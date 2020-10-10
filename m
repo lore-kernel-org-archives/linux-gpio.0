@@ -2,149 +2,73 @@ Return-Path: <SRS0=/kR9=DR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB987C2D0A4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29165C2D0A1
 	for <linux-gpio@archiver.kernel.org>; Sat, 10 Oct 2020 22:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88C3720795
+	by mail.kernel.org (Postfix) with ESMTP id 064342075E
 	for <linux-gpio@archiver.kernel.org>; Sat, 10 Oct 2020 22:57:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oHetx7Mq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731310AbgJJW5A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 10 Oct 2020 18:57:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50298 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388035AbgJJUqm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Oct 2020 16:46:42 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E15FC0613D0
-        for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2020 13:46:35 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id r21so6946227pgj.5
-        for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2020 13:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rE0dIynQwG6q4BairXo2itoxLJxN0IanlzP9BJTruT8=;
-        b=oHetx7Mqeqp7LEnWbTGOhD0LpJYZdj90r/hOX+JlxGataPliWkrUL0mCmN+BYL5wzV
-         wWlnr6G+IC6zj2N/w68VLBRFruYhIqt28+xciZGNIlJe3/6FlXVSxGcLTsJjg0EwljXw
-         eIkrDpZJ/DwgBOrJmY6yJVzN/BHD2/9kW93c2Cg3zrgjvfP675WwSJjLuWjUyUYAiMyN
-         r7s8tje0QbZTRoE1Vnc3isFFl8b06pDfNclE7Cu0eimHelLXKr1JqFL+xOO6B0OCfW5Y
-         Ul+7WelE7LPrq+IVeoyz8DKu9mgIR7U1mhcdTno4cMihRKlVPgAXQLuReUTGXWE9OS5O
-         8mHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rE0dIynQwG6q4BairXo2itoxLJxN0IanlzP9BJTruT8=;
-        b=WsOoKAmRDdXsk9SRK1TEyqWnNz5RHak0beGRbGY4sZNaun36Sm3nd5b3i3sy54iOfM
-         /onVRjTqkwLmXDdQ1IqYcX4myOEZyzW+ZLAlR4qbq/GJxEu+gz3Dq4rWJwB2C3rZVaYZ
-         D29TwVz74F7HiSvs/p0NY8IlDE7oFLTEiN7oLnGzujr5EZdK1EJ4Rpwvk3mwSHEMjiCK
-         NdlbIC3R+egzvIujjeCyZvYh+KR6jsYS/Oyl1x/xLpjmpukNPPTApggu+ntMtJOWKKFW
-         4Txm8y5vD9b14fgZ77ahxPld9tmgFjcel3VDZ5KjixzoEd7hBpUdTvDUdhw7oHf3vWM5
-         6w4w==
-X-Gm-Message-State: AOAM532hQPeH6IQw2CLL0clX71vKQ7+wh5/SRviQZ1b5qCJCOfbSZvaf
-        TQ4smtBMYZQTJjNpEPs8XmuUD9vYAy/Y+x9dzttKxv8vunz56A==
-X-Google-Smtp-Source: ABdhPJxcUtXxZb/uSx4VpzQqgiClJD+14t4ReNuOwhGQGNZWveGlYoVqlP9kcaZm/jlGtZHoiB4HuzrlgC/JITfHzFk=
-X-Received: by 2002:a17:90a:fb92:: with SMTP id cp18mr12053061pjb.228.1602362794509;
- Sat, 10 Oct 2020 13:46:34 -0700 (PDT)
+        id S1731202AbgJJW46 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 10 Oct 2020 18:56:58 -0400
+Received: from aposti.net ([89.234.176.197]:47164 "EHLO aposti.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731325AbgJJTKj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 10 Oct 2020 15:10:39 -0400
+Date:   Sat, 10 Oct 2020 21:10:14 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v4 0/3] pinctrl: Ingenic: Add support for SSI and I2S
+ pins.
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     =?UTF-8?b?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>,
+        linux-kernel@vger.kernel.org,
+        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Message-Id: <2L20IQ.FYURHZYQ6ZCT3@crapouillou.net>
+In-Reply-To: <CACRpkda1B3LcGWc1PhXNgi-6JxapiKY4F_94c6dk4eBLgVGBJg@mail.gmail.com>
+References: <20200913065836.12156-1-zhouyanjie@wanyeetech.com>
+        <CACRpkda1B3LcGWc1PhXNgi-6JxapiKY4F_94c6dk4eBLgVGBJg@mail.gmail.com>
 MIME-Version: 1.0
-References: <778e96d4-1695-43ee-90d6-86cc34b20418@www.fastmail.com>
-In-Reply-To: <778e96d4-1695-43ee-90d6-86cc34b20418@www.fastmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 10 Oct 2020 23:46:18 +0300
-Message-ID: <CAHp75Vf2-4zX0rh5VtBze=so8nYDav3yOMuYTwodBNhvGmvQ4A@mail.gmail.com>
-Subject: Re: Configuring bias on an APCI GpioInt
-To:     Jamie McClymont <jamie@kwiius.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Oct 10, 2020 at 11:58 AM Jamie McClymont <jamie@kwiius.com> wrote:
->
-> Hi again,
->
-> I have run into a second GPIO issue while writing a driver for the fingerprint sensor in my laptop*, configured in the ACPI table like so:
->
->    Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
->    {
->        Name (RBUF, ResourceTemplate ()
->        {
->            // SPI
->            SpiSerialBusV2 (0x0000, PolarityLow, FourWireMode, 0x08,
->                ControllerInitiated, 0x00989680, ClockPolarityLow,
->                ClockPhaseFirst, "\\_SB.PCI0.SPI1",
->                0x00, ResourceConsumer, , Exclusive,
->                )
->
->            // Interrupt
->            GpioInt (Level, ActiveLow, ExclusiveAndWake, PullUp, 0x0000,
->                "\\_SB.PCI0.GPI0", 0x00, ResourceConsumer, ,
->                )
->                {   // Pin list
->                    0x0000
->                }
->
->            // Reset
->            GpioIo (Exclusive, PullUp, 0x0000, 0x0000, IoRestrictionOutputOnly,
->                "\\_SB.PCI0.GPI0", 0x00, ResourceConsumer, ,
->                )
->                {   // Pin list
->                    0x0008
->                }
->        })
->        CreateWordField (RBUF, 0x3B, GPIN)
->        CreateWordField (RBUF, 0x63, SPIN)
->        GPIN = GNUM (0x02000017)
->        SPIN = GNUM (0x0202000A)
->        Return (RBUF) /* \_SB_.SPBA._CRS.RBUF */
->    }
->
-> I call devm_request_threaded_irq with the number provided in the irq field of the `struct spi_device` during the spi_probe.
->
-> This configures the right IRQ number, and it triggers when it should, but it stays asserted for 140ms-600ms after it should have been cleared.
+Hi Linus, Zhou,
 
-I was wondering how it works since it should have the same issue as
-with a regular GPIO. Now I understand that we simply ignore bias for
-GpioInt() resources. If you enable it, we come to the same issue. So,
-first we have to fix set bias followed by enabling it for GpioInt()
-resources.
+The first patch is bogus. Half of the SSI pins are wrong (GPIO chip D/E 
+start at 0x60/0x80 respectively).
 
-I will look closer at this next week.
+Sorry for not catching that before.
+
+-Paul
 
 
-> Given it's an active-low level-triggered interrupt with a pull-up requested by the acpi table, my theory is:
->
-> * The interrupt line is driven open-drain by the peripheral
-> * The pullup is not being correctly configured
-> * It is slooooowly pulled up by leakage current of the GPIO input, hence the interrupt being cleared after 140-600ms
->
-> Looking at traces and confirming by source code**, it seems that no code ever attempts to configure the pin's bias during the irq setup.
->
-> Is this a bug, or should I be manually setting up the GPIO some other way before requesting the IRQ?
->
-> Thanks
-> - Jamie McClymont
->
->
-> *Hardware details
-> ==============
->
-> Laptop is a Huawei Matebook X Pro
-> CPU is an Intel i5-8250U (the specific pinctrl is pinctrl_sunrisepoint)
-> Fingerprint Sensor is a Goodix GXFP5187 (not well-documented anywhere, I'm working through reverse-engineering)
->
-> ** Tested on 5.9-rc8, but I've been reading the source of linux-next and haven't picked up on any relevant differences
+Le mar. 29 sept. 2020 à 14:48, Linus Walleij 
+<linus.walleij@linaro.org> a écrit :
+> On Sun, Sep 13, 2020 at 8:59 AM 周琰杰 (Zhou Yanjie)
+> <zhouyanjie@wanyeetech.com> wrote:
+> 
+>>  1.Add SSI pins support for JZ4770 and JZ4780.
+>>  2.Correct the pullup and pulldown parameters of JZ4780.
+>>  3.Add I2S pins support for JZ4780, X1000, X1500, and X1830.
+>> 
+>>  v2->v3:
+>>  1.Add Paul Cercueil's Reviewed-by.
+>>  2.Fix bug about PE15's pull-up parameter.
+> 
+> This v3 patch set applied!
+> 
+> Thank you so much for your hard work!
+> 
+> Yours,
+> Linus Walleij
 
 
-
--- 
-With Best Regards,
-Andy Shevchenko
