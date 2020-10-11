@@ -1,171 +1,105 @@
-Return-Path: <SRS0=/kR9=DR=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Ll0c=DS=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89578C3279D
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Oct 2020 23:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4060FC43457
+	for <linux-gpio@archiver.kernel.org>; Sun, 11 Oct 2020 02:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65E9420760
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Oct 2020 23:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 065922084C
+	for <linux-gpio@archiver.kernel.org>; Sun, 11 Oct 2020 02:48:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="weHpStTx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731292AbgJJW47 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 10 Oct 2020 18:56:59 -0400
-Received: from aposti.net ([89.234.176.197]:48068 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731467AbgJJTZa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 10 Oct 2020 15:25:30 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Zhou Yanjie <zhouyanjie@wanyeetech.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>,
-        Artur Rojek <contact@artur-rojek.eu>
-Subject: [PATCH] pinctrl: ingenic: Fix invalid SSI pins
-Date:   Sat, 10 Oct 2020 21:25:09 +0200
-Message-Id: <20201010192509.9098-1-paul@crapouillou.net>
-In-Reply-To: <CACRpkda1B3LcGWc1PhXNgi-6JxapiKY4F_94c6dk4eBLgVGBJg@mail.gmail.com>
-References: <CACRpkda1B3LcGWc1PhXNgi-6JxapiKY4F_94c6dk4eBLgVGBJg@mail.gmail.com>
+        id S1730393AbgJKCso (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 10 Oct 2020 22:48:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730366AbgJKCso (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Oct 2020 22:48:44 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82FE1C0613D5
+        for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2020 19:48:44 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id b26so10345377pff.3
+        for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2020 19:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CRG92oMXy4E775EIK8O0DpmZIGdIMTpQqj/5ZSVtoLY=;
+        b=weHpStTxuhYPS7lmPZL9/pJezwwh8vwwWkoW6OYqSbVgsTSXnrXBooo9Sk4tOL5x3P
+         +mfDH6ATV9zyNC5hHUn2edNR+Z5+Q0RRNkweW7QjWgScac4PPlgLsgmAAXCCqnLEh3OP
+         3lW437RBQZLGsCOK7W4+YS0hpVROGZ/Iy7v1k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CRG92oMXy4E775EIK8O0DpmZIGdIMTpQqj/5ZSVtoLY=;
+        b=rufArWIAS1SzgarVRuMHFfBkMBq9+veU4DGurLaOhw8NiM+mUzy7bXx9GDuySeW+P6
+         yN0u0cUcILqvmKOniGV4xasLZRbNEZdeFVStU5HdOMi5NucCo7AWILEEWD4UfA9eyQBb
+         FiQC8WomT3PticVruZTb9au41eW24vx0BiYniqEz9W/5qiCIMnB3orWPb0coCTUzG5QU
+         V4FXM5gTJjJLhH/W62BsNHnERmyfbcU64l6A0n41bebMCas63ykCXCxP6jJcMzhq7SUR
+         9Eooab3Vu99VW253E8qV55JNm0d5d6aYHZ/BVjIuELafzZmT/Q/JXc6AVTB3+DSld90F
+         fXmA==
+X-Gm-Message-State: AOAM530lFpOZvJ/I0241ONUQB/UceOwz6eoeAwLdLU9N6uyztzAiM60X
+        2tMci9oQ9YkRz+8QRE5dh1C9k3BtnlwltQ==
+X-Google-Smtp-Source: ABdhPJwrGvROYt9PDnRCZ4PKLbJHDLKQcNIcm4hxT8GdAjhU/1yIldti4tw2fiIbvwwvQMG0mp8Z5w==
+X-Received: by 2002:a17:90b:128f:: with SMTP id fw15mr9908083pjb.107.1602384523344;
+        Sat, 10 Oct 2020 19:48:43 -0700 (PDT)
+Received: from shiro.work (p1268123-ipngn200803sizuokaden.shizuoka.ocn.ne.jp. [118.13.124.123])
+        by smtp.googlemail.com with ESMTPSA id z25sm14832836pgl.6.2020.10.10.19.48.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Oct 2020 19:48:42 -0700 (PDT)
+From:   Daniel Palmer <daniel@0x0f.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH 0/5] Add GPIO support for MStar/SigmaStar ARMv7
+Date:   Sun, 11 Oct 2020 11:48:26 +0900
+Message-Id: <20201011024831.3868571-1-daniel@0x0f.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The values for the SSI pins on GPIO chips D and E were off by 0x20.
+At the moment the MStar/SigmaStar support is only really
+capable of shell from an initramfs and not much else.
 
-Fixes: d3ef8c6b2286 ("pinctrl: Ingenic: Add SSI pins support for JZ4770 and JZ4780.")
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reported-by: Artur Rojek <contact@artur-rojek.eu>
----
- drivers/pinctrl/pinctrl-ingenic.c | 72 +++++++++++++++----------------
- 1 file changed, 36 insertions(+), 36 deletions(-)
+Most of the interesting drivers are blocked on clock and pinctrl
+drivers and those are going to take me a little while to get cleaned
+up.
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index c8e50a58a5e5..621909b01deb 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -635,44 +635,44 @@ static int jz4770_uart3_data_pins[] = { 0x6c, 0x85, };
- static int jz4770_uart3_hwflow_pins[] = { 0x88, 0x89, };
- static int jz4770_ssi0_dt_a_pins[] = { 0x15, };
- static int jz4770_ssi0_dt_b_pins[] = { 0x35, };
--static int jz4770_ssi0_dt_d_pins[] = { 0x55, };
--static int jz4770_ssi0_dt_e_pins[] = { 0x71, };
-+static int jz4770_ssi0_dt_d_pins[] = { 0x75, };
-+static int jz4770_ssi0_dt_e_pins[] = { 0x91, };
- static int jz4770_ssi0_dr_a_pins[] = { 0x14, };
- static int jz4770_ssi0_dr_b_pins[] = { 0x34, };
--static int jz4770_ssi0_dr_d_pins[] = { 0x54, };
--static int jz4770_ssi0_dr_e_pins[] = { 0x6e, };
-+static int jz4770_ssi0_dr_d_pins[] = { 0x74, };
-+static int jz4770_ssi0_dr_e_pins[] = { 0x8e, };
- static int jz4770_ssi0_clk_a_pins[] = { 0x12, };
- static int jz4770_ssi0_clk_b_pins[] = { 0x3c, };
--static int jz4770_ssi0_clk_d_pins[] = { 0x58, };
--static int jz4770_ssi0_clk_e_pins[] = { 0x6f, };
-+static int jz4770_ssi0_clk_d_pins[] = { 0x78, };
-+static int jz4770_ssi0_clk_e_pins[] = { 0x8f, };
- static int jz4770_ssi0_gpc_b_pins[] = { 0x3e, };
--static int jz4770_ssi0_gpc_d_pins[] = { 0x56, };
--static int jz4770_ssi0_gpc_e_pins[] = { 0x73, };
-+static int jz4770_ssi0_gpc_d_pins[] = { 0x76, };
-+static int jz4770_ssi0_gpc_e_pins[] = { 0x93, };
- static int jz4770_ssi0_ce0_a_pins[] = { 0x13, };
- static int jz4770_ssi0_ce0_b_pins[] = { 0x3d, };
--static int jz4770_ssi0_ce0_d_pins[] = { 0x59, };
--static int jz4770_ssi0_ce0_e_pins[] = { 0x70, };
-+static int jz4770_ssi0_ce0_d_pins[] = { 0x79, };
-+static int jz4770_ssi0_ce0_e_pins[] = { 0x90, };
- static int jz4770_ssi0_ce1_b_pins[] = { 0x3f, };
--static int jz4770_ssi0_ce1_d_pins[] = { 0x57, };
--static int jz4770_ssi0_ce1_e_pins[] = { 0x72, };
-+static int jz4770_ssi0_ce1_d_pins[] = { 0x77, };
-+static int jz4770_ssi0_ce1_e_pins[] = { 0x92, };
- static int jz4770_ssi1_dt_b_pins[] = { 0x35, };
--static int jz4770_ssi1_dt_d_pins[] = { 0x55, };
--static int jz4770_ssi1_dt_e_pins[] = { 0x71, };
-+static int jz4770_ssi1_dt_d_pins[] = { 0x75, };
-+static int jz4770_ssi1_dt_e_pins[] = { 0x91, };
- static int jz4770_ssi1_dr_b_pins[] = { 0x34, };
--static int jz4770_ssi1_dr_d_pins[] = { 0x54, };
--static int jz4770_ssi1_dr_e_pins[] = { 0x6e, };
-+static int jz4770_ssi1_dr_d_pins[] = { 0x74, };
-+static int jz4770_ssi1_dr_e_pins[] = { 0x8e, };
- static int jz4770_ssi1_clk_b_pins[] = { 0x3c, };
--static int jz4770_ssi1_clk_d_pins[] = { 0x58, };
--static int jz4770_ssi1_clk_e_pins[] = { 0x6f, };
-+static int jz4770_ssi1_clk_d_pins[] = { 0x78, };
-+static int jz4770_ssi1_clk_e_pins[] = { 0x8f, };
- static int jz4770_ssi1_gpc_b_pins[] = { 0x3e, };
--static int jz4770_ssi1_gpc_d_pins[] = { 0x56, };
--static int jz4770_ssi1_gpc_e_pins[] = { 0x73, };
-+static int jz4770_ssi1_gpc_d_pins[] = { 0x76, };
-+static int jz4770_ssi1_gpc_e_pins[] = { 0x93, };
- static int jz4770_ssi1_ce0_b_pins[] = { 0x3d, };
--static int jz4770_ssi1_ce0_d_pins[] = { 0x59, };
--static int jz4770_ssi1_ce0_e_pins[] = { 0x70, };
-+static int jz4770_ssi1_ce0_d_pins[] = { 0x79, };
-+static int jz4770_ssi1_ce0_e_pins[] = { 0x90, };
- static int jz4770_ssi1_ce1_b_pins[] = { 0x3f, };
--static int jz4770_ssi1_ce1_d_pins[] = { 0x57, };
--static int jz4770_ssi1_ce1_e_pins[] = { 0x72, };
-+static int jz4770_ssi1_ce1_d_pins[] = { 0x77, };
-+static int jz4770_ssi1_ce1_e_pins[] = { 0x92, };
- static int jz4770_mmc0_1bit_a_pins[] = { 0x12, 0x13, 0x14, };
- static int jz4770_mmc0_4bit_a_pins[] = { 0x15, 0x16, 0x17, };
- static int jz4770_mmc0_1bit_e_pins[] = { 0x9c, 0x9d, 0x94, };
-@@ -1050,35 +1050,35 @@ static int jz4780_ssi0_dt_a_19_pins[] = { 0x13, };
- static int jz4780_ssi0_dt_a_21_pins[] = { 0x15, };
- static int jz4780_ssi0_dt_a_28_pins[] = { 0x1c, };
- static int jz4780_ssi0_dt_b_pins[] = { 0x3d, };
--static int jz4780_ssi0_dt_d_pins[] = { 0x59, };
-+static int jz4780_ssi0_dt_d_pins[] = { 0x79, };
- static int jz4780_ssi0_dr_a_20_pins[] = { 0x14, };
- static int jz4780_ssi0_dr_a_27_pins[] = { 0x1b, };
- static int jz4780_ssi0_dr_b_pins[] = { 0x34, };
--static int jz4780_ssi0_dr_d_pins[] = { 0x54, };
-+static int jz4780_ssi0_dr_d_pins[] = { 0x74, };
- static int jz4780_ssi0_clk_a_pins[] = { 0x12, };
- static int jz4780_ssi0_clk_b_5_pins[] = { 0x25, };
- static int jz4780_ssi0_clk_b_28_pins[] = { 0x3c, };
--static int jz4780_ssi0_clk_d_pins[] = { 0x58, };
-+static int jz4780_ssi0_clk_d_pins[] = { 0x78, };
- static int jz4780_ssi0_gpc_b_pins[] = { 0x3e, };
--static int jz4780_ssi0_gpc_d_pins[] = { 0x56, };
-+static int jz4780_ssi0_gpc_d_pins[] = { 0x76, };
- static int jz4780_ssi0_ce0_a_23_pins[] = { 0x17, };
- static int jz4780_ssi0_ce0_a_25_pins[] = { 0x19, };
- static int jz4780_ssi0_ce0_b_pins[] = { 0x3f, };
--static int jz4780_ssi0_ce0_d_pins[] = { 0x57, };
-+static int jz4780_ssi0_ce0_d_pins[] = { 0x77, };
- static int jz4780_ssi0_ce1_b_pins[] = { 0x35, };
--static int jz4780_ssi0_ce1_d_pins[] = { 0x55, };
-+static int jz4780_ssi0_ce1_d_pins[] = { 0x75, };
- static int jz4780_ssi1_dt_b_pins[] = { 0x3d, };
--static int jz4780_ssi1_dt_d_pins[] = { 0x59, };
-+static int jz4780_ssi1_dt_d_pins[] = { 0x79, };
- static int jz4780_ssi1_dr_b_pins[] = { 0x34, };
--static int jz4780_ssi1_dr_d_pins[] = { 0x54, };
-+static int jz4780_ssi1_dr_d_pins[] = { 0x74, };
- static int jz4780_ssi1_clk_b_pins[] = { 0x3c, };
--static int jz4780_ssi1_clk_d_pins[] = { 0x58, };
-+static int jz4780_ssi1_clk_d_pins[] = { 0x78, };
- static int jz4780_ssi1_gpc_b_pins[] = { 0x3e, };
--static int jz4780_ssi1_gpc_d_pins[] = { 0x56, };
-+static int jz4780_ssi1_gpc_d_pins[] = { 0x76, };
- static int jz4780_ssi1_ce0_b_pins[] = { 0x3f, };
--static int jz4780_ssi1_ce0_d_pins[] = { 0x57, };
-+static int jz4780_ssi1_ce0_d_pins[] = { 0x77, };
- static int jz4780_ssi1_ce1_b_pins[] = { 0x35, };
--static int jz4780_ssi1_ce1_d_pins[] = { 0x55, };
-+static int jz4780_ssi1_ce1_d_pins[] = { 0x75, };
- static int jz4780_mmc0_8bit_a_pins[] = { 0x04, 0x05, 0x06, 0x07, 0x18, };
- static int jz4780_i2c3_pins[] = { 0x6a, 0x6b, };
- static int jz4780_i2c4_e_pins[] = { 0x8c, 0x8d, };
+Clock and pinctrl aren't needed for basic GPIO to work (all pins
+start off as GPIOs..) and it makes it possible to actually do something
+so this series adds everything that is needed for the main GPIO
+block in these chips.
+
+Daniel Palmer (5):
+  dt-bindings: gpio: Binding for MStar MSC313 GPIO controller
+  dt-bindings: gpio: Add a binding header for the MSC313 GPIO driver
+  gpio: msc313: MStar MSC313 GPIO driver
+  ARM: mstar: Add gpio controller to MStar base dtsi
+  ARM: mstar: Fill in GPIO controller properties for infinity
+
+ .../bindings/gpio/mstar,msc313-gpio.yaml      |  69 ++++
+ MAINTAINERS                                   |   3 +
+ arch/arm/boot/dts/mstar-infinity.dtsi         |  16 +
+ arch/arm/boot/dts/mstar-v7.dtsi               |   7 +
+ drivers/gpio/Kconfig                          |   9 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-msc313.c                    | 341 ++++++++++++++++++
+ include/dt-bindings/gpio/msc313-gpio.h        |  95 +++++
+ 8 files changed, 541 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
+ create mode 100644 drivers/gpio/gpio-msc313.c
+ create mode 100644 include/dt-bindings/gpio/msc313-gpio.h
+
 -- 
-2.28.0
+2.27.0
 
