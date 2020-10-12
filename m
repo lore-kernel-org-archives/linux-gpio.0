@@ -2,136 +2,88 @@ Return-Path: <SRS0=RBsP=DT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5151BC433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 13:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145F8C43457
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 14:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3C74206C1
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 13:22:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/TqMCBF"
+	by mail.kernel.org (Postfix) with ESMTP id D262A20878
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 14:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729343AbgJLNWu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 12 Oct 2020 09:22:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56538 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbgJLNWu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Oct 2020 09:22:50 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AB4DC0613D0
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2020 06:22:50 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id o9so8565536plx.10
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2020 06:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fUeVLC9cYxOn9RahTZ6DfnJMAyMvslD7/O6X0pGp96w=;
-        b=B/TqMCBFsnTFUj280pqZexsR9dg1wdh3gDQ1ZIk4lkwjnrFNVkawmmvqqDUzmVDlFz
-         s/PfgIMIn1hML1Mkx/bhr5nMLI404J9fbGIkdvAWfnOJF8lcI4ySZ2JUgM1HWuhTwKR9
-         jQ3fZHTIaA6bNq6qkjSGxZFUu3CUBpk70tJhE4klQytM0GDTJP0/QNTZyVsmGb75qxrE
-         2yfIsVMrEhth7jUgq+euG2Nij1gvJMyoLg+Kctl0eTB3kDcSY332AZkBSHrRuparo3Ow
-         /yGH9cGJTk+qTHL1eYE16kSNfSyeaBfXqoHTmT20DXAtZ4+yQ4ZYBQiIUL9W1ttf5iv2
-         T9FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fUeVLC9cYxOn9RahTZ6DfnJMAyMvslD7/O6X0pGp96w=;
-        b=oxEowyamRGMB6WnSekoaiZR8PbyEvVV0jwU7jfYH9SMxHkfZ9xPltOEKDXD9n66cw0
-         3foMEhoWmilJCthNlFVCxi0UJ5XOVJ1Q+En0t++1mkeHRml/yOLVcbKsfhWgYDF9xaoF
-         uYkJJczii93aNBROy4Ztw7zqKdYU83vjVN5ZPuYtj3ZjjSz+fWUCEgTvnr1orgdIktD4
-         07EdwgDHrLgrUoYIZvpXg8ZvXoiDLC+qWW5Qss17YnHY7TGspI/Xmvxq0tvnnpx3kFMO
-         o3wtODdVgVYMICR64ePV/cNeuZYEFzGKDEuWBWOA5GvY78hMPNKpenN1X6M0KgBrQbFN
-         x3Ww==
-X-Gm-Message-State: AOAM530CdBlrBsnRVWGmI+UeB6GTz9mZjeDFdOT1XHFd79mssutlDEhc
-        heVgRPQu0rMwIi6Ao367KIyVsSeJIJ7z7sKJSorNsQpjf0nw9A==
-X-Google-Smtp-Source: ABdhPJz3F1wDDaVCefg89pC+syP70tkTSngT6eeeX7roqE5efHkONz2n4iKBW1a16tMI2c6hxwp01l6RVZ6lKFXuKGY=
-X-Received: by 2002:a17:902:ea8c:b029:d2:8abd:c8de with SMTP id
- x12-20020a170902ea8cb02900d28abdc8demr24275857plb.21.1602508969747; Mon, 12
- Oct 2020 06:22:49 -0700 (PDT)
+        id S2390734AbgJLOAX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 12 Oct 2020 10:00:23 -0400
+Received: from mga04.intel.com ([192.55.52.120]:59139 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390201AbgJLN77 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 12 Oct 2020 09:59:59 -0400
+IronPort-SDR: EzaL8ft27VfyYgqDKD10V4sA9apwrd8g442u3EdfcMTo0LvNkNH3qbcAAbwet47DEWuu6WaVHr
+ loh6cYzlIjZg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9771"; a="163103608"
+X-IronPort-AV: E=Sophos;i="5.77,366,1596524400"; 
+   d="scan'208";a="163103608"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2020 06:59:57 -0700
+IronPort-SDR: eCwynhWKRzxkwi3Pw+Zc4cbu5IU0H/Y7DTiXCZ4Cw5dTuCmXKasIOOWUQ37y2aV9ybWEl29e02
+ mhbSkUCQ9Zrw==
+X-IronPort-AV: E=Sophos;i="5.77,366,1596524400"; 
+   d="scan'208";a="317932492"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2020 06:59:56 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1kRyNn-0053MB-4g; Mon, 12 Oct 2020 17:00:59 +0300
+Date:   Mon, 12 Oct 2020 17:00:59 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2] gpiolib: Switch to use
+ compat_need_64bit_alignment_fixup() helper
+Message-ID: <20201012140059.GY4077@smile.fi.intel.com>
+References: <20201008134105.51387-1-andriy.shevchenko@linux.intel.com>
+ <20201012130741.GA58711@sol>
 MIME-Version: 1.0
-References: <20201009180856.4738-1-andriy.shevchenko@linux.intel.com> <dadaf399-03cc-1512-8208-76565ab257a7@geanix.com>
-In-Reply-To: <dadaf399-03cc-1512-8208-76565ab257a7@geanix.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 12 Oct 2020 16:23:39 +0300
-Message-ID: <CAHp75Vd-Hw8Ewa+F-tOuxdadL7BhfC5HDSvMFuwuZzq2MwVcnA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: mcp23s08: Use full chunk of memory for
- regmap configuration
-To:     =?UTF-8?Q?Martin_Hundeb=C3=B8ll?= <martin@geanix.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201012130741.GA58711@sol>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 2:56 PM Martin Hundeb=C3=B8ll <martin@geanix.com> w=
-rote:
->
-> Hi Linus,
->
-> You can add my
-> Tested-by: Martin Hundeb=C3=B8ll <martin@geanix.com>
+On Mon, Oct 12, 2020 at 09:07:41PM +0800, Kent Gibson wrote:
+> On Thu, Oct 08, 2020 at 04:41:05PM +0300, Andy Shevchenko wrote:
+> > The new compat_need_64bit_alignment_fixup() helper allows to avoid
+> > ugly ifdeffery in IOCTL compatible code. Use it in GPIO cdev code.
 
-Thank you!
-Linus, below more typo fixes, but I'm not going to send a new version
-(until you explicitly require), so please take them into consideration
-when applying.
+> I'd re-arrange that checkin comment to
+> 
+> "Use the new compat_need_64bit_alignment_fixup() helper to avoid
+> ugly ifdeffery in IOCTL compatibility code."
 
-> Thanks,
-> Martin
->
-> On 09/10/2020 20.08, Andy Shevchenko wrote:
-> > It appears that simplification of mcp23s08_spi_regmap_init() made
-> > a regression due to wrong size calculation for dev_kmemdup() call.
+OK!
 
-> > It mises the fact that config variable is already a pointer, thus
+> but otherwise all good.
+> 
+> +1 on the deuglification, and it still works too.
+> 
+> Tested-by: Kent Gibson <warthog618@gmail.com>
 
-mises -> misses
+Thanks.
 
-> > the sizeof() calculation is wrong and only 4 or 8 bytes were copied.
-> >
-> > Fix the parameters to devm_kmemdup() to copy full chunk of memory.
+> > Depends-on: 527c412519eb ("compat: add a compat_need_64bit_alignment_fixup() helper")
 
-copy full -> copy a full
+> > Depends-on: cc7886d25bca ("compat: lift compat_s64 and compat_u64 to <asm-generic/compat.h>")
 
-> >
-> > Fixes: 0874758ecb2b ("pinctrl: mcp23s08: Refactor mcp23s08_spi_regmap_i=
-nit()")
-> > Reported-by: Martin Hundeb=C3=B8ll <martin@geanix.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> > v2: fixed few typos in the commit message
-> >   drivers/pinctrl/pinctrl-mcp23s08_spi.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pinctrl/pinctrl-mcp23s08_spi.c b/drivers/pinctrl/p=
-inctrl-mcp23s08_spi.c
-> > index 1f47a661b0a7..7c72cffe1412 100644
-> > --- a/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-> > +++ b/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-> > @@ -119,7 +119,7 @@ static int mcp23s08_spi_regmap_init(struct mcp23s08=
- *mcp, struct device *dev,
-> >               return -EINVAL;
-> >       }
-> >
-> > -     copy =3D devm_kmemdup(dev, &config, sizeof(config), GFP_KERNEL);
-> > +     copy =3D devm_kmemdup(dev, config, sizeof(*config), GFP_KERNEL);
-> >       if (!copy)
-> >               return -ENOMEM;
-> >
-> >
+I'll also drop this one, since former is dependent on latter.
 
-
-
---=20
+-- 
 With Best Regards,
 Andy Shevchenko
+
+
