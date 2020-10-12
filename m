@@ -2,79 +2,88 @@ Return-Path: <SRS0=RBsP=DT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D38C43457
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 04:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB3BC433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 04:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 197122078A
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 04:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2322B20780
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Oct 2020 04:20:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5v+ViQR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbgJLEDE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 12 Oct 2020 00:03:04 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:22174 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbgJLEDE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Oct 2020 00:03:04 -0400
-Received: from twspam01.aspeedtech.com (localhost [127.0.0.2] (may be forged))
-        by twspam01.aspeedtech.com with ESMTP id 09C3UCTG087693
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2020 11:30:12 +0800 (GMT-8)
-        (envelope-from billy_tsai@aspeedtech.com)
-Received: from mail.aspeedtech.com ([192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id 09C3TpBg087375;
-        Mon, 12 Oct 2020 11:29:51 +0800 (GMT-8)
-        (envelope-from billy_tsai@aspeedtech.com)
-Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 12 Oct
- 2020 11:32:01 +0800
-From:   Billy Tsai <billy_tsai@aspeedtech.com>
-To:     <robh+dt@kernel.org>, <joel@jms.id.au>, <andrew@aj.id.au>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <linux-gpio@vger.kernel.org>, <openbmc@lists.ozlabs.org>
-CC:     <BMC-SW@aspeedtech.com>
-Subject: [PATCH 1/3] Arm: dts: aspeed-g6: Fix the register range of gpio
-Date:   Mon, 12 Oct 2020 11:31:48 +0800
-Message-ID: <20201012033150.21056-2-billy_tsai@aspeedtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201012033150.21056-1-billy_tsai@aspeedtech.com>
-References: <20201012033150.21056-1-billy_tsai@aspeedtech.com>
+        id S1727715AbgJLEUQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 12 Oct 2020 00:20:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57728 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbgJLEUQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Oct 2020 00:20:16 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D722C0613CE
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2020 21:20:16 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id 1so2051295ple.2
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2020 21:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rQGNEfXrpPUCBuLRUMQY74vDZyCBVzFwJG26smzlRuU=;
+        b=L5v+ViQR9Ym8DfmUui+SPEHRtr5noAgnh3wnjQVOG7i0nszy9TpXsddp1RXWBQOSfk
+         apYPYrqMWUNd4GgosL4wwJlJhpg65/M7MDGTLs+5gKEZiHVB/Qhd0hqrMNVCMoZJYOdf
+         ub9mjws9T1FrbV9ZKZkIcrbU/PkFDZgltRm1LzrfOiGssIefKMA62/9g/VJDesfWh1P7
+         77x8XhlLlrmcwQYjewXVLBdv2jhHilpqZ+ubb2WXAaJ0LlJBEf6XDIfRedwNHUI67WuB
+         aTjKt3ge+5R8uGnjKzOXbecyDCuZW5FQ3xieH7MDzld1D/bBeiAYm8tWjxbXofmFlBBC
+         6SIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rQGNEfXrpPUCBuLRUMQY74vDZyCBVzFwJG26smzlRuU=;
+        b=czOw5FW3plP2eNGVzYyAzJt0bkSjSMAIy2fdsHNGKY/VtYn7yDbIq8Lqr5p945v/gU
+         fdfzb2bwx8Mm+nSr5D1ipbycbYv3ydSCCpV3jekOOB3epMlOLO81Zzf85zY3U5DPfCpr
+         KsVrggD5/mgq4rHhO0Hex767/guprAPLOBDz/kASQVv4OsNgZP2D0hwOJnjRr2z5UrJg
+         +d4b6VZylMfuqHD10+T4KCs/MHZR8bBjgrMSkBv+31/d0Vs8Ia1ju0eaoHn6nsj0GAL7
+         sGrDRpqf1grLfl+zqFwGVWSY3t5LOKmGBkMtVqmlOL8262VpvrpiIGkXhm8Leth1qi4P
+         t/rg==
+X-Gm-Message-State: AOAM533e5Xl53m1D9fqfvaKBn2BK1eLRl77bIrFPhRnFygfXjjn9OUo/
+        GuMeLhwKnTgcdKPa3J32sfY=
+X-Google-Smtp-Source: ABdhPJw3rVb/QSdOaHlY76Ce3juYppzW7dcPucmAFzixwSW/2M37O+8vYIrhHiGRzlhE8dPSCbkNlQ==
+X-Received: by 2002:a17:902:7e0b:b029:d3:8afd:5392 with SMTP id b11-20020a1709027e0bb02900d38afd5392mr21798018plm.5.1602476415763;
+        Sun, 11 Oct 2020 21:20:15 -0700 (PDT)
+Received: from sol (106-69-182-59.dyn.iinet.net.au. [106.69.182.59])
+        by smtp.gmail.com with ESMTPSA id d8sm22618555pjr.46.2020.10.11.21.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Oct 2020 21:20:14 -0700 (PDT)
+Date:   Mon, 12 Oct 2020 12:20:10 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2] gpiolib: Switch to use
+ compat_need_64bit_alignment_fixup() helper
+Message-ID: <20201012042010.GA13984@sol>
+References: <20201008134105.51387-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.10.9]
-X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
- (192.168.0.24)
-X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com 09C3TpBg087375
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201008134105.51387-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch is used to fix the memory range of gpio0
+On Thu, Oct 08, 2020 at 04:41:05PM +0300, Andy Shevchenko wrote:
+> The new compat_need_64bit_alignment_fixup() helper allows to avoid
+> ugly ifdeffery in IOCTL compatible code. Use it in GPIO cdev code.
+> 
+> Depends-on: 527c412519eb ("compat: add a compat_need_64bit_alignment_fixup() helper")
+> Depends-on: cc7886d25bca ("compat: lift compat_s64 and compat_u64 to <asm-generic/compat.h>")
 
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
----
- arch/arm/boot/dts/aspeed-g6.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Where can I find these?
 
-diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
-index 97ca743363d7..ad19dce038ea 100644
---- a/arch/arm/boot/dts/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g6.dtsi
-@@ -357,7 +357,7 @@
- 				#gpio-cells = <2>;
- 				gpio-controller;
- 				compatible = "aspeed,ast2600-gpio";
--				reg = <0x1e780000 0x800>;
-+				reg = <0x1e780000 0x400>;
- 				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
- 				gpio-ranges = <&pinctrl 0 0 208>;
- 				ngpios = <208>;
--- 
-2.17.1
+Cheers,
+Kent.
 
