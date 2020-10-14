@@ -7,105 +7,98 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD69C433DF
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 10:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC9AC433E7
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 10:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3293620878
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 10:33:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE637221FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 10:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbgJNKdW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Oct 2020 06:33:22 -0400
-Received: from mga17.intel.com ([192.55.52.151]:48023 "EHLO mga17.intel.com"
+        id S1727365AbgJNKqm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Oct 2020 06:46:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:31115 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbgJNKdW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 14 Oct 2020 06:33:22 -0400
-IronPort-SDR: B8TYcqt6nOI3S+RUY3p3GgMcdprI1FYAXE2Z0U6sloYP5IMKE1+IAn0axEv8tNUx70pRvBXWVt
- Rqf+uha6COPw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="145941136"
+        id S1726186AbgJNKqm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 14 Oct 2020 06:46:42 -0400
+IronPort-SDR: qh2mYOuYQsk6a4h5bG+VluO/EILkzSCoNGf/Jevhidl0kdU4hxkaFRpcLsZfkUmv0EhE6oQJs7
+ KmJo0bQ8hCjQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="227716291"
 X-IronPort-AV: E=Sophos;i="5.77,374,1596524400"; 
-   d="scan'208";a="145941136"
+   d="scan'208";a="227716291"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2020 03:33:20 -0700
-IronPort-SDR: j5L4i7QEVH6QmMILZQAoBec83E+GGABKjp5EJviUGlMAWwDahXeXIyrdjCKxgN2KEbpC7/wFfN
- 8OXe7q5M4kRg==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2020 03:46:41 -0700
+IronPort-SDR: SvNSsts5gCV/a0HB+paiIVMnCBdqlAGcm9gLdyXcnX3dhiVJcKfON65snCjRe8R8exnyBCdN3S
+ 4qy9lpn0yDrQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,374,1596524400"; 
-   d="scan'208";a="299911760"
+   d="scan'208";a="357340666"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 14 Oct 2020 03:33:19 -0700
+  by orsmga007.jf.intel.com with ESMTP; 14 Oct 2020 03:46:39 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 3D8083A1; Wed, 14 Oct 2020 13:33:18 +0300 (EEST)
+        id 1967511E; Wed, 14 Oct 2020 13:46:39 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v3] gpiolib: Switch to use compat_need_64bit_alignment_fixup() helper
-Date:   Wed, 14 Oct 2020 13:33:15 +0300
-Message-Id: <20201014103315.82662-1-andriy.shevchenko@linux.intel.com>
+        Jamie McClymont <jamie@kwiius.com>
+Subject: [PATCH v1 2/2] pinctrl: intel: Set default bias in case no particular value given
+Date:   Wed, 14 Oct 2020 13:46:38 +0300
+Message-Id: <20201014104638.84043-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201014104638.84043-1-andriy.shevchenko@linux.intel.com>
+References: <20201014104638.84043-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use the new compat_need_64bit_alignment_fixup() helper to avoid
-ugly ifdeffery in IOCTL compatibility code.
+When GPIO library asks pin control to set the bias, it doesn't pass
+any value of it and argument is considered boolean (and this is true
+for ACPI GpioIo() / GpioInt() resources, by the way). Thus, individual
+drivers must behave well, when they got the resistance value of 1 Ohm,
+i.e. transforming it to sane default.
 
-Depends-on: 527c412519eb ("compat: add a compat_need_64bit_alignment_fixup() helper")
+In case of Intel pin control hardware the 5 kOhm sounds plausible
+because on one hand it's a minimum of resistors present in all
+hardware generations and at the same time it's high enough to minimize
+leakage current (will be only 200 uA with the above choice).
+
+Fixes: e57725eabf87 ("pinctrl: intel: Add support for hardware debouncer")
+Reported-by: Jamie McClymont <jamie@kwiius.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Kent Gibson <warthog618@gmail.com>
 ---
-v3: reworded commit message (Kent), added Tb tag (Kent), dropped extra Dep-on
- drivers/gpio/gpiolib-cdev.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index e9faeaf65d14..192721f829a3 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -1479,21 +1479,10 @@ static __poll_t lineevent_poll(struct file *file,
- 	return events;
- }
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index df626643f9e4..6d23137489c1 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -693,6 +693,10 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned int pin,
  
--static ssize_t lineevent_get_size(void)
--{
--#if defined(CONFIG_X86_64) && !defined(CONFIG_UML)
--	/* i386 has no padding after 'id' */
--	if (in_ia32_syscall()) {
--		struct compat_gpioeevent_data {
--			compat_u64	timestamp;
--			u32		id;
--		};
--
--		return sizeof(struct compat_gpioeevent_data);
--	}
--#endif
--	return sizeof(struct gpioevent_data);
--}
-+struct compat_gpioeevent_data {
-+	compat_u64	timestamp;
-+	u32		id;
-+};
+ 		value |= PADCFG1_TERM_UP;
  
- static ssize_t lineevent_read(struct file *file,
- 			      char __user *buf,
-@@ -1515,7 +1504,10 @@ static ssize_t lineevent_read(struct file *file,
- 	 * actual sizeof() and pass this as an argument to copy_to_user() to
- 	 * drop unneeded bytes from the output.
- 	 */
--	ge_size = lineevent_get_size();
-+	if (compat_need_64bit_alignment_fixup())
-+		ge_size = sizeof(struct compat_gpioeevent_data);
-+	else
-+		ge_size = sizeof(struct gpioevent_data);
- 	if (count < ge_size)
- 		return -EINVAL;
++		/* Set default strength value in case none is given */
++		if (arg == 1)
++			arg = 5000;
++
+ 		switch (arg) {
+ 		case 20000:
+ 			value |= PADCFG1_TERM_20K << PADCFG1_TERM_SHIFT;
+@@ -715,6 +719,10 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned int pin,
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+ 		value &= ~(PADCFG1_TERM_UP | PADCFG1_TERM_MASK);
  
++		/* Set default strength value in case none is given */
++		if (arg == 1)
++			arg = 5000;
++
+ 		switch (arg) {
+ 		case 20000:
+ 			value |= PADCFG1_TERM_20K << PADCFG1_TERM_SHIFT;
 -- 
 2.28.0
 
