@@ -2,101 +2,99 @@ Return-Path: <SRS0=i6KD=DW=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D54BC43457
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 01:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB73C43467
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 01:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C515222257
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 01:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9C2E22265
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 01:40:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5bIT6z0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rPoqwyF5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389445AbgJOBk1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Oct 2020 21:40:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50626 "EHLO
+        id S1726320AbgJOBko (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Oct 2020 21:40:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389040AbgJOBjh (ORCPT
+        with ESMTP id S2389043AbgJOBjh (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Oct 2020 21:39:37 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25641C05113C;
-        Wed, 14 Oct 2020 16:12:25 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id x13so602712pgp.7;
-        Wed, 14 Oct 2020 16:12:25 -0700 (PDT)
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF6BC051139;
+        Wed, 14 Oct 2020 16:12:11 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id j8so659943pjy.5;
+        Wed, 14 Oct 2020 16:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=El/pzj9jX1MRiZIL1sB1BOM0SgriA1p/FtOnL1weGFo=;
-        b=J5bIT6z0TX+eVs8xDW9zOw85VcZRLKNeJHVPD7iao1P2SCJPovIzVZbQuOxLxtOzQm
-         JJ8rD20SCZK87cjll2bKuvEhdVmPCwJEC5DBZIKpyZx/YVa/mN274LrVA8Dc+V0GKccW
-         Kfj0qd347oz9T63kQpWHG/BGnD9XzeN+H/a/+ggOFxRQ8B4KTOXv+apYWNzVa43P8xK6
-         BrTQeaEOU5XYB78nh2Vs/SVVG8Zs8CQX7yt5mHdUDC1Td1yKpzhSFyFB25icffYVG/qe
-         HwZEFdLp2Gj8glbrO9XY8BcY6Yw0soPnQdtmwhqqbAKPhNWXkM5k0lC1VdKs6b/duEuS
-         1FiA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5o9LtSE4il05eduKOAcveXCckPmf/hiC2cqKYSVCGw8=;
+        b=rPoqwyF5R3ai/rEV40i1oHkC2vOSk4ECeFmvlu4l/fmVkSDXk4aqRfdvnqEY17iwJE
+         tC+ulP8GI6fEWas/HESneF+B4dqFQuTMvOzx88+R9WezOJREHCQQ1lap/mYIYJZKBlsH
+         cg0+jUdPstSfGNk+JRuL5e3BkBPS2dtA+yge6ShzkZZhufpjulnWCmmDpIqKF48n0lSx
+         Mf0PJ3ATmZaEpRHakaXdwN0AE6HUNd3asystE1129en1pqCaFjERtoc1vS1QUz/3bqDm
+         zQKQBY2uj07oN05rPDynIreqoJKxLlro4dX3kNieielHxzEZaFySx05AAvv61Ga0//2C
+         6HQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=El/pzj9jX1MRiZIL1sB1BOM0SgriA1p/FtOnL1weGFo=;
-        b=PX1WtaUC7jfvVti/5jJag23IKr1Gq6u1QbaXjPV924UWkwAx+qbhNzg4urQEDx3OMW
-         gEXxLsMkxwYNKX00SEyZlWDkfxKA6ePkI6bFnvbipwTBNzvGUNaqtMnYN4DdQMrbT6zp
-         /LkylkjnlFr6QTGtWWyKAded5koRpWculRgdGLIFzm7pv+5dMZVfMMJCehoejtGZV9n+
-         xHlPGlHtGUtBU4HuknlTnvEal10TACTWvFww0rP6ZLJNHSNzuPf33XMupDzL4w6o04fL
-         vRlN5OFVfUiKdFkQ4c5CBazohpSEhw4KsjK5AqW1sHk+1zydSxaJqpdOe4FNzPwLZ75q
-         VcSQ==
-X-Gm-Message-State: AOAM533wTmJaCT5clVPj6yfyTOTi7gsrRmVRCk8T61wCMJKuGmhiZ1A4
-        uDRqQjMcsjvByFE4yVvMLlNuucQ2M1SqBw==
-X-Google-Smtp-Source: ABdhPJy9xT71FwNcunMPImQQmE8t/49Ekelzfy+BJWZLW3EbgpRA4B2rGOShCtbn8XFl/tsUl7aE6g==
-X-Received: by 2002:a62:878c:0:b029:155:c0e4:fb39 with SMTP id i134-20020a62878c0000b0290155c0e4fb39mr1472751pfe.62.1602717144332;
-        Wed, 14 Oct 2020 16:12:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5o9LtSE4il05eduKOAcveXCckPmf/hiC2cqKYSVCGw8=;
+        b=ODscqY/dSsVJGiiJxZJOZWq6TVS3tTCKc3EETsPQChUelFrRcyAb8cODCBZaklJTCo
+         LUWt8RuFpysaTwxxJxkvsJFHcUH16jkOcI0Dy18qAjhKBQXPcYH7Jj3Xhv1g0zNRPlmJ
+         F5GkP6y1FL7M9sh80DFj625EBw9icfijsJAaU0tNS1+OQFwFHAlW25Nh+COFYBVRckPx
+         9k+LBDxKB8qC24GVqDWA0bSOEzRiSobWufot288viqw0lDTDPkKTHGKQWLu05SlFyYhp
+         JbJ3TRjRRncTMD36NVuhoAhMxx75bCrb9n+8NzxCqQFJAMxQczQw5rNVFokPt8EQaT7P
+         +VBg==
+X-Gm-Message-State: AOAM532Vle94+HzJJnDLS+DrgWt6KG/1TONE9i3UrfUU227UGYBA6kev
+        XHA7yTbNIGdMDDMdZZBI+96ta/AgtZTdSQ==
+X-Google-Smtp-Source: ABdhPJwVHN5qJtgI8oGth1R5PzaQvke5X6HSIqUkMF3dkQtlXOWHFBB5y/ZVakssOM4z2f2WHojVEA==
+X-Received: by 2002:a17:90a:dd46:: with SMTP id u6mr1496533pjv.67.1602717130119;
+        Wed, 14 Oct 2020 16:12:10 -0700 (PDT)
 Received: from sol.lan (106-69-182-59.dyn.iinet.net.au. [106.69.182.59])
-        by smtp.gmail.com with ESMTPSA id e5sm723157pjd.0.2020.10.14.16.12.21
+        by smtp.gmail.com with ESMTPSA id e5sm723157pjd.0.2020.10.14.16.12.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2020 16:12:23 -0700 (PDT)
+        Wed, 14 Oct 2020 16:12:09 -0700 (PDT)
 From:   Kent Gibson <warthog618@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         bgolaszewski@baylibre.com, linus.walleij@linaro.org
 Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v2 2/3] tools: gpio: add support for reporting realtime event clock to lsgpio
-Date:   Thu, 15 Oct 2020 07:11:57 +0800
-Message-Id: <20201014231158.34117-3-warthog618@gmail.com>
+Subject: [PATCH v2 0/3] gpiolib: cdev: allow edge event timestamps to be configured as REALTIME
+Date:   Thu, 15 Oct 2020 07:11:55 +0800
+Message-Id: <20201014231158.34117-1-warthog618@gmail.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201014231158.34117-1-warthog618@gmail.com>
-References: <20201014231158.34117-1-warthog618@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for reporting if a line is configured to report realtime
-timestamps in events.
+This patch set adds the option to select CLOCK_REALTIME as the source
+clock for line events.
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
- tools/gpio/lsgpio.c | 4 ++++
- 1 file changed, 4 insertions(+)
+The first patch is the core of the change, while the remaining two update
+the GPIO tools to make use of the new option.
 
-diff --git a/tools/gpio/lsgpio.c b/tools/gpio/lsgpio.c
-index 5a05a454d0c9..c61d061247e1 100644
---- a/tools/gpio/lsgpio.c
-+++ b/tools/gpio/lsgpio.c
-@@ -65,6 +65,10 @@ struct gpio_flag flagnames[] = {
- 		.name = "bias-disabled",
- 		.mask = GPIO_V2_LINE_FLAG_BIAS_DISABLED,
- 	},
-+	{
-+		.name = "clock-realtime",
-+		.mask = GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME,
-+	},
- };
- 
- static void print_attributes(struct gpio_v2_line_info *info)
+Changes for v2:
+ - change line_event_timestamp() return to u64 to avoid clipping to 32bits
+   on 32bit platforms.
+ - fix the line spacing after line_event_timestamp()
+
+Kent Gibson (3):
+  gpiolib: cdev: allow edge event timestamps to be configured as
+    REALTIME
+  tools: gpio: add support for reporting realtime event clock to lsgpio
+  tools: gpio: add option to report wall-clock time to gpio-event-mon
+
+ drivers/gpio/gpiolib-cdev.c | 21 ++++++++++++++++++---
+ drivers/gpio/gpiolib.h      |  1 +
+ include/uapi/linux/gpio.h   | 12 +++++++++---
+ tools/gpio/gpio-event-mon.c |  6 +++++-
+ tools/gpio/lsgpio.c         |  4 ++++
+ 5 files changed, 37 insertions(+), 7 deletions(-)
+
 -- 
 2.28.0
 
