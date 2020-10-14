@@ -1,70 +1,103 @@
-Return-Path: <SRS0=Utw9=DU=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=QqSN=DV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFE2C433E7
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Oct 2020 18:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3093DC433E7
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 00:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4760520E65
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Oct 2020 18:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602613456;
-	bh=28E6B7UdNH5prH8Ppnhu/d5WnQrzdaRA3oG0hW/gQqM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=0aPzmqIOlkG+NMs3B8ecUAjI+cjz5zyFfmHSfVb8c+2jmZ507rKU1AiwmTwQOe7Vs
-	 GODqQHWM3f7WiWCdjdXFMtoI+Y/x8wxWLoDe2mE0an6ufrg1nWH8KS7EW92CKsXzP+
-	 8DQVsOVc4+ap9uCibMZTfsqfKCx9n39Lkfx1x0uA=
+	by mail.kernel.org (Postfix) with ESMTP id EE5D2208B3
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 00:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbgJMSYM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Oct 2020 14:24:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728432AbgJMSYI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 13 Oct 2020 14:24:08 -0400
-Subject: Re: [GIT PULL] GPIO bulk changes for the v5.10 kernel series
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602613447;
-        bh=28E6B7UdNH5prH8Ppnhu/d5WnQrzdaRA3oG0hW/gQqM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VSsqcOJneElwrnDx3ueyEbmEpE2jhXqWeWR2hERCLNi17s+Zthxp1oTsnV0BvBAf6
-         hxcqd4R1h/LAWkpbnOeixMG3mf4KPioqh7lQk/jri48r5pSFh743vnZluCP5iTLGDU
-         Rc767YI5+4/1GPanZzj2rOItoM2hkeR6hehTzSlQ=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdbQU7xBcJ5GMhmovhvdpyDXmmr49wGUcuppHcKEc_Kacw@mail.gmail.com>
-References: <CACRpkdbQU7xBcJ5GMhmovhvdpyDXmmr49wGUcuppHcKEc_Kacw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdbQU7xBcJ5GMhmovhvdpyDXmmr49wGUcuppHcKEc_Kacw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.10-1
-X-PR-Tracked-Commit-Id: fc709df553a34fd18010f52e6b47652268d83e7d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0486beaf88d2460e9dbcbba281dab683a838f0c6
-Message-Id: <160261344752.11865.1744640158963896072.pr-tracker-bot@kernel.org>
-Date:   Tue, 13 Oct 2020 18:24:07 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        id S2389264AbgJNAaD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Oct 2020 20:30:03 -0400
+Received: from regular1.263xmail.com ([211.150.70.204]:38304 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730508AbgJNAaD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Oct 2020 20:30:03 -0400
+Received: from localhost (unknown [192.168.167.32])
+        by regular1.263xmail.com (Postfix) with ESMTP id 01DA9252;
+        Wed, 14 Oct 2020 08:23:58 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.120] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P19667T139951075981056S1602635036600792_;
+        Wed, 14 Oct 2020 08:23:57 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <e672a64380c6425723da0e7b6f339ffd>
+X-RL-SENDER: kever.yang@rock-chips.com
+X-SENDER: yk@rock-chips.com
+X-LOGIN-NAME: kever.yang@rock-chips.com
+X-FST-TO: linux-rockchip@lists.infradead.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v3_2/3=5d_pinctrl=3a_rockchip=3a_enable_gp?=
+ =?UTF-8?B?aW8gcGNsayBmb3Igcm9ja2NoaXBfZ3Bpb190b19pcnHjgJDor7fms6jmhI/vvIw=?=
+ =?UTF-8?B?6YKu5Lu255SxbGludXgtcm9ja2NoaXAtYm91bmNlcytrZXZlci55YW5nPXJvY2st?=
+ =?UTF-8?B?Y2hpcHMuY29tQGxpc3RzLmluZnJhZGVhZC5vcmfku6Plj5HjgJE=?=
+To:     Jianqun Xu <jay.xu@rock-chips.com>, linus.walleij@linaro.org,
+        heiko@sntech.de
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+References: <20201013063731.3618-1-jay.xu@rock-chips.com>
+ <20201013063731.3618-3-jay.xu@rock-chips.com>
+From:   Kever Yang <kever.yang@rock-chips.com>
+Message-ID: <75c48986-1f4c-67a3-1943-5ce51e33bbfd@rock-chips.com>
+Date:   Wed, 14 Oct 2020 08:23:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201013063731.3618-3-jay.xu@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Tue, 13 Oct 2020 11:49:35 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.10-1
+On 2020/10/13 下午2:37, Jianqun Xu wrote:
+> There need to enable pclk_gpio when do irq_create_mapping, since it will
+> do access to gpio controller.
+>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+> ---
+>   drivers/pinctrl/pinctrl-rockchip.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index 927d132d6716..a2f361aa6d05 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -3157,7 +3157,9 @@ static int rockchip_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+>   	if (!bank->domain)
+>   		return -ENXIO;
+>   
+> +	clk_enable(bank->clk);
+>   	virq = irq_create_mapping(bank->domain, offset);
+> +	clk_disable(bank->clk);
+>   
+>   	return (virq) ? : -ENXIO;
+>   }
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0486beaf88d2460e9dbcbba281dab683a838f0c6
 
-Thank you!
+Looks good to me,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Reviewed-by: Kever Yang<kever.yang@rock-chips.com>
+
+Thanks,
+- Kever
+
+
+
