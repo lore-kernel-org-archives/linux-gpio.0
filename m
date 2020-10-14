@@ -2,153 +2,104 @@ Return-Path: <SRS0=QqSN=DV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E97C4C433E7
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E76C2D0AE
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB6620BED
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFE68221EB
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:20:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="QEWzXL8S"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zXqVtU5t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgJNIOx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Oct 2020 04:14:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
+        id S1729033AbgJNIT7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Oct 2020 04:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727975AbgJNIOi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Oct 2020 04:14:38 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2CBCC05111C
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2020 00:37:49 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id k1so805201ilc.10
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2020 00:37:49 -0700 (PDT)
+        with ESMTP id S1727767AbgJNITf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Oct 2020 04:19:35 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBBBCC05112A
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2020 00:59:41 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id ce10so3500318ejc.5
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2020 00:59:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ECwItJ1lALKlX0ZcXtD0YP3cu8V/3wSlXxURpG7j4iM=;
-        b=QEWzXL8SINDjie6chJM5yqXYCkd0p54TJoVBqRO2UPna69T9pMNh7xq6LBA5llfm8I
-         aMG17oWxarLJvUMw740AhOjkod2yREhSQwap9sjyscti3mLInxj8d8rfigg2Jjx9XtDk
-         NNdw4UJHsJ/WTtymphx+0H5iNNGCOoFocbkUyGTwAZetKcOl9SmJpgyrlqZpNFO690pP
-         SxDfcnHxjwv2qKh+6r2oTSMKjauMGzveKijDgSslFMVzcu7UrCMEJ7v8qo5X3bGh+SUj
-         SR4gtmPDpXYcuE38myeZyYi+08oFvNpveHTuFiCNMfzXoP5SEnwaQWPqf8nivRrpg7+H
-         ujFQ==
+        bh=BbQ9zezJOZt5q13rquXSx1mp5UXjcu3g5SCKCd2+BGI=;
+        b=zXqVtU5tyznYTGXGamMS7R1Z0U+3OWxDZ5rx7TdXTWrbrG9jQSLWHCtsy1BoaGDwV1
+         2lfYhnqpt7af6sBlRIHuk5g/r5JFMUNK/kQJaFoL4kh5NkQ2VzXceSHfSrh9zrQWwmSn
+         ZtTgFpMRXM6FEBD+yQbkE5B2/vp/Y4WEb5tqWJgcBtiri5bIgcOtziYB2JChbf5mZoMS
+         dNVwZP+vGgddtow1WzjrwzPP134g4vR0++jnyg9aCsrlb40lzYLGA72egHRGcRdHSd/L
+         R2Vi365QPPg7MDo3sepnTYfQHIqYwY12XzSdJrgLpX8IiqUeLHFtf4kd1EW9M7IFz4Vn
+         XYFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ECwItJ1lALKlX0ZcXtD0YP3cu8V/3wSlXxURpG7j4iM=;
-        b=dlJSE+qXUgdYy/PBKdWVznqXiyBnHG79LndKAqw4TjD+Qn9q4DAgV7e6WaY94UcOhs
-         Sk1VACMKyixiXZ592F+ay/kEta+Li5ubd0gZmlFCiKPSwzmoOqtzqTbd1c7yGzuFQ2JM
-         ublW+HeH3TZjHcNed20AFjk/MRj2A9tD4vBCLDJS8hH2lxK0BgROpgmpRqgjOTyOsFSb
-         4hRWZqVEePWzvw0EtUbs3Fs2dNJpT/NQ20kC6/NnMDeFlmOJv0rFIaaqNUlTFhKegDun
-         WYr9NFaldUk2vfqGrG5VwnkB3Wm6kmkF/ryinB2kxPvSmvvQF6AP7bx/JClpgS/kGlAc
-         V5Tw==
-X-Gm-Message-State: AOAM5320HcMGj2jbsBLnEM2mBIgYBfrWWD4oyGrbV9fGQTIsuOLB5T0H
-        A4FcfZTf+qmNhjHrr2WplGyfUeB0fBD1fdMnIsb0Kw==
-X-Google-Smtp-Source: ABdhPJyBk2mnCZ/A8S+cYOSYN0tkAssWPvyybTnPdKmKnGqQbh94ZeTD2Si3jQmXca0yxKQYGN1xHT5b1ifHUQnrsws=
-X-Received: by 2002:a92:ca92:: with SMTP id t18mr2896062ilo.287.1602661069101;
- Wed, 14 Oct 2020 00:37:49 -0700 (PDT)
+        bh=BbQ9zezJOZt5q13rquXSx1mp5UXjcu3g5SCKCd2+BGI=;
+        b=jHQ2VVUaVk3teWvbVZ5Hno63bvnxWuX7oWEqYBhFLVDa4jHnYGPTlGjxgsxnKk8skS
+         DR6iviZ1sHd0SV0lhDyqkPPhG0rnv+bUsvIWE4yIGGUZCiZyijGaURNrGvIaZUqQEBny
+         PcZllvf8Ndf4qT2LtZaV+kO8VCzJVe4YPw2vyxnuoI46tRxdsvUfv32u0lCeH7II0hbB
+         8CsZzTpO7/clYK7pHqwvOzaZ788LgxaiXwypflAzslieJUUxQPHRYT7hSNFWjEw3HTcp
+         Mi7clLloImp2Gx703Mj8UVOkV8kdn3OFOBozcuQK5XqpoPTmiY6DmSvC+85RP4VDOWmi
+         RkhQ==
+X-Gm-Message-State: AOAM533aRg41To9lVk0It4rVbPWh0Zr8HzU4LMOTc0/kNfKqanJUjc2z
+        VdINPcjwIb6JDm8ekRVSLkjw+VT1qWPMR+SzpEE7ow==
+X-Google-Smtp-Source: ABdhPJzkQzh/qaNuPB64Ddr441/RAk3dMGcpPwYi6lMJJDMCh/gCShOoRmWm5DeXsA8uu/uIW9HngERTGPhVVcNAnfo=
+X-Received: by 2002:a17:906:d159:: with SMTP id br25mr4178974ejb.155.1602662380571;
+ Wed, 14 Oct 2020 00:59:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201002063148.32667-1-warthog618@gmail.com> <CAMRc=Md51g2-3PvQV_BA-qFJ=iDHqQELyMLx18yLR2LDQOCNHw@mail.gmail.com>
- <20201014031721.GA12685@sol>
-In-Reply-To: <20201014031721.GA12685@sol>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 14 Oct 2020 09:37:38 +0200
-Message-ID: <CAMRc=MdSxXgtf_t9Lxox-rt9Vj+N2dNqdQ_FpXLBFBQFWrZRjw@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH] core: Basic port to uAPI v2
+References: <20201014062740.78977-1-warthog618@gmail.com>
+In-Reply-To: <20201014062740.78977-1-warthog618@gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 14 Oct 2020 09:59:30 +0200
+Message-ID: <CAMpxmJWkUc-ZnDj56Q7_1ba73RXFFHos3MYas2TZSe-Q2AwhPQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] gpiolib: cdev: allow edge event timestamps to be
+ configured as REALTIME
 To:     Kent Gibson <warthog618@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 5:17 AM Kent Gibson <warthog618@gmail.com> wrote:
+On Wed, Oct 14, 2020 at 8:28 AM Kent Gibson <warthog618@gmail.com> wrote:
 >
-> On Tue, Oct 13, 2020 at 09:08:44AM +0200, Bartosz Golaszewski wrote:
-> > On Fri, Oct 2, 2020 at 8:32 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > >
-> > > Port existing implementation from GPIO uAPI v1 to v2.
-> > > The libgpiod external interface remains unchanged, only the internal
-> > > implementation switches from uAPI v1 to v2.
-> > >
-> > > This is a minimal port - uAPI v2 features are only used where it
-> > > simplifies the implementation, specifically multiple events on a bulk can
-> > > now be handled directly by the kernel in a single v2 line request rather
-> > > than being emulated by multiple v1 event requests.
-> > >
-> > > Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> > > ---
-> >
-> > Hi Kent!
-> >
-> > I just noticed that this broke the tests in Python and C++ bindings.
-> > Something to do with the RISING and FALLING edge values and how
-> > they're translated in the bindings, it seems. Let me know if you'd
-> > have time to take a look at it and see if it's something obvious.
-> > Otherwise I'll investigate that tomorrow.
-> >
+> This patch set adds the option to select CLOCK_REALTIME as the source
+> clock for line events.
 >
-> Lots of problems here, so where to start...
+> The first patch is the core of the change, while the remaining two update
+> the GPIO tools to make use of the new option.
 >
-> Firstly, I foolishly assumed that the coverage of the CXX and Python
-> tests was aimed at testing the binding, and that wouldn't provide
-> additional coverage to the core API to that tested by the C tests.
-> Not the case :(.
+> Kent Gibson (3):
+>   gpiolib: cdev: allow edge event timestamps to be configured as
+>     REALTIME
+>   tools: gpio: add support for reporting realtime event clock to lsgpio
+>   tools: gpio: add option to report wall-clock time to gpio-event-mon
 >
-> Most of the problems are due to the switch from an event request per
-> line to a single line request.  This breaks tests that assume an fd per
-> line and test the fds using poll.  As they are now the same, all line fds
-> in the bulk become ready to read at once, where previously it was only one.
-> These are only present in CXX and Python test cases :(.
+>  drivers/gpio/gpiolib-cdev.c | 21 ++++++++++++++++++---
+>  drivers/gpio/gpiolib.h      |  1 +
+>  include/uapi/linux/gpio.h   | 12 +++++++++---
+>  tools/gpio/gpio-event-mon.c |  6 +++++-
+>  tools/gpio/lsgpio.c         |  4 ++++
+>  5 files changed, 37 insertions(+), 7 deletions(-)
 >
-> I also misunderstood the use case for gpiod_line_event_wait_bulk(),
-> and used the event from the fd to determine the line (incorrectly as it
-> turns out).  As a consequence tests that then read the event from the
-> line fd find the subsequent event, or the wrong number of events.
-> Again, these are only present in CXX and Python tests :(.
+> --
+> 2.28.0
 >
-> And I misunderstood the offset passed in gpiod_line_bulk_get_line(),
-> using the chip offset not the bulk offset (there are too many damn
-> offsets here), so that only happened to work in the C tests as ALL lines
-> on the test chip were requested so the chip and bulk offsets match.
-> Changing the test to mismatch those offsets makes the C tests fail as
-> well :).
-> To fix that we'd need to peek into the file to get the event
-> offset without actually removing the event from the file, and be able to
-> find the line in a bulk based on chip offset.
->
-> Oh, and gpiod_line_bulk_get_line() doesn't do range checking, so will
-> happily return garbage if offset >= bulk.num_lines.  It happened to
-> return NULL in my testing, resulting an exception when trying to add the
-> line to the bulk.  But if it had returned something else...
->
-> So, in short, the switch to using one line request for all events in the
-> bulk is problematic with the exposing of the line fd, and the
-> current implementation of gpiod_line_event_wait_bulk() is broken.
->
-> Where to go from here depends on where you want to go with the API.
-> As mentioned yesterday, my preference would be for
-> gpiod_line_event_wait_bulk() to return the next event that occured on the
-> bulk rather than a bulk of lines with events.
->
-> And it needs to be made clear that the fd returned by
-> line.event_get_fd() applies to the bulk - assuming we switch to the one
-> request per bulk.
 
-Thanks for the detailed explanation. It all makes sense now. I thought
-it's possible to just use the new uAPI while keeping the old library
-interface for now. It does not seem to be the case (at least for
-events) in which case I'll just back out your port and I'll start
-working on a new API bit by bit, changing separate parts and
-introducing non-compatible changes where it's required.
+The entire series looks good to me.
 
-If you want to work on this too - just let me know which parts so we
-don't do the same thing twice.
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+Linus: do you think this can still make it into v5.10 as an
+improvement to the new uAPI or do we have to wait until the next merge
+window? Will you send another PR in this cycle?
 
 Bartosz
