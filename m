@@ -5,203 +5,98 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF511C433E7
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76615C433E7
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8708820BED
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:54:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06FAE20725
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Oct 2020 08:55:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdlINmbb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOmN7ytn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730242AbgJNIyg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1730102AbgJNIyg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 14 Oct 2020 04:54:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727452AbgJNIyg (ORCPT
+        with ESMTP id S1727297AbgJNIyg (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Oct 2020 04:54:36 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9FFDC04587D;
-        Tue, 13 Oct 2020 23:29:32 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id ds1so931204pjb.5;
-        Tue, 13 Oct 2020 23:29:32 -0700 (PDT)
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40D0C04587B;
+        Tue, 13 Oct 2020 23:28:25 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id y1so1236374plp.6;
+        Tue, 13 Oct 2020 23:28:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m8Vu+AjSbSKeBaM7oKUj4uXYWa8NW3k6+RiOkrCn5q8=;
-        b=RdlINmbb4AVCuFSGfKKDVXDdHQTEdcFR7kig9SJtGD1McccS0vo2Rn09iR6egWMJOq
-         2wf2yTkMrjuQ3SOKqiJnzEovbw0EibyXwEtKovZT6HG9ak6ZAXwwsCb5NcUtuDAv/oew
-         7MUZw9f+NEhGluxgovarOl6K7zoX751zNJLgNOWsQmN/uJ2yaeWSWqOtXVl9VK9F58EP
-         mw24lEvoDqYuxMZNhGjFuZXbOecWt5v7fN25wGVEzZm3wwuJ2IGoByWlnCibAWaD67iI
-         A3Qch67vqDYSIY17iNiT+DOocf3sTurNWOrt3zLAZKGZp+eP2ZjfRliCFd6/c9XugNx9
-         wAuw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=El/pzj9jX1MRiZIL1sB1BOM0SgriA1p/FtOnL1weGFo=;
+        b=kOmN7ytnHBMT72P72g/+pc+e8TbtzrNG1a42jRu5bi6oUR8AVaKW8Nc8sQYo7on7GV
+         x6Sjlvwh9LMAYq12VZhBv7Gaf7SPEPM87GGgfoSgzaOz0h35ODUMjPBcXUBCfFGuJoiY
+         8SWdfNiRx0UYpr0ujxcH7bgHH9iWdQ+9o9p9OwqIlANEjj7aidIcbHYO9UswUgKWq7gX
+         T/x/JpUOSwQuJmxkjT0J/DTqnHL6IwOYn5lrBPmHyDBx+StyaLrgmH4gLNnckyjItvoR
+         EzoSvdq90sNim1h77fjjzOh4j3BPABD28O7c2Y9oKuEmXQTSeQiK6Yv40egaIx7FnOlv
+         N5Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m8Vu+AjSbSKeBaM7oKUj4uXYWa8NW3k6+RiOkrCn5q8=;
-        b=EiNEEMp3jZdEbbqXckUXCbVvu7Ch/XSDfy7s7x4u659RJp60HxvjfYwjGPHTNBRi8d
-         qAr1SsExpHlP5Ia6/MxA5GP+XlBv5k4Pg5r5eLa4xoHTfDfFWWfqBMMEvuPsxPnqffM6
-         AngVkjloW3EW2YjyHhNDIEDQJFQJomO87LYQS8zUYlYylcbtmx0FAVwYmPdfdFCD8ipJ
-         NyrZQykiJFHFXjLlgVlB+DVIIWR0UtwaZ4rNJCrz7UnEAMJOw535YZr+VtyBzMdxbLZp
-         e0pLyB7jTegWctKVUp/hfRYaLgnI3MEasFDbUIBPzWlenqUeau4lFpEbLinxWi9JjZIl
-         zuZQ==
-X-Gm-Message-State: AOAM532dfBaZb5E6rb/34fjFjNiPWAGGmtmVlhP2cUY/MrX7tQ/cjRlN
-        MI4ZJU2M6ZcpMHNa5VvjixRBWPtwwjF1mA==
-X-Google-Smtp-Source: ABdhPJz6luhYLvwWoxFig/8oFQqZwewaeY/h0SiQqCQ1eAIu9SZvHMiluLXheCeo54HfRIjsG2f+PQ==
-X-Received: by 2002:a17:90a:a782:: with SMTP id f2mr2075621pjq.50.1602656972130;
-        Tue, 13 Oct 2020 23:29:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=El/pzj9jX1MRiZIL1sB1BOM0SgriA1p/FtOnL1weGFo=;
+        b=ZG7u1ye0PxP2CUwQ7J42hVLQxQcSH6NGW2QP4o+p/h4UIN7TCy5NCtABMdFISqrjWp
+         syzzT57b6egi1eU00F6se8RugErB4uOZtteD1kaAFC6u6YDZ8TWwW0ouV4+vi173lidm
+         YSIIZQqE2rDOvsKlBCV1jik7xCQzOy1dvqgQPVt61tesp9akWsGfLLpYeW/06ix3qt5E
+         9ph11B8kBVEH3qbIwfJiz5Ba9R/KkVtm3A+n7inaFklkOcc+kJ02xpURxFlCz56qeCMP
+         sdtoRkJNGkFGakY7Lyn/HM3M/d/HAVRZppHq88p+qHR1njGlxosEBu+QjomHl8TYGmzm
+         Qahg==
+X-Gm-Message-State: AOAM530+Jzolmoe+ImgNh9xu/lXyJ156PVUw+EOaE1zVw1/jOijTkUlL
+        46U0DEvQpZHJEE0/bWzb5VVM5f6y+p7yaw==
+X-Google-Smtp-Source: ABdhPJwqe7ANtIFwrFLHjY5juaV7war2WkNGP+qBxzhEMfuRzXIr5/C4IoyyNxSDph5hV93RKktA2Q==
+X-Received: by 2002:a17:902:bd92:b029:d3:8087:c6c9 with SMTP id q18-20020a170902bd92b02900d38087c6c9mr2756730pls.53.1602656905095;
+        Tue, 13 Oct 2020 23:28:25 -0700 (PDT)
 Received: from sol.lan (106-69-182-59.dyn.iinet.net.au. [106.69.182.59])
-        by smtp.gmail.com with ESMTPSA id a9sm1612945pjm.40.2020.10.13.23.29.29
+        by smtp.gmail.com with ESMTPSA id q24sm1803266pgb.12.2020.10.13.23.28.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2020 23:29:31 -0700 (PDT)
+        Tue, 13 Oct 2020 23:28:24 -0700 (PDT)
 From:   Kent Gibson <warthog618@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         bgolaszewski@baylibre.com, linus.walleij@linaro.org
 Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v2] gpiolib: cdev: document that line eflags are shared
-Date:   Wed, 14 Oct 2020 14:29:21 +0800
-Message-Id: <20201014062921.79112-1-warthog618@gmail.com>
+Subject: [PATCH 2/3] tools: gpio: add support for reporting realtime event clock to lsgpio
+Date:   Wed, 14 Oct 2020 14:27:39 +0800
+Message-Id: <20201014062740.78977-3-warthog618@gmail.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201014062740.78977-1-warthog618@gmail.com>
+References: <20201014062740.78977-1-warthog618@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The line.eflags field is shared so document this fact and highlight it
-throughout using READ_ONCE() and WRITE_ONCE() accessors.
-
-Also use a local copy of the eflags in edge_irq_thread() to ensure
-consistent control flow even if eflags changes.  This is only a defensive
-measure as edge_irq_thread() is currently disabled when the eflags are
-changed.
+Add support for reporting if a line is configured to report realtime
+timestamps in events.
 
 Signed-off-by: Kent Gibson <warthog618@gmail.com>
 ---
+ tools/gpio/lsgpio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes for v2:
- - fixed typo in commit comment.
+diff --git a/tools/gpio/lsgpio.c b/tools/gpio/lsgpio.c
+index 5a05a454d0c9..c61d061247e1 100644
+--- a/tools/gpio/lsgpio.c
++++ b/tools/gpio/lsgpio.c
+@@ -65,6 +65,10 @@ struct gpio_flag flagnames[] = {
+ 		.name = "bias-disabled",
+ 		.mask = GPIO_V2_LINE_FLAG_BIAS_DISABLED,
+ 	},
++	{
++		.name = "clock-realtime",
++		.mask = GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME,
++	},
+ };
  
- drivers/gpio/gpiolib-cdev.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index 192721f829a3..678de9264617 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -428,6 +428,12 @@ struct line {
- 	 */
- 	struct linereq *req;
- 	unsigned int irq;
-+	/*
-+	 * eflags is set by edge_detector_setup(), edge_detector_stop() and
-+	 * edge_detector_update(), which are themselves mutually exclusive,
-+	 * and is accessed by edge_irq_thread() and debounce_work_func(),
-+	 * which can both live with a slightly stale value.
-+	 */
- 	u64 eflags;
- 	/*
- 	 * timestamp_ns and req_seqno are accessed only by
-@@ -534,6 +540,7 @@ static irqreturn_t edge_irq_thread(int irq, void *p)
- 	struct line *line = p;
- 	struct linereq *lr = line->req;
- 	struct gpio_v2_line_event le;
-+	u64 eflags;
- 
- 	/* Do not leak kernel stack to userspace */
- 	memset(&le, 0, sizeof(le));
-@@ -552,8 +559,9 @@ static irqreturn_t edge_irq_thread(int irq, void *p)
- 	}
- 	line->timestamp_ns = 0;
- 
--	if (line->eflags == (GPIO_V2_LINE_FLAG_EDGE_RISING |
--			     GPIO_V2_LINE_FLAG_EDGE_FALLING)) {
-+	eflags = READ_ONCE(line->eflags);
-+	if (eflags == (GPIO_V2_LINE_FLAG_EDGE_RISING |
-+		       GPIO_V2_LINE_FLAG_EDGE_FALLING)) {
- 		int level = gpiod_get_value_cansleep(line->desc);
- 
- 		if (level)
-@@ -562,10 +570,10 @@ static irqreturn_t edge_irq_thread(int irq, void *p)
- 		else
- 			/* Emit high-to-low event */
- 			le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
--	} else if (line->eflags == GPIO_V2_LINE_FLAG_EDGE_RISING) {
-+	} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_RISING) {
- 		/* Emit low-to-high event */
- 		le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
--	} else if (line->eflags == GPIO_V2_LINE_FLAG_EDGE_FALLING) {
-+	} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_FALLING) {
- 		/* Emit high-to-low event */
- 		le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
- 	} else {
-@@ -634,6 +642,7 @@ static void debounce_work_func(struct work_struct *work)
- 	struct line *line = container_of(work, struct line, work.work);
- 	struct linereq *lr;
- 	int level;
-+	u64 eflags;
- 
- 	level = gpiod_get_raw_value_cansleep(line->desc);
- 	if (level < 0) {
-@@ -647,7 +656,8 @@ static void debounce_work_func(struct work_struct *work)
- 	WRITE_ONCE(line->level, level);
- 
- 	/* -- edge detection -- */
--	if (!line->eflags)
-+	eflags = READ_ONCE(line->eflags);
-+	if (!eflags)
- 		return;
- 
- 	/* switch from physical level to logical - if they differ */
-@@ -655,8 +665,8 @@ static void debounce_work_func(struct work_struct *work)
- 		level = !level;
- 
- 	/* ignore edges that are not being monitored */
--	if (((line->eflags == GPIO_V2_LINE_FLAG_EDGE_RISING) && !level) ||
--	    ((line->eflags == GPIO_V2_LINE_FLAG_EDGE_FALLING) && level))
-+	if (((eflags == GPIO_V2_LINE_FLAG_EDGE_RISING) && !level) ||
-+	    ((eflags == GPIO_V2_LINE_FLAG_EDGE_FALLING) && level))
- 		return;
- 
- 	/* Do not leak kernel stack to userspace */
-@@ -755,7 +765,7 @@ static void edge_detector_stop(struct line *line)
- 
- 	cancel_delayed_work_sync(&line->work);
- 	WRITE_ONCE(line->sw_debounced, 0);
--	line->eflags = 0;
-+	WRITE_ONCE(line->eflags, 0);
- 	/* do not change line->level - see comment in debounced_value() */
- }
- 
-@@ -774,7 +784,7 @@ static int edge_detector_setup(struct line *line,
- 		if (ret)
- 			return ret;
- 	}
--	line->eflags = eflags;
-+	WRITE_ONCE(line->eflags, eflags);
- 	if (gpio_v2_line_config_debounced(lc, line_idx)) {
- 		debounce_period_us = gpio_v2_line_config_debounce_period(lc, line_idx);
- 		ret = debounce_setup(line, debounce_period_us);
-@@ -817,13 +827,13 @@ static int edge_detector_update(struct line *line,
- 	unsigned int debounce_period_us =
- 		gpio_v2_line_config_debounce_period(lc, line_idx);
- 
--	if ((line->eflags == eflags) && !polarity_change &&
-+	if ((READ_ONCE(line->eflags) == eflags) && !polarity_change &&
- 	    (READ_ONCE(line->desc->debounce_period_us) == debounce_period_us))
- 		return 0;
- 
- 	/* sw debounced and still will be...*/
- 	if (debounce_period_us && READ_ONCE(line->sw_debounced)) {
--		line->eflags = eflags;
-+		WRITE_ONCE(line->eflags, eflags);
- 		WRITE_ONCE(line->desc->debounce_period_us, debounce_period_us);
- 		return 0;
- 	}
+ static void print_attributes(struct gpio_v2_line_info *info)
 -- 
 2.28.0
 
