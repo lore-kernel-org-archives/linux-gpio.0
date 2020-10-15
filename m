@@ -2,105 +2,182 @@ Return-Path: <SRS0=i6KD=DW=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5603EC433E7
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 12:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0F2C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 16:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFB1C2223F
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 12:16:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="qLrRqRlB"
+	by mail.kernel.org (Postfix) with ESMTP id F16B42225D
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 16:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbgJOMQm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Oct 2020 08:16:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36534 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbgJOMQl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Oct 2020 08:16:41 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70629C061755
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2020 05:16:40 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id q9so4002344iow.6
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2020 05:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hu2HVsowDHTEU6/j3jWKM66roOx9DvFrYhykuAfIoFs=;
-        b=qLrRqRlBWSC3csH1UdkBVeBguJR6450ilAGBSTMATLeJtNFqrIAt8thytDbf6DM38H
-         t0BUdNtuogeP5oT9xL79cc4y83UYwGvYPzMaBcu/PshVEL7mkqOQv78QeTbI2s661J8T
-         7wV+9rSjmU0AGYVDqC9uKRevcBSOZ+M6JWugaGZUN5hxXr9340QQXLUCAJBxONHrZBC2
-         X/gxWw1r96P3rxOO/zGHmv00mMMoUU60alfq8P7RPJxJYZL46l2mXi4AKWtxAEhqW3B0
-         za5jTwP2q52vAvw6kaB5+FDVBkIJFIbnqE1NiZbeUdVkt7PyoZ9sTsiIAR4ybHjTU4Yc
-         DUAg==
+        id S2389725AbgJOQrn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Oct 2020 12:47:43 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37551 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388946AbgJOQrn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Oct 2020 12:47:43 -0400
+Received: by mail-ot1-f66.google.com with SMTP id m22so3530380ots.4;
+        Thu, 15 Oct 2020 09:47:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hu2HVsowDHTEU6/j3jWKM66roOx9DvFrYhykuAfIoFs=;
-        b=lNWrF95YxBZkPDN4Tu007X/PUFe1zVZdbvt8pA+jQEpUCXSFceAuGd76pkONDZ74Vj
-         kHZFEHb8ntMROehvhzMTmcBeUvb1GbQR9GmRcC+4uyxxrIHoYC/chSuHOhJIIzj0j564
-         dpu1kua3xvst6ENQ0VsnsKt5mT0qRcYwSRFNNrJ+N2VwK90MXfNKyg8R4ZZpBSCHZjzs
-         Vdk8U7Mna2CoeRVV6Ac2vHIRG5NrhOBMorJwxmWuR7gSZeMoq9SuNDZbnbVhB51AMrKH
-         BcM3AuKzLpKuh6voSRz/n4ddW67aoNp5KZyquy3vFNOBKykZomnCHaFgczKFSMzpvzw4
-         v4OA==
-X-Gm-Message-State: AOAM530fbJVqtpydZeC3tI+OFYfQPL0mGqE0Io+RQRkBvrjlQor7wej4
-        vRHtRn9Vq7/0FhxlzpCFkGiJU1XbsP5XaUd6VDhMZQ==
-X-Google-Smtp-Source: ABdhPJwSzayF4DxMFbVKrTsj2atBKb6HAqCVE9GYzpKfWqqC/M4SPPUOd3Tt6Y2dRn2uQcQuQSqTHIfJPJaAqBAmlEE=
-X-Received: by 2002:a02:6952:: with SMTP id e79mr3198492jac.24.1602764199807;
- Thu, 15 Oct 2020 05:16:39 -0700 (PDT)
+        bh=4ocQz6eVq08qNExBb99R5h1Sr8QnT1VdSmdoW54LJE8=;
+        b=cU8FCxhyoA6iAmZkQ9Vf0s6S8S/rrDoOf3lPaVVK5yRDWJ6pPbqXsD3YzlM/CTh/gd
+         NKCf0GmKZTp5SAPVgdPVHBwmvjdts0FQXQS1kM30n6yeP7+AvrcDuwRXX/ALhLDh+Vyy
+         uAX2qrSM2FQial7zeB7OWswM43MbVz1S8BllGG7sucj9axe1xbLTRnMl9/QX890i93Va
+         8Eug+nQAlx7avROXWhIrcdPK1gyLRZkvclT2vNWh2DKFk0jixuesYzcwgyzsd8oDtYXK
+         sQ37MLyMTW2YiWRC9ONLppk4GbKf6Onzxobr981VVdudvLVDUskxDVGxlu91TcAK5drR
+         H3yQ==
+X-Gm-Message-State: AOAM532qs1679dDG0NFIgHyXu5kAMYKaGL/7wk67OmTHyme3y40HQRUD
+        PjkYSwrMSAStR1DwATqN4VxRowhUq87ZsCg/e4RcXG9dsXk=
+X-Google-Smtp-Source: ABdhPJy0Hqma3W/6XEto8KK9tfDMQO33Bz0sWrWmE/++xXtyKhSSL6AQHHD8kz3tQLW2FVXjzTg2omz7aoFrHb8DUIg=
+X-Received: by 2002:a05:6830:210a:: with SMTP id i10mr3261251otc.145.1602780461754;
+ Thu, 15 Oct 2020 09:47:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201015083805.GA10354@laureti-dev> <CAMRc=Md=ZeKLS-SKKgmq+V9VCt+7xdjNiwz89Ms-vOeTcwZBOw@mail.gmail.com>
- <20201015093526.GA10891@laureti-dev> <CAMRc=McpnnK9NydujR=YRuy0ZBLhQqz3SSZ5eeisjqhMPUbMhA@mail.gmail.com>
- <20201015105718.GA11027@laureti-dev> <CAMRc=MdWi94uzYb6OprmVoGnfmSHUCevqAPPgXOPHQNVrj0jfQ@mail.gmail.com>
- <20201015121312.GA7166@laureti-dev>
-In-Reply-To: <20201015121312.GA7166@laureti-dev>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 15 Oct 2020 14:16:29 +0200
-Message-ID: <CAMRc=McApWaCy8kUWurjZByN9vKqw8kZBwNVBtVXXf6-b3PsLg@mail.gmail.com>
-Subject: Re: [libgpiod] cxx bindings: time_point vs duration
-To:     Helmut Grohne <helmut.grohne@intenta.de>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bartekgola@gmail.com>
+References: <20201014110238.9600-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20201014110238.9600-1-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 15 Oct 2020 18:47:30 +0200
+Message-ID: <CAMuHMdWzaPnzs5WBqQz2b2R121TGahx-OzF3v9YjvSm+03SmiA@mail.gmail.com>
+Subject: Re: [PATCH RFC] pinctrl: sh-pfc: pfc-r8a77965: Optimize pinctrl image
+ size for RZ/G2N
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 2:13 PM Helmut Grohne <helmut.grohne@intenta.de> wrote:
->
-> On Thu, Oct 15, 2020 at 01:43:32PM +0200, Bartosz Golaszewski wrote:
-> > Well, it's a long story. It used to be what the kernel calls REALTIME
-> > clock, then it was changed to MONOTONIC and now there's a suggestion
-> > to make it configurable in v2. More on that here[1].
->
-> Ouch. I was wodering already as the timestamps looked like REALTIME
-> here, but I'm simply using an older kernel. In that case the type of
-> your timestamps should depend on the Linux kernel version, which is
-> impossible to do. All you can do now is lie for older kernels.
->
+Hi Biju,
 
-The library doesn't define what the timestamp is really and so doesn't
-guarantee anything either. This will change in v2 as we'll make this
-clock configurable so we'll have to define that by default the clock
-is MONOTONIC and can be explicitly changed to REALTIME.
-
-> > One question is: even if on linux the steady_clock is backed by
-> > CLOCK_MONOTONIC, is this a guarantee or just implementation? And can
-> > we rely on this if it's not defined?
+On Wed, Oct 14, 2020 at 1:02 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Optimize pinctrl image size, when only RZ/G2N is enabled in the defconfig.
+> (ie, disabling CONFIG_ARCH_R8A77965 from the defconfig)
 >
-> Like the nanosecond resolution of steady_clock this is certainly not
-> guarantueed. However, it is rooted so deeply that it is very unlikely to
-> change. In theory, there could be a chance of changing it to
-> CLOCK_BOOTTIME. I don't think anyon is going to try.
+> with this patch and disabling CONFIG_ARCH_R8A77965:
+> $ size drivers/pinctrl/sh-pfc/pfc-r8a77965.o
+>    text    data     bss     dec     hex filename
+>   49384       0       0   49384    c0e8 drivers/pinctrl/sh-pfc/pfc-r8a77965.o
 >
-> At this point I recommend going with steady_clock.
+> without patch:
+> $ size drivers/pinctrl/sh-pfc/pfc-r8a77965.o
+>    text    data     bss     dec     hex filename
+>   51848       0       0   51848    ca88 drivers/pinctrl/sh-pfc/pfc-r8a77965.o
 >
-> Helmut
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Ok, will do.
+Thanks for your patch!
 
-Bartosz
+> ---
+> This patch will save ~ 6KB=(3x 2KB/SoC) of memory on RZ/G2[HMN] u-boot[1] with
+> multi dtb support. As per discussion [1], u-boot imports PFC and Clock tables from Linux.
+>
+> [1] https://patchwork.ozlabs.org/project/uboot/patch/20201013085205.6075-4-biju.das.jz@bp.renesas.com/
+>
+> 1) By compiling out Automative parts
+> $ size drivers/pinctrl/renesas/pfc-r8a77965.o
+>    text    data     bss     dec     hex filename
+>   46141       0       0   46141    b43d drivers/pinctrl/renesas/pfc-r8a77965.o
+>
+> 2) without patch
+> $ size drivers/pinctrl/renesas/pfc-r8a77965.o
+>    text    data     bss     dec     hex filename
+>   48191       0       0   48191    bc3f drivers/pinctrl/renesas/pfc-r8a77965.o
+>
+> Please share your comments.
+
+This looks worthwhile to me, also for other SoCs.
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> @@ -18,6 +18,14 @@
+>  #include "core.h"
+>  #include "sh_pfc.h"
+>
+> +#ifdef CONFIG_PINCTRL_PFC_R8A77965
+> +#define PFC_R8A77965_GROUP     (30)
+> +#define PFC_R8A77965_FUNCTION  (4)
+> +#else
+> +#define PFC_R8A77965_GROUP     (0)
+> +#define PFC_R8A77965_FUNCTION  (0)
+> +#endif
+
+While introducing the definitions above reduces the overall number of
+#ifdefs slightly, it increases separation between the numbers (30 and 4)
+and the data they represent...
+
+> +
+>  #define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+>
+>  #define CPU_ALL_GP(fn, sfx)                                            \
+> @@ -1847,6 +1855,7 @@ static const unsigned int canfd1_data_mux[] = {
+>         CANFD1_TX_MARK,         CANFD1_RX_MARK,
+>  };
+>
+> +#ifdef CONFIG_PINCTRL_PFC_R8A77965
+>  /* - DRIF0 --------------------------------------------------------------- */
+>  static const unsigned int drif0_ctrl_a_pins[] = {
+>         /* CLK, SYNC */
+> @@ -2120,6 +2129,7 @@ static const unsigned int drif3_data1_b_pins[] = {
+>  static const unsigned int drif3_data1_b_mux[] = {
+>         RIF3_D1_B_MARK,
+>  };
+> +#endif
+>
+>  /* - DU --------------------------------------------------------------------- */
+>  static const unsigned int du_rgb666_pins[] = {
+> @@ -4380,7 +4390,7 @@ static const unsigned int vin5_clk_mux[] = {
+>
+>  static const struct {
+>         struct sh_pfc_pin_group common[318];
+> -       struct sh_pfc_pin_group automotive[30];
+> +       struct sh_pfc_pin_group automotive[PFC_R8A77965_GROUP];
+
+Hence I'm more inclined to just do:
+
+    +#ifdef CONFIG_PINCTRL_PFC_R8A77965
+            struct sh_pfc_pin_group automotive[30];
+    +#endif
+
+here, and move the #ifdef/#endif accordingly.
+
+>  } pinmux_groups = {
+>         .common = {
+>                 SH_PFC_PIN_GROUP(audio_clk_a_a),
+> @@ -4703,6 +4713,7 @@ static const struct {
+>                 SH_PFC_PIN_GROUP(vin5_clk),
+>         },
+>         .automotive = {
+> +#ifdef CONFIG_PINCTRL_PFC_R8A77965
+>                 SH_PFC_PIN_GROUP(drif0_ctrl_a),
+>                 SH_PFC_PIN_GROUP(drif0_data0_a),
+>                 SH_PFC_PIN_GROUP(drif0_data1_a),
+> @@ -4733,6 +4744,7 @@ static const struct {
+>                 SH_PFC_PIN_GROUP(drif3_ctrl_b),
+>                 SH_PFC_PIN_GROUP(drif3_data0_b),
+>                 SH_PFC_PIN_GROUP(drif3_data1_b),
+> +#endif
+>         }
+>  };
+
+Same for the functions.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
