@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3865C433E7
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 03:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 798E8C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 03:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E44022241
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 03:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2665622243
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 03:59:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="HtmqUoFi"
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="XlyLyw1y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730632AbgJOD7o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Oct 2020 23:59:44 -0400
-Received: from mail-dm6nam11on2042.outbound.protection.outlook.com ([40.107.223.42]:22560
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        id S2387436AbgJOD7v (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Oct 2020 23:59:51 -0400
+Received: from mail-mw2nam10on2064.outbound.protection.outlook.com ([40.107.94.64]:42656
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727281AbgJOD7o (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 14 Oct 2020 23:59:44 -0400
+        id S1730842AbgJOD7v (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 14 Oct 2020 23:59:51 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xi7Gf9KduC3kw5QmP82jmtmbn/U3yJ++2sgV9W5iKstJBVlCAUCiGh+/CwN2yqrPJfgPEdh9t6FKI1i3anTB2ySSalKj+aiazrQA/0+KxVoYFyJ9JmYM2cF92U/X6L/sxPe3K90QOmFcR0omvlHAZnqTpaThlfKo/Nxa4PXBuwmD5a5SChowAcO5nm3ZRFGcJpTC6HEBT+lT1/lSh6OH26yhG8WjgJgGUXgR1tZCXA6kZeZDScTS9KQ6VrE2A5WoR7zGk1BDiJlaGlKvMgTHD96Cnp+vcXiO8GH6a8BD96kBLKhoxDwCpyqIn4oGY0XWcWw2jQvBm7Dv+vwGuviZew==
+ b=IjFejb+KTbshlb/6r0RcTrTKpadVR10e6HzEvgwTRm4tfp+jzajfJYDl0efrpspgsAcW4heajuL4Pd+69K5O9TWzLxw9hk7CvBEGtqQY6m3nnt+zhsB6Y2+fSa55rcvSyhFJDvA3uvItfd9uqfj+3X2qQYk4xUPcdakDzYPCCNRoku8Fj89C93s/3nJ+cGdn0J/rLXD9oO63A3Em1uKf8Rj2+MonH+XYeWVOR7lj6+t8Li0nxFsb08opYaJ4ylYtT3jRTRfTZ92KolQqHn5zthKThMoMPQEpWkzf6dPaIXf+wgQzIj6pzVHIQYYImdu14QF9Uua17FVwzpn/r5lokg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PCF5eoSoYS1kU+EUQFGwFmNz3nLbCshy0mCs2AA7Ip0=;
- b=msWmEk9pvD3+NmF9TL6URn0d0Pf6uUPy/3O1Ll9igREYbCCu5IDkDAqjvWpHEW0hf/k97F+wnXffMFxmW2GsiMsrzbOPmXPhPr+DuXHLNhTzjCgiH8V7uhRkwXFTTGooQaWl1n9DL5l8z1K3F9nQMN/r4TEHMv4bKyeMJ55MJYs93QYcw//+znAQ6e8Q08EJ+VPXPmIGPXqViveqNcWPnAi54e6gOKQxSDUcvd5gvnYJdly7VGVIhXvnftWZc7Gm9I9ct2cZXddNRyyD+mDtmsIG+9CsuwgdfpKEAqZotmpUISqL0zCHKY7gaX9ifmvE9XGpbNeMCkhLeqZC0WF/lQ==
+ bh=+djlE/RxhbpRukq0Rhff/is8uf9PxUT1gmUoa1C3gyc=;
+ b=Z+VQM8OEhpYpZ1VLSpvseWEY4lvUpdfaY8GffvEK4DXHgf3ippM8HLKniPCt/GqV9G/mq06uXTDeghikFnXTuUO2e0ErpWe+XA0K+VC3T8sQEGrpP3lFUfQ8mDX1CiOP0X+4g9pBwFjsqRTKecIz9/HltMjjO1saHXTkDFYf+CiIRtxcFVX4mjQ0vxeqjAJSiKihV08jdE4NqP0STeAM/ar5sJcCGGu2/DlZsa4hE+YOvN7E8nqVOU6qWQKxwy/bikEdiVO2XqPtyoec3Kjkn0mjRIAERmaNr6FffUEj8kr0dzh0/0YDP7quKQM+Hph6UZjkHyBXnanjzU6LzOOsOA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=synaptics.com; dmarc=pass action=none
  header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PCF5eoSoYS1kU+EUQFGwFmNz3nLbCshy0mCs2AA7Ip0=;
- b=HtmqUoFiI1v81NjQCFRepUNQ/rQHQTghIwESKhU2jDbQQrAmdj/9i//b4zbqFL6uJkJtcH4aqOPdYVJoo6MsOXX/1CBsPDIVRFOZOJOmu0rxYlKUcsyJPdnAtZa3T9fxRA+PKeQ3cE5uMG8P0KK2d1MzGX5dP9JCYk3eYFnUN8s=
+ bh=+djlE/RxhbpRukq0Rhff/is8uf9PxUT1gmUoa1C3gyc=;
+ b=XlyLyw1yeSm7pnsq1GQHFyySM10LyrbkVWcb1RhET/tgyxJRYReixJVDMVEEsq3eWEAqx6S4/LZZpjWA3oibdQeE58BtRnpWWQgkpK3rgDIAy7F7i5UbjrMc7XbdxTgxUkw9pD/49LTkeuO4lx1nz4ibPmx+thFDoPPBCmcOyNg=
 Authentication-Results: os.amperecomputing.com; dkim=none (message not signed)
  header.d=none;os.amperecomputing.com; dmarc=none action=none
  header.from=synaptics.com;
@@ -44,12 +44,12 @@ Received: from DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17)
  by DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.20; Thu, 15 Oct
- 2020 03:59:42 +0000
+ 2020 03:59:49 +0000
 Received: from DM6PR03MB4555.namprd03.prod.outlook.com
  ([fe80::e494:740f:155:4a38]) by DM6PR03MB4555.namprd03.prod.outlook.com
  ([fe80::e494:740f:155:4a38%7]) with mapi id 15.20.3477.020; Thu, 15 Oct 2020
- 03:59:42 +0000
-Date:   Thu, 15 Oct 2020 11:56:55 +0800
+ 03:59:49 +0000
+Date:   Thu, 15 Oct 2020 11:58:10 +0800
 From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 To:     Hoan Tran <hoan@os.amperecomputing.com>,
         Serge Semin <fancer.lancer@gmail.com>,
@@ -63,9 +63,9 @@ To:     Hoan Tran <hoan@os.amperecomputing.com>,
         Wei Xu <xuwei5@hisilicon.com>
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/8] arm64: dts: apm: remove compatible string from dw apb
+Subject: [PATCH 6/8] arm: dts: socfpga: Remove compatible string from dw apb
  gpio port
-Message-ID: <20201015115655.26eb492f@xhacker.debian>
+Message-ID: <20201015115810.4913fc4c@xhacker.debian>
 In-Reply-To: <20201015115524.24e3c36b@xhacker.debian>
 References: <20201015115524.24e3c36b@xhacker.debian>
 X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
@@ -77,27 +77,27 @@ X-ClientProxiedBy: BY5PR13CA0005.namprd13.prod.outlook.com
  (2603:10b6:5:102::17)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xhacker.debian (192.147.44.15) by BY5PR13CA0005.namprd13.prod.outlook.com (2603:10b6:a03:180::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.6 via Frontend Transport; Thu, 15 Oct 2020 03:59:37 +0000
+Received: from xhacker.debian (192.147.44.15) by BY5PR13CA0005.namprd13.prod.outlook.com (2603:10b6:a03:180::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.6 via Frontend Transport; Thu, 15 Oct 2020 03:59:44 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c51fc8f5-2ee9-4af3-1eb1-08d870bebe81
+X-MS-Office365-Filtering-Correlation-Id: f1bf897e-e8f6-43d5-d493-08d870bec320
 X-MS-TrafficTypeDiagnostic: DM6PR03MB4555:
-X-Microsoft-Antispam-PRVS: <DM6PR03MB4555F21FB061DE216F434529ED020@DM6PR03MB4555.namprd03.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DM6PR03MB45558BC9DFDD4A005A9B872DED020@DM6PR03MB4555.namprd03.prod.outlook.com>
 X-MS-Oob-TLC-OOBClassifiers: OLM:363;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: x5fXQRwOVsHM2Bl1PTorfQOxH6stDuDu5seF5zOyloOTU35v+qTAmf1bOKeT3FFyOfLl7viDzfofhMugikw2OPAdl30hr0agEyDRdVJsU7C+5R/ePt7tR9W/ZojNDxQjt948x6ifJXrG90XPEFJRW370lI4hR4hZwZnr5FLUhWJk3f2xjPDW9iYoyRE/vk9gPjTbMd9L/DCT9lU85FH2odzvDdv8+/CCfqKpyi/Q+YOCCHbRZRWmqkX+14TqNRIH3hBvMsNTr30PQHp68NP/LWbq/XerDMAOh43/jTtz8x7D8G6S6TlqyGF2UJMr2L//9R9Igosh1nPE3knn5jrHVfIjGeM7F9iESdJamYIRxYN2/2+hgqbatCF9D80tPaz1Eo8l2Vaqt5oDtz6vXSrJxg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(136003)(39860400002)(396003)(366004)(83380400001)(4326008)(316002)(1076003)(7696005)(478600001)(52116002)(110136005)(55016002)(86362001)(2906002)(26005)(66556008)(7416002)(8676002)(6666004)(66946007)(186003)(16526019)(956004)(6506007)(9686003)(5660300002)(8936002)(34490700002)(66476007)(921003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: WE95PX10uMyAK28dqrMto5ggXuEt1vDlnWKP9ZkaYLdtxzbfMtPTw5/0j5OmIX+pxDjx9VVg8fjVJeht0RXelpW9TNsRUn4loZ6NhfseYE3APHW1KjZLIFL9VPHOW0jC2sthykKvvynVCCu/UQUYTqKNQwzEWD4+W2RfxoE4JrN+fvsvXjhsAzFPNaTMqaj7W6N/6dkT13NFd+mwzS4Ew9gAI/uPPU/IrVEMCyf/K4/Kp5fbCeZXMlVvCDaCUvR4VoTqBP2vTUDFH+zAMVuUoiJYOhXu6DWlWSE+9STxtyPvJ5Cn8yb7cYcKNkDIKN2hc4lICndyvmLZGRAXjfWPv1Svk+MxgalAtMWAGFUHXn8Xe1VIHKlVZPNFYRMmBNwZ2ar8BJMgkR1NXdEWXv0kE2a5M5eppPuNQ+Sx5Cwo//XNeZiCILFYw7S3PXp34WKpsXsDDmP8DPKFN5OblaHw7+aHJbkC7RZMsfhzbDLk+bz34bPBTTnQN7DBarznzKvmviabBN56O1MQtE6saoW5nYcPVTplsHZs+WIlSNq6zwS72itEpPRNfTrO5wvjXRugybH3COc8OzX8dgYxs4iAJduLlY9GiayPO0pwoeNmdmfOG6nPQzrdfuegNDDtGWFC58a87v+Oe691n86UYumKCw==
+X-Microsoft-Antispam-Message-Info: PLMFP1Cs5zTnjasDefk5yddxyWlLd7QYqcF95aUDFHNKi7A1ZYbOEnd4in9I16s55lGTNcv8B90k+Hu+8z79yAHiiM4o0LQMOGar0QHNnTy+7vLoGWCz197g10UV5hPKHA4nUAAQbZI+azE0BJ3hirMUyKtgG1Uz/0l5TJgaq5sRy8ANkX/Zswsy1vYcCrVN+FucGwEZuMrXfKbOQ3pzBLaBPnavUwTzQb3xrbymkk4hbSin88IF3BxAm7vAhEsgJJw+T5X8zWwCvYIY4v66jKetlIUq3qT5cHM/xKyjL803GfnI13EKWtwtAKtq16V8kzzNFgdyi74VEi7s2Kp2Weo/RGWShwjS7ia9akhA540gvxMLRLRh4of6bC9EWxtc5ePvo3iD6lTmPVPsS7PaXg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(136003)(39860400002)(396003)(366004)(83380400001)(4326008)(316002)(1076003)(7696005)(478600001)(52116002)(110136005)(55016002)(86362001)(2906002)(26005)(66556008)(7416002)(8676002)(6666004)(66946007)(186003)(16526019)(4744005)(956004)(6506007)(9686003)(5660300002)(8936002)(34490700002)(66476007)(921003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: jQjVsCdXB0CuekIcLeMz8FigipvWrLI/Sn7sYed5Sn+XuHN3u1FYta+x46SH8hqmWF4GGwvSXalGT3JWvz352lTINS5lhmJcyvwlbUNbMf4pIswYA/DVfuQJpN7FhPG4UCpyhPE63IvSSTNuP+ErB8BXx1TG3uoqSrrhyL33L0hJxhJyJvIQpuvU9L7i7rrHs3+NEm7yQtHJhixbGD7JCHm/TC7oNNpm6jlNakTUIABxi1vXsDVUx7KqK8w0So+9W1cgC9PQan+DC0lwbqtoK34LySUAeG7LrobUifJs1JQ+qx4yCcgd+sinDK6DWWqSgU1S3eRwAbQHgAbOQsl20m2ID09ZrynRg34bv+sOhXLY751pRUiIsWl7JuRXihyMIWghPfmejpswskUhBCSbaoiLBxR6Ct0N2sw80HGLnC0+AoM0nK+vzB9tPYbn4+feNxGpzQnswxrChDeC3fBbLcRve3GpO2CVWCSpsqEuQ1eNeu+NYZx2ci9UmD5BQJvuPIQ6OO6hufa5bEp0NUZPqybVMb4pAIexKkFg9CvJu/sXJHtBI74GiWVUJCFXzPhcCeDvSCzoC6HE9XLgtAc8llDQctbDOwUhHmB7pcu0Dle1swTiXBC3N/UMxPNfo2jz/0/jeiRSdS5awWQh39FlRg==
 X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c51fc8f5-2ee9-4af3-1eb1-08d870bebe81
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1bf897e-e8f6-43d5-d493-08d870bec320
 X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB4555.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2020 03:59:41.9392
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2020 03:59:49.6229
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sQhI5pOEblsOyzwEasmjbcEioKooCxTwklyFw5YKPeF7rUfT1wrfCpQrpqlpKOy5msuuIl6Ny3mqqkuUUlSzaw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3+2EhY2snziqaQWJ80KyQOdpdOYvYcjVO2iBue5lka+n7rYLYGVqyRpiy5E4OJ2GQ0cPZMYvzbA1d4n9gjT97g==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4555
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -107,34 +107,29 @@ The compatible string is never used.
 
 Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 ---
- arch/arm64/boot/dts/apm/apm-shadowcat.dtsi | 1 -
- arch/arm64/boot/dts/apm/apm-storm.dtsi     | 1 -
- 2 files changed, 2 deletions(-)
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-index 3feb1881bbc2..cc4265cc13f6 100644
---- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-+++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-@@ -714,7 +714,6 @@ dwgpio: gpio@1c024000 {
- 			#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+index 9d7f19e97df7..757c53ffe345 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+@@ -199,7 +199,6 @@ gpio0: gpio@ffc03200 {
+ 			status = "disabled";
  
  			porta: gpio-controller@0 {
 -				compatible = "snps,dw-apb-gpio-port";
  				gpio-controller;
- 				snps,nr-gpios = <32>;
- 				reg = <0>;
-diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-index 8c802d87e751..64b86b9d1b37 100644
---- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
-+++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-@@ -830,7 +830,6 @@ dwgpio: gpio@1c024000 {
- 			#size-cells = <0>;
+ 				#gpio-cells = <2>;
+ 				snps,nr-gpios = <24>;
+@@ -219,7 +218,6 @@ gpio1: gpio@ffc03300 {
+ 			status = "disabled";
  
- 			porta: gpio-controller@0 {
+ 			portb: gpio-controller@0 {
 -				compatible = "snps,dw-apb-gpio-port";
  				gpio-controller;
- 				snps,nr-gpios = <32>;
- 				reg = <0>;
+ 				#gpio-cells = <2>;
+ 				snps,nr-gpios = <24>;
 -- 
 2.28.0
 
