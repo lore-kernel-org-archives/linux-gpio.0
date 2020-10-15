@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D555C433E7
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 04:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87240C433E7
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 04:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E973122241
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 04:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DD7D22241
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Oct 2020 04:00:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="ZoFjNByB"
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="QhX6fp5+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbgJOEAR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Oct 2020 00:00:17 -0400
-Received: from mail-dm6nam11on2088.outbound.protection.outlook.com ([40.107.223.88]:19828
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        id S1726382AbgJOEAZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Oct 2020 00:00:25 -0400
+Received: from mail-mw2nam10on2067.outbound.protection.outlook.com ([40.107.94.67]:23650
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726185AbgJOEAR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 15 Oct 2020 00:00:17 -0400
+        id S1726376AbgJOEAZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 15 Oct 2020 00:00:25 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HeIdm+6LzDbPRbLGd/agA/mNGDgEU79YifD1IJAIwXShwF9px3LQnsaolgyz45Hhkly7FIDj7bvQ3XTtDtIHKQ2FBnfI5sa52eH+O2rzIB7jLt6rMoW6apnd83wbNeMsD9+6gnJhGaAZYwj4Ck9ybNsa46AuBx9v13xPSieuUpTsbz/RSTWMnc4Dpw/1gZXfMeplDrneK83VgYcZ90TonDr7nAyMqmllzKNRzBEY56bexszqytUWvNue7q+SE6pPOOVoFvCWIOeFmL7NKscfdbqbYnVFT2ftigyV/jv97NnAVXo7x97sdb44R/qvADdsooiR+pamkiL2qynUPysLJg==
+ b=DR+qPZjcUZoZ/fB0n6G/PTm+Ymrg0r88V0PxATc8xO0o/hHuQ2SPjOlt2Rr5K5/gLEnTzcW4fnIBFhdKjuCo9ClQTObtqXxMq/rOT1sgFDJjwycVlG2Hpcdg7gidhnewRaLmrgwnK1B3AOctqE0lY//Oj02RfHL3HIm5if7Bf6wDOzme3LDf4p1dhqAS+/SMLIXIrzucLA1RLrZCMt0R7M4GCAAG4NbRHf4yr6B+eqQo7HzyuFxoAPdSyYU84p7uvIc9HH/8yByle12+rou7Go1zVZtTNgwvYlPcl3XJlca9mjGp1n5pKxAUg3Tdgasvb4+gPLj2rMfMFb1fUFK/6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6dtKA+3/JxJ+5OI1gqKJSjNQKiZDPYnNnxYjFrZ69eY=;
- b=L3iefDpZrAFCz/Bu1RfInPDjGv87ApCiFpF+l1dzfkcekcDnsxEBywNuT3s66dCkJYs8z2+Dm2UF6uaO3zPhctJouNa0zsLZTO9O2kWl5QzhHknttKZuGe/GVVdmV3kcyTtfb0BWbTfhngoGp+T6JkCuI2HfFSQvYEeBp8rh11pyTZHLt0BDfg9LulocDZw/na598RqwIBiYopvRgHd8jz3pgfmMOWLz6lgk4eOHpHsfPX7b1CSuhIQkLLOhMxtoqALDKdX0QL7gvLwBpkmoc+9xPybw15FOcBDQap1bU/8sFbor+bcX2hwvvnovfCgTeq7NffNh0DfpBbn2OOqWbg==
+ bh=0wq2/M9iZQceQHc2fSaHBPknKf8f10Z0Spe9SYMyoCY=;
+ b=b4brxj6irPYtQge9oAtZK3ZObbIYkqdKjAD3p7GmvrFFaqrR5jmffbjRhUpojabei3U22UZrB1mue177WWDqf0CDtdjqyTxM25nHInjBE5tycK2Rhr4uEfLyS3j8WOEkjg+pFeF8BwFT8XtcVhnVb+WagwA+4tIweG83TWy9/hq0ggjrEVvPFuHZt2UAQap8bSWGfBWfHeP7pkk0WYmZOSRdLcX7zCkNXd6lJke5JwXRYaZLFSLhFP9MhIJKz6zce69s6cZS4WIIgExTTSslyMvAZfA6OXVNX6Yekd51DrSPBhizR4isrPQwIA6VCp3ohXQ86W6NnzWUx1ziuEjAsw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=synaptics.com; dmarc=pass action=none
  header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6dtKA+3/JxJ+5OI1gqKJSjNQKiZDPYnNnxYjFrZ69eY=;
- b=ZoFjNByBQ9oPNToIQgM7SMlP+8j7VOAY+JLH2M8xzVmGcuEZfcCMEKOBp4s9MI/cQ9C++1gphLlLWMnj4pdk3bbPqnLcBuC4dOBkro/inpOGMDuFXPrvxOgz5OtWCMYPSxJUs3GfwiPml0dEt2vLlXpOpN555fPrtVPDGVuDri8=
+ bh=0wq2/M9iZQceQHc2fSaHBPknKf8f10Z0Spe9SYMyoCY=;
+ b=QhX6fp5+evjeb7fUhCSoTKNuFWyMsLyJm03aanYlPO/ZJY/sRK/o5YbyUl0lmvQwInC8l8gRgWbAv+JbnkTxvVnBZC51hB70QTSjF+bxINrc4hrs1QPu3YsID6/jZ43o7+7BWhl3Y55uyDgW8EhCqr0BcnF+aYHNxOhdo6qX5P8=
 Authentication-Results: os.amperecomputing.com; dkim=none (message not signed)
  header.d=none;os.amperecomputing.com; dmarc=none action=none
  header.from=synaptics.com;
@@ -44,12 +44,12 @@ Received: from DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17)
  by DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.20; Thu, 15 Oct
- 2020 04:00:15 +0000
+ 2020 04:00:23 +0000
 Received: from DM6PR03MB4555.namprd03.prod.outlook.com
  ([fe80::e494:740f:155:4a38]) by DM6PR03MB4555.namprd03.prod.outlook.com
  ([fe80::e494:740f:155:4a38%7]) with mapi id 15.20.3477.020; Thu, 15 Oct 2020
- 04:00:15 +0000
-Date:   Thu, 15 Oct 2020 11:57:43 +0800
+ 04:00:23 +0000
+Date:   Thu, 15 Oct 2020 11:56:03 +0800
 From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 To:     Hoan Tran <hoan@os.amperecomputing.com>,
         Serge Semin <fancer.lancer@gmail.com>,
@@ -63,9 +63,9 @@ To:     Hoan Tran <hoan@os.amperecomputing.com>,
         Wei Xu <xuwei5@hisilicon.com>
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 5/8] arm64: dts: hip05: Remove compatible string from dw apb
+Subject: [PATCH 1/8] ARM: dts: berlin: Remove compatible string from dw apb
  gpio port
-Message-ID: <20201015115743.4d764a87@xhacker.debian>
+Message-ID: <20201015115603.71a91be9@xhacker.debian>
 In-Reply-To: <20201015115524.24e3c36b@xhacker.debian>
 References: <20201015115524.24e3c36b@xhacker.debian>
 X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
@@ -77,27 +77,27 @@ X-ClientProxiedBy: BY5PR13CA0005.namprd13.prod.outlook.com
  (2603:10b6:5:102::17)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xhacker.debian (192.147.44.15) by BY5PR13CA0005.namprd13.prod.outlook.com (2603:10b6:a03:180::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.6 via Frontend Transport; Thu, 15 Oct 2020 04:00:11 +0000
+Received: from xhacker.debian (192.147.44.15) by BY5PR13CA0005.namprd13.prod.outlook.com (2603:10b6:a03:180::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.6 via Frontend Transport; Thu, 15 Oct 2020 04:00:19 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cb48a27d-1802-44ff-3f45-08d870bed2bf
+X-MS-Office365-Filtering-Correlation-Id: 3eb9c124-0fb1-483e-5e2a-08d870bed753
 X-MS-TrafficTypeDiagnostic: DM6PR03MB4555:
-X-Microsoft-Antispam-PRVS: <DM6PR03MB455523A1A3D7FEB2FBA0EF32ED020@DM6PR03MB4555.namprd03.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DM6PR03MB4555A8FFB1EA99616AE3654BED020@DM6PR03MB4555.namprd03.prod.outlook.com>
 X-MS-Oob-TLC-OOBClassifiers: OLM:363;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5dGg8klEfzfWeK+CN2HhGeL0c3sCAWw87V/BE1b6EBdjDfbf/I9ZQcT9nIRqq2EAOWIJxI0+n0Gktf0Ab2PGWZxAjYPzu7wkrI70Bu/Rb6uIydbf68aaGnmf/XuH4cvDOo33brmGKdDT3omLvkohdAbsGq/owqOvy4KHZNXeOjafxPmnWgjuPuAnVrEVZ+zmbweLLehS7wKHjm/f8F67NoXXLf2BsKuz9yln7jeoUadKvIx6czoORnic4BbAxoAPTFoByVV1qiGgFeLA2S29RDnZmLiIaICIPYPJehD0Nz7aV0bRN3YSl8CpkL2aUbE8ZgYqhboeYKNZTr32oztLKjLezVbD/EP1FhOHJDiCXxMPl8nYbUjSlCoyfrSmM1eRcM6L1VonNLS4qgNQjawuTg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(136003)(39860400002)(396003)(366004)(83380400001)(4326008)(316002)(1076003)(7696005)(478600001)(52116002)(110136005)(55016002)(86362001)(2906002)(26005)(66556008)(7416002)(8676002)(6666004)(66946007)(186003)(16526019)(4744005)(956004)(6506007)(9686003)(5660300002)(8936002)(34490700002)(66476007)(921003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: 6+9LQQSM1iBFnIfZuyJVAuuOYNfYVHul5Zy4fhyv+qcQOEuhMZ2gDKBLyzYDpYW19p7nYHNKPOiGhM8/04QTEve7JhjbAGrMkLqmEZ0AKGraNgGFCaVEvFPHc93mO+BXfQlKlu8DoX8ljYN8q8hAeLtv+WBb4uOP2g+0rhIzPfiWJW2KCtH9M1WC6I76KrJ3uGT1e0d8o5mdpcE4kwNDD+h9v+VLwOtxWI+Hw3scUYqrWVJyT4L1Gx5MNW6c8IXjbqR8Yx6qYQloiVu+5sxyAFFiGaDkkpTcOkrD6rgqkdv4g9sktuk8gQb26wwV9AyfqiUoKJJy8rXQQR45hONdGRnvSsGjH1NFa/IuVltxLuELYdaYISH9EtEkWpRcsRSEBCBEcZnLB9qjERMr/CDuREWoOK3caGuKk0wPTX1SN5YGXJpMhxhlpOZgHRIP7D6StUGxEA7eTToOIVJzxrwS/b3+6r82HdLswvksv82LxO+ZpxPF8Qvn/QISnTf7GQSnk1TXqMI6tgT+GveXzowEFPJFsq09sibNChLwOGwYTyt8RAoh5ytyXHQbtkCXnSqgt8+bEoM0rzcK92o2yJcDXC4f+c1WhJXhAiqDDeeluE2IQeIWQ9kFS0HWQFhkarqveDdUDuRVKWvk5ZrYEH4eyA==
+X-Microsoft-Antispam-Message-Info: uZb8v/rNI4pGXtys6tlU9BTJv6+N5XIXMf6mbtJ0jKL7+9svEYKXgkfeMV8yOPsSEXTvCXslHpX2yGuorOlp7EFPL/MZpOikwlbXX7CAYWdVdQSVCeSh2wec1z6zjCljsnz5wITGJbOc532PZzyc/tbAsLSnaVlEYZfWC+j6/9whxFbMvKfk7/H+JKojMtfEqYAfkm5mBYYA8us+QlIx591qVNKezBRptzVPuzdTjWQlXhW7a0zx4XrodY2SRE+caqMAGZdGbCvbOYuippI2nhEtLHKR17Z6HcNpIeFuzMgnYGGOO/p6RImyXj83oNts/0+oOYAEJzz5ZUfOqzJxK8J/c2wiaDPuePGmHK1G57mlklRr6cX3JW3Nf8iJdcLNXnTQScLcP7siuLWhIUJMkQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(136003)(39860400002)(396003)(366004)(83380400001)(4326008)(316002)(1076003)(7696005)(478600001)(52116002)(110136005)(55016002)(86362001)(2906002)(26005)(66556008)(7416002)(8676002)(6666004)(66946007)(186003)(16526019)(956004)(6506007)(9686003)(5660300002)(8936002)(34490700002)(66476007)(921003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: tSELHVuIkTIlSztU//kYW7vZnX24FpwMvE5ZtnEON0mgWFktfygv96kt6xJfFTvskG18dxEpIg1DXVioG+bPsn+hBRKlXJXiFvS3cso8i1N5g8icJSDjK4B7fTD0d8A9FPz8HKnb1INDtw44XHgYS/1sdzjPHYjMdgsR1yxGJphyCSBDO0Pzz7AgVux5tFEE24rIFLXHuUIwNHFYGIkRyAnReF7Jq47jjLPpwb+X2Scsx5K+xeYHHyXt1a0w2yCNSdd24jEHZfkQ7dKxKyUMf2wD3xkvqYT7hmJp8tOYdpPi4PwvmSfHG6YDhbj3DwgtrWoW4ZHC9cjAY8c75NDY5gh1HocX0dgntEw4uTkgyAakIyJ6S6MNzycH8+NNKAhftPJG82WQkUtO/QZeWc4GFxCZevbD4zFoFHicExSvYXlBAQp9UtDhzbWHSUwsGD4qy1VKxNdNg6JBbJmlXkGOmrwPvYFdbjOffmfY0+p4w5RFt8+kCV5EHNkIGuitUQWiPKFDYOonWqkPL/wLiUplYS8oEsarDtWNOa+cAT26HbFUUIkXC1hqNzglx7kDUCkSJjjq3u4Q6SG37cvnQ96r3StPwj+FaRpfcEYjqmUukPf/cIYR1XEJHGyD3ILzQIQxTqOdundfq1+Hw/RDW70/wg==
 X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb48a27d-1802-44ff-3f45-08d870bed2bf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3eb9c124-0fb1-483e-5e2a-08d870bed753
 X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB4555.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2020 04:00:15.8359
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2020 04:00:23.5145
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DQrMM6VxgUyl5pRdTrQtcLTcFhLV6aKnz1JqkITKxRBKbfDALtMIigo1lcBji1BrmtgjGZ7zTkaV/M0ej4O6Bw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: Kx5ALEZmW/GZ1zqEa6+IzAeXjS4+5acHVx/I5zb+UmSnmhBE/nOoEwdllooGwBRXlEfEJTatpOp2cF/nvFdaOA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4555
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -107,29 +107,167 @@ The compatible string is never used.
 
 Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 ---
- arch/arm64/boot/dts/hisilicon/hip05.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/boot/dts/berlin2.dtsi   | 6 ------
+ arch/arm/boot/dts/berlin2cd.dtsi | 6 ------
+ arch/arm/boot/dts/berlin2q.dtsi  | 6 ------
+ 3 files changed, 18 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-index bc49955360db..390225f8979c 100644
---- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-@@ -332,7 +332,6 @@ peri_gpio0: gpio@802e0000 {
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/berlin2.dtsi b/arch/arm/boot/dts/berlin2.dtsi
+index 6194857f8a02..02c9b8b5b633 100644
+--- a/arch/arm/boot/dts/berlin2.dtsi
++++ b/arch/arm/boot/dts/berlin2.dtsi
+@@ -188,7 +188,6 @@ gpio0: gpio@400 {
+ 				#size-cells = <0>;
  
- 			porta: gpio-controller@0 {
--				compatible = "snps,dw-apb-gpio-port";
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				snps,nr-gpios = <32>;
-@@ -351,7 +350,6 @@ peri_gpio1: gpio@802f0000 {
- 			status = "disabled";
+ 				porta: gpio-port@0 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -206,7 +205,6 @@ gpio1: gpio@800 {
+ 				#size-cells = <0>;
  
- 			portb: gpio-controller@0 {
--				compatible = "snps,dw-apb-gpio-port";
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				snps,nr-gpios = <32>;
+ 				portb: gpio-port@1 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -224,7 +222,6 @@ gpio2: gpio@c00 {
+ 				#size-cells = <0>;
+ 
+ 				portc: gpio-port@2 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -242,7 +239,6 @@ gpio3: gpio@1000 {
+ 				#size-cells = <0>;
+ 
+ 				portd: gpio-port@3 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -443,7 +439,6 @@ sm_gpio1: gpio@5000 {
+ 				#size-cells = <0>;
+ 
+ 				portf: gpio-port@5 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -458,7 +453,6 @@ sm_gpio0: gpio@c000 {
+ 				#size-cells = <0>;
+ 
+ 				porte: gpio-port@4 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+diff --git a/arch/arm/boot/dts/berlin2cd.dtsi b/arch/arm/boot/dts/berlin2cd.dtsi
+index 6f30d7eb3b41..f7698ab97abf 100644
+--- a/arch/arm/boot/dts/berlin2cd.dtsi
++++ b/arch/arm/boot/dts/berlin2cd.dtsi
+@@ -178,7 +178,6 @@ gpio0: gpio@400 {
+ 				#size-cells = <0>;
+ 
+ 				porta: gpio-port@0 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -196,7 +195,6 @@ gpio1: gpio@800 {
+ 				#size-cells = <0>;
+ 
+ 				portb: gpio-port@1 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -214,7 +212,6 @@ gpio2: gpio@c00 {
+ 				#size-cells = <0>;
+ 
+ 				portc: gpio-port@2 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -232,7 +229,6 @@ gpio3: gpio@1000 {
+ 				#size-cells = <0>;
+ 
+ 				portd: gpio-port@3 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -470,7 +466,6 @@ sm_gpio1: gpio@5000 {
+ 				#size-cells = <0>;
+ 
+ 				portf: gpio-port@5 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+@@ -515,7 +510,6 @@ sm_gpio0: gpio@c000 {
+ 				#size-cells = <0>;
+ 
+ 				porte: gpio-port@4 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <8>;
+diff --git a/arch/arm/boot/dts/berlin2q.dtsi b/arch/arm/boot/dts/berlin2q.dtsi
+index b6a0acac6836..831505b47e27 100644
+--- a/arch/arm/boot/dts/berlin2q.dtsi
++++ b/arch/arm/boot/dts/berlin2q.dtsi
+@@ -249,7 +249,6 @@ gpio0: gpio@400 {
+ 				#size-cells = <0>;
+ 
+ 				porta: gpio-port@0 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <32>;
+@@ -267,7 +266,6 @@ gpio1: gpio@800 {
+ 				#size-cells = <0>;
+ 
+ 				portb: gpio-port@1 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <32>;
+@@ -285,7 +283,6 @@ gpio2: gpio@c00 {
+ 				#size-cells = <0>;
+ 
+ 				portc: gpio-port@2 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <32>;
+@@ -303,7 +300,6 @@ gpio3: gpio@1000 {
+ 				#size-cells = <0>;
+ 
+ 				portd: gpio-port@3 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <32>;
+@@ -549,7 +545,6 @@ sm_gpio1: gpio@5000 {
+ 				#size-cells = <0>;
+ 
+ 				portf: gpio-port@5 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <32>;
+@@ -610,7 +605,6 @@ sm_gpio0: gpio@c000 {
+ 				#size-cells = <0>;
+ 
+ 				porte: gpio-port@4 {
+-					compatible = "snps,dw-apb-gpio-port";
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					snps,nr-gpios = <32>;
 -- 
 2.28.0
 
