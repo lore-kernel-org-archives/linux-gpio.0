@@ -2,241 +2,125 @@ Return-Path: <SRS0=Nl/I=DX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AAEC433DF
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 16:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50699C43457
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 20:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D77E02084C
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 16:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EECE221775
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 20:52:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6LseaGX"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Tu7vXfik"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410936AbgJPQ4g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Oct 2020 12:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49034 "EHLO
+        id S2409072AbgJPUw5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Oct 2020 16:52:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410921AbgJPQ4g (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2020 12:56:36 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A07DBC061755
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2020 09:56:35 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id 77so3808941lfl.2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2020 09:56:35 -0700 (PDT)
+        with ESMTP id S2393599AbgJPUw5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2020 16:52:57 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1461EC061755;
+        Fri, 16 Oct 2020 13:52:57 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id p13so3859078edi.7;
+        Fri, 16 Oct 2020 13:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UCDm/leIjbm6cLrDBLzkAxcbDZIxq5LPj31J47YI3rA=;
-        b=O6LseaGXZ01uMmh85FJbb8S6TDmvdQR1JiVmqSS2EeQkzJD00jfbHtD2//OXppDt6g
-         blta4vTt9oEaP8e5p8zLjFuNp/LK/1yVu96vmTIhtP2npu3I7Ubxtdi08mXBNxUA2tJG
-         gwguMYAuaTp+W8YQicdembgZ+5TCQBWd0TYcJzcBaippWvzZ5JCOomp+18GRd5jWQ24g
-         Oi/26AeDGsOHA4+Ml/dFpG1xo+QITxDwNBmDBvGJgB06s5wLBQncR0N8VP5t7PKQke/7
-         wwSguDm4IKVYt22wyUibb+bQSwjt/F+a1oa7y092pDDmwjt66IssANTGI+6w9CtWkR0I
-         +w7A==
+        bh=LugPJbth2L+5NzHqEmJU9Ma7NXcScsFxdJ4jE8WC+U4=;
+        b=Tu7vXfika4qfrXsXOIcn75dbSNc5REGqutvQkX6182ssmjsn2jxIUZ+kP8c4FqidD1
+         iMzZVkOEOhMbhuvETrQ/wljPan2CMq5kBxv+mBrz11X8ejGecJ8bWRBk8n5i1el2g865
+         DcJ19IfZWCT5lfDCWFPx7PDVa7mCH/RVW3L8uosA+GHrAE6AlJIKvI9YTPbecLzi8Zl4
+         jzEq+1N1XhG3Y53aL+JM7tkGhzIN5n4Di8Q1Ya0zBcGQFV/82K9vHhZHztRJVXCX8jxA
+         1TLFIqkAgvFYCRXj7lryJz8v9DXrS+Q/x9nl9BFk4o7ukXPoUCi3AXy1fiWoVQkhtyRR
+         Lo8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UCDm/leIjbm6cLrDBLzkAxcbDZIxq5LPj31J47YI3rA=;
-        b=e1UIt0h8uwKGHJLNxWPcX5t8YLzOTvF/MKIaJeyILxj+RmxCQvVWQUYm73brxpHGhi
-         YArSM2o7/1htDuM5hsls3gQJwvBHU090FUODeJPmAztuHGBmRwUmhWOUQEt90ZsjJAe9
-         EZlsQ8f/iT1IIn/GElCtJ8MmTOz3VjPgbpnNDlYsX1/NLgu0RYP43x5lFKyXpFDa+f7X
-         YwkD3jo7qCeeJvgxRlV9nYwLwmC0p12rAgV6obOcvX5fYEkLgM0pgEOScx2SVJhOW6V5
-         bhj9v8Sc3heMwHl7JFJ/c/uSzqJFAVgW2WA8veygmI/y9bk60mcEGKjYDA8gFkANhUD6
-         DCaA==
-X-Gm-Message-State: AOAM530YBekVWAJEN/cf8YNzwu/v5XDZbbt+PG8A44fKdc3rgC/cLa/v
-        GvgZRkLtlKi8SR2QXH+StQoJ3YrBMlSBJPqPViwLlIV8eMsPqW6G
-X-Google-Smtp-Source: ABdhPJwBags0upoB0AtgWGyaHa1X1EFsEyDexUT9+94xT5o8Q/DQpH5sMpNWildjk23EtnIYZuNGjMJXWyVpJ2NDNXI=
-X-Received: by 2002:a19:824f:: with SMTP id e76mr1615966lfd.572.1602867394059;
- Fri, 16 Oct 2020 09:56:34 -0700 (PDT)
+        bh=LugPJbth2L+5NzHqEmJU9Ma7NXcScsFxdJ4jE8WC+U4=;
+        b=M1sS6jgMdJVphvKsg93hRVoBd3QUrMRpMpEj6lliVh6CddE5rvlcaYFkiBYlnrxmsn
+         kkzXq5jOLTqjjHd9ZqE5cvU0c4Jt3DoSjbbtzlq7G7LVY+s+YTDWMjl5y/tQHIk1zJ56
+         mvptrkOWytmUqAWhQbbJNuIvMUl5CJ6gqDrmJG82aFkJNbYsBWbBXeC6pkdcrADzRvNr
+         dryKiUPK89bnY+8GA/XxD0tT2HrF+UhWQGLWVkCGByfHnKt9WN5KnHcN1PmSMYe2tuRl
+         /IVTJwI9jnpAyvfGmIHr+haex5Vcoxf2NvQLkO8himq1nIYjtiRxVKsQgYUBhBaOkvlA
+         fFow==
+X-Gm-Message-State: AOAM5336d8FlJU4OA5cnSyeXtFyPU5bLG+Qu7kk2T3vbxaxqUjUNVuBh
+        Ez8klFJtDCQ3T8Fv+u4bto18rLIvnmzx26MKMLI=
+X-Google-Smtp-Source: ABdhPJxZ42lByUDO+OTDvcJk4T2dgzm029Jq7A4vWTsHVjzFmUepjiwamlx320/sHJIq5iNEVzj9fJQxeoJTImluMKI=
+X-Received: by 2002:a50:d517:: with SMTP id u23mr6148394edi.338.1602881575797;
+ Fri, 16 Oct 2020 13:52:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201011024831.3868571-1-daniel@0x0f.com> <20201011024831.3868571-4-daniel@0x0f.com>
-In-Reply-To: <20201011024831.3868571-4-daniel@0x0f.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 16 Oct 2020 18:56:23 +0200
-Message-ID: <CACRpkdYmdZ81q_tsXRQ56aFjGsvV3AwJ8_hiu31mD14DGiK84A@mail.gmail.com>
-Subject: Re: [PATCH 3/5] gpio: msc313: MStar MSC313 GPIO driver
-To:     Daniel Palmer <daniel@0x0f.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+References: <20201004162908.3216898-1-martin.blumenstingl@googlemail.com>
+ <20201004162908.3216898-3-martin.blumenstingl@googlemail.com>
+ <CACRpkdbTw4UBw02RXX2prju45AsDZqPchhz=gdzsuT-QjhYHVw@mail.gmail.com>
+ <CAFBinCAFDhWp6mgUqyOjdMVBR5oZQVpmVPjhnZs1Xg16tFa0PQ@mail.gmail.com>
+ <CACRpkdZdwoQCxxqosn2jQPMXLDnTEjuxSWOxG-L1YGE33wbFrg@mail.gmail.com> <CAL_JsqLF8KHG6qZUJzdMyN5cX-ZvPDbuGSGZLOw=CkY90SUGLw@mail.gmail.com>
+In-Reply-To: <CAL_JsqLF8KHG6qZUJzdMyN5cX-ZvPDbuGSGZLOw=CkY90SUGLw@mail.gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 16 Oct 2020 22:52:44 +0200
+Message-ID: <CAFBinCBpDn1Vx1ZQdk-Gf-muuAyxjXb+zCkvW6jsH8jP6mDuTw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] dt-bindings: gpio: Add binding documentation for
+ Etron EJ168/EJ188/EJ198
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Daniel,
+Hi Linus,
 
-thanks for your patch!
-
-Some comments below, we need some work but keep at it.
-
-On Sun, Oct 11, 2020 at 4:48 AM Daniel Palmer <daniel@0x0f.com> wrote:
-
-> This adds a driver that supports the GPIO block found in
-> MStar/SigmaStar ARMv7 SoCs.
+On Wed, Oct 14, 2020 at 2:43 PM Rob Herring <robh+dt@kernel.org> wrote:
 >
-> The controller seems to support 128 lines but where they
-> are wired up differs between chips and no currently known
-> chip uses anywhere near 128 lines so there needs to be some
-> per-chip data to collect together what lines actually have
-> physical pins attached and map the right names to them.
+> On Tue, Oct 13, 2020 at 8:27 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > On Wed, Oct 7, 2020 at 9:58 PM Martin Blumenstingl
+> > <martin.blumenstingl@googlemail.com> wrote:
+> > > On Wed, Oct 7, 2020 at 11:19 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > > On Sun, Oct 4, 2020 at 8:00 PM Martin Blumenstingl
+> > > > <martin.blumenstingl@googlemail.com> wrote:
+> > > >
+> > > > > +properties:
+> > > > > +  compatible:
+> > > > > +    enum:
+> > > > > +      - pci1b6f,7023
+> > > > > +      - pci1b6f,7052
+> > > >
+> > > > I think it is better to let the PCI driver for the whole hardware in
+> > > > drivers/usb/host/xhci-pci.c probe from the PCI configuration space
+> > > > numbers, and then add a gpio_chip to xhci-pci.c.
+> > >
+> > > to have everything consistent I will move the binding to
+> > > Documentation/devicetree/bindings/usb
+> >
+> > I do not understand why a PCI device would need a DT binding
+> > at all. They just probe from the magic number in the PCI
+> > config space, they spawn struct pci_dev PCI devices, not the
+> > type of platform devices coming out of the DT parser code.
+> > No DT compatible needed.
 >
-> The core peripherals seem to use the same lines on the
-> currently known chips but the lines used for the sensor
-> interface, lcd controller etc pins seem to be totally
-> different between the infinity and mercury chips
+> Same reason for all the discoverable buses need bindings. There can be
+> parts that are not discoverable or connections with non-discoverable
+> nodes. There's also cases where the discoverable device has to be
+> powered, reset deasserted, clocks enabled, etc. first to be
+> discovered.
 >
-> The code tries to collect all of the re-usable names,
-> offsets etc together so that it's easy to build the extra
-> per-chip data for other chips in the future.
->
-> So far this only supports the MSC313 and MSC313E chips.
->
-> Support for the SSC8336N (mercury5) is trivial to add once
-> all of the lines have been mapped out.
->
-> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> If the GPIOs here had connections elsewhere in the DT, then we have to
+> describe the provider in DT.
+this is exactly what I need it for: that platform has hand-written
+.dts files and I need to wire up a GPIO LED
 
-(...)
 
-> +config GPIO_MSC313
-> +       bool "MStar MSC313 GPIO support"
-> +       default y if ARCH_MSTARV7
-> +       depends on ARCH_MSTARV7
-> +       select GPIO_GENERIC
-
-Selecting GPIO_GENERIC, that is good.
-But you're not using it, because you can't.
-This chip does not have the bits lined up nicely
-in one register, instead there seems to be something
-like one register per line, right?
-So skip GPIO_GENERIC.
-
-> +#define MSC313_GPIO_IN  BIT(0)
-> +#define MSC313_GPIO_OUT BIT(4)
-> +#define MSC313_GPIO_OEN BIT(5)
-> +
-> +#define MSC313_GPIO_BITSTOSAVE (MSC313_GPIO_OUT | MSC313_GPIO_OEN)
-
-Some comment here telling us why these need saving and
-not others.
-
-> +#define FUART_NAMES                    \
-> +       MSC313_PINNAME_FUART_RX,        \
-> +       MSC313_PINNAME_FUART_TX,        \
-> +       MSC313_PINNAME_FUART_CTS,       \
-> +       MSC313_PINNAME_FUART_RTS
-> +
-> +#define OFF_FUART_RX   0x50
-> +#define OFF_FUART_TX   0x54
-> +#define OFF_FUART_CTS  0x58
-> +#define OFF_FUART_RTS  0x5c
-> +
-> +#define FUART_OFFSETS  \
-> +       OFF_FUART_RX,   \
-> +       OFF_FUART_TX,   \
-> +       OFF_FUART_CTS,  \
-> +       OFF_FUART_RTS
-
-This looks a bit strange. The GPIO driver should not really
-have to know about any other use cases for pins than
-GPIO. But I guess it is intuitive for the driver.
-
-> +#define SD_NAMES               \
-> +       MSC313_PINNAME_SD_CLK,  \
-> +       MSC313_PINNAME_SD_CMD,  \
-> +       MSC313_PINNAME_SD_D0,   \
-> +       MSC313_PINNAME_SD_D1,   \
-> +       MSC313_PINNAME_SD_D2,   \
-> +       MSC313_PINNAME_SD_D3
-> +
-> +#define OFF_SD_CLK     0x140
-> +#define OFF_SD_CMD     0x144
-> +#define OFF_SD_D0      0x148
-> +#define OFF_SD_D1      0x14cchild_to_parent_hwirq
-> +#define OFF_SD_D2      0x150
-> +#define OFF_SD_D3      0x154
-> +
-> +#define SD_OFFSETS     \
-> +       OFF_SD_CLK,     \
-> +       OFF_SD_CMD,     \
-> +       OFF_SD_D0,      \
-> +       OFF_SD_D1,      \
-> +       OFF_SD_D2,      \
-> +       OFF_SD_D3
-> +
-> +#define I2C1_NAMES                     \
-> +       MSC313_PINNAME_I2C1_SCL,        \
-> +       MSC313_PINNAME_I2C1_SCA
-> +
-> +#define OFF_I2C1_SCL   0x188
-> +#define OFF_I2C1_SCA   0x18c
-> +
-> +#define I2C1_OFFSETS   \
-> +       OFF_I2C1_SCL,   \
-> +       OFF_I2C1_SCA
-> +
-> +#define SPI0_NAMES             \
-> +       MSC313_PINNAME_SPI0_CZ, \
-> +       MSC313_PINNAME_SPI0_CK, \
-> +       MSC313_PINNAME_SPI0_DI, \
-> +       MSC313_PINNAME_SPI0_DO
-> +
-> +#define OFF_SPI0_CZ    0x1c0
-> +#define OFF_SPI0_CK    0x1c4
-> +#define OFF_SPI0_DI    0x1c8
-> +#define OFF_SPI0_DO    0x1cc
-> +
-> +#define SPI0_OFFSETS   \
-> +       OFF_SPI0_CZ,    \
-> +       OFF_SPI0_CK,    \
-> +       OFF_SPI0_DI,    \
-> +       OFF_SPI0_DO
-
-Same with all these. I suppose it is the offsets of stuff
-that would be there unless we were using it for GPIO.
-
-> +static int msc313_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct msc313_gpio *gpio = gpiochip_get_data(chip);
-> +> +
-
-> +       return gpio->irqs[offset];
-> +}
-
-Please do not use custom IRQ handling like this.
-As there seems to be one IRQ per line, look into using
-
-        select GPIOLIB_IRQCHIP
-        select IRQ_DOMAIN_HIERARCHY
-
-See for example in gpio-ixp4xx.c how we deal with
-hiearchical GPIO IRQs.
-
-> +       gpiochip->to_irq = msc313_gpio_to_irq;
-> +       gpiochip->base = -1;
-> +       gpiochip->ngpio = gpio->gpio_data->num;
-> +       gpiochip->names = gpio->gpio_data->names;
-> +
-> +       for (i = 0; i < gpiochip->ngpio; i++)
-> +               gpio->irqs[i] = of_irq_get_byname(pdev->dev.of_node, gpio->gpio_data->names[i]);
-
-Use hierarchical generic GPIO IRQs for these.
-
-Assign ->fwnode, ->parent_domain, ->child_to_parent_hwirq,
-and probably also ->handler on the struct gpio_irq_chip *.
-
-Skip assigning gpiochip->to_irq, the generic code will
-handle that.
-
-Again see gpio-ixp4xx.c for an example.
-
-Yours,
-Linus Walleij
+Best regards,
+Martin
