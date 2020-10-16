@@ -2,113 +2,118 @@ Return-Path: <SRS0=Nl/I=DX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 794BAC43457
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 21:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D9DC43467
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 21:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF9921D40
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 21:00:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="S4GwSQZH"
+	by mail.kernel.org (Postfix) with ESMTP id 9461A216C4
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 21:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409923AbgJPVAj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Oct 2020 17:00:39 -0400
-Received: from mxwww.masterlogin.de ([95.129.51.170]:58698 "EHLO
-        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390931AbgJPVAi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2020 17:00:38 -0400
-Received: from mxout2.routing.net (unknown [192.168.10.82])
-        by backup.mxwww.masterlogin.de (Postfix) with ESMTPS id 813742C460;
-        Fri, 16 Oct 2020 20:40:47 +0000 (UTC)
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-        by mxout2.routing.net (Postfix) with ESMTP id 6AA0A5FA21;
-        Fri, 16 Oct 2020 20:40:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-        s=20200217; t=1602880843;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Nq64YXij9tzn9ukxd1xli05D6EoZxP+TcI13tNDVaEk=;
-        b=S4GwSQZHgZGnhYpsYIzMW4OWVfWIXiRYfXE3/EJ7LvcWBT9QJdacMxLESXBtbTyZ2UFbSC
-        12BFYNZT2/v5bBlHIxIlkJ33lByNC2L4rF9LMPY6f6ZdgQOrM/NRq1UDrd0SnOKKIDtS8l
-        jJjqIUwNFwBnq5OV+2Msr0pTcT/OKOk=
-Received: from localhost.localdomain (fttx-pool-80.208.213.194.bambit.de [80.208.213.194])
-        by mxbox3.masterlogin.de (Postfix) with ESMTPSA id CDF5836023B;
-        Fri, 16 Oct 2020 20:40:42 +0000 (UTC)
-From:   Frank Wunderlich <linux@fw-web.de>
-To:     linux-mediatek@lists.infradead.org
-Cc:     Frank Wunderlich <frank-w@public-files.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Subject: [RFC 3/3] pinctl: mt7622: drop pwm ch7 as mt7622 only has 6 channels
-Date:   Fri, 16 Oct 2020 22:40:19 +0200
-Message-Id: <20201016204019.2606-4-linux@fw-web.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201016204019.2606-1-linux@fw-web.de>
-References: <20201016204019.2606-1-linux@fw-web.de>
+        id S2391310AbgJPV2f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Oct 2020 17:28:35 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:38486 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390460AbgJPV2e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2020 17:28:34 -0400
+X-Greylist: delayed 526 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Oct 2020 17:28:33 EDT
+Received: from ravnborg.org (unknown [188.228.123.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 428CE8062D;
+        Fri, 16 Oct 2020 23:19:45 +0200 (CEST)
+Date:   Fri, 16 Oct 2020 23:19:43 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Qinglang Miao <miaoqinglang@huawei.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH -next] omapfb: connector-hdmi: simplify the return
+ expression of hdmic_connect
+Message-ID: <20201016211943.GG1496366@ravnborg.org>
+References: <20200921131051.92661-1-miaoqinglang@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200921131051.92661-1-miaoqinglang@huawei.com>
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=fu7ymmwf c=1 sm=1 tr=0
+        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
+        a=kj9zAlcOel0A:10 a=i0EeH86SAAAA:8 a=e5mUnYsNAAAA:8
+        a=no2T8IuB39rNVZpCtwQA:9 a=CjuIK1q_8ugA:10 a=Vxmtnl_E_bksehYqCbjh:22
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Frank Wunderlich <frank-w@public-files.de>
+Hi Qinglang Miao
 
-mt7622 is reported by mediatek to have only 6 pwm channels
-so drop pindefines for 7th channel
+On Mon, Sep 21, 2020 at 09:10:51PM +0800, Qinglang Miao wrote:
+> Simplify the return expression.
+> 
+> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- drivers/pinctrl/mediatek/pinctrl-mt7622.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+I dropped the changes to gpio-cs5535.c when I applied this patch to
+drm-misc-next. It looks like an accident that it was included here.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index ce4a8a0cc19c..260ffadd24e4 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -439,12 +439,6 @@ static int mt7622_pwm_ch6_2_pins[] = { 81, };
- static int mt7622_pwm_ch6_2_funcs[] = { 4, };
- static int mt7622_pwm_ch6_3_pins[] = { 100, };
- static int mt7622_pwm_ch6_3_funcs[] = { 0, };
--static int mt7622_pwm_ch7_0_pins[] = { 70, };
--static int mt7622_pwm_ch7_0_funcs[] = { 3, };
--static int mt7622_pwm_ch7_1_pins[] = { 82, };
--static int mt7622_pwm_ch7_1_funcs[] = { 4, };
--static int mt7622_pwm_ch7_2_pins[] = { 101, };
--static int mt7622_pwm_ch7_2_funcs[] = { 0, };
- 
- /* SD */
- static int mt7622_sd_0_pins[] = { 16, 17, 18, 19, 20, 21, };
-@@ -611,9 +605,6 @@ static const struct group_desc mt7622_groups[] = {
- 	PINCTRL_PIN_GROUP("pwm_ch6_1", mt7622_pwm_ch6_1),
- 	PINCTRL_PIN_GROUP("pwm_ch6_2", mt7622_pwm_ch6_2),
- 	PINCTRL_PIN_GROUP("pwm_ch6_3", mt7622_pwm_ch6_3),
--	PINCTRL_PIN_GROUP("pwm_ch7_0", mt7622_pwm_ch7_0),
--	PINCTRL_PIN_GROUP("pwm_ch7_1", mt7622_pwm_ch7_1),
--	PINCTRL_PIN_GROUP("pwm_ch7_2", mt7622_pwm_ch7_2),
- 	PINCTRL_PIN_GROUP("sd_0", mt7622_sd_0),
- 	PINCTRL_PIN_GROUP("sd_1", mt7622_sd_1),
- 	PINCTRL_PIN_GROUP("snfi", mt7622_snfi),
-@@ -700,9 +691,7 @@ static const char *mt7622_pwm_groups[] = { "pwm_ch1_0", "pwm_ch1_1",
- 					   "pwm_ch4_3", "pwm_ch5_0",
- 					   "pwm_ch5_1", "pwm_ch5_2",
- 					   "pwm_ch6_0", "pwm_ch6_1",
--					   "pwm_ch6_2", "pwm_ch6_3",
--					   "pwm_ch7_0", "pwm_ch7_1",
--					   "pwm_ch7_2", };
-+					   "pwm_ch6_2", "pwm_ch6_3", };
- static const char *mt7622_sd_groups[] = { "sd_0", "sd_1", };
- static const char *mt7622_spic_groups[] = { "spic0_0", "spic0_1", "spic1_0",
- 					    "spic1_1", "spic2_0",
--- 
-2.25.1
+	Sam
 
+> ---
+>  drivers/gpio/gpio-cs5535.c                                 | 6 +-----
+>  drivers/video/fbdev/omap2/omapfb/displays/connector-hdmi.c | 7 +------
+>  2 files changed, 2 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-cs5535.c b/drivers/gpio/gpio-cs5535.c
+> index 53b24e3ae..57b9ddffd 100644
+> --- a/drivers/gpio/gpio-cs5535.c
+> +++ b/drivers/gpio/gpio-cs5535.c
+> @@ -345,12 +345,8 @@ static int cs5535_gpio_probe(struct platform_device *pdev)
+>  				mask_orig, mask);
+>  
+>  	/* finally, register with the generic GPIO API */
+> -	err = devm_gpiochip_add_data(&pdev->dev, &cs5535_gpio_chip.chip,
+> +	return devm_gpiochip_add_data(&pdev->dev, &cs5535_gpio_chip.chip,
+>  				     &cs5535_gpio_chip);
+> -	if (err)
+> -		return err;
+> -
+> -	return 0;
+>  }
+>  
+>  static struct platform_driver cs5535_gpio_driver = {
+> diff --git a/drivers/video/fbdev/omap2/omapfb/displays/connector-hdmi.c b/drivers/video/fbdev/omap2/omapfb/displays/connector-hdmi.c
+> index 49551afbd..670b9c6eb 100644
+> --- a/drivers/video/fbdev/omap2/omapfb/displays/connector-hdmi.c
+> +++ b/drivers/video/fbdev/omap2/omapfb/displays/connector-hdmi.c
+> @@ -50,18 +50,13 @@ static int hdmic_connect(struct omap_dss_device *dssdev)
+>  {
+>  	struct panel_drv_data *ddata = to_panel_data(dssdev);
+>  	struct omap_dss_device *in = ddata->in;
+> -	int r;
+>  
+>  	dev_dbg(ddata->dev, "connect\n");
+>  
+>  	if (omapdss_device_is_connected(dssdev))
+>  		return 0;
+>  
+> -	r = in->ops.hdmi->connect(in, dssdev);
+> -	if (r)
+> -		return r;
+> -
+> -	return 0;
+> +	return in->ops.hdmi->connect(in, dssdev);
+>  }
+>  
+>  static void hdmic_disconnect(struct omap_dss_device *dssdev)
+> -- 
+> 2.23.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
