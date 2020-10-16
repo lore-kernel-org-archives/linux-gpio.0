@@ -2,125 +2,108 @@ Return-Path: <SRS0=Nl/I=DX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50699C43457
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 20:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9CFC433E7
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 21:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EECE221775
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 20:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F772145D
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 21:00:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Tu7vXfik"
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="eUe9lvGq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409072AbgJPUw5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Oct 2020 16:52:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393599AbgJPUw5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2020 16:52:57 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1461EC061755;
-        Fri, 16 Oct 2020 13:52:57 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id p13so3859078edi.7;
-        Fri, 16 Oct 2020 13:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LugPJbth2L+5NzHqEmJU9Ma7NXcScsFxdJ4jE8WC+U4=;
-        b=Tu7vXfika4qfrXsXOIcn75dbSNc5REGqutvQkX6182ssmjsn2jxIUZ+kP8c4FqidD1
-         iMzZVkOEOhMbhuvETrQ/wljPan2CMq5kBxv+mBrz11X8ejGecJ8bWRBk8n5i1el2g865
-         DcJ19IfZWCT5lfDCWFPx7PDVa7mCH/RVW3L8uosA+GHrAE6AlJIKvI9YTPbecLzi8Zl4
-         jzEq+1N1XhG3Y53aL+JM7tkGhzIN5n4Di8Q1Ya0zBcGQFV/82K9vHhZHztRJVXCX8jxA
-         1TLFIqkAgvFYCRXj7lryJz8v9DXrS+Q/x9nl9BFk4o7ukXPoUCi3AXy1fiWoVQkhtyRR
-         Lo8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LugPJbth2L+5NzHqEmJU9Ma7NXcScsFxdJ4jE8WC+U4=;
-        b=M1sS6jgMdJVphvKsg93hRVoBd3QUrMRpMpEj6lliVh6CddE5rvlcaYFkiBYlnrxmsn
-         kkzXq5jOLTqjjHd9ZqE5cvU0c4Jt3DoSjbbtzlq7G7LVY+s+YTDWMjl5y/tQHIk1zJ56
-         mvptrkOWytmUqAWhQbbJNuIvMUl5CJ6gqDrmJG82aFkJNbYsBWbBXeC6pkdcrADzRvNr
-         dryKiUPK89bnY+8GA/XxD0tT2HrF+UhWQGLWVkCGByfHnKt9WN5KnHcN1PmSMYe2tuRl
-         /IVTJwI9jnpAyvfGmIHr+haex5Vcoxf2NvQLkO8himq1nIYjtiRxVKsQgYUBhBaOkvlA
-         fFow==
-X-Gm-Message-State: AOAM5336d8FlJU4OA5cnSyeXtFyPU5bLG+Qu7kk2T3vbxaxqUjUNVuBh
-        Ez8klFJtDCQ3T8Fv+u4bto18rLIvnmzx26MKMLI=
-X-Google-Smtp-Source: ABdhPJxZ42lByUDO+OTDvcJk4T2dgzm029Jq7A4vWTsHVjzFmUepjiwamlx320/sHJIq5iNEVzj9fJQxeoJTImluMKI=
-X-Received: by 2002:a50:d517:: with SMTP id u23mr6148394edi.338.1602881575797;
- Fri, 16 Oct 2020 13:52:55 -0700 (PDT)
+        id S2409714AbgJPVAF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Oct 2020 17:00:05 -0400
+Received: from mxwww.masterlogin.de ([95.129.51.170]:58494 "EHLO
+        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388893AbgJPVAE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2020 17:00:04 -0400
+X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Oct 2020 17:00:02 EDT
+Received: from mxout4.routing.net (unknown [192.168.10.112])
+        by backup.mxwww.masterlogin.de (Postfix) with ESMTPS id 30C102C45D;
+        Fri, 16 Oct 2020 20:40:47 +0000 (UTC)
+Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
+        by mxout4.routing.net (Postfix) with ESMTP id 4B95B1009C6;
+        Fri, 16 Oct 2020 20:40:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+        s=20200217; t=1602880842;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+oJ/of7Qw64mg5bDPdUBki6EV+Di1DJQKZsfwVaB1Kc=;
+        b=eUe9lvGqDR4qOexUreKNT6xAZ3cq5G+LK1YXUcwEXLPnxsZS5z6JSL4vhsIwXo4dvtkjZC
+        W1/vc2hfU4vbmMTBzwMtwuGtESH6qDP1L22A0AkgiY4beFqtZ6jzNgMKfOtmZ/hI0uEAiG
+        SQeRDbehoA6haIxXmXWDYPUhOc9Qd2Y=
+Received: from localhost.localdomain (fttx-pool-80.208.213.194.bambit.de [80.208.213.194])
+        by mxbox3.masterlogin.de (Postfix) with ESMTPSA id AF64036023B;
+        Fri, 16 Oct 2020 20:40:41 +0000 (UTC)
+From:   Frank Wunderlich <linux@fw-web.de>
+To:     linux-mediatek@lists.infradead.org
+Cc:     Frank Wunderlich <frank-w@public-files.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: [RFC 1/3] dts64: mt7622: enable all pwm for bananapi r64
+Date:   Fri, 16 Oct 2020 22:40:17 +0200
+Message-Id: <20201016204019.2606-2-linux@fw-web.de>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201016204019.2606-1-linux@fw-web.de>
+References: <20201016204019.2606-1-linux@fw-web.de>
 MIME-Version: 1.0
-References: <20201004162908.3216898-1-martin.blumenstingl@googlemail.com>
- <20201004162908.3216898-3-martin.blumenstingl@googlemail.com>
- <CACRpkdbTw4UBw02RXX2prju45AsDZqPchhz=gdzsuT-QjhYHVw@mail.gmail.com>
- <CAFBinCAFDhWp6mgUqyOjdMVBR5oZQVpmVPjhnZs1Xg16tFa0PQ@mail.gmail.com>
- <CACRpkdZdwoQCxxqosn2jQPMXLDnTEjuxSWOxG-L1YGE33wbFrg@mail.gmail.com> <CAL_JsqLF8KHG6qZUJzdMyN5cX-ZvPDbuGSGZLOw=CkY90SUGLw@mail.gmail.com>
-In-Reply-To: <CAL_JsqLF8KHG6qZUJzdMyN5cX-ZvPDbuGSGZLOw=CkY90SUGLw@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 16 Oct 2020 22:52:44 +0200
-Message-ID: <CAFBinCBpDn1Vx1ZQdk-Gf-muuAyxjXb+zCkvW6jsH8jP6mDuTw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] dt-bindings: gpio: Add binding documentation for
- Etron EJ168/EJ188/EJ198
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+From: Frank Wunderlich <frank-w@public-files.de>
 
-On Wed, Oct 14, 2020 at 2:43 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Tue, Oct 13, 2020 at 8:27 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > On Wed, Oct 7, 2020 at 9:58 PM Martin Blumenstingl
-> > <martin.blumenstingl@googlemail.com> wrote:
-> > > On Wed, Oct 7, 2020 at 11:19 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > > > On Sun, Oct 4, 2020 at 8:00 PM Martin Blumenstingl
-> > > > <martin.blumenstingl@googlemail.com> wrote:
-> > > >
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    enum:
-> > > > > +      - pci1b6f,7023
-> > > > > +      - pci1b6f,7052
-> > > >
-> > > > I think it is better to let the PCI driver for the whole hardware in
-> > > > drivers/usb/host/xhci-pci.c probe from the PCI configuration space
-> > > > numbers, and then add a gpio_chip to xhci-pci.c.
-> > >
-> > > to have everything consistent I will move the binding to
-> > > Documentation/devicetree/bindings/usb
-> >
-> > I do not understand why a PCI device would need a DT binding
-> > at all. They just probe from the magic number in the PCI
-> > config space, they spawn struct pci_dev PCI devices, not the
-> > type of platform devices coming out of the DT parser code.
-> > No DT compatible needed.
->
-> Same reason for all the discoverable buses need bindings. There can be
-> parts that are not discoverable or connections with non-discoverable
-> nodes. There's also cases where the discoverable device has to be
-> powered, reset deasserted, clocks enabled, etc. first to be
-> discovered.
->
-> If the GPIOs here had connections elsewhere in the DT, then we have to
-> describe the provider in DT.
-this is exactly what I need it for: that platform has hand-written
-.dts files and I need to wire up a GPIO LED
+mt7622 only supports 6 pwm-channels so drop pwm7
 
+third pwm (pwm2) is inverted and connected to fan-socket
 
-Best regards,
-Martin
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ .../boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts     | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts b/arch/arm64/boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts
+index 1cc4dcb0008c..ad5b1592182d 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts
+@@ -414,10 +414,15 @@ mux {
+ 		};
+ 	};
+ 
+-	pwm7_pins: pwm1-2-pins {
++	pwm_pins: pwm-pins {
+ 		mux {
+ 			function = "pwm";
+-			groups = "pwm_ch7_2";
++			groups = "pwm_ch1_0", /* mt7622_pwm_ch1_0_pins[] = { 51, }; */
++				 "pwm_ch2_0", /* mt7622_pwm_ch2_0_pins[] = { 52, }; */
++				 "pwm_ch3_2", /* mt7622_pwm_ch3_2_pins[] = { 97, }; */
++				 "pwm_ch4_1", /* mt7622_pwm_ch4_1_pins[] = { 67, }; */
++				 "pwm_ch5_0", /* mt7622_pwm_ch5_0_pins[] = { 68, }; */
++				 "pwm_ch6_0"; /* mt7622_pwm_ch6_0_pins[] = { 69, }; */
+ 		};
+ 	};
+ 
+@@ -537,7 +542,7 @@ mux {
+ 
+ &pwm {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pwm7_pins>;
++	pinctrl-0 = <&pwm_pins>;
+ 	status = "okay";
+ };
+ 
+-- 
+2.25.1
+
