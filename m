@@ -5,247 +5,512 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6550C433E7
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 06:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E9DC433E7
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 09:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5F1206DD
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 06:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8385820EDD
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Oct 2020 09:14:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="S09VwH2P"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="N8WlpKTo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394531AbgJPG7m (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Oct 2020 02:59:42 -0400
-Received: from z5.mailgun.us ([104.130.96.5]:24699 "EHLO z5.mailgun.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394520AbgJPG7l (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 16 Oct 2020 02:59:41 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1602831580; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=xcxsmxCIUvsJlF//IDWUoNfp3dAUx1VoQAyhaIngGw0=; b=S09VwH2P8k9USxtsWu8owZiDZpVwor7qrMhblOF4ko7XkQrjl83A8CT4Lj1VYbRBTfE4vfOS
- H6hhLJ6e7FXvQaC6TvhAmARcO1hGZwTgZV3C4lxf6JQkfvXT1Yt9i72XHe5Cdhn+ZC8+suyQ
- ke2GSFQrysP8ICZgDPhpBlNlTmU=
-X-Mailgun-Sending-Ip: 104.130.96.5
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 5f8944d0588858a3043824f6 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 16 Oct 2020 06:59:27
- GMT
-Sender: rnayak=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2628EC43382; Fri, 16 Oct 2020 06:59:27 +0000 (UTC)
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7AAA8C433F1;
-        Fri, 16 Oct 2020 06:59:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7AAA8C433F1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add sc7280 pinctrl bindings
-Date:   Fri, 16 Oct 2020 12:28:51 +0530
-Message-Id: <1602831532-24818-1-git-send-email-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S2405599AbgJPJJ4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Oct 2020 05:09:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394659AbgJPJJx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2020 05:09:53 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75122C0613D3
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2020 02:09:52 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id e17so1835173wru.12
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2020 02:09:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G1m0plo1fK1W0V7WTbRJJjix3jro0QT0SC62zhQtsUs=;
+        b=N8WlpKTo3EdJj6MJZYvbQ5zuei2AvTtikPp2JeePEOfCWNc6fObgPuw8XyQ8SsCiMM
+         s73bgHjqR1BTADhjguj7aeUaSmLJHcOT03kSRy55aXd3KK17/TzMRyt/2i5kcu/cUS1L
+         KTrMT6Gsi1hkv6GNNiQdK5hy/iza3MzRtUN+gNB85PUm1M5wTEb1TsiSwqsKv5LPYOqv
+         I0Qj5vMg06B70hqWuuOaM7NQMpDl6XYEwWAWxuqnlXfoiEWUA0CNU7WoeZli6I6PZOnu
+         wjh4Lf+bWza1gTSkCMpb2X5t/QPR5JYCMihqSXMP3nHgCjhyQL4bsTkXss09DZA/0VzC
+         lswQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G1m0plo1fK1W0V7WTbRJJjix3jro0QT0SC62zhQtsUs=;
+        b=BqpU2lFBFXbo7pxe03NoLM+mT3+A9zJmCMiYE4mIMjsqxWCqoRW4DA1JTLTpILG26g
+         7G1nUsbUiWn/At4g15I4mNkZlbSLmPx+QAKkoJhEsObN6X9U55Jr231tr3yVBZcqEzSn
+         gHXu1wQq1eQBQ6K/KlfEqnyTzPYv9Z18gKjTQ1OkYhbNQr8J2UxrQH1N+1j17EAhCD7q
+         gQgesa+8yMPW+0O1vQ0qW6kF/xwrB58YNvr3LN3sLYV/p6cwPnHSsb8LTk+Hh3HCIYUU
+         ZFl4lfIi1Ah8IMhg3VVvhw7bMjTvNSeb5JyTdSalPnoUNOdGjgvwAY18XpgXnhnK09rV
+         CS5w==
+X-Gm-Message-State: AOAM531cqmAC0alWM1VHLSv6aopn4Agtkjlx8N9TXdqmF2MWYIc3m+2M
+        xlH95YP7a1eVkJacolMctL+NLg==
+X-Google-Smtp-Source: ABdhPJxNL0HmrZEF64QBIVal5bHA0uVkHG4CJJw2wQ9AGYci7cB2/8DMZKyZaTpTC03b00pgNzaRQQ==
+X-Received: by 2002:a5d:6591:: with SMTP id q17mr2717847wru.173.1602839391080;
+        Fri, 16 Oct 2020 02:09:51 -0700 (PDT)
+Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
+        by smtp.gmail.com with ESMTPSA id n3sm1999931wmn.28.2020.10.16.02.09.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Oct 2020 02:09:50 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Helmut Grohne <helmut.grohne@intenta.de>
+Cc:     Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [libgpiod][RFC PATCH] bindings: cxx: demote the line's parent chip reference to a weak_ptr
+Date:   Fri, 16 Oct 2020 11:09:49 +0200
+Message-Id: <20201016090949.24456-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.28.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add device tree binding Documentation details for Qualcomm SC7280
-TLMM block.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Currently the line object has the power to control the parent chip's
+lifetime because it stores a hard reference (in the form of a shared
+pointer) to the underlying struct gpiod_chip. This is wrong from the
+relationship point-of-view - the chip should control the exposed lines,
+not the other way around.
+
+Demote the parent reference to a weak_ptr. Introduce a sub-class that
+allows line and line_bulk objects to lock the chip by temporarily
+converting this weak_ptr to a full shared_ptr - this way we don't risk
+dropping the last reference to the parent chip when the line is calling
+the underlying library functions. Chip deleted during that time will
+expire right after the concerned line method returns.
+
+This requires an API change - the global find_line() function now
+returns a <line, chip> pair so that the caller gets the chance to grab
+the chip's reference.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- .../bindings/pinctrl/qcom,sc7280-pinctrl.yaml      | 170 +++++++++++++++++++++
- 1 file changed, 170 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
+Hi Helmut!
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-new file mode 100644
-index 0000000..971cfaf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-@@ -0,0 +1,170 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/qcom,sc7280-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+Please take a look at the following proposition of modifying the
+relationship between chips and lines in C++ bindings. This is a follow-up
+to our discussion under your suggestion for using time_point for
+timestamps.
+
+Bartosz
+
+ bindings/cxx/chip.cpp                 |  6 ++++
+ bindings/cxx/examples/gpiofindcxx.cpp |  6 ++--
+ bindings/cxx/gpiod.hpp                | 31 +++++++++++++++++----
+ bindings/cxx/iter.cpp                 |  2 +-
+ bindings/cxx/line.cpp                 | 40 +++++++++++++++++++++------
+ bindings/cxx/line_bulk.cpp            |  9 ++++++
+ bindings/cxx/tests/tests-line.cpp     | 12 ++++----
+ 7 files changed, 81 insertions(+), 25 deletions(-)
+
+diff --git a/bindings/cxx/chip.cpp b/bindings/cxx/chip.cpp
+index 54c85da..1fc0723 100644
+--- a/bindings/cxx/chip.cpp
++++ b/bindings/cxx/chip.cpp
+@@ -69,6 +69,12 @@ chip::chip(::gpiod_chip* chip)
+ 
+ }
+ 
++chip::chip(const ::std::weak_ptr<::gpiod_chip>& chip_ptr)
++	: _m_chip(chip_ptr)
++{
 +
-+title: Qualcomm Technologies, Inc. SC7280 TLMM block
++}
 +
-+maintainers:
-+  - Rajendra Nayak <rnayak@codeaurora.org>
+ void chip::open(const ::std::string& device, int how)
+ {
+ 	auto func = open_funcs.at(how);
+diff --git a/bindings/cxx/examples/gpiofindcxx.cpp b/bindings/cxx/examples/gpiofindcxx.cpp
+index 08fb62c..aeba29d 100644
+--- a/bindings/cxx/examples/gpiofindcxx.cpp
++++ b/bindings/cxx/examples/gpiofindcxx.cpp
+@@ -19,11 +19,11 @@ int main(int argc, char **argv)
+ 		return EXIT_FAILURE;
+ 	}
+ 
+-	::gpiod::line line = ::gpiod::find_line(argv[1]);
+-	if (!line)
++	auto ret = ::gpiod::find_line(argv[1]);
++	if (!ret.first)
+ 		return EXIT_FAILURE;
+ 
+-	::std::cout << line.get_chip().name() << " " << line.offset() << ::std::endl;
++	::std::cout << ret.second.name() << " " << ret.first.offset() << ::std::endl;
+ 
+ 	return EXIT_SUCCESS;
+ }
+diff --git a/bindings/cxx/gpiod.hpp b/bindings/cxx/gpiod.hpp
+index 8dfc172..50cdf7f 100644
+--- a/bindings/cxx/gpiod.hpp
++++ b/bindings/cxx/gpiod.hpp
+@@ -199,11 +199,13 @@ public:
+ private:
+ 
+ 	chip(::gpiod_chip* chip);
++	chip(const ::std::weak_ptr<::gpiod_chip>& chip_ptr);
+ 
+ 	void throw_if_noref(void) const;
+ 
+ 	::std::shared_ptr<::gpiod_chip> _m_chip;
+ 
++	friend line;
+ 	friend chip_iter;
+ 	friend line_iter;
+ };
+@@ -438,10 +440,10 @@ public:
+ 	GPIOD_API int event_get_fd(void) const;
+ 
+ 	/**
+-	 * @brief Get the reference to the parent chip.
+-	 * @return Reference to the parent chip object.
++	 * @brief Get the parent chip.
++	 * @return Parent chip of this line.
+ 	 */
+-	GPIOD_API const chip& get_chip(void) const;
++	GPIOD_API const chip get_chip(void) const;
+ 
+ 	/**
+ 	 * @brief Re-read the line info from the kernel.
+@@ -526,7 +528,22 @@ private:
+ 	line_event make_line_event(const ::gpiod_line_event& event) const noexcept;
+ 
+ 	::gpiod_line* _m_line;
+-	chip _m_chip;
++	::std::weak_ptr<::gpiod_chip> _m_owner;
 +
-+description: |
-+  This binding describes the Top Level Mode Multiplexer block found in the
-+  SC7280 platform.
++	class chip_locker
++	{
++	public:
++		chip_locker(const line& line);
++		~chip_locker(void) = default;
 +
-+properties:
-+  compatible:
-+    const: qcom,sc7280-pinctrl
++		chip_locker(const chip_locker& other) = delete;
++		chip_locker(chip_locker&& other) = delete;
++		chip_locker& operator=(const chip_locker&& other) = delete;
++		chip_locker& operator=(chip_locker&& other) = delete;
 +
-+  reg:
-+    maxItems: 1
++	private:
++		::std::shared_ptr<::gpiod_chip> _m_chip;
++	};
+ 
+ 	friend chip;
+ 	friend line_bulk;
+@@ -536,9 +553,11 @@ private:
+ /**
+  * @brief Find a GPIO line by name. Search all GPIO chips present on the system.
+  * @param name Name of the line.
+- * @return Returns a line object - empty if the line was not found.
++ * @return Returns a <line, chip> pair where line is the line with given name
++ *         and chip is the line's owner. Both objects are empty if the line was
++ *         not found.
+  */
+-GPIOD_API line find_line(const ::std::string& name);
++GPIOD_API ::std::pair<line, chip> find_line(const ::std::string& name);
+ 
+ /**
+  * @brief Describes a single GPIO line event.
+diff --git a/bindings/cxx/iter.cpp b/bindings/cxx/iter.cpp
+index b1acc8c..7985910 100644
+--- a/bindings/cxx/iter.cpp
++++ b/bindings/cxx/iter.cpp
+@@ -115,7 +115,7 @@ line_iter& line_iter::operator++(void)
+ {
+ 	::gpiod_line* next = ::gpiod_line_iter_next(this->_m_iter.get());
+ 
+-	this->_m_current = next ? line(next, this->_m_current._m_chip) : line();
++	this->_m_current = next ? line(next, this->_m_current._m_owner) : line();
+ 
+ 	return *this;
+ }
+diff --git a/bindings/cxx/line.cpp b/bindings/cxx/line.cpp
+index 52084bf..1ee4459 100644
+--- a/bindings/cxx/line.cpp
++++ b/bindings/cxx/line.cpp
+@@ -24,14 +24,14 @@ const ::std::map<int, int> bias_mapping = {
+ 
+ line::line(void)
+ 	: _m_line(nullptr),
+-	  _m_chip()
++	  _m_owner()
+ {
+ 
+ }
+ 
+ line::line(::gpiod_line* line, const chip& owner)
+ 	: _m_line(line),
+-	  _m_chip(owner)
++	  _m_owner(owner._m_chip)
+ {
+ 
+ }
+@@ -39,6 +39,7 @@ line::line(::gpiod_line* line, const chip& owner)
+ unsigned int line::offset(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	return ::gpiod_line_offset(this->_m_line);
+ }
+@@ -46,6 +47,7 @@ unsigned int line::offset(void) const
+ ::std::string line::name(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	const char* name = ::gpiod_line_name(this->_m_line);
+ 
+@@ -55,6 +57,7 @@ unsigned int line::offset(void) const
+ ::std::string line::consumer(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	const char* consumer = ::gpiod_line_consumer(this->_m_line);
+ 
+@@ -64,6 +67,7 @@ unsigned int line::offset(void) const
+ int line::direction(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	int dir = ::gpiod_line_direction(this->_m_line);
+ 
+@@ -73,6 +77,7 @@ int line::direction(void) const
+ int line::active_state(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	int active = ::gpiod_line_active_state(this->_m_line);
+ 
+@@ -82,6 +87,7 @@ int line::active_state(void) const
+ int line::bias(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	return bias_mapping.at(::gpiod_line_bias(this->_m_line));
+ }
+@@ -89,6 +95,7 @@ int line::bias(void) const
+ bool line::is_used(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	return ::gpiod_line_is_used(this->_m_line);
+ }
+@@ -96,6 +103,7 @@ bool line::is_used(void) const
+ bool line::is_open_drain(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	return ::gpiod_line_is_open_drain(this->_m_line);
+ }
+@@ -103,6 +111,7 @@ bool line::is_open_drain(void) const
+ bool line::is_open_source(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	return ::gpiod_line_is_open_source(this->_m_line);
+ }
+@@ -128,6 +137,7 @@ void line::release(void) const
+ bool line::is_requested(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	return ::gpiod_line_is_requested(this->_m_line);
+ }
+@@ -227,6 +237,7 @@ line_event line::make_line_event(const ::gpiod_line_event& event) const noexcept
+ line_event line::event_read(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	::gpiod_line_event event_buf;
+ 	line_event event;
+@@ -243,6 +254,7 @@ line_event line::event_read(void) const
+ ::std::vector<line_event> line::event_read_multiple(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	/* 16 is the maximum number of events stored in the kernel FIFO. */
+ 	::std::array<::gpiod_line_event, 16> event_buf;
+@@ -265,6 +277,7 @@ line_event line::event_read(void) const
+ int line::event_get_fd(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	int ret = ::gpiod_line_event_get_fd(this->_m_line);
+ 
+@@ -275,14 +288,15 @@ int line::event_get_fd(void) const
+ 	return ret;
+ }
+ 
+-const chip& line::get_chip(void) const
++const chip line::get_chip(void) const
+ {
+-	return this->_m_chip;
++	return chip(this->_m_owner);
+ }
+ 
+ void line::update(void) const
+ {
+ 	this->throw_if_null();
++	line::chip_locker lock_chip(*this);
+ 
+ 	int ret = ::gpiod_line_update(this->_m_line);
+ 
+@@ -294,7 +308,7 @@ void line::update(void) const
+ void line::reset(void)
+ {
+ 	this->_m_line = nullptr;
+-	this->_m_chip.reset();
++	this->_m_owner.reset();
+ }
+ 
+ bool line::operator==(const line& rhs) const noexcept
+@@ -323,14 +337,22 @@ void line::throw_if_null(void) const
+ 		throw ::std::logic_error("object not holding a GPIO line handle");
+ }
+ 
+-line find_line(const ::std::string& name)
++line::chip_locker::chip_locker(const line& line)
++	: _m_chip(line._m_owner)
+ {
+-	line ret;
++	
++}
 +
-+  interrupts:
-+    description: Specifies the TLMM summary IRQ
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    description:
-+      Specifies the PIN numbers and Flags, as defined in defined in
-+      include/dt-bindings/interrupt-controller/irq.h
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    description: Specifying the pin number and flags, as defined in
-+      include/dt-bindings/gpio/gpio.h
-+    const: 2
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+  wakeup-parent:
-+    maxItems: 1
-+
-+#PIN CONFIGURATION NODES
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+    $ref: "/schemas/pinctrl/pincfg-node.yaml"
-+
-+    properties:
-+      pins:
-+        description:
-+          List of gpio pins affected by the properties specified in this
-+          subnode.
-+        items:
-+          oneOf:
-+            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-7][0-4])$"
-+            - enum: [ sdc1_rclk, sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk,
-+                      sdc2_cmd, sdc2_data, ufs_reset ]
-+        minItems: 1
-+        maxItems: 16
-+
-+      function:
-+        description:
-+          Specify the alternative function to be configured for the specified
-+          pins.
-+
-+        enum: [ atest_char, atest_char0, atest_char1, atest_char2,
-+                atest_char3, atest_usb0, atest_usb00, atest_usb01,
-+                atest_usb02, atest_usb03, atest_usb1, atest_usb10,
-+                atest_usb11, atest_usb12, atest_usb13, audio_ref,
-+                cam_mclk, cci_async, cci_i2c, cci_timer0, cci_timer1,
-+                cci_timer2, cci_timer3, cci_timer4, cmu_rng0, cmu_rng1,
-+                cmu_rng2, cmu_rng3, coex_uart1, cri_trng, cri_trng0,
-+                cri_trng1, dbg_out, ddr_bist, ddr_pxi0, ddr_pxi1, dp_hot,
-+                dp_lcd, edp_hot, edp_lcd, gcc_gp1, gcc_gp2, gcc_gp3,
-+                gpio, host2wlan_sol, ibi_i3c, jitter_bist, lpass_slimbus,
-+                mdp_vsync, mdp_vsync0, mdp_vsync1, mdp_vsync2, mdp_vsync3,
-+                mdp_vsync4, mdp_vsync5, mi2s0_data0, mi2s0_data1, mi2s0_sck,
-+                mi2s0_ws, mi2s1_data0, mi2s1_data1, mi2s1_sck, mi2s1_ws,
-+                mi2s2_data0, mi2s2_data1, mi2s2_sck, mi2s2_ws, mss_grfc0,
-+                mss_grfc1, mss_grfc10, mss_grfc11, mss_grfc12, mss_grfc2,
-+                mss_grfc3, mss_grfc4, mss_grfc5, mss_grfc6, mss_grfc7,
-+                mss_grfc8, mss_grfc9, nav_gpio0, nav_gpio1, nav_gpio2,
-+                pa_indicator, pcie0_clkreqn, pcie1_clkreqn, phase_flag0,
-+                phase_flag1, phase_flag10, phase_flag11, phase_flag12,
-+                phase_flag13, phase_flag14, phase_flag15, phase_flag16,
-+                phase_flag17, phase_flag18, phase_flag19, phase_flag2,
-+                phase_flag20, phase_flag21, phase_flag22, phase_flag23,
-+                phase_flag24, phase_flag25, phase_flag26, phase_flag27,
-+                phase_flag28, phase_flag29, phase_flag3, phase_flag30,
-+                phase_flag31, phase_flag4, phase_flag5, phase_flag6,
-+                phase_flag7, phase_flag8, phase_flag9, pll_bist,
-+                pll_bypassnl, pll_clk, pll_reset, pri_mi2s, prng_rosc,
-+                qdss_cti, qdss_gpio, qdss_gpio0, qdss_gpio1, qdss_gpio10,
-+                qdss_gpio11, qdss_gpio12, qdss_gpio13, qdss_gpio14,
-+                qdss_gpio15, qdss_gpio2, qdss_gpio3, qdss_gpio4, qdss_gpio5,
-+                qdss_gpio6, qdss_gpio7, qdss_gpio8, qdss_gpio9,
-+                qlink0_enable, qlink0_request, qlink0_wmss, qlink1_enable,
-+                qlink1_request, qlink1_wmss, qspi_clk, qspi_cs, qspi_data,
-+                qup00, qup01, qup02, qup03, qup04, qup05, qup06, qup07,
-+                qup10, qup11, qup12, qup13, qup14, qup15, qup16, qup17,
-+                sdc40, sdc41, sdc42, sdc43, sdc4_clk, sdc4_cmd, sd_write,
-+                sec_mi2s, tb_trig, tgu_ch0, tgu_ch1, tsense_pwm1,
-+                tsense_pwm2, uim0_clk, uim0_data, uim0_present, uim0_reset,
-+                uim1_clk, uim1_data, uim1_present, uim1_reset, usb2phy_ac,
-+                usb_phy, vfr_0, vfr_1, vsense_trigger ]
-+
-+      drive-strength:
-+        enum: [2, 4, 6, 8, 10, 12, 14, 16]
-+        default: 2
-+        description:
-+          Selects the drive strength for the specified pins, in mA.
-+
-+      bias-pull-down: true
-+
-+      bias-pull-up: true
-+
-+      bias-disable: true
-+
-+      output-high: true
-+
-+      output-low: true
-+
-+    required:
-+      - pins
-+      - function
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+        #include <dt-bindings/interrupt-controller/arm-gic.h>
-+        tlmm: pinctrl@f000000 {
-+                compatible = "qcom,sc7280-pinctrl";
-+                reg = <0xf000000 0x1000000>;
-+                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+                interrupt-controller;
-+                #interrupt-cells = <2>;
-+                gpio-ranges = <&tlmm 0 0 175>;
-+                wakeup-parent = <&pdc>;
-+
-+                qup_uart5_default: qup-uart5-pins {
-+                        pins = "gpio46", "gpio47";
-+                        function = "qup13";
-+                        drive-strength = <2>;
-+                        bias-disable;
-+                };
-+        };
++::std::pair<line, chip> find_line(const ::std::string& name)
++{
++	::std::pair<line, chip> ret;
+ 
+ 	for (auto& it: make_chip_iter()) {
+-		ret = it.find_line(name);
+-		if (ret)
++		ret.first = it.find_line(name);
++		if (ret.first) {
++			ret.second = it;
+ 			break;
++		}
+ 	}
+ 
+ 	return ret;
+diff --git a/bindings/cxx/line_bulk.cpp b/bindings/cxx/line_bulk.cpp
+index e77baa2..78615a1 100644
+--- a/bindings/cxx/line_bulk.cpp
++++ b/bindings/cxx/line_bulk.cpp
+@@ -101,6 +101,7 @@ void line_bulk::clear(void)
+ void line_bulk::request(const line_request& config, const ::std::vector<int> default_vals) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	if (!default_vals.empty() && this->size() != default_vals.size())
+ 		throw ::std::invalid_argument("the number of default values must correspond with the number of lines");
+@@ -131,6 +132,7 @@ void line_bulk::request(const line_request& config, const ::std::vector<int> def
+ void line_bulk::release(void) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	::gpiod_line_bulk bulk;
+ 
+@@ -142,6 +144,7 @@ void line_bulk::release(void) const
+ ::std::vector<int> line_bulk::get_values(void) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	::std::vector<int> values;
+ 	::gpiod_line_bulk bulk;
+@@ -161,6 +164,7 @@ void line_bulk::release(void) const
+ void line_bulk::set_values(const ::std::vector<int>& values) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	if (values.size() != this->_m_bulk.size())
+ 		throw ::std::invalid_argument("the size of values array must correspond with the number of lines");
+@@ -180,6 +184,7 @@ void line_bulk::set_config(int direction, ::std::bitset<32> flags,
+ 			   const ::std::vector<int> values) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	if (!values.empty() && this->_m_bulk.size() != values.size())
+ 		throw ::std::invalid_argument("the number of default values must correspond with the number of lines");
+@@ -206,6 +211,7 @@ void line_bulk::set_config(int direction, ::std::bitset<32> flags,
+ void line_bulk::set_flags(::std::bitset<32> flags) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	::gpiod_line_bulk bulk;
+ 	int rv, gflags;
+@@ -228,6 +234,7 @@ void line_bulk::set_flags(::std::bitset<32> flags) const
+ void line_bulk::set_direction_input() const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	::gpiod_line_bulk bulk;
+ 	int rv;
+@@ -243,6 +250,7 @@ void line_bulk::set_direction_input() const
+ void line_bulk::set_direction_output(const ::std::vector<int>& values) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	if (values.size() != this->_m_bulk.size())
+ 		throw ::std::invalid_argument("the size of values array must correspond with the number of lines");
+@@ -262,6 +270,7 @@ void line_bulk::set_direction_output(const ::std::vector<int>& values) const
+ line_bulk line_bulk::event_wait(const ::std::chrono::nanoseconds& timeout) const
+ {
+ 	this->throw_if_empty();
++	line::chip_locker lock_chip(this->_m_bulk.front());
+ 
+ 	::gpiod_line_bulk bulk, event_bulk;
+ 	::timespec ts;
+diff --git a/bindings/cxx/tests/tests-line.cpp b/bindings/cxx/tests/tests-line.cpp
+index e2e4cbc..9841bea 100644
+--- a/bindings/cxx/tests/tests-line.cpp
++++ b/bindings/cxx/tests/tests-line.cpp
+@@ -24,16 +24,16 @@ TEST_CASE("Global find_line() function works", "[line]")
+ 
+ 	SECTION("line found")
+ 	{
+-		auto line = ::gpiod::find_line("gpio-mockup-C-5");
+-		REQUIRE(line.offset() == 5);
+-		REQUIRE(line.name() == "gpio-mockup-C-5");
+-		REQUIRE(line.get_chip().label() == "gpio-mockup-C");
++		auto ret = ::gpiod::find_line("gpio-mockup-C-5");
++		REQUIRE(ret.first.offset() == 5);
++		REQUIRE(ret.first.name() == "gpio-mockup-C-5");
++		REQUIRE(ret.second.label() == "gpio-mockup-C");
+ 	}
+ 
+ 	SECTION("line not found")
+ 	{
+-		auto line = ::gpiod::find_line("nonexistent-line");
+-		REQUIRE_FALSE(line);
++		auto ret = ::gpiod::find_line("nonexistent-line");
++		REQUIRE_FALSE(ret.first);
+ 	}
+ }
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.28.0
 
