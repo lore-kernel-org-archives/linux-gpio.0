@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C69B4C433E7
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Oct 2020 14:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BBDC433E7
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Oct 2020 14:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62E6B222C3
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Oct 2020 14:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB5F8222B8
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Oct 2020 14:10:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="PpbzUn3b"
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="HpOqAHzY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbgJSOKa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Oct 2020 10:10:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38470 "EHLO
+        id S1729178AbgJSOKV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Oct 2020 10:10:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729404AbgJSOK3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2020 10:10:29 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 498A0C0613D1
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2020 07:10:29 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id t22so2081288plr.9
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2020 07:10:29 -0700 (PDT)
+        with ESMTP id S1729155AbgJSOKU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2020 10:10:20 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D9C1C0613D1
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2020 07:10:19 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id l18so44676pgg.0
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2020 07:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=0x0f.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1yRFSCl/mRcUkS6OvmVba08bS0ib90mEnvumV93631A=;
-        b=PpbzUn3bSYybM/B+P67kwVSTJcSculclJ5cYp+qp02sY9e/t2qzNdkZoyBhy1uYr/G
-         ihQHQwNUe/HNv99lgh72wXRgzmFk0PD3Jaxkj4mdBrs6csNqGxPob+KkU30UKCpyayu4
-         HFSlbcGJutFyRy5lWg97w43r3cIY7W+gesEZ4=
+        bh=sDf2wpUuzblvqUz0TuYPHYF7CNvy5nJj5wlwfBiA9Cc=;
+        b=HpOqAHzYkbFF5EvXP78Au0CjG9EmpOZbfd4X/1c/HTraPCSeMIHRSQcWo05jZ9CqqS
+         j8JLSTcuYn9AetcrcKp7ZEHx/FKxpSdNCTR+1Ac0JHwdLTl0RkGInpzLXbHuqmZThNel
+         EpONuf9v61dahukEdqkmWKeUsKqQcnUQH4M0U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1yRFSCl/mRcUkS6OvmVba08bS0ib90mEnvumV93631A=;
-        b=Tea3UTboKV3sPJu2nzG0IkrAS0ruhVip26HixiwDGTmzNdM7kY3gzmxwItZTy4kiNP
-         fLZCGRL4PnTNUoWunXP0rPYzdDlj90Z2mTGiLuMXi8PvoAuqTsWwpR2VZbWi2DPv5JF2
-         FucwGqd6LfuKoj7Z59A9Ivsqq9dJiaRZjQcjJ+MvcgOfhkxdWnZFhtQmUUU1uU+DPUdc
-         0rKdJwCUtO6aYluSTDv/CIW9dQtnzI447k327+DEcCB7kY3b+yzvdCMzjQjilvlJJQSR
-         zA3DViwmTf8e2XjnMf0aky7VJ0Wv52mMt9kOjY1fyvWr8H6Do/zrhFjqSzG5NXtsu5cE
-         2D1Q==
-X-Gm-Message-State: AOAM531BeLZBzqhpTjlnGNpjXK90wbi5xvk8yFM9OeZQHNID2R9Lud0D
-        iOHDdI5Eli03UnG6MnuVz3AO+YFecZFYCQ==
-X-Google-Smtp-Source: ABdhPJyICwRj7p9WMfp/BM1uvsfQPI+SYkKUzGl5TcvdYBXqf14o3hbbIsviNl3qL3r4B3WvD+HnFQ==
-X-Received: by 2002:a17:90a:3e4a:: with SMTP id t10mr17389449pjm.151.1603116628488;
-        Mon, 19 Oct 2020 07:10:28 -0700 (PDT)
+        bh=sDf2wpUuzblvqUz0TuYPHYF7CNvy5nJj5wlwfBiA9Cc=;
+        b=jBsQgcRxmoF4GLOtPVztGOWm3jOIrvasyxogBrciJNpg+UTkbbgYwsPDnhJMIsJftA
+         +SnMJ7kyAJI0/0iFKbO78vX7IjQKAohhpda+14M9FJaYOfWxQtZAA52iG1mZRac5ke4P
+         2/ZNTKYpjUfoGyZ9gCoEv6u0vw1YLdbRadB0Ndp8+jkQyElGb5xq9MXpcbmrbAsvci4E
+         valL19xzuiBoHi+MDsl6kjmB6BoX+QZGtK1yGrEorHWNcxZYVbKQA5HOba/8RuHdZTHA
+         wHp//YRJXNZyTr20GhtncD/rrbHqFw4UXZzG5+xpqmKJ5Ew7FfdOAfoRYezobVFRX8ET
+         IUCw==
+X-Gm-Message-State: AOAM532itCNDj2CG8a4J8p+ksFVKFH09qa8S9Y4gN3xo7PnEKYvJeVXO
+        +esmfgNeHJtRfNh5b2WMj4XCB040A0C7cg==
+X-Google-Smtp-Source: ABdhPJzEdWMHwmzuKcel1JcctN9VzFL0wzme9sHn8luNQVG+SQYgKgKwtwMkcc+NBv2dyYE336znmg==
+X-Received: by 2002:a63:1e65:: with SMTP id p37mr14684476pgm.131.1603116618537;
+        Mon, 19 Oct 2020 07:10:18 -0700 (PDT)
 Received: from shiro.work (p1268123-ipngn200803sizuokaden.shizuoka.ocn.ne.jp. [118.13.124.123])
-        by smtp.googlemail.com with ESMTPSA id 131sm78999pfy.5.2020.10.19.07.10.26
+        by smtp.googlemail.com with ESMTPSA id 131sm78999pfy.5.2020.10.19.07.10.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2020 07:10:27 -0700 (PDT)
+        Mon, 19 Oct 2020 07:10:17 -0700 (PDT)
 From:   Daniel Palmer <daniel@0x0f.com>
 To:     linux-gpio@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
         Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH v2 5/5] ARM: mstar: Fill in GPIO controller properties for infinity
-Date:   Mon, 19 Oct 2020 23:10:08 +0900
-Message-Id: <20201019141008.871177-6-daniel@0x0f.com>
+Subject: [PATCH v2 1/5] dt-bindings: gpio: Add a binding header for the MSC313 GPIO driver
+Date:   Mon, 19 Oct 2020 23:10:04 +0900
+Message-Id: <20201019141008.871177-2-daniel@0x0f.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201019141008.871177-1-daniel@0x0f.com>
 References: <20201019141008.871177-1-daniel@0x0f.com>
@@ -71,32 +71,135 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fill in the properties needed to use the GPIO controller
-in the infinity and infinity3 chips.
+Header adds defines for the gpio number of each pin
+from the driver view. The gpio block seems to support 128 lines
+but what line is mapped to a physical pin depends on the chip.
+The driver itself uses the index of a pin's offset in an array
+of the possible offsets for a chip as the gpio number.
+
+The defines remove the need to work out that index to consume
+a pin in the device tree.
 
 Signed-off-by: Daniel Palmer <daniel@0x0f.com>
 ---
- arch/arm/boot/dts/mstar-infinity.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ MAINTAINERS                            |  1 +
+ include/dt-bindings/gpio/msc313-gpio.h | 95 ++++++++++++++++++++++++++
+ 2 files changed, 96 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/msc313-gpio.h
 
-diff --git a/arch/arm/boot/dts/mstar-infinity.dtsi b/arch/arm/boot/dts/mstar-infinity.dtsi
-index cd911adef014..0bee517797f4 100644
---- a/arch/arm/boot/dts/mstar-infinity.dtsi
-+++ b/arch/arm/boot/dts/mstar-infinity.dtsi
-@@ -6,6 +6,13 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3f345f36c22c..a188fae8c04e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2132,6 +2132,7 @@ W:	http://linux-chenxing.org/
+ F:	Documentation/devicetree/bindings/arm/mstar/*
+ F:	arch/arm/boot/dts/mstar-*
+ F:	arch/arm/mach-mstar/
++F:	include/dt-bindings/gpio/msc313-gpio.h
  
- #include "mstar-v7.dtsi"
- 
-+#include <dt-bindings/gpio/msc313-gpio.h>
+ ARM/NEC MOBILEPRO 900/c MACHINE SUPPORT
+ M:	Michael Petchkovsky <mkpetch@internode.on.net>
+diff --git a/include/dt-bindings/gpio/msc313-gpio.h b/include/dt-bindings/gpio/msc313-gpio.h
+new file mode 100644
+index 000000000000..9b8cd6ffb7c4
+--- /dev/null
++++ b/include/dt-bindings/gpio/msc313-gpio.h
+@@ -0,0 +1,95 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * GPIO definitions for MStar/SigmaStar MSC313 and later SoCs
++ *
++ * Copyright (C) 2020 Daniel Palmer <daniel@thingy.jp>
++ */
 +
- &imi {
- 	reg = <0xa0000000 0x16000>;
- };
++#ifndef _DT_BINDINGS_MSC313_GPIO_H
++#define _DT_BINDINGS_MSC313_GPIO_H
 +
-+&gpio {
-+	compatible = "mstar,msc313-gpio";
-+	status = "okay";
-+};
++/* pin names for fuart, same for all SoCs so far */
++#define MSC313_PINNAME_FUART_RX		"fuart_rx"
++#define MSC313_PINNAME_FUART_TX		"fuart_tx"
++#define MSC313_PINNAME_FUART_CTS	"fuart_cts"
++#define MSC313_PINNAME_FUART_RTS	"fuart_rts"
++
++/* pin names for sr, mercury5 is different */
++#define MSC313_PINNAME_SR_IO2		"sr_io2"
++#define MSC313_PINNAME_SR_IO3		"sr_io3"
++#define MSC313_PINNAME_SR_IO4		"sr_io4"
++#define MSC313_PINNAME_SR_IO5		"sr_io5"
++#define MSC313_PINNAME_SR_IO6		"sr_io6"
++#define MSC313_PINNAME_SR_IO7		"sr_io7"
++#define MSC313_PINNAME_SR_IO8		"sr_io8"
++#define MSC313_PINNAME_SR_IO9		"sr_io9"
++#define MSC313_PINNAME_SR_IO10		"sr_io10"
++#define MSC313_PINNAME_SR_IO11		"sr_io11"
++#define MSC313_PINNAME_SR_IO12		"sr_io12"
++#define MSC313_PINNAME_SR_IO13		"sr_io13"
++#define MSC313_PINNAME_SR_IO14		"sr_io14"
++#define MSC313_PINNAME_SR_IO15		"sr_io15"
++#define MSC313_PINNAME_SR_IO16		"sr_io16"
++#define MSC313_PINNAME_SR_IO17		"sr_io17"
++
++/* pin names for sd, same for all SoCs so far */
++#define MSC313_PINNAME_SD_CLK		"sd_clk"
++#define MSC313_PINNAME_SD_CMD		"sd_cmd"
++#define MSC313_PINNAME_SD_D0		"sd_d0"
++#define MSC313_PINNAME_SD_D1		"sd_d1"
++#define MSC313_PINNAME_SD_D2		"sd_d2"
++#define MSC313_PINNAME_SD_D3		"sd_d3"
++
++/* pin names for i2c1, same for all SoCs so for */
++#define MSC313_PINNAME_I2C1_SCL		"i2c1_scl"
++#define MSC313_PINNAME_I2C1_SCA		"i2c1_sda"
++
++/* pin names for spi0, same for all SoCs so far */
++#define MSC313_PINNAME_SPI0_CZ		"spi0_cz"
++#define MSC313_PINNAME_SPI0_CK		"spi0_ck"
++#define MSC313_PINNAME_SPI0_DI		"spi0_di"
++#define MSC313_PINNAME_SPI0_DO		"spi0_do"
++
++#define MSC313_GPIO_FUART	0
++#define MSC313_GPIO_FUART_RX	(MSC313_GPIO_FUART + 0)
++#define MSC313_GPIO_FUART_TX	(MSC313_GPIO_FUART + 1)
++#define MSC313_GPIO_FUART_CTS	(MSC313_GPIO_FUART + 2)
++#define MSC313_GPIO_FUART_RTS	(MSC313_GPIO_FUART + 3)
++
++#define MSC313_GPIO_SR		(MSC313_GPIO_FUART_RTS + 1)
++#define MSC313_GPIO_SR_IO2	(MSC313_GPIO_SR + 0)
++#define MSC313_GPIO_SR_IO3	(MSC313_GPIO_SR + 1)
++#define MSC313_GPIO_SR_IO4	(MSC313_GPIO_SR + 2)
++#define MSC313_GPIO_SR_IO5	(MSC313_GPIO_SR + 3)
++#define MSC313_GPIO_SR_IO6	(MSC313_GPIO_SR + 4)
++#define MSC313_GPIO_SR_IO7	(MSC313_GPIO_SR + 5)
++#define MSC313_GPIO_SR_IO8	(MSC313_GPIO_SR + 6)
++#define MSC313_GPIO_SR_IO9	(MSC313_GPIO_SR + 7)
++#define MSC313_GPIO_SR_IO10	(MSC313_GPIO_SR + 8)
++#define MSC313_GPIO_SR_IO11	(MSC313_GPIO_SR + 9)
++#define MSC313_GPIO_SR_IO12	(MSC313_GPIO_SR + 10)
++#define MSC313_GPIO_SR_IO13	(MSC313_GPIO_SR + 11)
++#define MSC313_GPIO_SR_IO14	(MSC313_GPIO_SR + 12)
++#define MSC313_GPIO_SR_IO15	(MSC313_GPIO_SR + 13)
++#define MSC313_GPIO_SR_IO16	(MSC313_GPIO_SR + 14)
++#define MSC313_GPIO_SR_IO17	(MSC313_GPIO_SR + 15)
++
++#define MSC313_GPIO_SD		(MSC313_GPIO_SR_IO17 + 1)
++#define MSC313_GPIO_SD_CLK	(MSC313_GPIO_SD + 0)
++#define MSC313_GPIO_SD_CMD	(MSC313_GPIO_SD + 1)
++#define MSC313_GPIO_SD_D0	(MSC313_GPIO_SD + 2)
++#define MSC313_GPIO_SD_D1	(MSC313_GPIO_SD + 3)
++#define MSC313_GPIO_SD_D2	(MSC313_GPIO_SD + 4)
++#define MSC313_GPIO_SD_D3	(MSC313_GPIO_SD + 5)
++
++#define MSC313_GPIO_I2C1	(MSC313_GPIO_SD_D3 + 1)
++#define MSC313_GPIO_I2C1_SCL	(MSC313_GPIO_I2C1 + 0)
++#define MSC313_GPIO_I2C1_SDA	(MSC313_GPIO_I2C1 + 1)
++
++#define MSC313_GPIO_SPI0	(MSC313_GPIO_I2C1_SDA + 1)
++#define MSC313_GPIO_SPI0_CZ	(MSC313_GPIO_SPI0 + 0)
++#define MSC313_GPIO_SPI0_CK	(MSC313_GPIO_SPI0 + 1)
++#define MSC313_GPIO_SPI0_DI	(MSC313_GPIO_SPI0 + 2)
++#define MSC313_GPIO_SPI0_DO	(MSC313_GPIO_SPI0 + 3)
++
++#endif /* _DT_BINDINGS_MSC313_GPIO_H */
 -- 
 2.28.0
 
