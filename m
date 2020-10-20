@@ -1,147 +1,83 @@
-Return-Path: <SRS0=rtYV=D2=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=lWV/=D3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109C2C4363A
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Oct 2020 23:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D569BC433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Oct 2020 05:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B57302240C
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Oct 2020 23:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F0722225F
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Oct 2020 05:57:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="R0THCPfe"
+	dkim=pass (2048-bit key) header.d=intenta.de header.i=@intenta.de header.b="u4u6lCgE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388899AbgJSXF4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Oct 2020 19:05:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37910 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388893AbgJSXFv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2020 19:05:51 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DF8C0613DB
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2020 16:05:49 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id n6so17448ioc.12
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2020 16:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KZcwJitFojA7RhzeD/UU8gbzehCBdvf6g5ia0ZYCrq4=;
-        b=R0THCPfeT+NjRv5n7wRuWr3+iQQVH5mYQugrcFEorv7jMlZOJpq4gWO8x2sltRZ1S3
-         8+uXkfK+0xraFRPc7RLEyC+L1Eqn+lwfgcQ60rCu3Ir6T0iqCUlHxkXPI8IxQxljNihW
-         MxA7dERE+Fo0B6yhfEPLGm6gbjuMrGvt0ee7i4ozPAa6C0OwTV1SJBaz+sj8rzyyiIix
-         DQ1LhxNguLsVQ2r9xWcmCur9QDHoeimXQtC/UVpN+4Yl8O9ZbpYKUwlrKFZtzYHwjpgZ
-         iC+kREvCZvwgmOBCIm7DmgxG6/6ncKrp6QDCnbxkp/qIzrhuMyauJsg53LWTp//HSslk
-         z+3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KZcwJitFojA7RhzeD/UU8gbzehCBdvf6g5ia0ZYCrq4=;
-        b=kS42VqjYHA1b3ilhwX1xIQZcs4eD8rJQoOLpAFPOXLrqKhS+PLI1CwNT6DAUS4VwOI
-         9yGc3huquEP5GfzAjQGvoGt/jrZC1oPV23CaJlrDQqlEY1s2O/nfp34AblsKvbZeqDuF
-         NOm2huNmVlpuMXC3ZLvRnN74ffK9MbkAW45XR0lIM0QEmvbKxfcteQNZhvWuw7Km2MXg
-         LW8swlzruBiayXR1fJjEdGHhhRPo2X9N/8Vw0qIauZi3K59m20z4SDgsPCMF7Z4ZRw+q
-         k1rzgwhTXFWv0OTTTZMdoavx7P7LkAnGHWvkHpKu5DFI1Q6Hnm8C3WKdOuxDbcF3y7Bi
-         7U3Q==
-X-Gm-Message-State: AOAM532xF2cty45lvAc5syAgWXNcS5DKuPGmvH0Fomy8YtkK2z1fSa+U
-        4mId922nq6+iXtza9d96YBQJZA==
-X-Google-Smtp-Source: ABdhPJwE/qhLAedndnNRaUrUDMs331Onaq8Iz+VDEVRJN+4h4B5ckC67pNXDnvS9MRF/DxLJjNlnIQ==
-X-Received: by 2002:a6b:5019:: with SMTP id e25mr44377iob.123.1603148748578;
-        Mon, 19 Oct 2020 16:05:48 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id u8sm7938ilm.36.2020.10.19.16.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2020 16:05:47 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kUeDq-002hRf-LL; Mon, 19 Oct 2020 20:05:46 -0300
-Date:   Mon, 19 Oct 2020 20:05:46 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Tom Rix <trix@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-edac@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-power@fi.rohmeurope.com, linux-gpio@vger.kernel.org,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        industrypack-devel@lists.sourceforge.net,
-        linux-media@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com,
-        linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-can@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        intel-wired-lan@lists.osuosl.org, ath10k@lists.infradead.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com, linux-nfc@lists.01.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, patches@opensource.cirrus.com,
-        storagedev@microchip.com, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net,
-        linux-watchdog@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        bpf <bpf@vger.kernel.org>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        George Burgess <gbiv@google.com>
-Subject: Re: [RFC] treewide: cleanup unreachable breaks
-Message-ID: <20201019230546.GH36674@ziepe.ca>
-References: <20201017160928.12698-1-trix@redhat.com>
- <20201018054332.GB593954@kroah.com>
- <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+        id S1730606AbgJTF5W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Oct 2020 01:57:22 -0400
+Received: from mail.intenta.de ([178.249.25.132]:41116 "EHLO mail.intenta.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730544AbgJTF5W (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 20 Oct 2020 01:57:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=DxkOG6tcL5gcKVIp0/e9Zt2RcQOYn4aTzs2TtB6IKY4=;
+        b=u4u6lCgEclOBj535R4RCX01d1BQS9zVS90ykRgZGIlVmZ9CZ64R2s5eQ/MqpTISj+NNUhKyTZK5VC9aGDQ/DxK0ooDW1a2QpA+fUZwqD5ZlHpqRr02wf+uhlNUMZk5jNKZCqvLn/IZEKhxAtSj6Nkj3jZpZo0lxZjedPyFcew88Ns3H6gRbpJbVY2tdu6fumz5L3Fx/tAltOGjUOQAqmPR7sQg2dtdQufOtoNgf0A1Ht+hh8cYcGXNJcJ8ZxGuU7Hus8ai/1ow8nKRsVCkc7xqMv2EVnlEcICglEIxKc5zNvhCX/SMRwfogzwPumJHzPMfcbDYP8MP1aXQ6ApcVNoA==;
+Date:   Tue, 20 Oct 2020 07:57:14 +0200
+From:   Helmut Grohne <helmut.grohne@intenta.de>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+CC:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [libgpiod][RFC PATCH] bindings: cxx: demote the line's parent
+ chip reference to a weak_ptr
+Message-ID: <20201020055714.GA10256@laureti-dev>
+References: <20201016090949.24456-1-brgl@bgdev.pl>
+ <20201016102937.GA22245@laureti-dev>
+ <CAMRc=Md1RxGiv+v27dZOSsGX4v1OEc=E-EJvd-4_8tMjgFicoA@mail.gmail.com>
+ <CAMRc=MfjBai0PECzvXjLN9w_sP-ZE4QBxGL0-puow2zDKJd+Uw@mail.gmail.com>
+ <20201019123801.GA5116@laureti-dev>
+ <CAMpxmJU0y5Zze3we-NjnLi1fCG69v38fMwvTgCe0JXGK+RxLNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+In-Reply-To: <CAMpxmJU0y5Zze3we-NjnLi1fCG69v38fMwvTgCe0JXGK+RxLNQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
+ (10.10.16.48)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 19, 2020 at 12:42:15PM -0700, Nick Desaulniers wrote:
-> On Sat, Oct 17, 2020 at 10:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sat, Oct 17, 2020 at 09:09:28AM -0700, trix@redhat.com wrote:
-> > > From: Tom Rix <trix@redhat.com>
-> > >
-> > > This is a upcoming change to clean up a new warning treewide.
-> > > I am wondering if the change could be one mega patch (see below) or
-> > > normal patch per file about 100 patches or somewhere half way by collecting
-> > > early acks.
-> >
-> > Please break it up into one-patch-per-subsystem, like normal, and get it
-> > merged that way.
-> >
-> > Sending us a patch, without even a diffstat to review, isn't going to
-> > get you very far...
+On Mon, Oct 19, 2020 at 03:06:18PM +0200, Bartosz Golaszewski wrote:
+> But this still forces us to do
 > 
-> Tom,
-> If you're able to automate this cleanup, I suggest checking in a
-> script that can be run on a directory.  Then for each subsystem you
-> can say in your commit "I ran scripts/fix_whatever.py on this subdir."
->  Then others can help you drive the tree wide cleanup.  Then we can
-> enable -Wunreachable-code-break either by default, or W=2 right now
-> might be a good idea.
+>     return chip(::std::shared_ptr<::gpiod_chip>(this->_m_owner));
+> 
+> instead of a much more elegant
+> 
+>     return chip(this->_m_owner);
+> 
+> in line.cpp and there's an even less elegant thing in iter.cpp. Or am
+> I missing something?
 
-I remember using clang-modernize in the past to fix issues very
-similar to this, if clang machinery can generate the warning, can't
-something like clang-tidy directly generate the patch?
+I confirm the behaviour you see. My intuition that the conversion would
+happen implicitly was wrong.
 
-You can send me a patch for drivers/infiniband/* as well
+Still the sticking point is this: Your constructor should allow for most
+flexibility to the caller and in this case that means it should consume
+a shared_ptr by value.
 
-Thanks,
-Jason
+In order to make the case with a weak_ptr bearable, I suggest adding a
+delegating constructor:
+
+    chip(const ::std::weak_ptr<::gpiod_chip>& chip_ptr) :
+        chip(::std::shared_ptr<::gpiod_chip>(chip_ptr)) {}
+
+That way your desired way of calling should continue to work while not
+forcing callers to convert a real shared_ptr to weak_ptr and back.
+
+Sorry for the confusion about this.
+
+Helmut
