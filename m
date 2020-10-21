@@ -2,83 +2,89 @@ Return-Path: <SRS0=WRE+=D4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FFEC388F9
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Oct 2020 14:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CAD6C388F9
+	for <linux-gpio@archiver.kernel.org>; Wed, 21 Oct 2020 14:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37AF72224E
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Oct 2020 14:35:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/VjTAsq"
+	by mail.kernel.org (Postfix) with ESMTP id BF1B522275
+	for <linux-gpio@archiver.kernel.org>; Wed, 21 Oct 2020 14:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443017AbgJUOfa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 21 Oct 2020 10:35:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410097AbgJUOfa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Oct 2020 10:35:30 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D797C0613CE
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2020 07:35:30 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id n6so3276277wrm.13
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2020 07:35:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dT5w4uv1tNjWLC8UqAXWJT+jtfwK1G442QCcb3CVlhc=;
-        b=S/VjTAsqDMmWQtdgty8vHu1SHEWL+h2ZgbAN3lhWDComqfczcKxGqkvjcJ4o7rMNBp
-         caIafS3g1VX9NE1X4/Rk8qqKnOO5XVifUhYMDHhhCdyspM20R4qDgMFM+5OUmMxTCyNu
-         3M0ogyZiMFHFvJfiZT81m0r13jr0Z4eO6bdu+couK/pRPnvY5ca2GI8PRCvwzJ1TwKnx
-         V48Nfatx68O0qCO2qCOoo7ovaVmcKqd8EygAof78vf2h/nKxec5I1pscDbotW4Ido7At
-         9AiXiuJuUGpH1z1C6n/iJVZWJppagz20G1Hxq0tE8hsSbCIoHgFXN5dhe3fTzo0SYMq7
-         CqRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dT5w4uv1tNjWLC8UqAXWJT+jtfwK1G442QCcb3CVlhc=;
-        b=m3BEHALDqdDvJ3akj1e71E8bhEdkEKtOf/CPTInGjoCCSlnkDYE7e4cfQKKvPcBpND
-         pdStsTtHsYFkXIPx4+qqZhcNYWSkkYLqqcNJKT2HDhVPOqfOskmMid+xxZuovIsotPcm
-         SgJTZHk8w5SQxEl+mrScn6pCIogBkVcSLLu4J6bu7t+VyHhG1Kl+im8er8ybwT017TaV
-         mCLQRrUAj0r2nGarQXZMGjnWmUXEmXf0LUvJGBBZr9PDMHAkTgFM6YG0W2z/tNuc8TPD
-         3vUB9fyGaKAw8Ec5wykXh6ic/oDVDlUOu2JGmjn0H9vUYT2Y8nESmWfhUhuRleV+78CM
-         9jEQ==
-X-Gm-Message-State: AOAM533wiPiz1o68vWPZ4XcH0THyFNv9mVSen6FdvnrjuVkSevK3rarB
-        3+8nt3ALpCCcdCs+ZGEicwKVj9XsI1P7t4LNSxo=
-X-Google-Smtp-Source: ABdhPJxtBNcczArlbspQslIR0EP9mAqHom9iqz/KoaAc1VEw8FAaLprewh3NJgn6oE0t1+3SeLHa+Dr+gUjEoT4OMuo=
-X-Received: by 2002:adf:d850:: with SMTP id k16mr5065671wrl.259.1603290927973;
- Wed, 21 Oct 2020 07:35:27 -0700 (PDT)
+        id S2443023AbgJUOjh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 21 Oct 2020 10:39:37 -0400
+Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:37426 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2442066AbgJUOjh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 21 Oct 2020 10:39:37 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 0EF1887066B9;
+        Wed, 21 Oct 2020 14:39:36 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: joke73_430d3d127249
+X-Filterd-Recvd-Size: 2611
+Received: from XPS-9350.home (unknown [47.151.133.149])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 21 Oct 2020 14:39:34 +0000 (UTC)
+Message-ID: <42c1d07d46655f622c081f45b68ccaffba7361a1.camel@perches.com>
+Subject: Re: [PATCH] gpio: bd70528: remove unneeded break
+From:   Joe Perches <joe@perches.com>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "trix@redhat.com" <trix@redhat.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc:     linux-power <linux-power@fi.rohmeurope.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "apw@canonical.com" <apw@canonical.com>
+Date:   Wed, 21 Oct 2020 07:39:33 -0700
+In-Reply-To: <db6856d5431aac3ff56cd3817312d204c41cf7d0.camel@fi.rohmeurope.com>
+References: <20201019193353.13066-1-trix@redhat.com>
+         <5b13773306265f89366b86afba71d2b4a4130e2b.camel@fi.rohmeurope.com>
+         <0738b0cc482cfd07400cf8b0b0b2092e671cfb34.camel@fi.rohmeurope.com>
+         <b435953eed76b9247a4b1dab88f268afe76ff470.camel@perches.com>
+         <db6856d5431aac3ff56cd3817312d204c41cf7d0.camel@fi.rohmeurope.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-References: <20201015083805.GA10354@laureti-dev> <CAMRc=Md=ZeKLS-SKKgmq+V9VCt+7xdjNiwz89Ms-vOeTcwZBOw@mail.gmail.com>
- <20201015093526.GA10891@laureti-dev> <CAMRc=McpnnK9NydujR=YRuy0ZBLhQqz3SSZ5eeisjqhMPUbMhA@mail.gmail.com>
- <20201015105718.GA11027@laureti-dev> <CAMRc=MdWi94uzYb6OprmVoGnfmSHUCevqAPPgXOPHQNVrj0jfQ@mail.gmail.com>
- <20201015121312.GA7166@laureti-dev> <CAMRc=McApWaCy8kUWurjZByN9vKqw8kZBwNVBtVXXf6-b3PsLg@mail.gmail.com>
- <CAFhCfDa7Yy2a9-ddk0nZmNidar_-H_ONTU93Cb+YatcEGy3NbQ@mail.gmail.com>
-In-Reply-To: <CAFhCfDa7Yy2a9-ddk0nZmNidar_-H_ONTU93Cb+YatcEGy3NbQ@mail.gmail.com>
-From:   Jack Winch <sunt.un.morcov@gmail.com>
-Date:   Wed, 21 Oct 2020 17:35:17 +0300
-Message-ID: <CAFhCfDZN9Uvz74pXh56=w4LB71R_nO0KQsoDRe8khhDHgbmK5Q@mail.gmail.com>
-Subject: Re: [libgpiod] cxx bindings: time_point vs duration
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Helmut Grohne <helmut.grohne@intenta.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bartekgola@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-> If you really want a std::time_point, then you can construct
-> one from a std::duration object.
+On Wed, 2020-10-21 at 07:25 +0000, Vaittinen, Matti wrote:
+> Hello Joe & All,
+> On Tue, 2020-10-20 at 11:36 -0700, Joe Perches wrote:
+> > On Tue, 2020-10-20 at 11:48 +0000, Vaittinen, Matti wrote:
+[]
+> > > And for peeps who have not been following - following function
+> > > triggers the checkpatch error above:
+> > 
+> > Huh?  what version of checkpatch are you using?
+> > Send it to me please.
+[]
+> Please find my version of checkpatch and the patch to trigger the
+> warning attached.
 
-Sorry that should be:
+Thanks.  This test wasn't particularly useful
+(and had some false positives) and was removed by
 
-- std::chrono::time_point
-- std::chrono::duration
+commit ef3c005c0eb07a60949191bc6ee407d5f43cc502
+Author: Joe Perches <joe@perches.com>
+Date:   Tue Aug 11 18:35:19 2020 -0700
 
-Jack
+    checkpatch: remove missing switch/case break test
+    
+    This test doesn't work well and newer compilers are much better
+    at emitting this warning.
+    
+    Signed-off-by: Joe Perches <joe@perches.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Cc: Cambda Zhu <cambda@linux.alibaba.com>
+    Link: http://lkml.kernel.org/r/7e25090c79f6a69d502ab8219863300790192fe2.camel@perches.com
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+
