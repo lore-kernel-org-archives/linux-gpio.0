@@ -2,171 +2,86 @@ Return-Path: <SRS0=PlvD=D5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2881C56201
-	for <linux-gpio@archiver.kernel.org>; Thu, 22 Oct 2020 16:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61991C388F9
+	for <linux-gpio@archiver.kernel.org>; Thu, 22 Oct 2020 16:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4322463F
-	for <linux-gpio@archiver.kernel.org>; Thu, 22 Oct 2020 16:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7E52463D
+	for <linux-gpio@archiver.kernel.org>; Thu, 22 Oct 2020 16:26:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIuwhwNM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S369055AbgJVQAF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 22 Oct 2020 12:00:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48470 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S368855AbgJVP7I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 22 Oct 2020 11:59:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 4A8ADAC23;
-        Thu, 22 Oct 2020 15:59:06 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, wahrenst@gmx.net,
-        linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org
-Subject: [PATCH v2 01/10] firmware: raspberrypi: Introduce rpi_firmware_put()
-Date:   Thu, 22 Oct 2020 17:58:48 +0200
-Message-Id: <20201022155858.20867-2-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201022155858.20867-1-nsaenzjulienne@suse.de>
-References: <20201022155858.20867-1-nsaenzjulienne@suse.de>
+        id S2896989AbgJVQ00 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 22 Oct 2020 12:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51504 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2896986AbgJVQ00 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2020 12:26:26 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0799CC0613CE
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2020 09:26:25 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id l2so1235571pjt.5
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2020 09:26:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=fKNuFz0tzESvWOS3N0ECBXIENv0ncOLksuDyae91gxo=;
+        b=eIuwhwNM7/e6g2lJH2p1JSxYRXMyrZuDb/uoVl4JiTJqYc3ZV5zFgjfrMbPGUPf0EQ
+         Q7ZDh+BF+qat1f19gMVKn5kn9ze4WWPIReyqIR73+YK06h0MrF65dK/pktL4RJagsNB1
+         9VccngiFNAeKKLLc5z1HX0qesGO8Mt+ZRycDFRR1hoSzf4CMILS11C7Mzo2kM1Yy1GI3
+         A+Brup7pgZQkRwuVQ7neUlbWs/QpTFsep14bfA3IjtOnTgg6G0CHmkRXVzkl/3VL4eRi
+         CS3wt0wonOJCKyfZapZDeBvJ7v3aKiIuvab7VQQ53kWUG/qvAPUcTqkIahjWf7sotpR9
+         80PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=fKNuFz0tzESvWOS3N0ECBXIENv0ncOLksuDyae91gxo=;
+        b=oEAt4F1NM/e59Rnwb+Wqd+TJE2eCjkrfRJ+XtnM+0T6ij43g4joCikXtLogtqgNqSC
+         kBYmbz9UoW2kGEUDQBhFONXJLcNsj6RQkELV+0VIDPkquVawcTkCOJ5aSaD4tsxSGAmW
+         ucjPMTs8FNNGKTkDUbpRDp20uECa9SrS9tWEUe0kfRJchHytTntMjPK+54y0S9xk4DMB
+         pHxzDQgJ5bF6tV5WH/gvSeyfkr3NrpcWmQiFInAKIrMUe6v6PEkx+nwJbD/JopWqzQjX
+         TU4Hfyx3URPnMEy8JM0YErk72bpQkL/+N55NSByvPLhbweEL9g3ZU/wx7Llg0WjXyApm
+         YhDQ==
+X-Gm-Message-State: AOAM531FIhIGJHK2BDL3NpifGcVnw12uwwwLaln0OiKHTdl7iRpxvtsM
+        urptTinJUADKgR7XyA2Hk/nnvmTP94EQNhg77yX4DL7hDPp3cQ==
+X-Google-Smtp-Source: ABdhPJxX5bh5a87MVuRIM3JKmD4CRme9x+VijnusIPyvkQtmP9ywNmm12B7AimtEJ9kc7dWIOAcyOWGkgizrAJ4xcqo=
+X-Received: by 2002:a17:902:6bc8:b029:d6:d9d:f28c with SMTP id
+ m8-20020a1709026bc8b02900d60d9df28cmr3115440plt.17.1603383983916; Thu, 22 Oct
+ 2020 09:26:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 22 Oct 2020 19:27:13 +0300
+Message-ID: <CAHp75Veqdv8JnASmmsnv9AmrktByWH3R7Z36wLMyjJh0VffExw@mail.gmail.com>
+Subject: Is consumer documentation correct?
+To:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Alexandre Courbot <gnurou@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kent Gibson <warthog618@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When unbinding the firmware device we need to make sure it has no
-consumers left. Otherwise we'd leave them with a firmware handle
-pointing at freed memory.
+Hi!
 
-Keep a reference count of all consumers and make sure they all finished
-unbinding before we do.
+It _seems_ between
+  79a9becda894 ("gpiolib: export descriptor-based GPIO interface")
+and
+  14e85c0e69d5 ("gpio: remove gpio_descs global array")
+the "Interacting With the Legacy GPIO Subsystem" of GPIO consumer
+interface is correct.
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
+But is it the case afterwards?
 
-@Uwe: I didn't found it necessary to call 'try_module_get()' as the rest
-      of modules depend on the 'rpi_firmware_get/put()' symbols which already
-      block users from unloading the module prematurely.
+Details of the question are here [1].
 
- drivers/firmware/raspberrypi.c             | 30 +++++++++++++++++++++-
- include/soc/bcm2835/raspberrypi-firmware.h |  3 +++
- 2 files changed, 32 insertions(+), 1 deletion(-)
+[1]: https://stackoverflow.com/q/64455505/2511795
 
-diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-index 2371d08bdd17..e5ba609e3985 100644
---- a/drivers/firmware/raspberrypi.c
-+++ b/drivers/firmware/raspberrypi.c
-@@ -11,7 +11,9 @@
- #include <linux/module.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/refcount.h>
- #include <linux/slab.h>
-+#include <linux/wait.h>
- #include <soc/bcm2835/raspberrypi-firmware.h>
- 
- #define MBOX_MSG(chan, data28)		(((data28) & ~0xf) | ((chan) & 0xf))
-@@ -27,6 +29,9 @@ struct rpi_firmware {
- 	struct mbox_chan *chan; /* The property channel. */
- 	struct completion c;
- 	u32 enabled;
-+
-+	refcount_t consumers;
-+	wait_queue_head_t wait;
- };
- 
- static DEFINE_MUTEX(transaction_lock);
-@@ -247,6 +252,8 @@ static int rpi_firmware_probe(struct platform_device *pdev)
- 	}
- 
- 	init_completion(&fw->c);
-+	refcount_set(&fw->consumers, 1);
-+	init_waitqueue_head(&fw->wait);
- 
- 	platform_set_drvdata(pdev, fw);
- 
-@@ -275,6 +282,8 @@ static int rpi_firmware_remove(struct platform_device *pdev)
- 	rpi_hwmon = NULL;
- 	platform_device_unregister(rpi_clk);
- 	rpi_clk = NULL;
-+
-+	wait_event(fw->wait, refcount_dec_if_one(&fw->consumers));
- 	mbox_free_channel(fw->chan);
- 
- 	return 0;
-@@ -289,14 +298,33 @@ static int rpi_firmware_remove(struct platform_device *pdev)
- struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
- {
- 	struct platform_device *pdev = of_find_device_by_node(firmware_node);
-+	struct rpi_firmware *fw;
- 
- 	if (!pdev)
- 		return NULL;
- 
--	return platform_get_drvdata(pdev);
-+	fw = platform_get_drvdata(pdev);
-+	if (!fw)
-+		return NULL;
-+
-+	if (!refcount_inc_not_zero(&fw->consumers))
-+		return NULL;
-+
-+	return fw;
- }
- EXPORT_SYMBOL_GPL(rpi_firmware_get);
- 
-+/**
-+ * rpi_firmware_put - Put pointer to rpi_firmware structure.
-+ * @rpi_firmware:    Pointer to struct rpi_firmware
-+ */
-+void rpi_firmware_put(struct rpi_firmware *fw)
-+{
-+	refcount_dec(&fw->consumers);
-+	wake_up(&fw->wait);
-+}
-+EXPORT_SYMBOL_GPL(rpi_firmware_put);
-+
- static const struct of_device_id rpi_firmware_of_match[] = {
- 	{ .compatible = "raspberrypi,bcm2835-firmware", },
- 	{},
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index cc9cdbc66403..7836ea51fbdf 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -141,6 +141,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
- int rpi_firmware_property_list(struct rpi_firmware *fw,
- 			       void *data, size_t tag_size);
- struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
-+void rpi_firmware_put(struct rpi_firmware *fw);
- #else
- static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag,
- 					void *data, size_t len)
-@@ -158,6 +159,8 @@ static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware
- {
- 	return NULL;
- }
-+
-+void rpi_firmware_put(struct rpi_firmware *fw) { }
- #endif
- 
- #endif /* __SOC_RASPBERRY_FIRMWARE_H__ */
 -- 
-2.28.0
-
+With Best Regards,
+Andy Shevchenko
