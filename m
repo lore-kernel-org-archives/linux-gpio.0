@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78ECBC2D0A3
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D0CC4363A
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F92D21655
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FCE322202
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:19:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gh4HzeCC"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="YAWhsTan"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1781155AbgJZOTO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Oct 2020 10:19:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35694 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1781124AbgJZOTA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2020 10:19:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n15so12818128wrq.2
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2020 07:18:58 -0700 (PDT)
+        id S1780676AbgJZOTU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Oct 2020 10:19:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33166 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1781103AbgJZOS4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2020 10:18:56 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b8so12834690wrn.0
+        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2020 07:18:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zNlfGqR+PgAe0QneJuZnZZA8sj+er/tRH9Y2OabUbQ0=;
-        b=gh4HzeCCQLfL5jHFIUm26UdGLVfvp3opWY/OVkpIQohdrvtI3hdU8aERlCPcZ3dOvE
-         f1zOUGsmlti2vWFn/1wF5rhe74W9kraydJuqtvjm7vvJubXDuKFINX3Dpek4SVfCUBjh
-         udZ2K96ZTuXt+h/iOnMJV6/Eahh/jafnEweDc/eHnfDK0V0yEbC/V3k9M5YuS9cOBz13
-         2GuWQPyRw36d12wY22Os7QVDUPrldvVBSeSPNc0auOOW3d3O7RHXaFz/6Cp5i9+5DTiv
-         Y3NVheSPaAvC1fSkLSvoq69gnZSD4jrW5jEsVHAeGIZ32/GJex7HvS50vHIXC4TXLv1H
-         v7Xg==
+        bh=PfaggvFtdrOq7HMZ8nUir6KiglSCvEmyQ3kUEaGT+6M=;
+        b=YAWhsTanq/1g+up13sBNiIpkFwByGGbKUZyad3NsIgJ7Z2tft8n7yZEV8KEen/1bzh
+         wlb14wfGYsh21vjIY/7eTpZBB8ikjYnQc8atuAxqLcgScx3GkxtSS0nNcyvL59UYi+Cv
+         4R4pJTkh3qp22yFUj48kUpvSfRVEwiBE7LHSIyOgq5+xr8yYzAoQNNLLUGSctBAX5bBG
+         9GkhX3dJwRfaPm79/AluWfEHdgHYEcfdH5UyTC1hYCzUEV7dKYjt/VOSRL9ItJMAwvVG
+         Cayw2v3z4nTa6FdmznzkJ7UZi5KV0TNWXr/PzaXONwGPZ/1XeDQArriv+dyFAY+D9e6a
+         D6Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zNlfGqR+PgAe0QneJuZnZZA8sj+er/tRH9Y2OabUbQ0=;
-        b=ejy24vth+yOwP7q8KdkUNP/YjzQHu6K/z84/MSTsvBER47TW8hEk9ytj5yxhOGAM9m
-         yidupE0ABZpaC+y9Rzi0mcANk4TYKKrnA2WaPtLFKOclPlQSBaiKi0SehLychDfK+Xnk
-         4GphpPdn9zrK8qU7AOmVu9tj8sw2ucM0wqcl4ws+30Q9NWhHgaSEVmI+0WLuAZ37WAMT
-         tHQcA5CY6a9x+vLuvNbAsQhTSkuPLtw9Gi/bSiPpu1LnL4ziUrRdGXM6MgW9nIOi/kwg
-         w8QueBAAAIztlyfdTZynIbEYfM8Ns+CU+KypPy3mOwE+GV7on0wTkSgDltHug4Sw0qy5
-         rhMg==
-X-Gm-Message-State: AOAM530mbUxEwkae4mzeq9e83QkGc5EWQbb7SlBDudT1ncBa5rM6cBcF
-        6l8jS95nRusESTRfJzqWQP6ofg==
-X-Google-Smtp-Source: ABdhPJyjVcdemCo73EyobrFHZh8UvBBGsFPmk5fAb9DNhV+vH0yKvtXmZog+D8tGQZw2qD+6tmnEUg==
-X-Received: by 2002:a5d:4648:: with SMTP id j8mr17852406wrs.131.1603721937895;
-        Mon, 26 Oct 2020 07:18:57 -0700 (PDT)
+        bh=PfaggvFtdrOq7HMZ8nUir6KiglSCvEmyQ3kUEaGT+6M=;
+        b=q6lNx9YG41BHYfuHZePQpKGdtXnOQje94okIqOJL7ospsRsv657QDBH36y289oyUHJ
+         7KMkNtuZPRk7BKQY9TgsKg44CFqQb5Nbgz3Iy+JZO31GcNpBIj1akjjJUS8hO8dBOo3x
+         IEPEtpDkmcoIh25SSA3VTa82DQ8BOmhPrDWFz9TsSW3Psd0RJPaloSWa6QfgvgSEzA81
+         TXn9PKxtQYBX5/KeW0dMoFJ4D4KFloov0xMMR2gFmLkGuJx57DajyJwmeMpzf4jm6J23
+         TmG8L3/E8yuo28sT/PMVQxlcKBwKGHSWGhF9ECVX12DwPRAJgH92eQh8ykX68d1hD+8y
+         qKIA==
+X-Gm-Message-State: AOAM530Zf2KA994pwfHm/Nck35U6VnXhnCC3i/JkFh/Aq792p6UAaw74
+        Af/ZJyEdOUSbRBFzlu6x1GYOsQ==
+X-Google-Smtp-Source: ABdhPJwoPOaWPitDMZQa4yCzAq/8OszWEHAj5/I4X2rm1V6T/IkG87/TkyaXzgLiAyfIvpOwqCba/w==
+X-Received: by 2002:adf:93c1:: with SMTP id 59mr17886759wrp.369.1603721934172;
+        Mon, 26 Oct 2020 07:18:54 -0700 (PDT)
 Received: from localhost.localdomain (lfbn-nic-1-190-206.w2-15.abo.wanadoo.fr. [2.15.39.206])
-        by smtp.gmail.com with ESMTPSA id e15sm21920841wro.13.2020.10.26.07.18.56
+        by smtp.gmail.com with ESMTPSA id e15sm21920841wro.13.2020.10.26.07.18.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 07:18:57 -0700 (PDT)
+        Mon, 26 Oct 2020 07:18:53 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 7/7] gpio: exar: use devm action for freeing the IDA and drop remove()
-Date:   Mon, 26 Oct 2020 15:18:39 +0100
-Message-Id: <20201026141839.28536-8-brgl@bgdev.pl>
+Subject: [PATCH 4/7] gpio: exar: use a helper variable for &pdev->dev
+Date:   Mon, 26 Oct 2020 15:18:36 +0100
+Message-Id: <20201026141839.28536-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201026141839.28536-1-brgl@bgdev.pl>
 References: <20201026141839.28536-1-brgl@bgdev.pl>
@@ -73,74 +73,68 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We can simplify the error path in probe() and drop remove() entirely if
-we provide a devm action for freeing the device ID.
+It's more elegant to use a helper local variable to store the address
+of the underlying struct device than to dereference pdev everywhere. It
+also has the benefit of avoiding unnecessary line breaks.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-exar.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ drivers/gpio/gpio-exar.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index e4da278f74a2..fda9346d1dc0 100644
+index 752e8437ff80..db366d85b6b4 100644
 --- a/drivers/gpio/gpio-exar.c
 +++ b/drivers/gpio/gpio-exar.c
-@@ -110,6 +110,13 @@ static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
- 	return 0;
- }
+@@ -120,7 +120,8 @@ static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
  
-+static void exar_devm_ida_free(void *data)
-+{
-+	struct exar_gpio_chip *exar_gpio = data;
-+
-+	ida_free(&ida_index, exar_gpio->index);
-+}
-+
- static const struct regmap_config exar_regmap_config = {
- 	.name		= "exar-gpio",
- 	.reg_bits	= 8,
-@@ -157,6 +164,10 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 	if (index < 0)
- 		return index;
+ static int gpio_exar_probe(struct platform_device *pdev)
+ {
+-	struct pci_dev *pcidev = to_pci_dev(pdev->dev.parent);
++	struct device *dev = &pdev->dev;
++	struct pci_dev *pcidev = to_pci_dev(dev->parent);
+ 	struct exar_gpio_chip *exar_gpio;
+ 	u32 first_pin, ngpios;
+ 	void __iomem *p;
+@@ -134,16 +135,15 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	if (!p)
+ 		return -ENOMEM;
  
-+	ret = devm_add_action_or_reset(dev, exar_devm_ida_free, exar_gpio);
-+	if (ret)
-+		return ret;
-+
+-	ret = device_property_read_u32(&pdev->dev, "exar,first-pin",
+-				       &first_pin);
++	ret = device_property_read_u32(dev, "exar,first-pin", &first_pin);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = device_property_read_u32(&pdev->dev, "ngpios", &ngpios);
++	ret = device_property_read_u32(dev, "ngpios", &ngpios);
+ 	if (ret)
+ 		return ret;
+ 
+-	exar_gpio = devm_kzalloc(&pdev->dev, sizeof(*exar_gpio), GFP_KERNEL);
++	exar_gpio = devm_kzalloc(dev, sizeof(*exar_gpio), GFP_KERNEL);
+ 	if (!exar_gpio)
+ 		return -ENOMEM;
+ 
+@@ -157,7 +157,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 
  	sprintf(exar_gpio->name, "exar_gpio%d", index);
  	exar_gpio->gpio_chip.label = exar_gpio->name;
- 	exar_gpio->gpio_chip.parent = dev;
-@@ -173,29 +184,15 @@ static int gpio_exar_probe(struct platform_device *pdev)
+-	exar_gpio->gpio_chip.parent = &pdev->dev;
++	exar_gpio->gpio_chip.parent = dev;
+ 	exar_gpio->gpio_chip.direction_output = exar_direction_output;
+ 	exar_gpio->gpio_chip.direction_input = exar_direction_input;
+ 	exar_gpio->gpio_chip.get_direction = exar_get_direction;
+@@ -169,8 +169,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	exar_gpio->index = index;
+ 	exar_gpio->first_pin = first_pin;
  
- 	ret = devm_gpiochip_add_data(dev, &exar_gpio->gpio_chip, exar_gpio);
+-	ret = devm_gpiochip_add_data(&pdev->dev,
+-				     &exar_gpio->gpio_chip, exar_gpio);
++	ret = devm_gpiochip_add_data(dev, &exar_gpio->gpio_chip, exar_gpio);
  	if (ret)
--		goto err_destroy;
-+		return ret;
+ 		goto err_destroy;
  
- 	platform_set_drvdata(pdev, exar_gpio);
- 
--	return 0;
--
--err_destroy:
--	ida_free(&ida_index, index);
--	return ret;
--}
--
--static int gpio_exar_remove(struct platform_device *pdev)
--{
--	struct exar_gpio_chip *exar_gpio = platform_get_drvdata(pdev);
--
--	ida_free(&ida_index, exar_gpio->index);
--
- 	return 0;
- }
- 
- static struct platform_driver gpio_exar_driver = {
- 	.probe	= gpio_exar_probe,
--	.remove	= gpio_exar_remove,
- 	.driver	= {
- 		.name = DRIVER_NAME,
- 	},
 -- 
 2.29.1
 
