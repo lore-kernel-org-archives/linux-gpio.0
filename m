@@ -2,142 +2,90 @@ Return-Path: <SRS0=vyY5=EB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C493C55178
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A20C4363A
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 070D42465D
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B33722263
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:43:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qPVb71XN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1781825AbgJZOmL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Oct 2020 10:42:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36072 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1781658AbgJZOmK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 26 Oct 2020 10:42:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2EF1CB8E1;
-        Mon, 26 Oct 2020 14:42:08 +0000 (UTC)
-Message-ID: <700a149849222f3efbec73cb8a6be56b4b1c5bcb.camel@suse.de>
-Subject: Re: [PATCH v2 03/10] gpio: raspberrypi-exp: Release firmware handle
- on unbind
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
-        Linux Input <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org
-Date:   Mon, 26 Oct 2020 15:42:06 +0100
-In-Reply-To: <CAMpxmJXw12hKYCuMDjG-Ns6n=mXmr4B2x3HJaAJ19wH_xDUMag@mail.gmail.com>
-References: <20201022155858.20867-1-nsaenzjulienne@suse.de>
-         <20201022155858.20867-4-nsaenzjulienne@suse.de>
-         <CAMpxmJXw12hKYCuMDjG-Ns6n=mXmr4B2x3HJaAJ19wH_xDUMag@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-4RJXy1XArEUanWEz7Yut"
-User-Agent: Evolution 3.36.5 
+        id S1781850AbgJZOnX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Oct 2020 10:43:23 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:51105 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1781849AbgJZOnX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2020 10:43:23 -0400
+Received: by mail-pj1-f67.google.com with SMTP id p21so3362314pju.0
+        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2020 07:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iB6W1YRGfACToPxj/ygoH3yqEA0d31y7OSOhA2AlbSc=;
+        b=qPVb71XNGYrz0GF3747rwA8bCX5f6Ik6gtrhRbspMTWzHbsZnYvz1Q2xx4N3SZQ+FK
+         I0brk/70jL/pH7CffrTYWIKhBLoFZFtSFylu87kWpUhrXGdV5jOtqRPeT1uzHka/xb2n
+         Q1vNdIXH3fkLFi7WrJSmY0gmxowOOyjgb5FNWOKui4epV8nORFOv3cwkxrt7+UDk/3tg
+         tn8atmtZxlnVzh2K3nxHQ9GBf2twDOamVeH2d9NGGYYyMqqT409RwP0Uyp4ce/65gwqA
+         X9vfLqK9OOLETbKrR5t5k2RdHQwqmvKfYZIjQ9gGcTxk+wpcH/eFv7T0C5duA3d9s/Eb
+         bevw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iB6W1YRGfACToPxj/ygoH3yqEA0d31y7OSOhA2AlbSc=;
+        b=tPECEhQG/IxRsUtjVp9IfErOmn8XGNZXojz6URVwxfyCI7liPdNuNy2u96Gf9gKua8
+         WMh6aLGXGXyxrCEfk9tPvOE2/JFFrrFcwnoua0BayO6d9mFWZXuHTZPl0r7RLLjhHsxt
+         bBH50jCh7ZxGkJJf4TFp+xxxEEz+qBbG/Se4iOVlDH0BOx88H18RukyeLkIqcYwc8AmI
+         jI3U8/qEmqTlZmMOscJ5ywP1v9fJ3Al3ZPrIvmZpPUvGrDb8KV+3ZUdcEUu3pIxrE8Xu
+         eIep7nwvOs2SoABzNtUJMU4yttgZw6lqcaA0TiRi+8CO+dN3KBk/IEMCPFFyhlKaQb/O
+         TjfA==
+X-Gm-Message-State: AOAM532pEi5vwi593NfWtaO7tknrd9iEwqPNNq7v2qGAt8wY2ihpWl4t
+        6eX+d1hLeoJV3ND8AQg9TXRvJqTWOsSo7sJUCUY=
+X-Google-Smtp-Source: ABdhPJwV5QSV0AMWcWTHLDkvFOYuUi+SNMzoP5HCC8LAQ71SEiaIkeZj0iFESIbCP5duMQU0sLkvx4gc89cLgQMLQhI=
+X-Received: by 2002:a17:90a:fb92:: with SMTP id cp18mr21029595pjb.228.1603723402832;
+ Mon, 26 Oct 2020 07:43:22 -0700 (PDT)
 MIME-Version: 1.0
+References: <20201022165847.56153-1-andriy.shevchenko@linux.intel.com>
+ <20201022165847.56153-3-andriy.shevchenko@linux.intel.com> <CAMpxmJWhENX6bEWihp5hFjDnbXz5asdmEpw96_SJdx1v3+U1AA@mail.gmail.com>
+In-Reply-To: <CAMpxmJWhENX6bEWihp5hFjDnbXz5asdmEpw96_SJdx1v3+U1AA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 26 Oct 2020 16:44:12 +0200
+Message-ID: <CAHp75VdBahEEB5qnbbquPBG+iErEaupoAA-f1vTroAXoLLJFNw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] gpiolib: of: Use named item for enum gpiod_flags variable
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Mon, Oct 26, 2020 at 4:40 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+>
+> On Thu, Oct 22, 2020 at 6:58 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > Use named item instead of plain integer for enum gpiod_flags
+> > to make it clear that even 0 has its own meaning.
 
---=-4RJXy1XArEUanWEz7Yut
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> This patch doesn't seem to depend on the others in this series so I
+> applied it to my tree. Let me know if that's not the case. I'll let
+> you take the ACPI patches.
 
-On Mon, 2020-10-26 at 15:40 +0100, Bartosz Golaszewski wrote:
-> On Thu, Oct 22, 2020 at 5:59 PM Nicolas Saenz Julienne
-> <nsaenzjulienne@suse.de> wrote:
-> > Upon unbinding the device make sure we release RPi's firmware interface=
-.
-> >=20
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > ---
-> >  drivers/gpio/gpio-raspberrypi-exp.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpio/gpio-raspberrypi-exp.c b/drivers/gpio/gpio-ra=
-spberrypi-exp.c
-> > index bb100e0124e6..c008336e1131 100644
-> > --- a/drivers/gpio/gpio-raspberrypi-exp.c
-> > +++ b/drivers/gpio/gpio-raspberrypi-exp.c
-> > @@ -231,8 +231,19 @@ static int rpi_exp_gpio_probe(struct platform_devi=
-ce *pdev)
-> >         rpi_gpio->gc.get =3D rpi_exp_gpio_get;
-> >         rpi_gpio->gc.set =3D rpi_exp_gpio_set;
-> >         rpi_gpio->gc.can_sleep =3D true;
-> > +       platform_set_drvdata(pdev, rpi_gpio);
-> >=20
-> > -       return devm_gpiochip_add_data(dev, &rpi_gpio->gc, rpi_gpio);
-> > +       return gpiochip_add_data(&rpi_gpio->gc, rpi_gpio);
-> > +}
-> > +
-> > +static int rpi_exp_gpio_remove(struct platform_device *pdev)
-> > +{
-> > +       struct rpi_exp_gpio *rpi_gpio =3D platform_get_drvdata(pdev);
-> > +
-> > +       gpiochip_remove(&rpi_gpio->gc);
-> > +       rpi_firmware_put(rpi_gpio->fw);
-> > +
-> > +       return 0;
-> >  }
-> >=20
-> >  static const struct of_device_id rpi_exp_gpio_ids[] =3D {
-> > @@ -247,6 +258,7 @@ static struct platform_driver rpi_exp_gpio_driver =
-=3D {
-> >                 .of_match_table =3D of_match_ptr(rpi_exp_gpio_ids),
-> >         },
-> >         .probe  =3D rpi_exp_gpio_probe,
-> > +       .remove =3D rpi_exp_gpio_remove,
-> >  };
-> >  module_platform_driver(rpi_exp_gpio_driver);
-> >=20
-> > --
-> > 2.28.0
-> >=20
->=20
-> Why not introduce devm_rpi_firmware_get()? That would allow you to
-> keep the driver elegant without re-adding remove().
+It's fine, thanks! I have just sent an additional message to elaborate
+my vision, but again, the approach for this patch you chose is just
+fine.
 
-I like the idea, I'll look into it.
-
-Thanks,
-Nicolas
-
-
---=-4RJXy1XArEUanWEz7Yut
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+W4D4ACgkQlfZmHno8
-x/4RVwf/UZbRYwQfpY+67Gru7U3IMExckiPcjOHqeN3IO1Aqys6hi0LcCgQmZoRS
-yDES/QK4HITWb2LEOikdeICzUhcAmHLuD6l9Si1lOw/g7RZAcNoB+gejoLIKsxsJ
-BvBSsCz+ARcANf68gksyv52nsVLhMNlvZpnoVV6p9VTzTb0q7+QOBy7KndC73pyM
-cLs3LcbX7jTY71QjVIAVJql7UiQmzjA9V08bxNan8AF/yttAj0PgtZga1WYXQHG/
-ipUuvMADCJYB9WrHAhtY8TV1G1pGs0b+OTU6cEZukdSAUaNXzL+DKDHm3nlMi887
-7aRyD6vm++8u7ecNrtj2/Iug3MLyQg==
-=FwXW
------END PGP SIGNATURE-----
-
---=-4RJXy1XArEUanWEz7Yut--
-
+-- 
+With Best Regards,
+Andy Shevchenko
