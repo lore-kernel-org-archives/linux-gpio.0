@@ -2,97 +2,81 @@ Return-Path: <SRS0=vyY5=EB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 793ABC55178
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C0EC2D0A3
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2654B2242A
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE6332463C
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Oct 2020 14:25:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="dbERnr6p"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NwqD/7Pq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1781100AbgJZOSy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Oct 2020 10:18:54 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40392 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1781097AbgJZOSw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2020 10:18:52 -0400
-Received: by mail-wm1-f65.google.com with SMTP id k18so12628549wmj.5
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2020 07:18:51 -0700 (PDT)
+        id S1781388AbgJZOZJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Oct 2020 10:25:09 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:45614 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1780854AbgJZOZJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2020 10:25:09 -0400
+Received: by mail-ej1-f67.google.com with SMTP id dt13so13810951ejb.12
+        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2020 07:25:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=A7Q6GcsOlUvCk0TynHXF9lujyUa3NnBo8eWmuL6l7+w=;
-        b=dbERnr6pULh92RZDnWcvydfH2yw6FxlD2miJ7YCqpB4IphjIU4ejhTXlyktOIKn3Jb
-         rZctRLFnMwOnfeFdVf30d8C2MkbbteOjzJD9mjltuxl+IykpgfRDZO6sV9l8K24hAHp7
-         I0MDI54E/6dfGtOWk6xwCPZzYKUz6dL93plJnxKWVWfNnOArUgxyRcYanFTebe/PaYUZ
-         nX/Tj/fZQH4jubG0MbIqB/0S2+fjGQE++3Vyu1hxWFDrjNT6RAgRu2S9NBYfCUq21GEH
-         X0qoiqOMY4mV3JG6RyAwngQ0zI9g3SOFUk+zaFuQsM0A5gGqslSVI1S9DXDURbtsc1qb
-         b5WQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7w4jeMHfk0aErIBVFgSyeg+Yeg4wndmrt5fmHB78LX8=;
+        b=NwqD/7PqebhliLvuyEgGxkAy1tSrTzX0VmwnbfwudD8QWIhJPvaV5UvNqEgIwS4POv
+         53YRNEKMOL5294GspCb5WkT+bzMUmVsm1I8uPNr8j64Iv/83Rjxjc2co2UCtgiy9kGDb
+         jr1UeJlzyQtmciPQwT4yENmwJtgHBuVEStLU2ReXxdP4bz2zoNiQNd//7ixe8m0XX0yV
+         ghWf8qpJuesgwQkYmyOpMdbaJNXWLPN7WQqUKITGMd1e9uUJkRJ/egLAovvA2+OxguKv
+         Vq8SjS9SPeT64gD6Dp6Za1G7WHirFKrJRU9xFyyQprQjNQlRDVKcchqVtE890eb51ZUh
+         iynQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=A7Q6GcsOlUvCk0TynHXF9lujyUa3NnBo8eWmuL6l7+w=;
-        b=OB/eIiXLNHcvTF5Qtpj2UuM0YquzOHtYdppC7BywrKqBckAPwupPz17larXj/zZ4fP
-         8PL4oIds4kQiKkfCy5y7HBsUNv+G9Vz5YH5oYnHv6qUYtHeuPFfWryrWl6CpHUBDWg9H
-         qdw8EucnqB4WGzHZp/2P9BI2Z3cetDXpYJUsRR5StVfkmEnApHwxW1JmBSx2tS1q3ZK4
-         qBrWX+AJwpaFh669XZ4PRckTGi1TUDlJeVsIx4/mg7CB9mMov3sE+VeD5ZY4Rstm9Lh4
-         9mfLsBFMA/P9codv4YdCaszLRbLmgvGIyKqqILGTG0/hQ68IV1bmD6RYJ/IxvldCyfxx
-         hMqQ==
-X-Gm-Message-State: AOAM530wN8Shep3k9qV1tDpd8g/URnWebNhl9RXzeGodZCp2FoegVaHu
-        D3hmp/vz1ZbIvMdXm7tr/cw0zQ==
-X-Google-Smtp-Source: ABdhPJw+ShFg7cEncyf7KSXkD3885HgMK01cPnCNxlaN5WvaFyxG7asKNOI9e2P3ixYeUv6A8J1HqA==
-X-Received: by 2002:a1c:3882:: with SMTP id f124mr15715926wma.184.1603721930478;
-        Mon, 26 Oct 2020 07:18:50 -0700 (PDT)
-Received: from localhost.localdomain (lfbn-nic-1-190-206.w2-15.abo.wanadoo.fr. [2.15.39.206])
-        by smtp.gmail.com with ESMTPSA id e15sm21920841wro.13.2020.10.26.07.18.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 07:18:49 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 1/7] gpio: exar: add a newline after the copyright notice
-Date:   Mon, 26 Oct 2020 15:18:33 +0100
-Message-Id: <20201026141839.28536-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.29.1
-In-Reply-To: <20201026141839.28536-1-brgl@bgdev.pl>
-References: <20201026141839.28536-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7w4jeMHfk0aErIBVFgSyeg+Yeg4wndmrt5fmHB78LX8=;
+        b=PlTF13a5xFSmsZoeFTpyDtqnNFGKXJejcyD41F627UPI8PpSTUq/JH8kEkdhkR8FJj
+         RN2XfvmUveHEG5DMAG6F2/Cei8gw5NlZYzaMK2REv5Zgcfhz8ivFEe7LcwkoBKpncdZx
+         mvM0rXiZLvnFqjaBTt9NrVLnc8eRADXiGwnqGkx/qUqr5rNwGLagOnm3xGqWF+qsKrXV
+         AEA76L0tbXkiL/WQnuvO+/jTiGo8BV5AzwSDD1O0fQ1ZrIfa4rN3TijSOHA+P7/0Pbjq
+         JqJUvjeMYZWp0QV1znmbsXKfmg2LqMG4tX5+OB2H07AezcecAeH0KbLLppzOvxsXANnn
+         CzjQ==
+X-Gm-Message-State: AOAM5319b1u0oucZBA84ODwSQViPR95dizatNrsG9GOoah+RIZYOrTKb
+        raLhDbsX9kwCIgErxLEI+8NgDytOdGo87HAWiLfxsB8G+lk=
+X-Google-Smtp-Source: ABdhPJzR5F3tZnH3GYfMI0ohmE8A8E6l67sd1C9welxD5ucf5ZdyY6KmEKup2W0ARcfssdIVLijzZRfiOQiJyJtG5zw=
+X-Received: by 2002:a17:906:7d0:: with SMTP id m16mr15612447ejc.445.1603722306268;
+ Mon, 26 Oct 2020 07:25:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201021142528.10285-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20201021142528.10285-1-andriy.shevchenko@linux.intel.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 26 Oct 2020 15:24:55 +0100
+Message-ID: <CAMpxmJV3hGEq7BDD2fuUHkdxGTOA9gwkmZSv_YiT28YNXgR6BQ@mail.gmail.com>
+Subject: Re: [PATCH v1] gpiolib: Extract gpiod_not_found() helper
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Oct 21, 2020 at 4:25 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Several places in the code are using same idiom, i.e.
+>         IS_ERR(desc) && PTR_ERR(desc) == -ENOENT
+> which meaning is GPIO description is not found.
+>
+> For better readability extract gpiod_not_found() helper and use it.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-It's customary to have a newline between the copyright header and the
-includes. Add one to gpio-exar.
+Applied, thanks!
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-exar.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index b1accfba017d..4202dd363a11 100644
---- a/drivers/gpio/gpio-exar.c
-+++ b/drivers/gpio/gpio-exar.c
-@@ -4,6 +4,7 @@
-  *
-  * Copyright (C) 2015 Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-  */
-+
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/gpio/driver.h>
--- 
-2.29.1
-
+Bartosz
