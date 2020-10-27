@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09576C5DF9E
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CE4C55179
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF56222D9
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 741C522283
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:18:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="XHOIZDPF"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="uINaxail"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750923AbgJ0MRw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Oct 2020 08:17:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37529 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2899741AbgJ0MRv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2020 08:17:51 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w1so1661185wrm.4
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2020 05:17:48 -0700 (PDT)
+        id S1750948AbgJ0MSE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Oct 2020 08:18:04 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52578 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbgJ0MRz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2020 08:17:55 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c194so1164447wme.2
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2020 05:17:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4ajG2eJaPSZ0bX/1WDeWm0EaqfEJqxAhsr1ZG8pJATY=;
-        b=XHOIZDPFdLQqYweDS35MDqPOY+CIlpJefK0zBWfY0YBTimhWcawEQs8dTrakE90RO7
-         AfsytdKycv6sjHXN2trxR/+eOiuM7wcXVt5IB8qtwwAQMxE4BkNW/+a/GHnw+CWx2wsB
-         hGq7TZ6iovNwqijODvBmZWQde1pIjIB5HPsJl/6X5swnxCmi/14lryrQsGpQHt5jA5cY
-         IH9hXgKEdIPUw1YcA/W+R9L29LSTdk7ImHzGZaTNpbL+xJ2ChLwLclaOJCS3Z4u/Bf9u
-         JVbkgQtqzawUBytpFhmYgsiop5B0mx4A7abqvzrfSU90qALU5F3Ra0TXyhHJ+ZhCt7b5
-         VUBw==
+        bh=nNS5tvBpA/i0H7p7l8m9y8bW5QzwJCcb9cwqd3juySc=;
+        b=uINaxail9sUfALoEWstn2csJR9jE7v9clDsZtLcLiOMSXg2LAVFIQqN6lHKyyZUd4l
+         jRiwMGMG4DxMFJH69rSCLOtob+027D28VPhBQtpIrjKA/W5lb5Kv+7Q+cjTTcQNW8hxv
+         wUoV9A8I84g3amtYBnRWsQ9zCBUoSUYIxS8yqik5kvDE0D17HbZwhUPBEWV0xwo4eSQB
+         xtGlMRrIXAwBsMOZYueqppFbh9JQaNXeAayhSnZZJNrW9nmKvVAevDfxEiP//pXPGQn7
+         22ZoAAwvkiz2v+dHQuQfEfVqcnXh5D2KeVL1FBqvTUVKMuvl7wX7b6wRp1orV+Uuzzwn
+         SgBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4ajG2eJaPSZ0bX/1WDeWm0EaqfEJqxAhsr1ZG8pJATY=;
-        b=dZmhAU4ls91WccHVG1Ym0J9WqjFb3ls5qWJAm9ZrpEZcC82OarIzmqnDtGRK/V4p5F
-         uEHXpOVZ0EyCn0BeXPCenFj/oUk0lKye/Fzg5vAT6JbDJPthu+gsyu6owYQtKUD2clLO
-         5Qhmpd1OpY5AZg40m4yyVq8egAsCHaGRdCj9qoCMJ/5f69J26+BNTzcDz6glmXwDjHAN
-         0NHmG17QjYJavWWjOMUihdu9DYCfNUbzalZQXJcKVz8lBIOe7opY4haaXF7agbx0X4LX
-         nqiVGbMbOYp/7l9Fo8QG0fpB8o+qz56OZjfz2nmE3GtolTYfARm4umShqM6Euj27yjE/
-         EkTg==
-X-Gm-Message-State: AOAM533D/xjkkULIC7Gd2tqxNUfL0r01goU5+d0MBPpXNRNQSCDx22Rt
-        mYHzmKuxmvJ0etjZXy1H8EXIRQ==
-X-Google-Smtp-Source: ABdhPJxi+QacVHd5+AE8Jqv2dW1ZUW5QhwXfI6u/s0dk/pyhkeRg2gSWT3PEaZdn2SLI49Q2m9AoSg==
-X-Received: by 2002:a5d:4ac1:: with SMTP id y1mr2494500wrs.303.1603801068178;
-        Tue, 27 Oct 2020 05:17:48 -0700 (PDT)
+        bh=nNS5tvBpA/i0H7p7l8m9y8bW5QzwJCcb9cwqd3juySc=;
+        b=d+f6s2f2jJas+oFO+xXdSoKsIQ1Q9WMCKwjtKS0bkplCnPfu567dBZv5qOaIUx0jIg
+         oqwZasSgXOlatdsf5r9BxFh3d9hQiLHs0otEfJnghlyCH904+u811agA4rJ0Q1IwaSvb
+         J2TRcP+uz93vhj9fNwaZKNWsAPSxJrYjB2YMq0e7TaGQebHMkO8NL9H2EafYPmH+098J
+         W3Netpx/eIi7U0p+M5B3rzhYL/GkKFOyxN6Sq4dPNRM++vsQRe8Y0BPXmEX4UmvaaEdO
+         B2SBUJXZs1tbo9gR5pF6KBrSb6rlf0zd9w0ra+euDUEpUctbQXc+Fb40iF5nrAMtL9hu
+         LrHw==
+X-Gm-Message-State: AOAM533u3mz6WtOy61QO137cV/sV2mbaGMNUJyKhKRl2RfcEFMxqS8G0
+        TI0nb1kIW+Nm/0s8bjIxQGCiZA==
+X-Google-Smtp-Source: ABdhPJwlnp8d7/fOEkypkqwExUCmIl2RKP9vSFIY6Z3TXZuynGv+gQ6ZzaCTjRN4xR7i9/EdKZccow==
+X-Received: by 2002:a1c:28d4:: with SMTP id o203mr2460319wmo.143.1603801072719;
+        Tue, 27 Oct 2020 05:17:52 -0700 (PDT)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id a2sm1731908wrs.55.2020.10.27.05.17.46
+        by smtp.gmail.com with ESMTPSA id a2sm1731908wrs.55.2020.10.27.05.17.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 05:17:47 -0700 (PDT)
+        Tue, 27 Oct 2020 05:17:51 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -86,9 +86,9 @@ Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         netdev@vger.kernel.org, linux-mm@kvack.org,
         alsa-devel@alsa-project.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 6/8] drm: atomic: use krealloc_array()
-Date:   Tue, 27 Oct 2020 13:17:23 +0100
-Message-Id: <20201027121725.24660-7-brgl@bgdev.pl>
+Subject: [PATCH 8/8] dma-buf: use krealloc_array()
+Date:   Tue, 27 Oct 2020 13:17:25 +0100
+Message-Id: <20201027121725.24660-9-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201027121725.24660-1-brgl@bgdev.pl>
 References: <20201027121725.24660-1-brgl@bgdev.pl>
@@ -105,22 +105,23 @@ calculating the size of the new array.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpu/drm/drm_atomic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/dma-buf/sync_file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 58527f151984..09ad6a2ec17b 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -960,7 +960,8 @@ drm_atomic_get_connector_state(struct drm_atomic_state *state,
- 		struct __drm_connnectors_state *c;
- 		int alloc = max(index + 1, config->num_connector);
+diff --git a/drivers/dma-buf/sync_file.c b/drivers/dma-buf/sync_file.c
+index 5a5a1da01a00..2925ea03eef0 100644
+--- a/drivers/dma-buf/sync_file.c
++++ b/drivers/dma-buf/sync_file.c
+@@ -270,8 +270,8 @@ static struct sync_file *sync_file_merge(const char *name, struct sync_file *a,
+ 		fences[i++] = dma_fence_get(a_fences[0]);
  
--		c = krealloc(state->connectors, alloc * sizeof(*state->connectors), GFP_KERNEL);
-+		c = krealloc_array(state->connectors, alloc,
-+				   sizeof(*state->connectors), GFP_KERNEL);
- 		if (!c)
- 			return ERR_PTR(-ENOMEM);
+ 	if (num_fences > i) {
+-		nfences = krealloc(fences, i * sizeof(*fences),
+-				  GFP_KERNEL);
++		nfences = krealloc_array(fences, i,
++					 sizeof(*fences), GFP_KERNEL);
+ 		if (!nfences)
+ 			goto err;
  
 -- 
 2.29.1
