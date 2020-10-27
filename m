@@ -2,141 +2,165 @@ Return-Path: <SRS0=684V=EC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662D5C838CF
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 15:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7DCC55178
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 16:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BFDF21D42
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 15:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD75A20829
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 16:09:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WKldZ05u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NumASSN5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1765127AbgJ0Prm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Oct 2020 11:47:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26227 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1798549AbgJ0P2w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 27 Oct 2020 11:28:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603812531;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mlWO+8V1OcYguip2KBsMhYWBSFJwL/+zUDmEZaIbfJ4=;
-        b=WKldZ05uRRnd7jfUDf+eXY82dU6qVMRserWCR3AQCKsYULu3T/y8B1yqIJaoitr6iizuYf
-        Hx7lIZ9x8eFNLDGBeLFdrw9z15q1vuarALmscrBIZPINoUz/eJ8klX323OFv0aC1cstaWE
-        Yh5Pr3+u/a7yyxYmFlfv0y6WmGdUXC4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-417-xU4V-f77O3m2XA5APPV19w-1; Tue, 27 Oct 2020 11:28:48 -0400
-X-MC-Unique: xU4V-f77O3m2XA5APPV19w-1
-Received: by mail-wr1-f70.google.com with SMTP id v5so914637wrr.0
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2020 08:28:47 -0700 (PDT)
+        id S1754966AbgJ0QJN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Oct 2020 12:09:13 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44329 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1806860AbgJ0QJD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2020 12:09:03 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t6so473402plq.11
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2020 09:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y8z713XlayESH339Gp0VA0pxVEZrHHHC1564eAGVGao=;
+        b=NumASSN5jUGYa6e5z22XehydqEuDytI4MnptHFy12+L7djPz4ENXxNeSTt8AUpwpbB
+         e0o2xgt4N2sAtEC3XKrqQ1QMWH6Xeh0zbkKofMJkByOwtn6kFUEgdeYAdPEUy5mbmxeL
+         iQApgLUgSL3DsxMER2bJ2GVtl1wxyhPppNCCw2B95tepbbefUytZHVC/RdMMBWb6m0/S
+         +GOF9lGzFzvAZ6Tte7HivoAELh4vRVCjhZRLHX6nlPwmlM2gHLv+UhR8c5ONoeBOXoe+
+         CKnDnmURtNcns/625CYiXS+Tp11k71VLmQizLT4J3uZ692I3y3dXiTHzWntBzkxt3kEq
+         ji2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mlWO+8V1OcYguip2KBsMhYWBSFJwL/+zUDmEZaIbfJ4=;
-        b=ffqqd5Mkf4ncfzL2zSvdSowNQJR24PyH3MDnsHAULqbeNhanboFKer5i8Kgr86Pu7A
-         GGSPMc9wQuVvMqU8MGf9hzy7g1DZ0rA0hiBd5rEEquqdNPMDXd+JQQvozkxPaeU92Ygl
-         jfGIvEFFdHfj9qvfwuD1qGqnUQ4NEiLCtogmLAhlZiBVXL1NACwLDoakMqbHW1guMWeI
-         phbeOE60/ymTPIfZ/1O0HUMKm7X8ZZQP4sjPI28NrLC3FJBW4PbZ15bx9+7VO5lcC3Y6
-         9mrGHJ1RunGIlpoZM/tNoYtOmIl+qLj9shCbkyWN+y6d5njiLnJwq7wlSJGEBno17sas
-         cC9A==
-X-Gm-Message-State: AOAM530xAoah9XsNOn9+lnzY2ISM5n205dh1Q+Y+k+PwY45BsCPgLyoG
-        YHR5nag58niEbZ9sVf8cvaWxmfByhfWWqCJH5Jr/Wurafbh40F/DHonaSSpg2GHhvxJWxnc/9XV
-        6d7uYFPEYdKKtDxN/tXnHFQ==
-X-Received: by 2002:a1c:2cd7:: with SMTP id s206mr3177555wms.182.1603812526986;
-        Tue, 27 Oct 2020 08:28:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyuH3n7lQ9eR5dnqf6yc1oFeHmyleXhbTjubsRyj6zs3Jak/y/oaUl12gqM18qHQ8tFGKD6AA==
-X-Received: by 2002:a1c:2cd7:: with SMTP id s206mr3177537wms.182.1603812526789;
-        Tue, 27 Oct 2020 08:28:46 -0700 (PDT)
-Received: from redhat.com (bzq-109-65-21-184.red.bezeqint.net. [109.65.21.184])
-        by smtp.gmail.com with ESMTPSA id 3sm2370433wmd.19.2020.10.27.08.28.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 08:28:45 -0700 (PDT)
-Date:   Tue, 27 Oct 2020 11:28:40 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-gpio@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, alsa-devel@alsa-project.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 3/8] vhost: vringh: use krealloc_array()
-Message-ID: <20201027112607-mutt-send-email-mst@kernel.org>
-References: <20201027121725.24660-1-brgl@bgdev.pl>
- <20201027121725.24660-4-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y8z713XlayESH339Gp0VA0pxVEZrHHHC1564eAGVGao=;
+        b=b3QFtSz8CP7k8ZCban+4uJ9Ucr3wi1OhDcFjCjwjbKqwio7JJB3TTRYQXskD1ATZjr
+         ZuwuFM2ZadixIGmgcSZUcFNLObsZ6ssSxJK9JXXaVPIqe+1xW7O7Zhioa4dLqtOXs2ub
+         VRJEoylYkK6o3OE8ABKY3Ylj9rBwRYh/2eVnPzapyFn6cgREHmVlb2ydhm5uRQagrFqc
+         Aor6Py8qjTRzC+4G+N+py7QN7BX7t9bIr8tIi0Kr6aaNFoTpA6RvWbBaeSavemXvevgg
+         Am2C41Fxslrwm4GI4+JtMK5fz6iq1STm3opDvJrEbAY5l2TXzo2u4xkRdnMBAQNLJ/oP
+         SuRA==
+X-Gm-Message-State: AOAM530S4YtoWykI67e7UtdKV2g5S8qyQARGs1CpFYOsGH5wiMY9LaYi
+        hqdqj9OFvANv+FJz/KH3VUeaHbiFXa92cok0Fz0=
+X-Google-Smtp-Source: ABdhPJwnRuw6kfpLU6usrKj8k9y5UpG9W4uTmoM226PnUmWKyb6+ZHmI86szqWRZzz77ikQ9UMC5mgmvMFEAAnXWNfk=
+X-Received: by 2002:a17:902:7442:b029:d6:4773:7cdc with SMTP id
+ e2-20020a1709027442b02900d647737cdcmr3310063plt.21.1603814941169; Tue, 27 Oct
+ 2020 09:09:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201027121725.24660-4-brgl@bgdev.pl>
+References: <20201003230340.42mtl35n4ka4d5qw@Rk> <20201004051644.f3fg2oavbobrwhf6@Rk>
+ <20201006044941.fdjsp346kc5thyzy@Rk> <e9cfac98-51fc-b169-cb74-80fd11de12ec@redhat.com>
+ <20201006083157.3pg6zvju5buxspns@Rk> <69853d2b-239c-79d5-bf6f-7dc0eec65602@redhat.com>
+ <4f02cbdf-e1dd-b138-4975-118dd4f86089@redhat.com> <a07d3890-f560-855f-3631-a3d5848dcdf5@redhat.com>
+ <20201014042420.fkkyabmrkiekpmfw@Rk> <df2c008b-e7b5-4fdd-42ea-4d1c62b52139@redhat.com>
+ <20201026225400.37almqey2wxyazkn@Rk> <f15806d6-32e2-c6b0-8f96-670a196380a8@redhat.com>
+ <CAHp75VcwiGREBUJ0A06EEw-SyabqYsp+dqs2DpSrhaY-2GVdAA@mail.gmail.com> <86963e59-3661-c43c-4e08-a0f9b9e7ed07@redhat.com>
+In-Reply-To: <86963e59-3661-c43c-4e08-a0f9b9e7ed07@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 27 Oct 2020 18:09:49 +0200
+Message-ID: <CAHp75VcEr0AcdM2+ig5neMQn+5cfuttpFuAak7CkSO-qVjPeCw@mail.gmail.com>
+Subject: Re: Any other ways to debug GPIO interrupt controller (pinctrl-amd)
+ for broken touchpads of a new laptop model?
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Coiby Xu <coiby.xu@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        wang jun <availa@outlook.com>,
+        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 01:17:20PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Use the helper that checks for overflows internally instead of manually
-> calculating the size of the new array.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Oct 27, 2020 at 6:01 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> On 10/27/20 4:13 PM, Andy Shevchenko wrote:
+> > On Tue, Oct 27, 2020 at 4:31 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> >> On 10/26/20 11:54 PM, Coiby Xu wrote:
+> >>> Hi Hans and Linus,
+> >>>
+> >>> Will you interpret the 0x0000 value for debounce timeout in GPIO
+> >>> Interrupt Connection Resource Descriptor as disabling debouncing
+> >>> filter?
+> >>>
+> >>> GpioInt (EdgeLevel, ActiveLevel, Shared, PinConfig, DebounceTimeout, ResourceSource,
+> >>> ResourceSourceIndex, ResourceUsage, DescriptorName, VendorData) {PinList}
+> >>>
+> >>> I'm not sure if Windows' implementation is the de facto standard like
+> >>> i2c-hid. But if we are going to conform to the ACPI specs and we would
+> >>> regard 0x0000 debounce timeout as disabling debouncing filter, then we
+> >>> can fix this touchpad issue and potentially some related issues by
+> >>> implementing the feature of supporting configuring debounce timeout in
+> >>> drivers/gpio/gpiolib-acpi.c and removing all debounce filter
+> >>> configuration in amd_gpio_irq_set_type of drivers/pinctrl/pinctrl-amd.c.
+> >>> What do you think?
+> >>>
+> >>> A favorable evidence is I've collected five DSDT tables when
+> >>> investigating this issue. All 5 DSDT tables have an GpioInt specifying
+> >>> an non-zero debounce timeout value for the edge type irq and for all
+> >>> the level type irq, the debounce timeout is set to 0x0000.
+> >>
+> >> That is a very interesting observation and this matches with my
+> >> instincts which say that we should just disable the debounce filter
+> >> for level triggered interrupts in pinctrl-amd.c
+> >>
+> >> Yes that is a bit of a shortcut vs reading the valie from the ACPI
+> >> table, but I'm not sure that 0 always means disabled.
+> >>
+> >> Specifically the ACPI 6.2 spec also has a notion of pinconf settings
+> >> and the docs on "PinConfig()"  say:
+> >>
+> >> Note: There is some overlap between the properties set by GpioIo/GpioInt/ PinFunction and
+> >> PinConfig descriptors. For example, both are setting properties such as pull-ups. If the same
+> >> property is specified by multiple descriptors for the same pins, the order in which these properties
+> >> are applied is undetermined. To avoid any conflicts, GpioInt/GpioIo/PinFunction should provide a
+> >> default value for these properties when PinConfig is used. If PinConfig is used to set pin bias,
+> >> PullDefault should be used for GpioIo/GpioInt/ PinFunction. *If PinConfig is used to set debounce
+> >> timeout, 0 should be used for GpioIo/GpioInt.*
+> >>
+> >> So that suggests that a value of 0 does not necessarily mean "disabled" but
+> >> it means use a default, or possibly get the value from somewhere else such
+> >> as from a ACPI PinConfig description (if present).
+> >
+> > Nope, it was added to get rid of disambiguation when both Gpio*() and
+> > PinConfig() are given.
+> > So, 0 means default *if and only if* PinConfig() is present.
+> >
+> > I.o.w. the OS layers should do this:
+> >
+> >  - if Gpio*() provides Debounce != 0, we use it, otherwise
+> >  - if PinConfig() is present for this pin with a debounce set, use it, otherwise
+> >  - debounce is disabled.
+> >
+> > Now we missed a midentry implementation in the Linux kernel, hence go
+> > to last, i.e. disable debounce.
+> > But it should be rather done in gpiolib-acpi.c.
+> >
+> > Hope this helps.
+> >
+> > I Cc'ed this to Mika as co-author of that part of specification, he
+> > may correct me if I'm wrong.
+>
+> I see, so then the right thing to do for the bug which we are seeing
+> on some AMD platforms would be to honor the debounce setting I guess ?
+>
+> Can you and/or Mika write a patch(set) for this ?
 
-No problem with the patch, it does introduce some symmetry in the code.
+I will look at it, but meanwhile I would postpone until having a
+Mika's Ack on the action that my understanding and course of actions
+is correct.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+> > P.S. Does RedHat have a representative in ASWG?
+>
+> I think so yes, but mainly focussed on server related things I guess...
 
 
-
-> ---
->  drivers/vhost/vringh.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
-> index 8bd8b403f087..08a0e1c842df 100644
-> --- a/drivers/vhost/vringh.c
-> +++ b/drivers/vhost/vringh.c
-> @@ -198,7 +198,8 @@ static int resize_iovec(struct vringh_kiov *iov, gfp_t gfp)
->  
->  	flag = (iov->max_num & VRINGH_IOV_ALLOCATED);
->  	if (flag)
-> -		new = krealloc(iov->iov, new_num * sizeof(struct iovec), gfp);
-> +		new = krealloc_array(iov->iov, new_num,
-> +				     sizeof(struct iovec), gfp);
->  	else {
->  		new = kmalloc_array(new_num, sizeof(struct iovec), gfp);
->  		if (new) {
-> -- 
-> 2.29.1
-
+-- 
+With Best Regards,
+Andy Shevchenko
