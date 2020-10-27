@@ -5,55 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51064C56202
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42187C55178
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1665922264
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02CF022264
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Oct 2020 12:18:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="fei0ANa2"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="I6NX/4rt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750902AbgJ0MRs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Oct 2020 08:17:48 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37520 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2899720AbgJ0MRr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2020 08:17:47 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w1so1660932wrm.4
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2020 05:17:45 -0700 (PDT)
+        id S2899673AbgJ0MRo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Oct 2020 08:17:44 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36089 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2899664AbgJ0MRl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2020 08:17:41 -0400
+Received: by mail-wm1-f66.google.com with SMTP id e2so1214188wme.1
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2020 05:17:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Yv5nQ3yDPCTR6Qr42pQX9T0J3MZN9NU/gU5iZJIrkWk=;
-        b=fei0ANa2ElSFo4FKASLBvqdzEpQMc369lxMXy79AWLlLE4ldM0t9l6k8RVF3buSnvA
-         InRbHn9r2hR680pZZ+gYHBH0cxjnXEpWTBjRsyn3pPicTDT7ROS1njEmMsQ0EtyoYRv/
-         vBz+LlGkNh9F45O2WPmNPaWYUC2TRs+1c28W6I2DHNQSUKyUoBTvCUXW/RmCgB8tOU8G
-         g5O/0EGVAt658IQXZb3tOQIDePMiXd3i3GdEI4By620HO0ioGffbTx/3svpvzdtTVEbj
-         pJSbSja7AzYXp5nq6dTEmNRhW6+2gmmrtbUq1fP5SW49DL3CQr9yND4Z3iXAPYqZ02Lj
-         0X6A==
+        bh=2L3lr/8sLf7Z5y8Aim//8p5VZua449ayHzLh+PHsAEM=;
+        b=I6NX/4rt5CDmPWW1saFsLZWRkPzrAH2KBDwRbhX67CXdUXPPBiQxknBpev7HNopX7v
+         T4hCqsqEQ+8slSjg9oVsWiouDFBCjUxT2tQhZ7IsbEhntldfWt0pGCC18RYKkF8HyqJx
+         9RTh6mcLw4a5t85mWwIRiBjPnX8DfWDpwoFyv2x3tXDUqIcE4ydx14krTVgwR7Mujyzi
+         c7FeX7rajI1jIGSq0UFLTHM/eXW6rmNIQ+ewJ8tVOZErdCBzyF6pzeFt8JKoMnrfmiqh
+         HH4RQszopE21d3R0VoR6twetVnWG7wRPJVw9OB9Ugbj6v6iDFbcVtXVpkFtNwEVIqDq0
+         2QCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Yv5nQ3yDPCTR6Qr42pQX9T0J3MZN9NU/gU5iZJIrkWk=;
-        b=gD1lPFwLFoO8cJp4LyP8/aEEFXWarim84MXsqeCwAeQlfthsXD7mp6Trpw4Pj1pgsn
-         9sXVG/SemB9az7B0ELT4ho9nw8A98WvLJ0rnqrqW+Gy+X4dZfg4W3/q+skfdlGk0qxOZ
-         IddCBl3kDmF5Ej6y/acuRl66j0/WUAGzKYN7kDbRa2fj37LsFLFiZhqw03vrQzHxB8YI
-         w3lPGC6hbmTZEXLJ7pTjuZ4Qm6Sys8mgiUh4Xfb8SYMSNLR0J+esWgOPxKOUbf8ca6Gy
-         nk/8PRVx+AXgxEcjdAmdbENn2fMrY5UWrH9ZTch/opeuyyaGxj2H0J0RY02/1s3Kn+Ag
-         ca5Q==
-X-Gm-Message-State: AOAM532d7K7iRzzugKiSrXNTmJPCFWE0TS7wD8i7A6hkZWY3wZoTJLdT
-        tQy0knivPG/dBK6ZmdLdxncTSA==
-X-Google-Smtp-Source: ABdhPJwBy/86P9NLjWm4ayzRrNeTPV1ezoUeA/zg5bUjnQJez1TgK6PN9H/ezjMnvntOGwzzJ6JYWg==
-X-Received: by 2002:a05:6000:108:: with SMTP id o8mr2545710wrx.256.1603801064364;
-        Tue, 27 Oct 2020 05:17:44 -0700 (PDT)
+        bh=2L3lr/8sLf7Z5y8Aim//8p5VZua449ayHzLh+PHsAEM=;
+        b=jH//Dey/d5ZfOzQezcN9BplqnZRps5VopDSSXKtiOrafbQrelwSewIu6HCvb9PAQR0
+         1CvDEQnjSLd6jYoON+SHIZ3QKKugXblVxbPy6b/zUIljB77Utj/8xbAYK1oPrxEsy5ma
+         i7CofHO4WLxI/P+oqtZpJzZ+vbu9tJdS9GXX9UCg9q0KVkiJnWRLJJwCwxo8SEt84gP5
+         hLeytnQsfCZSuzrXRhkJwci+EyWJ+r70GDYS/h1sMxTVflRz9WnA5ZiKHpAyRjePgLWa
+         pLIrE04NA73B6kIA0Mrl6JJ/D9HjSDqRqDv4Eilq/+6FVAzbev3Gb+BymPvfskXjI5+r
+         9RkA==
+X-Gm-Message-State: AOAM530f93zKdaTZzjudhVb1CLNO5dA3ZySqGUycpfmcC9+QQVevWT9+
+        wHsvV8GzPAghMjKwq4Q4reulSQ==
+X-Google-Smtp-Source: ABdhPJwnQfDZtXuM3jzzK38lXBwCGy/kfsjXsJcKEg+cED0SodtStCj40BizmPHJbimBDnnjg0sfuQ==
+X-Received: by 2002:a1c:7c1a:: with SMTP id x26mr2463834wmc.4.1603801057987;
+        Tue, 27 Oct 2020 05:17:37 -0700 (PDT)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id a2sm1731908wrs.55.2020.10.27.05.17.42
+        by smtp.gmail.com with ESMTPSA id a2sm1731908wrs.55.2020.10.27.05.17.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 05:17:43 -0700 (PDT)
+        Tue, 27 Oct 2020 05:17:37 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -86,9 +86,9 @@ Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         netdev@vger.kernel.org, linux-mm@kvack.org,
         alsa-devel@alsa-project.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4/8] pinctrl: use krealloc_array()
-Date:   Tue, 27 Oct 2020 13:17:21 +0100
-Message-Id: <20201027121725.24660-5-brgl@bgdev.pl>
+Subject: [PATCH 1/8] mm: slab: provide krealloc_array()
+Date:   Tue, 27 Oct 2020 13:17:18 +0100
+Message-Id: <20201027121725.24660-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201027121725.24660-1-brgl@bgdev.pl>
 References: <20201027121725.24660-1-brgl@bgdev.pl>
@@ -100,27 +100,41 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Use the helper that checks for overflows internally instead of manually
-calculating the size of the new array.
+When allocating an array of elements, users should check for
+multiplication overflow or preferably use one of the provided helpers
+like: kmalloc_array().
+
+There's no krealloc_array() counterpart but there are many users who use
+regular krealloc() to reallocate arrays. Let's provide an actual
+krealloc_array() implementation.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/pinctrl/pinctrl-utils.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/slab.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-utils.c b/drivers/pinctrl/pinctrl-utils.c
-index f2bcbf62c03d..93df0d4c0a24 100644
---- a/drivers/pinctrl/pinctrl-utils.c
-+++ b/drivers/pinctrl/pinctrl-utils.c
-@@ -39,7 +39,7 @@ int pinctrl_utils_reserve_map(struct pinctrl_dev *pctldev,
- 	if (old_num >= new_num)
- 		return 0;
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index dd6897f62010..0e6683affee7 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -592,6 +592,17 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+ 	return __kmalloc(bytes, flags);
+ }
  
--	new_map = krealloc(*map, sizeof(*new_map) * new_num, GFP_KERNEL);
-+	new_map = krealloc_array(*map, new_num, sizeof(*new_map), GFP_KERNEL);
- 	if (!new_map) {
- 		dev_err(pctldev->dev, "krealloc(map) failed\n");
- 		return -ENOMEM;
++static __must_check inline void *
++krealloc_array(void *p, size_t new_n, size_t new_size, gfp_t flags)
++{
++	size_t bytes;
++
++	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
++		return NULL;
++
++	return krealloc(p, bytes, flags);
++}
++
+ /**
+  * kcalloc - allocate memory for an array. The memory is set to zero.
+  * @n: number of elements.
 -- 
 2.29.1
 
