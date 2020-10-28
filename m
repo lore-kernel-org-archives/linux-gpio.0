@@ -2,187 +2,88 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21ABAC55179
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15634C5DF9E
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1BBF20714
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:28:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c8YXWXab"
+	by mail.kernel.org (Postfix) with ESMTP id B643C2071A
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733015AbgJ1W2U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:28:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731994AbgJ1W2S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:28:18 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C9BC0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:28:17 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id i6so852338lfd.1
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JzxgzmFEKg3uyOYq0U+7u1Sr88Fa5cBf5J/ai9Bi9w4=;
-        b=c8YXWXabra4sW5/XLNopgCr1Ey4kEIOYZ1bnz6+tWCnkIM88z4M2Q3I8N6B+DLSZt4
-         cJzYWSgKqRYIP05RISLd1JWNSMYFkd9oJV/3pYM+4YbdbwwpPxZY4yZg7EkQpNCDvAMI
-         gD29S7F17ZYzpny8Auzr9eQgNQUDt2NXaN1SE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JzxgzmFEKg3uyOYq0U+7u1Sr88Fa5cBf5J/ai9Bi9w4=;
-        b=Hh0zd71x/ToEB5cwDkOEofycHWnv8pLUScmdPI/WR9mnezLQfgYvbaWmT5bObicsKj
-         A6KyCBLDw+8LpnzXyjSD9YCmfuIn7iYtNJG2eJj1UpqYT5TFZe1nxQhAmdDiQzeCWzuD
-         QS55ubSIJLMfOAVdGEr6TF5+81oaZG41P+Cz0X3yRTWQUA+lrKfN+S0xV5f1JMOUI4jU
-         tNw8i5i1XOnz0b4c28DoYhxNMsiDJIswfP8nrLAU25LTCVQGquZcuoyQursFGVKyxKXo
-         eKWExOZeuSxgUHfQuwOznbShbgr+cOGUYiha/3RXS0uFFOdbo+OJAZ3TCog1dc4EmrYF
-         ylRQ==
-X-Gm-Message-State: AOAM5318XY0+/8XPlfytHIMgOvrnP6GAc2XwXX6n/X50ySMflbYdOAb1
-        XdXXeQns+oDW0/vHnY6Aalpc8DYNhedZm4w56Ss=
-X-Google-Smtp-Source: ABdhPJw9WvnFCFfe0bMtDkbOl61PKkk2WINL/17GJ+UJzZwPlfMZ2z28uuVsBREELq+J+ey2Z9mmqA==
-X-Received: by 2002:adf:e685:: with SMTP id r5mr390473wrm.340.1603905483580;
-        Wed, 28 Oct 2020 10:18:03 -0700 (PDT)
-Received: from alco.lan ([80.71.134.83])
-        by smtp.gmail.com with ESMTPSA id y4sm222505wrp.74.2020.10.28.10.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 10:18:02 -0700 (PDT)
-From:   Ricardo Ribalda <ribalda@chromium.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda <ribalda@chromium.org>
-Subject: [PATCH] gpiolib: acpi: Support GpioInt with active_low polarity
-Date:   Wed, 28 Oct 2020 18:17:57 +0100
-Message-Id: <20201028171757.765866-1-ribalda@chromium.org>
-X-Mailer: git-send-email 2.29.0.rc2.309.g374f81d7ae-goog
+        id S2387673AbgJ1WaV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:30:21 -0400
+Received: from newton.telenet-ops.be ([195.130.132.45]:51674 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387683AbgJ1WaU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:30:20 -0400
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Oct 2020 18:30:19 EDT
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4CLrFD5tdKzMr2M9
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:15:12 +0100 (CET)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by andre.telenet-ops.be with bizsmtp
+        id lSFC2300D4C55Sk01SFCDu; Wed, 28 Oct 2020 15:15:12 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXmEK-000oZ5-01; Wed, 28 Oct 2020 15:15:12 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXmEJ-007FpU-C1; Wed, 28 Oct 2020 15:15:11 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/4] gpio: rcar: Cache gpiochip_get_data() return value
+Date:   Wed, 28 Oct 2020 15:15:01 +0100
+Message-Id: <20201028141504.1729093-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201028141504.1729093-1-geert+renesas@glider.be>
+References: <20201028141504.1729093-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On the current implementation we only support active_high polarity for
-GpioInt.
+Since commit 43c54ecade400cf6 ("gpio: move the subdriver data pointer
+into gpio_device") changed gpiochip_get_data() to an out-of-line
+function, it is now worthwhile to avoid multiple calls in a row by
+caching its return value in a local variable.
 
-There can be cases where a GPIO has active_low polarity and it is also a
-IRQ source.
-
-De-couple the irq_polarity and active_low fields instead of re-use it.
-
-With this patch we support ACPI devices such as:
-
-Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
-{
-        GpioInt (Edge, ActiveBoth, Exclusive, PullDefault, 0x0000,
-        "\\_SB.PCI0.GPIO", 0x00, ResourceConsumer, ,
-        )
-        {   // Pin list
-                0x0064
-        }
-})
-Name (_DSD, Package (0x02)  // _DSD: Device-Specific Data
-{
-        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */,
-        Package (0x01)
-        {
-        Package (0x02)
-        {
-                "privacy-gpio",
-                Package (0x04)
-                {
-                \_SB.PCI0.XHCI.RHUB.HS07,
-                Zero,
-                Zero,
-                One
-                }
-        }
-        }
-})
-
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpio/gpiolib-acpi.c | 8 ++++----
- drivers/gpio/gpiolib-acpi.h | 6 ++++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-rcar.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 834a12f3219e..bc33c1056391 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -624,7 +624,7 @@ int acpi_gpio_update_gpiod_lookup_flags(unsigned long *lookupflags,
- 		break;
- 	}
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 3ef19cef8da9b240..a75bbc9af1f14b06 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -295,14 +295,15 @@ static int gpio_rcar_direction_input(struct gpio_chip *chip, unsigned offset)
  
--	if (info->polarity == GPIO_ACTIVE_LOW)
-+	if (info->active_low)
- 		*lookupflags |= GPIO_ACTIVE_LOW;
+ static int gpio_rcar_get(struct gpio_chip *chip, unsigned offset)
+ {
++	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
+ 	u32 bit = BIT(offset);
  
- 	return 0;
-@@ -665,6 +665,7 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 					      agpio->pin_table[pin_index]);
- 		lookup->info.pin_config = agpio->pin_config;
- 		lookup->info.gpioint = gpioint;
-+		lookup->info.active_low = !!lookup->active_low;
+ 	/* testing on r8a7790 shows that INDT does not show correct pin state
+ 	 * when configured as output, so use OUTDT in case of output pins */
+-	if (gpio_rcar_read(gpiochip_get_data(chip), INOUTSEL) & bit)
+-		return !!(gpio_rcar_read(gpiochip_get_data(chip), OUTDT) & bit);
++	if (gpio_rcar_read(p, INOUTSEL) & bit)
++		return !!(gpio_rcar_read(p, OUTDT) & bit);
+ 	else
+-		return !!(gpio_rcar_read(gpiochip_get_data(chip), INDT) & bit);
++		return !!(gpio_rcar_read(p, INDT) & bit);
+ }
  
- 		/*
- 		 * Polarity and triggering are only specified for GpioInt
-@@ -675,11 +676,10 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 		 */
- 		if (lookup->info.gpioint) {
- 			lookup->info.flags = GPIOD_IN;
--			lookup->info.polarity = agpio->polarity;
-+			lookup->info.irq_polarity = agpio->polarity;
- 			lookup->info.triggering = agpio->triggering;
- 		} else {
- 			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio);
--			lookup->info.polarity = lookup->active_low;
- 		}
- 	}
- 
-@@ -958,7 +958,7 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- 				return ret;
- 
- 			irq_flags = acpi_dev_get_irq_type(info.triggering,
--							  info.polarity);
-+							  info.irq_polarity);
- 
- 			/* Set type if specified and different than the current one */
- 			if (irq_flags != IRQ_TYPE_NONE &&
-diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
-index 1c6d65cf0629..816a2d7a21ed 100644
---- a/drivers/gpio/gpiolib-acpi.h
-+++ b/drivers/gpio/gpiolib-acpi.h
-@@ -16,7 +16,8 @@ struct acpi_device;
-  * @flags: GPIO initialization flags
-  * @gpioint: if %true this GPIO is of type GpioInt otherwise type is GpioIo
-  * @pin_config: pin bias as provided by ACPI
-- * @polarity: interrupt polarity as provided by ACPI
-+ * @irq_polarity: interrupt polarity as provided by ACPI
-+ * @active_low: pin polarity as provided by ACPI
-  * @triggering: triggering type as provided by ACPI
-  * @quirks: Linux specific quirks as provided by struct acpi_gpio_mapping
-  */
-@@ -25,7 +26,8 @@ struct acpi_gpio_info {
- 	enum gpiod_flags flags;
- 	bool gpioint;
- 	int pin_config;
--	int polarity;
-+	int irq_polarity;
-+	bool active_low;
- 	int triggering;
- 	unsigned int quirks;
- };
+ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
 -- 
-2.29.0.rc2.309.g374f81d7ae-goog
+2.25.1
 
