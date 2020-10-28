@@ -2,87 +2,111 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B41C4363A
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095ABC64E7B
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B86C724743
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:14:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="N+BWrrYZ"
+	by mail.kernel.org (Postfix) with ESMTP id AB1EE206E9
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603923544;
+	bh=JAx1qWa20um1wQnui7p3l/DIW1YJ8YcH6WDCgd1IdSU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=bNI4oFJlGeuG+2Wo7K/UHQbipzTLHxpbUfDJ1trjxECa8Ymm8ydT63q7G48P6eYls
+	 jgZPfjSnAjEU/nHu4u7GypgvHO5QYCZko3fcrV9MynzkeBoYTlrtR23PCKT55T6Xjs
+	 qfl6Nz8eRrSMUfnM4jvdgnrFg5Q093kKckJhT6hc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731183AbgJ1WOH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:14:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52904 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731167AbgJ1WOG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:14:06 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C96C0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:14:06 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id o18so1126880edq.4
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:14:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pg1Awte/AcCE0VTpWWjF/X+y57TY14JHAwwH73vbeZk=;
-        b=N+BWrrYZvcw1eAZEn4Rkvla5ZhdaCVyBOuc8pxi/ev9ojf4qiOCEoNyr4LednIWYHi
-         MlXTPk/ebU2w9VwNP9NDCEXpqBs9v3FJgjkxG5NkxgbF4ypLsbxhhNuRAamoeBEYIvDZ
-         4WwqwTLFO8/Lg/hMFBrzaUDOLEPyp9MUoNlhitc45ZZUizXRNqtkXgZ86NHnq9Ox7wUs
-         dkNnJgm9/GOpasXFOpdXPHuXt6fXcFMpOXN8xuP9tq7xeZg+bMd15zN4cJV9n+e/3v4Z
-         3vN4N0knYEjOqDqfAjOkS4tpkW+PpRu1mF7YEtuGLqGpOxgwXsifpbnuGEGmswuatJBI
-         LW2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pg1Awte/AcCE0VTpWWjF/X+y57TY14JHAwwH73vbeZk=;
-        b=HOzawyiyhHURj4xLHk5BIPhih/PHHUY5Noei/7XuI+reJoy4vtKfvrsVVJgnew0hVy
-         Q8I182BxQjQsbzxf6+ygB75jtCXEjVVKWloPIkxXgZdDAOa4cgoxrybTF0mj52PyJkSz
-         dTCwX6NJj/ndCqf0m8olIkJnhfhCh+85tm8JGqHVsJ6aeEKJ5KrlFR0EG9gdfyQ3RaWF
-         hyaBY6cUgYdOaoS8IDc91nML6vGsrViciUy/xsMW3pJ5ORSmBCMqnmwe2tO4sX1v359X
-         LH3BnC8FZWIN2RL3lk/J8Uh76R4BalF6ERaU/odqE8aCaOIBop1yOqJtyykxTLIqKxU8
-         eeAw==
-X-Gm-Message-State: AOAM531Xwg+1Cv50/KxQ1P1SczoImZ+qMmISGWPJxrQVupCdx9C+DCY/
-        sb9WHI7xSg8i71dwBoZCYV15MMdVyXkRcsFxAwVbLaekHrk=
-X-Google-Smtp-Source: ABdhPJx66MvROMytz8Io7gwu5YHeqpdaA/k/cNh1NDS0LzJp5+8ZB4Dy8g7ogYGcrYnupMYog5+IQGiY3y/cw5WxoM0=
-X-Received: by 2002:a17:906:3146:: with SMTP id e6mr7958530eje.363.1603903015706;
- Wed, 28 Oct 2020 09:36:55 -0700 (PDT)
+        id S1731885AbgJ1WTC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:19:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731663AbgJ1WRk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 28 Oct 2020 18:17:40 -0400
+Received: from mail.kernel.org (ip5f5ad5b2.dynamic.kabel-deutschland.de [95.90.213.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59B16247A7;
+        Wed, 28 Oct 2020 14:23:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603895015;
+        bh=JAx1qWa20um1wQnui7p3l/DIW1YJ8YcH6WDCgd1IdSU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l751ojO5xWe+dORLoDgW1EzlSHs0QR+n1JmTHLoUWMW/Bx55nmbRxJb5Pb+/O9jxP
+         i8tJmF8TFQig657YLLejnAqH6bPS+rpaIlB7+BS9/udWOOgKAeo5a5uxGfeCHblYyc
+         3I6qm5ftuvDbCRoG9Y6B/dtFtB2dvF85lsdJ9te8=
+Received: from mchehab by mail.kernel.org with local (Exim 4.94)
+        (envelope-from <mchehab@kernel.org>)
+        id 1kXmMP-003hln-A4; Wed, 28 Oct 2020 15:23:33 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 23/33] docs: ABI: don't escape ReST-incompatible chars from obsolete and removed
+Date:   Wed, 28 Oct 2020 15:23:21 +0100
+Message-Id: <53f82f9b3c063bb1b928bdea4986f1471ad3ace7.1603893146.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <cover.1603893146.git.mchehab+huawei@kernel.org>
+References: <cover.1603893146.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-References: <20201028085748.17388-1-vincent.whitchurch@axis.com>
-In-Reply-To: <20201028085748.17388-1-vincent.whitchurch@axis.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 28 Oct 2020 17:36:44 +0100
-Message-ID: <CAMpxmJV5sorE8xPAynmc8mtw8aNP_3wm8DNSgx-Wc_fV61jCaQ@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: mockup: Allow probing from device tree
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>, kernel@axis.com,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 9:57 AM Vincent Whitchurch
-<vincent.whitchurch@axis.com> wrote:
->
-> Allow the mockup driver to be probed via the device tree without any
-> module parameters, allowing it to be used to configure and test higher
-> level drivers like the leds-gpio driver and corresponding userspace
-> before actual hardware is available.
->
-> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-> ---
->
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Applied, thanks!
+With just a single fix, the contents there can be parsed properly
+without the need to escape any ReST incompatible stuff.
 
-Bartosz
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/ABI/obsolete/sysfs-gpio      | 2 ++
+ Documentation/admin-guide/abi-obsolete.rst | 1 +
+ Documentation/admin-guide/abi-removed.rst  | 1 +
+ 3 files changed, 4 insertions(+)
+
+diff --git a/Documentation/ABI/obsolete/sysfs-gpio b/Documentation/ABI/obsolete/sysfs-gpio
+index e0d4e5e2dd90..b8b0fd341c17 100644
+--- a/Documentation/ABI/obsolete/sysfs-gpio
++++ b/Documentation/ABI/obsolete/sysfs-gpio
+@@ -13,6 +13,8 @@ Description:
+   GPIOs are identified as they are inside the kernel, using integers in
+   the range 0..INT_MAX.  See Documentation/admin-guide/gpio for more information.
+ 
++  ::
++
+     /sys/class/gpio
+ 	/export ... asks the kernel to export a GPIO to userspace
+ 	/unexport ... to return a GPIO to the kernel
+diff --git a/Documentation/admin-guide/abi-obsolete.rst b/Documentation/admin-guide/abi-obsolete.rst
+index cda9168445a5..d095867899c5 100644
+--- a/Documentation/admin-guide/abi-obsolete.rst
++++ b/Documentation/admin-guide/abi-obsolete.rst
+@@ -8,3 +8,4 @@ The description of the interface will document the reason why it is
+ obsolete and when it can be expected to be removed.
+ 
+ .. kernel-abi:: $srctree/Documentation/ABI/obsolete
++   :rst:
+diff --git a/Documentation/admin-guide/abi-removed.rst b/Documentation/admin-guide/abi-removed.rst
+index 497978fc9632..f7e9e43023c1 100644
+--- a/Documentation/admin-guide/abi-removed.rst
++++ b/Documentation/admin-guide/abi-removed.rst
+@@ -2,3 +2,4 @@ ABI removed symbols
+ ===================
+ 
+ .. kernel-abi:: $srctree/Documentation/ABI/removed
++   :rst:
+-- 
+2.26.2
+
