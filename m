@@ -2,122 +2,187 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C619FC56202
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21ABAC55179
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F0D420714
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1BBF20714
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:28:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCRgtAyd"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c8YXWXab"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbgJ1W2H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:28:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55338 "EHLO
+        id S1733015AbgJ1W2U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:28:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387568AbgJ1W14 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:27:56 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CD0C0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:27:55 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id n11so646428ota.2
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:27:55 -0700 (PDT)
+        with ESMTP id S1731994AbgJ1W2S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:28:18 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C9BC0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:28:17 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id i6so852338lfd.1
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:28:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3pjMjmENtYUj621klFYYU6RWKKnbIsd5hygGgsndT34=;
-        b=PCRgtAydIUY+L/sB1ctbgzy5LolXIozx/vTA1kQsZ3Bfm21b/kEnBbAIsHqQtGATrs
-         WNoxj/N4WLvAH6GObloXatgZNrSivpxy9nbVPCBh9B3OnJOU4HBWSwfZXqkIJnYEsd4l
-         DrUkgJCXFVI4DJExXnNcGvXPW5SPEysYJkRAmcV4IIfx9IpjM5GIb8z17L7cm2HP0zdP
-         ckjmHyoewkVAI4AupOH4trsLjDeGLRdrJewJeIWNbiyWisTVysLeB0PlNxfQOuCRf46y
-         lfwzaM1d7Jrzg1zC4ccCjg24NcDhT0hqEHTGZADIcGyjpmO96PYVp1Qb0aMSQQLak3H6
-         H5+w==
+        bh=JzxgzmFEKg3uyOYq0U+7u1Sr88Fa5cBf5J/ai9Bi9w4=;
+        b=c8YXWXabra4sW5/XLNopgCr1Ey4kEIOYZ1bnz6+tWCnkIM88z4M2Q3I8N6B+DLSZt4
+         cJzYWSgKqRYIP05RISLd1JWNSMYFkd9oJV/3pYM+4YbdbwwpPxZY4yZg7EkQpNCDvAMI
+         gD29S7F17ZYzpny8Auzr9eQgNQUDt2NXaN1SE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3pjMjmENtYUj621klFYYU6RWKKnbIsd5hygGgsndT34=;
-        b=k2GGgu2bROzMqKD++0JlON8XPZ5bJm3aeHcNfW9GQWDegKoIodZ6lzygXu7xKDgrdf
-         vb1r3YyKT6KvtcjvWP/SKyKWJFjkkpIBHT+PHrDaN4XHh6zXjDqZgL1tREFAq4i9xfIs
-         pg8PFZdXMMI3eS5bdMb6aRRPOUOS9cSs8ZG3Mx35sZQv3m7ivMPiSu1u553m1yAdlS0K
-         qpti+5Vl/qF54xZct3QbBIWev+5VsyQBG0aQUk3z/Gj37XI8DfDAPbrQSp+x9cr+nxvK
-         go+QGJo8QDKugGg5nzhY57HVhntsJzHhIPMYYHKFIdEf2PdDtyXH/i9dMjtxLt6FBhEg
-         +thw==
-X-Gm-Message-State: AOAM531vTJAFiRfcv0AyEdH7Xt43N+MHiNMCI+9DyzB8Ff04BVfKXabT
-        hXsZYI1mTfv8oNhoDp7u7d7lHZWkd5CbqA==
-X-Google-Smtp-Source: ABdhPJwfeZapuZ+9lvwIuDhnpi76l3f17jnxbk+XoJjRCMZkvvRxulr2ODP2TBVAvkZYDv3vePJZlw==
-X-Received: by 2002:a05:6820:100b:: with SMTP id v11mr4338189oor.87.1603859773332;
-        Tue, 27 Oct 2020 21:36:13 -0700 (PDT)
-Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id k51sm1895884otc.46.2020.10.27.21.36.12
+        bh=JzxgzmFEKg3uyOYq0U+7u1Sr88Fa5cBf5J/ai9Bi9w4=;
+        b=Hh0zd71x/ToEB5cwDkOEofycHWnv8pLUScmdPI/WR9mnezLQfgYvbaWmT5bObicsKj
+         A6KyCBLDw+8LpnzXyjSD9YCmfuIn7iYtNJG2eJj1UpqYT5TFZe1nxQhAmdDiQzeCWzuD
+         QS55ubSIJLMfOAVdGEr6TF5+81oaZG41P+Cz0X3yRTWQUA+lrKfN+S0xV5f1JMOUI4jU
+         tNw8i5i1XOnz0b4c28DoYhxNMsiDJIswfP8nrLAU25LTCVQGquZcuoyQursFGVKyxKXo
+         eKWExOZeuSxgUHfQuwOznbShbgr+cOGUYiha/3RXS0uFFOdbo+OJAZ3TCog1dc4EmrYF
+         ylRQ==
+X-Gm-Message-State: AOAM5318XY0+/8XPlfytHIMgOvrnP6GAc2XwXX6n/X50ySMflbYdOAb1
+        XdXXeQns+oDW0/vHnY6Aalpc8DYNhedZm4w56Ss=
+X-Google-Smtp-Source: ABdhPJw9WvnFCFfe0bMtDkbOl61PKkk2WINL/17GJ+UJzZwPlfMZ2z28uuVsBREELq+J+ey2Z9mmqA==
+X-Received: by 2002:adf:e685:: with SMTP id r5mr390473wrm.340.1603905483580;
+        Wed, 28 Oct 2020 10:18:03 -0700 (PDT)
+Received: from alco.lan ([80.71.134.83])
+        by smtp.gmail.com with ESMTPSA id y4sm222505wrp.74.2020.10.28.10.18.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 21:36:12 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Wed, 28 Oct 2020 10:18:02 -0700 (PDT)
+From:   Ricardo Ribalda <ribalda@chromium.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: qcom: sm8250: Specify PDC map
-Date:   Tue, 27 Oct 2020 21:36:42 -0700
-Message-Id: <20201028043642.1141723-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.28.0
+Cc:     Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH] gpiolib: acpi: Support GpioInt with active_low polarity
+Date:   Wed, 28 Oct 2020 18:17:57 +0100
+Message-Id: <20201028171757.765866-1-ribalda@chromium.org>
+X-Mailer: git-send-email 2.29.0.rc2.309.g374f81d7ae-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Specify the PDC mapping for SM8250, so that gpio interrupts are
-propertly mapped to the wakeup IRQs of the PDC.
+On the current implementation we only support active_high polarity for
+GpioInt.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+There can be cases where a GPIO has active_low polarity and it is also a
+IRQ source.
+
+De-couple the irq_polarity and active_low fields instead of re-use it.
+
+With this patch we support ACPI devices such as:
+
+Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+{
+        GpioInt (Edge, ActiveBoth, Exclusive, PullDefault, 0x0000,
+        "\\_SB.PCI0.GPIO", 0x00, ResourceConsumer, ,
+        )
+        {   // Pin list
+                0x0064
+        }
+})
+Name (_DSD, Package (0x02)  // _DSD: Device-Specific Data
+{
+        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */,
+        Package (0x01)
+        {
+        Package (0x02)
+        {
+                "privacy-gpio",
+                Package (0x04)
+                {
+                \_SB.PCI0.XHCI.RHUB.HS07,
+                Zero,
+                Zero,
+                One
+                }
+        }
+        }
+})
+
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/pinctrl/qcom/pinctrl-sm8250.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/gpio/gpiolib-acpi.c | 8 ++++----
+ drivers/gpio/gpiolib-acpi.h | 6 ++++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-sm8250.c b/drivers/pinctrl/qcom/pinctrl-sm8250.c
-index 826df0d637ea..af144e724bd9 100644
---- a/drivers/pinctrl/qcom/pinctrl-sm8250.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sm8250.c
-@@ -1313,6 +1313,22 @@ static const struct msm_pingroup sm8250_groups[] = {
- 	[183] = SDC_PINGROUP(sdc2_data, 0xb7000, 9, 0),
- };
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 834a12f3219e..bc33c1056391 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -624,7 +624,7 @@ int acpi_gpio_update_gpiod_lookup_flags(unsigned long *lookupflags,
+ 		break;
+ 	}
  
-+static const struct msm_gpio_wakeirq_map sm8250_pdc_map[] = {
-+	{ 0, 79 }, { 1, 84 }, { 2, 80 }, { 3, 82 }, { 4, 107 }, { 7, 43 },
-+	{ 11, 42 }, { 14, 44 }, { 15, 52 }, { 19, 67 }, { 23, 68 }, { 24, 105 },
-+	{ 27, 92 }, { 28, 106 }, { 31, 69 }, { 35, 70 }, { 39, 37 },
-+	{ 40, 108 }, { 43, 71 }, { 45, 72 }, { 47, 83 }, { 51, 74 }, { 55, 77 },
-+	{ 59, 78 }, { 63, 75 }, { 64, 81 }, { 65, 87 }, { 66, 88 }, { 67, 89 },
-+	{ 68, 54 }, { 70, 85 }, { 77, 46 }, { 80, 90 }, { 81, 91 }, { 83, 97 },
-+	{ 84, 98 }, { 86, 99 }, { 87, 100 }, { 88, 101 }, { 89, 102 },
-+	{ 92, 103 }, { 93, 104 }, { 100, 53 }, { 103, 47 }, { 104, 48 },
-+	{ 108, 49 }, { 109, 94 }, { 110, 95 }, { 111, 96 }, { 112, 55 },
-+	{ 113, 56 }, { 118, 50 }, { 121, 51 }, { 122, 57 }, { 123, 58 },
-+	{ 124, 45 }, { 126, 59 }, { 128, 76 }, { 129, 86 }, { 132, 93 },
-+	{ 133, 65 }, { 134, 66 }, { 136, 62 }, { 137, 63 }, { 138, 64 },
-+	{ 142, 60 }, { 143, 61 }
-+};
-+
- static const struct msm_pinctrl_soc_data sm8250_pinctrl = {
- 	.pins = sm8250_pins,
- 	.npins = ARRAY_SIZE(sm8250_pins),
-@@ -1323,6 +1339,8 @@ static const struct msm_pinctrl_soc_data sm8250_pinctrl = {
- 	.ngpios = 181,
- 	.tiles = sm8250_tiles,
- 	.ntiles = ARRAY_SIZE(sm8250_tiles),
-+	.wakeirq_map = sm8250_pdc_map,
-+	.nwakeirq_map = ARRAY_SIZE(sm8250_pdc_map),
- };
+-	if (info->polarity == GPIO_ACTIVE_LOW)
++	if (info->active_low)
+ 		*lookupflags |= GPIO_ACTIVE_LOW;
  
- static int sm8250_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+@@ -665,6 +665,7 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 					      agpio->pin_table[pin_index]);
+ 		lookup->info.pin_config = agpio->pin_config;
+ 		lookup->info.gpioint = gpioint;
++		lookup->info.active_low = !!lookup->active_low;
+ 
+ 		/*
+ 		 * Polarity and triggering are only specified for GpioInt
+@@ -675,11 +676,10 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 		 */
+ 		if (lookup->info.gpioint) {
+ 			lookup->info.flags = GPIOD_IN;
+-			lookup->info.polarity = agpio->polarity;
++			lookup->info.irq_polarity = agpio->polarity;
+ 			lookup->info.triggering = agpio->triggering;
+ 		} else {
+ 			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio);
+-			lookup->info.polarity = lookup->active_low;
+ 		}
+ 	}
+ 
+@@ -958,7 +958,7 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ 				return ret;
+ 
+ 			irq_flags = acpi_dev_get_irq_type(info.triggering,
+-							  info.polarity);
++							  info.irq_polarity);
+ 
+ 			/* Set type if specified and different than the current one */
+ 			if (irq_flags != IRQ_TYPE_NONE &&
+diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
+index 1c6d65cf0629..816a2d7a21ed 100644
+--- a/drivers/gpio/gpiolib-acpi.h
++++ b/drivers/gpio/gpiolib-acpi.h
+@@ -16,7 +16,8 @@ struct acpi_device;
+  * @flags: GPIO initialization flags
+  * @gpioint: if %true this GPIO is of type GpioInt otherwise type is GpioIo
+  * @pin_config: pin bias as provided by ACPI
+- * @polarity: interrupt polarity as provided by ACPI
++ * @irq_polarity: interrupt polarity as provided by ACPI
++ * @active_low: pin polarity as provided by ACPI
+  * @triggering: triggering type as provided by ACPI
+  * @quirks: Linux specific quirks as provided by struct acpi_gpio_mapping
+  */
+@@ -25,7 +26,8 @@ struct acpi_gpio_info {
+ 	enum gpiod_flags flags;
+ 	bool gpioint;
+ 	int pin_config;
+-	int polarity;
++	int irq_polarity;
++	bool active_low;
+ 	int triggering;
+ 	unsigned int quirks;
+ };
 -- 
-2.28.0
+2.29.0.rc2.309.g374f81d7ae-goog
 
