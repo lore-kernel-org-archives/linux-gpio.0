@@ -2,94 +2,115 @@ Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4501C388F7
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 00:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 507F0C4363A
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 00:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05826207DE
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 00:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFF8A20791
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 00:33:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="d7uJKM2k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpZxbBEp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388805AbgJ2A1y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 20:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46704 "EHLO
+        id S1732157AbgJ1WXP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:23:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388807AbgJ2A1u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 20:27:50 -0400
-Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB58FC0613CF;
-        Wed, 28 Oct 2020 17:27:49 -0700 (PDT)
-Received: by mail-vs1-xe42.google.com with SMTP id g21so611443vsp.0;
-        Wed, 28 Oct 2020 17:27:49 -0700 (PDT)
+        with ESMTP id S1732712AbgJ1WWq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:22:46 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7F4C0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:22:46 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id r10so334061plx.3
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:22:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RQ2kvUyYd4YE/aOcmy2TWcR3YaKz9JiRyVflCfdu5Ag=;
-        b=d7uJKM2kvc8QuY02CcO5eBrxbPT8YUiaUU1yfWyy96kwPlqHgSJbuzyw5TzPhu6q1i
-         Mx3BMKt0rJCXGELn+j98YQOuRL9N/PNF1OAh+5sMfmimXwb1nO1iOOgc1D9Z9NrdDut5
-         12Cjvu4k6cSwBpskqjLRgkmjbm/U3Vf2VSKf8=
+        bh=e0WV5pLxEioPyPbCZvINirWvsYtOLdelHBXJDNC1ihQ=;
+        b=EpZxbBEpzluh0EEnfKCCLiHWMHbFnx7ndJ7NV8YS7HYgw2sbwNmrfXe5/e/WAjmFOC
+         DU6qTPV3L9QiK/3DnX8DmciXe4d0ru8XnQF3kzN99ZhI9jKFh5oK/MWfYqoeWzrSgXce
+         YNkfiO09fIn1POzePTuqEmoao2Q48bIcPJiQzWUZZKcSP+ykS7laf4/0YR49KoeloDg3
+         AWu+ZqkZdbCcwx5fwUFr6lULm+S08oVepsdimox9jm1KrnyfDZF2keDFNTcd/XbzlZzb
+         n+wJ/8GJWDoewEdFz2XP337NnsdlBSBEw/hwCNbHAnkulmp0zTFjBCBW2n2kns7CpLjY
+         l4YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RQ2kvUyYd4YE/aOcmy2TWcR3YaKz9JiRyVflCfdu5Ag=;
-        b=NQx+tDArWavrF+TYS2ZkPFmUzcIfiHr/N6hE3xmWwa0mmqKeOs4KxECjF5LgEDtPHs
-         kI4VBlvT6h2C48V43jpLPoRvwwWJsN4OOuzEGEZUtl7+glqSdb72v/ODsaZo+h9suP18
-         WtdMw7KdCXd6DRxgqFMAU09vrvLhCgr3JLqTXnShas+pyfz8Cxs5g7UyEt+G6zeVkmtS
-         ENFvKrfxnz9r8vNDuI0SF1R/dHJ60f/ZqS8qkPEeitMI3XdF4msZOPglaGuwiFBWrtBE
-         Dnemxie09XzAVJRluMOAs8ydWjO0niRr6zgbz+SfESuAOC0jHm7vV3Rx9ux7BddEGl/D
-         VzUg==
-X-Gm-Message-State: AOAM530I8E71AKAM724D7nPG+RxOdjUrM+gkSml5B9xg3TgpafLcJp7K
-        rBRoFAX2EtcMP8MWx63d3iujYw4e+DtqlmaeIX5UjAOwixFQ9hY1
-X-Google-Smtp-Source: ABdhPJxQgUH7wxrvz7ZLyzad/HO2Oih626XOaAtn0H/+hBkJgVlw0Lkex5XUeHspPJHS77UwlY99ZTN9QT3BiEhy5OQ=
-X-Received: by 2002:ad4:5387:: with SMTP id i7mr5777139qvv.43.1603861987985;
- Tue, 27 Oct 2020 22:13:07 -0700 (PDT)
+        bh=e0WV5pLxEioPyPbCZvINirWvsYtOLdelHBXJDNC1ihQ=;
+        b=B2W2A6R6SiHktZ0VOS+2rCWBzgFvswjzi6fpyCjGZ311zzFE4BScPBi4WVDxxvLq8Y
+         EC4+0EypMDBNYJ/5ATLMAZTXeM9s1322MmramBxtgePsFdpPKLd8IYdXs3wlRNTJrXmL
+         HWV/s/v/rYforQp69V9Ksg2t6cxieSzayhhE3ugeKvZdUtdKUphr4vBIULUqDvumBA/b
+         EJ1UwhopXa6OW8UfJ6AjKR5Io0OWz2u4o30JaiydWGiPJf04XiZV2lmpsW9VwPrcoHVe
+         AliecPG4YA3mxhgwlr84Wl6/6UIQ7SGBSHGgmvGvjFK7/Y3BqE5VOkjpZ56UXatTiRq+
+         hgcw==
+X-Gm-Message-State: AOAM533jQna2BbmWfhm5QbZC7MQHg4iaBwUo+kv0PbpRaUHiHp2NZO/i
+        j33R0VdEYuzv3NmvzxednIiuast6L2z1RXRc5Nwg+CG/f9fUzA==
+X-Google-Smtp-Source: ABdhPJy9j0oSVg+HgAVPCAQ7kM9VWhplFZ/2AJi5PeOIva7axydMIxHQ94y8u6GDlqaEwQMsP14NpW0BWmrZSfHq+dk=
+X-Received: by 2002:a17:902:6bc8:b029:d6:d9d:f28c with SMTP id
+ m8-20020a1709026bc8b02900d60d9df28cmr753815plt.17.1603916941958; Wed, 28 Oct
+ 2020 13:29:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201012033150.21056-1-billy_tsai@aspeedtech.com>
- <20201012033150.21056-2-billy_tsai@aspeedtech.com> <49ef1445-ddb5-41fb-b9f5-f885a1784e77@www.fastmail.com>
-In-Reply-To: <49ef1445-ddb5-41fb-b9f5-f885a1784e77@www.fastmail.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 28 Oct 2020 05:12:56 +0000
-Message-ID: <CACPK8Xc-rFMkv6_VVizF0F8uqQQC=rko=P_LhC0CphJH+_VFYA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Arm: dts: aspeed-g6: Fix the register range of gpio
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     Billy Tsai <billy_tsai@aspeedtech.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+References: <CAHp75Veqdv8JnASmmsnv9AmrktByWH3R7Z36wLMyjJh0VffExw@mail.gmail.com>
+ <CACRpkdaAryt0PdbMQ-LMjJ=LNvmNVSHrjHfPn15uJo7WALpNEQ@mail.gmail.com>
+In-Reply-To: <CACRpkdaAryt0PdbMQ-LMjJ=LNvmNVSHrjHfPn15uJo7WALpNEQ@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 28 Oct 2020 22:29:50 +0200
+Message-ID: <CAHp75VfdRfROFwa+wsL6rW7v5=E+qYrE+rwy7zBP2YkZsgjdgQ@mail.gmail.com>
+Subject: Re: Is consumer documentation correct?
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Alexandre Courbot <gnurou@gmail.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        BMC-SW <BMC-SW@aspeedtech.com>
+        Kent Gibson <warthog618@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 26 Oct 2020 at 01:05, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Wed, Oct 28, 2020 at 6:15 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 >
+> On Thu, Oct 22, 2020 at 6:26 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
 >
->
-> On Mon, 12 Oct 2020, at 14:01, Billy Tsai wrote:
-> > This patch is used to fix the memory range of gpio0
+> > It _seems_ between
+> >   79a9becda894 ("gpiolib: export descriptor-based GPIO interface")
+> > and
+> >   14e85c0e69d5 ("gpio: remove gpio_descs global array")
+> > the "Interacting With the Legacy GPIO Subsystem" of GPIO consumer
+> > interface is correct.
 > >
-> > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> > But is it the case afterwards?
+> >
+> > Details of the question are here [1].
+> >
+> > [1]: https://stackoverflow.com/q/64455505/2511795
 >
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> I don't know if I even understand the question right, but gpio_to_desc()
+> can be called at any time as long as there is a struct gpio_chip with
+> the global GPIO number assigned to it. It will just index into the
+> array of descriptors stored inside the chip and return a pointer.
+> The allocation of the memory lives with the struct gpio_chip.
+>
+> If for example that chip is on USB and you unplug that USB
+> cable, naturally referencing the descriptor after that point
+> will cause disasters.
+>
+> The gpio_request()/free() doesn't really allocate or free
+> any memory at all. This is why we call gpio_to_desc() first
+> thing in the legacy functions.
 
-I've applied this with:
+The section titled "Interacting With the Legacy GPIO Subsystem"
+describes as far as I got it the interaction of gpio_to_desc() and
+desc_to_gpio() with new / legacy APIs along with their scope. But is
+that description correct after the above mentioned commit, i.e.
+14e85c0e69d5 ("gpio: remove gpio_descs global array") when we lose the
+always-present data structure (if I'm not mistaken)?
 
-Fixes: 8dbcb5b709b9 ("ARM: dts: aspeed-g6: Add gpio devices")
-
-Cheers,
-
-Joel
+-- 
+With Best Regards,
+Andy Shevchenko
