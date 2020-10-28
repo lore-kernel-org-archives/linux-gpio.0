@@ -2,115 +2,99 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8BBC4363A
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BE5C55179
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 142CF20796
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A92720759
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:12:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6rW1Nk/"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uwxwj3iY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbgJ1XKl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:10:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34026 "EHLO
+        id S1729428AbgJ1XM0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:12:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbgJ1XJO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:09:14 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE595C0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:09:14 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id k27so1306607oij.11
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:09:14 -0700 (PDT)
+        with ESMTP id S1726037AbgJ1XLt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:11:49 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91AFCC0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:11:48 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id o18so1248116edq.4
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=eO5/7xkBvWcjhyzUNXxsrcjlaFar4NsGB67kKk6LzIc=;
-        b=c6rW1Nk/e05q15RGsNxt2gfZl4juqQyk5Wd/I4youa2Iuxht1QTbGRnkPpXYyONabh
-         OZHATEcRXCNhke5525JYhyTVOKWdX4y2YrXPXLf8P6jbvVfzERc9pQ3OPubYBbkLawgx
-         zvI/wzKgpChD0cesNG4M+BlJEb3HoYapJE6JKm/lty/Yi5kCdcxk4pfcmaXuCPXSo5AU
-         O52J45ZjfLZoJzePzIfi1N1caDNB5qSLrIkL/mygHsw1c3OvrW7TC1gCSxCoPKS4WFHo
-         b32qLOeFlhsd0dir0BwEpdaP7JHo9VjN0wdiETSCGn+g24RdpVqHtexQxVYjK+fw7gsy
-         yOiA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Dg6TspjrICJkOugoHrRVElTVqmURk390ews+cACTSJ8=;
+        b=Uwxwj3iY3xmbx32gOYncPduLx0jmzJw60EJAWxSSTMMdJfc7U6orys9IQA9FigU6xX
+         rPl+/FBdqiiF0wPtih7ilQou2Z7HM1Lwjspl8clUa+qQe3ZyVOhjrFIN824V9ylxUweh
+         CjQ5rc/5B4k1bycKwy1Q0u0Fu2fiS33/JUfCH/nYb2MUeuvWS4P/qPVH66tuHAxIjBvt
+         tLesrOrMY0O1NcQ/l96Z+FuRkzNKwk//pWlulW/TqUQz/P7AoBbB6GGXoAfGukuXXRa4
+         tXqeDYmNygKz8poMFweCSU/Kt7E8+KLQaDMCOPs4O3/vMRpgJskuILJ85QK8smczcQ6B
+         uQRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=eO5/7xkBvWcjhyzUNXxsrcjlaFar4NsGB67kKk6LzIc=;
-        b=RLtvqk3JQzy6W3qLRw+tjiwNminY9bMMSncARVlW3/j+PBD2VlW1VjfvRy+eBR8jj9
-         c5JHPdNrWr2RfmZdGs4/8l5ohHtG6xeF9Edp5RVG2xwaarOjZDdg6S+4CZqi62/NwD2k
-         qvmy0NYJfLmp50Pje4cJDv7PrUUW67viRgsrZwK2aXJAY0tP/Ndbv5jph0jbWOcLeSZJ
-         hzC6he9MYLCax3lhDB9g80mVMxYEJgqYCPItxVT2c1Rj3aik2/HeeVTRtIymawrIVxeX
-         rgvOkUlGjdjvYsOjxvN0dnAdIRnPQ6qB0v3c690Feu9guHiY3lmRQUelqNJdd8IlbXvO
-         b2Pw==
-X-Gm-Message-State: AOAM530WcoOHxJRZXUxag7bT2359HQUohLy/EFk2wVpuzrILYfzqIkMd
-        CsW8aLq//buPlJV1t9KyPMwQUIARInNCCg==
-X-Google-Smtp-Source: ABdhPJw3feslZwJPQKwguaTgvXPJRhE8TARfxwSrbgZDi00q3siaDbbgRdeGVLIOod3fJLzrF1MIPg==
-X-Received: by 2002:a17:90a:498d:: with SMTP id d13mr7455363pjh.100.1603897409211;
-        Wed, 28 Oct 2020 08:03:29 -0700 (PDT)
-Received: from sol (106-69-179-84.dyn.iinet.net.au. [106.69.179.84])
-        by smtp.gmail.com with ESMTPSA id o15sm6956211pfp.91.2020.10.28.08.03.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 08:03:28 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 23:03:22 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jack Winch <sunt.un.morcov@gmail.com>,
-        Helmut Grohne <helmut.grohne@intenta.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2] treewide: rework struct gpiod_line_bulk
-Message-ID: <20201028150322.GA221014@sol>
-References: <20201027091715.8958-1-brgl@bgdev.pl>
- <20201028093928.GA152368@sol>
- <CAMRc=MeyFR450u7=LUhGNqs7jKv0PAduUAHvM-um2SjfEMRQOw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Dg6TspjrICJkOugoHrRVElTVqmURk390ews+cACTSJ8=;
+        b=q6q70YeUTLt5PEkMkPWsu/M4JtWS3aZSKwLFyXDw4aKAF8TiLY6ZCBT3dJScxx9Pw+
+         IuGdr2bkhsNVMDb41LGTqPyrr0kxfVo54UrJqi0O9fHxpirwNRbzJiCh+1+dJxRdncsM
+         1Uut86eaP/tdHydj9dtChwZb2YFHL3xO3UZGcACDS4QEmrGC53AVATSwQRu7+OPIcWkZ
+         1nMLzekHwaSeea8Iu9jozTh3Ux8WcDkmqudFDxKSobyVDr4s3TTNcg+SiE5ez4Rzxjie
+         VmRiuD3F7T135ptM9yyJOnho5mz93CqN0npOhsA1GJUG5qqW13qgGgPid56fqdoyZm0J
+         cI7A==
+X-Gm-Message-State: AOAM532eY2nUYQVQL4KDZHVt4jSDXIXbMXFEfJY5ayMpkGa8G/UsF5Rs
+        X84w1B38Q+IBXqyqdEjKvYfPeq2OEHR/7FiLnRLpMAv2wBhuNQ==
+X-Google-Smtp-Source: ABdhPJyFslxoXrfB3fvZNaGw4SpC6v9HMRGJ4GFgkLDfF8kIH0ow84Apw5ZtF459JqJ4n+DNGDF4ynB5LMpbNaL2hDY=
+X-Received: by 2002:a05:6402:17b7:: with SMTP id j23mr7853694edy.288.1603891354623;
+ Wed, 28 Oct 2020 06:22:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MeyFR450u7=LUhGNqs7jKv0PAduUAHvM-um2SjfEMRQOw@mail.gmail.com>
+References: <CAHp75Ve8ncybbLB7hCb0Qxh=JjJr8e1tVrXXiJhwFt9=2b3AYg@mail.gmail.com>
+In-Reply-To: <CAHp75Ve8ncybbLB7hCb0Qxh=JjJr8e1tVrXXiJhwFt9=2b3AYg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 28 Oct 2020 14:22:22 +0100
+Message-ID: <CACRpkdZoimQwdE6h4RWHGOtdm_0Gc-XDbSRyq=fu6AF9QMO+BA@mail.gmail.com>
+Subject: Re: Request for pre-review of pending MID removal patch series
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 02:19:05PM +0100, Bartosz Golaszewski wrote:
-> On Wed, Oct 28, 2020 at 10:39 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Tue, Oct 27, 2020 at 10:17:15AM +0100, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> >
-> > Subject should be prefixed with [libgpiod] according to the README ;).
-> >
-> 
-> Oh come on! :)
-> 
-> [snip]
-> 
-> >
-> > If you replace the gpiod_line_bulk_iter_foreach_line() here with
-> > manually looping over the bulk lines then everything from A to B above
-> > can be dropped.
-> >
-> 
-> Something is telling me that dedicated iterators are more elegant. But
-> I guess we can do everything manually for now and see about that
-> later. Fair enough, I'll drop it.
-> 
+On Fri, Oct 23, 2020 at 7:07 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 
-Good thing I'm here to let you know that little voice is wrong :).
+> There is a pending patch series [1] to remove a lot of legacy code
+> related to old Intel MID platforms. (Note, not all of them, since we
+> have an ACPI based Intel Edison edition which continue working nicely
+> after this)
+>
+> Most of the code is shuffling arch/x86 and the series is quite
+> dependent on the contents of that folder (for the sake of
+> bisectability). Since that the only way it would be integrated is
+> through the tip tree I would like to have your preliminary review on
+> other contents =E2=80=94 #3 and #4 are PDx86 and GPIO subsystems. In this=
+ case
+> I won't resend this many times.
+>
+> I have a preliminary offline agreement with Len Brown on SFI removal
+> (#2 in the list).
+>
+> [1]: https://gitlab.com/andy-shev/next/-/commits/topic/mid-removal/
 
-I've got a couple of commits in my working tree[1] that apply to your
-patch and drop the iters as I've suggested if you'd like to compare.
+The series:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Cheers,
-Kent.
-
-[1] https://github.com/warthog618/libgpiod/commits/for-v2
+Yours,
+Linus Walleij
