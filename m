@@ -2,158 +2,80 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1BDC388F7
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6575C388F7
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5462071A
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="GppF06Xe"
+	by mail.kernel.org (Postfix) with ESMTP id 62ED420714
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:35:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387821AbgJ1WbE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:31:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387840AbgJ1WbD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:31:03 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B791C0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:31:03 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id 13so654422pfy.4
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=IlGjamNZJQlb+bNbaicIlbYxcxVb5e3NoEjkDtwYOsM=;
-        b=GppF06XedzrMfmOa9p+EK8X7nn68I4wU8ciN4C90I197JntYCLxV8oT0OKod2DTPSs
-         PlwvWgpiF9GfA/IjZnrfjMFomonbyG8OUlK8yxmU/iyGKn5mMZTrHxj2pqtGI0yA/3uO
-         V9JT0YNO+UtcWohLxaFHoZRZ4Z/skFZTAGOeEcwE6cDqRcdRIjx7ZSFlXjn/Dzk8VHTg
-         Hi5vES1j/CtPNO67QAbzf7pRld8JxaeY7rqkLUfiZqcr3wHHfgt6LGnfhuhBgpax2Qwk
-         luTDE/HJXHfq3/uur9U5xwgqPru+SrxzFmfpFoKCcptvcuLNsTpoU9vh+l5jJDG3PBxv
-         rM4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=IlGjamNZJQlb+bNbaicIlbYxcxVb5e3NoEjkDtwYOsM=;
-        b=qHlHlnSbPBlX1YMP/uhd8L+MGkiF2tu//8aLIETuzgolLJJHSDEKc8UKkQGPIA+dOG
-         v3qhtGdEJZHPbcA0GCoTTzXGBXVcQ6bePIVXX1tYiqB7/gGF5haxiWKGrJDD3EKbXBXn
-         be+0udkjTQf07H+fmq85Exowb/9dvh/TIGIylE9MhjbJPzjCVJNT+il4IbV/Sc+4nXG4
-         PprP5UUrIBSs6o5wpBW7XP4GrqkPCuqd/41QoaXC0xQTAEzEsKHDMKhS5nnVreigojkx
-         mNPBh4sdyM3v3vHl82Ev8ho0G0zs0rflROgW34rvpIyiqyYkQvNhsgpyg92A2pnl3wvJ
-         q1tQ==
-X-Gm-Message-State: AOAM531aryAjrKB2wApo/6zRnfDAk7D83NfSad361VO+mzjERaE3xBiz
-        gTIJLaIqJoeZ0HMyjxwgT2V6H1I6wjIPOA==
-X-Google-Smtp-Source: ABdhPJwYK1XCiCnKmGoca3JQHNNSMjAzPEsjv5SAKoINhlK7cRjeKbGdlXoVslqo80WHP1EDkLSnsA==
-X-Received: by 2002:a62:2ec7:0:b029:164:4811:e1d6 with SMTP id u190-20020a622ec70000b02901644811e1d6mr579204pfu.12.1603910601791;
-        Wed, 28 Oct 2020 11:43:21 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id j15sm97686pgn.32.2020.10.28.11.43.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 11:43:21 -0700 (PDT)
-Message-ID: <5f99bbc9.1c69fb81.27557.045b@mx.google.com>
-Date:   Wed, 28 Oct 2020 11:43:21 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S2387997AbgJ1Wep (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:34:45 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:46460 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387992AbgJ1Wb5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:31:57 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLrFD3yJszMv9Sb
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:15:12 +0100 (CET)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id lSFC2300F4C55Sk01SFCF2; Wed, 28 Oct 2020 15:15:12 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXmEJ-000oZ4-Qx; Wed, 28 Oct 2020 15:15:11 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXmEJ-007FpR-Aw; Wed, 28 Oct 2020 15:15:11 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] gpio: rcar: Cleanups and improvements
+Date:   Wed, 28 Oct 2020 15:15:00 +0100
+Message-Id: <20201028141504.1729093-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.10-rc1-4-g8aa163350506
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: devel
-Subject: linusw/devel baseline: 116 runs,
- 1 regressions (v5.10-rc1-4-g8aa163350506)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel baseline: 116 runs, 1 regressions (v5.10-rc1-4-g8aa163350506)
+	Hi Linus, Bartosz,
 
-Regressions Summary
--------------------
+This patch series contains a few cleanups and improvements for the R-Car
+GPIO driver.  All four patches are independent.
 
-platform | arch | lab           | compiler | defconfig          | regressio=
-ns
----------+------+---------------+----------+--------------------+----------=
+The gpio_chip.get_multiple() implementation has been tested on R-Car
+Gen2 and Gen3.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  gpio: rcar: Cache gpiochip_get_data() return value
+  gpio: rcar: Align register offsets
+  gpio: rcar: Rework hardware features handling
+  gpio: rcar: Implement gpio_chip.get_multiple()
+
+ drivers/gpio/gpio-rcar.c | 87 ++++++++++++++++++++++++++--------------
+ 1 file changed, 58 insertions(+), 29 deletions(-)
+
+-- 
+2.25.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
-panda    | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1        =
-  =
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-  Details:  https://kernelci.org/test/job/linusw/branch/devel/kernel/v5.10-=
-rc1-4-g8aa163350506/plan/baseline/
-
-  Test:     baseline
-  Tree:     linusw
-  Branch:   devel
-  Describe: v5.10-rc1-4-g8aa163350506
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
-io.git/
-  SHA:      8aa16335050663357281fb1f1b0483ab91b4d8de =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform | arch | lab           | compiler | defconfig          | regressio=
-ns
----------+------+---------------+----------+--------------------+----------=
---
-panda    | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1        =
-  =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f99b440c8617f188a38103c
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/devel/v5.10-rc1-4-g8aa1=
-63350506/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//linusw/devel/v5.10-rc1-4-g8aa1=
-63350506/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f99b440c8617f1=
-88a381042
-        failing since 61 days (last pass: gpio-v5.8-2-103-g22cc422070d9, fi=
-rst fail: v5.9-rc1-10-gfeeaefd378ca)
-        60 lines
-
-    2020-10-28 18:11:07.202000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c802
-    2020-10-28 18:11:07.207000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c803
-    2020-10-28 18:11:07.213000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c804
-    2020-10-28 18:11:07.219000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c805
-    2020-10-28 18:11:07.225000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c806
-    2020-10-28 18:11:07.231000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c807
-    2020-10-28 18:11:07.237000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c808
-    2020-10-28 18:11:07.243000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c809
-    2020-10-28 18:11:07.249000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c80a
-    2020-10-28 18:11:07.255000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c80b =
-
-    ... (49 line(s) more)  =
-
- =20
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
