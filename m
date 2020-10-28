@@ -2,87 +2,89 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926F8C55179
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140B9C56201
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 299B020754
+	by mail.kernel.org (Postfix) with ESMTP id AD20520780
 	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:50:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+Wika7p"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BPr+F0iK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389460AbgJ1WuD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S2389476AbgJ1WuD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 28 Oct 2020 18:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58998 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733178AbgJ1Wth (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:49:37 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 803EFC0613CF;
-        Wed, 28 Oct 2020 15:49:37 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id x203so1260944oia.10;
-        Wed, 28 Oct 2020 15:49:37 -0700 (PDT)
+        with ESMTP id S2389456AbgJ1Wsp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:48:45 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B9CEC0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:48:44 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id h6so894647lfj.3
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:48:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZyqI9WOFaFFLuncAlq6I3YmM/P3bEkVE3YcPg4W+494=;
-        b=E+Wika7ptI5ifQPb2cHteAT5F6W79VkngYR1MAtRRAeojvQ/E/ieLEb9q6W3VVdoD/
-         hTm9vLdXc+D4dSwielSw1QZeo9libI7ddPayszguUD1VQNCkjnCGvuxEjWEoKW77dC57
-         mUwguKgypXHjLxa1bE8kl61XDQEIPDlKtNou2R/pd+2N/UXShkmya91i5KwXSUh/83nI
-         cAwYbbme9gB/cPdpUbQB8T3K7I5cWZVz79oW/yOl9sNP7F7SWaDMHpuuIQ359rFbwRBL
-         EnXMuNp7tC+DMJdmMc9c0pnfOQ8Dy9h2+9ieORza2v0IpbpqmhNmIiPW4ns3Onu4WuCZ
-         rffQ==
+        bh=ICbI/UdThJ7VwcdM+R69PEmT9tj+Qod3lfTEpbHHLpc=;
+        b=BPr+F0iKjUNJfX5QWDbuTRpNvZ/l8APFnn++eUrY59iDhY83bbHiN/kLrk6Q1EySIw
+         QZ2H0NYGI56cTCLKEcLepA2i9F5ZIipMfUe+C09TcoRyAIHRjDrO41xhPrvhTTWc5HwW
+         yGUuA2DIMesMjJiqfhRXPuuZNkt7QJT9mNpVWXpygA8m7ab3ddc0mPEo1tir9G3mTbxk
+         4jR84FVDHUo4XEbPKe7rHTgcXPv96m7gJzSOuKK6st43nppb8DUU1Otjs/BXNrUs9SX8
+         ArZ8mQ0sMbteg+sae68lfonz92FF2cwD8rLph9wAYwjwEBMdrEvRuRVEnj0A3vjWVuLy
+         ZC4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZyqI9WOFaFFLuncAlq6I3YmM/P3bEkVE3YcPg4W+494=;
-        b=hFKKPiYgV7OVcmZ+tfVmg1+PjeGZKFDHZNEV08dZKAPQVfJpIB1EgalSBSeWDXurL0
-         WsuO+HdXkh2xHWLKajF1AD6+uZCNzQGYjqVO3OE7PlLQx+8g467oFeE1AuYEUpX+MBQV
-         l7h4GTGX7B+FkLjClZ+8ZJ+Zpjr4TRhwqfeW2dQxlcYEyJHqNGFE7TMcLPSd+qbqcj9F
-         ZUF00m2EnH2Qxj55aWVnK4JZO1LvChlXdlG3owvZUo0mbWLzOCTL/H1m8IpD15yDYpZa
-         8JypNvZU+tWj9LkpK5MQTgIxAzU4wuX0j44ow+4GJokiynkS4XVCzDU4ZavodGlspJPM
-         XtgA==
-X-Gm-Message-State: AOAM530mwK/L+E4cmy2ezDe8N102VuqvLmwqNYFXEFjzpAKuUDFYfL0o
-        VMXgVzGkvW9P6LwjbMbv9Eloog4wdcjv+uAropoMTq1tWfg=
-X-Google-Smtp-Source: ABdhPJxhOiKXDSjpjWn5c5s0E1t3ewEDz3qZiFvrZXffc8HZHIKZefVK5Ht5LUdgjI4/0wJDumOU5PqE/2AlVBZPvRs=
-X-Received: by 2002:a17:90b:305:: with SMTP id ay5mr6599112pjb.129.1603885353672;
- Wed, 28 Oct 2020 04:42:33 -0700 (PDT)
+        bh=ICbI/UdThJ7VwcdM+R69PEmT9tj+Qod3lfTEpbHHLpc=;
+        b=AyD5hWo/YuVKCdtukRm4/xDbeK3VlMm/iAe2uUUt87DWww44x0sPGhPDFOcIVBZcSR
+         fgXLUKEBu8ubFoOXCyAXriios0u6uA27YQwIuT5+IMCmDgGTR0dfZKrqdUPH+f32QIea
+         ukm0JNGPsTvShu4bF9xuj6ChNJsfqiUmLhM80YrYTW5XkS+RemUI9G8aF2r2a4yuxCop
+         Kr0LA/1SoqV/3D6EuDShrdg0U2BOc6y6EppUShXJNRw1laBiHQjxUur7irAvedZAOB12
+         O6zI4soIY6mtujL4H5x+2gLzXKGzwy5KFNP9/pYlbB9ZUExkqR8yWPF7NWa7uBaC3J1R
+         37QA==
+X-Gm-Message-State: AOAM530QSRbqridiAU85XJb7YcCi0QWd3hACh6JVOLdqvbeqZWJ6WWuL
+        jmtqr1UW/CwvvvyOiGnjaqf+U0uhdmexxaNvPfWA9ATlJq290Q==
+X-Google-Smtp-Source: ABdhPJzJUaMMQZamqfp7s7x24JD6LJQ05fn/YM5TVoAVdEUyxvLdl64KkPnycpYl6rfaAIaNhjqRpi0XpXSRZ+/jICQ=
+X-Received: by 2002:a05:6512:3225:: with SMTP id f5mr2822630lfe.441.1603900920062;
+ Wed, 28 Oct 2020 09:02:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201027135325.22235-1-vincent.whitchurch@axis.com>
-In-Reply-To: <20201027135325.22235-1-vincent.whitchurch@axis.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 28 Oct 2020 13:43:22 +0200
-Message-ID: <CAHp75Vcy-m6tT3ChPYQ8vvsAOwV4CUM3feewb5bpk8h7mqa+AA@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: mockup: Allow probing from device tree
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        kernel@axis.com, devicetree <devicetree@vger.kernel.org>,
+References: <20201014231158.34117-1-warthog618@gmail.com>
+In-Reply-To: <20201014231158.34117-1-warthog618@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 28 Oct 2020 17:01:49 +0100
+Message-ID: <CACRpkdbTsN6p4n3f9SJrgAjdkzDu2S67rU3tLWwX0X50ekjctQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] gpiolib: cdev: allow edge event timestamps to be
+ configured as REALTIME
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 10:00 AM Vincent Whitchurch
-<vincent.whitchurch@axis.com> wrote:
+On Thu, Oct 15, 2020 at 1:12 AM Kent Gibson <warthog618@gmail.com> wrote:
+
+> This patch set adds the option to select CLOCK_REALTIME as the source
+> clock for line events.
 >
-> Allow the mockup driver to be probed via the device tree without any
-> module parameters, allowing it to be used to configure and test higher
-> level drivers like the leds-gpio driver and corresponding userspace
-> before actual hardware is available.
+> The first patch is the core of the change, while the remaining two update
+> the GPIO tools to make use of the new option.
+>
+> Changes for v2:
+>  - change line_event_timestamp() return to u64 to avoid clipping to 32bits
+>    on 32bit platforms.
+>  - fix the line spacing after line_event_timestamp()
 
-You have to officially announce a DT binding for that.
+Where are we standing with this patch set? Good to go so
+I should just try to merge it?
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
