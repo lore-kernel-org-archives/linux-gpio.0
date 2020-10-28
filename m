@@ -2,426 +2,218 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F99C55179
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3323C6369E
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7B49206D9
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62EA920704
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603923797;
+	bh=7eI6b2ycbin+XgZSCTJm+e47Gv52t3IHpfpr30S1GtU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=bY0FYVDfeC6ej23XpPj+oFDY5yRKa/DqLTWwtNcVDG09oFy+T4LzmTbfPNQFSsKuT
+	 Fcer+6NbUsK5OqNpqLesRAay2lMywFalBx4XCGGq9QuY77YFkH6GGtQHP6EbfTV/L0
+	 RWYVGWH6Ejc7Rd2swyWHefQbWRzkqqRyPR1QF7YQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732595AbgJ1WV5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:21:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732588AbgJ1WV4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:21:56 -0400
-X-Greylist: delayed 1497 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 28 Oct 2020 15:21:55 PDT
-Received: from leibniz.telenet-ops.be (leibniz.telenet-ops.be [IPv6:2a02:1800:110:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0073AC0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:21:55 -0700 (PDT)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLsc85xmxzMv7nZ
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:16:40 +0100 (CET)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id lTGg230054C55Sk01TGgH2; Wed, 28 Oct 2020 16:16:40 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-000pDd-PD; Wed, 28 Oct 2020 16:16:39 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-007H97-9X; Wed, 28 Oct 2020 16:16:39 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
+        id S1730695AbgJ1WWl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:22:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732628AbgJ1WWY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 28 Oct 2020 18:22:24 -0400
+Received: from localhost.localdomain (unknown [122.171.163.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 583F0241A5;
+        Wed, 28 Oct 2020 08:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603873830;
+        bh=7eI6b2ycbin+XgZSCTJm+e47Gv52t3IHpfpr30S1GtU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fOy3rkwQzTsEud9tUJVBjd3CvZdn7PUbyCesi3Z3CqgjMz2mE7ZC7Wg059SwnSiWL
+         RLYRQ3UjAOhBt6acYxO++cdXsm+ZXmePyrCVhUE7YObT2phA6dW2bjxivBkDXOjg/p
+         wBUIOnQQerXGjRevM54Fl3rQp4kFWn01gPIt1Afs=
+From:   Vinod Koul <vkoul@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] pinctrl: renesas: Factor out common R-Car Gen3 bias handling
-Date:   Wed, 28 Oct 2020 16:16:34 +0100
-Message-Id: <20201028151637.1734130-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028151637.1734130-1-geert+renesas@glider.be>
-References: <20201028151637.1734130-1-geert+renesas@glider.be>
+Cc:     Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add SDX55 pinctrl bindings
+Date:   Wed, 28 Oct 2020 14:00:16 +0530
+Message-Id: <20201028083017.611810-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-All pin control drivers for R-Car Gen3 SoCs contain identical bias
-handling.  Reduce code duplication by moving it to the common pinctrl.c
-code.
+Add device tree binding Documentation details for Qualcomm SDX55
+pinctrl driver.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/pinctrl/renesas/core.h         |  4 +++
- drivers/pinctrl/renesas/pfc-r8a77950.c | 45 ++------------------------
- drivers/pinctrl/renesas/pfc-r8a77951.c | 45 ++------------------------
- drivers/pinctrl/renesas/pfc-r8a7796.c  | 45 ++------------------------
- drivers/pinctrl/renesas/pfc-r8a77965.c | 45 ++------------------------
- drivers/pinctrl/renesas/pfc-r8a77990.c | 45 ++------------------------
- drivers/pinctrl/renesas/pinctrl.c      | 40 +++++++++++++++++++++++
- 7 files changed, 54 insertions(+), 215 deletions(-)
+ .../bindings/pinctrl/qcom,sdx55-pinctrl.yaml  | 144 ++++++++++++++++++
+ 1 file changed, 144 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
 
-diff --git a/drivers/pinctrl/renesas/core.h b/drivers/pinctrl/renesas/core.h
-index b5b1d163e98ab8d4..5ca7e0830ae9de38 100644
---- a/drivers/pinctrl/renesas/core.h
-+++ b/drivers/pinctrl/renesas/core.h
-@@ -33,4 +33,8 @@ const struct pinmux_bias_reg *
- sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
- 		       unsigned int *bit);
- 
-+unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
-+void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
-+			  unsigned int bias);
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
+new file mode 100644
+index 000000000000..2dd045a2fb03
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
+@@ -0,0 +1,144 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,sdx55-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- #endif /* __SH_PFC_CORE_H__ */
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77950.c b/drivers/pinctrl/renesas/pfc-r8a77950.c
-index 04812e62f3a476a8..32b66b9999b871eb 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77950.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77950.c
-@@ -5820,51 +5820,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ /* sentinel */ },
- };
- 
--static unsigned int r8a77950_pinmux_get_bias(struct sh_pfc *pfc,
--					     unsigned int pin)
--{
--	const struct pinmux_bias_reg *reg;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return PIN_CONFIG_BIAS_DISABLE;
--
--	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
--		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
--		return PIN_CONFIG_BIAS_PULL_UP;
--	else
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--}
--
--static void r8a77950_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				     unsigned int bias)
--{
--	const struct pinmux_bias_reg *reg;
--	u32 enable, updown;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return;
--
--	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
--	if (bias != PIN_CONFIG_BIAS_DISABLE)
--		enable |= BIT(bit);
--
--	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
--	if (bias == PIN_CONFIG_BIAS_PULL_UP)
--		updown |= BIT(bit);
--
--	sh_pfc_write(pfc, reg->pud, updown);
--	sh_pfc_write(pfc, reg->puen, enable);
--}
--
- static const struct sh_pfc_soc_operations r8a77950_pinmux_ops = {
- 	.pin_to_pocctrl = r8a77950_pin_to_pocctrl,
--	.get_bias = r8a77950_pinmux_get_bias,
--	.set_bias = r8a77950_pinmux_set_bias,
-+	.get_bias = rcar_pinmux_get_bias,
-+	.set_bias = rcar_pinmux_set_bias,
- };
- 
- const struct sh_pfc_soc_info r8a77950_pinmux_info = {
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77951.c b/drivers/pinctrl/renesas/pfc-r8a77951.c
-index 8d1262c170af0085..72252fdcbc21b821 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77951.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77951.c
-@@ -6201,51 +6201,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ /* sentinel */ },
- };
- 
--static unsigned int r8a77951_pinmux_get_bias(struct sh_pfc *pfc,
--					     unsigned int pin)
--{
--	const struct pinmux_bias_reg *reg;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return PIN_CONFIG_BIAS_DISABLE;
--
--	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
--		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
--		return PIN_CONFIG_BIAS_PULL_UP;
--	else
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--}
--
--static void r8a77951_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				     unsigned int bias)
--{
--	const struct pinmux_bias_reg *reg;
--	u32 enable, updown;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return;
--
--	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
--	if (bias != PIN_CONFIG_BIAS_DISABLE)
--		enable |= BIT(bit);
--
--	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
--	if (bias == PIN_CONFIG_BIAS_PULL_UP)
--		updown |= BIT(bit);
--
--	sh_pfc_write(pfc, reg->pud, updown);
--	sh_pfc_write(pfc, reg->puen, enable);
--}
--
- static const struct sh_pfc_soc_operations r8a77951_pinmux_ops = {
- 	.pin_to_pocctrl = r8a77951_pin_to_pocctrl,
--	.get_bias = r8a77951_pinmux_get_bias,
--	.set_bias = r8a77951_pinmux_set_bias,
-+	.get_bias = rcar_pinmux_get_bias,
-+	.set_bias = rcar_pinmux_set_bias,
- };
- 
- #ifdef CONFIG_PINCTRL_PFC_R8A774E1
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7796.c b/drivers/pinctrl/renesas/pfc-r8a7796.c
-index 88e9c46003d93327..6e8e023410c4c298 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7796.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7796.c
-@@ -6150,51 +6150,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ /* sentinel */ },
- };
- 
--static unsigned int r8a7796_pinmux_get_bias(struct sh_pfc *pfc,
--					    unsigned int pin)
--{
--	const struct pinmux_bias_reg *reg;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return PIN_CONFIG_BIAS_DISABLE;
--
--	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
--		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
--		return PIN_CONFIG_BIAS_PULL_UP;
--	else
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--}
--
--static void r8a7796_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				   unsigned int bias)
--{
--	const struct pinmux_bias_reg *reg;
--	u32 enable, updown;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return;
--
--	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
--	if (bias != PIN_CONFIG_BIAS_DISABLE)
--		enable |= BIT(bit);
--
--	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
--	if (bias == PIN_CONFIG_BIAS_PULL_UP)
--		updown |= BIT(bit);
--
--	sh_pfc_write(pfc, reg->pud, updown);
--	sh_pfc_write(pfc, reg->puen, enable);
--}
--
- static const struct sh_pfc_soc_operations r8a7796_pinmux_ops = {
- 	.pin_to_pocctrl = r8a7796_pin_to_pocctrl,
--	.get_bias = r8a7796_pinmux_get_bias,
--	.set_bias = r8a7796_pinmux_set_bias,
-+	.get_bias = rcar_pinmux_get_bias,
-+	.set_bias = rcar_pinmux_set_bias,
- };
- 
- #ifdef CONFIG_PINCTRL_PFC_R8A774A1
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77965.c b/drivers/pinctrl/renesas/pfc-r8a77965.c
-index 38b7b844abe9cc4a..590e5f8006d4c035 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77965.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77965.c
-@@ -6404,51 +6404,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ /* sentinel */ },
- };
- 
--static unsigned int r8a77965_pinmux_get_bias(struct sh_pfc *pfc,
--					    unsigned int pin)
--{
--	const struct pinmux_bias_reg *reg;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return PIN_CONFIG_BIAS_DISABLE;
--
--	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
--		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
--		return PIN_CONFIG_BIAS_PULL_UP;
--	else
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--}
--
--static void r8a77965_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				   unsigned int bias)
--{
--	const struct pinmux_bias_reg *reg;
--	u32 enable, updown;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return;
--
--	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
--	if (bias != PIN_CONFIG_BIAS_DISABLE)
--		enable |= BIT(bit);
--
--	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
--	if (bias == PIN_CONFIG_BIAS_PULL_UP)
--		updown |= BIT(bit);
--
--	sh_pfc_write(pfc, reg->pud, updown);
--	sh_pfc_write(pfc, reg->puen, enable);
--}
--
- static const struct sh_pfc_soc_operations r8a77965_pinmux_ops = {
- 	.pin_to_pocctrl = r8a77965_pin_to_pocctrl,
--	.get_bias = r8a77965_pinmux_get_bias,
--	.set_bias = r8a77965_pinmux_set_bias,
-+	.get_bias = rcar_pinmux_get_bias,
-+	.set_bias = rcar_pinmux_set_bias,
- };
- 
- #ifdef CONFIG_PINCTRL_PFC_R8A774B1
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77990.c b/drivers/pinctrl/renesas/pfc-r8a77990.c
-index 6f9f7638703dbf60..a51c1e684439106a 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77990.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77990.c
-@@ -5237,51 +5237,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ /* sentinel */ },
- };
- 
--static unsigned int r8a77990_pinmux_get_bias(struct sh_pfc *pfc,
--					     unsigned int pin)
--{
--	const struct pinmux_bias_reg *reg;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return PIN_CONFIG_BIAS_DISABLE;
--
--	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
--		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
--		return PIN_CONFIG_BIAS_PULL_UP;
--	else
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--}
--
--static void r8a77990_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				     unsigned int bias)
--{
--	const struct pinmux_bias_reg *reg;
--	u32 enable, updown;
--	unsigned int bit;
--
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
--	if (!reg)
--		return;
--
--	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
--	if (bias != PIN_CONFIG_BIAS_DISABLE)
--		enable |= BIT(bit);
--
--	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
--	if (bias == PIN_CONFIG_BIAS_PULL_UP)
--		updown |= BIT(bit);
--
--	sh_pfc_write(pfc, reg->pud, updown);
--	sh_pfc_write(pfc, reg->puen, enable);
--}
--
- static const struct sh_pfc_soc_operations r8a77990_pinmux_ops = {
- 	.pin_to_pocctrl = r8a77990_pin_to_pocctrl,
--	.get_bias = r8a77990_pinmux_get_bias,
--	.set_bias = r8a77990_pinmux_set_bias,
-+	.get_bias = rcar_pinmux_get_bias,
-+	.set_bias = rcar_pinmux_set_bias,
- };
- 
- #ifdef CONFIG_PINCTRL_PFC_R8A774C0
-diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
-index d34079726039c39d..4a030600f4fd0dd0 100644
---- a/drivers/pinctrl/renesas/pinctrl.c
-+++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -823,3 +823,43 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
- 
- 	return pinctrl_enable(pmx->pctl);
- }
++title: Qualcomm Technologies, Inc. SDX55 TLMM block
 +
-+unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
-+{
-+	const struct pinmux_bias_reg *reg;
-+	unsigned int bit;
++maintainers:
++  - Vinod Koul <vkoul@kernel.org>
 +
-+	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
-+	if (!reg)
-+		return PIN_CONFIG_BIAS_DISABLE;
++description: |
++  This binding describes the Top Level Mode Multiplexer block found in the
++  SDX55 platform.
 +
-+	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
-+		return PIN_CONFIG_BIAS_DISABLE;
-+	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
-+		return PIN_CONFIG_BIAS_PULL_UP;
-+	else
-+		return PIN_CONFIG_BIAS_PULL_DOWN;
-+}
++properties:
++  compatible:
++    const: qcom,sdx55-pinctrl
 +
-+void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
-+			  unsigned int bias)
-+{
-+	const struct pinmux_bias_reg *reg;
-+	u32 enable, updown;
-+	unsigned int bit;
++  reg:
++    maxItems: 1
 +
-+	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
-+	if (!reg)
-+		return;
++  interrupts:
++    description: Specifies the TLMM summary IRQ
++    maxItems: 1
 +
-+	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
-+	if (bias != PIN_CONFIG_BIAS_DISABLE)
-+		enable |= BIT(bit);
++  interrupt-controller: true
 +
-+	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
-+	if (bias == PIN_CONFIG_BIAS_PULL_UP)
-+		updown |= BIT(bit);
++  '#interrupt-cells':
++    description:
++      Specifies the PIN numbers and Flags, as defined in defined in
++      include/dt-bindings/interrupt-controller/irq.h
++    const: 2
 +
-+	sh_pfc_write(pfc, reg->pud, updown);
-+	sh_pfc_write(pfc, reg->puen, enable);
-+}
++  gpio-controller: true
++
++  '#gpio-cells':
++    description: Specifying the pin number and flags, as defined in
++      include/dt-bindings/gpio/gpio.h
++    const: 2
++
++  gpio-ranges:
++    maxItems: 1
++
++  wakeup-parent:
++    maxItems: 1
++
++#PIN CONFIGURATION NODES
++patternProperties:
++  '^.*$':
++    if:
++      type: object
++    then:
++      properties:
++        pins:
++          description:
++            List of gpio pins affected by the properties specified in this
++            subnode.
++          items:
++            oneOf:
++              - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-7][0-9])$"
++              - enum: [ ufs_reset, sdc1_rclk, sdc1_clk, sdc1_cmd, sdc1_data ]
++          minItems: 1
++          maxItems: 36
++
++        function:
++          description:
++            Specify the alternative function to be configured for the specified
++            pins.
++
++          enum: [ adsp_ext, atest, audio_ref, bimc_dte0, bimc_dte1, blsp_i2c1,
++                  blsp_i2c2, blsp_i2c3, blsp_i2c4, blsp_spi1, blsp_spi2,
++                  blsp_spi3, blsp_spi4, blsp_uart1, blsp_uart2, blsp_uart3,
++                  blsp_uart4, char_exec, coex_uart, coex_uart2, cri_trng,
++                  cri_trng0, cri_trng1, dbg_out, ddr_bist, ddr_pxi0,
++                  ebi0_wrcdc, ebi2_a, ebi2_lcd, emac_gcc0, emac_gcc1,
++                  emac_pps0, emac_pps1, ext_dbg, gcc_gp1, gcc_gp2, gcc_gp3,
++                  gcc_plltest, gpio, i2s_mclk, jitter_bist, ldo_en, ldo_update,
++                  mgpi_clk, m_voc, native_char, native_char0, native_char1,
++                  native_char2, native_char3, native_tsens, native_tsense,
++                  nav_gpio, pa_indicator, pcie_clkreq, pci_e, pll_bist, pll_ref,
++                  pll_test, pri_mi2s, prng_rosc, qdss_cti, qdss_gpio,
++                  qdss_gpio0, qdss_gpio1, qdss_gpio2, qdss_gpio3, qdss_gpio4,
++                  qdss_gpio5, qdss_gpio6, qdss_gpio7, qdss_gpio8, qdss_gpio9,
++                  qdss_gpio10, qdss_gpio11, qdss_gpio12, qdss_gpio13,
++                  qdss_gpio14, qdss_gpio15, qdss_stm0, qdss_stm1, qdss_stm2,
++                  qdss_stm3, qdss_stm4, qdss_stm5, qdss_stm6, qdss_stm7,
++                  qdss_stm8, qdss_stm9, qdss_stm10, qdss_stm11, qdss_stm12,
++                  qdss_stm13, qdss_stm14, qdss_stm15, qdss_stm16, qdss_stm17,
++                  qdss_stm18, qdss_stm19, qdss_stm20, qdss_stm21, qdss_stm22,
++                  qdss_stm23, qdss_stm24, qdss_stm25, qdss_stm26, qdss_stm27,
++                  qdss_stm28, qdss_stm29, qdss_stm30, qdss_stm31, qlink0_en,
++                  qlink0_req, qlink0_wmss, qlink1_en, qlink1_req, qlink1_wmss,
++                  spmi_coex, sec_mi2s, spmi_vgi, tgu_ch0, uim1_clk, uim1_data,
++                  uim1_present, uim1_reset, uim2_clk, uim2_data, uim2_present,
++                  uim2_reset, usb2phy_ac, vsense_trigger ]
++
++        drive-strength:
++          enum: [2, 4, 6, 8, 10, 12, 14, 16]
++          default: 2
++          description:
++            Selects the drive strength for the specified pins, in mA.
++
++        bias-pull-down: true
++
++        bias-pull-up: true
++
++        bias-disable: true
++
++        output-high: true
++
++        output-low: true
++
++      required:
++        - pins
++        - function
++
++      additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++        #include <dt-bindings/interrupt-controller/arm-gic.h>
++        pinctrl@1f00000 {
++                compatible = "qcom,sdx55-pinctrl";
++                reg = <0x0f100000 0x300000>;
++                interrupts = <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>;
++                #interrupt-cells = <2>;
++                interrupt-controller;
++                gpio-controller;
++                #gpio-cells = <2>;
++        };
++
++...
 -- 
-2.25.1
+2.26.2
 
