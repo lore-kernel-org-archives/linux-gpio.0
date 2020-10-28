@@ -2,99 +2,106 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BE5C55179
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA09C4363A
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A92720759
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7343207BC
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:23:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uwxwj3iY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArN/lxLf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbgJ1XM0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:12:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34486 "EHLO
+        id S2390289AbgJ1XXZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbgJ1XLt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:11:49 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91AFCC0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:11:48 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id o18so1248116edq.4
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:11:48 -0700 (PDT)
+        with ESMTP id S2390203AbgJ1XWR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:22:17 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97571C0613D2;
+        Wed, 28 Oct 2020 16:22:17 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id o129so762946pfb.1;
+        Wed, 28 Oct 2020 16:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Dg6TspjrICJkOugoHrRVElTVqmURk390ews+cACTSJ8=;
-        b=Uwxwj3iY3xmbx32gOYncPduLx0jmzJw60EJAWxSSTMMdJfc7U6orys9IQA9FigU6xX
-         rPl+/FBdqiiF0wPtih7ilQou2Z7HM1Lwjspl8clUa+qQe3ZyVOhjrFIN824V9ylxUweh
-         CjQ5rc/5B4k1bycKwy1Q0u0Fu2fiS33/JUfCH/nYb2MUeuvWS4P/qPVH66tuHAxIjBvt
-         tLesrOrMY0O1NcQ/l96Z+FuRkzNKwk//pWlulW/TqUQz/P7AoBbB6GGXoAfGukuXXRa4
-         tXqeDYmNygKz8poMFweCSU/Kt7E8+KLQaDMCOPs4O3/vMRpgJskuILJ85QK8smczcQ6B
-         uQRA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Z+hUYyDlaEK4lCFCCWRp2JTvLMWl+QVZfGI9YkRMX4U=;
+        b=ArN/lxLfAZjVgWV9asnrwIh3k9U916Fctx3VFWPYecAv6IjyEkF9qFbbMEL8QbiqhP
+         W/WWcCSSxsmjqSfxPkNuJyvxbVF54HRhRrTWWZU7cs9+SVvOLoyNlX6oExP6KpJFX+N+
+         DQ5KXjS8Nrx6Ms03yEo9sSsR/E6z7vbqgMBDv8TNsnKayPNc7qJfOZo2oWyhv9/sxYKc
+         kd3wrKYUt2Kq2FYLtZLMLPhVsQSzQYIGKeUM2bbU4YNIq06spM94N9VZnNUjWSOljPry
+         TsX1/uhALeG1GuBeVJI/lu9MVMrqkPzYLzOMq23iv6PIeUO/DnQUDg9kr5ydTL/QRe9o
+         nHMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Dg6TspjrICJkOugoHrRVElTVqmURk390ews+cACTSJ8=;
-        b=q6q70YeUTLt5PEkMkPWsu/M4JtWS3aZSKwLFyXDw4aKAF8TiLY6ZCBT3dJScxx9Pw+
-         IuGdr2bkhsNVMDb41LGTqPyrr0kxfVo54UrJqi0O9fHxpirwNRbzJiCh+1+dJxRdncsM
-         1Uut86eaP/tdHydj9dtChwZb2YFHL3xO3UZGcACDS4QEmrGC53AVATSwQRu7+OPIcWkZ
-         1nMLzekHwaSeea8Iu9jozTh3Ux8WcDkmqudFDxKSobyVDr4s3TTNcg+SiE5ez4Rzxjie
-         VmRiuD3F7T135ptM9yyJOnho5mz93CqN0npOhsA1GJUG5qqW13qgGgPid56fqdoyZm0J
-         cI7A==
-X-Gm-Message-State: AOAM532eY2nUYQVQL4KDZHVt4jSDXIXbMXFEfJY5ayMpkGa8G/UsF5Rs
-        X84w1B38Q+IBXqyqdEjKvYfPeq2OEHR/7FiLnRLpMAv2wBhuNQ==
-X-Google-Smtp-Source: ABdhPJyFslxoXrfB3fvZNaGw4SpC6v9HMRGJ4GFgkLDfF8kIH0ow84Apw5ZtF459JqJ4n+DNGDF4ynB5LMpbNaL2hDY=
-X-Received: by 2002:a05:6402:17b7:: with SMTP id j23mr7853694edy.288.1603891354623;
- Wed, 28 Oct 2020 06:22:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHp75Ve8ncybbLB7hCb0Qxh=JjJr8e1tVrXXiJhwFt9=2b3AYg@mail.gmail.com>
-In-Reply-To: <CAHp75Ve8ncybbLB7hCb0Qxh=JjJr8e1tVrXXiJhwFt9=2b3AYg@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 28 Oct 2020 14:22:22 +0100
-Message-ID: <CACRpkdZoimQwdE6h4RWHGOtdm_0Gc-XDbSRyq=fu6AF9QMO+BA@mail.gmail.com>
-Subject: Re: Request for pre-review of pending MID removal patch series
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Z+hUYyDlaEK4lCFCCWRp2JTvLMWl+QVZfGI9YkRMX4U=;
+        b=osYyD3lZqZ30QRYgRR7bEYplnW8VOME7bsiwvjL0N1jPtcEfUSkL7DBSmtpcBdnkB9
+         n17MkXLp1dt1SkutRo2fPlb/Kyd0t+MADHMwR4jXGJSo+JWLBWUO/IP4nr2Rhnoc0uBc
+         fnibLxTrNJl3u7T2UIZk1lATq1ebS/awwzIlu0X5vuLtSmJ/sitPb9GI2jhh8R20k5DH
+         0WujDk0NR+EIiwq+ejdaTg/1Z0X17AG80oO0aAD/lfZBNJSFA0DrwNW3qauoOgWCEhE0
+         YjkRYZ6pq3M12J2LmT9QK5uwwCmdOr1fmdqdviis+856DAQMmaKgYehhqqLU9NgFQaQC
+         EO9g==
+X-Gm-Message-State: AOAM530ViReM9k1dXSDDXt0YQx4RcykydgWLbvz0qF+SUJq3WzSf5SfP
+        rgnLDIWIcgQtMyHMkz1jyoRfv7rIAyPLCw==
+X-Google-Smtp-Source: ABdhPJzJR/CrflVVwZohuLxz8b71t2b4N1qNYlGl/mluP5YARvLTLBec++coW0wanH5vMaK238BYug==
+X-Received: by 2002:a17:90a:9f8a:: with SMTP id o10mr1205982pjp.160.1603927337156;
+        Wed, 28 Oct 2020 16:22:17 -0700 (PDT)
+Received: from sol (106-69-179-84.dyn.iinet.net.au. [106.69.179.84])
+        by smtp.gmail.com with ESMTPSA id q35sm472345pja.28.2020.10.28.16.22.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 16:22:16 -0700 (PDT)
+Date:   Thu, 29 Oct 2020 07:22:11 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 0/3] gpiolib: cdev: allow edge event timestamps to be
+ configured as REALTIME
+Message-ID: <20201028232211.GB4384@sol>
+References: <20201014231158.34117-1-warthog618@gmail.com>
+ <CACRpkdbTsN6p4n3f9SJrgAjdkzDu2S67rU3tLWwX0X50ekjctQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbTsN6p4n3f9SJrgAjdkzDu2S67rU3tLWwX0X50ekjctQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 7:07 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Wed, Oct 28, 2020 at 05:01:49PM +0100, Linus Walleij wrote:
+> On Thu, Oct 15, 2020 at 1:12 AM Kent Gibson <warthog618@gmail.com> wrote:
+> 
+> > This patch set adds the option to select CLOCK_REALTIME as the source
+> > clock for line events.
+> >
+> > The first patch is the core of the change, while the remaining two update
+> > the GPIO tools to make use of the new option.
+> >
+> > Changes for v2:
+> >  - change line_event_timestamp() return to u64 to avoid clipping to 32bits
+> >    on 32bit platforms.
+> >  - fix the line spacing after line_event_timestamp()
+> 
+> Where are we standing with this patch set? Good to go so
+> I should just try to merge it?
+> 
 
-> There is a pending patch series [1] to remove a lot of legacy code
-> related to old Intel MID platforms. (Note, not all of them, since we
-> have an ACPI based Intel Edison edition which continue working nicely
-> after this)
->
-> Most of the code is shuffling arch/x86 and the series is quite
-> dependent on the contents of that folder (for the sake of
-> bisectability). Since that the only way it would be integrated is
-> through the tip tree I would like to have your preliminary review on
-> other contents =E2=80=94 #3 and #4 are PDx86 and GPIO subsystems. In this=
- case
-> I won't resend this many times.
->
-> I have a preliminary offline agreement with Len Brown on SFI removal
-> (#2 in the list).
->
-> [1]: https://gitlab.com/andy-shev/next/-/commits/topic/mid-removal/
+I'm fine with it, especially now that I've tested it on 32bit platforms
+as well as 64bit.
 
-The series:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Bart was ok with v1, and I doubt the changes for v2 would negatively
+impact that, though I did overlook adding his review tag.
 
-Yours,
-Linus Walleij
+Cheers,
+Kent.
+
+> Yours,
+> Linus Walleij
