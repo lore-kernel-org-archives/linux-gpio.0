@@ -2,99 +2,108 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CD0C4363A
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041E1C55179
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03FA12245A
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B97524724
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:52:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="VLKLDhH5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQEVLxlQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbgJ1VuU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48730 "EHLO
+        id S1728271AbgJ1VwH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbgJ1VuS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 17:50:18 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29CF1C0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:50:18 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id k6so1127410ior.2
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:50:18 -0700 (PDT)
+        with ESMTP id S1727786AbgJ1VwG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 17:52:06 -0400
+Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921B1C0613CF;
+        Wed, 28 Oct 2020 14:52:06 -0700 (PDT)
+Received: by mail-oi1-x243.google.com with SMTP id f7so1156402oib.4;
+        Wed, 28 Oct 2020 14:52:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cOlVocq4IAMVemOE9OTUsRfXHyVhhbPmqVMPreN3EDA=;
-        b=VLKLDhH5+ey26PhxB02kMOKqY1O7uJisIhFfY6sICgo06ZQU9ZyN0GHNUP+hjbnJZi
-         Qkm0zxnFlwKDU63MgJo0DEI23ObE1wyJPaf4zVVukJCDWtB3tMujBt+zKAX5Ds/JIzwv
-         YhKZCKsecvEm4MjQcksuDs+HKp/aif0UIGdXkkAshi7SFsc/euSq4gdZ3aP1VsF8TRX9
-         +W86rpTBdADlx3bka8rOvUKPFUyzm2ekZTjAhL3+MvniBO8LDOXyRgQVjHTLK7Fpanbt
-         kJf9nrWtBzx7dBwqhNrbVJVZPxY/L8WEvgtWEn16/bK4wLryeFqiXH7EZryoRaI/M7z8
-         G2kw==
+        bh=hsiBaHtytHat8/EztZJPMms+wc+gkK9fFhRbXpui7XQ=;
+        b=MQEVLxlQBAUE8Edv0UruJBsGHTS6407b6J0mWXgnZtxQWJVTgvfoZAswU7xJkgQYQ0
+         Ddm8sQ76zjJVRKtkQlFy90/AG4a+nCqMy6zwee3lZeSF58nUjzSCyR6e5ipuATwKeQFx
+         +dpfnl3557iDt1HkVOdgqrc/F0u3oSsHc41Nw5dv21WL9SpIUx4hRzE3USyBCuRi6Rfd
+         7tuyWySJ5FCOs5D5P4BwoT+Kdd7sZpT5YW6+QKiL8YaQN3JGb90e1j3XsaGJDBGK6uGY
+         fiWnh8PoMxckM3nrVT395A+mMs9GIBD/ul5M6+fZHqzzmTg6GJIP3AVVGMnWB1PRla0t
+         k7+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cOlVocq4IAMVemOE9OTUsRfXHyVhhbPmqVMPreN3EDA=;
-        b=qcQHQ/ywfyNfBP1V+jOAYlGS0cT7uTpItk0JcSPuqXCDQsWfpfaQo8TKQhZ9Tf21Av
-         iQE3QJMnnKTzLON/lXq4lKnXvFDQHMoBRhOBThK2yHV+DZrwaO54TKdAZ9wgEQLP1xg9
-         gnKSvgLBs8ZpUOFyeWBnAbPfQMAPY58nrsxkudgYIDPdEblPm/CuSk1h6Z3iy0Izc/RJ
-         lWeocUiPq4VjYMGAl6kbHgktXd0vdxYx6gYc9+iBAJR7AhjkROhBlg3D8OCIf90N8Ze1
-         xxlsZrZ7FbVe2/Ho1fCNMxVZjN1kqNMBnpVnqirFCqI5AiQuXobjaOs8MrIFuvKw2zc2
-         Q3mw==
-X-Gm-Message-State: AOAM5334zngDUAUpIYVCKndihacK1w3QzJWPbkX1gzWed3qZq5D7mdI4
-        F9zfal30g32DFx+03xOgvhN4AYpD5nAmK0ZYms6tch5FSg8=
-X-Google-Smtp-Source: ABdhPJycUHW9N4gSdb2+ekP7lI8+Knw9K4/zGN4RgsSq9aTfkdPb0cfF+t3wJgXPrUauiFppD7uAn0Q0Pag4L/43Zw8=
-X-Received: by 2002:a6b:b883:: with SMTP id i125mr5889964iof.131.1603891156306;
- Wed, 28 Oct 2020 06:19:16 -0700 (PDT)
+        bh=hsiBaHtytHat8/EztZJPMms+wc+gkK9fFhRbXpui7XQ=;
+        b=WNtPKcbP2JxSkulBXowV3IIiDZ12QDrGoILu5h7gcZLNJHspPhsy0Aw/4dGUdPAo5n
+         RAcb43Ez5gNj7vP4/zgXLTslWZFu765q8/QGKeOAz0gq6PzAbW4Ok0Q03Ri2gSdsWxVp
+         23St3rWcISojR3OHwYYtFU/4XEN7cuGATiROBb8cUjFXtXv2GqSAClF09zBmh1tvxJEb
+         55wTB2UHEXD3gYK8S7kzm6uOanYrNCojSEjfX2me9U/0U3XEUA3VoIgaSBbKLNp3N6KK
+         ilITnByRqdQpxhfzLWIoND3bzUyUQdPf6rjRxxQTTfeHsSkhgW53njsQyiYJFuNaZE8r
+         7K1w==
+X-Gm-Message-State: AOAM530mdRXOqrOzS84LUHvH7eXL5ZKLCRkSA1dVUHfJ7kAp/jZnUjPi
+        xrOePGq92UixBYb5LsabStWzDP/37xDPWnM+PJJ30Yt/MgA=
+X-Google-Smtp-Source: ABdhPJy8JQRH34yo0LYH7fgqv7KNi4P+zNVt6GyrQjGrjJOIklaLoU3uoLRGVJm039L01MwTAaSTVYc9qlINuCALcKg=
+X-Received: by 2002:a17:90a:fb92:: with SMTP id cp18mr651136pjb.228.1603916683534;
+ Wed, 28 Oct 2020 13:24:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201027091715.8958-1-brgl@bgdev.pl> <20201028093928.GA152368@sol>
-In-Reply-To: <20201028093928.GA152368@sol>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 28 Oct 2020 14:19:05 +0100
-Message-ID: <CAMRc=MeyFR450u7=LUhGNqs7jKv0PAduUAHvM-um2SjfEMRQOw@mail.gmail.com>
-Subject: Re: [PATCH v2] treewide: rework struct gpiod_line_bulk
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jack Winch <sunt.un.morcov@gmail.com>,
-        Helmut Grohne <helmut.grohne@intenta.de>,
+References: <20201027135325.22235-1-vincent.whitchurch@axis.com> <CAMRc=Mdjm8tgxF_76T3f6r3TwghLKtrFtUv7ywtX3-nEQzVGtA@mail.gmail.com>
+In-Reply-To: <CAMRc=Mdjm8tgxF_76T3f6r3TwghLKtrFtUv7ywtX3-nEQzVGtA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 28 Oct 2020 22:25:32 +0200
+Message-ID: <CAHp75Vff1AyKDb=JiocsAefnft+tcm+BnuWDrxViQqZAQZjuVg@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: mockup: Allow probing from device tree
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        kernel@axis.com, devicetree <devicetree@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 10:39 AM Kent Gibson <warthog618@gmail.com> wrote:
+On Wed, Oct 28, 2020 at 8:41 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> On Tue, Oct 27, 2020 at 2:54 PM Vincent Whitchurch
+> <vincent.whitchurch@axis.com> wrote:
+
+...
+
+> > +#include <linux/of.h>
 >
-> On Tue, Oct 27, 2020 at 10:17:15AM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
+> Please keep the includes ordered alphabetically.
+
+Besides the fact that that is a wrong header to be included.
+mod_devicetable.h is the correct one.
+(See also below)
+
+...
+
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id gpio_mockup_of_match[] = {
+> > +       { .compatible = "gpio-mockup", },
+> > +       {},
+> > +};
+> > +MODULE_DEVICE_TABLE(of, gpio_mockup_of_match);
+> > +#endif
 >
-> Subject should be prefixed with [libgpiod] according to the README ;).
->
+> You don't need this ifdef - of_match_ptr() will evaluate to NULL if
+> CONFIG_OF is disabled and the compiler will optimize this struct out.
 
-Oh come on! :)
+It's not so. If you drop ugly ifdeffery (and I vote for that, see also
+above) the of_match_ptr() must be dropped as well.
+Otherwise the compiler will issue the warning. So it is either all or none.
 
-[snip]
-
->
-> If you replace the gpiod_line_bulk_iter_foreach_line() here with
-> manually looping over the bulk lines then everything from A to B above
-> can be dropped.
->
-
-Something is telling me that dedicated iterators are more elegant. But
-I guess we can do everything manually for now and see about that
-later. Fair enough, I'll drop it.
-
-Bartosz
-
-[snip]
+-- 
+With Best Regards,
+Andy Shevchenko
