@@ -2,199 +2,201 @@ Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7DBC4363A
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 01:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEDAC5517A
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 02:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CCDD206E9
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 01:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03912208C7
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 02:02:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S/EeI5L5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbgJ2ByI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 21:54:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:38652 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728679AbgJ1V5P (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:57:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDF351A00;
-        Wed, 28 Oct 2020 07:51:11 -0700 (PDT)
-Received: from [10.57.54.223] (unknown [10.57.54.223])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55C003F66E;
-        Wed, 28 Oct 2020 07:51:09 -0700 (PDT)
-Subject: Re: [PATCH v2 5/5] firmware: QCOM_SCM: Allow qcom_scm driver to be
- loadable as a permenent module
-To:     Will Deacon <will@kernel.org>, John Stultz <john.stultz@linaro.org>
-Cc:     Maulik Shah <mkshah@codeaurora.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Andy Gross <agross@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Todd Kjos <tkjos@google.com>
-References: <20200625001039.56174-1-john.stultz@linaro.org>
- <20200625001039.56174-6-john.stultz@linaro.org>
- <20200702141825.GA16941@willie-the-truck>
- <CALAqxLVZ2EhutYjOt7Be1RgnYwHT6-4m6DxA-t1wuxuSy=6yDQ@mail.gmail.com>
- <20200710075411.GA30011@willie-the-truck>
- <CALAqxLWadLrxckRHRAR0Q417RnFKquQJbRfO_DLEVH56cykRow@mail.gmail.com>
- <20200713204133.GA3731@willie-the-truck>
- <CALAqxLUDVEq4ds2Wbic6uaK3=dELKKO4eGQxjHFFz19GeUFd_w@mail.gmail.com>
- <20201028135118.GA28554@willie-the-truck>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <ae6ba27a-d3c8-8b98-c263-ec779ef35738@arm.com>
-Date:   Wed, 28 Oct 2020 14:51:03 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1726066AbgJ1Vss (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbgJ1Vmu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 17:42:50 -0400
+Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E5C9C0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:42:50 -0700 (PDT)
+Received: by mail-yb1-xb44.google.com with SMTP id s89so401589ybi.12
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+XiyYcEFSv40qmGk78jL7y009Wmf2FvqP17FLO0o/wQ=;
+        b=S/EeI5L5iAm7mA8nFOB8+fUM0G/jJrP+3a8lJEOvcn/KPF20Ut2xnUHnE6YtHhm5qf
+         68rA3FoD3tGHI1O5h37n4AdrDUFnHG8vciVcUz6pK0xlsMhjfCIKNKnDd9Gei3hMkYv0
+         7q6zQwD2pXp6tVZb4J6ieDqgGAB+l7vQUfiM9H2t0NPgKwMTEYXULF/4vKrKewrVzN5i
+         cCRiO6JBIWYcDuPj96QowHAxkNmd9t5j+V7gpngfEkCCexC5lG8w4cu9KBeoerQoAZed
+         fyTzQ+I4md8wSyL73/OBkeU3RcBiLN9QuDALxnTy3nONHMpeAcDi77n0b785ivDcM+KK
+         Ztsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+XiyYcEFSv40qmGk78jL7y009Wmf2FvqP17FLO0o/wQ=;
+        b=WVVw7gjiX/R56afJmS+HtshMXa/2hy+poiuGDcybBD3Y59SvYCjeek/lgIrBqrmt2a
+         gFeqiI0dM0x5RKU3JRv+JzTPn2waSwPYUwm7Oqd3+XR+ycw19d7tyjSVrSVaf1qItj+V
+         K9vdz/EsFeea548xt04G589aB3YFM/gU1uIDwUKVuUS0M5BEElDVycHoCrsvlStJdI9H
+         BlhYnPFPTmfi67h2+2UiYZoUf8rnNISHTvpY1KI7Zr8wyrVkvuCP4+2quh9FTGuk808H
+         FqJ0hgpDZtnmc5GdX8zmB/PWDBYoiPTCCfS20O3qb71EZdvK5Z6PiXy8uOMf5Gif1Ycd
+         Fqow==
+X-Gm-Message-State: AOAM531NInPF8WaiKDMISdjN8Kw26Vr2dF2ZK91g5BDWxzRGdEPsQjkc
+        PmjIr57UcNFNTcoW4EfLStOeBw81qUBG5g==
+X-Google-Smtp-Source: ABdhPJyOEsX2NrkArkQ+lhEF+JTD42MIssKbrKwgoF/zEzysvAYajpmNlBFC5Ml9f1fcMV7VXNEE5Q==
+X-Received: by 2002:a4a:d0a4:: with SMTP id t4mr6387691oor.21.1603902959220;
+        Wed, 28 Oct 2020 09:35:59 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id d145sm2810205oob.37.2020.10.28.09.35.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 09:35:58 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 11:35:56 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jeevan Shriram <jshriram@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: qcom: Add SDX55 pincontrol driver
+Message-ID: <20201028163556.GD3151@builder.lan>
+References: <20201028083017.611810-1-vkoul@kernel.org>
+ <20201028083017.611810-2-vkoul@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20201028135118.GA28554@willie-the-truck>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201028083017.611810-2-vkoul@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2020-10-28 13:51, Will Deacon wrote:
-> On Tue, Oct 27, 2020 at 10:53:47PM -0700, John Stultz wrote:
->> On Mon, Jul 13, 2020 at 1:41 PM Will Deacon <will@kernel.org> wrote:
->>> On Fri, Jul 10, 2020 at 03:21:53PM -0700, John Stultz wrote:
->>>> On Fri, Jul 10, 2020 at 12:54 AM Will Deacon <will@kernel.org> wrote:
->>>>> On Thu, Jul 09, 2020 at 08:28:45PM -0700, John Stultz wrote:
->>>>>> On Thu, Jul 2, 2020 at 7:18 AM Will Deacon <will@kernel.org> wrote:
->>>>>>> On Thu, Jun 25, 2020 at 12:10:39AM +0000, John Stultz wrote:
->>>>>>>> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
->>>>>>>> index b510f67dfa49..714893535dd2 100644
->>>>>>>> --- a/drivers/iommu/Kconfig
->>>>>>>> +++ b/drivers/iommu/Kconfig
->>>>>>>> @@ -381,6 +381,7 @@ config SPAPR_TCE_IOMMU
->>>>>>>>   config ARM_SMMU
->>>>>>>>        tristate "ARM Ltd. System MMU (SMMU) Support"
->>>>>>>>        depends on (ARM64 || ARM || (COMPILE_TEST && !GENERIC_ATOMIC64)) && MMU
->>>>>>>> +     depends on QCOM_SCM || !QCOM_SCM #if QCOM_SCM=m this can't be =y
->>>>>>>>        select IOMMU_API
->>>>>>>>        select IOMMU_IO_PGTABLE_LPAE
->>>>>>>>        select ARM_DMA_USE_IOMMU if ARM
->>>>>>>
->>>>>>> This looks like a giant hack. Is there another way to handle this?
->>>>>>
->>>>>> Sorry for the slow response here.
->>>>>>
->>>>>> So, I agree the syntax looks strange (requiring a comment obviously
->>>>>> isn't a good sign), but it's a fairly common way to ensure drivers
->>>>>> don't get built in if they optionally depend on another driver that
->>>>>> can be built as a module.
->>>>>>    See "RFKILL || !RFKILL", "EXTCON || !EXTCON", or "USB_GADGET ||
->>>>>> !USB_GADGET" in various Kconfig files.
->>>>>>
->>>>>> I'm open to using a different method, and in a different thread you
->>>>>> suggested using something like symbol_get(). I need to look into it
->>>>>> more, but that approach looks even more messy and prone to runtime
->>>>>> failures. Blocking the unwanted case at build time seems a bit cleaner
->>>>>> to me, even if the syntax is odd.
->>>>>
->>>>> Maybe just split it out then, so that the ARM_SMMU entry doesn't have this,
->>>>> as that driver _really_ doesn't care about SoC details like this. In other
->>>>> words, add a new entry along the lines of:
->>>>>
->>>>>          config ARM_SMMU_QCOM_IMPL
->>>>>          default y
->>>>>          #if QCOM_SCM=m this can't be =y
->>>>>          depends on ARM_SMMU & (QCOM_SCM || !QCOM_SCM)
->>>>>
->>>>> and then have arm-smmu.h provide a static inline qcom_smmu_impl_init()
->>>>> which returns -ENODEV if CONFIG_ARM_SMMU_QCOM_IMPL=n and hack the Makefile
->>>>> so that we don't bother to compile arm-smmu-qcom.o in that case.
->>>>>
->>>>> Would that work?
->>>>
->>>> I think this proposal still has problems with the directionality of the call.
->>>>
->>>> The arm-smmu-impl.o calls to arm-smmu-qcom.o which calls qcom_scm.o
->>>> So if qcom_scm.o is part of a module, the calling code in
->>>> arm-smmu-qcom.o also needs to be a module, which means CONFIG_ARM_SMMU
->>>> needs to be a module.
->>>>
->>>> I know you said the arm-smmu driver doesn't care about SoC details,
->>>> but the trouble is that currently the arm-smmu driver does directly
->>>> call the qcom-scm code. So it is a real dependency. However, if
->>>> QCOM_SCM is not configured, it calls stubs and that's ok.  In that
->>>> way, the "depends on QCOM_SCM || !QCOM_SCM" line actually makes sense.
->>>> It looks terrible because we're used to boolean logic, but it's
->>>> ternary.
->>>
->>> Yes, it looks ugly, but the part I really have issues with is that building
->>> QCOM_SCM=m and ARM_SMMU=y is perfectly fine if you don't run on an SoC
->>> with the qcom implementation. I don't see why we need to enforce things
->>> here beyond making sure that all selectable permutations _build_ and
->>> fail gracefully at runtime on the qcom SoC if SCM isn't available.
->>
->> Hey Will,
->>    Sorry to dredge up this old thread. I've been off busy with other
->> things and didn't get around to trying to rework this until now.
->>
->> Unfortunately I'm still having some trouble coming up with a better
->> solution. Initially I figured I'd rework the qcom_scm driver to, so
->> that we have the various qcom_scm_* as inline functions, which call
->> out to function pointers that the qcom_scm driver would register when
->> the module loaded (Oof, and unfortunately there are a *ton* qcom_scm_*
->> functions so its a bunch of churn).
->>
->> The trouble I realized with that approach is that if the ARM_SMMU code
->> is built in, then it may try to use the qcom_scm code before the
->> module loads and sets those function pointers. So while it would build
->> ok, the issue would be when the arm_smmu_device_reset() is done by
->> done on arm_smmu_device_probe(), it wouldn't actually call the right
->> code.  There isn't a really good way to deal with the module loading
->> at some random time after arm_smmu_device_probe() completes.
->>
->> This is the benefit of the module symbol dependency tracking: If the
->> arm_smmu.ko calls symbols in qcom_scm.ko then qcom_scm.ko has to load
->> first.
->> But if arm_smmu is built in, I haven't found a clear mechanism to
->> force qcom_scm to load before we probe, if it's configured as a
->> module.
->>
->> I also looked into the idea of reworking the arm-smmu-impl code to be
->> modular instead, and while it does provide a similar method of using
->> function pointers to minimize the amount of symbols the arm-smmu code
->> needs to know about, the initialization call path is
->> arm_smmu_device_probe -> arm_smmu_impl_init -> qcom_smmu_impl_init. So
->> it doesn't really allow for dynamic registration of implementation
->> modules at runtime.
->>
->> So I'm sort of stewing on maybe trying to rework the directionality,
->> so the arm-smmu-qcom.o code probes and calls arm_smmu_impl_init and
->> that is what initializes the arm_smmu_device_probe logic?
->>
->> Alternatively, I'm considering trying to switch the module dependency
->> annotation so that the CONFIG_QCOM_SCM modularity depends on ARM_SMMU
->> being a module. But that is sort of putting the restriction on the
->> callee instead of the caller (sort of flipping the meaning of the
->> depends), which feels prone to later trouble (and with multiple users
->> of CONFIG_QCOM_SCM needing similar treatment, it would make it
->> difficult to discover the right combination of configs needed to allow
->> it to be a module).
->>
->> Anyway, I wanted to reach out to see if you had any further ideas
->> here. Sorry for letting such a large time gap pass!
-> 
-> Well we can always go with your original hack, if it helps?
-> 
-> https://lore.kernel.org/linux-iommu/20200714075603.GE4277@willie-the-truck/
+On Wed 28 Oct 03:30 CDT 2020, Vinod Koul wrote:
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sdx55.c b/drivers/pinctrl/qcom/pinctrl-sdx55.c
+[..]
+> +static const struct msm_function sdx55_functions[] = {
+[..]
+> +	FUNCTION(qdss_gpio),
+> +	FUNCTION(qdss_gpio0),
+> +	FUNCTION(qdss_gpio1),
+> +	FUNCTION(qdss_gpio2),
+> +	FUNCTION(qdss_gpio3),
+> +	FUNCTION(qdss_gpio4),
+> +	FUNCTION(qdss_gpio5),
+> +	FUNCTION(qdss_gpio6),
+> +	FUNCTION(qdss_gpio7),
+> +	FUNCTION(qdss_gpio8),
+> +	FUNCTION(qdss_gpio9),
+> +	FUNCTION(qdss_gpio10),
+> +	FUNCTION(qdss_gpio11),
+> +	FUNCTION(qdss_gpio12),
+> +	FUNCTION(qdss_gpio13),
+> +	FUNCTION(qdss_gpio14),
+> +	FUNCTION(qdss_gpio15),
 
-Hmm, perhaps I'm missing something here, but even if the config options 
-*do* line up, what prevents arm-smmu probing before qcom-scm and 
-dereferencing NULL in qcom_scm_qsmmu500_wait_safe_toggle() before __scm 
-is initialised?
+As there are no overlaps within pingroups you can keep qdss_gpio as a
+single function.
 
-Robin.
+> +	FUNCTION(qdss_stm0),
+> +	FUNCTION(qdss_stm1),
+> +	FUNCTION(qdss_stm2),
+> +	FUNCTION(qdss_stm3),
+> +	FUNCTION(qdss_stm4),
+> +	FUNCTION(qdss_stm5),
+> +	FUNCTION(qdss_stm6),
+> +	FUNCTION(qdss_stm7),
+> +	FUNCTION(qdss_stm8),
+> +	FUNCTION(qdss_stm9),
+> +	FUNCTION(qdss_stm10),
+> +	FUNCTION(qdss_stm11),
+> +	FUNCTION(qdss_stm12),
+> +	FUNCTION(qdss_stm13),
+> +	FUNCTION(qdss_stm14),
+> +	FUNCTION(qdss_stm15),
+> +	FUNCTION(qdss_stm16),
+> +	FUNCTION(qdss_stm17),
+> +	FUNCTION(qdss_stm18),
+> +	FUNCTION(qdss_stm19),
+> +	FUNCTION(qdss_stm20),
+> +	FUNCTION(qdss_stm21),
+> +	FUNCTION(qdss_stm22),
+> +	FUNCTION(qdss_stm23),
+> +	FUNCTION(qdss_stm24),
+> +	FUNCTION(qdss_stm25),
+> +	FUNCTION(qdss_stm26),
+> +	FUNCTION(qdss_stm27),
+> +	FUNCTION(qdss_stm28),
+> +	FUNCTION(qdss_stm29),
+> +	FUNCTION(qdss_stm30),
+> +	FUNCTION(qdss_stm31),
+
+Ditto.
+
+> +	FUNCTION(qlink0_en),
+> +	FUNCTION(qlink0_req),
+> +	FUNCTION(qlink0_wmss),
+> +	FUNCTION(qlink1_en),
+> +	FUNCTION(qlink1_req),
+> +	FUNCTION(qlink1_wmss),
+> +	FUNCTION(spmi_coex),
+> +	FUNCTION(sec_mi2s),
+> +	FUNCTION(spmi_vgi),
+> +	FUNCTION(tgu_ch0),
+> +	FUNCTION(uim1_clk),
+> +	FUNCTION(uim1_data),
+> +	FUNCTION(uim1_present),
+> +	FUNCTION(uim1_reset),
+> +	FUNCTION(uim2_clk),
+> +	FUNCTION(uim2_data),
+> +	FUNCTION(uim2_present),
+> +	FUNCTION(uim2_reset),
+> +	FUNCTION(usb2phy_ac),
+> +	FUNCTION(vsense_trigger),
+> +};
+> +
+> +/* Every pin is maintained as a single group, and missing or non-existing pin
+> + * would be maintained as dummy group to synchronize pin group index with
+> + * pin descriptor registered with pinctrl core.
+> + * Clients would not be able to request these dummy pin groups.
+> + */
+> +static const struct msm_pingroup sdx55_groups[] = {
+> +	[0] = PINGROUP(0, uim2_data, blsp_uart1, qdss_stm31, ebi0_wrcdc, _,
+> +		       _, _, _, _),
+
+Please break the 80 character suggestion and leave these unwrapped.
+
+[..]
+> +	[108] = UFS_RESET(ufs_reset, 0x0),
+
+SDX55 doesn't have UFS support and I'm not able to find any UFS_RESET
+register in the TLMM block. So I suspect this is a copy paste issue
+somewhere.
+
+PS. Don't forget to drop the macro, if we don't need it.
+
+> +	[109] = SDC_PINGROUP(sdc1_rclk, 0x9a000, 15, 0),
+> +	[110] = SDC_PINGROUP(sdc1_clk, 0x9a000, 13, 6),
+> +	[111] = SDC_PINGROUP(sdc1_cmd, 0x9a000, 11, 3),
+> +	[112] = SDC_PINGROUP(sdc1_data, 0x9a000, 9, 0),
+> +};
+> +
+> +static const struct msm_pinctrl_soc_data sdx55_pinctrl = {
+> +	.pins = sdx55_pins,
+> +	.npins = ARRAY_SIZE(sdx55_pins),
+> +	.functions = sdx55_functions,
+> +	.nfunctions = ARRAY_SIZE(sdx55_functions),
+> +	.groups = sdx55_groups,
+> +	.ngroups = ARRAY_SIZE(sdx55_groups),
+> +	.ngpios = 108,
+
+If we had UFS_RESET, this should include it; i.e. be 109.
+
+Regards,
+Bjorn
