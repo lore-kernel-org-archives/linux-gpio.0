@@ -4,111 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A267C5DF9D
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8496DC5DF9D
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C787820728
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4495920714
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:36:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388032AbgJ1Wep (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:34:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56056 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387997AbgJ1Wb5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:31:57 -0400
-Received: from leibniz.telenet-ops.be (leibniz.telenet-ops.be [IPv6:2a02:1800:110:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D83C0613D1
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:31:57 -0700 (PDT)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLrFD42qKzMv9T8
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:15:12 +0100 (CET)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id lSFC2300L4C55Sk01SFCF4; Wed, 28 Oct 2020 15:15:12 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kXmEJ-000oZ8-UU; Wed, 28 Oct 2020 15:15:11 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kXmEJ-007Fpj-Ev; Wed, 28 Oct 2020 15:15:11 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
+        id S2388338AbgJ1WgN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:36:13 -0400
+Received: from muru.com ([72.249.23.125]:47074 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388459AbgJ1Wdx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 28 Oct 2020 18:33:53 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 1061A812F;
+        Wed, 28 Oct 2020 06:06:04 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] gpio: rcar: Implement gpio_chip.get_multiple()
-Date:   Wed, 28 Oct 2020 15:15:04 +0100
-Message-Id: <20201028141504.1729093-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028141504.1729093-1-geert+renesas@glider.be>
-References: <20201028141504.1729093-1-geert+renesas@glider.be>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Keerthy <j-keerthy@ti.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH] Revert "Revert "gpio: omap: Fix lost edge wake-up interrupts""
+Date:   Wed, 28 Oct 2020 08:05:56 +0200
+Message-Id: <20201028060556.56038-1-tony@atomide.com>
+X-Mailer: git-send-email 2.29.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for getting the state of multiple pins using a minimum of
-register reads.
+This reverts commit 579ced8fdb00b8e94304a83e3cc419f6f8eab08e.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Turns out I was overly optimistic about cpu_pm blocking idle being a
+solution for handling edge interrupts. While it helps in preventing
+entering idle states that potentially lose context, we can still get
+an edge interrupt triggering while entering idle. So we need to also
+add back the workaround for seeing if there are any pending edge
+interrupts when waking up.
+
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/gpio/gpio-rcar.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/gpio/gpio-omap.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index b33d1a2076eaa2e5..0b572dbc4a36801d 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -310,6 +310,35 @@ static int gpio_rcar_get(struct gpio_chip *chip, unsigned offset)
- 		return !!(gpio_rcar_read(p, INDT) & bit);
- }
- 
-+static int gpio_rcar_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-+				  unsigned long *bits)
-+{
-+	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
-+	u32 bankmask, outputs, m, val = 0;
-+	unsigned long flags;
-+
-+	bankmask = mask[0] & GENMASK(chip->ngpio - 1, 0);
-+	if (chip->valid_mask)
-+		bankmask &= chip->valid_mask[0];
-+
-+	if (!bankmask)
-+		return 0;
-+
-+	spin_lock_irqsave(&p->lock, flags);
-+	outputs = gpio_rcar_read(p, INOUTSEL);
-+	m = outputs & bankmask;
-+	if (m)
-+		val |= gpio_rcar_read(p, OUTDT) & m;
-+
-+	m = ~outputs & bankmask;
-+	if (m)
-+		val |= gpio_rcar_read(p, INDT) & m;
-+	spin_unlock_irqrestore(&p->lock, flags);
-+
-+	bits[0] = val;
-+	return 0;
-+}
-+
- static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1114,13 +1114,23 @@ static void omap_gpio_idle(struct gpio_bank *bank, bool may_lose_context)
  {
- 	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
-@@ -478,6 +507,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	gpio_chip->get_direction = gpio_rcar_get_direction;
- 	gpio_chip->direction_input = gpio_rcar_direction_input;
- 	gpio_chip->get = gpio_rcar_get;
-+	gpio_chip->get_multiple = gpio_rcar_get_multiple;
- 	gpio_chip->direction_output = gpio_rcar_direction_output;
- 	gpio_chip->set = gpio_rcar_set;
- 	gpio_chip->set_multiple = gpio_rcar_set_multiple;
+ 	struct device *dev = bank->chip.parent;
+ 	void __iomem *base = bank->base;
+-	u32 nowake;
++	u32 mask, nowake;
+ 
+ 	bank->saved_datain = readl_relaxed(base + bank->regs->datain);
+ 
+ 	if (!bank->enabled_non_wakeup_gpios)
+ 		goto update_gpio_context_count;
+ 
++	/* Check for pending EDGE_FALLING, ignore EDGE_BOTH */
++	mask = bank->enabled_non_wakeup_gpios & bank->context.fallingdetect;
++	mask &= ~bank->context.risingdetect;
++	bank->saved_datain |= mask;
++
++	/* Check for pending EDGE_RISING, ignore EDGE_BOTH */
++	mask = bank->enabled_non_wakeup_gpios & bank->context.risingdetect;
++	mask &= ~bank->context.fallingdetect;
++	bank->saved_datain &= ~mask;
++
+ 	if (!may_lose_context)
+ 		goto update_gpio_context_count;
+ 
 -- 
-2.25.1
-
+2.29.1
