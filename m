@@ -2,100 +2,129 @@ Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F23C388F7
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 02:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539F7C5517A
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 02:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18B4020738
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 02:14:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 030042076B
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 02:44:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fnSAZvX2"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nvCl8sKw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbgJ2COV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 22:14:21 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:38530 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbgJ1Vfu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 17:35:50 -0400
-Received: by mail-ej1-f65.google.com with SMTP id za3so987525ejb.5
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:35:48 -0700 (PDT)
+        id S1726485AbgJ1VeU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:34:20 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:32935 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbgJ1VeQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 17:34:16 -0400
+Received: by mail-oi1-f193.google.com with SMTP id s21so1135553oij.0
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EsEUWfEw0rdUjuGyy64d98Cv0PkfNVWtn5SQvgmieGM=;
-        b=fnSAZvX2aXo5cp2qFBj5UaxxB1xqDpeoMeHz+OUjt84KZaMl30fKZwYO7+4MYDEsIP
-         m55WP82ufZV/L9iJ4bnbchKRLmrzI3cZvo/rwO4Xg3aiX+lWccIKo2cNY+MAhJda+3DH
-         SjUfP7qM5W3CW0yVqQY/yHUu21xPsZP6ciMaqqvN5aqbC5VV9oueiCilfHmAKAx9Gydd
-         YE5WOIwtiotRhB6lHWRyX2yoVrxrI9CGg7obNuhqzJfUQwF8xzcymrobnXET50cO59T+
-         stwJx3UNjvmMdVBifuZUIBB9T5LJw/tgAd2xI7c/WpI+0Kgb2w2Pyw6tWEkdtM///UZO
-         VEVA==
+        bh=khsXwY2FOIak2E0IL9IWqYVg7gg6o/TiC9wESQ4lpvE=;
+        b=nvCl8sKwfy5MaflP71vCYy5uZwYIEw6hBOTPLMirYPIM9coKxLjYxUttQyjPrhGAW3
+         wIYGldGZNGcC8gHmdV+ZWm/IqohhKrnRpZPcrTxQRcVfK0TKBfDHIMVWxU6FFW1n+y4V
+         jYFhtScOr2Uz8IHzxFnLUdzAeKgHTM5DbPgfw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EsEUWfEw0rdUjuGyy64d98Cv0PkfNVWtn5SQvgmieGM=;
-        b=jOoaWppxjO3XjbJDT+DlgWkbBiiRq509l0AApZqyxqNMKhD3Ooj1t8cedQL6yeaWoA
-         IwgZ4LyeXq07lrd1bzmanDZDghzoq3yOjfCpnCFRgcj0/B73STjyFUlWvN3n+dbaB62b
-         HR9zLjZoGRoe1KxoLAGjenOi0YWNvXn7UfonBOHyrKluaXQBht1tvnQ2RvhM3RAtJRFQ
-         BuL1MiAhzQo/9Re7HGcle+s1UQsXmQOQ4prExa6nonYf/yuG7DJTjPleR0DLSVpq2YHG
-         rX0+NIVE/bkBp8aUc7IqNJjnXuuBK3s8Iot9qAH/cay5fU5AuOLLhi9Q4fX2mFt937NW
-         F+nQ==
-X-Gm-Message-State: AOAM530GQKlc3UJQnxIloUdzvRtwjye1R0pJ4YTCJbHMXv6PWTK7GQbO
-        ClQR5Z8ypZLzCU+AvMO+3HkEfSO9SYoh6YgJJicdwRISfb1JEA==
-X-Google-Smtp-Source: ABdhPJxHSkKBd8XvtNmfAzUxxA82g8YI959ywSo7yHJjReDr6TWK3d2FEkCLLUVEFW/HDtzNYId805Sb+bZzITmiXbU=
-X-Received: by 2002:ac2:50c1:: with SMTP id h1mr2869840lfm.333.1603901746305;
- Wed, 28 Oct 2020 09:15:46 -0700 (PDT)
+        bh=khsXwY2FOIak2E0IL9IWqYVg7gg6o/TiC9wESQ4lpvE=;
+        b=KSCmoDc7NOo4u+I/llACMGnx5RBr2tUL9IL++5LdK6EwLco5IJb369P7EDwUYD+Cs/
+         4IBp3nbBQKU5o3AObXqjb3yALsBStWIH2CmPwe3QS6hiMgYpYigJabcFaluUNkW2VOpQ
+         wrGTnCIEq00fBscHkvgnXqsN1NMtE5EzRLUBPbEVWjD/Yl3LDsXLjJ1f7mEDBOx0DjkP
+         AZY0m/0XnZN03EegLXtgmC6mSSLpnv+rXh5u+h8ONprKAWgo1GvfI9sP+HNtH5dr+Q3y
+         zjDRZeaRn4QdUp0I2t92DqFvgC49HvzTQc6PBXCgoSBc7xIVmtlsaULuE6y6jZhWJs8S
+         5Bxg==
+X-Gm-Message-State: AOAM531riqT7gJaVBcwkDE5pbOxt1KSGI2/H+4JVi0L6iZdzZocLzsFS
+        Zm5KFM+Ryu/iQQIDd+2ZuKYOUYEWYzG5ijQehFI=
+X-Google-Smtp-Source: ABdhPJzgCUrdQ+LQTFddxZXfio+3uoYq6GZ3GmaeoJQ5Vxa5w+EasQhhMuP6cLRUT6/yXyreyLQ50Q==
+X-Received: by 2002:aca:220b:: with SMTP id b11mr691926oic.130.1603919455035;
+        Wed, 28 Oct 2020 14:10:55 -0700 (PDT)
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
+        by smtp.gmail.com with ESMTPSA id l11sm136360oon.35.2020.10.28.14.10.54
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Oct 2020 14:10:54 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id u127so1032577oib.6
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:10:54 -0700 (PDT)
+X-Received: by 2002:a05:6808:602:: with SMTP id y2mr686737oih.11.1603919453681;
+ Wed, 28 Oct 2020 14:10:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHp75Veqdv8JnASmmsnv9AmrktByWH3R7Z36wLMyjJh0VffExw@mail.gmail.com>
-In-Reply-To: <CAHp75Veqdv8JnASmmsnv9AmrktByWH3R7Z36wLMyjJh0VffExw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 28 Oct 2020 17:15:35 +0100
-Message-ID: <CACRpkdaAryt0PdbMQ-LMjJ=LNvmNVSHrjHfPn15uJo7WALpNEQ@mail.gmail.com>
-Subject: Re: Is consumer documentation correct?
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kent Gibson <warthog618@gmail.com>
+References: <20201028205101.47583-1-andriy.shevchenko@linux.intel.com> <20201028205101.47583-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20201028205101.47583-2-andriy.shevchenko@linux.intel.com>
+From:   Ricardo Ribalda <ribalda@chromium.org>
+Date:   Wed, 28 Oct 2020 22:10:42 +0100
+X-Gmail-Original-Message-ID: <CANiDSCtRDwfFo9HE84iujjFe6h9aS6b3B8wkz5Rt0aO8=XMsNg@mail.gmail.com>
+Message-ID: <CANiDSCtRDwfFo9HE84iujjFe6h9aS6b3B8wkz5Rt0aO8=XMsNg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] Documentation: firmware-guide: gpio-properties:
+ active_low only for GpioIo()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-acpi@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 6:26 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+Hi Andy
 
-> It _seems_ between
->   79a9becda894 ("gpiolib: export descriptor-based GPIO interface")
-> and
->   14e85c0e69d5 ("gpio: remove gpio_descs global array")
-> the "Interacting With the Legacy GPIO Subsystem" of GPIO consumer
-> interface is correct.
+Thanks for your patch and super fast response.
+
+I think there are two different concepts here:
+
+1) when the pin has a low value, it is  0 or a 1? =>active_low
+
+2) when do I get an irq, low->high or high->low => irq polarity
+
+When I read the acpi spec for GpioInt()
+https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf page
+934, it has the same problem as for GpioIo(), it does not express the
+active_low and this is where the _DSD field comes handy.
+
+Without using the active_low, how can we describe  a pin that is
+active low and has to trigger an irq on both edges?
+
+Thanks again
+
+
+On Wed, Oct 28, 2020 at 9:51 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> But is it the case afterwards?
+> It appears that people may misinterpret active_low field in _DSD
+> for GpioInt() resource. Add a paragraph to clarify this.
 >
-> Details of the question are here [1].
+> Reported-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  Documentation/firmware-guide/acpi/gpio-properties.rst | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-> [1]: https://stackoverflow.com/q/64455505/2511795
+> diff --git a/Documentation/firmware-guide/acpi/gpio-properties.rst b/Documentation/firmware-guide/acpi/gpio-properties.rst
+> index e6e65ceb2ca1..370fe46c6af9 100644
+> --- a/Documentation/firmware-guide/acpi/gpio-properties.rst
+> +++ b/Documentation/firmware-guide/acpi/gpio-properties.rst
+> @@ -55,6 +55,9 @@ Since ACPI GpioIo() resource does not have a field saying whether it is
+>  active low or high, the "active_low" argument can be used here.  Setting
+>  it to 1 marks the GPIO as active low.
+>
+> +Note, active_low in _DSD does not make sense for GpioInt() resource and
+> +must be 0. GpioInt() resource has its own means of defining it.
+> +
+>  In our Bluetooth example the "reset-gpios" refers to the second GpioIo()
+>  resource, second pin in that resource with the GPIO number of 31.
+>
+> --
+> 2.28.0
+>
 
-I don't know if I even understand the question right, but gpio_to_desc()
-can be called at any time as long as there is a struct gpio_chip with
-the global GPIO number assigned to it. It will just index into the
-array of descriptors stored inside the chip and return a pointer.
-The allocation of the memory lives with the struct gpio_chip.
 
-If for example that chip is on USB and you unplug that USB
-cable, naturally referencing the descriptor after that point
-will cause disasters.
-
-The gpio_request()/free() doesn't really allocate or free
-any memory at all. This is why we call gpio_to_desc() first
-thing in the legacy functions.
-
-Yours,
-Linus Walleij
+-- 
+Ricardo Ribalda
