@@ -1,121 +1,95 @@
-Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9645EC388F7
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4501C388F7
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 00:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40C0320825
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05826207DE
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 00:27:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTy/e460"
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="d7uJKM2k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390081AbgJ1XyA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:54:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41196 "EHLO
+        id S2388805AbgJ2A1y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 20:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389984AbgJ1XxH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:53:07 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D20EC0613CF;
-        Wed, 28 Oct 2020 16:53:07 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id r1so530668vsi.12;
-        Wed, 28 Oct 2020 16:53:07 -0700 (PDT)
+        with ESMTP id S2388807AbgJ2A1u (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 20:27:50 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB58FC0613CF;
+        Wed, 28 Oct 2020 17:27:49 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id g21so611443vsp.0;
+        Wed, 28 Oct 2020 17:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=jms.id.au; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PYN4K1+Qo5CXy2dTkM2vzEcbUyt+oPx5TIK4442R5VA=;
-        b=OTy/e460iUjfhoI9aAffakKahhhxsFyOhcX7Pe8XatpgZgW4p2r22kefU9VUgmlNSX
-         KDszoNmWQKwSNCLYHwqqijzuit3JOvrkyMMyQXIb1HaAnxs90CHkW2cEoXJ12lTI+C3s
-         5Azit7cOIHaZvipRq0dWbvoHHoCE8qMBAmmfYc+3u0+swrtLuueJnwJO1UFQpupjpDmY
-         poV01fVvB9ipTBaS9KFW38ECjgEyw/AOSpJwQszvEa/ojLAznDklj2JhfzIlzk/j8ppX
-         AjaTQxHOpyaBoCvAX+zcB9jMsPpukP2XOHv2yGmFvn9sw92jh124DlIlGHp203Ve3ZzP
-         nQSA==
+        bh=RQ2kvUyYd4YE/aOcmy2TWcR3YaKz9JiRyVflCfdu5Ag=;
+        b=d7uJKM2kvc8QuY02CcO5eBrxbPT8YUiaUU1yfWyy96kwPlqHgSJbuzyw5TzPhu6q1i
+         Mx3BMKt0rJCXGELn+j98YQOuRL9N/PNF1OAh+5sMfmimXwb1nO1iOOgc1D9Z9NrdDut5
+         12Cjvu4k6cSwBpskqjLRgkmjbm/U3Vf2VSKf8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PYN4K1+Qo5CXy2dTkM2vzEcbUyt+oPx5TIK4442R5VA=;
-        b=K713OENW9vYjrj+IVpqxbS9WOZY9hxQ1cW+0pa9U4t8KZ3SttnraP5qG7GA9vOwWg7
-         53++CZBwKItPfGQkOD/a8DQerhC0xaTOWlykWM0vFB1UvTibctEFE0W+YmzZ37K6F/J2
-         nJTKtAZS6rVty36TrJo+fliwbDLUGgCJweJ8FEF5iG20u4KqoEnQz4nyPSsVVgwMOsGo
-         t8VxIOk8O4L4lb+dVn3WgOCOBWqfFi5+jVs3EALrusxWBnfTu2FTG0t4THi3me//lu+v
-         ZZsafP5swQBtCEr+cBIIPUI1ujimrl8PnSI/Bj5XN2k5L7NO/dT+Uzgt/zx1UuaN+3DQ
-         5ZDg==
-X-Gm-Message-State: AOAM531ODNCIGe2FhZnBhk3/o2Vl94tU6FCcofRWMsmW8/z7Loyd+jmn
-        kGRRyrI0FKdyzpDbVRq4iGNohiWMKCl1kc8gsSAAIJOZSE8=
-X-Google-Smtp-Source: ABdhPJzbN6AZnSn8xnNQv9pn7KISq95/FDkNcUJaHWTCbZwD5tEAj00jhZ0o9cYB3yT6BKajRQoJVz5rlVnjh+xNoj4=
-X-Received: by 2002:a17:902:bc4a:b029:d6:7ef9:689c with SMTP id
- t10-20020a170902bc4ab02900d67ef9689cmr288408plz.21.1603885245482; Wed, 28 Oct
- 2020 04:40:45 -0700 (PDT)
+        bh=RQ2kvUyYd4YE/aOcmy2TWcR3YaKz9JiRyVflCfdu5Ag=;
+        b=NQx+tDArWavrF+TYS2ZkPFmUzcIfiHr/N6hE3xmWwa0mmqKeOs4KxECjF5LgEDtPHs
+         kI4VBlvT6h2C48V43jpLPoRvwwWJsN4OOuzEGEZUtl7+glqSdb72v/ODsaZo+h9suP18
+         WtdMw7KdCXd6DRxgqFMAU09vrvLhCgr3JLqTXnShas+pyfz8Cxs5g7UyEt+G6zeVkmtS
+         ENFvKrfxnz9r8vNDuI0SF1R/dHJ60f/ZqS8qkPEeitMI3XdF4msZOPglaGuwiFBWrtBE
+         Dnemxie09XzAVJRluMOAs8ydWjO0niRr6zgbz+SfESuAOC0jHm7vV3Rx9ux7BddEGl/D
+         VzUg==
+X-Gm-Message-State: AOAM530I8E71AKAM724D7nPG+RxOdjUrM+gkSml5B9xg3TgpafLcJp7K
+        rBRoFAX2EtcMP8MWx63d3iujYw4e+DtqlmaeIX5UjAOwixFQ9hY1
+X-Google-Smtp-Source: ABdhPJxQgUH7wxrvz7ZLyzad/HO2Oih626XOaAtn0H/+hBkJgVlw0Lkex5XUeHspPJHS77UwlY99ZTN9QT3BiEhy5OQ=
+X-Received: by 2002:ad4:5387:: with SMTP id i7mr5777139qvv.43.1603861987985;
+ Tue, 27 Oct 2020 22:13:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201028103921.22486-1-zhe.he@windriver.com>
-In-Reply-To: <20201028103921.22486-1-zhe.he@windriver.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 28 Oct 2020 13:41:34 +0200
-Message-ID: <CAHp75VckpCLKeFLbf3RJ+eti5SX6a-ygvR7FM6M2-txp_kmMLQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: core: Add missing #ifdef CONFIG_GPIOLIB
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Drew Fustini <drew@beagleboard.org>,
+References: <20201012033150.21056-1-billy_tsai@aspeedtech.com>
+ <20201012033150.21056-2-billy_tsai@aspeedtech.com> <49ef1445-ddb5-41fb-b9f5-f885a1784e77@www.fastmail.com>
+In-Reply-To: <49ef1445-ddb5-41fb-b9f5-f885a1784e77@www.fastmail.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 28 Oct 2020 05:12:56 +0000
+Message-ID: <CACPK8Xc-rFMkv6_VVizF0F8uqQQC=rko=P_LhC0CphJH+_VFYA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] Arm: dts: aspeed-g6: Fix the register range of gpio
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     Billy Tsai <billy_tsai@aspeedtech.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        BMC-SW <BMC-SW@aspeedtech.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 12:40 PM He Zhe <zhe.he@windriver.com> wrote:
+On Mon, 26 Oct 2020 at 01:05, Andrew Jeffery <andrew@aj.id.au> wrote:
 >
-> To fix the following build warnings when CONFIG_GPIOLIB=n.
 >
-> drivers/pinctrl/core.c:1607:20: warning: unused variable 'chip' [-Wunused-variable]
->  1608 |  struct gpio_chip *chip;
->       |                    ^~~~
-> drivers/pinctrl/core.c:1606:15: warning: unused variable 'gpio_num' [-Wunused-variable]
->  1607 |  unsigned int gpio_num;
->       |               ^~~~~~~~
-> drivers/pinctrl/core.c:1605:29: warning: unused variable 'range' [-Wunused-variable]
->  1606 |  struct pinctrl_gpio_range *range;
->       |                             ^~~~~
+>
+> On Mon, 12 Oct 2020, at 14:01, Billy Tsai wrote:
+> > This patch is used to fix the memory range of gpio0
+> >
+> > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+>
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-Makes sense.
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+I've applied this with:
 
-> Fixes: f1b206cf7c57 ("pinctrl: core: print gpio in pins debugfs file")
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
->  drivers/pinctrl/core.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-> index 3663d87f51a0..9fc4433fece4 100644
-> --- a/drivers/pinctrl/core.c
-> +++ b/drivers/pinctrl/core.c
-> @@ -1602,9 +1602,11 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
->         struct pinctrl_dev *pctldev = s->private;
->         const struct pinctrl_ops *ops = pctldev->desc->pctlops;
->         unsigned i, pin;
-> +#ifdef CONFIG_GPIOLIB
->         struct pinctrl_gpio_range *range;
->         unsigned int gpio_num;
->         struct gpio_chip *chip;
-> +#endif
->
->         seq_printf(s, "registered pins: %d\n", pctldev->desc->npins);
->
-> --
-> 2.17.1
->
+Fixes: 8dbcb5b709b9 ("ARM: dts: aspeed-g6: Add gpio devices")
 
+Cheers,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Joel
