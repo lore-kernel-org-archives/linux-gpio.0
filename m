@@ -2,335 +2,92 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4019AC5DF9D
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E58EFC388F7
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E23D824754
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 775762473C
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 21:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rnM7N/+j"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwZ57T8u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729200AbgJ1V6o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:58:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50196 "EHLO
+        id S1729316AbgJ1V73 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbgJ1V6n (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 17:58:43 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8029C0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:58:43 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id j7so1126544oie.12
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:58:43 -0700 (PDT)
+        with ESMTP id S1729310AbgJ1V72 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 17:59:28 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90725C0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:59:28 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id n15so689782wrq.2
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 14:59:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oRD6HUWUuAzi24CGJ/GQKsSDbMvy+V67itPig7clj0U=;
-        b=rnM7N/+j3YKdyzhgwrBnqkrASMfhQ6PRfNOIQqg9MZ77HaBuvw/0WQmglB8zunMsyl
-         tSdSjp5g45YblckBhmxzxmRCkR+2WgJisrE1vTSmlRJdlmjrb/uCdzKCWnsSQ7jx5y7F
-         48WwM55YLP64VaXlFBDFzqnV0ow92DZUvQ+Sz4z+2+7DuLiTxVLTOuUdNmlfPVhFU2T4
-         ogHtkG4dwAADPpZ4gOghKBePVpXonh0hSCDtBpGz8Qi3wqXQXRlzT4HBou7Ts8c4EEmQ
-         UKRyXZqbAKC1XXHuNEL0B1VpvU07x/Kdbm/tS9pGpHlSVH6PC9uof2cxmfP4NANScM4x
-         +H2A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9BkbuooCI0n768ThkitRHsqLUEbJ24gP+vaNxySeBwg=;
+        b=TwZ57T8uWrT4ee/xv/UgV3k0J2vKc/wFx+wAMvRH+1BeKLWw9B+aAvD6EoOb2d09M3
+         HLpfUTNR0cl8bGSQqazyzH+h7wm/zmxdppXHPBlWoUyE++5DRLXId4KfPkc2edeAiGnw
+         tE5ZN1XAk8u8luHR/85HHYLPttm5czRmV1mLTNr8V9LZIXo4QACn+wAzfNEX8RVeZ6MM
+         9wosN8Gp1xgvn0k3XSP271BTNPZ0Q22yYhPoes8+L2RGZh/qPQWqN+tg8UPEGJPoCfQG
+         hctS2jJjaaOo5TsSOl7RO99cfz+aBBxX911cwhmNon48DatwDTkBFqAvB1BrCTprdMlN
+         jRKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oRD6HUWUuAzi24CGJ/GQKsSDbMvy+V67itPig7clj0U=;
-        b=cW9VmEGEfb45y1J/bPWSY03L+6SRAld+yrcKg91oicCPsf9RuRJaKGFckpGNJnyQ/e
-         a+9R+j+qVSh+ACVSui2dwtWWA5x5WCdmK6uAWzzHLQHuHv3jatSGPInwdroQqvmN139x
-         jvRo0m8hFFGgR1znz1+dSunWsr2Zwsd05b1XetlS88LED4D1QvPdh5KQ+PFyI7bDimCa
-         e0AUwEEt0OCEM4TwKYTF7dnSm+bEQAWL9usZ1Lvv3UzXRoiX+xYaIa3sSsxPoKQvHPlT
-         /FCED0Rf22cQEzHTYYI01ZACMfrtKOCdf1MHNYTLs0D1ZsjLMi9osOxv9qwMtzdz9alR
-         hZ6Q==
-X-Gm-Message-State: AOAM532XYDpt0OqzBWWpxN8jW8dRDY+IO6zQdKlf2wN487rJTZcgCwzz
-        BxEyzaELnhv/p9hXkLoD6p5GG4E61ZQpMg==
-X-Google-Smtp-Source: ABdhPJwYWcogHrcwmO/IhKNLp6aTIGpKbg3smEjZTdD/QnDqGvVwL1qJtH8+2LR18b3GJzqbsSpJrw==
-X-Received: by 2002:a17:90b:17c8:: with SMTP id me8mr5880704pjb.144.1603877975050;
-        Wed, 28 Oct 2020 02:39:35 -0700 (PDT)
-Received: from sol (106-69-179-84.dyn.iinet.net.au. [106.69.179.84])
-        by smtp.gmail.com with ESMTPSA id l22sm5485581pff.27.2020.10.28.02.39.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 02:39:34 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 17:39:28 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jack Winch <sunt.un.morcov@gmail.com>,
-        Helmut Grohne <helmut.grohne@intenta.de>,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2] treewide: rework struct gpiod_line_bulk
-Message-ID: <20201028093928.GA152368@sol>
-References: <20201027091715.8958-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9BkbuooCI0n768ThkitRHsqLUEbJ24gP+vaNxySeBwg=;
+        b=jY5dhf0f33+fdBr1w0NSKJ0xog1UQjc/m6QRXpyHyMEk6GZKwSzMEchD9tukkLm76K
+         pwdbGQfzOSj7vXbMoNThAnaiP42Cd7vmOJy60cGYnN/xabNMk2VoC5v3pTvfobFYhs1c
+         +EwtAHsWyuscUejKLd89WMpqq3h0bKSEC1V3cbA6OaDtYK/I1Sftmu6EDVaPrJnyX9Y3
+         npuae0/Lp6K8/lhIOMJ8asksVq75xXAsM5fCeDFzS7uYlGxUg23ONQz1RDHQsmGfJvS6
+         xp6ZGt/U0Hhmw/eSxVCp/DIqBfuW9KA7LyVEYB7mAO8vFmkiWksv4yOSQDlQWsL0YYeJ
+         Vaiw==
+X-Gm-Message-State: AOAM530L8S89BecvlNNHD9YlR6L5rpjUvgs3iEdiKpZMeeq0ioMmH1Ta
+        SVhK/a+zchWNUtjFCjjJooh/P4SFpN9F5iMnrDy/6S/nrnO8dw==
+X-Google-Smtp-Source: ABdhPJz+I7dct3hsj2r3Rcpd2lCTcuG+4DjTAN0aWpDxsVhUB5wrskoZwb4MAaRrE7QQ17++h/GygH0kCBzUOuFkYcE=
+X-Received: by 2002:ac2:50c1:: with SMTP id h1mr2824880lfm.333.1603900571005;
+ Wed, 28 Oct 2020 08:56:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201027091715.8958-1-brgl@bgdev.pl>
+References: <20201013063731.3618-1-jay.xu@rock-chips.com> <34840448.7XeAIBGaoL@diego>
+ <CACRpkdY8kRVJptQxCQNzbumjj-H+t-atJdguF39stukmiTfYyA@mail.gmail.com>
+In-Reply-To: <CACRpkdY8kRVJptQxCQNzbumjj-H+t-atJdguF39stukmiTfYyA@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 28 Oct 2020 16:56:00 +0100
+Message-ID: <CACRpkdZuptedcF5c7fDY8VQBx5ubr9ROrbuRiCtj9eim0AKVMg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] rockchip-pinctrl fixes
+To:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc:     Jianqun Xu <jay.xu@rock-chips.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 10:17:15AM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-
-Subject should be prefixed with [libgpiod] according to the README ;).
-
-[snip]
-
-> diff --git a/bindings/cxx/line_bulk.cpp b/bindings/cxx/line_bulk.cpp
-> index e77baa2..e7bd20e 100644
-> --- a/bindings/cxx/line_bulk.cpp
-> +++ b/bindings/cxx/line_bulk.cpp
-> @@ -46,6 +46,29 @@ const ::std::map<::std::bitset<32>, int, bitset_cmp> reqflag_mapping = {
->  	{ line_request::FLAG_BIAS_PULL_UP,	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP, },
->  };
-> 
-
-A - see comment after line_bulk::event_wait()
-
-> +struct line_bulk_iter_deleter
-> +{
-> +	void operator()(::gpiod_line_bulk_iter *iter)
-> +	{
-> +		::gpiod_line_bulk_iter_free(iter);
-> +	}
-> +};
-> +
-> +using line_bulk_iter_ptr = ::std::unique_ptr<::gpiod_line_bulk_iter,
-> +					     line_bulk_iter_deleter>;
-> +
-> +line_bulk_iter_ptr make_line_bulk_iter(::gpiod_line_bulk *bulk)
-> +{
-> +	::gpiod_line_bulk_iter *iter;
-> +
-> +	iter = ::gpiod_line_bulk_iter_new(bulk);
-> +	if (!iter)
-> +		throw ::std::system_error(errno, ::std::system_category(),
-> +					  "Unable to create new line bulk iterator");
-> +
-> +	return line_bulk_iter_ptr(iter);
-> +}
-> +
-
-B - see comment after line_bulk::event_wait()
-
->  } /* namespace */
->  
-
-[snip]
-
-> @@ -263,27 +270,26 @@ line_bulk line_bulk::event_wait(const ::std::chrono::nanoseconds& timeout) const
->  {
->  	this->throw_if_empty();
->  
-> -	::gpiod_line_bulk bulk, event_bulk;
-> +	line_bulk_ptr ev_bulk(::gpiod_line_bulk_new(this->size()));
-> +	auto chip = this->_m_bulk[0].get_chip();
-
-Move chip into the block where it is used.
-
-> +	auto bulk = this->to_line_bulk();
->  	::timespec ts;
->  	line_bulk ret;
->  	int rv;
->  
-> -	this->to_line_bulk(::std::addressof(bulk));
-> -
-> -	::gpiod_line_bulk_init(::std::addressof(event_bulk));
-> -
->  	ts.tv_sec = timeout.count() / 1000000000ULL;
->  	ts.tv_nsec = timeout.count() % 1000000000ULL;
->  
-> -	rv = ::gpiod_line_event_wait_bulk(::std::addressof(bulk),
-> -					  ::std::addressof(ts),
-> -					  ::std::addressof(event_bulk));
-> +	rv = ::gpiod_line_event_wait_bulk(bulk.get(), ::std::addressof(ts), ev_bulk.get());
->  	if (rv < 0) {
->  		throw ::std::system_error(errno, ::std::system_category(),
->  					  "error polling for events");
->  	} else if (rv > 0) {
-> -		for (unsigned int i = 0; i < event_bulk.num_lines; i++)
-> -			ret.append(line(event_bulk.lines[i], this->_m_bulk[i].get_chip()));
-> +		auto iter = make_line_bulk_iter(ev_bulk.get());
-> +		::gpiod_line *curr_line;
-> +
-> +		gpiod_line_bulk_iter_foreach_line(iter.get(), curr_line)
-> +			ret.append(line(curr_line, chip));
->  	}
->  
-
-If you replace the gpiod_line_bulk_iter_foreach_line() here with
-manually looping over the bulk lines then everything from A to B above
-can be dropped.
-
-i.e. 
--               auto iter = make_line_bulk_iter(ev_bulk.get());
--               ::gpiod_line *curr_line;
-+               auto chip = this->_m_bulk[0].get_chip();
-+               auto num_lines = ::gpiod_line_bulk_num_lines(ev_bulk.get());
-
--               gpiod_line_bulk_iter_foreach_line(iter.get(), curr_line)
--                       ret.append(line(curr_line, chip));
-+               for (unsigned int i = 0; i < num_lines; i++)
-+                       ret.append(line(::gpiod_line_bulk_get_line(ev_bulk.get(), i), chip));
-
-That includes the chip relocation, btw.
-
-[snip]
-
->  }
-> @@ -1715,9 +1751,10 @@ static PyObject *gpiod_LineBulk_event_wait(gpiod_LineBulkObject *self,
->  {
->  	static char *kwlist[] = { "sec", "nsec", NULL };
->  
-> -	struct gpiod_line_bulk bulk, ev_bulk;
-> -	struct gpiod_line *line, **line_ptr;
-> +	struct gpiod_line_bulk *bulk, *ev_bulk;
-> +	struct gpiod_line_bulk_iter *iter;
->  	gpiod_LineObject *line_obj;
-> +	struct gpiod_line *line;
->  	gpiod_ChipObject *owner;
->  	long sec = 0, nsec = 0;
->  	struct timespec ts;
-> @@ -1736,37 +1773,64 @@ static PyObject *gpiod_LineBulk_event_wait(gpiod_LineBulkObject *self,
->  	ts.tv_sec = sec;
->  	ts.tv_nsec = nsec;
->  
-> -	gpiod_LineBulkObjToCLineBulk(self, &bulk);
-> +	bulk = gpiod_LineBulkObjToCLineBulk(self);
-> +	if (!bulk)
-> +		return NULL;
-> +
-> +	ev_bulk = gpiod_line_bulk_new(self->num_lines);
-> +	if (!ev_bulk) {
-> +		gpiod_line_bulk_free(bulk);
-> +		return NULL;
-> +	}
->  
->  	Py_BEGIN_ALLOW_THREADS;
-> -	rv = gpiod_line_event_wait_bulk(&bulk, &ts, &ev_bulk);
-> +	rv = gpiod_line_event_wait_bulk(bulk, &ts, ev_bulk);
-> +	gpiod_line_bulk_free(bulk);
->  	Py_END_ALLOW_THREADS;
-> -	if (rv < 0)
-> +	if (rv < 0) {
-> +		gpiod_line_bulk_free(ev_bulk);
->  		return PyErr_SetFromErrno(PyExc_OSError);
-> -	else if (rv == 0)
-> +	} else if (rv == 0) {
-> +		gpiod_line_bulk_free(ev_bulk);
->  		Py_RETURN_NONE;
-> +	}
->  
-> -	ret = PyList_New(gpiod_line_bulk_num_lines(&ev_bulk));
-> -	if (!ret)
-> +	ret = PyList_New(gpiod_line_bulk_num_lines(ev_bulk));
-> +	if (!ret) {
-> +		gpiod_line_bulk_free(ev_bulk);
->  		return NULL;
-> +	}
->  
->  	owner = ((gpiod_LineObject *)(self->lines[0]))->owner;
->  
-> +	iter = gpiod_line_bulk_iter_new(ev_bulk);
-> +	if (!iter) {
-> +		gpiod_line_bulk_free(ev_bulk);
-> +		return PyErr_SetFromErrno(PyExc_OSError);
-> +	}
-> +
->  	i = 0;
-> -	gpiod_line_bulk_foreach_line(&ev_bulk, line, line_ptr) {
-> +	gpiod_line_bulk_iter_foreach_line(iter, line) {
->  		line_obj = gpiod_MakeLineObject(owner, line);
->  		if (!line_obj) {
-> +			gpiod_line_bulk_iter_free(iter);
-> +			gpiod_line_bulk_free(ev_bulk);
->  			Py_DECREF(ret);
->  			return NULL;
->  		}
->  
->  		rv = PyList_SetItem(ret, i++, (PyObject *)line_obj);
->  		if (rv < 0) {
-> +			gpiod_line_bulk_iter_free(iter);
-> +			gpiod_line_bulk_free(ev_bulk);
->  			Py_DECREF(ret);
->  			return NULL;
->  		}
->  	}
->  
-
-This function can be simplified by looping over the bulk manually rather
-than using the line_bulk_iter.
-
-> +	gpiod_line_bulk_iter_free(iter);
-> +	gpiod_line_bulk_free(ev_bulk);
-> +
->  	return ret;
->  }
->  
-> @@ -2241,41 +2305,59 @@ PyDoc_STRVAR(gpiod_Chip_get_all_lines_doc,
->  static gpiod_LineBulkObject *
->  gpiod_Chip_get_all_lines(gpiod_ChipObject *self, PyObject *Py_UNUSED(ignored))
->  {
-> +	struct gpiod_line_bulk_iter *iter;
->  	gpiod_LineBulkObject *bulk_obj;
-> -	struct gpiod_line_bulk bulk;
-> +	struct gpiod_line_bulk *bulk;
->  	gpiod_LineObject *line_obj;
->  	struct gpiod_line *line;
-> -	unsigned int offset;
-> +	unsigned int index = 0;
->  	PyObject *list;
->  	int rv;
->  
->  	if (gpiod_ChipIsClosed(self))
->  		return NULL;
->  
-> -	rv = gpiod_chip_get_all_lines(self->chip, &bulk);
-> -	if (rv)
-> +	bulk = gpiod_chip_get_all_lines(self->chip);
-> +	if (!bulk)
->  		return (gpiod_LineBulkObject *)PyErr_SetFromErrno(
->  							PyExc_OSError);
->  
-> -	list = PyList_New(gpiod_line_bulk_num_lines(&bulk));
-> -	if (!list)
-> +	list = PyList_New(gpiod_line_bulk_num_lines(bulk));
-> +	if (!list) {
-> +		gpiod_line_bulk_free(bulk);
->  		return NULL;
-> +	}
->  
-> -	gpiod_line_bulk_foreach_line_off(&bulk, line, offset) {
-> +	iter = gpiod_line_bulk_iter_new(bulk);
-> +	if (!iter) {
-> +		gpiod_line_bulk_free(bulk);
-> +		Py_DECREF(list);
-> +		return (gpiod_LineBulkObject *)PyErr_SetFromErrno(
-> +							PyExc_OSError);
-> +	}
-> +
-> +	gpiod_line_bulk_iter_foreach_line(iter, line) {
->  		line_obj = gpiod_MakeLineObject(self, line);
->  		if (!line_obj) {
-> +			gpiod_line_bulk_iter_free(iter);
-> +			gpiod_line_bulk_free(bulk);
->  			Py_DECREF(list);
->  			return NULL;
->  		}
+On Wed, Oct 28, 2020 at 4:55 PM Linus Walleij <linus.walleij@linaro.org> wr=
+ote:
+> On Tue, Oct 13, 2020 at 10:22 AM Heiko St=C3=BCbner <heiko@sntech.de> wro=
+te:
 >
+> > > Jianqun Xu (3):
+> > >   pinctrl: rockchip: make driver be tristate module
+> > >   pinctrl: rockchip: enable gpio pclk for rockchip_gpio_to_irq
+> > >   pinctrl: rockchip: create irq mapping in gpio_to_irq
+> >
+> > looks good to go as fixes.
+>
+> I record that as Acked-by :)
 
-Again, NOT using the line_bulk_iter here, and manually looping instead, is
-actually simpler and cleaner.
+Aha they are already reviewed-by in the patches. OK then,
+sorry for the confusion.
 
-Cheers,
-Kent.
-
+Yours,
+Linus Walleij
