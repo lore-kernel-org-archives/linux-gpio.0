@@ -4,38 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AABE3C388F7
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 719E6C56202
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66FCF20709
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FECB206F4
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:27:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732637AbgJ1WWU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:22:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54288 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732596AbgJ1WV6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:21:58 -0400
-Received: from leibniz.telenet-ops.be (leibniz.telenet-ops.be [IPv6:2a02:1800:110:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2E7EC0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:21:57 -0700 (PDT)
+        id S1732649AbgJ1WYo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:24:44 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:41692 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732582AbgJ1WV4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:21:56 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLsc868dVzMv7nb
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLsc85sg3zMv7nV
         for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:16:40 +0100 (CET)
 Received: from ramsan.of.borg ([84.195.186.194])
         by xavier.telenet-ops.be with bizsmtp
-        id lTGg230064C55Sk01TGg24; Wed, 28 Oct 2020 16:16:40 +0100
+        id lTGf2300h4C55Sk01TGf1z; Wed, 28 Oct 2020 16:16:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-000pDc-Ru; Wed, 28 Oct 2020 16:16:39 +0100
+        id 1kXnBn-000pDZ-Ii; Wed, 28 Oct 2020 16:16:39 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-007H91-8i; Wed, 28 Oct 2020 16:16:39 +0100
+        id 1kXnBn-007H8m-67; Wed, 28 Oct 2020 16:16:39 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -43,9 +40,9 @@ Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/8] pinctrl: renesas: Optimize sh_pfc_pin_config
-Date:   Wed, 28 Oct 2020 16:16:33 +0100
-Message-Id: <20201028151637.1734130-5-geert+renesas@glider.be>
+Subject: [PATCH 1/8] pinctrl: renesas: Remove superfluous goto in sh_pfc_gpio_set_direction()
+Date:   Wed, 28 Oct 2020 16:16:30 +0100
+Message-Id: <20201028151637.1734130-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028151637.1734130-1-geert+renesas@glider.be>
 References: <20201028151637.1734130-1-geert+renesas@glider.be>
@@ -55,59 +52,31 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Shrink sh_pfc_pin_config from 8 to 2 bytes:
-  - The mux_set flag can be removed, as a non-zero mark value means the
-    same (zero = PINMUX_RESERVED is an invalid mark value),
-  - The gpio_enabled flag needs only a single bit,
-  - Mark values are small integers, and can easily fit in a 15-bit
-    bitfield.
-
-This saves 6 bytes per pin when allocating the sh_pfc_pinctrl.configs
-array, i.e. it reduces run-time memory consumption by ca. 1.5 KiB.
+Commit b13431ed6eab808a ("pinctrl: sh-pfc: Remove incomplete flag
+"cfg->type"") removed the last statement in between the goto and the
+label.  Hence remove both.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pinctrl.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/pinctrl/renesas/pinctrl.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
-index 8e54f9b662f37f37..d34079726039c39d 100644
+index 212a4a9c3a8fc1c7..f8d5fae66e862fd6 100644
 --- a/drivers/pinctrl/renesas/pinctrl.c
 +++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -26,9 +26,8 @@
- #include "../pinconf.h"
- 
- struct sh_pfc_pin_config {
--	unsigned int mux_mark;
--	bool mux_set;
--	bool gpio_enabled;
-+	u16 gpio_enabled:1;
-+	u16 mux_mark:15;
- };
- 
- struct sh_pfc_pinctrl {
-@@ -371,12 +370,11 @@ static int sh_pfc_func_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
- 			goto done;
+@@ -460,12 +460,7 @@ static int sh_pfc_gpio_set_direction(struct pinctrl_dev *pctldev,
  	}
  
--	/* All group pins are configured, mark the pins as mux_set */
-+	/* All group pins are configured, mark the pins as muxed */
- 	for (i = 0; i < grp->nr_pins; ++i) {
- 		int idx = sh_pfc_get_pin_index(pfc, grp->pins[i]);
- 		struct sh_pfc_pin_config *cfg = &pmx->configs[idx];
- 
--		cfg->mux_set = true;
- 		cfg->mux_mark = grp->mux[i];
- 	}
- 
-@@ -432,7 +430,7 @@ static void sh_pfc_gpio_disable_free(struct pinctrl_dev *pctldev,
  	spin_lock_irqsave(&pfc->lock, flags);
- 	cfg->gpio_enabled = false;
- 	/* If mux is already set, this configures it here */
--	if (cfg->mux_set)
-+	if (cfg->mux_mark)
- 		sh_pfc_config_mux(pfc, cfg->mux_mark, PINMUX_TYPE_FUNCTION);
+-
+ 	ret = sh_pfc_config_mux(pfc, pin->enum_id, new_type);
+-	if (ret < 0)
+-		goto done;
+-
+-done:
  	spin_unlock_irqrestore(&pfc->lock, flags);
+ 	return ret;
  }
 -- 
 2.25.1
