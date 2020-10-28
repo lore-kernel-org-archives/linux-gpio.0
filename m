@@ -2,134 +2,84 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFA3C56202
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF831C63697
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8CC620738
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A72B206D9
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=windriversystems.onmicrosoft.com header.i=@windriversystems.onmicrosoft.com header.b="nesU95Z3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iuAxgqHL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732291AbgJ1WTH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:19:07 -0400
-Received: from mail-co1nam11on2054.outbound.protection.outlook.com ([40.107.220.54]:59049
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732283AbgJ1WSs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:18:48 -0400
-Received: from SN6PR11MB3039.namprd11.prod.outlook.com (2603:10b6:805:d3::27)
- by SN6PR11MB2992.namprd11.prod.outlook.com (2603:10b6:805:d4::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18; Wed, 28 Oct
- 2020 10:46:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JL91I/ietm3n0D3mewB7hXnpgJIfuzCdlCbU8aPWKm6RVMmcvaWKsb0vLK7Xk/1mtvvjCpu3S57yjs7H3s6VEN/qY0UzfayqwTcb5l2vp4qxb4HDbLbjEDS9/C/1/vhK2QbYC1wOd3Tmj9Z0W5NEzuP69xE7oMBmUNK91bnvMXa3wsjiabmQQrPCN42d3bw8PmmTocZg9KNvnpDeqqmC5f3bNDc5swxq6QLnIOdSh1k+RzKk1alIpeGWqMDunAjryTWx9O9r4DdtHRos77V8hmLx6QRRYe7Vx/mryIdkNiFGPgTkvSMupI+gszMWZKtFZEDoXrOp724I1Boqd3y2XQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H3GFPI16VbUrPUbo2XfBr65/q73gt0rEY7Bh33Dk7Y4=;
- b=SFlB1XadtpUnqmR+6G3RqA594bNagk6jpHhL+JioEwLIjYrnoxZ1dYP1tw0sB/+1wXyS7P9c2HijxIlSEaPql0gm4oLDpH0YzgsEbl8EU3kjoY8BPkF72VGC6RhEUv6Rzltfa4h/KW0uCHIAfCDP0dNedqZxN46PqjwU8snwC9LGro4pIUw/HPcTtv19DS2V7W7HYzSZNR97vS5HN1FwEC5OZ3qZbVPxK2BsaqLKOkRYGnDzKn92BsmXzrV6JURby+Gx6ZlJOCy0y3FhQYjLG1gCM0JapHKaMj+zbca7S4NUfxEZzG032Q3Rt52x13hkNIxpTXPLnG1OLekmvMDn7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+        id S1729991AbgJ1WTF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:19:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732279AbgJ1WSp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:18:45 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C36ACC0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:18:44 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id n6so665199wrm.13
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H3GFPI16VbUrPUbo2XfBr65/q73gt0rEY7Bh33Dk7Y4=;
- b=nesU95Z3UMroqrLvfOK9+vKcp/JvGEjyQmMAs5Vo6MFOLA1pmbCSp2eP/IyGYRo4mKZa9j7s8jhBE/10nbLJwlxhdFnmpsj2BrW92dhx97gGtktBfe9yM0JOp9BjuYK2UVXcFNBPe8e1Ah2xfreGN2D5ge0XpxLPu4Jejdm6iOQ=
-Authentication-Results: linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=none action=none header.from=windriver.com;
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
- by SN6PR11MB3039.namprd11.prod.outlook.com (2603:10b6:805:d3::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.27; Wed, 28 Oct
- 2020 10:40:20 +0000
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::4dbe:2ab5:9b68:a966]) by SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::4dbe:2ab5:9b68:a966%7]) with mapi id 15.20.3499.018; Wed, 28 Oct 2020
- 10:40:20 +0000
-From:   He Zhe <zhe.he@windriver.com>
-To:     linus.walleij@linaro.org, drew@beagleboard.org,
-        andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhe.he@windriver.com
-Subject: [PATCH] pinctrl: core: Add missing #ifdef CONFIG_GPIOLIB
-Date:   Wed, 28 Oct 2020 18:39:21 +0800
-Message-Id: <20201028103921.22486-1-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-Originating-IP: [60.247.85.82]
-X-ClientProxiedBy: HK2PR0302CA0021.apcprd03.prod.outlook.com
- (2603:1096:202::31) To SN6PR11MB3360.namprd11.prod.outlook.com
- (2603:10b6:805:c8::30)
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RrRlnhg/szGXJ+CqTv+QgypRguxwePuNcvzko2eNF90=;
+        b=iuAxgqHLkaJPSxfJIECz48Mk4HqjEvaKw6exSc/dPtOPplsvx9/zMz5kQQfnj90PYs
+         A7tDdsksEYUq3ePEFesJ3QZL/DTEc+nPxm1fPiCsHEU4vDoxsi/t3sBLRfMsyVUSu3xJ
+         EzP9TIhV/2YVRocIgkrKZ/DjHL9zjRbdOQ6+Pz29qR54ppwN0FQMIxMEZ9xnKG3kCuro
+         pfH7JV7vsODpk3n2DQ9sJmXM9maBdl3w/Y8jAxhryqcXu1jXVJeNG166qF3B3TIEC5v/
+         knuiF9mHiMCNLapbLVyW1D9NlLGFu4sle8tXHZQ1BidCPjtm6c/OZ32fq/BQZ2S5u/wb
+         SAJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RrRlnhg/szGXJ+CqTv+QgypRguxwePuNcvzko2eNF90=;
+        b=pJbwHRv7SVQO/sKF1rnxVzgswoLRYoRHf6TkublXZdpEFJoQBQz/Ved2x0RI6z4Ieo
+         99cW3gJ99nA1oVJXeqMzC0iBtV/DS5fxBjHIbtqV5VtNoBlc/x3eq8oFWkp8zzeMFvgm
+         JTmhonqFxsSzQ3ZyK3NtkN+JdDxTtyKFqarw6wKLmG0jkIT9Sq+zBsOFMjp2fLwVK16x
+         A72RduB8bB+CqiFWsmITX0pxbtTRcvcavNmb+PgX5O+hiY/qfaILGGpWSFegL/z5tMJv
+         lu4aiyCbFJx9/F/EXmG7eCPZ3/7AODTwUDVNbTllwscXraIWC6GkZ8eIvMu2MaRNwGVz
+         HyGQ==
+X-Gm-Message-State: AOAM531E+mP7QbXFZyJ0NnEmh3Fi46k/RecbxdnHKlma2AgumKpGQlx4
+        RxDUhOX0YonUlfVnlsZ7g+5Xs5Nduk41KnRtNEEGEOf8f+tEyA==
+X-Google-Smtp-Source: ABdhPJwKVwR1CvYavirDMXZ0fgbvKeG/If31B/j9xpUc5tE4BcwJl2E9iG+PvZDYBYOtcz7m1HOT6sMXVSAn0X3/d8w=
+X-Received: by 2002:a05:6512:322d:: with SMTP id f13mr2793562lfe.571.1603900485127;
+ Wed, 28 Oct 2020 08:54:45 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from pek-lpg-core2.corp.ad.wrs.com (60.247.85.82) by HK2PR0302CA0021.apcprd03.prod.outlook.com (2603:1096:202::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.10 via Frontend Transport; Wed, 28 Oct 2020 10:40:18 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 859e2646-cdd3-40ca-8a1c-08d87b2dde03
-X-MS-TrafficTypeDiagnostic: SN6PR11MB3039:|SN6PR11MB2992:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SN6PR11MB303997B6FBF79D9D285233748F170@SN6PR11MB3039.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:15;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: c8PECX4egtJrTu1ToAg3arYWq6eREg+shheniC5u+FRLkF9GVxUJsOlDPL/kmj8IHaHbuSiYK0qI0wtZvJS7euaqT7oPvt7OHxr3irwgZkegL4K/Q5eHQJb2grBFsmr8QaLiQSyQsOMaq1UeX1eyVV1mn29nj2ZthQbFZ6Czs5m23Vx3ylNHqQzMuCQ+A253ZvKyz0uc8COlceqao3qM8/ryeeL8fgtAR9TVbx+DKLooXepAGu7OezQX+KJXdetLJE8JBddqgOAyDAlFATHlL5EopjTTh1WQ3DwWW+6hyb/7N9dGmJbJ/XeECW5DaUO5
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR11MB3360.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(346002)(39840400004)(396003)(376002)(2906002)(478600001)(2616005)(6506007)(956004)(6486002)(86362001)(316002)(52116002)(186003)(8936002)(1076003)(36756003)(16526019)(8676002)(5660300002)(26005)(66476007)(66946007)(6666004)(83380400001)(6512007)(66556008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: O4fq765Fv5968WfG/kcGFf5WKGXCA/Ro0MJD3SCkErthklb3XO6lZFfKJRMVEx5q9SHIQoojVcqk8Lot8yZX6KOOXJs1MBIHTPFediow72zL86Fy+OrViVh+7Cs8XBcov36crQKKM2L0f7Au/3vVSrVjU4392TfCFLM6heZ/yo59W5bbJppMoqr4mWogXJiLGxJeP3LcgHBMe80239iAG2uHgbzjTLRl7i6YEW8kLvfVTcBYKd9og+3BsTPynk3gZYv2O3BbEzuhG3/NsdOWPjwI4xrPkLGJZE9W8+qx3PE0SODNJQH1WpGbgtqAC6e3q/Cd7P0rqT+FplYeLloK280FcIOZK8blHnA/ntrAzoQZev6jlZYxPHwg+wAmaX/irovEvtNzA5TB7u7CUNERIsrK4beSUSmALbRDsL4ifCeHc9uqM0TS4bBoCsufoUDGikOzUY9rk/r+PWyKwi8GAwDJ32j9jD3mbGYcsaNVWkhKsSND0ADVDQDVhAgS6Oi/n5dKHR0wrUByT6WFlXnzpd2QdgWg7tr1u0Mef+eZ/Mc1vABgLzZPmo7RpetoITMbRhWpCJE6BU+ZVQ6in8B0oGruihp2iYP/RP30vbh6cNsMcRHdA5rhOkXFV8P8XOmKgco9yfslOtIlF8O/fVi/Lg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 859e2646-cdd3-40ca-8a1c-08d87b2dde03
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR11MB3360.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2020 10:40:20.6001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Cb+5lKesqqtyIQpLS75uhPEfNlf/5LVD1MRa8WUUUGlfgnFNIph5jYWLTU7fx6UnCHQXFRLUvEdYycCCIhIVeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3039
-X-OriginatorOrg: windriver.com
+References: <20201013063731.3618-1-jay.xu@rock-chips.com>
+In-Reply-To: <20201013063731.3618-1-jay.xu@rock-chips.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 28 Oct 2020 16:54:34 +0100
+Message-ID: <CACRpkdbrGBJjOPBicQKAde-Y3NNARRcpvcK52Uu1Buu7sC8AvA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] rockchip-pinctrl fixes
+To:     Jianqun Xu <jay.xu@rock-chips.com>
+Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-To fix the following build warnings when CONFIG_GPIOLIB=n.
+On Tue, Oct 13, 2020 at 8:37 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
 
-drivers/pinctrl/core.c:1607:20: warning: unused variable 'chip' [-Wunused-variable]
- 1608 |  struct gpio_chip *chip;
-      |                    ^~~~
-drivers/pinctrl/core.c:1606:15: warning: unused variable 'gpio_num' [-Wunused-variable]
- 1607 |  unsigned int gpio_num;
-      |               ^~~~~~~~
-drivers/pinctrl/core.c:1605:29: warning: unused variable 'range' [-Wunused-variable]
- 1606 |  struct pinctrl_gpio_range *range;
-      |                             ^~~~~
+> These patches are required by GKI.
+>
+> Jianqun Xu (3):
+>   pinctrl: rockchip: make driver be tristate module
+>   pinctrl: rockchip: enable gpio pclk for rockchip_gpio_to_irq
+>   pinctrl: rockchip: create irq mapping in gpio_to_irq
 
-Fixes: f1b206cf7c57 ("pinctrl: core: print gpio in pins debugfs file")
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
- drivers/pinctrl/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+Patches applied for fixes.
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 3663d87f51a0..9fc4433fece4 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1602,9 +1602,11 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
- 	struct pinctrl_dev *pctldev = s->private;
- 	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
- 	unsigned i, pin;
-+#ifdef CONFIG_GPIOLIB
- 	struct pinctrl_gpio_range *range;
- 	unsigned int gpio_num;
- 	struct gpio_chip *chip;
-+#endif
- 
- 	seq_printf(s, "registered pins: %d\n", pctldev->desc->npins);
- 
--- 
-2.17.1
-
+Yours,
+Linus Walleij
