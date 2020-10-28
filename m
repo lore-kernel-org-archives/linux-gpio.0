@@ -2,218 +2,113 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3323C6369E
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AABE3C388F7
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62EA920704
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603923797;
-	bh=7eI6b2ycbin+XgZSCTJm+e47Gv52t3IHpfpr30S1GtU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=bY0FYVDfeC6ej23XpPj+oFDY5yRKa/DqLTWwtNcVDG09oFy+T4LzmTbfPNQFSsKuT
-	 Fcer+6NbUsK5OqNpqLesRAay2lMywFalBx4XCGGq9QuY77YFkH6GGtQHP6EbfTV/L0
-	 RWYVGWH6Ejc7Rd2swyWHefQbWRzkqqRyPR1QF7YQ=
+	by mail.kernel.org (Postfix) with ESMTP id 66FCF20709
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:24:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730695AbgJ1WWl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:22:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732628AbgJ1WWY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:22:24 -0400
-Received: from localhost.localdomain (unknown [122.171.163.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 583F0241A5;
-        Wed, 28 Oct 2020 08:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603873830;
-        bh=7eI6b2ycbin+XgZSCTJm+e47Gv52t3IHpfpr30S1GtU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fOy3rkwQzTsEud9tUJVBjd3CvZdn7PUbyCesi3Z3CqgjMz2mE7ZC7Wg059SwnSiWL
-         RLYRQ3UjAOhBt6acYxO++cdXsm+ZXmePyrCVhUE7YObT2phA6dW2bjxivBkDXOjg/p
-         wBUIOnQQerXGjRevM54Fl3rQp4kFWn01gPIt1Afs=
-From:   Vinod Koul <vkoul@kernel.org>
+        id S1732637AbgJ1WWU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:22:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54288 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732596AbgJ1WV6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:21:58 -0400
+Received: from leibniz.telenet-ops.be (leibniz.telenet-ops.be [IPv6:2a02:1800:110:4::f00:d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2E7EC0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:21:57 -0700 (PDT)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLsc868dVzMv7nb
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:16:40 +0100 (CET)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id lTGg230064C55Sk01TGg24; Wed, 28 Oct 2020 16:16:40 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXnBn-000pDc-Ru; Wed, 28 Oct 2020 16:16:39 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXnBn-007H91-8i; Wed, 28 Oct 2020 16:16:39 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add SDX55 pinctrl bindings
-Date:   Wed, 28 Oct 2020 14:00:16 +0530
-Message-Id: <20201028083017.611810-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.26.2
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/8] pinctrl: renesas: Optimize sh_pfc_pin_config
+Date:   Wed, 28 Oct 2020 16:16:33 +0100
+Message-Id: <20201028151637.1734130-5-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201028151637.1734130-1-geert+renesas@glider.be>
+References: <20201028151637.1734130-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add device tree binding Documentation details for Qualcomm SDX55
-pinctrl driver.
+Shrink sh_pfc_pin_config from 8 to 2 bytes:
+  - The mux_set flag can be removed, as a non-zero mark value means the
+    same (zero = PINMUX_RESERVED is an invalid mark value),
+  - The gpio_enabled flag needs only a single bit,
+  - Mark values are small integers, and can easily fit in a 15-bit
+    bitfield.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+This saves 6 bytes per pin when allocating the sh_pfc_pinctrl.configs
+array, i.e. it reduces run-time memory consumption by ca. 1.5 KiB.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/pinctrl/qcom,sdx55-pinctrl.yaml  | 144 ++++++++++++++++++
- 1 file changed, 144 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
+ drivers/pinctrl/renesas/pinctrl.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
-new file mode 100644
-index 000000000000..2dd045a2fb03
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
-@@ -0,0 +1,144 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/qcom,sdx55-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Technologies, Inc. SDX55 TLMM block
-+
-+maintainers:
-+  - Vinod Koul <vkoul@kernel.org>
-+
-+description: |
-+  This binding describes the Top Level Mode Multiplexer block found in the
-+  SDX55 platform.
-+
-+properties:
-+  compatible:
-+    const: qcom,sdx55-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description: Specifies the TLMM summary IRQ
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    description:
-+      Specifies the PIN numbers and Flags, as defined in defined in
-+      include/dt-bindings/interrupt-controller/irq.h
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    description: Specifying the pin number and flags, as defined in
-+      include/dt-bindings/gpio/gpio.h
-+    const: 2
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+  wakeup-parent:
-+    maxItems: 1
-+
-+#PIN CONFIGURATION NODES
-+patternProperties:
-+  '^.*$':
-+    if:
-+      type: object
-+    then:
-+      properties:
-+        pins:
-+          description:
-+            List of gpio pins affected by the properties specified in this
-+            subnode.
-+          items:
-+            oneOf:
-+              - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-7][0-9])$"
-+              - enum: [ ufs_reset, sdc1_rclk, sdc1_clk, sdc1_cmd, sdc1_data ]
-+          minItems: 1
-+          maxItems: 36
-+
-+        function:
-+          description:
-+            Specify the alternative function to be configured for the specified
-+            pins.
-+
-+          enum: [ adsp_ext, atest, audio_ref, bimc_dte0, bimc_dte1, blsp_i2c1,
-+                  blsp_i2c2, blsp_i2c3, blsp_i2c4, blsp_spi1, blsp_spi2,
-+                  blsp_spi3, blsp_spi4, blsp_uart1, blsp_uart2, blsp_uart3,
-+                  blsp_uart4, char_exec, coex_uart, coex_uart2, cri_trng,
-+                  cri_trng0, cri_trng1, dbg_out, ddr_bist, ddr_pxi0,
-+                  ebi0_wrcdc, ebi2_a, ebi2_lcd, emac_gcc0, emac_gcc1,
-+                  emac_pps0, emac_pps1, ext_dbg, gcc_gp1, gcc_gp2, gcc_gp3,
-+                  gcc_plltest, gpio, i2s_mclk, jitter_bist, ldo_en, ldo_update,
-+                  mgpi_clk, m_voc, native_char, native_char0, native_char1,
-+                  native_char2, native_char3, native_tsens, native_tsense,
-+                  nav_gpio, pa_indicator, pcie_clkreq, pci_e, pll_bist, pll_ref,
-+                  pll_test, pri_mi2s, prng_rosc, qdss_cti, qdss_gpio,
-+                  qdss_gpio0, qdss_gpio1, qdss_gpio2, qdss_gpio3, qdss_gpio4,
-+                  qdss_gpio5, qdss_gpio6, qdss_gpio7, qdss_gpio8, qdss_gpio9,
-+                  qdss_gpio10, qdss_gpio11, qdss_gpio12, qdss_gpio13,
-+                  qdss_gpio14, qdss_gpio15, qdss_stm0, qdss_stm1, qdss_stm2,
-+                  qdss_stm3, qdss_stm4, qdss_stm5, qdss_stm6, qdss_stm7,
-+                  qdss_stm8, qdss_stm9, qdss_stm10, qdss_stm11, qdss_stm12,
-+                  qdss_stm13, qdss_stm14, qdss_stm15, qdss_stm16, qdss_stm17,
-+                  qdss_stm18, qdss_stm19, qdss_stm20, qdss_stm21, qdss_stm22,
-+                  qdss_stm23, qdss_stm24, qdss_stm25, qdss_stm26, qdss_stm27,
-+                  qdss_stm28, qdss_stm29, qdss_stm30, qdss_stm31, qlink0_en,
-+                  qlink0_req, qlink0_wmss, qlink1_en, qlink1_req, qlink1_wmss,
-+                  spmi_coex, sec_mi2s, spmi_vgi, tgu_ch0, uim1_clk, uim1_data,
-+                  uim1_present, uim1_reset, uim2_clk, uim2_data, uim2_present,
-+                  uim2_reset, usb2phy_ac, vsense_trigger ]
-+
-+        drive-strength:
-+          enum: [2, 4, 6, 8, 10, 12, 14, 16]
-+          default: 2
-+          description:
-+            Selects the drive strength for the specified pins, in mA.
-+
-+        bias-pull-down: true
-+
-+        bias-pull-up: true
-+
-+        bias-disable: true
-+
-+        output-high: true
-+
-+        output-low: true
-+
-+      required:
-+        - pins
-+        - function
-+
-+      additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+  - gpio-controller
-+  - '#gpio-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+        #include <dt-bindings/interrupt-controller/arm-gic.h>
-+        pinctrl@1f00000 {
-+                compatible = "qcom,sdx55-pinctrl";
-+                reg = <0x0f100000 0x300000>;
-+                interrupts = <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>;
-+                #interrupt-cells = <2>;
-+                interrupt-controller;
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+        };
-+
-+...
+diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
+index 8e54f9b662f37f37..d34079726039c39d 100644
+--- a/drivers/pinctrl/renesas/pinctrl.c
++++ b/drivers/pinctrl/renesas/pinctrl.c
+@@ -26,9 +26,8 @@
+ #include "../pinconf.h"
+ 
+ struct sh_pfc_pin_config {
+-	unsigned int mux_mark;
+-	bool mux_set;
+-	bool gpio_enabled;
++	u16 gpio_enabled:1;
++	u16 mux_mark:15;
+ };
+ 
+ struct sh_pfc_pinctrl {
+@@ -371,12 +370,11 @@ static int sh_pfc_func_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
+ 			goto done;
+ 	}
+ 
+-	/* All group pins are configured, mark the pins as mux_set */
++	/* All group pins are configured, mark the pins as muxed */
+ 	for (i = 0; i < grp->nr_pins; ++i) {
+ 		int idx = sh_pfc_get_pin_index(pfc, grp->pins[i]);
+ 		struct sh_pfc_pin_config *cfg = &pmx->configs[idx];
+ 
+-		cfg->mux_set = true;
+ 		cfg->mux_mark = grp->mux[i];
+ 	}
+ 
+@@ -432,7 +430,7 @@ static void sh_pfc_gpio_disable_free(struct pinctrl_dev *pctldev,
+ 	spin_lock_irqsave(&pfc->lock, flags);
+ 	cfg->gpio_enabled = false;
+ 	/* If mux is already set, this configures it here */
+-	if (cfg->mux_set)
++	if (cfg->mux_mark)
+ 		sh_pfc_config_mux(pfc, cfg->mux_mark, PINMUX_TYPE_FUNCTION);
+ 	spin_unlock_irqrestore(&pfc->lock, flags);
+ }
 -- 
-2.26.2
+2.25.1
 
