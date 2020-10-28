@@ -2,89 +2,90 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140B9C56201
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9E7C4363A
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD20520780
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 22:50:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BPr+F0iK"
+	by mail.kernel.org (Postfix) with ESMTP id E45602076E
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389476AbgJ1WuD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389456AbgJ1Wsp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 18:48:45 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B9CEC0613CF
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:48:44 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id h6so894647lfj.3
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ICbI/UdThJ7VwcdM+R69PEmT9tj+Qod3lfTEpbHHLpc=;
-        b=BPr+F0iKjUNJfX5QWDbuTRpNvZ/l8APFnn++eUrY59iDhY83bbHiN/kLrk6Q1EySIw
-         QZ2H0NYGI56cTCLKEcLepA2i9F5ZIipMfUe+C09TcoRyAIHRjDrO41xhPrvhTTWc5HwW
-         yGUuA2DIMesMjJiqfhRXPuuZNkt7QJT9mNpVWXpygA8m7ab3ddc0mPEo1tir9G3mTbxk
-         4jR84FVDHUo4XEbPKe7rHTgcXPv96m7gJzSOuKK6st43nppb8DUU1Otjs/BXNrUs9SX8
-         ArZ8mQ0sMbteg+sae68lfonz92FF2cwD8rLph9wAYwjwEBMdrEvRuRVEnj0A3vjWVuLy
-         ZC4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ICbI/UdThJ7VwcdM+R69PEmT9tj+Qod3lfTEpbHHLpc=;
-        b=AyD5hWo/YuVKCdtukRm4/xDbeK3VlMm/iAe2uUUt87DWww44x0sPGhPDFOcIVBZcSR
-         fgXLUKEBu8ubFoOXCyAXriios0u6uA27YQwIuT5+IMCmDgGTR0dfZKrqdUPH+f32QIea
-         ukm0JNGPsTvShu4bF9xuj6ChNJsfqiUmLhM80YrYTW5XkS+RemUI9G8aF2r2a4yuxCop
-         Kr0LA/1SoqV/3D6EuDShrdg0U2BOc6y6EppUShXJNRw1laBiHQjxUur7irAvedZAOB12
-         O6zI4soIY6mtujL4H5x+2gLzXKGzwy5KFNP9/pYlbB9ZUExkqR8yWPF7NWa7uBaC3J1R
-         37QA==
-X-Gm-Message-State: AOAM530QSRbqridiAU85XJb7YcCi0QWd3hACh6JVOLdqvbeqZWJ6WWuL
-        jmtqr1UW/CwvvvyOiGnjaqf+U0uhdmexxaNvPfWA9ATlJq290Q==
-X-Google-Smtp-Source: ABdhPJzJUaMMQZamqfp7s7x24JD6LJQ05fn/YM5TVoAVdEUyxvLdl64KkPnycpYl6rfaAIaNhjqRpi0XpXSRZ+/jICQ=
-X-Received: by 2002:a05:6512:3225:: with SMTP id f5mr2822630lfe.441.1603900920062;
- Wed, 28 Oct 2020 09:02:00 -0700 (PDT)
+        id S1725930AbgJ1XHD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:07:03 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:34556 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731457AbgJ1XG6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:06:58 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLs2z07R5zMs9Zl
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 15:51:23 +0100 (CET)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id lSrN2300Q4C55Sk01SrNpH; Wed, 28 Oct 2020 15:51:22 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXmnK-000oxl-8Y; Wed, 28 Oct 2020 15:51:22 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXmnJ-007GYF-Je; Wed, 28 Oct 2020 15:51:21 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: Remove hole in pinctrl_gpio_range
+Date:   Wed, 28 Oct 2020 15:51:17 +0100
+Message-Id: <20201028145117.1731876-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20201014231158.34117-1-warthog618@gmail.com>
-In-Reply-To: <20201014231158.34117-1-warthog618@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 28 Oct 2020 17:01:49 +0100
-Message-ID: <CACRpkdbTsN6p4n3f9SJrgAjdkzDu2S67rU3tLWwX0X50ekjctQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] gpiolib: cdev: allow edge event timestamps to be
- configured as REALTIME
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 1:12 AM Kent Gibson <warthog618@gmail.com> wrote:
+On 64-bit platforms, pointer size and alignment are 64-bit, hence two
+4-byte holes are present before the pins and gc members of the
+pinctrl_gpio_range structure.  Get rid of these holes by moving the
+pins pointer.
 
-> This patch set adds the option to select CLOCK_REALTIME as the source
-> clock for line events.
->
-> The first patch is the core of the change, while the remaining two update
-> the GPIO tools to make use of the new option.
->
-> Changes for v2:
->  - change line_event_timestamp() return to u64 to avoid clipping to 32bits
->    on 32bit platforms.
->  - fix the line spacing after line_event_timestamp()
+This reduces kernel size of an arm64 Rockchip kernel by ca. 512 bytes.
 
-Where are we standing with this patch set? Good to go so
-I should just try to merge it?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only (arm/multi_v7_defconfig and arm64/defconfig).
+---
+ include/linux/pinctrl/pinctrl.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
+index 2aef59df93d70550..70b45d28e7a9293b 100644
+--- a/include/linux/pinctrl/pinctrl.h
++++ b/include/linux/pinctrl/pinctrl.h
+@@ -51,8 +51,8 @@ struct pinctrl_pin_desc {
+  * @id: an ID number for the chip in this range
+  * @base: base offset of the GPIO range
+  * @pin_base: base pin number of the GPIO range if pins == NULL
+- * @pins: enumeration of pins in GPIO range or NULL
+  * @npins: number of pins in the GPIO range, including the base number
++ * @pins: enumeration of pins in GPIO range or NULL
+  * @gc: an optional pointer to a gpio_chip
+  */
+ struct pinctrl_gpio_range {
+@@ -61,8 +61,8 @@ struct pinctrl_gpio_range {
+ 	unsigned int id;
+ 	unsigned int base;
+ 	unsigned int pin_base;
+-	unsigned const *pins;
+ 	unsigned int npins;
++	unsigned const *pins;
+ 	struct gpio_chip *gc;
+ };
+ 
+-- 
+2.25.1
+
