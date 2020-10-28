@@ -2,97 +2,130 @@ Return-Path: <SRS0=HCPu=ED=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E1DC388F7
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61824C55179
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F652207E8
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16959207CD
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Oct 2020 23:42:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="OC6Zm4U5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390525AbgJ1Xgz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:36:55 -0400
-Received: from newton.telenet-ops.be ([195.130.132.45]:54848 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390547AbgJ1XfT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:35:19 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4CLsc864FyzMwkh4
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2020 16:16:40 +0100 (CET)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id lTGf230124C55Sk01TGflB; Wed, 28 Oct 2020 16:16:40 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-000pDY-JL; Wed, 28 Oct 2020 16:16:39 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-007H8j-44; Wed, 28 Oct 2020 16:16:39 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/8] pinctrl: renesas: Cleanups and improvements
-Date:   Wed, 28 Oct 2020 16:16:29 +0100
-Message-Id: <20201028151637.1734130-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S1726159AbgJ1XmV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:42:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbgJ1XmI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2020 19:42:08 -0400
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80296C0613CF;
+        Wed, 28 Oct 2020 16:42:08 -0700 (PDT)
+Received: by mail-qt1-x842.google.com with SMTP id h12so791397qtc.9;
+        Wed, 28 Oct 2020 16:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=04ThpYsSViFhWqOQvQSGIlYZRGcXGFtIhUlX8pfHTD8=;
+        b=OC6Zm4U5t2xQjcut4yBwkeEk5KarEkjfCrPdUlu381Nv4vJI895Svp7x8sDb3IBxS3
+         fPfhT1B7HGC5UpOKgQPbPKJ8OQ+Wh5ei1AjIXfyGnvpaGsc8RYdCba4m2e8dSOSNKG0r
+         6IaEkkFLl4zzAivCnLsMl8DdDeZ7xDzu5G81g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=04ThpYsSViFhWqOQvQSGIlYZRGcXGFtIhUlX8pfHTD8=;
+        b=DLMle3rBT5FB64Jk9Cu8f3eYwMY/3daZc7z+O2hNNbwt5pFquzv7nLowGJY4uNv0mj
+         uKcBG+PN5LFZZs7P+mUs34LQg5zJWR/oLVa9t2vrARLE2fjdrzL3Ij8qUs3dhSU0QO6y
+         +4w0I6BQOW7CInLVoEzrzDyL3oC4xg++q/Hg6QWSU5LYfQLRCIGNX6gAYmuIY2JeHpOh
+         hbi1xa1vMnyNz6L5bCUzZ3k1+tz/QQOXXZGGsaym8W56q7asN+U8fjaU9T3OiC238qr5
+         B+P/3RgZAVkkfiwH9M2aLqz8O/+3nScpD31x78+BKGDUOi9BddixEVME8i1VrIOBFgYl
+         nJtQ==
+X-Gm-Message-State: AOAM5300wHRy/OUwaVJZqGthLvjrALd7PddJlhopgrvW/ozb65VqlMum
+        I6R+hxE++nacojzzX1wzL4GZ5uBfyI2GR19WswbUdjtlX2xVCg==
+X-Google-Smtp-Source: ABdhPJyi2tYbl11+8oD/pTg7MqvJo0FJxH9J/m9YOi24yaf3RoUaPY8LWOMrUDpfxRRNH1Z9ZM9QvQ/K9quBWlRWBR8=
+X-Received: by 2002:a05:620a:1303:: with SMTP id o3mr5853719qkj.66.1603861861220;
+ Tue, 27 Oct 2020 22:11:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201012033150.21056-1-billy_tsai@aspeedtech.com>
+ <20201012033150.21056-3-billy_tsai@aspeedtech.com> <CACPK8XdYvSmwdAkBzAO3kC8_PYa3CtPkNb0VxcOhmb2UYz5zDA@mail.gmail.com>
+ <E0B8BD13-86F6-486E-95DF-1038D7F59A8B@aspeedtech.com>
+In-Reply-To: <E0B8BD13-86F6-486E-95DF-1038D7F59A8B@aspeedtech.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 28 Oct 2020 05:10:49 +0000
+Message-ID: <CACPK8Xeg_LRGv1EEm7cdDWK2xST0mBP=iG7=43UE5qmEMMDsHQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Arm: dts: aspeed-g6: Add sgpio node
+To:     Billy Tsai <billy_tsai@aspeedtech.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Andrew Jeffery <andrew@aj.id.au>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        BMC-SW <BMC-SW@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-	Hi Linus,
+On Mon, 12 Oct 2020 at 04:56, Billy Tsai <billy_tsai@aspeedtech.com> wrote:
+>
+> Hi Joel,
+>
+> Thanks for the review.
+>
+> On 2020/10/12, 12:35 PM, Joel Stanley wrote:
+>
+>     > On Mon, 12 Oct 2020 at 03:32, Billy Tsai <billy_tsai@aspeedtech.com> wrote:
+>     > >
+>     > > This patch is used to add sgpiom and sgpios nodes and add compatible
+>     > > string for sgpiom.
+>     >
+>     > You also need to add sgpios documentation to the bindings docs.
+>     >
+>     > Whenever you add new device tree bindings to the kernel tree you
+>     > should add documentation for them.
+>     >
+>     > When preparing patches for submission, use scripts/checkpatch.pl to
+>     > check for common issues. It will warn you if you are adding strings
+>     > that are not documented.
+>     >
+>     > Cheers,
+>     >
+>     > Joel
+>     >
+>    Because the driver of sgpios doesn't be implemented, so I don't know how to describe it at sgpio-aspeed.txt.
+>    Can I just add  compatible string " aspeed,ast2600-sgpios " to the document for bypassing the warning of checkpatch?
 
-This patch series contains several cleanups and improvements for the
-Renesas pin control drivers.
+Ignore the sgpios issue for now; we don't have a driver for it so
+there's no need to add strings. Drop that part from your dts patch.
 
-I plan to queue these in renesas-pinctrl for v5.11.
+>     > >
+>     > >  - compatible : Should be one of
+>     > > -  "aspeed,ast2400-sgpio", "aspeed,ast2500-sgpio"
+>     > > +  "aspeed,ast2400-sgpio", "aspeed,ast2500-sgpio", "aspeed,ast2600-sgpiom"
+>     >
+>     > I think we should add sgpiom strings for the ast2500 (and ast2400?)
+>     > too, as this is how they should have been named in the first place:
+>     >
+>    If I change the document whether I also need to send the patch for sgpio driver and g5/g4.dtsi?
 
-Thanks for your comments!
+For the sgpiom? We already have a driver for that.
 
-Geert Uytterhoeven (8):
-  pinctrl: renesas: Remove superfluous goto in
-    sh_pfc_gpio_set_direction()
-  pinctrl: renesas: Singular/plural grammar fixes
-  pinctrl: renesas: Reorder struct sh_pfc_pin to remove hole
-  pinctrl: renesas: Optimize sh_pfc_pin_config
-  pinctrl: renesas: Factor out common R-Car Gen3 bias handling
-  pinctrl: renesas: r8a7778: Use physical addresses for PUPR regs
-  pinctrl: renesas: r8a7778: Use common R-Car bias handling
-  pinctrl: renesas: Protect GPIO leftovers by
-    CONFIG_PINCTRL_SH_FUNC_GPIO
+As I said above, make this about fixing the sgpio master and put aside
+the sgpio slave issue for now.
 
- drivers/pinctrl/renesas/core.c         |  2 +
- drivers/pinctrl/renesas/core.h         |  4 ++
- drivers/pinctrl/renesas/gpio.c         |  2 +-
- drivers/pinctrl/renesas/pfc-r8a7778.c  | 55 +++------------------
- drivers/pinctrl/renesas/pfc-r8a77950.c | 45 +----------------
- drivers/pinctrl/renesas/pfc-r8a77951.c | 45 +----------------
- drivers/pinctrl/renesas/pfc-r8a7796.c  | 45 +----------------
- drivers/pinctrl/renesas/pfc-r8a77965.c | 45 +----------------
- drivers/pinctrl/renesas/pfc-r8a77990.c | 45 +----------------
- drivers/pinctrl/renesas/pinctrl.c      | 68 ++++++++++++++++++++------
- drivers/pinctrl/renesas/sh_pfc.h       | 12 +++--
- 11 files changed, 86 insertions(+), 282 deletions(-)
+Cheers,
 
--- 
-2.25.1
+Joel
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+>     > >  - compatible : Should be one of
+>     > >    "aspeed,ast2400-sgpio", "aspeed,ast2500-sgpio"
+>     > >   "aspeed,ast2400-sgpiom", "aspeed,ast2500-sgpiom", "aspeed,ast2600-sgpiom"
