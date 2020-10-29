@@ -2,139 +2,139 @@ Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6C5C55179
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 218B5C55179
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CD26207DE
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC07F2087D
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:11:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qYyU4vJ7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXtAoYyc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725791AbgJ2SJ4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Oct 2020 14:09:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43314 "EHLO
+        id S1725914AbgJ2SLu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Oct 2020 14:11:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbgJ2SJa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2020 14:09:30 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C31C0613CF
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 11:09:00 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id w191so3994445oif.2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 11:09:00 -0700 (PDT)
+        with ESMTP id S1726019AbgJ2SKy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2020 14:10:54 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97CBFC0613CF;
+        Thu, 29 Oct 2020 11:10:54 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id y14so2992502pfp.13;
+        Thu, 29 Oct 2020 11:10:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=mBUzc9CK7MUBRWLylSHpe2XD8BDUPf6CGZ/koJbns3c=;
-        b=qYyU4vJ7lIMZB7mVlFC8g9vfsaKue73KJZYbT2ipvTyGxqr3B/Pb1WNfZNCWp0Rz2n
-         VySxQ/9rUoMGieDNBPR/H7OukAl2dCnpp+LkP0WmGeVdsA/J/GGB0HBPRbVGd9fr7Rtl
-         CmPB5S/6/sPoolazQBJWrQiD+/paaFMs2uinPNEs3upQeFEnxKygeOe0XcNsN/fseBhK
-         Kg/0gT4sTYKG70U2nwMGDEGWRlslBuLc4g1XUqy4rP/4jo20J0RqifYGfFEpjmVmi79h
-         04yfpBFIJk15QqwCC/63x1BEpKt5Odj82zoSfDUJoXUVt4gKQ6/S5Zzhj6FNTJBvxEzQ
-         mL0Q==
+        bh=9mYoC9fzlZILsK+v50uE5+YhxokVe2DzlkWulezZ7CI=;
+        b=kXtAoYycNFk6+FrKWo8f4xSLyBDeMpMWM6sgDbBeglsOFQWBWXrY5L4HhHVJYmhWvE
+         ONXSSMgPYXlink5oYPNbxLO/upi165EJlNfMLzLNgKNJgmkrd6eh2Pkj6gIPTGGrFeWa
+         sIbHzRzMY86DMN6S27eWQSm518p8ELEPX4KT3JpGvOipfvYDVPbGdnXAeGHN9cWkikkx
+         iiViBNKjhr01vRpXp20obCQur8doE3fZpKXq/4fKfxdLfnNbOKaujl/mM2/Ng8QFzENm
+         JOXk38f8rr4x+4esofPenX9hyEqRtDZ14g1uxkkITKOueQQi3vAEIRRSt08QucwhccTc
+         elSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mBUzc9CK7MUBRWLylSHpe2XD8BDUPf6CGZ/koJbns3c=;
-        b=IUJF3ntWal2VbWuEf7W/lDPqlcUbRZP5/0cHL2fIN7VkVHPWeU1Bqj4OOy70X8Eu+w
-         /cDzJlTJPJeu7/S3fZlFKG7B72uNaj/udNZhyOKDzNZIoFtvKOWbay+yEj0xx09m53DR
-         foJ8LhWiztXIL+oNu64IIbCxVujnfcKr4cZ41ALVDqtC3qmzDrMDHo+yg2NXbykUS86i
-         q+aXZoYV7sUWADUsFIFlzg4Y03NrmjGOcNMjHRNS7fiAJn6ZsEExRIfZFl0mK9Q5bvjc
-         jU7oWp2Jfcv9QZR6Z4/baFScaqwCxEqWDKi62UILt4vp8xumt0uJhkqtMcxYjegLrFUI
-         BNDg==
-X-Gm-Message-State: AOAM533t9Gn1JJY2AciqWcQWNtaFZXX+roC+nIHv52yevdAHTDzFX/8j
-        pb/WrSBAOExAP32bwZW33uGH6HAbS8bx5G+n4aX1Lw==
-X-Google-Smtp-Source: ABdhPJxqT2kL0a4tFiy+m/bOuNX6YodgkMrdSY8ftIGXaGCFzPFB4GPgxkbcd9UTdg23gBYzEH+631+hIBSlXikbbHo=
-X-Received: by 2002:aca:3442:: with SMTP id b63mr321446oia.15.1603994940142;
- Thu, 29 Oct 2020 11:09:00 -0700 (PDT)
+        bh=9mYoC9fzlZILsK+v50uE5+YhxokVe2DzlkWulezZ7CI=;
+        b=KJb7G+BPkTRAgtJVkK3AElAUAvLgsqGZW4uHyqbtQofT4mOrSv7zAkDRjqrBp27med
+         S3+F52nAnEnvsrYDjyM0IaN0vM1epJAgEz9YhCOU3llvIXmtkXimMYaj/19GUOQiV0Ix
+         cX8aS1wqW5OcqQfm8WeP5nSsK+hCCaw5zQFkn1BpBekk+u4MuXSw4qPc6hVzg+x6HW5k
+         d51fCZMXqKY64a+N69wdjc1EwJpLzPakZwWWruDMk7yKIWje3w7lBLy3k+v4I5NjkD+w
+         8ltXMuvlS3Bq0Xj4E9bf8RUP/8dcaW0Q+1MRu8PIKY6iXNzVoKBVCCrLGpWJXXHUjStN
+         uWOg==
+X-Gm-Message-State: AOAM532FEfxyTVSUqRsr1LXwzC/poFDGybmTuuZucpWKI2NUaZLpeJC4
+        VG6Szwl5dmRgnBovYdMw7mI7nGamkP0bnSeaYKZszyL1L6M=
+X-Google-Smtp-Source: ABdhPJxfEMjDFrWielFFXMh8vbPfRPlkCX6EKzU1tlvI3OeeaVaRtM2mWw+ipcc1u/pMntP1J6qdXCzufODpFgdsLp8=
+X-Received: by 2002:a17:90a:be11:: with SMTP id a17mr327451pjs.181.1603995054113;
+ Thu, 29 Oct 2020 11:10:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201028171757.765866-1-ribalda@chromium.org> <20201028182744.GZ4077@smile.fi.intel.com>
- <CANiDSCvy2dPyY8O5DVgTBwNNLmfA=kJ5HUKJqcFLnqQ8CWsJgA@mail.gmail.com> <CAHp75Vc6LhqKvuAeOkVtTAniHGRMGV=7Pa71CNT7por=PRk9eQ@mail.gmail.com>
-In-Reply-To: <CAHp75Vc6LhqKvuAeOkVtTAniHGRMGV=7Pa71CNT7por=PRk9eQ@mail.gmail.com>
-From:   Ricardo Ribalda <ribalda@google.com>
-Date:   Thu, 29 Oct 2020 19:08:47 +0100
-Message-ID: <CANiDSCsrtL1h+z_f7jQicgwz5nTc33wJGGCjZyeF9aGQJwED7A@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: acpi: Support GpioInt with active_low polarity
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20201028205101.47583-1-andriy.shevchenko@linux.intel.com>
+ <20201028205101.47583-2-andriy.shevchenko@linux.intel.com>
+ <CANiDSCtRDwfFo9HE84iujjFe6h9aS6b3B8wkz5Rt0aO8=XMsNg@mail.gmail.com>
+ <20201029144656.GD4077@smile.fi.intel.com> <CANiDSCuNVT=jr8rLyfWhGKNSOy5OnH7YBZaWSguBDVg219OGvQ@mail.gmail.com>
+ <CAHp75VfuZPpBZsyUEyD_R+ZEjPms6Z9L1tDdBKYfusWnbhtyww@mail.gmail.com>
+ <CAHp75Vf-KXSC5x+07rH+wFgv_9xx_+DoMd9ZxTAqr_a5uxc7jA@mail.gmail.com>
+ <CAHp75Vd+doPgSZQEOSAW4oRoAqPUdJyoivtNvbO5d1q-e280Eg@mail.gmail.com> <CANiDSCtNCn+vj=8kgx8oPUbCJS6mLmOckiWpJtobT_FtUCR3YQ@mail.gmail.com>
+In-Reply-To: <CANiDSCtNCn+vj=8kgx8oPUbCJS6mLmOckiWpJtobT_FtUCR3YQ@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 29 Oct 2020 20:10:37 +0200
+Message-ID: <CAHp75VdZiOnQdUirEM1BG27kV=htNX95Ar6eJ8LAK91MsOyYSg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] Documentation: firmware-guide: gpio-properties:
+ active_low only for GpioIo()
+To:     Ricardo Ribalda <ribalda@google.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@google.com>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Adding Tomasz in CC in case he wants to share more info about the device.
-
-On Thu, Oct 29, 2020 at 6:31 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Thu, Oct 29, 2020 at 5:37 PM Ricardo Ribalda <ribalda@google.com> wrote:
-> > On Thu, Oct 29, 2020 at 3:38 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
+On Thu, Oct 29, 2020 at 7:32 PM Ricardo Ribalda <ribalda@google.com> wrote:
+> On Thu, Oct 29, 2020 at 6:26 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Thu, Oct 29, 2020 at 7:20 PM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Thu, Oct 29, 2020 at 7:17 PM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Thu, Oct 29, 2020 at 4:55 PM Ricardo Ribalda <ribalda@google.com> wrote:
+> > > > > On Thu, Oct 29, 2020 at 3:45 PM Andy Shevchenko
+> > > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > On Wed, Oct 28, 2020 at 10:10:42PM +0100, Ricardo Ribalda wrote:
+> > > >
+> > > > ...
+> > > >
+> > > > > > ActiveLevel field is described in 19.6.55 GpioInt (GPIO Interrupt Connection
+> > > > > > Resource Descriptor Macro).
+> > > > > >
+> > > > > > > Without using the active_low, how can we describe  a pin that is
+> > > > > > > active low and has to trigger an irq on both edges?
+> > > > > >
+> > > > > > This is nonsense.
+> > > > > > What does it mean?
+> > > > >
+> > > > > Let me try to explain myself again:
+> > > > >
+> > > > > I have a gpio pin that produces IRQs on both edges. so ActiveLevel is Both
+> > > > >
+> > > > > The problem is that the value of that pin is inverted: Low means 1 and
+> > > > > high means 0.
+> > > > >
+> > > > > How can I describe that the pin "is inverted" without using the _DSD field?
+> > > >
+> > > > "Both edges" and "inverted" or "polarity low" in one sentence make no sense.
 > > >
-> > > On Wed, Oct 28, 2020 at 06:17:57PM +0100, Ricardo Ribalda wrote:
-> > > > On the current implementation we only support active_high polarity for
-> > > > GpioInt.
-> > > >
-> > > > There can be cases where a GPIO has active_low polarity and it is also a
-> > > > IRQ source.
-> > > >
-> > > > De-couple the irq_polarity and active_low fields instead of re-use it.
-> > > >
-> > > > With this patch we support ACPI devices such as:
-> > >
-> > > Is it real device on the market?!
+> > > To be on the constructive side, I can *imagine* so badly designed
+> > > hardware that uses level and edge at the same time, but before I go to
+> > > conclusions, can you share relevant (pieces of) datasheet?
 > >
-> > Yes, it is a chromebook.
+> > The [1] is a real example of how GPIO is being used to detect changing
+> > of current level of the signal.
+> > Note, ACPI tables for that device have problems [2], but I guess you
+> > may get the idea.
 >
-> You mean it's already on sale with this broken table?!
+>
+> This is exactly what I need to do. Get an IRQ whenever the value
+> changes. But the pin is "inverted"
 
-I do not agree that it is broken.  It follows the current standard ;)
+Yes. It's fine. The above is using GpioIo() resource where polarity is
+part of the _DSD (okay, the actual ACPI table doesn't have it, but you
+can do it).
 
->
-> > > This table is broken. _DSD GPIO active_low is only for GpioIo().
-> >
-> > AFAIK the format of the _DSD is not in the ACPI standard. We have
-> > decided its fields. (please correct me if I am wrong here)
->
-> _DSD is a concept that is part of the spec, but each UUID and its
-> application is out of scope indeed.
->
-> GPIO application to _DSD is described in the in-kernel documentation.
-> Thanks for pointing out the issues it has.
->
-> > On the other mail I have described why we need to make use of the
-> > active_low on a GpioInt()
-> >
-> > If there is another way of describing ActiveBoth + inverted polarity
-> > please let me know and I will go that way.
->
-> I answered it there, please, continue this topic there.
-> NAK to the proposed change.
->
-> > > If it is a ChromeBook, please fix the firmware.
+> This is the "schematic" :  https://ibb.co/f8GMBbP . I want to pass to
+> userspace a "1" when the switch is closed and "0"  when it is open.
 
-Lets agree what is the best way to describe in acpi my usecase and I
-will implement it.
-
->
-> --
-> With Best Regards,
-> Andy Shevchenko
-
-
+> > [1]: https://elixir.bootlin.com/linux/latest/source/drivers/extcon/extcon-intel-int3496.c#L138
+> > [2]: https://elixir.bootlin.com/linux/latest/source/drivers/extcon/extcon-intel-int3496.c#L45
 
 -- 
-Ricardo Ribalda
+With Best Regards,
+Andy Shevchenko
