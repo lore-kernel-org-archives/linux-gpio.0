@@ -2,58 +2,143 @@ Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B11C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 13:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3CBC4363A
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 13:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 842A12075E
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 13:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 757F4207DE
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 13:40:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VnckbwS7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbgJ2NO6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Oct 2020 09:14:58 -0400
-Received: from mga03.intel.com ([134.134.136.65]:47336 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbgJ2NO6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 29 Oct 2020 09:14:58 -0400
-IronPort-SDR: Q3Lxpy1F7SQp/PE730JATaUhvSxex6dEU9JdQF2+p4mztulT6QabDYKbuF3d+txgTqaz8++Uny
- BPuEnmkK+4QA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9788"; a="168528038"
+        id S1725826AbgJ2Nkn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Oct 2020 09:40:43 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:33536 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbgJ2Nkm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2020 09:40:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1603978842; x=1635514842;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Uj31RIUPMHB2663+cdl+eyLqGnnK0YFqnxVMboDH4s0=;
+  b=VnckbwS74ZEuqlvvFGMxu2J8FcKqyE8hqZ2xyjNT0W861DhXPl+38dum
+   6R2eSNnLvwB1sakZ4A4zJIEFkM3JhYjbvE8UgU78catN8aJh/HY3uksbV
+   VYH+dtWgXp54Cf4wdg5wHzboBnDbnpF3Nkp7yZGoD/waOOt3iNZyaobix
+   UsLdA9YLHF+ev2adWMAAIyLrhzVc4Hk7+MwP61MyB1JWLpVZ/ql17+t2e
+   MXL7tTbVnEha//JeFBVR1755Olwx2CSflH6emRdVrE2VqUI61jntdaeQf
+   UrqRFr2+VNnldeKhPqHTFsl/eQPzHviPzJyJwexgBroUKUlLyJHS6NQec
+   A==;
+IronPort-SDR: PBWMSUHCAHMdlj4mBmYjjyAdW+Iou2cvbL8aSgG9onbaQsagM/JCVk2KTSS9xW+iYSEPMyDokx
+ unTgUv+UQNJWeNFyXq6bV/4us2NMumW37ONx/cXrZUscCxcv4a4zhGn5zJr3Unls9RlYdIvi2x
+ NYo+lzTdC63+oMOycr2aL7Nj43HbrUnQhQjQ1rX93N1RdrsMZSJwLpuafaL7akPcZrGsuaW07u
+ DdFxKKQ3xaN3+Sx7BiOc07OuEPwOpUpGiqjGq27FgJf/Fezglj4R8ceCL/JpnB6ilTlhOn5wZe
+ 3lQ=
 X-IronPort-AV: E=Sophos;i="5.77,430,1596524400"; 
-   d="scan'208";a="168528038"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 06:14:50 -0700
-IronPort-SDR: SoBrt2GNeG4Vl07TXdhHIST+6z9v3ULt7XGZ3dcLmYgn/XVbWP6gnlYrBvCrJCSGRFFXfA/73R
- 7SFiAM92KvXQ==
-X-IronPort-AV: E=Sophos;i="5.77,430,1596524400"; 
-   d="scan'208";a="536666532"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 06:14:48 -0700
-Received: by lahna (sSMTP sendmail emulation); Thu, 29 Oct 2020 15:14:45 +0200
-Date:   Thu, 29 Oct 2020 15:14:45 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] pinctrl: intel: Add blank line before endif in Kconfig
-Message-ID: <20201029131445.GW2495@lahna.fi.intel.com>
-References: <20201029111728.70196-1-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="91815713"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Oct 2020 06:40:41 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 29 Oct 2020 06:40:41 -0700
+Received: from soft-dev10.microsemi.net (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Thu, 29 Oct 2020 06:40:39 -0700
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Lars Povlsen <lars.povlsen@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v7 0/3] Adding support for Microchip/Microsemi serial GPIO controller
+Date:   Thu, 29 Oct 2020 14:40:24 +0100
+Message-ID: <20201029134027.232951-1-lars.povlsen@microchip.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201029111728.70196-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 01:17:28PM +0200, Andy Shevchenko wrote:
-> Add a blank line before endif directive in Kconfig for better readability.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The series add support for the serial GPIO controller used by
+Microchip Sparx5, as well as (MSCC) ocelot/jaguar2 SoCs.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+v7 changes:
+- Fixed wrong sizeof in pin string name template. (Andy)
+- Collapsed sgpio_input_get() to one liner. (Andy)
+- Eliminated unneeded variable in microchip_sgpio_get_value()
+- Removed noisy dev_info(). (Andy)
+- Replaced platform_get_resource()+devm_ioremap_resource() with
+ devm_platform_ioremap_resource(). (Andy)
+- Replaced device_property_read_u32() with
+  of_property_read_u32(). (Andy)
+- Replaced __builtin_ffsll() with __builtin_ffs() for MIPS32 targets.
+
+v6 changes:
+- Use "bus-frequency" instead of "microchip,sgpio-frequency". Drop
+  '$ref'. (Robh)
+- Added "ngpios" description, bumped minimum to 32. (Linus)
+- Added "#size-cells" description. (Linus)
+- Changed "bus-frequency" validation in driver to reflect the YAML
+  description.
+
+v5 changes (driver comments from Linus):
+- Collect bank data in sgpio_bank struct
+- Add is_input boolean to sgpio_bank struct
+- Use single-bit bitmasks in sgpio_output_set() and sgpio_output_get()
+- Eliminate superfluous struct pinctrl_dev *pctl_dev in bank data
+- Fix wrong ngpio consistency check
+
+v4 changes (binding comments from Rob):
+- microchip,sgpio-port-ranges changed to uint32-matrix so tuples can
+  be represented properly.
+- gpio controller node name changed to "gpio@[0-1]"
+- whitespace fixes
+- DT files updated as per schema changes
+
+v3 changes:
+- Renamed all usage of "mchp" abbrevation with "microchip".
+- Split the in/output directions into (two) separate banks.
+- Eliminated the bindings include file (from above)
+- Changed SPDX license to "GPL-2.0-or-later"
+- Change -ENOTSUPP to -EOPNOTSUPP
+- Minor type/symbol naming changes
+
+v2 changes:
+- Adds both in and output modes.
+- Use direct adressing of the individual banks (#gpio-cells = <4>),
+  also osoleting need for addressing macros in bindings include file.
+- Property 'microchip,sgpio-ports' (uint32, bitmask) replaced by
+  proper range set (array of [start,end]) 'microchip,sgpio-port-ranges'.
+- Fixes whitespace issues in Kconfig file
+
+Lars Povlsen (3):
+  dt-bindings: pinctrl: Add bindings for pinctrl-microchip-sgpio driver
+  pinctrl: pinctrl-microchip-sgpio: Add pinctrl driver for Microsemi
+    Serial GPIO
+  arm64: dts: sparx5: Add SGPIO devices
+
+ .../pinctrl/microchip,sparx5-sgpio.yaml       | 145 ++++
+ MAINTAINERS                                   |   1 +
+ arch/arm64/boot/dts/microchip/sparx5.dtsi     |  91 +++
+ .../boot/dts/microchip/sparx5_pcb125.dts      |   5 +
+ .../dts/microchip/sparx5_pcb134_board.dtsi    | 258 +++++++
+ .../dts/microchip/sparx5_pcb135_board.dtsi    |  55 ++
+ drivers/pinctrl/Kconfig                       |  18 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-microchip-sgpio.c     | 653 ++++++++++++++++++
+ 9 files changed, 1227 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
+ create mode 100644 drivers/pinctrl/pinctrl-microchip-sgpio.c
+
+--
+2.25.1
