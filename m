@@ -2,214 +2,173 @@ Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF49C4363A
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC61C55179
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB67F20732
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2AA2075E
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 18:58:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="nuv45Mpo"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q9RvZEWc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725802AbgJ2S1R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Oct 2020 14:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46150 "EHLO
+        id S1725919AbgJ2S6x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Oct 2020 14:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbgJ2S1Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2020 14:27:16 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FFFC0613CF
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 11:27:16 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id w21so3048323pfc.7
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 11:27:16 -0700 (PDT)
+        with ESMTP id S1725910AbgJ2S6w (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2020 14:58:52 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C76DC0613CF
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 11:58:51 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id k65so4106734oih.8
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 11:58:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=wPsbDGoGZzP6uJah5LKu+pnTQjxjW33JXrKwp/w8TBY=;
-        b=nuv45MpoGZS6q2AfNDNB1kxeXSSpPDaKPUAoqv+pvO967/oP9FYG/0yPq1avwh1Ew8
-         foCu5BhrAKYg8QyqBfmHZgX9+C/9wwVCz3PDCqPp50ttJYEd6UBU7DMJY+BvuFunav4G
-         oF7ONb4bpQn9FWKkmqSG3CXv5So9VfNItng/O3Z414mOraqABnqnByOapZnWaWX+YKCj
-         ax5A9LMxhn5BZexA4Dl51s7rhG7v2Y2P7IYNBli1qckIjHHEfNXqqk9WiNH9QKmNZ7Dh
-         MzIRWdgk8LwWQ+RS67QPK0kXxl11cuIoTxSC94bR+VwQ5VlHE+IezOcMZfRV57ofRpQD
-         8BYA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JlhkSGuBWBk3b5VXZHQm5n3PCMxc5avXYrwwV4XYqxo=;
+        b=Q9RvZEWchJ4V/SCF/gH0VqrSOQmUyE5XZbaFxny6uw+DWN0YgtJYqHufMFQXtDt4sI
+         niDfL74ErtLKBRZCiZQwGckUEhGbpcFUSEv3R+O36peyYAYxcqyUsxVBMeL0l4VW18Pu
+         nfJrgG7/akmXXS+NbN8hEf4cKh3sZjgDTAR5UJ/Mk+dF+y+0rLOTe+lFBC7PMcsachyy
+         fTyrUyRobtI0b+KGZEJ7xfHG/g/PZEHHiSO/XtJzJfl+QjFuDTcgjm3B4c/EDeKny6Rb
+         x+nY6j6BH+8Qbeh+OLhDqSWssinNO5Y9a9qQt77WFnUsNYbZaODe5tHHQc3GjNXx8rKQ
+         Owog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=wPsbDGoGZzP6uJah5LKu+pnTQjxjW33JXrKwp/w8TBY=;
-        b=uc1RjRf4sZD+fjJAM93LJBdu8DNx1rEgvYyXUNrHngczkwYAOCrbWUOvmmSmYMJKPL
-         IVs1z1rFyB4pTFbG/2w4gFlp3H7lcalALOdfHfPVn8W6PvgXQGJNxaA/bCaY1l+OTPyy
-         WmaTDRB9xaN76xsVfkM5lJsgNnG+h24YJZhF55rAiz8KOKcX8t/Mei7DXdZ9ROE7uCND
-         zRhMMqV2SDy/RHeb6cQWANzZnE0k1pbjHH06E7xLRJfO0QWO90Y2n3epuoJfiVgiMaj0
-         R/XeOGwTBhq8qxcrfCwuKF6Vg/XN7Rczkm828zQ86ef2t3GcDRlmehdN3RWlN9+9mcbP
-         qqZA==
-X-Gm-Message-State: AOAM531Lc42hcmXhM131oMNzd+qur911xHHm1++JVU8GHGCrGgA02ypO
-        U9PDgmSdR7XWE2P2u6xyRX6vCii/2iA1+g==
-X-Google-Smtp-Source: ABdhPJwbja+7FNVT8bCWSVDbXuhgPMbmtHfM0lczzsbRWWOLyFraQuB+BXpTXuymKEdRlSmMFR/NeA==
-X-Received: by 2002:a63:4809:: with SMTP id v9mr4876631pga.87.1603996035877;
-        Thu, 29 Oct 2020 11:27:15 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id d145sm3879709pfd.136.2020.10.29.11.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2020 11:27:15 -0700 (PDT)
-Message-ID: <5f9b0983.1c69fb81.fba2f.8c9e@mx.google.com>
-Date:   Thu, 29 Oct 2020 11:27:15 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JlhkSGuBWBk3b5VXZHQm5n3PCMxc5avXYrwwV4XYqxo=;
+        b=N5BWm3C58sxljOM8orvUWcTcsP/YoXEI8QaMQBYeYDFJddHXrpxAfQICGCqrdO/RUW
+         EN1PrtXFuKeL2fFFlpd1kcelNejE8ZguJwpBkGvGKJjdP4ZcMyqyReoOe4CdIL9GjC4u
+         cyt03+gW/16NVZTvxy581FZ4HmAz4BvH5prXrzNa52MeE+riAzNP5ulWXQLP7s+Xdds7
+         ObbJ4L9BbJbFd4SLUHXJRPUJqWNj6AHTc6D7YZUnXMxM9BcH5GU8gkfSKRauuxnnalDC
+         FPpuFx0YJzPQGNBONmoMMg4VXoiAhsqMacjzaPolaWoiDPcLJLSBoeAUfQjQ4x5ZIVyd
+         H3Yg==
+X-Gm-Message-State: AOAM532XIRRbzqipn/59/HYa2p5RJAsoO3TVjv4zvpSeEgVH7fcGoY5Q
+        JbZXu5jylIE3ms4lypBKBAzbJ6X3+vL9+y2lKdK0Wg==
+X-Google-Smtp-Source: ABdhPJwuP9QDxEKGIv5BVO3LjZkI3xjQs9QAikuw3t7j+WFXY1KUbBCdY4P8UBY5KVmXsA8phLOGzWYpB9/AzQMWTuc=
+X-Received: by 2002:aca:cc01:: with SMTP id c1mr789970oig.128.1603997930701;
+ Thu, 29 Oct 2020 11:58:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.10-rc1-11-g50afb29ae413
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: for-next
-Subject: linusw/for-next baseline: 119 runs,
- 2 regressions (v5.10-rc1-11-g50afb29ae413)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+References: <20201028205101.47583-1-andriy.shevchenko@linux.intel.com>
+ <20201028205101.47583-2-andriy.shevchenko@linux.intel.com>
+ <CANiDSCtRDwfFo9HE84iujjFe6h9aS6b3B8wkz5Rt0aO8=XMsNg@mail.gmail.com>
+ <20201029144656.GD4077@smile.fi.intel.com> <CANiDSCuNVT=jr8rLyfWhGKNSOy5OnH7YBZaWSguBDVg219OGvQ@mail.gmail.com>
+ <CAHp75VfuZPpBZsyUEyD_R+ZEjPms6Z9L1tDdBKYfusWnbhtyww@mail.gmail.com>
+ <CAHp75Vf-KXSC5x+07rH+wFgv_9xx_+DoMd9ZxTAqr_a5uxc7jA@mail.gmail.com>
+ <CAHp75Vd+doPgSZQEOSAW4oRoAqPUdJyoivtNvbO5d1q-e280Eg@mail.gmail.com>
+ <CANiDSCtNCn+vj=8kgx8oPUbCJS6mLmOckiWpJtobT_FtUCR3YQ@mail.gmail.com>
+ <CANiDSCuJv258cXYgxcWBUVpvQm8tYy0Lrd426e63PHQJAnLYwQ@mail.gmail.com> <CAHp75Vc8FLoi=4Z78mNkDJk_qM_V0EA9s3aGb3qXU-i0vg8wxA@mail.gmail.com>
+In-Reply-To: <CAHp75Vc8FLoi=4Z78mNkDJk_qM_V0EA9s3aGb3qXU-i0vg8wxA@mail.gmail.com>
+From:   Ricardo Ribalda <ribalda@google.com>
+Date:   Thu, 29 Oct 2020 19:58:39 +0100
+Message-ID: <CANiDSCvD3JqT8pZy7MtuCtGGSP8bUrkndCf6CK866MeH7Hk3sA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] Documentation: firmware-guide: gpio-properties:
+ active_low only for GpioIo()
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Tomasz Figa <tfiga@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next baseline: 119 runs, 2 regressions (v5.10-rc1-11-g50afb29ae4=
-13)
+On Thu, Oct 29, 2020 at 7:13 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Thu, Oct 29, 2020 at 8:10 PM Ricardo Ribalda <ribalda@google.com> wrote:
+> > On Thu, Oct 29, 2020 at 6:32 PM Ricardo Ribalda <ribalda@google.com> wrote:
+> > > On Thu, Oct 29, 2020 at 6:26 PM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Thu, Oct 29, 2020 at 7:20 PM Andy Shevchenko
+> > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > On Thu, Oct 29, 2020 at 7:17 PM Andy Shevchenko
+> > > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > > On Thu, Oct 29, 2020 at 4:55 PM Ricardo Ribalda <ribalda@google.com> wrote:
+> > > > > > > On Thu, Oct 29, 2020 at 3:45 PM Andy Shevchenko
+> > > > > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > > > On Wed, Oct 28, 2020 at 10:10:42PM +0100, Ricardo Ribalda wrote:
+> > > > > >
+> > > > > > ...
+> > > > > >
+> > > > > > > > ActiveLevel field is described in 19.6.55 GpioInt (GPIO Interrupt Connection
+> > > > > > > > Resource Descriptor Macro).
+> > > > > > > >
+> > > > > > > > > Without using the active_low, how can we describe  a pin that is
+> > > > > > > > > active low and has to trigger an irq on both edges?
+> > > > > > > >
+> > > > > > > > This is nonsense.
+> > > > > > > > What does it mean?
+> > > > > > >
+> > > > > > > Let me try to explain myself again:
+> > > > > > >
+> > > > > > > I have a gpio pin that produces IRQs on both edges. so ActiveLevel is Both
+> > > > > > >
+> > > > > > > The problem is that the value of that pin is inverted: Low means 1 and
+> > > > > > > high means 0.
+> > > > > > >
+> > > > > > > How can I describe that the pin "is inverted" without using the _DSD field?
+> > > > > >
+> > > > > > "Both edges" and "inverted" or "polarity low" in one sentence make no sense.
+> > > > >
+> > > > > To be on the constructive side, I can *imagine* so badly designed
+> > > > > hardware that uses level and edge at the same time, but before I go to
+> > > > > conclusions, can you share relevant (pieces of) datasheet?
+> > > >
+> > > > The [1] is a real example of how GPIO is being used to detect changing
+> > > > of current level of the signal.
+> > > > Note, ACPI tables for that device have problems [2], but I guess you
+> > > > may get the idea.
+> > >
+> > >
+> > > This is exactly what I need to do. Get an IRQ whenever the value
+> > > changes. But the pin is "inverted"
+> > >
+> > > This is the "schematic" :  https://ibb.co/f8GMBbP . I want to pass to
+> > > userspace a "1" when the switch is closed and "0"  when it is open.
+> > >
+> > And there are also other devices where the swith works the other way
+> > around, so the acpi should be verbose enough to describe both
+> > situations.
+> >
+> > With my proposal (use the same active_low field as with GpioIO) we
+> > cover both usecases.
+>
+> Even without your proposal it's feasible.
+> You see, the problem here is that if you describe GPIO as Interrupt,
+> the edge and level together make complete nonsense.
+>
+> Solution: do *not* describe it as Interrupt.
 
-Regressions Summary
--------------------
+Now I get my mistake:
 
-platform        | arch  | lab           | compiler | defconfig          | r=
-egressions
-----------------+-------+---------------+----------+--------------------+--=
-----------
-bcm2837-rpi-3-b | arm64 | lab-baylibre  | gcc-8    | defconfig          | 1=
-          =
+I thought that gpiod_to_irq will not work unless it was a GpioInt()
+but it works fine. So in this case I will just convert it to that.
 
-panda           | arm   | lab-collabora | gcc-8    | multi_v7_defconfig | 1=
-          =
+Could we say that doing gpiod_get_value() from a GpioInt() is always
+wrong? Can we modify the code to avoid it?
 
-
-  Details:  https://kernelci.org/test/job/linusw/branch/for-next/kernel/v5.=
-10-rc1-11-g50afb29ae413/plan/baseline/
-
-  Test:     baseline
-  Tree:     linusw
-  Branch:   for-next
-  Describe: v5.10-rc1-11-g50afb29ae413
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
-io.git/
-  SHA:      50afb29ae41368d750cf46bece2b13065b0e9cef =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform        | arch  | lab           | compiler | defconfig          | r=
-egressions
-----------------+-------+---------------+----------+--------------------+--=
-----------
-bcm2837-rpi-3-b | arm64 | lab-baylibre  | gcc-8    | defconfig          | 1=
-          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f9afd9db4dcfac8ee381020
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/for-next/v5.10-rc1-11-g=
-50afb29ae413/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.txt
-  HTML log:    https://storage.kernelci.org//linusw/for-next/v5.10-rc1-11-g=
-50afb29ae413/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.ht=
-ml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/arm64/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5f9afd9db4dcfac8=
-ee381025
-        failing since 20 days (last pass: v5.9-rc8-78-g24160a8f7f13, first =
-fail: v5.9-rc8-79-g3d6e8262d3c0)
-        1 lines
-
-    2020-10-29 17:34:23.036000+00:00  Connected to bcm2837-rpi-3-b console =
-[channel connected] (~$quit to exit)
-    2020-10-29 17:34:23.036000+00:00  (user:khilman) is already connected
-    2020-10-29 17:34:37.899000+00:00  =00
-    2020-10-29 17:34:37.900000+00:00  =
-
-    2020-10-29 17:34:37.900000+00:00  U-Boot 2018.11 (Dec 04 2018 - 10:54:3=
-2 -0800)
-    2020-10-29 17:34:37.900000+00:00  =
-
-    2020-10-29 17:34:37.900000+00:00  DRAM:  948 MiB
-    2020-10-29 17:34:37.915000+00:00  RPI 3 Model B (0xa02082)
-    2020-10-29 17:34:38.002000+00:00  MMC:   mmc@7e202000: 0, sdhci@7e30000=
-0: 1
-    2020-10-29 17:34:38.034000+00:00  Loading Environment from FAT... *** W=
-arning - bad CRC, using default environment =
-
-    ... (380 line(s) more)  =
-
- =
+Sorry for the confusion and thanks for your help.
 
 
-
-platform        | arch  | lab           | compiler | defconfig          | r=
-egressions
-----------------+-------+---------------+----------+--------------------+--=
-----------
-panda           | arm   | lab-collabora | gcc-8    | multi_v7_defconfig | 1=
-          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f9aff7515a7e05cbf381035
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/for-next/v5.10-rc1-11-g=
-50afb29ae413/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//linusw/for-next/v5.10-rc1-11-g=
-50afb29ae413/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
+>
+> > > > [1]: https://elixir.bootlin.com/linux/latest/source/drivers/extcon/extcon-intel-int3496.c#L138
+> > > > [2]: https://elixir.bootlin.com/linux/latest/source/drivers/extcon/extcon-intel-int3496.c#L45
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
 
 
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f9aff7515a7e05=
-cbf38103b
-        failing since 62 days (last pass: gpio-v5.8-2-103-g22cc422070d9, fi=
-rst fail: v5.8-11991-gfc80c51fd4b2)
-        60 lines
-
-    2020-10-29 17:44:15.248000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c802
-    2020-10-29 17:44:15.253000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c803
-    2020-10-29 17:44:15.259000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c804
-    2020-10-29 17:44:15.265000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c805
-    2020-10-29 17:44:15.271000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c806
-    2020-10-29 17:44:15.277000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c807
-    2020-10-29 17:44:15.283000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c808
-    2020-10-29 17:44:15.289000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c809
-    2020-10-29 17:44:15.295000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c80a
-    2020-10-29 17:44:15.301000+00:00  kern  :alert : BUG: Bad page state in=
- process swapper/0  pfn:9c80b =
-
-    ... (49 line(s) more)  =
-
- =20
+--
+Ricardo Ribalda
