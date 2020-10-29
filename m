@@ -7,66 +7,65 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AC3C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 14:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16492C55179
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 15:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B55F3206D4
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 14:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB6E220838
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 15:35:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mS9uIhUQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hfWH7DQo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbgJ2OzK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Oct 2020 10:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40922 "EHLO
+        id S1728288AbgJ2PfR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Oct 2020 11:35:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbgJ2OzK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2020 10:55:10 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60DBEC0613D2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 07:55:09 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id z23so3482052oic.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 07:55:09 -0700 (PDT)
+        with ESMTP id S1728283AbgJ2Pef (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2020 11:34:35 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F1AC0613CF
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 08:34:35 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id n11so2632320ota.2
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2020 08:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vaQMcBVCJJD/JJxT+ZZ+fIMXdbxYyZLYCDfn47ZYa0E=;
-        b=mS9uIhUQShUBkkEziKcu+TR/U8DghYVfsadLZ1kIXzwm+4lqzYPZ4zXfy6fMZh227h
-         yWnBpoW50KAteRnofRkWxm6k8l2piC3wtlvz3o3VeiE/h41ylkObob1xcV0jUKRRKQHD
-         0na4FH8ChQlCm6bPsqMIryFSmAajgMjDDzzWwq9r9XJjP/T2dTwoGBndw261GK+U9894
-         x7QOWYJQWTA+Q6hzDmr6UTvgxGor8RRAv1XcuHLi2rFMJ6VgkcjRkQrhbqMwoTe4NLdK
-         /5xPwAnuHI+dUoQy1XXQs1bY1ka2557N66QVIWlRbdGqhv5vUDExrq/Q5VzeUWNIv6Qy
-         +/2A==
+        bh=gj1jJpANXv8NUxKuc1U2kl0sCOsIJejtHtuP5pNNdq0=;
+        b=hfWH7DQo6MwXumxkNFEKQ6mIUkgN/obcpao7IWfhHJqpjo61R6fm7nMF4GfWRZZ7gg
+         6v++9WPm9136sVxb7WABbsXBM+AqlbgE8SMi+UcLO8dQgD6KLmSpBg2nr7W+XZQxeZ2I
+         kbvlULl7hTiQ61gXLmKCUlPZBk5Yrlx18uwefqSuRW/fmpPxzTCKf1tGMBEtw21oqC3G
+         gwYfpkc/FrK4Vj9Ujfmm2UD9+V5RNmWXyIOYY8x62RrdoP/yzzkiYCh6ql7s/kTVcgDW
+         rugAPCELON6oOF0BNIStyGR0eq6Tm3L1XrDoRgMm1jNqyMcndRHTOQ0doqg6O6zuy15w
+         vwIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vaQMcBVCJJD/JJxT+ZZ+fIMXdbxYyZLYCDfn47ZYa0E=;
-        b=n/uyvyJp0RLVL2TS+c0gtPM8D1fpOCfmWPBZ+oBj2jUxIPhv1aRakiTMW2738jNroj
-         Wzw73vo+aDz6RLe/tJQwXC9ZaGIe4oY4/O4u8kN/jsbaixH+1zx8xNphAV6uYmoJMs1/
-         7w8amJMIfIw3iykLgQ6KwaZI58eYT2hzSttzGApiFB/Y97ifdyPqCwUPzPmGXsyMBXa6
-         dnC0CHiFYaFjRasxJW9BGjHuAdphGPw+RaZsTABR40GCZ1vApJNkUW7TAWlVSeA5hrMO
-         CGg7669O33U9NSRPbx7MF9PJaXdSqC4PpNCh92PnhLbjZJYcxlDKjLbAEzcoic/jTNhF
-         YpUg==
-X-Gm-Message-State: AOAM5334jcu4zR1S6O5ajzjCh2R8F8jYHWxa4nbHIG5/qIVgzii4GDGA
-        lewFsYa674k/O64f/fs7B80O1oPKJoaMf80NIQYWZA==
-X-Google-Smtp-Source: ABdhPJzKPF9BtphNice5MU505ZS0vyVa3wcrmTYTZHE8EPBAeneBwFHc3ky1Bp5ivj4DrR+4xh+c2MdWohhUdgf1DJs=
-X-Received: by 2002:aca:cc01:: with SMTP id c1mr169129oig.128.1603983308507;
- Thu, 29 Oct 2020 07:55:08 -0700 (PDT)
+        bh=gj1jJpANXv8NUxKuc1U2kl0sCOsIJejtHtuP5pNNdq0=;
+        b=UESFtpkwaBp7z9k8+uPJ49qJWHcteOVxMwWYIHHXP6AgcoVof94tZgMVTo1sNedf5V
+         weZLgD7xwkW84Y94pM3ED+hSfXrsEdRBjNxpkAWM9HTSqTgYiCFnzA/pWtdYMUVxjoob
+         cbvjaSamyNN9PtbSi3e6CuA9e/6joxkEvmZN2J/mYAD4IQsuOTs9yuenQanGrzPhZcLA
+         6cbp8sC9DJHc5Pvfd+NT3aaqeGbULkBfpuIVoJFaSuV+GcZ3xmqwMWEmgypu8WFF5khk
+         xVdX6H/YCcOg/2z+EL6qxdWyJR5tA89ZX4lMki3SzeQ8n/1RhLYlIJ0neTU82Vd5r3ql
+         0pQg==
+X-Gm-Message-State: AOAM530IkzJdUl2jhvec1y1KsH6cHoAZOnvI/ARQKc+8KiSKIrJ2ePmK
+        ToxPHwrXLrRGCJ7ygPjHmgm2J9driHZZISRsNoIZyg==
+X-Google-Smtp-Source: ABdhPJyGMqctXGvAmi1ujldo3C/IhTNjpeGLqbnC4WkTn6uj6dRtNongZ+NbPm+WXw74/1zYMbAnzsEbA8DtBOJdsC4=
+X-Received: by 2002:a05:6830:14c:: with SMTP id j12mr3812378otp.334.1603985674321;
+ Thu, 29 Oct 2020 08:34:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201028205101.47583-1-andriy.shevchenko@linux.intel.com>
- <20201028205101.47583-2-andriy.shevchenko@linux.intel.com>
- <CANiDSCtRDwfFo9HE84iujjFe6h9aS6b3B8wkz5Rt0aO8=XMsNg@mail.gmail.com> <20201029144656.GD4077@smile.fi.intel.com>
-In-Reply-To: <20201029144656.GD4077@smile.fi.intel.com>
+References: <20201028171757.765866-1-ribalda@chromium.org> <20201028182744.GZ4077@smile.fi.intel.com>
+In-Reply-To: <20201028182744.GZ4077@smile.fi.intel.com>
 From:   Ricardo Ribalda <ribalda@google.com>
-Date:   Thu, 29 Oct 2020 15:54:57 +0100
-Message-ID: <CANiDSCuNVT=jr8rLyfWhGKNSOy5OnH7YBZaWSguBDVg219OGvQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] Documentation: firmware-guide: gpio-properties:
- active_low only for GpioIo()
+Date:   Thu, 29 Oct 2020 16:34:23 +0100
+Message-ID: <CANiDSCvy2dPyY8O5DVgTBwNNLmfA=kJ5HUKJqcFLnqQ8CWsJgA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: acpi: Support GpioInt with active_low polarity
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-acpi@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -74,53 +73,69 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Hi Andy
 
-On Thu, Oct 29, 2020 at 3:45 PM Andy Shevchenko
+On Thu, Oct 29, 2020 at 3:38 PM Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 >
-> On Wed, Oct 28, 2020 at 10:10:42PM +0100, Ricardo Ribalda wrote:
-> > Hi Andy
+> On Wed, Oct 28, 2020 at 06:17:57PM +0100, Ricardo Ribalda wrote:
+> > On the current implementation we only support active_high polarity for
+> > GpioInt.
 > >
-> > Thanks for your patch and super fast response.
+> > There can be cases where a GPIO has active_low polarity and it is also a
+> > IRQ source.
 > >
-> > I think there are two different concepts here:
+> > De-couple the irq_polarity and active_low fields instead of re-use it.
 > >
-> > 1) when the pin has a low value, it is  0 or a 1? =>active_low
+> > With this patch we support ACPI devices such as:
 >
-> I'm not sure I have got it. GpioIo() has no such property and
-> _DSD active_low is documented as being polarity setting:
->
->         active_low == 1 => active low polarity.
->
-> > 2) when do I get an irq, low->high or high->low => irq polarity
->
-> IRQ polarity is clearly defined by GpioInt() resource in the ACPI
-> specification.
->
-> > When I read the acpi spec for GpioInt()
-> > https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf page
-> > 934, it has the same problem as for GpioIo(), it does not express the
-> > active_low and this is where the _DSD field comes handy.
->
-> ActiveLevel field is described in 19.6.55 GpioInt (GPIO Interrupt Connection
-> Resource Descriptor Macro).
->
-> > Without using the active_low, how can we describe  a pin that is
-> > active low and has to trigger an irq on both edges?
->
-> This is nonsense.
-> What does it mean?
+> Is it real device on the market?!
 
-Let me try to explain myself again:
+Yes, it is a chromebook.
 
-I have a gpio pin that produces IRQs on both edges. so ActiveLevel is Both
+>
+> This table is broken. _DSD GPIO active_low is only for GpioIo().
 
-The problem is that the value of that pin is inverted: Low means 1 and
-high means 0.
+AFAIK the format of the _DSD is not in the ACPI standard. We have
+decided its fields. (please correct me if I am wrong here)
 
-How can I describe that the pin "is inverted" without using the _DSD field?
+On the other mail I have described why we need to make use of the
+active_low on a GpioInt()
 
-Best regards
+If there is another way of describing ActiveBoth + inverted polarity
+please let me know and I will go that way.
 
+Thanks
+
+>
+> If it is a ChromeBook, please fix the firmware.
+>
+> > Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+> > {
+> >         GpioInt (Edge, ActiveBoth, Exclusive, PullDefault, 0x0000,
+> >         "\\_SB.PCI0.GPIO", 0x00, ResourceConsumer, ,
+> >         )
+> >         {   // Pin list
+> >                 0x0064
+> >         }
+> > })
+> > Name (_DSD, Package (0x02)  // _DSD: Device-Specific Data
+> > {
+> >         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */,
+> >         Package (0x01)
+> >         {
+> >         Package (0x02)
+> >         {
+> >                 "privacy-gpio",
+> >                 Package (0x04)
+> >                 {
+> >                 \_SB.PCI0.XHCI.RHUB.HS07,
+> >                 Zero,
+> >                 Zero,
+> >                 One
+> >                 }
+> >         }
+> >         }
+> > })
+>
 >
 > --
 > With Best Regards,
