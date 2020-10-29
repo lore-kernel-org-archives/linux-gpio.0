@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4F9C5517A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F16A0C56201
 	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 07:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77BBE2075E
+	by mail.kernel.org (Postfix) with ESMTP id B593B21D41
 	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 07:28:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbgJ2H2j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Oct 2020 03:28:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:30174 "EHLO mga06.intel.com"
+        id S1728526AbgJ2H2k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Oct 2020 03:28:40 -0400
+Received: from mga09.intel.com ([134.134.136.24]:31370 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728544AbgJ2H06 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 29 Oct 2020 03:26:58 -0400
-IronPort-SDR: BaCbs4e3UCXR4ClYeolJPofnlaJwUjFfgXYanal3Xq6JS9CEwy6laZ9E7RcMHJgCoKyjqULZHG
- /1n/CiyhD2aw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9788"; a="230016558"
+        id S1728514AbgJ2H05 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 29 Oct 2020 03:26:57 -0400
+IronPort-SDR: DbkrsUwFn4DP1lTvrdvovyb92/pM+4AX3fsm8bGNM51Qj7PnxEAbNAaH6yjfrfSdlbNjdeJ3Kf
+ qeYHBZx5dqnA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9788"; a="168508156"
 X-IronPort-AV: E=Sophos;i="5.77,429,1596524400"; 
-   d="scan'208";a="230016558"
+   d="scan'208";a="168508156"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2020 21:23:42 -0700
-IronPort-SDR: 7qBZxIdzj56h0pRFNrxB8vl/Ug2DjImFJ9alfVvy8IpRyBK7khf2p57vW1Mt3KiBcUWB3JRSxx
- PObYwiPd0qQA==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2020 21:23:42 -0700
+IronPort-SDR: gkX2/oxA6injjYcOeDITnzlJqVdaRZhiBxXpEM1/Dzaf6w0jCFy8TpDHd0eUemlzYXlKUHjxes
+ G4xp/cFt6Igw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,429,1596524400"; 
-   d="scan'208";a="334971960"
+   d="scan'208";a="395046286"
 Received: from lkp-server02.sh.intel.com (HELO 72b1a4bebef6) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 28 Oct 2020 21:23:41 -0700
+  by orsmga001.jf.intel.com with ESMTP; 28 Oct 2020 21:23:41 -0700
 Received: from kbuild by 72b1a4bebef6 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kXzTQ-00003P-Ng; Thu, 29 Oct 2020 04:23:40 +0000
-Date:   Thu, 29 Oct 2020 12:23:28 +0800
+        id 1kXzTQ-00003R-O1; Thu, 29 Oct 2020 04:23:40 +0000
+Date:   Thu, 29 Oct 2020 12:23:24 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:fixes] BUILD SUCCESS
- db507d45f064758d2bd21792d8ba6a8b440906a6
-Message-ID: <5f9a43c0.bnx5Oq3XmukLugB2%lkp@intel.com>
+Subject: [pinctrl:devel] BUILD SUCCESS
+ e2d6e5b8aa44471f0a4614fc924f7ced659d3d14
+Message-ID: <5f9a43bc.Y3AipPK5zAXtuyq7%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  fixes
-branch HEAD: db507d45f064758d2bd21792d8ba6a8b440906a6  pinctrl: rockchip: create irq mapping in gpio_to_irq
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  devel
+branch HEAD: e2d6e5b8aa44471f0a4614fc924f7ced659d3d14  pinctrl: mcp23s08: Print error message when regmap init fails
 
 elapsed time: 723m
 
-configs tested: 186
+configs tested: 182
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -88,11 +88,6 @@ ia64                                defconfig
 ia64                        generic_defconfig
 mips                          malta_defconfig
 sh                          lboxre2_defconfig
-mips                           gcw0_defconfig
-powerpc                       ebony_defconfig
-sh                   sh7770_generic_defconfig
-c6x                              allyesconfig
-arm                          simpad_defconfig
 arm                        mvebu_v5_defconfig
 m68k                         amcore_defconfig
 arm                        mvebu_v7_defconfig
@@ -170,6 +165,7 @@ m68k                             allyesconfig
 nios2                               defconfig
 arc                              allyesconfig
 nds32                             allnoconfig
+c6x                              allyesconfig
 nds32                               defconfig
 nios2                            allyesconfig
 csky                                defconfig
