@@ -2,117 +2,149 @@ Return-Path: <SRS0=Je6w=EE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06834C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 19:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F996C4363A
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 19:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B1732076D
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 19:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA4802075E
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Oct 2020 19:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725747AbgJ2TAS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Oct 2020 15:00:18 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38707 "EHLO mga01.intel.com"
+        id S1725940AbgJ2TK4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Oct 2020 15:10:56 -0400
+Received: from mga09.intel.com ([134.134.136.24]:29991 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbgJ2TAR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 29 Oct 2020 15:00:17 -0400
-IronPort-SDR: feIWC+QJVWzVyyVVqblEl+4neV9J8as5JvRzpgs7RDSFR3vFKOE3byQ/uSWppJmCXNaK8JMDlS
- E6vi0a2pgG1w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9789"; a="186285521"
+        id S1725780AbgJ2TK4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 29 Oct 2020 15:10:56 -0400
+IronPort-SDR: sRMlX4S1UZ+i63auon3FDqT8n4BzLkIy54tPdhWbgJtPXgWIdSq0XAFwi1Csh2b1vCG5bHhpm5
+ JTCxvD1j7zmQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9789"; a="168622816"
 X-IronPort-AV: E=Sophos;i="5.77,430,1596524400"; 
-   d="scan'208";a="186285521"
+   d="scan'208";a="168622816"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 12:00:16 -0700
-IronPort-SDR: vYyOwMyWII2nnIDUIc08l8IliMLKBJ603xz01XJ4wF9ile+oI8Rrs6LcTcUNd/cTp7YqSaf8KP
- /Ykq/lp7Cqow==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 12:10:55 -0700
+IronPort-SDR: 0bRmMVfvsg88yuWGgqucJT9pKP03MXE1LGVVZkh39p19J6HqAhreD/hGo3E6Fc9WuAupM3W4+O
+ rQFRInHxqrxg==
 X-IronPort-AV: E=Sophos;i="5.77,430,1596524400"; 
-   d="scan'208";a="525623700"
+   d="scan'208";a="469243898"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 12:00:13 -0700
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 12:10:51 -0700
 Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1kYDAh-001S76-PX; Thu, 29 Oct 2020 21:01:15 +0200
-Date:   Tue, 27 Oct 2020 15:29:11 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-gpio@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, alsa-devel@alsa-project.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 4/8] pinctrl: use krealloc_array()
-Message-ID: <20201027132911.GX4077@smile.fi.intel.com>
-References: <20201027121725.24660-1-brgl@bgdev.pl>
- <20201027121725.24660-5-brgl@bgdev.pl>
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1kYDL0-001SSH-02; Thu, 29 Oct 2020 21:11:54 +0200
+Date:   Thu, 29 Oct 2020 21:11:53 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Ricardo Ribalda <ribalda@google.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Tomasz Figa <tfiga@google.com>
+Subject: Re: [PATCH v1 2/3] Documentation: firmware-guide: gpio-properties:
+ active_low only for GpioIo()
+Message-ID: <20201029191153.GI4077@smile.fi.intel.com>
+References: <CANiDSCtRDwfFo9HE84iujjFe6h9aS6b3B8wkz5Rt0aO8=XMsNg@mail.gmail.com>
+ <20201029144656.GD4077@smile.fi.intel.com>
+ <CANiDSCuNVT=jr8rLyfWhGKNSOy5OnH7YBZaWSguBDVg219OGvQ@mail.gmail.com>
+ <CAHp75VfuZPpBZsyUEyD_R+ZEjPms6Z9L1tDdBKYfusWnbhtyww@mail.gmail.com>
+ <CAHp75Vf-KXSC5x+07rH+wFgv_9xx_+DoMd9ZxTAqr_a5uxc7jA@mail.gmail.com>
+ <CAHp75Vd+doPgSZQEOSAW4oRoAqPUdJyoivtNvbO5d1q-e280Eg@mail.gmail.com>
+ <CANiDSCtNCn+vj=8kgx8oPUbCJS6mLmOckiWpJtobT_FtUCR3YQ@mail.gmail.com>
+ <CANiDSCuJv258cXYgxcWBUVpvQm8tYy0Lrd426e63PHQJAnLYwQ@mail.gmail.com>
+ <CAHp75Vc8FLoi=4Z78mNkDJk_qM_V0EA9s3aGb3qXU-i0vg8wxA@mail.gmail.com>
+ <CANiDSCvD3JqT8pZy7MtuCtGGSP8bUrkndCf6CK866MeH7Hk3sA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201027121725.24660-5-brgl@bgdev.pl>
+In-Reply-To: <CANiDSCvD3JqT8pZy7MtuCtGGSP8bUrkndCf6CK866MeH7Hk3sA@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 01:17:21PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Use the helper that checks for overflows internally instead of manually
-> calculating the size of the new array.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/pinctrl/pinctrl-utils.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-utils.c b/drivers/pinctrl/pinctrl-utils.c
-> index f2bcbf62c03d..93df0d4c0a24 100644
-> --- a/drivers/pinctrl/pinctrl-utils.c
-> +++ b/drivers/pinctrl/pinctrl-utils.c
-> @@ -39,7 +39,7 @@ int pinctrl_utils_reserve_map(struct pinctrl_dev *pctldev,
->  	if (old_num >= new_num)
->  		return 0;
->  
-> -	new_map = krealloc(*map, sizeof(*new_map) * new_num, GFP_KERNEL);
-> +	new_map = krealloc_array(*map, new_num, sizeof(*new_map), GFP_KERNEL);
->  	if (!new_map) {
->  		dev_err(pctldev->dev, "krealloc(map) failed\n");
+On Thu, Oct 29, 2020 at 07:58:39PM +0100, Ricardo Ribalda wrote:
+> On Thu, Oct 29, 2020 at 7:13 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Thu, Oct 29, 2020 at 8:10 PM Ricardo Ribalda <ribalda@google.com> wrote:
+> > > On Thu, Oct 29, 2020 at 6:32 PM Ricardo Ribalda <ribalda@google.com> wrote:
+> > > > On Thu, Oct 29, 2020 at 6:26 PM Andy Shevchenko
+> > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > On Thu, Oct 29, 2020 at 7:20 PM Andy Shevchenko
+> > > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > > On Thu, Oct 29, 2020 at 7:17 PM Andy Shevchenko
+> > > > > > <andy.shevchenko@gmail.com> wrote:
 
-...and here?
+...
 
->  		return -ENOMEM;
-> -- 
-> 2.29.1
+> > > > > > > > Let me try to explain myself again:
+> > > > > > > >
+> > > > > > > > I have a gpio pin that produces IRQs on both edges. so ActiveLevel is Both
+> > > > > > > >
+> > > > > > > > The problem is that the value of that pin is inverted: Low means 1 and
+> > > > > > > > high means 0.
+> > > > > > > >
+> > > > > > > > How can I describe that the pin "is inverted" without using the _DSD field?
+> > > > > > >
+> > > > > > > "Both edges" and "inverted" or "polarity low" in one sentence make no sense.
+> > > > > >
+> > > > > > To be on the constructive side, I can *imagine* so badly designed
+> > > > > > hardware that uses level and edge at the same time, but before I go to
+> > > > > > conclusions, can you share relevant (pieces of) datasheet?
+> > > > >
+> > > > > The [1] is a real example of how GPIO is being used to detect changing
+> > > > > of current level of the signal.
+> > > > > Note, ACPI tables for that device have problems [2], but I guess you
+> > > > > may get the idea.
+> > > >
+> > > >
+> > > > This is exactly what I need to do. Get an IRQ whenever the value
+> > > > changes. But the pin is "inverted"
+> > > >
+> > > > This is the "schematic" :  https://ibb.co/f8GMBbP . I want to pass to
+> > > > userspace a "1" when the switch is closed and "0"  when it is open.
+> > > >
+> > > And there are also other devices where the swith works the other way
+> > > around, so the acpi should be verbose enough to describe both
+> > > situations.
+> > >
+> > > With my proposal (use the same active_low field as with GpioIO) we
+> > > cover both usecases.
+> >
+> > Even without your proposal it's feasible.
+> > You see, the problem here is that if you describe GPIO as Interrupt,
+> > the edge and level together make complete nonsense.
+> >
+> > Solution: do *not* describe it as Interrupt.
 > 
+> Now I get my mistake:
+> 
+> I thought that gpiod_to_irq will not work unless it was a GpioInt()
+> but it works fine. So in this case I will just convert it to that.
+
+It's actually that gpio_to_irq() is solely for GPIOs which initially are not IRQs.
+
+> Could we say that doing gpiod_get_value() from a GpioInt() is always
+> wrong?
+
+But it's not wrong. Some cases simply make little or no sense, but in principal
+why not? Yes, it may be fragile or too much customized.
+
+> Can we modify the code to avoid it?
+
+GpioInt() is orthogonal to GPIO APIs in Linux kernel. It close to be
+impossible. Also see above.
+
+> Sorry for the confusion and thanks for your help.
+
+No problem, you're welcome, it's good that you started a discussion!
+
+> > > > > [1]: https://elixir.bootlin.com/linux/latest/source/drivers/extcon/extcon-intel-int3496.c#L138
+> > > > > [2]: https://elixir.bootlin.com/linux/latest/source/drivers/extcon/extcon-intel-int3496.c#L45
 
 -- 
 With Best Regards,
