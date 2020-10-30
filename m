@@ -2,95 +2,98 @@ Return-Path: <SRS0=oXsu=EF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394A3C00A89
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 14:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A050DC00A89
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 15:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC88C2075E
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 14:58:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KPV3bpHH"
+	by mail.kernel.org (Postfix) with ESMTP id 3824E20729
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 15:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604072225;
+	bh=piDP34L7yDaL+NISKJuKg/cP0skP9zXEe8+3aMUTnr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LtoZcz5n5z7XBb9+lHbpUxWfidlfyoh9vlc5nbIlSfZ5GlokVy8ElVx84pLzgzXSD
+	 Xk2Pk/IxiYl51VEt9A497tqrS7CVhu21dPT5PpTL5x55k21/fTmJ+3fgfX0OYAeXYS
+	 pBTuoZNNuKYAH35s9bsoyFQmm/fnhb1zkrhAv/DU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbgJ3O6h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Oct 2020 10:58:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbgJ3O6g (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2020 10:58:36 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC10C0613CF
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 07:58:34 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id p5so9054711ejj.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 07:58:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i2vW/gUa8KABq6vJRUyix0aI3FxbHcHCVNJ+zNv4J+U=;
-        b=KPV3bpHHrAzBaaC50FEZp+AnzqFoDsf4z8fG2+W4QSR91laGEjppD2dpd2cPkJZauC
-         qEcnqyokHcyC/alN6Zz1evo0v6FklEUsIcAlIBHlWmh+p5dlgqj5bTy20UcTr5kpJ2Ln
-         Xjn3QVSADxZAq22aqaHl7jdGHHSpuAfyBIBsMRkPWTA/IBeRuZbKJXr8DmwMdpdhIrPb
-         205xpSbwsxBUDgFC23oKMYvmnUtvbEj0Y6uD9Z54izsByibk6E/MkizklE7OH+T4ko+W
-         ELOVHsUsUjbAtx1KWcn55nqyRK8UJafNsSkFd9igeyIjYA9RJPlA7fpbMT924mVbq96P
-         FJAw==
+        id S1726691AbgJ3PhE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Oct 2020 11:37:04 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39392 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbgJ3PhE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2020 11:37:04 -0400
+Received: by mail-ot1-f65.google.com with SMTP id z16so726610otq.6;
+        Fri, 30 Oct 2020 08:37:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i2vW/gUa8KABq6vJRUyix0aI3FxbHcHCVNJ+zNv4J+U=;
-        b=kVvpQqxaPwKVCvivrxobLl1fX78p23aV1wwxsbdzoOkhR36kw4uMipWE49F9w6hTOT
-         5MDCrxse2AEril7v1H4weVgFaOlblax9/+LYU3oYA4pos2S4aXcA/9dY1ttfbl/rqxW5
-         vLNmFyV7jbg3Ysoa6bvSBGyLaZYij0yX6D7m2AVvsJfLsSl4aicWaeJz7UQYPZbfSDD6
-         14WofHKzpeI/fxJiFe5H3Nt+swokC4m2iHu3YWQUc97pAlnIWc2yF2n8yL1KxzZc0pk4
-         nfZ+ia8EZA3Px5ngnpr2IluMKPi2Svygl691R3OvLWt2fWJs6UV/5/nTES84suRB84uj
-         SFzA==
-X-Gm-Message-State: AOAM531irwxaBFdL81cbz1z9QCd31ysmJTSKetVhZ/blqJwdnoP9kOB/
-        pAwrDedwcpiAC5Lc8iI/0B1VHx+rWoqns9CuX0OAnN0dRJA=
-X-Google-Smtp-Source: ABdhPJwAe5vVmO6vKwNIvkOdI5Rlek4y2s3XyxCFNDw0GCTi9mdwLw0HpOOabuKkXdvVQpzi81tYQoZqMo3W99mrbmw=
-X-Received: by 2002:a17:906:6a8b:: with SMTP id p11mr2948429ejr.470.1604069913474;
- Fri, 30 Oct 2020 07:58:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ofFXL9c4WfPJ0vh1CrcqW4yOOzqJ5jwhDnFefF3udus=;
+        b=oHPFOZlT419zlIqkVRtxWBQiD7ZTouxU45CvLFJHNo+doHw0eFGrUOshY4VtYlhK14
+         T6eZzvOdNgg/gp225vV/mPajIZ7F5dFmHHs0in/gU0FgHPAeLm/TrKjvA9JP+QS0GLid
+         IAVasBEjgrPG/TVSLRVxTGSawiUdMt7y5vYs8Oi8Y7MPADz3+iS1udp9eQqQz1kAR3QU
+         wZMVJsnva8PrOiKyv3UtkSaxA7WJLhyodqjlbdxhWASvRRjuW4aEt3NeiqjmPP3W+omG
+         MEpoql9yTfkNvayFuZVzHkhSxfQWBYZWi9VdOXaNzY8SuidcCSZfSILesW2Wv/SWFmlr
+         RNMg==
+X-Gm-Message-State: AOAM5331bKr6E1PiVH5FRg1ZGH8K1dOQC9x4hD0y2M8ZnpyDGba+ScHc
+        TJMbXQQ43oHskxwL9PSA/A==
+X-Google-Smtp-Source: ABdhPJycwUiV1vpf0o9YvAtnAVAgs/nLhIp6vbRgzxDr6FgbxTRz8AT2NZiGH5vGAw9RUdLMKfrjGg==
+X-Received: by 2002:a05:6830:1345:: with SMTP id r5mr2026633otq.6.1604072223527;
+        Fri, 30 Oct 2020 08:37:03 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m13sm1363306otn.20.2020.10.30.08.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2020 08:37:02 -0700 (PDT)
+Received: (nullmailer pid 3888717 invoked by uid 1000);
+        Fri, 30 Oct 2020 15:37:01 -0000
+Date:   Fri, 30 Oct 2020 10:37:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     devel@driverdev.osuosl.org, linux-pwm@vger.kernel.org,
+        Scott Branden <sbranden@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        linux-input@vger.kernel.org, sboyd@kernel.org,
+        gregkh@linuxfoundation.org, Ray Jui <rjui@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
+        u.kleine-koenig@pengutronix.de, p.zabel@pengutronix.de,
+        dmitry.torokhov@gmail.com
+Subject: Re: [PATCH v2 08/10] dt-bindings: pwm: Add binding for RPi firmware
+ PWM bus
+Message-ID: <20201030153701.GA3888665@bogus>
+References: <20201022155858.20867-1-nsaenzjulienne@suse.de>
+ <20201022155858.20867-9-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-References: <20201028141504.1729093-1-geert+renesas@glider.be>
-In-Reply-To: <20201028141504.1729093-1-geert+renesas@glider.be>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 30 Oct 2020 15:58:22 +0100
-Message-ID: <CAMpxmJWXUHCOMdZOjqXADx3jM2p0pQUdm2j=qO96ZgJr46JxuA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] gpio: rcar: Cleanups and improvements
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201022155858.20867-9-nsaenzjulienne@suse.de>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 3:15 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
->         Hi Linus, Bartosz,
->
-> This patch series contains a few cleanups and improvements for the R-Car
-> GPIO driver.  All four patches are independent.
->
-> The gpio_chip.get_multiple() implementation has been tested on R-Car
-> Gen2 and Gen3.
->
-> Thanks for your comments!
->
-> Geert Uytterhoeven (4):
->   gpio: rcar: Cache gpiochip_get_data() return value
->   gpio: rcar: Align register offsets
->   gpio: rcar: Rework hardware features handling
->   gpio: rcar: Implement gpio_chip.get_multiple()
->
->  drivers/gpio/gpio-rcar.c | 87 ++++++++++++++++++++++++++--------------
->  1 file changed, 58 insertions(+), 29 deletions(-)
->
+On Thu, 22 Oct 2020 17:58:55 +0200, Nicolas Saenz Julienne wrote:
+> The PWM bus controlling the fan in RPi's official PoE hat can only be
+> controlled by the board's co-processor.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> 
+> ---
+> Changes since v1:
+>  - Update bindings to use 2 #pwm-cells
+> 
+>  .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
+>  .../pwm/raspberrypi,firmware-pwm.h            | 13 ++++++++++++
+>  2 files changed, 33 insertions(+)
+>  create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
+> 
 
-Applied the entire series, thanks!
-
-Bartosz
+Reviewed-by: Rob Herring <robh@kernel.org>
