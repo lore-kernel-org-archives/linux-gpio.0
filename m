@@ -2,224 +2,189 @@ Return-Path: <SRS0=oXsu=EF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C9EC4741F
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 16:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED31AC00A89
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 16:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBA862075E
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 16:34:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B1F82075E
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Oct 2020 16:43:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IPXpUuBY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="INVfZz/f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbgJ3Qea (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Oct 2020 12:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54508 "EHLO
+        id S1727268AbgJ3QnH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Oct 2020 12:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgJ3Qe3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2020 12:34:29 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D1C5C0613CF
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 09:34:29 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id x7so7154474wrl.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 09:34:29 -0700 (PDT)
+        with ESMTP id S1727264AbgJ3QnG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2020 12:43:06 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECB4C0613DA
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 09:43:05 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id x20so7034486ilj.8
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 09:43:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OYYG+bPEQAKrvnUyay3Ge798oMm5TIrWSkpr0tXXXgA=;
-        b=IPXpUuBYHk3ry3LWCiDQtSu6JVXDRMasFEoSmK0oT5trABpOaXDfsD728+f337p+lI
-         ny80+nakxBsl5E5OT0ehurxFoDzVSQmTijOASIgnXyAFbkfnyjoqHNJ1F5GDZEX7vb8f
-         wLQAWg2f6JKwz+Y7vmg31ax+0UmLS4JcwQnLIGdAdLl5GAHwQYQJ8ySrmIZCG0dsggXP
-         hWEwyvfMF9RbsDxxfkKw8qEGhCVKLKg5MXWryea2MXp9Di31OysTGNr+SzvXFqvy32ii
-         BCxUvQCtzMDB0Meg2q6/YicGfLCQtwWyIQaLyO9GP8AvmpOjqFXDXCvBNl7SveASSvwP
-         5ysA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NZmqGfCg08N6iXx9q7TVWlSnhQqIDOwOjzOwbvXDxjI=;
+        b=INVfZz/fkvsZivy8jdRFY4jjuumPUnT03fIMmAZxhr2j3OQtTxmqWeMui9FFLMvZFz
+         QB2ePhBsJkuNysGjMHbU9DiLLxlLmss4JFzjBmUNAkJoiiGzYBFH/upOKm0AUQMizu+W
+         okAB9PgkVOM5lyq7RfM3eZWziu4Lw6xFmIPsA3WEdWrepzCLkMsPGFysW4PIdG4Ix46W
+         ABDHiqA089OjzR7YGXqWWnY73UPmGi5ssu5dObic6I8EipSHtDNSFTIEabkYZFtOUw53
+         gKZFvyCe8mIA4cQPQ5Ji/NguzzOPrnGBpJ5jXdtWnz2BLO+k8PETRjkg1JznRZelvTOY
+         uyUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OYYG+bPEQAKrvnUyay3Ge798oMm5TIrWSkpr0tXXXgA=;
-        b=M3/Tyk354BwRypia//LwwDRxGvoVPs1Y9M8+Q7LW3+8GG9bNpJNO+b3hrpjsUP0PLL
-         6txTWWnDy9o4mIx6TmjatP9NeYKAHAdZNAOJAikIWtYhGX/SE4EU4ybKO4XSUy2GdhIv
-         XN47e+vdELo9+Mb0610t7/DCPIKbby7NjK+OknLNWl69YDRhvzuBm/vqKvFV0CJ7nEO0
-         P8W6Wh7/avpSGanJNS/dtj6DMkvj7qV3IAuqw4GHtjnZAlQXg6vvIakDf6m1Ks3gBoZ3
-         qvmKixsi3Ai0Q+/4Dz7yKUFgDJDWemA5HYxTexfnsAoNpuRSuZbNbp52tK9P1fX3bZAS
-         s9Dg==
-X-Gm-Message-State: AOAM533hglzPsb5PB03RV6W4NYmQF4S/1IH1Z22ET/P9Uf78e5+39uVN
-        vEWT48sMQua3/zTMzdyk9i8YYw==
-X-Google-Smtp-Source: ABdhPJxXWB+Eh9fZ/z7qudWHHBxPDXya7nps40isjscACIutSC0MFscAxNvam9WGTjq6I1q2ExdESg==
-X-Received: by 2002:adf:ef45:: with SMTP id c5mr4507644wrp.117.1604075668061;
-        Fri, 30 Oct 2020 09:34:28 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
-        by smtp.gmail.com with ESMTPSA id z6sm5031989wmi.1.2020.10.30.09.34.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2020 09:34:27 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     linus.walleij@linaro.org, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add sm8250 lpass lpi pinctrl bindings
-Date:   Fri, 30 Oct 2020 16:34:20 +0000
-Message-Id: <20201030163421.14041-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20201030163421.14041-1-srinivas.kandagatla@linaro.org>
-References: <20201030163421.14041-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NZmqGfCg08N6iXx9q7TVWlSnhQqIDOwOjzOwbvXDxjI=;
+        b=MMfTiKrAUhTUwic5DoKIGxayLvumqOc+hcTzB6UA7rD6F5b2U2XcAlLtYXnpSEaXzk
+         tulU8m3fuu8Ytz2/AxRTmcGm1bBg7m7ovhQwRU/csUr1+XOJYQg6t/NHjGy/pHZfd2lC
+         EAvbyRSIyzdUII3gCv8tjZLOwkA2zbhfzpZ69LLG0eUhVcuuUodnFHoa73lPB/KWve0Z
+         XgpHRkdsLQYaBcbnL05Yahu4wtZ1JaCcvRWaTr8sqHlfIF3UriTepyj1AVgLBNH6gT+e
+         0bsx2L/WGhjQL1MRrJh3ct5mL4BDTHgDbQTXK4/MX64N13viMKktNbA8+xF9ep5zSnnx
+         XS4Q==
+X-Gm-Message-State: AOAM530nJfjlf6SXlF1FuEWV4BjuHHDk+eezUfBuDIZAZGUqX0DH2ID0
+        x5ZmtPC//GNeuKZacKj13ezx2FHs4QGTceSvJH+GOg==
+X-Google-Smtp-Source: ABdhPJwYf7SWuKIRh8xsBOBodbVLmuU+KCM1QaVpZsez95JZOYKTbDYung3PLxm+lfmttII+vBXdnzsUUs8NHjrseg0=
+X-Received: by 2002:a92:6403:: with SMTP id y3mr2528711ilb.72.1604076184121;
+ Fri, 30 Oct 2020 09:43:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1604042072.git.mchehab+huawei@kernel.org> <5bc78e5b68ed1e9e39135173857cb2e753be868f.1604042072.git.mchehab+huawei@kernel.org>
+In-Reply-To: <5bc78e5b68ed1e9e39135173857cb2e753be868f.1604042072.git.mchehab+huawei@kernel.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 30 Oct 2020 10:42:53 -0600
+Message-ID: <CANLsYkxc2uzA57Hg5OX31JOx08JCZfynzebjABv=6H01796xGA@mail.gmail.com>
+Subject: Re: [PATCH v2 31/39] docs: ABI: cleanup several ABI documents
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
+        =?UTF-8?Q?Marek_Marczykowski=2DG=C3=B3recki?= 
+        <marmarek@invisiblethingslab.com>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+        Alexander Antonov <alexander.antonov@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Andreas Klinger <ak@it-klinger.de>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Chao Yu <chao@kernel.org>,
+        Christian Gromm <christian.gromm@microchip.com>,
+        Colin Cross <ccross@android.com>, Dan Murphy <dmurphy@ti.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Danil Kipnis <danil.kipnis@cloud.ionos.com>,
+        David Sterba <dsterba@suse.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Jonas Meurer <jonas@freesources.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Kranthi Kuntala <kranthi.kuntala@intel.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>, Len Brown <lenb@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Oleh Kravchenko <oleg@kaa.org.ua>, Pavel Machek <pavel@ucw.cz>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Peter Chen <peter.chen@nxp.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Roman Sudarikov <roman.sudarikov@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Stefan Achatz <erazor_de@users.sourceforge.net>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Rix <trix@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Vineela Tummalapalli <vineela.tummalapalli@intel.com>,
+        Wu Hao <hao.wu@intel.com>, ceph-devel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i3c@lists.infradead.org,
+        linux-iio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add device tree binding Documentation details for Qualcomm SM8250
-LPASS(Low Power Audio Sub System) LPI(Low Power Island) pinctrl driver.
+On Fri, 30 Oct 2020 at 01:41, Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> There are some ABI documents that, while they don't generate
+> any warnings, they have issues when parsed by get_abi.pl script
+> on its output result.
+>
+> Address them, in order to provide a clean output.
+>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #for IIO
+> Reviewed-by: Tom Rix <trix@redhat.com> # for fpga-manager
+> Reviewed-By: Kajol Jain<kjain@linux.ibm.com> # for sysfs-bus-event_source-devices-hv_gpci and sysfs-bus-event_source-devices-hv_24x7
+> Acked-by: Oded Gabbay <oded.gabbay@gmail.com> # for Habanalabs
+> Acked-by: Vaibhav Jain <vaibhav@linux.ibm.com> # for sysfs-bus-papr-pmem
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- .../pinctrl/qcom,lpass-lpi-pinctrl.yaml       | 129 ++++++++++++++++++
- 1 file changed, 129 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml
+>  .../testing/sysfs-bus-coresight-devices-etb10 |   5 +-
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml
-new file mode 100644
-index 000000000000..8a0732574aee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml
-@@ -0,0 +1,129 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/qcom,lpass-lpi-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Technologies, Inc. Low Power Audio SubSystem (LPASS)
-+  Low Power Island (LPI) TLMM block
-+
-+maintainers:
-+  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-+
-+description: |
-+  This binding describes the Top Level Mode Multiplexer block found in the
-+  LPASS LPI IP on most Qualcomm SoCs
-+
-+properties:
-+  compatible:
-+    const: qcom,sm8250-lpass-lpi-pinctrl
-+
-+  reg:
-+    minItems: 2
-+    maxItems: 2
-+
-+  clocks:
-+    items:
-+      - description: LPASS Core voting clock
-+      - description: LPASS Audio voting clock
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: audio
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    description: Specifying the pin number and flags, as defined in
-+      include/dt-bindings/gpio/gpio.h
-+    const: 2
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+#PIN CONFIGURATION NODES
-+patternProperties:
-+  '^.*$':
-+    if:
-+      type: object
-+    then:
-+      properties:
-+        pins:
-+          description:
-+            List of gpio pins affected by the properties specified in this
-+            subnode.
-+          items:
-+            oneOf:
-+              - pattern: "^gpio([0-9]|[1-9][0-9])$"
-+          minItems: 1
-+          maxItems: 14
-+
-+        function:
-+          enum: [ gpio, swr_tx_clk, qua_mi2s_sclk, swr_tx_data1, qua_mi2s_ws,
-+                  swr_tx_data2, qua_mi2s_data0, swr_rx_clk, qua_mi2s_data1,
-+                  swr_rx_data1, qua_mi2s_data2, swr_tx_data3, swr_rx_data2,
-+                  dmic1_clk, i2s1_clk, dmic1_data, i2s1_ws, dmic2_clk,
-+                  i2s1_data0, dmic2_data, i2s1_data1, i2s2_clk, wsa_swr_clk,
-+                  i2s2_ws, wsa_swr_data, dmic3_clk, i2s2_data0, dmic3_data,
-+                  i2s2_data1 ]
-+          description:
-+            Specify the alternative function to be configured for the specified
-+            pins.
-+
-+        drive-strength:
-+          enum: [2, 4, 6, 8, 10, 12, 14, 16]
-+          default: 2
-+          description:
-+            Selects the drive strength for the specified pins, in mA.
-+
-+        slew-rate:
-+          enum: [0, 1, 2, 3]
-+          default: 0
-+          description: |
-+              0: No adjustments
-+              1: Higher Slew rate (faster edges)
-+              2: Lower Slew rate (slower edges)
-+              3: Reserved (No adjustments)
-+
-+        bias-pull-down: true
-+
-+        bias-pull-up: true
-+
-+        bias-disable: true
-+
-+        output-high: true
-+
-+        output-low: true
-+
-+      required:
-+        - pins
-+        - function
-+
-+      additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/sound/qcom,q6afe.h>
-+    lpi_tlmm: pinctrl@33c0000 {
-+        compatible = "qcom,sm8250-lpass-lpi-pinctrl";
-+        reg = <0x33c0000 0x20000>,
-+              <0x355a000 0x1000>;
-+        clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-+                 <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-+        clock-names = "core", "audio";
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        gpio-ranges = <&lpi_tlmm 0 0 14>;
-+    };
--- 
-2.21.0
+For the CoreSight part:
 
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
