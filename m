@@ -2,134 +2,159 @@ Return-Path: <SRS0=I6Ii=EG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0670C00A89
-	for <linux-gpio@archiver.kernel.org>; Sat, 31 Oct 2020 00:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0992C00A89
+	for <linux-gpio@archiver.kernel.org>; Sat, 31 Oct 2020 00:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB66922228
-	for <linux-gpio@archiver.kernel.org>; Sat, 31 Oct 2020 00:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BCEB22249
+	for <linux-gpio@archiver.kernel.org>; Sat, 31 Oct 2020 00:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDXLccTo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vkv+Mg8N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725562AbgJaABq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Oct 2020 20:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39348 "EHLO
+        id S1725768AbgJaAMz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Oct 2020 20:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbgJaABq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2020 20:01:46 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8301FC0613D5;
-        Fri, 30 Oct 2020 17:01:46 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id j18so6692398pfa.0;
-        Fri, 30 Oct 2020 17:01:46 -0700 (PDT)
+        with ESMTP id S1725562AbgJaAMy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2020 20:12:54 -0400
+Received: from mail-oo1-xc42.google.com (mail-oo1-xc42.google.com [IPv6:2607:f8b0:4864:20::c42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF63C0613D7
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 17:12:54 -0700 (PDT)
+Received: by mail-oo1-xc42.google.com with SMTP id j12so1998145oou.6
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2020 17:12:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rCRjK7Akw0TOdsFtKnu+v7xP+ZfNkg9XvMoHOEpcYoo=;
-        b=mDXLccToyKLQR2Zu/xUrx5vtQ8+geb+V17+23UgOyh8JGtyPOkLXH5unON2ptL/o0T
-         //pzJgF2R7YMAXZQZhfZSZ11JllbqaphL6blgtmtD+EeZPR00fThf/mIWgsWcjsT8a/U
-         QnXkfSUv5ke1mKIaAetU8Ca9uQgA3cvVvNMTA+0vctqQFu8CLRCdXyfwKb5Btu+6zH6a
-         5M+5A2RPpmC2Lf5wVDmKB4IAlh9ZPEax9dZTLV1OQ9XYauRRy9+woBC2SyUQZTiPgXUQ
-         sWeeFwQysluaJbJd1kbBvqpEs6WxJN4GGInC+KL7yWj5tkOMVFlb4wxEeOYq6asYibjU
-         hGbA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jmkNEXF5cOAT44oNaa0CAo3EqS9dZFXr7FPYKKXyzfA=;
+        b=vkv+Mg8Nts49zK21uhvvUUe5HteZqk+9SKh6/SBdxMAor/b0L82+k4Y9K+OUag78Wv
+         Jwd17Mdpa5WLYk4wh0/aopakx193gqDo+w4ydvNcXNKYsyGYp7BM8O4M1B9z4c2CGzWG
+         VJBdfedgdDtyB/TImJNMC13mpL5PkjU1wyUJjFWkmpqpiPaDPQqqFOYvrCiuJOKE8HFO
+         xB/KsHdv8+71SRb1uWE6yyuPcUkEZsp2pDrfsUlvzk46cgY8i4Y2yQ4GPekvuoMtZjnC
+         LiRWGuARhTqeOkeJy1gj7EU8+btrs+MC4WThY59ACMLglIDfdvkZpIvX4aGAKHNPs6Qs
+         3u3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rCRjK7Akw0TOdsFtKnu+v7xP+ZfNkg9XvMoHOEpcYoo=;
-        b=AcHzFfvUfFByLfSWQPYVBA+GQ1rk7y5VZ2TQt5NHJs4nOgThTIODToZXNR2VE4R0db
-         NUPBkletnej0BiRyxicJCuDQbgwG7oYw2udiWWB/AQUZzM+qQ01Lvr15LtJkge+SwpnU
-         H6UiNOSzt0+kNkjRZVG4C6iEk0JzPU6xP1Nh6aCcP+eI6Yds01LOWyIWbeod5LdDs3uK
-         HT8PjMAHU8KqbSJ+yWySYxUu9Z2tpnPUAbeYpumqrTc78jfLNVTjMybMk5e00v0Ug70e
-         3x9cCVtLiaVDBayRDTyk6p7t93kpNlwo5eNnhJGFvwqRFe5RZc5Ww9r4hEI9FnKC2rqj
-         u3Yw==
-X-Gm-Message-State: AOAM530u0na2Z2YKvUEuQdZA1EeIAjPNlmjy3OHDFRHoT3EVG/4J1Ass
-        lf9d3rhHDWK7eoGBwa/gSqTSanO6atc=
-X-Google-Smtp-Source: ABdhPJw28wzB7V6qzBb4EwmqBrlI8vlxYK64QZkjfCmcBvKKGci/ak9nsIRth2GMU0OVXaVJHhRucg==
-X-Received: by 2002:aa7:9245:0:b029:156:552a:1275 with SMTP id 5-20020aa792450000b0290156552a1275mr11492999pfp.12.1604102505787;
-        Fri, 30 Oct 2020 17:01:45 -0700 (PDT)
-Received: from sol (106-69-160-250.dyn.iinet.net.au. [106.69.160.250])
-        by smtp.gmail.com with ESMTPSA id h10sm6397352pgj.69.2020.10.30.17.01.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2020 17:01:44 -0700 (PDT)
-Date:   Sat, 31 Oct 2020 08:01:39 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] gpiolib: cdev: allow edge event timestamps to be
- configured as REALTIME
-Message-ID: <20201031000139.GA7042@sol>
-References: <20201014231158.34117-1-warthog618@gmail.com>
- <CACRpkdbTsN6p4n3f9SJrgAjdkzDu2S67rU3tLWwX0X50ekjctQ@mail.gmail.com>
- <20201028232211.GB4384@sol>
- <CAMpxmJX61dRE_d2Eyu2nXKx64rNrrTfScrdg=Cc-N-R_FKfUNg@mail.gmail.com>
- <CAMpxmJXiObcKyoE264oyiZOs08=uRYno6siMzz6BH+jmT_NKgQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jmkNEXF5cOAT44oNaa0CAo3EqS9dZFXr7FPYKKXyzfA=;
+        b=J5QTwAhzWD9wMdggHmNNvuqKkZJDDIMA6VELdum6Ob8P8MzyhakJIIovs7g9Ro4Y2P
+         XIucQEzuss0a09z83b+e7/vnpEHkGgjr9VH6k89paHIBZuKDq1K+1hQ4gwZ3h/oRl+Nj
+         40qvkXgNOjf11kRBn0yuHr43JU9wQPuS/dL4hh/gHCLLnpP0oK3cG/eyvCAjaQOoE41E
+         HAyzaJImEpl208hOHH4oi27nh5CLWGfhgP+1cECDZqG9QwmKxvfieRjJDEpQIRirXHje
+         fWspVVzTcqhdo7vyjoIsgNRgMTov17Epsjja/xAw0AvqcGgqYbNWCM+x3Ywc9NwK/dI3
+         PaeA==
+X-Gm-Message-State: AOAM532OFTQFcRSYZe8mCv8GBPVw/ZQQh39ZOl6sxAvitteESvWRaDXu
+        DKRJ+aAjbKtjAzOEB6YHQI8Lmz48objHPdHTahuSqw==
+X-Google-Smtp-Source: ABdhPJyg1P2jxuPJ3INlKNqxkesvEgxWdFy6INsw9yDE1UyPF53CbdnrlycVF/620SDHWA8iQrGcl+qCxF8X7thlHv4=
+X-Received: by 2002:a4a:5182:: with SMTP id s124mr3812313ooa.88.1604103173648;
+ Fri, 30 Oct 2020 17:12:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMpxmJXiObcKyoE264oyiZOs08=uRYno6siMzz6BH+jmT_NKgQ@mail.gmail.com>
+References: <20200625001039.56174-1-john.stultz@linaro.org>
+ <20200625001039.56174-6-john.stultz@linaro.org> <20200702141825.GA16941@willie-the-truck>
+ <CALAqxLVZ2EhutYjOt7Be1RgnYwHT6-4m6DxA-t1wuxuSy=6yDQ@mail.gmail.com>
+ <20200710075411.GA30011@willie-the-truck> <CALAqxLWadLrxckRHRAR0Q417RnFKquQJbRfO_DLEVH56cykRow@mail.gmail.com>
+ <20200713204133.GA3731@willie-the-truck> <CALAqxLUDVEq4ds2Wbic6uaK3=dELKKO4eGQxjHFFz19GeUFd_w@mail.gmail.com>
+ <20201028135118.GA28554@willie-the-truck> <ae6ba27a-d3c8-8b98-c263-ec779ef35738@arm.com>
+ <CALAqxLW13=cvTX3ghskb9uG_YoVh7kvp8UQGUB8mVDGYXHWpVQ@mail.gmail.com> <b5c5146d-4112-e0c2-d1dd-2ad0882190b3@arm.com>
+In-Reply-To: <b5c5146d-4112-e0c2-d1dd-2ad0882190b3@arm.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 30 Oct 2020 17:12:41 -0700
+Message-ID: <CALAqxLW=11O=bRQbVr_Bg6t97BhfxAqLC1OmXRATNjKkbxVUTA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] firmware: QCOM_SCM: Allow qcom_scm driver to be
+ loadable as a permenent module
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Maulik Shah <mkshah@codeaurora.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Marc Zyngier <maz@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Andy Gross <agross@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Todd Kjos <tkjos@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 03:52:24PM +0100, Bartosz Golaszewski wrote:
-> On Fri, Oct 30, 2020 at 3:49 PM Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
+On Fri, Oct 30, 2020 at 7:12 AM Robin Murphy <robin.murphy@arm.com> wrote:
+> On 2020-10-30 01:02, John Stultz wrote:
+> > On Wed, Oct 28, 2020 at 7:51 AM Robin Murphy <robin.murphy@arm.com> wrote:
+> >> Hmm, perhaps I'm missing something here, but even if the config options
+> >> *do* line up, what prevents arm-smmu probing before qcom-scm and
+> >> dereferencing NULL in qcom_scm_qsmmu500_wait_safe_toggle() before __scm
+> >> is initialised?
 > >
-> > On Thu, Oct 29, 2020 at 12:22 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > >
-> > > On Wed, Oct 28, 2020 at 05:01:49PM +0100, Linus Walleij wrote:
-> > > > On Thu, Oct 15, 2020 at 1:12 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > > >
-> > > > > This patch set adds the option to select CLOCK_REALTIME as the source
-> > > > > clock for line events.
-> > > > >
-> > > > > The first patch is the core of the change, while the remaining two update
-> > > > > the GPIO tools to make use of the new option.
-> > > > >
-> > > > > Changes for v2:
-> > > > >  - change line_event_timestamp() return to u64 to avoid clipping to 32bits
-> > > > >    on 32bit platforms.
-> > > > >  - fix the line spacing after line_event_timestamp()
-> > > >
-> > > > Where are we standing with this patch set? Good to go so
-> > > > I should just try to merge it?
-> > > >
-> > >
-> > > I'm fine with it, especially now that I've tested it on 32bit platforms
-> > > as well as 64bit.
-> > >
-> > > Bart was ok with v1, and I doubt the changes for v2 would negatively
-> > > impact that, though I did overlook adding his review tag.
-> > >
-> > > Cheers,
-> > > Kent.
-> > >
-> > > > Yours,
-> > > > Linus Walleij
+> > Oh man, this spun me on a "wait, but how does it all work!" trip. :)
 > >
-> > I'll take it through my tree then.
+> > So in the non-module case, the qcom_scm driver is a subsys_initcall
+> > and the arm-smmu is a module_platform_driver, so the ordering works
+> > out.
 > >
-> > Bartosz
-> 
-> The series no longer applies on top of v5.10-rc1. Could you rebase and resend?
-> 
+> > In the module case, the arm-smmu code isn't loaded until the qcom_scm
+> > driver finishes probing due to the symbol dependency handling.
+>
+> My point is that module load != driver probe. AFAICS you could disable
+> drivers_autoprobe, load both modules, bind the SMMU to its driver first,
+> and boom!
+>
+> > To double check this, I added a big msleep at the top of the
+> > qcom_scm_probe to try to open the race window you described, but the
+> > arm_smmu_device_probe() doesn't run until after qcom_scm_probe
+> > completes.
+>
+> I don't think asynchronous probing is enabled by default, so indeed I
+> would expect that to still happen to work ;)
+>
+> > So at least as a built in / built in, or a module/module case its ok.
+> > And in the case where arm-smmu is a module and qcom_scm is built in
+> > that's ok too.
+>
+> In the built-in case, I'm sure it happens to work out similarly because
+> the order of nodes in the DTB tends to be the order in which devices are
+> autoprobed. Again, async probe might be enough to break things; manually
+> binding drivers definitely should; moving the firmware node to the end
+> of the DTB probably would as well.
 
-Nuts, it relies on my doc tidy-up series that Linus has pulled into
-fixes, and so will likely go into v5.10-rc2??
+So, with modules, I turned on async probing for the two drivers, as
+well as moved the firmware node to the end of the dtb, and couldn't
+manage to trip it up even with a 6 second delay in the qcom_scm probe
+function.
 
-Specifically it is based over/conflicts with:
-2cc522d3931b gpio: uapi: kernel-doc formatting improvements
+It was only when doing the same with everything built in that I did
+manage to trigger the issue. So yes, you're right!  And it is an issue
+more easily tripped with everything built in statically (and not
+really connected to this patch series).
 
-If I rebase it onto devel then you will get a conflict when those merge.
-Is that what you want?
+> > Its just the case my patch is trying to prevent is where arm-smmu is
+> > built in, but qcom_scm is a module that it can't work (due to build
+> > errors in missing symbols,  or if we tried to use function pointers to
+> > plug in the qcom_scm - the lack of initialization ordering).
+> >
+> > Hopefully that addresses your concern? Let me know if I'm still
+> > missing something.
+>
+> What I was dancing around is that the SCM API (and/or its users) appears
+> to need a general way to tell whether SCM is ready or not, because the
+> initialisation ordering problem is there anyway. Neither Kconfig nor the
+> module loader can solve that.
 
-Cheers,
-Kent.
+Hrm... There is qcom_scm_is_available().  I tried adding a check for
+that in qcom_smmu_impl_init() and return EPROBE_DEFER if it fails, but
+I then hit a separate crash (tripping in iommu_group_remove_device on
+a null dev->iommu_group value). But after adding a check for that, it
+seems to be working...
+
+I'll try to spin up a separate patch here for that in a second.
+
+thanks
+-john
