@@ -2,66 +2,46 @@ Return-Path: <SRS0=fjZl=EI=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F692C388F2
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Nov 2020 15:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE47C4742C
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Nov 2020 15:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F299C2222B
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Nov 2020 15:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE92E2416E
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Nov 2020 15:41:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Qx6XIDDk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cf1MSWB7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbgKBPUn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 2 Nov 2020 10:20:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56682 "EHLO
+        id S1725837AbgKBPli (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 Nov 2020 10:41:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbgKBPUn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2020 10:20:43 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD384C061A49
-        for <linux-gpio@vger.kernel.org>; Mon,  2 Nov 2020 07:20:42 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id 23so1259105wmg.1
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2020 07:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=87j4CzgTjIznAlAGNVYlsLolKCjEqxgXtItxHQqBT+c=;
-        b=Qx6XIDDkn/kgktIUkUO/8COUc5pZ7Xmrd4WIhOhtRKLqRH4jXfWsq4XQF+tviij2AS
-         vQP1d5+o7im6WeNCxad2viztsEaWhYtaJWG1Vhj6E1J8UjnspJVoxf806Ry3jv4BdHop
-         xwURD6IJS7yc8ElYCbGBoudPzERtKy2XkZUjWqe32YJYz8gF1KzLAhJg0Sgft+3IMCWa
-         mV4JR08o+DnkkGEu+pVGUnHdRkfznAvaeW1sFyAveCP1kOZvsLyq+TKkJLfHFzK57TIm
-         KW7GgBKwfAnVfidT0ZnlSAScho5vr6Rjk96VIp+X50g2am696JF1i4Ih5IAkrxiZq5BJ
-         Pdug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=87j4CzgTjIznAlAGNVYlsLolKCjEqxgXtItxHQqBT+c=;
-        b=qPvmvMSHAgRvu8XCQjMI17okV8+csBUZk5YCEtDq9FpNRWxaqzffZ7mJuvAKX4sX93
-         c9oqgwzRxbUM7gpOzZekLFY2UZEKdblpJaJlI9c5XNA1QrVXqP0U1eNsRzUks9G4H64E
-         w48S8IpdOVX69Gi6tuw2Ofs7F7RA79t7vsLryWQDpKxvnmjvxDdQ0w7qS19p/r4luTP5
-         dgKYzjV4olGtKrE+dCnDzyOWedfZ+8gy3apdcAMndZ8m9WFjawwN5ZJzi3RJNiOjh7P4
-         VggUGrS+KFeLcJUwwgnYiBG+G9I76mtgJqcQfmC+XvNqxkqGT68fl6C5ucshc96hqpq2
-         7KLg==
-X-Gm-Message-State: AOAM530MXFj+NCXv0J08pQwwjwso/HyAOtIZn4wpAqI3ZrZJqSG6HW9X
-        nnG1gubYgN3zUjHILmuFpAFOrQ==
-X-Google-Smtp-Source: ABdhPJyrNQzSj1QE+Qkm5CWvnTtBNZHgXZdYRD5QsBgAGl8HowPGK/ocdDyRBmSt205H50cLvofh/w==
-X-Received: by 2002:a1c:9848:: with SMTP id a69mr18051505wme.158.1604330441469;
-        Mon, 02 Nov 2020 07:20:41 -0800 (PST)
-Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id b18sm15138014wmj.41.2020.11.02.07.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2020 07:20:40 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        with ESMTP id S1725791AbgKBPlh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2020 10:41:37 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B58C0617A6;
+        Mon,  2 Nov 2020 07:41:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=UmWNoo+0jio1rsbpATbpnTKOP6YpDT2+8aHnhsn1BNQ=; b=cf1MSWB7BC+d/XGfBcQ2kzWTKP
+        Peh8sMqwcaL1avawa0skij5vzCJuMhLjyf5+3duC9LV64xK5h7mYlExaCNl16g5xIgy0XYatg9Kkf
+        8MzQdAQ7nqnViyK6PC8RcELKGC+j9GZJ7ckJm169iVg6QlV5ggKqdv+lcQqqbrPMl+FlSrL0fJtVH
+        h3aIS4VO2YSOq9iZcZt7+s5WtKwHYRjz80MESyljeOHnTABAzm0KwnO67EhkQGqAYQ3ow0H2PyBl3
+        OZ6Wcz1eC4cFYhDOYdlGwsV1WdJGKy68/ZW9RvzSJwxRicr1Ax69ZJI0224mH0dP7B11Lada3H09n
+        ylAgZRSA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kZbx7-0002Pe-5d; Mon, 02 Nov 2020 15:41:01 +0000
+Date:   Mon, 2 Nov 2020 15:41:01 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
         Gustavo Padovan <gustavo@padovan.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
         Tony Luck <tony.luck@intel.com>,
@@ -81,65 +61,34 @@ To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-mm@kvack.org,
-        alsa-devel@alsa-project.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 0/8] slab: provide and use krealloc_array()
-Date:   Mon,  2 Nov 2020 16:20:29 +0100
-Message-Id: <20201102152037.963-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.29.1
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-gpio@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, alsa-devel@alsa-project.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v2 1/8] mm: slab: provide krealloc_array()
+Message-ID: <20201102154101.GO27442@casper.infradead.org>
+References: <20201102152037.963-1-brgl@bgdev.pl>
+ <20201102152037.963-2-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201102152037.963-2-brgl@bgdev.pl>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Nov 02, 2020 at 04:20:30PM +0100, Bartosz Golaszewski wrote:
+> +Chunks allocated with `kmalloc` can be resized with `krealloc`. Similarly
+> +to `kmalloc_array`: a helper for resising arrays is provided in the form of
+> +`krealloc_array`.
 
-Andy brought to my attention the fact that users allocating an array of
-equally sized elements should check if the size multiplication doesn't
-overflow. This is why we have helpers like kmalloc_array().
+Is there any reason you chose to `do_this` instead of do_this()?  The
+automarkup script turns do_this() into a nice link to the documentation
+which you're adding below.
 
-However we don't have krealloc_array() equivalent and there are many
-users who do their own multiplication when calling krealloc() for arrays.
-
-This series provides krealloc_array() and uses it in a couple places.
-
-A separate series will follow adding devm_krealloc_array() which is
-needed in the xilinx adc driver.
-
-v1 -> v2:
-- added a kernel doc for krealloc_array()
-- mentioned krealloc et al in the docs
-- collected review tags
-
-Bartosz Golaszewski (8):
-  mm: slab: provide krealloc_array()
-  ALSA: pcm: use krealloc_array()
-  vhost: vringh: use krealloc_array()
-  pinctrl: use krealloc_array()
-  edac: ghes: use krealloc_array()
-  drm: atomic: use krealloc_array()
-  hwtracing: intel: use krealloc_array()
-  dma-buf: use krealloc_array()
-
- Documentation/core-api/memory-allocation.rst |  4 ++++
- drivers/dma-buf/sync_file.c                  |  4 ++--
- drivers/edac/ghes_edac.c                     |  4 ++--
- drivers/gpu/drm/drm_atomic.c                 |  3 ++-
- drivers/hwtracing/intel_th/msu.c             |  2 +-
- drivers/pinctrl/pinctrl-utils.c              |  2 +-
- drivers/vhost/vringh.c                       |  3 ++-
- include/linux/slab.h                         | 18 ++++++++++++++++++
- sound/core/pcm_lib.c                         |  4 ++--
- 9 files changed, 34 insertions(+), 10 deletions(-)
-
--- 
-2.29.1
-
+Typo 'resising' resizing.
