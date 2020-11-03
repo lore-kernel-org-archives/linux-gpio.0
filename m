@@ -2,89 +2,216 @@ Return-Path: <SRS0=FMmw=EJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC45C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Nov 2020 08:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E05E9C388F2
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Nov 2020 10:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DF7F22264
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Nov 2020 08:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 841E622404
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Nov 2020 10:12:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRtWlLfl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KyQ+vPCP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725982AbgKCIfx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 3 Nov 2020 03:35:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbgKCIfx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Nov 2020 03:35:53 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C92C0613D1
-        for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2020 00:35:53 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id i7so11184050pgh.6
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Nov 2020 00:35:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xXjBZzkYsQ/dScCzfPYq2N6uSJfnRp0wFjY4Xlshz0g=;
-        b=JRtWlLflaWssmnGuQwJ08R/E2KG+DrZC5+cjfN1nrhewuPIaZdDxq+sR6frY8qV6uw
-         YaPBg8ai6SVoQby9xH/K8x14mVWIIQidHbG5N3QL2SvR2BL7XDX6pwmrmMJThGKAtuJq
-         5Vzg6B5217/ZhtHfaeDEnENwW7n4v0O+ZP9uV5LUnnRG7cNAOCkTTbP8kBwMceTZdcFd
-         EDh7unVgSZUes/SBIZRXIz3b8614pLaUM7bc3xHkdVRvbmpPro4Y5sgaLhODatIcD1bq
-         TWxoawug/0lfO3bhO5ub5RUjzUg3rbhWEyOjTDPKiApK+tWbNWpmPp/M6s1krbJ66VYh
-         utjQ==
+        id S1728066AbgKCKMT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 3 Nov 2020 05:12:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54482 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727470AbgKCKMP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Nov 2020 05:12:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604398333;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0MUFWE6mOnbnRG+Ni8WIQ3yfgCYil12Q6u/TIezmtsg=;
+        b=KyQ+vPCPXiaxQjpE2dtj2sUus4MiIFptxlkW/FHZ5D0gzOvnjc1lL0RM7wz/tNuKo1GCFV
+        V1FyTHCWAUijHDCpHBWaygmThB1WGRHRFo32TLn3+uoJbMvWcDRAQ+dn5UpK2bj869cXR+
+        +1AkiuEmVlI0IY9C6Bnt2O0VtQaph5w=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-301-8lH_Ba9vN1mGDEiQHCtcSA-1; Tue, 03 Nov 2020 05:12:12 -0500
+X-MC-Unique: 8lH_Ba9vN1mGDEiQHCtcSA-1
+Received: by mail-ej1-f70.google.com with SMTP id nt22so2223605ejb.17
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Nov 2020 02:12:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xXjBZzkYsQ/dScCzfPYq2N6uSJfnRp0wFjY4Xlshz0g=;
-        b=K+7Cz5eRnyTkPyE+v2ZvgwK8haDjgjRavIiDtbPNZETzVtrG0H6UX8KZXLUEuo6pqW
-         Aj8YF1TrBpuz5zxc4vMRbnMMououV5W3Jy1ohRzILF3/RsTVoq3WxKOqeibCCTdzZbxk
-         gI+iGkbZtERpZc5bUSfwrKoS2E9HbzFq8jB9qjr1T3U/FHPEhtPje3qnlS4Tps3SsVJo
-         ElrPiB0uCqVHYBm3R5WZfQsCbIXNnNCfCpoanAmeOOkzNE8lZLrU9xQyZube99XocYf/
-         Z9cvXH2AXxMgIaX1m4VXJSeHQXDkItPq8vBSQSYHo7Z04/pvGyjAEXtnnR0dZ+swQzmK
-         KB7g==
-X-Gm-Message-State: AOAM531eQ4eAi55BJQqRbHULu0h9SSswMzA4t205Ueudx7bcSQENJTWT
-        +wEydTfrCSg5GxjOSsu54fyU+KUMQeQoYGfjXnI=
-X-Google-Smtp-Source: ABdhPJyfsdt1j+2VN7PzuFPr9AcgkwAYwqRrU3Vv6SuiJhBiFiAbKAmOjnQKxXTcSRuWjKObobu2Wp0EepvbCUZVUJ0=
-X-Received: by 2002:a63:31ce:: with SMTP id x197mr4293280pgx.74.1604392552760;
- Tue, 03 Nov 2020 00:35:52 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0MUFWE6mOnbnRG+Ni8WIQ3yfgCYil12Q6u/TIezmtsg=;
+        b=b1Li5Ppg99bX1qjaSpZixtdu+X4NgT868kMmQKHvVg3tII/YO3fJVOzRderGxf7ewN
+         QZHuR7b4VcIk4ayob1q70oDMes43+JQ0QL9GZ5ozoNRXKmv5s+RoSht2lCaeGGp3UVaZ
+         Pn4tZvVcqEmCGD+YGacVmmY7rN7f5pXYa01SKNouNPuxaVHNT3DsPK/fyPXCEUQCr5ye
+         h7SOV0v29f2vxCxC1+mh9/XqLKnT7BZU+k+3fQibxUKq3SICd9IbF4LXmDLDPC30OOom
+         Qr4G3+NC+VpZK3+MM/+Slt6JVNJJQcFEHikzEeZb2yltHQkxsQhgxTNcc7GWciB6wyoM
+         SHvQ==
+X-Gm-Message-State: AOAM532FRTpJ3RKuQ+VrnB96a/3oguSVgYhqLZdpeTQrPuikWsodxzOE
+        j17qV2Jihh4I2bD0LB9pPeWEkf7o/cLhdCD8Mhuinvta3Y4J0NljxYieizBoji+5Q92lQ+uMg0G
+        ymRnDpRUg4VBG4mWQgCXW7g==
+X-Received: by 2002:aa7:d709:: with SMTP id t9mr6130965edq.305.1604398330648;
+        Tue, 03 Nov 2020 02:12:10 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJypkhXwlBVdPP8Nwx/U9egOi9INTITIlOwLSF0+H3rc3ojEQIsQTVaupr2QiIMSubSp0nl6kw==
+X-Received: by 2002:aa7:d709:: with SMTP id t9mr6130944edq.305.1604398330401;
+        Tue, 03 Nov 2020 02:12:10 -0800 (PST)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-6c10-fbf3-14c4-884c.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:6c10:fbf3:14c4:884c])
+        by smtp.gmail.com with ESMTPSA id hj13sm698941ejb.125.2020.11.03.02.12.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Nov 2020 02:12:09 -0800 (PST)
+Subject: Re: Any other ways to debug GPIO interrupt controller (pinctrl-amd)
+ for broken touchpads of a new laptop model?
+To:     Coiby Xu <coiby.xu@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        wang jun <availa@outlook.com>,
+        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+References: <20201006044941.fdjsp346kc5thyzy@Rk>
+ <e9cfac98-51fc-b169-cb74-80fd11de12ec@redhat.com>
+ <20201006083157.3pg6zvju5buxspns@Rk>
+ <69853d2b-239c-79d5-bf6f-7dc0eec65602@redhat.com>
+ <4f02cbdf-e1dd-b138-4975-118dd4f86089@redhat.com>
+ <a07d3890-f560-855f-3631-a3d5848dcdf5@redhat.com>
+ <20201014042420.fkkyabmrkiekpmfw@Rk>
+ <df2c008b-e7b5-4fdd-42ea-4d1c62b52139@redhat.com>
+ <20201026225400.37almqey2wxyazkn@Rk>
+ <f15806d6-32e2-c6b0-8f96-670a196380a8@redhat.com>
+ <20201103000507.ufzukd2vkb5h2e3b@Rk>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <2f4706a1-502f-75f0-9596-cc25b4933b6c@redhat.com>
+Date:   Tue, 3 Nov 2020 11:12:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-References: <20201022165847.56153-1-andriy.shevchenko@linux.intel.com>
- <20201022170319.GJ4077@smile.fi.intel.com> <CAHp75VfqQ97oLfRe03pkAbmoS6hq3P7ZScS7Jr1Y=ZAYgWmP7w@mail.gmail.com>
- <20201102165132.GR4077@smile.fi.intel.com>
-In-Reply-To: <20201102165132.GR4077@smile.fi.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 3 Nov 2020 10:35:36 +0200
-Message-ID: <CAHp75VfS+=moRT-Z9i02p-pt3Sh495qzr5XAqtbzfoeTFQiyuA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] gpiolib: acpi: Respect bias settings for GpioInt() resource
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jamie McClymont <jamie@kwiius.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201103000507.ufzukd2vkb5h2e3b@Rk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Nov 2, 2020 at 6:51 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, Oct 26, 2020 at 04:41:14PM +0200, Andy Shevchenko wrote:
-...
+Hi,
 
-> Linus, Bart, what do you think about this series?
->
-> (Linus, the patch 3/3 has been already applied by Bart as it's independent to ACPI anyway)
+On 11/3/20 1:05 AM, Coiby Xu wrote:
+> On Tue, Oct 27, 2020 at 11:09:11AM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+> ...
+>>
+>> So I see 2 ways to move forward with his:
+>>
+>> 1. Just disable the debounce filter for level type IRQs; or
+>> 2. Add a helper to sanitize the debounce pulse-duration setting and
+>>   call that when setting the IRQ type.
+>>   This helper would read the setting check it is not crazy long for
+>>   an IRQ-line (lets say anything above 1 ms is crazy long) and if it
+>>   is crazy long then overwrite it with a saner value.
+>>
+>> 2. is a bit tricky, because if the IRQ line comes from a chip then
+>> obviously max 1ms debouncing to catch eletrical interference should be
+>> fine. But sometimes cheap buttons for things like volume up/down on tablets
+>> are directly connected to GPIOs and then we may want longer debouncing...
+>>
+>> So if we do 2. we may want to limit it to only level type IRQs too.
+>>
+>> Note I have contacted AMD about this and asked them for some input on this,
+>> ideally they can tell us how exactly we should program the debounce filter
+>> and based on which data we should do that.
+> 
+> Is there any update from AMD?
 
-I have sent a v3
+I'm afraid not.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Based on the discussion, I'm going to
+> submit a patch to disable debounce filter for both level and edge
+> type IRQs, i.e. to remove relevant code in amd_gpio_irq_set_type of
+> drivers/pinctrl/pinctrl-amd.c since setting debounce filter is
+> orthogonal to setting irq type and Andy has submitted the patch to
+> support setting debounce setting supplied by ACPI in gpiolib-acpi.c
+
+Ok.
+
+> Btw, did you contact AMD through a representative?
+
+Yes I'm using Red Hat's contacts in to AMD's server department,
+which are putting me in contact with AMD'se client department.
+
+> Obviously CC them
+> didn't get their attention. There is an inconsistency for configuring
+> debounce timeout in pinctrl-amd as was spotted by Andy [1]. I also need
+> their feedback for this matter.
+> 
+> [1] https://lore.kernel.org/patchwork/comment/1522675/
+
+This is a case where Andy is obviously right and you should just use the
+higher precision "unit = 15625" value (except probably that is wrong too,
+see below).
+
+We have had similar issues with the docs for getting the TSC frequency
+on some Intel chips, where the docs said 16.6 MHz for a certain register
+value, where what they meant was 100/6 MHz which really is significantly
+different. This was leading to a time drift of 5 minutes / day on non
+networked (so no NTP) Linux systems.
+
+I think this is what Andy was referring to when he wrote:
+"What the heck with HW companies! (Just an emotion based on the experience)"
+
+So the lesson learned there is when you can be reasonable certain that
+the value really is a/b and the resulting digits of the value in the
+hw doc match that taking the lousy precision into account then you
+should probably assume the value really is a/b and not the lousy
+precision value given in the docs (or the code comment in this case).
+
+I mean 15.6 msec has 3 significant numbers, that gives an imprecision /
+error of approx. 1000 ppm where as a decent clock crystal is in the order
+of 50 ppm, so the hardware has a drift / error of approx. 50 ppm which
+makes using a value with an error of 1000 ppm in the code really really
+bad.
+
+Actually all the values look somewhat suspect. The comment:
+
+>                 Debounce        Debounce        Timer   Max
+>                 TmrLarge        TmrOutUnit      Unit    Debounce
+>                                                         Time
+>                 0       0       61 usec (2 RtcClk)      976 usec
+>                 0       1       244 usec (8 RtcClk)     3.9 msec
+>                 1       0       15.6 msec (512 RtcClk)  250 msec
+>                 1       1       62.5 msec (2048 RtcClk) 1 sec
+
+Helpfully gives the values in RtcClks. A typical RTC clock crystal
+is 32 KHz which gives us 31.25 usec per tick, so I would expect the
+values to be:
+
+                 0       0       62.500 usec (2 RtcClk)      
+                 0       1       250.00 usec (8 RtcClk)    
+                 1       0       16.000 msec (512 RtcClk) 
+                 1       1       64.000 msec (2048 RtcClk)
+
+And the max multiplier seems to be 15, not 16 as is used for the
+Max Debounce Time's in the comment, so those are wrong too. I have
+a feeling the table was build the wrong way around (minus the
+RtcClk parts). They started with a Max Debounce Time of 1 sec, then
+divided that by 16 given them 62.5 msec, where as in reality
+we have 2048 ticks of a 32 KHz clock giving us 64 millisec, etc.
+
+I also wonder if the 0-15 divider really is a 0-15 divider or a
+1-16 divider... This suggests:
+
+                if (debounce < 61) {
+                        pin_reg |= 1;
+
+It really is a 0-15 divider, so without docs we should just assume
+that it is 0-15 for now, which makes the divide 1 second by 16 thing
+which got them 62.5 msec (or so I believe) a bit suspect. Either the
+divide by 16 is wrong, or the divider really is a 1-16 divider...
+
+Regards,
+
+Hans
+
