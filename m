@@ -2,102 +2,192 @@ Return-Path: <SRS0=FFhp=EK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE797C388F7
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A3EC55179
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 759E722280
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:10:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="neaKBrQn"
+	by mail.kernel.org (Postfix) with ESMTP id 185F121734
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:39:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbgKDKKK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 05:10:10 -0500
-Received: from ozlabs.org ([203.11.71.1]:50033 "EHLO ozlabs.org"
+        id S1729391AbgKDKjv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 05:39:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58490 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727923AbgKDKJz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 4 Nov 2020 05:09:55 -0500
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 4CR2Sx3CqYz9sVM; Wed,  4 Nov 2020 21:09:53 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1604484593;
-        bh=a5WygqkHDCvwgU6p3aiWlaAFRr9MW05zMhpOiiyYDM8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=neaKBrQnwCB9rzlcas5HnhYy9tFLA98XSU3+J5icD6SfgCl+IvbLy8Cz3jKuNrkX/
-         Nmw5MTRXBp9fwviHydCqFEvsxSSapEU+5VOt+kkcOHDp8tekBpsfjFw73eX5Y1gYiP
-         bD1BZW8C+5SureaekOP4OzqPPs2Qh3/o4QjReNGQpVhlbDebzscNF016gDzZPgIzjv
-         krDQhtcBQ6KPdEoJQ7XPyrd1Ri5GTAsBHeRh7s+UlMPRHOOjD4wVOb5Fy6EYQ6cBqW
-         qxzD//co8O0TXn3xLpWXjyKILLLth8mRbZaNbB9fWvcHO40ZQufKrRY+QOfvcp8G9A
-         yr1dfKtcUA6rw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 3/4] selftests/gpio: Fix build when source tree is read only
-Date:   Wed,  4 Nov 2020 21:08:42 +1100
-Message-Id: <20201104100843.660407-3-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201104100843.660407-1-mpe@ellerman.id.au>
-References: <20201104100843.660407-1-mpe@ellerman.id.au>
+        id S1727001AbgKDKjv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 4 Nov 2020 05:39:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id EF2D3AD76;
+        Wed,  4 Nov 2020 10:39:48 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, wahrenst@gmx.net,
+        linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
+Subject: [PATCH v3 01/11] firmware: raspberrypi: Introduce devm_rpi_firmware_get()
+Date:   Wed,  4 Nov 2020 11:39:27 +0100
+Message-Id: <20201104103938.1286-2-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20201104103938.1286-1-nsaenzjulienne@suse.de>
+References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently the gpio selftests fail to build if the source tree is read
-only:
+When unbinding the firmware device we need to make sure it has no
+consumers left. Otherwise we'd leave them with a firmware handle
+pointing at freed memory.
 
-  make -j 160 -C tools/testing/selftests TARGETS=gpio
-  make[1]: Entering directory '/linux/tools/testing/selftests/gpio'
-  make OUTPUT=/linux/tools/gpio/ -C /linux/tools/gpio
-  make[2]: Entering directory '/linux/tools/gpio'
-  mkdir -p /linux/tools/gpio/include/linux 2>&1 || true
-  ln -sf /linux/tools/gpio/../../include/uapi/linux/gpio.h /linux/tools/gpio/include/linux/gpio.h
-  ln: failed to create symbolic link '/linux/tools/gpio/include/linux/gpio.h': Read-only file system
+Keep a reference count of all consumers and introduce
+devm_rpi_firmware_get() which will automatically decrease the reference
+count upon unbinding consumer drivers.
 
-This happens because we ask make to build ../../../gpio (tools/gpio)
-without pointing OUTPUT away from the source directory.
+Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-To fix it we create a subdirectory of the existing OUTPUT directory,
-called tools-gpio, and tell tools/gpio to build in there.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- tools/testing/selftests/gpio/Makefile | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 615c8a953ade..acf4088a9891 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -17,14 +17,18 @@ KSFT_KHDR_INSTALL := 1
- include ../lib.mk
+Changes since v2:
+ - Create devm_rpi_firmware_get()
+
+ drivers/firmware/raspberrypi.c             | 46 ++++++++++++++++++++++
+ include/soc/bcm2835/raspberrypi-firmware.h |  8 ++++
+ 2 files changed, 54 insertions(+)
+
+diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
+index 2371d08bdd17..74bdb3bde9dc 100644
+--- a/drivers/firmware/raspberrypi.c
++++ b/drivers/firmware/raspberrypi.c
+@@ -11,7 +11,9 @@
+ #include <linux/module.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/refcount.h>
+ #include <linux/slab.h>
++#include <linux/wait.h>
+ #include <soc/bcm2835/raspberrypi-firmware.h>
  
- GPIODIR := $(realpath ../../../gpio)
--GPIOOBJ := gpio-utils.o
-+GPIOOUT := $(OUTPUT)/tools-gpio/
-+GPIOOBJ := $(GPIOOUT)/gpio-utils.o
- 
- override define CLEAN
- 	$(RM) $(TEST_GEN_PROGS_EXTENDED)
--	$(MAKE) -C $(GPIODIR) OUTPUT=$(GPIODIR)/ clean
-+	$(RM) -rf $(GPIOOUT)
- endef
- 
--$(TEST_GEN_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
-+$(TEST_GEN_PROGS_EXTENDED): $(GPIOOBJ)
- 
--$(GPIODIR)/$(GPIOOBJ):
--	$(MAKE) OUTPUT=$(GPIODIR)/ -C $(GPIODIR)
-+$(GPIOOUT):
-+	mkdir -p $@
+ #define MBOX_MSG(chan, data28)		(((data28) & ~0xf) | ((chan) & 0xf))
+@@ -27,6 +29,9 @@ struct rpi_firmware {
+ 	struct mbox_chan *chan; /* The property channel. */
+ 	struct completion c;
+ 	u32 enabled;
 +
-+$(GPIOOBJ): $(GPIOOUT)
-+	$(MAKE) OUTPUT=$(GPIOOUT) -C $(GPIODIR)
++	refcount_t consumers;
++	wait_queue_head_t wait;
+ };
+ 
+ static DEFINE_MUTEX(transaction_lock);
+@@ -247,6 +252,8 @@ static int rpi_firmware_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	init_completion(&fw->c);
++	refcount_set(&fw->consumers, 1);
++	init_waitqueue_head(&fw->wait);
+ 
+ 	platform_set_drvdata(pdev, fw);
+ 
+@@ -275,11 +282,21 @@ static int rpi_firmware_remove(struct platform_device *pdev)
+ 	rpi_hwmon = NULL;
+ 	platform_device_unregister(rpi_clk);
+ 	rpi_clk = NULL;
++
++	wait_event(fw->wait, refcount_dec_if_one(&fw->consumers));
+ 	mbox_free_channel(fw->chan);
+ 
+ 	return 0;
+ }
+ 
++static void rpi_firmware_put(void *data)
++{
++	struct rpi_firmware *fw = data;
++
++	refcount_dec(&fw->consumers);
++	wake_up(&fw->wait);
++}
++
+ /**
+  * rpi_firmware_get - Get pointer to rpi_firmware structure.
+  * @firmware_node:    Pointer to the firmware Device Tree node.
+@@ -297,6 +314,35 @@ struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
+ }
+ EXPORT_SYMBOL_GPL(rpi_firmware_get);
+ 
++/**
++ * devm_rpi_firmware_get - Get pointer to rpi_firmware structure.
++ * @firmware_node:    Pointer to the firmware Device Tree node.
++ *
++ * Returns NULL is the firmware device is not ready.
++ */
++struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
++					   struct device_node *firmware_node)
++{
++	struct platform_device *pdev = of_find_device_by_node(firmware_node);
++	struct rpi_firmware *fw;
++
++	if (!pdev)
++		return NULL;
++
++	fw = platform_get_drvdata(pdev);
++	if (!fw)
++		return NULL;
++
++	if (!refcount_inc_not_zero(&fw->consumers))
++		return NULL;
++
++	if (devm_add_action_or_reset(dev, rpi_firmware_put, fw))
++		return NULL;
++
++	return fw;
++}
++EXPORT_SYMBOL_GPL(devm_rpi_firmware_get);
++
+ static const struct of_device_id rpi_firmware_of_match[] = {
+ 	{ .compatible = "raspberrypi,bcm2835-firmware", },
+ 	{},
+diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
+index cc9cdbc66403..8fe64f53a394 100644
+--- a/include/soc/bcm2835/raspberrypi-firmware.h
++++ b/include/soc/bcm2835/raspberrypi-firmware.h
+@@ -141,6 +141,8 @@ int rpi_firmware_property(struct rpi_firmware *fw,
+ int rpi_firmware_property_list(struct rpi_firmware *fw,
+ 			       void *data, size_t tag_size);
+ struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
++struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
++					   struct device_node *firmware_node);
+ #else
+ static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag,
+ 					void *data, size_t len)
+@@ -158,6 +160,12 @@ static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware
+ {
+ 	return NULL;
+ }
++
++static inline struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
++					struct device_node *firmware_node)
++{
++	return NULL;
++}
+ #endif
+ 
+ #endif /* __SOC_RASPBERRY_FIRMWARE_H__ */
 -- 
-2.25.1
+2.29.1
 
