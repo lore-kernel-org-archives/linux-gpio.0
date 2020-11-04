@@ -2,105 +2,171 @@ Return-Path: <SRS0=FFhp=EK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAD1C388F9
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 16:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3DBC55179
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 17:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12F84206CA
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 16:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B42D1207BB
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 17:04:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="wOXbh51k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="APvuMiLr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbgKDQdB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 11:33:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37048 "EHLO
+        id S1731607AbgKDREx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 12:04:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730877AbgKDQc6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 11:32:58 -0500
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D12C0613D3
-        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 08:32:57 -0800 (PST)
-Received: by mail-io1-xd43.google.com with SMTP id u62so22820753iod.8
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 08:32:57 -0800 (PST)
+        with ESMTP id S1729679AbgKDREw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 12:04:52 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7CBEC0613D3;
+        Wed,  4 Nov 2020 09:04:51 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id y16so23782689ljk.1;
+        Wed, 04 Nov 2020 09:04:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W89f9FhGl3ZmVVNh0IHsLhIBpTCURVceMfMaDhwTtHw=;
-        b=wOXbh51kkIYJs16L1wH3zkeCtTYv8T3jVyI9PcksX4T2ZXuxqC5XvQwkRVBbymWcyG
-         TYU5UXvAznrnKFiD+OFfz9pYVb7HHC3ZPM/DWvFTIt6TSN6dEuGo4JkCT1eI10I4TxGm
-         fdN5ynsz/tQLW95cF1DdBCu/iV/HEMG4pwV4CcKwVe1+DYxQIJnZb63+MfhDX5n9Xt4J
-         jd4K66pXpTidg9covNMepxicSh9d7ohLlI/UlvSDxmsI5XwbnVhcJsfXZSYc29zSLfI0
-         BsExRvy8tvEYvHhJldBW/hCWGxlOwl2cUai165/ViBT29XXai5mqfZ00DdKAlaU5auwY
-         R4mA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/ipN2OHWhaQxheYdOXhTrFFEC6RbsQ7nc8F7dXSQxjM=;
+        b=APvuMiLrs0T8g4v1aieiR0rHJlTVC9HNP01vRsacddx8uHEIMuZdXVzVj/gX5fKOL7
+         Fi4oYz2YMfcMI8Q1l/nGMRvN6HwVA+c4geJFzjSoi0I8Ebgy3N5y3c5KAf2xg6Q0JGTi
+         4BA+2BYDcGttqqZU9fkEZTtjJbk23+eLArZOthzAWCZFPiIZplks5h6BLWdLoOM6K40Z
+         7A/IMKiWFsRvz7G2kbPA43qfVI8rRK38NQS5NGLuwqadNquPdg84++UEBzxxuMj1MuXv
+         Ysc6v+K8tzXyB0LMVxyt+nBjNGWVg48XY4ivnOEkf1ACv6E6QbbOYzXPpiMR5REUdykZ
+         w6GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W89f9FhGl3ZmVVNh0IHsLhIBpTCURVceMfMaDhwTtHw=;
-        b=RxGieNk6gN9815XixIf0eWX6b9rVuoi6u9qKCHTqEq8iMCbp+avhWWG68pQ+PWT2jc
-         l+aFTISzfGKKTdQh+9/p19mSufIlnxBFQyfhV3tWJQ+VVdsH1shKjtF89K5wa85VCVem
-         eXCbXMmCVeiQp89mi7BszLs6coTyuEsDflJ83wImzuDoIF1BElkRQXozaF9K/gGQqDQD
-         MWdnkEbmzjqXYwV58jAPfqiomlYKkpAtdyfAUMTCTyr49wzSBxkYoQpYVHHqnNUaBjqY
-         5bHUHA7f5v+4bthM9h2EWg6mSDg84TNCwrmgP/4INXVr7K86oAtgNW8r1bxGf2zZEhtj
-         Q18A==
-X-Gm-Message-State: AOAM532zuXoW+fpsEPjuBmn5Ne5XD2S0tTs2WRPURk0qzpFr59AUGhTF
-        P3b9OvJqC5pfirhxWZbqw2F4WQcxZGurW+jPDSzACg==
-X-Google-Smtp-Source: ABdhPJzI+uzUtU73vm0s4A7AvEp9YID3FbNdalzqjNgFJmq5wpaL01y5gHvbqYCy2dkgoW+bhhed0RJ5Umd2Q8NVm7A=
-X-Received: by 2002:a02:65cf:: with SMTP id u198mr20169169jab.24.1604507577178;
- Wed, 04 Nov 2020 08:32:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/ipN2OHWhaQxheYdOXhTrFFEC6RbsQ7nc8F7dXSQxjM=;
+        b=pFDEJCYJgby3HEW4LExR2fpMu1Jp3AnNcdWOfjg4L1ugUgqghwBwUwGj8cpv+/0oBQ
+         tBFzlRbocGf4N2lYTSPxo02I5/88QBCokDSnLTPOLJd3MBn/uLrOeYuR5RKFGsLLO5GP
+         uSx3BaZkjcq+gYHtJq7xdpTTDaTe9ZaoIOyCOl9ccYQ2EyFkJ7eo2f4LN+jNHlNRgNlF
+         eVk7+CKlFPGcLBUbGbgs8YAGbhWNxXg7r537QgmliqbhxCbIJofB6bDc/Rphs2kCAA7A
+         PsYHExY/AuNoCeGEtuhdmTs63Y2fSxN3tpIIS/D6w5wpAigtxGq3yHCuvi9yLk5QgB+i
+         ov3A==
+X-Gm-Message-State: AOAM530NFHFYmp1Wr12Xoc9MSasiMgndhxStnCbE+ipHy6Hf7yOaN2WY
+        jtuE3G3PQlNS9fONS3Y+KOw=
+X-Google-Smtp-Source: ABdhPJzcBrlE+dGZLNsmcdhP8mbY+4f9VqWY7qrPPl6y5hePbgpQLyD5x4YF5qx9I3Prai5017DnqQ==
+X-Received: by 2002:a05:651c:506:: with SMTP id o6mr10281844ljp.249.1604509490384;
+        Wed, 04 Nov 2020 09:04:50 -0800 (PST)
+Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
+        by smtp.gmail.com with ESMTPSA id c4sm457931lfh.60.2020.11.04.09.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 09:04:49 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] gpio: tegra: Use raw_spinlock
+Date:   Wed,  4 Nov 2020 20:04:23 +0300
+Message-Id: <20201104170423.23436-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201104170423.23436-1-digetx@gmail.com>
+References: <20201104170423.23436-1-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20201026141839.28536-1-brgl@bgdev.pl> <20201026141839.28536-7-brgl@bgdev.pl>
-In-Reply-To: <20201026141839.28536-7-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 4 Nov 2020 17:32:46 +0100
-Message-ID: <CAMRc=Mfin3Rp9cFky4MKAc0cEtKU3LW3=R4nWE-Eeok7ypVVOQ@mail.gmail.com>
-Subject: Re: [RFT PATCH 6/7] gpio: exar: switch to using regmap
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 26, 2020 at 3:18 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> We can simplify the code in gpio-exar by using regmap. This allows us to
-> drop the mutex (regmap provides its own locking) and we can also reuse
-> regmap's bit operations instead of implementing our own update function.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Use raw_spinlock in order to fix spurious messages about invalid context
+when spinlock debugging is enabled. This happens because there is a legit
+nested raw_spinlock->spinlock locking usage within IRQ-related code. IRQ
+core uses raw spinlock and then Tegra GPIO driver uses a nested spinlock.
+The debug code can't recognize and handle this case, hence we need to use
+raw spinlock in the GPIO driver.
 
-[snip]
+ [ BUG: Invalid wait context ]
+ ...
+  (dump_stack) from (__lock_acquire)
+  (__lock_acquire) from (lock_acquire)
+  (lock_acquire) from (_raw_spin_lock_irqsave)
+  (_raw_spin_lock_irqsave) from (tegra_gpio_irq_set_type)
+  (tegra_gpio_irq_set_type) from (__irq_set_trigger)
+  (__irq_set_trigger) from (__setup_irq)
+  (__setup_irq) from (request_threaded_irq)
+  (request_threaded_irq) from (devm_request_threaded_irq)
+  (devm_request_threaded_irq) from (elants_i2c_probe)
+  (elants_i2c_probe) from (i2c_device_probe)
+ ...
 
->
->  static int exar_direction_output(struct gpio_chip *chip, unsigned int offset,
->                                  int value)
->  {
-> -       exar_set_value(chip, offset, value);
-> -       return exar_set_direction(chip, 0, offset);
-> +       struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
-> +       unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
-> +       unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
-> +
-> +       regmap_clear_bits(exar_gpio->regs, addr, BIT(bit));
-> +
-> +       return 0;
->  }
->
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-Upon closer look I noticed this now ignores the value argument. I
-doubt however it's the culprit of the crash Jan reported.
+Changelog:
 
-[snip]
+v2: - Only lvl_lock is converted to raw_spinlock. The dbc_lock doesn't
+      relate to IRQ and doesn't need the conversion.
 
-Bartosz
+    - Improved commit message by clarifying that IRQ core uses raw
+      spinlock.
+
+    - Added clarifying comment to the code for the lvl_lock.
+
+ drivers/gpio/gpio-tegra.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 98fc78739ebf..e19ebff6018c 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -61,8 +61,16 @@ struct tegra_gpio_info;
+ struct tegra_gpio_bank {
+ 	unsigned int bank;
+ 	unsigned int irq;
+-	spinlock_t lvl_lock[4];
+-	spinlock_t dbc_lock[4];	/* Lock for updating debounce count register */
++
++	/*
++	 * IRQ-core code uses raw locking, and thus, nested locking also
++	 * should be raw in order not to trip spinlock debug warnings.
++	 */
++	raw_spinlock_t lvl_lock[4];
++
++	/* Lock for updating debounce count register */
++	spinlock_t dbc_lock[4];
++
+ #ifdef CONFIG_PM_SLEEP
+ 	u32 cnf[4];
+ 	u32 out[4];
+@@ -334,14 +342,14 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
+ 	}
+ 
+-	spin_lock_irqsave(&bank->lvl_lock[port], flags);
++	raw_spin_lock_irqsave(&bank->lvl_lock[port], flags);
+ 
+ 	val = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
+ 	val &= ~(GPIO_INT_LVL_MASK << GPIO_BIT(gpio));
+ 	val |= lvl_type << GPIO_BIT(gpio);
+ 	tegra_gpio_writel(tgi, val, GPIO_INT_LVL(tgi, gpio));
+ 
+-	spin_unlock_irqrestore(&bank->lvl_lock[port], flags);
++	raw_spin_unlock_irqrestore(&bank->lvl_lock[port], flags);
+ 
+ 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, gpio), gpio, 0);
+ 	tegra_gpio_enable(tgi, gpio);
+@@ -675,7 +683,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 						 tegra_gpio_irq_handler, bank);
+ 
+ 		for (j = 0; j < 4; j++) {
+-			spin_lock_init(&bank->lvl_lock[j]);
++			raw_spin_lock_init(&bank->lvl_lock[j]);
+ 			spin_lock_init(&bank->dbc_lock[j]);
+ 		}
+ 	}
+-- 
+2.27.0
+
