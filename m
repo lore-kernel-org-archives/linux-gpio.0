@@ -2,121 +2,103 @@ Return-Path: <SRS0=FFhp=EK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A40C9C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E10C4741F
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44F622083B
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604516777;
-	bh=ilpBQ/1VyjpcQkzbM+hgn4u6GF48OPRDT7Xjs8PVOt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SLqdAx9f9zmHjre4Ot5eMoMEtCn7sw9ZNnlmEHuHP5jqR0JhkLEnoN3L3vF97WgiK
-	 Z45f8ZB8Yqw2w7icTu2bUm2Rf84FeQnvCtFnWI1VoFHojivbizKlcS+FnvCSguSgwj
-	 Os1yxcBDM/1VzSfeG4rOdztS1gUbv8WyDchiSEgo=
+	by mail.kernel.org (Postfix) with ESMTP id 71A9120709
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="X6wXiCxJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbgKDTGQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:06:16 -0500
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:33081 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729946AbgKDTGQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 14:06:16 -0500
-Received: by mail-oi1-f173.google.com with SMTP id k26so17738oiw.0;
-        Wed, 04 Nov 2020 11:06:15 -0800 (PST)
+        id S1731378AbgKDTbC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:31:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36646 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731306AbgKDTbB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 14:31:01 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A17C0613D4
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 11:31:00 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id w1so23347630wrm.4
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 11:31:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=t/9DP21Y/K7Z/VraeZB1byIXgPmUm3+JNNTaYKuJoag=;
+        b=X6wXiCxJ19YmJynRpQiIR1GKNEXqk6HCc8AB2RqHuJ3t9U5HvHt3IO/Ijl6tIrxY32
+         MBMEj5rHE0elD5LzJFd6z4hQbRERvqvNUTg1Pzdpyl3fVSq5Et/8Mw1c/vhPri3zvUu2
+         zIcQ+n4FtDzljU7tO460QRQIP0AgrECI6b2s+3OJ9AoNxxw5q39ABQ2VnRuIe6t/D7rd
+         akPjX/jGan+YoJJm9JLjgiY0ib8LPecB81+yis/DuYEaKCosBj2fXq0YwGklgeF7Zeqp
+         Igtu2AZoAGZBSgP38c8eMmE+cvhPDsmJa5OkdTkoLba9FQ57Q9NVD7BTJH6gJSqTeI5R
+         1VFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cFN5h9yGsHsZOKXv8QOHIY58GxPhGQOkwRhjB/ZiBHY=;
-        b=FbgnidgIt7VLNJxNMEbNFFm3S6Chuc1G5n+V3jGI0MuARAkpiyEI7DJ5nrwuyKBV+1
-         +b/CeVSjHeQTcahov28fS48DD66ZAH45QhIvynqnHNcTWf/C3Z1xoNO39Dqmmp/IDbP5
-         m78PeMkk9jNAD/YWAl5++rdd53RYRW/PoICBxwiKSV2IdcbJR0r6eqYoEawlYgJQQe+T
-         NkDIhhN2OFtaNrXYFdLUEwc9ajb+WliISCgIZQfg7nS8z6AIZp6fEXUmA2hOD8Qhf9wb
-         CvjPal0ojb2LFyHc4uVW94NaKThwCkwS8Gyr3fOxuOb6zWV+dT5Gl5fZDiVKO0Db3Qwq
-         me6w==
-X-Gm-Message-State: AOAM531ZkwxqpnjizheeyfySpTfR6RiqNtQFqeYWdMpnPuvmmshrhMQW
-        SiuGu4Evcud2upH65DPiHw==
-X-Google-Smtp-Source: ABdhPJxg0zwV09ldz2969D3HBuxab6u1/Ts/gJbn+JECdctdgUFKh5ZxAEiWT0cSOANiSBHnw3BhhA==
-X-Received: by 2002:aca:a951:: with SMTP id s78mr3577208oie.114.1604516775469;
-        Wed, 04 Nov 2020 11:06:15 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r188sm658438oia.13.2020.11.04.11.06.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=t/9DP21Y/K7Z/VraeZB1byIXgPmUm3+JNNTaYKuJoag=;
+        b=a58RcLuGss3q9dAlCoBmcCXJh3NM2umJezm1KXsX/dqV+QewuWKC5rz1zt/BmfCSCj
+         0s1EGbWeUMKZFd6YpZ/1hhz6MjDt6uNfkFp6u94YNsC05GfxVegRjLdhXorPtT1KvJwO
+         bkL5966njRDJdi0t7eCJrReW918s5nDKNKaNWnOAQAzuTzLGySSgX5AlJqWQzaecWyQ0
+         77C5ZmMlYefdvdolJ/p9ZPkcOJk1OtZuGekV0kFd3Z0Eunqok7k9b0KpbXt+N6M/WeKr
+         f9I95Gobj7BoZzwKdorqIjjoBGDVdkVu9kOlf3siWwxvLEZ0OfNXZlwWMrvoWm+7XEle
+         MQ+g==
+X-Gm-Message-State: AOAM530cjmrfc3+J1G0rYKq9v6FJ930mCAS2GKLt7iaDTBGTvNdJAe/6
+        SsTp33f5c6KqafR31a+pAaPmlQ==
+X-Google-Smtp-Source: ABdhPJwujp3SZEsGu7VhbaTGsgUxvo/eHznG69HLbFinR/fN8zCFPyza/HK/9iP1IkbiMaR8TO5KPA==
+X-Received: by 2002:adf:f101:: with SMTP id r1mr36574226wro.392.1604518259652;
+        Wed, 04 Nov 2020 11:30:59 -0800 (PST)
+Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
+        by smtp.gmail.com with ESMTPSA id m12sm4051671wrs.92.2020.11.04.11.30.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:06:14 -0800 (PST)
-Received: (nullmailer pid 3960013 invoked by uid 1000);
-        Wed, 04 Nov 2020 19:06:12 -0000
-Date:   Wed, 4 Nov 2020 13:06:12 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
-        Ray Jui <rjui@broadcom.com>, u.kleine-koenig@pengutronix.de,
-        devicetree@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        dmitry.torokhov@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com, p.zabel@pengutronix.de,
-        linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
-        linux-input@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
-        bgolaszewski@baylibre.com, sboyd@kernel.org,
-        linux-gpio@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v3 09/11] dt-bindings: pwm: Add binding for RPi firmware
- PWM bus
-Message-ID: <20201104190612.GA3959462@bogus>
-References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
- <20201104103938.1286-10-nsaenzjulienne@suse.de>
+        Wed, 04 Nov 2020 11:30:59 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        David Laight <David.Laight@aculab.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 3/8] gpio: exar: include idr.h
+Date:   Wed,  4 Nov 2020 20:30:46 +0100
+Message-Id: <20201104193051.32236-4-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20201104193051.32236-1-brgl@bgdev.pl>
+References: <20201104193051.32236-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104103938.1286-10-nsaenzjulienne@suse.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 04 Nov 2020 11:39:35 +0100, Nicolas Saenz Julienne wrote:
-> The PWM bus controlling the fan in RPi's official PoE hat can only be
-> controlled by the board's co-processor.
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> ---
-> 
-> Changes since v1:
->  - Update bindings to use 2 #pwm-cells
-> 
->  .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
->  .../pwm/raspberrypi,firmware-pwm.h            | 13 ++++++++++++
->  2 files changed, 33 insertions(+)
->  create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
-> 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+This driver uses IDA APIs but doesn't include the relevant header. This
+fixes it.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-exar.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.example.dt.yaml: firmware: pwm:#pwm-cells:0:0: 2 was expected
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-
-
-See https://patchwork.ozlabs.org/patch/1393804
-
-The base for the patch is generally the last rc1. Any dependencies
-should be noted.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index 4202dd363a11..1941ae533418 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -8,6 +8,7 @@
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/gpio/driver.h>
++#include <linux/idr.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-- 
+2.29.1
 
