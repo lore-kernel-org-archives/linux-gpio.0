@@ -2,126 +2,113 @@ Return-Path: <SRS0=FFhp=EK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CE6C4742C
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 17:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFA9C2D0A3
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 17:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF2E820732
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 17:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EFDE20782
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 17:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moRvfq8Z"
+	dkim=pass (2048-bit key) header.d=freebox-fr.20150623.gappssmtp.com header.i=@freebox-fr.20150623.gappssmtp.com header.b="zU8Kvdbz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731228AbgKDREv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 12:04:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42212 "EHLO
+        id S1726756AbgKDR1H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 12:27:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729679AbgKDREv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 12:04:51 -0500
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6197C0613D3;
-        Wed,  4 Nov 2020 09:04:50 -0800 (PST)
-Received: by mail-lf1-x144.google.com with SMTP id v144so296629lfa.13;
-        Wed, 04 Nov 2020 09:04:50 -0800 (PST)
+        with ESMTP id S1726604AbgKDR1H (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 12:27:07 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE111C0613D3
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 09:27:06 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id 184so28174572lfd.6
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 09:27:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PM+5bKcMSZ46q1jbOvyiMjCDhehFrvPVMAJTjDaj6n4=;
-        b=moRvfq8ZkG8t5Kg9Ano7uqKBCHtYd+6/Dh9L3ch0s37yOSHy4Qbkc8V1xCgHUKe9x7
-         FUSpFbY9v/CxFJxXI/WcDDxAWD9eD6d3dq2b/stFKC+3nSUJ7r8YPxVHHrirlaLCnmVB
-         8r2JzG3/3rzRX4aPuDw9cgumrsuyWu1kBsN/TuEdXLkPy2zYO/ewiZ/tUj0Copxl2eb0
-         oy/l7U3epqG7FVcjj7skclXAFYb1V714SHELKvFWEqAky3QJijTy6k76hBZYKjXZ+Vja
-         2njW0tWN17zYJIK1DQSRm4xMU7lT1KfI8h6iT5dCkcL7j8wuzNpU2HA/r5omBI7fUjV4
-         kEpA==
+        d=freebox-fr.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=4/Ari/JVxXZPHvRMjWeTV+TrzrBKoZb8CYCzssdi+Jk=;
+        b=zU8KvdbzfejJtmjKjKXOAdFbj8v2U8pzqMPP7KGpRYW3as5BxUkHLgpYUSy1uBdQh0
+         Qzu0FD5rCXdPTtKfb+3InVJ0+A4973QrqR8RyPmzYbqHY94aTp5kc3ZsUjCqjRuuBWLh
+         qVreGS5MOMAfG+2e5uPK7rpzpED8Cr6ErWfQdQyp6ZDAMtuEnlRYSdV3dGqsF5ms39iT
+         QKJCaW5xsbAt8YxVlSo3cXpCTQW8v3HpdK0P9K9sMvVs4b+iLDYeKTu0XAatdZD8nACG
+         FHoKeT8Dpggd2/92D22hdkflRVtllYkKF+bxXaRE0y0wQO/sGu0Rt3ghOgY0bylN6zL2
+         mdHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PM+5bKcMSZ46q1jbOvyiMjCDhehFrvPVMAJTjDaj6n4=;
-        b=eel5+0UHqgD7MdCi6FXWU1WwHLjrjEhRI55vgfWahE8U/VN6Do74qz2SqxboIxfw5D
-         LL+ZNEBmrkbONnum/fe0IEmTvjBmioM5/taeELZgEzJ+5ZClgmh5o8Hy+y9MAxzndI/D
-         wOph2vtdyA2grba4CN9m1AAYGW/Mvt24a9VKjtwcEaAHoHZguj2+bObbMbuOrkTkIaMJ
-         9zTu6VvzPs2jGEmoPFKTNit77hi/NoHa5cnpIucynuWivKXm8BYkXy8y10WIBQeygpAL
-         iulXMzkkfhY15tfCP1VkEsiNmfrtlh+LyzeMMEqTi/yEX0u82F9F8NrHobRNc/PsMpWn
-         pW8Q==
-X-Gm-Message-State: AOAM530Zu9d8gvt8omK9bbf/ueJiE9jT/PEaDieS46iI+786t8+rLati
-        zCyJxstGH5wP2+ICHluedSc=
-X-Google-Smtp-Source: ABdhPJy98s4TXSinPs8ZXdUei0YQUzzDQ+3g2Spn1Am3ie9HfUhnzekmjUi6vDUFCaCiP4WKrNSgNQ==
-X-Received: by 2002:ac2:47f3:: with SMTP id b19mr10509958lfp.192.1604509489374;
-        Wed, 04 Nov 2020 09:04:49 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id c4sm457931lfh.60.2020.11.04.09.04.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 09:04:48 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] gpio: tegra: Add lockdep class
-Date:   Wed,  4 Nov 2020 20:04:22 +0300
-Message-Id: <20201104170423.23436-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=4/Ari/JVxXZPHvRMjWeTV+TrzrBKoZb8CYCzssdi+Jk=;
+        b=qRA3dauL0ZOpP0S4TwB7pSXTWPrk2zKYE+Zsbuv705AxwhJb3tx2EP9J1HubjV2lwv
+         3CI5JTKOHpfCRxLFOGQwlOUyRf17qKSBDqlfAZ4Goq781Z419iJ3NQAFe7UA43JAZqjx
+         2aABy0Wi8pADseWFuG4BAuW8D7PmxwQKAGjFT4spaaKgBvosaq3I+l/aWollJB2+bKFg
+         Y4WrjSdv/nzFdLQnEfhXEVQ3iWpk/9WLy+y6HO6fCwR5+PnHZADgWTRZPbMN6HwUh6X8
+         7C9MW9IN9rj1y+dC0jgp5fQSXDTuSRmjtEr3bkPCGJvK/1CM1LK4gDhKsmbzpyBWbhYX
+         jG2A==
+X-Gm-Message-State: AOAM531gzorE+HRIln0w11PFb47j0p3SEW6w9xwV97UYjIlk5GO6a8Vy
+        4+b7GQxAdrVRemUTmTjsnWu4ljyXmisGmK0DYRvt6g==
+X-Google-Smtp-Source: ABdhPJzI4co41WmUWmXKKprceuX3wRtUhSLI5hYFN4sZyUcohC7uPZXCCtxbkrTqkwd3l7U1L2/9rKDlmESpLCyEDGg=
+X-Received: by 2002:a19:2d4f:: with SMTP id t15mr748178lft.346.1604510825213;
+ Wed, 04 Nov 2020 09:27:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Nicolas Schichan <nschichan@freebox.fr>
+Date:   Wed, 4 Nov 2020 18:26:54 +0100
+Message-ID: <CAHNNwZAucoc00gJrUsPRMpFc9U2r+os6NJfc1axsGh0m6ES=xQ@mail.gmail.com>
+Subject: gpiolib sysfs access when CONFIG_GPIO_CDEV is not set
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add lockdep class in order to fix debug warnings that are coming from a
-legit nested use of irq_set_irq_wake() by the Tegra GPIO driver.
+Hello,
 
- WARNING: possible recursive locking detected
- ...
-  (irq_set_irq_wake) from (tegra_gpio_irq_set_wake)
-  (tegra_gpio_irq_set_wake) from (irq_set_irq_wake)
-  (irq_set_irq_wake) from (brcmf_sdiod_intr_register [brcmfmac])
- ...
+Following an update to the 5.10-rc1 kernel, I found out that trying to
+export a GPIO using /sys/class/gpio/export fails with the kernel
+reporting a message in the kernel logs:
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Reported-by: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+# echo 41 >/sys/class/gpio/export
+[   46.761394] kobject_add_internal failed for gpio (error: -2 parent:
+gpiochip2)
+sh: write error: No such file or directory
+#
 
-Changelog:
+I have tracked it to the fact that I have CONFIG_GPIO_CDEV is disabled in
+my kernel config: Enabling CONFIG_GPIO_CDEV made export work again.
 
-v2: - No changes.
+Enabling CONFIG_GPIO_CDEV and commenting all the code in
+gpiolib_cdev_register() except the final "return 0;" made the issue
+appear again, leading me to think that the issue is related to
+something that is done cdev_device_add() must be done to fix the
+issue.
 
- drivers/gpio/gpio-tegra.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Looking at the code of cdev_device_add() I was able to determine that
+the device_add() call made there is required to get the gpiolib sysfs
+export to work again.
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 86568154cdb3..98fc78739ebf 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -560,6 +560,9 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
- 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
- };
- 
-+static struct lock_class_key gpio_lock_class;
-+static struct lock_class_key gpio_request_class;
-+
- static int tegra_gpio_probe(struct platform_device *pdev)
+In the end I have done this (which I won't even pretend is the proper
+way to fix this), and sysfs attributes are finally working without
+CONFIG_GPIO_CDEV:
+
+diff --git a/drivers/gpio/gpiolib-cdev.h b/drivers/gpio/gpiolib-cdev.h
+index cb41dd757338..dd72bd0e4af4 100644
+--- a/drivers/gpio/gpiolib-cdev.h
++++ b/drivers/gpio/gpiolib-cdev.h
+@@ -16,7 +16,7 @@ void gpiolib_cdev_unregister(struct gpio_device *gdev);
+
+ static inline int gpiolib_cdev_register(struct gpio_device *gdev, dev_t devt)
  {
- 	struct tegra_gpio_info *tgi;
-@@ -661,6 +664,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 		bank = &tgi->bank_info[GPIO_BANK(gpio)];
- 
- 		irq_set_chip_data(irq, bank);
-+		irq_set_lockdep_class(irq, &gpio_lock_class, &gpio_request_class);
- 		irq_set_chip_and_handler(irq, &tgi->ic, handle_simple_irq);
- 	}
- 
--- 
-2.27.0
+-    return 0;
++    return device_add(&gdev->dev);
+ }
 
+ static inline void gpiolib_cdev_unregister(struct gpio_device *gdev)
+
+If this is the preferred solution I can send a proper patch.
+
+Best Regards,
+
+-- 
+Nicolas Schichan
