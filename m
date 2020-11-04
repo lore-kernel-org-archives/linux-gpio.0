@@ -7,26 +7,24 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2722C56201
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C7CC63699
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 890E120786
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49465223BD
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 10:40:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbgKDKk0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 05:40:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58606 "EHLO mx2.suse.de"
+        id S1729780AbgKDKj7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 05:39:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58522 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729794AbgKDKkB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 4 Nov 2020 05:40:01 -0500
+        id S1729227AbgKDKjw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 4 Nov 2020 05:39:52 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2151CADC2;
-        Wed,  4 Nov 2020 10:40:00 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 3031BABAE;
+        Wed,  4 Nov 2020 10:39:50 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org
 Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
@@ -36,10 +34,12 @@ Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
         linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
         linux-clk@vger.kernel.org, sboyd@kernel.org,
         linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-Subject: [PATCH v3 10/11] DO NOT MERGE: ARM: dts: Add RPi's official PoE hat support
-Date:   Wed,  4 Nov 2020 11:39:36 +0100
-Message-Id: <20201104103938.1286-11-nsaenzjulienne@suse.de>
+        andy.shevchenko@gmail.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH v3 02/11] clk: bcm: rpi: Release firmware handle on unbind
+Date:   Wed,  4 Nov 2020 11:39:28 +0100
+Message-Id: <20201104103938.1286-3-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201104103938.1286-1-nsaenzjulienne@suse.de>
 References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
@@ -49,98 +49,32 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is an example on how to enable the fan on top of RPi's official PoE
-hat.
+Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
+interface when unbinding the device.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
 ---
 
-Changes since v1:
- - Update patch to use 2 pwm cells
+Changes since v2:
+ - Use devm_rpi_firmware_get(), instead of remove function
 
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 54 +++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ drivers/clk/bcm/clk-raspberrypi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index 09a1182c2936..361db82619a4 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-@@ -5,6 +5,7 @@
- #include "bcm283x-rpi-usb-peripheral.dtsi"
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index f89b9cfc4309..dd3b71eafabf 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -314,7 +314,7 @@ static int raspberrypi_clk_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
  
- #include <dt-bindings/reset/raspberrypi,firmware-reset.h>
-+#include <dt-bindings/pwm/raspberrypi,firmware-pwm.h>
- 
- / {
- 	compatible = "raspberrypi,4-model-b", "brcm,bcm2711";
-@@ -68,6 +69,54 @@ sd_vcc_reg: sd_vcc_reg {
- 		enable-active-high;
- 		gpio = <&expgpio 6 GPIO_ACTIVE_HIGH>;
- 	};
-+
-+	fan: pwm-fan {
-+		compatible = "pwm-fan";
-+		cooling-levels = <0 50 150 255>;
-+		#cooling-cells = <2>;
-+		pwms = <&fwpwm RASPBERRYPI_FIRMWARE_PWM_POE 80000>;
-+	};
-+
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			trips {
-+				threshold: trip-point@0 {
-+					temperature = <45000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				target: trip-point@1 {
-+					temperature = <50000>;
-+					hysteresis = <2000>;
-+					type = "active";
-+				};
-+
-+				cpu_hot: cpu_hot@0 {
-+					temperature = <55000>;
-+					hysteresis = <2000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&threshold>;
-+					cooling-device = <&fan 0 1>;
-+				};
-+
-+				map1 {
-+					trip = <&target>;
-+					cooling-device = <&fan 1 2>;
-+				};
-+
-+				map2 {
-+					trip = <&cpu_hot>;
-+					cooling-device = <&fan 2 3>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &ddc0 {
-@@ -103,6 +152,11 @@ reset: reset {
- 		compatible = "raspberrypi,firmware-reset";
- 		#reset-cells = <1>;
- 	};
-+
-+	fwpwm: pwm {
-+		compatible = "raspberrypi,firmware-pwm";
-+		#pwm-cells = <2>;
-+	};
- };
- 
- &gpio {
+-	firmware = rpi_firmware_get(firmware_node);
++	firmware = devm_rpi_firmware_get(&pdev->dev, firmware_node);
+ 	of_node_put(firmware_node);
+ 	if (!firmware)
+ 		return -EPROBE_DEFER;
 -- 
 2.29.1
 
