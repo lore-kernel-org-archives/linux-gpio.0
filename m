@@ -2,111 +2,112 @@ Return-Path: <SRS0=FFhp=EK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAA7C55179
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E01C2D0A3
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9699220709
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="vQ6r5NKU"
+	by mail.kernel.org (Postfix) with ESMTP id 6B82220759
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731114AbgKDTa5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:30:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730389AbgKDTa5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 14:30:57 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37DDAC0613D4
-        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 11:30:57 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id v5so3504184wmh.1
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 11:30:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e+B4nn+p6SZl8VwNKsIwWlOdD51ov0d76Utq0vxaU8M=;
-        b=vQ6r5NKUfUoH6zxRR/t4N8Ndt5Qt2rIQ4STPSFDtPuzui6ro3NzW2pe9Bc1vQFNzfV
-         TfHzVbLO9TIGAsQnKYlKIuSaMLvRXOtw2xLeFydPuoZfHxQ/Cp/WfA/sX+LMqXpoxDRe
-         S+sQ/QUtJLJIU8WK2MRwiUSfzZvSwX7kW3F9aHKU5/yl54G5IyxE6QuHi4YOEINMLoyf
-         i07fivKubVP7PqY710hdExXKheyV7mWBdLtzA1bixaCIZ8zOwcCQKZ3FmbUDJJm5NbRp
-         tqqmSROBrrx8h4pO4Ij+M7HSP8ZUWLxvwIxNCu3yUoC74krCppxZNozNpyiRYO9g+bvk
-         XcOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e+B4nn+p6SZl8VwNKsIwWlOdD51ov0d76Utq0vxaU8M=;
-        b=XK/fJADB4I611zYsF1oIZjhM2jJFApnCNyIli5C/vDSwco7yHZSA9eFZKrbckzK3Di
-         8BWxePPnv4CYzePEvXJmKH2NiNJzrhat1uYYllKjqPqdECNgwhXwWrouM5zNk5itLcfb
-         iibObyrwz11yJa0ulSDsjP2ijfMhu+zla03FrxS6BRVRmSnSgWIaI5bHFCSICmu3Z15H
-         QDdmlM1Nxdsk7+vvEYDFIDxf3rYjCExRQiHrf4LAg3O8Nq0YtlzSwMS+mKYK3WMK5arJ
-         rhsTekedZD1OidHjgJkeDk+WF/+O6nagJttsqwzIrxmSj0vo3KQVtt/CCUv4Oqa0RhV5
-         OVNw==
-X-Gm-Message-State: AOAM530/IdW6b0TejUIuDp+IF9kbWgCX2kA4Ehn6Hbg9KDF436197D4O
-        WfYqkeSv2y3xxdoamsjQBKHGYQ==
-X-Google-Smtp-Source: ABdhPJzHNVHbF+dAaencqhQbE8YKSuUJoCIc128keyMbqIKB5KKOffJsTQet890hcblRShwH+P4JCg==
-X-Received: by 2002:a1c:6843:: with SMTP id d64mr6465760wmc.131.1604518255891;
-        Wed, 04 Nov 2020 11:30:55 -0800 (PST)
-Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id m12sm4051671wrs.92.2020.11.04.11.30.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:30:55 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        David Laight <David.Laight@aculab.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 0/8] gpio: exar: refactor the driver
-Date:   Wed,  4 Nov 2020 20:30:43 +0100
-Message-Id: <20201104193051.32236-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.29.1
+        id S1730347AbgKDTzY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:55:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33184 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbgKDTzY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 4 Nov 2020 14:55:24 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 15DE6AC53;
+        Wed,  4 Nov 2020 19:55:22 +0000 (UTC)
+Message-ID: <4debc77f5c72e1f4eff36a700231493bf9fbf404.camel@suse.de>
+Subject: Re: [PATCH v3 09/11] dt-bindings: pwm: Add binding for RPi firmware
+ PWM bus
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
+        Ray Jui <rjui@broadcom.com>, u.kleine-koenig@pengutronix.de,
+        devicetree@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        dmitry.torokhov@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com, p.zabel@pengutronix.de,
+        linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
+        linux-input@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        bgolaszewski@baylibre.com, sboyd@kernel.org,
+        linux-gpio@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        andy.shevchenko@gmail.com
+Date:   Wed, 04 Nov 2020 20:55:19 +0100
+In-Reply-To: <20201104190612.GA3959462@bogus>
+References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
+         <20201104103938.1286-10-nsaenzjulienne@suse.de>
+         <20201104190612.GA3959462@bogus>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-cU9/G+WYZ+w+iySzg6LF"
+User-Agent: Evolution 3.36.5 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I just wanted to convert the driver to using simpler IDA API but ended up
-quickly converting it to using regmap. Unfortunately I don't have the HW
-to test it so marking the patches that introduce functional change as RFT
-and Cc'ing the original author.
+--=-cU9/G+WYZ+w+iySzg6LF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-v1 -> v2:
-- add new regmap helper: regmap_assign_bits()
-- fix lvl vs sel register access
-- set value in direction_output callback
+On Wed, 2020-11-04 at 13:06 -0600, Rob Herring wrote:
+> On Wed, 04 Nov 2020 11:39:35 +0100, Nicolas Saenz Julienne wrote:
+> > The PWM bus controlling the fan in RPi's official PoE hat can only be
+> > controlled by the board's co-processor.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> >=20
+> > ---
+> >=20
+> > Changes since v1:
+> >  - Update bindings to use 2 #pwm-cells
+> >=20
+> >  .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
+> >  .../pwm/raspberrypi,firmware-pwm.h            | 13 ++++++++++++
+> >  2 files changed, 33 insertions(+)
+> >  create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
+> >=20
+>=20
+> My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+> yamllint warnings/errors:
+>=20
+> dtschema/dtc warnings/errors:
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/=
+bcm/raspberrypi,bcm2835-firmware.example.dt.yaml: firmware: pwm:#pwm-cells:=
+0:0: 2 was expected
 
-Note: I didn't use the fancy method of offset calculation Andy and David
-suggested because this series broke the driver according to Jan - let's
-get it right before we modify it any more. I found a couple problems that
-could maybe cause the crash. Jan: could you give it another spin?
+Yes I forgot to update the example...
 
-Bartosz Golaszewski (8):
-  regmap: provide regmap_assign_bits()
-  gpio: exar: add a newline after the copyright notice
-  gpio: exar: include idr.h
-  gpio: exar: switch to a simpler IDA interface
-  gpio: exar: use a helper variable for &pdev->dev
-  gpio: exar: unduplicate address and offset computation
-  gpio: exar: switch to using regmap
-  gpio: exar: use devm action for freeing the IDA and drop remove()
+Regards,
+Nicolas
 
- drivers/gpio/Kconfig     |   1 +
- drivers/gpio/gpio-exar.c | 151 +++++++++++++++++++--------------------
- include/linux/regmap.h   |  16 +++++
- 3 files changed, 90 insertions(+), 78 deletions(-)
 
--- 
-2.29.1
+--=-cU9/G+WYZ+w+iySzg6LF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+jBycACgkQlfZmHno8
+x/4lqwf+LNqmKYmR+D64RymsZ5v7t1WD9DkM2AcOluMdjU13iiD8I+U2KdCc2R8Y
+KhH9mNARA0Kd5JtfEzifsT4G3OqWIac7V/abpwHwrS7ilQjx2gLCACaBO87JwzK0
+R5uOO0FWqaEoLK5GknPO2HGn8ez34EPHU3cu4SXBBFqEnaEbEMr9cEl0ou+vdrYS
+3JnsvkWGZO7LY9vh05c9I/L2pyFg1JieOLU46BYJxAPvlqeILLwWvJ0oq4iiFM7I
+ZFjf/7VhrNk92HLeRMTgPt6/LuVsvnDBJXzAEknYiZt4Taa99Y11MxauWIIqAsk+
+LBfmYrGtxl88K4eRkxCDzH4wnYm/qQ==
+=Ei+W
+-----END PGP SIGNATURE-----
+
+--=-cU9/G+WYZ+w+iySzg6LF--
 
