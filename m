@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D767C4741F
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28860C55178
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 101D82072C
+	by mail.kernel.org (Postfix) with ESMTP id C1EBB2071A
 	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="LOZfyrxq"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="CGG0ntkp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbgKDTbn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:31:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36652 "EHLO
+        id S1731176AbgKDTa7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:30:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731418AbgKDTbC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 14:31:02 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BDFCC0613D4
-        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 11:31:02 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id x7so23325646wrl.3
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 11:31:02 -0800 (PST)
+        with ESMTP id S1730788AbgKDTa6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 14:30:58 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7580EC0613D4
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 11:30:58 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id x7so23325493wrl.3
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 11:30:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lQQN2ZXT/G4B3VsGNJyIkmXWhvmT1sWJqpvE2SPt6Is=;
-        b=LOZfyrxq/o6RODMOyrU+qZOvySfL8SOerWyuvitpANZum1b/dHHL5T9VTGrvED/P7v
-         SJbnq0ng7zQf0JTXyCeHdNGalGpL9J76qP6TXFf2rzvAysdIjIvvRGN3FtALlw7o1ijQ
-         0qasCP7/Nz27WzdkvNctsAdGHcnR7M6UweKTyFp3NIeONAdb8rcGAyYTlCYTRJswfdPU
-         altYpiuR03HPGxJkkfXZ/caBPmrcGskefyx1wHlgGeGHjP6XkSRn8imRRy89Yi2MSftH
-         gM4lP6jXoigGMQf/THIJfmcaZZIpspe1JfYLS2RNKeS88LnI8LDVBEEm/9uqk7EGNw8X
-         JNFg==
+        bh=aE8AlEOJT9P+pbgFO2925Tf8enhX7i67KSrVU6g6Jdw=;
+        b=CGG0ntkpOFV4TRjjvJFjmnJMXugj2mxhcoA30rQurHrxKNQWQDQyAFNHcioGScs7rk
+         N5YSNXYWwfn3bsh2agO3bszdSPx8/s9FWZgzSxNQKxZ7qm7kY0AHWb5Co+Lt52QffvI0
+         VMaWIF7nyqLWxX3SgAnjjB59z4fQ1ILmoqizqZwMbTjo0iR2bsdFftureOZghCJ3mieR
+         QJ6f9OfIMyCdMxxUcpps5N7lSeGtExXxv3J/c/3lcYz2rANTctfhDnSf4Q7Zn1+NIORs
+         intdnRkQi/aOyq+PatXiPFV8c9z5OrG4zsh2llYOlYSvSlXLZiPtEOiQ79Zi5BT3JmtQ
+         jwJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lQQN2ZXT/G4B3VsGNJyIkmXWhvmT1sWJqpvE2SPt6Is=;
-        b=C/Qg6Z3QvCxi1cSDOm7NlCIbBJNS/RsdHuPOYDm5vzwCogcG/LhcQeLEKiGQf8FDJu
-         aQQdApo9URrpYzD60mj/5giY6mCNkcq3ZusKx8jeuteIhGnTsoc/g/AoKpCxJafNY0fD
-         g/4dgKAravwmn4gbkEN/8cXY4Pq7V5Ez764AMC3g3AFTHennPHDQKHy5wNq+VCrUv9rs
-         cwh/uFcYrsFsdvtiswm6tttIt7yHpz2uAt1wvde8zBn0o8vNkRxZgCWL70qPIrr6VIKJ
-         47fioT8PwYT4oFopH+0UYEDg6uYJjJ3rcTWk1kj9VFAh6Ij5ALm6w8Ukv9zmaWYAPG6W
-         wrww==
-X-Gm-Message-State: AOAM530AMMIgIcDFZn0kFM5TlQmUvqbJyUeZ7v4KkXMzslMc8QJrjSYB
-        zDa0RhAyCrL5XrJvFXaFGV9MgkiIEGM5Jg==
-X-Google-Smtp-Source: ABdhPJzmTo8yA7ign+6yiLlNRhedMA3K+hOB2l+5S9JH8N4LOgtiSZUZ5B6M4pznPp3esfra16yrwA==
-X-Received: by 2002:a5d:698e:: with SMTP id g14mr32482428wru.232.1604518261207;
-        Wed, 04 Nov 2020 11:31:01 -0800 (PST)
+        bh=aE8AlEOJT9P+pbgFO2925Tf8enhX7i67KSrVU6g6Jdw=;
+        b=X7pqjEQsEDaCTRA+JbU9R37UwNyxLSzvdOQLEejtNgfTroS49oV/LX/DOW4R0Lgf0Q
+         bZTgX5koFMlYEYrwFRLLkJJmX38c+TK+jbT5JNlzCLkao/khT79+eaGkbGHD4ELv6a7m
+         rPTdmfN+i/eSU7FU1o5/Lwp4OuAPgBCIQH1yS0PiYlYyeTfiR7aGM9hMCxw96DGcYDfs
+         nqq0KPO/SFdN1oekgQEtz0cT7YCvhq8j2PhyIGaRl4GLr4QCkc1tzvi6ecQaCfRaWb0m
+         CX4k2ASX7ApYN7PjBR4lHLooWn75Mmdod+0BiBOE4CX2mAPCukUnySv4qJJh1puOofgf
+         JKYA==
+X-Gm-Message-State: AOAM531xpyVcQ3iKNsQQuiDr4/xuc7uZNlAS2mXqIxijmvygYUVLAHrt
+        yAxnDRiS0AyfqpPVRUYCY7tKEw==
+X-Google-Smtp-Source: ABdhPJz7iWx6nLyowWVcGP/GeIV6d6ZWY4cYwwt+Tc3Zt4dxD1bTOjc9KJjirRpDMCkKnEiT2o4xww==
+X-Received: by 2002:adf:dd0b:: with SMTP id a11mr35765164wrm.41.1604518257130;
+        Wed, 04 Nov 2020 11:30:57 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id m12sm4051671wrs.92.2020.11.04.11.30.59
+        by smtp.gmail.com with ESMTPSA id m12sm4051671wrs.92.2020.11.04.11.30.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:31:00 -0800 (PST)
+        Wed, 04 Nov 2020 11:30:56 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -64,10 +64,11 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         David Laight <David.Laight@aculab.com>,
         Mark Brown <broonie@kernel.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 4/8] gpio: exar: switch to a simpler IDA interface
-Date:   Wed,  4 Nov 2020 20:30:47 +0100
-Message-Id: <20201104193051.32236-5-brgl@bgdev.pl>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v2 1/8] regmap: provide regmap_assign_bits()
+Date:   Wed,  4 Nov 2020 20:30:44 +0100
+Message-Id: <20201104193051.32236-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201104193051.32236-1-brgl@bgdev.pl>
 References: <20201104193051.32236-1-brgl@bgdev.pl>
@@ -79,50 +80,49 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We don't need to specify any ranges when allocating IDs so we can switch
-to ida_alloc() and ida_free() instead of the ida_simple_ counterparts.
+Add another bits helper to regmap API: this one sets given bits if value
+is true and clears them if it's false.
 
-ida_simple_get(ida, 0, 0, gfp) is equivalent to
-ida_alloc_range(ida, 0, UINT_MAX, gfp) which is equivalent to
-ida_alloc(ida, gfp). Note: IDR will never actually allocate an ID
-larger than INT_MAX.
-
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-exar.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/regmap.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index 1941ae533418..752e8437ff80 100644
---- a/drivers/gpio/gpio-exar.c
-+++ b/drivers/gpio/gpio-exar.c
-@@ -149,7 +149,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index e7834d98207f..62099e7a3ed6 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -1148,6 +1148,15 @@ static inline int regmap_clear_bits(struct regmap *map,
+ 	return regmap_update_bits_base(map, reg, bits, 0, NULL, false, false);
+ }
  
- 	mutex_init(&exar_gpio->lock);
++static inline int regmap_assign_bits(struct regmap *map, unsigned int reg,
++				     unsigned int bits, bool value)
++{
++	if (value)
++		return regmap_set_bits(map, reg, bits);
++	else
++		return regmap_clear_bits(map, reg, bits);
++}
++
+ int regmap_test_bits(struct regmap *map, unsigned int reg, unsigned int bits);
  
--	index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
-+	index = ida_alloc(&ida_index, GFP_KERNEL);
- 	if (index < 0) {
- 		ret = index;
- 		goto err_mutex_destroy;
-@@ -179,7 +179,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 	return 0;
+ /**
+@@ -1554,6 +1563,13 @@ static inline int regmap_clear_bits(struct regmap *map,
+ 	return -EINVAL;
+ }
  
- err_destroy:
--	ida_simple_remove(&ida_index, index);
-+	ida_free(&ida_index, index);
- err_mutex_destroy:
- 	mutex_destroy(&exar_gpio->lock);
- 	return ret;
-@@ -189,7 +189,7 @@ static int gpio_exar_remove(struct platform_device *pdev)
++static inline int regmap_assign_bits(struct regmap *map, unsigned int reg,
++				     unsigned int bits, bool value)
++{
++	WARN_ONCE(1, "regmap API is disabled");
++	return -EINVAL;
++}
++
+ static inline int regmap_test_bits(struct regmap *map,
+ 				   unsigned int reg, unsigned int bits)
  {
- 	struct exar_gpio_chip *exar_gpio = platform_get_drvdata(pdev);
- 
--	ida_simple_remove(&ida_index, exar_gpio->index);
-+	ida_free(&ida_index, exar_gpio->index);
- 	mutex_destroy(&exar_gpio->lock);
- 
- 	return 0;
 -- 
 2.29.1
 
