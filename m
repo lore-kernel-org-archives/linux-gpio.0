@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5C6C55179
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BD2C2D0A3
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A92CF2080D
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32E9A2065D
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 19:31:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="OsdPJIom"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Xc/0YLTZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731537AbgKDTbF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:31:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36660 "EHLO
+        id S1731297AbgKDTbB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:31:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730788AbgKDTbE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 14:31:04 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32546C0613D4
-        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 11:31:04 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id s9so23291815wro.8
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 11:31:04 -0800 (PST)
+        with ESMTP id S1731226AbgKDTbA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 14:31:00 -0500
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB6CC0613D4
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2020 11:30:59 -0800 (PST)
+Received: by mail-wm1-x342.google.com with SMTP id e2so3427965wme.1
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2020 11:30:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PfaggvFtdrOq7HMZ8nUir6KiglSCvEmyQ3kUEaGT+6M=;
-        b=OsdPJIomd69BhDyc9fg34yfsJj+muR6UcvOsSuGalhlbj1c91hG/Pk7tQ3DprEEVbU
-         BtEa1i4nmIeAJawI9HvI2Nu9t+PfqSF//7VbO15EdAu6fW1fKK1sLXAHZG+yxS5o2hLD
-         XPEhpXVbvBkjmpyHR++CudxD+yuRRwI+b2cHjpJDRUsFoKcSw4JPzZv25YYFC41CYwBh
-         Ei8Rk4WnRZkAVA12xa+SXFzo7JZDAzZAP/mSjZSLGrkv7lzXYrmzDoaavdlTyI4U0My7
-         Qkf/k0NUzi21gIsEcXvcKhFfvt9kc3S9jyl3uoLk0M7b9LKKAEN11U8IhtRVM1MK6xnC
-         uZsg==
+        bh=A7Q6GcsOlUvCk0TynHXF9lujyUa3NnBo8eWmuL6l7+w=;
+        b=Xc/0YLTZPI+UQWykB4lIw3iXmFif+BleKjICzPVQtQMaG33CpdikHlBIYxI88uBhTx
+         VzVOCxpteEdhPXq8CADPFBzLyRqFstOzccip1HzUyAW8nNRx/ZFgN/LGRMolVNd3Luyp
+         08AEebtbS+gSG+hrJuF3cHhYKyNnLytT5ZH2XlJrSVwq8WpcKuZk42Wnnz/qlLSrIffH
+         19LBzz+ORA47JecLcYmI3mNJhrABpkA+B0QLfz5luZr3mhtSdAuhawQiLEcsVm3KuuEc
+         5x5Bzo3WS6TSaUFzFJ5DKYFbHITmsureLqdX3Yr6uzRtZYDoFkJFBjSepfu5PCFhOaZo
+         kDeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PfaggvFtdrOq7HMZ8nUir6KiglSCvEmyQ3kUEaGT+6M=;
-        b=QSZj/JQLt5ui2h1/x1Q3khiNw298gNG/Sl4xKwkohqxPcgS0k6GqeKFdIfhbd7TNXI
-         s6a32epHe4jxFM8oSQG1YHy8PW0UrMEr9tb6LTOwJRRcluZAu36J/8F8NDwXYS9sUaLm
-         xC9jI9SryP7JkpgTNG4ia9n3VXmeRz89lcM91xBeh1CEls3NuPVx+M6XplBHYbMACp5y
-         xiZFLJN6dwfB33Gx6Wn7f+7UPwWQCVK4IDmc4OZqR0OrYlMb2yca4f+GuFJvF/uCuGMZ
-         4kfcGqNgBOrlb8WpncAjQTT/wC/F4o/j7Lo2Of33CPCWLYdI4WhZbrz5XLkICiWy5N3m
-         DhcQ==
-X-Gm-Message-State: AOAM5329LJXTfD36ICSTgwZxMVNsKjt3DUt8yGeZI69QIeN6cu0c9Eo2
-        XBukFcSUGPxztTd5+jqyFI/2VQ==
-X-Google-Smtp-Source: ABdhPJyl+5LxdbZHeWV1XMmLoAnA5++zG1zykwQR0D3QUEbfi6nyl4tK2QgVIKXmf6EHP+zC74SeNw==
-X-Received: by 2002:adf:e5c1:: with SMTP id a1mr29328591wrn.12.1604518262880;
-        Wed, 04 Nov 2020 11:31:02 -0800 (PST)
+        bh=A7Q6GcsOlUvCk0TynHXF9lujyUa3NnBo8eWmuL6l7+w=;
+        b=FlXYmsykEYXpwCWbedR1zsXoqeU8tOV/XiwjO/EGKjhbo3352Xd1dtoTrfBibc59qq
+         GhmImiSh3VNXcoUiPrCWYvLkheD3WAYZrFHCrwagNgwy5cIEHadvLlFHZQoA3Uzp5AF2
+         /H1EOXsfOIiqc/Fss+WbEBYwlUH4OPNtBV4c9NAlLQCEbq+/RCVdbSDHe3DJwrOS0YLk
+         3md9sEpvYuddbo1tOXG+nXnQlgJRkuDZBPj3zt95+uJhgOVhOJd24Qo+qoOod2yzN8W/
+         GSPHgqaqJa9WvxX1KyYxX4T4l+nPt+ywjFMqhnmuCFWGeRH+Rl/eHxoSt0c5rwcSiUbk
+         Zj3A==
+X-Gm-Message-State: AOAM531iHnmEbJvtlyhsvlebP2eLI3dWlKm/8j6OIjwGKBVl7tryjmMS
+        Y0vWYw9UsZ4KkXgiPfXLORONhQ==
+X-Google-Smtp-Source: ABdhPJxbC0ey4Rg99lhY3yGZtCR9r7zZ57Li9DI4bUljuHc+JAs4CwW4XOl2xv8dyBpp5/NAwqsqLQ==
+X-Received: by 2002:a1c:35c7:: with SMTP id c190mr6063566wma.7.1604518258408;
+        Wed, 04 Nov 2020 11:30:58 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id m12sm4051671wrs.92.2020.11.04.11.31.01
+        by smtp.gmail.com with ESMTPSA id m12sm4051671wrs.92.2020.11.04.11.30.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:31:01 -0800 (PST)
+        Wed, 04 Nov 2020 11:30:57 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -65,9 +65,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Mark Brown <broonie@kernel.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 5/8] gpio: exar: use a helper variable for &pdev->dev
-Date:   Wed,  4 Nov 2020 20:30:48 +0100
-Message-Id: <20201104193051.32236-6-brgl@bgdev.pl>
+Subject: [PATCH v2 2/8] gpio: exar: add a newline after the copyright notice
+Date:   Wed,  4 Nov 2020 20:30:45 +0100
+Message-Id: <20201104193051.32236-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201104193051.32236-1-brgl@bgdev.pl>
 References: <20201104193051.32236-1-brgl@bgdev.pl>
@@ -79,68 +79,26 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-It's more elegant to use a helper local variable to store the address
-of the underlying struct device than to dereference pdev everywhere. It
-also has the benefit of avoiding unnecessary line breaks.
+It's customary to have a newline between the copyright header and the
+includes. Add one to gpio-exar.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-exar.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-exar.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index 752e8437ff80..db366d85b6b4 100644
+index b1accfba017d..4202dd363a11 100644
 --- a/drivers/gpio/gpio-exar.c
 +++ b/drivers/gpio/gpio-exar.c
-@@ -120,7 +120,8 @@ static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
- 
- static int gpio_exar_probe(struct platform_device *pdev)
- {
--	struct pci_dev *pcidev = to_pci_dev(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct pci_dev *pcidev = to_pci_dev(dev->parent);
- 	struct exar_gpio_chip *exar_gpio;
- 	u32 first_pin, ngpios;
- 	void __iomem *p;
-@@ -134,16 +135,15 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 	if (!p)
- 		return -ENOMEM;
- 
--	ret = device_property_read_u32(&pdev->dev, "exar,first-pin",
--				       &first_pin);
-+	ret = device_property_read_u32(dev, "exar,first-pin", &first_pin);
- 	if (ret)
- 		return ret;
- 
--	ret = device_property_read_u32(&pdev->dev, "ngpios", &ngpios);
-+	ret = device_property_read_u32(dev, "ngpios", &ngpios);
- 	if (ret)
- 		return ret;
- 
--	exar_gpio = devm_kzalloc(&pdev->dev, sizeof(*exar_gpio), GFP_KERNEL);
-+	exar_gpio = devm_kzalloc(dev, sizeof(*exar_gpio), GFP_KERNEL);
- 	if (!exar_gpio)
- 		return -ENOMEM;
- 
-@@ -157,7 +157,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 
- 	sprintf(exar_gpio->name, "exar_gpio%d", index);
- 	exar_gpio->gpio_chip.label = exar_gpio->name;
--	exar_gpio->gpio_chip.parent = &pdev->dev;
-+	exar_gpio->gpio_chip.parent = dev;
- 	exar_gpio->gpio_chip.direction_output = exar_direction_output;
- 	exar_gpio->gpio_chip.direction_input = exar_direction_input;
- 	exar_gpio->gpio_chip.get_direction = exar_get_direction;
-@@ -169,8 +169,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 	exar_gpio->index = index;
- 	exar_gpio->first_pin = first_pin;
- 
--	ret = devm_gpiochip_add_data(&pdev->dev,
--				     &exar_gpio->gpio_chip, exar_gpio);
-+	ret = devm_gpiochip_add_data(dev, &exar_gpio->gpio_chip, exar_gpio);
- 	if (ret)
- 		goto err_destroy;
- 
+@@ -4,6 +4,7 @@
+  *
+  * Copyright (C) 2015 Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+  */
++
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/gpio/driver.h>
 -- 
 2.29.1
 
