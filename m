@@ -2,101 +2,184 @@ Return-Path: <SRS0=FFhp=EK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB72C388F9
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 15:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033E2C388F9
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 15:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3DBA2076D
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 15:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FF8E2074B
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Nov 2020 15:25:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c38nYRy6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTy3QjZ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730262AbgKDPZS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 10:25:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
+        id S1730370AbgKDPZY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 10:25:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730245AbgKDPZQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 10:25:16 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39D22C0613D4;
-        Wed,  4 Nov 2020 07:25:15 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id c18so2742365wme.2;
-        Wed, 04 Nov 2020 07:25:15 -0800 (PST)
+        with ESMTP id S1730582AbgKDPZW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2020 10:25:22 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8CC8C0613D3;
+        Wed,  4 Nov 2020 07:25:21 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id s9so22457129wro.8;
+        Wed, 04 Nov 2020 07:25:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hQuHwpO9W6EfVdvEexDpXK2yxO3fyCBXGcRXbSH1WmI=;
-        b=c38nYRy676SWec7f0EgQa52uS8Ebi+3J8uKzCJQDk9gB5bpQhQ4e5F2bGhFHdPfjf0
-         xBEYxSsef4gaiiPl2cYqP0AfmUpoyzU8eJfRIepZqsFPxO+O4D1eEK9FyHXYOHz128cl
-         9YYlLHiLwX5G31vpL9fcDVxPPGBkR0Rn8EUSm7bzwBH8u2vhf/2XEO3Qh77nybmF85Wy
-         Zz+7L9LeU9oXaJ2MVTR0ajbe8+O3g2dB5x8EM3NwHq539FkQtZ5rfgqdLwB2EE0up2rb
-         1kDiiJn2uHvSbP58nUQhwI51TykfBq9Suj0Wcz9VoEewhIhii6OkIdecwLSX+NPhGkIp
-         zzhw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=NzUdG7O5plJLltDdQaAt7vQkier8SQMoP2Kz4KWpJtg=;
+        b=HTy3QjZ6WeEHGWiVybXAWLAbazQm6t1Jx8qkfY8ajPoYCY66rZlKj9XOWS8b3RvnWF
+         hXmUAOmPOOwBzd1uDQ/r55JsN1GuoNWTvDIS0woWukbJERH7HEf9PFL1kP+HMOzu1qfK
+         dyW2oR6AM1jHNBNkc8pxvoN7xHaWvpsZvP7P+nppSDwjAbtXpsa2uLWcBniRZyPqe6Gk
+         HTfOhvwuCXH4xDsHEDftgcfbuUFWS0O6jn5lUbMeDLpwZIDy9pqn+66te/tyUQQhbzRP
+         NilI7jbP9mhUv1TgK1GniLP0HuIVmcF1YjS2gzp8zmnk1o/zRFVjmkVdx+50DrEb36Xt
+         PSYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hQuHwpO9W6EfVdvEexDpXK2yxO3fyCBXGcRXbSH1WmI=;
-        b=iOu9guYMNhSCXvNd2UJZfqxHWjGVBzImQqrFgbW4BZfsQ8VqqCCy8Lq2Hngofw8I6d
-         onbaDZMKnwiyiuSJMDJjQMmi9m2IX5hnA6MvQRPyMLHqeBYa8R1M0XEfl8yVhvwY8jJr
-         eozgfbhAIFdVp8/s0X8EYgIvejo1nSPHYj4Bftq9BfotqvpEg7E6QbrchMZ45y4GQ7Uw
-         XihA5R4Nrsjrzkt4IvejU7YfcRQU5o3OaAWKWq02Qg7VSL3zxqMGQAf4gEWcKuZi2AF9
-         lzLtv58ZKmiVD5Zq+edbEIiTpvvxElm90vdDax9rtuzk+NeBqDJ4bP+pLpP2pJAf+Dnl
-         TgMA==
-X-Gm-Message-State: AOAM531dKlv5GEM2DngNY51bJRMXVe/Z0SsICyUDxGVBCjoxfo/fPo25
-        WRshAHu8uFXUqk4L9log/Dk=
-X-Google-Smtp-Source: ABdhPJxvk8OnLYlJgX/MwAUVTAxCCGztXI7d3X1he06S/VWdeVwaH2YrOHL14r573YdVy4NfEQSKBw==
-X-Received: by 2002:a7b:cb46:: with SMTP id v6mr5142035wmj.146.1604503513917;
-        Wed, 04 Nov 2020 07:25:13 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=NzUdG7O5plJLltDdQaAt7vQkier8SQMoP2Kz4KWpJtg=;
+        b=cuiF8FWxrsm0kJDK1PbIb4NSmahO9brR/Fo01Gy/84DMWnOQkKNx7EseFqPYLZE1h7
+         7BDo4QjiUMNQv17Y5g43fQZ13swtjqugfwxsZY0TQE0f+D9G/SiPP9m28McE6FymmqL2
+         Sd/gQaIFiruGX2DBnGWErC4FVmW89w72Eped1svy2fJKRlN1vn7IP1Xm6vq71vgC8dgD
+         Gj4okcJVm4BKWU2UwPW3eZ6PBB+8M1jHpc/mNU1baxEXtafA0ReHTrOG4SqVP4FBfZvF
+         /xJ4skhguemSHQmrfU0qWLNDHOzVxC0yse7uLjWZH5DfG5RgUiS4YIjdP7J0GR6f5iPP
+         wC0w==
+X-Gm-Message-State: AOAM532ecoEOhtapV5b7pPGJOT6KgqrPahdrcKe1VzHFhEpn/NGv+evT
+        M+W37qcBHooW6UuIio/hWyQ=
+X-Google-Smtp-Source: ABdhPJwBKP7XMdHOEzKCA1aoTL/727GoUgoWuR5MxDyKScNUGQHAWCVtseN7CzPg+T7lgVeIhFjqPw==
+X-Received: by 2002:adf:f7c3:: with SMTP id a3mr34879862wrq.254.1604503520488;
+        Wed, 04 Nov 2020 07:25:20 -0800 (PST)
 Received: from srv-dev.mgt.openheadend.tv (aob-ovh-4.easytools.tv. [51.210.1.153])
-        by smtp.gmail.com with ESMTPSA id t2sm3050077wrw.95.2020.11.04.07.25.12
+        by smtp.gmail.com with ESMTPSA id t2sm3050077wrw.95.2020.11.04.07.25.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 07:25:13 -0800 (PST)
+        Wed, 04 Nov 2020 07:25:19 -0800 (PST)
 From:   Arnaud de Turckheim <quarium@gmail.com>
 To:     linus.walleij@linaro.org
 Cc:     bgolaszewski@baylibre.com, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, vilhelm.gray@gmail.com,
         Arnaud de Turckheim <quarium@gmail.com>
-Subject: [PATCH 0/3] gpio: pcie-idio-24: Fix IRQ handling
-Date:   Wed,  4 Nov 2020 16:24:52 +0100
-Message-Id: <20201104152455.40627-1-quarium@gmail.com>
+Subject: [PATCH 3/3] gpio: pcie-idio-24: Enable PEX8311 interrupts
+Date:   Wed,  4 Nov 2020 16:24:55 +0100
+Message-Id: <20201104152455.40627-4-quarium@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201104152455.40627-1-quarium@gmail.com>
+References: <20201104152455.40627-1-quarium@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch set fixes the irq_mask/irq_unmask functions and enables the
-PLX PEX8311 local interrupts.
+This enables the PEX8311 internal PCI wire interrupt and the PEX8311
+local interrupt input so the local interrupts are forwarded to the PCI.
 
-With the current version of the driver, gpiomon (from libgpiod) or a
-poll(2) on the sysfs value are not working. According to
-/proc/interrupts, there is no interruption triggered.
-The main issue is that the local interrupts are not forwarded by the
-PEX8311 to the PCI.
+Fixes: 585562046628 ("gpio: Add GPIO support for the ACCES PCIe-IDIO-24 family")
+Signed-off-by: Arnaud de Turckheim <quarium@gmail.com>
+---
+ drivers/gpio/gpio-pcie-idio-24.c | 52 +++++++++++++++++++++++++++++++-
+ 1 file changed, 51 insertions(+), 1 deletion(-)
 
-There is also two bugs:
-    - The IRQ mask is not correctly updated when unmasking an
-      interruption.
-    - The COS Enable Register value is not correctly updated when
-      masking/unmasking an interruption.
-
-It seems this problems exist since the initial commit.
-
-Arnaud de Turckheim (3):
-  gpio: pcie-idio-24: Fix irq mask when masking
-  gpio: pcie-idio-24: Fix IRQ Enable Register value
-  gpio: pcie-idio-24: Enable PEX8311 interrupts
-
- drivers/gpio/gpio-pcie-idio-24.c | 62 ++++++++++++++++++++++++++++----
- 1 file changed, 56 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
+index a61de14d09b6..2a07fd96707e 100644
+--- a/drivers/gpio/gpio-pcie-idio-24.c
++++ b/drivers/gpio/gpio-pcie-idio-24.c
+@@ -28,6 +28,47 @@
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+ 
++/*
++ * PLX PEX8311 PCI LCS_INTCSR Interrupt Control/Status
++ *
++ * Bit: Description
++ *   0: Enable Interrupt Sources (Bit 0)
++ *   1: Enable Interrupt Sources (Bit 1)
++ *   2: Generate Internal PCI Bus Internal SERR# Interrupt
++ *   3: Mailbox Interrupt Enable
++ *   4: Power Management Interrupt Enable
++ *   5: Power Management Interrupt
++ *   6: Slave Read Local Data Parity Check Error Enable
++ *   7: Slave Read Local Data Parity Check Error Status
++ *   8: Internal PCI Wire Interrupt Enable
++ *   9: PCI Express Doorbell Interrupt Enable
++ *  10: PCI Abort Interrupt Enable
++ *  11: Local Interrupt Input Enable
++ *  12: Retry Abort Enable
++ *  13: PCI Express Doorbell Interrupt Active
++ *  14: PCI Abort Interrupt Active
++ *  15: Local Interrupt Input Active
++ *  16: Local Interrupt Output Enable
++ *  17: Local Doorbell Interrupt Enable
++ *  18: DMA Channel 0 Interrupt Enable
++ *  19: DMA Channel 1 Interrupt Enable
++ *  20: Local Doorbell Interrupt Active
++ *  21: DMA Channel 0 Interrupt Active
++ *  22: DMA Channel 1 Interrupt Active
++ *  23: Built-In Self-Test (BIST) Interrupt Active
++ *  24: Direct Master was the Bus Master during a Master or Target Abort
++ *  25: DMA Channel 0 was the Bus Master during a Master or Target Abort
++ *  26: DMA Channel 1 was the Bus Master during a Master or Target Abort
++ *  27: Target Abort after internal 256 consecutive Master Retrys
++ *  28: PCI Bus wrote data to LCS_MBOX0
++ *  29: PCI Bus wrote data to LCS_MBOX1
++ *  30: PCI Bus wrote data to LCS_MBOX2
++ *  31: PCI Bus wrote data to LCS_MBOX3
++ */
++#define PLX_PEX8311_PCI_LCS_INTCSR  0x68
++#define INTCSR_INTERNAL_PCI_WIRE    BIT(8)
++#define INTCSR_LOCAL_INPUT          BIT(11)
++
+ /**
+  * struct idio_24_gpio_reg - GPIO device registers structure
+  * @out0_7:	Read: FET Outputs 0-7
+@@ -92,6 +133,7 @@ struct idio_24_gpio_reg {
+ struct idio_24_gpio {
+ 	struct gpio_chip chip;
+ 	raw_spinlock_t lock;
++	__u8 __iomem *plx;
+ 	struct idio_24_gpio_reg __iomem *reg;
+ 	unsigned long irq_mask;
+ };
+@@ -455,6 +497,7 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	struct device *const dev = &pdev->dev;
+ 	struct idio_24_gpio *idio24gpio;
+ 	int err;
++	const size_t pci_plx_bar_index = 1;
+ 	const size_t pci_bar_index = 2;
+ 	const char *const name = pci_name(pdev);
+ 	struct gpio_irq_chip *girq;
+@@ -469,12 +512,13 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return err;
+ 	}
+ 
+-	err = pcim_iomap_regions(pdev, BIT(pci_bar_index), name);
++	err = pcim_iomap_regions(pdev, BIT(pci_plx_bar_index) | BIT(pci_bar_index), name);
+ 	if (err) {
+ 		dev_err(dev, "Unable to map PCI I/O addresses (%d)\n", err);
+ 		return err;
+ 	}
+ 
++	idio24gpio->plx = pcim_iomap_table(pdev)[pci_plx_bar_index];
+ 	idio24gpio->reg = pcim_iomap_table(pdev)[pci_bar_index];
+ 
+ 	idio24gpio->chip.label = name;
+@@ -504,6 +548,12 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	/* Software board reset */
+ 	iowrite8(0, &idio24gpio->reg->soft_reset);
++	/*
++	 * enable PLX PEX8311 internal PCI wire interrupt and local interrupt
++	 * input
++	 */
++	iowrite8((INTCSR_INTERNAL_PCI_WIRE | INTCSR_LOCAL_INPUT) >> 8,
++		 idio24gpio->plx + PLX_PEX8311_PCI_LCS_INTCSR + 1);
+ 
+ 	err = devm_gpiochip_add_data(dev, &idio24gpio->chip, idio24gpio);
+ 	if (err) {
 -- 
 2.25.1
 
