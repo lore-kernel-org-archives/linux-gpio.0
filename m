@@ -2,86 +2,229 @@ Return-Path: <SRS0=WQsA=EL=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6323CC2D0A3
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Nov 2020 01:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF7AC2D0A3
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Nov 2020 02:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6A0E20729
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Nov 2020 01:47:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="TUrf1FzY"
+	by mail.kernel.org (Postfix) with ESMTP id 2F29020739
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Nov 2020 02:08:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731210AbgKEBrc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Nov 2020 20:47:32 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:3689 "EHLO rere.qmqm.pl"
+        id S1733241AbgKECIj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Nov 2020 21:08:39 -0500
+Received: from mga05.intel.com ([192.55.52.43]:10245 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbgKEBrc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 4 Nov 2020 20:47:32 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4CRRGn2ncnzkL;
-        Thu,  5 Nov 2020 02:47:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1604540850; bh=1TyHBCCwpl8WXLOw+y00Ta+ECeljoineDBn6iSjkCAw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TUrf1FzY/5AEa3aMTEedGY7q3vRnqz53uDcIDmF2tLB03WrhU7s8SNdhNkT/J8TaB
-         DEKCRz62wqI0c75H/ZFqT/JOExo7DNBacbn55pPNJqpgmp7k9zWT365wrtrEtiBZhb
-         3l0jL3+SVin6CDQJAUvMjk+KoELxR4rJUHXdCOE4bdrTJG4chekK693/R0MmY7wxVZ
-         NfnynWCXECVjzULYWf64tPwBxA6Bbylty/Z+7pmb492+hhgblsWkUJBfAqomK3/q2k
-         7kr9HoIG3O7qJ63SG3esoJPziNMTcz+s5hrgsb9x3+7TSUCK8YL7Kd6NJHUFXpYqFf
-         wsxQAp6Y87Aug==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Thu, 5 Nov 2020 02:47:28 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH 1/5] gpio: tps65910: use regmap accessors
-Message-ID: <20201105014728.GC17266@qmqm.qmqm.pl>
-References: <cover.1601164493.git.mirq-linux@rere.qmqm.pl>
- <e3a3979657babf716e5f4072e373637ce86ad7ff.1601164493.git.mirq-linux@rere.qmqm.pl>
- <CACRpkdaMHH35C1LqUROFBte3T00Lz0zApHy3hdZ83Z8EZR04hw@mail.gmail.com>
- <20201001090104.GM6148@dell>
- <20201104144331.GG4488@dell>
+        id S1728045AbgKECIj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 4 Nov 2020 21:08:39 -0500
+IronPort-SDR: JfXQkbwwvsZCzY0resCEAc+CF8rgjoZWCffWgJCXGDNXZxj0hyXKEuMqHPVOS4TqJ3dLH3MG7V
+ 7WatlVpYk3Tg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9795"; a="254023300"
+X-IronPort-AV: E=Sophos;i="5.77,451,1596524400"; 
+   d="scan'208";a="254023300"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2020 18:08:37 -0800
+IronPort-SDR: IsdCcwbz6wKFoCmliI6c6XVtioKI5lZYxqKyE3QSX9P/PHsVQLx/MzXm9EC3AAPsx7tG1x9jLP
+ rRl5PRzisU2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,451,1596524400"; 
+   d="scan'208";a="354095763"
+Received: from lkp-server02.sh.intel.com (HELO e61783667810) ([10.239.97.151])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Nov 2020 18:08:36 -0800
+Received: from kbuild by e61783667810 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kaUhX-0001Ad-S5; Thu, 05 Nov 2020 02:08:35 +0000
+Date:   Thu, 05 Nov 2020 10:08:35 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:fixes] BUILD SUCCESS
+ 8045ec42d14c6f77b5e925d1421150c043dfb75d
+Message-ID: <5fa35ea3.t9TC2xsqlZerrRlH%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201104144331.GG4488@dell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 02:43:31PM +0000, Lee Jones wrote:
-> On Thu, 01 Oct 2020, Lee Jones wrote:
-> > On Wed, 30 Sep 2020, Linus Walleij wrote:
-> > > On Sun, Sep 27, 2020 at 1:59 AM Micha³ Miros³aw <mirq-linux@rere.qmqm.pl> wrote:
-> > > > Use regmap accessors directly for register manipulation - removing one
-> > > > layer of abstraction.
-> > > >
-> > > > Signed-off-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
-> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > > 
-> > > I suppose it is easiest that Lee apply all patches to the MFD tree?
-> > Yes, that's fine.
-> I think this patch is orthogonal right?
-> 
-> Not sure why it need to go in via MFD.
-[...]
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  fixes
+branch HEAD: 8045ec42d14c6f77b5e925d1421150c043dfb75d  pinctrl: rockchip: create irq mapping in gpio_to_irq
 
-The patch 4 assumes all previous patches are applied (or there will be
-build breakage).
+elapsed time: 725m
 
-Best Regards
-Micha³ Miros³aw
+configs tested: 157
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                        shmobile_defconfig
+sh                           se7751_defconfig
+arm                        vexpress_defconfig
+mips                          ath25_defconfig
+arm                            u300_defconfig
+powerpc                  mpc885_ads_defconfig
+mips                  maltasmvp_eva_defconfig
+sh                   secureedge5410_defconfig
+powerpc                 canyonlands_defconfig
+xtensa                              defconfig
+microblaze                    nommu_defconfig
+arm                           efm32_defconfig
+arm                     davinci_all_defconfig
+riscv                    nommu_k210_defconfig
+sh                               alldefconfig
+arm                          prima2_defconfig
+powerpc                        fsp2_defconfig
+sh                          rsk7269_defconfig
+mips                        maltaup_defconfig
+arm                      pxa255-idp_defconfig
+arm                          tango4_defconfig
+parisc                           alldefconfig
+powerpc               mpc834x_itxgp_defconfig
+arm                           tegra_defconfig
+mips                         cobalt_defconfig
+openrisc                            defconfig
+mips                         tb0226_defconfig
+alpha                            allyesconfig
+powerpc                    sam440ep_defconfig
+mips                         db1xxx_defconfig
+arm                            pleb_defconfig
+arm                        mvebu_v7_defconfig
+sh                        sh7785lcr_defconfig
+arm                        spear3xx_defconfig
+powerpc                 mpc834x_itx_defconfig
+ia64                                defconfig
+mips                       capcella_defconfig
+mips                       rbtx49xx_defconfig
+arc                              alldefconfig
+um                            kunit_defconfig
+powerpc                     mpc5200_defconfig
+m68k                       m5475evb_defconfig
+m68k                          atari_defconfig
+sh                            titan_defconfig
+powerpc                  storcenter_defconfig
+arm                        clps711x_defconfig
+sh                        edosk7760_defconfig
+parisc                generic-64bit_defconfig
+powerpc                     tqm8555_defconfig
+i386                             alldefconfig
+sh                           se7722_defconfig
+powerpc                       holly_defconfig
+mips                        bcm47xx_defconfig
+mips                            gpr_defconfig
+m68k                          hp300_defconfig
+openrisc                         alldefconfig
+mips                          malta_defconfig
+arc                          axs103_defconfig
+mips                         tb0287_defconfig
+sh                         ap325rxa_defconfig
+powerpc                     stx_gp3_defconfig
+sh                     magicpanelr2_defconfig
+powerpc                     taishan_defconfig
+arm                          ep93xx_defconfig
+powerpc                      katmai_defconfig
+m68k                       bvme6000_defconfig
+sh                     sh7710voipgw_defconfig
+arm                         orion5x_defconfig
+mips                            ar7_defconfig
+riscv                    nommu_virt_defconfig
+powerpc                        cell_defconfig
+sh                  sh7785lcr_32bit_defconfig
+powerpc                  iss476-smp_defconfig
+arm                          moxart_defconfig
+m68k                             allmodconfig
+arc                           tb10x_defconfig
+arm                          gemini_defconfig
+powerpc                     asp8347_defconfig
+powerpc                      ppc64e_defconfig
+powerpc                     tqm8548_defconfig
+powerpc                     ksi8560_defconfig
+arc                     nsimosci_hs_defconfig
+ia64                             allmodconfig
+ia64                             allyesconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a004-20201104
+i386                 randconfig-a006-20201104
+i386                 randconfig-a005-20201104
+i386                 randconfig-a001-20201104
+i386                 randconfig-a002-20201104
+i386                 randconfig-a003-20201104
+i386                 randconfig-a004-20201105
+i386                 randconfig-a006-20201105
+i386                 randconfig-a005-20201105
+i386                 randconfig-a001-20201105
+i386                 randconfig-a002-20201105
+i386                 randconfig-a003-20201105
+x86_64               randconfig-a012-20201104
+x86_64               randconfig-a015-20201104
+x86_64               randconfig-a013-20201104
+x86_64               randconfig-a011-20201104
+x86_64               randconfig-a014-20201104
+x86_64               randconfig-a016-20201104
+i386                 randconfig-a015-20201104
+i386                 randconfig-a013-20201104
+i386                 randconfig-a014-20201104
+i386                 randconfig-a016-20201104
+i386                 randconfig-a011-20201104
+i386                 randconfig-a012-20201104
+riscv                            allyesconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a004-20201104
+x86_64               randconfig-a003-20201104
+x86_64               randconfig-a005-20201104
+x86_64               randconfig-a002-20201104
+x86_64               randconfig-a006-20201104
+x86_64               randconfig-a001-20201104
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
