@@ -2,144 +2,71 @@ Return-Path: <SRS0=N38l=EM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949F9C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A05C2D0A3
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3686C2087E
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:28:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="c2/zYJR0"
+	by mail.kernel.org (Postfix) with ESMTP id 3754320B80
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbgKFJ17 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Nov 2020 04:27:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52846 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbgKFJ17 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:27:59 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF184C0613CF
-        for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2020 01:27:58 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id e18so561845edy.6
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2020 01:27:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nnv5uGNlg6ZV7/2v1XUlOT90CUj1EOsp7HGgDBUIcEI=;
-        b=c2/zYJR0d8ePpqOhAzLT9bTxaaOv+fFGRz37Tphnemf9O9wx6+jyrUVFB6ObBa504g
-         6h4c4valuAu4rf2hmEpbeOCbsiOppTg8n0DFfabimD8yHr0CJvOBgTczpFj+0VpCY34u
-         CsZN8HV+WHe3jlIREDjrkVJL33u8qcR7Y0eorCSopnn5joWKla0VQuguuEjrLi2JIt/m
-         2KEVQnWBoIx9Quh+xgye3Ecnn6MoCQamS2+EOyj4Dn3lVPgy0ghcJLoyxaAbfwF4Xo7l
-         otg9bt66qGKeyJTdEWeU61kGD38Z5IPiPibCVB5B112/Sz6jpVtlAEABQd6nKbPlaaYu
-         tAVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nnv5uGNlg6ZV7/2v1XUlOT90CUj1EOsp7HGgDBUIcEI=;
-        b=lKBKIoOBbrJ2b1MGHqpAjFJ2pRmsvmlwvM0SYGb/hTlXEFW2vRzWPVQx8pHkendWOg
-         xKLIdlNux+z6r3XHOhq0bywS5EESV72Z76UlMJgUaMbWD8Tt5s3qgrAxYd/o5j2xTMjX
-         d9+/U13ZNcgESgDdzgBwqSdOEb7KtXoJUg4iut5aq9PS0uB6HYaHda+Kjwin/JzISZ8l
-         /zQ2GdnezP+KluO4ErZtbBbtbX+FECARNiIH8Xaz5XKTGpyzHstgAP57WO0nsOkV/2bm
-         4Akd/eNkKOgpJnuVeMsJyTRkdJOMejLSSta63r0Q/I8i5WEU+KZ66OOIbrLltxGRkPvr
-         Zi+g==
-X-Gm-Message-State: AOAM532g1PhH2WELGgHfDbsBmIBwibS4waMGEeBgpx/0SGv6VLQXQNtV
-        xT5S4jTxOzaKzxnInGtKQXBfnBBE2BfTG2WlQBH3Tw6Skgc=
-X-Google-Smtp-Source: ABdhPJwfYyOOtwoxCKqdG/kXaE7KBAFoS5HzygCOsjp/EZE0PlgK+Yifipy9k5IHKQMSmWj5oCenu8uXTy8w2N+fvyg=
-X-Received: by 2002:a50:99c3:: with SMTP id n3mr1067260edb.213.1604654877688;
- Fri, 06 Nov 2020 01:27:57 -0800 (PST)
+        id S1726642AbgKFJb2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Nov 2020 04:31:28 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38477 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726625AbgKFJb2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:31:28 -0500
+X-Originating-IP: 91.175.115.186
+Received: from localhost (91-175-115-186.subs.proxad.net [91.175.115.186])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 16FC560004;
+        Fri,  6 Nov 2020 09:31:21 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        <Steen.Hegelund@microchip.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 1/4] dt-bindings: pinctrl: ocelot: Add Luton SoC support
+Date:   Fri,  6 Nov 2020 10:31:15 +0100
+Message-Id: <20201106093118.965152-2-gregory.clement@bootlin.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201106093118.965152-1-gregory.clement@bootlin.com>
+References: <20201106093118.965152-1-gregory.clement@bootlin.com>
 MIME-Version: 1.0
-References: <20201104115348.51930-1-damien.lemoal@wdc.com>
-In-Reply-To: <20201104115348.51930-1-damien.lemoal@wdc.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 6 Nov 2020 10:27:46 +0100
-Message-ID: <CAMpxmJUO-fyQRyjKD4gNZFw=_iAH7eMd=xyLXLuwAikC0OnLsQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Do not trigger WARN() with sysfs gpio export/unexport
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 4, 2020 at 12:53 PM Damien Le Moal <damien.lemoal@wdc.com> wrote:
->
-> If a user tries to export or unexport an invalid gpio (e.g. gpio number
-> >= ARCH_NR_GPIOS), gpio_to_desc() will trigger a register dump through a
-> WARN() call. Avoid this rather scary error message by first checking the
-> validity of the gpio number before calling gpio_to_desc() in
-> export_store() and unexport_store(). The user gets a normal error
-> message to signal his/her error without any possible confusion with a
-> kernel bug.
->
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  drivers/gpio/gpiolib-sysfs.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-> index 728f6c687182..b6fd0d82757a 100644
-> --- a/drivers/gpio/gpiolib-sysfs.c
-> +++ b/drivers/gpio/gpiolib-sysfs.c
-> @@ -3,6 +3,7 @@
->  #include <linux/mutex.h>
->  #include <linux/device.h>
->  #include <linux/sysfs.h>
-> +#include <linux/gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/interrupt.h>
-> @@ -456,14 +457,15 @@ static ssize_t export_store(struct class *class,
->                                 const char *buf, size_t len)
->  {
->         long                    gpio;
-> -       struct gpio_desc        *desc;
-> +       struct gpio_desc        *desc = NULL;
->         int                     status;
->
->         status = kstrtol(buf, 0, &gpio);
->         if (status < 0)
->                 goto done;
->
-> -       desc = gpio_to_desc(gpio);
-> +       if (gpio_is_valid(gpio))
-> +               desc = gpio_to_desc(gpio);
->         /* reject invalid GPIOs */
->         if (!desc) {
->                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
-> @@ -503,14 +505,15 @@ static ssize_t unexport_store(struct class *class,
->                                 const char *buf, size_t len)
->  {
->         long                    gpio;
-> -       struct gpio_desc        *desc;
-> +       struct gpio_desc        *desc = NULL;
->         int                     status;
->
->         status = kstrtol(buf, 0, &gpio);
->         if (status < 0)
->                 goto done;
->
-> -       desc = gpio_to_desc(gpio);
-> +       if (gpio_is_valid(gpio))
-> +               desc = gpio_to_desc(gpio);
->         /* reject bogus commands (gpio_unexport ignores them) */
->         if (!desc) {
->                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
-> --
-> 2.28.0
->
+Add the documentation for the Microsemi Luton pinmuxing and gpio
+controller.
 
-How about we change that to an unconditional WARN() everytime the user
-tries to export a GPIO over sysfs so that people switch over to the
-character device?
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ .../devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt        | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I'm joking a bit but I think it's time to start discouraging people
-from using sysfs and a warning may be a good start.
+diff --git a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
+index 00912449237b..58ea2ae57713 100644
+--- a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
+@@ -3,7 +3,8 @@ Microsemi Ocelot pin controller Device Tree Bindings
+ 
+ Required properties:
+  - compatible		: Should be "mscc,ocelot-pinctrl",
+-			  "mscc,jaguar2-pinctrl" or "microchip,sparx5-pinctrl"
++			  "mscc,jaguar2-pinctrl", "microchip,sparx5-pinctrl"
++			  or "mscc,luton-pinctrl"
+  - reg			: Address and length of the register set for the device
+  - gpio-controller	: Indicates this device is a GPIO controller
+  - #gpio-cells		: Must be 2.
+-- 
+2.28.0
 
-Bartosz
