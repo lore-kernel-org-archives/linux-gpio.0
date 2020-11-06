@@ -2,104 +2,144 @@ Return-Path: <SRS0=N38l=EM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E7EC2D0A3
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949F9C2D0A3
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD3F42087E
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3686C2087E
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:28:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuNKss5T"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="c2/zYJR0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbgKFJZE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Nov 2020 04:25:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
+        id S1726028AbgKFJ17 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Nov 2020 04:27:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbgKFJZE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:25:04 -0500
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C84EC0613CF;
-        Fri,  6 Nov 2020 01:25:04 -0800 (PST)
-Received: by mail-pf1-x441.google.com with SMTP id z3so773435pfz.6;
-        Fri, 06 Nov 2020 01:25:04 -0800 (PST)
+        with ESMTP id S1725868AbgKFJ17 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:27:59 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF184C0613CF
+        for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2020 01:27:58 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id e18so561845edy.6
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2020 01:27:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=n6HjZO68eJwzCsb2ucSZ6B0XskEpVkwnHnaVuGbEBd8=;
-        b=QuNKss5T6V8FATdlBUmjBheEfwGufC9Y1UXzYxDMTiEZvLAF7bCfcmGRDg8qSEQQel
-         k3Nr9/fy6sJq5zzk3JFXFtN8YKFdHddgd5g5XTmbg820WhVQzZ/NHmxYen7Bj1sqQ8g5
-         ssFqfy7JYnuSngNiv0wzXDRRDSTxa+nSRr5xt0hYxk6DA/B3MBj71YH8Bbd+aJg/0euL
-         SV1IPLw3rjRdUBk49mYnCTKifNjQiTxnW+0FUgdLNwwviK5kpawTb4n1Bnvbu5Dh3oAY
-         pbRRwgtwO1N16x1599ipby+zECVNEvDKnYUU4Nkp9YZyy2i8cO95DboiTrH4NWyW1+Z7
-         homQ==
+        bh=nnv5uGNlg6ZV7/2v1XUlOT90CUj1EOsp7HGgDBUIcEI=;
+        b=c2/zYJR0d8ePpqOhAzLT9bTxaaOv+fFGRz37Tphnemf9O9wx6+jyrUVFB6ObBa504g
+         6h4c4valuAu4rf2hmEpbeOCbsiOppTg8n0DFfabimD8yHr0CJvOBgTczpFj+0VpCY34u
+         CsZN8HV+WHe3jlIREDjrkVJL33u8qcR7Y0eorCSopnn5joWKla0VQuguuEjrLi2JIt/m
+         2KEVQnWBoIx9Quh+xgye3Ecnn6MoCQamS2+EOyj4Dn3lVPgy0ghcJLoyxaAbfwF4Xo7l
+         otg9bt66qGKeyJTdEWeU61kGD38Z5IPiPibCVB5B112/Sz6jpVtlAEABQd6nKbPlaaYu
+         tAVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=n6HjZO68eJwzCsb2ucSZ6B0XskEpVkwnHnaVuGbEBd8=;
-        b=jKxFIeltJ9IVqOMroK8eYGY1iJW07/DyYS+sYDtDs4zZ6wnpmAjFBqqz70GR2JBL0g
-         fe0pOp+3DehoKNTDg2qs6O3STIewfcTFkGT0GVV4Ds2F4a/bNP0AFez3CbvkaPNsJd4O
-         IA2fO+fO4KnGyesm/0dQmZeBR/FRpvHy5zvTrAZHiN3eq/12FeS7YeXrMRqDL5r6G98g
-         Xm1wa9awtfcDbSL4yCKikYfCJ6PYXhkqQ5rPlTHntufiZyaMP3EZn7rhdfncYigUw95t
-         fS/XjSEncJokoMLUfLvuoIVeB1yAeQ3WVz9Or9RVIH5L2mlPcXICP5rE1s+TXMqPkdGL
-         gnow==
-X-Gm-Message-State: AOAM532R82Qa4ooOnevGJKnAyM2uzIlZNPDczVHjGBDabcIBBdyMo/j3
-        PdH/W+h1flEUYwy7GCNnStcJtG11zgTZwrl7hQgwQ29fUQM=
-X-Google-Smtp-Source: ABdhPJwFBbWhc/ajqSlGOcas2h9EZH9QHYpwErKY1RO0qZxDIbkxawo5JL2nnS7meQZOjB9qgm3lQKPxILJL90d9kUw=
-X-Received: by 2002:a62:343:0:b029:15c:e33c:faff with SMTP id
- 64-20020a6203430000b029015ce33cfaffmr1037118pfd.7.1604654703797; Fri, 06 Nov
- 2020 01:25:03 -0800 (PST)
+        bh=nnv5uGNlg6ZV7/2v1XUlOT90CUj1EOsp7HGgDBUIcEI=;
+        b=lKBKIoOBbrJ2b1MGHqpAjFJ2pRmsvmlwvM0SYGb/hTlXEFW2vRzWPVQx8pHkendWOg
+         xKLIdlNux+z6r3XHOhq0bywS5EESV72Z76UlMJgUaMbWD8Tt5s3qgrAxYd/o5j2xTMjX
+         d9+/U13ZNcgESgDdzgBwqSdOEb7KtXoJUg4iut5aq9PS0uB6HYaHda+Kjwin/JzISZ8l
+         /zQ2GdnezP+KluO4ErZtbBbtbX+FECARNiIH8Xaz5XKTGpyzHstgAP57WO0nsOkV/2bm
+         4Akd/eNkKOgpJnuVeMsJyTRkdJOMejLSSta63r0Q/I8i5WEU+KZ66OOIbrLltxGRkPvr
+         Zi+g==
+X-Gm-Message-State: AOAM532g1PhH2WELGgHfDbsBmIBwibS4waMGEeBgpx/0SGv6VLQXQNtV
+        xT5S4jTxOzaKzxnInGtKQXBfnBBE2BfTG2WlQBH3Tw6Skgc=
+X-Google-Smtp-Source: ABdhPJwfYyOOtwoxCKqdG/kXaE7KBAFoS5HzygCOsjp/EZE0PlgK+Yifipy9k5IHKQMSmWj5oCenu8uXTy8w2N+fvyg=
+X-Received: by 2002:a50:99c3:: with SMTP id n3mr1067260edb.213.1604654877688;
+ Fri, 06 Nov 2020 01:27:57 -0800 (PST)
 MIME-Version: 1.0
-References: <802c8865b70c3bdf70e44d37f14e7767b6495e88.1604631371.git.greentime.hu@sifive.com>
-In-Reply-To: <802c8865b70c3bdf70e44d37f14e7767b6495e88.1604631371.git.greentime.hu@sifive.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 6 Nov 2020 11:24:47 +0200
-Message-ID: <CAHp75VdHuZc43Oe8vp-Xtb2+vsEoV2FY-W_dAifuh4Un0BveSA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] gpio: sifive: To get gpio irq offset from device
- tree data
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Yash Shah <yash.shah@sifive.com>
+References: <20201104115348.51930-1-damien.lemoal@wdc.com>
+In-Reply-To: <20201104115348.51930-1-damien.lemoal@wdc.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 6 Nov 2020 10:27:46 +0100
+Message-ID: <CAMpxmJUO-fyQRyjKD4gNZFw=_iAH7eMd=xyLXLuwAikC0OnLsQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Do not trigger WARN() with sysfs gpio export/unexport
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 6, 2020 at 4:59 AM Greentime Hu <greentime.hu@sifive.com> wrote:
+On Wed, Nov 4, 2020 at 12:53 PM Damien Le Moal <damien.lemoal@wdc.com> wrote:
 >
-> We can get hwirq number of the gpio by its irq_data->hwirq so that we don't
-> need to add more macros for different platforms. This patch is tested in
-> SiFive Unleashed board and SiFive Unmatched board.
+> If a user tries to export or unexport an invalid gpio (e.g. gpio number
+> >= ARCH_NR_GPIOS), gpio_to_desc() will trigger a register dump through a
+> WARN() call. Avoid this rather scary error message by first checking the
+> validity of the gpio number before calling gpio_to_desc() in
+> export_store() and unexport_store(). The user gets a normal error
+> message to signal his/her error without any possible confusion with a
+> kernel bug.
+>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  drivers/gpio/gpiolib-sysfs.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+> index 728f6c687182..b6fd0d82757a 100644
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -3,6 +3,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/device.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/interrupt.h>
+> @@ -456,14 +457,15 @@ static ssize_t export_store(struct class *class,
+>                                 const char *buf, size_t len)
+>  {
+>         long                    gpio;
+> -       struct gpio_desc        *desc;
+> +       struct gpio_desc        *desc = NULL;
+>         int                     status;
+>
+>         status = kstrtol(buf, 0, &gpio);
+>         if (status < 0)
+>                 goto done;
+>
+> -       desc = gpio_to_desc(gpio);
+> +       if (gpio_is_valid(gpio))
+> +               desc = gpio_to_desc(gpio);
+>         /* reject invalid GPIOs */
+>         if (!desc) {
+>                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+> @@ -503,14 +505,15 @@ static ssize_t unexport_store(struct class *class,
+>                                 const char *buf, size_t len)
+>  {
+>         long                    gpio;
+> -       struct gpio_desc        *desc;
+> +       struct gpio_desc        *desc = NULL;
+>         int                     status;
+>
+>         status = kstrtol(buf, 0, &gpio);
+>         if (status < 0)
+>                 goto done;
+>
+> -       desc = gpio_to_desc(gpio);
+> +       if (gpio_is_valid(gpio))
+> +               desc = gpio_to_desc(gpio);
+>         /* reject bogus commands (gpio_unexport ignores them) */
+>         if (!desc) {
+>                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+> --
+> 2.28.0
+>
 
-...
+How about we change that to an unconditional WARN() everytime the user
+tries to export a GPIO over sysfs so that people switch over to the
+character device?
 
-> +       struct sifive_gpio *chip = gpiochip_get_data(gc);
-> +       struct irq_data *d = irq_get_irq_data(chip->irq_number[child]);
+I'm joking a bit but I think it's time to start discouraging people
+from using sysfs and a warning may be a good start.
 
-> +       *parent = d->hwirq;
-
-There is an API to get hwirq.
-
-...
-
-> +       for (i = 0; i < ngpio; i++)
-> +               chip->irq_number[i] = irq_of_parse_and_map(node, i);
-
-Can't you use platform_get_irq_optional()?
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Bartosz
