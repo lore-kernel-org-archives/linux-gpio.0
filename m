@@ -2,31 +2,30 @@ Return-Path: <SRS0=N38l=EM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F196C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3ABFC388F2
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C7082087E
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B66621734
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbgKFJrr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Nov 2020 04:47:47 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:46918 "EHLO
+        id S1726794AbgKFJrv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Nov 2020 04:47:51 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:46902 "EHLO
         mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbgKFJrm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:47:42 -0500
-Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 1CB2D3AC59C
-        for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2020 09:31:53 +0000 (UTC)
+        with ESMTP id S1726010AbgKFJrl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:47:41 -0500
+Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id B5EED3AB9BF
+        for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2020 09:31:43 +0000 (UTC)
 X-Originating-IP: 91.175.115.186
 Received: from localhost (91-175-115-186.subs.proxad.net [91.175.115.186])
         (Authenticated sender: gregory.clement@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 73A22C0068;
-        Fri,  6 Nov 2020 09:31:28 +0000 (UTC)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 4CF1C240013;
+        Fri,  6 Nov 2020 09:31:20 +0000 (UTC)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -36,150 +35,41 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Lars Povlsen <lars.povlsen@microchip.com>,
         <Steen.Hegelund@microchip.com>,
         Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 3/4] pinctrl: ocelot: Add support for Luton platforms
-Date:   Fri,  6 Nov 2020 10:31:17 +0100
-Message-Id: <20201106093118.965152-4-gregory.clement@bootlin.com>
+Subject: [PATCH 0/4] Extend pinctrl ocelot driver to support other SoCs
+Date:   Fri,  6 Nov 2020 10:31:14 +0100
+Message-Id: <20201106093118.965152-1-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201106093118.965152-1-gregory.clement@bootlin.com>
-References: <20201106093118.965152-1-gregory.clement@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Lars Povlsen <lars.povlsen@microchip.com>
+Hello,
 
-This patch adds support for Luton pinctrl, using the ocelot driver as
-basis. It adds pinconfig support as well, as supported by the
-platform.
+Ocelot SoC belongs to a larger family of SoCs which use the same
+interrupt controller with a few variation.
 
-gclement: Split from a larger patch adding support all platforms in
-the same time.
+This series of patches add support for Luton and Serval, they are all
+MIPS based.
 
-Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/pinctrl/pinctrl-ocelot.c | 92 ++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+The first patches of the series also updates the binding documentation
+with the new compatible strings.
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index a4a1b00f7f0d..ab74c79d7cca 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -158,6 +158,88 @@ struct ocelot_pinctrl {
- 	u8 stride;
- };
- 
-+#define LUTON_P(p, f0, f1)						\
-+static struct ocelot_pin_caps luton_pin_##p = {				\
-+	.pin = p,							\
-+	.functions = {							\
-+			FUNC_GPIO, FUNC_##f0, FUNC_##f1, FUNC_NONE,	\
-+	},								\
-+}
-+
-+LUTON_P(0,  SG0,       NONE);
-+LUTON_P(1,  SG0,       NONE);
-+LUTON_P(2,  SG0,       NONE);
-+LUTON_P(3,  SG0,       NONE);
-+LUTON_P(4,  TACHO,     NONE);
-+LUTON_P(5,  TWI,       PHY_LED);
-+LUTON_P(6,  TWI,       PHY_LED);
-+LUTON_P(7,  NONE,      PHY_LED);
-+LUTON_P(8,  EXT_IRQ,   PHY_LED);
-+LUTON_P(9,  EXT_IRQ,   PHY_LED);
-+LUTON_P(10, SFP,       PHY_LED);
-+LUTON_P(11, SFP,       PHY_LED);
-+LUTON_P(12, SFP,       PHY_LED);
-+LUTON_P(13, SFP,       PHY_LED);
-+LUTON_P(14, SI,        PHY_LED);
-+LUTON_P(15, SI,        PHY_LED);
-+LUTON_P(16, SI,        PHY_LED);
-+LUTON_P(17, SFP,       PHY_LED);
-+LUTON_P(18, SFP,       PHY_LED);
-+LUTON_P(19, SFP,       PHY_LED);
-+LUTON_P(20, SFP,       PHY_LED);
-+LUTON_P(21, SFP,       PHY_LED);
-+LUTON_P(22, SFP,       PHY_LED);
-+LUTON_P(23, SFP,       PHY_LED);
-+LUTON_P(24, SFP,       PHY_LED);
-+LUTON_P(25, SFP,       PHY_LED);
-+LUTON_P(26, SFP,       PHY_LED);
-+LUTON_P(27, SFP,       PHY_LED);
-+LUTON_P(28, SFP,       PHY_LED);
-+LUTON_P(29, PWM,       NONE);
-+LUTON_P(30, UART,      NONE);
-+LUTON_P(31, UART,      NONE);
-+
-+#define LUTON_PIN(n) {						\
-+	.number = n,						\
-+	.name = "GPIO_"#n,					\
-+	.drv_data = &luton_pin_##n				\
-+}
-+
-+static const struct pinctrl_pin_desc luton_pins[] = {
-+	LUTON_PIN(0),
-+	LUTON_PIN(1),
-+	LUTON_PIN(2),
-+	LUTON_PIN(3),
-+	LUTON_PIN(4),
-+	LUTON_PIN(5),
-+	LUTON_PIN(6),
-+	LUTON_PIN(7),
-+	LUTON_PIN(8),
-+	LUTON_PIN(9),
-+	LUTON_PIN(10),
-+	LUTON_PIN(11),
-+	LUTON_PIN(12),
-+	LUTON_PIN(13),
-+	LUTON_PIN(14),
-+	LUTON_PIN(15),
-+	LUTON_PIN(16),
-+	LUTON_PIN(17),
-+	LUTON_PIN(18),
-+	LUTON_PIN(19),
-+	LUTON_PIN(20),
-+	LUTON_PIN(21),
-+	LUTON_PIN(22),
-+	LUTON_PIN(23),
-+	LUTON_PIN(24),
-+	LUTON_PIN(25),
-+	LUTON_PIN(26),
-+	LUTON_PIN(27),
-+	LUTON_PIN(28),
-+	LUTON_PIN(29),
-+	LUTON_PIN(30),
-+	LUTON_PIN(31),
-+};
-+
- #define OCELOT_P(p, f0, f1, f2)						\
- static struct ocelot_pin_caps ocelot_pin_##p = {			\
- 	.pin = p,							\
-@@ -868,6 +950,15 @@ static const struct pinctrl_ops ocelot_pctl_ops = {
- 	.dt_free_map = pinconf_generic_dt_free_map,
- };
- 
-+static struct pinctrl_desc luton_desc = {
-+	.name = "luton-pinctrl",
-+	.pins = luton_pins,
-+	.npins = ARRAY_SIZE(luton_pins),
-+	.pctlops = &ocelot_pctl_ops,
-+	.pmxops = &ocelot_pmx_ops,
-+	.owner = THIS_MODULE,
-+};
-+
- static struct pinctrl_desc ocelot_desc = {
- 	.name = "ocelot-pinctrl",
- 	.pins = ocelot_pins,
-@@ -1151,6 +1242,7 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
- }
- 
- static const struct of_device_id ocelot_pinctrl_of_match[] = {
-+	{ .compatible = "mscc,luton-pinctrl", .data = &luton_desc },
- 	{ .compatible = "mscc,ocelot-pinctrl", .data = &ocelot_desc },
- 	{ .compatible = "mscc,jaguar2-pinctrl", .data = &jaguar2_desc },
- 	{ .compatible = "microchip,sparx5-pinctrl", .data = &sparx5_desc },
+Gregory
+
+Gregory CLEMENT (2):
+  dt-bindings: pinctrl: ocelot: Add Luton SoC support
+  dt-bindings: pinctrl: ocelot: Add Serval SoC support
+
+Lars Povlsen (2):
+  pinctrl: ocelot: Add support for Luton platforms
+  pinctrl: ocelot: Add support for Serval platforms
+
+ .../bindings/pinctrl/mscc,ocelot-pinctrl.txt  |   3 +-
+ drivers/pinctrl/pinctrl-ocelot.c              | 184 ++++++++++++++++++
+ 2 files changed, 186 insertions(+), 1 deletion(-)
+
 -- 
 2.28.0
 
