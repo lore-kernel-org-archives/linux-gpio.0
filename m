@@ -2,31 +2,31 @@ Return-Path: <SRS0=N38l=EM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5BEC55178
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942BDC5517A
 	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1F3F221FA
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46292221FE
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbgKFJrm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Nov 2020 04:47:42 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:46914 "EHLO
+        id S1726989AbgKFJrr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Nov 2020 04:47:47 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:46932 "EHLO
         mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbgKFJrl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:47:41 -0500
+        with ESMTP id S1727014AbgKFJrm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2020 04:47:42 -0500
 Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 3B50B3AAA96
-        for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2020 09:31:52 +0000 (UTC)
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id BC7B73AF635
+        for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2020 09:31:54 +0000 (UTC)
 X-Originating-IP: 91.175.115.186
 Received: from localhost (91-175-115-186.subs.proxad.net [91.175.115.186])
         (Authenticated sender: gregory.clement@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 05EF6FF805;
-        Fri,  6 Nov 2020 09:31:26 +0000 (UTC)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 8DB42FF804;
+        Fri,  6 Nov 2020 09:31:29 +0000 (UTC)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -36,9 +36,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Lars Povlsen <lars.povlsen@microchip.com>,
         <Steen.Hegelund@microchip.com>,
         Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 2/4] dt-bindings: pinctrl: ocelot: Add Serval SoC support
-Date:   Fri,  6 Nov 2020 10:31:16 +0100
-Message-Id: <20201106093118.965152-3-gregory.clement@bootlin.com>
+Subject: [PATCH 4/4] pinctrl: ocelot: Add support for Serval platforms
+Date:   Fri,  6 Nov 2020 10:31:18 +0100
+Message-Id: <20201106093118.965152-5-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201106093118.965152-1-gregory.clement@bootlin.com>
 References: <20201106093118.965152-1-gregory.clement@bootlin.com>
@@ -48,29 +48,138 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the documentation for the Microsemi Serval pinmuxing and gpio
-controller.
+From: Lars Povlsen <lars.povlsen@microchip.com>
 
+This patch adds support for Serval pinctrl, using the ocelot driver as
+basis. It adds pinconfig support as well, as supported by the
+platform.
+
+gclement: Split from a larger patch adding support all platforms in
+the same time.
+
+Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- .../devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt       | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-ocelot.c | 92 ++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
-index 58ea2ae57713..db99bd95d423 100644
---- a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
-@@ -3,8 +3,8 @@ Microsemi Ocelot pin controller Device Tree Bindings
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index ab74c79d7cca..18336950fd95 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -240,6 +240,88 @@ static const struct pinctrl_pin_desc luton_pins[] = {
+ 	LUTON_PIN(31),
+ };
  
- Required properties:
-  - compatible		: Should be "mscc,ocelot-pinctrl",
--			  "mscc,jaguar2-pinctrl", "microchip,sparx5-pinctrl"
--			  or "mscc,luton-pinctrl"
-+			  "mscc,jaguar2-pinctrl", "microchip,sparx5-pinctrl",
-+			  "mscc,luton-pinctrl" or "mscc,serval-pinctrl"
-  - reg			: Address and length of the register set for the device
-  - gpio-controller	: Indicates this device is a GPIO controller
-  - #gpio-cells		: Must be 2.
++#define SERVAL_P(p, f0, f1, f2)						\
++static struct ocelot_pin_caps serval_pin_##p = {			\
++	.pin = p,							\
++	.functions = {							\
++			FUNC_GPIO, FUNC_##f0, FUNC_##f1, FUNC_##f2,	\
++	},								\
++}
++
++SERVAL_P(0,  SG0,       NONE,      NONE);
++SERVAL_P(1,  SG0,       NONE,      NONE);
++SERVAL_P(2,  SG0,       NONE,      NONE);
++SERVAL_P(3,  SG0,       NONE,      NONE);
++SERVAL_P(4,  TACHO,     NONE,      NONE);
++SERVAL_P(5,  PWM,       NONE,      NONE);
++SERVAL_P(6,  TWI,       NONE,      NONE);
++SERVAL_P(7,  TWI,       NONE,      NONE);
++SERVAL_P(8,  SI,        NONE,      NONE);
++SERVAL_P(9,  SI,        MD,        NONE);
++SERVAL_P(10, SI,        MD,        NONE);
++SERVAL_P(11, SFP,       MD,        TWI_SCL_M);
++SERVAL_P(12, SFP,       MD,        TWI_SCL_M);
++SERVAL_P(13, SFP,       UART2,     TWI_SCL_M);
++SERVAL_P(14, SFP,       UART2,     TWI_SCL_M);
++SERVAL_P(15, SFP,       PTP0,      TWI_SCL_M);
++SERVAL_P(16, SFP,       PTP0,      TWI_SCL_M);
++SERVAL_P(17, SFP,       PCI_WAKE,  TWI_SCL_M);
++SERVAL_P(18, SFP,       NONE,      TWI_SCL_M);
++SERVAL_P(19, SFP,       NONE,      TWI_SCL_M);
++SERVAL_P(20, SFP,       NONE,      TWI_SCL_M);
++SERVAL_P(21, SFP,       NONE,      TWI_SCL_M);
++SERVAL_P(22, NONE,      NONE,      NONE);
++SERVAL_P(23, NONE,      NONE,      NONE);
++SERVAL_P(24, NONE,      NONE,      NONE);
++SERVAL_P(25, NONE,      NONE,      NONE);
++SERVAL_P(26, UART,      NONE,      NONE);
++SERVAL_P(27, UART,      NONE,      NONE);
++SERVAL_P(28, IRQ0,      NONE,      NONE);
++SERVAL_P(29, IRQ1,      NONE,      NONE);
++SERVAL_P(30, PTP0,      NONE,      NONE);
++SERVAL_P(31, PTP0,      NONE,      NONE);
++
++#define SERVAL_PIN(n) {						\
++	.number = n,						\
++	.name = "GPIO_"#n,					\
++	.drv_data = &serval_pin_##n				\
++}
++
++static const struct pinctrl_pin_desc serval_pins[] = {
++	SERVAL_PIN(0),
++	SERVAL_PIN(1),
++	SERVAL_PIN(2),
++	SERVAL_PIN(3),
++	SERVAL_PIN(4),
++	SERVAL_PIN(5),
++	SERVAL_PIN(6),
++	SERVAL_PIN(7),
++	SERVAL_PIN(8),
++	SERVAL_PIN(9),
++	SERVAL_PIN(10),
++	SERVAL_PIN(11),
++	SERVAL_PIN(12),
++	SERVAL_PIN(13),
++	SERVAL_PIN(14),
++	SERVAL_PIN(15),
++	SERVAL_PIN(16),
++	SERVAL_PIN(17),
++	SERVAL_PIN(18),
++	SERVAL_PIN(19),
++	SERVAL_PIN(20),
++	SERVAL_PIN(21),
++	SERVAL_PIN(22),
++	SERVAL_PIN(23),
++	SERVAL_PIN(24),
++	SERVAL_PIN(25),
++	SERVAL_PIN(26),
++	SERVAL_PIN(27),
++	SERVAL_PIN(28),
++	SERVAL_PIN(29),
++	SERVAL_PIN(30),
++	SERVAL_PIN(31),
++};
++
+ #define OCELOT_P(p, f0, f1, f2)						\
+ static struct ocelot_pin_caps ocelot_pin_##p = {			\
+ 	.pin = p,							\
+@@ -959,6 +1041,15 @@ static struct pinctrl_desc luton_desc = {
+ 	.owner = THIS_MODULE,
+ };
+ 
++static struct pinctrl_desc serval_desc = {
++	.name = "serval-pinctrl",
++	.pins = serval_pins,
++	.npins = ARRAY_SIZE(serval_pins),
++	.pctlops = &ocelot_pctl_ops,
++	.pmxops = &ocelot_pmx_ops,
++	.owner = THIS_MODULE,
++};
++
+ static struct pinctrl_desc ocelot_desc = {
+ 	.name = "ocelot-pinctrl",
+ 	.pins = ocelot_pins,
+@@ -1243,6 +1334,7 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
+ 
+ static const struct of_device_id ocelot_pinctrl_of_match[] = {
+ 	{ .compatible = "mscc,luton-pinctrl", .data = &luton_desc },
++	{ .compatible = "mscc,serval-pinctrl", .data = &serval_desc },
+ 	{ .compatible = "mscc,ocelot-pinctrl", .data = &ocelot_desc },
+ 	{ .compatible = "mscc,jaguar2-pinctrl", .data = &jaguar2_desc },
+ 	{ .compatible = "microchip,sparx5-pinctrl", .data = &sparx5_desc },
 -- 
 2.28.0
 
