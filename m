@@ -2,100 +2,98 @@ Return-Path: <SRS0=N38l=EM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB81C388F2
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 18:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE712C2D0A3
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 19:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D879021D81
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 18:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A31CB20B80
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Nov 2020 19:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbgKFSTp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Nov 2020 13:19:45 -0500
-Received: from mga17.intel.com ([192.55.52.151]:24327 "EHLO mga17.intel.com"
+        id S1727997AbgKFTXK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Nov 2020 14:23:10 -0500
+Received: from mga11.intel.com ([192.55.52.93]:17139 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727899AbgKFSTo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 6 Nov 2020 13:19:44 -0500
-IronPort-SDR: DI/JVwwXqy2fSmTEcWXL8hOsVIGJGHkfeBG7pQeV03iRe6VXd33WHdop+VTA/3wJBYW2Q9Rtzo
- d1SZGpvwRelA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9797"; a="149432883"
+        id S1727356AbgKFTXK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 6 Nov 2020 14:23:10 -0500
+IronPort-SDR: noEMlcZP09yPtDhA2ibgDYuerJI+jickWhHWd3lLuxQNu8E+I+v7yC8RAYybRBhg/iXYzbu9yr
+ YoqGFxwlfsyQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9797"; a="166079984"
 X-IronPort-AV: E=Sophos;i="5.77,457,1596524400"; 
-   d="scan'208";a="149432883"
+   d="scan'208";a="166079984"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2020 10:19:41 -0800
-IronPort-SDR: WcnbJaD3JAln2NCKyiDlb+rVXztaxtTALNwHUZ1o+eoIvTnjUaUjjCRzYpGZahMORV3TK85Uoq
- TE0uRdDZK4TQ==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2020 11:23:09 -0800
+IronPort-SDR: KJoEMz3wweMYUD+dOfyyJ0jzdwht6CfdRoTCWHbH8yagoZ4nVCij/YIATcvS/UgRPgTd+LHfm2
+ Y/G6tYYCnLqw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,457,1596524400"; 
-   d="scan'208";a="326498846"
+   d="scan'208";a="307293401"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 06 Nov 2020 10:19:39 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 06 Nov 2020 11:23:08 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id F08DAA7; Fri,  6 Nov 2020 20:19:38 +0200 (EET)
-Date:   Fri, 6 Nov 2020 20:19:38 +0200
+        id 845D676; Fri,  6 Nov 2020 21:23:07 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linux pin control <linux-gpio@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [GIT PULL] intel-pinctrl for 5.10-2
-Message-ID: <20201106181938.GA41213@black.fi.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jamie McClymont <jamie@kwiius.com>
+Subject: [PATCH v4 1/9] gpiolib: acpi: Respect bias settings for GpioInt() resource
+Date:   Fri,  6 Nov 2020 21:22:56 +0200
+Message-Id: <20201106192304.49179-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201106192304.49179-1-andriy.shevchenko@linux.intel.com>
+References: <20201106192304.49179-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+In some cases the GpioInt() resource is coming with bias settings
+which may affect system functioning. Respect bias settings for
+GpioInt() resource by calling acpi_gpio_update_gpiod_*flags() API
+in acpi_dev_gpio_irq_get().
 
-Bias configuration fixes. This PR is crucial for another GPIO ACPI related
-patch series, which I want to have in v5.11. I.o.w. this should go into v5.10
-to make everyone's life easier.
+Reported-by: Jamie McClymont <jamie@kwiius.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Thanks,
-
-With Best Regards,
-Andy Shevchenko
-
-The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
-
-  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v5.10-2
-
-for you to fetch changes up to f3c75e7a9349d1d33eb53ddc1b31640994969f73:
-
-  pinctrl: intel: Set default bias in case no particular value given (2020-10-26 13:26:50 +0200)
-
-----------------------------------------------------------------
-intel-pinctrl for v5.10-2
-
-* Respect bias setting when comes from ACPI
-
-The following is an automated git shortlog grouped by driver:
-
-intel:
- -  Set default bias in case no particular value given
- -  Fix 2 kOhm bias which is 833 Ohm
-
-----------------------------------------------------------------
-Andy Shevchenko (2):
-      pinctrl: intel: Fix 2 kOhm bias which is 833 Ohm
-      pinctrl: intel: Set default bias in case no particular value given
-
- drivers/pinctrl/intel/pinctrl-intel.c | 40 ++++++++++++++++++++++++++---------
- 1 file changed, 30 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 834a12f3219e..3a39e8a93226 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -942,6 +942,7 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ 
+ 		if (info.gpioint && idx++ == index) {
+ 			unsigned long lflags = GPIO_LOOKUP_FLAGS_DEFAULT;
++			enum gpiod_flags dflags = GPIOD_ASIS;
+ 			char label[32];
+ 			int irq;
+ 
+@@ -952,8 +953,11 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ 			if (irq < 0)
+ 				return irq;
+ 
++			acpi_gpio_update_gpiod_flags(&dflags, &info);
++			acpi_gpio_update_gpiod_lookup_flags(&lflags, &info);
++
+ 			snprintf(label, sizeof(label), "GpioInt() %d", index);
+-			ret = gpiod_configure_flags(desc, label, lflags, info.flags);
++			ret = gpiod_configure_flags(desc, label, lflags, dflags);
+ 			if (ret < 0)
+ 				return ret;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.28.0
 
