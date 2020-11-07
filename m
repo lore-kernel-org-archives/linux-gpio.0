@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133BBC55ABD
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD7CC56201
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8C5020872
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11B420704
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Jcw7g+e2"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="WPXbg8VN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgKGIPP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 7 Nov 2020 03:15:15 -0500
+        id S1728141AbgKGIPV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 7 Nov 2020 03:15:21 -0500
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57208 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727896AbgKGIPP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Nov 2020 03:15:15 -0500
+        with ESMTP id S1727896AbgKGIPU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Nov 2020 03:15:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1604736914; x=1636272914;
+  t=1604736919; x=1636272919;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=SUp3hrIaYTtH1qT6cOT38t7FswfwYA+WqgQCJBqAiMI=;
-  b=Jcw7g+e2xvveSaPJKVHxCfFdXx7g21LCawYelaZQEGuuMJ9thnZE3jc9
-   +DTB117+CP+B+NtVAglUSkQ9d9TX+fejPJnsO9o5bzYX6cRYD6Ar9z5AV
-   LsoTZgswUivcjdgDZSbZbJw96Th3LDzZuB/XjoOyhE8TQEVraTY0t3tJV
-   z+p6bAvXSiov2PeID8yJoHbwKVSEnRWSza9+AKfSjuLXg2HlbjCBkjOM9
-   hgHc2rl1ScSM6kUWXh0e1VGdCGCMUXpYviv9SVkOGbUskdyzs/daO8SJl
-   nCqrDlLwhxjqXwXN8hVg0i08uMH9WjYCYyUiOvmXg/GyYwzgzWYKJN/y1
-   Q==;
-IronPort-SDR: nV1JUffHd/0CNOb70lA/ZXDtZIJ4NvcYbe0U2gNnsm9BG8KoVVgcRM/PCunxhK+Fke8nBXSsZT
- uP/O+MIvzuVzK1S+cndmcj5HDGQIoLqt3VxMxsb1Dns6JvWhf/ohEEhlY3HD14O6s3HA1UBFz5
- L9BbCGBQU4pywHZiKfVACpauhEMVyWnuQORsRVwmJBzBDq0h27yOFLngO5nsNDryQjr0N860Kr
- C67igXpu+LNaYQnm/RjN7Ee+6hRQxCzQ7MLWwXkFE8XQlPIbgy6ooaq+szd9fjqB/t3N8kRfE7
- uqU=
+  bh=mT3pTXQexT9Dgnt/dopD8ONmHSaoe0HrxwBKmVk9pvo=;
+  b=WPXbg8VNLNvhK8/mhDMCUfDRpdGMs1O9HJ8JVTGDH/suF0H37N3OsZjA
+   GOegH2MBUAAnvxlAYo0dqLj5l3xtXiF8zfBix/4PnXB0lWOMvWq7eCja+
+   rnNzs9/m5+5EgI7v5V8j3eRYkLkYvLIXWGbEJqSeAwjl8eEjiD0e1Mm7f
+   Ifg1YNAh8zpM5kfBaK8zcwg9hRhoEyOcaBsJJQfuYI9+LGKsQJjitiQFS
+   1rUbZit2S0Y5rxHVPVzXiaoWvBwJWUKSkIGa2auR4uc3I7eNlDBknkpEs
+   eA0RS8lIZfMtqNskeyq+YHw84Z1OZpPUF+fGo112aYxDUYB4GlndagxvX
+   g==;
+IronPort-SDR: PvujEE7T4qzq3tSLmeHgOy0920IpY8ah539avwPTG/d3P8jL+HRdUiJCAvO4qP8WR7aGtbIq6N
+ Mp2eY6MH3JthWlQsK5qmK9Kl19Nf5/QeP3xMvGnh8VfKUHodj4fjrnk88TWU6Lu4k6Ot9WPNKa
+ OjC+L0ihBn9wqh6lcYUC3Hfz0wQeszdLReRsthl13qk76JOOVsp6ggaSTr61MvXqhCmEzknR3X
+ HIYv0djrm2BoUlvw/vr6dW/ddVk48sYdUikV5JoMW6af/ZTVFRjF6OGci1ampy2mbARnbSFtzd
+ j6M=
 X-IronPort-AV: E=Sophos;i="5.77,459,1596470400"; 
-   d="scan'208";a="156564407"
+   d="scan'208";a="156564412"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Nov 2020 16:15:14 +0800
-IronPort-SDR: 6elAszZyP8FpFDX1xg+oJE18MDif54flIfosvdl6gb2aS7zEe5oXTKo+loDT1QJUWFspKUcFYZ
- QIJ2yr5nQW+1K6Efr42VtHkpCuZm5rTjpBc1oBQe0atd9HYye7t7O/uGPC4xNr6mIMX1Ep1sVm
- L5qt4NwgNrYB+oNTjk2fYBMmRd59zntPGa55mF/ZgpiK0tlExxxSuJKmXxYy9YoC4xIn26Ge5r
- ObYdYmeW/b5XHvhEDPKnepaHN7dLqfRrtlL8/EkDXb7ygDyDkMIttw9QQoo5iP6dfB5qlaeq1r
- mLrSRj16X4HLtxhQu2GXjdLO
+  by ob1.hgst.iphmx.com with ESMTP; 07 Nov 2020 16:15:19 +0800
+IronPort-SDR: pWfFSy3MMowsC+GyZzx1sOTDYXGThvXr9H1EbHwR1dwxQ7ZZ6rNamyz3fUonZ6HrYzslw+ELF1
+ Im1K1h8ylZDFpDCdvxsD8mc/QpilDgvHYdIzjcKBr9e4vN7/pyWeIRdWuSqqFEQ76/QG1ZoIgN
+ O0S+T1XGJuG8W1DY7H9wLeySg3GtydH7Ql9Ch5gp9AbDsEbUgIijiHx9jH9fJ+WwFiuhSxCZtV
+ /xfb+cE/XeoX8Cu511083sNzKjf9ti7EWjwW4q6nDXRcHH2U7GKSDgXD4iTPs2jCMM5TVe129q
+ NFl7lvzKwachoX8jOmzMHkCu
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2020 00:00:05 -0800
-IronPort-SDR: cq//chzutH4wXylm4H8jmtnMe1aNpH0Uu4Whn6FkmWJy6febas7+Y3rO0Zc90N9BsNIrZx3kH+
- v0gyxR4aAqacsoAftph7QwdLBEw5g7puc3sMfZIwrUqLoOxw+FCfCHSfQn1Y6ZoX5QEeuT0frw
- OqacY0epJSaqMfB0cOwlkjduc04QBxwAUoNYVXLY1GFPqLeBMqRMMO7gLHiiaCKFC0KhcF27cg
- 5JWPtHYiThqG/mY+GP6D55fS00eOvc5QNPI5tFFF7HbsnDjggeQvLLge1PS0lf+dd3/VF5MbSA
- e5k=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2020 00:00:10 -0800
+IronPort-SDR: nsSrpRMvEDvSs1TeA0fMTqHiFneFxHjZmLfdiZ87YpKj8Av1NoJkpTT29IXc4QkCHCdg6d+K/y
+ zVGcDYrgUlDAfCTc+znMu3URNsQ3kk3ic6fmy40H5NFAj8SQwDDMBehX3TbPn8UYRGm+mzfuhQ
+ DJC3TOp0zMejeMzCFqodVr59FKdboNmBIlVIJflbfggqVHWF6ocv7cwqJTb4YP+Ci2XKOErP8e
+ NIeljGbMnfObFqEuZg9gln+SgXE+TnW8kID6vacvc37Da0BkapPZ9YbWTCsul4IYeM6yuSlmTt
+ lAk=
 WDCIronportException: Internal
 Received: from hdrdzf2.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.85])
-  by uls-op-cesaip01.wdc.com with ESMTP; 07 Nov 2020 00:15:12 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 07 Nov 2020 00:15:18 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -68,9 +68,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH 19/32] riscv: Add Kendryte K210 SoC reset controller
-Date:   Sat,  7 Nov 2020 17:14:07 +0900
-Message-Id: <20201107081420.60325-20-damien.lemoal@wdc.com>
+Subject: [PATCH 21/32] dt-bindings: Add Kendryte and Canaan vendor prefix
+Date:   Sat,  7 Nov 2020 17:14:09 +0900
+Message-Id: <20201107081420.60325-22-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201107081420.60325-1-damien.lemoal@wdc.com>
 References: <20201107081420.60325-1-damien.lemoal@wdc.com>
@@ -80,256 +80,36 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a reset controller driver for the Kendryte K210 SoC. This driver
-relies on its syscon compatible parent node for its register mapping.
-Automatically select this driver for compilation when the SOC_KENDRYTE
-option is selected.
+Update Documentation/devicetree/bindings/vendor-prefixes.yaml to include
+"Kendryte" and "canaan" as a vendor prefix for "Canaan Inc."
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- arch/riscv/Kconfig.socs    |   3 +
- drivers/reset/Kconfig      |   9 ++
- drivers/reset/Makefile     |   1 +
- drivers/reset/reset-k210.c | 186 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 199 insertions(+)
- create mode 100644 drivers/reset/reset-k210.c
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index a4c851ffc6b0..4d8e66d0556a 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -31,6 +31,9 @@ config SOC_KENDRYTE
- 	select SIFIVE_PLIC
- 	select SOC_K210
- 	select CLK_K210
-+	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
-+	select RESET_K210
- 	help
- 	  This enables support for Kendryte K210 SoC platform hardware.
- 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 07d162b179fc..c943051b5fc8 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -245,6 +245,15 @@ config RESET_ZYNQ
- 	help
- 	  This enables the reset controller driver for Xilinx Zynq SoCs.
- 
-+config RESET_K210
-+	bool "Reset controller driver for Kendryte K210 SoC"
-+	depends on RISCV && SOC_KENDRYTE
-+	depends on OF && MFD_SYSCON
-+	help
-+	  Support for the Kendryte K210 RISC-V SoC reset controller. If
-+          Say Y if you want to control reset signals provided by this
-+	  controller.
-+
- source "drivers/reset/sti/Kconfig"
- source "drivers/reset/hisilicon/Kconfig"
- source "drivers/reset/tegra/Kconfig"
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 16947610cc3b..1730a31e6871 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -33,4 +33,5 @@ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
- obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
- obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
- obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
-+obj-$(CONFIG_RESET_K210) += reset-k210.o
- 
-diff --git a/drivers/reset/reset-k210.c b/drivers/reset/reset-k210.c
-new file mode 100644
-index 000000000000..b6401aef2923
---- /dev/null
-+++ b/drivers/reset/reset-k210.c
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (c) 2020 Western Digital Corporation or its affiliates.
-+ */
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/delay.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/mfd/k210-sysctl.h>
-+#include <dt-bindings/reset/k210-rst.h>
-+
-+struct k210_rst {
-+	struct regmap *map;
-+	u32 offset;
-+	u32 mask;
-+	u32 assert_high;
-+	struct reset_controller_dev rcdev;
-+};
-+
-+static inline struct k210_rst *
-+to_k210_rst(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct k210_rst, rcdev);
-+}
-+
-+static inline int k210_rst_assert(struct reset_controller_dev *rcdev,
-+				  unsigned long id)
-+{
-+	struct k210_rst *ksr = to_k210_rst(rcdev);
-+	u32 bit = BIT(id);
-+
-+	if (!(bit & ksr->mask)) {
-+		dev_err(rcdev->dev, "Invalid assert id %lu\n", id);
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(rcdev->dev, "assert %s %lu\n",
-+		ksr->assert_high ? "high" : "low", id);
-+
-+	regmap_update_bits(ksr->map, ksr->offset, bit,
-+			   ksr->assert_high ? bit : 0);
-+
-+	return 0;
-+}
-+
-+static inline int k210_rst_deassert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct k210_rst *ksr = to_k210_rst(rcdev);
-+	u32 bit = BIT(id);
-+
-+	if (!(bit & ksr->mask)) {
-+		dev_err(rcdev->dev, "Invalid deassert id %lu\n", id);
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(rcdev->dev, "deassert %s %lu\n",
-+		ksr->assert_high ? "high" : "low", id);
-+
-+	regmap_update_bits(ksr->map, ksr->offset, bit,
-+			   ksr->assert_high ? 0 : bit);
-+
-+	return 0;
-+}
-+
-+static int k210_rst_reset(struct reset_controller_dev *rcdev,
-+			  unsigned long id)
-+{
-+	struct k210_rst *ksr = to_k210_rst(rcdev);
-+	int ret;
-+
-+	dev_dbg(rcdev->dev, "reset %s %lu\n",
-+		ksr->assert_high ? "high" : "low", id);
-+
-+	ret = k210_rst_assert(rcdev, id);
-+	if (ret == 0) {
-+		udelay(10);
-+		ret = k210_rst_deassert(rcdev, id);
-+	}
-+
-+	return ret;
-+}
-+
-+static int k210_rst_status(struct reset_controller_dev *rcdev,
-+			   unsigned long id)
-+{
-+	struct k210_rst *ksr = to_k210_rst(rcdev);
-+	u32 reg, bit = BIT(id);
-+	int ret;
-+
-+	if (!(bit & ksr->mask)) {
-+		dev_err(rcdev->dev, "Invalid reset %lx\n", id);
-+		return -EINVAL;
-+	}
-+
-+	ret = regmap_read(ksr->map, ksr->offset, &reg);
-+	if (ret)
-+		return ret;
-+
-+	if (ksr->assert_high)
-+		return ret & bit;
-+
-+	return !(ret & bit);
-+}
-+
-+static const struct reset_control_ops k210_rst_ops = {
-+	.assert		= k210_rst_assert,
-+	.deassert	= k210_rst_deassert,
-+	.reset		= k210_rst_reset,
-+	.status		= k210_rst_status,
-+};
-+
-+static int __init k210_rst_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct k210_rst *ksr;
-+	int ret, nr_resets;
-+
-+	dev_info(dev, "K210 reset controller\n");
-+
-+	ksr = devm_kzalloc(dev, sizeof(*ksr), GFP_KERNEL);
-+	if (!ksr)
-+		return -ENOMEM;
-+
-+	ksr->map = syscon_regmap_lookup_by_phandle(dev->of_node, "regmap");
-+	if (IS_ERR(ksr->map)) {
-+		ksr->map = syscon_node_to_regmap(dev->parent->of_node);
-+		if (IS_ERR(ksr->map)) {
-+			dev_err(dev, "get register map failed\n");
-+			return PTR_ERR(ksr->map);
-+		}
-+	}
-+
-+	ret = of_property_read_u32(dev->of_node, "offset", &ksr->offset);
-+	ret = of_property_read_u32(dev->of_node, "assert-high",
-+				   &ksr->assert_high);
-+	if (ret) {
-+		dev_err(dev, "unable to read 'offset' and 'assert-high'\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_property_read_u32(dev->of_node, "mask", &ksr->mask);
-+	if (ret) {
-+		/* Use default mask */
-+		ksr->mask = 0x27FFFFFF;
-+	}
-+	nr_resets = fls(ksr->mask);
-+	if (!nr_resets) {
-+		dev_err(dev, "Invalid mask 0x%08x\n", ksr->mask);
-+		return -EINVAL;
-+	}
-+
-+	ksr->rcdev.owner = THIS_MODULE;
-+	ksr->rcdev.dev = dev;
-+	ksr->rcdev.of_node = dev->of_node;
-+	ksr->rcdev.nr_resets = nr_resets;
-+	ksr->rcdev.ops = &k210_rst_ops;
-+
-+	return devm_reset_controller_register(dev, &ksr->rcdev);
-+}
-+
-+static const struct of_device_id k210_rst_dt_ids[] = {
-+	{ .compatible = "kendryte,k210-rst" },
-+};
-+
-+static struct platform_driver k210_rst_driver = {
-+	.probe	= k210_rst_probe,
-+	.driver = {
-+		.name		= "k210-rst",
-+		.of_match_table	= k210_rst_dt_ids,
-+	},
-+};
-+
-+/*
-+ * Most devices on the K210 SoC need reset as part of their initialization.
-+ * So initialize this driver early as part of the post core initialization.
-+ */
-+static int __init k210_rst_init(void)
-+{
-+	return platform_driver_register(&k210_rst_driver);
-+}
-+postcore_initcall(k210_rst_init);
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 2735be1a8470..f53d4d8e7f2a 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -179,6 +179,8 @@ patternProperties:
+     description: CALAO Systems SAS
+   "^calxeda,.*":
+     description: Calxeda
++  "^canaan,.*":
++    description: Canaan, Inc.
+   "^caninos,.*":
+     description: Caninos Loucos Program
+   "^capella,.*":
+@@ -537,6 +539,8 @@ patternProperties:
+     description: Ka-Ro electronics GmbH
+   "^keithkoep,.*":
+     description: Keith & Koep GmbH
++  "^kendryte,.*":
++    description: Canaan, Inc.
+   "^keymile,.*":
+     description: Keymile GmbH
+   "^khadas,.*":
 -- 
 2.28.0
 
