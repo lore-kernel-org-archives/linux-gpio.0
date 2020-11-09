@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3103C388F7
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 18:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FDAC56202
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 18:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5962720663
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 18:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83C84206D8
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 18:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729875AbgKISf6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 13:35:58 -0500
-Received: from mga11.intel.com ([192.55.52.93]:23130 "EHLO mga11.intel.com"
+        id S1729491AbgKISf7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 13:35:59 -0500
+Received: from mga18.intel.com ([134.134.136.126]:38636 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729491AbgKISf5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Nov 2020 13:35:57 -0500
-IronPort-SDR: U9/TMcJe5znyGoV/uvQqiWRFIA0p/NLQqXqhh9ze2SYF3QkeZsSSLCIi431nMWWoY5XuQ/NGWo
- Dq7WfTLdmiAg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="166341123"
+        id S1729829AbgKISf6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Nov 2020 13:35:58 -0500
+IronPort-SDR: qKRvhixk0dxn++FSDE/3V1gTO6iEvTWmZyN4tZrmYC/M6plnT7TYHL9kgsF5CKisgcBcqsKjvJ
+ qzdd7rG/mwdA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="157632299"
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="166341123"
+   d="scan'208";a="157632299"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 10:35:56 -0800
-IronPort-SDR: SlSyEClNLVRsIwTDGErBXbW+YEPbPEj7ql+k7TSWq6KzCjjvAuroDBTyIf+5yDb5Z+i1kexasa
- E5pWIUveinKg==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 10:35:57 -0800
+IronPort-SDR: aDLISJhiDWnBIBgpNuwHsivOL1JoMbRhShViJ2M6gPYOtd7Zh2VfBakP0kJPVzGWTJq6SkZa8W
+ dxxsc1DrbUrQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="529450416"
+   d="scan'208";a="530866469"
 Received: from lkp-server01.sh.intel.com (HELO d0be80f1a028) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Nov 2020 10:35:55 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 09 Nov 2020 10:35:55 -0800
 Received: from kbuild by d0be80f1a028 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kcC1D-0000M4-7y; Mon, 09 Nov 2020 18:35:55 +0000
-Date:   Tue, 10 Nov 2020 02:34:55 +0800
+        id 1kcC1D-0000Ly-6l; Mon, 09 Nov 2020 18:35:55 +0000
+Date:   Tue, 10 Nov 2020 02:35:01 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-descriptors-input-cleanup] BUILD SUCCESS
- edd582e76a292c45bb4b2de81c6497fbb7478b12
-Message-ID: <5fa98bcf.9r3cktKQ+kCoEjmV%lkp@intel.com>
+Subject: [gpio:gpio-descriptors-drm] BUILD SUCCESS
+ 855eff267fa467b292529c693b428929c6025fec
+Message-ID: <5fa98bd5.wgUnbLt/7L5Ae9pU%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-input-cleanup
-branch HEAD: edd582e76a292c45bb4b2de81c6497fbb7478b12  ARM: davinci: Switch DA850EVM to use GPIO descriptors
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-drm
+branch HEAD: 855eff267fa467b292529c693b428929c6025fec  drm/msm/hdmi: Do not initialize HPD line value
 
 elapsed time: 720m
 
-configs tested: 122
+configs tested: 126
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -100,6 +100,10 @@ mips                      fuloong2e_defconfig
 sh                         microdev_defconfig
 arm                            mmp2_defconfig
 sh                        sh7757lcr_defconfig
+um                           x86_64_defconfig
+mips                          rm200_defconfig
+powerpc                      bamboo_defconfig
+arm                            u300_defconfig
 arm                       versatile_defconfig
 arc                              alldefconfig
 arm                        multi_v5_defconfig
