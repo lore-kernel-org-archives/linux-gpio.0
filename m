@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5B2C2D0A3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3103C388F7
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 18:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 955CF206E3
+	by mail.kernel.org (Postfix) with ESMTP id 5962720663
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 18:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbgKISf6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1729875AbgKISf6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 9 Nov 2020 13:35:58 -0500
-Received: from mga03.intel.com ([134.134.136.65]:30571 "EHLO mga03.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:23130 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729829AbgKISf6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Nov 2020 13:35:58 -0500
-IronPort-SDR: 3t2RhXM151tHl1BqxwS2f02R3yc4OeUvaM3n5lA9OLdx59VIQxhJlM+BfJ/20WeStaWvBUsnjx
- 6wtwRfHptVGQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="169962649"
+        id S1729491AbgKISf5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Nov 2020 13:35:57 -0500
+IronPort-SDR: U9/TMcJe5znyGoV/uvQqiWRFIA0p/NLQqXqhh9ze2SYF3QkeZsSSLCIi431nMWWoY5XuQ/NGWo
+ Dq7WfTLdmiAg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="166341123"
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="169962649"
+   d="scan'208";a="166341123"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 10:35:57 -0800
-IronPort-SDR: bHizN3Pmf/D2ZuT1/VYWLme/X610XhPTCStQ0qnf6hG3hkhrNFFoY+VDreBqXFbna6weVW6xN1
- US1gZM7GewhA==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 10:35:56 -0800
+IronPort-SDR: SlSyEClNLVRsIwTDGErBXbW+YEPbPEj7ql+k7TSWq6KzCjjvAuroDBTyIf+5yDb5Z+i1kexasa
+ E5pWIUveinKg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="473088141"
+   d="scan'208";a="529450416"
 Received: from lkp-server01.sh.intel.com (HELO d0be80f1a028) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 09 Nov 2020 10:35:55 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 09 Nov 2020 10:35:55 -0800
 Received: from kbuild by d0be80f1a028 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kcC1D-0000M1-7V; Mon, 09 Nov 2020 18:35:55 +0000
-Date:   Tue, 10 Nov 2020 02:35:02 +0800
+        id 1kcC1D-0000M4-7y; Mon, 09 Nov 2020 18:35:55 +0000
+Date:   Tue, 10 Nov 2020 02:34:55 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-descriptors-charger] BUILD SUCCESS
- bcfa9453ad4790844bde91b649debf25648cb8e7
-Message-ID: <5fa98bd6.J6uuBTi6HLTRgTfo%lkp@intel.com>
+Subject: [gpio:gpio-descriptors-input-cleanup] BUILD SUCCESS
+ edd582e76a292c45bb4b2de81c6497fbb7478b12
+Message-ID: <5fa98bcf.9r3cktKQ+kCoEjmV%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,8 +53,8 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-charger
-branch HEAD: bcfa9453ad4790844bde91b649debf25648cb8e7  power: supply: s3c-adc-battery: Convert to GPIO descriptors
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-input-cleanup
+branch HEAD: edd582e76a292c45bb4b2de81c6497fbb7478b12  ARM: davinci: Switch DA850EVM to use GPIO descriptors
 
 elapsed time: 720m
 
