@@ -1,73 +1,87 @@
-Return-Path: <SRS0=uyMg=EO=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=WlaW=EP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D39C388F9
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Nov 2020 18:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 452CEC2D0A3
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 06:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2C25206F4
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Nov 2020 18:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6F4D20706
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 06:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604903192;
+	bh=nWJ3XKFoO5Uhw686hH17QIA1fPBqriVVOcCzDDYLQrU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=0ReAItJjviPo5uxthFiMtdlakLCOQ8Tuegvy7OGaPcZ5R6sgFcSFN3GGTVO1zg5O8
+	 BTTlKK2YPS7Gc4sc9/MUU9stVRRxQS4k8x0OWh0YkM44nLMIoaF3hko8rMkSp8G9in
+	 Xfmx18OMjWEZ44ZfGh+fH0NgSDgeHTDFZukxh94g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbgKHSkS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 8 Nov 2020 13:40:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbgKHSkS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Nov 2020 13:40:18 -0500
-X-Greylist: delayed 2294 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 08 Nov 2020 10:40:17 PST
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A543AC0613CF
-        for <linux-gpio@vger.kernel.org>; Sun,  8 Nov 2020 10:40:17 -0800 (PST)
-Received: from dslb-084-059-242-201.084.059.pools.vodafone-ip.de ([84.59.242.201] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1kbp0n-00025g-Fz; Sun, 08 Nov 2020 19:01:57 +0100
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH] pinctrl: pinctrl-at91-pio4: Set irq handler and data in one go
-Date:   Sun,  8 Nov 2020 19:01:44 +0100
-Message-Id: <20201108180144.28594-1-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
+        id S1728904AbgKIG0b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 01:26:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727077AbgKIG0b (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Nov 2020 01:26:31 -0500
+Received: from localhost.localdomain (unknown [122.171.147.34])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4B192068D;
+        Mon,  9 Nov 2020 06:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604903190;
+        bh=nWJ3XKFoO5Uhw686hH17QIA1fPBqriVVOcCzDDYLQrU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oyq2iwqbe+biiYtko/WTaAll3CbGH6VeY8Ejx7mEgHi16Q3MA2UUUu23sDg4Wc6dD
+         86ivp7cG1CklMWU7d1nY42AvvwDSvErdATohcr5c+J8melY+ZdgtUVGTDgEkXpTtjT
+         rcW+jLkmnoTd80lX1urYQ8bC/VfsvsxbrML61Qi4=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] pinctrl: qcom: Add binding and driver for SDX55 pincontrol
+Date:   Mon,  9 Nov 2020 11:56:18 +0530
+Message-Id: <20201109062620.14566-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Replace the two separate calls for setting the irq handler and data with a
-single irq_set_chained_handler_and_data() call.
+This series add device tree binding documentation and driver for SDX55 SOC
+pincontroller.
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v3:
+ - Add ack by Bjorn
+ - Fix dt_binding_check errors
+ - Add gpio ranges in binding
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 578b387100d9..157fea808629 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -1127,8 +1127,8 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 			return -EINVAL;
- 		}
- 		atmel_pioctrl->irqs[i] = res->start;
--		irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
--		irq_set_handler_data(res->start, atmel_pioctrl);
-+		irq_set_chained_handler_and_data(res->start,
-+			atmel_gpio_irq_handler, atmel_pioctrl);
- 		dev_dbg(dev, "bank %i: irq=%pr\n", i, res);
- 	}
- 
+Changes in v2:
+ - merge the functional groups together
+ - move pins to single line for readability
+
+Jeevan Shriram (1):
+  pinctrl: qcom: Add SDX55 pincontrol driver
+
+Vinod Koul (1):
+  dt-bindings: pinctrl: qcom: Add SDX55 pinctrl bindings
+
+ .../bindings/pinctrl/qcom,sdx55-pinctrl.yaml  |  154 +++
+ drivers/pinctrl/qcom/Kconfig                  |    9 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-sdx55.c          | 1018 +++++++++++++++++
+ 4 files changed, 1182 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-sdx55.c
+
 -- 
-2.20.1
+2.26.2
 
