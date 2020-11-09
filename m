@@ -2,239 +2,147 @@ Return-Path: <SRS0=WlaW=EP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D22EC56201
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403A0C388F7
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 396992083B
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:27:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="He3snIwb"
+	by mail.kernel.org (Postfix) with ESMTP id F0C572076E
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:28:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604928518;
+	bh=C62EO4IC0tkPHza1Z5wLuwCPmHs9dymzQ6bTKN291E0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=lynFiwRwAemmfCHtKrwg0vUyQHsKBp+MEYdjPK79UREbbO5XCUo9Tt7s2HVVvxiZC
+	 a59rBXaCybwaPHAfiquChYs+jC3z3amWsCzvbailCLIXKbaH6lpB92iH8jVPb9ZqBr
+	 0Ir2PKXPbMBEZVI2inbD3Ears16Hvnv3RTHNH35g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387760AbgKIN1R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 08:27:17 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:44837 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733274AbgKIN1R (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 08:27:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1604928437; x=1636464437;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=fa6KWX2B4zVTjwSqmWXYRE0FGe8eLF9ePLavcrFXjlI=;
-  b=He3snIwbVhHNC6HdvaJFjCO8Qi5kb9a7PHoMAzA3I0pJtn4bUwteAJoa
-   a0LeIbQskDp9l7GHhzQ41aAX7ZkdNWqU/LSwTQQdJSjfGuEU7teuzPqmk
-   wiqqMAzcGDGYaMYa6MyNgDz5JKQvW8WSaKl4hB11aaQ5Se4Qg3Bvgr1fn
-   wDyKLo+Cg8rO6RxqT/QY/vvUGOleAQ4s5KZYmCLC6jFdPoRJVZYVUvoJ/
-   qse/jOJETLnCRnBuFjDIeFZgKQqZkos68H9eGLkKqmpxs3NWoAoPtIt5C
-   MlQxc3nmE+/MkUdMWf7bBVGGRWKxV6B3H5o0dbcJ0SUjZQPaW5MlSCtwH
-   w==;
-IronPort-SDR: uME5OOF23il5MIV2noBL/0qvtpRyTa8i9sd/BNdUXAhR0ZG1bH7i6fLM5X3OI3VcRi+FhKHfXN
- jxszSokoLklOfq548uRjyB/N7NFvbpFX+IY17r9XHpBDFGMagm8UQYswPELgI5n8s2VGl/YA3Z
- md0ZRAkoR/XKdD+FDlsY14dfAcbcR+fseuWNjYoAsCj42l/civV30HPvFKYAvq3v/c3rJckeBc
- Q7I0OS97oPP3TU7Lb2t8kWlr0kRG5Q/yN/5hkuFSuMOL/25AgKjdNM/Ui8oGEWvf6EYDdxo4I1
- SBg=
-X-IronPort-AV: E=Sophos;i="5.77,463,1596524400"; 
-   d="scan'208";a="97721907"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Nov 2020 06:27:15 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 9 Nov 2020 06:27:13 -0700
-Received: from soft-dev10.microsemi.net (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Mon, 9 Nov 2020 06:27:11 -0700
-From:   Lars Povlsen <lars.povlsen@microchip.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v8 1/3] dt-bindings: pinctrl: Add bindings for pinctrl-microchip-sgpio driver
-Date:   Mon, 9 Nov 2020 14:26:41 +0100
-Message-ID: <20201109132643.457932-2-lars.povlsen@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201109132643.457932-1-lars.povlsen@microchip.com>
-References: <20201109132643.457932-1-lars.povlsen@microchip.com>
+        id S1731112AbgKIN2Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 08:28:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733012AbgKINNs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Nov 2020 08:13:48 -0500
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 888C5221F1;
+        Mon,  9 Nov 2020 13:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604927627;
+        bh=C62EO4IC0tkPHza1Z5wLuwCPmHs9dymzQ6bTKN291E0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lu6ZloQxCpVK9XPcQeKzDCyoPfapyzr8TmXS1ZEQ5eLaXSQuhBcR94+nOWdM77AES
+         kV44ekL3qEsJoQl40SCbzafHpHB/U5BDiFZlYsy1bDuBBjuiPNMvRlmyINyVtsgYHP
+         +CZ44kZDC+mqx34R9oQDI2jfLLxSNjX09++Ubcyg=
+Received: by mail-oi1-f178.google.com with SMTP id w188so4585167oib.1;
+        Mon, 09 Nov 2020 05:13:47 -0800 (PST)
+X-Gm-Message-State: AOAM533ghNW5C4wTcPw1BTBJ/wO7q05blkQ5kGYW8aF+6QmwHPWFBrsy
+        dUT41dKrbdJymQJI6f5pIgDgRFwIDPQfe/6m6zA=
+X-Google-Smtp-Source: ABdhPJxw91Hj0jZh5TbrSnMgwYuPfwA98iCODNQAPuLfkdT9c4QN2Zz2pIgElY5nW2+5lWSvP9BtJ7kmgCwWxxMgu9A=
+X-Received: by 2002:aca:e0d7:: with SMTP id x206mr9417239oig.67.1604927626755;
+ Mon, 09 Nov 2020 05:13:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <cover.1603055402.git.syednwaris@gmail.com> <15a044d3ba23f00c31fd09437bdd3e5924bb91cd.1603055402.git.syednwaris@gmail.com>
+ <CAK8P3a3f=fuq24QwNee3QgoMcSK5rcvLRpdTOWBZ9NJ4d-4bvA@mail.gmail.com>
+ <20201101150033.GA68138@shinobu> <CAK8P3a0y7mh=ZDPefgpawY97gpYv79UXFLBzoGfu3ex2up2aDQ@mail.gmail.com>
+ <20201109123411.GA19869@syed>
+In-Reply-To: <20201109123411.GA19869@syed>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Mon, 9 Nov 2020 14:13:30 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2_1xT7Jz_q-xZstnW6dSRkRp4Q9Cqyz1t7Bo189zgfaA@mail.gmail.com>
+Message-ID: <CAK8P3a2_1xT7Jz_q-xZstnW6dSRkRp4Q9Cqyz1t7Bo189zgfaA@mail.gmail.com>
+Subject: Re: [PATCH v12 4/4] gpio: xilinx: Utilize generic bitmap_get_value
+ and _set_value
+To:     Syed Nayyar Waris <syednwaris@gmail.com>
+Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds DT bindings for the Microsemi/Microchip SGPIO controller,
-bindings microchip,sparx5-sgpio, mscc,ocelot-sgpio and
-mscc,luton-sgpio.
+On Mon, Nov 9, 2020 at 1:34 PM Syed Nayyar Waris <syednwaris@gmail.com> wrote:
+> On Sun, Nov 01, 2020 at 09:08:29PM +0100, Arnd Bergmann wrote:
+> > > This avoids adding a costly conditional check inside bitmap_set_value()
+> > > when almost all bitmap_set_value() calls will have static arguments with
+> > > well-defined and obvious boundaries.
+> > >
+> > > Do you think this would be an acceptable solution to resolve your GCC
+> > > warnings?
+> >
+> > Unfortunately, it does not seem to make a difference, as gcc still
+> > knows that this compiles to the same result, and it produces the same
+> > warning as before (see https://godbolt.org/z/rjx34r)
+> >
+> >          Arnd
+>
+> Hi Arnd,
+>
+> Sharing a different version of bitmap_set_valuei() function. See below.
+>
+> Let me know if the below solution looks good to you and if it resolves
+> the above compiler warning.
 
-Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../pinctrl/microchip,sparx5-sgpio.yaml       | 145 ++++++++++++++++++
- 1 file changed, 145 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
+Thanks for the follow-up!
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml b/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
-new file mode 100644
-index 000000000000..08325bf77a81
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
-@@ -0,0 +1,145 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/microchip,sparx5-sgpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microsemi/Microchip Serial GPIO controller
-+
-+maintainers:
-+  - Lars Povlsen <lars.povlsen@microchip.com>
-+
-+description: |
-+  By using a serial interface, the SIO controller significantly extend
-+  the number of available GPIOs with a minimum number of additional
-+  pins on the device. The primary purpose of the SIO controllers is to
-+  connect control signals from SFP modules and to act as an LED
-+  controller.
-+
-+properties:
-+  $nodename:
-+    pattern: "^gpio@[0-9a-f]+$"
-+
-+  compatible:
-+    enum:
-+      - microchip,sparx5-sgpio
-+      - mscc,ocelot-sgpio
-+      - mscc,luton-sgpio
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  microchip,sgpio-port-ranges:
-+    description: This is a sequence of tuples, defining intervals of
-+      enabled ports in the serial input stream. The enabled ports must
-+      match the hardware configuration in order for signals to be
-+      properly written/read to/from the controller holding
-+      registers. Being tuples, then number of arguments must be
-+      even. The tuples mast be ordered (low, high) and are
-+      inclusive.
-+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+    items:
-+      items:
-+        - description: |
-+            "low" indicates start bit number of range
-+          minimum: 0
-+          maximum: 31
-+        - description: |
-+            "high" indicates end bit number of range
-+          minimum: 0
-+          maximum: 31
-+    minItems: 1
-+    maxItems: 32
-+
-+  bus-frequency:
-+    description: The sgpio controller frequency (Hz). This dictates
-+      the serial bitstream speed, which again affects the latency in
-+      getting control signals back and forth between external shift
-+      registers. The speed must be no larger than half the system
-+      clock, and larger than zero.
-+    default: 12500000
-+
-+patternProperties:
-+  "^gpio@[0-1]$":
-+    type: object
-+    properties:
-+      compatible:
-+        const: microchip,sparx5-sgpio-bank
-+
-+      reg:
-+        description: |
-+          The GPIO bank number. "0" is designates the input pin bank,
-+          "1" the output bank.
-+        maxItems: 1
-+
-+      gpio-controller: true
-+
-+      '#gpio-cells':
-+        description: |
-+         Specifies the pin (port and bit) and flags. Note that the
-+         SGIO pin is defined by *2* numbers, a port number between 0
-+         and 31, and a bit index, 0 to 3. The maximum bit number is
-+         controlled indirectly by the "ngpios" property: (ngpios/32).
-+        const: 3
-+
-+      ngpios:
-+        description: The numbers of GPIO's exposed. This must be a
-+          multiple of 32.
-+        minimum: 32
-+        maximum: 128
-+
-+    required:
-+      - compatible
-+      - reg
-+      - gpio-controller
-+      - '#gpio-cells'
-+      - ngpios
-+
-+    additionalProperties: false
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - microchip,sgpio-port-ranges
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+examples:
-+  - |
-+    sgpio2: gpio@1101059c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      compatible = "microchip,sparx5-sgpio";
-+      clocks = <&sys_clk>;
-+      pinctrl-0 = <&sgpio2_pins>;
-+      pinctrl-names = "default";
-+      reg = <0x1101059c 0x100>;
-+      microchip,sgpio-port-ranges = <0 0>, <16 18>, <28 31>;
-+      bus-frequency = <25000000>;
-+      sgpio_in2: gpio@0 {
-+        reg = <0>;
-+        compatible = "microchip,sparx5-sgpio-bank";
-+        gpio-controller;
-+        #gpio-cells = <3>;
-+        ngpios = <96>;
-+      };
-+      sgpio_out2: gpio@1 {
-+        compatible = "microchip,sparx5-sgpio-bank";
-+        reg = <1>;
-+        gpio-controller;
-+        #gpio-cells = <3>;
-+        ngpios = <96>;
-+      };
-+    };
--- 
-2.25.1
+> @@ -1,5 +1,5 @@
+>  static inline void bitmap_set_value(unsigned long *map,
+> -                                    unsigned long value,
+> +                                    unsigned long value, const size_t length,
+>                                      unsigned long start, unsigned long nbits)
+>  {
+>          const size_t index = BIT_WORD(start);
+> @@ -7,6 +7,9 @@ static inline void bitmap_set_value(unsigned long *map,
+>          const unsigned long ceiling = round_up(start + 1, BITS_PER_LONG);
+>          const unsigned long space = ceiling - start;
+>
+> +       if (index >= length)
+> +               return;
+> +
+>          value &= GENMASK(nbits - 1, 0);
+>
+>          if (space >= nbits) {
+> @@ -15,6 +18,10 @@ static inline void bitmap_set_value(unsigned long *map,
+>          } else {
+>                  map[index + 0] &= ~BITMAP_FIRST_WORD_MASK(start);
+>                  map[index + 0] |= value << offset;
+> +
+> +               if (index + 1 >= length)
+> +                       return;
+> +
+>                  map[index + 1] &= ~BITMAP_LAST_WORD_MASK(start + nbits);
+>                  map[index + 1] |= value >> space;
+>          }
 
+Yes, this does address the warning: https://godbolt.org/z/3nsGzq
+
+Not sure what the best calling conventions would be though, as the function
+now has five arguments, and the one called 'nbits' appears to be what
+all other helpers in include/linux/bitmap.h use for the length of the bitmap,
+while this one uses it for the length of the value.
+
+I'd prefer passing the number of bits in the bitmap rather than the number
+of 'unsigned long' words in it, and calling that 'nbits', while renaming
+the current 'nbits' to something else, e.g.:
+
+static inline void bitmap_set_value(unsigned long *map,
+                                    unsigned long value, unsigned long start,
+                                    unsigned long clump_size, unsigned
+long nbits);
+
+Though I'm still unsure about the argument order. Having 'nbits'
+right next to 'map' would be the most logical to me as they logically
+belong together, but most other linux/bitops.h helpers seem to have
+'nbits' as the last argument.
+
+        Arnd
