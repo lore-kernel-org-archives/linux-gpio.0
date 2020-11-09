@@ -2,109 +2,154 @@ Return-Path: <SRS0=WlaW=EP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894C3C388F7
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 12:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E201C388F7
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E39CD221FF
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 12:56:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBF8C20897
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiius.com header.i=@kwiius.com header.b="0dyJfg5J";
-	dkim=temperror (0-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X+C4Is/D"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hkwreRyK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729897AbgKIM47 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 07:56:59 -0500
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:49807 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729882AbgKIM4t (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 07:56:49 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0DDF45C02B4
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2020 07:56:49 -0500 (EST)
-Received: from imap22 ([10.202.2.72])
-  by compute4.internal (MEProxy); Mon, 09 Nov 2020 07:56:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiius.com; h=
-        mime-version:message-id:date:from:to:subject:content-type; s=
-        fm3; bh=nJND+74rJtWsZauz0uPnNk+J58BKR0M50nAkBoSy/jo=; b=0dyJfg5J
-        RmcVdku97553VZT968gO+p+zXLwGpc+gPW6IfWdJESwE7KGjcX19CH4+y/8YKBel
-        F2r0pMhXhERwBvDAj+8tF3FVstUzJFppLuvt6fmtmN3NJHlIBkbGyH4af/5W5FAi
-        Z1kDCFEUbR6WCxSfXCAgONClopUtH/+6AyGKaYsQIl8mi7IJRIlG5tCUiWphK8Se
-        /YS19g+n5dIMsYJbsWCtgVhMkvQuR/YYjXDSYrTCI7SLmRb5iCMK5hEHCPNli4XV
-        st5Qtj5dZOY09Jo37wRJWubi4Y23yIbKbeZuLbA6tOH9cWWhibm3gjatfAdY0zur
-        b4OeivF2ssEwmA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-type:date:from:message-id
-        :mime-version:subject:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm1; bh=nJND+74rJtWsZauz0uPnNk+J58BKR
-        0M50nAkBoSy/jo=; b=X+C4Is/DvSPh4LloxP6piW/vleU3lISnpsbshH877uLt/
-        t/BsE8ZczYbqhfWIrhcHF6oEZcpRWPuMyAJ2rt5sKXqOOs9OpNST8pi0T7X2IUnu
-        lJpiHJ+il5tqOu4ulJ/YbrYSYvXM4BJo+N7HuyfRl4Jfbwktk/r4SGRbhQi70/lD
-        OrGWV12f0ijK6+eH3+T8l6lf4muq27mlyRx9bbo5nBXdYUqcEaredEpUjT2yTWVm
-        oFDsVzVEU7xXa+Dx23kVBkGbcnXKcvhqcnyeXaen0lX0ZSuzIZgAtP/hpGcIIQmk
-        BKGBzC3pqAYCtQpG5Dgii+HDlShpMO8xhcBUnHBtw==
-X-ME-Sender: <xms:kDypX6PSpXjkZfMVHDr6wPEY5nzaRGy2UzAoX3-RsDbrbU2aMdnKWA>
-    <xme:kDypX489Eyolm4sIC4UM75AVxnirMqVWLeO8fOJvFd_IksAWeZfJD8ddvCPMk7JJZ
-    aaoj9-Lgx1y3ZtSOQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudduhedggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefofgggkfffhffvufgtsehttdertd
-    erreejnecuhfhrohhmpedflfgrmhhivgcuofgtvehlhihmohhnthdfuceojhgrmhhivges
-    khifihhiuhhsrdgtohhmqeenucggtffrrghtthgvrhhnpeeludejleehvddutdefleffhe
-    ffffffffeljeejieegheeguddtjedvveekieevfeenucevlhhushhtvghrufhiiigvpedt
-    necurfgrrhgrmhepmhgrihhlfhhrohhmpehjrghmihgvsehkfihiihhushdrtghomh
-X-ME-Proxy: <xmx:kDypXxQItOy4gGr_40YfNqa8oPKmd5flW4_WnzpYiyebM6uJaPX8-w>
-    <xmx:kDypX6vUPJfvxe85_PH0hcf8jkX403W-gsYRMWzPiS1401YrIMs3Ig>
-    <xmx:kDypXyfz359t2Mp1eo0tnva6kam8qzdSMXpP8etrkweK4Y_8oYeGaQ>
-    <xmx:kTypX8rOEsbEETKufaW6Xy0UPG5rnZqjtctIiC9qJ_K5_KG2E_WbOQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 7E40C668007A; Mon,  9 Nov 2020 07:56:48 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.3.0-570-gba0a262-fm-20201106.001-gba0a2623
-Mime-Version: 1.0
-Message-Id: <a491261f-8463-474d-a6b3-d674670c7bb7@www.fastmail.com>
-Date:   Tue, 10 Nov 2020 01:56:27 +1300
-From:   "Jamie McClymont" <jamie@kwiius.com>
-To:     linux-gpio@vger.kernel.org
-Subject: =?UTF-8?Q?How_to_handle_a_level-triggered_interrupt_that_is_slow_to_de-a?=
- =?UTF-8?Q?ssert_itself?=
+        id S1731980AbgKIN1G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 08:27:06 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:44817 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387610AbgKIN1F (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 08:27:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1604928426; x=1636464426;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yQ7aQbaQcUFJGuL2d0l9emAGsalZe+Edw03if27uOyU=;
+  b=hkwreRyKWIqJdsS+9seds87LeWouA3XnfVBrO/9oIDylxiViEF54vd7D
+   1n47tpzAG+M8jv9NsmiCc7xFzQIK2fuk0xYLpvngVLeCkXKf/DtgvJVnl
+   x3BQ3M21gygoTMHWRVe8L+yPM65yOmwaI3DHzqXyBYhAzFNchCMV7yVd9
+   9RT8VzZR8gI6rcr79Ni/qoM4zEL3P7k+/qs5SI/m9m/UyGjfw6UMfYqLq
+   z+sHxAzd8srJXdTu+Qw3RysN4GsMkrrYUwsdmP2LgVv0eoOaXMHJViv8H
+   Pp2+kEWt/XR1QdRp6jxBRdabDNjcN+hACZ7m8Gp9TSDmGesn96YNLWx+P
+   w==;
+IronPort-SDR: izAjxhWgaHu9XCtkfi8HyQBOHgHwsD9UvcEXXmsnm81zHh5ylWakVLRLQVwqwnKfjAaHwVOD4k
+ 0FjdS7adZjXyPJUxu2zZ26Y+hn3diChepsTwbmW6IxucX2VGX4BEoGyMKzY8Xvz2EWJPFt283J
+ rkazrfmnC2DJXeKfUvLDJnaFGKUaeojSc2eRbKaco3WXfYyIIQObSwG4EOUqaS+5H3enU/G1NA
+ jRZnKQfa2FUgxJ6VNDakHERv9g9DD6JiTvHJz0pyPQRo6hM1b0QZhUbIfJZbegBDBpxwlSEOvA
+ WNo=
+X-IronPort-AV: E=Sophos;i="5.77,463,1596524400"; 
+   d="scan'208";a="97721891"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Nov 2020 06:27:05 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Mon, 9 Nov 2020 06:27:04 -0700
+Received: from soft-dev10.microsemi.net (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Mon, 9 Nov 2020 06:27:02 -0700
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Lars Povlsen <lars.povlsen@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v8 0/3] Adding support for Microchip/Microsemi serial GPIO controller
+Date:   Mon, 9 Nov 2020 14:26:40 +0100
+Message-ID: <20201109132643.457932-1-lars.povlsen@microchip.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi all,
+The series add support for the serial GPIO controller used by
+Microchip Sparx5, as well as (MSCC) ocelot/jaguar2 SoCs.
 
-Background context:
+v8 changes (from Andy):
+ - Removed OF dependency/usage entirely.
+ - Trimmed+sorted include files.
+ - Made local variables reverse xmas sorted.
+ - Removed __func__ usage.
+ - Changed some occurences of "if (x) { ..." to early return.
+ - Use dev_err_probe() where possible.
+ - Replace of_device_get_match_data() with device_get_match_data()
+ - Some minor formatting corrections
+ - Do per-pin string allocation as opposed to bulk allocation+chop.
 
-I'm continuing my efforts to reverse-engineer and write a driver for the Goodix GXFP5187 fingerprint sensor in my Huawei Matebook X Pro (the host is an Intel i5-8250U).
+v7 changes:
+- Fixed wrong sizeof in pin string name template. (Andy)
+- Collapsed sgpio_input_get() to one liner. (Andy)
+- Eliminated unneeded variable in microchip_sgpio_get_value()
+- Removed noisy dev_info(). (Andy)
+- Replaced platform_get_resource()+devm_ioremap_resource() with
+ devm_platform_ioremap_resource(). (Andy)
+- Replaced device_property_read_u32() with
+  of_property_read_u32(). (Andy)
+- Replaced __builtin_ffsll() with __builtin_ffs() for MIPS32 targets.
 
-The device is connected via SPI plus a GPIO Interrupt pin, defined like so in the ACPI tables:
+v6 changes:
+- Use "bus-frequency" instead of "microchip,sgpio-frequency". Drop
+  '$ref'. (Robh)
+- Added "ngpios" description, bumped minimum to 32. (Linus)
+- Added "#size-cells" description. (Linus)
+- Changed "bus-frequency" validation in driver to reflect the YAML
+  description.
 
-    GpioInt (Level, ActiveLow, ExclusiveAndWake, PullUp, 0x0000,
-        "\\_SB.PCI0.GPI0", 0x00, ResourceConsumer, ,) { 0x0000 }
+v5 changes (driver comments from Linus):
+- Collect bank data in sgpio_bank struct
+- Add is_input boolean to sgpio_bank struct
+- Use single-bit bitmasks in sgpio_output_set() and sgpio_output_get()
+- Eliminate superfluous struct pinctrl_dev *pctl_dev in bank data
+- Fix wrong ngpio consistency check
 
-This line is held down by the device when it has a message for the host, and stays held down until the host finishes reading the message out over SPI.
+v4 changes (binding comments from Rob):
+- microchip,sgpio-port-ranges changed to uint32-matrix so tuples can
+  be represented properly.
+- gpio controller node name changed to "gpio@[0-1]"
+- whitespace fixes
+- DT files updated as per schema changes
 
-I'm handling this with a devm_request_threaded_irq-type handler, where the irq part is just "return IRQ_WAKE_THREAD", and the threaded part does all the work. My understanding is that this is a reasonable approach since I don't have tight latency requirements (and the sleeping spi functions are convenient, plus I don't want to introduce any unnecessary jitter to the system) -- please correct me if I shouldn't actually be using a threaded handler here.
+v3 changes:
+- Renamed all usage of "mchp" abbrevation with "microchip".
+- Split the in/output directions into (two) separate banks.
+- Eliminated the bindings include file (from above)
+- Changed SPDX license to "GPL-2.0-or-later"
+- Change -ENOTSUPP to -EOPNOTSUPP
+- Minor type/symbol naming changes
 
----
+v2 changes:
+- Adds both in and output modes.
+- Use direct adressing of the individual banks (#gpio-cells = <4>),
+  also osoleting need for addressing macros in bindings include file.
+- Property 'microchip,sgpio-ports' (uint32, bitmask) replaced by
+  proper range set (array of [start,end]) 'microchip,sgpio-port-ranges'.
+- Fixes whitespace issues in Kconfig file
 
-Here's my problem:
+Lars Povlsen (3):
+  dt-bindings: pinctrl: Add bindings for pinctrl-microchip-sgpio driver
+  pinctrl: pinctrl-microchip-sgpio: Add pinctrl driver for Microsemi
+    Serial GPIO
+  arm64: dts: sparx5: Add SGPIO devices
 
-the IRQ line actually stays held down for roughly 180us after I've finished reading out the message over SPI. That means that as soon as the handler finishes, a new one starts, and it reads out corrupted data, since the sensor doesn't have anything to say.
+ .../pinctrl/microchip,sparx5-sgpio.yaml       | 145 ++++
+ MAINTAINERS                                   |   1 +
+ arch/arm64/boot/dts/microchip/sparx5.dtsi     |  91 +++
+ .../boot/dts/microchip/sparx5_pcb125.dts      |   5 +
+ .../dts/microchip/sparx5_pcb134_board.dtsi    | 258 +++++++
+ .../dts/microchip/sparx5_pcb135_board.dtsi    |  55 ++
+ drivers/pinctrl/Kconfig                       |  16 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-microchip-sgpio.c     | 640 ++++++++++++++++++
+ 9 files changed, 1212 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
+ create mode 100644 drivers/pinctrl/pinctrl-microchip-sgpio.c
 
-This is okay in theory -- the corrupted message header can be detected by its checksum, and disregarded. However, this leads to a race condition where the chip can decide it DOES have something to say to the host, WHILE the host is reading out the corrupted header. At that point, the two sides de-sync in their ideas of what needs to be read, and everything stops working.
-
-So, I'd like some way to pause interrupt handling for 200us+, and only re-run the handler if the line is still held down after that time.
-
-My first approach was to add a sleep (usleep_range) at the end of the threaded handler, right before returning IRQ_HANDLED. However, it appears that after the sleep finishes, the IRQ is triggered one more time -- presumably it has been set as pending before/during the sleep?
-
-My new workaround is to save a ktime_get_ns timestamp at the end of the handler, and check it against the current ktime at the start, returning early if not enough time has yet elapsed. This is unsatisfactory, as it is effectively a 180us busy-wait, and gets in the way of whatever the core could better be doing (presumably idling and saving power :).
-
-Is it possible to return to the first approach, but prevent that one spurious interrupt from firing after the handler ends?
-
-Thanks
--- Jamie McClymont
+--
+2.25.1
