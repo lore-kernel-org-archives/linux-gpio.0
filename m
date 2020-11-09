@@ -2,147 +2,114 @@ Return-Path: <SRS0=WlaW=EP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403A0C388F7
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FE3C388F7
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0C572076E
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5608E216C4
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604928518;
-	bh=C62EO4IC0tkPHza1Z5wLuwCPmHs9dymzQ6bTKN291E0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=lynFiwRwAemmfCHtKrwg0vUyQHsKBp+MEYdjPK79UREbbO5XCUo9Tt7s2HVVvxiZC
-	 a59rBXaCybwaPHAfiquChYs+jC3z3amWsCzvbailCLIXKbaH6lpB92iH8jVPb9ZqBr
-	 0Ir2PKXPbMBEZVI2inbD3Ears16Hvnv3RTHNH35g=
+	s=default; t=1604928596;
+	bh=uFEtIlKezOT9TIZTKmINrxsNQ5X+2p18rkvgsgVL0L0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iQ96WpoQd4V8+Xlt3Yf/bzP6rz8+hKF/Hq/YU15255tToSCzrBorGrYYoZJNq6Bed
+	 vc26EiJtwopzMqyjTt1n7muNF8uQrO66tfp5lfCOL28h7LAHZY/3+iUTJ+kANNdz7T
+	 ZJdkU9FxzltzcMT8mU8YEdIjwjjJDLgHMUp2h5ec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731112AbgKIN2Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 08:28:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39908 "EHLO mail.kernel.org"
+        id S1733098AbgKIN3y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 08:29:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733012AbgKINNs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Nov 2020 08:13:48 -0500
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1732507AbgKIN3u (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Nov 2020 08:29:50 -0500
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 888C5221F1;
-        Mon,  9 Nov 2020 13:13:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBC40206ED;
+        Mon,  9 Nov 2020 13:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604927627;
-        bh=C62EO4IC0tkPHza1Z5wLuwCPmHs9dymzQ6bTKN291E0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lu6ZloQxCpVK9XPcQeKzDCyoPfapyzr8TmXS1ZEQ5eLaXSQuhBcR94+nOWdM77AES
-         kV44ekL3qEsJoQl40SCbzafHpHB/U5BDiFZlYsy1bDuBBjuiPNMvRlmyINyVtsgYHP
-         +CZ44kZDC+mqx34R9oQDI2jfLLxSNjX09++Ubcyg=
-Received: by mail-oi1-f178.google.com with SMTP id w188so4585167oib.1;
-        Mon, 09 Nov 2020 05:13:47 -0800 (PST)
-X-Gm-Message-State: AOAM533ghNW5C4wTcPw1BTBJ/wO7q05blkQ5kGYW8aF+6QmwHPWFBrsy
-        dUT41dKrbdJymQJI6f5pIgDgRFwIDPQfe/6m6zA=
-X-Google-Smtp-Source: ABdhPJxw91Hj0jZh5TbrSnMgwYuPfwA98iCODNQAPuLfkdT9c4QN2Zz2pIgElY5nW2+5lWSvP9BtJ7kmgCwWxxMgu9A=
-X-Received: by 2002:aca:e0d7:: with SMTP id x206mr9417239oig.67.1604927626755;
- Mon, 09 Nov 2020 05:13:46 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1603055402.git.syednwaris@gmail.com> <15a044d3ba23f00c31fd09437bdd3e5924bb91cd.1603055402.git.syednwaris@gmail.com>
- <CAK8P3a3f=fuq24QwNee3QgoMcSK5rcvLRpdTOWBZ9NJ4d-4bvA@mail.gmail.com>
- <20201101150033.GA68138@shinobu> <CAK8P3a0y7mh=ZDPefgpawY97gpYv79UXFLBzoGfu3ex2up2aDQ@mail.gmail.com>
- <20201109123411.GA19869@syed>
-In-Reply-To: <20201109123411.GA19869@syed>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Mon, 9 Nov 2020 14:13:30 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2_1xT7Jz_q-xZstnW6dSRkRp4Q9Cqyz1t7Bo189zgfaA@mail.gmail.com>
-Message-ID: <CAK8P3a2_1xT7Jz_q-xZstnW6dSRkRp4Q9Cqyz1t7Bo189zgfaA@mail.gmail.com>
-Subject: Re: [PATCH v12 4/4] gpio: xilinx: Utilize generic bitmap_get_value
- and _set_value
-To:     Syed Nayyar Waris <syednwaris@gmail.com>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        s=default; t=1604928589;
+        bh=uFEtIlKezOT9TIZTKmINrxsNQ5X+2p18rkvgsgVL0L0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PEG8KeoO1wg/M/IVLPzj/C7ZEL4s3Tsx4rRoTdy2l5sVppOCViz/ToFBMFM9h5eLU
+         675zJRzfjOBHcbcf/fqIsV8GcVcTDcR8WetZMirDPxwSkOwPCynyj7c8zdLekufxcQ
+         BsW8dXU9EUPjownhVubxXbCndz6dsSeLOCFKVreI=
+Date:   Mon, 9 Nov 2020 13:29:35 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
+        linux-spi@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Subject: Re: [PATCH 03/32] spi: dw: Fix driving MOSI low while recieving
+Message-ID: <20201109132935.GB6380@sirena.org.uk>
+References: <20201107081420.60325-1-damien.lemoal@wdc.com>
+ <20201107081420.60325-4-damien.lemoal@wdc.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+Content-Disposition: inline
+In-Reply-To: <20201107081420.60325-4-damien.lemoal@wdc.com>
+X-Cookie: This fortune is false.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Nov 9, 2020 at 1:34 PM Syed Nayyar Waris <syednwaris@gmail.com> wrote:
-> On Sun, Nov 01, 2020 at 09:08:29PM +0100, Arnd Bergmann wrote:
-> > > This avoids adding a costly conditional check inside bitmap_set_value()
-> > > when almost all bitmap_set_value() calls will have static arguments with
-> > > well-defined and obvious boundaries.
-> > >
-> > > Do you think this would be an acceptable solution to resolve your GCC
-> > > warnings?
-> >
-> > Unfortunately, it does not seem to make a difference, as gcc still
-> > knows that this compiles to the same result, and it produces the same
-> > warning as before (see https://godbolt.org/z/rjx34r)
-> >
-> >          Arnd
->
-> Hi Arnd,
->
-> Sharing a different version of bitmap_set_valuei() function. See below.
->
-> Let me know if the below solution looks good to you and if it resolves
-> the above compiler warning.
 
-Thanks for the follow-up!
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> @@ -1,5 +1,5 @@
->  static inline void bitmap_set_value(unsigned long *map,
-> -                                    unsigned long value,
-> +                                    unsigned long value, const size_t length,
->                                      unsigned long start, unsigned long nbits)
->  {
->          const size_t index = BIT_WORD(start);
-> @@ -7,6 +7,9 @@ static inline void bitmap_set_value(unsigned long *map,
->          const unsigned long ceiling = round_up(start + 1, BITS_PER_LONG);
->          const unsigned long space = ceiling - start;
->
-> +       if (index >= length)
-> +               return;
-> +
->          value &= GENMASK(nbits - 1, 0);
->
->          if (space >= nbits) {
-> @@ -15,6 +18,10 @@ static inline void bitmap_set_value(unsigned long *map,
->          } else {
->                  map[index + 0] &= ~BITMAP_FIRST_WORD_MASK(start);
->                  map[index + 0] |= value << offset;
-> +
-> +               if (index + 1 >= length)
-> +                       return;
-> +
->                  map[index + 1] &= ~BITMAP_LAST_WORD_MASK(start + nbits);
->                  map[index + 1] |= value >> space;
->          }
+On Sat, Nov 07, 2020 at 05:13:51PM +0900, Damien Le Moal wrote:
 
-Yes, this does address the warning: https://godbolt.org/z/3nsGzq
+> The resting state of MOSI is high when nothing is driving it. If we
+> drive it low while recieving, it looks like we are transmitting 0x00
+> instead of transmitting nothing. This can confuse slaves (like SD cards)
+> which allow new commands to be sent over MOSI while they are returning
+> data over MISO. The return of MOSI from 0 to 1 at the end of recieving
+> a byte can look like a start bit and a transmission bit to an SD card.
 
-Not sure what the best calling conventions would be though, as the function
-now has five arguments, and the one called 'nbits' appears to be what
-all other helpers in include/linux/bitmap.h use for the length of the bitmap,
-while this one uses it for the length of the value.
+If client devices are interpreting the transmitted data then I would
+expect the drivers for that hardware to be ensuring that whatever we
+transmit matches what the device is expecting.  We shouldn't be putting
+a hack in a particular controller driver to paper over things, that will
+mean that the device will break when used with other controllers and if
+different devices have different requirements then obviously we can't
+satisfy them.  There is not meaningfully a general specification for SPI
+which says what happens when signals are idle, it's all specific to the
+client device.
 
-I'd prefer passing the number of bits in the bitmap rather than the number
-of 'unsigned long' words in it, and calling that 'nbits', while renaming
-the current 'nbits' to something else, e.g.:
+In this case it also looks like the controller hardware requires
+transmit data and therefore should be setting SPI_MUST_TX and just
+removing the in driver default anyway, though that will have no effect
+one way or anther on the issue you're seeing.
 
-static inline void bitmap_set_value(unsigned long *map,
-                                    unsigned long value, unsigned long start,
-                                    unsigned long clump_size, unsigned
-long nbits);
+Please also try to avoid the use of master/slave terminology where
+reasonable, controller and device tend to work for SPI (though MOSI/MISO
+are going to be harder to shift).
 
-Though I'm still unsure about the argument order. Having 'nbits'
-right next to 'map' would be the most logical to me as they logically
-belong together, but most other linux/bitops.h helpers seem to have
-'nbits' as the last argument.
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature; name="signature.asc"
 
-        Arnd
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+pRD4ACgkQJNaLcl1U
+h9C5TAf/XbwBOxTibzpvLt8ovg4q6S5JE6AAQVhlhvghT7Yf7yrHRWjzb0yS6iYp
+KQb6/34eaIvIS48nMgl+1nODQGH7gALefdHDVJgWJzW2pz66UBMG8Eg5DzUagnZM
+QrFDJwjghbqyKutTPSYyJqYkhdzxZH15TlJeAu43BVuAF0c7Znxpk3apXr54b6J0
+nXV+CGRukYMHoT0kcNAZRG/znjrFFxUz8yBtAqR6Ue2AvSU3QGDVU7O+JHlRfMj6
+SPeCXxvDhVBz7Sbo+XWoesnhzGza5+1fQdYSur9vVxjKmrI5pbxBZpBXHJ2WvTnt
+HSXi47r4tVbbZC4W3BBRJPE6KTFQLA==
+=2gHP
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
