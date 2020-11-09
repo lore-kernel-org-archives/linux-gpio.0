@@ -2,133 +2,166 @@ Return-Path: <SRS0=WlaW=EP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AC7C4741F
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 12:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC3FC61DD8
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 12:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89BD121D46
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 12:18:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6380C2084C
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 12:18:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="DxTb+0Te"
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="Xttw3JWf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbgKIMS0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 07:18:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42774 "EHLO
+        id S1729697AbgKIMSa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 07:18:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729632AbgKIMSZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 07:18:25 -0500
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41F0CC0613D3
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2020 04:18:24 -0800 (PST)
-Received: by mail-pf1-x443.google.com with SMTP id q5so5028701pfk.6
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2020 04:18:24 -0800 (PST)
+        with ESMTP id S1729656AbgKIMSa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 07:18:30 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CBBC0613D3
+        for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2020 04:18:29 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id t18so4663051plo.0
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2020 04:18:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=0x0f.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0ECS4fSUjBtwy6Ka0FJ1351R2BmrDJGaIrqok5xLHqc=;
-        b=DxTb+0Te0zpg9F3FsAG34GuTxjXeWUPuvJrwvHPeKZSxo9ZoOtHRVx81kpvTcsOfo8
-         oR+SMQtkwI5rzaIQudhw95vV2rkohZiS27WQlUwkJfclYxfeps+0wWMDqTVaAXeuUA9J
-         7AQKzbmzBfZSNbhm0BM7vSIvZaa9CsOctK/Yw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wWmlfMfRUXU44J3q+Sc5kmE5CqBvigtZaPIOQbZQHF8=;
+        b=Xttw3JWftH5F6nYAMRHB94r+/xuVVekPxG5xY57CpspsotoypVnZ/McuG8ak6VZNEN
+         drAUyJod/SbePFKvfNZKqyAOMs5WkVdvRMREtJR5iYm+NxBE8e8C6U43M9AqMvhbXXTx
+         C3cMYPayqBg9ZCvhWjI3WpdC6n3rxLm7rAGHw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0ECS4fSUjBtwy6Ka0FJ1351R2BmrDJGaIrqok5xLHqc=;
-        b=EoZCbKtZqTSrXZzJPpdTO4I4Tk6ITrr4fMVutE9OzaZ7i1qWFDrwW7e2OmNj3XGBHA
-         mBIKkMfoyu4+4MXAho7WQ7nFgVed1GxLaz+YzSgQzFpoZ+po/BYAjVwi8hl6UiRCVA42
-         GxgiRvj4F8+r3/fNYKT8FNDjJPvFmW5EwT3lz/efIH13bibGauMbOJncUC4tqW9F3A23
-         n1Gos5F8ML+xIgzY4s2Eo6pedCCz+K8E7GxHbtwdDyxOCoprz76qpNRbhBc4ouCaYj2O
-         S4Wd3Aj0tLBY5VZFf0XrEUaJXMsVTwZqIIVSXyWWXv7n7/tqdCXeP4ahRZaWwo92FcGV
-         EB3g==
-X-Gm-Message-State: AOAM531JTohocBVmsJjgtC66HhTvdgxSOi7Z9T5VH3fNgFUn8rQlLS02
-        hbD6eLTx5CoPXOPfOVzAICeSCQ==
-X-Google-Smtp-Source: ABdhPJwiprztaOlzoU+V3h2d05eGOMn560WX/sUv7c/t2PAq7D9nYP6sjKVdAiErqkHfsZHQaOkoGQ==
-X-Received: by 2002:a65:6649:: with SMTP id z9mr12193992pgv.18.1604924303784;
-        Mon, 09 Nov 2020 04:18:23 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wWmlfMfRUXU44J3q+Sc5kmE5CqBvigtZaPIOQbZQHF8=;
+        b=jZ51/D0iNhjnt/kfw5Qi2ShagzR1BTabNZhuE+wT4qPqPjPclbLujZ6FPaYCNO//+2
+         2PNWFJ03j2SQjyJoWTnXcSVcdaEUTQidRqtNTdo+pfrVOy6BKTLu/iaLovx7rOAKexgM
+         NeKDsfgQ68QkSCtmIuMYInP5ZJjh4bAZnh7TilFNH1kBntG4nr4icwbrkfOedwjSgiCf
+         /5LgTLCchgfyapZy7Y4I/593kXUF6+w+EvokFBjZHoieK2WDdn+KZRPCIXiarNPKZmC6
+         xKtjRwsGxkCOxdJbVVa5r/ZIuqQatmiSaXk6Y62SEy0RSLn1742/1lIP/8Z3NS9W/vCj
+         JV9Q==
+X-Gm-Message-State: AOAM531Sl7/Z90DzFtCsBRKAmo2yhgZEp31FACkOCSu+1oqh31qEgZEv
+        uq0K8XH9iaJ+pZMCC+IXqduTXcPnx/xGZA==
+X-Google-Smtp-Source: ABdhPJzTrCkoWqzth3LbUrGmAO6H7Cm1AYYsxKHAD1WHKBpHCwpPP1N6RkIDe+FfRnohjogyE36OfA==
+X-Received: by 2002:a17:902:9347:b029:d5:d554:9922 with SMTP id g7-20020a1709029347b02900d5d5549922mr11990623plp.56.1604924309106;
+        Mon, 09 Nov 2020 04:18:29 -0800 (PST)
 Received: from shiro.work (p1268123-ipngn200803sizuokaden.shizuoka.ocn.ne.jp. [118.13.124.123])
-        by smtp.googlemail.com with ESMTPSA id i123sm11425204pfc.13.2020.11.09.04.18.21
+        by smtp.googlemail.com with ESMTPSA id i123sm11425204pfc.13.2020.11.09.04.18.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 04:18:23 -0800 (PST)
+        Mon, 09 Nov 2020 04:18:28 -0800 (PST)
 From:   Daniel Palmer <daniel@0x0f.com>
 List-Id: <soc.lore.kernel.org>
 To:     soc@kernel.org, linux-gpio@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
         maz@kernel.org, w@1wt.eu, Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH v3 0/5] Add GPIO support for MStar/SigmaStar ARMv7
-Date:   Mon,  9 Nov 2020 21:17:26 +0900
-Message-Id: <20201109121731.1537580-1-daniel@0x0f.com>
+Subject: [PATCH v3 2/5] dt-bindings: gpio: Binding for MStar MSC313 GPIO controller
+Date:   Mon,  9 Nov 2020 21:17:28 +0900
+Message-Id: <20201109121731.1537580-3-daniel@0x0f.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201109121731.1537580-1-daniel@0x0f.com>
+References: <20201109121731.1537580-1-daniel@0x0f.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-At the moment the MStar/SigmaStar support is only really
-capable of shell from an initramfs and not much else.
+Add a binding description for the MStar/SigmaStar GPIO controller
+found in the MSC313 and later ARMv7 SoCs.
 
-Most of the interesting drivers are blocked on clock and pinctrl
-drivers and those are going to take me a little while to get cleaned
-up.
-
-Clock and pinctrl aren't needed for basic GPIO to work (all pins
-start off as GPIOs..) and it makes it possible to actually do something
-so this series adds everything that is needed for the main GPIO
-block in these chips.
-
-Changes since v2:
-
-- Numerous style and code cleanups as suggested by Andy Shevchenko,
-  Linus Walleij, Marc Zyngier and Rob Herring.
-
-- Pad names moved out of the binding header because they are no longer
-  needed there. The pin/pad numbers are still there as I couldn't think
-  of a better way to do this. meson8b-gpio.h seems to be similar.
-
-Changes since v1:
-
-- Moves the binding header commit before the yaml commit
-  
-- Fixes the license on the binding header to include BSD-2-Clause
-
-- The driver has been reworked to use the gpiolib irqchip functionality
-  as suggested by Linus[0]. I think I got this right. The gpio controller
-  doesn't actually do anything with interrupts itself.. It just happens
-  to have 4 lines that are also wired to lines on one of the interrupt
-  controllers.
-
-- Now that the driver is an interrupt controller in it's own right for
-  the gpio lines that have associated interrupts the binding description
-  has been updated to add the interrupt-controller bits and remove the
-  description of the interrupt-names that described how the interrupts
-  used to be passed in.
-
-Daniel Palmer (5):
-  dt-bindings: gpio: Add a binding header for the MSC313 GPIO driver
-  dt-bindings: gpio: Binding for MStar MSC313 GPIO controller
-  gpio: msc313: MStar MSC313 GPIO driver
-  ARM: mstar: Add gpio controller to MStar base dtsi
-  ARM: mstar: Fill in GPIO controller properties for infinity
-
- .../bindings/gpio/mstar,msc313-gpio.yaml      |  62 +++
- MAINTAINERS                                   |   3 +
- arch/arm/boot/dts/mstar-infinity.dtsi         |   7 +
- arch/arm/boot/dts/mstar-v7.dtsi               |  10 +
- drivers/gpio/Kconfig                          |  11 +
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-msc313.c                    | 460 ++++++++++++++++++
- include/dt-bindings/gpio/msc313-gpio.h        |  53 ++
- 8 files changed, 607 insertions(+)
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+---
+ .../bindings/gpio/mstar,msc313-gpio.yaml      | 62 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 63 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
- create mode 100644 drivers/gpio/gpio-msc313.c
- create mode 100644 include/dt-bindings/gpio/msc313-gpio.h
 
+diff --git a/Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml b/Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
+new file mode 100644
+index 000000000000..8c7cfe3a51b3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/mstar,msc313-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MStar/SigmaStar GPIO controller
++
++maintainers:
++  - Daniel Palmer <daniel@thingy.jp>
++
++properties:
++  $nodename:
++    pattern: "^gpio@[0-9a-f]+$"
++
++  compatible:
++    const: mstar,msc313-gpio
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-ranges: true
++
++  gpio-ranges-group-names:
++    $ref: /schemas/types.yaml#/definitions/string-array
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - "#gpio-cells"
++  - interrupt-controller
++  - "#interrupt-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/msc313-gpio.h>
++
++    gpio: gpio@207800 {
++      compatible = "mstar,msc313e-gpio";
++      #gpio-cells = <2>;
++      reg = <0x207800 0x200>;
++      gpio-controller;
++      gpio-ranges = <&pinctrl 0 36 22>,
++                    <&pinctrl 22 63 4>,
++                    <&pinctrl 26 68 6>;
++      #interrupt-cells = <2>;
++      interrupt-controller;
++      interrupt-parent = <&intc_fiq>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index db9c008a0395..87ca71f55de3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2131,6 +2131,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ W:	http://linux-chenxing.org/
+ F:	Documentation/devicetree/bindings/arm/mstar/*
++F:	Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
+ F:	arch/arm/boot/dts/mstar-*
+ F:	arch/arm/mach-mstar/
+ F:	include/dt-bindings/gpio/msc313-gpio.h
 -- 
 2.29.2
 
