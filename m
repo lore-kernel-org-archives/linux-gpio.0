@@ -6,165 +6,123 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36926C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 14:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411ABC388F7
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 14:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9FC320853
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 14:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 016DC206E3
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 14:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604932895;
-	bh=yAypb4Z+4goyWfKuvwVWnsSV+ZMyJbAKwefaPjlJpIU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=oyEr/2o3uMel8r3n89txtaW6VmhymNNVytnIMlmkYDXzhXT1Y6U56p2V/sDeRjrX9
-	 jAZT4dhUqANnmPZF4fu4evbJRqgIV17qFgtOecc8V5Vl7HF3dMM7NdVfOOhWc53JJ+
-	 NWCCLxhlqb4X/2ieJ8eR5A+Xzyaob7j8fLhYkgbw=
+	s=default; t=1604932932;
+	bh=sqs6Ab6qmHb8wLjpO8+s17ibG0cExkZUhwdEEn/31RM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=GoNtyYh368AdQt0+3qf248GiGyKcU0wdCSvsUcUtdqlNHhDanT4PnQ3HA0RNFf5zJ
+	 zboE7Od8JkNTNQhTauFTR/+MRcVxYFrHEW3UutntksER1UfDgdC1xTWpju6YmjESMX
+	 FX0qy2ZaM8Kkbt15KjM+dCwIQ4g7TUlvIgeVsqaU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731143AbgKIOle (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 09:41:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55926 "EHLO mail.kernel.org"
+        id S1731493AbgKIOmL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 09:42:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726952AbgKIOld (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Nov 2020 09:41:33 -0500
-Received: from saruman (88-113-213-94.elisa-laajakaista.fi [88.113.213.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731491AbgKIOmL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Nov 2020 09:42:11 -0500
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7FEE20789;
-        Mon,  9 Nov 2020 14:41:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5132B221E9;
+        Mon,  9 Nov 2020 14:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604932892;
-        bh=yAypb4Z+4goyWfKuvwVWnsSV+ZMyJbAKwefaPjlJpIU=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=fuCpaK/GXwQcADBF293ZmU1fhjQnR9mQAqKGemh/yOLWxyYokGyxeYRc3r/nofDL6
-         CXScDlLVxe0eNh3QBA2inEmCMoafenPJEwLA+HaWDNWgapdp1/1i/OAiwdbhGxX/3w
-         MD19d3/NtL3ufoVNaC9koH7LUSOBMK3sXVUuPEFI=
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jamie McClymont <jamie@kwiius.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: Re: How to handle a level-triggered interrupt that is slow to
- de-assert itself
-In-Reply-To: <CAHp75VcBB9wGdrBKXXSnCeHRwS1uEEz9TSrnbxzZ5g+yGdXaiA@mail.gmail.com>
-References: <a491261f-8463-474d-a6b3-d674670c7bb7@www.fastmail.com>
- <CAHp75VcBB9wGdrBKXXSnCeHRwS1uEEz9TSrnbxzZ5g+yGdXaiA@mail.gmail.com>
-Date:   Mon, 09 Nov 2020 16:41:24 +0200
-Message-ID: <87tuty384r.fsf@kernel.org>
+        s=default; t=1604932930;
+        bh=sqs6Ab6qmHb8wLjpO8+s17ibG0cExkZUhwdEEn/31RM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=I0iWJXq7f8C4w8yCYfE3FJzyDJQWdci2e2Yo5BRR9N1qSpD90kCXxUr//h8p5d63l
+         +zV4WPLmIRHHsTCfNzdRO/HdzzXaIZ7PKpQ76S7Yf4QyvazXUtPDly4j26hIe08QP8
+         KbhJeRUpCqLE2tWq83v7JaAVW9L0uqPr3XV6+Kmk=
+Received: by mail-ot1-f48.google.com with SMTP id j14so9125993ots.1;
+        Mon, 09 Nov 2020 06:42:10 -0800 (PST)
+X-Gm-Message-State: AOAM5331pGgHLlj7FzCqTxsUz1K5+Xs/9kzQx7QHfnWclOREc6+xkhEH
+        O/aKcGAdyUbj6Mt3JV177qp1JSvSjBGlGXb4860=
+X-Google-Smtp-Source: ABdhPJzeeo6JiBdT3OYlZsQwt9pc+G9cyqIJAbkyOtDcxvKwYR4vZ799vC2P3NypOkrxzEQQr00gdSY/oBLDecIaZeM=
+X-Received: by 2002:a05:6830:22d2:: with SMTP id q18mr9636879otc.305.1604932929586;
+ Mon, 09 Nov 2020 06:42:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <cover.1603055402.git.syednwaris@gmail.com> <15a044d3ba23f00c31fd09437bdd3e5924bb91cd.1603055402.git.syednwaris@gmail.com>
+ <CAK8P3a3f=fuq24QwNee3QgoMcSK5rcvLRpdTOWBZ9NJ4d-4bvA@mail.gmail.com>
+ <20201101150033.GA68138@shinobu> <CAK8P3a0y7mh=ZDPefgpawY97gpYv79UXFLBzoGfu3ex2up2aDQ@mail.gmail.com>
+ <20201109123411.GA19869@syed> <20201109134128.GA5596@shinobu>
+In-Reply-To: <20201109134128.GA5596@shinobu>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Mon, 9 Nov 2020 15:41:53 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2FMkMc0K+hu0pnqC8wEMeapKPkZXaBm+HFYYPTes5NHA@mail.gmail.com>
+Message-ID: <CAK8P3a2FMkMc0K+hu0pnqC8wEMeapKPkZXaBm+HFYYPTes5NHA@mail.gmail.com>
+Subject: Re: [PATCH v12 4/4] gpio: xilinx: Utilize generic bitmap_get_value
+ and _set_value
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc:     Syed Nayyar Waris <syednwaris@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Hi,
-
-Andy Shevchenko <andy.shevchenko@gmail.com> writes:
-> On Mon, Nov 9, 2020 at 2:57 PM Jamie McClymont <jamie@kwiius.com> wrote:
+On Mon, Nov 9, 2020 at 2:41 PM William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> On Mon, Nov 09, 2020 at 06:04:11PM +0530, Syed Nayyar Waris wrote:
 >
-> Looking into the problem I think the better people to answer are ones
-> from the input subsystem (or closer), so I have added a few to the Cc
-> list.
+> One of my concerns is that we're incurring the latency two additional
+> conditional checks just to suppress a compiler warning about a case that
+> wouldn't occur in the actual use of bitmap_set_value(). I'm hoping
+> there's a way for us to suppress these warnings without adding onto the
+> latency of this function; given that bitmap_set_value() is intended to
+> be used in loops, conditionals here could significantly increase latency
+> in drivers.
+
+At least for this caller, the size check would be a compile-time
+constant that can be eliminated.
+
+> I wonder if array_index_nospec() might have the side effect of
+> suppressing these warnings for us. For example, would this work:
 >
->> Background context:
->>
->> I'm continuing my efforts to reverse-engineer and write a driver for
->> the Goodix GXFP5187 fingerprint sensor in my Huawei Matebook X Pro
->> (the host is an Intel i5-8250U).
->>
->> The device is connected via SPI plus a GPIO Interrupt pin, defined
->> like so in the ACPI tables:
->>
->>     GpioInt (Level, ActiveLow, ExclusiveAndWake, PullUp, 0x0000,
->>         "\\_SB.PCI0.GPI0", 0x00, ResourceConsumer, ,) { 0x0000 }
->>
->> This line is held down by the device when it has a message for the
->> host, and stays held down until the host finishes reading the message
->> out over SPI.
->>
->> I'm handling this with a devm_request_threaded_irq-type handler,
->> where the irq part is just "return IRQ_WAKE_THREAD", and the threaded
+> static inline void bitmap_set_value(unsigned long *map,
+>                                     unsigned long value,
+>                                     unsigned long start, unsigned long nbits)
+> {
+>         const unsigned long offset = start % BITS_PER_LONG;
+>         const unsigned long ceiling = round_up(start + 1, BITS_PER_LONG);
+>         const unsigned long space = ceiling - start;
+>         size_t index = BIT_WORD(start);
+>
+>         value &= GENMASK(nbits - 1, 0);
+>
+>         if (space >= nbits) {
+>                 index = array_index_nospec(index, index + 1);
+>
+>                 map[index] &= ~(GENMASK(nbits - 1, 0) << offset);
+>                 map[index] |= value << offset;
+>         } else {
+>                 index = array_index_nospec(index, index + 2);
+>
+>                 map[index + 0] &= ~BITMAP_FIRST_WORD_MASK(start);
+>                 map[index + 0] |= value << offset;
+>                 map[index + 1] &= ~BITMAP_LAST_WORD_MASK(start + nbits);
+>                 map[index + 1] |= value >> space;
+>         }
+> }
+>
+> Or is this going to produce the same warning because we're not using an
+> explicit check against the map array size?
 
-I think you should pass NULL as the top half and make sure you have
-IRQF_ONESHOT flag while requesting the interrupt. This way, the line
-will be disabled by IRQ subsystem for the duration of the bottom half.
+https://godbolt.org/z/fxnsG9
 
->> part does all the work. My understanding is that this is a reasonable
->> approach since I don't have tight latency requirements (and the
->> sleeping spi functions are convenient, plus I don't want to introduce
->> any unnecessary jitter to the system) -- please correct me if I
->> shouldn't actually be using a threaded handler here.
->>
->> ---
->>
->> Here's my problem:
->>
->> the IRQ line actually stays held down for roughly 180us after I've
->> finished reading out the message over SPI. That means that as soon as
->> the handler finishes, a new one starts, and it reads out corrupted
->> data, since the sensor doesn't have anything to say.
->>
->> This is okay in theory -- the corrupted message header can be
->> detected by its checksum, and disregarded. However, this leads to a
->> race condition where the chip can decide it DOES have something to
->> say to the host, WHILE the host is reading out the corrupted
->> header. At that point, the two sides de-sync in their ideas of what
->> needs to be read, and everything stops working.
->>
->> So, I'd like some way to pause interrupt handling for 200us+, and
->> only re-run the handler if the line is still held down after that
->> time.
+It still warns about the 'map[index + 1]' access: from all I can tell,
+gcc mainly complains because it cannot rule out that 'space < nbits',
+and then it knows the size of 'DECLARE_BITMAP(old, 64)' and finds
+that if 'index + 0' is correct, then 'index + 1' overflows that array.
 
-usleep_range(180, 200) before exitting the handler? You're in the bottom
-half anyway.
-
->> My first approach was to add a sleep (usleep_range) at the end of the
->> threaded handler, right before returning IRQ_HANDLED. However, it
->> appears that after the sleep finishes, the IRQ is triggered one more
->> time -- presumably it has been set as pending before/during the
->> sleep?
->>
->> My new workaround is to save a ktime_get_ns timestamp at the end of
->> the handler, and check it against the current ktime at the start,
->> returning early if not enough time has yet elapsed. This is
->> unsatisfactory, as it is effectively a 180us busy-wait, and gets in
->> the way of whatever the core could better be doing (presumably idling
->> and saving power :).
->>
->> Is it possible to return to the first approach, but prevent that one
->> spurious interrupt from firing after the handler ends?
-
-IRQF_ONESHOT would probably help with this part, I guess. Could you give
-it a shot?
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJFBAEBCAAvFiEElLzh7wn96CXwjh2IzL64meEamQYFAl+pVRQRHGJhbGJpQGtl
-cm5lbC5vcmcACgkQzL64meEamQY+UQ//bLX8KcF3VEkMeNM7YV4X3jAWEY54hIyM
-nf719I8+D77AhzbEPhUYSNNKe80qimbvaSPG6caoIIMC7PRlrkwVrlDjtgoPpmmz
-60fyTY6ynUCgeH7P/rpDQtgxmA6o/km/plc6TTlsPg9XlRTScIVssV9ZD5gvLSlH
-B0EfOvWuWO8ZCsHqRRY3nwBRT4z7V1K0iOjv3j3KyRwFdxovCECRnVGP+0P9tkL0
-CJoEplQ2DWj2l28NmxbAqk5opnU72dYLr6+zdHmMVJygxFnwUdQsTbk8jcK3QRi5
-DFClPusJC99/jDvPDX5vlPnGxBWNksPQnQa3xnTEpQeri9D8c87xG0hNQyQKKDIu
-i1odsnUOgKsjXgmT2PrUUFr7NqKYaF2Qm6NWJbStqMna/gG+BEqCYmqG6Bujj5UG
-kEWkeqmPQf0Sd83q1c8dAqGZE9WenMquqzfJwOtLNqCUQiUvl63rdhynyInOb1ov
-C18HkipaZJuTOTQTdFxESGvikDg9E+dAMS2ZFtNyTVVrhGcyrBm72F8E64gmjF1k
-0sRHLcMDy0CybWwPCru7f4neecxiT901gEiT3l+iOsS+jz2WKsYsfbDKm3qQS0qj
-RpD+xQoCiriYeJwwpJS0HdNZPYsJgIHIxk9cusDGih1K6CgUt0FvfGBT/ii8Myqn
-vG6RIVtJA0g=
-=vKK3
------END PGP SIGNATURE-----
---=-=-=--
+      Arnd
