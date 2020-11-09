@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3DAC63798
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A2AC63699
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB9C32074F
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6553C206E3
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730448AbgKIUx5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 15:53:57 -0500
-Received: from mga03.intel.com ([134.134.136.65]:41852 "EHLO mga03.intel.com"
+        id S1730305AbgKIUxz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 15:53:55 -0500
+Received: from mga09.intel.com ([134.134.136.24]:59643 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729872AbgKIUx4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Nov 2020 15:53:56 -0500
-IronPort-SDR: 3lNJR2KVK03/phx1XoSuymQtNB7NYL64qXRNWN2BRpueDhlOI98QlMJ+XIii5N65bmqGSQPqUg
- w4rcIRckS/IA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="169982900"
+        id S1730267AbgKIUxz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Nov 2020 15:53:55 -0500
+IronPort-SDR: KF3TpUCWdr6WlOyhsu5biokIxKOfkUgQe8YSPRNMWEuOGKmzEE1clLhEZ7sxrrIRelHsgyNKJU
+ DYD689eBpZ9A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="170022472"
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="169982900"
+   d="scan'208";a="170022472"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 12:53:53 -0800
-IronPort-SDR: wKgRGZyQ6PLyyujgn7uoz7mdgwe8w2CLllMOsR9nKJ6ohQ+eeqUo6nepEIfz0FvJTA8+369TdJ
- k3L4vouXovfA==
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 12:53:52 -0800
+IronPort-SDR: PsLLLMhOVSsiU6HO2yLRApNEn/xYVbzlTQ8+BnLIw0Jv/YtMtmxXyZrEo2xUyAoFheT4zuu/kr
+ toADRW2MGt1w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="398408070"
+   d="scan'208";a="355843048"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 09 Nov 2020 12:53:51 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 09 Nov 2020 12:53:51 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 3567856E; Mon,  9 Nov 2020 22:53:48 +0200 (EET)
+        id 46F075D4; Mon,  9 Nov 2020 22:53:48 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -44,9 +44,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Hans de Goede <hdegoede@redhat.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v5 08/17] gpiolib: Extract gpio_set_debounce_timeout() for internal use
-Date:   Mon,  9 Nov 2020 22:53:23 +0200
-Message-Id: <20201109205332.19592-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v5 10/17] gpiolib: acpi: Use named item for enum gpiod_flags variable
+Date:   Mon,  9 Nov 2020 22:53:25 +0200
+Message-Id: <20201109205332.19592-11-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201109205332.19592-1-andriy.shevchenko@linux.intel.com>
 References: <20201109205332.19592-1-andriy.shevchenko@linux.intel.com>
@@ -56,45 +56,29 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In some cases we would like to have debounce setter which doesn't fail
-when feature is not supported by a controller.
+Use named item instead of plain integer for enum gpiod_flags
+to make it clear that even 0 has its own meaning.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpiolib.c | 7 +++++++
- drivers/gpio/gpiolib.h | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/gpio/gpiolib-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4558af08df23..9d23fbf1f7cd 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2162,6 +2162,13 @@ static int gpio_set_bias(struct gpio_desc *desc)
- 	return gpio_set_config_with_argument_optional(desc, bias, arg);
- }
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 3a39e8a93226..c127b410a7a2 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1136,7 +1136,7 @@ acpi_gpiochip_parse_own_gpio(struct acpi_gpio_chip *achip,
+ 	int ret;
  
-+int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce)
-+{
-+	enum pin_config_param mode = PIN_CONFIG_PERSIST_STATE;
-+
-+	return gpio_set_config_with_argument_optional(desc, mode, debounce);
-+}
-+
- /**
-  * gpiod_direction_input - set the GPIO direction to input
-  * @desc:	GPIO to set to input
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 16bc5731673c..9b1a1c782704 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -136,6 +136,7 @@ int gpiod_request(struct gpio_desc *desc, const char *label);
- void gpiod_free(struct gpio_desc *desc);
- int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
- 		unsigned long lflags, enum gpiod_flags dflags);
-+int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce);
- int gpiod_hog(struct gpio_desc *desc, const char *name,
- 		unsigned long lflags, enum gpiod_flags dflags);
+ 	*lflags = GPIO_LOOKUP_FLAGS_DEFAULT;
+-	*dflags = 0;
++	*dflags = GPIOD_ASIS;
+ 	*name = NULL;
  
+ 	ret = fwnode_property_read_u32_array(fwnode, "gpios", gpios,
 -- 
 2.28.0
 
