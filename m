@@ -2,152 +2,85 @@ Return-Path: <SRS0=WlaW=EP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC05C388F7
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DB3C4741F
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00D3520731
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647A320731
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="h63NN6JI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nz3/eu1O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbgKILHB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 06:07:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59484 "EHLO
+        id S1729045AbgKIL0A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 06:26:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729302AbgKILHB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 06:07:01 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06089C0617A7
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2020 03:07:00 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id b8so8231744wrn.0
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2020 03:07:00 -0800 (PST)
+        with ESMTP id S1726410AbgKILZ7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 06:25:59 -0500
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C9AC0613CF;
+        Mon,  9 Nov 2020 03:25:59 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id g11so4573410pll.13;
+        Mon, 09 Nov 2020 03:25:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/BZufo5GeZBBjJpVBhVfUUqf7bDRhIufHOC+GeAXTjw=;
-        b=h63NN6JIr7BPg/L5K4tALUY+/tMHu7b/AohNm+Sq0AHtLr7C775RNCqPF5N91xMyBI
-         MOiY+0CB7+nr/djuF77eQh2JjzNwZIgYaGZcGaavyRIGIDOMtNAYYoguPo3Q8xFlwx6L
-         QddH+S2xNU+tvs03WMAyY063pe678sUddwGJwNwh+sGNbGg5ToLYxAiebC7qHygj5JKC
-         wX/om83DYWGS2MTV/IcOR6891AOSOJx6pnI6tFAZh8FUdpFrpM+edanMCufFGJCkBefi
-         wPu7sueEx5oa9fOWdtBQSKZ4a7oTEsuZvbf1jYwrHa9aigN1cKpCLLxVES7TkXXM96mf
-         VUKg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9VWTIKF28LHU8ZeLkZIsqVh2wDqnUw6qnVDKoXbjYGg=;
+        b=nz3/eu1O5KMIUzeF87jX8MQ0u6TSvi2b17O8vZM0jPAa75eajjABWPhHVkWI5cPtU5
+         jVvDPqgSiclX3+A5tdiB+80S0KKA5tkeeh14FOeHyZx4rmiaLnU44EAXqo19GUajwIIf
+         kru70l2LhWEdFgmaOzqQqUtiuUD993y0YJjufBa1qRBlGuy2dabe1vWwc5/+VHQqzCgY
+         6X8vNK9hgaLqbrtrt/RP3zhcFI+wnTYq98+0Y+C9kye/zaROcogam8vkimVDNJ97X/3h
+         m4c4nevOWXrRtVkpNUlIXXR0XOxGfBBuHE39A/wnfLRFY3ZqtxIfZQz18WzA+9P9JvWx
+         52bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/BZufo5GeZBBjJpVBhVfUUqf7bDRhIufHOC+GeAXTjw=;
-        b=air2IJ7vbHLDBTuXnTU4syH30oSfX3iX4P2ml9lZEWf716KWP/HOegmf73Tps+drDF
-         dVjR9EwKDjcLT3uFqH5/MtWuW4biSBHGt3baL76/kQfhwuLNOyUGJ8NdA1GvlK5wGZ4m
-         nezyaPKnKTK9aqcBhxt23xr1Yldnlr2fX905q/G5sJtL/uc8N92KHRioNzxawMyy0j//
-         zo4ESiCPakarTobVQJhH9F0Ak6SxwQ1muao0pidKWB2tfCpv6lvDLxA5OXyv6IaMKYIV
-         HGbHsyeGdKL87rOgUjlLPZURMlQeeOmxw6Rh68QGVvPGmbOFtcSChXwu/vw5MapVMcAq
-         PmvQ==
-X-Gm-Message-State: AOAM531NQk8Rt4sY/nygj1wHVt1PXpFbiyQ7uLGVI6i01PBDFRwAcD+N
-        TqJ5p2txRFsWpdFKbXDPteQV1A==
-X-Google-Smtp-Source: ABdhPJyoLN1aG0XKVyv+yWfCk24OCLDvJjyIFGdAfhV/HDRuWRPPB2x0i9RWfrD3NWEqtPTk5g+kWQ==
-X-Received: by 2002:adf:9066:: with SMTP id h93mr18252220wrh.166.1604920019608;
-        Mon, 09 Nov 2020 03:06:59 -0800 (PST)
-Received: from localhost.localdomain (lfbn-nic-1-190-206.w2-15.abo.wanadoo.fr. [2.15.39.206])
-        by smtp.gmail.com with ESMTPSA id d3sm12815582wre.91.2020.11.09.03.06.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 03:06:58 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-mm@kvack.org,
-        alsa-devel@alsa-project.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 0/9] slab: provide and use krealloc_array()
-Date:   Mon,  9 Nov 2020 12:06:45 +0100
-Message-Id: <20201109110654.12547-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.29.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9VWTIKF28LHU8ZeLkZIsqVh2wDqnUw6qnVDKoXbjYGg=;
+        b=E/jps+EuvFT3JcydK1rKkbXlcilUfON9iN4Maze4gj0attwSXn3vgqZF5R0WnGJJ3S
+         zpfMD26ARDr0B/LlbvVee2k7JMJAzF4b0/wQpiGa7C+O0Np/p88fF16lZJccLaF1LCSc
+         U/BAQd4iGVQVAbPE8y9tEcs7uYRdB/BX5dL4+cw7AxUbT4bpd/zIqJnVMZR9sDacuR6s
+         K+/QkO78qvt8Jf68XUoPDCk1Z9IF4M9UTYl5ROEq6Wu5UO6p4vbvIVm97k/257pp2zyi
+         Ma/5aRWbXMEd3hGjImloseyzkoXOKYb2YBgP0ReE4K/i2oWlr1sLKWi+3B5ZCWWndEt+
+         1FNQ==
+X-Gm-Message-State: AOAM531EqJ86Zypo+vSWnRqhdzWlol/x8eO5O686D48NI53zX/nUZwSk
+        cCDB79lq6MEYpjqLg8iOpCCY9QgjbL9JPvujt4XmJdu6SfE=
+X-Google-Smtp-Source: ABdhPJzosvL5aKk2as0/mQgnAbi2zWKOPqsjGZTL1xstKFocnO/hTOzOGCEH0iQSQOFeISzMWUea6YTOC05a4Mu0N1E=
+X-Received: by 2002:a17:902:bc4a:b029:d6:7ef9:689c with SMTP id
+ t10-20020a170902bc4ab02900d67ef9689cmr12600774plz.21.1604921158928; Mon, 09
+ Nov 2020 03:25:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20201108180144.28594-1-martin@kaiser.cx>
+In-Reply-To: <20201108180144.28594-1-martin@kaiser.cx>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 9 Nov 2020 13:26:48 +0200
+Message-ID: <CAHp75VeVPUJ_a4L+Lj-zR6Wm3Woq6F0uHzmtx3NCRO=TVopvrw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: pinctrl-at91-pio4: Set irq handler and data in
+ one go
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Sun, Nov 8, 2020 at 8:05 PM Martin Kaiser <martin@kaiser.cx> wrote:
+>
+> Replace the two separate calls for setting the irq handler and data with a
+> single irq_set_chained_handler_and_data() call.
 
-Andy brought to my attention the fact that users allocating an array of
-equally sized elements should check if the size multiplication doesn't
-overflow. This is why we have helpers like kmalloc_array().
-
-However we don't have krealloc_array() equivalent and there are many
-users who do their own multiplication when calling krealloc() for arrays.
-
-This series provides krealloc_array() and uses it in a couple places.
-
-A separate series will follow adding devm_krealloc_array() which is
-needed in the xilinx adc driver.
-
-v1 -> v2:
-- added a kernel doc for krealloc_array()
-- mentioned krealloc et al in the docs
-- collected review tags
-
-v2 -> v3:
-- add a patch improving krealloc()'s kerneldoc
-- fix a typo
-- improve .rst doc
-- tweak line breaks
-
-Bartosz Golaszewski (9):
-  mm: slab: clarify krealloc()'s behavior with __GFP_ZERO
-  mm: slab: provide krealloc_array()
-  ALSA: pcm: use krealloc_array()
-  vhost: vringh: use krealloc_array()
-  pinctrl: use krealloc_array()
-  edac: ghes: use krealloc_array()
-  drm: atomic: use krealloc_array()
-  hwtracing: intel: use krealloc_array()
-  dma-buf: use krealloc_array()
-
- Documentation/core-api/memory-allocation.rst |  4 ++++
- drivers/dma-buf/sync_file.c                  |  3 +--
- drivers/edac/ghes_edac.c                     |  4 ++--
- drivers/gpu/drm/drm_atomic.c                 |  3 ++-
- drivers/hwtracing/intel_th/msu.c             |  2 +-
- drivers/pinctrl/pinctrl-utils.c              |  2 +-
- drivers/vhost/vringh.c                       |  3 ++-
- include/linux/slab.h                         | 18 ++++++++++++++++++
- mm/slab_common.c                             |  6 +++---
- sound/core/pcm_lib.c                         |  4 ++--
- 10 files changed, 36 insertions(+), 13 deletions(-)
+Can it be rewritten to use the GPIO core facility of instantiating IRQ chip?
 
 -- 
-2.29.1
-
+With Best Regards,
+Andy Shevchenko
