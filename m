@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BC2C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20E9C388F7
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1874B206E5
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:08:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46807206E5
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 11:08:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="lrGFiV0J"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="aox5vh8y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbgKILIC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 06:08:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59554 "EHLO
+        id S1729559AbgKILHH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 06:07:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729595AbgKILHK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 06:07:10 -0500
+        with ESMTP id S1729547AbgKILHF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 06:07:05 -0500
 Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0158C061A49
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2020 03:07:07 -0800 (PST)
-Received: by mail-wr1-x442.google.com with SMTP id p1so8196982wrf.12
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2020 03:07:07 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA6EC0617A7
+        for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2020 03:07:04 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id p8so7416410wrx.5
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2020 03:07:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=m2ikj+dhQ1Zeha09QctzFr3Pm7l2AwdyE1EcOPpxBQc=;
-        b=lrGFiV0JEwMQZrmMw1exEx6p70DOim7QTqsGe9oOJfscxaaDbqtNd51mDY2gLrVO6e
-         AJaVU6gEvJ5Rqj0pmzF+RQrIAx3UUypf5ocQh5+MxoPZ8v5DbPYgi+LUXOO0xXncPOxJ
-         vazruXakD7raTY00eG7zaplUuhpuFOzAXeDC0+Go3Z91tS4RB4jYmtz+tumRzgHuHKVW
-         Q3APL+KmLaN9niAGudHytA7iWz6ha072HjPWCU0qqHVWmvaciARBx8JEUQUEjIamSyMq
-         CKw7PL+YgCXUcrNMDTeAPsCWzL8tuPTeq/pLQmlfpQnNOHY3qjMybpVo+6SdERNaMi03
-         sDgw==
+        bh=X2Rt2FzEDhfwvo5anIXOq/hUQeEl4/lxGNeKa+o6J0w=;
+        b=aox5vh8ytYutbWVc26/liVn7Z8hEPu2nlIMQId7oA48asO+6m3jeTPz78Xi5tKvZ5M
+         bwqHNNDNK70TD0NuDOZApqzQQQIxd7lpVAV+s12r5UTEgNsP0LLtTP/8WwzPWY/N5W3F
+         Npda/QnMuuCjfODUnOM6c1KUKnZ4sERDBgsxwJiNxobq6BnhL/yQBZO223GeqTICPw9m
+         vPcqcg/xsiMtQw2qzDEvFh+x8itNf6+A8g+1ljb0/aVhzJkxBCaUC9gPqB0T/1iCSeAD
+         Up5ueADAnhN5fgjIVO2va7mHiOxvK3gevDqJSukErF5i8yrzIC+ShGo5F2g2sSe+Tv4s
+         iVVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=m2ikj+dhQ1Zeha09QctzFr3Pm7l2AwdyE1EcOPpxBQc=;
-        b=HNvX27E2jSxxpakqlpWFmz+w9n1Aeigr6v9e9EYVgwNUbiamkKTFyuZVhSS342az/h
-         q3DUbnf4deyZZa+69FXUPV7/5eFsmya1Jbr1EVqJbsZcQaXnyJBlx4MFMnI8n0UjCbuM
-         ewfAHE7BZY5KOf4+qtkeRrMuufcFUXhRxxNM+rcjHzybYSZbda0Xd2j7FMpXZCZaiGUX
-         uuv1ULyc9xsWnPrsu64PGIjqmwBjwXcYsKelvHfplOJd8IGXdNRTjqwljZHoWG5y8ITP
-         8i0/KxfM2gLedO0ROuKt1Wlddy0OcN8eJ16nn5FKh6ywteBupy6Syr3utbSfT93WZBD1
-         KRTg==
-X-Gm-Message-State: AOAM530BhdppGjaJOCPKiW1bwl6/jhaw2Vf5bHdFRlpO0D8Ui8YLizqN
-        nGVS9fR81D925UEQB5R0rXvDEw==
-X-Google-Smtp-Source: ABdhPJyDQDC3mJ8XBzXRPLr9tujc8yB1EaUC1zlVXx3gghE7oqzt7WatCScZ7dhRaCoAETe4X60pOw==
-X-Received: by 2002:a5d:54c5:: with SMTP id x5mr3869675wrv.297.1604920026445;
-        Mon, 09 Nov 2020 03:07:06 -0800 (PST)
+        bh=X2Rt2FzEDhfwvo5anIXOq/hUQeEl4/lxGNeKa+o6J0w=;
+        b=sIJsDQ+e0eGhrqfx0SxHTFd2ZdayC4vXZauJSJdIPgPnGwajur2WOkW7d/m0M4mKDi
+         4/r3bS310+zKXMczdAPP6AF6+NvtlpiwSb1YPYKN7wekZHr6eQM3tEBlm6GMetYH/K98
+         nkGqstnBusRUa1LmvVb7yhiw9hFBXU/3wEX+//30v1xoIc7rHbHYkfMWSnJPJfhnxfjf
+         VbgFlGVIvAtPubcd06OpcueLiNTS7dTwewqwll/DboEiFbytHvrexdZsc4MVY191IG6l
+         h5LBi9cPu3nX8GEECcmD1rXhO0N4E9mdWJhnhDsV0Gi1m0omQPS6LaDHcH6zeXbEPmHI
+         MYtg==
+X-Gm-Message-State: AOAM532ar9ZpLOUDZ8fh8PjKMeMYtX1XcKvzQysKVZYhqbIscfA9txkR
+        GHlWLekbWe5IGqK0PiUpJatD9Q==
+X-Google-Smtp-Source: ABdhPJz9QUvKGU969idAKC9U5b3ocmwgTjZ8J0vtC/TaPYMbRMpLHkJeyp4aCBCLAgcQ+m/LRxWMMA==
+X-Received: by 2002:adf:9066:: with SMTP id h93mr18252530wrh.166.1604920022928;
+        Mon, 09 Nov 2020 03:07:02 -0800 (PST)
 Received: from localhost.localdomain (lfbn-nic-1-190-206.w2-15.abo.wanadoo.fr. [2.15.39.206])
-        by smtp.gmail.com with ESMTPSA id d3sm12815582wre.91.2020.11.09.03.07.04
+        by smtp.gmail.com with ESMTPSA id d3sm12815582wre.91.2020.11.09.03.07.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 03:07:05 -0800 (PST)
+        Mon, 09 Nov 2020 03:07:02 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -88,10 +88,11 @@ Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-mm@kvack.org,
         alsa-devel@alsa-project.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 4/9] vhost: vringh: use krealloc_array()
-Date:   Mon,  9 Nov 2020 12:06:49 +0100
-Message-Id: <20201109110654.12547-5-brgl@bgdev.pl>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v3 2/9] mm: slab: provide krealloc_array()
+Date:   Mon,  9 Nov 2020 12:06:47 +0100
+Message-Id: <20201109110654.12547-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201109110654.12547-1-brgl@bgdev.pl>
 References: <20201109110654.12547-1-brgl@bgdev.pl>
@@ -103,29 +104,67 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Use the helper that checks for overflows internally instead of manually
-calculating the size of the new array.
+When allocating an array of elements, users should check for
+multiplication overflow or preferably use one of the provided helpers
+like: kmalloc_array().
+
+There's no krealloc_array() counterpart but there are many users who use
+regular krealloc() to reallocate arrays. Let's provide an actual
+krealloc_array() implementation.
+
+While at it: add some documentation regarding krealloc.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- drivers/vhost/vringh.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/core-api/memory-allocation.rst |  4 ++++
+ include/linux/slab.h                         | 18 ++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
-index 8bd8b403f087..08a0e1c842df 100644
---- a/drivers/vhost/vringh.c
-+++ b/drivers/vhost/vringh.c
-@@ -198,7 +198,8 @@ static int resize_iovec(struct vringh_kiov *iov, gfp_t gfp)
+diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
+index 4446a1ac36cc..5954ddf6ee13 100644
+--- a/Documentation/core-api/memory-allocation.rst
++++ b/Documentation/core-api/memory-allocation.rst
+@@ -147,6 +147,10 @@ The address of a chunk allocated with `kmalloc` is aligned to at least
+ ARCH_KMALLOC_MINALIGN bytes.  For sizes which are a power of two, the
+ alignment is also guaranteed to be at least the respective size.
  
- 	flag = (iov->max_num & VRINGH_IOV_ALLOCATED);
- 	if (flag)
--		new = krealloc(iov->iov, new_num * sizeof(struct iovec), gfp);
-+		new = krealloc_array(iov->iov, new_num,
-+				     sizeof(struct iovec), gfp);
- 	else {
- 		new = kmalloc_array(new_num, sizeof(struct iovec), gfp);
- 		if (new) {
++Chunks allocated with kmalloc() can be resized with krealloc(). Similarly
++to kmalloc_array(): a helper for resizing arrays is provided in the form of
++krealloc_array().
++
+ For large allocations you can use vmalloc() and vzalloc(), or directly
+ request pages from the page allocator. The memory allocated by `vmalloc`
+ and related functions is not physically contiguous.
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index dd6897f62010..be4ba5867ac5 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -592,6 +592,24 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+ 	return __kmalloc(bytes, flags);
+ }
+ 
++/**
++ * krealloc_array - reallocate memory for an array.
++ * @p: pointer to the memory chunk to reallocate
++ * @new_n: new number of elements to alloc
++ * @new_size: new size of a single member of the array
++ * @flags: the type of memory to allocate (see kmalloc)
++ */
++static __must_check inline void *
++krealloc_array(void *p, size_t new_n, size_t new_size, gfp_t flags)
++{
++	size_t bytes;
++
++	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
++		return NULL;
++
++	return krealloc(p, bytes, flags);
++}
++
+ /**
+  * kcalloc - allocate memory for an array. The memory is set to zero.
+  * @n: number of elements.
 -- 
 2.29.1
 
