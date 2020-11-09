@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD67C2D0A3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D22EC56201
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 025CA206ED
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 396992083B
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 13:27:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Oz53cTZg"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="He3snIwb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbgKIN1b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Nov 2020 08:27:31 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:28462 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733098AbgKIN1X (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 08:27:23 -0500
+        id S2387760AbgKIN1R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Nov 2020 08:27:17 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:44837 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733274AbgKIN1R (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2020 08:27:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1604928443; x=1636464443;
+  t=1604928437; x=1636464437;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ABbXMXJ+wjkizV38zFxbPfTkg8gQdTq8ISGdk0bwCLY=;
-  b=Oz53cTZgi948f7o91enixPSnFOn4zhZjAoBEvFx0XnjEW5JzmAlpISNK
-   GUWj+odYC/BjR8HRZNC4EeWXxKhpCgIKqfJypuTT1UcyKyGVua42JMSE9
-   5VHNjsxlWgpeyWtm1c8ZnzXOCnroqGPa1IiSye7l5LM6Ekj4HxQSquerE
-   QJaRFrwFAAzVItKJ9qW5/BF1ZHRMsKkDkEbUp5DMs4k5NCMOWQQruZK7M
-   czTQgZQ6wmiduG5uqzky+293BO+LItvozzn0dC7/qf+4Ka58967xB+Iiq
-   EWaL4IB8yeOQWVDxw1AZgvDMrfpTbJpUMeha5FiJ+ikqBbYmSPLTzEbcW
-   A==;
-IronPort-SDR: Y9CGgXgcWeIpOB7ObNJ4Q7mmdVtv2w4zvVaUwNVRlJVIStS1UTOw1snLOl/76xLCCZE5/YoNKl
- YOpoqRPsrR1yzR64JzbX5LyrZfzfkBL1Cw7mDQW2Ke0RMZQoj30a1bS6ijt3fVFGv2Vgh0T+UE
- QjWKUDZpogXZ06yUuZA2W+fOoQBLXT1AzrdJZvFuyDlHy6lBse2y8RejmWofZp8NQohVsmxp4V
- EbNpRUbxtfesBbruRKBmixyA56OLglAJDaqtsvnxiBsbcyL48CxIkYvy0NMSsImCNj0doHIVYi
- Z98=
+  bh=fa6KWX2B4zVTjwSqmWXYRE0FGe8eLF9ePLavcrFXjlI=;
+  b=He3snIwbVhHNC6HdvaJFjCO8Qi5kb9a7PHoMAzA3I0pJtn4bUwteAJoa
+   a0LeIbQskDp9l7GHhzQ41aAX7ZkdNWqU/LSwTQQdJSjfGuEU7teuzPqmk
+   wiqqMAzcGDGYaMYa6MyNgDz5JKQvW8WSaKl4hB11aaQ5Se4Qg3Bvgr1fn
+   wDyKLo+Cg8rO6RxqT/QY/vvUGOleAQ4s5KZYmCLC6jFdPoRJVZYVUvoJ/
+   qse/jOJETLnCRnBuFjDIeFZgKQqZkos68H9eGLkKqmpxs3NWoAoPtIt5C
+   MlQxc3nmE+/MkUdMWf7bBVGGRWKxV6B3H5o0dbcJ0SUjZQPaW5MlSCtwH
+   w==;
+IronPort-SDR: uME5OOF23il5MIV2noBL/0qvtpRyTa8i9sd/BNdUXAhR0ZG1bH7i6fLM5X3OI3VcRi+FhKHfXN
+ jxszSokoLklOfq548uRjyB/N7NFvbpFX+IY17r9XHpBDFGMagm8UQYswPELgI5n8s2VGl/YA3Z
+ md0ZRAkoR/XKdD+FDlsY14dfAcbcR+fseuWNjYoAsCj42l/civV30HPvFKYAvq3v/c3rJckeBc
+ Q7I0OS97oPP3TU7Lb2t8kWlr0kRG5Q/yN/5hkuFSuMOL/25AgKjdNM/Ui8oGEWvf6EYDdxo4I1
+ SBg=
 X-IronPort-AV: E=Sophos;i="5.77,463,1596524400"; 
-   d="scan'208";a="95609834"
+   d="scan'208";a="97721907"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Nov 2020 06:27:22 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Nov 2020 06:27:15 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 9 Nov 2020 06:27:22 -0700
+ 15.1.1979.3; Mon, 9 Nov 2020 06:27:13 -0700
 Received: from soft-dev10.microsemi.net (10.10.115.15) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Mon, 9 Nov 2020 06:27:19 -0700
+ 15.1.1979.3 via Frontend Transport; Mon, 9 Nov 2020 06:27:11 -0700
 From:   Lars Povlsen <lars.povlsen@microchip.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 CC:     Lars Povlsen <lars.povlsen@microchip.com>,
@@ -58,10 +58,11 @@ CC:     Lars Povlsen <lars.povlsen@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v8 3/3] arm64: dts: sparx5: Add SGPIO devices
-Date:   Mon, 9 Nov 2020 14:26:43 +0100
-Message-ID: <20201109132643.457932-4-lars.povlsen@microchip.com>
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v8 1/3] dt-bindings: pinctrl: Add bindings for pinctrl-microchip-sgpio driver
+Date:   Mon, 9 Nov 2020 14:26:41 +0100
+Message-ID: <20201109132643.457932-2-lars.povlsen@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201109132643.457932-1-lars.povlsen@microchip.com>
 References: <20201109132643.457932-1-lars.povlsen@microchip.com>
@@ -72,491 +73,168 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds SGPIO devices for the Sparx5 SoC and configures it for the
-applicable reference boards.
+This adds DT bindings for the Microsemi/Microchip SGPIO controller,
+bindings microchip,sparx5-sgpio, mscc,ocelot-sgpio and
+mscc,luton-sgpio.
 
 Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm64/boot/dts/microchip/sparx5.dtsi     |  91 ++++++
- .../boot/dts/microchip/sparx5_pcb125.dts      |   5 +
- .../dts/microchip/sparx5_pcb134_board.dtsi    | 258 ++++++++++++++++++
- .../dts/microchip/sparx5_pcb135_board.dtsi    |  55 ++++
- 4 files changed, 409 insertions(+)
+ .../pinctrl/microchip,sparx5-sgpio.yaml       | 145 ++++++++++++++++++
+ 1 file changed, 145 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
 
-diff --git a/arch/arm64/boot/dts/microchip/sparx5.dtsi b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-index 3cb01c39c3c8..f09707297a9f 100644
---- a/arch/arm64/boot/dts/microchip/sparx5.dtsi
-+++ b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-@@ -226,6 +226,22 @@ si2_pins: si2-pins {
- 				function = "si2";
- 			};
- 
-+			sgpio0_pins: sgpio-pins {
-+				pins = "GPIO_0", "GPIO_1", "GPIO_2", "GPIO_3";
-+				function = "sg0";
-+			};
+diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml b/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
+new file mode 100644
+index 000000000000..08325bf77a81
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
+@@ -0,0 +1,145 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/microchip,sparx5-sgpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+			sgpio1_pins: sgpio1-pins {
-+				pins = "GPIO_4", "GPIO_5", "GPIO_12", "GPIO_13";
-+				function = "sg1";
-+			};
++title: Microsemi/Microchip Serial GPIO controller
 +
-+			sgpio2_pins: sgpio2-pins {
-+				pins = "GPIO_30", "GPIO_31", "GPIO_32",
-+				       "GPIO_33";
-+				function = "sg2";
-+			};
++maintainers:
++  - Lars Povlsen <lars.povlsen@microchip.com>
 +
- 			uart_pins: uart-pins {
- 				pins = "GPIO_10", "GPIO_11";
- 				function = "uart";
-@@ -256,6 +272,81 @@ emmc_pins: emmc-pins {
- 			};
- 		};
- 
-+		sgpio0: gpio@61101036c {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "microchip,sparx5-sgpio";
-+			status = "disabled";
-+			clocks = <&sys_clk>;
-+			pinctrl-0 = <&sgpio0_pins>;
-+			pinctrl-names = "default";
-+			reg = <0x6 0x1101036c 0x100>;
-+			sgpio_in0: gpio@0 {
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				reg = <0>;
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+				ngpios = <96>;
-+			};
-+			sgpio_out0: gpio@1 {
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				reg = <1>;
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+				ngpios = <96>;
-+			};
-+		};
++description: |
++  By using a serial interface, the SIO controller significantly extend
++  the number of available GPIOs with a minimum number of additional
++  pins on the device. The primary purpose of the SIO controllers is to
++  connect control signals from SFP modules and to act as an LED
++  controller.
 +
-+		sgpio1: gpio@611010484 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "microchip,sparx5-sgpio";
-+			status = "disabled";
-+			clocks = <&sys_clk>;
-+			pinctrl-0 = <&sgpio1_pins>;
-+			pinctrl-names = "default";
-+			reg = <0x6 0x11010484 0x100>;
-+			sgpio_in1: gpio@0 {
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				reg = <0>;
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+				ngpios = <96>;
-+			};
-+			sgpio_out1: gpio@1 {
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				reg = <1>;
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+				ngpios = <96>;
-+			};
-+		};
++properties:
++  $nodename:
++    pattern: "^gpio@[0-9a-f]+$"
 +
-+		sgpio2: gpio@61101059c {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "microchip,sparx5-sgpio";
-+			status = "disabled";
-+			clocks = <&sys_clk>;
-+			pinctrl-0 = <&sgpio2_pins>;
-+			pinctrl-names = "default";
-+			reg = <0x6 0x1101059c 0x100>;
-+			sgpio_in2: gpio@0 {
-+				reg = <0>;
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+				ngpios = <96>;
-+			};
-+			sgpio_out2: gpio@1 {
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				reg = <1>;
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+				ngpios = <96>;
-+			};
-+		};
++  compatible:
++    enum:
++      - microchip,sparx5-sgpio
++      - mscc,ocelot-sgpio
++      - mscc,luton-sgpio
 +
- 		i2c0: i2c@600101000 {
- 			compatible = "snps,designware-i2c";
- 			status = "disabled";
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb125.dts b/arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
-index 6b2da7c7520c..9baa085d7861 100644
---- a/arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
-@@ -69,6 +69,11 @@ spi-flash@9 {
- 	};
- };
- 
-+&sgpio0 {
-+	status = "okay";
-+	microchip,sgpio-port-ranges = <0 23>;
-+};
++  "#address-cells":
++    const: 1
 +
- &i2c1 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi b/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
-index f37b478d6534..6820579448d0 100644
---- a/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
-@@ -36,6 +36,242 @@ gpio-restart {
- 		gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
- 		priority = <200>;
- 	};
++  "#size-cells":
++    const: 0
 +
-+	leds {
-+		compatible = "gpio-leds";
-+		led@0 {
-+			label = "twr0:green";
-+			gpios = <&sgpio_out0 8 0 GPIO_ACTIVE_LOW>;
-+		};
-+		led@1 {
-+			label = "twr0:yellow";
-+			gpios = <&sgpio_out0 8 1 GPIO_ACTIVE_LOW>;
-+		};
-+		led@2 {
-+			label = "twr1:green";
-+			gpios = <&sgpio_out0 9 0 GPIO_ACTIVE_LOW>;
-+		};
-+		led@3 {
-+			label = "twr1:yellow";
-+			gpios = <&sgpio_out0 9 1 GPIO_ACTIVE_LOW>;
-+		};
-+		led@4 {
-+			label = "twr2:green";
-+			gpios = <&sgpio_out0 10 0 GPIO_ACTIVE_LOW>;
-+		};
-+		led@5 {
-+			label = "twr2:yellow";
-+			gpios = <&sgpio_out0 10 1 GPIO_ACTIVE_LOW>;
-+		};
-+		led@6 {
-+			label = "twr3:green";
-+			gpios = <&sgpio_out0 11 0 GPIO_ACTIVE_LOW>;
-+		};
-+		led@7 {
-+			label = "twr3:yellow";
-+			gpios = <&sgpio_out0 11 1 GPIO_ACTIVE_LOW>;
-+		};
-+		led@8 {
-+			label = "eth12:green";
-+			gpios = <&sgpio_out0 12 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@9 {
-+			label = "eth12:yellow";
-+			gpios = <&sgpio_out0 12 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@10 {
-+			label = "eth13:green";
-+			gpios = <&sgpio_out0 13 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@11 {
-+			label = "eth13:yellow";
-+			gpios = <&sgpio_out0 13 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@12 {
-+			label = "eth14:green";
-+			gpios = <&sgpio_out0 14 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@13 {
-+			label = "eth14:yellow";
-+			gpios = <&sgpio_out0 14 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@14 {
-+			label = "eth15:green";
-+			gpios = <&sgpio_out0 15 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@15 {
-+			label = "eth15:yellow";
-+			gpios = <&sgpio_out0 15 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@16 {
-+			label = "eth48:green";
-+			gpios = <&sgpio_out1 16 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@17 {
-+			label = "eth48:yellow";
-+			gpios = <&sgpio_out1 16 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@18 {
-+			label = "eth49:green";
-+			gpios = <&sgpio_out1 17 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@19 {
-+			label = "eth49:yellow";
-+			gpios = <&sgpio_out1 17 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@20 {
-+			label = "eth50:green";
-+			gpios = <&sgpio_out1 18 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@21 {
-+			label = "eth50:yellow";
-+			gpios = <&sgpio_out1 18 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@22 {
-+			label = "eth51:green";
-+			gpios = <&sgpio_out1 19 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@23 {
-+			label = "eth51:yellow";
-+			gpios = <&sgpio_out1 19 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@24 {
-+			label = "eth52:green";
-+			gpios = <&sgpio_out1 20 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@25 {
-+			label = "eth52:yellow";
-+			gpios = <&sgpio_out1 20 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@26 {
-+			label = "eth53:green";
-+			gpios = <&sgpio_out1 21 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@27 {
-+			label = "eth53:yellow";
-+			gpios = <&sgpio_out1 21 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@28 {
-+			label = "eth54:green";
-+			gpios = <&sgpio_out1 22 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@29 {
-+			label = "eth54:yellow";
-+			gpios = <&sgpio_out1 22 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@30 {
-+			label = "eth55:green";
-+			gpios = <&sgpio_out1 23 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@31 {
-+			label = "eth55:yellow";
-+			gpios = <&sgpio_out1 23 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@32 {
-+			label = "eth56:green";
-+			gpios = <&sgpio_out1 24 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@33 {
-+			label = "eth56:yellow";
-+			gpios = <&sgpio_out1 24 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@34 {
-+			label = "eth57:green";
-+			gpios = <&sgpio_out1 25 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@35 {
-+			label = "eth57:yellow";
-+			gpios = <&sgpio_out1 25 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@36 {
-+			label = "eth58:green";
-+			gpios = <&sgpio_out1 26 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@37 {
-+			label = "eth58:yellow";
-+			gpios = <&sgpio_out1 26 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@38 {
-+			label = "eth59:green";
-+			gpios = <&sgpio_out1 27 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@39 {
-+			label = "eth59:yellow";
-+			gpios = <&sgpio_out1 27 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@40 {
-+			label = "eth60:green";
-+			gpios = <&sgpio_out1 28 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@41 {
-+			label = "eth60:yellow";
-+			gpios = <&sgpio_out1 28 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@42 {
-+			label = "eth61:green";
-+			gpios = <&sgpio_out1 29 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@43 {
-+			label = "eth61:yellow";
-+			gpios = <&sgpio_out1 29 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@44 {
-+			label = "eth62:green";
-+			gpios = <&sgpio_out1 30 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@45 {
-+			label = "eth62:yellow";
-+			gpios = <&sgpio_out1 30 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@46 {
-+			label = "eth63:green";
-+			gpios = <&sgpio_out1 31 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+		led@47 {
-+			label = "eth63:yellow";
-+			gpios = <&sgpio_out1 31 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+	};
- };
- 
- &spi0 {
-@@ -70,6 +306,28 @@ spi-flash@9 {
- 	};
- };
- 
-+&sgpio0 {
-+	status = "okay";
-+	microchip,sgpio-port-ranges = <8 15>;
-+	gpio@0 {
-+		ngpios = <64>;
-+	};
-+	gpio@1 {
-+		ngpios = <64>;
-+	};
-+};
++  reg:
++    maxItems: 1
 +
-+&sgpio1 {
-+	status = "okay";
-+	microchip,sgpio-port-ranges = <24 31>;
-+	gpio@0 {
-+		ngpios = <64>;
-+	};
-+	gpio@1 {
-+		ngpios = <64>;
-+	};
-+};
++  clocks:
++    maxItems: 1
 +
- &gpio {
- 	i2cmux_pins_i: i2cmux-pins-i {
- 	       pins = "GPIO_16", "GPIO_17", "GPIO_18", "GPIO_19",
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi b/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
-index b02b8c8ce44d..e28c6dd16377 100644
---- a/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
-@@ -20,6 +20,50 @@ gpio-restart {
- 		gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
- 		priority = <200>;
- 	};
++  microchip,sgpio-port-ranges:
++    description: This is a sequence of tuples, defining intervals of
++      enabled ports in the serial input stream. The enabled ports must
++      match the hardware configuration in order for signals to be
++      properly written/read to/from the controller holding
++      registers. Being tuples, then number of arguments must be
++      even. The tuples mast be ordered (low, high) and are
++      inclusive.
++    $ref: /schemas/types.yaml#/definitions/uint32-matrix
++    items:
++      items:
++        - description: |
++            "low" indicates start bit number of range
++          minimum: 0
++          maximum: 31
++        - description: |
++            "high" indicates end bit number of range
++          minimum: 0
++          maximum: 31
++    minItems: 1
++    maxItems: 32
 +
-+	leds {
-+		compatible = "gpio-leds";
-+		led@0 {
-+			label = "eth60:yellow";
-+			gpios = <&sgpio_out1 28 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+		led@1 {
-+			label = "eth60:green";
-+			gpios = <&sgpio_out1 28 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+		led@2 {
-+			label = "eth61:yellow";
-+			gpios = <&sgpio_out1 29 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+		led@3 {
-+			label = "eth61:green";
-+			gpios = <&sgpio_out1 29 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+		led@4 {
-+			label = "eth62:yellow";
-+			gpios = <&sgpio_out1 30 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+		led@5 {
-+			label = "eth62:green";
-+			gpios = <&sgpio_out1 30 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+		led@6 {
-+			label = "eth63:yellow";
-+			gpios = <&sgpio_out1 31 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+		led@7 {
-+			label = "eth63:green";
-+			gpios = <&sgpio_out1 31 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+	};
- };
- 
- &gpio {
-@@ -83,6 +127,17 @@ spi-flash@9 {
- 	};
- };
- 
-+&sgpio1 {
-+	status = "okay";
-+	microchip,sgpio-port-ranges = <24 31>;
-+	gpio@0 {
-+		ngpios = <64>;
-+	};
-+	gpio@1 {
-+		ngpios = <64>;
-+	};
-+};
++  bus-frequency:
++    description: The sgpio controller frequency (Hz). This dictates
++      the serial bitstream speed, which again affects the latency in
++      getting control signals back and forth between external shift
++      registers. The speed must be no larger than half the system
++      clock, and larger than zero.
++    default: 12500000
 +
- &axi {
- 	i2c0_imux: i2c0-imux@0 {
- 		compatible = "i2c-mux-pinctrl";
++patternProperties:
++  "^gpio@[0-1]$":
++    type: object
++    properties:
++      compatible:
++        const: microchip,sparx5-sgpio-bank
++
++      reg:
++        description: |
++          The GPIO bank number. "0" is designates the input pin bank,
++          "1" the output bank.
++        maxItems: 1
++
++      gpio-controller: true
++
++      '#gpio-cells':
++        description: |
++         Specifies the pin (port and bit) and flags. Note that the
++         SGIO pin is defined by *2* numbers, a port number between 0
++         and 31, and a bit index, 0 to 3. The maximum bit number is
++         controlled indirectly by the "ngpios" property: (ngpios/32).
++        const: 3
++
++      ngpios:
++        description: The numbers of GPIO's exposed. This must be a
++          multiple of 32.
++        minimum: 32
++        maximum: 128
++
++    required:
++      - compatible
++      - reg
++      - gpio-controller
++      - '#gpio-cells'
++      - ngpios
++
++    additionalProperties: false
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - microchip,sgpio-port-ranges
++  - "#address-cells"
++  - "#size-cells"
++
++examples:
++  - |
++    sgpio2: gpio@1101059c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      compatible = "microchip,sparx5-sgpio";
++      clocks = <&sys_clk>;
++      pinctrl-0 = <&sgpio2_pins>;
++      pinctrl-names = "default";
++      reg = <0x1101059c 0x100>;
++      microchip,sgpio-port-ranges = <0 0>, <16 18>, <28 31>;
++      bus-frequency = <25000000>;
++      sgpio_in2: gpio@0 {
++        reg = <0>;
++        compatible = "microchip,sparx5-sgpio-bank";
++        gpio-controller;
++        #gpio-cells = <3>;
++        ngpios = <96>;
++      };
++      sgpio_out2: gpio@1 {
++        compatible = "microchip,sparx5-sgpio-bank";
++        reg = <1>;
++        gpio-controller;
++        #gpio-cells = <3>;
++        ngpios = <96>;
++      };
++    };
 -- 
 2.25.1
 
