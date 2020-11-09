@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58C4C63697
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25D9C63777
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92EB0206E3
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ADB12074F
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Nov 2020 20:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730401AbgKIUxz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1730408AbgKIUxz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 9 Nov 2020 15:53:55 -0500
-Received: from mga09.intel.com ([134.134.136.24]:59643 "EHLO mga09.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:33886 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730272AbgKIUxy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1730305AbgKIUxy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Mon, 9 Nov 2020 15:53:54 -0500
-IronPort-SDR: AgzztPa/LLjq+T0XcWls8xKLa8rorrUA9mPqDwmpib6Eq9o2nODAyeNxYlvuKrYrx0owQZbqg7
- dIh3HvKRYuXQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="170022474"
+IronPort-SDR: Ze6ylc3Qv2Sm96JUAzd5S3PrCLO/J+atGDwlIvu2Ku8pNABb7z0KUp8zCgjkRrKJgJChRyo6fU
+ QBnuguT7rn5Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="166360553"
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="170022474"
+   d="scan'208";a="166360553"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 12:53:53 -0800
-IronPort-SDR: nB4ZBINBCKZAwvq8WIK0XetMTYOu/5gsoMyiU/hKfJPYwD950iJfexte6+7ft7UKOinz52VA+p
- RCk9vn+PDnRw==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 12:53:53 -0800
+IronPort-SDR: oy2CxVa8c2mWbc/qilhMJy9wHlv7LbEXIEVx63Bta9pVykmP2jFV8bAApfG0fz56rJjUMoksdS
+ Cf4/GkN9wzFg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,464,1596524400"; 
-   d="scan'208";a="354262455"
+   d="scan'208";a="365605629"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 09 Nov 2020 12:53:51 -0800
+  by orsmga007.jf.intel.com with ESMTP; 09 Nov 2020 12:53:51 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 500165DB; Mon,  9 Nov 2020 22:53:48 +0200 (EET)
+        id 2D6694C7; Mon,  9 Nov 2020 22:53:48 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Coiby Xu <coiby.xu@gmail.com>
-Subject: [PATCH v5 11/17] gpiolib: acpi: Take into account debounce settings
-Date:   Mon,  9 Nov 2020 22:53:26 +0200
-Message-Id: <20201109205332.19592-12-andriy.shevchenko@linux.intel.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v5 07/17] gpiolib: Extract gpio_set_config_with_argument_optional() helper
+Date:   Mon,  9 Nov 2020 22:53:22 +0200
+Message-Id: <20201109205332.19592-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201109205332.19592-1-andriy.shevchenko@linux.intel.com>
 References: <20201109205332.19592-1-andriy.shevchenko@linux.intel.com>
@@ -57,94 +56,103 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We didn't take into account the debounce settings supplied by ACPI.
-This change is targeting the mentioned gap.
+This function is useful for internal use in GPIO library.
+There will be new user coming, prepare a helper for the new comer
+and the existing ones.
 
-Reported-by: Coiby Xu <coiby.xu@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpiolib-acpi.c | 18 ++++++++++++++++++
- drivers/gpio/gpiolib-acpi.h |  2 ++
- 2 files changed, 20 insertions(+)
+ drivers/gpio/gpiolib.c | 50 ++++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index c127b410a7a2..6cbad96be866 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -299,6 +299,10 @@ static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
- 		return AE_OK;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 0691ecbd9a16..4558af08df23 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2105,6 +2105,30 @@ static int gpio_set_config_with_argument(struct gpio_desc *desc,
+ 	return gpio_do_set_config(gc, gpio_chip_hwgpio(desc), config);
+ }
+ 
++static int gpio_set_config_with_argument_optional(struct gpio_desc *desc,
++						  enum pin_config_param mode,
++						  u32 argument)
++{
++	struct device *dev = &desc->gdev->dev;
++	int gpio = gpio_chip_hwgpio(desc);
++	int ret;
++
++	ret = gpio_set_config_with_argument(desc, mode, argument);
++	if (ret != -ENOTSUPP)
++		return ret;
++
++	switch (mode) {
++	case PIN_CONFIG_PERSIST_STATE:
++		if (ret)
++			dev_dbg(dev, "Persistence not supported for GPIO %d\n", gpio);
++		break;
++	default:
++		break;
++	}
++
++	return 0;
++}
++
+ static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
+ {
+ 	return gpio_set_config_with_argument(desc, mode, 0);
+@@ -2114,7 +2138,6 @@ static int gpio_set_bias(struct gpio_desc *desc)
+ {
+ 	enum pin_config_param bias;
+ 	unsigned int arg;
+-	int ret;
+ 
+ 	if (test_bit(FLAG_BIAS_DISABLE, &desc->flags))
+ 		bias = PIN_CONFIG_BIAS_DISABLE;
+@@ -2136,11 +2159,7 @@ static int gpio_set_bias(struct gpio_desc *desc)
+ 		break;
  	}
  
-+	ret = gpio_set_debounce_timeout(desc, agpio->debounce_timeout);
-+	if (ret)
-+		goto fail_free_desc;
-+
- 	ret = gpiochip_lock_as_irq(chip, pin);
- 	if (ret) {
- 		dev_err(chip->parent,
-@@ -664,6 +668,7 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 		lookup->desc = acpi_get_gpiod(agpio->resource_source.string_ptr,
- 					      agpio->pin_table[pin_index]);
- 		lookup->info.pin_config = agpio->pin_config;
-+		lookup->info.debounce = agpio->debounce_timeout;
- 		lookup->info.gpioint = gpioint;
+-	ret = gpio_set_config_with_argument(desc, bias, arg);
+-	if (ret != -ENOTSUPP)
+-		return ret;
+-
+-	return 0;
++	return gpio_set_config_with_argument_optional(desc, bias, arg);
+ }
  
- 		/*
-@@ -961,6 +966,10 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- 			if (ret < 0)
- 				return ret;
+ /**
+@@ -2382,10 +2401,6 @@ EXPORT_SYMBOL_GPL(gpiod_set_debounce);
+ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
+ {
+ 	enum pin_config_param mode = PIN_CONFIG_PERSIST_STATE;
+-	struct gpio_chip *gc;
+-	unsigned long packed;
+-	int gpio;
+-	int rc;
  
-+			ret = gpio_set_debounce_timeout(desc, info.debounce);
-+			if (ret)
-+				return ret;
-+
- 			irq_flags = acpi_dev_get_irq_type(info.triggering,
- 							  info.polarity);
+ 	VALIDATE_DESC(desc);
+ 	/*
+@@ -2395,20 +2410,7 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
+ 	assign_bit(FLAG_TRANSITORY, &desc->flags, transitory);
  
-@@ -1048,6 +1057,7 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 		if (!found) {
- 			enum gpiod_flags flags = acpi_gpio_to_gpiod_flags(agpio);
- 			const char *label = "ACPI:OpRegion";
-+			int ret;
- 
- 			desc = gpiochip_request_own_desc(chip, pin, label,
- 							 GPIO_ACTIVE_HIGH,
-@@ -1058,6 +1068,14 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 				goto out;
- 			}
- 
-+			ret = gpio_set_debounce_timeout(desc, agpio->debounce_timeout);
-+			if (ret) {
-+				status = AE_ERROR;
-+				gpiochip_free_own_desc(desc);
-+				mutex_unlock(&achip->conn_lock);
-+				goto out;
-+			}
-+
- 			conn = kzalloc(sizeof(*conn), GFP_KERNEL);
- 			if (!conn) {
- 				status = AE_NO_MEMORY;
-diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
-index 1c6d65cf0629..e2edb632b2cc 100644
---- a/drivers/gpio/gpiolib-acpi.h
-+++ b/drivers/gpio/gpiolib-acpi.h
-@@ -18,6 +18,7 @@ struct acpi_device;
-  * @pin_config: pin bias as provided by ACPI
-  * @polarity: interrupt polarity as provided by ACPI
-  * @triggering: triggering type as provided by ACPI
-+ * @debounce: debounce timeout as provided by ACPI
-  * @quirks: Linux specific quirks as provided by struct acpi_gpio_mapping
-  */
- struct acpi_gpio_info {
-@@ -27,6 +28,7 @@ struct acpi_gpio_info {
- 	int pin_config;
- 	int polarity;
- 	int triggering;
-+	unsigned int debounce;
- 	unsigned int quirks;
- };
+ 	/* If the driver supports it, set the persistence state now */
+-	gc = desc->gdev->chip;
+-	if (!gc->set_config)
+-		return 0;
+-
+-	packed = pinconf_to_config_packed(mode, !transitory);
+-	gpio = gpio_chip_hwgpio(desc);
+-	rc = gpio_do_set_config(gc, gpio, packed);
+-	if (rc == -ENOTSUPP) {
+-		dev_dbg(&desc->gdev->dev, "Persistence not supported for GPIO %d\n",
+-				gpio);
+-		return 0;
+-	}
+-
+-	return rc;
++	return gpio_set_config_with_argument_optional(desc, mode, !transitory);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_transitory);
  
 -- 
 2.28.0
