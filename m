@@ -2,95 +2,195 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CA5C388F7
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF33C388F7
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EE7F207E8
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74239207D3
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:13:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDkgs4wo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kW8Ur+Bh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730445AbgKJOLu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 09:11:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57768 "EHLO
+        id S1730958AbgKJONd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 09:13:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730070AbgKJOLt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:11:49 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563C1C0613D1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:11:49 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id i6so17747722lfd.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:11:49 -0800 (PST)
+        with ESMTP id S1730703AbgKJONc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:13:32 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46F0FC0613CF
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:13:32 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id v12so11521191pfm.13
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:13:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KpEnlnWHjDYLqMoNrHt/KysUsi09ROrhJWtHTDCWRGI=;
-        b=BDkgs4woTqGqDFzLsQFt4eu4Kw92iGzSuCTQeQElSxv66BP10wEsrSFhEWFcyZ8k+1
-         PY2O0/GuW4gT1FhsqFZJi3uxOBoAEcecE1Zua8LkaBKmPibKBYDWknfrRvfVCBmfE15S
-         WHvzbxRGlltekn5L7pZkl/bAllYsZT+H9vsyI8xK8CTZujcKHBkTnRDmIdOUVT8QoiXK
-         PjOG6C3zAZa4FamO6GIFICx+i4z8QX3Yia4XxDo5GyTR8msPcqbZWUG2rvPmTTAzgugE
-         URxSZbvHY/vHKL/LjDwynre8bcWqE/RPy5l8pxFgc70rkWm08TN0LEKlQTfEiA64FeZ1
-         PQtA==
+        bh=M/Wbwc9NAiIxtgM/0e/ZkERhngg/OaAFxws8ElWVezg=;
+        b=kW8Ur+Bhy9P8B3XgtBYoyDnRElllr0Wp2STvwcKP1ZKCIgB/mlnbaiQmlH/S/WDkMr
+         cNfrI6vsl/nFCdyUD/KWbye5CNXt71KYFOkHOYasA+5YnViW/KL4eKlKWDkPRp/os9Rv
+         EhRV9+oxqaTyIHNJ0jCdeQc/GkFyXsGmctLbdwZpVI6iIjuiqNUFKvxEtAfdn4A8Blql
+         2513LnQ9GXcscaIUThH+EBfhdstAwQdHgBBEdt+A2pH/vPtB/W0Q5bffGPYumd8+He5q
+         p+vDg3qWeOw+cMgtQwj1Q5HwTuMINm9VqR+a/SWL0nMRkjvtLZ4UAJPhp5LvUF6SBF/B
+         51cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KpEnlnWHjDYLqMoNrHt/KysUsi09ROrhJWtHTDCWRGI=;
-        b=LzFzOEG+jWS7dDWXm43pGiKegLWC/nj59Yiq8X4eihibCjU4nutAKh1zMoWJS48R9Q
-         q6AGyGktMlASMfBjHv7910J+UMSxoUQ0ZxylPA8PAhArx+c0X6vZSORSWDoQT7Z6+kOO
-         amO2dmuqhrz0v67LY9Bwv4uYxlfw9b9S/eHcOKr8ERpa5UhXkozvz/EH5QKgaUkNesTo
-         Pr5LO3cr1mXn4Y8eYTjzuQ7uEG87uFkh5Qre3xxV36r2FpCEqOr1+Ayt/6Cl41hvbEXB
-         zxaAl+R5uz+XrGMqihfIOPLlVTbTM7nnFBWXKO+Qm4iVethv+hbaK5TLYoKo0+ChHfNy
-         slyw==
-X-Gm-Message-State: AOAM530yuoWjf0iwwiTc5c5oZsIL3lF9bvRJB4PGFlDmbnA1ohpeKScC
-        RKy7Q6orIU1wqK+G6ncp4JiUTgMPz5l6Dc0tzuuugA==
-X-Google-Smtp-Source: ABdhPJzvVokIIH3qqB2eJVY8gRVEaKtrnAHyEY9b7k7GNoTkcxcN1g1p9HGvhDxeQyifSTCtb1kd1CZTXmDi34FpIYM=
-X-Received: by 2002:a19:5e0b:: with SMTP id s11mr6995400lfb.502.1605017507860;
- Tue, 10 Nov 2020 06:11:47 -0800 (PST)
+        bh=M/Wbwc9NAiIxtgM/0e/ZkERhngg/OaAFxws8ElWVezg=;
+        b=JXwOay2MNCTtH7f4oDRdgUO/hzF72JruslJoE0h6dqT4W6HOEY1xcNzvsCkOiyStC8
+         +2iQ/Pl/EzL9fKqamoSzWVQXucH/xbw/p71nY+XXEbM683zLHhifh3vEvO9vPoXbXxjn
+         EDHP0QpmrXGxQnBMbRUsIVNrIysiOIlhzQWDd7V8YA4THaUuQ4Z5GQrQTACl8lfVcdRD
+         KuchAAzV7kyxRkSABL7JTwlB+VFrsToWMuxSf9pqBgE3g2LvOFF+rgqu8ywG09uwp+5k
+         rLnYDxoccCvVyxc7qJ3IEived90YUEIzAyBgfoM3BH2/uBz1PXXrD1zl6+6eMU67Mt75
+         Sh2w==
+X-Gm-Message-State: AOAM531TYIYW819zfOmDPRcX9gi1SHcAK7cPwRi0HmwDFJfZQP5Rx2cb
+        zVt7zxiPglHj+iVl8oea7lTeNtCuosOp9C2jicU=
+X-Google-Smtp-Source: ABdhPJwyyP6lMRoccrbttmgOrZ/++jV0c6JJWKq5GyT96ejJSdymwR48sep07l7sV/sYyK4NppIzHjAaRIImDgQPU0w=
+X-Received: by 2002:a63:4511:: with SMTP id s17mr17205223pga.4.1605017611779;
+ Tue, 10 Nov 2020 06:13:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20201106093118.965152-1-gregory.clement@bootlin.com>
-In-Reply-To: <20201106093118.965152-1-gregory.clement@bootlin.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Nov 2020 15:11:37 +0100
-Message-ID: <CACRpkdYJHd47-vpuXjb8s0Y=Y=w+QaAMEK+=STqRFbESXJ8M-g@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Extend pinctrl ocelot driver to support other SoCs
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>
+References: <20201109205332.19592-1-andriy.shevchenko@linux.intel.com> <2baa55ec-d2f0-fb76-6e83-614e899ab752@redhat.com>
+In-Reply-To: <2baa55ec-d2f0-fb76-6e83-614e899ab752@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 10 Nov 2020 16:14:20 +0200
+Message-ID: <CAHp75VfqvE9gZ3fmjm54nRV_e9_bCDAZZnXP27f0j9i-uH6uDA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/17] gpiolib: acpi: pin configuration fixes
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jamie McClymont <jamie@kwiius.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 6, 2020 at 10:31 AM Gregory CLEMENT
-<gregory.clement@bootlin.com> wrote:
-
-> Ocelot SoC belongs to a larger family of SoCs which use the same
-> interrupt controller with a few variation.
+On Tue, Nov 10, 2020 at 4:10 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> On 11/9/20 9:53 PM, Andy Shevchenko wrote:
+> > There are fixes (and plenty cleanups) that allow to take into consideration
+> > more parameters in ACPI, i.e. bias for GpioInt() and debounce timeout
+> > for Operation Regions, Events and GpioInt() resources.
+> >
+> > During review Hans noted, that gpiod_set_debounce() returns -ENOTSUPP for
+> > the cases when feature is not supported either by driver or a controller.
+> >
+> > It appears that we have slightly messy API here:
+> >
+> >   FUNC                        Relation with ENOTSUPP
+> >
+> >   gpiod_set_config()   returns if not supported
+> >   gpiod_set_debounce()         as gpiod_set_config() above
+> >   gpio_set_debounce()  legacy wrapper on top of gpiod_set_debounce()
+> >   gpiod_set_transitory() skips it (returns okay) with debug message
+> >   gpio_set_config()    returns if not supported
+> >   gpio_set_bias()      skips it (returns okay)
+> >
+> > Last two functions are internal to GPIO library, while the rest is
+> > exported API. In order to be consistent with both naming schemas
+> > the series introduces gpio_set_debounce_timeout() that considers
+> > the feature optional. New API is only for internal use.
+> >
+> > While at it, the few first patches do clean up the current GPIO library
+> > code to unify it to some extend.
+> >
+> > The above is followed by changes made in ACPI GPIO library part.
+> >
+> > The bias patch highly depends on Intel pin control driver changes
+> > (they are material for v5.10 [1]), due to this and amount of the
+> > prerequisite changes this series is probably not supposed to be
+> > backported (at least right now).
 >
-> This series of patches add support for Luton and Serval, they are all
-> MIPS based.
+> The entire series looks good to me, feel free to add my:
 >
-> The first patches of the series also updates the binding documentation
-> with the new compatible strings.
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-All 4 patches applied.
+Thanks!
 
-Please consider converting the device tree bindings to YAML
-when/if you have time.
+I still would like Mika to have a look and perform a couple more tests myself.
+And I have one emergency task right now, so I think we have time to
+let others have a look and comment / test / etc.
 
-Yours,
-Linus Walleij
+>
+> to patches 1-16 (patch 17 makes sense to me, but I do not feel
+> I'm the right person to ack it).
+>
+> Regards,
+>
+> Hans
+>
+>
+>
+>
+> >
+> > The last patch adds Intel GPIO tree as official one for ACPI GPIO
+> > changes.
+> >
+> > Assuming [1] makes v5.10 this series can be sent as PR to Linus
+> > for v5.11 cycle.
+> >
+> > Note, some patches are also depend to the code from GPIO fixes / for-next
+> > repositories. Unfortunately there is no one repository which contains all
+> > up to date for-next changes against GPIO subsystem. That's why I have merged
+> > Bart's for-current followed by Linus' fixes followed by Bart's for-next
+> > followed by Linus' for-next branches as prerequisites to the series.
+> >
+> > Cc: Jamie McClymont <jamie@kwiius.com>
+> >
+> > [1]: https://lore.kernel.org/linux-gpio/20201106181938.GA41213@black.fi.intel.com/
+> >
+> > Changelog v5:
+> > - introduced gpio_set_debounce_timeout()
+> > - made a prerequisite refactoring in GPIO library code
+> > - updated the rest accordingly
+> >
+> > Changelog v4:
+> > - extended debounce setting to ACPI events and Operation Regions
+> > - added Ack (Linus)
+> > - added few more cleanup patches, including MAINTAINERS update
+> >
+> > Changelog v3:
+> > - dropped upstreamed OF patch
+> > - added debounce fix
+> >
+> > Andy Shevchenko (17):
+> >   gpiolib: Replace unsigned by unsigned int
+> >   gpiolib: add missed break statement
+> >   gpiolib: use proper API to pack pin configuration parameters
+> >   gpiolib: Add temporary variable to gpiod_set_transitory() for cleaner
+> >     code
+> >   gpiolib: Extract gpio_set_config_with_argument() for future use
+> >   gpiolib: move bias related code from gpio_set_config() to
+> >     gpio_set_bias()
+> >   gpiolib: Extract gpio_set_config_with_argument_optional() helper
+> >   gpiolib: Extract gpio_set_debounce_timeout() for internal use
+> >   gpiolib: acpi: Respect bias settings for GpioInt() resource
+> >   gpiolib: acpi: Use named item for enum gpiod_flags variable
+> >   gpiolib: acpi: Take into account debounce settings
+> >   gpiolib: acpi: Move acpi_gpio_to_gpiod_flags() upper in the code
+> >   gpiolib: acpi: Make acpi_gpio_to_gpiod_flags() usable for GpioInt()
+> >   gpiolib: acpi: Extract acpi_request_own_gpiod() helper
+> >   gpiolib: acpi: Convert pin_index to be u16
+> >   gpiolib: acpi: Use BIT() macro to increase readability
+> >   gpiolib: acpi: Make Intel GPIO tree official for GPIO ACPI work
+> >
+> >  MAINTAINERS                   |   1 +
+> >  drivers/gpio/gpiolib-acpi.c   | 130 ++++++++++++++++++++--------------
+> >  drivers/gpio/gpiolib-acpi.h   |   2 +
+> >  drivers/gpio/gpiolib.c        |  97 ++++++++++++++-----------
+> >  drivers/gpio/gpiolib.h        |   1 +
+> >  include/linux/gpio/consumer.h |   4 +-
+> >  6 files changed, 141 insertions(+), 94 deletions(-)
+> >
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
