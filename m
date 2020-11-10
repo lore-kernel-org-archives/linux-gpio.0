@@ -2,110 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12416C388F7
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A7AC388F7
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 15:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7EC120809
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:57:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="tIhZV71Q"
+	by mail.kernel.org (Postfix) with ESMTP id 861AB206B2
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 15:00:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731191AbgKJO4G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 09:56:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36634 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731117AbgKJO4E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:56:04 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1482FC0613D1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:56:04 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id h2so3292527wmm.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:56:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=P/FM3SMv3SB2sukISrVKcep86V1B6E/aNLJz2tne09k=;
-        b=tIhZV71Q4boKhfAj3rBGGOhDubcjk8h9xi0zeADwf79XuWZCYP9iiJLX7dhizOcndI
-         QdcGQCgZpMIJPlAQ0nLG78bQjzDfoSxMtNL0hh2TAVNz75cPbmZCHzFa8UtnuibG+Ysy
-         f+Ru23ldKtfI2rK/C6aYoQWJzGmEz1K4TAzSDRhvEtqpInAPIiqtimVERE3jyuHtcci0
-         TiQoqSWmTH2SB3bOZiUBpHi0KL8x6MLyNxaSaIG7uqogEMswBGdy0ITKGD7JsH1Qa9dy
-         TlawCPc+p1FjmvUYAOGHxwI+hdQw+ixUh9t3zk2VKoDNwrT0lUhLQjtwN3skspFzdfof
-         pZ4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=P/FM3SMv3SB2sukISrVKcep86V1B6E/aNLJz2tne09k=;
-        b=qt570rJ//OOZXifA1+NZZ/PXN/cIF3z5aP+opbNtt0yeujdHoaL/2/uKOnZN/CjjZm
-         +t3gRwKLcdMH7CfyxpirTnGon8odZ+pqOsdukk2juZc0wM/vm1bgLywKLxutbDWW/6bp
-         5iPaCYcjhla6PH8iwbumkZlcK84xx74iIiPLO6um4ujUhVloBPX8ig9Ro+PKjiRC+I3Q
-         8Q01a4u3KU7aiR2m5JoUFTNCHfNvczbhUlNpzOJ6D6ikTY+i6uwCe/DFwkE0XmeEjJ2U
-         dxBjiAgp7L/VD3vNgV3+QD0KDPLnXPT25ospTmR5z1NUfhHspl0IGRW5sPY5djPGWo0P
-         MMeA==
-X-Gm-Message-State: AOAM5337RsKaW7vpVB0ERJwmGH9YLXhtxGps5J5OUB1RsQrV7e0A3c7f
-        a/KAoVtyMpZ7cwhDjIm44RKIpg==
-X-Google-Smtp-Source: ABdhPJxw2U/1PtlE0cL6yafWRPApOChPFBAYZDeZDTAijh+MqnUlHK6C2x1xc3XmE1BYZUFTzdaAsg==
-X-Received: by 2002:a7b:cf31:: with SMTP id m17mr72757wmg.62.1605020162791;
-        Tue, 10 Nov 2020 06:56:02 -0800 (PST)
-Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id f17sm3261827wmf.41.2020.11.10.06.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 06:56:01 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        David Laight <David.Laight@aculab.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 0/7] gpio: exar: refactor the driver
-Date:   Tue, 10 Nov 2020 15:55:45 +0100
-Message-Id: <20201110145552.23024-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.29.1
+        id S1730200AbgKJPAv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 10:00:51 -0500
+Received: from mga02.intel.com ([134.134.136.20]:16060 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731054AbgKJPAv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Nov 2020 10:00:51 -0500
+IronPort-SDR: KUJF6RES29JEwO8GNmj0G3+9RfsOV0WNV9XzypfBcjDD+C+xfqusOdCN4r2Pq1Yl57dkLfaRiU
+ rRK4SL1RhWmg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9801"; a="156990559"
+X-IronPort-AV: E=Sophos;i="5.77,466,1596524400"; 
+   d="scan'208";a="156990559"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 07:00:43 -0800
+IronPort-SDR: 0m+sLG7EaSBtlxIOGydFu1MSzxEGYua1iyjNhe/OIQVXozS4eZ8mzpYzjSPOymLLaXQJCkdVFl
+ oPvRg773uhNA==
+X-IronPort-AV: E=Sophos;i="5.77,466,1596524400"; 
+   d="scan'208";a="327706939"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 07:00:41 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1kcV9T-005VNY-0j; Tue, 10 Nov 2020 17:01:43 +0200
+Date:   Tue, 10 Nov 2020 17:01:43 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Laight <David.Laight@aculab.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 6/7] gpio: exar: switch to using regmap
+Message-ID: <20201110150143.GV4077@smile.fi.intel.com>
+References: <20201110123406.3261-1-brgl@bgdev.pl>
+ <20201110123406.3261-7-brgl@bgdev.pl>
+ <20201110142624.GT4077@smile.fi.intel.com>
+ <20201110142750.GU4077@smile.fi.intel.com>
+ <CAMpxmJUQ3t02q-Chd-WE+pYRAsOOEnbQ0jB+G_uAGv+sJBK1tg@mail.gmail.com>
+ <a5b0fcd0-eb62-79b3-3f27-6595b9bdb91c@siemens.com>
+ <CAMpxmJW1j9+KAj12OKs3njUWy+UA5B993Pyd=xmo4k8LM-8GUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJW1j9+KAj12OKs3njUWy+UA5B993Pyd=xmo4k8LM-8GUw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Nov 10, 2020 at 03:52:00PM +0100, Bartosz Golaszewski wrote:
+> On Tue, Nov 10, 2020 at 3:50 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> > On 10.11.20 15:30, Bartosz Golaszewski wrote:
 
-I just wanted to convert the driver to using simpler IDA API but ended up
-quickly converting it to using regmap. Unfortunately I don't have the HW
-to test it so marking the patches that introduce functional change as RFT
-and Cc'ing the original author.
+...
 
-v1 -> v2:
-- add new regmap helper: regmap_assign_bits()
-- fix lvl vs sel register access
-- set value in direction_output callback
+> > Removing the line that Andy found made things work here. And switching
+> > to 16 for reg_bits didn't make things worse again.
+> >
+> > Jan
+> 
+> Alright! I'll send a v4 with these things fixed then.
 
-v2 -> v3:
-- drop the regmap helper from series
+Hold on, the registers are 16-bit wide, but their halves are sparsed!
+So, I guess 8 and 8 with helpers to get hi and lo parts are essential.
 
-v3 -> v4:
-- renamed the regmap variable to 'regmap' as leaving the old name caused me
-  to miss an assignment leading to a crash (culprit spotted by Andy Shevchenko)
-
-Bartosz Golaszewski (7):
-  gpio: exar: add a newline after the copyright notice
-  gpio: exar: include idr.h
-  gpio: exar: switch to a simpler IDA interface
-  gpio: exar: use a helper variable for &pdev->dev
-  gpio: exar: unduplicate address and offset computation
-  gpio: exar: switch to using regmap
-  gpio: exar: use devm action for freeing the IDA and drop remove()
-
- drivers/gpio/Kconfig     |   1 +
- drivers/gpio/gpio-exar.c | 155 +++++++++++++++++++--------------------
- 2 files changed, 77 insertions(+), 79 deletions(-)
 
 -- 
-2.29.1
+With Best Regards,
+Andy Shevchenko
+
 
