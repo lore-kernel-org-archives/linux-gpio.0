@@ -2,92 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61077C56201
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B9AC55ABD
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1B0C206F1
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25ED4206B2
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:41:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yMvmv62j"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pXEGHrkB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730819AbgKJOkK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 09:40:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
+        id S1730306AbgKJOlH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 09:41:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730432AbgKJOkK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:40:10 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6181CC0613D3
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:40:10 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id l2so17906266lfk.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:40:10 -0800 (PST)
+        with ESMTP id S1730059AbgKJOlH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:41:07 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5F4C0613CF
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:41:05 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id i13so5546437pgm.9
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:41:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XMIR0x3v/SOduiNJI+iAqXslKNdg1Phd+avxtEvAmZ0=;
-        b=yMvmv62jzEb5fWYRyJZ4EfNvXQWxI0M2a6MD6A14Kx2zX0+pJwr0BFTgurkn/NFcYN
-         SEuffXDjbLtIeQtWDaXAhzdEJoRKIeHAT5dvDEySvCGFrvh9bPI0L3QFezJRcPZWqkwR
-         FIQqy4YacfO3Oj7lxlpiIQnlZ4lyLWMQFP58iJL3VeCk2S/Z0o+9+n36DPvrUm3djefP
-         Nf8fsoRkRTr406syuJyIdGYjtpWJFYIFc/AlaHKP8gv0mbHpRynDsz7F35XR6HyAaEkO
-         LEgu4epTlp38o7p3nKYvORMzrP2I8j9HTmYhHZ1PbN3l0woZQdGi2pyG9yox7ZCDvkr+
-         JmKg==
+        bh=94SMVHlHxacGDgm2q3giI2hZLO+mR8k8TKdaWeq9tQ4=;
+        b=pXEGHrkBjX9Y6T504uaZk4TfN5NIJ1PSdjIKU9x1hv+5KqxtDiIKIljXLVBql61sYz
+         wt172j/5hWTUPqt+gyNjS7DnwT+0W1mA59Cexn7HfUgGzp0ZuQ5AqN/CkZjO3tqJZQB+
+         auDLdXvGaA3Wf+N+fW9SOusWkUWSBl+Gv7K78KlRPRYr+PeSUkj9fDzOGHZ/wdZgxunf
+         XHWwXQFDDEYbkIAx+Tv+Wa9p0Uz8Xlj5ZKa2dC85zl6Dyy1+VU+gUcQYPgPjH/8vM2y9
+         K0QwTfrQtfD6xwBZ5wEySfRIluZnQd8WbhJWfO2n+AqLISq1+cQfqLVZjtjj0MLN++Q4
+         Ta5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XMIR0x3v/SOduiNJI+iAqXslKNdg1Phd+avxtEvAmZ0=;
-        b=XGf17b6S0bP68u3lnQBs7M5X8vW1hxArxwONwrI6cWECJT1nuRovcbrHnBZN4l/8Ik
-         OGBW9OWZHg6VLDXdkTGVA5GAPtu+vKRCaP5tUqVj18aEKivcHAQw/e3Cxnc0sOQZIPRB
-         J95VPEKrUwqKGuLMcKzmnUe9t44HsQn07+fXqs5dTLvjyzgq9zeDU8ojHmf1hbti5h2y
-         DFjSYhkK0j+B4AEP4+sz9PNpHjIpX5Tb5ykB8Q27jzfzxjhzMlCWnV0n/lA8GcZ96DNP
-         U5p78cCAiBQ1jhL+dbd4qUb01H3nvSpFi+kx+DTM5kZwJpTHOUi3p8Q9oECN66IZV4Qj
-         WK1g==
-X-Gm-Message-State: AOAM5337iuWMSH+0E3E8h9d21d/0NUeUkeX6wpHRNawq3tXdMz1HSk7x
-        Ul5ktYDisdU/ktypkmAWAMzuzrY3vue6+PrPBsDeGA==
-X-Google-Smtp-Source: ABdhPJwZKZCcPYORmeuUmPxVdMBipXbwsghexY2Fo6mTCT8Nwc9BfXeRqZ9vpij7/rcd11cpqaaXACeFiLO1OmB0y3k=
-X-Received: by 2002:a19:ca05:: with SMTP id a5mr4591668lfg.571.1605019208781;
- Tue, 10 Nov 2020 06:40:08 -0800 (PST)
+        bh=94SMVHlHxacGDgm2q3giI2hZLO+mR8k8TKdaWeq9tQ4=;
+        b=atTCIJIWqxX3pENE3z39vCvD7qAB93ctOZDQrP9IJ6lc6XO2cIJtOVrtMw3NCLe0hX
+         uuYglLH8+G79OJxyDJxQ7WL4fTlr0NoFhNkQpgjFhirbaEPdTvmFRh/X+lkz6PNMa5LT
+         9BYl9e/BpSwOW39hyIKLL9CsHw1LgNgcEDBRxvJNx6zLTzL3HKeVqYG8VssfhaLYy8sZ
+         0EQxcaT4F/FVLodqG5D4oqfBf3k9oAnKAsSahftW9XLIfV/3gf3M12GMKm6m4ItIkHiG
+         duLj0MfAL3GOzfWkfki3coY3VfQEJzPKsMn+U98lzJRm65Qbem+gC0M872FeNnyZkiiL
+         w/Ug==
+X-Gm-Message-State: AOAM5316GMNzHTyih0q1fnMjxuytfKELQyYbtabwKQZaZ/O4/6DjKzGU
+        Y8NRozcKwZd1g9IHFDHeTOde6vr62ZYQuJSnKvU=
+X-Google-Smtp-Source: ABdhPJzXZsFYBfKWyA4ohwJhykDOLRZvN4cSFmUokAvQIHyC+iQ5jM1j+WGdwjUS/J/UAZ44lIcVPsePRjjR9jm0cuw=
+X-Received: by 2002:a17:90a:4816:: with SMTP id a22mr5716497pjh.228.1605019265472;
+ Tue, 10 Nov 2020 06:41:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-10-damien.lemoal@wdc.com>
-In-Reply-To: <20201107081420.60325-10-damien.lemoal@wdc.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Nov 2020 15:39:57 +0100
-Message-ID: <CACRpkda1Pd3hTiEHWDOAz3zCMA6WK4VmvjkNv0O_ckFaWQ-zSw@mail.gmail.com>
-Subject: Re: [PATCH 09/32] riscv: Fix SiFive gpio probe
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
+References: <20201110142724.14760-1-linus.walleij@linaro.org>
+In-Reply-To: <20201110142724.14760-1-linus.walleij@linaro.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 10 Nov 2020 16:41:54 +0200
+Message-ID: <CAHp75Veg_1S76i7by+3sJNhb3to_V=Qs8t_DydewzUYFtOhNUw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: sysfs: Enforce character device
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Nov 7, 2020 at 9:14 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+On Tue, Nov 10, 2020 at 4:27 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> Fix the check on the number of IRQs to allow up to the maximum (32)
-> instead of only the maximum minus one.
->
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 
-I just ripped this patch out of your patch set and applied it to
-the GPIO tree with some minor change to the subject.
 
-Yours,
-Linus Walleij
+> +       select GPIO_CDEV # We need to encourage the new ABI
+
+While I am all for new ABI, I don't think this is a good idea.
+If they are brave enough to move to old ABI it should be a reason
+(supporting old scripts all around the product while updating the
+kernel, comes to my mind).
+But at the same time they may want to keep a low memory footprint.
+
+-- 
+With Best Regards,
+Andy Shevchenko
