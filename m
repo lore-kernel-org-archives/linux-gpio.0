@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51426C63697
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A0FC61DD8
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E78C520731
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AC902076E
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:57:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="w+ZcawHw"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="zDD20QVM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731450AbgKJO4O (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 09:56:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36640 "EHLO
+        id S1732628AbgKJO5S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 09:57:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731227AbgKJO4H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:56:07 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BD36C0613D1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:56:05 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id k2so9587627wrx.2
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:56:05 -0800 (PST)
+        with ESMTP id S1731365AbgKJO4M (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:56:12 -0500
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E11C0613D3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:56:12 -0800 (PST)
+Received: by mail-wm1-x344.google.com with SMTP id d142so3272678wmd.4
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:56:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=A7Q6GcsOlUvCk0TynHXF9lujyUa3NnBo8eWmuL6l7+w=;
-        b=w+ZcawHwB0e3nB10uWI5DX6CesgFsMuEwayRrb8XkjoRWUp0F/fCC7j5OVqQ1ZPWGj
-         tA3151tQRB2+KJHEb8MJkzDqtN0Phvg7QYOrINaW1/t21gObq8PaefxB3iOo07bLp6yr
-         E3xmoNacZfG6A/RDC+1A6gH1QB7CizNMfRH99ZAOdBMJT4B9ApoA8ppYNSyA9jsAolxF
-         +3ZmzwdrQVL8BGfjkRg+eYYHtMKxklpKZDQUtUae5SROj/DPYAmpI2o5rVNLFozbXHIX
-         GiCajga5UXzrpUP7/w7fPR+DcfeYuD8CvF51qkIi2A7kQW3DyQchWcv3us+i+q4GBySD
-         SPcg==
+        bh=SyfsPFMi1Ol5bHDdeg25EiAHS6gH8P7QyAg8QmJ1Sho=;
+        b=zDD20QVMC5IWBHog2KuNoZ8pGkgPX7Zgy2+KbJMYTZd7PKhDV4IOzOKifhW8EuzDVK
+         D0U/twFCuXZ3WEeYgaxiAHj5xg5Sab2cVpforIiTC+gHdaOo4vIxiq6Ck47ijCy+UjZ6
+         amPapieoKB19FzEe7XAlat3NXSfFVxI5Zieabreptqz//W5hT1Fy8o+6mi2LiTpAIrQg
+         U7gawmdly0dGU8m5G8tglRiier3RXnuLCy6oRDMNKXgbVNnDTWtzeXFfn4KE+4HKc3OG
+         fVejE3kUK5B71SR2eBjKFiiKInsZ0q1k3XN4h9j3i6IiqiteJ7VC757UDUZc1fiWNU3V
+         6gvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=A7Q6GcsOlUvCk0TynHXF9lujyUa3NnBo8eWmuL6l7+w=;
-        b=b7RLG/ikVwMWZGL7xXkXuaePY3Zsdctp/POnYrm4A+gJY4YfoenEuRlp1qqk9wnBWH
-         Hj4CxRJY/r9bBKNEP7vePlZWZ8zGtpkHJygdzVKsnsCwsrwI8ajTlgvh+8Lp4RrYG/YJ
-         3wzlYZHdFeHFTpzzSdWU56RF1WMIPw6YPcKIyAAH/h+l03LGWs0tIByyM3R79ayShS97
-         9B47pTWw0S08InmMdXHRe0zIhJK1UJ6vZE3p6Di5dlvut2tjJM/sCNL6XpXo6a1BbDzR
-         0xkxtSHbl6l1EvcFQIgChNirRqiGq3ULlE+dP+PhWGn0oJbHxV8hhrgZHfiR7RR66iWR
-         90rg==
-X-Gm-Message-State: AOAM533M1K64DfNOYAOySIbE4OWxsdFIyEkWa4sH2jECHQxU3ycYH3Mi
-        vrYkDLTBv4xhnIZA9v6R3OPVgQ==
-X-Google-Smtp-Source: ABdhPJxOU/dttXRMN7VN6gM9Zf9mVLj8tSVjQRRNqbDf/ak/UG0PszbRWOZvfgV4zELM3w7aMe8OSA==
-X-Received: by 2002:adf:8304:: with SMTP id 4mr23920371wrd.215.1605020164113;
-        Tue, 10 Nov 2020 06:56:04 -0800 (PST)
+        bh=SyfsPFMi1Ol5bHDdeg25EiAHS6gH8P7QyAg8QmJ1Sho=;
+        b=Ds2SA8vZxO9Ml6ZUQ7BFC9SXAGyjHffYAt+ibP/sZpCdt6/m+wOnBx5KgGL6FUzS5z
+         42jSwFl+thqLEnMUeUCHpOHE5BzQWR7k+JTAdIfJCqXh/oy9m2m8u5cS+LcJIBH5Dwao
+         G3aCeFjEbADeL2hr3OLX5eUZGK7hsHl7Ld96uqHbJJGY6+BGXR2+N4T8CyuWGe/l/Kb+
+         F3McXGlqhqvleLAYLAAw2AfUPoTgx5s08IfL6hhin+Cdt0CVAw8+BRfyAnMiCeg7nTRe
+         bCm0Lg/WY/TAXpKXEAU/QwLSD+V7HIVZec2XE8/CES296zuAI8mNpA6PIY/8116wJ9qt
+         sEbg==
+X-Gm-Message-State: AOAM530wMzViw3zKWIHUeaSS+F8968nD9teUq83M4oLmYQD6cg9Y9AcT
+        ptmyBsLYZtH6k9S+ZWkzkFRJ+A==
+X-Google-Smtp-Source: ABdhPJzaDMq9yF/90PfbDtmjMrDDyU6nQWF5HcfMvUY6Hf+4iouCXqUCX+g+a816+uzUAvJbyXGhyA==
+X-Received: by 2002:a1c:3d54:: with SMTP id k81mr60297wma.144.1605020170860;
+        Tue, 10 Nov 2020 06:56:10 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id f17sm3261827wmf.41.2020.11.10.06.56.02
+        by smtp.gmail.com with ESMTPSA id f17sm3261827wmf.41.2020.11.10.06.56.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 06:56:03 -0800 (PST)
+        Tue, 10 Nov 2020 06:56:10 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -64,9 +64,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         David Laight <David.Laight@aculab.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 1/7] gpio: exar: add a newline after the copyright notice
-Date:   Tue, 10 Nov 2020 15:55:46 +0100
-Message-Id: <20201110145552.23024-2-brgl@bgdev.pl>
+Subject: [PATCH v4 5/7] gpio: exar: unduplicate address and offset computation
+Date:   Tue, 10 Nov 2020 15:55:50 +0100
+Message-Id: <20201110145552.23024-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201110145552.23024-1-brgl@bgdev.pl>
 References: <20201110145552.23024-1-brgl@bgdev.pl>
@@ -78,26 +78,93 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-It's customary to have a newline between the copyright header and the
-includes. Add one to gpio-exar.
+Provide and use helpers for calculating the register address and bit
+offset instead of hand coding it in every function.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-exar.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-exar.c | 40 ++++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index b1accfba017d..4202dd363a11 100644
+index db366d85b6b4..28b0b4b5fa35 100644
 --- a/drivers/gpio/gpio-exar.c
 +++ b/drivers/gpio/gpio-exar.c
-@@ -4,6 +4,7 @@
-  *
-  * Copyright (C) 2015 Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-  */
+@@ -33,6 +33,26 @@ struct exar_gpio_chip {
+ 	unsigned int first_pin;
+ };
+ 
++static unsigned int
++exar_offset_to_sel_addr(struct exar_gpio_chip *exar_gpio, unsigned int offset)
++{
++	return (offset + exar_gpio->first_pin) / 8 ? EXAR_OFFSET_MPIOSEL_HI
++						   : EXAR_OFFSET_MPIOSEL_LO;
++}
 +
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/gpio/driver.h>
++static unsigned int
++exar_offset_to_lvl_addr(struct exar_gpio_chip *exar_gpio, unsigned int offset)
++{
++	return (offset + exar_gpio->first_pin) / 8 ? EXAR_OFFSET_MPIOLVL_HI
++						   : EXAR_OFFSET_MPIOLVL_LO;
++}
++
++static unsigned int
++exar_offset_to_bit(struct exar_gpio_chip *exar_gpio, unsigned int offset)
++{
++	return (offset + exar_gpio->first_pin) % 8;
++}
++
+ static void exar_update(struct gpio_chip *chip, unsigned int reg, int val,
+ 			unsigned int offset)
+ {
+@@ -52,9 +72,8 @@ static int exar_set_direction(struct gpio_chip *chip, int direction,
+ 			      unsigned int offset)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+ 
+ 	exar_update(chip, addr, direction, bit);
+ 	return 0;
+@@ -75,9 +94,8 @@ static int exar_get(struct gpio_chip *chip, unsigned int reg)
+ static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+ 
+ 	if (exar_get(chip, addr) & BIT(bit))
+ 		return GPIO_LINE_DIRECTION_IN;
+@@ -88,9 +106,8 @@ static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+ static int exar_get_value(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+ 
+ 	return !!(exar_get(chip, addr) & BIT(bit));
+ }
+@@ -99,9 +116,8 @@ static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
+ 			   int value)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+ 
+ 	exar_update(chip, addr, value, bit);
+ }
 -- 
 2.29.1
 
