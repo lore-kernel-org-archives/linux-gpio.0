@@ -2,82 +2,119 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D189DC388F7
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E70C388F7
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7498620797
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4AC9207BB
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:32:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RXTSd0/e"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZsD/YY8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbgKJN3o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 08:29:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51088 "EHLO
+        id S1726721AbgKJNcG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 08:32:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgKJN3o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 08:29:44 -0500
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 524D6C0613CF
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 05:29:44 -0800 (PST)
-Received: by mail-ed1-x543.google.com with SMTP id ay21so12714917edb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 05:29:44 -0800 (PST)
+        with ESMTP id S1729908AbgKJNcG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 08:32:06 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FC44C0613D3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 05:32:05 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id s30so17510900lfc.4
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 05:32:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6Hjhyv1ODznxDZvv28mX53Q346Z2MPzaR8QZjz1eM74=;
-        b=RXTSd0/eCptvcrfUbup7Lapd8x3eal4iaa+J2U0xlucffy89rj3SSCYfnyjSyb8e2i
-         CkSmIgJg9ju8dt1ewBIdryqzQ4VtFwQhjvIHm+tmTPp/G4Tiua7hh8/LTCtlsMda+wAN
-         SYEXl8GfDf0zlphnGMRgdmEA0C1ZDrRT+xQYy1xg1S2Urfhpkng1ypmZfO3aMR5XgI8T
-         +Rhdn+AsPocyefwnW1Yzo7r8SVxS+vwdBL+rZvOT39wTqAyYTPqoI0DV1QAjQetUhl5C
-         osoMPoFQe2e/s78tlNjwsUE3axo4SycH8zi82y8n89btzbo/+igN3Q+HHK0A18EwivFm
-         xR0Q==
+        bh=il23hITCqpxK2KRgonKc+lZYY9qSqjOLZ5WOY5ud//k=;
+        b=eZsD/YY8FuEfxVATHStyvm+EUySeSb5pDpxl2yI0vSyMxqVlz5O602Mqb6Ll03GRex
+         B2JFyB4ps5kCym3tA0KpvBkxeisAgbh+8uu1BkHddSVGDWauHO6vZfNj0UitFncjBTSF
+         VrLx3yV9+eJvPBu109zvRX/W0ypnyNbMXQsJo9VYqrt//VxjhfrfbcZ8bK6JDqr5INbd
+         OEFQgPSoHcSp0zOL0vp52Az2ds0NG7GUdkB/QhG1mc0Gy3R1nD26B9TW6UiG7oXZJSSm
+         ewiKW1Mti/Nj4Jfumj7rQIjn9IxDfqSju5xthPR88Tl94HrXEhJdLQ2GOPv3o93gFshU
+         Lx1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6Hjhyv1ODznxDZvv28mX53Q346Z2MPzaR8QZjz1eM74=;
-        b=i2rIjvtKx4SW2M8P7F3jVkFmpXwmieXCyl8qmkJ53533uL8BXWEZGKOY2zINston0I
-         YzvN9s5/3/GZvM/J3HuEquX2Ljfya8AUkAc5mXJCNNoag2rUvPCfv4EdDnFzLf6LDm5I
-         GZ4r0hA6m2llv4iAUekuct8aqGHBWfb1LG874feJTc7roJuvSPYMb+s3ps4edKs0Ng1F
-         H0Z7O1FqExzaJb5/WIqICshWp/Tp/ZBlowXvzIpswlidOx/SX22rpCW9ba8hshZFsoXA
-         WJr+ffc9hwIHFgRl3MG+q0zD5mE+tiQnQlPoSdlzvL9K4M73vYMZbWclKuQGmpkPEM+x
-         0mzw==
-X-Gm-Message-State: AOAM530R/BqKBgW2N5WOihcSMMisUCRbhzCyG/l23FdqQ/wBtRrLCcp9
-        ivpzZsTxbjuX7Ngha/zW/hNxg+l48YflNgN0rHm1i4mLGq0=
-X-Google-Smtp-Source: ABdhPJza93kzi5WELzMnY5jGFPnf1t9Ayc9HbuIqoLYEuFOVCRq9VhbWCOcWeIF9M/AGiFzn3mC1EDZSfIEnHErTa7U=
-X-Received: by 2002:a05:6402:283:: with SMTP id l3mr21680277edv.232.1605014983110;
- Tue, 10 Nov 2020 05:29:43 -0800 (PST)
+        bh=il23hITCqpxK2KRgonKc+lZYY9qSqjOLZ5WOY5ud//k=;
+        b=Aw3WKikA682+3yLOuY5EF4A7Vfq/pTpLyQRCjVe5jLj9l3J8B8K3eNUh+5Mw0n7T/u
+         gvW0r8NEMhZ72bjuy8Bx+iDhsi+ekmUk3fjL9mremeO+O/J/vTKrbrrGef7ymbHCYfYg
+         CXfTbHU5BLGMUWkJJzcFiTTa5VAWxj3Z5C2iGoX+JAa2AUbVeQEzcKbJgjNNi6hQLpZ2
+         n+kxysw7WS2LZdJM+0ciUA0/0NIeiMiSf5URgf1tNv5SBbQw3pibC5mZhM3zCRaleo/v
+         M/LoGIQzD0Max66CiKpSX7hwEPnm0qRyPPXKlnqj8et5ZKNZ67ilMUnxWUXJ5+TCpucn
+         SqVg==
+X-Gm-Message-State: AOAM53327UtmcyOck+H0/kVSYYGC//iSe1+Mcg/IRk+KkaI/zxInOd6F
+        POlh1XEeptX79ZhgYI0fqNNPY1UwoWslLyazzg/rDw==
+X-Google-Smtp-Source: ABdhPJzWJ3lOVKlGcQ8YECy3hPBeXO41jPP1o22E0DHyk2dojD3Vo8yORWGB+/5mvWJjM1nIipJ8VbO1YOMsF9jqZaw=
+X-Received: by 2002:a19:5e0b:: with SMTP id s11mr6921684lfb.502.1605015123992;
+ Tue, 10 Nov 2020 05:32:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20201110123406.3261-1-brgl@bgdev.pl> <20201110123406.3261-7-brgl@bgdev.pl>
- <7f890933-71a7-28d5-75ae-8d80d6a67ff5@siemens.com>
-In-Reply-To: <7f890933-71a7-28d5-75ae-8d80d6a67ff5@siemens.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 10 Nov 2020 14:29:32 +0100
-Message-ID: <CAMpxmJXiuuRu0A=GPaqBg=YbW=nQX4WrBm9e-3SOkFuaT0rEFw@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] gpio: exar: switch to using regmap
-To:     Jan Kiszka <jan.kiszka@siemens.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1604561884-10166-1-git-send-email-mkshah@codeaurora.org>
+In-Reply-To: <1604561884-10166-1-git-send-email-mkshah@codeaurora.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 10 Nov 2020 14:31:53 +0100
+Message-ID: <CACRpkdZJ6yrisNKFG8MJEOhzAV7HRtUTniXpnFVd9fpVy75ruw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: Move clearing pending IRQ to
+ .irq_request_resources callback
+To:     Maulik Shah <mkshah@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        =?UTF-8?Q?open_list=3AGPIO_SUBSYSTEM_=3Clinux=2Dgpio=40vger=2Ekernel=2Eorg=3E=2C_Andy_?=
+         =?UTF-8?Q?Gross_=3Cagross=40kernel=2Eorg=3E=2C_Thomas_Gleixner_=3Ctglx=40linutronix=2E?=
+         =?UTF-8?Q?de=3E=2C_Jason_Cooper_=3Cjason=40lakedaemon=2Enet=3E=2C_Doug_Anderson_=3Cdia?=
+         =?UTF-8?Q?nders=40chromium=2Eorg=3E=2C_Rajendra_Nayak_=3Crnayak=40codeaurora=2Eorg=3E=2C?=
+         =?UTF-8?Q?_Lina_Iyer_=3Cilina=40codeaurora=2Eorg=3E=2C?= 
+        <dianders@chromium.org>, Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        =?UTF-8?Q?open_list=3AGPIO_SUBSYSTEM_=3Clinux=2Dgpio=40vger=2Ekernel=2Eorg=3E=2C_Andy_?=
+         =?UTF-8?Q?Gross_=3Cagross=40kernel=2Eorg=3E=2C_Thomas_Gleixner_=3Ctglx=40linutronix=2E?=
+         =?UTF-8?Q?de=3E=2C_Jason_Cooper_=3Cjason=40lakedaemon=2Enet=3E=2C_Doug_Anderson_=3Cdia?=
+         =?UTF-8?Q?nders=40chromium=2Eorg=3E=2C_Rajendra_Nayak_=3Crnayak=40codeaurora=2Eorg=3E=2C?=
+         =?UTF-8?Q?_Lina_Iyer_=3Cilina=40codeaurora=2Eorg=3E=2C?= 
+        <lsrao@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 2:23 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
->
->
-> Unfortunately, this one still crashes:
->
+On Thu, Nov 5, 2020 at 8:38 AM Maulik Shah <mkshah@codeaurora.org> wrote:
 
-Just to confirm: does patch 5/7 alone work?
+> When GPIOs that are routed to PDC are used as output they can still latch
+> the IRQ pending at GIC. As a result the spurious IRQ was handled when the
+> client driver change the direction to input to starts using it as IRQ.
+>
+> Currently such erroneous latched IRQ are cleared with .irq_enable callback
+> however if the driver continue to use GPIO as interrupt and invokes
+> disable_irq() followed by enable_irq() then everytime during enable_irq()
+> previously latched interrupt gets cleared.
+>
+> This can make edge IRQs not seen after enable_irq() if they had arrived
+> after the driver has invoked disable_irq() and were pending at GIC.
+>
+> Move clearing erroneous IRQ to .irq_request_resources callback as this is
+> the place where GPIO direction is changed as input and its locked as IRQ.
+>
+> While at this add a missing check to invoke msm_gpio_irq_clear_unmask()
+> from .irq_enable callback only when GPIO is not routed to PDC.
+>
+> Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 
-Bartosz
+This looks critical so I applied it for fixes so we get some
+rotation in linux-next.
+
+If Bjorn has other opinions he will tell us :)
+
+Yours,
+Linus Walleij
