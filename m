@@ -2,101 +2,93 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E304DC388F7
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10402C4742C
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78DDD206B2
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB03C20797
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 14:47:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="i5ZuAjKq"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XZOD1vKe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbgKJOlK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 09:41:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34198 "EHLO
+        id S1730070AbgKJOrW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 09:47:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730059AbgKJOlJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:41:09 -0500
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D0BBC0613CF
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:41:09 -0800 (PST)
-Received: by mail-io1-xd44.google.com with SMTP id r9so14284125ioo.7
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:41:09 -0800 (PST)
+        with ESMTP id S1730672AbgKJOrV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 09:47:21 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D77C0613D4
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:47:21 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id i6so17930141lfd.1
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 06:47:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dn8iOwBj5fjE2xG51HcWqy5Oy/yWfS8sGb0RXIKjdS8=;
-        b=i5ZuAjKq2niuYt59/TsWQ97kVsCB5xVOWn4LU0FaFcOD/Q22a34uTq5NEfyFq5tmzM
-         AjDcioXz1kF4w+W7K44SwROzHvQRWzz92huVU1NL1JNOnhqJgaj9yjMihpJUw/cU+fDI
-         JPhawPOyOxjaCCos1/yI4HuFpCswXXrR8jiz52XTq4vZJ0eTHXhL+yAvfFL5eIG/uMyz
-         kcT1ppm7rOwTd03OHrLHZ/SPmttHd8D4RSXFkLWtwvFlmAtheP6u2htlBYS24jl1UJmm
-         etnq3+mq7f8GYn1Wvf5E6grV7b3wbG90fuyYuziz3OX0TUo/cekgT3j+6pky/on7cjn8
-         tdcg==
+        bh=kiWbHwM/Lr8KmmLC2XpYaczHAMgXswVwBOFL89IZblY=;
+        b=XZOD1vKezmecxMgGB2KrnL99f6D1FfXpEp38edLi+v6XX+/2DwlTq8GQNRMPlUGcas
+         WTmTOsZdFoW/F53Xc4MjByycnOx3skWg7Lw0au4+WC+y+fbxiT1FbuIA2K3TF1ZkM6hX
+         sfaq/f+id1NXynG39rkmv2VNdGaoFkt6cx7J2wfOatok+ZvBVD2Ytc3SsqTyLkNOvHBk
+         i0no7VAoh9Ty6snnjOyibxmv6PpiNg40TvV5mMylXUrkJUsOY9LRTDcyHLJqT04KgZqN
+         Kny7Cje9XUnNHbZ+6YjaD7VdtuKilcGIYHrsqOnNwLspmNYbT1W4Ns+IzTmDKpThPqlR
+         YhFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dn8iOwBj5fjE2xG51HcWqy5Oy/yWfS8sGb0RXIKjdS8=;
-        b=pjoK4l6Ufn/yitnUUP2qWcOkNZPtsudNPlMNF6ZhKcSyv23nPwTcUx+7bqpDWu5UTI
-         goF4XGB8q7CbC9EK403ywPN39VeyGpzxUvgq9OZSoRIVp2LW4/dD3GbwYCICCLbjBqEV
-         WM8eWIvFHkukWxmIso+OeLHqULEcXZv22UKnNm2+6zt0o7FwgzOAzJtCOfYpV85sOdUD
-         A09z30yakpUu5gBsLWpCxsSpgbc43bxcwGEakRuPMwYzLqZMakz5Pi+zRAdVeUl92CQW
-         ZQs8apWcGqxBQRSYW4VMgsODiOFDE/84tVOTEztUzTTo/E9vIHxZtVUSaXVKIRaJD7LM
-         8Wpw==
-X-Gm-Message-State: AOAM531MjfN6CSzTuNdVvK9mjnxepMzhWQCw8Bd+Sgg+Vp01+nWSEHuQ
-        o/1/vjWnXbjRIYtojyLJRL4h0JlADtcdbuuC/wbzqgEwEWw=
-X-Google-Smtp-Source: ABdhPJxqBC+rsXnsukSKbdhQkufqcmVTnGmVcKWhybsmKzxbAsYrXqJLXqaDCqalT24sA7YWwCJC12qidi3ZN796zmM=
-X-Received: by 2002:a6b:7c06:: with SMTP id m6mr14721110iok.130.1605019268856;
- Tue, 10 Nov 2020 06:41:08 -0800 (PST)
+        bh=kiWbHwM/Lr8KmmLC2XpYaczHAMgXswVwBOFL89IZblY=;
+        b=lYO40TQWiYCZgppopqPZiAL2ceAj2BfUuAwll2TH0Ic1Y+Sg2yYMLeyQrAdv2u/0BU
+         cxb/B+h/mJsjuyquQVDXa/ULSwWzsa4/yEFwKKKsMzLuyYEYjLporYNeWGhumZzmvdbd
+         SrKwuWjjBnsEj6kNaIWuqMQaQEMShATBMioviXTsXJYruFt6BiP8FD2lT204n/UEbEYP
+         q0u7ko8Mw5GJ3bZ/ze8JAqFBm+1dM/JqwcJJKcCDEvCCyzj5gVckkCdMfQUV6XsaGa7w
+         toXHP1KrUzOQGCWtpGTL8YrnnKfmgvcAKs32xauSND9fZGwlRpwIKAMNpnmQUmycvvOX
+         +J1A==
+X-Gm-Message-State: AOAM5318X8zFGC+wZmBVZ0mIrxBWIgMuDFbQQ5ge7xpqkagmsnHbzd5n
+        ic1si6WAWG2EDZhSBpwHvH3JThyVgSoUzVUx3Ox/vA==
+X-Google-Smtp-Source: ABdhPJyi74cMCtvgB2LhCZiGshSdj4vtK9CzMPI7ALGe90BKtPZD+3vJoENQBsDaxfuy/JxgoF7vPVs3eoY3U4dEbmw=
+X-Received: by 2002:ac2:50c1:: with SMTP id h1mr7305358lfm.333.1605019639735;
+ Tue, 10 Nov 2020 06:47:19 -0800 (PST)
 MIME-Version: 1.0
-References: <20201104115348.51930-1-damien.lemoal@wdc.com> <CAMpxmJUO-fyQRyjKD4gNZFw=_iAH7eMd=xyLXLuwAikC0OnLsQ@mail.gmail.com>
- <4dae7924b5d8b020e747a36ecb015063090b819b.camel@wdc.com> <CACRpkdZup58yojegKUxpok-aqE95sk18JDc0kuiUoiOj1XKpGA@mail.gmail.com>
-In-Reply-To: <CACRpkdZup58yojegKUxpok-aqE95sk18JDc0kuiUoiOj1XKpGA@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 10 Nov 2020 15:40:58 +0100
-Message-ID: <CAMRc=MfjWfvKP8ZjU9RA+kgpR9x3pqkGExzMjSerLztLwDV86Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Do not trigger WARN() with sysfs gpio export/unexport
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+References: <20201109062620.14566-1-vkoul@kernel.org>
+In-Reply-To: <20201109062620.14566-1-vkoul@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 10 Nov 2020 15:47:08 +0100
+Message-ID: <CACRpkdY=g4omnvgTzsBP6qwg7s8VYaFwChgAsJciQFS7SJ67jQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] pinctrl: qcom: Add binding and driver for SDX55 pincontrol
+To:     Vinod Koul <vkoul@kernel.org>, John Stultz <john.stultz@linaro.org>
+Cc:     MSM <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 3:31 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Fri, Nov 6, 2020 at 12:27 PM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
->
-> > It may not be the best interface for regular end users to
-> > manipulate gpios, but it is definitely super useful for developers to do quick
-> > tests of their setup/drivers (which is what I did for my work with the Kendryte
-> > K210 RISC-V SoC support).
->
-> It is a bit discouraging that RISC-V, which was invented after we already
-> obsoleted the sysfs ABI, is deploying this for development and test.
->
-> We need to think about a similar facility for users which is less
-> damaging but fulfils the same needs. I think I saw something a while
-> back that looked promising and added some funky files in debugfs
-> in a hierarchical manner per-gpiochip instead. That is how debugfs
-> should be used.
->
+On Mon, Nov 9, 2020 at 7:26 AM Vinod Koul <vkoul@kernel.org> wrote:
 
-Basically something like what gpio-mockup does for events? Was it
-something out-of-tree or was it on the mailing list?
+> This series add device tree binding documentation and driver for SDX55 SOC
+> pincontroller.
+>
+> Changes in v3:
+>  - Add ack by Bjorn
+>  - Fix dt_binding_check errors
+>  - Add gpio ranges in binding
 
-Also: quick tests have the tendency to become long-term solutions. :)
+Excellent, patches applied for v5.11.
 
-Is gpioget/gpioset duo difficult/cumbersome to use? It's a serious
-question - I wrote it in a way that was as user-friendly as possible
-but maybe I'm missing something about sysfs that makes users prefer it
-over a command-line tool. To me sysfs was always a PITA with the
-global numbers etc. but it still seems to stick with others.
+I also just applied John Stultz patches for modularizing the Qualcomm
+drivers so there might be some need to patch up so this driver can
+also modularize, check the result!
 
-Bartosz
+Yours,
+Linus Walleij
