@@ -2,86 +2,310 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6E6C388F7
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE07C388F7
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC18020797
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:43:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQc4irTY"
+	by mail.kernel.org (Postfix) with ESMTP id 8855020731
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 13:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbgKJNn6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 08:43:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53398 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730099AbgKJNn5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 08:43:57 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CC1C0613CF
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 05:43:57 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id y16so8664545ljh.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 05:43:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OMks7TCxypfO5zEMmipqoyz9iMqo2n6lpAYXT3GQdZE=;
-        b=ZQc4irTYSXr7Uynl52t5lAyJ3t7rTZZ8zDrkNuxqhTZ559c4Nxt5sAfq+M1mF8/i9C
-         QPupN+mkrcVfSsMuRoQj+Y4XOc9YEjOV9wjN6M36AqOSNzzteZhNd+Vyn70PWrI2Aj41
-         t/d1+IncCak1EMA7w+3fUuX5sC7yIpR6tl2/dyQMM8aPnFt3IyMuMGVb4g8Wrb3tP8k/
-         j4AxzVLYvDj+IRXt2Mhq6G63LnLXa2pbc+aHxdsbHUFcPT0Rd7C8TXtbB7aTevfBagkz
-         EADOPXaglrGnKqrxS4q1KJy4zz6wGtBMg0qYp55j62Hm7k+6e7H6zZQuVkPck7UDpE0u
-         PVdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OMks7TCxypfO5zEMmipqoyz9iMqo2n6lpAYXT3GQdZE=;
-        b=A9EZaUH601n8qPyU66ZgEeF1UM0QuA0KUqJ9x883nLAUdnNm1eZUtzbM8/o+ikIurQ
-         ByqjiXKkGTqOGMaBgPumJqipS6KLvSdFm8mE3ldTHUjaRP+t1OU+D/yd5l1MJb2jzcYB
-         39tdUl/6s9Qu9KtBh4mmVwolGvK3Kxb5sg8e8GYK/ZTKykpPvbk8X9t/wvqyhosMwmo+
-         tDedj6W3f3OQMNlh/DYPgQ3cVkCTWM83nukWjF6ZX2bLmvIeZWlQai7QrCEQPNYggYoP
-         YOH8NZnRLm6J9Lrj71I/NDOfOUm6//ku18aDpPVPjeJlrJXuzqfj+1WHivUG7O0qnaNy
-         QblA==
-X-Gm-Message-State: AOAM530eoWrQKjOsn+WSqWarx+LNbZrZMQOCQa3+I5EfHCAWeYi/EZ1z
-        KBVDzo2pB5ChSasXl0JpzftxGzkQNa7DEqZMY0YWZA==
-X-Google-Smtp-Source: ABdhPJw2JVrii/Lp5BJnQVyUrauPeK2zgq1rilJyDhm5OQIL+Qesys0TTnEHOCRlwDICOKoIfiL4zx/thHFdAq7Q0Ws=
-X-Received: by 2002:a2e:86d4:: with SMTP id n20mr8854254ljj.293.1605015836059;
- Tue, 10 Nov 2020 05:43:56 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHNNwZAucoc00gJrUsPRMpFc9U2r+os6NJfc1axsGh0m6ES=xQ@mail.gmail.com>
-In-Reply-To: <CAHNNwZAucoc00gJrUsPRMpFc9U2r+os6NJfc1axsGh0m6ES=xQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Nov 2020 14:43:45 +0100
-Message-ID: <CACRpkdZzLNY1B7e3CECpxNfgxAQsB=-Z9WmVSAT-EwKBgN9krg@mail.gmail.com>
-Subject: Re: gpiolib sysfs access when CONFIG_GPIO_CDEV is not set
-To:     Nicolas Schichan <nschichan@freebox.fr>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        id S1730542AbgKJNql (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 08:46:41 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:45932 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730511AbgKJNqk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Nov 2020 08:46:40 -0500
+X-Greylist: delayed 1395 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Nov 2020 08:46:38 EST
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 0AADN9ng029762
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Nov 2020 14:23:10 +0100
+Received: from [167.87.33.169] ([167.87.33.169])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 0AADN7Qf022173;
+        Tue, 10 Nov 2020 14:23:08 +0100
+Subject: Re: [PATCH v3 6/7] gpio: exar: switch to using regmap
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        David Laight <David.Laight@aculab.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20201110123406.3261-1-brgl@bgdev.pl>
+ <20201110123406.3261-7-brgl@bgdev.pl>
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <7f890933-71a7-28d5-75ae-8d80d6a67ff5@siemens.com>
+Date:   Tue, 10 Nov 2020 14:23:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+MIME-Version: 1.0
+In-Reply-To: <20201110123406.3261-7-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 4, 2020 at 6:27 PM Nicolas Schichan <nschichan@freebox.fr> wrote:
 
-> I have tracked it to the fact that I have CONFIG_GPIO_CDEV is disabled in
-> my kernel config: Enabling CONFIG_GPIO_CDEV made export work again.
+On 10.11.20 13:34, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We can simplify the code in gpio-exar by using regmap. This allows us to
+> drop the mutex (regmap provides its own locking) and we can also reuse
+> regmap's bit operations instead of implementing our own update function.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/gpio/Kconfig     |  1 +
+>  drivers/gpio/gpio-exar.c | 90 +++++++++++++++++-----------------------
+>  2 files changed, 38 insertions(+), 53 deletions(-)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 5d4de5cd6759..253a61ec9645 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -255,6 +255,7 @@ config GPIO_EP93XX
+>  config GPIO_EXAR
+>  	tristate "Support for GPIO pins on XR17V352/354/358"
+>  	depends on SERIAL_8250_EXAR
+> +	select REGMAP_MMIO
+>  	help
+>  	  Selecting this option will enable handling of GPIO pins present
+>  	  on Exar XR17V352/354/358 chips.
+> diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+> index 28b0b4b5fa35..a2d324c513f8 100644
+> --- a/drivers/gpio/gpio-exar.c
+> +++ b/drivers/gpio/gpio-exar.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/module.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+>  
+>  #define EXAR_OFFSET_MPIOLVL_LO 0x90
+>  #define EXAR_OFFSET_MPIOSEL_LO 0x93
+> @@ -26,9 +27,8 @@ static DEFINE_IDA(ida_index);
+>  
+>  struct exar_gpio_chip {
+>  	struct gpio_chip gpio_chip;
+> -	struct mutex lock;
+> +	struct regmap *regs;
+>  	int index;
+> -	void __iomem *regs;
+>  	char name[20];
+>  	unsigned int first_pin;
+>  };
+> @@ -53,51 +53,13 @@ exar_offset_to_bit(struct exar_gpio_chip *exar_gpio, unsigned int offset)
+>  	return (offset + exar_gpio->first_pin) % 8;
+>  }
+>  
+> -static void exar_update(struct gpio_chip *chip, unsigned int reg, int val,
+> -			unsigned int offset)
+> -{
+> -	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+> -	int temp;
+> -
+> -	mutex_lock(&exar_gpio->lock);
+> -	temp = readb(exar_gpio->regs + reg);
+> -	temp &= ~BIT(offset);
+> -	if (val)
+> -		temp |= BIT(offset);
+> -	writeb(temp, exar_gpio->regs + reg);
+> -	mutex_unlock(&exar_gpio->lock);
+> -}
+> -
+> -static int exar_set_direction(struct gpio_chip *chip, int direction,
+> -			      unsigned int offset)
+> -{
+> -	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+> -	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
+> -	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+> -
+> -	exar_update(chip, addr, direction, bit);
+> -	return 0;
+> -}
+> -
+> -static int exar_get(struct gpio_chip *chip, unsigned int reg)
+> -{
+> -	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+> -	int value;
+> -
+> -	mutex_lock(&exar_gpio->lock);
+> -	value = readb(exar_gpio->regs + reg);
+> -	mutex_unlock(&exar_gpio->lock);
+> -
+> -	return value;
+> -}
+> -
+>  static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+>  	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
+>  	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+>  
+> -	if (exar_get(chip, addr) & BIT(bit))
+> +	if (regmap_test_bits(exar_gpio->regs, addr, BIT(bit)))
+>  		return GPIO_LINE_DIRECTION_IN;
+>  
+>  	return GPIO_LINE_DIRECTION_OUT;
+> @@ -109,7 +71,7 @@ static int exar_get_value(struct gpio_chip *chip, unsigned int offset)
+>  	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
+>  	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+>  
+> -	return !!(exar_get(chip, addr) & BIT(bit));
+> +	return !!(regmap_test_bits(exar_gpio->regs, addr, BIT(bit)));
+>  }
+>  
+>  static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
+> @@ -119,21 +81,42 @@ static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
+>  	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
+>  	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+>  
+> -	exar_update(chip, addr, value, bit);
+> +	if (value)
+> +		regmap_set_bits(exar_gpio->regs, addr, BIT(bit));
+> +	else
+> +		regmap_clear_bits(exar_gpio->regs, addr, BIT(bit));
+>  }
+>  
+>  static int exar_direction_output(struct gpio_chip *chip, unsigned int offset,
+>  				 int value)
+>  {
+> +	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+> +	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
+> +	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+> +
+>  	exar_set_value(chip, offset, value);
+> -	return exar_set_direction(chip, 0, offset);
+> +	regmap_clear_bits(exar_gpio->regs, addr, BIT(bit));
+> +
+> +	return 0;
+>  }
+>  
+>  static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
+>  {
+> -	return exar_set_direction(chip, 1, offset);
+> +	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+> +	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
+> +	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+> +
+> +	regmap_set_bits(exar_gpio->regs, addr, BIT(bit));
+> +
+> +	return 0;
+>  }
+>  
+> +static const struct regmap_config exar_regmap_config = {
+> +	.name		= "exar-gpio",
+> +	.reg_bits	= 8,
+> +	.val_bits	= 8,
+> +};
+> +
+>  static int gpio_exar_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -163,13 +146,17 @@ static int gpio_exar_probe(struct platform_device *pdev)
+>  	if (!exar_gpio)
+>  		return -ENOMEM;
+>  
+> -	mutex_init(&exar_gpio->lock);
+> +	/*
+> +	 * We don't need to check the return values of mmio regmap operations (unless
+> +	 * the regmap has a clock attached which is not the case here).
+> +	 */
+> +	exar_gpio->regs = devm_regmap_init_mmio(dev, p, &exar_regmap_config);
+> +	if (IS_ERR(exar_gpio->regs))
+> +		return PTR_ERR(exar_gpio->regs);
+>  
+>  	index = ida_alloc(&ida_index, GFP_KERNEL);
+> -	if (index < 0) {
+> -		ret = index;
+> -		goto err_mutex_destroy;
+> -	}
+> +	if (index < 0)
+> +		return index;
+>  
+>  	sprintf(exar_gpio->name, "exar_gpio%d", index);
+>  	exar_gpio->gpio_chip.label = exar_gpio->name;
+> @@ -195,8 +182,6 @@ static int gpio_exar_probe(struct platform_device *pdev)
+>  
+>  err_destroy:
+>  	ida_free(&ida_index, index);
+> -err_mutex_destroy:
+> -	mutex_destroy(&exar_gpio->lock);
+>  	return ret;
+>  }
+>  
+> @@ -205,7 +190,6 @@ static int gpio_exar_remove(struct platform_device *pdev)
+>  	struct exar_gpio_chip *exar_gpio = platform_get_drvdata(pdev);
+>  
+>  	ida_free(&ida_index, exar_gpio->index);
+> -	mutex_destroy(&exar_gpio->lock);
+>  
+>  	return 0;
+>  }
+> 
 
-We have deliberately made it hard to remove the character device
-because we want to encourage people to use it.
+Unfortunately, this one still crashes:
 
-> Yes, we have no users of the character device gpio interface on our
-> platform, so I have disabled it explicitly when updating the defconfig
-> to the 5.10-rc1 kernel.
+...
+0000:02:00.0: ttyS2 at MMIO 0x90000000 (irq = 44, base_baud = 7812500) is a XR17V35X
+0000:02:00.0: ttyS3 at MMIO 0x90000400 (irq = 44, base_baud = 7812500) is a XR17V35X
+BUG: kernel NULL pointer dereference, address: 00000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0xc3300010) - not-present page
+*pde = 00000000 
+Oops: 0010 [#1] PREEMPT
+CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 5.10.0-rc2+ #440
+Hardware name: Intel Corp. QUARK/SIMATIC IOT2000, BIOS V24.02.01 10/30/2018
+Workqueue: events deferred_probe_work_func
+EIP: 0x0
+Code: Unable to access opcode bytes at RIP 0xffffffd6.
+EAX: 00000000 EBX: f7c74000 ECX: 00000004 EDX: 00000096
+ESI: 00000000 EDI: 00000000 EBP: c1157d88 ESP: c1157d70
+DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00010286
+CR0: 80050033 CR2: ffffffd6 CR3: 03778000 CR4: 00100010
+Call Trace:
+ regmap_update_bits_base+0x22/0x60
+ exar_set_value+0x4e/0x70 [gpio_exar]
+ exar_direction_output+0x3a/0x80 [gpio_exar]
+ ? exar_set_value+0x70/0x70 [gpio_exar]
+ ? exar_set_value+0x70/0x70 [gpio_exar]
+ gpiod_direction_output_raw_commit+0x74/0x270
+ ? exar_direction_input+0x50/0x50 [gpio_exar]
+ ? exar_set_value+0x70/0x70 [gpio_exar]
+ gpiod_direction_output+0xf0/0x160
+ create_gpio_led+0xea/0x180
+ gpio_led_probe+0x22c/0x460
+ ? device_pm_check_callbacks+0x4c/0x100
+ platform_drv_probe+0x2d/0x80
+ really_probe+0xcb/0x330
+ driver_probe_device+0x49/0xa0
+ __device_attach_driver+0x61/0x80
+ ? driver_allows_async_probing+0x60/0x60
+ bus_for_each_drv+0x4f/0x90
+ __device_attach+0xbb/0x120
+ ? driver_allows_async_probing+0x60/0x60
+ device_initial_probe+0x12/0x20
+ bus_probe_device+0x6f/0x80
+ deferred_probe_work_func+0x56/0x80
+ process_one_work+0x1ce/0x390
+ worker_thread+0x37/0x420
+ kthread+0x115/0x130
+ ? process_one_work+0x390/0x390
+ ? kthread_create_on_node+0x20/0x20
+ ret_from_fork+0x19/0x30
+Modules linked in: gpio_exar(+) spi_pxa2xx_platform(+) 8250_exar spi_pxa2xx_pci ti_adc108s102 industrialio_triggered_buffer kfifo_buf industrialio at24
+CR2: 0000000000000000
+---[ end trace 8ea7faca198463b8 ]---
+EIP: 0x0
+Code: Unable to access opcode bytes at RIP 0xffffffd6.
+EAX: 00000000 EBX: f7c74000 ECX: 00000004 EDX: 00000096
+ESI: 00000000 EDI: 00000000 EBP: c1157d88 ESP: c1157d70
+DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00010286
+CR0: 80050033 CR2: ffffffd6 CR3: 03778000 CR4: 00100010
 
-Please consider getting users of the character device, since if they
-are using the sysfs they are using an explicitly obsoleted interface.
-
-Yours,
-Linus Walleij
+Jan
