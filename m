@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4B2C55ABD
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 12:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F08C388F7
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 12:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3810207D3
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 12:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB0A520781
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Nov 2020 12:34:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="sV3UVxEX"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="eg3Cytyp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbgKJMen (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Nov 2020 07:34:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42466 "EHLO
+        id S1730368AbgKJMem (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Nov 2020 07:34:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730407AbgKJMeR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 07:34:17 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5BCC0613D1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 04:34:16 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id a3so1514292wmb.5
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 04:34:16 -0800 (PST)
+        with ESMTP id S1730453AbgKJMeT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Nov 2020 07:34:19 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B76EDC0613D6
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 04:34:18 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id l1so8079429wrb.9
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2020 04:34:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lQQN2ZXT/G4B3VsGNJyIkmXWhvmT1sWJqpvE2SPt6Is=;
-        b=sV3UVxEXouoK63lYQ3sZ8dzWkxLMl3GBy4cA9l5fOi9UnJ7e2ZWBTsTS7IMQr8Ws7H
-         KraWsioS8ciUm8VPNhI5vs8fpEzYIgmc4l+/ukScdTQtTPuGmmRAMFrL3u0KqgYFsW+l
-         Kg69pZmfAlLceFCKcOoH3ZmZD4Doq7dO8/pwCUDwEi4Nzb9tSLHun4YXIPc97RdRqyAA
-         ojYkq1bnFVeELxsqRRKxRwDJhmqG8pzzYKhRdGM2GR5uoHMTl1xQKJc1SNB2qZxpXrCd
-         8n+nudelBCerotlnuDXJjLbQ49lCPgjEba3H7Ymwv0MGKLj41pL1vTrTMhdL/w0Jikse
-         fFCw==
+        bh=SyfsPFMi1Ol5bHDdeg25EiAHS6gH8P7QyAg8QmJ1Sho=;
+        b=eg3CytypQM/HEfeJZPkKrA2oP/01+B03QechvtoIHMDtU8esfU21sNd52SdNAw9xbj
+         093aEREwgXpWgcZQmdfdclrtzVRzoAhhA5WeMmZauY57ovozBJOURv0uVMgjglMbL3wO
+         Sew1fvb1nxFOkLTYFSdr3Z98b9iAOSHr8Df5iAESDXzX7nhdHGHko/ikYtY8VVkWypMB
+         vDY/1fgeqm8HIsenIJi5j4rq/qPjKYbVh9pfQIQNZHdH6ZkzoAgsRPAM7c4EiCCeFDVr
+         nkxea5m3EN9zHg9Zmne3gsMoCDK6Kf/5Y3sBEU5/DjWyvHPM8C1hrKIKfCDJUyzymUNW
+         HL0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lQQN2ZXT/G4B3VsGNJyIkmXWhvmT1sWJqpvE2SPt6Is=;
-        b=SEahyhtONney7GC/oBfFtq8RgfcXUpUhDi3W9oxbuEvIMU6o31JParkVpu8UFoBwWW
-         iM8erNUu+59StOOzjyGjODP1tiwJPTc4EZBAu+TrGbE7rCdguEvR/dqv3BVTy9PAYD9w
-         98m4TXok06qadPwjXI2BIl3V99+yBMR1uYrIM/lY3fznyEgq0FkPT6Aksq7hmwdNYNsl
-         jGs58zjiH7yj+uTdabixeVFyRpJrwcuUKcvPTRJ/tXd5zxBZOOOvyq/kLBAHhcAO/D7f
-         6Z8yO2tVRNGxaaD1r1pXYpCFY3aNkgusIeOr6u1pGln7cVZCxsI1M0CbcTCzJ9P+NOik
-         Dlxg==
-X-Gm-Message-State: AOAM532/Hq7rcZKs4FnIZm23NA8xnVLkNzCWKLpAyQe8ANm/OdcLfnNu
-        9DMJyXX17zFwMT3ukjtF7UOWBQ==
-X-Google-Smtp-Source: ABdhPJwmFQn6uwkVRA6amIfnVciBMRYDqwjaxLrEq637PklqtLdfEcnYhTbbi12bVmMFTFpbQIZvMg==
-X-Received: by 2002:a1c:35c7:: with SMTP id c190mr4553794wma.146.1605011655289;
-        Tue, 10 Nov 2020 04:34:15 -0800 (PST)
+        bh=SyfsPFMi1Ol5bHDdeg25EiAHS6gH8P7QyAg8QmJ1Sho=;
+        b=UwkKGk4cfVvHrQSZsbaYH72WkxWxarHHKgGyLwTEeqpzYNDCMtxzLjNgAxu1f7qarG
+         2MTm8M6GkDybP/m+wvrMeCwimnaZjkgg0NhFQinoZnirYBDjPz2BWReoCq9ByxVfKCDJ
+         V6MhX3XbB0FB+5wVGv0lgDhe0qbtlR6uCiroouHeKLk7xQbKUkTE8q0vsvHbaKq3rzM2
+         OkVMY069mlm/9qFyHjFfYY8P7SHD9mnkOHnHEJhiLsY4AqqUPQ/piNl39rDjBX/SFXl1
+         ffK2Ssm5dJwfZ2mEyF0vQ/xJ9xmXJRv/DqqAD9hGB0Syh++SRMYsZyc1ptubVyn9RiT3
+         qvSA==
+X-Gm-Message-State: AOAM531PU6QjsulKe/F4+eJO25gX37ainoM7LYkBiA53h/wPrlFz7FD3
+        nUaeOCivHMkt1/xfN78AhoFnDQ==
+X-Google-Smtp-Source: ABdhPJz84ubKcc4CsVo6fw8BzfaAA0tY9l4m5kYH7MIpwiFA6x1J57ZkFnzMZQgGo9wDw7gGq8jRdQ==
+X-Received: by 2002:a5d:514f:: with SMTP id u15mr12722798wrt.385.1605011657513;
+        Tue, 10 Nov 2020 04:34:17 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id s8sm12942217wrn.33.2020.11.10.04.34.14
+        by smtp.gmail.com with ESMTPSA id s8sm12942217wrn.33.2020.11.10.04.34.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 04:34:14 -0800 (PST)
+        Tue, 10 Nov 2020 04:34:16 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -64,9 +64,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         David Laight <David.Laight@aculab.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 3/7] gpio: exar: switch to a simpler IDA interface
-Date:   Tue, 10 Nov 2020 13:34:02 +0100
-Message-Id: <20201110123406.3261-4-brgl@bgdev.pl>
+Subject: [PATCH v3 5/7] gpio: exar: unduplicate address and offset computation
+Date:   Tue, 10 Nov 2020 13:34:04 +0100
+Message-Id: <20201110123406.3261-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201110123406.3261-1-brgl@bgdev.pl>
 References: <20201110123406.3261-1-brgl@bgdev.pl>
@@ -78,50 +78,93 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We don't need to specify any ranges when allocating IDs so we can switch
-to ida_alloc() and ida_free() instead of the ida_simple_ counterparts.
-
-ida_simple_get(ida, 0, 0, gfp) is equivalent to
-ida_alloc_range(ida, 0, UINT_MAX, gfp) which is equivalent to
-ida_alloc(ida, gfp). Note: IDR will never actually allocate an ID
-larger than INT_MAX.
+Provide and use helpers for calculating the register address and bit
+offset instead of hand coding it in every function.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-exar.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-exar.c | 40 ++++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index 1941ae533418..752e8437ff80 100644
+index db366d85b6b4..28b0b4b5fa35 100644
 --- a/drivers/gpio/gpio-exar.c
 +++ b/drivers/gpio/gpio-exar.c
-@@ -149,7 +149,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+@@ -33,6 +33,26 @@ struct exar_gpio_chip {
+ 	unsigned int first_pin;
+ };
  
- 	mutex_init(&exar_gpio->lock);
- 
--	index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
-+	index = ida_alloc(&ida_index, GFP_KERNEL);
- 	if (index < 0) {
- 		ret = index;
- 		goto err_mutex_destroy;
-@@ -179,7 +179,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_destroy:
--	ida_simple_remove(&ida_index, index);
-+	ida_free(&ida_index, index);
- err_mutex_destroy:
- 	mutex_destroy(&exar_gpio->lock);
- 	return ret;
-@@ -189,7 +189,7 @@ static int gpio_exar_remove(struct platform_device *pdev)
++static unsigned int
++exar_offset_to_sel_addr(struct exar_gpio_chip *exar_gpio, unsigned int offset)
++{
++	return (offset + exar_gpio->first_pin) / 8 ? EXAR_OFFSET_MPIOSEL_HI
++						   : EXAR_OFFSET_MPIOSEL_LO;
++}
++
++static unsigned int
++exar_offset_to_lvl_addr(struct exar_gpio_chip *exar_gpio, unsigned int offset)
++{
++	return (offset + exar_gpio->first_pin) / 8 ? EXAR_OFFSET_MPIOLVL_HI
++						   : EXAR_OFFSET_MPIOLVL_LO;
++}
++
++static unsigned int
++exar_offset_to_bit(struct exar_gpio_chip *exar_gpio, unsigned int offset)
++{
++	return (offset + exar_gpio->first_pin) % 8;
++}
++
+ static void exar_update(struct gpio_chip *chip, unsigned int reg, int val,
+ 			unsigned int offset)
  {
- 	struct exar_gpio_chip *exar_gpio = platform_get_drvdata(pdev);
+@@ -52,9 +72,8 @@ static int exar_set_direction(struct gpio_chip *chip, int direction,
+ 			      unsigned int offset)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
  
--	ida_simple_remove(&ida_index, exar_gpio->index);
-+	ida_free(&ida_index, exar_gpio->index);
- 	mutex_destroy(&exar_gpio->lock);
- 
+ 	exar_update(chip, addr, direction, bit);
  	return 0;
+@@ -75,9 +94,8 @@ static int exar_get(struct gpio_chip *chip, unsigned int reg)
+ static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_sel_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+ 
+ 	if (exar_get(chip, addr) & BIT(bit))
+ 		return GPIO_LINE_DIRECTION_IN;
+@@ -88,9 +106,8 @@ static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+ static int exar_get_value(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+ 
+ 	return !!(exar_get(chip, addr) & BIT(bit));
+ }
+@@ -99,9 +116,8 @@ static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
+ 			   int value)
+ {
+ 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+-	unsigned int addr = (offset + exar_gpio->first_pin) / 8 ?
+-		EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
+-	unsigned int bit  = (offset + exar_gpio->first_pin) % 8;
++	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
++	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+ 
+ 	exar_update(chip, addr, value, bit);
+ }
 -- 
 2.29.1
 
