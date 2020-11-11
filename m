@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB88C63697
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEA2C6369E
 	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A232208B3
+	by mail.kernel.org (Postfix) with ESMTP id 90DE2208CA
 	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgKKWGZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726849AbgKKWGZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 11 Nov 2020 17:06:25 -0500
-Received: from mga02.intel.com ([134.134.136.20]:65375 "EHLO mga02.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:8979 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726849AbgKKWGY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1726865AbgKKWGY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 11 Nov 2020 17:06:24 -0500
-IronPort-SDR: DVT077+iPXPGVSSw802dnyExxW9vn3V4N13P0NUwUzUhjLKlULMOyAZMDGLkAr7i3F2c5ibBEB
- RblvP/V2ApRg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="157241316"
+IronPort-SDR: qcFPVv/vt686AVy1bKZmlk+WEM8Zjn4QQX6gxOp2DJacEsFSg6V6bDIPp2p/JSBmgqs+uDlMpm
+ z/+/KRN9PyrQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="149498451"
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="157241316"
+   d="scan'208";a="149498451"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:06:23 -0800
-IronPort-SDR: uX5Lt0jCwKYl+0hYntFKx/Dlo/ohaT7WhanTiiNe2Ap8P3NHlJgRSr/OKZy+HAvdqm69F1vfst
- OjjVpnrAnkpg==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:06:24 -0800
+IronPort-SDR: lWfMqqGTnnKkMSfY+2xJl/6pQ3fF8czfVkujVznaq9PYVLigSsYCXuB6pieHMh7GPCLNFxkNc8
+ RwUrrSZb6MkA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="360718158"
+   d="scan'208";a="366390838"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Nov 2020 14:06:20 -0800
+  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2020 14:06:23 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id AC16752A; Thu, 12 Nov 2020 00:06:17 +0200 (EET)
+        id 232BB7A1; Thu, 12 Nov 2020 00:06:18 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v6 09/18] gpiolib: acpi: Move non-critical code outside of critical section
-Date:   Thu, 12 Nov 2020 00:05:50 +0200
-Message-Id: <20201111220559.39680-10-andriy.shevchenko@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v6 18/18] ARM: Drop ARCH_NR_GPIOS definition
+Date:   Thu, 12 Nov 2020 00:05:59 +0200
+Message-Id: <20201111220559.39680-19-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201111220559.39680-1-andriy.shevchenko@linux.intel.com>
 References: <20201111220559.39680-1-andriy.shevchenko@linux.intel.com>
@@ -56,42 +54,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Mika noticed that some code is run under mutex when it doesn't require
-the lock, like an error code assignment.
+The conditional by the generic header is the same,
+hence drop unnecessary duplication.
 
-Move non-critical code outside of critical section.
-
-Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib-acpi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/gpio.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index a9254de964cc..b00171d2aaf5 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1063,8 +1063,8 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 							 GPIO_ACTIVE_HIGH,
- 							 flags);
- 			if (IS_ERR(desc)) {
--				status = AE_ERROR;
- 				mutex_unlock(&achip->conn_lock);
-+				status = AE_ERROR;
- 				goto out;
- 			}
+diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
+index c50e383358c4..f3bb8a2bf788 100644
+--- a/arch/arm/include/asm/gpio.h
++++ b/arch/arm/include/asm/gpio.h
+@@ -2,10 +2,6 @@
+ #ifndef _ARCH_ARM_GPIO_H
+ #define _ARCH_ARM_GPIO_H
  
-@@ -1078,9 +1078,9 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 
- 			conn = kzalloc(sizeof(*conn), GFP_KERNEL);
- 			if (!conn) {
--				status = AE_NO_MEMORY;
- 				gpiochip_free_own_desc(desc);
- 				mutex_unlock(&achip->conn_lock);
-+				status = AE_NO_MEMORY;
- 				goto out;
- 			}
+-#if CONFIG_ARCH_NR_GPIO > 0
+-#define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
+-#endif
+-
+ /* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
+ #include <asm-generic/gpio.h>
  
 -- 
 2.28.0
