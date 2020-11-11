@@ -2,65 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6406EC388F9
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 07:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB33C388F9
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 08:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13164207BB
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 07:35:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5251D206F1
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 08:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725904AbgKKHfn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Nov 2020 02:35:43 -0500
-Received: from mga07.intel.com ([134.134.136.100]:51470 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbgKKHfk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Nov 2020 02:35:40 -0500
-IronPort-SDR: PUHx8az0zZ2C/N1vEjAXdCVQnBAL5bHIbJQkIeUft190qGq4lqe7F0p0aTzaJkOA58/c9L88Z+
- duKqQ/V4JKpA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9801"; a="234275505"
-X-IronPort-AV: E=Sophos;i="5.77,468,1596524400"; 
-   d="scan'208";a="234275505"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 23:35:38 -0800
-IronPort-SDR: aXhr6lrzJc6PynPzrdFfsI7dW2+QoahA6gRWi7nyb9V+fQmCeYd+WBTR8Rc/kDrSNl6n5YS2Lk
- m41hmcCsSZlw==
-X-IronPort-AV: E=Sophos;i="5.77,468,1596524400"; 
-   d="scan'208";a="473757115"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 23:35:36 -0800
-Received: by lahna (sSMTP sendmail emulation); Wed, 11 Nov 2020 09:35:33 +0200
-Date:   Wed, 11 Nov 2020 09:35:33 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Divagar Mohandass <divagar.mohandass@intel.com>
-Subject: Re: [PATCH v1] pinctrl: jasperlake: Unhide SPI group of pins
-Message-ID: <20201111073533.GM2495@lahna.fi.intel.com>
-References: <20201110195923.14516-1-andriy.shevchenko@linux.intel.com>
+        id S1726327AbgKKIdy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Nov 2020 03:33:54 -0500
+Received: from mo-csw-fb1516.securemx.jp ([210.130.202.172]:41864 "EHLO
+        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbgKKIdx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 03:33:53 -0500
+X-Greylist: delayed 394 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Nov 2020 03:33:52 EST
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1516) id 0AB8RIhs029486; Wed, 11 Nov 2020 17:27:18 +0900
+Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 0AB8R3SH006157; Wed, 11 Nov 2020 17:27:03 +0900
+X-Iguazu-Qid: 34trMeFKDGTR1d4FxM
+X-Iguazu-QSIG: v=2; s=0; t=1605083222; q=34trMeFKDGTR1d4FxM; m=nGIKsNDb0eac6blomvebqsRAl1gvq1tLrxpLBZMFhSQ=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1512) id 0AB8R2Bs021318;
+        Wed, 11 Nov 2020 17:27:02 +0900
+Received: from enc01.toshiba.co.jp ([106.186.93.100])
+        by imx2.toshiba.co.jp  with ESMTP id 0AB8R1FN017627;
+        Wed, 11 Nov 2020 17:27:01 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc01.toshiba.co.jp  with ESMTP id 0AB8R1MS026367;
+        Wed, 11 Nov 2020 17:27:01 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH 0/4] gpio: visoconti: Add Toshiba Visconti GPIO support
+Date:   Thu, 12 Nov 2020 02:25:49 +0900
+X-TSB-HOP: ON
+Message-Id: <20201111172553.1369282-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201110195923.14516-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 09:59:23PM +0200, Andy Shevchenko wrote:
-> If the group of pins is hidden in the pin list it affects
-> the register offset calculation despite fixed GPIO base.
-> Hence, the offsets of all pins after the hidden group
-> are broken. Instead we have to unhide the group and use a flag
-> to exclude it from GPIO number space.
-> 
-> Fixes: e278dcb7048b ("pinctrl: intel: Add Intel Jasper Lake pin controller support")
-> Reported-by: Divagar Mohandass <divagar.mohandass@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi,
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+This series is the GPIO driver for Toshiba's ARM SoC, Visconti[0].
+This includes DT binding documentation, device driver, MAINTAINER files, and updates to DT files.
+
+Best regards,
+  Nobuhiro
+
+[0]: https://toshiba.semicon-storage.com/ap-en/semiconductor/product/image-recognition-processors-visconti.html
+
+Nobuhiro Iwamatsu (4):
+  dt-bindings: gpio: Add bindings for Toshiba Visconti GPIO Controller
+  gpio: visoconti: Add Toshiba Visconti GPIO support
+  MAINTAINERS: Add entries for Toshiba Visconti GPIO controller
+  arm: dts: visconti: Add DT support for Toshiba Visconti5 GPIO driver
+
+ .../bindings/gpio/toshiba,gpio-visconti.yaml  |  85 ++++++
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/toshiba/tmpv7708-rm-mbrc.dts     |   4 +
+ arch/arm64/boot/dts/toshiba/tmpv7708.dtsi     |  27 ++
+ drivers/gpio/Kconfig                          |   8 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-visconti.c                  | 287 ++++++++++++++++++
+ drivers/pinctrl/visconti/pinctrl-common.c     |  23 ++
+ 8 files changed, 437 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+ create mode 100644 drivers/gpio/gpio-visconti.c
+
+-- 
+2.29.2
