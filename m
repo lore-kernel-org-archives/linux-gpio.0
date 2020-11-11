@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B96A7C56201
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FA8C388F9
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79354208CA
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E589208CA
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbgKKWUb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726849AbgKKWUb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 11 Nov 2020 17:20:31 -0500
-Received: from mga05.intel.com ([192.55.52.43]:48184 "EHLO mga05.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:54740 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726849AbgKKWUa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Nov 2020 17:20:30 -0500
-IronPort-SDR: EcuZoqpSxWqFPOpH4jANzzBwDwYtkRTT9B/dvGYfjv9pd1iMBTpqGEIjRVOv6B/sDeY0NDro6F
- 51A1owcFZ0JQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="254934871"
+        id S1726746AbgKKWUb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Nov 2020 17:20:31 -0500
+IronPort-SDR: Pi16kaCQyuMCbX3RHTT3a9thyR/yzk9kb8u5fZIxCyc1LwTSmbyjG3a743R92BI1Nf0vSYWnOk
+ 2VZ15AmPcqiw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="167643238"
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="254934871"
+   d="scan'208";a="167643238"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:30 -0800
-IronPort-SDR: hSL+WK0wPOUaS/HXBKPISj+1TsfGfRYrtyhvDXq7suPWtOyW2qhushXc+FYHBKK7LjKYlMypgs
- iM8OOBrWrngg==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:30 -0800
+IronPort-SDR: eGM7lNhU47CeSeKh3a0fba1zRpXHdBnkcrHc/VUGnNwvT7Rb3Ik/VjXWzjGPwE9/4MqNyb06DD
+ VNM1WIloJazQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="474018190"
+   d="scan'208";a="366394648"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 11 Nov 2020 14:20:28 -0800
+  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2020 14:20:28 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 73D80B1; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
+        id 8E3FF1CC; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -44,9 +44,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Hans de Goede <hdegoede@redhat.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v7 01/18] gpiolib: Replace unsigned by unsigned int
-Date:   Thu, 12 Nov 2020 00:19:51 +0200
-Message-Id: <20201111222008.39993-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v7 04/18] gpiolib: Extract gpio_set_config_with_argument() for future use
+Date:   Thu, 12 Nov 2020 00:19:54 +0200
+Message-Id: <20201111222008.39993-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
 References: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
@@ -56,115 +56,53 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Replace unsigned by unsigned int in GPIO library code.
-Note, legacy API left untouched.
+In the future we will need to have a separate function
+that takes an arbitrary argument value.
+
+Extract gpio_set_config_with_argument() for that purpose.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpiolib.c        | 16 ++++++++--------
- include/linux/gpio/consumer.h |  4 ++--
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/gpio/gpiolib.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bb5a9557b350..f94225d7817b 100644
+index 87bb73991337..5210f396f0cd 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -211,7 +211,7 @@ static int gpiochip_find_base(int ngpio)
- int gpiod_get_direction(struct gpio_desc *desc)
- {
- 	struct gpio_chip *gc;
--	unsigned offset;
-+	unsigned int offset;
- 	int ret;
- 
- 	gc = gpiod_to_chip(desc);
-@@ -1333,7 +1333,7 @@ void gpiochip_irq_domain_deactivate(struct irq_domain *domain,
+@@ -2094,10 +2094,19 @@ static int gpio_do_set_config(struct gpio_chip *gc, unsigned int offset,
+ 	return gc->set_config(gc, offset, config);
  }
- EXPORT_SYMBOL_GPL(gpiochip_irq_domain_deactivate);
  
--static int gpiochip_to_irq(struct gpio_chip *gc, unsigned offset)
-+static int gpiochip_to_irq(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct irq_domain *domain = gc->irq.domain;
- 
-@@ -1635,7 +1635,7 @@ static inline void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gc)
-  * @gc: the gpiochip owning the GPIO
-  * @offset: the offset of the GPIO to request for GPIO function
-  */
--int gpiochip_generic_request(struct gpio_chip *gc, unsigned offset)
-+int gpiochip_generic_request(struct gpio_chip *gc, unsigned int offset)
- {
- #ifdef CONFIG_PINCTRL
- 	if (list_empty(&gc->gpiodev->pin_ranges))
-@@ -1651,7 +1651,7 @@ EXPORT_SYMBOL_GPL(gpiochip_generic_request);
-  * @gc: the gpiochip to request the gpio function for
-  * @offset: the offset of the GPIO to free from GPIO function
-  */
--void gpiochip_generic_free(struct gpio_chip *gc, unsigned offset)
-+void gpiochip_generic_free(struct gpio_chip *gc, unsigned int offset)
- {
- 	pinctrl_gpio_free(gc->gpiodev->base + offset);
- }
-@@ -1663,7 +1663,7 @@ EXPORT_SYMBOL_GPL(gpiochip_generic_free);
-  * @offset: the offset of the GPIO to apply the configuration
-  * @config: the configuration to be applied
-  */
--int gpiochip_generic_config(struct gpio_chip *gc, unsigned offset,
-+int gpiochip_generic_config(struct gpio_chip *gc, unsigned int offset,
- 			    unsigned long config)
- {
- 	return pinctrl_gpio_set_config(gc->gpiodev->base + offset, config);
-@@ -1994,7 +1994,7 @@ void gpiod_free(struct gpio_desc *desc)
-  * help with diagnostics, and knowing that the signal is used as a GPIO
-  * can help avoid accidentally multiplexing it to another controller.
-  */
--const char *gpiochip_is_requested(struct gpio_chip *gc, unsigned offset)
-+const char *gpiochip_is_requested(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_desc *desc;
- 
-@@ -2098,7 +2098,7 @@ static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
+-static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
++static int gpio_set_config_with_argument(struct gpio_desc *desc,
++					 enum pin_config_param mode,
++					 u32 argument)
  {
  	struct gpio_chip *gc = desc->gdev->chip;
  	unsigned long config;
--	unsigned arg;
-+	unsigned int arg;
++
++	config = pinconf_to_config_packed(mode, argument);
++	return gpio_do_set_config(gc, gpio_chip_hwgpio(desc), config);
++}
++
++static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
++{
+ 	unsigned int arg;
  
  	switch (mode) {
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
-@@ -2354,7 +2354,7 @@ EXPORT_SYMBOL_GPL(gpiod_set_config);
-  * 0 on success, %-ENOTSUPP if the controller doesn't support setting the
-  * debounce time.
-  */
--int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
-+int gpiod_set_debounce(struct gpio_desc *desc, unsigned int debounce)
- {
- 	unsigned long config;
+@@ -2111,8 +2120,7 @@ static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
+ 		break;
+ 	}
  
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 901aab89d025..ef49307611d2 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -158,7 +158,7 @@ int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 				       unsigned long *value_bitmap);
- 
- int gpiod_set_config(struct gpio_desc *desc, unsigned long config);
--int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
-+int gpiod_set_debounce(struct gpio_desc *desc, unsigned int debounce);
- int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
- void gpiod_toggle_active_low(struct gpio_desc *desc);
- 
-@@ -481,7 +481,7 @@ static inline int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
- 	return -ENOSYS;
+-	config = pinconf_to_config_packed(mode, arg);
+-	return gpio_do_set_config(gc, gpio_chip_hwgpio(desc), config);
++	return gpio_set_config_with_argument(desc, mode, arg);
  }
  
--static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
-+static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned int debounce)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(desc);
+ static int gpio_set_bias(struct gpio_desc *desc)
 -- 
 2.28.0
 
