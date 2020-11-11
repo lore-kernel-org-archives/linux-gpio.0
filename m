@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EBBC388F9
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F2AC5517A
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDC33208CA
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32788208B8
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbgKKWUp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Nov 2020 17:20:45 -0500
+        id S1726108AbgKKWUs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Nov 2020 17:20:48 -0500
 Received: from mga11.intel.com ([192.55.52.93]:62550 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbgKKWUn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Nov 2020 17:20:43 -0500
-IronPort-SDR: h1jK4lKWx9z54KzvYLLriegAD4x2LAvz/98AWqHJSDqvTtxRp0jTQu1ORn6/tEMZX2RrccwQEw
- 9B/plOUVOIyA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="166719136"
+        id S1727188AbgKKWUq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Nov 2020 17:20:46 -0500
+IronPort-SDR: GS5fg2CViQjzXJvs9q3bVDqV+h4vBb/jl7ft23Sb3GY+091uJdOsjBhnED1+7oI1neH13wQruP
+ pAowSrRe9YKA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="166719147"
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="166719136"
+   d="scan'208";a="166719147"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:30 -0800
-IronPort-SDR: TXv7LshxYPhqv916np938hMIKsUGWmmmT2DVoImZ4eN9bkLkY5bEXKnrMhpqpPNKqRA+uaNyHB
- hZ0pWTPmYz0A==
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:32 -0800
+IronPort-SDR: AzB7wgGQQtfpeBzpW5DOtatSHgthblNunOwuE97Dk6RrYmFhqLpuZYYPOmRRAGFc64RU5OPyNr
+ uo6bA9hmUgkQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="354991218"
+   d="scan'208";a="356821979"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 11 Nov 2020 14:20:28 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 11 Nov 2020 14:20:31 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 854F3142; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
+        id E7CB460A; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Cc:     Vasile-Laurentiu Stanimir 
+        <vasile-laurentiu.stanimir@windriver.com>,
         Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v7 03/18] gpiolib: use proper API to pack pin configuration parameters
-Date:   Thu, 12 Nov 2020 00:19:53 +0200
-Message-Id: <20201111222008.39993-4-andriy.shevchenko@linux.intel.com>
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v7 13/18] gpiolib: acpi: Set initial value for output pin based on bias and polarity
+Date:   Thu, 12 Nov 2020 00:20:03 +0200
+Message-Id: <20201111222008.39993-14-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
 References: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
@@ -56,28 +58,92 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Instead of open coded macro use, call pinconf_to_config_packed().
+From: Vasile-Laurentiu Stanimir <vasile-laurentiu.stanimir@windriver.com>
 
+GpioIo() resources don't contain an initial value for the output pin.
+Therefore instead of deducting its value solely based on bias field
+we should deduce that value from the polarity and the bias fields.
+Typical scenario is, when pin is defined in the table and its polarity,
+specified in _DSD or via platform code, is defined as active low,
+in the following call chain:
+
+  -> acpi_populate_gpio_lookup()
+     -> acpi_gpio_to_gpiod_flags()
+
+it will return GPIOD_OUT_HIGH if bias is set no matter if polarity
+is GPIO_ACTIVE_LOW, so it will return the current level instead of
+the logical level.
+
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Vasile-Laurentiu Stanimir <vasile-laurentiu.stanimir@windriver.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib-acpi.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b45487aace7e..87bb73991337 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2111,7 +2111,7 @@ static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
- 		break;
- 	}
- 
--	config = PIN_CONF_PACKED(mode, arg);
-+	config = pinconf_to_config_packed(mode, arg);
- 	return gpio_do_set_config(gc, gpio_chip_hwgpio(desc), config);
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index ac1bde0720f2..b47d5e8edaeb 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -206,7 +206,7 @@ static void acpi_gpiochip_request_irqs(struct acpi_gpio_chip *acpi_gpio)
  }
  
+ static enum gpiod_flags
+-acpi_gpio_to_gpiod_flags(const struct acpi_resource_gpio *agpio)
++acpi_gpio_to_gpiod_flags(const struct acpi_resource_gpio *agpio, int polarity)
+ {
+ 	switch (agpio->io_restriction) {
+ 	case ACPI_IO_RESTRICT_INPUT:
+@@ -215,15 +215,17 @@ acpi_gpio_to_gpiod_flags(const struct acpi_resource_gpio *agpio)
+ 		/*
+ 		 * ACPI GPIO resources don't contain an initial value for the
+ 		 * GPIO. Therefore we deduce that value from the pull field
+-		 * instead. If the pin is pulled up we assume default to be
+-		 * high, if it is pulled down we assume default to be low,
+-		 * otherwise we leave pin untouched.
++		 * and the polarity instead. If the pin is pulled up we assume
++		 * default to be high, if it is pulled down we assume default
++		 * to be low, otherwise we leave pin untouched. For active low
++		 * polarity values will be switched. See also
++		 * Documentation/firmware-guide/acpi/gpio-properties.rst.
+ 		 */
+ 		switch (agpio->pin_config) {
+ 		case ACPI_PIN_CONFIG_PULLUP:
+-			return GPIOD_OUT_HIGH;
++			return polarity == GPIO_ACTIVE_LOW ? GPIOD_OUT_LOW : GPIOD_OUT_HIGH;
+ 		case ACPI_PIN_CONFIG_PULLDOWN:
+-			return GPIOD_OUT_LOW;
++			return polarity == GPIO_ACTIVE_LOW ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
+ 		default:
+ 			break;
+ 		}
+@@ -683,8 +685,8 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 			lookup->info.polarity = agpio->polarity;
+ 			lookup->info.triggering = agpio->triggering;
+ 		} else {
+-			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio);
+ 			lookup->info.polarity = lookup->active_low;
++			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio, lookup->info.polarity);
+ 		}
+ 	}
+ 
+@@ -1055,12 +1057,13 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 		}
+ 
+ 		if (!found) {
+-			enum gpiod_flags flags = acpi_gpio_to_gpiod_flags(agpio);
++			int polarity = GPIO_ACTIVE_HIGH;
++			enum gpiod_flags flags = acpi_gpio_to_gpiod_flags(agpio, polarity);
+ 			const char *label = "ACPI:OpRegion";
+ 			int ret;
+ 
+ 			desc = gpiochip_request_own_desc(chip, pin, label,
+-							 GPIO_ACTIVE_HIGH,
++							 polarity,
+ 							 flags);
+ 			if (IS_ERR(desc)) {
+ 				mutex_unlock(&achip->conn_lock);
 -- 
 2.28.0
 
