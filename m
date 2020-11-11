@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A44AC6369E
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9C1C388F9
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 394AF208B8
+	by mail.kernel.org (Postfix) with ESMTP id C82B12100A
 	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbgKKWUg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1727158AbgKKWUg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 11 Nov 2020 17:20:36 -0500
-Received: from mga07.intel.com ([134.134.136.100]:36989 "EHLO mga07.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:36979 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727137AbgKKWUf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727145AbgKKWUf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 11 Nov 2020 17:20:35 -0500
-IronPort-SDR: 4glK79RwYGgiIeZ/iJqa2TdZVuoSgsuwVB00v0nVtl9Jjxvx5aA+fjHrpcSnC5gVjssDjXE5EO
- bX1J+3f9EQcA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="234391785"
+IronPort-SDR: UsLYnFS+Q4QR9rvP1lDZBhd11CYVzqpke/OOjkr5IoJC/hW+dEMvybeX9GQN3VvCYNj0O8IAiX
+ 0MjunrM5osLQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="234391792"
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="234391785"
+   d="scan'208";a="234391792"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:33 -0800
-IronPort-SDR: i5LOYxWRlWW00dde92NJGe0riXbaRhE58F4t+BQs/n6OfDTNQQ59TfpB2uXRVs5ohR9EEZLJr8
- fUgodGRdDnrA==
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:34 -0800
+IronPort-SDR: YC7FNnSMqxXCrg3KBpWWAixJJZky3WQXS/r9Li13bKqEyklvhEb40QfEMtgsTz+pbsXnE3d7TJ
+ uptn5UCqtugQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="308983980"
+   d="scan'208";a="308983990"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Nov 2020 14:20:30 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 11 Nov 2020 14:20:33 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B157D4B0; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
+        id 1A0FBA7; Thu, 12 Nov 2020 00:20:28 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jamie McClymont <jamie@kwiius.com>,
         Hans de Goede <hdegoede@redhat.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v7 08/18] gpiolib: acpi: Respect bias settings for GpioInt() resource
-Date:   Thu, 12 Nov 2020 00:19:58 +0200
-Message-Id: <20201111222008.39993-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v7 17/18] gpiolib: acpi: Use BIT() macro to increase readability
+Date:   Thu, 12 Nov 2020 00:20:07 +0200
+Message-Id: <20201111222008.39993-18-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
 References: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
@@ -57,45 +56,30 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In some cases the GpioInt() resource is coming with bias settings
-which may affect system functioning. Respect bias settings for
-GpioInt() resource by calling acpi_gpio_update_gpiod_*flags() API
-in acpi_dev_gpio_irq_get().
+We may use BIT() macro to increase readability in
+acpi_gpio_adr_space_handler().
 
-Reported-by: Jamie McClymont <jamie@kwiius.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpiolib-acpi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpio/gpiolib-acpi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 834a12f3219e..3a39e8a93226 100644
+index a556e2ec0a39..6cc5f91bfe2e 100644
 --- a/drivers/gpio/gpiolib-acpi.c
 +++ b/drivers/gpio/gpiolib-acpi.c
-@@ -942,6 +942,7 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+@@ -1101,8 +1101,7 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 		mutex_unlock(&achip->conn_lock);
  
- 		if (info.gpioint && idx++ == index) {
- 			unsigned long lflags = GPIO_LOOKUP_FLAGS_DEFAULT;
-+			enum gpiod_flags dflags = GPIOD_ASIS;
- 			char label[32];
- 			int irq;
- 
-@@ -952,8 +953,11 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- 			if (irq < 0)
- 				return irq;
- 
-+			acpi_gpio_update_gpiod_flags(&dflags, &info);
-+			acpi_gpio_update_gpiod_lookup_flags(&lflags, &info);
-+
- 			snprintf(label, sizeof(label), "GpioInt() %d", index);
--			ret = gpiod_configure_flags(desc, label, lflags, info.flags);
-+			ret = gpiod_configure_flags(desc, label, lflags, dflags);
- 			if (ret < 0)
- 				return ret;
- 
+ 		if (function == ACPI_WRITE)
+-			gpiod_set_raw_value_cansleep(desc,
+-						     !!((1 << i) & *value));
++			gpiod_set_raw_value_cansleep(desc, !!(*value & BIT(i)));
+ 		else
+ 			*value |= (u64)gpiod_get_raw_value_cansleep(desc) << i;
+ 	}
 -- 
 2.28.0
 
