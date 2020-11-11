@@ -2,183 +2,122 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 518CDC5517A
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 14:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1755CC388F9
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 14:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A00A20809
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 14:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9A8820756
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 14:09:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lWCk5qxl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbgKKOAI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Nov 2020 09:00:08 -0500
-Received: from mga17.intel.com ([192.55.52.151]:14591 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726923AbgKKOAG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Nov 2020 09:00:06 -0500
-IronPort-SDR: r7Y/cg4Rl2vRCb8HKjT3NxQfDMVC3LAO/5TbqWsTXouebvtX6cPXLSWadv3QeNOHEo3X1gZvcJ
- bBE/Y5GV5iFA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9801"; a="149996407"
-X-IronPort-AV: E=Sophos;i="5.77,469,1596524400"; 
-   d="scan'208";a="149996407"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 06:00:05 -0800
-IronPort-SDR: bHPUREI8Yj4ZAW2He8KoyYG/gsXXyc62ZZYGQU0qci6tk4wIgnTFLrnVpjFW9RPZoGYXJi1rWt
- MQh5oGsnbvnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,469,1596524400"; 
-   d="scan'208";a="428770592"
-Received: from lkp-server02.sh.intel.com (HELO 5b2c7e53fe46) ([10.239.97.151])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Nov 2020 06:00:03 -0800
-Received: from kbuild by 5b2c7e53fe46 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1kcqfK-0000FJ-Bz; Wed, 11 Nov 2020 14:00:02 +0000
-Date:   Wed, 11 Nov 2020 21:59:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:for-next] BUILD SUCCESS
- c4f103cf846460da0503f8e254ef2584eb48719b
-Message-ID: <5fabee3e.1T0UT80yeVuyMqoE%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1726851AbgKKOJL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Nov 2020 09:09:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59376 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbgKKOIg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 09:08:36 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF9AC0613D1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2020 06:08:36 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id q19so2207899ljc.10
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2020 06:08:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sl17UnNN1853pv8Fm2YJwHvBxDhtc6bmkJMszso6wJw=;
+        b=lWCk5qxlFFQNf1X4wZDbIoSNQ3OiEi8AuwEDxdVDpD/FZYdWPgEs4hRKyE5ukfSPrE
+         26Yy+SvJwmncWe4l0jv9MZL2TXygHdnV88DClbSbAUqnTkWlLKLRCuou0nzhv8eQX/Yf
+         ytT82aZuzfvEGFobCoyI/yDnDzjZITTWeZmH4eQrJfpy64UTO8ROsHIuL29u8cx1omSk
+         hZUTPl3KE7+q+tx7Hyft5vhSYgbY9MOPNpEqOb184/eN49bJqDQpX2qovNb/qUnDu4a1
+         ke4D0UiHdXpiVLTGtQlTYLWDkVGTrmsgPr+MYVpimrJPzHX3dOLCA/M1YhdlpT6oXJsr
+         uzAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sl17UnNN1853pv8Fm2YJwHvBxDhtc6bmkJMszso6wJw=;
+        b=KEepOjN/uslpsuwkf0Pq9+r56wEuQrWlGtbYsmpzZxl3gLXIRPREijZ6/BRZNumRFm
+         eS8PbhhKizEkoa12Ftfcss4DnIPuR00Kpw5s9B4oES737SbERCjXFovT8MK+iLyFHMvE
+         /hGZn5bU8yJzjZQQ+hBMxDPntNg4B+qHVZISpQvUHnZgLRi1DbXRu1BLaX0B4VgEjcO2
+         cS9Iz4F30q1iEnK+/ZBtDJSBQUfkLc41xvwhBFN/MWFe5Av0hir+Fo1n/ubSUTQAlc63
+         ARMsU6rqnziZilf7A1mqYGjo0Z47Zk6B7Zc6fgJcdCXlxT7NWWJEP9ERwOkITgUFBspk
+         mCEQ==
+X-Gm-Message-State: AOAM530lpDPTBRTE7xlSzF/MViEf7OPdsapowoQyg1HtqgYio1yRgERy
+        rqn4D2gBXtYDlHsNG/ekMZyPV9XwRR8yvCZs
+X-Google-Smtp-Source: ABdhPJyAs/q8Le7LKnDYllritZSni6VfKOCDnj9B2EL0oOnPFEJzW5PGDYFeQ23zK8ZkAz4cX6MROw==
+X-Received: by 2002:a2e:8753:: with SMTP id q19mr2262360ljj.188.1605103714503;
+        Wed, 11 Nov 2020 06:08:34 -0800 (PST)
+Received: from localhost.localdomain (c-92d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.146])
+        by smtp.gmail.com with ESMTPSA id w10sm245437ljo.130.2020.11.11.06.08.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2020 06:08:33 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Yash Shah <yash.shah@sifive.com>,
+        "Wesley W . Terpstra" <wesley@sifive.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH 1/2] RFT: gpio: sifive: Set affinity callback to parent
+Date:   Wed, 11 Nov 2020 15:06:27 +0100
+Message-Id: <20201111140628.24067-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  for-next
-branch HEAD: c4f103cf846460da0503f8e254ef2584eb48719b  Merge branch 'devel' into for-next
+This assigns the .irq_set_affinity to the parent callback.
+I assume the sifive GPIO can be used in systems with
+SMP.
 
-elapsed time: 919m
+I used the pattern making the hirerarchy tolerant for missing
+parent as in Marc's earlier patches.
 
-configs tested: 111
-configs skipped: 2
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-nios2                            alldefconfig
-powerpc                      pcm030_defconfig
-powerpc                    amigaone_defconfig
-powerpc                 mpc832x_rdb_defconfig
-powerpc                      ppc64e_defconfig
-arm                      pxa255-idp_defconfig
-powerpc                         ps3_defconfig
-powerpc                   motionpro_defconfig
-mips                      fuloong2e_defconfig
-mips                       bmips_be_defconfig
-arm                           efm32_defconfig
-arm                          iop32x_defconfig
-arm                        cerfcube_defconfig
-h8300                    h8300h-sim_defconfig
-h8300                               defconfig
-xtensa                    xip_kc705_defconfig
-arm                            hisi_defconfig
-arm                          badge4_defconfig
-sh                           se7780_defconfig
-sh                         apsh4a3a_defconfig
-arm                       netwinder_defconfig
-arm                         mv78xx0_defconfig
-sh                            migor_defconfig
-powerpc                   bluestone_defconfig
-sh                         ap325rxa_defconfig
-s390                             allyesconfig
-powerpc                      bamboo_defconfig
-sh                            shmin_defconfig
-powerpc                     tqm8540_defconfig
-mips                        maltaup_defconfig
-arm                        magician_defconfig
-mips                 decstation_r4k_defconfig
-powerpc                 mpc836x_mds_defconfig
-m68k                            q40_defconfig
-arc                      axs103_smp_defconfig
-x86_64                           alldefconfig
-arm                   milbeaut_m10v_defconfig
-arm                         nhk8815_defconfig
-parisc                              defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a006-20201111
-i386                 randconfig-a005-20201111
-i386                 randconfig-a002-20201111
-i386                 randconfig-a001-20201111
-i386                 randconfig-a003-20201111
-i386                 randconfig-a004-20201111
-x86_64               randconfig-a015-20201111
-x86_64               randconfig-a011-20201111
-x86_64               randconfig-a014-20201111
-x86_64               randconfig-a013-20201111
-x86_64               randconfig-a016-20201111
-x86_64               randconfig-a012-20201111
-i386                 randconfig-a012-20201111
-i386                 randconfig-a014-20201111
-i386                 randconfig-a016-20201111
-i386                 randconfig-a011-20201111
-i386                 randconfig-a015-20201111
-i386                 randconfig-a013-20201111
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a003-20201111
-x86_64               randconfig-a005-20201111
-x86_64               randconfig-a004-20201111
-x86_64               randconfig-a002-20201111
-x86_64               randconfig-a006-20201111
-x86_64               randconfig-a001-20201111
-
+Cc: Yash Shah <yash.shah@sifive.com>
+Cc: Wesley W. Terpstra <wesley@sifive.com>
+Suggested-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/gpio/gpio-sifive.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/gpio/gpio-sifive.c b/drivers/gpio/gpio-sifive.c
+index c54dd08f2cbf..e4c190562132 100644
+--- a/drivers/gpio/gpio-sifive.c
++++ b/drivers/gpio/gpio-sifive.c
+@@ -128,6 +128,16 @@ static void sifive_gpio_irq_eoi(struct irq_data *d)
+ 	irq_chip_eoi_parent(d);
+ }
+ 
++static int sifive_gpio_irq_set_affinity(struct irq_data *data,
++					const struct cpumask *dest,
++					bool force)
++{
++	if (data->parent_data)
++		return irq_chip_set_affinity_parent(data, dest, force);
++
++	return 0;
++}
++
+ static struct irq_chip sifive_gpio_irqchip = {
+ 	.name		= "sifive-gpio",
+ 	.irq_set_type	= sifive_gpio_irq_set_type,
+@@ -136,6 +146,7 @@ static struct irq_chip sifive_gpio_irqchip = {
+ 	.irq_enable	= sifive_gpio_irq_enable,
+ 	.irq_disable	= sifive_gpio_irq_disable,
+ 	.irq_eoi	= sifive_gpio_irq_eoi,
++	.irq_set_affinity = sifive_gpio_irq_set_affinity,
+ };
+ 
+ static int sifive_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
+-- 
+2.26.2
+
