@@ -2,167 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3E8C388F9
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44459C5517A
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 310F1208CA
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7780208CA
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgKKWUZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Nov 2020 17:20:25 -0500
-Received: from mga17.intel.com ([192.55.52.151]:63860 "EHLO mga17.intel.com"
+        id S1726901AbgKKWUa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Nov 2020 17:20:30 -0500
+Received: from mga09.intel.com ([134.134.136.24]:2201 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbgKKWUZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Nov 2020 17:20:25 -0500
-IronPort-SDR: f6UOH5lQul12Stjb7f/je25vhz1mMbA9k5vdJtWsEP/CiuVYm03weDOH/VfssMjsEk2lSOsl1u
- BJdzF4KUTC2w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="150077415"
+        id S1726746AbgKKWUa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Nov 2020 17:20:30 -0500
+IronPort-SDR: HhMj1rGdc5n1znaHZZPjxrneWmyySA9w6YUT1dKeILIQVRZj3br04rWVYLfqtwM5UxGqZyL9U7
+ 4D8lSC4u4/cw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="170393187"
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="150077415"
+   d="scan'208";a="170393187"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:24 -0800
-IronPort-SDR: VhPwuFAKRNEeYUNBKYb7jlUxl5cghs+tjUGbW/oLx42bkT0N7MrBaasFHWOjl0dFIDft59NJGG
- z79gIyia7LtA==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:30 -0800
+IronPort-SDR: Gsq8Frgdk5zWQD82rAZEsnKSoWlP3CqpqVQOx4x2x10GHqkz5w0aUdv42M84v2wc09ZV8P8wsV
+ RqzvmPAP4ykw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="354991153"
+   d="scan'208";a="541980392"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 11 Nov 2020 14:20:23 -0800
+  by orsmga005.jf.intel.com with ESMTP; 11 Nov 2020 14:20:28 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 19532B1; Thu, 12 Nov 2020 00:20:21 +0200 (EET)
+        id 9705B3D3; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jamie McClymont <jamie@kwiius.com>,
-        Coiby Xu <coiby.xu@gmail.com>,
-        Vasile-Laurentiu Stanimir 
-        <vasile-laurentiu.stanimir@windriver.com>
-Subject: [PATCH v7 00/18] gpiolib: acpi: pin configuration fixes
-Date:   Thu, 12 Nov 2020 00:19:50 +0200
-Message-Id: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
+        Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v7 05/18] gpiolib: move bias related code from gpio_set_config() to gpio_set_bias()
+Date:   Thu, 12 Nov 2020 00:19:55 +0200
+Message-Id: <20201111222008.39993-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
+References: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are fixes (and plenty cleanups) that allow to take into consideration
-more parameters in ACPI, i.e. bias for GpioInt() and debounce timeout
-for Operation Regions, Events and GpioInt() resources.
+Move bias related code from gpio_set_config() to gpio_set_bias().
 
-During review Hans noted, that gpiod_set_debounce() returns -ENOTSUPP for
-the cases when feature is not supported either by driver or a controller.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-It appears that we have slightly messy API here:
-
-  FUNC			Relation with ENOTSUPP
-
-  gpiod_set_config()	 returns if not supported
-  gpiod_set_debounce()	 as gpiod_set_config() above
-  gpio_set_debounce()	 legacy wrapper on top of gpiod_set_debounce()
-  gpiod_set_transitory() skips it (returns okay) with debug message
-  gpio_set_config()	 returns if not supported
-  gpio_set_bias()	 skips it (returns okay)
-
-Last two functions are internal to GPIO library, while the rest is
-exported API. In order to be consistent with both naming schemas
-the series introduces gpio_set_debounce_timeout() that considers
-the feature optional. New API is only for internal use.
-
-While at it, the few first patches clean up the current GPIO library
-code to unify it to some extend.
-
-The above is followed by changes made in ACPI GPIO library part.
-
-The bias patch highly depends on Intel pin control driver changes
-(they are material for v5.10 [1]), due to this and amount of the
-prerequisite changes this series is probably not supposed to be
-backported (at least right now).
-
-The last patch adds Intel GPIO tree as official one for ACPI GPIO
-changes.
-
-Assuming [1] makes v5.10 this series can be sent as PR to Linus
-for v5.11 cycle.
-
-Note, some patches are also depend to the code from GPIO fixes / for-next
-repositories. Unfortunately there is no one repository which contains all
-up to date for-next changes against GPIO subsystem. That's why I have merged
-Linus' for-next followed by Bart's for-next branches as prerequisites
-to the series.
-
-Cc: Jamie McClymont <jamie@kwiius.com>
-Cc: Coiby Xu <coiby.xu@gmail.com>
-Cc: Vasile-Laurentiu Stanimir <vasile-laurentiu.stanimir@windriver.com>
-
-[1]: https://lore.kernel.org/linux-gpio/20201106181938.GA41213@black.fi.intel.com/
-
-Changelog v7:
-- sent correct set of patches
-
-Changelog v6:
-- added tags (Hans, Mika, Linus)
-- dropped temporary variables in couple of patches (Mika)
-- dropped "Add temporary variable to gpiod_set_transitory()..." (Mika)
-- added patch to move assignments outside a lock (Mika)
-- added patch from Vasile
-- due to above rebased accordingly the affected ones
-
-Changelog v5:
-- introduced gpio_set_debounce_timeout()
-- made a prerequisite refactoring in GPIO library code
-- updated the rest accordingly
-
-Changelog v4:
-- extended debounce setting to ACPI events and Operation Regions
-- added Ack (Linus)
-- added few more cleanup patches, including MAINTAINERS update
-
-Changelog v3:
-- dropped upstreamed OF patch
-- added debounce fix
-
-Andy Shevchenko (17):
-  gpiolib: Replace unsigned by unsigned int
-  gpiolib: add missed break statement
-  gpiolib: use proper API to pack pin configuration parameters
-  gpiolib: Extract gpio_set_config_with_argument() for future use
-  gpiolib: move bias related code from gpio_set_config() to
-    gpio_set_bias()
-  gpiolib: Extract gpio_set_config_with_argument_optional() helper
-  gpiolib: Introduce gpio_set_debounce_timeout() for internal use
-  gpiolib: acpi: Respect bias settings for GpioInt() resource
-  gpiolib: acpi: Use named item for enum gpiod_flags variable
-  gpiolib: acpi: Take into account debounce settings
-  gpiolib: acpi: Move non-critical code outside of critical section
-  gpiolib: acpi: Move acpi_gpio_to_gpiod_flags() upper in the code
-  gpiolib: acpi: Make acpi_gpio_to_gpiod_flags() usable for GpioInt()
-  gpiolib: acpi: Extract acpi_request_own_gpiod() helper
-  gpiolib: acpi: Convert pin_index to be u16
-  gpiolib: acpi: Use BIT() macro to increase readability
-  gpiolib: acpi: Make Intel GPIO tree official for GPIO ACPI work
-
-Vasile-Laurentiu Stanimir (1):
-  gpiolib: acpi: Set initial value for output pin based on bias and
-    polarity
-
- MAINTAINERS                   |   1 +
- drivers/gpio/gpiolib-acpi.c   | 138 +++++++++++++++++++++-------------
- drivers/gpio/gpiolib-acpi.h   |   2 +
- drivers/gpio/gpiolib.c        |  98 ++++++++++++++----------
- drivers/gpio/gpiolib.h        |   1 +
- include/linux/gpio/consumer.h |   4 +-
- 6 files changed, 147 insertions(+), 97 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 5210f396f0cd..2bfc44ca4425 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2107,25 +2107,13 @@ static int gpio_set_config_with_argument(struct gpio_desc *desc,
+ 
+ static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
+ {
+-	unsigned int arg;
+-
+-	switch (mode) {
+-	case PIN_CONFIG_BIAS_PULL_DOWN:
+-	case PIN_CONFIG_BIAS_PULL_UP:
+-		arg = 1;
+-		break;
+-
+-	default:
+-		arg = 0;
+-		break;
+-	}
+-
+-	return gpio_set_config_with_argument(desc, mode, arg);
++	return gpio_set_config_with_argument(desc, mode, 0);
+ }
+ 
+ static int gpio_set_bias(struct gpio_desc *desc)
+ {
+ 	enum pin_config_param bias;
++	unsigned int arg;
+ 	int ret;
+ 
+ 	if (test_bit(FLAG_BIAS_DISABLE, &desc->flags))
+@@ -2137,7 +2125,18 @@ static int gpio_set_bias(struct gpio_desc *desc)
+ 	else
+ 		return 0;
+ 
+-	ret = gpio_set_config(desc, bias);
++	switch (bias) {
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++	case PIN_CONFIG_BIAS_PULL_UP:
++		arg = 1;
++		break;
++
++	default:
++		arg = 0;
++		break;
++	}
++
++	ret = gpio_set_config_with_argument(desc, bias, arg);
+ 	if (ret != -ENOTSUPP)
+ 		return ret;
+ 
 -- 
 2.28.0
 
