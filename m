@@ -2,79 +2,177 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,
-	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EBFC388F9
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 08:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 451A1C388F9
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 08:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A23F20659
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 08:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D44A8206E3
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 08:52:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fKtP3O0P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbgKKIuB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Nov 2020 03:50:01 -0500
-Received: from mo-csw-fb1116.securemx.jp ([210.130.202.175]:46746 "EHLO
-        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbgKKIuA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 03:50:00 -0500
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1116) id 0AB8RHLr021984; Wed, 11 Nov 2020 17:27:18 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 0AB8R1O3031490; Wed, 11 Nov 2020 17:27:01 +0900
-X-Iguazu-Qid: 2wHHmca9fjm8Ybd8ro
-X-Iguazu-QSIG: v=2; s=0; t=1605083221; q=2wHHmca9fjm8Ybd8ro; m=KJP6CDDJxGlPugnW+J1zzmfZpKOaWDTq6SkZ7oJbxDk=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1111) id 0AB8R0xm017970;
-        Wed, 11 Nov 2020 17:27:00 +0900
-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-        by imx12.toshiba.co.jp  with ESMTP id 0AB8R0DO006932;
-        Wed, 11 Nov 2020 17:27:00 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id 0AB8QxCe032365;
-        Wed, 11 Nov 2020 17:27:00 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH 3/4] MAINTAINERS: Add entries for Toshiba Visconti GPIO controller
-Date:   Thu, 12 Nov 2020 02:25:52 +0900
-X-TSB-HOP: ON
-Message-Id: <20201111172553.1369282-4-nobuhiro1.iwamatsu@toshiba.co.jp>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201111172553.1369282-1-nobuhiro1.iwamatsu@toshiba.co.jp>
-References: <20201111172553.1369282-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+        id S1726230AbgKKIwa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Nov 2020 03:52:30 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:55759 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbgKKIwa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 03:52:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1605084749; x=1636620749;
+  h=references:from:to:cc:subject:in-reply-to:date:
+   message-id:mime-version;
+  bh=mPPy1TkcVOlW/Zjck2Emjg838QadGoDmShOXyWNzpns=;
+  b=fKtP3O0POp+1kmQ15AGUDU196cBf1tDpgc71CqLRqhphd1lTRY7UpETS
+   1UHkz2i3VN/uBeTagbIj7We0KIFO+MusJAqKbCziLaA8MwJwOLwN/SzA+
+   gHl0dVtw2VkEJw62fq01bv7S/0WKFeabXnxLbM/EL3e7tOu17TEO6BU/9
+   lmX+Eq/ep4OkAx/ZQbD459LiAGWEU4KCIsXGolFwKRNVY1a/BG72aMeuN
+   XVIJQ5ZXjcGlcIDXUOnHn0rprj94100vRxxZEeej+m4o+My7CbAf+bzD7
+   Q54BsOArzCq735haCaG4n7Dtrt5JXqnyAP1v0SeTwj2Exh+eRvMvq5LJg
+   Q==;
+IronPort-SDR: vriVf8UGjCnWN9V1LMJVSV66qS6uYu96PDzWV8heInFGVS3xNRLeUhigGq6SrUWEgFCLf+xD5Q
+ 5SNx2NqrpRHKkmjbP6xjwKJ0Aa/CB7RHEwHx/hU0d6eWiX4CkwulRDBfCuy8bmiPAzj859x0wM
+ Xh4drdJEfsWayKYHbwk1GzbbP5wXbJDfac8ZfcNvHj24Dc/tpjBbYg7GPj+Gwk7rmw8MkB/gZc
+ tIHKAW5GuLMnFWieBTq1+s1v3M8h3KBxlYL/DrdBiukeOx2vwPUpe602nOKPTsmRPFjt6LNo4D
+ Tec=
+X-IronPort-AV: E=Sophos;i="5.77,469,1596524400"; 
+   d="scan'208";a="103025944"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Nov 2020 01:52:29 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Wed, 11 Nov 2020 01:52:28 -0700
+Received: from soft-dev10.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3
+ via Frontend Transport; Wed, 11 Nov 2020 01:52:26 -0700
+References: <20201109132643.457932-1-lars.povlsen@microchip.com> <20201109132643.457932-3-lars.povlsen@microchip.com> <CAHp75Vdfm7A5=Mi-LZ1sHJS5fSngypZQ50-rGQ7A6kD2kmVFTA@mail.gmail.com> <87361hfbwu.fsf@microchip.com> <CAHp75VfZ=hJvpYiAOz72yRpJTxLU6ZOo9hEz4BsBcgSwAcjCFA@mail.gmail.com>
+User-agent: mu4e 1.2.0; emacs 26.3
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Lars Povlsen <lars.povlsen@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-arm Mailing List" <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH v8 2/3] pinctrl: pinctrl-microchip-sgpio: Add pinctrl driver for Microsemi Serial GPIO
+In-Reply-To: <CAHp75VfZ=hJvpYiAOz72yRpJTxLU6ZOo9hEz4BsBcgSwAcjCFA@mail.gmail.com>
+Date:   Wed, 11 Nov 2020 09:51:52 +0100
+Message-ID: <87zh3oe0nr.fsf@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add entries for Toshiba Visconti GPIO Controller binding and driver.
 
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Andy Shevchenko writes:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 94ac10a153c7..7af1f9257eec 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2635,8 +2635,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwamatsu/linux-visconti.git
- F:	Documentation/devicetree/bindings/arm/toshiba.yaml
-+F:	Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
- F:	Documentation/devicetree/bindings/pinctrl/toshiba,tmpv7700-pinctrl.yaml
- F:	arch/arm64/boot/dts/toshiba/
-+F:	drivers/gpio/gpio-visconti.c
- F:	drivers/pinctrl/visconti/
- N:	visconti
- 
--- 
-2.29.2
+> On Tue, Nov 10, 2020 at 5:51 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
+>> > On Mon, Nov 9, 2020 at 3:27 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
+>
+>> >> This adds a pinctrl driver for the Microsemi/Microchip Serial GPIO
+>> >> (SGPIO) device used in various SoC's.
+>> >
+>> > Please, elaborate what you said previously, because now it has no
+>> > justification to be a pin control driver.
+>>
+>> As previously stated, the individual pins have possible other functions
+>> than GPIO. When these functions are added, the driver will need pinctrl
+>> functinality. This was accepted by Linux Walleij.
+>
+> Yes, I understand that. What I meant is to update the commit message
+> to tell this to the reviewers / readers / anthropologists.
 
+Ok, will do.
+
+>
+> ...
+>
+>> >> +               return -EOPNOTSUPP;
+>> >
+>> > Are you sure? IIRC internally we are using ENOTSUPP.
+>> >
+>> > Couple of drivers seem to be wrongly using the other one.
+>>
+>> Checkpatch complains about ENOTSUPP:
+>>
+>> # ENOTSUPP is not a standard error code and should be avoided in new patches.
+>> # Folks usually mean EOPNOTSUPP (also called ENOTSUP), when they type ENOTSUPP.
+>
+> checkpatch is wrong if this is internal code and to me sounds like
+> it's not going out of the kernel.
+>
+> ...
+
+As it appears there are different opinions on this I'll let the pinctrl
+maintainer decide.
+
+>
+>> >> +                       err = -EOPNOTSUPP;
+>> >
+>> > Ditto.
+>>
+>> Ditto.
+>
+> Ditto.
+>
+> ...
+>
+>> >> +               dev_err(pctldev->dev, "Pin %d direction as %s is not possible\n",
+>> >> +                       pin, input ? "input" : "output");
+>> >
+>> > Do we need this noise? Isn't user space getting a proper error code as
+>> > per doc and can handle this?
+>> >
+>>
+>> This need not go to user space, as one use-case is using the pin as a
+>> i2c mux. In this case no signs of the error condition is recorded, it
+>> just doesn't work. So I concur it is not noise, it is sign of an
+>> erroneous situation which should be fixed, IMHO.
+>>
+>> The message makes it easy to locate the issue, if any. The message will
+>> not occur on a properly configured system.
+>
+> It's noise. As we discussed with Alexandre (and I guess came to the
+> same page) that its consumer's business how to treat the error.
+>
+>> Lets have the maintainer make the call.
+>
+> ...
+
+I digress. I'll remove it.
+
+>
+>> >> +static int microchip_sgpio_get_ports(struct sgpio_priv *priv)
+>> >> +{
+>
+>> >> +}
+>> >
+>> > As per previous version comment, i.e. perhaps find an existing API for
+>> > this kind of parser or introduce a generic one.
+>>
+>> I fixed the use of OF api's - that was surely an oversight.
+>>
+>> I have searched for a suitable API without finding one. The closest
+>> thing was the parsing of "gpio-reserved-ranges" in gpiolib-of.c, but
+>> that was coded directly. So I think this might not be of general use.
+>>
+>> If it is, lets do that after the driver is merged.
+>
+> I guess it will be a lot of benefit to have such API earlier than later.
+
+Thank you for your comments. I'll send the new version shortly.
+
+---Lars
+
+--
+Lars Povlsen,
+Microchip
