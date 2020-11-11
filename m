@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FA8C388F9
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C85CC56202
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E589208CA
+	by mail.kernel.org (Postfix) with ESMTP id DAB5E208CA
 	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbgKKWUb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Nov 2020 17:20:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:54740 "EHLO mga04.intel.com"
+        id S1727042AbgKKWUd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Nov 2020 17:20:33 -0500
+Received: from mga09.intel.com ([134.134.136.24]:2201 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbgKKWUb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Nov 2020 17:20:31 -0500
-IronPort-SDR: Pi16kaCQyuMCbX3RHTT3a9thyR/yzk9kb8u5fZIxCyc1LwTSmbyjG3a743R92BI1Nf0vSYWnOk
- 2VZ15AmPcqiw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="167643238"
+        id S1727010AbgKKWUd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Nov 2020 17:20:33 -0500
+IronPort-SDR: PnYOhV8WgdCUNwhPVOkg7DRxJuhkOUPhTdCu8rXSSTUGZ2gEMQDvOrBCf93CnuNJ0o6HL8RoQy
+ lFRagIUz1bTw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="170393194"
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="167643238"
+   d="scan'208";a="170393194"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:30 -0800
-IronPort-SDR: eGM7lNhU47CeSeKh3a0fba1zRpXHdBnkcrHc/VUGnNwvT7Rb3Ik/VjXWzjGPwE9/4MqNyb06DD
- VNM1WIloJazQ==
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:32 -0800
+IronPort-SDR: kvVDaLnLkjU1YjX4YfFQX3PEtH6EWCJLTgN57QTP66ymu3xm4p5TCcMy98YbQqT0mmbR9Qj0SG
+ ofcUZbk/MKYw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="366394648"
+   d="scan'208";a="360722024"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2020 14:20:28 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 11 Nov 2020 14:20:31 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8E3FF1CC; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
+        id D1E635DB; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v7 04/18] gpiolib: Extract gpio_set_config_with_argument() for future use
-Date:   Thu, 12 Nov 2020 00:19:54 +0200
-Message-Id: <20201111222008.39993-5-andriy.shevchenko@linux.intel.com>
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v7 11/18] gpiolib: acpi: Move non-critical code outside of critical section
+Date:   Thu, 12 Nov 2020 00:20:01 +0200
+Message-Id: <20201111222008.39993-12-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
 References: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
@@ -56,53 +56,43 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In the future we will need to have a separate function
-that takes an arbitrary argument value.
+Mika noticed that some code is run under mutex when it doesn't require
+the lock, like an error code assignment.
 
-Extract gpio_set_config_with_argument() for that purpose.
+Move non-critical code outside of critical section.
 
+Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpiolib.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib-acpi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 87bb73991337..5210f396f0cd 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2094,10 +2094,19 @@ static int gpio_do_set_config(struct gpio_chip *gc, unsigned int offset,
- 	return gc->set_config(gc, offset, config);
- }
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index a9254de964cc..b00171d2aaf5 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1063,8 +1063,8 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 							 GPIO_ACTIVE_HIGH,
+ 							 flags);
+ 			if (IS_ERR(desc)) {
+-				status = AE_ERROR;
+ 				mutex_unlock(&achip->conn_lock);
++				status = AE_ERROR;
+ 				goto out;
+ 			}
  
--static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
-+static int gpio_set_config_with_argument(struct gpio_desc *desc,
-+					 enum pin_config_param mode,
-+					 u32 argument)
- {
- 	struct gpio_chip *gc = desc->gdev->chip;
- 	unsigned long config;
-+
-+	config = pinconf_to_config_packed(mode, argument);
-+	return gpio_do_set_config(gc, gpio_chip_hwgpio(desc), config);
-+}
-+
-+static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
-+{
- 	unsigned int arg;
+@@ -1078,9 +1078,9 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
  
- 	switch (mode) {
-@@ -2111,8 +2120,7 @@ static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
- 		break;
- 	}
+ 			conn = kzalloc(sizeof(*conn), GFP_KERNEL);
+ 			if (!conn) {
+-				status = AE_NO_MEMORY;
+ 				gpiochip_free_own_desc(desc);
+ 				mutex_unlock(&achip->conn_lock);
++				status = AE_NO_MEMORY;
+ 				goto out;
+ 			}
  
--	config = pinconf_to_config_packed(mode, arg);
--	return gpio_do_set_config(gc, gpio_chip_hwgpio(desc), config);
-+	return gpio_set_config_with_argument(desc, mode, arg);
- }
- 
- static int gpio_set_bias(struct gpio_desc *desc)
 -- 
 2.28.0
 
