@@ -2,127 +2,208 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123C2C56202
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C0BC61DD8
 	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 05:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1961208FE
+	by mail.kernel.org (Postfix) with ESMTP id EA95121734
 	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 05:37:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMJgpf9a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbgKLFhJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Nov 2020 00:37:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729576AbgKLBq1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 20:46:27 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD36C0613D1;
-        Wed, 11 Nov 2020 17:45:47 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id g7so3039246pfc.2;
-        Wed, 11 Nov 2020 17:45:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nOQD+47l1Vj9tZi/oOhEDued5DuJRPNMgWRyqUdj0hA=;
-        b=RMJgpf9aRvHsm7kXTPn6A4QHZjITSTMgFpSPAsMIDsD9Vq2FGlymCQ2Uy9WLTcLgud
-         qcvZWqtPn4jtyWomXgZOZuaGMlO2WRVM66OJ58RyU+8tB4/Z6t+5kyb1la/bFNvIQPNy
-         +gfGfVHSsGC88lwyTHYBVOldd5dkmJ8zNnfGN4wdGKkvtA5U/ZgbYHYAtXazC6yUv6G6
-         18AKV5PhQRuc9McMOPXFn4enN6RsZ6bzrUeznvRv50DulrL8Df1nad3nFKi4ygo6hi1F
-         vr6MAnGzpjH0q2duju6VUxCCWNB57QbzNbWKojxTfKCMb8p803FeYeAomZ9dfOGjw0HX
-         nzmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nOQD+47l1Vj9tZi/oOhEDued5DuJRPNMgWRyqUdj0hA=;
-        b=jYx9+7oQNHxjIczMKy+rlhs69F/hQVvDHWD3hcQLkKyTda97o7M6xeuCDi47Uns4CY
-         0RNu+bafh24ndLckrf7ZHqyzQwvGD/UV4Q9b6t+9w8ODtbk+lU1UCEjOjlMD81ZbXz34
-         CnoTAcPQE8D72kX+VIzn4SNNEBYI/qLfsEL4iAVJX6ZjN+XSNfixOhcLiNWl7QD6dTrl
-         ug6lEEue1pByYaowcQGVBm3It4Z5Y4QIADeFfr6UAxwNxYTDcWxDWblQTUVmKxFPhjHG
-         MigEfXb/XyjOrdBI+y9uuB7ckRmIKUFFr1FCF2nv5fihJX7PKp6fu+FMjP1QVOctnb/z
-         BEVw==
-X-Gm-Message-State: AOAM532kZ7itmJKepXN7HHXIh+SSxMGn8UbmRztJoL4iQO9/Tf2bUcRx
-        wtXzAhtqTL1s++PNDEjjQsI=
-X-Google-Smtp-Source: ABdhPJw49jebosLeBcZ1ZsqKR3LnVI8Mxnm8v5sWdo+ropNNGLFnXAlwpDz5nWxUdwGFQZE5kJbwXQ==
-X-Received: by 2002:a17:90a:fd0d:: with SMTP id cv13mr4600504pjb.124.1605145546448;
-        Wed, 11 Nov 2020 17:45:46 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id d11sm3944079pjm.18.2020.11.11.17.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2020 17:45:45 -0800 (PST)
-Date:   Wed, 11 Nov 2020 17:45:42 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
-        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
-Subject: Re: [PATCH v3 07/11] input: raspberrypi-ts: Release firmware handle
- when not needed
-Message-ID: <20201112014542.GA1003057@dtor-ws>
-References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
- <20201104103938.1286-8-nsaenzjulienne@suse.de>
+        id S1729305AbgKLFhK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Nov 2020 00:37:10 -0500
+Received: from mga14.intel.com ([192.55.52.115]:7788 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729028AbgKLEpe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Nov 2020 23:45:34 -0500
+IronPort-SDR: HP5+9THCdAYh2kHfnNEPgrv/y1UtsAUxOzE6Rd0SHTGgBbf7l5G7u7dlfpFvpFZhIq5BFxEg1t
+ SnOLM4+x7UAg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="169473431"
+X-IronPort-AV: E=Sophos;i="5.77,471,1596524400"; 
+   d="scan'208";a="169473431"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 20:45:33 -0800
+IronPort-SDR: AUetnB+tPSOw0M2A2eUGpxI6NhwwUYCPpx6H6tIRVUlAM7hqhH4LOO2xgTnxZd7YRBa7odf3ly
+ lClfozXF9aWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,471,1596524400"; 
+   d="scan'208";a="355078452"
+Received: from lkp-server02.sh.intel.com (HELO de5c6a867800) ([10.239.97.151])
+  by orsmga008.jf.intel.com with ESMTP; 11 Nov 2020 20:45:32 -0800
+Received: from kbuild by de5c6a867800 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kd4UG-00005X-1Q; Thu, 12 Nov 2020 04:45:32 +0000
+Date:   Thu, 12 Nov 2020 12:44:53 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [gpio:for-next] BUILD SUCCESS
+ 27b5ea2fcb90d2dbc3be03e3a171bc28117eef14
+Message-ID: <5facbdc5.FqqBkx+ez9MY8V/V%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104103938.1286-8-nsaenzjulienne@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Nicolas,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  for-next
+branch HEAD: 27b5ea2fcb90d2dbc3be03e3a171bc28117eef14  Merge branch 'devel' into for-next
 
-On Wed, Nov 04, 2020 at 11:39:33AM +0100, Nicolas Saenz Julienne wrote:
-> Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
-> interface when unbinding the device.
+elapsed time: 724m
 
-Unless I am mistaken this driver does not really need the firmware
-structure past rpi_ts_probe(), and will be fine if it disappears earlier
-than unbind time.
+configs tested: 136
+configs skipped: 2
 
-Thanks.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> 
-> ---
-> 
-> Changes since v2:
->  - Use devm_rpi_firmware_get(), instead of remove function
-> 
->  drivers/input/touchscreen/raspberrypi-ts.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/touchscreen/raspberrypi-ts.c b/drivers/input/touchscreen/raspberrypi-ts.c
-> index ef6aaed217cf..efed0efa91d9 100644
-> --- a/drivers/input/touchscreen/raspberrypi-ts.c
-> +++ b/drivers/input/touchscreen/raspberrypi-ts.c
-> @@ -134,7 +134,7 @@ static int rpi_ts_probe(struct platform_device *pdev)
->  		return -ENOENT;
->  	}
->  
-> -	fw = rpi_firmware_get(fw_node);
-> +	fw = devm_rpi_firmware_get(&pdev->dev, fw_node);
->  	of_node_put(fw_node);
->  	if (!fw)
->  		return -EPROBE_DEFER;
-> -- 
-> 2.29.1
-> 
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+powerpc                       ebony_defconfig
+m68k                          atari_defconfig
+mips                        jmr3927_defconfig
+sh                           se7206_defconfig
+arm                            qcom_defconfig
+sh                            titan_defconfig
+arm                        mini2440_defconfig
+powerpc                     mpc512x_defconfig
+sh                          lboxre2_defconfig
+powerpc                     mpc5200_defconfig
+arm                       aspeed_g4_defconfig
+mips                        workpad_defconfig
+sh                           se7712_defconfig
+um                            kunit_defconfig
+m68k                         apollo_defconfig
+powerpc                    mvme5100_defconfig
+powerpc                   lite5200b_defconfig
+arm                       cns3420vb_defconfig
+arm                        mvebu_v5_defconfig
+csky                             alldefconfig
+um                           x86_64_defconfig
+powerpc                mpc7448_hpc2_defconfig
+mips                         tb0226_defconfig
+sh                             shx3_defconfig
+i386                                defconfig
+powerpc                           allnoconfig
+m68k                        m5307c3_defconfig
+c6x                                 defconfig
+sh                   secureedge5410_defconfig
+mips                      pistachio_defconfig
+ia64                      gensparse_defconfig
+powerpc                     tqm8560_defconfig
+arm                       mainstone_defconfig
+xtensa                    xip_kc705_defconfig
+arm                         at91_dt_defconfig
+arc                 nsimosci_hs_smp_defconfig
+c6x                        evmc6474_defconfig
+powerpc                      makalu_defconfig
+riscv                    nommu_k210_defconfig
+sh                               allmodconfig
+ia64                            zx1_defconfig
+xtensa                  nommu_kc705_defconfig
+arm                            zeus_defconfig
+sh                               alldefconfig
+arm                         s3c6400_defconfig
+arm                        keystone_defconfig
+microblaze                      mmu_defconfig
+sh                             sh03_defconfig
+sh                         microdev_defconfig
+arm                   milbeaut_m10v_defconfig
+riscv                            allmodconfig
+arm                         nhk8815_defconfig
+arm                          moxart_defconfig
+powerpc                     ep8248e_defconfig
+powerpc                   currituck_defconfig
+powerpc                 mpc837x_mds_defconfig
+m68k                           sun3_defconfig
+sh                           se7705_defconfig
+arm                          collie_defconfig
+mips                         cobalt_defconfig
+arm                      tct_hammer_defconfig
+mips                     decstation_defconfig
+arm                          ixp4xx_defconfig
+m68k                          hp300_defconfig
+arm                         socfpga_defconfig
+m68k                          sun3x_defconfig
+sh                     magicpanelr2_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+i386                 randconfig-a006-20201111
+i386                 randconfig-a005-20201111
+i386                 randconfig-a002-20201111
+i386                 randconfig-a001-20201111
+i386                 randconfig-a003-20201111
+i386                 randconfig-a004-20201111
+x86_64               randconfig-a015-20201111
+x86_64               randconfig-a011-20201111
+x86_64               randconfig-a014-20201111
+x86_64               randconfig-a013-20201111
+x86_64               randconfig-a016-20201111
+x86_64               randconfig-a012-20201111
+i386                 randconfig-a012-20201111
+i386                 randconfig-a014-20201111
+i386                 randconfig-a016-20201111
+i386                 randconfig-a011-20201111
+i386                 randconfig-a015-20201111
+i386                 randconfig-a013-20201111
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
 
--- 
-Dmitry
+clang tested configs:
+x86_64               randconfig-a003-20201111
+x86_64               randconfig-a005-20201111
+x86_64               randconfig-a004-20201111
+x86_64               randconfig-a002-20201111
+x86_64               randconfig-a006-20201111
+x86_64               randconfig-a001-20201111
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
