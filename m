@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5564C2D0A3
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 05:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCA5C56202
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 05:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85A1D208FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 05:37:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FDBE2168B
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 05:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729306AbgKLFhK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1729307AbgKLFhK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 12 Nov 2020 00:37:10 -0500
-Received: from mga07.intel.com ([134.134.136.100]:5248 "EHLO mga07.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:48492 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729012AbgKLEpe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1729013AbgKLEpe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 11 Nov 2020 23:45:34 -0500
-IronPort-SDR: TONTtn6yRUuzGLKqf6eV8Li0mMknM3OeL8hF9brEINqhNIGgShbP5ZXV30lnJCMzA/lH+JK5oQ
- vdye6kHUEpeA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="234422623"
+IronPort-SDR: K9tivCMxdT1zJZp9sDVPstsFqmLk7n842WXo4KlD8U2hVqjX7q/KP+ol1s/m6b8ByHLrs17oJu
+ H6LWROYmqtxg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="188249922"
 X-IronPort-AV: E=Sophos;i="5.77,471,1596524400"; 
-   d="scan'208";a="234422623"
+   d="scan'208";a="188249922"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 20:45:33 -0800
-IronPort-SDR: v+Z8N8s9hgFsEVnFHN0GhdtUTGmbHDIo1443+6josW7n3jwCnlNFUF6cY93n6r7ny7RWhKgOjl
- MeFGzEQwHJKw==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 20:45:33 -0800
+IronPort-SDR: z4Y8mLQQZl3vAG19096PeZA5MTzlQeOTbAaGWVhLDkv7GO+HwHjwxoj/iY4bi/98dyfMVqSnKr
+ 00opNKp5FYig==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,471,1596524400"; 
-   d="scan'208";a="542098619"
+   d="scan'208";a="323500349"
 Received: from lkp-server02.sh.intel.com (HELO de5c6a867800) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 11 Nov 2020 20:45:32 -0800
+  by orsmga003.jf.intel.com with ESMTP; 11 Nov 2020 20:45:32 -0800
 Received: from kbuild by de5c6a867800 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kd4UF-00005L-Ag; Thu, 12 Nov 2020 04:45:31 +0000
-Date:   Thu, 12 Nov 2020 12:44:51 +0800
+        id 1kd4UF-00005O-Mz; Thu, 12 Nov 2020 04:45:31 +0000
+Date:   Thu, 12 Nov 2020 12:44:44 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:for-next] BUILD SUCCESS
- 722491772123510eabd2b380f1bd905ed2ecc13b
-Message-ID: <5facbdc3.3Knpfi0gdzMnHRtL%lkp@intel.com>
+Subject: [pinctrl:devel] BUILD SUCCESS
+ 3603a537bf791d4047b89fd0fc060f723eded458
+Message-ID: <5facbdbc.GGDkrm09z/8h/cxA%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  for-next
-branch HEAD: 722491772123510eabd2b380f1bd905ed2ecc13b  Merge branch 'devel' into for-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  devel
+branch HEAD: 3603a537bf791d4047b89fd0fc060f723eded458  pinctrl: pinctrl-at91-pio4: Set irq handler and data in one go
 
 elapsed time: 723m
 
-configs tested: 141
+configs tested: 134
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -100,13 +100,18 @@ arm                       mainstone_defconfig
 xtensa                    xip_kc705_defconfig
 arm                         at91_dt_defconfig
 arc                 nsimosci_hs_smp_defconfig
-powerpc                      makalu_defconfig
 c6x                        evmc6474_defconfig
+powerpc                      makalu_defconfig
+mips                     cu1000-neo_defconfig
+alpha                               defconfig
+powerpc                   currituck_defconfig
+arm                          ixp4xx_defconfig
+arm                       spear13xx_defconfig
 riscv                    nommu_k210_defconfig
+sh                               allmodconfig
 sh                   secureedge5410_defconfig
 ia64                            zx1_defconfig
 xtensa                  nommu_kc705_defconfig
-sh                               allmodconfig
 arm                            zeus_defconfig
 sh                               alldefconfig
 arm                         s3c6400_defconfig
@@ -116,10 +121,8 @@ sh                             sh03_defconfig
 sh                         microdev_defconfig
 arm                   milbeaut_m10v_defconfig
 arm                         nhk8815_defconfig
-riscv                            allmodconfig
 arm                          moxart_defconfig
 powerpc                     ep8248e_defconfig
-powerpc                   currituck_defconfig
 powerpc                 mpc837x_mds_defconfig
 m68k                           sun3_defconfig
 sh                           se7705_defconfig
@@ -128,14 +131,10 @@ arm                          collie_defconfig
 mips                         cobalt_defconfig
 arm                      tct_hammer_defconfig
 mips                     decstation_defconfig
-arm                          ixp4xx_defconfig
-arc                        vdk_hs38_defconfig
-powerpc                    gamecube_defconfig
-sh                          rsk7201_defconfig
-sh                               j2_defconfig
-riscv                            alldefconfig
-mips                malta_qemu_32r6_defconfig
-mips                   sb1250_swarm_defconfig
+m68k                          hp300_defconfig
+arm                         socfpga_defconfig
+m68k                          sun3x_defconfig
+sh                     magicpanelr2_defconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                             allyesconfig
@@ -149,7 +148,6 @@ c6x                              allyesconfig
 nds32                               defconfig
 nios2                            allyesconfig
 csky                                defconfig
-alpha                               defconfig
 alpha                            allyesconfig
 xtensa                           allyesconfig
 h8300                            allyesconfig
@@ -183,17 +181,12 @@ i386                 randconfig-a016-20201111
 i386                 randconfig-a011-20201111
 i386                 randconfig-a015-20201111
 i386                 randconfig-a013-20201111
-i386                 randconfig-a012-20201112
-i386                 randconfig-a014-20201112
-i386                 randconfig-a016-20201112
-i386                 randconfig-a011-20201112
-i386                 randconfig-a015-20201112
-i386                 randconfig-a013-20201112
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
 riscv                             allnoconfig
 riscv                               defconfig
 riscv                          rv32_defconfig
+riscv                            allmodconfig
 x86_64                                   rhel
 x86_64                           allyesconfig
 x86_64                    rhel-7.6-kselftests
