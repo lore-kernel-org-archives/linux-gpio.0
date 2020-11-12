@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5BDC56201
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 17:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A414EC56201
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 17:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F1D821D40
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 17:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC83221E9
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 17:13:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="BPzr8+JN"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="WkNv08zJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbgKLRNV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Nov 2020 12:13:21 -0500
-Received: from mail-dm6nam10on2088.outbound.protection.outlook.com ([40.107.93.88]:42177
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S1726217AbgKLRN2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Nov 2020 12:13:28 -0500
+Received: from mail-bn7nam10on2081.outbound.protection.outlook.com ([40.107.92.81]:35552
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726200AbgKLRNU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Nov 2020 12:13:20 -0500
+        id S1726174AbgKLRN1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Nov 2020 12:13:27 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ja7dkthejTbHySIFEEQom0ndZUmmoNhLSik7b1Hu7ATMUZaMO9Fbt6VP9++ee1zU+retE6VJqyhxXbiBijQnvyFdLLN384IE/pI0yD/XOHcj/lY4gfAuBP87EV9SOtuUkcYmrhkZ4IP0P3zPlTt8THVtFryHRQO18ReeADFfXEsLRdX4FhNU3+398IAka33x+cyizWZ312s1Tjr9dXhVJNnyaG8esGZKmme43UtG8RZS2l65G3M3foDsZ+2TA395wjLebKopeznHhWvO8TQvo83NjZaNF+rALBJrr4CRXpPmJRZNhq8P7mcmW8eWX56pUk41i3Ar/YkugPIkw8FKVA==
+ b=aU8MoRhyMl1ZSYBU6HpEOznWyVLne//P9rAAdk/LdzJhix9B0jw745m2pNUyQ7sNJsCr7VXTTRAvfalwynjzBcf8wLHburvUkV1Nv0DF60vbuBmDm2I1dqmeXmCO3W7EaGwWSfD0v+Drwzsv3xu713/9eDDeGnD5waI9Ri5EPA21PTe76RemBsgXFNsCAmTwKZMTLGxeHNTrbOxQNbPAr4pX19po56ztdmQixTVqzk0bt6n1mc9TSKD1zuxKM2Jq04fd48Ho9nn9oNxRZ/oNVS6pX7tKG6a8Iy2mqcpWg+98i7AB21DYE0aVv2OQEEVu4UIHfPqoH46mA/vQjNoA1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mmiedhJM5z71SNmvtNdM7S5v1iGKQ+1iEwYX7LAR9cs=;
- b=RZ6b0ztVbUE3QVri8gcoS1Ag0IYsuN6TgWbKzWJHH2RyGtlRl34/cgJsborIWKQ+AWxMqPKUyVGJciXWJBrtXRpHwpNaIbs+wljfDBsHgN2bF65Rbg8GVUGrufKytdz1+Rm9fntD377iJrV9kVk1kUMoPXcw3iYspZcm6XkRzb8F7tips2lVYNbaRUkUe5QHQdvMgRCMtcFICs7cDQzgK3FUZA8CwnJuPIZxmhXgtM5lZNQ8xXhjG2ZaS2QMRGP/n5xZAW5y9EythPRnwdkBXor6PAlPY6H8Gp0wCgPtPiVhDmpFlXbgGBLdYJz/M7iUTamMCfV75Bm8QACFHfPGcw==
+ bh=O9kkCKNJrU+3pgOv+apEyRDJumrijAgr4zyhPI8pgaM=;
+ b=GJtdOhzMNcDeyMht64gBDCFmXNqyJIV6y0jM0wT9ho1ByjHXi4RlQMeBlq4xFv4hgGMriJczpe0M96rv5RNjd0BIGsAua8PLB9tm41Wc4mX6B923sBm0Xbqt8fhi2bmI766yemxlkJxY9LQcduTHIbp7hMEjzwcmx8k9VdARXfHtb3FqzxMK0LOP58Dnvqo+HajYBmVL760VcavLEsbGVdsjCfPcEGhdfWVrWRkjXklBMJFH0EOviwgJTZNp7kpQeiHm+ioboXs8tzw0CileP1Ukgv0hAa48P0pkXAEoSBMmlf9o9Vse+aDqVMVTn22WFONR+jup5EDweyU/7GTpkA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
  dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
@@ -36,36 +36,36 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mmiedhJM5z71SNmvtNdM7S5v1iGKQ+1iEwYX7LAR9cs=;
- b=BPzr8+JNdLc16QmIK+T9nssI2pDcpCl7LOPTvq5bBeCBpjupYK5a60ksl5HZQv8dVnfenMMpWTBI3GEyvLSyjZh0mGY5F0nuVWj1nqwhfeMpi3I/U82BowUeBcSgpXQPFTtMI1sBwOP7lvg3ODGVkrct3MYpkrp8IC7mxBYtA5U=
-Received: from DM6PR18CA0029.namprd18.prod.outlook.com (2603:10b6:5:15b::42)
- by SN4PR0201MB3408.namprd02.prod.outlook.com (2603:10b6:803:50::16) with
+ bh=O9kkCKNJrU+3pgOv+apEyRDJumrijAgr4zyhPI8pgaM=;
+ b=WkNv08zJz1zeqB4g/76JNuhpMoxispP7lZw5Lj6hA47uvvsS5/dJN0ENIZHcFbtaLsm0U8Z0/cUdp+YdbA6ETYFaG9Zn3VEBhJn/WQQMMrlC+K6bo1EsbhXFySmFW2BUUcRQLtcdOnB/9dWSIjJHDyRG3yYh/xImfXaB1nmcHWs=
+Received: from BL1PR13CA0261.namprd13.prod.outlook.com (2603:10b6:208:2ba::26)
+ by BL0PR02MB5697.namprd02.prod.outlook.com (2603:10b6:208:85::32) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.25; Thu, 12 Nov
- 2020 17:13:17 +0000
-Received: from CY1NAM02FT040.eop-nam02.prod.protection.outlook.com
- (2603:10b6:5:15b:cafe::39) by DM6PR18CA0029.outlook.office365.com
- (2603:10b6:5:15b::42) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21 via Frontend
- Transport; Thu, 12 Nov 2020 17:13:17 +0000
+ 2020 17:13:22 +0000
+Received: from BL2NAM02FT008.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:208:2ba:cafe::3f) by BL1PR13CA0261.outlook.office365.com
+ (2603:10b6:208:2ba::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3564.13 via Frontend
+ Transport; Thu, 12 Nov 2020 17:13:22 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
  header.d=none;linaro.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- CY1NAM02FT040.mail.protection.outlook.com (10.152.75.135) with Microsoft SMTP
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ BL2NAM02FT008.mail.protection.outlook.com (10.152.76.162) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.3564.22 via Frontend Transport; Thu, 12 Nov 2020 17:13:17 +0000
+ 15.20.3564.22 via Frontend Transport; Thu, 12 Nov 2020 17:13:21 +0000
 Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Thu, 12 Nov 2020 09:13:03 -0800
+ 15.1.1913.5; Thu, 12 Nov 2020 09:12:44 -0800
 Received: from smtp.xilinx.com (172.19.127.96) by
  xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.1913.5 via Frontend Transport; Thu, 12 Nov 2020 09:13:03 -0800
+ 15.1.1913.5 via Frontend Transport; Thu, 12 Nov 2020 09:12:44 -0800
 Envelope-to: git@xilinx.com,
  michal.simek@xilinx.com,
  linus.walleij@linaro.org,
@@ -77,7 +77,7 @@ Envelope-to: git@xilinx.com,
 Received: from [10.140.6.6] (port=44844 helo=xhdappanad40.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1kdG9e-0005SG-So; Thu, 12 Nov 2020 09:13:03 -0800
+        id 1kdG9L-0005SG-DW; Thu, 12 Nov 2020 09:12:43 -0800
 From:   Srinivas Neeli <srinivas.neeli@xilinx.com>
 To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
         <michal.simek@xilinx.com>, <shubhrajyoti.datta@xilinx.com>,
@@ -86,9 +86,9 @@ CC:     <linux-gpio@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <git@xilinx.com>,
         Srinivas Neeli <srinivas.neeli@xilinx.com>
-Subject: [LINUX PATCH V3 9/9] MAINTAINERS: add fragment for xilinx GPIO drivers
-Date:   Thu, 12 Nov 2020 22:42:28 +0530
-Message-ID: <1605201148-4508-10-git-send-email-srinivas.neeli@xilinx.com>
+Subject: [LINUX PATCH V3 3/9] gpio: gpio-xilinx: Add clock support
+Date:   Thu, 12 Nov 2020 22:42:22 +0530
+Message-ID: <1605201148-4508-4-git-send-email-srinivas.neeli@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1605201148-4508-1-git-send-email-srinivas.neeli@xilinx.com>
 References: <1605201148-4508-1-git-send-email-srinivas.neeli@xilinx.com>
@@ -97,61 +97,93 @@ Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9142f8be-4d42-4cee-833b-08d8872e3f52
-X-MS-TrafficTypeDiagnostic: SN4PR0201MB3408:
-X-Microsoft-Antispam-PRVS: <SN4PR0201MB3408A1136ECB494459824559AFE70@SN4PR0201MB3408.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: e3377617-93b6-4f8e-3c02-08d8872e4215
+X-MS-TrafficTypeDiagnostic: BL0PR02MB5697:
+X-Microsoft-Antispam-PRVS: <BL0PR02MB5697B13B0F8A89842CE8E436AFE70@BL0PR02MB5697.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
+X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SH+p9L3EUfE8hksMZocjqyvQ8zwFGcT4BL59I2NWBpgrHR78Kue74pJRzl+AkLisfS2I+TyTlgkhDTKpiO8tPdw0TCV/lFisBKmBkYkRagW99na0W0YR1kLhr8qc+dXvv5d+4JcHmL54CX5NT+vgVHBC3kIWQ8kI8z1pTC/76eQ3yKxYD4lDxfS3iaeXuC26barE1v9LF0Y+ba0JJvlsiXhpEp330InFJJe5am3cdEYi7LH0gFIvFijenPBWypCuk8NPR6+wYjmdwSwOtsAoUKQGQTCKtE0w8oQO7rilv+Ed4+4Ozu16nLpUvw8tXkWYHrkJMFcBSFyz+tcusIp27Ur+e8uOUIHwKqDzMEAS0czOBTDddLuX/kGh81RMl8TRMVUyVfoNhlIlfAxUTV3DYnQsXHBXyhOZNBGeaevYWDE=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(136003)(376002)(346002)(396003)(39860400002)(46966005)(5660300002)(4744005)(44832011)(26005)(107886003)(7696005)(110136005)(54906003)(2616005)(82310400003)(47076004)(426003)(316002)(4326008)(36756003)(186003)(336012)(7636003)(82740400003)(356005)(9786002)(8936002)(2906002)(70206006)(478600001)(70586007)(6666004)(36906005)(8676002)(102446001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: QR56+lTQPp64FyemVHQfH8CAwzSjNRZMBRF5sx9i+Yv4iJ0WeVNvzfbIATyuANs4j8YA5vqu0z8S4lyIjmlnKum6X6pLP3FIPIy6CYdCOCOJBg9KVzU/3Dle+a4G6PcQCVB6swbXkS6orbgod9tXvG3mlUAgdCrikqVmoPr/PcUwRpZTwPjzauD8NJxe3z1gaeECyN/3UrnrO57JMpzktXVhraJIG7qgNm3LunEpqRhJ33qGr3/pAkcUemdm6UlCkotdogTrTzNrKmfuPCNoZWS3+h8rkb54ffjKVAdTdeyTfgRN0qpt/SQsEt2nW2MTh9CRLsgfhuAK1kMzbZKfXa755tuEIzny+stG0GkIzfhxaKLIAmbfNfw83E4vHB8d4+2mzcty0eC1GUGY73orsQvZ+PGYICLI2mvyFJMcnvk=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(396003)(376002)(39860400002)(136003)(46966005)(36906005)(82310400003)(316002)(54906003)(356005)(107886003)(426003)(336012)(8676002)(2616005)(7636003)(478600001)(6666004)(8936002)(70586007)(4326008)(7696005)(186003)(82740400003)(9786002)(47076004)(83380400001)(26005)(44832011)(70206006)(2906002)(5660300002)(36756003)(110136005)(102446001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2020 17:13:17.2843
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2020 17:13:21.8179
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9142f8be-4d42-4cee-833b-08d8872e3f52
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3377617-93b6-4f8e-3c02-08d8872e4215
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT040.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT008.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3408
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB5697
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Added entry for xilinx GPIO drivers.
+Adds clock support to the Xilinx GPIO driver.
 
 Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
-Acked-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 ---
-Changes in V3:
--None
+Chnages in V3:
+-Created separate patch for Clock changes.
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpio/gpio-xilinx.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87452fca5235..89a7c045a213 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19283,6 +19283,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/can/xilinx_can.txt
- F:	drivers/net/can/xilinx_can.c
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 17a8a8f90d84..99d603bfb6f0 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -6,6 +6,7 @@
+  */
  
-+XILINX GPIO DRIVER
-+M:	Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-+R:	Srinivas Neeli <srinivas.neeli@xilinx.com>
-+R:	Michal Simek <michal.simek@xilinx.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
-+F:	Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-+F:	drivers/gpio/gpio-xilinx.c
-+F:	drivers/gpio/gpio-zynq.c
+ #include <linux/bitops.h>
++#include <linux/clk.h>
+ #include <linux/errno.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/init.h>
+@@ -38,6 +39,7 @@
+  * @gpio_state: GPIO state shadow register
+  * @gpio_dir: GPIO direction shadow register
+  * @gpio_lock: Lock used for synchronization
++ * @clk: clock resource for this driver
+  */
+ struct xgpio_instance {
+ 	struct gpio_chip gc;
+@@ -46,6 +48,7 @@ struct xgpio_instance {
+ 	u32 gpio_state[2];
+ 	u32 gpio_dir[2];
+ 	spinlock_t gpio_lock[2];
++	struct clk *clk;
+ };
+ 
+ static inline int xgpio_index(struct xgpio_instance *chip, int gpio)
+@@ -333,11 +336,25 @@ static int xgpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(chip->regs);
+ 	}
+ 
++	chip->clk = devm_clk_get_optional(&pdev->dev, NULL);
++	if (IS_ERR(chip->clk)) {
++		if (PTR_ERR(chip->clk) != -EPROBE_DEFER)
++			dev_dbg(&pdev->dev, "Input clock not found\n");
++		return PTR_ERR(chip->clk);
++	}
 +
- XILINX SD-FEC IP CORES
- M:	Derek Kiernan <derek.kiernan@xilinx.com>
- M:	Dragan Cvetic <dragan.cvetic@xilinx.com>
++	status = clk_prepare_enable(chip->clk);
++	if (status < 0) {
++		dev_err(&pdev->dev, "Failed to prepare clk\n");
++		return status;
++	}
++
+ 	xgpio_save_regs(chip);
+ 
+ 	status = devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
+ 	if (status) {
+ 		dev_err(&pdev->dev, "failed to add GPIO chip\n");
++		clk_disable_unprepare(chip->clk);
+ 		return status;
+ 	}
+ 
 -- 
 2.7.4
 
