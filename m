@@ -2,68 +2,80 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9FDC5519F
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 16:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A98C5519F
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 16:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73DBC2224A
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 16:13:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p31NeE54"
+	by mail.kernel.org (Postfix) with ESMTP id A86D420B80
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 16:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728757AbgKLQNO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Nov 2020 11:13:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60634 "EHLO mail.kernel.org"
+        id S1729027AbgKLQhp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Nov 2020 11:37:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41794 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728233AbgKLQNN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Nov 2020 11:13:13 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB6E622227;
-        Thu, 12 Nov 2020 16:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605197593;
-        bh=szils6tcEcwwVZZ4gp8vhFScN28Lkvc8EBBHksEFcks=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p31NeE54E7p/+JXUrncHbgL6Xb8FPe6NQpS9T+m5uiAsPN0Oh/ObvmpWYYDjo4ImL
-         lqIqAY2e1dOS9hjrU1gyVb9x4r9mVPiQdHq+mAPngf+6y7gQxwT3JOCZZ19junOye6
-         CQ9r6a693ioDcpmOx9nzsJCM3/XZB/lPSZJlr5pg=
-Date:   Thu, 12 Nov 2020 11:13:11 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        stable <stable@vger.kernel.org>,
-        intel-wired-lan@lists.osuosl.org, linux-gpio@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [4.4] Security fixes (pinctrl, i40e, geneve)
-Message-ID: <20201112161311.GE403069@sasha-vm>
-References: <f5e2e87fb1a9613b161e63cf5504cc375e095dbc.camel@codethink.co.uk>
+        id S1728685AbgKLQho (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Nov 2020 11:37:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 99AF8AFC8;
+        Thu, 12 Nov 2020 16:37:42 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org
+Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
+        andy.shevchenko@gmail.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: [PATCH v4 08/11] input: raspberrypi-ts: Release firmware handle when not needed
+Date:   Thu, 12 Nov 2020 17:36:26 +0100
+Message-Id: <20201112163630.17177-9-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201112163630.17177-1-nsaenzjulienne@suse.de>
+References: <20201112163630.17177-1-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <f5e2e87fb1a9613b161e63cf5504cc375e095dbc.camel@codethink.co.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 11:43:56PM +0000, Ben Hutchings wrote:
->Here are backports of some fixes to the 4.4 stable branch.
->
->I wasn't able to test the pinctrl fix (no idea how to reproduce it).
->
->I wasn't able to test the i40e changes (no hardware and no reproducer
->available).
->
->I tested the geneve fix with libreswan as (roughly) described in the
->commit message.
+Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
+interface when unbinding the device.
 
-Queued up, thanks Ben!
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
 
+Changes since v3:
+ - Release firmware handle in probe function
+
+Changes since v2:
+ - Use devm_rpi_firmware_get(), instead of remove function
+
+ drivers/input/touchscreen/raspberrypi-ts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/raspberrypi-ts.c b/drivers/input/touchscreen/raspberrypi-ts.c
+index ef6aaed217cf..5000f5fd9ec3 100644
+--- a/drivers/input/touchscreen/raspberrypi-ts.c
++++ b/drivers/input/touchscreen/raspberrypi-ts.c
+@@ -160,7 +160,7 @@ static int rpi_ts_probe(struct platform_device *pdev)
+ 	touchbuf = (u32)ts->fw_regs_phys;
+ 	error = rpi_firmware_property(fw, RPI_FIRMWARE_FRAMEBUFFER_SET_TOUCHBUF,
+ 				      &touchbuf, sizeof(touchbuf));
+-
++	rpi_firmware_put(fw);
+ 	if (error || touchbuf != 0) {
+ 		dev_warn(dev, "Failed to set touchbuf, %d\n", error);
+ 		return error;
 -- 
-Thanks,
-Sasha
+2.29.2
+
