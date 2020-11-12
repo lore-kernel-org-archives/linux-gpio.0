@@ -2,148 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,
+	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F2AC5517A
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAD2C56201
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 01:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32788208B8
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Nov 2020 22:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C4C520791
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 01:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbgKKWUs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Nov 2020 17:20:48 -0500
-Received: from mga11.intel.com ([192.55.52.93]:62550 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727188AbgKKWUq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Nov 2020 17:20:46 -0500
-IronPort-SDR: GS5fg2CViQjzXJvs9q3bVDqV+h4vBb/jl7ft23Sb3GY+091uJdOsjBhnED1+7oI1neH13wQruP
- pAowSrRe9YKA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="166719147"
-X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="166719147"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 14:20:32 -0800
-IronPort-SDR: AzB7wgGQQtfpeBzpW5DOtatSHgthblNunOwuE97Dk6RrYmFhqLpuZYYPOmRRAGFc64RU5OPyNr
- uo6bA9hmUgkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,470,1596524400"; 
-   d="scan'208";a="356821979"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Nov 2020 14:20:31 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E7CB460A; Thu, 12 Nov 2020 00:20:27 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Vasile-Laurentiu Stanimir 
-        <vasile-laurentiu.stanimir@windriver.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v7 13/18] gpiolib: acpi: Set initial value for output pin based on bias and polarity
-Date:   Thu, 12 Nov 2020 00:20:03 +0200
-Message-Id: <20201111222008.39993-14-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
-References: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
+        id S1728367AbgKLBcU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Nov 2020 20:32:20 -0500
+Received: from mo-csw1114.securemx.jp ([210.130.202.156]:52566 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727956AbgKKXmV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 18:42:21 -0500
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 0ABNg7JG030509; Thu, 12 Nov 2020 08:42:07 +0900
+X-Iguazu-Qid: 2wHHadmXO0HaSfspQ8
+X-Iguazu-QSIG: v=2; s=0; t=1605138126; q=2wHHadmXO0HaSfspQ8; m=+UEpVNPoNKAz3dfcq+BQXtyCiPyl2pjBsvGtuuQkoeg=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1113) id 0ABNg6Id026074;
+        Thu, 12 Nov 2020 08:42:06 +0900
+Received: from enc01.toshiba.co.jp ([106.186.93.100])
+        by imx2.toshiba.co.jp  with ESMTP id 0ABNg6n1016632;
+        Thu, 12 Nov 2020 08:42:06 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc01.toshiba.co.jp  with ESMTP id 0ABNg5hF003444;
+        Thu, 12 Nov 2020 08:42:05 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v2 4/4] arm: dts: visconti: Add DT support for Toshiba Visconti5 GPIO driver
+Date:   Thu, 12 Nov 2020 17:40:57 +0900
+X-TSB-HOP: ON
+Message-Id: <20201112084057.1399983-5-nobuhiro1.iwamatsu@toshiba.co.jp>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201112084057.1399983-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+References: <20201112084057.1399983-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Vasile-Laurentiu Stanimir <vasile-laurentiu.stanimir@windriver.com>
+Add the GPIO node in Toshiba Visconti5 SoC-specific DT file.
+And enable the GPIO node in TMPV7708 RM main board's board-specific DT file.
 
-GpioIo() resources don't contain an initial value for the output pin.
-Therefore instead of deducting its value solely based on bias field
-we should deduce that value from the polarity and the bias fields.
-Typical scenario is, when pin is defined in the table and its polarity,
-specified in _DSD or via platform code, is defined as active low,
-in the following call chain:
-
-  -> acpi_populate_gpio_lookup()
-     -> acpi_gpio_to_gpiod_flags()
-
-it will return GPIOD_OUT_HIGH if bias is set no matter if polarity
-is GPIO_ACTIVE_LOW, so it will return the current level instead of
-the logical level.
-
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Vasile-Laurentiu Stanimir <vasile-laurentiu.stanimir@windriver.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 ---
- drivers/gpio/gpiolib-acpi.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ .../boot/dts/toshiba/tmpv7708-rm-mbrc.dts     |  4 +++
+ arch/arm64/boot/dts/toshiba/tmpv7708.dtsi     | 27 +++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index ac1bde0720f2..b47d5e8edaeb 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -206,7 +206,7 @@ static void acpi_gpiochip_request_irqs(struct acpi_gpio_chip *acpi_gpio)
- }
+diff --git a/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts b/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
+index ed0bf7f13f54..950010a290f0 100644
+--- a/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
++++ b/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
+@@ -41,3 +41,7 @@ &uart1 {
+ 	clocks = <&uart_clk>;
+ 	clock-names = "apb_pclk";
+ };
++
++&gpio {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
+index 242f25f4e12a..e202ae52eca9 100644
+--- a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
++++ b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
+@@ -157,6 +157,33 @@ pmux: pmux@24190000 {
+ 			reg = <0 0x24190000 0 0x10000>;
+ 		};
  
- static enum gpiod_flags
--acpi_gpio_to_gpiod_flags(const struct acpi_resource_gpio *agpio)
-+acpi_gpio_to_gpiod_flags(const struct acpi_resource_gpio *agpio, int polarity)
- {
- 	switch (agpio->io_restriction) {
- 	case ACPI_IO_RESTRICT_INPUT:
-@@ -215,15 +215,17 @@ acpi_gpio_to_gpiod_flags(const struct acpi_resource_gpio *agpio)
- 		/*
- 		 * ACPI GPIO resources don't contain an initial value for the
- 		 * GPIO. Therefore we deduce that value from the pull field
--		 * instead. If the pin is pulled up we assume default to be
--		 * high, if it is pulled down we assume default to be low,
--		 * otherwise we leave pin untouched.
-+		 * and the polarity instead. If the pin is pulled up we assume
-+		 * default to be high, if it is pulled down we assume default
-+		 * to be low, otherwise we leave pin untouched. For active low
-+		 * polarity values will be switched. See also
-+		 * Documentation/firmware-guide/acpi/gpio-properties.rst.
- 		 */
- 		switch (agpio->pin_config) {
- 		case ACPI_PIN_CONFIG_PULLUP:
--			return GPIOD_OUT_HIGH;
-+			return polarity == GPIO_ACTIVE_LOW ? GPIOD_OUT_LOW : GPIOD_OUT_HIGH;
- 		case ACPI_PIN_CONFIG_PULLDOWN:
--			return GPIOD_OUT_LOW;
-+			return polarity == GPIO_ACTIVE_LOW ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
- 		default:
- 			break;
- 		}
-@@ -683,8 +685,8 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 			lookup->info.polarity = agpio->polarity;
- 			lookup->info.triggering = agpio->triggering;
- 		} else {
--			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio);
- 			lookup->info.polarity = lookup->active_low;
-+			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio, lookup->info.polarity);
- 		}
- 	}
- 
-@@ -1055,12 +1057,13 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 		}
- 
- 		if (!found) {
--			enum gpiod_flags flags = acpi_gpio_to_gpiod_flags(agpio);
-+			int polarity = GPIO_ACTIVE_HIGH;
-+			enum gpiod_flags flags = acpi_gpio_to_gpiod_flags(agpio, polarity);
- 			const char *label = "ACPI:OpRegion";
- 			int ret;
- 
- 			desc = gpiochip_request_own_desc(chip, pin, label,
--							 GPIO_ACTIVE_HIGH,
-+							 polarity,
- 							 flags);
- 			if (IS_ERR(desc)) {
- 				mutex_unlock(&achip->conn_lock);
++		gpio: gpio@28020000 {
++			compatible = "toshiba,gpio-visconti";
++			reg = <0 0x28020000 0 0x1000>;
++			#gpio-cells = <0x2>;
++			gpio-ranges = <&pmux 0 0 32>;
++			gpio-controller;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			interrupts =
++				<GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
+ 		uart0: serial@28200000 {
+ 			compatible = "arm,pl011", "arm,primecell";
+ 			reg = <0 0x28200000 0 0x1000>;
 -- 
-2.28.0
+2.29.2
 
