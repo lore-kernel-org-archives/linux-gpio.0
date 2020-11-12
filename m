@@ -2,66 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F1DC2D0A3
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 07:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D660C2D0A3
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 07:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C45272085B
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 07:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3933020709
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 07:21:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="o695KMSl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725960AbgKLHBD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Nov 2020 02:01:03 -0500
-Received: from mga12.intel.com ([192.55.52.136]:54238 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbgKLHBC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Nov 2020 02:01:02 -0500
-IronPort-SDR: TXYJmof/Kass6i7xQF9Uj5SVO7fNJzuvD/3T5qVNifgt+lCdiAKwQsaOvSrAd++QQP2ao60Y1S
- f4a/+hcU1xTA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9802"; a="149541593"
-X-IronPort-AV: E=Sophos;i="5.77,471,1596524400"; 
-   d="scan'208";a="149541593"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 23:00:56 -0800
-IronPort-SDR: WvTMHRRTO6Rgj+wvRfIF5OvvA7zS71YGe08Zbkp+3/tzP2Fj9tv9Xju8lO4ZXUkcKJE6DPmJW8
- aTvCTdmvoEFQ==
-X-IronPort-AV: E=Sophos;i="5.77,471,1596524400"; 
-   d="scan'208";a="542144885"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2020 23:00:53 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 12 Nov 2020 09:00:50 +0200
-Date:   Thu, 12 Nov 2020 09:00:50 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v5 17/17] gpiolib: acpi: Make Intel GPIO tree official
- for GPIO ACPI work
-Message-ID: <20201112070050.GO2495@lahna.fi.intel.com>
-References: <20201109205332.19592-1-andriy.shevchenko@linux.intel.com>
- <20201109205332.19592-18-andriy.shevchenko@linux.intel.com>
- <20201111192739.GS4077@smile.fi.intel.com>
+        id S1725966AbgKLHV3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Nov 2020 02:21:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49112 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbgKLHV3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Nov 2020 02:21:29 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE669C0617A6
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2020 23:21:28 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id h6so731425ilj.8
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2020 23:21:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atishpatra.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ab2X7D8rQV+rUh3MG2vmCj3eeC4kvsZIlLSd9hzapi4=;
+        b=o695KMSlvlKK8s2nZB3RnNNjASazEvqZxx7SlWDLIfkA7DjvTGHQKtr7OeUjA+JK/W
+         6AsWT7BcKyt6qJFEm42kuZq/NhNqqk+O/5M33EKitgOxYwwKwIv4xVOTPW0KtSDKxWoi
+         N/WtmAKQP0MX+WWeb1AnqArll7M6n1MD4y/2o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ab2X7D8rQV+rUh3MG2vmCj3eeC4kvsZIlLSd9hzapi4=;
+        b=gWTWEZ+4/BKJ5M5G3SWLiHpStRa3vVVT5noNXQB6/gnO9S1pEMKzuvKUSkQrVevAos
+         owiL5408daqjTRY2jaN0fACyla+g64q6vnvKE4ZevJ/BBYo6BU9qImL1wIp81dviuS9r
+         7Y16M5lY0q586l7rCC1jGyRWE0BM0oOjgUpoQHqJdKbg8YCIeme9X4hjHOmiQY2bkL1N
+         kjdJVS/66fXB9HaaAanTBizqSwWW4kEp7vHWwsmhv/pBPqyz9oDsXEBrnecDqDZjslQi
+         1y4slrUn7FTpVRbo1jKLHE+NfAkQY4kGavNgqX22cMpCGENj/qz+RCmLQX/bC7VEMZ/K
+         9v3g==
+X-Gm-Message-State: AOAM530iBl0jPsdP8bczUiuRWmyIOCHUy7sp8exHPRhHpauU05sHkOhx
+        meVGcSEkgIcniBJZUGBWlaNQ0+j62DUDngnRosd6
+X-Google-Smtp-Source: ABdhPJwG3l0icsmB1IU32yQpvlFd8k79z2GNzpvnNWW307BnW87hWqYbQJNHXepVhLwR9j1SCouAAn38lAiRUpIrLCw=
+X-Received: by 2002:a92:512:: with SMTP id q18mr20861835ile.147.1605165688041;
+ Wed, 11 Nov 2020 23:21:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201111192739.GS4077@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-9-damien.lemoal@wdc.com>
+In-Reply-To: <20201107081420.60325-9-damien.lemoal@wdc.com>
+From:   Atish Patra <atishp@atishpatra.org>
+Date:   Wed, 11 Nov 2020 23:21:17 -0800
+Message-ID: <CAOnJCUJO3Oqy94MbT-eV+xaJn9obE0H=zpvuJuch-aY5e9bfgQ@mail.gmail.com>
+Subject: Re: [PATCH 08/32] riscv: Fix kernel time_init()
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 09:27:39PM +0200, Andy Shevchenko wrote:
-> On Mon, Nov 09, 2020 at 10:53:32PM +0200, Andy Shevchenko wrote:
-> > Make Intel GPIO tree official for GPIO ACPI work.
-> 
-> Mika, do you think it's a good idea?
+On Sat, Nov 7, 2020 at 12:15 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+>
+> If of_clk_init() is not called in time_init(), clock providers defined
+> in the system device tree are not initialized, resulting in failures for
+> other devices to initialize due to missing clocks.
+> Similarly to other architectures and to the default kernel time_init()
+> implementation, call of_clk_init() before executing timer_probe() in
+> time_init().
+>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  arch/riscv/kernel/time.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+> index 4d3a1048ad8b..8a5cf99c0776 100644
+> --- a/arch/riscv/kernel/time.c
+> +++ b/arch/riscv/kernel/time.c
+> @@ -4,6 +4,7 @@
+>   * Copyright (C) 2017 SiFive
+>   */
+>
+> +#include <linux/of_clk.h>
+>  #include <linux/clocksource.h>
+>  #include <linux/delay.h>
+>  #include <asm/sbi.h>
+> @@ -24,6 +25,8 @@ void __init time_init(void)
+>         riscv_timebase = prop;
+>
+>         lpj_fine = riscv_timebase / HZ;
+> +
+> +       of_clk_init(NULL);
+>         timer_probe();
+>  }
+>
+> --
+> 2.28.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-If it helps the GPIO maintainers work then yes sure, and in that case
-you can add:
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Atish Patra <atish.patra@wdc.com>
+
+-- 
+Regards,
+Atish
