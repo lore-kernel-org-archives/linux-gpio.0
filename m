@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAD2C56201
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956CDC388F9
 	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 01:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C4C520791
+	by mail.kernel.org (Postfix) with ESMTP id 4889B208B3
 	for <linux-gpio@archiver.kernel.org>; Thu, 12 Nov 2020 01:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbgKLBcU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728035AbgKLBcU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 11 Nov 2020 20:32:20 -0500
-Received: from mo-csw1114.securemx.jp ([210.130.202.156]:52566 "EHLO
+Received: from mo-csw1116.securemx.jp ([210.130.202.158]:39100 "EHLO
         mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727956AbgKKXmV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 18:42:21 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 0ABNg7JG030509; Thu, 12 Nov 2020 08:42:07 +0900
-X-Iguazu-Qid: 2wHHadmXO0HaSfspQ8
-X-Iguazu-QSIG: v=2; s=0; t=1605138126; q=2wHHadmXO0HaSfspQ8; m=+UEpVNPoNKAz3dfcq+BQXtyCiPyl2pjBsvGtuuQkoeg=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1113) id 0ABNg6Id026074;
-        Thu, 12 Nov 2020 08:42:06 +0900
-Received: from enc01.toshiba.co.jp ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id 0ABNg6n1016632;
-        Thu, 12 Nov 2020 08:42:06 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 0ABNg5hF003444;
-        Thu, 12 Nov 2020 08:42:05 +0900
+        with ESMTP id S1727957AbgKKXmX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2020 18:42:23 -0500
+Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 0ABNgBtO004573; Thu, 12 Nov 2020 08:42:11 +0900
+X-Iguazu-Qid: 2wHHV20KPmXSE6z9Zg
+X-Iguazu-QSIG: v=2; s=0; t=1605138131; q=2wHHV20KPmXSE6z9Zg; m=4N+CvX23mKlsNGvGLKo/FPQu0W0ccP8J6JucCZN54lU=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+        by relay.securemx.jp (mx-mr1112) id 0ABNgAb1007555;
+        Thu, 12 Nov 2020 08:42:10 +0900
+Received: from enc02.toshiba.co.jp ([61.202.160.51])
+        by imx12.toshiba.co.jp  with ESMTP id 0ABNgA3W002687;
+        Thu, 12 Nov 2020 08:42:10 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id 0ABNg9MW008022;
+        Thu, 12 Nov 2020 08:42:10 +0900
 From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
@@ -38,10 +38,10 @@ Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v2 4/4] arm: dts: visconti: Add DT support for Toshiba Visconti5 GPIO driver
-Date:   Thu, 12 Nov 2020 17:40:57 +0900
+Subject: [PATCH v2 1/4] dt-bindings: gpio: Add bindings for Toshiba Visconti GPIO Controller
+Date:   Thu, 12 Nov 2020 17:40:54 +0900
 X-TSB-HOP: ON
-Message-Id: <20201112084057.1399983-5-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-Id: <20201112084057.1399983-2-nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201112084057.1399983-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 References: <20201112084057.1399983-1-nobuhiro1.iwamatsu@toshiba.co.jp>
@@ -51,65 +51,105 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the GPIO node in Toshiba Visconti5 SoC-specific DT file.
-And enable the GPIO node in TMPV7708 RM main board's board-specific DT file.
+Add bindings for the Toshiba Visconti GPIO Controller.
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 ---
- .../boot/dts/toshiba/tmpv7708-rm-mbrc.dts     |  4 +++
- arch/arm64/boot/dts/toshiba/tmpv7708.dtsi     | 27 +++++++++++++++++++
- 2 files changed, 31 insertions(+)
+ .../bindings/gpio/toshiba,gpio-visconti.yaml  | 85 +++++++++++++++++++
+ 1 file changed, 85 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
 
-diff --git a/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts b/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
-index ed0bf7f13f54..950010a290f0 100644
---- a/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
-+++ b/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
-@@ -41,3 +41,7 @@ &uart1 {
- 	clocks = <&uart_clk>;
- 	clock-names = "apb_pclk";
- };
+diff --git a/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+new file mode 100644
+index 000000000000..735b5c811c57
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+@@ -0,0 +1,85 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/toshiba,gpio-visconti.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+&gpio {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-index 242f25f4e12a..e202ae52eca9 100644
---- a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-+++ b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-@@ -157,6 +157,33 @@ pmux: pmux@24190000 {
- 			reg = <0 0x24190000 0 0x10000>;
- 		};
- 
-+		gpio: gpio@28020000 {
-+			compatible = "toshiba,gpio-visconti";
-+			reg = <0 0x28020000 0 0x1000>;
-+			#gpio-cells = <0x2>;
-+			gpio-ranges = <&pmux 0 0 32>;
-+			gpio-controller;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			interrupts =
-+				<GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+		};
++title: Toshiba Visconti ARM SoCs GPIO controller
 +
- 		uart0: serial@28200000 {
- 			compatible = "arm,pl011", "arm,primecell";
- 			reg = <0 0x28200000 0 0x1000>;
++maintainers:
++  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
++
++properties:
++  compatible:
++    items:
++      - const: toshiba,gpio-tmpv7708
++
++  reg:
++    maxItems: 1
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-ranges: true
++
++  gpio-controller: true
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  interrupts:
++    description:
++      interrupt mapping one per GPIO.
++    minItems: 32
++    maxItems: 32
++
++required:
++  - compatible
++  - reg
++  - "#gpio-cells"
++  - gpio-ranges
++  - gpio-controller
++  - interrupt-controller
++  - "#interrupt-cells"
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++      #include <dt-bindings/interrupt-controller/irq.h>
++      #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++      soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        gpio: gpio@28020000 {
++          compatible = "toshiba,gpio-tmpv7708";
++          reg = <0 0x28020000 0 0x1000>;
++          #gpio-cells = <0x2>;
++          gpio-ranges = <&pmux 0 0 32>;
++          gpio-controller;
++          interrupt-controller;
++          #interrupt-cells = <2>;
++          interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
++              <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++        };
++      };
++...
 -- 
 2.29.2
 
