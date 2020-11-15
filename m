@@ -2,90 +2,56 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=BAYES_50,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22876C56202
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Nov 2020 16:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEE1C6379F
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Nov 2020 16:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6FAB2244C
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Nov 2020 16:04:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y1yenbxW"
+	by mail.kernel.org (Postfix) with ESMTP id 8F4CD222C4
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Nov 2020 16:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbgKOQEX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 15 Nov 2020 11:04:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbgKOQEX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Nov 2020 11:04:23 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25775C0613D1
-        for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2020 08:04:21 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id x9so16898578ljc.7
-        for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2020 08:04:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hCr673H/Yn2fBC5SYLBr7olqdWNdjytKrx20Eb1RGVw=;
-        b=Y1yenbxWDkfp6xCuUVaoyoH6kkg1EhpLcv9ArvNBhmN46Z9cff6JZZ6Afhami6ZQo2
-         U1hVMjaI9dR8fUbLLCJhAlOStQVhXW9D0s6UJ+63LlrYW2aFJqJtfhftR5din1wi9nJn
-         eUhh277sLy1LNbxZpKXpazh06bitrGt3OPOBRitkoi6p4KYDwizA8h5h8u6Dxs6Mjoef
-         eExiJsZFd5DZKvrqXOzhYAk5RmWR99snbBih2emQo9FyLe01EkG03fNsT5g3+aiKV9ey
-         1JiOGfOSu70TA8sgS5tO4Qo5QPwa2aKdZJx2Gz4IXcLoQEG2Y0EOE5vXjknB2UE3o5JU
-         vGug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hCr673H/Yn2fBC5SYLBr7olqdWNdjytKrx20Eb1RGVw=;
-        b=P+20nzIE3Xa1Qbs9frqM7Y6rizpDVcRxsAX4yDpeM6V7Pb+YPVund50sud5yIV2Xkw
-         a965YjY37DbZRaTCTEOluVQNP+J1bkPZIvZxIqUz11FfGS+qjpb198wBNe4jlyNH4Qrr
-         r6pRtCh4oNnoL57P/3ffe9uTR1RHHLVIBPcZytjOLCE+jcxp3dGQCGs94V+GohceEbI5
-         jjhI2G6hG1oANp0JRfrCJSLg/1C9rOk8IZSpn1hgG62/u5XUZklwKS+B0wuz6WocJuoR
-         u9S884CNGADSl8W9yotzW6yPAzmB+tYTBVd9UYthx2jc0UGzSRNpU8ueqaxY1qYtIV5e
-         ajXA==
-X-Gm-Message-State: AOAM533qZEv82qBWdNwRv4fKOMSoC3pnvj8J2Hqjz8Q0+NuIyw76xQxt
-        FP5d/DSSLOPkqCRzYUFTOwfry96/A35vuWQtL4OZkA==
-X-Google-Smtp-Source: ABdhPJxCYu3rejDRIFy/zJ5yaEV7Z8FhFZgnK0LcY7vDHTbFtfw1DRWxcCx239SpOYESERCqBaKtQ9/3J+YQuBu5wLU=
-X-Received: by 2002:a2e:95d2:: with SMTP id y18mr5218966ljh.286.1605456259664;
- Sun, 15 Nov 2020 08:04:19 -0800 (PST)
+        id S1727162AbgKOQnb convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 15 Nov 2020 11:43:31 -0500
+Received: from sw73-70-41.adsl.seed.net.tw ([203.73.70.41]:60489 "EHLO
+        oa.trendtek.com.tw" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbgKOQn3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Nov 2020 11:43:29 -0500
+Received: from [156.96.44.214] ([156.96.44.214])
+        (authenticated bits=0)
+        by oa.trendtek.com.tw (8.13.8/8.13.1) with ESMTP id 0AFGh6G3029327
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2020 00:43:27 +0800
+Message-Id: <202011151643.0AFGh6G3029327@oa.trendtek.com.tw>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <20201111222008.39993-1-andriy.shevchenko@linux.intel.com>
- <CAHp75Vcfr-=v5Ba3VhR5NTnJM3gEYevUNJUdBnhdh4YUvTzVLA@mail.gmail.com> <CAHp75Vd68Kb+b4PoZ-LZcs=Bqx+t1wK7pi_5JyRLpKdr1=uMfA@mail.gmail.com>
-In-Reply-To: <CAHp75Vd68Kb+b4PoZ-LZcs=Bqx+t1wK7pi_5JyRLpKdr1=uMfA@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 15 Nov 2020 17:04:08 +0100
-Message-ID: <CACRpkdawP_6MKx803ecQMtZ-DgnNbXKt2uu4GGHrvfK+-REudg@mail.gmail.com>
-Subject: Re: [PATCH v7 00/18] gpiolib: acpi: pin configuration fixes
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Jamie McClymont <jamie@kwiius.com>,
-        Coiby Xu <coiby.xu@gmail.com>,
-        Vasile-Laurentiu Stanimir 
-        <vasile-laurentiu.stanimir@windriver.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Corporate and Personal Loan *
+To:     linux-gpio@vger.kernel.org
+From:   "Investment  Corporate" <financialcapability6@gmail.com>
+Date:   Sun, 15 Nov 2020 08:43:21 -0800
+Reply-To: hmurrah39@gmail.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 3:16 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+Hello linux-gpio@vger.kernel.org
 
-> Linus, Bart, it would be nice to hear from you about GPIO library
-> cleanups and in general about the series...
 
-The series:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+We are Base Investment Company offering Corporate and Personal Loan at 3% Interest Rate for a duration of 10Years.
 
-Can you send me a pull request for the contents of the v7 patch series
-so I can pull it in?
 
-Yours,
-Linus Walleij
+We also pay 1% commission to brokers, who introduce project owners for finance or other opportunities.
+
+
+Please get back to me if you are interested for more
+
+details.
+
+
+Yours faithfully,
+
+Hashim Murrah
