@@ -2,78 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF2BC4742C
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 10:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E46C4742C
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 12:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 357ED222B9
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 10:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E3A72064C
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 12:01:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="tMi80xyn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbgKPKDe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Nov 2020 05:03:34 -0500
-Received: from mga05.intel.com ([192.55.52.43]:24224 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726584AbgKPKDe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 16 Nov 2020 05:03:34 -0500
-IronPort-SDR: 47kVzs1o94husmOdaVuARRGKQCoZT5xClJNPRYrvL2M6exMTWkSCWZNrxn5B50F5BqvDmEByQB
- Ynf5IgpS1KYQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9806"; a="255435443"
-X-IronPort-AV: E=Sophos;i="5.77,482,1596524400"; 
-   d="scan'208";a="255435443"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2020 02:03:33 -0800
-IronPort-SDR: qWsE8fftXFfnTqVtxm9iIDUGVLPIZQ6P4nHlR8hOxs0/nfF21nTiPot18en3xwA+mxDscUliEX
- XjSEidVQTDBg==
-X-IronPort-AV: E=Sophos;i="5.77,482,1596524400"; 
-   d="scan'208";a="358411589"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2020 02:03:32 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1kebNC-0072RQ-QA; Mon, 16 Nov 2020 12:04:34 +0200
-Date:   Mon, 16 Nov 2020 12:04:34 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] pinctrl: baytrail: Avoid clearing debounce value when
- turning it off
-Message-ID: <20201116100434.GU4077@smile.fi.intel.com>
-References: <20201112190301.44373-1-andriy.shevchenko@linux.intel.com>
- <20201113093611.GL2495@lahna.fi.intel.com>
+        id S1729193AbgKPKmt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Nov 2020 05:42:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37478 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729178AbgKPKms (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2020 05:42:48 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53979C0613D2
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2020 02:42:48 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id 23so18106371wrc.8
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2020 02:42:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CxfKxZTg1DbPHJWPzb3+j86ivMqV6vfkqrTZ7ZDLxTg=;
+        b=tMi80xynRp4hBqkNkBreCUIY5H8i99McNc6u7JRzeN5b/v1RcIzqYDuz+u4VLBDa9a
+         DqGiqDNYLTHNHjEbTpskAdupj5OGTAqmbli3Sh2tR66LFdqndOIncLE7KFbI1/p27XrZ
+         uSML2nMbyQEvBIBSnQZtXsOiXifpczCGJxey9QA9YKTKKs+QMZQCELrY7r8/Bk7T4e4g
+         SN2u1YF/IbX1X6eQdfq++GZFXy4245JLonuWUsblKnFP/fxfXseQJDlnqiXMNXPjel3d
+         1+287JeZmDMvKRaNBVubnTa9qIok9lF0OgCuoovXl+pqonNxE09wmRU6RjoRfSSVAxFP
+         oqDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CxfKxZTg1DbPHJWPzb3+j86ivMqV6vfkqrTZ7ZDLxTg=;
+        b=UIKAk+gbv2J3AVobBXfyXLgrXzdrKtpTjsswzczb4Lhcr0ZqdD0hcOT2IrKv0FRT2e
+         wWWPzMstZsAZJiE/2Wcxav2mPYXalX78FV4JBq+CCimi0OqIz6qp2kTOId4dxByLKG9C
+         Ibnun/bpwpwlWUU8WeDEQU4apzLSjrhVFNMF7025WhyOkC5CL6I91uN9CbtgXbWSSHfL
+         Ty/acoKW9GgjvroQ8GRBXCAltDwwg1UcP3vjcTR30B7eb0ZIgm+iEtxNUBt+6NgtPX5p
+         YXMHAhDKYTe8YN2yGi9HrRmeQmcFRygXP1LhalDhB25YHWm0vXQFZSDwgEE4095bZZxV
+         B6cg==
+X-Gm-Message-State: AOAM530eOEsBuUEW8BHEBRL4IoxJ0lc/TccD8Hg/zkXI/cOYudv+y8dB
+        U3esen0XkLg4jYQRVPJhWmRcvg==
+X-Google-Smtp-Source: ABdhPJzUKjTNKTbXFWJcsJH8ygfAj6l68RwUt/AazhZ6d2KIvuU+crBrvhbEHSdvAoUUE2Of0Iu60Q==
+X-Received: by 2002:adf:f304:: with SMTP id i4mr18285381wro.268.1605523367000;
+        Mon, 16 Nov 2020 02:42:47 -0800 (PST)
+Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
+        by smtp.gmail.com with ESMTPSA id v16sm20583283wml.33.2020.11.16.02.42.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2020 02:42:46 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        David Laight <David.Laight@aculab.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v5 1/7] gpio: exar: add a newline after the copyright notice
+Date:   Mon, 16 Nov 2020 11:42:36 +0100
+Message-Id: <20201116104242.19907-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20201116104242.19907-1-brgl@bgdev.pl>
+References: <20201116104242.19907-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201113093611.GL2495@lahna.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 11:36:11AM +0200, Mika Westerberg wrote:
-> On Thu, Nov 12, 2020 at 09:03:01PM +0200, Andy Shevchenko wrote:
-> > Baytrail pin control has a common register to set up debounce timeout.
-> > When a pin configuration requested debounce to be disabled, the rest
-> > of the pins may still want to have debounce enabled and thus rely on
-> > the common timeout value. Avoid clearing debounce value when turning
-> > it off for one pin while others may still use it.
-> > 
-> > Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
-> > Depends-on: 04ff5a095d66 ("pinctrl: baytrail: Rectify debounce support")
-> > Depends-on: 827e1579e1d5 ("pinctrl: baytrail: Rectify debounce support (part 2)")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Pushed to my review and testing queue, thanks!
+It's customary to have a newline between the copyright header and the
+includes. Add one to gpio-exar.
 
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-exar.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index b1accfba017d..4202dd363a11 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -4,6 +4,7 @@
+  *
+  * Copyright (C) 2015 Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+  */
++
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/gpio/driver.h>
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.29.1
 
