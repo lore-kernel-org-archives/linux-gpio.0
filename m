@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1919CC5519F
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 12:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF501C5519F
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 12:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3DA022263
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 12:05:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53A972227F
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Nov 2020 12:06:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="T+tUvkIF"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Sjo+8Err"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729267AbgKPKnA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Nov 2020 05:43:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37516 "EHLO
+        id S1729280AbgKPKnJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Nov 2020 05:43:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729232AbgKPKm4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2020 05:42:56 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4224C061A04
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2020 02:42:54 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id c9so23251524wml.5
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2020 02:42:54 -0800 (PST)
+        with ESMTP id S1729189AbgKPKms (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2020 05:42:48 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B32C0613CF
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2020 02:42:47 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id c9so23251135wml.5
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2020 02:42:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v6hO2EdktD6tTwbP0hf9n6mHqN7h4IqXAlEVl1IexRM=;
-        b=T+tUvkIF+iH4K8+P7U64YpgECCTYj+oVV2Ij3yc1MDvVMu+ziOO6jKj29VjW7Zf4UR
-         BGkzB9TV+T8Xcu7p8oR2x2ePl/BzA8jQs6t/cqXalSzA54H0t8+smAzDpF3XqeLGkhkV
-         26uANPiz6+nqI0KfbuHTnqnGZRrsIJk7gSfik7PFY/WskKul9Ncz4pgNSohp69ulfP3P
-         4mccSQTOVDm9DnRGvo2m+83H8OGR165kgHaVg/HCu38Nyk1qHbL4GnEGPsL3pTqWJFWE
-         ILMUnR6idga7JubvwejWzkqB87KiqagNkMJsHnjbkbu7n/kTUGOhZ0ZgIqwX5DNVV3ij
-         4CEg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4Bx0bwB8usWIGXQU6DeOYV9xHI+q7mXHS7hZ1vV9tck=;
+        b=Sjo+8Err9noENP9ZXt891O85sVDqiqCyYo93SgK3VG6j6OwaDV9Zazkwf7yHNzSRJP
+         l1Ry1Fi4Jboo6Ng2zV2I/WMRBXQ4dLiOBRs/utowNCNilwma6LT3WKPmbBUbYGMk49GC
+         d1Neh+N+ksSLgoI/D0Jm+UtPim0A/gxOdRi8qoG+kOP4mrHnPbeqocB5M3uLR1icTcvD
+         yiLrRZ8JS39+mKPCx8G8fy5ZY+XhW2VpM45HUWUUo2yk78tXdYonWS1GRJIHhEbmk+T7
+         SKo1GCRF7UAlguKOgJpdq4WsMBDu0F9OUaztQ6pV5Qs7XGL/n4tfvtJAYfw3ZTb0v8qB
+         7jPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v6hO2EdktD6tTwbP0hf9n6mHqN7h4IqXAlEVl1IexRM=;
-        b=sAJ+FQXQMIVpExSKalo4UnXeJjBISc7nOXCtD7zo0/k/Y4M98W4bWtWcRPc+NZ28Hz
-         virVWI060/QLw6flux/baquLqzhjsSahIRRuhRo7ziGz9GY+wn7u0jKNrh1nBwRXLpR4
-         9ZuxQNiS9lJAERiqTq+JJH0QoznLX5SbqwHegetDB/ag9AkV5TBqL+h1zFtavkYONB/W
-         vNXAs8gBNwGU59Vor5J5G0rHpc72nj/x1v904mRMq3lESsv/dADZs/NXPCoJaqmQ57zA
-         SGfHS2lyZgrnUgQ9C0h9RCVni8eZiT1IWQMPNfoIUOr0DAYGufRVkl9tN2T9m3PVtGsD
-         Iy5w==
-X-Gm-Message-State: AOAM531RTPI12aHF2TiSAzwmNSCgvuRA0bRnKmmr4S+5MxUKqBfUtjhe
-        hKfr3uM3Au/kiNkrvcyqLTMzTg==
-X-Google-Smtp-Source: ABdhPJw+poV12SjtIeBVrkrmoi0MFRcpkejjbt0VzAUy70UMCekqpQfFhC7AOmFs6L7Fjs1chqY9Ww==
-X-Received: by 2002:a1c:21c1:: with SMTP id h184mr15545483wmh.106.1605523373631;
-        Mon, 16 Nov 2020 02:42:53 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4Bx0bwB8usWIGXQU6DeOYV9xHI+q7mXHS7hZ1vV9tck=;
+        b=GrexthOn8R3IZwjB4ctu+VF5rBXRa6/dbs93R3CGC1u5dzDCzA830Paf2wux+s1mVF
+         OiwJ/xc3hJdYGE3kbRVvt9epi3gVYRJI4cEVjLnwi1IV0xBf6tP+/rnAyE6YXCFqC5C7
+         InnOfghQQAJFF7OTR52WLUbcVDT4UEBKLXvYArSzr7GfxkDphu06vBoEq43CY6PS/eFn
+         KOMdA+G1hDOhii1uaKVGYX9wFRYWWDWH5SYLHycpNlcjJD/7G73Tn6jTz/3q5u1D2aB2
+         aSF+9hXTPSDswkSNA9P5mNoJccVd3J2xYcZClj7qWG91r4OaV6Nli5YLsvVmddEdFaCb
+         LSkQ==
+X-Gm-Message-State: AOAM5333dshN+NzUXQDMQi9m/NATyjvTSsT6Rbi+iLmnW3yNITD1PquU
+        WwFVLRatV3JHkfAqana3WvgxRg==
+X-Google-Smtp-Source: ABdhPJzN3VlxVGSntXS+YyLoLvOZXfSX/aWdI21WZGt10d7rsuaDIcqV9aBmHWK/N7Uw47a/raxJzw==
+X-Received: by 2002:a1c:97:: with SMTP id 145mr14413406wma.72.1605523365855;
+        Mon, 16 Nov 2020 02:42:45 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id v16sm20583283wml.33.2020.11.16.02.42.52
+        by smtp.gmail.com with ESMTPSA id v16sm20583283wml.33.2020.11.16.02.42.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2020 02:42:53 -0800 (PST)
+        Mon, 16 Nov 2020 02:42:45 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -64,12 +64,10 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         David Laight <David.Laight@aculab.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 7/7] gpio: exar: use devm action for freeing the IDA and drop remove()
-Date:   Mon, 16 Nov 2020 11:42:42 +0100
-Message-Id: <20201116104242.19907-8-brgl@bgdev.pl>
+Subject: [PATCH v5 0/7] gpio: exar: refactor the driver
+Date:   Mon, 16 Nov 2020 11:42:35 +0100
+Message-Id: <20201116104242.19907-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
-In-Reply-To: <20201116104242.19907-1-brgl@bgdev.pl>
-References: <20201116104242.19907-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -78,75 +76,40 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We can simplify the error path in probe() and drop remove() entirely if
-we provide a devm action for freeing the device ID.
+I just wanted to convert the driver to using simpler IDA API but ended up
+quickly converting it to using regmap. Unfortunately I don't have the HW
+to test it so marking the patches that introduce functional change as RFT
+and Cc'ing the original author.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-exar.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+v1 -> v2:
+- add new regmap helper: regmap_assign_bits()
+- fix lvl vs sel register access
+- set value in direction_output callback
 
-diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index 79fb0964ace3..e4c1ac88d2ba 100644
---- a/drivers/gpio/gpio-exar.c
-+++ b/drivers/gpio/gpio-exar.c
-@@ -111,6 +111,13 @@ static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
- 	return 0;
- }
- 
-+static void exar_devm_ida_free(void *data)
-+{
-+	struct exar_gpio_chip *exar_gpio = data;
-+
-+	ida_free(&ida_index, exar_gpio->index);
-+}
-+
- static const struct regmap_config exar_regmap_config = {
- 	.name		= "exar-gpio",
- 	/*
-@@ -163,6 +170,10 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 	if (index < 0)
- 		return index;
- 
-+	ret = devm_add_action_or_reset(dev, exar_devm_ida_free, exar_gpio);
-+	if (ret)
-+		return ret;
-+
- 	sprintf(exar_gpio->name, "exar_gpio%d", index);
- 	exar_gpio->gpio_chip.label = exar_gpio->name;
- 	exar_gpio->gpio_chip.parent = dev;
-@@ -178,29 +189,15 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 
- 	ret = devm_gpiochip_add_data(dev, &exar_gpio->gpio_chip, exar_gpio);
- 	if (ret)
--		goto err_destroy;
-+		return ret;
- 
- 	platform_set_drvdata(pdev, exar_gpio);
- 
--	return 0;
--
--err_destroy:
--	ida_free(&ida_index, index);
--	return ret;
--}
--
--static int gpio_exar_remove(struct platform_device *pdev)
--{
--	struct exar_gpio_chip *exar_gpio = platform_get_drvdata(pdev);
--
--	ida_free(&ida_index, exar_gpio->index);
--
- 	return 0;
- }
- 
- static struct platform_driver gpio_exar_driver = {
- 	.probe	= gpio_exar_probe,
--	.remove	= gpio_exar_remove,
- 	.driver	= {
- 		.name = DRIVER_NAME,
- 	},
+v2 -> v3:
+- drop the regmap helper from series
+
+v3 -> v4:
+- renamed the regmap variable to 'regmap' as leaving the old name caused me
+  to miss an assignment leading to a crash (culprit spotted by Andy Shevchenko)
+
+v4 -> v5:
+- set the reg_bits to 11 in regmap config
+- collect review tags from Andy
+
+Bartosz Golaszewski (7):
+  gpio: exar: add a newline after the copyright notice
+  gpio: exar: include idr.h
+  gpio: exar: switch to a simpler IDA interface
+  gpio: exar: use a helper variable for &pdev->dev
+  gpio: exar: unduplicate address and offset computation
+  gpio: exar: switch to using regmap
+  gpio: exar: use devm action for freeing the IDA and drop remove()
+
+ drivers/gpio/Kconfig     |   1 +
+ drivers/gpio/gpio-exar.c | 160 ++++++++++++++++++++-------------------
+ 2 files changed, 82 insertions(+), 79 deletions(-)
+
 -- 
 2.29.1
 
