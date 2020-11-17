@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B946BC64E75
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Nov 2020 12:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D54C63798
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Nov 2020 12:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 785F824695
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Nov 2020 12:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 953AF2467A
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Nov 2020 12:58:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jy+avDI/"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="itOuL32L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbgKQM5B (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Nov 2020 07:57:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53806 "EHLO mail.kernel.org"
+        id S1725779AbgKQM5t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Nov 2020 07:57:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728397AbgKQM5A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Nov 2020 07:57:00 -0500
+        id S1728735AbgKQM5q (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 17 Nov 2020 07:57:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 092F324654;
-        Tue, 17 Nov 2020 12:56:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BA322225B;
+        Tue, 17 Nov 2020 12:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605617820;
-        bh=TYmOUFx1wB5HO2cWnT7UCvQQ/O6u8B3krnauYye4MmM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jy+avDI/UPo5PzfnpKLECsMVTA1aXKQzna/jkS3Ld9O42PFB67iJ26JrWkbglAEYy
-         FYJSlRvDICMgmkc4z8hUrmO+pmBgqj+sjyxeqfySR2jx7/OtXOtM7uvo5n6BiYAJMk
-         8kMsteoqeXHwWJZakPkewPaztzzKL+XDyF6l7wrA=
+        s=default; t=1605617865;
+        bh=jiXUb3dHuj6wF3mgnGob5udyk4xvwnvCnIdVrrxyCAY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=itOuL32LLcu0LNIOKCtc3XBKIEfLoYEHGS0CQUjaUC1jPAmZmS0Bk5AGH8Mrns9wp
+         C3L66jk3tqHFcNpm0LrNISm4uz5uPd+3QYEAu4bTiip9kBRTiasAeI25AkVo1Aniib
+         Is+yOC+nDc/z4aqM3nKCRdKkY3cdXK4IRaukwmnM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jianqun Xu <jay.xu@rock-chips.com>,
@@ -42,12 +42,10 @@ Cc:     Jianqun Xu <jay.xu@rock-chips.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.9 04/21] pinctrl: rockchip: enable gpio pclk for rockchip_gpio_to_irq
-Date:   Tue, 17 Nov 2020 07:56:35 -0500
-Message-Id: <20201117125652.599614-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 1/6] pinctrl: rockchip: enable gpio pclk for rockchip_gpio_to_irq
+Date:   Tue, 17 Nov 2020 07:57:38 -0500
+Message-Id: <20201117125743.599974-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201117125652.599614-1-sashal@kernel.org>
-References: <20201117125652.599614-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -74,10 +72,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 0401c1da79dd0..7b398ed2113e8 100644
+index 005df24f5b3f1..4d3b62707524a 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3155,7 +3155,9 @@ static int rockchip_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -2778,7 +2778,9 @@ static int rockchip_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
  	if (!bank->domain)
  		return -ENXIO;
  
