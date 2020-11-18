@@ -2,211 +2,243 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E1CC63697
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 12:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB089C5519F
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 14:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68353221FC
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 12:20:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="qjmMVVY8"
+	by mail.kernel.org (Postfix) with ESMTP id 725A822244
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 14:12:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbgKRMUC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Nov 2020 07:20:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgKRMUB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2020 07:20:01 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB188C0613D4
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2020 04:20:01 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id fw15so182961pjb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2020 04:20:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=JWgJx7zFWjlNyz/5HsOhXoDBO3YUiejOb6THeNru5dc=;
-        b=qjmMVVY8jzRxD0xyrV1F2YcwkEYHuYyzrW7T/1ErEr713O52eh/85kdNzCldfr3Vmy
-         w7V95a6TbGHpklX9qTbOl1RDpjqXM7Y17T5DdWuijJF25/Uv9bPlRxCKXe8FXjli6mDy
-         JXOOhtJwGYvupZSAaH7+MKJ+zDUSw4UHBtggy7bxzgcRhSilcObPQlRgqdQyYvV9bP90
-         ZCC5DCGoLA7CtPM+5zN4xX0OZrjozx1ksaOqGxu79CMtm7oKsgkjwVRrBX7kIWCkRfvc
-         qm41YlmWB3R/QhvYJQNmEmv/6uwSqoJHyQ10jvki5VxnRVvWOBpQAXbGCSXjqukM98+Z
-         UuSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=JWgJx7zFWjlNyz/5HsOhXoDBO3YUiejOb6THeNru5dc=;
-        b=RbDFZEdg2UNEZ/Wj2T6x7qNpaXGAqU7zvF3cbJsQBU/KXbEQh+ZpjmYn/VWOxTT94M
-         z9cHkRLslf/nxo78U3RgTddEdoVoXC8o2cpQOku9REqgsRNCkIYXHzCNq3CVQhPTKxtJ
-         X8l6N82Mvo6WTuMxul6++y/hRV9XAaoP8cs5A46W0v2XLKaQ7HnfTlF3TfGRLcJG7I8h
-         dGjf8GpsrsWNflNvyK/MKCTCc+lP9bzmAooz5UkoWWYPyhF5Lm+lb2MvJDu4wgB+UjNd
-         WjphoRYwdnFy7rrny5yaONLoXKXCYYZYBATwce82Gth//ZXS9hV1BMakuDy/YmOaDtqh
-         BLcQ==
-X-Gm-Message-State: AOAM532yNIqXcdi8il5SrB17d+XDlnxcFtFVUZduo4i4d/0qAUbceTZx
-        TkmH557KwgZoRSfv0O9sw1F2KgiTy5R1Xg==
-X-Google-Smtp-Source: ABdhPJxKue3hcGQpriu5xPUXOhzCJc0ia28Saaym/Afb7mijsU6n0/q+MVImj05B9x+LdA3qJUC1YQ==
-X-Received: by 2002:a17:90a:b904:: with SMTP id p4mr3529682pjr.81.1605701998023;
-        Wed, 18 Nov 2020 04:19:58 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id q23sm26995299pfg.18.2020.11.18.04.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2020 04:19:57 -0800 (PST)
-Message-ID: <5fb5116d.1c69fb81.5e2b9.95c2@mx.google.com>
-Date:   Wed, 18 Nov 2020 04:19:57 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        id S1726672AbgKROMq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Nov 2020 09:12:46 -0500
+Received: from mga18.intel.com ([134.134.136.126]:44399 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbgKROMp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 18 Nov 2020 09:12:45 -0500
+IronPort-SDR: ih8N5aUHfPOVOIXige3+cao/rO51ZRlzFXyVex5kEgMPhkO5CRoPJsJtjip30OFjuZasbyMxf2
+ 8SwbqAO0m8zQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9808"; a="158893338"
+X-IronPort-AV: E=Sophos;i="5.77,486,1596524400"; 
+   d="scan'208";a="158893338"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2020 06:12:42 -0800
+IronPort-SDR: 1tBfe0VF3pTjq7BTtiXzkEkVxFG0HfT54KEqW8zYXtPZ6N7xAgRHkhBpJUn/pjwS/PhCiDiZVH
+ QSfvsUCkYMpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,486,1596524400"; 
+   d="scan'208";a="368338496"
+Received: from lkp-server02.sh.intel.com (HELO 67996b229c47) ([10.239.97.151])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Nov 2020 06:12:39 -0800
+Received: from kbuild by 67996b229c47 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kfOCN-00007Z-3B; Wed, 18 Nov 2020 14:12:39 +0000
+Date:   Wed, 18 Nov 2020 22:12:32 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:for-next] BUILD SUCCESS
+ 826def369598fd5a0788d60c33d791cc039ee848
+Message-ID: <5fb52bd0.7BQ6FCC3vcdHTQYD%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v5.10-rc4-34-g0f2c7af45d7e
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: devel
-Subject: linusw/devel build: 7 builds: 0 failed, 7 passed,
- 11 warnings (v5.10-rc4-34-g0f2c7af45d7e)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel build: 7 builds: 0 failed, 7 passed, 11 warnings (v5.10-rc4-34=
--g0f2c7af45d7e)
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  for-next
+branch HEAD: 826def369598fd5a0788d60c33d791cc039ee848  Merge branch 'devel' into for-next
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
-5.10-rc4-34-g0f2c7af45d7e/
+elapsed time: 725m
 
-Tree: linusw
-Branch: devel
-Git Describe: v5.10-rc4-34-g0f2c7af45d7e
-Git Commit: 0f2c7af45d7eef8455d7ad39c5326229bf19a2ed
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Built: 7 unique architectures
+configs tested: 171
+configs skipped: 2
 
-Warnings Detected:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-arc:
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+sh                          rsk7269_defconfig
+powerpc                 mpc832x_rdb_defconfig
+sh                        edosk7760_defconfig
+sh                         microdev_defconfig
+sh                            shmin_defconfig
+sh                            migor_defconfig
+nios2                            alldefconfig
+arc                           tb10x_defconfig
+sh                              ul2_defconfig
+arm                          lpd270_defconfig
+powerpc                     mpc5200_defconfig
+m68k                            mac_defconfig
+arm                          tango4_defconfig
+arm                        spear3xx_defconfig
+powerpc                    ge_imp3a_defconfig
+arm                          gemini_defconfig
+xtensa                    xip_kc705_defconfig
+powerpc                     ksi8560_defconfig
+microblaze                    nommu_defconfig
+arm                          exynos_defconfig
+mips                 decstation_r4k_defconfig
+mips                      maltasmvp_defconfig
+mips                           ci20_defconfig
+arc                         haps_hs_defconfig
+sh                   sh7770_generic_defconfig
+mips                      loongson3_defconfig
+arm                            mps2_defconfig
+arc                     nsimosci_hs_defconfig
+mips                            ar7_defconfig
+powerpc                      cm5200_defconfig
+mips                          malta_defconfig
+openrisc                    or1ksim_defconfig
+arm                         hackkit_defconfig
+m68k                         apollo_defconfig
+mips                          rm200_defconfig
+mips                  decstation_64_defconfig
+sh                            hp6xx_defconfig
+mips                       bmips_be_defconfig
+c6x                        evmc6472_defconfig
+arm                         shannon_defconfig
+h8300                       h8s-sim_defconfig
+sh                   sh7724_generic_defconfig
+powerpc                    klondike_defconfig
+powerpc                 mpc832x_mds_defconfig
+powerpc                    gamecube_defconfig
+sh                                  defconfig
+mips                        omega2p_defconfig
+arm                         mv78xx0_defconfig
+powerpc                           allnoconfig
+powerpc                         ps3_defconfig
+powerpc                   bluestone_defconfig
+powerpc                      ppc40x_defconfig
+sh                          rsk7203_defconfig
+powerpc                      pcm030_defconfig
+openrisc                         alldefconfig
+sparc                               defconfig
+powerpc                     kilauea_defconfig
+powerpc                    adder875_defconfig
+mips                     cu1000-neo_defconfig
+m68k                         amcore_defconfig
+mips                            e55_defconfig
+arm                         socfpga_defconfig
+powerpc                 mpc8313_rdb_defconfig
+sh                               j2_defconfig
+xtensa                  cadence_csp_defconfig
+sh                          polaris_defconfig
+arm                            lart_defconfig
+arm                          prima2_defconfig
+h8300                            alldefconfig
+mips                      bmips_stb_defconfig
+arm                           h5000_defconfig
+arm                        neponset_defconfig
+s390                             alldefconfig
+i386                                defconfig
+arm                           corgi_defconfig
+sh                          rsk7264_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+parisc                           allyesconfig
+s390                             allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+x86_64               randconfig-a005-20201118
+x86_64               randconfig-a003-20201118
+x86_64               randconfig-a004-20201118
+x86_64               randconfig-a002-20201118
+x86_64               randconfig-a006-20201118
+x86_64               randconfig-a001-20201118
+i386                 randconfig-a006-20201117
+i386                 randconfig-a005-20201117
+i386                 randconfig-a001-20201117
+i386                 randconfig-a002-20201117
+i386                 randconfig-a004-20201117
+i386                 randconfig-a003-20201117
+i386                 randconfig-a006-20201118
+i386                 randconfig-a005-20201118
+i386                 randconfig-a002-20201118
+i386                 randconfig-a001-20201118
+i386                 randconfig-a003-20201118
+i386                 randconfig-a004-20201118
+i386                 randconfig-a012-20201118
+i386                 randconfig-a014-20201118
+i386                 randconfig-a016-20201118
+i386                 randconfig-a011-20201118
+i386                 randconfig-a013-20201118
+i386                 randconfig-a015-20201118
+i386                 randconfig-a012-20201117
+i386                 randconfig-a014-20201117
+i386                 randconfig-a016-20201117
+i386                 randconfig-a011-20201117
+i386                 randconfig-a015-20201117
+i386                 randconfig-a013-20201117
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
 
-arm64:
-    defconfig (gcc-8): 8 warnings
-
-arm:
-    multi_v7_defconfig (gcc-8): 3 warnings
-
-i386:
-
-mips:
-
-riscv:
-
-x86_64:
-
-
-Warnings summary:
-
-    3    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.=
-dtsi:7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-range=
-s" property but its #size-cells (1) differs from / (2)
-    3    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.=
-dtsi:7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-range=
-s" property but its #address-cells (1) differs from / (2)
-    1    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Fa=
-iled prerequisite 'spi_bus_bridge'
-    1    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:185.3-14: War=
-ning (dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but =
-its #size-cells (1) differs from / (2)
-    1    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:185.3-14: War=
-ning (dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (1) differs from / (2)
-    1    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (=
-spi_bus_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for =
-SPI bus
-    1    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (=
-spi_bus_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells f=
-or SPI bus
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 8 warnings, 0 section mi=
-smatches
-
-Warnings:
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:185.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:185.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-size-cells (1) differs from / (2)
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sec=
-tion mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
+clang tested configs:
+x86_64               randconfig-a003-20201117
+x86_64               randconfig-a005-20201117
+x86_64               randconfig-a004-20201117
+x86_64               randconfig-a002-20201117
+x86_64               randconfig-a001-20201117
+x86_64               randconfig-a006-20201117
+x86_64               randconfig-a015-20201118
+x86_64               randconfig-a014-20201118
+x86_64               randconfig-a011-20201118
+x86_64               randconfig-a013-20201118
+x86_64               randconfig-a016-20201118
+x86_64               randconfig-a012-20201118
+x86_64               randconfig-a015-20201116
+x86_64               randconfig-a011-20201116
+x86_64               randconfig-a014-20201116
+x86_64               randconfig-a013-20201116
+x86_64               randconfig-a016-20201116
+x86_64               randconfig-a012-20201116
 
 ---
-For more info write to <info@kernelci.org>
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
