@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A531C64E7B
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 10:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E20C63697
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 10:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E81FC206A5
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 10:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31CB8206A5
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 10:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbgKRKqz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Nov 2020 05:46:55 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:55912 "EHLO
+        id S1726195AbgKRKrI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Nov 2020 05:47:08 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:55926 "EHLO
         mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727707AbgKRKqz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 18 Nov 2020 05:46:55 -0500
+        id S1727734AbgKRKrI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 18 Nov 2020 05:47:08 -0500
 Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id 5FA044407F0;
-        Wed, 18 Nov 2020 12:31:04 +0200 (IST)
+        by mx.tkos.co.il (Postfix) with ESMTPS id A1F5A440DBB;
+        Wed, 18 Nov 2020 12:31:17 +0200 (IST)
 From:   Baruch Siach <baruch@tkos.co.il>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
@@ -31,19 +31,19 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc:     Baruch Siach <baruch@tkos.co.il>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Jason Cooper <jason@lakedaemon.net>,
         Andrew Lunn <andrew@lunn.ch>,
         Gregory Clement <gregory.clement@bootlin.com>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Chris Packham <chris.packham@alliedtelesis.co.nz>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Ralph Sennhauser <ralph.sennhauser@gmail.com>,
         linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/5] gpio: mvebu: update Armada XP per-CPU comment
-Date:   Wed, 18 Nov 2020 12:30:42 +0200
-Message-Id: <42dec69070e1f2b09b29606247635a57f780b765.1605694661.git.baruch@tkos.co.il>
+Subject: [PATCH 4/5] arm64: dts: armada: add pwm offsets for ap/cp gpios
+Date:   Wed, 18 Nov 2020 12:30:45 +0200
+Message-Id: <5189d34603ac90eb265b906cb37115d105aa4087.1605694661.git.baruch@tkos.co.il>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1605694661.git.baruch@tkos.co.il>
 References: <cover.1605694661.git.baruch@tkos.co.il>
@@ -53,31 +53,77 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Commit 2233bf7a92e ("gpio: mvebu: switch to regmap for register access")
-introduced percpu_regs to replace percpu_membase. Update the comment to
-match.
+The 'pwm-offset' property of both GPIO blocks (per CP component) point
+to the same counter registers offset. The driver will decide how to use
+counters A/B.
 
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Fixes: 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register access")
+This is different from the convention of pwm on earlier Armada series
+(370/38x). On those systems the assignment of A/B counters to GPIO
+blocks is coded in both DT and the driver. The actual behaviour of the
+current driver on Armada 8K/7K is the same as earlier systems.
+
+Add also clock properties for base pwm frequency reference.
+
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
- drivers/gpio/gpio-mvebu.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/boot/dts/marvell/armada-ap80x.dtsi |  3 +++
+ arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 433e2c3f3fd5..bdc4d813a42e 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -78,8 +78,7 @@
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi b/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi
+index 12e477f1aeb9..7f8d589ed938 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi
+@@ -281,6 +281,9 @@ ap_gpio: gpio@1040 {
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					gpio-ranges = <&ap_pinctrl 0 0 20>;
++					pwm-offset = <0x10c0>;
++					#pwm-cells = <2>;
++					clocks = <&ap_clk 3>;
+ 				};
+ 			};
  
- /*
-  * The Armada XP has per-CPU registers for interrupt cause, interrupt
-- * mask and interrupt level mask. Those are relative to the
-- * percpu_membase.
-+ * mask and interrupt level mask. Those are in percpu_regs range.
-  */
- #define GPIO_EDGE_CAUSE_ARMADAXP_OFF(cpu) ((cpu) * 0x4)
- #define GPIO_EDGE_MASK_ARMADAXP_OFF(cpu)  (0x10 + (cpu) * 0x4)
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+index 9dcf16beabf5..366daec416df 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+@@ -234,12 +234,17 @@ CP11X_LABEL(gpio1): gpio@100 {
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				gpio-ranges = <&CP11X_LABEL(pinctrl) 0 0 32>;
++				pwm-offset = <0x1f0>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				interrupts = <86 IRQ_TYPE_LEVEL_HIGH>,
+ 					<85 IRQ_TYPE_LEVEL_HIGH>,
+ 					<84 IRQ_TYPE_LEVEL_HIGH>,
+ 					<83 IRQ_TYPE_LEVEL_HIGH>;
+ 				#interrupt-cells = <2>;
++				clock-names = "core", "axi";
++				clocks = <&CP11X_LABEL(clk) 1 21>,
++					 <&CP11X_LABEL(clk) 1 17>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -250,12 +255,17 @@ CP11X_LABEL(gpio2): gpio@140 {
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				gpio-ranges = <&CP11X_LABEL(pinctrl) 0 32 31>;
++				pwm-offset = <0x1f0>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				interrupts = <82 IRQ_TYPE_LEVEL_HIGH>,
+ 					<81 IRQ_TYPE_LEVEL_HIGH>,
+ 					<80 IRQ_TYPE_LEVEL_HIGH>,
+ 					<79 IRQ_TYPE_LEVEL_HIGH>;
+ 				#interrupt-cells = <2>;
++				clock-names = "core", "axi";
++				clocks = <&CP11X_LABEL(clk) 1 21>,
++					 <&CP11X_LABEL(clk) 1 17>;
+ 				status = "disabled";
+ 			};
+ 		};
 -- 
 2.29.2
 
