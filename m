@@ -2,85 +2,98 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D9DC63697
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 14:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143FEC5519F
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 14:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E18A246A6
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 14:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D732246B5
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 14:29:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OO4/2RBX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbgKRORQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Nov 2020 09:17:16 -0500
-Received: from mga14.intel.com ([192.55.52.115]:41765 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbgKRORQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 18 Nov 2020 09:17:16 -0500
-IronPort-SDR: zkHF3PZKLbyl2tP8aqyg0l5FFnqSBGNkq33y0VcIJjH/7MX9bL7ATAWkahp4xP6LSIszaquqD9
- 9jOMCEMuvWNA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9808"; a="170339469"
-X-IronPort-AV: E=Sophos;i="5.77,486,1596524400"; 
-   d="scan'208";a="170339469"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2020 06:17:11 -0800
-IronPort-SDR: we8zB+YPeNCFu4ylTwOP7Keop1xQyhMwRXtEycqHv//YXuFeF5/EKPbX29dzEw/5tlq8mfD/YO
- zG3ZZyLlMq+w==
-X-IronPort-AV: E=Sophos;i="5.77,486,1596524400"; 
-   d="scan'208";a="534308315"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2020 06:17:09 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1kfOHj-007e9c-9J; Wed, 18 Nov 2020 16:18:11 +0200
-Date:   Wed, 18 Nov 2020 16:18:11 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linux GPIO <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [GIT PULL] intel-gpio for 5.11-1
-Message-ID: <20201118141811.GV4077@smile.fi.intel.com>
-References: <20201116152625.GA20187@black.fi.intel.com>
- <CACRpkdbgO++4scNqX=3D0XKSyUhah67UvMjHDbaT4SyX0ESF-A@mail.gmail.com>
+        id S1726384AbgKRO31 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Nov 2020 09:29:27 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:34074 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbgKRO30 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2020 09:29:26 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0AIETOB6103990;
+        Wed, 18 Nov 2020 08:29:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1605709764;
+        bh=KIaOUjZAqHDFMPJ7onsZXDxLWHV4cStDELc2Qb5T0ig=;
+        h=From:To:CC:Subject:Date;
+        b=OO4/2RBXs5a8u3LqP/4oTa2DdhJL/TvXOrneq/QPkZiwRJr67QNuBvqguxNC6jtKy
+         tGvJFRMUb0bocIZVqKUpBxjV8qCrFPxjETxKbTBogZoySV/HLQfKeyJRzCujnw4DAr
+         Cen271mFS/o2dM3fyI+ZHrS0cRDWGDcWtxkX6U2E=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0AIETOJo035215
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Nov 2020 08:29:24 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 18
+ Nov 2020 08:29:24 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 18 Nov 2020 08:29:24 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0AIETNRX107661;
+        Wed, 18 Nov 2020 08:29:23 -0600
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] gpiolib: do not print err message for EPROBE_DEFER
+Date:   Wed, 18 Nov 2020 16:29:17 +0200
+Message-ID: <20201118142917.25752-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbgO++4scNqX=3D0XKSyUhah67UvMjHDbaT4SyX0ESF-A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 10:24:37PM +0100, Linus Walleij wrote:
-> On Mon, Nov 16, 2020 at 4:26 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > The following changes since commit b72de3ff19fdc4bbe4d4bb3f4483c7e46e00bac3:
-> >
-> >   gpio: sifive: Fix SiFive gpio probe (2020-11-11 09:53:09 +0100)
-> >
-> > are available in the Git repository at:
-> >
-> >   git@gitolite.kernel.org:pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v5.11-1
-> >
-> > for you to fetch changes up to e709a7b5a066362b697d65dda90edc71f913df70:
-> >
-> >   gpiolib: acpi: Make Intel GPIO tree official for GPIO ACPI work (2020-11-16 14:14:35 +0200)
-> 
-> Thanks! I merged in v5.10-rc4 to the GPIO devel branch and
-> pulled in this on top, works like a charm!
+The gpiochip may have dependencies from pinmux and so got deferred. Now it
+will print error message every time -EPROBE_DEFER is returned which is
+unnecessary:
 
-I'm not sure I understood why you merged v5.10-rc4, but in any case thanks,
-result is great!
+"gpiochip_add_data_with_key: GPIOs 0..31 (gpio-0-31) failed to register, -517"
 
+Hence, do suppress error message for -EPROBE_DEFER case.
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpiolib.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 089ddcaa9bc6..fd2c503a6aab 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -771,9 +771,11 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	ida_free(&gpio_ida, gdev->id);
+ err_free_gdev:
+ 	/* failures here can mean systems won't boot... */
+-	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
+-	       gdev->base, gdev->base + gdev->ngpio - 1,
+-	       gc->label ? : "generic", ret);
++	if (ret != -EPROBE_DEFER) {
++		pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
++		       gdev->base, gdev->base + gdev->ngpio - 1,
++		       gc->label ? : "generic", ret);
++	}
+ 	kfree(gdev);
+ 	return ret;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
