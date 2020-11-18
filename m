@@ -2,147 +2,138 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17188C63697
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 08:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED850C63777
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 09:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD2C2241A6
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 08:29:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="x6eY0PCR"
+	by mail.kernel.org (Postfix) with ESMTP id 9D850221FC
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Nov 2020 09:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbgKRI3U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Nov 2020 03:29:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39940 "EHLO
+        id S1726754AbgKRJyD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Nov 2020 04:54:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbgKRI3U (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2020 03:29:20 -0500
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 681F8C061A4D
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2020 00:29:18 -0800 (PST)
-Received: by mail-ej1-x643.google.com with SMTP id o9so1565771ejg.1
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2020 00:29:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e7/0oySTdCBUS5K5VKhLrqKbbTWozDIFYehy2a24oc4=;
-        b=x6eY0PCRQQMpbRy1Q6I+uu2YRoF0r80KxAZAQf9JYuY7YfySWIG/IDmCzLYv7CaBsZ
-         7SrK4geFajx4WBuJSxw3oLdNfgW0ovgegiQHt/m9n7a5Utp8dDQlE6JCWoyW6R+lOpiT
-         FbHpL2YR+nhQfigvVD3YVHC5Vc24MOU5GQlUSjGPtemOT/Z5V0IJEueviYI+TWfNxaMa
-         JoqLlIzxPBgZ5/upGEV7DiBW9qID+MvjIB1WTzavkjzQuKhh+pftwAib3wjvLlUWrBWk
-         6lPZj68GyYlz9r5ntU4DpfTriBwHExi1ODjUuostjEtrslX9QGrQ+IcWHX124w/4nQKd
-         pMHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e7/0oySTdCBUS5K5VKhLrqKbbTWozDIFYehy2a24oc4=;
-        b=a9JnBW00voCVeCNJQMJ40gKbm/FEIQqXPKE8Dz169hdmwpYhq1srNBut/IXvR+wGGJ
-         OxHQ6+5099CjrKC7SC34lSrgXjHEO4jWynX1Hg4F4mBIqk9shEPTyu1y7wBbvdSAOA/t
-         WDwpgTx0WxOeK6zNAwspLSncsYm3NMJOOcDkFA+uSxflxVZzedPmasE+aDP/HTnNKcPb
-         8r9BP7k1HRg5b2pO6HgZ2ua8VdVRqqxAiq+aF/lN7Jnyp6Y+nPOAA1m5+T6FwzDbvF6L
-         EAPbRJWLH0aF6VxZZgmfLPx3N9xYQ4huqRR8sxbahS3ip/W7JASfQnn136XDmruwKJRi
-         uPOg==
-X-Gm-Message-State: AOAM530nwXWs5xNACTJLlSG/+xlCqahn/C1wZUl83UgMDvWcuYVJ7DD4
-        xWJLa0Xak/qMxv4lMpHOkQExpbOsYs3eKooqYk0btg==
-X-Google-Smtp-Source: ABdhPJxkvr9erWwYTMRmncD7Ew/aYtYR/RWu/Aktlh0nMa+Hl7GHN+3niImXyMHSA/Vx6TuVW+ZUpqtd4KMriVuXyzs=
-X-Received: by 2002:a17:906:15cc:: with SMTP id l12mr21905044ejd.363.1605688157047;
- Wed, 18 Nov 2020 00:29:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20201113023355.43406-1-greentime.hu@sifive.com>
-In-Reply-To: <20201113023355.43406-1-greentime.hu@sifive.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 18 Nov 2020 09:29:06 +0100
-Message-ID: <CAMpxmJXhqprF2QcYwkwFnHzv0H4_944MGUtmi4Ra5s_CU3R9+A@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: sifive: To get gpio irq offset from device tree data
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
+        with ESMTP id S1727296AbgKRJyD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2020 04:54:03 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59936C061A4D
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2020 01:54:03 -0800 (PST)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kfK9t-0003br-T9; Wed, 18 Nov 2020 10:53:49 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kfK9p-00087c-1n; Wed, 18 Nov 2020 10:53:45 +0100
+Date:   Wed, 18 Nov 2020 10:53:42 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Jonathan Cameron <jic23@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Yash Shah <yash.shah@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alban Bedel <albeu@free.fr>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>, zhang.lyra@gmail.com,
+        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        dl-linux-imx <linux-imx@nxp.com>, orsonzhai@gmail.com,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        linux-pwm@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Sascha Hauer <kernel@pengutronix.de>, baolin.wang7@gmail.com,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] drivers: gpio: use of_match_ptr() and ACPI_PTR() macros
+Message-ID: <20201118095342.sviuxvfsbmmn22mo@pengutronix.de>
+References: <20201117154340.18216-1-info@metux.net>
+ <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jrmdeyhh5m52oxeb"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 3:34 AM Greentime Hu <greentime.hu@sifive.com> wrote:
->
-> We can get hwirq number of the gpio by its irq_data->hwirq so that we don't
-> need to add more macros for different platforms. This patch is tested in
-> SiFive Unleashed board and SiFive Unmatched board.
->
-> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-> ---
->  drivers/gpio/gpio-sifive.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-sifive.c b/drivers/gpio/gpio-sifive.c
-> index c54dd08f2cbf..630bddec48e5 100644
-> --- a/drivers/gpio/gpio-sifive.c
-> +++ b/drivers/gpio/gpio-sifive.c
-> @@ -29,7 +29,6 @@
->  #define SIFIVE_GPIO_OUTPUT_XOR 0x40
->
->  #define SIFIVE_GPIO_MAX                32
-> -#define SIFIVE_GPIO_IRQ_OFFSET 7
->
->  struct sifive_gpio {
->         void __iomem            *base;
-> @@ -37,7 +36,7 @@ struct sifive_gpio {
->         struct regmap           *regs;
->         unsigned long           irq_state;
->         unsigned int            trigger[SIFIVE_GPIO_MAX];
-> -       unsigned int            irq_parent[SIFIVE_GPIO_MAX];
-> +       unsigned int            irq_number[SIFIVE_GPIO_MAX];
->  };
->
->  static void sifive_gpio_set_ie(struct sifive_gpio *chip, unsigned int offset)
-> @@ -144,8 +143,12 @@ static int sifive_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
->                                              unsigned int *parent,
->                                              unsigned int *parent_type)
->  {
-> +       struct sifive_gpio *chip = gpiochip_get_data(gc);
-> +       struct irq_data *d = irq_get_irq_data(chip->irq_number[child]);
-> +
->         *parent_type = IRQ_TYPE_NONE;
-> -       *parent = child + SIFIVE_GPIO_IRQ_OFFSET;
-> +       *parent = irqd_to_hwirq(d);
-> +
->         return 0;
->  }
->
-> @@ -165,7 +168,7 @@ static int sifive_gpio_probe(struct platform_device *pdev)
->         struct irq_domain *parent;
->         struct gpio_irq_chip *girq;
->         struct sifive_gpio *chip;
-> -       int ret, ngpio;
-> +       int ret, ngpio, i;
->
->         chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
->         if (!chip)
-> @@ -200,6 +203,9 @@ static int sifive_gpio_probe(struct platform_device *pdev)
->                 return -ENODEV;
->         }
->
-> +       for (i = 0; i < ngpio; i++)
-> +               chip->irq_number[i] = platform_get_irq(pdev, i);
-> +
->         ret = bgpio_init(&chip->gc, dev, 4,
->                          chip->base + SIFIVE_GPIO_INPUT_VAL,
->                          chip->base + SIFIVE_GPIO_OUTPUT_VAL,
-> --
-> 2.29.2
->
 
-Applied, thanks!
+--jrmdeyhh5m52oxeb
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bart
+On Tue, Nov 17, 2020 at 06:45:37PM +0200, Andy Shevchenko wrote:
+> On Tue, Nov 17, 2020 at 5:45 PM Enrico Weigelt, metux IT consult
+> <info@metux.net> wrote:
+> >
+> > The of_match_ptr(foo) macro evaluates to foo, only if
+> > CONFIG_OF is set, otherwise to NULL. Same does ACPI_PTR with
+> > CONFIG_ACPI. That's very helpful for drivers that can be used
+> > with or without oftree / acpi.
+> >
+> > Even though most of the drivers touched here probably don't
+> > actually need that, it's also nice for consistency to make it
+> > the de-facto standard and change all drivers to use the
+> > of_match_ptr() and ACPI_PTR() macros.
+> >
+> > A nice side effect: in some situations, when compiled w/o
+> > CONFIG_OF/CONFIG_ACPI, the corresponding match tables could
+> > automatically become unreferenced and optimized-away by the
+> > compiler, w/o explicitly cluttering the code w/ ifdef's.
+>=20
+> NAK.
+>=20
+> It prevents using DT-enabled drivers on ACPI based platforms.
+
+So a system without CONFIG_OF might still make use of .of_match_table?
+
+If so: TIL ...
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--jrmdeyhh5m52oxeb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+07yIACgkQwfwUeK3K
+7Ak+4Af/S4LACdOy4WkgBIlg0vOjRAgAtSXuRqE7DZpYrEDA16Jf1/hvxQgwZgoQ
+2gZ2CszqBXhxH94X4GFtm7veiGfXquPsf0qlQ31Ou2yDIIv0+oXBBrSi78lwesD1
+1s6fYmYnp+Oijt1tRIg+euHAWOyIIyavCIBFkoFVIOvlux7JMc7pQZrdTGuiHJP1
+6c6F0G+G2nlLQtmwsR4Jm2vERKNDy3X87PdQANsH4ipSsIFyxTH/5Mgx4kLRZ/sg
+prSguvAIqgH+3KyVK9w454gWpqQJrGiCa7CEybzjNjAnjCAoxnnJ8SQ1/Ys27Y5L
+O0PgX1tM/ulriSZe+T5UUlYqGZyBAw==
+=A5vw
+-----END PGP SIGNATURE-----
+
+--jrmdeyhh5m52oxeb--
