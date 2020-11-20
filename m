@@ -2,90 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D446C64E69
-	for <linux-gpio@archiver.kernel.org>; Fri, 20 Nov 2020 15:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38528C2D0E4
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Nov 2020 15:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1650F22252
-	for <linux-gpio@archiver.kernel.org>; Fri, 20 Nov 2020 15:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D28EE22D0A
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Nov 2020 15:37:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="AttRXot9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbgKTP0S convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 20 Nov 2020 10:26:18 -0500
-Received: from smtp.asem.it ([151.1.184.197]:55711 "EHLO smtp.asem.it"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728662AbgKTP0S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 20 Nov 2020 10:26:18 -0500
-Received: from webmail.asem.it
-        by asem.it (smtp.asem.it)
-        (SecurityGateway 6.5.2)
-        with ESMTP id SG000621942.MSG 
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2020 16:26:14 +0100
-Received: from ASAS044.asem.intra (172.16.16.44) by ASAS044.asem.intra
- (172.16.16.44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 20
- Nov 2020 16:26:13 +0100
-Received: from ASAS044.asem.intra ([::1]) by ASAS044.asem.intra ([::1]) with
- mapi id 15.01.1979.003; Fri, 20 Nov 2020 16:26:13 +0100
-From:   Flavio Suligoi <f.suligoi@asem.it>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] docs: ACPI: enumeration: add PCI hierarchy
- representation
-Thread-Topic: [PATCH v2] docs: ACPI: enumeration: add PCI hierarchy
- representation
-Thread-Index: AQHWvy3o1QjrgEUP4UmaOryOTfF696nRDJQAgAAXbqA=
-Date:   Fri, 20 Nov 2020 15:26:13 +0000
-Message-ID: <d51ce85e8c474242a939e13f81c1a5a1@asem.it>
-References: <20201120111125.78296-1-f.suligoi@asem.it>
- <20201120150014.GS4077@smile.fi.intel.com>
-In-Reply-To: <20201120150014.GS4077@smile.fi.intel.com>
-Accept-Language: it-IT, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.16.17.208]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729086AbgKTPha (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 20 Nov 2020 10:37:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbgKTPh3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2020 10:37:29 -0500
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 425F2C0613CF
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2020 07:37:28 -0800 (PST)
+Received: by mail-io1-xd41.google.com with SMTP id o8so1875433ioh.0
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2020 07:37:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yYfn0xrqxXA4qCufDcYzGrMAJusooLXO2UBf9nW7f6w=;
+        b=AttRXot9z8jkfsY73VFI7OxJDUvYwz4d0VCk06GjwvKj6CSq6D+pS00Po4qC0Vw54L
+         CIN757xr9TpHAIkuCaSsiqSeOJNVxybtKaEj5QrwHfg6eBeOM1tychfM9MW+WR15/7i2
+         HVeVx1I5c0kWpe1B5vCZ3fYYan8oeyPWz4izlm5h2cu+E50EQS/xPt5Jz9Uc2uPsZf11
+         twK/o+Ru6QcLSF7BJGJFDs+zchUvLbn/UKt89zaToiU9nKazHfYS+d+6ZFjZBJFRgaHA
+         tMz69on3pMWUQZj58+NBa183iuuIiHZYxZZJQemQ3GtjG/vxRUMHpFQbGRh9arER5U4u
+         LytQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yYfn0xrqxXA4qCufDcYzGrMAJusooLXO2UBf9nW7f6w=;
+        b=T6/TIy84gYRAf1KchYp/dQ19LVXuaOmxuLXtTkNMu79iIKal3c4SuqoPqwvdE8apdo
+         kJdnp/VXZ3EIw4pZ+VYWTRO75BSYPz4hl83UffwoHvmV83kbM9ZeVPD6/itdJkwaA9JA
+         Izi5kTeYnWM98WlgnDs5DPcAQy1VhQtw09oQnceHSLtgMTjiNaNk/LHzUYOH9hVa0If1
+         2/MG6i1dNQFuIBP2yDJjDCs3ahSnLQqK43uVeH3QOaLyp9AQ1fWHOrf2RZsRlq+7fiO4
+         TZJEthwNBTBFgFcZnqfzU1nQo1IjJJdOxgmz/CaluLiiepcgZylAE5TW/+C/gkmU6pfC
+         AGRg==
+X-Gm-Message-State: AOAM530T4hxP/5+mKPc9ha6qoUZkVvWZ7qyNNLxYHoDxU4gq6S0s5yd8
+        8bsSPjCj0SqbySqNTck92YTiJWo5FOFRMIoRGCf2x0y1coI=
+X-Google-Smtp-Source: ABdhPJzPZrwQd2s+0RPNUp5Ob0OQ4L27fSfeMzGrucn59cDaAHAowA7+e7w/VMkT8+2JdzaCGOF616OSIKNgacYkEF0=
+X-Received: by 2002:a6b:c582:: with SMTP id v124mr14506411iof.13.1605886647651;
+ Fri, 20 Nov 2020 07:37:27 -0800 (PST)
 MIME-Version: 1.0
-X-SGHeloLookup-Result: pass smtp.helo=webmail.asem.it (ip=172.16.16.44)
-X-SGSPF-Result: none (smtp.asem.it)
-X-SGOP-RefID: str=0001.0A090201.5FB7E016.001F,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0 (_st=1 _vt=0 _iwf=0)
+References: <20201120141539.11025-1-brgl@bgdev.pl> <5fff-5fb7d600-1-776b3000@96844491>
+In-Reply-To: <5fff-5fb7d600-1-776b3000@96844491>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 20 Nov 2020 16:37:16 +0100
+Message-ID: <CAMRc=MfbGGuwwauPji13SBink1Rqgr7rmyH3kxSYQfQJxN6H1Q@mail.gmail.com>
+Subject: Re: [libgpiod][PATCH] build: allow building with pre-v5.5 kernel headers
+To:     Michael Nosthoff <buildroot@heine.tech>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy,
+On Fri, Nov 20, 2020 at 3:42 PM Michael Nosthoff <buildroot@heine.tech> wrote:
+>
+> Hi Bartosz,
+>
+> On Friday, November 20, 2020 15:15 CET, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > libgpiod v1.6 requires at least v5.5 linux kernel headers to build. This
+> > is because several new symbols have been defined in linux v5.5. In order
+> > to allow building with kernel headers v4.6 and on, let's check the
+> > presence of the new symbols and redefine them if needed.
+> >
+>
+> In the Buildroot Package (for 1.4.x) you set the dependency for headers to be at least 4.8. [1]
+> Could this then be lowered or is there a mixup?
+>
+> Regards,
+> Michael
+>
+> [1] https://git.busybox.net/buildroot/tree/package/libgpiod/Config.in
+>
 
-> > This patch, with a practical example, show how to do this.
-> 
-> Good enough, we can amend style and formatting later on.
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
+No, it's my mistake - it should say v4.8 in the patch, not v4.6.
 
-Thanks!
-
-> > Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
-> > ---
-> 
-> (Here you usually put a changelog what has been done in v2 vs. v1))
-
-Yes, you are right! I forgot it!
-
-> 
-> --
-> With Best Regards,
-> Andy Shevchenko
-> 
-
-Regards,
-Flavio
+Bartosz
