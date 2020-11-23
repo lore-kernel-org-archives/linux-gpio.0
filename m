@@ -2,190 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C49C56202
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 13:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B60C64E75
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 13:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6D220575
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 13:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B68552075A
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 13:23:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SvVAx04F"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ucPq/hty"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733261AbgKWNKf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 23 Nov 2020 08:10:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58256 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732782AbgKWMrB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 23 Nov 2020 07:47:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606135615;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=evJ57IeWGORpeQJY5HEMAH5Lc0ZFA9EW90lm963OgUY=;
-        b=SvVAx04Fw6BT7gIjdU10yj5hiqnkE3p0NoOfLJg1NpXafOg/cstjOLFiGWiQiwqR2rz+/S
-        Dmh/iBscOvQMsBWPJPmwGC2kUCjXqADVzGDPybEUtwqVip2EESB82GzwNiGrTGEpR0Sbdi
-        0CtRyohvlCT/i98PpPZ2+mgIj4FAUIw=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-122-h05pgvTuNGCR6861BNljIg-1; Mon, 23 Nov 2020 07:46:53 -0500
-X-MC-Unique: h05pgvTuNGCR6861BNljIg-1
-Received: by mail-ed1-f71.google.com with SMTP id i1so485680edt.19
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2020 04:46:53 -0800 (PST)
+        id S1732924AbgKWNXR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 Nov 2020 08:23:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731532AbgKWMf2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Nov 2020 07:35:28 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BBDBC061A4D
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2020 04:35:27 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id s27so3521686lfp.5
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2020 04:35:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bIWsoLneay5Kl8XDCK10cRcYyCYPRUIRK+zSmVlUvos=;
+        b=ucPq/htyydn+9nClVGlZXYjYlkUMJiVSI6//s3K2lB127+Dttlcf30ubg2H0y6FtTe
+         0t0/uAcNyjks0BNC+Nc9WQM9twGuyQgzeJDmHOJCcuG+BPEgo4hZphWquRikKVGCaEDH
+         fZ9J0t0/u2VfMvu3ThtvvLpxoqAXFYzigtfxsm/UFO7lW8Qd2SlHVODvvjva2lUIv9Wh
+         C56U3YkqIoZLIrq/Q6mXCqbIVVZjrdUbXXTgF57i/vdQhFyGr1ys40XzGUOvAyMl6YSB
+         r9W3JHWAvhB32/0yGKToSVztgYnBmSn1zD2LDPjUKQH80SPA+8oNJEecXJ/c2Cat6vX+
+         DDsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=evJ57IeWGORpeQJY5HEMAH5Lc0ZFA9EW90lm963OgUY=;
-        b=PYIEZCetmBs/9VaXT3z949fTeqOywmyTrunnquTC7EGhzZ+7MsUMKND/5P8PIeJzzj
-         IJl+UMgRaRvtz3BVmNlUuK2wF3B9/d1SX8bkXyjnv93P4Cf73B17qkJqazLrSiobNi9i
-         D3D4EWXb4XrRkvERtouiPsLxFjx8RFUOrb20ivOL0RvICYMelD8t6tlOTCe9Kf44Rp+x
-         0/A8TvUwNbG+lo3gXfqFeoKZH1jpCdW/Yb+N5sPitFl+g/HBL8fKdE2oBSb9zNuNwxHN
-         szDsQl+Ep2HqMMXXT39xwCo6myRiomzTOqotapjiqrPSWLW+NzyirVwqLECE4LqPmx1O
-         dlFg==
-X-Gm-Message-State: AOAM5310qL3PF69g7e/8VzNfPlpbq5wxahO10QlGGeN+aUOcgM6Lyuoa
-        KpM9axSMbeMmoJfmF0D7i2Lwvvl60VqfXfxjZT9Ian+nXz8eoZUzhIEFTdrPQglivulUWo8SW4h
-        ZDa3aSUro5GLuVwjlHt/csA==
-X-Received: by 2002:a17:906:a458:: with SMTP id cb24mr15795812ejb.321.1606135612113;
-        Mon, 23 Nov 2020 04:46:52 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwh+3rNPb9WWpPngWZDk/0DfRV8Zc6jyCrePzz41XOpactTff8NpGKOGFXcG3/HAarwv6HSLQ==
-X-Received: by 2002:a17:906:a458:: with SMTP id cb24mr15795799ejb.321.1606135611922;
-        Mon, 23 Nov 2020 04:46:51 -0800 (PST)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-6c10-fbf3-14c4-884c.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:6c10:fbf3:14c4:884c])
-        by smtp.gmail.com with ESMTPSA id u13sm4897248ejz.74.2020.11.23.04.46.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2020 04:46:51 -0800 (PST)
-Subject: Re: [PATCH 1/1] pinctrl: add IRQF_EARLY_RESUME flags with gpio irq
- for elan touchpad.
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>,
-        caizhaopeng@uniontech.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Zhangyueqian <zhangyueqian@uniontech.com>,
-        Zhangshuang <zhangshuang@uniontech.com>,
-        Hualet Wang <wangyaohua@uniontech.com>,
-        Zhanglei <zhanglei@uniontech.com>
-References: <20200424091201.568-1-caizhaopeng@uniontech.com>
- <20201112135221.GC4077@smile.fi.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <1e67c040-2aff-65bd-188a-bacf9a7fd7c4@redhat.com>
-Date:   Mon, 23 Nov 2020 13:46:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bIWsoLneay5Kl8XDCK10cRcYyCYPRUIRK+zSmVlUvos=;
+        b=B45vw1I4ZqO+xo9NcQO+PO9LfMTVkHAgObfMxzFo2x7y1fcq+/bdfnPDDsZ997tXD1
+         hP5Iz95SfPIqm7w3XceOy8kGjCQ0RfeVOY43pVdLhhxrupOs+Zgfck5HvwPCQBqjFlOu
+         CsLWnSu3gLVsv2fZm5+mbjhUXs6nBp6CTtBeGGfexoy2H4FRYxtjrbDuGv9LZTFjdV68
+         kui97IlRhrkUTMxZgmaJQwj+7rffaukcRMR4+ohaAbVKYHnJPv/8XddKifzb6g5hjTD2
+         IfawVAWNWxnLo+GDm9RpA6DIyb7U83OUHD+5o+M5wzDflTfupPdJgO54WWXDv94cjrAc
+         q/gg==
+X-Gm-Message-State: AOAM532mwEyhmf3KJmXOE3QGeE7t1rShsRmhbtomHPj92udB26HgS1bH
+        xEAL/DWlCFXM7vhF/h55pF4BInrbMqF1tDMA03MnpQ==
+X-Google-Smtp-Source: ABdhPJyKTHrZB4S6+zJWCf7UD8YLgth7EXVZo1EcgOOYpBLPQaWWmzkLYbQnaZmrG7aYqRK3IZDf1ocx2qEm2ucjD18=
+X-Received: by 2002:a19:5f11:: with SMTP id t17mr1536573lfb.572.1606134925520;
+ Mon, 23 Nov 2020 04:35:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201112135221.GC4077@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201106042710.55979-1-john.stultz@linaro.org>
+ <20201106042710.55979-3-john.stultz@linaro.org> <20201116155936.GE2224373@ulmo>
+ <20201116163603.GA30507@willie-the-truck>
+In-Reply-To: <20201116163603.GA30507@willie-the-truck>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 23 Nov 2020 13:35:14 +0100
+Message-ID: <CACRpkdZ9P0vG-deWmK8A-zRZbndq1gz_oaK_b128bu4NfUB+Nw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] firmware: QCOM_SCM: Allow qcom_scm driver to be
+ loadable as a permenent module
+To:     Will Deacon <will@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+On Mon, Nov 16, 2020 at 5:36 PM Will Deacon <will@kernel.org> wrote:
 
-On 11/12/20 2:52 PM, Andy Shevchenko wrote:
-> 
-> +Cc: Hans.
-> 
-> I can't speak for AMD, but I think it may be useful for Intel pin control.
-> However, I didn't check what may be the side effects of this change and neither
-> contributor answered to my comments...
+> Linus -- please can you drop this one (patch 3/3) for now, given that it's
+> causing problems?
 
-AFAICT setting IRQF_EARLY_RESUME causes it to not be resumed during
-normal IRQ resuming, but earlier during the syscore_resume() call.
+Reverted now, sorry for missing to do this earlier.
 
-There are 2 problems with this:
-
-1. When using S3 suspend syscore_resume() runs before any device
-suspend handlers, so any state restoring which the GPIO controller's
-resume handler is doing has not been done yet. While esp. after
-S3 suspend the restoring may be important (s2idle suspend should
-not touch the GPIO registers contents).
-
-2. When using S2idle suspend syscore_resume() *never* runs, and
-IRQs marked with IRQF_EARLY_RESUME are skipped during the normal
-IRQ resume phase, so these IRQs will never be resumed.
-
-Also IRQF_EARLY_RESUME is used almost no where:
-
-[hans@x1 linux]$ ack -l IRQF_EARLY_RESUME drivers
-drivers/xen/events/events_base.c
-drivers/rtc/rtc-sc27xx.c
-drivers/mfd/twl4030-irq.c
-
-Which is probably why we have not yet hit the s2idle issue with it.
-
-So this all in all seems like a bad idea, and we need to better root
-cause the issue with these Elan touchpads and fix the actual issue.
-
-Regards,
-
-Hans
-
-
-
-
-> 
-> So, just heads up.
-> 
-> On Fri, Apr 24, 2020 at 05:12:01PM +0800, caizhaopeng@uniontech.com wrote:
->> From: Caicai <caizhaopeng@uniontech.com>
->>
->> I had tested two Notebook machines, the Intel i5(or amd ryzen)
->> with elan touchpad, and there's a probability that the touchpad
->> won't work after going to the S3/S4 to wake up, that it would
->> appear no more than 15 times. I found that there's no interrupt
->> to check for /proc/interrupt. It was found that the gpio
->> interrupt of i2c was also not on top. By adding the gpio
->> interrupt flags with IRQF_EARLY_RESUME, now the touchpad tested
->> 200 + times works well.
->>
->> Signed-off-by: Caicai <caizhaopeng@uniontech.com>
->> ---
->>  drivers/pinctrl/intel/pinctrl-intel.c | 2 +-
->>  drivers/pinctrl/pinctrl-amd.c         | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
->> index 8fb6c9668c37..a350dade6aa0 100644
->> --- a/drivers/pinctrl/intel/pinctrl-intel.c
->> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
->> @@ -1189,7 +1189,7 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
->>  	 * controllers share the same interrupt line.
->>  	 */
->>  	ret = devm_request_irq(pctrl->dev, irq, intel_gpio_irq,
->> -			       IRQF_SHARED | IRQF_NO_THREAD,
->> +			       IRQF_SHARED | IRQF_NO_THREAD | IRQF_EARLY_RESUME,
->>  			       dev_name(pctrl->dev), pctrl);
->>  	if (ret) {
->>  		dev_err(pctrl->dev, "failed to request interrupt\n");
->> diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
->> index 977792654e01..70c37f4da2b1 100644
->> --- a/drivers/pinctrl/pinctrl-amd.c
->> +++ b/drivers/pinctrl/pinctrl-amd.c
->> @@ -937,7 +937,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
->>  	}
->>  
->>  	ret = devm_request_irq(&pdev->dev, irq_base, amd_gpio_irq_handler,
->> -			       IRQF_SHARED, KBUILD_MODNAME, gpio_dev);
->> +			       IRQF_SHARED | IRQF_EARLY_RESUME | IRQF_NO_THREAD, KBUILD_MODNAME, gpio_dev);
->>  	if (ret)
->>  		goto out2;
->>  
->> -- 
->> 2.20.1
->>
->>
->>
-> 
-
+Yours,
+Linus Walleij
