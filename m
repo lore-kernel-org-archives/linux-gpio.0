@@ -2,56 +2,55 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98996C2D0E4
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 15:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D26F5C56202
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 15:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EA832067C
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 15:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 606E120773
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Nov 2020 15:06:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2GVy7oG3"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XTq788Ll"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731109AbgKWPDx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 23 Nov 2020 10:03:53 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:33888 "EHLO
+        id S1732050AbgKWPGG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 Nov 2020 10:06:06 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:34145 "EHLO
         esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729244AbgKWPDw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Nov 2020 10:03:52 -0500
+        with ESMTP id S1729602AbgKWPGE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Nov 2020 10:06:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1606143832; x=1637679832;
+  t=1606143964; x=1637679964;
   h=references:from:to:cc:subject:in-reply-to:date:
    message-id:mime-version;
-  bh=/qmxyOtIe7horPzTCQwNVyF3JoEv2WeaHlm/AqMmYtk=;
-  b=2GVy7oG3TkGc/1ICT5j+/+sP7GKWpcAMjWul4ffFGnClzMOnJgWglEpA
-   htd/K59BbEUt+RU/7IWlIfVqU4LrqGX/i+SirRZlZb25DWJtywO1tSHHc
-   FlNPcYCnAtXpWTennuxcCevSQuvqf0XCdvza+QMvOmt0nBRzJsBD8Xut9
-   sLChNheR/iqX+2Pn7rAIMjCSolCR9Bfr6RC/B3A59O4Bh7OYlewFDF1Uo
-   W1bmtTlNhn9uJt8JInvxj/8GJNmaMHFRpIgsW2tm3ZMufQEfKBbCKE9AW
-   L1Thx9pvxSVhm50b1T0Sc0U/rNfF02blLsZZ6ARxOKqeclrcU0WrLdlk5
-   w==;
-IronPort-SDR: mBBlxo1O2RmDMvGsTK1573NN3Xrk+HfBzhDpcJ13b/dGRCtFTvb0bIJUiTpNcrERK0qqig8p4S
- A3LCoI9LogZgI7K3HlabJbNocpWQS1XLxHJ9TKk0YxWmyRIbZ7lcenpP+rl90jofVFElzcWG1N
- QB13zFrOQH7+hInM6jGcYoQ4jBkewFVIsrNbnOsu+GcwRLRGdrq1+jKpC+KBLlMQOGjiqoYY1o
- 0r0MVniKbSld4hci9caTgJX98vGcpIpP05jd8yPJYJYfK16UWwG4lT6ZLNTA0boEpCkVlEGJan
- kB4=
+  bh=SZKdsVisH2xj8OOk97XoqM3QGAQYL5iB0nFf752OqB4=;
+  b=XTq788LlY8yaeKfm2OK0O9PnGilQJU0uEytMVyVmGdE3rQFWTgH0ai26
+   WENqBtGxqwC9ux0NvuTfJwkwbAXiKyte3Ny2LwkaBkfRJG80+P8a2usRh
+   cxY8O1/+ErFdyR7zFWf4c/tda4Xl3j/4TChtbTZu13Zv1Y3FSnvoq65rU
+   JzGajJUlRSzhnUE1tgreqR0ChJhKS1qaxXj9zw3E9BJs/Cmy21x+U8Diw
+   D35ny5W+yZAgWNQMxzpViZXew/jVCVsGrr4E/eclncwbeuTRXDMAqKzlA
+   Nv0ZXMAj2AzGQH09JfiWIc+yqg+DGkgxqSTTlQhRi0+Y1SPx1BAupH+6R
+   g==;
+IronPort-SDR: +ouTkoeXgtdlGkMSfeQmxvFgWWu9hWP9NpkSCwbXthlatuhCXvUxS+z+s+wGVy5h9wFukO6cLs
+ yjxHQGNW1g0AvShb1SWodoac6ghYVXBexR15HxdyQRhuUteGYmABL7/Ki9LEGYVWOTfIDVs0/I
+ dHI7R6UXBOSThWhFmEyUGoP9lZsG5xfNVxte3MVuEr6bdgPNhi2GOg7RhzzfkZiDhqKIC2FKLo
+ 9xlp5qHb4mAZdiTQkv1IiGHjZTNyB+AJZXkvTOTo6HR82mZzbsaSFBmOURL0e/ANiIV8iqfrR3
+ /f0=
 X-IronPort-AV: E=Sophos;i="5.78,363,1599548400"; 
-   d="scan'208";a="99503650"
+   d="scan'208";a="99504032"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Nov 2020 08:03:52 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Nov 2020 08:06:04 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 23 Nov 2020 08:03:51 -0700
+ 15.1.1979.3; Mon, 23 Nov 2020 08:06:03 -0700
 Received: from soft-dev10.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3
- via Frontend Transport; Mon, 23 Nov 2020 08:03:49 -0700
-References: <20201113145151.68900-1-lars.povlsen@microchip.com> <20201113145151.68900-4-lars.povlsen@microchip.com> <CACRpkdaYHTTXC2gEgtCvDk9N8AqWeUyFSXyWp2aiEd97hk55fA@mail.gmail.com>
+ via Frontend Transport; Mon, 23 Nov 2020 08:06:01 -0700
+References: <20201113145151.68900-1-lars.povlsen@microchip.com> <CACRpkdZAc2yKFpngBHCdxjFBpc0XCVAYWyEERMSHX+7sL7Fgrg@mail.gmail.com>
 User-agent: mu4e 1.2.0; emacs 26.3
 From:   Lars Povlsen <lars.povlsen@microchip.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
@@ -64,10 +63,10 @@ CC:     Lars Povlsen <lars.povlsen@microchip.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v10 3/3] arm64: dts: sparx5: Add SGPIO devices
-In-Reply-To: <CACRpkdaYHTTXC2gEgtCvDk9N8AqWeUyFSXyWp2aiEd97hk55fA@mail.gmail.com>
-Date:   Mon, 23 Nov 2020 16:03:43 +0100
-Message-ID: <87r1ok3yk0.fsf@microchip.com>
+Subject: Re: [PATCH v10 0/3] Adding support for Microchip/Microsemi serial GPIO controller
+In-Reply-To: <CACRpkdZAc2yKFpngBHCdxjFBpc0XCVAYWyEERMSHX+7sL7Fgrg@mail.gmail.com>
+Date:   Mon, 23 Nov 2020 16:05:56 +0100
+Message-ID: <87pn443ygb.fsf@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -79,18 +78,29 @@ Linus Walleij writes:
 
 > On Fri, Nov 13, 2020 at 3:52 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
 >
->> This adds SGPIO devices for the Sparx5 SoC and configures it for the
->> applicable reference boards.
+>> The series add support for the serial GPIO controller used by
+>> Microchip Sparx5, as well as (MSCC) ocelot/jaguar2 SoCs.
 >>
->> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
+>> v10 changes - anniversary edition (from Andy):
+>>  - Fixed "Author" comment
+>>  - Added missing "break;" in default switch case
+>>  - Return -EINVAL when requesting pin disabled in bitstream
+>>  - Change bank consistency check to return -ERANGE if failed (-EINVAL
+>>    previously)
 >
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Patches 1 & 2 applied to the GPIO tree!
+
+Excellent!
+
 >
-> Please funnel this patch through the SoC tree for this machine.
+> Patch 3 needs to go to the SoC tree.
+>
 
-ACK!
+I'll forward this in a PR for Arnd.
 
-Thanks,
+> Thanks for your hard work!
+
+Thank you to both you and Any for good comments.
 
 ---Lars
 
