@@ -2,126 +2,135 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC74C63777
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 17:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AFAC63798
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 17:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50E7920857
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 17:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C8DD20857
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 17:48:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="eLC6mgDb"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kJmaRcUE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390187AbgKXRm3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Nov 2020 12:42:29 -0500
-Received: from z5.mailgun.us ([104.130.96.5]:42302 "EHLO z5.mailgun.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733250AbgKXRm3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Nov 2020 12:42:29 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1606239749; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=LDLGWnftuNhuhwXEbFu9jSpsqBYMscUfjOPnE77S6l8=; b=eLC6mgDb/0C+6DUXWFzQxztkeaEeeUNwraf+ywIhKV5mSS/hLNh0ayqDUsU0owdLVAsB8KEQ
- RHyru7IzN0BjeuXuX6gof02Yeb7JXr8ATp31nXEFgsIFvI4o7nXYcm4xhD8kmrV8mHBmCb1L
- G7r7J4QNBrR9/y277jY+QYY1zZ4=
-X-Mailgun-Sending-Ip: 104.130.96.5
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 5fbd45f5d64ea0b703a92ae5 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 24 Nov 2020 17:42:13
- GMT
-Sender: mkshah=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DF9DAC433C6; Tue, 24 Nov 2020 17:42:12 +0000 (UTC)
-Received: from [192.168.29.129] (unknown [49.36.77.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 843C7C433ED;
-        Tue, 24 Nov 2020 17:42:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 843C7C433ED
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=mkshah@codeaurora.org
-Subject: Re: [PATCH 1/3] irqchip: qcom-pdc: Fix phantom irq when changing
- between rising/falling
-To:     Doug Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Marc Zyngier <maz@kernel.org>,
+        id S2404029AbgKXRrs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Nov 2020 12:47:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45840 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404018AbgKXRrq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2020 12:47:46 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75F37C061A4E
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2020 09:47:46 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id w187so4720063pfd.5
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2020 09:47:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=D8tPSsYL1qfIVkcuPbhvLnnL5asoR8hb7TjnZUtF55c=;
+        b=kJmaRcUEMsT8jHB+Gq+d+M86v0kV4uA4QNxg8wP6Jx4fx/QkRJQBLTaks0GEYrYCXH
+         vMWeozBudkIku9CEGq5ASZ7QqrQA2aOei7tAlFtUC5fMz/HbFem+v/Do2dk7APjseMl4
+         Pc0x5reiISDWy5FqKPzJyWP/UofkJSPYekMu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=D8tPSsYL1qfIVkcuPbhvLnnL5asoR8hb7TjnZUtF55c=;
+        b=ZyT/fOANUs2xgBa9I0T5f7B2amm4Jn3lWTDmAWk5KVvRKKwxJpb8S3S+aRio64lm9F
+         7MPOuHJHcYpx6yP1SYmv4Svn8Fvm+TBa6RdHzdhTvRHcrNkrK9EN4/Ut0OHe21tBVrsp
+         vYFRzle6hK7K8N8vdJBOhBzLygBHopaaMOmeHN2Cvamkj7uO/H8GOaaEqx/K/lX1PQrF
+         UuSgUTFXUtjRaHF9pd+umO/2IDd7OuDuRbfYWp03Qgn2oV2o/wJmJIHBwGKrTvxEnQgo
+         1yMGfFwde7r1tJd/PWmq+3Kbq58vhmegwtWModpKIaLiCpbSAQgB/ypc5Vg9A6yOYdtU
+         tnSQ==
+X-Gm-Message-State: AOAM531EfWAVfkuFxgQQ83uH83Zj+CprbY+DVXJVk6Fa+xOyeyOpKm0i
+        RlHbp03iJeEx9oVFpLFvVIzVCLULnPp39A==
+X-Google-Smtp-Source: ABdhPJyBJULUMYEWPTxjWku02vD3DrDQD/ZbLXbaawto/H1pM+se8SKoCpExYCi52Od/6GCPMajYtg==
+X-Received: by 2002:a63:6341:: with SMTP id x62mr4527970pgb.93.1606240066021;
+        Tue, 24 Nov 2020 09:47:46 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:42b0:34ff:fe3d:58e6])
+        by smtp.gmail.com with ESMTPSA id i4sm13480459pgg.67.2020.11.24.09.47.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2020 09:47:45 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Marc Zyngier <maz@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
-        Srinivas Ramana <sramana@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
         Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <swboyd@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20201123160139.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
- <CACRpkdamdXCqZa4=qb5MsJtQMw1v53z5HZVv5SHJv84dtVACqQ@mail.gmail.com>
- <CAD=FV=W9+Wa=0d-Y+kxhqsRVM4TOofTC-C519cLkYOsLSBRZ4A@mail.gmail.com>
-From:   Maulik Shah <mkshah@codeaurora.org>
-Message-ID: <603c691f-3614-d87b-075a-0889e9ffc453@codeaurora.org>
-Date:   Tue, 24 Nov 2020 23:12:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, Maulik Shah <mkshah@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/3] pinctrl: qcom: Allow SoCs to specify a GPIO function that's not 0
+Date:   Tue, 24 Nov 2020 09:47:20 -0800
+Message-Id: <20201124094636.v2.2.I3ad184e3423d8e479bc3e86f5b393abb1704a1d1@changeid>
+X-Mailer: git-send-email 2.29.2.454.gaff20da3a2-goog
+In-Reply-To: <20201124094636.v2.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
+References: <20201124094636.v2.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=W9+Wa=0d-Y+kxhqsRVM4TOofTC-C519cLkYOsLSBRZ4A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+There's currently a comment in the code saying function 0 is GPIO.
+Instead of hardcoding it, let's add a member where an SoC can specify
+it.  No known SoCs use a number other than 0, but this just makes the
+code clearer.  NOTE: no SoC code needs to be updated since we can rely
+on zero-initialization.
 
-+	 * When we change types the PDC can give a phantom interrupt.
-+	 * Clear it.  Specifically the phantom shows up if a line is already
-+	 * high and we change to rising or if a line is already low and we
-+	 * change to falling but let's be consistent and clear it always.
-+	 *
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-Can you please hold this change. I am checking with HW folks if above 
-commented behaviour is expected/is valid case to set the irq type rising 
-edge when the line is already high.
+(no changes since v1)
 
-Will keep posting update here.
+ drivers/pinctrl/qcom/pinctrl-msm.c | 4 ++--
+ drivers/pinctrl/qcom/pinctrl-msm.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Thanks,
-Maulik
-
-On 11/24/2020 10:25 PM, Doug Anderson wrote:
-> Hi,
->
-> On Tue, Nov 24, 2020 at 12:28 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Nov 24, 2020 at 1:02 AM Douglas Anderson <dianders@chromium.org> wrote:
->>
->>> We have a problem if we use gpio-keys and configure wakeups such that
->>> we only want one edge to wake us up.  AKA:
->>>    wakeup-event-action = <EV_ACT_DEASSERTED>;
->>>    wakeup-source;
->> I would need Marc's ACK to apply this with the other patches
->> to the pinctrl tree, but I can't really see if maybe it is OK to
->> apply it separately?
-> I'll make an explicit note after the cut in the patch, but to also
-> respond here: we can apply this patch on its own.  The only reason I
-> sent as one series is because they address similar issues, this patch
-> stands on its own.  Patch #3 needs #2 but patch #2/#3 don't need patch
-> #1.
->
->> Also are these patches supposed to all go in as fixes or
->> for v5.11?
-> Wherever it makes sense.
->
-> -Doug
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 77a25bdf0da7..588df91274e2 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -210,8 +210,8 @@ static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
+ 	if (!g->nfuncs)
+ 		return 0;
+ 
+-	/* For now assume function 0 is GPIO because it always is */
+-	return msm_pinmux_set_mux(pctldev, g->funcs[0], offset);
++	return msm_pinmux_set_mux(pctldev,
++				  g->funcs[pctrl->soc->gpio_func], offset);
+ }
+ 
+ static const struct pinmux_ops msm_pinmux_ops = {
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+index 333f99243c43..e31a5167c91e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.h
++++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+@@ -118,6 +118,7 @@ struct msm_gpio_wakeirq_map {
+  * @wakeirq_dual_edge_errata: If true then GPIOs using the wakeirq_map need
+  *                            to be aware that their parent can't handle dual
+  *                            edge interrupts.
++ * @gpio_func: Which function number is GPIO (usually 0).
+  */
+ struct msm_pinctrl_soc_data {
+ 	const struct pinctrl_pin_desc *pins;
+@@ -134,6 +135,7 @@ struct msm_pinctrl_soc_data {
+ 	const struct msm_gpio_wakeirq_map *wakeirq_map;
+ 	unsigned int nwakeirq_map;
+ 	bool wakeirq_dual_edge_errata;
++	unsigned int gpio_func;
+ };
+ 
+ extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.29.2.454.gaff20da3a2-goog
 
