@@ -5,53 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461ABC64E69
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C56CC83013
 	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 04:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E218B2086A
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 04:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D6052085B
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 04:38:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="DpJfuC/n"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hvLj8aIK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbgKXEiA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 23 Nov 2020 23:38:00 -0500
+        id S1729264AbgKXEiI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 Nov 2020 23:38:08 -0500
 Received: from esa6.hgst.iphmx.com ([216.71.154.45]:49807 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728953AbgKXEh7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Nov 2020 23:37:59 -0500
+        with ESMTP id S1728953AbgKXEiH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Nov 2020 23:38:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606192679; x=1637728679;
+  t=1606192687; x=1637728687;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Az6O/WzoiosWPFmOOsLRfis9CNZAmyhMPpEj64bfwfs=;
-  b=DpJfuC/nzxVyAfV5PN+Qm8p4t9ZRlBEIR3TLOLxLj6DGreJ8tqfH83sd
-   8ni2NmUbqJ5UspcgmFku6c9PnILnk9o9BgGAw/qK2kqmBxOEcFuCfzjOX
-   u6RVMIpmxUlEljCy3q/+xUHfqEg9ZNpWjNndHfIjzrVx3Kt4YhoDCR0zI
-   0Gozq9tVuyslgH89G/Yme+/lYtIUmdgfI/rjNc5eKNhQTR19RPfIEOxe7
-   vp/7oOXe35dcejAk3/okg+U/zk0ahWz+Q4wfqFTczdUGSgLJ07fQYX+mw
-   tVU14jNDvq527v+qHhM1iQRFyHeHBMpi5ZgeGNKLFGUjcR0ZSANYdE/IT
-   g==;
-IronPort-SDR: nVYylcPack7t7W+OFtSuUOWm7X7zNVMwG6Ch4X0w21bPXd1MgwYgZDUKQpGFRn9SuA4hV5K3kS
- yOko/KRNNoSrXo9R8TP5NeP4iECkb41eXZyh05R6217igOGhnEios5sjV5OHzijEFUprhdUjFb
- jZp5XqWIruVtIidZDshf/L+YGwgoeDNS8V+rjStQKhA2nbvaT//gFh1JDE53fAhGRsGWGnztZC
- /pT/HC/+ZgfSVAkSNHgLM8gmN4yqb+i4RwZnTlnWC/g+wQqozOSYBYIVpj0YRfXr9MtR5jXnQU
- /Zc=
+  bh=JdBVBZY3ULTQ3qd6MFXdWgh6JhVeGPBTXCCSTFbMJb0=;
+  b=hvLj8aIK/4wNRyKrCJaa0OqSY52EE75fzt3DDxnPs/rt4RnsS3zN+QXO
+   6SkY8efXC/UyJ2cDeG92nR9af0KCZ6t3m+cV3bUs4jLSivZK+IpIZ6W+5
+   lazmPXjFFpgZiMUO0+840qnIt3I8+7pVKhoCMZ+IDv4QaMwpSbyOF5uyJ
+   kVmY5QoCKyS1HoE7b74suLFf44VUCp+DBACuYfDtYowJ36E3klsnh1ERr
+   XGFYJWTO8LZxd3BMsIAcUwwws7nETDnWPoMJFE6Y8TLPNdPrZ6VNxYV63
+   w2+cJrT4hwQrOSxRoeF590Unp3aUDRWkIrsfTI+AYvfaWBL6vUSjN/Gc5
+   Q==;
+IronPort-SDR: p3aMnwQf3BVmNr0kVke4ZbW3ICWGn/0muKb4KYlNRLJhJVlKXjxflnjdReKQDwqfB11FeZmopK
+ bcJdOTOdR3T3p996qKDFYUcDF7D3UESdZim/y8ykefm62QA5d3B1puNO077IvxsUg6G8JX81r8
+ V0wcPJTH30XHVYi6j0Ru3RPJOHW+EGjgF4WUKE/50bJ+VchYbLPuiNSVkpwOBK4j/K1OZ/6Fyc
+ UocZkS5mSs65WbO7U/BIsp+mTvCe7uxGmVP/7908tNYynznbensEkeKNeHICu5PoAcwm2bgOzD
+ ZM8=
 X-IronPort-AV: E=Sophos;i="5.78,365,1599494400"; 
-   d="scan'208";a="154498188"
+   d="scan'208";a="154498193"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2020 12:37:59 +0800
-IronPort-SDR: /Fi3clV1PFj0I8QBvYejpJP/j5Gr38b5Vp0kEou7eueRUzrJiHJi07B8FIc5L0cIa9gMMXGRdd
- GaphQwIA29/y3zl9rz33LqPXro9gT82+A=
+  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2020 12:38:03 +0800
+IronPort-SDR: r9Cqo7BsYa6DVdNeT7cZkq3Z3A2n9A7MBjVv2tk2Z2WXNaz95bSUKtay51SJZUMnCWT7RjK8Dr
+ rJ7wGcmaxqtVSKde+ON4/wJ4K6sHUdSHk=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 20:23:42 -0800
-IronPort-SDR: 3vJFMhvKc6oNnHXF4Ykfgdbx0fwN5+8XxKPrP7M7MBdSoft1daX93XIFPjW5aI8iYJnjaANihk
- 7NLs27nzQ6Ig==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 20:23:46 -0800
+IronPort-SDR: hOu3SgLc24FehT7ZJ1s/82fRqJNbIDkNbNBiT8Q1Yac1lv9kbaUZToZkOlMQBhEQe0OIVme4Ng
+ kKgXmGDMkaeA==
 WDCIronportException: Internal
 Received: from hdrdzf2.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.163])
-  by uls-op-cesaip01.wdc.com with ESMTP; 23 Nov 2020 20:37:56 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 23 Nov 2020 20:38:00 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -60,9 +60,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v2 13/21] riscv: Add Canaan Kendryte K210 reset controller
-Date:   Tue, 24 Nov 2020 13:37:20 +0900
-Message-Id: <20201124043728.199852-14-damien.lemoal@wdc.com>
+Subject: [PATCH v2 15/21] riscv: Add SiPeed MAIX BiT board device tree
+Date:   Tue, 24 Nov 2020 13:37:22 +0900
+Message-Id: <20201124043728.199852-16-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201124043728.199852-1-damien.lemoal@wdc.com>
 References: <20201124043728.199852-1-damien.lemoal@wdc.com>
@@ -72,220 +72,248 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a reset controller driver for the Canaan Kendryte K210 SoC. This
-driver relies on its syscon compatible parent node (sysctl) for its
-register mapping. Automatically select this driver for compilation
-when the SOC_CANAAN option is selected.
+Add a device tree for the SiPeed MAIX BiT and MAIX BiTm boards. This
+device tree enables LEDs, gpio, i2c and spi/mmc SD card devices.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- arch/riscv/Kconfig.socs    |   3 +
- drivers/reset/Kconfig      |   9 +++
- drivers/reset/Makefile     |   1 +
- drivers/reset/reset-k210.c | 150 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 163 insertions(+)
- create mode 100644 drivers/reset/reset-k210.c
+ arch/riscv/boot/dts/canaan/k210_maix_bit.dts | 227 +++++++++++++++++++
+ 1 file changed, 227 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_bit.dts
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 68bdd664b5c2..b3cd253ec2c2 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -33,6 +33,9 @@ config SOC_CANAAN
- 	select CLK_K210
- 	select PINCTRL
- 	select PINCTRL_K210
-+	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
-+	select RESET_K210
- 	help
- 	  This enables support for Canaan Kendryte K210 SoC platform hardware.
- 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 07d162b179fc..529d206cfdfd 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -245,6 +245,15 @@ config RESET_ZYNQ
- 	help
- 	  This enables the reset controller driver for Xilinx Zynq SoCs.
- 
-+config RESET_K210
-+	bool "Reset controller driver for Canaan Kendryte K210 SoC"
-+	depends on RISCV && SOC_CANAAN
-+	depends on OF && MFD_SYSCON
-+	help
-+	  Support for the Canaan Kendryte K210 RISC-V SoC reset controller.
-+	  Say Y if you want to control reset signals provided by this
-+	  controller.
-+
- source "drivers/reset/sti/Kconfig"
- source "drivers/reset/hisilicon/Kconfig"
- source "drivers/reset/tegra/Kconfig"
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 16947610cc3b..1730a31e6871 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -33,4 +33,5 @@ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
- obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
- obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
- obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
-+obj-$(CONFIG_RESET_K210) += reset-k210.o
- 
-diff --git a/drivers/reset/reset-k210.c b/drivers/reset/reset-k210.c
+diff --git a/arch/riscv/boot/dts/canaan/k210_maix_bit.dts b/arch/riscv/boot/dts/canaan/k210_maix_bit.dts
 new file mode 100644
-index 000000000000..1e37d657a942
+index 000000000000..a5a40f9cf812
 --- /dev/null
-+++ b/drivers/reset/reset-k210.c
-@@ -0,0 +1,150 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/arch/riscv/boot/dts/canaan/k210_maix_bit.dts
+@@ -0,0 +1,227 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Copyright (c) 2020 Western Digital Corporation or its affiliates.
++ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
++ * Copyright (C) 2020 Western Digital Corporation or its affiliates.
 + */
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/delay.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <soc/canaan/k210-sysctl.h>
 +
-+#include <dt-bindings/reset/k210-rst.h>
++/dts-v1/;
 +
-+#define K210_RST_MASK	0x27FFFFFF
++#include "k210.dtsi"
 +
-+struct k210_rst {
-+	struct regmap *map;
-+	struct reset_controller_dev rcdev;
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "SiPeed MAIX BiT";
++	compatible = "sipeed,maix-bitm", "sipeed,maix-bit",
++		     "canaan,kendryte-k210";
++
++	chosen {
++		bootargs = "earlycon console=ttySIF0";
++		stdout-path = "serial0:115200n8";
++	};
++
++	gpio-leds {
++		compatible = "gpio-leds";
++
++		green {
++			gpios = <&gpio1_0 4 GPIO_ACTIVE_LOW>;
++		};
++
++		red {
++			gpios = <&gpio1_0 5 GPIO_ACTIVE_LOW>;
++		};
++
++		blue {
++			gpios = <&gpio1_0 6 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		boot {
++			label = "BOOT";
++			linux,code = <BTN_0>;
++			gpios = <&gpio0 0 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		status = "disabled";
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		simple-audio-card,codec {
++			sound-dai = <&mic>;
++		};
++	};
++
++	mic: mic {
++		#sound-dai-cells = <0>;
++		compatible = "memsensing,msm261s4030h0";
++		status = "disabled";
++	};
 +};
 +
-+static inline struct k210_rst *
-+to_k210_rst(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct k210_rst, rcdev);
-+}
++&fpioa {
++	pinctrl-names = "default";
++	pinctrl-0 = <&jtag_pinctrl>;
++	status = "okay";
 +
-+static inline int k210_rst_assert(struct reset_controller_dev *rcdev,
-+				  unsigned long id)
-+{
-+	struct k210_rst *ksr = to_k210_rst(rcdev);
-+	u32 bit = BIT(id);
++	jtag_pinctrl: jtag-pinmux {
++		pinmux = <K210_FPIOA(0, K210_PCF_JTAG_TCLK)>,
++			 <K210_FPIOA(1, K210_PCF_JTAG_TDI)>,
++			 <K210_FPIOA(2, K210_PCF_JTAG_TMS)>,
++			 <K210_FPIOA(3, K210_PCF_JTAG_TDO)>;
++	};
 +
-+	if (!(bit & K210_RST_MASK))
-+		return -EINVAL;
++	uarths_pinctrl: uarths-pinmux {
++		pinmux = <K210_FPIOA(4, K210_PCF_UARTHS_RX)>,
++			 <K210_FPIOA(5, K210_PCF_UARTHS_TX)>;
++	};
 +
-+	dev_dbg(rcdev->dev, "assert %lu\n", id);
++	gpio_pinctrl: gpio-pinmux {
++		pinmux = <K210_FPIOA(8, K210_PCF_GPIO0)>,
++			 <K210_FPIOA(9, K210_PCF_GPIO1)>,
++			 <K210_FPIOA(10, K210_PCF_GPIO2)>,
++			 <K210_FPIOA(11, K210_PCF_GPIO3)>,
++			 <K210_FPIOA(12, K210_PCF_GPIO4)>,
++			 <K210_FPIOA(13, K210_PCF_GPIO5)>,
++			 <K210_FPIOA(14, K210_PCF_GPIO6)>,
++			 <K210_FPIOA(15, K210_PCF_GPIO7)>;
++	};
 +
-+	regmap_update_bits(ksr->map, K210_SYSCTL_PERI_RESET, bit, 1);
++	gpiohs_pinctrl: gpiohs-pinmux {
++		pinmux = <K210_FPIOA(16, K210_PCF_GPIOHS0)>,
++			 <K210_FPIOA(17, K210_PCF_GPIOHS1)>,
++			 <K210_FPIOA(21, K210_PCF_GPIOHS5)>,
++			 <K210_FPIOA(22, K210_PCF_GPIOHS6)>,
++			 <K210_FPIOA(23, K210_PCF_GPIOHS7)>,
++			 <K210_FPIOA(24, K210_PCF_GPIOHS8)>,
++			 <K210_FPIOA(25, K210_PCF_GPIOHS9)>,
++			 <K210_FPIOA(32, K210_PCF_GPIOHS16)>,
++			 <K210_FPIOA(33, K210_PCF_GPIOHS17)>,
++			 <K210_FPIOA(34, K210_PCF_GPIOHS18)>,
++			 <K210_FPIOA(35, K210_PCF_GPIOHS19)>;
++	};
 +
-+	return 0;
-+}
++	i2s0_pinctrl: i2s0-pinmux {
++		pinmux = <K210_FPIOA(18, K210_PCF_I2S0_SCLK)>,
++			 <K210_FPIOA(19, K210_PCF_I2S0_WS)>,
++			 <K210_FPIOA(20, K210_PCF_I2S0_IN_D0)>;
++	};
 +
-+static inline int k210_rst_deassert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct k210_rst *ksr = to_k210_rst(rcdev);
-+	u32 bit = BIT(id);
++	dvp_pinctrl: dvp-pinmux {
++		pinmux = <K210_FPIOA(40, K210_PCF_SCCB_SDA)>,
++			 <K210_FPIOA(41, K210_PCF_SCCB_SCLK)>,
++			 <K210_FPIOA(42, K210_PCF_DVP_RST)>,
++			 <K210_FPIOA(43, K210_PCF_DVP_VSYNC)>,
++			 <K210_FPIOA(44, K210_PCF_DVP_PWDN)>,
++			 <K210_FPIOA(45, K210_PCF_DVP_HSYNC)>,
++			 <K210_FPIOA(46, K210_PCF_DVP_XCLK)>,
++			 <K210_FPIOA(47, K210_PCF_DVP_PCLK)>;
++	};
 +
-+	if (!(bit & K210_RST_MASK))
-+		return -EINVAL;
++	spi0_pinctrl: spi0-pinmux {
++		pinmux = <K210_FPIOA(36, K210_PCF_GPIOHS20)>,  /* cs */
++			 <K210_FPIOA(37, K210_PCF_GPIOHS21)>,  /* rst */
++			 <K210_FPIOA(38, K210_PCF_GPIOHS22)>,  /* dc */
++			 <K210_FPIOA(39, K210_PCF_SPI0_SCLK)>; /* wr */
++	};
 +
-+	dev_dbg(rcdev->dev, "deassert %lu\n", id);
++	spi1_pinctrl: spi1-pinmux {
++		pinmux = <K210_FPIOA(26, K210_PCF_SPI1_D1)>,
++			 <K210_FPIOA(27, K210_PCF_SPI1_SCLK)>,
++			 <K210_FPIOA(28, K210_PCF_SPI1_D0)>,
++			 <K210_FPIOA(29, K210_PCF_GPIOHS13)>; /* cs */
++	};
 +
-+	regmap_update_bits(ksr->map, K210_SYSCTL_PERI_RESET, bit, 0);
-+
-+	return 0;
-+}
-+
-+static int k210_rst_reset(struct reset_controller_dev *rcdev,
-+			  unsigned long id)
-+{
-+	int ret;
-+
-+	dev_dbg(rcdev->dev, "reset %lu\n", id);
-+
-+	ret = k210_rst_assert(rcdev, id);
-+	if (ret == 0) {
-+		udelay(10);
-+		ret = k210_rst_deassert(rcdev, id);
-+	}
-+
-+	return ret;
-+}
-+
-+static int k210_rst_status(struct reset_controller_dev *rcdev,
-+			   unsigned long id)
-+{
-+	struct k210_rst *ksr = to_k210_rst(rcdev);
-+	u32 reg, bit = BIT(id);
-+	int ret;
-+
-+	if (!(bit & K210_RST_MASK))
-+		return -EINVAL;
-+
-+	ret = regmap_read(ksr->map, K210_SYSCTL_PERI_RESET, &reg);
-+	if (ret)
-+		return ret;
-+
-+	return ret & bit;
-+}
-+
-+static const struct reset_control_ops k210_rst_ops = {
-+	.assert		= k210_rst_assert,
-+	.deassert	= k210_rst_deassert,
-+	.reset		= k210_rst_reset,
-+	.status		= k210_rst_status,
++	i2c1_pinctrl: i2c1-pinmux {
++		pinmux = <K210_FPIOA(30, K210_PCF_I2C1_SCLK)>,
++			 <K210_FPIOA(31, K210_PCF_I2C1_SDA)>;
++	};
 +};
 +
-+static int __init k210_rst_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct k210_rst *ksr;
-+
-+	dev_info(dev, "K210 reset controller\n");
-+
-+	if (!dev->parent) {
-+		dev_err(&pdev->dev, "No parent for K210 reset controller\n");
-+		return -ENODEV;
-+	}
-+
-+	ksr = devm_kzalloc(dev, sizeof(*ksr), GFP_KERNEL);
-+	if (!ksr)
-+		return -ENOMEM;
-+
-+	ksr->map = syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(ksr->map))
-+		return PTR_ERR(ksr->map);
-+
-+	ksr->rcdev.owner = THIS_MODULE;
-+	ksr->rcdev.dev = dev;
-+	ksr->rcdev.of_node = dev->of_node;
-+	ksr->rcdev.nr_resets = fls(K210_RST_MASK);
-+	ksr->rcdev.ops = &k210_rst_ops;
-+
-+	return devm_reset_controller_register(dev, &ksr->rcdev);
-+}
-+
-+static const struct of_device_id k210_rst_dt_ids[] = {
-+	{ .compatible = "canaan,k210-rst" },
++&uarths0 {
++	pinctrl-0 = <&uarths_pinctrl>;
++	pinctrl-names = "default";
++	status = "okay";
 +};
 +
-+static struct platform_driver k210_rst_driver = {
-+	.probe	= k210_rst_probe,
-+	.driver = {
-+		.name		= "k210-rst",
-+		.of_match_table	= k210_rst_dt_ids,
-+	},
++&gpio0 {
++	pinctrl-0 = <&gpiohs_pinctrl>;
++	pinctrl-names = "default";
++	status = "okay";
 +};
 +
-+/*
-+ * Most devices on the K210 SoC need reset as part of their initialization.
-+ * So initialize this driver early as part of the post core initialization.
-+ */
-+static int __init k210_rst_init(void)
-+{
-+	return platform_driver_register(&k210_rst_driver);
-+}
-+postcore_initcall(k210_rst_init);
++&gpio1 {
++	pinctrl-0 = <&gpio_pinctrl>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&i2s0 {
++	#sound-dai-cells = <1>;
++	pinctrl-0 = <&i2s0_pinctrl>;
++	pinctrl-names = "default";
++};
++
++&i2c1 {
++	pinctrl-0 = <&i2c1_pinctrl>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
++
++&dvp0 {
++	pinctrl-0 = <&dvp_pinctrl>;
++	pinctrl-names = "default";
++};
++
++&spi0 {
++	pinctrl-0 = <&spi0_pinctrl>;
++	pinctrl-names = "default";
++	num-cs = <1>;
++	cs-gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
++
++	panel@0 {
++		compatible = "sitronix,st7789v";
++		reg = <0>;
++		reset-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
++		dc-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
++		spi-max-frequency = <15000000>;
++		spi-cs-high;
++		status = "disabled";
++	};
++};
++
++&spi1 {
++	pinctrl-0 = <&spi1_pinctrl>;
++	pinctrl-names = "default";
++	num-cs = <1>;
++	cs-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
++	status = "okay";
++
++	slot@0 {
++		compatible = "mmc-spi-slot";
++		reg = <0>;
++		voltage-ranges = <3300 3300>;
++		spi-max-frequency = <25000000>;
++		broken-cd;
++	};
++};
++
++&spi3 {
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++		m25p,fast-read;
++		broken-flash-reset;
++	};
++};
 -- 
 2.28.0
 
