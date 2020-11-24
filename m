@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B291AC63777
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 105C7C63798
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67C352068D
+	by mail.kernel.org (Postfix) with ESMTP id BF9452068D
 	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbgKXG2H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Nov 2020 01:28:07 -0500
-Received: from ozlabs.ru ([107.174.27.60]:51416 "EHLO ozlabs.ru"
+        id S1729188AbgKXG2I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Nov 2020 01:28:08 -0500
+Received: from ozlabs.ru ([107.174.27.60]:51420 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728682AbgKXG2H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1729552AbgKXG2H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 24 Nov 2020 01:28:07 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 75863AE80257;
-        Tue, 24 Nov 2020 01:18:20 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id 894A2AE8024F;
+        Tue, 24 Nov 2020 01:17:57 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
@@ -33,73 +33,116 @@ Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
         Alexey Kardashevskiy <aik@ozlabs.ru>
-Subject: [PATCH kernel v4 8/8] powerpc/pci: Remove LSI mappings on device teardown
-Date:   Tue, 24 Nov 2020 17:17:20 +1100
-Message-Id: <20201124061720.86766-9-aik@ozlabs.ru>
+Subject: [PATCH kernel v4 4/8] genirq: Free IRQ descriptor via embedded kobject
+Date:   Tue, 24 Nov 2020 17:17:16 +1100
+Message-Id: <20201124061720.86766-5-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201124061720.86766-1-aik@ozlabs.ru>
 References: <20201124061720.86766-1-aik@ozlabs.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Oliver O'Halloran <oohall@gmail.com>
+At the moment the IRQ descriptor is freed via the free_desc() helper.
+We want to add reference counting to IRQ descriptors and there is already
+kobj embedded into irq_desc which we want to reuse.
 
-When a passthrough IO adapter is removed from a pseries machine using hash
-MMU and the XIVE interrupt mode, the POWER hypervisor expects the guest OS
-to clear all page table entries related to the adapter. If some are still
-present, the RTAS call which isolates the PCI slot returns error 9001
-"valid outstanding translations" and the removal of the IO adapter fails.
-This is because when the PHBs are scanned, Linux maps automatically the
-INTx interrupts in the Linux interrupt number space but these are never
-removed.
+This shuffles free_desc()/etc to make it simply call kobject_put() and
+moves all the cleanup into the kobject_release hook.
 
-This problem can be fixed by adding the corresponding unmap operation when
-the device is removed. There's no pcibios_* hook for the remove case, but
-the same effect can be achieved using a bus notifier.
+As a bonus, we do not need irq_sysfs_del() as kobj removes itself from
+sysfs if it knows that it was added.
 
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
+This should cause no behavioral change.
+
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 ---
- arch/powerpc/kernel/pci-common.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ kernel/irq/irqdesc.c | 42 ++++++++++++------------------------------
+ 1 file changed, 12 insertions(+), 30 deletions(-)
 
-diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-index be108616a721..95f4e173368a 100644
---- a/arch/powerpc/kernel/pci-common.c
-+++ b/arch/powerpc/kernel/pci-common.c
-@@ -404,6 +404,27 @@ static int pci_read_irq_line(struct pci_dev *pci_dev)
- 	return 0;
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 1a7723604399..75374b7944b5 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -295,18 +295,6 @@ static void irq_sysfs_add(int irq, struct irq_desc *desc)
+ 	}
  }
  
-+static int ppc_pci_unmap_irq_line(struct notifier_block *nb,
-+			       unsigned long action, void *data)
-+{
-+	struct pci_dev *pdev = to_pci_dev(data);
-+
-+	if (action == BUS_NOTIFY_DEL_DEVICE)
-+		irq_dispose_mapping(pdev->irq);
-+
-+	return NOTIFY_DONE;
+-static void irq_sysfs_del(struct irq_desc *desc)
+-{
+-	/*
+-	 * If irq_sysfs_init() has not yet been invoked (early boot), then
+-	 * irq_kobj_base is NULL and the descriptor was never added.
+-	 * kobject_del() complains about a object with no parent, so make
+-	 * it conditional.
+-	 */
+-	if (irq_kobj_base)
+-		kobject_del(&desc->kobj);
+-}
+-
+ static int __init irq_sysfs_init(void)
+ {
+ 	struct irq_desc *desc;
+@@ -337,7 +325,6 @@ static struct kobj_type irq_kobj_type = {
+ };
+ 
+ static void irq_sysfs_add(int irq, struct irq_desc *desc) {}
+-static void irq_sysfs_del(struct irq_desc *desc) {}
+ 
+ #endif /* CONFIG_SYSFS */
+ 
+@@ -419,39 +406,34 @@ static struct irq_desc *alloc_desc(int irq, int node, unsigned int flags,
+ 	return NULL;
+ }
+ 
+-static void irq_kobj_release(struct kobject *kobj)
+-{
+-	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+-
+-	free_masks(desc);
+-	free_percpu(desc->kstat_irqs);
+-	kfree(desc);
+-}
+-
+ static void delayed_free_desc(struct rcu_head *rhp)
+ {
+ 	struct irq_desc *desc = container_of(rhp, struct irq_desc, rcu);
+ 
++	free_masks(desc);
++	free_percpu(desc->kstat_irqs);
++	kfree(desc);
 +}
 +
-+static struct notifier_block ppc_pci_unmap_irq_notifier = {
-+	.notifier_call = ppc_pci_unmap_irq_line,
-+};
-+
-+static int ppc_pci_register_irq_notifier(void)
++static void free_desc(unsigned int irq)
 +{
-+	return bus_register_notifier(&pci_bus_type, &ppc_pci_unmap_irq_notifier);
-+}
-+arch_initcall(ppc_pci_register_irq_notifier);
++	struct irq_desc *desc = irq_to_desc(irq);
 +
- /*
-  * Platform support for /proc/bus/pci/X/Y mmap()s.
-  *  -- paulus.
+ 	kobject_put(&desc->kobj);
+ }
+ 
+-static void free_desc(unsigned int irq)
++static void irq_kobj_release(struct kobject *kobj)
+ {
+-	struct irq_desc *desc = irq_to_desc(irq);
++	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
++	unsigned int irq = desc->irq_data.irq;
+ 
+ 	irq_remove_debugfs_entry(desc);
+ 	unregister_irq_proc(irq, desc);
+ 
+ 	/*
+-	 * sparse_irq_lock protects also show_interrupts() and
+-	 * kstat_irq_usr(). Once we deleted the descriptor from the
+-	 * sparse tree we can free it. Access in proc will fail to
+-	 * lookup the descriptor.
+-	 *
+ 	 * The sysfs entry must be serialized against a concurrent
+ 	 * irq_sysfs_init() as well.
+ 	 */
+-	irq_sysfs_del(desc);
+ 	delete_irq_desc(irq);
+ 
+ 	/*
 -- 
 2.17.1
 
