@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09976C63777
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2861C63798
 	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3A8A20897
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7013C208C3
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbgKXG1i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728206AbgKXG1i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 24 Nov 2020 01:27:38 -0500
 Received: from ozlabs.ru ([107.174.27.60]:51272 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727771AbgKXG1i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727731AbgKXG1i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 24 Nov 2020 01:27:38 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id A6A2EAE80255;
-        Tue, 24 Nov 2020 01:18:14 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id 55E0EAE80241;
+        Tue, 24 Nov 2020 01:17:45 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
@@ -33,9 +33,9 @@ Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
         Alexey Kardashevskiy <aik@ozlabs.ru>
-Subject: [PATCH kernel v4 7/8] genirq/irqdomain: Reference irq_desc for already mapped irqs
-Date:   Tue, 24 Nov 2020 17:17:19 +1100
-Message-Id: <20201124061720.86766-8-aik@ozlabs.ru>
+Subject: [PATCH kernel v4 2/8] genirq/irqdomain: Clean legacy IRQ allocation
+Date:   Tue, 24 Nov 2020 17:17:14 +1100
+Message-Id: <20201124061720.86766-3-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201124061720.86766-1-aik@ozlabs.ru>
 References: <20201124061720.86766-1-aik@ozlabs.ru>
@@ -43,63 +43,187 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This references an irq_desc if already mapped interrupt requested to map
-again. This happends for PCI legacy interrupts where 4 interrupts are
-shared among all devices on the same PCI host bus adapter.
+There are 10 users of __irq_domain_alloc_irqs() and only one - IOAPIC -
+passes realloc==true. There is no obvious reason for handling this
+specific case in the generic code.
 
-From now on, the users shall call irq_dispose_mapping() for every
-irq_create_fwspec_mapping(). Most (all?) users do not bother with
-disposing though so it is not very likely to break many things.
+This splits out __irq_domain_alloc_irqs_data() to make it clear what
+IOAPIC does and makes __irq_domain_alloc_irqs() cleaner.
+
+This should cause no behavioral change.
 
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 ---
- kernel/irq/irqdomain.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ include/linux/irqdomain.h      |  3 ++
+ arch/x86/kernel/apic/io_apic.c | 13 +++--
+ kernel/irq/irqdomain.c         | 89 ++++++++++++++++++++--------------
+ 3 files changed, 65 insertions(+), 40 deletions(-)
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index a0a81cc6c524..07f4bde87de5 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -663,7 +663,9 @@ unsigned int irq_create_mapping(struct irq_domain *domain,
- 	/* Check if mapping already exists */
- 	virq = irq_find_mapping(domain, hwirq);
- 	if (virq) {
-+		desc = irq_to_desc(virq);
- 		pr_debug("-> existing mapping on virq %d\n", virq);
-+		kobject_get(&desc->kobj);
- 		return virq;
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 71535e87109f..6cc37bba9951 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -470,6 +470,9 @@ static inline struct irq_domain *irq_domain_add_hierarchy(struct irq_domain *par
+ 					   ops, host_data);
+ }
+ 
++extern int __irq_domain_alloc_irqs_data(struct irq_domain *domain, int virq,
++					unsigned int nr_irqs, int node, void *arg,
++					const struct irq_affinity_desc *affinity);
+ extern int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
+ 				   unsigned int nr_irqs, int node, void *arg,
+ 				   bool realloc,
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index 7b3c7e0d4a09..df9c0ab3a119 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -970,9 +970,14 @@ static int alloc_irq_from_domain(struct irq_domain *domain, int ioapic, u32 gsi,
+ 		return -1;
  	}
  
-@@ -762,6 +764,7 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
- 	irq_hw_number_t hwirq;
- 	unsigned int type = IRQ_TYPE_NONE;
- 	int virq;
-+	struct irq_desc *desc;
+-	return __irq_domain_alloc_irqs(domain, irq, 1,
+-				       ioapic_alloc_attr_node(info),
+-				       info, legacy, NULL);
++	if (irq == -1 || !legacy)
++		return __irq_domain_alloc_irqs(domain, irq, 1,
++					       ioapic_alloc_attr_node(info),
++					       info, false, NULL);
++
++	return __irq_domain_alloc_irqs_data(domain, irq, 1,
++					    ioapic_alloc_attr_node(info),
++					    info, NULL);
+ }
  
- 	if (fwspec->fwnode) {
- 		domain = irq_find_matching_fwspec(fwspec, DOMAIN_BUS_WIRED);
-@@ -798,8 +801,11 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
- 		 * current trigger type then we are done so return the
- 		 * interrupt number.
- 		 */
--		if (type == IRQ_TYPE_NONE || type == irq_get_trigger_type(virq))
-+		if (type == IRQ_TYPE_NONE || type == irq_get_trigger_type(virq)) {
-+			desc = irq_to_desc(virq);
-+			kobject_get(&desc->kobj);
- 			return virq;
+ /*
+@@ -1006,7 +1011,7 @@ static int alloc_isa_irq_from_domain(struct irq_domain *domain,
+ 			return -ENOMEM;
+ 	} else {
+ 		info->flags |= X86_IRQ_ALLOC_LEGACY;
+-		irq = __irq_domain_alloc_irqs(domain, irq, 1, node, info, true,
++		irq = __irq_domain_alloc_irqs_data(domain, irq, 1, node, info,
+ 					      NULL);
+ 		if (irq >= 0) {
+ 			irq_data = irq_domain_get_irq_data(domain, irq);
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index cf8b374b892d..ca5c78366c85 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1386,6 +1386,51 @@ int irq_domain_alloc_irqs_hierarchy(struct irq_domain *domain,
+ 	return domain->ops->alloc(domain, irq_base, nr_irqs, arg);
+ }
+ 
++int __irq_domain_alloc_irqs_data(struct irq_domain *domain, int virq,
++				 unsigned int nr_irqs, int node, void *arg,
++				 const struct irq_affinity_desc *affinity)
++{
++	int i, ret;
++
++	if (domain == NULL) {
++		domain = irq_default_domain;
++		if (WARN(!domain, "domain is NULL; cannot allocate IRQ\n"))
++			return -EINVAL;
++	}
++
++	if (irq_domain_alloc_irq_data(domain, virq, nr_irqs)) {
++		pr_debug("cannot allocate memory for IRQ%d\n", virq);
++		ret = -ENOMEM;
++		goto out_free_irq_data;
++	}
++
++	mutex_lock(&irq_domain_mutex);
++	ret = irq_domain_alloc_irqs_hierarchy(domain, virq, nr_irqs, arg);
++	if (ret < 0) {
++		mutex_unlock(&irq_domain_mutex);
++		goto out_free_irq_data;
++	}
++
++	for (i = 0; i < nr_irqs; i++) {
++		ret = irq_domain_trim_hierarchy(virq + i);
++		if (ret) {
++			mutex_unlock(&irq_domain_mutex);
++			goto out_free_irq_data;
 +		}
++	}
++
++	for (i = 0; i < nr_irqs; i++) {
++		irq_domain_insert_irq(virq + i);
++	}
++	mutex_unlock(&irq_domain_mutex);
++
++	return virq;
++
++out_free_irq_data:
++	irq_domain_free_irq_data(virq, nr_irqs);
++	return ret;
++}
++
+ /**
+  * __irq_domain_alloc_irqs - Allocate IRQs from domain
+  * @domain:	domain to allocate from
+@@ -1412,7 +1457,7 @@ int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
+ 			    unsigned int nr_irqs, int node, void *arg,
+ 			    bool realloc, const struct irq_affinity_desc *affinity)
+ {
+-	int i, ret, virq;
++	int ret, virq;
  
- 		/*
- 		 * If the trigger type has not been set yet, then set
-@@ -811,6 +817,8 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
- 				return 0;
+ 	if (domain == NULL) {
+ 		domain = irq_default_domain;
+@@ -1420,47 +1465,19 @@ int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
+ 			return -EINVAL;
+ 	}
  
- 			irqd_set_trigger_type(irq_data, type);
-+			desc = irq_to_desc(virq);
-+			kobject_get(&desc->kobj);
- 			return virq;
- 		}
+-	if (realloc && irq_base >= 0) {
+-		virq = irq_base;
+-	} else {
+-		virq = irq_domain_alloc_descs(irq_base, nr_irqs, 0, node,
+-					      affinity);
+-		if (virq < 0) {
+-			pr_debug("cannot allocate IRQ(base %d, count %d)\n",
+-				 irq_base, nr_irqs);
+-			return virq;
+-		}
++	virq = irq_domain_alloc_descs(irq_base, nr_irqs, 0, node, affinity);
++	if (virq < 0) {
++		pr_debug("cannot allocate IRQ(base %d, count %d)\n",
++			 irq_base, nr_irqs);
++		return virq;
+ 	}
  
+-	if (irq_domain_alloc_irq_data(domain, virq, nr_irqs)) {
+-		pr_debug("cannot allocate memory for IRQ%d\n", virq);
+-		ret = -ENOMEM;
++	ret = __irq_domain_alloc_irqs_data(domain, virq, nr_irqs, node, arg, affinity);
++	if (ret <= 0)
+ 		goto out_free_desc;
+-	}
+-
+-	mutex_lock(&irq_domain_mutex);
+-	ret = irq_domain_alloc_irqs_hierarchy(domain, virq, nr_irqs, arg);
+-	if (ret < 0) {
+-		mutex_unlock(&irq_domain_mutex);
+-		goto out_free_irq_data;
+-	}
+-
+-	for (i = 0; i < nr_irqs; i++) {
+-		ret = irq_domain_trim_hierarchy(virq + i);
+-		if (ret) {
+-			mutex_unlock(&irq_domain_mutex);
+-			goto out_free_irq_data;
+-		}
+-	}
+-	
+-	for (i = 0; i < nr_irqs; i++)
+-		irq_domain_insert_irq(virq + i);
+-	mutex_unlock(&irq_domain_mutex);
+ 
+ 	return virq;
+ 
+-out_free_irq_data:
+-	irq_domain_free_irq_data(virq, nr_irqs);
+ out_free_desc:
+ 	irq_free_descs(virq, nr_irqs);
+ 	return ret;
 -- 
 2.17.1
 
