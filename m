@@ -2,169 +2,171 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF89CC64E7A
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDDFEC63777
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 07:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AED92068D
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616F720715
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 07:03:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="PLO2LfB1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725616AbgKXG2J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Nov 2020 01:28:09 -0500
-Received: from ozlabs.ru ([107.174.27.60]:51422 "EHLO ozlabs.ru"
+        id S1725786AbgKXHDy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Nov 2020 02:03:54 -0500
+Received: from m42-4.mailgun.net ([69.72.42.4]:64359 "EHLO m42-4.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729552AbgKXG2I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Nov 2020 01:28:08 -0500
-Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 2A578AE80251;
-        Tue, 24 Nov 2020 01:18:02 -0500 (EST)
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
+        id S1729819AbgKXHDx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 24 Nov 2020 02:03:53 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1606201432; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=YF61W81vONcskH27ZHgeEaWj9GgOnf6tmXPHaUZQsKI=; b=PLO2LfB1bxBvCv72id6s7iM5pHf5NAQFZFQAQrtrnvnNZp98FJ1fe1xFIBud+Hxf7LIfHNAr
+ cTsGTh/zOcD32CXZ6/fLV96ViiSM0WfSdkvOtF6Qkl/XJGUyQBsU5U1Ocg9dESrKx57UkzXK
+ 5pk9NkMupc6GUDsaXhX7dC7AnFQ=
+X-Mailgun-Sending-Ip: 69.72.42.4
+X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n08.prod.us-east-1.postgun.com with SMTP id
+ 5fbcb0524146c5eefd9aba39 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 24 Nov 2020 07:03:46
+ GMT
+Sender: mkshah=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7552CC43465; Tue, 24 Nov 2020 07:03:45 +0000 (UTC)
+Received: from [192.168.29.129] (unknown [49.36.77.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CFF4FC433ED;
+        Tue, 24 Nov 2020 07:03:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CFF4FC433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=mkshah@codeaurora.org
+Subject: Re: [PATCH 1/3] irqchip: qcom-pdc: Fix phantom irq when changing
+ between rising/falling
+To:     Douglas Anderson <dianders@chromium.org>,
         Marc Zyngier <maz@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>
-Subject: [PATCH kernel v4 5/8] genirq: Add free_irq hook for IRQ descriptor and use for mapping disposal
-Date:   Tue, 24 Nov 2020 17:17:17 +1100
-Message-Id: <20201124061720.86766-6-aik@ozlabs.ru>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201124061720.86766-1-aik@ozlabs.ru>
-References: <20201124061720.86766-1-aik@ozlabs.ru>
+        Jason Cooper <jason@lakedaemon.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Srinivas Ramana <sramana@codeaurora.org>,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org
+References: <20201123160139.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
+From:   Maulik Shah <mkshah@codeaurora.org>
+Message-ID: <ca9543df-3cb3-c4b2-b60c-97651f489795@codeaurora.org>
+Date:   Tue, 24 Nov 2020 12:33:36 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
+MIME-Version: 1.0
+In-Reply-To: <20201123160139.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We want to make the irq_desc.kobj's release hook free associated resources
-but we do not want to pollute the irqdesc code with domains.
+Hi Doug,
 
-This adds a free_irq hook which is called when the last reference to
-the descriptor is dropped.
+Thanks for the patch. Looks good to me and tested.
 
-The first user is mapped irqs. This potentially can break the existing
-users; however they seem to do the right thing and call dispose once
-per mapping.
+Reviewed-by: Maulik Shah <mkshah@codeaurora.org>
+Tested-by: Maulik Shah <mkshah@codeaurora.org>
 
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
----
- include/linux/irqdesc.h    |  1 +
- include/linux/irqdomain.h  |  2 --
- include/linux/irqhandler.h |  1 +
- kernel/irq/irqdesc.c       |  3 +++
- kernel/irq/irqdomain.c     | 14 ++++++++++++--
- 5 files changed, 17 insertions(+), 4 deletions(-)
+Thanks,
+Maulik
 
-diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
-index 5745491303e0..6d44cb6a20ad 100644
---- a/include/linux/irqdesc.h
-+++ b/include/linux/irqdesc.h
-@@ -57,6 +57,7 @@ struct irq_desc {
- 	struct irq_data		irq_data;
- 	unsigned int __percpu	*kstat_irqs;
- 	irq_flow_handler_t	handle_irq;
-+	irq_free_handler_t	free_irq;
- 	struct irqaction	*action;	/* IRQ action list */
- 	unsigned int		status_use_accessors;
- 	unsigned int		core_internal_state__do_not_mess_with_it;
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index a353b93ddf9e..ccca87cd3d15 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -381,8 +381,6 @@ extern int irq_domain_associate(struct irq_domain *domain, unsigned int irq,
- extern void irq_domain_associate_many(struct irq_domain *domain,
- 				      unsigned int irq_base,
- 				      irq_hw_number_t hwirq_base, int count);
--extern void irq_domain_disassociate(struct irq_domain *domain,
--				    unsigned int irq);
- 
- extern unsigned int irq_create_mapping(struct irq_domain *host,
- 				       irq_hw_number_t hwirq);
-diff --git a/include/linux/irqhandler.h b/include/linux/irqhandler.h
-index c30f454a9518..3dbc2bb764f3 100644
---- a/include/linux/irqhandler.h
-+++ b/include/linux/irqhandler.h
-@@ -10,5 +10,6 @@
- struct irq_desc;
- struct irq_data;
- typedef	void (*irq_flow_handler_t)(struct irq_desc *desc);
-+typedef	void (*irq_free_handler_t)(struct irq_desc *desc);
- 
- #endif
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 75374b7944b5..071363da8688 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -427,6 +427,9 @@ static void irq_kobj_release(struct kobject *kobj)
- 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
- 	unsigned int irq = desc->irq_data.irq;
- 
-+	if (desc->free_irq)
-+		desc->free_irq(desc);
-+
- 	irq_remove_debugfs_entry(desc);
- 	unregister_irq_proc(irq, desc);
- 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 805478f81d96..4779d912bb86 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -485,7 +485,7 @@ static void irq_domain_set_mapping(struct irq_domain *domain,
- 	}
- }
- 
--void irq_domain_disassociate(struct irq_domain *domain, unsigned int irq)
-+static void irq_domain_disassociate(struct irq_domain *domain, unsigned int irq)
- {
- 	struct irq_data *irq_data = irq_get_irq_data(irq);
- 	irq_hw_number_t hwirq;
-@@ -582,6 +582,13 @@ void irq_domain_associate_many(struct irq_domain *domain, unsigned int irq_base,
- }
- EXPORT_SYMBOL_GPL(irq_domain_associate_many);
- 
-+static void irq_mapped_free_desc(struct irq_desc *desc)
-+{
-+	unsigned int virq = desc->irq_data.irq;
-+
-+	irq_domain_disassociate(desc->irq_data.domain, virq);
-+}
-+
- /**
-  * irq_create_direct_mapping() - Allocate an irq for direct mapping
-  * @domain: domain to allocate the irq for or NULL for default domain
-@@ -638,6 +645,7 @@ unsigned int irq_create_mapping(struct irq_domain *domain,
- {
- 	struct device_node *of_node;
- 	int virq;
-+	struct irq_desc *desc;
- 
- 	pr_debug("irq_create_mapping(0x%p, 0x%lx)\n", domain, hwirq);
- 
-@@ -674,6 +682,9 @@ unsigned int irq_create_mapping(struct irq_domain *domain,
- 	pr_debug("irq %lu on domain %s mapped to virtual irq %u\n",
- 		hwirq, of_node_full_name(of_node), virq);
- 
-+	desc = irq_to_desc(virq);
-+	desc->free_irq = irq_mapped_free_desc;
-+
- 	return virq;
- }
- EXPORT_SYMBOL_GPL(irq_create_mapping);
-@@ -865,7 +876,6 @@ void irq_dispose_mapping(unsigned int virq)
- 	if (irq_domain_is_hierarchy(domain)) {
- 		irq_domain_free_irqs(virq, 1);
- 	} else {
--		irq_domain_disassociate(domain, virq);
- 		irq_free_desc(virq);
- 	}
- }
+On 11/24/2020 5:31 AM, Douglas Anderson wrote:
+> We have a problem if we use gpio-keys and configure wakeups such that
+> we only want one edge to wake us up.  AKA:
+>    wakeup-event-action = <EV_ACT_DEASSERTED>;
+>    wakeup-source;
+>
+> Specifically we end up with a phantom interrupt that blocks suspend if
+> the line was already high and we want wakeups on rising edges (AKA we
+> want the GPIO to go low and then high again before we wake up).  The
+> opposite is also problematic.
+>
+> Specifically, here's what's happening today:
+> 1. Normally, gpio-keys configures to look for both edges.  Due to the
+>     current workaround introduced in commit c3c0c2e18d94 ("pinctrl:
+>     qcom: Handle broken/missing PDC dual edge IRQs on sc7180"), if the
+>     line was high we'd configure for falling edges.
+> 2. At suspend time, we change to look for rising edges.
+> 3. After qcom_pdc_gic_set_type() runs, we get a phantom interrupt.
+>
+> We can solve this by just clearing the phantom interrupt.
+>
+> NOTE: it is possible that this could cause problems for a client with
+> very specific needs, but there's not much we can do with this
+> hardware.  As an example, let's say the interrupt signal is currently
+> high and the client is looking for falling edges.  The client now
+> changes to look for rising edges.  The client could possibly expect
+> that if the line has a short pulse low (and back high) that it would
+> always be detected.  Specifically no matter when the pulse happened,
+> it should either have tripped the (old) falling edge trigger or the
+> (new) rising edge trigger.  We will simply not trip it.  We could
+> narrow down the race a bit by polling our parent before changing
+> types, but no matter what we do there will still be a period of time
+> where we can't tell the difference between a real transition (or more
+> than one transition) and the phantom.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+>   drivers/irqchip/qcom-pdc.c | 19 ++++++++++++++++++-
+>   1 file changed, 18 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+> index bd39e9de6ecf..7d097164aadc 100644
+> --- a/drivers/irqchip/qcom-pdc.c
+> +++ b/drivers/irqchip/qcom-pdc.c
+> @@ -159,6 +159,8 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
+>   {
+>   	int pin_out = d->hwirq;
+>   	enum pdc_irq_config_bits pdc_type;
+> +	enum pdc_irq_config_bits old_pdc_type;
+> +	int ret;
+>   
+>   	if (pin_out == GPIO_NO_WAKE_IRQ)
+>   		return 0;
+> @@ -187,9 +189,24 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
+>   		return -EINVAL;
+>   	}
+>   
+> +	old_pdc_type = pdc_reg_read(IRQ_i_CFG, pin_out);
+>   	pdc_reg_write(IRQ_i_CFG, pin_out, pdc_type);
+>   
+> -	return irq_chip_set_type_parent(d, type);
+> +	ret = irq_chip_set_type_parent(d, type);
+> +
+> +	/*
+> +	 * When we change types the PDC can give a phantom interrupt.
+> +	 * Clear it.  Specifically the phantom shows up if a line is already
+> +	 * high and we change to rising or if a line is already low and we
+> +	 * change to falling but let's be consistent and clear it always.
+> +	 *
+> +	 * Doing this works because we have IRQCHIP_SET_TYPE_MASKED so the
+> +	 * interrupt will be cleared before the rest of the system sees it.
+> +	 */
+> +	if (old_pdc_type != pdc_type)
+> +		irq_chip_set_parent_state(d, IRQCHIP_STATE_PENDING, 0);
+> +
+> +	return ret;
+>   }
+>   
+>   static struct irq_chip qcom_pdc_gic_chip = {
+
 -- 
-2.17.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
 
