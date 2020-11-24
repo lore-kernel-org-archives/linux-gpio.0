@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105C7C63798
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDEDC56201
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF9452068D
+	by mail.kernel.org (Postfix) with ESMTP id 934912080A
 	for <linux-gpio@archiver.kernel.org>; Tue, 24 Nov 2020 06:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbgKXG2I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728682AbgKXG2I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 24 Nov 2020 01:28:08 -0500
-Received: from ozlabs.ru ([107.174.27.60]:51420 "EHLO ozlabs.ru"
+Received: from ozlabs.ru ([107.174.27.60]:51418 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729552AbgKXG2H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1729188AbgKXG2H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 24 Nov 2020 01:28:07 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 894A2AE8024F;
-        Tue, 24 Nov 2020 01:17:57 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id D511EAE80253;
+        Tue, 24 Nov 2020 01:18:08 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
@@ -33,9 +33,9 @@ Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
         Alexey Kardashevskiy <aik@ozlabs.ru>
-Subject: [PATCH kernel v4 4/8] genirq: Free IRQ descriptor via embedded kobject
-Date:   Tue, 24 Nov 2020 17:17:16 +1100
-Message-Id: <20201124061720.86766-5-aik@ozlabs.ru>
+Subject: [PATCH kernel v4 6/8] genirq/irqdomain: Move hierarchical IRQ cleanup to kobject_release
+Date:   Tue, 24 Nov 2020 17:17:18 +1100
+Message-Id: <20201124061720.86766-7-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201124061720.86766-1-aik@ozlabs.ru>
 References: <20201124061720.86766-1-aik@ozlabs.ru>
@@ -43,106 +43,92 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-At the moment the IRQ descriptor is freed via the free_desc() helper.
-We want to add reference counting to IRQ descriptors and there is already
-kobj embedded into irq_desc which we want to reuse.
-
-This shuffles free_desc()/etc to make it simply call kobject_put() and
-moves all the cleanup into the kobject_release hook.
-
-As a bonus, we do not need irq_sysfs_del() as kobj removes itself from
-sysfs if it knows that it was added.
-
-This should cause no behavioral change.
+This moves hierarchical domain's irqs cleanup into the kobject release
+hook to make irq_domain_free_irqs() as simple as kobject_put.
 
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 ---
- kernel/irq/irqdesc.c | 42 ++++++++++++------------------------------
- 1 file changed, 12 insertions(+), 30 deletions(-)
+ kernel/irq/irqdomain.c | 43 +++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 1a7723604399..75374b7944b5 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -295,18 +295,6 @@ static void irq_sysfs_add(int irq, struct irq_desc *desc)
- 	}
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 4779d912bb86..a0a81cc6c524 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -863,21 +863,9 @@ EXPORT_SYMBOL_GPL(irq_create_of_mapping);
+  */
+ void irq_dispose_mapping(unsigned int virq)
+ {
+-	struct irq_data *irq_data = irq_get_irq_data(virq);
+-	struct irq_domain *domain;
++	struct irq_desc *desc = irq_to_desc(virq);
+ 
+-	if (!virq || !irq_data)
+-		return;
+-
+-	domain = irq_data->domain;
+-	if (WARN_ON(domain == NULL))
+-		return;
+-
+-	if (irq_domain_is_hierarchy(domain)) {
+-		irq_domain_free_irqs(virq, 1);
+-	} else {
+-		irq_free_desc(virq);
+-	}
++	kobject_put(&desc->kobj);
+ }
+ EXPORT_SYMBOL_GPL(irq_dispose_mapping);
+ 
+@@ -1396,6 +1384,19 @@ int irq_domain_alloc_irqs_hierarchy(struct irq_domain *domain,
+ 	return domain->ops->alloc(domain, irq_base, nr_irqs, arg);
  }
  
--static void irq_sysfs_del(struct irq_desc *desc)
--{
--	/*
--	 * If irq_sysfs_init() has not yet been invoked (early boot), then
--	 * irq_kobj_base is NULL and the descriptor was never added.
--	 * kobject_del() complains about a object with no parent, so make
--	 * it conditional.
--	 */
--	if (irq_kobj_base)
--		kobject_del(&desc->kobj);
--}
--
- static int __init irq_sysfs_init(void)
- {
- 	struct irq_desc *desc;
-@@ -337,7 +325,6 @@ static struct kobj_type irq_kobj_type = {
- };
- 
- static void irq_sysfs_add(int irq, struct irq_desc *desc) {}
--static void irq_sysfs_del(struct irq_desc *desc) {}
- 
- #endif /* CONFIG_SYSFS */
- 
-@@ -419,39 +406,34 @@ static struct irq_desc *alloc_desc(int irq, int node, unsigned int flags,
- 	return NULL;
- }
- 
--static void irq_kobj_release(struct kobject *kobj)
--{
--	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
--
--	free_masks(desc);
--	free_percpu(desc->kstat_irqs);
--	kfree(desc);
--}
--
- static void delayed_free_desc(struct rcu_head *rhp)
- {
- 	struct irq_desc *desc = container_of(rhp, struct irq_desc, rcu);
- 
-+	free_masks(desc);
-+	free_percpu(desc->kstat_irqs);
-+	kfree(desc);
++static void irq_domain_hierarchy_free_desc(struct irq_desc *desc)
++{
++	unsigned int virq = desc->irq_data.irq;
++	struct irq_data *data = irq_get_irq_data(virq);
++
++	mutex_lock(&irq_domain_mutex);
++	irq_domain_remove_irq(virq);
++	irq_domain_free_irqs_hierarchy(data->domain, virq, 1);
++	mutex_unlock(&irq_domain_mutex);
++
++	irq_domain_free_irq_data(virq, 1);
 +}
 +
-+static void free_desc(unsigned int irq)
-+{
-+	struct irq_desc *desc = irq_to_desc(irq);
+ int __irq_domain_alloc_irqs_data(struct irq_domain *domain, int virq,
+ 				 unsigned int nr_irqs, int node, void *arg,
+ 				 const struct irq_affinity_desc *affinity)
+@@ -1430,7 +1431,10 @@ int __irq_domain_alloc_irqs_data(struct irq_domain *domain, int virq,
+ 	}
+ 
+ 	for (i = 0; i < nr_irqs; i++) {
++		struct irq_desc *desc = irq_to_desc(virq + i);
 +
- 	kobject_put(&desc->kobj);
+ 		irq_domain_insert_irq(virq + i);
++		desc->free_irq = irq_domain_hierarchy_free_desc;
+ 	}
+ 	mutex_unlock(&irq_domain_mutex);
+ 
+@@ -1675,14 +1679,11 @@ void irq_domain_free_irqs(unsigned int virq, unsigned int nr_irqs)
+ 		 "NULL pointer, cannot free irq\n"))
+ 		return;
+ 
+-	mutex_lock(&irq_domain_mutex);
+-	for (i = 0; i < nr_irqs; i++)
+-		irq_domain_remove_irq(virq + i);
+-	irq_domain_free_irqs_hierarchy(data->domain, virq, nr_irqs);
+-	mutex_unlock(&irq_domain_mutex);
++	for (i = 0; i < nr_irqs; i++) {
++		struct irq_desc *desc = irq_to_desc(virq + i);
+ 
+-	irq_domain_free_irq_data(virq, nr_irqs);
+-	irq_free_descs(virq, nr_irqs);
++		kobject_put(&desc->kobj);
++	}
  }
  
--static void free_desc(unsigned int irq)
-+static void irq_kobj_release(struct kobject *kobj)
- {
--	struct irq_desc *desc = irq_to_desc(irq);
-+	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
-+	unsigned int irq = desc->irq_data.irq;
- 
- 	irq_remove_debugfs_entry(desc);
- 	unregister_irq_proc(irq, desc);
- 
- 	/*
--	 * sparse_irq_lock protects also show_interrupts() and
--	 * kstat_irq_usr(). Once we deleted the descriptor from the
--	 * sparse tree we can free it. Access in proc will fail to
--	 * lookup the descriptor.
--	 *
- 	 * The sysfs entry must be serialized against a concurrent
- 	 * irq_sysfs_init() as well.
- 	 */
--	irq_sysfs_del(desc);
- 	delete_irq_desc(irq);
- 
- 	/*
+ /**
 -- 
 2.17.1
 
