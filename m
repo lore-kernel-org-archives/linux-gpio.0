@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1E0C63798
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Nov 2020 05:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F45AC2D0E4
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Nov 2020 05:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 076D221D81
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Nov 2020 05:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1567021D7F
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Nov 2020 05:23:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IAn+C8K3"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="R8BM8/vl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbgK0FU7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 27 Nov 2020 00:20:59 -0500
-Received: from m12-14.163.com ([220.181.12.14]:40349 "EHLO m12-14.163.com"
+        id S1729422AbgK0FWy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 27 Nov 2020 00:22:54 -0500
+Received: from m12-18.163.com ([220.181.12.18]:59772 "EHLO m12-18.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729100AbgK0FU7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 27 Nov 2020 00:20:59 -0500
+        id S1729100AbgK0FWy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 27 Nov 2020 00:22:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
         s=s110527; h=From:Subject:Date:Message-Id; bh=lmgddvHtAi5SdHCftt
-        KJz4DYN1iYMVB/xgJ/V1LKoCk=; b=IAn+C8K3nZ//qxxcqnBLP5k7vmmjR2OEXL
-        UjkFJzI/7GSepnhuooVVYneWUzftEo8xnWmldjuYcCluRcGg11aysMtJlHZjvt/0
-        oxmZEw/AbmQ0CdNHgZxkGm81EgKz+F2vR+lcHfIOzdyHtY8u0ziBWUcAZE5FT3qi
-        1ow2LnaiY=
+        KJz4DYN1iYMVB/xgJ/V1LKoCk=; b=R8BM8/vlkT+tsLpWQrvFzKdF3WjF4n60Kv
+        pDgJ4rg4HksCHlmGz8fJ7C/bgSmTepjx3bwZj1nEG9u6gNF3Hy71w4dTVRkszhn6
+        0xo7UAdPGgqokb1yuOKk27LwSOdEzi5qu8A4LuHMlbBpfRozMPvF5EaNWACTnUyv
+        myQwGWsTA=
 Received: from localhost.localdomain (unknown [115.238.52.186])
-        by smtp10 (Coremail) with SMTP id DsCowAC37vJijMBfOncJYA--.30588S3;
-        Fri, 27 Nov 2020 13:19:45 +0800 (CST)
+        by smtp14 (Coremail) with SMTP id EsCowAB3t_6_jMBfeM8wGg--.52279S3;
+        Fri, 27 Nov 2020 13:21:04 +0800 (CST)
 From:   linsheng_111@163.com
 To:     linus.walleij@linaro.org, khilman@baylibre.com,
         narmstrong@baylibre.com, jbrunet@baylibre.com,
@@ -38,17 +38,17 @@ Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Lin shenghuan <linsheng_111@163.com>
 Subject: [PATCH] add amlogic gpio to irq
-Date:   Fri, 27 Nov 2020 13:19:27 +0800
-Message-Id: <1606454367-3493-1-git-send-email-linsheng_111@163.com>
+Date:   Fri, 27 Nov 2020 13:21:02 +0800
+Message-Id: <1606454462-3826-1-git-send-email-linsheng_111@163.com>
 X-Mailer: git-send-email 2.7.4
 Signed-off-by: Lin shenghuan <linshenghuan@hangtu-china.com>
-X-CM-TRANSID: DsCowAC37vJijMBfOncJYA--.30588S3
+X-CM-TRANSID: EsCowAB3t_6_jMBfeM8wGg--.52279S3
 X-Coremail-Antispam: 1Uf129KBjvJXoWxJFy3Zr4xtw47Kr45Kr48WFg_yoW5WF45pF
         43GFyYyr13JF47WryrAanrAFW3K3WxJFW2gay7Ka97uw13GFyDtFy29FW5Zrs8WrW5CF4r
-        Jr4rGFWUWr45AFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UHBTrUUUUU=
+        Jr4rGFWUWr45AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UlPfLUUUUU=
 X-Originating-IP: [115.238.52.186]
-X-CM-SenderInfo: polq2x5hqjsiirr6il2tof0z/1tbipBHpOlr7rnYrLgAAsa
+X-CM-SenderInfo: polq2x5hqjsiirr6il2tof0z/1tbipADpOlr7rnYvbQAAsM
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
