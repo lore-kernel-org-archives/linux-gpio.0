@@ -2,205 +2,162 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D82C71155
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFAFC83014
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA508206E9
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74D7C206E9
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:55:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="h3mZy1ve"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hX7kS0pu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbgK3Xxb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Nov 2020 18:53:31 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:7900 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbgK3Xxb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:53:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606780921; x=1638316921;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2rnV5PkQIBCqcTmTBmP7vWqrn4eu+wULGdTFOzOGoCk=;
-  b=h3mZy1vecASZKq1xPdz+4alOjDXFCdY+LmL3qZtVY8HvMpP25kRHv2Nu
-   mm7mKelfvr6QagQeUG7Yv0CFQMZjl7ZTULj/erTXmYOQF1DtSgXhxq3Oc
-   4aRIg06OSCZVwEmzKTxF9DfpYrTqbc2x5IgRl14/xn3WY9PK3KeAGEwDO
-   Y0I6FcYWdaur3Qqoz+SwbLp/D5Hj8YP8r3KdSemodsSwPxBWWJua1CPMC
-   yd935CpcSQpp/Whis4rb2ibomE9YSx5z2USJPRA/reIuMcj/KqurPjg4A
-   5cZjt0sRAp/vuucpltXXAHrytkWvHKBroUimNmWojeFp22qLZIvRCsAMQ
-   g==;
-IronPort-SDR: Rawoj5nWIriNYhDD7gSeb/EwYycNr87DQvHrpcEywtIOYEZ2NjP15gP0XzPXcxM02SGG3FgmTR
- Kyakci0/Bs51yyYN9u95ky0C8BrZPCj111PGS5y5jK1zFtChPi+HTMUnx9DsTrNHej0XtYR3c0
- bPXxzJcBIegRWUOf3hI+LrzVZiNJDCqUC5BcD9Y5E5Iq/KywprzeYj3+O/YHiPKaHiRVHyRY+f
- Ksir8227Ao783TMTsyKBE1oKkzRMPfqVEgZtGpvyIzMfUnSnG4mSCEDUMIq0/jE5vldFM7Dk6x
- L4k=
-X-IronPort-AV: E=Sophos;i="5.78,382,1599494400"; 
-   d="scan'208";a="257538359"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Dec 2020 07:55:38 +0800
-IronPort-SDR: CPxNGEMwbD2WyaOuKB+b9mLPz+fcs3uv8BTIhno5jAj7TJOJChVHI7q4EgAbvyp510jEh5sDC9
- nKOIe30ZKWW/DlqJoqrC2sBjRuaqxYHF8=
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2020 15:33:30 -0800
-IronPort-SDR: iAJot4MY8+ggbadTd64KQaDOj8+jkjkmES8RZfZIpQgBXwBQBxJ4aTaCBrlb8xjAh6hpsRJyIw
- tdOt+4s9KNMg==
-WDCIronportException: Internal
-Received: from phd004834.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.196])
-  by uls-op-cesaip01.wdc.com with ESMTP; 30 Nov 2020 15:49:15 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v3 21/21] riscv: Add Canaan Kendryte K210 SD card defconfig
-Date:   Tue,  1 Dec 2020 08:48:29 +0900
-Message-Id: <20201130234829.118298-22-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201130234829.118298-1-damien.lemoal@wdc.com>
-References: <20201130234829.118298-1-damien.lemoal@wdc.com>
+        id S1730735AbgK3Xze (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Nov 2020 18:55:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51212 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730700AbgK3Xze (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:55:34 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A512C0613D2;
+        Mon, 30 Nov 2020 15:54:48 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id g185so547241wmf.3;
+        Mon, 30 Nov 2020 15:54:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=XBVRd2hhngL7guRqxXoC+QmFNH1wDfQZ2r1tO/S1i2A=;
+        b=hX7kS0puFUA4k++ZIgBDD+63kiOTSWzMy/Tz8ax7odizmx2YYGNq4JMCofNndfd0Ue
+         m7TuxVLJAHElznp5dlpzyk1ss5m0Iv8uEtXlemyafAj5FPRXgWDSnVK1kZffbXo4ktgq
+         EyYiw/pHEys6cy7MY2DZYMEO7YxXsSPGHZJibuVWxlAtx948IOY2supb1tIHVg6Q+fQy
+         KsQjw4ZlkPym7aZFQ4LSOJmyaGFKMVmL7cRHjIZ2xh0UpXhxoJ50nOuoFHIsj5RgnGtx
+         tOjDAJ8r0aCS5BEKjeGDHkA8XJFTdSMI0HoRAeW7VEuET9qAyFKgXQXBLgz/u2FlJbtb
+         xojw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=XBVRd2hhngL7guRqxXoC+QmFNH1wDfQZ2r1tO/S1i2A=;
+        b=NZNMXPxeCYBOwfyUHkUNWBcaMPonAjJ0ksapR/g7L8P38L/hGzZk1EGsMkntduQb3g
+         zJKuJvkNDxfkNcgxhBEWzpPHRY8mrmzLbjLkQbbNtkoOZFF0FsBG2SHWIjZ2ue0bhnwm
+         piSROj0j7s8B4Qfa71MNalMMJM/a5nFqu/MqUQq5+bMXNiOs81pVw+Ff1sxbLlfIRqXm
+         D+PucpCp30hifpQ6eVe5PKwGxCBL/8TTSA8CeGPjL4IsgVDss48r3cZAcJL62Nqhj8D5
+         fnZR9D85uk4CTQju1vFhRBJbIkPw6jh4hzNTEfD/gbUmuRQebcxBwnTFPZJLVCO+RBGa
+         nUOw==
+X-Gm-Message-State: AOAM533G0xChQEma1AfbKac+lvnF4tZaxfudZGrIOjjJva8wX0gAgNqB
+        4+ol3KtatFLirq+e1stcfEY=
+X-Google-Smtp-Source: ABdhPJxfNT0ptDh8zvsMLBjWl4plsBQOlWBrJWvdYxLVXpb3GxHK+GR+xrYL/ad3X322z4IcAJOa9A==
+X-Received: by 2002:a7b:c849:: with SMTP id c9mr272766wml.101.1606780486874;
+        Mon, 30 Nov 2020 15:54:46 -0800 (PST)
+Received: from [192.168.1.211] ([2.31.224.80])
+        by smtp.gmail.com with ESMTPSA id g11sm30902199wrq.7.2020.11.30.15.54.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Nov 2020 15:54:46 -0800 (PST)
+Subject: Re: [PATCH 14/18] acpi: utils: Add function to fetch dependent
+ acpi_devices
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-media@vger.kernel.org, devel@acpica.org, rjw@rjwysocki.net,
+        lenb@kernel.org, gregkh@linuxfoundation.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, yong.zhi@intel.com,
+        sakari.ailus@linux.intel.com, bingbu.cao@intel.com,
+        tian.shu.qiu@intel.com, mchehab@kernel.org, robert.moore@intel.com,
+        erik.kaneda@intel.com, pmladek@suse.com, rostedt@goodmis.org,
+        sergey.senozhatsky@gmail.com, linux@rasmusvillemoes.dk,
+        kieran.bingham+renesas@ideasonboard.com, jacopo+renesas@jmondi.org,
+        laurent.pinchart+renesas@ideasonboard.com,
+        jorhand@linux.microsoft.com, kitakar@gmail.com,
+        heikki.krogerus@linux.intel.com
+References: <20201130133129.1024662-1-djrscally@gmail.com>
+ <20201130133129.1024662-15-djrscally@gmail.com>
+ <20201130182354.GW4077@smile.fi.intel.com>
+From:   Dan Scally <djrscally@gmail.com>
+Message-ID: <26d7fa3f-3552-90e0-1f64-5c39449dcdd7@gmail.com>
+Date:   Mon, 30 Nov 2020 23:54:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201130182354.GW4077@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The nommu_k210_defconfig default configuration allows booting a Canaan
-Kendryte K210 SoC based boards using an embedded intramfs cpio file.
-Modifying this configuration to enable support for the board SD card is
-not trivial for all users. To help beginners getting started with these
-boards, add the nommu_k210_sdcard_defconfig default configuration file
-to set all configuration options necessary to use the board mmc-spi sd
-card for the root file system.
+Hi Andy
 
-This new configuration adds support for the block layer, the mmc-spi
-driver and modifies the boot options to specify the rootfs device as
-mmcblk0p1 (first partition of the sd card block device). The ext2 file
-system is selected by default to encourage its use as that results in
-only about 4KB added to the kernel image size. As ext2 does not have
-journaling, the boot options specify a read-only mount of the file
-system. Similarly to the smaller nommu_k210_defconfig, this new default
-configuration disables virtual terminal support to reduce the kernel
-image size.
+On 30/11/2020 18:23, Andy Shevchenko wrote:
+> On Mon, Nov 30, 2020 at 01:31:25PM +0000, Daniel Scally wrote:
+>> ACPI devices declare themselves dependent on other devices via the _DEP
+>> buffer. Fetching the dependee from dependent is a matter of parsing
+>> _DEP, but currently there's no method to fetch dependent from dependee.
+>> Add one, so we can parse sensors dependent on a PMIC from the PMIC's
+>> acpi_driver.
+> Do I understand correctly that it's an existing table provided by firmware that
+> (ab)uses _DEP in such way? Note, the specification doesn't tell we may use it
+> in this way, OTOH I don't remember if it strictly forbids such use.
+>
+> So, please elaborate in the commit message why you need this and pint out to
+> the 6.5.8 "_DEP (Operation Region Dependencies)" which clearly says about
+> OpRegions and that part already supported by ACPI in the Linux, if I'm not
+> mistaken, need to refresh my memory.
 
-The default device tree selected is unchanged, specifying the simple
-"k210_generic" device tree file. The user must change this setting to
-specify the device tree suitable for the board being used
-(k210_maix_bit, k210_maix_dock, k210_maix_go, k210_maixduino or
-k210_kd233).
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- .../riscv/configs/nommu_k210_sdcard_defconfig | 93 +++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
+Laurent's reply is good explanation, but for example see my Lenovo Miix
+510's DSDT:
 
-diff --git a/arch/riscv/configs/nommu_k210_sdcard_defconfig b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-new file mode 100644
-index 000000000000..999905ee9d53
---- /dev/null
-+++ b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-@@ -0,0 +1,93 @@
-+# CONFIG_CPU_ISOLATION is not set
-+CONFIG_LOG_BUF_SHIFT=13
-+CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=12
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+# CONFIG_SYSFS_SYSCALL is not set
-+# CONFIG_FHANDLE is not set
-+# CONFIG_BASE_FULL is not set
-+# CONFIG_FUTEX is not set
-+# CONFIG_EPOLL is not set
-+# CONFIG_SIGNALFD is not set
-+# CONFIG_TIMERFD is not set
-+# CONFIG_EVENTFD is not set
-+# CONFIG_AIO is not set
-+# CONFIG_IO_URING is not set
-+# CONFIG_ADVISE_SYSCALLS is not set
-+# CONFIG_MEMBARRIER is not set
-+# CONFIG_KALLSYMS is not set
-+CONFIG_EMBEDDED=y
-+# CONFIG_VM_EVENT_COUNTERS is not set
-+# CONFIG_COMPAT_BRK is not set
-+CONFIG_SLOB=y
-+# CONFIG_MMU is not set
-+CONFIG_SOC_CANAAN=y
-+CONFIG_SOC_CANAAN_K210_DTB_SOURCE="k210_generic"
-+CONFIG_MAXPHYSMEM_2GB=y
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
-+CONFIG_CMDLINE="earlycon console=ttySIF0 rootdelay=2 root=/dev/mmcblk0p1 ro"
-+CONFIG_CMDLINE_FORCE=y
-+# CONFIG_SECCOMP is not set
-+# CONFIG_STACKPROTECTOR is not set
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_MQ_IOSCHED_DEADLINE is not set
-+# CONFIG_MQ_IOSCHED_KYBER is not set
-+CONFIG_BINFMT_FLAT=y
-+# CONFIG_COREDUMP is not set
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+# CONFIG_FW_LOADER is not set
-+# CONFIG_ALLOW_DEV_COREDUMP is not set
-+# CONFIG_BLK_DEV is not set
-+# CONFIG_INPUT_LEDS is not set
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_SERIO is not set
-+# CONFIG_VT is not set
-+# CONFIG_UNIX98_PTYS is not set
-+# CONFIG_LEGACY_PTYS is not set
-+# CONFIG_LDISC_AUTOLOAD is not set
-+# CONFIG_HW_RANDOM is not set
-+# CONFIG_DEVMEM is not set
-+CONFIG_I2C=y
-+CONFIG_I2C_CHARDEV=y
-+# CONFIG_I2C_HELPER_AUTO is not set
-+CONFIG_I2C_DESIGNWARE_PLATFORM=y
-+CONFIG_SPI=y
-+# CONFIG_SPI_MEM is not set
-+CONFIG_SPI_DESIGNWARE=y
-+CONFIG_SPI_DW_MMIO=y
-+CONFIG_GPIO_SYSFS=y
-+# CONFIG_GPIO_CDEV_V1 is not set
-+CONFIG_GPIO_DWAPB=y
-+CONFIG_GPIO_SIFIVE=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON=y
-+# CONFIG_HWMON is not set
-+# CONFIG_HID is not set
-+# CONFIG_USB_SUPPORT is not set
-+CONFIG_MMC=y
-+# CONFIG_PWRSEQ_EMMC is not set
-+# CONFIG_PWRSEQ_SIMPLE is not set
-+CONFIG_MMC_SPI=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_USER=y
-+# CONFIG_VIRTIO_MENU is not set
-+# CONFIG_VHOST_MENU is not set
-+CONFIG_EXT2_FS=y
-+# CONFIG_FILE_LOCKING is not set
-+# CONFIG_DNOTIFY is not set
-+# CONFIG_INOTIFY_USER is not set
-+# CONFIG_MISC_FILESYSTEMS is not set
-+CONFIG_LSM="[]"
-+CONFIG_PRINTK_TIME=y
-+# CONFIG_SYMBOLIC_ERRNAME is not set
-+# CONFIG_DEBUG_BUGVERBOSE is not set
-+# CONFIG_DEBUG_MISC is not set
-+CONFIG_PANIC_ON_OOPS=y
-+# CONFIG_SCHED_DEBUG is not set
-+# CONFIG_RCU_TRACE is not set
-+# CONFIG_FTRACE is not set
-+# CONFIG_RUNTIME_TESTING_MENU is not set
--- 
-2.28.0
 
+https://gist.githubusercontent.com/djrscally/e64d112180517352fa3392878b0f4a7d/raw/88b90b3ea4204fd7845257b6666fdade47cc2981/dsdt.dsl
+
+
+Search OVTI2680 and OVTI5648 for the cameras. Both are dependent on
+IN3472 devices (PMI0 and PMI1) which are the discrete type that we're
+attempting to handle here.
+
+>
+> ...
+>
+>> +	handle = adev->handle;
+>> +
+>> +	if (!acpi_has_method(handle, "_DEP"))
+>> +		return 0;
+>> +
+>> +	status = acpi_evaluate_reference(handle, "_DEP", NULL, &dep_handles);
+>> +	if (ACPI_FAILURE(status))
+>> +		return 0;
+>> +
+>> +	for (i = 0; i < dep_handles.count; i++) {
+>> +		struct acpi_device_info *info;
+>> +
+>> +		status = acpi_get_object_info(dep_handles.handles[i], &info);
+>> +		if (ACPI_FAILURE(status))
+>> +			continue;
+>> +
+>> +		if (info->valid & ACPI_VALID_HID) {
+>> +			ret = acpi_bus_get_device(dep_handles.handles[i], &candidate);
+>> +			if (ret || !candidate) {
+>> +				kfree(info);
+>> +				continue;
+>> +			}
+>> +
+>> +			if (candidate == dependee) {
+>> +				acpi_dev_put(candidate);
+>> +				kfree(info);
+>> +				return 1;
+>> +			}
+>> +
+>> +			kfree(info);
+>> +		}
+>> +	}
+> Can you utilize (by moving to here and export for ACPI layer the
+> acpi_lpss_dep()?
+oooh, yes, I think I can. Thank you!
