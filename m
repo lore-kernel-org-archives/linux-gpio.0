@@ -7,119 +7,106 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1C5C8300F
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFD8C64E8A
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2072073C
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A6AB206F9
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:40:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aB1zWDkK"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="glbcz3v2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgK3Qi3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Nov 2020 11:38:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39486 "EHLO
+        id S1728831AbgK3QkI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Nov 2020 11:40:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728004AbgK3Qi2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 11:38:28 -0500
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67E7AC0613D3
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2020 08:37:48 -0800 (PST)
-Received: by mail-ed1-x544.google.com with SMTP id l5so16988197edq.11
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2020 08:37:48 -0800 (PST)
+        with ESMTP id S1728780AbgK3QkH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 11:40:07 -0500
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D285C0613D3
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2020 08:39:27 -0800 (PST)
+Received: by mail-ej1-x642.google.com with SMTP id d17so21086869ejy.9
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2020 08:39:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MGdi8zw2UllbWy3UVgiIB3U1ISdHvVn0dXTWbzhqRHw=;
-        b=aB1zWDkK5NfvrmnrmOSCL/lbknzHRwKGj1aueBf2V03Sd6MpGnI0JfOynU1L+Ogb+x
-         wJytGRe8eBSCzk5p+hrSF8NRWQ9EzWELjDbujZIvG7t/Y6vf84OEwEXFbssX5NFpsO/S
-         U2Fy1chzzhaQHsSvYMli6eB50DPVcfkH/hq1h00mVi1+Xp3KaUDnT41QaRyaKzae1sAB
-         OwR6d/DjVUjb6cL4LJfm5G+E3KSFWs23XT9/FscKngVfULfqJqECez6rCyRDnk9W3wj+
-         g7EGgqpDVMjlU0mcjuOqvOY2x/PVn8LMZhFiiMPRh3RmjL9zpNi6BiJCedilbfGd2LOA
-         IfXQ==
+        bh=6tD9ZVZ6gEgHyopRLPxX9gjuGEYfwDbo2GR5pg3Ufw4=;
+        b=glbcz3v23KpKTyAKnx1I60vsVXUyi8fdbsPAkgkSO82ICb8g57m1qTTu7ZzCVZ9Ihc
+         FH5rZ8Ht8MBFuLyHSylml3QywhK9XbmEWYDbOuDsdABb8RFkUldZ1HCYLrPNDdNlxyTp
+         DQYHeaUIJz/6bgu/RYhL7KePVkD+5V03rg+b3NxI3uOc4hXeJ80fHWG9QameyeLyAr5Q
+         qXmCwF85bIyrjijUS9NSSilY3kjYs8ViX4Q9fH9appyTrlusTidi4l8tmBTPvrt932qZ
+         8P27uJXoiWSFSIXKvkt4+prrOLmDRHI73pPWHz5bshntvLIQbbIQ3XZRAPzCk3a61Cs4
+         m6qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MGdi8zw2UllbWy3UVgiIB3U1ISdHvVn0dXTWbzhqRHw=;
-        b=rBh6+ZrEvuY/j4Jaz6RIZTSzClJ4VuvPj5AocGXxC4omIoGg8I6myuWAJrgQoduDKE
-         eOz8dcswSC1wyOntoFDly+broQrhuAboXeUGtkUJJrdHoxRDq8rdeozP++Q+lBBxcNXy
-         J4TBNNINBRiLpmLfy+2InBeKOl7Iw00LE8Zd02xz2B9wKkB3PPaK+A6jnER3+P/Jurp0
-         8Rkng4t8SswE6HLm/qtoWAROP/olzwW8nwD5h+E+5Znd/rc/mja4Vkia0eCIltoOi3m+
-         f+hkgyYw29P2SFFLEcsXFTcE2G3cdnm01jUqlVHxBXaFglZxPb6TbCuIwmKflcmLDZhq
-         /drA==
-X-Gm-Message-State: AOAM530XRNLRMIP9RWXnY2ziPXWptfJJegOl+KUJ+um3nxtdhfwYrDE1
-        LgN8ZVHokGDWAyAr9fbRGSaXSQ7YBkX01hiUuVU0uJR864s=
-X-Google-Smtp-Source: ABdhPJwwPbz1lJhNl39w+VpN8EO/mmbxfDOKDsyQn4TG5vFIeHuiL/TfIgbs7NmsghfoNhd4IHozS7s3SvnOJwmvCUs=
-X-Received: by 2002:a05:6402:307c:: with SMTP id bs28mr1919331edb.186.1606754266882;
- Mon, 30 Nov 2020 08:37:46 -0800 (PST)
+        bh=6tD9ZVZ6gEgHyopRLPxX9gjuGEYfwDbo2GR5pg3Ufw4=;
+        b=iA9UUmCcfHjw6d7x3WYIlPepyfaMWH2tL+0wnhXCcGMKFbwoKPUuPKoxky6vm8TUJ3
+         sf7TYWaqKzfix2x6hfbS8TrOzmuUfn2gKbrBAevm0cO7EOEvu5ctRwbz949eFEyKfDQh
+         lSFO3TBr6wWpvCGKljBGYQBLjqUUzsncrhQJiX5uYGX+sXl42fC8wzoJmzZiUuQ2yYe3
+         Yd1+yadV6qaEyFEuL+zWcj40f1ioJ2BMU0Y9XhOG5WHNGJXRWAcInkGlm6AbJR0enOk1
+         OGnDY1SmfU+rGF/c+i8aqYaatRFH+e3KDcKWIsw07eWAXzttuo2harUyXioxo/G/Hnk7
+         6Lhg==
+X-Gm-Message-State: AOAM533OkIPtO+D1TYUiFEhapKpK3FjPM2X8aQyGx4ldz0Pc3cKdpP5M
+        AoFRMZYs3N0ZCbe3FjuhwrMadxpJ6IcSVDOaqjqI0Q==
+X-Google-Smtp-Source: ABdhPJzoCYimjzh4bEQ9MTo+GD5OKm/5MTWjv3mRz8F3tY/eucztztKkMgUZGD/9LslE8VvXK+DJg6C7YKs8OF0nQ58=
+X-Received: by 2002:a17:907:b09:: with SMTP id h9mr7163881ejl.155.1606754365951;
+ Mon, 30 Nov 2020 08:39:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20201119142104.85566-1-alexandru.ardelean@analog.com> <CAHp75VdkomLMPYZbB7-KerGmyxXxB8hQuAjLtJ0bhB5f5vfuNA@mail.gmail.com>
-In-Reply-To: <CAHp75VdkomLMPYZbB7-KerGmyxXxB8hQuAjLtJ0bhB5f5vfuNA@mail.gmail.com>
+References: <20201118143149.26067-1-grygorii.strashko@ti.com>
+In-Reply-To: <20201118143149.26067-1-grygorii.strashko@ti.com>
 From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 30 Nov 2020 17:37:35 +0100
-Message-ID: <CAMpxmJXbpiiKzxsrBk5mdLf1Kk5_-5pwJYOeCsTTqKmS2QUMTQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: xra1403: remove unneeded spi_set_drvdata()
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nandor Han <nandor.han@ge.com>,
-        Semi Malinen <semi.malinen@ge.com>,
-        Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 30 Nov 2020 17:39:15 +0100
+Message-ID: <CAMpxmJVm7euifTBKx06mzUw6zD5s2KJHYniGviV=H8Yo6YJMdg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: omap: handle deferred probe with dev_err_probe()
+ for gpiochip_add_data()
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 4:04 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Wed, Nov 18, 2020 at 3:31 PM Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 >
-> On Thu, Nov 19, 2020 at 4:17 PM Alexandru Ardelean
-> <alexandru.ardelean@analog.com> wrote:
-> >
-> > There is no matching spi_get_drvdata() call in the driver, so there is no
-> > need to do spi_set_drvdata(). This looks like it probably was copied from a
-> > driver that used both spi_set_drvdata() & spi_get_drvdata().
+> The gpiochip_add_data() may return -EPROBE_DEFER which is not handled
+> properly by TI GPIO driver and causes unnecessary boot log messages.
 >
-> While above luckily (*) okay it may not always be the case.
+> Hence, add proper deferred probe handling with new dev_err_probe() API.
 >
-> *) it can be paired with dev_get_drvdata() which is usual for PM callbacks.
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+>  drivers/gpio/gpio-omap.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> With amended commit message
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index f7ceb2b11afc..41952bb818ad 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1049,11 +1049,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>         irq->first = irq_base;
+>
+>         ret = gpiochip_add_data(&bank->chip, bank);
+> -       if (ret) {
+> -               dev_err(bank->chip.parent,
+> -                       "Could not register gpio chip %d\n", ret);
+> -               return ret;
+> -       }
+> +       if (ret)
+> +               return dev_err_probe(bank->chip.parent, ret, "Could not register gpio chip\n");
+>
+>         ret = devm_request_irq(bank->chip.parent, bank->irq,
+>                                omap_gpio_irq_handler,
+> --
+> 2.17.1
 >
 
-I applied this patch. I wasn't sure exactly how you want the commit
-message to be changed - it sounds pretty clear to me so I took it.
+Now applied. Thanks!
 
 Bartosz
-
-> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > ---
-> >  drivers/gpio/gpio-xra1403.c | 10 +---------
-> >  1 file changed, 1 insertion(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
-> > index e2cac12092af..49c878cfd5c6 100644
-> > --- a/drivers/gpio/gpio-xra1403.c
-> > +++ b/drivers/gpio/gpio-xra1403.c
-> > @@ -186,15 +186,7 @@ static int xra1403_probe(struct spi_device *spi)
-> >                 return ret;
-> >         }
-> >
-> > -       ret = devm_gpiochip_add_data(&spi->dev, &xra->chip, xra);
-> > -       if (ret < 0) {
-> > -               dev_err(&spi->dev, "Unable to register gpiochip\n");
-> > -               return ret;
-> > -       }
-> > -
-> > -       spi_set_drvdata(spi, xra);
-> > -
-> > -       return 0;
-> > +       return devm_gpiochip_add_data(&spi->dev, &xra->chip, xra);
-> >  }
-> >
-> >  static const struct spi_device_id xra1403_ids[] = {
-> > --
-> > 2.17.1
