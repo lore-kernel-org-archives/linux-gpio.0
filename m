@@ -2,126 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A212DC71156
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D044FC71156
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 618382076E
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AF0F206F9
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 16:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728586AbgK3QkA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Nov 2020 11:40:00 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:32945 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727924AbgK3QkA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 11:40:00 -0500
-Received: by mail-il1-f193.google.com with SMTP id y9so11901624ilb.0;
-        Mon, 30 Nov 2020 08:39:44 -0800 (PST)
+        id S1728039AbgK3Qkx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Nov 2020 11:40:53 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:42323 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727924AbgK3Qkw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 11:40:52 -0500
+Received: by mail-il1-f195.google.com with SMTP id f5so11882352ilj.9;
+        Mon, 30 Nov 2020 08:40:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=GxbcPm40Z/OfvA3tX+RN9PfY6ghzBrA55YxrDnO7ysY=;
-        b=M6lpowL3qpdVRL5koaCCc14/I589CBqNBouWLk7DkXiVeRFnJeQqC8kUn0EThTRfPa
-         5Uk4V9IEP4DbTq/iSWClXh+LZgso1a9vNOeXa+UR82tkORmP0mlpB4VYhwGjAw49uiKO
-         j1WvdNNgm+1t6ed7ifac83QV9pokgjusQ9KN30LjGJoQxr0ilfPpR7JIVaxhOD9CiYk+
-         AyTTGmkGUxoH0guNya7lm7tqsWnr0Z1fj9GzrczIgdsavC2A/tfoY7ktsg0coCAdOLmy
-         db3cxGPo3abraxF4/q7LQbHWQ1jUcEIwv+bGSciS+KbkDgFA0P+d5BNrZEY3D1m6Bk9z
-         TH/w==
-X-Gm-Message-State: AOAM530TSZeGTNdFqwywg6NsDtecmQrG39BcxyoI8oy0wPupQk/nx+gn
-        Ta4VVNfvHCKfI3FSvmXP+w==
-X-Google-Smtp-Source: ABdhPJzY9MzktBK1OkYtWSDkzwOcRYCFt2VHyLCC7bUEJXijT3EkfPx6av4RZ3T4OMflXGgu5ppcjw==
-X-Received: by 2002:a92:607:: with SMTP id x7mr18906592ilg.34.1606754358863;
-        Mon, 30 Nov 2020 08:39:18 -0800 (PST)
+        bh=bAYc28O40kbetv9cXus2ITFmscdZF+ewqzJQFnlg8NE=;
+        b=rTGAJbaL01siTjSFUfKc6mUECZtsPovF879e/C22LUBk/TOWLtMEmOtVLV66m6dEmb
+         U5bUEaxTqmPxbbymDBgK60X5e66ZJUnY0kxP+XqOSaEGQQxEPO4T2qS6+BDRtt96dp/x
+         Gdmw4FYJlzn/xJZ/vGUWqkswnQ7b9+NkX/WM0Y8e6aGULUCFw5WWlDLq2ZlE/WiYEAtK
+         pTLJCWm1raiVg8UtBSmxGbTP7J19im7zyIU8RqpvZzh9A7iNdAsXxT/XBtKObB5Kglju
+         SeqSuOBcUJvhH1oS8YieiLeB3AiCba6rBrhatDAFclVhr6dEmX7iHasA29f3zeDn/gvf
+         V3/w==
+X-Gm-Message-State: AOAM533K8eWJejk4x0atbvD2ztrsNjLfKhfOHQ+QqDhlLxu1PJMeiVSZ
+        0KErhXzF7aJmwInhKT37Vw==
+X-Google-Smtp-Source: ABdhPJxRWZfczSYCVHlAHpdcSkC/qm5wJX03gIby4IS304rXTN1z3EjI2USfEgJ9eEXADu3AgXzv6g==
+X-Received: by 2002:a92:c887:: with SMTP id w7mr18648555ilo.277.1606754411806;
+        Mon, 30 Nov 2020 08:40:11 -0800 (PST)
 Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id b9sm4311464iok.20.2020.11.30.08.39.16
+        by smtp.gmail.com with ESMTPSA id u1sm11192110ilb.74.2020.11.30.08.40.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 08:39:18 -0800 (PST)
-Received: (nullmailer pid 2593543 invoked by uid 1000);
-        Mon, 30 Nov 2020 16:39:15 -0000
-Date:   Mon, 30 Nov 2020 09:39:15 -0700
+        Mon, 30 Nov 2020 08:40:11 -0800 (PST)
+Received: (nullmailer pid 2594996 invoked by uid 1000);
+        Mon, 30 Nov 2020 16:40:09 -0000
+Date:   Mon, 30 Nov 2020 09:40:09 -0700
 From:   Rob Herring <robh@kernel.org>
 To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Sean Anderson <seanga2@gmail.com>,
-        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 09/21] dt-bindings: Document canaan,k210-fpioa bindings
-Message-ID: <20201130163915.GA2593105@robh.at.kernel.org>
+        Sean Anderson <seanga2@gmail.com>, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 10/21] dt-binding: Document canaan,k210-sysctl bindings
+Message-ID: <20201130164009.GA2593992@robh.at.kernel.org>
 References: <20201124043728.199852-1-damien.lemoal@wdc.com>
- <20201124043728.199852-10-damien.lemoal@wdc.com>
+ <20201124043728.199852-11-damien.lemoal@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124043728.199852-10-damien.lemoal@wdc.com>
+In-Reply-To: <20201124043728.199852-11-damien.lemoal@wdc.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 24 Nov 2020 13:37:16 +0900, Damien Le Moal wrote:
-> Document the device tree bindings for the Canaan Kendryte K210 SoC
-> Fully Programmable IO Array (FPIOA) pinctrl driver in
-> Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml. The
-> new header file include/dt-bindings/pinctrl/k210-fpioa.h is added to
-> define all 256 possible pin functions of the SoC IO pins, as well as
-> macros simplifying the definition of pin functions in a device tree.
+On Tue, 24 Nov 2020 13:37:17 +0900, Damien Le Moal wrote:
+> Document the device tree bindings of the Canaan Kendryte K210 SoC
+> system controller driver in
+> Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml.
 > 
 > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 > ---
->  .../bindings/pinctrl/canaan,k210-fpioa.yaml   | 165 +++++++++++
->  include/dt-bindings/pinctrl/k210-fpioa.h      | 276 ++++++++++++++++++
->  2 files changed, 441 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
->  create mode 100644 include/dt-bindings/pinctrl/k210-fpioa.h
+>  .../bindings/mfd/canaan,k210-sysctl.yaml      | 116 ++++++++++++++++++
+>  1 file changed, 116 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
 > 
 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml:59:1: [error] syntax error: found character '\t' that cannot start any token (syntax)
 
 dtschema/dtc warnings/errors:
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-extract-example", line 45, in <module>
-    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 343, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
-    node = self.composer.get_single_node()
-  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
-  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 731, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
-ruamel.yaml.scanner.ScannerError: while scanning a plain scalar
-  in "<unicode string>", line 58, column 11
-found a tab character that violates indentation
-  in "<unicode string>", line 59, column 1
-make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.example.dts] Error 1
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.example.dts'
-make[1]: *** Waiting for unfinished jobs....
-make[1]: *** [Documentation/devicetree/bindings/Makefile:59: Documentation/devicetree/bindings/processed-schema-examples.json] Error 123
+Unknown file referenced: [Errno 2] No such file or directory: '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/canaan,k210-clk.yaml'
+xargs: dt-doc-validate: exited with status 255; aborting
+make[1]: *** [Documentation/devicetree/bindings/Makefile:59: Documentation/devicetree/bindings/processed-schema-examples.json] Error 124
 make: *** [Makefile:1364: dt_binding_check] Error 2
 
 
-See https://patchwork.ozlabs.org/patch/1405241
+See https://patchwork.ozlabs.org/patch/1405243
 
 The base for the patch is generally the last rc1. Any dependencies
 should be noted.
