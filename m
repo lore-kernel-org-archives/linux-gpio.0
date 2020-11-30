@@ -2,75 +2,107 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E83C63777
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AC7C71155
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17774207F7
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05475207BB
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="KP+nOg8a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728727AbgK3XuR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Nov 2020 18:50:17 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:42421 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbgK3XuR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:50:17 -0500
-Received: by mail-il1-f195.google.com with SMTP id f5so13108564ilj.9;
-        Mon, 30 Nov 2020 15:50:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=J6EbXhsW5fN3yBjCyVEPyIx477gV7aMbZdAD7syPooI=;
-        b=f72pb1MNJHCI9pHCgoy5TsNqLukXh+sOc83oa5f4xONVskDwIfokQbLZyt454Ps4ji
-         ynuZYOS3h5alN1DyJftVjwT4vSmH5EXnn0F5vJopfwpV4/pucw3LuJvcCkd+vl/GowSZ
-         brUkYcGiR1siDQPxVG4cJDggWiQhl3dmPG11OGjNhiY8i/BmyYua6FmA3PIvlaNHNEId
-         8ohwW15D9IXv69WTts+WIUpeuSr6jCXH6zE0LqzWA6SNrR8SiMzP30WFy4fpauLR47ok
-         6KwlRi9sa7Tyoz/p6JMCVmiEoU4C1uJc7cCWvlz3fMnnSy7X1AXNIm8yY3MVrMeeG3wo
-         +s8g==
-X-Gm-Message-State: AOAM533qFHIQWwx5RZEs1+LOO5j0q5qubbJ9ApweSseTaz/yluIEOdb8
-        2VtEIiEcsH1f+hVL3W/hLw==
-X-Google-Smtp-Source: ABdhPJzceB7Yz7DZ84DfuUCkRNhl1H+v/ITUy2z4Ug1NcuaWTnuN5GNLzaPQjWsxpMmSOOIHBupfJw==
-X-Received: by 2002:a92:d38e:: with SMTP id o14mr143903ilo.59.1606780176352;
-        Mon, 30 Nov 2020 15:49:36 -0800 (PST)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id k15sm63625ils.87.2020.11.30.15.49.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 15:49:35 -0800 (PST)
-Received: (nullmailer pid 3277325 invoked by uid 1000);
-        Mon, 30 Nov 2020 23:49:32 -0000
-Date:   Mon, 30 Nov 2020 16:49:32 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, agross@kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: pinctrl: qcom: Add sm8250 lpass lpi
- pinctrl bindings
-Message-ID: <20201130234932.GA3277243@robh.at.kernel.org>
-References: <20201116143432.15809-1-srinivas.kandagatla@linaro.org>
- <20201116143432.15809-2-srinivas.kandagatla@linaro.org>
+        id S1730005AbgK3XuV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Nov 2020 18:50:21 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:7930 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbgK3XuV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:50:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1606780634; x=1638316634;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=LAnvTxuCrxiYwbhYLblxFRB980/m85EFlvtWJ9EMVlc=;
+  b=KP+nOg8ayL8kNwrVUO7pcuGARDQoETFi2ldCYmfscnP96+akfxH4djXz
+   Gs5CfLe9L/pb4pvOhTCDObzNeE6UCilMVmH1bHCpViv+lGz684ZFy9XSF
+   5kP1Mb86O+5ZQ/Freoxl3WUuPhRcUnRx9sO+1cdEZPDnMTzvlnw9VsoYF
+   uOBQrHnUWWI9vfZ/LyNVWLTEhNhkuiLDUaKeojDkoF65X0Xlg3OyaCPdp
+   m4pfqovXfxGgjoo71qQDLs0WBoSA4lEmkPAzDoE/tAOIx8kpHqLSE2Rtq
+   lxhdk8si2VNQ0xWTBwEXsbwMRrqbitvYlDcm4CAyv65ru9lDLZmIxPATD
+   w==;
+IronPort-SDR: nPqm0p+iXTaXmHqkMevD/mbc9/i2aa3xyYoyKa963pJ92NLOJzln/P0azO40dNR6EJu0Kr+FjS
+ PsEjlOqK3nyujxeIM6pUjGSCPmGaMLJBTfoYy2M5b0sU2BdTProbs5OUmdkQ7rN+h9SpjF5MB9
+ MU4CxZkRZEFuwdnciGHhILsIwRW86tfEHmkSN+yKpuzAyKuofkcI/8sCOKSl3HBL9Dtdiugmex
+ gDC0e5TUBWrT17v7u0tzenYuHEVmlKXgu2g5iQQcs14ENVxgOsmjA+kMB/4ggIuH+GzhzPDppJ
+ hyE=
+X-IronPort-AV: E=Sophos;i="5.78,382,1599494400"; 
+   d="scan'208";a="257538293"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 01 Dec 2020 07:54:42 +0800
+IronPort-SDR: 6sYpR+XGSzxic7Bkjyko5Yqv9LOHV2Zq4Di4u+MXVfP69yIQ1bbctEFgcWV/8ZsYbas5l9t49B
+ AmxnsylARswOdBM7OXelWiDlXn5uq4piw=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2020 15:32:54 -0800
+IronPort-SDR: KzFqzqX8anTpMG4dXaErAu2yqFBePyUg/u1I+TFU6bGUPJ+WYJdzcngfK90Ceo5pZ7J4nNcqTG
+ KkB7x/dGM4fg==
+WDCIronportException: Internal
+Received: from phd004834.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.196])
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Nov 2020 15:48:39 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Sean Anderson <seanga2@gmail.com>
+Subject: [PATCH v3 03/21] riscv: Enable interrupts during syscalls with M-Mode
+Date:   Tue,  1 Dec 2020 08:48:11 +0900
+Message-Id: <20201130234829.118298-4-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201130234829.118298-1-damien.lemoal@wdc.com>
+References: <20201130234829.118298-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201116143432.15809-2-srinivas.kandagatla@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 16 Nov 2020 14:34:31 +0000, Srinivas Kandagatla wrote:
-> Add device tree binding Documentation details for Qualcomm SM8250
-> LPASS(Low Power Audio Sub System) LPI(Low Power Island) pinctrl driver.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../pinctrl/qcom,lpass-lpi-pinctrl.yaml       | 132 ++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml
-> 
+When running is M-Mode (no MMU config), MPIE does not get set. This
+results in all syscalls being executed with interrupts disabled as
+handle_exception never sets SR_IE as it always sees SR_PIE being
+cleared. Fix this by always force enabling interrupts in
+handle_syscall when CONFIG_RISCV_M_MODE is enabled.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ arch/riscv/kernel/entry.S | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index 524d918f3601..080eb8d78589 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -155,6 +155,15 @@ skip_context_tracking:
+ 	tail do_trap_unknown
+ 
+ handle_syscall:
++#ifdef CONFIG_RISCV_M_MODE
++	/*
++	 * When running is M-Mode (no MMU config), MPIE does not get set.
++	 * As a result, we need to force enable interrupts here because
++	 * handle_exception did not do set SR_IE as it always sees SR_PIE
++	 * being cleared.
++	 */
++	csrs CSR_STATUS, SR_IE
++#endif
+ #if defined(CONFIG_TRACE_IRQFLAGS) || defined(CONFIG_CONTEXT_TRACKING)
+ 	/* Recover a0 - a7 for system calls */
+ 	REG_L a0, PT_A0(sp)
+-- 
+2.28.0
+
