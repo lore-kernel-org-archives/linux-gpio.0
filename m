@@ -2,105 +2,75 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACA7C63777
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E83C63777
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDA14207BB
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="PgeFyySA"
+	by mail.kernel.org (Postfix) with ESMTP id 17774207F7
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387457AbgK3XuJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Nov 2020 18:50:09 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:7901 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbgK3XuJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:50:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606780615; x=1638316615;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ah0+1mEnJdX05Q2mVPorPQhcLW5wBEGXXNi04bnk03g=;
-  b=PgeFyySAtEgReTsBuIPUDF69/VfA1+IloR3Q3aJ2Za7YMy7FKNM9i6qI
-   kpaHmIWYvyWeF2Poh1e91Yw7kv5Yn3y6EhoeVZcQYF2toBBRcYzkmCQiB
-   bAkzLhrNLSA+diiiVgOxFbqBbQwPHDij0VAo4ulx5ARkfXKcBwlRZ0RaF
-   XiQjzOmLW3yMn+vLWPQhtbEh8gpPyBK2t1celWQGjdiQiDC874LL3hznD
-   tndh7VJp6628nfnrwKgKzxP/r1IeS1q05+HUd+vwZ+3uPJIGvrRxAWWTr
-   D2qPKadUUhLhYyvrP/oazb3nBROfO1yJgRtxiO3dOF01r67izAUwb0NKe
-   w==;
-IronPort-SDR: FoGIgIWzgI5FSggKLijvj3fCi+D+b0AWrQsSyvlhASLKyG0hEJuwRm2LbyiesrU4w5oDFqwOhu
- iCcy5Dje1NCt4WlFKDHGNJblm+hDySIjCuMZfE+Er+0mO0Sm5yZ+gIpLTCE19N1OlB/T3Gfq/q
- M6YeqkhS1hacI/qWL2CYrU/9D7qeFBZmzR6IW2+Z9Ps98LutOLitSLJXVqTmHzy4WE/akBvrha
- 0GgoQmha+a3iamgJyq2hR2njX157h5tQAgtBWsvESWd0bliv0qq25+01HDCwyIefMQmrpPEjY/
- MGM=
-X-IronPort-AV: E=Sophos;i="5.78,382,1599494400"; 
-   d="scan'208";a="257538290"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Dec 2020 07:54:39 +0800
-IronPort-SDR: dByqXgyzLt7OQMXwmaUmC0C5j4lhddyoosdAnEqbHDoixiLOArVP7pZ3XljhavBbms23fRh/+V
- eTHcddcSXPUh2ZbbCn9Dn1I8SzfljXOVs=
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2020 15:32:52 -0800
-IronPort-SDR: hvlVHOz/0iZEszrhwcyWuIEJSllGkMd+V3vEMq+WXKp89gnOJeJho2LaYZJzaROy55xSqC/Skl
- V4t6JqLqXw9g==
-WDCIronportException: Internal
-Received: from phd004834.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.196])
-  by uls-op-cesaip01.wdc.com with ESMTP; 30 Nov 2020 15:48:37 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v3 02/21] riscv: Fix sifive serial driver
-Date:   Tue,  1 Dec 2020 08:48:10 +0900
-Message-Id: <20201130234829.118298-3-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201130234829.118298-1-damien.lemoal@wdc.com>
-References: <20201130234829.118298-1-damien.lemoal@wdc.com>
+        id S1728727AbgK3XuR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Nov 2020 18:50:17 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:42421 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbgK3XuR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:50:17 -0500
+Received: by mail-il1-f195.google.com with SMTP id f5so13108564ilj.9;
+        Mon, 30 Nov 2020 15:50:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=J6EbXhsW5fN3yBjCyVEPyIx477gV7aMbZdAD7syPooI=;
+        b=f72pb1MNJHCI9pHCgoy5TsNqLukXh+sOc83oa5f4xONVskDwIfokQbLZyt454Ps4ji
+         ynuZYOS3h5alN1DyJftVjwT4vSmH5EXnn0F5vJopfwpV4/pucw3LuJvcCkd+vl/GowSZ
+         brUkYcGiR1siDQPxVG4cJDggWiQhl3dmPG11OGjNhiY8i/BmyYua6FmA3PIvlaNHNEId
+         8ohwW15D9IXv69WTts+WIUpeuSr6jCXH6zE0LqzWA6SNrR8SiMzP30WFy4fpauLR47ok
+         6KwlRi9sa7Tyoz/p6JMCVmiEoU4C1uJc7cCWvlz3fMnnSy7X1AXNIm8yY3MVrMeeG3wo
+         +s8g==
+X-Gm-Message-State: AOAM533qFHIQWwx5RZEs1+LOO5j0q5qubbJ9ApweSseTaz/yluIEOdb8
+        2VtEIiEcsH1f+hVL3W/hLw==
+X-Google-Smtp-Source: ABdhPJzceB7Yz7DZ84DfuUCkRNhl1H+v/ITUy2z4Ug1NcuaWTnuN5GNLzaPQjWsxpMmSOOIHBupfJw==
+X-Received: by 2002:a92:d38e:: with SMTP id o14mr143903ilo.59.1606780176352;
+        Mon, 30 Nov 2020 15:49:36 -0800 (PST)
+Received: from xps15 ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id k15sm63625ils.87.2020.11.30.15.49.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Nov 2020 15:49:35 -0800 (PST)
+Received: (nullmailer pid 3277325 invoked by uid 1000);
+        Mon, 30 Nov 2020 23:49:32 -0000
+Date:   Mon, 30 Nov 2020 16:49:32 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, agross@kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: pinctrl: qcom: Add sm8250 lpass lpi
+ pinctrl bindings
+Message-ID: <20201130234932.GA3277243@robh.at.kernel.org>
+References: <20201116143432.15809-1-srinivas.kandagatla@linaro.org>
+ <20201116143432.15809-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201116143432.15809-2-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Setup the port uartclk in sifive_serial_probe() so that the base baud
-rate is correctly printed during device probe instead of always showing
-"0".  I.e. the probe message is changed from
+On Mon, 16 Nov 2020 14:34:31 +0000, Srinivas Kandagatla wrote:
+> Add device tree binding Documentation details for Qualcomm SM8250
+> LPASS(Low Power Audio Sub System) LPI(Low Power Island) pinctrl driver.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../pinctrl/qcom,lpass-lpi-pinctrl.yaml       | 132 ++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml
+> 
 
-38000000.serial: ttySIF0 at MMIO 0x38000000 (irq = 1,
-base_baud = 0) is a SiFive UART v0
-
-to the correct:
-
-38000000.serial: ttySIF0 at MMIO 0x38000000 (irq = 1,
-base_baud = 115200) is a SiFive UART v0
-
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- drivers/tty/serial/sifive.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
-index 13eadcb8aec4..214bf3086c68 100644
---- a/drivers/tty/serial/sifive.c
-+++ b/drivers/tty/serial/sifive.c
-@@ -999,6 +999,7 @@ static int sifive_serial_probe(struct platform_device *pdev)
- 	/* Set up clock divider */
- 	ssp->clkin_rate = clk_get_rate(ssp->clk);
- 	ssp->baud_rate = SIFIVE_DEFAULT_BAUD_RATE;
-+	ssp->port.uartclk = ssp->baud_rate * 16;
- 	__ssp_update_div(ssp);
- 
- 	platform_set_drvdata(pdev, ssp);
--- 
-2.28.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
