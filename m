@@ -2,94 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD9CC64E8A
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 10:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABCAC64E7B
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 10:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3812084C
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 10:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99496207F7
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 10:59:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KMBVkjQS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Q5PDI0pl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbgK3Ker (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Nov 2020 05:34:47 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33010 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728528AbgK3Ker (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 05:34:47 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0AUAX6PD033011;
-        Mon, 30 Nov 2020 04:33:06 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1606732386;
-        bh=yMgfSKwhsApyTXmZzBfg0ZsUT/F0myEgiyp5/ylYxt8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=KMBVkjQSHs4tRl15XDSWtkAkjvl/aP5msjciPvs0AaGbM3Vc38Kndrr04kecGPVMF
-         IfomIXvg4j6g5IpKXLPk6HeGqNlcebuKCFgdbpZJ94WPhJ6hYO53TAqABni7W8tLCE
-         k3r896q+qXGY2rc/HGqwjPjWoYprMXQORc80kUjo=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0AUAX6sT086703
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Nov 2020 04:33:06 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 30
- Nov 2020 04:33:06 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 30 Nov 2020 04:33:06 -0600
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0AUAX2OS015683;
-        Mon, 30 Nov 2020 04:33:04 -0600
-Subject: Re: [PATCH] gpio: omap: handle deferred probe with dev_err_probe()
- for gpiochip_add_data()
-To:     Tony Lindgren <tony@atomide.com>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1726270AbgK3K67 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Nov 2020 05:58:59 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:54135 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbgK3K67 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 05:58:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1606733939; x=1638269939;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lG24qXnTMPWdHovPB8UQbhB99rbvgeaUYvp+Yjrdx4c=;
+  b=Q5PDI0pl/ccdYT1rDZ0utZFtv31FYy1ubAngDZyALV74+hihLg92AJb6
+   Klc/gYTOxgXFg+RZemVp59MoZT14bgaPJIspdEXAd9GXtao6427Gh1Ssb
+   rcigFoU0ORK7ilWuNN5GdUbIvTR8lNrjDNWfE4lLk8QAJ9K43m0M9J+Rr
+   w9jn85Yx3KDHHpyb6atj5qkIkHEIseS6O9M6U5sfGCoplio8ADGE4mzmA
+   tqi9C52szHKwNT98bcTrTbTLyKPSaKMNvIFSFjZorOwlBRH7WLJVk62dR
+   05rzRKTXg4Gk9XuqLojYpnBOY8T1scsuIDFUtJdnI/w91/oxmZO2Yg5LT
+   A==;
+IronPort-SDR: DCtnSZI4e2rum7te2ZtztgNwdB+poyNWSBY/FN1x95iV+eYlCxajISsOFfnCB8jfEEJDBo0vBU
+ 3hm6GAUVy+zrFHVXJaYJgYc0VbK72Vs7oL/1nIf5ymqS0zc8XPttgpiMCFEnzbnXkKCB7FJYeH
+ AEY0RPs5zm6wcOxkcSOdOMu6NuIYSFNNFqjYYaZx86YH/n1Yf2u7roUSyCjVdeUxWJRDOt8jiZ
+ LNfS2PPlbxpguCIVKDgpPlJ7csJJxLQm4Baw4PKk/7HpTsl3golCLKCdFG3UtmRHN97VZYFAYS
+ yjs=
+X-IronPort-AV: E=Sophos;i="5.78,381,1599494400"; 
+   d="scan'208";a="263923357"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2020 18:57:53 +0800
+IronPort-SDR: DuXZc3hp+bIZ0cIy+BCoLQ9mKNnGrj/DFNrIdHh3EaDpkgm4F6NQelWHcVsjAVYCElPSs0vKmG
+ 3f54cL0JCMM9PzY5+H72o+0XbrW/FfVfo=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2020 02:43:31 -0800
+IronPort-SDR: hbjZWYItIXeH2T41eZaFii0vsEjZkNBJ5D+25/LKeFHeRHlgDgGDfz/NAJaCHLoqb1GVTwZbbf
+ 9E4uPRhH9kQg==
+WDCIronportException: Internal
+Received: from phd004834.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.196])
+  by uls-op-cesaip02.wdc.com with ESMTP; 30 Nov 2020 02:57:53 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-References: <20201118143149.26067-1-grygorii.strashko@ti.com>
- <20201119091907.GH26857@atomide.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <a3c0e105-36a5-f100-ae42-d6b43a1461a9@ti.com>
-Date:   Mon, 30 Nov 2020 12:33:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Serge Semin <fancer.lancer@gmail.com>,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: dwapb: Remove unnecessary error message
+Date:   Mon, 30 Nov 2020 19:57:49 +0900
+Message-Id: <20201130105749.71659-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20201119091907.GH26857@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi All,
+In dwapb_get_reset(), if devm_reset_control_get_optional_shared() fails,
+an error message is printed even if the failure is the benign
+EPROBE_DEFER error due to the reset controller not yet being
+initialized. Use dev_err_probe() to handle
+devm_reset_control_get_optional_shared() errors to avoid unnecessarilly
+printing an error message for the deferred probe error.
 
-On 19/11/2020 11:19, Tony Lindgren wrote:
-> * Grygorii Strashko <grygorii.strashko@ti.com> [201118 14:33]:
->> The gpiochip_add_data() may return -EPROBE_DEFER which is not handled
->> properly by TI GPIO driver and causes unnecessary boot log messages.
->>
->> Hence, add proper deferred probe handling with new dev_err_probe() API.
->>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> 
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ drivers/gpio/gpio-dwapb.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Are there any comments? Could it be merged?
-On am335 we no do see ~10 annoying error  messages during boot as there now is
-dependency from pinctrl on this platform.
-
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 2a9046c0fb16..ec4f6ceaae68 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -616,10 +616,9 @@ static int dwapb_get_reset(struct dwapb_gpio *gpio)
+ 	int err;
+ 
+ 	gpio->rst = devm_reset_control_get_optional_shared(gpio->dev, NULL);
+-	if (IS_ERR(gpio->rst)) {
+-		dev_err(gpio->dev, "Cannot get reset descriptor\n");
+-		return PTR_ERR(gpio->rst);
+-	}
++	if (IS_ERR(gpio->rst))
++		return dev_err_probe(gpio->dev, PTR_ERR(gpio->rst),
++				     "Cannot get reset descriptor\n");
+ 
+ 	err = reset_control_deassert(gpio->rst);
+ 	if (err) {
 -- 
-Best regards,
-grygorii
+2.28.0
+
