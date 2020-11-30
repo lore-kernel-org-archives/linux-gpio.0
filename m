@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7656C71156
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD432C83011
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4BE207BB
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC6B207FF
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Nov 2020 23:52:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="qac8PX3f"
+	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="Jq7Z29w9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388935AbgK3Xv2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Nov 2020 18:51:28 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:7900 "EHLO
+        id S2389010AbgK3Xvr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Nov 2020 18:51:47 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:7846 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388889AbgK3Xv2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:51:28 -0500
+        with ESMTP id S2388998AbgK3Xvq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2020 18:51:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606780735; x=1638316735;
+  t=1606780759; x=1638316759;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=V2xB2SB8lv6Aw9YkubyQDVNa1bzqAGS3bq1UPeXwDbw=;
-  b=qac8PX3f2pp/t8YhJe0IALh96v0AVQ81xRx4erEEMre6Rkjj4Z7K41YB
-   W5By8xnIlbRV+aVbLQGljvDZW7P7v2Emmhzw6i5EmwNpvOZDHPEPeHMAQ
-   URINP1cvG7cSNqTTXOZLQuJhThkTSVovMBP6DJRsax3zpa3CNzbIIZ9Xx
-   X5W3ePJjopSbFTIgtureA8fMiKmEFgNZdNaKIg7Bqg5Fo6nH6u6F9yfQR
-   hLD6wICP3oWqtMR8b+w8VvE5RLOpPB2NyIrD/Kf4pvd60oTkTj2R2xIo9
-   JEDikQMVBfSQFa/gGnB6DEXA/+eocwe9YeP43fMf6Wgqn5wWrnX1Ftinw
-   A==;
-IronPort-SDR: fG3pOilYoDKFD87MdcXTc4+KwQa58ngYhVv4j6UB7hDhv7eUDFRTOLNqkWuG/BAfjDPZ+ZlKrg
- /pgTElBuoMj3aQkqBhW+ILgCN1G/xr3aQs9iGg9dEQ/Cx93IDZwNnsiLnn+P0+k+TqvhO0QwVJ
- GUgTMalUPyTQarfg38W9eO6BMeBs90TgQ6wQQegx4tsCkXlEraehFWKoDJlOPOGymI9eVbYg8f
- F+IluCf0vy6Znp1jb2CSwYlh47KJVg+hfW7BXIX+95UGVrCfo/Lg5IDgy4aMMBPM+VHevQYE1b
- HaA=
+  bh=StmOPoVg6vd/DEtYNFfZxaKcRuIxm6iuu65tn14yWWY=;
+  b=Jq7Z29w9hK3xumdI6dDNtBY2b82b0NCl5wS6fyT2PAiQUtfHYCTAfora
+   BESWPguwhi3g1JWS4a28O7rPzSViShUe4/zYN0srzqJFYQizN9aNt0KHA
+   TQHMLWtC/hPMBVMGqP0ixR5iQXDFCz+Qzup/rghkYzqYFQtSRW2UJGx1v
+   Z4oD77CbmmmXUAGSlOLPPE7+Mt1R1RuJhjE+9ksxIxS4k4nrvIt0Akkft
+   ESqaeyKSAOm0rdff2eizK49x7WHwdK2VzzvlUo4HBAk2+GexcX/UUdJLa
+   ld0b8fTxdhqbnqjzE3lHpbCwmXdWIknv9ELovVWou9NMbOBJ/ZDxM26H+
+   g==;
+IronPort-SDR: vdfvma4paGjF04ENEGLoYAkDoBMIsJDZbtxo2i6AGP+UGuuIiXUoIzJ1UBM/Oq6xI6sUv2iqOa
+ UvCUsQk2oBE53emG38goQT/EwuMburh0ZJcj4MgtL14gv8084AIS4zx7G5irkO/19Jbm24Q6BM
+ Sz1h2bmELb/miwZRmqM6A5/MgfGcSf6Ajtwu3geETStNvK4PXXrYbQK0q8+oDzgkalUUyKIaTk
+ qmNA/y5+bZqcKjSXii4zTjMDdmZuV2nTq23nldrFEVvsKdI8bvyur7ttiPAkh2xEvJBBBLNXVr
+ kMk=
 X-IronPort-AV: E=Sophos;i="5.78,382,1599494400"; 
-   d="scan'208";a="257538311"
+   d="scan'208";a="257538322"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Dec 2020 07:55:01 +0800
-IronPort-SDR: ohgCNzaEgoy1ruIwSjLcv9xkpXervvR+vFMNzVaOaZca+3FuFe1CYzaIVWQxFLt8oS4/G8Zw2v
- AKfUTBBcxqC9ZdvwNuXI5L+GVX8kOEQU0=
+  by ob1.hgst.iphmx.com with ESMTP; 01 Dec 2020 07:55:11 +0800
+IronPort-SDR: vHIUtGm0GH5nNuwlnU+I9xfJclRiqxX4wlnh7tUZGFeze/Mp6F4Lp8xIIncL12w61zqsDF7NDY
+ kwt/Bshz1d/Jb4TWanFQoJDgR+lFgnyxo=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2020 15:33:06 -0800
-IronPort-SDR: hHcenuuwfyoVYybmXAOZkxow4xnAG1CIx05AmA1KwcUYthkOwLfV78Y2Ey+9IIEZ+7OxauakyA
- pmRu1gChvORw==
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2020 15:33:12 -0800
+IronPort-SDR: kG+rMyAgW5Jrb/bGqWpcd9Pm/yj9eceM7L4Pb8fvsGsSogAKouxWwznbQLyClyL4Zwx0ds0uYu
+ dfpRcwr5rehA==
 WDCIronportException: Internal
 Received: from phd004834.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.196])
-  by uls-op-cesaip01.wdc.com with ESMTP; 30 Nov 2020 15:48:51 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Nov 2020 15:48:57 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -60,9 +60,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v3 09/21] dt-bindings: pinctrl: Document canaan,k210-fpioa bindings
-Date:   Tue,  1 Dec 2020 08:48:17 +0900
-Message-Id: <20201130234829.118298-10-damien.lemoal@wdc.com>
+Subject: [PATCH v3 12/21] riscv: Add Canaan Kendryte K210 FPIOA driver
+Date:   Tue,  1 Dec 2020 08:48:20 +0900
+Message-Id: <20201130234829.118298-13-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201130234829.118298-1-damien.lemoal@wdc.com>
 References: <20201130234829.118298-1-damien.lemoal@wdc.com>
@@ -72,480 +72,1085 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Document the device tree bindings for the Canaan Kendryte K210 SoC
-Fully Programmable IO Array (FPIOA) pinctrl driver in
-Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml. The
-new header file include/dt-bindings/pinctrl/k210-fpioa.h is added to
-define all 256 possible pin functions of the SoC IO pins, as well as
-macros simplifying the definition of pin functions in a device tree.
+Add the pinctrl-k210.c pinctrl driver for the Canaan Kendryte K210
+field programmable IO array (FPIOA) to allow configuring the SoC pin
+functions. The K210 has 48 programmable pins which can take any of 256
+possible functions.
 
+This patch is inspired from the k210 pinctrl driver for the u-boot
+project and contains many direct contributions from Sean Anderson.
+
+The MAINTAINERS file is updated to list myself as maintainer of this new
+driver.
+
+Signed-off-by: Sean Anderson <seanga2@gmail.com>
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- .../bindings/pinctrl/canaan,k210-fpioa.yaml   | 171 +++++++++++
- include/dt-bindings/pinctrl/k210-fpioa.h      | 276 ++++++++++++++++++
- 2 files changed, 447 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
- create mode 100644 include/dt-bindings/pinctrl/k210-fpioa.h
+ MAINTAINERS                    |   3 +
+ arch/riscv/Kconfig.socs        |   2 +
+ drivers/pinctrl/Kconfig        |  13 +
+ drivers/pinctrl/Makefile       |   1 +
+ drivers/pinctrl/pinctrl-k210.c | 984 +++++++++++++++++++++++++++++++++
+ 5 files changed, 1003 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-k210.c
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f6c265b25002..7836f471df71 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3826,10 +3826,13 @@ CANAAN/KENDRYTE K210 RISC-V SOC SUPPORT
+ M:	Damien Le Moal <damien.lemoal@wdc.com>
+ L:	linux-riscv@lists.infradead.org
+ L:	linux-clk@vger.kernel.org (clock driver)
++L:	linux-gpio@vger.kernel.org (pinctrl driver)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
+ F:	Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
++F:	Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
+ F:	drivers/clk/clk-k210.c
++F:	drivers/pinctrl/pinctrl-k210.c
+ F:	drivers/soc/canaan/
+ F:	include/soc/canaan/
+ 
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index f2f9633087d1..68bdd664b5c2 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -31,6 +31,8 @@ config SOC_CANAAN
+ 	select SIFIVE_PLIC
+ 	select SOC_K210_SYSCTL
+ 	select CLK_K210
++	select PINCTRL
++	select PINCTRL_K210
+ 	help
+ 	  This enables support for Canaan Kendryte K210 SoC platform hardware.
+ 
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 815095326e2d..fec380c27075 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -374,6 +374,19 @@ config PINCTRL_OCELOT
+ 	select OF_GPIO
+ 	select REGMAP_MMIO
+ 
++config PINCTRL_K210
++	bool "Pinctrl driver for the Canaan Kendryte K210 SoC"
++	depends on RISCV && SOC_CANAAN
++	depends on OF && HAS_IOMEM
++	select PINMUX
++	select GENERIC_PINCONF
++	select GPIOLIB
++	select OF_GPIO
++	select REGMAP_MMIO
++	help
++	  Add support for the Canaan Kendryte K210 RISC-V SOC Field
++	  Programmable IO Array (FPIOA) controller.
++
+ source "drivers/pinctrl/actions/Kconfig"
+ source "drivers/pinctrl/aspeed/Kconfig"
+ source "drivers/pinctrl/bcm/Kconfig"
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index f53933b2ff02..d6f913adb04a 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -47,6 +47,7 @@ obj-$(CONFIG_PINCTRL_INGENIC)	+= pinctrl-ingenic.o
+ obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
+ obj-$(CONFIG_PINCTRL_OCELOT)	+= pinctrl-ocelot.o
+ obj-$(CONFIG_PINCTRL_EQUILIBRIUM)   += pinctrl-equilibrium.o
++obj-$(CONFIG_PINCTRL_K210)	+= pinctrl-k210.o
+ 
+ obj-y				+= actions/
+ obj-$(CONFIG_ARCH_ASPEED)	+= aspeed/
+diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
 new file mode 100644
-index 000000000000..30b850c3bf2b
+index 000000000000..c1fd30b3b7da
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
-@@ -0,0 +1,171 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/canaan,k210-fpioa.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Canaan Kendryte K210 FPIOA Device Tree Bindings
-+
-+maintainers:
-+  - Damien Le Moal <damien.lemoal@wdc.com>
-+
-+description:
-+  The Canaan Kendryte K210 SoC Fully Programmable IO Array (FPIOA)
-+  controller allows assiging any of 256 possible functions to any of
-+  48 IO pins of the SoC. Pin function configuration is performed on
-+  a per-pin basis.
-+
-+properties:
-+  compatible:
-+    const: canaan,k210-fpioa
-+
-+  reg:
-+    maxItems: 1
-+    description:
-+      Address and length of the register set for the FPIOA controller.
-+
-+  clocks:
-+    items:
-+      - description: Controller reference clock source
-+      - description: APB interface clock source
-+
-+  clock-names:
-+    items:
-+      - const: ref
-+      - const: pclk
-+
-+  resets:
-+    maxItems: 1
-+
-+  canaan,k210-sysctl-power:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      phandle of the K210 system controller node and offset of its
-+      power domain control register.
-+
-+patternProperties:
-+  '-pinmux$':
-+    type: object
-+    $ref: /schemas/pinctrl/pinmux-node.yaml
-+    description:
-+      FPIOA client devices use sub-nodes to define the desired pin
-+      configuration. Client device sub-nodes use the pinux property
-+      below.
-+
-+    properties:
-+      pinmux:
-+        description:
-+          List of IO pins alternate functions. The values for each IO
-+          pin is a combination of an IO pin number (0 to 47) with the
-+          desired function for the IO pin. Functions are defined as
-+          macros in include/dt-bindings/pinctrl/k210-fpioa.h.
-+          The K210_FPIOA(IO pin, function) macro is provided to
-+          facilitate the combination of IO pin numbers and functions.
-+
-+    required:
-+      - pinmux
-+
-+    additionalProperties: false
-+
-+  '-pins$':
-+    type: object
-+    $ref: /schemas/pinctrl/pincfg-node.yaml
-+    description:
-+      FPIOA client devices use sub-nodes to define the desired
-+      configuration of pins. Client device sub-nodes use the
-+      properties below.
-+
-+    properties:
-+      pins:
-+        description:
-+          List of IO pins affected by the properties specified in this
-+          subnode. IO pins are identified using the pin names "IO_xx".
-+          Pin configuration nodes can also define the power domain to
-+          be used for the SoC pin groups A0 (IO pins 0-5),
-+          A1 (IO pins 6-11), A2 (IO pins 12-17), B0 (IO pins 18-23),
-+          B1 (IO pins 24-29), B2 (IO pins 30-35), B3 (IO pins 30-35),
-+          C0 (IO pins 36-41) and C1 (IO pins 42-47) using the
-+          power-source property.
-+        items:
-+          anyOf:
-+            - pattern: "^(IO_([0-9]*))|(A[0-2])|(B[3-5])|(C[6-7])$"
-+            - enum: [ IO_0, IO_1, IO_2, IO_3, IO_4, IO_5, IO_6, IO_7,
-+                      IO_8, IO_9, IO_10, IO_11, IO_12, IO_13, IO_14,
-+                      IO_15, IO_16, IO_17, IO_18, IO_19, IO_20, IO_21,
-+                      IO_22, IO_23, IO_24, IO_25, IO_26, IO_27, IO_28,
-+                      IO_29, IO_30, IO_31, IO_32, IO_33, IO_34, IO_35,
-+                      IO_36, IO_37, IO_38, IO_39, IO_40, IO_41, IO_42,
-+                      IO_43, IO_44, IO_45, IO_46, IO_47,
-+                      A0, A1, A2, B3, B4, B5, C6, C7 ]
-+      bias-disable: true
-+
-+      bias-pull-down: true
-+
-+      bias-pull-up: true
-+
-+      drive-strength: true
-+
-+      drive-strength-microamp: true
-+
-+      input-enable: true
-+
-+      input-disable: true
-+
-+      input-schmitt-enable: true
-+
-+      input-schmitt-disable: true
-+
-+      intput-polarity-invert:
-+        description:
-+          Enable or disable pin input polarity inversion.
-+
-+      output-enable: true
-+
-+      output-disable: true
-+
-+      output-high: true
-+
-+      output-low: true
-+
-+      output-polarity-invert:
-+        description:
-+          Enable or disable pin output polarity inversion.
-+
-+      slew-rate: true
-+
-+      power-source: true
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - canaan,k210-sysctl-power
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/pinctrl/k210-fpioa.h>
-+    #include <dt-bindings/clock/k210-clk.h>
-+    #include <dt-bindings/reset/k210-rst.h>
-+
-+    fpioa: pinmux@502B0000 {
-+      compatible = "canaan,k210-fpioa";
-+      reg = <0x502B0000 0x100>;
-+      clocks = <&sysclk K210_CLK_FPIOA>,
-+               <&sysclk K210_CLK_APB0>;
-+      clock-names = "ref", "pclk";
-+      resets = <&sysrst K210_RST_FPIOA>;
-+      canaan,k210-sysctl-power = <&sysctl 108>;
-+      pinctrl-0 = <&jtag_pinctrl>;
-+      pinctrl-names = "default";
-+
-+      jtag_pinctrl: jtag-pinmux {
-+        pinmux = <K210_FPIOA(0, K210_PCF_JTAG_TCLK)>,
-+                 <K210_FPIOA(1, K210_PCF_JTAG_TDI)>,
-+                 <K210_FPIOA(2, K210_PCF_JTAG_TMS)>,
-+                 <K210_FPIOA(3, K210_PCF_JTAG_TDO)>;
-+      };
-+    };
-diff --git a/include/dt-bindings/pinctrl/k210-fpioa.h b/include/dt-bindings/pinctrl/k210-fpioa.h
-new file mode 100644
-index 000000000000..314285eab3a1
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/k210-fpioa.h
-@@ -0,0 +1,276 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
++++ b/drivers/pinctrl/pinctrl-k210.c
+@@ -0,0 +1,984 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
 + * Copyright (C) 2020 Sean Anderson <seanga2@gmail.com>
 + * Copyright (c) 2020 Western Digital Corporation or its affiliates.
 + */
-+#ifndef PINCTRL_K210_FPIOA_H
-+#define PINCTRL_K210_FPIOA_H
++#include <linux/io.h>
++#include <linux/of_device.h>
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
++#include <linux/bitfield.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/io.h>
++
++#include <dt-bindings/pinctrl/k210-fpioa.h>
++
++#include "core.h"
++#include "pinconf.h"
++#include "pinctrl-utils.h"
 +
 +/*
-+ * Full list of FPIOA functions from
-+ * kendryte-standalone-sdk/lib/drivers/include/fpioa.h
++ * The K210 only implements 8 drive levels, even though
++ * there is register space for 16
 + */
-+#define K210_PCF_MASK		GENMASK(7, 0)
-+#define K210_PCF_JTAG_TCLK	0   /* JTAG Test Clock */
-+#define K210_PCF_JTAG_TDI	1   /* JTAG Test Data In */
-+#define K210_PCF_JTAG_TMS	2   /* JTAG Test Mode Select */
-+#define K210_PCF_JTAG_TDO	3   /* JTAG Test Data Out */
-+#define K210_PCF_SPI0_D0	4   /* SPI0 Data 0 */
-+#define K210_PCF_SPI0_D1	5   /* SPI0 Data 1 */
-+#define K210_PCF_SPI0_D2	6   /* SPI0 Data 2 */
-+#define K210_PCF_SPI0_D3	7   /* SPI0 Data 3 */
-+#define K210_PCF_SPI0_D4	8   /* SPI0 Data 4 */
-+#define K210_PCF_SPI0_D5	9   /* SPI0 Data 5 */
-+#define K210_PCF_SPI0_D6	10  /* SPI0 Data 6 */
-+#define K210_PCF_SPI0_D7	11  /* SPI0 Data 7 */
-+#define K210_PCF_SPI0_SS0	12  /* SPI0 Chip Select 0 */
-+#define K210_PCF_SPI0_SS1	13  /* SPI0 Chip Select 1 */
-+#define K210_PCF_SPI0_SS2	14  /* SPI0 Chip Select 2 */
-+#define K210_PCF_SPI0_SS3	15  /* SPI0 Chip Select 3 */
-+#define K210_PCF_SPI0_ARB	16  /* SPI0 Arbitration */
-+#define K210_PCF_SPI0_SCLK	17  /* SPI0 Serial Clock */
-+#define K210_PCF_UARTHS_RX	18  /* UART High speed Receiver */
-+#define K210_PCF_UARTHS_TX	19  /* UART High speed Transmitter */
-+#define K210_PCF_RESV6		20  /* Reserved function */
-+#define K210_PCF_RESV7		21  /* Reserved function */
-+#define K210_PCF_CLK_SPI1	22  /* Clock SPI1 */
-+#define K210_PCF_CLK_I2C1	23  /* Clock I2C1 */
-+#define K210_PCF_GPIOHS0	24  /* GPIO High speed 0 */
-+#define K210_PCF_GPIOHS1	25  /* GPIO High speed 1 */
-+#define K210_PCF_GPIOHS2	26  /* GPIO High speed 2 */
-+#define K210_PCF_GPIOHS3	27  /* GPIO High speed 3 */
-+#define K210_PCF_GPIOHS4	28  /* GPIO High speed 4 */
-+#define K210_PCF_GPIOHS5	29  /* GPIO High speed 5 */
-+#define K210_PCF_GPIOHS6	30  /* GPIO High speed 6 */
-+#define K210_PCF_GPIOHS7	31  /* GPIO High speed 7 */
-+#define K210_PCF_GPIOHS8	32  /* GPIO High speed 8 */
-+#define K210_PCF_GPIOHS9	33  /* GPIO High speed 9 */
-+#define K210_PCF_GPIOHS10	34  /* GPIO High speed 10 */
-+#define K210_PCF_GPIOHS11	35  /* GPIO High speed 11 */
-+#define K210_PCF_GPIOHS12	36  /* GPIO High speed 12 */
-+#define K210_PCF_GPIOHS13	37  /* GPIO High speed 13 */
-+#define K210_PCF_GPIOHS14	38  /* GPIO High speed 14 */
-+#define K210_PCF_GPIOHS15	39  /* GPIO High speed 15 */
-+#define K210_PCF_GPIOHS16	40  /* GPIO High speed 16 */
-+#define K210_PCF_GPIOHS17	41  /* GPIO High speed 17 */
-+#define K210_PCF_GPIOHS18	42  /* GPIO High speed 18 */
-+#define K210_PCF_GPIOHS19	43  /* GPIO High speed 19 */
-+#define K210_PCF_GPIOHS20	44  /* GPIO High speed 20 */
-+#define K210_PCF_GPIOHS21	45  /* GPIO High speed 21 */
-+#define K210_PCF_GPIOHS22	46  /* GPIO High speed 22 */
-+#define K210_PCF_GPIOHS23	47  /* GPIO High speed 23 */
-+#define K210_PCF_GPIOHS24	48  /* GPIO High speed 24 */
-+#define K210_PCF_GPIOHS25	49  /* GPIO High speed 25 */
-+#define K210_PCF_GPIOHS26	50  /* GPIO High speed 26 */
-+#define K210_PCF_GPIOHS27	51  /* GPIO High speed 27 */
-+#define K210_PCF_GPIOHS28	52  /* GPIO High speed 28 */
-+#define K210_PCF_GPIOHS29	53  /* GPIO High speed 29 */
-+#define K210_PCF_GPIOHS30	54  /* GPIO High speed 30 */
-+#define K210_PCF_GPIOHS31	55  /* GPIO High speed 31 */
-+#define K210_PCF_GPIO0		56  /* GPIO pin 0 */
-+#define K210_PCF_GPIO1		57  /* GPIO pin 1 */
-+#define K210_PCF_GPIO2		58  /* GPIO pin 2 */
-+#define K210_PCF_GPIO3		59  /* GPIO pin 3 */
-+#define K210_PCF_GPIO4		60  /* GPIO pin 4 */
-+#define K210_PCF_GPIO5		61  /* GPIO pin 5 */
-+#define K210_PCF_GPIO6		62  /* GPIO pin 6 */
-+#define K210_PCF_GPIO7		63  /* GPIO pin 7 */
-+#define K210_PCF_UART1_RX	64  /* UART1 Receiver */
-+#define K210_PCF_UART1_TX	65  /* UART1 Transmitter */
-+#define K210_PCF_UART2_RX	66  /* UART2 Receiver */
-+#define K210_PCF_UART2_TX	67  /* UART2 Transmitter */
-+#define K210_PCF_UART3_RX	68  /* UART3 Receiver */
-+#define K210_PCF_UART3_TX	69  /* UART3 Transmitter */
-+#define K210_PCF_SPI1_D0	70  /* SPI1 Data 0 */
-+#define K210_PCF_SPI1_D1	71  /* SPI1 Data 1 */
-+#define K210_PCF_SPI1_D2	72  /* SPI1 Data 2 */
-+#define K210_PCF_SPI1_D3	73  /* SPI1 Data 3 */
-+#define K210_PCF_SPI1_D4	74  /* SPI1 Data 4 */
-+#define K210_PCF_SPI1_D5	75  /* SPI1 Data 5 */
-+#define K210_PCF_SPI1_D6	76  /* SPI1 Data 6 */
-+#define K210_PCF_SPI1_D7	77  /* SPI1 Data 7 */
-+#define K210_PCF_SPI1_SS0	78  /* SPI1 Chip Select 0 */
-+#define K210_PCF_SPI1_SS1	79  /* SPI1 Chip Select 1 */
-+#define K210_PCF_SPI1_SS2	80  /* SPI1 Chip Select 2 */
-+#define K210_PCF_SPI1_SS3	81  /* SPI1 Chip Select 3 */
-+#define K210_PCF_SPI1_ARB	82  /* SPI1 Arbitration */
-+#define K210_PCF_SPI1_SCLK	83  /* SPI1 Serial Clock */
-+#define K210_PCF_SPI2_D0	84  /* SPI2 Data 0 */
-+#define K210_PCF_SPI2_SS	85  /* SPI2 Select */
-+#define K210_PCF_SPI2_SCLK	86  /* SPI2 Serial Clock */
-+#define K210_PCF_I2S0_MCLK	87  /* I2S0 Master Clock */
-+#define K210_PCF_I2S0_SCLK	88  /* I2S0 Serial Clock(BCLK) */
-+#define K210_PCF_I2S0_WS	89  /* I2S0 Word Select(LRCLK) */
-+#define K210_PCF_I2S0_IN_D0	90  /* I2S0 Serial Data Input 0 */
-+#define K210_PCF_I2S0_IN_D1	91  /* I2S0 Serial Data Input 1 */
-+#define K210_PCF_I2S0_IN_D2	92  /* I2S0 Serial Data Input 2 */
-+#define K210_PCF_I2S0_IN_D3	93  /* I2S0 Serial Data Input 3 */
-+#define K210_PCF_I2S0_OUT_D0	94  /* I2S0 Serial Data Output 0 */
-+#define K210_PCF_I2S0_OUT_D1	95  /* I2S0 Serial Data Output 1 */
-+#define K210_PCF_I2S0_OUT_D2	96  /* I2S0 Serial Data Output 2 */
-+#define K210_PCF_I2S0_OUT_D3	97  /* I2S0 Serial Data Output 3 */
-+#define K210_PCF_I2S1_MCLK	98  /* I2S1 Master Clock */
-+#define K210_PCF_I2S1_SCLK	99  /* I2S1 Serial Clock(BCLK) */
-+#define K210_PCF_I2S1_WS	100 /* I2S1 Word Select(LRCLK) */
-+#define K210_PCF_I2S1_IN_D0	101 /* I2S1 Serial Data Input 0 */
-+#define K210_PCF_I2S1_IN_D1	102 /* I2S1 Serial Data Input 1 */
-+#define K210_PCF_I2S1_IN_D2	103 /* I2S1 Serial Data Input 2 */
-+#define K210_PCF_I2S1_IN_D3	104 /* I2S1 Serial Data Input 3 */
-+#define K210_PCF_I2S1_OUT_D0	105 /* I2S1 Serial Data Output 0 */
-+#define K210_PCF_I2S1_OUT_D1	106 /* I2S1 Serial Data Output 1 */
-+#define K210_PCF_I2S1_OUT_D2	107 /* I2S1 Serial Data Output 2 */
-+#define K210_PCF_I2S1_OUT_D3	108 /* I2S1 Serial Data Output 3 */
-+#define K210_PCF_I2S2_MCLK	109 /* I2S2 Master Clock */
-+#define K210_PCF_I2S2_SCLK	110 /* I2S2 Serial Clock(BCLK) */
-+#define K210_PCF_I2S2_WS	111 /* I2S2 Word Select(LRCLK) */
-+#define K210_PCF_I2S2_IN_D0	112 /* I2S2 Serial Data Input 0 */
-+#define K210_PCF_I2S2_IN_D1	113 /* I2S2 Serial Data Input 1 */
-+#define K210_PCF_I2S2_IN_D2	114 /* I2S2 Serial Data Input 2 */
-+#define K210_PCF_I2S2_IN_D3	115 /* I2S2 Serial Data Input 3 */
-+#define K210_PCF_I2S2_OUT_D0	116 /* I2S2 Serial Data Output 0 */
-+#define K210_PCF_I2S2_OUT_D1	117 /* I2S2 Serial Data Output 1 */
-+#define K210_PCF_I2S2_OUT_D2	118 /* I2S2 Serial Data Output 2 */
-+#define K210_PCF_I2S2_OUT_D3	119 /* I2S2 Serial Data Output 3 */
-+#define K210_PCF_RESV0		120 /* Reserved function */
-+#define K210_PCF_RESV1		121 /* Reserved function */
-+#define K210_PCF_RESV2		122 /* Reserved function */
-+#define K210_PCF_RESV3		123 /* Reserved function */
-+#define K210_PCF_RESV4		124 /* Reserved function */
-+#define K210_PCF_RESV5		125 /* Reserved function */
-+#define K210_PCF_I2C0_SCLK	126 /* I2C0 Serial Clock */
-+#define K210_PCF_I2C0_SDA	127 /* I2C0 Serial Data */
-+#define K210_PCF_I2C1_SCLK	128 /* I2C1 Serial Clock */
-+#define K210_PCF_I2C1_SDA	129 /* I2C1 Serial Data */
-+#define K210_PCF_I2C2_SCLK	130 /* I2C2 Serial Clock */
-+#define K210_PCF_I2C2_SDA	131 /* I2C2 Serial Data */
-+#define K210_PCF_DVP_XCLK	132 /* DVP System Clock */
-+#define K210_PCF_DVP_RST	133 /* DVP System Reset */
-+#define K210_PCF_DVP_PWDN	134 /* DVP Power Down Mode */
-+#define K210_PCF_DVP_VSYNC	135 /* DVP Vertical Sync */
-+#define K210_PCF_DVP_HSYNC	136 /* DVP Horizontal Sync */
-+#define K210_PCF_DVP_PCLK	137 /* Pixel Clock */
-+#define K210_PCF_DVP_D0		138 /* Data Bit 0 */
-+#define K210_PCF_DVP_D1		139 /* Data Bit 1 */
-+#define K210_PCF_DVP_D2		140 /* Data Bit 2 */
-+#define K210_PCF_DVP_D3		141 /* Data Bit 3 */
-+#define K210_PCF_DVP_D4		142 /* Data Bit 4 */
-+#define K210_PCF_DVP_D5		143 /* Data Bit 5 */
-+#define K210_PCF_DVP_D6		144 /* Data Bit 6 */
-+#define K210_PCF_DVP_D7		145 /* Data Bit 7 */
-+#define K210_PCF_SCCB_SCLK	146 /* Serial Camera Control Bus Clock */
-+#define K210_PCF_SCCB_SDA	147 /* Serial Camera Control Bus Data */
-+#define K210_PCF_UART1_CTS	148 /* UART1 Clear To Send */
-+#define K210_PCF_UART1_DSR	149 /* UART1 Data Set Ready */
-+#define K210_PCF_UART1_DCD	150 /* UART1 Data Carrier Detect */
-+#define K210_PCF_UART1_RI	151 /* UART1 Ring Indicator */
-+#define K210_PCF_UART1_SIR_IN	152 /* UART1 Serial Infrared Input */
-+#define K210_PCF_UART1_DTR	153 /* UART1 Data Terminal Ready */
-+#define K210_PCF_UART1_RTS	154 /* UART1 Request To Send */
-+#define K210_PCF_UART1_OUT2	155 /* UART1 User-designated Output 2 */
-+#define K210_PCF_UART1_OUT1	156 /* UART1 User-designated Output 1 */
-+#define K210_PCF_UART1_SIR_OUT	157 /* UART1 Serial Infrared Output */
-+#define K210_PCF_UART1_BAUD	158 /* UART1 Transmit Clock Output */
-+#define K210_PCF_UART1_RE	159 /* UART1 Receiver Output Enable */
-+#define K210_PCF_UART1_DE	160 /* UART1 Driver Output Enable */
-+#define K210_PCF_UART1_RS485_EN	161 /* UART1 RS485 Enable */
-+#define K210_PCF_UART2_CTS	162 /* UART2 Clear To Send */
-+#define K210_PCF_UART2_DSR	163 /* UART2 Data Set Ready */
-+#define K210_PCF_UART2_DCD	164 /* UART2 Data Carrier Detect */
-+#define K210_PCF_UART2_RI	165 /* UART2 Ring Indicator */
-+#define K210_PCF_UART2_SIR_IN	166 /* UART2 Serial Infrared Input */
-+#define K210_PCF_UART2_DTR	167 /* UART2 Data Terminal Ready */
-+#define K210_PCF_UART2_RTS	168 /* UART2 Request To Send */
-+#define K210_PCF_UART2_OUT2	169 /* UART2 User-designated Output 2 */
-+#define K210_PCF_UART2_OUT1	170 /* UART2 User-designated Output 1 */
-+#define K210_PCF_UART2_SIR_OUT	171 /* UART2 Serial Infrared Output */
-+#define K210_PCF_UART2_BAUD	172 /* UART2 Transmit Clock Output */
-+#define K210_PCF_UART2_RE	173 /* UART2 Receiver Output Enable */
-+#define K210_PCF_UART2_DE	174 /* UART2 Driver Output Enable */
-+#define K210_PCF_UART2_RS485_EN	175 /* UART2 RS485 Enable */
-+#define K210_PCF_UART3_CTS	176 /* UART3 Clear To Send */
-+#define K210_PCF_UART3_DSR	177 /* UART3 Data Set Ready */
-+#define K210_PCF_UART3_DCD	178 /* UART3 Data Carrier Detect */
-+#define K210_PCF_UART3_RI	179 /* UART3 Ring Indicator */
-+#define K210_PCF_UART3_SIR_IN	180 /* UART3 Serial Infrared Input */
-+#define K210_PCF_UART3_DTR	181 /* UART3 Data Terminal Ready */
-+#define K210_PCF_UART3_RTS	182 /* UART3 Request To Send */
-+#define K210_PCF_UART3_OUT2	183 /* UART3 User-designated Output 2 */
-+#define K210_PCF_UART3_OUT1	184 /* UART3 User-designated Output 1 */
-+#define K210_PCF_UART3_SIR_OUT	185 /* UART3 Serial Infrared Output */
-+#define K210_PCF_UART3_BAUD	186 /* UART3 Transmit Clock Output */
-+#define K210_PCF_UART3_RE	187 /* UART3 Receiver Output Enable */
-+#define K210_PCF_UART3_DE	188 /* UART3 Driver Output Enable */
-+#define K210_PCF_UART3_RS485_EN	189 /* UART3 RS485 Enable */
-+#define K210_PCF_TIMER0_TOGGLE1	190 /* TIMER0 Toggle Output 1 */
-+#define K210_PCF_TIMER0_TOGGLE2	191 /* TIMER0 Toggle Output 2 */
-+#define K210_PCF_TIMER0_TOGGLE3	192 /* TIMER0 Toggle Output 3 */
-+#define K210_PCF_TIMER0_TOGGLE4	193 /* TIMER0 Toggle Output 4 */
-+#define K210_PCF_TIMER1_TOGGLE1	194 /* TIMER1 Toggle Output 1 */
-+#define K210_PCF_TIMER1_TOGGLE2	195 /* TIMER1 Toggle Output 2 */
-+#define K210_PCF_TIMER1_TOGGLE3	196 /* TIMER1 Toggle Output 3 */
-+#define K210_PCF_TIMER1_TOGGLE4	197 /* TIMER1 Toggle Output 4 */
-+#define K210_PCF_TIMER2_TOGGLE1	198 /* TIMER2 Toggle Output 1 */
-+#define K210_PCF_TIMER2_TOGGLE2	199 /* TIMER2 Toggle Output 2 */
-+#define K210_PCF_TIMER2_TOGGLE3	200 /* TIMER2 Toggle Output 3 */
-+#define K210_PCF_TIMER2_TOGGLE4	201 /* TIMER2 Toggle Output 4 */
-+#define K210_PCF_CLK_SPI2	202 /* Clock SPI2 */
-+#define K210_PCF_CLK_I2C2	203 /* Clock I2C2 */
-+#define K210_PCF_INTERNAL0	204 /* Internal function signal 0 */
-+#define K210_PCF_INTERNAL1	205 /* Internal function signal 1 */
-+#define K210_PCF_INTERNAL2	206 /* Internal function signal 2 */
-+#define K210_PCF_INTERNAL3	207 /* Internal function signal 3 */
-+#define K210_PCF_INTERNAL4	208 /* Internal function signal 4 */
-+#define K210_PCF_INTERNAL5	209 /* Internal function signal 5 */
-+#define K210_PCF_INTERNAL6	210 /* Internal function signal 6 */
-+#define K210_PCF_INTERNAL7	211 /* Internal function signal 7 */
-+#define K210_PCF_INTERNAL8	212 /* Internal function signal 8 */
-+#define K210_PCF_INTERNAL9	213 /* Internal function signal 9 */
-+#define K210_PCF_INTERNAL10	214 /* Internal function signal 10 */
-+#define K210_PCF_INTERNAL11	215 /* Internal function signal 11 */
-+#define K210_PCF_INTERNAL12	216 /* Internal function signal 12 */
-+#define K210_PCF_INTERNAL13	217 /* Internal function signal 13 */
-+#define K210_PCF_INTERNAL14	218 /* Internal function signal 14 */
-+#define K210_PCF_INTERNAL15	219 /* Internal function signal 15 */
-+#define K210_PCF_INTERNAL16	220 /* Internal function signal 16 */
-+#define K210_PCF_INTERNAL17	221 /* Internal function signal 17 */
-+#define K210_PCF_CONSTANT	222 /* Constant function */
-+#define K210_PCF_INTERNAL18	223 /* Internal function signal 18 */
-+#define K210_PCF_DEBUG0		224 /* Debug function 0 */
-+#define K210_PCF_DEBUG1		225 /* Debug function 1 */
-+#define K210_PCF_DEBUG2		226 /* Debug function 2 */
-+#define K210_PCF_DEBUG3		227 /* Debug function 3 */
-+#define K210_PCF_DEBUG4		228 /* Debug function 4 */
-+#define K210_PCF_DEBUG5		229 /* Debug function 5 */
-+#define K210_PCF_DEBUG6		230 /* Debug function 6 */
-+#define K210_PCF_DEBUG7		231 /* Debug function 7 */
-+#define K210_PCF_DEBUG8		232 /* Debug function 8 */
-+#define K210_PCF_DEBUG9		233 /* Debug function 9 */
-+#define K210_PCF_DEBUG10	234 /* Debug function 10 */
-+#define K210_PCF_DEBUG11	235 /* Debug function 11 */
-+#define K210_PCF_DEBUG12	236 /* Debug function 12 */
-+#define K210_PCF_DEBUG13	237 /* Debug function 13 */
-+#define K210_PCF_DEBUG14	238 /* Debug function 14 */
-+#define K210_PCF_DEBUG15	239 /* Debug function 15 */
-+#define K210_PCF_DEBUG16	240 /* Debug function 16 */
-+#define K210_PCF_DEBUG17	241 /* Debug function 17 */
-+#define K210_PCF_DEBUG18	242 /* Debug function 18 */
-+#define K210_PCF_DEBUG19	243 /* Debug function 19 */
-+#define K210_PCF_DEBUG20	244 /* Debug function 20 */
-+#define K210_PCF_DEBUG21	245 /* Debug function 21 */
-+#define K210_PCF_DEBUG22	246 /* Debug function 22 */
-+#define K210_PCF_DEBUG23	247 /* Debug function 23 */
-+#define K210_PCF_DEBUG24	248 /* Debug function 24 */
-+#define K210_PCF_DEBUG25	249 /* Debug function 25 */
-+#define K210_PCF_DEBUG26	250 /* Debug function 26 */
-+#define K210_PCF_DEBUG27	251 /* Debug function 27 */
-+#define K210_PCF_DEBUG28	252 /* Debug function 28 */
-+#define K210_PCF_DEBUG29	253 /* Debug function 29 */
-+#define K210_PCF_DEBUG30	254 /* Debug function 30 */
-+#define K210_PCF_DEBUG31	255 /* Debug function 31 */
++#define K210_PC_DRIVE_MASK	GENMASK(11, 8)
++#define K210_PC_DRIVE_SHIFT	8
++#define K210_PC_DRIVE_0		(0 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_1		(1 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_2		(2 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_3		(3 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_4		(4 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_5		(5 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_6		(6 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_7		(7 << K210_PC_DRIVE_SHIFT)
++#define K210_PC_DRIVE_MAX	7
++#define K210_PC_MODE_MASK	GENMASK(23, 12)
 +
-+#define K210_FPIOA(pin, func)		(((pin) << 16) | (func))
++/*
++ * output enabled == PC_OE & (PC_OE_INV ^ FUNCTION_OE)
++ * where FUNCTION_OE is a physical signal from the function.
++ */
++#define K210_PC_OE		BIT(12) /* Output Enable */
++#define K210_PC_OE_INV		BIT(13) /* INVert Output Enable */
++#define K210_PC_DO_OE		BIT(14) /* set Data Out to Output Enable sig */
++#define K210_PC_DO_INV		BIT(15) /* INVert final Data Output */
++#define K210_PC_PU		BIT(16) /* Pull Up */
++#define K210_PC_PD		BIT(17) /* Pull Down */
++/* Strong pull up not implemented on K210 */
++#define K210_PC_SL		BIT(19) /* reduce SLew rate */
++/* Same semantics as OE above */
++#define K210_PC_IE		BIT(20) /* Input Enable */
++#define K210_PC_IE_INV		BIT(21) /* INVert Input Enable */
++#define K210_PC_DI_INV		BIT(22) /* INVert Data Input */
++#define K210_PC_ST		BIT(23) /* Schmitt Trigger */
++#define K210_PC_DI		BIT(31) /* raw Data Input */
 +
-+#define K210_PC_POWER_3V3	0
-+#define K210_PC_POWER_1V8	1
++#define K210_PC_BIAS_MASK	(K210_PC_PU & K210_PC_PD)
 +
-+#endif /* PINCTRL_K210_FPIOA_H */
++#define K210_PC_MODE_IN		(K210_PC_IE | K210_PC_ST)
++#define K210_PC_MODE_OUT	(K210_PC_DRIVE_7 | K210_PC_OE)
++#define K210_PC_MODE_I2C	(K210_PC_MODE_IN | K210_PC_SL | \
++				 K210_PC_OE | K210_PC_PU)
++#define K210_PC_MODE_SCCB	(K210_PC_MODE_I2C | \
++				 K210_PC_OE_INV | K210_PC_IE_INV)
++#define K210_PC_MODE_SPI	(K210_PC_MODE_IN | K210_PC_IE_INV | \
++				 K210_PC_MODE_OUT | K210_PC_OE_INV)
++#define K210_PC_MODE_GPIO	(K210_PC_MODE_IN | K210_PC_MODE_OUT)
++
++#define K210_PG_FUNC		GENMASK(7, 0)
++#define K210_PG_DO		BIT(8)
++#define K210_PG_PIN		GENMASK(22, 16)
++
++/*
++ * struct k210_fpioa: Kendryte K210 FPIOA memory mapped registers
++ * @pins: 48 32-bits IO pin registers
++ * @tie_en: 256 (one per function) input tie enable bits
++ * @tie_val: 256 (one per function) input tie value bits
++ */
++struct k210_fpioa {
++	u32 pins[48];
++	u32 tie_en[8];
++	u32 tie_val[8];
++};
++
++struct k210_fpioa_data {
++
++	struct device *dev;
++	struct pinctrl_dev *pctl;
++
++	struct k210_fpioa __iomem *fpioa;
++	struct regmap *sysctl_map;
++	u32 power_offset;
++	struct clk *clk;
++	struct clk *pclk;
++};
++
++#define K210_PIN_NAME(i)	("IO_" #i)
++#define K210_PIN(i)		[(i)] = PINCTRL_PIN((i), K210_PIN_NAME(i))
++
++static const struct pinctrl_pin_desc k210_pins[] = {
++	K210_PIN(0),  K210_PIN(1),  K210_PIN(2),
++	K210_PIN(3),  K210_PIN(4),  K210_PIN(5),
++	K210_PIN(6),  K210_PIN(7),  K210_PIN(8),
++	K210_PIN(9),  K210_PIN(10), K210_PIN(11),
++	K210_PIN(12), K210_PIN(13), K210_PIN(14),
++	K210_PIN(15), K210_PIN(16), K210_PIN(17),
++	K210_PIN(18), K210_PIN(19), K210_PIN(20),
++	K210_PIN(21), K210_PIN(22), K210_PIN(23),
++	K210_PIN(24), K210_PIN(25), K210_PIN(26),
++	K210_PIN(27), K210_PIN(28), K210_PIN(29),
++	K210_PIN(30), K210_PIN(31), K210_PIN(32),
++	K210_PIN(33), K210_PIN(34), K210_PIN(35),
++	K210_PIN(36), K210_PIN(37), K210_PIN(38),
++	K210_PIN(39), K210_PIN(40), K210_PIN(41),
++	K210_PIN(42), K210_PIN(43), K210_PIN(44),
++	K210_PIN(45), K210_PIN(46), K210_PIN(47)
++};
++
++#define K210_NPINS ARRAY_SIZE(k210_pins)
++
++/*
++ * Pin groups: each of the 48 programmable pins is a group.
++ * To this are added 8 power domain groups, which for the purposes of
++ * the pin subsystem, contain no pins. The power domain groups only exist
++ * to set the power level. The id should never be used (since there are
++ * no pins 48-55).
++ */
++static const char *const k210_group_names[] = {
++	/* The first 48 groups are for pins, one each */
++	K210_PIN_NAME(0),  K210_PIN_NAME(1),  K210_PIN_NAME(2),
++	K210_PIN_NAME(3),  K210_PIN_NAME(4),  K210_PIN_NAME(5),
++	K210_PIN_NAME(6),  K210_PIN_NAME(7),  K210_PIN_NAME(8),
++	K210_PIN_NAME(9),  K210_PIN_NAME(10), K210_PIN_NAME(11),
++	K210_PIN_NAME(12), K210_PIN_NAME(13), K210_PIN_NAME(14),
++	K210_PIN_NAME(15), K210_PIN_NAME(16), K210_PIN_NAME(17),
++	K210_PIN_NAME(18), K210_PIN_NAME(19), K210_PIN_NAME(20),
++	K210_PIN_NAME(21), K210_PIN_NAME(22), K210_PIN_NAME(23),
++	K210_PIN_NAME(24), K210_PIN_NAME(25), K210_PIN_NAME(26),
++	K210_PIN_NAME(27), K210_PIN_NAME(28), K210_PIN_NAME(29),
++	K210_PIN_NAME(30), K210_PIN_NAME(31), K210_PIN_NAME(32),
++	K210_PIN_NAME(33), K210_PIN_NAME(34), K210_PIN_NAME(35),
++	K210_PIN_NAME(36), K210_PIN_NAME(37), K210_PIN_NAME(38),
++	K210_PIN_NAME(39), K210_PIN_NAME(40), K210_PIN_NAME(41),
++	K210_PIN_NAME(42), K210_PIN_NAME(43), K210_PIN_NAME(44),
++	K210_PIN_NAME(45), K210_PIN_NAME(46), K210_PIN_NAME(47),
++	[48] = "A0", [49] = "A1", [50] = "A2",
++	[51] = "B3", [52] = "B4", [53] = "B5",
++	[54] = "C6", [55] = "C7"
++};
++
++#define K210_NGROUPS	ARRAY_SIZE(k210_group_names)
++
++enum k210_pinctrl_mode_id {
++	K210_PC_DEFAULT_DISABLED,
++	K210_PC_DEFAULT_IN,
++	K210_PC_DEFAULT_IN_TIE,
++	K210_PC_DEFAULT_OUT,
++	K210_PC_DEFAULT_I2C,
++	K210_PC_DEFAULT_SCCB,
++	K210_PC_DEFAULT_SPI,
++	K210_PC_DEFAULT_GPIO,
++	K210_PC_DEFAULT_INT13,
++};
++
++#define K210_PC_DEFAULT(mode) \
++	[K210_PC_DEFAULT_##mode] = K210_PC_MODE_##mode
++
++static const u32 k210_pinconf_mode_id_to_mode[] = {
++	[K210_PC_DEFAULT_DISABLED] = 0,
++	K210_PC_DEFAULT(IN),
++	[K210_PC_DEFAULT_IN_TIE] = K210_PC_MODE_IN,
++	K210_PC_DEFAULT(OUT),
++	K210_PC_DEFAULT(I2C),
++	K210_PC_DEFAULT(SCCB),
++	K210_PC_DEFAULT(SPI),
++	K210_PC_DEFAULT(GPIO),
++	[K210_PC_DEFAULT_INT13] = K210_PC_MODE_IN | K210_PC_PU,
++};
++
++#undef DEFAULT
++
++/*
++ * Pin functions configuration information.
++ */
++struct k210_pcf_info {
++	char name[15];
++	u8 mode_id;
++};
++
++#define K210_FUNC(id, mode)				\
++	[K210_PCF_##id] = {				\
++		.name = #id,				\
++		.mode_id = K210_PC_DEFAULT_##mode	\
++	}
++
++static const struct k210_pcf_info k210_pcf_infos[] = {
++	K210_FUNC(JTAG_TCLK,		IN),
++	K210_FUNC(JTAG_TDI,		IN),
++	K210_FUNC(JTAG_TMS,		IN),
++	K210_FUNC(JTAG_TDO,		OUT),
++	K210_FUNC(SPI0_D0,		SPI),
++	K210_FUNC(SPI0_D1,		SPI),
++	K210_FUNC(SPI0_D2,		SPI),
++	K210_FUNC(SPI0_D3,		SPI),
++	K210_FUNC(SPI0_D4,		SPI),
++	K210_FUNC(SPI0_D5,		SPI),
++	K210_FUNC(SPI0_D6,		SPI),
++	K210_FUNC(SPI0_D7,		SPI),
++	K210_FUNC(SPI0_SS0,		OUT),
++	K210_FUNC(SPI0_SS1,		OUT),
++	K210_FUNC(SPI0_SS2,		OUT),
++	K210_FUNC(SPI0_SS3,		OUT),
++	K210_FUNC(SPI0_ARB,		IN_TIE),
++	K210_FUNC(SPI0_SCLK,		OUT),
++	K210_FUNC(UARTHS_RX,		IN),
++	K210_FUNC(UARTHS_TX,		OUT),
++	K210_FUNC(RESV6,		IN),
++	K210_FUNC(RESV7,		IN),
++	K210_FUNC(CLK_SPI1,		OUT),
++	K210_FUNC(CLK_I2C1,		OUT),
++	K210_FUNC(GPIOHS0,		GPIO),
++	K210_FUNC(GPIOHS1,		GPIO),
++	K210_FUNC(GPIOHS2,		GPIO),
++	K210_FUNC(GPIOHS3,		GPIO),
++	K210_FUNC(GPIOHS4,		GPIO),
++	K210_FUNC(GPIOHS5,		GPIO),
++	K210_FUNC(GPIOHS6,		GPIO),
++	K210_FUNC(GPIOHS7,		GPIO),
++	K210_FUNC(GPIOHS8,		GPIO),
++	K210_FUNC(GPIOHS9,		GPIO),
++	K210_FUNC(GPIOHS10,		GPIO),
++	K210_FUNC(GPIOHS11,		GPIO),
++	K210_FUNC(GPIOHS12,		GPIO),
++	K210_FUNC(GPIOHS13,		GPIO),
++	K210_FUNC(GPIOHS14,		GPIO),
++	K210_FUNC(GPIOHS15,		GPIO),
++	K210_FUNC(GPIOHS16,		GPIO),
++	K210_FUNC(GPIOHS17,		GPIO),
++	K210_FUNC(GPIOHS18,		GPIO),
++	K210_FUNC(GPIOHS19,		GPIO),
++	K210_FUNC(GPIOHS20,		GPIO),
++	K210_FUNC(GPIOHS21,		GPIO),
++	K210_FUNC(GPIOHS22,		GPIO),
++	K210_FUNC(GPIOHS23,		GPIO),
++	K210_FUNC(GPIOHS24,		GPIO),
++	K210_FUNC(GPIOHS25,		GPIO),
++	K210_FUNC(GPIOHS26,		GPIO),
++	K210_FUNC(GPIOHS27,		GPIO),
++	K210_FUNC(GPIOHS28,		GPIO),
++	K210_FUNC(GPIOHS29,		GPIO),
++	K210_FUNC(GPIOHS30,		GPIO),
++	K210_FUNC(GPIOHS31,		GPIO),
++	K210_FUNC(GPIO0,		GPIO),
++	K210_FUNC(GPIO1,		GPIO),
++	K210_FUNC(GPIO2,		GPIO),
++	K210_FUNC(GPIO3,		GPIO),
++	K210_FUNC(GPIO4,		GPIO),
++	K210_FUNC(GPIO5,		GPIO),
++	K210_FUNC(GPIO6,		GPIO),
++	K210_FUNC(GPIO7,		GPIO),
++	K210_FUNC(UART1_RX,		IN),
++	K210_FUNC(UART1_TX,		OUT),
++	K210_FUNC(UART2_RX,		IN),
++	K210_FUNC(UART2_TX,		OUT),
++	K210_FUNC(UART3_RX,		IN),
++	K210_FUNC(UART3_TX,		OUT),
++	K210_FUNC(SPI1_D0,		SPI),
++	K210_FUNC(SPI1_D1,		SPI),
++	K210_FUNC(SPI1_D2,		SPI),
++	K210_FUNC(SPI1_D3,		SPI),
++	K210_FUNC(SPI1_D4,		SPI),
++	K210_FUNC(SPI1_D5,		SPI),
++	K210_FUNC(SPI1_D6,		SPI),
++	K210_FUNC(SPI1_D7,		SPI),
++	K210_FUNC(SPI1_SS0,		OUT),
++	K210_FUNC(SPI1_SS1,		OUT),
++	K210_FUNC(SPI1_SS2,		OUT),
++	K210_FUNC(SPI1_SS3,		OUT),
++	K210_FUNC(SPI1_ARB,		IN_TIE),
++	K210_FUNC(SPI1_SCLK,		OUT),
++	K210_FUNC(SPI2_D0,		SPI),
++	K210_FUNC(SPI2_SS,		IN),
++	K210_FUNC(SPI2_SCLK,		IN),
++	K210_FUNC(I2S0_MCLK,		OUT),
++	K210_FUNC(I2S0_SCLK,		OUT),
++	K210_FUNC(I2S0_WS,		OUT),
++	K210_FUNC(I2S0_IN_D0,		IN),
++	K210_FUNC(I2S0_IN_D1,		IN),
++	K210_FUNC(I2S0_IN_D2,		IN),
++	K210_FUNC(I2S0_IN_D3,		IN),
++	K210_FUNC(I2S0_OUT_D0,		OUT),
++	K210_FUNC(I2S0_OUT_D1,		OUT),
++	K210_FUNC(I2S0_OUT_D2,		OUT),
++	K210_FUNC(I2S0_OUT_D3,		OUT),
++	K210_FUNC(I2S1_MCLK,		OUT),
++	K210_FUNC(I2S1_SCLK,		OUT),
++	K210_FUNC(I2S1_WS,		OUT),
++	K210_FUNC(I2S1_IN_D0,		IN),
++	K210_FUNC(I2S1_IN_D1,		IN),
++	K210_FUNC(I2S1_IN_D2,		IN),
++	K210_FUNC(I2S1_IN_D3,		IN),
++	K210_FUNC(I2S1_OUT_D0,		OUT),
++	K210_FUNC(I2S1_OUT_D1,		OUT),
++	K210_FUNC(I2S1_OUT_D2,		OUT),
++	K210_FUNC(I2S1_OUT_D3,		OUT),
++	K210_FUNC(I2S2_MCLK,		OUT),
++	K210_FUNC(I2S2_SCLK,		OUT),
++	K210_FUNC(I2S2_WS,		OUT),
++	K210_FUNC(I2S2_IN_D0,		IN),
++	K210_FUNC(I2S2_IN_D1,		IN),
++	K210_FUNC(I2S2_IN_D2,		IN),
++	K210_FUNC(I2S2_IN_D3,		IN),
++	K210_FUNC(I2S2_OUT_D0,		OUT),
++	K210_FUNC(I2S2_OUT_D1,		OUT),
++	K210_FUNC(I2S2_OUT_D2,		OUT),
++	K210_FUNC(I2S2_OUT_D3,		OUT),
++	K210_FUNC(RESV0,		DISABLED),
++	K210_FUNC(RESV1,		DISABLED),
++	K210_FUNC(RESV2,		DISABLED),
++	K210_FUNC(RESV3,		DISABLED),
++	K210_FUNC(RESV4,		DISABLED),
++	K210_FUNC(RESV5,		DISABLED),
++	K210_FUNC(I2C0_SCLK,		I2C),
++	K210_FUNC(I2C0_SDA,		I2C),
++	K210_FUNC(I2C1_SCLK,		I2C),
++	K210_FUNC(I2C1_SDA,		I2C),
++	K210_FUNC(I2C2_SCLK,		I2C),
++	K210_FUNC(I2C2_SDA,		I2C),
++	K210_FUNC(DVP_XCLK,		OUT),
++	K210_FUNC(DVP_RST,		OUT),
++	K210_FUNC(DVP_PWDN,		OUT),
++	K210_FUNC(DVP_VSYNC,		IN),
++	K210_FUNC(DVP_HSYNC,		IN),
++	K210_FUNC(DVP_PCLK,		IN),
++	K210_FUNC(DVP_D0,		IN),
++	K210_FUNC(DVP_D1,		IN),
++	K210_FUNC(DVP_D2,		IN),
++	K210_FUNC(DVP_D3,		IN),
++	K210_FUNC(DVP_D4,		IN),
++	K210_FUNC(DVP_D5,		IN),
++	K210_FUNC(DVP_D6,		IN),
++	K210_FUNC(DVP_D7,		IN),
++	K210_FUNC(SCCB_SCLK,		SCCB),
++	K210_FUNC(SCCB_SDA,		SCCB),
++	K210_FUNC(UART1_CTS,		IN),
++	K210_FUNC(UART1_DSR,		IN),
++	K210_FUNC(UART1_DCD,		IN),
++	K210_FUNC(UART1_RI,		IN),
++	K210_FUNC(UART1_SIR_IN,		IN),
++	K210_FUNC(UART1_DTR,		OUT),
++	K210_FUNC(UART1_RTS,		OUT),
++	K210_FUNC(UART1_OUT2,		OUT),
++	K210_FUNC(UART1_OUT1,		OUT),
++	K210_FUNC(UART1_SIR_OUT,	OUT),
++	K210_FUNC(UART1_BAUD,		OUT),
++	K210_FUNC(UART1_RE,		OUT),
++	K210_FUNC(UART1_DE,		OUT),
++	K210_FUNC(UART1_RS485_EN,	OUT),
++	K210_FUNC(UART2_CTS,		IN),
++	K210_FUNC(UART2_DSR,		IN),
++	K210_FUNC(UART2_DCD,		IN),
++	K210_FUNC(UART2_RI,		IN),
++	K210_FUNC(UART2_SIR_IN,		IN),
++	K210_FUNC(UART2_DTR,		OUT),
++	K210_FUNC(UART2_RTS,		OUT),
++	K210_FUNC(UART2_OUT2,		OUT),
++	K210_FUNC(UART2_OUT1,		OUT),
++	K210_FUNC(UART2_SIR_OUT,	OUT),
++	K210_FUNC(UART2_BAUD,		OUT),
++	K210_FUNC(UART2_RE,		OUT),
++	K210_FUNC(UART2_DE,		OUT),
++	K210_FUNC(UART2_RS485_EN,	OUT),
++	K210_FUNC(UART3_CTS,		IN),
++	K210_FUNC(UART3_DSR,		IN),
++	K210_FUNC(UART3_DCD,		IN),
++	K210_FUNC(UART3_RI,		IN),
++	K210_FUNC(UART3_SIR_IN,		IN),
++	K210_FUNC(UART3_DTR,		OUT),
++	K210_FUNC(UART3_RTS,		OUT),
++	K210_FUNC(UART3_OUT2,		OUT),
++	K210_FUNC(UART3_OUT1,		OUT),
++	K210_FUNC(UART3_SIR_OUT,	OUT),
++	K210_FUNC(UART3_BAUD,		OUT),
++	K210_FUNC(UART3_RE,		OUT),
++	K210_FUNC(UART3_DE,		OUT),
++	K210_FUNC(UART3_RS485_EN,	OUT),
++	K210_FUNC(TIMER0_TOGGLE1,	OUT),
++	K210_FUNC(TIMER0_TOGGLE2,	OUT),
++	K210_FUNC(TIMER0_TOGGLE3,	OUT),
++	K210_FUNC(TIMER0_TOGGLE4,	OUT),
++	K210_FUNC(TIMER1_TOGGLE1,	OUT),
++	K210_FUNC(TIMER1_TOGGLE2,	OUT),
++	K210_FUNC(TIMER1_TOGGLE3,	OUT),
++	K210_FUNC(TIMER1_TOGGLE4,	OUT),
++	K210_FUNC(TIMER2_TOGGLE1,	OUT),
++	K210_FUNC(TIMER2_TOGGLE2,	OUT),
++	K210_FUNC(TIMER2_TOGGLE3,	OUT),
++	K210_FUNC(TIMER2_TOGGLE4,	OUT),
++	K210_FUNC(CLK_SPI2,		OUT),
++	K210_FUNC(CLK_I2C2,		OUT),
++	K210_FUNC(INTERNAL0,		OUT),
++	K210_FUNC(INTERNAL1,		OUT),
++	K210_FUNC(INTERNAL2,		OUT),
++	K210_FUNC(INTERNAL3,		OUT),
++	K210_FUNC(INTERNAL4,		OUT),
++	K210_FUNC(INTERNAL5,		OUT),
++	K210_FUNC(INTERNAL6,		OUT),
++	K210_FUNC(INTERNAL7,		OUT),
++	K210_FUNC(INTERNAL8,		OUT),
++	K210_FUNC(INTERNAL9,		IN),
++	K210_FUNC(INTERNAL10,		IN),
++	K210_FUNC(INTERNAL11,		IN),
++	K210_FUNC(INTERNAL12,		IN),
++	K210_FUNC(INTERNAL13,		INT13),
++	K210_FUNC(INTERNAL14,		I2C),
++	K210_FUNC(INTERNAL15,		IN),
++	K210_FUNC(INTERNAL16,		IN),
++	K210_FUNC(INTERNAL17,		IN),
++	K210_FUNC(CONSTANT,		DISABLED),
++	K210_FUNC(INTERNAL18,		IN),
++	K210_FUNC(DEBUG0,		OUT),
++	K210_FUNC(DEBUG1,		OUT),
++	K210_FUNC(DEBUG2,		OUT),
++	K210_FUNC(DEBUG3,		OUT),
++	K210_FUNC(DEBUG4,		OUT),
++	K210_FUNC(DEBUG5,		OUT),
++	K210_FUNC(DEBUG6,		OUT),
++	K210_FUNC(DEBUG7,		OUT),
++	K210_FUNC(DEBUG8,		OUT),
++	K210_FUNC(DEBUG9,		OUT),
++	K210_FUNC(DEBUG10,		OUT),
++	K210_FUNC(DEBUG11,		OUT),
++	K210_FUNC(DEBUG12,		OUT),
++	K210_FUNC(DEBUG13,		OUT),
++	K210_FUNC(DEBUG14,		OUT),
++	K210_FUNC(DEBUG15,		OUT),
++	K210_FUNC(DEBUG16,		OUT),
++	K210_FUNC(DEBUG17,		OUT),
++	K210_FUNC(DEBUG18,		OUT),
++	K210_FUNC(DEBUG19,		OUT),
++	K210_FUNC(DEBUG20,		OUT),
++	K210_FUNC(DEBUG21,		OUT),
++	K210_FUNC(DEBUG22,		OUT),
++	K210_FUNC(DEBUG23,		OUT),
++	K210_FUNC(DEBUG24,		OUT),
++	K210_FUNC(DEBUG25,		OUT),
++	K210_FUNC(DEBUG26,		OUT),
++	K210_FUNC(DEBUG27,		OUT),
++	K210_FUNC(DEBUG28,		OUT),
++	K210_FUNC(DEBUG29,		OUT),
++	K210_FUNC(DEBUG30,		OUT),
++	K210_FUNC(DEBUG31,		OUT),
++};
++
++#define PIN_CONFIG_OUTPUT_INVERT	(PIN_CONFIG_END + 1)
++#define PIN_CONFIG_INPUT_INVERT		(PIN_CONFIG_END + 2)
++
++static const struct pinconf_generic_params k210_pinconf_custom_params[] = {
++	{ "output-polarity-invert", PIN_CONFIG_OUTPUT_INVERT, 1 },
++	{ "input-polarity-invert",  PIN_CONFIG_INPUT_INVERT, 1 },
++};
++
++/*
++ * Max drive strength in uA.
++ */
++static const int k210_pinconf_drive_strength[] = {
++	[0] = 11200,
++	[1] = 16800,
++	[2] = 22300,
++	[3] = 27800,
++	[4] = 33300,
++	[5] = 38700,
++	[6] = 44100,
++	[7] = 49500,
++};
++
++static int k210_pinconf_get_drive(unsigned int max_strength_ua)
++{
++	int i;
++
++	for (i = K210_PC_DRIVE_MAX; i; i--) {
++		if (k210_pinconf_drive_strength[i] <= max_strength_ua)
++			return i;
++	}
++
++	return -EINVAL;
++}
++
++static void k210_pinmux_set_pin_function(struct pinctrl_dev *pctldev,
++					 u32 pin, u32 func)
++{
++	struct k210_fpioa_data *pdata = pinctrl_dev_get_drvdata(pctldev);
++	const struct k210_pcf_info *info = &k210_pcf_infos[func];
++	u32 mode = k210_pinconf_mode_id_to_mode[info->mode_id];
++	u32 val = func | mode;
++
++	dev_dbg(pdata->dev, "set pin %u function %s (%u) -> 0x%08x\n",
++		pin, info->name, func, val);
++
++	writel(val, &pdata->fpioa->pins[pin]);
++}
++
++static int k210_pinconf_set_param(struct pinctrl_dev *pctldev,
++				  unsigned int pin,
++				  unsigned int param, unsigned int arg)
++{
++	struct k210_fpioa_data *pdata = pinctrl_dev_get_drvdata(pctldev);
++	u32 val = readl(&pdata->fpioa->pins[pin]);
++	int drive;
++
++	dev_dbg(pdata->dev, "set pin %u param %u, arg 0x%x\n",
++		pin, param, arg);
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		val &= ~K210_PC_BIAS_MASK;
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		if (!arg)
++			return -EINVAL;
++		val |= K210_PC_PD;
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		if (!arg)
++			return -EINVAL;
++		val |= K210_PC_PD;
++		break;
++	case PIN_CONFIG_DRIVE_STRENGTH:
++		arg *= 1000;
++		fallthrough;
++	case PIN_CONFIG_DRIVE_STRENGTH_UA:
++		drive = k210_pinconf_get_drive(arg);
++		if (drive < 0)
++			return drive;
++		val &= ~K210_PC_DRIVE_MASK;
++		val |= FIELD_PREP(K210_PC_DRIVE_MASK, drive);
++		break;
++	case PIN_CONFIG_INPUT_ENABLE:
++		if (arg)
++			val |= K210_PC_IE;
++		else
++			val &= ~K210_PC_IE;
++		break;
++	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++		if (arg)
++			val |= K210_PC_ST;
++		else
++			val &= ~K210_PC_ST;
++		break;
++	case PIN_CONFIG_OUTPUT:
++		k210_pinmux_set_pin_function(pctldev, pin, K210_PCF_CONSTANT);
++		val = readl(&pdata->fpioa->pins[pin]);
++		val |= K210_PC_MODE_OUT;
++		if (!arg)
++			val |= K210_PC_DO_INV;
++		break;
++	case PIN_CONFIG_OUTPUT_ENABLE:
++		if (arg)
++			val |= K210_PC_OE;
++		else
++			val &= ~K210_PC_OE;
++		break;
++	case PIN_CONFIG_SLEW_RATE:
++		if (arg)
++			val |= K210_PC_SL;
++		else
++			val &= ~K210_PC_SL;
++		break;
++	case PIN_CONFIG_OUTPUT_INVERT:
++		if (arg)
++			val |= K210_PC_DO_INV;
++		else
++			val &= ~K210_PC_DO_INV;
++		break;
++	case PIN_CONFIG_INPUT_INVERT:
++		if (arg)
++			val |= K210_PC_DI_INV;
++		else
++			val &= ~K210_PC_DI_INV;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	writel(val, &pdata->fpioa->pins[pin]);
++
++	return 0;
++}
++
++static int k210_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
++			    unsigned long *configs, unsigned int num_configs)
++{
++	unsigned int param, arg;
++	int i, ret;
++
++	if (WARN_ON(pin >= K210_NPINS))
++		return -EINVAL;
++
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++		ret = k210_pinconf_set_param(pctldev, pin, param, arg);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static void k210_pinconf_dbg_show(struct pinctrl_dev *pctldev,
++				  struct seq_file *s, unsigned int pin)
++{
++	struct k210_fpioa_data *pdata = pinctrl_dev_get_drvdata(pctldev);
++
++	seq_printf(s, "%#x", readl(&pdata->fpioa->pins[pin]));
++}
++
++static int k210_pinconf_group_set(struct pinctrl_dev *pctldev,
++				  unsigned int selector, unsigned long *configs,
++				  unsigned int num_configs)
++{
++	struct k210_fpioa_data *pdata = pinctrl_dev_get_drvdata(pctldev);
++	unsigned int param, arg;
++	u32 bit;
++	int i;
++
++	/* Pins should be configured with pinmux, not groups*/
++	if (selector < K210_NPINS)
++		return -EINVAL;
++
++	/* Otherwise it's a power domain */
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		if (param != PIN_CONFIG_POWER_SOURCE)
++			return -EINVAL;
++
++		arg = pinconf_to_config_argument(configs[i]);
++		bit = BIT(selector - K210_NPINS);
++		regmap_update_bits(pdata->sysctl_map,
++				   pdata->power_offset,
++				   bit, arg ? bit : 0);
++	}
++
++	return 0;
++}
++
++static void k210_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
++					struct seq_file *s,
++					unsigned int selector)
++{
++	struct k210_fpioa_data *pdata = pinctrl_dev_get_drvdata(pctldev);
++	int ret;
++	u32 val;
++
++	if (selector < K210_NPINS)
++		return k210_pinconf_dbg_show(pctldev, s, selector);
++
++	ret = regmap_read(pdata->sysctl_map, pdata->power_offset, &val);
++	if (ret) {
++		dev_err(pdata->dev, "Failed to read power reg\n");
++		return;
++	}
++
++	seq_printf(s, "%s: %s V", k210_group_names[selector],
++		   val & BIT(selector - K210_NPINS) ? "1.8" : "3.3");
++}
++
++static const struct pinconf_ops k210_pinconf_ops = {
++	.is_generic = true,
++	.pin_config_set = k210_pinconf_set,
++	.pin_config_group_set = k210_pinconf_group_set,
++	.pin_config_dbg_show = k210_pinconf_dbg_show,
++	.pin_config_group_dbg_show = k210_pinconf_group_dbg_show,
++};
++
++static int k210_pinmux_get_function_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(k210_pcf_infos);
++}
++
++static const char *k210_pinmux_get_function_name(struct pinctrl_dev *pctldev,
++						 unsigned int selector)
++{
++	return k210_pcf_infos[selector].name;
++}
++
++static int k210_pinmux_get_function_groups(struct pinctrl_dev *pctldev,
++					   unsigned int selector,
++					   const char * const **groups,
++					   unsigned int * const num_groups)
++{
++	/* Any function can be mapped to any pin */
++	*groups = k210_group_names;
++	*num_groups = K210_NPINS;
++
++	return 0;
++}
++
++static int k210_pinmux_set_mux(struct pinctrl_dev *pctldev,
++			       unsigned int function,
++			       unsigned int group)
++{
++	/* Can't mux power domains */
++	if (group >= K210_NPINS)
++		return -EINVAL;
++
++	k210_pinmux_set_pin_function(pctldev, group, function);
++
++	return 0;
++}
++
++static const struct pinmux_ops k210_pinmux_ops = {
++	.get_functions_count = k210_pinmux_get_function_count,
++	.get_function_name = k210_pinmux_get_function_name,
++	.get_function_groups = k210_pinmux_get_function_groups,
++	.set_mux = k210_pinmux_set_mux,
++	.strict = true,
++};
++
++static int k210_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	return K210_NGROUPS;
++}
++
++static const char *k210_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
++					       unsigned int group)
++{
++	return k210_group_names[group];
++}
++
++static int k210_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
++				       unsigned int group,
++				       const unsigned int **pins,
++				       unsigned int *npins)
++{
++	if (group >= K210_NPINS) {
++		*pins = NULL;
++		*npins = 0;
++		return 0;
++	}
++
++	*pins = &k210_pins[group].number;
++	*npins = 1;
++
++	return 0;
++}
++
++static void k210_pinctrl_pin_dbg_show(struct pinctrl_dev *pctldev,
++				      struct seq_file *s, unsigned int offset)
++{
++	seq_printf(s, "%s", dev_name(pctldev->dev));
++}
++
++static int k210_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
++					  struct device_node *np,
++					  struct pinctrl_map **map,
++					  unsigned int *reserved_maps,
++					  unsigned int *num_maps)
++{
++	struct property *prop;
++	const __be32 *p;
++	int ret, pinmux_groups;
++	u32 pinmux_group;
++	unsigned long *configs = NULL;
++	unsigned int num_configs = 0;
++	unsigned int reserve = 0;
++
++	ret = of_property_count_strings(np, "groups");
++	if (!ret)
++		return pinconf_generic_dt_subnode_to_map(pctldev, np, map,
++						reserved_maps, num_maps,
++						PIN_MAP_TYPE_CONFIGS_GROUP);
++
++	pinmux_groups = of_property_count_u32_elems(np, "pinmux");
++	if (pinmux_groups <= 0) {
++		/* Ignore this node */
++		return 0;
++	}
++
++	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
++					      &num_configs);
++	if (ret < 0) {
++		dev_err(pctldev->dev, "%pOF: could not parse node property\n",
++			np);
++		return ret;
++	}
++
++	reserve = pinmux_groups * (1 + num_configs);
++	ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps, num_maps,
++					reserve);
++	if (ret < 0)
++		goto exit;
++
++	of_property_for_each_u32(np, "pinmux", prop, p, pinmux_group) {
++		const char *group_name, *func_name;
++		u32 pin = FIELD_GET(K210_PG_PIN, pinmux_group);
++		u32 func = FIELD_GET(K210_PG_FUNC, pinmux_group);
++
++		if (pin >= K210_NPINS) {
++			ret = -EINVAL;
++			goto exit;
++		}
++
++		group_name = k210_group_names[pin];
++		func_name = k210_pcf_infos[func].name;
++
++		dev_dbg(pctldev->dev, "Pinmux %s: pin %u func %s\n",
++			np->name, pin, func_name);
++
++		ret = pinctrl_utils_add_map_mux(pctldev, map, reserved_maps,
++						num_maps, group_name,
++						func_name);
++		if (ret < 0) {
++			dev_err(pctldev->dev, "%pOF add mux map failed %d\n",
++				np, ret);
++			goto exit;
++		}
++
++		if (num_configs) {
++			ret = pinctrl_utils_add_map_configs(pctldev, map,
++					reserved_maps, num_maps, group_name,
++					configs, num_configs,
++					PIN_MAP_TYPE_CONFIGS_PIN);
++			if (ret < 0) {
++				dev_err(pctldev->dev,
++					"%pOF add configs map failed %d\n",
++					np, ret);
++				goto exit;
++			}
++		}
++	}
++
++	ret = 0;
++
++exit:
++	kfree(configs);
++	return ret;
++}
++
++static int k210_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
++				       struct device_node *np_config,
++				       struct pinctrl_map **map,
++				       unsigned int *num_maps)
++{
++	unsigned int reserved_maps;
++	struct device_node *np;
++	int ret;
++
++	reserved_maps = 0;
++	*map = NULL;
++	*num_maps = 0;
++
++	ret = k210_pinctrl_dt_subnode_to_map(pctldev, np_config, map,
++					     &reserved_maps, num_maps);
++	if (ret < 0)
++		goto err;
++
++	for_each_available_child_of_node(np_config, np) {
++		ret = k210_pinctrl_dt_subnode_to_map(pctldev, np, map,
++						     &reserved_maps, num_maps);
++		if (ret < 0)
++			goto err;
++	}
++	return 0;
++
++err:
++	pinctrl_utils_free_map(pctldev, *map, *num_maps);
++	return ret;
++}
++
++
++static const struct pinctrl_ops k210_pinctrl_ops = {
++	.get_groups_count = k210_pinctrl_get_groups_count,
++	.get_group_name = k210_pinctrl_get_group_name,
++	.get_group_pins = k210_pinctrl_get_group_pins,
++	.pin_dbg_show = k210_pinctrl_pin_dbg_show,
++	.dt_node_to_map = k210_pinctrl_dt_node_to_map,
++	.dt_free_map = pinconf_generic_dt_free_map,
++};
++
++static struct pinctrl_desc k210_pinctrl_desc = {
++	.name = "k210-pinctrl",
++	.pins = k210_pins,
++	.npins = K210_NPINS,
++	.pctlops = &k210_pinctrl_ops,
++	.pmxops = &k210_pinmux_ops,
++	.confops = &k210_pinconf_ops,
++	.custom_params = k210_pinconf_custom_params,
++	.num_custom_params = ARRAY_SIZE(k210_pinconf_custom_params),
++};
++
++static void k210_fpioa_init_ties(struct k210_fpioa_data *pdata)
++{
++	struct k210_fpioa __iomem *fpioa = pdata->fpioa;
++	u32 val;
++	int i, j;
++
++	dev_dbg(pdata->dev, "Init pin ties\n");
++
++	/* Init pin functions input ties */
++	for (i = 0; i < ARRAY_SIZE(fpioa->tie_en); i++) {
++		val = 0;
++		for (j = 0; j < 32; j++) {
++			if (k210_pcf_infos[i * 32 + j].mode_id ==
++			    K210_PC_DEFAULT_IN_TIE) {
++				dev_dbg(pdata->dev,
++					"tie_en function %d (%s)\n",
++					i * 32 + j,
++					k210_pcf_infos[i * 32 + j].name);
++				val |= BIT(j);
++			}
++		}
++
++		/* Set value before enable */
++		writel(val, &fpioa->tie_val[i]);
++		writel(val, &fpioa->tie_en[i]);
++	}
++}
++
++static int __init k210_fpioa_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct k210_fpioa_data *pdata;
++	int ret;
++
++	dev_info(dev, "K210 FPIOA pin controller\n");
++
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++
++	pdata->dev = dev;
++	platform_set_drvdata(pdev, pdata);
++
++	pdata->fpioa = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(pdata->fpioa))
++		return PTR_ERR(pdata->fpioa);
++
++	pdata->clk = devm_clk_get(dev, "ref");
++	if (IS_ERR(pdata->clk))
++		return PTR_ERR(pdata->clk);
++
++	ret = clk_prepare_enable(pdata->clk);
++	if (ret)
++		return ret;
++
++	pdata->pclk = devm_clk_get_optional(dev, "pclk");
++	if (!IS_ERR(pdata->pclk))
++		clk_prepare_enable(pdata->pclk);
++
++	pdata->sysctl_map =
++		syscon_regmap_lookup_by_phandle_args(np,
++						"canaan,k210-sysctl-power",
++						1, &pdata->power_offset);
++	if (IS_ERR(pdata->sysctl_map))
++		return PTR_ERR(pdata->sysctl_map);
++
++	k210_fpioa_init_ties(pdata);
++
++	pdata->pctl = pinctrl_register(&k210_pinctrl_desc, dev, (void *)pdata);
++	if (IS_ERR(pdata->pctl))
++		return PTR_ERR(pdata->pctl);
++
++	return 0;
++}
++
++static const struct of_device_id k210_fpioa_dt_ids[] = {
++	{ .compatible = "canaan,k210-fpioa" },
++};
++
++static struct platform_driver k210_fpioa_driver = {
++	.probe	= k210_fpioa_probe,
++	.driver = {
++		.name		= "k210-fpioa",
++		.of_match_table	= k210_fpioa_dt_ids,
++	},
++};
++builtin_platform_driver(k210_fpioa_driver);
 -- 
 2.28.0
 
