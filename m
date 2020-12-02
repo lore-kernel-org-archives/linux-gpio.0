@@ -2,83 +2,148 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0743AC64E8A
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Dec 2020 13:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C73AC64E8A
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Dec 2020 13:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAEBD22202
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Dec 2020 13:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EF42221FA
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Dec 2020 13:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbgLBNk1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Dec 2020 08:40:27 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:45643 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727927AbgLBNk1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Dec 2020 08:40:27 -0500
-Received: from orion.localdomain ([77.7.48.174]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N64FC-1k8zv90JuS-016L9F; Wed, 02 Dec 2020 14:37:55 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH v2] gpio: just plain warning when nonexisting gpio requested
-Date:   Wed,  2 Dec 2020 14:37:54 +0100
-Message-Id: <20201202133754.32045-1-info@metux.net>
-X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:x509up239nMwUVSsvhFUtmNN65DNpopoJqJa79l9iIluvPMt7mE
- O8tNgzo6nCm7380ByRyvDalQu2XmVYYgV3WjLbn6SLEk7DyBH6v0j7ZOMtodXI43bzCh0XQ
- 0iWNTu/+M3a5CJ5u0y8nsO4gpGaMXqat6Tn0VXr6+nBwD0+MkOvJbDtBRu18+xWvccmvTs1
- 4ymIJsDS8ii7UwhjQYmtQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tXWjYQRg/tM=:V2T8r2rk7sbhOVtBqb7/gN
- sQJf5ELXMjzzvsFV55QvSgzNYM4fYcyE49NUFavA8QfRAHCU3MHYEklZxIHM0FUz55RmytM3Y
- BMAv7oj+Ls3mQXk6NnO9qdaR2+sdSwrN205NYzAU7b7fzyXHCYQg6Lrxc93D3UO8h4BGgfin4
- 9dM9rhBFfOXT5uXQ7qvwi4SmJCecF7uQNrvuIPGBuH3oZRPKJkdnUYTpq77PSHQahRUEVZJ8j
- UFfZQq5t70Rt+3S2/3QNA2yNdGRatY7KyR8jFOw0Pnkqd0rvaQmds9w0OoZFNFTByy2JhtS0g
- 7l7Ap7myX2s6abYoSRvvxJ5k0EmoflwjkOUXqCvUo5HQ8eKADBkdrAmxoLzLJ2z4gq2s3pglW
- f321KB1gtnYS9/npsLJLicuJcIE4/XQFiCZoZFwd8mdaTAn4yKY8Kf5dk2TIH
+        id S2388816AbgLBNz3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Dec 2020 08:55:29 -0500
+Received: from foss.arm.com ([217.140.110.172]:40316 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727927AbgLBNz2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 2 Dec 2020 08:55:28 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4DE111B3;
+        Wed,  2 Dec 2020 05:54:42 -0800 (PST)
+Received: from localhost.localdomain (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4692F3F718;
+        Wed,  2 Dec 2020 05:54:41 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Icenowy Zheng <icenowy@aosc.xyz>,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Yangtao Li <frank@allwinnertech.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH 3/8] pinctrl: sunxi: Add support for the Allwinner H616-R pin controller
+Date:   Wed,  2 Dec 2020 13:54:04 +0000
+Message-Id: <20201202135409.13683-4-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20201202135409.13683-1-andre.przywara@arm.com>
+References: <20201202135409.13683-1-andre.przywara@arm.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
+There are only two pins left now, used to connect to the PMIC via I2C.
 
-When trying to export an nonexisting gpio ID, the kernel prints out a
-big warning w/ stacktrace, sounding like a huge problem. In fact it's
-a pretty normal situation, like file or device not found.
-
-So, just print a more relaxed warning instead.
-
-changes v2: drop defining pr_fmt()
-
-Signed-off-by: Enrico Weigelt <info@metux.net>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sunxi/Kconfig                 |  5 ++
+ drivers/pinctrl/sunxi/Makefile                |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h616-r.c | 58 +++++++++++++++++++
+ 3 files changed, 64 insertions(+)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h616-r.c
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 089ddcaa9bc6..6639e7b77d6c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index 73e88ce71a48..33751a6a0757 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -124,4 +124,9 @@ config PINCTRL_SUN50I_H616
+ 	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
++config PINCTRL_SUN50I_H616_R
++	bool "Support for the Allwinner H616 R-PIO"
++	default ARM64 && ARCH_SUNXI
++	select PINCTRL_SUNXI
 +
- #include <linux/bitmap.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -119,7 +120,7 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 
- 	if (!gpio_is_valid(gpio))
--		WARN(1, "invalid GPIO %d\n", gpio);
-+		pr_warn("invalid GPIO %d\n", gpio);
- 
- 	return NULL;
- }
+ endif
+diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+index 5359327a3c8f..d3440c42b9d6 100644
+--- a/drivers/pinctrl/sunxi/Makefile
++++ b/drivers/pinctrl/sunxi/Makefile
+@@ -24,5 +24,6 @@ obj-$(CONFIG_PINCTRL_SUN50I_H5)		+= pinctrl-sun50i-h5.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H6)		+= pinctrl-sun50i-h6.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H616)	+= pinctrl-sun50i-h616.o
++obj-$(CONFIG_PINCTRL_SUN50I_H616_R)	+= pinctrl-sun50i-h616-r.o
+ obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
+ obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-h616-r.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-h616-r.c
+new file mode 100644
+index 000000000000..eb76c009bf24
+--- /dev/null
++++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-h616-r.c
+@@ -0,0 +1,58 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Allwinner H616 R_PIO pin controller driver
++ *
++ * Copyright (C) 2020 Arm Ltd.
++ * Based on former work, which is:
++ *   Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
++ *   Copyright (C) 2014 Boris Brezillon
++ *   Boris Brezillon <boris.brezillon@free-electrons.com>
++ *   Copyright (C) 2014 Maxime Ripard
++ *   Maxime Ripard <maxime.ripard@free-electrons.com>
++ */
++
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/reset.h>
++
++#include "pinctrl-sunxi.h"
++
++static const struct sunxi_desc_pin sun50i_h616_r_pins[] = {
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_i2c")),	/* SCK */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_i2c")),	/* SDA */
++};
++
++static const struct sunxi_pinctrl_desc sun50i_h616_r_pinctrl_data = {
++	.pins = sun50i_h616_r_pins,
++	.npins = ARRAY_SIZE(sun50i_h616_r_pins),
++	.pin_base = PL_BASE,
++};
++
++static int sun50i_h616_r_pinctrl_probe(struct platform_device *pdev)
++{
++	return sunxi_pinctrl_init(pdev,
++				  &sun50i_h616_r_pinctrl_data);
++}
++
++static const struct of_device_id sun50i_h616_r_pinctrl_match[] = {
++	{ .compatible = "allwinner,sun50i-h616-r-pinctrl", },
++	{}
++};
++
++static struct platform_driver sun50i_h616_r_pinctrl_driver = {
++	.probe	= sun50i_h616_r_pinctrl_probe,
++	.driver	= {
++		.name		= "sun50i-h616-r-pinctrl",
++		.of_match_table	= sun50i_h616_r_pinctrl_match,
++	},
++};
++builtin_platform_driver(sun50i_h616_r_pinctrl_driver);
 -- 
-2.11.0
+2.17.5
 
