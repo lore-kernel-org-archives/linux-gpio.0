@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C43EC4361A
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Dec 2020 16:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 262EDC4167B
+	for <linux-gpio@archiver.kernel.org>; Fri,  4 Dec 2020 16:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52A4722B3B
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Dec 2020 16:48:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E228622B2D
+	for <linux-gpio@archiver.kernel.org>; Fri,  4 Dec 2020 16:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730699AbgLDQs3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 4 Dec 2020 11:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57418 "EHLO mail.kernel.org"
+        id S1729262AbgLDQsc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 4 Dec 2020 11:48:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728997AbgLDQs2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 4 Dec 2020 11:48:28 -0500
+        id S1728997AbgLDQs3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 4 Dec 2020 11:48:29 -0500
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBBEC229C9;
-        Fri,  4 Dec 2020 16:47:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF0BB22B2A;
+        Fri,  4 Dec 2020 16:47:48 +0000 (UTC)
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <maz@kernel.org>)
-        id 1klEFF-00G234-Lh; Fri, 04 Dec 2020 16:47:45 +0000
+        id 1klEFH-00G234-8M; Fri, 04 Dec 2020 16:47:47 +0000
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -36,10 +36,12 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Johan Hovold <johan@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         kernel-team@android.com
-Subject: [PATCH 0/4] USB: ftdio_sio: GPIO validity fixes
-Date:   Fri,  4 Dec 2020 16:47:35 +0000
-Message-Id: <20201204164739.781812-1-maz@kernel.org>
+Subject: [PATCH 2/4] USB: serial: ftdi_sio: Report the valid GPIO lines to gpiolib
+Date:   Fri,  4 Dec 2020 16:47:37 +0000
+Message-Id: <20201204164739.781812-3-maz@kernel.org>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201204164739.781812-1-maz@kernel.org>
+References: <20201204164739.781812-1-maz@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 62.31.163.78
@@ -50,46 +52,47 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Having recently tried to use the CBUS GPIOs that come thanks to the
-ftdio_sio driver, it occurred to me that the driver has a couple of
-usability issues:
+Since it is pretty common for only some of the CBUS lines to be
+valid as GPIO lines, let's report such validity to the rest of
+the kernel.
 
-- it advertises potential GPIOs that are reserved to other uses (LED
-  control, or something else)
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/usb/serial/ftdi_sio.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-- it returns an odd error (-ENODEV), instead of the expected -EINVAL
-  when a line is unavailable, leading to a difficult diagnostic
-
-We address the issues in a number of ways:
-
-- Stop reporting invalid GPIO lines as valid to userspace. It
-  definitely seems odd to do so. Instead, report the line as being
-  used, making the userspace interface a bit more consistent.
-
-- Implement the init_valid_mask() callback in the ftdi_sio driver,
-  allowing it to report which lines are actually valid.
-
-- As suggested by Linus, give an indication to the user of why some of
-  the GPIO lines are unavailable, and point them to a useful tool
-  (once per boot). It is a bit sad that there next to no documentation
-  on how to use these CBUS pins.
-
-- Drop the error reporting code, which has become useless at this
-  point.
-
-Tested with a couple of FTDI devices (FT230X and FT231X) and various
-CBUS configurations.
-
-Marc Zyngier (4):
-  gpiolib: cdev: Flag invalid GPIOs as used
-  USB: serial: ftdi_sio: Report the valid GPIO lines to gpiolib
-  USB: serial: ftdi_sio: Log the CBUS GPIO validity
-  USB: serial: ftdi_sio: Drop GPIO line checking dead code
-
- drivers/gpio/gpiolib-cdev.c   |  1 +
- drivers/usb/serial/ftdi_sio.c | 26 +++++++++++++++++++++++---
- 2 files changed, 24 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index e0f4c3d9649c..13e575f16bcd 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -2002,6 +2002,19 @@ static int ftdi_gpio_direction_output(struct gpio_chip *gc, unsigned int gpio,
+ 	return result;
+ }
+ 
++static int ftdi_gpio_init_valid_mask(struct gpio_chip *gc,
++				     unsigned long *valid_mask,
++				     unsigned int ngpios)
++{
++	struct usb_serial_port *port = gpiochip_get_data(gc);
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	unsigned long map = priv->gpio_altfunc;
++
++	bitmap_complement(valid_mask, &map, ngpios);
++
++	return 0;
++}
++
+ static int ftdi_read_eeprom(struct usb_serial *serial, void *dst, u16 addr,
+ 				u16 nbytes)
+ {
+@@ -2173,6 +2186,7 @@ static int ftdi_gpio_init(struct usb_serial_port *port)
+ 	priv->gc.get_direction = ftdi_gpio_direction_get;
+ 	priv->gc.direction_input = ftdi_gpio_direction_input;
+ 	priv->gc.direction_output = ftdi_gpio_direction_output;
++	priv->gc.init_valid_mask = ftdi_gpio_init_valid_mask;
+ 	priv->gc.get = ftdi_gpio_get;
+ 	priv->gc.set = ftdi_gpio_set;
+ 	priv->gc.get_multiple = ftdi_gpio_get_multiple;
 -- 
 2.28.0
 
