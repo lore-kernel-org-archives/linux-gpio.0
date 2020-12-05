@@ -2,91 +2,64 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320A8C2BB40
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Dec 2020 16:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C0DC4361A
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Dec 2020 05:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1214C229C9
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Dec 2020 16:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B70022D3E
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Dec 2020 05:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730831AbgLDQs3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 4 Dec 2020 11:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57444 "EHLO mail.kernel.org"
+        id S1728471AbgLEFmZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Dec 2020 00:42:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729262AbgLDQs3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 4 Dec 2020 11:48:29 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 712F122AED;
-        Fri,  4 Dec 2020 16:47:48 +0000 (UTC)
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <maz@kernel.org>)
-        id 1klEFG-00G234-Mr; Fri, 04 Dec 2020 16:47:46 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-team@android.com
-Subject: [PATCH 1/4] gpiolib: cdev: Flag invalid GPIOs as used
-Date:   Fri,  4 Dec 2020 16:47:36 +0000
-Message-Id: <20201204164739.781812-2-maz@kernel.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201204164739.781812-1-maz@kernel.org>
-References: <20201204164739.781812-1-maz@kernel.org>
+        id S1727444AbgLEFmZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 5 Dec 2020 00:42:25 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607146904;
+        bh=1UOM3lyrYNIHNQmUwBpCqtJorNVR7n1hPqtb+XM0tww=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=MA1iZSIwjlf5aB6MkgnstF2EhHg1aeaFegQlC4e4IqyTJ8tHBTyJtoEqe3FJfNGNO
+         SoMQf7vq05Tx5xLfWgdSSwaD3ApiFcY9gPsK+XuJNoPygGk9Vpf++d8pAQcwyJw+1u
+         LmVGJ7d1+A3R5bGrrZ6de9PGw3vEE8rzwzVQJVA/T3gq41guMRt6U2Gd31BEi9CcYo
+         DVoue+GnmE1fpqqoTjLy677Z3Pwj1K0bxjdtGFSMlyNHviuxAjU9LZpz77637a2loe
+         qjWqNC+dpcfpjacRZ0DU81hayhdA+dd6PJZmMQYTF2skgyLa62kCzoWajT/wx0aS9K
+         5YnYBCzJ/X+MQ==
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, johan@kernel.org, gregkh@linuxfoundation.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201202032500.206346-2-damien.lemoal@wdc.com>
+References: <20201202032500.206346-1-damien.lemoal@wdc.com> <20201202032500.206346-2-damien.lemoal@wdc.com>
+Subject: Re: [PATCH v4 01/21] riscv: Fix kernel time_init()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Sean Anderson <seanga2@gmail.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Date:   Fri, 04 Dec 2020 21:41:43 -0800
+Message-ID: <160714690354.1580929.8976634034112573437@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When reporting the state of a GPIO to userspace, we never check
-for the actual validity of the line, meaning we report invalid
-lines as being usable. A subsequent request will fail though,
-which is an inconsistent behaviour from a userspace perspective.
+Quoting Damien Le Moal (2020-12-01 19:24:40)
+> If of_clk_init() is not called in time_init(), clock providers defined
+> in the system device tree are not initialized, resulting in failures for
+> other devices to initialize due to missing clocks.
+> Similarly to other architectures and to the default kernel time_init()
+> implementation, call of_clk_init() before executing timer_probe() in
+> time_init().
+>=20
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
 
-Instead, let's check for the validity of the line and report it
-as used if it is invalid. This allows a tool such as gpioinfo
-to report something sensible:
-
-gpiochip3 - 4 lines:
-	line   0:      unnamed       unused   input  active-high
-	line   1:      unnamed       kernel   input  active-high [used]
-	line   2:      unnamed       kernel   input  active-high [used]
-	line   3:      unnamed       unused   input  active-high
-
-In this example, lines 1 and 2 are invalid, and cannot be used by
-userspace.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/gpio/gpiolib-cdev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index e9faeaf65d14..a0fcb4ccaa02 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -1910,6 +1910,7 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
- 	    test_bit(FLAG_USED_AS_IRQ, &desc->flags) ||
- 	    test_bit(FLAG_EXPORT, &desc->flags) ||
- 	    test_bit(FLAG_SYSFS, &desc->flags) ||
-+	    !gpiochip_line_is_valid(gc, info->offset) ||
- 	    !ok_for_pinctrl)
- 		info->flags |= GPIO_V2_LINE_FLAG_USED;
- 
--- 
-2.28.0
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
