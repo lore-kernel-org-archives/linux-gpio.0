@@ -2,339 +2,185 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC662C4361A
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Dec 2020 16:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9DAC433FE
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Dec 2020 19:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCD7723359
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Dec 2020 16:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1BE222287
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Dec 2020 19:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbgLEPft (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Dec 2020 10:35:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbgLEPZ7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Dec 2020 10:25:59 -0500
-Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8C1C02B8E4;
-        Sat,  5 Dec 2020 05:43:39 -0800 (PST)
-Received: by mail-qv1-xf42.google.com with SMTP id ec16so4260719qvb.0;
-        Sat, 05 Dec 2020 05:43:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=7V54Z/5Mr/xxZxoJa6ftBYvRndPF7BKH8GwvUe0W1jo=;
-        b=nNe87USGiI5TXREYkoGvoEOqxnFeogR6rh+mcbxhir4ObpT9e7AokThh+c+w3ffXD6
-         M49MBBrH2tTaQ2B/XzKpMt9KTTSaWxmb5ZGL5W4WSayvK8E92czfLckqGCPG81DwNuBV
-         vlpGa6vdxIN7dknt76sod5Nri8oNnv8shGqoJgWBDwH1SsceR6gQtGELM3riabxWfkDX
-         vvyMrOODthd0vjj0WUbvvD88Kqy2NFYFklWJiKzblUosrHQooLXmPnsbMrbCkulvxHu/
-         PzM7Hx3ApImG7JG2GmPH65JrpMVzw0IpNiE3pL10QOZ30z2B38+92ZOSNGxjslJFE/cH
-         /Phw==
+        id S1726241AbgLETdl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Dec 2020 14:33:41 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54825 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725903AbgLETdj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Dec 2020 14:33:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607196732;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ofSC9lpwG6+UCSNudemJILG6AFj0fHelQy+fBqMM60g=;
+        b=IJcaELS9QwBG8ZD54qcE/d8Fkuy3TkwSTJ90/DF+XybnRVscFrbvEhqzHARpQjyYbWxdV6
+        bAC3CkbRXO/vVIhLry0XP9i9ZerVew7bMtQGKTCYR83FbwRunPa0WCS8KF44lR74KVaGpM
+        O8Yb3IvaxKTrJVo1rnVd5WLgiJidVvs=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-343-Uk9UyZK1O-yRxOM_vZxGKQ-1; Sat, 05 Dec 2020 14:32:11 -0500
+X-MC-Unique: Uk9UyZK1O-yRxOM_vZxGKQ-1
+Received: by mail-wm1-f72.google.com with SMTP id a130so7568464wmf.0
+        for <linux-gpio@vger.kernel.org>; Sat, 05 Dec 2020 11:32:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7V54Z/5Mr/xxZxoJa6ftBYvRndPF7BKH8GwvUe0W1jo=;
-        b=nyJctCFI9pAYc8IU9scnLGzrkcfsNydrkivdQXt3t47AbdnOun0czlJLrAyPczDl21
-         W8pF7CXEliv8L5Q/UnCl5EVcL4fIwZSslRaSp0S+fLqnuJTYK2tXn+/rBb/2P3B0kz/4
-         O7uRFcL50QQnbiD2lB+eO3pFea2h9dmq18xjLoGIaTs+yH+a9Wgl2WNrHr/Kh9i9Imsr
-         eE6DRyvcJ0lUAbbgYl70fyElSQ+80W7We0sXK2E/CQXBQyGVAOUk4JXLnqF2cJ9ohXHx
-         SqZsQ32/GmpXDVuVLfgZvQB+A2X21dFyYlb6H+dLETI8sw8LQwW/0/KKGd4yJJ3EJc9s
-         0zeg==
-X-Gm-Message-State: AOAM530MNNs1YrSyYGDesg623TKoy5YGw8nGpjuPdoBNPfA/Gk+bruTX
-        YlbEz8zOQn3v2lHjD6uJa4cTIQejJG5gsA==
-X-Google-Smtp-Source: ABdhPJwyIeonJaI/FDnQ3n3MDma2rUmE/Kfsw0jOlKbN/08tEtNoFDPIVd613z6xf+DOoONjAZjHvA==
-X-Received: by 2002:a0c:fa4f:: with SMTP id k15mr11346192qvo.62.1607175818286;
-        Sat, 05 Dec 2020 05:43:38 -0800 (PST)
-Received: from [192.168.1.201] (pool-108-51-35-162.washdc.fios.verizon.net. [108.51.35.162])
-        by smtp.googlemail.com with ESMTPSA id r14sm8098427qtu.25.2020.12.05.05.43.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Dec 2020 05:43:37 -0800 (PST)
-Subject: Re: [PATCH v4 11/21] riscv: Add Canaan Kendryte K210 clock driver
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20201202032500.206346-1-damien.lemoal@wdc.com>
- <20201202032500.206346-12-damien.lemoal@wdc.com>
- <160714919628.1580929.1456162330322523777@swboyd.mtv.corp.google.com>
- <d9aec92299e5f427aaf5c5e892194e27006f8bbc.camel@wdc.com>
-From:   Sean Anderson <seanga2@gmail.com>
-Message-ID: <3ef543a8-5709-d653-e347-78faa08f81d2@gmail.com>
-Date:   Sat, 5 Dec 2020 08:43:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ofSC9lpwG6+UCSNudemJILG6AFj0fHelQy+fBqMM60g=;
+        b=OXdt4IPYzsuTY6danG3X4lqjEtMa6HcJNfRSsnjm37wF3wXqXWxYC8FVvluifxE4x+
+         kxFneFlJskrk70+pWOd1zxDRTb6INMQV/QidMrlXBRsahUud/vyfOMvIGr6R+M66A54B
+         ijuaxWOxdYsBVil8RJFbp6J9DadImT+A3rfA43auQLGryDqhIBi0M9QahCTcV6rKirg2
+         iNH8l1bziEeDwPmcndcjcWq6YCoQ61rXoX0KxLRteWIiiSFuTLz5hpEMnABgwcIrpE0s
+         zr4qHdBAyBIsZqdZn4seGzy+YqYWx+qvyg9iwlKAaXDvibqzf4CHAH/q4UgwBRjKjYJx
+         R57A==
+X-Gm-Message-State: AOAM532d6X3DS4RVcdK+4LQ9+iysYT/5M1fqi5qjxezijx7Ih4vkfeI4
+        O2d3NHjsWbnJuSxpaRdRlDZNIFORgxVYP2q9QVHdD12zufNWCLF/BfvIdfZ/AtBqpPE2fGUqCv4
+        zBG9XpfOIO+glWIYvFuZXrg==
+X-Received: by 2002:a1c:9d85:: with SMTP id g127mr10659847wme.118.1607196729258;
+        Sat, 05 Dec 2020 11:32:09 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxTZFGnBU4zJ3vNUAlp7Lk23tATWWb8vX7NoCe2Rd1SBGhMQ9NKv0j2hhmXa23rEif7aIjTgQ==
+X-Received: by 2002:a1c:9d85:: with SMTP id g127mr10659834wme.118.1607196729032;
+        Sat, 05 Dec 2020 11:32:09 -0800 (PST)
+Received: from redhat.com (bzq-79-176-44-197.red.bezeqint.net. [79.176.44.197])
+        by smtp.gmail.com with ESMTPSA id b14sm8512163wrq.47.2020.12.05.11.32.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Dec 2020 11:32:08 -0800 (PST)
+Date:   Sat, 5 Dec 2020 14:32:04 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-riscv@lists.infradead.org, stefanha@redhat.com,
+        msuchanek@suse.de
+Subject: Re: [PATCH v2 2/2] drivers: gpio: add virtio-gpio guest driver
+Message-ID: <20201205142218-mutt-send-email-mst@kernel.org>
+References: <20201203191135.21576-1-info@metux.net>
+ <20201203191135.21576-2-info@metux.net>
+ <8209ce55-a4aa-f256-b9b9-f7eb3cac877b@redhat.com>
+ <96aca1e6-2d5a-deb1-2444-88f938c7a9de@metux.net>
 MIME-Version: 1.0
-In-Reply-To: <d9aec92299e5f427aaf5c5e892194e27006f8bbc.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <96aca1e6-2d5a-deb1-2444-88f938c7a9de@metux.net>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 12/5/20 2:43 AM, Damien Le Moal wrote:
-> Hi Stephen,
+On Sat, Dec 05, 2020 at 08:59:55AM +0100, Enrico Weigelt, metux IT consult wrote:
+> On 04.12.20 04:35, Jason Wang wrote:
 > 
-> Thank you for the review. I will address all your comments.
-> I just have a few questions below.
+> >> --- a/drivers/gpio/Kconfig
+> >> +++ b/drivers/gpio/Kconfig
+> >> @@ -1615,6 +1615,15 @@ config GPIO_MOCKUP
+> >>         tools/testing/selftests/gpio/gpio-mockup.sh. Reference the
+> >> usage in
+> >>         it.
+> >>   +config GPIO_VIRTIO
+> >> +    tristate "VirtIO GPIO support"
+> >> +    depends on VIRTIO
+> > 
+> > 
+> > Let's use select, since there's no prompt for VIRTIO and it doesn't have
+> > any dependencies.
 > 
-> On Fri, 2020-12-04 at 22:19 -0800, Stephen Boyd wrote:
->> Quoting Damien Le Moal (2020-12-01 19:24:50)
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 2daa6ee673f7..3da9a7a02f61 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -3822,6 +3822,22 @@ W:       https://github.com/Cascoda/ca8210-linux.git
->>>   F:     Documentation/devicetree/bindings/net/ieee802154/ca8210.txt
->>>   F:     drivers/net/ieee802154/ca8210.c
->>>   
->>>
->>>
->>>
->>> +CANAAN/KENDRYTE K210 SOC CLOCK DRIVER
->>> +M:     Damien Le Moal <damien.lemoal@wdc.com>
->>> +L:     linux-riscv@lists.infradead.org
->>> +L:     linux-clk@vger.kernel.org (clock driver)
->>
->> Is this needed? I think we cover all of drivers/clk/ and bindings/clock
->> already.
+> whoops, it's not that simple:
 > 
-> I was not sure about that so I added the entry. Will remove it.
+> make: Entering directory '/home/nekrad/src/apu2-dev/pkg/kernel.apu2.git'
+> make[1]: Entering directory
+> '/home/nekrad/src/dk/DistroKit/platform-x86_64/build-target/linux-5.8.9-build'
+>   GEN     Makefile
+> drivers/gpu/drm/Kconfig:74:error: recursive dependency detected!
+> drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_HELPER is selected by
+> DRM_VIRTIO_GPU
+> drivers/gpu/drm/virtio/Kconfig:2:	symbol DRM_VIRTIO_GPU depends on VIRTIO
+> drivers/virtio/Kconfig:2:	symbol VIRTIO is selected by GPIO_VIRTIO
+> drivers/gpio/Kconfig:1618:	symbol GPIO_VIRTIO depends on GPIOLIB
+> drivers/gpio/Kconfig:14:	symbol GPIOLIB is selected by I2C_MUX_LTC4306
+> drivers/i2c/muxes/Kconfig:47:	symbol I2C_MUX_LTC4306 depends on I2C
+> drivers/i2c/Kconfig:8:	symbol I2C is selected by FB_DDC
+> drivers/video/fbdev/Kconfig:63:	symbol FB_DDC depends on FB
+> drivers/video/fbdev/Kconfig:12:	symbol FB is selected by DRM_KMS_FB_HELPER
+> drivers/gpu/drm/Kconfig:80:	symbol DRM_KMS_FB_HELPER depends on
+> DRM_KMS_HELPER
 > 
->>
->>> +S:     Maintained
->>> +F:     Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
->>> +F:     drivers/clk/clk-k210.c
->>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
->>> index 88ac0d1a5da4..f2f9633087d1 100644
->>> --- a/arch/riscv/Kconfig.socs
->>> +++ b/arch/riscv/Kconfig.socs
->>> @@ -29,6 +29,8 @@ config SOC_CANAAN
->>>          select SERIAL_SIFIVE if TTY
->>>          select SERIAL_SIFIVE_CONSOLE if TTY
->>>          select SIFIVE_PLIC
->>> +       select SOC_K210_SYSCTL
->>> +       select CLK_K210
->>
->> Any reason to do this vs. just make it the default?
+> Seems that we can only depend on or select some symbol - we run into
+> huge trouble if thats mixed. Just changed DRM_VIRTIO_GPU to just select
+> VIRIO instead of depending on it, and now it works.
 > 
-> I do not understand here... Just selecting the drivers needed for the SoC here.
-> Is there any other way of doing this ?
-> 
-> [...]
->>> +
->>> +       while (true) {
->>> +               reg = readl(pll->lock);
->>> +               if ((reg & mask) == mask)
->>> +                       break;
->>> +
->>> +               reg |= BIT(pll->lock_shift + K210_PLL_CLEAR_SLIP);
->>> +               writel(reg, pll->lock);
->>
->> Is this readl_poll_timeout?
-> 
-> Oh. Yes, it is. I did not know about this function. Will change the code to use
-> it.
+> I've posted another patch for fixing drivers/gpu/drm/virtio/Kconfig
+> to use 'select' instead of 'depends on'.
 
-FWIW the timeout could be incorrect since we might be configuring a
-parent of ACLK. And realistically the only way this fails is if a user
-has edited this file and put in invalid PLL parameters. I don't think
-you gain much by adding a timeout.
+It seems a bit of a mess, at this point I'm not entirely sure when
+should drivers select VIRTIO and when depend on it.
 
->>
->>> +       }
->>> +}
->>> +
->>> +static bool k210_pll_hw_is_enabled(struct k210_pll *pll)
->>> +{
->>> +       u32 reg = readl(pll->reg);
->>> +       u32 mask = K210_PLL_PWRD | K210_PLL_EN;
->>> +
->>> +       if (reg & K210_PLL_RESET)
->>> +               return false;
->>> +
->>> +       return (reg & mask) == mask;
->>> +}
->>> +
->>> +static void k210_pll_enable_hw(struct k210_pll *pll)
->>> +{
->>> +       struct k210_pll_cfg *pll_cfg = &k210_plls_cfg[pll->id];
->>> +       unsigned long flags;
->>> +       u32 reg;
->>> +
->>> +       spin_lock_irqsave(&kcl->clk_lock, flags);
->>> +
->>> +       if (k210_pll_hw_is_enabled(pll))
->>> +               goto unlock;
->>> +
->>> +       if (pll->id == K210_PLL0) {
->>> +               /* Re-parent aclk to IN0 to keep the CPUs running */
->>> +               k210_aclk_set_selector(0);
->>> +       }
->>> +
->>> +       /* Set factors */
->>> +       reg = readl(pll->reg);
->>> +       reg &= ~GENMASK(19, 0);
->>> +       reg |= FIELD_PREP(K210_PLL_CLKR, pll_cfg->r);
->>> +       reg |= FIELD_PREP(K210_PLL_CLKF, pll_cfg->f);
->>> +       reg |= FIELD_PREP(K210_PLL_CLKOD, pll_cfg->od);
->>> +       reg |= FIELD_PREP(K210_PLL_BWADJ, pll_cfg->bwadj);
->>> +       reg |= K210_PLL_PWRD;
->>> +       writel(reg, pll->reg);
->>> +
->>> +       /* Ensure reset is low before asserting it */
->>> +       reg &= ~K210_PLL_RESET;
->>> +       writel(reg, pll->reg);
->>> +       reg |= K210_PLL_RESET;
->>> +       writel(reg, pll->reg);
->>> +       nop();
->>> +       nop();
->>
->> Are these nops needed for some reason? Any comment to add here? It's
->> basically non-portable code and hopefully nothing is inserted into that
->> writel function that shouldn't be there.
-> 
-> No clue... They are "magic" nops that are present in the K210 SDK from
-> Kendryte. I copied that, but do not actually know if they are really needed. I
-> am working without any specs for the hardware: the Kendryte SDK is my main
-> source of information here. I will try to remove them or just replace this with
-> a delay() call a nd see what happens.
+The text near it says:
 
-Basically any delay should work as long as it takes more than 2
-instructions ;) Of course, anything longer than that just delays startup
-for no reason.
+# SPDX-License-Identifier: GPL-2.0-only
+config VIRTIO
+        tristate
+        help
+          This option is selected by any driver which implements the virtio
+          bus, such as CONFIG_VIRTIO_PCI, CONFIG_VIRTIO_MMIO, CONFIG_RPMSG
+          or CONFIG_S390_GUEST.
 
---Sean
+Which seems clear enough and would indicate drivers for devices *behind*
+the bus should not select VIRTIO and thus presumably should "depend on" it.
+This is violated in virtio console and virtio fs drivers.
 
-> 
-> [...]
->>> +static int k210_aclk_set_parent(struct clk_hw *hw, u8 index)
->>> +{
->>> +       if (WARN_ON(index > 1))
->>
->> Is this possible? What am I going to do as a user if this happens?
-> 
-> No, it is not possible. Will remove this. I could put a BUG_ON(), but I am not
-> a fan this extreme.
-> 
-> [...]
->>> +       /*
->>> +        * in0 is the system base fixed-rate 26MHz oscillator which
->>> +        * should already be defined by the device tree. If it is not,
->>> +        * create it here.
->>
->> Are there old DTBs that don't have this? Sadface.
-> 
-> No, not any old DTB. Will remove that.
-> 
->>
->>> +        */
->>> +       in0_clk = of_clk_get(np, 0);
->>> +       if (IS_ERR(in0_clk)) {
->>> +               pr_warn("%pOFP: in0 oscillator not found\n", np);
->>> +               hws[K210_CLK_IN0] =
->>> +                       clk_hw_register_fixed_rate(NULL, "in0", NULL,
->>> +                                                  0, K210_IN0_RATE);
->>> +       } else {
->>> +               hws[K210_CLK_IN0] = __clk_get_hw(in0_clk);
->>> +       }
->>> +       if (IS_ERR(hws[K210_CLK_IN0])) {
->>> +               pr_err("%pOFP: failed to get base oscillator\n", np);
->>> +               goto err;
->>> +       }
->>> +
->>> +       in0 = clk_hw_get_name(hws[K210_CLK_IN0]);
->>> +       aclk_parents[0] = in0;
->>> +       pll_parents[0] = in0;
->>> +       mux_parents[0] = in0;
->>
->> Can we use the new way of specifying clk parents so that we don't have
->> to use __clk_get_hw(), of_clk_get(), and clk_hw_get_name()? Hopefully
->> the core can handl that all instead of this driver.
-> 
-> Not sure what new way of specifying the parent you are referring to here.
-> clk_hw_set_parent() ?
-> 
->>
->>> +
->>> +       /* PLLs */
->>> +       hws[K210_CLK_PLL0] =
->>> +               k210_register_pll(K210_PLL0, "pll0", pll_parents, 1, 0);
->>> +       hws[K210_CLK_PLL1] =
->>> +               k210_register_pll(K210_PLL1, "pll1", pll_parents, 1, 0);
->>> +       hws[K210_CLK_PLL2] =
->>> +               k210_register_pll(K210_PLL2, "pll2", pll_parents, 3, 0);
->>> +
->>> +       /* aclk: muxed of in0 and pll0_d, no gate */
->>> +       hws[K210_CLK_ACLK] = k210_register_aclk();
->>> +
->>> +       /*
->>> +        * Clocks with aclk as source: the CPU clock is obviously critical.
->>> +        * So is the CLINT clock as the scheduler clocksource.
->>> +        */
->>> +       hws[K210_CLK_CPU] =
->>> +               k210_register_clk(K210_CLK_CPU, "cpu", "aclk", CLK_IS_CRITICAL);
->>> +       hws[K210_CLK_CLINT] =
->>> +               clk_hw_register_fixed_factor(NULL, "clint", "aclk",
->>> +                                            CLK_IS_CRITICAL, 1, 50);
->>
->> Is anyone getting these clks? It's nice and all to model things in the
->> clk framework but if they never have a consumer then it is sort of
->> useless and just wastes memory and causes more overhead.
-> 
-> The CPU and SRAM clocks do not have any consumer, so I could remove them (just
-> enable the HW but not represent them as clocks in the driver). There is no
-> direct consumer of ACLK but it is the parent of multiple clocks, including the
-> SRAM clocks. So it needs to be represented as a clock and kept alive even if
-> all the peripheral drivers needing it are disabled. Otherwise, the system just
-> stops (SRAM accesses hang).
-> 
-> [...]
->>> +       ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, kcl->clk_data);
->>> +       if (ret)
->>> +               pr_err("%pOFP: add clock provider failed %d\n", np, ret);
->>> +       else
->>> +               pr_info("%pOFP: CPU running at %lu MHz\n",
->>
->> Is this important? Is there a CPUfreq driver that runs and tells us the
->> boot CPU frequency instead? Doesn't feel like we care in the clk driver
->> about this.
-> 
-> There is no CPU freq driver that gives this frequency that I know of. That is
-> why I added the message since the driver basically just comes up using the
-> default HW settings for the SoC. CPU freq speed can be changed though by
-> increasing the PLL freq. Just not supporting this for now as it is tricky to
-> do: the SRAM clocks depend on aclk and PLL1 and if these are not the same
-> value, the system hangs (most likely because we end up with the sram banks
-> running at different speeds, which the SoC cache does not like).
-> 
-> [...]
->>> +CLK_OF_DECLARE_DRIVER(k210_clk, "canaan,k210-clk", k210_clk_init);
->>
->> Is this needed or can this just be a plain platform driver? If something
->> is needed early for a clocksource or clockevent then the driver can be
->> split to register those few clks early from this hook and then register
->> the rest later when the platform device probes. That's what
->> CLK_OF_DECLARE_DRIVER is for. A DECLARE_DRIVER without a platform driver
->> is incorrect.
-> 
-> I think I can clean this up: aclk and clint clocks are needed early but others
-> can likely be deferred. Will fix this up.
-> 
-> Thanks !
-> 
+For console it says:
+
+commit 9f30eb29c514589e16f2999ea070598583d1f6ec
+Author: Michal Suchanek <msuchanek@suse.de>
+Date:   Mon Aug 31 18:58:50 2020 +0200
+
+    char: virtio: Select VIRTIO from VIRTIO_CONSOLE.
+    
+    Make it possible to have virtio console built-in when
+    other virtio drivers are modular.
+    
+    Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+    Reviewed-by: Amit Shah <amit@kernel.org>
+    Link: https://lore.kernel.org/r/20200831165850.26163-1-msuchanek@suse.de
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+which seems kind of bogus - why do we care about allowing a builtin
+virtio console driver if the pci virtio bus driver is a module?
+There won't be any devices on the bus to attach to ...
+
+And for virtio fs it was like this from the beginning.
+
+I am inclined to fix console and virtio fs to depend on VIRTIO:
+select is harder to use correctly ...
+
+Jason?
+
+
+> -- 
+> ---
+> Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+> werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+> GPG/PGP-Schlüssel zu.
+> ---
+> Enrico Weigelt, metux IT consult
+> Free software and Linux embedded engineering
+> info@metux.net -- +49-151-27565287
 
