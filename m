@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CCFC4361B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CECC433FE
 	for <linux-gpio@archiver.kernel.org>; Sun,  6 Dec 2020 10:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 507F42310B
+	by mail.kernel.org (Postfix) with ESMTP id 38EC222D2C
 	for <linux-gpio@archiver.kernel.org>; Sun,  6 Dec 2020 10:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725767AbgLFKwl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726011AbgLFKwl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sun, 6 Dec 2020 05:52:41 -0500
-Received: from mga11.intel.com ([192.55.52.93]:64445 "EHLO mga11.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:39235 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbgLFKwl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 6 Dec 2020 05:52:41 -0500
-IronPort-SDR: 3Jsb8Qx+n+qBe/9SZ6zSL1oIydT3soI9iJOxALzUFZdkBYNt5s8NSqO5Xnh6iTG51MXHwB/BQC
- ADGYQyZaxd0g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9826"; a="170067274"
+        id S1725767AbgLFKwk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 6 Dec 2020 05:52:40 -0500
+IronPort-SDR: WyTNx4sqosp+YmPVk4YXTJT1kC8CZlIHhd1Qh2dXEnFguLSOfh1zhyE+tUi2xJts4aAZf2dBZx
+ aZfVxkr5UyHw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9826"; a="191837167"
 X-IronPort-AV: E=Sophos;i="5.78,397,1599548400"; 
-   d="scan'208";a="170067274"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2020 02:52:00 -0800
-IronPort-SDR: Wsn8a7cSHdUiAi26u4mXMh2S8qYtX5DdzGcrG8CazyZdDgURL30cWTmdEFda9Ec7qY9cpEJN0p
- Lqd/bm7gEz9Q==
+   d="scan'208";a="191837167"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2020 02:52:00 -0800
+IronPort-SDR: Wh3KrD5LpRFJueSkwCIYQFwHZtFy+od5LvSIY1DZuRbd/S4+2HsmD5IETjoEAfm2TCTbUJbQfL
+ xmc9r8afHmFg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.78,397,1599548400"; 
-   d="scan'208";a="336876440"
+   d="scan'208";a="539361924"
 Received: from lkp-server01.sh.intel.com (HELO 47754f1311fc) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 06 Dec 2020 02:51:59 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 06 Dec 2020 02:51:59 -0800
 Received: from kbuild by 47754f1311fc with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1klre2-0000hH-RB; Sun, 06 Dec 2020 10:51:58 +0000
-Date:   Sun, 06 Dec 2020 18:51:46 +0800
+        id 1klre2-0000hK-Td; Sun, 06 Dec 2020 10:51:58 +0000
+Date:   Sun, 06 Dec 2020 18:51:41 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:fixes] BUILD SUCCESS
- c3c882898d07157a1b083aaaddf0e8346373d111
-Message-ID: <5fccb7c2.35Y90qWeHOQeyI9h%lkp@intel.com>
+Subject: [pinctrl:devel] BUILD SUCCESS
+ 6e261d1090d6db0e9dd22978b6f38a2c58558a3f
+Message-ID: <5fccb7bd.H71oUcsciG7hYQik%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,10 +50,10 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  fixes
-branch HEAD: c3c882898d07157a1b083aaaddf0e8346373d111  pinctrl: aspeed: Fix GPIO requests on pass-through banks
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  devel
+branch HEAD: 6e261d1090d6db0e9dd22978b6f38a2c58558a3f  pinctrl: qcom: Add sm8250 lpass lpi pinctrl driver
 
-elapsed time: 725m
+elapsed time: 724m
 
 configs tested: 123
 configs skipped: 2
