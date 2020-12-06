@@ -2,46 +2,47 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C085C47434
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4550C2BB3F
 	for <linux-gpio@archiver.kernel.org>; Sun,  6 Dec 2020 10:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62B2023142
+	by mail.kernel.org (Postfix) with ESMTP id 8B6682312B
 	for <linux-gpio@archiver.kernel.org>; Sun,  6 Dec 2020 10:53:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbgLFKwr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 6 Dec 2020 05:52:47 -0500
-Received: from mga06.intel.com ([134.134.136.31]:4067 "EHLO mga06.intel.com"
+        id S1727330AbgLFKw4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 6 Dec 2020 05:52:56 -0500
+Received: from mga01.intel.com ([192.55.52.88]:39235 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbgLFKwl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 6 Dec 2020 05:52:41 -0500
-IronPort-SDR: WQjQFpSuNWTans77SEvGMNDaNyINCo9M6GVb7SnKwE5minETbPw6dA8O2Na6J5h79S8+2MvLWt
- xwLVgT57rDsQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9826"; a="235178658"
+        id S1725822AbgLFKw4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 6 Dec 2020 05:52:56 -0500
+IronPort-SDR: khzinvSgw4AYpCgXKG6r0M/TWxzfWBsUGQbOusfWVtzujl8V8e6lrBarGq1/5dAbJTMBL4hmCS
+ OPZaEOBXOaAw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9826"; a="191837168"
 X-IronPort-AV: E=Sophos;i="5.78,397,1599548400"; 
-   d="scan'208";a="235178658"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2020 02:52:00 -0800
-IronPort-SDR: ytQ+8EaRoYu5LH0HBboA7CKvjria86gEl05x+euNhIz++hfwTZmKeGBxVnOYRWv4sgwiz5eM6f
- 5SVRJV/iqVmA==
+   d="scan'208";a="191837168"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2020 02:52:00 -0800
+IronPort-SDR: R4Fg/dqpORdVFBCYmXJamro+GcupYWCxjT4J6X9/rc0LNISdtIMPa7k9xxXlKXd1Lt90Nxxq7T
+ R5McMRGVjRUA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.78,397,1599548400"; 
-   d="scan'208";a="347120970"
+   d="scan'208";a="362723975"
 Received: from lkp-server01.sh.intel.com (HELO 47754f1311fc) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 06 Dec 2020 02:51:59 -0800
+  by orsmga008.jf.intel.com with ESMTP; 06 Dec 2020 02:51:59 -0800
 Received: from kbuild by 47754f1311fc with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1klre3-0000hQ-0V; Sun, 06 Dec 2020 10:51:59 +0000
-Date:   Sun, 06 Dec 2020 18:51:44 +0800
+        id 1klre2-0000hN-VJ; Sun, 06 Dec 2020 10:51:58 +0000
+Date:   Sun, 06 Dec 2020 18:51:43 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-debugfs-todo] BUILD SUCCESS
- 0dc4d47b86c841d28148ab3897a81d25eb617a48
-Message-ID: <5fccb7c0.QRRDZD6z17OwWILZ%lkp@intel.com>
+Subject: [gpio:fixes] BUILD SUCCESS
+ 77c12bf3839479c3963433043e2051d738f3ab63
+Message-ID: <5fccb7bf.u4up3Od+L0R/DuJ0%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,8 +51,8 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-debugfs-todo
-branch HEAD: 0dc4d47b86c841d28148ab3897a81d25eb617a48  Documentation: gpio: fix typo and unclear legacy API section
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  fixes
+branch HEAD: 77c12bf3839479c3963433043e2051d738f3ab63  Merge tag 'gpio-fixes-for-v5.10-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into fixes
 
 elapsed time: 725m
 
@@ -78,12 +79,17 @@ microblaze                          defconfig
 sh                     sh7710voipgw_defconfig
 arm                          pxa910_defconfig
 sh                   rts7751r2dplus_defconfig
-powerpc                     pq2fads_defconfig
-mips                          malta_defconfig
-powerpc                         wii_defconfig
-m68k                            mac_defconfig
-powerpc                     tqm8540_defconfig
-powerpc                     mpc512x_defconfig
+riscv                    nommu_k210_defconfig
+sh                 kfr2r09-romimage_defconfig
+mips                        maltaup_defconfig
+csky                                defconfig
+s390                             alldefconfig
+sh                            hp6xx_defconfig
+sh                           se7750_defconfig
+powerpc                    adder875_defconfig
+sh                         apsh4a3a_defconfig
+arm                          pcm027_defconfig
+arm                          badge4_defconfig
 sh                           se7705_defconfig
 arm                          iop32x_defconfig
 arc                              alldefconfig
@@ -93,15 +99,12 @@ powerpc                     taishan_defconfig
 arm                       versatile_defconfig
 arm                        magician_defconfig
 m68k                          multi_defconfig
-powerpc                     akebono_defconfig
-openrisc                         alldefconfig
-sh                        edosk7760_defconfig
-powerpc                   lite5200b_defconfig
-powerpc                      katmai_defconfig
-arm                  colibri_pxa270_defconfig
+powerpc                     sbc8548_defconfig
+powerpc                   currituck_defconfig
+powerpc                 canyonlands_defconfig
+sh                             shx3_defconfig
 arm                       aspeed_g4_defconfig
 sh                         ap325rxa_defconfig
-powerpc                    adder875_defconfig
 sh                            titan_defconfig
 mips                         tb0226_defconfig
 powerpc                      makalu_defconfig
@@ -110,11 +113,11 @@ sh                               j2_defconfig
 ia64                          tiger_defconfig
 arm                        mini2440_defconfig
 arm                           spitz_defconfig
-sh                           se7750_defconfig
-sh                 kfr2r09-romimage_defconfig
-mips                           jazz_defconfig
-um                             i386_defconfig
-arm                         mv78xx0_defconfig
+arm                         ebsa110_defconfig
+m68k                       m5208evb_defconfig
+m68k                        m5407c3_defconfig
+arm                         assabet_defconfig
+powerpc                     stx_gp3_defconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                             allyesconfig
@@ -127,7 +130,6 @@ nds32                             allnoconfig
 c6x                              allyesconfig
 nds32                               defconfig
 nios2                            allyesconfig
-csky                                defconfig
 alpha                               defconfig
 alpha                            allyesconfig
 xtensa                           allyesconfig
@@ -166,7 +168,6 @@ i386                 randconfig-a011-20201206
 i386                 randconfig-a015-20201206
 i386                 randconfig-a012-20201206
 i386                 randconfig-a016-20201206
-riscv                    nommu_k210_defconfig
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
 riscv                             allnoconfig
