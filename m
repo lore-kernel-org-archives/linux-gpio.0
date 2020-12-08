@@ -2,341 +2,116 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1,WEIRD_QUOTING autolearn=unavailable
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A4FC4167B
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Dec 2020 23:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A16C4361B
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 00:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DDA923A00
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Dec 2020 23:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1B6A23A1E
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 00:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726158AbgLGXEP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Dec 2020 18:04:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35944 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgLGXEP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2020 18:04:15 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B10D0C061749;
-        Mon,  7 Dec 2020 15:03:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=q1rWMd+0bmuLKMjmUfpeFhBnzWtZkmB1pVE5t2ouoEQ=; b=MPuvzIQAkYZo6NKkowA47Hz/4i
-        uGOYEbJCp0j2GmVrI/DHQ+6CRRmfjG/DEiCujZF0qcueLhGm8c9la1qJQfKWHjsTlozAcKiz4CNnU
-        4a1qFs78PXt1/rlHT0VS9X51LDzJNELHwEdNyasUSfV2AX+P/ULj10FwXNC3ZIUOxqHcbl+KyRfOQ
-        5IRLWUtQLjm3weYn1wTd/t9Iye1MmaTEk9pJLP+4IZhM/52+V/wyIPWtPWsO0UCMPnKJtB9GYtrMX
-        7tdaaEhvgCx/b5jTlNoDc+ROh8F1oEXm+Pw2ghAUx4qYt+Km7r6GmADIjOBxUhpgkr2uSDh8OoO+L
-        kj3gP0Xg==;
-Received: from [2601:1c0:6280:3f0::1494]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kmPXX-0000yz-9N; Mon, 07 Dec 2020 23:03:31 +0000
-Subject: Re: [PATCH v3] drivers: gpio: add virtio-gpio guest driver
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org
-Cc:     corbet@lwn.net, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, mst@redhat.com, jasowang@redhat.com,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-riscv@lists.infradead.org
-References: <20201207204838.21406-1-info@metux.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ff4357f3-93f1-cd86-a1da-01dcb144e52b@infradead.org>
-Date:   Mon, 7 Dec 2020 15:03:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
-MIME-Version: 1.0
-In-Reply-To: <20201207204838.21406-1-info@metux.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728505AbgLHA5l convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Dec 2020 19:57:41 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52889 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728499AbgLHA5l (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2020 19:57:41 -0500
+Received: from mail-pl1-f197.google.com ([209.85.214.197])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1kmRJK-0004Z9-6f
+        for linux-gpio@vger.kernel.org; Tue, 08 Dec 2020 00:56:58 +0000
+Received: by mail-pl1-f197.google.com with SMTP id e11so5745846pld.0
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Dec 2020 16:56:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=WTDz8bK/RWXRCRmsA/3MNXxPAebwOarBfZw4aRZ3Qm0=;
+        b=IHG6VP/V5Le78HrtEzGSBcYrwBob6ZsNSrwRBDsm7MzhSSmPsNyexHymprZis47skG
+         Sdr8gywmOI0Gh+s7k9r7mUiDa8kzmom0x/eTCcErwh6y+t7XjPOTPtkyE4fwxV+lRN/y
+         5OCJDXVBwGIWze3LlGXeSb0fmPMZnamskif7CWcYBYRHLPZ/fDJY69UEFoxLQ9rcaSew
+         kC6G60EQ+EHjPMVq6EL90xzMEa6gFsRVPWWssamF8Pg9ljrKkFgoNIYYso7ol0rfkdGq
+         MT2i9GngxMEm8uJ3eC7UosUvUX4urikQHWETvlDU6hY5dTsEBnx4utNcv4ZbLv1bc076
+         v0jw==
+X-Gm-Message-State: AOAM533Kivv/gFKz759YH9gAeXQV9Q+mUWb7C7RZXqQwKoAnzuuiVZ+f
+        3CBi8FGiL51M+J9VKhsqocH13+8042yRA/sCpC4j/dOFx4OirLPpFHgcT9riKJSkf2cL3Zu6tdS
+        b1NR56dcm9vJVMSYaHm+FpVafXp4gEYLsNearBwI=
+X-Received: by 2002:aa7:9606:0:b029:19d:c837:d69b with SMTP id q6-20020aa796060000b029019dc837d69bmr15744544pfg.46.1607389016434;
+        Mon, 07 Dec 2020 16:56:56 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxzwzQhD3uhKSAfTnB99/1hdo+0uV0XKuJ+YJfuA5MtWxjd5vgoYkeAHf2GfB45EZsvPNO1hw==
+X-Received: by 2002:aa7:9606:0:b029:19d:c837:d69b with SMTP id q6-20020aa796060000b029019dc837d69bmr15744535pfg.46.1607389016069;
+        Mon, 07 Dec 2020 16:56:56 -0800 (PST)
+Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id p16sm584368pju.47.2020.12.07.16.56.53
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Dec 2020 16:56:55 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.20.0.2.21\))
+Subject: Re: [PATCH v1] pinctrl: intel: Actually disable Tx and Rx buffers on
+ GPIO request
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20201207175940.10631-1-andriy.shevchenko@linux.intel.com>
+Date:   Tue, 8 Dec 2020 08:56:51 +0800
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <B9765E09-0F9C-4E1D-A7F8-3D09B81EF4CD@canonical.com>
+References: <20201207175940.10631-1-andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+X-Mailer: Apple Mail (2.3654.20.0.2.21)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 12/7/20 12:48 PM, Enrico Weigelt, metux IT consult wrote:
-> Introducing new GPIO driver for virtual GPIO devices via virtio.
 
-  Introduce
 
+> On Dec 8, 2020, at 01:59, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> The driver allows routing GPIO control into VM guests, eg. brigding
-> virtual gpios to specific host gpios, or attaching simulators for
-> automatic application testing.
+> Mistakenly the buffers (input and output) become together enabled for a little
+> period of time during GPIO request. This is problematic, because instead of
+> initial motive to disable them in the commit af7e3eeb84e2
+> ("pinctrl: intel: Disable input and output buffer when switching to GPIO"),
+> the driven value on the pin, which might be used as an IRQ line, brings
+> firmware of some touch pads in an awkward state that needs a full power off
+> to recover. Fix this by, as stated in a culprit commit, disabling the buffers.
 > 
+> Fixes: af7e3eeb84e2 ("pinctrl: intel: Disable input and output buffer when switching to GPIO")
+> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=210497
+> Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-These ...
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-> Changes v3:
->     * spec: fixed type names
->     * spec: replace "host"/"guest" by "device"/"cpu"
->     * spec: change terminology from "events" to "messages"
->     * driver: fixed missing can_sleep flag
->     * driver: select VIRTIO instead of depends on
->     * driver: drop references to qemu in Kconfig
->     * driver: fixed incomplete error handling and possible deadlock
->               in case of sending buf failed
->     * driver: dropped unneeded WARN_ON
->     * driver: fixed retval of virtio_gpio_xmit()
->     * driver: dynamically allocate virtio buffers
->     * driver: added locking on gpio operations
->     * driver: added irq_chip functions
-> 
-> Changes v2:
->     * uapi: fixed header license
->     * driver: sorted include's
->     * driver: fixed formatting
->     * driver: fixed unneeded devm allocation - plain kzalloc/kfree is enough
->     * driver: fixed missing devm_kzalloc fail check
->     * driver: use devm_kcalloc() for array allocation
->     * spec: added virtio-gpio protocol specification
-
-... Vx change descriptions go after the following "---" line.
-I usually put them before the diffstat, with one blank line
-separating them.
-
-> 
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 > ---
->  Documentation/gpio/virtio-gpio.rst | 176 +++++++++++++++++
->  MAINTAINERS                        |   6 +
->  drivers/gpio/Kconfig               |   7 +
->  drivers/gpio/Makefile              |   1 +
->  drivers/gpio/gpio-virtio.c         | 381 +++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/virtio_gpio.h   |  39 ++++
->  include/uapi/linux/virtio_ids.h    |   1 +
->  7 files changed, 611 insertions(+)
->  create mode 100644 Documentation/gpio/virtio-gpio.rst
->  create mode 100644 drivers/gpio/gpio-virtio.c
->  create mode 100644 include/uapi/linux/virtio_gpio.h
+> drivers/pinctrl/intel/pinctrl-intel.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/gpio/virtio-gpio.rst b/Documentation/gpio/virtio-gpio.rst
-> new file mode 100644
-> index 000000000000..e7bf01ec1ce7
-> --- /dev/null
-> +++ b/Documentation/gpio/virtio-gpio.rst
-> @@ -0,0 +1,176 @@
-> +"""""""""""""""""
-> +Virtio-GPIO protocol specification
-> +"""""""""""""""""
-> +...........
-> +Specification for virtio-based virtiual GPIO devices
-
-                                  virtual
-although it seems redundant.
-
-> +...........
-> +
-> ++------------
-> ++Version_ 1.0
-> ++------------
-> +
-> +===================
-> +General
-> +===================
-> +
-> +The virtio-gpio protocol provides access to general purpose IO devices
-> +to virtual machine guests. These virtualized GPIOs could be either provided
-
-   in  (?)
-
-> +by some simulator (eg. virtual HIL), routed to some external device or
-
-                     (e.g.
-
-> +routed to real GPIOs on the host (eg. virtualized embedded applications).
-
-                                    (e.g.
-
-> +
-> +Instead of simulating some existing real GPIO chip within an VMM, this
-
-                                                      within a
-and why not just "VM"?
-
-> +protocol provides an hardware independent interface between host and guest
-
-                     a hardware
-
-> +that solely relies on an active virtio connection (no matter which transport
-> +actually used), no other buses or additional platform driver logic required.
-> +
-> +===================
-> +Protocol layout
-> +===================
-> +
-> +----------------------
-> +Configuration space
-> +----------------------
-> +
-> ++--------+----------+-------------------------------+
-> +| Offset | Type     | Description                   |
-> ++========+==========+===============================+
-> +| 0x00   | u8       | version                       |
-> ++--------+----------+-------------------------------+
-> +| 0x02   | u16      | number of GPIO lines          |
-> ++--------+----------+-------------------------------+
-> +| 0x04   | u32      | size of gpio name block       |
-> ++--------+----------+-------------------------------+
-> +| 0x20   | char[32] | device name (0-terminated)    |
-> ++--------+----------+-------------------------------+
-> +| 0x40   | char[]   | line names block              |
-> ++--------+----------+-------------------------------+
-> +
-> +- for version field currently only value 1 supported.
-> +- the line names block holds a stream of zero-terminated strings,
-> +  holding the individual line names.
-> +- unspecified fields are reserved for future use and should be zero.
-> +
-> +------------------------
-> +Virtqueues and messages:
-> +------------------------
-> +
-> +- Queue #0: transmission from device to cpu
-
-                                           CPU
-
-> +- Queue #1: transmission from cpu to device
-
-                                 CPU
-
-> +
-> +The queues transport messages of the struct virtio_gpio_msg:
-> +
-> +Message format:
-> +---------------
-> +
-> ++--------+----------+---------------+
-> +| Offset | Type     | Description   |
-> ++========+==========+===============+
-> +| 0x00   | uint16   | event type    |
-> ++--------+----------+---------------+
-> +| 0x02   | uint16   | line id       |
-> ++--------+----------+---------------+
-> +| 0x04   | uint32   | value         |
-> ++--------+----------+---------------+
-> +
-> +Message types:
-> +--------------
-
-Do the Message types go into the "event type" field above?
-Please clarify.
-
-> +
-> ++-------+----------------------------------------+-----------------------------+
-> +| Code  | Symbol                                |                             |
-> ++=======+========================================+=============================+
-> +| 0x01  | VIRTIO_GPIO_MSG_GUEST_REQUEST          | request gpio line           |
-> ++-------+---------------------------------------+-----------------------------+
-> +| 0x02  | VIRTIO_GPIO_MSG_GUEST_DIRECTION_INPUT  | set direction to input      |
-> ++-------+---------------------------------------+-----------------------------+
-> +| 0x03  | VIRTIO_GPIO_MSG_GUEST_DIRECTION_OUTPUT | set direction to output     |
-> ++-------+---------------------------------------+-----------------------------+
-> +| 0x04  | VIRTIO_GPIO_MSG_GUEST_GET_DIRECTION    | read current direction      |
-> ++-------+---------------------------------------+-----------------------------+
-> +| 0x05  | VIRTIO_GPIO_MSG_GUEST_GET_VALUE        | read current level          |
-> ++-------+---------------------------------------+-----------------------------+
-> +| 0x06  | VIRTIO_GPIO_MSG_GUEST_SET_VALUE        | set current (out) level     |
-> ++-------+---------------------------------------+-----------------------------+
-> +| 0x11  | VIRTIO_GPIO_MSG_HOST_LEVEL             | state changed (host->guest) |
-> ++-------+----------------+-----------------------+-----------------------------+
-> +
-> +----------------------
-> +Data flow:
-> +----------------------
-> +
-> +- all operations, except ``VIRTIO_GPIO_MSG_HOST_LEVEL``, are guest-initiated
-> +- host replies ``VIRTIO_GPIO_MSG_HOST_LEVEL`` OR'ed to the ``type`` field
-> +- ``VIRTIO_GPIO_MSG_HOST_LEVEL`` is only sent asynchronically from host to guest
-
-                                                 asynchronously
-
-> +- in replies, a negative ``value`` field denotes an unix-style errno code
-
-                                                    a Unix-style
-
-> +- valid direction values are:> +  * 0 = output
-> +  * 1 = input
-> +- valid line state values are:
-> +  * 0 = inactive
-> +  * 1 = active
-> +
-> +VIRTIO_GPIO_MSG_GUEST_REQUEST
-> +----------------------------
-> +
-> +- notify the host that given line# is going to be used
-> +- request:
-> +  * ``line`` field: line number
-> +  * ``value`` field: unused
-> +- reply:
-> +  * ``value`` field: errno code (0 = success)
-> +
-> +VIRTIO_GPIO_MSG_GUEST_DIRECTION_INPUT
-> +------------------------------------
-> +
-> +- set line line direction to input
-> +- request:
-> +  * ``line`` field: line number
-> +  * ``value`` field: unused
-> +- reply: value field holds errno
-> +  * ``value`` field: errno code (0 = success)
-> +
-> +VIRTIO_GPIO_MSG_GUEST_DIRECTION_OUTPUT
-> +-------------------------------------
-> +
-> +- set line direction to output and given line state
-> +- request:
-> +  * ``line`` field: line number
-> +  * ``value`` field: output state (0=inactive, 1=active)
-> +- reply:
-> +  * ``value`` field: holds errno
-> +
-> +VIRTIO_GPIO_MSG_GUEST_GET_DIRECTION
-> +----------------------------------
-> +
-> +- retrieve line direction
-> +- request:
-> +  * ``line`` field: line number
-> +  * ``value`` field: unused
-> +- reply:
-> +  * ``value`` field: direction (0=output, 1=input) or errno code
-> +
-> +VIRTIO_GPIO_MSG_GUEST_GET_VALUE
-> +------------------------------
-> +
-> +- retrieve line state value
-> +- request:
-> +  * ``line`` field: line number
-> +  * ``value`` field: unused
-> +- reply:
-> +  * ``value`` field: line state (0=inactive, 1=active) or errno code
-> +
-> +VIRTIO_GPIO_MSG_GUEST_SET_VALUE
-> +------------------------------
-> +
-> +- set line state value (output only)
-> +- request:
-> +  * ``line`` field: line number
-> +  * ``value`` field: line state (0=inactive, 1=active)
-> +- reply:
-> +  * ``value`` field: new line state or errno code
-> +
-> +VIRTIO_GPIO_MSG_HOST_LEVEL
-> +-------------------------
-> +
-> +- async notification from host to gues: line state changed
-
-                                     guest:
-
-> +- ``line`` field: line number
-> +- ``value`` field: new line state (0=inactive, 1=active)
-
-
--- 
-~Randy
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+> index e77145e3b31b..5cd720f5b0e1 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -452,8 +452,8 @@ static void intel_gpio_set_gpio_mode(void __iomem *padcfg0)
+> 	value |= PADCFG0_PMODE_GPIO;
+> 
+> 	/* Disable input and output buffers */
+> -	value &= ~PADCFG0_GPIORXDIS;
+> -	value &= ~PADCFG0_GPIOTXDIS;
+> +	value |= PADCFG0_GPIORXDIS;
+> +	value |= PADCFG0_GPIOTXDIS;
+> 
+> 	/* Disable SCI/SMI/NMI generation */
+> 	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
+> -- 
+> 2.29.2
+> 
+> 
 
