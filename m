@@ -2,141 +2,154 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CAAC193FE
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 04:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6454DC2BB40
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 04:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEB3023A5E
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 04:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4628023A5B
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 04:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbgLHEyB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Dec 2020 23:54:01 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58180 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbgLHEyB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2020 23:54:01 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B84nxYX064111;
-        Tue, 8 Dec 2020 04:52:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=1e3cV7XKyt5cBPHNeWYhYMHu3W87CKppja6U1Jvw5F4=;
- b=V+G180Fh0lHbcmydQJqS5i+cerb42SoRrRI9QCXlQMjyWKKfj0acXqExTQUiK+7OEtft
- OuMy/8L57grCegXY4FPi2mfpdUD9NETOrjU6XyLEGnB6yCKU9e30d2WSgQTsYBxq/cMN
- 5junVfgiRpfFB5rc1EfDtZHP43anCs3FIrUtz16u4yPsKG0NCInMT5yeMTaPCX1MMJeq
- qZ1GHIcbwNatFRQ/tELhwJDJybfqjlIskC/pDoCLpTPJ2KTrod7PX9rst5aaRTC3xIQA
- veh/+mbPHLjYXfePq5oiUCHv2+7Gowf8M2KKiHFzojpZKSSSQD2meZy2nTRpI8CVh6TQ Yg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 35825m0srp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 08 Dec 2020 04:52:35 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B84ocFe155422;
-        Tue, 8 Dec 2020 04:52:34 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 358kys9m8t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 08 Dec 2020 04:52:34 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B84qX4M159553;
-        Tue, 8 Dec 2020 04:52:33 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 358kys9m7s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Dec 2020 04:52:33 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0B84qDZf015901;
-        Tue, 8 Dec 2020 04:52:15 GMT
-Received: from ca-mkp.ca.oracle.com (/10.156.108.201)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 07 Dec 2020 20:52:13 -0800
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        coreteam@netfilter.org, selinux@vger.kernel.org,
-        Miguel Ojeda <ojeda@kernel.org>, Joe Perches <joe@perches.com>,
-        linux-hardening@vger.kernel.org, reiserfs-devel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, patches@opensource.cirrus.com,
-        linux-fbdev@vger.kernel.org, keyrings@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-geode@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-hams@vger.kernel.org, linux-ext4@vger.kernel.org,
-        wcn36xx@lists.infradead.org, GR-everest-linux-l2@marvell.com,
-        x86@kernel.org, linux-watchdog@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-atm-general@lists.sourceforge.net,
-        linux-wireless@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-decnet-user@lists.sourceforge.net,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        netfilter-devel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org,
-        Kees Cook <keescook@chromium.org>,
-        samba-technical@lists.samba.org, ceph-devel@vger.kernel.org,
-        drbd-dev@tron.linbit.com, intel-gfx@lists.freedesktop.org,
-        dm-devel@redhat.com, linux-acpi@vger.kernel.org,
-        linux-ide@vger.kernel.org, xen-devel@lists.xenproject.org,
-        op-tee@lists.trustedfirmware.org, linux-hwmon@vger.kernel.org,
-        linux-sctp@vger.kernel.org, bridge@lists.linux-foundation.org,
-        linux-mtd@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-can@vger.kernel.org, rds-devel@oss.oracle.com,
-        oss-drivers@netronome.com, tipc-discussion@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-rdma@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net,
-        linux1394-devel@lists.sourceforge.net, alsa-devel@alsa-project.org,
-        linux-i3c@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-afs@lists.infradead.org, nouveau@lists.freedesktop.org,
-        GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-mm@kvack.org,
-        intel-wired-lan@lists.osuosl.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: (subset) [PATCH 000/141] Fix fall-through warnings for Clang
-Date:   Mon,  7 Dec 2020 23:52:01 -0500
-Message-Id: <160740299787.710.4201881220590518200.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <cover.1605896059.git.gustavoars@kernel.org>
-References: <cover.1605896059.git.gustavoars@kernel.org>
+        id S1726632AbgLHE5R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Dec 2020 23:57:17 -0500
+Received: from mail-mw2nam10on2078.outbound.protection.outlook.com ([40.107.94.78]:21740
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727245AbgLHE5R (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 7 Dec 2020 23:57:17 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KEVzl+buGruSG+/qRc+V4HYAzkyNp6RFR76KfxYrwjjLG+A1sJhmA2c/21OFX2aRg7u2ZqQTjqeI92Zrw5Ylh6Ku7xdAqJ7K96ZTJVbg2Ve1396FNoagElmB4G2eW7ZQtcQM+bf8lRrInvlRyKrryXGIwtvs8a6y9VV6p3cv+sjtw9+J7lywg1AMQOXMuMqv27JdBHhDmAzXDgNlYqjGoxH/k53/J0elExZyUyyZiKxjXyjuEjmJNHFHR9tZOY3trgAIWsXXSO0M0qb0hWVp/M/O6oOH9yMoREzujiLkGK4cgpNv6hI0sz1IMGp8F4PS5uAassxqlk/Zzk8iDGjspA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N79OTZrrmmNuvMV8VCNul+2BOseccZypgFYJqQlM50w=;
+ b=dl7Y4oA8Q0MzOf3L+no/SLkIzyUipWjP3REPj3dlg6cFq9kCl149dXnzWTk8YrWLSMbdSbtjY7eGvOAAtxxmieCbABIcFcv720d3StiLnqiiJm7aQpMXK+Vu8LufPEg2aEDLo9UQsehXl0cXnCmT9wHxWuy5+L/JUQxHk/SeifGlURwpHmHW83TLGFO5kwppqmOq094CqxBhrwm/mQnv64Sb2QliKgIjDNkBYBh1JfbyHq+cmwKp1rMoT1V1GuYQy2cPhaqRF/d2E49RJ1Iqwu+H0pGvhhduO+HUxWdHZ03pG9XiyKluQhv+3mUKJ7/dILy60GK+1oKrO+kXtSGtuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=openfive.com; dmarc=pass action=none header.from=sifive.com;
+ dkim=pass header.d=sifive.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sifive.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N79OTZrrmmNuvMV8VCNul+2BOseccZypgFYJqQlM50w=;
+ b=fjXprMmT8EpFYPd3i4RThveHcVS0+u6wMFP0Wdi7zse5sw1YWDf3DHTS3E4Mm90FNgeAqWfDxkvjWL0wIR/WpMxNkGVoTHz4czd5Jg1yhcwbpfbbhqWHnJRhDZxnE/EDXZn8vBy5AdoCcj3Qh81C1tkOPhA3ztS4/Pk6NUvCIbI=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=sifive.com;
+Received: from BY5PR13MB4453.namprd13.prod.outlook.com (2603:10b6:a03:1d1::19)
+ by BY5PR13MB3745.namprd13.prod.outlook.com (2603:10b6:a03:22e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.7; Tue, 8 Dec
+ 2020 04:56:15 +0000
+Received: from BY5PR13MB4453.namprd13.prod.outlook.com
+ ([fe80::7c13:1ac6:9f2a:5eae]) by BY5PR13MB4453.namprd13.prod.outlook.com
+ ([fe80::7c13:1ac6:9f2a:5eae%8]) with mapi id 15.20.3654.012; Tue, 8 Dec 2020
+ 04:56:15 +0000
+From:   Yash Shah <yash.shah@sifive.com>
+To:     linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     broonie@kernel.org, gregkh@linuxfoundation.org,
+        aou@eecs.berkeley.edu, lee.jones@linaro.org,
+        u.kleine-koenig@pengutronix.de, thierry.reding@gmail.com,
+        andrew@lunn.ch, peter@korsgaard.com, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, robh+dt@kernel.org, bgolaszewski@baylibre.com,
+        linus.walleij@linaro.org, Yash Shah <yash.shah@sifive.com>
+Subject: [PATCH v2 2/9] dt-bindings: spi: Update DT binding docs to support SiFive FU740 SoC
+Date:   Tue,  8 Dec 2020 10:25:34 +0530
+Message-Id: <1607403341-57214-3-git-send-email-yash.shah@sifive.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1607403341-57214-1-git-send-email-yash.shah@sifive.com>
+References: <1607403341-57214-1-git-send-email-yash.shah@sifive.com>
+Content-Type: text/plain
+X-Originating-IP: [159.117.144.156]
+X-ClientProxiedBy: PN1PR0101CA0041.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c00:c::27) To BY5PR13MB4453.namprd13.prod.outlook.com
+ (2603:10b6:a03:1d1::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9828 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 bulkscore=0
- phishscore=0 mlxlogscore=740 clxscore=1015 priorityscore=1501 mlxscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012080029
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from osubuntu003.open-silicon.com (159.117.144.156) by PN1PR0101CA0041.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c00:c::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17 via Frontend Transport; Tue, 8 Dec 2020 04:56:09 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cdbb8064-7d22-4259-3c3c-08d89b3597fd
+X-MS-TrafficTypeDiagnostic: BY5PR13MB3745:
+X-LD-Processed: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1,ExtAddr
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BY5PR13MB374583C4DEB173E5C41B865B82CD0@BY5PR13MB3745.namprd13.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yI/MrqYCDO1ZvS9lEopau7oJn9xQ93MDNTxVzgtzwi2QhrhT3icF3oX5WNlxQJpsJswS2+fxXVXccMNkgDTWKZbFFYVFlITcgsSjN9yDZOUksB+xUFw6GK7HMFz7OpToccHWL6fvnCPU/5XgmhLi7w9508dwEQVU7pOEaA+MKL1bkulmQuXr0J6Vd3NFpZONBqAq+obJ3D+9jmI47zCsIHRQhWBi3jdqIFBSXu33iArR7bVUDlgV91oN146yxDnImBF2pEOg0zo8EH0uqAT7dVO8Mhps0ZOfdSkizq5hHA5z+yzsYQ+yEpzi14joRhqO0DlrO9ZhuoZADkoGqB3AfA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR13MB4453.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(6029001)(366004)(376002)(396003)(39850400004)(136003)(346002)(4326008)(6666004)(6506007)(956004)(16526019)(66556008)(66476007)(7416002)(42882007)(2616005)(6486002)(26005)(478600001)(186003)(316002)(44832011)(36756003)(8936002)(83380400001)(66946007)(6512007)(107886003)(5660300002)(83170400001)(2906002)(52116002)(8676002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?gFYK+Ti7UwHCFaT3Eti8Y3v6wDoJ8M9lvYBKOaNVZSGGc3ipzoasLsXjP95n?=
+ =?us-ascii?Q?tFLkEQin0ctII69ZHQbNm7y3mKhFGvdP7vwW4eJmR2EeOCIWsph0fVvKeQyJ?=
+ =?us-ascii?Q?KMZNsQnwVDvUlFZ7ihGDJ2IV4JcxwHaiWS4CeWMPrSvGQuSm+BR7MXCggwke?=
+ =?us-ascii?Q?8URYKw9hGmsbvd7Lm7PpnDMHNyjCu60m0nzLSfF1M/EwyMxr2aMLgH3yzREL?=
+ =?us-ascii?Q?WucE7KXKLNe7RUUlhmPDYM2+YtiRkSwFvM/lFQ9obdf6SYDSv+WVtJZZ/EdS?=
+ =?us-ascii?Q?mRkphsAsQMM7817yI0uIypJSJt89KY29a7qOWACVQ0srziCxOUfMigkgEkWH?=
+ =?us-ascii?Q?jZg4xbQ3GU8X9bkQSdYN8wFihCvAg4Oxw1zC2l7fT4vxCuM5Nj56eMVYxqJR?=
+ =?us-ascii?Q?3Ld8UlEzcymA2p/8Y1Pp1T0SfUYxB2JqJYimJeh85otCUtWNjHiYL5UOa0f5?=
+ =?us-ascii?Q?E4vevw3k79P/4xDCswvdjXFlQCQMYLVMStK0Xu30DBE/2W5I44YuxDhWH7Jk?=
+ =?us-ascii?Q?nVn3Tcdpto2GssuBJcLvzKByL+ajhAPEnPgEuhJO7V/WrxbllEwYhVKv0UX3?=
+ =?us-ascii?Q?z6GYfEpWuwOXv3+m9tuRKgzHg6PE2oBgyaHyp/OpM3PyW9QovChvsTfu+eBm?=
+ =?us-ascii?Q?KLLXkGx8yXgnQPJVaDZD8+cAHqKizMb4+TbVawLYgRsT0f1lsfEX2EXil7/C?=
+ =?us-ascii?Q?kUij8uPVDAES21jWqA7JyY7/ftc0BEnrV18FAZOAfj53W5vD3V1VMWTpSVRQ?=
+ =?us-ascii?Q?rprn8bIj/DSVorilCZr5zNh7H7lej5iinrrUpzKe+2OdJalwLbv2xlzDpifG?=
+ =?us-ascii?Q?EpIXs7cYnlvFAgNCV7Tu3UDwVofQy9JwCJYcGLUcp+eNDXoXkyqE+yDwelVo?=
+ =?us-ascii?Q?GYwmDiYUxVZ8plEZnuH985BnTU18cX7rlVZkNZTbObaaA2/sIjwYAwqGjiHf?=
+ =?us-ascii?Q?Rs2fOMA9P4jwQkYJx+W5i0PYC0afmKd+Jtph9bgXDNsAajCQ3syz6XOYQp40?=
+ =?us-ascii?Q?ylNZ?=
+X-OriginatorOrg: sifive.com
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR13MB4453.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2020 04:56:15.6939
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdbb8064-7d22-4259-3c3c-08d89b3597fd
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S4mCiekn6ZkE3tvpU0Sh7wQNCKRqF1PQLVzazc+ihMzX+5SWpzb2F7tw2RUNVF6miepl5ePe19EMvXEtGLqyUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR13MB3745
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 20 Nov 2020 12:21:39 -0600, Gustavo A. R. Silva wrote:
+Add new compatible strings to the DT binding documents to support SiFive
+FU740-C000.
 
-> This series aims to fix almost all remaining fall-through warnings in
-> order to enable -Wimplicit-fallthrough for Clang.
-> 
-> In preparation to enable -Wimplicit-fallthrough for Clang, explicitly
-> add multiple break/goto/return/fallthrough statements instead of just
-> letting the code fall through to the next case.
-> 
-> [...]
+Signed-off-by: Yash Shah <yash.shah@sifive.com>
+---
+ Documentation/devicetree/bindings/spi/spi-sifive.yaml | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Applied to 5.11/scsi-queue, thanks!
-
-[054/141] target: Fix fall-through warnings for Clang
-          https://git.kernel.org/mkp/scsi/c/492096ecfa39
-
+diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.yaml b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
+index 56dcf1d..6e7e394 100644
+--- a/Documentation/devicetree/bindings/spi/spi-sifive.yaml
++++ b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
+@@ -17,15 +17,17 @@ allOf:
+ properties:
+   compatible:
+     items:
+-      - const: sifive,fu540-c000-spi
++      - enum:
++          - sifive,fu540-c000-spi
++          - sifive,fu740-c000-spi
+       - const: sifive,spi0
+ 
+     description:
+       Should be "sifive,<chip>-spi" and "sifive,spi<version>".
+       Supported compatible strings are -
+-      "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
+-      onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
+-      SPI v0 IP block with no chip integration tweaks.
++      "sifive,fu540-c000-spi" and "sifive,fu740-c000-spi" for the SiFive SPI v0
++      as integrated onto the SiFive FU540 and FU740 chip resp, and "sifive,spi0"
++      for the SiFive SPI v0 IP block with no chip integration tweaks.
+       Please refer to sifive-blocks-ip-versioning.txt for details
+ 
+       SPI RTL that corresponds to the IP block version numbers can be found here -
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.7.4
+
