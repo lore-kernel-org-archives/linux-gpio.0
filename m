@@ -2,80 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3B9C4361B
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 17:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082E8C433FE
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 18:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86A1023B03
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 17:12:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C701423B46
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 18:25:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730632AbgLHRMZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Dec 2020 12:12:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53112 "EHLO mail.kernel.org"
+        id S1730875AbgLHSZa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Dec 2020 13:25:30 -0500
+Received: from mga01.intel.com ([192.55.52.88]:2077 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730330AbgLHRMY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 8 Dec 2020 12:12:24 -0500
-From:   Mark Brown <broonie@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Yash Shah <yash.shah@sifive.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     aou@eecs.berkeley.edu, peter@korsgaard.com,
-        paul.walmsley@sifive.com, u.kleine-koenig@pengutronix.de,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        gregkh@linuxfoundation.org, palmer@dabbelt.com, andrew@lunn.ch,
-        thierry.reding@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org
-In-Reply-To: <1607403341-57214-1-git-send-email-yash.shah@sifive.com>
-References: <1607403341-57214-1-git-send-email-yash.shah@sifive.com>
-Subject: Re: (subset) [PATCH v2 0/9] arch: riscv: add board and SoC DT file support
-Message-Id: <160744749760.30021.12384107049854621023.b4-ty@kernel.org>
-Date:   Tue, 08 Dec 2020 17:11:37 +0000
+        id S1730424AbgLHSZa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 8 Dec 2020 13:25:30 -0500
+IronPort-SDR: rMxK8n2Xrbz90ra+NP1BcEkfNTbeNi1sIrV2JhuGqJfWQoWpBxnZQUeouAqRg2cy78gDTi8Ed3
+ gAY8LGG+8HHg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9829"; a="192235843"
+X-IronPort-AV: E=Sophos;i="5.78,403,1599548400"; 
+   d="scan'208";a="192235843"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 10:24:49 -0800
+IronPort-SDR: LNZWxvlxfBiZEghXMozgiEdsi37bEN1tcvnIXJgyemMv3vkzo/5aD5Uo2i5dqnEgfNwuZiblPy
+ n6bUfm2XIVYg==
+X-IronPort-AV: E=Sophos;i="5.78,403,1599548400"; 
+   d="scan'208";a="317916904"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 10:24:48 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1kmhgM-00Cswy-Re; Tue, 08 Dec 2020 20:25:50 +0200
+Date:   Tue, 8 Dec 2020 20:25:50 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH v1] pinctrl: intel: Actually disable Tx and Rx buffers on
+ GPIO request
+Message-ID: <20201208182550.GN4077@smile.fi.intel.com>
+References: <20201207175940.10631-1-andriy.shevchenko@linux.intel.com>
+ <CAHp75VeHz3CAZMQgQsU+WdDyjS+woMTyeOWYDzARePq1aaa=Og@mail.gmail.com>
+ <CACRpkdb4AYx1dOYkZvHzRD7fbGfVbKoGqdnmh1m=rdhGnAaPag@mail.gmail.com>
+ <20201208094853.GF4077@smile.fi.intel.com>
+ <20201208095013.GG4077@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201208095013.GG4077@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 8 Dec 2020 10:25:32 +0530, Yash Shah wrote:
-> Start board support by adding initial support for the SiFive FU740 SoC
-> and the first development board that uses it, the SiFive HiFive
-> Unmatched A00.
-> 
-> Boot-tested on Linux 5.10-rc4 on a HiFive Unmatched A00 board using the
-> U-boot and OpenSBI.
-> 
-> [...]
+On Tue, Dec 08, 2020 at 11:50:13AM +0200, Andy Shevchenko wrote:
+> On Tue, Dec 08, 2020 at 11:48:53AM +0200, Andy Shevchenko wrote:
 
-Applied to
+...
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> I can send a v2 for your convenience.
 
-Thanks!
+v2 has been sent.
 
-[2/9] dt-bindings: spi: Update DT binding docs to support SiFive FU740 SoC
-      commit: 76347344c522da78be29403dda81463ffae2bc99
+-- 
+With Best Regards,
+Andy Shevchenko
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
