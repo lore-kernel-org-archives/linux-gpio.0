@@ -2,91 +2,165 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0520FC433FE
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 18:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC28C4361B
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 21:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B355623B46
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 18:25:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C72A23B03
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 21:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730909AbgLHSZ7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Dec 2020 13:25:59 -0500
-Received: from mga12.intel.com ([192.55.52.136]:16108 "EHLO mga12.intel.com"
+        id S1729447AbgLHVUQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Dec 2020 16:20:16 -0500
+Received: from mga09.intel.com ([134.134.136.24]:3050 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730894AbgLHSZ7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 8 Dec 2020 13:25:59 -0500
-IronPort-SDR: 5sgTmod8iM96yqqHy4/Usu9Tdum4V03fpGJON0fzUftpYHy9AHgFkDnFPt5tNhtmCq8zU7CB8b
- dGkcO/4t1LHA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9829"; a="153183549"
+        id S1726104AbgLHVUQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 8 Dec 2020 16:20:16 -0500
+IronPort-SDR: tqucb/Z/Wg168FsK8l0vACsnSqJuMZaSSLxdDM0230cwY5PNJJ8z0VhlValVh9rHPqv9A10I4r
+ 9V5YPIteONWg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9829"; a="174119453"
 X-IronPort-AV: E=Sophos;i="5.78,403,1599548400"; 
-   d="scan'208";a="153183549"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 10:24:13 -0800
-IronPort-SDR: v0S3v6Yga9o1183zujV7MH05G5qiacc+9MRWqqY2fIAAik0tZNtsAMZIKZSF1lQDIZOrWuPjGZ
- 0Vw4wCSx1tPg==
+   d="scan'208";a="174119453"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 13:19:35 -0800
+IronPort-SDR: DwL11Hjmhg9recvDgHCvaOwJ8FisQ7DAygMGeT6YyyYylnHqrJhlIsq+FKDR5zeiwZQG+Tj1FU
+ TptXXkIDFCPg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.78,403,1599548400"; 
-   d="scan'208";a="367875071"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Dec 2020 10:24:12 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5E07A14B; Tue,  8 Dec 2020 20:24:11 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2] pinctrl: intel: Actually disable Tx and Rx buffers on GPIO request
-Date:   Tue,  8 Dec 2020 20:24:03 +0200
-Message-Id: <20201208182403.40435-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.29.2
+   d="scan'208";a="376098069"
+Received: from lkp-server01.sh.intel.com (HELO c88bd47c8831) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Dec 2020 13:19:34 -0800
+Received: from kbuild by c88bd47c8831 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kmkOT-0000T8-Gi; Tue, 08 Dec 2020 21:19:33 +0000
+Date:   Wed, 09 Dec 2020 05:18:44 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:for-next] BUILD SUCCESS
+ 09fe5dc62aae1327d98186e1e9299a2e4f62a055
+Message-ID: <5fcfedb4.C6gFT1vW20h91yOV%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Mistakenly the buffers (input and output) become enabled together for a short
-period of time during GPIO request. This is problematic, because instead of
-initial motive to disable them in the commit af7e3eeb84e2
-("pinctrl: intel: Disable input and output buffer when switching to GPIO"),
-the driven value on the pin, which might be used as an IRQ line, brings
-firmwares of some touch pads to an awkward state that needs a full power off
-to recover. Fix this, as stated in the culprit commit, by disabling the buffers.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  for-next
+branch HEAD: 09fe5dc62aae1327d98186e1e9299a2e4f62a055  Merge branch 'devel' into for-next
 
-Fixes: af7e3eeb84e2 ("pinctrl: intel: Disable input and output buffer when switching to GPIO")
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=210497
-Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+elapsed time: 723m
+
+configs tested: 96
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+powerpc                      tqm8xx_defconfig
+alpha                            alldefconfig
+powerpc                     tqm5200_defconfig
+arm                         vf610m4_defconfig
+arm                      integrator_defconfig
+arm                    vt8500_v6_v7_defconfig
+arm                           efm32_defconfig
+arm                        clps711x_defconfig
+mips                         tb0219_defconfig
+m68k                       m5275evb_defconfig
+arm                              alldefconfig
+powerpc               mpc834x_itxgp_defconfig
+ia64                        generic_defconfig
+arm                         palmz72_defconfig
+arm                             ezx_defconfig
+powerpc                        icon_defconfig
+sh                          rsk7201_defconfig
+sh                      rts7751r2d1_defconfig
+arm                         axm55xx_defconfig
+nds32                             allnoconfig
+powerpc                      arches_defconfig
+mips                        qi_lb60_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                               tinyconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a004-20201208
+i386                 randconfig-a005-20201208
+i386                 randconfig-a001-20201208
+i386                 randconfig-a002-20201208
+i386                 randconfig-a006-20201208
+i386                 randconfig-a003-20201208
+x86_64               randconfig-a004-20201208
+x86_64               randconfig-a006-20201208
+x86_64               randconfig-a005-20201208
+x86_64               randconfig-a001-20201208
+x86_64               randconfig-a002-20201208
+x86_64               randconfig-a003-20201208
+i386                 randconfig-a013-20201208
+i386                 randconfig-a014-20201208
+i386                 randconfig-a011-20201208
+i386                 randconfig-a015-20201208
+i386                 randconfig-a012-20201208
+i386                 randconfig-a016-20201208
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a016-20201208
+x86_64               randconfig-a012-20201208
+x86_64               randconfig-a013-20201208
+x86_64               randconfig-a014-20201208
+x86_64               randconfig-a015-20201208
+x86_64               randconfig-a011-20201208
+
 ---
-v2: added tags, cosmetic fixes in the commit message
- drivers/pinctrl/intel/pinctrl-intel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index e77145e3b31b..5cd720f5b0e1 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -452,8 +452,8 @@ static void intel_gpio_set_gpio_mode(void __iomem *padcfg0)
- 	value |= PADCFG0_PMODE_GPIO;
- 
- 	/* Disable input and output buffers */
--	value &= ~PADCFG0_GPIORXDIS;
--	value &= ~PADCFG0_GPIOTXDIS;
-+	value |= PADCFG0_GPIORXDIS;
-+	value |= PADCFG0_GPIOTXDIS;
- 
- 	/* Disable SCI/SMI/NMI generation */
- 	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
--- 
-2.29.2
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
