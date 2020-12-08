@@ -2,92 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 088DCC4361B
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 08:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF9FC433FE
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 08:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBAE2233EE
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 08:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5417423A68
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 08:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgLHIfg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Dec 2020 03:35:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
+        id S1728078AbgLHInC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Dec 2020 03:43:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbgLHIfg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2020 03:35:36 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B844BC0613D6
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Dec 2020 00:34:55 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id a1so16823073ljq.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Dec 2020 00:34:55 -0800 (PST)
+        with ESMTP id S1727735AbgLHInB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2020 03:43:01 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45848C0613D6
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Dec 2020 00:42:21 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id a8so7201048lfb.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Dec 2020 00:42:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=195UJafgdu4DiqsgA5FNUf3zYycV58fxtYb2a9pEgf4=;
-        b=yQzshfGBrbKwARa8KTb7YGpmHKgxQ+tPfZNklXD6jKETBClbWk1PxhuuSJnZLm7oph
-         DVYXZBP3y3BWhnnZ7f/Ob1rVVoWT38gnZkizNon529oaTOrRJzIWXOnC5Kpix0cOvhtZ
-         /mrARLD14JrOybc2QaC1v/MCqrQiSA+Vf0y0qGkxZqLr5D1xy1w6zLD/7SKV7sdPMmZO
-         73d7XqAYNaY6dU5kIIj3pEzBLNc+ky1zphYQGoMpqu9uiOrVyLCnCZD0Ljze2l5EeaFf
-         3s8ZdYE5JDAz8E/hyqEIm7LkDHXgfuboAMQRN6BFAGf7232W5ycy8RFvCOk4lNWi0Yjv
-         nT/Q==
+        bh=ymnCoQX1+UEnlfRUosY5UkqWz5Rl16ic4atnqAGgf1E=;
+        b=TSzGAA5l5QLF43fxPLXCwVQ7edav0PgyWJzpkKM81cFxyi08uGwT4SY4R7Z4bWL0XV
+         wFTFaoDtlnh+oYASBIDEKAq9W57r+GKVQhSKPn75ojafgU9J0Ulr1pOqE1kDa24abJyl
+         Rowr8bfapuebK5wuz1PeQB2XY3lOl0yCrlq7rqiZXRI3AenjxPB1hyxkbsFyUrRy3dx8
+         NgP2Jsv4HD5IsGy0RwCvW9PTT6yR2K98ZNp/e7E052wu1YEVqW3IHP9WxBzEKFEguwBi
+         1liTeusR/i0QxXB5lomW8exauCdRK7Kzl3oZRxEJOJhNDlz0rstla8Aw+1HJW5BI5ZGE
+         UZig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=195UJafgdu4DiqsgA5FNUf3zYycV58fxtYb2a9pEgf4=;
-        b=UzaTJVyhan3S6KVYysNif/RtJiLwUwn8qEcMj3hVv9WQIT7EuHMWn1Eqr1bPK1tNZ4
-         A0QgvxVicw8SziwtDyMwibxjBKlwGBKf4GymLlqd9+neF1oqkhY0F/0TD2Dthv9xpzmn
-         0RohDgfmjoXTXdxg92ml92xEZCd+tlCIRhynylJg+DxeyGLBy1V43mvRIauYnemDdAnk
-         v1OYTgJ5VOZrNmVvXzoNKG3eVM0INeCLbzt0COo9lH7VHZqSbkF2a36Azz5oBlC/EPN3
-         apZseyi23sefy1ddLjTzgFhYiD2ZaoeyYKsZYPtXLj9xRVnCQgcWlNREAdP1NncDD+tc
-         J16w==
-X-Gm-Message-State: AOAM530ziBeIyxgYk0/f2NohwfmVOBO3iAoQaa07J92WJ+l5c0cZgG/P
-        qiCzVcOa9L4Q8doVAE19ArT+ClVkhxv1TIG5uwN9rA==
-X-Google-Smtp-Source: ABdhPJz08If1smVODrdSah1o52/iEr3KU7W2SERtuqjk2irk+tpCJx8X0EynGRNZdDqgKk4DfHeiN59zmhBmlmvqj6Y=
-X-Received: by 2002:a2e:94d:: with SMTP id 74mr1041013ljj.104.1607416494299;
- Tue, 08 Dec 2020 00:34:54 -0800 (PST)
+        bh=ymnCoQX1+UEnlfRUosY5UkqWz5Rl16ic4atnqAGgf1E=;
+        b=Wpmq+yOUqj6uuGu1n90GyOOAwyQwC+f3s3pLuy5fGFAsfRdI3g5u1oBFeGQJfD2Toe
+         iX+OckIU2q+Z+qyq20jOBscfJcKTS4AOGkANfFp/jGD1syNcL6tnGsXy6Izzq41PNywI
+         2bcSrQE3pVdUfF8BuYqJ2xyvuYzpXbZMB/5DvuL1ihITiT/iFwlN4kQ5cDb+sv+FVnJz
+         kyqwwy0EXCa/xYJRLh0rFnq+V44wquokx3MvBKtybRVuid0IgxEPiYsdDm+XjRnnWuj5
+         jtdryAnCw7jsNgCdP92Ayhggq9LOvyFqH0wxw84wyhvdB4UJgqQq7rT14v7TM9C8Oy6s
+         jY2Q==
+X-Gm-Message-State: AOAM532lueoTsz9fFbSslYmqbuQfb7tr1VL7JeRAf+R2AoVym0MFT8mV
+        9hJ8wB0FTl8QWiygpiABG9YuRYQjUtR7U7H5acMaPg==
+X-Google-Smtp-Source: ABdhPJxJH6WOiwnX0/Tp2sqcPodJNB8qgVejkevd8OIMmSe8HP3/a8RT4LZ5WXvCVLbktHHy+GWvSAkdamL7iDdA6yc=
+X-Received: by 2002:ac2:4308:: with SMTP id l8mr9319905lfh.260.1607416939796;
+ Tue, 08 Dec 2020 00:42:19 -0800 (PST)
 MIME-Version: 1.0
-References: <20201207175940.10631-1-andriy.shevchenko@linux.intel.com> <CAHp75VeHz3CAZMQgQsU+WdDyjS+woMTyeOWYDzARePq1aaa=Og@mail.gmail.com>
-In-Reply-To: <CAHp75VeHz3CAZMQgQsU+WdDyjS+woMTyeOWYDzARePq1aaa=Og@mail.gmail.com>
+References: <20201203182423.5499-1-info@metux.net>
+In-Reply-To: <20201203182423.5499-1-info@metux.net>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 8 Dec 2020 09:34:43 +0100
-Message-ID: <CACRpkdb4AYx1dOYkZvHzRD7fbGfVbKoGqdnmh1m=rdhGnAaPag@mail.gmail.com>
-Subject: Re: [PATCH v1] pinctrl: intel: Actually disable Tx and Rx buffers on
- GPIO request
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date:   Tue, 8 Dec 2020 09:42:09 +0100
+Message-ID: <CACRpkdZK2epvcxezVerW3TVdLgO5sz46J8VreaAANMYw=tq+-A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drivers: gpio: bt8xx: prefer dev_err()/dev_warn()
+ over of raw printk
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Michael Buesch <m@bues.ch>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Dec 7, 2020 at 7:07 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Mon, Dec 7, 2020 at 8:02 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > Mistakenly the buffers (input and output) become together enabled for a little
-> > period of time during GPIO request. This is problematic, because instead of
-> > initial motive to disable them in the commit af7e3eeb84e2
-> > ("pinctrl: intel: Disable input and output buffer when switching to GPIO"),
-> > the driven value on the pin, which might be used as an IRQ line, brings
-> > firmware of some touch pads in an awkward state that needs a full power off
-> > to recover. Fix this by, as stated in a culprit commit, disabling the buffers.
->
-> Linus, since we are at rc7 I'm not going to send a PR for this single
-> fix (I truly do not expect anything to come). Please, proceed as usual
-> (either to v5.10 or to v5.11 cycle, there is not much difference b/c
-> culptin is sitting in v5.9).
+On Thu, Dec 3, 2020 at 7:24 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-OK no problem, I applied the patch directly for fixes so we get it in ASAP.
+> For logging in device contexts, dev_*() functions are preferred over
+> raw printk(), which also print out device name.
+>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+
+All three patches applied.
+
+Thanks for tidying this up Enrico!
 
 Yours,
 Linus Walleij
