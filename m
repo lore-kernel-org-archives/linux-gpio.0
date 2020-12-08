@@ -2,161 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0571C4167B
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 07:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1605AC433FE
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 08:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C49923A61
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 07:56:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D487123A61
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 08:22:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbgLHH4L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Dec 2020 02:56:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33132 "EHLO
+        id S1725208AbgLHIWa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Dec 2020 03:22:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbgLHH4K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2020 02:56:10 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2B0C0613D6;
-        Mon,  7 Dec 2020 23:55:29 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id c1so3302770wrq.6;
-        Mon, 07 Dec 2020 23:55:29 -0800 (PST)
+        with ESMTP id S1726734AbgLHIWa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2020 03:22:30 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C7EC0613D6
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Dec 2020 00:21:44 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id y16so18149411ljk.1
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Dec 2020 00:21:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iZBg6NYc1fDrXniV/VR86/1qE8M8HyWt002YbvqPFwA=;
-        b=NR05I4W5IgbtZCAnyadH1WNM+a0Jdb5V5V1FIjmJJVoOHLm//pyynVhvfizCaUPjK0
-         tCCeaCiEB8i4eIUV6SVZmOKVMrxsmKwVxJkQtD+BRWEzlbBs9SxGtvZm8eUJyAysMV41
-         HeMuYpg3tCm4k1SBKEtaUVJXOeCrxQ4BXnnG5lMBXYD9W2udo3cYB773g4zsHj/IsTC3
-         EwkVLp1wF32XosN1nqJLnIZGCf4czVFzPJkI420+bvjBCEOJwlHC/G7urFnxQz71BT9r
-         GcECxPo0Uedxz6v1MNZz9/ZKylnMwfhLpD4oc4W7C3slmjdmZ93weTNTt3ylpw/IRd2c
-         Ughw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/L9ij+xi4aU+RA5FHQP+6+0fS+qsQ1KICkMdHJmFYFc=;
+        b=bYPvkZyzHphpd2LIG29zK/pI8TNd8M64LXuz04KBFAzCVM2tn6HgtLC4y0krAVsJGv
+         HmZ6aUEcKYzXhARN1OGrWuBrOKpnEmmtqa7ywUSjV2r3A/jB2vpbQwNsgZOlxEJUcsl8
+         QPPgKvurbDc295hFdI/W3mWEddd+hjtVyjNxtB0fT1BAi4cCrNQVH6032xcs8asD7CgZ
+         EjanTiW0Fb3w7kLQrHr//TwXgV/cX7v7abUMsryIbh+Zh3qx0UasUnD0LEuYbhxqaqX1
+         Y8uQ6gjPAkp/qoxxPhEYKuWcbegGalJQIMuDoMvXI7pe3d8Y1O/e8XVdhZAy05EJc7mH
+         8j8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iZBg6NYc1fDrXniV/VR86/1qE8M8HyWt002YbvqPFwA=;
-        b=T4LikJuaeoPzM9gNES7MAQ42B8DM4rNHjhiY/R+ddXorHC0kwE1bVYvmp9885hahWf
-         KLxvqzZuZmAxSZCuFhIcyghacpWAT999blmyEiqO9rIq9ULaVfjWxXRqKI+qZQQlQ07M
-         WyDcbD3VvTo7qe4uKa76e6hVoVhMTL+pzo57Ni3GdAeNSyTv1l+ZMiXoSVB7EZiZMj1m
-         1oAkVElpjOidkMkVxQge92LalAPNNuvsp6l+nwPkUA2zm4KdsPCYxwLlxQX6UIUAD7Qe
-         ET4KURUCPdxLH4wmBNHEbem4Zf0VH1ZPWJ83TljhYqL+PDxefsEyyp1SCduipcJ+LqJU
-         +hOw==
-X-Gm-Message-State: AOAM5329BEm3Dnkavc/CLOITeABa0tCEFhMWeBts9PdAhWhL0JAQSflP
-        hkhmlpNni/awHqQHDAe28yVQ82IP04o=
-X-Google-Smtp-Source: ABdhPJxxbsnv9uCrap7/LBgI68S6qea6ttTGtNj92JTHuHMUhjs2jiRWobIn4D8wOMzmenDEgBrc5w==
-X-Received: by 2002:a5d:610d:: with SMTP id v13mr23845962wrt.425.1607414128460;
-        Mon, 07 Dec 2020 23:55:28 -0800 (PST)
-Received: from localhost.localdomain (188.red-81-44-87.dynamicip.rima-tde.net. [81.44.87.188])
-        by smtp.gmail.com with ESMTPSA id h184sm1620735wmh.23.2020.12.07.23.55.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Dec 2020 23:55:27 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     linus.walleij@linaro.org
-Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org,
-        yanaijie@huawei.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: [PATCH v2 1/2] dt-bindings: pinctrl: rt2880: add binding document
-Date:   Tue,  8 Dec 2020 08:55:22 +0100
-Message-Id: <20201208075523.7060-2-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201208075523.7060-1-sergio.paracuellos@gmail.com>
-References: <20201208075523.7060-1-sergio.paracuellos@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/L9ij+xi4aU+RA5FHQP+6+0fS+qsQ1KICkMdHJmFYFc=;
+        b=gc5nO38L4QcOYN9lmX3KmjQPxji6d94LgJ8eZ1u+LdMnjOCcoS+X4OGoskGFwLX7NJ
+         cbOof84vT+l6E+U+44rjZb03S9U8Xc1gZKaGc30NqJr/dkmb1JhZ49JxbpgLJqEEPQDv
+         tAYZvwka6Vt9iCJL0JkfZ0w3OvISr1gxVxhE1iLKlUg4mb9cfV58iHbbJI3jMOGnxf7U
+         UBz2MCDcKEdWpvDL/d/LQdJLiXNATrqMCsSQtCEbJnRBBlXpx9dYOuO8ttfHix0aityc
+         x0AodZKg5qTottlN6yX9Tp/Wl/gEq9L3URqMidyyYfOq3ekC414iO1QVX0l+Rk50BVGS
+         AxVA==
+X-Gm-Message-State: AOAM531OAVHDMGdQTyTQhpSOZniP1a/fxX5KK8dgUELCf4lFjGXcurt7
+        /5g38/pmd+Y/CJmagfJsc+BbqD/rbgC09qfScote8g==
+X-Google-Smtp-Source: ABdhPJz3QSFZPxGv2N/pnXp+VezSxPYZ2V9M6+O2npQftKaRSLMZh4qMKQdxMJx/Ncz13H34GLneBICqZoSBqKisFV4=
+X-Received: by 2002:a2e:b1c9:: with SMTP id e9mr10482058lja.283.1607415702493;
+ Tue, 08 Dec 2020 00:21:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201208075523.7060-1-sergio.paracuellos@gmail.com> <20201208075523.7060-3-sergio.paracuellos@gmail.com>
+In-Reply-To: <20201208075523.7060-3-sergio.paracuellos@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 8 Dec 2020 09:21:31 +0100
+Message-ID: <CACRpkdY_Me8kO-Fa-vUspJNv+2vy0fswTM-RaUoaZJ5rCfuynA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: ralink: add a pinctrl driver for the
+ rt2880 family
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Jason Yan <yanaijie@huawei.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The commit adds rt2880 compatible node in binding document.
+On Tue, Dec 8, 2020 at 8:55 AM Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- .../pinctrl/ralink,rt2880-pinmux.yaml         | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml
+> These Socs have 1-3 banks of 8-32 gpios. Rather then setting the muxing of each
+> pin individually, these socs have mux groups that when set will effect 1-N pins.
+> Pin groups have a 2, 4 or 8 different muxes.
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml
-new file mode 100644
-index 000000000000..7dea3e26d99e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/ralink,rt2880-pinmux.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Ralink rt2880 pinmux controller
-+
-+maintainers:
-+  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+
-+description:
-+  The rt2880 pinmux can only set the muxing of pin groups. muxing indiviual pins
-+  is not supported. There is no pinconf support.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ralink,rt2880-pinmux
-+
-+  pinctrl-0:
-+    description:
-+      A phandle to the node containing the subnodes containing default
-+      configurations. This is for pinctrl hogs.
-+
-+  pinctrl-names:
-+    description:
-+      A pinctrl state named "default" can be defined.
-+    const: default
-+
-+required:
-+  - compatible
-+
-+patternProperties:
-+  '[a-z0-9_-]+':
-+    if:
-+      type: object
-+      description: node for pinctrl.
-+      $ref: "pinmux-node.yaml"
-+    then:
-+      properties:
-+        groups:
-+          description: Name of the pin group to use for the functions.
-+          enum: [i2c, spi, uart1, uart2, uart3, rgmii1, rgmii2, mdio,
-+                 pcie, sdhci]
-+        function:
-+          description: The mux function to select
-+          enum: [gpio, i2c, spi, uart1, uart2, uart3, rgmii1, rgmii2,
-+                 mdio, nand1, nand2, sdhci]
-+
-+additionalProperties: false
-+
-+examples:
-+  # Pinmux controller node
-+  - |
-+    pinctrl {
-+      compatible = "ralink,rt2880-pinmux";
-+      pinctrl-names = "default";
-+      pinctrl-0 = <&state_default>;
-+
-+      state_default: pinctrl0 {
-+      };
-+
-+      i2c_pins: i2c0 {
-+        i2c0 {
-+          groups = "i2c";
-+          function = "i2c";
-+        };
-+      };
-+    };
--- 
-2.25.1
+Greg I'm happy if you just apply this right now for v5.11, as Sergio
+is obviously on top of things and the DT bindings will get there
+eventually so I don't see any need to hold back the de-staging just
+waiting for patch 1 (which I will eventually apply directly anyway).
 
+Yours,
+Linus Walleij
