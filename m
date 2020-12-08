@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45638C193FE
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 07:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F66DC2BBCD
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 07:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE2C23A7C
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 07:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CB5723A7E
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Dec 2020 07:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbgLHHgO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Dec 2020 02:36:14 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:58686 "EHLO
+        id S1727459AbgLHHg3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Dec 2020 02:36:29 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:58664 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbgLHHgO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2020 02:36:14 -0500
+        with ESMTP id S1726299AbgLHHg3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2020 02:36:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607412973; x=1638948973;
+  t=1607412989; x=1638948989;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=MDkmFUEKJBDPBV8k8pNfLkUIGvXmb9uGh25aZkSnZo4=;
-  b=Ou4Z/Mtq+/Ei4NC4SHtibzj9froT7/YInC6D+kv37uJDl48fOUpf1iMj
-   B16Mmc3VYnuBaaxYliX0OpigzOQZY5JgerkJsU45C2+ODaMxuNFFe+c18
-   iUDqEF5eJ2DD1fLRC55q8CaLx2dAGnGQDMDYm+tch0QkcY+M8L7Q4coOE
-   iVkAbKo/C/6DL1IXR+mHZ9K6IokDdFZie9KhetinoWgPQVfNe1hLeV7Zc
-   xVgzHsqBvQLfIq9eRkw4rls3AMkzK/i8qFwUg0grVasSdbq6IbUHCYsO/
-   rIS+Qcsg1uQuanceraFaPwpo2XIV7IstcLBB/Z7aQSwl5K/uVcB9VuDEP
-   Q==;
-IronPort-SDR: ezyyUCbCPbmnFbso0G4KvkueP6cZI0+nAzPgZ6iOA0Up3QXYYSLbQhCKBNgYNn7UX3F3YF+1NL
- n7ryzwAohe8rLyX6KxWO8bdifU9o05PKDMJ+3Pjm9SJGoQLoeE3Z+xdpv2z5cFRhLqziHJW6fR
- n41VeSeYj9pKcgSj//L81g64SqB/nR3QQmWkL+DSbru0PrK4ttjtde22ZgjDf/mSGEPcbKq3yh
- yWuiIQD93PaUAWpvkSUjERxjz5X9+u+hQeecux392dZY7UqwKQAk2YqBcRW+G2at0rwakXKa6Q
- geA=
+  bh=S1YmWmqvdIYXxQKwYnEAtpW95Vpx9w6kjXteMcQR5RY=;
+  b=HyzveYRo+wqJ6cquI0OV1GE6gNw3X18YBxTm5MpsTZus/0Tx4AxuRfP0
+   uvR+hTdG9sSwADJ6EUYnFw2oqJRbIFLWxYpXsnCjxfof/KPl9CBNceWQV
+   utKOQfEphZir9jJmtgiVyuUs9AIZFHlGCy8w6PH2nmA6VWm7/EwPu99OS
+   dtyqvjlPyGv+QUqXBlglN6KbjqvgZYdpDrEzm1VYEVYjFcB8haOGG9U5T
+   tt1o1e0N3bmnv+XEvyK9PqxQTmQr4R9RpDVnELCK15LRvUExkUzYWcQf0
+   1/oh7Mnm3t2VhuChJh5cNtn4srJKEbhA0or2LneQS5F8y2PwPsNAr2X4n
+   g==;
+IronPort-SDR: OSDb0RreCx+aAMKjbaI+UZKYiD2Xczr6n/DtL8QXoqedi/HKtkvDTC3Pk+f/EC87gDuVAiHyzX
+ J6Duy0o7UEA5J4knY1k4ZjVpdN5bf/80pGrGDAgBeXsdugZaTT1gyoba4cHm2SMZded3m/MrVH
+ pBzswJz3oFMUti/5vW4Ft+BDFG4JV/Vmi47UsLBdI6doe4K2ibFT169V8mu55T0Z+smZqKDB5h
+ 39Xsz15zjJNiT0LcP0G/I0V+xe4uX8Nb2jCdgXnwrKpMsOuM92c7Kyootrux/S9SbpSPWK1egs
+ 4ng=
 X-IronPort-AV: E=Sophos;i="5.78,401,1599494400"; 
-   d="scan'208";a="155876637"
+   d="scan'208";a="155876653"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Dec 2020 15:34:10 +0800
-IronPort-SDR: 4nZpVlz5qG9kcvnRn9f4QKwLVlgHJRd7YmfW5iwHu4iqd59a9rn8l3Dhe2bk0i3OBzNGYRTQ4y
- VxLG7SruFYHez17P5EnnjkprKV9itCkoM=
+  by ob1.hgst.iphmx.com with ESMTP; 08 Dec 2020 15:34:17 +0800
+IronPort-SDR: 0LvF+6A5QxVsEgK1PklqCLjpaAJ9dVcvFQS6HnXKkS2bkADRgCuSGtqbGwrKDNp0rSxhhgeiEp
+ ijp4LWqWS302J5Gw1CTOuP/9aRH7DR9g0=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 23:18:11 -0800
-IronPort-SDR: AGvVi7tKk0vJpQNlRu+ypCrSOJ80PY7z2nz8ujd6U3Q44TtssdASj71VQMjjb/w6CJzOuzNUmx
- uxtgMPgvw9GA==
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 23:18:17 -0800
+IronPort-SDR: RQD7EKANzywJV/HRg1j1X3bS3mlOI+gGU7eygNLNiakd8330VcLccRz8OKJQYvmBK8JyAnwEls
+ Yb6KPydp+Iag==
 WDCIronportException: Internal
 Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 07 Dec 2020 23:34:09 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Dec 2020 23:34:15 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -58,9 +58,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v5 05/21] riscv: Use vendor name for K210 SoC support
-Date:   Tue,  8 Dec 2020 16:33:39 +0900
-Message-Id: <20201208073355.40828-6-damien.lemoal@wdc.com>
+Subject: [PATCH v5 08/21] dt-bindings: reset: Document canaan,k210-rst bindings
+Date:   Tue,  8 Dec 2020 16:33:42 +0900
+Message-Id: <20201208073355.40828-9-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201208073355.40828-1-damien.lemoal@wdc.com>
 References: <20201208073355.40828-1-damien.lemoal@wdc.com>
@@ -70,209 +70,114 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Rename configuration options and directories related to the Kendryte
-K210 SoC to use the SoC vendor name (canaan) instead of the "kendryte"
-branding name.
+Document the device tree bindings for the Canaan Kendryte K210 SoC
+reset controller driver in
+Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml. The header
+file include/dt-bindings/reset/k210-rst.h is added to define all
+possible reset lines of the SoC.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- arch/riscv/Kconfig.socs                       | 24 +++++++++----------
- arch/riscv/Makefile                           |  2 +-
- arch/riscv/boot/dts/Makefile                  |  2 +-
- arch/riscv/boot/dts/canaan/Makefile           |  5 ++++
- .../boot/dts/{kendryte => canaan}/k210.dts    |  0
- .../boot/dts/{kendryte => canaan}/k210.dtsi   |  0
- arch/riscv/boot/dts/kendryte/Makefile         |  5 ----
- arch/riscv/configs/nommu_k210_defconfig       |  2 +-
- drivers/soc/Kconfig                           |  2 +-
- drivers/soc/Makefile                          |  2 +-
- drivers/soc/{kendryte => canaan}/Kconfig      |  4 ++--
- drivers/soc/{kendryte => canaan}/Makefile     |  0
- .../soc/{kendryte => canaan}/k210-sysctl.c    |  0
- 13 files changed, 24 insertions(+), 24 deletions(-)
- create mode 100644 arch/riscv/boot/dts/canaan/Makefile
- rename arch/riscv/boot/dts/{kendryte => canaan}/k210.dts (100%)
- rename arch/riscv/boot/dts/{kendryte => canaan}/k210.dtsi (100%)
- delete mode 100644 arch/riscv/boot/dts/kendryte/Makefile
- rename drivers/soc/{kendryte => canaan}/Kconfig (79%)
- rename drivers/soc/{kendryte => canaan}/Makefile (100%)
- rename drivers/soc/{kendryte => canaan}/k210-sysctl.c (100%)
+ .../bindings/reset/canaan,k210-rst.yaml       | 40 ++++++++++++++++++
+ include/dt-bindings/reset/k210-rst.h          | 42 +++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+ create mode 100644 include/dt-bindings/reset/k210-rst.h
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 0bc3e28581f2..88ac0d1a5da4 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -22,21 +22,21 @@ config SOC_VIRT
- 	help
- 	  This enables support for QEMU Virt Machine.
- 
--config SOC_KENDRYTE
--	bool "Kendryte K210 SoC"
-+config SOC_CANAAN
-+	bool "Canaan Kendryte K210 SoC"
- 	depends on !MMU
- 	select CLINT_TIMER if RISCV_M_MODE
- 	select SERIAL_SIFIVE if TTY
- 	select SERIAL_SIFIVE_CONSOLE if TTY
- 	select SIFIVE_PLIC
- 	help
--	  This enables support for Kendryte K210 SoC platform hardware.
-+	  This enables support for Canaan Kendryte K210 SoC platform hardware.
- 
--if SOC_KENDRYTE
-+if SOC_CANAAN
- 
--config SOC_KENDRYTE_K210_DTB_BUILTIN
--	bool "Builtin device tree for the Kendryte K210"
--	depends on SOC_KENDRYTE
-+config SOC_CANAAN_K210_DTB_BUILTIN
-+	bool "Builtin device tree for the Canaan Kendryte K210"
-+	depends on SOC_CANAAN
- 	default y
- 	select OF
- 	select BUILTIN_DTB
-@@ -45,13 +45,13 @@ config SOC_KENDRYTE_K210_DTB_BUILTIN
- 	  This option should be selected if no bootloader is being used.
- 	  If unsure, say Y.
- 
--config SOC_KENDRYTE_K210_DTB_SOURCE
--	string "Source file for the Kendryte K210 builtin DTB"
--	depends on SOC_KENDRYTE
--	depends on SOC_KENDRYTE_K210_DTB_BUILTIN
-+config SOC_CANAAN_K210_DTB_SOURCE
-+	string "Source file for the Canaan Kendryte K210 builtin DTB"
-+	depends on SOC_CANAAN
-+	depends on SOC_CANAAN_K210_DTB_BUILTIN
- 	default "k210"
- 	help
--	  Base name (without suffix, relative to arch/riscv/boot/dts/kendryte)
-+	  Base name (without suffix, relative to arch/riscv/boot/dts/canaan)
- 	  for the DTS file that will be used to produce the DTB linked into the
- 	  kernel.
- 
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 0289a97325d1..cd08dc40e8d8 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -83,7 +83,7 @@ PHONY += vdso_install
- vdso_install:
- 	$(Q)$(MAKE) $(build)=arch/riscv/kernel/vdso $@
- 
--ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_SOC_KENDRYTE),yy)
-+ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_SOC_CANAAN),yy)
- KBUILD_IMAGE := $(boot)/loader.bin
- else
- KBUILD_IMAGE := $(boot)/Image.gz
-diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
-index 21e3905f1c44..4da40691c55b 100644
---- a/arch/riscv/boot/dts/Makefile
-+++ b/arch/riscv/boot/dts/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- subdir-y += sifive
--subdir-$(CONFIG_SOC_KENDRYTE) += kendryte
-+subdir-$(CONFIG_SOC_CANAAN) += canaan
- 
- obj-$(CONFIG_BUILTIN_DTB) := $(addsuffix /, $(subdir-y))
-diff --git a/arch/riscv/boot/dts/canaan/Makefile b/arch/riscv/boot/dts/canaan/Makefile
+diff --git a/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml b/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
 new file mode 100644
-index 000000000000..9ee7156c0c31
+index 000000000000..53e4ede9c0bd
 --- /dev/null
-+++ b/arch/riscv/boot/dts/canaan/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+ifneq ($(CONFIG_SOC_CANAAN_K210_DTB_SOURCE),"")
-+dtb-y += $(strip $(shell echo $(CONFIG_SOC_CANAAN_K210_DTB_SOURCE))).dtb
-+obj-$(CONFIG_SOC_CANAAN_K210_DTB_BUILTIN) += $(addsuffix .o, $(dtb-y))
-+endif
-diff --git a/arch/riscv/boot/dts/kendryte/k210.dts b/arch/riscv/boot/dts/canaan/k210.dts
-similarity index 100%
-rename from arch/riscv/boot/dts/kendryte/k210.dts
-rename to arch/riscv/boot/dts/canaan/k210.dts
-diff --git a/arch/riscv/boot/dts/kendryte/k210.dtsi b/arch/riscv/boot/dts/canaan/k210.dtsi
-similarity index 100%
-rename from arch/riscv/boot/dts/kendryte/k210.dtsi
-rename to arch/riscv/boot/dts/canaan/k210.dtsi
-diff --git a/arch/riscv/boot/dts/kendryte/Makefile b/arch/riscv/boot/dts/kendryte/Makefile
-deleted file mode 100644
-index 83636693166d..000000000000
---- a/arch/riscv/boot/dts/kendryte/Makefile
-+++ /dev/null
-@@ -1,5 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--ifneq ($(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE),"")
--dtb-y += $(strip $(shell echo $(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE))).dtb
--obj-$(CONFIG_SOC_KENDRYTE_K210_DTB_BUILTIN) += $(addsuffix .o, $(dtb-y))
--endif
-diff --git a/arch/riscv/configs/nommu_k210_defconfig b/arch/riscv/configs/nommu_k210_defconfig
-index cd1df62b13c7..368a28cf1467 100644
---- a/arch/riscv/configs/nommu_k210_defconfig
-+++ b/arch/riscv/configs/nommu_k210_defconfig
-@@ -27,7 +27,7 @@ CONFIG_EMBEDDED=y
- CONFIG_SLOB=y
- # CONFIG_SLAB_MERGE_DEFAULT is not set
- # CONFIG_MMU is not set
--CONFIG_SOC_KENDRYTE=y
-+CONFIG_SOC_CANAAN=y
- CONFIG_MAXPHYSMEM_2GB=y
- CONFIG_SMP=y
- CONFIG_NR_CPUS=2
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index 425ab6f7e375..f43886fec32b 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -6,6 +6,7 @@ source "drivers/soc/amlogic/Kconfig"
- source "drivers/soc/aspeed/Kconfig"
- source "drivers/soc/atmel/Kconfig"
- source "drivers/soc/bcm/Kconfig"
-+source "drivers/soc/canaan/Kconfig"
- source "drivers/soc/fsl/Kconfig"
- source "drivers/soc/imx/Kconfig"
- source "drivers/soc/ixp4xx/Kconfig"
-@@ -22,6 +23,5 @@ source "drivers/soc/ux500/Kconfig"
- source "drivers/soc/versatile/Kconfig"
- source "drivers/soc/xilinx/Kconfig"
- source "drivers/soc/zte/Kconfig"
--source "drivers/soc/kendryte/Kconfig"
- 
- endmenu
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 36452bed86ef..dec90fca120b 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -28,4 +28,4 @@ obj-$(CONFIG_ARCH_U8500)	+= ux500/
- obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
- obj-y				+= xilinx/
- obj-$(CONFIG_ARCH_ZX)		+= zte/
--obj-$(CONFIG_SOC_KENDRYTE)	+= kendryte/
-+obj-$(CONFIG_SOC_CANAAN)	+= canaan/
-diff --git a/drivers/soc/kendryte/Kconfig b/drivers/soc/canaan/Kconfig
-similarity index 79%
-rename from drivers/soc/kendryte/Kconfig
-rename to drivers/soc/canaan/Kconfig
-index 49785b1b0217..5232d13f07e5 100644
---- a/drivers/soc/kendryte/Kconfig
-+++ b/drivers/soc/canaan/Kconfig
-@@ -1,9 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--if SOC_KENDRYTE
-+if SOC_CANAAN
- 
- config K210_SYSCTL
--	bool "Kendryte K210 system controller"
-+	bool "Canaan Kendryte K210 SoC system controller"
- 	default y
- 	depends on RISCV
- 	help
-diff --git a/drivers/soc/kendryte/Makefile b/drivers/soc/canaan/Makefile
-similarity index 100%
-rename from drivers/soc/kendryte/Makefile
-rename to drivers/soc/canaan/Makefile
-diff --git a/drivers/soc/kendryte/k210-sysctl.c b/drivers/soc/canaan/k210-sysctl.c
-similarity index 100%
-rename from drivers/soc/kendryte/k210-sysctl.c
-rename to drivers/soc/canaan/k210-sysctl.c
++++ b/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/canaan,k210-rst.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Canaan Kendryte K210 Reset Controller Device Tree Bindings
++
++maintainers:
++  - Damien Le Moal <damien.lemoal@wdc.com>
++
++description: |
++  Canaan Kendryte K210 reset controller driver which supports the SoC
++  system controller supplied reset registers for the various peripherals
++  of the SoC. The K210 reset controller node must be defined as a child
++  node of the K210 system controller node.
++
++  See also:
++  - dt-bindings/reset/k210-rst.h
++
++properties:
++  compatible:
++    const: canaan,k210-rst
++
++  '#reset-cells':
++    const: 1
++
++required:
++  - '#reset-cells'
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/reset/k210-rst.h>
++    sysrst: reset-controller {
++      compatible = "canaan,k210-rst";
++      #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/reset/k210-rst.h b/include/dt-bindings/reset/k210-rst.h
+new file mode 100644
+index 000000000000..883c1aed50e8
+--- /dev/null
++++ b/include/dt-bindings/reset/k210-rst.h
+@@ -0,0 +1,42 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2019 Sean Anderson <seanga2@gmail.com>
++ * Copyright (c) 2020 Western Digital Corporation or its affiliates.
++ */
++#ifndef RESET_K210_SYSCTL_H
++#define RESET_K210_SYSCTL_H
++
++/*
++ * Kendryte K210 SoC system controller K210_SYSCTL_SOFT_RESET register bits.
++ * Taken from Kendryte SDK (kendryte-standalone-sdk).
++ */
++#define K210_RST_ROM	0
++#define K210_RST_DMA	1
++#define K210_RST_AI	2
++#define K210_RST_DVP	3
++#define K210_RST_FFT	4
++#define K210_RST_GPIO	5
++#define K210_RST_SPI0	6
++#define K210_RST_SPI1	7
++#define K210_RST_SPI2	8
++#define K210_RST_SPI3	9
++#define K210_RST_I2S0	10
++#define K210_RST_I2S1	11
++#define K210_RST_I2S2	12
++#define K210_RST_I2C0	13
++#define K210_RST_I2C1	14
++#define K210_RST_I2C2	15
++#define K210_RST_UART1	16
++#define K210_RST_UART2	17
++#define K210_RST_UART3	18
++#define K210_RST_AES	19
++#define K210_RST_FPIOA	20
++#define K210_RST_TIMER0	21
++#define K210_RST_TIMER1	22
++#define K210_RST_TIMER2	23
++#define K210_RST_WDT0	24
++#define K210_RST_WDT1	25
++#define K210_RST_SHA	26
++#define K210_RST_RTC	29
++
++#endif /* RESET_K210_SYSCTL_H */
 -- 
 2.28.0
 
