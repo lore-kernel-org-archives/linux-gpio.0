@@ -2,86 +2,113 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB8AC4361B
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 08:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0121C19425
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 08:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87E0C2313E
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 08:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D59923719
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 08:53:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbgLIInQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 03:43:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39350 "EHLO
+        id S1728244AbgLIIwd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 03:52:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728184AbgLIInQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 03:43:16 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38D3CC0613D6
-        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 00:42:36 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id 23so1971447lfg.10
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 00:42:36 -0800 (PST)
+        with ESMTP id S1728184AbgLIIwX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 03:52:23 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3F3C061793
+        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 00:51:42 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id t22so1367395ljk.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 00:51:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rFJqflg3adJFeN3Kytku+xyfIdshoH7ILfDIx/FbTe0=;
-        b=p/fwR9lHVyHy6dWZd9GfVwh5Yoij+ymPwnY8f20sRhR6JWzC3bQSEZPxE/FnhG8V6+
-         JXHBcJoi8O+mV2tBXLCDbKWRMuoTqzqURwhl53ZY7vzgmoyPkdxcOQZzR2uZy2Gwfkb5
-         mQ2diz9Kig4I59jEUPhB1nVWTepPhTVfg4jBS5D/thmo/bJoHRt3oPvxJn3oh1LIMS0D
-         rk7HvgL+D69hAJlSRjZvVNcuA4rW7OShkg+w3th48spb3wj9RIjYRkD6rfrI+zDL0C4a
-         5ut5LOjeX14b1XhbhG3yA/zt7OGBv8qepFMdsCXbFRmT22k7x1lR4iDNp0G1AZ2KTw2j
-         UwBA==
+        bh=2LZygKLdMeXtg6UECM3hwilY+T5j2Bz/7hXfM4FH8eM=;
+        b=epPtSSR/7bb7N5MVhrvn8mmG61DUhbJ5ceSBz3zdi5ttU8hgJi895CvkV+jIJ/6Elk
+         faLbAlJ0Ct8dkmLFvgIrcS2c+E739IaF5RCxecfGNHm3mm9cz8saP5sgGgYp+X1PV4bC
+         8mhsjose2UwRapucDt1waykXBayMMNhXuMNDIMFXYNitjuaFIJIsgeaGcS06BwcAfxiT
+         KnhaJQskTWoexBWR6Z8n6Tmma+HZsp8I7wCXBC5u3Xfmk6pam3fV2CZ4Ur7GSbOGsa+I
+         mOEm5C+iR1V90Ai9/YLl2ZsKt3HZkVjDOpFbulodrKnOwGlU5c4D2BW0bjsEGeVxZrhT
+         woEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rFJqflg3adJFeN3Kytku+xyfIdshoH7ILfDIx/FbTe0=;
-        b=tRxbbEZTBRclHtUZqDjMr29t0SfI6/g5Q1qkfvAbUTougyQKqBwviLSmBxZ+LorHtg
-         c8MFPmnEsojMiWF5LwGY9AB8cLS+k+AQtFjr+wBLxSGStTATO9u9Dx3jCg66cEqUF3Z8
-         p5phLKpIBQXd5Zip/Y2PwYlg27R1DlSDWGQGK/vssSA57Yr2VrquYnuak90vHHxhL+nF
-         MCWn0cXvi/Fa9Kf/ZlZVqlvIL2Pp1QSr93W4LEQ/uAlZq2cyPT/NxTxF5DGcb4YJX+Cy
-         WHgxtxYHeqO1IbTfv0YVKhL2VQXqAbxibRHEzmSPe1c/NM3kEJT4L3IAG9Z8WAqgRe6s
-         Vd/w==
-X-Gm-Message-State: AOAM531Gq/SwzlH9f6RxzVda+DuzY9gQk1lJX7dtS35eGl8JN/Jg9Yie
-        c61vbXQbSQxt4XvV6xY5qe49W7vLmfGpmmvfv/RXcA==
-X-Google-Smtp-Source: ABdhPJwFUsAoeMA8DaIqBEoEmSKEcEAz8QCn4SxhYXfB8gtURU7134qDvZyePL4+HrhnLZyfcmBazAkL6BQAK0vfcWw=
-X-Received: by 2002:a19:8384:: with SMTP id f126mr600240lfd.649.1607503354685;
- Wed, 09 Dec 2020 00:42:34 -0800 (PST)
+        bh=2LZygKLdMeXtg6UECM3hwilY+T5j2Bz/7hXfM4FH8eM=;
+        b=i1wPpUX8ZMunCgJvGCOOikgHBzCmuK6ItsJt6nNNS1DDZyH+lHfqRqN6bUxH9y9f5N
+         +gR+cbWuLB2kwJJ6/aqvJS678ogJRcfVW49J314YH75qdRYl5YOuUnSHi154lbnm0Pia
+         ny15mi9rJMi9N7u0UcDTkUBNSVCcu77Mzcyqy5kk9OtbdXKCsA6yla0S7Ouz/HklNa+P
+         Qd4nadUJu5sv5mvhqPZynkwRLfJnS/XLH/Ac3iTNyKJddWlmzrZUmKNPC4yKUOIWUXyM
+         O69avxYgebJBrjnsLWOB0tXUh4y5GtbrldAEEiljry79wmWJWk8yhRimCNANE9XHTvP4
+         1U/w==
+X-Gm-Message-State: AOAM532WUqtkQu/QfMYU2BzMNVRBBNvgfmOU4do1IsI/hsVHQG4ze0cG
+        BzziL+WW8thuqdkFWGUwEgXatmGkBkGDLf+/5N/Pyg==
+X-Google-Smtp-Source: ABdhPJzppB0j8WgWv6IdUZKKIGJXOVBgkHuLGiXKbyH9OU440iaPPvmtmnyjuDh6a/e9QQ8jwdYfQNzIxLD6F6BmUpY=
+X-Received: by 2002:a2e:910f:: with SMTP id m15mr622232ljg.467.1607503901332;
+ Wed, 09 Dec 2020 00:51:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20201209055106.840100-1-zhang.lyra@gmail.com>
-In-Reply-To: <20201209055106.840100-1-zhang.lyra@gmail.com>
+References: <20201203191135.21576-1-info@metux.net> <20201203191135.21576-2-info@metux.net>
+ <0080d492-2f07-d1c6-d18c-73d4204a5d40@metux.net> <CACRpkdb4R4yHcUV2KbGEC_RkU+QmH6Xg7X+qee8sEa9TURGr8A@mail.gmail.com>
+ <51d3efb7-b7eb-83d7-673a-308dd51616d3@metux.net>
+In-Reply-To: <51d3efb7-b7eb-83d7-673a-308dd51616d3@metux.net>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 9 Dec 2020 09:42:23 +0100
-Message-ID: <CACRpkdZptM_n00mirKDkmJn5e+h4HdUrKAG8x6onep00bSegSQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: eic-sprd: break loop when getting NULL device resource
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Wed, 9 Dec 2020 09:51:30 +0100
+Message-ID: <CACRpkdbqVoT56H88hoZwDqV0kW_8XTaE5TkMQsg-RRrPqgF=cQ@mail.gmail.com>
+Subject: Re: Howto listen to/handle gpio state changes ? Re: [PATCH v2 2/2]
+ drivers: gpio: add virtio-gpio guest driver
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
+        Jonathan Corbet <corbet@lwn.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 6:51 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+On Tue, Dec 8, 2020 at 3:07 PM Enrico Weigelt, metux IT consult
+<lkml@metux.net> wrote:
 
-> EIC controller have unfixed numbers of banks on different Spreadtrum SoCs,
-> and each bank has its own base address, the loop of getting there base
-> address in driver should break if the resource gotten via
-> platform_get_resource() is NULL already. The later ones would be all NULL
-> even if the loop continues.
+> I've been looking for some more direct notification callback for gpio
+> consumers: here the consumer would register itself as a listener on
+> some gpio_desc and called back when something changes (with data what
+> exactly changed, eg. "gpio #3 input switched to high").
 >
-> Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Seems we currently just have the indirect path via interrupts.
 
-Patch applied for fixes!
+I don't know how indirect it is, it seems pretty direct to me. The subsystem
+was designed in response to how the hardware in front of the developers
+worked.
+
+So far we have had:
+- Cascaded interrupts
+- Dedicated (hieararchical) interrupts
+- Message Signalled Interrupts
+
+And if you now bring something else to the show then it's not like the
+subsystem was designed for some abstract quality such as
+generic notification of events that occurred, all practical instances
+have been around actual IRQs and that is why it is using
+struct irq_chip.
+
+What we need to understand is if your new usecase is an outlier
+so it is simplest modeled by a "mock" irq_chip or we have to design
+something new altogether like notifications on changes. I suspect
+irq_chip would be best because all drivers using GPIOs for interrupts
+are expecting interrupts, and it would be an enormous task to
+change them all and really annoying to create a new mechanism
+on the side.
 
 Yours,
 Linus Walleij
