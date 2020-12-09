@@ -2,126 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F297DC1B0D9
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 15:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75594C4361B
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 16:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D240823B45
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 15:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B79F23BCB
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 16:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726431AbgLIPnG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 10:43:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
+        id S1727742AbgLIQDF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 11:03:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbgLIPnD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 10:43:03 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFF9C0613CF
-        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 07:42:23 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id 69so1410938pgg.8
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 07:42:23 -0800 (PST)
+        with ESMTP id S1727559AbgLIQDF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 11:03:05 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 800AAC0613CF
+        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 08:02:25 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id f9so1277582pfc.11
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 08:02:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=94s+C2pgmg1Kx2RBwDa9+UTBPP6bm4dJfGR23kr5sZk=;
-        b=uGHjrqjWL9vz7tktfiebAc65UK8Kab97bY7c6i8Fczp4ook/Cj6aSkoknPy1cfMGeb
-         7KKCGYrIlw4SqJVzJDNZ8BS45Ys6ytrCFUQ7aEeoW+ze1nl4tdOJ5YhLyjWer1iICJca
-         zeXcBMQWKSj+5ug9fMa5Q+dzxATyQS19rxiaW2eBy/JrZgABYBJAwz8wgvfjzwzmU4eJ
-         KBamfgv861SZxKVAMmjiQFzOQFl/VltB1+DNovvShSEri2PK6TDroVtIb77pi0Re0o6P
-         oXApYEKzTLPA/3Q8pkCup0kUFajDcqhErz9Idje2dG+DaHvm5ubcd9LBFWqqM3tgEHd+
-         kksw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VQAQ2J6LbV3gszHKeOVHEcsMGoc7/0iCrJQJ/rSIwdY=;
+        b=R0gt3ItnqniRhw7aQYymhT8ObGWHPuSWf1gEpXTsdNV3duXkIpWAdJ85ItSGb0cABr
+         O7PhSdxmqCD59qPbsL7cd2SMIap5DxNEbUh5PCAerM9mKq4kZCClkUTM4FRhnXrp067R
+         447RfFYRYoRZML4LSJt8IUKJrQcXWO9hN0OVxO86N52BtYxcRiVhU2pncZx5O3i1YTpw
+         QG/eXM7il9HcaALtE85kwbvAhBH5w2HBPCKrIGdrozETxdgj+gkKcu9xtG2CJ39L7res
+         sZV9Cq4+6AwIbidbIT5S0qHqXVYxg/ZImWQ1uMraH6BHgtxuPh+hMYa6Q3X9qdIU1Zty
+         ctjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=94s+C2pgmg1Kx2RBwDa9+UTBPP6bm4dJfGR23kr5sZk=;
-        b=K4ywBDsWZrvV1Lrwp0NFVJEhlguYmUY3iUa65OzIrNILb2y8BWtFnUo0XorKYGIBrJ
-         2ao+F/Gh/6jViKP322QFY73Tq+4ezixiNZDVVi7NNfCkhv9UxuyqPwzSpLYRp5jyp0jg
-         CMVLy/ne0x6SfDnGR+xHbECeqHFzaY9bi1yFtWDY4+5834SQJ6U8YvRAOOUlYWJ4gpGX
-         gjg8Wfql5UfnYU7W5g1UjHBRrrZRh/eRB1HEmEN3XzX5L/GofbNmHmQ6v6Zi4/gGYyKK
-         eQd7wq4AeqDsekVpmXN2xGlCI7/Euchpj5SMFl0dr2yeHClNkpaiai130kAwN33uh59P
-         SBug==
-X-Gm-Message-State: AOAM530jtiXSlfLnGxjeMDy+s1o27Nj8QGjkCk2w12b+j5hkSYGneUsI
-        r+LS63N2wV+izmwSZIsX1NZlOfjAeod1Fw==
-X-Google-Smtp-Source: ABdhPJyRHdoNYpSeFoVGvYR8O11U5ODJFjERoCHTl8UM9iYGmw853QgxEdyWH+ZuhUNq2gmAAwjJSw==
-X-Received: by 2002:a63:c407:: with SMTP id h7mr2518634pgd.150.1607528542276;
-        Wed, 09 Dec 2020 07:42:22 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 22sm2919323pfn.190.2020.12.09.07.42.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Dec 2020 07:42:21 -0800 (PST)
-Message-ID: <5fd0f05d.1c69fb81.b5716.551f@mx.google.com>
-Date:   Wed, 09 Dec 2020 07:42:21 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VQAQ2J6LbV3gszHKeOVHEcsMGoc7/0iCrJQJ/rSIwdY=;
+        b=lBw82z63mINWjOJ5lcodH3Fu6xQhtZTShQRNc7OzTgpXkgbyhVsnUgBPleJ9z4UUkd
+         o5ksH6yvVrOa5b7Qrtm3tWa4ZNwTh279NyC9O8xjIWfkOGkLgOdslUSD3mX+PZhVW0kH
+         UcP6+fB6rLA1yEcHiKr4DiO1SToW/9ra3t+FoYMfp3vTUDrhj2qrbq9PbvyoDShIsyYZ
+         kclt3/Pmp7IDIwZBe3nNxSU/pdr/narhqCDwKckn4jdq8NxeJoUFBF4lTgwr3bNdFmcM
+         k3BtpUNmbCY3WlspbWpTYua+FuNOdcxh2RWHFOkgIFJyUD0/cR3cSbVrhgQXr7Ny9IwM
+         8Emg==
+X-Gm-Message-State: AOAM533AZc7glOF7uMXbN/PSh0Z6SNJpKK0Jq8dbVM6dm9ISPv9ZwZWV
+        bE0JrfmxFprbEkhfjkJrEtvG6ZAOilLnzRs+9YY=
+X-Google-Smtp-Source: ABdhPJy/wApaXKX9jrNfIf67ronwPYtl+kP65NpKmwSC9zUC28XMVPj39AHMj3ILh9Rgbs3/J9xTpH+ud8o20z8NewU=
+X-Received: by 2002:a63:4002:: with SMTP id n2mr2582063pga.4.1607529744948;
+ Wed, 09 Dec 2020 08:02:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: devel
-X-Kernelci-Tree: linusw
-X-Kernelci-Kernel: v5.10-rc4-85-g40b37008eb5a
-X-Kernelci-Report-Type: test
-Subject: linusw/devel baseline: 120 runs,
- 1 regressions (v5.10-rc4-85-g40b37008eb5a)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+References: <20201209095248.22408-1-brgl@bgdev.pl> <CACRpkdZgK3dmjM32BYAWFvHOhBUsQbNbCSNMaebvRr+Jnes=Ww@mail.gmail.com>
+ <CAMRc=Mdq7LBTAbUguuLH=f5_vfo5pc95BCveqSvApBTC26aNQQ@mail.gmail.com>
+ <CACRpkdYM2knogZLRp+AAdE5ssvhULDZ6xr8yGrO8rvSMrZuScw@mail.gmail.com>
+ <CAHp75VefreUB1KvdPGYUqmd7jq+hEWuPoq7nRG4RxLP6YpPRLA@mail.gmail.com>
+ <CAHp75Vebqe2ndfAx5b_awLnjM7UCh2bmcdJBEakVZL3hSQhRQA@mail.gmail.com> <CACRpkdYbANG6GCYPrUus0k_wnEzF-6rkE1GMRLc3-nvqja=73w@mail.gmail.com>
+In-Reply-To: <CACRpkdYbANG6GCYPrUus0k_wnEzF-6rkE1GMRLc3-nvqja=73w@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 9 Dec 2020 18:03:13 +0200
+Message-ID: <CAHp75VeGoFurUzUvKLLDhF7Mb9T2H9oqV_fVgTcAEvknBjBH3g@mail.gmail.com>
+Subject: Re: [GIT PULL] gpio: updates for v5.11-rc1
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel baseline: 120 runs, 1 regressions (v5.10-rc4-85-g40b37008eb5a)
+On Wed, Dec 9, 2020 at 4:39 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Wed, Dec 9, 2020 at 11:39 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>
+> > Manually I did the following:
+> > - removed the conflicting hunk entirely
+> > - added 'break;' to the existing function in 'case
+> > ACPI_IO_RESTRICT_OUTPUT:' case
+>
+> OK I did the same and merged in Bartosz branch exactly like that,
+> let's hope it works!
 
-Regressions Summary
--------------------
+I just have checked your devel branch and it looks okay to me, thanks!
 
-platform   | arch  | lab     | compiler | defconfig | regressions
------------+-------+---------+----------+-----------+------------
-imx8mp-evk | arm64 | lab-nxp | gcc-8    | defconfig | 1          =
-
-
-  Details:  https://kernelci.org/test/job/linusw/branch/devel/kernel/v5.10-=
-rc4-85-g40b37008eb5a/plan/baseline/
-
-  Test:     baseline
-  Tree:     linusw
-  Branch:   devel
-  Describe: v5.10-rc4-85-g40b37008eb5a
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
-io.git/
-  SHA:      40b37008eb5a300ea35aa83432c213b6028313d5 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform   | arch  | lab     | compiler | defconfig | regressions
------------+-------+---------+----------+-----------+------------
-imx8mp-evk | arm64 | lab-nxp | gcc-8    | defconfig | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fd0e600b945a87662c94cc5
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/devel/v5.10-rc4-85-g40b=
-37008eb5a/arm64/defconfig/gcc-8/lab-nxp/baseline-imx8mp-evk.txt
-  HTML log:    https://storage.kernelci.org//linusw/devel/v5.10-rc4-85-g40b=
-37008eb5a/arm64/defconfig/gcc-8/lab-nxp/baseline-imx8mp-evk.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/arm64/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fd0e600b945a87662c94=
-cc6
-        failing since 3 days (last pass: v5.10-rc4-34-g0f2c7af45d7ee, first=
- fail: v5.10-rc4-47-gc47d9e1b7343) =
-
- =20
+-- 
+With Best Regards,
+Andy Shevchenko
