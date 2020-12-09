@@ -2,93 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7AEC1B0D8
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF01C19425
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 11:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C400923BDC
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0EC12343F
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 11:22:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbgLIKmx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 05:42:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34822 "EHLO mx2.suse.de"
+        id S1730664AbgLILVR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 06:21:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbgLIKmx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 9 Dec 2020 05:42:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 08849AB63;
-        Wed,  9 Dec 2020 10:42:11 +0000 (UTC)
-Message-ID: <fcc97ca28c3aaa3ab69b4de4818c1dc89b85b430.camel@suse.de>
-Subject: Re: [PATCH v5 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-Date:   Wed, 09 Dec 2020 11:42:09 +0100
-In-Reply-To: <20201123183833.18750-12-nsaenzjulienne@suse.de>
-References: <20201123183833.18750-1-nsaenzjulienne@suse.de>
-         <20201123183833.18750-12-nsaenzjulienne@suse.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-DYDWHGJjHHu30M9SeI+k"
-User-Agent: Evolution 3.38.2 
+        id S1727013AbgLILUH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 9 Dec 2020 06:20:07 -0500
+X-Gm-Message-State: AOAM532+D1hj72eNWbigRJ36XrBNtiQmRz5DI82g8Yf9iTfbpsBahqes
+        ErwYIaeDpOESo7af9GUCqOGwN8m9PPUD1sC8EYc=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607512766;
+        bh=U8CiCE+927eWk1WjnrHEeDDVKhi+XWJxlcOhS4QhpHE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CZbfYp5eMW4vCNbBV9SJiILwyOwti8/kZsAVsYvK2NDemL3iD6lIVzx6OIJEzAsWN
+         K7x05Wm2fieBTM1ho1osVEiUn4PDp5UA/CU+Z08ZXp4Zz0dKo11UaIjzG6QhQ0V8kk
+         PtKS7Mx+K8wZf/TTtpqjFwiyKbSmLsa5ATNjqokNb/UtL8Te498LaiXp/3Sv+J7B0+
+         fEyxHwC6s2/HAlh66Tv3eglhNIQdcjWYfLF610MdIfaY8OjsdW/JTUqSY3wvAtnGAl
+         7QogIuRU22jLlxkLW6zhhTRccEomhcXrCKo8BJhDFfjA3QRJ48x00BzLy2atC0/7rv
+         gm5xle3EZOSYA==
+X-Google-Smtp-Source: ABdhPJy+RZN5YZE70pJEXGADA4yibSdAI8aJxjowtgSH9QR1iHKhytI8wUUYsRy7Qa7sG+nxaBUGbjy4r0F/blrkE+c=
+X-Received: by 2002:a9d:6317:: with SMTP id q23mr1277831otk.251.1607512765731;
+ Wed, 09 Dec 2020 03:19:25 -0800 (PST)
 MIME-Version: 1.0
+References: <20201203191135.21576-1-info@metux.net> <20201203191135.21576-2-info@metux.net>
+ <0080d492-2f07-d1c6-d18c-73d4204a5d40@metux.net> <CACRpkdb4R4yHcUV2KbGEC_RkU+QmH6Xg7X+qee8sEa9TURGr8A@mail.gmail.com>
+ <51d3efb7-b7eb-83d7-673a-308dd51616d3@metux.net> <CACRpkdbqVoT56H88hoZwDqV0kW_8XTaE5TkMQsg-RRrPqgF=cQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbqVoT56H88hoZwDqV0kW_8XTaE5TkMQsg-RRrPqgF=cQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Wed, 9 Dec 2020 12:19:09 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1PRQGUXkjdSmqxXSONX_ZoCgsfx8hJBUdBUk14tyzErA@mail.gmail.com>
+Message-ID: <CAK8P3a1PRQGUXkjdSmqxXSONX_ZoCgsfx8hJBUdBUk14tyzErA@mail.gmail.com>
+Subject: Re: Howto listen to/handle gpio state changes ? Re: [PATCH v2 2/2]
+ drivers: gpio: add virtio-gpio guest driver
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Wed, Dec 9, 2020 at 9:51 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Dec 8, 2020 at 3:07 PM Enrico Weigelt, metux IT consult <lkml@metux.net> wrote:
 
---=-DYDWHGJjHHu30M9SeI+k
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> What we need to understand is if your new usecase is an outlier
+> so it is simplest modeled by a "mock" irq_chip or we have to design
+> something new altogether like notifications on changes. I suspect
+> irq_chip would be best because all drivers using GPIOs for interrupts
+> are expecting interrupts, and it would be an enormous task to
+> change them all and really annoying to create a new mechanism
+> on the side.
 
-Hi All,
+I would expect the platform abstraction to actually be close enough
+to a chained irqchip that it actually works: the notification should
+come in via vring_interrupt(), which is a normal interrupt handler
+that calls vq->vq.callback(), calling generic_handle_irq() (and
+possibly chained_irq_enter()/chained_irq_exit() around it) like the
+other gpio drivers do should just work here I think, and if it did
+not, then I would expect this to be just a bug in the driver rather
+than something missing in the gpio framework.
 
-On Mon, 2020-11-23 at 19:38 +0100, Nicolas Saenz Julienne wrote:
-> Adds support to control the PWM bus available in official Raspberry Pi
-> PoE HAT. Only RPi's co-processor has access to it, so commands have to
-> be sent through RPi's firmware mailbox interface.
->=20
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
->=20
-
-I'll soon send a v6 of this series and was wondering if there is any more
-feedback for this patch.
-
-Regards,
-Nicolas
-
-
---=-DYDWHGJjHHu30M9SeI+k
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl/QqgEACgkQlfZmHno8
-x/4KCgf/atII/Noi91247tu9b99CnitDBaC5oT2VJlArRSWUNcHEEJPbZ1seDvpF
-wmsApHQ7yKkAnDJdCzSRj7K+/Pp8PhETFK/vmD5TWAxaBtjbvvdHDQT+2RvLSthv
-x4AJ/aAdpPsHuGzde7JViJAuogdoPuqVWExVPdjBbA2+SoWmuHxsaCBtnlD+HYhL
-jP+22+d6ea9OTvtVHgWrgeRjfWXPaNSvQ6GCWASLBpbsfssUWlSWWAURk4NP/lXA
-XhGFaDg+yzd1scAtX8T74lseUd7EP0sMpGmL4G3YWx1eg1oLSChdPx4hdupyIA6G
-ZUcTKvwbLhTkXiSJYnXeAUDjSgbJag==
-=FbnN
------END PGP SIGNATURE-----
-
---=-DYDWHGJjHHu30M9SeI+k--
-
+       Arnd
