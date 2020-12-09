@@ -2,54 +2,54 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3902C19425
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862D4C2BBD4
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3F2223AFE
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DB5723AFE
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbgLIFh3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 00:37:29 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15290 "EHLO
+        id S1727727AbgLIFhE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 00:37:04 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15253 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbgLIFh0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 00:37:26 -0500
+        with ESMTP id S1727693AbgLIFg7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 00:36:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607492245; x=1639028245;
+  t=1607492218; x=1639028218;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=vDk8Zb8GLHLHzz/ShRrTftAiv5e5AMJT6u7ZVVWRg6c=;
-  b=cLZon9oFFEav4ZVbcfJrlTwjv1CGpEll/Gjo8rK4TIUPAJ/CtkZj/SPp
-   vzldxPFFizruOelGFDIZRGo1jxKexw6NfbE250iwC31uD9MU9xvXfeJAE
-   Ugn7Xn0tsy6dtvKXmiqN3BpSQNuVzntexWD4rxq2OBEZE9j1fkpSZA/p7
-   TCRcYRJmWuFzPGLWvJq7PnLh/sgewinxTW59Dw2Y6jrnGMYRQBFd/TJ2h
-   Sz/3vTe8ih/nBsu1FpPPA1mf6Ok1HFC3XTmkHVDD2fZekZxgx5hwnGbhi
-   wB6fAHD2Qb3omyXrTXZ7uLDl86ozVcTHRBTaabm33U7oMz6z/+SroQPPx
-   A==;
-IronPort-SDR: QT5/yHIVaL7stDUke/AhJvpGBLfpKVr+8gLne4YMPhcRZwEkWbe0xjANIAlFLq58/igvmXQ6mM
- 03eu9qSsS1q6c93et5TMPNk3IXQI40lzEBxcs/xVyzL42fAccDiggsTrXdIxzUIL4/xhFVtKTU
- hTtKITMoswN+4tNOs/s/jySvmmK8GGWKaCzWkXEfIwICTvJqX3Zbx2Kwfuxkoe7IMqEM0LH44S
- LMecycS/XL8+Fi5W2pd4sBltrA8Tq90nteL7d18PrUtxzNt8M1MY+NF/YM8Cpo8y2zAM5/8UzK
- lKE=
+  bh=IwAcMtgipO6q6CangWgNrtZsFH/XITbIqfB03apfyPA=;
+  b=MJ6xcJG454aKfqJlTL+pr/2Im1pKjA91hH92Lvpt+vB64o8p8mJUeVCz
+   aPQYBQY4qPb4tNEzhmit7G8Mrkd5yE9ZKSLKCuER6MZaFZLQvLyCxBNRG
+   Tp5c45f2uxHSf2qFiktUlN1V6hGDVL3OFRHQpW1ORwl+ldOIfFed4Dv81
+   JvTdOYIEWAEj2aEWNFUasJRr2HgN+7j1+3aBflZofhxHF+GD5oF818yzu
+   pjD8SzAcICkLL0TFEAn/CFiWUlP83/vydo1Ag1HL9CpJfLGIGTfc+OYD2
+   0hnnrCV8fuT/sM9L2bfE0Ec0y9zmOgWVnsB7+uo4tJxyCRmBvyj6VsNYw
+   Q==;
+IronPort-SDR: 0yCcZtBCRyYS0wucDT1bcv4xn83Wq8LMtuhktpFw2PfOBplPnXg5IHgJrP7uDjghVSrQPwHzBv
+ mYB8JbGlvZ5hDW39UU0RbOj0YY2RpZac2TU16M2+9M5XCmdrsYfY3k+XOYg7x7lb67eHbhU6hg
+ JfkyImUyyYwMkX99O5o8ZiKvwaJW7SPx/H31C7UwwBC/znwpy51uKqm/v8D2zwMns2w896COYb
+ fYVHagRyBnNhTLZbd0wAKUWojTL3f1QNdEe5VK4A2p5EWXhQ3EjbqUqGtIMXrgj8L9OylFc4PQ
+ 71Y=
 X-IronPort-AV: E=Sophos;i="5.78,404,1599494400"; 
-   d="scan'208";a="154735890"
+   d="scan'208";a="154735885"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:23 +0800
-IronPort-SDR: ZtNMqktprp+t2jAHv3izBN/quM09PkCP/ZCNfRCef1OPQbjPiF1upxrnlK5JuhYS+W0pFhd+b0
- 9Y1HrZgW4tuddGDkRihc7iOjn/Z7G3mKU=
+  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:19 +0800
+IronPort-SDR: MzoP+F6Ua3eIStjDYk8nwB1VIAL6RMKcc/Y4qzci2NfdzYR2dy67ONGIE6yKtro67WoRRSN/2t
+ NVW0bgy8s7X27jq6jENrytTTdcvU+fBzk=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:49 -0800
-IronPort-SDR: NzFYj7XlzSMPan0NyNQQFDdDe5yB6FxEz0JHplg3SQfT+tWLrN1p1zXsc3IjttjuV/bzauTcJu
- eNokP3HZ1CzQ==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:45 -0800
+IronPort-SDR: tdVxV/n7I9aCMFR5uVcjPRBrjCLs89bfoBIrZk8qg6EgfuBz8ACsCSl2lw8LZNGIhJ0lKW8DVJ
+ MzN6kkFyfk4w==
 WDCIronportException: Internal
 Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:21 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:17 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -58,9 +58,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v6 06/22] riscv: cleanup Canaan Kendryte K210 sysctl driver
-Date:   Wed,  9 Dec 2020 14:34:50 +0900
-Message-Id: <20201209053506.122582-7-damien.lemoal@wdc.com>
+Subject: [PATCH v6 04/22] riscv: Fix builtin DTB handling
+Date:   Wed,  9 Dec 2020 14:34:48 +0900
+Message-Id: <20201209053506.122582-5-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201209053506.122582-1-damien.lemoal@wdc.com>
 References: <20201209053506.122582-1-damien.lemoal@wdc.com>
@@ -70,213 +70,212 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce the header file include/soc/canaan/k210-sysctl.h to have a
-common definition of the Canaan Kendryte K210 SoC system controller
-registers. Simplify the k210 system controller driver code by removing
-unused register bits definition. The MAINTAINERS file is updated,
-adding the entry "CANAAN/KENDRYTE K210 SOC SYSTEM CONTROLLER DRIVER"
-with myself listed as maintainer for this driver.
-This is a preparatory patch for introducing the K210 clock driver. No
-functional changes are introduced.
+All SiPeed K210 MAIX boards have the exact same vendor, arch and
+implementation IDs, preventing differentiation to select the correct
+device tree to use through the SOC_BUILTIN_DTB_DECLARE() macro. This
+result in this macro to be useless and mandates changing the code of
+the sysctl driver to change the builtin device tree suitable for the
+target board.
+
+Fix this problem by removing the SOC_BUILTIN_DTB_DECLARE() macro since
+it is used only for the K210 support. The code searching the builtin
+DTBs using the vendor, arch an implementation IDs is also removed.
+Support for builtin DTB falls back to the simpler and more traditional
+handling of builtin DTB using the CONFIG_BUILTIN_DTB option, similarly
+to other architectures.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- MAINTAINERS                      |  7 +++
- drivers/soc/canaan/k210-sysctl.c | 93 +++++++++-----------------------
- include/soc/canaan/k210-sysctl.h | 41 ++++++++++++++
- 3 files changed, 74 insertions(+), 67 deletions(-)
- create mode 100644 include/soc/canaan/k210-sysctl.h
+ arch/riscv/Kconfig.socs               | 19 ++++++++++----
+ arch/riscv/boot/dts/Makefile          |  2 +-
+ arch/riscv/boot/dts/kendryte/Makefile |  5 ++--
+ arch/riscv/include/asm/soc.h          | 38 ---------------------------
+ arch/riscv/kernel/soc.c               | 27 -------------------
+ arch/riscv/mm/init.c                  |  6 +----
+ drivers/soc/kendryte/k210-sysctl.c    | 12 ---------
+ 7 files changed, 19 insertions(+), 90 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6f474153dbec..6d06a5fda7ba 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3831,6 +3831,13 @@ W:	https://github.com/Cascoda/ca8210-linux.git
- F:	Documentation/devicetree/bindings/net/ieee802154/ca8210.txt
- F:	drivers/net/ieee802154/ca8210.c
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 8a55f6156661..0bc3e28581f2 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -32,9 +32,7 @@ config SOC_KENDRYTE
+ 	help
+ 	  This enables support for Kendryte K210 SoC platform hardware.
  
-+CANAAN/KENDRYTE K210 SOC SYSTEM CONTROLLER DRIVER
-+M:	Damien Le Moal <damien.lemoal@wdc.com>
-+L:	linux-riscv@lists.infradead.org
-+S:	Maintained
-+F:	drivers/soc/canaan/
-+F:	include/soc/canaan/
+-config SOC_KENDRYTE_K210_DTB
+-	def_bool y
+-	depends on SOC_KENDRYTE_K210_DTB_BUILTIN
++if SOC_KENDRYTE
+ 
+ config SOC_KENDRYTE_K210_DTB_BUILTIN
+ 	bool "Builtin device tree for the Kendryte K210"
+@@ -42,10 +40,21 @@ config SOC_KENDRYTE_K210_DTB_BUILTIN
+ 	default y
+ 	select OF
+ 	select BUILTIN_DTB
+-	select SOC_KENDRYTE_K210_DTB
+ 	help
+-	  Builds a device tree for the Kendryte K210 into the Linux image.
++	  Build a device tree for the Kendryte K210 into the Linux image.
+ 	  This option should be selected if no bootloader is being used.
+ 	  If unsure, say Y.
+ 
++config SOC_KENDRYTE_K210_DTB_SOURCE
++	string "Source file for the Kendryte K210 builtin DTB"
++	depends on SOC_KENDRYTE
++	depends on SOC_KENDRYTE_K210_DTB_BUILTIN
++	default "k210"
++	help
++	  Base name (without suffix, relative to arch/riscv/boot/dts/kendryte)
++	  for the DTS file that will be used to produce the DTB linked into the
++	  kernel.
 +
- CACHEFILES: FS-CACHE BACKEND FOR CACHING ON MOUNTED FILESYSTEMS
- M:	David Howells <dhowells@redhat.com>
- L:	linux-cachefs@redhat.com (moderated for non-subscribers)
-diff --git a/drivers/soc/canaan/k210-sysctl.c b/drivers/soc/canaan/k210-sysctl.c
-index 4608fbca20e1..60b474c33d45 100644
---- a/drivers/soc/canaan/k210-sysctl.c
-+++ b/drivers/soc/canaan/k210-sysctl.c
-@@ -12,74 +12,33 @@
- #include <linux/bitfield.h>
- #include <asm/soc.h>
- 
-+#include <soc/canaan/k210-sysctl.h>
++endif
 +
- #define K210_SYSCTL_CLK0_FREQ		26000000UL
+ endmenu
+diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
+index ca1f8cbd78c0..21e3905f1c44 100644
+--- a/arch/riscv/boot/dts/Makefile
++++ b/arch/riscv/boot/dts/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ subdir-y += sifive
+-subdir-y += kendryte
++subdir-$(CONFIG_SOC_KENDRYTE) += kendryte
  
- /* Registers base address */
- #define K210_SYSCTL_SYSCTL_BASE_ADDR	0x50440000ULL
+ obj-$(CONFIG_BUILTIN_DTB) := $(addsuffix /, $(subdir-y))
+diff --git a/arch/riscv/boot/dts/kendryte/Makefile b/arch/riscv/boot/dts/kendryte/Makefile
+index 1a88e616f18e..83636693166d 100644
+--- a/arch/riscv/boot/dts/kendryte/Makefile
++++ b/arch/riscv/boot/dts/kendryte/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-dtb-$(CONFIG_SOC_KENDRYTE_K210_DTB) += k210.dtb
+-
++ifneq ($(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE),"")
++dtb-y += $(strip $(shell echo $(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE))).dtb
+ obj-$(CONFIG_SOC_KENDRYTE_K210_DTB_BUILTIN) += $(addsuffix .o, $(dtb-y))
++endif
+diff --git a/arch/riscv/include/asm/soc.h b/arch/riscv/include/asm/soc.h
+index 6c8363b1f327..f494066051a2 100644
+--- a/arch/riscv/include/asm/soc.h
++++ b/arch/riscv/include/asm/soc.h
+@@ -21,42 +21,4 @@ void soc_early_init(void);
+ extern unsigned long __soc_early_init_table_start;
+ extern unsigned long __soc_early_init_table_end;
  
--/* Registers */
--#define K210_SYSCTL_PLL0		0x08
--#define K210_SYSCTL_PLL1		0x0c
--/* clkr: 4bits, clkf1: 6bits, clkod: 4bits, bwadj: 4bits */
--#define   PLL_RESET		(1 << 20)
--#define   PLL_PWR		(1 << 21)
--#define   PLL_INTFB		(1 << 22)
--#define   PLL_BYPASS		(1 << 23)
--#define   PLL_TEST		(1 << 24)
--#define   PLL_OUT_EN		(1 << 25)
--#define   PLL_TEST_EN		(1 << 26)
--#define K210_SYSCTL_PLL_LOCK		0x18
--#define   PLL0_LOCK1		(1 << 0)
--#define   PLL0_LOCK2		(1 << 1)
--#define   PLL0_SLIP_CLEAR	(1 << 2)
--#define   PLL0_TEST_CLK_OUT	(1 << 3)
--#define   PLL1_LOCK1		(1 << 8)
--#define   PLL1_LOCK2		(1 << 9)
--#define   PLL1_SLIP_CLEAR	(1 << 10)
--#define   PLL1_TEST_CLK_OUT	(1 << 11)
--#define   PLL2_LOCK1		(1 << 16)
--#define   PLL2_LOCK2		(1 << 16)
--#define   PLL2_SLIP_CLEAR	(1 << 18)
--#define   PLL2_TEST_CLK_OUT	(1 << 19)
--#define K210_SYSCTL_CLKSEL0	0x20
--#define   CLKSEL_ACLK		(1 << 0)
--#define K210_SYSCTL_CLKEN_CENT		0x28
--#define   CLKEN_CPU		(1 << 0)
--#define   CLKEN_SRAM0		(1 << 1)
--#define   CLKEN_SRAM1		(1 << 2)
--#define   CLKEN_APB0		(1 << 3)
--#define   CLKEN_APB1		(1 << 4)
--#define   CLKEN_APB2		(1 << 5)
--#define K210_SYSCTL_CLKEN_PERI		0x2c
--#define   CLKEN_ROM		(1 << 0)
--#define   CLKEN_DMA		(1 << 1)
--#define   CLKEN_AI		(1 << 2)
--#define   CLKEN_DVP		(1 << 3)
--#define   CLKEN_FFT		(1 << 4)
--#define   CLKEN_GPIO		(1 << 5)
--#define   CLKEN_SPI0		(1 << 6)
--#define   CLKEN_SPI1		(1 << 7)
--#define   CLKEN_SPI2		(1 << 8)
--#define   CLKEN_SPI3		(1 << 9)
--#define   CLKEN_I2S0		(1 << 10)
--#define   CLKEN_I2S1		(1 << 11)
--#define   CLKEN_I2S2		(1 << 12)
--#define   CLKEN_I2C0		(1 << 13)
--#define   CLKEN_I2C1		(1 << 14)
--#define   CLKEN_I2C2		(1 << 15)
--#define   CLKEN_UART1		(1 << 16)
--#define   CLKEN_UART2		(1 << 17)
--#define   CLKEN_UART3		(1 << 18)
--#define   CLKEN_AES		(1 << 19)
--#define   CLKEN_FPIO		(1 << 20)
--#define   CLKEN_TIMER0		(1 << 21)
--#define   CLKEN_TIMER1		(1 << 22)
--#define   CLKEN_TIMER2		(1 << 23)
--#define   CLKEN_WDT0		(1 << 24)
--#define   CLKEN_WDT1		(1 << 25)
--#define   CLKEN_SHA		(1 << 26)
--#define   CLKEN_OTP		(1 << 27)
--#define   CLKEN_RTC		(1 << 29)
-+/* Register bits */
-+/* K210_SYSCTL_PLL1: clkr: 4bits, clkf1: 6bits, clkod: 4bits, bwadj: 4bits */
-+#define PLL_RESET		(1 << 20)
-+#define PLL_PWR			(1 << 21)
-+#define PLL_BYPASS		(1 << 23)
-+#define PLL_OUT_EN		(1 << 25)
-+/* K210_SYSCTL_PLL_LOCK */
-+#define PLL1_LOCK1		(1 << 8)
-+#define PLL1_LOCK2		(1 << 9)
-+#define PLL1_SLIP_CLEAR		(1 << 10)
-+/* K210_SYSCTL_SEL0 */
-+#define CLKSEL_ACLK		(1 << 0)
-+/* K210_SYSCTL_CLKEN_CENT */
-+#define CLKEN_CPU		(1 << 0)
-+#define CLKEN_SRAM0		(1 << 1)
-+#define CLKEN_SRAM1		(1 << 2)
-+/* K210_SYSCTL_EN_PERI */
-+#define CLKEN_ROM		(1 << 0)
-+#define CLKEN_TIMER0		(1 << 21)
-+#define CLKEN_RTC		(1 << 29)
- 
- struct k210_sysctl {
- 	void __iomem		*regs;
-@@ -140,7 +99,7 @@ static unsigned long k210_sysctl_clk_recalc_rate(struct clk_hw *hw,
- 	 * If the clock selector is not set, use the base frequency.
- 	 * Otherwise, use PLL0 frequency with a frequency divisor.
- 	 */
--	clksel0 = readl(s->regs + K210_SYSCTL_CLKSEL0);
-+	clksel0 = readl(s->regs + K210_SYSCTL_SEL0);
- 	if (!(clksel0 & CLKSEL_ACLK))
- 		return K210_SYSCTL_CLK0_FREQ;
- 
-@@ -237,11 +196,11 @@ static void __init k210_soc_early_init(const void *fdt)
- 	k210_set_bits(PLL_OUT_EN, regs + K210_SYSCTL_PLL0);
- 
- 	k210_set_bits(CLKEN_CPU | CLKEN_SRAM0 | CLKEN_SRAM1,
--		      regs + K210_SYSCTL_CLKEN_CENT);
-+		      regs + K210_SYSCTL_EN_CENT);
- 	k210_set_bits(CLKEN_ROM | CLKEN_TIMER0 | CLKEN_RTC,
--		      regs + K210_SYSCTL_CLKEN_PERI);
-+		      regs + K210_SYSCTL_EN_PERI);
- 
--	k210_set_bits(CLKSEL_ACLK, regs + K210_SYSCTL_CLKSEL0);
-+	k210_set_bits(CLKSEL_ACLK, regs + K210_SYSCTL_SEL0);
- 
+-/*
+- * Allows Linux to provide a device tree, which is necessary for SOCs that
+- * don't provide a useful one on their own.
+- */
+-struct soc_builtin_dtb {
+-	unsigned long vendor_id;
+-	unsigned long arch_id;
+-	unsigned long imp_id;
+-	void *(*dtb_func)(void);
+-};
+-
+-/*
+- * The argument name must specify a valid DTS file name without the dts
+- * extension.
+- */
+-#define SOC_BUILTIN_DTB_DECLARE(name, vendor, arch, impl)		\
+-	extern void *__dtb_##name##_begin;				\
+-									\
+-	static __init __used						\
+-	void *__soc_builtin_dtb_f__##name(void)				\
+-	{								\
+-		return (void *)&__dtb_##name##_begin;			\
+-	}								\
+-									\
+-	static const struct soc_builtin_dtb __soc_builtin_dtb__##name	\
+-		__used __section("__soc_builtin_dtb_table") =		\
+-	{								\
+-		.vendor_id = vendor,					\
+-		.arch_id   = arch,					\
+-		.imp_id    = impl,					\
+-		.dtb_func  = __soc_builtin_dtb_f__##name,		\
+-	}
+-
+-extern unsigned long __soc_builtin_dtb_table_start;
+-extern unsigned long __soc_builtin_dtb_table_end;
+-
+-void *soc_lookup_builtin_dtb(void);
+-
+ #endif
+diff --git a/arch/riscv/kernel/soc.c b/arch/riscv/kernel/soc.c
+index c7b0a73e382e..a0516172a33c 100644
+--- a/arch/riscv/kernel/soc.c
++++ b/arch/riscv/kernel/soc.c
+@@ -26,30 +26,3 @@ void __init soc_early_init(void)
+ 		}
+ 	}
+ }
+-
+-static bool soc_builtin_dtb_match(unsigned long vendor_id,
+-				unsigned long arch_id, unsigned long imp_id,
+-				const struct soc_builtin_dtb *entry)
+-{
+-	return entry->vendor_id == vendor_id &&
+-	       entry->arch_id == arch_id &&
+-	       entry->imp_id == imp_id;
+-}
+-
+-void * __init soc_lookup_builtin_dtb(void)
+-{
+-	unsigned long vendor_id, arch_id, imp_id;
+-	const struct soc_builtin_dtb *s;
+-
+-	__asm__ ("csrr %0, mvendorid" : "=r"(vendor_id));
+-	__asm__ ("csrr %0, marchid" : "=r"(arch_id));
+-	__asm__ ("csrr %0, mimpid" : "=r"(imp_id));
+-
+-	for (s = (void *)&__soc_builtin_dtb_table_start;
+-	     (void *)s < (void *)&__soc_builtin_dtb_table_end; s++) {
+-		if (soc_builtin_dtb_match(vendor_id, arch_id, imp_id, s))
+-			return s->dtb_func();
+-	}
+-
+-	return NULL;
+-}
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 8e577f14f120..c32ff32cf9ab 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -601,11 +601,7 @@ static void __init setup_vm_final(void)
+ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+ {
+ #ifdef CONFIG_BUILTIN_DTB
+-	dtb_early_va = soc_lookup_builtin_dtb();
+-	if (!dtb_early_va) {
+-		/* Fallback to first available DTS */
+-		dtb_early_va = (void *) __dtb_start;
+-	}
++	dtb_early_va = (void *) __dtb_start;
+ #else
+ 	dtb_early_va = (void *)dtb_pa;
+ #endif
+diff --git a/drivers/soc/kendryte/k210-sysctl.c b/drivers/soc/kendryte/k210-sysctl.c
+index 707019223dd8..4608fbca20e1 100644
+--- a/drivers/soc/kendryte/k210-sysctl.c
++++ b/drivers/soc/kendryte/k210-sysctl.c
+@@ -246,15 +246,3 @@ static void __init k210_soc_early_init(const void *fdt)
  	iounmap(regs);
  }
-diff --git a/include/soc/canaan/k210-sysctl.h b/include/soc/canaan/k210-sysctl.h
-new file mode 100644
-index 000000000000..2e037db68f35
---- /dev/null
-+++ b/include/soc/canaan/k210-sysctl.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
-+ * Copyright (c) 2020 Western Digital Corporation or its affiliates.
-+ */
-+#ifndef K210_SYSCTL_H
-+#define K210_SYSCTL_H
-+
-+/*
-+ * Kendryte K210 SoC system controller registers offsets.
-+ * Taken from Kendryte SDK (kendryte-standalone-sdk).
-+ */
-+#define K210_SYSCTL_GIT_ID	0x00 /* Git short commit id */
-+#define K210_SYSCTL_UART_BAUD	0x04 /* Default UARTHS baud rate */
-+#define K210_SYSCTL_PLL0	0x08 /* PLL0 controller */
-+#define K210_SYSCTL_PLL1	0x0C /* PLL1 controller */
-+#define K210_SYSCTL_PLL2	0x10 /* PLL2 controller */
-+#define K210_SYSCTL_PLL_LOCK	0x18 /* PLL lock tester */
-+#define K210_SYSCTL_ROM_ERROR	0x1C /* AXI ROM detector */
-+#define K210_SYSCTL_SEL0	0x20 /* Clock select controller 0 */
-+#define K210_SYSCTL_SEL1	0x24 /* Clock select controller 1 */
-+#define K210_SYSCTL_EN_CENT	0x28 /* Central clock enable */
-+#define K210_SYSCTL_EN_PERI	0x2C /* Peripheral clock enable */
-+#define K210_SYSCTL_SOFT_RESET	0x30 /* Soft reset ctrl */
-+#define K210_SYSCTL_PERI_RESET	0x34 /* Peripheral reset controller */
-+#define K210_SYSCTL_THR0	0x38 /* Clock threshold controller 0 */
-+#define K210_SYSCTL_THR1	0x3C /* Clock threshold controller 1 */
-+#define K210_SYSCTL_THR2	0x40 /* Clock threshold controller 2 */
-+#define K210_SYSCTL_THR3	0x44 /* Clock threshold controller 3 */
-+#define K210_SYSCTL_THR4	0x48 /* Clock threshold controller 4 */
-+#define K210_SYSCTL_THR5	0x4C /* Clock threshold controller 5 */
-+#define K210_SYSCTL_THR6	0x50 /* Clock threshold controller 6 */
-+#define K210_SYSCTL_MISC	0x54 /* Miscellaneous controller */
-+#define K210_SYSCTL_PERI	0x58 /* Peripheral controller */
-+#define K210_SYSCTL_SPI_SLEEP	0x5C /* SPI sleep controller */
-+#define K210_SYSCTL_RESET_STAT	0x60 /* Reset source status */
-+#define K210_SYSCTL_DMA_SEL0	0x64 /* DMA handshake selector 0 */
-+#define K210_SYSCTL_DMA_SEL1	0x68 /* DMA handshake selector 1 */
-+#define K210_SYSCTL_POWER_SEL	0x6C /* IO Power Mode Select controller */
-+
-+#endif
+ SOC_EARLY_INIT_DECLARE(generic_k210, "kendryte,k210", k210_soc_early_init);
+-
+-#ifdef CONFIG_SOC_KENDRYTE_K210_DTB_BUILTIN
+-/*
+- * Generic entry for the default k210.dtb embedded DTB for boards with:
+- *   - Vendor ID: 0x4B5
+- *   - Arch ID: 0xE59889E6A5A04149 (= "Canaan AI" in UTF-8 encoded Chinese)
+- *   - Impl ID:	0x4D41495832303030 (= "MAIX2000")
+- * These values are reported by the SiPEED MAXDUINO, SiPEED MAIX GO and
+- * SiPEED Dan dock boards.
+- */
+-SOC_BUILTIN_DTB_DECLARE(k210, 0x4B5, 0xE59889E6A5A04149, 0x4D41495832303030);
+-#endif
 -- 
 2.28.0
 
