@@ -2,92 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DD2C4361B
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AF5C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6FCC23B6C
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FD5623B7E
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbgLIKgg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 05:36:36 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:57923 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727836AbgLIKgg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 05:36:36 -0500
-Received: from [192.168.1.155] ([77.2.91.93]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MpDeD-1kM7Qx2oGd-00qfIe; Wed, 09 Dec 2020 11:33:48 +0100
-Subject: Re: [PATCH v2 2/2] drivers: gpio: add virtio-gpio guest driver
-To:     Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-riscv@lists.infradead.org, stefanha@redhat.com,
-        msuchanek@suse.de
-References: <20201203191135.21576-1-info@metux.net>
- <20201203191135.21576-2-info@metux.net>
- <8209ce55-a4aa-f256-b9b9-f7eb3cac877b@redhat.com>
- <96aca1e6-2d5a-deb1-2444-88f938c7a9de@metux.net>
- <20201205142218-mutt-send-email-mst@kernel.org>
- <842519cc-94ca-3c11-ddd6-543e5a89c998@redhat.com>
- <20201207085247-mutt-send-email-mst@kernel.org>
- <0a9c19bd-0d25-1035-57e3-b1f5f204c309@redhat.com>
- <500d0c68-0c6d-f5fb-665b-74aec6d59f99@metux.net>
- <9e11f1ab-6b7c-d50e-d7db-633ebc3d358c@redhat.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <02dd5afb-5e62-0c38-88c2-a37531180e06@metux.net>
-Date:   Wed, 9 Dec 2020 11:33:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1729861AbgLIKjv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 05:39:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727836AbgLIKjv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 05:39:51 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D55C7C0613CF
+        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 02:39:10 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id f9so737053pfc.11
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 02:39:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xYhJRPwi46R4OiNBvna2fl9iuS/T/Z0gnmLAbxys4bo=;
+        b=QcQg85PYsxfFTstUmzoJ7NdPmo7uv1O4ylDNC8lLMxVlXsApI/E/0GAs+ajBHwhDSv
+         YoopDCK4W+BqYIlUhbC7BgUihvgXtt28D5bHH4m9ckCn706zlPXL9rHN2277KiXV/dCc
+         RyTsnNzzGc6gs0jo7hIYDl3pE5wnd+j+qizg3lVnqRaCBiEh40pL46yRnuSC4gxSAxkg
+         GKJospJeZxYaeaoT+ud0q2Z+v3tWgxtkhN0HkHX+KOKqGhTW17qi3/yXdieB/LOTNtBG
+         yiuDuVOFiGAX+AeoXpLEt2MTZAE4K+uldSDD5RaR1w6rCCWw37as7RWY0ZFtJYCKfimB
+         5Hqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xYhJRPwi46R4OiNBvna2fl9iuS/T/Z0gnmLAbxys4bo=;
+        b=EmCuDj3WL74AGjMiBZSEQb5nBBL3nWprFjXeEPINOx6AJATle7WgK9ZDNXWnTkzUQ7
+         Nbd+zCxibsuOqj/whgUr8WNPSthH3yjChfHO2tOEY3kYrk41OBKTSXgPcmGlQmLfwd55
+         iFMRLjVb9FAYuYP6utYzCSjbBVcZpf8CxMMyf68Z875rLnaeaKpDdUHf4zSoYSJJCLZ0
+         DmaCVusxo4KswOgviTB+G0333+2orEY2NGEjRLDVnSZZEZllqUmQeFe9TPKiz377D/Ln
+         cKv2IDtV71+RKcCMPqWSGH63bxcsdrXM3s+rM56KeSbCMpFzFsGt9WKWYRz9lAHtda6V
+         FQag==
+X-Gm-Message-State: AOAM531RWfv/2VwjPSGSgJdpWOKYX/ljPNWZuatURJT5/x9OE7EROcQJ
+        iFiQIhOpsDvJHWB4AklZhFNZeWog0/38r4CO/Q0=
+X-Google-Smtp-Source: ABdhPJzrYuc0Xv9hRzTjnYyMqcQ/IcQkkr/g27TKPOi6NerC5bWK++kZH/M0ComHu34FDydPu6MDeMp+VJhc9HxThq4=
+X-Received: by 2002:a63:4002:: with SMTP id n2mr1424898pga.4.1607510350444;
+ Wed, 09 Dec 2020 02:39:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9e11f1ab-6b7c-d50e-d7db-633ebc3d358c@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:6IBOdJ3Pw3iu1MA21dwXanEXus7g8p1ep+GkGt9zVIbhxhZx7Kf
- jiiT9jUHC2ZzHCmY2HNp5e7SosSLryMqody8olJ3KO/KGIWk81GbzazHXz4geIZ1BDAIhaz
- O8m+3MwjyC39TfP3KI6umd7EFHWVbx0KiKNiUK1cxON6xTUIZESLpMjOonPjPOKV9Yj7Oae
- unBSQwjogiQhVFADVN+ZA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NIdITOosddQ=:P8JLLlTSzK2CBNVBgIMqUV
- UpiIQoKs9//rlDBkl+fCiRfYISscyoor6jO2Rq0dZxW1574ox9nuQeFZh0lQ3t4Fg4KZJ73nl
- 41qNdWYboci98BEv99ALc1TYA0fKsHeWhU5snts4GVf/6JzUk3Ai/7nvlwxO8EUlrS98ve4AU
- rI6fhXFXfj1fboAkITyOq3VnBUDeBi+RaGhxi6RpZGLJtb0Z0h0qBu55Em4JCCTGiPADYnwP6
- lzAPldZb40Qo9c9jGzFfRHv0rpkY6Iz8ykrHP2X+9/ovFK8cd3W3afEGqL5u7WD21fL4xKx4F
- xULPKia5OMoBCbT/QAtq6rJSobc7bghBqWPj+dWQw5gpqdSg3gF3XUyJrKOiyhHv7nNuFKb2P
- UiQJ0QH/1E6BdqPqNGy0nE++XxDrfkdrCx+6S7OgeJW70XM8Yn4EpqSHtnt+FNE7rtD/jazD6
- FWcB0/8kvkVwAOZ9iUV1+Nk3uXO893cxNPA2qUkzF2FGXpgA9bpG
+References: <20201209095248.22408-1-brgl@bgdev.pl> <CACRpkdZgK3dmjM32BYAWFvHOhBUsQbNbCSNMaebvRr+Jnes=Ww@mail.gmail.com>
+ <CAMRc=Mdq7LBTAbUguuLH=f5_vfo5pc95BCveqSvApBTC26aNQQ@mail.gmail.com>
+ <CACRpkdYM2knogZLRp+AAdE5ssvhULDZ6xr8yGrO8rvSMrZuScw@mail.gmail.com> <CAHp75VefreUB1KvdPGYUqmd7jq+hEWuPoq7nRG4RxLP6YpPRLA@mail.gmail.com>
+In-Reply-To: <CAHp75VefreUB1KvdPGYUqmd7jq+hEWuPoq7nRG4RxLP6YpPRLA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 9 Dec 2020 12:39:58 +0200
+Message-ID: <CAHp75Vebqe2ndfAx5b_awLnjM7UCh2bmcdJBEakVZL3hSQhRQA@mail.gmail.com>
+Subject: Re: [GIT PULL] gpio: updates for v5.11-rc1
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 09.12.20 10:31, Jason Wang wrote:
+On Wed, Dec 9, 2020 at 12:33 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Wed, Dec 9, 2020 at 12:22 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Wed, Dec 9, 2020 at 11:13 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > > On Wed, Dec 9, 2020 at 11:07 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > > On Wed, Dec 9, 2020 at 10:52 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > > >
+> > > > > These are the patches I collected over this release cycle. Nothing all
+> > > > > too exciting - mainly just updates to drivers and refactoring of the
+> > > > > core code. Please pull.
+> > > >
+> > > > Nice!
+> > > >
+> > > > But I get a merge conflict in gpiolib-acpi.c! Since I said Andy should
+> > > > be maintaining that file it makes me a bit nervous.
+>
+> Linus, no problem. This conflict can be easily resolved.
+> Do you want me to publish a test branch with an example of resolution?
 
-Hi,
+Here you are:
+https://gitlab.com/andy-shev/next/-/tree/test-gpio-brgl-merge
 
->> And even if some USB-HA driver is enabled, the actualy machine doesn't
->> necessarily have the corresponding device.
-> 
-> Ok, then select works for me.
+Manually I did the following:
+- removed the conflicting hunk entirely
+- added 'break;' to the existing function in 'case
+ACPI_IO_RESTRICT_OUTPUT:' case
 
-Great, so does everybody aggree on my patch ?
-https://lore.kernel.org/lkml/20201204131221.2827-1-info@metux.net/
-
---mtx
 
 -- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+With Best Regards,
+Andy Shevchenko
