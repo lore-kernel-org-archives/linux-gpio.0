@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862D4C2BBD4
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AD0C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB5723AFE
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D315923AFE
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbgLIFhE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 00:37:04 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15253 "EHLO
+        id S1727009AbgLIFhn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 00:37:43 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15306 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727693AbgLIFg7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 00:36:59 -0500
+        with ESMTP id S1727276AbgLIFhn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 00:37:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607492218; x=1639028218;
+  t=1607492262; x=1639028262;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=IwAcMtgipO6q6CangWgNrtZsFH/XITbIqfB03apfyPA=;
-  b=MJ6xcJG454aKfqJlTL+pr/2Im1pKjA91hH92Lvpt+vB64o8p8mJUeVCz
-   aPQYBQY4qPb4tNEzhmit7G8Mrkd5yE9ZKSLKCuER6MZaFZLQvLyCxBNRG
-   Tp5c45f2uxHSf2qFiktUlN1V6hGDVL3OFRHQpW1ORwl+ldOIfFed4Dv81
-   JvTdOYIEWAEj2aEWNFUasJRr2HgN+7j1+3aBflZofhxHF+GD5oF818yzu
-   pjD8SzAcICkLL0TFEAn/CFiWUlP83/vydo1Ag1HL9CpJfLGIGTfc+OYD2
-   0hnnrCV8fuT/sM9L2bfE0Ec0y9zmOgWVnsB7+uo4tJxyCRmBvyj6VsNYw
+  bh=WYEB+xAbAuz8m2e2zCencw/TA9tmQomuLP1slmI1JUQ=;
+  b=UB+CbDY4D9QzZ10JvuvEtvV8ceQcZr9ePu3sbox+1hRE+kSle5f27HyS
+   2w2HdAk8uIVqIJ2CMsPyB8Tv1ebxwrFyRCTdFAq+ZOyZe37nTMQQnmZ5B
+   nLBk869FgA46auKvJ5REhFS/9MfgQbumhiQCoZcCPU56SecKsPl+fMEGF
+   XB1VaOjYYw+CELZrcBpZZl1YrUa8m4sUGT7lnrvR8HYul2zUcoWNQ2AQK
+   1P2JLbDCg5QYY4vx9QLIQx7+FvGl7w8xJttJT06kYZNC6BEUaBZVsXVP5
+   rlGEu3T1E09CXEidCEC7N3e0VqVwSDZapqUKimC6JIFsjc2Qx4umM88js
    Q==;
-IronPort-SDR: 0yCcZtBCRyYS0wucDT1bcv4xn83Wq8LMtuhktpFw2PfOBplPnXg5IHgJrP7uDjghVSrQPwHzBv
- mYB8JbGlvZ5hDW39UU0RbOj0YY2RpZac2TU16M2+9M5XCmdrsYfY3k+XOYg7x7lb67eHbhU6hg
- JfkyImUyyYwMkX99O5o8ZiKvwaJW7SPx/H31C7UwwBC/znwpy51uKqm/v8D2zwMns2w896COYb
- fYVHagRyBnNhTLZbd0wAKUWojTL3f1QNdEe5VK4A2p5EWXhQ3EjbqUqGtIMXrgj8L9OylFc4PQ
- 71Y=
+IronPort-SDR: RJfAHx9b78cEHtuKq2iR2/0UvVlH+OSOQHrNOZ5CpnxrZs7E2kN4XeAMJg3O+cKDZRZW6bjWjB
+ bNbzuqlumFG2WUkoxGZphe1rXr12HRt1SF2y+jdInSOvL4NtswRf12HfPYl/sIPnbrprnFUhGe
+ mlGVepWkrGEuaCLo2oqYV2aLewEHHYA3xbBmJp9KTC4mCZegg249CpQos8HZou9BnZYy1enG/Z
+ zh3e5Mres0kcqDmUh7oKNFcZcTsCdo2Z/sJXrwzWC/5+KGzlqe0F776J0uPoh6cjXbc93aSp6m
+ q20=
 X-IronPort-AV: E=Sophos;i="5.78,404,1599494400"; 
-   d="scan'208";a="154735885"
+   d="scan'208";a="154735898"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:19 +0800
-IronPort-SDR: MzoP+F6Ua3eIStjDYk8nwB1VIAL6RMKcc/Y4qzci2NfdzYR2dy67ONGIE6yKtro67WoRRSN/2t
- NVW0bgy8s7X27jq6jENrytTTdcvU+fBzk=
+  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:27 +0800
+IronPort-SDR: Bec4eiDKqwvp0VMeU+/i9U/TR1Z+cHnFHXR7M4vxjjU8n/FpnXt3bvHSdIj++dFH8YPDLXp7xW
+ bEsCnkm3yQEldHV++i6EMxffO417yGw/M=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:45 -0800
-IronPort-SDR: tdVxV/n7I9aCMFR5uVcjPRBrjCLs89bfoBIrZk8qg6EgfuBz8ACsCSl2lw8LZNGIhJ0lKW8DVJ
- MzN6kkFyfk4w==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:53 -0800
+IronPort-SDR: P4uZjs5f+5BxHSGbdwUus2YeR7g2ND0buudUm8S6N8HZY2azHhFWeeF62gZNczoIU7W5mNoCkJ
+ IqPb27HDKfGw==
 WDCIronportException: Internal
 Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:17 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:25 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -58,9 +58,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v6 04/22] riscv: Fix builtin DTB handling
-Date:   Wed,  9 Dec 2020 14:34:48 +0900
-Message-Id: <20201209053506.122582-5-damien.lemoal@wdc.com>
+Subject: [PATCH v6 08/22] dt-binding: clock: Document canaan,k210-clk bindings
+Date:   Wed,  9 Dec 2020 14:34:52 +0900
+Message-Id: <20201209053506.122582-9-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201209053506.122582-1-damien.lemoal@wdc.com>
 References: <20201209053506.122582-1-damien.lemoal@wdc.com>
@@ -70,212 +70,145 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-All SiPeed K210 MAIX boards have the exact same vendor, arch and
-implementation IDs, preventing differentiation to select the correct
-device tree to use through the SOC_BUILTIN_DTB_DECLARE() macro. This
-result in this macro to be useless and mandates changing the code of
-the sysctl driver to change the builtin device tree suitable for the
-target board.
-
-Fix this problem by removing the SOC_BUILTIN_DTB_DECLARE() macro since
-it is used only for the K210 support. The code searching the builtin
-DTBs using the vendor, arch an implementation IDs is also removed.
-Support for builtin DTB falls back to the simpler and more traditional
-handling of builtin DTB using the CONFIG_BUILTIN_DTB option, similarly
-to other architectures.
+Document the device tree bindings of the Canaan Kendryte K210 SoC clock
+driver in Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml.
+The header file include/dt-bindings/clock/k210-clk.h is modified to
+include the complete list of IDs for all clocks of the SoC.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- arch/riscv/Kconfig.socs               | 19 ++++++++++----
- arch/riscv/boot/dts/Makefile          |  2 +-
- arch/riscv/boot/dts/kendryte/Makefile |  5 ++--
- arch/riscv/include/asm/soc.h          | 38 ---------------------------
- arch/riscv/kernel/soc.c               | 27 -------------------
- arch/riscv/mm/init.c                  |  6 +----
- drivers/soc/kendryte/k210-sysctl.c    | 12 ---------
- 7 files changed, 19 insertions(+), 90 deletions(-)
+ .../bindings/clock/canaan,k210-clk.yaml       | 54 ++++++++++++++++++
+ include/dt-bindings/clock/k210-clk.h          | 55 +++++++++++++++----
+ 2 files changed, 98 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 8a55f6156661..0bc3e28581f2 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -32,9 +32,7 @@ config SOC_KENDRYTE
- 	help
- 	  This enables support for Kendryte K210 SoC platform hardware.
- 
--config SOC_KENDRYTE_K210_DTB
--	def_bool y
--	depends on SOC_KENDRYTE_K210_DTB_BUILTIN
-+if SOC_KENDRYTE
- 
- config SOC_KENDRYTE_K210_DTB_BUILTIN
- 	bool "Builtin device tree for the Kendryte K210"
-@@ -42,10 +40,21 @@ config SOC_KENDRYTE_K210_DTB_BUILTIN
- 	default y
- 	select OF
- 	select BUILTIN_DTB
--	select SOC_KENDRYTE_K210_DTB
- 	help
--	  Builds a device tree for the Kendryte K210 into the Linux image.
-+	  Build a device tree for the Kendryte K210 into the Linux image.
- 	  This option should be selected if no bootloader is being used.
- 	  If unsure, say Y.
- 
-+config SOC_KENDRYTE_K210_DTB_SOURCE
-+	string "Source file for the Kendryte K210 builtin DTB"
-+	depends on SOC_KENDRYTE
-+	depends on SOC_KENDRYTE_K210_DTB_BUILTIN
-+	default "k210"
-+	help
-+	  Base name (without suffix, relative to arch/riscv/boot/dts/kendryte)
-+	  for the DTS file that will be used to produce the DTB linked into the
-+	  kernel.
+diff --git a/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
+new file mode 100644
+index 000000000000..565ca468cb44
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/canaan,k210-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+endif
++title: Canaan Kendryte K210 Clock Device Tree Bindings
 +
- endmenu
-diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
-index ca1f8cbd78c0..21e3905f1c44 100644
---- a/arch/riscv/boot/dts/Makefile
-+++ b/arch/riscv/boot/dts/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- subdir-y += sifive
--subdir-y += kendryte
-+subdir-$(CONFIG_SOC_KENDRYTE) += kendryte
++maintainers:
++  - Damien Le Moal <damien.lemoal@wdc.com>
++
++description: |
++  Canaan Kendryte K210 SoC clocks driver bindings. The clock
++  controller node must be defined as a child node of the K210
++  system controller node.
++
++  See also:
++  - dt-bindings/clock/k210-clk.h
++
++properties:
++  compatible:
++    const: canaan,k210-clk
++
++  clocks:
++    description:
++      Phandle of the SoC 26MHz fixed-rate oscillator clock.
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - '#clock-cells'
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/k210-clk.h>
++    clocks {
++      in0: oscillator {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <26000000>;
++      };
++    };
++
++    /* ... */
++    sysclk: clock-controller {
++      #clock-cells = <1>;
++      compatible = "canaan,k210-clk";
++      clocks = <&in0>;
++    };
+diff --git a/include/dt-bindings/clock/k210-clk.h b/include/dt-bindings/clock/k210-clk.h
+index 5a2fd64d1a49..b2de702cbf75 100644
+--- a/include/dt-bindings/clock/k210-clk.h
++++ b/include/dt-bindings/clock/k210-clk.h
+@@ -3,18 +3,51 @@
+  * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
+  * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+  */
+-#ifndef K210_CLK_H
+-#define K210_CLK_H
++#ifndef CLOCK_K210_CLK_H
++#define CLOCK_K210_CLK_H
  
- obj-$(CONFIG_BUILTIN_DTB) := $(addsuffix /, $(subdir-y))
-diff --git a/arch/riscv/boot/dts/kendryte/Makefile b/arch/riscv/boot/dts/kendryte/Makefile
-index 1a88e616f18e..83636693166d 100644
---- a/arch/riscv/boot/dts/kendryte/Makefile
-+++ b/arch/riscv/boot/dts/kendryte/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--dtb-$(CONFIG_SOC_KENDRYTE_K210_DTB) += k210.dtb
--
-+ifneq ($(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE),"")
-+dtb-y += $(strip $(shell echo $(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE))).dtb
- obj-$(CONFIG_SOC_KENDRYTE_K210_DTB_BUILTIN) += $(addsuffix .o, $(dtb-y))
-+endif
-diff --git a/arch/riscv/include/asm/soc.h b/arch/riscv/include/asm/soc.h
-index 6c8363b1f327..f494066051a2 100644
---- a/arch/riscv/include/asm/soc.h
-+++ b/arch/riscv/include/asm/soc.h
-@@ -21,42 +21,4 @@ void soc_early_init(void);
- extern unsigned long __soc_early_init_table_start;
- extern unsigned long __soc_early_init_table_end;
+ /*
+- * Arbitrary identifiers for clocks.
+- * The structure is: in0 -> pll0 -> aclk -> cpu
+- *
+- * Since we use the hardware defaults for now, set all these to the same clock.
++ * Kendryte K210 SoC clock identifiers (arbitrary values).
+  */
+-#define K210_CLK_PLL0   0
+-#define K210_CLK_PLL1   0
+-#define K210_CLK_ACLK   0
+-#define K210_CLK_CPU    0
++#define K210_CLK_CPU	0
++#define K210_CLK_SRAM0	1
++#define K210_CLK_SRAM1	2
++#define K210_CLK_AI	3
++#define K210_CLK_DMA	4
++#define K210_CLK_FFT	5
++#define K210_CLK_ROM	6
++#define K210_CLK_DVP	7
++#define K210_CLK_APB0	8
++#define K210_CLK_APB1	9
++#define K210_CLK_APB2	10
++#define K210_CLK_I2S0	11
++#define K210_CLK_I2S1	12
++#define K210_CLK_I2S2	13
++#define K210_CLK_I2S0_M	14
++#define K210_CLK_I2S1_M	15
++#define K210_CLK_I2S2_M	16
++#define K210_CLK_WDT0	17
++#define K210_CLK_WDT1	18
++#define K210_CLK_SPI0	19
++#define K210_CLK_SPI1	20
++#define K210_CLK_SPI2	21
++#define K210_CLK_I2C0	22
++#define K210_CLK_I2C1	23
++#define K210_CLK_I2C2	24
++#define K210_CLK_SPI3	25
++#define K210_CLK_TIMER0	26
++#define K210_CLK_TIMER1	27
++#define K210_CLK_TIMER2	28
++#define K210_CLK_GPIO	29
++#define K210_CLK_UART1	30
++#define K210_CLK_UART2	31
++#define K210_CLK_UART3	32
++#define K210_CLK_FPIOA	33
++#define K210_CLK_SHA	34
++#define K210_CLK_AES	35
++#define K210_CLK_OTP	36
++#define K210_CLK_RTC	37
  
--/*
-- * Allows Linux to provide a device tree, which is necessary for SOCs that
-- * don't provide a useful one on their own.
-- */
--struct soc_builtin_dtb {
--	unsigned long vendor_id;
--	unsigned long arch_id;
--	unsigned long imp_id;
--	void *(*dtb_func)(void);
--};
--
--/*
-- * The argument name must specify a valid DTS file name without the dts
-- * extension.
-- */
--#define SOC_BUILTIN_DTB_DECLARE(name, vendor, arch, impl)		\
--	extern void *__dtb_##name##_begin;				\
--									\
--	static __init __used						\
--	void *__soc_builtin_dtb_f__##name(void)				\
--	{								\
--		return (void *)&__dtb_##name##_begin;			\
--	}								\
--									\
--	static const struct soc_builtin_dtb __soc_builtin_dtb__##name	\
--		__used __section("__soc_builtin_dtb_table") =		\
--	{								\
--		.vendor_id = vendor,					\
--		.arch_id   = arch,					\
--		.imp_id    = impl,					\
--		.dtb_func  = __soc_builtin_dtb_f__##name,		\
--	}
--
--extern unsigned long __soc_builtin_dtb_table_start;
--extern unsigned long __soc_builtin_dtb_table_end;
--
--void *soc_lookup_builtin_dtb(void);
--
- #endif
-diff --git a/arch/riscv/kernel/soc.c b/arch/riscv/kernel/soc.c
-index c7b0a73e382e..a0516172a33c 100644
---- a/arch/riscv/kernel/soc.c
-+++ b/arch/riscv/kernel/soc.c
-@@ -26,30 +26,3 @@ void __init soc_early_init(void)
- 		}
- 	}
- }
--
--static bool soc_builtin_dtb_match(unsigned long vendor_id,
--				unsigned long arch_id, unsigned long imp_id,
--				const struct soc_builtin_dtb *entry)
--{
--	return entry->vendor_id == vendor_id &&
--	       entry->arch_id == arch_id &&
--	       entry->imp_id == imp_id;
--}
--
--void * __init soc_lookup_builtin_dtb(void)
--{
--	unsigned long vendor_id, arch_id, imp_id;
--	const struct soc_builtin_dtb *s;
--
--	__asm__ ("csrr %0, mvendorid" : "=r"(vendor_id));
--	__asm__ ("csrr %0, marchid" : "=r"(arch_id));
--	__asm__ ("csrr %0, mimpid" : "=r"(imp_id));
--
--	for (s = (void *)&__soc_builtin_dtb_table_start;
--	     (void *)s < (void *)&__soc_builtin_dtb_table_end; s++) {
--		if (soc_builtin_dtb_match(vendor_id, arch_id, imp_id, s))
--			return s->dtb_func();
--	}
--
--	return NULL;
--}
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 8e577f14f120..c32ff32cf9ab 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -601,11 +601,7 @@ static void __init setup_vm_final(void)
- asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- {
- #ifdef CONFIG_BUILTIN_DTB
--	dtb_early_va = soc_lookup_builtin_dtb();
--	if (!dtb_early_va) {
--		/* Fallback to first available DTS */
--		dtb_early_va = (void *) __dtb_start;
--	}
-+	dtb_early_va = (void *) __dtb_start;
- #else
- 	dtb_early_va = (void *)dtb_pa;
- #endif
-diff --git a/drivers/soc/kendryte/k210-sysctl.c b/drivers/soc/kendryte/k210-sysctl.c
-index 707019223dd8..4608fbca20e1 100644
---- a/drivers/soc/kendryte/k210-sysctl.c
-+++ b/drivers/soc/kendryte/k210-sysctl.c
-@@ -246,15 +246,3 @@ static void __init k210_soc_early_init(const void *fdt)
- 	iounmap(regs);
- }
- SOC_EARLY_INIT_DECLARE(generic_k210, "kendryte,k210", k210_soc_early_init);
--
--#ifdef CONFIG_SOC_KENDRYTE_K210_DTB_BUILTIN
--/*
-- * Generic entry for the default k210.dtb embedded DTB for boards with:
-- *   - Vendor ID: 0x4B5
-- *   - Arch ID: 0xE59889E6A5A04149 (= "Canaan AI" in UTF-8 encoded Chinese)
-- *   - Impl ID:	0x4D41495832303030 (= "MAIX2000")
-- * These values are reported by the SiPEED MAXDUINO, SiPEED MAIX GO and
-- * SiPEED Dan dock boards.
-- */
--SOC_BUILTIN_DTB_DECLARE(k210, 0x4B5, 0xE59889E6A5A04149, 0x4D41495832303030);
--#endif
+-#endif /* K210_CLK_H */
++#define K210_NUM_CLKS	38
++
++#endif /* CLOCK_K210_CLK_H */
 -- 
 2.28.0
 
