@@ -2,110 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E381C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 09:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6B0C19425
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 09:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3839F23A6C
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 09:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BBD723B45
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 09:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbgLIJEy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 04:04:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42662 "EHLO
+        id S1728717AbgLIJVd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 04:21:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727920AbgLIJEw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 04:04:52 -0500
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC11CC0613D6
-        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 01:04:11 -0800 (PST)
-Received: by mail-lf1-x144.google.com with SMTP id m25so2047388lfc.11
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 01:04:11 -0800 (PST)
+        with ESMTP id S1727904AbgLIJVb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 04:21:31 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05D12C0613CF
+        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 01:20:51 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id y22so1408452ljn.9
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 01:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=u8KKN6kEP37Zb7PmsnDAFaBNjQZ74PfUTCo3xpIHe+4=;
-        b=tjbgpYtBD9Cp3oZ/+ZqVBgK6uC90kg/92F0++7454fg6X8Y045ejX12IJi61RR56Tn
-         CSR2t9R1X3AqFKJ5434ULkCLTHbcDD9pJTJudwHZdYfCIGntqZx13i38HAnQmDCw/5ep
-         0GAnISEMnHP26rv0VZkfAcbZW3CFFErixasIE+i6SQQ6HINGDEKY5sWz/cjrlRHseQK/
-         TybZFQwME9Ej/CANfPWjJabsFL3zHvJyzfmMbVT6efU7iFMWW43/ldBZ0K2GjnbH/zi9
-         AwN44apWWTMptUo6wJak/8T3RnkS3mZWJScdeCj/Zm9HYSoXlkTnG1kA/r1UGLcosH58
-         c1EQ==
+        bh=1mr09ffXdVmc89p6dDRlCyEcatrToejix5SUivzuIsk=;
+        b=axTtZsMbIWlnygCChz8g7xt2gAeXugayM40N/ag0rKiUwvn83qmt+qsPuXls5upxmu
+         3qBtic4iapQFl7fhO8ICfG2eGCtKBz8ZuR86zE6Jf/O19m3X/NESm2UaHFr8vQm6lz99
+         nL2LFqsJLJNwlcLW/Ortk8aJT1fe+N62rIvQTdl3VCZGaAxxg0ZDsahdwDz8Bv4rbrIB
+         tVoAav+6gJBEI42Rc1iJJF/AAAVXsMVDLYp1BvT+XqF08AGxMa5Qhe/mgIkAI/6pz2I2
+         6z4CyvrbVeScRKYO1wkUxKCDJo7dnZFQWkW/jlez9ychli6QTYEM8SrA26t9VNupVheq
+         oGiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=u8KKN6kEP37Zb7PmsnDAFaBNjQZ74PfUTCo3xpIHe+4=;
-        b=NX13c8RxoNEwasL5A75fzdP2Rb9BtW96Bla+a+PqCMgHV2XsVYBCzOteh2u95mSSCH
-         QYGPtgz0ifKy98ycomlTxQ8LDrhCaiXZw8ZTJo92suqTY+Zist4vghQxmZl+pQG4ZXWb
-         mQfwA+BebxGUvrUPZhDrQhc6bkcD9+4+5Kp9zzoYy8ubVXqYkWrC/YxaQgTmCg1WKnd+
-         DY0p6+tIBNozljRyqakD/UTOWmEJTY+kZ7iV8D5kjdlGzru6cnMzQCcppxDCl+bS8Lmb
-         hq3bm8sIFwQNj7F2yJ3AinuhJFsn2W8ke5kad9Wt5oH2CDH3aVXcx9jkpAGg/QpVeZDE
-         Ym7w==
-X-Gm-Message-State: AOAM530/ItsNr2r3DGkTPmLUSmTHLdL4YEKP/l0yuRMqGZ/WtycrWug4
-        tqvqht3zYqN5dnFsKj5Qc8ieIsCWvs0HUA1sUcN8Rw==
-X-Google-Smtp-Source: ABdhPJwuKkyip48lpOSEFICnOa696vlq3QGttzrv7MSDYITrNbVRdD+irJ6V6I1ixXgelIrnyZ0MGPhltSqo1zq38bI=
-X-Received: by 2002:a19:6557:: with SMTP id c23mr633204lfj.157.1607504650310;
- Wed, 09 Dec 2020 01:04:10 -0800 (PST)
+        bh=1mr09ffXdVmc89p6dDRlCyEcatrToejix5SUivzuIsk=;
+        b=KNdTw4KY2JnfHw/KZHVgATFB5BymDPjW5tXuHwd88i5/e1gXLX5TZFfSElovq6QkHV
+         N9jWrw3/e12AzbQf3G+0EVc9ecOglMBbWMGnWSumwZ9njhubxXjxizucT5YKLjIm1Fc1
+         diKbZ1hI8CMB4kSQDIzCCAEKKu6MRl3QDQpOOw16RdojcWY6BHnonWi1DaAmlHZiD1iV
+         nYQAOuTDr/ecTR93F89hbe5yq/Ta8UWRhr1MqGm6TUemn0rHndyi1Egq90jjrO+ISmd9
+         tqepFdVQ0zHmo3ZsHYUHxnx1YihSAAZOJAYM77nrQqAq8w18ipR4rp5nKczwIBVhZmBl
+         tHEA==
+X-Gm-Message-State: AOAM532HoZ7g+ywVpgWruT/mlslv1/jR7+wqOBkAh3nBFa1FqEoycPF0
+        KCQSa2wx9pNOQF1DSLWce9NUBcxj61cjF4k/vIh9xg==
+X-Google-Smtp-Source: ABdhPJyzvFZ5i/+cIo/v7GMXy5y7QF210K4A/VhM09QlXGBziof1oFuyBn/PxeMLTnvBvuKpDbiZHch59dU8k5OOBXk=
+X-Received: by 2002:a05:651c:29c:: with SMTP id b28mr697854ljo.368.1607505649530;
+ Wed, 09 Dec 2020 01:20:49 -0800 (PST)
 MIME-Version: 1.0
-References: <1606901543-8957-1-git-send-email-luojiaxing@huawei.com>
- <1606901543-8957-2-git-send-email-luojiaxing@huawei.com> <CACRpkdbodato7AL4xv-oEO9+-Mo9fDaH+jZh+6T=3urE0tbULw@mail.gmail.com>
- <5955bd97-046c-8ac3-f66e-ea967e8f9128@huawei.com>
-In-Reply-To: <5955bd97-046c-8ac3-f66e-ea967e8f9128@huawei.com>
+References: <20201204164739.781812-1-maz@kernel.org> <X841xwCChUEqi5Ad@localhost>
+ <73d57fe9fefe50955771846ea52004fb@kernel.org> <X85FVc07Hc7LQQU8@localhost>
+ <d5fa2065009d5854b4c719003ebcb255@kernel.org> <X85O9GoDcbiDp97j@localhost>
+In-Reply-To: <X85O9GoDcbiDp97j@localhost>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 9 Dec 2020 10:03:59 +0100
-Message-ID: <CACRpkdZPmVWHV9Rbpfma3gDic=fmQQ9B0oQ0HsqwnJ0EpoGENA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] gpio: gpio-hisi: Add HiSilicon GPIO support
-To:     luojiaxing <luojiaxing@huawei.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Date:   Wed, 9 Dec 2020 10:20:38 +0100
+Message-ID: <CACRpkdZ06vWY+mqR7bYd_WcEM6+N6v5GgTAYhr0p0KkNLa3Qnw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] USB: ftdio_sio: GPIO validity fixes
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Jiaxing,
+On Mon, Dec 7, 2020 at 4:48 PM Johan Hovold <johan@kernel.org> wrote:
+> On Mon, Dec 07, 2020 at 03:34:23PM +0000, Marc Zyngier wrote:
 
-thanks! waiting for the new patch!
+> > If they claim that their lines are available, and then refuse to
+> > let the user play with it, that's just a bug willing to be fixed.
+>
+> My point was that this is how *all* gpio drivers work, and that muxing
+> is somewhat orthogonal to the gpio controller implementation.
 
-On Wed, Dec 9, 2020 at 9:19 AM luojiaxing <luojiaxing@huawei.com> wrote:
+This is true. It's because it is orthogonal that the separate subsystem
+for pin control including pin muxing exists.
 
-> >> +static void hisi_gpio_irq_disable(struct irq_data *d)
-> >> +{
-> >> +       struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> >> +
-> >> +       hisi_gpio_irq_set_mask(d);
-> >> +       hisi_gpio_write_reg(chip, HISI_GPIO_INTEN_CLR_WX, BIT(irqd_to_hwirq(d)));
-> >> +}
-> >
-> > Interesting with a GPIO hardware that both as enable and mask
-> > bits. I can't see why, usually they just have masks but I suppose
-> > there is some reason.
->
-> I see gpio-dwapb.c distinguishes between enable and mask too.
->
-> In my opinion, enable indicates that the user uses the GPIO line as the
-> interrupt trigger source,
->
-> and mask indicates that the user does not want to see an interrupts for
-> a while.
->
-> The difference between the two types of flag is that interrupts
-> generated during masking are recorded but not lost,
->
-> however, if interrupts are disabled, interrupts will lost.
+Should I be really overly picky, the drivers that can mux lines like
+this should be implementing the pin control mux driver side as
+well just to make Linux aware of this. But if the muxing cannot
+be changed by the kernel (albeit with special tools) then it would
+be pretty overengineered for this case. Things would be much
+easier if this wasn't some flashing configuration but more of a
+runtime thing (which is kind of the implicit assumption in pin
+control land).
 
-Ah, that makes perfect sense! Thanks for explaining.
+We don't really have many drivers that are "muxable by
+(intrusive) flashing" as opposed to "muxable by setting some
+bits" so in that way these FTDI drivers and siblings are special.
+
+So this needs some special considerations to become user
+friendly I think.
 
 Yours,
 Linus Walleij
