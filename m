@@ -2,201 +2,128 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA18C4361B
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 20:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F191C4361B
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 20:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 109A423A02
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 20:17:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0591923A22
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 20:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388179AbgLIUPd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 15:15:33 -0500
-Received: from mga06.intel.com ([134.134.136.31]:29158 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388171AbgLIUPa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 9 Dec 2020 15:15:30 -0500
-IronPort-SDR: gw1f6D+H5fhqZvy2GqHAfRH6my4tHe8g1YXrsi5HbrmWUHUj4fQoJ0IIkqRGPg/smZxzprPLge
- lZAbBR+Z7uoA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9830"; a="235738980"
-X-IronPort-AV: E=Sophos;i="5.78,405,1599548400"; 
-   d="scan'208";a="235738980"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2020 12:14:41 -0800
-IronPort-SDR: kJPbJe9FGeXnLoSrAtKD/7DsbIhKuhN5bvSzoDWUvqVeixyHEWevyiy+0/bnp52AfeFz/XvKkd
- nzq4VyksPf6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.78,405,1599548400"; 
-   d="scan'208";a="348489479"
-Received: from lkp-server01.sh.intel.com (HELO 2bbb63443648) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 09 Dec 2020 12:14:40 -0800
-Received: from kbuild by 2bbb63443648 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1kn5rD-0000Qq-Bj; Wed, 09 Dec 2020 20:14:39 +0000
-Date:   Thu, 10 Dec 2020 04:14:10 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:for-next] BUILD SUCCESS
- 274380f9eb09fa49cd4fda83f438f5c8366b13ec
-Message-ID: <5fd13012.7P2XhVrkzR4fwIru%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1732812AbgLIUYX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 15:24:23 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58502 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730039AbgLIUYX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 15:24:23 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0B9KMYrS093383;
+        Wed, 9 Dec 2020 14:22:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1607545354;
+        bh=0YOr/KkSEFpTKDVBe5HkrfTXFveoPFaa5XWm7Svxg7A=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=nJBYIQZr0v6lufvH0ZaFAm1rXVXE8Y46IxZPkAIl62WLJ1VxUa2c66AtQB25EgYiV
+         nL/a9qPUfn/JWmUpXk432xiAzXPWCSW+BNipBHHz1h0qVhdb2zU6coRwYG5Sla+gst
+         JWg7Xk7Z6MfewE8yF3BpQi9dZr39egrZldmiauW0=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0B9KMYbu010807
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Dec 2020 14:22:34 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 9 Dec
+ 2020 14:22:34 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 9 Dec 2020 14:22:34 -0600
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0B9KMTT1020549;
+        Wed, 9 Dec 2020 14:22:31 -0600
+Subject: Re: Howto listen to/handle gpio state changes ? Re: [PATCH v2 2/2]
+ drivers: gpio: add virtio-gpio guest driver
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@kernel.org>
+CC:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>
+References: <20201203191135.21576-1-info@metux.net>
+ <20201203191135.21576-2-info@metux.net>
+ <0080d492-2f07-d1c6-d18c-73d4204a5d40@metux.net>
+ <CACRpkdb4R4yHcUV2KbGEC_RkU+QmH6Xg7X+qee8sEa9TURGr8A@mail.gmail.com>
+ <51d3efb7-b7eb-83d7-673a-308dd51616d3@metux.net>
+ <CACRpkdbqVoT56H88hoZwDqV0kW_8XTaE5TkMQsg-RRrPqgF=cQ@mail.gmail.com>
+ <CAK8P3a1PRQGUXkjdSmqxXSONX_ZoCgsfx8hJBUdBUk14tyzErA@mail.gmail.com>
+ <CACRpkdbNAeDsi9B14kbkAeoqX7NE_Ua_yOX1iNF75oNK0ELefQ@mail.gmail.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <2827855a-dc4f-2e17-aca3-4b1b9f0d5084@ti.com>
+Date:   Wed, 9 Dec 2020 22:22:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CACRpkdbNAeDsi9B14kbkAeoqX7NE_Ua_yOX1iNF75oNK0ELefQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  for-next
-branch HEAD: 274380f9eb09fa49cd4fda83f438f5c8366b13ec  Merge branch 'devel' into for-next
 
-elapsed time: 722m
 
-configs tested: 131
-configs skipped: 2
+On 09/12/2020 14:53, Linus Walleij wrote:
+> On Wed, Dec 9, 2020 at 12:19 PM Arnd Bergmann <arnd@kernel.org> wrote:
+>> On Wed, Dec 9, 2020 at 9:51 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Tue, Dec 8, 2020 at 3:07 PM Enrico Weigelt, metux IT consult <lkml@metux.net> wrote:
+>>
+>>> What we need to understand is if your new usecase is an outlier
+>>> so it is simplest modeled by a "mock" irq_chip or we have to design
+>>> something new altogether like notifications on changes. I suspect
+>>> irq_chip would be best because all drivers using GPIOs for interrupts
+>>> are expecting interrupts, and it would be an enormous task to
+>>> change them all and really annoying to create a new mechanism
+>>> on the side.
+>>
+>> I would expect the platform abstraction to actually be close enough
+>> to a chained irqchip that it actually works: the notification should
+>> come in via vring_interrupt(), which is a normal interrupt handler
+>> that calls vq->vq.callback(), calling generic_handle_irq() (and
+>> possibly chained_irq_enter()/chained_irq_exit() around it) like the
+>> other gpio drivers do should just work here I think, and if it did
+>> not, then I would expect this to be just a bug in the driver rather
+>> than something missing in the gpio framework.
+> 
+> Performance/latency-wise that would also be strongly encouraged.
+> 
+> Tglx isn't super-happy about the chained interrupts at times, as they
+> can create really nasty bugs, but a pure IRQ in fastpath of some
+> kinde is preferable and intuitive either way.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+In my opinion the problem here is that proposed patch somehow describes Front end, but
+says nothing about Backend and overall design.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-m68k                       m5475evb_defconfig
-m68k                        m5407c3_defconfig
-sh                            titan_defconfig
-powerpc                     redwood_defconfig
-arc                 nsimosci_hs_smp_defconfig
-sh                              ul2_defconfig
-ia64                             alldefconfig
-sh                          lboxre2_defconfig
-mips                           gcw0_defconfig
-sh                          kfr2r09_defconfig
-sh                           se7724_defconfig
-arm                           viper_defconfig
-arm                     davinci_all_defconfig
-powerpc                      mgcoge_defconfig
-mips                         bigsur_defconfig
-powerpc                      ppc64e_defconfig
-sh                            shmin_defconfig
-mips                         tb0226_defconfig
-powerpc                   motionpro_defconfig
-mips                           ip28_defconfig
-arc                           tb10x_defconfig
-powerpc                      ppc44x_defconfig
-powerpc                     tqm5200_defconfig
-powerpc                     sequoia_defconfig
-c6x                              alldefconfig
-arm                          ixp4xx_defconfig
-sh                                  defconfig
-arm                       imx_v6_v7_defconfig
-arm                            mmp2_defconfig
-alpha                            allyesconfig
-mips                      pistachio_defconfig
-sh                           se7751_defconfig
-powerpc                       holly_defconfig
-arm                           h5000_defconfig
-sh                            migor_defconfig
-mips                        bcm63xx_defconfig
-powerpc                    socrates_defconfig
-powerpc                    klondike_defconfig
-riscv                             allnoconfig
-arm                           tegra_defconfig
-powerpc                     tqm8541_defconfig
-m68k                             alldefconfig
-arm                          ep93xx_defconfig
-arm                        cerfcube_defconfig
-arm                       multi_v4t_defconfig
-arm                        vexpress_defconfig
-arm                          pxa168_defconfig
-riscv                    nommu_k210_defconfig
-powerpc                 mpc8540_ads_defconfig
-sh                             shx3_defconfig
-powerpc                      pmac32_defconfig
-mips                          ath79_defconfig
-powerpc                 xes_mpc85xx_defconfig
-m68k                       bvme6000_defconfig
-sh                           se7619_defconfig
-sparc                               defconfig
-openrisc                            defconfig
-m68k                           sun3_defconfig
-arm                        multi_v7_defconfig
-powerpc                 mpc85xx_cds_defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-i386                               tinyconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a004-20201209
-i386                 randconfig-a005-20201209
-i386                 randconfig-a001-20201209
-i386                 randconfig-a002-20201209
-i386                 randconfig-a006-20201209
-i386                 randconfig-a003-20201209
-x86_64               randconfig-a016-20201209
-x86_64               randconfig-a012-20201209
-x86_64               randconfig-a013-20201209
-x86_64               randconfig-a014-20201209
-x86_64               randconfig-a015-20201209
-x86_64               randconfig-a011-20201209
-i386                 randconfig-a013-20201209
-i386                 randconfig-a014-20201209
-i386                 randconfig-a011-20201209
-i386                 randconfig-a015-20201209
-i386                 randconfig-a012-20201209
-i386                 randconfig-a016-20201209
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
+What is expected to be virtualized? whole GPIO chip? or set of GPIOs from different GPIO chips?
+Most often nobody want to give Guest access to the whole GPIO chip, so, most probably, smth. similar to
+GPIO Aggregator will be needed.
 
-clang tested configs:
-x86_64               randconfig-a004-20201209
-x86_64               randconfig-a006-20201209
-x86_64               randconfig-a005-20201209
-x86_64               randconfig-a001-20201209
-x86_64               randconfig-a002-20201209
-x86_64               randconfig-a003-20201209
+How is situation going to be resolved that GPIO framework and IRQ framework are independent, but intersect, and
+GPIO controller drivers have no idea who and how requesting GPIO IRQ - threaded vs non-threaded vs oneshot.
+So, some information need to be transferred to Back end  - at minimum IRQ triggering type.
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Overall, it might be better to start from pure gpio and leave GPIO IRQ aside.
+-- 
+Best regards,
+grygorii
