@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 436FEC2BBD5
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083C5C4361B
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9E323B79
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D658F23B4B
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 05:38:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbgLIFhn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 00:37:43 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15253 "EHLO
+        id S1727769AbgLIFiF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 00:38:05 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15280 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbgLIFhn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 00:37:43 -0500
+        with ESMTP id S1727154AbgLIFiF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 00:38:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607492262; x=1639028262;
+  t=1607492284; x=1639028284;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TxrkKxa9B/FbbF02pP19+yravWB9f2iZvayjqKxqkXQ=;
-  b=UUV36Evk/SyIj9XE2AG77U9InE6xkCgEac2wRq3bG3rc1Ke+qp7snEI/
-   h9vuZ+BL0IQAF/Z6ULm7Qc/aDIME3joSuBImJ7CilgRRo0j3fhyW/Jn5P
-   pFauDvueesuhxJwmhsqIqroBCYGEL0K2KsK1eO4yyjpApsZqHCR4DoqAb
-   4rOl5y1BoXntpLrmi2qwMEDn68HX0pFC9WmEdNyqPDSx4CDsAumcaTJ5u
-   Lbl9470cM15iKmaWoyH4z9aFEy3vYa5hcXAAuvxcvM8kWiRFkxSFGqzWZ
-   +zKZ3tjYM7zK59m/leL+VOpxH5RkIDtiPwok/F+2WTSjimr2ydR+omG4z
-   A==;
-IronPort-SDR: QzWAfRnrMfmh5EQj3toepmbkOXBz2Y3eiZnOyqu5o5vqtuyCYxCWzkCcvGXhduei7AHsvYJ+3T
- GCMNLBH+wvFB/Do8ioeQnZVYrYb22Nci9DshKIwGJfkyTT5AN4bcUpO+cITmhdxP5a9kYUw2D9
- Pv3hs1d715XbFREiFB9SuMmgM6dWuvH5K5jSKM/bSQ1AOVCjv7eIS6Dz6//jwEoGS8xXATHWuG
- p9ct1IfpvImwaPEYFPmKYsj+0IG+G2Kkuo2dyWI63p1tQfhKPrsOJSoU9JRe4DG9KD2WRfZxLl
- UmI=
+  bh=S1YmWmqvdIYXxQKwYnEAtpW95Vpx9w6kjXteMcQR5RY=;
+  b=JrXuQ2xmy31iWd2HJy9oVsp+WcSqp4cNqFy2OHmndkPxkPbJftGgRyAX
+   6ep8Hf4GEF9TCV/4ccmXzMFWEBthOTqJlhyjApMcOlh4g/nXE+pNQwnRN
+   wpxn7jY7SHPtrtBqdN09dck2AX4P39cGrsny49/Ba3VisBpzHreGqI0qz
+   eOGQqYD565joAM+OQOny8CZ8L+ExkzYzZuB1Cs6Ehy3j05h1R0hd1f8ff
+   y68PnVZWKGi6RTQw0biiBmeGJRcd3v0CHu+CscSmwp/c5df27R3cTVBPi
+   WNhOrxe1hofWLTjjvg/sEbDyjMdWzDuh6t8gGg8vhlJub4jwlkPiV6dHr
+   Q==;
+IronPort-SDR: TCfSp7YrRMFT7G5myX6RxoDzwh6gv4NNY5mxKIuG7Ye8UgxmYvDIOe+FhwG7jOTR4jX9SNnpRL
+ ZwgTemEIaaQE7OPcWFTTTtdCMMOuwlZgq5vtKtfMlHLynbv8gwtcpnXVXlI3JOVMT3ozdvKC+1
+ GQqa042laY6CowWUNdTQLy0a7TfKkgX3jQZjCyj6T7C/IMSBxDbL8lnaiDntbiy0Ad0/DWbR8K
+ JsCtxasl64VPNxryxPMu4dviH6OAMJ8DqcKW6VavYuXYc6+RIz27kvw12Q2DKRjiv7S/2NPt9c
+ 4DU=
 X-IronPort-AV: E=Sophos;i="5.78,404,1599494400"; 
-   d="scan'208";a="154735894"
+   d="scan'208";a="154735901"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:25 +0800
-IronPort-SDR: LkQw1TprxVMJVKuu9BjcL7wZ7SFckt4SbYBdUoiiBR/zheVV5cmA9PIbtfrXCQF8lL/z7dDrSr
- 7axA4EnZAmzp2QBnMEq5+vuvhgN6Yh0x8=
+  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:29 +0800
+IronPort-SDR: DpJCptEtpsufOjMNZN6fr6kGRiCDAmq+yIkig4qLZ3rz2EQIwj4rlMoiWYxmZ5SIKAQRwhgTNQ
+ 93oY0vVRpu6E7JqpP3RnFFZXEltChpdu0=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:51 -0800
-IronPort-SDR: zKlNfBpUt0XZ5WXGViO15Km0ziS4/MVtN2v6nTqayqOvRVSS45/n1E1K4FpmyaWWRceOvVAQRt
- 77Vs2ROhSlUw==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:55 -0800
+IronPort-SDR: l2or2Xos59B6y0OEgvzEJVydM2+S+T9J6z0dAzRpP2Uu7CtfLeaovNivzpwuKeVIvDv+OzEs31
+ XxIpdOXzWRfw==
 WDCIronportException: Internal
 Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:23 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:27 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -58,9 +58,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v6 07/22] dt-bindings: Add Canaan vendor prefix
-Date:   Wed,  9 Dec 2020 14:34:51 +0900
-Message-Id: <20201209053506.122582-8-damien.lemoal@wdc.com>
+Subject: [PATCH v6 09/22] dt-bindings: reset: Document canaan,k210-rst bindings
+Date:   Wed,  9 Dec 2020 14:34:53 +0900
+Message-Id: <20201209053506.122582-10-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201209053506.122582-1-damien.lemoal@wdc.com>
 References: <20201209053506.122582-1-damien.lemoal@wdc.com>
@@ -70,28 +70,114 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Update Documentation/devicetree/bindings/vendor-prefixes.yaml to
-include "canaan" as a vendor prefix for "Canaan Inc.". Canaan is the
-vendor of the Kendryte K210 RISC-V SoC.
+Document the device tree bindings for the Canaan Kendryte K210 SoC
+reset controller driver in
+Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml. The header
+file include/dt-bindings/reset/k210-rst.h is added to define all
+possible reset lines of the SoC.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/reset/canaan,k210-rst.yaml       | 40 ++++++++++++++++++
+ include/dt-bindings/reset/k210-rst.h          | 42 +++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+ create mode 100644 include/dt-bindings/reset/k210-rst.h
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 2735be1a8470..a07231aaf3e7 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -179,6 +179,8 @@ patternProperties:
-     description: CALAO Systems SAS
-   "^calxeda,.*":
-     description: Calxeda
-+  "^canaan,.*":
-+    description: Canaan, Inc.
-   "^caninos,.*":
-     description: Caninos Loucos Program
-   "^capella,.*":
+diff --git a/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml b/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+new file mode 100644
+index 000000000000..53e4ede9c0bd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/canaan,k210-rst.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Canaan Kendryte K210 Reset Controller Device Tree Bindings
++
++maintainers:
++  - Damien Le Moal <damien.lemoal@wdc.com>
++
++description: |
++  Canaan Kendryte K210 reset controller driver which supports the SoC
++  system controller supplied reset registers for the various peripherals
++  of the SoC. The K210 reset controller node must be defined as a child
++  node of the K210 system controller node.
++
++  See also:
++  - dt-bindings/reset/k210-rst.h
++
++properties:
++  compatible:
++    const: canaan,k210-rst
++
++  '#reset-cells':
++    const: 1
++
++required:
++  - '#reset-cells'
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/reset/k210-rst.h>
++    sysrst: reset-controller {
++      compatible = "canaan,k210-rst";
++      #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/reset/k210-rst.h b/include/dt-bindings/reset/k210-rst.h
+new file mode 100644
+index 000000000000..883c1aed50e8
+--- /dev/null
++++ b/include/dt-bindings/reset/k210-rst.h
+@@ -0,0 +1,42 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2019 Sean Anderson <seanga2@gmail.com>
++ * Copyright (c) 2020 Western Digital Corporation or its affiliates.
++ */
++#ifndef RESET_K210_SYSCTL_H
++#define RESET_K210_SYSCTL_H
++
++/*
++ * Kendryte K210 SoC system controller K210_SYSCTL_SOFT_RESET register bits.
++ * Taken from Kendryte SDK (kendryte-standalone-sdk).
++ */
++#define K210_RST_ROM	0
++#define K210_RST_DMA	1
++#define K210_RST_AI	2
++#define K210_RST_DVP	3
++#define K210_RST_FFT	4
++#define K210_RST_GPIO	5
++#define K210_RST_SPI0	6
++#define K210_RST_SPI1	7
++#define K210_RST_SPI2	8
++#define K210_RST_SPI3	9
++#define K210_RST_I2S0	10
++#define K210_RST_I2S1	11
++#define K210_RST_I2S2	12
++#define K210_RST_I2C0	13
++#define K210_RST_I2C1	14
++#define K210_RST_I2C2	15
++#define K210_RST_UART1	16
++#define K210_RST_UART2	17
++#define K210_RST_UART3	18
++#define K210_RST_AES	19
++#define K210_RST_FPIOA	20
++#define K210_RST_TIMER0	21
++#define K210_RST_TIMER1	22
++#define K210_RST_TIMER2	23
++#define K210_RST_WDT0	24
++#define K210_RST_WDT1	25
++#define K210_RST_SHA	26
++#define K210_RST_RTC	29
++
++#endif /* RESET_K210_SYSCTL_H */
 -- 
 2.28.0
 
