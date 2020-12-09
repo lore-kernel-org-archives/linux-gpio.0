@@ -5,91 +5,105 @@ X-Spam-Level:
 X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CE9C4361B
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 15:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DEAC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 15:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90D5823AFE
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 15:31:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E45622B3A
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 15:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbgLIPbS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 10:31:18 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41441 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbgLIPbS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 10:31:18 -0500
-Received: by mail-lj1-f195.google.com with SMTP id f11so2838309ljm.8;
-        Wed, 09 Dec 2020 07:31:01 -0800 (PST)
+        id S1729997AbgLIPmb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 10:42:31 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39344 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbgLIPmX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 10:42:23 -0500
+Received: by mail-lf1-f67.google.com with SMTP id a12so3699769lfl.6;
+        Wed, 09 Dec 2020 07:42:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=TGmJfop0poAU5I2zMh4LF9CytL92M/ZbRIts/6La8S8=;
-        b=O+hro+BhSrULCa0sGCaEacrQbXV4ZoPAUHSb0wg+FM5ZsonOiBZGmDdt8+y8f2pLSO
-         EqACZRogA8xsa9QGBPxRu0An79VRAmXhExcWlYkFcOxDhIzeGpHEILxYmJDBv7NRMmPZ
-         WNBzbIdE9cO2OdL+oE904GUMk7mmlcxYxiNkP/noKHhallQ7lwYglXmVcmhzQcakuZ54
-         0TUawDxAqYCexxl+TlTM7nRD3FHFnOPJHHP08vom7UziPaxTPOJo3ClkBUtzC7sP4UnD
-         sM6R0bB5PZSZp/YxLSJgcrohHGyRDyl1Y3kR0GwalxSScpXlaK6vH1ThMTj0UOXAbcSt
-         Q3zA==
-X-Gm-Message-State: AOAM530MVrEty4fO+1c9lgBHECBZlmimYcD7flSOtckTY7dk5QUUOlY7
-        0baIfWomZiyOOfCf27+TqwE=
-X-Google-Smtp-Source: ABdhPJzvCEsXNgtdPAfi+q1QYxF873m6Him6AopB6fOxqG4qytxYpPRsRFLTa2231EvbJuGH7UnXWg==
-X-Received: by 2002:a2e:88d6:: with SMTP id a22mr1323029ljk.150.1607527835523;
-        Wed, 09 Dec 2020 07:30:35 -0800 (PST)
+        bh=xHtJdl5wRPnIFMBx2cuWtaxIr4kDVs8SuLeP7y0WSmY=;
+        b=DLW3pn/5TdXySKs2PgdPIVarz/4hvE9vvRUBkhMLSp3HD3m/i16tAv0aPyZSO216Gk
+         oZ6gWEgEceuQjnW8EYUiajCJyWWbqHTd2zZgE/69fvcvrQPhAJ0KDhTuuhHSxjLHg0Yd
+         EZ0DqgQ5GcJzUECr0a3AhJp5/0W0x9GAi8XHYACNtMhNjQQ/ghEw1c1FE9oZT7vLaETX
+         PxEj54Mm2jfTmxJZPGMGI6jSArHN1d+tdodSPaF0SlEPa6qGry4gaoaZUPsnO0ejDs7J
+         NFcrMSsnpY9VhPgMCwcFfC3GBr1ph7MUVOXIpo8qJlwj2py8KLZPq9NuVl2ctExCOx2g
+         voDA==
+X-Gm-Message-State: AOAM531NBhFqU0RmvifMOKPtFyROvE/3b5wszkPp7xahCSZpJmd2vMRg
+        Cf/rKuNEHhpOeKCXbXI/X3Y=
+X-Google-Smtp-Source: ABdhPJw9ljZ7MRhYTQbmC7vjfq9B+Ozu4VAas+KoVlY+wzQhnTq7ZPUTzns8ekRUWpKUG+89P88iuw==
+X-Received: by 2002:a19:8c0f:: with SMTP id o15mr1261240lfd.126.1607528501264;
+        Wed, 09 Dec 2020 07:41:41 -0800 (PST)
 Received: from xi.terra (c-beaee455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.174.190])
-        by smtp.gmail.com with ESMTPSA id b5sm206311lfg.13.2020.12.09.07.30.34
+        by smtp.gmail.com with ESMTPSA id x20sm208612lfq.86.2020.12.09.07.41.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Dec 2020 07:30:34 -0800 (PST)
+        Wed, 09 Dec 2020 07:41:40 -0800 (PST)
 Received: from johan by xi.terra with local (Exim 4.93.0.4)
         (envelope-from <johan@kernel.org>)
-        id 1kn1Qy-0005YD-7s; Wed, 09 Dec 2020 16:31:16 +0100
-Date:   Wed, 9 Dec 2020 16:31:16 +0100
+        id 1kn1bh-0005bT-5o; Wed, 09 Dec 2020 16:42:21 +0100
+Date:   Wed, 9 Dec 2020 16:42:21 +0100
 From:   Johan Hovold <johan@kernel.org>
-To:     Manivannan Sadhasivam <mani@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Johan Hovold <johan@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg KH <gregkh@linuxfoundation.org>,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Johan Hovold <johan@kernel.org>, Marc Zyngier <maz@kernel.org>,
         linux-usb <linux-usb@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        patong.mxl@gmail.com,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Angelo Dureghello <angelo.dureghello@timesys.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v5 2/3] usb: serial: xr_serial: Add gpiochip support
-Message-ID: <X9DtxFgrkFIUIzyv@localhost>
-References: <20201122170822.21715-1-mani@kernel.org>
- <20201122170822.21715-3-mani@kernel.org>
- <CACRpkdbY-aZB1BAD=JkZAHA+OQvpH12AD3tLAp6Nf1hwr74s9A@mail.gmail.com>
- <X8ZmfbQp7/BGgxec@localhost>
- <CACRpkdZJdxqxUEQaKUHctHRSQAUpYZJtuxonwVd_ZFAsLBbKrA@mail.gmail.com>
- <X89OOUOG0x0SSxXA@localhost>
- <CACRpkdavm7GG8HdV1xk0W_b1EzUmvF0kKAGnp0u6t42NAWa9iA@mail.gmail.com>
- <20201208125250.GB9925@work>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH 0/4] USB: ftdio_sio: GPIO validity fixes
+Message-ID: <X9DwXS2xaiOs033B@localhost>
+References: <20201204164739.781812-1-maz@kernel.org>
+ <X841xwCChUEqi5Ad@localhost>
+ <73d57fe9fefe50955771846ea52004fb@kernel.org>
+ <X85FVc07Hc7LQQU8@localhost>
+ <d5fa2065009d5854b4c719003ebcb255@kernel.org>
+ <X85O9GoDcbiDp97j@localhost>
+ <CACRpkdZ06vWY+mqR7bYd_WcEM6+N6v5GgTAYhr0p0KkNLa3Qnw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201208125250.GB9925@work>
+In-Reply-To: <CACRpkdZ06vWY+mqR7bYd_WcEM6+N6v5GgTAYhr0p0KkNLa3Qnw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 06:22:50PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Dec 08, 2020 at 01:41:52PM +0100, Linus Walleij wrote:
-> > On Tue, Dec 8, 2020 at 10:57 AM Johan Hovold <johan@kernel.org> wrote:
-
-> > I think if this driver already has unique line-names per-gpiochip
-> > we could actually make it depend on !GPIO_SYSFS and
-> > just add the names.
+On Wed, Dec 09, 2020 at 10:20:38AM +0100, Linus Walleij wrote:
+> On Mon, Dec 7, 2020 at 4:48 PM Johan Hovold <johan@kernel.org> wrote:
+> > On Mon, Dec 07, 2020 at 03:34:23PM +0000, Marc Zyngier wrote:
 > 
-> Sure thing.
+> > > If they claim that their lines are available, and then refuse to
+> > > let the user play with it, that's just a bug willing to be fixed.
+> >
+> > My point was that this is how *all* gpio drivers work, and that muxing
+> > is somewhat orthogonal to the gpio controller implementation.
 > 
-> Johan, if you are okay with this I can resubmit incorporating Linus's
-> suggestion.
+> This is true. It's because it is orthogonal that the separate subsystem
+> for pin control including pin muxing exists.
+> 
+> Should I be really overly picky, the drivers that can mux lines like
+> this should be implementing the pin control mux driver side as
+> well just to make Linux aware of this. But if the muxing cannot
+> be changed by the kernel (albeit with special tools) then it would
+> be pretty overengineered for this case. Things would be much
+> easier if this wasn't some flashing configuration but more of a
+> runtime thing (which is kind of the implicit assumption in pin
+> control land).
 
-Let's wait a bit with adding the names.
+We'd still have problem of how to configure these hot-pluggable devices
+at runtime, so it's not necessarily easier.
 
-That can possibly be done as a follow-up too even if removing GPIO_SYSFS
-support later is not ideal in case that's the path chosen (we'd have a
-similar problem with the existing USB-serial GPIO implementations though).
+If I remember correctly the xr_serial driver under review is doing
+something like muxing at runtime, but by simply having whichever
+interface (tty or gpio) that claims the resource first implicitly set
+the mux configuration. I have to revisit that.
+
+> We don't really have many drivers that are "muxable by
+> (intrusive) flashing" as opposed to "muxable by setting some
+> bits" so in that way these FTDI drivers and siblings are special.
+
+Yeah, but the gpio-reserved-range (valid-mask) feature which Marc used
+comes close here.
 
 Johan
