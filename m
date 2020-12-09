@@ -2,108 +2,148 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162B5C4167B
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23545C4361B
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D288123A22
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE6E823B7E
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Dec 2020 10:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729799AbgLIKMr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 05:12:47 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:27864 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729779AbgLIKMl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 05:12:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1607508585;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=Message-Id:Date:Subject:Cc:To:From:From:Subject:Sender;
-        bh=8Y1PdLucYIkCKVYFMjCy954XW6R1LXzP14geS5eN+IA=;
-        b=L/qOMCDpSPUIkSiLb2j1Sa1tiZ5CLsSziQBpvq4W9NlOZwOI2qmndMxSMLQaZZMHYI
-        MgFBlits0rm/J6W4ZkKunDPcSEYb/dJIik3cxy8Gqq/Zbf6p4B7nQdm2ObobRdR5yzq/
-        nqZHQi+iiDO5baLUX5cinQTcOWAlL/vpIhGpkbSuf+vNGGOyMq+BjSODQzMBL+KrdJru
-        HqF/HXfB6eW4O4j5cE+pcmWmR8Xn65mFUkaeywqZYAmRlYdX+1RlPPfwtNzkWujsE7dQ
-        pb9y/svWC/pqViXD5YwxNBnChy855856GFbxqgnCVJHN2O2AYDaPXG6VKiqGySpTBk3i
-        dU3A==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH6HGqpg2w="
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 47.6.2 DYNA|AUTH)
-        with ESMTPSA id 908871wB99vi5Sm
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Wed, 9 Dec 2020 10:57:44 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linus.walleij@linaro.org
-Cc:     linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>, thesven73@gmail.com,
-        lukas@wunner.de, laurent.pinchart@ideasonboard.com,
-        andreas@kemnade.info, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH] spi: dt-bindings: clarify CS behavior for spi-cs-high and gpio descriptors
-Date:   Wed,  9 Dec 2020 10:57:44 +0100
-Message-Id: <3bed61807fff6268789e7d411412fbc5cd6ffe2a.1607507863.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.26.2
+        id S1728631AbgLIKNo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 05:13:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728431AbgLIKNo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 05:13:44 -0500
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB9CC0613CF
+        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 02:13:03 -0800 (PST)
+Received: by mail-il1-x143.google.com with SMTP id v3so1039241ilo.5
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 02:13:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vv5EWNGcGOBn17lzKflBTUVfS6qMaqRPW6pG3V7oNm0=;
+        b=J3x3PEchxftRulVBJUUkwjAyds3S4iVfo7cL1pmt+TY8BVCJFnLoV2menBIMu+JiAE
+         BGB4+onCy3TaXHgMTJJGoTyuLroFPWLK+oB3a9zFyoNUTgyxp7AcAACmNpVt78Y7mT0/
+         FLTDUUp3ys1vYttx5rmNdPvXr7aJJFefDwZwRlvdBoVgBXhNdcLoZSLqgrslJLMQ01Wf
+         8dvhkYD1sOPd7G9Pydlubps9cTcBG9V2M6osNuF03XcUTqa4ZJizt2AqAI4kumhSvK+q
+         3PGfP+bLzL28vL17RWX50CRCcTasSzfmOWKcmvu/Hrfub7UqLjbl0Uc8kj6xSwDJGCJL
+         cIVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vv5EWNGcGOBn17lzKflBTUVfS6qMaqRPW6pG3V7oNm0=;
+        b=akYZOBMZqUMW5OngFqwh6MHcVzBIsph+ICwkEXxHBO+FUA5YtUpOU9d4QoLdhlPA9w
+         l8lmULvBg8jpWySB8/II/659SsbAhaW/k9zTrX7+ET/2JJHl8MP4tQGQVbRo0e6AIro9
+         32To2EJpC20DoKvyXCTaHNKTza4ZDcvwhSaLrLODU7zPvBv7nbwoDvBY20ok7vMUIEIB
+         mgO5XPC8TTVH76hJ0C16ZRrwV6/3HDn4EjAGaqlnhBEUduBaaWMk0yZZYWTWJLl+xELC
+         wJtA/Iv8nsdH3QCLgfbzwdxcd2NTnc8FXridKwLXWQVd1fAH2cYbhPo8SVurHPXB9goe
+         0ZUw==
+X-Gm-Message-State: AOAM532WVaoTWkTgZpikuEzVyrjYjFfq7rM64jOoqEmpipGKMV13u9V0
+        Bkuhwd39eHVTW7DiUdKzQUDifKYsNnIOzzQTH8LkTc42jGL2ag==
+X-Google-Smtp-Source: ABdhPJyWYOBwMpRn9vmNphxqlGSawmSzx3hzRUsRkaHE/Iv4myQSGJETiu82M4kxl7aUMKMvyb53ponV6YUzpOLrqbc=
+X-Received: by 2002:a92:c945:: with SMTP id i5mr1884465ilq.6.1607508783343;
+ Wed, 09 Dec 2020 02:13:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201209095248.22408-1-brgl@bgdev.pl> <CACRpkdZgK3dmjM32BYAWFvHOhBUsQbNbCSNMaebvRr+Jnes=Ww@mail.gmail.com>
+In-Reply-To: <CACRpkdZgK3dmjM32BYAWFvHOhBUsQbNbCSNMaebvRr+Jnes=Ww@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 9 Dec 2020 11:12:52 +0100
+Message-ID: <CAMRc=Mdq7LBTAbUguuLH=f5_vfo5pc95BCveqSvApBTC26aNQQ@mail.gmail.com>
+Subject: Re: [GIT PULL] gpio: updates for v5.11-rc1
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Behavior of CS signal in combination of spi-cs-high and gpio descriptors
-is not clearly defined and documented. So clarify the documentation
+On Wed, Dec 9, 2020 at 11:07 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> Hi Bartosz,
+>
+> On Wed, Dec 9, 2020 at 10:52 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> > These are the patches I collected over this release cycle. Nothing all
+> > too exciting - mainly just updates to drivers and refactoring of the
+> > core code. Please pull.
+>
+> Nice!
+>
+> But I get a merge conflict in gpiolib-acpi.c! Since I said Andy should
+> be maintaining that file it makes me a bit nervous.
+>
+> It looks like this:
+>
+> index 6cc5f91bfe2e,23fa9df8241d..000000000000
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@@ -586,6 -526,40 +586,43 @@@ static bool acpi_get_driver_gpio_data(s
+>         return false;
+>   }
 
-Cc: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- .../bindings/spi/spi-controller.yaml          | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Strange, I didn't see any conflicts in next...
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-index 1b56d5e40f1fc..5f505810104dd 100644
---- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-@@ -42,6 +42,33 @@ properties:
-         cs2 : &gpio1 1 0
-         cs3 : &gpio1 2 0
- 
-+      The second flag of a gpio descriptor can be GPIO_ACTIVE_HIGH (0)
-+      or GPIO_ACTIVE_LOW(1). Legacy device trees often use 0.
-+
-+      There is a special rule set for combining the second flag of an
-+      cs-gpio with the optional spi-cs-high flag for SPI slaves.
-+
-+      Each table entry defines how the CS pin is to be physically
-+      driven (not considering potential gpio inversions by pinmux):
-+
-+      device node     | cs-gpio       | CS pin state active | Note
-+      ================+===============+=====================+=====
-+      spi-cs-high     | -             | H                   |
-+      -               | -             | L                   |
-+      spi-cs-high     | ACTIVE_HIGH   | H                   |
-+      -               | ACTIVE_HIGH   | L                   | 1
-+      spi-cs-high     | ACTIVE_LOW    | H                   | 2
-+      -               | ACTIVE_LOW    | L                   |
-+
-+      Notes:
-+      1) Should print a warning about polarity inversion.
-+         Here it would be wise to avoid and define the gpio as
-+         ACTIVE_LOW.
-+      2) Should print a warning about polarity inversion
-+         because ACTIVE_LOW is overridden by spi-cs-high.
-+         Should be generally avoided and be replaced by
-+         spi-cs-high + ACTIVE_HIGH.
-+
-   num-cs:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description:
--- 
-2.26.2
+>
+> ++<<<<<<< HEAD
+> ++=======
+> + static enum gpiod_flags
+> + acpi_gpio_to_gpiod_flags(const struct acpi_resource_gpio *agpio)
+> + {
+> +       switch (agpio->io_restriction) {
+> +       case ACPI_IO_RESTRICT_INPUT:
+> +               return GPIOD_IN;
+> +       case ACPI_IO_RESTRICT_OUTPUT:
+> +               /*
+> +                * ACPI GPIO resources don't contain an initial value for the
+> +                * GPIO. Therefore we deduce that value from the pull field
+> +                * instead. If the pin is pulled up we assume default to be
+> +                * high, if it is pulled down we assume default to be low,
+> +                * otherwise we leave pin untouched.
+> +                */
+> +               switch (agpio->pin_config) {
+> +               case ACPI_PIN_CONFIG_PULLUP:
+> +                       return GPIOD_OUT_HIGH;
+> +               case ACPI_PIN_CONFIG_PULLDOWN:
+> +                       return GPIOD_OUT_LOW;
+> +               default:
+> +                       break;
+> +               }
+> +               break;
 
+This break is the only thing I have in my tree. Andy told me to take
+that patch with his ack. It seems you don't have this function in your
+tree - was it moved at some point?
+
+Bartosz
+
+> +       default:
+> +               break;
+> +       }
+> +
+> +       /*
+> +        * Assume that the BIOS has configured the direction and pull
+> +        * accordingly.
+> +        */
+> +       return GPIOD_ASIS;
+> + }
+> +
+> ++>>>>>>> 1542ec5eaddb45b4fe625de3d95ee4e94226514d
+>   static int
+>   __acpi_gpio_update_gpiod_flags(enum gpiod_flags *flags, enum
+> gpiod_flags update)
+>   {
+>
+> I don't exactly know what do do here ... any advice?
+>
+> Yours,
+> Linus Walleij
