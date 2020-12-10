@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,TVD_SPACE_RATIO,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D960AC0018C
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 435EAC4167B
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC57722E00
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:50:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09EB922E00
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404392AbgLJTn5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S2404386AbgLJTn5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 10 Dec 2020 14:43:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53332 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404345AbgLJTnp (ORCPT
+        with ESMTP id S2404344AbgLJTnp (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:45 -0500
 Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC9EC061794;
-        Thu, 10 Dec 2020 11:42:51 -0800 (PST)
-Message-Id: <20201210194045.360198201@linutronix.de>
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A432C0611CE;
+        Thu, 10 Dec 2020 11:42:46 -0800 (PST)
+Message-Id: <20201210194044.972064156@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1607629369;
+        s=2020; t=1607629364;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=ZlPg9sxtWavWNstOnduWAE0LJ88d0safrspZWU+Bxkw=;
-        b=K1DERQLLdTNr2zHRckKSlzdGpOu3K2YNmRf/Fd+Me9xL7e1+z/WEZj2/ktZthj5jq1hRc5
-        H3K05V2lxe1VMwzID4A3YLY85G8CYSpDrmB064IUNRFZIZdMGhdgfMMXJmC2dwy27hx5dv
-        +8AXgD/DGykOcBz1Xa8j76SRM06+jkTJXOvxx9wVIyXxp695f6gHDGbeeV9JlTl+CV+qJz
-        iigE2xdn6yZ1PRpeA5+aMqV0fQZ1NATjbH3H6LTr2G8vwxub7OglAIb7biMKHi/AyccluD
-        JT3nn4CWSg161dQ9jAMQEsqATs9zRWVAVD7sNovXx4fL9L9H47Prx2LPtWUjvw==
+        bh=9YlyTwMk4Mbfk7ZW8GDEykvPqsqe5qocY/DN2nXVexA=;
+        b=hVw3OYCTWsMz0Aw61IHODSqZTydWtjxPDClGGC7iGCBQqFWidRe56rShTgIEwhvft2xxVQ
+        M/YlcKaOAyEQXPl7Q3R3E32QqIuTfXQ19MYqHX2sGJ83TqbX6MyS7Wtr2e++pcbRAgNdOI
+        cVxo/p5uF7/AAg7bzLR09pxbrsczA1ufWBrFzi+yYRMMnxIdHGVV8b25XSGFqMhhM/ZLfS
+        qYZkmMDMAVG+a+Dk/ioVTw4ujul3+CsBK60KEwLQOzocKe9FTUxmnyQhV7MVP4FyuTzzdh
+        Mx0/OtbsUm0nXPbmcxdV1KpjnJXXPfi7+2ISytWZAwaHiml7fGtt4XCeI+DnvA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1607629369;
+        s=2020e; t=1607629364;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=ZlPg9sxtWavWNstOnduWAE0LJ88d0safrspZWU+Bxkw=;
-        b=5OkxueAP7qHY2hZdC3q6dEaDkreK0XDmJgigYgkjGtvPF1gC/y/J1hb+Pc7lUaZciQOAo7
-        alJrfrmEbNVTr+Cw==
-Date:   Thu, 10 Dec 2020 20:26:04 +0100
+        bh=9YlyTwMk4Mbfk7ZW8GDEykvPqsqe5qocY/DN2nXVexA=;
+        b=TDoY6kDn3fqOFjjhxcsd3OY1zWrz3aQ6qRhKrymB7SphyJoO4N2U2VRY7uCgEKkn/QVPql
+        uhJWWeP2DlMdL5CA==
+Date:   Thu, 10 Dec 2020 20:26:00 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -88,7 +88,7 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
         linux-rdma@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
         Leon Romanovsky <leon@kernel.org>
-Subject: [patch 28/30] xen/events: Reduce irq_info::spurious_cnt storage size
+Subject: [patch 24/30] xen/events: Remove unused bind_evtchn_to_irq_lateeoi()
 References: <20201210192536.118432146@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -97,43 +97,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-To prepare for interrupt spreading reduce the storage size of
-irq_info::spurious_cnt to u8 so the required flag for the spreading logic
-will not increase the storage size.
-
-Protect the usage site against overruns.
-
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: Stefano Stabellini <sstabellini@kernel.org>
 Cc: xen-devel@lists.xenproject.org
 ---
- drivers/xen/events/events_base.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/xen/events/events_base.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
 --- a/drivers/xen/events/events_base.c
 +++ b/drivers/xen/events/events_base.c
-@@ -95,7 +95,7 @@ struct irq_info {
- 	struct list_head list;
- 	struct list_head eoi_list;
- 	short refcnt;
--	short spurious_cnt;
-+	u8 spurious_cnt;
- 	enum xen_irq_type type; /* type */
- 	unsigned irq;
- 	evtchn_port_t evtchn;   /* event channel */
-@@ -528,8 +528,10 @@ static void xen_irq_lateeoi_locked(struc
- 		return;
+@@ -1132,12 +1132,6 @@ int bind_evtchn_to_irq(evtchn_port_t evt
+ }
+ EXPORT_SYMBOL_GPL(bind_evtchn_to_irq);
  
- 	if (spurious) {
--		if ((1 << info->spurious_cnt) < (HZ << 2))
--			info->spurious_cnt++;
-+		if ((1 << info->spurious_cnt) < (HZ << 2)) {
-+			if (info->spurious_cnt != 0xFF)
-+				info->spurious_cnt++;
-+		}
- 		if (info->spurious_cnt > 1) {
- 			delay = 1 << (info->spurious_cnt - 2);
- 			if (delay > HZ)
+-int bind_evtchn_to_irq_lateeoi(evtchn_port_t evtchn)
+-{
+-	return bind_evtchn_to_irq_chip(evtchn, &xen_lateeoi_chip);
+-}
+-EXPORT_SYMBOL_GPL(bind_evtchn_to_irq_lateeoi);
+-
+ static int bind_ipi_to_irq(unsigned int ipi, unsigned int cpu)
+ {
+ 	struct evtchn_bind_ipi bind_ipi;
 
