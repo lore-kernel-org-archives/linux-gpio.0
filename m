@@ -2,76 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C864AC433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCAAC0018C
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 758E423B85
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0DF122BF5
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389652AbgLJN7c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 08:59:32 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9591 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727310AbgLJN70 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 08:59:26 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CsFqZ02DNzM2qB;
-        Thu, 10 Dec 2020 21:58:02 +0800 (CST)
-Received: from ubuntu.network (10.175.138.68) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 10 Dec 2020 21:58:33 +0800
-From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <sean.wang@kernel.org>, <linus.walleij@linaro.org>,
-        <matthias.bgg@gmail.com>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Subject: [PATCH -next] pinctrl/mediatek: simplify the return expression of mtk_pinconf_bias_disable_set_rev1()
-Date:   Thu, 10 Dec 2020 21:59:02 +0800
-Message-ID: <20201210135902.1548-1-zhengyongjun3@huawei.com>
-X-Mailer: git-send-email 2.22.0
+        id S2389835AbgLJOE3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 09:04:29 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:5149 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389841AbgLJOE0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 09:04:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1607609066; x=1639145066;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=a9lIXSkXmm1JjHCFgZUF+EI1D5ZXZRRfkRqwz5LKPsE=;
+  b=qtG+kOR7CX+sciK66noFPKxwQ1YlJLyH+yLmaL2PBex70Vx/Sc3xE9NU
+   ze1YxO0A4+nex5Qf+n4HikSkfTIDgcjk1iVDmTjLGRhUyQ14KiLnjt1/d
+   EhLvZH2mQCcwqqpu6U+V7cZmicg+cjDpdxO24dSMt3y1eIilO4JGMnbeJ
+   Rcei2dt6u8q9jaoIeQSB18Aea4Li0j4jSn6+oP7ZhwVREvP02DGX5pP4h
+   k2ZK9qeDXOjSQtxrgCHBXgzAtMpoKjJAhPDF/FHOWjvkYrUK4oSWkVSv1
+   KMOUxLlbqI/qxg/A/KwT173WPZ5bjQQ42Oq13A5oOgTMtEswGD2+isb2f
+   A==;
+IronPort-SDR: +wP6XV9kvFAwKT8TXPQYbmtIZuDil8W87bEb/Qgony9ioJlqe5lvguhUMjgImA/vK7zPxeVVFu
+ an8lvK6dbahETPx4yehZw3j7Z/2uGZ1+0b8V8L5MvOp/mrXuXb4Z25VYy+vXd4gs2495sMs7Xv
+ J9p/iriR+KCVytxyFX8Rw0cdFipnRvezpAfbLoydxld/J+uRZ7HL++uFc6+BQEYLwd0zNjNzX0
+ 4Z4P6XmGRKxqz07HRTb5bDDEa6+j3rDPGfBbM0vAhFqlL0H/RzkE5PjfXtpGS6p78yFNj2K6ib
+ weU=
+X-IronPort-AV: E=Sophos;i="5.78,408,1599494400"; 
+   d="scan'208";a="159316683"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Dec 2020 22:03:20 +0800
+IronPort-SDR: uVr5c+/+OUd+ObU2tOdE3mgQ1mMjtpV0Fw0mKy8RHapbuoWqKBbjMkAJWeS3KmgZGodX/F3api
+ fXqFmfWn2WIpQ/bX96lMfV3J4nIzN9IgQ=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2020 05:47:12 -0800
+IronPort-SDR: AYIs6fKaxtHsLAssBV6+qL+slKYEegOBU1Hy83epkwHh6hmSUUPiHJC1HWDsM5dVzAgNS4OPZx
+ pq90cn8uQTcw==
+WDCIronportException: Internal
+Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
+  by uls-op-cesaip02.wdc.com with ESMTP; 10 Dec 2020 06:03:19 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Sean Anderson <seanga2@gmail.com>
+Subject: [PATCH v8 01/22] riscv: Fix kernel time_init()
+Date:   Thu, 10 Dec 2020 23:02:52 +0900
+Message-Id: <20201210140313.258739-2-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201210140313.258739-1-damien.lemoal@wdc.com>
+References: <20201210140313.258739-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.138.68]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Simplify the return expression.
+If of_clk_init() is not called in time_init(), clock providers defined
+in the system device tree are not initialized, resulting in failures for
+other devices to initialize due to missing clocks.
+Similarly to other architectures and to the default kernel time_init()
+implementation, call of_clk_init() before executing timer_probe() in
+time_init().
 
-Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ arch/riscv/kernel/time.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 7e950f5d62d0..7aeb552d16ce 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -488,14 +488,8 @@ EXPORT_SYMBOL_GPL(mtk_pinconf_bias_get);
- int mtk_pinconf_bias_disable_set_rev1(struct mtk_pinctrl *hw,
- 				      const struct mtk_pin_desc *desc)
- {
--	int err;
--
--	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PULLEN,
--			       MTK_DISABLE);
--	if (err)
--		return err;
--
--	return 0;
-+	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PULLEN,
-+				MTK_DISABLE);
+diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+index 4d3a1048ad8b..8a5cf99c0776 100644
+--- a/arch/riscv/kernel/time.c
++++ b/arch/riscv/kernel/time.c
+@@ -4,6 +4,7 @@
+  * Copyright (C) 2017 SiFive
+  */
+ 
++#include <linux/of_clk.h>
+ #include <linux/clocksource.h>
+ #include <linux/delay.h>
+ #include <asm/sbi.h>
+@@ -24,6 +25,8 @@ void __init time_init(void)
+ 	riscv_timebase = prop;
+ 
+ 	lpj_fine = riscv_timebase / HZ;
++
++	of_clk_init(NULL);
+ 	timer_probe();
  }
- EXPORT_SYMBOL_GPL(mtk_pinconf_bias_disable_set_rev1);
  
 -- 
-2.22.0
+2.29.2
 
