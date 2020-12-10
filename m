@@ -7,52 +7,53 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB97C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A08C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2037722D5A
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D7B23406
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:59:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404312AbgLJTng (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 14:43:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53272 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393492AbgLJTnb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:31 -0500
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 915D1C06138C;
-        Thu, 10 Dec 2020 11:42:27 -0800 (PST)
-Message-Id: <20201210194043.454288890@linutronix.de>
+        id S2393555AbgLJTnf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 14:43:35 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57796 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404307AbgLJTnc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:32 -0500
+Message-Id: <20201210194045.250321315@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1607629346;
+        s=2020; t=1607629368;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=d6ZnDp1ZYVpzy4fVKUFFFULYmpUUlcl5sebpJ1aGphc=;
-        b=MSBX3shBH0qoLZgoBaKe5kLbUB8TnsF2wkt/HDprwYNeTCAbd2lA/IPfG5shNVgtErFne6
-        2e7dxedwAVSHA242jzYwEZEDos7nzVn3jxex71TScShSaummfLGCXQPpi9hsC6bxlpki1A
-        PaKHNLN8C0jAcib2U6kKogdFm6aBvAusAl2wzmpxVjN8CVqMhcCswRy3h+4P9laPxunXLd
-        H7LLUzUcw0fvfesHPPxL0uK/nLdCXiS7KyYQy2gAPBMvgGCcbyREn+oK+jObT1BhRalalZ
-        V5Nn3/fVSWTJibiL01V8QA9WbzxTf/xt6yFIPqkmLVhG809hQRqJj+6eoADqiw==
+        bh=h+/J8p7baJr0DOpzZw5pWLEFMQkgQKdthJegqn8/Z3Y=;
+        b=ViQ26TbnUeY8qEjEzYulRVnhFAoB9EDH9YUPDvEiFg//dnXloI1oen9eNgmVDH3RmZaBn0
+        0l0hb/eh9AtQOqQOiBnzJtoucvR/Mgcwm3gjLtIH7WkV3WksbFVdOMHzNi5Zj6EnqfiQBo
+        j3AWozoE82ZIwe2qbFS8RFleThcs9Bt3OInvffx5HlfgL9KUZRRlg7kyEJZxqWJqWBqEXh
+        aZpEesZBBg55CfasJSjlzL/0bXPLxp/DGSRYtaZAfSC1smsroPfxhOGgzqx3F6MyhNadS8
+        HUk9gvp8N0w4LGaQVpf17rVe2GplhulXqQJFiAihQg9NPYrVAz0L2MOk4uIbBw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1607629346;
+        s=2020e; t=1607629368;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=d6ZnDp1ZYVpzy4fVKUFFFULYmpUUlcl5sebpJ1aGphc=;
-        b=/jZEQ2YP5EiBLPFVPa41DzeVlkA22cUlEXVQ4rLDBt8Dt9AhsUKkU1UyqJF1WyN4nzOpZY
-        l36XkFlXpQQTzpDg==
-Date:   Thu, 10 Dec 2020 20:25:45 +0100
+        bh=h+/J8p7baJr0DOpzZw5pWLEFMQkgQKdthJegqn8/Z3Y=;
+        b=VbJwfVLRzH/9JhiMalVLwKmOuULPqzvXaWNQJQDqIexhTGvkL8AL9yE+2ch4ltaw7RfVm0
+        CZcollJCruWADiAA==
+Date:   Thu, 10 Dec 2020 20:26:03 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Marc Zyngier <maz@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
         Helge Deller <deller@gmx.de>,
         afzal mohammed <afzal.mohd.ma@gmail.com>,
-        linux-parisc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-parisc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
@@ -83,12 +84,8 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
         linux-rdma@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-Subject: [patch 09/30] ARM: smp: Use irq_desc_kstat_cpu() in show_ipi_list()
+        Leon Romanovsky <leon@kernel.org>
+Subject: [patch 27/30] xen/events: Only force affinity mask for percpu interrupts
 References: <20201210192536.118432146@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -97,25 +94,145 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The irq descriptor is already there, no need to look it up again.
+All event channel setups bind the interrupt on CPU0 or the target CPU for
+percpu interrupts and overwrite the affinity mask with the corresponding
+cpumask. That does not make sense.
+
+The XEN implementation of irqchip::irq_set_affinity() already picks a
+single target CPU out of the affinity mask and the actual target is stored
+in the effective CPU mask, so destroying the user chosen affinity mask
+which might contain more than one CPU is wrong.
+
+Change the implementation so that the channel is bound to CPU0 at the XEN
+level and leave the affinity mask alone. At startup of the interrupt
+affinity will be assigned out of the affinity mask and the XEN binding will
+be updated. Only keep the enforcement for real percpu interrupts.
+
+On resume the overwrite is not required either because info->cpu and the
+affinity mask are still the same as at the time of suspend. Same for
+rebind_evtchn_irq().
+
+This also prepares for proper interrupt spreading.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: xen-devel@lists.xenproject.org
 ---
- arch/arm/kernel/smp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/xen/events/events_base.c |   42 ++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 14 deletions(-)
 
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -550,7 +550,7 @@ void show_ipi_list(struct seq_file *p, i
- 		seq_printf(p, "%*s%u: ", prec - 1, "IPI", i);
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -433,15 +433,20 @@ static bool pirq_needs_eoi_flag(unsigned
+ 	return info->u.pirq.flags & PIRQ_NEEDS_EOI;
+ }
  
- 		for_each_online_cpu(cpu)
--			seq_printf(p, "%10u ", kstat_irqs_cpu(irq, cpu));
-+			seq_printf(p, "%10u ", irq_desc_kstat_cpu(ipi_desc[i], cpu));
+-static void bind_evtchn_to_cpu(evtchn_port_t evtchn, unsigned int cpu)
++static void bind_evtchn_to_cpu(evtchn_port_t evtchn, unsigned int cpu,
++			       bool force_affinity)
+ {
+ 	int irq = get_evtchn_to_irq(evtchn);
+ 	struct irq_info *info = info_for_irq(irq);
  
- 		seq_printf(p, " %s\n", ipi_types[i]);
+ 	BUG_ON(irq == -1);
+-#ifdef CONFIG_SMP
+-	cpumask_copy(irq_get_affinity_mask(irq), cpumask_of(cpu));
+-#endif
++
++	if (IS_ENABLED(CONFIG_SMP) && force_affinity) {
++		cpumask_copy(irq_get_affinity_mask(irq), cpumask_of(cpu));
++		cpumask_copy(irq_get_effective_affinity_mask(irq),
++			     cpumask_of(cpu));
++	}
++
+ 	xen_evtchn_port_bind_to_cpu(evtchn, cpu, info->cpu);
+ 
+ 	info->cpu = cpu;
+@@ -788,7 +793,7 @@ static unsigned int __startup_pirq(unsig
+ 		goto err;
+ 
+ 	info->evtchn = evtchn;
+-	bind_evtchn_to_cpu(evtchn, 0);
++	bind_evtchn_to_cpu(evtchn, 0, false);
+ 
+ 	rc = xen_evtchn_port_setup(evtchn);
+ 	if (rc)
+@@ -1107,8 +1112,8 @@ static int bind_evtchn_to_irq_chip(evtch
+ 			irq = ret;
+ 			goto out;
+ 		}
+-		/* New interdomain events are bound to VCPU 0. */
+-		bind_evtchn_to_cpu(evtchn, 0);
++		/* New interdomain events are initially bound to VCPU 0. */
++		bind_evtchn_to_cpu(evtchn, 0, false);
+ 	} else {
+ 		struct irq_info *info = info_for_irq(irq);
+ 		WARN_ON(info == NULL || info->type != IRQT_EVTCHN);
+@@ -1156,7 +1161,11 @@ static int bind_ipi_to_irq(unsigned int
+ 			irq = ret;
+ 			goto out;
+ 		}
+-		bind_evtchn_to_cpu(evtchn, cpu);
++		/*
++		 * Force the affinity mask to the target CPU so proc shows
++		 * the correct target.
++		 */
++		bind_evtchn_to_cpu(evtchn, cpu, true);
+ 	} else {
+ 		struct irq_info *info = info_for_irq(irq);
+ 		WARN_ON(info == NULL || info->type != IRQT_IPI);
+@@ -1269,7 +1278,11 @@ int bind_virq_to_irq(unsigned int virq,
+ 			goto out;
+ 		}
+ 
+-		bind_evtchn_to_cpu(evtchn, cpu);
++		/*
++		 * Force the affinity mask for percpu interrupts so proc
++		 * shows the correct target.
++		 */
++		bind_evtchn_to_cpu(evtchn, cpu, percpu);
+ 	} else {
+ 		struct irq_info *info = info_for_irq(irq);
+ 		WARN_ON(info == NULL || info->type != IRQT_VIRQ);
+@@ -1634,8 +1647,7 @@ void rebind_evtchn_irq(evtchn_port_t evt
+ 
+ 	mutex_unlock(&irq_mapping_update_lock);
+ 
+-        bind_evtchn_to_cpu(evtchn, info->cpu);
+-	irq_set_affinity(irq, cpumask_of(info->cpu));
++	bind_evtchn_to_cpu(evtchn, info->cpu, false);
+ 
+ 	/* Unmask the event channel. */
+ 	enable_irq(irq);
+@@ -1669,7 +1681,7 @@ static int xen_rebind_evtchn_to_cpu(evtc
+ 	 * it, but don't do the xenlinux-level rebind in that case.
+ 	 */
+ 	if (HYPERVISOR_event_channel_op(EVTCHNOP_bind_vcpu, &bind_vcpu) >= 0)
+-		bind_evtchn_to_cpu(evtchn, tcpu);
++		bind_evtchn_to_cpu(evtchn, tcpu, false);
+ 
+ 	if (!masked)
+ 		unmask_evtchn(evtchn);
+@@ -1798,7 +1810,8 @@ static void restore_cpu_virqs(unsigned i
+ 
+ 		/* Record the new mapping. */
+ 		(void)xen_irq_info_virq_setup(cpu, irq, evtchn, virq);
+-		bind_evtchn_to_cpu(evtchn, cpu);
++		/* The affinity mask is still valid */
++		bind_evtchn_to_cpu(evtchn, cpu, false);
  	}
+ }
+ 
+@@ -1823,7 +1836,8 @@ static void restore_cpu_ipis(unsigned in
+ 
+ 		/* Record the new mapping. */
+ 		(void)xen_irq_info_ipi_setup(cpu, irq, evtchn, ipi);
+-		bind_evtchn_to_cpu(evtchn, cpu);
++		/* The affinity mask is still valid */
++		bind_evtchn_to_cpu(evtchn, cpu, false);
+ 	}
+ }
+ 
 
