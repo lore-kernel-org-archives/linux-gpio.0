@@ -2,409 +2,217 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C3BC4167B
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82592C4167B
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C52223A1D
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EA51206FC
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389365AbgLJNiB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 08:38:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733284AbgLJNfk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 08:35:40 -0500
-Received: from mail-yb1-xb41.google.com (mail-yb1-xb41.google.com [IPv6:2607:f8b0:4864:20::b41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF2F0C06179C;
-        Thu, 10 Dec 2020 05:34:59 -0800 (PST)
-Received: by mail-yb1-xb41.google.com with SMTP id a16so4719225ybh.5;
-        Thu, 10 Dec 2020 05:34:59 -0800 (PST)
+        id S2389680AbgLJNyI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 08:54:08 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:38693 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389671AbgLJNyH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 08:54:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1607608447; x=1639144447;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=eS6SvZkNgQ7BcK9b6Ghm/mI8Wqp57UeYr6iq6V/Ts+A=;
+  b=Qt9xqwzYf48aW8RZEm18SwWTCYH92oBnSRuWiAcBu66n9B0Hnic6+qRV
+   vTYsAOc9n/zQ/+BjuQkSabPJ5T0HvWBPn6SPu7Fj3vIixa9aa9Jl1WDLf
+   mkc/+U8eldDqR2yp4nv3ujITxdZr9s8obCLxryx8eC+zLlUvYJ0PF3v23
+   ONyPMWGVxu+ht14huVtuWYVQXTP1Ym0ibd084oVvRl4XPx131+3gZpyRK
+   zRjny0J1NmLq2PQgXRyhs8XIBOp6GxGjLazJCIlu/5DTGkfMBIUpAwcWm
+   EHv+738wH2uHSLYYy5d+yCzmCHLz+uq8Lb5y2Ix7/DWyNgW4gzobXo0h3
+   A==;
+IronPort-SDR: qAYLc5Ffv5vZBfug700xoPTQ3Mi30GJ+wznC+1vSKU7LqrO6eWMvl7PDmpV2hxVVLS9chlDvMZ
+ 2LKRJTJs8pMs3VtvEO4sSwdvUhOXhU/sOYyEPJuWIgloFPGybOX5WnIcnqyHF8emoJ9HkLHWZp
+ UEfxhn09XpJLTEg41HXPvrq+7W3XDWGqrglDhDgRjs8nwW4HVVO+Y5WZe9XMZfRGkEcbcCndn9
+ V1USPSKwFKllUkqVAOgUSKdiiucm1RZ0PxmClQ+fwfLumaO7JtqNdlgNY1WBiG/cZJvLkh/9LO
+ hso=
+X-IronPort-AV: E=Sophos;i="5.78,408,1599494400"; 
+   d="scan'208";a="159316023"
+Received: from mail-mw2nam12lp2043.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.43])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Dec 2020 21:53:00 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ettZddPeERq/uPaFauGYst/wLvo262+5hMV27t2qScum6xtQ2M8PzWdBsx7adEwSjKA/JcuEuQutPgnlldyeuJSVc2LyhHY6a5+7rXoQgpJVM506wLRaapuZ5HjP+araymOc56i5L0dOSd/rRLwABIuYIlHNHTPgPSdxt581AgyLg9FPp1DdgXoXLyIPUg1nsatk9ep20IcqmIzqudoP6vdOaID25aiUVyJBxLlLNxQGuy7Y1bxcPY3YETQOhiE6Q0Xh6ma6xR/v+eLEXGIqf8uhre1cCcZh57M1zN/49w0ssFMruz8zCJOSp+86P2BLZ8ulMpjPYfDNCNMIseTiyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4ti17RCLoPz4K5CHhqDSWbcTr1eQiXCBQqxfUvWro8=;
+ b=GU4oYpt6KHRNQ98HgwLm3wZBYTV37zf3br7yRft6YLOtV7hbgDEkzLNTbrPZuMXBbySJI3El0c169ytV3wPid4/wVc4VkrMMuXdq1Of01XqsUDnV4L0Dp6vWgBeK5/bf4k6JlQonKeN0RzZo+YdTMxkB1gE0M/R74MU4lGHpQiZlNvUV79o7bMvHH1HWJtJKFGY8WVNbhqsbNz9o5d6lBeaB7qysroh4/7rHK0J3VIunnzOpgLQvm+XSKl+bJvbNRPMRwCmfTlKNf2DI6dx2QE2w2l9pf8lgOimUiARmwFPSz86XP1ROPIBp9yOyscOoHq/75UuoeX8uRIyKEbXs6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vfSAyzZfUjlWeyeSEewwWw2mhFaO2D8flFMA2vqBuNA=;
-        b=Jm8tEDfLMwIXJ2wrtH7X1/A+NaAlnDCauFW5AjRJgM62R64rLa5gsiCbx+txq0lpP8
-         6SZaayc+pbJo/qLTgIEf/RkjmcPbtpz26lGK+WR8mgi17UegIYk8o7Gm8Vxfx5d134WS
-         FAvE7cFGkO+XUnS83IWARxVZBjI93OTgPeamecAXTz3Kcb6BhPqyTrxr6HDGTtS1pzRD
-         g7V5n2re2MmhW6K4FvyEYxSOwsg/BGo6SZVA0hAjEh+mJvu651IV12Uam+pm3mJ25qM4
-         CI7B0WAR764SeYThgr+wugAk+K7kumO1Eksoad/lY3KqEHwbmYbj9DIxSWqODo1m95Jg
-         1hMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vfSAyzZfUjlWeyeSEewwWw2mhFaO2D8flFMA2vqBuNA=;
-        b=EZSbnBFLRR5giegJhlV/ztv8b0j11p7pZkTvO3VGsml0GDf9tpjlyE8YaOOFDlrbAY
-         PHg7duO44/NCk0J2DSCDneGYfESVAkNHsc5K3r1bAWAzp+w2JlhgqrFl1QWT9tQRgMji
-         m2erK4ag6twrd7VggMErZdxKQBPsLXix4tXZ4CJRIWxC1iF0XHn9TGSYRt/ARgFZbmj0
-         a+YDsVootJWAE1Ow6gqKqX5W2ZPl6nfzlvkG+Rs2iVWUf5yAS3Kma47xdS5+LkvwydEB
-         Zjq3sdaW6iloftc6kInIS9IVDdySo5QF6rwPwjoh2jNKitd/JP11uvAJWNKFPp5SwisI
-         AJBQ==
-X-Gm-Message-State: AOAM533CID3s1j/ToD1tOCqD4rMNQ8VDIf+19GZAvznVksgL/rtvlYHw
-        aciCF7Y8/Tyzb9hajgRWG11f7iU7/aVOj5Xg4ic=
-X-Google-Smtp-Source: ABdhPJwXw2P7R5ISv4M6hrhYJ9kts/kEdAW82RV1P+4EI3ZDlat8PHriVJFzNbuowRuRDEPPEw6nCzOJR12j6/QfGb8=
-X-Received: by 2002:a05:6902:210:: with SMTP id j16mr11138986ybs.122.1607607299236;
- Thu, 10 Dec 2020 05:34:59 -0800 (PST)
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4ti17RCLoPz4K5CHhqDSWbcTr1eQiXCBQqxfUvWro8=;
+ b=dRmssp4fRh5nQ+RhmLUIbH9K3i5YuZmLizWH6gJ7eIuZelZckV/YRhOzNKqkIsTxOJTa0IY7Vr47Zve/j42iyVqkPjkfe2xWn8QViiVn7l1VeOX+ouYzjvpA2tm3kXeLJzCOa+I8JDMKnMkw2dbjXYcb2QAjYm6X/wdedNta41s=
+Received: from CH2PR04MB6522.namprd04.prod.outlook.com (2603:10b6:610:34::19)
+ by CH2PR04MB7125.namprd04.prod.outlook.com (2603:10b6:610:a3::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.18; Thu, 10 Dec
+ 2020 13:52:57 +0000
+Received: from CH2PR04MB6522.namprd04.prod.outlook.com
+ ([fe80::897c:a04b:4eb0:640a]) by CH2PR04MB6522.namprd04.prod.outlook.com
+ ([fe80::897c:a04b:4eb0:640a%7]) with mapi id 15.20.3632.023; Thu, 10 Dec 2020
+ 13:52:57 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "seanga2@gmail.com" <seanga2@gmail.com>
+Subject: Re: [PATCH v7 00/22] RISC-V Kendryte K210 support improvements
+Thread-Topic: [PATCH v7 00/22] RISC-V Kendryte K210 support improvements
+Thread-Index: AQHWzqYvKtn7lzf0bUaGE16+bO2s4w==
+Date:   Thu, 10 Dec 2020 13:52:57 +0000
+Message-ID: <CH2PR04MB6522B5386D73AAE564D8D98AE7CB0@CH2PR04MB6522.namprd04.prod.outlook.com>
+References: <20201210034003.222297-1-damien.lemoal@wdc.com>
+ <CAMuHMdVbU2kjKU3EVN5kszPc=VQcgzYLemV6AOyg+YyZBfc31Q@mail.gmail.com>
+ <5389e421f884c43ff6a806ac4ec95b43a93d02f7.camel@wdc.com>
+ <CAMuHMdVnR2E6+ANYuZLvsTW8Od4Sa=wDtjnio4h3z=W2ePPGGw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linux-m68k.org; dkim=none (message not signed)
+ header.d=none;linux-m68k.org; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2400:2411:43c0:6000:5911:8225:c337:ee37]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 6ca7151b-7b37-4fc0-324a-08d89d12e66c
+x-ms-traffictypediagnostic: CH2PR04MB7125:
+x-microsoft-antispam-prvs: <CH2PR04MB712589654094F118DE76AC37E7CB0@CH2PR04MB7125.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 8y9pVJVnX1Se3yiJMz3lZMjm6eDV5fGV8k0D+gqadTDkOePwNIemi8TuAgPsHby7LB/8z/0DIE8BHIKih7hfAhf4T4PL3JnKho8e/3RFsvHyQsVgx52+lbdU4r48xwAH11gTj2+mDNAKP1oDbOM6ieCnZyl9y4jFnt5/1eBA41vLwVxduWWZxPOrYe++w16d9+z0sATc8MKHunlkhJIXoxTHZ6bYAt02n5vYDDBLu92Jue984JKYszyiiiEh123BUxJw50FXcA56p2U7Wh1s2viDt1/8FGPQRgf0mfrl4W9pWeTKCoRyb5Rw/VFMELsAxg8PmNcWqbRYEJK3OeUugg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR04MB6522.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(136003)(346002)(8936002)(6916009)(71200400001)(5660300002)(54906003)(7696005)(76116006)(64756008)(66446008)(66476007)(52536014)(91956017)(66556008)(66946007)(86362001)(508600001)(4326008)(186003)(53546011)(55016002)(83380400001)(9686003)(2906002)(7416002)(33656002)(6506007)(8676002)(4001150100001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?vFWH+8OnHJW3yQA2yXkK8TiNPlAxEZNklnfvCNarQDJD1qKAsHQrNDdCjL1G?=
+ =?us-ascii?Q?ZAcE4xgM5ai0gHMD7tFGcovPmIvV035uudcYiXzCKVQFL4XxfOdvB6uSR3n+?=
+ =?us-ascii?Q?yL8lLVK/TUyDmqRvUy5FuNeuLPahQDcDxINMJmZCgDmizGiWhX0D0k6FFZbd?=
+ =?us-ascii?Q?4iARM2zTpQtmpglytA1OQmwJE+CysOnKXshlGdy69G5TEmdxNT/ZV/Yjt4zq?=
+ =?us-ascii?Q?+OtWuRk1OQIE4ZzAkP1gsMwqgFpPmzLfnDniAcEfokjmuvC/X0pT21PwMRwM?=
+ =?us-ascii?Q?TCCg322ICm0YYuHg90w6PW85Pmz8EXYOr0uJ5XSmNby9fTAD75t5m+da4Jbc?=
+ =?us-ascii?Q?Dfejf8L9kAfW9wPgSQArwx5BcfR3Xq1m3fEfFTjEAY3tD6PxMHM9shrGUACh?=
+ =?us-ascii?Q?apqJIS9xak7j/sSexIY+5/9aFxg8E7ElK3wI/UCJzr9G1ozvKgR//ZeC7oR+?=
+ =?us-ascii?Q?EFWl24EYwmzudigZbXSP+co3WsA/lVEWm+Ng2U0aHojQ/EQz++knasUNB22y?=
+ =?us-ascii?Q?NWTFsRls884xQTEjtR5HZGd50z3QYNYSDncwdBPHHXDkGDO3MGxN/Uw30+ZD?=
+ =?us-ascii?Q?JshCBv7Qb+/VpvLnS6vIrmkxNOb7lseI3jW3DRFaqSJn8BZmpIMG4+oPwiIt?=
+ =?us-ascii?Q?DBH+f2yiWUj+bdU0GvBoPEtlDYqntSapoQxidYABb98ZOj2Z3TArKszLp3G4?=
+ =?us-ascii?Q?c6vJfZFzUw4iTdkuzrnuunIcNkRTfqnxIq4v5HDy21m1eIkIhO2iJl9nfwAh?=
+ =?us-ascii?Q?QgL/FPB4OK+LSCTZ484hJE6BPkaUjrHrHcWc6th2e8S5X5e+G3XjK/lRcNKL?=
+ =?us-ascii?Q?nqRkRjHNWLOMUDiYBWRgPzX2jx6227+7bSDAHGQMctZyAnLDrp11NZ+gfcxQ?=
+ =?us-ascii?Q?IS8XNyVKvhvdjL9pOMhUvQhiDKsa3QVdWOkOdY0Y7nWMOcNkvqkYsPH+pZg/?=
+ =?us-ascii?Q?IlvKb1q1Wlossk/UG1Gl+z+xaQezE6k7F8yNSi4F/J2BEQLQ1CFgbw31qkvi?=
+ =?us-ascii?Q?u5EhJVxPoBkLmEFkPpR2l3fz5kWaCc7LA4rfPpppQCNFdzftkdiLki5Ih4yk?=
+ =?us-ascii?Q?s6lzHhCw?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1607403341-57214-1-git-send-email-yash.shah@sifive.com> <1607403341-57214-8-git-send-email-yash.shah@sifive.com>
-In-Reply-To: <1607403341-57214-8-git-send-email-yash.shah@sifive.com>
-From:   Bin Meng <bmeng.cn@gmail.com>
-Date:   Thu, 10 Dec 2020 21:34:47 +0800
-Message-ID: <CAEUhbmURfwMYo6FTuL7TP7daSuhBOOpcZX-mfCxCTVS+QiaHqA@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] riscv: dts: add initial support for the SiFive
- FU740-C000 SoC
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        broonie@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Albert Ou <aou@eecs.berkeley.edu>, lee.jones@linaro.org,
-        u.kleine-koenig@pengutronix.de,
-        Thierry Reding <thierry.reding@gmail.com>, andrew@lunn.ch,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR04MB6522.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ca7151b-7b37-4fc0-324a-08d89d12e66c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2020 13:52:57.2652
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sq0y1/HXEsGjsFhitPnrqWH9Nhvf73Z2fIgh1XisVDqcgc9+vwVnC1ebW6tOmrxQaVU/1IMiiLlYMJU+yjTFCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR04MB7125
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Dec 8, 2020 at 3:06 PM Yash Shah <yash.shah@sifive.com> wrote:
->
-> Add initial support for the SiFive FU540-C000 SoC. FU740-C000 is built
-
-FU740-C000 Soc
-
-> around the SiFIve U7 Core Complex and a TileLink interconnect.
->
-> This file is expected to grow as more device drivers are added to the
-> kernel.
->
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> ---
->  arch/riscv/boot/dts/sifive/fu740-c000.dtsi | 293 +++++++++++++++++++++++++++++
->  1 file changed, 293 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/sifive/fu740-c000.dtsi
->
-> diff --git a/arch/riscv/boot/dts/sifive/fu740-c000.dtsi b/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
-> new file mode 100644
-> index 0000000..eeb4f8c3
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
-> @@ -0,0 +1,293 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/* Copyright (c) 2020 SiFive, Inc */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/clock/sifive-fu740-prci.h>
-> +
-> +/ {
-> +       #address-cells = <2>;
-> +       #size-cells = <2>;
-> +       compatible = "sifive,fu740-c000", "sifive,fu740";
-> +
-> +       aliases {
-> +               serial0 = &uart0;
-> +               serial1 = &uart1;
-> +               ethernet0 = &eth0;
-> +       };
-> +
-> +       chosen {
-> +       };
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               cpu0: cpu@0 {
-> +                       compatible = "sifive,bullet0", "riscv";
-> +                       device_type = "cpu";
-> +                       i-cache-block-size = <64>;
-> +                       i-cache-sets = <128>;
-> +                       i-cache-size = <16384>;
-> +                       next-level-cache = <&ccache>;
-> +                       reg = <0x0>;
-> +                       riscv,isa = "rv64imac";
-> +                       status = "disabled";
-> +                       cpu0_intc: interrupt-controller {
-> +                               #interrupt-cells = <1>;
-> +                               compatible = "riscv,cpu-intc";
-> +                               interrupt-controller;
-> +                       };
-> +               };
-> +               cpu1: cpu@1 {
-> +                       compatible = "sifive,bullet0", "riscv";
-> +                       d-cache-block-size = <64>;
-> +                       d-cache-sets = <64>;
-> +                       d-cache-size = <32768>;
-> +                       d-tlb-sets = <1>;
-> +                       d-tlb-size = <40>;
-> +                       device_type = "cpu";
-> +                       i-cache-block-size = <64>;
-> +                       i-cache-sets = <128>;
-> +                       i-cache-size = <32768>;
-> +                       i-tlb-sets = <1>;
-> +                       i-tlb-size = <40>;
-> +                       mmu-type = "riscv,sv39";
-> +                       next-level-cache = <&ccache>;
-> +                       reg = <0x1>;
-> +                       riscv,isa = "rv64imafdc";
-> +                       tlb-split;
-> +                       cpu1_intc: interrupt-controller {
-> +                               #interrupt-cells = <1>;
-> +                               compatible = "riscv,cpu-intc";
-> +                               interrupt-controller;
-> +                       };
-> +               };
-> +               cpu2: cpu@2 {
-> +                       compatible = "sifive,bullet0", "riscv";
-> +                       d-cache-block-size = <64>;
-> +                       d-cache-sets = <64>;
-> +                       d-cache-size = <32768>;
-> +                       d-tlb-sets = <1>;
-> +                       d-tlb-size = <40>;
-> +                       device_type = "cpu";
-> +                       i-cache-block-size = <64>;
-> +                       i-cache-sets = <128>;
-> +                       i-cache-size = <32768>;
-> +                       i-tlb-sets = <1>;
-> +                       i-tlb-size = <40>;
-> +                       mmu-type = "riscv,sv39";
-> +                       next-level-cache = <&ccache>;
-> +                       reg = <0x2>;
-> +                       riscv,isa = "rv64imafdc";
-> +                       tlb-split;
-> +                       cpu2_intc: interrupt-controller {
-> +                               #interrupt-cells = <1>;
-> +                               compatible = "riscv,cpu-intc";
-> +                               interrupt-controller;
-> +                       };
-> +               };
-> +               cpu3: cpu@3 {
-> +                       compatible = "sifive,bullet0", "riscv";
-> +                       d-cache-block-size = <64>;
-> +                       d-cache-sets = <64>;
-> +                       d-cache-size = <32768>;
-> +                       d-tlb-sets = <1>;
-> +                       d-tlb-size = <40>;
-> +                       device_type = "cpu";
-> +                       i-cache-block-size = <64>;
-> +                       i-cache-sets = <128>;
-> +                       i-cache-size = <32768>;
-> +                       i-tlb-sets = <1>;
-> +                       i-tlb-size = <40>;
-> +                       mmu-type = "riscv,sv39";
-> +                       next-level-cache = <&ccache>;
-> +                       reg = <0x3>;
-> +                       riscv,isa = "rv64imafdc";
-> +                       tlb-split;
-> +                       cpu3_intc: interrupt-controller {
-> +                               #interrupt-cells = <1>;
-> +                               compatible = "riscv,cpu-intc";
-> +                               interrupt-controller;
-> +                       };
-> +               };
-> +               cpu4: cpu@4 {
-> +                       compatible = "sifive,bullet0", "riscv";
-> +                       d-cache-block-size = <64>;
-> +                       d-cache-sets = <64>;
-> +                       d-cache-size = <32768>;
-> +                       d-tlb-sets = <1>;
-> +                       d-tlb-size = <40>;
-> +                       device_type = "cpu";
-> +                       i-cache-block-size = <64>;
-> +                       i-cache-sets = <128>;
-> +                       i-cache-size = <32768>;
-> +                       i-tlb-sets = <1>;
-> +                       i-tlb-size = <40>;
-> +                       mmu-type = "riscv,sv39";
-> +                       next-level-cache = <&ccache>;
-> +                       reg = <0x4>;
-> +                       riscv,isa = "rv64imafdc";
-> +                       tlb-split;
-> +                       cpu4_intc: interrupt-controller {
-> +                               #interrupt-cells = <1>;
-> +                               compatible = "riscv,cpu-intc";
-> +                               interrupt-controller;
-> +                       };
-> +               };
-> +       };
-> +       soc {
-> +               #address-cells = <2>;
-> +               #size-cells = <2>;
-> +               compatible = "simple-bus";
-> +               ranges;
-> +               plic0: interrupt-controller@c000000 {
-> +                       #interrupt-cells = <1>;
-> +                       #address-cells = <0>;
-> +                       compatible = "sifive,fu540-c000-plic", "sifive,plic-1.0.0";
-
-I don't see bindings updated for FU740 PLIC, like "sifive,fu740-c000-plic"?
-
-> +                       reg = <0x0 0xc000000 0x0 0x4000000>;
-> +                       riscv,ndev = <69>;
-> +                       interrupt-controller;
-> +                       interrupts-extended = <
-> +                               &cpu0_intc 0xffffffff
-> +                               &cpu1_intc 0xffffffff &cpu1_intc 9
-> +                               &cpu2_intc 0xffffffff &cpu2_intc 9
-> +                               &cpu3_intc 0xffffffff &cpu3_intc 9
-> +                               &cpu4_intc 0xffffffff &cpu4_intc 9>;
-> +               };
-> +               prci: clock-controller@10000000 {
-> +                       compatible = "sifive,fu740-c000-prci";
-> +                       reg = <0x0 0x10000000 0x0 0x1000>;
-> +                       clocks = <&hfclk>, <&rtcclk>;
-> +                       #clock-cells = <1>;
-> +               };
-> +               uart0: serial@10010000 {
-> +                       compatible = "sifive,fu740-c000-uart", "sifive,uart0";
-> +                       reg = <0x0 0x10010000 0x0 0x1000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <39>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       status = "disabled";
-> +               };
-> +               uart1: serial@10011000 {
-> +                       compatible = "sifive,fu740-c000-uart", "sifive,uart0";
-> +                       reg = <0x0 0x10011000 0x0 0x1000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <40>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       status = "disabled";
-> +               };
-> +               i2c0: i2c@10030000 {
-> +                       compatible = "sifive,fu740-c000-i2c", "sifive,i2c0";
-> +                       reg = <0x0 0x10030000 0x0 0x1000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <52>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       reg-shift = <2>;
-> +                       reg-io-width = <1>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +               i2c1: i2c@10031000 {
-> +                       compatible = "sifive,fu740-c000-i2c", "sifive,i2c0";
-> +                       reg = <0x0 0x10031000 0x0 0x1000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <53>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       reg-shift = <2>;
-> +                       reg-io-width = <1>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +               qspi0: spi@10040000 {
-> +                       compatible = "sifive,fu740-c000-spi", "sifive,spi0";
-> +                       reg = <0x0 0x10040000 0x0 0x1000>,
-> +                             <0x0 0x20000000 0x0 0x10000000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <41>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +               qspi1: spi@10041000 {
-> +                       compatible = "sifive,fu740-c000-spi", "sifive,spi0";
-> +                       reg = <0x0 0x10041000 0x0 0x1000>,
-> +                             <0x0 0x30000000 0x0 0x10000000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <42>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +               spi0: spi@10050000 {
-> +                       compatible = "sifive,fu740-c000-spi", "sifive,spi0";
-> +                       reg = <0x0 0x10050000 0x0 0x1000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <43>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +               eth0: ethernet@10090000 {
-> +                       compatible = "sifive,fu540-c000-gem";
-
-"sifive,fu740-c000-gem"?
-
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <55>;
-> +                       reg = <0x0 0x10090000 0x0 0x2000>,
-> +                             <0x0 0x100a0000 0x0 0x1000>;
-> +                       local-mac-address = [00 00 00 00 00 00];
-> +                       clock-names = "pclk", "hclk";
-> +                       clocks = <&prci PRCI_CLK_GEMGXLPLL>,
-> +                                <&prci PRCI_CLK_GEMGXLPLL>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +               pwm0: pwm@10020000 {
-> +                       compatible = "sifive,fu740-c000-pwm", "sifive,pwm0";
-> +                       reg = <0x0 0x10020000 0x0 0x1000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <44>, <45>, <46>, <47>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       #pwm-cells = <3>;
-> +                       status = "disabled";
-> +               };
-> +               pwm1: pwm@10021000 {
-> +                       compatible = "sifive,fu740-c000-pwm", "sifive,pwm0";
-> +                       reg = <0x0 0x10021000 0x0 0x1000>;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <48>, <49>, <50>, <51>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       #pwm-cells = <3>;
-> +                       status = "disabled";
-> +               };
-> +               ccache: cache-controller@2010000 {
-> +                       compatible = "sifive,fu740-c000-ccache", "cache";
-> +                       cache-block-size = <64>;
-> +                       cache-level = <2>;
-> +                       cache-sets = <2048>;
-> +                       cache-size = <2097152>;
-> +                       cache-unified;
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <19 20 21 22>;
-> +                       reg = <0x0 0x2010000 0x0 0x1000>;
-> +               };
-> +               gpio: gpio@10060000 {
-> +                       compatible = "sifive,fu740-c000-gpio", "sifive,gpio0";
-> +                       interrupt-parent = <&plic0>;
-> +                       interrupts = <23>, <24>, <25>, <26>, <27>, <28>, <29>,
-> +                                    <30>, <31>, <32>, <33>, <34>, <35>, <36>,
-> +                                    <37>, <38>;
-> +                       reg = <0x0 0x10060000 0x0 0x1000>;
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
-> +                       interrupt-controller;
-> +                       #interrupt-cells = <2>;
-> +                       clocks = <&prci PRCI_CLK_PCLK>;
-> +                       status = "disabled";
-> +               };
-> +       };
-> +};
-
-Regards,
-Bin
+On 2020/12/10 22:23, Geert Uytterhoeven wrote:=0A=
+> Hi Damien,=0A=
+> =0A=
+> On Thu, Dec 10, 2020 at 1:36 PM Damien Le Moal <Damien.LeMoal@wdc.com> wr=
+ote:=0A=
+>> On Thu, 2020-12-10 at 11:04 +0100, Geert Uytterhoeven wrote:=0A=
+>>> On Thu, Dec 10, 2020 at 4:41 AM Damien Le Moal <damien.lemoal@wdc.com> =
+wrote:=0A=
+>>>> Changes from v6:=0A=
+>>>> * Annotate struct platform_driver variables with __refdata to avoid=0A=
+>>>>   section mismatch compilation errors=0A=
+>>>=0A=
+>>> Blindly following the advice from kernel test robot <lkp@intel.com> is=
+=0A=
+>>> not always a good idea:=0A=
+>>>=0A=
+>>>     The variable k210_rst_driver references=0A=
+>>>     the function __init set_reset_devices()=0A=
+>>>     If the reference is valid then annotate the=0A=
+>>>     variable with or __refdata (see linux/init.h) or name the variable:=
+=0A=
+>>>=0A=
+>>> If your driver's probe function is annotated with __init, you cannot=0A=
+>>> have a pointer to it in the driver structure, as any binding done after=
+=0A=
+>>> the freeing of initmem will cause a crash.  Adding the __refdata merely=
+=0A=
+>>> suppresses the warning, and won't avoid the crash.=0A=
+>>=0A=
+>> Hmm... I must be misunderstanding something here. free_initmem() is call=
+ed from=0A=
+>> kernel_init() right before starting the user init process. That is late =
+enough=0A=
+>> that all drivers are already probed and initialized. At least that is wh=
+at I=0A=
+>> thought, especially considering that none of the k210 drivers can be mod=
+ules=0A=
+>> and are all builtin. What am I missing here ?=0A=
+> =0A=
+> For these specific cases, binding is indeed unlikely to happen after=0A=
+> free_initmem(). In the generic case that is not true.=0A=
+> However, you can still trigger it manually by unbinding and rebinding=0A=
+> the device manually through sysfs.=0A=
+=0A=
+Got it. Sending a v8 with the correction.=0A=
+=0A=
+Thanks !=0A=
+=0A=
+> =0A=
+>> So I think I will go with option 2. It is simpler and safer. We can alwa=
+ys=0A=
+>> revisit and optimize later. I would prefer this series to land first :)=
+=0A=
+> =0A=
+> Right. Correctness first, performance later.=0A=
+> =0A=
+> Gr{oetje,eeting}s,=0A=
+> =0A=
+>                         Geert=0A=
+> =0A=
+> --=0A=
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org=0A=
+> =0A=
+> In personal conversations with technical people, I call myself a hacker. =
+But=0A=
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.=0A=
+>                                 -- Linus Torvalds=0A=
+> =0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
