@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97523C2BB9A
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B9EC0018C
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 583ED23D3C
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2681223E22
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390132AbgLJTnD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 14:43:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393473AbgLJTnB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:01 -0500
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C7EC061793;
-        Thu, 10 Dec 2020 11:42:21 -0800 (PST)
-Message-Id: <20201210194042.967177918@linutronix.de>
+        id S2404301AbgLJTn1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 14:43:27 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56954 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404297AbgLJTnP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:15 -0500
+Message-Id: <20201210194043.957046529@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1607629339;
+        s=2020; t=1607629352;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=gYsowh6i1mqGXNg6FrEIlf+Px9WkTuZjYPGZA4AoQf4=;
-        b=gQRR2ovC6G1wG0/hHfvHA26mBklNiMZtkvMBYZWjgQshlf7o+cIXoD11qJjLT48W0LHgJA
-        5Zvfg1News0uQs48erbM5kmDtHengxfmuqG2DKGnaIJ04vg1FJ7jnVpZXG8cNwMy19OeFP
-        iPFhPWqfd87RfMeVK3ZgF11+LhI8jQI6rRQAPId6pBGrjdbz5+dRwipziIghpyTp0+nYcu
-        /rMQolvJykCdajiQdhpg5/73/PAnO6jEv3XXq/Rv9w9yxTGzkAvSFeWdlWRlX1S05CmH1R
-        pxA14gUUPV2LrG7qMC56g75TqBVjQeX4kqlFmRI413CglTnFsrbWRi0PstpOew==
+        bh=aHjBasf7kS/mugPgGoqzaKHWX8S9MZAhVf8pOv9wzqI=;
+        b=hIJe5uDFg4eKtha16rd5RMgP75gihkgyuo+wu9nJj9lb1QxB+dyj8VagUmUhTQC26INyeG
+        8XIXTkbYJX+KGxPBwbTjWFL8gH8tKgvYA0sd+Cbqs0pmZohafXQRaBxZ4X0LrRHAFHI+fK
+        34Ah/yU2AM+9WMw+oDh09bmBmxCAcLljD/Ywf7QGigq/72RSIaYCWXy9MRJcPUHTzSLEcU
+        hQensxz9JJtZ3t/2uwIx4+1Y2fv0/x2+3nAGVvooEgtnvb2OUreKFZUgUZSfzBs+FE+M45
+        5E1wbC+M9uufcsBkYfGEAcb5u4V11lC9yi8KNKp2A+CRv838rNvetMOidgM8lg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1607629339;
+        s=2020e; t=1607629352;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=gYsowh6i1mqGXNg6FrEIlf+Px9WkTuZjYPGZA4AoQf4=;
-        b=rxr0RqK5G71Mdyjh0pmNkfya7BLBal4i+pBNw5B4iIspa3uaIBOFXW7QFkpv0Ae/Yof/mz
-        NtSLBAk6jBeGNuDQ==
-Date:   Thu, 10 Dec 2020 20:25:40 +0100
+        bh=aHjBasf7kS/mugPgGoqzaKHWX8S9MZAhVf8pOv9wzqI=;
+        b=A/zWaVNR4ntcGYc6FuYZaabTLVIc+ZQNDV6wELc3l8+V7v8iKaL/rxgSQB4qy+gMpZm5QC
+        1is0DPvmHcXJQvCg==
+Date:   Thu, 10 Dec 2020 20:25:50 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Marc Zyngier <maz@kernel.org>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
         Helge Deller <deller@gmx.de>,
         afzal mohammed <afzal.mohd.ma@gmail.com>,
@@ -57,16 +61,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will@kernel.org>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
         Wambui Karuga <wambui.karugax@gmail.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
         Jon Mason <jdmason@kudzu.us>,
@@ -88,7 +85,7 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Juergen Gross <jgross@suse.com>,
         Stefano Stabellini <sstabellini@kernel.org>,
         xen-devel@lists.xenproject.org
-Subject: [patch 04/30] genirq: Provide irq_get_effective_affinity()
+Subject: [patch 14/30] drm/i915/pmu: Replace open coded kstat_irqs() copy
 References: <20201210192536.118432146@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -97,28 +94,182 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Provide an accessor to the effective interrupt affinity mask. Going to be
-used to replace open coded fiddling with the irq descriptor.
+Driver code has no business with the internals of the irq descriptor.
+
+Aside of that the count is per interrupt line and therefore takes
+interrupts from other devices into account which share the interrupt line
+and are not handled by the graphics driver.
+
+Replace it with a pmu private count which only counts interrupts which
+originate from the graphics card.
+
+To avoid atomics or heuristics of some sort make the counter field
+'unsigned long'. That limits the count to 4e9 on 32bit which is a lot and
+postprocessing can easily deal with the occasional wraparound.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
 ---
- include/linux/irq.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/i915/i915_irq.c |   34 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/i915/i915_pmu.c |   18 +-----------------
+ drivers/gpu/drm/i915/i915_pmu.h |    8 ++++++++
+ 3 files changed, 43 insertions(+), 17 deletions(-)
 
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -907,6 +907,13 @@ struct cpumask *irq_data_get_effective_a
- }
- #endif
+--- a/drivers/gpu/drm/i915/i915_irq.c
++++ b/drivers/gpu/drm/i915/i915_irq.c
+@@ -60,6 +60,24 @@
+  * and related files, but that will be described in separate chapters.
+  */
  
-+static inline struct cpumask *irq_get_effective_affinity_mask(unsigned int irq)
++/*
++ * Interrupt statistic for PMU. Increments the counter only if the
++ * interrupt originated from the the GPU so interrupts from a device which
++ * shares the interrupt line are not accounted.
++ */
++static inline void pmu_irq_stats(struct drm_i915_private *priv,
++				 irqreturn_t res)
 +{
-+	struct irq_data *d = irq_get_irq_data(irq);
++	if (unlikely(res != IRQ_HANDLED))
++		return;
 +
-+	return d ? irq_data_get_effective_affinity_mask(d) : NULL;
++	/*
++	 * A clever compiler translates that into INC. A not so clever one
++	 * should at least prevent store tearing.
++	 */
++	WRITE_ONCE(priv->pmu.irq_count, priv->pmu.irq_count + 1);
 +}
 +
- unsigned int arch_dynirq_lower_bound(unsigned int from);
+ typedef bool (*long_pulse_detect_func)(enum hpd_pin pin, u32 val);
  
- int __irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node,
+ static const u32 hpd_ilk[HPD_NUM_PINS] = {
+@@ -1599,6 +1617,8 @@ static irqreturn_t valleyview_irq_handle
+ 		valleyview_pipestat_irq_handler(dev_priv, pipe_stats);
+ 	} while (0);
+ 
++	pmu_irq_stats(dev_priv, ret);
++
+ 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
+ 
+ 	return ret;
+@@ -1676,6 +1696,8 @@ static irqreturn_t cherryview_irq_handle
+ 		valleyview_pipestat_irq_handler(dev_priv, pipe_stats);
+ 	} while (0);
+ 
++	pmu_irq_stats(dev_priv, ret);
++
+ 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
+ 
+ 	return ret;
+@@ -2103,6 +2125,8 @@ static irqreturn_t ilk_irq_handler(int i
+ 	if (sde_ier)
+ 		raw_reg_write(regs, SDEIER, sde_ier);
+ 
++	pmu_irq_stats(i915, ret);
++
+ 	/* IRQs are synced during runtime_suspend, we don't require a wakeref */
+ 	enable_rpm_wakeref_asserts(&i915->runtime_pm);
+ 
+@@ -2419,6 +2443,8 @@ static irqreturn_t gen8_irq_handler(int
+ 
+ 	gen8_master_intr_enable(regs);
+ 
++	pmu_irq_stats(dev_priv, IRQ_HANDLED);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -2514,6 +2540,8 @@ static __always_inline irqreturn_t
+ 
+ 	gen11_gu_misc_irq_handler(gt, gu_misc_iir);
+ 
++	pmu_irq_stats(i915, IRQ_HANDLED);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -3688,6 +3716,8 @@ static irqreturn_t i8xx_irq_handler(int
+ 		i8xx_pipestat_irq_handler(dev_priv, iir, pipe_stats);
+ 	} while (0);
+ 
++	pmu_irq_stats(dev_priv, ret);
++
+ 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
+ 
+ 	return ret;
+@@ -3796,6 +3826,8 @@ static irqreturn_t i915_irq_handler(int
+ 		i915_pipestat_irq_handler(dev_priv, iir, pipe_stats);
+ 	} while (0);
+ 
++	pmu_irq_stats(dev_priv, ret);
++
+ 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
+ 
+ 	return ret;
+@@ -3941,6 +3973,8 @@ static irqreturn_t i965_irq_handler(int
+ 		i965_pipestat_irq_handler(dev_priv, iir, pipe_stats);
+ 	} while (0);
+ 
++	pmu_irq_stats(dev_priv, IRQ_HANDLED);
++
+ 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
+ 
+ 	return ret;
+--- a/drivers/gpu/drm/i915/i915_pmu.c
++++ b/drivers/gpu/drm/i915/i915_pmu.c
+@@ -423,22 +423,6 @@ static enum hrtimer_restart i915_sample(
+ 	return HRTIMER_RESTART;
+ }
+ 
+-static u64 count_interrupts(struct drm_i915_private *i915)
+-{
+-	/* open-coded kstat_irqs() */
+-	struct irq_desc *desc = irq_to_desc(i915->drm.pdev->irq);
+-	u64 sum = 0;
+-	int cpu;
+-
+-	if (!desc || !desc->kstat_irqs)
+-		return 0;
+-
+-	for_each_possible_cpu(cpu)
+-		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
+-
+-	return sum;
+-}
+-
+ static void i915_pmu_event_destroy(struct perf_event *event)
+ {
+ 	struct drm_i915_private *i915 =
+@@ -581,7 +565,7 @@ static u64 __i915_pmu_event_read(struct
+ 				   USEC_PER_SEC /* to MHz */);
+ 			break;
+ 		case I915_PMU_INTERRUPTS:
+-			val = count_interrupts(i915);
++			val = READ_ONCE(pmu->irq_count);
+ 			break;
+ 		case I915_PMU_RC6_RESIDENCY:
+ 			val = get_rc6(&i915->gt);
+--- a/drivers/gpu/drm/i915/i915_pmu.h
++++ b/drivers/gpu/drm/i915/i915_pmu.h
+@@ -108,6 +108,14 @@ struct i915_pmu {
+ 	 */
+ 	ktime_t sleep_last;
+ 	/**
++	 * @irq_count: Number of interrupts
++	 *
++	 * Intentionally unsigned long to avoid atomics or heuristics on 32bit.
++	 * 4e9 interrupts are a lot and postprocessing can really deal with an
++	 * occasional wraparound easily. It's 32bit after all.
++	 */
++	unsigned long irq_count;
++	/**
+ 	 * @events_attr_group: Device events attribute group.
+ 	 */
+ 	struct attribute_group events_attr_group;
 
