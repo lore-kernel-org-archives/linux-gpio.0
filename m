@@ -2,28 +2,27 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08F1C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 12:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6BCC4361B
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 12:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58B9E23D20
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 12:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA27023B70
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 12:17:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388325AbgLJMRJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 07:17:09 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:58306 "EHLO
+        id S2388250AbgLJMRP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 07:17:15 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:58274 "EHLO
         mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388250AbgLJMRC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S2388197AbgLJMRC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Thu, 10 Dec 2020 07:17:02 -0500
 Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id 06D9F440281;
-        Thu, 10 Dec 2020 14:16:16 +0200 (IST)
+        by mx.tkos.co.il (Postfix) with ESMTPS id 49959440048;
+        Thu, 10 Dec 2020 14:16:08 +0200 (IST)
 From:   Baruch Siach <baruch@tkos.co.il>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
@@ -40,52 +39,53 @@ Cc:     Baruch Siach <baruch@tkos.co.il>, Andrew Lunn <andrew@lunn.ch>,
         Ralph Sennhauser <ralph.sennhauser@gmail.com>,
         linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH v4 3/3] dt-bindings: ap806: document marvell,gpio pwm-offset property
-Date:   Thu, 10 Dec 2020 14:16:00 +0200
-Message-Id: <5c2810b698c5099264b82a7f6fbed13e66062307.1607601615.git.baruch@tkos.co.il>
+Subject: [PATCH v4 0/3] gpio: mvebu: Armada 8K/7K PWM support
+Date:   Thu, 10 Dec 2020 14:15:57 +0200
+Message-Id: <cover.1607601615.git.baruch@tkos.co.il>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <cover.1607601615.git.baruch@tkos.co.il>
-References: <cover.1607601615.git.baruch@tkos.co.il>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Update the example as well. Add the '#pwm-cells' and 'clocks' properties
-for a complete working example.
+This series makes two changes to v3:
 
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
- .../bindings/arm/marvell/ap80x-system-controller.txt      | 8 ++++++++
- 1 file changed, 8 insertions(+)
+  * Remove patches that are in LinusW linux-gpio for-next and fixes
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-index e31511255d8e..052a967c1f28 100644
---- a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-@@ -80,6 +80,11 @@ Required properties:
- 
- - offset: offset address inside the syscon block
- 
-+Optional properties:
-+
-+- marvell,pwm-offset: offset address of PWM duration control registers inside
-+  the syscon block
-+
- Example:
- ap_syscon: system-controller@6f4000 {
- 	compatible = "syscon", "simple-mfd";
-@@ -101,6 +106,9 @@ ap_syscon: system-controller@6f4000 {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		gpio-ranges = <&ap_pinctrl 0 0 19>;
-+		marvell,pwm-offset = <0x10c0>;
-+		#pwm-cells = <2>;
-+		clocks = <&ap_clk 3>;
- 	};
- };
- 
+  * Rename the 'pwm-offset' property to 'marvell,pwm-offset' as suggested by 
+    Rob Herring
+
+The original cover letter follows (with DT property name updated).
+
+The gpio-mvebu driver supports the PWM functionality of the GPIO block for
+earlier Armada variants like XP, 370 and 38x. This series extends support to
+newer Armada variants that use CP11x and AP80x, like Armada 8K and 7K.
+
+This series adds adds the 'marvell,pwm-offset' property to DT binding. 
+'marvell,pwm-offset' points to the base of A/B counter registers that 
+determine the PWM period and duty cycle.
+
+The existing PWM DT binding reflects an arbitrary decision to allocate the A
+counter to the first GPIO block, and B counter to the other one. In attempt to
+provide better future flexibility, the new 'marvell,pwm-offset' property 
+always points to the base address of both A/B counters. The driver code still 
+allocates the counters in the same way, but this might change in the future 
+with no change to the DT.
+
+Tested AP806 and CP110 (both) on Armada 8040 based system.
+
+Baruch Siach (3):
+  gpio: mvebu: add pwm support for Armada 8K/7K
+  arm64: dts: armada: add pwm offsets for ap/cp gpios
+  dt-bindings: ap806: document marvell,gpio pwm-offset property
+
+ .../arm/marvell/ap80x-system-controller.txt   |   8 ++
+ arch/arm64/boot/dts/marvell/armada-ap80x.dtsi |   3 +
+ arch/arm64/boot/dts/marvell/armada-cp11x.dtsi |  10 ++
+ drivers/gpio/gpio-mvebu.c                     | 101 ++++++++++++------
+ 4 files changed, 89 insertions(+), 33 deletions(-)
+
 -- 
 2.29.2
 
