@@ -2,182 +2,251 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57380C2BBCD
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E7AC3526A
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2855423E1E
+	by mail.kernel.org (Postfix) with ESMTP id D3CB823C44
 	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389957AbgLJOGH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 09:06:07 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:5144 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389953AbgLJOFv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 09:05:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607609150; x=1639145150;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5HeCPpC2eIy6wf3Z5moPS/TBbmANlueIBuGfBKoPqYw=;
-  b=Doz9+WuR2AkuW73QBjl1RL+7qEqLeWC6g1Fu5pqbUeCoj9WKNFTEUMR4
-   6Hz38gxsSiX5z15zwDnMbwG/NpayxzsBbrnCJvLJG/dfU5tJKODBkMeCd
-   fFOaR4YYwrKWaxmOA0dhlnJKesKOIfXgZA78amyx8FDXmRNSY0MLaYR3H
-   0WSgnvxDaXqsuOg5R6UQ2NYljkc/2skOZzWomFinLoN6wm184RkVkE9sB
-   dq7MlJBtQ+t8dWKhaq8iCkn2BqAddPl62HIN+bp1N0FYxaa+ZuhWH78J4
-   5kmVLb2ZCra7oIBLk8j/QA6PMiYFWIpzl0KVSBn7qRVoKTRBRPWgbhWxg
-   Q==;
-IronPort-SDR: 8WAVTSDs+1u1YS7CvmcuPQj6TMqFK/6ynAbMVX6cqOmZxTBl0JDVuAo2xFL7JgoRQADKR3iZlk
- h5PrY9hFY9Ucth6dEDy4ntIj2NoATKkTlx1vbOrp/bF5aSZ/UzwLoZsAONABcFvu2+b7BFyqBl
- 1Nw2pZekkViTgNXH+C1f5zVwgtnMHfJnd1FEAg8XyB4HUtRF+9zZyPAGIlKD1NdbaXL1PwC83x
- /ecpTlgzjQUGm2UHCZDkRbq9P5YapyRcHwA9w/A0XNXcoqqUeb1updEHegY+dygKxpa4j9+dDR
- OsY=
-X-IronPort-AV: E=Sophos;i="5.78,408,1599494400"; 
-   d="scan'208";a="159316722"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Dec 2020 22:03:36 +0800
-IronPort-SDR: kU30jMR75YcBAz7coyIBnaKFWN2Ejilu9g6DVyjBn4bVxG+E1DKWn31zXoBg28jYtll6dV+czD
- XtHWfYY1YoMyryDDXT9wOoRLD9TvU41Fs=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2020 05:47:28 -0800
-IronPort-SDR: /epogBhLeR3572DbcYQ7HyAhK9OpEtxRa6qMzBBSROf5shuVU7mWQAXgqew+Z5qzgF7tf0755c
- nHJPO+KQchqQ==
-WDCIronportException: Internal
-Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 10 Dec 2020 06:03:35 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v8 09/22] dt-bindings: reset: Document canaan,k210-rst bindings
-Date:   Thu, 10 Dec 2020 23:03:00 +0900
-Message-Id: <20201210140313.258739-10-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201210140313.258739-1-damien.lemoal@wdc.com>
-References: <20201210140313.258739-1-damien.lemoal@wdc.com>
+        id S2389671AbgLJNyh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 08:54:37 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45184 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729554AbgLJNxh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 08:53:37 -0500
+Received: by mail-oi1-f195.google.com with SMTP id f132so5745693oib.12;
+        Thu, 10 Dec 2020 05:53:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y32G0SiLzhGje+fPfkVUVVtOO584HQjIsyYAUWwTj50=;
+        b=SknIROBPEv1ctbTWfnHo2zuUqg8FtufqEE1nX9afgV603pvZFtNpMlAw5YejykAngI
+         KgRDsw+EioGbuVUdZcuh0agaWZpw0uTMmxwtmJ+s/RUw7kA8ERoZ9UAZleFVmYKBSJjd
+         j5HHYRRsN0Qdd+JtcqV5P7wtxJenHNycN2huEPHvVvhCMcK3gdL/1l2WUzs1t3dJEmlB
+         qdklxbiCHRnljkiBoRXOgXBtKV8xByT3WhmObRyhWeXsCSh5yxkts77EF5TlCb8GI0uX
+         tYpM2mxoIICgQ+MvZfWNcq4Rx31yKfN3WtXyrgYzKKZLNnhuCWj9wornQ0i2TrRNyuQb
+         +BOA==
+X-Gm-Message-State: AOAM533cQG77t5LLebD79SgNB5ucn1jGOJYPA9R3JOCEoi8q8EuzJg6U
+        TgU6xFJOpf8YwQGZHPGHxw==
+X-Google-Smtp-Source: ABdhPJxBLv9CccTXi1it7qPV/oi4RQ+kwEjh9YL8f8mNtRRmjN3LYbkfkvUIWuHcSETrhvDQxMzIOA==
+X-Received: by 2002:aca:f289:: with SMTP id q131mr5346313oih.159.1607608375805;
+        Thu, 10 Dec 2020 05:52:55 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t26sm422964otm.17.2020.12.10.05.52.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Dec 2020 05:52:54 -0800 (PST)
+Received: (nullmailer pid 2411367 invoked by uid 1000);
+        Thu, 10 Dec 2020 13:52:53 -0000
+Date:   Thu, 10 Dec 2020 07:52:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: pinctrl: qcom: Add SM8350 pinctrl
+ bindings
+Message-ID: <20201210135253.GA2405508@robh.at.kernel.org>
+References: <20201208085748.3684670-1-vkoul@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201208085748.3684670-1-vkoul@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Document the device tree bindings for the Canaan Kendryte K210 SoC
-reset controller driver in
-Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml. The header
-file include/dt-bindings/reset/k210-rst.h is added to define all
-possible reset lines of the SoC.
+On Tue, Dec 08, 2020 at 02:27:47PM +0530, Vinod Koul wrote:
+> Add device tree binding Documentation details for Qualcomm SM8350
+> pinctrl driver.
+> 
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+> 
+> Changes since v1:
+>   - Fix pins pattern
+>   - Fix example indent
+> 
+>  .../bindings/pinctrl/qcom,sm8350-pinctrl.yaml | 151 ++++++++++++++++++
+>  1 file changed, 151 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..8ddb347c43da
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
+> @@ -0,0 +1,151 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/qcom,sm8350-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. SM8350 TLMM block
+> +
+> +maintainers:
+> +  - Vinod Koul <vkoul@kernel.org>
+> +
+> +description: |
+> +  This binding describes the Top Level Mode Multiplexer block found in the
+> +  SM8350 platform.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm8350-pinctrl
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- .../bindings/reset/canaan,k210-rst.yaml       | 40 ++++++++++++++++++
- include/dt-bindings/reset/k210-rst.h          | 42 +++++++++++++++++++
- 2 files changed, 82 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
- create mode 100644 include/dt-bindings/reset/k210-rst.h
+If this block is called TLMM, then I'd expect that to be in the 
+compatible string. But I guess this is consistent with the others.
 
-diff --git a/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml b/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
-new file mode 100644
-index 000000000000..53e4ede9c0bd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
-@@ -0,0 +1,40 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/reset/canaan,k210-rst.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Canaan Kendryte K210 Reset Controller Device Tree Bindings
-+
-+maintainers:
-+  - Damien Le Moal <damien.lemoal@wdc.com>
-+
-+description: |
-+  Canaan Kendryte K210 reset controller driver which supports the SoC
-+  system controller supplied reset registers for the various peripherals
-+  of the SoC. The K210 reset controller node must be defined as a child
-+  node of the K210 system controller node.
-+
-+  See also:
-+  - dt-bindings/reset/k210-rst.h
-+
-+properties:
-+  compatible:
-+    const: canaan,k210-rst
-+
-+  '#reset-cells':
-+    const: 1
-+
-+required:
-+  - '#reset-cells'
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/reset/k210-rst.h>
-+    sysrst: reset-controller {
-+      compatible = "canaan,k210-rst";
-+      #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/reset/k210-rst.h b/include/dt-bindings/reset/k210-rst.h
-new file mode 100644
-index 000000000000..883c1aed50e8
---- /dev/null
-+++ b/include/dt-bindings/reset/k210-rst.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2019 Sean Anderson <seanga2@gmail.com>
-+ * Copyright (c) 2020 Western Digital Corporation or its affiliates.
-+ */
-+#ifndef RESET_K210_SYSCTL_H
-+#define RESET_K210_SYSCTL_H
-+
-+/*
-+ * Kendryte K210 SoC system controller K210_SYSCTL_SOFT_RESET register bits.
-+ * Taken from Kendryte SDK (kendryte-standalone-sdk).
-+ */
-+#define K210_RST_ROM	0
-+#define K210_RST_DMA	1
-+#define K210_RST_AI	2
-+#define K210_RST_DVP	3
-+#define K210_RST_FFT	4
-+#define K210_RST_GPIO	5
-+#define K210_RST_SPI0	6
-+#define K210_RST_SPI1	7
-+#define K210_RST_SPI2	8
-+#define K210_RST_SPI3	9
-+#define K210_RST_I2S0	10
-+#define K210_RST_I2S1	11
-+#define K210_RST_I2S2	12
-+#define K210_RST_I2C0	13
-+#define K210_RST_I2C1	14
-+#define K210_RST_I2C2	15
-+#define K210_RST_UART1	16
-+#define K210_RST_UART2	17
-+#define K210_RST_UART3	18
-+#define K210_RST_AES	19
-+#define K210_RST_FPIOA	20
-+#define K210_RST_TIMER0	21
-+#define K210_RST_TIMER1	22
-+#define K210_RST_TIMER2	23
-+#define K210_RST_WDT0	24
-+#define K210_RST_WDT1	25
-+#define K210_RST_SHA	26
-+#define K210_RST_RTC	29
-+
-+#endif /* RESET_K210_SYSCTL_H */
--- 
-2.29.2
+> +
+> +  reg:
+> +    description: Specifies the base address and size of the TLMM register space
 
+Drop.
+
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description: Specifies the TLMM summary IRQ
+
+Drop.
+
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    description: Specifies the PIN numbers and Flags, as defined in
+> +      include/dt-bindings/interrupt-controller/irq.h
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    description: Specifying the pin number and flags, as defined in
+> +      include/dt-bindings/gpio/gpio.h
+> +    const: 2
+> +
+> +  gpio-ranges:
+> +    maxItems: 1
+> +
+> +  gpio-reserved-ranges:
+> +    maxItems: 1
+> +
+> +#PIN CONFIGURATION NODES
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: "/schemas/pinctrl/pincfg-node.yaml"
+> +
+
+Don't you need mux and config nodes in here? 
+
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this subnode.
+> +        items:
+> +          oneOf:
+> +            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|20[0-3])$"
+> +            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk, sdc2_cmd, sdc2_data ]
+> +        minItems: 1
+> +        maxItems: 36
+> +
+> +      function:
+> +        description:
+> +          Specify the alternative function to be configured for the specified
+> +          pins. Functions are only valid for gpio pins.
+> +        enum: [ atest_char, atest_usb, audio_ref, cam_mclk, cci_async,
+> +                cci_i2c, cci_timer, cmu_rng, coex_uart1, coex_uart2, cri_trng,
+> +                cri_trng0, cri_trng1, dbg_out, ddr_bist, ddr_pxi0, ddr_pxi1,
+> +                ddr_pxi2, ddr_pxi3, dp_hot, dp_lcd, gcc_gp1, gcc_gp2, gcc_gp3,
+> +                gpio, ibi_i3c, jitter_bist, lpass_slimbus, mdp_vsync, mdp_vsync0,
+> +                mdp_vsync1, mdp_vsync2, mdp_vsync3, mi2s0_data0, mi2s0_data1,
+> +                mi2s0_sck, mi2s0_ws, mi2s1_data0, mi2s1_data1, mi2s1_sck,
+> +                mi2s1_ws, mi2s2_data0, mi2s2_data1, mi2s2_sck, mi2s2_ws,
+> +                mss_grfc0, mss_grfc1, mss_grfc10, mss_grfc11, mss_grfc12,
+> +                mss_grfc2, mss_grfc3, mss_grfc4, mss_grfc5, mss_grfc6,
+> +                mss_grfc7, mss_grfc8, mss_grfc9, nav_gpio, pa_indicator,
+> +                pcie0_clkreqn, pcie1_clkreqn, phase_flag, pll_bist, pll_clk,
+> +                pri_mi2s, prng_rosc, qdss_cti, qdss_gpio, qlink0_enable,
+> +                qlink0_request, qlink0_wmss, qlink1_enable, qlink1_request,
+> +                qlink1_wmss, qlink2_enable, qlink2_request, qlink2_wmss, qspi0,
+> +                qspi1, qspi2, qspi3, qspi_clk, qspi_cs, qup0, qup1, qup10,
+> +                qup11, qup12, qup13, qup14, qup15, qup16, qup17, qup18, qup19,
+> +                qup2, qup3, qup4, qup5, qup6, qup7, qup8, qup9, qup_l4, qup_l5,
+> +                qup_l6, sd_write, sdc40, sdc41, sdc42, sdc43, sdc4_clk,
+> +                sdc4_cmd, sec_mi2s, tb_trig, tgu_ch0, tgu_ch1, tgu_ch2,
+> +                tgu_ch3, tsense_pwm1, tsense_pwm2, uim0_clk, uim0_data,
+> +                uim0_present, uim0_reset, uim1_clk, uim1_data, uim1_present,
+> +                uim1_reset, usb2phy_ac, usb_phy, vfr_0, vfr_1, vsense_trigger ]
+> +
+> +
+> +      drive-strength:
+> +        enum: [2, 4, 6, 8, 10, 12, 14, 16]
+> +        default: 2
+> +        description:
+> +          Selects the drive strength for the specified pins, in mA.
+> +
+> +      bias-pull-down: true
+> +
+> +      bias-pull-up: true
+> +
+> +      bias-disable: true
+> +
+> +      output-high: true
+> +
+> +      output-low: true
+> +
+> +    required:
+> +      - pins
+> +      - function
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - gpio-ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +        tlmm: pinctrl@f000000 {
+> +          compatible = "qcom,sm8350-pinctrl";
+> +          reg = <0x0f100000 0x300000>;
+> +          interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +          gpio-controller;
+> +          #gpio-cells = <2>;
+> +          interrupt-controller;
+> +          #interrupt-cells = <2>;
+> +          gpio-ranges = <&tlmm 0 0 203>;
+> +          serial-pins {
+> +            pins = "gpio18", "gpio19";
+> +            function = "qup3";
+> +            drive-strength = <8>;
+> +            bias-disable;
+> +          };
+> +        };
+> +
+> +...
+> -- 
+> 2.26.2
+> 
