@@ -2,138 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ABBC433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CEDC4361B
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCC5221E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24A9E22D06
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 13:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389114AbgLJNeJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 08:34:09 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46146 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728925AbgLJNeJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 08:34:09 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0BADWMo0069011;
-        Thu, 10 Dec 2020 07:32:22 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1607607142;
-        bh=JHpOR1kUHxtPaKlXFx+C7LrcNp8Gm/RDnhA8hMFAgg8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GPdRtkF9AvlLw0wgUNk/srZkBu3Y0K7BmILEkuCDUVeh8kicElCIfaxcEMJlhXUaB
-         eJIGd76HFFNBlbFLN1cGcaXZDyViSLqgUC1xPs1dkMQILvZf0aCGJECwoy9JiM6tUr
-         IyPrbq+GUGxWdBEDN+EtnUxv+gtVWJjJp+QSeMp4=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0BADWMOw001270
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Dec 2020 07:32:22 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 10
- Dec 2020 07:32:21 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 10 Dec 2020 07:32:21 -0600
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0BADWFuO013329;
-        Thu, 10 Dec 2020 07:32:17 -0600
-Subject: Re: Howto listen to/handle gpio state changes ? Re: [PATCH v2 2/2]
- drivers: gpio: add virtio-gpio guest driver
-To:     Arnd Bergmann <arnd@kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-References: <20201203191135.21576-1-info@metux.net>
- <20201203191135.21576-2-info@metux.net>
- <0080d492-2f07-d1c6-d18c-73d4204a5d40@metux.net>
- <CACRpkdb4R4yHcUV2KbGEC_RkU+QmH6Xg7X+qee8sEa9TURGr8A@mail.gmail.com>
- <51d3efb7-b7eb-83d7-673a-308dd51616d3@metux.net>
- <CACRpkdbqVoT56H88hoZwDqV0kW_8XTaE5TkMQsg-RRrPqgF=cQ@mail.gmail.com>
- <CAK8P3a1PRQGUXkjdSmqxXSONX_ZoCgsfx8hJBUdBUk14tyzErA@mail.gmail.com>
- <CACRpkdbNAeDsi9B14kbkAeoqX7NE_Ua_yOX1iNF75oNK0ELefQ@mail.gmail.com>
- <2827855a-dc4f-2e17-aca3-4b1b9f0d5084@ti.com>
- <CAK8P3a30=AcEZAZ2yNUgctj=4YM6FhS1ZXB4ts7a7WV=gBcatA@mail.gmail.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <3e16d597-d1f6-f054-4523-a7a00c945618@ti.com>
-Date:   Thu, 10 Dec 2020 15:32:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2389293AbgLJNf6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 08:35:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389316AbgLJNf5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 08:35:57 -0500
+Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CFC6C0617A7;
+        Thu, 10 Dec 2020 05:35:04 -0800 (PST)
+Received: by mail-yb1-xb44.google.com with SMTP id w139so4722883ybe.4;
+        Thu, 10 Dec 2020 05:35:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PruGUtDJdsgm777wkWNoe3vOXDaPQKYGDAojPXnGM3g=;
+        b=qr+ZqQ2F4EZQfgdy8K+Kqs+ju2va5nhDTYEtOvAiGmiJX2+U4h7E0rqdX/PQIbTGh+
+         CaNBjYsEAXvrBdvcJyqNLGW4vI71xB9Nunla2/S8Xyg076OROcaxIxeqZTo87P3ZrpEK
+         Tpyw6ehpSlxTCxW21MgYgUT/F7qeRYG8LkRURerN8L1ZKKDe4UG5A5J53BhFNdTcPG/Y
+         CJlzYxOG+uJgGNDy4V8xNEcrr5hALBb9Ini1MUiJq1CqsUQiqthZCmUX5zIc5YHmI0Qy
+         OVaNLCOIWBxSV2WCJM383Thx15WG8Z/Tf8K5+nJcmuQC/qSm75GCDSEV190GMIGubzD8
+         TUTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PruGUtDJdsgm777wkWNoe3vOXDaPQKYGDAojPXnGM3g=;
+        b=o2HBbi4xX3Y5yk2R+abvPTSG7UZlSTneSQfqO6Zi6+sJgwbHUMC789NCTtJFgzDd37
+         gqO2ZERGrjRc9CMN3cjYpoLE9ptRkDfhecuck/r9Qyyh678W1MajE8tTwsCSby9EPiVy
+         UgowOiDSHq9wLtv9LZzJgxL/kEo+8uihoBlYixhEr20g38ZyBhkP1d4NjYXMPvB/4cAd
+         Lf2o/DHF3s882Wgr+JxrihdB4M6SsT5IqL6aEYK048Ts9LvpaUDrswx0nVDJ7ADr2u6i
+         Ul2/CvikMqJUjaqevajWLEN6tqE+kiAV3SgyK2saPxErJ0vwN43StB62BxQCUhfKlVyX
+         cUoQ==
+X-Gm-Message-State: AOAM531CZZir3eWC36zsv/7h/3QcXVLSzuJw7MwU+TXKvHas41HISa2Y
+        OHo9Jg3Pe0LJ25DiyyNUzTE9T0YKwKJtNhpZNE0=
+X-Google-Smtp-Source: ABdhPJwt8733zr6N4yj6FxVSgrph3s9l4oGe3cVPbzqFrVlmw6Xv6Vu14kyHNxg5hkVg18XwvFJU42O68ypfOORJOLs=
+X-Received: by 2002:a5b:2c6:: with SMTP id h6mr10931588ybp.306.1607607303436;
+ Thu, 10 Dec 2020 05:35:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a30=AcEZAZ2yNUgctj=4YM6FhS1ZXB4ts7a7WV=gBcatA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1607403341-57214-1-git-send-email-yash.shah@sifive.com> <1607403341-57214-9-git-send-email-yash.shah@sifive.com>
+In-Reply-To: <1607403341-57214-9-git-send-email-yash.shah@sifive.com>
+From:   Bin Meng <bmeng.cn@gmail.com>
+Date:   Thu, 10 Dec 2020 21:34:51 +0800
+Message-ID: <CAEUhbmUPvu6bRDSnA4aUNNZRdjzfYSQOVvkN=PrqAxCK5oCngg@mail.gmail.com>
+Subject: Re: [PATCH v2 8/9] dt-bindings: riscv: Update YAML doc to support
+ SiFive HiFive Unmatched board
+To:     Yash Shah <yash.shah@sifive.com>
+Cc:     linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        broonie@kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Albert Ou <aou@eecs.berkeley.edu>, lee.jones@linaro.org,
+        u.kleine-koenig@pengutronix.de,
+        Thierry Reding <thierry.reding@gmail.com>, andrew@lunn.ch,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Dec 8, 2020 at 3:05 PM Yash Shah <yash.shah@sifive.com> wrote:
+>
+> Add new compatible strings to the YAML DT binding document to support
+> SiFive's HiFive Unmatched board
+>
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/sifive.yaml | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>
 
-
-On 09/12/2020 22:38, Arnd Bergmann wrote:
-> On Wed, Dec 9, 2020 at 9:22 PM Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->> On 09/12/2020 14:53, Linus Walleij wrote:
->>> On Wed, Dec 9, 2020 at 12:19 PM Arnd Bergmann <arnd@kernel.org> wrote:
->>>> On Wed, Dec 9, 2020 at 9:51 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->>>>> On Tue, Dec 8, 2020 at 3:07 PM Enrico Weigelt, metux IT consult <lkml@metux.net> wrote:
->>>>
->>>>> What we need to understand is if your new usecase is an outlier
->>>>> so it is simplest modeled by a "mock" irq_chip or we have to design
->>>>> something new altogether like notifications on changes. I suspect
->>>>> irq_chip would be best because all drivers using GPIOs for interrupts
->>>>> are expecting interrupts, and it would be an enormous task to
->>>>> change them all and really annoying to create a new mechanism
->>>>> on the side.
->>>>
->>>> I would expect the platform abstraction to actually be close enough
->>>> to a chained irqchip that it actually works: the notification should
->>>> come in via vring_interrupt(), which is a normal interrupt handler
->>>> that calls vq->vq.callback(), calling generic_handle_irq() (and
->>>> possibly chained_irq_enter()/chained_irq_exit() around it) like the
->>>> other gpio drivers do should just work here I think, and if it did
->>>> not, then I would expect this to be just a bug in the driver rather
->>>> than something missing in the gpio framework.
->>>
->>> Performance/latency-wise that would also be strongly encouraged.
->>>
->>> Tglx isn't super-happy about the chained interrupts at times, as they
->>> can create really nasty bugs, but a pure IRQ in fastpath of some
->>> kinde is preferable and intuitive either way.
->>
->> In my opinion the problem here is that proposed patch somehow describes Front end, but
->> says nothing about Backend and overall design.
->>
->> What is expected to be virtualized? whole GPIO chip? or set of GPIOs from different GPIO chips?
->> Most often nobody want to give Guest access to the whole GPIO chip, so, most probably, smth. similar to
->> GPIO Aggregator will be needed.
-> 
-> I would argue that it does not matter, the virtual GPIO chip could really
-> be anything. Certain functions such as a gpio based keyboard require
-> interrupts, so it sounds useful to make them work.
-
-Agree, and my point was not to discard IRQ support, but solve problem step by step.
-And existing Back end, in any form, may just help to understand virtio-gpio protocol spec and
-identify missed pieces.
-
-For example, should 'Configuration space' specify if IRQs are supported on not?
-
--- 
-Best regards,
-grygorii
+Reviewed-by: Bin Meng <bin.meng@windriver.com>
