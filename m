@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B9EC0018C
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8418C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2681223E22
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EEF422E00
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 19:49:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404301AbgLJTn1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 14:43:27 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56954 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404297AbgLJTnP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:15 -0500
-Message-Id: <20201210194043.957046529@linutronix.de>
+        id S2404398AbgLJTn6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 14:43:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404346AbgLJTnp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:45 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA06AC0611CF;
+        Thu, 10 Dec 2020 11:42:52 -0800 (PST)
+Message-Id: <20201210194045.457218278@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1607629352;
+        s=2020; t=1607629371;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=aHjBasf7kS/mugPgGoqzaKHWX8S9MZAhVf8pOv9wzqI=;
-        b=hIJe5uDFg4eKtha16rd5RMgP75gihkgyuo+wu9nJj9lb1QxB+dyj8VagUmUhTQC26INyeG
-        8XIXTkbYJX+KGxPBwbTjWFL8gH8tKgvYA0sd+Cbqs0pmZohafXQRaBxZ4X0LrRHAFHI+fK
-        34Ah/yU2AM+9WMw+oDh09bmBmxCAcLljD/Ywf7QGigq/72RSIaYCWXy9MRJcPUHTzSLEcU
-        hQensxz9JJtZ3t/2uwIx4+1Y2fv0/x2+3nAGVvooEgtnvb2OUreKFZUgUZSfzBs+FE+M45
-        5E1wbC+M9uufcsBkYfGEAcb5u4V11lC9yi8KNKp2A+CRv838rNvetMOidgM8lg==
+        bh=DeAXpsHXHZePk9yJlBEnvP07GAeQwVu3hbsEAC1KvV4=;
+        b=1ftX1NujPl+Xx3UaWEfCXjp+Nmg07+hPgK1Itu5O9SNBHoe9yl+RQXJ/2O1zp6IsfiLibV
+        HNI3oNJClnToZKNFBhedsy/3BepLS3TXsVRVkXB5G9+wE4lEck2qZ5nIFKfa87g0ab144q
+        Y8XYj/VugkwqMCvECW/TpEV1x4HCWrFdBzkevGfKqOFN0SaDM1/ov3Gwx/TBks3pXmGNrv
+        6QLKNAZhpAG6K+WVzFwjUhr3/uI//AlEz6mL833Dkg8c8/wOmAQ4fMPk7JfBTna6uA13Ka
+        n+R9468jt6R90wHee6UQ35MxaJ9NecvbD7sk9TpDtngv50OniDJk+BnWh4ozJQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1607629352;
+        s=2020e; t=1607629371;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=aHjBasf7kS/mugPgGoqzaKHWX8S9MZAhVf8pOv9wzqI=;
-        b=A/zWaVNR4ntcGYc6FuYZaabTLVIc+ZQNDV6wELc3l8+V7v8iKaL/rxgSQB4qy+gMpZm5QC
-        1is0DPvmHcXJQvCg==
-Date:   Thu, 10 Dec 2020 20:25:50 +0100
+        bh=DeAXpsHXHZePk9yJlBEnvP07GAeQwVu3hbsEAC1KvV4=;
+        b=RL8ukeyN4bqd9Ll57DRL2wfv9LwNl4AYd7GzKiPBhSvQTs7EEhPh2RseLXs/41XjAQfiFB
+        9Mcn1n8WsG2pJ9Ag==
+Date:   Thu, 10 Dec 2020 20:26:05 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Marc Zyngier <maz@kernel.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
         Helge Deller <deller@gmx.de>,
         afzal mohammed <afzal.mohd.ma@gmail.com>,
@@ -61,9 +61,16 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will@kernel.org>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
         Wambui Karuga <wambui.karugax@gmail.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
         Jon Mason <jdmason@kudzu.us>,
@@ -80,12 +87,8 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
         linux-rdma@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-Subject: [patch 14/30] drm/i915/pmu: Replace open coded kstat_irqs() copy
+        Leon Romanovsky <leon@kernel.org>
+Subject: [patch 29/30] xen/events: Implement irq distribution
 References: <20201210192536.118432146@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -94,182 +97,151 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Driver code has no business with the internals of the irq descriptor.
-
-Aside of that the count is per interrupt line and therefore takes
-interrupts from other devices into account which share the interrupt line
-and are not handled by the graphics driver.
-
-Replace it with a pmu private count which only counts interrupts which
-originate from the graphics card.
-
-To avoid atomics or heuristics of some sort make the counter field
-'unsigned long'. That limits the count to 4e9 on 32bit which is a lot and
-postprocessing can easily deal with the occasional wraparound.
+Keep track of the assignments of event channels to CPUs and select the
+online CPU with the least assigned channels in the affinity mask which is
+handed to irq_chip::irq_set_affinity() from the core code.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: xen-devel@lists.xenproject.org
 ---
- drivers/gpu/drm/i915/i915_irq.c |   34 ++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/i915/i915_pmu.c |   18 +-----------------
- drivers/gpu/drm/i915/i915_pmu.h |    8 ++++++++
- 3 files changed, 43 insertions(+), 17 deletions(-)
+ drivers/xen/events/events_base.c |   72 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 64 insertions(+), 8 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_irq.c
-+++ b/drivers/gpu/drm/i915/i915_irq.c
-@@ -60,6 +60,24 @@
-  * and related files, but that will be described in separate chapters.
-  */
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -96,6 +96,7 @@ struct irq_info {
+ 	struct list_head eoi_list;
+ 	short refcnt;
+ 	u8 spurious_cnt;
++	u8 is_accounted;
+ 	enum xen_irq_type type; /* type */
+ 	unsigned irq;
+ 	evtchn_port_t evtchn;   /* event channel */
+@@ -161,6 +162,9 @@ static DEFINE_PER_CPU(int [NR_VIRQS], vi
+ /* IRQ <-> IPI mapping */
+ static DEFINE_PER_CPU(int [XEN_NR_IPIS], ipi_to_irq) = {[0 ... XEN_NR_IPIS-1] = -1};
  
-+/*
-+ * Interrupt statistic for PMU. Increments the counter only if the
-+ * interrupt originated from the the GPU so interrupts from a device which
-+ * shares the interrupt line are not accounted.
-+ */
-+static inline void pmu_irq_stats(struct drm_i915_private *priv,
-+				 irqreturn_t res)
++/* Event channel distribution data */
++static atomic_t channels_on_cpu[NR_CPUS];
++
+ static int **evtchn_to_irq;
+ #ifdef CONFIG_X86
+ static unsigned long *pirq_eoi_map;
+@@ -257,6 +261,32 @@ static void set_info_for_irq(unsigned in
+ 		irq_set_chip_data(irq, info);
+ }
+ 
++/* Per CPU channel accounting */
++static void channels_on_cpu_dec(struct irq_info *info)
 +{
-+	if (unlikely(res != IRQ_HANDLED))
++	if (!info->is_accounted)
 +		return;
 +
-+	/*
-+	 * A clever compiler translates that into INC. A not so clever one
-+	 * should at least prevent store tearing.
-+	 */
-+	WRITE_ONCE(priv->pmu.irq_count, priv->pmu.irq_count + 1);
++	info->is_accounted = 0;
++
++	if (WARN_ON_ONCE(info->cpu >= nr_cpu_ids))
++		return;
++
++	WARN_ON_ONCE(!atomic_add_unless(&channels_on_cpu[info->cpu], -1 , 0));
 +}
 +
- typedef bool (*long_pulse_detect_func)(enum hpd_pin pin, u32 val);
- 
- static const u32 hpd_ilk[HPD_NUM_PINS] = {
-@@ -1599,6 +1617,8 @@ static irqreturn_t valleyview_irq_handle
- 		valleyview_pipestat_irq_handler(dev_priv, pipe_stats);
- 	} while (0);
- 
-+	pmu_irq_stats(dev_priv, ret);
++static void channels_on_cpu_inc(struct irq_info *info)
++{
++	if (WARN_ON_ONCE(info->cpu >= nr_cpu_ids))
++		return;
 +
- 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
- 
- 	return ret;
-@@ -1676,6 +1696,8 @@ static irqreturn_t cherryview_irq_handle
- 		valleyview_pipestat_irq_handler(dev_priv, pipe_stats);
- 	} while (0);
- 
-+	pmu_irq_stats(dev_priv, ret);
++	if (WARN_ON_ONCE(!atomic_add_unless(&channels_on_cpu[info->cpu], 1,
++					    INT_MAX)))
++		return;
 +
- 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
- 
- 	return ret;
-@@ -2103,6 +2125,8 @@ static irqreturn_t ilk_irq_handler(int i
- 	if (sde_ier)
- 		raw_reg_write(regs, SDEIER, sde_ier);
- 
-+	pmu_irq_stats(i915, ret);
++	info->is_accounted = 1;
++}
 +
- 	/* IRQs are synced during runtime_suspend, we don't require a wakeref */
- 	enable_rpm_wakeref_asserts(&i915->runtime_pm);
- 
-@@ -2419,6 +2443,8 @@ static irqreturn_t gen8_irq_handler(int
- 
- 	gen8_master_intr_enable(regs);
- 
-+	pmu_irq_stats(dev_priv, IRQ_HANDLED);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -2514,6 +2540,8 @@ static __always_inline irqreturn_t
- 
- 	gen11_gu_misc_irq_handler(gt, gu_misc_iir);
- 
-+	pmu_irq_stats(i915, IRQ_HANDLED);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -3688,6 +3716,8 @@ static irqreturn_t i8xx_irq_handler(int
- 		i8xx_pipestat_irq_handler(dev_priv, iir, pipe_stats);
- 	} while (0);
- 
-+	pmu_irq_stats(dev_priv, ret);
-+
- 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
- 
- 	return ret;
-@@ -3796,6 +3826,8 @@ static irqreturn_t i915_irq_handler(int
- 		i915_pipestat_irq_handler(dev_priv, iir, pipe_stats);
- 	} while (0);
- 
-+	pmu_irq_stats(dev_priv, ret);
-+
- 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
- 
- 	return ret;
-@@ -3941,6 +3973,8 @@ static irqreturn_t i965_irq_handler(int
- 		i965_pipestat_irq_handler(dev_priv, iir, pipe_stats);
- 	} while (0);
- 
-+	pmu_irq_stats(dev_priv, IRQ_HANDLED);
-+
- 	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
- 
- 	return ret;
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -423,22 +423,6 @@ static enum hrtimer_restart i915_sample(
- 	return HRTIMER_RESTART;
- }
- 
--static u64 count_interrupts(struct drm_i915_private *i915)
--{
--	/* open-coded kstat_irqs() */
--	struct irq_desc *desc = irq_to_desc(i915->drm.pdev->irq);
--	u64 sum = 0;
--	int cpu;
--
--	if (!desc || !desc->kstat_irqs)
--		return 0;
--
--	for_each_possible_cpu(cpu)
--		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
--
--	return sum;
--}
--
- static void i915_pmu_event_destroy(struct perf_event *event)
+ /* Constructors for packed IRQ information. */
+ static int xen_irq_info_common_setup(struct irq_info *info,
+ 				     unsigned irq,
+@@ -339,6 +369,7 @@ static void xen_irq_info_cleanup(struct
  {
- 	struct drm_i915_private *i915 =
-@@ -581,7 +565,7 @@ static u64 __i915_pmu_event_read(struct
- 				   USEC_PER_SEC /* to MHz */);
- 			break;
- 		case I915_PMU_INTERRUPTS:
--			val = count_interrupts(i915);
-+			val = READ_ONCE(pmu->irq_count);
- 			break;
- 		case I915_PMU_RC6_RESIDENCY:
- 			val = get_rc6(&i915->gt);
---- a/drivers/gpu/drm/i915/i915_pmu.h
-+++ b/drivers/gpu/drm/i915/i915_pmu.h
-@@ -108,6 +108,14 @@ struct i915_pmu {
- 	 */
- 	ktime_t sleep_last;
- 	/**
-+	 * @irq_count: Number of interrupts
-+	 *
-+	 * Intentionally unsigned long to avoid atomics or heuristics on 32bit.
-+	 * 4e9 interrupts are a lot and postprocessing can really deal with an
-+	 * occasional wraparound easily. It's 32bit after all.
-+	 */
-+	unsigned long irq_count;
-+	/**
- 	 * @events_attr_group: Device events attribute group.
- 	 */
- 	struct attribute_group events_attr_group;
+ 	set_evtchn_to_irq(info->evtchn, -1);
+ 	info->evtchn = 0;
++	channels_on_cpu_dec(info);
+ }
+ 
+ /*
+@@ -449,7 +480,9 @@ static void bind_evtchn_to_cpu(evtchn_po
+ 
+ 	xen_evtchn_port_bind_to_cpu(evtchn, cpu, info->cpu);
+ 
++	channels_on_cpu_dec(info);
+ 	info->cpu = cpu;
++	channels_on_cpu_inc(info);
+ }
+ 
+ /**
+@@ -622,11 +655,6 @@ static void xen_irq_init(unsigned irq)
+ {
+ 	struct irq_info *info;
+ 
+-#ifdef CONFIG_SMP
+-	/* By default all event channels notify CPU#0. */
+-	cpumask_copy(irq_get_affinity_mask(irq), cpumask_of(0));
+-#endif
+-
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (info == NULL)
+ 		panic("Unable to allocate metadata for IRQ%d\n", irq);
+@@ -1691,10 +1719,34 @@ static int xen_rebind_evtchn_to_cpu(evtc
+ 	return 0;
+ }
+ 
++/*
++ * Find the CPU within @dest mask which has the least number of channels
++ * assigned. This is not precise as the per cpu counts can be modified
++ * concurrently.
++ */
++static unsigned int select_target_cpu(const struct cpumask *dest)
++{
++	unsigned int cpu, best_cpu = UINT_MAX, minch = UINT_MAX;
++
++	for_each_cpu_and(cpu, dest, cpu_online_mask) {
++		unsigned int curch = atomic_read(&channels_on_cpu[cpu]);
++
++		if (curch < minch) {
++			minch = curch;
++			best_cpu = cpu;
++		}
++	}
++
++	/* If this happens accounting is screwed up */
++	if (WARN_ON_ONCE(best_cpu == UINT_MAX))
++		best_cpu = cpumask_first(dest);
++	return best_cpu;
++}
++
+ static int set_affinity_irq(struct irq_data *data, const struct cpumask *dest,
+ 			    bool force)
+ {
+-	unsigned tcpu = cpumask_first_and(dest, cpu_online_mask);
++	unsigned int tcpu = select_target_cpu(dest);
+ 	int ret;
+ 
+ 	ret = xen_rebind_evtchn_to_cpu(evtchn_from_irq(data->irq), tcpu);
+@@ -1922,8 +1974,12 @@ void xen_irq_resume(void)
+ 	xen_evtchn_resume();
+ 
+ 	/* No IRQ <-> event-channel mappings. */
+-	list_for_each_entry(info, &xen_irq_list_head, list)
+-		info->evtchn = 0; /* zap event-channel binding */
++	list_for_each_entry(info, &xen_irq_list_head, list) {
++		/* Zap event-channel binding */
++		info->evtchn = 0;
++		/* Adjust accounting */
++		channels_on_cpu_dec(info);
++	}
+ 
+ 	clear_evtchn_to_irq_all();
+ 
 
