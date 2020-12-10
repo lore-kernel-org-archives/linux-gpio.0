@@ -2,182 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB79C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 00:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496B9C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 02:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64A3722B4B
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 00:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163C323BC7
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 02:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbgLJAn1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Dec 2020 19:43:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729165AbgLJAn0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 19:43:26 -0500
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 119E8C0617A6
-        for <linux-gpio@vger.kernel.org>; Wed,  9 Dec 2020 16:42:46 -0800 (PST)
-Received: by mail-pg1-x544.google.com with SMTP id e2so2560967pgi.5
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2020 16:42:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OtKKHM+lfVGS9aSA9NCqh5kpYArg50M6MIVfsP4DbfQ=;
-        b=DoaBAJQ7EGMFD6ylzp7C1r8x2quZTXePKc5Ilus12x834dc1Fr7hUBP0QhAzXwy76c
-         SmyajWzfrejfbwKrMWd63+kLMLd2jLxHoQbKRoEPUki8KnuXSQK7+XhRLDGOGFSugntr
-         NPzqKcRJK/GO+29Fm3Q/WMUK/x3q/6PMknJ9c=
+        id S1726580AbgLJCOg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Dec 2020 21:14:36 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44799 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbgLJCOg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2020 21:14:36 -0500
+Received: by mail-ot1-f65.google.com with SMTP id f16so3467566otl.11;
+        Wed, 09 Dec 2020 18:14:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OtKKHM+lfVGS9aSA9NCqh5kpYArg50M6MIVfsP4DbfQ=;
-        b=ZcxfKaqIC9vIqol80tImMuYbXAkiiMGupdztspegtFwN5aGQ86X07NLuoOT1VDKsdR
-         AdJBoPKdb/OlapO96yzG7kU+lYjgVhek1iGaSjSRBf/YfKlrC57uj2O2A723bBpRNIRU
-         hSsVmyxK8HeyCngpa06J0jVuXPcebb2mdLo0RRVqGrXHiiqYbFt7m937I4UJej7JgbEB
-         teVg5ZS/WQEo0CqmX1masdwbqNY591c5yEPyP1+LfKoaAeAytStvWrzY1pbH9FLDTjz0
-         09p1XMWYwzOOO+3q9GBq8K8/Fa96/43wstTZlDSvETidnyytW/irR8KLDZpynWH27kJQ
-         YWwQ==
-X-Gm-Message-State: AOAM533kEOnWZNbq4El7P8nXY+MpqISrSsIlVbU4I3y6MX3pv0No5dGj
-        VA+3sYYU16FMTQ8ACARs0L16zw==
-X-Google-Smtp-Source: ABdhPJxYE8ouDzBhahQvEhvQ1Ha8ojf7CZnkTDciqw7fzGdD6qRxxK+IKnGeWSDFYMsGcId/2+ahzg==
-X-Received: by 2002:a17:90a:be17:: with SMTP id a23mr4616028pjs.236.1607560965560;
-        Wed, 09 Dec 2020 16:42:45 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:42b0:34ff:fe3d:58e6])
-        by smtp.gmail.com with ESMTPSA id l23sm3690430pgm.22.2020.12.09.16.42.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uvuESJ7aQViukX65KHwtf9YvigahbdIqwb8vH0OL0oo=;
+        b=FVidFd6dQ33bLjFWWYt/McgGdLGuX7W4WkaphDhwKfxYk3QGkXDWURFmp106rMMdee
+         Y1q7kKed3GhAxiQESHLdELlnhpYgLN50ZM+R3cA6ygKW3jQs0L7fR6SI0G2lkmRCi3qD
+         0c/2WUQj4pspGpWltg2Ty6nVeFPt53IJ73kOho8XO2s8vJHIIfEANU1HEzcgip0PUe5d
+         G+9QCSuvT3E+MK4V9iCpOCD5MusFLIS811RJfZv7hfv8an+1x3alUj4qpLpAgIVuIXt+
+         HtljnAqiHqTUu7qC6R+G96udMSwKdgSzJx8SkHPrFWHgrTDYViRw+x7rJ4B/6oR6ftEj
+         Rz5w==
+X-Gm-Message-State: AOAM532KvMIhTFGxV7Am8jJlx/5C0RZmq7Lb57QC/vLLysO/tPVY0AiP
+        y2oe1Pxu2eVEGgMyQBmjoshNasqKyQ==
+X-Google-Smtp-Source: ABdhPJzIcVnXVUZa0YCcG+skcD1a0imLZZ3uG+dfjaLZBLb1EkuCvfHIL3HeYEu5S6eq85WTU6SvdQ==
+X-Received: by 2002:a05:6830:1c3d:: with SMTP id f29mr4364041ote.47.1607566435550;
+        Wed, 09 Dec 2020 18:13:55 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a25sm732738oos.23.2020.12.09.18.13.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Dec 2020 16:42:44 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Ramana <sramana@codeaurora.org>,
-        Maulik Shah <mkshah@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-gpio@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        Archana Sathyakumar <asathyak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] irqchip: qcom-pdc: Fix phantom irq when changing between rising/falling
-Date:   Wed,  9 Dec 2020 16:41:01 -0800
-Message-Id: <20201209163818.v3.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
-X-Mailer: git-send-email 2.29.2.576.ga3fc446d84-goog
+        Wed, 09 Dec 2020 18:13:54 -0800 (PST)
+Received: (nullmailer pid 1495814 invoked by uid 1000);
+        Thu, 10 Dec 2020 02:13:53 -0000
+Date:   Wed, 9 Dec 2020 20:13:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mt7621-gpio: convert bindings to YAML format
+Message-ID: <20201210021353.GA1495778@robh.at.kernel.org>
+References: <20201207081151.7489-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201207081151.7489-1-sergio.paracuellos@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We have a problem if we use gpio-keys and configure wakeups such that
-we only want one edge to wake us up.  AKA:
-  wakeup-event-action = <EV_ACT_DEASSERTED>;
-  wakeup-source;
+On Mon, 07 Dec 2020 09:11:51 +0100, Sergio Paracuellos wrote:
+> Convert the mt7621-gpio device tree bindings to the new YAML format.
+> 
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
+>  .../bindings/gpio/mediatek,mt7621-gpio.txt    | 35 ---------
+>  .../bindings/gpio/mediatek,mt7621-gpio.yaml   | 72 +++++++++++++++++++
+>  2 files changed, 72 insertions(+), 35 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.yaml
+> 
 
-Specifically we end up with a phantom interrupt that blocks suspend if
-the line was already high and we want wakeups on rising edges (AKA we
-want the GPIO to go low and then high again before we wake up).  The
-opposite is also problematic.
-
-Specifically, here's what's happening today:
-1. Normally, gpio-keys configures to look for both edges.  Due to the
-   current workaround introduced in commit c3c0c2e18d94 ("pinctrl:
-   qcom: Handle broken/missing PDC dual edge IRQs on sc7180"), if the
-   line was high we'd configure for falling edges.
-2. At suspend time, we change to look for rising edges.
-3. After qcom_pdc_gic_set_type() runs, we get a phantom interrupt.
-
-We can solve this by just clearing the phantom interrupt.
-
-NOTE: it is possible that this could cause problems for a client with
-very specific needs, but there's not much we can do with this
-hardware.  As an example, let's say the interrupt signal is currently
-high and the client is looking for falling edges.  The client now
-changes to look for rising edges.  The client could possibly expect
-that if the line has a short pulse low (and back high) that it would
-always be detected.  Specifically no matter when the pulse happened,
-it should either have tripped the (old) falling edge trigger or the
-(new) rising edge trigger.  We will simply not trip it.  We could
-narrow down the race a bit by polling our parent before changing
-types, but no matter what we do there will still be a period of time
-where we can't tell the difference between a real transition (or more
-than one transition) and the phantom.
-
-Fixes: f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Maulik Shah <mkshah@codeaurora.org>
-Tested-by: Maulik Shah <mkshah@codeaurora.org>
----
-There are no dependencies between this patch and patch #2/#3.  It can
-go in by itself.  Patches are only grouped together in one series
-because they address similar issues.
-
-Maulik has got confirmation from hardware guys and understands the
-problem.  This patch is ready to land.
-
-Changes in v3:
-- Adjusted the comment as per Maulik.
-
-Changes in v2:
-- 0 => false
-- If irq_chip_set_type_parent() fails don't bother clearing.
-- Add Fixes tag.
-
- drivers/irqchip/qcom-pdc.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index bd39e9de6ecf..5dc63c20b67e 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -159,6 +159,8 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
- {
- 	int pin_out = d->hwirq;
- 	enum pdc_irq_config_bits pdc_type;
-+	enum pdc_irq_config_bits old_pdc_type;
-+	int ret;
- 
- 	if (pin_out == GPIO_NO_WAKE_IRQ)
- 		return 0;
-@@ -187,9 +189,26 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
- 
-+	old_pdc_type = pdc_reg_read(IRQ_i_CFG, pin_out);
- 	pdc_reg_write(IRQ_i_CFG, pin_out, pdc_type);
- 
--	return irq_chip_set_type_parent(d, type);
-+	ret = irq_chip_set_type_parent(d, type);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * When we change types the PDC can give a phantom interrupt.
-+	 * Clear it.  Specifically the phantom shows up when reconfiguring
-+	 * polarity of interrupt without changing the state of the signal
-+	 * but let's be consistent and clear it always.
-+	 *
-+	 * Doing this works because we have IRQCHIP_SET_TYPE_MASKED so the
-+	 * interrupt will be cleared before the rest of the system sees it.
-+	 */
-+	if (old_pdc_type != pdc_type)
-+		irq_chip_set_parent_state(d, IRQCHIP_STATE_PENDING, false);
-+
-+	return 0;
- }
- 
- static struct irq_chip qcom_pdc_gic_chip = {
--- 
-2.29.2.576.ga3fc446d84-goog
-
+Reviewed-by: Rob Herring <robh@kernel.org>
