@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 239F2C4361B
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 20:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E45C4167B
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 20:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7B802332A
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 20:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D3342332A
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 20:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393531AbgLJTnT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 14:43:19 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56826 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404286AbgLJTnN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:13 -0500
-Message-Id: <20201210194043.769108348@linutronix.de>
+        id S2393423AbgLJTnF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 14:43:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393512AbgLJTnC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 14:43:02 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8125FC06179C;
+        Thu, 10 Dec 2020 11:42:22 -0800 (PST)
+Message-Id: <20201210194043.067097663@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1607629349;
+        s=2020; t=1607629341;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=RkpDEDsz36bMGIvl/YLs0noKGbsbwyBTWfWGyYCIvwI=;
-        b=FjXt0gBZbmoGEhW+JUNun0TgRlpWk5UHUbF8b/SYgA73R5qt2FK9Tl9JCUAhz1x+5ISxmb
-        8V7v08WHaUsVznntzV+P4bCrHHh6loow5ZaaQC5qCuEudPhwVHK22AOQesI0Ecsqkh8veP
-        Qwn4/oD2Zv3hZttfcTXroXZBKsSviSPS/hfZ0fieRb3ZsJsiILx4Kdfz9zR7w+K2srUSyp
-        sVcjXZizv2IhQYS+ESc7LfjgqYgvOCII1d3ugOhi6vPvk7jAG3wwmOOag6qx9YOR3B1IuO
-        KQi2Ohrd/6vH+kL/8yvl1XW4GpaahKbPHYgPc32mGshR05m6gXPFbQzdssR1DQ==
+        bh=an/0SlT10gC/rfGB9cofMBAbBc2y8gDRMVN0GHlSQuQ=;
+        b=4P4kE5RTAFQxk4E9p2NZ5tVZaT/fVdqT6FUBVR+n0VlRr8uKLCY6ouByJWK/y9MigmPqnb
+        tesyONzFlkjZdJe1WWdFvx3h+r+GXjLB7sIlmHBZwN8ZTN8764SDWmNv/29J0LI/juCzrG
+        5AR2DIz8iI4y5+WrS2Gk+rZPh543USYMAHoeudVHDJ9Wges2zOPIJ3rC2brtEkqswFGEBV
+        qoEKpCAHt2vMMptUuKRYjL5+zlSE91zw5P4yyaAjNJTKm8BCJhUlMmWxn/QqILbbs/4fJM
+        zRFVwll3IxpXJvkmkahKFPnuLZWACJTleFizSON231iYySZCGseiBRgkWQqHew==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1607629349;
+        s=2020e; t=1607629341;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=RkpDEDsz36bMGIvl/YLs0noKGbsbwyBTWfWGyYCIvwI=;
-        b=tNp+xNMz1hLFIiRaZEJhoV6X6hTrUYtKO/6Uex9oEhysEt44+COqeNeDA5dBz+L1+ts6Sq
-        70KNBmuAKx0cHoAw==
-Date:   Thu, 10 Dec 2020 20:25:48 +0100
+        bh=an/0SlT10gC/rfGB9cofMBAbBc2y8gDRMVN0GHlSQuQ=;
+        b=0D9iZlJLFfBnhtOaF8MIaZu0T6LGBg7Mhm2UH/Vr6qq568TJA8295HDu2RHkjE+w+f0eVZ
+        +xYpdmSgjdKynXCQ==
+Date:   Thu, 10 Dec 2020 20:25:41 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Marc Zyngier <maz@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
         Helge Deller <deller@gmx.de>,
         afzal mohammed <afzal.mohd.ma@gmail.com>,
@@ -54,6 +55,8 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
         Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
@@ -85,7 +88,7 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Juergen Gross <jgross@suse.com>,
         Stefano Stabellini <sstabellini@kernel.org>,
         xen-devel@lists.xenproject.org
-Subject: [patch 12/30] s390/irq: Use irq_desc_kstat_cpu() in show_msi_interrupt()
+Subject: [patch 05/30] genirq: Annotate irq stats data races
 References: <20201210192536.118432146@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -94,25 +97,44 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The irq descriptor is already there, no need to look it up again.
+Both the per cpu stats and the accumulated count are accessed lockless and
+can be concurrently modified. That's intentional and the stats are a rough
+estimate anyway. Annotate them with data_race().
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org
 ---
- arch/s390/kernel/irq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/irq/irqdesc.c |    4 ++--
+ kernel/irq/proc.c    |    5 +++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
---- a/arch/s390/kernel/irq.c
-+++ b/arch/s390/kernel/irq.c
-@@ -124,7 +124,7 @@ static void show_msi_interrupt(struct se
- 	raw_spin_lock_irqsave(&desc->lock, flags);
- 	seq_printf(p, "%3d: ", irq);
- 	for_each_online_cpu(cpu)
--		seq_printf(p, "%10u ", kstat_irqs_cpu(irq, cpu));
-+		seq_printf(p, "%10u ", irq_desc_kstat_irq(desc, cpu));
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -943,10 +943,10 @@ unsigned int kstat_irqs(unsigned int irq
+ 	if (!irq_settings_is_per_cpu_devid(desc) &&
+ 	    !irq_settings_is_per_cpu(desc) &&
+ 	    !irq_is_nmi(desc))
+-	    return desc->tot_count;
++		return data_race(desc->tot_count);
  
- 	if (desc->irq_data.chip)
- 		seq_printf(p, " %8s", desc->irq_data.chip->name);
+ 	for_each_possible_cpu(cpu)
+-		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
++		sum += data_race(*per_cpu_ptr(desc->kstat_irqs, cpu));
+ 	return sum;
+ }
+ 
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -488,9 +488,10 @@ int show_interrupts(struct seq_file *p,
+ 	if (!desc || irq_settings_is_hidden(desc))
+ 		goto outsparse;
+ 
+-	if (desc->kstat_irqs)
++	if (desc->kstat_irqs) {
+ 		for_each_online_cpu(j)
+-			any_count |= *per_cpu_ptr(desc->kstat_irqs, j);
++			any_count |= data_race(*per_cpu_ptr(desc->kstat_irqs, j));
++	}
+ 
+ 	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
+ 		goto outsparse;
 
