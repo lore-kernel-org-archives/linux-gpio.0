@@ -2,269 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35991C2BBD5
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A664CC4361B
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0659A23C82
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68EC423C81
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Dec 2020 14:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389928AbgLJOIG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Dec 2020 09:08:06 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:5152 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbgLJOIG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 09:08:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607609285; x=1639145285;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=h53uB8DldUFUjxykUeLYLGTvXTE8o2cohPuBevq/K5w=;
-  b=U1WATsQhdUEBix++Kjn4jlLNBFJ5G6tMqsRrGiKjKDh6WrHNRLW1+9IU
-   anPTxEPWL4kNOgBX5QU1Pvc786cRprgz3xwpPvud0AKSJeNKlyMzPnAKL
-   GVpkPDINL9K1s0m0xIZmr7WbZngIwa/jQZQStusiVjSX3LVyNHstirs9L
-   TT1zqf2AZeN+QvnHua8NpC2VUPoD3ST+iAnccubwHsfLKI7OLmrbUEG2z
-   eUC2zuFcpA+rGiwoV3sivzKSyd1amCtWEwTShg40wItpZ/9nm1D8jaVhX
-   53hr148eGuahUTwUJQSs0k51zYJ5C+WQ5reJ0jVKc3vQyn7jIWqIx7F8p
-   A==;
-IronPort-SDR: 4erAFGtbo6kPE8cg2lMc7t1dZoRnrUfj2JO43WXx0G+loYOYDaHGukggEn7U1gzChJUvaZqxNG
- /qFG8LBSDx0YQBHMDpmj0qtZeLAAs8NTIvylpQe0hhFtWuzMZXz1V5zRVA8irBvR2MDLXAfnea
- GN5wAZz5yA5n1thqJFMFzmSV9UHU9bQKNsz0b6pDKkZLx/2f5rDyY4pjbXddF5bOVv9wYTAZfK
- lGSlDNVdbebVfI1XKLyBbRp/llndmwzp29HMi9YLvKwX06ILeNCNIlIWCEczpa2r7Y0yWLc3jy
- avw=
-X-IronPort-AV: E=Sophos;i="5.78,408,1599494400"; 
-   d="scan'208";a="159316783"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Dec 2020 22:03:58 +0800
-IronPort-SDR: 1GgbzAzoDW1Lb0K+nCXtyAKGNwTGSOK0wZlR8u77l62urfXeErPY2pys6TlQaLJZ5gVGvBOgxd
- 6+WyUZBY1UJMOkAuMFNJ01fRO7zy79GPk=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2020 05:47:50 -0800
-IronPort-SDR: 5Ge097K8BcceMNJ/cGQnk3O7QRLHgcPdeRrbdwoO4zHCM9c1efOVmU8yc7w2iXq2YPlltdRhPJ
- KYfpJ06UNLYg==
-WDCIronportException: Internal
-Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 10 Dec 2020 06:03:58 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v8 20/22] riscv: Add Kendryte KD233 board device tree
-Date:   Thu, 10 Dec 2020 23:03:11 +0900
-Message-Id: <20201210140313.258739-21-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201210140313.258739-1-damien.lemoal@wdc.com>
-References: <20201210140313.258739-1-damien.lemoal@wdc.com>
+        id S2387850AbgLJOOg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Dec 2020 09:14:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387865AbgLJOO0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2020 09:14:26 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2918BC0613CF;
+        Thu, 10 Dec 2020 06:13:46 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id w16so4318145pga.9;
+        Thu, 10 Dec 2020 06:13:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4Hb7CAOESndOw0qmRw9ewVrZoBtsOHUQtrWnjHs0d1U=;
+        b=hs49l3MbegHnzNrh0GBjhULW6ig/YFYqX2EM+6DzwB+fRgW9ILpGbafrJWdjTyYMGx
+         bg5fZABvSnlI26rFJy5pxWeVo1syaM3lTLnySC+vNijzgwJofGFA4jF8GbP5lw/3bolx
+         5MhNjpMMyGnxypq8jozD4tCdXpzAlJfrNhzeBSvLByOHyyXW0qcPmyn2crxwuFCW1NsE
+         0Y0LSTXpJzVV+Js+XxpS2wWocBaPoNyqwnIaHiLPRmTujhAnWChx87vID4du1gZxQ4lT
+         IO1MhWxII0hyNuc2ufbgv59WCjVSJinhDKlHuXizxWjqOrMl69sU847jQTfSRlqFqumA
+         +2PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4Hb7CAOESndOw0qmRw9ewVrZoBtsOHUQtrWnjHs0d1U=;
+        b=kNOP9L8F0BN5IBCE9KrlPyFv/hPFTx8BKcQRvscwo0tcIzd9PBL+RgcTTWAVUIZLm+
+         fUBHaypM0m32nwlQFMk3KZsFDEGmZ74ueQAnRHcPaI4fmNTYKV+0veMXVQ3IIWKup9BD
+         b2md8enq04Ct5X4xta9G0fKmef0NFjTO+jLjkYtW7t78rPqUziGFTX2dHrx867qPG15J
+         Ki2Dy3CA7LA3nDlX3tm0UmT/JVyMdTyBVwpiRl/ffyBQCpx1tQJbxbe+iTSmEdqCrcbL
+         oJ7h/r/OQ0otbn7Cm3K660cA51f9WYo7ylxbhUSDmBg0k6glpwHbSGjsvbbz0S3EcdhX
+         G1lw==
+X-Gm-Message-State: AOAM533u2Ky4GuZviHKv14KoCABiRw9bE6EOMyCiK0WnB1kK0QOyhqJP
+        /CdQ6pNQRoc3D2s1JJ5ubkWu+NQvj3zjBv4XxNkOsZ0Ap/w=
+X-Google-Smtp-Source: ABdhPJyFNZ9FhSEOIbEkRgpnz977Ot0cuwbUMyrsnC9vlZUdQdfjd+91orjutqMRcuYPE8Fvn6lnet0Z/prPzhCJx2I=
+X-Received: by 2002:a17:90a:c592:: with SMTP id l18mr7847600pjt.228.1607609625632;
+ Thu, 10 Dec 2020 06:13:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201210065013.29348-1-troy_lee@aspeedtech.com>
+In-Reply-To: <20201210065013.29348-1-troy_lee@aspeedtech.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 10 Dec 2020 16:14:33 +0200
+Message-ID: <CAHp75VcMuHiUFgSas26DA-Bh1gGA_G5FT+9cetK=En9Q_oMZtg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: aspeed: Lock GPIO pin used as IRQ
+To:     Troy Lee <troy_lee@aspeedtech.com>
+Cc:     OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-aspeed@lists.ozlabs.org>,
+        open list <linux-kernel@vger.kernel.org>, leetroy@gmail.com,
+        ryan_chen@aspeedtech.com, chiawei_wang@aspeedtech.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a device tree for the Canaan Kendryte KD233 development board.
-This device tree enables LEDs, some gpios and spi/mmc SD card device.
-The WS2812B RGB LED and the 10 position rotary dip switch present on
-the board are left undefined.
+On Thu, Dec 10, 2020 at 9:36 AM Troy Lee <troy_lee@aspeedtech.com> wrote:
+>
+> GPIO pins can be used as IRQ indicators. When they do,
+> those pins should be flaged with locks to avoid kernel
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- arch/riscv/boot/dts/canaan/k210_kd233.dts | 178 ++++++++++++++++++++++
- 1 file changed, 178 insertions(+)
- create mode 100644 arch/riscv/boot/dts/canaan/k210_kd233.dts
+flagged
 
-diff --git a/arch/riscv/boot/dts/canaan/k210_kd233.dts b/arch/riscv/boot/dts/canaan/k210_kd233.dts
-new file mode 100644
-index 000000000000..44852a27df93
---- /dev/null
-+++ b/arch/riscv/boot/dts/canaan/k210_kd233.dts
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
-+ * Copyright (C) 2020 Western Digital Corporation or its affiliates.
-+ */
-+
-+/dts-v1/;
-+
-+#include "k210.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	model = "Kendryte KD233";
-+	compatible = "canaan,kendryte-kd233",
-+		     "canaan,kendryte-k210";
-+
-+	chosen {
-+		bootargs = "earlycon console=ttySIF0";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		led0 {
-+			gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led1 {
-+			gpios = <&gpio0 9 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key0 {
-+			label = "KEY0";
-+			linux,code = <BTN_0>;
-+			gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		status = "disabled";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s0 0>;
-+		};
-+
-+		simple-audio-card,codec {
-+			sound-dai = <&mic>;
-+		};
-+	};
-+
-+	mic: mic {
-+		#sound-dai-cells = <0>;
-+		compatible = "memsensing,msm261s4030h0";
-+		status = "disabled";
-+	};
-+};
-+
-+&fpioa {
-+	pinctrl-0 = <&jtag_pinctrl>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	jtag_pinctrl: jtag-pinmux {
-+		pinmux = <K210_FPIOA(0, K210_PCF_JTAG_TCLK)>,
-+			 <K210_FPIOA(1, K210_PCF_JTAG_TDI)>,
-+			 <K210_FPIOA(2, K210_PCF_JTAG_TMS)>,
-+			 <K210_FPIOA(3, K210_PCF_JTAG_TDO)>;
-+	};
-+
-+	uarths_pinctrl: uarths-pinmux {
-+		pinmux = <K210_FPIOA(4, K210_PCF_UARTHS_RX)>,
-+			 <K210_FPIOA(5, K210_PCF_UARTHS_TX)>;
-+	};
-+
-+	spi0_pinctrl: spi0-pinmux {
-+		pinmux = <K210_FPIOA(6, K210_PCF_GPIOHS20)>,  /* cs */
-+			 <K210_FPIOA(7, K210_PCF_SPI0_SCLK)>, /* wr */
-+			 <K210_FPIOA(8, K210_PCF_GPIOHS21)>;  /* dc */
-+	};
-+
-+	dvp_pinctrl: dvp-pinmux {
-+		pinmux = <K210_FPIOA(9, K210_PCF_SCCB_SCLK)>,
-+			 <K210_FPIOA(10, K210_PCF_SCCB_SDA)>,
-+			 <K210_FPIOA(11, K210_PCF_DVP_RST)>,
-+			 <K210_FPIOA(12, K210_PCF_DVP_VSYNC)>,
-+			 <K210_FPIOA(13, K210_PCF_DVP_PWDN)>,
-+			 <K210_FPIOA(14, K210_PCF_DVP_XCLK)>,
-+			 <K210_FPIOA(15, K210_PCF_DVP_PCLK)>,
-+			 <K210_FPIOA(17, K210_PCF_DVP_HSYNC)>;
-+	};
-+
-+	gpiohs_pinctrl: gpiohs-pinmux {
-+		pinmux = <K210_FPIOA(16, K210_PCF_GPIOHS0)>,
-+			 <K210_FPIOA(20, K210_PCF_GPIOHS4)>, /* Rot. dip sw line 8 */
-+			 <K210_FPIOA(21, K210_PCF_GPIOHS5)>, /* Rot. dip sw line 4 */
-+			 <K210_FPIOA(22, K210_PCF_GPIOHS6)>, /* Rot. dip sw line 2 */
-+			 <K210_FPIOA(23, K210_PCF_GPIOHS7)>, /* Rot. dip sw line 1 */
-+			 <K210_FPIOA(24, K210_PCF_GPIOHS8)>,
-+			 <K210_FPIOA(25, K210_PCF_GPIOHS9)>,
-+			 <K210_FPIOA(26, K210_PCF_GPIOHS10)>;
-+	};
-+
-+	spi1_pinctrl: spi1-pinmux {
-+		pinmux = <K210_FPIOA(29, K210_PCF_SPI1_SCLK)>,
-+			 <K210_FPIOA(30, K210_PCF_SPI1_D0)>,
-+			 <K210_FPIOA(31, K210_PCF_SPI1_D1)>,
-+			 <K210_FPIOA(32, K210_PCF_GPIOHS16)>; /* cs */
-+	};
-+
-+	i2s0_pinctrl: i2s0-pinmux {
-+		pinmux = <K210_FPIOA(33, K210_PCF_I2S0_IN_D0)>,
-+			 <K210_FPIOA(34, K210_PCF_I2S0_WS)>,
-+			 <K210_FPIOA(35, K210_PCF_I2S0_SCLK)>;
-+	};
-+};
-+
-+&uarths0 {
-+	pinctrl-0 = <&uarths_pinctrl>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&gpio0 {
-+	pinctrl-0 = <&gpiohs_pinctrl>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&i2s0 {
-+	#sound-dai-cells = <1>;
-+	pinctrl-0 = <&i2s0_pinctrl>;
-+	pinctrl-names = "default";
-+};
-+
-+&dvp0 {
-+	pinctrl-0 = <&dvp_pinctrl>;
-+	pinctrl-names = "default";
-+};
-+
-+&spi0 {
-+	pinctrl-0 = <&spi0_pinctrl>;
-+	pinctrl-names = "default";
-+	num-cs = <1>;
-+	cs-gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
-+
-+	panel@0 {
-+		compatible = "ilitek,ili9341";
-+		reg = <0>;
-+		dc-gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>;
-+		spi-max-frequency = <15000000>;
-+		status = "disabled";
-+	};
-+};
-+
-+&spi1 {
-+	pinctrl-0 = <&spi1_pinctrl>;
-+	pinctrl-names = "default";
-+	num-cs = <1>;
-+	cs-gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+
-+	slot@0 {
-+		compatible = "mmc-spi-slot";
-+		reg = <0>;
-+		voltage-ranges = <3300 3300>;
-+		spi-max-frequency = <25000000>;
-+		broken-cd;
-+	};
-+};
+> warning message.
+
+...
+
+> @@ -651,6 +651,13 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
+
+> +       rc = gpiochip_lock_as_irq(&gpio->chip, d->hwirq);
+> +       if (rc) {
+> +               dev_err(gpio->chip.parent, "unable to lock GPIO %lu as IRQ\n",
+> +                       d->hwirq);
+> +               return rc;
+> +       }
+
+It's a copy'n'paste of generic code. Why do you need it in an unusual
+place, i.e. ->irq_set_type() IIUC?
+Can you elaborate about an issue, because this seems to be a hack?
+
 -- 
-2.29.2
-
+With Best Regards,
+Andy Shevchenko
