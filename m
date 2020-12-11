@@ -2,151 +2,129 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AEEC433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 23:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4013DC4361B
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 23:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08A7B20DD4
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 23:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 078852226A
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 23:08:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405850AbgLKWIZ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 17:08:25 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:31540 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404495AbgLKWIF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 11 Dec 2020 17:08:05 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-25-lRPy8p40M8CPiAlacIukIQ-1; Fri, 11 Dec 2020 22:06:25 +0000
-X-MC-Unique: lRPy8p40M8CPiAlacIukIQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 11 Dec 2020 22:06:24 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 11 Dec 2020 22:06:24 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Thomas Gleixner' <tglx@linutronix.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Marc Zyngier <maz@kernel.org>,
-        "Jani Nikula" <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        afzal mohammed <afzal.mohd.ma@gmail.com>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Wambui Karuga <wambui.karugax@gmail.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Michal Simek" <michal.simek@xilinx.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        "Tariq Toukan" <tariqt@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Jakub Kicinski" <kuba@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Saeed Mahameed <saeedm@nvidia.com>,
-        "Leon Romanovsky" <leon@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-Subject: RE: [patch 14/30] drm/i915/pmu: Replace open coded kstat_irqs() copy
-Thread-Topic: [patch 14/30] drm/i915/pmu: Replace open coded kstat_irqs() copy
-Thread-Index: AQHWz72qwjNpP0n0UkWT70W8RrLS8qnx7xrwgAB1jgCAAA6ksA==
-Date:   Fri, 11 Dec 2020 22:06:24 +0000
-Message-ID: <6dd2eb7de7ad4a5893f057b90662718f@AcuMS.aculab.com>
-References: <20201210192536.118432146@linutronix.de>
- <20201210194043.957046529@linutronix.de>
- <ad05af1a-5463-2a80-0887-7629721d6863@linux.intel.com>
- <87y2i4h54i.fsf@nanos.tec.linutronix.de>
- <d6cbfa118490459bb0671394f00323fc@AcuMS.aculab.com>
- <87eejwgib7.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87eejwgib7.fsf@nanos.tec.linutronix.de>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S2406734AbgLKWPO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 17:15:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406717AbgLKWOz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 17:14:55 -0500
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40878C0613CF
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 14:14:15 -0800 (PST)
+Received: by mail-ua1-x92d.google.com with SMTP id 17so3017832uaq.4
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 14:14:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B+v8QnAZfVmqdM00Egj83ptDN3hTPJz74BI1U+QyDFM=;
+        b=g7q7BwyabpGEt1cdczJmqxzv2S6iTyT9mkFah7BKR4FKU5Dr3lxJHEJC0Rr50ihcQE
+         x1mkixFbjWFPbE0IiX/M08n2k7Qd6Hc7d6scCrDuqsa0QM/mQUpTbrYJPT9xoIGnPfRQ
+         ULTkk4v6bW1+d6xwlNbplePkS2/QY4dSfBP1s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B+v8QnAZfVmqdM00Egj83ptDN3hTPJz74BI1U+QyDFM=;
+        b=V59RtX1d39J2ypV3lbh1fuaXjOKfgXPCvXk+s1Ea8ovnwDaPtqW9aFaHRXhZ4npigS
+         zRFZvHJmk6FXLmsoP6Z3diaiMR4CBRMWIV1zDgT79i5f4WtutXL/0B0Jmkd5Dyua3XWw
+         TBMrsn8wFvQ4Bf/y4msKvaRxcFaoUYLVNZSFTGFjJ7hq7oGsXwcFPkqpVFsyIoHv+OfG
+         96o1ACx7E9lUB8EvzhTDSTet0yO87yWa55FF4REmzD1z0ISNVbWAahDsjcDCDdMxUt4g
+         vUU/LX2kDf4kIeQSsV2KhQYnPOKTejtcoFyzUtHXsOlU/LoWGrs/GkzeO4JYMpCnGc25
+         Ujig==
+X-Gm-Message-State: AOAM532QBvlaN80wRSrSiZDCmVb89GjXxMv1o6lF9Gs8T5ygUEO3bEsl
+        08jNV486MLnoyH/oOFxuSg5UD++wIR1yKQ==
+X-Google-Smtp-Source: ABdhPJzrqEml4bzhCly/oNOnmIIKcwcIjETCms4yC+IYG+OJqhwdEW0h1zZuAoHVfbQrotyN/wATZA==
+X-Received: by 2002:ab0:d6:: with SMTP id 80mr15390870uaj.46.1607724854195;
+        Fri, 11 Dec 2020 14:14:14 -0800 (PST)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id s20sm1201780vks.21.2020.12.11.14.14.13
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Dec 2020 14:14:13 -0800 (PST)
+Received: by mail-ua1-f54.google.com with SMTP id w7so3354258uap.13
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 14:14:13 -0800 (PST)
+X-Received: by 2002:ab0:6285:: with SMTP id z5mr14895918uao.0.1607724852718;
+ Fri, 11 Dec 2020 14:14:12 -0800 (PST)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20201124094636.v2.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
+ <20201124094636.v2.3.I771b6594b2a4d5b7fe7e12a991a6640f46386e8d@changeid>
+ <d6c5dba9-bcc7-fac9-dd41-c989509c822b@codeaurora.org> <CAD=FV=UOSkHQMcSV8Zq5qPfBoUu5xYzfNZqUPmymvD7PXUAN4w@mail.gmail.com>
+ <b84d5bb4-e413-ad20-a19a-c7420abd5d5d@codeaurora.org> <CAD=FV=UXo3RPuVSYwOrHJMxF38K-ynoaPv4ZVQ6N2ok_zcoOFw@mail.gmail.com>
+ <5f24ec87-6d91-dfd9-0f4f-6687f37c60ac@codeaurora.org> <CAD=FV=Wm_q60w34LmbtC88BkfS0aKp_a=AjnuYFL=g-DX_-=yQ@mail.gmail.com>
+ <92c61a18-0a1d-099e-4a11-b33a052b4ec2@codeaurora.org>
+In-Reply-To: <92c61a18-0a1d-099e-4a11-b33a052b4ec2@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 11 Dec 2020 14:14:01 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XvWFd84OxHmYgO8McV-ixe+ucMxhOdAWzHu4nLnnCtbQ@mail.gmail.com>
+Message-ID: <CAD=FV=XvWFd84OxHmYgO8McV-ixe+ucMxhOdAWzHu4nLnnCtbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] pinctrl: qcom: Clear possible pending irq when
+ remuxing GPIOs
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Thomas Gleixner
-> Sent: 11 December 2020 21:11
-> 
-> On Fri, Dec 11 2020 at 14:19, David Laight wrote:
-> > From: Thomas Gleixner
-> >> You can't catch that. If this really becomes an issue you need a
-> >> sequence counter around it.
-> >
-> > Or just two copies of the high word.
-> > Provided the accesses are sequenced:
-> > writer:
-> > 	load high:low
-> > 	add small_value,high:low
-> > 	store high
-> > 	store low
-> > 	store high_copy
-> > reader:
-> > 	load high_copy
-> > 	load low
-> > 	load high
-> > 	if (high != high_copy)
-> > 		low = 0;
-> 
-> And low = 0 is solving what? You need to loop back and retry until it's
-> consistent and then it's nothing else than an open coded sequence count.
+Hi,
 
-If it is a counter or timestamp then the high:0 value happened
-some time between when you started trying to read the value and
-when you finished trying to read it.
+On Thu, Dec 10, 2020 at 11:07 PM Maulik Shah <mkshah@codeaurora.org> wrote:
+>
+> I have slightly modified your test case (see at
+> https://crrev.com/c/2584729) which is as per what i used in my testing.
+>
+> Here is what i am doing, setting GPIO to a fixed function (function 2 here)
+> Note that function 0 is the GPIO (interrupt mode).
+>
+> 1) Pull up the GPIO in function 2
+> 2) Pull down the GPIO in function 2
+>
+> Repeat above steps, and you will see fake interrupt every time pull down/up.
+> This proves that if you mux away from GPIO then still PDC sees the line
+> and can latch the interrupt at GIC.
 
-As such it is a perfectly reasonable return value.
+Ah, super useful example!  Thanks!  Yes, I can replicate your results.
 
-	David
+...but this seems to contradict my other test.  Ah, dang, I think I
+see the problem with my original test.  The important difference is
+that in your test you used the alternate function "mi2s_2" and in mine
+I used "qspi_data".  When I selected "qspi_data" it must have been
+actively driving the pin and _that's_ why I couldn't affect it.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+When I change my test to use "mi2s_2" then my toggles via "wp enable"
+and "wp disable" cause phantom interrupts.  That confirms what you're
+saying: the PDC _can_ see the twiddles even when muxed away.
+Presumably the active driving my "qspi_data" is also what caused my
+phantom glitches.
 
+So, as you said, that means my mental model is totally wrong here.
+Wow, if I had known that earlier I would have saved a lot of time.
+That'll learn me...
+
+OK, v4 being posted and you can see if that handles all the cases?
+
+-Doug
