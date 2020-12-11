@@ -5,197 +5,334 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EFFC4361B
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 17:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E581DC4167B
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 17:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7140B22D72
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 17:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5B0323EF3
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 17:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389884AbgLKQtO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 11:49:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34276 "EHLO mx2.suse.de"
+        id S2390870AbgLKQtw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 11:49:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34850 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389714AbgLKQsv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 11 Dec 2020 11:48:51 -0500
+        id S2390288AbgLKQth (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 11 Dec 2020 11:49:37 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E06B5AE55;
-        Fri, 11 Dec 2020 16:48:08 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 7177CB296;
+        Fri, 11 Dec 2020 16:48:22 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, wahrenst@gmx.net,
-        linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
-        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
-Subject: [PATCH v6 01/11] firmware: raspberrypi: Keep count of all consumers
-Date:   Fri, 11 Dec 2020 17:47:50 +0100
-Message-Id: <20201211164801.7838-2-nsaenzjulienne@suse.de>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
+        andy.shevchenko@gmail.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: [PATCH v6 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
+Date:   Fri, 11 Dec 2020 17:48:00 +0100
+Message-Id: <20201211164801.7838-12-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201211164801.7838-1-nsaenzjulienne@suse.de>
 References: <20201211164801.7838-1-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When unbinding the firmware device we need to make sure it has no
-consumers left. Otherwise we'd leave them with a firmware handle
-pointing at freed memory.
+Adds support to control the PWM bus available in official Raspberry Pi
+PoE HAT. Only RPi's co-processor has access to it, so commands have to
+be sent through RPi's firmware mailbox interface.
 
-Keep a reference count of all consumers and introduce rpi_firmware_put()
-which will permit automatically decrease the reference count upon
-unbinding consumer drivers.
-
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-
 ---
-Changes since v5:
- - Add comment to avoid people blindly switching the memory allocation
-   to the devm variant.
- - Fix function documentation as per Florian's comment.
 
- Changes since v3:
-- Use kref instead of waiting on refcount
+Changes since v3:
+ - Rename compatible string to be more explicit WRT to bus's limitations
 
- drivers/firmware/raspberrypi.c             | 40 ++++++++++++++++++++--
- include/soc/bcm2835/raspberrypi-firmware.h |  2 ++
- 2 files changed, 39 insertions(+), 3 deletions(-)
+Changes since v2:
+ - Use devm_rpi_firmware_get()
+ - Rename driver
+ - Small cleanups
 
-diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-index 30259dc9b805..b65e4c495772 100644
---- a/drivers/firmware/raspberrypi.c
-+++ b/drivers/firmware/raspberrypi.c
-@@ -7,6 +7,7 @@
-  */
+Changes since v1:
+ - Use default pwm bindings and get rid of xlate() function
+ - Correct spelling errors
+ - Correct apply() function
+ - Round values
+ - Fix divisions in arm32 mode
+ - Small cleanups
+
+ drivers/pwm/Kconfig               |   9 ++
+ drivers/pwm/Makefile              |   1 +
+ drivers/pwm/pwm-raspberrypi-poe.c | 216 ++++++++++++++++++++++++++++++
+ 3 files changed, 226 insertions(+)
+ create mode 100644 drivers/pwm/pwm-raspberrypi-poe.c
+
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 0937e1c047ac..75e2344703b3 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -423,6 +423,15 @@ config PWM_PXA
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-pxa.
  
- #include <linux/dma-mapping.h>
-+#include <linux/kref.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
-@@ -27,6 +28,8 @@ struct rpi_firmware {
- 	struct mbox_chan *chan; /* The property channel. */
- 	struct completion c;
- 	u32 enabled;
++config PWM_RASPBERRYPI_POE
++	tristate "Raspberry Pi Firwmware PoE Hat PWM support"
++	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
++	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
++	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
++	help
++	  Enable Raspberry Pi firmware controller PWM bus used to control the
++	  official RPI PoE hat
 +
-+	struct kref consumers;
- };
- 
- static DEFINE_MUTEX(transaction_lock);
-@@ -225,12 +228,31 @@ static void rpi_register_clk_driver(struct device *dev)
- 						-1, NULL, 0);
- }
- 
-+static void rpi_firmware_delete(struct kref *kref)
-+{
-+	struct rpi_firmware *fw = container_of(kref, struct rpi_firmware,
-+					       consumers);
-+
-+	mbox_free_channel(fw->chan);
-+	kfree(fw);
-+}
-+
-+void rpi_firmware_put(struct rpi_firmware *fw)
-+{
-+	kref_put(&fw->consumers, rpi_firmware_delete);
-+}
-+EXPORT_SYMBOL_GPL(rpi_firmware_put);
-+
- static int rpi_firmware_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct rpi_firmware *fw;
- 
--	fw = devm_kzalloc(dev, sizeof(*fw), GFP_KERNEL);
-+	/*
-+	 * Memory will be freed by rpi_firmware_delete() once all users have
-+	 * released their firmware handles. Don't use devm_kzalloc() here.
-+	 */
-+	fw = kzalloc(sizeof(*fw), GFP_KERNEL);
- 	if (!fw)
- 		return -ENOMEM;
- 
-@@ -247,6 +269,7 @@ static int rpi_firmware_probe(struct platform_device *pdev)
- 	}
- 
- 	init_completion(&fw->c);
-+	kref_init(&fw->consumers);
- 
- 	platform_set_drvdata(pdev, fw);
- 
-@@ -275,7 +298,8 @@ static int rpi_firmware_remove(struct platform_device *pdev)
- 	rpi_hwmon = NULL;
- 	platform_device_unregister(rpi_clk);
- 	rpi_clk = NULL;
--	mbox_free_channel(fw->chan);
-+
-+	rpi_firmware_put(fw);
- 
- 	return 0;
- }
-@@ -284,16 +308,26 @@ static int rpi_firmware_remove(struct platform_device *pdev)
-  * rpi_firmware_get - Get pointer to rpi_firmware structure.
-  * @firmware_node:    Pointer to the firmware Device Tree node.
-  *
-+ * The reference to rpi_firmware has to be released with rpi_firmware_put().
+ config PWM_RCAR
+ 	tristate "Renesas R-Car PWM support"
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 18b89d7fd092..ed28d7bd4c64 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -38,6 +38,7 @@ obj-$(CONFIG_PWM_MXS)		+= pwm-mxs.o
+ obj-$(CONFIG_PWM_OMAP_DMTIMER)	+= pwm-omap-dmtimer.o
+ obj-$(CONFIG_PWM_PCA9685)	+= pwm-pca9685.o
+ obj-$(CONFIG_PWM_PXA)		+= pwm-pxa.o
++obj-$(CONFIG_PWM_RASPBERRYPI_POE)	+= pwm-raspberrypi-poe.o
+ obj-$(CONFIG_PWM_RCAR)		+= pwm-rcar.o
+ obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
+ obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
+diff --git a/drivers/pwm/pwm-raspberrypi-poe.c b/drivers/pwm/pwm-raspberrypi-poe.c
+new file mode 100644
+index 000000000000..24b498839fcc
+--- /dev/null
++++ b/drivers/pwm/pwm-raspberrypi-poe.c
+@@ -0,0 +1,216 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2020 Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
++ * For more information on Raspberry Pi's PoE hat see:
++ * https://www.raspberrypi.org/products/poe-hat/
 + *
-  * Returns NULL is the firmware device is not ready.
-  */
- struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
- {
- 	struct platform_device *pdev = of_find_device_by_node(firmware_node);
-+	struct rpi_firmware *fw;
- 
- 	if (!pdev)
- 		return NULL;
- 
--	return platform_get_drvdata(pdev);
-+	fw = platform_get_drvdata(pdev);
-+	if (!fw)
-+		return NULL;
++ * Limitations:
++ *  - No disable bit, so a disabled PWM is simulated by duty_cycle 0
++ *  - Only normal polarity
++ *  - Fixed 12.5 kHz period
++ *
++ * The current period is completed when HW is reconfigured.
++ */
 +
-+	if (!kref_get_unless_zero(&fw->consumers))
-+		return NULL;
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pwm.h>
 +
-+	return fw;
- }
- EXPORT_SYMBOL_GPL(rpi_firmware_get);
- 
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index cc9cdbc66403..fdfef7fe40df 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -140,6 +140,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
- 			  u32 tag, void *data, size_t len);
- int rpi_firmware_property_list(struct rpi_firmware *fw,
- 			       void *data, size_t tag_size);
-+void rpi_firmware_put(struct rpi_firmware *fw);
- struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
- #else
- static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag,
-@@ -154,6 +155,7 @@ static inline int rpi_firmware_property_list(struct rpi_firmware *fw,
- 	return -ENOSYS;
- }
- 
-+static inline void rpi_firmware_put(struct rpi_firmware *fw) { }
- static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
- {
- 	return NULL;
++#include <soc/bcm2835/raspberrypi-firmware.h>
++#include <dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h>
++
++#define RPI_PWM_MAX_DUTY		255
++#define RPI_PWM_PERIOD_NS		80000 /* 12.5 kHz */
++
++#define RPI_PWM_CUR_DUTY_REG		0x0
++#define RPI_PWM_DEF_DUTY_REG		0x1
++
++struct raspberrypi_pwm {
++	struct rpi_firmware *firmware;
++	struct pwm_chip chip;
++	unsigned int duty_cycle;
++};
++
++struct raspberrypi_pwm_prop {
++	__le32 reg;
++	__le32 val;
++	__le32 ret;
++} __packed;
++
++static inline struct raspberrypi_pwm *to_raspberrypi_pwm(struct pwm_chip *chip)
++{
++	return container_of(chip, struct raspberrypi_pwm, chip);
++}
++
++static int raspberrypi_pwm_set_property(struct rpi_firmware *firmware,
++					u32 reg, u32 val)
++{
++	struct raspberrypi_pwm_prop msg = {
++		.reg = cpu_to_le32(reg),
++		.val = cpu_to_le32(val),
++	};
++	int ret;
++
++	ret = rpi_firmware_property(firmware, RPI_FIRMWARE_SET_POE_HAT_VAL,
++				    &msg, sizeof(msg));
++	if (ret)
++		return ret;
++	if (msg.ret)
++		return -EIO;
++
++	return 0;
++}
++
++static int raspberrypi_pwm_get_property(struct rpi_firmware *firmware,
++					u32 reg, u32 *val)
++{
++	struct raspberrypi_pwm_prop msg = {
++		.reg = reg
++	};
++	int ret;
++
++	ret = rpi_firmware_property(firmware, RPI_FIRMWARE_GET_POE_HAT_VAL,
++				    &msg, sizeof(msg));
++	if (ret)
++		return ret;
++	if (msg.ret)
++		return -EIO;
++
++	*val = le32_to_cpu(msg.val);
++
++	return 0;
++}
++
++static void raspberrypi_pwm_get_state(struct pwm_chip *chip,
++				      struct pwm_device *pwm,
++				      struct pwm_state *state)
++{
++	struct raspberrypi_pwm *rpipwm = to_raspberrypi_pwm(chip);
++
++	state->period = RPI_PWM_PERIOD_NS;
++	state->duty_cycle = DIV_ROUND_CLOSEST(rpipwm->duty_cycle * RPI_PWM_PERIOD_NS,
++					      RPI_PWM_MAX_DUTY);
++	state->enabled = !!(rpipwm->duty_cycle);
++	state->polarity = PWM_POLARITY_NORMAL;
++}
++
++static int raspberrypi_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			         const struct pwm_state *state)
++{
++	struct raspberrypi_pwm *rpipwm = to_raspberrypi_pwm(chip);
++	unsigned int duty_cycle;
++	int ret;
++
++        if (state->period < RPI_PWM_PERIOD_NS ||
++            state->polarity != PWM_POLARITY_NORMAL)
++                return -EINVAL;
++
++        if (!state->enabled)
++                duty_cycle = 0;
++        else if (state->duty_cycle < RPI_PWM_PERIOD_NS)
++                duty_cycle = DIV_ROUND_CLOSEST_ULL(state->duty_cycle * RPI_PWM_MAX_DUTY,
++					           RPI_PWM_PERIOD_NS);
++        else
++                duty_cycle = RPI_PWM_MAX_DUTY;
++
++	if (duty_cycle == rpipwm->duty_cycle)
++		return 0;
++
++	ret = raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_CUR_DUTY_REG,
++					   duty_cycle);
++	if (ret) {
++		dev_err(chip->dev, "Failed to set duty cycle: %d\n", ret);
++		return ret;
++	}
++
++	/*
++	 * This sets the default duty cycle after resetting the board, we
++	 * updated it every time to mimic Raspberry Pi's downstream's driver
++	 * behaviour.
++	 */
++	ret = raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_DEF_DUTY_REG,
++					   duty_cycle);
++	if (ret) {
++		dev_err(chip->dev, "Failed to set default duty cycle: %d\n", ret);
++		return ret;
++	}
++
++        rpipwm->duty_cycle = duty_cycle;
++
++	return 0;
++}
++
++static const struct pwm_ops raspberrypi_pwm_ops = {
++	.get_state = raspberrypi_pwm_get_state,
++	.apply = raspberrypi_pwm_apply,
++	.owner = THIS_MODULE,
++};
++
++static int raspberrypi_pwm_probe(struct platform_device *pdev)
++{
++	struct device_node *firmware_node;
++	struct device *dev = &pdev->dev;
++	struct rpi_firmware *firmware;
++	struct raspberrypi_pwm *rpipwm;
++	int ret;
++
++	firmware_node = of_get_parent(dev->of_node);
++	if (!firmware_node) {
++		dev_err(dev, "Missing firmware node\n");
++		return -ENOENT;
++	}
++
++	firmware = devm_rpi_firmware_get(&pdev->dev, firmware_node);
++	of_node_put(firmware_node);
++	if (!firmware)
++		return -EPROBE_DEFER;
++
++	rpipwm = devm_kzalloc(&pdev->dev, sizeof(*rpipwm), GFP_KERNEL);
++	if (!rpipwm)
++		return -ENOMEM;
++
++	rpipwm->firmware = firmware;
++	rpipwm->chip.dev = dev;
++	rpipwm->chip.ops = &raspberrypi_pwm_ops;
++	rpipwm->chip.base = -1;
++	rpipwm->chip.npwm = RASPBERRYPI_FIRMWARE_PWM_NUM;
++
++	platform_set_drvdata(pdev, rpipwm);
++
++	ret = raspberrypi_pwm_get_property(rpipwm->firmware, RPI_PWM_CUR_DUTY_REG,
++					   &rpipwm->duty_cycle);
++	if (ret) {
++		dev_err(dev, "Failed to get duty cycle: %d\n", ret);
++		return ret;
++	}
++
++	return pwmchip_add(&rpipwm->chip);
++}
++
++static int raspberrypi_pwm_remove(struct platform_device *pdev)
++{
++	struct raspberrypi_pwm *rpipwm = platform_get_drvdata(pdev);
++
++	return pwmchip_remove(&rpipwm->chip);
++}
++
++static const struct of_device_id raspberrypi_pwm_of_match[] = {
++	{ .compatible = "raspberrypi,firmware-poe-pwm", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, raspberrypi_pwm_of_match);
++
++static struct platform_driver raspberrypi_pwm_driver = {
++	.driver = {
++		.name = "raspberrypi-poe-pwm",
++		.of_match_table = raspberrypi_pwm_of_match,
++	},
++	.probe = raspberrypi_pwm_probe,
++	.remove = raspberrypi_pwm_remove,
++};
++module_platform_driver(raspberrypi_pwm_driver);
++
++MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de>");
++MODULE_DESCRIPTION("Raspberry Pi Firwmare Based PWM Bus Driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.29.2
 
