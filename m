@@ -2,63 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93D3C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 20:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 451E2C4361B
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 20:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 740642311A
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 20:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F382E23BCD
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 20:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405859AbgLKSgc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 13:36:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405891AbgLKSfy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 11 Dec 2020 13:35:54 -0500
-Subject: Re: [GIT PULL] Late GPIO fixes for v5.10
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607711713;
-        bh=mG94QyQCNioYqA9lkBgZiFfr22b+SVdCC85HE70C6nI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=BjOwN2Yt/h1U4f/vxh4BA/W4SxeCAOhGTkrlhZGGlQ4qFYc0PVy4LEvWyGwmjfGO2
-         F+D5sY8/OV8JYXnFxdCvNCqD0VxgVYXYTnPbKqOg+CbCnhz+5/17nsAUHCMvb4/9uB
-         GusYym7rLmobyA1Ic7CH/KrdA5JQxPXwg79iFQzowVzOi+M5LWxKdh4dWtAAd/C3Yl
-         0v2lF2rwGq2S/ELn3ZdPtHB/XHuUi+wlatjA+r6GMRrFlL6RZ7QvQsR3BT1hL62BIc
-         pOO9sLZAq+0tNeY2vprm/Dl2x9gk4po9Vr2Msb7xyoCLk2Zulh9eiGqzE5NJ7xYjES
-         gXercHjrE/1Rg==
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdbVVZPFs-=pyDO-HpR4yY-f2nyYRgTTwNbA3nMzXaYSNQ@mail.gmail.com>
-References: <CACRpkdbVVZPFs-=pyDO-HpR4yY-f2nyYRgTTwNbA3nMzXaYSNQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdbVVZPFs-=pyDO-HpR4yY-f2nyYRgTTwNbA3nMzXaYSNQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/v5.10-3
-X-PR-Tracked-Commit-Id: 263ade7166a2e589c5b605272690c155c0637dcb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6d47cdecaa45c88ba3858323aa54ec9aa1de1a9b
-Message-Id: <160771171391.31675.6615597234235156074.pr-tracker-bot@kernel.org>
-Date:   Fri, 11 Dec 2020 18:35:13 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1727103AbgLKS7W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 13:59:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732084AbgLKS7L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 13:59:11 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B07A9C0613CF;
+        Fri, 11 Dec 2020 10:58:31 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id c79so7550017pfc.2;
+        Fri, 11 Dec 2020 10:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=320RebTR8RNqiiBYn8ZtKuZFxrkRlPQWBrl9GpDvUvM=;
+        b=LKJt41PIAvjRtKddIbd2BmReM4x7NmVbbEQ2eAMRf7f07yw0fYlUf1748jdc/SAVAK
+         TpXdkvk8yekQjxPzQJnkVouWqv0c+ChuAA41eeLgyoiiFWLjOv+n3d9FTQjjAKUW6uvH
+         0X/ZMuckLfEjo3m+X6S3H8/wDjSYAy8y5YbR3ifxdAkW24iQHeCUL8A3JAQHzcbNgvtm
+         S5al5sx0D1BNPeNDozCOOCno+ltgZBlUw6HiRpdQfTQl1gjSOLpU/kYp7Zi8YU6+Qucv
+         ipwAvtyusSgjihMaEcMB9LZVQnAJEbpj1iAThLWROg1hXGlQNwExfsH14KRRLCES3CG1
+         GCVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=320RebTR8RNqiiBYn8ZtKuZFxrkRlPQWBrl9GpDvUvM=;
+        b=tDLbHv4a59nYtF2MHioqm5rn6f4xsf8RU4X6fmScmCs0AtHQS9Mqnx+wMmcqLGWlR3
+         wlzSaHw3Z6Spxqh1e2StEIMWOkKly3jXcNLuPeSDVJ6Ko6t2tQjo3hmP/CjfDVonFyE/
+         3s4QIBVhjKzOaiZy31yISWai1cQwVnTW1FHIlk1HgxTIRnLQTUNuvLm8/qP6yUNkUUca
+         1qQ7L9h6Fyre88GlmsgFcPi8972HIZH9w1c1tr8UlkxzZyyR+4TpNAPGUPZyjEA0IYXQ
+         EoLf31Kv+P8fOm53LjRtLnj1kSTwmUDuVoiXhBjlB6LcAT8zjUHzQQfUsDeME2KCyS9X
+         fxnQ==
+X-Gm-Message-State: AOAM5310IK2fr7SgbLitl2KoV4uiUhMhcqUGSROv9OIbqFOksz4clsLl
+        jQZZdjyESVAvq/oByUQaOzBUg+R8Lt5xse+Fxfk=
+X-Google-Smtp-Source: ABdhPJzCwaH9RtljsVUgVllZ8IxAE73P9W7PrK5XYEhFoEd6uPSxaOLS8UXO/eps772X8J4EBsfcIjtMm5H0Z3jQYws=
+X-Received: by 2002:a63:c04b:: with SMTP id z11mr12389891pgi.74.1607713111220;
+ Fri, 11 Dec 2020 10:58:31 -0800 (PST)
+MIME-Version: 1.0
+References: <1607659581-15764-1-git-send-email-lennychen@tencent.com>
+In-Reply-To: <1607659581-15764-1-git-send-email-lennychen@tencent.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 11 Dec 2020 20:58:15 +0200
+Message-ID: <CAHp75VdmC2QyVYz_QcbgpdMwkJ5VndUwp=rmk=b0KSZcwZrqkg@mail.gmail.com>
+Subject: Re: [PATCH] driver: pinctrl: fix unused variable warning
+To:     chenlei0x@gmail.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lei Chen <lennychen@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Fri, 11 Dec 2020 09:38:23 +0100:
+On Fri, Dec 11, 2020 at 1:46 PM <chenlei0x@gmail.com> wrote:
+>
+> From: Lei Chen <lennychen@tencent.com>
+>
+> In pinctrl_pins_show, range, gpio_num and chip variables are not used if
+> CONFIG_GPIOLIB is not defined. Use this macro to wrap them.
+>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/v5.10-3
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/drivers/pinctrl/core.c?h=for-next&id=b507cb92477ad85902783a183c5ce01d16296687
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6d47cdecaa45c88ba3858323aa54ec9aa1de1a9b
-
-Thank you!
+Rule of thumb: base your patches on the latest subsystem tree snapshot.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+With Best Regards,
+Andy Shevchenko
