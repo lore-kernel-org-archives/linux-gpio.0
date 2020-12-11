@@ -2,85 +2,113 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 451E2C4361B
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 20:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F436C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 21:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F382E23BCD
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 20:41:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EF5323BAB
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 21:57:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgLKS7W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 13:59:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732084AbgLKS7L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 13:59:11 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B07A9C0613CF;
-        Fri, 11 Dec 2020 10:58:31 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id c79so7550017pfc.2;
-        Fri, 11 Dec 2020 10:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=320RebTR8RNqiiBYn8ZtKuZFxrkRlPQWBrl9GpDvUvM=;
-        b=LKJt41PIAvjRtKddIbd2BmReM4x7NmVbbEQ2eAMRf7f07yw0fYlUf1748jdc/SAVAK
-         TpXdkvk8yekQjxPzQJnkVouWqv0c+ChuAA41eeLgyoiiFWLjOv+n3d9FTQjjAKUW6uvH
-         0X/ZMuckLfEjo3m+X6S3H8/wDjSYAy8y5YbR3ifxdAkW24iQHeCUL8A3JAQHzcbNgvtm
-         S5al5sx0D1BNPeNDozCOOCno+ltgZBlUw6HiRpdQfTQl1gjSOLpU/kYp7Zi8YU6+Qucv
-         ipwAvtyusSgjihMaEcMB9LZVQnAJEbpj1iAThLWROg1hXGlQNwExfsH14KRRLCES3CG1
-         GCVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=320RebTR8RNqiiBYn8ZtKuZFxrkRlPQWBrl9GpDvUvM=;
-        b=tDLbHv4a59nYtF2MHioqm5rn6f4xsf8RU4X6fmScmCs0AtHQS9Mqnx+wMmcqLGWlR3
-         wlzSaHw3Z6Spxqh1e2StEIMWOkKly3jXcNLuPeSDVJ6Ko6t2tQjo3hmP/CjfDVonFyE/
-         3s4QIBVhjKzOaiZy31yISWai1cQwVnTW1FHIlk1HgxTIRnLQTUNuvLm8/qP6yUNkUUca
-         1qQ7L9h6Fyre88GlmsgFcPi8972HIZH9w1c1tr8UlkxzZyyR+4TpNAPGUPZyjEA0IYXQ
-         EoLf31Kv+P8fOm53LjRtLnj1kSTwmUDuVoiXhBjlB6LcAT8zjUHzQQfUsDeME2KCyS9X
-         fxnQ==
-X-Gm-Message-State: AOAM5310IK2fr7SgbLitl2KoV4uiUhMhcqUGSROv9OIbqFOksz4clsLl
-        jQZZdjyESVAvq/oByUQaOzBUg+R8Lt5xse+Fxfk=
-X-Google-Smtp-Source: ABdhPJzCwaH9RtljsVUgVllZ8IxAE73P9W7PrK5XYEhFoEd6uPSxaOLS8UXO/eps772X8J4EBsfcIjtMm5H0Z3jQYws=
-X-Received: by 2002:a63:c04b:: with SMTP id z11mr12389891pgi.74.1607713111220;
- Fri, 11 Dec 2020 10:58:31 -0800 (PST)
+        id S2394684AbgLKVJE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 16:09:04 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:37572 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391366AbgLKVIv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 16:08:51 -0500
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1607720888;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HhSZk3JoDjyQOLMPOFgRgzwUyrTACu0UGSGM/7NvY6I=;
+        b=ODjND6hv3nPITeDJOTxlIhVMHSqc6z+V97F+ULhmNWUDUg4MeWWcc8/RjfBSpJ+3E7KGvI
+        7u3oIQ1T0blXK7tiZjRPA+EmHIW9gpYRAbWAbVY6gfKBefi2hgLwHuva9Pr5DzcIfb4zGY
+        SuyetRvP8eIvO7dEK0SnW5NkAhYPqinzrr4Dc4PuL6rLfSElkjk6Dm5HgGKkZSl8lMyVVb
+        GCj6eMo+nj1M3TWtminM7NXFXEDFn7q5iOiTlBNVs+z2wkgYrK9LnDALIH7BFq1ID6L7rE
+        ud/rYvRghXbFi0znwvlxBBbwl+qtg9iLqpnrT1m9/JCtlXDnnHPHRcYj9dijAA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1607720888;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HhSZk3JoDjyQOLMPOFgRgzwUyrTACu0UGSGM/7NvY6I=;
+        b=jd0RTQztrN1EtCKge/4M0pzHQ/MU02TRkL1ocrE3lvW4v9ht90/z6O6t5eEalNoD9uJ0/m
+        DmETqLTaJjhHPNAQ==
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Marc Zyngier <maz@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        afzal mohammed <afzal.mohd.ma@gmail.com>,
+        linux-parisc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Wambui Karuga <wambui.karugax@gmail.com>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list\:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Tariq Toukan <tariqt@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "open list\:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
+        Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org
+Subject: Re: [patch 03/30] genirq: Move irq_set_lockdep_class() to core
+In-Reply-To: <CAHp75Vc-2OjE2uwvNRiyLMQ8GSN3P7SehKD-yf229_7ocaktiw@mail.gmail.com>
+References: <20201210192536.118432146@linutronix.de> <20201210194042.860029489@linutronix.de> <CAHp75Vc-2OjE2uwvNRiyLMQ8GSN3P7SehKD-yf229_7ocaktiw@mail.gmail.com>
+Date:   Fri, 11 Dec 2020 22:08:07 +0100
+Message-ID: <87h7osgifc.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <1607659581-15764-1-git-send-email-lennychen@tencent.com>
-In-Reply-To: <1607659581-15764-1-git-send-email-lennychen@tencent.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 11 Dec 2020 20:58:15 +0200
-Message-ID: <CAHp75VdmC2QyVYz_QcbgpdMwkJ5VndUwp=rmk=b0KSZcwZrqkg@mail.gmail.com>
-Subject: Re: [PATCH] driver: pinctrl: fix unused variable warning
-To:     chenlei0x@gmail.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lei Chen <lennychen@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 1:46 PM <chenlei0x@gmail.com> wrote:
->
-> From: Lei Chen <lennychen@tencent.com>
->
-> In pinctrl_pins_show, range, gpio_num and chip variables are not used if
-> CONFIG_GPIOLIB is not defined. Use this macro to wrap them.
->
+On Fri, Dec 11 2020 at 19:53, Andy Shevchenko wrote:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/drivers/pinctrl/core.c?h=for-next&id=b507cb92477ad85902783a183c5ce01d16296687
+> On Thu, Dec 10, 2020 at 10:14 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>>
+>> irq_set_lockdep_class() is used from modules and requires irq_to_desc() to
+>> be exported. Move it into the core code which lifts another requirement for
+>> the export.
+>
+> ...
+>
+>> +       if (IS_ENABLED(CONFIG_LOCKDEP))
+>> +               __irq_set_lockdep_class(irq, lock_class, request_class);
 
-Rule of thumb: base your patches on the latest subsystem tree snapshot.
-
--- 
-With Best Regards,
-Andy Shevchenko
+You are right. Let me fix that.
