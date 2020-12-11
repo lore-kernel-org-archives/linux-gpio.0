@@ -2,72 +2,58 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF27C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E038C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A3B223CD3
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:07:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C54D23C82
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:15:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388204AbgLKKGY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 05:06:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60462 "EHLO
+        id S2394227AbgLKKOz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 05:14:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405787AbgLKKGD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 05:06:03 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C3FC0617A6
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 02:04:42 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id m5so8390236wrx.9
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 02:04:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=1m1097L8Z65yNEwPVsqCFAhMTO7JcIQztqm0XMNCEPQ=;
-        b=QxFc8GC7E8T+U1gL6XJZvjeXxiWbuXfRqv6+3/ZJOEoQYn8YiRuOLDZAWueGTraddr
-         xPqz2bb/8UoAjcvd5vsoN8LW5Iq1Lp0AqSabcEPsXCi+l/VkgtRG+OzcSz2lDjE/Pdix
-         jshzcxstN+qosX02zQCGS+/I2FYEYzEAEBcOtJSJ1mr8h1MxoB17ALXOASyS2RwWORLD
-         sYyHzWywWpvht4yy3yfrgCqZgrWTC9ga2KkmmQ+oI2PP2v+Qn9n0ORXRDwcKBkqiCMKf
-         N0XznwYuSkPJfUeKcTzGZ2pjw4N1X+j5jdnHapfeS7fwZVeyxQTBUj+e7/XfSTgXR3Ap
-         ykzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=1m1097L8Z65yNEwPVsqCFAhMTO7JcIQztqm0XMNCEPQ=;
-        b=isUfTPZP4a3M/wVuFoxhbdTAAD12fKNMavTiGc0/ZpBGX0uyDE7oDijApxwf46CdCL
-         Oc/KJ45auj1E8D3N5KJHHpaQqxBj2r2/Kg43/+5OlBwpIb3kF5fCjk3TRDZPqNdu4nWz
-         2uuGBuYewxs43VNCIF+QAiwf+8+NGNSL78QhxFNMWEHLnC4FKsoPK+nbXSlwPWMZjkOT
-         Dwd61RJ0RjD9lvyNYeV/UqHuQfSp6Srw6IYPVVA0/ZP+6F+LLZv8DUPa1F/asK5eMKze
-         DE0LGqQAQLFFmmyVQ90K3hW+oEBYmf4GAtLA6lNrmZrr9EO69uo7hIH/XDDVPrZv/eHW
-         fG1Q==
-X-Gm-Message-State: AOAM533ZZMKtWliscERusQayMgQ2/dxeNxeeJGeEPlvaKQPShH2GE3Me
-        zUpPMQQnnv3bLA7vxivd7h8GDw==
-X-Google-Smtp-Source: ABdhPJwPXfTZPDeiEu60EOOVLfjPDebdQDfkcu30zCcF3k07tbHpbRDSiAPsDeGxO9u3bWjkQ8cNJw==
-X-Received: by 2002:a5d:6ccc:: with SMTP id c12mr13142414wrc.4.1607681080467;
-        Fri, 11 Dec 2020 02:04:40 -0800 (PST)
-Received: from dell ([91.110.221.240])
-        by smtp.gmail.com with ESMTPSA id 125sm14307876wmc.27.2020.12.11.02.04.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Dec 2020 02:04:39 -0800 (PST)
-Date:   Fri, 11 Dec 2020 10:04:36 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        with ESMTP id S1727879AbgLKKOV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 05:14:21 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AABD4C0613CF;
+        Fri, 11 Dec 2020 02:13:33 -0800 (PST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1607681612;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4TDbx5/eRxAHfo/4EOFfTsBBr8/iJ4NkSA5alVnInbw=;
+        b=Ebn4XFcCDWYTM7X6Ch/mHznY5CAClfBbnhfLrO3Y6Kuikr6oFUaWSYQxhfOCU5ekEgEuk5
+        ABxuPFqFDpUr/6fqEOmv/vOsnXIUuOejIYPyy0GJ0t4RBjN90FMlPlJ+tVDpM1qv0p7R8a
+        xeZwcfSm29wJ/oRRI9rOhGLtzHCBhA3bpzeRWeG0Z24sHj1GQq05/L9FR4mQ32JHOYHSXu
+        dDKuIj780YnhAu3jYewZAvLFsgNKDUqY7qYYXiJp4nkUDKsOaT+FgTS0xQYjkM48kJqr48
+        89TXlGkoZBhTjLzmOxl42qVBK3QR64G1yObP38Wf6bryGtmLISA8jiMWLoDDjQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1607681612;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4TDbx5/eRxAHfo/4EOFfTsBBr8/iJ4NkSA5alVnInbw=;
+        b=xExbb1LasawAWe5q2U6DGt3Co7x6OFVa9wgrktZhoDZT1DZdHSUTeF92DjXx94ng108/hg
+        9efMO3KmpdkXHQDQ==
+To:     =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        boris.ostrovsky@oracle.com, LKML <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Marc Zyngier <maz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
         Helge Deller <deller@gmx.de>,
         afzal mohammed <afzal.mohd.ma@gmail.com>,
         linux-parisc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
@@ -83,7 +69,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Wambui Karuga <wambui.karugax@gmail.com>,
         intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        linux-gpio@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Jon Mason <jdmason@kudzu.us>,
         Dave Jiang <dave.jiang@intel.com>,
         Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -97,51 +85,72 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
         linux-rdma@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-Subject: Re: [patch 16/30] mfd: ab8500-debugfs: Remove the racy fiddling with
- irq_desc
-Message-ID: <20201211100436.GC5029@dell>
-References: <20201210192536.118432146@linutronix.de>
- <20201210194044.157283633@linutronix.de>
+        Leon Romanovsky <leon@kernel.org>
+Subject: Re: [patch 27/30] xen/events: Only force affinity mask for percpu interrupts
+In-Reply-To: <a4bce428-4420-6064-c7cc-7136a7544a52@suse.com>
+References: <20201210192536.118432146@linutronix.de> <20201210194045.250321315@linutronix.de> <7f7af60f-567f-cdef-f8db-8062a44758ce@oracle.com> <a4bce428-4420-6064-c7cc-7136a7544a52@suse.com>
+Date:   Fri, 11 Dec 2020 11:13:31 +0100
+Message-ID: <874kksiras.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201210194044.157283633@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 10 Dec 2020, Thomas Gleixner wrote:
+On Fri, Dec 11 2020 at 07:17, J=C3=BCrgen Gro=C3=9F wrote:
+> On 11.12.20 00:20, boris.ostrovsky@oracle.com wrote:
+>>=20
+>> On 12/10/20 2:26 PM, Thomas Gleixner wrote:
+>>> All event channel setups bind the interrupt on CPU0 or the target CPU f=
+or
+>>> percpu interrupts and overwrite the affinity mask with the corresponding
+>>> cpumask. That does not make sense.
+>>>
+>>> The XEN implementation of irqchip::irq_set_affinity() already picks a
+>>> single target CPU out of the affinity mask and the actual target is sto=
+red
+>>> in the effective CPU mask, so destroying the user chosen affinity mask
+>>> which might contain more than one CPU is wrong.
+>>>
+>>> Change the implementation so that the channel is bound to CPU0 at the X=
+EN
+>>> level and leave the affinity mask alone. At startup of the interrupt
+>>> affinity will be assigned out of the affinity mask and the XEN binding =
+will
+>>> be updated.
+>>=20
+>>=20
+>> If that's the case then I wonder whether we need this call at all and in=
+stead bind at startup time.
+>
+> This binding to cpu0 was introduced with commit 97253eeeb792d61ed2
+> and I have no reason to believe the underlying problem has been
+> eliminated.
 
-> First of all drivers have absolutely no business to dig into the internals
-> of an irq descriptor. That's core code and subject to change. All of this
-> information is readily available to /proc/interrupts in a safe and race
-> free way.
-> 
-> Remove the inspection code which is a blatant violation of subsystem
-> boundaries and racy against concurrent modifications of the interrupt
-> descriptor.
-> 
-> Print the irq line instead so the information can be looked up in a sane
-> way in /proc/interrupts.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> ---
->  drivers/mfd/ab8500-debugfs.c |   16 +++-------------
->  1 file changed, 3 insertions(+), 13 deletions(-)
+    "The kernel-side VCPU binding was not being correctly set for newly
+     allocated or bound interdomain events.  In ARM guests where 2-level
+     events were used, this would result in no interdomain events being
+     handled because the kernel-side VCPU masks would all be clear.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+     x86 guests would work because the irq affinity was set during irq
+     setup and this would set the correct kernel-side VCPU binding."
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I'm not convinced that this is really correctly analyzed because affinity
+setting is done at irq startup.
+
+                switch (__irq_startup_managed(desc, aff, force)) {
+	        case IRQ_STARTUP_NORMAL:
+	                ret =3D __irq_startup(desc);
+                        irq_setup_affinity(desc);
+			break;
+
+which is completely architecture agnostic. So why should this magically
+work on x86 and not on ARM if both are using the same XEN irqchip with
+the same irqchip callbacks.
+
+Thanks,
+
+        tglx
+
+
