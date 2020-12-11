@@ -2,48 +2,43 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0424C2BB48
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB09C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6780A23C82
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:16:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F95523DE3
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 10:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733192AbgLKKP7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 05:15:59 -0500
-Received: from mga09.intel.com ([134.134.136.24]:39165 "EHLO mga09.intel.com"
+        id S1731920AbgLKKYb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 05:24:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40316 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728679AbgLKKP2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 11 Dec 2020 05:15:28 -0500
-IronPort-SDR: fpAU1niPIFuPTXmkaalAoedDWd6uMmiwK+GIuPm7zkHmUKiTH/WmaZ7cJIBYl1P482UaQWEBR/
- 2I8f41Hr9z8g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9831"; a="174554594"
-X-IronPort-AV: E=Sophos;i="5.78,411,1599548400"; 
-   d="scan'208";a="174554594"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2020 02:13:39 -0800
-IronPort-SDR: RsQ7lmI/Ay9vaPccFC88f8JfxCXrqcVSXV/MMPaui8twEB+RtpNdJLZX44RdUN4vBcYtBFso8b
- xcHG9HzNR9pw==
-X-IronPort-AV: E=Sophos;i="5.78,411,1599548400"; 
-   d="scan'208";a="321689328"
-Received: from ynaki-mobl1.ger.corp.intel.com (HELO [10.214.252.46]) ([10.214.252.46])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2020 02:13:24 -0800
-Subject: Re: [patch 14/30] drm/i915/pmu: Replace open coded kstat_irqs() copy
-To:     Thomas Gleixner <tglx@linutronix.de>,
+        id S1731174AbgLKKYE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 11 Dec 2020 05:24:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1607682195; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ylj5Ou5EGxXoY8HzgwHM13TBu2785E6dSVq65gzanwU=;
+        b=JX3YEGDayzn/l2cWmgQW18vQXaGMPfebAVghI4mXIKoPFWr46I+1iXrHo1/89wbKgnsUQw
+        fJfjpQHih3nDIAzyPuBktA46WbSRZFyDOHCZ4ClWbuCsmJrqvPgr1yruvflf2j4L0wRo2h
+        gXPAph/J2UIJAu9VFo9bE4J63Z3Pprg=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 86CDFADA2;
+        Fri, 11 Dec 2020 10:23:15 +0000 (UTC)
+Subject: Re: [patch 27/30] xen/events: Only force affinity mask for percpu
+ interrupts
+To:     Thomas Gleixner <tglx@linutronix.de>, boris.ostrovsky@oracle.com,
         LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Marc Zyngier <maz@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
         Helge Deller <deller@gmx.de>,
         afzal mohammed <afzal.mohd.ma@gmail.com>,
@@ -54,9 +49,16 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will@kernel.org>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
         Wambui Karuga <wambui.karugax@gmail.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
         Jon Mason <jdmason@kudzu.us>,
@@ -73,233 +75,260 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
         linux-rdma@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
+        Leon Romanovsky <leon@kernel.org>
 References: <20201210192536.118432146@linutronix.de>
- <20201210194043.957046529@linutronix.de>
-From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Organization: Intel Corporation UK Plc
-Message-ID: <ad05af1a-5463-2a80-0887-7629721d6863@linux.intel.com>
-Date:   Fri, 11 Dec 2020 10:13:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20201210194045.250321315@linutronix.de>
+ <7f7af60f-567f-cdef-f8db-8062a44758ce@oracle.com>
+ <a4bce428-4420-6064-c7cc-7136a7544a52@suse.com>
+ <874kksiras.fsf@nanos.tec.linutronix.de>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <83b596c7-453b-34b5-a6a5-6c04d20e818a@suse.com>
+Date:   Fri, 11 Dec 2020 11:23:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201210194043.957046529@linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <874kksiras.fsf@nanos.tec.linutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="JLZob3e3TcGZaffU2V6GYg9zw25iTy30k"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--JLZob3e3TcGZaffU2V6GYg9zw25iTy30k
+Content-Type: multipart/mixed; boundary="W7MOwpcHMEZDHVpnNeRdRpRviypq0k3b2";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Thomas Gleixner <tglx@linutronix.de>, boris.ostrovsky@oracle.com,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Marc Zyngier <maz@kernel.org>,
+ Stefano Stabellini <sstabellini@kernel.org>, xen-devel@lists.xenproject.org,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, afzal mohammed <afzal.mohd.ma@gmail.com>,
+ linux-parisc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Christian Borntraeger <borntraeger@de.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+ Chris Wilson <chris@chris-wilson.co.uk>,
+ Wambui Karuga <wambui.karugax@gmail.com>, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ Lee Jones <lee.jones@linaro.org>, Jon Mason <jdmason@kudzu.us>,
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+ linux-ntb@googlegroups.com, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Michal Simek <michal.simek@xilinx.com>, linux-pci@vger.kernel.org,
+ Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+ Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Tariq Toukan <tariqt@nvidia.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>
+Message-ID: <83b596c7-453b-34b5-a6a5-6c04d20e818a@suse.com>
+Subject: Re: [patch 27/30] xen/events: Only force affinity mask for percpu
+ interrupts
+References: <20201210192536.118432146@linutronix.de>
+ <20201210194045.250321315@linutronix.de>
+ <7f7af60f-567f-cdef-f8db-8062a44758ce@oracle.com>
+ <a4bce428-4420-6064-c7cc-7136a7544a52@suse.com>
+ <874kksiras.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <874kksiras.fsf@nanos.tec.linutronix.de>
 
-On 10/12/2020 19:25, Thomas Gleixner wrote:
-> Driver code has no business with the internals of the irq descriptor.
-> 
-> Aside of that the count is per interrupt line and therefore takes
-> interrupts from other devices into account which share the interrupt line
-> and are not handled by the graphics driver.
-> 
-> Replace it with a pmu private count which only counts interrupts which
-> originate from the graphics card.
-> 
-> To avoid atomics or heuristics of some sort make the counter field
-> 'unsigned long'. That limits the count to 4e9 on 32bit which is a lot and
-> postprocessing can easily deal with the occasional wraparound.
+--W7MOwpcHMEZDHVpnNeRdRpRviypq0k3b2
+Content-Type: multipart/mixed;
+ boundary="------------C0A97F76D1E2DDEBCBB7C379"
+Content-Language: en-US
 
-After my failed hasty sketch from last night I had a different one which 
-was kind of heuristics based (re-reading the upper dword and retrying if 
-it changed on 32-bit). But you are right - it is okay to at least start 
-like this today and if later there is a need we can either do that or 
-deal with wrap at PMU read time.
+This is a multi-part message in MIME format.
+--------------C0A97F76D1E2DDEBCBB7C379
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-So thanks for dealing with it, some small comments below but overall it 
-is fine.
+On 11.12.20 11:13, Thomas Gleixner wrote:
+> On Fri, Dec 11 2020 at 07:17, J=C3=BCrgen Gro=C3=9F wrote:
+>> On 11.12.20 00:20, boris.ostrovsky@oracle.com wrote:
+>>>
+>>> On 12/10/20 2:26 PM, Thomas Gleixner wrote:
+>>>> All event channel setups bind the interrupt on CPU0 or the target CP=
+U for
+>>>> percpu interrupts and overwrite the affinity mask with the correspon=
+ding
+>>>> cpumask. That does not make sense.
+>>>>
+>>>> The XEN implementation of irqchip::irq_set_affinity() already picks =
+a
+>>>> single target CPU out of the affinity mask and the actual target is =
+stored
+>>>> in the effective CPU mask, so destroying the user chosen affinity ma=
+sk
+>>>> which might contain more than one CPU is wrong.
+>>>>
+>>>> Change the implementation so that the channel is bound to CPU0 at th=
+e XEN
+>>>> level and leave the affinity mask alone. At startup of the interrupt=
 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: intel-gfx@lists.freedesktop.org
-> Cc: dri-devel@lists.freedesktop.org
-> ---
->   drivers/gpu/drm/i915/i915_irq.c |   34 ++++++++++++++++++++++++++++++++++
->   drivers/gpu/drm/i915/i915_pmu.c |   18 +-----------------
->   drivers/gpu/drm/i915/i915_pmu.h |    8 ++++++++
->   3 files changed, 43 insertions(+), 17 deletions(-)
-> 
-> --- a/drivers/gpu/drm/i915/i915_irq.c
-> +++ b/drivers/gpu/drm/i915/i915_irq.c
-> @@ -60,6 +60,24 @@
->    * and related files, but that will be described in separate chapters.
->    */
->   
-> +/*
-> + * Interrupt statistic for PMU. Increments the counter only if the
-> + * interrupt originated from the the GPU so interrupts from a device which
-> + * shares the interrupt line are not accounted.
-> + */
-> +static inline void pmu_irq_stats(struct drm_i915_private *priv,
+>>>> affinity will be assigned out of the affinity mask and the XEN bindi=
+ng will
+>>>> be updated.
+>>>
+>>>
+>>> If that's the case then I wonder whether we need this call at all and=
+ instead bind at startup time.
+>>
+>> This binding to cpu0 was introduced with commit 97253eeeb792d61ed2
+>> and I have no reason to believe the underlying problem has been
+>> eliminated.
+>=20
+>      "The kernel-side VCPU binding was not being correctly set for newl=
+y
+>       allocated or bound interdomain events.  In ARM guests where 2-lev=
+el
+>       events were used, this would result in no interdomain events bein=
+g
+>       handled because the kernel-side VCPU masks would all be clear.
+>=20
+>       x86 guests would work because the irq affinity was set during irq=
 
-We never use priv as a local name, it should be either i915 or dev_priv.
+>       setup and this would set the correct kernel-side VCPU binding."
+>=20
+> I'm not convinced that this is really correctly analyzed because affini=
+ty
+> setting is done at irq startup.
+>=20
+>                  switch (__irq_startup_managed(desc, aff, force)) {
+> 	        case IRQ_STARTUP_NORMAL:
+> 	                ret =3D __irq_startup(desc);
+>                          irq_setup_affinity(desc);
+> 			break;
+>=20
+> which is completely architecture agnostic. So why should this magically=
 
-> +				 irqreturn_t res)
-> +{
-> +	if (unlikely(res != IRQ_HANDLED))
-> +		return;
-> +
-> +	/*
-> +	 * A clever compiler translates that into INC. A not so clever one
-> +	 * should at least prevent store tearing.
-> +	 */
-> +	WRITE_ONCE(priv->pmu.irq_count, priv->pmu.irq_count + 1);
+> work on x86 and not on ARM if both are using the same XEN irqchip with
+> the same irqchip callbacks.
 
-Curious, probably more educational for me - given x86_32 and x86_64, and 
-the context of it getting called, what is the difference from just doing 
-irq_count++?
+I think this might be related to _initial_ cpu binding of events and
+changing the binding later. This might be handled differently in the
+hypervisor.
 
-> +}
-> +
->   typedef bool (*long_pulse_detect_func)(enum hpd_pin pin, u32 val);
->   
->   static const u32 hpd_ilk[HPD_NUM_PINS] = {
-> @@ -1599,6 +1617,8 @@ static irqreturn_t valleyview_irq_handle
->   		valleyview_pipestat_irq_handler(dev_priv, pipe_stats);
->   	} while (0);
->   
-> +	pmu_irq_stats(dev_priv, ret);
-> +
->   	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
->   
->   	return ret;
-> @@ -1676,6 +1696,8 @@ static irqreturn_t cherryview_irq_handle
->   		valleyview_pipestat_irq_handler(dev_priv, pipe_stats);
->   	} while (0);
->   
-> +	pmu_irq_stats(dev_priv, ret);
-> +
->   	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
->   
->   	return ret;
-> @@ -2103,6 +2125,8 @@ static irqreturn_t ilk_irq_handler(int i
->   	if (sde_ier)
->   		raw_reg_write(regs, SDEIER, sde_ier);
->   
-> +	pmu_irq_stats(i915, ret);
-> +
->   	/* IRQs are synced during runtime_suspend, we don't require a wakeref */
->   	enable_rpm_wakeref_asserts(&i915->runtime_pm);
->   
-> @@ -2419,6 +2443,8 @@ static irqreturn_t gen8_irq_handler(int
->   
->   	gen8_master_intr_enable(regs);
->   
-> +	pmu_irq_stats(dev_priv, IRQ_HANDLED);
-> +
->   	return IRQ_HANDLED;
->   }
->   
-> @@ -2514,6 +2540,8 @@ static __always_inline irqreturn_t
->   
->   	gen11_gu_misc_irq_handler(gt, gu_misc_iir);
->   
-> +	pmu_irq_stats(i915, IRQ_HANDLED);
-> +
->   	return IRQ_HANDLED;
->   }
->   
-> @@ -3688,6 +3716,8 @@ static irqreturn_t i8xx_irq_handler(int
->   		i8xx_pipestat_irq_handler(dev_priv, iir, pipe_stats);
->   	} while (0);
->   
-> +	pmu_irq_stats(dev_priv, ret);
-> +
->   	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
->   
->   	return ret;
-> @@ -3796,6 +3826,8 @@ static irqreturn_t i915_irq_handler(int
->   		i915_pipestat_irq_handler(dev_priv, iir, pipe_stats);
->   	} while (0);
->   
-> +	pmu_irq_stats(dev_priv, ret);
-> +
->   	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
->   
->   	return ret;
-> @@ -3941,6 +3973,8 @@ static irqreturn_t i965_irq_handler(int
->   		i965_pipestat_irq_handler(dev_priv, iir, pipe_stats);
->   	} while (0);
->   
-> +	pmu_irq_stats(dev_priv, IRQ_HANDLED);
-> +
->   	enable_rpm_wakeref_asserts(&dev_priv->runtime_pm);
->   
->   	return ret;
-> --- a/drivers/gpu/drm/i915/i915_pmu.c
-> +++ b/drivers/gpu/drm/i915/i915_pmu.c
-> @@ -423,22 +423,6 @@ static enum hrtimer_restart i915_sample(
->   	return HRTIMER_RESTART;
->   }
 
-In this file you can also drop the #include <linux/irq.h> line.
+Juergen
 
->   
-> -static u64 count_interrupts(struct drm_i915_private *i915)
-> -{
-> -	/* open-coded kstat_irqs() */
-> -	struct irq_desc *desc = irq_to_desc(i915->drm.pdev->irq);
-> -	u64 sum = 0;
-> -	int cpu;
-> -
-> -	if (!desc || !desc->kstat_irqs)
-> -		return 0;
-> -
-> -	for_each_possible_cpu(cpu)
-> -		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
-> -
-> -	return sum;
-> -}
-> -
->   static void i915_pmu_event_destroy(struct perf_event *event)
->   {
->   	struct drm_i915_private *i915 =
-> @@ -581,7 +565,7 @@ static u64 __i915_pmu_event_read(struct
->   				   USEC_PER_SEC /* to MHz */);
->   			break;
->   		case I915_PMU_INTERRUPTS:
-> -			val = count_interrupts(i915);
-> +			val = READ_ONCE(pmu->irq_count);
+--------------C0A97F76D1E2DDEBCBB7C379
+Content-Type: application/pgp-keys;
+ name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="OpenPGP_0xB0DE9DD628BF132F.asc"
 
-I guess same curiosity about READ_ONCE like in the increment site.
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
->   			break;
->   		case I915_PMU_RC6_RESIDENCY:
->   			val = get_rc6(&i915->gt);
-> --- a/drivers/gpu/drm/i915/i915_pmu.h
-> +++ b/drivers/gpu/drm/i915/i915_pmu.h
-> @@ -108,6 +108,14 @@ struct i915_pmu {
->   	 */
->   	ktime_t sleep_last;
->   	/**
-> +	 * @irq_count: Number of interrupts
-> +	 *
-> +	 * Intentionally unsigned long to avoid atomics or heuristics on 32bit.
-> +	 * 4e9 interrupts are a lot and postprocessing can really deal with an
-> +	 * occasional wraparound easily. It's 32bit after all.
-> +	 */
-> +	unsigned long irq_count;
-> +	/**
->   	 * @events_attr_group: Device events attribute group.
->   	 */
->   	struct attribute_group events_attr_group;
-> 
+xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOBy=
+cWx
+w3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJvedYm8O=
+f8Z
+d621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJNwQpd369y=
+9bf
+IhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvxXP3FAp2pkW0xq=
+G7/
+377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEBAAHNHEp1ZXJnZW4gR=
+3Jv
+c3MgPGpnQHBmdXBmLm5ldD7CwHkEEwECACMFAlOMcBYCGwMHCwkIBwMCAQYVCAIJCgsEFgIDA=
+QIe
+AQIXgAAKCRCw3p3WKL8TL0KdB/93FcIZ3GCNwFU0u3EjNbNjmXBKDY4FUGNQH2lvWAUy+dnyT=
+hpw
+dtF/jQ6j9RwE8VP0+NXcYpGJDWlNb9/JmYqLiX2Q3TyevpB0CA3dbBQp0OW0fgCetToGIQrg0=
+MbD
+1C/sEOv8Mr4NAfbauXjZlvTj30H2jO0u+6WGM6nHwbh2l5O8ZiHkH32iaSTfN7Eu5RnNVUJbv=
+oPH
+Z8SlM4KWm8rG+lIkGurqqu5gu8q8ZMKdsdGC4bBxdQKDKHEFExLJK/nRPFmAuGlId1E3fe10v=
+5QL
++qHI3EIPtyfE7i9Hz6rVwi7lWKgh7pe0ZvatAudZ+JNIlBKptb64FaiIOAWDCx1SzR9KdWVyZ=
+2Vu
+IEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+wsB5BBMBAgAjBQJTjHCvAhsDBwsJCAcDAgEGFQgCC=
+QoL
+BBYCAwECHgECF4AACgkQsN6d1ii/Ey/HmQf/RtI7kv5A2PS4RF7HoZhPVPogNVbC4YA6lW7Dr=
+Wf0
+teC0RR3MzXfy6pJ+7KLgkqMlrAbN/8Dvjoz78X+5vhH/rDLa9BuZQlhFmvcGtCF8eR0T1v0nC=
+/nu
+AFVGy+67q2DH8As3KPu0344TBDpAvr2uYM4tSqxK4DURx5INz4ZZ0WNFHcqsfvlGJALDeE0Lh=
+ITT
+d9jLzdDad1pQSToCnLl6SBJZjDOX9QQcyUigZFtCXFst4dlsvddrxyqT1f17+2cFSdu7+ynLm=
+XBK
+7abQ3rwJY8SbRO2iRulogc5vr/RLMMlscDAiDkaFQWLoqHHOdfO9rURssHNN8WkMnQfvUewRz=
+80h
+SnVlcmdlbiBHcm9zcyA8amdyb3NzQG5vdmVsbC5jb20+wsB5BBMBAgAjBQJTjHDXAhsDBwsJC=
+AcD
+AgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/Ey8PUQf/ehmgCI9jB9hlgexLvgOtf7PJn=
+FOX
+gMLdBQgBlVPO3/D9R8LtF9DBAFPNhlrsfIG/SqICoRCqUcJ96Pn3P7UUinFG/I0ECGF4EvTE1=
+jnD
+kfJZr6jrbjgyoZHiw/4BNwSTL9rWASyLgqlA8u1mf+c2yUwcGhgkRAd1gOwungxcwzwqgljf0=
+N51
+N5JfVRHRtyfwq/ge+YEkDGcTU6Y0sPOuj4Dyfm8fJzdfHNQsWq3PnczLVELStJNdapwPOoE+l=
+otu
+fe3AM2vAEYJ9rTz3Cki4JFUsgLkHFqGZarrPGi1eyQcXeluldO3m91NK/1xMI3/+8jbO0tsn1=
+tqS
+EUGIJi7ox80eSnVlcmdlbiBHcm9zcyA8amdyb3NzQHN1c2UuZGU+wsB5BBMBAgAjBQJTjHDrA=
+hsD
+BwsJCAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/Ey+LhQf9GL45eU5vOowA2u5N3=
+g3O
+ZUEBmDHVVbqMtzwlmNC4k9Kx39r5s2vcFl4tXqW7g9/ViXYuiDXb0RfUpZiIUW89siKrkzmQ5=
+dM7
+wRqzgJpJwK8Bn2MIxAKArekWpiCKvBOB/Cc+3EXE78XdlxLyOi/NrmSGRIov0karw2RzMNOu5=
+D+j
+LRZQd1Sv27AR+IP3I8U4aqnhLpwhK7MEy9oCILlgZ1QZe49kpcumcZKORmzBTNh30FVKK1Evm=
+V2x
+AKDoaEOgQB4iFQLhJCdP1I5aSgM5IVFdn7v5YgEYuJYx37IoN1EblHI//x/e2AaIHpzK5h88N=
+Eaw
+QsaNRpNSrcfbFmAg987ATQRTjHAWAQgAyzH6AOODMBjgfWE9VeCgsrwH3exNAU32gLq2xvjpW=
+nHI
+s98ndPUDpnoxWQugJ6MpMncr0xSwFmHEgnSEjK/PAjppgmyc57BwKII3sV4on+gDVFJR6Y8ZR=
+wgn
+BC5mVM6JjQ5xDk8WRXljExRfUX9pNhdE5eBOZJrDRoLUmmjDtKzWaDhIg/+1Hzz93X4fCQkNV=
+bVF
+LELU9bMaLPBG/x5q4iYZ2k2ex6d47YE1ZFdMm6YBYMOljGkZKwYde5ldM9mo45mmwe0icXKLk=
+pEd
+IXKTZeKDO+Hdv1aqFuAcccTg9RXDQjmwhC3yEmrmcfl0+rPghO0Iv3OOImwTEe4co3c1mwARA=
+QAB
+wsBfBBgBAgAJBQJTjHAWAhsMAAoJELDendYovxMvQ/gH/1ha96vm4P/L+bQpJwrZ/dneZcmEw=
+Tbe
+8YFsw2V/Buv6Z4Mysln3nQK5ZadD534CF7TDVft7fC4tU4PONxF5D+/tvgkPfDAfF77zy2AH1=
+vJz
+Q1fOU8lYFpZXTXIHb+559UqvIB8AdgR3SAJGHHt4RKA0F7f5ipYBBrC6cyXJyyoprT10EMvU8=
+VGi
+wXvTyJz3fjoYsdFzpWPlJEBRMedCot60g5dmbdrZ5DWClAr0yau47zpWj3enf1tLWaqcsuylW=
+svi
+uGjKGw7KHQd3bxALOknAp4dN3QwBYCKuZ7AddY9yjynVaD5X7nF9nO5BjR/i1DG86lem3iBDX=
+zXs
+ZDn8R38=3D
+=3D2wuH
+-----END PGP PUBLIC KEY BLOCK-----
 
-Regards,
+--------------C0A97F76D1E2DDEBCBB7C379--
 
-Tvrtko
+--W7MOwpcHMEZDHVpnNeRdRpRviypq0k3b2--
+
+--JLZob3e3TcGZaffU2V6GYg9zw25iTy30k
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAl/TSJEFAwAAAAAACgkQsN6d1ii/Ey+l
+mgf/d2+/6FRTlqTIKtgTaI9zWYXHFZUVv6aYW6iBE6VxANXvSWq9HMk6KnsreMEFtZ6/gFqr/hEu
+oLKI4zId8FjcveupY8yiEXvBkWDXXQHXm2vw2fO6Fe2D0RCcR0QLeFpvolQBAp0s4pGQNCWixekr
+Q6YyAWOKOmAjWmLsSsyend9GfjL+BFR6pObB4CLRdm5rvQHbPW6pNHBTTX2bxeszchEibXqmy+eX
+K7jbAijkr/Vq+9h84FBdAOZQRgXCIrWI14ae2O+8CGs9w5v/Yczedv+z4knUyDtXHly4+zuhkPSW
+tmVXo5DD0Oh4PaNITuXRo6Y9sSrWG1w22F+SVn8vKg==
+=c494
+-----END PGP SIGNATURE-----
+
+--JLZob3e3TcGZaffU2V6GYg9zw25iTy30k--
