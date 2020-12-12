@@ -2,166 +2,169 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856D0C4361B
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 23:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5E4C433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Dec 2020 00:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EDDA221E3
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Dec 2020 23:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0640523358
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Dec 2020 00:51:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437138AbgLKXnz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 18:43:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45402 "EHLO
+        id S1728503AbgLLAhx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 19:37:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437310AbgLKXns (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 18:43:48 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D292CC0613CF
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 15:43:07 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id c79so7975076pfc.2
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 15:43:07 -0800 (PST)
+        with ESMTP id S2437765AbgLLAhc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 19:37:32 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E78C0613D3
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 16:36:51 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id 23so15847632lfg.10
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 16:36:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CWe3lT2KTKFUzGLUYEmf1fRhGjuRP6+tjVN05hf7ecQ=;
-        b=GzKSdSfOqSug9KN8cGDhih/kriids7aLbt+tfe7zPOpwYUpHjFK1N7sMrAi8k53LSa
-         N42djdMFEoUDVo9RZtrC530tioVo4q3YkEz1mROTNWRunLxOxKWXgRZ9BQAsj96Nhb9I
-         339RUQtkFGXz7rlBwlPLhaHvT7Y1TON1NG+3ZpSCmpGFasOdL6iP07ob1cFuklk1dXst
-         N3My3GM23rb6pWUmxXMl1BJyHt1JtLNWNM6Po612llvJB11QlaF2YFt7N0m250K0fjJp
-         qOebzucXKL2SN2vAAgeAanTakY/VnMw6Sf5Wq3i1LWDoSwAocu4FiEz21UC5ucCYh6NT
-         JzPw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ttjqXhxQi+pNizwAm4tpfBYhH9e2m0KKEEwUkI5pPkw=;
+        b=V4rIX9tGub7KABlVbhEWkOc8JyvTIimSGi9ZCxXgEZXicY8lL22Tl+8wTUixpT+KJd
+         MpCVltyw5Y6xAKfXa8Zn7UD78JWuknfQtyceOftl7xEY7r1HuFI5NrI1FW928ihY1onJ
+         +o24L3HgNMdhfBhCqY/9YAXGj0h1eFxHMXYpXxZie/Z0EOHV5IX/oF5qJEq2WOcV+OKN
+         XFE0Nn1DjkxIDVOgJZTGTuWi9Px2Pav3TIh9iVJjFweC6L3wke4qPCI02F9jztRcPEbK
+         pI4noO24N4EB+oqhpUgZ6Vys74oViN6siVIka5EoXXFK04XkQRnu9eVN1L9ICWxW+duT
+         xRgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CWe3lT2KTKFUzGLUYEmf1fRhGjuRP6+tjVN05hf7ecQ=;
-        b=BEPhtUGQy3338SWH/0i6yaimBKkEM4Y+2fFxBmaUiVmkVmQwYe2newYnohd9ChXVtx
-         AWwRjHnmGqBc6GZafhv5mhYT6Yg52oOZPoCfi2NVSKMArjnLzcOOSHmqw+cxPfdY5n8J
-         sPEagOXqayT/I+ULe9riyqNeL/ewUEQzOpJ+tEJgots3QjRiIK3yQCF7WY+dFZbIR4K2
-         DbUsrMaSLsROS234Dg/IcTT6Ut1T69GTb2BbRZCcSJkIQtaghqdWQrGPgNJ+/ZYzLKSr
-         Oj75/PwphgyEtdqJC6skXpYAE0PbPDIB7MMUMaYzWGjY8wPZmar7TkKAuvR31VIypwFF
-         8I/Q==
-X-Gm-Message-State: AOAM530RQI+80Wj/8Ngjb0HEzyGN5D15VWAxZy0DYweowDkAfKa/l3/a
-        WDlH6ciTk10+Xw/5HwSDhMKNGE65LIllnZdi
-X-Google-Smtp-Source: ABdhPJzxn/MxBh4KLs+xJ8ujkjk/5JcaZEuzTNXOvI5kpA3VB1+upg/rRA6BEbvCvlgGI8hejf1KyQ==
-X-Received: by 2002:a63:e24f:: with SMTP id y15mr4715442pgj.366.1607730187345;
-        Fri, 11 Dec 2020 15:43:07 -0800 (PST)
-Received: from x1 ([2601:1c0:4701:ae70:e96a:e062:3e2a:2534])
-        by smtp.gmail.com with ESMTPSA id i7sm728629pgr.88.2020.12.11.15.43.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ttjqXhxQi+pNizwAm4tpfBYhH9e2m0KKEEwUkI5pPkw=;
+        b=WKGIFtRNgWAWEmqOUepc0QaYfR5fZuETDmiiwVyJu72ULUBncJHjFz0v2uVBsSXYJo
+         HFaN7BiU9MGxpeJKyOoRm/7+2bNJ8xIOe2WCsBBSE76Mc/PMPucf8O2uo+QNpcQYJH4W
+         9B9KEvy2D6zCHVEPJ0LClQvgDVQb8HLxMUvYqN2ASmFl7xx4+inj58kJHqh11ZkFeN/0
+         1WpyMMrmBwNtMbUcK/JrbQ2C1xefnQoLSnjOVgo7C2wgBZZeMKKTQIv3gXgAJ9eaE/la
+         84h4N9fmve7viZehyWi3lhQ+JnfihwjKH3QaJRpiyy9Yj5PEJunHYQZ7JQakONg+CYCR
+         W4uw==
+X-Gm-Message-State: AOAM530neryfCOiYtje8mBoyMg+ucggP/szA7T5DGldalRJgoxkNRsyD
+        HNSg+dfOikEHa3VlIOLIQpVQYJVY6YbbQMnw
+X-Google-Smtp-Source: ABdhPJygSLsOht2j04f7E6A/vo6z5NziyQvjseJAV15q87u5r/xVCGYHyTWqUaz6lKGMJpN+MZUNxg==
+X-Received: by 2002:a2e:5018:: with SMTP id e24mr6218830ljb.425.1607733410214;
+        Fri, 11 Dec 2020 16:36:50 -0800 (PST)
+Received: from localhost.localdomain (c-92d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.146])
+        by smtp.gmail.com with ESMTPSA id i29sm1053519lfc.193.2020.12.11.16.36.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Dec 2020 15:43:06 -0800 (PST)
-Date:   Fri, 11 Dec 2020 15:43:04 -0800
-From:   Drew Fustini <drew@beagleboard.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        Fri, 11 Dec 2020 16:36:49 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-Subject: Re: [RFC PATCH] pinctrl: add helper to expose pinctrl state in
- debugfs
-Message-ID: <20201211234304.GA189853@x1>
-References: <20201211042625.129255-1-drew@beagleboard.org>
- <CAHp75VcAbdrSnb_ag9Rc0tny3Vtqjs1if+ahk7U36V2eaKMpSw@mail.gmail.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH] gpiolib: Disallow identical line names in the same chip
+Date:   Sat, 12 Dec 2020 01:34:47 +0100
+Message-Id: <20201212003447.238474-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcAbdrSnb_ag9Rc0tny3Vtqjs1if+ahk7U36V2eaKMpSw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 11:15:21PM +0200, Andy Shevchenko wrote:
-> On Fri, Dec 11, 2020 at 1:54 PM Drew Fustini <drew@beagleboard.org> wrote:
-> >
-> > BeagleBoard.org [0] currently uses an out-of-tree driver called
-> > bone-pinmux-helper [1] developed by Pantelis Antoniou [2] back in 2013.
-> 
-> And it looks like it's still using APIs from 2013.
-> Needs quite a clean up.
+We need to make this namespace hierarchical: at least do not
+allow two lines on the same chip to have the same name, this
+is just too much flexibility. If we name a line on a chip,
+name it uniquely on that chip.
 
-Thanks for taking a look at my RFC and responding. It is good to know
-that it is using out-dated APIs. Would you be able to elaborate?
+I don't know what happens if we just apply this, I *hope* there
+are not a lot of systems out there breaking this simple and
+intuitive rule.
 
-It interacts with pinctrl core through devm_pinctrl_get(),
-pinctrl_lookup_state() and pinctrl_select_state(). Is there newer way of
-doing that?
+As a side effect, this makes the device tree naming code
+scream a bit if names are not globally unique.
 
-> > The driver assists users of our BeagleBone and PocketBeagle boards in
-> > rapid prototyping by allowing them to change at run-time between defined
-> > set of pinctrl states [3] for each pin on the expansion connectors [4].
-> > This is achieved by exposing a 'state' file in sysfs for each pin which
-> > is used by our 'config-pin' utility [5].
-> >
-> > Our goal is to eliminate all out-of-tree drivers for BeagleBoard.org
-> > boards and thus I have been working to replace bone-pinmux-helper with a
-> > new driver that could be acceptable upstream. My understanding is that
-> > debugfs, unlike sysfs, could be the appropriate mechanism to expose such
-> > functionality.
-> 
-> Yeah, for debugfs we don't require too much and esp. there is no
-> requirement to keep backward compatibility thru interface.
-> I.o.w. it's *not* an ABI.
-> 
-> ...
-> 
-> > I used the compatible string "pinctrl,state-helper" but would appreciate
-> > advice on how to best name this. Should I create a new vendor prefix?
-> 
-> Since it's BB specific, it should have file name and compatible string
-> accordingly.
+I think there are not super-many device trees out there naming
+their lines so let's fix this before the problem becomes
+widespread.
 
-At first, I was thinking about this as a beaglebone specific solution
-and had bone in the driver name and compatible string. But then I 
-realized it could used in other situations where it is beneficial to
-to read and select a pinctrl state through debugfs.
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Johan Hovold <johan@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+This may be just the first step in tightening this up.
+Googling gives at hand that the colission warning doesn't
+happen much so we might go as far as to say the name can
+be required to be globally unique, but that creates a flat
+namespace so I don't know if that is desireable.
+---
+ drivers/gpio/gpiolib.c | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
-I'm happy to rebrand the naming as beaglebone if that would be more
-acceptable.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 5ce0c14c637b..be4b3e9032b2 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -330,11 +330,9 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
+ 
+ /*
+  * Take the names from gc->names and assign them to their GPIO descriptors.
+- * Warn if a name is already used for a GPIO line on a different GPIO chip.
+  *
+- * Note that:
+- *   1. Non-unique names are still accepted,
+- *   2. Name collisions within the same GPIO chip are not reported.
++ * - Fail if a name is already used for a GPIO line on the same chip.
++ * - Allow names to not be globally unique but warn about it.
+  */
+ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ {
+@@ -343,13 +341,19 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ 
+ 	/* First check all names if they are unique */
+ 	for (i = 0; i != gc->ngpio; ++i) {
+-		struct gpio_desc *gpio;
++		struct gpio_desc *gpiod;
+ 
+-		gpio = gpio_name_to_desc(gc->names[i]);
+-		if (gpio)
++		gpiod = gpio_name_to_desc(gc->names[i]);
++		if (gpiod) {
+ 			dev_warn(&gdev->dev,
+ 				 "Detected name collision for GPIO name '%s'\n",
+ 				 gc->names[i]);
++			if (gpiod->gdev == gdev) {
++				dev_err(&gdev->dev,
++					"GPIO name collision on the same chip, this is not allowed, fix all lines on the chip to have unique names\n");
++				return -EINVAL;
++			}
++		}
+ 	}
+ 
+ 	/* Then add all names to the GPIO descriptors */
+@@ -402,8 +406,22 @@ static int devprop_gpiochip_set_names(struct gpio_chip *chip)
+ 		return ret;
+ 	}
+ 
+-	for (i = 0; i < count; i++)
++	for (i = 0; i < count; i++) {
++		struct gpio_desc *gpiod;
++
++		gpiod = gpio_name_to_desc(names[i]);
++		if (gpiod) {
++			dev_warn(&gdev->dev,
++                                 "Detected name collision for GPIO name '%s'\n",
++                                 names[i]);
++			if (gpiod->gdev == gdev) {
++				dev_err(&gdev->dev,
++					"GPIO name collision on the same chip, this is not allowed, fix all lines on the chip to have unique names\n");
++				return -EINVAL;
++			}
++		}
+ 		gdev->descs[i].name = names[i];
++	}
+ 
+ 	kfree(names);
+ 
+-- 
+2.28.0
 
-> But I'm wondering, why it requires this kind of thing and can't be
-> simply always part of the kernel based on configuration option?
-
-Do you mean not having a new CONFIG option for this driver and just have
-it be enabled by CONFIG_PINCTRL?
-
-> > The P9_14_pinmux entry would cause pinctrl-state-helper to be probed.
-> > The driver would create the corresponding pinctrl state file in debugfs
-> > for the pin.  Here is an example of how the state can be read and
-> > written from userspace:
-> >
-> > root@beaglebone:~# cat /sys/kernel/debug/ocp\:P9_14_pinmux/state
-> > default
-> > root@beaglebone:~# echo pwm > /sys/kernel/debug/ocp\:P9_14_pinmux/state
-> > root@beaglebone:~# cat /sys/kernel/debug/ocp\:P9_14_pinmux/state
-> > pwm
-> 
-> Shouldn't it be rather a part of a certain pin control folder:
-> debug/pinctrl/.../mux/...
-> ?
-
-Yes, I think that would make sense, but I was struggling to figure out
-how to do that. pinctrl_init_debugfs() in pinctrl/core.c does create the
-"pinctrl" directory, but I could not figure out how to use this as the
-parent dir when calling debugfs_create_dir() in this driver's probe().
-
-I thought there might be a way in debugfs API to use existing directory
-path as a parent but I couldn't figure anything like that. I would
-appreciate any advice.
-
-> 
-> > I would very much appreciate feedback on both this general concept, and
-> > also specific areas in which the code should be changed to be acceptable
-> > upstream.
-> 
-> I will give time for more discussion about concepts and so, because
-> code (as stated above) is quite old and requires a lot of cleaning up.
-
-Thanks for taking the time to comment. I'll look at other drivers to see
-the ways in which this drivers is out-dated.
-
--Drew
