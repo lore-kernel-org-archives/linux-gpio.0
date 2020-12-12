@@ -2,74 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B674C4361B
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Dec 2020 00:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EBFC433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Dec 2020 00:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3C8923358
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Dec 2020 00:52:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C27322336F
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Dec 2020 00:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437765AbgLLAlF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Dec 2020 19:41:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54278 "EHLO
+        id S2437827AbgLLAnq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Dec 2020 19:43:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728522AbgLLAkz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 19:40:55 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB14C0613D6
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 16:40:15 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id a8so15887813lfb.3
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 16:40:15 -0800 (PST)
+        with ESMTP id S2437795AbgLLAnX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2020 19:43:23 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931A2C0613D6
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 16:42:42 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id w13so15872490lfd.5
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2020 16:42:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qr/pDcCO8cCehnbQjTWYMGLriDoYbkYLrbVp2cL1O3w=;
-        b=hzojou/hnh+/ewtkPOZkeajzFdG3+n4ZEmlrTlz508XAkwWZEmbs7cG+PB7esQwFn0
-         7517RZNM1Qto6X9sYqHtGdTuWLH5os34JHokQdm7MWRiEpgwvZGDsUU3ynotlw/r4A9t
-         gpY87yqnHSmqHfxjgOSdcOIHXQDNlL0IxGoOy269Duo602uI97R+wUKJGK+lGrdI4B2D
-         N95CRMFZF7/k39Lbd8pMkt/A4GEj1j/ZvIcRPlJP1MvV0WgpEDD+Lx1FY7fEae23dKZd
-         FFPdSO7i4/08tyuSXel7ROizepA4KzrzTtbDPTD8WH2DXF93Yj0fgmZwBMMSIkXjVeZY
-         7R1g==
+        bh=JSeQxyyLK0Dk77OSQFmi+qaj29cbpZTyl22M1kcfmrA=;
+        b=UmMWRCoe6pF/vjA4dWtgAZ0BIY0yhp8tXZlJSrp7YWFPsz62oDIWfBbodQ4a8mrh8c
+         +fV188G+4MPI8sLjU8bUpFU1ESKnBKdLherNOuteRqhr98m3MEDL+q2OebA8gllbgcax
+         3mUc27fuYOu1yzENRCQTRNBcnP/17XDpcZb1K7drRzyKxQU9zIqy3QqWTTrjvUlyBmA6
+         Yw1pfxtAJVVKYdzezAObx1XuqvzfaqGYdZeaqZNwHIC/ShJB/wTzWyH+fQzN4FtAU60y
+         Rj9UC3HRtcDHS+M1B+ktFzBSP6Nh1Da0v9zMjxqt0iR4zkxdGhlNqcZPiuzJ1AZTTfYr
+         rwCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qr/pDcCO8cCehnbQjTWYMGLriDoYbkYLrbVp2cL1O3w=;
-        b=D8zWR9iw4XxthX1Sgabm0rD6I7MS0b1dA2LhkR7uNdQ7v82fSKWbmWDnyGml6L20Ei
-         Da+yxZsvacjXYKYkI6zO71Kl+NE4blB/ESdA9sWBP4eEXZokjNdwjk10ObolyDZKNhlf
-         w97XoTC0WANGSMNutefuO+D5Pu1Je5bJdVlc+xry/T/7yVZjOzbWMP2n5w57uT8ERp10
-         Jw3OdXefojlfpS1ENIxyXOjs5u2mawD72cGXAGZ61/ejrenRDCScmaZ2/YW7u0DFptMY
-         PgSRaMSmaK1Y+l4lDXDkJv4U8NPj3mpsHXbAwyKnhUR06C//1E3ATP3kFdsQ9moqy8pj
-         6yAg==
-X-Gm-Message-State: AOAM533zu9ZXORJtPmc5Qonjs6taZIMP/cDzec3PUUgdQEjsAyyptmYh
-        NwSWvh7aCpD+1RcoqibxNLu5+gel9Nqp7VfJMqzSWQ==
-X-Google-Smtp-Source: ABdhPJzk+c/pwIfHdYIRw+4A24Ev3VSfBOj85++ml4TNmCPZ3se1bPvNGqC7yytJxDMBmF7/yxzR2Kf1v0ly91xFxUM=
-X-Received: by 2002:a2e:85d1:: with SMTP id h17mr6167420ljj.438.1607733614050;
- Fri, 11 Dec 2020 16:40:14 -0800 (PST)
+        bh=JSeQxyyLK0Dk77OSQFmi+qaj29cbpZTyl22M1kcfmrA=;
+        b=bsQdu+L45metIIi29sJSED3QIe6Y9BLCIG/ty2PFp3NlvepvUXBcbfY5JhFYQ5PPsZ
+         rnd9CLSwk9lZOGSWIrWEMzLnPYtgSIBfqqfvv6b/lKGUmszAUp0RkZaLplNiRnY48jxP
+         QvBafxjkH9QoDnGjh5e/WzQuKsdHkcOYikE/uf67IqVCf8Cc+URyD+UNRxKVkvv1Exa+
+         VizpYa0mLMYgHo6LPNTo7ruLMme4boNb2lZOM8vXO6D6BSryb9RzP7V21nYNIRUHqJOP
+         XTCp4x1JtXG2sg3kFXxcJRK8n+gpcjdmgU30alOM15AH0piy2sr/oQxprrf01jdXDRDa
+         4eyQ==
+X-Gm-Message-State: AOAM532dEZOcnZwJVEKvZ/qB3I5q5PwvspfpoWFZnDwpE2IZRwWsDJia
+        ln2ep7UgCenCI9DYtkPfdo0CeRNQdVNsKm+yqFiZeg==
+X-Google-Smtp-Source: ABdhPJw7ohYOdmTo2QhObVg+jdtBqsCg03Az5b9eew3VpL5VYdjdPUhuKfaVeuiP/SE0hYFmuHVoqtNHiHuoa2UP++I=
+X-Received: by 2002:a05:6512:3238:: with SMTP id f24mr5744709lfe.29.1607733761006;
+ Fri, 11 Dec 2020 16:42:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20201210135902.1548-1-zhengyongjun3@huawei.com>
-In-Reply-To: <20201210135902.1548-1-zhengyongjun3@huawei.com>
+References: <20201210135746.1492-1-zhengyongjun3@huawei.com>
+In-Reply-To: <20201210135746.1492-1-zhengyongjun3@huawei.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 12 Dec 2020 01:40:03 +0100
-Message-ID: <CACRpkdZEZ86ui4c_h2jrESvwDFe3mpHN+T4USuJjDc-tpkVi5g@mail.gmail.com>
-Subject: Re: [PATCH -next] pinctrl/mediatek: simplify the return expression of mtk_pinconf_bias_disable_set_rev1()
+Date:   Sat, 12 Dec 2020 01:42:30 +0100
+Message-ID: <CACRpkdaM4vU+iEqXYJ+u1w=_FKmt8mmGUYdhENv3ggGp5LrHMQ@mail.gmail.com>
+Subject: Re: [PATCH -next] pinctrl/spear: simplify the return expression of spear300_pinctrl_probe()
 To:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Cc:     Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Cc:     Viresh Kumar <vireshk@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 2:58 PM Zheng Yongjun <zhengyongjun3@huawei.com> wrote:
+On Thu, Dec 10, 2020 at 2:57 PM Zheng Yongjun <zhengyongjun3@huawei.com> wrote:
 
 > Simplify the return expression.
 >
