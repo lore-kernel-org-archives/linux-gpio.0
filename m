@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4265CC433FE
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 08:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ACDC4167B
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 08:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF8D322D6F
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 08:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F25E22DCC
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 08:12:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403878AbgLMIMM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 13 Dec 2020 03:12:12 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:32107 "EHLO
+        id S2394228AbgLMIMt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Dec 2020 03:12:49 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:32105 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390359AbgLMIML (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2020 03:12:11 -0500
+        with ESMTP id S2392896AbgLMIMt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2020 03:12:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607847131; x=1639383131;
+  t=1607847169; x=1639383169;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ClvrNvc9ueVuR2BQ2Aez67Uy8hk5dNK+OucEci/qmOc=;
-  b=NkKvr+QTnfwwPHECWZs7PqWp18y+gwmzT3v2Bm847KPqxSX6PgO83sZZ
-   K7xMFUNqEAO9FwTA1wzFlmkNY9ktmbfTfZzTmv7SpZqi/t9FR/c7MB9FA
-   PpD0BqaJCuAPQjFJwpAIZtLkYleqSRt7jPNfJWRMDkKUjynA1Fjv2qa7x
-   qpIuq4XU6KAh8pJfnnhECBIOHGjuDugeKXd54Y2MQZ7uh3oWgg/7LURaz
-   Giq2hIi4wldOLas5uv5O63HfjnnYdSNjDV6OOOBP6EYvXBUxj91IECKG/
-   tA2KPL+puoRxPtS/ivV4F6DNC0D/7cTzYMOpzKmNXjHGCGfEd911qMQ/k
-   A==;
-IronPort-SDR: UpuDRBbqiSOyI4dP3U/atOgGtaUm4Ig2OdTvj0Yq8C4GESPFvXcDuIh/dOxsFYZSnVjMbtkwb6
- 7Re0faWH+tsmGVIEGLnSKjRCTdsldyUJuMZcMa0HenGS/Qb5UKuLCs/ooVkyFXq1tpG8g2f3q0
- BhL1YHhYKH3O3aGnT/oFMkKuw6+0q9K8dQkQlpJOAVxTUk8MHvgajkFA8A2sESmNsktL3HXvbs
- IPeCDph7hrltF2AM6oQLDEZ223LCkLT+odtBzj5M1M16MGSWNRGb5ZnLuJFrOPy1w3dCzNeCSr
- tI8=
+  bh=EWs9Id0WN8U3hC16kEMGKACQAkkI4/IPFe7+6Y7Fn58=;
+  b=Efg/QhN+Dwf8f01NuZzzFn98OKwWXcOawzna7BjxeJPY9olUmLu56CYH
+   mGqK+ZLu8z8JDE4crB48nbtKcOu/COwxfFMUv7NrT3U4EO5PfIhb0A8td
+   H2VtuJZdGwWZiL+Ms/y7XFFL9+H4xOU0pUXGoqrSiKdxTxWGNZaZDYr0v
+   M93r+7o4yZmGOFqQ6vzIR2kzum3g3EGlaq5p+MpwiGrceMlhVfMJMJIPc
+   CwCSuk9wqwggfKWTddRRkPdgl+94tZ4YUPVjE0IK4djHCnwGYVd0qHz5z
+   NOR3iYatE5MqYpaQShM565C8thOOFxfDLNIB995z/ipp8pvqdRGSBev9P
+   Q==;
+IronPort-SDR: QIs2n+Y3P1PRVEGAZJDgvt1XvTUnf3esMHcCZ3AwpWlyoh91mzPHAL5m5E6tWZchDSlWL+wq+q
+ xpWWdszv/MnpVoITR8KhsWNKw3pgNJyRfDN1KT33ytYt6gtQgozzE604iSWr6UiD8tACSNZ13z
+ IffJJmErhx+jHjFq/3uXiCqVREBBT09lQBta/OVR2SfUrKIqqFg4uYEIbqVI7Orz5Ym0+w04AT
+ ZTxxii7jD/0oYfzz8n2i5ERjRmPNi6B/SIw+YMhdnHTkKLEC6AACYoLMlWuAGvxjCQF2+RiS46
+ p0s=
 X-IronPort-AV: E=Sophos;i="5.78,415,1599494400"; 
-   d="scan'208";a="265208175"
+   d="scan'208";a="265208182"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Dec 2020 16:10:33 +0800
-IronPort-SDR: 8i0cJtb5boE2KxasGcfyv3cfBYOo4sGpla+jeZlFBX0Tj3/SRALJnGxH0LQJSe9gOQpzSrLUCV
- I/VD0F6OVt2P7338Nw1q4aC+4iaFWfw4hC7c8ixuvR9NwJEGzux9hsrqYrDH+snrVNrX0ngS6G
- rmNgKfQNY5cChhH8ZkVhlwtzQvgHaG8oJUmdZ6M2bg+3quyjw3+igb2tVJvw+wDnEGTUeBTc75
- 23XyFd9jkAXy7qqkbadkqs+ffgO7C+RsYdfV5VHnfLeLNLuEog0sh/nJ9uqm3r1znRzl3mdiL+
- SIWDPAYX55ccTaBiB31GzO1J
+  by ob1.hgst.iphmx.com with ESMTP; 13 Dec 2020 16:10:37 +0800
+IronPort-SDR: dyhjTo/n9ZdpBBjr+FuBE/2KQWsBqaGKaZUqMY+rPRDdS9xo1suUX8CByB0OK4OqmLl5vUV24h
+ ycR3vGsVB6bp9456sdloKZtz1upsKqkqUnumVsHUJo9r06Bq1t76vqgSLtosF+y1FFrHs8sBIw
+ AjwKLITZMSUhHaWq3S8hM2SOh9acBzBFEgJbDZdySMrtZwVMcrmT7I5aGqdn4tci1n4CJtd3sb
+ KAgOWTbzJ7Kt/Nf8aA6iNFHdfZM9DNwoPQLwOPOpHPVxzxMKwYMWnB3v1H+7n/xCNibQBHAGqx
+ tjzfVircMEJtI7vi7QW2dIUx
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2020 23:55:54 -0800
-IronPort-SDR: SWUAqFCntP0O5KgkeAbHYWqD1GOHs9V5AuDDA9AyXBgHHTrn+T195mKzQJEAJ8zpttUKwz1Ral
- lWpmv59Dx7dITi4fGA1aB0Kv14fzrdkM+FMd2y3Q2HA78HRsA4a27EtdSLgwT7JnkfjdXpF369
- jsoLKATmB3pGNdv+1eC2+W55SBrjRf9EWaujAt8PP7N4UxoVhdHST2wULknsr2siVj3TdItQRf
- iQzBfReHC3NhmqZ024FIeWHtBoHiM7x6gD6H4HZr4GmzhKIlb0aHPD0gxVA2TK9We2+JkDKnh0
- LJI=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2020 23:55:58 -0800
+IronPort-SDR: ywXiDj0wZ7vaRuclMP4mIh5F2GuBZ7eouz8KadHKbt6L8/yUKCcw9oq46urmXdWqqXrU0nnhwp
+ mz+It37W/wVVbVAp++WkRBZBN1g3WSde5SITlIDSSQcDtxHpYGaSYneivQC3GX1B0f/n2OyDXb
+ r/AwEtciGmIAsYRcCO3hVJ9DR8Rrh8Z6WpMTLeWYkYq0KiWgoZMkwIKDO5Kbc67j8oYNJoaLfI
+ bYW1u4Tcwvye2HrDCeiQFAm23FrTPNDcTGS6mMCRUw4shFOZifrEZoYy/Bi+4ypN0KaBWyBpsV
+ rTk=
 WDCIronportException: Internal
 Received: from phd004806.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.197])
-  by uls-op-cesaip02.wdc.com with ESMTP; 13 Dec 2020 00:10:32 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 13 Dec 2020 00:10:36 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -64,9 +64,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v9 06/22] riscv: cleanup Canaan Kendryte K210 sysctl driver
-Date:   Sun, 13 Dec 2020 17:10:00 +0900
-Message-Id: <20201213081016.179192-7-damien.lemoal@wdc.com>
+Subject: [PATCH v9 08/22] dt-binding: clock: Document canaan,k210-clk bindings
+Date:   Sun, 13 Dec 2020 17:10:02 +0900
+Message-Id: <20201213081016.179192-9-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201213081016.179192-1-damien.lemoal@wdc.com>
 References: <20201213081016.179192-1-damien.lemoal@wdc.com>
@@ -76,213 +76,146 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce the header file include/soc/canaan/k210-sysctl.h to have a
-common definition of the Canaan Kendryte K210 SoC system controller
-registers. Simplify the k210 system controller driver code by removing
-unused register bits definition. The MAINTAINERS file is updated,
-adding the entry "CANAAN/KENDRYTE K210 SOC SYSTEM CONTROLLER DRIVER"
-with myself listed as maintainer for this driver.
-This is a preparatory patch for introducing the K210 clock driver. No
-functional changes are introduced.
+Document the device tree bindings of the Canaan Kendryte K210 SoC clock
+driver in Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml.
+The header file include/dt-bindings/clock/k210-clk.h is modified to
+include the complete list of IDs for all clocks of the SoC.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- MAINTAINERS                      |  7 +++
- drivers/soc/canaan/k210-sysctl.c | 93 +++++++++-----------------------
- include/soc/canaan/k210-sysctl.h | 41 ++++++++++++++
- 3 files changed, 74 insertions(+), 67 deletions(-)
- create mode 100644 include/soc/canaan/k210-sysctl.h
+ .../bindings/clock/canaan,k210-clk.yaml       | 54 ++++++++++++++++++
+ include/dt-bindings/clock/k210-clk.h          | 55 +++++++++++++++----
+ 2 files changed, 98 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6f474153dbec..6d06a5fda7ba 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3831,6 +3831,13 @@ W:	https://github.com/Cascoda/ca8210-linux.git
- F:	Documentation/devicetree/bindings/net/ieee802154/ca8210.txt
- F:	drivers/net/ieee802154/ca8210.c
- 
-+CANAAN/KENDRYTE K210 SOC SYSTEM CONTROLLER DRIVER
-+M:	Damien Le Moal <damien.lemoal@wdc.com>
-+L:	linux-riscv@lists.infradead.org
-+S:	Maintained
-+F:	drivers/soc/canaan/
-+F:	include/soc/canaan/
-+
- CACHEFILES: FS-CACHE BACKEND FOR CACHING ON MOUNTED FILESYSTEMS
- M:	David Howells <dhowells@redhat.com>
- L:	linux-cachefs@redhat.com (moderated for non-subscribers)
-diff --git a/drivers/soc/canaan/k210-sysctl.c b/drivers/soc/canaan/k210-sysctl.c
-index 4608fbca20e1..60b474c33d45 100644
---- a/drivers/soc/canaan/k210-sysctl.c
-+++ b/drivers/soc/canaan/k210-sysctl.c
-@@ -12,74 +12,33 @@
- #include <linux/bitfield.h>
- #include <asm/soc.h>
- 
-+#include <soc/canaan/k210-sysctl.h>
-+
- #define K210_SYSCTL_CLK0_FREQ		26000000UL
- 
- /* Registers base address */
- #define K210_SYSCTL_SYSCTL_BASE_ADDR	0x50440000ULL
- 
--/* Registers */
--#define K210_SYSCTL_PLL0		0x08
--#define K210_SYSCTL_PLL1		0x0c
--/* clkr: 4bits, clkf1: 6bits, clkod: 4bits, bwadj: 4bits */
--#define   PLL_RESET		(1 << 20)
--#define   PLL_PWR		(1 << 21)
--#define   PLL_INTFB		(1 << 22)
--#define   PLL_BYPASS		(1 << 23)
--#define   PLL_TEST		(1 << 24)
--#define   PLL_OUT_EN		(1 << 25)
--#define   PLL_TEST_EN		(1 << 26)
--#define K210_SYSCTL_PLL_LOCK		0x18
--#define   PLL0_LOCK1		(1 << 0)
--#define   PLL0_LOCK2		(1 << 1)
--#define   PLL0_SLIP_CLEAR	(1 << 2)
--#define   PLL0_TEST_CLK_OUT	(1 << 3)
--#define   PLL1_LOCK1		(1 << 8)
--#define   PLL1_LOCK2		(1 << 9)
--#define   PLL1_SLIP_CLEAR	(1 << 10)
--#define   PLL1_TEST_CLK_OUT	(1 << 11)
--#define   PLL2_LOCK1		(1 << 16)
--#define   PLL2_LOCK2		(1 << 16)
--#define   PLL2_SLIP_CLEAR	(1 << 18)
--#define   PLL2_TEST_CLK_OUT	(1 << 19)
--#define K210_SYSCTL_CLKSEL0	0x20
--#define   CLKSEL_ACLK		(1 << 0)
--#define K210_SYSCTL_CLKEN_CENT		0x28
--#define   CLKEN_CPU		(1 << 0)
--#define   CLKEN_SRAM0		(1 << 1)
--#define   CLKEN_SRAM1		(1 << 2)
--#define   CLKEN_APB0		(1 << 3)
--#define   CLKEN_APB1		(1 << 4)
--#define   CLKEN_APB2		(1 << 5)
--#define K210_SYSCTL_CLKEN_PERI		0x2c
--#define   CLKEN_ROM		(1 << 0)
--#define   CLKEN_DMA		(1 << 1)
--#define   CLKEN_AI		(1 << 2)
--#define   CLKEN_DVP		(1 << 3)
--#define   CLKEN_FFT		(1 << 4)
--#define   CLKEN_GPIO		(1 << 5)
--#define   CLKEN_SPI0		(1 << 6)
--#define   CLKEN_SPI1		(1 << 7)
--#define   CLKEN_SPI2		(1 << 8)
--#define   CLKEN_SPI3		(1 << 9)
--#define   CLKEN_I2S0		(1 << 10)
--#define   CLKEN_I2S1		(1 << 11)
--#define   CLKEN_I2S2		(1 << 12)
--#define   CLKEN_I2C0		(1 << 13)
--#define   CLKEN_I2C1		(1 << 14)
--#define   CLKEN_I2C2		(1 << 15)
--#define   CLKEN_UART1		(1 << 16)
--#define   CLKEN_UART2		(1 << 17)
--#define   CLKEN_UART3		(1 << 18)
--#define   CLKEN_AES		(1 << 19)
--#define   CLKEN_FPIO		(1 << 20)
--#define   CLKEN_TIMER0		(1 << 21)
--#define   CLKEN_TIMER1		(1 << 22)
--#define   CLKEN_TIMER2		(1 << 23)
--#define   CLKEN_WDT0		(1 << 24)
--#define   CLKEN_WDT1		(1 << 25)
--#define   CLKEN_SHA		(1 << 26)
--#define   CLKEN_OTP		(1 << 27)
--#define   CLKEN_RTC		(1 << 29)
-+/* Register bits */
-+/* K210_SYSCTL_PLL1: clkr: 4bits, clkf1: 6bits, clkod: 4bits, bwadj: 4bits */
-+#define PLL_RESET		(1 << 20)
-+#define PLL_PWR			(1 << 21)
-+#define PLL_BYPASS		(1 << 23)
-+#define PLL_OUT_EN		(1 << 25)
-+/* K210_SYSCTL_PLL_LOCK */
-+#define PLL1_LOCK1		(1 << 8)
-+#define PLL1_LOCK2		(1 << 9)
-+#define PLL1_SLIP_CLEAR		(1 << 10)
-+/* K210_SYSCTL_SEL0 */
-+#define CLKSEL_ACLK		(1 << 0)
-+/* K210_SYSCTL_CLKEN_CENT */
-+#define CLKEN_CPU		(1 << 0)
-+#define CLKEN_SRAM0		(1 << 1)
-+#define CLKEN_SRAM1		(1 << 2)
-+/* K210_SYSCTL_EN_PERI */
-+#define CLKEN_ROM		(1 << 0)
-+#define CLKEN_TIMER0		(1 << 21)
-+#define CLKEN_RTC		(1 << 29)
- 
- struct k210_sysctl {
- 	void __iomem		*regs;
-@@ -140,7 +99,7 @@ static unsigned long k210_sysctl_clk_recalc_rate(struct clk_hw *hw,
- 	 * If the clock selector is not set, use the base frequency.
- 	 * Otherwise, use PLL0 frequency with a frequency divisor.
- 	 */
--	clksel0 = readl(s->regs + K210_SYSCTL_CLKSEL0);
-+	clksel0 = readl(s->regs + K210_SYSCTL_SEL0);
- 	if (!(clksel0 & CLKSEL_ACLK))
- 		return K210_SYSCTL_CLK0_FREQ;
- 
-@@ -237,11 +196,11 @@ static void __init k210_soc_early_init(const void *fdt)
- 	k210_set_bits(PLL_OUT_EN, regs + K210_SYSCTL_PLL0);
- 
- 	k210_set_bits(CLKEN_CPU | CLKEN_SRAM0 | CLKEN_SRAM1,
--		      regs + K210_SYSCTL_CLKEN_CENT);
-+		      regs + K210_SYSCTL_EN_CENT);
- 	k210_set_bits(CLKEN_ROM | CLKEN_TIMER0 | CLKEN_RTC,
--		      regs + K210_SYSCTL_CLKEN_PERI);
-+		      regs + K210_SYSCTL_EN_PERI);
- 
--	k210_set_bits(CLKSEL_ACLK, regs + K210_SYSCTL_CLKSEL0);
-+	k210_set_bits(CLKSEL_ACLK, regs + K210_SYSCTL_SEL0);
- 
- 	iounmap(regs);
- }
-diff --git a/include/soc/canaan/k210-sysctl.h b/include/soc/canaan/k210-sysctl.h
+diff --git a/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
 new file mode 100644
-index 000000000000..2e037db68f35
+index 000000000000..565ca468cb44
 --- /dev/null
-+++ b/include/soc/canaan/k210-sysctl.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
-+ * Copyright (c) 2020 Western Digital Corporation or its affiliates.
-+ */
-+#ifndef K210_SYSCTL_H
-+#define K210_SYSCTL_H
++++ b/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/canaan,k210-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/*
-+ * Kendryte K210 SoC system controller registers offsets.
-+ * Taken from Kendryte SDK (kendryte-standalone-sdk).
-+ */
-+#define K210_SYSCTL_GIT_ID	0x00 /* Git short commit id */
-+#define K210_SYSCTL_UART_BAUD	0x04 /* Default UARTHS baud rate */
-+#define K210_SYSCTL_PLL0	0x08 /* PLL0 controller */
-+#define K210_SYSCTL_PLL1	0x0C /* PLL1 controller */
-+#define K210_SYSCTL_PLL2	0x10 /* PLL2 controller */
-+#define K210_SYSCTL_PLL_LOCK	0x18 /* PLL lock tester */
-+#define K210_SYSCTL_ROM_ERROR	0x1C /* AXI ROM detector */
-+#define K210_SYSCTL_SEL0	0x20 /* Clock select controller 0 */
-+#define K210_SYSCTL_SEL1	0x24 /* Clock select controller 1 */
-+#define K210_SYSCTL_EN_CENT	0x28 /* Central clock enable */
-+#define K210_SYSCTL_EN_PERI	0x2C /* Peripheral clock enable */
-+#define K210_SYSCTL_SOFT_RESET	0x30 /* Soft reset ctrl */
-+#define K210_SYSCTL_PERI_RESET	0x34 /* Peripheral reset controller */
-+#define K210_SYSCTL_THR0	0x38 /* Clock threshold controller 0 */
-+#define K210_SYSCTL_THR1	0x3C /* Clock threshold controller 1 */
-+#define K210_SYSCTL_THR2	0x40 /* Clock threshold controller 2 */
-+#define K210_SYSCTL_THR3	0x44 /* Clock threshold controller 3 */
-+#define K210_SYSCTL_THR4	0x48 /* Clock threshold controller 4 */
-+#define K210_SYSCTL_THR5	0x4C /* Clock threshold controller 5 */
-+#define K210_SYSCTL_THR6	0x50 /* Clock threshold controller 6 */
-+#define K210_SYSCTL_MISC	0x54 /* Miscellaneous controller */
-+#define K210_SYSCTL_PERI	0x58 /* Peripheral controller */
-+#define K210_SYSCTL_SPI_SLEEP	0x5C /* SPI sleep controller */
-+#define K210_SYSCTL_RESET_STAT	0x60 /* Reset source status */
-+#define K210_SYSCTL_DMA_SEL0	0x64 /* DMA handshake selector 0 */
-+#define K210_SYSCTL_DMA_SEL1	0x68 /* DMA handshake selector 1 */
-+#define K210_SYSCTL_POWER_SEL	0x6C /* IO Power Mode Select controller */
++title: Canaan Kendryte K210 Clock Device Tree Bindings
 +
-+#endif
++maintainers:
++  - Damien Le Moal <damien.lemoal@wdc.com>
++
++description: |
++  Canaan Kendryte K210 SoC clocks driver bindings. The clock
++  controller node must be defined as a child node of the K210
++  system controller node.
++
++  See also:
++  - dt-bindings/clock/k210-clk.h
++
++properties:
++  compatible:
++    const: canaan,k210-clk
++
++  clocks:
++    description:
++      Phandle of the SoC 26MHz fixed-rate oscillator clock.
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - '#clock-cells'
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/k210-clk.h>
++    clocks {
++      in0: oscillator {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <26000000>;
++      };
++    };
++
++    /* ... */
++    sysclk: clock-controller {
++      #clock-cells = <1>;
++      compatible = "canaan,k210-clk";
++      clocks = <&in0>;
++    };
+diff --git a/include/dt-bindings/clock/k210-clk.h b/include/dt-bindings/clock/k210-clk.h
+index 5a2fd64d1a49..b2de702cbf75 100644
+--- a/include/dt-bindings/clock/k210-clk.h
++++ b/include/dt-bindings/clock/k210-clk.h
+@@ -3,18 +3,51 @@
+  * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
+  * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+  */
+-#ifndef K210_CLK_H
+-#define K210_CLK_H
++#ifndef CLOCK_K210_CLK_H
++#define CLOCK_K210_CLK_H
+ 
+ /*
+- * Arbitrary identifiers for clocks.
+- * The structure is: in0 -> pll0 -> aclk -> cpu
+- *
+- * Since we use the hardware defaults for now, set all these to the same clock.
++ * Kendryte K210 SoC clock identifiers (arbitrary values).
+  */
+-#define K210_CLK_PLL0   0
+-#define K210_CLK_PLL1   0
+-#define K210_CLK_ACLK   0
+-#define K210_CLK_CPU    0
++#define K210_CLK_CPU	0
++#define K210_CLK_SRAM0	1
++#define K210_CLK_SRAM1	2
++#define K210_CLK_AI	3
++#define K210_CLK_DMA	4
++#define K210_CLK_FFT	5
++#define K210_CLK_ROM	6
++#define K210_CLK_DVP	7
++#define K210_CLK_APB0	8
++#define K210_CLK_APB1	9
++#define K210_CLK_APB2	10
++#define K210_CLK_I2S0	11
++#define K210_CLK_I2S1	12
++#define K210_CLK_I2S2	13
++#define K210_CLK_I2S0_M	14
++#define K210_CLK_I2S1_M	15
++#define K210_CLK_I2S2_M	16
++#define K210_CLK_WDT0	17
++#define K210_CLK_WDT1	18
++#define K210_CLK_SPI0	19
++#define K210_CLK_SPI1	20
++#define K210_CLK_SPI2	21
++#define K210_CLK_I2C0	22
++#define K210_CLK_I2C1	23
++#define K210_CLK_I2C2	24
++#define K210_CLK_SPI3	25
++#define K210_CLK_TIMER0	26
++#define K210_CLK_TIMER1	27
++#define K210_CLK_TIMER2	28
++#define K210_CLK_GPIO	29
++#define K210_CLK_UART1	30
++#define K210_CLK_UART2	31
++#define K210_CLK_UART3	32
++#define K210_CLK_FPIOA	33
++#define K210_CLK_SHA	34
++#define K210_CLK_AES	35
++#define K210_CLK_OTP	36
++#define K210_CLK_RTC	37
+ 
+-#endif /* K210_CLK_H */
++#define K210_NUM_CLKS	38
++
++#endif /* CLOCK_K210_CLK_H */
 -- 
 2.29.2
 
