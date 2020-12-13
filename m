@@ -2,97 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E17C433FE
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 16:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D63C4361B
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 16:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E21ED23380
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 16:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C511823380
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 16:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389237AbgLMQSL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728063AbgLMQSL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sun, 13 Dec 2020 11:18:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728063AbgLMQSF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2020 11:18:05 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4032DC0613CF;
-        Sun, 13 Dec 2020 08:17:25 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id e25so13042779wme.0;
-        Sun, 13 Dec 2020 08:17:25 -0800 (PST)
+        with ESMTP id S2390872AbgLMQSJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2020 11:18:09 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C10EAC061793;
+        Sun, 13 Dec 2020 08:17:28 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id a6so11611443wmc.2;
+        Sun, 13 Dec 2020 08:17:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dmjKdO+JEpT1IqCZS5DtE4FSFs2mvQW8g5a7Dp6tEjk=;
-        b=IxPbfQKxUyhWWjWPfr179EFDY0r+LSab9s12y35Z85P9SQiZmygiHbZ9c7D13MiBNF
-         0rOMzuPZbg8RLwb03mF2fNFChQzWS21iCB/cXvGpSOc7YkO0aef8cUWBhhNfsJL7wM9x
-         PwZwm6HmYPvo9mfj7S7W4tdDd/JpT61IpfxvKFF7OL9Bd7B4rlnPSYHh/p8lsw8w91hL
-         wBmRgm3rJAZgZCj2FC1SPSFBH2Owr474D3biHgFr/0JMlXbZyAm8EXys21T7FNusjs94
-         WwDPV1ZQOqn5gYz3rmZhnx6701eoVuxrds8/067XaNm1r+ZXW9qbhAPw01V/6/2JPt5M
-         KtfQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tBnar4EOBqUyAZ3eTgoIH+VVc0DkF/ERTYiHgxOAUMg=;
+        b=vXlC2tVK0G+/3jO20C9qCbaoPVYJ0MvK1j4MBx3N4ODAPfbGuez+CtKGivf6iv8twt
+         u2NErF0T+SwWSZn0ZFxak4Vy7+y3yzi23y/cy+WdOsr6tLUSCOY57lYFmIx1RutKUTCp
+         ALjbGOJxorB+k97XV2a4uzfkGzyH0o04gEl5uQUUpRg695wy+VgxyCnplbjCkhdmrnMb
+         tSMchwR0+c2/HYSSbLm3tkI4DWkjsazL8sd8w4bXIJpXzpcPc3LMQkIZ2zxcZKtNqXEA
+         QX9Mw4iuJfmP9zNh0nkRUCPUReuZVkQaiC3TZZRBGoRlnrvZgyKILcecqMIW+0eRgAX9
+         grtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dmjKdO+JEpT1IqCZS5DtE4FSFs2mvQW8g5a7Dp6tEjk=;
-        b=F0vxdAJLy0N4B+P9aM3464yIK/WwCcVdHBuz5De+M4vkEWf7e8Y1frwlKkXNQldyCH
-         L3Fj27nv6ndQh00xe/VsAFgGZUkqtDBRvYTu1v56bmfpYkSWJM7A+mfqeAr+9zf+puhK
-         IIRBY93FQDIZIfvky5YtC13BxdgVFuQp7vKeGgWm2ea9wXRwKX5oOcnU9G+ZBpeOxrLc
-         jQy9QYT67yrNqa/MIdKuQ6wMcoupiW62pYTwqoUdMiHdCG1VIl+mj/NC2enCeVZHJ4zR
-         UlwKLzkWWTeWlMskjGB83O3NJHZBMo8+AHoXrt3LHQwhs1Otv0xXqyL277P9Bdixsb80
-         krPw==
-X-Gm-Message-State: AOAM533V1akfrfVbc3yyqAsKqQLVpYZe0ULIGFzmzWl5nQdof0FdKEtb
-        /N8yZnZNdyvuJxMDp37o5N/64W7ck1s=
-X-Google-Smtp-Source: ABdhPJz5o+Q66aJWk460uLI3HwRYoGxECEUuhnH+7NlpQFQfP/nUe8tczjt9EpUFQTxM9EuxYAKlYQ==
-X-Received: by 2002:a1c:5406:: with SMTP id i6mr23593347wmb.137.1607876244038;
-        Sun, 13 Dec 2020 08:17:24 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tBnar4EOBqUyAZ3eTgoIH+VVc0DkF/ERTYiHgxOAUMg=;
+        b=c8LhZ9WN8JGy4sPF1wlQ3j4VR7kFDQ0iKBPa3RX3eQRqXfQV8SQwc1AHIvsrqJ9Gl/
+         taBLCOFe2SMeFu3g3CftOJHcDV4vhudqRjKSU2Cd+BLzUWSWmpvw+Tdbg+jWni+h8tV7
+         VKUrmUO4AwVbJNWdxg/8K6+7kHLUyJ5kXtaQh+noaaNcY5AfSm5GfKOeimyjI2NqwG2w
+         kHN5+whNpjPzG3Ugeq/B+oijEFzUfRxdd8GAFuPtdCGRsZm4/egdcHbrqY6mDGLJI4Bu
+         mNPhi8iQaq5xj0YrpkO24S2GDVv1c3mZEejMYZL8+2YOymm4s03LE2a3FSswQhcM6pqF
+         scrw==
+X-Gm-Message-State: AOAM531AoZBWyz1PsAsqD9gZ3GzerEebH09EQLZnHCZ2sHMofJ+bbfbw
+        AMZ3Zs/PXY43OpYUDHS5fXo=
+X-Google-Smtp-Source: ABdhPJxhFTIYlZQiGHofApKmES4ojOpP9cIJyfrcT0+gwKkK8YImq+k0vM2L9reQYhpLSHyE8uj1jQ==
+X-Received: by 2002:a7b:c24d:: with SMTP id b13mr17034601wmj.151.1607876247525;
+        Sun, 13 Dec 2020 08:17:27 -0800 (PST)
 Received: from localhost.localdomain (188.red-81-44-87.dynamicip.rima-tde.net. [81.44.87.188])
-        by smtp.gmail.com with ESMTPSA id 64sm27102073wmd.12.2020.12.13.08.17.22
+        by smtp.gmail.com with ESMTPSA id 64sm27102073wmd.12.2020.12.13.08.17.26
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 13 Dec 2020 08:17:23 -0800 (PST)
+        Sun, 13 Dec 2020 08:17:27 -0800 (PST)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linus.walleij@linaro.org
 Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org,
         yanaijie@huawei.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: [PATCH 0/8] pinctrl: ralink: rt2880: Some minimal clean ups
-Date:   Sun, 13 Dec 2020 17:17:13 +0100
-Message-Id: <20201213161721.6514-1-sergio.paracuellos@gmail.com>
+        devicetree@vger.kernel.org, devel@driverdev.osuosl.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 3/8]  pinctrl: ralink: rt2880: return proper error code
+Date:   Sun, 13 Dec 2020 17:17:16 +0100
+Message-Id: <20201213161721.6514-4-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201213161721.6514-1-sergio.paracuellos@gmail.com>
+References: <20201213161721.6514-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After this driver was moved from staging into pinctrl subsytems
-some reviews for bindigns and driver itself comes from Ron Herring
-and Dan Carpenter. Get rid of all the comments to properly be in
-a good shape before merge window.
+Check for NULL shall return '-ENOMEM' instead of '-1'.
 
-Best regards,
-    Sergio Paracuellos
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Sergio Paracuellos (8):
-  dt-bindings: pinctrl: rt2880: properly redo bindings
-  pinctrl: ralink: rt2880: avoid double pointer to simplify code
-  pinctrl: ralink: rt2880: return proper error code
-  pinctrl: ralink: rt2880: add missing NULL check
-  pinctrl: ralink: rt2880: delete not needed error message
-  pinctrl: ralink: rt2880: preserve error codes
-  pinctrl: ralink: rt2880: use 'PTR_ERR_OR_ZERO'
-  staging: mt7621-dts: properly name pinctrl related nodes
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ drivers/pinctrl/ralink/pinctrl-rt2880.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../pinctrl/ralink,rt2880-pinmux.yaml         | 62 +++++++++----------
- drivers/pinctrl/ralink/pinctrl-rt2880.c       | 45 +++++++-------
- drivers/staging/mt7621-dts/mt7621.dtsi        | 46 +++++++-------
- 3 files changed, 73 insertions(+), 80 deletions(-)
-
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt2880.c b/drivers/pinctrl/ralink/pinctrl-rt2880.c
+index c933e1a1d4fa..6e0bf7c4837b 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt2880.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt2880.c
+@@ -206,7 +206,7 @@ static int rt2880_pinmux_index(struct rt2880_priv *p)
+ 	p->group_names = devm_kcalloc(p->dev, p->group_count,
+ 				      sizeof(char *), GFP_KERNEL);
+ 	if (!p->group_names)
+-		return -1;
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < p->group_count; i++) {
+ 		p->group_names[i] = p->groups[i].name;
 -- 
 2.25.1
 
