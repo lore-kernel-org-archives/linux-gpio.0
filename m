@@ -5,65 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7963DC4167B
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 16:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACE9C2BBCA
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 16:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 523ED23380
+	by mail.kernel.org (Postfix) with ESMTP id CFC85233F6
 	for <linux-gpio@archiver.kernel.org>; Sun, 13 Dec 2020 16:18:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388730AbgLMQSu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 13 Dec 2020 11:18:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38746 "EHLO
+        id S2404701AbgLMQSv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Dec 2020 11:18:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404701AbgLMQSt (ORCPT
+        with ESMTP id S2404226AbgLMQSt (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2020 11:18:49 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1FDC0617B0;
-        Sun, 13 Dec 2020 08:17:34 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id w5so10250900wrm.11;
-        Sun, 13 Dec 2020 08:17:33 -0800 (PST)
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3107C0617A6;
+        Sun, 13 Dec 2020 08:17:31 -0800 (PST)
+Received: by mail-wm1-x344.google.com with SMTP id k10so11614291wmi.3;
+        Sun, 13 Dec 2020 08:17:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=X/SjzDMsmOBxksRB2/nR67BPPBDrp7yLu8jvVQSPdRA=;
-        b=RA9YPVDPP+Hlea2+CoCov3pCGvBJPPAI//vWwsri9yIDoXMxCPFwqlm6aDUA2tO5C2
-         bbs/pBFtoOssukMSlk+7pNsbfJJEnm8M2sC0hWQs3hFZGgb5GTq3rlSIvtcp/dg+oo1G
-         lchDa25ZOzl5UcvMKgN6pSH4FkRYFQER+22/5YbSv/PtsN4qAHnezkQHLWsEaOO8McL/
-         CEHY0YkOqBdy9bBZMNVBFK6VthIvIC8paW39UGvpmOJVE1WOrgKrE8ZGuqdZTwFeyfXN
-         um/36355ECTDo1cnex8yxgAPttwXkzCmXrLAHG7xZoIg8PBNJ0W7AP+rJkinQO5Nl7kh
-         5iMA==
+        bh=w9VFIJdHj+SJxF4z+WgbqJ8x7eNPsM9DBQcH2wJnArM=;
+        b=DgvvQc0NAh1OKOf+xsxZRjBpmVYIChLVpTygScao4JsyKQZOXnJ995flh2Z2WHhXjS
+         VU/iMisOaB4SSkMVJ64YnxbYHFcBhhgHnBSWQ0qBOqmg64ucF0sTz89qTDee+v3/FwiT
+         WuoMfkWSGEz8J5H4wSIBSk9rnCtdBM/yH3U/TLLWJHV7PNnYKhWyd+qcr1s/l9zmK/sg
+         RI7aD+YPTWWVZPrHNVa/GakA3b798KuLaSScKfbCCCB45BhFr/yBSMg7YcnX7MfUEvXd
+         r6j/lDdOzcOf267FQjO2UJwx17Mp6zPsKm9bIvIeaozT50bW+fA4B/FbivMZQOQTaw/F
+         UBIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=X/SjzDMsmOBxksRB2/nR67BPPBDrp7yLu8jvVQSPdRA=;
-        b=WpWTUaKG1JIakM7NfNe70IrHIXyA8EsVnytfHIimjpyZEXW8OUmfafMVI7KHqqaqen
-         nT6BK8M6YT/2nWA0+3eXqBoks2qfDzVH3WHBP70RvH1o8quKojQiSwZpSCGD18yBLbk9
-         itxHi8mnYpuHqKGDMYXwfqbS08eAeriyHZmC8/NjB+UtDuTYVekU/ML9YTC2LOZddxeo
-         BNZGFCUZRW3f8IUOkVBon6sKPbzfg6JjnLQ9NQxrlklqm0OdagANDwfrIs8MrfiYS4cS
-         WnUGMp2ej1BnPWnno5NS90UnC39/4k1zO73TeNwe/Bwqjk/yl8DcSGOOqDqdzLTjsOI8
-         PcIA==
-X-Gm-Message-State: AOAM532fiNqI1JuMUlQqhe/fsmMLwxeqBaG831UXOLPWOKeZacEZlQEQ
-        Kwf3XZzYDe3pbLN71YGXsD8=
-X-Google-Smtp-Source: ABdhPJyJqmj0HNzc2fwOmoYbmupN0wZjJVWhHfjcFkpjkCTKKiJrRTgN6MXYcDkwVAPecugXOEcpeg==
-X-Received: by 2002:a5d:5704:: with SMTP id a4mr13108334wrv.37.1607876252873;
-        Sun, 13 Dec 2020 08:17:32 -0800 (PST)
+        bh=w9VFIJdHj+SJxF4z+WgbqJ8x7eNPsM9DBQcH2wJnArM=;
+        b=JGMPzO/lsSDTtpRu6k+4Ss5v1bQ19dqoWhczrrUtiZvopTH8nTpa+q+z+5mYOHIT20
+         9AC6T7k+aGQNnH2OudkvLW4VxivEP+fq8ixeakxQDiHpHfWmETPtAYYLoknhZAYyzMqa
+         +e80TUIWaJCp2uXgFhPPIrFe82d6kPwsOu7wnR+23oZl/yuKBFLs+7XgyDZwi9oeA8J4
+         QSg9MScyAnXc5dGoIxC6hpvvVZC1edzjMLPB3ZuP5e+TAUYmFkxFicEZU56w2OX1/2qj
+         GiRri9r2yR/DI1AKie6znDTgbel2UsppE3aO3GYcau1WeQCuygqc7cDftuFm7WrvGmdN
+         WhVQ==
+X-Gm-Message-State: AOAM530FP02qTKp2FgtbXGzbHXduie7ORmp3XmrUel1B+30sn2e9dJnf
+        zuTIyfMHTYO5/Bs4+d2NwxU=
+X-Google-Smtp-Source: ABdhPJyTeWtycO/1IXRhvCbaw1614hdJtEa+J6vkyRpI4RbtVAsHskSG3As8u1WNf7N78Tpig7KSGw==
+X-Received: by 2002:a7b:c751:: with SMTP id w17mr23205450wmk.121.1607876250816;
+        Sun, 13 Dec 2020 08:17:30 -0800 (PST)
 Received: from localhost.localdomain (188.red-81-44-87.dynamicip.rima-tde.net. [81.44.87.188])
-        by smtp.gmail.com with ESMTPSA id 64sm27102073wmd.12.2020.12.13.08.17.31
+        by smtp.gmail.com with ESMTPSA id 64sm27102073wmd.12.2020.12.13.08.17.29
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 13 Dec 2020 08:17:32 -0800 (PST)
+        Sun, 13 Dec 2020 08:17:30 -0800 (PST)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linus.walleij@linaro.org
 Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org,
         yanaijie@huawei.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: [PATCH 8/8] staging: mt7621-dts: properly name pinctrl related nodes
-Date:   Sun, 13 Dec 2020 17:17:21 +0100
-Message-Id: <20201213161721.6514-9-sergio.paracuellos@gmail.com>
+        devicetree@vger.kernel.org, devel@driverdev.osuosl.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 6/8] pinctrl: ralink: rt2880: preserve error codes
+Date:   Sun, 13 Dec 2020 17:17:19 +0100
+Message-Id: <20201213161721.6514-7-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201213161721.6514-1-sergio.paracuellos@gmail.com>
 References: <20201213161721.6514-1-sergio.paracuellos@gmail.com>
@@ -73,126 +74,49 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-According to the binding documentation pinctrl related nodes
-must use '-pins$' and ''^(.*-)?pinmux$'' as names. Change all
-of them to properly match them.
+Some paths in probe function are returning '-EINVAL'
+instead of preserve original code from called functions.
+Change them to preserve all of them.
 
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- drivers/staging/mt7621-dts/mt7621.dtsi | 46 +++++++++++++-------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ drivers/pinctrl/ralink/pinctrl-rt2880.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index 5b9d3bf82cb1..f05b7dec703b 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -228,83 +228,83 @@ pinctrl: pinctrl {
- 		state_default: pinctrl0 {
- 		};
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt2880.c b/drivers/pinctrl/ralink/pinctrl-rt2880.c
+index 4725aa34328a..5af1c8a20322 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt2880.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt2880.c
+@@ -315,6 +315,7 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
+ {
+ 	struct rt2880_priv *p;
+ 	struct pinctrl_dev *dev;
++	int err;
  
--		i2c_pins: i2c0 {
--			i2c0 {
-+		i2c_pins: i2c0-pins {
-+			pinmux {
- 				groups = "i2c";
- 				function = "i2c";
- 			};
- 		};
+ 	if (!rt2880_pinmux_data)
+ 		return -ENOTSUPP;
+@@ -330,13 +331,16 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, p);
  
--		spi_pins: spi0 {
--			spi0 {
-+		spi_pins: spi0-pins {
-+			pinmux {
- 				groups = "spi";
- 				function = "spi";
- 			};
- 		};
- 
--		uart1_pins: uart1 {
--			uart1 {
-+		uart1_pins: uart1-pins {
-+			pinmux {
- 				groups = "uart1";
- 				function = "uart1";
- 			};
- 		};
- 
--		uart2_pins: uart2 {
--			uart2 {
-+		uart2_pins: uart2-pins {
-+			pinmux {
- 				groups = "uart2";
- 				function = "uart2";
- 			};
- 		};
- 
--		uart3_pins: uart3 {
--			uart3 {
-+		uart3_pins: uart3-pins {
-+			pinmux {
- 				groups = "uart3";
- 				function = "uart3";
- 			};
- 		};
- 
--		rgmii1_pins: rgmii1 {
--			rgmii1 {
-+		rgmii1_pins: rgmii1-pins {
-+			pinmux {
- 				groups = "rgmii1";
- 				function = "rgmii1";
- 			};
- 		};
- 
--		rgmii2_pins: rgmii2 {
--			rgmii2 {
-+		rgmii2_pins: rgmii2-pins {
-+			pinmux {
- 				groups = "rgmii2";
- 				function = "rgmii2";
- 			};
- 		};
- 
--		mdio_pins: mdio0 {
--			mdio0 {
-+		mdio_pins: mdio0-pins {
-+			pinmux {
- 				groups = "mdio";
- 				function = "mdio";
- 			};
- 		};
- 
--		pcie_pins: pcie0 {
--			pcie0 {
-+		pcie_pins: pcie0-pins {
-+			pinmux {
- 				groups = "pcie";
- 				function = "gpio";
- 			};
- 		};
- 
--		nand_pins: nand0 {
--			spi-nand {
-+		nand_pins: nand0-pins {
-+			spi-pinmux {
- 				groups = "spi";
- 				function = "nand1";
- 			};
- 
--			sdhci-nand {
-+			sdhci-pinmux {
- 				groups = "sdhci";
- 				function = "nand2";
- 			};
- 		};
- 
--		sdhci_pins: sdhci0 {
--			sdhci0 {
-+		sdhci_pins: sdhci0-pins {
-+			pinmux {
- 				groups = "sdhci";
- 				function = "sdhci";
- 			};
+ 	/* init the device */
+-	if (rt2880_pinmux_index(p)) {
++	err = rt2880_pinmux_index(p);
++	if (err) {
+ 		dev_err(&pdev->dev, "failed to load index\n");
+-		return -EINVAL;
++		return err;
+ 	}
+-	if (rt2880_pinmux_pins(p)) {
++
++	err = rt2880_pinmux_pins(p);
++	if (err) {
+ 		dev_err(&pdev->dev, "failed to load pins\n");
+-		return -EINVAL;
++		return err;
+ 	}
+ 	dev = pinctrl_register(p->desc, &pdev->dev, p);
+ 	if (IS_ERR(dev))
 -- 
 2.25.1
 
