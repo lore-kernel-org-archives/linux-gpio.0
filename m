@@ -2,69 +2,67 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 068F2C2BB48
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 00:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36005C0018C
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 00:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C74742389B
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 00:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04FC4238D6
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 00:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406942AbgLNAGh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 13 Dec 2020 19:06:37 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:48103 "EHLO
+        id S1730728AbgLNAGe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Dec 2020 19:06:34 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:34897 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727178AbgLNAGe (ORCPT
+        by vger.kernel.org with ESMTP id S1730264AbgLNAGe (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
         Sun, 13 Dec 2020 19:06:34 -0500
-X-Greylist: delayed 639 seconds by postgrey-1.27 at vger.kernel.org; Sun, 13 Dec 2020 19:06:33 EST
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3900758031E;
-        Sun, 13 Dec 2020 18:55:10 -0500 (EST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 1A5D85802FA;
+        Sun, 13 Dec 2020 18:55:09 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Sun, 13 Dec 2020 18:55:10 -0500
+  by compute5.internal (MEProxy); Sun, 13 Dec 2020 18:55:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=Me9oM9C7gnSn/
-        bA00pvi332g4ULeBtBRmI4/Jx5+WEQ=; b=gXa30+dBr8ufc2i05s4lmoVnr2ywy
-        KbppxPWMHR4+KAiurzY5e/tUw/g7Os5y206E0tNeoOTCT5S4hKmomdOoQSAZwnzL
-        KA2i2gTAkeToLGK5dNfElkSwEzvElLKZK7c65R3cDvULSRDFJ6OcuDPvcewYkmoz
-        bixlShUDlz6afyf2ff2rp8KQegIg2jpBd4jh3SARGweRm+I5yFTNjqBdW1iXGgPe
-        SG/LIBR0nVueB21Jp8d1Xlrj5Z4kNUIBSkh0o8us2UwHcYy+wXAQ2OHJuPeqAVQv
-        HyJP0D+bGSvyxm7bLBCI5/iCQrFl/f/ZKBp7l6n3b7pksYy2uWFjOJu1g==
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=z+hKEFWzaz+NIB1StV1wepaJfG
+        /xJSZ0kvj+tC6Swzg=; b=hUAoEDQlcEgvw+PQNvhoiwlISPOjjc1xoGHfmzRgy/
+        kaSGM6aRagVBqw8jB8Xuq3gAB7TdxL0WYA6TNiJutuPOd3beaxZfLX9cN1sg8YO8
+        8ewMOeTO70NN6Hvrq+WHzodkVcoXLXF633z0CWjvmrfe/8O8NWCRyT2bxVcJAvwM
+        YUl18Lrr20r31G8BMQ7oZJj0BJ4EWawRAP3a8lNAGvInsxHBn0/1+4R9YujXklzG
+        nE8nngtwU+lF7exzlltJiHSRGUKlZZ5dPcrTiO+TL6jrTO70dxivyf+bh+5GcVEC
+        wgbg13RDeOoFTv29uX1Yy4ao95nkcFW8p83BQCjnUbRw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=Me9oM9C7gnSn/bA00pvi332g4ULeBtBRmI4/Jx5+WEQ=; b=mDwfNPpT
-        LNtriOV2SrX4lcB0j0r7z4dQZ/BmLbYQbJDRoimbu+L1aPw3L6cIcEu9wzosaljm
-        AgyK1gEk3V9zFZdXHaUy1p0C816+7nKYvGBzHurHwwfA628nkBreA+d//WGXbOFs
-        u8a8MmjHiPYmZSFDfMqB7aMCdj8wssPuPdo96I19lrJLEU3DCjtBxyjrdQLQxZPr
-        4f83iHUPxV5M5QHKwFatmhqK3snr6TzybYL33Wp7fzKr92LZV9cu+Q7ArAeDFqOi
-        wvhWRGlHc4k7Wh6ekTyQoXfVlpJJz1WMgSU/oo1m+rc4X7ERRsFdNSg6Yy7M8uA9
-        ZwWyZQH/OoZxRw==
-X-ME-Sender: <xms:3qnWX7M0ruqg3dxx2gUCfHe55I6qaseudMGEJRi2VqMW3MjoT-IfHw>
-    <xme:3qnWX7LQx2YgkQw4jfLOIflPa3fkAPpUt2E3KUMN1lUrrsCd2Q8t6VgS2MkrWMj1b
-    rvwohUIF-IVsPgPDQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekiedgudektdcutefuodetggdotefrod
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=z+hKEFWzaz+NIB1St
+        V1wepaJfG/xJSZ0kvj+tC6Swzg=; b=pWvnIbVBMSjFTzkAtIcchsKt/X99tjTMD
+        3RYjhRwnGL0KsdW1S6dje2WnKDE0boi/PEP2eS6SbH12YCXdUaIpcyPScB5s6zsw
+        hriy4r2wbeJq/WwC2oIjH2gq7UipEt8+ybcavDKeCmeE9H6dPPjLoVuwDPq7rFa9
+        oI4gRpEntf/x/3MqDwClvjzr37RXD9D7E7boQ3dccAqgvx6xBNYciu06ppHOIqSI
+        L/LLNowk6TtnNqQ4/ej27+GdhpqeuTgklHNJld8BmkPu8nG8SKuXkhd1I6pz5KR3
+        dR0qQtmGuhUsnReV6rdyaqGEU2Q6BkeNVxuwi395GOByAgnaPvo9g==
+X-ME-Sender: <xms:26nWX7i9C_yrIDIvLTrAF2maQllK-Kj_MT1WRlc0Gw6Ry9dPGQgbtw>
+    <xme:26nWX4AzCZv7b33a2JebDz2ETVYgqZEYJLKXKZI8k4UyF0BXQ0RxZCUBl8i7J-Lzz
+    6FNHDPWSut4qeN-Iw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekiedgudejlecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepudfhjeefvdfhgfefheetgffhieeigfefhefgvddvveefgeejheej
-    vdfgjeehueeinecukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghruf
-    hiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgr
-    nhgurdhorhhg
-X-ME-Proxy: <xmx:3qnWX7LFY-kwwbVukB4BRsZK8mBUFAoBrPwd_ClKvOVwyCpUPNMBsw>
-    <xmx:3qnWX15p9CHpn6VN-E39D-T4ridUKjjFDCfAzvV09oQEWDgT8ziKjQ>
-    <xmx:3qnWX1cxF-U8hUTSgwZ9D7aOf79EX34GekClvJ6ssoeUOVHDLo56JA>
-    <xmx:3qnWX1tviz8pX_qbDPqH6dDFkMnyivo_Xr6s3_WCKGOQ-0yytCk6bw>
+    enucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
+    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuggftrf
+    grthhtvghrnhepieetkefhheduudfgledtudefjeejfeegveehkeeufffhhfejkeehieff
+    tdevtdevnecukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgu
+    rdhorhhg
+X-ME-Proxy: <xmx:26nWX7FFkLjHgFyHfoPypPqwrvCqIori9_4SN_6xFtKfaC3Y7XcV7w>
+    <xmx:26nWX4QeGjbhn9OxV3LLWyliRtNqaYF81MdO_TrESktnrSKITn4uBQ>
+    <xmx:26nWX4xafVZPVc_gdrAGZy_VMevdP7e1tC91PJLgPHfYdmKw66kq3w>
+    <xmx:3anWX0h7Pv2pOfItYHprgcVm1fQrCwN_vHEQDWo0HXtPRNCCR-a4Bw>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8A12D1080057;
-        Sun, 13 Dec 2020 18:55:09 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 10DAE108005B;
+        Sun, 13 Dec 2020 18:55:07 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -78,167 +76,45 @@ Cc:     Andre Przywara <andre.przywara@arm.com>,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 4/4] arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
-Date:   Sun, 13 Dec 2020 17:55:06 -0600
-Message-Id: <20201213235506.25201-5-samuel@sholland.org>
+Subject: [PATCH 0/4] Allwinner H6 RSB support
+Date:   Sun, 13 Dec 2020 17:55:02 -0600
+Message-Id: <20201213235506.25201-1-samuel@sholland.org>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201213235506.25201-1-samuel@sholland.org>
-References: <20201213235506.25201-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On boards where the only peripheral connected to PL0/PL1 is an X-Powers
-PMIC, configure the connection to use the RSB bus rather than the I2C
-bus. Compared to the I2C controller that shares the pins, the RSB
-controller allows a higher bus frequency, and it is more CPU-efficient.
+The Allwinner H6 SoC contains an RSB controller. It is almost completely
+undocumented, so it was missed when doing the initial SoC bringup.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
+This series adds the clock/reset, pin configuration, and device tree
+node needed to use the RSB controller. Since RSB is faster, simpler, and
+generally more reliable than the I2C controller IP in the SoC, switch to
+using it where possible.
+
+This was tested on an Orange Pi 3 and a Pine H64 model B. This series
+does not switch the Pine H64 to use RSB, as doing so would prevent
+accessing the external RTC that shares the I2C bus.
+
+Samuel Holland (4):
+  clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
+  pinctrl: sunxi: h6-r: Add s_rsb pin functions
+  arm64: dts: allwinner: h6: Add RSB controller node
+  arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
+
  .../dts/allwinner/sun50i-h6-beelink-gs1.dts   | 38 +++++++++----------
  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 14 +++----
  .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 22 +++++------
- 3 files changed, 37 insertions(+), 37 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 19 ++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |  5 +++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h        |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c   |  2 +
+ include/dt-bindings/clock/sun50i-h6-r-ccu.h   |  1 +
+ include/dt-bindings/reset/sun50i-h6-r-ccu.h   |  1 +
+ 9 files changed, 66 insertions(+), 38 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-index 416e0fa76ba7..8a95abfc2ebb 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-@@ -158,12 +158,28 @@ &pio {
- 	vcc-pg-supply = <&reg_aldo1>;
- };
- 
--&r_i2c {
-+&r_ir {
-+	linux,rc-map-name = "rc-beelink-gs1";
-+	status = "okay";
-+};
-+
-+&r_pio {
-+	/*
-+	 * FIXME: We can't add that supply for now since it would
-+	 * create a circular dependency between pinctrl, the regulator
-+	 * and the RSB Bus.
-+	 *
-+	 * vcc-pl-supply = <&reg_aldo1>;
-+	 */
-+	vcc-pm-supply = <&reg_aldo1>;
-+};
-+
-+&r_rsb {
- 	status = "okay";
- 
--	axp805: pmic@36 {
-+	axp805: pmic@745 {
- 		compatible = "x-powers,axp805", "x-powers,axp806";
--		reg = <0x36>;
-+		reg = <0x745>;
- 		interrupt-parent = <&r_intc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
-@@ -281,22 +297,6 @@ sw {
- 	};
- };
- 
--&r_ir {
--	linux,rc-map-name = "rc-beelink-gs1";
--	status = "okay";
--};
--
--&r_pio {
--	/*
--	 * PL0 and PL1 are used for PMIC I2C
--	 * don't enable the pl-supply else
--	 * it will fail at boot
--	 *
--	 * vcc-pl-supply = <&reg_aldo1>;
--	 */
--	vcc-pm-supply = <&reg_aldo1>;
--};
--
- &rtc {
- 	clocks = <&ext_osc32k>;
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index 8a8d1a608e30..e86360ea022e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -222,12 +222,16 @@ &pio {
- 	vcc-pg-supply = <&reg_vcc_wifi_io>;
- };
- 
--&r_i2c {
-+&r_ir {
-+	status = "okay";
-+};
-+
-+&r_rsb {
- 	status = "okay";
- 
--	axp805: pmic@36 {
-+	axp805: pmic@745 {
- 		compatible = "x-powers,axp805", "x-powers,axp806";
--		reg = <0x36>;
-+		reg = <0x745>;
- 		interrupt-parent = <&r_intc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
-@@ -339,10 +343,6 @@ sw {
- 	};
- };
- 
--&r_ir {
--	status = "okay";
--};
--
- &rtc {
- 	clocks = <&ext_osc32k>;
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-index 0d5f9aeb96d0..96635588e9a6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-@@ -128,12 +128,20 @@ &pio {
- 	vcc-pg-supply = <&reg_aldo1>;
- };
- 
--&r_i2c {
-+&r_ir {
-+	status = "okay";
-+};
-+
-+&r_pio {
-+	vcc-pm-supply = <&reg_bldo3>;
-+};
-+
-+&r_rsb {
- 	status = "okay";
- 
--	axp805: pmic@36 {
-+	axp805: pmic@745 {
- 		compatible = "x-powers,axp805", "x-powers,axp806";
--		reg = <0x36>;
-+		reg = <0x745>;
- 		interrupt-parent = <&r_intc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
-@@ -248,14 +256,6 @@ sw {
- 	};
- };
- 
--&r_ir {
--	status = "okay";
--};
--
--&r_pio {
--	vcc-pm-supply = <&reg_bldo3>;
--};
--
- &rtc {
- 	clocks = <&ext_osc32k>;
- };
 -- 
 2.26.2
 
