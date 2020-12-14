@@ -2,139 +2,136 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97513C2BB40
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 00:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA05C4361B
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 01:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65464238A1
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 00:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A997222C7E
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 01:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406995AbgLNAH2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 13 Dec 2020 19:07:28 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:59695 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727178AbgLNAHV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 13 Dec 2020 19:07:21 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id B9C9058031C;
-        Sun, 13 Dec 2020 18:55:09 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 13 Dec 2020 18:55:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=sGIZhzHz1FkZQ
-        G0+QrmOXj6Tw3VH/mhTS+rkKDVcsCg=; b=FrTtfyvogqIvxKdUFX7jJ1JMVQtwo
-        XKMgnj1yVmODuWaJbWKdTgEsPENp0+H5O6a4BD5QJ3x5UmIDbSalbJBfSHdCMf2i
-        L7hU4MOqSnvxFJqbBzRYAXbFO8UrEYSlBycSJmx1Tat1i3wNrZT5PBfwPIH6ut3Y
-        OfGNQF53CoxJpkRIapDpGws+HIIf6IaGcJua+o41H8hUSS2nrMW2bmyKjN8thA+s
-        s9Jj3nn5a8qW9sTb0XnlKZ50LYLFQ5AeWJ418H6l8/k0Vz2Hjq0qcOitkbW72GMr
-        a+pEIpyMBK5ifCRL2liz0fIrNl9skoF7lYikLlZU/ZNnkvV3rOtW9cCtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=sGIZhzHz1FkZQG0+QrmOXj6Tw3VH/mhTS+rkKDVcsCg=; b=BPUbXeFw
-        EA6oiCDciMSGpT4W1tgy0jnoWfAR7aJ5wQl2hIWII9wat0XsV2rvnJ8veVEVUkj4
-        p78pVAv5cMF988cNJS3tWoJrdRWkeh49yx7Hi9URlmqQheFrFpAHmxfddfRffYeG
-        rXiLojLZB103cdwSPvaE0meOuNX5o15Sv/DbXDdlKf/p92rnR67eFdr5lO7bur80
-        1EOjPVMlbiqMweu6IjSwsMnu1RjIykCFFeFmJcGoWmcxtPINb3ipP4Lz4kvCRa88
-        dBT0pi3R4lNuJOPi2c/g5dsRUhzVwXdg3mkr4jhFQm/wB+UQ1jFH7vn5rjsGiZW9
-        lvQX/VTB8d08Ow==
-X-ME-Sender: <xms:3anWX6c68Q5ppKtMX7ulMrU7SxL21McqrbjCoLmRICgcg0zt8PZShQ>
-    <xme:3anWX0MfUkMBRTjrQed3B1q-5n9Iv9fDvS8ehhIeYEazt03JGrxspqEvpu1EHVc0F
-    _1MYxUAS0fKpGENSg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekiedgudejlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepudfhjeefvdfhgfefheetgffhieeigfefhefgvddvveefgeejheej
-    vdfgjeehueeinecukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgr
-    nhgurdhorhhg
-X-ME-Proxy: <xmx:3anWX7jZMVWlBba2TU5WKOciWkCZ42zzSfCDMrKVOB6ZIypjwygllQ>
-    <xmx:3anWX39vWJoRCw31QnS9ngdjl_7noU2HS4esBqK71ZkpYFatb72tFg>
-    <xmx:3anWX2tXK1NBdBrUI8bfKLBS6iEwLGewsUxaJgcUJsZa1HDnCYSKuw>
-    <xmx:3anWX7PBO82vkderhqZoE5-hXBMs3oS11CJXJlG1mERyvqGN71o6xg>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E71B0108005C;
-        Sun, 13 Dec 2020 18:55:08 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 3/4] arm64: dts: allwinner: h6: Add RSB controller node
-Date:   Sun, 13 Dec 2020 17:55:05 -0600
-Message-Id: <20201213235506.25201-4-samuel@sholland.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201213235506.25201-1-samuel@sholland.org>
-References: <20201213235506.25201-1-samuel@sholland.org>
+        id S1731697AbgLNB2K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Dec 2020 20:28:10 -0500
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:41784 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437697AbgLNB2A (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2020 20:28:00 -0500
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 0BE1NtDr074558;
+        Mon, 14 Dec 2020 09:23:55 +0800 (GMT-8)
+        (envelope-from billy_tsai@aspeedtech.com)
+Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
+ (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 14 Dec
+ 2020 09:27:05 +0800
+From:   Billy Tsai <billy_tsai@aspeedtech.com>
+To:     <andrew@aj.id.au>, <linus.walleij@linaro.org>, <joel@jms.id.au>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <BMC-SW@aspeedtech.com>
+Subject: [PATCH v2] driver: aspeed: g6: Fix PWMG0 pinctrl setting
+Date:   Mon, 14 Dec 2020 09:27:00 +0800
+Message-ID: <20201214012700.23560-1-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <D9745FBC-BEA7-421E-B56C-21EA9AAE094E@aspeedtech.com>
+References: <D9745FBC-BEA7-421E-B56C-21EA9AAE094E@aspeedtech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [192.168.10.9]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 0BE1NtDr074558
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The H6 SoC contains an undocumented but fully functional RSB controller.
-Add support for it. The MMIO register address matches other SoCs of the
-same generation, and the IRQ matches a hole in the documented IRQ list.
+The SCU offset for signal PWM8 in group PWM8G0 is wrong, fix it from
+SCU414 to SCU4B4.
+Besides that, When PWM8~15 of PWMG0 set it needs to clear SCU414 bits
+at the same time.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
+Fixes: 2eda1cdec49f ("pinctrl: aspeed: Add AST2600 pinmux support")
+
+Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 24 ++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 34cfd68ca523..dd47176e432d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -1014,6 +1014,11 @@ r_ir_rx_pin: r-ir-rx-pin {
- 				pins = "PL9";
- 				function = "s_cir_rx";
- 			};
-+
-+			r_rsb_pins: r-rsb-pins {
-+				pins = "PL0", "PL1";
-+				function = "s_rsb";
-+			};
- 		};
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+index b673a44ffa3b..1dfb12a5b2ce 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+@@ -367,49 +367,57 @@ FUNC_GROUP_DECL(RMII4, F24, E23, E24, E25, C25, C24, B26, B25, B24);
  
- 		r_ir: ir@7040000 {
-@@ -1045,6 +1050,20 @@ r_i2c: i2c@7081400 {
- 			#size-cells = <0>;
- 		};
+ #define D22 40
+ SIG_EXPR_LIST_DECL_SESG(D22, SD1CLK, SD1, SIG_DESC_SET(SCU414, 8));
+-SIG_EXPR_LIST_DECL_SEMG(D22, PWM8, PWM8G0, PWM8, SIG_DESC_SET(SCU414, 8));
++SIG_EXPR_LIST_DECL_SEMG(D22, PWM8, PWM8G0, PWM8, SIG_DESC_SET(SCU4B4, 8),
++			SIG_DESC_CLEAR(SCU414, 8));
+ PIN_DECL_2(D22, GPIOF0, SD1CLK, PWM8);
+ GROUP_DECL(PWM8G0, D22);
  
-+		r_rsb: rsb@7083000 {
-+			compatible = "allwinner,sun8i-a23-rsb";
-+			reg = <0x07083000 0x400>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&r_ccu CLK_R_APB2_RSB>;
-+			clock-frequency = <3000000>;
-+			resets = <&r_ccu RST_R_APB2_RSB>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_rsb_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		ths: thermal-sensor@5070400 {
- 			compatible = "allwinner,sun50i-h6-ths";
- 			reg = <0x05070400 0x100>;
+ #define E22 41
+ SIG_EXPR_LIST_DECL_SESG(E22, SD1CMD, SD1, SIG_DESC_SET(SCU414, 9));
+-SIG_EXPR_LIST_DECL_SEMG(E22, PWM9, PWM9G0, PWM9, SIG_DESC_SET(SCU4B4, 9));
++SIG_EXPR_LIST_DECL_SEMG(E22, PWM9, PWM9G0, PWM9, SIG_DESC_SET(SCU4B4, 9),
++			SIG_DESC_CLEAR(SCU414, 9));
+ PIN_DECL_2(E22, GPIOF1, SD1CMD, PWM9);
+ GROUP_DECL(PWM9G0, E22);
+ 
+ #define D23 42
+ SIG_EXPR_LIST_DECL_SESG(D23, SD1DAT0, SD1, SIG_DESC_SET(SCU414, 10));
+-SIG_EXPR_LIST_DECL_SEMG(D23, PWM10, PWM10G0, PWM10, SIG_DESC_SET(SCU4B4, 10));
++SIG_EXPR_LIST_DECL_SEMG(D23, PWM10, PWM10G0, PWM10, SIG_DESC_SET(SCU4B4, 10),
++			SIG_DESC_CLEAR(SCU414, 10));
+ PIN_DECL_2(D23, GPIOF2, SD1DAT0, PWM10);
+ GROUP_DECL(PWM10G0, D23);
+ 
+ #define C23 43
+ SIG_EXPR_LIST_DECL_SESG(C23, SD1DAT1, SD1, SIG_DESC_SET(SCU414, 11));
+-SIG_EXPR_LIST_DECL_SEMG(C23, PWM11, PWM11G0, PWM11, SIG_DESC_SET(SCU4B4, 11));
++SIG_EXPR_LIST_DECL_SEMG(C23, PWM11, PWM11G0, PWM11, SIG_DESC_SET(SCU4B4, 11),
++			SIG_DESC_CLEAR(SCU414, 11));
+ PIN_DECL_2(C23, GPIOF3, SD1DAT1, PWM11);
+ GROUP_DECL(PWM11G0, C23);
+ 
+ #define C22 44
+ SIG_EXPR_LIST_DECL_SESG(C22, SD1DAT2, SD1, SIG_DESC_SET(SCU414, 12));
+-SIG_EXPR_LIST_DECL_SEMG(C22, PWM12, PWM12G0, PWM12, SIG_DESC_SET(SCU4B4, 12));
++SIG_EXPR_LIST_DECL_SEMG(C22, PWM12, PWM12G0, PWM12, SIG_DESC_SET(SCU4B4, 12),
++			SIG_DESC_CLEAR(SCU414, 12));
+ PIN_DECL_2(C22, GPIOF4, SD1DAT2, PWM12);
+ GROUP_DECL(PWM12G0, C22);
+ 
+ #define A25 45
+ SIG_EXPR_LIST_DECL_SESG(A25, SD1DAT3, SD1, SIG_DESC_SET(SCU414, 13));
+-SIG_EXPR_LIST_DECL_SEMG(A25, PWM13, PWM13G0, PWM13, SIG_DESC_SET(SCU4B4, 13));
++SIG_EXPR_LIST_DECL_SEMG(A25, PWM13, PWM13G0, PWM13, SIG_DESC_SET(SCU4B4, 13),
++			SIG_DESC_CLEAR(SCU414, 13));
+ PIN_DECL_2(A25, GPIOF5, SD1DAT3, PWM13);
+ GROUP_DECL(PWM13G0, A25);
+ 
+ #define A24 46
+ SIG_EXPR_LIST_DECL_SESG(A24, SD1CD, SD1, SIG_DESC_SET(SCU414, 14));
+-SIG_EXPR_LIST_DECL_SEMG(A24, PWM14, PWM14G0, PWM14, SIG_DESC_SET(SCU4B4, 14));
++SIG_EXPR_LIST_DECL_SEMG(A24, PWM14, PWM14G0, PWM14, SIG_DESC_SET(SCU4B4, 14),
++			SIG_DESC_CLEAR(SCU414, 14));
+ PIN_DECL_2(A24, GPIOF6, SD1CD, PWM14);
+ GROUP_DECL(PWM14G0, A24);
+ 
+ #define A23 47
+ SIG_EXPR_LIST_DECL_SESG(A23, SD1WP, SD1, SIG_DESC_SET(SCU414, 15));
+-SIG_EXPR_LIST_DECL_SEMG(A23, PWM15, PWM15G0, PWM15, SIG_DESC_SET(SCU4B4, 15));
++SIG_EXPR_LIST_DECL_SEMG(A23, PWM15, PWM15G0, PWM15, SIG_DESC_SET(SCU4B4, 15),
++			SIG_DESC_CLEAR(SCU414, 15));
+ PIN_DECL_2(A23, GPIOF7, SD1WP, PWM15);
+ GROUP_DECL(PWM15G0, A23);
+ 
 -- 
-2.26.2
+2.17.1
 
