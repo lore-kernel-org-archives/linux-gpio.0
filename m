@@ -2,97 +2,82 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1407BC4361B
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 22:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C738C2BB48
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 23:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3DEF20732
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 22:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E7282250F
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 23:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441144AbgLNWlK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Dec 2020 17:41:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37048 "EHLO
+        id S2441119AbgLNXAg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Dec 2020 18:00:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502548AbgLNWjG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2020 17:39:06 -0500
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A127DC0617B0
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2020 14:37:50 -0800 (PST)
-Received: by mail-ej1-x641.google.com with SMTP id ce23so24861047ejb.8
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2020 14:37:50 -0800 (PST)
+        with ESMTP id S2441382AbgLNXA2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2020 18:00:28 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5753DC06179C
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2020 14:59:48 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id x20so14920527lfe.12
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2020 14:59:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Wpovx0yRP9DSFSHvKp2FoFUcoLmrNOPDoYByta7OUGE=;
-        b=rb6SMNGBZt9aiMAmP75pi71SxFp4U71SbiaOZXgZBGX2kFsS8n4QV4ukqtdFXI47eN
-         hmMw4Z9x+u1picnso5mcnX1fBkkkl3htx667UksHrpZEP9oKfTUBrrw7/fi27ACaK8mY
-         H+U4rrpXzzg0PP1CiJzQJuX3ss53pdFy45CpcN1gyalW+ERBfrrf9Xd55uJIy5Z6YpN3
-         gVw7xF633vnpn2g/pwh+4slMQTOB9WcptcO3C1HQuTNE4fh1IZt7XFbtjX4uXjbwfYxC
-         OuADP/+bc/ftgEvOGzMQ+4TAaTMQlP9xA5kwQCeU61FfY4qPot8qm0VYc06cJ6YJFLJZ
-         5PBA==
+        bh=djP1cIFGNKx6l7Nlgqp0ZKpNw9S9LD7jiI9PWcz6Kdc=;
+        b=PJ4d01FMMdIJ9wg0E4hURfNRev8clAPOyiEAqeNtjwnCs9SMUclB7HE+PeDMfVS6KD
+         ogUCRGVFoWbjgJ+2jqSx6ejWfd/8nZ0gtWqhURGQHxmmVnHSwwUwNyi21T51wB6y6AVN
+         LdO3C2t2yU6PNkEYMtnyJIiOMyf3qNICAF3izYyXRPbjxc5dpy9eLsFrppg2He+omQ6p
+         d2SSE4Wk9xV2SDNzoKGIPBGSFdmIfG/E8s+VP/Syi00KdAJK57YDAxW3iHAu9OMpwEYc
+         /rsqWI1zn5Qa0w4r+cbSeGay2GYdOvL6LnqObA/p2pqLqUUFgFYnncu8NrijpItmqVUX
+         u5qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Wpovx0yRP9DSFSHvKp2FoFUcoLmrNOPDoYByta7OUGE=;
-        b=G7QAP4t20+rlyyr444fmxvIrOfF2IbtQQgdFW8J8Vya0qI1gxYB3CARp7Jx7eNS8t7
-         ZKn+o2Y8uigSXBFJI6/cLqH85q3FofbqMWKdhcplBS0v0MnPSJjWspZG8eKe9S97Dlzh
-         8eo6suoieUFWo+X+c91L3EBGyN+wrBlEzurcNWexp7na0URbeNxVaYnNMAduIHyk2hk4
-         NFqtskBLBHcsChwMNCcTgv7GmO4zYeQrI3XVeIlhcMPO8Rg4rpZy3Gq5QHHepTC1DxKk
-         ql1QqVLISNwrXl3XiWQ/Fo/sW+DhZrK0l5Hx7jA0V/rTgvv0Cmgw+fBVDSPe7GG1wBGQ
-         Zj+w==
-X-Gm-Message-State: AOAM532aaK2HA9aU2qpEDZ80961rx2eUE1kY2jnPJdcORcL2OX8mFL6B
-        tAB+w629rsiAoy+sm3Af8L8/9h71Qs0FUgvmwIsWPQ==
-X-Google-Smtp-Source: ABdhPJzC7PpZxBF4DcMj8+Z3cC+llQOjyzGnQfaUrl0pxCufDJ+pt5cfQ26vem5rM+34GGbngoeX4hKpgYy9Of8p/0o=
-X-Received: by 2002:a17:906:82ce:: with SMTP id a14mr24610695ejy.421.1607985469261;
- Mon, 14 Dec 2020 14:37:49 -0800 (PST)
+        bh=djP1cIFGNKx6l7Nlgqp0ZKpNw9S9LD7jiI9PWcz6Kdc=;
+        b=H9t4+sCAh+Sz15CvwMOri0o5BVZo57B1+NmhHMJguuMzVb0DJpk7VI2dlOn7uWLUFC
+         8K5F+cWtpEcfKQed9nzQqKMcDXaY1QlwPiX0znJ9jK8jj2Of5QlsxsPTD1eijuwhBA0f
+         RD2LDWwlWKEnCVjottxrtJbnkdOcAI8nfG98gKXUb0c/Y0viGe6DHBEJIx2412k2AB9V
+         FZI4PSV7LixMGH3TlBZjOWy7QWyAac+Bu4cErEOU7wayLbEJXnoNv8ZxfnTSyzE5bBJY
+         OKmnsV0Gk32uXOrgiO8Hvwh6v6rE8VQLU9shmF336jjxKPFVioFFZOm0l+BPolE4mjCI
+         wQ4A==
+X-Gm-Message-State: AOAM531nWZOCSdx3aca3mgtPJ7V6qlmkLw2D+ZxTEGpB71t5k4g2vsev
+        y2y6LDaV2c3SIbq7hJfDnBziySoJM1MrbkH2AzUl0A==
+X-Google-Smtp-Source: ABdhPJyPZCaZYrTOX3XXkA3mrXLWyVqJ2GqQy9M0v+4KhyopHggdMWf8J1pDw8TGf+FeZZSaeHNreW8yMvZ6Da81Dfw=
+X-Received: by 2002:a05:651c:1312:: with SMTP id u18mr10565874lja.200.1607986786869;
+ Mon, 14 Dec 2020 14:59:46 -0800 (PST)
 MIME-Version: 1.0
-References: <1607934255-52544-1-git-send-email-luojiaxing@huawei.com>
- <1607934255-52544-2-git-send-email-luojiaxing@huawei.com> <CACRpkdZSQSCO3dWcjUZtUMDK+Jjdnc9ORxpR9qiopgMk-o=Ryg@mail.gmail.com>
- <20201214165812.GL4077@smile.fi.intel.com>
-In-Reply-To: <20201214165812.GL4077@smile.fi.intel.com>
+References: <20201214165524.43843-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20201214165524.43843-1-andriy.shevchenko@linux.intel.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 14 Dec 2020 23:37:38 +0100
-Message-ID: <CACRpkdYvBrqHZt28fyHD6F6a4ecbzvfGknpfwr8HFdtYodaYgg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] gpio: gpio-hisi: Add HiSilicon GPIO support
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 14 Dec 2020 23:59:36 +0100
+Message-ID: <CACRpkdY8xEK+Z6q6LiFt43qThutUx7-niFjGL+FA9RLymZ-XBg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] gpio: hisi: Do not require ACPI for COMPILE_TEST
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Luo Jiaxing <luojiaxing@huawei.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        John Garry <john.garry@huawei.com>,
-        Linuxarm <linuxarm@huawei.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 5:57 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Mon, Dec 14, 2020 at 10:11:23AM +0100, Linus Walleij wrote:
-> > On Mon, Dec 14, 2020 at 9:24 AM Luo Jiaxing <luojiaxing@huawei.com> wrote:
-> >
-> > > This GPIO driver is for HiSilicon's ARM SoC.
-> >
-> > Patch applied, any further issues can certainly be fixed in-tree.
+On Mon, Dec 14, 2020 at 5:55 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+
+> Make it clear that ACPI needs to be present only to get driver functional.
+> It is not required for compilation.
 >
-> I just sent two :-)
+> Fixes: 356b01a986a5 ("gpio: gpio-hisi: Add HiSilicon GPIO support")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thanks Andy!
-
-Actually I kind like this in a way because then you also get some
-credit for the heavy review work that you do on new drivers and
-so often go uncredited.
-
-I'm sometimes tempted to even add "Co-developed-by" for the
-vast improvements you bring up. (Like on my YAS530 driver.)
+Both patches applied!
+Thanks!
 
 Yours,
 Linus Walleij
