@@ -2,241 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC55AC2BB9A
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 22:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE90C4361B
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 22:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C57122509
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 22:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47EF520732
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Dec 2020 22:41:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408575AbgLNW3L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Dec 2020 17:29:11 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43930 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390134AbgLNW3J (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2020 17:29:09 -0500
-Received: from [IPv6:2a00:5f00:102:0:a0b6:46ff:fefa:49e7] (unknown [IPv6:2a00:5f00:102:0:a0b6:46ff:fefa:49e7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: gtucker)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 6DA3E1F4503D;
-        Mon, 14 Dec 2020 22:28:23 +0000 (GMT)
-Subject: Re: linusw/devel bisection:
- baseline.bootrr.mediatek-mt8173-pinctrl-probed on mt8173-elm-hana
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <5fd76cf2.1c69fb81.6f19b.b16a@mx.google.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "kernelci-results@groups.io" <kernelci-results@groups.io>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Johan Hovold <johan@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        linux-mediatek@lists.infradead.org
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Message-ID: <483b08f2-09c3-e753-d2ce-4e34fee627f3@collabora.com>
-Date:   Mon, 14 Dec 2020 22:28:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        id S2439546AbgLNWks (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Dec 2020 17:40:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37324 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439849AbgLNWkp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2020 17:40:45 -0500
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE8AC0613D3
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2020 14:40:03 -0800 (PST)
+Received: by mail-ej1-x641.google.com with SMTP id g20so24914476ejb.1
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2020 14:40:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BL39H/RUZTWrv2NxltTatWySwCecuBzAbL+C5wKmwX0=;
+        b=PDUvsntEZv2KZd4CVk0SjS+5BmBSe7BzVTu5kQ7ZWHyMm9dt/SZj5WX7DR4HIRkuA5
+         zvBglur/k2rxM//FscPd+DXmPfY0+ey39/XZ/OPW5nS7LzmRLeblq3Pd5Eany1D1sTkP
+         NadoU8OvvWQliIU+TUUbO2RGZAmfnRPTgkye/6NTijkujFQzzmpQXNpiG0Qg0UBSHvCe
+         AYGVBa7hz/e6hfNbPfioIwQrnrzyzn/ofiifROXT83WfcUkRBG61+tIesdbCBpp/hXCC
+         ohkOvosdPZzW7gq3AX2X4kdXGs0qxA3xXwhhEEp3D/X7/UrTfL3avzr27d4xsaw5ts55
+         z68Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BL39H/RUZTWrv2NxltTatWySwCecuBzAbL+C5wKmwX0=;
+        b=OfqF/ER8jwNVI/vTe8xdvK3Y9pP2rpIF80DL0F/dgoc2vtwXZv6KvIZnaDNNpo+vMo
+         fkMerAaOzivKXsw23/9EK4AakKVpYf/1phGqKARht3wVG1+d3/HdoR+2OQhxGgrQ3VrW
+         kC+P7iar3PWaSU/2E1Z6+ybvIw+e+aQmxTvwE3lUzTNF4pB0Y383l/5rhqb3t06pfCC2
+         adzQssIr9W9pUqpbQZD+3/nJIXd6TlyO/mPvarOKth8kW5/IMHdA/KAemvxLz/7C9kni
+         ScIQL8InouzY8+pm/SldBdUFIv8c1i1G9sy0+mGXBCyrFYPz7RruhhMnekRNkbOBu/SW
+         4wzg==
+X-Gm-Message-State: AOAM5338w/+2G7KiTAtUPrPh8unfqRI63UWUbo+x5/tnLFbEHTx/qGZ9
+        9sFrBdsQuN8vcEWxH/CfUkcI8ZZ9BRthI8oJ37u49A==
+X-Google-Smtp-Source: ABdhPJxAQ6Y+c7ptp1jSAajW9pxcPIy8Vr46Vzr/TwP1M08bXsV4BpDxl8NSWinnZtnaDzuHUOy3/k1ky2TOXeLKAC0=
+X-Received: by 2002:a17:906:15c7:: with SMTP id l7mr481498ejd.226.1607985601905;
+ Mon, 14 Dec 2020 14:40:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5fd76cf2.1c69fb81.6f19b.b16a@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201212003447.238474-1-linus.walleij@linaro.org> <X9cwahptmETQ5lkL@localhost>
+In-Reply-To: <X9cwahptmETQ5lkL@localhost>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 14 Dec 2020 23:39:50 +0100
+Message-ID: <CACRpkda5_JwCAB2TisyzdJgb395JmU1AfuDDX0gWTvEj7-Mamw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Disallow identical line names in the same chip
+To:     Johan Hovold <johan@kernel.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, Dec 14, 2020 at 10:29 AM Johan Hovold <johan@kernel.org> wrote:
 
-Please see the bisection report below about the pinctrl driver
-failing to probe on the arm64 mt8173-elm-hana platform.
+> As I mentioned earlier, the not-globally unique warning only makes sense
+> for cases where all names comes from something like devicetree, and we
+> shouldn't warn if we plug in two identical USB devices that provide
+> default line names.
+>
+> Not sure it's even warranted to warn even if those default names collide
+> with the names provided in devicetree. Perhaps best to just drop the
+> flat-namespace assumption entirely and make sure gpiolib and the
+> userspace library can handle that.
 
-Reports aren't automatically sent to the public while we're
-trialing new bisection features on kernelci.org but this one
-looks valid.
+You're right. (As usual.)
 
-This is the error message:
+I dropped the global collision warning when applying.
 
-[    0.051788] gpio gpiochip0: Detected name collision for GPIO name ''
-[    0.051813] gpio gpiochip0: GPIO name collision on the same chip, this is not allowed, fix all lines on the chip to have unique names
-[    0.051832] gpiochip_add_data_with_key: GPIOs 377..511 (1000b000.pinctrl) failed to register, -17
-[    0.051946] mediatek-mt8173-pinctrl: probe of 1000b000.pinctrl failed with error -22
-
-and the full log:
-
-  https://storage.kernelci.org/linusw/devel/v5.10-rc4-91-g65efb43ac94b/arm64/defconfig/gcc-8/lab-collabora/baseline-mt8173-elm-hana.html#L492
-
-I guess some GPIO now needs to be renamed following your patch
-which enforces uniqueness, so it's not a problem with the patch
-per se.  As I'm not sure if it's something you would want to fix
-yourself, I've also CC-ed MediaTek and others such as Enric who
-knows about this platform and helped enable the test in KernelCI.
-
-Best wishes,
-Guillaume
-
-On 14/12/2020 13:47, KernelCI bot wrote:
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> * This automated bisection report was sent to you on the basis  *
-> * that you may be involved with the breaking commit it has      *
-> * found.  No manual investigation has been done to verify it,   *
-> * and the root cause of the problem may be somewhere else.      *
-> *                                                               *
-> * If you do send a fix, please include this trailer:            *
-> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-> *                                                               *
-> * Hope this helps!                                              *
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> 
-> linusw/devel bisection: baseline.bootrr.mediatek-mt8173-pinctrl-probed on mt8173-elm-hana
-> 
-> Summary:
->   Start:      65efb43ac94b gpiolib: Disallow identical line names in the same chip
->   Plain log:  https://storage.kernelci.org/linusw/devel/v5.10-rc4-91-g65efb43ac94b/arm64/defconfig/gcc-8/lab-collabora/baseline-mt8173-elm-hana.txt
->   HTML log:   https://storage.kernelci.org/linusw/devel/v5.10-rc4-91-g65efb43ac94b/arm64/defconfig/gcc-8/lab-collabora/baseline-mt8173-elm-hana.html
->   Result:     65efb43ac94b gpiolib: Disallow identical line names in the same chip
-> 
-> Checks:
->   revert:     PASS
->   verify:     PASS
-> 
-> Parameters:
->   Tree:       linusw
->   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/
->   Branch:     devel
->   Target:     mt8173-elm-hana
->   CPU arch:   arm64
->   Lab:        lab-collabora
->   Compiler:   gcc-8
->   Config:     defconfig
->   Test case:  baseline.bootrr.mediatek-mt8173-pinctrl-probed
-> 
-> Breaking commit found:
-> 
-> -------------------------------------------------------------------------------
-> commit 65efb43ac94bffeb652cddba4106817bb38c5e71
-> Author: Linus Walleij <linus.walleij@linaro.org>
-> Date:   Sat Dec 12 01:34:47 2020 +0100
-> 
->     gpiolib: Disallow identical line names in the same chip
->     
->     We need to make this namespace hierarchical: at least do not
->     allow two lines on the same chip to have the same name, this
->     is just too much flexibility. If we name a line on a chip,
->     name it uniquely on that chip.
->     
->     I don't know what happens if we just apply this, I *hope* there
->     are not a lot of systems out there breaking this simple and
->     intuitive rule.
->     
->     As a side effect, this makes the device tree naming code
->     scream a bit if names are not globally unique.
->     
->     I think there are not super-many device trees out there naming
->     their lines so let's fix this before the problem becomes
->     widespread.
->     
->     Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->     Cc: Johan Hovold <johan@kernel.org>
->     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->     Link: https://lore.kernel.org/r/20201212003447.238474-1-linus.walleij@linaro.org
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 5ce0c14c637b..fe1b96b7f127 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -330,11 +330,9 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
->  
->  /*
->   * Take the names from gc->names and assign them to their GPIO descriptors.
-> - * Warn if a name is already used for a GPIO line on a different GPIO chip.
->   *
-> - * Note that:
-> - *   1. Non-unique names are still accepted,
-> - *   2. Name collisions within the same GPIO chip are not reported.
-> + * - Fail if a name is already used for a GPIO line on the same chip.
-> + * - Allow names to not be globally unique but warn about it.
->   */
->  static int gpiochip_set_desc_names(struct gpio_chip *gc)
->  {
-> @@ -343,13 +341,19 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
->  
->  	/* First check all names if they are unique */
->  	for (i = 0; i != gc->ngpio; ++i) {
-> -		struct gpio_desc *gpio;
-> +		struct gpio_desc *gpiod;
->  
-> -		gpio = gpio_name_to_desc(gc->names[i]);
-> -		if (gpio)
-> +		gpiod = gpio_name_to_desc(gc->names[i]);
-> +		if (gpiod) {
->  			dev_warn(&gdev->dev,
->  				 "Detected name collision for GPIO name '%s'\n",
->  				 gc->names[i]);
-> +			if (gpiod->gdev == gdev) {
-> +				dev_err(&gdev->dev,
-> +					"GPIO name collision on the same chip, this is not allowed, fix all lines on the chip to have unique names\n");
-> +				return -EEXIST;
-> +			}
-> +		}
->  	}
->  
->  	/* Then add all names to the GPIO descriptors */
-> @@ -402,8 +406,22 @@ static int devprop_gpiochip_set_names(struct gpio_chip *chip)
->  		return ret;
->  	}
->  
-> -	for (i = 0; i < count; i++)
-> +	for (i = 0; i < count; i++) {
-> +		struct gpio_desc *gpiod;
-> +
-> +		gpiod = gpio_name_to_desc(names[i]);
-> +		if (gpiod) {
-> +			dev_warn(&gdev->dev,
-> +                                 "Detected name collision for GPIO name '%s'\n",
-> +                                 names[i]);
-> +			if (gpiod->gdev == gdev) {
-> +				dev_err(&gdev->dev,
-> +					"GPIO name collision on the same chip, this is not allowed, fix all lines on the chip to have unique names\n");
-> +				return -EEXIST;
-> +			}
-> +		}
->  		gdev->descs[i].name = names[i];
-> +	}
->  
->  	kfree(names);
-> -------------------------------------------------------------------------------
-> 
-> 
-> Git bisection log:
-> 
-> -------------------------------------------------------------------------------
-> git bisect start
-> # good: [9777d0bfdae796de3f8d73879a43bc00145dc8ee] gpio: cs5535: Simplify the return expression of cs5535_gpio_probe()
-> git bisect good 9777d0bfdae796de3f8d73879a43bc00145dc8ee
-> # bad: [65efb43ac94bffeb652cddba4106817bb38c5e71] gpiolib: Disallow identical line names in the same chip
-> git bisect bad 65efb43ac94bffeb652cddba4106817bb38c5e71
-> # good: [a8f25236e6e3d945139b62da0c4398778f77a5b3] MAINTAINERS: Add maintainer for HiSilicon GPIO driver
-> git bisect good a8f25236e6e3d945139b62da0c4398778f77a5b3
-> # first bad commit: [65efb43ac94bffeb652cddba4106817bb38c5e71] gpiolib: Disallow identical line names in the same chip
-> -------------------------------------------------------------------------------
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Groups.io Links: You receive all messages sent to this group.
-> View/Reply Online (#4626): https://groups.io/g/kernelci-results/message/4626
-> Mute This Topic: https://groups.io/mt/78950269/924702
-> Group Owner: kernelci-results+owner@groups.io
-> Unsubscribe: https://groups.io/g/kernelci-results/unsub [guillaume.tucker@collabora.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
-> 
-
+Yours,
+Linus Walleij
