@@ -2,34 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,
 	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1FBC2BB48
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3924C4361B
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 022FA23741
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C2023715
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbgLQFsE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Dec 2020 00:48:04 -0500
-Received: from mo-csw1515.securemx.jp ([210.130.202.154]:55738 "EHLO
+        id S1727146AbgLQFsG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Dec 2020 00:48:06 -0500
+Received: from mo-csw1516.securemx.jp ([210.130.202.155]:47042 "EHLO
         mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbgLQFsE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2020 00:48:04 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 0BH5jgw6022886; Thu, 17 Dec 2020 14:45:42 +0900
-X-Iguazu-Qid: 34tKDF9mqOOHwLOa7u
-X-Iguazu-QSIG: v=2; s=0; t=1608183941; q=34tKDF9mqOOHwLOa7u; m=eoG1+mV2bZuOEnXzCBWKv6WeU+Q4aLX/c0XEKB2aT6I=
+        with ESMTP id S1726999AbgLQFsF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2020 00:48:05 -0500
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 0BH5jg6q001870; Thu, 17 Dec 2020 14:45:42 +0900
+X-Iguazu-Qid: 34tKHiA2wuBf3MeCUL
+X-Iguazu-QSIG: v=2; s=0; t=1608183941; q=34tKHiA2wuBf3MeCUL; m=L4eiyHo1Sa7b18spQ74GmWZ36FJ9ezljVNeOiwZEdlE=
 Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1510) id 0BH5jfp7038780;
+        by relay.securemx.jp (mx-mr1513) id 0BH5jfaf017874;
         Thu, 17 Dec 2020 14:45:41 +0900
 Received: from enc01.toshiba.co.jp ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id 0BH5jfsC021828;
+        by imx2.toshiba.co.jp  with ESMTP id 0BH5jftu021826;
         Thu, 17 Dec 2020 14:45:41 +0900 (JST)
 Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 0BH5jeIX023989;
+        by enc01.toshiba.co.jp  with ESMTP id 0BH5jen9023978;
         Thu, 17 Dec 2020 14:45:40 +0900
 From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -37,11 +38,12 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v5 4/4] arm: dts: visconti: Add DT support for Toshiba Visconti5 GPIO driver
-Date:   Thu, 17 Dec 2020 23:43:38 +0900
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 1/4] dt-bindings: gpio: Add bindings for Toshiba Visconti GPIO Controller
+Date:   Thu, 17 Dec 2020 23:43:35 +0900
 X-TSB-HOP: ON
-Message-Id: <20201217144338.3129140-5-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-Id: <20201217144338.3129140-2-nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217144338.3129140-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 References: <20201217144338.3129140-1-nobuhiro1.iwamatsu@toshiba.co.jp>
@@ -51,50 +53,92 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the GPIO node in Toshiba Visconti5 SoC-specific DT file.
-And enable the GPIO node in TMPV7708 RM main board's board-specific DT file.
+Add bindings for the Toshiba Visconti GPIO Controller.
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
 ---
- arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts |  4 ++++
- arch/arm64/boot/dts/toshiba/tmpv7708.dtsi        | 11 +++++++++++
- 2 files changed, 15 insertions(+)
+ .../bindings/gpio/toshiba,gpio-visconti.yaml  | 70 +++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
 
-diff --git a/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts b/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
-index ed0bf7f13f54..950010a290f0 100644
---- a/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
-+++ b/arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts
-@@ -41,3 +41,7 @@ &uart1 {
- 	clocks = <&uart_clk>;
- 	clock-names = "apb_pclk";
- };
+diff --git a/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+new file mode 100644
+index 000000000000..9ad470e01953
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/toshiba,gpio-visconti.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+&gpio {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-index 242f25f4e12a..17fdcbd4b075 100644
---- a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-+++ b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-@@ -157,6 +157,17 @@ pmux: pmux@24190000 {
- 			reg = <0 0x24190000 0 0x10000>;
- 		};
- 
-+		gpio: gpio@28020000 {
-+			compatible = "toshiba,gpio-tmpv7708";
-+			reg = <0 0x28020000 0 0x1000>;
-+			#gpio-cells = <0x2>;
-+			gpio-ranges = <&pmux 0 0 32>;
-+			gpio-controller;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-parent = <&gic>;
-+		};
++title: Toshiba Visconti ARM SoCs GPIO controller
 +
- 		uart0: serial@28200000 {
- 			compatible = "arm,pl011", "arm,primecell";
- 			reg = <0 0x28200000 0 0x1000>;
++maintainers:
++  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
++
++properties:
++  compatible:
++    items:
++      - const: toshiba,gpio-tmpv7708
++
++  reg:
++    maxItems: 1
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-ranges: true
++
++  gpio-controller: true
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  interrupts:
++    description:
++      interrupt mapping one per GPIO.
++    minItems: 16
++    maxItems: 16
++
++required:
++  - compatible
++  - reg
++  - "#gpio-cells"
++  - gpio-ranges
++  - gpio-controller
++  - interrupt-controller
++  - "#interrupt-cells"
++  - interrupt-parent
++
++additionalProperties: false
++
++examples:
++  - |
++      #include <dt-bindings/interrupt-controller/irq.h>
++      #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++      soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        gpio: gpio@28020000 {
++          compatible = "toshiba,gpio-tmpv7708";
++          reg = <0 0x28020000 0 0x1000>;
++          #gpio-cells = <0x2>;
++          gpio-ranges = <&pmux 0 0 32>;
++          gpio-controller;
++          interrupt-controller;
++          #interrupt-cells = <2>;
++          interrupt-parent = <&gic>;
++        };
++      };
++...
 -- 
 2.29.2
 
