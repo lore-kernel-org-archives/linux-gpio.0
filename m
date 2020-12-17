@@ -2,117 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC98C2BBCA
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD0FC2BB9A
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 08:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 772C42376F
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF90E2389A
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 08:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbgLQFsL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Dec 2020 00:48:11 -0500
-Received: from mo-csw1516.securemx.jp ([210.130.202.155]:47074 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbgLQFsG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2020 00:48:06 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 0BH5jf9k001855; Thu, 17 Dec 2020 14:45:42 +0900
-X-Iguazu-Qid: 34tMRegmucT75bpbPB
-X-Iguazu-QSIG: v=2; s=0; t=1608183941; q=34tMRegmucT75bpbPB; m=EKL2NyHRI7vjiZb9lcz5yf1H/8ympR15SI6IPMJWisc=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1510) id 0BH5je9X038766;
-        Thu, 17 Dec 2020 14:45:41 +0900
-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-        by imx12.toshiba.co.jp  with ESMTP id 0BH5jetT028756;
-        Thu, 17 Dec 2020 14:45:40 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id 0BH5jeON027843;
-        Thu, 17 Dec 2020 14:45:40 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v5 0/4] gpio: visconti: Add Toshiba Visconti GPIO support
-Date:   Thu, 17 Dec 2020 23:43:34 +0900
-X-TSB-HOP: ON
-Message-Id: <20201217144338.3129140-1-nobuhiro1.iwamatsu@toshiba.co.jp>
-X-Mailer: git-send-email 2.29.2
+        id S1727026AbgLQIKm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Dec 2020 03:10:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726488AbgLQIKm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Dec 2020 03:10:42 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608192601;
+        bh=T619GpfnsNUVG7ybqE3r/JQVeRBCmUlACnAIeSE4AqA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=OM8byHptyPa3OKLYRZOSAc14KRCWWU1twEt5rHxS5eARrOH+ZysLdhvatygQavIuc
+         0XflD+WPOVqpB2O3RrIhZoKGYIm9oBcBShJRRcVLzRqdDhGQKI+tkuvYXpgA2UFIeN
+         j10zGERr8pnso5JmPFsgLcGHrtZhoFeUjUrDg1oJ+Fyw5GOwUVrNBP0WxGKN79BXBu
+         eNIz2MLeP1qvE6rVisggyUS9kU6riYJnpzLv47VNzBgDIlYopQx01HhIpQ3sCcQpSy
+         C933xf963fhkOCz0zo9SpIVXWtkZhHuX9i9tGPDfOqZZt5aZSS/Yt58CG58bzjEjjM
+         fRu9mOjfIn4Zw==
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201213135056.24446-10-damien.lemoal@wdc.com>
+References: <20201213135056.24446-1-damien.lemoal@wdc.com> <20201213135056.24446-10-damien.lemoal@wdc.com>
+Subject: Re: [PATCH v10 09/23] dt-binding: clock: Document canaan,k210-clk bindings
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Sean Anderson <seanga2@gmail.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Date:   Thu, 17 Dec 2020 00:09:59 -0800
+Message-ID: <160819259979.1580929.9332027241734052085@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Quoting Damien Le Moal (2020-12-13 05:50:42)
+> diff --git a/include/dt-bindings/clock/k210-clk.h b/include/dt-bindings/c=
+lock/k210-clk.h
+> index 5a2fd64d1a49..b2de702cbf75 100644
+> --- a/include/dt-bindings/clock/k210-clk.h
+> +++ b/include/dt-bindings/clock/k210-clk.h
+> @@ -3,18 +3,51 @@
+>   * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
+>   * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+>   */
+> -#ifndef K210_CLK_H
+> -#define K210_CLK_H
+> +#ifndef CLOCK_K210_CLK_H
+> +#define CLOCK_K210_CLK_H
+> =20
+>  /*
+> - * Arbitrary identifiers for clocks.
+> - * The structure is: in0 -> pll0 -> aclk -> cpu
+> - *
+> - * Since we use the hardware defaults for now, set all these to the same=
+ clock.
+> + * Kendryte K210 SoC clock identifiers (arbitrary values).
+>   */
+> -#define K210_CLK_PLL0   0
+> -#define K210_CLK_PLL1   0
+> -#define K210_CLK_ACLK   0
+> -#define K210_CLK_CPU    0
 
-This series is the GPIO driver for Toshiba's ARM SoC, Visconti[0].
-This provides DT binding documentation, device driver, MAINTAINER files, and updates to DT files.
+This seems to open a bisection hole. I see that ACLK is used in the
+existing dtsi file, and that is the same as CLK_CPU, but after this
+patch it will change to not exist anymore. Can we leave ACLK around
+defined to be 0? I imagine it won't be used in the future so we can
+remove it later. I can then apply this for v5.11-rc1 and then merge the
+clk driver patch in clk tree.
 
-Best regards,
-  Nobuhiro
-
-[0]: https://toshiba.semicon-storage.com/ap-en/semiconductor/product/image-recognition-processors-visconti.html
-
-dt-bindings: gpio: Add bindings for Toshiba Visconti GPIO Controller:
-  v4 -> v5: Drop interrupts property.
-            Add interrupts-parrent property.
-  v3 -> v4: Add Reviewed-by tag.
-  v2 -> v3: Fix dtschema/dtc warnings.
-    dtschema/dtc warnings/errors:
-      Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.example.dt.yaml: gpio@28020000: interrupts: [[0, 24, 4], [0, 25, 4], [0, 26, 4], [0, 27, 4], [0, 28, 4], [0, 29, 4], [0, 30, 4], [0, 31, 4], [0, 32, 4], [0, 33, 4], [0, 34, 4], [0, 35, 4], [0, 36, 4], [0, 37, 4], [0, 38, 4], [0, 39, 4]] is too short
-	From schema: Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
-  v1 -> v2: Fix typo.
-
-gpio: visoconti: Add Toshiba Visconti GPIO support:
-  v4 -> v5: Add IRQ_DOMAIN_HIERARCH to Kconfig
-            Updated for using hierarchical irqs.
-  v3 -> v4: Drop VISCONTI_GPIO_NR.
-            Fix return code of platform_irq_count.
-            Fix coprytight header.
-            Add Reviewed-by tag.
-  v2 -> v3: Add select GPIO_GENERIC
-            Use genric MMIO GPIO library
-            Use bgpio_init() as initialized the generic helpers.
-            Use irqchip template instead of gpiochip_irqchip_add().
-  v1 -> v2: No update
-
-MAINTAINERS: Add entries for Toshiba Visconti GPIO controller:
-  v4 -> v5: No update
-  v3 -> v4: No update
-  v2 -> v3: No update
-  v1 -> v2: No update
-
-arm: dts: visconti: Add DT support for Toshiba Visconti5 GPIO driver:
-  v4 -> v5: Drop interrupts property.
-            Add interrupts-parrent property.
-  v3 -> v4: Add Reviewed-by tag.
-  v2 -> v3: Fix compatible string.
-  v1 -> v2: No update
-
-Nobuhiro Iwamatsu (4):
-  dt-bindings: gpio: Add bindings for Toshiba Visconti GPIO Controller
-  gpio: visconti: Add Toshiba Visconti GPIO support
-  MAINTAINERS: Add entries for Toshiba Visconti GPIO controller
-  arm: dts: visconti: Add DT support for Toshiba Visconti5 GPIO driver
-
- .../bindings/gpio/toshiba,gpio-visconti.yaml  |  70 ++++++
- MAINTAINERS                                   |   2 +
- .../boot/dts/toshiba/tmpv7708-rm-mbrc.dts     |   4 +
- arch/arm64/boot/dts/toshiba/tmpv7708.dtsi     |  11 +
- drivers/gpio/Kconfig                          |  10 +
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-visconti.c                  | 218 ++++++++++++++++++
- drivers/pinctrl/visconti/pinctrl-common.c     |  23 ++
- 8 files changed, 339 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
- create mode 100644 drivers/gpio/gpio-visconti.c
-
--- 
-2.29.2
-
+> +#define K210_CLK_CPU   0
+> +#define K210_CLK_SRAM0 1
+> +#define K210_CLK_SRAM1 2
