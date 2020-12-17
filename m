@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-19.8 required=3.0 tests=BAYES_00,
 	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3924C4361B
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF65C2BB40
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9C2023715
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 133D323715
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Dec 2020 05:48:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbgLQFsG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1727117AbgLQFsG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 17 Dec 2020 00:48:06 -0500
-Received: from mo-csw1516.securemx.jp ([210.130.202.155]:47042 "EHLO
+Received: from mo-csw1116.securemx.jp ([210.130.202.158]:37860 "EHLO
         mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbgLQFsF (ORCPT
+        with ESMTP id S1727002AbgLQFsF (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2020 00:48:05 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 0BH5jg6q001870; Thu, 17 Dec 2020 14:45:42 +0900
-X-Iguazu-Qid: 34tKHiA2wuBf3MeCUL
-X-Iguazu-QSIG: v=2; s=0; t=1608183941; q=34tKHiA2wuBf3MeCUL; m=L4eiyHo1Sa7b18spQ74GmWZ36FJ9ezljVNeOiwZEdlE=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1513) id 0BH5jfaf017874;
+Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 0BH5jgHO015126; Thu, 17 Dec 2020 14:45:42 +0900
+X-Iguazu-Qid: 2wGrT5MSNgHV6wvH5o
+X-Iguazu-QSIG: v=2; s=0; t=1608183941; q=2wGrT5MSNgHV6wvH5o; m=kunDsOD/zTd+YWMq+Xk+Cfr6kP5MAhRKFOjL/Z+lWZI=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+        by relay.securemx.jp (mx-mr1111) id 0BH5jfxI020386;
         Thu, 17 Dec 2020 14:45:41 +0900
-Received: from enc01.toshiba.co.jp ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id 0BH5jftu021826;
+Received: from enc02.toshiba.co.jp ([61.202.160.51])
+        by imx12.toshiba.co.jp  with ESMTP id 0BH5jfot028762;
         Thu, 17 Dec 2020 14:45:41 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 0BH5jen9023978;
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id 0BH5je4d027848;
         Thu, 17 Dec 2020 14:45:40 +0900
 From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -38,12 +38,11 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 1/4] dt-bindings: gpio: Add bindings for Toshiba Visconti GPIO Controller
-Date:   Thu, 17 Dec 2020 23:43:35 +0900
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v5 3/4] MAINTAINERS: Add entries for Toshiba Visconti GPIO controller
+Date:   Thu, 17 Dec 2020 23:43:37 +0900
 X-TSB-HOP: ON
-Message-Id: <20201217144338.3129140-2-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-Id: <20201217144338.3129140-4-nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217144338.3129140-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 References: <20201217144338.3129140-1-nobuhiro1.iwamatsu@toshiba.co.jp>
@@ -53,92 +52,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add bindings for the Toshiba Visconti GPIO Controller.
+Add entries for Toshiba Visconti GPIO Controller binding and driver.
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
 ---
- .../bindings/gpio/toshiba,gpio-visconti.yaml  | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
-new file mode 100644
-index 000000000000..9ad470e01953
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/toshiba,gpio-visconti.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Toshiba Visconti ARM SoCs GPIO controller
-+
-+maintainers:
-+  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: toshiba,gpio-tmpv7708
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-ranges: true
-+
-+  gpio-controller: true
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  interrupts:
-+    description:
-+      interrupt mapping one per GPIO.
-+    minItems: 16
-+    maxItems: 16
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#gpio-cells"
-+  - gpio-ranges
-+  - gpio-controller
-+  - interrupt-controller
-+  - "#interrupt-cells"
-+  - interrupt-parent
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+      #include <dt-bindings/interrupt-controller/irq.h>
-+      #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+      soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        gpio: gpio@28020000 {
-+          compatible = "toshiba,gpio-tmpv7708";
-+          reg = <0 0x28020000 0 0x1000>;
-+          #gpio-cells = <0x2>;
-+          gpio-ranges = <&pmux 0 0 32>;
-+          gpio-controller;
-+          interrupt-controller;
-+          #interrupt-cells = <2>;
-+          interrupt-parent = <&gic>;
-+        };
-+      };
-+...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 50fbbfffb921..8565272d95c4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2636,8 +2636,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwamatsu/linux-visconti.git
+ F:	Documentation/devicetree/bindings/arm/toshiba.yaml
++F:	Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+ F:	Documentation/devicetree/bindings/pinctrl/toshiba,tmpv7700-pinctrl.yaml
+ F:	arch/arm64/boot/dts/toshiba/
++F:	drivers/gpio/gpio-visconti.c
+ F:	drivers/pinctrl/visconti/
+ N:	visconti
+ 
 -- 
 2.29.2
 
