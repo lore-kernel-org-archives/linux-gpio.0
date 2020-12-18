@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D3FC49EC7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A954C49ECA
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 15:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0562523AFD
+	by mail.kernel.org (Postfix) with ESMTP id 5442023AFD
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 15:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbgLRPBd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Dec 2020 10:01:33 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:37545 "EHLO
+        id S1730264AbgLRPCZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Dec 2020 10:02:25 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:45487 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728755AbgLRPBc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2020 10:01:32 -0500
+        with ESMTP id S1728730AbgLRPBa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2020 10:01:30 -0500
 Received: from orion.localdomain ([95.115.54.243]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MWzwP-1kb8wv17gv-00XHi6; Fri, 18 Dec 2020 15:58:12 +0100
+ 1N4hex-1k7pjp3to7-011gFY; Fri, 18 Dec 2020 15:58:19 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
@@ -41,23 +41,25 @@ Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
         linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-arch@vger.kernel.org
-Subject: [PATCH 06/23] arch: mips: drop misleading warning on spurious IRQ
-Date:   Fri, 18 Dec 2020 15:57:29 +0100
-Message-Id: <20201218145746.24205-7-info@metux.net>
+Subject: [PATCH 10/23] arch: sh: drop misleading warning on spurious IRQ
+Date:   Fri, 18 Dec 2020 15:57:33 +0100
+Message-Id: <20201218145746.24205-11-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20201218145746.24205-1-info@metux.net>
 References: <20201218145746.24205-1-info@metux.net>
-X-Provags-ID: V03:K1:CKs9MqJcsQ4yy3q3f+8tWrC6QTbpuKuQMG+KTzMedFASYQcOiG/
- Q78gWYA5HKggev5O6xh34DcQhnMBfhKn8gtR4VRR7rZL5zIS3QUlS32+KdRqWKcyuTSvNOH
- uTkigkeo7/nP4CzFY3hI8Dwg19K23ZPIyERxZ9DkBKTUL5h3+lUXYk2tY+SUPPGWfgPR0lG
- CkOb2oLT7DvNxaftfJA5A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:p20gOeKfsjk=:o81VjUXJDMFLIKat7V03ex
- vxqsaV2VIoq9Xb7y8DlBdWyEI3cdxbI08YXFKEXOwu4PQAOJ4dTGlKLs9Uu7W5cCUN+Y6Kfqn
- 8c+Lw/JNhGBi1/PdB2BW+7hasXM/xrbvviJmhxf4/aLbXvZbNMBWHksEnbxALrhq0G4lZqhJh
- lzutLkr4YzjfrRulMv60Gm092W0NAJvsOBFKdzbX5FqJVh7460Cj+sALQnDSi04jGIxcCZmJL
- mzODjirb5kymnuy4zwCJo+DDqqTKiwEm7Ijr/kxy3nh1sv8E615VXpzkru6pwr5g3UBkxFT6h
- Tzi7maPbVOFUxzhx09eXFuZsYM6dwuGf931747ww9Pp5vsQrGsdchwvvSU9wrDsMxFDEClnok
- UKB9Mf+TyjaM0BBMtZCzTkSoLqu7FX8iLmA6GDUXvGmhap8FxPv336071eQC1
+X-Provags-ID: V03:K1:n12oP3JSFdzHbdPHfGLc/eyYhy99xvRd/Zl5J0TLtYnt5jRmItv
+ iBoKqGJzKtE1cptmOrCYFnpxsT2kddEHwQF+M+hdBpwplwB8LieM/+oZLoePAQ1Jbo8ZNUK
+ WvZWJRmTU8H7efFxfvGQDAgF/VzmaZFVYYVXPIucMwQtPBZB18ir086XAMcctmg0knXV+nh
+ XJAYldaOgDjpgd+dswptQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:HjWPrqnCh9g=:nWXKZzOD/GGnb7cDBprLO6
+ ltg75MxwEjQU6yee9vlY+d0VqCWO3tEvvA5MwKZg6SKMyexKOYIREKI5Kp71yRtBpIWjN+j7f
+ sH8FtAzk+AHl5eAaONphhT/ihtKttLsgoqoDQ0Jv4Tzqtq3GMXompZ/rwxwJ3UREY5RvAQg4t
+ GxwMHPuRcSE31pQ+FmeYTBTETpmHcB2zkdBjDfSHCzwUkF9iVw+w4MftOE23kbKIiKVfr0IA4
+ Jd2PrwrS5E+YbwHtFxfL54dgMVF1V8lItNBerRHGFs1iVwiKF/yqcwZ29wnzw16hIZcWRdi9T
+ PSjDgJD7APPGIotv/zHmUNTD3xOapj4yXPzDi4sKcbNrC9UeNyn/PZRLXJJSFWgW0CDxWj1WZ
+ lkFvc3qffLVHibMSlRKfcnbdJwMJ7Xjts6XNamB6l2a4y0RWLv+aRPfk/2dxH7kVRIpO+Wlqu
+ e8w9kgL7YOxE6hH/FNlmzdSXRxw4tOLSPJcHgrhXuphsfEXP8PNQ5QL6KEvH3PCi2mkk80ebH
+ Zq6rOqLGBYfsv6bh4zUwZE=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -74,44 +76,21 @@ we just don't need to duplicate this in each single arch. So just drop it.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- arch/mips/include/asm/hardirq.h | 3 +--
- arch/mips/kernel/irq.c          | 9 ---------
- 2 files changed, 1 insertion(+), 11 deletions(-)
+ arch/sh/kernel/irq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/mips/include/asm/hardirq.h b/arch/mips/include/asm/hardirq.h
-index c977a86c2c65..75444120e6cb 100644
---- a/arch/mips/include/asm/hardirq.h
-+++ b/arch/mips/include/asm/hardirq.h
-@@ -10,8 +10,7 @@
- #ifndef _ASM_HARDIRQ_H
- #define _ASM_HARDIRQ_H
+diff --git a/arch/sh/kernel/irq.c b/arch/sh/kernel/irq.c
+index ab5f790b0cd2..c14a142efe60 100644
+--- a/arch/sh/kernel/irq.c
++++ b/arch/sh/kernel/irq.c
+@@ -31,7 +31,6 @@ atomic_t irq_err_count;
+ void ack_bad_irq(unsigned int irq)
+ {
+ 	atomic_inc(&irq_err_count);
+-	printk("unexpected IRQ trap at vector %02x\n", irq);
+ }
  
--extern void ack_bad_irq(unsigned int irq);
--#define ack_bad_irq ack_bad_irq
-+#define ack_bad_irq(irq)
- 
- #include <asm-generic/hardirq.h>
- 
-diff --git a/arch/mips/kernel/irq.c b/arch/mips/kernel/irq.c
-index 85b6c60f285d..c98be305fab6 100644
---- a/arch/mips/kernel/irq.c
-+++ b/arch/mips/kernel/irq.c
-@@ -27,15 +27,6 @@
- 
- void *irq_stack[NR_CPUS];
- 
--/*
-- * 'what should we do if we get a hw irq event on an illegal vector'.
-- * each architecture has to answer this themselves.
-- */
--void ack_bad_irq(unsigned int irq)
--{
--	printk("unexpected IRQ # %d\n", irq);
--}
--
- atomic_t irq_err_count;
- 
- int arch_show_interrupts(struct seq_file *p, int prec)
+ #if defined(CONFIG_PROC_FS)
 -- 
 2.11.0
 
