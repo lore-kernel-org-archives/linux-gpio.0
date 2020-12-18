@@ -2,228 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE7AC2BBD4
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 05:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBDAC4361B
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 14:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAC6423A7C
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 05:36:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F12923AAA
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 14:35:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731528AbgLRFgn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Dec 2020 00:36:43 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:29078 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbgLRFgn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2020 00:36:43 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1608269777; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=bIxzsvC8MsCGA55Fum83HNABdyD+z6GnK6PLUqTBqj0=; b=kqxu0bVLpT1OLC+r0MSNRdNxjp8ZdBVSsAWVy5UXz1eOMkGlpyQy2PIkAr9/Rhu5Kab9+PHA
- f/FGRfknYs2PvlLGIRtlkgs28H0PVXi5cnNxQRqiHLh3jSoC+HAdc6fGykuTopstW9nSSAXP
- e00EuAEtgEDgWoK/cVRWKeTkv+g=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n08.prod.us-east-1.postgun.com with SMTP id
- 5fdc3fb17549779c5b7930ae (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 18 Dec 2020 05:35:45
- GMT
-Sender: rnayak=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 07A67C43465; Fri, 18 Dec 2020 05:35:44 +0000 (UTC)
-Received: from [192.168.0.120] (unknown [49.207.218.91])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88093C433C6;
-        Fri, 18 Dec 2020 05:35:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88093C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v4 3/4] pinctrl: qcom: Don't clear pending interrupts when
- enabling
-To:     Douglas Anderson <dianders@chromium.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Maulik Shah <mkshah@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-msm@vger.kernel.org,
-        Srinivas Ramana <sramana@codeaurora.org>,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        linux-gpio@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20201211141514.v4.1.I2702919afc253e2a451bebc3b701b462b2d22344@changeid>
- <20201211141514.v4.3.I7cf3019783720feb57b958c95c2b684940264cd1@changeid>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <71a4e7da-59da-4a7c-aa4e-45ade8c5558b@codeaurora.org>
-Date:   Fri, 18 Dec 2020 11:05:35 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
-MIME-Version: 1.0
-In-Reply-To: <20201211141514.v4.3.I7cf3019783720feb57b958c95c2b684940264cd1@changeid>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727812AbgLROfJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Dec 2020 09:35:09 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:56373 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727662AbgLROfJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2020 09:35:09 -0500
+Received: from orion.localdomain ([95.115.54.243]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N5G1V-1k7L7Y3etB-0116tK; Fri, 18 Dec 2020 15:31:50 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, msalter@redhat.com, jacquiot.aurelien@gmail.com,
+        gerg@linux-m68k.org, geert@linux-m68k.org,
+        tsbogend@alpha.franken.de, James.Bottomley@HansenPartnership.com,
+        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        maz@kernel.org, tony@atomide.com, arnd@arndb.de,
+        linux-alpha@vger.kernel.org, linux-c6x-dev@linux-c6x.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: [PATCH 05/23] arch: ia64: drop misleading warning on spurious IRQ
+Date:   Fri, 18 Dec 2020 15:31:04 +0100
+Message-Id: <20201218143122.19459-6-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20201218143122.19459-1-info@metux.net>
+References: <20201218143122.19459-1-info@metux.net>
+X-Provags-ID: V03:K1:qnMCRRlYz3iyZZIxed2PdpOh9lZoshxB8GShF8Dv5f884PMzhlA
+ rgGET+r1LOZnPvEOElYtWvVtMeqma1PT6MAm+LyDreI+nOr4o8KfnR1Sfy8JSaEoh/faF3N
+ mrLr75Iv7ypE9eo+ty0Tfs5nujHLVGldONLbTa7Q1Q55yE3p4fTjay0i5z65zYWsxWyrY8j
+ wdxS9QtIcELSO8KinnzKQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hEIvj0u6eNU=:Fotl5KfVQ9DkUfRBzyG236
+ z/v5oxv76HGlDvlwKxUPTZ+J/aiWp+XWF/kaGHdjv+IJqG/iu5JTRILDf5Pp0Pe6m9rrmBgTa
+ BPn3060l3hEUj0pTfRb4kiaMAWT36TdQ0WLNOR0ZvhV5jSOO2SuKAuO/9yDCHul1P56WocZYQ
+ m6ozUElHwYzMrzcxMhmoQuIiNyMlmYjhOh3JpzTxU0C1lYVRoaYbJUB3y8SQ1D82iuBockN+X
+ rZRUjOoIzpyBbSrmqY8qUbR75erprCtatSW2DOY8E+1PAHqBJLrkVo4+/8p33VW41Yz1GwNGK
+ iO4xjTuivZQWUc700sPaIwQbgYC9G9nXOOEowcnoPyrv3Xko+pWDDZ2KXSvjx9QKu46KRvRfZ
+ 7FnsAYtylPkalUN295WkJKOHMC4I5hj63PTgpeme12O4Qn6Yb/gw3f/VhkYyT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+The warning in ack_bad_irq() is misleading in several ways:
+* the term "vector" isn't quite correct
+* the printing format isn't consistent across the archs: some print decimal,
+  some hex, some hex w/o "0x" prefix.
+* the printed linux irq isn't meaningful in all cases - we actually would
+  want it to print the hw irq.
 
-On 12/12/2020 3:45 AM, Douglas Anderson wrote:
-> In Linux, if a driver does disable_irq() and later does enable_irq()
-> on its interrupt, I believe it's expecting these properties:
-> * If an interrupt was pending when the driver disabled then it will
->    still be pending after the driver re-enables.
-> * If an edge-triggered interrupt comes in while an interrupt is
->    disabled it should assert when the interrupt is re-enabled.
-> 
-> If you think that the above sounds a lot like the disable_irq() and
-> enable_irq() are supposed to be masking/unmasking the interrupt
-> instead of disabling/enabling it then you've made an astute
-> observation.  Specifically when talking about interrupts, "mask"
-> usually means to stop posting interrupts but keep tracking them and
-> "disable" means to fully shut off interrupt detection.  It's
-> unfortunate that this is so confusing, but presumably this is all the
-> way it is for historical reasons.
-> 
-> Perhaps more confusing than the above is that, even though clients of
-> IRQs themselves don't have a way to request mask/unmask
-> vs. disable/enable calls, IRQ chips themselves can implement both.
-> ...and yet more confusing is that if an IRQ chip implements
-> disable/enable then they will be called when a client driver calls
-> disable_irq() / enable_irq().
-> 
-> It does feel like some of the above could be cleared up.  However,
-> without any other core interrupt changes it should be clear that when
-> an IRQ chip gets a request to "disable" an IRQ that it has to treat it
-> like a mask of that IRQ.
-> 
-> In any case, after that long interlude you can see that the "unmask
-> and clear" can break things.  Maulik tried to fix it so that we no
-> longer did "unmask and clear" in commit 71266d9d3936 ("pinctrl: qcom:
-> Move clearing pending IRQ to .irq_request_resources callback"), but it
-> only handled the PDC case (it also had problems, but that's the
-> subject of another patch).  Let's fix this for the non-PDC case.
-> 
->  From my understanding the source of the phantom interrupt in the
-> non-PDC case was the one that could have been introduced in
-> msm_gpio_irq_set_type().  Let's handle that one and then get rid of
-> the clear.
-> 
-> Fixes: 4b7618fdc7e6 ("pinctrl: qcom: Add irq_enable callback for msm gpio")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> I don't have lots of good test cases here, so hopefully someone from
-> Qualcomm can confirm that this works well for them and there isn't
-> some other phantom interrupt source that I'm not aware of.
+Since all call sites already print out more detailed and correct information,
+we just don't need to duplicate this in each single arch. So just drop it.
 
-I currently don;t have access to any non-PDC hardware, so could not really do
-any real tests, but the changes seem sane, so
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ arch/ia64/include/asm/hardirq.h | 2 +-
+ arch/ia64/kernel/irq.c          | 9 ---------
+ 2 files changed, 1 insertion(+), 10 deletions(-)
 
-Reviewed-by: Rajendra Nayak <rnayak@codeaurora.org>
-
-> 
-> Changes in v4:
-> - ("pinctrl: qcom: Don't clear pending interrupts when enabling") split for v4.
-> 
->   drivers/pinctrl/qcom/pinctrl-msm.c | 32 +++++++++++++-----------------
->   1 file changed, 14 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 588df91274e2..f785646d1df7 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -774,7 +774,7 @@ static void msm_gpio_irq_mask(struct irq_data *d)
->   	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
->   }
->   
-> -static void msm_gpio_irq_clear_unmask(struct irq_data *d, bool status_clear)
-> +static void msm_gpio_irq_unmask(struct irq_data *d)
->   {
->   	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->   	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-> @@ -792,17 +792,6 @@ static void msm_gpio_irq_clear_unmask(struct irq_data *d, bool status_clear)
->   
->   	raw_spin_lock_irqsave(&pctrl->lock, flags);
->   
-> -	if (status_clear) {
-> -		/*
-> -		 * clear the interrupt status bit before unmask to avoid
-> -		 * any erroneous interrupts that would have got latched
-> -		 * when the interrupt is not in use.
-> -		 */
-> -		val = msm_readl_intr_status(pctrl, g);
-> -		val &= ~BIT(g->intr_status_bit);
-> -		msm_writel_intr_status(val, pctrl, g);
-> -	}
-> -
->   	val = msm_readl_intr_cfg(pctrl, g);
->   	val |= BIT(g->intr_raw_status_bit);
->   	val |= BIT(g->intr_enable_bit);
-> @@ -822,7 +811,7 @@ static void msm_gpio_irq_enable(struct irq_data *d)
->   		irq_chip_enable_parent(d);
->   
->   	if (!test_bit(d->hwirq, pctrl->skip_wake_irqs))
-> -		msm_gpio_irq_clear_unmask(d, true);
-> +		msm_gpio_irq_unmask(d);
->   }
->   
->   static void msm_gpio_irq_disable(struct irq_data *d)
-> @@ -837,11 +826,6 @@ static void msm_gpio_irq_disable(struct irq_data *d)
->   		msm_gpio_irq_mask(d);
->   }
->   
-> -static void msm_gpio_irq_unmask(struct irq_data *d)
-> -{
-> -	msm_gpio_irq_clear_unmask(d, false);
-> -}
-> -
->   /**
->    * msm_gpio_update_dual_edge_parent() - Prime next edge for IRQs handled by parent.
->    * @d: The irq dta.
-> @@ -936,6 +920,7 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->   	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
->   	const struct msm_pingroup *g;
->   	unsigned long flags;
-> +	bool was_enabled;
->   	u32 val;
->   
->   	if (msm_gpio_needs_dual_edge_parent_workaround(d, type)) {
-> @@ -997,6 +982,7 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->   	 * could cause the INTR_STATUS to be set for EDGE interrupts.
->   	 */
->   	val = msm_readl_intr_cfg(pctrl, g);
-> +	was_enabled = val & BIT(g->intr_raw_status_bit);
->   	val |= BIT(g->intr_raw_status_bit);
->   	if (g->intr_detection_width == 2) {
->   		val &= ~(3 << g->intr_detection_bit);
-> @@ -1046,6 +1032,16 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->   	}
->   	msm_writel_intr_cfg(val, pctrl, g);
->   
-> +	/*
-> +	 * The first time we set RAW_STATUS_EN it could trigger an interrupt.
-> +	 * Clear it.  This is safe because we have IRQCHIP_SET_TYPE_MASKED.
-> +	 */
-> +	if (!was_enabled) {
-> +		val = msm_readl_intr_status(pctrl, g);
-> +		val &= ~BIT(g->intr_status_bit);
-> +		msm_writel_intr_status(val, pctrl, g);
-> +	}
-> +
->   	if (test_bit(d->hwirq, pctrl->dual_edge_irqs))
->   		msm_gpio_update_dual_edge_pos(pctrl, g, d);
->   
-> 
-
+diff --git a/arch/ia64/include/asm/hardirq.h b/arch/ia64/include/asm/hardirq.h
+index ccde7c2ba00f..dddaafaf84e0 100644
+--- a/arch/ia64/include/asm/hardirq.h
++++ b/arch/ia64/include/asm/hardirq.h
+@@ -22,6 +22,6 @@
+ 
+ extern void __iomem *ipi_base_addr;
+ 
+-void ack_bad_irq(unsigned int irq);
++#define ack_bad_irq(irq)
+ 
+ #endif /* _ASM_IA64_HARDIRQ_H */
+diff --git a/arch/ia64/kernel/irq.c b/arch/ia64/kernel/irq.c
+index ecef17c7c35b..1365c7cf2095 100644
+--- a/arch/ia64/kernel/irq.c
++++ b/arch/ia64/kernel/irq.c
+@@ -28,15 +28,6 @@
+ #include <asm/xtp.h>
+ 
+ /*
+- * 'what should we do if we get a hw irq event on an illegal vector'.
+- * each architecture has to answer this themselves.
+- */
+-void ack_bad_irq(unsigned int irq)
+-{
+-	printk(KERN_ERR "Unexpected irq vector 0x%x on CPU %u!\n", irq, smp_processor_id());
+-}
+-
+-/*
+  * Interrupt statistics:
+  */
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
+
