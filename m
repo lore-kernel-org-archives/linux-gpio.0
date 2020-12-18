@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44648C35270
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 14:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB486C4743C
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 14:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B39423AC0
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 14:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1CB723AC0
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Dec 2020 14:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbgLROfS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Dec 2020 09:35:18 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:51407 "EHLO
+        id S1728789AbgLROgX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Dec 2020 09:36:23 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:38775 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728029AbgLROfS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2020 09:35:18 -0500
+        with ESMTP id S1727662AbgLROfQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2020 09:35:16 -0500
 Received: from orion.localdomain ([95.115.54.243]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MZkxj-1kcoFa2LHL-00WjtE; Fri, 18 Dec 2020 15:32:09 +0100
+ 1MD9Kj-1kzJDr1AGX-0099IA; Fri, 18 Dec 2020 15:31:58 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
@@ -41,203 +41,57 @@ Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
         linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-arch@vger.kernel.org
-Subject: [PATCH 15/23] arch: mips: use generic irq error counter
-Date:   Fri, 18 Dec 2020 15:31:14 +0100
-Message-Id: <20201218143122.19459-16-info@metux.net>
+Subject: [PATCH 09/23] arch: s390: drop misleading warning on spurious IRQ
+Date:   Fri, 18 Dec 2020 15:31:08 +0100
+Message-Id: <20201218143122.19459-10-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20201218143122.19459-1-info@metux.net>
 References: <20201218143122.19459-1-info@metux.net>
-X-Provags-ID: V03:K1:U1Ak/9ScsjyFYX+WGDIYoVojkUNJ6hF+6wQxy6ce5gvk0M/i13b
- SVB5QU3OxoK0sJirLk2hgpuDD5n/JYh/T2EFuvyBTl6yh+DCHdYmEjapCEbp3DrXQ0sRbQv
- c8Dou65hAanyqc6UaE7VWDeWLPY6L1bCKlGijc7ufXI6CJfft/mT1EcOT5lNJZbpRwsaL9z
- zDxX7z54+xWPR1RsNEiSg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CkN31NN0Y5c=:AkDwN4dOYkg4/ced8F1Bdm
- 5tOHX+znKJ5CD/TRaL7An0fEWZAAzaCg1TFznZK0zwFF/FYNyfUDKLqN/VF91yuWGFVnN7Smj
- hmRq8ii8MDeQ+3fXgkWmdJEIOG29Cni2VzHIHzXqx6bmSyzQLawN+/M3zmly+KAkNqeaoshmY
- MngMn3QXDhMzO6IOMh2TjIc4UhzyBJpVEPrhWm7lSfJQRvkJ/HRl64jHUEyMM4PBegzSlSbfp
- rw/NqTu1O9RhpCqOTGdzgsWTVl/MIBVs7LHEDlpNlzY7qn1mDpsGpD0mvS3dq6P6jIufTwimz
- 1b9qQmMQgYxZHTdrQl1lGuq0Z+DOZdC2b8OFG52QUIRiC9OIbgXGywjVl4rh+omrKU/7lUYL0
- i9kzID1mTYV3HC9dwsgrBWdf5gn7jIQoaRLdgWY+cp2RYQGii4lSr/277g3Jg
+X-Provags-ID: V03:K1:+Fk5XG1M51DsDMqllxhuk9QMdwKM8nFiYzagO2Q/2cSgAuejovr
+ dtmISK1c/qztd4178uEaymF5uh/0I6XlA2Tqnyx7Bfb0v6ONN47Yqppdl3VTdau8eLZW2Uv
+ /pHid2mGQ+3dMXHd9bKt92Duo1y1rPLeQr5rGle5B4uBkwH7iz9s0bsnzCRdN3jFBUhSf/r
+ +0OdIMQ80t8v/+o43h3+A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Z2f4lndISjI=:zHUd/iqf0O3qag8NkEcoBz
+ x4x9TA7Ovp04jopysG/BlFtt1L5oIEmvskqof0AHt9vQMAKkztiscW5ztKv8l1IPCHM4FRUK7
+ ob3aoPzcMvd0E5ijhnPp1qaioD3QFkMaBe+oev+iwsti2I965xNEIIOKQakRqrgwN7V2zYzBB
+ 8XgP9bUY+3Tiv6CMn8DT42WJvWvHPiqPqpw8bGh8YBe9MMOekLpBZz6OTOzdFxDgJdyVlkxMc
+ Woo6ULY0pjIcEj/2+3mzbmDNZrNjx4xo4WB6FTNIsI5UvulnLwvmYxAQR8juEJf6ShH7cGcxY
+ kk6tE44rK5SWHHMaqfK5sZEBFToA3VUjtPeCZxjWMfyLWLVp6UOq4BJ74AXDFlPs57qLm8Xbb
+ uH6PiWBNvirOZkAb5kUMzlHPjSXYR1xgbCzp2pBMri5zdtt3HN0eVFGqhHnrw
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use the newly introduced irq error counter, that's already maintained
-by all callers of ack_bad_irq(), in order to remove duplicate code.
+The warning in ack_bad_irq() is misleading in several ways:
+* the term "vector" isn't quite correct
+* the printing format isn't consistent across the archs: some print decimal,
+  some hex, some hex w/o 0x prefix.
+* the printed linux irq isn't meaningful in all cases - we actually would
+  want it to print the hw irq.
+
+Since all call sites already print out more detailed and correct information,
+we just don't need to duplicate this in each single arch. So just drop it.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- arch/mips/include/asm/hw_irq.h | 4 ----
- arch/mips/kernel/irq-gt641xx.c | 3 ++-
- arch/mips/kernel/irq.c         | 7 +++----
- arch/mips/sni/rm200.c          | 3 ++-
- arch/mips/vr41xx/common/icu.c  | 3 ++-
- arch/mips/vr41xx/common/irq.c  | 5 +++--
- drivers/gpio/gpio-vr41xx.c     | 4 ++--
- 7 files changed, 14 insertions(+), 15 deletions(-)
+ arch/s390/include/asm/hardirq.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/mips/include/asm/hw_irq.h b/arch/mips/include/asm/hw_irq.h
-index 9e8ef5994c9c..b75fe2c4377f 100644
---- a/arch/mips/include/asm/hw_irq.h
-+++ b/arch/mips/include/asm/hw_irq.h
-@@ -8,10 +8,6 @@
- #ifndef __ASM_HW_IRQ_H
- #define __ASM_HW_IRQ_H
+diff --git a/arch/s390/include/asm/hardirq.h b/arch/s390/include/asm/hardirq.h
+index dfbc3c6c0674..56d95fcb310a 100644
+--- a/arch/s390/include/asm/hardirq.h
++++ b/arch/s390/include/asm/hardirq.h
+@@ -21,9 +21,6 @@
+ #define __ARCH_HAS_DO_SOFTIRQ
+ #define __ARCH_IRQ_EXIT_IRQS_DISABLED
  
--#include <linux/atomic.h>
--
--extern atomic_t irq_err_count;
--
- /*
-  * interrupt-retrigger: NOP for now. This may not be appropriate for all
-  * machines, we'll see ...
-diff --git a/arch/mips/kernel/irq-gt641xx.c b/arch/mips/kernel/irq-gt641xx.c
-index 93bcf5736a6f..e2c877287bee 100644
---- a/arch/mips/kernel/irq-gt641xx.c
-+++ b/arch/mips/kernel/irq-gt641xx.c
-@@ -11,6 +11,7 @@
- #include <linux/types.h>
+-static inline void ack_bad_irq(unsigned int irq)
+-{
+-	printk(KERN_CRIT "unexpected IRQ trap at vector %02x\n", irq);
+-}
++#define ack_bad_irq(irq)
  
- #include <asm/gt64120.h>
-+#include <asm-generic/irq-err.h>
- 
- #define GT641XX_IRQ_TO_BIT(irq) (1U << (irq - GT641XX_IRQ_BASE))
- 
-@@ -97,7 +98,7 @@ void gt641xx_irq_dispatch(void)
- 		}
- 	}
- 
--	atomic_inc(&irq_err_count);
-+	irq_err_inc();
- }
- 
- void __init gt641xx_irq_init(void)
-diff --git a/arch/mips/kernel/irq.c b/arch/mips/kernel/irq.c
-index c98be305fab6..3ea3e4280648 100644
---- a/arch/mips/kernel/irq.c
-+++ b/arch/mips/kernel/irq.c
-@@ -8,6 +8,7 @@
-  * Copyright (C) 1992 Linus Torvalds
-  * Copyright (C) 1994 - 2000 Ralf Baechle
-  */
-+#include <asm-generic/irq-err.h>
- #include <linux/kernel.h>
- #include <linux/delay.h>
- #include <linux/init.h>
-@@ -27,17 +28,15 @@
- 
- void *irq_stack[NR_CPUS];
- 
--atomic_t irq_err_count;
--
- int arch_show_interrupts(struct seq_file *p, int prec)
- {
--	seq_printf(p, "%*s: %10u\n", prec, "ERR", atomic_read(&irq_err_count));
-+	seq_printf(p, "%*s: %10u\n", prec, "ERR", irq_err_get());
- 	return 0;
- }
- 
- asmlinkage void spurious_interrupt(void)
- {
--	atomic_inc(&irq_err_count);
-+	irq_err_inc();
- }
- 
- void __init init_IRQ(void)
-diff --git a/arch/mips/sni/rm200.c b/arch/mips/sni/rm200.c
-index d84744ca871d..c61d60a4dcc5 100644
---- a/arch/mips/sni/rm200.c
-+++ b/arch/mips/sni/rm200.c
-@@ -21,6 +21,7 @@
- #include <asm/sni.h>
- #include <asm/time.h>
- #include <asm/irq_cpu.h>
-+#include <asm-generic/irq-err.h>
- 
- #define RM200_I8259A_IRQ_BASE 32
- 
-@@ -270,7 +271,7 @@ void sni_rm200_mask_and_ack_8259A(struct irq_data *d)
- 			       "spurious RM200 8259A interrupt: IRQ%d.\n", irq);
- 			spurious_irq_mask |= irqmask;
- 		}
--		atomic_inc(&irq_err_count);
-+		irq_err_inc();
- 		/*
- 		 * Theoretically we do not have to handle this IRQ,
- 		 * but in Linux this does not cause problems and is
-diff --git a/arch/mips/vr41xx/common/icu.c b/arch/mips/vr41xx/common/icu.c
-index 7b7f25b4b057..462f559ad978 100644
---- a/arch/mips/vr41xx/common/icu.c
-+++ b/arch/mips/vr41xx/common/icu.c
-@@ -27,6 +27,7 @@
- #include <asm/io.h>
- #include <asm/vr41xx/irq.h>
- #include <asm/vr41xx/vr41xx.h>
-+#include <asm-generic/irq-err.h>
- 
- static void __iomem *icu1_base;
- static void __iomem *icu2_base;
-@@ -640,7 +641,7 @@ static int icu_get_irq(unsigned int irq)
- 
- 	printk(KERN_ERR "spurious ICU interrupt: %04x,%04x\n", pend1, pend2);
- 
--	atomic_inc(&irq_err_count);
-+	irq_err_inc();
- 
- 	return -1;
- }
-diff --git a/arch/mips/vr41xx/common/irq.c b/arch/mips/vr41xx/common/irq.c
-index 8f68446ff2d9..b2580de08e25 100644
---- a/arch/mips/vr41xx/common/irq.c
-+++ b/arch/mips/vr41xx/common/irq.c
-@@ -10,6 +10,7 @@
- 
- #include <asm/irq_cpu.h>
- #include <asm/vr41xx/irq.h>
-+#include <asm-generic/irq-err.h>
- 
- typedef struct irq_cascade {
- 	int (*get_irq)(unsigned int);
-@@ -46,7 +47,7 @@ static void irq_dispatch(unsigned int irq)
- 	irq_cascade_t *cascade;
- 
- 	if (irq >= NR_IRQS) {
--		atomic_inc(&irq_err_count);
-+		irq_err_inc();
- 		return;
- 	}
- 
-@@ -66,7 +67,7 @@ static void irq_dispatch(unsigned int irq)
- 		ret = cascade->get_irq(irq);
- 		irq = ret;
- 		if (ret < 0)
--			atomic_inc(&irq_err_count);
-+			irq_err_inc();
- 		else
- 			irq_dispatch(irq);
- 		if (!irqd_irq_disabled(idata) && chip->irq_unmask)
-diff --git a/drivers/gpio/gpio-vr41xx.c b/drivers/gpio/gpio-vr41xx.c
-index 98cd715ccc33..c1dbd933d291 100644
---- a/drivers/gpio/gpio-vr41xx.c
-+++ b/drivers/gpio/gpio-vr41xx.c
-@@ -18,7 +18,7 @@
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
--
-+#include <asm-generic/irq-err.h>
- #include <asm/vr41xx/giu.h>
- #include <asm/vr41xx/irq.h>
- #include <asm/vr41xx/vr41xx.h>
-@@ -217,7 +217,7 @@ static int giu_get_irq(unsigned int irq)
- 	printk(KERN_ERR "spurious GIU interrupt: %04x(%04x),%04x(%04x)\n",
- 	       maskl, pendl, maskh, pendh);
- 
--	atomic_inc(&irq_err_count);
-+	irq_err_inc();
- 
- 	return -EINVAL;
- }
+ #endif /* __ASM_HARDIRQ_H */
 -- 
 2.11.0
 
