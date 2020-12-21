@@ -2,68 +2,116 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 775B0C3526C
-	for <linux-gpio@archiver.kernel.org>; Sun, 20 Dec 2020 22:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B933C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Dec 2020 02:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A56E22D05
-	for <linux-gpio@archiver.kernel.org>; Sun, 20 Dec 2020 22:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5510C22EBD
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Dec 2020 02:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbgLTWsv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 20 Dec 2020 17:48:51 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:35024 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbgLTWsv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 20 Dec 2020 17:48:51 -0500
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
-        (envelope-from <andrew@lunn.ch>)
-        id 1kr7Ui-00D2SS-MH; Sun, 20 Dec 2020 23:48:04 +0100
-Date:   Sun, 20 Dec 2020 23:48:04 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lars Povlsen <lars.povlsen@microchip.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        id S1726610AbgLUCzP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 20 Dec 2020 21:55:15 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:9923 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726166AbgLUCzP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 20 Dec 2020 21:55:15 -0500
+X-IronPort-AV: E=Sophos;i="5.78,436,1599490800"; 
+   d="scan'208";a="66411289"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 21 Dec 2020 11:54:43 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id AA30B41BA02A;
+        Mon, 21 Dec 2020 11:54:43 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
+        matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
+        broonie@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com
+Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        linux-gpio@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v10 3/3] arm64: dts: sparx5: Add SGPIO devices
-Message-ID: <20201220224804.GA3107610@lunn.ch>
-References: <20201113145151.68900-1-lars.povlsen@microchip.com>
- <20201113145151.68900-4-lars.povlsen@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201113145151.68900-4-lars.povlsen@microchip.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 00/12] treewide: bd9571mwv: Add support for BD9574MWF
+Date:   Mon, 21 Dec 2020 11:54:27 +0900
+Message-Id: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 03:51:51PM +0100, Lars Povlsen wrote:
-> +		led@8 {
-> +			label = "eth12:green";
-> +			gpios = <&sgpio_out0 12 0 GPIO_ACTIVE_HIGH>;
-> +			default-state = "off";
-> +		};
-> +		led@9 {
-> +			label = "eth12:yellow";
-> +			gpios = <&sgpio_out0 12 1 GPIO_ACTIVE_HIGH>;
-> +			default-state = "off";
-> +		};
+Add BD9574MWF support into bd9571mwv gpio, mfd and regulator drivers.
+Latest Ebisu-4D boards has this chip instead of BD9571MWV so that
+we need this patch series to detect this chip at runtime.
 
-Hi Lars
+Note that the patch [1/12] is a bug-fix patch for mfd driver.
 
-I did not see these patches earlier, but i've been looking at the
-switch driver patches recently, so went digging.
+Changes from v3:
+ - Add "Acked-for-MFD-by" in patch 1, 3, 9 and 10.
+ - Use "Co-developed-by" instead in patch 11.
+ - In patch 11:
+ -- Remove abusing kernel-doc formatting in patch.
+ -- Rename bd957x_data with bd957x_ddata in patch.
+ -- Remove product name printk.
+ -- Rename bd9571mwv_identify() with bd957x_identify().
+ -- Remove argument "part_name" from bd957x_identify().
+ -- Modify dev_err() string.
+ -- Rename BD9571MWV_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9571MWV.
+ -- Fix errno from -ENOENT to -ENODEV.
+ - In patch 12:
+ -- Rename "MFD driver" to "core driver".
+ -- Remove unnecessary comments.
+ -- Rename BD9574MWF_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9574MWF.
+ https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=402719
 
-Can the Ethernet switch itself control these LEDs for indicating
-things like packet receive/transmit, link state, and link speed? Or
-are they purely software controlled?
+Changes from v2:
+ - Use devm_mfd_add_devices() to remove the mfd device in unload.
+ - Update commit descriptions in patch 4 and 8.
+ - Use regmap_get_device() to simplify in patch 4.
+ - Remove "struct bd9571mwv" and bd9571mwv_remove().
+ - Add Reviewed-by in patch 3 to 9.
+ - Use devm_regmap_add_irq_chip() to simplify in patch 10.
+ https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=400477
 
-    Thanks
-	Andrew
+Changes from v1:
+ - Document BD9574MWF on the dt-binding.
+ - Add ROHM_CHIP_TYPE_BD957[14] into rohm-generic.h.
+ - To simplify gpio and regulator drivers, using regmap instead of
+   using struct bd9571mwv.
+ - Remove BD9574MWF definitions to make gpio and regulator driver
+   simple to support for BD9574MWF.
+ - Add BD9574MWF support for gpio and regulator drivers.
+ - Add missing regmap ranges for BD9574MWF.
+ - Rename "part_number" with "part_name".
+ https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=398059
+
+Khiem Nguyen (2):
+  mfd: bd9571mwv: Make the driver more generic
+  mfd: bd9571mwv: Add support for BD9574MWF
+
+Yoshihiro Shimoda (10):
+  mfd: bd9571mwv: Use devm_mfd_add_devices()
+  dt-bindings: mfd: bd9571mwv: Document BD9574MWF
+  mfd: rohm-generic: Add BD9571 and BD9574
+  regulator: bd9571mwv: rid of using struct bd9571mwv
+  regulator: bd9571mwv: Add BD9574MWF support
+  gpio: bd9571mwv: Use the SPDX license identifier
+  gpio: bd9571mwv: rid of using struct bd9571mwv
+  gpio: bd9571mwv: Add BD9574MWF support
+  mfd: bd9571mwv: Use the SPDX license identifier
+  mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
+
+ .../devicetree/bindings/mfd/bd9571mwv.txt          |   4 +-
+ drivers/gpio/gpio-bd9571mwv.c                      |  35 ++--
+ drivers/mfd/bd9571mwv.c                            | 197 ++++++++++++++-------
+ drivers/regulator/bd9571mwv-regulator.c            |  59 +++---
+ include/linux/mfd/bd9571mwv.h                      |  45 ++---
+ include/linux/mfd/rohm-generic.h                   |   2 +
+ 6 files changed, 203 insertions(+), 139 deletions(-)
+
+-- 
+2.7.4
+
