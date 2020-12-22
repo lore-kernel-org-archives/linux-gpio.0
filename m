@@ -2,121 +2,74 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A0AC43217
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Dec 2020 11:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EA7C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Dec 2020 11:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15BC12310D
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Dec 2020 11:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6362523124
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Dec 2020 11:34:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgLVLW5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 22 Dec 2020 06:22:57 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:59808 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726024AbgLVLW5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 22 Dec 2020 06:22:57 -0500
-X-IronPort-AV: E=Sophos;i="5.78,438,1599490800"; 
-   d="scan'208";a="66595826"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Dec 2020 20:22:25 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A38D44008553;
-        Tue, 22 Dec 2020 20:22:25 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
-        matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v5 00/12] treewide: bd9571mwv: Add support for BD9574MWF
-Date:   Tue, 22 Dec 2020 20:22:07 +0900
-Message-Id: <1608636139-564-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726670AbgLVLeo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Dec 2020 06:34:44 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10057 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbgLVLeo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2020 06:34:44 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4D0Z2m0WCnzM7yQ;
+        Tue, 22 Dec 2020 19:33:04 +0800 (CST)
+Received: from [127.0.0.1] (10.40.192.131) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.498.0; Tue, 22 Dec 2020
+ 19:33:53 +0800
+Subject: Re: [PATCH v1] gpio: hisi: delete some unused variables in
+ hisi_gpio_probe()
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1608539124-4914-1-git-send-email-luojiaxing@huawei.com>
+ <CAHp75VcV2E+e9e_o7zwrL+gzZ3xUkZYOnTDACxH1j59bxTVifw@mail.gmail.com>
+From:   luojiaxing <luojiaxing@huawei.com>
+Message-ID: <5be97c5e-39fc-bf58-aee5-39438948b059@huawei.com>
+Date:   Tue, 22 Dec 2020 19:33:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VcV2E+e9e_o7zwrL+gzZ3xUkZYOnTDACxH1j59bxTVifw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.40.192.131]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add BD9574MWF support into bd9571mwv gpio, mfd and regulator drivers.
-Latest Ebisu-4D boards has this chip instead of BD9571MWV so that
-we need this patch series to detect this chip at runtime.
 
-Note that the patch [1/12] is a bug-fix patch for mfd driver.
+On 2020/12/21 18:35, Andy Shevchenko wrote:
+> On Mon, Dec 21, 2020 at 10:25 AM Luo Jiaxing <luojiaxing@huawei.com> wrote:
+>> kernel test rebot report that dat, set and clr in hisi_gpio_probe() is
+>> unused variables. So delete it.
+> Fixes: tag?
 
-Changes from v4:
- - Add Reviwed-by in patch 1, 10, 11 and 12.
- - Keep bd9571mwv_id_table[] as-is because unused in patch 12.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=404657
 
-Changes from v3:
- - Add "Acked-for-MFD-by" in patch 1, 3, 9 and 10.
- - Use "Co-developed-by" instead in patch 11.
- - In patch 11:
- -- Remove abusing kernel-doc formatting in patch.
- -- Rename bd957x_data with bd957x_ddata in patch.
- -- Remove product name printk.
- -- Rename bd9571mwv_identify() with bd957x_identify().
- -- Remove argument "part_name" from bd957x_identify().
- -- Modify dev_err() string.
- -- Rename BD9571MWV_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9571MWV.
- -- Fix errno from -ENOENT to -ENODEV.
- - In patch 12:
- -- Rename "MFD driver" to "core driver".
- -- Remove unnecessary comments.
- -- Rename BD9574MWF_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9574MWF.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=402719
+Fixes: 356b01a986a5 ("gpio: gpio-hisi: Add HiSilicon GPIO support")
 
-Changes from v2:
- - Use devm_mfd_add_devices() to remove the mfd device in unload.
- - Update commit descriptions in patch 4 and 8.
- - Use regmap_get_device() to simplify in patch 4.
- - Remove "struct bd9571mwv" and bd9571mwv_remove().
- - Add Reviewed-by in patch 3 to 9.
- - Use devm_regmap_add_irq_chip() to simplify in patch 10.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=400477
 
-Changes from v1:
- - Document BD9574MWF on the dt-binding.
- - Add ROHM_CHIP_TYPE_BD957[14] into rohm-generic.h.
- - To simplify gpio and regulator drivers, using regmap instead of
-   using struct bd9571mwv.
- - Remove BD9574MWF definitions to make gpio and regulator driver
-   simple to support for BD9574MWF.
- - Add BD9574MWF support for gpio and regulator drivers.
- - Add missing regmap ranges for BD9574MWF.
- - Rename "part_number" with "part_name".
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=398059
+Should I send v2 to add this tag? or we can ask linus to help to add it 
+when apply this?
 
-Khiem Nguyen (2):
-  mfd: bd9571mwv: Make the driver more generic
-  mfd: bd9571mwv: Add support for BD9574MWF
 
-Yoshihiro Shimoda (10):
-  mfd: bd9571mwv: Use devm_mfd_add_devices()
-  dt-bindings: mfd: bd9571mwv: Document BD9574MWF
-  mfd: rohm-generic: Add BD9571 and BD9574
-  regulator: bd9571mwv: rid of using struct bd9571mwv
-  regulator: bd9571mwv: Add BD9574MWF support
-  gpio: bd9571mwv: Use the SPDX license identifier
-  gpio: bd9571mwv: rid of using struct bd9571mwv
-  gpio: bd9571mwv: Add BD9574MWF support
-  mfd: bd9571mwv: Use the SPDX license identifier
-  mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
+Thanks
 
- .../devicetree/bindings/mfd/bd9571mwv.txt          |   4 +-
- drivers/gpio/gpio-bd9571mwv.c                      |  35 ++--
- drivers/mfd/bd9571mwv.c                            | 194 ++++++++++++++-------
- drivers/regulator/bd9571mwv-regulator.c            |  59 ++++---
- include/linux/mfd/bd9571mwv.h                      |  45 ++---
- include/linux/mfd/rohm-generic.h                   |   2 +
- 6 files changed, 201 insertions(+), 138 deletions(-)
+Jiaxing
 
--- 
-2.7.4
+>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
 
