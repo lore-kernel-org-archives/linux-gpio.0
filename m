@@ -2,105 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD006C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 08:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B83C433DB
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 11:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6819022AAC
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 08:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB62120809
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 11:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgLXIwc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Dec 2020 03:52:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbgLXIwb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Dec 2020 03:52:31 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C0DC06179C
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Dec 2020 00:51:51 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id r3so1555727wrt.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Dec 2020 00:51:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=qP2XO0ngR1ghr+fNEQtPmScgoXBcnPP/lIItDhCDK2M=;
-        b=Iryp6kYWS3NXejOjSaJPJiIIH/0NoO/EHvJzVCFh0J8O+x0zDFnTSiuQnH/zFl7aP/
-         xYQyvKNouvqduGnBh1KNTvINHBT5gH8fo/ieCBq1tAORoDt+64+ZQJS3sXRQ7L3YaW+E
-         m0JA3O8kFRi4Q7gbDiakahTEejtUdVxrl3LTetORs8b4pQHaEQ740DUG3V8stdAFtw5f
-         JXTOHKYTA0AupqarG3Ju47KQrtW3gC5H5KaKvXPVU+Bzdr0/ZfzXtmv5NCuAQcNeSgWf
-         aRNYOxDnOFvu1x9nbZRFeOKSZIN0XWUJO3orCcHTnU+i6ywFuKki+XgVGfddShssVsLg
-         gRPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=qP2XO0ngR1ghr+fNEQtPmScgoXBcnPP/lIItDhCDK2M=;
-        b=EZDrjsFQW3d9moHxTRQoqyOQR7xnnBSbQrpvD9TPbsV09OmLHc///gImdHv1gFyUiA
-         5B6ItvRCLE3/IhpSTiliU6InnwvVG1YOOAE86B5kL71xYE3gttZYNR0exRiSGpknTlzr
-         ksDVKsiGP3uywLHteJ9WSlZNMITJd9mWAbj6GBGBLM4JbNx05ItKVuZsBdbVz3moW82j
-         eEJh1mJcBDzF9Ex71GcuFX0/otnv2HrgeQPoN+dBlktEXfXxB+PpwMlYTp2TcixjscGC
-         3paS0qh/TSggJGiLEcT6uW8RJBX4rsuP8hgSU+wQ7jieqyGEmypL2lXrYwy8LyTCxPUh
-         4YgQ==
-X-Gm-Message-State: AOAM531k5DLWdFj7y0IomKXsk3B5syymfE/6WXEi5wA/Udxd/h1oZVwa
-        nILA0h4jgD+WMJBU3/nEwsT4AA==
-X-Google-Smtp-Source: ABdhPJwMWyYathVI8voQEL5w+ZGTezLUadtdsVtsEAYFpKlLaXykiPJDAwHZ0o6p8CQ/DkLr/RTVPg==
-X-Received: by 2002:a5d:4491:: with SMTP id j17mr32512895wrq.78.1608799909968;
-        Thu, 24 Dec 2020 00:51:49 -0800 (PST)
-Received: from dell ([91.110.221.181])
-        by smtp.gmail.com with ESMTPSA id w13sm37720655wrt.52.2020.12.24.00.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Dec 2020 00:51:49 -0800 (PST)
-Date:   Thu, 24 Dec 2020 08:51:47 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     marek.vasut+renesas@gmail.com, matti.vaittinen@fi.rohmeurope.com,
-        lgirdwood@gmail.com, broonie@kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, khiem.nguyen.xt@renesas.com,
-        linux-power@fi.rohmeurope.com, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 11/12] mfd: bd9571mwv: Make the driver more generic
-Message-ID: <20201224085147.GH681741@dell>
-References: <1608793457-11997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1608793457-11997-12-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        id S1727759AbgLXLXF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Dec 2020 06:23:05 -0500
+Received: from forward101p.mail.yandex.net ([77.88.28.101]:46234 "EHLO
+        forward101p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727320AbgLXLXE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 24 Dec 2020 06:23:04 -0500
+Received: from sas1-46fc755e9ad1.qloud-c.yandex.net (sas1-46fc755e9ad1.qloud-c.yandex.net [IPv6:2a02:6b8:c08:168c:0:640:46fc:755e])
+        by forward101p.mail.yandex.net (Yandex) with ESMTP id CBA5E3282A27;
+        Thu, 24 Dec 2020 14:22:16 +0300 (MSK)
+Received: from sas2-1cbd504aaa99.qloud-c.yandex.net (sas2-1cbd504aaa99.qloud-c.yandex.net [2a02:6b8:c14:7101:0:640:1cbd:504a])
+        by sas1-46fc755e9ad1.qloud-c.yandex.net (mxback/Yandex) with ESMTP id OOszU6btW6-MGDGocsQ;
+        Thu, 24 Dec 2020 14:22:16 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1608808936;
+        bh=6ef1Y/wT/YxAUYOSfWMBMRXmZUruYuAkUBovxu7izrA=;
+        h=In-Reply-To:References:Date:Subject:To:From:Message-Id:Cc;
+        b=CoCN9Atwi/Bty+21ZBJa5mf4undEl8l7VWoMT+Vf90hFViqdKqqdQQRQl9L3ebxyG
+         4yhys8pvqYO2NzPxzSXHV+86MZFCtxYhRd6dpzHDbHzzL3vplaxXU4hjmUki0nP8LO
+         Pnbhp8xb4SGR9Zh6mH+xy/EHl2X+1BzJ1se1Re7E=
+Authentication-Results: sas1-46fc755e9ad1.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by sas2-1cbd504aaa99.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id wXm6oVjgK4-MGJeQTE8;
+        Thu, 24 Dec 2020 14:22:16 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     Nikita Shubin <nikita.shubin@maquefel.me>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 2/3] gpio: ep93xx: drop to_irq binding
+Date:   Thu, 24 Dec 2020 14:22:02 +0300
+Message-Id: <20201224112203.7174-3-nikita.shubin@maquefel.me>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20201224112203.7174-1-nikita.shubin@maquefel.me>
+References: <20201224112203.7174-1-nikita.shubin@maquefel.me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1608793457-11997-12-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 24 Dec 2020, Yoshihiro Shimoda wrote:
+As ->to_irq is redefined in gpiochip_add_irqchip, having it defined in
+driver is useless, so let's drop it.
 
-> From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-> 
-> Since the driver supports BD9571MWV PMIC only, this patch makes
-> the functions and data structure become more generic so that
-> it can support other PMIC variants as well. Also remove printing
-> part name which Lee Jones suggested.
-> 
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-> Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  drivers/mfd/bd9571mwv.c       | 77 +++++++++++++++++++++++--------------------
->  include/linux/mfd/bd9571mwv.h | 18 ++--------
->  2 files changed, 43 insertions(+), 52 deletions(-)
+Also i think it is worth to give a gentle warning in
+gpiochip_add_irqchip, to prevent people relying on to_irq.
 
-For my own reference (apply this as-is to your sign-off block):
+For example
 
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+WARN_ON_ONCE(gc->to_irq,
+"to_irq is redefined in gpiochip_add_irqchip" \
+"and you shouldn't rely on it\n");
 
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+ drivers/gpio/gpio-ep93xx.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index d6db0ff16581..90afe07213ce 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -325,11 +325,6 @@ static int ep93xx_gpio_set_config(struct gpio_chip *gc, unsigned offset,
+ 	return 0;
+ }
+ 
+-static int ep93xx_gpio_f_to_irq(struct gpio_chip *gc, unsigned offset)
+-{
+-	return EP93XX_GPIO_F_IRQ_BASE + offset;
+-}
+-
+ static int ep93xx_gpio_add_ab_irq_chip(struct gpio_chip *gc,
+ 					struct platform_device *pdev,
+ 					struct ep93xx_irq_chip *eic,
+@@ -407,7 +402,6 @@ static int ep93xx_gpio_add_f_irq_chip(struct gpio_chip *gc,
+ 	}
+ 	girq->default_type = IRQ_TYPE_NONE;
+ 	girq->handler = handle_level_irq;
+-	gc->to_irq = ep93xx_gpio_f_to_irq;
+ 
+ 	return 0;
+ }
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.26.2
+
