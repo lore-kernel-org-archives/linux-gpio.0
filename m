@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9193C433E9
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8027AC4332B
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB23D22BF3
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2985222AED
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbgLXHFG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Dec 2020 02:05:06 -0500
+        id S1728012AbgLXHFP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Dec 2020 02:05:15 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:17304 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727147AbgLXHE6 (ORCPT
+        by vger.kernel.org with ESMTP id S1727778AbgLXHE5 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 24 Dec 2020 02:04:58 -0500
+        Thu, 24 Dec 2020 02:04:57 -0500
 X-IronPort-AV: E=Sophos;i="5.78,444,1599490800"; 
-   d="scan'208";a="67025551"
+   d="scan'208";a="67025548"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie5.idc.renesas.com with ESMTP; 24 Dec 2020 16:04:22 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4AB70401227C;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0F99A401227D;
         Thu, 24 Dec 2020 16:04:22 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
@@ -36,9 +36,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v7 10/12] mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
-Date:   Thu, 24 Dec 2020 16:04:15 +0900
-Message-Id: <1608793457-11997-11-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v7 08/12] gpio: bd9571mwv: Add BD9574MWF support
+Date:   Thu, 24 Dec 2020 16:04:13 +0900
+Message-Id: <1608793457-11997-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1608793457-11997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1608793457-11997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -46,66 +46,46 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use dev_regmap_add_irq_chip() to simplify the code.
+Add support for BD9574MWF which is similar chip with BD9571MWV.
+Note that BD9574MWF has additional features "RECOV_GPOUT",
+"FREQSEL" and "RTC_IN", but supports GPIO function only.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mfd/bd9571mwv.c | 27 ++++++---------------------
- 1 file changed, 6 insertions(+), 21 deletions(-)
+ drivers/gpio/gpio-bd9571mwv.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-index e68c3fa..49e968e 100644
---- a/drivers/mfd/bd9571mwv.c
-+++ b/drivers/mfd/bd9571mwv.c
-@@ -170,31 +170,17 @@ static int bd9571mwv_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
+diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
+index 0e5395f..df6102b 100644
+--- a/drivers/gpio/gpio-bd9571mwv.c
++++ b/drivers/gpio/gpio-bd9571mwv.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * ROHM BD9571MWV-M GPIO driver
++ * ROHM BD9571MWV-M and BD9574MWF-M GPIO driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  *
+@@ -10,6 +10,7 @@
+  */
  
--	ret = regmap_add_irq_chip(bd->regmap, bd->irq, IRQF_ONESHOT, 0,
--				  &bd9571mwv_irq_chip, &bd->irq_data);
-+	ret = devm_regmap_add_irq_chip(bd->dev, bd->regmap, bd->irq,
-+				       IRQF_ONESHOT, 0, &bd9571mwv_irq_chip,
-+				       &bd->irq_data);
- 	if (ret) {
- 		dev_err(bd->dev, "Failed to register IRQ chip\n");
- 		return ret;
- 	}
+ #include <linux/gpio/driver.h>
++#include <linux/mfd/rohm-generic.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
  
--	ret = devm_mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO,
--				   bd9571mwv_cells, ARRAY_SIZE(bd9571mwv_cells),
--				   NULL, 0, regmap_irq_get_domain(bd->irq_data));
--	if (ret) {
--		regmap_del_irq_chip(bd->irq, bd->irq_data);
--		return ret;
--	}
--
--	return 0;
--}
--
--static int bd9571mwv_remove(struct i2c_client *client)
--{
--	struct bd9571mwv *bd = i2c_get_clientdata(client);
--
--	regmap_del_irq_chip(bd->irq, bd->irq_data);
--
--	return 0;
-+	return devm_mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO,
-+				    bd9571mwv_cells, ARRAY_SIZE(bd9571mwv_cells),
-+				    NULL, 0, regmap_irq_get_domain(bd->irq_data));
+@@ -118,7 +119,8 @@ static int bd9571mwv_gpio_probe(struct platform_device *pdev)
  }
  
- static const struct of_device_id bd9571mwv_of_match_table[] = {
-@@ -215,7 +201,6 @@ static struct i2c_driver bd9571mwv_driver = {
- 		.of_match_table = bd9571mwv_of_match_table,
- 	},
- 	.probe		= bd9571mwv_probe,
--	.remove		= bd9571mwv_remove,
- 	.id_table       = bd9571mwv_id_table,
+ static const struct platform_device_id bd9571mwv_gpio_id_table[] = {
+-	{ "bd9571mwv-gpio", },
++	{ "bd9571mwv-gpio", ROHM_CHIP_TYPE_BD9571 },
++	{ "bd9574mwf-gpio", ROHM_CHIP_TYPE_BD9574 },
+ 	{ /* sentinel */ }
  };
- module_i2c_driver(bd9571mwv_driver);
+ MODULE_DEVICE_TABLE(platform, bd9571mwv_gpio_id_table);
 -- 
 2.7.4
 
