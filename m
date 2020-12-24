@@ -2,130 +2,196 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED66EC43217
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B86DC433E6
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0927224B8
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0630622AAA
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Dec 2020 07:35:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbgLXHEx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Dec 2020 02:04:53 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:17304 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726064AbgLXHEw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 24 Dec 2020 02:04:52 -0500
-X-IronPort-AV: E=Sophos;i="5.78,444,1599490800"; 
-   d="scan'208";a="67025536"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Dec 2020 16:04:21 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 176FF401227D;
-        Thu, 24 Dec 2020 16:04:21 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
-        matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v7 00/12] treewide: bd9571mwv: Add support for BD9574MWF
-Date:   Thu, 24 Dec 2020 16:04:05 +0900
-Message-Id: <1608793457-11997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726730AbgLXHfL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Dec 2020 02:35:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50614 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbgLXHfK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Dec 2020 02:35:10 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739C7C0617A7
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Dec 2020 23:34:30 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id q18so1406374wrn.1
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Dec 2020 23:34:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=irTCI/vF0NkdBwIJVYrdKY08hhMbdCGPb63kIfO2o2A=;
+        b=R6zumxj5qvPbaQ4pMr1SUXVtsq99ZJmEEj4kGrQD/PJTM/EI2nIJySlp+8DHxbGSya
+         dSpv6/MBDLhv81xFenGB6ic+QB3FjIj4tUE2lU7mYqU8Md1NBpF3BHgIYeE+jodyoWuX
+         9cpCSF1GzKG3k/0wOLa00LPV/08zivvnLjhHEmx2/me+VVXK6fl9Tv6bh0MtiI8/ZEOd
+         KfWVgbw93zXAs3vCR6jSpwYaHCVbGmEONWCY0ngPDPZBbKQoCx+3oKVXuY0p+Px6e2sU
+         5DoOBYdfZISQMaaxxIm151sRu/O1XJInWx4OIVra3M6smOXrifJLA8oJjYme9O+FDTZ1
+         4lNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=irTCI/vF0NkdBwIJVYrdKY08hhMbdCGPb63kIfO2o2A=;
+        b=iJrGEH4jm0o+WPiy5pLtIgHESqs5MYQT3WrIlapkRpxNvyNfXBJsGNKScCTWlKX+P+
+         XSfpCL2WaPv7NReJMCH677+wIuP2Qy4lRJ5EtB9GYKgvaK8Uspqd0PfA2gDigGTxqA0f
+         vAN1HWj6mN2NBwsIhmR99FW2df7bhVa2BaSv1W/e7kN2zZhUad0Em4V+MH4ZB3qS7su1
+         yiqWWAb6Nmn5J3kki+bpFGucig2I5Ua/zDuKHr+wyMBulcY88ArNVbc4fwfbY+2UCWm2
+         EXM2huvG47+NTXRDlTyr6uaNmLVIZcJdaFk3x3FjGEu7zGLARAQfw0vK6vsu8zQ4xHB7
+         O6cQ==
+X-Gm-Message-State: AOAM531ix/lkBmzgMJx0KBAdf/fNjYOKgLxLXT0YvcDxDjMXh/UNuCFl
+        HLBNTa691gwGsi0UGQhWsOSfaA==
+X-Google-Smtp-Source: ABdhPJxO2aw2I+NqFLE1L/awTbwxiuesQi5naGzmXtMKXPnXTMsy2GU+91KE+f9Cs5zfvVpLSe1IZg==
+X-Received: by 2002:adf:b1ca:: with SMTP id r10mr33037021wra.252.1608795269049;
+        Wed, 23 Dec 2020 23:34:29 -0800 (PST)
+Received: from dell ([91.110.221.181])
+        by smtp.gmail.com with ESMTPSA id w18sm39857432wrn.2.2020.12.23.23.34.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Dec 2020 23:34:28 -0800 (PST)
+Date:   Thu, 24 Dec 2020 07:34:26 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>,
+        "matti.vaittinen@fi.rohmeurope.com" 
+        <matti.vaittinen@fi.rohmeurope.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        "linux-power@fi.rohmeurope.com" <linux-power@fi.rohmeurope.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 11/12] mfd: bd9571mwv: Make the driver more generic
+Message-ID: <20201224073426.GD681741@dell>
+References: <1608718963-21818-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1608718963-21818-12-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20201223153928.GA681741@dell>
+ <OSAPR01MB368360D8A4E3AD1E6F928271D8DD0@OSAPR01MB3683.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <OSAPR01MB368360D8A4E3AD1E6F928271D8DD0@OSAPR01MB3683.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add BD9574MWF support into bd9571mwv gpio, mfd and regulator drivers.
-Latest Ebisu-4D boards has this chip instead of BD9571MWV so that
-we need this patch series to detect this chip at runtime.
+On Thu, 24 Dec 2020, Yoshihiro Shimoda wrote:
 
-Note that the patch [1/12] is a bug-fix patch for mfd driver.
+> Hi Lee,
+> 
+> > From: Lee Jones, Sent: Thursday, December 24, 2020 12:39 AM
+> > On Wed, 23 Dec 2020, Yoshihiro Shimoda wrote:
+> > > From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+> > >
+> > > Since the driver supports BD9571MWV PMIC only, this patch makes
+> > > the functions and data structure become more generic so that
+> > > it can support other PMIC variants as well. Also remove printing
+> > > part name which Lee Jones suggested.
+> > >
+> > > Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+> > > Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > >  drivers/mfd/bd9571mwv.c       | 89 +++++++++++++++++++++++++------------------
+> > >  include/linux/mfd/bd9571mwv.h | 18 +--------
+> > >  2 files changed, 54 insertions(+), 53 deletions(-)
+> > 
+> > Couple of small points.
+> > 
+> > Remainder looks good.
+> 
+> Thank you for your review!
+> 
+> > > diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+> > > index 49e968e..c905ab4 100644
+> > > --- a/drivers/mfd/bd9571mwv.c
+> > > +++ b/drivers/mfd/bd9571mwv.c
+> > > @@ -3,6 +3,7 @@
+> > >   * ROHM BD9571MWV-M MFD driver
+> > >   *
+> > >   * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+> > > + * Copyright (C) 2020 Renesas Electronics Corporation
+> > >   *
+> > >   * Based on the TPS65086 driver
+> > >   */
+> > > @@ -14,6 +15,14 @@
+> > >
+> > >  #include <linux/mfd/bd9571mwv.h>
+> > >
+> > > +/* Driver data to distinguish bd957x variants */
+> > > +struct bd957x_ddata {
+> > > +	const struct regmap_config *regmap_config;
+> > > +	const struct regmap_irq_chip *irq_chip;
+> > 
+> > > +	const struct mfd_cell *cells;
+> > > +	int num_cells;
+> > 
+> > Are you using these post-probe?
+> > 
+> > If not, they're not ddata.
+> 
+> I'm not using all these members post-probe.
+> So, I'll remove ddata.
+> 
+> <snip>
+> > >  static int bd9571mwv_probe(struct i2c_client *client,
+> > > -			  const struct i2c_device_id *ids)
+> > > +			   const struct i2c_device_id *ids)
+> > >  {
+> > > -	struct bd9571mwv *bd;
+> > > -	int ret;
+> > > -
+> > > -	bd = devm_kzalloc(&client->dev, sizeof(*bd), GFP_KERNEL);
+> > > -	if (!bd)
+> > > -		return -ENOMEM;
+> > > -
+> > > -	i2c_set_clientdata(client, bd);
+> > > -	bd->dev = &client->dev;
+> > > -	bd->irq = client->irq;
+> > > +	const struct bd957x_ddata *ddata;
+> > > +	struct device *dev = &client->dev;
+> > > +	struct regmap *regmap;
+> > > +	struct regmap_irq_chip_data *irq_data;
+> > > +	int ret, irq = client->irq;
+> > > +
+> > > +	/* Read the PMIC product code */
+> > > +	ret = i2c_smbus_read_byte_data(client, BD9571MWV_PRODUCT_CODE);
+> > > +	if (ret < 0) {
+> > > +		dev_err(dev, "Failed to read product code\n");
+> > > +		return ret;
+> > > +	}
+> > 
+> > Nit: '\n' here.
+> 
+> I got it. I'll add a blank line here.
+> 
+> > > +	switch (ret) {
+> > > +	case BD9571MWV_PRODUCT_CODE_BD9571MWV:
+> > > +		ddata = &bd9571mwv_ddata;
+> > 
+> > Simply declare 'const struct mfd_cell *cells' locally in probe and
+> > assign it here instead.
+> 
+> I got it. I'll also add "const struct regmap_config *regmap_config;"
+> and "const struct regmap_irq_chip *irq_chip;" locally in probe.
 
-Changes from v6:
- - Remove "struct bd957x_ddata" because this is not used after probed.
- - Add "Acked-for-MFD-by" in patch 12.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=405725
-
-Changes from v5:
- - Fix typo in the patch 5 and 8.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=405263
-
-Changes from v4:
- - Add Reviwed-by in patch 1, 10, 11 and 12.
- - Keep bd9571mwv_id_table[] as-is because unused in patch 12.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=404657
-
-Changes from v3:
- - Add "Acked-for-MFD-by" in patch 1, 3, 9 and 10.
- - Use "Co-developed-by" instead in patch 11.
- - In patch 11:
- -- Remove abusing kernel-doc formatting in patch.
- -- Rename bd957x_data with bd957x_ddata in patch.
- -- Remove product name printk.
- -- Rename bd9571mwv_identify() with bd957x_identify().
- -- Remove argument "part_name" from bd957x_identify().
- -- Modify dev_err() string.
- -- Rename BD9571MWV_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9571MWV.
- -- Fix errno from -ENOENT to -ENODEV.
- - In patch 12:
- -- Rename "MFD driver" to "core driver".
- -- Remove unnecessary comments.
- -- Rename BD9574MWF_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9574MWF.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=402719
-
-Changes from v2:
- - Use devm_mfd_add_devices() to remove the mfd device in unload.
- - Update commit descriptions in patch 4 and 8.
- - Use regmap_get_device() to simplify in patch 4.
- - Remove "struct bd9571mwv" and bd9571mwv_remove().
- - Add Reviewed-by in patch 3 to 9.
- - Use devm_regmap_add_irq_chip() to simplify in patch 10.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=400477
-
-Changes from v1:
- - Document BD9574MWF on the dt-binding.
- - Add ROHM_CHIP_TYPE_BD957[14] into rohm-generic.h.
- - To simplify gpio and regulator drivers, using regmap instead of
-   using struct bd9571mwv.
- - Remove BD9574MWF definitions to make gpio and regulator driver
-   simple to support for BD9574MWF.
- - Add BD9574MWF support for gpio and regulator drivers.
- - Add missing regmap ranges for BD9574MWF.
- - Rename "part_number" with "part_name".
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=398059
-
-Khiem Nguyen (2):
-  mfd: bd9571mwv: Make the driver more generic
-  mfd: bd9571mwv: Add support for BD9574MWF
-
-Yoshihiro Shimoda (10):
-  mfd: bd9571mwv: Use devm_mfd_add_devices()
-  dt-bindings: mfd: bd9571mwv: Document BD9574MWF
-  mfd: rohm-generic: Add BD9571 and BD9574
-  regulator: bd9571mwv: rid of using struct bd9571mwv
-  regulator: bd9571mwv: Add BD9574MWF support
-  gpio: bd9571mwv: Use the SPDX license identifier
-  gpio: bd9571mwv: rid of using struct bd9571mwv
-  gpio: bd9571mwv: Add BD9574MWF support
-  mfd: bd9571mwv: Use the SPDX license identifier
-  mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
-
- .../devicetree/bindings/mfd/bd9571mwv.txt          |   4 +-
- drivers/gpio/gpio-bd9571mwv.c                      |  35 ++--
- drivers/mfd/bd9571mwv.c                            | 178 ++++++++++++++-------
- drivers/regulator/bd9571mwv-regulator.c            |  59 ++++---
- include/linux/mfd/bd9571mwv.h                      |  45 ++----
- include/linux/mfd/rohm-generic.h                   |   2 +
- 6 files changed, 186 insertions(+), 137 deletions(-)
+If you only use them there, then yes, that's correct.
 
 -- 
-2.7.4
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
