@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 432A9C4360C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602CEC4361A
 	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD38230FF
+	by mail.kernel.org (Postfix) with ESMTP id 4A52A230FF
 	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729380AbgLYJeg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Dec 2020 04:34:36 -0500
+        id S1729251AbgLYJeK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Dec 2020 04:34:10 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:32384 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729196AbgLYJeK (ORCPT
+        by vger.kernel.org with ESMTP id S1729238AbgLYJeJ (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 25 Dec 2020 04:34:10 -0500
+        Fri, 25 Dec 2020 04:34:09 -0500
 X-IronPort-AV: E=Sophos;i="5.78,447,1599490800"; 
-   d="scan'208";a="67150503"
+   d="scan'208";a="67150489"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie5.idc.renesas.com with ESMTP; 25 Dec 2020 18:33:36 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3ECCA40178DA;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 04E8E40178D8;
         Fri, 25 Dec 2020 18:33:36 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
@@ -36,9 +36,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v8 08/12] gpio: bd9571mwv: Add BD9574MWF support
-Date:   Fri, 25 Dec 2020 18:33:23 +0900
-Message-Id: <1608888807-3117-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v8 06/12] gpio: bd9571mwv: Use the SPDX license identifier
+Date:   Fri, 25 Dec 2020 18:33:21 +0900
+Message-Id: <1608888807-3117-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -46,46 +46,37 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for BD9574MWF which is similar chip with BD9571MWV.
-Note that BD9574MWF has additional features "RECOV_GPOUT",
-"FREQSEL" and "RTC_IN", but supports GPIO function only.
+Use the SPDX license identifier instead of a local description.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpio/gpio-bd9571mwv.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-bd9571mwv.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
 diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
-index 0e5395f..df6102b 100644
+index c0abc9c..abb622c 100644
 --- a/drivers/gpio/gpio-bd9571mwv.c
 +++ b/drivers/gpio/gpio-bd9571mwv.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-only
  /*
-- * ROHM BD9571MWV-M GPIO driver
-+ * ROHM BD9571MWV-M and BD9574MWF-M GPIO driver
+  * ROHM BD9571MWV-M GPIO driver
   *
   * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
   *
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/gpio/driver.h>
-+#include <linux/mfd/rohm-generic.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- 
-@@ -118,7 +119,8 @@ static int bd9571mwv_gpio_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id bd9571mwv_gpio_id_table[] = {
--	{ "bd9571mwv-gpio", },
-+	{ "bd9571mwv-gpio", ROHM_CHIP_TYPE_BD9571 },
-+	{ "bd9574mwf-gpio", ROHM_CHIP_TYPE_BD9574 },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(platform, bd9571mwv_gpio_id_table);
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+- * kind, whether expressed or implied; without even the implied warranty
+- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License version 2 for more details.
+- *
+  * Based on the TPS65086 driver
+  *
+  * NOTE: Interrupts are not supported yet.
 -- 
 2.7.4
 
