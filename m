@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE18C43217
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432A9C4360C
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0E5123339
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD38230FF
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbgLYJeg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1729380AbgLYJeg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 25 Dec 2020 04:34:36 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:2083 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726198AbgLYJeK (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:32384 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729196AbgLYJeK (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 25 Dec 2020 04:34:10 -0500
 X-IronPort-AV: E=Sophos;i="5.78,447,1599490800"; 
-   d="scan'208";a="66934055"
+   d="scan'208";a="67150503"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Dec 2020 18:33:36 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 25 Dec 2020 18:33:36 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E0CCB40178D9;
-        Fri, 25 Dec 2020 18:33:35 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3ECCA40178DA;
+        Fri, 25 Dec 2020 18:33:36 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -36,9 +36,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v8 05/12] regulator: bd9571mwv: Add BD9574MWF support
-Date:   Fri, 25 Dec 2020 18:33:20 +0900
-Message-Id: <1608888807-3117-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v8 08/12] gpio: bd9571mwv: Add BD9574MWF support
+Date:   Fri, 25 Dec 2020 18:33:23 +0900
+Message-Id: <1608888807-3117-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -47,64 +47,45 @@ List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 Add support for BD9574MWF which is similar chip with BD9571MWV.
-Note that we don't support voltage rails VD{09,18,25,33} by this
-driver on BD9574. The VD09 voltage could be read from PMIC but that
-is not supported by this commit.
+Note that BD9574MWF has additional features "RECOV_GPOUT",
+"FREQSEL" and "RTC_IN", but supports GPIO function only.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/regulator/bd9571mwv-regulator.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-bd9571mwv.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index 42b6a70..7b0cd08 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
+diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
+index 0e5395f..df6102b 100644
+--- a/drivers/gpio/gpio-bd9571mwv.c
++++ b/drivers/gpio/gpio-bd9571mwv.c
 @@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+ // SPDX-License-Identifier: GPL-2.0-only
  /*
-- * ROHM BD9571MWV-M regulator driver
-+ * ROHM BD9571MWV-M and BD9574MWF-M regulator driver
+- * ROHM BD9571MWV-M GPIO driver
++ * ROHM BD9571MWV-M and BD9574MWF-M GPIO driver
   *
   * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
   *
-@@ -9,6 +9,7 @@
-  * NOTE: VD09 is missing
+@@ -10,6 +10,7 @@
   */
  
+ #include <linux/gpio/driver.h>
 +#include <linux/mfd/rohm-generic.h>
  #include <linux/module.h>
- #include <linux/of.h>
  #include <linux/platform_device.h>
-@@ -277,6 +278,7 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 	struct regulator_dev *rdev;
- 	unsigned int val;
- 	int i;
-+	enum rohm_chip_type chip = platform_get_device_id(pdev)->driver_data;
  
- 	bdreg = devm_kzalloc(&pdev->dev, sizeof(*bdreg), GFP_KERNEL);
- 	if (!bdreg)
-@@ -292,6 +294,9 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 	config.regmap = bdreg->regmap;
- 
- 	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
-+		/* BD9574MWF supports DVFS only */
-+		if (chip == ROHM_CHIP_TYPE_BD9574 && regulators[i].id != DVFS)
-+			continue;
- 		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
- 					       &config);
- 		if (IS_ERR(rdev)) {
-@@ -339,7 +344,8 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+@@ -118,7 +119,8 @@ static int bd9571mwv_gpio_probe(struct platform_device *pdev)
  }
  
- static const struct platform_device_id bd9571mwv_regulator_id_table[] = {
--	{ "bd9571mwv-regulator", },
-+	{ "bd9571mwv-regulator", ROHM_CHIP_TYPE_BD9571 },
-+	{ "bd9574mwf-regulator", ROHM_CHIP_TYPE_BD9574 },
+ static const struct platform_device_id bd9571mwv_gpio_id_table[] = {
+-	{ "bd9571mwv-gpio", },
++	{ "bd9571mwv-gpio", ROHM_CHIP_TYPE_BD9571 },
++	{ "bd9574mwf-gpio", ROHM_CHIP_TYPE_BD9574 },
  	{ /* sentinel */ }
  };
- MODULE_DEVICE_TABLE(platform, bd9571mwv_regulator_id_table);
+ MODULE_DEVICE_TABLE(platform, bd9571mwv_gpio_id_table);
 -- 
 2.7.4
 
