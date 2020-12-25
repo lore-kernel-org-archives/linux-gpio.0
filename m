@@ -2,30 +2,32 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EC5C433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01429C43331
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3A76230FF
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B062313F
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Dec 2020 09:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgLYJeH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Dec 2020 04:34:07 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:2083 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726023AbgLYJeH (ORCPT
+        id S1729192AbgLYJeQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Dec 2020 04:34:16 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:32384 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729292AbgLYJeO (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 25 Dec 2020 04:34:07 -0500
+        Fri, 25 Dec 2020 04:34:14 -0500
 X-IronPort-AV: E=Sophos;i="5.78,447,1599490800"; 
-   d="scan'208";a="66934046"
+   d="scan'208";a="67150509"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Dec 2020 18:33:35 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 25 Dec 2020 18:33:36 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4AA0F4016D4A;
-        Fri, 25 Dec 2020 18:33:35 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A9A8C40178D8;
+        Fri, 25 Dec 2020 18:33:36 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -35,102 +37,218 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v8 00/12] treewide: bd9571mwv: Add support for BD9574MWF
-Date:   Fri, 25 Dec 2020 18:33:15 +0900
-Message-Id: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v8 12/12] mfd: bd9571mwv: Add support for BD9574MWF
+Date:   Fri, 25 Dec 2020 18:33:27 +0900
+Message-Id: <1608888807-3117-13-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add BD9574MWF support into bd9571mwv gpio, mfd and regulator drivers.
-Latest Ebisu-4D boards has this chip instead of BD9571MWV so that
-we need this patch series to detect this chip at runtime.
+From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 
-Note that the patch [1/12] is a bug-fix patch for mfd driver.
+The new PMIC BD9574MWF inherits features from BD9571MWV.
+Add the support of new PMIC to existing bd9571mwv driver.
 
-Changes from v6:
- - Fix typo in the patch 10.
- - Add "Acked-for-MFD-by" in patch 2 and 11.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=406091
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/bd9571mwv.c       | 76 ++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/mfd/bd9571mwv.h | 17 ++++++++--
+ 2 files changed, 89 insertions(+), 4 deletions(-)
 
-Changes from v6:
- - Remove "struct bd957x_ddata" because this is not used after probed.
- - Add "Acked-for-MFD-by" in patch 12.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=405725
-
-Changes from v5:
- - Fix typo in the patch 5 and 8.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=405263
-
-Changes from v4:
- - Add Reviwed-by in patch 1, 10, 11 and 12.
- - Keep bd9571mwv_id_table[] as-is because unused in patch 12.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=404657
-
-Changes from v3:
- - Add "Acked-for-MFD-by" in patch 1, 3, 9 and 10.
- - Use "Co-developed-by" instead in patch 11.
- - In patch 11:
- -- Remove abusing kernel-doc formatting in patch.
- -- Rename bd957x_data with bd957x_ddata in patch.
- -- Remove product name printk.
- -- Rename bd9571mwv_identify() with bd957x_identify().
- -- Remove argument "part_name" from bd957x_identify().
- -- Modify dev_err() string.
- -- Rename BD9571MWV_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9571MWV.
- -- Fix errno from -ENOENT to -ENODEV.
- - In patch 12:
- -- Rename "MFD driver" to "core driver".
- -- Remove unnecessary comments.
- -- Rename BD9574MWF_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9574MWF.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=402719
-
-Changes from v2:
- - Use devm_mfd_add_devices() to remove the mfd device in unload.
- - Update commit descriptions in patch 4 and 8.
- - Use regmap_get_device() to simplify in patch 4.
- - Remove "struct bd9571mwv" and bd9571mwv_remove().
- - Add Reviewed-by in patch 3 to 9.
- - Use devm_regmap_add_irq_chip() to simplify in patch 10.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=400477
-
-Changes from v1:
- - Document BD9574MWF on the dt-binding.
- - Add ROHM_CHIP_TYPE_BD957[14] into rohm-generic.h.
- - To simplify gpio and regulator drivers, using regmap instead of
-   using struct bd9571mwv.
- - Remove BD9574MWF definitions to make gpio and regulator driver
-   simple to support for BD9574MWF.
- - Add BD9574MWF support for gpio and regulator drivers.
- - Add missing regmap ranges for BD9574MWF.
- - Rename "part_number" with "part_name".
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=398059
-
-Khiem Nguyen (2):
-  mfd: bd9571mwv: Make the driver more generic
-  mfd: bd9571mwv: Add support for BD9574MWF
-
-Yoshihiro Shimoda (10):
-  mfd: bd9571mwv: Use devm_mfd_add_devices()
-  dt-bindings: mfd: bd9571mwv: Document BD9574MWF
-  mfd: rohm-generic: Add BD9571 and BD9574
-  regulator: bd9571mwv: rid of using struct bd9571mwv
-  regulator: bd9571mwv: Add BD9574MWF support
-  gpio: bd9571mwv: Use the SPDX license identifier
-  gpio: bd9571mwv: rid of using struct bd9571mwv
-  gpio: bd9571mwv: Add BD9574MWF support
-  mfd: bd9571mwv: Use the SPDX license identifier
-  mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
-
- .../devicetree/bindings/mfd/bd9571mwv.txt          |   4 +-
- drivers/gpio/gpio-bd9571mwv.c                      |  35 ++--
- drivers/mfd/bd9571mwv.c                            | 178 ++++++++++++++-------
- drivers/regulator/bd9571mwv-regulator.c            |  59 ++++---
- include/linux/mfd/bd9571mwv.h                      |  45 ++----
- include/linux/mfd/rohm-generic.h                   |   2 +
- 6 files changed, 186 insertions(+), 137 deletions(-)
-
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index 2c1fcbb..e15b1ac 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * ROHM BD9571MWV-M MFD driver
++ * ROHM BD9571MWV-M and BD9574MVF-M core driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  * Copyright (C) 2020 Renesas Electronics Corporation
+@@ -11,6 +11,7 @@
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/core.h>
++#include <linux/mfd/rohm-generic.h>
+ #include <linux/module.h>
+ 
+ #include <linux/mfd/bd9571mwv.h>
+@@ -103,6 +104,72 @@ static struct regmap_irq_chip bd9571mwv_irq_chip = {
+ 	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
+ };
+ 
++static const struct mfd_cell bd9574mwf_cells[] = {
++	{ .name = "bd9574mwf-regulator", },
++	{ .name = "bd9574mwf-gpio", },
++};
++
++static const struct regmap_range bd9574mwf_readable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
++	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_SETVMAX),
++	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_MONIVDAC),
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9574mwf_readable_table = {
++	.yes_ranges	= bd9574mwf_readable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_readable_yes_ranges),
++};
++
++static const struct regmap_range bd9574mwf_writable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
++	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
++	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
++	regmap_reg_range(BD9571MWV_GPIO_INT_SET, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9574mwf_writable_table = {
++	.yes_ranges	= bd9574mwf_writable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_writable_yes_ranges),
++};
++
++static const struct regmap_range bd9574mwf_volatile_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
++};
++
++static const struct regmap_access_table bd9574mwf_volatile_table = {
++	.yes_ranges	= bd9574mwf_volatile_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_volatile_yes_ranges),
++};
++
++static const struct regmap_config bd9574mwf_regmap_config = {
++	.reg_bits	= 8,
++	.val_bits	= 8,
++	.cache_type	= REGCACHE_RBTREE,
++	.rd_table	= &bd9574mwf_readable_table,
++	.wr_table	= &bd9574mwf_writable_table,
++	.volatile_table	= &bd9574mwf_volatile_table,
++	.max_register	= 0xff,
++};
++
++static struct regmap_irq_chip bd9574mwf_irq_chip = {
++	.name		= "bd9574mwf",
++	.status_base	= BD9571MWV_INT_INTREQ,
++	.mask_base	= BD9571MWV_INT_INTMASK,
++	.ack_base	= BD9571MWV_INT_INTREQ,
++	.init_ack_masked = true,
++	.num_regs	= 1,
++	.irqs		= bd9571mwv_irqs,
++	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
++};
++
+ static int bd957x_identify(struct device *dev, struct regmap *regmap)
+ {
+ 	unsigned int value;
+@@ -162,6 +229,12 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 		cells = bd9571mwv_cells;
+ 		num_cells = ARRAY_SIZE(bd9571mwv_cells);
+ 		break;
++	case BD9571MWV_PRODUCT_CODE_BD9574MWF:
++		regmap_config = &bd9574mwf_regmap_config;
++		irq_chip = &bd9574mwf_irq_chip;
++		cells = bd9574mwf_cells;
++		num_cells = ARRAY_SIZE(bd9574mwf_cells);
++		break;
+ 	default:
+ 		dev_err(dev, "Unsupported device 0x%x\n", ret);
+ 		return -ENODEV;
+@@ -190,6 +263,7 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 
+ static const struct of_device_id bd9571mwv_of_match_table[] = {
+ 	{ .compatible = "rohm,bd9571mwv", },
++	{ .compatible = "rohm,bd9574mwf", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, bd9571mwv_of_match_table);
+diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
+index e1716ec..8efd99d 100644
+--- a/include/linux/mfd/bd9571mwv.h
++++ b/include/linux/mfd/bd9571mwv.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * ROHM BD9571MWV-M driver
++ * ROHM BD9571MWV-M and BD9574MWF-M driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  * Copyright (C) 2020 Renesas Electronics Corporation
+@@ -14,11 +14,12 @@
+ #include <linux/device.h>
+ #include <linux/regmap.h>
+ 
+-/* List of registers for BD9571MWV */
++/* List of registers for BD9571MWV and BD9574MWF */
+ #define BD9571MWV_VENDOR_CODE			0x00
+ #define BD9571MWV_VENDOR_CODE_VAL		0xdb
+ #define BD9571MWV_PRODUCT_CODE			0x01
+ #define BD9571MWV_PRODUCT_CODE_BD9571MWV	0x60
++#define BD9571MWV_PRODUCT_CODE_BD9574MWF	0x74
+ #define BD9571MWV_PRODUCT_REVISION		0x02
+ 
+ #define BD9571MWV_I2C_FUSA_MODE			0x10
+@@ -48,6 +49,7 @@
+ #define BD9571MWV_VD33_VID			0x44
+ 
+ #define BD9571MWV_DVFS_VINIT			0x50
++#define BD9574MWF_VD09_VINIT			0x51
+ #define BD9571MWV_DVFS_SETVMAX			0x52
+ #define BD9571MWV_DVFS_BOOSTVID			0x53
+ #define BD9571MWV_DVFS_SETVID			0x54
+@@ -61,6 +63,7 @@
+ #define BD9571MWV_GPIO_INT_SET			0x64
+ #define BD9571MWV_GPIO_INT			0x65
+ #define BD9571MWV_GPIO_INTMASK			0x66
++#define BD9574MWF_GPIO_MUX			0x67
+ 
+ #define BD9571MWV_REG_KEEP(n)			(0x70 + (n))
+ 
+@@ -70,6 +73,8 @@
+ #define BD9571MWV_PROT_ERROR_STATUS2		0x83
+ #define BD9571MWV_PROT_ERROR_STATUS3		0x84
+ #define BD9571MWV_PROT_ERROR_STATUS4		0x85
++#define BD9574MWF_PROT_ERROR_STATUS5		0x86
++#define BD9574MWF_SYSTEM_ERROR_STATUS		0x87
+ 
+ #define BD9571MWV_INT_INTREQ			0x90
+ #define BD9571MWV_INT_INTREQ_MD1_INT		BIT(0)
+@@ -82,6 +87,12 @@
+ #define BD9571MWV_INT_INTREQ_BKUP_TRG_INT	BIT(7)
+ #define BD9571MWV_INT_INTMASK			0x91
+ 
++#define BD9574MWF_SSCG_CNT			0xA0
++#define BD9574MWF_POFFB_MRB			0xA1
++#define BD9574MWF_SMRB_WR_PROT			0xA2
++#define BD9574MWF_SMRB_ASSERT			0xA3
++#define BD9574MWF_SMRB_STATUS			0xA4
++
+ #define BD9571MWV_ACCESS_KEY			0xff
+ 
+ /* Define the BD9571MWV IRQ numbers */
+@@ -91,7 +102,7 @@ enum bd9571mwv_irqs {
+ 	BD9571MWV_IRQ_MD2_E2,
+ 	BD9571MWV_IRQ_PROT_ERR,
+ 	BD9571MWV_IRQ_GP,
+-	BD9571MWV_IRQ_128H_OF,
++	BD9571MWV_IRQ_128H_OF,	/* BKUP_HOLD on BD9574MWF */
+ 	BD9571MWV_IRQ_WDT_OF,
+ 	BD9571MWV_IRQ_BKUP_TRG,
+ };
 -- 
 2.7.4
 
