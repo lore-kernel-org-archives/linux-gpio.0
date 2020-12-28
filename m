@@ -2,218 +2,236 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE5CC433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 12:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11D5C433E9
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 15:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4D022084D
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 12:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0A1322B45
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 15:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgL1MNV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Dec 2020 07:13:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40386 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbgL1MNU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Dec 2020 07:13:20 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3635CC061795
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Dec 2020 04:12:40 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id o17so23461261lfg.4
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Dec 2020 04:12:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U5dnI6hl/uAinnpfwjzW42khHlLLdEo6KFHybJaznUs=;
-        b=Jjb/nwUvkEGmkSEzVwmXn+lIezhxSCwnCtBvaNxeeiDgCb7PMiokmM1cqfH3/4rb+e
-         XyFo74xz0qxF8mjDYOFcbGd6H2sGCyh3XWCoBM9vLWRa09nq/idp+AWqYRHqIM3MPcK6
-         7BwJZfHx4w+NSbgUlsmePG/yOTJRMlZ2+Gs/036xKf7gUovORvmdCSlLa2ACLiBEkwxG
-         b/evgHVMvJD6nRbHECWe8o/Gqg33nOFw22LpGuRIkceZvlQC/QjVaFyBDnBYq3IiO2yn
-         iHLT7/SY6TWLnAo3zwkFYcVZc4v6oV9CFwZv+pEukiOrqUSoQL9E5XdXZcwl4JuaW8GB
-         RyBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U5dnI6hl/uAinnpfwjzW42khHlLLdEo6KFHybJaznUs=;
-        b=XESQyslWtJtl2LVLcsJph8uUIfWEjVatkNMemVimw9KuS1imWEyseO1iV2cden/WzI
-         gmLxdy0mgdLw2vu9tTt6qFSfbzP050aIbOkOB8WwUMJSDtw8N2Sz7rCfM/jbLEeO4DFx
-         wpqsAzLgvb8cpUXIlC14kcj8u5GQ+KYAo/6NJ+K2o1chvpPTOL2Dht770W+TBU/Szua7
-         4wtr2FNJF2IuvhpFYA9Yr/y3Spt3IadoMCGeLfhQYQcwVsLKKttS2Umr9I+IFNJIdjXq
-         NgeC4zZB862CU/5fCTNTtEWcyBiMxiCJBzAVLk25cpyXuLd/rtKUpGgebq+l2qBA/GN3
-         fjfg==
-X-Gm-Message-State: AOAM531zEeLQnLEJAQ671BMGscAIoE5vMhNfzD/ejVqyOsnC79rHLlz/
-        FkSqwL5BfQv9H9wJPKnPuWKMLkuYdmtAvM/TeS7spg==
-X-Google-Smtp-Source: ABdhPJxwpJprr6pD65kQrg3HfTYT/inYom0+1ZwhUQegnwfPAS2avm2w25j3YRiAFyIflTh1hkDoKyEuPzX3x50S5o0=
-X-Received: by 2002:a05:6512:34c5:: with SMTP id w5mr18333870lfr.214.1609157558710;
- Mon, 28 Dec 2020 04:12:38 -0800 (PST)
+        id S2439051AbgL1PGA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Dec 2020 10:06:00 -0500
+Received: from forward500p.mail.yandex.net ([77.88.28.110]:53577 "EHLO
+        forward500p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2504228AbgL1PF4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 28 Dec 2020 10:05:56 -0500
+Received: from iva3-4f441b146a71.qloud-c.yandex.net (iva3-4f441b146a71.qloud-c.yandex.net [IPv6:2a02:6b8:c0c:498c:0:640:4f44:1b14])
+        by forward500p.mail.yandex.net (Yandex) with ESMTP id 48127940423;
+        Mon, 28 Dec 2020 18:05:08 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by iva3-4f441b146a71.qloud-c.yandex.net (mxback/Yandex) with ESMTP id 3PoAR5PxjQ-57DKFFLj;
+        Mon, 28 Dec 2020 18:05:07 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1609167907;
+        bh=LbIGQYGVuU5ladSSucPcONHVBEN4CnC07EgGwEb9mJM=;
+        h=Message-Id:Cc:Subject:In-Reply-To:Date:References:To:From;
+        b=XomDNzRhsgUveeGirs/jYiRH5/+75xmaf0/IO7vrtBGbnJeDfZIdHkeeQTITyiPZN
+         8IaIuwjACxJEFd0AhQqnzUkYNcdmVa2GfGc6LTbrSsrI3Z8WX7JvyF6k/8zCfeP72M
+         rEuru72NrUmnKngZ0ndx7qqHRCYe735Aw217y+1o=
+Authentication-Results: iva3-4f441b146a71.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by iva4-0814df7d67c8.qloud-c.yandex.net with HTTP;
+        Mon, 28 Dec 2020 18:05:07 +0300
+From:   nikita.shubin@maquefel.me
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAHp75VctYjASuKeEqOQDH1k5XKSYVGMFsf+_cOCx72JtiMnBSw@mail.gmail.com>
+References: <20201224112203.7174-1-nikita.shubin@maquefel.me> <20201224112203.7174-2-nikita.shubin@maquefel.me> <CAHp75VctYjASuKeEqOQDH1k5XKSYVGMFsf+_cOCx72JtiMnBSw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] gpio: ep93xx: convert to multi irqchips
 MIME-Version: 1.0
-References: <20201213135056.24446-1-damien.lemoal@wdc.com> <20201213135056.24446-24-damien.lemoal@wdc.com>
-In-Reply-To: <20201213135056.24446-24-damien.lemoal@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Mon, 28 Dec 2020 17:42:27 +0530
-Message-ID: <CAAhSdy0XSzrnucDJPWzVVr37Zn0iRxVQZf5X2KkxCkv2kDf4_Q@mail.gmail.com>
-Subject: Re: [PATCH v10 23/23] riscv: Add Canaan Kendryte K210 SD card defconfig
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Mon, 28 Dec 2020 18:05:07 +0300
+Message-Id: <715101609167778@mail.yandex.ru>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Dec 13, 2020 at 7:22 PM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+26.12.2020, 20:52, "Andy Shevchenko" <andy.shevchenko@gmail.com>:
+> On Thu, Dec 24, 2020 at 1:23 PM Nikita Shubin <nikita.shubin@maquefel.me> wrote:
+>>  Since gpiolib requires having separate irqchips for each gpiochip, we
+>>  need to add some we definetly need a separate one for F port, and we
 >
-> The nommu_k210_defconfig default configuration allows booting a Canaan
-> Kendryte K210 SoC based boards using an embedded intramfs cpio file.
-> Modifying this configuration to enable support for the board SD card is
-> not trivial for all users. To help beginners getting started with these
-> boards, add the nommu_k210_sdcard_defconfig default configuration file
-> to set all configuration options necessary to use the board mmc-spi sd
-> card for the root file system.
+> definitely
 >
-> This new configuration adds support for the block layer, the mmc-spi
-> driver and modifies the boot options to specify the rootfs device as
-> mmcblk0p1 (first partition of the sd card block device). The ext2 file
-> system is selected by default to encourage its use as that results in
-> only about 4KB added to the kernel image size. As ext2 does not have
-> journaling, the boot options specify a read-only mount of the file
-> system. Similarly to the smaller nommu_k210_defconfig, this new default
-> configuration disables virtual terminal support to reduce the kernel
-> image size.
+>>  could combine gpiochip A and B into one - but this will break namespace
+>>  and logick.
+>>
+>>  So despite 3 irqchips is a bit beefy we need a separate irqchip for each
 >
-> The default device tree selected is unchanged, specifying the simple
-> "k210_generic" device tree file. The user must change this setting to
-> specify the device tree suitable for the board being used
-> (k210_maix_bit, k210_maix_dock, k210_maix_go, k210_maixduino or
-> k210_kd233).
+> is a -> being a
 >
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  .../riscv/configs/nommu_k210_sdcard_defconfig | 93 +++++++++++++++++++
->  1 file changed, 93 insertions(+)
->  create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
+>>  interrupt capable port.
+>>
+>>  - added separate irqchip for each iterrupt capable gpiochip
 >
-> diff --git a/arch/riscv/configs/nommu_k210_sdcard_defconfig b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-> new file mode 100644
-> index 000000000000..a75388defd44
-> --- /dev/null
-> +++ b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-> @@ -0,0 +1,93 @@
-> +# CONFIG_CPU_ISOLATION is not set
-> +CONFIG_LOG_BUF_SHIFT=13
-> +CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=12
-> +CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-> +# CONFIG_SYSFS_SYSCALL is not set
-> +# CONFIG_FHANDLE is not set
-> +# CONFIG_BASE_FULL is not set
-> +# CONFIG_FUTEX is not set
-> +# CONFIG_EPOLL is not set
-> +# CONFIG_SIGNALFD is not set
-> +# CONFIG_TIMERFD is not set
-> +# CONFIG_EVENTFD is not set
-> +# CONFIG_AIO is not set
-> +# CONFIG_IO_URING is not set
-> +# CONFIG_ADVISE_SYSCALLS is not set
-> +# CONFIG_MEMBARRIER is not set
-> +# CONFIG_KALLSYMS is not set
-> +CONFIG_EMBEDDED=y
-> +# CONFIG_VM_EVENT_COUNTERS is not set
-> +# CONFIG_COMPAT_BRK is not set
-> +CONFIG_SLOB=y
-> +# CONFIG_MMU is not set
-> +CONFIG_SOC_CANAAN=y
-> +CONFIG_SOC_CANAAN_K210_DTB_SOURCE="k210_generic"
-> +CONFIG_MAXPHYSMEM_2GB=y
-> +CONFIG_SMP=y
-> +CONFIG_NR_CPUS=2
-> +CONFIG_CMDLINE="earlycon console=ttySIF0 rootdelay=2 root=/dev/mmcblk0p1 ro"
-> +CONFIG_CMDLINE_FORCE=y
-> +# CONFIG_SECCOMP is not set
-> +# CONFIG_STACKPROTECTOR is not set
-> +# CONFIG_BLK_DEV_BSG is not set
-> +# CONFIG_MQ_IOSCHED_DEADLINE is not set
-> +# CONFIG_MQ_IOSCHED_KYBER is not set
-> +CONFIG_BINFMT_FLAT=y
-> +# CONFIG_COREDUMP is not set
-> +CONFIG_DEVTMPFS=y
-> +CONFIG_DEVTMPFS_MOUNT=y
-> +# CONFIG_FW_LOADER is not set
-> +# CONFIG_ALLOW_DEV_COREDUMP is not set
-> +# CONFIG_BLK_DEV is not set
-> +# CONFIG_INPUT_LEDS is not set
-> +# CONFIG_INPUT_KEYBOARD is not set
-> +# CONFIG_INPUT_MOUSE is not set
-> +# CONFIG_SERIO is not set
-> +# CONFIG_VT is not set
-> +# CONFIG_UNIX98_PTYS is not set
-> +# CONFIG_LEGACY_PTYS is not set
-> +# CONFIG_LDISC_AUTOLOAD is not set
-> +# CONFIG_HW_RANDOM is not set
-> +# CONFIG_DEVMEM is not set
-> +CONFIG_I2C=y
-> +CONFIG_I2C_CHARDEV=y
-> +# CONFIG_I2C_HELPER_AUTO is not set
-> +CONFIG_I2C_DESIGNWARE_PLATFORM=y
-> +CONFIG_SPI=y
-> +# CONFIG_SPI_MEM is not set
-> +CONFIG_SPI_DESIGNWARE=y
-> +CONFIG_SPI_DW_MMIO=y
-> +# CONFIG_GPIO_SYSFS is not set
-> +# CONFIG_GPIO_CDEV_V1 is not set
-> +CONFIG_GPIO_DWAPB=y
-> +CONFIG_GPIO_SIFIVE=y
-> +CONFIG_POWER_RESET=y
-> +CONFIG_POWER_RESET_SYSCON=y
-> +# CONFIG_HWMON is not set
-> +# CONFIG_HID is not set
-> +# CONFIG_USB_SUPPORT is not set
-> +CONFIG_MMC=y
-> +# CONFIG_PWRSEQ_EMMC is not set
-> +# CONFIG_PWRSEQ_SIMPLE is not set
-> +CONFIG_MMC_SPI=y
-> +CONFIG_NEW_LEDS=y
-> +CONFIG_LEDS_CLASS=y
-> +CONFIG_LEDS_GPIO=y
-> +CONFIG_LEDS_USER=y
-> +# CONFIG_VIRTIO_MENU is not set
-> +# CONFIG_VHOST_MENU is not set
-> +CONFIG_EXT2_FS=y
-> +# CONFIG_FILE_LOCKING is not set
-> +# CONFIG_DNOTIFY is not set
-> +# CONFIG_INOTIFY_USER is not set
-> +# CONFIG_MISC_FILESYSTEMS is not set
-> +CONFIG_LSM="[]"
-> +CONFIG_PRINTK_TIME=y
-> +# CONFIG_SYMBOLIC_ERRNAME is not set
-> +# CONFIG_DEBUG_BUGVERBOSE is not set
-> +# CONFIG_DEBUG_MISC is not set
-> +CONFIG_PANIC_ON_OOPS=y
-> +# CONFIG_SCHED_DEBUG is not set
-> +# CONFIG_RCU_TRACE is not set
-> +# CONFIG_FTRACE is not set
-> +# CONFIG_RUNTIME_TESTING_MENU is not set
+> interrupt
+>
+>>  - dropped ep93xx_gpio_port (it wasn't working correct for port F anyway)
+>>  - moved irq registers into separate struct ep93xx_irq_chip, togather
+>
+> irq -> IRQ (everywhere)
+>
+> together
+>
+>>    with regs current state
+>>  - reworked irq handle for ab gpiochips (through bit not tottaly sure this
+>>    is a correct thing to do)
+>
+> ab -> AB ?
+>
+> In the parentheses something like "I'm not totally sure that this is a
+> correct thing to do, though".
+>
+>>  - dropped has_irq and has_hierarchical_irq and added a simple index
+>>    which we rely on when adding irq's to gpiochip's
+>
+> IRQs to GPIO chips
+>
+> (It would be nice if you can spell check and proofread commit
+> messages and comments in the code.
+>
+> ...
+>
+>>  +struct ep93xx_irq_chip {
+>>  + void __iomem *int_type1;
+>>  + void __iomem *int_type2;
+>>  + void __iomem *eoi;
+>>  + void __iomem *en;
+>>  + void __iomem *debounce;
+>>  + void __iomem *status;
+>
+> This is a bit... overcomplicated.
+> Can we rather use regmap API?
+>
+>>  + u8 gpio_int_unmasked;
+>>  + u8 gpio_int_enabled;
+>>  + u8 gpio_int_type1;
+>>  + u8 gpio_int_type2;
+>>  + u8 gpio_int_debounce;
+>>  + struct irq_chip chip;
+>>  +};
+>
+> ...
+>
+>>   /* Port ordering is: A B F */
+>>  +static const char *irq_chip_names[3] = {"gpio-irq-a",
+>>  + "gpio-irq-b",
+>>  + "gpio-irq-f"};
+>
+> Can you use better pattern, ie.
+> static const char * const foo[] = {
+>   ...
+> };
+>
+> (there are two things: splitting per lines and additional const)?
+>
+> ...
+>
+>>  + ab_parent_irq = platform_get_irq(pdev, 0);
+>
+> Error check, please?
+> Also, if it's an optional resource, use platform_get_irq_optional().
+>
+>>  + err = devm_request_irq(dev, ab_parent_irq,
+>>  + ep93xx_ab_irq_handler,
+>>  + IRQF_SHARED, eic->chip.name, gc);
+>
+>>  +
+>
+> Redundant blank line.
+>
+>>  + if (err) {
+>>  + dev_err(dev, "error requesting IRQ : %d\n", ab_parent_irq);
+>>  + return err;
+>>  + }
+>
+> ...
+>
+>>  + girq->num_parents = 1;
+>>  + girq->parents = devm_kcalloc(dev, 1,
+>>  + sizeof(*girq->parents),
+>>  + GFP_KERNEL);
+>
+> Can be squeezed to less amount of LOCs. Also consider to use
+> girq->num_parents as a parameter to devm_kcalloc().
+>
+>>  + if (!girq->parents)
+>>  + return -ENOMEM;
+>
+> ...
+>
+>>  + girq->handler = handle_level_irq;
+>
+> Don't we want to mark them as bad by using handle_bad_irq() as default handler?
+>
+> ...
+>
+>>  + /*
+>>  + * FIXME: convert this to use hierarchical IRQ support!
+>>  + * this requires fixing the root irqchip to be hierarchial.
+>
+> hierarchical
+>
+>>  + */
+>
+> ...
+>
+>>  + girq->num_parents = 8;
+>>  + girq->parents = devm_kcalloc(dev, 8,
+>>  + sizeof(*girq->parents),
+>>  + GFP_KERNEL);
+>
+> As per above.
+>
+>>  +
+>
+> Redundant blank line.
+>
+>>  + if (!girq->parents)
+>>  + return -ENOMEM;
+>
+> ...
+>
+>>  + /* Pick resources 1..8 for these IRQs */
+>>  + for (i = 1; i <= 8; i++)
+>>  + girq->parents[i - 1] = platform_get_irq(pdev, i);
+>
+> I would rather like to see i + 1 as a parameter which is much easier
+> to read and understand.
+>
+>>  + for (i = 0; i < 8; i++) {
+>
+> Also in both cases replace 8 by ARRAY_SIZE() or predefined constant.
+>
+>>  + gpio_irq = EP93XX_GPIO_F_IRQ_BASE + i;
+>>  + irq_set_chip_data(gpio_irq, gc);
+>>  + irq_set_chip_and_handler(gpio_irq,
+>>  + girq->chip,
+>>  + handle_level_irq);
+>>  + irq_clear_status_flags(gpio_irq, IRQ_NOREQUEST);
+>>  + }
+>
+> Okay, I see that this is in the original code. Consider them as
+> suggestions for additional changes.
+>
+> And briefly looking into the rest of the code the recommendation is to
+> split this and perhaps other patches to smaller logical pieces.
+>
+> Also, try to organize your series in groups each of them respectively
+> represents the following
+> 1) fixes (can be backported, usually contain Fixes tag to the culprit commit);
+> 2) preparatory refactoring patches / cleanups;
+> 3) new features.
+>
 > --
-> 2.29.2
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> With Best Regards,
+> Andy Shevchenko
 
-Looks good to me.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
+Thank you, Andy, i ll rework my RFC patch according to your advices and resubmit.
