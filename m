@@ -2,111 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FACC433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 06:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476F0C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 09:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A49EF207C9
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 06:48:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1168320781
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 09:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbgL1GsL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Dec 2020 01:48:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46934 "EHLO
+        id S1726919AbgL1JFL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Dec 2020 04:05:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbgL1GsL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Dec 2020 01:48:11 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140BEC061794;
-        Sun, 27 Dec 2020 22:47:31 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id t16so10495103wra.3;
-        Sun, 27 Dec 2020 22:47:31 -0800 (PST)
+        with ESMTP id S1726861AbgL1JFL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Dec 2020 04:05:11 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5703C061795
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Dec 2020 01:04:30 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id c79so5982882pfc.2
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Dec 2020 01:04:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/UKmRzFqrXr3oBhWBs08I7ckptL5gCh5r4ECFD/wdmE=;
-        b=gesGFLjMF1jc+zUjpW8efQN2E0o2in6H3jBs8+qWtu6Bsh7GYmPoWQ6cr/VdIK0Tvg
-         HELFZFNYCJBR+lh8zbDwqdlMWRdlvaFB+2ZcQkOD3o82sop6RNKflDOSMPe1u46v6kn6
-         y9/fV7yavtjMZDDSsrz+ivZIbKWXoLmeyDTBFExZzh0/gfn3Ss4V8ZnoT/v+NGv+gMtU
-         9LhMQhH2k/PpPkszB+/oBKGBTK0JRz++Gpfb7yVbU33q2pMPSqjKrJJkUaLNZpHZsMN7
-         HhPkh2RFNl3h6nBpzg5SpGFHe9/AbrFCmnpHfXFICPMFDKIjKK94VEkC1iSM7G+aT5Fs
-         fgQA==
+        bh=X4pAM+KZPcorEeEY52d8nlRr19UO6jcGAcFxkVXndac=;
+        b=Q0q/Ga+Nxl+3FRZgGiLxoEgOGgwiSNoS3EbH3cbyl+E0gQ7GJLAkpv/ZNUp2DuRnZh
+         c7JaTDTi6Jcrtdo5bby8PAXpJsATseq5v3CWrgtaVJNHH8vi4G/xtXPWxXhyjRWONizp
+         6rFkdMqbF9G8k+I0VvApIg/HinLERWVH9zkTs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/UKmRzFqrXr3oBhWBs08I7ckptL5gCh5r4ECFD/wdmE=;
-        b=oJo3RLYFQ//uE+JdfTTCZdp2r0jr6B5sijzX4p9e59E4/tvTgGEaJFudpFsdrE+KRS
-         pRX+N7nNLSZX6CqWIXYVgTuyxVB6w0JfdxpIx3azCB/Hj22j0qqUpnFMLXABxLBtp7jn
-         oCKsHw3/nrk/T4OghmPZXwjN94drUgbwf6JMp1lZNtZjAtqvFFpTnuQpWWeBfOxsUnWG
-         FWsPf9bXRqW7fWMZ4dC+9IXUovlqbSde03p0Hsqo/IXNXGI5E2znAiI5OzL3VzFi/0ZY
-         KXpfvd6QvZ7Il07eN/6tar7tK81jw25PoAouT9EvRSgFyz8+D1eRWeCoUaqa1qq1Z3HH
-         EE7w==
-X-Gm-Message-State: AOAM533/3reQo+1TMZy89JXhbbENIvf0uR4zhYCOLZt67LmZFzgDydLO
-        LtjBxVnew8HWkJ7Wp/NDAWU=
-X-Google-Smtp-Source: ABdhPJwks9F5j8NQOuvz2ZNc477KFidIMN1/2amuv4aRqeDjuIhl1C5M/ksA+w3VCpU12hmjgAZV5w==
-X-Received: by 2002:adf:f7d2:: with SMTP id a18mr48941609wrq.47.1609138049806;
-        Sun, 27 Dec 2020 22:47:29 -0800 (PST)
-Received: from localhost.localdomain (188.red-81-44-87.dynamicip.rima-tde.net. [81.44.87.188])
-        by smtp.gmail.com with ESMTPSA id s3sm17107194wmc.44.2020.12.27.22.47.28
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Dec 2020 22:47:29 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     linus.walleij@linaro.org
-Cc:     linux-gpio@vger.kernel.org, gregkh@linuxfoundation.org,
-        yanaijie@huawei.com, neil@brown.name, linux-kernel@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] pinctrl: ralink: rt2880: fix '-Wmissing-prototypes' in init function
-Date:   Mon, 28 Dec 2020 07:47:27 +0100
-Message-Id: <20201228064727.30098-1-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        bh=X4pAM+KZPcorEeEY52d8nlRr19UO6jcGAcFxkVXndac=;
+        b=ginWvNQqgBx9qzTamy/fiL7l1DXwvL78COGx9P27QMPfT+PWhNj3xMqhRLiKfwP0LL
+         vSKHsAd6B/du8Y6m3c74sTqoEbnw42nZA1CPmRwYRzGQBhzXdVw05Ee8hakQG1n/AfKH
+         3q4G8bSw2t3rISs2PFfGRnZzA9NOTa9sh+uwcMw14JuXx10irud3+3fLiw71vl6IePKx
+         MP7t/k+78QoY22UJgtSrjwiBrLSgpWP433a/upIYHG0uGRG4SI1y0va8ha1qb0lKbDxg
+         D88NMAUeden/x0Lk94hVd1X11x5eLpA/nZPqjMI9cOzITiRnXtIf95aBRVE6GXj8Y4pm
+         4aHA==
+X-Gm-Message-State: AOAM533DTbCnbQP6bqIFcpkQj6CaJPKZP7wud35l18N65IwJGCV5ka3i
+        B3SG2S6eJ7cPmzUKbzdShtav9w==
+X-Google-Smtp-Source: ABdhPJxt6FqRzO1S7YUjyHUwrV8TLbMVa6hCRDhCOqzEtTJ899Q8c45+FCd78FI7imT744QJSdl6hQ==
+X-Received: by 2002:a63:e049:: with SMTP id n9mr42750637pgj.339.1609146270214;
+        Mon, 28 Dec 2020 01:04:30 -0800 (PST)
+Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:1a60:24ff:fe89:3e93])
+        by smtp.gmail.com with ESMTPSA id h10sm31496329pfn.213.2020.12.28.01.04.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Dec 2020 01:04:29 -0800 (PST)
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Light Hsieh <light.hsieh@mediatek.com>,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH] pinctrl: mediatek: Fix fallback call path
+Date:   Mon, 28 Dec 2020 17:04:25 +0800
+Message-Id: <20201228090425.2130569-1-hsinyi@chromium.org>
+X-Mailer: git-send-email 2.29.2.729.g45daf8777d-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Kernel test robot reported the following warning:
-'warning: no previous prototype for 'rt2880_pinmux_init''.
-This function is the entry point for the platform driver and
-it is private to this driver. Hence declare it 'static' which is
-the correct thing to do fixing also this warning.
+Some SoCs, eg. mt8183, are using a pinconfig operation bias_set_combo.
+The fallback path in mtk_pinconf_adv_pull_set() should also try this
+operation.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Fixes: cafe19db7751 ("pinctrl: mediatek: Backward compatible to previous Mediatek's bias-pull usage")
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
 ---
-Hi Linus, 
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Just a note to let you know that this patch is rebased on the top of this
-series which are pending to be applied:
-http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2020-December/149353.html
-
-Thanks in advance for your time!
-
-Best regards,
-    Sergio Paracuellos
-
- drivers/pinctrl/ralink/pinctrl-rt2880.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/ralink/pinctrl-rt2880.c b/drivers/pinctrl/ralink/pinctrl-rt2880.c
-index 983da62ff3be..1f8e8d5b71fd 100644
---- a/drivers/pinctrl/ralink/pinctrl-rt2880.c
-+++ b/drivers/pinctrl/ralink/pinctrl-rt2880.c
-@@ -361,7 +361,7 @@ static struct platform_driver rt2880_pinmux_driver = {
- 	},
- };
- 
--int __init rt2880_pinmux_init(void)
-+static int __init rt2880_pinmux_init(void)
- {
- 	return platform_driver_register(&rt2880_pinmux_driver);
- }
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 7aeb552d16ce9..72f17f26acd80 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -920,6 +920,10 @@ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
+ 			err = hw->soc->bias_set(hw, desc, pullup);
+ 			if (err)
+ 				return err;
++		} else if (hw->soc->bias_set_combo) {
++			err = hw->soc->bias_set_combo(hw, desc, pullup, arg);
++			if (err)
++				return err;
+ 		} else {
+ 			return -ENOTSUPP;
+ 		}
 -- 
-2.25.1
+2.29.2.729.g45daf8777d-goog
 
