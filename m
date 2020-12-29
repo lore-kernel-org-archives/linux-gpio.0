@@ -2,79 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F58BC4321A
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 23:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C307C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Dec 2020 20:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 142F5222F9
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Dec 2020 23:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4803C206F9
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Dec 2020 20:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730636AbgL1Wzw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Dec 2020 17:55:52 -0500
-Received: from mga17.intel.com ([192.55.52.151]:20884 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729382AbgL1UIT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 28 Dec 2020 15:08:19 -0500
-IronPort-SDR: 8Z/hSQ77/38OJ3SUz2mfJFD9ejDnW6xAZ75OstJ/hBl53jtVPMdZS+mQhGE5GVvzQZ1TkxrID8
- /1IQegic0eUw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9848"; a="156207358"
-X-IronPort-AV: E=Sophos;i="5.78,456,1599548400"; 
-   d="scan'208";a="156207358"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Dec 2020 12:06:23 -0800
-IronPort-SDR: W6LKwrETLC3WRbOG5xzlvTpxv26PmDKoRXEDvBUukESFNZjZ0lebjqfAWlPW47AQ006ZvYFJWN
- 32pT3crmtVKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.78,456,1599548400"; 
-   d="scan'208";a="392869412"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Dec 2020 12:06:20 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 98C96DE; Mon, 28 Dec 2020 22:06:19 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/3] gpiolib: Follow usual pattern for gpiod_remove_lookup_table() call
-Date:   Mon, 28 Dec 2020 22:06:16 +0200
-Message-Id: <20201228200618.58716-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.29.2
+        id S1726214AbgL2UsD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Dec 2020 15:48:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbgL2UsD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Dec 2020 15:48:03 -0500
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0122BC061574;
+        Tue, 29 Dec 2020 12:47:23 -0800 (PST)
+Received: by mail-qv1-xf2c.google.com with SMTP id h16so6882418qvu.8;
+        Tue, 29 Dec 2020 12:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y+rG0GxaF7x1wXd8TaaHi/8Xfv1oonAYxPZa52+iv1g=;
+        b=VbPKpHSd6tZDH2zm47wqbko1A0NgXSGNZkyRuWT0E2sm0HTfdFGyHB/RCpWIrj7w6K
+         6n3mAJ2YuIkUF8tc/Vwb7YU3jzqAvQ2K6gMG6pw9rwMinOmto/FfSwtx3dEuJVqwnIJK
+         nJ0oxhLGzqgHFkd/VxDZ25QH9kktVZZZG2zzfsYFgUC3h3471N3WWeDrlbOJrLxhFyKb
+         DB4DGheTESkWASZV2gKyaTv9HKFUbvDmwZo1pGfdaxr6PaTv8s8/Fem2m2YLZt6RMK7v
+         BthRbKXKTbOpr1mRPdPglD+3dbyVjIDJgve7+rr+6hEi2O4dHkip7cTrYSKDpbCTN/1h
+         siuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y+rG0GxaF7x1wXd8TaaHi/8Xfv1oonAYxPZa52+iv1g=;
+        b=t7rWJhUuud2TATO+kc5vRrFDczRk2Ntxos8k4+MeCr9FBx3+MqTv4wGrncumg9At3x
+         z2omKgq/Olmhg68sS9ShJ/oS4zr30Vmequw9TmBLQy0riIvZ5x21BsMjbDdylVN3Df8F
+         PCUWgtc+gw9bkKgRd3Tdkfb9W86VImd1lplqnUVAPTqXgIx++FVqbbb/nSQRcb3Vks9l
+         7NghPHe7uLKICLtWBdth6FPzK1s2j0C5fLXAH3eUUTuG3UyAeEi3cJwRn+eQ3aGyvOzz
+         rfxMKgyw+tAUg3sk3wmN8h/m7blTlhSgybSvFAWKOMGDQQargTvr7dC88pr6hl/PgUcL
+         NFnA==
+X-Gm-Message-State: AOAM5307ycM5qk8CLyaleJCeTDvFpcNsNWPPtyDG7C/NEnS5RBwFa1mY
+        IefjigR5c05QvUrH8fITMcU=
+X-Google-Smtp-Source: ABdhPJx/7QCz1uzdmG7N+yZpMXQZ01RrfD1TOA7M0mU/tmv2rVqr45+D6n3cQ9hHWlePDfPWlfO3pA==
+X-Received: by 2002:a0c:f690:: with SMTP id p16mr5946583qvn.58.1609274842134;
+        Tue, 29 Dec 2020 12:47:22 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:45f1:1d00::1])
+        by smtp.gmail.com with ESMTPSA id w8sm27667541qts.50.2020.12.29.12.47.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Dec 2020 12:47:21 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] pinctrl: nomadik: Remove unused variable in nmk_gpio_dbg_show_one
+Date:   Tue, 29 Dec 2020 13:47:10 -0700
+Message-Id: <20201229204710.1129033-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The usual pattern for the remove calls, like gpiod_remove_lookup_table(),
-is to be NULL-aware, i.o.w. become a no-op whenever parameter is NULL.
-Update gpiod_remove_lookup_table() call to follow this pattern.
+Clang warns:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+drivers/pinctrl/nomadik/pinctrl-nomadik.c:952:8: warning: unused
+variable 'wake' [-Wunused-variable]
+                bool wake;
+                     ^
+1 warning generated.
+
+There were two wake declarations added to nmk_gpio_dbg_show_one when
+converting it to use irq_has_action but only one is used within its
+scope. Remove the unused one so there is no more warning.
+
+Fixes: f3925032d7fd ("pinctrl: nomadik: Use irq_has_action()")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/gpio/gpiolib.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b02cc2abd3b6..611d6ea82d75 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3460,6 +3460,10 @@ EXPORT_SYMBOL_GPL(gpiod_add_lookup_table);
-  */
- void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
- {
-+	/* Nothing to remove */
-+	if (!table)
-+		return;
-+
- 	mutex_lock(&gpio_lookup_lock);
- 
- 	list_del(&table->list);
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index d4ea10803fd9..abfe11c7b49f 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -949,7 +949,6 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 	} else {
+ 		int irq = chip->to_irq(chip, offset);
+ 		const int pullidx = pull ? 1 : 0;
+-		bool wake;
+ 		int val;
+ 		static const char * const pulls[] = {
+ 			"none        ",
+
+base-commit: 5c8fe583cce542aa0b84adc939ce85293de36e5e
 -- 
-2.29.2
+2.30.0
 
