@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9A7C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 575E0C4332B
 	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC336208C7
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39BFD20DD4
+	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbhACKBF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 3 Jan 2021 05:01:05 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:56391 "EHLO
+        id S1726563AbhACKBS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 3 Jan 2021 05:01:18 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:53895 "EHLO
         new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726072AbhACKA6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Jan 2021 05:00:58 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 9B6895803E8;
-        Sun,  3 Jan 2021 05:00:11 -0500 (EST)
+        by vger.kernel.org with ESMTP id S1726072AbhACKBR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Jan 2021 05:01:17 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C63375803E4;
+        Sun,  3 Jan 2021 05:00:10 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sun, 03 Jan 2021 05:00:11 -0500
+  by compute5.internal (MEProxy); Sun, 03 Jan 2021 05:00:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=nVjtQEK9XaBpR
-        QQ15wkj2tc7GfDi4X4brxsvTseHVaQ=; b=gGVCtJkoVvQNimG4iaMquEqwuuliD
-        qu4pkYH5Rb8trCBAqbYv3Bt+pCh2iHFXPTIQY6wrJIP0DM7LPCmOiIX4eajjUVO7
-        eLgEoJsvtyfRbgxSVctzNFvjDMxgf4PjM86pGEdRuzRolv1JSKD6sJSUPglvcFUX
-        bCJW5Q1tnbGSo5QtdjVEa4ojAylhs2OUK+x7eFeZQMOa8KhQeMivpPZNkyAwD8Gc
-        LW5geK1QXAIHzXm3p9V4uqcYRZeYK3TB627LtgkrqImJdfF7j+rX4Nspg5LJdS1I
-        bzcd454qlv8freCrYwBcaRBuqlJaZWRWAp3nXqAUdRYeCTr9J096ahx1A==
+        :mime-version:content-transfer-encoding; s=fm1; bh=LZ7PuAqRkqcLx
+        40eoM2uefOkifLs8JNhxV9A8QPxP/0=; b=fkNKL5ZoE/Cj3CQAk53oc4NRdSb0t
+        4xKxYppsh5EgqY4nqlsj06FlgjXEZC8VQrvQvYYbMRIkpjjPYOr4RTJ+KUYMcwyE
+        69vbFXf50cxS2aygdW9fzHICwViJy0j9McvQeugD3GKdfdDmkp/wHa5kUTqWW1KK
+        1qroOAoQj8Z5xraKxvvFJaMUr08LcnClOcBRm+Jle9Px70HvbfhyK4ewX6YvdcYU
+        lBlPMvhDYHbMPzjOf65Yb6LJAIud+7MdgunGYF9c23ZcvTN/y5qX+ayb94IXj3U7
+        c5nks4ef98z9xkA4fzQr1ed+4mvM8JtK9e+x58UGRgwbvm8Vd73y2mifw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=nVjtQEK9XaBpRQQ15wkj2tc7GfDi4X4brxsvTseHVaQ=; b=dohiBUMJ
-        3NSkS1dRew3RGn54/7yz6k1tuYN9I5sn4Gh1UqmLCRAdb5KLR5mVNMHYI3oxmkdB
-        bpEHqq0+PmWUtfdw7Dewi916Dpj02Bgrz8JfqZOP8Uv4efXNH4R2mcQw3lUH3FmE
-        AwAlJloOmkfR1ico4uG8WwBjmVW3ar4woM4LKbSftrUFwbAOTlz2FboL762lcTpW
-        8d8QVIagd7KJGLUZ7XutBlR1NHUfgi+ZLEKEgy3hFoA4wvbZW/5cAawx7eWNxjZf
-        ZjBKmLVzII62qZo6aE7ijeauVauBaPKNIruMCkuRRPS0GFUy1orUVkb8khmuOJja
-        rmprdfaxrF6zlw==
-X-ME-Sender: <xms:q5XxX3vMXMUK9H_vCUiz7DzsCHJWDBynJ4y6Qp5l6wV9fm2lPS4AsQ>
-    <xme:q5XxX44FSMdmZsbecLeilc9_r4gEE2fsFbOzxeyKZYlZi6thUSuH-bn9AxBrG_CEV
-    lim5Wd29yP1gh4UIQ>
+        fm1; bh=LZ7PuAqRkqcLx40eoM2uefOkifLs8JNhxV9A8QPxP/0=; b=BmcjSj5H
+        /r5Ate/o9E6JNzOPHXFf/U2svgoGcj+OIxQG16M+thKS440S++pV0q8z/7JmNQxI
+        4bKBcmtmdE7e4S/LQrTthZMXC3CaFr8+x85gE3634vYJr1a3IMLdLff+A/Cca4y/
+        boeHwXyWp4w96fUNGpRhBbJRlZyUlU02XLHZvA9AOEGCuYF+ZLE5Q9q5Iw6HFv0M
+        hJR7f1B/N+FRxaNi/k//ftMm3cPUSBusIuoiGXgKLN55JLwiFU5FuK5WowPyElcz
+        FYcqEYVwotellvHvYUutqeGmBKeliup8n5qsBlWiGZB9p19iI2c/Ed/SQNRpasNq
+        DL76hAh+r+dxTg==
+X-ME-Sender: <xms:qZXxX9yNoW-MAInC0Trxp4Cq5lUbPC3JtHRt1nwTXt-WpQEGbn1hpw>
+    <xme:qZXxX9QqA4SImw4oy-9YOhxXuh_WPRKPS_qnhltlqivq8ih_mJdKXC9dxFLuUexb9
+    Lr8670V2Glyh7rdUg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddguddtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddguddtucetufdoteggod
     gfejheeuieenucfkphepjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuih
     iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghn
     ugdrohhrgh
-X-ME-Proxy: <xmx:q5XxX6hhczK25a-TBfIZo9fZIVBBtAmI04ljXMqY28l7PyDg--U8vQ>
-    <xmx:q5XxXylUTzJgo5r9SdTKojocCd2IOE3rNZkmnZTCzhCAuwLVs6bLZw>
-    <xmx:q5XxXxu22u9nyPDH4RTWm9erkNSyfGa302ctbw8qZpbG5dY5sdGXYg>
-    <xmx:q5XxX2u8wBGyCNRzdU3WmSJAKz3YikbeXYCnDOXgTwMn6ZD1u2cs4A>
+X-ME-Proxy: <xmx:qZXxX3UMpFhf7t1qcNTh0XCQghdZOHHCxRoMNmWSNSGD4GssDr6IKA>
+    <xmx:qZXxX_jXyVd_y-5BL1XOmvh9H71sX_mu2br56raij5MaTyOWyDZGsw>
+    <xmx:qZXxX_CI3R2Mzebbq-5alv4NsKiZitijKURjfPCSBLNbxD6nco3QHw>
+    <xmx:qpXxX_xsTDNNcC_W3PEcHSkz3QZa_O8GVtUynyo1NZ3HRnl_mw1mqA>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F1864108005F;
-        Sun,  3 Jan 2021 05:00:10 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 264591080057;
+        Sun,  3 Jan 2021 05:00:09 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -76,9 +76,9 @@ Cc:     Andre Przywara <andre.przywara@arm.com>,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 4/4] arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
-Date:   Sun,  3 Jan 2021 04:00:07 -0600
-Message-Id: <20210103100007.32867-5-samuel@sholland.org>
+Subject: [PATCH v2 1/4] clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
+Date:   Sun,  3 Jan 2021 04:00:04 -0600
+Message-Id: <20210103100007.32867-2-samuel@sholland.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210103100007.32867-1-samuel@sholland.org>
 References: <20210103100007.32867-1-samuel@sholland.org>
@@ -88,155 +88,93 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On boards where the only peripheral connected to PL0/PL1 is an X-Powers
-PMIC, configure the connection to use the RSB bus rather than the I2C
-bus. Compared to the I2C controller that shares the pins, the RSB
-controller allows a higher bus frequency, and it is more CPU-efficient.
+While no information about the H6 RSB controller is included in the
+datasheet or manual, the vendor BSP and power management blob both
+reference the RSB clock parent and register address. These values were
+verified by experimentation.
+
+Since this clock/reset are added late, the specifier is added at the end
+to maintain the existing DT binding. The code is kept in register order.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- .../dts/allwinner/sun50i-h6-beelink-gs1.dts   | 38 +++++++++----------
- .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 14 +++----
- .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 22 +++++------
- 3 files changed, 37 insertions(+), 37 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c      | 5 +++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h      | 2 +-
+ include/dt-bindings/clock/sun50i-h6-r-ccu.h | 2 ++
+ include/dt-bindings/reset/sun50i-h6-r-ccu.h | 1 +
+ 4 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-index 7c9dbde645b5..3452add30cc4 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-@@ -150,12 +150,28 @@ &pio {
- 	vcc-pg-supply = <&reg_aldo1>;
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+index 50f8d1bc7046..56e351b513f3 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -91,6 +91,8 @@ static SUNXI_CCU_GATE(r_apb2_uart_clk,	"r-apb2-uart",	"r-apb2",
+ 		      0x18c, BIT(0), 0);
+ static SUNXI_CCU_GATE(r_apb2_i2c_clk,	"r-apb2-i2c",	"r-apb2",
+ 		      0x19c, BIT(0), 0);
++static SUNXI_CCU_GATE(r_apb2_rsb_clk,	"r-apb2-rsb",	"r-apb2",
++		      0x1bc, BIT(0), 0);
+ static SUNXI_CCU_GATE(r_apb1_ir_clk,	"r-apb1-ir",	"r-apb1",
+ 		      0x1cc, BIT(0), 0);
+ static SUNXI_CCU_GATE(r_apb1_w1_clk,	"r-apb1-w1",	"r-apb1",
+@@ -130,6 +132,7 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
+ 	&r_apb1_pwm_clk.common,
+ 	&r_apb2_uart_clk.common,
+ 	&r_apb2_i2c_clk.common,
++	&r_apb2_rsb_clk.common,
+ 	&r_apb1_ir_clk.common,
+ 	&r_apb1_w1_clk.common,
+ 	&ir_clk.common,
+@@ -147,6 +150,7 @@ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
+ 		[CLK_R_APB1_PWM]	= &r_apb1_pwm_clk.common.hw,
+ 		[CLK_R_APB2_UART]	= &r_apb2_uart_clk.common.hw,
+ 		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
++		[CLK_R_APB2_RSB]	= &r_apb2_rsb_clk.common.hw,
+ 		[CLK_R_APB1_IR]		= &r_apb1_ir_clk.common.hw,
+ 		[CLK_R_APB1_W1]		= &r_apb1_w1_clk.common.hw,
+ 		[CLK_IR]		= &ir_clk.common.hw,
+@@ -161,6 +165,7 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
+ 	[RST_R_APB1_PWM]	=  { 0x13c, BIT(16) },
+ 	[RST_R_APB2_UART]	=  { 0x18c, BIT(16) },
+ 	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
++	[RST_R_APB2_RSB]	=  { 0x1bc, BIT(16) },
+ 	[RST_R_APB1_IR]		=  { 0x1cc, BIT(16) },
+ 	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
  };
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+index 782117dc0b28..7e290b840803 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+@@ -14,6 +14,6 @@
  
--&r_i2c {
-+&r_ir {
-+	linux,rc-map-name = "rc-beelink-gs1";
-+	status = "okay";
-+};
+ #define CLK_R_APB2	3
+ 
+-#define CLK_NUMBER	(CLK_W1 + 1)
++#define CLK_NUMBER	(CLK_R_APB2_RSB + 1)
+ 
+ #endif /* _CCU_SUN50I_H6_R_H */
+diff --git a/include/dt-bindings/clock/sun50i-h6-r-ccu.h b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+index 76136132a13e..890368d252c4 100644
+--- a/include/dt-bindings/clock/sun50i-h6-r-ccu.h
++++ b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+@@ -21,4 +21,6 @@
+ #define CLK_IR			11
+ #define CLK_W1			12
+ 
++#define CLK_R_APB2_RSB		13
 +
-+&r_pio {
-+	/*
-+	 * FIXME: We can't add that supply for now since it would
-+	 * create a circular dependency between pinctrl, the regulator
-+	 * and the RSB Bus.
-+	 *
-+	 * vcc-pl-supply = <&reg_aldo1>;
-+	 */
-+	vcc-pm-supply = <&reg_aldo1>;
-+};
-+
-+&r_rsb {
- 	status = "okay";
+ #endif /* _DT_BINDINGS_CLK_SUN50I_H6_R_CCU_H_ */
+diff --git a/include/dt-bindings/reset/sun50i-h6-r-ccu.h b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
+index 01c84dba49a4..7950e799c76d 100644
+--- a/include/dt-bindings/reset/sun50i-h6-r-ccu.h
++++ b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
+@@ -13,5 +13,6 @@
+ #define RST_R_APB2_I2C		4
+ #define RST_R_APB1_IR		5
+ #define RST_R_APB1_W1		6
++#define RST_R_APB2_RSB		7
  
--	axp805: pmic@36 {
-+	axp805: pmic@745 {
- 		compatible = "x-powers,axp805", "x-powers,axp806";
--		reg = <0x36>;
-+		reg = <0x745>;
- 		interrupt-parent = <&r_intc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
-@@ -273,22 +289,6 @@ sw {
- 	};
- };
- 
--&r_ir {
--	linux,rc-map-name = "rc-beelink-gs1";
--	status = "okay";
--};
--
--&r_pio {
--	/*
--	 * PL0 and PL1 are used for PMIC I2C
--	 * don't enable the pl-supply else
--	 * it will fail at boot
--	 *
--	 * vcc-pl-supply = <&reg_aldo1>;
--	 */
--	vcc-pm-supply = <&reg_aldo1>;
--};
--
- &rtc {
- 	clocks = <&ext_osc32k>;
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index 15c9dd8c4479..16702293ac0b 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -175,12 +175,16 @@ &pio {
- 	vcc-pg-supply = <&reg_vcc_wifi_io>;
- };
- 
--&r_i2c {
-+&r_ir {
-+	status = "okay";
-+};
-+
-+&r_rsb {
- 	status = "okay";
- 
--	axp805: pmic@36 {
-+	axp805: pmic@745 {
- 		compatible = "x-powers,axp805", "x-powers,axp806";
--		reg = <0x36>;
-+		reg = <0x745>;
- 		interrupt-parent = <&r_intc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
-@@ -291,10 +295,6 @@ sw {
- 	};
- };
- 
--&r_ir {
--	status = "okay";
--};
--
- &rtc {
- 	clocks = <&ext_osc32k>;
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-index ebc120a9232f..23e3cb2ffd8d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-@@ -112,12 +112,20 @@ &pio {
- 	vcc-pg-supply = <&reg_aldo1>;
- };
- 
--&r_i2c {
-+&r_ir {
-+	status = "okay";
-+};
-+
-+&r_pio {
-+	vcc-pm-supply = <&reg_bldo3>;
-+};
-+
-+&r_rsb {
- 	status = "okay";
- 
--	axp805: pmic@36 {
-+	axp805: pmic@745 {
- 		compatible = "x-powers,axp805", "x-powers,axp806";
--		reg = <0x36>;
-+		reg = <0x745>;
- 		interrupt-parent = <&r_intc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
-@@ -232,14 +240,6 @@ sw {
- 	};
- };
- 
--&r_ir {
--	status = "okay";
--};
--
--&r_pio {
--	vcc-pm-supply = <&reg_bldo3>;
--};
--
- &rtc {
- 	clocks = <&ext_osc32k>;
- };
+ #endif /* _DT_BINDINGS_RST_SUN50I_H6_R_CCU_H_ */
 -- 
 2.26.2
 
