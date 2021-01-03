@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575E0C4332B
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D60C4321A
+	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39BFD20DD4
+	by mail.kernel.org (Postfix) with ESMTP id F2B512080D
 	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbhACKBS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 3 Jan 2021 05:01:18 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:53895 "EHLO
+        id S1726625AbhACKBW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 3 Jan 2021 05:01:22 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:36159 "EHLO
         new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726072AbhACKBR (ORCPT
+        by vger.kernel.org with ESMTP id S1726558AbhACKBR (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Jan 2021 05:01:17 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id C63375803E4;
-        Sun,  3 Jan 2021 05:00:10 -0500 (EST)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 12F625803E7;
+        Sun,  3 Jan 2021 05:00:11 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 03 Jan 2021 05:00:10 -0500
+  by compute1.internal (MEProxy); Sun, 03 Jan 2021 05:00:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=LZ7PuAqRkqcLx
-        40eoM2uefOkifLs8JNhxV9A8QPxP/0=; b=fkNKL5ZoE/Cj3CQAk53oc4NRdSb0t
-        4xKxYppsh5EgqY4nqlsj06FlgjXEZC8VQrvQvYYbMRIkpjjPYOr4RTJ+KUYMcwyE
-        69vbFXf50cxS2aygdW9fzHICwViJy0j9McvQeugD3GKdfdDmkp/wHa5kUTqWW1KK
-        1qroOAoQj8Z5xraKxvvFJaMUr08LcnClOcBRm+Jle9Px70HvbfhyK4ewX6YvdcYU
-        lBlPMvhDYHbMPzjOf65Yb6LJAIud+7MdgunGYF9c23ZcvTN/y5qX+ayb94IXj3U7
-        c5nks4ef98z9xkA4fzQr1ed+4mvM8JtK9e+x58UGRgwbvm8Vd73y2mifw==
+        :mime-version:content-transfer-encoding; s=fm1; bh=8gRIQ3rwm89lT
+        cTKGKWdo9Q4TRYPDRi0xY9xLkajhkc=; b=DOgJ2do/aDDye7zZ3X7g0v4f3Bifs
+        LBspmVwqThEMPHPVmrM/cgrOSaugJXi10Hur4qD98ZBE84rsriLs1HDFPwTm0nNG
+        vkL4OPvYF6YwX8jdJ25qxltOkE2gdeQfKbMFBGPrh09vJ9INfsQ6b07o8ZwTcDnT
+        e5MojGZua07QLY5pBDILaw/8ZsJErjrIOY/NcwnT2iHa081ymSPu7PPyG35zSfn7
+        bBqP8PNlzl49wY53O3dh9fR8ji4EgeIHdMY+Q+ynx4+2+MSqKCf0ohC7D6dkPMpe
+        4CJIHrcHlGLUMe70CO8SeUkkOIhVw7ri4qlK/NP4cqCtgyeWnYpAAvRHg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=LZ7PuAqRkqcLx40eoM2uefOkifLs8JNhxV9A8QPxP/0=; b=BmcjSj5H
-        /r5Ate/o9E6JNzOPHXFf/U2svgoGcj+OIxQG16M+thKS440S++pV0q8z/7JmNQxI
-        4bKBcmtmdE7e4S/LQrTthZMXC3CaFr8+x85gE3634vYJr1a3IMLdLff+A/Cca4y/
-        boeHwXyWp4w96fUNGpRhBbJRlZyUlU02XLHZvA9AOEGCuYF+ZLE5Q9q5Iw6HFv0M
-        hJR7f1B/N+FRxaNi/k//ftMm3cPUSBusIuoiGXgKLN55JLwiFU5FuK5WowPyElcz
-        FYcqEYVwotellvHvYUutqeGmBKeliup8n5qsBlWiGZB9p19iI2c/Ed/SQNRpasNq
-        DL76hAh+r+dxTg==
-X-ME-Sender: <xms:qZXxX9yNoW-MAInC0Trxp4Cq5lUbPC3JtHRt1nwTXt-WpQEGbn1hpw>
-    <xme:qZXxX9QqA4SImw4oy-9YOhxXuh_WPRKPS_qnhltlqivq8ih_mJdKXC9dxFLuUexb9
-    Lr8670V2Glyh7rdUg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddguddtucetufdoteggodetrfdotf
+        fm1; bh=8gRIQ3rwm89lTcTKGKWdo9Q4TRYPDRi0xY9xLkajhkc=; b=Jd20DFu6
+        0gVWRjd1VVHf9DslCWmXN93t8ALbCI4qXbQCTfbdh08m6Pe0pj6iVje8/Wh3Ahgb
+        sWlNGG0A4kEEOuJmzhVUotIJQJNml3XOTeyOpKyOXyZhwtcVlhx57z7W02JLa+1o
+        MXnZIA2Kf0LNrY6mHX8E3BAV19z/FBPp9h8wCp2LhGyZIh9qillH4nFYx8U5orFC
+        9DiQIf73Y5D74f3h6OSQYtH4ZXensQPuuU52QTRsyQOLroUZxKU1qPI+TYCf7YTY
+        xmHyD+skpWOYf3qD/6OU9AiGL6DtHY9WIu1Z4R+UWXv8OkV7pvGwYwhO4HfhoJi0
+        LxXWknDkGprzVg==
+X-ME-Sender: <xms:qpXxXyDOH2oBm1d3DdrwJ4SYoiQTp8I2dbCazuHp0pHcZfEUV43xwg>
+    <xme:qpXxX8cEsfAa8o3Xilr6-z2S2Oi01nNNyvPjOagFS1EC6P3N9i1UWm-hQ0UCgiHTv
+    8O1hWI7WqRSW8o_Sg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddgudduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddguddtucetufdoteggod
     gfejheeuieenucfkphepjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuih
     iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghn
     ugdrohhrgh
-X-ME-Proxy: <xmx:qZXxX3UMpFhf7t1qcNTh0XCQghdZOHHCxRoMNmWSNSGD4GssDr6IKA>
-    <xmx:qZXxX_jXyVd_y-5BL1XOmvh9H71sX_mu2br56raij5MaTyOWyDZGsw>
-    <xmx:qZXxX_CI3R2Mzebbq-5alv4NsKiZitijKURjfPCSBLNbxD6nco3QHw>
-    <xmx:qpXxX_xsTDNNcC_W3PEcHSkz3QZa_O8GVtUynyo1NZ3HRnl_mw1mqA>
+X-ME-Proxy: <xmx:qpXxXyfIQiBJbe4EYVX-QfLG2Gk4FhAMf45aWrHDAboRyeDXt_ZMBw>
+    <xmx:qpXxX4gv4dOtGnYq2ukBJdJXkcBWjHVHYssegBKpg3MjvtXxPAiP7w>
+    <xmx:qpXxX2R29Fdc1bkBPG3ZGLJnpBjcLXPpJmwSEF-0pLhAPisUrtdXSg>
+    <xmx:q5XxXxH66vDGT4WKaepdyQMAWGQGXCuUpGsn7---WpPUfg-R0Vlhow>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 264591080057;
-        Sun,  3 Jan 2021 05:00:09 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5AAE7108005B;
+        Sun,  3 Jan 2021 05:00:10 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -76,9 +76,9 @@ Cc:     Andre Przywara <andre.przywara@arm.com>,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 1/4] clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
-Date:   Sun,  3 Jan 2021 04:00:04 -0600
-Message-Id: <20210103100007.32867-2-samuel@sholland.org>
+Subject: [PATCH v2 3/4] arm64: dts: allwinner: h6: Add RSB controller node
+Date:   Sun,  3 Jan 2021 04:00:06 -0600
+Message-Id: <20210103100007.32867-4-samuel@sholland.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210103100007.32867-1-samuel@sholland.org>
 References: <20210103100007.32867-1-samuel@sholland.org>
@@ -88,93 +88,52 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-While no information about the H6 RSB controller is included in the
-datasheet or manual, the vendor BSP and power management blob both
-reference the RSB clock parent and register address. These values were
-verified by experimentation.
-
-Since this clock/reset are added late, the specifier is added at the end
-to maintain the existing DT binding. The code is kept in register order.
+The H6 SoC contains an undocumented but fully functional RSB controller.
+Add support for it. The MMIO register address matches other SoCs of the
+same generation, and the IRQ matches a hole in the documented IRQ list.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c      | 5 +++++
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h      | 2 +-
- include/dt-bindings/clock/sun50i-h6-r-ccu.h | 2 ++
- include/dt-bindings/reset/sun50i-h6-r-ccu.h | 1 +
- 4 files changed, 9 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-index 50f8d1bc7046..56e351b513f3 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-@@ -91,6 +91,8 @@ static SUNXI_CCU_GATE(r_apb2_uart_clk,	"r-apb2-uart",	"r-apb2",
- 		      0x18c, BIT(0), 0);
- static SUNXI_CCU_GATE(r_apb2_i2c_clk,	"r-apb2-i2c",	"r-apb2",
- 		      0x19c, BIT(0), 0);
-+static SUNXI_CCU_GATE(r_apb2_rsb_clk,	"r-apb2-rsb",	"r-apb2",
-+		      0x1bc, BIT(0), 0);
- static SUNXI_CCU_GATE(r_apb1_ir_clk,	"r-apb1-ir",	"r-apb1",
- 		      0x1cc, BIT(0), 0);
- static SUNXI_CCU_GATE(r_apb1_w1_clk,	"r-apb1-w1",	"r-apb1",
-@@ -130,6 +132,7 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
- 	&r_apb1_pwm_clk.common,
- 	&r_apb2_uart_clk.common,
- 	&r_apb2_i2c_clk.common,
-+	&r_apb2_rsb_clk.common,
- 	&r_apb1_ir_clk.common,
- 	&r_apb1_w1_clk.common,
- 	&ir_clk.common,
-@@ -147,6 +150,7 @@ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
- 		[CLK_R_APB1_PWM]	= &r_apb1_pwm_clk.common.hw,
- 		[CLK_R_APB2_UART]	= &r_apb2_uart_clk.common.hw,
- 		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
-+		[CLK_R_APB2_RSB]	= &r_apb2_rsb_clk.common.hw,
- 		[CLK_R_APB1_IR]		= &r_apb1_ir_clk.common.hw,
- 		[CLK_R_APB1_W1]		= &r_apb1_w1_clk.common.hw,
- 		[CLK_IR]		= &ir_clk.common.hw,
-@@ -161,6 +165,7 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
- 	[RST_R_APB1_PWM]	=  { 0x13c, BIT(16) },
- 	[RST_R_APB2_UART]	=  { 0x18c, BIT(16) },
- 	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
-+	[RST_R_APB2_RSB]	=  { 0x1bc, BIT(16) },
- 	[RST_R_APB1_IR]		=  { 0x1cc, BIT(16) },
- 	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
- };
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
-index 782117dc0b28..7e290b840803 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
-@@ -14,6 +14,6 @@
- 
- #define CLK_R_APB2	3
- 
--#define CLK_NUMBER	(CLK_W1 + 1)
-+#define CLK_NUMBER	(CLK_R_APB2_RSB + 1)
- 
- #endif /* _CCU_SUN50I_H6_R_H */
-diff --git a/include/dt-bindings/clock/sun50i-h6-r-ccu.h b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
-index 76136132a13e..890368d252c4 100644
---- a/include/dt-bindings/clock/sun50i-h6-r-ccu.h
-+++ b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
-@@ -21,4 +21,6 @@
- #define CLK_IR			11
- #define CLK_W1			12
- 
-+#define CLK_R_APB2_RSB		13
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 8a62a9fbe347..b043beea8e6e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -949,6 +949,11 @@ r_ir_rx_pin: r-ir-rx-pin {
+ 				pins = "PL9";
+ 				function = "s_cir_rx";
+ 			};
 +
- #endif /* _DT_BINDINGS_CLK_SUN50I_H6_R_CCU_H_ */
-diff --git a/include/dt-bindings/reset/sun50i-h6-r-ccu.h b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
-index 01c84dba49a4..7950e799c76d 100644
---- a/include/dt-bindings/reset/sun50i-h6-r-ccu.h
-+++ b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
-@@ -13,5 +13,6 @@
- #define RST_R_APB2_I2C		4
- #define RST_R_APB1_IR		5
- #define RST_R_APB1_W1		6
-+#define RST_R_APB2_RSB		7
++			r_rsb_pins: r-rsb-pins {
++				pins = "PL0", "PL1";
++				function = "s_rsb";
++			};
+ 		};
  
- #endif /* _DT_BINDINGS_RST_SUN50I_H6_R_CCU_H_ */
+ 		r_ir: ir@7040000 {
+@@ -979,6 +984,20 @@ r_i2c: i2c@7081400 {
+ 			#size-cells = <0>;
+ 		};
+ 
++		r_rsb: rsb@7083000 {
++			compatible = "allwinner,sun8i-a23-rsb";
++			reg = <0x07083000 0x400>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&r_ccu CLK_R_APB2_RSB>;
++			clock-frequency = <3000000>;
++			resets = <&r_ccu RST_R_APB2_RSB>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_rsb_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		ths: thermal-sensor@5070400 {
+ 			compatible = "allwinner,sun50i-h6-ths";
+ 			reg = <0x05070400 0x100>;
 -- 
 2.26.2
 
