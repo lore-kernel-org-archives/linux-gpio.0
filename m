@@ -2,67 +2,66 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D60C4321A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4646DC43219
 	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2B512080D
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 130C7207FB
+	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726625AbhACKBW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726610AbhACKBW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sun, 3 Jan 2021 05:01:22 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:36159 "EHLO
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:47227 "EHLO
         new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726558AbhACKBR (ORCPT
+        by vger.kernel.org with ESMTP id S1726551AbhACKBR (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Jan 2021 05:01:17 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 12F625803E7;
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 063BE5803E6;
         Sun,  3 Jan 2021 05:00:11 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Sun, 03 Jan 2021 05:00:11 -0500
+  by compute5.internal (MEProxy); Sun, 03 Jan 2021 05:00:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=8gRIQ3rwm89lT
-        cTKGKWdo9Q4TRYPDRi0xY9xLkajhkc=; b=DOgJ2do/aDDye7zZ3X7g0v4f3Bifs
-        LBspmVwqThEMPHPVmrM/cgrOSaugJXi10Hur4qD98ZBE84rsriLs1HDFPwTm0nNG
-        vkL4OPvYF6YwX8jdJ25qxltOkE2gdeQfKbMFBGPrh09vJ9INfsQ6b07o8ZwTcDnT
-        e5MojGZua07QLY5pBDILaw/8ZsJErjrIOY/NcwnT2iHa081ymSPu7PPyG35zSfn7
-        bBqP8PNlzl49wY53O3dh9fR8ji4EgeIHdMY+Q+ynx4+2+MSqKCf0ohC7D6dkPMpe
-        4CJIHrcHlGLUMe70CO8SeUkkOIhVw7ri4qlK/NP4cqCtgyeWnYpAAvRHg==
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=guJpiRmPNmpuay60jtLre2M1kZ
+        YS531pnroQeqKbbp8=; b=YLDuPULraX09Gwh5S9275jKOlHpmSStsqW94OkeYxn
+        Hh6Qil1iiurLo+nuzPV4bEpVKpyQJLUsWse5NAy8dmdCsct9RkzYP03e4kVJts/T
+        LaYfuqps8v+rZpM7oZPdjf0ypbWbYTjZlnu/RG0UDxfjrsPD5OjhIcn5RVH3nu+X
+        D8mMtSdrhMW3cbog1JF4CzfTxKAV1xuJOLpQkIa5WGQwO3fJTT+jAbLaHn27ix3c
+        wYwrGZD3qeSRSuwO862por3DxlXosye3jxCkm2pYfGz3JGEyRz6Hy+NkxxSm44Wv
+        HQl2LfXspvALgsknS2uFwbJWCYgqre8++bvqDBh2jSfQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=8gRIQ3rwm89lTcTKGKWdo9Q4TRYPDRi0xY9xLkajhkc=; b=Jd20DFu6
-        0gVWRjd1VVHf9DslCWmXN93t8ALbCI4qXbQCTfbdh08m6Pe0pj6iVje8/Wh3Ahgb
-        sWlNGG0A4kEEOuJmzhVUotIJQJNml3XOTeyOpKyOXyZhwtcVlhx57z7W02JLa+1o
-        MXnZIA2Kf0LNrY6mHX8E3BAV19z/FBPp9h8wCp2LhGyZIh9qillH4nFYx8U5orFC
-        9DiQIf73Y5D74f3h6OSQYtH4ZXensQPuuU52QTRsyQOLroUZxKU1qPI+TYCf7YTY
-        xmHyD+skpWOYf3qD/6OU9AiGL6DtHY9WIu1Z4R+UWXv8OkV7pvGwYwhO4HfhoJi0
-        LxXWknDkGprzVg==
-X-ME-Sender: <xms:qpXxXyDOH2oBm1d3DdrwJ4SYoiQTp8I2dbCazuHp0pHcZfEUV43xwg>
-    <xme:qpXxX8cEsfAa8o3Xilr6-z2S2Oi01nNNyvPjOagFS1EC6P3N9i1UWm-hQ0UCgiHTv
-    8O1hWI7WqRSW8o_Sg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddgudduucetufdoteggodetrfdotf
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=guJpiRmPNmpuay60j
+        tLre2M1kZYS531pnroQeqKbbp8=; b=XqukjVFBhkXyrlYdkIfVHin2RGLB+4Xrp
+        5kCugZ3nr/hjQUb4ulN0voovduXwX8ulsZ8nHcNGHKRFdHMPxPvA3apRc1fiZ4o2
+        AyZjnUNup7eG03QXH5nUwwO+MU/3Iz7X1ynoAQmbRjtL5+RSLXvzyvReXfgLk5iI
+        lg2qmy2zJ5kUvP86Qa3jNEQm8dwi6CfYDUBRYNuVSytb9JLaBsePz11gjfDbola7
+        OfFviaN/DQr0AlNAtGpHnz4ozkuJFRHciLNvYFKnYwYkbdPe4ptr7Lg0Lbyed72K
+        tL+BkAZjmaDWT53tQKYWWBby1ei+YZUw8z0oKaV11tXjnUo8r5Acg==
+X-ME-Sender: <xms:qZXxX0phcwZrR8dRkK3P7v8ZrkTS3YVxss9LyeYLCIiTaHzA2boatQ>
+    <xme:qZXxX6oEt4wmoX6PEIoRaNly11DRrzVkBLjfuLra6Z_so6q8If2H-p8AyrD51IQex
+    L9GfhxvMQsy79miqA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddguddtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
-    frrghtthgvrhhnpeduhfejfedvhffgfeehtefghfeiiefgfeehgfdvvdevfeegjeehjedv
-    gfejheeuieenucfkphepjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghn
-    ugdrohhrgh
-X-ME-Proxy: <xmx:qpXxXyfIQiBJbe4EYVX-QfLG2Gk4FhAMf45aWrHDAboRyeDXt_ZMBw>
-    <xmx:qpXxX4gv4dOtGnYq2ukBJdJXkcBWjHVHYssegBKpg3MjvtXxPAiP7w>
-    <xmx:qpXxX2R29Fdc1bkBPG3ZGLJnpBjcLXPpJmwSEF-0pLhAPisUrtdXSg>
-    <xmx:q5XxXxH66vDGT4WKaepdyQMAWGQGXCuUpGsn7---WpPUfg-R0Vlhow>
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtffrrg
+    htthgvrhhnpeeiteekhfehuddugfeltddufeejjeefgeevheekueffhffhjeekheeiffdt
+    vedtveenucfkphepjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdr
+    ohhrgh
+X-ME-Proxy: <xmx:qZXxX5MQNgi5QNT9nVQ-OM0WoSlteqazr5vufWThLufZAOB9WCP9wQ>
+    <xmx:qZXxX76MUBgCyU2tuM0GBzX5yp7WlXtI9DvgRr92WAkmlo9C1a5Hlg>
+    <xmx:qZXxXz5lKngfOPJnYJ_3JpD8YHZD10fH6P3gX3j0dNFqBp5SGj1Gjg>
+    <xmx:qpXxX6L9aMUoSmBILSK09FG75vCLdiXSlGuLRfc9mHgBaO1FMMDAfA>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5AAE7108005B;
-        Sun,  3 Jan 2021 05:00:10 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 82CD11080059;
+        Sun,  3 Jan 2021 05:00:08 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -76,64 +75,48 @@ Cc:     Andre Przywara <andre.przywara@arm.com>,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 3/4] arm64: dts: allwinner: h6: Add RSB controller node
-Date:   Sun,  3 Jan 2021 04:00:06 -0600
-Message-Id: <20210103100007.32867-4-samuel@sholland.org>
+Subject: [PATCH v2 0/4] Allwinner H6 RSB support
+Date:   Sun,  3 Jan 2021 04:00:03 -0600
+Message-Id: <20210103100007.32867-1-samuel@sholland.org>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210103100007.32867-1-samuel@sholland.org>
-References: <20210103100007.32867-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The H6 SoC contains an undocumented but fully functional RSB controller.
-Add support for it. The MMIO register address matches other SoCs of the
-same generation, and the IRQ matches a hole in the documented IRQ list.
+The Allwinner H6 SoC contains an RSB controller. It is almost completely
+undocumented, so it was missed when doing the initial SoC bringup.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+This series adds the clock/reset, pin configuration, and device tree
+node needed to use the RSB controller. Since RSB is faster, simpler, and
+generally more reliable than the I2C controller IP in the SoC, switch to
+using it where possible.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 8a62a9fbe347..b043beea8e6e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -949,6 +949,11 @@ r_ir_rx_pin: r-ir-rx-pin {
- 				pins = "PL9";
- 				function = "s_cir_rx";
- 			};
-+
-+			r_rsb_pins: r-rsb-pins {
-+				pins = "PL0", "PL1";
-+				function = "s_rsb";
-+			};
- 		};
- 
- 		r_ir: ir@7040000 {
-@@ -979,6 +984,20 @@ r_i2c: i2c@7081400 {
- 			#size-cells = <0>;
- 		};
- 
-+		r_rsb: rsb@7083000 {
-+			compatible = "allwinner,sun8i-a23-rsb";
-+			reg = <0x07083000 0x400>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&r_ccu CLK_R_APB2_RSB>;
-+			clock-frequency = <3000000>;
-+			resets = <&r_ccu RST_R_APB2_RSB>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_rsb_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		ths: thermal-sensor@5070400 {
- 			compatible = "allwinner,sun50i-h6-ths";
- 			reg = <0x05070400 0x100>;
+This was tested on an Orange Pi 3 and a Pine H64 model B. This series
+does not switch the Pine H64 to use RSB, as doing so would prevent
+accessing the external RTC that shares the I2C bus.
+
+Changes v1->v2:
+  - Put the new values at the end of the DT binding headers
+
+Samuel Holland (4):
+  clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
+  pinctrl: sunxi: h6-r: Add s_rsb pin functions
+  arm64: dts: allwinner: h6: Add RSB controller node
+  arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
+
+ .../dts/allwinner/sun50i-h6-beelink-gs1.dts   | 38 +++++++++----------
+ .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 14 +++----
+ .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 22 +++++------
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 19 ++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |  5 +++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h        |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c   |  2 +
+ include/dt-bindings/clock/sun50i-h6-r-ccu.h   |  2 +
+ include/dt-bindings/reset/sun50i-h6-r-ccu.h   |  1 +
+ 9 files changed, 67 insertions(+), 38 deletions(-)
+
 -- 
 2.26.2
 
