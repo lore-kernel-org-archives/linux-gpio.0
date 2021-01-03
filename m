@@ -2,86 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BF4C433E0
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 14:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C057C433DB
+	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 15:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B58DF20936
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 14:20:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5A6207FB
+	for <linux-gpio@archiver.kernel.org>; Sun,  3 Jan 2021 15:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbhACOUk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 3 Jan 2021 09:20:40 -0500
-Received: from mail-lf1-f52.google.com ([209.85.167.52]:43683 "EHLO
-        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbhACOUj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Jan 2021 09:20:39 -0500
-Received: by mail-lf1-f52.google.com with SMTP id 23so58495556lfg.10;
-        Sun, 03 Jan 2021 06:20:22 -0800 (PST)
+        id S1727270AbhACPLD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 3 Jan 2021 10:11:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727265AbhACPLC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Jan 2021 10:11:02 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11FEFC0613CF
+        for <linux-gpio@vger.kernel.org>; Sun,  3 Jan 2021 07:10:22 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id w1so33509645ejf.11
+        for <linux-gpio@vger.kernel.org>; Sun, 03 Jan 2021 07:10:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v2eCTCh3sPSKxbmVYCA5K6gAkjTyl0RABNT20hQRB1w=;
+        b=cqNsyGqfm8I+yIFTmAdF1+5+wGWsQoUYoiDvkS9lXRxpEm1uE1YR1udoBls+yh0DT1
+         WiqgRUVwOC3IjBPimP2ReALvuwA1q6VS+E/APj5r8mDbyPKCbTGQCuqwi3b9XEH+ZUBZ
+         tmX+DohA9lN4yAjYXQkyG/0xpjXFNeeGdFPBDdS3DgiwHR7TAEOlQeSDtn63TLzNvPao
+         gWKr41G8z/sHpPvHTVbPNKr4tEl4HXZEiHz6nCTf69bfRrikZd1ggj80jwv7tt28MlGC
+         OE29GW67Nqkneq/uPsIkkXwT6HZ58Q7Oevs046zE0YasliUMtpNHZYkqQ1MHJNPe3n5Q
+         jeaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lyRDga/P88nXpUNSjHBPV4V01nLvTjv4Bg0ZMq7KWiw=;
-        b=Cs3qe7Y3sa+2q2LMYf0Bm7gIHJuTwHz6MmY4eRtwFa9XsmZNSFuNVrEackUJmhBlCY
-         PwhEHiZqJLiA3wwYy+AHKCXDsq7w/lvANqWtKWrDTbIUAEFo+XXFqmBxkSOEC8CGacmO
-         H2RDTHzEf9uAMy5Xz0AVd54y5PuqXgFPhkHyOUX8PVZvlHqBPNoWY6b9Ex8SlZ5Cen6x
-         9uQk/fIM/SyrojJgPswp5a3ZuHHt/XbPScYV7tZdLYm6T2IPkgJtEFVpZYEgNlJgx5My
-         Thf3kQnL5Y23KYjwxYOQVBo4hszTMDHSFpcOTyYzlAL15nMjJYdPgtOPn4zl6H0EGS5E
-         N/rA==
-X-Gm-Message-State: AOAM531YXMoc+jQ3/eKKoQ2GI3nqSmtj4K1QyWy1rne3R2vdh2awrWdH
-        L5nQLQuFO46DQOcymOKZo4atiyE6zkXQ1Q==
-X-Google-Smtp-Source: ABdhPJwqtCL2WZR2lgnS6qNkJmmik9smGPVjF1BAIHsjdmh83+L3Lk9l+Ce1n8Nn8PS141lKdVuKAA==
-X-Received: by 2002:ac2:430a:: with SMTP id l10mr10776662lfh.22.1609683596842;
-        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id c16sm7006237lfb.236.2021.01.03.06.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id a12so58583911lfl.6;
-        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
-X-Received: by 2002:a19:810:: with SMTP id 16mr33000667lfi.233.1609683595991;
- Sun, 03 Jan 2021 06:19:55 -0800 (PST)
+        bh=v2eCTCh3sPSKxbmVYCA5K6gAkjTyl0RABNT20hQRB1w=;
+        b=S4pTmKfhG2Nsy1TwTREbEjx+56WGqVXfzfhTJPHLhHHaN1oKerX8D+XyIdlEilqg8c
+         pq/dvkHUxAdIB1in65hWUfiesXVb+y6kDdF7h015P90nNq75NlLRE8jED6Kg6csRNMgZ
+         /lzB83c4fkE5OZlQlNAgrtckrtpiD0NjF5Nj6UNbNFa+48E7Yzo/lDMryU/pxWI25reK
+         DYZx9AQCRMP9+Cj53VZe86jtanhfn3sZqO5XMMTRWtvhvMWVICyKwqVlXyZfVk0t9h4g
+         cKRzBIyirluggRdWFsqNFlbscZDK8vYYU9Jp5ePoANLlWi52niYqFy+UK50q/c30FR5W
+         EqQg==
+X-Gm-Message-State: AOAM532kRbZL1B+ehnWIq2EZyeDknTr9L4ZkpBHT9pjLFeuhlj0iccA6
+        yjLsMc/2FrsP8obno4e5NhFYvFmm5fneeIVeJRElITba3uM=
+X-Google-Smtp-Source: ABdhPJzTHwRUSjjsGeIvxDbiBU4vFEXApfPchE6luAXuLhygbX6laFnr14wtoWa5iw5TZstkQFQpgpWw9LzpUQH25Vc=
+X-Received: by 2002:a17:906:8594:: with SMTP id v20mr63112642ejx.470.1609686620644;
+ Sun, 03 Jan 2021 07:10:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20210103100007.32867-1-samuel@sholland.org> <20210103100007.32867-3-samuel@sholland.org>
-In-Reply-To: <20210103100007.32867-3-samuel@sholland.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sun, 3 Jan 2021 22:19:44 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64KioyzGK0uLTVNyhc38fH2A8DWRYc8FVkEVZDjVwr6RA@mail.gmail.com>
-Message-ID: <CAGb2v64KioyzGK0uLTVNyhc38fH2A8DWRYc8FVkEVZDjVwr6RA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 2/4] pinctrl: sunxi: h6-r: Add s_rsb pin functions
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andre Przywara <andre.przywara@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <20201215105329.138193-1-colin.king@canonical.com>
+In-Reply-To: <20201215105329.138193-1-colin.king@canonical.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Sun, 3 Jan 2021 16:10:10 +0100
+Message-ID: <CAMpxmJVQb0Rh2kkVwAgmEvFzxckTUr4HANp_XUkWq8EC88TV=A@mail.gmail.com>
+Subject: Re: [PATCH] gpio: fix spelling mistake in Kconfig "supprot" -> "support"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Jan 3, 2021 at 6:00 PM Samuel Holland <samuel@sholland.org> wrote:
+On Tue, Dec 15, 2020 at 11:53 AM Colin King <colin.king@canonical.com> wrote:
 >
-> As there is an RSB controller in the H6 SoC, there should be some pin
-> configuration for it. While no such configuration is documented, the
-> "s_i2c" pins are suspiciously on the "alternate" function 3, with no
-> primary function 2 given. This suggests the primary function for these
-> pins is actually RSB, and that is indeed the case.
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Add the "s_rsb" pin functions so the RSB controller can be used.
+> There is a spelling mistake in the Kconfig help text. Fix it.
 >
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpio/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index c70f46e80a3b..f58e46ec1c96 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -666,7 +666,7 @@ config GPIO_WCD934X
+>         tristate "Qualcomm Technologies Inc WCD9340/WCD9341 gpio controller driver"
+>         depends on MFD_WCD934X && OF_GPIO
+>         help
+> -         This driver is to supprot GPIO block found on the Qualcomm Technologies
+> +         This driver is to support GPIO block found on the Qualcomm Technologies
+>          Inc WCD9340/WCD9341 Audio Codec.
+>
+>  config GPIO_XGENE
+> --
+> 2.29.2
+>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Applied, thanks!
+
+Bart
