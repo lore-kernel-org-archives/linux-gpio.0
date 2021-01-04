@@ -2,89 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68F0C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEE6C4332B
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B882322509
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D34622211
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:01:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbhADPBB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Jan 2021 10:01:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36500 "EHLO
+        id S1726512AbhADPBO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 4 Jan 2021 10:01:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727276AbhADPBB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jan 2021 10:01:01 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C5FC061798
-        for <linux-gpio@vger.kernel.org>; Mon,  4 Jan 2021 07:00:04 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id iq13so10235537pjb.3
-        for <linux-gpio@vger.kernel.org>; Mon, 04 Jan 2021 07:00:04 -0800 (PST)
+        with ESMTP id S1726189AbhADPBO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jan 2021 10:01:14 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BAACC061574
+        for <linux-gpio@vger.kernel.org>; Mon,  4 Jan 2021 07:00:24 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id m25so64917927lfc.11
+        for <linux-gpio@vger.kernel.org>; Mon, 04 Jan 2021 07:00:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=h5UdJjQc0UZ2A5YydAq7QM0JpsrBvPlx4ee1JuFyPwU=;
-        b=rLhIkyp0pG7Mr3vALYs/5t76IX82MStmw6hNhaMnSz2DL5PxXTuXQu54MyTV95wjPe
-         f6s7TVfjxqbOO0cHnnz8EnAaorgW/phN7jBfiBXOybxSC6GyZ2tnS3gb8tfms4jS/chb
-         119Iqn51nxMVvOgGVB5LmMwfVAYk+GLQ0Q8gkWnvJ9JyD4+oyPwXz9h5HvQQqNzaSB3l
-         NyXDXfvlqmEbh3H2RhXq6UKLOPl5dJFIIOGplEEuoLKuD4w/3DC4KxflbRKi9u6w0Zw1
-         kCQ0SEAi/gbnPU7Tv7j35Mg+5YdC6RkOetQAD/dtGO2Oy6L8UvEJrKyjZ7iQowKFWFxl
-         cnBA==
+        bh=tR4uUSuiT2yNCjy2l75xxGnO77PWcJQ+DtWty5i0rMc=;
+        b=LJ/AsciYj2BKHcnJ73UgKyavCV9Qw6QPv4rj+dpkZQo3YhzjsIYgubutakzgyTilOD
+         BP9w87saYt2mwvs7pZCpYcL045gJziDe+nWIOEIroRJOnA/6w6C3nho2eTCijDeSKdjt
+         PBqhmEKevTBMFjsa0IcaooKAmbg3t91gOMxVs09uohr1nFJay1Z1SsD25Pw+7ggP08aJ
+         5qjrV116BFU7LMFDr/xS64uW5vVHC3/z159BsSxs/JhDkCYSr0Lhd9QeDmh2c6lqrcBl
+         BvcUQtSkdSewYsZD9JVB7IA4M8OtwXfkhg1fq/nM+bJu/vwBI0RnGutIae+G/ZtFnR4+
+         UEZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=h5UdJjQc0UZ2A5YydAq7QM0JpsrBvPlx4ee1JuFyPwU=;
-        b=azKG9+mB40EEm+/c8KroYkIYwxmcGChOBjTp7LUTAI3MkOp4c0ukmoVguB9GJeYvry
-         sGshTY/OtT4sNSImJXIUvLp+R/JrPaI8LPmQKOCEpFLD9/ZwoC/az5ES1jNt66ZOnonU
-         AtxufsEfDfjKw8uZDD1BBRn/PChE86Okmjh5pHF0T4q8hBmGBAsGjEEIu51NXaIbyX3K
-         Xxvp7HQjkWaJOhIrKyMrpdG4kzV1z+bNa/UByB/JeB5qG4Vn2uMFf9TkLEpuHqSrcJ2Y
-         NdFG9IbSSfX+3fCg9n3frSw4jxhkql8X/pVanE6obyoOS5kCQ2evoKawsWQZ7Yei2gKm
-         tCdw==
-X-Gm-Message-State: AOAM532hXLZNRsPxkv8CXILms4FJlwOHf3uNap5Eq35iU+8FZaDCpBd7
-        qJNMEuRzAtuBzDHpeQC2rMJpIxuuMQT2Zelw6qY=
-X-Google-Smtp-Source: ABdhPJzc+q1AS5qWwrv1jveupEYxlc4MyAGVYhGJp7tE4AOx0AXVSpM6wirfEDjx4tfHLxhoRdRbNnZ2QloNjYi5A+0=
-X-Received: by 2002:a17:902:e98c:b029:da:cb88:f11d with SMTP id
- f12-20020a170902e98cb02900dacb88f11dmr51812952plb.17.1609772403955; Mon, 04
- Jan 2021 07:00:03 -0800 (PST)
+        bh=tR4uUSuiT2yNCjy2l75xxGnO77PWcJQ+DtWty5i0rMc=;
+        b=fyC7CTOeoDt9Ba1dWyc4DaxckdN+RgNaxSlR7aMh88ZJXXJk7RxlKzKm6qObLXISSP
+         1n8KScr984cuLaIWBZr3WLspoijAWPHJvhdTuOZstOTqWR8dnNpD2d+73oX4Tjr8UHx9
+         DL88InysPeywhkW8r2tontPIT0lgU2HCSsXY/D4TKS9ouBDBJ87HnOE4wbDPW5GmXV6+
+         Ftt9yTFyLFTqlCKSVAWPmjrVkhMPEksMOOfj813ZnD8AywsQ/cPi9fS/V72Rpy38q3Kg
+         V6e9HdYr2wbYL6v4O0110E79fGGp36f2hTheTZ2c/iyHBD5usdFL2j/40kWw8gTQoPEM
+         qt9A==
+X-Gm-Message-State: AOAM532g0/Tp4PCsKkTIl3KQCA7zVkZxo1OIjrk3FFX8gUjup7YstCQl
+        gtB6QzhyAt8UcajDQ2Kf1w2qw9K4wXvVcMNURtTGH3wTHSo=
+X-Google-Smtp-Source: ABdhPJw8BDy+1PA7BTXsFDKivU2qz6c7DgAaqRK4RmPbkQPgVpVra4mzO3RTstCIcQRAlI3tqm7JphEKl6JVoakBr3M=
+X-Received: by 2002:a05:6512:74e:: with SMTP id c14mr34844158lfs.529.1609772422734;
+ Mon, 04 Jan 2021 07:00:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20210102175859.335447-1-adam@l4re.org> <20210102175859.335447-5-adam@l4re.org>
-In-Reply-To: <20210102175859.335447-5-adam@l4re.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 4 Jan 2021 17:00:52 +0200
-Message-ID: <CAHp75VcszX_zXpFcNFHXzCFwWdhQHFvYKre=UUMUVjdfyrBwrA@mail.gmail.com>
-Subject: Re: [PATCH 5/6] gpiolib: Fix return check of __irq_domain_alloc_irqs
-To:     Adam Lackorzynski <adam@l4re.org>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linusw@kernel.org>, kaloz@openwrt.org,
-        khalasa@piap.pl, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+References: <20201217144338.3129140-1-nobuhiro1.iwamatsu@toshiba.co.jp> <20201217144338.3129140-5-nobuhiro1.iwamatsu@toshiba.co.jp>
+In-Reply-To: <20201217144338.3129140-5-nobuhiro1.iwamatsu@toshiba.co.jp>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 4 Jan 2021 16:00:11 +0100
+Message-ID: <CACRpkdb--GSy-0vnAFS9Pik4TjrNRTrYeZr2RBZD6SFM8zotyQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] arm: dts: visconti: Add DT support for Toshiba
+ Visconti5 GPIO driver
+To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
+        yuji2.ishikawa@toshiba.co.jp,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jan 2, 2021 at 8:24 PM Adam Lackorzynski <adam@l4re.org> wrote:
+On Thu, Dec 17, 2020 at 6:45 AM Nobuhiro Iwamatsu
+<nobuhiro1.iwamatsu@toshiba.co.jp> wrote:
+
+> Add the GPIO node in Toshiba Visconti5 SoC-specific DT file.
+> And enable the GPIO node in TMPV7708 RM main board's board-specific DT file.
 >
-> 0 is not a proper IRQ number and also indicates failure.
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Reviewed-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
 
-Hmm... While in this case it's perhaps okay, this does not work in
-general since the function can take irq_base == 0 and realloc == true.
-So if we want to have a code that somebody may reuse better not to do
-this (we never get 0 from this function).
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-In my humble opinion NAK.
+Please funnel this patch through the ARM SoC tree.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
