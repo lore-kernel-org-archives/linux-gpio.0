@@ -2,106 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843D0C433E6
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E94C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 604D22242A
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15FA12076D
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jan 2021 15:04:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbhADPBV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Jan 2021 10:01:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36502 "EHLO
+        id S1727032AbhADPD4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 4 Jan 2021 10:03:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbhADPBV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jan 2021 10:01:21 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D58C061795;
-        Mon,  4 Jan 2021 07:00:38 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id 30so14504385pgr.6;
-        Mon, 04 Jan 2021 07:00:38 -0800 (PST)
+        with ESMTP id S1726663AbhADPD4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jan 2021 10:03:56 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B940DC061574
+        for <linux-gpio@vger.kernel.org>; Mon,  4 Jan 2021 07:03:15 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id h22so65071427lfu.2
+        for <linux-gpio@vger.kernel.org>; Mon, 04 Jan 2021 07:03:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=P/UOf32XQtDWqi9saPG9839isG2jm3RedZf8gZrS4lI=;
-        b=q5eygYTooqfGlr45SVlSuNSbmbGaN+SGy3mCJx8RhX7ei8NAcDrOVBscXnRiOW7Bxv
-         d+Vvt5n/3jVoaCVNkR41B6GE6NBHlJELQYusuCIkqwqWvF4y8TCgevP5CBeQyohWqvB0
-         5pAf5NFjfkg3ESqIg7YdV5/FElsiFOpunYXfsnNiJr62Wix4TjgmNe/WXEeSyQfQe7TA
-         hQaegxL8KAEcM7Uq6eB7WfxRFDp856Y9BEGU2ASIO6ISq3DdGF+dDuwb2ywf51akQslp
-         RhDDF6Q8nLCXyPeEi8U8Q1IRzreKN5Gn7WUSDY+3cJP34cNNBjC4ltXa9OKz7SvHrLLV
-         siMA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J5beBNHMdA1gHacbQ7KCPabulppTZo/UkkRxhQq//fY=;
+        b=jURit9OvneWs286wGYUSCwSZ1SOW+Vz2YfUKezNZ/KZnM4F4Hey7qTMZl+Pj6sDy0W
+         MOtVRCWuRQqeS3YExg4Rn6SjbIh172IEEGNzyFw7K8BB0lh4Xf3qsk/fwQ096OKPjAJD
+         Hu+Xsb3BslA1XieKFl8l78GSqIaG8Zg5LHvOI+o/bK4HJAV8brnBQN419hQFenE/kZKB
+         L1nIZXIZhm/Fm2vxnrGctwsWKJu7Eic3nf72YJ5dqb0fX90oSeKIys/ufXlsy6tEJKt5
+         qC1j6VWnGVAcAZDCDUdqa3oMvpkpJlViZTqmPg5l16Q6+W9d5v7iNdfOyuy2QM8TJwUU
+         1bqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=P/UOf32XQtDWqi9saPG9839isG2jm3RedZf8gZrS4lI=;
-        b=RMIIoX7ro53qQJOM5QEJZNzs8iAuOudjKBGxP4tAES1eh3YxsnUdE7bvfHKBrr2OJL
-         kbMdyCtjYEhU0qfK0q2Wa97Wc8pAE/3bgC6fJuayxiB5psgadYNR/sSUz+1Xyy+/tXEs
-         MfEd35fr1gybrjmjgmvwk90FHFru+1lrJlcsoNShNmKMMpCrkdSLBFIJtMnW3tIsbfJT
-         bB0ssHe1Or2kBEdQg6sonAaRLPxpRdw5ByRFrIjnt+S2FGuxCfLHmkjeH/lF9bm/yxAF
-         FBse9yJNFhM83j9GKP5ZaDMv5Nz7nVJc3Vh949SPb+m4sizPN/PsM5oZxrI+89O6f0oN
-         yGDA==
-X-Gm-Message-State: AOAM533kgf7wSPE1XhiCJyioenVU+8UUaC3JIqrjMTGQ5bsIq9DeL9I2
-        jdtAudvwlUliBeDaReh/65k=
-X-Google-Smtp-Source: ABdhPJwxceoqpljoOxORiWe+hoanyQbBB6sJGiOwW8wB1uRizJrPsm/OTyrEvrg3o+AmYGKcarvRlw==
-X-Received: by 2002:a63:4d59:: with SMTP id n25mr52244502pgl.122.1609772437982;
-        Mon, 04 Jan 2021 07:00:37 -0800 (PST)
-Received: from sol (106-69-181-20.dyn.iinet.net.au. [106.69.181.20])
-        by smtp.gmail.com with ESMTPSA id q23sm62373625pgm.89.2021.01.04.07.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jan 2021 07:00:37 -0800 (PST)
-Date:   Mon, 4 Jan 2021 23:00:31 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>
-Subject: Re: [PATCH 1/7] selftests: gpio: rework and simplify test
- implementation
-Message-ID: <20210104150031.GA853645@sol>
-References: <20210102022949.92304-1-warthog618@gmail.com>
- <20210102022949.92304-2-warthog618@gmail.com>
- <CAHp75VdMs1mP7pK46qKqJbjfyrcKhSGvtyzQpTRsehMz6o=Jpg@mail.gmail.com>
- <20210103021725.GA6622@sol>
- <CAHp75VfONKY7VS0q=GkSX14i--g0=jfBg4RFBoMk4DxJPMHJFg@mail.gmail.com>
- <20210104015129.GA4939@sol>
- <CAHp75Vdd6yC=j+m7OOdP=M1j8Eoaayq8HSLF2fjVXcA0wiu9kQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J5beBNHMdA1gHacbQ7KCPabulppTZo/UkkRxhQq//fY=;
+        b=cRFbNYZKbnHYjloqPfCvyl3zy+FkdSH+4grCCk34ww5z3mNu6HLErubwNWrLktrtIn
+         uYZ+nPU1GhpORJErA/LQ8xDxhw3KCCCIe7+CuICRFN6SRgmAh071STjoOvk2oZnGsuP/
+         xwg9hZ7XbCHvhOinqrGVMNyWmx3glkir3HOQ0lpuH1Lgu0x8wAnlZ+6HFZFhxf7P/EIx
+         LE7HN3wFrknkTbC5cFyTCMhEArYBK6Y/BReYsZqxlzFCr+dB9peT9+IKRZbYAzFiz5A6
+         J0ZePh0+nZgO3CWL28VJR76/cggutuMn9XHWLXLPyuniTgkwFYQY/oT6TK9qj6QbWUOx
+         gpMQ==
+X-Gm-Message-State: AOAM530IT7YPqnf4qZcLbJOpgosP8cCbuQe0kWnyoekRiqVRGO/wbMkE
+        G4o4eDP7OJUy+K6euS9s8RH5F/DuWb6WyKatXToUYg==
+X-Google-Smtp-Source: ABdhPJyZSo2vs0ioHFInq7433TP/qFV0Cym97cE+YK8oE3Vt6dU5J9kjlu2ZUe6YMN1vnxvH5jtR/kIkKY9sn+ZeSec=
+X-Received: by 2002:a2e:b047:: with SMTP id d7mr34335495ljl.467.1609772593270;
+ Mon, 04 Jan 2021 07:03:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vdd6yC=j+m7OOdP=M1j8Eoaayq8HSLF2fjVXcA0wiu9kQ@mail.gmail.com>
+References: <1e823780-b1ef-42dd-bb60-321b4d482d31@www.fastmail.com> <20201217024912.3198-1-billy_tsai@aspeedtech.com>
+In-Reply-To: <20201217024912.3198-1-billy_tsai@aspeedtech.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 4 Jan 2021 16:03:02 +0100
+Message-ID: <CACRpkdbLG5Sc8JjonGjDdJraStoz7PfQxBEb5ai_gktV4whzdQ@mail.gmail.com>
+Subject: Re: [PATCH v3] driver: aspeed: g6: Fix PWMG0 pinctrl setting
+To:     Billy Tsai <billy_tsai@aspeedtech.com>
+Cc:     Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        BMC-SW@aspeedtech.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 03:52:49PM +0200, Andy Shevchenko wrote:
-> On Mon, Jan 4, 2021 at 3:51 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > On Sun, Jan 03, 2021 at 05:10:10PM +0200, Andy Shevchenko wrote:
-> 
-> ...
-> 
-> > In this example it is the 508:
-> >
-> > # e.g. gpiochip0: GPIOs 508-511, parent: platform/gpio-mockup.0, gpio-mockup-A:
-> >
-> > So I'll use that - unless it is unreliable for some reason?
-> 
-> debugfs is not an ABI and tomorrow this can be changed without notice.
-> 
+On Thu, Dec 17, 2020 at 3:50 AM Billy Tsai <billy_tsai@aspeedtech.com> wrote:
 
-I had a bad feeling that might be the case, and all my current solutions
-use debugfs one way or another, so back to the drawing board on that one.
+> The SCU offset for signal PWM8 in group PWM8G0 is wrong, fix it from
+> SCU414 to SCU4B4.
+>
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 
-Thanks,
-Kent.
+Patch applied for fixes.
 
+Yours,
+Linus Walleij
