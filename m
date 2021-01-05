@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A48C43331
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jan 2021 12:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06205C43333
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jan 2021 12:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9C222AAA
+	by mail.kernel.org (Postfix) with ESMTP id D1D9722ADF
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jan 2021 12:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbhAEMn0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Jan 2021 07:43:26 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:34611 "EHLO
+        id S1729117AbhAEMn3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Jan 2021 07:43:29 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:34636 "EHLO
         mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729085AbhAEMn0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 5 Jan 2021 07:43:26 -0500
+        id S1729099AbhAEMn3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 5 Jan 2021 07:43:29 -0500
 Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id 0E8FF44071F;
-        Tue,  5 Jan 2021 14:42:40 +0200 (IST)
+        by mx.tkos.co.il (Postfix) with ESMTPS id B25E1440820;
+        Tue,  5 Jan 2021 14:42:43 +0200 (IST)
 From:   Baruch Siach <baruch@tkos.co.il>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
@@ -31,10 +31,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     Baruch Siach <baruch@tkos.co.il>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
+Cc:     Baruch Siach <baruch@tkos.co.il>, Andrew Lunn <andrew@lunn.ch>,
         Gregory Clement <gregory.clement@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Chris Packham <chris.packham@alliedtelesis.co.nz>,
@@ -42,9 +41,9 @@ Cc:     Baruch Siach <baruch@tkos.co.il>,
         Ralph Sennhauser <ralph.sennhauser@gmail.com>,
         linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH v5 1/4] gpio: mvebu: fix pwm get_state period calculation
-Date:   Tue,  5 Jan 2021 14:42:28 +0200
-Message-Id: <0cd077886d37699bdf0a20295fd8ee422e5285b5.1609849176.git.baruch@tkos.co.il>
+Subject: [PATCH v5 3/4] arm64: dts: armada: add pwm offsets for ap/cp gpios
+Date:   Tue,  5 Jan 2021 14:42:30 +0200
+Message-Id: <e783b1233a8d0bc2ef25f5b5b9a7385adc52c8e2.1609849176.git.baruch@tkos.co.il>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1609849176.git.baruch@tkos.co.il>
 References: <cover.1609849176.git.baruch@tkos.co.il>
@@ -54,43 +53,77 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The period is the sum of on and off values.
+The 'marvell,pwm-offset' property of both GPIO blocks (per CP component)
+point to the same counter registers offset. The driver will decide how
+to use counters A/B.
 
-Reported-by: Russell King <linux@armlinux.org.uk>
-Fixes: 757642f9a584e ("gpio: mvebu: Add limited PWM support")
+This is different from the convention of pwm on earlier Armada series
+(370/38x). On those systems the assignment of A/B counters to GPIO
+blocks is coded in both DT and the driver. The actual behaviour of the
+current driver on Armada 8K/7K is the same as earlier systems.
+
+Add also clock properties for base pwm frequency reference.
+
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
- drivers/gpio/gpio-mvebu.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/marvell/armada-ap80x.dtsi |  3 +++
+ arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 672681a976f5..ac7cb6d3702e 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -679,17 +679,13 @@ static void mvebu_pwm_get_state(struct pwm_chip *chip,
- 	regmap_read(mvpwm->regs, mvebu_pwmreg_blink_off_duration(mvpwm), &u);
- 	val = (unsigned long long) u * NSEC_PER_SEC;
- 	do_div(val, mvpwm->clk_rate);
--	if (val < state->duty_cycle) {
-+	val += state->duty_cycle;
-+	if (val > UINT_MAX)
-+		state->period = UINT_MAX;
-+	else if (val)
-+		state->period = val;
-+	else
- 		state->period = 1;
--	} else {
--		val -= state->duty_cycle;
--		if (val > UINT_MAX)
--			state->period = UINT_MAX;
--		else if (val)
--			state->period = val;
--		else
--			state->period = 1;
--	}
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi b/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi
+index 12e477f1aeb9..6614472100c2 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap80x.dtsi
+@@ -281,6 +281,9 @@ ap_gpio: gpio@1040 {
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					gpio-ranges = <&ap_pinctrl 0 0 20>;
++					marvell,pwm-offset = <0x10c0>;
++					#pwm-cells = <2>;
++					clocks = <&ap_clk 3>;
+ 				};
+ 			};
  
- 	regmap_read(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset, &u);
- 	if (u)
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+index 994a2fce449a..d774a39334d9 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+@@ -234,12 +234,17 @@ CP11X_LABEL(gpio1): gpio@100 {
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				gpio-ranges = <&CP11X_LABEL(pinctrl) 0 0 32>;
++				marvell,pwm-offset = <0x1f0>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				interrupts = <86 IRQ_TYPE_LEVEL_HIGH>,
+ 					<85 IRQ_TYPE_LEVEL_HIGH>,
+ 					<84 IRQ_TYPE_LEVEL_HIGH>,
+ 					<83 IRQ_TYPE_LEVEL_HIGH>;
+ 				#interrupt-cells = <2>;
++				clock-names = "core", "axi";
++				clocks = <&CP11X_LABEL(clk) 1 21>,
++					 <&CP11X_LABEL(clk) 1 17>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -250,12 +255,17 @@ CP11X_LABEL(gpio2): gpio@140 {
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				gpio-ranges = <&CP11X_LABEL(pinctrl) 0 32 31>;
++				marvell,pwm-offset = <0x1f0>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				interrupts = <82 IRQ_TYPE_LEVEL_HIGH>,
+ 					<81 IRQ_TYPE_LEVEL_HIGH>,
+ 					<80 IRQ_TYPE_LEVEL_HIGH>,
+ 					<79 IRQ_TYPE_LEVEL_HIGH>;
+ 				#interrupt-cells = <2>;
++				clock-names = "core", "axi";
++				clocks = <&CP11X_LABEL(clk) 1 21>,
++					 <&CP11X_LABEL(clk) 1 17>;
+ 				status = "disabled";
+ 			};
+ 		};
 -- 
 2.29.2
 
