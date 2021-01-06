@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C019DC4332B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20A4C4332D
 	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jan 2021 12:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E6C8205F4
+	by mail.kernel.org (Postfix) with ESMTP id BA96F22ADF
 	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jan 2021 12:28:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbhAFM2Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Jan 2021 07:28:24 -0500
-Received: from mail-bn8nam12on2050.outbound.protection.outlook.com ([40.107.237.50]:40188
+        id S1726705AbhAFM2U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Jan 2021 07:28:20 -0500
+Received: from mail-bn8nam12on2087.outbound.protection.outlook.com ([40.107.237.87]:40161
         "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726712AbhAFM2W (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 6 Jan 2021 07:28:22 -0500
+        id S1726576AbhAFM2S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 6 Jan 2021 07:28:18 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lXXLdkwm8XtOZVi1+/MMm5gJk7Uvu+Rd4uxmomX9OdIoZNLSFSfVvaFkJQ93xxVy3eHOT5OFGlNrV+m8W3WYjsrJcqkL/hS5J60YzjoXTkfwid5TLltVlQkHWRD3qLf1PeD4bPDHLW7WOu5Lq/lcf0aChPmrBhyQmj2qXlkxBYpjgbYGVLo3IYqbdXOOCMJJEhpN/fuhicMg16Rb5/p53apR+AEQwQ8QOElmRMmdEri0xeJjsSOJzb2e86AS0N6pk7lHzbsjtRNw57oj2fH5P3GDMmvQhNiBrNpSA6zxpWopi765U4VSCozYOG+EVMKJ2VjuHI7MzTtF9vulINGVLw==
+ b=j5qTvGWKFRQN5RSOfk6F3LCSBk8UK8CfhxvIK6b8vShU8pA9vQ7CUBmKEgSBBrGzBWicn66y0O7ksKzbL/Z+A22jBZR0gyfRTku1zOJ3aLsYDuiMkWFrn7y0Gxi/chJu+ja7f39SZjM6mALRN84KdUNUdZd2VN008x3zpYhzyR18RtLK1DyQSVXB2juhy2QLLZLMTQ2OMrZI43QIuKY/y4s+J+etplXbEelWRH48mBHaTRjdw2mbC2NCu07fjnkvI2PntoUyVznu4IYOJ0B+Gn0zKWmoXe1sefDspys6H+4Z+tzwSY4BNXh4fELjKTu2HpWDhXcC2eQ8rT+a2eeiMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SF6KUbrehHQHc7jVQv5ivsdfH0YzfhqyaLmhN/y8PLM=;
- b=gYAf8u1uoYQ6xPNKVIVQJDZH9C8rES2lBWal4ru+tt84MrR1SYFiGui4+sItxGdmDjldXqSlbrNIi9xb04Zsqae0oFW/ViieUpe5aRMFMwG3wiSuWIh3HQDzN4mbSDiVPAyt+QiSTTeBnyN5/lj8FFTyMxqwkkK137tLM8l0iQHU/PIB6Z8URqMUhnKdquODV592cBW1zvgwABunaJ0cNZ/bzkTXtzyf4YEziYAaVAcC3BcY9V6fJ9c6TLIZzflT3KWk5y7rjDndeilZ8gpNAT3Hgj45KMLVyMzRFTPh36yUL823DEx3rh++0AaXh44CudmolmNJ3zCJ0uY8du9hFw==
+ bh=y7FKHvOzNV9IIL9cHUuJWuxtHtej8HeBypt6olXANf8=;
+ b=G3xWJ8j4Khy5pXuhwqNnFv7o94a+pgresuc0fZqQ5iQUoG4i4mmDIs1VtNuWH/IITwke7lrBN3TbTR2Ilj6s0PVJi1YlCbZ4fgR8FOIA0cbzFGasZTMIcXYbllIskdUa1m00vHJ5vOkocPGJjLXwC6mN9QBnPIYve8BVXP2mAzN1tTB8IEmYfhPLE3vpDuhtyyqLFKnh3VPsQVKRsLBPMXaBdQH08r5i3pDVQaQ/vuAYyVR0dFQazNecYwj0sIMTte4Q3CEn3uiBYHKFLwgFy6CIlTNehqnn2v0sP7dx7LqqHeuIWcIJ38dfYeLg0UGaDQGJib1JhfE0TbKAQPTcuQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
  dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
@@ -34,36 +34,36 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SF6KUbrehHQHc7jVQv5ivsdfH0YzfhqyaLmhN/y8PLM=;
- b=d669nWhFAEH4sK67wc5K1tQjKp0XeGy0hFXnLMwgRM7HlofT3H+isKKWYG16RJNO5qh9ndA1MPkLoZl7mB416SC1EiugQNyKFaeA0w26k/TBEfUYbYwME5MgCAsSJRBcB36w2+YcJngeYDONeCtUaflhSjIkr5RleTprPJu7xqY=
-Received: from CY4PR21CA0009.namprd21.prod.outlook.com (2603:10b6:903:dd::19)
- by BYAPR02MB5925.namprd02.prod.outlook.com (2603:10b6:a03:125::14) with
+ bh=y7FKHvOzNV9IIL9cHUuJWuxtHtej8HeBypt6olXANf8=;
+ b=gqmU07AjLOB+DNlVneZ2Fvb/L7+6FYk+EU4cHh2UzdLvnd39Km0u8cX//GWJp5dIsMeE2eEK5xCbSlKXT8CIq3sOKJEJHW6jTLR5D0VWEAmsfPonhgiQdkRhUYQabjpocqpfAgm0U91b/GZeEULPamBrBq/ygLr/tk5si2JWrc4=
+Received: from CY4PR18CA0069.namprd18.prod.outlook.com (2603:10b6:903:13f::31)
+ by PH0PR02MB7719.namprd02.prod.outlook.com (2603:10b6:510:4e::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3721.19; Wed, 6 Jan
- 2021 12:27:28 +0000
-Received: from CY1NAM02FT040.eop-nam02.prod.protection.outlook.com
- (2603:10b6:903:dd:cafe::cf) by CY4PR21CA0009.outlook.office365.com
- (2603:10b6:903:dd::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3763.2 via Frontend
- Transport; Wed, 6 Jan 2021 12:27:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6; Wed, 6 Jan
+ 2021 12:27:25 +0000
+Received: from CY1NAM02FT003.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:903:13f:cafe::f4) by CY4PR18CA0069.outlook.office365.com
+ (2603:10b6:903:13f::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6 via Frontend
+ Transport; Wed, 6 Jan 2021 12:27:25 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
  header.d=none;linaro.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- CY1NAM02FT040.mail.protection.outlook.com (10.152.75.135) with Microsoft SMTP
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ CY1NAM02FT003.mail.protection.outlook.com (10.152.74.151) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.3742.6 via Frontend Transport; Wed, 6 Jan 2021 12:27:27 +0000
+ 15.20.3742.6 via Frontend Transport; Wed, 6 Jan 2021 12:27:25 +0000
 Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Wed, 6 Jan 2021 04:27:11 -0800
+ 15.1.1913.5; Wed, 6 Jan 2021 04:26:58 -0800
 Received: from smtp.xilinx.com (172.19.127.95) by
  xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.1913.5 via Frontend Transport; Wed, 6 Jan 2021 04:27:11 -0800
+ 15.1.1913.5 via Frontend Transport; Wed, 6 Jan 2021 04:26:58 -0800
 Envelope-to: git@xilinx.com,
  michal.simek@xilinx.com,
  linus.walleij@linaro.org,
@@ -77,7 +77,7 @@ Envelope-to: git@xilinx.com,
 Received: from [10.140.6.6] (port=49550 helo=xhdappanad40.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1kx7uA-0003Ag-Ei; Wed, 06 Jan 2021 04:27:10 -0800
+        id 1kx7tx-0003Ag-1W; Wed, 06 Jan 2021 04:26:57 -0800
 From:   Srinivas Neeli <srinivas.neeli@xilinx.com>
 To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
         <michal.simek@xilinx.com>, <shubhrajyoti.datta@xilinx.com>,
@@ -87,9 +87,9 @@ CC:     <linux-gpio@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <git@xilinx.com>,
         Srinivas Neeli <srinivas.neeli@xilinx.com>
-Subject: [PATCH V4 5/5] gpio: gpio-xilinx: Add check if width exceeds 32
-Date:   Wed, 6 Jan 2021 17:56:40 +0530
-Message-ID: <1609936000-28378-6-git-send-email-srinivas.neeli@xilinx.com>
+Subject: [PATCH V4 2/5] gpio: gpio-xilinx: Reduce spinlock array to array
+Date:   Wed, 6 Jan 2021 17:56:37 +0530
+Message-ID: <1609936000-28378-3-git-send-email-srinivas.neeli@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1609936000-28378-1-git-send-email-srinivas.neeli@xilinx.com>
 References: <1609936000-28378-1-git-send-email-srinivas.neeli@xilinx.com>
@@ -98,60 +98,152 @@ Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 205fd76f-b8da-4b62-74b3-08d8b23e6e0b
-X-MS-TrafficTypeDiagnostic: BYAPR02MB5925:
-X-Microsoft-Antispam-PRVS: <BYAPR02MB5925BECBE8320B763E54EE73AFD00@BYAPR02MB5925.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 778765b8-86a9-4a1d-8a07-08d8b23e6ca3
+X-MS-TrafficTypeDiagnostic: PH0PR02MB7719:
+X-Microsoft-Antispam-PRVS: <PH0PR02MB7719EDDBA75D348D6C36BA1BAFD00@PH0PR02MB7719.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vFoaPaafhnBxaHGOk+NW0oTCGO4GBbc2X7AecZCJiAEP1oWqcvOZ+b1bhc9F057nzWJuTgue3v/PQzqSHuLyT4IJM4ekRS1K0DnMA1h3y4hgZD1feHGvd7Kf8Edcuq85pZjGRYwWSTomLB1cVpYQCLXTfnns9xT7jo/aeXYfytGKW8ZaEumvCkx5hBw3PjXDKSLQzC0ukRzeTtup0cY2mew8JaHg6OI+ITQamQvRR0qg9SGKHUvOSo5SXPGZntdE3plAUEdRtogEWh3wHayPaTAK8BNJeXaV3v9cs2pRPQj6/zkI5xSkyPVUkbn3LOJdSjRfHeSynW4lpbkt5JdObYHJXg5ihRsUE0Bhr8a6YY8tG6XrlAtSwjb7CjMuHMLmuYXbHyhIWEwEL+emkLbarg665904hL5q/kCYat1jxCko2+lCvGtBcMK7+ujARG98CYN0nL0fFUMsm5CKb9ll0A+8h+0Gv+5gw8Mt/xNahDQe4VZEdtZhRpdC90qCaDgh
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(376002)(136003)(396003)(39860400002)(346002)(46966006)(9786002)(8676002)(8936002)(478600001)(4744005)(70206006)(107886003)(7696005)(110136005)(54906003)(316002)(5660300002)(6666004)(70586007)(47076005)(2906002)(82310400003)(44832011)(82740400003)(186003)(2616005)(83380400001)(7636003)(26005)(356005)(36756003)(426003)(336012)(4326008)(36906005)(102446001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: GZE36DtIXn/NEBZ09wZ+C84ZYLHzn+3By6vQI/CKVZAJaB9/t8Zn94A7XO+mTrVwCyJ47hD/Ah+0uoxbWp8Wore0NW/7yXq417oq2PHGICOMZHeCilvsO1iaagrxCaCVcNeOL0qOS3RX9qqR2zbyyPVKx8VUVDX18j4i5O5FxMhuL79moietTE7Blsr81d0plnIWgglfDlM6ug5WofruJc7tvd1KzIIRuWufXHu/27zF88D9nJHqqB++qnajdx1XNeyHprIlGMALngwandgmms16QQhIrnhGEe4aNtPoHGRVn7TO6YzleQyDRoFtxTgFnJtPORphjNYuJzc22rZ+KezE/j2dmElMh6zgTZfilINtFduIKb2HbEReseAbXXAIIkyxfTCVhrjWxM6Zkkk06MtJSLXggAQ3VG/2ZWbXbJl1uJ23JlvMVaUhG00PtCw4rsrPaGHQFl2KZWXY1eGecDE0JJvdxByEpxsZtkpZWmFktAe4RnW1in2JPzAzJz5S
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(396003)(39860400002)(136003)(376002)(46966006)(36756003)(4326008)(316002)(110136005)(36906005)(7636003)(82310400003)(54906003)(356005)(83380400001)(5660300002)(8936002)(2906002)(9786002)(47076005)(107886003)(6666004)(70586007)(336012)(70206006)(2616005)(426003)(478600001)(26005)(82740400003)(44832011)(186003)(8676002)(7696005)(102446001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2021 12:27:27.6236
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2021 12:27:25.2659
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 205fd76f-b8da-4b62-74b3-08d8b23e6e0b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 778765b8-86a9-4a1d-8a07-08d8b23e6ca3
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT040.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT003.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5925
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7719
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add check to see if gpio-width property does not exceed 32.
-If it exceeds then return -EINVAL.
+Changed spinlock array to single. It is preparation for irq support which
+is shared between two channels that's why spinlock should be only one.
 
 Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
 ---
 Changes in V4:
--New patch.
+-None.
+Changes in V3:
+-Created new patch for spinlock changes.
 ---
- drivers/gpio/gpio-xilinx.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpio/gpio-xilinx.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index e47ae08167f8..ddec718e114c 100644
+index d010a63d5d15..f88db56543c2 100644
 --- a/drivers/gpio/gpio-xilinx.c
 +++ b/drivers/gpio/gpio-xilinx.c
-@@ -591,6 +591,9 @@ static int xgpio_probe(struct platform_device *pdev)
+@@ -47,7 +47,7 @@ struct xgpio_instance {
+ 	unsigned int gpio_width[2];
+ 	u32 gpio_state[2];
+ 	u32 gpio_dir[2];
+-	spinlock_t gpio_lock[2];
++	spinlock_t gpio_lock;	/* For serializing operations */
+ 	struct clk *clk;
+ };
+ 
+@@ -113,7 +113,7 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	int index =  xgpio_index(chip, gpio);
+ 	int offset =  xgpio_offset(chip, gpio);
+ 
+-	spin_lock_irqsave(&chip->gpio_lock[index], flags);
++	spin_lock_irqsave(&chip->gpio_lock, flags);
+ 
+ 	/* Write to GPIO signal and set its direction to output */
+ 	if (val)
+@@ -124,7 +124,7 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+ 		       xgpio_regoffset(chip, gpio), chip->gpio_state[index]);
+ 
+-	spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
++	spin_unlock_irqrestore(&chip->gpio_lock, flags);
+ }
+ 
+ /**
+@@ -144,7 +144,7 @@ static void xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	int index = xgpio_index(chip, 0);
+ 	int offset, i;
+ 
+-	spin_lock_irqsave(&chip->gpio_lock[index], flags);
++	spin_lock_irqsave(&chip->gpio_lock, flags);
+ 
+ 	/* Write to GPIO signals */
+ 	for (i = 0; i < gc->ngpio; i++) {
+@@ -155,9 +155,9 @@ static void xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 			xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+ 				       index * XGPIO_CHANNEL_OFFSET,
+ 				       chip->gpio_state[index]);
+-			spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
++			spin_unlock_irqrestore(&chip->gpio_lock, flags);
+ 			index =  xgpio_index(chip, i);
+-			spin_lock_irqsave(&chip->gpio_lock[index], flags);
++			spin_lock_irqsave(&chip->gpio_lock, flags);
+ 		}
+ 		if (__test_and_clear_bit(i, mask)) {
+ 			offset =  xgpio_offset(chip, i);
+@@ -171,7 +171,7 @@ static void xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+ 		       index * XGPIO_CHANNEL_OFFSET, chip->gpio_state[index]);
+ 
+-	spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
++	spin_unlock_irqrestore(&chip->gpio_lock, flags);
+ }
+ 
+ /**
+@@ -190,14 +190,14 @@ static int xgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 	int index =  xgpio_index(chip, gpio);
+ 	int offset =  xgpio_offset(chip, gpio);
+ 
+-	spin_lock_irqsave(&chip->gpio_lock[index], flags);
++	spin_lock_irqsave(&chip->gpio_lock, flags);
+ 
+ 	/* Set the GPIO bit in shadow register and set direction as input */
+ 	chip->gpio_dir[index] |= BIT(offset);
+ 	xgpio_writereg(chip->regs + XGPIO_TRI_OFFSET +
+ 		       xgpio_regoffset(chip, gpio), chip->gpio_dir[index]);
+ 
+-	spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
++	spin_unlock_irqrestore(&chip->gpio_lock, flags);
+ 
+ 	return 0;
+ }
+@@ -221,7 +221,7 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	int index =  xgpio_index(chip, gpio);
+ 	int offset =  xgpio_offset(chip, gpio);
+ 
+-	spin_lock_irqsave(&chip->gpio_lock[index], flags);
++	spin_lock_irqsave(&chip->gpio_lock, flags);
+ 
+ 	/* Write state of GPIO signal */
+ 	if (val)
+@@ -236,7 +236,7 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	xgpio_writereg(chip->regs + XGPIO_TRI_OFFSET +
+ 			xgpio_regoffset(chip, gpio), chip->gpio_dir[index]);
+ 
+-	spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
++	spin_unlock_irqrestore(&chip->gpio_lock, flags);
+ 
+ 	return 0;
+ }
+@@ -312,7 +312,7 @@ static int xgpio_probe(struct platform_device *pdev)
  	if (of_property_read_u32(np, "xlnx,gpio-width", &chip->gpio_width[0]))
  		chip->gpio_width[0] = 32;
  
-+	if (chip->gpio_width[0] > 32)
-+		return -EINVAL;
-+
- 	spin_lock_init(&chip->gpio_lock);
+-	spin_lock_init(&chip->gpio_lock[0]);
++	spin_lock_init(&chip->gpio_lock);
  
  	if (of_property_read_u32(np, "xlnx,is-dual", &is_dual))
-@@ -615,6 +618,8 @@ static int xgpio_probe(struct platform_device *pdev)
+ 		is_dual = 0;
+@@ -336,7 +336,6 @@ static int xgpio_probe(struct platform_device *pdev)
  					 &chip->gpio_width[1]))
  			chip->gpio_width[1] = 32;
  
-+		if (chip->gpio_width[1] > 32)
-+			return -EINVAL;
+-		spin_lock_init(&chip->gpio_lock[1]);
  	}
  
  	chip->gc.base = -1;
