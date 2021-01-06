@@ -5,25 +5,25 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6976FC43331
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jan 2021 07:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDF4C4321A
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jan 2021 07:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 238E32310E
+	by mail.kernel.org (Postfix) with ESMTP id E84DF23105
 	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jan 2021 07:38:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbhAFHif (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Jan 2021 02:38:35 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:36299 "EHLO
+        id S1726375AbhAFHie (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Jan 2021 02:38:34 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:36272 "EHLO
         mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726217AbhAFHif (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 6 Jan 2021 02:38:35 -0500
+        id S1726294AbhAFHie (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 6 Jan 2021 02:38:34 -0500
 Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id DB64D4409D4;
-        Wed,  6 Jan 2021 09:37:51 +0200 (IST)
+        by mx.tkos.co.il (Postfix) with ESMTPS id E8F6344079E;
+        Wed,  6 Jan 2021 09:37:48 +0200 (IST)
 From:   Baruch Siach <baruch@tkos.co.il>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
@@ -31,10 +31,10 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     Baruch Siach <baruch@tkos.co.il>, Rob Herring <robh@kernel.org>,
+Cc:     Baruch Siach <baruch@tkos.co.il>,
+        Russell King <linux@armlinux.org.uk>,
         Andrew Lunn <andrew@lunn.ch>,
         Gregory Clement <gregory.clement@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Chris Packham <chris.packham@alliedtelesis.co.nz>,
@@ -42,9 +42,9 @@ Cc:     Baruch Siach <baruch@tkos.co.il>, Rob Herring <robh@kernel.org>,
         Ralph Sennhauser <ralph.sennhauser@gmail.com>,
         linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH v6 4/4] dt-bindings: ap806: document gpio marvell,pwm-offset property
-Date:   Wed,  6 Jan 2021 09:37:40 +0200
-Message-Id: <2c6ca62ad42e08dcf308f91a8da8124749d44308.1609917364.git.baruch@tkos.co.il>
+Subject: [PATCH v6 1/4] gpio: mvebu: fix pwm get_state period calculation
+Date:   Wed,  6 Jan 2021 09:37:37 +0200
+Message-Id: <22d1fe7b2137e3a2660ab2e6f1f127d41493fb16.1609917364.git.baruch@tkos.co.il>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1609917364.git.baruch@tkos.co.il>
 References: <cover.1609917364.git.baruch@tkos.co.il>
@@ -54,41 +54,50 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Update the example as well. Add the '#pwm-cells' and 'clocks' properties
-for a complete working example.
+The period is the sum of on and off values.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reported-by: Russell King <linux@armlinux.org.uk>
+Fixes: 757642f9a584e ("gpio: mvebu: Add limited PWM support")
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
- .../bindings/arm/marvell/ap80x-system-controller.txt      | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v6: divide (on + off) sum to reduce rounding error (RMK)
+---
+ drivers/gpio/gpio-mvebu.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-index e31511255d8e..052a967c1f28 100644
---- a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-@@ -80,6 +80,11 @@ Required properties:
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 672681a976f5..a912a8fed197 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -676,20 +676,17 @@ static void mvebu_pwm_get_state(struct pwm_chip *chip,
+ 	else
+ 		state->duty_cycle = 1;
  
- - offset: offset address inside the syscon block
++	val = (unsigned long long) u; /* on duration */
+ 	regmap_read(mvpwm->regs, mvebu_pwmreg_blink_off_duration(mvpwm), &u);
+-	val = (unsigned long long) u * NSEC_PER_SEC;
++	val += (unsigned long long) u; /* period = on + off duration */
++	val *= NSEC_PER_SEC;
+ 	do_div(val, mvpwm->clk_rate);
+-	if (val < state->duty_cycle) {
++	if (val > UINT_MAX)
++		state->period = UINT_MAX;
++	else if (val)
++		state->period = val;
++	else
+ 		state->period = 1;
+-	} else {
+-		val -= state->duty_cycle;
+-		if (val > UINT_MAX)
+-			state->period = UINT_MAX;
+-		else if (val)
+-			state->period = val;
+-		else
+-			state->period = 1;
+-	}
  
-+Optional properties:
-+
-+- marvell,pwm-offset: offset address of PWM duration control registers inside
-+  the syscon block
-+
- Example:
- ap_syscon: system-controller@6f4000 {
- 	compatible = "syscon", "simple-mfd";
-@@ -101,6 +106,9 @@ ap_syscon: system-controller@6f4000 {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		gpio-ranges = <&ap_pinctrl 0 0 19>;
-+		marvell,pwm-offset = <0x10c0>;
-+		#pwm-cells = <2>;
-+		clocks = <&ap_clk 3>;
- 	};
- };
- 
+ 	regmap_read(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset, &u);
+ 	if (u)
 -- 
 2.29.2
 
