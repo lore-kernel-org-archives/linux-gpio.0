@@ -4,161 +4,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320A8C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B470C433DB
 	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jan 2021 19:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0806423436
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jan 2021 19:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E68AD23435
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jan 2021 19:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbhAGTDw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Jan 2021 14:03:52 -0500
-Received: from mga03.intel.com ([134.134.136.65]:7191 "EHLO mga03.intel.com"
+        id S1726319AbhAGTDu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Jan 2021 14:03:50 -0500
+Received: from mga14.intel.com ([192.55.52.115]:62710 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbhAGTDw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 7 Jan 2021 14:03:52 -0500
-IronPort-SDR: /0K9yX7c18SBURNWMl0uPGu0T8plAvjCbLSPJLClYG2cT71Do/htD7p42tJznTwQaKwa2+TBLI
- i0BENtxypAcA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="177579061"
+        id S1726165AbhAGTDt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 7 Jan 2021 14:03:49 -0500
+IronPort-SDR: ZuDDWLugQTlC3m2kvmeMtVKFlkqkre6HxNh6j9WC0YkEahZArCkT9Cpsw1HRtTUgvm4Lrkejba
+ WfK44kLgtbww==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="176700863"
 X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="177579061"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 11:02:05 -0800
-IronPort-SDR: gnRRRyMT5XKp7TMSJfQ3mWgH8xdqDNbYoytjBTit5VcO0FLNLt5F5kbwPTo5cnVKA1rPNUudnC
- wlmEExDjnAuQ==
+   d="scan'208";a="176700863"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 11:02:04 -0800
+IronPort-SDR: iMA2RqkTpGhBODB0P6jDwk0pie2IHjQwYcw3XiRtt2cT/0tj4dLeo8Pzethiy1bbXuHrfQH+1N
+ cF4aY9z+FF5g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="497608517"
+   d="scan'208";a="362070573"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 07 Jan 2021 11:02:02 -0800
+  by orsmga002.jf.intel.com with ESMTP; 07 Jan 2021 11:02:02 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9FCA41C4; Thu,  7 Jan 2021 21:02:01 +0200 (EET)
+        id C8A3D211; Thu,  7 Jan 2021 21:02:01 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/4] pinctrl: intel: Split intel_pinctrl_add_padgroups() for better maintenance
-Date:   Thu,  7 Jan 2021 21:01:57 +0200
-Message-Id: <20210107190200.41221-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/4] pinctrl: intel: Convert capability list to features
+Date:   Thu,  7 Jan 2021 21:02:00 +0200
+Message-Id: <20210107190200.41221-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210107190200.41221-1-andriy.shevchenko@linux.intel.com>
+References: <20210107190200.41221-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently the intel_pinctrl_add_padgroups() is twisted a bit due to
-a different nature of the pin control hardware implementations. Thus,
-its maintenance is a bit hard. Besides that some pieces of code
-are run on all hardware and make this code slightly inefficient,
-and moreover, validation for one case is done in a wrong time in a flow
-which makes it even slower.
-
-Split intel_pinctrl_add_padgroups() to two functions, one per hardware
-implementation, for better maintenance and readability.
+Communities can have features provided in the capability list.
+Traverse the list and convert to respective features.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 60 ++++++++++++++++++---------
- 1 file changed, 40 insertions(+), 20 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 41 +++++++++++++++++++++++++--
+ drivers/pinctrl/intel/pinctrl-intel.h |  4 +++
+ 2 files changed, 42 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index b6ef1911c1dd..ae13e4390935 100644
+index 00979acb0203..3d9f22ee987a 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.c
 +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1321,34 +1321,19 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	return 0;
- }
+@@ -29,6 +29,16 @@
+ #define REVID_SHIFT			16
+ #define REVID_MASK			GENMASK(31, 16)
  
--static int intel_pinctrl_add_padgroups(struct intel_pinctrl *pctrl,
--				       struct intel_community *community)
-+static int intel_pinctrl_add_padgroups_by_gpps(struct intel_pinctrl *pctrl,
-+					       struct intel_community *community)
- {
- 	struct intel_padgroup *gpps;
--	unsigned int npins = community->npins;
- 	unsigned int padown_num = 0;
--	size_t ngpps, i;
--
--	if (community->gpps)
--		ngpps = community->ngpps;
--	else
--		ngpps = DIV_ROUND_UP(community->npins, community->gpp_size);
-+	size_t i, ngpps = community->ngpps;
++#define CAPLIST				0x004
++#define CAPLIST_ID_SHIFT		16
++#define CAPLIST_ID_MASK			GENMASK(23, 16)
++#define CAPLIST_ID_GPIO_HW_INFO		1
++#define CAPLIST_ID_PWM			2
++#define CAPLIST_ID_BLINK		3
++#define CAPLIST_ID_EXP			4
++#define CAPLIST_NEXT_SHIFT		0
++#define CAPLIST_NEXT_MASK		GENMASK(15, 0)
++
+ #define PADBAR				0x00c
  
- 	gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
- 	if (!gpps)
- 		return -ENOMEM;
+ #define PADOWN_BITS			4
+@@ -1472,7 +1482,7 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
+ 	for (i = 0; i < pctrl->ncommunities; i++) {
+ 		struct intel_community *community = &pctrl->communities[i];
+ 		void __iomem *regs;
+-		u32 padbar;
++		u32 offset;
+ 		u32 value;
  
- 	for (i = 0; i < ngpps; i++) {
--		if (community->gpps) {
--			gpps[i] = community->gpps[i];
--		} else {
--			unsigned int gpp_size = community->gpp_size;
--
--			gpps[i].reg_num = i;
--			gpps[i].base = community->pin_base + i * gpp_size;
--			gpps[i].size = min(gpp_size, npins);
--			npins -= gpps[i].size;
--		}
-+		gpps[i] = community->gpps[i];
- 
- 		if (gpps[i].size > 32)
- 			return -EINVAL;
-@@ -1366,6 +1351,38 @@ static int intel_pinctrl_add_padgroups(struct intel_pinctrl *pctrl,
- 				break;
+ 		*community = pctrl->soc->communities[i];
+@@ -1492,11 +1502,36 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
+ 			break;
  		}
  
-+		gpps[i].padown_num = padown_num;
-+		padown_num += DIV_ROUND_UP(gpps[i].size * 4, 32);
-+	}
++		/* Determine community features based on the capabilities */
++		offset = CAPLIST;
++		do {
++			value = readl(regs + offset);
++			switch ((value & CAPLIST_ID_MASK) >> CAPLIST_ID_SHIFT) {
++			case CAPLIST_ID_GPIO_HW_INFO:
++				community->features |= PINCTRL_FEATURE_GPIO_HW_INFO;
++				break;
++			case CAPLIST_ID_PWM:
++				community->features |= PINCTRL_FEATURE_PWM;
++				break;
++			case CAPLIST_ID_BLINK:
++				community->features |= PINCTRL_FEATURE_BLINK;
++				break;
++			case CAPLIST_ID_EXP:
++				community->features |= PINCTRL_FEATURE_EXP;
++				break;
++			default:
++				break;
++			}
++			offset = (value & CAPLIST_NEXT_MASK) >> CAPLIST_NEXT_SHIFT;
++		} while (offset);
 +
-+	community->gpps = gpps;
++		dev_dbg(&pdev->dev, "Community%d features: %#08x\n", i, community->features);
 +
-+	return 0;
-+}
-+
-+static int intel_pinctrl_add_padgroups_by_size(struct intel_pinctrl *pctrl,
-+					       struct intel_community *community)
-+{
-+	struct intel_padgroup *gpps;
-+	unsigned int npins = community->npins;
-+	unsigned int padown_num = 0;
-+	size_t i, ngpps = DIV_ROUND_UP(npins, community->gpp_size);
-+
-+	if (community->gpp_size > 32)
-+		return -EINVAL;
-+
-+	gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
-+	if (!gpps)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ngpps; i++) {
-+		unsigned int gpp_size = community->gpp_size;
-+
-+		gpps[i].reg_num = i;
-+		gpps[i].base = community->pin_base + i * gpp_size;
-+		gpps[i].size = min(gpp_size, npins);
-+		npins -= gpps[i].size;
-+
- 		gpps[i].padown_num = padown_num;
+ 		/* Read offset of the pad configuration registers */
+-		padbar = readl(regs + PADBAR);
++		offset = readl(regs + PADBAR);
  
- 		/*
-@@ -1483,7 +1500,10 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
  		community->regs = regs;
- 		community->pad_regs = regs + padbar;
+-		community->pad_regs = regs + padbar;
++		community->pad_regs = regs + offset;
  
--		ret = intel_pinctrl_add_padgroups(pctrl, community);
-+		if (community->gpps)
-+			ret = intel_pinctrl_add_padgroups_by_gpps(pctrl, community);
-+		else
-+			ret = intel_pinctrl_add_padgroups_by_size(pctrl, community);
- 		if (ret)
- 			return ret;
- 	}
+ 		if (community->gpps)
+ 			ret = intel_pinctrl_add_padgroups_by_gpps(pctrl, community);
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index ad34b7a3f6ed..c4fef03b663f 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -143,6 +143,10 @@ struct intel_community {
+ /* Additional features supported by the hardware */
+ #define PINCTRL_FEATURE_DEBOUNCE	BIT(0)
+ #define PINCTRL_FEATURE_1K_PD		BIT(1)
++#define PINCTRL_FEATURE_GPIO_HW_INFO	BIT(2)
++#define PINCTRL_FEATURE_PWM		BIT(3)
++#define PINCTRL_FEATURE_BLINK		BIT(4)
++#define PINCTRL_FEATURE_EXP		BIT(5)
+ 
+ /**
+  * PIN_GROUP - Declare a pin group
 -- 
 2.29.2
 
