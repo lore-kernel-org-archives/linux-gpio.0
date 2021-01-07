@@ -2,100 +2,230 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232D5C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jan 2021 19:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6013DC433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jan 2021 23:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF7E323436
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jan 2021 19:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A70A235DD
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jan 2021 23:55:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbhAGTFN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Jan 2021 14:05:13 -0500
-Received: from mga03.intel.com ([134.134.136.65]:7191 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbhAGTFN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 7 Jan 2021 14:05:13 -0500
-IronPort-SDR: jVqvlrIXwpxNXCQ26+CQ3FGVymqsMHVO4vyAtsF5IpiuoVa55MvX6RhoNop4QQfmsX37JP0g5J
- iJ6n3kNgSABw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="177579062"
-X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="177579062"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 11:02:05 -0800
-IronPort-SDR: 7opanTpbSusnsWr6kENe2qcjH9nMc2KSk0mJ4Y0JX/wZhaXPhp9OH0B6WtzBg5C92PdbQHWhTS
- reMPA5DEhlBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="497608518"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 07 Jan 2021 11:02:02 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id AECD1191; Thu,  7 Jan 2021 21:02:01 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/4] pinctrl: intel: Drop unnecessary check for predefined features
-Date:   Thu,  7 Jan 2021 21:01:58 +0200
-Message-Id: <20210107190200.41221-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210107190200.41221-1-andriy.shevchenko@linux.intel.com>
-References: <20210107190200.41221-1-andriy.shevchenko@linux.intel.com>
+        id S1729184AbhAGXz5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Jan 2021 18:55:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbhAGXz5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jan 2021 18:55:57 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7725C0612F4;
+        Thu,  7 Jan 2021 15:55:16 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id q75so6969348wme.2;
+        Thu, 07 Jan 2021 15:55:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=ZncM7JH6Ki9FcKPmGbPeUTYbtASY1HLiha8VMirLUHY=;
+        b=mMyXEhd1cUGjWTGi0vOP8/6X+t+zUyEBQASUR6Ru0sHOF52lbgJQrX8BQjrmJpl9RH
+         IInQNx9iicLUum5zdjbNgCRCPPZ/Aaa/8NKFSc6btEfsOnMb1t6jV1mvOiEHeg212mwn
+         C+V483iiw42ts69wgoOvjRtaknBVVTEo0NvaUGZTl6tdIsMvRQssSBf7uD6xWpp9rRNV
+         uith9x4ogywuYCApBR0HU3WHFFgDeta5T5zc9tw1jHz4YaAj8CxVBUoVSqZUq1aUU96D
+         DXsCxTaGpca/JhJgoFlwM/+DOPu+jNec7sZoz+shzN7xqwWc7WrukuNptry77lKDBn+z
+         CoDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=ZncM7JH6Ki9FcKPmGbPeUTYbtASY1HLiha8VMirLUHY=;
+        b=QZiHkg7nbcsuA5n14HaWfBOLHTYr7Ye16O5ygeVq8X48yq1QkfnFvM50fUqI04tajv
+         qjYetAFMNH7UveTrwCjHw7uWrIyfRf0kwjN6zNfRgj8GFb4op8bdHBno2Afui5SZBhTo
+         hrXpBYUoeSlwIpDYfvce2mGx1nuubQQDeQm216DjjptJD0yI23rWlZ3qR1jPy6o9jhw8
+         XoBbBfXZwLcJIwBeYyyvLvHfuSQkk28En9QSXi/BWfOmXst4Q2gYiLg5REjWS3vJ/EGZ
+         sRQil2xudU8i9DxfjiFqa7WC4efJ0UZOWGLbXAgUkw6qgbDc6Ai+c997JrV57hfyT0SB
+         Azdg==
+X-Gm-Message-State: AOAM533nxT+LFqqjVQAJRHxm304Kk2xS9u1uKhu43MlhEZfgh9BOo5Ig
+        F9WmaPBT71GTyZYvBFDhlWJ8niJScUP4I8YD
+X-Google-Smtp-Source: ABdhPJwaqtio3vX4piZLRmmLcmP6Vxg8q/YXAaanNNYcOSEMk1p6rpteK4dG6OqK3aUCUmJVOBuuXw==
+X-Received: by 2002:a1c:63d4:: with SMTP id x203mr704864wmb.28.1610063715330;
+        Thu, 07 Jan 2021 15:55:15 -0800 (PST)
+Received: from [192.168.1.211] ([2.29.208.120])
+        by smtp.gmail.com with ESMTPSA id v189sm10471673wmg.14.2021.01.07.15.55.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Jan 2021 15:55:14 -0800 (PST)
+Subject: Re: [PATCH 18/18] ipu3: Add driver for dummy INT3472 ACPI device
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-media@vger.kernel.org, devel@acpica.org, rjw@rjwysocki.net,
+        lenb@kernel.org, gregkh@linuxfoundation.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, yong.zhi@intel.com,
+        sakari.ailus@linux.intel.com, bingbu.cao@intel.com,
+        tian.shu.qiu@intel.com, mchehab@kernel.org, robert.moore@intel.com,
+        erik.kaneda@intel.com, pmladek@suse.com, rostedt@goodmis.org,
+        sergey.senozhatsky@gmail.com, linux@rasmusvillemoes.dk,
+        kieran.bingham+renesas@ideasonboard.com, jacopo+renesas@jmondi.org,
+        laurent.pinchart+renesas@ideasonboard.com,
+        jorhand@linux.microsoft.com, kitakar@gmail.com,
+        heikki.krogerus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20201130133129.1024662-1-djrscally@gmail.com>
+ <20201130133129.1024662-19-djrscally@gmail.com>
+ <20201130200719.GB4077@smile.fi.intel.com>
+From:   Daniel Scally <djrscally@gmail.com>
+Message-ID: <778f23fc-b99c-33a2-642d-ca0e47fd4ed5@gmail.com>
+Date:   Thu, 7 Jan 2021 23:55:13 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20201130200719.GB4077@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-None of the drivers is overriding features. Remove unnecessary check.
-While here, rename rev to value to make easier further development.
+Hi Andy, all
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+On 30/11/2020 20:07, Andy Shevchenko wrote:
+> On Mon, Nov 30, 2020 at 01:31:29PM +0000, Daniel Scally wrote:
+>> On platforms where ACPI is designed for use with Windows, resources
+>> that are intended to be consumed by sensor devices are sometimes in
+>> the _CRS of a dummy INT3472 device upon which the sensor depends. This
+>> driver binds to the dummy acpi device (which does not represent a
+> acpi device -> acpi_device
+>
+>> physical PMIC) and maps them into GPIO lines and regulators for use by
+>> the sensor device instead.
+> ...
+>
+>> This patch contains the bits of this process that we're least sure about.
+>> The sensors in scope for this work are called out as dependent (in their
+>> DSDT entry's _DEP) on a device with _HID INT3472. These come in at least
+>> 2 kinds; those with an I2cSerialBusV2 entry (which we presume therefore
+>> are legitimate tps68470 PMICs that need handling by those drivers - work
+>> on that in the future). And those without an I2C device. For those without
+>> an I2C device they instead have an array of GPIO pins defined in _CRS. So
+>> for example, my Lenovo Miix 510's OVTI2680 sensor is dependent on one of
+>> the _latter_ kind of INT3472 devices, with this _CRS:
+>>
+>> Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+>> {
+>>     Name (SBUF, ResourceTemplate ()
+>>     {
+>>         GpioIo (Exclusive, PullDefault, 0x0000, 0x0000,
+>> 	    IoRestrictionOutputOnly, "\\_SB.PCI0.GPI0",
+>> 	    0x00, ResourceConsumer, ,
+>>             )
+>>             {   // Pin list
+>>                 0x0079
+>>             }
+>>         GpioIo (Exclusive, PullDefault, 0x0000, 0x0000,
+>> 	    IoRestrictionOutputOnly, "\\_SB.PCI0.GPI0",
+>> 	    0x00, ResourceConsumer, ,
+>>             )
+>>             {   // Pin list
+>>                 0x007A
+>>             }
+>>         GpioIo (Exclusive, PullDefault, 0x0000, 0x0000,
+>> 	    IoRestrictionOutputOnly, "\\_SB.PCI0.GPI0",
+>> 	    0x00, ResourceConsumer, ,
+>>             )
+>>             {   // Pin list
+>>                 0x008F
+>>             }
+>>     })
+>>     Return (SBUF) /* \_SB_.PCI0.PMI1._CRS.SBUF */
+>> }
+>>
+>> and the same device has a _DSM Method, which returns 32-bit ints where
+>> the second lowest byte we noticed to match the pin numbers of the GPIO
+>> lines:
+>>
+>> Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+>> {
+>>     If ((Arg0 == ToUUID ("79234640-9e10-4fea-a5c1-b5aa8b19756f")))
+>>     {
+>>         If ((Arg2 == One))
+>>         {
+>>             Return (0x03)
+>>         }
+>>
+>>         If ((Arg2 == 0x02))
+>>         {
+>>             Return (0x01007900)
+>>         }
+>>
+>>         If ((Arg2 == 0x03))
+>>         {
+>>             Return (0x01007A0C)
+>>         }
+>>
+>>         If ((Arg2 == 0x04))
+>>         {
+>>             Return (0x01008F01)
+>>         }
+>>     }
+>>
+>>     Return (Zero)
+>> }
+>>
+>> We know that at least some of those pins have to be toggled active for the
+>> sensor devices to be available in i2c, so the conclusion we came to was
+>> that those GPIO entries assigned to the INT3472 device actually represent
+>> GPIOs and regulators to be consumed by the sensors themselves. Tsuchiya
+>> noticed that the lowest byte in the return values of the _DSM method
+>> seemed to represent the type or function of the GPIO line, and we
+>> confirmed that by testing on each surface device that GPIO lines where the
+>> low byte in the _DSM entry for that pin was 0x0d controlled the privacy
+>> LED of the cameras.
+>>
+>> We're guessing as to the exact meaning of the function byte, but I
+>> conclude they're something like this:
+>>
+>> 0x00 - probably a reset GPIO
+>> 0x01 - regulator for the sensor
+>> 0x0c - regulator for the sensor
+>> 0x0b - regulator again, but for a VCM or EEPROM
+>> 0x0d - privacy led (only one we're totally confident of since we can see
+>>        it happen!)
+> It's solely Windows driver design...
+> Luckily I found some information and can clarify above table:
+>
+> 0x00 Reset
+> 0x01 Power down
+> 0x0b Power enable
+> 0x0c Clock enable
+> 0x0d LED (active high)
+>
+> The above text perhaps should go somewhere under Documentation.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index ae13e4390935..1a479112ed85 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1473,6 +1473,7 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
- 		struct intel_community *community = &pctrl->communities[i];
- 		void __iomem *regs;
- 		u32 padbar;
-+		u32 value;
- 
- 		*community = pctrl->soc->communities[i];
- 
-@@ -1480,18 +1481,11 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
- 		if (IS_ERR(regs))
- 			return PTR_ERR(regs);
- 
--		/*
--		 * Determine community features based on the revision if
--		 * not specified already.
--		 */
--		if (!community->features) {
--			u32 rev;
--
--			rev = (readl(regs + REVID) & REVID_MASK) >> REVID_SHIFT;
--			if (rev >= 0x94) {
--				community->features |= PINCTRL_FEATURE_DEBOUNCE;
--				community->features |= PINCTRL_FEATURE_1K_PD;
--			}
-+		/* Determine community features based on the revision */
-+		value = readl(regs + REVID);
-+		if (((value & REVID_MASK) >> REVID_SHIFT) >= 0x94) {
-+			community->features |= PINCTRL_FEATURE_DEBOUNCE;
-+			community->features |= PINCTRL_FEATURE_1K_PD;
- 		}
- 
- 		/* Read offset of the pad configuration registers */
--- 
-2.29.2
+Coming back to this; there's a bit of an anomaly with the 0x01 Power
+Down pin for at least one platform.  As listed above, the OV2680 on one
+of my platforms has 3 GPIOs defined, and the table above gives them as
+type Reset, Power down and Clock enable. I'd assumed from this table
+that "power down" meant a powerdown GPIO (I.E. the one usually called
+PWDNB in Omnivision datasheets and "powerdown" in drivers), but the
+datasheet for the OV2680 doesn't list a separate reset and powerdown
+pin, but rather a single pin that performs both functions.
+
+
+Am I wrong to treat that as something that ought to be mapped as a
+powerdown GPIO to the sensors? Or do you know of any other way to
+reconcile that discrepancy?
+
+
+Failing that; the only way I can think to handle this is to register
+proxy GPIO pins assigned to the sensors as you suggested previously, and
+have them toggle the GPIO's assigned to the INT3472 based on platform
+specific mapping data (I.E. we register a pin called "reset", which on
+most platforms just toggles the 0x00 pin, but on this specific platform
+would drive both 0x00 and 0x01 together. We're already heading that way
+for the regulator consumer supplies so it's sort of nothing new, but I'd
+still rather not if it can be avoided.
 
