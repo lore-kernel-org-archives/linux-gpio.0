@@ -2,60 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAD3C433DB
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D59C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB283239ED
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:48:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0063238E8
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:56:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbhAHNs0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Jan 2021 08:48:26 -0500
-Received: from mga06.intel.com ([134.134.136.31]:54524 "EHLO mga06.intel.com"
+        id S1726294AbhAHN4Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Jan 2021 08:56:25 -0500
+Received: from mga04.intel.com ([192.55.52.120]:60934 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727450AbhAHNs0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 8 Jan 2021 08:48:26 -0500
-IronPort-SDR: 4seF5yqC4uI5T0+hSx5zh//WP8KR+oOYxd9uj1fkIxNDX55cdR7206E8IPB5mo2aTLgZP2Lmoo
- 93DOikpT1Sfw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="239146294"
+        id S1726060AbhAHN4Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 8 Jan 2021 08:56:25 -0500
+IronPort-SDR: m9o5BIEI6jqaUe8iopAiO2Ti9hSaRjWIKVBBoHqdViJVZpwhmXDtfRg92OE6V717BaImQkicPt
+ 6Zyheail05Eg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="175018357"
 X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
-   d="scan'208";a="239146294"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:46:39 -0800
-IronPort-SDR: cRYwjT31cA8/cUABIyccbsyPlWPsN6SMJF0v6XSx/SAXXKBBT9/yNFE6jKQQvnd7u3YjEgGDE3
- qXEcsdOi9LCQ==
+   d="scan'208";a="175018357"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:55:44 -0800
+IronPort-SDR: WVLjkAa0469ZD84Vmr7HfBitILcZcwP+RB0lmkPmlq4wlP/uzoCcLeuj9ZoebEo8x1KWD2+m95
+ MADmlj35EkiA==
 X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
-   d="scan'208";a="380126020"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:46:37 -0800
-Received: by lahna (sSMTP sendmail emulation); Fri, 08 Jan 2021 15:46:35 +0200
-Date:   Fri, 8 Jan 2021 15:46:35 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] pinctrl: intel: Convert capability list to
- features
-Message-ID: <20210108134635.GC968855@lahna.fi.intel.com>
-References: <20210108134005.30048-1-andriy.shevchenko@linux.intel.com>
- <20210108134005.30048-3-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="362337390"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:55:42 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1kxsFw-006CqW-KN; Fri, 08 Jan 2021 15:56:44 +0200
+Date:   Fri, 8 Jan 2021 15:56:44 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Zheng Yongjun <zhengyongjun3@huawei.com>
+Cc:     sathyanarayanan.kuppuswamy@linux.intel.com, andy@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 -next] gpio: wcove: convert comma to semicolon
+Message-ID: <20210108135644.GO4077@smile.fi.intel.com>
+References: <20210108092413.19354-1-zhengyongjun3@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210108134005.30048-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20210108092413.19354-1-zhengyongjun3@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 08, 2021 at 03:40:05PM +0200, Andy Shevchenko wrote:
-> Communities can have features provided in the capability list.
-> Traverse the list and convert to respective features.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Fri, Jan 08, 2021 at 05:24:13PM +0800, Zheng Yongjun wrote:
+> Replace a comma between expression statements by a semicolon.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Pushed to my review and testing queue, thanks!
+
+> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+> ---
+>  drivers/gpio/gpio-wcove.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
+> index b5fbba5a783a..97c5f1d01b62 100644
+> --- a/drivers/gpio/gpio-wcove.c
+> +++ b/drivers/gpio/gpio-wcove.c
+> @@ -434,7 +434,7 @@ static int wcove_gpio_probe(struct platform_device *pdev)
+>  	wg->chip.get_direction = wcove_gpio_get_direction;
+>  	wg->chip.get = wcove_gpio_get;
+>  	wg->chip.set = wcove_gpio_set;
+> -	wg->chip.set_config = wcove_gpio_set_config,
+> +	wg->chip.set_config = wcove_gpio_set_config;
+>  	wg->chip.base = -1;
+>  	wg->chip.ngpio = WCOVE_VGPIO_NUM;
+>  	wg->chip.can_sleep = true;
+> -- 
+> 2.22.0
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
