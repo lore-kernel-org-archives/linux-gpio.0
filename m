@@ -2,165 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43ECDC433DB
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B703C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDE4E2399A
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01068239EB
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbhAHNnO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Jan 2021 08:43:14 -0500
-Received: from mga06.intel.com ([134.134.136.31]:54277 "EHLO mga06.intel.com"
+        id S1726059AbhAHNpg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Jan 2021 08:45:36 -0500
+Received: from mga05.intel.com ([192.55.52.43]:13935 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727860AbhAHNnN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 8 Jan 2021 08:43:13 -0500
-IronPort-SDR: 9GxVB8nSIyNOyvQ7Q+s1nqMuehh4eo+DCaZLMBXAjsVjeLcUbVSzOHqw6ijts8aYK9zGagaK9a
- ShiXLy5TeRZA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="239145659"
+        id S1725816AbhAHNpg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 8 Jan 2021 08:45:36 -0500
+IronPort-SDR: o6Pnh5XI9ORbQ8kQJOhqOX5dYMNd2s5y4Cy6oxmezF8GWO7laTy12VDg4b5VGFSlQrenOIMxYl
+ 71CBBkMW9i9Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="262367724"
 X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
-   d="scan'208";a="239145659"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:40:07 -0800
-IronPort-SDR: v7YZPJkd8zeXbAMGj8oURyax9oeTxNZar7i+M7hKt6UGsvENjJh1a0wShqoWNX+3s2SGBvoU31
- dP7jSwTWlo/g==
-X-ExtLoop1: 1
+   d="scan'208";a="262367724"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:44:55 -0800
+IronPort-SDR: K/FgkxVb1TPkXWsqew2sd35rED4PvOy60sQpxxLA/eHwgmd4rKOfFXzfiQ6Tqw8vByyFivtvOR
+ hCZxJD6swpKg==
 X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
-   d="scan'208";a="388189620"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 08 Jan 2021 05:40:06 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B3496113; Fri,  8 Jan 2021 15:40:05 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org,
+   d="scan'208";a="347355264"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:44:54 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1kxs5U-006CFY-I6; Fri, 08 Jan 2021 15:45:56 +0200
+Date:   Fri, 8 Jan 2021 15:45:56 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/3] pinctrl: intel: Split intel_pinctrl_add_padgroups() for better maintenance
-Date:   Fri,  8 Jan 2021 15:40:03 +0200
-Message-Id: <20210108134005.30048-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.29.2
+Subject: Re: [PATCH v1 4/4] pinctrl: intel: Convert capability list to
+ features
+Message-ID: <20210108134556.GM4077@smile.fi.intel.com>
+References: <20210107190200.41221-1-andriy.shevchenko@linux.intel.com>
+ <20210107190200.41221-4-andriy.shevchenko@linux.intel.com>
+ <20210108070722.GX968855@lahna.fi.intel.com>
+ <CAHp75Vcckax+HYH1aYDG0tsgiL_1xXLqRW-8Xjq4+-OhLWXaLA@mail.gmail.com>
+ <CAHp75VcPM0UH6iaCdbakgdaxM7CaJax8-kVLMzYvAeFfRYgdng@mail.gmail.com>
+ <20210108124643.GA968855@lahna.fi.intel.com>
+ <CAHp75VcrWhnM5xFEwhK8yPAJ9yLeuGMZh7Xr0V8_x7Jyvgvu2g@mail.gmail.com>
+ <20210108131138.GB968855@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210108131138.GB968855@lahna.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently the intel_pinctrl_add_padgroups() is twisted a bit due to
-a different nature of the pin control hardware implementations. Thus,
-its maintenance is a bit hard. Besides that some pieces of code
-are run on all hardware and make this code slightly inefficient,
-and moreover, validation for one case is done in a wrong time in a flow
-which makes it even slower.
+On Fri, Jan 08, 2021 at 03:11:38PM +0200, Mika Westerberg wrote:
+> On Fri, Jan 08, 2021 at 02:51:09PM +0200, Andy Shevchenko wrote:
+> > On Fri, Jan 8, 2021 at 2:46 PM Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
 
-Split intel_pinctrl_add_padgroups() to two functions, one per hardware
-implementation, for better maintenance and readability.
+...
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
-v2: added tag (Mika)
- drivers/pinctrl/intel/pinctrl-intel.c | 60 ++++++++++++++++++---------
- 1 file changed, 40 insertions(+), 20 deletions(-)
+> > What about solving the issue when it comes?
+> 
+> Up to you :)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index b6ef1911c1dd..ae13e4390935 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1321,34 +1321,19 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	return 0;
- }
- 
--static int intel_pinctrl_add_padgroups(struct intel_pinctrl *pctrl,
--				       struct intel_community *community)
-+static int intel_pinctrl_add_padgroups_by_gpps(struct intel_pinctrl *pctrl,
-+					       struct intel_community *community)
- {
- 	struct intel_padgroup *gpps;
--	unsigned int npins = community->npins;
- 	unsigned int padown_num = 0;
--	size_t ngpps, i;
--
--	if (community->gpps)
--		ngpps = community->ngpps;
--	else
--		ngpps = DIV_ROUND_UP(community->npins, community->gpp_size);
-+	size_t i, ngpps = community->ngpps;
- 
- 	gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
- 	if (!gpps)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < ngpps; i++) {
--		if (community->gpps) {
--			gpps[i] = community->gpps[i];
--		} else {
--			unsigned int gpp_size = community->gpp_size;
--
--			gpps[i].reg_num = i;
--			gpps[i].base = community->pin_base + i * gpp_size;
--			gpps[i].size = min(gpp_size, npins);
--			npins -= gpps[i].size;
--		}
-+		gpps[i] = community->gpps[i];
- 
- 		if (gpps[i].size > 32)
- 			return -EINVAL;
-@@ -1366,6 +1351,38 @@ static int intel_pinctrl_add_padgroups(struct intel_pinctrl *pctrl,
- 				break;
- 		}
- 
-+		gpps[i].padown_num = padown_num;
-+		padown_num += DIV_ROUND_UP(gpps[i].size * 4, 32);
-+	}
-+
-+	community->gpps = gpps;
-+
-+	return 0;
-+}
-+
-+static int intel_pinctrl_add_padgroups_by_size(struct intel_pinctrl *pctrl,
-+					       struct intel_community *community)
-+{
-+	struct intel_padgroup *gpps;
-+	unsigned int npins = community->npins;
-+	unsigned int padown_num = 0;
-+	size_t i, ngpps = DIV_ROUND_UP(npins, community->gpp_size);
-+
-+	if (community->gpp_size > 32)
-+		return -EINVAL;
-+
-+	gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
-+	if (!gpps)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ngpps; i++) {
-+		unsigned int gpp_size = community->gpp_size;
-+
-+		gpps[i].reg_num = i;
-+		gpps[i].base = community->pin_base + i * gpp_size;
-+		gpps[i].size = min(gpp_size, npins);
-+		npins -= gpps[i].size;
-+
- 		gpps[i].padown_num = padown_num;
- 
- 		/*
-@@ -1483,7 +1500,10 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
- 		community->regs = regs;
- 		community->pad_regs = regs + padbar;
- 
--		ret = intel_pinctrl_add_padgroups(pctrl, community);
-+		if (community->gpps)
-+			ret = intel_pinctrl_add_padgroups_by_gpps(pctrl, community);
-+		else
-+			ret = intel_pinctrl_add_padgroups_by_size(pctrl, community);
- 		if (ret)
- 			return ret;
- 	}
+I have sent v2 with dropped patch 3 and added your tag for patches 1 and 2.
+Please, review the patch 3 which is basically kept unchanged.
+Thanks!
+
+> > > IMHO it is always good idea to avoid possible infinite loops
+> > > especially in the kernel space.
+> > 
+> > But do PCI / xHCI (the first two that came to my mind) have something like this?
+> 
+> Yes they do, at least PCI. I would expect xHCI to have it too as the
+> hardware can be hot removed in the middle of a capability list walk
+> returning 1's on subsequent reads.
+
+Good to know.
+
 -- 
-2.29.2
+With Best Regards,
+Andy Shevchenko
+
 
