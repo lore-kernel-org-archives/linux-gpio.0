@@ -2,118 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9755CC4332B
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAD3C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E697239EB
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB283239ED
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jan 2021 13:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbhAHNrc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Jan 2021 08:47:32 -0500
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:34385 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbhAHNrc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2021 08:47:32 -0500
-Received: by mail-lf1-f51.google.com with SMTP id o19so23069653lfo.1;
-        Fri, 08 Jan 2021 05:47:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+x0U9gnubjMksUUz9hbmIwV7xJqnGYTXvOaJN2bErmc=;
-        b=QG3ty2PCDxRtOR2mxkp/NGnoe26zPqsmA5kkWGedHeaGzmdTUrLbUdZtVVYcyqwCip
-         gg6RV48Bl1X8XrMGsW0damjOVgLLLDmVMNfH49ttE5DoNRmFycKFar5/f9rLzsYS32sT
-         tQOsbbwPnFLZN3f4alhPYP4GvgaW8/RiZkvpKEitSXNUTvI1sOSEc8lYdrqkVfRLGnel
-         uaoe/MTg0mZzdTrCzf8jqFwxDEQAID0Ms5kzHeqMYprazA/GvcXqm2VAwPgickJ/vWEx
-         KIZd7Docgb0OmlvGZA4S9cEKt53adx64m04ci70qiDxWOaWTSud49kdl094SQ+4b/+tO
-         p4rQ==
-X-Gm-Message-State: AOAM530ltY2jstDqqbSIlLZ24sd836/Xj1WDxgg0cwjqg+luRx7wdBWg
-        BQmnntfpUvSRPcGcaIM08FQ=
-X-Google-Smtp-Source: ABdhPJzmVghMpIe305ILIR0E7GrTBajPwttVkPIpoBA4YIcTQBEZ6Tl2OPTRdU85zO0Mb2fyzVU3rg==
-X-Received: by 2002:a19:381c:: with SMTP id f28mr1593368lfa.339.1610113609383;
-        Fri, 08 Jan 2021 05:46:49 -0800 (PST)
-Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
-        by smtp.gmail.com with ESMTPSA id j20sm2149802ljc.47.2021.01.08.05.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 05:46:48 -0800 (PST)
-Date:   Fri, 8 Jan 2021 15:46:42 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH 15/15] MAINTAINERS: Add ROHM BD71815AGW
-Message-ID: <8b2cbbb783607500af5bbc529e3b17411027f1ad.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1727904AbhAHNs0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Jan 2021 08:48:26 -0500
+Received: from mga06.intel.com ([134.134.136.31]:54524 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727450AbhAHNs0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 8 Jan 2021 08:48:26 -0500
+IronPort-SDR: 4seF5yqC4uI5T0+hSx5zh//WP8KR+oOYxd9uj1fkIxNDX55cdR7206E8IPB5mo2aTLgZP2Lmoo
+ 93DOikpT1Sfw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="239146294"
+X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
+   d="scan'208";a="239146294"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:46:39 -0800
+IronPort-SDR: cRYwjT31cA8/cUABIyccbsyPlWPsN6SMJF0v6XSx/SAXXKBBT9/yNFE6jKQQvnd7u3YjEgGDE3
+ qXEcsdOi9LCQ==
+X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
+   d="scan'208";a="380126020"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 05:46:37 -0800
+Received: by lahna (sSMTP sendmail emulation); Fri, 08 Jan 2021 15:46:35 +0200
+Date:   Fri, 8 Jan 2021 15:46:35 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 3/3] pinctrl: intel: Convert capability list to
+ features
+Message-ID: <20210108134635.GC968855@lahna.fi.intel.com>
+References: <20210108134005.30048-1-andriy.shevchenko@linux.intel.com>
+ <20210108134005.30048-3-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20210108134005.30048-3-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add maintainer entries for ROHM BD71815AGW drivers.
-New regulator and GPIO drivers were introduced for these PMICs.
+On Fri, Jan 08, 2021 at 03:40:05PM +0200, Andy Shevchenko wrote:
+> Communities can have features provided in the capability list.
+> Traverse the list and convert to respective features.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 281de213ef47..eac1875ec788 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15102,18 +15102,21 @@ F:	Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
- F:	Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
- F:	drivers/clk/clk-bd718x7.c
- F:	drivers/gpio/gpio-bd70528.c
-+F:	drivers/gpio/gpio-bd71815.c
- F:	drivers/gpio/gpio-bd71828.c
- F:	drivers/mfd/rohm-bd70528.c
- F:	drivers/mfd/rohm-bd71828.c
- F:	drivers/mfd/rohm-bd718x7.c
- F:	drivers/power/supply/bd70528-charger.c
- F:	drivers/regulator/bd70528-regulator.c
-+F:	drivers/regulator/bd71815-regulator.c
- F:	drivers/regulator/bd71828-regulator.c
- F:	drivers/regulator/bd718x7-regulator.c
- F:	drivers/regulator/rohm-regulator.c
- F:	drivers/rtc/rtc-bd70528.c
- F:	drivers/watchdog/bd70528_wdt.c
- F:	include/linux/mfd/rohm-bd70528.h
-+F:	include/linux/mfd/rohm-bd71815.h
- F:	include/linux/mfd/rohm-bd71828.h
- F:	include/linux/mfd/rohm-bd718x7.h
- F:	include/linux/mfd/rohm-generic.h
--- 
-2.25.4
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
