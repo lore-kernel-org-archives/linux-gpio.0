@@ -2,69 +2,71 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4758C4332D
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EE4C4332D
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 850B621744
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C6E921744
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732093AbhAKNfN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Jan 2021 08:35:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54016 "EHLO
+        id S1732829AbhAKNfy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Jan 2021 08:35:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731259AbhAKNfL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2021 08:35:11 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 322E6C061786
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2021 05:34:31 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id y17so16423177wrr.10
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2021 05:34:31 -0800 (PST)
+        with ESMTP id S1732031AbhAKNfx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2021 08:35:53 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A688AC0617A3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2021 05:34:36 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id a12so16415529wrv.8
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2021 05:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7t04GSheOQRVVcWG8j8bszkBKGmuW9GgLM9ZzWToJtQ=;
-        b=kU2GLLLWA/Onhu5+ZM+h7CjAWv4doxg60fgLsMjB1Uvj99xmx5xfdq0IEd9d03hpDW
-         SrBL/hM6su34OZ8OYU64sir10YpVR9VbR5a8F4NbY1yVUdgss32YnNK45B05I8xuwYaz
-         ypYpnND7GCn+OXih02iTIfiMb1uQAIrf0z6NBCqeOn/UXY0Ya2FYGWXqEqlJkUSekKMY
-         VtSunWm4eKxaeB3QOTGcdYoHQp448eHhd5CJdvmMkMyC7QugzGpOLGIpV7vJZRbKkx0D
-         yLTUVsbmXNdvqv+yLLUs8nGJPySgbmQq1KTWFWSq9kshkbljwrhMsDUQ4WYh7HPxhOft
-         yKfg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=9PWAjj6KAmmN1RPUy2sMDvaGFXGluCDaXTYP2i4wwX0=;
+        b=Z7HSVy7wSFFnfEuvJQpJpxt8KhP1EhF9bXDY7qu55pIXBBxvPw6Scb2q8K9kdsxW4C
+         Jhb3KZavw1sRraNH3TnliiJU/7o9PgpmKDUJHQeBxV41RCxW06EvaB1If+7e6uvJ4+Ia
+         zO6evyH7bsNIfKrtmra0jYGh75PSRIHP1YtTgc45CEQa2VglXMjeGXohrwlJg/lZMpPd
+         COlpDzvpYz0RlnTxySaz4AskHY4iotJnpAhR2ih1jf09pypQCJuf9i/QtnDLEXl8P4Au
+         anW+6Qv0yfa9u9NRM91HSbq1JhU3kN2yRYal0MV3KrqEtGFXiY3PiHlag4UMEcBKup/G
+         mq4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7t04GSheOQRVVcWG8j8bszkBKGmuW9GgLM9ZzWToJtQ=;
-        b=kENGC5csz/bahZxCUFOl5s9kQ9+h7clFuVJX1XpJxvZ43WE5RQkLsiaCUN0RFhCc9Q
-         9897rT1pYtFff078dBGqtvMK8cRUsRV9Cf2o6SQ/8jlhKewXd718Ooh8WQcInxp5xcWW
-         YvmU5x7QQtlIdyC/Lmsx5bsqkTTwxQUzXtlO50YnZfMLXZgXDCEyFQn5pYgB1PYCpbIr
-         nqB+D0kFEHeqgCb/RKL5q6lxpLE+UtqlRbasZnyPkZAz/0FFVJbxmEzJmaSpL939TKHo
-         E9lJi+/0snhmTOLc/yrp1OrHudSmUX/2mo8quWSQSIfHsVlbKzYLkBP5XRQZchW/dDxd
-         RtLA==
-X-Gm-Message-State: AOAM531gY9fYz1uXLwfcuHNlxCixEN6OsVerX5A9zaBdIS2ewckLNCfF
-        AdJKvLO8vMQy/dbG1I2PySeybg==
-X-Google-Smtp-Source: ABdhPJxtv4KXLEbVBE+A3naBUw+pHH7EHlgrCcJOAa8NZr9vUvtP/rJwv1iHyoeIP9unz8YdL6Z9eQ==
-X-Received: by 2002:adf:f58a:: with SMTP id f10mr17049958wro.338.1610372070002;
-        Mon, 11 Jan 2021 05:34:30 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9PWAjj6KAmmN1RPUy2sMDvaGFXGluCDaXTYP2i4wwX0=;
+        b=rLOeFkCsxFRgx9yZAdWmx433tbMkC0W4PBoYi3rA78/OZ7UJfSYUtnxkjJDG33I3bG
+         uMOvHA2vr+oPzyE7ZpPPG1gXv9aI1G7if1wO8iT/FT4zICRHgoWNMcjsB4lU3azbFTJV
+         HllHlSWkV880W11I0/qT1uzuvS86Y6AreRJ+miwSuwD6UFQOg5sAlaCfrNCncqOVmCBx
+         /3sesFN2lMMRhqgWEne2CMq9G+itFRvzkY8xbWV5a+0IU44smI5mRQnFfmwVrcBmGOK2
+         EcsG5zO7PtGPTjXFlIWHj7zpke4rw032IBRJp0+VkwGbWyPLTeyLPidwUdWOqSn4oeqT
+         FypA==
+X-Gm-Message-State: AOAM530zF7kHVbLu2DhV8r9PBUHUwQuwzrx/EWBy1MjML1UORORQw07I
+        tYtXbKX3tAa+psmKQki4o/BOpg==
+X-Google-Smtp-Source: ABdhPJzpJg6wlL75/yCRIRrsLd5gU/jEUxO1TW30hQI2tzqeH1+/2awa5FolJYc91yOrQ4L41tKaLg==
+X-Received: by 2002:adf:e452:: with SMTP id t18mr15683256wrm.177.1610372075496;
+        Mon, 11 Jan 2021 05:34:35 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id m11sm21456741wmi.16.2021.01.11.05.34.29
+        by smtp.gmail.com with ESMTPSA id m11sm21456741wmi.16.2021.01.11.05.34.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 05:34:29 -0800 (PST)
+        Mon, 11 Jan 2021 05:34:34 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [libgpiod][PATCH 0/6] treewide: remove more cruft and 
-Date:   Mon, 11 Jan 2021 14:34:20 +0100
-Message-Id: <20210111133426.22040-1-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH 5/6] bindings: cxx: line: reorder bias mapping entries
+Date:   Mon, 11 Jan 2021 14:34:25 +0100
+Message-Id: <20210111133426.22040-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20210111133426.22040-1-brgl@bgdev.pl>
+References: <20210111133426.22040-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -73,50 +75,31 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This is another batch of improvements to libgpiod before we overhaul the
-data structure model.
+Reorder the definitions so that they match the order in which they're
+declared in the class. This is cosmetic only.
 
-The last patch adds the kernel uapi header to the repository so that we
-no longer depend on its presence on the host system.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ bindings/cxx/line.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Bartosz Golaszewski (6):
-  treewide: remove helpers for opening chips by name & number
-  treewide: simplify the active-low line property
-  treewide: rename BIAS_AS_IS to BIAS_NONE
-  treewide: make drive settings an enum
-  bindings: cxx: line: reorder bias mapping entries
-  core: add the kernel uapi header to the repository
-
- bindings/cxx/chip.cpp                  |  41 +-
- bindings/cxx/examples/gpioinfocxx.cpp  |   3 +-
- bindings/cxx/gpiod.hpp                 |  57 +--
- bindings/cxx/line.cpp                  |  28 +-
- bindings/cxx/tests/tests-chip.cpp      |  97 +----
- bindings/cxx/tests/tests-event.cpp     |  14 +-
- bindings/cxx/tests/tests-iter.cpp      |   2 +-
- bindings/cxx/tests/tests-line.cpp      |  93 ++---
- bindings/python/examples/gpioinfo.py   |   4 +-
- bindings/python/gpiodmodule.c          | 167 +++-----
- bindings/python/tests/gpiod_py_test.py | 173 ++++----
- configure.ac                           |  12 +-
- include/gpiod.h                        |  65 +--
- lib/Makefile.am                        |   2 +-
- lib/core.c                             |  29 +-
- lib/helpers.c                          |  57 ---
- lib/uapi/gpio.h                        | 522 +++++++++++++++++++++++++
- tests/tests-chip.c                     |  41 --
- tests/tests-line.c                     | 100 ++---
- tools/gpiodetect.c                     |   2 +-
- tools/gpiofind.c                       |   2 +-
- tools/gpioget.c                        |   2 +-
- tools/gpioinfo.c                       |  28 +-
- tools/gpiomon.c                        |   2 +-
- tools/gpioset.c                        |   2 +-
- tools/tools-common.c                   |  57 +++
- tools/tools-common.h                   |   3 +
- 27 files changed, 903 insertions(+), 702 deletions(-)
- create mode 100644 lib/uapi/gpio.h
-
+diff --git a/bindings/cxx/line.cpp b/bindings/cxx/line.cpp
+index 04b15f7..cb9b6dc 100644
+--- a/bindings/cxx/line.cpp
++++ b/bindings/cxx/line.cpp
+@@ -20,10 +20,10 @@ const ::std::map<int, int> drive_mapping = {
+ };
+ 
+ const ::std::map<int, int> bias_mapping = {
++	{ GPIOD_LINE_BIAS_NONE,		line::BIAS_NONE, },
++	{ GPIOD_LINE_BIAS_DISABLE,	line::BIAS_DISABLE, },
+ 	{ GPIOD_LINE_BIAS_PULL_UP,	line::BIAS_PULL_UP, },
+ 	{ GPIOD_LINE_BIAS_PULL_DOWN,	line::BIAS_PULL_DOWN, },
+-	{ GPIOD_LINE_BIAS_DISABLE,	line::BIAS_DISABLE, },
+-	{ GPIOD_LINE_BIAS_NONE,		line::BIAS_NONE, },
+ };
+ 
+ } /* namespace */
 -- 
 2.29.1
 
