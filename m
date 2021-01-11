@@ -2,107 +2,321 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1ACC4332B
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28453C43331
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66ECE21534
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09616221EC
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jan 2021 13:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbhAKNLz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Jan 2021 08:11:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730752AbhAKNLy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 11 Jan 2021 08:11:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E240122AAB;
-        Mon, 11 Jan 2021 13:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610370673;
-        bh=AmODotHhHqE5rQ7jrjw/zpMa0EF2YxLtNlbdQq2dKFY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jPsLXfVKxGo3XvOdA/kWPru4HQo3uHlHD7WTD7Z+jg4EeHklB+xudWVRvumR8ZEjp
-         IH1MR0hhEoUQeQCROZC/qInMMcaTVRe39vLogAayU40d8kFEh0Hr0KdmxxiZHciE8i
-         Bi+Bvg0z4iUKqYnCcxQrtOE0mairMCBQ3xKaMgTVQQg/kxtVMx5oS28GgyURVl45Ry
-         ih7dP2NS4jhasdDwjWmdGYfRc84rctt53Ae9aTrlN3GsatNGHdETOt26lJljgOY0Rg
-         xfTX0bdwO3EZqK7i5iS4JI8GqCQIsDfGYFK3iW5wLuh9f8E2VkF0kncAL6/yZzU6gm
-         X9FeLFZdmtlWA==
-Date:   Mon, 11 Jan 2021 13:10:40 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
-        martin.botka@somainline.org, phone-devel@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/2] pinctrl: Add driver for Awinic AW9523/B I2C GPIO
- Expander
-Message-ID: <20210111131040.GA4728@sirena.org.uk>
-References: <20210109140204.151340-1-angelogioacchino.delregno@somainline.org>
- <20210109140204.151340-2-angelogioacchino.delregno@somainline.org>
- <CACRpkdbETKnhgR2-T+s3ChY4v-C5ErdPEp2WcMSZHzJ=O-fHig@mail.gmail.com>
- <111b918d-2b43-be81-2dbf-e984750b0ef7@somainline.org>
- <CACRpkdZXgN91jKBDvf=P5_6ObOaacQa2PGL3-jP1gBW__ZyOaA@mail.gmail.com>
- <744125a7-ffb6-a3f5-70cb-2ab48fcf31b8@somainline.org>
+        id S1732322AbhAKNfR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Jan 2021 08:35:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732336AbhAKNfP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2021 08:35:15 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9514AC06179F
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2021 05:34:34 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id y17so16423383wrr.10
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2021 05:34:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=XoF0/MvdOgxi1bpezX0nEQo+7jz9HVrhGliuxhhSz7s=;
+        b=2KF1T1T99AeR9jS5CabfOGYw6ttvtw63unnDtTwZu+mFTEOYrZfbxfqJtG7Oc30qd8
+         9t0W0QAtTLqz1rnXzQZ89d6EjeOkCs9AeeHXGH9c+l274ZKI3IpRRrCvA+fQw/rIYjyK
+         lQ3Yedlo7W7LbpQukLMAl5sFPwHSgQSACMHYmV+35BRz5Eir/PjtvHDnEZWPXQLKv83A
+         +Fxtp9o0rOHJog0b7OEb+SqO4SXOWNCQ2ckw/2bMgtxK8jsY1y4vhZQCsbZEf89mEU6N
+         RhPAtVQ0FgziG3Uph8dwqy2bVdJP5UWkx/9m+k0lf0O73jFR2Mcf/cNxD2nhkBmGOagn
+         LDxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=XoF0/MvdOgxi1bpezX0nEQo+7jz9HVrhGliuxhhSz7s=;
+        b=HgmfzmNpdxq2o+8QW1O/qhefTIJj/w5wtK7qbhsgoqEftVKaAYuVbNv3kUVpGfL0dp
+         MqRLCbxgW5pAOaTANgLza/nMwwORIcIIouEM3B3re8Mat0x4cXh13ue6810bBhrQboYe
+         0y/KKV2LiPuqCQSWX9w4S4gueVpbLYivrvTpe56lLL9b7LnVq8sFpLy3j3PPq3M5+czJ
+         iPnOGkO5B5xs9fv4mWHATVEzKKVSFj93sb8V6/LcksNd4k3ZUDGAXIMdw4n6nX3aunjI
+         EJY/DPPE77ExgmGj27UvHQNSuwYmmf2nU/LrprItFhgvPsyXmLxt6wR+ofEy9ZLCnwLe
+         ee+Q==
+X-Gm-Message-State: AOAM532cBIyW0V/eFmuZQSjtF85iOD8cAfKD7yZnJDBkiB0BmZFYERP9
+        JdqM1uflEt4rQ/FbYPYGxWJB6A==
+X-Google-Smtp-Source: ABdhPJz3mDlwqhtQgBYo17p6FvFQVTN1yFloTz8dxt3EIevzXnmv4nW6YpkFd+p39qsX4npjJMnBcw==
+X-Received: by 2002:a5d:60ca:: with SMTP id x10mr16800669wrt.242.1610372073388;
+        Mon, 11 Jan 2021 05:34:33 -0800 (PST)
+Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
+        by smtp.gmail.com with ESMTPSA id m11sm21456741wmi.16.2021.01.11.05.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jan 2021 05:34:32 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [libgpiod][PATCH 3/6] treewide: rename BIAS_AS_IS to BIAS_NONE
+Date:   Mon, 11 Jan 2021 14:34:23 +0100
+Message-Id: <20210111133426.22040-4-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20210111133426.22040-1-brgl@bgdev.pl>
+References: <20210111133426.22040-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Content-Disposition: inline
-In-Reply-To: <744125a7-ffb6-a3f5-70cb-2ab48fcf31b8@somainline.org>
-X-Cookie: Too much is not enough.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+When inspecting the current bias setting of a GPIO line, the AS_IS name
+of one of the possible values really means that there's no bias so it
+should be renamed to NONE for clarity.
 
-On Sun, Jan 10, 2021 at 03:32:47PM +0100, AngeloGioacchino Del Regno wrote:
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ bindings/cxx/gpiod.hpp                 |  2 +-
+ bindings/cxx/line.cpp                  |  2 +-
+ bindings/cxx/tests/tests-line.cpp      |  8 ++++----
+ bindings/python/gpiodmodule.c          | 10 +++++-----
+ bindings/python/tests/gpiod_py_test.py |  6 +++---
+ include/gpiod.h                        |  4 ++--
+ lib/core.c                             |  2 +-
+ tests/tests-line.c                     | 12 ++++++------
+ 8 files changed, 23 insertions(+), 23 deletions(-)
 
-> Then, the set_bit/clear_bit in aw9523_irq_mask(), aw9523_irq_unmask were
-> replaced with calls to regmap_update_bits_async, example:
+diff --git a/bindings/cxx/gpiod.hpp b/bindings/cxx/gpiod.hpp
+index 8b4a8f9..fb675fc 100644
+--- a/bindings/cxx/gpiod.hpp
++++ b/bindings/cxx/gpiod.hpp
+@@ -486,7 +486,7 @@ public:
+ 	 * @brief Possible bias settings.
+ 	 */
+ 	enum : int {
+-		BIAS_AS_IS = 1,
++		BIAS_NONE = 1,
+ 		/**< Line's bias state is unknown. */
+ 		BIAS_DISABLE,
+ 		/**< Line's internal bias is disabled. */
+diff --git a/bindings/cxx/line.cpp b/bindings/cxx/line.cpp
+index 5a907db..19c974d 100644
+--- a/bindings/cxx/line.cpp
++++ b/bindings/cxx/line.cpp
+@@ -17,7 +17,7 @@ const ::std::map<int, int> bias_mapping = {
+ 	{ GPIOD_LINE_BIAS_PULL_UP,	line::BIAS_PULL_UP, },
+ 	{ GPIOD_LINE_BIAS_PULL_DOWN,	line::BIAS_PULL_DOWN, },
+ 	{ GPIOD_LINE_BIAS_DISABLE,	line::BIAS_DISABLE, },
+-	{ GPIOD_LINE_BIAS_AS_IS,	line::BIAS_AS_IS, },
++	{ GPIOD_LINE_BIAS_NONE,		line::BIAS_NONE, },
+ };
+ 
+ } /* namespace */
+diff --git a/bindings/cxx/tests/tests-line.cpp b/bindings/cxx/tests/tests-line.cpp
+index 3c7ea39..2a6cdf8 100644
+--- a/bindings/cxx/tests/tests-line.cpp
++++ b/bindings/cxx/tests/tests-line.cpp
+@@ -35,7 +35,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
+ 		REQUIRE_FALSE(line.is_used());
+ 		REQUIRE_FALSE(line.is_open_drain());
+ 		REQUIRE_FALSE(line.is_open_source());
+-		REQUIRE(line.bias() == ::gpiod::line::BIAS_AS_IS);
++		REQUIRE(line.bias() == ::gpiod::line::BIAS_NONE);
+ 	}
+ 
+ 	SECTION("exported line")
+@@ -54,7 +54,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
+ 		REQUIRE(line.is_used());
+ 		REQUIRE_FALSE(line.is_open_drain());
+ 		REQUIRE_FALSE(line.is_open_source());
+-		REQUIRE(line.bias() == ::gpiod::line::BIAS_AS_IS);
++		REQUIRE(line.bias() == ::gpiod::line::BIAS_NONE);
+ 	}
+ 
+ 	SECTION("exported line with flags")
+@@ -75,7 +75,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
+ 		REQUIRE(line.is_used());
+ 		REQUIRE(line.is_open_drain());
+ 		REQUIRE_FALSE(line.is_open_source());
+-		REQUIRE(line.bias() == ::gpiod::line::BIAS_AS_IS);
++		REQUIRE(line.bias() == ::gpiod::line::BIAS_NONE);
+ 	}
+ 
+ 	SECTION("exported open source line")
+@@ -95,7 +95,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
+ 		REQUIRE(line.is_used());
+ 		REQUIRE_FALSE(line.is_open_drain());
+ 		REQUIRE(line.is_open_source());
+-		REQUIRE(line.bias() == ::gpiod::line::BIAS_AS_IS);
++		REQUIRE(line.bias() == ::gpiod::line::BIAS_NONE);
+ 	}
+ 
+ 	SECTION("exported bias disable line")
+diff --git a/bindings/python/gpiodmodule.c b/bindings/python/gpiodmodule.c
+index b48a83a..228ac73 100644
+--- a/bindings/python/gpiodmodule.c
++++ b/bindings/python/gpiodmodule.c
+@@ -68,7 +68,7 @@ enum {
+ };
+ 
+ enum {
+-	gpiod_BIAS_AS_IS = 1,
++	gpiod_BIAS_NONE = 1,
+ 	gpiod_BIAS_DISABLE,
+ 	gpiod_BIAS_PULL_UP,
+ 	gpiod_BIAS_PULL_DOWN,
+@@ -374,9 +374,9 @@ static PyObject *gpiod_Line_bias(gpiod_LineObject *self,
+ 		return Py_BuildValue("I", gpiod_BIAS_PULL_DOWN);
+ 	case GPIOD_LINE_BIAS_DISABLE:
+ 		return Py_BuildValue("I", gpiod_BIAS_DISABLE);
+-	case GPIOD_LINE_BIAS_AS_IS:
++	case GPIOD_LINE_BIAS_NONE:
+ 	default:
+-		return Py_BuildValue("I", gpiod_BIAS_AS_IS);
++		return Py_BuildValue("I", gpiod_BIAS_NONE);
+ 	}
+ }
+ 
+@@ -2527,8 +2527,8 @@ static gpiod_ConstDescr gpiod_ConstList[] = {
+ 	},
+ 	{
+ 		.typeobj = &gpiod_LineType,
+-		.name = "BIAS_AS_IS",
+-		.val = gpiod_BIAS_AS_IS,
++		.name = "BIAS_NONE",
++		.val = gpiod_BIAS_NONE,
+ 	},
+ 	{
+ 		.typeobj = &gpiod_LineType,
+diff --git a/bindings/python/tests/gpiod_py_test.py b/bindings/python/tests/gpiod_py_test.py
+index 3093a1c..d9521de 100755
+--- a/bindings/python/tests/gpiod_py_test.py
++++ b/bindings/python/tests/gpiod_py_test.py
+@@ -241,7 +241,7 @@ class LineInfo(MockupTestCase):
+             self.assertTrue(line.is_requested())
+             self.assertTrue(line.is_open_drain())
+             self.assertFalse(line.is_open_source())
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_AS_IS)
++            self.assertEqual(line.bias(), gpiod.Line.BIAS_NONE)
+ 
+     def test_exported_open_drain_line(self):
+         with gpiod.Chip(mockup.chip_path(0)) as chip:
+@@ -259,7 +259,7 @@ class LineInfo(MockupTestCase):
+             self.assertTrue(line.is_requested())
+             self.assertTrue(line.is_open_drain())
+             self.assertFalse(line.is_open_source())
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_AS_IS)
++            self.assertEqual(line.bias(), gpiod.Line.BIAS_NONE)
+ 
+     def test_exported_open_source_line(self):
+         with gpiod.Chip(mockup.chip_path(0)) as chip:
+@@ -277,7 +277,7 @@ class LineInfo(MockupTestCase):
+             self.assertTrue(line.is_requested())
+             self.assertFalse(line.is_open_drain())
+             self.assertTrue(line.is_open_source())
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_AS_IS)
++            self.assertEqual(line.bias(), gpiod.Line.BIAS_NONE)
+ 
+     def test_exported_bias_disable_line(self):
+         with gpiod.Chip(mockup.chip_path(0)) as chip:
+diff --git a/include/gpiod.h b/include/gpiod.h
+index 75da84c..18017d5 100644
+--- a/include/gpiod.h
++++ b/include/gpiod.h
+@@ -284,7 +284,7 @@ enum {
+  * @brief Possible internal bias settings.
+  */
+ enum {
+-	GPIOD_LINE_BIAS_AS_IS = 1,
++	GPIOD_LINE_BIAS_NONE = 1,
+ 	/**< The internal bias state is unknown. */
+ 	GPIOD_LINE_BIAS_DISABLE,
+ 	/**< The internal bias is disabled. */
+@@ -337,7 +337,7 @@ bool gpiod_line_is_active_low(struct gpiod_line *line) GPIOD_API;
+  * @brief Read the GPIO line bias setting.
+  * @param line GPIO line object.
+  * @return Returns GPIOD_LINE_BIAS_PULL_UP, GPIOD_LINE_BIAS_PULL_DOWN,
+- *         GPIOD_LINE_BIAS_DISABLE or GPIOD_LINE_BIAS_AS_IS.
++ *         GPIOD_LINE_BIAS_DISABLE or GPIOD_LINE_BIAS_NONE.
+  */
+ int gpiod_line_bias(struct gpiod_line *line) GPIOD_API;
+ 
+diff --git a/lib/core.c b/lib/core.c
+index c6fb474..60b39c6 100644
+--- a/lib/core.c
++++ b/lib/core.c
+@@ -485,7 +485,7 @@ int gpiod_line_bias(struct gpiod_line *line)
+ 	if (line->info_flags & GPIOLINE_FLAG_BIAS_PULL_DOWN)
+ 		return GPIOD_LINE_BIAS_PULL_DOWN;
+ 
+-	return GPIOD_LINE_BIAS_AS_IS;
++	return GPIOD_LINE_BIAS_NONE;
+ }
+ 
+ bool gpiod_line_is_used(struct gpiod_line *line)
+diff --git a/tests/tests-line.c b/tests/tests-line.c
+index d6264af..07d5601 100644
+--- a/tests/tests-line.c
++++ b/tests/tests-line.c
+@@ -418,7 +418,7 @@ GPIOD_TEST_CASE(set_flags_bias, 0, { 8 })
+ 	ret = gpiod_line_request_input(line, GPIOD_TEST_CONSUMER);
+ 	g_assert_cmpint(ret, ==, 0);
+ 	gpiod_test_return_if_failed();
+-	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_NONE);
+ 
+ 	ret = gpiod_line_set_flags(line,
+ 		GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE);
+@@ -762,7 +762,7 @@ GPIOD_TEST_CASE(misc_flags, 0, { 8 })
+ 	g_assert_false(gpiod_line_is_used(line));
+ 	g_assert_false(gpiod_line_is_open_drain(line));
+ 	g_assert_false(gpiod_line_is_open_source(line));
+-	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_NONE);
+ 
+ 	config.request_type = GPIOD_LINE_REQUEST_DIRECTION_OUTPUT;
+ 	config.consumer = GPIOD_TEST_CONSUMER;
+@@ -775,7 +775,7 @@ GPIOD_TEST_CASE(misc_flags, 0, { 8 })
+ 	g_assert_true(gpiod_line_is_used(line));
+ 	g_assert_true(gpiod_line_is_open_drain(line));
+ 	g_assert_false(gpiod_line_is_open_source(line));
+-	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_NONE);
+ 	g_assert_cmpint(gpiod_line_direction(line), ==,
+ 			GPIOD_LINE_DIRECTION_OUTPUT);
+ 
+@@ -790,7 +790,7 @@ GPIOD_TEST_CASE(misc_flags, 0, { 8 })
+ 	g_assert_true(gpiod_line_is_used(line));
+ 	g_assert_false(gpiod_line_is_open_drain(line));
+ 	g_assert_true(gpiod_line_is_open_source(line));
+-	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_NONE);
+ 	g_assert_cmpint(gpiod_line_direction(line), ==,
+ 			GPIOD_LINE_DIRECTION_OUTPUT);
+ 
+@@ -829,7 +829,7 @@ GPIOD_TEST_CASE(misc_flags_work_together, 0, { 8 })
+ 	g_assert_true(gpiod_line_is_used(line));
+ 	g_assert_true(gpiod_line_is_open_drain(line));
+ 	g_assert_false(gpiod_line_is_open_source(line));
+-	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_NONE);
+ 	g_assert_true(gpiod_line_is_active_low(line));
+ 	g_assert_cmpint(gpiod_line_direction(line), ==,
+ 			GPIOD_LINE_DIRECTION_OUTPUT);
+@@ -846,7 +846,7 @@ GPIOD_TEST_CASE(misc_flags_work_together, 0, { 8 })
+ 	g_assert_true(gpiod_line_is_used(line));
+ 	g_assert_false(gpiod_line_is_open_drain(line));
+ 	g_assert_true(gpiod_line_is_open_source(line));
+-	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_NONE);
+ 	g_assert_true(gpiod_line_is_active_low(line));
+ 
+ 	gpiod_line_release(line);
+-- 
+2.29.1
 
-Why are you trying to use the _async() versions here?  Don't you need
-the I/O to complete synchronously, and what would be the benefit of
-dealing with the complexity of making things async?  The genirq
-framework is definitely going to expect things to be complete before you
-return to it...
-
-Note also that this only really does anything for SPI, I2C doesn't offer
-an aynchronous API.
-
-> <4>[    1.064060]  regmap_i2c_write+0x1c/0x50
-
-regmap will only use spinlocks if you explictly ask it to do so by
-setting fast_io.  You can't use spinlock based locking for your register
-cache if your device is attached via I2C, I2C is a very slow bus and I2C
-controllers will need to sleep.  I'd be very surprised if there were any
-benefit from using a flat cache with such a device frankly, the I/O is
-going to be so slow that any performance gain from using a flat cache is
-lost in the noise.
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/8TlAACgkQJNaLcl1U
-h9By5gf9GtyGBDOfQulWOZeMoyUphHU9j0RN7pN2FPc5guPc3ihmcnQMo0qTp5MD
-+Kt5kV85ysVR/vwhrMyGkfKuvh8mAqXxYxSzPruo6Iy23c2YPasuIGqhJEILrfB4
-sB5JYtsjDXrWqwaFk3jnhmRljiyG6QIeXoQwc9bGmXsV6lcYkFN/WP/w1zUo9j2t
-NfNQ4ao/O1hpRY1+2pgoZ0bjPeo8ck4kow8sDl2KKnNDudJZcTiHLswOQ+rkwrhE
-ekktFQknw8BaqGRFpyxJgM822hHKtKROIIE9u+L/wiDp2d5+RDkVCGw7XLzU6Wcm
-U3XKnRsGfi2xxnO2VzInFjWfAqv6uQ==
-=6nWa
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
