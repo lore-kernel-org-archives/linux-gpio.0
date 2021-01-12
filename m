@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C15C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jan 2021 09:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2691DC433E6
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jan 2021 09:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8516222CE3
+	by mail.kernel.org (Postfix) with ESMTP id D0B1922D2A
 	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jan 2021 09:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405725AbhALJBw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S2405697AbhALJBw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 12 Jan 2021 04:01:52 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:18782 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405659AbhALJBw (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:61665 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389001AbhALJBw (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 12 Jan 2021 04:01:52 -0500
 X-IronPort-AV: E=Sophos;i="5.79,340,1602514800"; 
-   d="scan'208";a="68514074"
+   d="scan'208";a="68731772"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Jan 2021 18:01:19 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Jan 2021 18:01:18 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 18DD64007554;
-        Tue, 12 Jan 2021 18:01:19 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B980A40062D6;
+        Tue, 12 Jan 2021 18:01:18 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -36,9 +36,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v9 07/12] gpio: bd9571mwv: rid of using struct bd9571mwv
-Date:   Tue, 12 Jan 2021 18:01:02 +0900
-Message-Id: <1610442067-7446-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v9 04/12] regulator: bd9571mwv: rid of using struct bd9571mwv
+Date:   Tue, 12 Jan 2021 18:00:59 +0900
+Message-Id: <1610442067-7446-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1610442067-7446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1610442067-7446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -51,87 +51,165 @@ rid of using struct bd9571mwv.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpio/gpio-bd9571mwv.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/regulator/bd9571mwv-regulator.c | 49 +++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
-index abb622c..0e5395f 100644
---- a/drivers/gpio/gpio-bd9571mwv.c
-+++ b/drivers/gpio/gpio-bd9571mwv.c
-@@ -16,8 +16,8 @@
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index e690c2c..42b6a70 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -17,7 +17,7 @@
  #include <linux/mfd/bd9571mwv.h>
  
- struct bd9571mwv_gpio {
-+	struct regmap *regmap;
- 	struct gpio_chip chip;
+ struct bd9571mwv_reg {
 -	struct bd9571mwv *bd;
++	struct regmap *regmap;
+ 
+ 	/* DDR Backup Power */
+ 	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
+@@ -137,26 +137,30 @@ static const struct regulator_desc regulators[] = {
  };
  
- static int bd9571mwv_gpio_get_direction(struct gpio_chip *chip,
-@@ -26,7 +26,7 @@ static int bd9571mwv_gpio_get_direction(struct gpio_chip *chip,
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
- 	int ret, val;
- 
--	ret = regmap_read(gpio->bd->regmap, BD9571MWV_GPIO_DIR, &val);
-+	ret = regmap_read(gpio->regmap, BD9571MWV_GPIO_DIR, &val);
- 	if (ret < 0)
- 		return ret;
- 	if (val & BIT(offset))
-@@ -40,8 +40,7 @@ static int bd9571mwv_gpio_direction_input(struct gpio_chip *chip,
+ #ifdef CONFIG_PM_SLEEP
+-static int bd9571mwv_bkup_mode_read(struct bd9571mwv *bd, unsigned int *mode)
++static int bd9571mwv_bkup_mode_read(struct bd9571mwv_reg *bdreg,
++				    unsigned int *mode)
  {
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
+ 	int ret;
  
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_DIR,
--			   BIT(offset), 0);
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_DIR, BIT(offset), 0);
+-	ret = regmap_read(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
++	ret = regmap_read(bdreg->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
+ 	if (ret) {
+-		dev_err(bd->dev, "failed to read backup mode (%d)\n", ret);
++		dev_err(regmap_get_device(bdreg->regmap),
++			"failed to read backup mode (%d)\n", ret);
+ 		return ret;
+ 	}
  
  	return 0;
  }
-@@ -52,9 +51,9 @@ static int bd9571mwv_gpio_direction_output(struct gpio_chip *chip,
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
  
- 	/* Set the initial value */
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_OUT,
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_OUT,
- 			   BIT(offset), value ? BIT(offset) : 0);
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_DIR,
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_DIR,
- 			   BIT(offset), BIT(offset));
+-static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
++static int bd9571mwv_bkup_mode_write(struct bd9571mwv_reg *bdreg,
++				     unsigned int mode)
+ {
+ 	int ret;
  
- 	return 0;
-@@ -65,7 +64,7 @@ static int bd9571mwv_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
- 	int ret, val;
- 
--	ret = regmap_read(gpio->bd->regmap, BD9571MWV_GPIO_IN, &val);
-+	ret = regmap_read(gpio->regmap, BD9571MWV_GPIO_IN, &val);
- 	if (ret < 0)
+-	ret = regmap_write(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
++	ret = regmap_write(bdreg->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
+ 	if (ret) {
+-		dev_err(bd->dev, "failed to configure backup mode 0x%x (%d)\n",
++		dev_err(regmap_get_device(bdreg->regmap),
++			"failed to configure backup mode 0x%x (%d)\n",
+ 			mode, ret);
+ 		return ret;
+ 	}
+@@ -194,7 +198,7 @@ static ssize_t backup_mode_store(struct device *dev,
+ 	 * Configure DDR Backup Mode, to change the role of the accessory power
+ 	 * switch from a power switch to a wake-up switch, or vice versa
+ 	 */
+-	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
++	ret = bd9571mwv_bkup_mode_read(bdreg, &mode);
+ 	if (ret)
  		return ret;
  
-@@ -77,7 +76,7 @@ static void bd9571mwv_gpio_set(struct gpio_chip *chip, unsigned int offset,
- {
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
+@@ -202,7 +206,7 @@ static ssize_t backup_mode_store(struct device *dev,
+ 	if (bdreg->bkup_mode_enabled)
+ 		mode |= bdreg->bkup_mode_cnt_keepon;
  
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_OUT,
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_OUT,
- 			   BIT(offset), value ? BIT(offset) : 0);
+-	ret = bd9571mwv_bkup_mode_write(bdreg->bd, mode);
++	ret = bd9571mwv_bkup_mode_write(bdreg, mode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -221,7 +225,7 @@ static int bd9571mwv_suspend(struct device *dev)
+ 		return 0;
+ 
+ 	/* Save DDR Backup Mode */
+-	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
++	ret = bd9571mwv_bkup_mode_read(bdreg, &mode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -235,7 +239,7 @@ static int bd9571mwv_suspend(struct device *dev)
+ 	mode |= bdreg->bkup_mode_cnt_keepon;
+ 
+ 	if (mode != bdreg->bkup_mode_cnt_saved)
+-		return bd9571mwv_bkup_mode_write(bdreg->bd, mode);
++		return bd9571mwv_bkup_mode_write(bdreg, mode);
+ 
+ 	return 0;
+ }
+@@ -248,7 +252,7 @@ static int bd9571mwv_resume(struct device *dev)
+ 		return 0;
+ 
+ 	/* Restore DDR Backup Mode */
+-	return bd9571mwv_bkup_mode_write(bdreg->bd, bdreg->bkup_mode_cnt_saved);
++	return bd9571mwv_bkup_mode_write(bdreg, bdreg->bkup_mode_cnt_saved);
  }
  
-@@ -105,9 +104,9 @@ static int bd9571mwv_gpio_probe(struct platform_device *pdev)
+ static const struct dev_pm_ops bd9571mwv_pm  = {
+@@ -268,7 +272,6 @@ static int bd9571mwv_regulator_remove(struct platform_device *pdev)
  
- 	platform_set_drvdata(pdev, gpio);
+ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ {
+-	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
+ 	struct regulator_config config = { };
+ 	struct bd9571mwv_reg *bdreg;
+ 	struct regulator_dev *rdev;
+@@ -279,40 +282,40 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ 	if (!bdreg)
+ 		return -ENOMEM;
  
--	gpio->bd = dev_get_drvdata(pdev->dev.parent);
-+	gpio->regmap = dev_get_regmap(pdev->dev.parent, NULL);
- 	gpio->chip = template_chip;
--	gpio->chip.parent = gpio->bd->dev;
-+	gpio->chip.parent = pdev->dev.parent;
+-	bdreg->bd = bd;
++	bdreg->regmap = dev_get_regmap(pdev->dev.parent, NULL);
  
- 	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
- 	if (ret < 0) {
+ 	platform_set_drvdata(pdev, bdreg);
+ 
+ 	config.dev = &pdev->dev;
+-	config.dev->of_node = bd->dev->of_node;
+-	config.driver_data = bd;
+-	config.regmap = bd->regmap;
++	config.dev->of_node = pdev->dev.parent->of_node;
++	config.driver_data = bdreg;
++	config.regmap = bdreg->regmap;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
+ 		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
+ 					       &config);
+ 		if (IS_ERR(rdev)) {
+-			dev_err(bd->dev, "failed to register %s regulator\n",
++			dev_err(&pdev->dev, "failed to register %s regulator\n",
+ 				pdev->name);
+ 			return PTR_ERR(rdev);
+ 		}
+ 	}
+ 
+ 	val = 0;
+-	of_property_read_u32(bd->dev->of_node, "rohm,ddr-backup-power", &val);
++	of_property_read_u32(config.dev->of_node, "rohm,ddr-backup-power", &val);
+ 	if (val & ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK) {
+-		dev_err(bd->dev, "invalid %s mode %u\n",
++		dev_err(&pdev->dev, "invalid %s mode %u\n",
+ 			"rohm,ddr-backup-power", val);
+ 		return -EINVAL;
+ 	}
+ 	bdreg->bkup_mode_cnt_keepon = val;
+ 
+-	bdreg->rstbmode_level = of_property_read_bool(bd->dev->of_node,
++	bdreg->rstbmode_level = of_property_read_bool(config.dev->of_node,
+ 						      "rohm,rstbmode-level");
+-	bdreg->rstbmode_pulse = of_property_read_bool(bd->dev->of_node,
++	bdreg->rstbmode_pulse = of_property_read_bool(config.dev->of_node,
+ 						      "rohm,rstbmode-pulse");
+ 	if (bdreg->rstbmode_level && bdreg->rstbmode_pulse) {
+-		dev_err(bd->dev, "only one rohm,rstbmode-* may be specified");
++		dev_err(&pdev->dev, "only one rohm,rstbmode-* may be specified");
+ 		return -EINVAL;
+ 	}
+ 
 -- 
 2.7.4
 
