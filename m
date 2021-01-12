@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B11C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jan 2021 09:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C288C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jan 2021 09:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03CF022E01
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jan 2021 09:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3B8222D05
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jan 2021 09:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405884AbhALJDB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Jan 2021 04:03:01 -0500
+        id S2392454AbhALJDR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Jan 2021 04:03:17 -0500
 Received: from relmlor2.renesas.com ([210.160.252.172]:18782 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405626AbhALJBv (ORCPT
+        by vger.kernel.org with ESMTP id S2389112AbhALJBu (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 12 Jan 2021 04:01:51 -0500
+        Tue, 12 Jan 2021 04:01:50 -0500
 X-IronPort-AV: E=Sophos;i="5.79,340,1602514800"; 
-   d="scan'208";a="68514071"
+   d="scan'208";a="68514068"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie6.idc.renesas.com with ESMTP; 12 Jan 2021 18:01:18 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D20D94007554;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9725C4007554;
         Tue, 12 Jan 2021 18:01:18 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
@@ -36,9 +36,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v9 05/12] regulator: bd9571mwv: Add BD9574MWF support
-Date:   Tue, 12 Jan 2021 18:01:00 +0900
-Message-Id: <1610442067-7446-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v9 03/12] mfd: rohm-generic: Add BD9571 and BD9574
+Date:   Tue, 12 Jan 2021 18:00:58 +0900
+Message-Id: <1610442067-7446-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1610442067-7446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1610442067-7446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -46,66 +46,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for BD9574MWF which is similar chip with BD9571MWV.
-Note that we don't support voltage rails VD{09,18,25,33} by this
-driver on BD9574. The VD09 voltage could be read from PMIC but that
-is not supported by this commit.
+Add chip IDs for BD9571MWV and BD9574MWF.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-by: Mark Brown <broonie@kernel.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/regulator/bd9571mwv-regulator.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ include/linux/mfd/rohm-generic.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index 42b6a70..7b0cd08 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * ROHM BD9571MWV-M regulator driver
-+ * ROHM BD9571MWV-M and BD9574MWF-M regulator driver
-  *
-  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
-  *
-@@ -9,6 +9,7 @@
-  * NOTE: VD09 is missing
-  */
- 
-+#include <linux/mfd/rohm-generic.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -277,6 +278,7 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 	struct regulator_dev *rdev;
- 	unsigned int val;
- 	int i;
-+	enum rohm_chip_type chip = platform_get_device_id(pdev)->driver_data;
- 
- 	bdreg = devm_kzalloc(&pdev->dev, sizeof(*bdreg), GFP_KERNEL);
- 	if (!bdreg)
-@@ -292,6 +294,9 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 	config.regmap = bdreg->regmap;
- 
- 	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
-+		/* BD9574MWF supports DVFS only */
-+		if (chip == ROHM_CHIP_TYPE_BD9574 && regulators[i].id != DVFS)
-+			continue;
- 		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
- 					       &config);
- 		if (IS_ERR(rdev)) {
-@@ -339,7 +344,8 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id bd9571mwv_regulator_id_table[] = {
--	{ "bd9571mwv-regulator", },
-+	{ "bd9571mwv-regulator", ROHM_CHIP_TYPE_BD9571 },
-+	{ "bd9574mwf-regulator", ROHM_CHIP_TYPE_BD9574 },
- 	{ /* sentinel */ }
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+index 4283b5b..affacf8 100644
+--- a/include/linux/mfd/rohm-generic.h
++++ b/include/linux/mfd/rohm-generic.h
+@@ -12,6 +12,8 @@ enum rohm_chip_type {
+ 	ROHM_CHIP_TYPE_BD71847,
+ 	ROHM_CHIP_TYPE_BD70528,
+ 	ROHM_CHIP_TYPE_BD71828,
++	ROHM_CHIP_TYPE_BD9571,
++	ROHM_CHIP_TYPE_BD9574,
+ 	ROHM_CHIP_TYPE_AMOUNT
  };
- MODULE_DEVICE_TABLE(platform, bd9571mwv_regulator_id_table);
+ 
 -- 
 2.7.4
 
