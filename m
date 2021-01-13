@@ -2,102 +2,74 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0FDC433E0
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jan 2021 19:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA18C433DB
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 00:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAC0720776
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jan 2021 19:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6498B23359
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 00:29:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbhAMTuu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Jan 2021 14:50:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50302 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbhAMTuu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2021 14:50:50 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD113C061786
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Jan 2021 11:50:09 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kzm9c-0001yW-JU; Wed, 13 Jan 2021 20:50:04 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kzm9a-0001US-JR; Wed, 13 Jan 2021 20:50:02 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
+        id S1729885AbhANA3W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Jan 2021 19:29:22 -0500
+Received: from atlmailgw2.ami.com ([63.147.10.42]:61087 "EHLO
+        atlmailgw2.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbhANA20 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2021 19:28:26 -0500
+X-AuditID: ac10606f-231ff70000001934-d8-5fff765a36f4
+Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by atlmailgw2.ami.com (Symantec Messaging Gateway) with SMTP id 42.3B.06452.A567FFF5; Wed, 13 Jan 2021 17:38:18 -0500 (EST)
+Received: from ami-us-wk.us.megatrends.com (172.16.98.207) by
+ atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Wed, 13 Jan 2021 17:38:16 -0500
+From:   Hongwei Zhang <hongweiz@ami.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH 1/2] gpio: pca953x: Add support for pca9506
-Date:   Wed, 13 Jan 2021 20:49:51 +0100
-Message-Id: <20210113194952.104734-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.29.2
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>
+CC:     Hongwei Zhang <hongweiz@ami.com>
+Subject: [PATCH, v1 0/1] gpio: aspeed: Add gpio base address reading
+Date:   Wed, 13 Jan 2021 17:38:07 -0500
+Message-ID: <20210113223808.31626-1-hongweiz@ami.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [172.16.98.207]
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWyRiBhgm5U2f94g+Z7aha7LnNYfJl7isXi
+        9/m/zBZT/ixnstj0+BqrRfPqc8wWm+f/YbS4vGsOm8WplhcsDpweV9t3sXu8v9HK7nHx4zFm
+        jzvX9rB5bF5S73F+xkJGj8+b5ALYo7hsUlJzMstSi/TtErgyThz8wF4wm7mi7/QBxgbGI0xd
+        jJwcEgImEncaJjN2MXJxCAnsYpJ4/aiHFcphlPi4ZisLSBWbgJrE3s1zmEASIgInmSRm7f4F
+        1s4soCLxY/U1VhBbWMBFYufUh2wgNouAqsSbNQ/AangFTCVuTTrCBrFOXmL1hgPMEHFBiZMz
+        n7BAzJGQOPjiBVhcSEBW4tahx1DnKUo8+PWddQIj3ywkLbOQtCxgZFrFKJRYkpObmJmTXm6k
+        l5ibqZecn7uJERK++TsYP340P8TIxMF4iFGCg1lJhLeo+2+8EG9KYmVValF+fFFpTmrxIUZp
+        DhYlcd5V7kfjhQTSE0tSs1NTC1KLYLJMHJxSDYzyyqqSIXmcaSLpyWnbZsc0Hju7Refmntx7
+        k2w0w8qWdmZcfRwtcfzowSM3dTbYtks8FWHe6H0nQz1F8xuv4KEzB3KvvDiad2T527jVUjYu
+        z68saVdQWj7xy6uQf1uXfAnYvef6hXuRFdWlMTnfvhmvrTQ/2qz45vu0B7tFwlY3zwopda8q
+        Nf2oxFKckWioxVxUnAgArcLYW00CAAA=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-According to the reference manual "The PCA9505 is identical to the
-PCA9506 except that it includes 100 kΩ internal pull-up resistors on all
-the I/Os." So the pca9506 device can be considered identical to the
-pca9505 for the gpio driver.
+Dear Reviewer,
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 1 +
- drivers/gpio/gpio-pca953x.c                              | 2 ++
- 2 files changed, 3 insertions(+)
+Add gpio base address reading in the driver; in old code, it just
+returns -1 to gpio->chip.base. In this patch, the code first try to
+read base address from of_property_read_u32(), if it fails, then
+return -1.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-index f5ee23c2df60..cdd7744b8723 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-@@ -32,6 +32,7 @@ properties:
-       - maxim,max7327
-       - nxp,pca6416
-       - nxp,pca9505
-+      - nxp,pca9506
-       - nxp,pca9534
-       - nxp,pca9535
-       - nxp,pca9536
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 825b362eb4b7..5ea09fd01544 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -73,6 +73,7 @@
- static const struct i2c_device_id pca953x_id[] = {
- 	{ "pca6416", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "pca9505", 40 | PCA953X_TYPE | PCA_INT, },
-+	{ "pca9506", 40 | PCA953X_TYPE | PCA_INT, },
- 	{ "pca9534", 8  | PCA953X_TYPE | PCA_INT, },
- 	{ "pca9535", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "pca9536", 4  | PCA953X_TYPE, },
-@@ -1236,6 +1237,7 @@ static int pca953x_resume(struct device *dev)
- static const struct of_device_id pca953x_dt_ids[] = {
- 	{ .compatible = "nxp,pca6416", .data = OF_953X(16, PCA_INT), },
- 	{ .compatible = "nxp,pca9505", .data = OF_953X(40, PCA_INT), },
-+	{ .compatible = "nxp,pca9506", .data = OF_953X(40, PCA_INT), },
- 	{ .compatible = "nxp,pca9534", .data = OF_953X( 8, PCA_INT), },
- 	{ .compatible = "nxp,pca9535", .data = OF_953X(16, PCA_INT), },
- 	{ .compatible = "nxp,pca9536", .data = OF_953X( 4, 0), },
+Hongwei Zhang (1):
+  gpio: aspeed: Add gpio base address reading
 
-base-commit: 5c8fe583cce542aa0b84adc939ce85293de36e5e
+ drivers/gpio/gpio-aspeed.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
 -- 
-2.29.2
+2.17.1
 
