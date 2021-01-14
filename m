@@ -2,74 +2,136 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA18C433DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 00:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99805C43219
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 01:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6498B23359
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 00:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 732842343B
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 01:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729885AbhANA3W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Jan 2021 19:29:22 -0500
-Received: from atlmailgw2.ami.com ([63.147.10.42]:61087 "EHLO
-        atlmailgw2.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729871AbhANA20 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2021 19:28:26 -0500
-X-AuditID: ac10606f-231ff70000001934-d8-5fff765a36f4
-Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by atlmailgw2.ami.com (Symantec Messaging Gateway) with SMTP id 42.3B.06452.A567FFF5; Wed, 13 Jan 2021 17:38:18 -0500 (EST)
-Received: from ami-us-wk.us.megatrends.com (172.16.98.207) by
- atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Wed, 13 Jan 2021 17:38:16 -0500
-From:   Hongwei Zhang <hongweiz@ami.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <openbmc@lists.ozlabs.org>
-CC:     Hongwei Zhang <hongweiz@ami.com>
-Subject: [PATCH, v1 0/1] gpio: aspeed: Add gpio base address reading
-Date:   Wed, 13 Jan 2021 17:38:07 -0500
-Message-ID: <20210113223808.31626-1-hongweiz@ami.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728185AbhANBqh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Jan 2021 20:46:37 -0500
+Received: from foss.arm.com ([217.140.110.172]:42570 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727012AbhANA55 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 13 Jan 2021 19:57:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DB191FB;
+        Wed, 13 Jan 2021 16:45:58 -0800 (PST)
+Received: from slackpad.fritz.box (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A3073F719;
+        Wed, 13 Jan 2021 16:45:55 -0800 (PST)
+Date:   Thu, 14 Jan 2021 00:45:12 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Icenowy Zheng <icenowy@aosc.xyz>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 02/21] dt-bindings: pinctrl: Add Allwinner H616
+ compatible strings
+Message-ID: <20210114004512.6cc7bd10@slackpad.fritz.box>
+In-Reply-To: <20201214093728.ehd2362jzclbxwp5@gilmour>
+References: <20201211011934.6171-1-andre.przywara@arm.com>
+        <20201211011934.6171-3-andre.przywara@arm.com>
+        <20201214093728.ehd2362jzclbxwp5@gilmour>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-slackware-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.98.207]
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWyRiBhgm5U2f94g+Z7aha7LnNYfJl7isXi
-        9/m/zBZT/ixnstj0+BqrRfPqc8wWm+f/YbS4vGsOm8WplhcsDpweV9t3sXu8v9HK7nHx4zFm
-        jzvX9rB5bF5S73F+xkJGj8+b5ALYo7hsUlJzMstSi/TtErgyThz8wF4wm7mi7/QBxgbGI0xd
-        jJwcEgImEncaJjN2MXJxCAnsYpJ4/aiHFcphlPi4ZisLSBWbgJrE3s1zmEASIgInmSRm7f4F
-        1s4soCLxY/U1VhBbWMBFYufUh2wgNouAqsSbNQ/AangFTCVuTTrCBrFOXmL1hgPMEHFBiZMz
-        n7BAzJGQOPjiBVhcSEBW4tahx1DnKUo8+PWddQIj3ywkLbOQtCxgZFrFKJRYkpObmJmTXm6k
-        l5ibqZecn7uJERK++TsYP340P8TIxMF4iFGCg1lJhLeo+2+8EG9KYmVValF+fFFpTmrxIUZp
-        DhYlcd5V7kfjhQTSE0tSs1NTC1KLYLJMHJxSDYzyyqqSIXmcaSLpyWnbZsc0Hju7Refmntx7
-        k2w0w8qWdmZcfRwtcfzowSM3dTbYtks8FWHe6H0nQz1F8xuv4KEzB3KvvDiad2T527jVUjYu
-        z68saVdQWj7xy6uQf1uXfAnYvef6hXuRFdWlMTnfvhmvrTQ/2qz45vu0B7tFwlY3zwopda8q
-        Nf2oxFKckWioxVxUnAgArcLYW00CAAA=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dear Reviewer,
+On Mon, 14 Dec 2020 10:37:28 +0100
+Maxime Ripard <maxime@cerno.tech> wrote:
 
-Add gpio base address reading in the driver; in old code, it just
-returns -1 to gpio->chip.base. In this patch, the code first try to
-read base address from of_property_read_u32(), if it fails, then
-return -1.
+> On Fri, Dec 11, 2020 at 01:19:15AM +0000, Andre Przywara wrote:
+> > A new SoC, a new compatible string.
+> > Also we were too miserly with just allowing seven interrupt banks.
+> > 
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml   | 18
+> > ++++++++++++++++-- 1 file changed, 16 insertions(+), 2 deletions(-)
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+> > b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+> > index 5240487dfe50..292b05d9ed08 100644 ---
+> > a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+> > +++
+> > b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+> > @@ -53,6 +53,8 @@ properties:
+> >        - allwinner,sun50i-h5-pinctrl
+> >        - allwinner,sun50i-h6-pinctrl
+> >        - allwinner,sun50i-h6-r-pinctrl
+> > +      - allwinner,sun50i-h616-pinctrl
+> > +      - allwinner,sun50i-h616-r-pinctrl
+> >        - allwinner,suniv-f1c100s-pinctrl
+> >        - nextthing,gr8-pinctrl
+> >  
+> > @@ -61,7 +63,7 @@ properties:
+> >  
+> >    interrupts:
+> >      minItems: 1
+> > -    maxItems: 7
+> > +    maxItems: 8
+> >      description:
+> >        One interrupt per external interrupt bank supported on the
+> >        controller, sorted by bank number ascending order.
+> > @@ -91,7 +93,7 @@ properties:
+> >        bank found in the controller
+> >      $ref: /schemas/types.yaml#/definitions/uint32-array
+> >      minItems: 1
+> > -    maxItems: 5
+> > +    maxItems: 8
+> >  
+> >  patternProperties:
+> >    # It's pretty scary, but the basic idea is that:
+> > @@ -145,6 +147,18 @@ allOf:
+> >    # boards are defining it at the moment so it would generate a
+> > lot of # warnings.
+> >  
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          enum:
+> > +            - allwinner,sun50i-h616-pinctrl
+> > +
+> > +    then:
+> > +      properties:
+> > +        interrupts:
+> > +          minItems: 8
+> > +          maxItems: 8
+> > +  
+> 
+> You don't need to have both if they are equals, and in this particular
 
-Hongwei Zhang (1):
-  gpio: aspeed: Add gpio base address reading
+Mmh, but all the other compatibles have both equal, so what would be
+the recommended way to describe this? Just minItems? I don't find a
+good explanation at the moment how to handle an explicit number, other
+than by enumerating the items explicitly.
 
- drivers/gpio/gpio-aspeed.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> case we already check that the maximum is 8 so there's no need to
+> repeat that check here.
 
--- 
-2.17.1
+Are you referring to the overall "maxItems: 8" above, in the 2nd hunk?
+While this will become redundant, this is apparently prone to changes
+(as only "7" would be redundant at the moment), so I would rather not
+rely on a global limit.
 
+Cheers,
+Andre.
