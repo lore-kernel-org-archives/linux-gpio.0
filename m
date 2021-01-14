@@ -2,98 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDDEC4332D
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 01:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D935CC433E9
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 04:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 473C52310A
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 01:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965D323977
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 04:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbhANBtt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Jan 2021 20:49:49 -0500
-Received: from atlmailgw1.ami.com ([63.147.10.40]:61942 "EHLO
-        atlmailgw1.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729878AbhANA3Y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2021 19:29:24 -0500
-X-AuditID: ac1060b2-a7dff700000017ec-b8-5fff765d82bc
-Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by atlmailgw1.ami.com (Symantec Messaging Gateway) with SMTP id 05.B8.06124.D567FFF5; Wed, 13 Jan 2021 17:38:21 -0500 (EST)
-Received: from ami-us-wk.us.megatrends.com (172.16.98.207) by
- atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Wed, 13 Jan 2021 17:38:20 -0500
-From:   Hongwei Zhang <hongweiz@ami.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <openbmc@lists.ozlabs.org>
-CC:     Hongwei Zhang <hongweiz@ami.com>
-Subject: [PATCH, v1 1/1] gpio: aspeed: Add gpio base address reading
-Date:   Wed, 13 Jan 2021 17:38:08 -0500
-Message-ID: <20210113223808.31626-2-hongweiz@ami.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210113223808.31626-1-hongweiz@ami.com>
-References: <20210113223808.31626-1-hongweiz@ami.com>
+        id S1726469AbhANEyg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Jan 2021 23:54:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54266 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbhANEyf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2021 23:54:35 -0500
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F25C061575;
+        Wed, 13 Jan 2021 20:53:56 -0800 (PST)
+Received: by mail-ot1-x332.google.com with SMTP id n42so4117321ota.12;
+        Wed, 13 Jan 2021 20:53:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F/k23s6lgOXZTqVuz1xHoCpi6MO42eB1Dy/aDLB/l68=;
+        b=Coc4H+UnaMckq5Z75k2Q3USrwW93aY7dO8h+Qix6g7Kv187G+0IqgvkZS0x7rws4ay
+         drZewiOBfXeJC3p0qcAUuOm+g03lWXrHZuU9g8/f6qh/rV/dgiVt5mo408EmGsmiJtuL
+         7l011CS9rYTisF+uCszEIRVnnKbatIxJeJwlgCCj816UPg2LOe+rK0K2tyJwzdWUNfPO
+         mP59NVkJM2/YSvGH6J4N7Y3BezoY56fFVNqRcDGcgcZ+Y4TY+OF55zOh0UX7w9coHzQx
+         k9v7wQ9JPI9/bKAu+GYebDmCgXRxsGYdMK8KzGJHweWSZqyaqygir6SjWEA2HdNUd46b
+         6IxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F/k23s6lgOXZTqVuz1xHoCpi6MO42eB1Dy/aDLB/l68=;
+        b=Zg+C7QtH8gC6dmDy6A3lxzsAyvFLS7x8tahtzEHdWcwvJCpt/7VwaeCDjQZifQ6BES
+         7A4Y1Su0EE2w4FqWPGXjE4o6E4VvtpgcrGySRkLyanV5z3QH/+rw1cn1f5T7UgA9YI0a
+         F71nimrZTO0mmmn66RzKhkoBO3BizzsbzoSKKNnYJo5Kd784mC1I6VK0/d8a+837do3O
+         KJmckUYx4Iwg1B1MhchfctV+sf11ObOmhBPIEjQ/+P2XTVZISUcdJfJ3gPwLaztJxVG2
+         rokbimznmwgnQDRfnivg1JAEwJIkjMB9aVddW4+6X7RZE+2HrT62b1/HUifq48hHm5eX
+         8iuw==
+X-Gm-Message-State: AOAM533TKA+m5ynPxQ7/WIG3rckrMvRnnvIDtTpR36HsBLhkP+QGAiOh
+        cBCDpINUVCsTSl5OQ0aswICjHKMbJ9y58MqSLh/Ah3pyWoQ=
+X-Google-Smtp-Source: ABdhPJx4Xf5P3YiozBLInHmduvDf5X+on8T7vqIGA34k3G4cvNXXgPHh1nwm+gkhePe43fKP8aLMW0JSMAB7VPcNV4M=
+X-Received: by 2002:a9d:2f67:: with SMTP id h94mr3481013otb.238.1610600035974;
+ Wed, 13 Jan 2021 20:53:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.98.207]
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsWyRiBhgm5s2f94g8dvdS12Xeaw+DL3FIvF
-        7/N/mS2m/FnOZLHp8TVWi+bV55gtNs//w2hxedccNotTLS9YHDg9rrbvYvd4f6OV3ePix2PM
-        Hneu7WHz2Lyk3uP8jIWMHp83yQWwR3HZpKTmZJalFunbJXBlnHs2lbmgi6tizwP9BsatHF2M
-        HBwSAiYShzYldTFycQgJ7GKSeH+xnQnKYZQ4uOMBYxcjJwebgJrE3s1zwBIiAieZJGbt/sUE
-        kmAWUJH4sfoaK4gtLOAisfrXezaQqSwCqhIn1uaDhHkFTCUapu9iAbElBOQlVm84wAxicwqY
-        SbxquAY2XwioZkP7LHaIekGJkzOfsECMl5A4+OIFM0SNrMStQ4+ZIOYoSjz49Z11AqPALCQt
-        s5C0LGBkWsUolFiSk5uYmZNebqiXmJupl5yfu4kREuibdjC2XDQ/xMjEwXiIUYKDWUmEt6j7
-        b7wQb0piZVVqUX58UWlOavEhRmkOFiVx3lXuR+OFBNITS1KzU1MLUotgskwcnFINjA4Cfs/+
-        h7F+/rd2tcJJtvVL9m3atPe+yN2rpdnXlraL57qlHaniva/hrXr8cd0KK5ltDd1X7pWtaayx
-        jnz8kdNx27K/mdHJKdw7HjnUvN+151Pc3EChrgKWuYuXN9YxbZFrzDF/113F/n8HX1FJ0q1t
-        x/S2Shyx+C0oeun8zYXXHyW9LVT690OJpTgj0VCLuag4EQBg8FzCYgIAAA==
+References: <1610509395-107554-1-git-send-email-abaci-bugfix@linux.alibaba.com>
+In-Reply-To: <1610509395-107554-1-git-send-email-abaci-bugfix@linux.alibaba.com>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Thu, 14 Jan 2021 12:53:47 +0800
+Message-ID: <CADBw62qWmR9w+rXCjjO3_Yw9Hk_BoSFZhM7pbiRKp+bgnOfonA@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sprd: Simplify bool comparison
+To:     Yang Li <abaci-bugfix@linux.alibaba.com>
+Cc:     Orson Zhai <orsonzhai@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add gpio base address reading in the driver; in old code, it just
-returns -1 to gpio->chip.base.
+On Wed, Jan 13, 2021 at 11:43 AM Yang Li <abaci-bugfix@linux.alibaba.com> wrote:
+>
+> Fix the following coccicheck warning:
+> ./drivers/pinctrl/sprd/pinctrl-sprd.c:690:8-23: WARNING: Comparison to
+> bool
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Yang Li <abaci-bugfix@linux.alibaba.com>
 
-Fixes: 7ee2d5b4d4340353 ("ARM: dts: nuvoton: Add Fii Kudo system")
-Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
----
- drivers/gpio/gpio-aspeed.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+You should keep other guy's reviewed-by or acked-by tag for the
+following version if no other big changes. So again
+Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index d07bf2c3f136..4ebe4c40154c 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -1140,7 +1140,7 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
- 	const struct of_device_id *gpio_id;
- 	struct aspeed_gpio *gpio;
- 	int rc, i, banks, err;
--	u32 ngpio;
-+	u32 ngpio, base;
- 
- 	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
- 	if (!gpio)
-@@ -1179,7 +1179,10 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
- 	gpio->chip.set = aspeed_gpio_set;
- 	gpio->chip.set_config = aspeed_gpio_set_config;
- 	gpio->chip.label = dev_name(&pdev->dev);
--	gpio->chip.base = -1;
-+	err = of_property_read_u32(pdev->dev.of_node, "base", &base);
-+	gpio->chip.base = (u16) base;
-+	if (err)
-+		gpio->chip.base = -1;
- 
- 	/* Allocate a cache of the output registers */
- 	banks = DIV_ROUND_UP(gpio->chip.ngpio, 32);
+> ---
+> Changes in v2:
+>     - make "pinctrl: sprd:" as subject prefix
+>
+>  drivers/pinctrl/sprd/pinctrl-sprd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+> index 08dc193..dca7a50 100644
+> --- a/drivers/pinctrl/sprd/pinctrl-sprd.c
+> +++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+> @@ -687,7 +687,7 @@ static int sprd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin_id,
+>                                 shift = INPUT_SCHMITT_SHIFT;
+>                                 break;
+>                         case PIN_CONFIG_BIAS_PULL_UP:
+> -                               if (is_sleep_config == true) {
+> +                               if (is_sleep_config) {
+>                                         val |= SLEEP_PULL_UP;
+>                                         mask = SLEEP_PULL_UP_MASK;
+>                                         shift = SLEEP_PULL_UP_SHIFT;
+> --
+> 1.8.3.1
+>
+
+
 -- 
-2.17.1
-
+Baolin Wang
