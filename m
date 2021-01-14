@@ -2,110 +2,116 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D935CC433E9
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 04:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0076C433DB
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 07:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 965D323977
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 04:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E44123977
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Jan 2021 07:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbhANEyg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Jan 2021 23:54:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54266 "EHLO
+        id S1726104AbhANHCh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Jan 2021 02:02:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbhANEyf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2021 23:54:35 -0500
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F25C061575;
-        Wed, 13 Jan 2021 20:53:56 -0800 (PST)
-Received: by mail-ot1-x332.google.com with SMTP id n42so4117321ota.12;
-        Wed, 13 Jan 2021 20:53:56 -0800 (PST)
+        with ESMTP id S1725989AbhANHCh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jan 2021 02:02:37 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C22C061786
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Jan 2021 23:01:56 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id m5so2680816pjv.5
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Jan 2021 23:01:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F/k23s6lgOXZTqVuz1xHoCpi6MO42eB1Dy/aDLB/l68=;
-        b=Coc4H+UnaMckq5Z75k2Q3USrwW93aY7dO8h+Qix6g7Kv187G+0IqgvkZS0x7rws4ay
-         drZewiOBfXeJC3p0qcAUuOm+g03lWXrHZuU9g8/f6qh/rV/dgiVt5mo408EmGsmiJtuL
-         7l011CS9rYTisF+uCszEIRVnnKbatIxJeJwlgCCj816UPg2LOe+rK0K2tyJwzdWUNfPO
-         mP59NVkJM2/YSvGH6J4N7Y3BezoY56fFVNqRcDGcgcZ+Y4TY+OF55zOh0UX7w9coHzQx
-         k9v7wQ9JPI9/bKAu+GYebDmCgXRxsGYdMK8KzGJHweWSZqyaqygir6SjWEA2HdNUd46b
-         6IxQ==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=JYt8EI7ieKorpASVOTgek/+xr+Y9gbz77CFyRzCwwWc=;
+        b=LFFNI2M+BRcL71xQeiE/HQKmU6e8hRTnsGw7tApsujH74JkBAe7fqku6FUdkM5IR+Q
+         SJhfYYVAxqyypI4g788jHX+tNEe5BpDe+vRDiFNdrtMlJ94LTtXniKeisrj4iSf/B8Sf
+         voXJ0UtPw/36wMa3gDL2uiOjH3OxNXB9WkmaI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F/k23s6lgOXZTqVuz1xHoCpi6MO42eB1Dy/aDLB/l68=;
-        b=Zg+C7QtH8gC6dmDy6A3lxzsAyvFLS7x8tahtzEHdWcwvJCpt/7VwaeCDjQZifQ6BES
-         7A4Y1Su0EE2w4FqWPGXjE4o6E4VvtpgcrGySRkLyanV5z3QH/+rw1cn1f5T7UgA9YI0a
-         F71nimrZTO0mmmn66RzKhkoBO3BizzsbzoSKKNnYJo5Kd784mC1I6VK0/d8a+837do3O
-         KJmckUYx4Iwg1B1MhchfctV+sf11ObOmhBPIEjQ/+P2XTVZISUcdJfJ3gPwLaztJxVG2
-         rokbimznmwgnQDRfnivg1JAEwJIkjMB9aVddW4+6X7RZE+2HrT62b1/HUifq48hHm5eX
-         8iuw==
-X-Gm-Message-State: AOAM533TKA+m5ynPxQ7/WIG3rckrMvRnnvIDtTpR36HsBLhkP+QGAiOh
-        cBCDpINUVCsTSl5OQ0aswICjHKMbJ9y58MqSLh/Ah3pyWoQ=
-X-Google-Smtp-Source: ABdhPJx4Xf5P3YiozBLInHmduvDf5X+on8T7vqIGA34k3G4cvNXXgPHh1nwm+gkhePe43fKP8aLMW0JSMAB7VPcNV4M=
-X-Received: by 2002:a9d:2f67:: with SMTP id h94mr3481013otb.238.1610600035974;
- Wed, 13 Jan 2021 20:53:55 -0800 (PST)
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=JYt8EI7ieKorpASVOTgek/+xr+Y9gbz77CFyRzCwwWc=;
+        b=jLNnGNa2GiCKOXfzHjRM2yPTDkQ95cNtehdjHq95PDKsdFen2o5lwN8XPicvBrF2/Q
+         y5AAwauFUOEYt/nGZIqiEkPLSH+SE+4XJpXu7JLK4RVSQuvyDJ2BdH461RoAr0jXlB2z
+         IZt0E9DrK//upQ1YKX3suQrBCd+NXPPb7+wkJRYWP4fagHsv5HUkuZ7JOAeDl1lJYD2D
+         xR+ejWVZQVZLnMioSgS6cVUtN3OVqSVo1oYZVpCCjR7vU7oUM0G7scri06G9N1nXv94c
+         dDi3GhdpynAqz/4I73da1ZCV7xpYN0ehAIWJoCdrazqAgzDaVyXZTnnDJrNrjVyVzcM9
+         a96g==
+X-Gm-Message-State: AOAM530Gr/tuF4j4OJINLUW4ERUgZDGlOKlpIzV1HV/YI6PozvBUkBuM
+        9Id6XNI9oVmJHNfkWpvYZcy0cg==
+X-Google-Smtp-Source: ABdhPJwJ+hg053U92FUixpn8y1FNmzaBdqnBVUnK/a8LK5a+UIXuUEwJAkdG0MN7awaogQxUdzC5Lw==
+X-Received: by 2002:a17:90a:c791:: with SMTP id gn17mr3543162pjb.28.1610607716259;
+        Wed, 13 Jan 2021 23:01:56 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:201:3e52:82ff:fe6c:83ab])
+        by smtp.gmail.com with ESMTPSA id b12sm4286109pft.114.2021.01.13.23.01.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Jan 2021 23:01:55 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1610509395-107554-1-git-send-email-abaci-bugfix@linux.alibaba.com>
-In-Reply-To: <1610509395-107554-1-git-send-email-abaci-bugfix@linux.alibaba.com>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Thu, 14 Jan 2021 12:53:47 +0800
-Message-ID: <CADBw62qWmR9w+rXCjjO3_Yw9Hk_BoSFZhM7pbiRKp+bgnOfonA@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: sprd: Simplify bool comparison
-To:     Yang Li <abaci-bugfix@linux.alibaba.com>
-Cc:     Orson Zhai <orsonzhai@gmail.com>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210108093339.v5.2.I3635de080604e1feda770591c5563bd6e63dd39d@changeid>
+References: <20210108093339.v5.1.I3ad184e3423d8e479bc3e86f5b393abb1704a1d1@changeid> <20210108093339.v5.2.I3635de080604e1feda770591c5563bd6e63dd39d@changeid>
+Subject: Re: [PATCH v5 2/4] pinctrl: qcom: No need to read-modify-write the interrupt status
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        linux-gpio@vger.kernel.org,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org
+To:     Douglas Anderson <dianders@chromium.org>,
+        Jason Cooper <jason@lakedaemon.net>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Wed, 13 Jan 2021 23:01:54 -0800
+Message-ID: <161060771402.3661239.1174238618385699475@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jan 13, 2021 at 11:43 AM Yang Li <abaci-bugfix@linux.alibaba.com> wrote:
->
-> Fix the following coccicheck warning:
-> ./drivers/pinctrl/sprd/pinctrl-sprd.c:690:8-23: WARNING: Comparison to
-> bool
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <abaci-bugfix@linux.alibaba.com>
-
-You should keep other guy's reviewed-by or acked-by tag for the
-following version if no other big changes. So again
-Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
-
+Quoting Douglas Anderson (2021-01-08 09:35:14)
+> When the Qualcomm pinctrl driver wants to Ack an interrupt, it does a
+> read-modify-write on the interrupt status register.  On some SoCs it
+> makes sure that the status bit is 1 to "Ack" and on others it makes
+> sure that the bit is 0 to "Ack".  Presumably the first type of
+> interrupt controller is a "write 1 to clear" type register and the
+> second just let you directly set the interrupt status register.
+>=20
+> As far as I can tell from scanning structure definitions, the
+> interrupt status bit is always in a register by itself.  Thus with
+> both types of interrupt controllers it is safe to "Ack" interrupts
+> without doing a read-modify-write.  We can do a simple write.
+>=20
+> It should be noted that if the interrupt status bit _was_ ever in a
+> register with other things (like maybe status bits for other GPIOs):
+> a) For "write 1 clear" type controllers then read-modify-write would
+>    be totally wrong because we'd accidentally end up clearing
+>    interrupts we weren't looking at.
+> b) For "direct set" type controllers then read-modify-write would also
+>    be wrong because someone setting one of the other bits in the
+>    register might accidentally clear (or set) our interrupt.
+> I say this simply to show that the current read-modify-write doesn't
+> provide any sort of "future proofing" of the code.  In fact (for
+> "write 1 clear" controllers) the new code is slightly more "future
+> proof" since it would allow more than one interrupt status bits to
+> share a register.
+>=20
+> NOTE: this code fixes no bugs--it simply avoids an extra register
+> read.
+>=20
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
-> Changes in v2:
->     - make "pinctrl: sprd:" as subject prefix
->
->  drivers/pinctrl/sprd/pinctrl-sprd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-> index 08dc193..dca7a50 100644
-> --- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-> +++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-> @@ -687,7 +687,7 @@ static int sprd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin_id,
->                                 shift = INPUT_SCHMITT_SHIFT;
->                                 break;
->                         case PIN_CONFIG_BIAS_PULL_UP:
-> -                               if (is_sleep_config == true) {
-> +                               if (is_sleep_config) {
->                                         val |= SLEEP_PULL_UP;
->                                         mask = SLEEP_PULL_UP_MASK;
->                                         shift = SLEEP_PULL_UP_SHIFT;
-> --
-> 1.8.3.1
->
 
-
--- 
-Baolin Wang
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
