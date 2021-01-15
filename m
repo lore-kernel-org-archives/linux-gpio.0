@@ -2,156 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBBDC433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 10:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 087E9C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 11:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B513F221E2
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 10:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBAE1235F9
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 11:14:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731856AbhAOKyp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 15 Jan 2021 05:54:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46012 "EHLO
+        id S1726385AbhAOLOH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 15 Jan 2021 06:14:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731851AbhAOKyo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Jan 2021 05:54:44 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC7D6C0613C1
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 02:54:03 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1l0Mjl-0004qr-2U; Fri, 15 Jan 2021 11:53:49 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1l0MjG-0005DQ-Sc; Fri, 15 Jan 2021 11:53:18 +0100
-Date:   Fri, 15 Jan 2021 11:53:18 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Baruch Siach <baruch@tkos.co.il>, Andrew Lunn <andrew@lunn.ch>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-pwm@vger.kernel.org,
+        with ESMTP id S1725946AbhAOLOH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Jan 2021 06:14:07 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF82C061796
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 03:13:25 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id q18so8883761wrn.1
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 03:13:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=2tAzY7WCaNY6Vvb3iCn3hNcrKN7+M/W71UmthXEquj0=;
+        b=yccXe6XzXp4PeqVy5jE4MDa9Q7zYzWMxG2qUuOLKr5MHfKj8qz/eRR6l/DapGMFh/2
+         NSIRPoQOfQg6DGgxI9MOtu51DHCgdDkMKtQ8uwH95J8WUcCtaw/l5Bw05MCg8+wzmEkO
+         7auWaWb4S1pUYIYW7AMkLi1G09ag0IeiqPPXXpLP/V33KkxJ0bxfDXWPNE6tSZHEFg+o
+         OZTAbE6MvM5XfMJM4nshUbeWpAQDEeOJDApjoekDLq0Ly4yp1QRIZClf1Zr2rsVJ+ZqR
+         MsROxnfjceeoCalkPtRbow/EXyGdH/QSRnqbPKlznKCam5y7vlHoTLm5cEDA4PhBU+TY
+         L9YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=2tAzY7WCaNY6Vvb3iCn3hNcrKN7+M/W71UmthXEquj0=;
+        b=eSjiMVA67UgAYvD9CAoEsHlEzNr9ofieAnSCS9IvlmFZyFrJFz85++NoTHSkyGaaKR
+         4JrOYcYQ/R4W0E+llvna66AwZAoW2gb+q09Wvtwm51FbseZQ8oFFXutB+Nz/oe2fbKoB
+         mOyn+L8zO56FpCBj8NgJD/lHnmgHsM4Tu5nFWDH8Jrr0UT6KNclXnLEEID0ovTe1P38T
+         u4I/qjwLQyCOpQkgpS9y5eSu4+fqqrohR7qdYhFbtMcIQxkrskpHO4WralZktsrV66S7
+         KyIM+vucadtjGzwFy+Z9+zkJQjDOLNgoVCQwJxEpAcLov+dQ+Sw07dw/V8Qm8bK3nmdn
+         0Rgg==
+X-Gm-Message-State: AOAM533QWkud0wyIJuRR4s1OyFeKlIucHElWPESQ1JUsvU4dKSXh3HlT
+        L9yRC1FDWNDDQsAMhrlyUJVwFg==
+X-Google-Smtp-Source: ABdhPJyb5AthIn+iJs64v8mJJV6h4qlEQLZ0vDmL/7IZZEfzlpBDZuNS8IxFoGmyYnY5FQ+eStCLMw==
+X-Received: by 2002:adf:8184:: with SMTP id 4mr13102145wra.63.1610709203901;
+        Fri, 15 Jan 2021 03:13:23 -0800 (PST)
+Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
+        by smtp.gmail.com with ESMTPSA id l1sm15048822wrq.64.2021.01.15.03.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jan 2021 03:13:23 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org,
-        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v3 5/5] gpio: mvebu: document zero pwm duty cycle
- limitation
-Message-ID: <20210115105318.n2vov4gw6ohv4rxp@pengutronix.de>
-References: <cover.1610628807.git.baruch@tkos.co.il>
- <7c18dd67d3bf3e3ed9a8efa2edd33e8f29f09a7a.1610628807.git.baruch@tkos.co.il>
- <20210114202545.7wnc5ikeffc45xk5@pengutronix.de>
- <20210114222802.GY1551@shell.armlinux.org.uk>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 1/4] configfs: increase the item name length
+Date:   Fri, 15 Jan 2021 12:13:08 +0100
+Message-Id: <20210115111311.31601-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20210115111311.31601-1-brgl@bgdev.pl>
+References: <20210115111311.31601-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="w5umzkznxwn4gsq5"
-Content-Disposition: inline
-In-Reply-To: <20210114222802.GY1551@shell.armlinux.org.uk>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
---w5umzkznxwn4gsq5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+20 characters limit for item name is relatively small. Let's increase it
+to 32 to fit '04-committable-children' - a name we'll use in the sample
+code for committable items.
 
-On Thu, Jan 14, 2021 at 10:28:02PM +0000, Russell King - ARM Linux admin wr=
-ote:
-> On Thu, Jan 14, 2021 at 09:25:45PM +0100, Uwe Kleine-K=F6nig wrote:
-> > Hello Baruch,
-> >=20
-> > On Thu, Jan 14, 2021 at 08:57:37PM +0200, Baruch Siach wrote:
-> > > Add a comment on why the code never sets on/off registers to zero.
-> > >=20
-> > > Reported-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > > Analyzed-by: Russell King <linux@armlinux.org.uk>
-> > > Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-> > > ---
-> > >  drivers/gpio/gpio-mvebu.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >=20
-> > > diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-> > > index 6b017854ce61..09780944bef9 100644
-> > > --- a/drivers/gpio/gpio-mvebu.c
-> > > +++ b/drivers/gpio/gpio-mvebu.c
-> > > @@ -706,6 +706,10 @@ static int mvebu_pwm_apply(struct pwm_chip *chip=
-, struct pwm_device *pwm,
-> > >  	do_div(val, NSEC_PER_SEC);
-> > >  	if (val > UINT_MAX)
-> > >  		return -EINVAL;
-> > > +	/*
-> > > +	 * Zero on/off values don't work as expected. Experimentation shows
-> > > +	 * that zero value is treated as 2^32. This behavior is not documen=
-ted.
-> > > +	 */
-> >=20
-> > This is too easy. The right thing to do is to adapt .apply and
-> > .get_state to use this new information.
->=20
-> What exactly do you expect the changes to be?
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ include/linux/configfs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What I expect is:
+diff --git a/include/linux/configfs.h b/include/linux/configfs.h
+index 2e8c69b43c64..4f76dcc08134 100644
+--- a/include/linux/configfs.h
++++ b/include/linux/configfs.h
+@@ -27,7 +27,7 @@
+ #include <linux/kref.h>   /* struct kref */
+ #include <linux/mutex.h>  /* struct mutex */
+ 
+-#define CONFIGFS_ITEM_NAME_LEN	20
++#define CONFIGFS_ITEM_NAME_LEN	32
+ 
+ struct module;
+ 
+-- 
+2.29.1
 
- - let .apply() write 0 if the intention is to configure 2^32 clock
-   steps for the on or off register; and symmetrically
- - let .get_state report 2^32 * NSEC_PER_SEC / clk_rate if the register
-   value is 0.
-=20
-> Bear in mind that the hardware is not capable of atomically updating
-> e.g. the duty cycle without affecting the period, because any change
-> in duty cycle needs the "on" and "off" durations to be separately
-> programmed, and there's a chance that the hardware could start using
-> either value mid-update.
->=20
-> Also, disabling "blink" mode to achieve a steady output (for 0% or 100%
-> duty cycle) would require further investigation to find out how the
-> hardware behaves at the moment where blink mode is disabled: does the
-> output retain its current state (does the bit in the output register
-> toggle with the blink) or does it revert to the value in the output
-> register that was programmed before blink mode was enabled.
-
-I have some plans here about what is the right behaviour, but this needs
-some preparatory work that I didn't do yet. I'll come back to this
-eventually.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---w5umzkznxwn4gsq5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmABdBsACgkQwfwUeK3K
-7AmSbQf/b6xusBmeJVR8LHLl4M8AVis579GcNw//cubD6SzItF6Vz9ziSM9zs2hG
-vWEf6U3UzCn/27oHJTPD6/xBqVV85rE+qUkRv7zZ2zps+foAIQkZlRYa+nkj3WT9
-dUVKSwuDRZ+8W0yqbBsqzbwxqdscM+CicuIsIWtOC1lN8e/0aSwkmVYQpHMpUeRn
-jTI+GgKxjiHyy1S4ahuAAcXcZgPVwrqPdJ+vRQdFX/RsOiTAQBCuWoAhRWq6lZB8
-y51xCo3AhtTYLzooES4emK33NYRtSbISNiUFDk3UlpKhUioGoo3cPtmY+atrgV3/
-x+WeYEG8t6xmCC+rJxa8LpQi4s+rcw==
-=6hbj
------END PGP SIGNATURE-----
-
---w5umzkznxwn4gsq5--
