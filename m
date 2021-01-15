@@ -2,34 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EBFC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A53C433E9
 	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 16:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C80BF221FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 16:48:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45800222B3
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 16:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbhAOQrq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726136AbhAOQrq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 15 Jan 2021 11:47:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37670 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbhAOQrp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Jan 2021 11:47:45 -0500
+        with ESMTP id S1726309AbhAOQrq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Jan 2021 11:47:46 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70342C0613C1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDD3C061793
         for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 08:47:05 -0800 (PST)
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1l0SFY-0001Wi-Vp; Fri, 15 Jan 2021 17:47:00 +0100
+        id 1l0SFY-0001WS-IL; Fri, 15 Jan 2021 17:47:00 +0100
 Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1l0SFY-0004hA-Lz; Fri, 15 Jan 2021 17:47:00 +0100
+        id 1l0SFX-0004gy-Te; Fri, 15 Jan 2021 17:46:59 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -38,12 +38,10 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-gpio@vger.kernel.org, kernel@pengutronix.de,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: gpio: pca953x: Increase allowed length for gpio-line-names
-Date:   Fri, 15 Jan 2021 17:46:58 +0100
-Message-Id: <20210115164658.187681-4-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v2 0/3] gpio: pca953x: Add support for pca9506
+Date:   Fri, 15 Jan 2021 17:46:55 +0100
+Message-Id: <20210115164658.187681-1-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210115164658.187681-1-u.kleine-koenig@pengutronix.de>
-References: <20210115164658.187681-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -55,28 +53,31 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Some supported chips (e.g. pca9505) support 40 lines. To be able to give
-each line a name the length of the gpio-line-names property must be
-allowed to contain up to 40 entries.
+Hello,
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+compared to (implicit) v1 (Message-Id:
+20210113194952.104734-1-u.kleine-koenig@pengutronix.de) I split the
+patch #1 into driver adaption and dt documenation (i.e. patches #1 and
+#2 here).
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-index cdd7744b8723..246bae53be8b 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-@@ -71,7 +71,7 @@ properties:
- 
-   gpio-line-names:
-     minItems: 1
--    maxItems: 32
-+    maxItems: 40
- 
-   interrupts:
-     maxItems: 1
+For patch #3 I did s/chips/lines/ in the commit log and capitalized
+"Increase" in the summary line.
+
+Best regards
+Uwe
+
+Uwe Kleine-König (3):
+  gpio: pca953x: Add support for pca9506
+  dt-bindings: gpio: pca953x: Document new supported chip pca9506
+  dt-bindings: gpio: pca953x: Increase allowed length for
+    gpio-line-names
+
+ Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 3 ++-
+ drivers/gpio/gpio-pca953x.c                              | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+
+base-commit: 5c8fe583cce542aa0b84adc939ce85293de36e5e
 -- 
 2.29.2
 
