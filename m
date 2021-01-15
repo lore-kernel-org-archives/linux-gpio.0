@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92DEC433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 10:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480BEC43381
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 10:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BED923718
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 10:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1881E23772
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 Jan 2021 10:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbhAOKbG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 15 Jan 2021 05:31:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40940 "EHLO
+        id S1726249AbhAOKbH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 15 Jan 2021 05:31:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbhAOKbE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Jan 2021 05:31:04 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5176C061793
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 02:30:23 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id a9so5270248wrt.5
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 02:30:23 -0800 (PST)
+        with ESMTP id S1726045AbhAOKbG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Jan 2021 05:31:06 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44B01C061795
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 02:30:25 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id c5so8727479wrp.6
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Jan 2021 02:30:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=32Uw3thlzOueQc1TCXdLqB7hUCyagYO8i7LjznvXNXI=;
-        b=PUpdJR+HtkHdWL7ZbCJZYtzgyUspNoUkaHMCVuiwwN2snqp/cX5/WaY8GQWTCye1OZ
-         ZGWah3pTP1Y+li9myIYcUTDMgZDpyRJzzFqM0JdFVdDLXfxh4v+qzSFnhz1Ov9MdSzDe
-         Q/1hRhwuuOWoP0zV9xBKeTXzFR8IbbIf08UDlABUu/Ea4nRTBlQ6a8cYpFJSHQ08TCYN
-         KgiJBn5BFCjmwU5Xhikj9vm6tIhtFPjXsOyC687NSs+6GNaetmsghMVcFms6cyiO3paG
-         KsmyPvCsdAsOHD65j2ZAKbhMokpWff6sSPRt78vYT3D/VFq9QKl0SuEbl+zAlMJoRFwx
-         NtzQ==
+        bh=aphsTU9HtqHr+MTnNEXHu0BvdDEGZPpWbSySuJKBduU=;
+        b=uiRyA/NEQ75+A2WC5vNaU/HykGI3gP91/V5gTy9ScIMGgSrVfPbr0HidnurJGcW9p8
+         m2ePu14TE9PntOTLr3XST3n4Y6Ao3+Hth9zZstEYcNJ5IgJQdH2q1yXfHHEA2EXN33g/
+         NmmQmnIf5okMIqlY9xmDWSRdPg6cCjL18lpyxiLNMx186mSKfev/LC9BOuwoFE7GNx28
+         T3YRYxSTx9h2UBeWH2njWJeJOWaC6Sm3ZrGBna3pN1XXmRrjfs9nV/+AJNAfk3yv9STW
+         3TJR3N6iN2RitvD2ac9nFonBTTBSseLkWCt7Gt/fqIodWVjGM3/1Aa4UVbXYnLEnINsg
+         T/xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=32Uw3thlzOueQc1TCXdLqB7hUCyagYO8i7LjznvXNXI=;
-        b=fk16TR1Vhev+bJiSKmeAQPqkUX4cXJicR9H24rpB6zh/ncO6JoP9iDCJMAa17QrQZf
-         eTe4pg2TSyr4Jj99pJyuLO3Y1dXfAfz0PW+Aqzo0D7ye7QkftSvuCM6o0TS/GbMSnPah
-         Y9JjIcqAkFHxIzs+03goGs1cdn5ux8DTU9BL8BSSGOkbUmST4TDiTCglAz+enpLPjCcd
-         /+XfRP4sHUO6fg0YwgXKykB/QhgEaEhnT+JBtgp8Jm95i+cg683/zUWL/ZQ99HD8wy3J
-         6qlNkm+9R8iwO9zHTxXbk6spRa8XYyqXFETVlRKIBOQfgeo1AIFmY3WI/wrwGbmEsvWD
-         Nzdw==
-X-Gm-Message-State: AOAM530WL07clAf5d/+05+dS8XNC80/G7c8lbhXoujflDp5P5n3fQlJD
-        qrHfcq0vxqprP/3w4lR9j49XZRjN/EXRMA==
-X-Google-Smtp-Source: ABdhPJxzFrCEsVsr5ZKSyf35dpFMkhpnTlFdBylWcS3Ob9fmsMxUw5XwvomWj2HhMwVV5agU9Nj//w==
-X-Received: by 2002:adf:b257:: with SMTP id y23mr6285513wra.371.1610706622478;
-        Fri, 15 Jan 2021 02:30:22 -0800 (PST)
+        bh=aphsTU9HtqHr+MTnNEXHu0BvdDEGZPpWbSySuJKBduU=;
+        b=Fv8p0oK0T62zdfzpu0u5OZqGjpmMVsRFlCjccGAsKxv3oay0aarKC6CzMI7Y7A0w/G
+         2B4CLh70CqXueUzdJcE7I9C57hHeKSLoqweIvyj4zAS2S/xOOwZF0AD32tXXUMOXdruT
+         eKzkat1NdVOVjeSCPHfrZ+1nPlc0gDNwGHovq7keE6ICc4Qf6asx4WwDYZrjB1fRGZZQ
+         PXQGdPI9o2j5sQuF2e2w1m79DVDH5C11bNJ+rhtEZwmLb+Io4HyF3JOfMfCfd2XBxgtL
+         sDH0m4vaXzcqKYY7hM1isY5Kp46V/XdVQcLpU3/iAlabnsWDuI1GEVx+2byapfaxEuaL
+         kOXg==
+X-Gm-Message-State: AOAM532W0/n5NZVXljgvnAuXm2ePebVQvViGF9Zwe8Ys7BZdMDljMUXp
+        /GiJUND57gc04iKO4HiwP0JyWA==
+X-Google-Smtp-Source: ABdhPJwiyREeghjZO6sfa1K3q1zE4WfyEz5bTpcuR4aeNvpZQlWs47lziy+SqmtJErvhLhOdB5p1CA==
+X-Received: by 2002:a5d:6045:: with SMTP id j5mr11983014wrt.223.1610706624021;
+        Fri, 15 Jan 2021 02:30:24 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id m14sm13815288wrh.94.2021.01.15.02.30.21
+        by smtp.gmail.com with ESMTPSA id m14sm13815288wrh.94.2021.01.15.02.30.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 02:30:22 -0800 (PST)
+        Fri, 15 Jan 2021 02:30:23 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [libgpiod][PATCH v2 2/7] treewide: simplify the active-low line property
-Date:   Fri, 15 Jan 2021 11:30:13 +0100
-Message-Id: <20210115103018.27704-3-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH v2 4/7] treewide: rename BIAS_DISABLE to BIAS_DISABLED
+Date:   Fri, 15 Jan 2021 11:30:15 +0100
+Message-Id: <20210115103018.27704-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20210115103018.27704-1-brgl@bgdev.pl>
 References: <20210115103018.27704-1-brgl@bgdev.pl>
@@ -75,619 +75,327 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Unlike line direction - where input and output modes are equal, no signal
-inversion (active-high) is the natural state of the line while active-low
-is less likely. Let's drop the ACTIVE_STATE enum treewide and provide a
-boolean property for lines - is_active_low() - to reflect that fact. This
-function returning false means the line is "active-high".
+When we're reading the current bias setting of a line, it is already
+disabled so the flag should be named as such. While BIAS_DISABLE would
+technically be fine when modifying the setting, let's rename it to
+BIAS_DISABLED too for consistency.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- bindings/cxx/examples/gpioinfocxx.cpp  |  3 +-
- bindings/cxx/gpiod.hpp                 | 16 ++------
- bindings/cxx/line.cpp                  |  6 +--
- bindings/cxx/tests/tests-line.cpp      | 24 ++++++------
- bindings/python/examples/gpioinfo.py   |  4 +-
- bindings/python/gpiodmodule.c          | 45 ++++++----------------
- bindings/python/tests/gpiod_py_test.py | 16 ++++----
- include/gpiod.h                        | 16 ++------
- lib/core.c                             | 12 +++---
- tests/tests-line.c                     | 52 +++++++++-----------------
- tools/gpioinfo.c                       | 10 ++---
- 11 files changed, 69 insertions(+), 135 deletions(-)
+ bindings/cxx/gpiod.hpp                 |  4 ++--
+ bindings/cxx/line.cpp                  |  2 +-
+ bindings/cxx/line_bulk.cpp             |  4 ++--
+ bindings/cxx/tests/tests-line.cpp      |  4 ++--
+ bindings/python/gpiodmodule.c          | 20 ++++++++++----------
+ bindings/python/tests/gpiod_py_test.py |  4 ++--
+ include/gpiod.h                        |  4 ++--
+ lib/core.c                             |  6 +++---
+ tests/tests-event.c                    |  2 +-
+ tests/tests-line.c                     | 10 +++++-----
+ tools/gpioinfo.c                       |  2 +-
+ tools/tools-common.c                   |  2 +-
+ 12 files changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/bindings/cxx/examples/gpioinfocxx.cpp b/bindings/cxx/examples/gpioinfocxx.cpp
-index 2490abd..384286e 100644
---- a/bindings/cxx/examples/gpioinfocxx.cpp
-+++ b/bindings/cxx/examples/gpioinfocxx.cpp
-@@ -44,8 +44,7 @@ int main(int argc, char **argv)
- 				::std::cout << " ";
- 
- 				::std::cout.width(10);
--				::std::cout << (lit.active_state() == ::gpiod::line::ACTIVE_LOW
--									? "active-low" : "active-high");
-+				::std::cout << (lit.is_active_low() ? "active-low" : "active-high");
- 
- 				::std::cout << ::std::endl;
- 			}
 diff --git a/bindings/cxx/gpiod.hpp b/bindings/cxx/gpiod.hpp
-index 6c9ccd6..8b4a8f9 100644
+index fb7f1fa..dbcae6c 100644
 --- a/bindings/cxx/gpiod.hpp
 +++ b/bindings/cxx/gpiod.hpp
-@@ -313,10 +313,10 @@ public:
- 	GPIOD_API int direction(void) const;
- 
- 	/**
--	 * @brief Get current active state of this line.
--	 * @return Current active state setting.
-+	 * @brief Check if this line's signal is inverted.
-+	 * @return True if this line is "active-low", false otherwise.
- 	 */
--	GPIOD_API int active_state(void) const;
-+	GPIOD_API bool is_active_low(void) const;
- 
- 	/**
- 	 * @brief Get current bias of this line.
-@@ -482,16 +482,6 @@ public:
- 		/**< Line's direction setting is output. */
- 	};
- 
--	/**
--	 * @brief Possible active state settings.
--	 */
--	enum : int {
--		ACTIVE_LOW = 1,
--		/**< Line's active state is low. */
--		ACTIVE_HIGH,
--		/**< Line's active state is high. */
--	};
--
- 	/**
- 	 * @brief Possible bias settings.
- 	 */
+@@ -225,7 +225,7 @@ struct line_request
+ 	/**< The line is an open-source port. */
+ 	GPIOD_API static const ::std::bitset<32> FLAG_OPEN_DRAIN;
+ 	/**< The line is an open-drain port. */
+-	GPIOD_API static const ::std::bitset<32> FLAG_BIAS_DISABLE;
++	GPIOD_API static const ::std::bitset<32> FLAG_BIAS_DISABLED;
+ 	/**< The line has neither pull-up nor pull-down resistor enabled. */
+ 	GPIOD_API static const ::std::bitset<32> FLAG_BIAS_PULL_DOWN;
+ 	/**< The line has a configurable pull-down resistor enabled. */
+@@ -488,7 +488,7 @@ public:
+ 	enum : int {
+ 		BIAS_UNKNOWN = 1,
+ 		/**< Line's bias state is unknown. */
+-		BIAS_DISABLE,
++		BIAS_DISABLED,
+ 		/**< Line's internal bias is disabled. */
+ 		BIAS_PULL_UP,
+ 		/**< Line's internal pull-up bias is enabled. */
 diff --git a/bindings/cxx/line.cpp b/bindings/cxx/line.cpp
-index 54382e2..5a907db 100644
+index c605790..99eb246 100644
 --- a/bindings/cxx/line.cpp
 +++ b/bindings/cxx/line.cpp
-@@ -74,14 +74,12 @@ int line::direction(void) const
- 	return dir == GPIOD_LINE_DIRECTION_INPUT ? DIRECTION_INPUT : DIRECTION_OUTPUT;
- }
+@@ -16,7 +16,7 @@ namespace {
+ const ::std::map<int, int> bias_mapping = {
+ 	{ GPIOD_LINE_BIAS_PULL_UP,	line::BIAS_PULL_UP, },
+ 	{ GPIOD_LINE_BIAS_PULL_DOWN,	line::BIAS_PULL_DOWN, },
+-	{ GPIOD_LINE_BIAS_DISABLE,	line::BIAS_DISABLE, },
++	{ GPIOD_LINE_BIAS_DISABLED,	line::BIAS_DISABLED, },
+ 	{ GPIOD_LINE_BIAS_UNKNOWN,	line::BIAS_UNKNOWN, },
+ };
  
--int line::active_state(void) const
-+bool line::is_active_low(void) const
- {
- 	this->throw_if_null();
- 	line::chip_guard lock_chip(*this);
+diff --git a/bindings/cxx/line_bulk.cpp b/bindings/cxx/line_bulk.cpp
+index 6e88d21..17b7208 100644
+--- a/bindings/cxx/line_bulk.cpp
++++ b/bindings/cxx/line_bulk.cpp
+@@ -14,7 +14,7 @@ namespace gpiod {
+ const ::std::bitset<32> line_request::FLAG_ACTIVE_LOW(GPIOD_BIT(0));
+ const ::std::bitset<32> line_request::FLAG_OPEN_SOURCE(GPIOD_BIT(1));
+ const ::std::bitset<32> line_request::FLAG_OPEN_DRAIN(GPIOD_BIT(2));
+-const ::std::bitset<32> line_request::FLAG_BIAS_DISABLE(GPIOD_BIT(3));
++const ::std::bitset<32> line_request::FLAG_BIAS_DISABLED(GPIOD_BIT(3));
+ const ::std::bitset<32> line_request::FLAG_BIAS_PULL_DOWN(GPIOD_BIT(4));
+ const ::std::bitset<32> line_request::FLAG_BIAS_PULL_UP(GPIOD_BIT(5));
  
--	int active = ::gpiod_line_active_state(this->_m_line);
--
--	return active == GPIOD_LINE_ACTIVE_STATE_HIGH ? ACTIVE_HIGH : ACTIVE_LOW;
-+	return ::gpiod_line_is_active_low(this->_m_line);
- }
- 
- int line::bias(void) const
+@@ -41,7 +41,7 @@ const ::std::map<::std::bitset<32>, int, bitset_cmp> reqflag_mapping = {
+ 	{ line_request::FLAG_ACTIVE_LOW,	GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW, },
+ 	{ line_request::FLAG_OPEN_DRAIN,	GPIOD_LINE_REQUEST_FLAG_OPEN_DRAIN, },
+ 	{ line_request::FLAG_OPEN_SOURCE,	GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE, },
+-	{ line_request::FLAG_BIAS_DISABLE,	GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE, },
++	{ line_request::FLAG_BIAS_DISABLED,	GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED, },
+ 	{ line_request::FLAG_BIAS_PULL_DOWN,	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN, },
+ 	{ line_request::FLAG_BIAS_PULL_UP,	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP, },
+ };
 diff --git a/bindings/cxx/tests/tests-line.cpp b/bindings/cxx/tests/tests-line.cpp
-index 53b1d03..3c7ea39 100644
+index 7ea9b3a..97d12be 100644
 --- a/bindings/cxx/tests/tests-line.cpp
 +++ b/bindings/cxx/tests/tests-line.cpp
-@@ -29,7 +29,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
- 		REQUIRE(line.offset() == 4);
- 		REQUIRE(line.name() == "gpio-mockup-A-4");
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_INPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
- 		REQUIRE(line.consumer().empty());
- 		REQUIRE_FALSE(line.is_requested());
- 		REQUIRE_FALSE(line.is_used());
-@@ -49,7 +49,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
- 		REQUIRE(line.offset() == 4);
- 		REQUIRE(line.name() == "gpio-mockup-A-4");
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
- 		REQUIRE(line.is_requested());
- 		REQUIRE(line.is_used());
- 		REQUIRE_FALSE(line.is_open_drain());
-@@ -70,7 +70,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
- 		REQUIRE(line.offset() == 4);
- 		REQUIRE(line.name() == "gpio-mockup-A-4");
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_LOW);
-+		REQUIRE(line.is_active_low());
- 		REQUIRE(line.is_requested());
- 		REQUIRE(line.is_used());
- 		REQUIRE(line.is_open_drain());
-@@ -90,7 +90,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
- 		REQUIRE(line.offset() == 4);
- 		REQUIRE(line.name() == "gpio-mockup-A-4");
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
- 		REQUIRE(line.is_requested());
- 		REQUIRE(line.is_used());
- 		REQUIRE_FALSE(line.is_open_drain());
-@@ -110,7 +110,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
- 		REQUIRE(line.offset() == 4);
- 		REQUIRE(line.name() == "gpio-mockup-A-4");
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
- 		REQUIRE(line.is_requested());
- 		REQUIRE(line.is_used());
- 		REQUIRE_FALSE(line.is_open_drain());
-@@ -130,7 +130,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
- 		REQUIRE(line.offset() == 4);
- 		REQUIRE(line.name() == "gpio-mockup-A-4");
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());;
- 		REQUIRE(line.is_requested());
- 		REQUIRE(line.is_used());
- 		REQUIRE_FALSE(line.is_open_drain());
-@@ -150,7 +150,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
- 		REQUIRE(line.offset() == 4);
- 		REQUIRE(line.name() == "gpio-mockup-A-4");
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
- 		REQUIRE(line.is_requested());
- 		REQUIRE(line.is_used());
- 		REQUIRE_FALSE(line.is_open_drain());
-@@ -320,19 +320,19 @@ TEST_CASE("Line can be reconfigured", "[line]")
- 		config.flags = 0;
+@@ -104,7 +104,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
+ 
+ 		config.consumer = consumer.c_str();
+ 		config.request_type = ::gpiod::line_request::DIRECTION_OUTPUT;
+-		config.flags = ::gpiod::line_request::FLAG_BIAS_DISABLE;
++		config.flags = ::gpiod::line_request::FLAG_BIAS_DISABLED;
  		line.request(config);
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_INPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
  
- 		line.set_config(::gpiod::line_request::DIRECTION_OUTPUT,
- 			::gpiod::line_request::FLAG_ACTIVE_LOW,1);
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_LOW);
-+		REQUIRE(line.is_active_low());
- 		REQUIRE(mockup::instance().chip_get_value(0, 3) == 0);
- 		line.set_value(0);
- 		REQUIRE(mockup::instance().chip_get_value(0, 3) == 1);
- 
- 		line.set_config(::gpiod::line_request::DIRECTION_OUTPUT, 0);
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
- 		REQUIRE(mockup::instance().chip_get_value(0, 3) == 0);
- 		line.set_value(1);
- 		REQUIRE(mockup::instance().chip_get_value(0, 3) == 1);
-@@ -348,12 +348,12 @@ TEST_CASE("Line can be reconfigured", "[line]")
- 
- 		line.set_flags(::gpiod::line_request::FLAG_ACTIVE_LOW);
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_LOW);
-+		REQUIRE(line.is_active_low());
- 		REQUIRE(mockup::instance().chip_get_value(0, 3) == 0);
- 
- 		line.set_flags(0);
- 		REQUIRE(line.direction() == ::gpiod::line::DIRECTION_OUTPUT);
--		REQUIRE(line.active_state() == ::gpiod::line::ACTIVE_HIGH);
-+		REQUIRE_FALSE(line.is_active_low());
- 		REQUIRE(mockup::instance().chip_get_value(0, 3) == 1);
+ 		REQUIRE(line.offset() == 4);
+@@ -115,7 +115,7 @@ TEST_CASE("Line information can be correctly retrieved", "[line]")
+ 		REQUIRE(line.is_used());
+ 		REQUIRE_FALSE(line.is_open_drain());
+ 		REQUIRE_FALSE(line.is_open_source());
+-		REQUIRE(line.bias() == ::gpiod::line::BIAS_DISABLE);
++		REQUIRE(line.bias() == ::gpiod::line::BIAS_DISABLED);
  	}
  
-diff --git a/bindings/python/examples/gpioinfo.py b/bindings/python/examples/gpioinfo.py
-index 6a47b66..1593337 100755
---- a/bindings/python/examples/gpioinfo.py
-+++ b/bindings/python/examples/gpioinfo.py
-@@ -23,11 +23,11 @@ if __name__ == '__main__':
-                     name = line.name()
-                     consumer = line.consumer()
-                     direction = line.direction()
--                    active_state = line.active_state()
-+                    active_low = line.is_active_low()
- 
-                     print('\tline {:>3}: {:>18} {:>12} {:>8} {:>10}'.format(
-                           offset,
-                           'unnamed' if name is None else name,
-                           'unused' if consumer is None else consumer,
-                           'input' if direction == gpiod.Line.DIRECTION_INPUT else 'output',
--                          'active-low' if active_state == gpiod.Line.ACTIVE_LOW else 'active-high'))
-+                          'active-low' if active_low else 'active-high'))
+ 	SECTION("exported pull-down line")
 diff --git a/bindings/python/gpiodmodule.c b/bindings/python/gpiodmodule.c
-index e8641f1..b48a83a 100644
+index e0cfab3..b1d8f35 100644
 --- a/bindings/python/gpiodmodule.c
 +++ b/bindings/python/gpiodmodule.c
-@@ -67,11 +67,6 @@ enum {
- 	gpiod_DIRECTION_OUTPUT,
+@@ -57,7 +57,7 @@ enum {
+ 	gpiod_LINE_REQ_FLAG_OPEN_DRAIN		= GPIOD_BIT(0),
+ 	gpiod_LINE_REQ_FLAG_OPEN_SOURCE		= GPIOD_BIT(1),
+ 	gpiod_LINE_REQ_FLAG_ACTIVE_LOW		= GPIOD_BIT(2),
+-	gpiod_LINE_REQ_FLAG_BIAS_DISABLE	= GPIOD_BIT(3),
++	gpiod_LINE_REQ_FLAG_BIAS_DISABLED	= GPIOD_BIT(3),
+ 	gpiod_LINE_REQ_FLAG_BIAS_PULL_DOWN	= GPIOD_BIT(4),
+ 	gpiod_LINE_REQ_FLAG_BIAS_PULL_UP	= GPIOD_BIT(5),
  };
+@@ -69,7 +69,7 @@ enum {
  
--enum {
--	gpiod_ACTIVE_HIGH = 1,
--	gpiod_ACTIVE_LOW,
--};
--
  enum {
- 	gpiod_BIAS_AS_IS = 1,
- 	gpiod_BIAS_DISABLE,
-@@ -341,28 +336,20 @@ static PyObject *gpiod_Line_direction(gpiod_LineObject *self,
- 	return ret;
- }
- 
--PyDoc_STRVAR(gpiod_Line_active_state_doc,
--"active_state() -> integer\n"
-+PyDoc_STRVAR(gpiod_Line_is_active_low_doc,
-+"is_active_low() -> boolean\n"
- "\n"
--"Get the active state setting of this GPIO line.");
-+"Check if this line's signal is inverted");
- 
--static PyObject *gpiod_Line_active_state(gpiod_LineObject *self,
--					 PyObject *Py_UNUSED(ignored))
-+static PyObject *gpiod_Line_is_active_low(gpiod_LineObject *self,
-+					  PyObject *Py_UNUSED(ignored))
- {
--	PyObject *ret;
--	int active;
--
- 	if (gpiod_ChipIsClosed(self->owner))
- 		return NULL;
- 
--	active = gpiod_line_active_state(self->line);
--
--	if (active == GPIOD_LINE_ACTIVE_STATE_HIGH)
--		ret = Py_BuildValue("I", gpiod_ACTIVE_HIGH);
--	else
--		ret = Py_BuildValue("I", gpiod_ACTIVE_LOW);
--
--	return ret;
-+	if (gpiod_line_is_active_low(self->line))
-+		Py_RETURN_TRUE;
-+	Py_RETURN_FALSE;
- }
- 
- PyDoc_STRVAR(gpiod_Line_bias_doc,
-@@ -973,10 +960,10 @@ static PyMethodDef gpiod_Line_methods[] = {
- 		.ml_doc = gpiod_Line_direction_doc,
+ 	gpiod_BIAS_UNKNOWN = 1,
+-	gpiod_BIAS_DISABLE,
++	gpiod_BIAS_DISABLED,
+ 	gpiod_BIAS_PULL_UP,
+ 	gpiod_BIAS_PULL_DOWN,
+ };
+@@ -372,8 +372,8 @@ static PyObject *gpiod_Line_bias(gpiod_LineObject *self,
+ 		return Py_BuildValue("I", gpiod_BIAS_PULL_UP);
+ 	case GPIOD_LINE_BIAS_PULL_DOWN:
+ 		return Py_BuildValue("I", gpiod_BIAS_PULL_DOWN);
+-	case GPIOD_LINE_BIAS_DISABLE:
+-		return Py_BuildValue("I", gpiod_BIAS_DISABLE);
++	case GPIOD_LINE_BIAS_DISABLED:
++		return Py_BuildValue("I", gpiod_BIAS_DISABLED);
+ 	case GPIOD_LINE_BIAS_UNKNOWN:
+ 	default:
+ 		return Py_BuildValue("I", gpiod_BIAS_UNKNOWN);
+@@ -1286,8 +1286,8 @@ static void gpiod_MakeRequestConfig(struct gpiod_line_request_config *conf,
+ 		conf->flags |= GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE;
+ 	if (flags & gpiod_LINE_REQ_FLAG_ACTIVE_LOW)
+ 		conf->flags |= GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW;
+-	if (flags & gpiod_LINE_REQ_FLAG_BIAS_DISABLE)
+-		conf->flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE;
++	if (flags & gpiod_LINE_REQ_FLAG_BIAS_DISABLED)
++		conf->flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED;
+ 	if (flags & gpiod_LINE_REQ_FLAG_BIAS_PULL_DOWN)
+ 		conf->flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN;
+ 	if (flags & gpiod_LINE_REQ_FLAG_BIAS_PULL_UP)
+@@ -2532,8 +2532,8 @@ static gpiod_ConstDescr gpiod_ConstList[] = {
  	},
- 	{
--		.ml_name = "active_state",
--		.ml_meth = (PyCFunction)gpiod_Line_active_state,
-+		.ml_name = "is_active_low",
-+		.ml_meth = (PyCFunction)gpiod_Line_is_active_low,
- 		.ml_flags = METH_NOARGS,
--		.ml_doc = gpiod_Line_active_state_doc,
-+		.ml_doc = gpiod_Line_is_active_low_doc,
- 	},
- 	{
- 		.ml_name = "bias",
-@@ -2538,16 +2525,6 @@ static gpiod_ConstDescr gpiod_ConstList[] = {
- 		.name = "DIRECTION_OUTPUT",
- 		.val = gpiod_DIRECTION_OUTPUT,
- 	},
--	{
--		.typeobj = &gpiod_LineType,
--		.name = "ACTIVE_HIGH",
--		.val = gpiod_ACTIVE_HIGH,
--	},
--	{
--		.typeobj = &gpiod_LineType,
--		.name = "ACTIVE_LOW",
--		.val = gpiod_ACTIVE_LOW,
--	},
  	{
  		.typeobj = &gpiod_LineType,
- 		.name = "BIAS_AS_IS",
+-		.name = "BIAS_DISABLE",
+-		.val = gpiod_BIAS_DISABLE,
++		.name = "BIAS_DISABLED",
++		.val = gpiod_BIAS_DISABLED,
+ 	},
+ 	{
+ 		.typeobj = &gpiod_LineType,
+@@ -2649,8 +2649,8 @@ static gpiod_ModuleConst gpiod_ModuleConsts[] = {
+ 		.value = gpiod_LINE_REQ_FLAG_ACTIVE_LOW,
+ 	},
+ 	{
+-		.name = "LINE_REQ_FLAG_BIAS_DISABLE",
+-		.value = gpiod_LINE_REQ_FLAG_BIAS_DISABLE,
++		.name = "LINE_REQ_FLAG_BIAS_DISABLED",
++		.value = gpiod_LINE_REQ_FLAG_BIAS_DISABLED,
+ 	},
+ 	{
+ 		.name = "LINE_REQ_FLAG_BIAS_PULL_DOWN",
 diff --git a/bindings/python/tests/gpiod_py_test.py b/bindings/python/tests/gpiod_py_test.py
-index 79294bc..3093a1c 100755
+index 7d790f3..3c6e24b 100755
 --- a/bindings/python/tests/gpiod_py_test.py
 +++ b/bindings/python/tests/gpiod_py_test.py
-@@ -205,7 +205,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_INPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_HIGH)
-+            self.assertFalse(line.is_active_low())
-             self.assertEqual(line.consumer(), None)
-             self.assertFalse(line.is_used())
-             self.assertFalse(line.is_requested())
-@@ -219,7 +219,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_LOW)
-+            self.assertTrue(line.is_active_low())
-             self.assertEqual(line.consumer(), default_consumer)
-             self.assertTrue(line.is_used())
+@@ -282,7 +282,7 @@ class LineInfo(MockupTestCase):
+     def test_exported_bias_disable_line(self):
+         with gpiod.Chip(mockup.chip_path(0)) as chip:
+             line = chip.get_line(4)
+-            flags = gpiod.LINE_REQ_FLAG_BIAS_DISABLE
++            flags = gpiod.LINE_REQ_FLAG_BIAS_DISABLED
+             line.request(consumer=default_consumer,
+                          type=gpiod.LINE_REQ_DIR_OUT,
+                          flags=flags)
+@@ -295,7 +295,7 @@ class LineInfo(MockupTestCase):
              self.assertTrue(line.is_requested())
-@@ -235,7 +235,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_LOW)
-+            self.assertTrue(line.is_active_low())
-             self.assertEqual(line.consumer(), default_consumer)
-             self.assertTrue(line.is_used())
-             self.assertTrue(line.is_requested())
-@@ -253,7 +253,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_HIGH)
-+            self.assertFalse(line.is_active_low())
-             self.assertEqual(line.consumer(), default_consumer)
-             self.assertTrue(line.is_used())
-             self.assertTrue(line.is_requested())
-@@ -271,7 +271,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_HIGH)
-+            self.assertFalse(line.is_active_low())
-             self.assertEqual(line.consumer(), default_consumer)
-             self.assertTrue(line.is_used())
-             self.assertTrue(line.is_requested())
-@@ -289,7 +289,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_HIGH)
-+            self.assertFalse(line.is_active_low())
-             self.assertEqual(line.consumer(), default_consumer)
-             self.assertTrue(line.is_used())
-             self.assertTrue(line.is_requested())
-@@ -307,7 +307,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_HIGH)
-+            self.assertFalse(line.is_active_low())
-             self.assertEqual(line.consumer(), default_consumer)
-             self.assertTrue(line.is_used())
-             self.assertTrue(line.is_requested())
-@@ -325,7 +325,7 @@ class LineInfo(MockupTestCase):
-             self.assertEqual(line.offset(), 4)
-             self.assertEqual(line.name(), 'gpio-mockup-A-4')
-             self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
--            self.assertEqual(line.active_state(), gpiod.Line.ACTIVE_HIGH)
-+            self.assertFalse(line.is_active_low())
-             self.assertEqual(line.consumer(), default_consumer)
-             self.assertTrue(line.is_used())
-             self.assertTrue(line.is_requested())
+             self.assertFalse(line.is_open_drain())
+             self.assertFalse(line.is_open_source())
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_DISABLE)
++            self.assertEqual(line.bias(), gpiod.Line.BIAS_DISABLED)
+ 
+     def test_exported_bias_pull_down_line(self):
+         with gpiod.Chip(mockup.chip_path(0)) as chip:
 diff --git a/include/gpiod.h b/include/gpiod.h
-index b073b3b..75da84c 100644
+index 1aaa6cd..919128f 100644
 --- a/include/gpiod.h
 +++ b/include/gpiod.h
-@@ -280,16 +280,6 @@ enum {
- 	/**< Direction is output - we're driving the GPIO line. */
- };
- 
--/**
-- * @brief Possible active state settings.
-- */
--enum {
--	GPIOD_LINE_ACTIVE_STATE_HIGH = 1,
--	/**< The active state of a GPIO is active-high. */
--	GPIOD_LINE_ACTIVE_STATE_LOW,
--	/**< The active state of a GPIO is active-low. */
--};
--
- /**
-  * @brief Possible internal bias settings.
-  */
-@@ -337,11 +327,11 @@ const char *gpiod_line_consumer(struct gpiod_line *line) GPIOD_API;
- int gpiod_line_direction(struct gpiod_line *line) GPIOD_API;
- 
- /**
-- * @brief Read the GPIO line active state setting.
-+ * @brief Check if the signal of this line is inverted.
-  * @param line GPIO line object.
-- * @return Returns GPIOD_LINE_ACTIVE_STATE_HIGH or GPIOD_LINE_ACTIVE_STATE_LOW.
-+ * @return True if this line is "active-low", false otherwise.
-  */
--int gpiod_line_active_state(struct gpiod_line *line) GPIOD_API;
-+bool gpiod_line_is_active_low(struct gpiod_line *line) GPIOD_API;
- 
- /**
-  * @brief Read the GPIO line bias setting.
+@@ -286,7 +286,7 @@ enum {
+ enum {
+ 	GPIOD_LINE_BIAS_UNKNOWN = 1,
+ 	/**< The internal bias state is unknown. */
+-	GPIOD_LINE_BIAS_DISABLE,
++	GPIOD_LINE_BIAS_DISABLED,
+ 	/**< The internal bias is disabled. */
+ 	GPIOD_LINE_BIAS_PULL_UP,
+ 	/**< The internal pull-up bias is enabled. */
+@@ -433,7 +433,7 @@ enum {
+ 	/**< The line is an open-source port. */
+ 	GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW	= GPIOD_BIT(2),
+ 	/**< The active state of the line is low (high is the default). */
+-	GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE	= GPIOD_BIT(3),
++	GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED	= GPIOD_BIT(3),
+ 	/**< The line has neither either pull-up nor pull-down resistor. */
+ 	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN	= GPIOD_BIT(4),
+ 	/**< The line has pull-down resistor enabled. */
 diff --git a/lib/core.c b/lib/core.c
-index d96e6cf..c6fb474 100644
+index 9ee84cf..55766ec 100644
 --- a/lib/core.c
 +++ b/lib/core.c
-@@ -41,8 +41,8 @@ struct gpiod_line {
- 	/* The direction of the GPIO line. */
- 	int direction;
- 
--	/* The active-state configuration. */
--	int active_state;
-+	/* Is this line active-low?. */
-+	bool active_low;
- 
- 	/* The logical value last written to the line. */
- 	int output_value;
-@@ -471,9 +471,9 @@ int gpiod_line_direction(struct gpiod_line *line)
- 	return line->direction;
- }
- 
--int gpiod_line_active_state(struct gpiod_line *line)
-+bool gpiod_line_is_active_low(struct gpiod_line *line)
- {
--	return line->active_state;
-+	return line->active_low;
- }
- 
+@@ -479,7 +479,7 @@ bool gpiod_line_is_active_low(struct gpiod_line *line)
  int gpiod_line_bias(struct gpiod_line *line)
-@@ -541,9 +541,7 @@ int gpiod_line_update(struct gpiod_line *line)
- 						? GPIOD_LINE_DIRECTION_OUTPUT
- 						: GPIOD_LINE_DIRECTION_INPUT;
+ {
+ 	if (line->info_flags & GPIOLINE_FLAG_BIAS_DISABLE)
+-		return GPIOD_LINE_BIAS_DISABLE;
++		return GPIOD_LINE_BIAS_DISABLED;
+ 	if (line->info_flags & GPIOLINE_FLAG_BIAS_PULL_UP)
+ 		return GPIOD_LINE_BIAS_PULL_UP;
+ 	if (line->info_flags & GPIOLINE_FLAG_BIAS_PULL_DOWN)
+@@ -639,7 +639,7 @@ static void line_request_flag_to_gpio_v2_line_config(int flags,
+ 	else if (flags & GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE)
+ 		config->flags |= GPIO_V2_LINE_FLAG_OPEN_SOURCE;
  
--	line->active_state = info.flags & GPIO_V2_LINE_FLAG_ACTIVE_LOW
--						? GPIOD_LINE_ACTIVE_STATE_LOW
--						: GPIOD_LINE_ACTIVE_STATE_HIGH;
-+	line->active_low = !!(info.flags & GPIO_V2_LINE_FLAG_ACTIVE_LOW);
+-	if (flags & GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE)
++	if (flags & GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED)
+ 		config->flags |= GPIO_V2_LINE_FLAG_BIAS_DISABLED;
+ 	else if (flags & GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN)
+ 		config->flags |= GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
+@@ -671,7 +671,7 @@ static bool line_request_config_validate(
+ 		return false;
+ 	}
  
- 	line->info_flags = line_info_v2_to_info_flags(&info);
+-	if (config->flags & GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE)
++	if (config->flags & GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED)
+ 		bias_flags++;
+ 	if (config->flags & GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP)
+ 		bias_flags++;
+diff --git a/tests/tests-event.c b/tests/tests-event.c
+index aed2395..5fa4459 100644
+--- a/tests/tests-event.c
++++ b/tests/tests-event.c
+@@ -219,7 +219,7 @@ GPIOD_TEST_CASE(both_edges_bias_disable, 0, { 8 })
+ 	gpiod_test_return_if_failed();
+ 
+ 	ret = gpiod_line_request_both_edges_events_flags(line,
+-		GPIOD_TEST_CONSUMER, GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE);
++		GPIOD_TEST_CONSUMER, GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED);
+ 	g_assert_cmpint(ret, ==, 0);
+ 	gpiod_test_return_if_failed();
  
 diff --git a/tests/tests-line.c b/tests/tests-line.c
-index cc66fcc..d6264af 100644
+index 88857a0..0f8e20e 100644
 --- a/tests/tests-line.c
 +++ b/tests/tests-line.c
-@@ -340,12 +340,10 @@ GPIOD_TEST_CASE(set_config_bulk_null_values, 0, { 8 })
- 	ret = gpiod_line_request_bulk_output(bulk, GPIOD_TEST_CONSUMER, 0);
- 	g_assert_cmpint(ret, ==, 0);
- 	gpiod_test_return_if_failed();
--	g_assert_cmpint(gpiod_line_active_state(line0), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
--	g_assert_cmpint(gpiod_line_active_state(line1), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
--	g_assert_cmpint(gpiod_line_active_state(line2), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
-+	g_assert_false(gpiod_line_is_active_low(line0));
-+	g_assert_false(gpiod_line_is_active_low(line1));
-+	g_assert_false(gpiod_line_is_active_low(line2));
-+
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 0), ==, 0);
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 1), ==, 0);
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 2), ==, 0);
-@@ -354,12 +352,9 @@ GPIOD_TEST_CASE(set_config_bulk_null_values, 0, { 8 })
- 			GPIOD_LINE_REQUEST_DIRECTION_OUTPUT,
- 			GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW, NULL);
- 	g_assert_cmpint(ret, ==, 0);
--	g_assert_cmpint(gpiod_line_active_state(line0), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
--	g_assert_cmpint(gpiod_line_active_state(line1), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
--	g_assert_cmpint(gpiod_line_active_state(line2), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
-+	g_assert_true(gpiod_line_is_active_low(line0));
-+	g_assert_true(gpiod_line_is_active_low(line1));
-+	g_assert_true(gpiod_line_is_active_low(line2));
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 0), ==, 1);
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 1), ==, 1);
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 2), ==, 1);
-@@ -367,12 +362,9 @@ GPIOD_TEST_CASE(set_config_bulk_null_values, 0, { 8 })
- 	ret = gpiod_line_set_config_bulk(bulk,
- 			GPIOD_LINE_REQUEST_DIRECTION_OUTPUT, 0, NULL);
- 	g_assert_cmpint(ret, ==, 0);
--	g_assert_cmpint(gpiod_line_active_state(line0), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
--	g_assert_cmpint(gpiod_line_active_state(line1), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
--	g_assert_cmpint(gpiod_line_active_state(line2), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
-+	g_assert_false(gpiod_line_is_active_low(line0));
-+	g_assert_false(gpiod_line_is_active_low(line1));
-+	g_assert_false(gpiod_line_is_active_low(line2));
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 0), ==, 0);
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 1), ==, 0);
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 2), ==, 0);
-@@ -395,20 +387,17 @@ GPIOD_TEST_CASE(set_flags_active_state, 0, { 8 })
- 	ret = gpiod_line_request_output(line, GPIOD_TEST_CONSUMER, 1);
- 	g_assert_cmpint(ret, ==, 0);
- 	gpiod_test_return_if_failed();
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
-+	g_assert_false(gpiod_line_is_active_low(line));
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 2), ==, 1);
+@@ -421,9 +421,9 @@ GPIOD_TEST_CASE(set_flags_bias, 0, { 8 })
+ 	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_UNKNOWN);
  
- 	ret = gpiod_line_set_flags(line, GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW);
+ 	ret = gpiod_line_set_flags(line,
+-		GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE);
++		GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED);
  	g_assert_cmpint(ret, ==, 0);
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
-+	g_assert_true(gpiod_line_is_active_low(line));
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 2), ==, 0);
+-	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_DISABLE);
++	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_DISABLED);
  
- 	ret = gpiod_line_set_flags(line, 0);
- 	g_assert_cmpint(ret, ==, 0);
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
-+	g_assert_false(gpiod_line_is_active_low(line));
- 	g_assert_cmpint(gpiod_test_chip_get_value(0, 2), ==, 1);
- }
- 
-@@ -719,8 +708,7 @@ GPIOD_TEST_CASE(active_state, 0, { 8 })
- 	g_assert_cmpint(ret, ==, 0);
+ 	ret = gpiod_line_set_flags(line,
+ 		GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
+@@ -959,13 +959,13 @@ GPIOD_TEST_CASE(multiple_bias_flags, 0, { 8 })
  	gpiod_test_return_if_failed();
  
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_HIGH);
-+	g_assert_false(gpiod_line_is_active_low(line));
+ 	ret = gpiod_line_request_input_flags(line, GPIOD_TEST_CONSUMER,
+-					GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE |
++					GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED |
+ 					GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN);
+ 	g_assert_cmpint(ret, ==, -1);
+ 	g_assert_cmpint(errno, ==, EINVAL);
  
- 	gpiod_line_release(line);
+ 	ret = gpiod_line_request_input_flags(line, GPIOD_TEST_CONSUMER,
+-					GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE |
++					GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED |
+ 					GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
+ 	g_assert_cmpint(ret, ==, -1);
+ 	g_assert_cmpint(errno, ==, EINVAL);
+@@ -977,7 +977,7 @@ GPIOD_TEST_CASE(multiple_bias_flags, 0, { 8 })
+ 	g_assert_cmpint(errno, ==, EINVAL);
  
-@@ -842,8 +830,7 @@ GPIOD_TEST_CASE(misc_flags_work_together, 0, { 8 })
- 	g_assert_true(gpiod_line_is_open_drain(line));
- 	g_assert_false(gpiod_line_is_open_source(line));
- 	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
-+	g_assert_true(gpiod_line_is_active_low(line));
- 	g_assert_cmpint(gpiod_line_direction(line), ==,
- 			GPIOD_LINE_DIRECTION_OUTPUT);
- 
-@@ -860,8 +847,7 @@ GPIOD_TEST_CASE(misc_flags_work_together, 0, { 8 })
- 	g_assert_false(gpiod_line_is_open_drain(line));
- 	g_assert_true(gpiod_line_is_open_source(line));
- 	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_AS_IS);
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
-+	g_assert_true(gpiod_line_is_active_low(line));
- 
- 	gpiod_line_release(line);
- 
-@@ -882,8 +868,7 @@ GPIOD_TEST_CASE(misc_flags_work_together, 0, { 8 })
- 	g_assert_false(gpiod_line_is_open_drain(line));
- 	g_assert_false(gpiod_line_is_open_source(line));
- 	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_PULL_DOWN);
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
-+	g_assert_true(gpiod_line_is_active_low(line));
- 	g_assert_cmpint(gpiod_line_direction(line), ==,
- 			GPIOD_LINE_DIRECTION_INPUT);
- 
-@@ -903,8 +888,7 @@ GPIOD_TEST_CASE(misc_flags_work_together, 0, { 8 })
- 	g_assert_false(gpiod_line_is_open_drain(line));
- 	g_assert_false(gpiod_line_is_open_source(line));
- 	g_assert_cmpint(gpiod_line_bias(line), ==, GPIOD_LINE_BIAS_PULL_UP);
--	g_assert_cmpint(gpiod_line_active_state(line), ==,
--			GPIOD_LINE_ACTIVE_STATE_LOW);
-+	g_assert_true(gpiod_line_is_active_low(line));
- 	g_assert_cmpint(gpiod_line_direction(line), ==,
- 			GPIOD_LINE_DIRECTION_INPUT);
- 
+ 	ret = gpiod_line_request_input_flags(line, GPIOD_TEST_CONSUMER,
+-					GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE |
++					GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED |
+ 					GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN |
+ 					GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
+ 	g_assert_cmpint(ret, ==, -1);
 diff --git a/tools/gpioinfo.c b/tools/gpioinfo.c
-index 057a19f..8d228ab 100644
+index 8d228ab..845113a 100644
 --- a/tools/gpioinfo.c
 +++ b/tools/gpioinfo.c
-@@ -117,11 +117,11 @@ static PRINTF(3, 4) void prinfo(bool *of,
+@@ -34,7 +34,7 @@ static bool line_bias_is_pulldown(struct gpiod_line *line)
  
- static void list_lines(struct gpiod_chip *chip)
+ static bool line_bias_is_disabled(struct gpiod_line *line)
  {
--	int direction, active_state;
-+	bool flag_printed, of, active_low;
- 	const char *name, *consumer;
- 	struct gpiod_line *line;
- 	unsigned int i, offset;
--	bool flag_printed, of;
-+	int direction;
+-	return gpiod_line_bias(line) == GPIOD_LINE_BIAS_DISABLE;
++	return gpiod_line_bias(line) == GPIOD_LINE_BIAS_DISABLED;
+ }
  
- 	printf("%s - %u lines:\n",
- 	       gpiod_chip_name(chip), gpiod_chip_num_lines(chip));
-@@ -134,7 +134,7 @@ static void list_lines(struct gpiod_chip *chip)
- 		name = gpiod_line_name(line);
- 		consumer = gpiod_line_consumer(line);
- 		direction = gpiod_line_direction(line);
--		active_state = gpiod_line_active_state(line);
-+		active_low = gpiod_line_is_active_low(line);
- 
- 		of = false;
- 
-@@ -157,9 +157,7 @@ static void list_lines(struct gpiod_chip *chip)
- 		prinfo(&of, 8, "%s ", direction == GPIOD_LINE_DIRECTION_INPUT
- 							? "input" : "output");
- 		prinfo(&of, 13, "%s ",
--		       active_state == GPIOD_LINE_ACTIVE_STATE_LOW
--							? "active-low"
--							: "active-high");
-+		       active_low ? "active-low" : "active-high");
- 
- 		flag_printed = false;
- 		for (i = 0; i < ARRAY_SIZE(flags); i++) {
+ static const struct flag flags[] = {
+diff --git a/tools/tools-common.c b/tools/tools-common.c
+index bb6cde6..9d4612a 100644
+--- a/tools/tools-common.c
++++ b/tools/tools-common.c
+@@ -68,7 +68,7 @@ int bias_flags(const char *option)
+ 	if (strcmp(option, "pull-up") == 0)
+ 		return GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP;
+ 	if (strcmp(option, "disable") == 0)
+-		return GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE;
++		return GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED;
+ 	if (strcmp(option, "as-is") != 0)
+ 		die("invalid bias: %s", option);
+ 	return 0;
 -- 
 2.29.1
 
