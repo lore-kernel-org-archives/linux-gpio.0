@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0E1C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E322C4332E
 	for <linux-gpio@archiver.kernel.org>; Sun, 17 Jan 2021 13:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD11E2222A
-	for <linux-gpio@archiver.kernel.org>; Sun, 17 Jan 2021 13:18:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C1B622226
+	for <linux-gpio@archiver.kernel.org>; Sun, 17 Jan 2021 13:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbhAQNSL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 17 Jan 2021 08:18:11 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:52037 "EHLO
+        id S1728968AbhAQNSR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 17 Jan 2021 08:18:17 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:52056 "EHLO
         mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728862AbhAQNSK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 17 Jan 2021 08:18:10 -0500
+        id S1728650AbhAQNSQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 17 Jan 2021 08:18:16 -0500
 Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id 70B444407EC;
-        Sun, 17 Jan 2021 15:17:21 +0200 (IST)
+        by mx.tkos.co.il (Postfix) with ESMTPS id E5F9E440820;
+        Sun, 17 Jan 2021 15:17:27 +0200 (IST)
 From:   Baruch Siach <baruch@tkos.co.il>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
@@ -40,9 +40,9 @@ Cc:     Baruch Siach <baruch@tkos.co.il>, Andrew Lunn <andrew@lunn.ch>,
         Ralph Sennhauser <ralph.sennhauser@gmail.com>,
         linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 2/5] gpio: mvebu: improve pwm period calculation accuracy
-Date:   Sun, 17 Jan 2021 15:17:03 +0200
-Message-Id: <a56e1e2a0ed2e9ce1ef7c9b336ab1b7c5efd2802.1610882271.git.baruch@tkos.co.il>
+Subject: [PATCH v4 4/5] gpio: mvebu: don't limit pwm period/duty_cycle to UINT_MAX
+Date:   Sun, 17 Jan 2021 15:17:05 +0200
+Message-Id: <d84e13d905b0ea578511a2439f825ed90c4ea2e5.1610882271.git.baruch@tkos.co.il>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1610882271.git.baruch@tkos.co.il>
 References: <cover.1610882271.git.baruch@tkos.co.il>
@@ -53,39 +53,43 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Change 'off' register value calculation from
-
-  $off = (period - duty_cycle) * clkrate / NSEC_PER_SEC
-
-to
-
-  $off = (period * clkrate / NSEC_PER_SEC) - $on
-
-That is, divide the full period value to reduce rounding error.
+PWM on/off registers are limited to UINT_MAX. However the state period
+and duty_cycle fields are ns values of type u64. There is no reason to
+limit them to UINT_MAX.
 
 Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
- drivers/gpio/gpio-mvebu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mvebu.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index a912a8fed197..c424d88e9e2b 100644
+index 8673ba77af5a..6b017854ce61 100644
 --- a/drivers/gpio/gpio-mvebu.c
 +++ b/drivers/gpio/gpio-mvebu.c
-@@ -715,9 +715,9 @@ static int mvebu_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+@@ -669,9 +669,7 @@ static void mvebu_pwm_get_state(struct pwm_chip *chip,
+ 	regmap_read(mvpwm->regs, mvebu_pwmreg_blink_on_duration(mvpwm), &u);
+ 	val = (unsigned long long) u * NSEC_PER_SEC;
+ 	val = DIV_ROUND_UP_ULL(val, mvpwm->clk_rate);
+-	if (val > UINT_MAX)
+-		state->duty_cycle = UINT_MAX;
+-	else if (val)
++	if (val)
+ 		state->duty_cycle = val;
  	else
- 		on = 1;
- 
--	val = (unsigned long long) mvpwm->clk_rate *
--		(state->period - state->duty_cycle);
-+	val = (unsigned long long) mvpwm->clk_rate * state->period;
- 	do_div(val, NSEC_PER_SEC);
-+	val -= on;
- 	if (val > UINT_MAX)
- 		return -EINVAL;
- 	if (val)
+ 		state->duty_cycle = 1;
+@@ -681,9 +679,7 @@ static void mvebu_pwm_get_state(struct pwm_chip *chip,
+ 	val += (unsigned long long) u; /* period = on + off duration */
+ 	val *= NSEC_PER_SEC;
+ 	val = DIV_ROUND_UP_ULL(val, mvpwm->clk_rate);
+-	if (val > UINT_MAX)
+-		state->period = UINT_MAX;
+-	else if (val)
++	if (val)
+ 		state->period = val;
+ 	else
+ 		state->period = 1;
 -- 
 2.29.2
 
