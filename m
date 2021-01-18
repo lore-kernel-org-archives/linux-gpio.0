@@ -2,121 +2,127 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6A6C4332E
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AA8C43381
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD3922D6D
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D298022252
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392269AbhARNah (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 08:30:37 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:34061 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392259AbhARNac (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 Jan 2021 08:30:32 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 4AF3C58073D;
-        Mon, 18 Jan 2021 08:29:24 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 18 Jan 2021 08:29:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=t9OxNww6HWANpl54DQNy0q2p7lT
-        jdtSam7hUc9ITNzs=; b=attOfT2JhEVIdl47sbSUK/s47o8YAfdcDGViEkjPbvU
-        kN8PHV6KfcrnUlnGI0H/zGWV/lYQ/pducVd00hrRS9hHyg5OfAtW+KJ2R7HwnmfM
-        5iq8BYpz51zKcuocrj/vP/AFPEJr6TVyHo59LKoSM2ypTJ3ltvkw7ig3SZRLpt6J
-        lHil40Rhw642JFs1NT3z9U4K8NleFiVPQLc4Z9OuIehemycr1YyXyJA5QKrxo70H
-        eDLO50qTvALYLnz1Ks4SUZiW4qcyk2hcYolm3Rb5rS0qbMkRO+CHH2VOMDGu+ErN
-        xB781iOqbwRtIrqoJ26sBo1Tswut5Ch0qwYcnIjPcpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=t9OxNw
-        w6HWANpl54DQNy0q2p7lTjdtSam7hUc9ITNzs=; b=JLHGu7fHEcDAC3NTaQcGeg
-        2zuGNPvX2PpaqiuoI2b+5uzzAGAZgsRdDByCUBrgB5fy0cMCaP8CRolCKBFlJ/sR
-        X1kRLMWD9VZ6my4AMb3FldcOg4/VuN8U/YhM4GT73PUa1F/5q2hVOXgfoYPozTZ5
-        aPe+HCCQI4UpJlR3uDhTcIce8tHBGGduqmC3B0l2roCmjTnsJyz7d+k3U/uJrFUm
-        13np3cXhXdbg9687Nt2cHPGOEfgZEtC5AmgJGmZTjcnrCkszd6i4m39MRGK1M6rb
-        AAPkScJKpYr5N/NKGipPdD39TJBWKAktFxffAtxjpmnUKEjF36E2OMxwMGpWom3g
-        ==
-X-ME-Sender: <xms:NI0FYLIiNmWXWwbaBOvX3PkXmJan0ViGFZ-ojBJmhyXS1K3iVNa5lw>
-    <xme:NI0FYPLNRltU0bDEd2GQ1Xxu5PT-iD6D6C9A7Sk6FAfmmOa9lZLnp7l12gQSmiHRi
-    -Zrhngv83FYsfv-lsA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtdekgdehvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedunecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:NI0FYDt0pSg1-AUo5z1Yvjzoxwbl3xLerUXHPUiBfMJIcKdBKKSBTA>
-    <xmx:NI0FYEbrJoo_yNV_QLnwaAmtR3yoHU3_Tjg0sjzAjVTBfcXu1H1P3A>
-    <xmx:NI0FYCbVvp5PEZ8UjVR07oNPg80W2GiLGc4M9heDz_EqLypu37LF9w>
-    <xmx:NI0FYOQCrC6S2s8pkCXuA9lrz5vEuC25zctrNXBuf5ScukApMwpr8Q>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D162B240057;
-        Mon, 18 Jan 2021 08:29:23 -0500 (EST)
-Date:   Mon, 18 Jan 2021 14:29:22 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 03/21] dt-bindings: pinctrl: Add Allwinner H616
- compatible strings
-Message-ID: <20210118132922.bsq34567ojf3q7mm@gilmour>
-References: <20210118020848.11721-1-andre.przywara@arm.com>
- <20210118020848.11721-4-andre.przywara@arm.com>
+        id S2404568AbhARNiD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 08:38:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404563AbhARNh7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 08:37:59 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FA1C061574;
+        Mon, 18 Jan 2021 05:37:18 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id q18so16517481wrn.1;
+        Mon, 18 Jan 2021 05:37:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=0GzTuPlUmDlKAUOrTakw6mXZi0BGp+BTd5mEhKzsE+Y=;
+        b=tbqoUD1yUgihkyIV/iG6PchxPwEEkIAUVuetxA75KepkQeOSsnIrYS9EK6v7ZOtYA9
+         IBGyo+kGzKw5FTjO+Ad8ncYjSkSivJpdhTIHcFrP93uElvxQFMrZEqFvILABrpw4hu+i
+         hrF+pMhcU+wjsAJMeDt53poZyUuuWR2owSvA6g+yXeLw1C+fvii8looKEAoe4j8gPjIW
+         hMEZbOi7LBVNzv8VciTLds8PkmLlBFO2DTrMHk8gJcAN7UaTHmasUp+dGLcQA/Gw4tv2
+         DJ9PW6RDw0CbLP2hMGD/zrUsTqPKK+wuLC+nL4hbHKZ5iuBNAtNhMNaf5G9ML5rgWecr
+         9/XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=0GzTuPlUmDlKAUOrTakw6mXZi0BGp+BTd5mEhKzsE+Y=;
+        b=McuMqQPb2zCx5ou/J+LVZ2bY2nE/lOSf0VXxOb3KeyoV/i8hyptZWF8OtLq/LccNLc
+         eNIeBKLBki1ef4xMqU0XqWfAACDTusvsG/9hqrOoBFRG1biq675UWBrtEhzos2NIhjgw
+         J6ssCUssrncuHzVwv5YkogiWlSl0Q1S/qmeISYWJ+WvTqZOo95Fdc5EIt8QyjHmGXEgM
+         c4jAQNsablqJclU52emH4W0mOBUQzOX+xSJJUGvxdUIWDKk2YUBJFSoYU8oWWVV6yy4+
+         Uh5mzIFN9iiLggd1z3iv3mtjTMiJBof71zbLbEXOOakdIL0liaXIE7WbOV2CMiCn/ijU
+         spjA==
+X-Gm-Message-State: AOAM533UkJyXxgzGbXAOSXWy/N3PWsqu6HTGibhsiNM9MDMoR18H5AwJ
+        kXf0M5vmDfWN/zpiV/p65zc=
+X-Google-Smtp-Source: ABdhPJzEAiBeMBKPwY1u7Uw98g43mjmAdoEw7ZgexSS/BfValqgZ8NFe8jJicfnFbGGpQDebn+LkVw==
+X-Received: by 2002:adf:d231:: with SMTP id k17mr24905141wrh.264.1610977037314;
+        Mon, 18 Jan 2021 05:37:17 -0800 (PST)
+Received: from [192.168.1.211] ([2.29.208.120])
+        by smtp.gmail.com with ESMTPSA id u5sm9676387wmg.9.2021.01.18.05.37.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Jan 2021 05:37:16 -0800 (PST)
+Subject: Re: [PATCH v2 2/7] acpi: utils: Add function to fetch dependent
+ acpi_devices
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devel@acpica.org,
+        rjw@rjwysocki.net, lenb@kernel.org, andy@kernel.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, lee.jones@linaro.org,
+        hdegoede@redhat.com, mgross@linux.intel.com,
+        robert.moore@intel.com, erik.kaneda@intel.com,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        kieran.bingham@ideasonboard.com
+References: <20210118003428.568892-1-djrscally@gmail.com>
+ <20210118003428.568892-3-djrscally@gmail.com>
+ <20210118123355.GF4077@smile.fi.intel.com>
+From:   Daniel Scally <djrscally@gmail.com>
+Message-ID: <c4875559-d735-67ff-66a2-8fd2bc1eceab@gmail.com>
+Date:   Mon, 18 Jan 2021 13:37:15 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7nwyzr24mrjxwgux"
-Content-Disposition: inline
-In-Reply-To: <20210118020848.11721-4-andre.przywara@arm.com>
+In-Reply-To: <20210118123355.GF4077@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
---7nwyzr24mrjxwgux
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 18/01/2021 12:33, Andy Shevchenko wrote:
+> On Mon, Jan 18, 2021 at 12:34:23AM +0000, Daniel Scally wrote:
+>> In some ACPI tables we encounter, devices use the _DEP method to assert
+>> a dependence on other ACPI devices as opposed to the OpRegions that the
+>> specification intends. We need to be able to find those devices "from"
+>> the dependee, so add a function to parse all ACPI Devices and check if
+>> the include the handle of the dependee device in their _DEP buffer.
+> Fix prefix to be "ACPI / utils: " and rebase on top of function name changes as
+> suggested by Laurent.
 
-On Mon, Jan 18, 2021 at 02:08:30AM +0000, Andre Przywara wrote:
-> A new SoC, a new compatible string.
-> Also we were too miserly with just allowing seven interrupt banks.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+OK.
 
-Maxime
+>> +/**
+>> + * acpi_dev_get_next_dep_dev - Return next ACPI device dependent on input dev
+> Are you expecting some kind of for_each_*() macro to be added and used?
+> Otherwise there is probably no need to have it "_next_" in the name as it will
+> be a bit confusing.
 
---7nwyzr24mrjxwgux
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+I thought that somebody might want to do that in the future yes,
+although I've no need for it at the minute because each of the dummy
+INT3472 devices only has one dependent sensor that we've seen so far.
+But for the INT3472 devices representing a physical TPS68470, there are
+platforms where 2 sensors are called out as dependent on the same PMIC
+ACPI device (Surface Go2 for example).
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAWNMgAKCRDj7w1vZxhR
-xfN+AP90aYXbY08sDFUSinXCA22Rk+Qm62JSM2tvdDBHmNO2iAEA69kKXTttiaA/
-0gVIfdRT6KZpkqlutGYANT73gjGWdgo=
-=AJkx
------END PGP SIGNATURE-----
+It can be renamed and just cross that bridge when we come to it though,
+I have no problem with that.
 
---7nwyzr24mrjxwgux--
+>
+>> + * @adev: Pointer to the dependee device
+>> + * @prev: Pointer to the previous dependent device (or NULL for first match)
+>> + *
+>> + * Return the next ACPI device which declares itself dependent on @adev in
+>> + * the _DEP buffer.
+>> + *
+>> + * The caller is responsible to call put_device() on the returned device.
+>> + */
