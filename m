@@ -2,75 +2,95 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC594C433E6
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 12:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE06C433E6
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 12:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8A71221F8
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 12:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8E3E2231F
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 12:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391618AbhARMdp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 07:33:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38274 "EHLO mx2.suse.de"
+        id S2390516AbhARMey (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 07:34:54 -0500
+Received: from mga03.intel.com ([134.134.136.65]:33257 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391607AbhARMdk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 Jan 2021 07:33:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B67D9B93D;
-        Mon, 18 Jan 2021 12:32:58 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v7 04/11] gpio: raspberrypi-exp: Release firmware handle on unbind
-Date:   Mon, 18 Jan 2021 13:32:37 +0100
-Message-Id: <20210118123244.13669-5-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210118123244.13669-1-nsaenzjulienne@suse.de>
-References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
+        id S2404055AbhARMeu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 Jan 2021 07:34:50 -0500
+IronPort-SDR: MxqmXUfBU5LuYfmsxWK0knQc4fqoe5VGAz980ECJAZrhR8ukHLLiqyqst2RAXhPXhOSdhYx5ZU
+ vy8psgIA2NZA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9867"; a="178882109"
+X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
+   d="scan'208";a="178882109"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 04:32:58 -0800
+IronPort-SDR: KpQl6Qabvav18BtNcRapJV3kUkLwcUyZ1hPHgtgvtgXbRb3U/GdOt7sUgY3UXvOTcAKPfPy43I
+ dxdGuYOAzxcg==
+X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
+   d="scan'208";a="365325419"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 04:32:53 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1l1TjH-0027kG-Q9; Mon, 18 Jan 2021 14:33:55 +0200
+Date:   Mon, 18 Jan 2021 14:33:55 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Daniel Scally <djrscally@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devel@acpica.org,
+        rjw@rjwysocki.net, lenb@kernel.org, andy@kernel.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, lee.jones@linaro.org,
+        hdegoede@redhat.com, mgross@linux.intel.com,
+        robert.moore@intel.com, erik.kaneda@intel.com,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 2/7] acpi: utils: Add function to fetch dependent
+ acpi_devices
+Message-ID: <20210118123355.GF4077@smile.fi.intel.com>
+References: <20210118003428.568892-1-djrscally@gmail.com>
+ <20210118003428.568892-3-djrscally@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210118003428.568892-3-djrscally@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
-interface when unbinding the device.
+On Mon, Jan 18, 2021 at 12:34:23AM +0000, Daniel Scally wrote:
+> In some ACPI tables we encounter, devices use the _DEP method to assert
+> a dependence on other ACPI devices as opposed to the OpRegions that the
+> specification intends. We need to be able to find those devices "from"
+> the dependee, so add a function to parse all ACPI Devices and check if
+> the include the handle of the dependee device in their _DEP buffer.
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-raspberrypi-exp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fix prefix to be "ACPI / utils: " and rebase on top of function name changes as
+suggested by Laurent.
 
-diff --git a/drivers/gpio/gpio-raspberrypi-exp.c b/drivers/gpio/gpio-raspberrypi-exp.c
-index bb100e0124e6..64a552ecc2ad 100644
---- a/drivers/gpio/gpio-raspberrypi-exp.c
-+++ b/drivers/gpio/gpio-raspberrypi-exp.c
-@@ -208,7 +208,7 @@ static int rpi_exp_gpio_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	fw = rpi_firmware_get(fw_node);
-+	fw = devm_rpi_firmware_get(&pdev->dev, fw_node);
- 	of_node_put(fw_node);
- 	if (!fw)
- 		return -EPROBE_DEFER;
+...
+
+> +/**
+> + * acpi_dev_get_next_dep_dev - Return next ACPI device dependent on input dev
+
+Are you expecting some kind of for_each_*() macro to be added and used?
+Otherwise there is probably no need to have it "_next_" in the name as it will
+be a bit confusing.
+
+> + * @adev: Pointer to the dependee device
+> + * @prev: Pointer to the previous dependent device (or NULL for first match)
+> + *
+> + * Return the next ACPI device which declares itself dependent on @adev in
+> + * the _DEP buffer.
+> + *
+> + * The caller is responsible to call put_device() on the returned device.
+> + */
+
 -- 
-2.29.2
+With Best Regards,
+Andy Shevchenko
+
 
