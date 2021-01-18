@@ -2,201 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153D8C433E9
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6A6C4332E
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8F37206B5
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FD3922D6D
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404488AbhARNZP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 08:25:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38132 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391604AbhARMdk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 Jan 2021 07:33:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0F0B0B8F1;
-        Mon, 18 Jan 2021 12:32:56 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v7 01/11] firmware: raspberrypi: Keep count of all consumers
-Date:   Mon, 18 Jan 2021 13:32:34 +0100
-Message-Id: <20210118123244.13669-2-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210118123244.13669-1-nsaenzjulienne@suse.de>
-References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
+        id S2392269AbhARNah (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 08:30:37 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:34061 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392259AbhARNac (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 Jan 2021 08:30:32 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 4AF3C58073D;
+        Mon, 18 Jan 2021 08:29:24 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 18 Jan 2021 08:29:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=t9OxNww6HWANpl54DQNy0q2p7lT
+        jdtSam7hUc9ITNzs=; b=attOfT2JhEVIdl47sbSUK/s47o8YAfdcDGViEkjPbvU
+        kN8PHV6KfcrnUlnGI0H/zGWV/lYQ/pducVd00hrRS9hHyg5OfAtW+KJ2R7HwnmfM
+        5iq8BYpz51zKcuocrj/vP/AFPEJr6TVyHo59LKoSM2ypTJ3ltvkw7ig3SZRLpt6J
+        lHil40Rhw642JFs1NT3z9U4K8NleFiVPQLc4Z9OuIehemycr1YyXyJA5QKrxo70H
+        eDLO50qTvALYLnz1Ks4SUZiW4qcyk2hcYolm3Rb5rS0qbMkRO+CHH2VOMDGu+ErN
+        xB781iOqbwRtIrqoJ26sBo1Tswut5Ch0qwYcnIjPcpQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=t9OxNw
+        w6HWANpl54DQNy0q2p7lTjdtSam7hUc9ITNzs=; b=JLHGu7fHEcDAC3NTaQcGeg
+        2zuGNPvX2PpaqiuoI2b+5uzzAGAZgsRdDByCUBrgB5fy0cMCaP8CRolCKBFlJ/sR
+        X1kRLMWD9VZ6my4AMb3FldcOg4/VuN8U/YhM4GT73PUa1F/5q2hVOXgfoYPozTZ5
+        aPe+HCCQI4UpJlR3uDhTcIce8tHBGGduqmC3B0l2roCmjTnsJyz7d+k3U/uJrFUm
+        13np3cXhXdbg9687Nt2cHPGOEfgZEtC5AmgJGmZTjcnrCkszd6i4m39MRGK1M6rb
+        AAPkScJKpYr5N/NKGipPdD39TJBWKAktFxffAtxjpmnUKEjF36E2OMxwMGpWom3g
+        ==
+X-ME-Sender: <xms:NI0FYLIiNmWXWwbaBOvX3PkXmJan0ViGFZ-ojBJmhyXS1K3iVNa5lw>
+    <xme:NI0FYPLNRltU0bDEd2GQ1Xxu5PT-iD6D6C9A7Sk6FAfmmOa9lZLnp7l12gQSmiHRi
+    -Zrhngv83FYsfv-lsA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtdekgdehvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedunecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:NI0FYDt0pSg1-AUo5z1Yvjzoxwbl3xLerUXHPUiBfMJIcKdBKKSBTA>
+    <xmx:NI0FYEbrJoo_yNV_QLnwaAmtR3yoHU3_Tjg0sjzAjVTBfcXu1H1P3A>
+    <xmx:NI0FYCbVvp5PEZ8UjVR07oNPg80W2GiLGc4M9heDz_EqLypu37LF9w>
+    <xmx:NI0FYOQCrC6S2s8pkCXuA9lrz5vEuC25zctrNXBuf5ScukApMwpr8Q>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D162B240057;
+        Mon, 18 Jan 2021 08:29:23 -0500 (EST)
+Date:   Mon, 18 Jan 2021 14:29:22 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 03/21] dt-bindings: pinctrl: Add Allwinner H616
+ compatible strings
+Message-ID: <20210118132922.bsq34567ojf3q7mm@gilmour>
+References: <20210118020848.11721-1-andre.przywara@arm.com>
+ <20210118020848.11721-4-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7nwyzr24mrjxwgux"
+Content-Disposition: inline
+In-Reply-To: <20210118020848.11721-4-andre.przywara@arm.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When unbinding the firmware device we need to make sure it has no
-consumers left. Otherwise we'd leave them with a firmware handle
-pointing at freed memory.
 
-Keep a reference count of all consumers and introduce rpi_firmware_put()
-which will permit automatically decrease the reference count upon
-unbinding consumer drivers.
+--7nwyzr24mrjxwgux
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Jan 18, 2021 at 02:08:30AM +0000, Andre Przywara wrote:
+> A new SoC, a new compatible string.
+> Also we were too miserly with just allowing seven interrupt banks.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
----
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-Changes since v5:
- - Add comment to avoid people blindly switching the memory allocation
-   to the devm variant.
- - Fix function documentation as per Florian's comment.
+Maxime
 
-Changes since v3:
- - Use kref instead of waiting on refcount
+--7nwyzr24mrjxwgux
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/firmware/raspberrypi.c             | 40 ++++++++++++++++++++--
- include/soc/bcm2835/raspberrypi-firmware.h |  2 ++
- 2 files changed, 39 insertions(+), 3 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-index 30259dc9b805..b65e4c495772 100644
---- a/drivers/firmware/raspberrypi.c
-+++ b/drivers/firmware/raspberrypi.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/dma-mapping.h>
-+#include <linux/kref.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
-@@ -27,6 +28,8 @@ struct rpi_firmware {
- 	struct mbox_chan *chan; /* The property channel. */
- 	struct completion c;
- 	u32 enabled;
-+
-+	struct kref consumers;
- };
- 
- static DEFINE_MUTEX(transaction_lock);
-@@ -225,12 +228,31 @@ static void rpi_register_clk_driver(struct device *dev)
- 						-1, NULL, 0);
- }
- 
-+static void rpi_firmware_delete(struct kref *kref)
-+{
-+	struct rpi_firmware *fw = container_of(kref, struct rpi_firmware,
-+					       consumers);
-+
-+	mbox_free_channel(fw->chan);
-+	kfree(fw);
-+}
-+
-+void rpi_firmware_put(struct rpi_firmware *fw)
-+{
-+	kref_put(&fw->consumers, rpi_firmware_delete);
-+}
-+EXPORT_SYMBOL_GPL(rpi_firmware_put);
-+
- static int rpi_firmware_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct rpi_firmware *fw;
- 
--	fw = devm_kzalloc(dev, sizeof(*fw), GFP_KERNEL);
-+	/*
-+	 * Memory will be freed by rpi_firmware_delete() once all users have
-+	 * released their firmware handles. Don't use devm_kzalloc() here.
-+	 */
-+	fw = kzalloc(sizeof(*fw), GFP_KERNEL);
- 	if (!fw)
- 		return -ENOMEM;
- 
-@@ -247,6 +269,7 @@ static int rpi_firmware_probe(struct platform_device *pdev)
- 	}
- 
- 	init_completion(&fw->c);
-+	kref_init(&fw->consumers);
- 
- 	platform_set_drvdata(pdev, fw);
- 
-@@ -275,7 +298,8 @@ static int rpi_firmware_remove(struct platform_device *pdev)
- 	rpi_hwmon = NULL;
- 	platform_device_unregister(rpi_clk);
- 	rpi_clk = NULL;
--	mbox_free_channel(fw->chan);
-+
-+	rpi_firmware_put(fw);
- 
- 	return 0;
- }
-@@ -284,16 +308,26 @@ static int rpi_firmware_remove(struct platform_device *pdev)
-  * rpi_firmware_get - Get pointer to rpi_firmware structure.
-  * @firmware_node:    Pointer to the firmware Device Tree node.
-  *
-+ * The reference to rpi_firmware has to be released with rpi_firmware_put().
-+ *
-  * Returns NULL is the firmware device is not ready.
-  */
- struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
- {
- 	struct platform_device *pdev = of_find_device_by_node(firmware_node);
-+	struct rpi_firmware *fw;
- 
- 	if (!pdev)
- 		return NULL;
- 
--	return platform_get_drvdata(pdev);
-+	fw = platform_get_drvdata(pdev);
-+	if (!fw)
-+		return NULL;
-+
-+	if (!kref_get_unless_zero(&fw->consumers))
-+		return NULL;
-+
-+	return fw;
- }
- EXPORT_SYMBOL_GPL(rpi_firmware_get);
- 
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index cc9cdbc66403..fdfef7fe40df 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -140,6 +140,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
- 			  u32 tag, void *data, size_t len);
- int rpi_firmware_property_list(struct rpi_firmware *fw,
- 			       void *data, size_t tag_size);
-+void rpi_firmware_put(struct rpi_firmware *fw);
- struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
- #else
- static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag,
-@@ -154,6 +155,7 @@ static inline int rpi_firmware_property_list(struct rpi_firmware *fw,
- 	return -ENOSYS;
- }
- 
-+static inline void rpi_firmware_put(struct rpi_firmware *fw) { }
- static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
- {
- 	return NULL;
--- 
-2.29.2
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAWNMgAKCRDj7w1vZxhR
+xfN+AP90aYXbY08sDFUSinXCA22Rk+Qm62JSM2tvdDBHmNO2iAEA69kKXTttiaA/
+0gVIfdRT6KZpkqlutGYANT73gjGWdgo=
+=AJkx
+-----END PGP SIGNATURE-----
 
+--7nwyzr24mrjxwgux--
