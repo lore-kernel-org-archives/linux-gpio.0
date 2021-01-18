@@ -2,126 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29234C43331
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 21:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD2DC43381
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 22:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3AC923107
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 21:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B00E22DFB
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 22:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390529AbhARVoV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 16:44:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52068 "EHLO
+        id S1727015AbhARWaE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 17:30:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388595AbhARJ6H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 04:58:07 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675E3C061573
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 01:57:26 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id n6so1758683edt.10
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 01:57:26 -0800 (PST)
+        with ESMTP id S1726540AbhARWaD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 17:30:03 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A637CC061575
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 14:29:22 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id j3so104543ljb.9
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 14:29:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PEdJuvRovun2XBYWu7zDwcSgXgkePjiZI9JCJEf9aWY=;
-        b=zWHd3FVZEEOIiWF320gSXCH0QNJEm+MpVw1nXofNUBt9Yj2n1Gvt+Vb/hDMn27aK8Q
-         sMDFUjXQHPdTp6yexYY2pIfas+Nb+o+jLLHGj81NcbGHDoih+44ZZF1wry0Z3qHO5kme
-         eDHjElchY8++45S0Af1CKyuD4v3uEUbIYftEXpzvtSQP9zJTZ7EljVqc7W8ePBjh9P7B
-         tgZs8UfYNNNNvvt3Nbry+qls9Zc7Ew9iKL1d/gHRgRkNtOjBa5pPSfKujg3wmeH7E+KR
-         t1bnXCVjHqqJm5xo51Gm62zf7VWbql7BC56cK5cIhU9q41sg4uEUKsO9CAbmjhyXNtXH
-         kjnQ==
+         :cc:content-transfer-encoding;
+        bh=bUoyIwualxmCOZc7fLaBimHoQ2673QVgFv+KTluFbL0=;
+        b=Y1xzqd2qTqin1Srx9hlZn6IdHLtP5a9Gdnopbgx8Nx/aCHDdkptz0KPQ5niknZeX6W
+         TaFNLy72Z09WgagzvTcm0pDCGEDI5bvTYUDrkUI72babUOtYIv7zTPLwi5dPkf7ph7g3
+         w/10z85fs63jQ2mLvqQKJTm454mOM+YjBEvLyFIuPjNS6rDSqjVvH6mJ3QFH77IoX2pz
+         1+ep7j9nFvfeIRhDiM/+54XUizWWkzCORpG5hdZkgUMIuLJoOUKG3JByBgTI68o+Vwi0
+         Rqh3vbJo7nleHFzyOoVOFXH31Tu9SjGH++HspYfZrg6qWBsnGr3lN76lqoHKEUWcYNp5
+         m51g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PEdJuvRovun2XBYWu7zDwcSgXgkePjiZI9JCJEf9aWY=;
-        b=hlmJaJbhqgT9ifCL9LxUddfdi873SMEDtzmNc4AbkuBWCMC++mD4NIjdLqd7XYmYFo
-         LOMyflSelsiDF9xrZd2H1hDr41Rc38EwhBC8eG3XwVj2mmwO6xiDco8YaQJyqyQsajWg
-         B/dQuE9WyxuzNK+Dpkks1CrNK/WbQd176kJEiJMmSsnGdzLO/WvKZUHHtC0QBf3WBRh3
-         r1O/GcwCxciAfjUqBKk/AmKC5REc8t6KJ8GFBHUTKIHcnAvBuakTyess2ouoi0ipDEIW
-         U4DbMzFmerx9hf321OE/0zNzam1MgaDN0mslgtAxH0G7Sj3pbqPfTLhCp1a9jZBFT4/G
-         P1Ww==
-X-Gm-Message-State: AOAM53173dhbgMx0/3KrpMfqlS9rApwMTE+LOfLPRK4BTeUk6CZ4o77T
-        fEq7/cGQi1AL0MBC1Cs0FwI9BFfLtLQ9f0jyhDmAOQ==
-X-Google-Smtp-Source: ABdhPJzNbXkBC1wcDmJjbFyzZPgvpImbQBaCaNg09qp8IXCky+ZtckHHJqsaizNhwtpR6almMljmvcX1IBrr6flFJrQ=
-X-Received: by 2002:a05:6402:14b:: with SMTP id s11mr5336788edu.214.1610963844950;
- Mon, 18 Jan 2021 01:57:24 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bUoyIwualxmCOZc7fLaBimHoQ2673QVgFv+KTluFbL0=;
+        b=sfm+UfQ1q9nv0VhrSOSLcE0qwvb/yfDTgW6y70shWGORDi2giVbhxvf5UVTj9sowFP
+         6t4mbMWBD0ENfg5xsqOlKjkmQQmPBi0SRC9SL+7CMzTyM4Io6nJxNWHMd8PlGJtkd89r
+         qfzsNYZUxQGFWjlld7PAkCm287XPex7sR8kyTae0WqBVy92c1SfnIjdzmU2Sb8nwEXiq
+         ApDTft06m8ExGLZb8aSPSV2XZIz2mRZEU+TcD8ed0oftRqU5JqxCcQwik4Kd9J35BIvF
+         MMeMzNjQCEovt68R3INOY9XIOJ8jOha54VlhonkAU1tqEFI2egCWJhwSSoEBFuv5xuz7
+         TM3Q==
+X-Gm-Message-State: AOAM531V0kT3um8l40XOGw5npSTX78jL3mUNB6w6dO7ZTWjFhxlaSqXf
+        7wXjxL7Og8mAH+dXHDfedyfKVGViK+kxxfWs+09a+Q==
+X-Google-Smtp-Source: ABdhPJyi+yigw+zM8wEJDU+Me9gCw1yphmZyfKy2OAIuMKbAVJK4rhZggmQflYmvIPx0+jbtea2fym6hW4NW8R8z9rA=
+X-Received: by 2002:a05:651c:205b:: with SMTP id t27mr659935ljo.368.1611008961014;
+ Mon, 18 Jan 2021 14:29:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20210115103018.27704-1-brgl@bgdev.pl> <20210115103018.27704-8-brgl@bgdev.pl>
- <20210118002218.GC6841@sol>
-In-Reply-To: <20210118002218.GC6841@sol>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 18 Jan 2021 10:57:14 +0100
-Message-ID: <CAMRc=MfXgUKNx3fj2JBD0qtN3-9n9Yr2qg5UR-f-aDc0DGj2+Q@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH v2 7/7] core: add the kernel uapi header to the repository
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+References: <20210116015350.3501927-1-j.neuschaefer@gmx.net>
+In-Reply-To: <20210116015350.3501927-1-j.neuschaefer@gmx.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 18 Jan 2021 23:29:10 +0100
+Message-ID: <CACRpkdZ+Vp3Jq+vZavVwGrbahbqytuPQRASKHf0yC-c_NFk0-Q@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: pinctrl-microchip-sgpio: Fix indentation
+To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 1:22 AM Kent Gibson <warthog618@gmail.com> wrote:
->
-> On Fri, Jan 15, 2021 at 11:30:18AM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > In order to avoid any problems with symbols missing from the host linux
-> > kernel headers (for example: if current version of libgpiod supports
-> > features that were added recently to the kernel but the host headers are
-> > outdated and don't export required symbols) let's add the uapi header to
-> > the repository and include it instead of the one in /usr/include/linux.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  configure.ac    |  12 +-
-> >  lib/Makefile.am |   2 +-
-> >  lib/core.c      |   3 +-
-> >  lib/uapi/gpio.h | 522 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 528 insertions(+), 11 deletions(-)
-> >  create mode 100644 lib/uapi/gpio.h
-> >
->
-> [snip]
-> > +enum gpio_v2_line_flag {
-> > +     GPIO_V2_LINE_FLAG_USED                  = _BITULL(0),
-> > +     GPIO_V2_LINE_FLAG_ACTIVE_LOW            = _BITULL(1),
-> > +     GPIO_V2_LINE_FLAG_INPUT                 = _BITULL(2),
-> > +     GPIO_V2_LINE_FLAG_OUTPUT                = _BITULL(3),
-> > +     GPIO_V2_LINE_FLAG_EDGE_RISING           = _BITULL(4),
-> > +     GPIO_V2_LINE_FLAG_EDGE_FALLING          = _BITULL(5),
-> > +     GPIO_V2_LINE_FLAG_OPEN_DRAIN            = _BITULL(6),
-> > +     GPIO_V2_LINE_FLAG_OPEN_SOURCE           = _BITULL(7),
-> > +     GPIO_V2_LINE_FLAG_BIAS_PULL_UP          = _BITULL(8),
-> > +     GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN        = _BITULL(9),
-> > +     GPIO_V2_LINE_FLAG_BIAS_DISABLED         = _BITULL(10),
-> > +};
->
-> Perhaps include the header from v5.11-rc3 that includes the
-> GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME flag?
->
-> Unless your intent is for the next libgpiod release to explicitly target
-> v5.10?
->
+On Sat, Jan 16, 2021 at 2:54 AM Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
 
-Not at all! I'll just update the header once a new linux version is
-out. I doubt v2.0 will be done anytime soon and I don't want to rush
-it.
-
-Bart
-
-> +1 for including the header, btw.  Targetting a specific kernel header
-> simplifies the build.  We are always going to have to deal with current
-> apps being run on old kernels, either way, and anyone that cares to use
-> current features has to ensure they have a current kernel, either way.
+> yamllint warns:
+> ./Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
+>   102:10  error   wrong indentation: expected 10 but found 9 (indentation=
+)
 >
-> Cheers,
-> Kent.
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+
+Patch applied.
+
+Yours,
+Linus Walleij
