@@ -2,124 +2,133 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E0AC433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 00:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1EAC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 00:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDB812151B
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 00:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F2E223E8
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 00:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbhARAXH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 17 Jan 2021 19:23:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41814 "EHLO
+        id S1730543AbhARAfe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 17 Jan 2021 19:35:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730336AbhARAXE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Jan 2021 19:23:04 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFCECC061573
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Jan 2021 16:22:23 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id be12so7696811plb.4
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Jan 2021 16:22:23 -0800 (PST)
+        with ESMTP id S1730523AbhARAfZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Jan 2021 19:35:25 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DC5C061757;
+        Sun, 17 Jan 2021 16:34:45 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id u14so8206655wmq.4;
+        Sun, 17 Jan 2021 16:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xiGPKIIQgdpUFVuYvQFq3IoBWtyPmgyta6sdSAImJtQ=;
-        b=bNbpjZpZYYxI6UF7Ch9qb0fdlGNTRd7JrK50DqbRBwPl39uj/EpQ/R2MmDfviE2Ssj
-         ailTh8cLCWw0ANai6J8/DFsDAAsgJrm73yJ1z0AhvecNfTRnm093MqOtnBavrKk6+MOK
-         MiCGV314lbzRBu59r+PEKzwiS2oCfH/kYQpWal06n62FKXZul/Gj1aKq4fBYLXhXwRKD
-         KeNrXOLSF2gd7A5iTHFM8BdjzLCZMdlx07E6fFUCxNgx+WpuDJmNoOM7agQc2URHVaT+
-         GbvBW1YmUjiuuoiLhwHOfiFdcBP+lE12go+ZccUftPUuhMjj5j6exPlXL/NMnm5zDeXZ
-         J4Xw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uWwlR2JD3sOpBYSIkzbMOHTkmK2E7HCQ52xgimQRdfg=;
+        b=rsflLZaEbKqnXrB4MxHq/6ALeOIvbtVotESsfAL8Quyuk/od9smrl6iVXp1IWaUVHX
+         jUDc02ydCwfsG6f0AbYuIK6i8atPZ5y1I2KvW0fj2hN85afmKU+4kSXcVsIoA2ZuGEHD
+         zSr0V9b9TyYFSOdN9nEHQ9d6qDaI3oy0Z4mPQWys2nhdN9SelkoKbD5zKnK8c5JzmFfd
+         4AlPyXhFMxqK3lGUXdFjMj2ilM061a+5FhN/J4t2kUvTamvB7+KvIkKLef9oyxPiQjQY
+         Cw1g34ACjN0mVyAguZ9caUZ/0cHF4EO+lk5K8NVdBOGZFDmAFdEEBZ+7aeF3wPHRo2Fi
+         VBEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xiGPKIIQgdpUFVuYvQFq3IoBWtyPmgyta6sdSAImJtQ=;
-        b=oqcb+cBbjpolgFFeLSRO6IO5RsE4lZ0BmMn3M75+vpdl4JfZvXkGUIKDbeZOw1L+mb
-         9kygPM4PQltl0P6gvusSSzcEFvm9bXxBz0ippHN/JSauKY3Tk2fCapxLwsRV0SoJ5HSD
-         nvwvDwRMY3542lZ/ZFCkZgCu2M69OuN91H8LcdLzeLuA91Rlzhrzq026TIt2AW47tKMb
-         zpTfGrlYC+b+yy2GFr0EpMEBYvU7tl99A9Do8dyNeD+pDnzLmmbGUJw/oO1a7W3WLeVF
-         iJy5Zmnv/Gbm2a+erhdOqUrBJ/VD77fBLjuvWaA7a3vkYz0qu1X6ZNMDtM/qHeTDp91m
-         SClA==
-X-Gm-Message-State: AOAM532l2/NvHGk0mlK7DHO9qjDuIVqHtw1+pK7FF27AGDNdmAQRaYh8
-        +qfKD8zSJzQejGLD42Q+MXs=
-X-Google-Smtp-Source: ABdhPJy7NvDgclq8bYsBaBWNzoCIEYZosYcASC7PCjUc7nbVzgtubNFnaV8jJaf647+ckBJwc8aJvg==
-X-Received: by 2002:a17:903:228a:b029:da:d645:ab58 with SMTP id b10-20020a170903228ab02900dad645ab58mr24214320plh.25.1610929343282;
-        Sun, 17 Jan 2021 16:22:23 -0800 (PST)
-Received: from sol (106-69-181-154.dyn.iinet.net.au. [106.69.181.154])
-        by smtp.gmail.com with ESMTPSA id w27sm14166957pfq.104.2021.01.17.16.22.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uWwlR2JD3sOpBYSIkzbMOHTkmK2E7HCQ52xgimQRdfg=;
+        b=L+kXO46+KAsoTW4puWIGBk4ZTeF2PXheGn2PVKIhKu/frTGpGV6YtYfhPYg5b0lFAq
+         BeLpbltK5D/meYAiNcNr2uiTo/3PHYwAbSmhIMAibreqP+9ryj/yNaxBHeTk7+F9WbmW
+         X1joeiTU3T8fg0p+YoyHzcLwA637hRC2/Amgwiw+q7BBob1wiqHCUJHh2i5FUiBrXy//
+         zDl3w/o71BERV0vf46XYX75zUM0kzfWAV3bGA6TBs7R59JwtSR4EHm0zDN/JxITXpiLj
+         lk6KdCfgzPAGdkVFGG5/KBnfviVJtQoVzrVUe/DKaOb2ArpQY1TG/vK34S/8iOgjmWhg
+         6jHw==
+X-Gm-Message-State: AOAM533nHfVSN31AR+DayGVAamSkNCBSagqiLxDvm7e+3ECrTuW1d9kt
+        /6b8zC12J9zOFodYCFkQfX6vaVWStKbhnA==
+X-Google-Smtp-Source: ABdhPJzzh1BsCeWgvlBnbQCml4lrvnEv9WKpVfMy088N7PBSItV0kmvjQmp/Q0r+cm5G47ymrl7pUA==
+X-Received: by 2002:a05:600c:258:: with SMTP id 24mr18752269wmj.16.1610930084256;
+        Sun, 17 Jan 2021 16:34:44 -0800 (PST)
+Received: from valhalla.home ([2.29.208.120])
+        by smtp.gmail.com with ESMTPSA id o124sm23642040wmb.5.2021.01.17.16.34.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Jan 2021 16:22:22 -0800 (PST)
-Date:   Mon, 18 Jan 2021 08:22:18 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [libgpiod][PATCH v2 7/7] core: add the kernel uapi header to the
- repository
-Message-ID: <20210118002218.GC6841@sol>
-References: <20210115103018.27704-1-brgl@bgdev.pl>
- <20210115103018.27704-8-brgl@bgdev.pl>
+        Sun, 17 Jan 2021 16:34:43 -0800 (PST)
+From:   Daniel Scally <djrscally@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devel@acpica.org
+Cc:     rjw@rjwysocki.net, lenb@kernel.org, andy@kernel.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, lee.jones@linaro.org,
+        hdegoede@redhat.com, mgross@linux.intel.com,
+        robert.moore@intel.com, erik.kaneda@intel.com,
+        sakari.ailus@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
+Subject: [PATCH v2 3/7] i2c: i2c-core-base: Use format macro in i2c_dev_set_name()
+Date:   Mon, 18 Jan 2021 00:34:24 +0000
+Message-Id: <20210118003428.568892-4-djrscally@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210118003428.568892-1-djrscally@gmail.com>
+References: <20210118003428.568892-1-djrscally@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210115103018.27704-8-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 11:30:18AM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> In order to avoid any problems with symbols missing from the host linux
-> kernel headers (for example: if current version of libgpiod supports
-> features that were added recently to the kernel but the host headers are
-> outdated and don't export required symbols) let's add the uapi header to
-> the repository and include it instead of the one in /usr/include/linux.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  configure.ac    |  12 +-
->  lib/Makefile.am |   2 +-
->  lib/core.c      |   3 +-
->  lib/uapi/gpio.h | 522 ++++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 528 insertions(+), 11 deletions(-)
->  create mode 100644 lib/uapi/gpio.h
-> 
+Some places in the kernel allow users to map resources to a device
+using device name (for example, gpiod_lookup_table). Currently
+this involves waiting for the i2c_client to have been registered so we
+can use dev_name(&client->dev). We want to add a function to allow users
+to refer to an i2c device by name before it has been instantiated, so
+create a macro for the format that's accessible outside the i2c layer
+and use it in i2c_dev_set_name()
 
-[snip]
-> +enum gpio_v2_line_flag {
-> +	GPIO_V2_LINE_FLAG_USED			= _BITULL(0),
-> +	GPIO_V2_LINE_FLAG_ACTIVE_LOW		= _BITULL(1),
-> +	GPIO_V2_LINE_FLAG_INPUT			= _BITULL(2),
-> +	GPIO_V2_LINE_FLAG_OUTPUT		= _BITULL(3),
-> +	GPIO_V2_LINE_FLAG_EDGE_RISING		= _BITULL(4),
-> +	GPIO_V2_LINE_FLAG_EDGE_FALLING		= _BITULL(5),
-> +	GPIO_V2_LINE_FLAG_OPEN_DRAIN		= _BITULL(6),
-> +	GPIO_V2_LINE_FLAG_OPEN_SOURCE		= _BITULL(7),
-> +	GPIO_V2_LINE_FLAG_BIAS_PULL_UP		= _BITULL(8),
-> +	GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN	= _BITULL(9),
-> +	GPIO_V2_LINE_FLAG_BIAS_DISABLED		= _BITULL(10),
-> +};
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Daniel Scally <djrscally@gmail.com>
+---
+	- Used format macro in i2c_dev_set_name() instead of sub func
 
-Perhaps include the header from v5.11-rc3 that includes the
-GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME flag?
+ drivers/i2c/i2c-core-base.c | 4 ++--
+ include/linux/i2c.h         | 3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-Unless your intent is for the next libgpiod release to explicitly target
-v5.10?
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 63ebf722a424..547b8926cac8 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -811,12 +811,12 @@ static void i2c_dev_set_name(struct i2c_adapter *adap,
+ 	struct acpi_device *adev = ACPI_COMPANION(&client->dev);
+ 
+ 	if (info && info->dev_name) {
+-		dev_set_name(&client->dev, "i2c-%s", info->dev_name);
++		dev_set_name(&client->dev, I2C_DEV_NAME_FORMAT, info->dev_name);
+ 		return;
+ 	}
+ 
+ 	if (adev) {
+-		dev_set_name(&client->dev, "i2c-%s", acpi_dev_name(adev));
++		dev_set_name(&client->dev, I2C_DEV_NAME_FORMAT, acpi_dev_name(adev));
+ 		return;
+ 	}
+ 
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 56622658b215..4d40a4b46810 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -39,6 +39,9 @@ enum i2c_slave_event;
+ typedef int (*i2c_slave_cb_t)(struct i2c_client *client,
+ 			      enum i2c_slave_event event, u8 *val);
+ 
++/* I2C Device Name Format - to maintain consistency outside the i2c layer */
++#define I2C_DEV_NAME_FORMAT		"i2c-%s"
++
+ /* I2C Frequency Modes */
+ #define I2C_MAX_STANDARD_MODE_FREQ	100000
+ #define I2C_MAX_FAST_MODE_FREQ		400000
+-- 
+2.25.1
 
-+1 for including the header, btw.  Targetting a specific kernel header
-simplifies the build.  We are always going to have to deal with current
-apps being run on old kernels, either way, and anyone that cares to use
-current features has to ensure they have a current kernel, either way.
-
-Cheers,
-Kent.
