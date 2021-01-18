@@ -2,81 +2,74 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A89C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6347FC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C84CB22B49
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AACE221F8
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 13:54:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392308AbhARNe0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 08:34:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41816 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733181AbhARNeC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 08:34:02 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581D5C061574
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 05:33:18 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id 6so23711850ejz.5
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 05:33:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gpeJt4sFwqBjOrypvHBXhkahW36fR0StjLmTVgCtx60=;
-        b=hDXxDkcaKc7QNbc330eLBN3cb3dfHrC+IXPmlM/8Py/JhfIlPFAZxIQKSIbwuW2O4w
-         a4FAgystYnEPU62jeHwsnOV77tlhvsesS4V6/gTk1UUGjoefRmk6YImjixp6Gm8ukN/q
-         h/Fko+ulgHMj6nqJAQLttZlsIMRG5wHnR4IK1l8CiPiIJjzV9b+bYyVDaMnXnXYKv8nI
-         dAWjRidp+RY11T16qTQT/YCT5lPfKQZxSA3Emlc+gfCEzm4YQ7xRPsHHm5AXVRzLEnv+
-         jIOZL6EnGbxbglqq00WoMynZCsR3iGkc7vqsgiklk+8hOTbvVQ6P2wxYQBJ0rAa4UDTt
-         uoAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gpeJt4sFwqBjOrypvHBXhkahW36fR0StjLmTVgCtx60=;
-        b=Te6tPwT7RUQtu1Fb3BVIQWFeJ8VXzXLiSx22CoLaXsx4HPgf2ebKWdcdqWIk83+SjH
-         Ze4Yxow2iQxcvS693kuE1o4rAI2bF8rro6mVo+kv3kcKLCrJTlvykjhY+XBrraSKitIg
-         Qf7ohirToeWGvlV7UdbLoRE67E3aRZA5cv+soE1ko0rRsuDZGT0RvH+AlMHQ2r3HH8Yx
-         svrAUqwBAzuJMj5LzM2e//20C9O8L5EmmUtWzoF0MfAEp1+EilYYnF8/rSBIvbCTjZvC
-         6cGzHNT2TnczmBEHcirZ//z717CCRni/Lh8jvod/81pqQLKavojzv0GSUzOwnAKi8hWq
-         mC/A==
-X-Gm-Message-State: AOAM531Sl1G/eDdzChrQmKUkw2jsQIFvQFVh5GRvSDyfSordR5yuXpki
-        K5jhvH1UzmbKMdnySYa4R5uxjNn37BTSpMCrLftXomIfARY=
-X-Google-Smtp-Source: ABdhPJwVX59jV33b/2juxlTLiEw7kRhKO1iEukLetuvO57JbX+1ydMf4Oy10iEUEc7vjhQI74tXtTpB5iSL87be58eE=
-X-Received: by 2002:a17:906:388b:: with SMTP id q11mr4290515ejd.421.1610976797058;
- Mon, 18 Jan 2021 05:33:17 -0800 (PST)
+        id S2392390AbhARNyN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 08:54:13 -0500
+Received: from mga07.intel.com ([134.134.136.100]:11188 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392537AbhARNx7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 Jan 2021 08:53:59 -0500
+IronPort-SDR: FsBN1LPfwfzTVEIgYpAQt/EZ1ViDGCbzsXosAwvz7TcR9qU79MlXRGhnzh8qOX1T47HWtswDsG
+ rdlpOD0lIyVA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9867"; a="242874244"
+X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
+   d="scan'208";a="242874244"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 05:52:14 -0800
+IronPort-SDR: idZMKSyigO8avX5+ct25yJP/03K3E41bU/vlGs1poIWmGYv6fl7ALo5+1+MgRDu334yxHdubuJ
+ HotjxZQgYHBw==
+X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
+   d="scan'208";a="353515615"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 05:52:08 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1l1Uxy-002CMg-95; Mon, 18 Jan 2021 15:53:10 +0200
+Date:   Mon, 18 Jan 2021 15:53:10 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Daniel Scally <djrscally@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devel@acpica.org,
+        rjw@rjwysocki.net, lenb@kernel.org, andy@kernel.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, lee.jones@linaro.org,
+        hdegoede@redhat.com, mgross@linux.intel.com,
+        robert.moore@intel.com, erik.kaneda@intel.com,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 7/7] mfd: Remove tps68470 MFD driver
+Message-ID: <20210118135310.GN4077@smile.fi.intel.com>
+References: <20210118003428.568892-1-djrscally@gmail.com>
+ <20210118003428.568892-8-djrscally@gmail.com>
 MIME-Version: 1.0
-References: <20210112010307.200310-1-damien.lemoal@wdc.com>
-In-Reply-To: <20210112010307.200310-1-damien.lemoal@wdc.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 18 Jan 2021 14:33:05 +0100
-Message-ID: <CACRpkdbTazK7yLPVe79SoneD+tdiXv9GPvN29dSMgCZkf8Pjbg@mail.gmail.com>
-Subject: Re: [PATCH v11 02/10] pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sean Anderson <seanga2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210118003428.568892-8-djrscally@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Damien,
+On Mon, Jan 18, 2021 at 12:34:28AM +0000, Daniel Scally wrote:
+> This driver only covered one scenario in which ACPI devices with _HID
+> INT3472 are found, and its functionality has been taken over by the
+> intel-skl-int3472 module, so remove it.
 
-this looks all right to me.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Prefix: "mfd: tps68470: ". Rationale: easier to look for specific commits, by,
+for example, running `git log --grep tps68470`.
 
-Shall I apply just this one patch to the pinctrl tree?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I think the line that touches arch/*/Kconfig should be dropped
-then, that better go to the SoC tree.
 
-Yours,
-Linus Walleij
