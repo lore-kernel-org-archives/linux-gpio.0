@@ -2,84 +2,146 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62474C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 16:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B083EC43381
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 17:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F55D22C7E
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 16:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8041122C9D
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 17:08:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405812AbhARQwa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 11:52:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
+        id S2406884AbhARRHy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 12:07:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393189AbhARPNH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 10:13:07 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE716C061574
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 07:12:26 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id r12so12800365ejb.9
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 07:12:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZmXMj6tFKE8O/qXvV9RqSTfoZj1tErBM1YvyS8NSRYQ=;
-        b=rSKd/+kQhKHKvCzCBh+bDSZaqvcd3n6A8x36pafF19Bqvr1Ssokw2zVnNNuecpVUnZ
-         hIvJ2PY5lmtAH07hYNk4KiFRcLQxQZ/4fEpWyYchZZSIR0gqBKzGjVYMffT8M0ayXNwJ
-         vHij/uYX3va2Fwoy57ZU3+U7+W5LCSD8Woc4ruFMoHn3e3RP+lRmDD0vYm9b+0ON+GEH
-         Kd6/JJg8TPd80zLk/6dsYzMAPB78tKHQ7SrVKnZJZqgPpfiIUeGLdkI7fU6OtrmSYOGM
-         zQwNxtucHHdZuTPfwEyU57JQUBuESnEiRT3+3tjFGqDzsZmaKnHt7qDDy2Vr4Uaf0C7g
-         3TZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZmXMj6tFKE8O/qXvV9RqSTfoZj1tErBM1YvyS8NSRYQ=;
-        b=dWSwT6Bqw2lcozfxyGn5JUX/qewGr95LAlKRSOF7wtx7UPZElzy+i0uzaUUL2ppBub
-         3IC5U35CXUC+zGwb4nIXkA4JEBIm4ZaaVXwbp7OoVE+dcbwrIUB7R8kjze6DjElwfbK0
-         EuREDfNXPbnfm2z/xBUwYvdI40PCy1+pmmd9CJJj5ieA5FdHVhIKVK5sHnpBpp961hjH
-         IsSDzjkP1VrxEC94UsFhVQBswvtWafRIfpW+vfTJ4lcqYnllayzFZp5GS261dEkZFzHa
-         9pyvQrlwCNXE+euL1Wh7YTeldG2WeT0YwJX79Kmr90v2nFyZUvjS6ZJlNHPWDXKjrIp8
-         mDrg==
-X-Gm-Message-State: AOAM531qVOlzQfz09G2OrW5aXyenVqbEL5y2AIuvx5MLKhq8g8lMNaVk
-        1fWAR2fjQyoczAHrNVapIQ3McbNDJ45VJ/tj0ji+yXM4ByQ=
-X-Google-Smtp-Source: ABdhPJweZGFoaO6uQEfZVRheP1p7oFTT5JiICmWMpMlLwDagcrJsBxmLSovHoJthz83/Az6ydq9fXiF6RTWwlWplxxg=
-X-Received: by 2002:a17:907:2705:: with SMTP id w5mr83892ejk.505.1610982745601;
- Mon, 18 Jan 2021 07:12:25 -0800 (PST)
+        with ESMTP id S2406887AbhARRHo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 12:07:44 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B685C06179E;
+        Mon, 18 Jan 2021 09:06:03 -0800 (PST)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B63A2BB;
+        Mon, 18 Jan 2021 18:06:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1610989561;
+        bh=hV0WHCjFGw1rTzD++XaJeAj6GzXlQajHsTgjgpBryXs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hNOuPj1h1pmgWY6bY3ZJf0d6zcHBaf2KDadN25ZLRYS3uYrRXRtW4ifFoF3bhFHYL
+         GCffXA6cQ4bSUs2nnaCbMH89pxaj2C4s33AF8CV1DbCZq84qvdBHar6S/0GRSdHKLN
+         DCD4v5FAjSgMZh9n6G8RDF7w7jSlsArXuLo5u5N8=
+Date:   Mon, 18 Jan 2021 19:05:44 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "andy@kernel.org" <andy@kernel.org>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "wsa@kernel.org" <wsa@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "mgross@linux.intel.com" <mgross@linux.intel.com>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "erik.kaneda@intel.com" <erik.kaneda@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2 6/7] platform: x86: Add intel_skl_int3472 driver
+Message-ID: <YAW/6Ek/j733xzLW@pendragon.ideasonboard.com>
+References: <20210118003428.568892-1-djrscally@gmail.com>
+ <20210118003428.568892-7-djrscally@gmail.com>
+ <-GKrxu8GJvGe-PlKkLpblw9N-DtVtS7i87BOCLgJR72yf4hUFpUgiOlGcFero_gqgUxJrX2gxtLOnz_31hJugfam0SXXmXxIzGIhS162mhI=@protonmail.com>
+ <20210118135121.GM4077@smile.fi.intel.com>
+ <w3qrFtorGLZ_wMnr_Mi7cltli9g8jsMtiQ7Z1Usnj2IKfJ1MJz6-wxlIAEQ-ErgU1x6IBxdAIHBHtQ3OOT_FJOuUYheILlUc20ysNL_zroo=@protonmail.com>
+ <20210118152323.GV4077@smile.fi.intel.com>
+ <e1032328-c5e8-0bfa-4b87-64207d283d17@redhat.com>
 MIME-Version: 1.0
-References: <20210115095313.2334693-1-geert+renesas@glider.be>
-In-Reply-To: <20210115095313.2334693-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 18 Jan 2021 16:12:14 +0100
-Message-ID: <CACRpkdYyP=2Rkoxz4ce0R3O_zG9kgqJVZk2mjGaFGRL-amGzpw@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: sh-pfc: Updates for v5.12
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e1032328-c5e8-0bfa-4b87-64207d283d17@redhat.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 10:53 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+Hi Hans,
 
-> The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
->
->   Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.12-tag1
->
-> for you to fetch changes up to a5cda861ed57710837bc560a3c715160da710555:
+On Mon, Jan 18, 2021 at 04:32:54PM +0100, Hans de Goede wrote:
+> On 1/18/21 4:23 PM, andriy.shevchenko@linux.intel.com wrote:
+> > On Mon, Jan 18, 2021 at 02:51:30PM +0000, Barnabás Pőcze wrote:
+> >> 2021. január 18., hétfő 14:51 keltezéssel, Andy Shevchenko írta:
+> >>
+> >>> On Mon, Jan 18, 2021 at 11:12:34AM +0000, Barnabás Pőcze wrote:
+> >>>> 2021. január 18., hétfő 1:34 keltezéssel, Daniel Scally írta:
+> >>>
+> >>>> Have you considered putting the source (and header) files into a dedicated
+> >>>> folder? I think it'd help manageability in the long run, and it'd be immediately
+> >>>> obvious that these source files form a single "unit".
+> >>>
+> >>> What would be the folder name? Because, for example, intel_cht_int33fe* have no
+> >>> folder (yet?) and here it's kinda similar case when HID describes something
+> >>> else than just one IP.
+> >>
+> >> I think "intel_skl_int3472" would not be a bad name for the folder. And I believe
+> >> "intel_cht_int33fe" could be given its own folder as well.
+> > 
+> > I;m not objecting (at some point in the past I had proposed moving Intel stuff
+> > to a separate folder, but at that time PDx86 has no folders at all and Darren
+> > was kinda not in favour of creating ones, but things changed), just let's hear
+> > Hans on this.
+> 
+> I'm in favor of using a folder for this and "intel_skl_int3472" is fine with me.
+> 
+> With that said I'm not entirely sure if I'm in favor of the _skl_ part of
+> the folder and driver name or not.
+> 
+> The INT3472 ACPI device is used with other CPUs, e.g. Apollo Lake too and
+> I think the driver should work fine with those.
 
-Pulled into my "devel" branch for v5.12!
+It should work on Kabylake as well, although there are some differences
+in the way the INT3472 device is modelled in the DSDT between those two
+platforms. Hopefully nothing that couldn't be supported in a single
+driver without adding too many hacks.
 
-Yours,
-Linus Walleij
+> The intel_cht_int33fe case is special because the driver only applies
+> to some models with an INT33FE ACPI device (the whole INT33FE ACPI device
+> is a horrible thing which seems to stem from Intel rushing Bay Trail to
+> market to try and compete on the tablet market).
+
+The INT3472 ACPI device is also horrible. It reminds me of Intercal, the
+programming language that was created by gathering features of several
+well known languages and then making sure that none of them would be
+used: the ACPI model of the device was probably created by someone who
+has studied ACPI extensively and decided to break every single best
+practice rule. I lack English words strong enough to express my dismay
+on this topic (but I still have hope to find solace in Finnish).
+
+> With that all said SKL probably is the first SoC to feature this and I
+> guess future IPUs may still use INT3472 given Intel's BAD habit of
+> re-using ACPI HIDs for multiple incompatible generations. So I guess
+> that keeping it is fine; and if we then need an incompatible INT3472
+> driver for newer IPUs we can use a different prefix for those.
+> 
+> TL;DR:
+> 
+> 1. Using a folder is fine, desirable even
+> 2. I've some concerns about the name, but I'm not really objecting,
+> just giving my 2 cents.
+
+-- 
+Regards,
+
+Laurent Pinchart
