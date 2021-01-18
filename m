@@ -2,90 +2,140 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB72C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 09:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F72C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 09:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 311BE2245C
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 09:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 127FC222B3
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 09:39:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387994AbhARJZW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 04:25:22 -0500
-Received: from forward103p.mail.yandex.net ([77.88.28.106]:40335 "EHLO
-        forward103p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388277AbhARJH1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 Jan 2021 04:07:27 -0500
-Received: from myt6-5578c6b2b9c3.qloud-c.yandex.net (myt6-5578c6b2b9c3.qloud-c.yandex.net [IPv6:2a02:6b8:c12:37a8:0:640:5578:c6b2])
-        by forward103p.mail.yandex.net (Yandex) with ESMTP id 8A37F18C17B1;
-        Mon, 18 Jan 2021 12:05:22 +0300 (MSK)
-Received: from myt6-9bdf92ffd111.qloud-c.yandex.net (myt6-9bdf92ffd111.qloud-c.yandex.net [2a02:6b8:c12:468a:0:640:9bdf:92ff])
-        by myt6-5578c6b2b9c3.qloud-c.yandex.net (mxback/Yandex) with ESMTP id dLSFXTknEI-5MDO4bZ5;
-        Mon, 18 Jan 2021 12:05:22 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1610960722;
-        bh=eae+71nwdCl87dQPfVh8jK749vbX5rWsf1eR+dT00F0=;
-        h=In-Reply-To:References:Date:Subject:To:From:Message-Id:Cc;
-        b=p2LDhD9WmMAGk9IAIwWMUC73UpO78OT1UkOm6yWt+eFHRUNBmyIj/wHhmqtRxKoW1
-         Zd9ll/JSQEsieEzp+/FgZq69gZ41+AA9fB5PrPKQZxEjkBy/C8kwAXwgCbTPVXWMeP
-         4HK9TLwpufKDgQLlB0+cMBJSSzo6eNM5Yv/So8UI=
-Authentication-Results: myt6-5578c6b2b9c3.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by myt6-9bdf92ffd111.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id mPweMU6MOS-5LIeMc8N;
-        Mon, 18 Jan 2021 12:05:21 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-From:   Nikita Shubin <nikita.shubin@maquefel.me>
-Cc:     Nikita Shubin <nikita.shubin@maquefel.me>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] gpiolib: warning on gpiochip->to_irq defined
-Date:   Mon, 18 Jan 2021 12:05:08 +0300
-Message-Id: <20210118090508.21686-1-nikita.shubin@maquefel.me>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201228150052.2633-1-nikita.shubin@maquefel.me>
-References: <20201228150052.2633-1-nikita.shubin@maquefel.me>
+        id S2388679AbhARJaZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 04:30:25 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55760 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388571AbhARJTz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 04:19:55 -0500
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BB0AF2BB;
+        Mon, 18 Jan 2021 10:19:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1610961551;
+        bh=gjnQsqFgxtpSq29xrtqXIVq4Xvc9Ow3B2rHgXQ+GU3o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lYwoQ3Lh7ouSl1TmFTMKG2c4wx3waTDRv8f10AxBqjGIpJ796ly2IOzm2fvAnYDmO
+         hHwEVuJD5DngMdlfvi6mFvMcWOxI85BE53JDlzDfMPsMeAxt5r/1BoGo+k1qmj3jIP
+         DPG34Im8q/Jek+X88TtBRdYDlavT/vy9MRdiHNjE=
+Date:   Mon, 18 Jan 2021 11:18:55 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Daniel Scally <djrscally@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devel@acpica.org,
+        rjw@rjwysocki.net, lenb@kernel.org, andy@kernel.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, lee.jones@linaro.org,
+        hdegoede@redhat.com, mgross@linux.intel.com,
+        robert.moore@intel.com, erik.kaneda@intel.com,
+        sakari.ailus@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 4/7] i2c: i2c-core-acpi: Add i2c_acpi_dev_name()
+Message-ID: <YAVSf7+iTPNYf5XS@pendragon.ideasonboard.com>
+References: <20210118003428.568892-1-djrscally@gmail.com>
+ <20210118003428.568892-5-djrscally@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210118003428.568892-5-djrscally@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-gpiochip->to_irq method is redefined in gpiochip_add_irqchip.
+Hi Daniel,
 
-A lot of gpiod driver's still define ->to_irq method, let's give
-a gentle warning that they can no longer rely on it, so they can remove
-it on ocassion.
+Thank you for the patch.
 
-Fixes: e0d8972898139 ("gpio: Implement tighter IRQ chip integration")
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
----
-v1->v2:
-- Change chip_err to chip_warn
----
- drivers/gpio/gpiolib.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Mon, Jan 18, 2021 at 12:34:25AM +0000, Daniel Scally wrote:
+> We want to refer to an i2c device by name before it has been
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5ce0c14c637b..5a9410c2537d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1489,6 +1489,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
- 		type = IRQ_TYPE_NONE;
- 	}
- 
-+	if (gc->to_irq)
-+		chip_warn(gc, "to_irq is redefined in %s and you shouldn't rely on it\n", __func__);
-+
- 	gc->to_irq = gpiochip_to_irq;
- 	gc->irq.default_type = type;
- 	gc->irq.lock_key = lock_key;
+s/i2c device/acpi i2c device/ ?
+
+> created by the kernel; add a function that constructs the name
+> from the acpi device instead.
+> 
+> Signed-off-by: Daniel Scally <djrscally@gmail.com>
+> ---
+> Changes in v2:
+> 
+> 	- Stopped using devm_kasprintf()
+> 
+>  drivers/i2c/i2c-core-acpi.c | 16 ++++++++++++++++
+>  include/linux/i2c.h         |  5 +++++
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+> index 37c510d9347a..98c3ba9a2350 100644
+> --- a/drivers/i2c/i2c-core-acpi.c
+> +++ b/drivers/i2c/i2c-core-acpi.c
+> @@ -497,6 +497,22 @@ struct i2c_client *i2c_acpi_new_device(struct device *dev, int index,
+>  }
+>  EXPORT_SYMBOL_GPL(i2c_acpi_new_device);
+>  
+> +/**
+> + * i2c_acpi_dev_name - Construct i2c device name for devs sourced from ACPI
+> + * @adev:     ACPI device to construct the name for
+> + *
+> + * Constructs the name of an i2c device matching the format used by
+> + * i2c_dev_set_name() to allow users to refer to an i2c device by name even
+> + * before they have been instantiated.
+> + *
+> + * The caller is responsible for freeing the returned pointer.
+> + */
+> +char *i2c_acpi_dev_name(struct acpi_device *adev)
+> +{
+> +	return kasprintf(GFP_KERNEL, I2C_DEV_NAME_FORMAT, acpi_dev_name(adev));
+
+There's a real danger of a memory leak, as the function name sounds very
+similar to dev_name() or acpi_dev_name() and those don't allocate
+memory. I'm not sure what a better name would be, but given that this
+function is only used in patch 6/7 and not in the I2C subsystem itself,
+I wonder if we should inline this kasprintf() call in the caller and
+drop this patch.
+
+> +}
+> +EXPORT_SYMBOL_GPL(i2c_acpi_dev_name);
+> +
+>  #ifdef CONFIG_ACPI_I2C_OPREGION
+>  static int acpi_gsb_i2c_read_bytes(struct i2c_client *client,
+>  		u8 cmd, u8 *data, u8 data_len)
+> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> index 4d40a4b46810..b82aac05b17f 100644
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -998,6 +998,7 @@ bool i2c_acpi_get_i2c_resource(struct acpi_resource *ares,
+>  u32 i2c_acpi_find_bus_speed(struct device *dev);
+>  struct i2c_client *i2c_acpi_new_device(struct device *dev, int index,
+>  				       struct i2c_board_info *info);
+> +char *i2c_acpi_dev_name(struct acpi_device *adev);
+>  struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle);
+>  #else
+>  static inline bool i2c_acpi_get_i2c_resource(struct acpi_resource *ares,
+> @@ -1014,6 +1015,10 @@ static inline struct i2c_client *i2c_acpi_new_device(struct device *dev,
+>  {
+>  	return ERR_PTR(-ENODEV);
+>  }
+> +static inline char *i2c_acpi_dev_name(struct acpi_device *adev)
+> +{
+> +	return NULL;
+> +}
+>  static inline struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
+>  {
+>  	return NULL;
+
 -- 
-2.29.2
+Regards,
 
+Laurent Pinchart
