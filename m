@@ -2,93 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC36C433E6
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 16:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62474C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 16:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC1722CA2
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 16:44:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F55D22C7E
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 16:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405809AbhARQoH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 11:44:07 -0500
-Received: from mga06.intel.com ([134.134.136.31]:8760 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405681AbhARQno (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 Jan 2021 11:43:44 -0500
-IronPort-SDR: LKD/3STSXLgcOm/e5wTO2Oj+jPwcgmSnPuvK1eo6/1niucmpoZaay+I3vDLw2FYhE57yUcHVC4
- Lcvo/6gjHyHQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9868"; a="240366370"
-X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
-   d="scan'208";a="240366370"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 08:41:51 -0800
-IronPort-SDR: Op/kjjsZzHuGZ5jUoKNrngn2tFcngTUBJX+xDyw0XNbwjGUJ8h45cHOatY4wKk2Vvbo+l+e9t4
- U1qjLoNC5d1w==
-X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
-   d="scan'208";a="500695133"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 08:41:43 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l1Xc4-002MIe-SA; Mon, 18 Jan 2021 18:42:44 +0200
-Date:   Mon, 18 Jan 2021 18:42:44 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Daniel Scally <djrscally@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-i2c <linux-i2c@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, andy@kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Kaneda <erik.kaneda@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v2 1/7] acpi: utils: move acpi_lpss_dep() to utils
-Message-ID: <20210118164244.GD4077@smile.fi.intel.com>
-References: <20210118003428.568892-1-djrscally@gmail.com>
- <20210118003428.568892-2-djrscally@gmail.com>
- <20210118122852.GD4077@smile.fi.intel.com>
- <CAJZ5v0hihFa=M658GE2LtoKCnPkMQznXBtq9_+g0_4gFnw6qAg@mail.gmail.com>
+        id S2405812AbhARQwa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 11:52:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393189AbhARPNH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 10:13:07 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE716C061574
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 07:12:26 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id r12so12800365ejb.9
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2021 07:12:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZmXMj6tFKE8O/qXvV9RqSTfoZj1tErBM1YvyS8NSRYQ=;
+        b=rSKd/+kQhKHKvCzCBh+bDSZaqvcd3n6A8x36pafF19Bqvr1Ssokw2zVnNNuecpVUnZ
+         hIvJ2PY5lmtAH07hYNk4KiFRcLQxQZ/4fEpWyYchZZSIR0gqBKzGjVYMffT8M0ayXNwJ
+         vHij/uYX3va2Fwoy57ZU3+U7+W5LCSD8Woc4ruFMoHn3e3RP+lRmDD0vYm9b+0ON+GEH
+         Kd6/JJg8TPd80zLk/6dsYzMAPB78tKHQ7SrVKnZJZqgPpfiIUeGLdkI7fU6OtrmSYOGM
+         zQwNxtucHHdZuTPfwEyU57JQUBuESnEiRT3+3tjFGqDzsZmaKnHt7qDDy2Vr4Uaf0C7g
+         3TZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZmXMj6tFKE8O/qXvV9RqSTfoZj1tErBM1YvyS8NSRYQ=;
+        b=dWSwT6Bqw2lcozfxyGn5JUX/qewGr95LAlKRSOF7wtx7UPZElzy+i0uzaUUL2ppBub
+         3IC5U35CXUC+zGwb4nIXkA4JEBIm4ZaaVXwbp7OoVE+dcbwrIUB7R8kjze6DjElwfbK0
+         EuREDfNXPbnfm2z/xBUwYvdI40PCy1+pmmd9CJJj5ieA5FdHVhIKVK5sHnpBpp961hjH
+         IsSDzjkP1VrxEC94UsFhVQBswvtWafRIfpW+vfTJ4lcqYnllayzFZp5GS261dEkZFzHa
+         9pyvQrlwCNXE+euL1Wh7YTeldG2WeT0YwJX79Kmr90v2nFyZUvjS6ZJlNHPWDXKjrIp8
+         mDrg==
+X-Gm-Message-State: AOAM531qVOlzQfz09G2OrW5aXyenVqbEL5y2AIuvx5MLKhq8g8lMNaVk
+        1fWAR2fjQyoczAHrNVapIQ3McbNDJ45VJ/tj0ji+yXM4ByQ=
+X-Google-Smtp-Source: ABdhPJweZGFoaO6uQEfZVRheP1p7oFTT5JiICmWMpMlLwDagcrJsBxmLSovHoJthz83/Az6ydq9fXiF6RTWwlWplxxg=
+X-Received: by 2002:a17:907:2705:: with SMTP id w5mr83892ejk.505.1610982745601;
+ Mon, 18 Jan 2021 07:12:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hihFa=M658GE2LtoKCnPkMQznXBtq9_+g0_4gFnw6qAg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210115095313.2334693-1-geert+renesas@glider.be>
+In-Reply-To: <20210115095313.2334693-1-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 18 Jan 2021 16:12:14 +0100
+Message-ID: <CACRpkdYyP=2Rkoxz4ce0R3O_zG9kgqJVZk2mjGaFGRL-amGzpw@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: sh-pfc: Updates for v5.12
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 05:06:30PM +0100, Rafael J. Wysocki wrote:
-> On Mon, Jan 18, 2021 at 1:30 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > On Mon, Jan 18, 2021 at 12:34:22AM +0000, Daniel Scally wrote:
-> > > I need to be able to identify devices which declare themselves to be
-> > > dependent on other devices through _DEP; add this function to utils.c
-> > > and export it to the rest of the ACPI layer.
-> >
-> > Prefix -> "ACPI / utils: "
-> 
-> Preferably "ACPI: utils: " for that matter
+On Fri, Jan 15, 2021 at 10:53 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Ah, good to know! I was always bending between / and : there.
+> The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+>
+>   Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.12-tag1
+>
+> for you to fetch changes up to a5cda861ed57710837bc560a3c715160da710555:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Pulled into my "devel" branch for v5.12!
 
-
+Yours,
+Linus Walleij
