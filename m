@@ -2,122 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82347C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 15:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C61C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 15:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D11D22C9C
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 15:32:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03B3C22C9C
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jan 2021 15:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405764AbhARPcB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 10:32:01 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:41273 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405747AbhARP0v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 Jan 2021 10:26:51 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 2BA0F580759;
-        Mon, 18 Jan 2021 10:26:05 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 18 Jan 2021 10:26:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=LK5udVspjHQLZOBPj3AOvghu8IB
-        7IXzpfmX+3iA0yyM=; b=JUXw6fSJLyuqzUlgdPryxxbBmVR97uUZeEu/DqXnYuQ
-        AzPbEFMtfObcCGSi9mha9wJ7c0G0tSRLn+kBA3WFlxO9OAI0+fnCQLY8jQkHXIn8
-        8RDrZb1L/JEX5hgv49rJtJU0Rn7xGHhF+i5+5J6lwr2YCs9EqX78NPc0EEHDrE6+
-        lCs4+01gYKwpd5hYCd7QuD1TeMOk7HL1wFqnBeBajmijcv55Wm/HLJNaIlNRTthz
-        TnzUD9pIRC9kvh/tc2QxODdQYKqpXM6QXymcee2BngqBPp4mPiIb/IGlqFae/kjt
-        eRU8JSw5lz0tWobbrs1A52b3qHxarFxFjcPDzlTuWLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=LK5udV
-        spjHQLZOBPj3AOvghu8IB7IXzpfmX+3iA0yyM=; b=OrDv6EJMxZ8zZSQnaEkBw1
-        z/+g0CPgCISMzkLD4SDEwCPa//yimGgSWOyCrVA8uKiNKd4TI4qOIq/1zRSrRLTU
-        HkIHRLSZuFFo7yQA1JbxEj+Hg3my0g8KUyDAWGw0xV4bCgl3sOmGMcwglD0KPonu
-        ykHpSrPU5Y/gk6UZzS+7HWkX/EnanKkKOcc73PeLkeBKDdbB8QRkhSGnIwC+XUk8
-        dk0Ju7zXeMHQtfG7enar56SncOfdk7lcv8Q05l31QmTtUOnoTB7biSzMtma3mH65
-        EzPEUHr3mnz9oeCzEgkp7X3KlTklDCAgtyDCqGUKR5SSSPuWkZ2mRr2fV90kKgFQ
-        ==
-X-ME-Sender: <xms:i6gFYE2EtQxPEONHcpCoOcYQhoaT5ytVahUSen5Eh5Z_0WC7BjORMg>
-    <xme:i6gFYPGeGIOHIebhtRJRtuYtaisjsa6bKjSMsSGQPxWGEjrPZNcgV1rSXcRY8UFC_
-    lzQ1NWN2Zk3akGp81w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtdekgdejiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:jKgFYM6K1GvqDmNIz05stVJ0mzkLYuZyGBZc87nT3OvDHq9_xXhF-g>
-    <xmx:jKgFYN2Z_7yNjXrzgHaldcjZCCOChIsF86VQaP3Pz78_B9fioTMEag>
-    <xmx:jKgFYHHVENeUFZCQRz3Hw6a9bUq7yuh3hyV1FmwVNLBZ6u93tu7ckQ>
-    <xmx:jagFYO_PKqT9sXh6FheJh6mTE8Zqg2VYuRPlB06nCN93EuITw79jUQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B093524005A;
-        Mon, 18 Jan 2021 10:26:03 -0500 (EST)
-Date:   Mon, 18 Jan 2021 16:26:01 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 04/21] pinctrl: sunxi: Add support for the Allwinner
- H616 pin controller
-Message-ID: <20210118152601.j4dn27zzhuzds2ya@gilmour>
-References: <20210118020848.11721-1-andre.przywara@arm.com>
- <20210118020848.11721-5-andre.przywara@arm.com>
+        id S2405976AbhARPwK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 10:52:10 -0500
+Received: from mga01.intel.com ([192.55.52.88]:62210 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405968AbhARPtz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 Jan 2021 10:49:55 -0500
+IronPort-SDR: SX+H5SrnUIW2aS2wMCkpMkZcWy2ZvRZJVWgboaMifx7YmFupuBtJ2t6I/5iloxDoSmmB9YMDTY
+ /WTcr3CoTvew==
+X-IronPort-AV: E=McAfee;i="6000,8403,9868"; a="197515034"
+X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
+   d="scan'208";a="197515034"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 07:47:56 -0800
+IronPort-SDR: FZXyR9Yj44AZW1W+LqW4U2uJWS72nNLBgaMb8phX095Yo+3wF3tUF5Me7OfVam8nLncN+xmLgG
+ ZG1fjOoDg+og==
+X-IronPort-AV: E=Sophos;i="5.79,356,1602572400"; 
+   d="scan'208";a="353541314"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 07:47:51 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1l1Wlw-002J6b-KM; Mon, 18 Jan 2021 17:48:52 +0200
+Date:   Mon, 18 Jan 2021 17:48:52 +0200
+From:   "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "andy@kernel.org" <andy@kernel.org>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "wsa@kernel.org" <wsa@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "mgross@linux.intel.com" <mgross@linux.intel.com>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "erik.kaneda@intel.com" <erik.kaneda@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2 6/7] platform: x86: Add intel_skl_int3472 driver
+Message-ID: <20210118154852.GY4077@smile.fi.intel.com>
+References: <20210118003428.568892-1-djrscally@gmail.com>
+ <20210118003428.568892-7-djrscally@gmail.com>
+ <-GKrxu8GJvGe-PlKkLpblw9N-DtVtS7i87BOCLgJR72yf4hUFpUgiOlGcFero_gqgUxJrX2gxtLOnz_31hJugfam0SXXmXxIzGIhS162mhI=@protonmail.com>
+ <20210118135121.GM4077@smile.fi.intel.com>
+ <w3qrFtorGLZ_wMnr_Mi7cltli9g8jsMtiQ7Z1Usnj2IKfJ1MJz6-wxlIAEQ-ErgU1x6IBxdAIHBHtQ3OOT_FJOuUYheILlUc20ysNL_zroo=@protonmail.com>
+ <20210118152323.GV4077@smile.fi.intel.com>
+ <e1032328-c5e8-0bfa-4b87-64207d283d17@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3df5e5hjreiqauet"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210118020848.11721-5-andre.przywara@arm.com>
+In-Reply-To: <e1032328-c5e8-0bfa-4b87-64207d283d17@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Mon, Jan 18, 2021 at 04:32:54PM +0100, Hans de Goede wrote:
+> On 1/18/21 4:23 PM, andriy.shevchenko@linux.intel.com wrote:
 
---3df5e5hjreiqauet
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-On Mon, Jan 18, 2021 at 02:08:31AM +0000, Andre Przywara wrote:
-> Port A is used for an internal connection to some analogue circuitry
-> which looks like an AC200 IP (as in the H6), though this is not
-> mentioned in the manual.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> 1. Using a folder is fine, desirable even
+> 2. I've some concerns about the name, but I'm not really objecting,
+> just giving my 2 cents.
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+Let's get into compromised summary:
+ - create a folder for these driver files
+ - name it without _skl_ while leaving this in the file / driver names
 
-Thanks!
-Maxime
+Does everybody agree on this approach?
 
---3df5e5hjreiqauet
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+With Best Regards,
+Andy Shevchenko
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAWohQAKCRDj7w1vZxhR
-xWwgAQDzUsiSsvVWmGYKTIjfAvDSb4cyvKqd41IRoxEonfT0PgEAsDfaZINzDpAE
-5B80+1Z81y4fyQd1D7swQqnjvF4/JA0=
-=81EK
------END PGP SIGNATURE-----
-
---3df5e5hjreiqauet--
