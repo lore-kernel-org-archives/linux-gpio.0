@@ -2,103 +2,106 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F97C10F00
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6301C07548
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA55207FB
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDF3A2070B
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405514AbhASOcy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:32:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34390 "EHLO
+        id S2405472AbhASOcq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 09:32:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389693AbhASNFa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 08:05:30 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CC4C061795
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 04:52:27 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id a10so11689338ejg.10
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 04:52:27 -0800 (PST)
+        with ESMTP id S2393075AbhASMcZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 07:32:25 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B985C0613C1;
+        Tue, 19 Jan 2021 04:31:44 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id v19so12842614pgj.12;
+        Tue, 19 Jan 2021 04:31:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WV7L1kLG3PoCgk5eDaz8gy8bMq/uXgxIVF8+lUQIh+E=;
-        b=Fbr4JousLcIgupU6L4I4sRgEF2ysF3165R5itAIgMgql588a8GffAZ00hqTa+ijhfR
-         0rVRhi2n+rJcr05S2hx8nJ9vMMV8IAzJxE+sT0If4SdOzNi0CMeT4et9miUzGv58J6OF
-         yA6TSQ7kt/+966V1m+kr3FbErQa2sXvQrAFoaFiNHyS1exMJbXOwDxFRZvlZo9Kzm/w5
-         2VrQtIjsyQyap84garcGuTLtDHrmjDNh2rAPdmAQZ5E0vbf3Dr2ryBOSB+YaNO4RopzN
-         Ep18nnaGA+EH+SbRLGNNyMvnU4Byr0SD3gR4yNS5OSRiIXH1LhOqNThnVm/tmSX8OIGf
-         +JsA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+JLDSkRZX1A32iY7ojiQ/x6no5IxYCI3Qh2YXDpNLT4=;
+        b=G3TNRC655dwGqNqNnIpiH041uEUGD6dfO7WXo/y23S0wYnsdle0LPGRJ+hPfSGO529
+         ARiAuphiP9v8JVNIsTCPUI/ckP5feQ33jojN0k9ZUPtgeZbdOHhY8FhOlg/vex/3ijG9
+         N02KDKpbE4CyNGDOxR6w/AJsm6As/oSa/0S+zbQm2jwd7IRW2OwEHtlUHGqGGRvKwCMC
+         Hy2Tp/Cdjtb9z4CD2p/sq91RkA+cAaC12rMaBssyKC31IsX7CFs1k8moYx6qHceJbRKM
+         beTL9tgkEWsO6D9JyNjHGkm+88yXzCqrseadvCzL/MBx1xjgMSXXduOaUzU61ATGOxuu
+         RqAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WV7L1kLG3PoCgk5eDaz8gy8bMq/uXgxIVF8+lUQIh+E=;
-        b=YxUuSqDn2A5r7GYl16onHSBUP+z3yDlOyXyZqdk4lU1Epe9x6SkN7AKiBJk5zNrKbZ
-         7W/z+JMRtz/MYMBq9YTcY9/oTiz35+0F5HAgNommQUaWaSGXreFj/NrchC2r8612Ltqt
-         n8sr45OdXXM+JeO8ZrzWho7KahbnSrB5tyB0JQ1NOkc21Set6S7/+wW3cgiwUUDyviYp
-         4GUY6zkKBOhwDHYbxJwAXI1xxXVl3605sg5oHgD8mE4KiAnbhKVzHmG0yfbks2KYw5EZ
-         KPVGwywoa1OTv4ELJljOFkj2WOjHVLTt4/2WVZOsv9QLFXTWcE4ZB3507AFrthfMJkyq
-         HxMQ==
-X-Gm-Message-State: AOAM533Gnj+APKmiCrn+BxY7NNIbx5oWz8gn9PfAzEH2hYxoafmQJCXj
-        vSoxxTNI/9DawPYZt//9E6hR+ChhLs7YStUNuiAwjA==
-X-Google-Smtp-Source: ABdhPJxj94GeoRvmRcNkG4fxqmwo3FAvPSVL//ar3j3bj5XUxEOe5nuWJPJXxe26I/H+MUK2msEH5GdPZDqYavFd7H8=
-X-Received: by 2002:a17:906:1c4b:: with SMTP id l11mr2933957ejg.155.1611060746123;
- Tue, 19 Jan 2021 04:52:26 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+JLDSkRZX1A32iY7ojiQ/x6no5IxYCI3Qh2YXDpNLT4=;
+        b=rGQms7uv4AzV+7LR/0FJDopPyJmBFgDS+eP/C8Z6FvqyhH1+/c5puzYFy89p/ZhD5W
+         egp5wD6smkwnnPUuRDFu0xckqfHobeqHdQy3Tm1XnFfpiAZHiI9KrglwTE54StQkVYZp
+         rxQcKgQOdNGMKjb7yWQRkQRw2ZpPivLxu2HxeoHH+94RzQSKxHpiDTGIKGYpVhxs73tX
+         S2t7uoicM+ZB8PesdTWH0Wrp90V4HHi+tcabAP8IzdYtlPVhzuFhyg01eH7Fi+jNjYYm
+         5PGXSVeW4uPuIbL08ZonFBVmKDP/ZmgRnaSo5y4gAOtK1BfwLjC3eeshsnQ/PlV8JvhF
+         I6Nw==
+X-Gm-Message-State: AOAM5318b8WJCUjGmv/TAEHHvBPJjlgrlAsAmRhV6sEpYJpi6/mcwvJe
+        jAYLE6JgVzp4MTqwADK1BsNd3exSSRU=
+X-Google-Smtp-Source: ABdhPJzPdxqggGs5/R0uiPSxsoutD60rLp6zKUbBPVf7+xR0X8CLBMmMddtE1cI3STYfDhsOlTw1cw==
+X-Received: by 2002:a63:cf06:: with SMTP id j6mr4214942pgg.195.1611059503900;
+        Tue, 19 Jan 2021 04:31:43 -0800 (PST)
+Received: from sol.lan (106-69-181-154.dyn.iinet.net.au. [106.69.181.154])
+        by smtp.gmail.com with ESMTPSA id q4sm19283052pgr.39.2021.01.19.04.31.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jan 2021 04:31:43 -0800 (PST)
+From:   Kent Gibson <warthog618@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, bgolaszewski@baylibre.com,
+        linus.walleij@linaro.org, shuah@kernel.org, bamv2005@gmail.com
+Cc:     Kent Gibson <warthog618@gmail.com>
+Subject: [PATCH v3 4/7] selftests: remove obsolete gpio references from kselftest_deps.sh
+Date:   Tue, 19 Jan 2021 20:30:56 +0800
+Message-Id: <20210119123059.102004-5-warthog618@gmail.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210119123059.102004-1-warthog618@gmail.com>
+References: <20210119123059.102004-1-warthog618@gmail.com>
 MIME-Version: 1.0
-References: <20210112133010.21397-1-digetx@gmail.com> <20210112133010.21397-2-digetx@gmail.com>
-In-Reply-To: <20210112133010.21397-2-digetx@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 19 Jan 2021 13:52:15 +0100
-Message-ID: <CAMpxmJWo4Qd1b7rxW_BLax7X=_NGrWY=-Ec9zphV3rngG=J=xQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] gpio: tegra: Add dependency on GPIOLIB_IRQCHIP
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 2:30 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> Add dependency on GPIOLIB_IRQCHIP in order to fix driver compilation.
->
-> Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
-> Reported-by: Matt Merhar <mattmerhar@protonmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpio/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 75f6c37620ea..0cd1f91e4a19 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -597,6 +597,7 @@ config GPIO_TEGRA
->         default ARCH_TEGRA
->         depends on ARCH_TEGRA || COMPILE_TEST
->         depends on OF_GPIO
-> +       select GPIOLIB_IRQCHIP
->         help
->           Say yes here to support GPIO pins on NVIDIA Tegra SoCs.
->
-> --
-> 2.29.2
->
+GPIO Makefile has been greatly simplified so remove references to lines
+which no longer exist.
 
-Applied, thanks!
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ tools/testing/selftests/kselftest_deps.sh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Bartosz
+diff --git a/tools/testing/selftests/kselftest_deps.sh b/tools/testing/selftests/kselftest_deps.sh
+index bbc04646346b..00e60d6eb16b 100755
+--- a/tools/testing/selftests/kselftest_deps.sh
++++ b/tools/testing/selftests/kselftest_deps.sh
+@@ -129,13 +129,11 @@ l2_tests=$(grep -r --include=Makefile ": LDLIBS" | \
+ 		grep -v "VAR_LDLIBS" | awk -F: '{print $1}')
+ 
+ # Level 3
+-# gpio,  memfd and others use pkg-config to find mount and fuse libs
++# memfd and others use pkg-config to find mount and fuse libs
+ # respectively and save it in VAR_LDLIBS. If pkg-config doesn't find
+ # any, VAR_LDLIBS set to default.
+ # Use the default value and filter out pkg-config for dependency check.
+ # e.g:
+-# gpio/Makefile
+-#	VAR_LDLIBS := $(shell pkg-config --libs mount) 2>/dev/null)
+ # memfd/Makefile
+ #	VAR_LDLIBS := $(shell pkg-config fuse --libs 2>/dev/null)
+ 
+-- 
+2.30.0
+
