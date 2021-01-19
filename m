@@ -8,62 +8,62 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C833C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0486C4361A
 	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F51323121
+	by mail.kernel.org (Postfix) with ESMTP id E2F6423110
 	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405490AbhASOcs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:32:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
+        id S2405464AbhASOcp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 09:32:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393146AbhASMdN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 07:33:13 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE515C0613D3;
-        Tue, 19 Jan 2021 04:31:54 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id n10so12852411pgl.10;
-        Tue, 19 Jan 2021 04:31:54 -0800 (PST)
+        with ESMTP id S2393064AbhASMcU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 07:32:20 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2BFC061757;
+        Tue, 19 Jan 2021 04:31:39 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id q20so12147016pfu.8;
+        Tue, 19 Jan 2021 04:31:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rO4FgoQlfT5qC78SA/iF3xAy8MoN9OhEKSPd1TRY9cI=;
-        b=IaOZMO1t2gJVw6vcWJASbjqEavOIm4Zghpnif9K619FUqWYbl6mUr2tU9TML/cwdWS
-         bwl8iqxUZgpGVrzdJsaIuN/OklqTg+pJYYXIkwSPqP0pFzv6NBf128K1pjoojVfXSJ2l
-         d8NVhiOGH1h+J1NLQEMEE12FtK66O2FwOfyrsgGff4QkM5HBn8x5wwAc03L3vJdFwoHS
-         2HsAKznZyseE+VB1n/hb0TDySy4h7yWUN2aCcoWd8TRFJGxdqiv2bYvLnHdNXs/xpp7s
-         hnrpcJHsu2DIhF9BTtCmJmI6c8fAOXPlCtTun73AW35SRyDmmPRXlIBlV+7hrzf6owjl
-         ggEw==
+        bh=NCSydqpnHVjAmvTqsjkiTNmZXzdwl6yVgm/Kw1jmQmE=;
+        b=snSA0a1Y3HOpkhm5sl1YTuqJ52tj5O+GIL4EQwK4Cu+oXDaB8AzBVwvmXn2TwSvRGV
+         32vUmE8MtVBlqosgFjROj1EONMhB0CCqekPAfQkRIiUPHOlSQsJftMLR4u+LIxePGyGg
+         VEHyFIUPxWZBy6hSwYZjXinAAvEfn/ERWpGyuZH+PTX+3fJIsjxIcKSvjvf+ljiJlm0c
+         bwbFMykeTZFJdmkXmMT40NNRpwsXusJlQ2io7sikbOy/sY6exMHTB+22Mmj0K+SUijWn
+         tjy3Z5zrXyKIMZHcPUvcobinnSs7gwe34bcVanqyhTMtak/fdpJ4UojYfexDsxQOuASm
+         Votw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rO4FgoQlfT5qC78SA/iF3xAy8MoN9OhEKSPd1TRY9cI=;
-        b=VMugaEnb//8uJzVribFSq+HOlUKFCH9ieCARzY9tr/gDFxxjF9ZvEdbjm/3wPNjkLj
-         UWSDh7xF7b79eXhI5vwWdMH5FWgKZZWfyYXFD7jp/FbduX3C2mVKcpm58Z5C9+oZZIgL
-         /7Lp2uUAz2iHyk3mCvH+FVfkGKE+AhXvbKRt5r0BehX2/QbAKRSYeGyBA3PGOK8qzHi0
-         fGDdK2jle46q8T/7fBj732eFz+hLgAp7WjCOTX6NZ+EvMdIsSIamx4s4gktHF81mODx6
-         Sl1l8rqPYpTrNEOBJS6T5YzdffDKp+qLzRKy0k/Tglfypbn2alvnRDPGEhgtwvEVob0i
-         b1Rg==
-X-Gm-Message-State: AOAM530wfcKYFzfz0tLSJusGOMnRCEeYQwuSXNtK6epVYNcYTMsYYzMR
-        3admLf69ZHXj4AKzOhTatCGnW+C0JFU=
-X-Google-Smtp-Source: ABdhPJwslojPn+O2Hb4zttn2fRuPOWF/Lef6EFBDPvuXeCLXae42ioiQs2MkYGIHqKsws0HeIf1qFw==
-X-Received: by 2002:a62:7fc1:0:b029:19f:1dab:5029 with SMTP id a184-20020a627fc10000b029019f1dab5029mr3981033pfd.13.1611059513648;
-        Tue, 19 Jan 2021 04:31:53 -0800 (PST)
+        bh=NCSydqpnHVjAmvTqsjkiTNmZXzdwl6yVgm/Kw1jmQmE=;
+        b=pZPBcgPaRVC/L0t+Q5Pibqtju+olOED4KvnnpY1dLQd16RIOHw5A2958FVI7qhtsjO
+         5F8G/p9s1WOJDepaqHw4ovEW6N9P9ta9RAs98Nxl++erxKBfkYf5fPBXAyZpXJRwlR1A
+         pwa3Hx2SpoDkZVeWlzVvAOfh64rA0GIaWnIioWepvPj9avJ1cqzTxSE3dB20mbyhDzby
+         YrckHUhfcLBTbR9HpFYU/odk4uszVkKNKOWTFL4E+J8qbU1eBxb1zN4i90DCRAqqIKFW
+         nwteRvfiKyUI5QNnugZLbYtCeMcVIwZ1qIrcjCr48nu8rFyVv7mxD/SLgndXyyA1wjs7
+         FL9g==
+X-Gm-Message-State: AOAM533mqey1hiyrqy2b8EGpI8beHGlMJ2Idc3n2FsTxYaypm9PQb4tv
+        8XoEuPLH0P5ZbQ+GGUZH1+rYoLeDCoc=
+X-Google-Smtp-Source: ABdhPJzOFeGsNRsxwIA/iDbyjjpbz/oKvEaUi+zGM5sFdp+jAPEcTQCGUo5EPbetf6EpXiWxv1eJkA==
+X-Received: by 2002:aa7:8bc3:0:b029:1ba:7a2:7720 with SMTP id s3-20020aa78bc30000b02901ba07a27720mr999384pfd.3.1611059498924;
+        Tue, 19 Jan 2021 04:31:38 -0800 (PST)
 Received: from sol.lan (106-69-181-154.dyn.iinet.net.au. [106.69.181.154])
-        by smtp.gmail.com with ESMTPSA id q4sm19283052pgr.39.2021.01.19.04.31.49
+        by smtp.gmail.com with ESMTPSA id q4sm19283052pgr.39.2021.01.19.04.31.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 04:31:53 -0800 (PST)
+        Tue, 19 Jan 2021 04:31:38 -0800 (PST)
 From:   Kent Gibson <warthog618@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kselftest@vger.kernel.org, bgolaszewski@baylibre.com,
         linus.walleij@linaro.org, shuah@kernel.org, bamv2005@gmail.com
 Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v3 6/7] selftests: gpio: port to GPIO uAPI v2
-Date:   Tue, 19 Jan 2021 20:30:58 +0800
-Message-Id: <20210119123059.102004-7-warthog618@gmail.com>
+Subject: [PATCH v3 3/7] selftests: remove obsolete build restriction for gpio
+Date:   Tue, 19 Jan 2021 20:30:55 +0800
+Message-Id: <20210119123059.102004-4-warthog618@gmail.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210119123059.102004-1-warthog618@gmail.com>
 References: <20210119123059.102004-1-warthog618@gmail.com>
@@ -73,200 +73,36 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a port to the GPIO uAPI v2 interface and make it the default.
+Build restrictions related to the gpio-mockup-chardev helper are
+no longer relevant so remove them.
 
 Signed-off-by: Kent Gibson <warthog618@gmail.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- .../testing/selftests/gpio/gpio-mockup-cdev.c | 75 +++++++++++++++++--
- tools/testing/selftests/gpio/gpio-mockup.sh   | 11 ++-
- 2 files changed, 76 insertions(+), 10 deletions(-)
+ tools/testing/selftests/Makefile | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-cdev.c b/tools/testing/selftests/gpio/gpio-mockup-cdev.c
-index 3a7fc3ac1349..e83eac71621a 100644
---- a/tools/testing/selftests/gpio/gpio-mockup-cdev.c
-+++ b/tools/testing/selftests/gpio/gpio-mockup-cdev.c
-@@ -18,6 +18,44 @@
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index afbab4aeef3c..75a30a5d9945 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -123,15 +123,6 @@ ARCH           ?= $(SUBARCH)
+ export KSFT_KHDR_INSTALL_DONE := 1
+ export BUILD
  
- #define CONSUMER	"gpio-mockup-cdev"
- 
-+static int request_line_v2(int cfd, unsigned int offset,
-+			   uint64_t flags, unsigned int val)
-+{
-+	struct gpio_v2_line_request req;
-+	int ret;
-+
-+	memset(&req, 0, sizeof(req));
-+	req.num_lines = 1;
-+	req.offsets[0] = offset;
-+	req.config.flags = flags;
-+	strcpy(req.consumer, CONSUMER);
-+	if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
-+		req.config.num_attrs = 1;
-+		req.config.attrs[0].mask = 1;
-+		req.config.attrs[0].attr.id = GPIO_V2_LINE_ATTR_ID_OUTPUT_VALUES;
-+		if (val)
-+			req.config.attrs[0].attr.values = 1;
-+	}
-+	ret = ioctl(cfd, GPIO_V2_GET_LINE_IOCTL, &req);
-+	if (ret == -1)
-+		return -errno;
-+	return req.fd;
-+}
-+
-+
-+static int get_value_v2(int lfd)
-+{
-+	struct gpio_v2_line_values vals;
-+	int ret;
-+
-+	memset(&vals, 0, sizeof(vals));
-+	vals.mask = 1;
-+	ret = ioctl(lfd, GPIO_V2_LINE_GET_VALUES_IOCTL, &vals);
-+	if (ret == -1)
-+		return -errno;
-+	return vals.bits & 0x1;
-+}
-+
- static int request_line_v1(int cfd, unsigned int offset,
- 			   uint32_t flags, unsigned int val)
- {
-@@ -57,6 +95,7 @@ static void usage(char *prog)
- 	printf("               (default is to leave bias unchanged):\n");
- 	printf("        -l: set line active low (default is active high)\n");
- 	printf("        -s: set line value (default is to get line value)\n");
-+	printf("        -u: uAPI version to use (default is 2)\n");
- 	exit(-1);
- }
- 
-@@ -78,29 +117,42 @@ int main(int argc, char *argv[])
- {
- 	char *chip;
- 	int opt, ret, cfd, lfd;
--	unsigned int offset, val;
-+	unsigned int offset, val, abiv;
- 	uint32_t flags_v1;
-+	uint64_t flags_v2;
- 
-+	abiv = 2;
- 	ret = 0;
- 	flags_v1 = GPIOHANDLE_REQUEST_INPUT;
-+	flags_v2 = GPIO_V2_LINE_FLAG_INPUT;
- 
- 	while ((opt = getopt(argc, argv, "lb:s:u:")) != -1) {
- 		switch (opt) {
- 		case 'l':
- 			flags_v1 |= GPIOHANDLE_REQUEST_ACTIVE_LOW;
-+			flags_v2 |= GPIO_V2_LINE_FLAG_ACTIVE_LOW;
- 			break;
- 		case 'b':
--			if (strcmp("pull-up", optarg) == 0)
-+			if (strcmp("pull-up", optarg) == 0) {
- 				flags_v1 |= GPIOHANDLE_REQUEST_BIAS_PULL_UP;
--			else if (strcmp("pull-down", optarg) == 0)
-+				flags_v2 |= GPIO_V2_LINE_FLAG_BIAS_PULL_UP;
-+			} else if (strcmp("pull-down", optarg) == 0) {
- 				flags_v1 |= GPIOHANDLE_REQUEST_BIAS_PULL_DOWN;
--			else if (strcmp("disabled", optarg) == 0)
-+				flags_v2 |= GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
-+			} else if (strcmp("disabled", optarg) == 0) {
- 				flags_v1 |= GPIOHANDLE_REQUEST_BIAS_DISABLE;
-+				flags_v2 |= GPIO_V2_LINE_FLAG_BIAS_DISABLED;
-+			}
- 			break;
- 		case 's':
- 			val = atoi(optarg);
- 			flags_v1 &= ~GPIOHANDLE_REQUEST_INPUT;
- 			flags_v1 |= GPIOHANDLE_REQUEST_OUTPUT;
-+			flags_v2 &= ~GPIO_V2_LINE_FLAG_INPUT;
-+			flags_v2 |= GPIO_V2_LINE_FLAG_OUTPUT;
-+			break;
-+		case 'u':
-+			abiv = atoi(optarg);
- 			break;
- 		default:
- 			usage(argv[0]);
-@@ -119,7 +171,10 @@ int main(int argc, char *argv[])
- 		return -errno;
- 	}
- 
--	lfd = request_line_v1(cfd, offset, flags_v1, val);
-+	if (abiv == 1)
-+		lfd = request_line_v1(cfd, offset, flags_v1, val);
-+	else
-+		lfd = request_line_v2(cfd, offset, flags_v2, val);
- 
- 	close(cfd);
- 
-@@ -128,10 +183,14 @@ int main(int argc, char *argv[])
- 		return lfd;
- 	}
- 
--	if (flags_v1 & GPIOHANDLE_REQUEST_OUTPUT)
-+	if (flags_v2 & GPIO_V2_LINE_FLAG_OUTPUT) {
- 		wait_signal();
--	else
--		ret = get_value_v1(lfd);
-+	} else {
-+		if (abiv == 1)
-+			ret = get_value_v1(lfd);
-+		else
-+			ret = get_value_v2(lfd);
-+	}
- 
- 	close(lfd);
- 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup.sh b/tools/testing/selftests/gpio/gpio-mockup.sh
-index 0aa8e4294de1..0d6c5f7f95d2 100755
---- a/tools/testing/selftests/gpio/gpio-mockup.sh
-+++ b/tools/testing/selftests/gpio/gpio-mockup.sh
-@@ -14,6 +14,7 @@ module="gpio-mockup"
- verbose=
- full_test=
- random=
-+uapi_opt=
- active_opt=
- bias_opt=
- line_set_pid=
-@@ -30,6 +31,7 @@ usage()
- 	echo "-r:  test random lines as well as fence posts"
- 	echo "-t:  interface type:"
- 	echo "      cdev (character device ABI) - default"
-+	echo "      cdev_v1 (deprecated character device ABI)"
- 	echo "      sysfs (deprecated SYSFS ABI)"
- 	echo "-v:  verbose progress reporting"
- 	exit $ksft_fail
-@@ -100,7 +102,8 @@ get_line()
- {
- 	release_line
- 
--	$BASE/gpio-mockup-cdev $active_opt /dev/$chip $offset
-+	local cdev_opts=${uapi_opt}${active_opt}
-+	$BASE/gpio-mockup-cdev $cdev_opts /dev/$chip $offset
- 	echo $?
- }
- 
-@@ -142,7 +145,7 @@ set_line()
- 		esac
- 	done
- 
--	local cdev_opts=${active_opt}
-+	local cdev_opts=${uapi_opt}${active_opt}
- 	if [ "$val" ]; then
- 		$BASE/gpio-mockup-cdev $cdev_opts -s$val /dev/$chip $offset &
- 		# failure to set is detected by reading mockup and toggling values
-@@ -340,6 +343,10 @@ sysfs)
- 	source $BASE/gpio-mockup-sysfs.sh
- 	echo "WARNING: gpio sysfs ABI is deprecated."
- 	;;
-+cdev_v1)
-+	echo "WARNING: gpio cdev ABI v1 is deprecated."
-+	uapi_opt="-u1 "
-+	;;
- cdev)
- 	;;
- *)
+-# build and run gpio when output directory is the src dir.
+-# gpio has dependency on tools/gpio and builds tools/gpio
+-# objects in the src directory in all cases making the src
+-# repo dirty even when objects are relocated.
+-ifneq (1,$(DEFAULT_INSTALL_HDR_PATH))
+-	TMP := $(filter-out gpio, $(TARGETS))
+-	TARGETS := $(TMP)
+-endif
+-
+ # set default goal to all, so make without a target runs all, even when
+ # all isn't the first target in the file.
+ .DEFAULT_GOAL := all
 -- 
 2.30.0
 
