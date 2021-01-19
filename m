@@ -2,260 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DBDC433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0532C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 23:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8118423104
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 887212251D
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 23:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390259AbhASOaW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:30:22 -0500
-Received: from mga14.intel.com ([192.55.52.115]:53291 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732905AbhASJ0I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:26:08 -0500
-IronPort-SDR: yzdCDtBwq/+mi8eOFSqsfskx3ZG6xw11n0a36+IuoO3KYTadCogrNbpyFfFtSBjGFvKkH4xhdB
- 3G8yRoIxvY8w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9868"; a="178121666"
-X-IronPort-AV: E=Sophos;i="5.79,358,1602572400"; 
-   d="scan'208";a="178121666"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2021 01:23:53 -0800
-IronPort-SDR: fYt+TwSxnqP24B6kl7d2nh0cJr09mHy0C1J1P/Qytt9UO+g+k4EOGUs6oJi25/lwBBzKbgw85E
- ZQrfueVFWWzQ==
-X-IronPort-AV: E=Sophos;i="5.79,358,1602572400"; 
-   d="scan'208";a="350454613"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2021 01:23:46 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l1nFo-003L1D-9R; Tue, 19 Jan 2021 11:24:48 +0200
-Date:   Tue, 19 Jan 2021 11:24:48 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Daniel Scally <djrscally@gmail.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, devel@acpica.org,
-        rjw@rjwysocki.net, lenb@kernel.org, andy@kernel.org,
-        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, wsa@kernel.org, lee.jones@linaro.org,
-        hdegoede@redhat.com, mgross@linux.intel.com,
-        robert.moore@intel.com, erik.kaneda@intel.com,
-        sakari.ailus@linux.intel.com, kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2 6/7] platform: x86: Add intel_skl_int3472 driver
-Message-ID: <20210119092448.GN4077@smile.fi.intel.com>
-References: <20210118003428.568892-1-djrscally@gmail.com>
- <20210118003428.568892-7-djrscally@gmail.com>
- <YAVRqWeUsLjvU62P@pendragon.ideasonboard.com>
- <20210118144606.GO4077@smile.fi.intel.com>
- <75e99a06-4579-44ee-5f20-8f2ee3309a68@gmail.com>
+        id S1730350AbhASXxT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 18:53:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406358AbhASN6z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 08:58:55 -0500
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8932C061573;
+        Tue, 19 Jan 2021 05:58:06 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id r4so10537460pls.11;
+        Tue, 19 Jan 2021 05:58:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KL4XTeXlgYSf3JC4dzvkf+Ob0LcmcMIcOK/73KdYSys=;
+        b=RP8XNWcgdk0ReCZvzMJI+MVBI4cqb1Tp+obUwl0iC/ywxJfA0moQ6Iy8DEWrWmQ0Fu
+         RiVyA4OEYU6whVzbw0fAHrNczTFIVZRMdlRNRjENnWMyzwiSPOW12Skt29j62b3PClQR
+         sYdRAbTZSLYdWTwKXiQadEG4l5ebbOcEA9Qg144lub/sMqjUsnNlN9pmXg7IGosM+0Ty
+         OYVrMTAbMBpJUhMXyEqxjE4q0Cm8AZhF8f1DbhskDBGbUDl+o91bRK+VXxi0Gyr2lwqq
+         jdNbWUcEhkmvslxFvKp+Rk6ixrZkBL1o/ImSt1SLGBs+pE+AQa+kl0gVq3ofu1yPeBtP
+         MDvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KL4XTeXlgYSf3JC4dzvkf+Ob0LcmcMIcOK/73KdYSys=;
+        b=mLgRayafOEW+Ut4fMePTw5T9NcQl1hStRs7GMXdxVOdwTgct4o43P0qpNjqCltmj+u
+         73+3abXaxx701XMgnKTbTvxFgEySt3rIeejrsHNwlfp8kk7roU5CCLeHXq99l2Ofx/FB
+         vvEPUkHpm+BRPGCo1NAnRI/KiL6+WhqU7q37UOLjP39tt+znh2qCiuCoBLu5lVJt0g81
+         lpwfK0ajaHRek97Ge38PdhvVS/uhDbMpSGvgMgSAMWS7t3B9KKdoBnA1PqzT4Qyg7kD0
+         KrdF2GBgvgWG0EIdYIc6Zz4EcH+dGpmmNnl8I/1x/aggAVgP527WW9b1tZTSzo/396jy
+         srSA==
+X-Gm-Message-State: AOAM533/7krPvv7KHSti8w92rWCtn0POdya4lklh0GT9BWo1BmSBr2YP
+        +Km8Npkg7yfVX+al06cLK3r80B0Xxrk=
+X-Google-Smtp-Source: ABdhPJzH2iEUJxT2cTQQ2+zZ4EtLm7SM90YRu8usYcXGs9F9EQWJEZPk6GX3gDdx9mV/Fx0BREh0HQ==
+X-Received: by 2002:a17:90a:808a:: with SMTP id c10mr5589172pjn.229.1611064685930;
+        Tue, 19 Jan 2021 05:58:05 -0800 (PST)
+Received: from sol.lan (106-69-181-154.dyn.iinet.net.au. [106.69.181.154])
+        by smtp.gmail.com with ESMTPSA id c5sm6617710pfi.5.2021.01.19.05.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jan 2021 05:58:05 -0800 (PST)
+From:   Kent Gibson <warthog618@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        bgolaszewski@baylibre.com, linus.walleij@linaro.org
+Cc:     Kent Gibson <warthog618@gmail.com>
+Subject: [PATCH] gpio: uapi: fix line info flags description
+Date:   Tue, 19 Jan 2021 21:57:27 +0800
+Message-Id: <20210119135727.105360-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <75e99a06-4579-44ee-5f20-8f2ee3309a68@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 09:19:52PM +0000, Daniel Scally wrote:
-> On 18/01/2021 14:46, Andy Shevchenko wrote:
-> > On Mon, Jan 18, 2021 at 11:15:21AM +0200, Laurent Pinchart wrote:
-> >> On Mon, Jan 18, 2021 at 12:34:27AM +0000, Daniel Scally wrote:
+The description of the flags field of the struct gpio_v2_line_info
+mentions "the GPIO lines" while the info only applies to an individual
+GPIO line.  This was accidentally changed from "the GPIO line" during
+formatting improvements.
 
-...
+Reword to "this GPIO line" to clarify and to be consistent with other
+struct gpio_v2_line_info fields.
 
-> >>> +static struct i2c_driver int3472_tps68470 = {
-> >>> +	.driver = {
-> >>> +		.name = "int3472-tps68470",
-> >>> +		.acpi_match_table = int3472_device_id,
-> >>> +	},
-> >>> +	.probe_new = skl_int3472_tps68470_probe,
-> >>> +};
-> > I'm not sure we want to have like this. If I'm not mistaken the I²C driver can
-> > be separated without ACPI IDs (just having I²C IDs) and you may instantiate it
-> > via i2c_new_client_device() or i2c_acpi_new_device() whichever suits better...
-> 
-> Sorry, I'm a bit confused by this. The i2c device is already
-> present...we just want the driver to bind to them, so what role do those
-> functions have there?
+Fixes: 2cc522d3931b ("gpio: uapi: kernel-doc formatting improvements")
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+---
+ include/uapi/linux/gpio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What I meant is something like
-
- *_i2c.c
-	real I²C driver for the TPS chip, but solely with I²C ID table, no ACPI
-	involved (and it sounds like it should be mfd/tps one, in which you
-	just cut out ACPI IDs and convert to pure I²C one, that what I had
-	suggested in the first place)
-
- *_proxy.c
-	GPIO proxy as library
-
- *.c
-	platform driver with ACPI ID, in which ->probe() we actually instantiate
-	above via calling i2c_acpi_new_device(), *if needed*, along with GPIO
-	proxy
-
-...
-
-> >>> +struct int3472_gpio_clock {
-> >>> +	struct clk *clk;
-> >>> +	struct clk_hw clk_hw;
-> >>> +	struct clk_lookup *cl;
-> >>> +	struct gpio_desc *gpio;
-> >>> +};
-
-> >>> +static const struct clk_ops skl_int3472_clock_ops = {
-> >>> +	.prepare = skl_int3472_clk_prepare,
-> >>> +	.unprepare = skl_int3472_clk_unprepare,
-> >>> +	.enable = skl_int3472_clk_enable,
-> >>> +	.disable = skl_int3472_clk_disable,
-> >>> +};
-
-> > Wondering if this has some similarities with and actually can utilize clk-gpio
-> > driver.
-> > Yeah, sounds like reinventing clk-gpio.c.
-> >
-> > static const struct clk_ops clk_gpio_gate_ops = {
-> > 	.enable = clk_gpio_gate_enable,
-> > 	.disable = clk_gpio_gate_disable,
-> > 	.is_enabled = clk_gpio_gate_is_enabled,
-> > };
-> >
-> > Or is it mux? It has support there as well.
-> >
-> Hmm, yeah, this looks like it would work actually. So I think I'd need to:
-> 
-> 
-> 1. Make enabling INTEL_SKL_INT3472 also enable the clk-gpio driver
-> 
-> 2. Register a platform device to bind to the clk-gpio driver
-> 
-> 3. Register a gpio lookup table so that the clk-gpio driver can find the
-> gpio in question using gpiod_get()
-> 
-> And that looks like it will work; I'll try it.
-
-You need to modify clk-gpio.c to export
-
-clk_hw_register_gpio_gate()
-clk_hw_register_gpio_mux()
-
-(perhaps it will require to add *_unregister() counterparts) and call it from
-your code.
-
-See, for example, how clk_hw_unregister_fixed_rate() is being used. Another
-case is to add a helper directly into clk-gpio and call it instead of
-clk_hw_*() one, see how clk_register_fractional_divider() is implemented and
-used.
-
-...
-
-> >>> +	/* Lenovo Miix 510-12ISK - OV5648, Rear */
-> >>> +	{ "GEFF150023R", REGULATOR_SUPPLY("avdd", "i2c-OVTI5648:00"), NULL},
-> >>> +	/* Surface Go 1&2 - OV5693, Front */
-> >>> +	{ "YHCU", REGULATOR_SUPPLY("avdd", "i2c-INT33BE:00"), NULL},
-> > I'm wondering if you should use same I2C format macro and create this
-> > dynamically? Or rather find a corresponding ACPI device instance and
-> > copy it's name? ...
-> 
-> The supply name needs hard-coding really, but the device name I suppose
-> can come from int3472->sensor_name.
-
-To be strict in terms you are using "device instance name" in the
-REGULATOR_SUPPLY() second parameter. Because "device name" is generic and
-doesn't point to the actual *instance* of the device in the system.
-
-So, and "device name instance" we may get only by traversing through the (ACPI)
-bus and find corresponding struct device and derive name from it. Same way like
-you have done in previous patch series.
-
-Because there is no guarantee that, e.g., i2c-INT33BE:00 will be present on
-the system and moreover there is no guarantee that if two INT33BE or more
-devices are present you will get :00 always for the one you need!
-
-...
-
-> >>> +	ret = ERR_PTR(-ENODEV);
-> > This seems redundant. Or are you expecting ARRAY_SIZE() to be 0?
-> > If no, you may add static_assert() near to the array definition.
-> 
-> It **could** become 0, if the entries I've added are removed in future
-> because the sensors are no longer supported or something. There might be
-> no sensor_module_config for a given device. We only need to supply one if
-> 
-> a) The platform has a 0x0b type GPIO, which means we need to define a
-> supply name the driver is expecting
-> 
-> b) The GPIO functions deviate from documented purpose, which means we
-> need to supply a remapping struct
-> 
-> Otherwise, there's no need for it.
-
-I see. So, up to you then.
-
-> 
-> 
-> >>> +
-> >>> +	int3472->regulator.rdev = regulator_register(&int3472->regulator.rdesc,
-> >>> +						     &cfg);
-> >>> +	if (IS_ERR(int3472->regulator.rdev)) {
-> >>> +		ret = PTR_ERR(int3472->regulator.rdev);
-> >>> +		goto err_free_gpio;
-> >>> +	}
-> > Similar here, can we utilize gpio-regulator.c?
-> >
-> 
-> Also yes probably, with the same steps as for the clocks. Again, I'll
-> try that out, thanks very much.
-
-You may look at arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
-(but in your case you probably don't need a GPIO lookup table, just check).
-
-...
-
-> >>> +		dev_warn(&int3472->pdev->dev,
-> >>> +			 "GPIO type 0x%llx unknown; the sensor may not work\n",
-> >>> +			 (obj->integer.value & 0xff));
-> >> No need for parentheses.
-> > And instead of "%llx" with " & 0xff" you may use "%x" with "(u8)" cast.
-> > However, I don't think we need to show only last byte, because it may give
-> > wrong impression on values like "0x100".
-> 
-> But in this case only the last byte holds the type information, second
-> lowest byte is the pin number. So as we understand it, 0x100 would be
-> invalid anyway.
-
-Ah, indeed. So, I think the best is to have %hhx and see if you can supply just
-obj->integer.value and compiler won't warn about type mismatch.
-
-...
-
-> >>> +	} else {
-> >>> +		opregion_dev = skl_int3472_register_pdev("tps68470_pmic_opregion",
-> >>> +							 &client->dev);
-> >>> +		if (IS_ERR(opregion_dev)) {
-> >>> +			ret = PTR_ERR(opregion_dev);
-> >>> +			goto err_free_gpio;
-> >>> +		}
-> >>> +	}
-> >> I wonder if this could be simplified by using devm_mfd_add_devices. You
-> >> could have two arrays of mfd_cell, one for each case.
-> > Yeah, which effectively means that we should have some kind of mfd/tps68470 in
-> > place.
-> 
-> Can you expand on what you mean by that a little, please?
-
-The very first comment in this reply should hopefully shed a light on my idea.
-
+diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
+index e4eb0b8c5cf9..7a6f7948a7df 100644
+--- a/include/uapi/linux/gpio.h
++++ b/include/uapi/linux/gpio.h
+@@ -212,7 +212,7 @@ struct gpio_v2_line_request {
+  * @offset: the local offset on this GPIO chip, fill this in when
+  * requesting the line information from the kernel
+  * @num_attrs: the number of attributes in @attrs
+- * @flags: flags for the GPIO lines, with values from &enum
++ * @flags: flags for this GPIO line, with values from &enum
+  * gpio_v2_line_flag, such as %GPIO_V2_LINE_FLAG_ACTIVE_LOW,
+  * %GPIO_V2_LINE_FLAG_OUTPUT etc, added together.
+  * @attrs: the configuration attributes associated with the line
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.30.0
 
