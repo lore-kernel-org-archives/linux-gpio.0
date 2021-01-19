@@ -4,143 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED377C43381
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CC3C43219
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4E44206E9
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B7C623138
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405124AbhASOcY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:32:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
+        id S2405168AbhASOcg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 09:32:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404922AbhASLBL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 06:01:11 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB495C061575
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 03:00:30 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id bx12so6957455edb.8
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 03:00:30 -0800 (PST)
+        with ESMTP id S2405225AbhASLLz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 06:11:55 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A868C061575
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 03:11:11 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id h16so21003120edt.7
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 03:11:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=z1Mdmn8iV3Ak3n2cPbHK34NCK8LkeMVKgCqIq+DA4PU=;
-        b=gIFV2xLFjXPFSmH7l/eWhK7mjHGORXDPnJt11pNYnTxDzquCgMAr1qP3AHsXoEcSfa
-         1RCM4BG3srAtPrEM1rIfKGVu0vNx/ltLjgJDunntPYu3ClQ1PIgRhBxUZAiYZPZGaJxf
-         HiN5S/T5xzB2eHrU2sgY1VYqQjiGupe3BOiqmYprR+8jJKMvublol0inD8o/LiXMl+If
-         CKaK3OVzWoODiJf/mfr6CKY71O8FIiko+hbPVCWEIQkflSZ/5uEQdIvpWjQEoG8VTZlJ
-         krPS1dN7cUflvoOslaIgscyjRgWGqrC0/a7JiNNdAfU7G+MBkURRxrqm6bw5D9RD4Y18
-         784g==
+         :cc;
+        bh=ZzzlZM79+je0IaX7qHpL9yVgFOtBxcnXULVGyLZiDbQ=;
+        b=BjBn3aSUCY5Lqy8Cqpp8fSn7FXd+k9Vfy4O6jRlJfNBNxExwSbKhm2hm7skaWWZ2Un
+         RPzSzpy+qtbT0acBlFVorZtRxBDmMGDP5dzt3wYnVzx0NYsymAB1nc/W+N2Kt9wL0jxW
+         ckXRc/ak0FPh/CA9Xv3+nflva9jZT+gOOGglaKaTA7QSsOWvrswV2YdmbgYMzYuKlpg6
+         65oLG1iDOqzOKVeMufg9gOl6q//FnvuIXSJPu6YssUXvAsXSDqTI1DKbRkBlnmxbdjvV
+         M8YimzUoWp8g33VgE+E1We35nyXQbt8HyoPBBwmN7beT+liSOCRNy0y3F928+FVklkEn
+         G6SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=z1Mdmn8iV3Ak3n2cPbHK34NCK8LkeMVKgCqIq+DA4PU=;
-        b=CFxMkxy6buBi7qeMVF8mX6SJtIVsPZSrNL2RJ8d6uxayFZzUL5gyr6UasGj9+WTTfl
-         Gz7kKYYXQwkYCKL3FEXY4ExOwedfpbK4tQWF8cypu/7OojBKtd5edUog1QvhNnEwk0RV
-         9bWZ+wqXvvap1hdL7IRgPfMqhPCu6dOPxq4rgXcyZaSs7O5hnQ5yGNSX5hTjNkWuxp9/
-         OVO4dZfJI6KMPET2XX+vlamsUHpAmmn7SxyLCWwAqjXTMTz/qRDgON7mH4msRzQXkIBw
-         1hJ4rdw0CbCKIVdP8nCdCwaQDl5sHXtad029CdmT4BYn/eqB8bKksHMNk1h6Tx1X2aLm
-         7kbQ==
-X-Gm-Message-State: AOAM5325IZav2Q5QQQ8oQsquUtB+YxHSBOePq/eeKO9fAjCfC1xVcmVX
-        XeP2syv3et75xTcMTZmX1T+aot7TVjWV3ZpyCFLg4A==
-X-Google-Smtp-Source: ABdhPJylPgcGxNAuKY13Hft24g7OxTBSxC5eCrvV5HPhowuwmrOD/G8UqN1buqjRZrgXgqnScMOgvarHdhW44CizCyM=
-X-Received: by 2002:a05:6402:3508:: with SMTP id b8mr2965321edd.341.1611054029480;
- Tue, 19 Jan 2021 03:00:29 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=ZzzlZM79+je0IaX7qHpL9yVgFOtBxcnXULVGyLZiDbQ=;
+        b=g2bwL9iBR9WdzLDQEiaZl0TgepVzcehneNJT+Qz5hSmj/1nqHGuMRE9INhnZCkof/L
+         Ab2dDjhwufFJGhMF7iBYKMuLE95m0FBlxH6IrAvCn2QixJI3suX67hxcgFCNVBL7px/C
+         jCFIPrXFote27J9luT+d9tlGIpjDoZJjRZrBbOAbWZZic8fv27drVqjsbRKlIMbCK3B/
+         /Z93KFZqf5MaNSKjgudGhLraSLOb6sYNPSVdY7ErT0o3pdv102fevxdYKKL74auHnUxz
+         mva9ZHJ9VAiEsahO5SolcvA+n3JcScp5sB/zvaiJzr/ySUOa+Bo4mW5AhLUx6ma2SwJR
+         ALZQ==
+X-Gm-Message-State: AOAM531WZdJaEkI5HL7DFKoYv5BDPPar1FkjiBWKdgzpKPQsw7dswgE7
+        S7VdMeptQtQI0mPMF6TsWfpzpE6108sgPcPqiOGTKg==
+X-Google-Smtp-Source: ABdhPJwNNMggKrYZPmut1W+3BQp7oi6AHtjMfb5EnDKaIVcqmSkOpdxjdqGNnqUVVFtkBUXTHF20acar1tFffkeZEc4=
+X-Received: by 2002:a05:6402:35ca:: with SMTP id z10mr3025956edc.186.1611054670036;
+ Tue, 19 Jan 2021 03:11:10 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1610882271.git.baruch@tkos.co.il> <588373a200d20da0fa6c2a6c7f1928b4818097e9.1610882271.git.baruch@tkos.co.il>
-In-Reply-To: <588373a200d20da0fa6c2a6c7f1928b4818097e9.1610882271.git.baruch@tkos.co.il>
+References: <20210119031813.16980-1-rdunlap@infradead.org>
+In-Reply-To: <20210119031813.16980-1-rdunlap@infradead.org>
 From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 19 Jan 2021 12:00:18 +0100
-Message-ID: <CAMpxmJU1mjek0rEzr34xFdPHDTuEe9i9wjwiLp=UezXKYNtcwQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] gpio: mvebu: fix pwm .get_state period calculation
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+Date:   Tue, 19 Jan 2021 12:10:59 +0100
+Message-ID: <CAMpxmJWNDLoLEYepj8AtssfYuttOPE9R6D=HF_Nf=Nb0mW_Cyw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: sifive: select IRQ_DOMAIN_HIERARCHY rather than
+ depend on it
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-gpio <linux-gpio@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Yash Shah <yash.shah@sifive.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Jan 17, 2021 at 2:17 PM Baruch Siach <baruch@tkos.co.il> wrote:
+On Tue, Jan 19, 2021 at 4:18 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> The period is the sum of on and off values. That is, calculate period as
+> This is the only driver in the kernel source tree that depends on
+> IRQ_DOMAIN_HIERARCHY instead of selecting it. Since it is not a
+> visible Kconfig symbol, depending on it (expecting a user to
+> set/enable it) doesn't make much sense, so change it to select
+> instead of "depends on".
 >
->   ($on + $off) / clkrate
->
-> instead of
->
->   $off / clkrate - $on / clkrate
->
-> that makes no sense.
->
-> Reported-by: Russell King <linux@armlinux.org.uk>
-> Reviewed-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> Fixes: 757642f9a584e ("gpio: mvebu: Add limited PWM support")
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> Fixes: 96868dce644d ("gpio/sifive: Add GPIO driver for SiFive SoCs")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Greentime Hu <greentime.hu@sifive.com>
+> Cc: Yash Shah <yash.shah@sifive.com>
 > ---
->  drivers/gpio/gpio-mvebu.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
+>  drivers/gpio/Kconfig |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-> index 672681a976f5..a912a8fed197 100644
-> --- a/drivers/gpio/gpio-mvebu.c
-> +++ b/drivers/gpio/gpio-mvebu.c
-> @@ -676,20 +676,17 @@ static void mvebu_pwm_get_state(struct pwm_chip *ch=
-ip,
->         else
->                 state->duty_cycle =3D 1;
+> --- linux-next-20210118.orig/drivers/gpio/Kconfig
+> +++ linux-next-20210118/drivers/gpio/Kconfig
+> @@ -521,7 +521,8 @@ config GPIO_SAMA5D2_PIOBU
 >
-> +       val =3D (unsigned long long) u; /* on duration */
->         regmap_read(mvpwm->regs, mvebu_pwmreg_blink_off_duration(mvpwm), =
-&u);
-> -       val =3D (unsigned long long) u * NSEC_PER_SEC;
-> +       val +=3D (unsigned long long) u; /* period =3D on + off duration =
-*/
-> +       val *=3D NSEC_PER_SEC;
->         do_div(val, mvpwm->clk_rate);
-> -       if (val < state->duty_cycle) {
-> +       if (val > UINT_MAX)
-> +               state->period =3D UINT_MAX;
-> +       else if (val)
-> +               state->period =3D val;
-> +       else
->                 state->period =3D 1;
-> -       } else {
-> -               val -=3D state->duty_cycle;
-> -               if (val > UINT_MAX)
-> -                       state->period =3D UINT_MAX;
-> -               else if (val)
-> -                       state->period =3D val;
-> -               else
-> -                       state->period =3D 1;
-> -       }
->
->         regmap_read(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset, &u)=
-;
->         if (u)
-> --
-> 2.29.2
->
+>  config GPIO_SIFIVE
+>         bool "SiFive GPIO support"
+> -       depends on OF_GPIO && IRQ_DOMAIN_HIERARCHY
+> +       depends on OF_GPIO
+> +       select IRQ_DOMAIN_HIERARCHY
+>         select GPIO_GENERIC
+>         select GPIOLIB_IRQCHIP
+>         select REGMAP_MMIO
 
-I applied this for fixes and will send out a PR to Linus T this week.
-Once that's upstream I'll apply the rest for the next release.
+Applied, thanks!
 
-Bartosz
+Bart
