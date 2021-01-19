@@ -2,84 +2,198 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCC4C433DB
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 03:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF76C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 04:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0361B208DB
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 03:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA73207A0
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 04:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388715AbhASDTE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jan 2021 22:19:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbhASDTD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2021 22:19:03 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139D1C061575;
-        Mon, 18 Jan 2021 19:18:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=IDJteZLGpl5jFaFEs8wvm4tfskugOjAqMpYM3vOLN5g=; b=XikgqOcpDeKkL/7YUivnWGWWyX
-        KoXul4jcGUyhbk9e9yExzQV1TfN5fNHozm2DOqqRKDxPd+2GEKoAby5cKKo9Caa11aYzgo1C8u9hM
-        4QTdyfV7QZQMCKpFKnUq3untnI2Vop9cjeDBPjGC4cEehSRv6gseP5crIrB7QzMAVueqrLsdecJoq
-        9uiTWa8TB68b69/zznJKLtBdIH7CRa8Ed46oxwP+LOWnkngy6HmHqybbuMTWUskSExTOhwbcHGesJ
-        TzlYWB4MKExqN/6AyutOFaFtkk2Ya0Al84JtG7Ui7vrOWQxKGHg/rbCwwKY0UO4dWb2bFaTGtcT78
-        AzHjOWoA==;
-Received: from [2601:1c0:6280:3f0::9abc] (helo=merlin.infradead.org)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1l1hX9-0008A9-Uo; Tue, 19 Jan 2021 03:18:20 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Yash Shah <yash.shah@sifive.com>
-Subject: [PATCH] gpio: sifive: select IRQ_DOMAIN_HIERARCHY rather than depend on it
-Date:   Mon, 18 Jan 2021 19:18:13 -0800
-Message-Id: <20210119031813.16980-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.26.2
+        id S1732068AbhASEcL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jan 2021 23:32:11 -0500
+Received: from mga11.intel.com ([192.55.52.93]:43228 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731364AbhASEao (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 Jan 2021 23:30:44 -0500
+IronPort-SDR: MGEsCFSiTsPv1lfwTsDI2mtcFsd/KQjNsG8FOEBOPJBUNJjinrWeIl3KLF+gr2ukxaW4qBLgPv
+ JVO2hBjL3AZg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9868"; a="175373054"
+X-IronPort-AV: E=Sophos;i="5.79,357,1602572400"; 
+   d="scan'208";a="175373054"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 20:29:51 -0800
+IronPort-SDR: XOiAIRKrqTAQDZ5xucKI1UDj4pejVeW0lNdAdVO9bQmYx9mEeGol5kphgVaYUagc6AJxaZsgMe
+ R7muPY4/qoaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,357,1602572400"; 
+   d="scan'208";a="383788651"
+Received: from lkp-server01.sh.intel.com (HELO 260eafd5ecd0) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 18 Jan 2021 20:29:49 -0800
+Received: from kbuild by 260eafd5ecd0 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1l1ieL-0004iZ-5M; Tue, 19 Jan 2021 04:29:49 +0000
+Date:   Tue, 19 Jan 2021 12:28:59 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:fixes] BUILD SUCCESS
+ cf9d052aa6005f1e8dfaf491d83bf37f368af69e
+Message-ID: <6006600b.dnPF1berLgshSpt/%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is the only driver in the kernel source tree that depends on
-IRQ_DOMAIN_HIERARCHY instead of selecting it. Since it is not a
-visible Kconfig symbol, depending on it (expecting a user to
-set/enable it) doesn't make much sense, so change it to select
-instead of "depends on".
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: cf9d052aa6005f1e8dfaf491d83bf37f368af69e  pinctrl: qcom: Don't clear pending interrupts when enabling
 
-Fixes: 96868dce644d ("gpio/sifive: Add GPIO driver for SiFive SoCs")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Greentime Hu <greentime.hu@sifive.com>
-Cc: Yash Shah <yash.shah@sifive.com>
+elapsed time: 720m
+
+configs tested: 129
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+sh                 kfr2r09-romimage_defconfig
+sparc64                             defconfig
+arm                          pxa910_defconfig
+sparc                            allyesconfig
+powerpc                    amigaone_defconfig
+arm                           tegra_defconfig
+arm                          collie_defconfig
+powerpc                 mpc836x_mds_defconfig
+powerpc                      tqm8xx_defconfig
+sh                          polaris_defconfig
+s390                             allyesconfig
+m68k                        mvme147_defconfig
+arm                          tango4_defconfig
+powerpc                  iss476-smp_defconfig
+powerpc                      ep88xc_defconfig
+powerpc                      mgcoge_defconfig
+arm                            xcep_defconfig
+powerpc                 mpc837x_rdb_defconfig
+arm                         nhk8815_defconfig
+s390                       zfcpdump_defconfig
+h8300                     edosk2674_defconfig
+mips                     decstation_defconfig
+mips                malta_qemu_32r6_defconfig
+arm                         s3c2410_defconfig
+sh                              ul2_defconfig
+m68k                          multi_defconfig
+openrisc                         alldefconfig
+mips                           xway_defconfig
+sparc                       sparc32_defconfig
+mips                       lemote2f_defconfig
+arm                          imote2_defconfig
+powerpc                      pcm030_defconfig
+sh                   sh7724_generic_defconfig
+xtensa                    smp_lx200_defconfig
+arm                             ezx_defconfig
+arm                           viper_defconfig
+arm                            zeus_defconfig
+mips                      bmips_stb_defconfig
+arm                            hisi_defconfig
+arm                     am200epdkit_defconfig
+arm                         vf610m4_defconfig
+mips                          rm200_defconfig
+arm                        magician_defconfig
+h8300                               defconfig
+openrisc                 simple_smp_defconfig
+powerpc                 mpc85xx_cds_defconfig
+powerpc                 xes_mpc85xx_defconfig
+arm                      tct_hammer_defconfig
+mips                           jazz_defconfig
+powerpc                     skiroot_defconfig
+xtensa                generic_kc705_defconfig
+powerpc                     tqm5200_defconfig
+m68k                         amcore_defconfig
+xtensa                       common_defconfig
+sh                            hp6xx_defconfig
+i386                             alldefconfig
+m68k                            q40_defconfig
+powerpc                 mpc8560_ads_defconfig
+csky                                defconfig
+mips                    maltaup_xpa_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+parisc                           allyesconfig
+s390                                defconfig
+sparc                               defconfig
+i386                               tinyconfig
+i386                             allyesconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a004-20210118
+i386                 randconfig-a001-20210118
+x86_64               randconfig-a015-20210118
+x86_64               randconfig-a013-20210118
+x86_64               randconfig-a012-20210118
+x86_64               randconfig-a016-20210118
+x86_64               randconfig-a011-20210118
+x86_64               randconfig-a014-20210118
+i386                 randconfig-a011-20210118
+i386                 randconfig-a012-20210118
+i386                 randconfig-a016-20210118
+i386                 randconfig-a015-20210118
+i386                 randconfig-a013-20210118
+i386                 randconfig-a014-20210118
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                      rhel-8.3-kbuiltin
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a004-20210118
+x86_64               randconfig-a006-20210118
+x86_64               randconfig-a001-20210118
+x86_64               randconfig-a003-20210118
+x86_64               randconfig-a005-20210118
+x86_64               randconfig-a002-20210118
+
 ---
- drivers/gpio/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- linux-next-20210118.orig/drivers/gpio/Kconfig
-+++ linux-next-20210118/drivers/gpio/Kconfig
-@@ -521,7 +521,8 @@ config GPIO_SAMA5D2_PIOBU
- 
- config GPIO_SIFIVE
- 	bool "SiFive GPIO support"
--	depends on OF_GPIO && IRQ_DOMAIN_HIERARCHY
-+	depends on OF_GPIO
-+	select IRQ_DOMAIN_HIERARCHY
- 	select GPIO_GENERIC
- 	select GPIOLIB_IRQCHIP
- 	select REGMAP_MMIO
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
