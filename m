@@ -2,212 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5A8C432C3
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E50C433E6
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 299E32310C
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95092230FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405482AbhASOcr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:32:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55716 "EHLO
+        id S2405115AbhASOcH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 09:32:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393144AbhASMdN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 07:33:13 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1220C0613CF;
-        Tue, 19 Jan 2021 04:31:49 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id j12so3105931pjy.5;
-        Tue, 19 Jan 2021 04:31:49 -0800 (PST)
+        with ESMTP id S2391183AbhASLAU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 06:00:20 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BEFFC061757;
+        Tue, 19 Jan 2021 02:59:40 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id b8so10308980plx.0;
+        Tue, 19 Jan 2021 02:59:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cCv2wIHBUA2OBP0G0sZ8W1yCZLNMmx7yo4vsapAVUbs=;
-        b=n8hJ6koBqoYIRBhYsduA+Neqlg+nVEHcSbH3TdGz6OC4y8oXOxr3ZWcoIWNBGKGkee
-         avyx2rEp2QsRnpgegNSM6ntC9sxvYJGq9ICJg8L9HdjIR+xwBqYsBXsUIFjHiozFMAhQ
-         yupTCXDekahLXRQnlUnvh8dkMSTua4OF9T3bRMTiIcGSS//I+qORxBZrXRYVDqbXNhBO
-         5s/Cgs2pmue2RptBDayfAUEgyqSixKANDNQUhLP2OgVoOK5O/t5iTGTsnxZ6dovmetIA
-         gd/dcBFA7aJT+U1Ot7tA5uIepuIzxoV5qqXzAYUmfMmXfDY6RFF09hAGDuwgRqs4vMOT
-         0CNA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=2FDiZ6od0fvQh7WzUZnbGxxoxVajqn8rZ5Nyw7ukQhM=;
+        b=CfevHelY0M0Q8sniU03dWoxCXyGea12k+yHYrnOAuetxEesrkfgIlWtfy7H3izws9O
+         q3ST3hp6q7UNbAWoRM7yXJGRdkkEPBFX7noEfzwwwf7zDI6rhiLUQaniHgome26PbBsk
+         7Fe2silUEW6jc2ToHyqfXeu5UwbiIa7JSkeZKpJA7CRZy4YFjsM3HQbD6OxTYRjGqxdG
+         INOkAGLEgEN9+PU1eSvfuIk+qbUP5bcxFbsto2UVSwD7RkEU3XpyWXgid2ROUhExBWv9
+         Q6SGOiA60iHvQCycthECli2DbzAPzLZB49sD5c+BUfEqTBVjGEvKW987/a5BzQe2TlpX
+         OXtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cCv2wIHBUA2OBP0G0sZ8W1yCZLNMmx7yo4vsapAVUbs=;
-        b=DA0MxVHi9Dq8x4+JUYjvhIdKEyvk2HjlHnu2ZCXiwBC5Sk1J2QSvCsWWTAzULccIIV
-         J9LlhT9tL+5qnBSrfsrsYlVKGAam4TcnGfM01vIxX3W7Z9S3sTFyK0HWO2O+v5LaA5Z7
-         3OVNZYNT+m3u1k0EkT8RmvAl484CKSYfn01AZ71u3+qJUy3z0a6m7Rog4CnqRcraogUD
-         XiJhUXP3lmj6zvWAF/jb7Rwq9vneSAAARDgEcHwNUxYIT8f2D4r3iBnFZmm2/iWnzAuN
-         QavWmB6hZrE6Cbu/Bc24obAwQ7Wy0dk0Q7U5nqPydx/tP3W1eYJ7z1sgx8EQzPLZfEB0
-         qPBw==
-X-Gm-Message-State: AOAM533DOdYC6o6CoqWZOesQ5iP+U153hREAgmvU2li4YylAliTp15Ls
-        g1fST5TOt06JVANG161KKHmlnkxG4bI=
-X-Google-Smtp-Source: ABdhPJyR/zicJHQLPdl13dvirO0HxefzsfhxWPZXnMV6aiasWHcG0ovss3HNoR05hyMgaoFQ+9JfRA==
-X-Received: by 2002:a17:90a:f404:: with SMTP id ch4mr5166086pjb.78.1611059508770;
-        Tue, 19 Jan 2021 04:31:48 -0800 (PST)
-Received: from sol.lan (106-69-181-154.dyn.iinet.net.au. [106.69.181.154])
-        by smtp.gmail.com with ESMTPSA id q4sm19283052pgr.39.2021.01.19.04.31.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2FDiZ6od0fvQh7WzUZnbGxxoxVajqn8rZ5Nyw7ukQhM=;
+        b=bOqz/2RNYVvBWzec1Xb3IJUm3+bseLbaUccblaGQlbUrUsewarObTBzlTEVjIezSBX
+         rGcCrwG2uUDjikMV/VSbR+4f5NWUCJNZyvdD5B+O+LrW30R6A29ZBWi64roHlmRCZHzl
+         9bE7FHBHLS0GJ3idZGjTFqSBQGseYaMr7S1Nc88SZGMT66NiAQlbjccynRe9+8ZUymQA
+         flUWGBWoTdsu71/8r/59WPbGLIm4Zb5/gkfQDJm/Aej8svJmd+xn/KhE1xJyx9lMNSII
+         U9P0AIMaOcad6z2/705D0JcNKu3G0fUF0T0h7rF5EjAoaPK88lmdrvCkCPAbA+xAlPuQ
+         ASrA==
+X-Gm-Message-State: AOAM533qvese8PdXQSa+qGQP7bRLqE8dA1HvfFS1VejvavLmCUqH7SGJ
+        ZRBW5FpzOn7zWE6HP0KMudg=
+X-Google-Smtp-Source: ABdhPJxyLJIgULTnX2m2lZkZhNNmupD+5+0pVQKyeFBaTgJYI5RBZ4sN/jOzV58/mIL3judNWX9wKg==
+X-Received: by 2002:a17:902:8492:b029:de:17d0:16cf with SMTP id c18-20020a1709028492b02900de17d016cfmr4055536plo.74.1611053979877;
+        Tue, 19 Jan 2021 02:59:39 -0800 (PST)
+Received: from sol (106-69-181-154.dyn.iinet.net.au. [106.69.181.154])
+        by smtp.gmail.com with ESMTPSA id v9sm18204495pff.102.2021.01.19.02.59.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 04:31:48 -0800 (PST)
+        Tue, 19 Jan 2021 02:59:39 -0800 (PST)
+Date:   Tue, 19 Jan 2021 18:59:33 +0800
 From:   Kent Gibson <warthog618@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, bgolaszewski@baylibre.com,
-        linus.walleij@linaro.org, shuah@kernel.org, bamv2005@gmail.com
-Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v3 5/7] tools: gpio: remove uAPI v1 code no longer used by selftests
-Date:   Tue, 19 Jan 2021 20:30:57 +0800
-Message-Id: <20210119123059.102004-6-warthog618@gmail.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210119123059.102004-1-warthog618@gmail.com>
-References: <20210119123059.102004-1-warthog618@gmail.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>
+Subject: Re: [PATCH v2 0/7] selftests: gpio: rework and port to GPIO uAPI v2
+Message-ID: <20210119105933.GA21741@sol>
+References: <20210107025731.226017-1-warthog618@gmail.com>
+ <CACRpkdZf2GhScg=sUG35nA5P6jXH93uuK0Fq_uhz29wBQLHOKQ@mail.gmail.com>
+ <20210119003455.GB5169@sol>
+ <CAMpxmJUkFL+w7afS2NKF-xiMR==HVR1Mk8uQm3782DBoG0qneA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJUkFL+w7afS2NKF-xiMR==HVR1Mk8uQm3782DBoG0qneA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-gpio-mockup-chardev helper has been obsoleted and removed, so also remove
-the tools/gpio code that it, and nothing else, was using.
+On Tue, Jan 19, 2021 at 11:37:46AM +0100, Bartosz Golaszewski wrote:
+> On Tue, Jan 19, 2021 at 1:35 AM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > On Mon, Jan 18, 2021 at 04:04:51PM +0100, Linus Walleij wrote:
+> > > On Thu, Jan 7, 2021 at 3:58 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > >
+> > > >   selftests: gpio: rework and simplify test implementation
+> > > >   selftests: gpio: remove obsolete gpio-mockup-chardev.c
+> > > >   selftests: remove obsolete build restriction for gpio
+> > > >   selftests: remove obsolete gpio references from kselftest_deps.sh
+> > > >   tools: gpio: remove uAPI v1 code no longer used by selftests
+> > > >   selftests: gpio: port to GPIO uAPI v2
+> > > >   selftests: gpio: add CONFIG_GPIO_CDEV to config
+> > >
+> > > Bartosz I think you can just merge these patches into the GPIO tree, at least
+> > > I think that is what I have done in the past.
+> > >
+> >
+> > Could you touch up that Fixes tag in patch 1 if you merge v2?
+> >
+> > Thanks,
+> > Kent.
+> 
+> Kent,
+> 
+> This doesn't apply to my for-next branch - there's a conflict in
+> tools/testing/selftests/gpio/Makefile, could you take a look?
+> 
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- tools/gpio/gpio-utils.c | 89 -----------------------------------------
- tools/gpio/gpio-utils.h |  6 ---
- 2 files changed, 95 deletions(-)
+Which is your for-next branch?
 
-diff --git a/tools/gpio/gpio-utils.c b/tools/gpio/gpio-utils.c
-index 37187e056c8b..1639b4d832cd 100644
---- a/tools/gpio/gpio-utils.c
-+++ b/tools/gpio/gpio-utils.c
-@@ -32,74 +32,6 @@
-  * following api will request gpio lines, do the operation and then
-  * release these lines.
-  */
--/**
-- * gpiotools_request_linehandle() - request gpio lines in a gpiochip
-- * @device_name:	The name of gpiochip without prefix "/dev/",
-- *			such as "gpiochip0"
-- * @lines:		An array desired lines, specified by offset
-- *			index for the associated GPIO device.
-- * @num_lines:		The number of lines to request.
-- * @flag:		The new flag for requsted gpio. Reference
-- *			"linux/gpio.h" for the meaning of flag.
-- * @data:		Default value will be set to gpio when flag is
-- *			GPIOHANDLE_REQUEST_OUTPUT.
-- * @consumer_label:	The name of consumer, such as "sysfs",
-- *			"powerkey". This is useful for other users to
-- *			know who is using.
-- *
-- * Request gpio lines through the ioctl provided by chardev. User
-- * could call gpiotools_set_values() and gpiotools_get_values() to
-- * read and write respectively through the returned fd. Call
-- * gpiotools_release_linehandle() to release these lines after that.
-- *
-- * Return:		On success return the fd;
-- *			On failure return the errno.
-- */
--int gpiotools_request_linehandle(const char *device_name, unsigned int *lines,
--				 unsigned int num_lines, unsigned int flag,
--				 struct gpiohandle_data *data,
--				 const char *consumer_label)
--{
--	struct gpiohandle_request req;
--	char *chrdev_name;
--	int fd;
--	int i;
--	int ret;
--
--	ret = asprintf(&chrdev_name, "/dev/%s", device_name);
--	if (ret < 0)
--		return -ENOMEM;
--
--	fd = open(chrdev_name, 0);
--	if (fd == -1) {
--		ret = -errno;
--		fprintf(stderr, "Failed to open %s, %s\n",
--			chrdev_name, strerror(errno));
--		goto exit_free_name;
--	}
--
--	for (i = 0; i < num_lines; i++)
--		req.lineoffsets[i] = lines[i];
--
--	req.flags = flag;
--	strcpy(req.consumer_label, consumer_label);
--	req.lines = num_lines;
--	if (flag & GPIOHANDLE_REQUEST_OUTPUT)
--		memcpy(req.default_values, data, sizeof(req.default_values));
--
--	ret = ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &req);
--	if (ret == -1) {
--		ret = -errno;
--		fprintf(stderr, "Failed to issue %s (%d), %s\n",
--			"GPIO_GET_LINEHANDLE_IOCTL", ret, strerror(errno));
--	}
--
--	if (close(fd) == -1)
--		perror("Failed to close GPIO character device file");
--exit_free_name:
--	free(chrdev_name);
--	return ret < 0 ? ret : req.fd;
--}
- 
- /**
-  * gpiotools_request_line() - request gpio lines in a gpiochip
-@@ -215,27 +147,6 @@ int gpiotools_get_values(const int fd, struct gpio_v2_line_values *values)
- 	return ret;
- }
- 
--/**
-- * gpiotools_release_linehandle(): Release the line(s) of gpiochip
-- * @fd:			The fd returned by
-- *			gpiotools_request_linehandle().
-- *
-- * Return:		On success return 0;
-- *			On failure return the errno.
-- */
--int gpiotools_release_linehandle(const int fd)
--{
--	int ret;
--
--	ret = close(fd);
--	if (ret == -1) {
--		perror("Failed to close GPIO LINEHANDLE device file");
--		ret = -errno;
--	}
--
--	return ret;
--}
--
- /**
-  * gpiotools_release_line(): Release the line(s) of gpiochip
-  * @fd:			The fd returned by
-diff --git a/tools/gpio/gpio-utils.h b/tools/gpio/gpio-utils.h
-index 6c69a9f1c253..8af7c8ee19ce 100644
---- a/tools/gpio/gpio-utils.h
-+++ b/tools/gpio/gpio-utils.h
-@@ -24,12 +24,6 @@ static inline int check_prefix(const char *str, const char *prefix)
- 		strncmp(str, prefix, strlen(prefix)) == 0;
- }
- 
--int gpiotools_request_linehandle(const char *device_name, unsigned int *lines,
--				 unsigned int num_lines, unsigned int flag,
--				 struct gpiohandle_data *data,
--				 const char *consumer_label);
--int gpiotools_release_linehandle(const int fd);
--
- int gpiotools_request_line(const char *device_name,
- 			   unsigned int *lines,
- 			   unsigned int num_lines,
--- 
-2.30.0
+The patch set is based on and applies cleanly to gpio/for-next 7ac554888233,
+so I'm not sure which branch you are targetting.
 
+Cheers,
+Kent.
