@@ -2,98 +2,111 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05918C43333
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9592AC07EBC
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F340323104
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8786D23104
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 22:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403847AbhASObn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:31:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59470 "EHLO
+        id S2405347AbhASOck (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 09:32:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731672AbhASKij (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 05:38:39 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98AD6C061573
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 02:37:58 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id g3so8402096ejb.6
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 02:37:58 -0800 (PST)
+        with ESMTP id S2405252AbhASLMn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 06:12:43 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5A5BC0613C1;
+        Tue, 19 Jan 2021 03:12:02 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id y187so16349257wmd.3;
+        Tue, 19 Jan 2021 03:12:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LtpYS3fE2cC5QgHZMy5lDBgkuvmbGBZXc8oUExaRobg=;
-        b=AVEAcv6erHpJS5IUR9N16OaW5mbpHSuKwXHB016yFyMXO8JGzwgihACuRmGR47q51n
-         EMHHMxJmnNtY5a3NtfFcauTpTOH0ANADTCmwYaemis6q7sTvHnBYaoHH+uYZswjsuO/B
-         UWmQ4vmYlfJK0lD44U35ZUM03AfHYAonkYRQQlw4bK6zSqGs8zWq+4nx3680wXx+gB9y
-         ekiyqIjewfmdo4Rgteu/klRNDwKVLtaQ4IppW7xFexWFFHzEfY8dyBfRtSUNPcLnN03N
-         vhhLIFqpra1Dp4KxKDyMOyKv6M9BvEJ6CzGh2Fwi9fXrfVZksEs17VACkAEuX3oxFDN2
-         DyFA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=vzBb5/Tv6UlBk+EMbkqMhlDzSJvMQnejvX8e7cfy6pY=;
+        b=iyKbA/ref/cqKHgmpv0D2SbIRkZVdsRnvxsb1kFyMXSwCclym02NRPq2rQUaahMNWf
+         fFOWZgA4hllMQSYlubBVGt3BNHoMUSYFtQXTeNCgHOdlnMMnoMIsf/ShygjQZiucVuCk
+         i09fmQjHgfbGTL2MeqfkeC1iGYWKDcHtbZVopWJO62y47u2A3ZC7G5MfmrpyV8pLTixn
+         U7a5PhbLQcQe3K0K8FKJ/Vax2pFtkcbfQig32ukhx9PrijsfqDUfzkcjbtJGIQdkxCMd
+         ERW/P9Sg5AnY1Z5qLRkxdgA/OJsNYEN1ZVDGxEPSZGEQtcwoXxWZixH0Cf54RKs5+WcM
+         NfUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LtpYS3fE2cC5QgHZMy5lDBgkuvmbGBZXc8oUExaRobg=;
-        b=QbMN4VcQteg+0PveAyabpU90IKp+J4t3AnoLB6xb5HFgRwfCXaTFYFulRb8vDo07Q+
-         vFJVOIVLEJ/G9TXtboVEisJKRQaFZRcGyZDlk/acKDJZf8xYKievkZR1TpG+maRYKcTP
-         IzxYAN+cEIHuQnVgk7C/2AM/Vfm263I33Brhnmhshl+rjTm1VjEcPaXRH0tYX5EiUUty
-         ldQfyoi3qX/6oG0l/mVyeUF6VWi7qOkaNNtpPKAgVoBz6kfOYll9mZ3OZVQuDP5nlrMp
-         aQi64rct5iDuOzQJuAwntuZAz83bmdQJm/8L22WCfWvp1AVeOZiGTjM4Al3w9EIeD6Hv
-         1P/A==
-X-Gm-Message-State: AOAM533tgm+0rsVipK4zaKJOrOTkc6D1i8oidhLm+U/csFJOYhAEn/q9
-        g4MQjgNOTTd+F7wPtccreeFsns1TXkFbxZKGmOOgqA==
-X-Google-Smtp-Source: ABdhPJyAozB1lFwLmI79KJn1esgyufm62vTBA3EAVda+QYKmeD4MJINnKWS/8L9U70HoqJJRoGWTHTTlM9s5jgA+QNM=
-X-Received: by 2002:a17:906:19c3:: with SMTP id h3mr2521301ejd.429.1611052676821;
- Tue, 19 Jan 2021 02:37:56 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=vzBb5/Tv6UlBk+EMbkqMhlDzSJvMQnejvX8e7cfy6pY=;
+        b=nufY3A+laS7DgkUbNxdtQg9/Vj+0bGZut2jhfL160Ck8nmV0qGdLAOF4HG2eFHJk0R
+         fUBzB130DMC5MQVljTfy3Jn65KX+DdOZT9CPApn4WQK3WY2ryKy8weP/Dou/zT3c7OTk
+         pZ5YdxfxYZ8aZAwYQ+/4ETKtN1nBkXg8LcFY/i5KLk9hbI3FSDEBe+lyScg7J3jPXVJx
+         JpfTqPiElAXtnRwyMLAB+NfOnDcQa4/iPg17lbIosxUojafYH+Hvz+/P1HhICRSQLEFm
+         jZj8xAy6NASpbmM3ypogB/OUcfRuLqdGsssSRbgY4AKmeQL/JAC/0ct6kDn1y2mGvxih
+         E4Lw==
+X-Gm-Message-State: AOAM532fqqkdequECosTr3D7GuUu/+8IAgd9eGHdw0jcGYzNTWRl1NXh
+        2OSZT+3mn26KIDHDlhggjuI=
+X-Google-Smtp-Source: ABdhPJzXyvKMRBHff/3egHeqjvWcHG8JKBSU0/vF5pWK95xFgz+RG+FsjEHU51pFgAwOPbn5ONplsA==
+X-Received: by 2002:a1c:24c4:: with SMTP id k187mr3693910wmk.14.1611054721747;
+        Tue, 19 Jan 2021 03:12:01 -0800 (PST)
+Received: from [192.168.1.211] ([2.29.208.120])
+        by smtp.gmail.com with ESMTPSA id 17sm3833428wmk.48.2021.01.19.03.12.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Jan 2021 03:12:01 -0800 (PST)
+Subject: Re: [PATCH v2 6/7] platform: x86: Add intel_skl_int3472 driver
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devel@acpica.org,
+        rjw@rjwysocki.net, lenb@kernel.org, andy@kernel.org,
+        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, wsa@kernel.org, lee.jones@linaro.org,
+        hdegoede@redhat.com, mgross@linux.intel.com,
+        robert.moore@intel.com, erik.kaneda@intel.com,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
+References: <20210118003428.568892-1-djrscally@gmail.com>
+ <20210118003428.568892-7-djrscally@gmail.com>
+ <2d8d7072-3b6f-4ffa-29dc-51f31fe4af72@ideasonboard.com>
+ <20210119111122.GU4077@smile.fi.intel.com>
+From:   Daniel Scally <djrscally@gmail.com>
+Message-ID: <c720ec32-b6d1-9b78-376e-4e3686878d70@gmail.com>
+Date:   Tue, 19 Jan 2021 11:12:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210107025731.226017-1-warthog618@gmail.com> <CACRpkdZf2GhScg=sUG35nA5P6jXH93uuK0Fq_uhz29wBQLHOKQ@mail.gmail.com>
- <20210119003455.GB5169@sol>
-In-Reply-To: <20210119003455.GB5169@sol>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 19 Jan 2021 11:37:46 +0100
-Message-ID: <CAMpxmJUkFL+w7afS2NKF-xiMR==HVR1Mk8uQm3782DBoG0qneA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] selftests: gpio: rework and port to GPIO uAPI v2
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210119111122.GU4077@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 1:35 AM Kent Gibson <warthog618@gmail.com> wrote:
->
-> On Mon, Jan 18, 2021 at 04:04:51PM +0100, Linus Walleij wrote:
-> > On Thu, Jan 7, 2021 at 3:58 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > >   selftests: gpio: rework and simplify test implementation
-> > >   selftests: gpio: remove obsolete gpio-mockup-chardev.c
-> > >   selftests: remove obsolete build restriction for gpio
-> > >   selftests: remove obsolete gpio references from kselftest_deps.sh
-> > >   tools: gpio: remove uAPI v1 code no longer used by selftests
-> > >   selftests: gpio: port to GPIO uAPI v2
-> > >   selftests: gpio: add CONFIG_GPIO_CDEV to config
-> >
-> > Bartosz I think you can just merge these patches into the GPIO tree, at least
-> > I think that is what I have done in the past.
-> >
->
-> Could you touch up that Fixes tag in patch 1 if you merge v2?
->
-> Thanks,
-> Kent.
 
-Kent,
+On 19/01/2021 11:11, Andy Shevchenko wrote:
+> On Tue, Jan 19, 2021 at 10:56:17AM +0000, Kieran Bingham wrote:
+>> On 18/01/2021 00:34, Daniel Scally wrote:
+> ...
+>
+>>> +config INTEL_SKL_INT3472
+>>> +	tristate "Intel SkyLake ACPI INT3472 Driver"
+>>> +	depends on X86 && ACPI
+>>> +	select REGMAP_I2C
+>> I've tried compiling this as a built in and a module and on my minimal
+>> config I had failures on both for regulator_register and
+>> regulator_unregister.
+>>
+>> I suspect this needs to have either a selects or a depends upon
+>> CONFIG_REGULATOR
+> Valid point, although it seems no consensus on which is better to use. It seems
+> to me that in this case we need to select it.
+>
+Yeah; it will be necessary for the gpio-regulator too anyway I expect.
 
-This doesn't apply to my for-next branch - there's a conflict in
-tools/testing/selftests/gpio/Makefile, could you take a look?
 
-Bartosz
+Thanks Kieran; I missed that entirely.
+
