@@ -2,87 +2,145 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3CBC4332B
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED377C43381
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF7B120715
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4E44206E9
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403786AbhASObP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:31:15 -0500
-Received: from mga09.intel.com ([134.134.136.24]:38678 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387635AbhASJg7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:36:59 -0500
-IronPort-SDR: +mcbgIGpvgow1F5e6VE5S1GtIOm3FVCYsAKR0tqE12pnJHBfUuRpeL7m0PWgawHfAWO0CPLqPL
- ZJxi9X79vffA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9868"; a="179051386"
-X-IronPort-AV: E=Sophos;i="5.79,358,1602572400"; 
-   d="scan'208";a="179051386"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2021 01:34:54 -0800
-IronPort-SDR: ZyqcKiU5pqIaa4jK/y2/kFZdKURQvGqk5xzdXr4GsBSdbnY941/vMnTNW1eh005BqSKScnjNF6
- GS5fHddU9VVw==
-X-IronPort-AV: E=Sophos;i="5.79,358,1602572400"; 
-   d="scan'208";a="426408521"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2021 01:34:44 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l1nQM-003Lep-8a; Tue, 19 Jan 2021 11:35:42 +0200
-Date:   Tue, 19 Jan 2021 11:35:42 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Daniel Scally <djrscally@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        devel@acpica.org, rjw@rjwysocki.net, lenb@kernel.org,
-        andy@kernel.org, mika.westerberg@linux.intel.com,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        wsa@kernel.org, lee.jones@linaro.org, hdegoede@redhat.com,
-        mgross@linux.intel.com, robert.moore@intel.com,
-        erik.kaneda@intel.com, sakari.ailus@linux.intel.com,
-        kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2 6/7] platform: x86: Add intel_skl_int3472 driver
-Message-ID: <20210119093542.GP4077@smile.fi.intel.com>
-References: <20210118003428.568892-1-djrscally@gmail.com>
- <20210118003428.568892-7-djrscally@gmail.com>
- <YAVRqWeUsLjvU62P@pendragon.ideasonboard.com>
- <20210118144606.GO4077@smile.fi.intel.com>
- <75e99a06-4579-44ee-5f20-8f2ee3309a68@gmail.com>
- <1053125f-7cb2-8aa0-3204-24df62986184@gmail.com>
- <YAZ6Y1QDyWwPGE69@pendragon.ideasonboard.com>
+        id S2405124AbhASOcY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 09:32:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404922AbhASLBL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 06:01:11 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB495C061575
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 03:00:30 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id bx12so6957455edb.8
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Jan 2021 03:00:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=z1Mdmn8iV3Ak3n2cPbHK34NCK8LkeMVKgCqIq+DA4PU=;
+        b=gIFV2xLFjXPFSmH7l/eWhK7mjHGORXDPnJt11pNYnTxDzquCgMAr1qP3AHsXoEcSfa
+         1RCM4BG3srAtPrEM1rIfKGVu0vNx/ltLjgJDunntPYu3ClQ1PIgRhBxUZAiYZPZGaJxf
+         HiN5S/T5xzB2eHrU2sgY1VYqQjiGupe3BOiqmYprR+8jJKMvublol0inD8o/LiXMl+If
+         CKaK3OVzWoODiJf/mfr6CKY71O8FIiko+hbPVCWEIQkflSZ/5uEQdIvpWjQEoG8VTZlJ
+         krPS1dN7cUflvoOslaIgscyjRgWGqrC0/a7JiNNdAfU7G+MBkURRxrqm6bw5D9RD4Y18
+         784g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=z1Mdmn8iV3Ak3n2cPbHK34NCK8LkeMVKgCqIq+DA4PU=;
+        b=CFxMkxy6buBi7qeMVF8mX6SJtIVsPZSrNL2RJ8d6uxayFZzUL5gyr6UasGj9+WTTfl
+         Gz7kKYYXQwkYCKL3FEXY4ExOwedfpbK4tQWF8cypu/7OojBKtd5edUog1QvhNnEwk0RV
+         9bWZ+wqXvvap1hdL7IRgPfMqhPCu6dOPxq4rgXcyZaSs7O5hnQ5yGNSX5hTjNkWuxp9/
+         OVO4dZfJI6KMPET2XX+vlamsUHpAmmn7SxyLCWwAqjXTMTz/qRDgON7mH4msRzQXkIBw
+         1hJ4rdw0CbCKIVdP8nCdCwaQDl5sHXtad029CdmT4BYn/eqB8bKksHMNk1h6Tx1X2aLm
+         7kbQ==
+X-Gm-Message-State: AOAM5325IZav2Q5QQQ8oQsquUtB+YxHSBOePq/eeKO9fAjCfC1xVcmVX
+        XeP2syv3et75xTcMTZmX1T+aot7TVjWV3ZpyCFLg4A==
+X-Google-Smtp-Source: ABdhPJylPgcGxNAuKY13Hft24g7OxTBSxC5eCrvV5HPhowuwmrOD/G8UqN1buqjRZrgXgqnScMOgvarHdhW44CizCyM=
+X-Received: by 2002:a05:6402:3508:: with SMTP id b8mr2965321edd.341.1611054029480;
+ Tue, 19 Jan 2021 03:00:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YAZ6Y1QDyWwPGE69@pendragon.ideasonboard.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1610882271.git.baruch@tkos.co.il> <588373a200d20da0fa6c2a6c7f1928b4818097e9.1610882271.git.baruch@tkos.co.il>
+In-Reply-To: <588373a200d20da0fa6c2a6c7f1928b4818097e9.1610882271.git.baruch@tkos.co.il>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 19 Jan 2021 12:00:18 +0100
+Message-ID: <CAMpxmJU1mjek0rEzr34xFdPHDTuEe9i9wjwiLp=UezXKYNtcwQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] gpio: mvebu: fix pwm .get_state period calculation
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-gpio <linux-gpio@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 08:21:23AM +0200, Laurent Pinchart wrote:
-> On Tue, Jan 19, 2021 at 12:11:40AM +0000, Daniel Scally wrote:
-> > On 18/01/2021 21:19, Daniel Scally wrote:
+On Sun, Jan 17, 2021 at 2:17 PM Baruch Siach <baruch@tkos.co.il> wrote:
+>
+> The period is the sum of on and off values. That is, calculate period as
+>
+>   ($on + $off) / clkrate
+>
+> instead of
+>
+>   $off / clkrate - $on / clkrate
+>
+> that makes no sense.
+>
+> Reported-by: Russell King <linux@armlinux.org.uk>
+> Reviewed-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Fixes: 757642f9a584e ("gpio: mvebu: Add limited PWM support")
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+>  drivers/gpio/gpio-mvebu.c | 19 ++++++++-----------
+>  1 file changed, 8 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+> index 672681a976f5..a912a8fed197 100644
+> --- a/drivers/gpio/gpio-mvebu.c
+> +++ b/drivers/gpio/gpio-mvebu.c
+> @@ -676,20 +676,17 @@ static void mvebu_pwm_get_state(struct pwm_chip *ch=
+ip,
+>         else
+>                 state->duty_cycle =3D 1;
+>
+> +       val =3D (unsigned long long) u; /* on duration */
+>         regmap_read(mvpwm->regs, mvebu_pwmreg_blink_off_duration(mvpwm), =
+&u);
+> -       val =3D (unsigned long long) u * NSEC_PER_SEC;
+> +       val +=3D (unsigned long long) u; /* period =3D on + off duration =
+*/
+> +       val *=3D NSEC_PER_SEC;
+>         do_div(val, mvpwm->clk_rate);
+> -       if (val < state->duty_cycle) {
+> +       if (val > UINT_MAX)
+> +               state->period =3D UINT_MAX;
+> +       else if (val)
+> +               state->period =3D val;
+> +       else
+>                 state->period =3D 1;
+> -       } else {
+> -               val -=3D state->duty_cycle;
+> -               if (val > UINT_MAX)
+> -                       state->period =3D UINT_MAX;
+> -               else if (val)
+> -                       state->period =3D val;
+> -               else
+> -                       state->period =3D 1;
+> -       }
+>
+>         regmap_read(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset, &u)=
+;
+>         if (u)
+> --
+> 2.29.2
+>
 
-...
+I applied this for fixes and will send out a PR to Linus T this week.
+Once that's upstream I'll apply the rest for the next release.
 
-> > (also, Laurent, if we did it this way we wouldn't be able to also handle
-> > the led-indicator GPIO here without some fairly major rework)
-> 
-> Given the additional complexity I don't think it's worth it, your
-> implementation is fine and code duplication with clk-gpio is minimal.
-
-Making clk-gpio.c available as a library is a win in long term and reduces a
-possible duplication by others in the future. I bet we even might find already
-clk-gpio parts in some drivers.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bartosz
