@@ -2,87 +2,143 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E8DC4361A
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7B4C41518
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05EF820729
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C49ED20729
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jan 2021 14:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405184AbhASOcj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:32:39 -0500
-Received: from mga11.intel.com ([192.55.52.93]:49505 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405240AbhASLMX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 19 Jan 2021 06:12:23 -0500
-IronPort-SDR: 3uYPwzDIQ74XV46GpVMoSozFwrE3m5nPN72LzvC/gSgi+kodCpc0uq3Muln088cmEQ42CZybe3
- 4FNP4YdF9O7w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9868"; a="175407051"
-X-IronPort-AV: E=Sophos;i="5.79,358,1602572400"; 
-   d="scan'208";a="175407051"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2021 03:10:27 -0800
-IronPort-SDR: qyBoVzudwLBj/l7BjOhWTnh9a9OJS7YiHbyJra8Jlwne0DRqr15v4uwaFEzRmL8KEvFfXgwl9j
- AzKWny92iNBw==
-X-IronPort-AV: E=Sophos;i="5.79,358,1602572400"; 
-   d="scan'208";a="569671485"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2021 03:10:21 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l1ouw-003RSK-QR; Tue, 19 Jan 2021 13:11:22 +0200
-Date:   Tue, 19 Jan 2021 13:11:22 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Daniel Scally <djrscally@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        devel@acpica.org, rjw@rjwysocki.net, lenb@kernel.org,
-        andy@kernel.org, mika.westerberg@linux.intel.com,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        wsa@kernel.org, lee.jones@linaro.org, hdegoede@redhat.com,
-        mgross@linux.intel.com, robert.moore@intel.com,
-        erik.kaneda@intel.com, sakari.ailus@linux.intel.com,
-        laurent.pinchart@ideasonboard.com
-Subject: Re: [PATCH v2 6/7] platform: x86: Add intel_skl_int3472 driver
-Message-ID: <20210119111122.GU4077@smile.fi.intel.com>
+        id S2405537AbhASOdO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jan 2021 09:33:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39458 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393747AbhASN2x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2021 08:28:53 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3B9C061573;
+        Tue, 19 Jan 2021 05:28:11 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id c127so1260089wmf.5;
+        Tue, 19 Jan 2021 05:28:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=5y8Ro1ypuMwid9mJ+5yTb8j+eAM7KPlRMembrO9vocc=;
+        b=lx6zvICzjPPHETERikm0s4RqzxKqjLCL/yTU4tYQDIumZZt4FI6Zr0zXmBGkJ4xtSg
+         Tpev99JjWdgHUg0pnM/bgFnJ1naDMnmNS+C4GOAxcA6U9nR7HAHbyT668vglCwGfXn7k
+         mQrTwoyW3LrjUlLHMqNTTBDb5o8sw8NWZSuvNybzvMkicpDX10QKTtp5Eu5f8acMamf+
+         kF9QqGU/8CINxLPv+UGKla0AoMuD0DXTAB4hbRfqV/SMTPm9/862zcSP7K+cAKuw/0U9
+         YT6AEHteHr8n+n7FkZQslMfQdIogjDB/Lh1c2nanAh+bQzmIe2ezQ9LuuMGIlSbtXLbO
+         id0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=5y8Ro1ypuMwid9mJ+5yTb8j+eAM7KPlRMembrO9vocc=;
+        b=swUAc9o7nu6HWCv0ZiH0jmVg9uGGm5wU6OGmwiSclCNFZgkxIa18x4ZAEfNEqEPHMu
+         Z9gfU3WJOmHPELuFyatHfCoAQa211GRxWc6uj2Qf9SmjDYiJCz47cMXLk3QwNh5MtGZU
+         8Sh1tDtElzNydm3iu6Ce/9JfWntHxaM0SI6ytYEeTemai5TUWrBWVaXDIidmP0xuBv3L
+         smzYcf744SFToYLod6etYOJTTc2mHKVKmNzWvX4HzDmNllfJxcj9jQpYz31BQDw0/eBK
+         Ij+geNHkP9AUGFEpSnAsyHFNYW7Tw1mqr/8vJW2VfqdUxcpOYDyYcmFn4qgqrd6UVyn4
+         hSWA==
+X-Gm-Message-State: AOAM531CuP+sQsD4wLA5mamFJUYOWF4jzH1UOlvJLbNgRiRjR9nkglD5
+        WRj1bNbfIlDestSCSSWqQ8I=
+X-Google-Smtp-Source: ABdhPJyqV3r5lugb4G4AUkJpM01DH9xMik3Jbf10xwwURpVgVJLd2eqD2bWAvX85ZopBoeYJj6Z5Rg==
+X-Received: by 2002:a7b:c08b:: with SMTP id r11mr2514749wmh.11.1611062890337;
+        Tue, 19 Jan 2021 05:28:10 -0800 (PST)
+Received: from [192.168.1.211] ([2.29.208.120])
+        by smtp.gmail.com with ESMTPSA id b64sm4518824wmb.26.2021.01.19.05.28.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Jan 2021 05:28:09 -0800 (PST)
+Subject: Re: [PATCH v2 2/7] acpi: utils: Add function to fetch dependent
+ acpi_devices
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-i2c <linux-i2c@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, andy@kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Kaneda <erik.kaneda@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
 References: <20210118003428.568892-1-djrscally@gmail.com>
- <20210118003428.568892-7-djrscally@gmail.com>
- <2d8d7072-3b6f-4ffa-29dc-51f31fe4af72@ideasonboard.com>
+ <20210118003428.568892-3-djrscally@gmail.com>
+ <CAJZ5v0gVQsZ4rxXW8uMidW9zfY_S50zpfrL-Gq0J3Z4-qqBiww@mail.gmail.com>
+ <b381b48e-1bf2-f3e7-10a6-e51cd261f43c@gmail.com>
+ <CAJZ5v0iU2m4Hs6APuauQ645DwbjYaB8nJFjYH0+7yQnR-FPZBQ@mail.gmail.com>
+From:   Daniel Scally <djrscally@gmail.com>
+Message-ID: <29f82122-8059-c9dc-15af-a6812e5509f7@gmail.com>
+Date:   Tue, 19 Jan 2021 13:28:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d8d7072-3b6f-4ffa-29dc-51f31fe4af72@ideasonboard.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CAJZ5v0iU2m4Hs6APuauQ645DwbjYaB8nJFjYH0+7yQnR-FPZBQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 10:56:17AM +0000, Kieran Bingham wrote:
-> On 18/01/2021 00:34, Daniel Scally wrote:
 
-...
+On 19/01/2021 13:15, Rafael J. Wysocki wrote:
+> On Mon, Jan 18, 2021 at 9:51 PM Daniel Scally <djrscally@gmail.com> wrote:
+>> On 18/01/2021 16:14, Rafael J. Wysocki wrote:
+>>> On Mon, Jan 18, 2021 at 1:37 AM Daniel Scally <djrscally@gmail.com> wrote:
+>>>> In some ACPI tables we encounter, devices use the _DEP method to assert
+>>>> a dependence on other ACPI devices as opposed to the OpRegions that the
+>>>> specification intends. We need to be able to find those devices "from"
+>>>> the dependee, so add a function to parse all ACPI Devices and check if
+>>>> the include the handle of the dependee device in their _DEP buffer.
+>>> What exactly do you need this for?
+>> So, in our DSDT we have devices with _HID INT3472, plus sensors which
+>> refer to those INT3472's in their _DEP method. The driver binds to the
+>> INT3472 device, we need to find the sensors dependent on them.
+>>
+> Well, this is an interesting concept. :-)
+>
+> Why does _DEP need to be used for that?  Isn't there any other way to
+> look up the dependent sensors?
 
-> > +config INTEL_SKL_INT3472
-> > +	tristate "Intel SkyLake ACPI INT3472 Driver"
-> > +	depends on X86 && ACPI
-> > +	select REGMAP_I2C
-> 
-> I've tried compiling this as a built in and a module and on my minimal
-> config I had failures on both for regulator_register and
-> regulator_unregister.
-> 
-> I suspect this needs to have either a selects or a depends upon
-> CONFIG_REGULATOR
 
-Valid point, although it seems no consensus on which is better to use. It seems
-to me that in this case we need to select it.
+If there is, I'm not aware of it, I don't see a reference to the sensor
+in the INT3472 device (named "PMI0", with the corresponding sensor being
+"CAM0") in DSDT  [1]
 
--- 
-With Best Regards,
-Andy Shevchenko
+>>> Would it be practical to look up the suppliers in acpi_dep_list instead?
+>>>
+>>> Note that supplier drivers may remove entries from there, but does
+>>> that matter for your use case?
+>> Ah - that may work, yes. Thank you, let me test that.
+> Even if that doesn't work right away, but it can be made work, I would
+> very much prefer that to the driver parsing _DEP for every device in
+> the namespace by itself.
 
+
+Alright; I haven't looked too closely yet, but I think an iterator over
+acpi_dep_list exported from the ACPI subsystem would also work in a
+pretty similar way to the function introduced in this patch does,
+without much work
+
+
+[1]
+https://gist.githubusercontent.com/djrscally/e64d112180517352fa3392878b0f4a7d/raw/88b90b3ea4204fd7845257b6666fdade47cc2981/dsdt.dsl
 
