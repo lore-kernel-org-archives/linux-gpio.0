@@ -2,89 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9123DC433DB
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 07:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07588C433DB
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 08:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0E023131
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 07:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B10CE23158
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 08:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbhATHoE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Jan 2021 02:44:04 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:36806 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728852AbhATHoD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 Jan 2021 02:44:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R551e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=abaci-bugfix@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UMJS1pF_1611128583;
-Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:abaci-bugfix@linux.alibaba.com fp:SMTPD_---0UMJS1pF_1611128583)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 Jan 2021 15:43:06 +0800
-From:   Jiapeng Zhong <abaci-bugfix@linux.alibaba.com>
-To:     linus.walleij@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jiapeng Zhong <abaci-bugfix@linux.alibaba.com>
-Subject: [PATCH] pinctrl: nomadik: Assign boolean values to a bool variable
-Date:   Wed, 20 Jan 2021 15:43:01 +0800
-Message-Id: <1611128581-73345-1-git-send-email-abaci-bugfix@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1730486AbhATICm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Jan 2021 03:02:42 -0500
+Received: from mx.blih.net ([212.83.155.74]:21225 "EHLO mx.blih.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729643AbhATICY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 20 Jan 2021 03:02:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bidouilliste.com;
+        s=mx; t=1611129668;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZsuP9EUESZltLXaS8dgiXaaE9jo809x4YaPbT21PXX0=;
+        b=H7JaUfFmYjDL9GqizsW5Z81btdTOdGyLWR7NoJXuI2Mf0ZC2A7VVQJ8nVadFxPz5Ns7NEh
+        cHlxGitgyOwAdSJ8SVKX199i7PGBz8U75pttMkV2/fnqa6TB1JPFnmJWgpXbUXVAh4UC8z
+        eReXnS+9nC83aog2msOHc1cunSX/oBI=
+Received: from amy.home (lfbn-idf2-1-745-114.w86-247.abo.wanadoo.fr [86.247.192.114])
+        by mx.blih.net (OpenSMTPD) with ESMTPSA id 3bf0e6a4 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Wed, 20 Jan 2021 08:01:08 +0000 (UTC)
+Date:   Wed, 20 Jan 2021 09:01:08 +0100
+From:   Emmanuel Vadot <manu@bidouilliste.com>
+To:     Drew Fustini <drew@beagleboard.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: clarify #pinctrl-cells for pinctrl-single,pins
+Message-Id: <20210120090108.bbdee781a237cb931a572323@bidouilliste.com>
+In-Reply-To: <20210120050342.320704-1-drew@beagleboard.org>
+References: <20210120050342.320704-1-drew@beagleboard.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; amd64-portbld-freebsd13.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix the following coccicheck warnings:
+On Tue, 19 Jan 2021 21:03:44 -0800
+Drew Fustini <drew@beagleboard.org> wrote:
 
-./drivers/pinctrl/nomadik/pinctrl-nomadik.c:1397:6-16: WARNING:
-Assignment of 0/1 to bool variable.
+> Document that #pinctrl-cells can be 1 or 2 for pinctrl-single,pins
+> 
+> Fixes: 27c90e5e48d0 ("ARM: dts: am33xx-l4: change #pinctrl-cells from 1 to 2")
+> Reported-by: Emmanuel Vadot <manu@bidouilliste.com>
+> Link: https://lore.kernel.org/linux-gpio/20210115190201.9273b637a7f967e7e55bc740@bidouilliste.com/
+> Cc: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Drew Fustini <drew@beagleboard.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
+> index f903eb4471f8..bb9999119314 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
+> @@ -8,7 +8,7 @@ Required properties:
+>  - reg : offset and length of the register set for the mux registers
+>  
+>  - #pinctrl-cells : number of cells in addition to the index, set to 1
+> -  for pinctrl-single,pins and 2 for pinctrl-single,bits
+> +  or 2 for pinctrl-single,pins and set to 2 for pinctrl-single,bits
+>  
+>  - pinctrl-single,register-width : pinmux register access width in bits
+>  
+> -- 
+> 2.25.1
+> 
 
-./drivers/pinctrl/nomadik/pinctrl-nomadik.c:1380:4-14: WARNING:
-Assignment of 0/1 to bool variable.
+ Reviewed-by: Emmanuel Vadot <manu@FreeBSD.org>
 
-./drivers/pinctrl/nomadik/pinctrl-nomadik.c:1370:6-16: WARNING:
-Assignment of 0/1 to bool variable.
+ Thanks, now the docs make more sense :)
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Jiapeng Zhong <abaci-bugfix@linux.alibaba.com>
----
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index d4ea108..770cbf7 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -1367,7 +1367,7 @@ static const char *nmk_find_pin_name(struct pinctrl_dev *pctldev, const char *pi
- static bool nmk_pinctrl_dt_get_config(struct device_node *np,
- 		unsigned long *configs)
- {
--	bool has_config = 0;
-+	bool has_config = false;
- 	unsigned long cfg = 0;
- 	int i, val, ret;
- 
-@@ -1377,7 +1377,7 @@ static bool nmk_pinctrl_dt_get_config(struct device_node *np,
- 		if (ret != -EINVAL) {
- 			if (nmk_dt_pin_config(i, val, &cfg) == 0) {
- 				*configs |= cfg;
--				has_config = 1;
-+				has_config = true;
- 			}
- 		}
- 	}
-@@ -1394,7 +1394,7 @@ static int nmk_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	int ret;
- 	const char *function = NULL;
- 	unsigned long configs = 0;
--	bool has_config = 0;
-+	bool has_config = false;
- 	struct property *prop;
- 	struct device_node *np_config;
- 
 -- 
-1.8.3.1
-
+Emmanuel Vadot <manu@bidouilliste.com> <manu@FreeBSD.org>
