@@ -2,424 +2,222 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE129C4332D
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 13:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2E3C4161F
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 13:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99B9E23340
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 13:48:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CF0D23371
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 13:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbhATNlN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Jan 2021 08:41:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389698AbhATNVx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 Jan 2021 08:21:53 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 483D82245C;
-        Wed, 20 Jan 2021 13:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611148852;
-        bh=UtigMLM4aPy6vib5ZJLfoCwByKUtzjTF+theM0hqreQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oJYcoKUePfrHPyGEp88qKoIn5csiBG5KjENxyOgUqzYtWzLxFR2GiGiNrWORmQv7T
-         98m7aKwY7yKoth8WJfjUEKbhXRAhlrRNc26ZX1kYb1um5k2aVcsvI0fd99yBz57oUu
-         U+klrebwVB2xZEoZKvFnjQkx+UL9N8qjsCcuixoLhUjoq0RTKUVS2Agyw7bT/unMwu
-         J/T+WEi4EQU3HkgsEdgrH3Bi8WXB75h4ewD0HOMmWty0Kz6fN17R+CwA/jz+I1Czp1
-         kJhTFnQ9DTnSW8PP0DMzIEkmj82t7m2a3+zTh1auiYovp83J98WzQJFCa/EWWyqoyQ
-         3ckcPIzxaT2Ww==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        id S1733204AbhATNle (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Jan 2021 08:41:34 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:22694 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387613AbhATNZv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2021 08:25:51 -0500
+X-Greylist: delayed 529 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Jan 2021 08:25:49 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1611148972;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:From:
+        Subject:Sender;
+        bh=YU/rKsjnWYPnj3nJ6KYYEFHw/ThNWuYDYVCY430vMEE=;
+        b=BApUiAnoh6+9SmnPABmW2ADWtfWHMGbyR76fc44ndRvl5lhYaK610FzXQG7sOCfvZZ
+        Cf8gZWal2Xeh7/KEwG5ivAyFodXdSx6uo/em+Adp73W19q0nmxgNekGCuKXr6X5gwLbe
+        1TNkQ5zPC/b0kyxsSa/PccBAnQeGa+86ChFqDN+xI/n/EaSBrzitiFjyTdV2dZcXfxhw
+        f4rDprrtyOOk1+LIltGMSXLdzcBLWEdj36QdMiRUaXRK6G1B/h4FKFpd9z4EZCf2g7mq
+        o35dM/GYY0zBuykggvzc33tWK/bR6sVUin9em18y6lV+y89zVPwMzY/0JfDV1BU5FiJw
+        JUFg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlaVXA4Fz1o="
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.178.35]
+        by smtp.strato.de (RZmta 47.12.1 DYNA|AUTH)
+        with ESMTPSA id m056b3x0KDDl36i
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 20 Jan 2021 14:13:47 +0100 (CET)
+Subject: Re: [PATCH] pinctrl: ingenic: Improve JZ4760 support
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20210120110722.20133-1-paul@crapouillou.net>
+Date:   Wed, 20 Jan 2021 14:13:46 +0100
+Cc:     Linus Walleij <linus.walleij@linaro.org>, od@zcrc.me,
         linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jun Nie <jun.nie@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 1/5] gpio: remove zte zx driver
-Date:   Wed, 20 Jan 2021 14:20:41 +0100
-Message-Id: <20210120132045.2127659-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210120132045.2127659-1-arnd@kernel.org>
-References: <20210120132045.2127659-1-arnd@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-mips <linux-mips@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Boddie <paul@boddie.org.uk>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5CD80D68-0E53-4DB8-8FA6-1A9DEF270B11@goldelico.com>
+References: <20210120110722.20133-1-paul@crapouillou.net>
+To:     Paul Cercueil <paul@crapouillou.net>
+X-Mailer: Apple Mail (2.3124)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-The zte zx platform is getting removed, so this driver is no
-longer needed.
+> Am 20.01.2021 um 12:07 schrieb Paul Cercueil <paul@crapouillou.net>:
+>=20
+> - Add otg function and otg-vbus group.
+>=20
+> - Add lcd-8bit, lcd-16bit, lcd-18bit, lcd-generic and lcd-special
+>  groups. Change the lcd-24bit group so that it only selects the pins
+>  that aren't in the lcd-18bit and lcd-generic groups (which breaks
+>  Device Tree in theory, but there is none out there for any JZ4760
+>  based board, yet). Remove the lcd-no-pins group which is just =
+useless.
 
-Cc: Jun Nie <jun.nie@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- .../bindings/gpio/zx296702-gpio.txt           |  24 --
- drivers/gpio/Kconfig                          |   7 -
- drivers/gpio/Makefile                         |   1 -
- drivers/gpio/gpio-zx.c                        | 289 ------------------
- 4 files changed, 321 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
- delete mode 100644 drivers/gpio/gpio-zx.c
+Does this mean it is also usless for the other Ingenic SoC?
+Background: we are working on jz4730 support and have simply copied it.
 
-diff --git a/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt b/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
-deleted file mode 100644
-index 0dab156fcf41..000000000000
---- a/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
-+++ /dev/null
-@@ -1,24 +0,0 @@
--ZTE ZX296702 GPIO controller
--
--Required properties:
--- compatible : "zte,zx296702-gpio"
--- #gpio-cells : Should be two. The first cell is the pin number and the
--  second cell is used to specify optional parameters:
--  - bit 0 specifies polarity (0 for normal, 1 for inverted)
--- gpio-controller : Marks the device node as a GPIO controller.
--- interrupts : Interrupt mapping for GPIO IRQ.
--- gpio-ranges : Interaction with the PINCTRL subsystem.
--
--gpio1: gpio@b008040 {
--	compatible = "zte,zx296702-gpio";
--	reg = <0xb008040 0x40>;
--	gpio-controller;
--	#gpio-cells = <2>;
--	gpio-ranges = < &pmx0 0 54 2 &pmx0 2 59 14>;
--	interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
--	interrupt-parent = <&intc>;
--	interrupt-controller;
--	#interrupt-cells = <2>;
--	clock-names = "gpio_pclk";
--	clocks = <&lsp0clk ZX296702_GPIO_CLK>;
--};
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index c70f46e80a3b..e4f6dfefa9df 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -727,13 +727,6 @@ config GPIO_ZYNQ
- 	help
- 	  Say yes here to support Xilinx Zynq GPIO controller.
- 
--config GPIO_ZX
--	bool "ZTE ZX GPIO support"
--	depends on ARCH_ZX || COMPILE_TEST
--	select GPIOLIB_IRQCHIP
--	help
--	  Say yes here to support the GPIO device on ZTE ZX SoCs.
--
- config GPIO_LOONGSON1
- 	tristate "Loongson1 GPIO support"
- 	depends on MACH_LOONGSON32
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 35e3b6026665..db72ebc7b387 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -180,5 +180,4 @@ obj-$(CONFIG_GPIO_XLP)			+= gpio-xlp.o
- obj-$(CONFIG_GPIO_XRA1403)		+= gpio-xra1403.o
- obj-$(CONFIG_GPIO_XTENSA)		+= gpio-xtensa.o
- obj-$(CONFIG_GPIO_ZEVIO)		+= gpio-zevio.o
--obj-$(CONFIG_GPIO_ZX)			+= gpio-zx.o
- obj-$(CONFIG_GPIO_ZYNQ)			+= gpio-zynq.o
-diff --git a/drivers/gpio/gpio-zx.c b/drivers/gpio/gpio-zx.c
-deleted file mode 100644
-index 64bfb722756a..000000000000
---- a/drivers/gpio/gpio-zx.c
-+++ /dev/null
-@@ -1,289 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * ZTE ZX296702 GPIO driver
-- *
-- * Author: Jun Nie <jun.nie@linaro.org>
-- *
-- * Copyright (C) 2015 Linaro Ltd.
-- */
--#include <linux/bitops.h>
--#include <linux/device.h>
--#include <linux/errno.h>
--#include <linux/gpio/driver.h>
--#include <linux/irqchip/chained_irq.h>
--#include <linux/init.h>
--#include <linux/of.h>
--#include <linux/pinctrl/consumer.h>
--#include <linux/platform_device.h>
--#include <linux/pm.h>
--#include <linux/slab.h>
--#include <linux/spinlock.h>
--
--#define ZX_GPIO_DIR	0x00
--#define ZX_GPIO_IVE	0x04
--#define ZX_GPIO_IV	0x08
--#define ZX_GPIO_IEP	0x0C
--#define ZX_GPIO_IEN	0x10
--#define ZX_GPIO_DI	0x14
--#define ZX_GPIO_DO1	0x18
--#define ZX_GPIO_DO0	0x1C
--#define ZX_GPIO_DO	0x20
--
--#define ZX_GPIO_IM	0x28
--#define ZX_GPIO_IE	0x2C
--
--#define ZX_GPIO_MIS	0x30
--#define ZX_GPIO_IC	0x34
--
--#define ZX_GPIO_NR	16
--
--struct zx_gpio {
--	raw_spinlock_t		lock;
--
--	void __iomem		*base;
--	struct gpio_chip	gc;
--};
--
--static int zx_direction_input(struct gpio_chip *gc, unsigned offset)
--{
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--	unsigned long flags;
--	u16 gpiodir;
--
--	if (offset >= gc->ngpio)
--		return -EINVAL;
--
--	raw_spin_lock_irqsave(&chip->lock, flags);
--	gpiodir = readw_relaxed(chip->base + ZX_GPIO_DIR);
--	gpiodir &= ~BIT(offset);
--	writew_relaxed(gpiodir, chip->base + ZX_GPIO_DIR);
--	raw_spin_unlock_irqrestore(&chip->lock, flags);
--
--	return 0;
--}
--
--static int zx_direction_output(struct gpio_chip *gc, unsigned offset,
--		int value)
--{
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--	unsigned long flags;
--	u16 gpiodir;
--
--	if (offset >= gc->ngpio)
--		return -EINVAL;
--
--	raw_spin_lock_irqsave(&chip->lock, flags);
--	gpiodir = readw_relaxed(chip->base + ZX_GPIO_DIR);
--	gpiodir |= BIT(offset);
--	writew_relaxed(gpiodir, chip->base + ZX_GPIO_DIR);
--
--	if (value)
--		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO1);
--	else
--		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO0);
--	raw_spin_unlock_irqrestore(&chip->lock, flags);
--
--	return 0;
--}
--
--static int zx_get_value(struct gpio_chip *gc, unsigned offset)
--{
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--
--	return !!(readw_relaxed(chip->base + ZX_GPIO_DI) & BIT(offset));
--}
--
--static void zx_set_value(struct gpio_chip *gc, unsigned offset, int value)
--{
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--
--	if (value)
--		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO1);
--	else
--		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO0);
--}
--
--static int zx_irq_type(struct irq_data *d, unsigned trigger)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--	int offset = irqd_to_hwirq(d);
--	unsigned long flags;
--	u16 gpiois, gpioi_epos, gpioi_eneg, gpioiev;
--	u16 bit = BIT(offset);
--
--	if (offset < 0 || offset >= ZX_GPIO_NR)
--		return -EINVAL;
--
--	raw_spin_lock_irqsave(&chip->lock, flags);
--
--	gpioiev = readw_relaxed(chip->base + ZX_GPIO_IV);
--	gpiois = readw_relaxed(chip->base + ZX_GPIO_IVE);
--	gpioi_epos = readw_relaxed(chip->base + ZX_GPIO_IEP);
--	gpioi_eneg = readw_relaxed(chip->base + ZX_GPIO_IEN);
--
--	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
--		gpiois |= bit;
--		if (trigger & IRQ_TYPE_LEVEL_HIGH)
--			gpioiev |= bit;
--		else
--			gpioiev &= ~bit;
--	} else
--		gpiois &= ~bit;
--
--	if ((trigger & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
--		gpioi_epos |= bit;
--		gpioi_eneg |= bit;
--	} else {
--		if (trigger & IRQ_TYPE_EDGE_RISING) {
--			gpioi_epos |= bit;
--			gpioi_eneg &= ~bit;
--		} else if (trigger & IRQ_TYPE_EDGE_FALLING) {
--			gpioi_eneg |= bit;
--			gpioi_epos &= ~bit;
--		}
--	}
--
--	writew_relaxed(gpiois, chip->base + ZX_GPIO_IVE);
--	writew_relaxed(gpioi_epos, chip->base + ZX_GPIO_IEP);
--	writew_relaxed(gpioi_eneg, chip->base + ZX_GPIO_IEN);
--	writew_relaxed(gpioiev, chip->base + ZX_GPIO_IV);
--	raw_spin_unlock_irqrestore(&chip->lock, flags);
--
--	return 0;
--}
--
--static void zx_irq_handler(struct irq_desc *desc)
--{
--	unsigned long pending;
--	int offset;
--	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--	struct irq_chip *irqchip = irq_desc_get_chip(desc);
--
--	chained_irq_enter(irqchip, desc);
--
--	pending = readw_relaxed(chip->base + ZX_GPIO_MIS);
--	writew_relaxed(pending, chip->base + ZX_GPIO_IC);
--	if (pending) {
--		for_each_set_bit(offset, &pending, ZX_GPIO_NR)
--			generic_handle_irq(irq_find_mapping(gc->irq.domain,
--							    offset));
--	}
--
--	chained_irq_exit(irqchip, desc);
--}
--
--static void zx_irq_mask(struct irq_data *d)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--	u16 mask = BIT(irqd_to_hwirq(d) % ZX_GPIO_NR);
--	u16 gpioie;
--
--	raw_spin_lock(&chip->lock);
--	gpioie = readw_relaxed(chip->base + ZX_GPIO_IM) | mask;
--	writew_relaxed(gpioie, chip->base + ZX_GPIO_IM);
--	gpioie = readw_relaxed(chip->base + ZX_GPIO_IE) & ~mask;
--	writew_relaxed(gpioie, chip->base + ZX_GPIO_IE);
--	raw_spin_unlock(&chip->lock);
--}
--
--static void zx_irq_unmask(struct irq_data *d)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct zx_gpio *chip = gpiochip_get_data(gc);
--	u16 mask = BIT(irqd_to_hwirq(d) % ZX_GPIO_NR);
--	u16 gpioie;
--
--	raw_spin_lock(&chip->lock);
--	gpioie = readw_relaxed(chip->base + ZX_GPIO_IM) & ~mask;
--	writew_relaxed(gpioie, chip->base + ZX_GPIO_IM);
--	gpioie = readw_relaxed(chip->base + ZX_GPIO_IE) | mask;
--	writew_relaxed(gpioie, chip->base + ZX_GPIO_IE);
--	raw_spin_unlock(&chip->lock);
--}
--
--static struct irq_chip zx_irqchip = {
--	.name		= "zx-gpio",
--	.irq_mask	= zx_irq_mask,
--	.irq_unmask	= zx_irq_unmask,
--	.irq_set_type	= zx_irq_type,
--};
--
--static int zx_gpio_probe(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--	struct zx_gpio *chip;
--	struct gpio_irq_chip *girq;
--	int irq, id, ret;
--
--	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
--	if (!chip)
--		return -ENOMEM;
--
--	chip->base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(chip->base))
--		return PTR_ERR(chip->base);
--
--	id = of_alias_get_id(dev->of_node, "gpio");
--
--	raw_spin_lock_init(&chip->lock);
--	chip->gc.request = gpiochip_generic_request;
--	chip->gc.free = gpiochip_generic_free;
--	chip->gc.direction_input = zx_direction_input;
--	chip->gc.direction_output = zx_direction_output;
--	chip->gc.get = zx_get_value;
--	chip->gc.set = zx_set_value;
--	chip->gc.base = ZX_GPIO_NR * id;
--	chip->gc.ngpio = ZX_GPIO_NR;
--	chip->gc.label = dev_name(dev);
--	chip->gc.parent = dev;
--	chip->gc.owner = THIS_MODULE;
--
--	/*
--	 * irq_chip support
--	 */
--	writew_relaxed(0xffff, chip->base + ZX_GPIO_IM);
--	writew_relaxed(0, chip->base + ZX_GPIO_IE);
--	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
--	girq = &chip->gc.irq;
--	girq->chip = &zx_irqchip;
--	girq->parent_handler = zx_irq_handler;
--	girq->num_parents = 1;
--	girq->parents = devm_kcalloc(&pdev->dev, 1,
--				     sizeof(*girq->parents),
--				     GFP_KERNEL);
--	if (!girq->parents)
--		return -ENOMEM;
--	girq->parents[0] = irq;
--	girq->default_type = IRQ_TYPE_NONE;
--	girq->handler = handle_simple_irq;
--
--	ret = gpiochip_add_data(&chip->gc, chip);
--	if (ret)
--		return ret;
--
--	platform_set_drvdata(pdev, chip);
--	dev_info(dev, "ZX GPIO chip registered\n");
--
--	return 0;
--}
--
--static const struct of_device_id zx_gpio_match[] = {
--	{
--		.compatible = "zte,zx296702-gpio",
--	},
--	{ },
--};
--
--static struct platform_driver zx_gpio_driver = {
--	.probe		= zx_gpio_probe,
--	.driver = {
--		.name	= "zx_gpio",
--		.of_match_table = of_match_ptr(zx_gpio_match),
--	},
--};
--builtin_platform_driver(zx_gpio_driver)
--- 
-2.29.2
+>=20
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> drivers/pinctrl/pinctrl-ingenic.c | 38 +++++++++++++++++++++++--------
+> 1 file changed, 28 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c =
+b/drivers/pinctrl/pinctrl-ingenic.c
+> index 76fec77c5b67..f2746125b077 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -376,12 +376,21 @@ static int jz4760_cim_pins[] =3D {
+> 	0x26, 0x27, 0x28, 0x29,
+> 	0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30, 0x31,
+> };
+> +static int jz4760_lcd_8bit_pins[] =3D {
+> +	0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x4c,
+> +	0x4d, 0x52, 0x53,
+> +};
+> +static int jz4760_lcd_16bit_pins[] =3D {
+> +	0x4e, 0x4f, 0x50, 0x51, 0x56, 0x57, 0x58, 0x59,
+> +};
+> +static int jz4760_lcd_18bit_pins[] =3D {
+> +	0x5a, 0x5b,
+> +};
+> static int jz4760_lcd_24bit_pins[] =3D {
+> -	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
+> -	0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+> -	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
+> -	0x58, 0x59, 0x5a, 0x5b,
+> +	0x40, 0x41, 0x4a, 0x4b, 0x54, 0x55,
+> };
+> +static int jz4760_lcd_special_pins[] =3D { 0x40, 0x41, 0x4a, 0x54 };
+> +static int jz4760_lcd_generic_pins[] =3D { 0x49, };
+> static int jz4760_pwm_pwm0_pins[] =3D { 0x80, };
+> static int jz4760_pwm_pwm1_pins[] =3D { 0x81, };
+> static int jz4760_pwm_pwm2_pins[] =3D { 0x82, };
+> @@ -390,6 +399,7 @@ static int jz4760_pwm_pwm4_pins[] =3D { 0x84, };
+> static int jz4760_pwm_pwm5_pins[] =3D { 0x85, };
+> static int jz4760_pwm_pwm6_pins[] =3D { 0x6a, };
+> static int jz4760_pwm_pwm7_pins[] =3D { 0x6b, };
+> +static int jz4760_otg_pins[] =3D { 0x8a, };
+>=20
+> static u8 jz4760_uart3_data_funcs[] =3D { 0, 1, };
+> static u8 jz4760_mmc0_1bit_a_funcs[] =3D { 1, 1, 0, };
+> @@ -436,8 +446,12 @@ static const struct group_desc jz4760_groups[] =3D =
+{
+> 	INGENIC_PIN_GROUP("i2c0-data", jz4760_i2c0, 0),
+> 	INGENIC_PIN_GROUP("i2c1-data", jz4760_i2c1, 0),
+> 	INGENIC_PIN_GROUP("cim-data", jz4760_cim, 0),
+> +	INGENIC_PIN_GROUP("lcd-8bit", jz4760_lcd_8bit, 0),
+> +	INGENIC_PIN_GROUP("lcd-16bit", jz4760_lcd_16bit, 0),
+> +	INGENIC_PIN_GROUP("lcd-18bit", jz4760_lcd_18bit, 0),
+> 	INGENIC_PIN_GROUP("lcd-24bit", jz4760_lcd_24bit, 0),
+> -	{ "lcd-no-pins", },
+> +	INGENIC_PIN_GROUP("lcd-generic", jz4760_lcd_generic, 0),
+> +	INGENIC_PIN_GROUP("lcd-special", jz4760_lcd_special, 1),
+> 	INGENIC_PIN_GROUP("pwm0", jz4760_pwm_pwm0, 0),
+> 	INGENIC_PIN_GROUP("pwm1", jz4760_pwm_pwm1, 0),
+> 	INGENIC_PIN_GROUP("pwm2", jz4760_pwm_pwm2, 0),
+> @@ -446,6 +460,7 @@ static const struct group_desc jz4760_groups[] =3D =
+{
+> 	INGENIC_PIN_GROUP("pwm5", jz4760_pwm_pwm5, 0),
+> 	INGENIC_PIN_GROUP("pwm6", jz4760_pwm_pwm6, 0),
+> 	INGENIC_PIN_GROUP("pwm7", jz4760_pwm_pwm7, 0),
+> +	INGENIC_PIN_GROUP("otg-vbus", jz4760_otg, 0),
+> };
+>=20
+> static const char *jz4760_uart0_groups[] =3D { "uart0-data", =
+"uart0-hwflow", };
+> @@ -477,7 +492,10 @@ static const char *jz4760_cs6_groups[] =3D { =
+"nemc-cs6", };
+> static const char *jz4760_i2c0_groups[] =3D { "i2c0-data", };
+> static const char *jz4760_i2c1_groups[] =3D { "i2c1-data", };
+> static const char *jz4760_cim_groups[] =3D { "cim-data", };
+> -static const char *jz4760_lcd_groups[] =3D { "lcd-24bit", =
+"lcd-no-pins", };
+> +static const char *jz4760_lcd_groups[] =3D {
+> +	"lcd-8bit", "lcd-16bit", "lcd-18bit", "lcd-24bit",
+> +	"lcd-special", "lcd-generic",
+> +};
+> static const char *jz4760_pwm0_groups[] =3D { "pwm0", };
+> static const char *jz4760_pwm1_groups[] =3D { "pwm1", };
+> static const char *jz4760_pwm2_groups[] =3D { "pwm2", };
+> @@ -486,6 +504,7 @@ static const char *jz4760_pwm4_groups[] =3D { =
+"pwm4", };
+> static const char *jz4760_pwm5_groups[] =3D { "pwm5", };
+> static const char *jz4760_pwm6_groups[] =3D { "pwm6", };
+> static const char *jz4760_pwm7_groups[] =3D { "pwm7", };
+> +static const char *jz4760_otg_groups[] =3D { "otg-vbus", };
+>=20
+> static const struct function_desc jz4760_functions[] =3D {
+> 	{ "uart0", jz4760_uart0_groups, ARRAY_SIZE(jz4760_uart0_groups), =
+},
+> @@ -514,6 +533,7 @@ static const struct function_desc =
+jz4760_functions[] =3D {
+> 	{ "pwm5", jz4760_pwm5_groups, ARRAY_SIZE(jz4760_pwm5_groups), },
+> 	{ "pwm6", jz4760_pwm6_groups, ARRAY_SIZE(jz4760_pwm6_groups), },
+> 	{ "pwm7", jz4760_pwm7_groups, ARRAY_SIZE(jz4760_pwm7_groups), },
+> +	{ "otg", jz4760_otg_groups, ARRAY_SIZE(jz4760_otg_groups), },
+> };
+>=20
+> static const struct ingenic_chip_info jz4760_chip_info =3D {
+> @@ -648,7 +668,6 @@ static int jz4770_mac_rmii_pins[] =3D {
+> 	0xa9, 0xab, 0xaa, 0xac, 0xa5, 0xa4, 0xad, 0xae, 0xa6, 0xa8,
+> };
+> static int jz4770_mac_mii_pins[] =3D { 0xa7, 0xaf, };
+> -static int jz4770_otg_pins[] =3D { 0x8a, };
+>=20
+> static const struct group_desc jz4770_groups[] =3D {
+> 	INGENIC_PIN_GROUP("uart0-data", jz4770_uart0_data, 0),
+> @@ -747,7 +766,7 @@ static const struct group_desc jz4770_groups[] =3D =
+{
+> 	INGENIC_PIN_GROUP("pwm7", jz4770_pwm_pwm7, 0),
+> 	INGENIC_PIN_GROUP("mac-rmii", jz4770_mac_rmii, 0),
+> 	INGENIC_PIN_GROUP("mac-mii", jz4770_mac_mii, 0),
+> -	INGENIC_PIN_GROUP("otg-vbus", jz4770_otg, 0),
+> +	INGENIC_PIN_GROUP("otg-vbus", jz4760_otg, 0),
+> };
+>=20
+> static const char *jz4770_uart0_groups[] =3D { "uart0-data", =
+"uart0-hwflow", };
+> @@ -808,7 +827,6 @@ static const char *jz4770_pwm5_groups[] =3D { =
+"pwm5", };
+> static const char *jz4770_pwm6_groups[] =3D { "pwm6", };
+> static const char *jz4770_pwm7_groups[] =3D { "pwm7", };
+> static const char *jz4770_mac_groups[] =3D { "mac-rmii", "mac-mii", };
+> -static const char *jz4770_otg_groups[] =3D { "otg-vbus", };
+>=20
+> static const struct function_desc jz4770_functions[] =3D {
+> 	{ "uart0", jz4770_uart0_groups, ARRAY_SIZE(jz4770_uart0_groups), =
+},
+> @@ -841,7 +859,7 @@ static const struct function_desc =
+jz4770_functions[] =3D {
+> 	{ "pwm6", jz4770_pwm6_groups, ARRAY_SIZE(jz4770_pwm6_groups), },
+> 	{ "pwm7", jz4770_pwm7_groups, ARRAY_SIZE(jz4770_pwm7_groups), },
+> 	{ "mac", jz4770_mac_groups, ARRAY_SIZE(jz4770_mac_groups), },
+> -	{ "otg", jz4770_otg_groups, ARRAY_SIZE(jz4770_otg_groups), },
+> +	{ "otg", jz4760_otg_groups, ARRAY_SIZE(jz4760_otg_groups), },
+> };
+>=20
+> static const struct ingenic_chip_info jz4770_chip_info =3D {
+> --=20
+> 2.29.2
+>=20
 
