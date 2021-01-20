@@ -2,48 +2,69 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1C8C07EBC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB37C41620
 	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 23:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1483E2360D
+	by mail.kernel.org (Postfix) with ESMTP id 34C8E23603
 	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 23:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387942AbhATWfU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Jan 2021 17:35:20 -0500
-Received: from mga18.intel.com ([134.134.136.126]:15529 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728418AbhATVvQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 Jan 2021 16:51:16 -0500
-IronPort-SDR: dThbE9NW7Ya/UluXAp/KOzQm3Zl4LGVQ0nSu5rlbZRG1n7GG2692KSPrtrdPMnHgnuu13cy6iG
- MxIPPcwT8ztw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="166844447"
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="166844447"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 13:45:51 -0800
-IronPort-SDR: JcFFCuyJ5rZZgliale7ijBKodJjqS6C3L6pgSUxiF3X4wLc+BUQL9J0XElBMxPclnt+yedd7mS
- XejaEon8QWgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="402929391"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Jan 2021 13:45:49 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9DA34118; Wed, 20 Jan 2021 23:45:48 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/5] lib/cmdline_kunit: add a new test case for get_options()
-Date:   Wed, 20 Jan 2021 23:45:43 +0200
-Message-Id: <20210120214547.89770-1-andriy.shevchenko@linux.intel.com>
+        id S1728418AbhATWfX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Jan 2021 17:35:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41832 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730410AbhATWWU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2021 17:22:20 -0500
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16B8C0613CF
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2021 14:21:07 -0800 (PST)
+Received: by mail-oi1-x22b.google.com with SMTP id q25so26756670oij.10
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2021 14:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iuuB/jOlzPElZfMvk5p2UDvJi85zELwSvE3glw8OPIw=;
+        b=e2o98l27C2vaXITzOO4ZXqZ4QA16q+H8vup/3a0lHVCDl1dlwZmg+AwCy/mdauli/1
+         tXjQ3FLWcMf+lEq6r7IPBOZvlP9a4E8IwTwsa/dw6uWlTNk/2shXK+4TDAejDTO46O/N
+         APFPzMl4dfG06AxgPuyBnpMIPZfmnjcEbnSdtSxIy6zj3egxRf1bQvw3+DJ2nMwRa2Tt
+         WKixlcmo1MfHtx5NwsfK5CMZujrUhC0DTwAOUQ5CRTwLvQKdS04LajteEys2UH1Cvgwu
+         1q3pNSTXhFEqanuq8hrhkQ9imy2VvBtou79eF/53c9C0SsfLrDjMTW7ri3vAklH/HL3X
+         aJ8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iuuB/jOlzPElZfMvk5p2UDvJi85zELwSvE3glw8OPIw=;
+        b=fyLa1B6LKK5kdVTe1FBElgCb9rSMgTUuA6e0IP/nOuBvYDUv1mEHK1GlBPkhtet7Ri
+         +bM5D70WVN+IBvd8JzWOSRRtk8zWce7Z09M+ZR1SitmeB1HPi2JwwFPTj6QhsUkKXxx/
+         PH+9wmnuh2dXOU9Zqwkui0t9khZsrX62A3yR55lfffL8SeN+4diIOgmbwlI/aR27ZPio
+         iixg0+KfYn16XnHiHZg05IDav8/Uc05Sn1eqDAeqMGEAaSo2EVoGFQZcu+czIZcDjTIJ
+         ekbSNVzzOWjbDWCCtuFBT1Wz/Qn6X7ZZ02WQ+kOqoIWU2CgzRs7FIUVtarRrSZztNvF5
+         QdOQ==
+X-Gm-Message-State: AOAM532Q+s05X+b+ZtTxOvuE4fANF/F4JKo7gjpOD896d7WCt+GFAn31
+        8fUctIBXXDP1KERIxUuFv4yhew==
+X-Google-Smtp-Source: ABdhPJytfmfxPYq2+G1uFOWDMntzi0gw0jgFPSvVK1kERm0z+jCb/zumi/rIT1FeyHa6hU0hHsiMDg==
+X-Received: by 2002:a05:6808:9a:: with SMTP id s26mr4254499oic.124.1611181266962;
+        Wed, 20 Jan 2021 14:21:06 -0800 (PST)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id h127sm660819oia.28.2021.01.20.14.21.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jan 2021 14:21:06 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] pinctrl: qcom: TLMM driver for SC8180x
+Date:   Wed, 20 Jan 2021 14:21:11 -0800
+Message-Id: <20210120222114.1609779-1-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,87 +72,25 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a test case for get_options() which is provided by cmdline.c.
+These patches introduces a binding documenting the shared properties of all
+TLMM blocks, then defines the binding for the SC8180x specifically, followed by
+the actual driver.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- lib/cmdline_kunit.c | 52 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+Bjorn Andersson (3):
+  dt-bindings: pinctrl: qcom: Define common TLMM binding
+  dt-bindings: pinctrl: qcom: Add sc8180x binding
+  pinctrl: qcom: Add sc8180x TLMM driver
 
-diff --git a/lib/cmdline_kunit.c b/lib/cmdline_kunit.c
-index 550e7a47fd24..74da9ed61779 100644
---- a/lib/cmdline_kunit.c
-+++ b/lib/cmdline_kunit.c
-@@ -18,6 +18,26 @@ static const int cmdline_test_values[] = {
- 	1, 3, 2, 1, 1, 1, 3, 1,
- };
- 
-+static_assert(ARRAY_SIZE(cmdline_test_strings) == ARRAY_SIZE(cmdline_test_values));
-+
-+static const char *cmdline_test_range_strings[] = {
-+	"-7" , "--7"  , "-1-2"    , "7--9",
-+	"7-" , "-7--9", "7-9,"    , "9-7" ,
-+	"5-a", "a-5"  , "5-8"     , ",8-5",
-+	"+,1", "-,4"  , "-3,0-1,6", "4,-" ,
-+	" +2", " -9"  , "0-1,-3,6", "- 9" ,
-+};
-+
-+static const int cmdline_test_range_values[][16] = {
-+	{ 1, -7, }, { 0, -0, }, { 4, -1, 0, +1, 2, }, { 0, 7, },
-+	{ 0, +7, }, { 0, -7, }, { 3, +7, 8, +9, 0, }, { 0, 9, },
-+	{ 0, +5, }, { 0, -0, }, { 4, +5, 6, +7, 8, }, { 0, 0, },
-+	{ 0, +0, }, { 0, -0, }, { 4, -3, 0, +1, 6, }, { 1, 4, },
-+	{ 0, +0, }, { 0, -0, }, { 4, +0, 1, -3, 6, }, { 0, 0, },
-+};
-+
-+static_assert(ARRAY_SIZE(cmdline_test_range_strings) == ARRAY_SIZE(cmdline_test_range_values));
-+
- static void cmdline_do_one_test(struct kunit *test, const char *in, int rc, int offset)
- {
- 	const char *fmt = "Pattern: %s";
-@@ -84,10 +104,42 @@ static void cmdline_test_tail_int(struct kunit *test)
- 	} while (++i < ARRAY_SIZE(cmdline_test_strings));
- }
- 
-+static void cmdline_do_one_range_test(struct kunit *test, const char *in,
-+				      unsigned int n, const int *e)
-+{
-+	unsigned int i;
-+	int r[16];
-+
-+#define FMT	"in test %u"
-+#define FMT2	"expected %d numbers, got %d"
-+#define FMT3	"at %d"
-+	memset(r, 0, sizeof(r));
-+	get_options(in, ARRAY_SIZE(r), r);
-+	KUNIT_EXPECT_EQ_MSG(test, r[0], e[0], FMT " " FMT2, n, e[0], r[0]);
-+	for (i = 1; i < ARRAY_SIZE(r); i++)
-+		KUNIT_EXPECT_EQ_MSG(test, r[i], e[i], FMT " " FMT3, n, i);
-+#undef FMT3
-+#undef FMT2
-+#undef FMT
-+}
-+
-+static void cmdline_test_range(struct kunit *test)
-+{
-+	unsigned int i = 0;
-+
-+	do {
-+		const char *str = cmdline_test_range_strings[i];
-+		const int *e = cmdline_test_range_values[i];
-+
-+		cmdline_do_one_range_test(test, str, i, e);
-+	} while (++i < ARRAY_SIZE(cmdline_test_range_strings));
-+}
-+
- static struct kunit_case cmdline_test_cases[] = {
- 	KUNIT_CASE(cmdline_test_noint),
- 	KUNIT_CASE(cmdline_test_lead_int),
- 	KUNIT_CASE(cmdline_test_tail_int),
-+	KUNIT_CASE(cmdline_test_range),
- 	{}
- };
- 
+ .../pinctrl/qcom,sc8180x-pinctrl.yaml         |  153 ++
+ .../bindings/pinctrl/qcom,tlmm-common.yaml    |   85 +
+ drivers/pinctrl/qcom/Kconfig                  |    9 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-sc8180x.c        | 1624 +++++++++++++++++
+ 5 files changed, 1872 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-sc8180x.c
+
 -- 
 2.29.2
 
