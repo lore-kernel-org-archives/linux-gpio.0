@@ -2,79 +2,142 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BE5C433DB
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 16:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7E6C433E9
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 16:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9CB32336D
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 16:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06589233EA
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Jan 2021 16:19:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391071AbhATP7Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Jan 2021 10:59:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390825AbhATP7M (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 Jan 2021 10:59:12 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2391335AbhATQT2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Jan 2021 11:19:28 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:55123 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391507AbhATQRk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 20 Jan 2021 11:17:40 -0500
+Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D12782336D;
-        Wed, 20 Jan 2021 15:58:31 +0000 (UTC)
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94)
-        (envelope-from <maz@kernel.org>)
-        id 1l2FsL-008zAu-Rb; Wed, 20 Jan 2021 15:58:30 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 20 Jan 2021 15:58:29 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Saravana Kannan <saravanak@google.com>,
+        by mx.tkos.co.il (Postfix) with ESMTPS id DC4A2440DAA;
+        Wed, 20 Jan 2021 18:16:41 +0200 (IST)
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] gpiolib: Bind gpio_device to a driver to enable
- fw_devlink=on by default
-In-Reply-To: <YAhQzxaHCffpPSdQ@kroah.com>
-References: <20210116011412.3211292-1-saravanak@google.com>
- <87r1mjkc07.wl-maz@kernel.org>
- <CAGETcx_5JJ2An=URY=0GwBbZzjfqN4w=-+2BuCsstYePej3sRw@mail.gmail.com>
- <01f733ab81959e4cf847cbf1d521ad9d@kernel.org> <YAhQzxaHCffpPSdQ@kroah.com>
-User-Agent: Roundcube Webmail/1.4.10
-Message-ID: <2c2950c5bf94e456560704dbfa48ed16@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: gregkh@linuxfoundation.org, saravanak@google.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, Jisheng.Zhang@synaptics.com, kever.yang@rock-chips.com, kernel-team@android.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Baruch Siach <baruch@tkos.co.il>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 4/4] gpio: mvebu: improve handling of pwm zero on/off values
+Date:   Wed, 20 Jan 2021 18:16:28 +0200
+Message-Id: <fb61ffe7275237715af92015b2216b8355feb0d6.1611128398.git.baruch@tkos.co.il>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <cover.1611128398.git.baruch@tkos.co.il>
+References: <cover.1611128398.git.baruch@tkos.co.il>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2021-01-20 15:48, Greg Kroah-Hartman wrote:
-> On Wed, Jan 20, 2021 at 03:39:30PM +0000, Marc Zyngier wrote:
+Hardware appears to treat zero value as 2^32. Take advantage of this
+fact to support on/off values of up to UINT_MAX+1 == 2^32. Adjust both
+.apply and .get_state to handle zero as a special case.
 
->> Anyway, I said what I had to say. If platforms break with this
->> change, I'll expect it to be disabled in 5.12.
-> 
-> I'm thinking we can not change the default and will probably revert 
-> this
-> patch "soon".
+Rounded up division result in .get_state can't be zero, since the
+dividend is now larger than 0. Remove check for this case.
 
-I think there is a lot of value in keeping this enabled for a bit,
-so that we can work out what breaks, and find solutions that scale
-a bit better.
+Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Analyzed-by: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ drivers/gpio/gpio-mvebu.c | 39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
 
-Thanks,
-
-         M.
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 6b017854ce61..75e3c235bd3a 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -667,22 +667,21 @@ static void mvebu_pwm_get_state(struct pwm_chip *chip,
+ 	spin_lock_irqsave(&mvpwm->lock, flags);
+ 
+ 	regmap_read(mvpwm->regs, mvebu_pwmreg_blink_on_duration(mvpwm), &u);
+-	val = (unsigned long long) u * NSEC_PER_SEC;
+-	val = DIV_ROUND_UP_ULL(val, mvpwm->clk_rate);
+-	if (val)
+-		state->duty_cycle = val;
++	/* Hardware treats zero as 2^32. See mvebu_pwm_apply(). */
++	if (u > 0)
++		val = u;
+ 	else
+-		state->duty_cycle = 1;
++		val = UINT_MAX + 1ULL;
++	state->duty_cycle = DIV_ROUND_UP_ULL(val * NSEC_PER_SEC,
++			mvpwm->clk_rate);
+ 
+-	val = (unsigned long long) u; /* on duration */
+ 	regmap_read(mvpwm->regs, mvebu_pwmreg_blink_off_duration(mvpwm), &u);
+-	val += (unsigned long long) u; /* period = on + off duration */
+-	val *= NSEC_PER_SEC;
+-	val = DIV_ROUND_UP_ULL(val, mvpwm->clk_rate);
+-	if (val)
+-		state->period = val;
++	/* period = on + off duration */
++	if (u > 0)
++		val += u;
+ 	else
+-		state->period = 1;
++		val += UINT_MAX + 1ULL;
++	state->period = DIV_ROUND_UP_ULL(val * NSEC_PER_SEC, mvpwm->clk_rate);
+ 
+ 	regmap_read(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset, &u);
+ 	if (u)
+@@ -704,9 +703,15 @@ static int mvebu_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 
+ 	val = (unsigned long long) mvpwm->clk_rate * state->duty_cycle;
+ 	do_div(val, NSEC_PER_SEC);
+-	if (val > UINT_MAX)
++	if (val > UINT_MAX + 1ULL)
+ 		return -EINVAL;
+-	if (val)
++	/*
++	 * Zero on/off values don't work as expected. Experimentation shows
++	 * that zero value is treated as 2^32. This behavior is not documented.
++	 */
++	if (val == UINT_MAX + 1ULL)
++		on = 0;
++	else if (val)
+ 		on = val;
+ 	else
+ 		on = 1;
+@@ -714,9 +719,11 @@ static int mvebu_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	val = (unsigned long long) mvpwm->clk_rate * state->period;
+ 	do_div(val, NSEC_PER_SEC);
+ 	val -= on;
+-	if (val > UINT_MAX)
++	if (val > UINT_MAX + 1ULL)
+ 		return -EINVAL;
+-	if (val)
++	if (val == UINT_MAX + 1ULL)
++		off = 0;
++	else if (val)
+ 		off = val;
+ 	else
+ 		off = 1;
 -- 
-Jazz is not dead. It just smells funny...
+2.29.2
+
