@@ -2,324 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FB9C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 11:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6711BC433E9
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AECE2389F
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 11:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 166D323975
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729940AbhAULGx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Jan 2021 06:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730068AbhAULGr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 21 Jan 2021 06:06:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D1BA23602;
-        Thu, 21 Jan 2021 11:06:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611227165;
-        bh=NyhCfMXZmQGKcSdnIz70pSwAmHZqcxW2NAYXRkZuiaQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uga5Pwl5JfVX78OLreQ5FYbmDdvq2tA3M/iS0+kaxJlYyvHyXFj0h3piQm2XbCZBn
-         VNfXFifTe9ABVR0zn6fUyP6kSbpoVt5leRfiM7r5CDq3Phr+qNESIiKUx2GSR2A35D
-         W4BjZlO8M7wTSlzgqfRME6d/HZktJ2TS5jKvLG7HErw2sEQdgEuDeTweJoCb3VQbwe
-         wlLg69KJy2m9uiSepu2ONrYb4Bnk/JPBKSNLiV5tScspUEeDVd/uKOGGbs93trYmC6
-         bCs0QNgrACFGG3MYJs1b/rxeUTgTl+J2lHJkJFAiyBHS4g/rimjsRzFk6cReDui9C+
-         v9G56UHEWhqeQ==
-Received: from johan by xi.lan with local (Exim 4.93.0.4)
-        (envelope-from <johan@kernel.org>)
-        id 1l2Xn1-0004gJ-G7; Thu, 21 Jan 2021 12:06:12 +0100
-Date:   Thu, 21 Jan 2021 12:06:11 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Manivannan Sadhasivam <mani@kernel.org>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patong.mxl@gmail.com, linus.walleij@linaro.org,
-        mchehab+huawei@kernel.org, angelo.dureghello@timesys.com,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] usb: serial: xr_serial: Add gpiochip support
-Message-ID: <YAlgIz4gzL1sC2+G@hovoldconsulting.com>
-References: <20201122170822.21715-1-mani@kernel.org>
- <20201122170822.21715-3-mani@kernel.org>
+        id S1730925AbhAUL7p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Jan 2021 06:59:45 -0500
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:42838 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728846AbhAUL7f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Jan 2021 06:59:35 -0500
+Received: by mail-ot1-f41.google.com with SMTP id f6so1319644ots.9;
+        Thu, 21 Jan 2021 03:59:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LMQpWTlwXlB+6DhuZpRPyd2/2y3TLAjilyG8Sg/pBQ4=;
+        b=tbYRWno+wlZxOIOXoc2efdBECq/zwJxHZz1DYSHEeo+FGar5goxcUjpkxY3rGtxCeJ
+         fVg67s99LYEEctteoTQ+xRmZ3ewBDg4T4lUF4yAREJRFr0j/N8K/m/YKAKg2Vgc4xbB6
+         iEVO+UGhc8mKZ1xM7xdgDSchClUVeQvpsGbqXUDHcwMgPpX9d9Rg1GlCmDCq7u9jU954
+         GxnGuhfllwcvkfjkEuB+oYpodG9Xwyf9ROKGbVu1hHbGJ70bSXqdT5FOjD44ps9ysPA1
+         HgTK8dCXKw1DEhDwBAclb7jJtK0cuW7IsUemF0WzulbJavAPHbzIAKaiD3dCOikBTzAj
+         r6Rg==
+X-Gm-Message-State: AOAM53133IraZqjTiy30MFqRAaPr71tvh56qzkH6t7K4zJmFvIJ8+FjT
+        QFRQ/pwpkIz00imBdtTk60g7XAsjdeAn19ik9eo=
+X-Google-Smtp-Source: ABdhPJzUXT3Qcu1MEek/JIy1QokhzlIz+1Z889izuguqO0chtBSEj4LHKA87+uH8We9MoxEatFnak9b3i0z82NlULJU=
+X-Received: by 2002:a9d:1710:: with SMTP id i16mr9965157ota.260.1611230334235;
+ Thu, 21 Jan 2021 03:58:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201122170822.21715-3-mani@kernel.org>
+References: <20210118003428.568892-1-djrscally@gmail.com> <20210118003428.568892-3-djrscally@gmail.com>
+ <CAJZ5v0gVQsZ4rxXW8uMidW9zfY_S50zpfrL-Gq0J3Z4-qqBiww@mail.gmail.com>
+ <b381b48e-1bf2-f3e7-10a6-e51cd261f43c@gmail.com> <CAJZ5v0iU2m4Hs6APuauQ645DwbjYaB8nJFjYH0+7yQnR-FPZBQ@mail.gmail.com>
+ <e2d7e5e9-920f-7227-76a6-b166e30e11e5@gmail.com>
+In-Reply-To: <e2d7e5e9-920f-7227-76a6-b166e30e11e5@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 21 Jan 2021 12:58:43 +0100
+Message-ID: <CAJZ5v0gg5oXG3yOO9iDvPKSsadYrFojW6JcKfZcQbFFpO78zAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] acpi: utils: Add function to fetch dependent acpi_devices
+To:     Daniel Scally <djrscally@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-i2c <linux-i2c@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, andy@kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Kaneda <erik.kaneda@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Nov 22, 2020 at 10:38:21PM +0530, Manivannan Sadhasivam wrote:
-> Add gpiochip support for Maxlinear/Exar USB to serial converter
-> for controlling the available gpios.
-> 
-> Inspired from cp210x usb to serial converter driver.
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
-> ---
->  drivers/usb/serial/xr_serial.c | 267 ++++++++++++++++++++++++++++++++-
->  1 file changed, 261 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/xr_serial.c b/drivers/usb/serial/xr_serial.c
-> index e166916554d6..ca63527a5310 100644
-> --- a/drivers/usb/serial/xr_serial.c
-> +++ b/drivers/usb/serial/xr_serial.c
-> @@ -9,6 +9,7 @@
->   * Copyright (c) 2020 Manivannan Sadhasivam <mani@kernel.org>
->   */
->  
-> +#include <linux/gpio/driver.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
-> @@ -16,6 +17,28 @@
->  #include <linux/usb.h>
->  #include <linux/usb/serial.h>
->  
-> +#ifdef CONFIG_GPIOLIB
-> +enum gpio_pins {
-> +	GPIO_RI = 0,
-> +	GPIO_CD,
-> +	GPIO_DSR,
-> +	GPIO_DTR,
-> +	GPIO_CTS,
-> +	GPIO_RTS,
-> +	GPIO_MAX,
-> +};
-> +#endif
-> +
-> +struct xr_port_private {
-> +#ifdef CONFIG_GPIOLIB
-> +	struct gpio_chip gc;
-> +	bool gpio_registered;
-> +	enum gpio_pins pin_status[GPIO_MAX];
+On Thu, Jan 21, 2021 at 10:47 AM Daniel Scally <djrscally@gmail.com> wrote:
+>
+> Hi Rafael
+>
+> On 19/01/2021 13:15, Rafael J. Wysocki wrote:
+> > On Mon, Jan 18, 2021 at 9:51 PM Daniel Scally <djrscally@gmail.com> wrote:
+> >> On 18/01/2021 16:14, Rafael J. Wysocki wrote:
+> >>> On Mon, Jan 18, 2021 at 1:37 AM Daniel Scally <djrscally@gmail.com> wrote:
+> >>>> In some ACPI tables we encounter, devices use the _DEP method to assert
+> >>>> a dependence on other ACPI devices as opposed to the OpRegions that the
+> >>>> specification intends. We need to be able to find those devices "from"
+> >>>> the dependee, so add a function to parse all ACPI Devices and check if
+> >>>> the include the handle of the dependee device in their _DEP buffer.
+> >>> What exactly do you need this for?
+> >> So, in our DSDT we have devices with _HID INT3472, plus sensors which
+> >> refer to those INT3472's in their _DEP method. The driver binds to the
+> >> INT3472 device, we need to find the sensors dependent on them.
+> >>
+> > Well, this is an interesting concept. :-)
+> >
+> > Why does _DEP need to be used for that?  Isn't there any other way to
+> > look up the dependent sensors?
+> >
+> >>> Would it be practical to look up the suppliers in acpi_dep_list instead?
+> >>>
+> >>> Note that supplier drivers may remove entries from there, but does
+> >>> that matter for your use case?
+> >> Ah - that may work, yes. Thank you, let me test that.
+> > Even if that doesn't work right away, but it can be made work, I would
+> > very much prefer that to the driver parsing _DEP for every device in
+> > the namespace by itself.
+>
+>
+> This does work; do you prefer it in scan.c, or in utils.c (in which case
+> with acpi_dep_list declared as external var in internal.h)?
 
-This isn't an array of enum gpio_pins, rather you use the enum as an
-index into the array which only stores a boolean value per pin.
+Let's put it in scan.c for now, because there is the lock protecting
+the list in there too.
 
-Please rename the array and fix the type (e.g. bool) so that it is clear
-how from the name how it is being used, for example, "gpio_requested" or
-"gpio_in_use".
-
-> +#endif
-> +	struct mutex gpio_lock;	/* protects GPIO state */
-> +	bool port_open;
-> +};
-> +
->  struct xr_txrx_clk_mask {
->  	u16 tx;
->  	u16 rx0;
-> @@ -106,6 +129,8 @@ struct xr_txrx_clk_mask {
->  #define XR21V141X_REG_GPIO_CLR		0x1e
->  #define XR21V141X_REG_GPIO_STATUS	0x1f
->  
-> +static int xr_cts_rts_check(struct xr_port_private *port_priv);
-> +
->  static int xr_set_reg(struct usb_serial_port *port, u8 block, u8 reg,
->  		      u8 val)
->  {
-> @@ -309,6 +334,7 @@ static int xr_uart_disable(struct usb_serial_port *port)
->  static void xr_set_flow_mode(struct tty_struct *tty,
->  			     struct usb_serial_port *port)
->  {
-> +	struct xr_port_private *port_priv = usb_get_serial_port_data(port);
->  	unsigned int cflag = tty->termios.c_cflag;
->  	int ret;
->  	u8 flow, gpio_mode;
-> @@ -318,6 +344,17 @@ static void xr_set_flow_mode(struct tty_struct *tty,
->  		return;
->  
->  	if (cflag & CRTSCTS) {
-> +		/*
-> +		 * Check if the CTS/RTS pins are occupied by GPIOLIB. If yes,
-
-GPIOLIB doesn't "occupy" anything. Use something like "claimed by"
-instead.
-
-> +		 * then use no flow control.
-> +		 */
-> +		if (xr_cts_rts_check(port_priv)) {
-> +			dev_dbg(&port->dev,
-> +				"CTS/RTS pins are occupied, so disabling flow control\n");
-
-Ditto.
-
-And there's no need to ignore a request for sw flow control if the pins
-are in use. Just move the check above the conditional and make the
-first branch depend on it.
-
-You also need to clear CRTSCTS in termios if it cannot be set.
-
-> +			flow = XR21V141X_UART_FLOW_MODE_NONE;
-> +			goto exit;
-> +		}
-> +
->  		dev_dbg(&port->dev, "Enabling hardware flow ctrl\n");
->  
->  		/*
-> @@ -341,6 +378,7 @@ static void xr_set_flow_mode(struct tty_struct *tty,
->  		flow = XR21V141X_UART_FLOW_MODE_NONE;
->  	}
->  
-> +exit:
->  	/*
->  	 * As per the datasheet, UART needs to be disabled while writing to
->  	 * FLOW_CONTROL register.
-> @@ -355,18 +393,22 @@ static void xr_set_flow_mode(struct tty_struct *tty,
->  static int xr_tiocmset_port(struct usb_serial_port *port,
->  			    unsigned int set, unsigned int clear)
->  {
-> +	struct xr_port_private *port_priv = usb_get_serial_port_data(port);
->  	u8 gpio_set = 0;
->  	u8 gpio_clr = 0;
->  	int ret = 0;
->  
-> -	/* Modem control pins are active low, so set & clr are swapped */
-> -	if (set & TIOCM_RTS)
-> +	/*
-> +	 * Modem control pins are active low, so set & clr are swapped. And
-> +	 * ignore the pins that are occupied by GPIOLIB.
-> +	 */
-> +	if ((set & TIOCM_RTS) && !(port_priv->pin_status[GPIO_RTS]))
->  		gpio_clr |= XR21V141X_UART_MODE_RTS;
-> -	if (set & TIOCM_DTR)
-> +	if ((set & TIOCM_DTR) && !(port_priv->pin_status[GPIO_DTR]))
->  		gpio_clr |= XR21V141X_UART_MODE_DTR;
-> -	if (clear & TIOCM_RTS)
-> +	if ((clear & TIOCM_RTS) && !(port_priv->pin_status[GPIO_RTS]))
->  		gpio_set |= XR21V141X_UART_MODE_RTS;
-> -	if (clear & TIOCM_DTR)
-> +	if ((clear & TIOCM_DTR) && !(port_priv->pin_status[GPIO_DTR]))
->  		gpio_set |= XR21V141X_UART_MODE_DTR;
->  
->  	/* Writing '0' to gpio_{set/clr} bits has no effect, so no need to do */
-> @@ -464,6 +506,7 @@ static void xr_set_termios(struct tty_struct *tty,
->  
->  static int xr_open(struct tty_struct *tty, struct usb_serial_port *port)
->  {
-> +	struct xr_port_private *port_priv = usb_get_serial_port_data(port);
->  	int ret;
->  
->  	ret = xr_uart_enable(port);
-> @@ -482,13 +525,23 @@ static int xr_open(struct tty_struct *tty, struct usb_serial_port *port)
->  		return ret;
->  	}
->  
-> +	mutex_lock(&port_priv->gpio_lock);
-> +	port_priv->port_open = true;
-> +	mutex_unlock(&port_priv->gpio_lock);
-
-This needs to be done before calling set_termios() above.
-
-> +
->  	return 0;
->  }
->  
->  static void xr_close(struct usb_serial_port *port)
->  {
-> +	struct xr_port_private *port_priv = usb_get_serial_port_data(port);
-> +
->  	usb_serial_generic_close(port);
->  
-> +	mutex_lock(&port_priv->gpio_lock);
-> +	port_priv->port_open = false;
-> +	mutex_unlock(&port_priv->gpio_lock);
-> +
->  	xr_uart_disable(port);
->  }
->  
-> @@ -553,13 +606,215 @@ static void xr_break_ctl(struct tty_struct *tty, int break_state)
->  	xr_set_reg_uart(port, XR21V141X_REG_TX_BREAK, state);
->  }
->  
-> -static int xr_port_probe(struct usb_serial_port *port)
-> +#ifdef CONFIG_GPIOLIB
-> +
-> +static int xr_cts_rts_check(struct xr_port_private *port_priv)
->  {
-> +	if (port_priv->pin_status[GPIO_RTS] || port_priv->pin_status[GPIO_CTS])
-> +		return -EBUSY;
-> +
->  	return 0;
->  }
->  
-> +static int xr_gpio_request(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +	struct usb_serial_port *port = gpiochip_get_data(gc);
-> +	struct xr_port_private *port_priv = usb_get_serial_port_data(port);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&port_priv->gpio_lock);
-> +	/*
-> +	 * Do not proceed if the port is open. This is done to avoid changing
-> +	 * the GPIO configuration used by the serial driver.
-> +	 */
-> +	if (port_priv->port_open) {
-> +		ret = -EBUSY;
-> +		goto err_out;
-> +	}
-> +
-> +	/* Mark the GPIO pin as busy */
-> +	port_priv->pin_status[offset] = true;
-
-What about GPIO5/RTS#? It may still be configured for flow control even
-if the port is now closed. You need to switch to GPIO mode.
-
-> +
-> +err_out:
-> +	mutex_unlock(&port_priv->gpio_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static void xr_gpio_free(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +	struct usb_serial_port *port = gpiochip_get_data(gc);
-> +	struct xr_port_private *port_priv = usb_get_serial_port_data(port);
-> +
-> +	mutex_lock(&port_priv->gpio_lock);
-> +	/*
-> +	 * Do not proceed if the port is open. This is done to avoid toggling
-> +	 * of pins suddenly when the serial port is in use.
-> +	 */
-> +	if (port_priv->port_open)
-> +		goto err_out;
-> +
-> +	/* Mark the GPIO pin as free */
-> +	port_priv->pin_status[offset] = false;
-
-You cannot fail this even if the port is open since otherwise the pin
-will remain claimed.
-
-You may need to cache the valid pins at serial port open instead as I
-already mentioned.
-
-Also, you need to figure out how to coordinate the pin-configuration
-with the serial driver. I suggested added a call to configure DTR/RTS at
-outputs on open(), but perhaps this should only be done once in case
-they are not really used for modem control and instead needs to be
-reconfigured as inputs by the gpio driver (i.e. before opening the
-port). 
-
-I'm still not sure about how best to handle this remuxing at runtime in
-order to avoid having incidentally setting up an incorrect pin
-configuration.
-
-Ideally, the muxing should be determined in EEPROM or be based on
-VID/PID and not be allowed to change at runtime at all...
-
-I'm not convinced that the current approach is a good idea yet.
-
-> +
-> +err_out:
-> +	mutex_unlock(&port_priv->gpio_lock);
-> +}
-
-Johan
+How do you want to implement this?  Something like "walk the list and
+run a callback for the matching entries" or do you have something else
+in mind?
