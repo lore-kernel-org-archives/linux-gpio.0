@@ -2,128 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BD7C433DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 05:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC71C433DB
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 06:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0DBE2389B
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 05:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D74622248
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 06:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725969AbhAUF5p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Jan 2021 00:57:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49308 "EHLO
+        id S1727114AbhAUG0r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Jan 2021 01:26:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbhAUDUf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2021 22:20:35 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FE2FC061757
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2021 19:19:14 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id b5so725098pjl.0
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2021 19:19:14 -0800 (PST)
+        with ESMTP id S1726821AbhAUG0k (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Jan 2021 01:26:40 -0500
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 252BFC061575
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2021 22:26:00 -0800 (PST)
+Received: by mail-pg1-x536.google.com with SMTP id n10so703350pgl.10
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2021 22:26:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TfFXs9mHknQ0FYX15Kzdj3tfAorhNNw9oOMWrG9kjOg=;
-        b=G6cX1b7FU4HY4wZI+2MjTESh6qWFl1UVhBIep94K4oZaALWIOSY6dnRj21zF4/BoXu
-         HOY0R8JbcFjkGE4k+Zh9urkWuo+9FIWLh8d+OZvt1CUgoJGttfPhd3dVdtggdeaOK/+r
-         Xo3Hus9G9ODpuWvdUGVpPK65/zpfP8epxZUohIm68dixOAdh1/MytY7fXYPEMotvojky
-         vAZoPZS7CAKj6fUqdOFIa+yUGrwNf/7aHc4bATbv69u7mYLdp6MWf/MZYCX48dKRxNRA
-         vhHoutAXbknZqpMjhsHP5PrEEGToTb+slTC6XSa73gn+HsGSyqA6fAiaQPYao6zAJ6zI
-         7y5w==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NJxqFT+5qx53zphJZqNCcKwlvAjoGdjphcdT6milPrE=;
+        b=ZLcWa7hqgwXCCjlSVXumhxDRuVAzD3Z/O/SEbVb3WNo9rjVWosgNMjemgyCAAiq2Qi
+         GV1zPwxD8n8EbbrsgB7j8reHho6elKprcS8MNKhx3R5FssxXBB0ZywjW8bDvCEufEFSj
+         ATbU38QHRqbznfReOl2/65UasfWLbdNhL9zuL8zhGH7vsWk5wmqgiKop2YIPYMEF3sS7
+         h8Xo43I4MZ6vmyrcmNE8OZHu6Kf8GvA/+ZW2MlseqXu0vtj+3rXtbKB45nDLRc5lJISQ
+         BheUw9BAoA9nm/YvU3JYBzXP+MmElhMzuXDXfIAZxb1rxHO3c8fbNU2e6D5/8CKdpkxV
+         OAjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TfFXs9mHknQ0FYX15Kzdj3tfAorhNNw9oOMWrG9kjOg=;
-        b=G99CGEoL2FkbU0iuA9nkYNbdc08okfhfjCuM/ZA09zNQpT5MqnDGkGFBoX3cIOaP/B
-         Biw/xoRJ7CsLKFfJxtji639CuurzfeuuA5Kw+0xa6/cUBU7MFmX9Yr578l5Fq4/0ZXrt
-         tD2+N2Exu38hJqv3VWMlAa6PtX2dlZLcyUDQx2J+yJ64LAKXO0Fo+s46fhQ0+GVM9o0w
-         u7K2+cYFTxaEeq5saT7myJG2LLgqNepXsaTAKuJRDxcJTHyOMvN2A6iLjazkMDwkXnZD
-         HoFPB27ag7MabMT4SUtlxdjiEnYEJyIIatXYKBMYUToigeLL0F6hIy7McaDWREuKe2xR
-         dkcw==
-X-Gm-Message-State: AOAM53243+gKLBR9m6OekIHNcWIZo0Jn6Ma/9+kt1mDSIQWGFC45V986
-        d8s4q+YEctY54Z5X81b9KrNJIA==
-X-Google-Smtp-Source: ABdhPJx2sHHMfN5ZADdBI6iJaxaoVTtR18nr1yhDctYo0c+exErrZ2AbajkyA2sgazoZuo8xJzmyJg==
-X-Received: by 2002:a17:902:ed8e:b029:de:8c17:f7e8 with SMTP id e14-20020a170902ed8eb02900de8c17f7e8mr12957440plj.19.1611199153742;
-        Wed, 20 Jan 2021 19:19:13 -0800 (PST)
-Received: from x1 ([2601:1c0:4701:ae70:d139:25ba:c4c6:2929])
-        by smtp.gmail.com with ESMTPSA id e5sm3603667pfc.76.2021.01.20.19.19.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NJxqFT+5qx53zphJZqNCcKwlvAjoGdjphcdT6milPrE=;
+        b=Ljh2w9UA6hIA3mYAubJ3IdW2PMMgtgfDgL6Y5zxFOx4HSxH/Bb1R3rtcfcMioy7nlO
+         rvonzq0sDn8Bz0CZyVLvYlyfvq30RNVexdhY3p28/zvRjPNmu0p4uWoUfzO/UZSIAOAS
+         Gd/DrKrfx2HpRhA1qagl86tZ1tPv0IVgTqz8bDoFJ9eZhDJZbZeSbluhXf5VGjhAh4yw
+         PFyv88+OgXHpBBZ8zCViPFPyp82AD1AMzesk4EM/9YR5SXqxEcK7e5gxC9rbFLbQFr5v
+         EiU9Nt8VxAzNsG8LvkuvUALmozayhoxAkL3lF9QurIQkPwKh2nQEyW+jH3t25m8UcQlB
+         Polw==
+X-Gm-Message-State: AOAM531KxNzozEzeY/d1dyI1iJFr+vp2YiL8KggmDZCI+ZguZa/5N70d
+        ZfSJY3KXNbIo+xvFroTPq+MY
+X-Google-Smtp-Source: ABdhPJyQ0dm+7soCPKNjt7VdaMA7zt7NaoBhCMhSkEUDUvu/UNSoNl2F3mz1tAb957LKZW2T/AkM1w==
+X-Received: by 2002:a63:e058:: with SMTP id n24mr487228pgj.345.1611210359556;
+        Wed, 20 Jan 2021 22:25:59 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:6182:23c4:4d5:e6d9:fc7e:c8e2])
+        by smtp.gmail.com with ESMTPSA id b26sm606498pfo.202.2021.01.20.22.25.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 19:19:12 -0800 (PST)
-Date:   Wed, 20 Jan 2021 19:19:10 -0800
-From:   Drew Fustini <drew@beagleboard.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@linaro.org>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Jason Kridner <jkridner@beagleboard.org>,
-        Robert Nelson <robertcnelson@beagleboard.org>
-Subject: Re: [RFC PATCH v2] pinctrl: add helper to expose pinctrl state in
- debugfs
-Message-ID: <20210121031910.GA252950@x1>
-References: <20201218045134.4158709-1-drew@beagleboard.org>
- <CAHp75Vfwb+f3k2+mAj+jB=XsKFX-hCxx61A_PCmwz6y-YKHMcg@mail.gmail.com>
- <20201224203603.GA59600@x1>
- <CACRpkdb9RnGJbct+D-88JPDSbaVp1XS8vjhhHYosy20EPkLjaw@mail.gmail.com>
- <20210109025527.GA2918377@x1>
- <CACRpkdaOfU=OLp5D-EXK2oU9bScLZ-QjLdCSrewiSBa0SRRNwg@mail.gmail.com>
- <X/wiZjioLqcTYVfj@atomide.com>
+        Wed, 20 Jan 2021 22:25:58 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     linus.walleij@linaro.org
+Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cristian.ciocaltea@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] pinctrl: actions: Add the platform dependency to drivers
+Date:   Thu, 21 Jan 2021 11:55:47 +0530
+Message-Id: <20210121062547.27173-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <X/wiZjioLqcTYVfj@atomide.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 12:03:18PM +0200, Tony Lindgren wrote:
-> Hi,
-> 
-> * Linus Walleij <linus.walleij@linaro.org> [210109 21:14]:
-> > On Sat, Jan 9, 2021 at 3:55 AM Drew Fustini <drew@beagleboard.org> wrote:
-> > 
-> > > I discussed my use case and this patch on #armlinux earlier this week
-> > > and Alexandre Belloni suggested looking at the pinmux-pins debugfs file.
-> > 
-> > This sounds reasonable.
-> > 
-> > > This made me think that a possible solution could be to define a store
-> > > function for pinmux-pins to handle something like "<pin#> <function#>".
-> > > I believe the ability to activate a pin function (or pin group) from
-> > > userspace would satisfy our beagleboard.org use-case.
-> > >
-> > > Does that seem like a reasonable approach?
-> > 
-> > This sounds like a good approach.
-> 
-> Makes sense to me too.
-> 
-> We may want to make it into a proper sysfs interface eventually to not
-> require debugfs be enabled in .config. But that's another set of patches,
-> certainly makes sense to first enable it for debugfs.
-> 
-> Regards,
-> 
-> Tony
+The Actions Semi pinctrl drivers are a mix of both ARM32 and ARM64
+platforms. So let's add the correct platform dependency to avoid them
+being selected on the other.
 
-I have added a debugfs file "pinmux-set" to pinmux.c. This allows
-"<function-number> <group-number>" to be written into that file. The
-function pinmux_set_write() calls ops->set_mux() with fsel and gsel.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/pinctrl/actions/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I'll post an RFC with the code, but I am wondering if it would better
-to take the function as a name and then lookup the function number
-(fsel)?
-
-thanks,
-drew
-
-
+diff --git a/drivers/pinctrl/actions/Kconfig b/drivers/pinctrl/actions/Kconfig
+index a1d16e8280e5..8bb8345b17da 100644
+--- a/drivers/pinctrl/actions/Kconfig
++++ b/drivers/pinctrl/actions/Kconfig
+@@ -12,18 +12,21 @@ config PINCTRL_OWL
+ 
+ config PINCTRL_S500
+ 	bool "Actions Semi S500 pinctrl driver"
++	depends on ARM
+ 	depends on PINCTRL_OWL
+ 	help
+ 	  Say Y here to enable Actions Semi S500 pinctrl driver
+ 
+ config PINCTRL_S700
+ 	bool "Actions Semi S700 pinctrl driver"
++	depends on ARM64
+ 	depends on PINCTRL_OWL
+ 	help
+ 	  Say Y here to enable Actions Semi S700 pinctrl driver
+ 
+ config PINCTRL_S900
+ 	bool "Actions Semi S900 pinctrl driver"
++	depends on ARM64
+ 	depends on PINCTRL_OWL
+ 	help
+ 	  Say Y here to enable Actions Semi S900 pinctrl driver
+-- 
+2.25.1
 
