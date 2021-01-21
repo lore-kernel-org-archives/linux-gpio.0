@@ -2,156 +2,97 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BBBC433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DCDC433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12FAA221E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 172C92395A
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbhAUMON (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Jan 2021 07:14:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51200 "EHLO
+        id S1729943AbhAUMPI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Jan 2021 07:15:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730528AbhAUMOI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Jan 2021 07:14:08 -0500
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA80CC061757
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:13:27 -0800 (PST)
-Received: by mail-vs1-xe29.google.com with SMTP id e15so917166vsa.0
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:13:27 -0800 (PST)
+        with ESMTP id S1730994AbhAUMOu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Jan 2021 07:14:50 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED49BC0613ED
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:14:01 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id m187so1258584wme.2
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:14:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=74gw7o+OO7Q7aDvPtMEjR/zc2dSGvqCTFDo3Lw0ey7o=;
-        b=ZxaoFgCOKpzQNF9P9CAbJRTQX52OYbGya3+y8gRNe7u3+DF/A+gPmS64giuGrYBJCL
-         REfPrGABoR1BJKnj2FvpuiJLsahf5ZRb1X5tJe55Ohi+ZQQ34uLvkTI9m2Ro3YEubJPj
-         7QKAP1ZQR/5oFIqTwHAvfGJlKfm5dBCwcLe9I=
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1fh/a4DYJLi+AyFxFDtHnnnCfJUqWq8QRUBkRL69peM=;
+        b=uhtmotDTNcSU3elkTAGv5ljRnhN+O0WXOi+p5MvFvHsI8xTZRnSfv//K0qPQAcyCTJ
+         set7h6+CIAFEgUkRQeZbWhAip5XSFiM+vdUIyAfTUj44O4uJz9ORrFANHe5GiCegWyWF
+         zbBxz60Z/Ze0CXHMVHw0ItPZyr80p2tiNaqKgKrVD1tGvzz0eoEZEVvMcGrY07kBHfDd
+         SbeiJqTJIW2bJ0c4kmMrbXlgUtFcKiw8ngHPwQb64FWxbFACEhcvdc6wQ6cJ7o0OeriU
+         EkYeDXVPUkno5yxMjmERrX1N9YIsccmM04qrPVkhW68XUhCNfLWoB4rPOi+vGC3/l3Ba
+         HgJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=74gw7o+OO7Q7aDvPtMEjR/zc2dSGvqCTFDo3Lw0ey7o=;
-        b=soZc4kQQMSbemuwGYA7L2RAOfSfFme7aB0p77OmqYxNEC4SrUhrPxgC0RjCTde7+zR
-         THNFBuHp2OaN1QsDKpRyUHKWDFKunmpsg/UZg6ONBU0swPi/UhD6lNwY3Zt8Z2GPd7Ie
-         JNHQbpO7ybyfkAFCFFqPsxDaRGrbiM8ufaKC4Nvx6w7e8+N/TmXbGBJP2TodDwGKUJPq
-         b1gRHdP5yKSgB2G4ZkStgLCznezvZU45OpQaQ5RRAq7m0rYb7QnfoUD1wtl/PS5du+us
-         ZNmyG6A4/19ZzlJB0jvH+q3RQWOpvTgE8yAPUF6SqTdvFUtbOyk5DzRo+8eWX4Bx5/dd
-         qUDg==
-X-Gm-Message-State: AOAM530XXae8nBlcvPW0pKkunG2e7YbPlXqdghKIIESGtiP8VcM+8QgC
-        RyyEa3iLZtj4oAFqLGZGDDe508A0oc3dotwddJTqXg==
-X-Google-Smtp-Source: ABdhPJymJABAcGavKrbK4gC0YLY9q1kE0CAv498eEeQAGOTIl5L7HsgWnpAyU/aJ7z/O7SDmoNRUPLQWMlGnlmW3E4w=
-X-Received: by 2002:a05:6102:34f:: with SMTP id e15mr10011997vsa.21.1611231207046;
- Thu, 21 Jan 2021 04:13:27 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1fh/a4DYJLi+AyFxFDtHnnnCfJUqWq8QRUBkRL69peM=;
+        b=MOmUw1nz3vZPiFlS2eprynXjS88fg+k/DFKI3Tk3diAYtz+oyGCDeLvdunm3cMNgXb
+         Nmrn/v2Q+GravkM6EsX0YIe59Fk5Mo3VYZAtsJPf4BIaEAIIhm6gbP4iRglqhmpPskzX
+         DLnhV3HNfILqOl92GDBZl/izpAK1UdSiJcYiIE9GvX5BYMf4AKrsS5/vE/UImZRJLOtm
+         3LkPbNdSnCVpBnk2R9YE2xLgE9yfdUSSxUF1V1GeknpvwkYSGzZwc2b2k6xqIMFjBoNi
+         LmaUzxtrxTLp4XMFJ6w2XwcXoMO3k+K/6H8eE4NQk2IzoJnlOj9RxKi+29wuyFiKI9CC
+         PFQQ==
+X-Gm-Message-State: AOAM533eADpHifWmbi6PW+JUh4XTjuIZ6cBc/mbefBIwBs8p67zcXqZR
+        Z9PC41dzMVoYl0on7N7Jagl29YPjyDEghA==
+X-Google-Smtp-Source: ABdhPJx9Bhv813mdnZiQlWQ4Uk812dfwvV+b3bgBmx5XiuSgvG/PaMMnuhhojD92G4yGmytdYhen2A==
+X-Received: by 2002:a1c:f706:: with SMTP id v6mr8828963wmh.85.1611231240762;
+        Thu, 21 Jan 2021 04:14:00 -0800 (PST)
+Received: from localhost.localdomain (lfbn-nic-1-190-206.w2-15.abo.wanadoo.fr. [2.15.39.206])
+        by smtp.gmail.com with ESMTPSA id w129sm7964855wmb.11.2021.01.21.04.14.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Jan 2021 04:14:00 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] gpio: mockup: tweak the Kconfig help text
+Date:   Thu, 21 Jan 2021 13:13:55 +0100
+Message-Id: <20210121121355.31654-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.29.1
 MIME-Version: 1.0
-References: <20210121075149.1310-1-hailong.fan@mediatek.com>
- <CANMq1KBqKUofLaM+OEaTq6PSeYomNSLvn65c+Wyi1cKsLDNboQ@mail.gmail.com> <1611230975.2493.17.camel@mhfsdcap03>
-In-Reply-To: <1611230975.2493.17.camel@mhfsdcap03>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 21 Jan 2021 20:13:16 +0800
-Message-ID: <CANMq1KCXrEGrNrOwivrchXyawzKySVzQoxA1goYC-eh-auNFCA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] pinctrl: mediatek: Fix trigger type setting follow
- for unexpected interrupt
-To:     mtk15103 <hailong.fan@mediatek.com>
-Cc:     Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, youlin.pei@mediatek.com,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Chen-Tsung Hsieh <chentsung@chromium.org>,
-        gtk_pangao@mediatek.com, Hanks Chen <hanks.chen@mediatek.com>,
-        Yong Wu <yong.wu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 8:09 PM mtk15103 <hailong.fan@mediatek.com> wrote:
->
-> On Thu, 2021-01-21 at 16:55 +0800, Nicolas Boichat wrote:
-> > On Thu, Jan 21, 2021 at 3:52 PM Hailong Fan <hailong.fan@mediatek.com> wrote:
-> > >
-> > > When flipping the polarity will be generated interrupt under certain
-> > > circumstances, but GPIO external signal has not changed.
-> > > Then, mask the interrupt before polarity setting, and clear the
-> > > unexpected interrupt after trigger type setting completed.
-> > >
-> > > Signed-off-by: Hailong Fan <hailong.fan@mediatek.com>
-> > > ---
-> > > Resend since some server reject.
-> > > ---
-> > >  drivers/pinctrl/mediatek/mtk-eint.c | 13 +++++++++++--
-> > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-> > > index 22736f60c16c..3acda6bb401e 100644
-> > > --- a/drivers/pinctrl/mediatek/mtk-eint.c
-> > > +++ b/drivers/pinctrl/mediatek/mtk-eint.c
-> > > @@ -157,6 +157,7 @@ static void mtk_eint_ack(struct irq_data *d)
-> > >  static int mtk_eint_set_type(struct irq_data *d, unsigned int type)
-> > >  {
-> > >         struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
-> > > +       unsigned int unmask;
-> >
-> > bool?
-> Yes,thanks.
-> >
-> > >         u32 mask = BIT(d->hwirq & 0x1f);
-> > >         void __iomem *reg;
-> > >
-> > > @@ -173,6 +174,13 @@ static int mtk_eint_set_type(struct irq_data *d, unsigned int type)
-> > >         else
-> > >                 eint->dual_edge[d->hwirq] = 0;
-> > >
-> > > +       if (!mtk_eint_get_mask(eint, d->hwirq)) {
-> > > +               mtk_eint_mask(d);
-> > > +               unmask = 1;
-> > > +       } else {
-> > > +               unmask = 0;
-> > > +       }
-> > > +
-> > >         if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING)) {
-> > >                 reg = mtk_eint_get_offset(eint, d->hwirq, eint->regs->pol_clr);
-> > >                 writel(mask, reg);
-> > > @@ -189,8 +197,9 @@ static int mtk_eint_set_type(struct irq_data *d, unsigned int type)
-> > >                 writel(mask, reg);
-> > >         }
-> > >
-> > > -       if (eint->dual_edge[d->hwirq])
-> > > -               mtk_eint_flip_edge(eint, d->hwirq);
-> >
-> > Why are you dropping this? Aren't we at risk to miss the first edge
-> > after mtk_eint_set_type is called?
-> mtk_eint_unmask() will do it.
-> If unmask != 1, user need to call mtk_eint_unmask() to enable the
-> interrupt before use it, thanks.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Makes sense, I just have one more worry:
-https://elixir.bootlin.com/linux/latest/source/drivers/pinctrl/mediatek/mtk-eint.c#L122
+gpio-mockup doesn't require SYSFS to be selected so drop that bit from
+the Kconfig text.
 
-mtk_eint_unmask unmasks the interrupt _before_ the edge is flipped,
-could this cause a spurious interrupt? On any unmask operation -- not
-just on mtk_eint_set_type (so this is technically another problem,
-that should be fixed as a separate patch)
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> > > +       mtk_eint_ack(d);
-> > > +       if (unmask == 1)
-> >
-> > Just `if (unmask)`
-> Yes,thanks.
-> > > +               mtk_eint_unmask(d);
-> > >
-> > >         return 0;
-> > >  }
-> > > --
-> > > 2.18.0
->
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index c70f46e80a3b..e8e3ed803c07 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1633,8 +1633,7 @@ config GPIO_MOCKUP
+ 	select IRQ_SIM
+ 	help
+ 	  This enables GPIO Testing driver, which provides a way to test GPIO
+-	  subsystem through sysfs(or char device) and debugfs. GPIO_SYSFS
+-	  must be selected for this test.
++	  subsystem through sysfs (or char device) and debugfs.
+ 	  User could use it through the script in
+ 	  tools/testing/selftests/gpio/gpio-mockup.sh. Reference the usage in
+ 	  it.
+-- 
+2.29.1
+
