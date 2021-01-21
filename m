@@ -4,81 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F268C433E6
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333FCC433DB
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25868206ED
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D68F72399A
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Jan 2021 12:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730975AbhAUMRH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Jan 2021 07:17:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51810 "EHLO
+        id S1728846AbhAUMU1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Jan 2021 07:20:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730820AbhAUMQ5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Jan 2021 07:16:57 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA4FC0613CF
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:16:12 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id b10so2212160ljp.6
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:16:12 -0800 (PST)
+        with ESMTP id S1730963AbhAUMOj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Jan 2021 07:14:39 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3BCC0613CF
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:13:54 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id h7so2197101lfc.6
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Jan 2021 04:13:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9Wtv/oGlhHYXfu5S1B9jE1DQi/pI6PhFjtlqmq/M6uU=;
-        b=qHUU2VGYj8yE6Tcu7dl1lx0DsjEOLk0/gvZNPnjPSmY8ouNCDzW+GvLTeDTjHrGAxQ
-         OtgSPqw0/YxYj69JzivdmCzUpl5ASV9E6FlNysACGUZg+21lkzArbJK1kGYwgFLzxeFv
-         38u9clbjzyywSmiSpwhCdL7ajylnGFuLy0MzDV6inJOeWpCP0g8Ze0Yoj0dr28eU4yKT
-         UbIlNtOCMhNycbR0yjyi7FnTz/MG4mPK7fEbgJkMHWMqoxVar5RyjRwoPQorNeoshafr
-         CEr24WPwSHRV2BkQjRh2e40SQv24yuxeuw0SWF8wnEfm9++MUtPbSJdOeRK3LLx1p4E+
-         vxPA==
+        bh=Myx5eVNR3ui/ZOjCm1kbNmJ8TPZ/ps+O2zKImwlnNDw=;
+        b=PptR/y8axGlQYN9TjYXCbMoAG0s9YFu7WBRrSDpGtB4PxYHLcMVlk118pM5qfOWW5v
+         cdsHHzq+NzVA64vjIHoOaI2pG6eW0HyXMNYzJYXP6uQco7rmyZcHEkwoT8jjWFlhYlqQ
+         nipubU0tuAlSnFeEwTuF8RA75WkX9zhciNVZ4PsafyU0QOwCNiU415fObnn5VMdigI8L
+         NcM4rsveU9bue68MPHVSzYNsfivoQ1vUVpip0p7Mzt1t+VH33AwCo1h133ny0FjMzsBC
+         Xvjb0PjGMSD8YoQdRLpTuH+hy/ssqyzVR8IrtRmcQTCI9W3sRRXbwgF+lXfp0h0a1Tu1
+         j/EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9Wtv/oGlhHYXfu5S1B9jE1DQi/pI6PhFjtlqmq/M6uU=;
-        b=QIf7X3TczKzjfAJaAf8FJ5h2OZdgEL+1Mu9OkxxJ20BFjyHmKa/WVTvlaKIE4NVWcI
-         f47+HPpzqn+Ksw3/DxYthPNA0E8ROwd65Dez6YZ8zk0pcoPRIawhWKKUMLhdU2QrZcQ6
-         yyr3d9IE+2yObRzo5ngvHPxD8as9bjSQ8QDhGw2pqIPtzkbZWh+4lwjIHkM/1FKOfu/u
-         JXGtDJfZ2JbaH3UM9xCPS9vWHtRBucnHRNhnBvCK08DcQIcKShQ9wlb8AeLdFO4q6S25
-         rWdz7D5Ervdtx4mTmq8waG0thMao72W0UPvDQNMHtuBOuYrWWSsOe+Vo8n2BqDF+afUu
-         utAw==
-X-Gm-Message-State: AOAM531td+KSywXGfoEwr3QBcRl92m1zNM4j6TsB9rlkKe2lMRMeLJUo
-        OETapSTAQWZLzPyzUA60H/VP6i4zfOHAwaOjhe+BDg==
-X-Google-Smtp-Source: ABdhPJxOpmC7bp0kI1WyMPCJ1Yfz6KX8VPH4FwGmX6MRUhQVsg1COINq9Z3v9kR0tmojXDJB7rHsq0iU8ned4wcpHew=
-X-Received: by 2002:a2e:b54d:: with SMTP id a13mr46804ljn.438.1611231371124;
- Thu, 21 Jan 2021 04:16:11 -0800 (PST)
+        bh=Myx5eVNR3ui/ZOjCm1kbNmJ8TPZ/ps+O2zKImwlnNDw=;
+        b=fbgD6XHIos4jxV/PjWk59it7D+KkI2mcjM2Etc0+o1OSR8cAWdUSG0iJ3xQsORUB1e
+         VH+38nJ1qXxM5tbyCoDWGlR/iLL1l4kPHs1cpqLOpM0IKNumqZ8769WWUnt5uTEjrwiT
+         XrI/MB89BYeePmaLCVBYnScu+ldj1O9H50rO34lsJv00ayPJ1OUSR+nal0e6t4MsQ8Rt
+         bPV50qbwGUMWuiHE63VIV/uc5ywDfjhEN1ipEtgcfk7WbzZIVF2thx9SjtRxOddt4Ghp
+         xmFQ2oLbrqB8oUxmFGA5vNv6hiZ25/Mq3iZi+SzcYwsRdLID5LyYiJY04tFC4vDKJeqC
+         ddYA==
+X-Gm-Message-State: AOAM530bqpwQ3ds7zAFFAKB9hOvEyqQzD8rpsJLc9jmpePZ0G488HSO7
+        BkgHLoNS5yC5bHgBS61onpT3Hoex5n68T9QQyUWTVw==
+X-Google-Smtp-Source: ABdhPJy4ogC8cUFfatEuWax8vy3nRxBHlsEqavCD4L8Eh8EmBpIGmwwKufkZvlfvqgQZlGAbFOE1QSnK8tLR9sU608M=
+X-Received: by 2002:a19:8bc6:: with SMTP id n189mr6311874lfd.291.1611231233107;
+ Thu, 21 Jan 2021 04:13:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20210120110722.20133-1-paul@crapouillou.net>
-In-Reply-To: <20210120110722.20133-1-paul@crapouillou.net>
+References: <20210120132045.2127659-1-arnd@kernel.org> <20210120132045.2127659-3-arnd@kernel.org>
+In-Reply-To: <20210120132045.2127659-3-arnd@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 21 Jan 2021 13:16:00 +0100
-Message-ID: <CACRpkdaTKWT9=DNJUzcN_03JR88bjurRUb7b12P4iTHdAVXbzA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: ingenic: Improve JZ4760 support
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     od@zcrc.me,
+Date:   Thu, 21 Jan 2021 13:13:42 +0100
+Message-ID: <CACRpkdZWtGzLUnDg5G4CUnyc9NpSZoTu3Cf2qE-rNCNw6HXqag@mail.gmail.com>
+Subject: Re: [PATCH 2/5] pinctrl: remove zte zx driver
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jun Nie <jun.nie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 12:07 PM Paul Cercueil <paul@crapouillou.net> wrote:
+On Wed, Jan 20, 2021 at 2:20 PM Arnd Bergmann <arnd@kernel.org> wrote:
 
-> - Add otg function and otg-vbus group.
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> - Add lcd-8bit, lcd-16bit, lcd-18bit, lcd-generic and lcd-special
->   groups. Change the lcd-24bit group so that it only selects the pins
->   that aren't in the lcd-18bit and lcd-generic groups (which breaks
->   Device Tree in theory, but there is none out there for any JZ4760
->   based board, yet). Remove the lcd-no-pins group which is just useless.
+> The zte zx platform is getting removed, so this driver is no
+> longer needed.
 >
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Cc: Jun Nie <jun.nie@linaro.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 Patch applied.
 
