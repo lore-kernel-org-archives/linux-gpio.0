@@ -2,67 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEBDC4332B
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F13CC433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 104C323444
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A7882343E
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbhAVMSc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 07:18:32 -0500
-Received: from mga05.intel.com ([192.55.52.43]:24395 "EHLO mga05.intel.com"
+        id S1727875AbhAVMk6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 07:40:58 -0500
+Received: from mga03.intel.com ([134.134.136.65]:47127 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727815AbhAVMSV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Jan 2021 07:18:21 -0500
-IronPort-SDR: KR0+RJ8/cQP5DyaH4o4Ok76D6YyHDaM9Zw5cFYd4Jl+mAsQEl+oQPy3O2CDLruKbm8bSXyi996
- 6LysIUplzNOw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9871"; a="264255541"
+        id S1727898AbhAVMku (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 Jan 2021 07:40:50 -0500
+IronPort-SDR: CwS/seXfsOeHe7HMyxWihyx8FJcArAO2lKMuZ9WFizjffgkcATd7ik/a9+SOrFRUfxJX5cd2rl
+ dmDfa0uRnm9Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9871"; a="179520759"
 X-IronPort-AV: E=Sophos;i="5.79,366,1602572400"; 
-   d="scan'208";a="264255541"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2021 04:16:36 -0800
-IronPort-SDR: WItIChbS6ax3acWXO6rgpUIL2zM88u2AcZUf0fSgR/M6oD+YBU6GDurRHRU04zStvByIDth58g
- Pctlzq6Ra3Ww==
+   d="scan'208";a="179520759"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2021 04:38:59 -0800
+IronPort-SDR: i+qKkExPyNb8COWADY0TxTzxATrFraW4s0GzLWpzUZFN3e1gVKNSpK6kvtBSBk8aBv5KETySs7
+ n5XvI7SHTJFw==
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.79,366,1602572400"; 
-   d="scan'208";a="467909267"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2021 04:16:34 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l2vNh-008r1C-NA; Fri, 22 Jan 2021 14:17:37 +0200
-Date:   Fri, 22 Jan 2021 14:17:37 +0200
+   d="scan'208";a="574626614"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 22 Jan 2021 04:38:57 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id C7FFB12A; Fri, 22 Jan 2021 14:38:56 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v1] gpio: aggregator: Use compound literal from the header
-Message-ID: <YArCYTsuA2r+segw@smile.fi.intel.com>
-References: <20210122105045.23820-1-andriy.shevchenko@linux.intel.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 2/6] lib/cmdline: Update documentation to reflect behaviour
+Date:   Fri, 22 Jan 2021 14:38:49 +0200
+Message-Id: <20210122123853.75162-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210122123853.75162-1-andriy.shevchenko@linux.intel.com>
+References: <20210122123853.75162-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210122105045.23820-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 12:50:45PM +0200, Andy Shevchenko wrote:
-> Instead of doing it in place, convert GPIO_LOOKUP_IDX() and GPIO_HOG()
-> to be compund literals that's allow to use them as rvalue in assignments.
-> 
-> Due to above conversion, use compound literal from the header
-> in the gpio-aggregator.c.
+get_options() API has some tricks to optimize that may be not so obvious
+to the caller. Update documentation to reflect current behaviour.
 
-I will resend this as a part of other aggregator related series as v3.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+v3: added Rb tag (Bart)
+ lib/cmdline.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/lib/cmdline.c b/lib/cmdline.c
+index b390dd03363b..2a9ae2143e42 100644
+--- a/lib/cmdline.c
++++ b/lib/cmdline.c
+@@ -83,7 +83,7 @@ EXPORT_SYMBOL(get_option);
+  *	get_options - Parse a string into a list of integers
+  *	@str: String to be parsed
+  *	@nints: size of integer array
+- *	@ints: integer array
++ *	@ints: integer array (must have a room for at least one element)
+  *
+  *	This function parses a string containing a comma-separated
+  *	list of integers, a hyphen-separated range of _positive_ integers,
+@@ -91,6 +91,11 @@ EXPORT_SYMBOL(get_option);
+  *	full, or when no more numbers can be retrieved from the
+  *	string.
+  *
++ *	Returns:
++ *
++ *	The first element is filled by the amount of the collected numbers
++ *	in the range. The rest is what was parsed from the @str.
++ *
+  *	Return value is the character in the string which caused
+  *	the parse to end (typically a null terminator, if @str is
+  *	completely parseable).
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.29.2
 
