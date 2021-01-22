@@ -2,106 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40076C433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADE3C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:51:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F240323437
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:42:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B74423437
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:51:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbhAVMm1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 07:42:27 -0500
-Received: from mga03.intel.com ([134.134.136.65]:47127 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728038AbhAVMmO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Jan 2021 07:42:14 -0500
-IronPort-SDR: nfFSITXxLbfUU98Y9eQuSqZEISV1CCsTuOoVQ3D/Z4Z7xWPef/a6/xT1jKE/zAeq6G4h5BLcDX
- JvFp1mVnLOeA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9871"; a="179520761"
-X-IronPort-AV: E=Sophos;i="5.79,366,1602572400"; 
-   d="scan'208";a="179520761"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2021 04:38:59 -0800
-IronPort-SDR: q/WI+RujMJUmG5WowZBt2RFZ2QWJFJxwEPFAgOImt+a015pjL2X09OXO6dRBJtRZV693EXTwcG
- kqCgw79yX1Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,366,1602572400"; 
-   d="scan'208";a="574626615"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 22 Jan 2021 04:38:57 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id F136332E; Fri, 22 Jan 2021 14:38:56 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 5/6] gpio: aggregator: Use compound literal from the header
-Date:   Fri, 22 Jan 2021 14:38:52 +0200
-Message-Id: <20210122123853.75162-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210122123853.75162-1-andriy.shevchenko@linux.intel.com>
-References: <20210122123853.75162-1-andriy.shevchenko@linux.intel.com>
+        id S1726160AbhAVMvc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 07:51:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59160 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbhAVMva (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 07:51:30 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75997C0613D6
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 04:50:50 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id 3so6399486ljc.4
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 04:50:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QO7Q+Bo33zbKnfaEHa+E7ZPJqNq7QkLPG7LoF8C4d3A=;
+        b=SL1MkqdG64CwdvkhfXYSrqOrM8jouPAzIskR9ioxGZEGYVr+LPhxO3T8H/nksBdLOb
+         CbIVcTHnzQh3T9v+a1Wjht2/fpG0vuMJT84bG0x32AYxuDxxwoeLBI+7l5dJTvabgc6a
+         XpjrEOUqSdNv6j4rWkEwkooIxq0NahTmHQe1is4N6EMrNJGy6L8Wy5cdcr5ksbl2TIeL
+         4Z5Vx51aSdIYZ4NFkqxkZfD9nOd624I+sv1rNq2JLm2BKioaHCOEhPIFCcXEukJNzbP+
+         8w5h6pR5T/OoSGb2mJZQgc3M4uorEtBFccLjjOxSqhm7zJf9TUr0R2hIW607eINllEdo
+         d0iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QO7Q+Bo33zbKnfaEHa+E7ZPJqNq7QkLPG7LoF8C4d3A=;
+        b=EOR2DLQzCeIUeSdepx9b/zOJI+vbExhcg2vUGJO39x7Hs00Bht50fQZjYBuTBgQNSJ
+         eztisZLiQVCNYOlxVAxDMwCF6Be4saBiPv478vm7QjIXp/lgM0fCL4qZrEZwZpBOrCc6
+         bfqIic5+71zXWjRBNiN2VHR7qBikZhfnFXjQKVuuOLDZJko+1zdxtWZoV48olZEBL4eO
+         6xf1Sn9qBSnceUs4bWt2azkNLGG+S16euhC5yuqzVS/NqJle2O76KxZd+I4l9DCPmA5+
+         xvlg/J7q0SQZXalDUd7bjlQr31ZDxXUezrJ8ZRlMAZDZgu9SoVhhNLaxJ+l2aGWiV+7r
+         WTcw==
+X-Gm-Message-State: AOAM530DrSzpMYXsJ8xHGB5Z+OF+eVEwofQdGYE63hdRaPh+NENu5eEr
+        Qc9589Lj+Sr1q9oKs4lJuO2FhTbArJ/VQ8F2bF+41g==
+X-Google-Smtp-Source: ABdhPJzrQ3mW9M5Y//9pmvu5f6Du0SUf66RDCzTfz6ifwbqkhCcvEypYapctjRN3IVFznyLy+t5TLNmK8ZHFt3ytEWI=
+X-Received: by 2002:a2e:9dc3:: with SMTP id x3mr720600ljj.326.1611319848907;
+ Fri, 22 Jan 2021 04:50:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1611034054-63867-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+ <1611034054-63867-2-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+In-Reply-To: <1611034054-63867-2-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 22 Jan 2021 13:50:37 +0100
+Message-ID: <CACRpkdYH_ZdwF_aXTrp-5rYCifmHF2X8172513q9P+t4vy_RLg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] firmware: xilinx: Added pinctrl support
+To:     Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        git <git@xilinx.com>, saikrishna12468@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Instead of doing it in place, convert GPIO_LOOKUP_IDX() and GPIO_HOG()
-to be compund literals that's allow to use them as rvalue in assignments.
+On Tue, Jan 19, 2021 at 6:28 AM Sai Krishna Potthuri
+<lakshmi.sai.krishna.potthuri@xilinx.com> wrote:
 
-Due to above conversion, use compound literal from the header
-in the gpio-aggregator.c.
+> Add pinctrl support to query platform specific information (pins)
+> from firmware.
+>
+> Signed-off-by: Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v3: new patch
- drivers/gpio/gpio-aggregator.c | 3 +--
- include/linux/gpio/machine.h   | 4 ++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+I need an ACK from the maintainer of this file to merge it with the rest to
+the pinctrl tree. I suppose Michal?
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 40a081b095fb..13e473c97ce4 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -72,8 +72,7 @@ static int aggr_add_gpio(struct gpio_aggregator *aggr, const char *key,
- 	if (!lookups)
- 		return -ENOMEM;
- 
--	lookups->table[*n] =
--		(struct gpiod_lookup)GPIO_LOOKUP_IDX(key, hwnum, NULL, *n, 0);
-+	lookups->table[*n] = GPIO_LOOKUP_IDX(key, hwnum, NULL, *n, 0);
- 
- 	(*n)++;
- 	memset(&lookups->table[*n], 0, sizeof(lookups->table[*n]));
-diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
-index 781a053abbb9..d755e529c1e3 100644
---- a/include/linux/gpio/machine.h
-+++ b/include/linux/gpio/machine.h
-@@ -75,7 +75,7 @@ struct gpiod_hog {
-  * gpiod_get_index()
-  */
- #define GPIO_LOOKUP_IDX(_key, _chip_hwnum, _con_id, _idx, _flags)         \
--{                                                                         \
-+(struct gpiod_lookup) {                                                   \
- 	.key = _key,                                                      \
- 	.chip_hwnum = _chip_hwnum,                                        \
- 	.con_id = _con_id,                                                \
-@@ -87,7 +87,7 @@ struct gpiod_hog {
-  * Simple definition of a single GPIO hog in an array.
-  */
- #define GPIO_HOG(_chip_label, _chip_hwnum, _line_name, _lflags, _dflags)  \
--{                                                                         \
-+(struct gpiod_hog) {                                                      \
- 	.chip_label = _chip_label,                                        \
- 	.chip_hwnum = _chip_hwnum,                                        \
- 	.line_name = _line_name,                                          \
--- 
-2.29.2
-
+Yours,
+Linus Walleij
