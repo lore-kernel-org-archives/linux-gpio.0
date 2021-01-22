@@ -7,83 +7,119 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6277BC433E0
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 10:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503DAC433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 10:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2100A235F7
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 10:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 047E02376F
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 10:18:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbhAVKCw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:02:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50740 "EHLO
+        id S1727262AbhAVKRv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 05:17:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbhAVKBF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 05:01:05 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57D8BC06178B
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 01:50:30 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id p13so5832431ljg.2
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 01:50:30 -0800 (PST)
+        with ESMTP id S1727873AbhAVKQX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 05:16:23 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376C2C061788
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 02:15:23 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id v24so6781501lfr.7
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 02:15:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=pKapt/M6y/PyIWz6wXtu/tZ4eGaVQitNaXfiOXO+clw=;
-        b=Ai0IGzb/825iKbCNaOMRzOq/NIIdsqb1K/mSaEkhPBqb1st67Cwqu2faoXi+pSoqJa
-         V2tZFQR6tYIfGfYruJlgPDBN0Z+sgVFc5yef1OIl/FFJq3Vk/kcjX7CxSS1T8kbBLJzr
-         qs6iP9UOHVE6ZPNXVAyBWzzeTyJ6VAtidhIQHD7x3IdolPgEfcrghaNVbG4c0/3Ggpq8
-         chr72u2wzD1Cwa5ND9zXe/wBBqwzB/vmzVmlYWqDTQ+uqqvWncpAzgIdHSLSwPIRwuSe
-         8FGmf9sxtu6UYFEnluZ/lBJ0YgkS0509F02OlCSSf3foc7RzmkOzpejlQ/V37r+N60b9
-         fJ+w==
+        bh=JeOk+55hs/OjAgPyY2pb0nUEwkpKQZfK7wFamZWRbYs=;
+        b=ZutjUI2lm71tLSgZAaQNa0u/+Urgw/34kwRHkYdDkn5FxIxtrRCeAOTHzgeWePnwYs
+         kUSrCiLPSzdFwOlKTwcAzg09jPp+C0rMFFdw0krhbTLHYaJ8cPBw9TSgpEesedTLXDo0
+         jGY6dXbt8fMo6RPM/UWHbEthK2UMyq/nU6RbWeAYDB8/Q5q1Z4hwltIvJZOSSmzRu9Lz
+         ypDtXM6pz5ZAKV6IuJYFAzfOZL/4u1harAEtafCjedsMab9QVBiHaon68kJ9HC3Eib2j
+         o/vFbypqY3CqiRpX+P70hkrAVAX4Z1qoac2LNHlnACwRBydFFKCkAaIDaCmPHZ1roA9Y
+         BJgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pKapt/M6y/PyIWz6wXtu/tZ4eGaVQitNaXfiOXO+clw=;
-        b=mQhIZ8bGibOdvaZzHrigse8xsidvbblXhMWtZ0xD4Umd/wQL1/RFPnmp2LhbXiUXa4
-         c5cBP5t0NWEncbf0ZeXN5qNWKOZNf5OkjsKd0ijW3Fn9htSn93eGfM07ftivzTTQroKO
-         a4QNmELl83RqRaC56t1c1a5JnNnQTr/8e0aEBWqUfpyzFYTlHB08bzSqabqjKBO/pQ++
-         ehQl7e0B58wWd6u8dCPPWLfnoK+ImwJF91kKIjdBBnruuXKXUwIypYXWBtDhGMt8+65R
-         SW5Ivl9B1qcevQOmynH2iotkwASGk9aWecxUpQ5AfTUD66Z/2I5WZoTQ8lxnuMkC8qLq
-         w22g==
-X-Gm-Message-State: AOAM530QkQyQ9aRrUOswgQimBQK57ybDkgXOcvzJKxJkDnOHMJ8VH1Jd
-        57AN326GFljeUa+nFrVjCGvif+Ari+jceGKxgG28vQ==
-X-Google-Smtp-Source: ABdhPJwxAUKeWHiEudGoJqNviXtDPynvQ8t1kMzlIC2gud45legMMte2/A/VmDnms7BnWvZCVVE4QvXAtgPdQPsWOAA=
-X-Received: by 2002:a2e:b047:: with SMTP id d7mr298641ljl.467.1611309028785;
- Fri, 22 Jan 2021 01:50:28 -0800 (PST)
+        bh=JeOk+55hs/OjAgPyY2pb0nUEwkpKQZfK7wFamZWRbYs=;
+        b=sfkEdIT+bAq712H+6S559c4e0YMSfzJ7W/Us5bunbaVRT3obrufYDNxhYboT/FJ4qR
+         EgvTGaxOL3GPMGgNzHABVxwbJnEhyvR4PcH0yDqTFTT3vZtsmqcmweJNnqqPLsgmdw6B
+         G1NimN+pBR8DIl2sE0P3Yc56wME7IDTAPIHkJFIccC2iKEE/qO2ObemzXNZChEv+9/S9
+         j+gEZjC7xMFtmSEpuqc3K0IZw+T6c2TWh98O4LwrrkH9JIM2ANEGk/gEF1NbqpAyYtnV
+         Xt1JOn4IFNternNf2mAF/qg23yuuHuWhaSu377Hjl1GU++NOVnfx+sYOWXwFbUJTmObV
+         a7tw==
+X-Gm-Message-State: AOAM530yI3G3hP7+jL+ADPTvQyMiTmrN4P1UsPyhgiDdQMDKHSJwg1LX
+        Ez31dVzD4eiQXg9cXBS/eo9S/4JRB1GSXD5YUoFjeg==
+X-Google-Smtp-Source: ABdhPJxxdubXPUSxQzdq6d+z5fTzKW36/7vCD1kavkda0eM8/Ly6Qv8oTZwe5Q/8DW3CLRR1CypzljgEijF8mX6PknA=
+X-Received: by 2002:a05:6512:3238:: with SMTP id f24mr1964113lfe.29.1611310521729;
+ Fri, 22 Jan 2021 02:15:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20210113194952.104734-1-u.kleine-koenig@pengutronix.de>
- <20210113194952.104734-2-u.kleine-koenig@pengutronix.de> <CACRpkdbVKzE_pe0mPb4H2c0RVJGxEtiFEfMpTCoEO+7qdVBHFQ@mail.gmail.com>
- <20210118145721.6puoqfd6jx3x76jh@pengutronix.de>
-In-Reply-To: <20210118145721.6puoqfd6jx3x76jh@pengutronix.de>
+References: <20201209072842.amvpwe37zvfmve3g@pengutronix.de>
+ <20201211170432.6113-1-nicola.dilieto@gmail.com> <20201211170432.6113-2-nicola.dilieto@gmail.com>
+ <20210117130434.663qpp6noujptdyt@pengutronix.de>
+In-Reply-To: <20210117130434.663qpp6noujptdyt@pengutronix.de>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Jan 2021 10:50:17 +0100
-Message-ID: <CACRpkdY03=pawFPJqxwfdxL=dUUDOVvcpt+s+qTHfa9Wg6-eiA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: gpio: pca953x: increase allowed length
- for gpio-line-names
+Date:   Fri, 22 Jan 2021 11:15:10 +0100
+Message-ID: <CACRpkdawMpuznr-XC2uvZm8PvOj-jObpnbz6iptV-Q4OFxjesw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] pwm: pwm-gpio: New driver
 To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Cc:     Nicola Di Lieto <nicola.dilieto@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh@kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 3:57 PM Uwe Kleine-K=C3=B6nig
+Hi Nicola, Uwe,
+
+thanks for looping me in on this very interesting driver!
+
+This can be really helpful, I already see that it would be possible to
+replace the hopeless idiomatic driver for the NSLU2 ixp4xx
+beeper speaker with this driver.
+
+On Sun, Jan 17, 2021 at 2:04 PM Uwe Kleine-K=C3=B6nig
 <u.kleine-koenig@pengutronix.de> wrote:
 
-> Who will pick up this series (preferable v2 instead of this (implicit)
-> v1)? Will they notice this Reviewed-by?
+> > +static void pwm_gpio_work(struct work_struct *work)
+> > +{
+> > +     struct pwm_gpio *pwm_gpio =3D container_of(work, struct pwm_gpio,=
+ work);
+> > +
+> > +     gpiod_set_value_cansleep(pwm_gpio->desc, pwm_gpio->output);
+>
+> Usually you want to check the return value of gpiod_set_value. @Linus +
+> Bartosz: What do you think, does it need checking for an error here?
 
-Bartosz is collecting GPIO patches to Torvalds for this merge
-window.
+We have traditionally been quite relaxed on that. But since it is
+the cansleep variant, meaning this GPIO could be on a GPIO
+expander on I2C or SPI, it would be more important.
+
+However: in this specific case for PWM I wonder if we should
+stick with gpio_set_value() without _cansleep, and then we can
+definitely skip the error check.
+
+That means GPIO PWM can happen on on-chip GPIOs that
+are just a register write. Certainly no need to check the return
+value of these. Also we know it will satisfy timing.
+
+If we allow GPIO PWM on slow buses and expanders that can
+sleep I do not think the PWM will be very good or reliable.
+
+For example on an I2C expander, with the bus speed of
+max 400 kHz, what kind of PWM can we create on that?
+Certainly now above 200 kHz (Nyquist frequency) and
+probably less. And we have to way to actually check the
+frequency of the underlying bus, so I am a bit skeptic
+here.
+
+Would gpio_set_value() work for now or do we need to
+support expanders and _cansleep?
 
 Yours,
 Linus Walleij
