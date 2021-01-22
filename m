@@ -2,138 +2,116 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF50C433DB
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 16:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF74C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 19:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14CCD23AA1
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 16:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D7BB23A7A
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 19:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbhAVQwh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 11:52:37 -0500
-Received: from mail-ot1-f53.google.com ([209.85.210.53]:40287 "EHLO
-        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729445AbhAVQpD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 11:45:03 -0500
-Received: by mail-ot1-f53.google.com with SMTP id i20so5656648otl.7;
-        Fri, 22 Jan 2021 08:44:50 -0800 (PST)
+        id S1728485AbhAVTVU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 14:21:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729696AbhAVSka (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 13:40:30 -0500
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540FBC0617A7
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 10:38:36 -0800 (PST)
+Received: by mail-yb1-xb2a.google.com with SMTP id y4so6404252ybn.3
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 10:38:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4cM6BTjLehZHKGNxw1eQJuLZGeESJeNzjeqPqEolkPM=;
+        b=Ufs/m/pL8sjTm8Fj2vCRs3TnibA1sxGEe4dPJd+5H0G9ieYU57W7PCtQx5hGBou72P
+         A3a7/8/0pTFOvir6svQe+xKlvsBJ4kmmmNotqkM8Us3sJCn161AyjxxXkjmxsGwCAgSB
+         pf2T2LCk+e1p17hwpyzASuJuQdHcAEyEJKdOrisTvkxOSB92v5nbDYhnA8oDlVOgfaQj
+         9/YgejaW/TnSYHJAS03geao+qngv3ZU07lchFtgp8Q4kgJkMLOtSnpzvOdU+8s5oRShD
+         Cq6fBTKZu11jAC1Dc+XJDcrSxpHW8RBQJc3dmp8zYhzsJtBfWsoDxYj6ba1wmmnl4Fxm
+         y+lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pnrEQfhYuBrzK0vLqeOqp/B/gAHb1xQ8W9kS69q0vhc=;
-        b=pI8W10DMWEQAItnG4UPTtU0UcZJFUzaFSgeQZTOzZqIMh8CB/ujfPW0DT/VMgEU4x3
-         zYTc2S8Y6Ghlle8LSs3oda6PAqW1GlE8eVbW+xSXeqLy/s1K26mI4fy6e7vAVz9AOVNk
-         yZ7mAkEUBrt7LuTHmwM5ehoK5j+cdZaX9kOBAfJLg9mKbFK0FrQ4JuECFCOdP/ujwu+a
-         3+9J8xZAX/UgubvUCkGoOWaBcb9jjQrqm+/rNQ0I6ErM4ChAQEFJljpW21FPHheOjdH5
-         b9VGkuo5ZW079u0g2yxHhxhPMThE65/3i/qxPi3JmpsrM+8dmA9JJOtwisiz87EfCQQ0
-         9NaQ==
-X-Gm-Message-State: AOAM531stR6Ex3v644ZZr76dFZhJGGvzOa0tpfA/zpD0dPYrAVoiHsfD
-        DWTX9+9uuuqD8izccRWgmg==
-X-Google-Smtp-Source: ABdhPJxWCkx1VUfDE7OUA/3RFJiCyA1xvZdIVdEX5OCRqoTUAmSOU6tAx5Dp0yfPw2mcrQ4TgUl56g==
-X-Received: by 2002:a05:6830:838:: with SMTP id t24mr4018961ots.139.1611333865388;
-        Fri, 22 Jan 2021 08:44:25 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q77sm1688312ooq.15.2021.01.22.08.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jan 2021 08:44:24 -0800 (PST)
-Received: (nullmailer pid 939438 invoked by uid 1000);
-        Fri, 22 Jan 2021 16:44:23 -0000
-Date:   Fri, 22 Jan 2021 10:44:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: pinctrl: qcom: Add SM8350 pinctrl
- bindings
-Message-ID: <20210122164423.GA931999@robh.at.kernel.org>
-References: <20210121171747.3161543-1-vkoul@kernel.org>
- <20210121171747.3161543-2-vkoul@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4cM6BTjLehZHKGNxw1eQJuLZGeESJeNzjeqPqEolkPM=;
+        b=OUm9yzatO8LIWF2iOMnKY9vZlfOwTTYn4d5QzLZzXOQ/F6C6cn+7CenLyTOz+uPrPs
+         093th50fu1ejt6e/wpbH71ys17dLv4EJ8czWI0X96VF9KrjA8/yXf1VdMpmKBfHw28uG
+         ezHQ02BcRjebIjsIxhKipKqrMW+UBXZEtul/RdGI5mdO0sIC+cpSICMhQMb0gnBmZK7U
+         To+t06Jrewk0OH/XwL5G5eoccN+vsDrdpS4yoJqjaTww4YvNVmJNoJnHexncb1IP+rSx
+         IsA4/D0B/xBvIXrF2omFSfU8Adlvk+A30yRrObRixS8fs67y4OGq6hfMw9v7W9s+kIVV
+         +USQ==
+X-Gm-Message-State: AOAM533Qv9AvPARzxd0UbK21Od6PnF+022XSLloGa0+dETIbcsvkEJ5n
+        BNodAMMnb0GilowLkvfL76XgUiy5p9vHAsp8cyKbNQ==
+X-Google-Smtp-Source: ABdhPJwma2AQ4TcVCauJ6+ntaXdFk2dmzYfWyse9LFsVJgMcLBseH2aXLNppZbj8OPYtx1rSNXAHYiXHFAZr0MHN3gM=
+X-Received: by 2002:a25:dfcb:: with SMTP id w194mr7774121ybg.346.1611340715341;
+ Fri, 22 Jan 2021 10:38:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210121171747.3161543-2-vkoul@kernel.org>
+References: <20210121223756.1112199-1-saravanak@google.com>
+ <CAHp75VcrsVcUWaaE8JZHGDMyX9MKYONoVo+9-rzT7rvnkH5xSg@mail.gmail.com> <CACRpkdYbxrJsaGVskzBjMp05P4NkP5bkReH3TjXJWivG0rFcVw@mail.gmail.com>
+In-Reply-To: <CACRpkdYbxrJsaGVskzBjMp05P4NkP5bkReH3TjXJWivG0rFcVw@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 22 Jan 2021 10:37:58 -0800
+Message-ID: <CAGETcx9EGJi68==uCxrAddZ5GoyNxTKGPxwsqwpv+pzkJ5Uj7A@mail.gmail.com>
+Subject: Re: [PATCH v4] gpiolib: Bind gpio_device to a driver to enable
+ fw_devlink=on by default
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 10:47:46PM +0530, Vinod Koul wrote:
-> Add device tree binding Documentation details for Qualcomm SM8350
-> pinctrl driver.
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  .../bindings/pinctrl/qcom,sm8350-pinctrl.yaml | 146 ++++++++++++++++++
->  1 file changed, 146 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..706bc79db60b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
-> @@ -0,0 +1,146 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/qcom,sm8350-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Technologies, Inc. SM8350 TLMM block
-> +
-> +maintainers:
-> +  - Vinod Koul <vkoul@kernel.org>
-> +
-> +description: |
-> +  This binding describes the Top Level Mode Multiplexer (TLMM) block found
-> +  in the SM8350 platform.
-> +
-> +allOf:
-> +  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8350-tlmm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts: true
-> +  interrupt-controller: true
-> +  '#interrupt-cells': true
-> +  gpio-controller: true
-> +  gpio-reserved-ranges: true
-> +  '#gpio-cells': true
-> +  gpio-ranges: true
-> +  wakeup-parent: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +patternProperties:
-> +  '-state$':
-> +    oneOf:
-> +      - $ref: "#/$defs/qcom-sm8350-tlmm-state"
-> +      - patternProperties:
-> +          ".*":
-> +            $ref: "#/$defs/qcom-sm8350-tlmm-state"
-> +
-> +'$defs':
+On Fri, Jan 22, 2021 at 5:08 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Fri, Jan 22, 2021 at 10:55 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
 
-No need for quotes. Otherwise,
+Andy, I'll address your exit() comments too.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> > On Fri, Jan 22, 2021 at 12:40 AM Saravana Kannan <saravanak@google.com> wrote:
+>
+> > > @@ -596,6 +596,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+> > >                 gdev->dev.of_node = gc->of_node;
+> > >         else
+> > >                 gc->of_node = gdev->dev.of_node;
+> > > +       gdev->dev.fwnode = of_fwnode_handle(gdev->dev.of_node);
+> >
+> > This looks like a complete breakage on ACPI enabled systems.
+>
+> This looks broken to me too, if OF functions are compiled out
+> this happens:
+>
+> include/linux/of.h:#define of_fwnode_handle(node) NULL
+>
+> And if there is a valid fwnode in the device it gets overwritten
+> with NULL.
+>
+> This is partly why I want the DT code to be in its own file.
 
-I'm assuming this passes checks because I can't check due to the 
-dependencies.
+Yeah, both of you are right that this is broken.
 
-Rob
+So all I really need to do to fix this is:
+if (gdev->dev.of_node)
+    gdev->dev.fwnode = of_fwnode_handle(gdev->dev.of_node);
+
+I don't mind putting this in gpiolib-of.c. It's just kinda weird to me
+to call into gpiolib-of.c just for these 2 lines.
+
+I'll just move the entire block inside #ifdef into gpiolib-of.c in the
+next version. Let me know how it looks.
+
+-Saravana
