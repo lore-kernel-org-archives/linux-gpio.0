@@ -2,194 +2,181 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9F8C433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 09:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2B8C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 10:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0CA322DBF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 09:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D01AE235E4
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 10:00:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbhAVJ5J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 04:57:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
+        id S1727418AbhAVJ7W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 04:59:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbhAVJ4h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 04:56:37 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147B8C061786;
-        Fri, 22 Jan 2021 01:55:56 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id g15so3425604pjd.2;
-        Fri, 22 Jan 2021 01:55:56 -0800 (PST)
+        with ESMTP id S1727727AbhAVJua (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 04:50:30 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5A0C061786
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 01:50:03 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id w18so3349271pfu.9
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 01:50:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tD+ViDmR1uT2A2nMuxssbpuh+e9V2Sp2uc5IPNHYRMQ=;
-        b=VlQ2NozSIgFj3HoLHAlzUv32PtjdSBDyESnmP635x/9sEnoOiFqw/ODUFzid7L7vrE
-         vpX85Sf8QO3yRMYbLBhLVLp2XtwdBicnNt8EP6QknqvSxfxU/D8PXnJ87sy5yFG2hVl8
-         DgCayFPpC6pZJJ+rdqvuJvU4Ex61N6P110L2VodNwP89d951Nj4HdzXiVb/Gg7tC2p83
-         OxOW8fAAbgOnLP32TR4zYY7SLJj5anian6mblgZUB4F72I4IIFGyYjgBVMbXJWJVnu8M
-         0awqxpBcQdc6j26XYOnPCkFjnZIcu/sElAragRh/MZIfSvpxF6C443nuLZhDLh14QoZn
-         V05A==
+        bh=OKi5EXU5rgmzsI6aDa7OCZTcXDJNQQk0V5qykYmEWEQ=;
+        b=r5d0wM8IZqYTdqTe1SOJb+tDn7WcwYvVRne8tHym6vj+9wk8zY1c65X5uQcL+/VH+M
+         4vN7WmHmvovFPOAHzyHgBDeiHScEWX8v8Dwma0x+rnaF1xRGALxt5i5p42hGcBSlqcSi
+         Z5zG9Z7HzOifELGIWJ2u2BGwJxrZEpbtaxDuouNE4x5g8v6GveTwI+ZqaT8Zrinf28FY
+         CAiWD/bRfyeNkbp0kLbUuqS8UzJMrH9eI4d5+6o9BmxKHgZWwSTAhbPjlfNmprLMpRA6
+         mFDzfp2rr9xB5v8kINCNgy6bDhb+eAvUm2Rp934ELiKHTkIxj57qJf35cpYYeLAvRRQ9
+         l2xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tD+ViDmR1uT2A2nMuxssbpuh+e9V2Sp2uc5IPNHYRMQ=;
-        b=nQtIffmNwrh40KiEkQAVxuJqLLB6isQ2GfvORhWB9zp7t4nqDiuHD+HcmkbL+XrK8H
-         gWI0HLCvl50QSOZ+HFbdw3yCtFztELZy1524w7/B8sLmzIGDrmvj11XHhl0wyHjsO0re
-         su0HurFyJdv3ZhI9V4x98IcIeLqm7u81XPtyzwqdyDOKwzJSW2UlYMRokqJoTDJ21IfF
-         IcPCs4Lma/bCioFadqobAjXBv+09/ObZnY1mMKORqkwqodWLHUScN6h2bl3ZltZcFof+
-         hNkQVilJ9rNuispaRypYKuwB433bJFsLQLXZW1ipsGqAhhZ2k+AJjJBfdpAl6GAIMOgQ
-         O//g==
-X-Gm-Message-State: AOAM533wIsZ0SBKlN5Ij8EmNQPM3usTYRkPS5jsWJj1MfyG9zotOVUCs
-        W9obY6jjeRvxV5gq9t/dDvKiAXAJiOyinJDhjDg=
-X-Google-Smtp-Source: ABdhPJwZaXNka3/peRQC2KxL3hXIK1JqDTWtfCYGB2DZsvxyL8e//ejrzxE35ta2iegzyCDLrIrNnmeYBaa5X7or0P4=
-X-Received: by 2002:a17:90a:1050:: with SMTP id y16mr4542088pjd.181.1611309355511;
- Fri, 22 Jan 2021 01:55:55 -0800 (PST)
+        bh=OKi5EXU5rgmzsI6aDa7OCZTcXDJNQQk0V5qykYmEWEQ=;
+        b=QvWJdH0KnFtLqnsG774UJ9ArnAOj9eIt+E6DM81kCMxU3thYres4nEUZ24CFLj36iT
+         WRqy+78U4WRutE1iGJB5ZVIvmfHuEF0yPeOvaNG5EyhC/mG0HN5jJAT0PH/gBlg57J1l
+         W48FkcD1Ku8BlObZfwApRN90zjp/w7U5v0nEJ0sTElvzT45Kohjx+rOV1yhV2WT9WpCD
+         r0zTctQrkHaURajpZJupXPPuO1R1m0pOzyiy3FiPyzsY6Bk4euG9i6zMMzhZVtCQU0OK
+         mkGBBIXZvkrGNiiBZTfWL1lWTMajd4M+4ibMom2YlDPkg21t+eiDx6ngcJAXFNH4uK1f
+         yITQ==
+X-Gm-Message-State: AOAM531Mv02TgWiM1sNzqwaek6+byxhqfdqRzJEESIUytz1/6r9f9bnz
+        68Bb43zKWJcQoT2Ia4FyYRJ8hQY9DnH7Y6lNt98=
+X-Google-Smtp-Source: ABdhPJw9nAy2TIV/TBisoHC5r2WsLItDqHIawvumE1Q6ksX4wjBwOCrQ9yL9NMYUcbGN8kVOKGFPsKppK+dZ/LS61mA=
+X-Received: by 2002:a65:644b:: with SMTP id s11mr4012113pgv.4.1611309003007;
+ Fri, 22 Jan 2021 01:50:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20210121223756.1112199-1-saravanak@google.com>
-In-Reply-To: <20210121223756.1112199-1-saravanak@google.com>
+References: <20210121051806.623743-1-drew@beagleboard.org> <CAHp75Vd5M0kyNzq+5gcZEd=6hK_7Y5_dEJ39-yQO7WuYRM4KWw@mail.gmail.com>
+ <20210121232653.GA672978@x1>
+In-Reply-To: <20210121232653.GA672978@x1>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 22 Jan 2021 11:56:44 +0200
-Message-ID: <CAHp75VcrsVcUWaaE8JZHGDMyX9MKYONoVo+9-rzT7rvnkH5xSg@mail.gmail.com>
-Subject: Re: [PATCH v4] gpiolib: Bind gpio_device to a driver to enable
- fw_devlink=on by default
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 22 Jan 2021 11:50:52 +0200
+Message-ID: <CAHp75Vejt3mN4SBTVnRkyLkDA+jnh3Y4pC5bOGdKAdUZGCPFWw@mail.gmail.com>
+Subject: Re: [RFC PATCH] pinctrl: pinmux: Add pinmux-set debugfs file
+To:     Drew Fustini <drew@beagleboard.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@beagleboard.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 12:40 AM Saravana Kannan <saravanak@google.com> wrote:
->
-> There are multiple instances of GPIO device tree nodes of the form:
->
-> foo {
->         compatible = "acme,foo";
->         ...
->
->         gpio0: gpio0@xxxxxxxx {
->                 compatible = "acme,bar";
->                 ...
->                 gpio-controller;
->         };
->
->         gpio1: gpio1@xxxxxxxx {
->                 compatible = "acme,bar";
->                 ...
->                 gpio-controller;
->         };
->
->         ...
-> }
->
-> bazz {
->         my-gpios = <&gpio0 ...>;
-> }
->
-> Case 1: The driver for "foo" populates struct device for these gpio*
-> nodes and then probes them using a driver that binds with "acme,bar".
-> This driver for "acme,bar" then registers the gpio* nodes with gpiolib.
-> This lines up with how DT nodes with the "compatible" property are
-> typically converted to struct devices and then registered with driver
-> core to probe them. This also allows the gpio* devices to hook into all
-> the driver core capabilities like runtime PM, probe deferral,
-> suspend/resume ordering, device links, etc.
->
-> Case 2: The driver for "foo" doesn't populate struct devices for these
-> gpio* nodes before registering them with gpiolib. Instead it just loops
-> through its child nodes and directly registers the gpio* nodes with
-> gpiolib.
->
-> Drivers that follow case 2 cause problems with fw_devlink=on. This is
-> because fw_devlink will prevent bazz from probing until there's a struct
-> device that has gpio0 as its fwnode (because bazz lists gpio0 as a GPIO
-> supplier). Once the struct device is available, fw_devlink will create a
-> device link with gpio0 device as the supplier and bazz device as the
-> consumer. After this point, since the gpio0 device will never bind to a
-> driver, the device link will prevent bazz device from ever probing.
->
-> Finding and refactoring all the instances of drivers that follow case 2
-> will cause a lot of code churn and it is not something that can be done
-> in one shot. In some instances it might not even be possible to refactor
-> them cleanly. Examples of such instances are [1] [2].
->
-> This patch works around this problem and avoids all the code churn by
-> simply setting the fwnode of the gpio_device and creating a stub driver
-> to bind to the gpio_device. This allows all the consumers to continue
-> probing when the driver follows case 2.
+On Fri, Jan 22, 2021 at 1:26 AM Drew Fustini <drew@beagleboard.org> wrote:
+> On Thu, Jan 21, 2021 at 01:18:58PM +0200, Andy Shevchenko wrote:
+> > On Thu, Jan 21, 2021 at 7:18 AM Drew Fustini <drew@beagleboard.org> wrote:
 
 ...
 
-> @@ -596,6 +596,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->                 gdev->dev.of_node = gc->of_node;
->         else
->                 gc->of_node = gdev->dev.of_node;
-> +       gdev->dev.fwnode = of_fwnode_handle(gdev->dev.of_node);
+> > > RFC question: should pinmux-set take function name and group name
+> > > instead of the selector numbers?
+> >
+> > I would prefer names and integers (but from user p.o.v. names are
+> > easier to understand, while numbers are good for scripting).
+>
+> I don't actually see any example of looking up the function name in the
+> existing pinctrl code. There is pin_function_tree in struct pinctrl_dev.
+> pinmux_generic_get_function_name() does radix_tree_lookup() with the
+> selector integer as the key, but there is no corresponding "get function
+> selector by name" function.
+>
+> I think I would need to go through all the nodes in the radix tree to
+> find the name that matches. Although, I am just learning now about the
+> radix implementation in Linux so there might be a simpler way that I am
+> missing.
 
-This looks like a complete breakage on ACPI enabled systems. Care to
-test on ACPI and confirm it works? I could recommend to use Intel
-Galileo platform since there is a dwapb GPIO and a lot of nice
-(semi-sarcastic, because of many quirks) code over the kernel.
-
-(Yes, you have to have both OF and ACPI in the config being enabled
-which is valid combination)
-
->  #endif
-
-...
-
-> +static int gpio_stub_drv_probe(struct device *dev)
-> +{
-> +       /*
-> +        * The DT node of some GPIO chips have a "compatible" property, but
-> +        * never have a struct device added and probed by a driver to register
-> +        * the GPIO chip with gpiolib. In such cases, fw_devlink=on will cause
-> +        * the consumers of the GPIO chip to get probe deferred forever because
-
-get a probe
-
-> +        * they will be waiting for a device associated with the GPIO chip
-> +        * firmware node to get added and bound to a driver.
-> +        *
-> +        * To allow these consumers to probe, we associate the struct
-> +        * gpio_device of the GPIO chip with the firmware node and then simply
-> +        * bind it to this stub driver.
-> +        */
-> +       return 0;
-> +}
+I probably have to revive my work towards gluing ACPI with pin control
+where AFAIR I have created some kind of radix / rbtree for something
+(not sure it's exactly what you need here, so consider this just as a
+side note).
 
 ...
 
-> +       if (driver_register(&gpio_stub_drv) < 0) {
-> +               pr_err("gpiolib: could not register GPIO stub driver\n");
-> +               bus_unregister(&gpio_bus_type);
-> +               return ret;
-> +       }
-> +
->         ret = alloc_chrdev_region(&gpio_devt, 0, GPIO_DEV_MAX, GPIOCHIP_NAME);
->         if (ret < 0) {
->                 pr_err("gpiolib: failed to allocate char dev region\n");
-> +               driver_unregister(&gpio_stub_drv);
->                 bus_unregister(&gpio_bus_type);
->                 return ret;
->         }
+> > The following is better to include in documentation and remove from
+> > the commit message.
 
-Looks like you missed to fix the __exit call in this module.
+> > Shorter is better, what about simply
+> >
+> > # cat /sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pinmux-functions
+> > ?
+> >
+> > Btw  in reST format you may create a nice citation of this. And yes,
+> > this should also go to the documentation.
+>
+> Good point, I'll shorten the example lines in v2.
+
+Even better to tell that we operate on the level of mount point of
+debugfs and use
+
+ # cat pinctrl/44e10800.pinmux-pinctrl-single/pinmux-functions
+
+> > This and above is still part of documentation, and not a commit message thingy.
+>
+> Is something I should add to Documentation/driver-api/pinctl.rst in a
+> seperate patch?
+
+Not sure, I think more about as a part of this very path you change
+code and documentation. But usually it's a preference of the certain
+subsystem.
+
+...
+
+> > > +       if (cnt == 0)
+> > > +               return 0;
+> >
+> > Has it ever happened here?
+>
+> Good point, I guess there is no reason for userspace to write 0 bytes.
+
+My point is that this check is done somewhere in the guts of kernfs.
+When in doubt I recommend to look around in the kernel and check most
+recent code with similar code pieces.
+
+...
+
+> > > +       buf = memdup_user_nul(user_buf, cnt);
+> > > +       if (IS_ERR(buf))
+> > > +               return PTR_ERR(buf);
+> > > +
+> > > +       if (buf[cnt - 1] == '\n')
+> > > +               buf[cnt - 1] = '\0';
+> >
+> > Shouldn't you rather use strndup_from_user() (or how is it called?)
+
+Any comments?
+
+...
+
+> > Can be simply
+> >
+> >  err_freebuf:
+> >         kfree(buf);
+> >         return err ?: cnt;
+>
+> Thanks, I didn't really like the duplication but was having trouble
+> thinking of a cleaner way to write it.  That is good to know it is ok to
+> use the ternary operator in a return statement.
+
+Again, depends on certain subsystem maintainer's preferences.
+
+
+> > > +       debugfs_create_file("pinmux-set", S_IFREG | S_IWUSR,
+> > > +                           devroot, pctldev, &pinmux_set_ops);
+
+One more thing, as a preparatory patch please move from S_I* to plain
+octal numbers as it's preferable.
+
 
 -- 
 With Best Regards,
