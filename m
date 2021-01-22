@@ -2,161 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AB6C433DB
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 11:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81455C433E6
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 11:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41B21238EE
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 11:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5016E238EE
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 11:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbhAVLwX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 06:52:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37868 "EHLO
+        id S1727128AbhAVLyQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 06:54:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727470AbhAVLMY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 06:12:24 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 970B6C06174A
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 03:11:43 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id a10so7085848ejg.10
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 03:11:43 -0800 (PST)
+        with ESMTP id S1727723AbhAVLx5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 06:53:57 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C98C061788
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 03:53:16 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id hs11so7291475ejc.1
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 03:53:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ohfeIb6T1g/LItU2tIorqokyc/lMXRh8pKSHBsSXA/k=;
-        b=jXJUmC/3+d0EWsl9S1V6uTc1zE4vNd3iMIMMJV8fW55PgTBZa9TOpoVnba5jObmhSx
-         M0ZNzDfCg2rYYcb0h3Imye9gS8J4amqddnuAPlmzqHoj+L9UFAtE32qUoRTDMKklGZ47
-         EhH+85CeI5QzFVPM53jCo5aTEVpmXb9cwYtLYKEatzPYV9bkbmw/2RLmCzzY/DIcWNIs
-         FHYPF9hP+xY7rmqxWUjQKRkFDjqgls8B/taKDddqbXdKCM9RR76Ps+M0dYgQ0ZqVMg9R
-         aSIG5vssxhkhW/jM6lJfmcykyquVRMME9EcN3HkbAAdvFPrZ3jFvmf2GwXNM7ARBMlXL
-         ikSg==
+         :cc:content-transfer-encoding;
+        bh=JI8WLVbmTizf9gTslSutB/gV1a/YA//GFzXlgB2oB7E=;
+        b=oCPusnLDZ1GFf67rgHfmnbKLh+PChkBrgKOTG8sqNFuDl0/TsMm3u37AqTy0h+cqO8
+         vo6M5TujMabCxkpWsYOK1fMlTtdfd697cf74nlCg/C7dnFFfN+xgVrwdROsY6y8wnErv
+         ArByyPUktA0kYQ84c7Dp59thGX82SnDzTNi2VhGjNpkGdBKvd9DOnSSGi9jUP1arNIQb
+         SavkOW5VDQIuN+Qu0u/I2FuCPtqsec3PMMNWYmEf/95uQ6Zhzu6G10HYw3vjvxleqaPV
+         E9ITAn5SOl4RJW3TRnPfgCHhewmSQ/68mJPxMWsYSdTIsv/gqg+/cHy7hnz7JDuyFubC
+         Matg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ohfeIb6T1g/LItU2tIorqokyc/lMXRh8pKSHBsSXA/k=;
-        b=awuQ7hKq9ESd1mbu+t6ZoKcw0ycEVVziopSZxsL916cZ+ppTyOTgsnomUH2KHxPe13
-         pYnS6zHxjymHSLhftKoG0lwfFEqkE4nxpgAvUqT1F81r3PAch7+9JPOf9JNnme+yfRMP
-         OIUq0cVDco6AqGZzbWm0qDAjg3d0UyVY2UHYEBNJPnTQgeGwoJoyKXKahvbe7DBUbv7R
-         qdWXfXLY5JJePDjZUeVLgHeQwNKsAk4EbEbUbYn+Xn8BXRak3p7etBfkZ7neSRbJPPOs
-         zuy8ZMbERXa63KeYFy8v2zh81zgJgEMiWM3tRC9tcEpDNM/Trsnq+dB9cM7NTUEIiV+N
-         P3Iw==
-X-Gm-Message-State: AOAM533Uult6NBPdVHFE7HThpN8CSs70/GcqlXEnDXCurSVDeLmaQGbQ
-        hhuHMaFrXA68+PIlkPbs7rdPHQWya/U+DY7xTpDw4Q==
-X-Google-Smtp-Source: ABdhPJx+8cyjOSPL1tc7nHl9sJ3NkCCpib8c5h0HQkGQ8/stAaQAmSsLql1rULjWZoBFb3vWy/h99qtkviGOKMNfKZI=
-X-Received: by 2002:a17:906:2617:: with SMTP id h23mr2639428ejc.168.1611313902323;
- Fri, 22 Jan 2021 03:11:42 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JI8WLVbmTizf9gTslSutB/gV1a/YA//GFzXlgB2oB7E=;
+        b=aQpEC4vw7YE8ZQET9xF0hV9Zj27hiTrTWUE2M4iZqetoICqir0I1rx5oriBLLV3hP+
+         BJaq0U8By1CkuQgTywnFhiyvLRcZfyN85dYU1flg0clU0RId65krQ9eM+8BMidplKSMH
+         Q6G4cszkSeum5HnKWj507m/apVQIAHJqwXXSitsc6awZzGIOHuijuusN5bgnhEXv7G9c
+         6udCSBbA0NQ3e0l20qcLRoEygm7wv29aP7AHF2VlDVKvITOx8rHKA5zOnvL+k3VwKt4B
+         cHE182GoB9fYu4gKHc1fRCGMUqCLZ2IXSs/YkCTVNorKVhdjKZa/jMbr6LUl7BQmp7Uz
+         9CSw==
+X-Gm-Message-State: AOAM531gwzGPOnRG6IArciZuPezoYFbgKnP04qRYEunQbIMODgYO6PwG
+        5dVtOkNF7LGis8274O9WpEtnznsemQ+Wx4a5S/z4/Q==
+X-Google-Smtp-Source: ABdhPJwpXAHlvIudY/PzJhYC6GZ4zseMiiZNvSTQBAdAxIJDPQFnyQBOSXvJgQqYMjN6/NzK6L1vwB6w8Q4hX0pZqcY=
+X-Received: by 2002:a17:906:6846:: with SMTP id a6mr2698616ejs.470.1611316395273;
+ Fri, 22 Jan 2021 03:53:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20210120214547.89770-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210120214547.89770-1-andriy.shevchenko@linux.intel.com>
+References: <20210113194952.104734-1-u.kleine-koenig@pengutronix.de>
+ <20210113194952.104734-2-u.kleine-koenig@pengutronix.de> <CACRpkdbVKzE_pe0mPb4H2c0RVJGxEtiFEfMpTCoEO+7qdVBHFQ@mail.gmail.com>
+ <20210118145721.6puoqfd6jx3x76jh@pengutronix.de> <CACRpkdY03=pawFPJqxwfdxL=dUUDOVvcpt+s+qTHfa9Wg6-eiA@mail.gmail.com>
+In-Reply-To: <CACRpkdY03=pawFPJqxwfdxL=dUUDOVvcpt+s+qTHfa9Wg6-eiA@mail.gmail.com>
 From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 22 Jan 2021 12:11:31 +0100
-Message-ID: <CAMpxmJXjGf3b=KGxghX=Qpd_rDSFvJWZ12dPOsMRut5kR1OSGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] lib/cmdline_kunit: add a new test case for get_options()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Fri, 22 Jan 2021 12:53:04 +0100
+Message-ID: <CAMpxmJUjFyyuqHseyfs+sTivPdx17u-XJt53nUWp0zuW7Uwhpw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: gpio: pca953x: increase allowed length
+ for gpio-line-names
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 10:45 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, Jan 22, 2021 at 10:50 AM Linus Walleij <linus.walleij@linaro.org> w=
+rote:
 >
-> Add a test case for get_options() which is provided by cmdline.c.
+> On Mon, Jan 18, 2021 at 3:57 PM Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  lib/cmdline_kunit.c | 52 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
+> > Who will pick up this series (preferable v2 instead of this (implicit)
+> > v1)? Will they notice this Reviewed-by?
 >
-> diff --git a/lib/cmdline_kunit.c b/lib/cmdline_kunit.c
-> index 550e7a47fd24..74da9ed61779 100644
-> --- a/lib/cmdline_kunit.c
-> +++ b/lib/cmdline_kunit.c
-> @@ -18,6 +18,26 @@ static const int cmdline_test_values[] = {
->         1, 3, 2, 1, 1, 1, 3, 1,
->  };
+> Bartosz is collecting GPIO patches to Torvalds for this merge
+> window.
 >
-> +static_assert(ARRAY_SIZE(cmdline_test_strings) == ARRAY_SIZE(cmdline_test_values));
-> +
-> +static const char *cmdline_test_range_strings[] = {
-> +       "-7" , "--7"  , "-1-2"    , "7--9",
-> +       "7-" , "-7--9", "7-9,"    , "9-7" ,
-> +       "5-a", "a-5"  , "5-8"     , ",8-5",
-> +       "+,1", "-,4"  , "-3,0-1,6", "4,-" ,
-> +       " +2", " -9"  , "0-1,-3,6", "- 9" ,
-> +};
-> +
-> +static const int cmdline_test_range_values[][16] = {
-> +       { 1, -7, }, { 0, -0, }, { 4, -1, 0, +1, 2, }, { 0, 7, },
-> +       { 0, +7, }, { 0, -7, }, { 3, +7, 8, +9, 0, }, { 0, 9, },
-> +       { 0, +5, }, { 0, -0, }, { 4, +5, 6, +7, 8, }, { 0, 0, },
-> +       { 0, +0, }, { 0, -0, }, { 4, -3, 0, +1, 6, }, { 1, 4, },
-> +       { 0, +0, }, { 0, -0, }, { 4, +0, 1, -3, 6, }, { 0, 0, },
-> +};
-> +
-> +static_assert(ARRAY_SIZE(cmdline_test_range_strings) == ARRAY_SIZE(cmdline_test_range_values));
-> +
->  static void cmdline_do_one_test(struct kunit *test, const char *in, int rc, int offset)
->  {
->         const char *fmt = "Pattern: %s";
-> @@ -84,10 +104,42 @@ static void cmdline_test_tail_int(struct kunit *test)
->         } while (++i < ARRAY_SIZE(cmdline_test_strings));
->  }
->
-> +static void cmdline_do_one_range_test(struct kunit *test, const char *in,
-> +                                     unsigned int n, const int *e)
-> +{
-> +       unsigned int i;
-> +       int r[16];
-> +
-> +#define FMT    "in test %u"
-> +#define FMT2   "expected %d numbers, got %d"
-> +#define FMT3   "at %d"
-> +       memset(r, 0, sizeof(r));
-> +       get_options(in, ARRAY_SIZE(r), r);
-> +       KUNIT_EXPECT_EQ_MSG(test, r[0], e[0], FMT " " FMT2, n, e[0], r[0]);
-> +       for (i = 1; i < ARRAY_SIZE(r); i++)
-> +               KUNIT_EXPECT_EQ_MSG(test, r[i], e[i], FMT " " FMT3, n, i);
-> +#undef FMT3
-> +#undef FMT2
-> +#undef FMT
+> Yours,
+> Linus Walleij
 
-IMO these FMT macros are super confusing, please just use hardcoded
-strings because you're not saving any code anyway.
+I already have v2 of this series in my tree.
 
-Bart
-
-> +}
-> +
-> +static void cmdline_test_range(struct kunit *test)
-> +{
-> +       unsigned int i = 0;
-> +
-> +       do {
-> +               const char *str = cmdline_test_range_strings[i];
-> +               const int *e = cmdline_test_range_values[i];
-> +
-> +               cmdline_do_one_range_test(test, str, i, e);
-> +       } while (++i < ARRAY_SIZE(cmdline_test_range_strings));
-> +}
-> +
->  static struct kunit_case cmdline_test_cases[] = {
->         KUNIT_CASE(cmdline_test_noint),
->         KUNIT_CASE(cmdline_test_lead_int),
->         KUNIT_CASE(cmdline_test_tail_int),
-> +       KUNIT_CASE(cmdline_test_range),
->         {}
->  };
->
-> --
-> 2.29.2
->
+Bartosz
