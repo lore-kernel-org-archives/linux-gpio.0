@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16375C4332E
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 19:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBE6C4332B
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 19:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE40C23B00
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 19:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1871923AFE
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 19:35:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbhAVTWD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 14:22:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54056 "EHLO
+        id S1729661AbhAVTVe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 14:21:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728931AbhAVTAS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 14:00:18 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 498ACC061788;
-        Fri, 22 Jan 2021 10:59:33 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id f11so7696336ljm.8;
-        Fri, 22 Jan 2021 10:59:33 -0800 (PST)
+        with ESMTP id S1730133AbhAVTAP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 14:00:15 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC18C061793;
+        Fri, 22 Jan 2021 10:59:34 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id b26so8953352lff.9;
+        Fri, 22 Jan 2021 10:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ohGFiXHYHoTonBgXCTi8H38fPiR4kxhD0+dqMp2Wuxs=;
-        b=Sl5Bmy/whDelcTQo7BO1xlfxmw6kEcYt3iREEv+lw16mkKg6m3S+yZ63rPpLgiKkL2
-         U0GYQGKSKOVz+0v4/qPJo0WMqbjQBxkKzfnPix3Pz7d7cTESMr4lnSyOSSN/kUXHamJ0
-         b/bvFvFcfc9x3fKo4gPXBf0dinETePRXflDuw91Z9+eF9fA+CvFX0vYQ+CssEBegnUVh
-         ln+RaxUhcYQuAvJM2VtGrXMFF2TxObeS5yv/jlHksL8CPYIvunNcm/RDRVdM67e0P4Ft
-         zLfPe9IyXjf3DqovYsdT91GHL7Wt3+NXii3CmlBOKYO5c6QI0/j7IsxH41wZ5gRsGii7
-         H+xw==
+        bh=S4LSwqzDcpzMr0Zo2i9hZKPinlaZGaigjdHHgTDKS4A=;
+        b=E2MNUaADdYPlaaQzE562gYZKSbv5qtwiuLlt9vI6lEImaaVRL1gcenHtVV9CSZjjZ6
+         SkrG3nw+ONuigihKysXPjN0dlQRQaoEFJ7v5u5NtB4MMiWkvQnhHAxUXYgCw6WI7biy1
+         lOPjUtozeiDth2Rlab1pVloWS/nNDzzrdV9U5UNtKvo3LguyVUadeNRN4Bb7pFd2LwMk
+         yZBAwPQ67/GgMN1nB1Lf0fli1N7QgpFaiONazp1vFpzczfK3p18lD1IceTd3SABisK0f
+         Rc8YJKpfJ2iJ1yUG2OttQJKI92Tgc9EhN+GCozLj5RtSyBrvjXz9Usxvf/w3IlyzFHkX
+         KeXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ohGFiXHYHoTonBgXCTi8H38fPiR4kxhD0+dqMp2Wuxs=;
-        b=l+BREk+u5IfNl0lqnVRtOxF+30NN6SLbsrCerj3KBlgycSCqexHBTvv7SPQki/VE14
-         CSXGAoqhBOCl/sACm9WuicftPpuvgO7jp+NRf4dpFgadym96MqWe7ZhTSseWLMUemaSA
-         Kw7okAWV9fXgldAG4SXpppM9riwshXyRQWdkzNbvVVVUVh/LR0f1XFt+QU6EyQW6C588
-         Z3nyfDt3eiYLYAt3QUUJLAnxEtkC4v+tj8Ss63iHpDUBfYLXGoJqfyKFKY9HHcZj/7yK
-         GRnd2wCGTTOXvhPGcRRyLcV6b9mIQi/K2fPoJn5kFQaYlPyCXdVW83zJy56OF2jOaMhu
-         iP8A==
-X-Gm-Message-State: AOAM532IhVO2ffuNcIuYiPhaBffc18OEjXIQ8OFPFgOpF5KMwNtmNHM+
-        4AS/45kU1ruAwunLksy153o=
-X-Google-Smtp-Source: ABdhPJwyqsPT02bv5GCgIRPJ/swOskozutRVMKsDZpT6MjF6G7odbMvIZKvIWF7QcAaNnNJnSvtIDw==
-X-Received: by 2002:a05:651c:282:: with SMTP id b2mr1575237ljo.52.1611341971885;
-        Fri, 22 Jan 2021 10:59:31 -0800 (PST)
+        bh=S4LSwqzDcpzMr0Zo2i9hZKPinlaZGaigjdHHgTDKS4A=;
+        b=FtaQ7EfqQOLRIZdbpjqKML7NtZlFwYMSyrpLwEhOM+ysafqw2aSkoD0kUO9ahKknzB
+         BcjbwgllwG3gX0LsA8whGHk4G0tPP+N10edlROOb84mReZdpZLR6K2pFpPKhnLTNeRFq
+         JbQ0GVF7sN/a6r75F55ni5sm43O5uNBRxyA5HNX5IgSk36953t48vQdx1f1BBq4gBLTF
+         pgdiesA9ZvJPLN1zPVE5vphGzSmoOUj9AjnpPjxU4x3Z26FmD04FazhxtOL2yPtDZXwf
+         aABSLSWKsLWKJDZ/0JhEaFoTuZ1DuuHMCN9Je2TxZIe8NJBI+YmKjKI7oA9EX+8dZccV
+         iSvw==
+X-Gm-Message-State: AOAM531jGx0Md1d17dsdFXkMBLLJCSfM7uEfyqgFKGO3r1Bjvy+K2LXp
+        hxOGSoIudwiy5U3hh0RKQ2Q=
+X-Google-Smtp-Source: ABdhPJw/AtXDmHd8xhzJvD1h8l7YE1RZ8arnDWxrdiZqxWedOJF1MYqsVHfrckg//Tef14sHZ4QOwQ==
+X-Received: by 2002:a19:787:: with SMTP id 129mr906428lfh.540.1611341973568;
+        Fri, 22 Jan 2021 10:59:33 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id 19sm994783lft.90.2021.01.22.10.59.31
+        by smtp.gmail.com with ESMTPSA id 19sm994783lft.90.2021.01.22.10.59.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jan 2021 10:59:31 -0800 (PST)
+        Fri, 22 Jan 2021 10:59:33 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,9 +64,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/3] gpio: tegra: Use debugfs_create_devm_seqfile()
-Date:   Fri, 22 Jan 2021 21:55:41 +0300
-Message-Id: <20210122185543.16554-2-digetx@gmail.com>
+Subject: [PATCH v1 3/3] gpio: tegra: Support building driver as a loadable module
+Date:   Fri, 22 Jan 2021 21:55:43 +0300
+Message-Id: <20210122185543.16554-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210122185543.16554-1-digetx@gmail.com>
 References: <20210122185543.16554-1-digetx@gmail.com>
@@ -76,42 +76,65 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use resource-managed variant of debugfs_create_file(0444) to prepare code
-for the modularization of the driver.
+Support building driver as a loadable kernel module. This allows to
+reduce size of a kernel zImage, which is important for some devices
+since size of kernel partition may be limited and since some bootloader
+variants have known problems in regards to the initrd placement if kernel
+image is too big.
+
+$ lsmod
+Module                  Size  Used by
+gpio_tegra             16384  27
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpio/gpio-tegra.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/gpio/Kconfig      |  2 +-
+ drivers/gpio/gpio-tegra.c | 15 +++++++++------
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 1b0acca28c59..c3ce43cc4c31 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -594,7 +594,7 @@ config GPIO_TB10X
+ 	select OF_GPIO
+ 
+ config GPIO_TEGRA
+-	bool "NVIDIA Tegra GPIO support"
++	tristate "NVIDIA Tegra GPIO support"
+ 	default ARCH_TEGRA
+ 	depends on ARCH_TEGRA || COMPILE_TEST
+ 	depends on OF_GPIO
 diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 9a43129313fa..06f033375e40 100644
+index 1efd6fb642c7..0be24248280a 100644
 --- a/drivers/gpio/gpio-tegra.c
 +++ b/drivers/gpio/gpio-tegra.c
-@@ -605,7 +605,7 @@ static void tegra_gpio_irq_release_resources(struct irq_data *d)
+@@ -798,6 +798,7 @@ static const struct of_device_id tegra_gpio_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, tegra_gpio_of_match);
  
- static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
- {
--	struct tegra_gpio_info *tgi = s->private;
-+	struct tegra_gpio_info *tgi = dev_get_drvdata(s->private);
- 	unsigned int i, j;
- 
- 	for (i = 0; i < tgi->bank_count; i++) {
-@@ -627,12 +627,10 @@ static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--DEFINE_SHOW_ATTRIBUTE(tegra_dbg_gpio);
+ static struct platform_driver tegra_gpio_driver = {
+ 	.driver = {
+@@ -807,9 +808,11 @@ static struct platform_driver tegra_gpio_driver = {
+ 	},
+ 	.probe = tegra_gpio_probe,
+ };
 -
- static void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
- {
--	debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
--			    &tegra_dbg_gpio_fops);
-+	debugfs_create_devm_seqfile(tgi->dev, "tegra_gpio", NULL,
-+				    tegra_dbg_gpio_show);
- }
- 
- #else
+-static int __init tegra_gpio_init(void)
+-{
+-	return platform_driver_register(&tegra_gpio_driver);
+-}
+-subsys_initcall(tegra_gpio_init);
++module_platform_driver(tegra_gpio_driver);
++
++MODULE_DESCRIPTION("NVIDIA Tegra GPIO controller driver");
++MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
++MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
++MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
++MODULE_AUTHOR("Erik Gilling <konkers@google.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.29.2
 
