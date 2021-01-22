@@ -7,76 +7,90 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6848C433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 22:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5F3C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 22:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F67723B09
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 22:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E4D923B01
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 22:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbhAVWyi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 17:54:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46864 "EHLO
+        id S1728170AbhAVWzG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 17:55:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729204AbhAVWsh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 17:48:37 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 932F8C061794
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 14:47:56 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id l12so5816485ljc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 14:47:56 -0800 (PST)
+        with ESMTP id S1728489AbhAVWyv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2021 17:54:51 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ECAEC0613D6
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 14:54:11 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id q12so9737718lfo.12
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2021 14:54:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dIWgpxTzAU7neyLO5D8TajLhANUxOv5nY7y9DCeaEWs=;
-        b=h//3sL6KUkJSBcB5nEzL5E4dPLIsbya6teNaf37vh/c4AtQZPFnYyvkI0mJ1Ltd3mi
-         Szs7f8j7jaygtecvGggDrQQY/AOFN630S/RUKaIRjiBw6btTBRjSPCLDpvWJKpshVeF/
-         4W/vu64bNdRRuXYIWPWgJ8F/5zdgBCLvgvkFjp3N3gObDHQlGqJyKoDgk5RPJh8Cf5G2
-         5QCTieOHwA8k4uOi8FFXX5DDfmwYkfLZNcyYRAXWq6AUb0zGNcuMkhZ28aAiQRxscJFr
-         M7xlU0E3DlY5/IMUsxPd6QfL2+DTMMARrgXq2IxayqP81vVA254gpo17eY9C/Tu9hs2K
-         +soA==
+        bh=lK1Ztruj/7Ai7wfptRb6jTFj2OZIBvggRzmnF/iCjys=;
+        b=dZb+LzStntWjq4Y1nmoakr+NRtwSsyQ3CYDuit/NJtX3SRbsWbPWrq8qvEBnzZsAV4
+         6txTGxY34ZUpnssWeeL7VQ0d9/I9EuGbdiUXnpER6xVqtwXt9PyaQmBop44grcwHSr2b
+         XP/v2WoiYCaeBJHeyo4GENx85lH7Eu24rwD92FI1tdUTCz9t7mArG8ksYtsmSKumQfyO
+         XMKxs6OFcA1AD6QI2E5YvA/v4bXBN2UJFbgWAGNNoShTMV3CojNXsNHrbJBQKEP73bAL
+         PS0BdxSshrGrksJkDdqdUcQKTkO2LIhyYx5f42esHSI+DWIdVhKZZ1ehAFEZ6cG3X3RK
+         bxBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dIWgpxTzAU7neyLO5D8TajLhANUxOv5nY7y9DCeaEWs=;
-        b=OOoYPKT0HeBTp2+eW+66NdHUDVnGiNKqF7zvOi+NU77j9PQdTYtEI/oXA1q6SkyZ+j
-         zPx+i9xIfV3JdAdFX0CeX7xH36tuWzYgBiDg6kn23TQOKRY1F1HnEqjvSYRUui2tNvVF
-         QVbEc1fht7dGtsSI9QU3Zc3zHsRq93sn/PlKrgksjNy7aSbRCWbATTQY61Ty4YLbxvIC
-         W/p+EbXBdv1gPW3C8BENnJOzp59j7t3u10pVZ6lztb3/tHCx5CeEsW/gvFe8i3ciuOni
-         cGDIK4LuvZMeqNvvs1PqHnVEOqN5gkBgwrIIrvmU8BpAMCdyHidFrKGaaSJaRcaox9aN
-         jhkg==
-X-Gm-Message-State: AOAM5321eI17/Zwu9u0AkblinF70ijIbuEroww08PMTuvsVMVYvMqS7B
-        LpeRY0J7N/wSFrg2jVnG3fwTx/Qx4w7pJW6NKVCziw==
-X-Google-Smtp-Source: ABdhPJzoMWpLu1sd1E0uopGczpCuawrVcYbO8BSD89jWRBAsY/YPKGcQeZu2gy5KLDUwD4A7OlfUU0/ukrGAGDhXIaw=
-X-Received: by 2002:a2e:88c1:: with SMTP id a1mr79313ljk.74.1611355675097;
- Fri, 22 Jan 2021 14:47:55 -0800 (PST)
+        bh=lK1Ztruj/7Ai7wfptRb6jTFj2OZIBvggRzmnF/iCjys=;
+        b=SeNw0RQmnM9x8RGSShQBjDpX7BqZ8+DFIUCq/gm/Hw/PsR0UprPD3QkKXhTw8ckdBM
+         smFHKc7d9r8ZaEgLV+LjZDKHRTgEmD4tFOmyjOLQNpAjLqrgOIa4CkCN5VDLUZurTR/g
+         q4OzHJl95ve5bB/SCePiG5IUtA57ytDGUWsGyZVkeln/zhYgBCedkm+bz8fQr5pLd0Ub
+         P8MhnHOvgXUC+ndwcT+pAhBEsw3uwkVl3FuA20WL06P0uS3K2zBwvYCxFuhGuZaVOYBM
+         K9kkcVpOksYnqr6UKqWdYfqxagD25mm0mPSqlcBNXsq428gzKNU8F/MqH8sa35sDCmty
+         pJbw==
+X-Gm-Message-State: AOAM5339v7hHd8fiuSNSw5TyZ1MZkB+cS4lJExPveEp0pYOxC9In2jto
+        pQYw3+WJ2uzrW8MTYGS96ef7NtVH7w7qsgsHCEFx6d9a+al4zQ==
+X-Google-Smtp-Source: ABdhPJy6s+Z1cvTrVuvPnh27aMkITJYy3v+NBelFbox7MDmy1Eoa/Y5shcQQrjQej4BHKxcVr6WEb7OUaBLQ0xZrIN8=
+X-Received: by 2002:a19:495d:: with SMTP id l29mr750255lfj.465.1611356049903;
+ Fri, 22 Jan 2021 14:54:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20210121121355.31654-1-brgl@bgdev.pl>
-In-Reply-To: <20210121121355.31654-1-brgl@bgdev.pl>
+References: <20210119062908.20169-1-liu.xiang@zlingsmart.com> <20210121164013.cqfxvach4ugkohm7@gilmour>
+In-Reply-To: <20210121164013.cqfxvach4ugkohm7@gilmour>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Jan 2021 23:47:44 +0100
-Message-ID: <CACRpkdZ-TT8wwRr6bJgvqjBcw5OkyB7+jyBO3AKdhaWSQTxuVw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mockup: tweak the Kconfig help text
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Date:   Fri, 22 Jan 2021 23:53:59 +0100
+Message-ID: <CACRpkdb1gn2e9=ip6ipAwW27vmf1FCs_y1Z=w-K8y8Z9MXVBMw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sunxi: fix use-after-free in sunxi_pmx_free()
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Liu Xiang <liu.xiang@zlingsmart.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        liuxiang_1999@126.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 1:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Thu, Jan 21, 2021 at 5:40 PM Maxime Ripard <maxime@cerno.tech> wrote:
+> On Tue, Jan 19, 2021 at 02:29:08PM +0800, Liu Xiang wrote:
+> > When CONFIG_REGULATOR is not set, sunxi_pmx_request() always return
+> > success. Even a group of pins call sunxi_pmx_request(), the refcount
+> > is only 1. This can cause a use-after-free warning in sunxi_pmx_free().
+> > To solve this problem, go to err path if regulator_get() return NULL
+> > or error.
+> >
+> > Signed-off-by: Liu Xiang <liu.xiang@zlingsmart.com>
 >
-> gpio-mockup doesn't require SYSFS to be selected so drop that bit from
-> the Kconfig text.
+> Is there any drawback to depending on CONFIG_REGULATOR?
 >
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Given that we need those regulators enabled anyway, I guess we could
+> just select or depends on it
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I agree.
+
+Liu can you make a patch to Kconfig to just select REGULATOR?
+Possibly even the specific regulator driver this SoC is using
+if it is very specific for this purpose.
 
 Yours,
 Linus Walleij
