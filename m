@@ -7,127 +7,124 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDE4C433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEABC433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A95E22DBF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD9023437
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jan 2021 12:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbhAVMlM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jan 2021 07:41:12 -0500
+        id S1728056AbhAVMmZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jan 2021 07:42:25 -0500
 Received: from mga07.intel.com ([134.134.136.100]:62320 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727892AbhAVMkt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Jan 2021 07:40:49 -0500
-IronPort-SDR: U1eGLI6ykO3mCP9NAE/vUPCkgED59WCpU5L8wj5NElY3Rb/Yz/y4MPBaNzWVztoAuBC/Hoal2j
- bqiRfjCQowEw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9871"; a="243516879"
+        id S1728034AbhAVMmO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 Jan 2021 07:42:14 -0500
+IronPort-SDR: TaV+gyIPAB+1gfiVaKTozugcQ+r521R9tmgh3MS6K+lDBlL61lUkVuwyF17nQgoAdJSAyiaxLt
+ X8rVPW2T8aZw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9871"; a="243516880"
 X-IronPort-AV: E=Sophos;i="5.79,366,1602572400"; 
-   d="scan'208";a="243516879"
+   d="scan'208";a="243516880"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2021 04:38:59 -0800
-IronPort-SDR: xFrnfTkcdiJHes4uhvacc0u7pV1JSJ6xJDyxJxChdh9ezkLSW8vbm84+iw55Wygjxqu6A4QOBT
- AmtNar7VuyLQ==
+IronPort-SDR: xwuFXJYy9r0M3ez/bXxxuNYEI+DKSlw1hPTgPLQh5Nqy+1wbCXb5bOnx3e/oYHXVy2pV5PwuMm
+ nCF3XxSsqKMQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.79,366,1602572400"; 
-   d="scan'208";a="407733764"
+   d="scan'208";a="407733765"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Jan 2021 04:38:57 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Jan 2021 04:38:58 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BD73614F; Fri, 22 Jan 2021 14:38:56 +0200 (EET)
+        id E67FB29A; Fri, 22 Jan 2021 14:38:56 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 1/6] lib/cmdline_kunit: add a new test case for get_options()
-Date:   Fri, 22 Jan 2021 14:38:48 +0200
-Message-Id: <20210122123853.75162-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 4/6] gpio: aggregator: Replace isrange() by using get_options()
+Date:   Fri, 22 Jan 2021 14:38:51 +0200
+Message-Id: <20210122123853.75162-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210122123853.75162-1-andriy.shevchenko@linux.intel.com>
+References: <20210122123853.75162-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a test case for get_options() which is provided by cmdline.c.
+We already have a nice helper called get_options() which can be used
+to validate the input format. Replace isrange() by using it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-v3: drop string macros (Bart)
- lib/cmdline_kunit.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+v3: added Rb tags (Linus, Bart)
+ drivers/gpio/gpio-aggregator.c | 33 +++------------------------------
+ 1 file changed, 3 insertions(+), 30 deletions(-)
 
-diff --git a/lib/cmdline_kunit.c b/lib/cmdline_kunit.c
-index 550e7a47fd24..91737f17ce51 100644
---- a/lib/cmdline_kunit.c
-+++ b/lib/cmdline_kunit.c
-@@ -18,6 +18,26 @@ static const int cmdline_test_values[] = {
- 	1, 3, 2, 1, 1, 1, 3, 1,
- };
- 
-+static_assert(ARRAY_SIZE(cmdline_test_strings) == ARRAY_SIZE(cmdline_test_values));
-+
-+static const char *cmdline_test_range_strings[] = {
-+	"-7" , "--7"  , "-1-2"    , "7--9",
-+	"7-" , "-7--9", "7-9,"    , "9-7" ,
-+	"5-a", "a-5"  , "5-8"     , ",8-5",
-+	"+,1", "-,4"  , "-3,0-1,6", "4,-" ,
-+	" +2", " -9"  , "0-1,-3,6", "- 9" ,
-+};
-+
-+static const int cmdline_test_range_values[][16] = {
-+	{ 1, -7, }, { 0, -0, }, { 4, -1, 0, +1, 2, }, { 0, 7, },
-+	{ 0, +7, }, { 0, -7, }, { 3, +7, 8, +9, 0, }, { 0, 9, },
-+	{ 0, +5, }, { 0, -0, }, { 4, +5, 6, +7, 8, }, { 0, 0, },
-+	{ 0, +0, }, { 0, -0, }, { 4, -3, 0, +1, 6, }, { 1, 4, },
-+	{ 0, +0, }, { 0, -0, }, { 4, +0, 1, -3, 6, }, { 0, 0, },
-+};
-+
-+static_assert(ARRAY_SIZE(cmdline_test_range_strings) == ARRAY_SIZE(cmdline_test_range_values));
-+
- static void cmdline_do_one_test(struct kunit *test, const char *in, int rc, int offset)
- {
- 	const char *fmt = "Pattern: %s";
-@@ -84,10 +104,37 @@ static void cmdline_test_tail_int(struct kunit *test)
- 	} while (++i < ARRAY_SIZE(cmdline_test_strings));
+diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
+index dfd8a4876a27..40a081b095fb 100644
+--- a/drivers/gpio/gpio-aggregator.c
++++ b/drivers/gpio/gpio-aggregator.c
+@@ -62,34 +62,6 @@ static char *get_arg(char **args)
+ 	return start;
  }
  
-+static void cmdline_do_one_range_test(struct kunit *test, const char *in,
-+				      unsigned int n, const int *e)
-+{
-+	unsigned int i;
-+	int r[16];
-+
-+	memset(r, 0, sizeof(r));
-+	get_options(in, ARRAY_SIZE(r), r);
-+	KUNIT_EXPECT_EQ_MSG(test, r[0], e[0], "in test %u expected %d numbers, got %d",
-+			    n, e[0], r[0]);
-+	for (i = 1; i < ARRAY_SIZE(r); i++)
-+		KUNIT_EXPECT_EQ_MSG(test, r[i], e[i], "in test %u at %d", n, i);
-+}
-+
-+static void cmdline_test_range(struct kunit *test)
-+{
-+	unsigned int i = 0;
-+
-+	do {
-+		const char *str = cmdline_test_range_strings[i];
-+		const int *e = cmdline_test_range_values[i];
-+
-+		cmdline_do_one_range_test(test, str, i, e);
-+	} while (++i < ARRAY_SIZE(cmdline_test_range_strings));
-+}
-+
- static struct kunit_case cmdline_test_cases[] = {
- 	KUNIT_CASE(cmdline_test_noint),
- 	KUNIT_CASE(cmdline_test_lead_int),
- 	KUNIT_CASE(cmdline_test_tail_int),
-+	KUNIT_CASE(cmdline_test_range),
- 	{}
- };
+-static bool isrange(const char *s)
+-{
+-	size_t n;
+-
+-	if (IS_ERR_OR_NULL(s))
+-		return false;
+-
+-	while (1) {
+-		n = strspn(s, "0123456789");
+-		if (!n)
+-			return false;
+-
+-		s += n;
+-
+-		switch (*s++) {
+-		case '\0':
+-			return true;
+-
+-		case '-':
+-		case ',':
+-			break;
+-
+-		default:
+-			return false;
+-		}
+-	}
+-}
+-
+ static int aggr_add_gpio(struct gpio_aggregator *aggr, const char *key,
+ 			 int hwnum, unsigned int *n)
+ {
+@@ -112,10 +84,10 @@ static int aggr_add_gpio(struct gpio_aggregator *aggr, const char *key,
  
+ static int aggr_parse(struct gpio_aggregator *aggr)
+ {
++	char *name, *offsets, *p;
+ 	char *args = aggr->args;
+ 	unsigned long *bitmap;
+ 	unsigned int i, n = 0;
+-	char *name, *offsets;
+ 	int error = 0;
+ 
+ 	bitmap = bitmap_alloc(ARCH_NR_GPIOS, GFP_KERNEL);
+@@ -130,7 +102,8 @@ static int aggr_parse(struct gpio_aggregator *aggr)
+ 			goto free_bitmap;
+ 		}
+ 
+-		if (!isrange(offsets)) {
++		p = get_options(offsets, 0, &error);
++		if (error == 0 || *p) {
+ 			/* Named GPIO line */
+ 			error = aggr_add_gpio(aggr, name, U16_MAX, &n);
+ 			if (error)
 -- 
 2.29.2
 
