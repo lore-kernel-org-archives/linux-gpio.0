@@ -2,101 +2,206 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B04C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 16:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 614F5C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 18:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61A9922583
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 16:14:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09A1422DD6
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 18:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbhAYQGQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 Jan 2021 11:06:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37570 "EHLO
+        id S1726124AbhAYSXS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 Jan 2021 13:23:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730382AbhAYQGL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2021 11:06:11 -0500
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B47C06174A;
-        Mon, 25 Jan 2021 08:05:28 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id d81so27507230iof.3;
-        Mon, 25 Jan 2021 08:05:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PKFdQJWox9aZ4PvErLOeFCl9Ca17gHD16VMhp7rOwKE=;
-        b=eaWu6IaaAS1LwErvpIhsdIx/0+R9KO4T4Cx31RtpY0Yy3VtFfQ/6s00liOzOGJTwOk
-         ZmfNaObMhPCkgFrcxhBQJnozdAfvcDmxBzvZpE4zdNvPQ4lRaGS89XnjAmxrkFp69Bx0
-         ZhKsFzCWUwL8RlnSFwESG7dcN2SVziZE/ZDMrFjqu6fCrek5hBSwfzliRQOF29rrJj1Y
-         /H8kpeQBkaAi7BpgDuyjRy9y3T87hjGVfICWv/JGyc6P5cI71vwe6zMT9fnpI0WcA+cJ
-         JEKSaiNigmSFbpi7TXcrPkiH/nllazHNWPOKEltDzXfEpY0cDwi53GbmCISUT+gtjIXj
-         XWBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PKFdQJWox9aZ4PvErLOeFCl9Ca17gHD16VMhp7rOwKE=;
-        b=l2WGairOWxGnejGowPL9VbJNwAy42Y4ZPKwDa343gBA3qJR/+DGbnQ/sgWVrqIDgAW
-         uptXcYtwBqCPCXjd/V/xtvy+MOJ+zV7K9eSS9U5Oiw0FOA8OKE2WFwQhH64cthcs4F/R
-         L9xHTiyIEaRb3x7y8sSvrsulDzGZIKTOmIg1hKsjtA1yYoxKuzC08FZidXhXarUpmZ3k
-         LuC9b5KAnHYVGTnpwJ7u3ZFzXHrnuPRQa1EIQECvuQcLjWrKGMEh2Z+eb8jXWPb7I5kT
-         SVjjf8nW1x/zemF/OTkW/tMimKzYMGH3yoeJy4NOd3cCSBZuRyVngxMbdMeBjVkgiiMy
-         KNcg==
-X-Gm-Message-State: AOAM530AMTIvs1nuAzlhRMMEoVFqKYEz1FeD257nI26g78h41B/Zh8I2
-        dRJz3wOHp5ccjXCqazIMpYJPpzV+c6tXPXYvK1TIkCxDEa5Sgg==
-X-Google-Smtp-Source: ABdhPJya+WW0x+mSKy2+g1N2ELbfh9H+kwJYEORd7Sqf4JqMZg5irYw5+OZ2UJ4CA9yR84lFPe0qiYvozCA2otGsDVc=
-X-Received: by 2002:a05:6e02:dea:: with SMTP id m10mr950392ilj.241.1611590728327;
- Mon, 25 Jan 2021 08:05:28 -0800 (PST)
+        with ESMTP id S1726725AbhAYSXN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2021 13:23:13 -0500
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3327AC0613ED;
+        Mon, 25 Jan 2021 10:21:59 -0800 (PST)
+Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 784623E84E;
+        Mon, 25 Jan 2021 19:21:55 +0100 (CET)
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+To:     linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, konrad.dybcio@somainline.org,
+        marijn.suijten@somainline.org, martin.botka@somainline.org,
+        phone-devel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Subject: [PATCH 2/2] dt-bindings: pinctrl: Add bindings for Awinic AW9523/AW9523B
+Date:   Mon, 25 Jan 2021 19:21:53 +0100
+Message-Id: <20210125182153.212998-2-angelogioacchino.delregno@somainline.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210125182153.212998-1-angelogioacchino.delregno@somainline.org>
+References: <20210125182153.212998-1-angelogioacchino.delregno@somainline.org>
 MIME-Version: 1.0
-References: <20210125044322.6280-1-dqfext@gmail.com> <20210125044322.6280-2-dqfext@gmail.com>
- <20210125155233.GA438031@robh.at.kernel.org>
-In-Reply-To: <20210125155233.GA438031@robh.at.kernel.org>
-From:   DENG Qingfang <dqfext@gmail.com>
-Date:   Tue, 26 Jan 2021 00:05:17 +0800
-Message-ID: <CALW65jb0W3R1fEDM8hGPR8kHFAg9KXpXkdmDJqxiTaVZ4vP+ig@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: dsa: add MT7530 GPIO
- controller binding
-To:     Rob Herring <robh@kernel.org>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        =?UTF-8?Q?Ren=C3=A9_van_Dorst?= <opensource@vdorst.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        linux-gpio@vger.kernel.org,
-        Frank Wunderlich <frank-w@public-files.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>, netdev <netdev@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 11:52 PM Rob Herring <robh@kernel.org> wrote:
->
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
+Add bindings for the Awinic AW9523/AW9523B I2C GPIO Expander driver.
 
-Sorry. Will do that next time.
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+---
+ .../pinctrl/awinic,aw9523-pinctrl.yaml        | 139 ++++++++++++++++++
+ 1 file changed, 139 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
 
->
-> If a tag was not added on purpose, please state why and what changed.
->
+diff --git a/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
+new file mode 100644
+index 000000000000..640d4d7e4cab
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
+@@ -0,0 +1,139 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/awinic,aw9523-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Awinic AW9523/AW9523B I2C GPIO Expander
++
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
++
++description: |
++  The Awinic AW9523/AW9523B I2C GPIO Expander featuring 16 multi-function
++  I/O, 256 steps PWM mode and interrupt support.
++
++properties:
++  compatible:
++    const: awinic,aw9523-pinctrl
++
++  reg:
++    maxItems: 1
++
++  '#gpio-cells':
++    description: |
++      Specifying the pin number and flags, as defined in
++      include/dt-bindings/gpio/gpio.h
++    const: 2
++
++  gpio-controller: true
++
++  gpio-ranges:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  interrupts:
++    maxItems: 1
++    description: Specifies the INTN pin IRQ.
++
++  '#interrupt-cells':
++    description:
++      Specifies the PIN numbers and Flags, as defined in defined in
++      include/dt-bindings/interrupt-controller/irq.h
++    const: 2
++
++  reset-gpios:
++    maxItems: 1
++
++#PIN CONFIGURATION NODES
++patternProperties:
++  '-pins$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: "/schemas/pinctrl/pincfg-node.yaml"
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in
++          this subnode.
++        items:
++          pattern: "^gpio([0-9]|1[0-5])$"
++        minItems: 1
++        maxItems: 16
++
++      function:
++        description:
++          Specify the alternative function to be configured for the
++          specified pins.
++
++        enum: [ gpio, pwm ]
++
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      drive-open-drain: true
++      drive-push-pull: true
++      input-enable: true
++      input-disable: true
++      output-high: true
++      output-low: true
++
++    required:
++      - pins
++      - function
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++  - gpio-ranges
++
++additionalProperties: false
++
++examples:
++  # Example configuration to drive pins for a keyboard matrix
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        aw9523: gpio-expander@58 {
++                compatible = "awinic,aw9523-pinctrl";
++                reg = <0x58>;
++                interrupt-parent = <&tlmm>;
++                interrupts = <50 IRQ_TYPE_EDGE_FALLING>;
++                gpio-controller;
++                #gpio-cells = <2>;
++                gpio-ranges = <&tlmm 0 0 16>;
++                interrupt-controller;
++                #interrupt-cells = <2>;
++                reset-gpios = <&tlmm 51 GPIO_ACTIVE_HIGH>;
++
++                keyboard-matrix-col-pins {
++                        pins = "gpio8", "gpio9", "gpio10", "gpio11",
++                               "gpio12", "gpio13", "gpio14", "gpio15";
++                        function = "gpio";
++                        input-disable;
++                        output-low;
++                };
++
++                keyboard-matrix-row-pins {
++                        pins = "gpio0", "gpio1", "gpio2", "gpio3",
++                               "gpio4", "gpio5", "gpio6", "gpio7";
++                        function = "gpio";
++                        bias-pull-up;
++                        drive-open-drain;
++                        input-enable;
++                };
++        };
++    };
+-- 
+2.30.0
+
