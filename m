@@ -2,117 +2,405 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1726AC433DB
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 02:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AEFC433E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 03:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2C2D230FA
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 02:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0AA1230FD
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 03:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729200AbhAYOKk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 Jan 2021 09:10:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729258AbhAYOIr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2021 09:08:47 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77AD4C061786;
-        Mon, 25 Jan 2021 06:08:06 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id a12so9774706lfb.1;
-        Mon, 25 Jan 2021 06:08:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b70UYa8YIK0x9xv+9vYo/yu767VIPloSWRaqTr4Le5U=;
-        b=p2aWeLNxieT8woVT0Tl/UIXog/WUBwAaE+KXDvN3pVh7Tl9ZVAD+1/JiZX0bHE311l
-         WIS0Fc0dUG8GqfDKDPHM62E60VTzNwJvhZ46CsjqN/rZm3IzD0xVx2BxdNdl70xehQFp
-         n+8ebZ0qkSe5mVX0/BRW+bf4RGo5bVjD8r2D8v/1iYWgFcc5Zb+cfEz5VjMIzRNnwn+t
-         0klFZfxePE4Yjx+zVVUFn1w+f5UJmTS05THBybzYt7h7+SNQ8mK7pDQgsyS0O2QdG4vM
-         Spg8PBxWdArWbSyOxtTrtP1cUfqxJXuzbdVcJ81elQ7hGOsQ2WoVpl3Z2vZIob0F1fff
-         bWEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b70UYa8YIK0x9xv+9vYo/yu767VIPloSWRaqTr4Le5U=;
-        b=ajqKU+lOY5i/Ac0LOz0bkepiDPCkU8gTRJLNAeUAq9y4MAYeiS7OKwzqkqr03hlJDU
-         Uul0VwaoCXtZsKn8EySqBVNxTm8rcqNI8Y8bOvdfo7UjV0rSIM3Yxg9ylbORtbeg6v8O
-         slmFxILim/TtO8Jt4HMxwbJ8ZSn2omJpPhUXn/fU+akKFGBqjqVFNhxRnHyaGu93QYdR
-         kfRLkpT6SeMb6nxO8DB7Ba0p/tLyZPTZAwRMGlHT4AI1VcmoKAFZtIA9/N/qxaPPcLhd
-         eJLcKcSBntMaawGj1RX9inCWLFu8g+7gpVhaChnyXhnmGv4nKEQuc8F6qgUPRtdlYU7j
-         dqWg==
-X-Gm-Message-State: AOAM531pVhliHwqr8Gz26EC0TIDVJx+3Vb2qscyNySlP6sfX7NPFmedJ
-        oRJyplZU9ixMfCCtdn/a9DLAGI2U9Bc=
-X-Google-Smtp-Source: ABdhPJxCtwtWXYO91eo6tYXFDoyFBpADb2MoH9I5qV4pNcyLmcqhJSYYTq9inWLbmT/uD6Wo9qmcmw==
-X-Received: by 2002:a19:c1c9:: with SMTP id r192mr351166lff.578.1611583684824;
-        Mon, 25 Jan 2021 06:08:04 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id u18sm298271ljl.57.2021.01.25.06.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 06:08:04 -0800 (PST)
-Subject: Re: [PATCH v1 0/3] Support building gpio-tegra driver as loadable
- module
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210122185543.16554-1-digetx@gmail.com>
- <CACRpkdZTyBuz240iYuvi91k3dLKKXX=4DNxFEBP7mSNB58XtDw@mail.gmail.com>
- <24d46928-8c57-acba-f9cf-49afbe4c983c@gmail.com>
- <CACRpkdaR9+mxXXjRADG4+qaGiqgwVRPcCAo-5nZwXXASYfs9+g@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b6075dec-c019-3701-4d3d-d3327aef17d7@gmail.com>
-Date:   Mon, 25 Jan 2021 17:08:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        id S1727241AbhAYKXB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 Jan 2021 05:23:01 -0500
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:58955 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbhAYKWZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2021 05:22:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1611570144; x=1643106144;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=kkT0NZx3YoFEjlue/xzoaJqbpzoBMo3HlBOmQaSEfDA=;
+  b=WsUg71inPlf/O/9vNz8Uj9gOykOkStLA5XhB5TsWZKn/OEWkhGXON3+a
+   pp1xJKWfyaNV+uNzRkLQeiy6RkGcQF1TjybmmQnSyVLnJzOH0/H2+DqMR
+   7Ri8YThPevtUm6lT2/IqwxFSBmzdfJpUApc240/k/SneabtK0vbQMOmx8
+   O5MM4W+zx2xcmV1BaSacJm6WECtQ15GDK6D7AbDGJy930hTZJgwDI1Iis
+   kfWe20+rvmgwmPPM38my3ag8x7kl1Aew2Q/lxvpJPnFgephDSCR5T32fM
+   DceyZKhr6tl8DoiGju/6786RAEkF2/w9amKTVmCdHCrdzExUP5D9UFZ+K
+   Q==;
+IronPort-SDR: Cl8CGlCfq4URIJjCJ4pIX8APq72ffop3a0Z5pS3y9tLhG5c7fJPvdu3VaUSEZT4nhYZvWfGkDc
+ JnMblR2K+bqnl5MWpBhcqSfQhDDbJTOhoFB2bXsYyiaUstl33qZWlcYaY9+Cu506OgyufUsRKP
+ 85jDhTfc9vSjIRv6OkHuOCDURcY4UIV2+Efzf4ELdTZmu9xvUKVsTWvMSwtCUZWQlXcl52Xu7l
+ 4okiKGdRURrttt1TUQ4lnq4ur9Rq7k5d4vMwqz6IXHoFJaJd8rOZuGFErddeVR+0oDNK01ly7y
+ sOE=
+X-IronPort-AV: E=Sophos;i="5.79,373,1602572400"; 
+   d="scan'208";a="41611506"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jan 2021 03:19:34 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Mon, 25 Jan 2021 03:19:34 -0700
+Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Mon, 25 Jan 2021 03:19:30 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 3/3] pinctrl: at91-pio4: fix "Prefer 'unsigned int' to bare use of 'unsigned'"
+Date:   Mon, 25 Jan 2021 12:19:14 +0200
+Message-ID: <1611569954-23279-4-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1611569954-23279-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1611569954-23279-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaR9+mxXXjRADG4+qaGiqgwVRPcCAo-5nZwXXASYfs9+g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-25.01.2021 01:46, Linus Walleij пишет:
-> On Sun, Jan 24, 2021 at 12:56 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->> 24.01.2021 01:50, Linus Walleij пишет:
->>> On Fri, Jan 22, 2021 at 7:59 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>>
->>>> This small series adds modularization support to the gpio-tegra driver,
->>>> i.e. driver now could be built as a loadable kernel module.
->>>>
->>>> Dmitry Osipenko (3):
->>>>   gpio: tegra: Use debugfs_create_devm_seqfile()
->>>>   gpio: tegra: Clean up whitespaces in tegra_gpio_driver
->>>>   gpio: tegra: Support building driver as a loadable module
->>>
->>> As these three patches clearly make the kernel look better after
->>> than before:
->>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>>
->>> However when we are doing this I would strongly encourage you
->>> to also make a patch implementing remove() so you can insmod
->>> rmmod the module at runtime.
->>
->> The remove() is optional for drivers, it doesn't prevent the rmmod.
-> 
-> Aha you mean all resources are managed (devm_*) so that
-> rmmod/insmod works fine with this driver?
+Fix "Prefer 'unsigned int' to bare use of 'unsigned'" checkpatch.pl
+warning.
 
-yes
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c | 110 +++++++++++++++++++-----------------
+ 1 file changed, 57 insertions(+), 53 deletions(-)
 
-> OK then! :) the work is finished.
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index c59ab0bfb945..0206cbfcbebb 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -80,8 +80,8 @@
+  * @sr: slew rate support
+  */
+ struct atmel_pioctrl_data {
+-	unsigned nbanks;
+-	unsigned last_bank_count;
++	unsigned int nbanks;
++	unsigned int last_bank_count;
+ 	unsigned int sr;
+ };
+ 
+@@ -91,11 +91,11 @@ struct atmel_group {
+ };
+ 
+ struct atmel_pin {
+-	unsigned pin_id;
+-	unsigned mux;
+-	unsigned ioset;
+-	unsigned bank;
+-	unsigned line;
++	unsigned int pin_id;
++	unsigned int mux;
++	unsigned int ioset;
++	unsigned int bank;
++	unsigned int line;
+ 	const char *device;
+ };
+ 
+@@ -125,16 +125,16 @@ struct atmel_pin {
+ struct atmel_pioctrl {
+ 	void __iomem		*reg_base;
+ 	struct clk		*clk;
+-	unsigned		nbanks;
++	unsigned int		nbanks;
+ 	struct pinctrl_dev	*pinctrl_dev;
+ 	struct atmel_group	*groups;
+ 	const char * const	*group_names;
+ 	struct atmel_pin	**pins;
+-	unsigned		npins;
++	unsigned int		npins;
+ 	struct gpio_chip	*gpio_chip;
+ 	struct irq_domain	*irq_domain;
+ 	int			*irqs;
+-	unsigned		*pm_wakeup_sources;
++	unsigned int		*pm_wakeup_sources;
+ 	struct {
+ 		u32		imr;
+ 		u32		odsr;
+@@ -177,11 +177,11 @@ static void atmel_gpio_irq_ack(struct irq_data *d)
+ 	 */
+ }
+ 
+-static int atmel_gpio_irq_set_type(struct irq_data *d, unsigned type)
++static int atmel_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = irq_data_get_irq_chip_data(d);
+ 	struct atmel_pin *pin = atmel_pioctrl->pins[d->hwirq];
+-	unsigned reg;
++	unsigned int reg;
+ 
+ 	atmel_gpio_write(atmel_pioctrl, pin->bank, ATMEL_PIO_MSKR,
+ 			 BIT(pin->line));
+@@ -268,7 +268,7 @@ static struct irq_chip atmel_gpio_irq_chip = {
+ 	.irq_set_wake	= atmel_gpio_irq_set_wake,
+ };
+ 
+-static int atmel_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
++static int atmel_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
+ 
+@@ -316,11 +316,12 @@ static void atmel_gpio_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static int atmel_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
++static int atmel_gpio_direction_input(struct gpio_chip *chip,
++				      unsigned int offset)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
+ 	struct atmel_pin *pin = atmel_pioctrl->pins[offset];
+-	unsigned reg;
++	unsigned int reg;
+ 
+ 	atmel_gpio_write(atmel_pioctrl, pin->bank, ATMEL_PIO_MSKR,
+ 			 BIT(pin->line));
+@@ -331,11 +332,11 @@ static int atmel_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	return 0;
+ }
+ 
+-static int atmel_gpio_get(struct gpio_chip *chip, unsigned offset)
++static int atmel_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
+ 	struct atmel_pin *pin = atmel_pioctrl->pins[offset];
+-	unsigned reg;
++	unsigned int reg;
+ 
+ 	reg = atmel_gpio_read(atmel_pioctrl, pin->bank, ATMEL_PIO_PDSR);
+ 
+@@ -369,12 +370,13 @@ static int atmel_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 	return 0;
+ }
+ 
+-static int atmel_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
++static int atmel_gpio_direction_output(struct gpio_chip *chip,
++				       unsigned int offset,
+ 				       int value)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
+ 	struct atmel_pin *pin = atmel_pioctrl->pins[offset];
+-	unsigned reg;
++	unsigned int reg;
+ 
+ 	atmel_gpio_write(atmel_pioctrl, pin->bank,
+ 			 value ? ATMEL_PIO_SODR : ATMEL_PIO_CODR,
+@@ -389,7 +391,7 @@ static int atmel_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 	return 0;
+ }
+ 
+-static void atmel_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
++static void atmel_gpio_set(struct gpio_chip *chip, unsigned int offset, int val)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
+ 	struct atmel_pin *pin = atmel_pioctrl->pins[offset];
+@@ -445,11 +447,11 @@ static struct gpio_chip atmel_gpio_chip = {
+ 
+ /* --- PINCTRL --- */
+ static unsigned int atmel_pin_config_read(struct pinctrl_dev *pctldev,
+-					  unsigned pin_id)
++					  unsigned int pin_id)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+-	unsigned bank = atmel_pioctrl->pins[pin_id]->bank;
+-	unsigned line = atmel_pioctrl->pins[pin_id]->line;
++	unsigned int bank = atmel_pioctrl->pins[pin_id]->bank;
++	unsigned int line = atmel_pioctrl->pins[pin_id]->line;
+ 	void __iomem *addr = atmel_pioctrl->reg_base
+ 			     + bank * ATMEL_PIO_BANK_OFFSET;
+ 
+@@ -461,11 +463,11 @@ static unsigned int atmel_pin_config_read(struct pinctrl_dev *pctldev,
+ }
+ 
+ static void atmel_pin_config_write(struct pinctrl_dev *pctldev,
+-				   unsigned pin_id, u32 conf)
++				   unsigned int pin_id, u32 conf)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+-	unsigned bank = atmel_pioctrl->pins[pin_id]->bank;
+-	unsigned line = atmel_pioctrl->pins[pin_id]->line;
++	unsigned int bank = atmel_pioctrl->pins[pin_id]->bank;
++	unsigned int line = atmel_pioctrl->pins[pin_id]->line;
+ 	void __iomem *addr = atmel_pioctrl->reg_base
+ 			     + bank * ATMEL_PIO_BANK_OFFSET;
+ 
+@@ -483,7 +485,7 @@ static int atmel_pctl_get_groups_count(struct pinctrl_dev *pctldev)
+ }
+ 
+ static const char *atmel_pctl_get_group_name(struct pinctrl_dev *pctldev,
+-					     unsigned selector)
++					     unsigned int selector)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -491,19 +493,20 @@ static const char *atmel_pctl_get_group_name(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int atmel_pctl_get_group_pins(struct pinctrl_dev *pctldev,
+-				     unsigned selector, const unsigned **pins,
+-				     unsigned *num_pins)
++				     unsigned int selector,
++				     const unsigned int **pins,
++				     unsigned int *num_pins)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+ 
+-	*pins = (unsigned *)&atmel_pioctrl->groups[selector].pin;
++	*pins = (unsigned int *)&atmel_pioctrl->groups[selector].pin;
+ 	*num_pins = 1;
+ 
+ 	return 0;
+ }
+ 
+ static struct atmel_group *
+-atmel_pctl_find_group_by_pin(struct pinctrl_dev *pctldev, unsigned pin)
++atmel_pctl_find_group_by_pin(struct pinctrl_dev *pctldev, unsigned int pin)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	int i;
+@@ -524,7 +527,7 @@ static int atmel_pctl_xlate_pinfunc(struct pinctrl_dev *pctldev,
+ 				    const char **func_name)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+-	unsigned pin_id, func_id;
++	unsigned int pin_id, func_id;
+ 	struct atmel_group *grp;
+ 
+ 	pin_id = ATMEL_GET_PIN_NO(pinfunc);
+@@ -554,10 +557,10 @@ static int atmel_pctl_xlate_pinfunc(struct pinctrl_dev *pctldev,
+ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 					struct device_node *np,
+ 					struct pinctrl_map **map,
+-					unsigned *reserved_maps,
+-					unsigned *num_maps)
++					unsigned int *reserved_maps,
++					unsigned int *num_maps)
+ {
+-	unsigned num_pins, num_configs, reserve;
++	unsigned int num_pins, num_configs, reserve;
+ 	unsigned long *configs;
+ 	struct property	*pins;
+ 	u32 pinfunc;
+@@ -628,10 +631,10 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ static int atmel_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 				     struct device_node *np_config,
+ 				     struct pinctrl_map **map,
+-				     unsigned *num_maps)
++				     unsigned int *num_maps)
+ {
+ 	struct device_node *np;
+-	unsigned reserved_maps;
++	unsigned int reserved_maps;
+ 	int ret;
+ 
+ 	*map = NULL;
+@@ -679,13 +682,13 @@ static int atmel_pmx_get_functions_count(struct pinctrl_dev *pctldev)
+ }
+ 
+ static const char *atmel_pmx_get_function_name(struct pinctrl_dev *pctldev,
+-					       unsigned selector)
++					       unsigned int selector)
+ {
+ 	return atmel_functions[selector];
+ }
+ 
+ static int atmel_pmx_get_function_groups(struct pinctrl_dev *pctldev,
+-					 unsigned selector,
++					 unsigned int selector,
+ 					 const char * const **groups,
+ 					 unsigned * const num_groups)
+ {
+@@ -698,11 +701,11 @@ static int atmel_pmx_get_function_groups(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int atmel_pmx_set_mux(struct pinctrl_dev *pctldev,
+-			     unsigned function,
+-			     unsigned group)
++			     unsigned int function,
++			     unsigned int group)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+-	unsigned pin;
++	unsigned int pin;
+ 	u32 conf;
+ 
+ 	dev_dbg(pctldev->dev, "enable function %s group %s\n",
+@@ -726,13 +729,13 @@ static const struct pinmux_ops atmel_pmxops = {
+ };
+ 
+ static int atmel_conf_pin_config_group_get(struct pinctrl_dev *pctldev,
+-					   unsigned group,
++					   unsigned int group,
+ 					   unsigned long *config)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+-	unsigned param = pinconf_to_config_param(*config), arg = 0;
++	unsigned int param = pinconf_to_config_param(*config), arg = 0;
+ 	struct atmel_group *grp = atmel_pioctrl->groups + group;
+-	unsigned pin_id = grp->pin;
++	unsigned int pin_id = grp->pin;
+ 	u32 res;
+ 
+ 	res = atmel_pin_config_read(pctldev, pin_id);
+@@ -786,21 +789,21 @@ static int atmel_conf_pin_config_group_get(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int atmel_conf_pin_config_group_set(struct pinctrl_dev *pctldev,
+-					   unsigned group,
++					   unsigned int group,
+ 					   unsigned long *configs,
+-					   unsigned num_configs)
++					   unsigned int num_configs)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	struct atmel_group *grp = atmel_pioctrl->groups + group;
+-	unsigned bank, pin, pin_id = grp->pin;
++	unsigned int bank, pin, pin_id = grp->pin;
+ 	u32 mask, conf = 0;
+ 	int i;
+ 
+ 	conf = atmel_pin_config_read(pctldev, pin_id);
+ 
+ 	for (i = 0; i < num_configs; i++) {
+-		unsigned param = pinconf_to_config_param(configs[i]);
+-		unsigned arg = pinconf_to_config_argument(configs[i]);
++		unsigned int param = pinconf_to_config_param(configs[i]);
++		unsigned int arg = pinconf_to_config_argument(configs[i]);
+ 
+ 		dev_dbg(pctldev->dev, "%s: pin=%u, config=0x%lx\n",
+ 			__func__, pin_id, configs[i]);
+@@ -900,7 +903,8 @@ static int atmel_conf_pin_config_group_set(struct pinctrl_dev *pctldev,
+ }
+ 
+ static void atmel_conf_pin_config_dbg_show(struct pinctrl_dev *pctldev,
+-					   struct seq_file *s, unsigned pin_id)
++					   struct seq_file *s,
++					   unsigned int pin_id)
+ {
+ 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	u32 conf;
+@@ -1108,8 +1112,8 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	for (i = 0 ; i < atmel_pioctrl->npins; i++) {
+ 		struct atmel_group *group = atmel_pioctrl->groups + i;
+-		unsigned bank = ATMEL_PIO_BANK(i);
+-		unsigned line = ATMEL_PIO_LINE(i);
++		unsigned int bank = ATMEL_PIO_BANK(i);
++		unsigned int line = ATMEL_PIO_LINE(i);
+ 
+ 		atmel_pioctrl->pins[i] = devm_kzalloc(dev,
+ 				sizeof(**atmel_pioctrl->pins), GFP_KERNEL);
+-- 
+2.7.4
 
-The work on the modularization indeed should be finished, thanks.
