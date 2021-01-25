@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 509E1C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 03:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BC5C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 03:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 178D722472
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 03:17:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 172D3224DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Jan 2021 03:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbhAYDQw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 24 Jan 2021 22:16:52 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41538 "EHLO
+        id S1726834AbhAYDUm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 24 Jan 2021 22:20:42 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:44797 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727003AbhAYDQM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Jan 2021 22:16:12 -0500
-X-UUID: 398615451dfb4218851be9acf96b5b01-20210125
-X-UUID: 398615451dfb4218851be9acf96b5b01-20210125
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        with ESMTP id S1726692AbhAYDUi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Jan 2021 22:20:38 -0500
+X-UUID: 9df3b9b45e5240e1a1c1f28f0a7a4257-20210125
+X-UUID: 9df3b9b45e5240e1a1c1f28f0a7a4257-20210125
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <hailong.fan@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 387554124; Mon, 25 Jan 2021 11:15:21 +0800
+        with ESMTP id 333410447; Mon, 25 Jan 2021 11:19:52 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 25 Jan 2021 11:15:18 +0800
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 25 Jan 2021 11:19:51 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 25 Jan 2021 11:15:17 +0800
+ Transport; Mon, 25 Jan 2021 11:19:51 +0800
 From:   Hailong Fan <hailong.fan@mediatek.com>
 To:     Sean Wang <sean.wang@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -42,9 +42,9 @@ CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, <chentsung@chromium.org>,
         <gtk_pangao@mediatek.com>, <hanks.chen@mediatek.com>,
         <yong.wu@mediatek.com>, Hailong Fan <hailong.fan@mediatek.com>
-Subject: [PATCH] pinctrl: mediatek: Fix trigger type setting follow for unexpected interrupt
-Date:   Mon, 25 Jan 2021 11:15:13 +0800
-Message-ID: <20210125031513.1741-1-hailong.fan@mediatek.com>
+Subject: [PATCH v2] pinctrl: mediatek: Fix trigger type setting follow for unexpected interrupt
+Date:   Mon, 25 Jan 2021 11:19:46 +0800
+Message-ID: <20210125031946.1882-1-hailong.fan@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -58,8 +58,7 @@ Then, mask the interrupt before polarity setting, and clear the
 unexpected interrupt after trigger type setting completed.
 
 Signed-off-by: Hailong Fan <hailong.fan@mediatek.com>
----
-[V2]
+Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
 ---
  drivers/pinctrl/mediatek/mtk-eint.c | 13 +++++++++++--
  1 file changed, 11 insertions(+), 2 deletions(-)
