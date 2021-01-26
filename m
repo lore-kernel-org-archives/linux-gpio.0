@@ -2,116 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC91C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF7BC41620
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 18:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82A2420829
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E738320449
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 18:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731036AbhAZPlh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:41:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
+        id S1728656AbhAZRWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:22:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392582AbhAZPka (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 10:40:30 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E25EC061D7F
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 07:39:50 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id a20so2201061pjs.1
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 07:39:50 -0800 (PST)
+        with ESMTP id S1731101AbhAZQ4k (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 11:56:40 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3880EC061D7D;
+        Tue, 26 Jan 2021 08:56:00 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id b26so23618682lff.9;
+        Tue, 26 Jan 2021 08:56:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ry2gpr6gXFVf9iEI53wDazGx/7l4smEJsdfHqtTX24g=;
-        b=fut77XsLgqRrTecfD8hYhm9vkVQR+/2SxFdqR+yrvS81FLqhWJfD8kMELzwLPpHyKX
-         QRL5vKAFe7Wtgg/zyy0pj/Q0lDVKY+UlDgdVRYMGqa+CukUxn0gTsx4jzYO5Y0DLqP/9
-         hK6evT3ZxexhMHnV05EYzqCeyRmKDkLUt8B0WUX/OKrOgRq1SKoDoeGhb02o9yC0rDh4
-         xQh7+KnSrgVheNGhBbp+rV5pIgbOkkCs+UKaXIR6WjRoMxl8DzPr7/8NtMIFn6MSffjH
-         xr0bl331JWQ00Gpn0dYjlaNLhNNQ7L4evvwkKqCITeNkWuBBnRKJzMRHeux8aRWPjrkD
-         6uBA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IUDDZRZxdmyV3zHbIgFV/f+pJvlpZPQNewiwbQaO6tE=;
+        b=lW8J7gdCPRMweOQw8pwNhFi4aRG/l+tBBUD0aanYKeGqx5yQ1nLZ7amwTrNZHy6vU2
+         V9wwSXUgUvgm4WHsgQysRp7Qdnkj7lv13RJkpJmXiHgv2vptiA6hb/h3zaYrFtGVwNnB
+         wp0favvJMQzNKEyLe/ecQt4MU1Y4BDQ3+CCBSvfEouaXwPVNEjIMQaAm/INI0V4d4EYR
+         Euctr81IITXkASr5McZpLWSUZxaj+GPouo/1cYqAlGbcxNNFf46cYkjGnSmBVeBb3I4t
+         CHAgzgNNdr4nM29pWXKyRFzV2kGPi9FpD5hWu07RxVRd70ZvB5sgyWWcNPRMllyENxG9
+         800Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ry2gpr6gXFVf9iEI53wDazGx/7l4smEJsdfHqtTX24g=;
-        b=MmzJS1X61LJoBXez6ImBJhN6ijZxuq2AWfFEHA6icv5RPhAIxHwLAHwBEa5Khl1hRV
-         jDumhloUweVRvEOzucUORDlzVd9sO/Z4NSm9ef/KwaEBQrfFVm//LRvBSb8jVZlnCAs8
-         dBXLM5/uOcKve8i08l5j1JGDKVgoD/90RDSEnsUAyBCXheNzlkdYARxqfkR2z6OKIy3i
-         ZE23Ck/5QsTPaiB75SS9Wbv83Xg70hneFsHbG0ektrI4pyyW6bB/cg/NsTW+VPpSmOsq
-         TcxGYwOVyYlAu4Zp7wdBXktNKuCtoDHvy16Ey+7WpeWh6iyL8VvHoexcSNBwcjTWaIXm
-         Ga7w==
-X-Gm-Message-State: AOAM531NFEhhJ6lMoWT9Cl/JTQxBWRfMsn+dgl2zpQZqxFB7YYRRvdht
-        qiDfSMu7R5UdPGD2WLkA9zvc
-X-Google-Smtp-Source: ABdhPJyEIQlk7u5/AohAMRMIjlOMghL0I91m9bodQZa0HBw1shzSQ741fgJ6fM4ZcGleJWi+lCBn8Q==
-X-Received: by 2002:a17:90a:c68d:: with SMTP id n13mr360368pjt.71.1611675589591;
-        Tue, 26 Jan 2021 07:39:49 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:6d84:5293:c96f:fa31:6124:85e6])
-        by smtp.gmail.com with ESMTPSA id n128sm20433159pga.55.2021.01.26.07.39.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 07:39:48 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     linus.walleij@linaro.org
-Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cristian.ciocaltea@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2] pinctrl: actions: Add the platform dependency to drivers
-Date:   Tue, 26 Jan 2021 21:09:35 +0530
-Message-Id: <20210126153935.29623-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IUDDZRZxdmyV3zHbIgFV/f+pJvlpZPQNewiwbQaO6tE=;
+        b=O+IzDx/R5ply9lEv35ei1unhLF3QYjDeuIYvzGQfiWiF87wsenSAkYO6FpwABMX3Ru
+         0xp7N1Jo6dYj3eKAgqzIC+1xMACy3ys0W1AGWW0q3bUIkKevD0Och9oOM/coUU5bLfRX
+         /nH4voJzJoN1keIo0BNnCR9KhWMcofF87SJ8vpMQh6n4cSw/ACRwdWhZanCa8r1M+C1Y
+         IalR1nxjWJtqffvvxVAXPs8t3drkFN+BM62ZPfFX8sAZc1FXIV/ZSGmDSw+tkpf+9ds7
+         XhCyV3lquhdNHdXV8IhPaQYW1xz68OseUUxbRGg511FN5k7W/ECDkIfWk9qYGXBU9V6O
+         deVw==
+X-Gm-Message-State: AOAM530JYyAGWFrUSOZ09yN0WvOX+hCGP/wRgXULqPxylsy5Evy+bCxd
+        daJeIpWfsX0lR+mFEEGDMRecAPW04mHGqFgJx68=
+X-Google-Smtp-Source: ABdhPJy9dl1Tk9pVWPFcSjiX8vKJgMaCDnwogfliEKqUrmBFXH5j360/BhKOOcxo7U7KWVqbda7Zg9HYVSXc7AKyd7I=
+X-Received: by 2002:ac2:515b:: with SMTP id q27mr2948208lfd.516.1611680158749;
+ Tue, 26 Jan 2021 08:55:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <YBANNJ8XtoRf7SuW@smile.fi.intel.com> <CAMeQTsbGBrTvfkz6BStwL240Kz-dbrQVKtXbYkRtbD3OoUKCcg@mail.gmail.com>
+ <CAHp75Vc9RAHvTDAw1ryHq_CPRMtjqkzg9081nw0+RPY_yWPJgA@mail.gmail.com>
+In-Reply-To: <CAHp75Vc9RAHvTDAw1ryHq_CPRMtjqkzg9081nw0+RPY_yWPJgA@mail.gmail.com>
+From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Date:   Tue, 26 Jan 2021 17:55:47 +0100
+Message-ID: <CAMeQTsY6k64LUg3DYbi67W6-Gx6znOeJbDfKUhzGt-BxF2BgKA@mail.gmail.com>
+Subject: Re: [GIT PULL] ib-drm-gpio-pdx86-rtc-wdt-v5.12-1
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>, linux-watchdog@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Actions Semi pinctrl drivers are a mix of both ARM32 and ARM64
-platforms. So let's add the correct platform dependency to avoid them
-being selected on the other.
+On Tue, Jan 26, 2021 at 4:51 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Tue, Jan 26, 2021 at 5:25 PM Patrik Jakobsson
+> <patrik.r.jakobsson@gmail.com> wrote:
+> > On Tue, Jan 26, 2021 at 1:37 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > Hi guys,
+> > >
+> > > This is first part of Intel MID outdated platforms removal. It's collected into
+> > > immutable branch with a given tag, please pull to yours subsystems.
+> >
+> > Hi Andy,
+> > Do you plan on eventually removing X86_INTEL_MID completely? If so,
+> > then I should probably start looking at removing the corresponding
+> > parts in GMA500.
+>
+> Nope. It is related to only Medfield / Clovertrail platforms.
+>
+> There are other (MID) platforms that may / might utilize this driver
+> in the future.
 
-Also make sure they are available for build test by depending on
-COMPILE_TEST.
+Right, there's still Oaktrail / Moorestown with hardware in the wild.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
+>
+> I.o.w. we probably can remove the oldest stuff in the driver WRT above
+> mentioned platforms, but leave the driver for the rest.
+> I wouldn't be in a hurry with this though, display drivers are easy to
+> remove, but really hard to get back on velocity after that.
 
-Added depends on COMPILE_TEST
+Ok, I'll have a look at removing Medfield. That code should have been
+removed a long time ago.
 
- drivers/pinctrl/actions/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/pinctrl/actions/Kconfig b/drivers/pinctrl/actions/Kconfig
-index a1d16e8280e5..119f0e471efd 100644
---- a/drivers/pinctrl/actions/Kconfig
-+++ b/drivers/pinctrl/actions/Kconfig
-@@ -12,18 +12,21 @@ config PINCTRL_OWL
- 
- config PINCTRL_S500
- 	bool "Actions Semi S500 pinctrl driver"
-+	depends on ARM || COMPILE_TEST
- 	depends on PINCTRL_OWL
- 	help
- 	  Say Y here to enable Actions Semi S500 pinctrl driver
- 
- config PINCTRL_S700
- 	bool "Actions Semi S700 pinctrl driver"
-+	depends on ARM64 || COMPILE_TEST
- 	depends on PINCTRL_OWL
- 	help
- 	  Say Y here to enable Actions Semi S700 pinctrl driver
- 
- config PINCTRL_S900
- 	bool "Actions Semi S900 pinctrl driver"
-+	depends on ARM64 || COMPILE_TEST
- 	depends on PINCTRL_OWL
- 	help
- 	  Say Y here to enable Actions Semi S900 pinctrl driver
--- 
-2.25.1
-
+-Patrik
