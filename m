@@ -2,106 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E43D5C433DB
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 13:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFC5C433E9
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 13:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B05F62255F
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 13:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C35E222B51
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 13:50:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391754AbhAZNfs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 08:35:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59776 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392543AbhAZN07 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 08:26:59 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C806AC061A31
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 05:26:17 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id d2so16168224edz.3
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 05:26:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g1bWSW2j2AzUWAFhSJZFlC66uupPeLjnhszVJrACnuw=;
-        b=hlqR1UTITl2IrZgG52KTylgq694xBqCbP2uOK7UZErWX5UjUpEj26bNjp5I2ASQBcy
-         NrcqZa4u3g3cCNc8N7TLmoBGqiGH1+bGVporc+AfMztQJ2p1PPcDWUiv4yVhdV71ynt9
-         zhO8mtfBn0jWkMcGdvAqEUX+KRg6J9KBy1ZSV3aMTJP5RVUM6LWrbv2CAqkDK7igHTDp
-         idIAgBkeXHS44OaKJttLbc8GPjeNt/E5oIbJIOcphXtf9MVQIccRPRnvfI+7Y2FzJtkg
-         jpkaaIpJ+ImQuaKCAhoaxVAO8rv1G/1pXNAo8p5YkzVm1v5vv6lH49uXzdSUhLIgMh8Q
-         G9IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g1bWSW2j2AzUWAFhSJZFlC66uupPeLjnhszVJrACnuw=;
-        b=M9c+BnTLhGbifZlrEoKwgD0dASghsCHl21IpvOJug0LBgIfvQ3BDyJaFa88gqtGXYI
-         s89KVnejl/wYCcPFJyhHEnBr6KRwCHsVTL/F7BWrORK27NxuDsOiUV45AIsVUsbJVuTr
-         XUfMV+KiX/2jl0vAY4uZI1Fd6QzxTFy7gruhgqYgTlqAzGukMVmNLAuxX5tUdJOlf4pA
-         ACgNk5229yHDCJImRx5drc15c7sfDWNAOBZHTVyvNC1/kInDR4gRXgG/mXu2J6LhJKEu
-         fBIltlpeli78u7K+Cxyvoagv6pXpkO98ozJFwSAe/NLAgfhDKEdeQeHYqO/ULTaBXJsw
-         LlPA==
-X-Gm-Message-State: AOAM53039POLWbMpB+grgt7P49m2NWdgQ+PHOfZgoVPqCHENtqeuK9w5
-        UFnlrLPMX66qSwxAnHm+lypCMQ==
-X-Google-Smtp-Source: ABdhPJxYoOhqu0uVmrPjAm/2q9G4E+XPc6EQ2qooE1FG/uuK4u7WYvLoeIqvmMnqRM5oH2BRxbWCfg==
-X-Received: by 2002:aa7:c981:: with SMTP id c1mr4786033edt.90.1611667576505;
-        Tue, 26 Jan 2021 05:26:16 -0800 (PST)
-Received: from localhost.localdomain ([2a02:2450:102f:d6a:65c9:91eb:731f:f2c8])
-        by smtp.gmail.com with ESMTPSA id dh14sm12236010edb.11.2021.01.26.05.26.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 05:26:15 -0800 (PST)
-From:   Robert Foss <robert.foss@linaro.org>
-To:     linus.walleij@linaro.org, robh+dt@kernel.org,
-        lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
-        UNGLinuxDriver@microchip.com, lgirdwood@gmail.com,
-        broonie@kernel.org, matthias.bgg@gmail.com, jiaxin.yu@mediatek.com,
-        shane.chien@mediatek.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-mediatek@lists.infradead.org
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [PATCH v1 1/2] dt-bindings: pinctrl: pinctrl-microchip-sgpio: Fix dt_binding_check warning
-Date:   Tue, 26 Jan 2021 14:25:30 +0100
-Message-Id: <20210126132531.2084711-1-robert.foss@linaro.org>
-X-Mailer: git-send-email 2.27.0
+        id S2405360AbhAZNt5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:49:57 -0500
+Received: from mga06.intel.com ([134.134.136.31]:50000 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405323AbhAZNtz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 26 Jan 2021 08:49:55 -0500
+IronPort-SDR: j5T3mCqvbdVcWMQQdfB1pzgRsFch4h6O28M14kETp+wZPhQBTBFZgMGss/H3MxL8Klu+TkjyfL
+ l3TcGUlNoUWQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="241431449"
+X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
+   d="scan'208";a="241431449"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 05:49:14 -0800
+IronPort-SDR: mJk/x5Gy53qxCI3lJwuYwwGt6fSLVDyZZu9h2+JXkxQwV3SDEWKn1oRXPkKM3EG+jvrcyKsrre
+ RmiGC3u8zbrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
+   d="scan'208";a="429715819"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 26 Jan 2021 05:49:13 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 5A813173; Tue, 26 Jan 2021 15:49:12 +0200 (EET)
+Date:   Tue, 26 Jan 2021 15:49:12 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux pin control <linux-gpio@vger.kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL] intel-pinctrl for 5.12-1
+Message-ID: <YBAd2HT9LFIugxEo@black.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Silence indentation level warning reported by dt_binding_check in
-order to reduce noise during routine checks.
+Hi Linux pin control  maintainers,
 
-$ make dt_binding_check
-mt8192-mt6359-rt1015-rt5682.yaml:10:4: [warning] wrong indentation:
-expected 2 but found 3 (indentation)
+Rather quite cycle from Intel pin control perspective. Please pull.
 
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
----
- .../devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml   | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml b/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
-index df0c83cb1c6e..4fe35e650909 100644
---- a/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/microchip,sparx5-sgpio.yaml
-@@ -99,8 +99,8 @@ patternProperties:
- 
-       '#interrupt-cells':
-         description:
--         Specifies the pin (port and bit) and flags, as defined in
--         defined in include/dt-bindings/interrupt-controller/irq.h
-+          Specifies the pin (port and bit) and flags, as defined in
-+          defined in include/dt-bindings/interrupt-controller/irq.h
-         const: 3
- 
-       ngpios:
+With Best Regards,
+Andy Shevchenko
+
+The following changes since commit e71ba9452f0b5b2e8dc8aa5445198cd9214a6a62:
+
+  Linux 5.11-rc2 (2021-01-03 15:55:30 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v5.12-1
+
+for you to fetch changes up to 0e793a4e283487378e9a5b7db37bc1781bc72fd7:
+
+  pinctrl: tigerlake: Add Alder Lake-P ACPI ID (2021-01-08 16:04:50 +0200)
+
+----------------------------------------------------------------
+intel-pinctrl for v5.12-1
+
+* Enable pin control on Intel Alder Lake-P
+* Traverse through capabilities, convert them to features for the future use
+
+The following is an automated git shortlog grouped by driver:
+
+intel:
+ -  Convert capability list to features
+ -  Drop unnecessary check for predefined features
+ -  Split intel_pinctrl_add_padgroups() for better maintenance
+
+tigerlake:
+ -  Add Alder Lake-P ACPI ID
+
+----------------------------------------------------------------
+Andy Shevchenko (4):
+      pinctrl: intel: Split intel_pinctrl_add_padgroups() for better maintenance
+      pinctrl: intel: Drop unnecessary check for predefined features
+      pinctrl: intel: Convert capability list to features
+      pinctrl: tigerlake: Add Alder Lake-P ACPI ID
+
+ drivers/pinctrl/intel/pinctrl-intel.c     | 117 +++++++++++++++++++++---------
+ drivers/pinctrl/intel/pinctrl-intel.h     |   4 +
+ drivers/pinctrl/intel/pinctrl-tigerlake.c |   1 +
+ 3 files changed, 88 insertions(+), 34 deletions(-)
+
 -- 
-2.27.0
+With Best Regards,
+Andy Shevchenko
+
 
