@@ -2,174 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF38C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 12:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9148C433E9
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 13:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4C2A230FE
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 12:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B67832247F
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 13:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391392AbhAZMjQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 07:39:16 -0500
-Received: from mga03.intel.com ([134.134.136.65]:47772 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728794AbhAZMjK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 26 Jan 2021 07:39:10 -0500
-IronPort-SDR: 9X/Ujf1+/mzqowE9kLrSbGllICZ+bsFK+UmSudcujWdy65SYiJ58dYBWdpxhS+6bN3/EV7Lu4Y
- HUOjJ3rU1nVA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="179973781"
-X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="179973781"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 04:37:14 -0800
-IronPort-SDR: xtjAOkynaLHfXe5zpBV18SvsRxeKacFBYCOy6xM8lMumXM5JOU1r74QRBgpcyA2Zh5et8mJjjw
- QBmmY7umAlQw==
-X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="406691221"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 04:37:10 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l4Nbo-00EOdg-F6; Tue, 26 Jan 2021 14:38:12 +0200
-Date:   Tue, 26 Jan 2021 14:38:12 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     platform-driver-x86@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>
-Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [GIT PULL] ib-drm-gpio-pdx86-rtc-wdt-v5.12-1
-Message-ID: <YBANNJ8XtoRf7SuW@smile.fi.intel.com>
+        id S2391661AbhAZNbu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:31:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404375AbhAZN1h (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 08:27:37 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44605C0698C1
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 05:26:19 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id a14so8418239edu.7
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 05:26:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jJsyBSQ5fnIh7z+EGO1ct3NYyuJeKMfKI26SOZHy/5M=;
+        b=nreZNHlarXxqqf5v1K41FArfFksX47QMYvpuQazuFPHcwCsFArVTbduVnLIzt9WudS
+         TV8fBmKsTd6KRZXO+6PmPol6JoQevANIt/52yoKVyl7u7SOoOLr1JaKVIIBURin13/OS
+         ozXZaN2EPwkbo5YSiSjLBn81LbdbKH14+6EUwaxblzZXRq5+WCCvCJmFjTFManR/E0Ml
+         zFr3Tk1CYCjXMJELN7gy4dBmw/5tuQTNDQGrds//v6ZcmvXvGYwQmcW2Uwizfp5yJ08b
+         LpFFLzJbO0gbmSnkj8OzClOly8qROT5daNyeuDJWHIXgEGW2Zk27TvJNn6Sist2aTXSR
+         6/3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jJsyBSQ5fnIh7z+EGO1ct3NYyuJeKMfKI26SOZHy/5M=;
+        b=BinSYAMov/6e9QALcaoBY67b4rWg3+UjhxUPDe0Xmt8jUnpR/wUjT0OWKHY7v5cyFy
+         JiRyy6va5nm8qWIa8WT5RVwtNy/2UbcgIPOeGHqnrwHnTxWNAOPQV6h0gz0BMsD9NWQT
+         642lCZgzuYIwCWgjwjAlgjQnU2bpZJ6CiP4i6gZvqN6yNRwhsx31un9cQuTtFzxTMHK+
+         qmo/tOWwUqEF0aFfaEjF9yzHw2d6S81FyeIcrLdB9LFbRNWfrxvuv+3gCokfYi6LTPGw
+         cqZmRey/uOYXMa7HI+3UOKhDI3B07KVkGwQ1UWMJkTpiTYBSrQDyFTl3a3f6/bTC7UuH
+         oCDg==
+X-Gm-Message-State: AOAM532WpAmr0KIhL0dx3ly13DBgiWfmlBv4M8SRLcMXk0cPhjPJ8nWJ
+        BRz4YOnbH9d86IERBiGcnovXKFRcC/6jWw==
+X-Google-Smtp-Source: ABdhPJxbhLHk4eGRreEqF4cTHMfjlD/b2feroKVc/aXltYt5dPKG1lCH+uD6Eh2WG04mPRzB26UreQ==
+X-Received: by 2002:a05:6402:438d:: with SMTP id o13mr4500539edc.135.1611667577953;
+        Tue, 26 Jan 2021 05:26:17 -0800 (PST)
+Received: from localhost.localdomain ([2a02:2450:102f:d6a:65c9:91eb:731f:f2c8])
+        by smtp.gmail.com with ESMTPSA id dh14sm12236010edb.11.2021.01.26.05.26.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 05:26:17 -0800 (PST)
+From:   Robert Foss <robert.foss@linaro.org>
+To:     linus.walleij@linaro.org, robh+dt@kernel.org,
+        lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
+        UNGLinuxDriver@microchip.com, lgirdwood@gmail.com,
+        broonie@kernel.org, matthias.bgg@gmail.com, jiaxin.yu@mediatek.com,
+        shane.chien@mediatek.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-mediatek@lists.infradead.org
+Cc:     Robert Foss <robert.foss@linaro.org>
+Subject: [PATCH v1 2/2] dt-bindings: mediatek: mt8192: Fix dt_binding_check warning
+Date:   Tue, 26 Jan 2021 14:25:31 +0100
+Message-Id: <20210126132531.2084711-2-robert.foss@linaro.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210126132531.2084711-1-robert.foss@linaro.org>
+References: <20210126132531.2084711-1-robert.foss@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi guys,
+Silence indentation level warning reported by dt_binding_check in
+order to reduce noise during routine checks.
 
-This is first part of Intel MID outdated platforms removal. It's collected into
-immutable branch with a given tag, please pull to yours subsystems.
+$ make dt_binding_check
+mt8192-mt6359-rt1015-rt5682.yaml:10:4: [warning] wrong indentation:
+expected 2 but found 3 (indentation)
 
-(All changes are tagged by the respective maintainers)
+Signed-off-by: Robert Foss <robert.foss@linaro.org>
+---
+ .../bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml           | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-
-With Best Regards,
-Andy Shevchenko
-
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
-
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/linux-platform-drivers-x86.git tags/ib-drm-gpio-pdx86-rtc-wdt-v5.12-1
-
-for you to fetch changes up to a507e5d90f3d6846a02d9c2c79e6f6395982db92:
-
-  platform/x86: intel_scu_wdt: Get rid of custom x86 model comparison (2021-01-25 20:05:32 +0200)
-
-----------------------------------------------------------------
-ib-drm-gpio-pdx86-rtc-wdt for v5.12-1
-
-First part of Intel MID outdated platforms removal.
-
-The following is an automated git shortlog grouped by driver:
-
-drm/gma500:
- -  Get rid of duplicate NULL checks
- -  Convert to use new SCU IPC API
-
-gpio:
- -  msic: Remove driver for deprecated platform
- -  intel-mid: Remove driver for deprecated platform
-
-intel_mid_powerbtn:
- -  Remove driver for deprecated platform
-
-intel_mid_thermal:
- -  Remove driver for deprecated platform
-
-intel_scu_wdt:
- -  Get rid of custom x86 model comparison
- -  Drop SCU notification
- -  Move driver from arch/x86
-
-rtc:
- -  mrst: Remove driver for deprecated platform
-
-watchdog:
- -  intel-mid_wdt: Postpone IRQ handler registration till SCU is ready
- -  intel_scu_watchdog: Remove driver for deprecated platform
-
-----------------------------------------------------------------
-Andy Shevchenko (12):
-      drm/gma500: Convert to use new SCU IPC API
-      drm/gma500: Get rid of duplicate NULL checks
-      gpio: intel-mid: Remove driver for deprecated platform
-      gpio: msic: Remove driver for deprecated platform
-      platform/x86: intel_mid_thermal: Remove driver for deprecated platform
-      platform/x86: intel_mid_powerbtn: Remove driver for deprecated platform
-      rtc: mrst: Remove driver for deprecated platform
-      watchdog: intel_scu_watchdog: Remove driver for deprecated platform
-      watchdog: intel-mid_wdt: Postpone IRQ handler registration till SCU is ready
-      platform/x86: intel_scu_wdt: Move driver from arch/x86
-      platform/x86: intel_scu_wdt: Drop SCU notification
-      platform/x86: intel_scu_wdt: Get rid of custom x86 model comparison
-
- MAINTAINERS                                        |   2 -
- arch/x86/platform/intel-mid/device_libs/Makefile   |   1 -
- drivers/gpio/Kconfig                               |  14 -
- drivers/gpio/Makefile                              |   1 -
- drivers/gpio/TODO                                  |   2 +-
- drivers/gpio/gpio-intel-mid.c                      | 414 ---------------
- drivers/gpio/gpio-msic.c                           | 314 ------------
- drivers/gpu/drm/gma500/Kconfig                     |   1 +
- drivers/gpu/drm/gma500/mdfld_device.c              |   2 -
- drivers/gpu/drm/gma500/mdfld_dsi_output.c          |   2 -
- drivers/gpu/drm/gma500/mdfld_output.c              |   8 +-
- drivers/gpu/drm/gma500/oaktrail_device.c           |   3 -
- drivers/gpu/drm/gma500/psb_drv.h                   |   3 +
- drivers/gpu/drm/gma500/tc35876x-dsi-lvds.c         |  30 +-
- drivers/platform/x86/Kconfig                       |  23 +-
- drivers/platform/x86/Makefile                      |   3 +-
- drivers/platform/x86/intel_mid_powerbtn.c          | 233 ---------
- drivers/platform/x86/intel_mid_thermal.c           | 560 ---------------------
- .../platform/x86/intel_scu_wdt.c                   |  41 +-
- drivers/rtc/Kconfig                                |  12 -
- drivers/rtc/Makefile                               |   1 -
- drivers/rtc/rtc-mrst.c                             | 521 -------------------
- drivers/watchdog/Kconfig                           |   9 -
- drivers/watchdog/Makefile                          |   1 -
- drivers/watchdog/intel-mid_wdt.c                   |   8 +-
- drivers/watchdog/intel_scu_watchdog.c              | 533 --------------------
- drivers/watchdog/intel_scu_watchdog.h              |  50 --
- 27 files changed, 54 insertions(+), 2738 deletions(-)
- delete mode 100644 drivers/gpio/gpio-intel-mid.c
- delete mode 100644 drivers/gpio/gpio-msic.c
- delete mode 100644 drivers/platform/x86/intel_mid_powerbtn.c
- delete mode 100644 drivers/platform/x86/intel_mid_thermal.c
- rename arch/x86/platform/intel-mid/device_libs/platform_mrfld_wdt.c => drivers/platform/x86/intel_scu_wdt.c (69%)
- delete mode 100644 drivers/rtc/rtc-mrst.c
- delete mode 100644 drivers/watchdog/intel_scu_watchdog.c
- delete mode 100644 drivers/watchdog/intel_scu_watchdog.h
-
+diff --git a/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml b/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml
+index bf8c8ba25009..54650823b29a 100644
+--- a/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml
++++ b/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml
+@@ -7,8 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Mediatek MT8192 with MT6359, RT1015 and RT5682 ASoC sound card driver
+ 
+ maintainers:
+-   - Jiaxin Yu <jiaxin.yu@mediatek.com>
+-   - Shane Chien <shane.chien@mediatek.com>
++  - Jiaxin Yu <jiaxin.yu@mediatek.com>
++  - Shane Chien <shane.chien@mediatek.com>
+ 
+ description:
+   This binding describes the MT8192 sound card.
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.27.0
 
