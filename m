@@ -2,68 +2,244 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E918CC433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 18:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FF4C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 20:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B70D222597
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 18:37:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DCB622B3B
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 20:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391473AbhAZRWb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:22:31 -0500
-Received: from out28-74.mail.aliyun.com ([115.124.28.74]:53738 "EHLO
-        out28-74.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731585AbhAZGdN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 01:33:13 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09914935|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.044853-0.0191849-0.935962;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047203;MF=liu.xiang@zlingsmart.com;NM=1;PH=DW;RN=8;RT=8;SR=0;TI=W4_6085603_DEFAULT_0AC2669D_1611642513078_o7001c447c;
-Received: from WS-web (liu.xiang@zlingsmart.com[W4_6085603_DEFAULT_0AC2669D_1611642513078_o7001c447c]) by ay29a011140100061.et135 at Tue, 26 Jan 2021 14:31:55 +0800
-Date:   Tue, 26 Jan 2021 14:31:55 +0800
-From:   "liu xiang" <liu.xiang@zlingsmart.com>
-To:     "Maxime Ripard" <maxime@cerno.tech>,
-        "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     "=?UTF-8?B?b3BlbiBsaXN0OkdQSU8gU1VCU1lTVEVN?=" 
-        <linux-gpio@vger.kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
-        "Jernej Skrabec" <jernej.skrabec@siol.net>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "liuxiang_1999" <liuxiang_1999@126.com>
-Reply-To: "liu xiang" <liu.xiang@zlingsmart.com>
-Message-ID: <5c4b7a8c-c549-43ae-8ec6-5ae3ed26d321.liu.xiang@zlingsmart.com>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gcGluY3RybDogc3VueGk6IGZpeCB1c2UtYWZ0ZXItZnJlZSBpbiBzdW54?=
-  =?UTF-8?B?aV9wbXhfZnJlZSgp?=
-X-Mailer: [Alimail-Mailagent revision 794][W4_6085603][DEFAULT][Chrome]
+        id S1727339AbhAZF1X (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 00:27:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56716 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730062AbhAZE2W (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2021 23:28:22 -0500
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD38C061788
+        for <linux-gpio@vger.kernel.org>; Mon, 25 Jan 2021 20:26:50 -0800 (PST)
+Received: by mail-ot1-x331.google.com with SMTP id d1so15056753otl.13
+        for <linux-gpio@vger.kernel.org>; Mon, 25 Jan 2021 20:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Sxs612cpeWk15s9IRsZQmGfQWRxEVp1NyNx2VAk5PQg=;
+        b=pLxjBRSUifb+FQNiC5QIELRNYUDee8Q/998g8Xz+9uTbKm2/PeB+SMw5G3wj/othVN
+         0RmH6L36rIVwRog1w3xBrSZGaNVb9FDdyxIoj3lTKMhRt/3Pz2NVq0Y3TpHFAAttq5cf
+         Bxib/8d6lZZhIWBBmvLy2EF3LHzo6PLEq/2eYFC7OkbPQc+CKFb3ZeF8U+w2UDef1Je9
+         VZoGkAvWiXFLH8GwiFKkLyqdkAuSJp7MKufFB3P4cVaH/VMnpSg7HSZSjTqfrh7vbCix
+         aYpkgpgQg2iR/C42fH6ktfxQ2+MlUIWf1f4Aybic7pqDGZ1hsjtJ0ZHzStuAzfjFaJPN
+         VC+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Sxs612cpeWk15s9IRsZQmGfQWRxEVp1NyNx2VAk5PQg=;
+        b=EC/zs9n6CzlkvhMzFDuBWfIvtKb+947Wk84F4sGrJXwNHeAm5kbN5n6CkY4Zb1uU0Q
+         Fl7EBvHUby/LzWkwGE7W/W1MgYIiZB2XVQT9M71jlessYiffqA+pZzjjT/qPjp85DEws
+         S+T5KMmprEc34RfLj3Uue6gYecCsAnmBI77/5gyinc56XbUOLZkisWfX/0xDTbKh0jaW
+         79Pw5kiau0HIJrIfaXdIS3GfYOi4LHWaHvPveeHfstR8DyooI/9YON+zXsbCAerFl/CL
+         R+XtR2zVXDO1rTA1n6PRvZaPPfq5BHUprH3STP68oW4sWAJ/uZZ2v/FmQkVFSi2VCsIu
+         bQ9Q==
+X-Gm-Message-State: AOAM5320ziNJKQxIMjODHqNYmy75A6nUth/P23lLVSiav3xwj/Np5x0I
+        uMd1XoDnVdjoVzyPV0Z/VGSsCw==
+X-Google-Smtp-Source: ABdhPJwIgqPvhOuEMX2vL3suWxRX/QP8lNokACHAx9Lh9I02IwyKl4hFXECw0s1y7YEUUVS0/hgCPA==
+X-Received: by 2002:a9d:3985:: with SMTP id y5mr2700391otb.202.1611635209827;
+        Mon, 25 Jan 2021 20:26:49 -0800 (PST)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id w129sm3930638oig.23.2021.01.25.20.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jan 2021 20:26:49 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/3] dt-bindings: pinctrl: qcom: Add sc8180x binding
+Date:   Mon, 25 Jan 2021 20:26:49 -0800
+Message-Id: <20210126042650.1725176-2-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210126042650.1725176-1-bjorn.andersson@linaro.org>
+References: <20210126042650.1725176-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-References: <20210119062908.20169-1-liu.xiang@zlingsmart.com> <20210121164013.cqfxvach4ugkohm7@gilmour>,<CACRpkdb1gn2e9=ip6ipAwW27vmf1FCs_y1Z=w-K8y8Z9MXVBMw@mail.gmail.com>
-x-aliyun-mail-creator: W4_6085603_DEFAULT_AoSTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV09XNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83NS4wLjM3NzAuMTAwIFNhZmFyaS81MzcuMzY=zN
-In-Reply-To: <CACRpkdb1gn2e9=ip6ipAwW27vmf1FCs_y1Z=w-K8y8Z9MXVBMw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-PiBPbiBUaHUsIEphbiAyMSwgMjAyMSBhdCA1OjQwIFBNIE1heGltZSBSaXBhcmQgPG1heGltZUBj
-ZXJuby50ZWNoPiB3cm90ZToKPiBPbiBUdWUsIEphbiAxOSwgMjAyMSBhdCAwMjoyOTowOFBNICsw
-ODAwLCBMaXUgWGlhbmcgd3JvdGU6Cj4gPiBXaGVuIENPTkZJR19SRUdVTEFUT1IgaXMgbm90IHNl
-dCwgc3VueGlfcG14X3JlcXVlc3QoKSBhbHdheXMgcmV0dXJuCj4gPiBzdWNjZXNzLiBFdmVuIGEg
-Z3JvdXAgb2YgcGlucyBjYWxsIHN1bnhpX3BteF9yZXF1ZXN0KCksIHRoZSByZWZjb3VudAo+ID4g
-aXMgb25seSAxLiBUaGlzIGNhbiBjYXVzZSBhIHVzZS1hZnRlci1mcmVlIHdhcm5pbmcgaW4gc3Vu
-eGlfcG14X2ZyZWUoKS4KPiA+IFRvIHNvbHZlIHRoaXMgcHJvYmxlbSwgZ28gdG8gZXJyIHBhdGgg
-aWYgcmVndWxhdG9yX2dldCgpIHJldHVybiBOVUxMCj4gPiBvciBlcnJvci4KPiA+Cj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBMaXUgWGlhbmcgPGxpdS54aWFuZ0B6bGluZ3NtYXJ0LmNvbT4KPgo+IElzIHRo
-ZXJlIGFueSBkcmF3YmFjayB0byBkZXBlbmRpbmcgb24gQ09ORklHX1JFR1VMQVRPUj8KPgo+IEdp
-dmVuIHRoYXQgd2UgbmVlZCB0aG9zZSByZWd1bGF0b3JzIGVuYWJsZWQgYW55d2F5LCBJIGd1ZXNz
-IHdlIGNvdWxkCj4ganVzdCBzZWxlY3Qgb3IgZGVwZW5kcyBvbiBpdAo+IAo+IEkgYWdyZWUuCj4g
-Cj4gTGl1IGNhbiB5b3UgbWFrZSBhIHBhdGNoIHRvIEtjb25maWcgdG8ganVzdCBzZWxlY3QgUkVH
-VUxBVE9SPwo+IFBvc3NpYmx5IGV2ZW4gdGhlIHNwZWNpZmljIHJlZ3VsYXRvciBkcml2ZXIgdGhp
-cyBTb0MgaXMgdXNpbmcKPiBpZiBpdCBpcyB2ZXJ5IHNwZWNpZmljIGZvciB0aGlzIHB1cnBvc2Uu
-Cj4gCj4gWW91cnMsCj4gTGludXMgV2FsbGVpagoKSSBmb3VuZCB0aGF0IHRoZSByZWd1bGF0b3Ig
-ZHJpdmVyIGlzIHJlbGF0ZWQgdG8gdGhlIHNwZWNpZmljIGJvYXJkLCBub3QgdGhlIFNvQy4KVGhl
-cmUgaXMgbm8gYm9hcmQgY29uZmlnIGZvciBBUk02NCBTb0MgbGlrZSBBUk0uCklzIGEgZ29vZCBp
-ZGVhIHRvIHNlbGVjdCB0aGUgcmVndWxhdG9yIGRyaXZlciBpbiB0aGUgcGluY3RybCBLb25maWc/
-IE9yIGp1c3QgCnNlbGVjdCBDT05GSUdfUkVHVUxBVE9SX0ZJWEVEX1ZPTFRBR0UgdG8gYXZvaWQg
-dGhlIHVzZS1hZnRlci1mcmVlIHdhcm5pbmc/
+Add binding for the TLMM block in the Qualcomm SC8180X platform.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ .../pinctrl/qcom,sc8180x-pinctrl.yaml         | 152 ++++++++++++++++++
+ 1 file changed, 152 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
+new file mode 100644
+index 000000000000..a82dab898395
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
+@@ -0,0 +1,152 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,sc8180x-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. SC8180X TLMM block
++
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
++
++description: |
++  This binding describes the Top Level Mode Multiplexer block found in the
++  SC8180X platform.
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,sc8180x-tlmm
++
++  reg:
++    maxItems: 3
++
++  reg-names:
++    items:
++      - const: "west"
++      - const: "east"
++      - const: "south"
++
++  interrupts: true
++  interrupt-controller: true
++  '#interrupt-cells': true
++  gpio-controller: true
++  gpio-reserved-ranges: true
++  '#gpio-cells': true
++  gpio-ranges: true
++  wakeup-parent: true
++
++required:
++  - compatible
++  - reg
++  - reg-names
++
++additionalProperties: false
++
++patternProperties:
++  '-state$':
++    oneOf:
++      - $ref: "#/$defs/qcom-sc8180x-tlmm-state"
++      - patternProperties:
++          ".*":
++            $ref: "#/$defs/qcom-sc8180x-tlmm-state"
++
++'$defs':
++  qcom-sc8180x-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: "qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state"
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-8][0-9])$"
++            - enum: [ sdc2_clk, sdc2_cmd, sdc2_data, ufs_reset ]
++        minItems: 1
++        maxItems: 16
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++        enum: [ adsp_ext, agera_pll, aoss_cti, atest_char, atest_tsens,
++                atest_tsens2, atest_usb0, atest_usb1, atest_usb2, atest_usb3,
++                atest_usb4, audio_ref, btfm_slimbus, cam_mclk, cci_async,
++                cci_i2c, cci_timer0, cci_timer1, cci_timer2, cci_timer3,
++                cci_timer4, cci_timer5, cci_timer6, cci_timer7, cci_timer8,
++                cci_timer9, cri_trng, dbg_out, ddr_bist, ddr_pxi, debug_hot,
++                dp_hot, edp_hot, edp_lcd, emac_phy, emac_pps, gcc_gp1, gcc_gp2,
++                gcc_gp3, gcc_gp4, gcc_gp5, gpio, gps, grfc, hs1_mi2s, hs2_mi2s,
++                hs3_mi2s, jitter_bist, lpass_slimbus, m_voc, mdp_vsync,
++                mdp_vsync0, mdp_vsync1, mdp_vsync2, mdp_vsync3, mdp_vsync4,
++                mdp_vsync5, mss_lte, nav_pps, pa_indicator, pci_e0, pci_e1,
++                pci_e2, pci_e3, phase_flag, pll_bist, pll_bypassnl, pll_reset,
++                pri_mi2s, pri_mi2s_ws, prng_rosc, qdss_cti, qdss_gpio, qlink,
++                qspi0, qspi0_clk, qspi0_cs, qspi1, qspi1_clk, qspi1_cs,
++                qua_mi2s, qup0, qup1, qup2, qup3, qup4, qup5, qup6, qup7, qup8,
++                qup9, qup10, qup11, qup12, qup13, qup14, qup15, qup16, qup17,
++                qup18, qup19, qup_l4, qup_l5, qup_l6, rgmii, sd_write, sdc4,
++                sdc4_clk, sdc4_cmd, sec_mi2s, sp_cmu, spkr_i2s, ter_mi2s, tgu,
++                tsense_pwm1, tsense_pwm2, tsif1, tsif2, uim1, uim2, uim_batt,
++                usb0_phy, usb1_phy, usb2phy_ac, vfr_1, vsense_trigger,
++                wlan1_adc, wlan2_adc, wmss_reset ]
++
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      drive-strength: true
++      input-enable: true
++      output-high: true
++      output-low: true
++
++    required:
++      - pins
++      - function
++
++    additionalProperties: false
++
++examples:
++  - |
++        #include <dt-bindings/interrupt-controller/arm-gic.h>
++        pinctrl@3100000 {
++                compatible = "qcom,sc8180x-tlmm";
++                reg = <0x03100000 0x300000>,
++                      <0x03500000 0x700000>,
++                      <0x03d00000 0x300000>;
++                reg-names = "west", "east", "south";
++                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++                gpio-controller;
++                #gpio-cells = <2>;
++                interrupt-controller;
++                #interrupt-cells = <2>;
++                gpio-ranges = <&tlmm 0 0 190>;
++
++                gpio-wo-subnode-state {
++                        pins = "gpio1";
++                        function = "gpio";
++                };
++
++                uart-w-subnodes-state {
++                        rx {
++                                pins = "gpio4";
++                                function = "qup6";
++                                bias-pull-up;
++                        };
++
++                        tx {
++                                pins = "gpio5";
++                                function = "qup6";
++                                bias-disable;
++                        };
++                };
++        };
++...
+-- 
+2.29.2
+
