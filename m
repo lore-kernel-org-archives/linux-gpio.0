@@ -2,143 +2,107 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94318C4332B
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB263C4332B
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73E5123101
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:26:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D5402083E
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389846AbhAZP0M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:26:12 -0500
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:53361 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391539AbhAZPZR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 26 Jan 2021 10:25:17 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 615C2B47;
-        Tue, 26 Jan 2021 10:24:30 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 26 Jan 2021 10:24:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=N58P68rmnDJxoYYRk7nViKAuN+J
-        BxJrfBhrOUbLBiS8=; b=bMv/TMmgBMOX8kgzlkOTxmHHdgOeJQKfRcSIvfMwu6B
-        gNDqqOSaEo5BfkhYgYhFHkjKnwh7mymtcT4EqO5OcWgZQBx+3Gl0pux8H5ZuXLFi
-        LPSG7O94PpTMRTaAO9H67HJtzdshOIjNiAl5rkQJscFSsQid9NSm066hr6Snzo2K
-        FDtfC/7d4GeB3lO811YglJBK8lyJkkYhSuP+Df35Adx7qn7QTFNOrzwmqTx44yLT
-        lGYdN7G5vHuu46i+nB+xllZ94xkXOwopC7cbWReju5N/mQeclN22dQLSUgRSkWxT
-        GKaydJni/KvTIVNY7WMI9ZV3FO53Jgg1+b5d8b50tTg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=N58P68
-        rmnDJxoYYRk7nViKAuN+JBxJrfBhrOUbLBiS8=; b=dqNxADrXGnulfEb1fcwQGS
-        JKmK6JqjYrmEbtuxDY9X3Fne/f7iEn2neuW3Rj9THnmmwCzDa42g1ysiJtbz/hDT
-        RDqZO1D6qS85AqyLFSZFMjgdSqnvkWsZCkONakjM7KXQI09MAgv0a95OrFF+Xr7M
-        3H6M0M79HN8Ef8X6g/1OMQ5mFr4TfewdNcUmmP232IRSIr+zrw7gDzv9ObdtouGU
-        2Eb443dKT/yENKknDYr66viLHpE+hCIcepk+x9NUQDVsc2BOhB2HFGo+JMT1qn/0
-        cmQN6Hgah11w9yMnMeqXFVYQvyCNajfePm5OLFp4/opOgjc/0qwmAPUtbv/UwbSw
-        ==
-X-ME-Sender: <xms:LDQQYAk2th3yH9GW2Bs341OEuXh8dUU5TcNy1SnzoWEkXFd9NQcJVg>
-    <xme:LDQQYP0zY0E5G87x4LV1b5wn6Fw_MB4DhgLmzG55IUMZAofbwigSnqftuDU9u6cbM
-    vX6mXgZXtL6YvzrZmU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdeigddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:LDQQYOrIjkK4YsUH8Z00KU-GuAIrFK7iXiYq0Yer5xuNC6IHQzdr3A>
-    <xmx:LDQQYMkz6Qf5u4gTfLb4M9sxLmhS5YlT2MbqHgmSBQtOzHrshn-vUw>
-    <xmx:LDQQYO1mYSpQPsTPMFokeVZTjly4xr5R6aSgVLpEZ6ot-8KoWUJ_7g>
-    <xmx:LTQQYK-qRUMryIfVopHcPNQybCGguCGCoFxozKnNQ6VUoJE3hyJoRw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5F9F4108005B;
-        Tue, 26 Jan 2021 10:24:28 -0500 (EST)
-Date:   Tue, 26 Jan 2021 16:24:26 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     liu xiang <liu.xiang@zlingsmart.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        liuxiang_1999 <liuxiang_1999@126.com>
-Subject: Re: [PATCH] pinctrl: sunxi: fix use-after-free in sunxi_pmx_free()
-Message-ID: <20210126152426.pmnuipcyaloaz4tx@gilmour>
-References: <20210119062908.20169-1-liu.xiang@zlingsmart.com>
- <20210121164013.cqfxvach4ugkohm7@gilmour>
- <CACRpkdb1gn2e9=ip6ipAwW27vmf1FCs_y1Z=w-K8y8Z9MXVBMw@mail.gmail.com>
- <5c4b7a8c-c549-43ae-8ec6-5ae3ed26d321.liu.xiang@zlingsmart.com>
- <CACRpkdaJQcuWwS2g4UgRpWb+iHYSmWoNj6gEsvGwtPZq+aJBbQ@mail.gmail.com>
+        id S2392769AbhAZPvz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 10:51:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392031AbhAZPvn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 10:51:43 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCB4DC061D73;
+        Tue, 26 Jan 2021 07:51:02 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id j21so5383821pls.7;
+        Tue, 26 Jan 2021 07:51:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e1wIxfZ2pa94U6ERVc2TBu1sPL7/ZYPSJAmu9tbJ7iw=;
+        b=fInUUBW/u2yZkKQ9i4u1tJ4c+stOkTJCJtSFcDLZ7m/xs9cZT542Eb2J5XlAOl8xPv
+         DtHadV5tMMfxNK6aBMVjHNggIwvNKjBxXQJORTHKRarKVjBMRj4aZ2ZFbdCSu6m/QBiJ
+         8WEOou3Sj7ixxzifYtQN/LX5gb98Of28SIfvk8keig14TyEK02m0ZM9sX5KjF+raFYRX
+         i9zNWhK5pY/8Qa/Ywd0D5gQzpd6FaQMM6bM69oPwHXiDxOmf7yaNaO9ibFdCQIUWeb70
+         PLaqHLpZ9cFYa9GvvdBBgHTZw2e6bySE0pNTApwJTaDkDEd/egu/gBGsb12p/44eYqRY
+         gXxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e1wIxfZ2pa94U6ERVc2TBu1sPL7/ZYPSJAmu9tbJ7iw=;
+        b=aSwpLjMzOaZSydQoU2DoupjjU74RYSVy1ktDdvMSO1Sfs1NI/X1Z3TFIg9Erx24gm7
+         zdbtfXkgSBvn3I3lKzhnzEyjPkVj52y3byefejl7966VcU4vc+QXeqdH+hi6fZQNr7fK
+         nXwfRfYSFsejYhBMcnuVLQpi/L66W2iRlr5mKnOeTgeGFbPcxgVO4pcWP9euL1xC6kRt
+         GOT1SAIwTuAcwB+G1njOvgIKmkGty2wOHJFlyZcD8YnhUw4kpfEc+9eE0zVZ6ECqXKHY
+         3hDjArDs2EWPUmpdjdSEk97mwyH3QGIjfKc6ZH/F3oAPcFKeZ/u8t6CIWX380J0CDy8e
+         K4Lw==
+X-Gm-Message-State: AOAM5301zX7du/pS4/x3rKYYBd38IsiR+09z88mJoG9zQdXLIXymw84A
+        D4ANM0429pG6NS33Rh+iL+pvTae+vb9tPKDZyyg=
+X-Google-Smtp-Source: ABdhPJx5glss0sqleRtDBlXmNqPnxXWh5zBE4ZdTKEjL+tUMNHRV8Ts7oKcmyySbHPNP8WfNZVvgavGou2cpAroNDx4=
+X-Received: by 2002:a17:90a:c84:: with SMTP id v4mr423673pja.228.1611676262312;
+ Tue, 26 Jan 2021 07:51:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3t3ycay2bf7rxezc"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaJQcuWwS2g4UgRpWb+iHYSmWoNj6gEsvGwtPZq+aJBbQ@mail.gmail.com>
+References: <YBANNJ8XtoRf7SuW@smile.fi.intel.com> <CAMeQTsbGBrTvfkz6BStwL240Kz-dbrQVKtXbYkRtbD3OoUKCcg@mail.gmail.com>
+In-Reply-To: <CAMeQTsbGBrTvfkz6BStwL240Kz-dbrQVKtXbYkRtbD3OoUKCcg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 26 Jan 2021 17:51:51 +0200
+Message-ID: <CAHp75Vc9RAHvTDAw1ryHq_CPRMtjqkzg9081nw0+RPY_yWPJgA@mail.gmail.com>
+Subject: Re: [GIT PULL] ib-drm-gpio-pdx86-rtc-wdt-v5.12-1
+To:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>, linux-watchdog@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
---3t3ycay2bf7rxezc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 26, 2021 at 04:03:29PM +0100, Linus Walleij wrote:
-> On Tue, Jan 26, 2021 at 7:31 AM liu xiang <liu.xiang@zlingsmart.com> wrot=
-e:
->=20
-> > > Liu can you make a patch to Kconfig to just select REGULATOR?
-> > > Possibly even the specific regulator driver this SoC is using
-> > > if it is very specific for this purpose.
+On Tue, Jan 26, 2021 at 5:25 PM Patrik Jakobsson
+<patrik.r.jakobsson@gmail.com> wrote:
+> On Tue, Jan 26, 2021 at 1:37 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > >
-> > I found that the regulator driver is related to the specific board, not=
- the SoC.
-> > There is no board config for ARM64 SoC like ARM.
-> > Is a good idea to select the regulator driver in the pinctrl Konfig? Or=
- just
-> > select CONFIG_REGULATOR_FIXED_VOLTAGE to avoid the use-after-free warni=
-ng?
->=20
-> If that regulator is what the board uses to satisfy this driver then that
-> is what you should select. Write some blurb in the commit message
-> about what is going on.
->=20
-> You can even add a comment in Kconfig like that:
->=20
-> # Needed to provide power to rails
-> select REGULATOR_FIXED_VOLTAGE
+> > Hi guys,
+> >
+> > This is first part of Intel MID outdated platforms removal. It's collected into
+> > immutable branch with a given tag, please pull to yours subsystems.
+>
+> Hi Andy,
+> Do you plan on eventually removing X86_INTEL_MID completely? If so,
+> then I should probably start looking at removing the corresponding
+> parts in GMA500.
 
-Virtually all the boards will need a regulator, but you can't make the
-assumption that this is the driver that is going to be used. In most
-case, it isn't.
+Nope. It is related to only Medfield / Clovertrail platforms.
 
-But it's not really a big deal, we depend on the framework itself being
-enabled for regulator_get to return the proper error, not one given
-driver.
+There are other (MID) platforms that may / might utilize this driver
+in the future.
 
-Maxime
+I.o.w. we probably can remove the oldest stuff in the driver WRT above
+mentioned platforms, but leave the driver for the rest.
+I wouldn't be in a hurry with this though, display drivers are easy to
+remove, but really hard to get back on velocity after that.
 
---3t3ycay2bf7rxezc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYBA0KgAKCRDj7w1vZxhR
-xdm2AP9Vg1fFmdBMLPOzFtzelXWiubltA/UbM3djut80g40SsgEAonnEgt7nnczQ
-xpjCO5ObhLC7IWv1ZoKyTSfECCr2SgY=
-=NX1o
------END PGP SIGNATURE-----
-
---3t3ycay2bf7rxezc--
+-- 
+With Best Regards,
+Andy Shevchenko
