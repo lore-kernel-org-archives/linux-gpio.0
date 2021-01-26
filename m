@@ -2,115 +2,149 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF7BC41620
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FCFC4332B
 	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 18:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E738320449
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 18:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F38322273
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 18:36:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbhAZRWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:22:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731101AbhAZQ4k (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 11:56:40 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3880EC061D7D;
-        Tue, 26 Jan 2021 08:56:00 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id b26so23618682lff.9;
-        Tue, 26 Jan 2021 08:56:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IUDDZRZxdmyV3zHbIgFV/f+pJvlpZPQNewiwbQaO6tE=;
-        b=lW8J7gdCPRMweOQw8pwNhFi4aRG/l+tBBUD0aanYKeGqx5yQ1nLZ7amwTrNZHy6vU2
-         V9wwSXUgUvgm4WHsgQysRp7Qdnkj7lv13RJkpJmXiHgv2vptiA6hb/h3zaYrFtGVwNnB
-         wp0favvJMQzNKEyLe/ecQt4MU1Y4BDQ3+CCBSvfEouaXwPVNEjIMQaAm/INI0V4d4EYR
-         Euctr81IITXkASr5McZpLWSUZxaj+GPouo/1cYqAlGbcxNNFf46cYkjGnSmBVeBb3I4t
-         CHAgzgNNdr4nM29pWXKyRFzV2kGPi9FpD5hWu07RxVRd70ZvB5sgyWWcNPRMllyENxG9
-         800Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IUDDZRZxdmyV3zHbIgFV/f+pJvlpZPQNewiwbQaO6tE=;
-        b=O+IzDx/R5ply9lEv35ei1unhLF3QYjDeuIYvzGQfiWiF87wsenSAkYO6FpwABMX3Ru
-         0xp7N1Jo6dYj3eKAgqzIC+1xMACy3ys0W1AGWW0q3bUIkKevD0Och9oOM/coUU5bLfRX
-         /nH4voJzJoN1keIo0BNnCR9KhWMcofF87SJ8vpMQh6n4cSw/ACRwdWhZanCa8r1M+C1Y
-         IalR1nxjWJtqffvvxVAXPs8t3drkFN+BM62ZPfFX8sAZc1FXIV/ZSGmDSw+tkpf+9ds7
-         XhCyV3lquhdNHdXV8IhPaQYW1xz68OseUUxbRGg511FN5k7W/ECDkIfWk9qYGXBU9V6O
-         deVw==
-X-Gm-Message-State: AOAM530JYyAGWFrUSOZ09yN0WvOX+hCGP/wRgXULqPxylsy5Evy+bCxd
-        daJeIpWfsX0lR+mFEEGDMRecAPW04mHGqFgJx68=
-X-Google-Smtp-Source: ABdhPJy9dl1Tk9pVWPFcSjiX8vKJgMaCDnwogfliEKqUrmBFXH5j360/BhKOOcxo7U7KWVqbda7Zg9HYVSXc7AKyd7I=
-X-Received: by 2002:ac2:515b:: with SMTP id q27mr2948208lfd.516.1611680158749;
- Tue, 26 Jan 2021 08:55:58 -0800 (PST)
+        id S1727790AbhAZRWj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:22:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389867AbhAZIWe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 26 Jan 2021 03:22:34 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 479A220717
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 08:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611649313;
+        bh=ifZX5JkH2KGQEngRqfDyhgMFQH75aVXiKarwuVpDq74=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Z1YHmTROxAlFmxp0+XwdvBTr+Nbg1AKagmOj1kjYhokU+9XDuP/wdMT3spxwSKFVB
+         Uc9dq0/7VRJsnt4rfQKdSod9ffzTS+1dqiG8P6Pk0qqWYy8dLdO/HG3lusk28QNDxO
+         0R5iBK1aoN6XGKvVKO/O4iibP6Z1CqLXSG5r8uEnQ4BPKurykulGXK5MkqeLbLksfG
+         oiI8K4VcwdUKquOZnKwtgpwYqGyrnMSlBqVhdABrcI1jUiC+xnWM4dU+JNLUzEkWJf
+         ay16wXU6vo1CvbcXpQW/F706Zmmjt6+YozryYoPg599ZqawZ7pUaN3F+1xaqU1EZxL
+         G5AqU6F+wCVUQ==
+Received: by mail-ej1-f54.google.com with SMTP id l9so21761975ejx.3
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 00:21:53 -0800 (PST)
+X-Gm-Message-State: AOAM530Qf5IZp+K7oQeNdqnJkLsOXOehZFOz1v4HS2jq1tRAHaD2eTVW
+        IgBMzXhpd6z3+0dSMaeDQGlr8fFrkd6Hmvz7SzY=
+X-Google-Smtp-Source: ABdhPJxfZA4RboehZB7wY0VN7HdEEtRIOvsa7DCgyqkKMlwj8RPCvG1/579qQWpNykHxEoO8A3aqYUzwc/6Yp1OfXCA=
+X-Received: by 2002:a17:906:158c:: with SMTP id k12mr2805657ejd.119.1611649311780;
+ Tue, 26 Jan 2021 00:21:51 -0800 (PST)
 MIME-Version: 1.0
-References: <YBANNJ8XtoRf7SuW@smile.fi.intel.com> <CAMeQTsbGBrTvfkz6BStwL240Kz-dbrQVKtXbYkRtbD3OoUKCcg@mail.gmail.com>
- <CAHp75Vc9RAHvTDAw1ryHq_CPRMtjqkzg9081nw0+RPY_yWPJgA@mail.gmail.com>
-In-Reply-To: <CAHp75Vc9RAHvTDAw1ryHq_CPRMtjqkzg9081nw0+RPY_yWPJgA@mail.gmail.com>
-From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date:   Tue, 26 Jan 2021 17:55:47 +0100
-Message-ID: <CAMeQTsY6k64LUg3DYbi67W6-Gx6znOeJbDfKUhzGt-BxF2BgKA@mail.gmail.com>
-Subject: Re: [GIT PULL] ib-drm-gpio-pdx86-rtc-wdt-v5.12-1
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>, linux-watchdog@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <CGME20210125232704epcas2p4f362849a8f5e85f46d406d20b7983429@epcas2p4.samsung.com>
+ <202101260734.haBuNSsB-lkp@intel.com> <000001d6f377$6c1b3af0$4451b0d0$@samsung.com>
+In-Reply-To: <000001d6f377$6c1b3af0$4451b0d0$@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 26 Jan 2021 09:21:40 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPeht+rL0Epd4jsQLgw=Yg70+gHKMSw4m1xwdvp5pO6mqg@mail.gmail.com>
+Message-ID: <CAJKOXPeht+rL0Epd4jsQLgw=Yg70+gHKMSw4m1xwdvp5pO6mqg@mail.gmail.com>
+Subject: Re: [pinctrl:devel 32/33] drivers/pinctrl/samsung/pinctrl-s3c64xx.c:296:25:
+ error: passing argument 1 of 'spin_unlock_irqrestore' from incompatible
+ pointer type
+To:     Chanho Park <chanho61.park@samsung.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 4:51 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Tue, 26 Jan 2021 at 01:08, Chanho Park <chanho61.park@samsung.com> wrote:
 >
-> On Tue, Jan 26, 2021 at 5:25 PM Patrik Jakobsson
-> <patrik.r.jakobsson@gmail.com> wrote:
-> > On Tue, Jan 26, 2021 at 1:37 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > Hi guys,
-> > >
-> > > This is first part of Intel MID outdated platforms removal. It's collected into
-> > > immutable branch with a given tag, please pull to yours subsystems.
+> >         git fetch --no-tags pinctrl devel
+> >         git checkout 1f306ecbe0f66681bd87a2bb9013630233a32f7f
+> >         # save the attached .config to linux build tree
+> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross
+> > ARCH=c6x
 > >
-> > Hi Andy,
-> > Do you plan on eventually removing X86_INTEL_MID completely? If so,
-> > then I should probably start looking at removing the corresponding
-> > parts in GMA500.
+> > If you fix the issue, kindly add following tag as appropriate
+> > Reported-by: kernel test robot <lkp@intel.com>
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    In file included from include/linux/wait.h:9,
+> >                     from include/linux/pid.h:6,
+> >                     from include/linux/sched.h:14,
+> >                     from include/linux/ratelimit.h:6,
+> >                     from include/linux/dev_printk.h:16,
+> >                     from include/linux/device.h:15,
+> >                     from drivers/pinctrl/samsung/pinctrl-s3c64xx.c:14:
+> >    drivers/pinctrl/samsung/pinctrl-s3c64xx.c: In function
+> > 's3c64xx_irq_set_function':
+> > >> drivers/pinctrl/samsung/pinctrl-s3c64xx.c:289:20: error: passing
+> > >> argument 1 of 'spinlock_check' from incompatible pointer type
+> > >> [-Werror=incompatible-pointer-types]
+> >      289 |  spin_lock_irqsave(&bank->slock, flags);
+> >          |                    ^~~~~~~~~~~~
+> >          |                    |
+> >          |                    raw_spinlock_t * {aka struct raw_spinlock *}
+> >    include/linux/spinlock.h:252:34: note: in definition of macro
+> > 'raw_spin_lock_irqsave'
+> >      252 |   flags = _raw_spin_lock_irqsave(lock); \
+> >          |                                  ^~~~
+> >    drivers/pinctrl/samsung/pinctrl-s3c64xx.c:289:2: note: in expansion of
+> > macro 'spin_lock_irqsave'
+> >      289 |  spin_lock_irqsave(&bank->slock, flags);
+> >          |  ^~~~~~~~~~~~~~~~~
+> >    In file included from include/linux/wait.h:9,
+> >                     from include/linux/pid.h:6,
+> >                     from include/linux/sched.h:14,
+> >                     from include/linux/ratelimit.h:6,
+> >                     from include/linux/dev_printk.h:16,
+> >                     from include/linux/device.h:15,
+> >                     from drivers/pinctrl/samsung/pinctrl-s3c64xx.c:14:
+> >    include/linux/spinlock.h:327:67: note: expected 'spinlock_t *' {aka
+> > 'struct spinlock *'} but argument is of type 'raw_spinlock_t *' {aka
+> > 'struct raw_spinlock *'}
+> >      327 | static __always_inline raw_spinlock_t
+> *spinlock_check(spinlock_t
+> > *lock)
+> >          |
+> ~~~~~~~~~~~~^~~~
+> > >> drivers/pinctrl/samsung/pinctrl-s3c64xx.c:296:25: error: passing
+> > >> argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type
+> > >> [-Werror=incompatible-pointer-types]
+> >      296 |  spin_unlock_irqrestore(&bank->slock, flags);
+> >          |                         ^~~~~~~~~~~~
+> >          |                         |
+> >          |                         raw_spinlock_t * {aka struct
+> raw_spinlock *}
+> >    In file included from include/linux/wait.h:9,
+> >                     from include/linux/pid.h:6,
+> >                     from include/linux/sched.h:14,
+> >                     from include/linux/ratelimit.h:6,
+> >                     from include/linux/dev_printk.h:16,
+> >                     from include/linux/device.h:15,
+> >                     from drivers/pinctrl/samsung/pinctrl-s3c64xx.c:14:
+> >    include/linux/spinlock.h:407:64: note: expected 'spinlock_t *' {aka
+> > 'struct spinlock *'} but argument is of type 'raw_spinlock_t *' {aka
+> > 'struct raw_spinlock *'}
+> >      407 | static __always_inline void spin_unlock_irqrestore(spinlock_t
+> > *lock, unsigned long flags)
+> >          |
+> ~~~~~~~~~~~~^~~~
+> >    cc1: some warnings being treated as errors
+> >
+> >
 >
-> Nope. It is related to only Medfield / Clovertrail platforms.
+> Hi Linus,
 >
-> There are other (MID) platforms that may / might utilize this driver
-> in the future.
+> I was not aware PINCTRL_S3C64XX because it's not enabled in
+> s3c6410_defconfig.
+> Please pick the v2 patch. Sorry for the inconvenience.
 
-Right, there's still Oaktrail / Moorestown with hardware in the wild.
+For arm:
+make allyesconfig
+make -j4 drivers/pinctrl/samsung/
 
->
-> I.o.w. we probably can remove the oldest stuff in the driver WRT above
-> mentioned platforms, but leave the driver for the rest.
-> I wouldn't be in a hurry with this though, display drivers are easy to
-> remove, but really hard to get back on velocity after that.
+and indeed it does not compile...
 
-Ok, I'll have a look at removing Medfield. That code should have been
-removed a long time ago.
-
--Patrik
+Best regards,
+Krzysztof
