@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0380FC433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C551C433E9
 	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 05:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF618206F7
+	by mail.kernel.org (Postfix) with ESMTP id E7B2422795
 	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 05:27:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbhAZF1C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:27:02 -0500
-Received: from mga18.intel.com ([134.134.136.126]:26920 "EHLO mga18.intel.com"
+        id S1731051AbhAZF1F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 00:27:05 -0500
+Received: from mga03.intel.com ([134.134.136.65]:54564 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731566AbhAZCWn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 25 Jan 2021 21:22:43 -0500
-IronPort-SDR: r7TAgSb1VT7bQpkJiy2czzlboidrdnlhN3as+8iQR+WigsyaNq1+HLTwCMKlVN40NPvT0exLSO
- 6kVoH/68jt8Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="167510115"
+        id S1731558AbhAZCWo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 25 Jan 2021 21:22:44 -0500
+IronPort-SDR: vbN/v1xvXJUEgvxumRrLP7Ajj4XrM2x5UbF8MJkO7z4RbZFMNPpcMJZalDsBIyH6Jt3lmU1MYM
+ dJWB7lpQcsSA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="179918586"
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="167510115"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 18:21:58 -0800
-IronPort-SDR: fxqL7YB4/imQm2NpOOsPAMuJd9Y3VRFYzEoQdd93OiF42BZUmZuDwEYhcPRO1vM7qWVIqc9WsL
- 7nDEP2uUHvYw==
+   d="scan'208";a="179918586"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 18:21:58 -0800
+IronPort-SDR: dCodzGK0YHPoea8ED/rAy0AKdQTD6h/yWQYC6iZ9+OBAw1aiuO94qcHaWNCEz+EQxFjJit7Wqc
+ tY02WYGHmdsg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="353293320"
+   d="scan'208";a="350530756"
 Received: from lkp-server02.sh.intel.com (HELO 625d3a354f04) ([10.239.97.151])
-  by orsmga003.jf.intel.com with ESMTP; 25 Jan 2021 18:21:57 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 25 Jan 2021 18:21:57 -0800
 Received: from kbuild by 625d3a354f04 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1l4DzQ-0000Uf-Rd; Tue, 26 Jan 2021 02:21:56 +0000
-Date:   Tue, 26 Jan 2021 10:21:24 +0800
+        id 1l4DzQ-0000Uo-Tf; Tue, 26 Jan 2021 02:21:56 +0000
+Date:   Tue, 26 Jan 2021 10:21:22 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:fixes] BUILD SUCCESS
- 317dea99f0b64fc7a176d19f1d59aaee003bc569
-Message-ID: <600f7ca4.ZcgCsit82yqZ7U4e%lkp@intel.com>
+Subject: [pinctrl:for-next] BUILD SUCCESS
+ eed831dbe060c5573a9a4fd5d4156fba29726d0b
+Message-ID: <600f7ca2.Rb+Qo4Vlt2i9NHDW%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -51,12 +51,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
-branch HEAD: 317dea99f0b64fc7a176d19f1d59aaee003bc569  pinctrl: mediatek: Fix trigger type setting follow for unexpected interrupt
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: eed831dbe060c5573a9a4fd5d4156fba29726d0b  Merge branch 'devel' into for-next
 
 elapsed time: 727m
 
-configs tested: 139
+configs tested: 149
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -88,6 +88,12 @@ sh                           se7343_defconfig
 powerpc                    klondike_defconfig
 arm                         palmz72_defconfig
 m68k                        stmark2_defconfig
+mips                         rt305x_defconfig
+powerpc                      arches_defconfig
+mips                        omega2p_defconfig
+mips                          ath25_defconfig
+powerpc                     skiroot_defconfig
+powerpc                 mpc8315_rdb_defconfig
 mips                         tb0287_defconfig
 arm                         assabet_defconfig
 powerpc                       eiger_defconfig
@@ -102,7 +108,6 @@ powerpc                       holly_defconfig
 arm                        keystone_defconfig
 arm                            u300_defconfig
 powerpc                     ppa8548_defconfig
-powerpc                 mpc8315_rdb_defconfig
 sh                           se7705_defconfig
 mips                  cavium_octeon_defconfig
 powerpc                     tqm5200_defconfig
@@ -119,6 +124,11 @@ powerpc                    amigaone_defconfig
 mips                      fuloong2e_defconfig
 arm                       aspeed_g5_defconfig
 arm                         nhk8815_defconfig
+sh                          polaris_defconfig
+arm                           corgi_defconfig
+powerpc                      walnut_defconfig
+arm                        mvebu_v7_defconfig
+mips                         mpc30x_defconfig
 mips                  maltasmvp_eva_defconfig
 arc                            hsdk_defconfig
 powerpc                     mpc83xx_defconfig
