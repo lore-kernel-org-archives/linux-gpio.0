@@ -2,84 +2,98 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3434CC43332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AB6C4332E
 	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09C17230FC
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA476230FD
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 15:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406020AbhAZPCF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:02:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52496 "EHLO
+        id S2405879AbhAZPB7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 10:01:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406014AbhAZPCC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 10:02:02 -0500
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22316C061A31
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 07:01:22 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id 3so19956461ljc.4
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 07:01:22 -0800 (PST)
+        with ESMTP id S2406008AbhAZPBW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 10:01:22 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4C7C0698C1
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 06:59:58 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id i187so12822359lfd.4
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 06:59:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lirWGcwxQ/9sPMV+iwf/h9oS1/CrHerBIWG2c3EGSGk=;
-        b=oxDNjk3iYXpmm6bruISbusuPot9758mJ8Dgv+nZKud8ztqpQNcDycw29k3Ecz0PiyL
-         o42TBWfTSj49+9TPcA+9BZ3Zim6TnBDn56Ya7bmFqDxaz0wH8t9qCSXFJezTPjfiRwaB
-         O6bJhXI6k27/dPyMOVaiNgRVN/zh8XTY05LAa0W6F2iIsY65mUpDEvUDWbKPts4L4neT
-         UlP7PrSI5Q/gg5m8VV4LRpepfajeLsAioMA8gRGlOYAe5ItJpoAKB2veaJUXnDlyjpbl
-         uzlUiwlNAa5t4lx/ZS9G6uSjCBSLmozFkbTwd7jb14OdgxmDinoWOCAHfVC5eMwuA4le
-         p0OQ==
+        bh=5PPoqIyCpJtL/ek+tU9+EyocWfpZVKR5Q6N/JZNTSoc=;
+        b=CJW5k+g5rrW0iG7J1Vqjf7EeICvtVMaqQr4Mrssy80eRmciKqXrKNu2x10XtIpUMjd
+         2Q9fD9jJF+Yiw/QHFgpLarnnoC9HGqb7+JqNxEgSc6ULWHrPbJmfwNrJC6HhunyJagtg
+         X99euSfrluWSS5ypVzSO5NDMQXTO+CUmJuikTOK8ZdbxbZzpn8/jxBjqRW7InmA6noQy
+         kVpakp5prj7msQgdbf5j7iuW6hQhykXGedscqJrv+7qvBclJSxgfLk7uWbofhgk5yXoC
+         HYVsH6NmMWQ2xYCfoGIVnVCnWAy7NrLg+zu14JIFrJsRVJ3PouFzyRQeh8veAj9pmYVy
+         LVrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lirWGcwxQ/9sPMV+iwf/h9oS1/CrHerBIWG2c3EGSGk=;
-        b=BpjDxdyLDwaXhr3tqr5EpTutuYEV4AB26VRuND7KHNOIos8N+47QSnm8xlHCYFRKBR
-         qB8O+SrTaOYNSpMq6Z10cOqtQvCzN5+HMybRki3ChXlQeFq2ctILvW6JPYUzLPSu4+zD
-         3+enUGgRrdwcVVihb6zxj5sgGlpkV9WmhB0s+7OTMH6Hd6bicz1ZvLZBO2qYD+Gj0jXu
-         BaDHwCTeB6++/7UvcqGD1EWoR8aSFmksPY/uDPVWnZzKLuz2LBbRKub+QTQpaImareiF
-         FLy+f++IbCjymmKUUvoG0Q+giZUjs9sk0gCK1G5oMAgzWOoyKNvHvKGsF4wQ4b2XBcUN
-         EZfQ==
-X-Gm-Message-State: AOAM532ZLuR/k6Ox1F7E0nI0MurZUchYzCH6XWvssWnYHuJJPN2et0EA
-        vjifHooQ9z7mmCJ1TXEk3wXxlk2pvqz/4gbZychaer/IzorDVg==
-X-Google-Smtp-Source: ABdhPJw7GgZKBeeQTizTG5WDVnMhfRi/N35rHmdXVZj4220Qaw571LqXQu07Fhyh4yYgtdx58u66xSSMeVVEqT4HoEo=
-X-Received: by 2002:a2e:b4cd:: with SMTP id r13mr3179920ljm.273.1611673280673;
- Tue, 26 Jan 2021 07:01:20 -0800 (PST)
+        bh=5PPoqIyCpJtL/ek+tU9+EyocWfpZVKR5Q6N/JZNTSoc=;
+        b=JoPqQP4dv12P3+AjSwKfQnzH3CR+IIVkqyL7Sv4uF+yORxSDSQwGcXLHSp8T1sYq2W
+         +P2cFrI4CEpkSbq8VMHcJplJ83SAgBEc4VCNzj2wiKLGzqpQvLm0fxsl/uIkINMCfcCZ
+         O6dksIcQ2HqZAMv5eZ20OOF5ySlPIHRLxC8yY1N4TvgEk9ssP/l2snVXXDpGe4IFW5lB
+         BGbZGlFYse0bK6fC7t/gLzujFV0gSuNL5yZqdwh/HX2KdOoSopCz9ITwcI+exrYk+cXO
+         JwWZCRbvomctyJ84RZ11QFVdS0hIfqSFL2/TDlfAgM23uQbGtPcwaG8Nczk7BjuGOpwY
+         BWfg==
+X-Gm-Message-State: AOAM533Q+cEGnXHFBUxfzgjIz+9GDEijshIDsMdVM7CAa4B7nFyWD2Oj
+        a6ogYvxOMb7vK3dMDIj3lDa60j5qMOylY/8LB6wDug==
+X-Google-Smtp-Source: ABdhPJw+UEQhd8vKQIGL6NeYSPSicxlz7dsriKTU3lH8LHsu7n43H+WLi/pKgx8+e/k/qqhhJKe1LW7Bfg9MZUXVmL8=
+X-Received: by 2002:a19:495d:: with SMTP id l29mr2785470lfj.465.1611673197037;
+ Tue, 26 Jan 2021 06:59:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20210126050817.GA187797@x1>
-In-Reply-To: <20210126050817.GA187797@x1>
+References: <20210126132531.2084711-1-robert.foss@linaro.org>
+In-Reply-To: <20210126132531.2084711-1-robert.foss@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 26 Jan 2021 16:01:08 +0100
-Message-ID: <CACRpkdafPAJXYar=n2En7GC=gVQ74iOejH4j5cDu3Co3PR8h=Q@mail.gmail.com>
-Subject: Re: pinctl.rst instead of pinctrl.rst?
-To:     Drew Fustini <drew@beagleboard.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 26 Jan 2021 15:59:46 +0100
+Message-ID: <CACRpkdYPY3HxpWHMp08477z62PBYEjCKWpw3Uf0SQ7VHVB3jdw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: pinctrl: pinctrl-microchip-sgpio: Fix
+ dt_binding_check warning
+To:     Robert Foss <robert.foss@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        jiaxin.yu@mediatek.com, shane.chien@mediatek.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 6:08 AM Drew Fustini <drew@beagleboard.org> wrote:
+On Tue, Jan 26, 2021 at 2:26 PM Robert Foss <robert.foss@linaro.org> wrote:
 
-> I was having trouble finding the pinctrl rst documentation until I
-> realized it is named pinctl with no 'r':
+> Silence indentation level warning reported by dt_binding_check in
+> order to reduce noise during routine checks.
 >
-> Documentation/driver-api/pinctl.rst
+> $ make dt_binding_check
+> mt8192-mt6359-rt1015-rt5682.yaml:10:4: [warning] wrong indentation:
+> expected 2 but found 3 (indentation)
 >
-> Is there a reason for this?
+> Signed-off-by: Robert Foss <robert.foss@linaro.org>
 
-No.
-
-> Is it worth me submitting a patch to rename and change tree-wide
-> references?
-
-I would rather rename it pin-control.rst in that case.
+I already have a fix for this in my tree, thanks anyway!
 
 Yours,
 Linus Walleij
