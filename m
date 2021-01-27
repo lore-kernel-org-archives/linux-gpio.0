@@ -2,91 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CB7C433DB
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 12:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEE7C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 12:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13D6C20789
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 12:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 224B62070E
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 12:24:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235905AbhA0MQY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Jan 2021 07:16:24 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:43019 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234594AbhA0LrN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2021 06:47:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1611748032; x=1643284032;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=Olp4T24u22Y0c3fRKuJAXAXhENBuhcAibANtr8qFhws=;
-  b=gqUtFoWEMj1ih7oTiLgxuqLF7EtSBiBr+Ky73OMPGUvNGe/Gz4r41rG6
-   5fBUhmlfqaTwHmxhwDo+QbaouZMMLf1/J33mq2Fd8lVeWmWNKI8e6RxRg
-   3+F2WMTIq9LnIOs/1vqw/8GS8tuwOVQ5alTsU0NNP8lhfwR09mLQQLFF9
-   mQSjGDlGWGlIjISQwwlmtUikhBG8HStotdZpV02odtn5VxhIGjcxoZ1L5
-   NX9DDDgGTqTGguEizSOUiY93at7UWkO8J4gJ0FEj5AxUdPR8JuYc+fk6z
-   1psX7LJxdx+FxErKlSNhxYmuBkbTNpUlNUkRyF4evljiuHUeqVetiad4W
-   g==;
-IronPort-SDR: aAufn5aI9HolWFs2xkUbjEiLblKXOolifr5mER+lfUt+GSBcu5oeCfEc3qDPsT70OG+yxIgN6k
- srXDoslLwvgk2WGiSn0zIqaKA9D+YOLycoylTAas6zQaeCvXoYnUEBlLyF2OQCcoEFRylCLiu/
- /8XnOGbQc7W8YFtiSjPFmHoD9rjt4hnRNe6yWyo4rShVQaTx7P2+FYnOyLPgebpwy7WC3StRim
- ccBHqJzEzu5CQNJ8j6u0kEMYyBV/Yabe0oeN8XYnHZIVP6gc5SAQymzmyMVVCrn8BNoc0SKUon
- QVw=
-X-IronPort-AV: E=Sophos;i="5.79,379,1602572400"; 
-   d="scan'208";a="112682919"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jan 2021 04:45:55 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 27 Jan 2021 04:45:55 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Wed, 27 Jan 2021 04:45:50 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 0/3] pinctrl: at91-pio4: add support for slew-rate
-Date:   Wed, 27 Jan 2021 13:45:42 +0200
-Message-ID: <1611747945-29960-1-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
+        id S236438AbhA0MYv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Jan 2021 07:24:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45216 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237866AbhA0MWF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2021 07:22:05 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB6AC061788;
+        Wed, 27 Jan 2021 04:21:25 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id i9so1474087wmq.1;
+        Wed, 27 Jan 2021 04:21:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=6wzhM0vYiCJZX/iFlWpvlgaHX6fMT0ar8DkHkOnklLo=;
+        b=qszFMFNNVkARa3XOYQlsRtBUli5kzHIrCzcp2oQdStspXx8PAIPcTP+JEPWh1BhcWp
+         WYkQsi9hSMJw/etFq3lcDCJ6pmmBtdJGuxVf5nBSUjYEu0HLti1RKsqkx1CliSE+Fzpg
+         vXp6gkCxWJMgg5gPSI3U8hofi/EkeQQMloTty5cQPidk3NDgE7Z0iUvCtGl0UahH8ATA
+         ocyTarVDhEEtuSWTYyehDTClnk+2FS19wHFGO5ftJtCgWQnq4daQoI0abAnscpL4dRPU
+         oERI6tCpdGqmNWWpWbCFevVHXplpGSaIhWdZ+CXP9SIsiSX8W8miLtXiRklPdp+jWzRQ
+         qqKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=6wzhM0vYiCJZX/iFlWpvlgaHX6fMT0ar8DkHkOnklLo=;
+        b=K8SUK0LQrZqEORrNNTYEGC2Qk4KHTcXNDGDMWCMwTZ4Yeg3gkldmuS2hgsZxES+Zcw
+         h+ZWqI+fwTnUuM68XbPw5qzYL7HSky1S1pl8SpRs5IBg7+DiWpoqzY5ye9Oj4+VnlPqH
+         u+bjvYSb9xhwcY8JtmECLzn5ALQ3s6fYlPeA0W76/3xnKTzaaukZlqP2cXZPrLiowXnX
+         JOERJWwHu+hxTh5rP9xNaifVUuIhI2kqMm+DrQbnWfACJup9j3qT+mnPannPbWNZFjFC
+         ikJFvtzmByf5/t/4H559bq05V/+bC928UgMGS+F0gykw7GQl41htYmMGZdJHOMqSRthd
+         AsXw==
+X-Gm-Message-State: AOAM53093p1zFjClAgZcS5vXa0uad5aJvYmSXbvplp2nMsqGzdG0Dg/V
+        2OEsUXktfKoEeFJqNgXwD+I=
+X-Google-Smtp-Source: ABdhPJydU2J+Sg2HOmDomq+Z5srxSDfdoZgIvjYqDKBoALGWhkkabAj7a7Opbx3wxAk3eQpIpLKOBA==
+X-Received: by 2002:a05:600c:3515:: with SMTP id h21mr3976949wmq.179.1611750083788;
+        Wed, 27 Jan 2021 04:21:23 -0800 (PST)
+Received: from [192.168.1.21] ([195.245.17.255])
+        by smtp.gmail.com with ESMTPSA id n125sm2438268wmf.30.2021.01.27.04.21.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jan 2021 04:21:22 -0800 (PST)
+Message-ID: <00f0e7a1d276b0efe5005d0645fdc9d9e86376c0.camel@gmail.com>
+Subject: Re: [PATCH v2 4/9] gpio: ep93xx: drop to_irq binding
+From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To:     Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 27 Jan 2021 13:21:22 +0100
+In-Reply-To: <20210127104617.1173-5-nikita.shubin@maquefel.me>
+References: <20201228150052.2633-1-nikita.shubin@maquefel.me>
+         <20210127104617.1173-1-nikita.shubin@maquefel.me>
+         <20210127104617.1173-5-nikita.shubin@maquefel.me>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.2 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Hi!
 
-This series adds support for slew rate on SAMA7G5. Along with this
-patch 3/3 fixes some checkpatch.pl warnings.
+On Wed, 2021-01-27 at 13:46 +0300, Nikita Shubin wrote:
+> As ->to_irq is redefined in gpiochip_add_irqchip, having it defined
+> in
+> driver is useless, so let's drop it.
+> 
+> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 
-Thank you,
-Claudiu Beznea
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
-Changes in v2:
-- s/sr/slew_rate_support/g in patch 2/3
-- collected tags
-
-Claudiu Beznea (3):
-  dt-bindings: pinctrl: at91-pio4: add slew-rate
-  pinctrl: at91-pio4: add support for slew-rate
-  pinctrl: at91-pio4: fix "Prefer 'unsigned int' to bare use of    
-    'unsigned'"
-
- .../bindings/pinctrl/atmel,at91-pio4-pinctrl.txt   |   8 +-
- drivers/pinctrl/pinctrl-at91-pio4.c                | 137 +++++++++++++--------
- 2 files changed, 89 insertions(+), 56 deletions(-)
+> ---
+>  drivers/gpio/gpio-ep93xx.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+> index 9c3d049e5af7..dee19372ebbd 100644
+> --- a/drivers/gpio/gpio-ep93xx.c
+> +++ b/drivers/gpio/gpio-ep93xx.c
+> @@ -337,11 +337,6 @@ static int ep93xx_gpio_set_config(struct
+> gpio_chip *gc, unsigned offset,
+>         return 0;
+>  }
+>  
+> -static int ep93xx_gpio_f_to_irq(struct gpio_chip *gc, unsigned
+> offset)
+> -{
+> -       return EP93XX_GPIO_F_IRQ_BASE + offset;
+> -}
+> -
+>  static void ep93xx_init_irq_chips(struct ep93xx_gpio *epg)
+>  {
+>         int i;
+> @@ -429,7 +424,6 @@ static int ep93xx_gpio_add_bank(struct gpio_chip
+> *gc,
+>                 }
+>                 girq->default_type = IRQ_TYPE_NONE;
+>                 girq->handler = handle_level_irq;
+> -               gc->to_irq = ep93xx_gpio_f_to_irq;
+>                 girq->first = EP93XX_GPIO_F_IRQ_BASE;
+>         }
+>  
 
 -- 
-2.7.4
+Alexander Sverdlin.
+
 
