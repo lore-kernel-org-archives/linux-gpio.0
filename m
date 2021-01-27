@@ -2,142 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826F9C433E0
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6FAC433DB
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33FC42072E
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:07:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62E082076D
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313175AbhAZXIL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 18:08:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbhAZE42 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2021 23:56:28 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF55C06178A
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Jan 2021 20:55:48 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id g15so1519811pjd.2
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Jan 2021 20:55:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=A+xo3PRCK79jj+xfn6kKZjOBkB350fZ6rhjD6DI0rxM=;
-        b=kaKvwXbFyAqpP+UiSlZHnfAvyZd0+zaC9/ULW7J9CZ8k5c5TNv3C/A5++Y44n26s2y
-         hjR+apqEBKBZXB81WFZKHS3B4MrT3rJf+NCxEwUQuTcgwX8I2Ic5fekdrEA+1Nmktf4D
-         ZjscnZ/ois3yHlG1tx/J3ou6WFyFi/ShtabzjPw7uaX0CfEImEwIq9bbuv+bOzc1v26B
-         MaxopG4mbe+Nf01wgTfNinsgom/t/Dl348pl+S6eJ456SV+hMs0hKsvPRGWX4MuLWkQJ
-         PQw6plwMCJcVk9/2fYBEzB8ZzgVReqky4YRsB6E4oBiU4dubvhCEsAzFGYmfZZGYGpT8
-         tFcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=A+xo3PRCK79jj+xfn6kKZjOBkB350fZ6rhjD6DI0rxM=;
-        b=o0jpbQxsYxbdgVYg+ji3tZ/1P27z/dLA7+qq/wsIAalLIWov8oj096ucdUEcfROJ3q
-         8uXvBvPO/RntT4o01t0a05bycdmtYzW8XGnC9vEx+rqLNCOnJ9yGw9cnt35sQbiZgWwZ
-         nngmlueStIPPD/Lzgeirecrep+NiYSl1VfNcLfrm34L/Wgwf/+ncEYZ34DRrDpLeYbTt
-         +DYINa/Kp/SngJUp2u71IaoMB3uyxy4jkEh1k6j2k0m4lqa0x/N1Ws+yNqZgf/nueyWy
-         4Bw2siInIOCsTJgGgtLTAkGyZf0BV2CRTvbTWfwSh90jORq+pN64XgGWnMgHDryrtwzG
-         3BCA==
-X-Gm-Message-State: AOAM531mFmzHK0Op37AvTZWa7VQNvQs0tnfEX8tl8R0crVfx4ZxvKIKD
-        fgtyAU+UKYn745hTgOC656061A==
-X-Google-Smtp-Source: ABdhPJzGaQNqQSbwwVJst9Y81nAQYuzD6OpiAagKOy8cC6gsdFxH1ECju1m1y4NgqCYatHDW0DptLA==
-X-Received: by 2002:a17:90b:3682:: with SMTP id mj2mr4029939pjb.9.1611636948198;
-        Mon, 25 Jan 2021 20:55:48 -0800 (PST)
-Received: from x1.hsd1.or.comcast.net ([2601:1c0:4701:ae70:dd5e:ff29:33fe:cad2])
-        by smtp.gmail.com with ESMTPSA id gw20sm858796pjb.55.2021.01.25.20.55.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 20:55:47 -0800 (PST)
-From:   Drew Fustini <drew@beagleboard.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Drew Fustini <drew@beagleboard.org>
-Subject: [PATCH] pinctrl: use to octal permissions for debugfs files
-Date:   Mon, 25 Jan 2021 20:47:43 -0800
-Message-Id: <20210126044742.87602-1-drew@beagleboard.org>
-X-Mailer: git-send-email 2.25.1
+        id S236031AbhA0KmW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Jan 2021 05:42:22 -0500
+Received: from www.zeus03.de ([194.117.254.33]:36986 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236061AbhA0KkC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 27 Jan 2021 05:40:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=uXQip5yKijIqcMZ3FcQVyHF9S+s5
+        HpPijwryumSAIGk=; b=V5MjUonS791+0QOYdiJezdyAaBjAtbtqyVl1r3s1uvZ9
+        5woNfO/AItGLTDDnWOhEZlwPakBHT+lu7KyvpOKEzuH60qpGvSseHchJnuH3Ot+q
+        +duTjfEy0mckWbxmmlYuQlTvQvqAX8yMT2tHDzIHZ2efNil6EyxTcwjDRKbZE5o=
+Received: (qmail 4026905 invoked from network); 27 Jan 2021 11:39:19 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jan 2021 11:39:19 +0100
+X-UD-Smtp-Session: l3s3148p1@RrQvYt+5cr0gAwDPXyX1AEdA8SGgn5QT
+Date:   Wed, 27 Jan 2021 11:39:19 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] gpio: gpiolib: remove shadowed variable
+Message-ID: <20210127103919.GC928@ninjato>
+References: <20210105105914.13172-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUT8CEyJ1ERmLr443SuZgemFF40cDviSGwhYM7ZnN_b_g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUT8CEyJ1ERmLr443SuZgemFF40cDviSGwhYM7ZnN_b_g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Switch over pinctrl debugfs files to use octal permissions as they are
-preferred over symbolic permissions. Refer to commit f90774e1fd27
-("checkpatch: look for symbolic permissions and suggest octal instead").
 
-Signed-off-by: Drew Fustini <drew@beagleboard.org>
----
-Patch note:
-- I learned about this preference of octal over symbolic when I created
-  an RFC to add a new debugfs file ("pinmux-select"). I am submitting
-  this patch to switch existing entries in pinctrl over to octal before
-  I submit a proper PATCH for the "pinmux-select" functionality in which
-  I will use octal permissions for the new file.
+--jy6Sn24JjFx/iggw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/pinctrl/core.c    | 6 +++---
- drivers/pinctrl/pinconf.c | 4 ++--
- drivers/pinctrl/pinmux.c  | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+On Tue, Jan 05, 2021 at 12:14:34PM +0100, Geert Uytterhoeven wrote:
+> On Tue, Jan 5, 2021 at 12:00 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> > After refactoring, we had two variables for the same thing. Remove the
+> > second declaration, one is enough here. Found by cppcheck.
+> >
+> > drivers/gpio/gpiolib.c:2551:17: warning: Local variable 'ret' shadows o=
+uter variable [shadowVariable]
+> >
+> > Fixes: d377f56f34f5 ("gpio: gpiolib: Normalize return code variable nam=
+e")
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 9fc4433fece4..791736b2de77 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1916,11 +1916,11 @@ static void pinctrl_init_debugfs(void)
- 		return;
- 	}
- 
--	debugfs_create_file("pinctrl-devices", S_IFREG | S_IRUGO,
-+	debugfs_create_file("pinctrl-devices", 0400,
- 			    debugfs_root, NULL, &pinctrl_devices_fops);
--	debugfs_create_file("pinctrl-maps", S_IFREG | S_IRUGO,
-+	debugfs_create_file("pinctrl-maps", 0400,
- 			    debugfs_root, NULL, &pinctrl_maps_fops);
--	debugfs_create_file("pinctrl-handles", S_IFREG | S_IRUGO,
-+	debugfs_create_file("pinctrl-handles", 0400,
- 			    debugfs_root, NULL, &pinctrl_fops);
- }
- 
-diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index 02c075cc010b..f005921bb49e 100644
---- a/drivers/pinctrl/pinconf.c
-+++ b/drivers/pinctrl/pinconf.c
-@@ -370,9 +370,9 @@ DEFINE_SHOW_ATTRIBUTE(pinconf_groups);
- void pinconf_init_device_debugfs(struct dentry *devroot,
- 			 struct pinctrl_dev *pctldev)
- {
--	debugfs_create_file("pinconf-pins", S_IFREG | S_IRUGO,
-+	debugfs_create_file("pinconf-pins", 0400,
- 			    devroot, pctldev, &pinconf_pins_fops);
--	debugfs_create_file("pinconf-groups", S_IFREG | S_IRUGO,
-+	debugfs_create_file("pinconf-groups", 0400,
- 			    devroot, pctldev, &pinconf_groups_fops);
- }
- 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index bab888fe3f8e..7f6190eaedbb 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -676,9 +676,9 @@ DEFINE_SHOW_ATTRIBUTE(pinmux_pins);
- void pinmux_init_device_debugfs(struct dentry *devroot,
- 			 struct pinctrl_dev *pctldev)
- {
--	debugfs_create_file("pinmux-functions", S_IFREG | S_IRUGO,
-+	debugfs_create_file("pinmux-functions", 0400,
- 			    devroot, pctldev, &pinmux_functions_fops);
--	debugfs_create_file("pinmux-pins", S_IFREG | S_IRUGO,
-+	debugfs_create_file("pinmux-pins", 0400,
- 			    devroot, pctldev, &pinmux_pins_fops);
- }
- 
--- 
-2.25.1
+Ccing Linus & Bartosz
 
+
+--jy6Sn24JjFx/iggw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmARQtMACgkQFA3kzBSg
+KbZq0BAApfeePPvTIfSLa7R6TXTKvpLC+31oyXBmwvTH/n9DvGxbMJLzzAWgtRu4
+dqW47iHrVyPEIoDtZtYnuSQZJA48IPVGd1mRFFl3vdECQbwNn2NzTAxRQC8H343T
+Fcmea1l/qMEOcr3FEX9Y87F5HBdcaOrc/c989O8ZL/sweIqJdN3c4KZgf3DvzOGj
+9r39Qo/DbwYqUjaLOsUUt9B0teznxpIoAJnFjykOPZADdYcqgXIaCHc9hQwGm5k5
+kXMGeN97ohYFz+YThMOLUm32nUwkGtwdFQSJtYeHAkHRVqIumuYnSAuCgR8BJnvj
+tI5BVoHn12AEQufA2A481GW8Uj3n7YNCF99q+kCvAJITxzaf33BNL+0qVWsnMEgd
+oWCVir5kVi6LDi0y+OtMoTy0++kEEtrGfQEsDr8sauBvNxBUtACcUaN45uaxEfxY
+dKXbnmI5iavCpQxM5Pzqv6PozS8PKKEUnN6ySZqVvylQmtLxRCgPyQjlb1YX7nut
+ztUt4fUM6MNF4y9Z4MX+mgkHDC+g9wwd6aJEIhrdewvAZB1Bst/NW4ZTBFenhNZt
+Y4qzwMW64btWyKcNdb8XGqpXgS++l49HgQS0g5K03NH18F6ulggUbgvPIvs/5gv/
+ywAWdRmNGquI6tP1pTZU5Uom2l8Nnswhps3UhujfBAs/BzKRbnI=
+=93W/
+-----END PGP SIGNATURE-----
+
+--jy6Sn24JjFx/iggw--
