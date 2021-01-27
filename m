@@ -2,127 +2,136 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83DACC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB007C433E9
 	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 06:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54B9F2070E
+	by mail.kernel.org (Postfix) with ESMTP id AC74C20717
 	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 06:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234958AbhA0GDU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Jan 2021 01:03:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232846AbhA0FsH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2021 00:48:07 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 903ECC061786
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 21:46:18 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id e19so478927pfh.6
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 21:46:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dQTVty13FWkU7w1uhlDVsfbx9oRCoQ1u3obrytMgFvo=;
-        b=fp3hWsuxXsv3uG2o797K2QBX244/CQ5VJLjvF0UzxjXQtfGfry2l0bQUaP47KcW7DF
-         uSr9KWKPd/MHu2urs2W6SKY/nejY128EfaGZXyuyU6CYm+LEDDxbopM6RG4skTE2B7wf
-         26av1b8qyd1H051MYEqOdQOogb4emT0baXgthDwCEC0UK0KZ1qy9kayrdhwJpbUaqFM4
-         Xy6PkReARLb7QsaCop4gfo8jMpNH2HRFGrbp3qOinqa5hE53QATYyGhJhVNcL9y3at0j
-         bzTR6/wYW86VqIJfONG7hWAMNYD+Dd+xNEKwq7WWiZY6KsaY2O1ayvdocHOIzAvw/s3m
-         nIWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=dQTVty13FWkU7w1uhlDVsfbx9oRCoQ1u3obrytMgFvo=;
-        b=df3/RjwowHirohTyna7/JFZJ5Zpu8YLlLwG+KIaBpZfOoKQJsRijcMvSCTnMuG4qp7
-         fXmvrpdIzpNHb1XqzG6jYSbZvyIBviFREN93ymkrWDIXWdex60e+1fejzHf6vndbbEmo
-         j+DdZ6Fdnn2NFksRkMEyEasp7VlR0MSWiaeH2IkU98+REwYk+a/8JkoUOFaXjQfrN4fb
-         Rpf5k71q+WwYM6EdhlYxCxQ27OkS2UvS22e43beo3Q1r8R2w+9WgIaU4Tp2yRS93H1+R
-         kdT16SmvUGJHXFpH/7wL4pugwtPGbf+yH6LmPkEzUeMwmVLgV6U5Paq+5IELjlMdg0g/
-         mLKQ==
-X-Gm-Message-State: AOAM532X1wR/cAKeG1XRCJEvgBqP4tIL9VD6/ugxknbAuCu1buB7jQ6/
-        JMn6fkGH3n1wDms3yGiflV3mOg==
-X-Google-Smtp-Source: ABdhPJwQPp8sa/gDYpvmRptSsHpV/LmYDfv2OiMy5FTeSLrwIgRYhHIe+HQu2rEh6ylL00Kyd+rZXg==
-X-Received: by 2002:a65:6484:: with SMTP id e4mr9521885pgv.401.1611726377946;
-        Tue, 26 Jan 2021 21:46:17 -0800 (PST)
-Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
-        by smtp.gmail.com with ESMTPSA id i132sm884744pfe.10.2021.01.26.21.46.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 21:46:17 -0800 (PST)
-Date:   Tue, 26 Jan 2021 21:46:17 -0800 (PST)
-X-Google-Original-Date: Tue, 26 Jan 2021 21:44:15 PST (-0800)
-Subject:     Re: [PATCH v11 02/10] pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver
-In-Reply-To: <BL0PR04MB6514540BF8CC35309C376394E7BF0@BL0PR04MB6514.namprd04.prod.outlook.com>
-CC:     linus.walleij@linaro.org, linux-riscv@lists.infradead.org,
-        linux-gpio@vger.kernel.org, seanga2@gmail.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Message-ID: <mhng-1e63addb-f00d-49c7-be01-995d5a403a43@palmerdabbelt-glaptop>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S234912AbhA0GDR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Jan 2021 01:03:17 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:21152 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236905AbhA0DoD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 22:44:03 -0500
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210127021848epoutp02b993e9315554e6c886521e0f2e66c862~d9UdrEemb1419514195epoutp02T
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2021 02:18:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210127021848epoutp02b993e9315554e6c886521e0f2e66c862~d9UdrEemb1419514195epoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1611713928;
+        bh=WM7q4kf5G65rwCE/0Jl15sKtPpk5oSXqV+eNHf4TN20=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=Rz6K6WNU19HSuBpzOOdAT4Jbc8AQ/SvztIm0S35FNyLEqQ2+gArnIiAkoC1KMV8j2
+         /xKTsj6KFFTqeEEVH6uWAAfP95TDUxR6Vb5IxDXdeN02tvHL3ea7RiVit0HF1Tun+6
+         89eNZPkdjZ3JEjepklrXQIeQdfxN6tc+2aavbyxA=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20210127021848epcas2p4da6494e12ac663a2a11eaf33573f3776~d9UdaJM7L2013720137epcas2p4F;
+        Wed, 27 Jan 2021 02:18:48 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.40.186]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4DQS2b0J7Pz4x9QK; Wed, 27 Jan
+        2021 02:18:47 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        94.4C.05262.38DC0106; Wed, 27 Jan 2021 11:18:43 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210127021842epcas2p3b0c438b9780fa5340ee9ffe81d17b9e3~d9UYAgP221569115691epcas2p3s;
+        Wed, 27 Jan 2021 02:18:42 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210127021842epsmtrp2cc772307910a842a53cf973fb75644fa~d9UX-wkaE1013310133epsmtrp2l;
+        Wed, 27 Jan 2021 02:18:42 +0000 (GMT)
+X-AuditID: b6c32a47-b81ff7000000148e-50-6010cd83420c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        26.1F.08745.28DC0106; Wed, 27 Jan 2021 11:18:42 +0900 (KST)
+Received: from KORCO039056 (unknown [10.229.8.156]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210127021842epsmtip2201a40ae656475e840a4f52166b19ca1~d9UXyq9Y31702617026epsmtip2B;
+        Wed, 27 Jan 2021 02:18:42 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Linus Walleij'" <linus.walleij@linaro.org>
+Cc:     "'open list:GPIO SUBSYSTEM'" <linux-gpio@vger.kernel.org>,
+        "'Krzysztof Kozlowski'" <krzk@kernel.org>
+In-Reply-To: <CACRpkdbAfAsJEhvLosrZCHcdRRTUYgLSR0McykxCamqEE=d8mg@mail.gmail.com>
+Subject: RE: [pinctrl:devel 32/33]
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c:296:25: error: passing argument 1
+ of 'spin_unlock_irqrestore' from incompatible pointer type
+Date:   Wed, 27 Jan 2021 11:18:42 +0900
+Message-ID: <002801d6f452$bb86d640$329482c0$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHfPgJ7vKMTCmjJO21WdD9GUhLuoAGwfof8ARRZf3YCbLP0GqoAnDsQ
+Content-Language: ko
+x-msg-type: PERSONAL
+x-drm-type: PERSONAL
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOKsWRmVeSWpSXmKPExsWy7bCmmW7zWYEEgw+PuS3On9/AbjHlz3Im
+        i83z/zA6MHtsWtXJ5nHn2h42j8+b5AKYo3JsMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1
+        DS0tzJUU8hJzU22VXHwCdN0yc4AWKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIK
+        DA0L9IoTc4tL89L1kvNzrQwNDIxMgSoTcjLmPU4q+MJU8X7JWpYGxjlMXYwcHBICJhLz/qt3
+        MXJxCAnsYJQ42vuUHcL5xCixYMtNNgjnM6PEz+0L2GE6pm3jg4jvYpTYemspE4TzglFi57Jz
+        QB2cHGwC+hIvO7axgtgiAgYS989PYwexmQWyJLa2T2IGsTkFAiWW7JzLDNIsLLCWUeLM96+M
+        IBtYBFQlFk/TA6nhFbCU2Db/NyOELShxcuYTFog58hLb384BmyMhoCDx8+kyqF1uEnfXPIDa
+        JSIxu7MNqkZEonvLbaiXRSTu7EkBWSshMJVDYlLHcTaIGheJCzd/s0PYwhKvjm+BsqUkPr/b
+        ywbR0M0o0froP1RiNaNEZ6MPhG0v8Wv6FlaQBcwCmhLrd+lD7FKWOHIL6mQ+iY7Df6FhyCvR
+        0SY0gVFlFpLHZiF5bBaSB2YhzFzAyLKKUSy1oDg3PbXYqMAYOaY3MYJToJb7DsYZbz/oHWJk
+        4mA8xCjBwawkwvteWSBBiDclsbIqtSg/vqg0J7X4EKMpMKQnMkuJJucDk3BeSbyhqZGZmYGl
+        qYWpmZGFkjhvscGDeCGB9MSS1OzU1ILUIpg+Jg5OqQYm5vUpDr3PDRbuUd+erd0xKaLm70kP
+        kXsS8VylpvMk5a7FL7Q9tkpRTPJSVs/2O/a93ZW7Ta8vF3c5Krj0zaOv/eXPBBi0A69u0L27
+        1KijQOc8w8dSt1yuLU/8zs99Y7/iRkrX8yoPnbyC03FFxTpFNSut9EMT2S9FBbzm3JxQy8t/
+        58oDtrnZr0+4fp7+J2/Veon90w8cm1Pr7j9f8NUqq+jntZO7Yzz/nt+h7r9raf3+29l9MnOT
+        jhyIvG+0pb/oWsZfn026iepJokbb7Tx+HBC/8tLQ+NNRTj6udJPDS/+u9Hpx+pppxIMLX6pC
+        hLbX7lf7NeudidT6U8J3mV6yL/UI2rCjf87RVbszvTZGKrEUZyQaajEXFScCAEI4ChgKBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSvG7TWYEEgydTFCzOn9/AbjHlz3Im
+        i83z/zA6MHtsWtXJ5nHn2h42j8+b5AKYo7hsUlJzMstSi/TtErgy5j1OKvjCVPF+yVqWBsY5
+        TF2MHBwSAiYS07bxdTFycQgJ7GCUuHD5HlCcEyguK/Hs3Q52CFtY4n7LEVaIomeMEse//QZL
+        sAnoS7zs2MYKYosIGEjcPz+NHWQos0CWRMsUC4j6b4wSK3cvA6vhFAiUWLJzLjNIQlhgJaPE
+        78nnWEAaWARUJRZP0wOp4RWwlNg2/zcjhC0ocXLmExYQm1lAW6L3YSsjhC0vsf3tHGaI4xQk
+        fj6FmA9y6KvjW6CONpW48HUFE8RtbhJ31zxgh+gVkZjd2QbVKyLRveU2NCBEJO7sSZnAKD4L
+        yeZZSDbPQrJ5FpJJCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBEebltYOxj2r
+        PugdYmTiYDzEKMHBrCTC+15ZIEGINyWxsiq1KD++qDQntfgQozQHi5I474Wuk/FCAumJJanZ
+        qakFqUUwWSYOTqkGpsilUW+tH3ro3Qg8cXGeXsuRLWVCZfNn/VcTPaeyMHb/kv9FeucKdptJ
+        Tgi5cWzf5v1tHL43Vm/5L6LQa9u96aF36RGlGhV+5l9xlZcVFaxmb+Y2uHrNbJ6yl3LjpIsX
+        Zrik5s7xWCgT4a49b4d9XbVvaaCS5HsehbL9jH9+F56YLfAwMv97lGH9pOC+s/MTT85VOm7A
+        9WtOsu785O2/N5488D3n16pdgYl35S9t9e65bc0UWnvQX/Ddpvd1khOO7lunPs0iMUn15ByO
+        Xb68ByRmJDwqviZjbbBkO8dtiR1ftyTdm/Em5878KVsWu18+qtyVfWVXgNImpo+eV/59UOVi
+        ERZdyPd5jvGETbIXN85WYinOSDTUYi4qTgQAUsrOViUDAAA=
+X-CMS-MailID: 20210127021842epcas2p3b0c438b9780fa5340ee9ffe81d17b9e3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210125232704epcas2p4f362849a8f5e85f46d406d20b7983429
+References: <CGME20210125232704epcas2p4f362849a8f5e85f46d406d20b7983429@epcas2p4.samsung.com>
+        <202101260734.haBuNSsB-lkp@intel.com>
+        <000001d6f377$6c1b3af0$4451b0d0$@samsung.com>
+        <CACRpkdbAfAsJEhvLosrZCHcdRRTUYgLSR0McykxCamqEE=d8mg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 22 Jan 2021 22:19:51 PST (-0800), Damien Le Moal wrote:
-> On 2021/01/23 13:15, Palmer Dabbelt wrote:
->> On Thu, 21 Jan 2021 00:32:38 PST (-0800), Damien Le Moal wrote:
->>>> On 2021/01/21 17:25, Linus Walleij wrote:
->>>> On Thu, Jan 21, 2021 at 1:15 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
->>>>> On 2021/01/21 3:21, Palmer Dabbelt wrote:
->>>>>> On Mon, 18 Jan 2021 05:33:05 PST (-0800), linus.walleij@linaro.org wrote:
->>>>>>> Hi Damien,
->>>>>>>
->>>>>>> this looks all right to me.
->>>>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>>>>>>
->>>>>>> Shall I apply just this one patch to the pinctrl tree?
->>>>>>
->>>>>> That's fine with me.  The DT bindings are in riscv/for-next, maybe it's best to
->>>>>> take those as well and I'll drop them?  I don't generally like to drop stuff
->>>>>> from for-next, but that's probably better than having everything all mixed up.
->>>>>>
->>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git/commit/?h=for-next&id=ed3137edb31b86702511e7ad12b4abe8686b6805
->>>>>>
->>>>>>> I think the line that touches arch/*/Kconfig should be dropped
->>>>>>> then, that better go to the SoC tree.
->>>>>>
->>>>>> I'm OK with you taking them along with my Ack, but if you don't want to that's
->>>>>> fine.  Just LMK
->>>>>>
->>>>>> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
->>>>>
->>>>> Linus,
->>>>>
->>>>> Please let me know which way you want to proceed. If you want to take the patch,
->>>>> I will resend without the Kconfig change and move that change to another patch.
->>>>
->>>> It's fine to proceed as is, since Palmer already applied the bindings to
->>>> his tree, just apply the pinctrl driver there as well. I don't see any
->>>> risk of collisions in the tree.
->>>
->>> Sounds good. Thanks !
->> 
->> I don't see an actual Ack here, but I'm OK taking it.  IIRC there were some
->> issues with the DT stuff as well, I don't remember if they got resolved or if I
->> should be expecting a v14.
->
-> Palmer,
+> > I was not aware PINCTRL_S3C64XX because it's not enabled in
+> > s3c6410_defconfig.
+> > Please pick the v2 patch. Sorry for the inconvenience.
 > 
-> Linus sent a reviewed-by tag (see above).
+> I can't do that because I have merged other stuff on top and pulled in
+> other branches.
 > 
-> For the dt-bindings problems, the v13 that I sent already addresses all make
-> dtbs_check warning and also addresses Rob's comments. The v13 dt-bindings
-> patches need review, as well as the clk driver patch. Will ping Stephen about
-> that one.
-> I will send a v14 only if there are more comments that need to be addressed.
+> Please send a fix-up patch.
 
-Ah, thanks.  This is on for-next.  I'll look at the rest, but probably not
-tonight as it's a bit late here.
+I posted a patch on top of the previous patch.
+Thanks.
+
+Best Regards,
+Chanho Park
+
