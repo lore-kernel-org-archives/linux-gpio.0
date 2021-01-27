@@ -2,94 +2,106 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6FAC433DB
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F311C433E6
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62E082076D
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E9520771
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 10:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236031AbhA0KmW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Jan 2021 05:42:22 -0500
-Received: from www.zeus03.de ([194.117.254.33]:36986 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236061AbhA0KkC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 27 Jan 2021 05:40:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=uXQip5yKijIqcMZ3FcQVyHF9S+s5
-        HpPijwryumSAIGk=; b=V5MjUonS791+0QOYdiJezdyAaBjAtbtqyVl1r3s1uvZ9
-        5woNfO/AItGLTDDnWOhEZlwPakBHT+lu7KyvpOKEzuH60qpGvSseHchJnuH3Ot+q
-        +duTjfEy0mckWbxmmlYuQlTvQvqAX8yMT2tHDzIHZ2efNil6EyxTcwjDRKbZE5o=
-Received: (qmail 4026905 invoked from network); 27 Jan 2021 11:39:19 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jan 2021 11:39:19 +0100
-X-UD-Smtp-Session: l3s3148p1@RrQvYt+5cr0gAwDPXyX1AEdA8SGgn5QT
-Date:   Wed, 27 Jan 2021 11:39:19 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        id S236104AbhA0KsL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Jan 2021 05:48:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235950AbhA0KrR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2021 05:47:17 -0500
+Received: from forward102j.mail.yandex.net (forward102j.mail.yandex.net [IPv6:2a02:6b8:0:801:2::102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653EBC06174A;
+        Wed, 27 Jan 2021 02:46:35 -0800 (PST)
+Received: from iva6-6aa4ee7025da.qloud-c.yandex.net (iva6-6aa4ee7025da.qloud-c.yandex.net [IPv6:2a02:6b8:c0c:6106:0:640:6aa4:ee70])
+        by forward102j.mail.yandex.net (Yandex) with ESMTP id 5CC8DF233C9;
+        Wed, 27 Jan 2021 13:46:33 +0300 (MSK)
+Received: from iva6-2d18925256a6.qloud-c.yandex.net (iva6-2d18925256a6.qloud-c.yandex.net [2a02:6b8:c0c:7594:0:640:2d18:9252])
+        by iva6-6aa4ee7025da.qloud-c.yandex.net (mxback/Yandex) with ESMTP id f9h9r13gJ3-kXGWXiml;
+        Wed, 27 Jan 2021 13:46:33 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1611744393;
+        bh=dRtGy7GDCULMUNvIFTHiZshKgi9mwsQBzk/q5Xc/ppE=;
+        h=In-Reply-To:References:Date:Subject:To:From:Message-Id:Cc;
+        b=B+O61xsFjzdT+TBO8q3wwCa0orghyuqd5iaYaELqRFJY6/As1wtWKqO+16N3w41pi
+         MKtU0/1/6dohVXYBFrBQv1hZJd8+u3rfX9yHl8AdmP1R/gCEEKyrR+pAlgNaPua8iq
+         8UKv6EdpvHzJA96UUhEhmB7/hwFhiQVj4QzGpIc0=
+Authentication-Results: iva6-6aa4ee7025da.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by iva6-2d18925256a6.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id AUuDuROonk-kWm89ilh;
+        Wed, 27 Jan 2021 13:46:32 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Nikita Shubin <nikita.shubin@maquefel.me>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] gpio: gpiolib: remove shadowed variable
-Message-ID: <20210127103919.GC928@ninjato>
-References: <20210105105914.13172-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdUT8CEyJ1ERmLr443SuZgemFF40cDviSGwhYM7ZnN_b_g@mail.gmail.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 6/9] gpio: ep93xx: refactor ep93xx_gpio_add_bank
+Date:   Wed, 27 Jan 2021 13:46:14 +0300
+Message-Id: <20210127104617.1173-7-nikita.shubin@maquefel.me>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210127104617.1173-1-nikita.shubin@maquefel.me>
+References: <20201228150052.2633-1-nikita.shubin@maquefel.me>
+ <20210127104617.1173-1-nikita.shubin@maquefel.me>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUT8CEyJ1ERmLr443SuZgemFF40cDviSGwhYM7ZnN_b_g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+- replace plain numbers with girq->num_parents in devm_kcalloc
+- replace plain numbers with ARRAY_SIZE(girq->parents) for port F
+- refactor i - 1 to i + 1 to make loop more readable
+- combine getting IRQ's loop and setting handler's into single loop
 
---jy6Sn24JjFx/iggw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+ drivers/gpio/gpio-ep93xx.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-On Tue, Jan 05, 2021 at 12:14:34PM +0100, Geert Uytterhoeven wrote:
-> On Tue, Jan 5, 2021 at 12:00 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > After refactoring, we had two variables for the same thing. Remove the
-> > second declaration, one is enough here. Found by cppcheck.
-> >
-> > drivers/gpio/gpiolib.c:2551:17: warning: Local variable 'ret' shadows o=
-uter variable [shadowVariable]
-> >
-> > Fixes: d377f56f34f5 ("gpio: gpiolib: Normalize return code variable nam=
-e")
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index 8f66e3ca0cfb..e4270b4e5f26 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -384,7 +384,7 @@ static int ep93xx_gpio_add_bank(struct gpio_chip *gc,
+ 
+ 		girq->parent_handler = ep93xx_gpio_ab_irq_handler;
+ 		girq->num_parents = 1;
+-		girq->parents = devm_kcalloc(dev, 1,
++		girq->parents = devm_kcalloc(dev, girq->num_parents,
+ 					     sizeof(*girq->parents),
+ 					     GFP_KERNEL);
+ 		if (!girq->parents)
+@@ -406,15 +406,14 @@ static int ep93xx_gpio_add_bank(struct gpio_chip *gc,
+ 		 */
+ 		girq->parent_handler = ep93xx_gpio_f_irq_handler;
+ 		girq->num_parents = 8;
+-		girq->parents = devm_kcalloc(dev, 8,
++		girq->parents = devm_kcalloc(dev, girq->num_parents,
+ 					     sizeof(*girq->parents),
+ 					     GFP_KERNEL);
+ 		if (!girq->parents)
+ 			return -ENOMEM;
+ 		/* Pick resources 1..8 for these IRQs */
+-		for (i = 1; i <= 8; i++)
+-			girq->parents[i - 1] = platform_get_irq(pdev, i);
+-		for (i = 0; i < 8; i++) {
++		for (i = 0; i < ARRAY_SIZE(girq->parents); i++) {
++			girq->parents[i] = platform_get_irq(pdev, i + 1);
+ 			gpio_irq = EP93XX_GPIO_F_IRQ_BASE + i;
+ 			irq_set_chip_data(gpio_irq, &epg->gc[5]);
+ 			irq_set_chip_and_handler(gpio_irq,
+-- 
+2.29.2
 
-Ccing Linus & Bartosz
-
-
---jy6Sn24JjFx/iggw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmARQtMACgkQFA3kzBSg
-KbZq0BAApfeePPvTIfSLa7R6TXTKvpLC+31oyXBmwvTH/n9DvGxbMJLzzAWgtRu4
-dqW47iHrVyPEIoDtZtYnuSQZJA48IPVGd1mRFFl3vdECQbwNn2NzTAxRQC8H343T
-Fcmea1l/qMEOcr3FEX9Y87F5HBdcaOrc/c989O8ZL/sweIqJdN3c4KZgf3DvzOGj
-9r39Qo/DbwYqUjaLOsUUt9B0teznxpIoAJnFjykOPZADdYcqgXIaCHc9hQwGm5k5
-kXMGeN97ohYFz+YThMOLUm32nUwkGtwdFQSJtYeHAkHRVqIumuYnSAuCgR8BJnvj
-tI5BVoHn12AEQufA2A481GW8Uj3n7YNCF99q+kCvAJITxzaf33BNL+0qVWsnMEgd
-oWCVir5kVi6LDi0y+OtMoTy0++kEEtrGfQEsDr8sauBvNxBUtACcUaN45uaxEfxY
-dKXbnmI5iavCpQxM5Pzqv6PozS8PKKEUnN6ySZqVvylQmtLxRCgPyQjlb1YX7nut
-ztUt4fUM6MNF4y9Z4MX+mgkHDC+g9wwd6aJEIhrdewvAZB1Bst/NW4ZTBFenhNZt
-Y4qzwMW64btWyKcNdb8XGqpXgS++l49HgQS0g5K03NH18F6ulggUbgvPIvs/5gv/
-ywAWdRmNGquI6tP1pTZU5Uom2l8Nnswhps3UhujfBAs/BzKRbnI=
-=93W/
------END PGP SIGNATURE-----
-
---jy6Sn24JjFx/iggw--
