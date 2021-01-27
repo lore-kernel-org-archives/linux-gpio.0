@@ -2,161 +2,303 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36737C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 23:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB272C433E6
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 04:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D940E20663
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jan 2021 23:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D4222070E
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 04:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732210AbhAZXJZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 18:09:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49506 "EHLO
+        id S239383AbhA0EmG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jan 2021 23:42:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389432AbhAZTIy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 14:08:54 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C735CC06174A
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 11:08:13 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id w1so24503175ejf.11
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 11:08:13 -0800 (PST)
+        with ESMTP id S2389644AbhA0AGp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 19:06:45 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E74DC06178B
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 16:04:40 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id o7so350304pgl.1
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2021 16:04:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ccncod4bJ72tcGcy7W1/RKUQfGbg1f/NFT4D3fRxO50=;
-        b=yEYdB7vsEehLKEZC2ypXX0M42F4dJ3KGTo3pasLpV495AsHFNvYpn91cR8wDxCPZz9
-         8auip/3OOarJfZC9X/KwcSyFdjx/0WG1wExuts04bUNAeHQVB30ULQqdu4TIHgOeO0ir
-         a01lMvlZH3bcrZwRrXgAcPs3I0KDIsCf60uJ0JXYfkAMsJKFWtZdEd9tYIfLau2vwW/W
-         Dj1CzGtwF4k2yNjJ466EehQZHkaez7C6W/yDcHJzouSrozO2OgQJp0s97PSpXa+BBqD9
-         9pm88HFjlpQXpzG1hfvUWSBLMbbmPN+GHxgIZuWqqHMNbrgevpWYhFGfNYCy9R/weYNw
-         ZFmA==
+        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1vy4fxFjc+ojePEGm9S0MBi0jipTSfFhAgAo+uoqFzI=;
+        b=u/AqHyIpj76efLaeJLaQUIRyHE7+DJYLiusS7rShze9raXz0FM/d2HcGifBojAQhG7
+         Cb7RtDf4B59yOaYi6KGVhTJd3vcW8dxzcB8nqKT4MvsN/GUOr0ekIxo4qvHEmjPMtGgH
+         sff4lRxxRUByV0LhtjZxVOEvzMPqB6ZILutJ80aYjtCG0MDK9ddLYB11TFMZ7511nfwF
+         iHRvIYYxJHrh/ToP9Lu8VRi3rS7pV88CKvR25AyqwT+Tnw9Y4VBAnnM1HypOJk4rCiP9
+         Gw2AYzOZbCLuJWmjy6GoANye5qaHoVmz8dmF5Mgxmt1UNNi0SQJU9mO/dft6hlX//Am4
+         Nb7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ccncod4bJ72tcGcy7W1/RKUQfGbg1f/NFT4D3fRxO50=;
-        b=Qvms90TDfEr5eppl1tYgnoqXgYf79u7HM4ZIBGMlwI/V/K9TMC53YEGwc3K7T0TFu6
-         Detao8KmwFn0CNWjqoOe0riVRM6K+rA3sEOsvozeslslxcQ7Iu6nXWJpPiRQU/mMOolX
-         Evc5gF48HjDrECTF+5bpQ3y1HLfitayCvjAUqBqehU5Th/oxClo/OHHsIKsrPYhxIHQ0
-         OTe7lTysOaPLO6qqtzBErZNdfa2TRX/78nrwagTpdtN6f05SfeAffWPxY+PjJrvEHgQz
-         0V+FGvfqtwTX/3XRRVGlGM6XSV54gLKPe3n4hi+27SqBUvNUrMR6ii5JPPVYE3rbaRet
-         o3Rg==
-X-Gm-Message-State: AOAM532eCREzgqSehaDwBhttdjKNsu540XcuSb2dpXDWYwfsJxwsCYV8
-        y6vq+GefcAt/m/8oMD0hLp5EoY8U+jNmNKsmzN9iLw==
-X-Google-Smtp-Source: ABdhPJyoTxhQLMpU2yvgvDSgyt29JQpVwyAN40O84op4wXCsNdUUDazQbbBsPeQgeng/l8ZfzuDE12LMcJxrQxoFvlI=
-X-Received: by 2002:a17:906:dfd3:: with SMTP id jt19mr4402078ejc.64.1611688092563;
- Tue, 26 Jan 2021 11:08:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20210111133426.22040-1-brgl@bgdev.pl> <20210111133426.22040-7-brgl@bgdev.pl>
- <CAHp75VfeO10DXc2nCRKP9=6uppJ28k36E8yr20+YCd0mKUGjWA@mail.gmail.com>
- <CAMRc=MevGmAMBK20O2BBmyD9NjCSpC9-O_j_0HM6DQV66rnA2Q@mail.gmail.com>
- <20210111144647.GY4077@smile.fi.intel.com> <CAMpxmJW=6YXgPBJ3=1sBbNAOWTV4idwHz-cWv+YborZ4hLtcKA@mail.gmail.com>
- <20210125055527.GA344851@sol> <CAMRc=Mc4gK6BXKV8-b9qBTgm8m5DqW35UPxPWn7PbfJ-8LB4Yw@mail.gmail.com>
- <YBBNSzKHYNXki6NY@kroah.com>
-In-Reply-To: <YBBNSzKHYNXki6NY@kroah.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 26 Jan 2021 20:08:01 +0100
-Message-ID: <CAMRc=MeQ2gNgCEuf9apUgmzxeCUUPjD5oAChXXVOw=JmoqqaGA@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH 6/6] core: add the kernel uapi header to the repository
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Kent Gibson <warthog618@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1vy4fxFjc+ojePEGm9S0MBi0jipTSfFhAgAo+uoqFzI=;
+        b=hmPQKgiEE1J+PHJyRaYivxLQdSL6mZzNNIrHSbP0RRhicGXANjwOL7JYuCWkmlPpuu
+         KtaYzKZ7g6q4jxwjjdYy9jL9Iqe7FEoSaE1nZpzqo64dZblKKxoY0rjZGztx+wHEm8AX
+         TZlZoDggRoWhVe9UJHWIDrqRIMg7rJPZWx3qD+8AAfRsLsUPOPG6PwmVdWyitWM1wtVx
+         YGnThjR5Q+H0RN9HOYS/bqk83iQ1Qwa5catLlpvaNwXOvQi/ZM5VU3Hq06/k0Yv3gI5a
+         5OQ/Pas0+vCbu63R+oST2JWrKmdT8QYTnokgS9Bx2HFNHV+3ny0DHomDTJk/dAZn1iCp
+         niiA==
+X-Gm-Message-State: AOAM531K1Nlm1ej7AyiQTGx3/y5WkyRPGOHepc5BZV3PtJJ3utZJ/Vl6
+        2nh9iMVUXwha1KPLtrlaKUTSyg==
+X-Google-Smtp-Source: ABdhPJz7UFVIoVecPqAF2EAVnuw1EjqKtzt7Gh+4EwyTCwPaV7ovulOBqCooWTC9qHPVV6TZZCBp1A==
+X-Received: by 2002:a05:6a00:8d0:b029:1b6:3581:4f41 with SMTP id s16-20020a056a0008d0b02901b635814f41mr7482093pfu.56.1611705879609;
+        Tue, 26 Jan 2021 16:04:39 -0800 (PST)
+Received: from x1.hsd1.or.comcast.net ([2601:1c0:4701:ae70:515f:b0ad:6302:bbc2])
+        by smtp.gmail.com with ESMTPSA id y5sm213536pfq.96.2021.01.26.16.04.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 16:04:38 -0800 (PST)
+From:   Drew Fustini <drew@beagleboard.org>
+To:     bcousson@baylibre.com, Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@beagleboard.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-gpio@vger.kernel.org
+Cc:     Drew Fustini <drew@beagleboard.org>
+Subject: [PATCH 1/2] ARM: dts: am335x-pocketbeagle: unique gpio-line-names
+Date:   Tue, 26 Jan 2021 16:03:03 -0800
+Message-Id: <20210127000303.436595-1-drew@beagleboard.org>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 6:11 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Jan 26, 2021 at 04:07:47PM +0100, Bartosz Golaszewski wrote:
-> > On Mon, Jan 25, 2021 at 6:55 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > >
-> >
-> > [snip!]
-> >
-> > > >
-> > > > I don't like the ifdef hell so I prefer to bundle the header. I'm open
-> > > > to other suggestions, although I can't come up with anything else.
-> > > >
-> > >
-> > > Going off on a bit of a tangent, but I'm trying to add support for
-> > > decoding the GPIO ioctls into strace and am running up against a similar
-> > > issue.
-> > >
-> > > The way strace does it is to check the uAPI header on the host and use
-> > > it if possible.  To handle where it may be stale, local types are
-> > > defined that mirror any types that may have been added since the header
-> > > was originally released.  If the corresponding type is available in the
-> > > linux header then it is used, else the local type.
-> > >
-> > > This obviously creates a lot of pointless boilerplate code and
-> > > preprocessor chicanery so I floated the idea of just including the latest
-> > > header in the strace tree, as you are doing here for libgpiod.
-> > > But that raised the issue of licencing, specifically if you copy the
-> > > linux/gpio.h into a source tree does that mean that the whole project
-> > > becomes GPL 2.0?  That is an issue for strace as it is LGPL 2.1 - as is
-> > > libgpiod.
-> > >
-> > > The Linux uAPI headers are under the GPL-2.0 WITH Linux-syscall-note,
-> > > which is also not totally clear on this point[1].
-> > >
-> > > My gut feeling was that using and even copying API headers doesn't
-> > > constitute a derived work, as per the FSF view quoted in [1], and
-> > > ethically might even be less of a violation than copying and re-defining
-> > > individual types, but I'd rather not rely on a gut feeling.
-> > >
-> > > Is there some clear opinion or precedent on this point?
-> > > i.e. are libgpiod and strace in legal licence jeopardy if they include
-> > > gpio.h in their source tree?
-> > >
-> > > Cheers,
-> > > Kent.
-> > >
-> > > [1] https://lkml.org/lkml/2020/2/21/2193
-> >
-> > Thanks for pointing that out. I lack the legal knowledge to have an
-> > opinion of my own on this.
-> >
-> > Cc'ing Greg KH for help.
-> >
-> > Greg: do you know if it's fine to bundle a 'GPL-2.0 WITH
-> > Linux-syscall-note' uAPI header together with an LGPL-v2.1-or-later
-> > user-space shared library?
->
-> How would you "bundle" such a thing as that is not what is in the kernel
-> source tree?  If you are going to copy files out of the kernel and do
-> other things with them, well, I recommend asking a lawyer as I am not
-> one :)
->
-> good luck!
->
-> greg k-h
+Based on linux-gpio discussion [1], it is best practice to make the
+gpio-line-names unique. Generic names like "[ethernet]" are replaced
+with the name of the unique signal on the AM3358 SoC ball corresponding
+to the gpio line. "[NC]" is also renamed to the standard "NC" name to
+represent "not connected".
 
-By "bundling" I mean - copying the kernel uAPI header verbatim from
-the kernel tree into the project repository. The reason for that is
-the fact that always relying on the toolchain kernel headers leads to
-build issues if we want to support more recent kernel features in the
-library while the supplied headers don't define all required symbols.
+[1] https://lore.kernel.org/linux-gpio/20201216195357.GA2583366@x1/
 
-We can either make the latest supported version of linux headers a
-hard requirement for building (I did that and buildroot folks yelled
-at me because two stable versions of the library had different kernel
-headers requirements) or redefine certain symbols (new symbols since
-the oldest supported kernel version) or - and this is preferred unless
-it's against the linux license - include the kernel headers in the
-source tarball of the library.
+Signed-off-by: Drew Fustini <drew@beagleboard.org>
+---
+ arch/arm/boot/dts/am335x-pocketbeagle.dts | 140 +++++++++++-----------
+ 1 file changed, 70 insertions(+), 70 deletions(-)
 
-I hope this is not a stupid question but obviously I don't know any
-lawyer well versed in software copyright: can we direct this question
-to anyone at the Linux Foundation maybe?
+diff --git a/arch/arm/boot/dts/am335x-pocketbeagle.dts b/arch/arm/boot/dts/am335x-pocketbeagle.dts
+index d526c5941c9b..209cdd17dc1e 100644
+--- a/arch/arm/boot/dts/am335x-pocketbeagle.dts
++++ b/arch/arm/boot/dts/am335x-pocketbeagle.dts
+@@ -61,51 +61,51 @@ vmmcsd_fixed: fixedregulator0 {
+ 
+ &gpio0 {
+ 	gpio-line-names =
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
+ 		"P1.08 [SPI0_CLK]",
+ 		"P1.10 [SPI0_MISO]",
+ 		"P1.12 [SPI0_MOSI]",
+ 		"P1.06 [SPI0_CS]",
+ 		"[MMC0_CD]",
+ 		"P2.29 [SPI1_CLK]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
++		"[SYSBOOT 12]",
++		"[SYSBOOT 13]",
++		"[SYSBOOT 14]",
++		"[SYSBOOT 15]",
+ 		"P1.26 [I2C2_SDA]",
+ 		"P1.28 [I2C2_SCL]",
+ 		"P2.11 [I2C1_SDA]",
+ 		"P2.09 [I2C1_SCL]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
++		"NC",
+ 		"P2.31 [SPI1_CS]",
+ 		"P1.20 [PRU0.16]",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
+ 		"P2.03",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
+ 		"P1.34",
+ 		"P2.19",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
+ 		"P2.05 [UART4_RX]",
+ 		"P2.07 [UART4_TX]";
+ };
+ 
+ &gpio1 {
+ 	gpio-line-names =
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
+ 		"P2.25 [SPI1_MOSI]",
+ 		"P1.32 [UART0_RX]",
+ 		"P1.30 [UART0_TX]",
+@@ -113,10 +113,10 @@ &gpio1 {
+ 		"P2.33",
+ 		"P2.22",
+ 		"P2.18",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
+ 		"P2.01 [PWM1A]",
+-		"[NC]",
++		"NC",
+ 		"P2.10",
+ 		"[USR LED 0]",
+ 		"[USR LED 1]",
+@@ -126,35 +126,35 @@ &gpio1 {
+ 		"P2.04",
+ 		"P2.02",
+ 		"P2.08",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]";
++		"NC",
++		"NC",
++		"NC";
+ };
+ 
+ &gpio2 {
+ 	gpio-line-names =
+ 		"P2.20",
+ 		"P2.17",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
++		"NC",
+ 		"[EEPROM_WP]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[SYSBOOT]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
++		"[SYSBOOT 0]",
++		"[SYSBOOT 1]",
++		"[SYSBOOT 2]",
++		"[SYSBOOT 3]",
++		"[SYSBOOT 4]",
++		"[SYSBOOT 5]",
++		"[SYSBOOT 6]",
++		"[SYSBOOT 7]",
++		"[SYSBOOT 8]",
++		"[SYSBOOT 9]",
++		"[SYSBOOT 10]",
++		"[SYSBOOT 11]",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
+ 		"P2.35 [AIN5]",
+ 		"P1.02 [AIN6]",
+ 		"P1.35 [PRU1.10]",
+@@ -169,19 +169,19 @@ &gpio2 {
+ 
+ &gpio3 {
+ 	gpio-line-names =
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
+ 		"[I2C0_SDA]",
+ 		"[I2C0_SCL]",
+-		"[JTAG]",
+-		"[JTAG]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
++		"[JTAG EMU0]",
++		"[JTAG EMU1]",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
+ 		"P1.03 [USB1]",
+ 		"P1.36 [PWM0A]",
+ 		"P1.33 [PRU0.1]",
+@@ -191,16 +191,16 @@ &gpio3 {
+ 		"P2.34 [PRU0.5]",
+ 		"P2.28 [PRU0.6]",
+ 		"P1.29 [PRU0.7]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]",
+-		"[NC]";
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC",
++		"NC";
+ };
+ 
+ &am33xx_pinmux {
+-- 
+2.25.1
 
-Bartosz
