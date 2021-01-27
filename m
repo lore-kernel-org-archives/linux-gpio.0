@@ -2,152 +2,322 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4F2C433DB
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 04:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9958C43381
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 06:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86EC12070E
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 04:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF1962070A
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Jan 2021 06:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239368AbhA0El4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jan 2021 23:41:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47708 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388200AbhAZXUo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2021 18:20:44 -0500
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C016EC06174A;
-        Tue, 26 Jan 2021 15:19:32 -0800 (PST)
-Received: by mail-yb1-xb2f.google.com with SMTP id v200so249984ybe.1;
-        Tue, 26 Jan 2021 15:19:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yG8TN3kSOy/r5C1fLciwDAgyrhAMN8G3ZSfNxn4LKwI=;
-        b=JGn9UVd1WL6oLaAIgsVyZFefcVBcfaNKnNmOKOUyzbrJVYPNvDflHiTqTCWbm08KKm
-         cHN3UA9Qctcy/zocpr/AYU08cR4RovIIz4JlaEWXZxBMFL7ThTcs/Xw7vAn5YKV9F6bS
-         Ovrxi5Oqb0xAcSldXg7BPjJ7e8IrIwVj7lashPMbLmBoH+ir0sIVOOgNZRTTXJMWihA5
-         aBH8+0LeIHQz5MZkI5ksYuuMbyMEKaAIyhlG64IipkZUPMFKbeYo+0C5IyD9IBsL+mgu
-         NXmYmPsFaDDfqufP8ivVnzJswuQdVImtIfytTHJaKUTtTMsOam8GbSNJKsqKsz3Wlfh9
-         WIpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yG8TN3kSOy/r5C1fLciwDAgyrhAMN8G3ZSfNxn4LKwI=;
-        b=VQzjlGnjwwKXGtmg6M3zPDHX9hCe0FvY+1Msdl0oVJ5vHLuE+4qGmnWBI57mXUva7y
-         o2zvi+FzAv5LA0fyQ2mFNkirTYcUWFu6rtB7y5CuUU4H9/r/LFnGD1Sv3W3ipeMUgpVn
-         gVl90qg9KKqVNQ3arWXLYJUM0cKycEa4WSavMk0jeUuAKupGWS1KEmrQ4RVJQ2jClT8h
-         GGRhhVet7wd2XwpYaDkDGNHSiZYxluzuJ0AglniaJcwBGjTUoxFClli+Ka4hndHpGl1T
-         u2kRQ3x+sNihGyWuJLyVokibcXkad+Y98a+yijURkntQVA/ThsgygVbv2L34g6aImJ/a
-         FnWA==
-X-Gm-Message-State: AOAM533BgN2PQxauxeOIdYNK6Ug0jpmGKfmcMDPWlukyubKw8RusOpJ5
-        JvyaszjypAx1sHDpQ/44uzA0VLDYSZaaDdIuolM=
-X-Google-Smtp-Source: ABdhPJzBIh/uw8fHMxIPrq4i5pm0L5Jnoe2iN2FtZdlZzW9R7RDH1coLX0c8arxTOhBav4i1zaEHR/zAQGpitgryc7o=
-X-Received: by 2002:a25:9b81:: with SMTP id v1mr10594112ybo.168.1611703172052;
- Tue, 26 Jan 2021 15:19:32 -0800 (PST)
+        id S232916AbhA0GDJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Jan 2021 01:03:09 -0500
+Received: from mga12.intel.com ([192.55.52.136]:16298 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236838AbhA0DnO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 26 Jan 2021 22:43:14 -0500
+IronPort-SDR: yu/1A2j8Qz0SOKhOAtfPykm3jTFFiVlNxI/tZaPjesAGpHzffDmHlcTX2w27AXT1HqXA7wo0xu
+ MHSf4eXQIo2Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="159185314"
+X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
+   d="scan'208";a="159185314"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 19:42:31 -0800
+IronPort-SDR: HtVYs3bO9PTvaAML/HSUD4668fSMSKt4d7vUUJMdc/dbWxlcsVxv0rAJeJwLNNlr7rpFIJNIKz
+ s9eyhQgrzGig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
+   d="scan'208";a="362251087"
+Received: from lkp-server02.sh.intel.com (HELO 625d3a354f04) ([10.239.97.151])
+  by fmsmga008.fm.intel.com with ESMTP; 26 Jan 2021 19:42:30 -0800
+Received: from kbuild by 625d3a354f04 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1l4biv-0001IS-O4; Wed, 27 Jan 2021 03:42:29 +0000
+Date:   Wed, 27 Jan 2021 11:41:32 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:devel] BUILD REGRESSION
+ 9d5032f97e9e0655e8c507ab1f43237e31520b00
+Message-ID: <6010e0ec.svhp6fduETRFccMu%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <YBANNJ8XtoRf7SuW@smile.fi.intel.com> <CAMeQTsbGBrTvfkz6BStwL240Kz-dbrQVKtXbYkRtbD3OoUKCcg@mail.gmail.com>
- <CAHp75Vc9RAHvTDAw1ryHq_CPRMtjqkzg9081nw0+RPY_yWPJgA@mail.gmail.com>
- <CAMeQTsY6k64LUg3DYbi67W6-Gx6znOeJbDfKUhzGt-BxF2BgKA@mail.gmail.com>
- <CAHp75VdKxARQAyyTd=ZcaoER1iF6Mk4AS1Dn6U9VCjt_D_+q8A@mail.gmail.com>
- <3b4c2f63-14e6-5041-3c15-c2d65b229269@redhat.com> <CAHp75VcEq4thOub+k5rDR61KZX4jCZj2zJr2OqsdedmpSB64KA@mail.gmail.com>
-In-Reply-To: <CAHp75VcEq4thOub+k5rDR61KZX4jCZj2zJr2OqsdedmpSB64KA@mail.gmail.com>
-From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date:   Wed, 27 Jan 2021 00:19:17 +0100
-Message-ID: <CAMeQTsZMK9E4=qB-Kxnt9i4RGDFRkVMAgyYSck_tmk7C7yTH2A@mail.gmail.com>
-Subject: Re: [GIT PULL] ib-drm-gpio-pdx86-rtc-wdt-v5.12-1
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Mark Gross <mgross@linux.intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>, linux-watchdog@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 9:53 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Tue, Jan 26, 2021 at 8:33 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> > On 1/26/21 6:14 PM, Andy Shevchenko wrote:
-> > > On Tue, Jan 26, 2021 at 6:55 PM Patrik Jakobsson
-> > > <patrik.r.jakobsson@gmail.com> wrote:
-> > >> On Tue, Jan 26, 2021 at 4:51 PM Andy Shevchenko
-> > >> <andy.shevchenko@gmail.com> wrote:
-> > >>> On Tue, Jan 26, 2021 at 5:25 PM Patrik Jakobsson
-> > >>> <patrik.r.jakobsson@gmail.com> wrote:
-> > >>>> On Tue, Jan 26, 2021 at 1:37 PM Andy Shevchenko
-> > >>>> <andriy.shevchenko@linux.intel.com> wrote:
-> > >>>>>
-> > >>>>> Hi guys,
-> > >>>>>
-> > >>>>> This is first part of Intel MID outdated platforms removal. It's collected into
-> > >>>>> immutable branch with a given tag, please pull to yours subsystems.
-> > >>>>
-> > >>>> Hi Andy,
-> > >>>> Do you plan on eventually removing X86_INTEL_MID completely? If so,
-> > >>>> then I should probably start looking at removing the corresponding
-> > >>>> parts in GMA500.
-> > >>>
-> > >>> Nope. It is related to only Medfield / Clovertrail platforms.
-> > >>>
-> > >>> There are other (MID) platforms that may / might utilize this driver
-> > >>> in the future.
-> > >>
-> > >> Right, there's still Oaktrail / Moorestown with hardware in the wild.
-> > >
-> > > Actually Moorestown had to be removed a few years ago (kernel won't
-> > > boot on them anyway from that date when Alan removed support under
-> > > arch/x86 for it).
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 9d5032f97e9e0655e8c507ab1f43237e31520b00  dt-bindings: mediatek: mt8192: Fix dt_binding_check warning
 
-Ok. I lump Moorestown and Oaktrail together since they have the same
-Z6xx series CPU/GPU (GMA600). I still have a working Oaktrail device
-so that support should stay in gma500.
+Error/Warning reports:
 
-> > >
-> > > I'm talking about Merrifield and Moorefield that can utilize it and
-> > > also some other platforms that are not SFI based (Cedar something...
-> > > IIRC).
-> >
-> > Yes at least there are some 64 bit capable SoCs with GMA500 which were
-> > used in NAS like devices. These NAS-es actually have a VGA output
-> > (and maybe also DVI?) which is attached to the GMA500.
+https://lore.kernel.org/linux-gpio/202101260734.haBuNSsB-lkp@intel.com
 
-Yes these should be Cedarview/Cedartrail. Some of them are 64-bit and
-some are 32-bit. I think it came down to if bios enabled it or not.
-Cedarview comes with VGA, DVI and eDP/DP. Quite a few Cedarview
-devices exist in the wild.
+Error/Warning in current branch:
 
->
-> Since you are talking about 64-bit, definitely they are *not*
-> Moorestown, Medfield, Clovertrail since the mentioned never were
-> 64-bit. But it would be nice to see the CPU model number to be sure.
->
-> > I know people are running Fedora on these, so we should at least keep
-> > these supported.
->
-> Is it possible to gather the CPU model number from them? (Or at least
-> the exact device/box name)
+drivers/pinctrl/samsung/pinctrl-s3c64xx.c:289:20: error: passing argument 1 of 'spinlock_check' from incompatible pointer type [-Werror=incompatible-pointer-types]
+drivers/pinctrl/samsung/pinctrl-s3c64xx.c:296:25: error: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [-Werror=incompatible-pointer-types]
 
-Yes, it would be interesting to know more about Clovertrail. gma500
-only supports up to the Cedarview GPUs but Clovertrail might also use
-a Cedarview GPU.
+Error/Warning ids grouped by kconfigs:
 
--Patrik
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- arc-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- arm-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- arm-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- arm64-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- arm64-randconfig-r023-20210126
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- c6x-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- h8300-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- i386-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- ia64-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- ia64-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- m68k-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- m68k-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- mips-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- mips-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- nds32-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- nios2-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- openrisc-randconfig-r025-20210126
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- parisc-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- powerpc-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- powerpc-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- powerpc-randconfig-r012-20210126
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- riscv-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- riscv-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- sh-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- sparc-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- x86_64-allmodconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+|-- x86_64-allyesconfig
+|   |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+|   `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+`-- xtensa-allyesconfig
+    |-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spin_unlock_irqrestore-from-incompatible-pointer-type
+    `-- drivers-pinctrl-samsung-pinctrl-s3c64xx.c:error:passing-argument-of-spinlock_check-from-incompatible-pointer-type
+
+elapsed time: 724m
+
+configs tested: 155
+configs skipped: 2
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+sh                          landisk_defconfig
+powerpc                 mpc832x_mds_defconfig
+powerpc                        warp_defconfig
+powerpc                     tqm8560_defconfig
+powerpc                      ppc44x_defconfig
+powerpc                      ep88xc_defconfig
+sh                          kfr2r09_defconfig
+powerpc                    klondike_defconfig
+powerpc                    mvme5100_defconfig
+mips                           ip22_defconfig
+openrisc                    or1ksim_defconfig
+xtensa                generic_kc705_defconfig
+x86_64                           allyesconfig
+nios2                         10m50_defconfig
+powerpc                 mpc8315_rdb_defconfig
+powerpc                 mpc85xx_cds_defconfig
+arm                        clps711x_defconfig
+mips                     decstation_defconfig
+powerpc                  storcenter_defconfig
+arm                          ep93xx_defconfig
+powerpc                         wii_defconfig
+sh                           se7780_defconfig
+mips                         tb0287_defconfig
+sh                          polaris_defconfig
+xtensa                    smp_lx200_defconfig
+parisc                generic-32bit_defconfig
+powerpc                     stx_gp3_defconfig
+powerpc                     kilauea_defconfig
+powerpc                     tqm8541_defconfig
+arm                            lart_defconfig
+openrisc                            defconfig
+c6x                         dsk6455_defconfig
+powerpc                        cell_defconfig
+xtensa                    xip_kc705_defconfig
+arm                       imx_v6_v7_defconfig
+arm                        realview_defconfig
+arm                         vf610m4_defconfig
+mips                           ci20_defconfig
+alpha                               defconfig
+um                           x86_64_defconfig
+arm                         lubbock_defconfig
+powerpc                      acadia_defconfig
+sh                        dreamcast_defconfig
+powerpc                 mpc837x_mds_defconfig
+arm                      integrator_defconfig
+powerpc                    adder875_defconfig
+arm                       cns3420vb_defconfig
+um                            kunit_defconfig
+sh                        edosk7705_defconfig
+arm                       aspeed_g4_defconfig
+powerpc                     pq2fads_defconfig
+powerpc                     powernv_defconfig
+arm                          pcm027_defconfig
+mips                       capcella_defconfig
+arm                             pxa_defconfig
+parisc                           alldefconfig
+powerpc                 mpc832x_rdb_defconfig
+arm                        spear6xx_defconfig
+c6x                                 defconfig
+powerpc                           allnoconfig
+arm                        spear3xx_defconfig
+sh                           se7750_defconfig
+sh                          rsk7264_defconfig
+m68k                          amiga_defconfig
+powerpc                     asp8347_defconfig
+powerpc                       ppc64_defconfig
+nds32                               defconfig
+arc                         haps_hs_defconfig
+mips                        nlm_xlr_defconfig
+arm                        neponset_defconfig
+arm                        multi_v7_defconfig
+powerpc                       maple_defconfig
+m68k                        m5307c3_defconfig
+arm                        shmobile_defconfig
+powerpc                   lite5200b_defconfig
+arm                         s3c2410_defconfig
+arm                        oxnas_v6_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                               tinyconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+i386                 randconfig-a001-20210126
+i386                 randconfig-a002-20210126
+i386                 randconfig-a004-20210126
+i386                 randconfig-a006-20210126
+i386                 randconfig-a003-20210126
+i386                 randconfig-a005-20210126
+x86_64               randconfig-a012-20210126
+x86_64               randconfig-a016-20210126
+x86_64               randconfig-a015-20210126
+x86_64               randconfig-a011-20210126
+x86_64               randconfig-a013-20210126
+x86_64               randconfig-a014-20210126
+i386                 randconfig-a013-20210126
+i386                 randconfig-a011-20210126
+i386                 randconfig-a012-20210126
+i386                 randconfig-a015-20210126
+i386                 randconfig-a014-20210126
+i386                 randconfig-a016-20210126
+i386                 randconfig-a013-20210127
+i386                 randconfig-a011-20210127
+i386                 randconfig-a012-20210127
+i386                 randconfig-a015-20210127
+i386                 randconfig-a014-20210127
+i386                 randconfig-a016-20210127
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                      rhel-8.3-kbuiltin
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a003-20210126
+x86_64               randconfig-a002-20210126
+x86_64               randconfig-a001-20210126
+x86_64               randconfig-a005-20210126
+x86_64               randconfig-a006-20210126
+x86_64               randconfig-a004-20210126
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
