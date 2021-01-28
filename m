@@ -2,38 +2,41 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312E1C433E6
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 12:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FABBC433E9
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 12:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D117E64DDE
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 12:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7D9764DDE
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 12:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231705AbhA1MXM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Jan 2021 07:23:12 -0500
-Received: from forward105p.mail.yandex.net ([77.88.28.108]:47485 "EHLO
-        forward105p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231508AbhA1MWY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 Jan 2021 07:22:24 -0500
-Received: from sas1-2c02ca35cfae.qloud-c.yandex.net (sas1-2c02ca35cfae.qloud-c.yandex.net [IPv6:2a02:6b8:c14:3992:0:640:2c02:ca35])
-        by forward105p.mail.yandex.net (Yandex) with ESMTP id AF0554D41D0B;
-        Thu, 28 Jan 2021 15:21:35 +0300 (MSK)
+        id S231778AbhA1MYC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Jan 2021 07:24:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43984 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231560AbhA1MWv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2021 07:22:51 -0500
+Received: from forward105j.mail.yandex.net (forward105j.mail.yandex.net [IPv6:2a02:6b8:0:801:2::108])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BFB4C061786;
+        Thu, 28 Jan 2021 04:21:44 -0800 (PST)
+Received: from sas1-44e0060c3838.qloud-c.yandex.net (sas1-44e0060c3838.qloud-c.yandex.net [IPv6:2a02:6b8:c08:f21a:0:640:44e0:60c])
+        by forward105j.mail.yandex.net (Yandex) with ESMTP id F22A7B2404F;
+        Thu, 28 Jan 2021 15:21:41 +0300 (MSK)
 Received: from sas1-27140bb19246.qloud-c.yandex.net (sas1-27140bb19246.qloud-c.yandex.net [2a02:6b8:c08:1803:0:640:2714:bb1])
-        by sas1-2c02ca35cfae.qloud-c.yandex.net (mxback/Yandex) with ESMTP id DOD2zEoBkr-LZGO4aYo;
-        Thu, 28 Jan 2021 15:21:35 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1611836495;
-        bh=yxUd7GW+52WO9gCx62QYkoMSITctOlyet8SNAIkbEtU=;
-        h=Date:Subject:To:From:Message-Id:Cc;
-        b=HJZ/xqQLwdo10VJQKXQVa/T3kIhYUxoSgB7hWqarTvhxjD2yb0Fe/sp8mIp5r2oi7
-         8xPfAANeUzFv6E9/YWFHIECNFTK+yVIzgfi1YoZLqLTPoh1kSLxaC0sWX4fH8n/WKe
-         xapbkTMlt/NHZQFYjcfZ+tAgZmsU3437Ych8hA0k=
-Authentication-Results: sas1-2c02ca35cfae.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by sas1-27140bb19246.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id dVFT85naok-LYn8A8ge;
-        Thu, 28 Jan 2021 15:21:34 +0300
+        by sas1-44e0060c3838.qloud-c.yandex.net (mxback/Yandex) with ESMTP id cMRMwpIY5F-LfHiMgu4;
+        Thu, 28 Jan 2021 15:21:41 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1611836501;
+        bh=gSqzfAVVe2QLlO6bgA/NbmqOwAH97wz2L/kiPuJirpw=;
+        h=In-Reply-To:References:Date:Subject:To:From:Message-Id:Cc;
+        b=qzSCQ59NZiMeJvPDmiSQVxoAjN7dthHcfgSqeKJ3V7D60hcWsMqvUa44nFSM+WGWi
+         bcBQR0zzmkbbvWJkEXil1PAXX0NiEcqlOviJdqhBweYS86XCPust3rSuf9jR4Ja6c6
+         TU1F4NUaFEhj3g/uBsbrrJJyk/CbPYGSQSTwwwq4=
+Authentication-Results: sas1-44e0060c3838.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by sas1-27140bb19246.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id dVFT85naok-Lfn8Fdfd;
+        Thu, 28 Jan 2021 15:21:41 +0300
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (Client certificate not present)
 From:   Nikita Shubin <nikita.shubin@maquefel.me>
@@ -43,10 +46,12 @@ Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Alexander Sverdlin <alexander.sverdlin@gmail.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/7] gpio: ep93xx: fixes series patch
-Date:   Thu, 28 Jan 2021 15:21:16 +0300
-Message-Id: <20210128122123.25341-1-nikita.shubin@maquefel.me>
+Subject: [PATCH v3 6/7] gpio: ep93xx: refactor ep93xx_gpio_add_bank
+Date:   Thu, 28 Jan 2021 15:21:22 +0300
+Message-Id: <20210128122123.25341-7-nikita.shubin@maquefel.me>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210128122123.25341-1-nikita.shubin@maquefel.me>
+References: <20210128122123.25341-1-nikita.shubin@maquefel.me>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
@@ -54,32 +59,51 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-v2: 
-https://lore.kernel.org/linux-gpio/20210127104617.1173-1-nikita.shubin@maquefel.me/
+- replace plain numbers with girq->num_parents in devm_kcalloc
+- replace plain numbers with girq->num_parents for port F
+- refactor i - 1 to i + 1 to make loop more readable
+- combine getting IRQ's loop and setting handler's into single loop
 
-v2->v3 changes
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+v2->v3
+- use ->num_parents instead of ARRAY_SIZE()
+---
+ drivers/gpio/gpio-ep93xx.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-[PATCH v3 1/7] gpio: ep93xx: fix BUG_ON port F usage
-As suggested Andy Shevchenko dropped  most of commit message
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index d69ec09cd618..df55aa13bd9a 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -384,7 +384,7 @@ static int ep93xx_gpio_add_bank(struct gpio_chip *gc,
+ 
+ 		girq->parent_handler = ep93xx_gpio_ab_irq_handler;
+ 		girq->num_parents = 1;
+-		girq->parents = devm_kcalloc(dev, 1,
++		girq->parents = devm_kcalloc(dev, girq->num_parents,
+ 					     sizeof(*girq->parents),
+ 					     GFP_KERNEL);
+ 		if (!girq->parents)
+@@ -406,15 +406,14 @@ static int ep93xx_gpio_add_bank(struct gpio_chip *gc,
+ 		 */
+ 		girq->parent_handler = ep93xx_gpio_f_irq_handler;
+ 		girq->num_parents = 8;
+-		girq->parents = devm_kcalloc(dev, 8,
++		girq->parents = devm_kcalloc(dev, girq->num_parents,
+ 					     sizeof(*girq->parents),
+ 					     GFP_KERNEL);
+ 		if (!girq->parents)
+ 			return -ENOMEM;
+ 		/* Pick resources 1..8 for these IRQs */
+-		for (i = 1; i <= 8; i++)
+-			girq->parents[i - 1] = platform_get_irq(pdev, i);
+-		for (i = 0; i < 8; i++) {
++		for (i = 0; i < girq->num_parents; i++) {
++			girq->parents[i] = platform_get_irq(pdev, i + 1);
+ 			gpio_irq = EP93XX_GPIO_F_IRQ_BASE + i;
+ 			irq_set_chip_data(gpio_irq, &epg->gc[5]);
+ 			irq_set_chip_and_handler(gpio_irq,
+-- 
+2.29.2
 
-[PATCH v3 2/7] gpio: ep93xx: Fix single irqchip with multi
- gpiochips
-- Andy Shevchenko:
-	- added coma
-- Alexander Sverdlin:
-	- changed to fixes commit d2b091961510
-
-[PATCH v2 6/9] gpio: ep93xx: refactor ep93xx_gpio_add_bank
-- Alexander Sverdlin:
-	- use ->num_parents instead of ARRAY_SIZE()
-
-Alexander - i think you are right about these two patches
-they have no meaning currently, so i dropped them.
-
-[PATCH v2 7/9] gpio: ep93xx: separate IRQ's setup
-- Alexander Sverdlin:
-	- drop patch entirely
-
-[PATCH v2 9/9] gpio: ep93xx: replace bools with idx for IRQ ports
-- Alexander Sverdlin:
-	- drop patch entirely
