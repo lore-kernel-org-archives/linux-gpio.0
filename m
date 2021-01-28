@@ -2,73 +2,72 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 564E8C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 16:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D8DC433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 18:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14EC064DE9
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 16:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65C8064DF5
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jan 2021 18:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232446AbhA1QUh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Jan 2021 11:20:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38546 "EHLO
+        id S231506AbhA1Sc7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Jan 2021 13:32:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232331AbhA1QU2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2021 11:20:28 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B952AC061573;
-        Thu, 28 Jan 2021 08:19:47 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id o10so5452367wmc.1;
-        Thu, 28 Jan 2021 08:19:47 -0800 (PST)
+        with ESMTP id S232120AbhA1Sa6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2021 13:30:58 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A92AC061756;
+        Thu, 28 Jan 2021 10:30:17 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id m2so5096825wmm.1;
+        Thu, 28 Jan 2021 10:30:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=vnF/8n1joNx7ZvClg7mI0UIu1XccpzjX5uAACDp4lRU=;
-        b=sdCAOEFG4JHJZBMrUHhd3c9eVxJBPDjMe5gk0ezOJGkbrh9swpDyW6VO6/PQkBkv1E
-         KHeIEVwutZLuuBerq0xXP6x2QZRDRjuAW60a4OIe2ujBVbjteXwHu5ID3ssTf3oSSnWK
-         YnGIwCeSZWK2E8lgl5hWCsb/RYgZ8R+RjnxDPzOxFuEr7Ib6rLXYrRI+rZtw3hGoOugl
-         A8DVhpDp7kgyzKpVMP8dytOQchHBpAXWzqJX7P8IXgRFqqwxAhMJFiAZcsEcZicKtxpD
-         obuzBMk2ddb4nL23a6eqdTDzsNBIJuvNR1fPBrhX/aG9v9KqFngONHq6WZTHD+I9Nawn
-         5Ikg==
+        bh=FOT56mw0O0r1/EN41NHrTrcQj92z0Zt2Tm5uGtNf7nU=;
+        b=qYnAHPQLGrD49l4LyT+zlLwR82HT6fro1oVy1mVw7IOtn7QVc1N1QezOI53dvPHPX6
+         /TeiMv8C1azZjkqvvsa3FfyUmyxltRG/hv8/R5d0KFhi7uwKyVhZHwrTanwZ6We3VRul
+         SuaXlG3OEZ6QPZpIBCgZjmxBlLM8P8hE6f72BA0ZfBndvSdVHYgV3xi24nagpz3HV1Eg
+         J/tNk+m1cixLGqiAU1BndClq2ixWRTQtfTRPrOajxLVD2egJsrW/g2Ufum7di7e4h0Td
+         IFKqOmANrvtFVd/JDRlSBuAwlbBsGLlqY0y9a16/vIMV0jjwej0hkxHHnLeShSAMS+AR
+         FaNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=vnF/8n1joNx7ZvClg7mI0UIu1XccpzjX5uAACDp4lRU=;
-        b=AFEXkukwO0GLn54zbAj6LH/MYgEdBsKGjzewdEXeHwlFN1gu4ZslpvuvXWTPeJsN2m
-         RIhN76K9ckjTO6EgBrl5dsz24pmBh0WB8fjfBsNuqDTMH/xBU+owb3GIm3F9LwVWC0+A
-         PyLtEFjocxF0cDZIwIn2vtN6NFG/J+3xfe1mt4F3ZF0e3j+Tzz/xY45EsSjwty9N1nuP
-         DAaGvOLsMmWqF8pEiINBuaToEe37ZXliiQ7cgGghsplPpGllvCGI2e+Z1zZyyP0YZdnN
-         8KhwW9zenjHo+2bjZBaKhD8SHWLa0POTVw9im0/eAEw8H/seW6WfZvB+sVb631UmhYMl
-         F2Gg==
-X-Gm-Message-State: AOAM531TwlWq/pp1STS6Bd6kJIkaSSaMi/B96tQ7I/dB9tNbe/mWyObG
-        EvR6rKNQC5qhwiTiV/YOSVo=
-X-Google-Smtp-Source: ABdhPJyO2/k4X024ZvXWDo1LFXX2pbu2yvZzgWV0d2SMNi8MpjCw0ZTODMvlwBsvDhgi/jEJoCLwkg==
-X-Received: by 2002:a05:600c:154f:: with SMTP id f15mr48443wmg.46.1611850786555;
-        Thu, 28 Jan 2021 08:19:46 -0800 (PST)
+        bh=FOT56mw0O0r1/EN41NHrTrcQj92z0Zt2Tm5uGtNf7nU=;
+        b=l/6hvlNsBcb8XR1izlstDPUTWDmp2BPwf8OjcVw/W9tZr9BoU9DfmsMurgYb9Laf52
+         2T4HbHj/Ujq0hZnGy0eCG7XBHfCXgEwtLwD2pWmO/Z23eszDJowEaEInwPdcIjcyHm8h
+         X4mK5mMv2WnODhw447ZhvaCp+Z9GHsJxjdXFaKrhRQnx4pgWYR5dBHrJKtD+DGMEk9Y+
+         w4DHkfOla+X0JAo+de/GRtUqeIrSMD8bDIyBMgBxF00CMMJg8B+UpgksqN8KrXp/QWxH
+         +yotCG1DTYnytB3Slsah7rXAfbtROSXupQCE+6bActEHJovlx8VXkCKoi3K9h1hrJBSg
+         gF9A==
+X-Gm-Message-State: AOAM532YNUJ2BPKPd2Nrj8PjrtmAxdyfkrC6CuQsfLAPxMFp/vGnGJO2
+        aRAJcqXqGxaTMXWOnlfQvOU=
+X-Google-Smtp-Source: ABdhPJyIC1JObbIm5EPnjP8J70ZZu+ICvNjxUdqJvHK+8Lu6u6lyUXKfjIOv3B+4EI/HdstNS1hnHw==
+X-Received: by 2002:a05:600c:35c4:: with SMTP id r4mr523115wmq.174.1611858616283;
+        Thu, 28 Jan 2021 10:30:16 -0800 (PST)
 Received: from [192.168.1.21] ([195.245.17.255])
-        by smtp.gmail.com with ESMTPSA id i6sm7552163wrs.71.2021.01.28.08.19.45
+        by smtp.gmail.com with ESMTPSA id z15sm7570542wrs.25.2021.01.28.10.30.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jan 2021 08:19:45 -0800 (PST)
-Message-ID: <a0c121fdfb2893ec89425534387212524e4ff7cf.camel@gmail.com>
-Subject: Re: [PATCH v3 1/7] gpio: gpio-ep93xx: fix BUG_ON port F usage
+        Thu, 28 Jan 2021 10:30:15 -0800 (PST)
+Message-ID: <f964e132200b9e952a3ad424c5fa82f9d1bf74f1.camel@gmail.com>
+Subject: Re: [PATCH v3 7/7] gpiod: ep93xx: refactor base IRQ number
 From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Nikita Shubin <nikita.shubin@maquefel.me>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+To:     Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Thu, 28 Jan 2021 17:19:45 +0100
-In-Reply-To: <CAHp75VfBb5+K9cSAzj9EBD+KtswkHSNMZWoCaU=bKvOO3fXRjw@mail.gmail.com>
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 28 Jan 2021 19:30:14 +0100
+In-Reply-To: <20210128122123.25341-8-nikita.shubin@maquefel.me>
 References: <20210128122123.25341-1-nikita.shubin@maquefel.me>
-         <20210128122123.25341-2-nikita.shubin@maquefel.me>
-         <CAHp75VfBb5+K9cSAzj9EBD+KtswkHSNMZWoCaU=bKvOO3fXRjw@mail.gmail.com>
+         <20210128122123.25341-8-nikita.shubin@maquefel.me>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.2 
 MIME-Version: 1.0
@@ -77,31 +76,77 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Nikita,
+Hi!
 
-On Thu, 2021-01-28 at 18:11 +0200, Andy Shevchenko wrote:
-> > +/*
-> > + * F Port index in GPIOCHIP'S array is 5
-> > + * but we use index 2 for stored values and offsets
-> > + */
-> > +#define EP93XX_GPIO_F_PORT_INDEX 5
+On Thu, 2021-01-28 at 15:21 +0300, Nikita Shubin wrote:
+> - use predefined constants instead of plain numbers
+> - use provided bank IRQ number instead of defined constant
+>   for port F
 > 
-> Hmm... Why not to use an array with holes instead.
-> 
-> ...
-> 
-> > +       if (port == EP93XX_GPIO_F_PORT_INDEX)
-> > +               port = 2;
-> 
-> Sorry, but I'm not in favour of this as it adds confusion.
-> See above for the potential way to solve.
+> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 
-well, I was thinking the same yesterday. It just adds another
-level on confusion into the code, which even the author got
-wrong :)
+Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
-Array with holes would be more obvious, but one can also embedd
-the necessary values into struct ep93xx_gpio_bank.
+> ---
+>  drivers/gpio/gpio-ep93xx.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+> index df55aa13bd9a..b1501607e8ed 100644
+> --- a/drivers/gpio/gpio-ep93xx.c
+> +++ b/drivers/gpio/gpio-ep93xx.c
+> @@ -28,6 +28,8 @@
+>  /* Maximum value for irq capable line identifiers */
+>  #define EP93XX_GPIO_LINE_MAX_IRQ 23
+>  
+> +#define EP93XX_GPIO_A_IRQ_BASE 64
+> +#define EP93XX_GPIO_B_IRQ_BASE 72
+>  /*
+>   * Static mapping of GPIO bank F IRQS:
+>   * F0..F7 (16..24) to irq 80..87.
+> @@ -311,14 +313,14 @@ struct ep93xx_gpio_bank {
+>  
+>  static struct ep93xx_gpio_bank ep93xx_gpio_banks[] = {
+>         /* Bank A has 8 IRQs */
+> -       EP93XX_GPIO_BANK("A", 0x00, 0x10, 0, true, false, 64),
+> +       EP93XX_GPIO_BANK("A", 0x00, 0x10, 0, true, false,
+> EP93XX_GPIO_A_IRQ_BASE),
+>         /* Bank B has 8 IRQs */
+> -       EP93XX_GPIO_BANK("B", 0x04, 0x14, 8, true, false, 72),
+> +       EP93XX_GPIO_BANK("B", 0x04, 0x14, 8, true, false,
+> EP93XX_GPIO_B_IRQ_BASE),
+>         EP93XX_GPIO_BANK("C", 0x08, 0x18, 40, false, false, 0),
+>         EP93XX_GPIO_BANK("D", 0x0c, 0x1c, 24, false, false, 0),
+>         EP93XX_GPIO_BANK("E", 0x20, 0x24, 32, false, false, 0),
+>         /* Bank F has 8 IRQs */
+> -       EP93XX_GPIO_BANK("F", 0x30, 0x34, 16, false, true, 0),
+> +       EP93XX_GPIO_BANK("F", 0x30, 0x34, 16, false, true,
+> EP93XX_GPIO_F_IRQ_BASE),
+>         EP93XX_GPIO_BANK("G", 0x38, 0x3c, 48, false, false, 0),
+>         EP93XX_GPIO_BANK("H", 0x40, 0x44, 56, false, false, 0),
+>  };
+> @@ -414,7 +416,7 @@ static int ep93xx_gpio_add_bank(struct gpio_chip
+> *gc,
+>                 /* Pick resources 1..8 for these IRQs */
+>                 for (i = 0; i < girq->num_parents; i++) {
+>                         girq->parents[i] = platform_get_irq(pdev, i +
+> 1);
+> -                       gpio_irq = EP93XX_GPIO_F_IRQ_BASE + i;
+> +                       gpio_irq = bank->irq_base + i;
+>                         irq_set_chip_data(gpio_irq, &epg->gc[5]);
+>                         irq_set_chip_and_handler(gpio_irq,
+>                                                 
+> &ep93xx_gpio_irq_chip,
+> @@ -423,7 +425,7 @@ static int ep93xx_gpio_add_bank(struct gpio_chip
+> *gc,
+>                 }
+>                 girq->default_type = IRQ_TYPE_NONE;
+>                 girq->handler = handle_level_irq;
+> -               girq->first = EP93XX_GPIO_F_IRQ_BASE;
+> +               girq->first = bank->irq_base;
+>         }
+>  
+>         return devm_gpiochip_add_data(dev, gc, epg);
 
 -- 
 Alexander Sverdlin.
