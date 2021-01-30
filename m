@@ -2,150 +2,123 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BEBC433E6
-	for <linux-gpio@archiver.kernel.org>; Sat, 30 Jan 2021 02:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1919C433E6
+	for <linux-gpio@archiver.kernel.org>; Sat, 30 Jan 2021 09:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C909A60235
-	for <linux-gpio@archiver.kernel.org>; Sat, 30 Jan 2021 02:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBA7264DF5
+	for <linux-gpio@archiver.kernel.org>; Sat, 30 Jan 2021 09:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232916AbhA3CJD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Jan 2021 21:09:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48998 "EHLO
+        id S231587AbhA3JU3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 30 Jan 2021 04:20:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233262AbhA3CHH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Jan 2021 21:07:07 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 074DCC0613ED;
-        Fri, 29 Jan 2021 18:05:18 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id j12so7344899pfj.12;
-        Fri, 29 Jan 2021 18:05:18 -0800 (PST)
+        with ESMTP id S231715AbhA3JUP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Jan 2021 04:20:15 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C9E6C0617AA
+        for <linux-gpio@vger.kernel.org>; Sat, 30 Jan 2021 00:21:33 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id i9so8894318wmq.1
+        for <linux-gpio@vger.kernel.org>; Sat, 30 Jan 2021 00:21:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ha7cDz5klKkhTpo5euIGmAiyN3F0x/AzncqZSAgqejk=;
-        b=gXR8TWL/GSbd+BTSOP7hYzzftfT6KysHK8MDtcvvrv7lkJwp6yDYfopWO2YQtSFU/z
-         qCbuQWYuQLiEZwNsg3CYEffQ7uaPbZaAgGYGVFAAfqG0vvF1JjM+xw1HxpILhoVSnzrA
-         EykpOAobH6zmXt6HEo9kpDu0g6SFLJfn7tMylftAHI8hIIluwA0+djpJIK6VuIgqr+BL
-         AvPb7LwunNl57GE7hk8NrZKwfbcf2HnF2bP/IhPGmGJpQPIXrEB2w6qZizc162ww5bHc
-         oS8BfU6429CXAjnLRlHqmaYwCKhHabOzkLV0n31o4tQ0L5/Xq7Xj8MR2BdbrGXCcexZH
-         wYjw==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wlfadfbrmnq3giiUziIBDERuBfZMf0+CD1+IscHGj28=;
+        b=itg+VnYcYZ38pClixocKf/g7MZFUQSeALN12A7EDaxvHyhTLZcv0TEmlnSfcZ+sjeg
+         xRxmmEapWIorkKFiOGcoHFft0Fxus39O6UoGTXrkC1tibWEVQ0CrsQ45uO1JXC8uW4ln
+         Ndu/6YezcaWA2AoIkJX7Y/AJK5cyxGZD9VKsk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ha7cDz5klKkhTpo5euIGmAiyN3F0x/AzncqZSAgqejk=;
-        b=HAfCM1z66SRBiZhDOyDa7SxlGgYHP0A8/R8TyGGMUm1t6eoHFCMMNUW8RXZth1pHIO
-         o9uSTvCLWGacb8cZLLiOQdLEleCAD1D+UW2UKaAfF/x2Xp2ywdq1mbUG7ngm9sIIpvxc
-         v4m4YWaX8VEb4q0oz7t0iJ/Mn2o8IjYEFtmV93J+4xsquvqW2WFgG84SyBWjvVf30/Cb
-         X/EiNzkb7qM7M9SNoxgQODvctJ68p9ketlrtUsZq6saKMiLdErq/zrNslTyssBWoNthm
-         AZo/smMV5epXdtaIEuUDKDhv84g0Ys4KtOuhB2XfmZbIDiUeINZF9skz0bitI85otGPX
-         yOQg==
-X-Gm-Message-State: AOAM530QsUc/S0ow40dR0dS/ekVCYx5vDTF7KEV3S+9pWig3X8ZFd0ly
-        DFbq6UDXJ/sialrV0o0W5ReN45gyn7m//g==
-X-Google-Smtp-Source: ABdhPJx0EIXCj480w9Vp1E2CYYaLdZyMWKfY3IJeVtmActSGPlYN2Ja1peCL+8dcxWIfJ8557FG1Tw==
-X-Received: by 2002:a63:34c8:: with SMTP id b191mr7133032pga.405.1611972318297;
-        Fri, 29 Jan 2021 18:05:18 -0800 (PST)
-Received: from shinobu (113x33x126x33.ap113.ftth.ucom.ne.jp. [113.33.126.33])
-        by smtp.gmail.com with ESMTPSA id q15sm8101034pfk.181.2021.01.29.18.05.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wlfadfbrmnq3giiUziIBDERuBfZMf0+CD1+IscHGj28=;
+        b=JEWXVMMlbVF1SbGkIvv50vNcja1Jue1/3PnLAOSikVroLie5XR+jMjIeV4HLlZT2Hg
+         dOKQdqaWFk3dN7o/w+xWvQLFdN0Z+egYId0kEFzVKnBppiB7tcqLAmKXXAiDmiCw7Afi
+         7wxN0tqOvJgWUXen+SMi1gnYmjvbyySBocNFbcVrn7BjCJtJsgDf0BSeDxKADK96N8+A
+         ZNCsG7zVitVava8ClDqnXoskqZWqGiRYEG9iawk/kGkRPkfSzGNKpMZg/j9Ie71FT7ZT
+         NCjFxcXsFjgtKKIkTWAlEF8wYkCSRidgBrM0DSotr2s5owTVA2LgCRHYZVl/2PmW4KfK
+         dtyw==
+X-Gm-Message-State: AOAM531uUJeexttVOLYu5EZa0vD5R56zBvF0c0ETAZtBggw6VHk55lsE
+        fJwJErzMspQSN47+kzoEbQBUYA==
+X-Google-Smtp-Source: ABdhPJzYHbXsKSCcB7Vq3G4KWJWrzhFnlKKTTzTYTJpmoJJqCq+hSHWaU/GXgSa+7Cq9B5Ct1gr5kg==
+X-Received: by 2002:a7b:c854:: with SMTP id c20mr6797012wml.127.1611994892074;
+        Sat, 30 Jan 2021 00:21:32 -0800 (PST)
+Received: from localhost.localdomain ([37.163.154.109])
+        by smtp.gmail.com with ESMTPSA id j4sm16380560wru.20.2021.01.30.00.21.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Jan 2021 18:05:17 -0800 (PST)
-Date:   Sat, 30 Jan 2021 11:05:08 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Srinivas Neeli <srinivas.neeli@xilinx.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        michal.simek@xilinx.com, shubhrajyoti.datta@xilinx.com,
-        sgoud@xilinx.com, syednwaris@gmail.com, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        git@xilinx.com
-Subject: Re: [PATCH V5 5/5] gpio: gpio-xilinx: Add check if width exceeds 32
-Message-ID: <YBS+1EljcGLDq8U+@shinobu>
-References: <1611930410-25747-1-git-send-email-srinivas.neeli@xilinx.com>
- <1611930410-25747-6-git-send-email-srinivas.neeli@xilinx.com>
+        Sat, 30 Jan 2021 00:21:31 -0800 (PST)
+From:   Michael Trimarchi <michael@amarulasolutions.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Angelo Compagnucci <angelo@amarulasolutions.com>
+Subject: [PATCH] pinctrl: Support pin that does not support configuration option
+Date:   Sat, 30 Jan 2021 09:21:28 +0100
+Message-Id: <20210130082128.3778939-1-michael@amarulasolutions.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5ks6C7Cgywkx2xlR"
-Content-Disposition: inline
-In-Reply-To: <1611930410-25747-6-git-send-email-srinivas.neeli@xilinx.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Some of the iMX25 pins have not an associated configuration register so
+when they are configured the standard way through the device tree the
+kernel complains with:
 
---5ks6C7Cgywkx2xlR
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+imx25-pinctrl 43fac000.iomuxc: Pin(MX25_PAD_EXT_ARMCLK) does not support
+config function
 
-On Fri, Jan 29, 2021 at 07:56:50PM +0530, Srinivas Neeli wrote:
-> Add check to see if gpio-width property does not exceed 32.
-> If it exceeds then return -EINVAL.
->=20
-> Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Tested-by: Angelo Compagnucci <angelo@amarulasolutions.com>
+---
+ drivers/pinctrl/core.c                  | 2 +-
+ drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 9fc4433fece4..7115b0b5689c 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1273,7 +1273,7 @@ static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
+ 			break;
+ 		}
+ 
+-		if (ret < 0) {
++		if (ret < 0 && ret != -ENOTSUPP) {
+ 			goto unapply_new_state;
+ 		}
+ 
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index daf28bc5661d..2c7c1de9cca7 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -356,7 +356,7 @@ static int imx_pinconf_get_mmio(struct pinctrl_dev *pctldev, unsigned pin_id,
+ 	if (pin_reg->conf_reg == -1) {
+ 		dev_err(ipctl->dev, "Pin(%s) does not support config function\n",
+ 			info->pins[pin_id].name);
+-		return -EINVAL;
++		return -ENOTSUPP;
+ 	}
+ 
+ 	*config = readl(ipctl->base + pin_reg->conf_reg);
+@@ -391,7 +391,7 @@ static int imx_pinconf_set_mmio(struct pinctrl_dev *pctldev,
+ 	if (pin_reg->conf_reg == -1) {
+ 		dev_err(ipctl->dev, "Pin(%s) does not support config function\n",
+ 			info->pins[pin_id].name);
+-		return -EINVAL;
++		return -ENOTSUPP;
+ 	}
+ 
+ 	dev_dbg(ipctl->dev, "pinconf set pin %s\n",
+-- 
+2.25.1
 
-> ---
-> Changes in V5:
-> -None
-> Changes in V4:
-> -New patch.
-> ---
->  drivers/gpio/gpio-xilinx.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> index acd574779ca6..b411d3156e0b 100644
-> --- a/drivers/gpio/gpio-xilinx.c
-> +++ b/drivers/gpio/gpio-xilinx.c
-> @@ -589,6 +589,9 @@ static int xgpio_probe(struct platform_device *pdev)
->  	if (of_property_read_u32(np, "xlnx,gpio-width", &chip->gpio_width[0]))
->  		chip->gpio_width[0] =3D 32;
-> =20
-> +	if (chip->gpio_width[0] > 32)
-> +		return -EINVAL;
-> +
->  	spin_lock_init(&chip->gpio_lock);
-> =20
->  	if (of_property_read_u32(np, "xlnx,is-dual", &is_dual))
-> @@ -613,6 +616,8 @@ static int xgpio_probe(struct platform_device *pdev)
->  					 &chip->gpio_width[1]))
->  			chip->gpio_width[1] =3D 32;
-> =20
-> +		if (chip->gpio_width[1] > 32)
-> +			return -EINVAL;
->  	}
-> =20
->  	chip->gc.base =3D -1;
-> --=20
-> 2.7.4
->=20
-
---5ks6C7Cgywkx2xlR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEk5I4PDJ2w1cDf/bghvpINdm7VJIFAmAUvrwACgkQhvpINdm7
-VJJ4nxAAzRkaHQUnewnwSrydk2mHrYamMVGPzFWsrG5heOgcxrEaAbJ9rOwBatxf
-dD7LHpGbskMBf00hNxa7iUOjBUFAje2upwxTtlNRjguNzufAGvSlmk4EVC7PKndp
-1fLAgx3Id7tXhfPIxcYxfcXNB+gtdfN/LLzPj0kNEXButa+gP28o70WcRNdiHnq0
-2j0zb/GGzGF9asVrYD5GlGUGyMNEMHLZO7SPTAvZZgAzjGK9zzYjbZqNvTKOXocZ
-l0WTrm9H1TqSXeC0nSRQjAmB8TyKPuiSVXCmIag8GZGqw3l9l5YT6095eLu0kH8Z
-dP6ffXa56z/gwURT2cjr38862tRdAmGetpe5lynOKJYgosUTgsgvmZ809QtRUr7d
-oX7t7CAkOi71h3crUFwPacaxqtlyXL/75nfBksCVfsmMBZvWDS+xGuMNYwRb27R8
-lEPzZogvr1LLZ9BtJkHK8p1B/9M2d0hPCEXLiLxqGcVyXml2m1xAamTO6JEvLNmi
-OdDZSs9NqHtF0tg8C2+VHhGk12urEp3xMU2BnEX8iHOZ7LvGNkAUpfdP6I8pbpE4
-1xx5DImBicQ4M7vI9w2M0058rPuwkSSVMOcRpmeXkjg9LezpWevT6hq/rrOEIhWo
-fKFpB1KKoMYZl92sK1D4p1mjINxbNI9Mn0zUtIQp4shRE2A59Z8=
-=utiP
------END PGP SIGNATURE-----
-
---5ks6C7Cgywkx2xlR--
