@@ -2,325 +2,148 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7F8C433E0
-	for <linux-gpio@archiver.kernel.org>; Sun, 31 Jan 2021 21:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 721B8C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Feb 2021 08:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11E8564E30
-	for <linux-gpio@archiver.kernel.org>; Sun, 31 Jan 2021 21:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30CFE64E3C
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Feb 2021 08:38:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229513AbhAaV3c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 31 Jan 2021 16:29:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36176 "EHLO
+        id S232533AbhBAIi2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Feb 2021 03:38:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230013AbhAaV32 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 31 Jan 2021 16:29:28 -0500
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2915DC0613D6
-        for <linux-gpio@vger.kernel.org>; Sun, 31 Jan 2021 13:28:48 -0800 (PST)
-Received: by mail-yb1-xb2c.google.com with SMTP id q201so11365730ybg.8
-        for <linux-gpio@vger.kernel.org>; Sun, 31 Jan 2021 13:28:48 -0800 (PST)
+        with ESMTP id S232549AbhBAIiX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Feb 2021 03:38:23 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F0EDC061573
+        for <linux-gpio@vger.kernel.org>; Mon,  1 Feb 2021 00:37:43 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id i8so6553554ejc.7
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Feb 2021 00:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=iRXDaKcuPFZ1g77tcHjhAIL2RDFfqyx64KolFOkHk6U=;
-        b=XvpETEDk2H5tcjSbBQN4HnqVuhUQI3+QSEJlKDFtdKi88L46MBvepFZHFPVtq9D5bM
-         ekSi4ZXYMxU5vfZCbCJms+amTxqKsCwPhpB6dlJ2f5cKJJ1HmUtnTKFr4Fj66FQEa1F7
-         r9W/iOAIiakiXAxN/np1MuWy8I3FrEjiKMsQswHiJAUYRpJB7MlT6364BueInCAPi8RQ
-         MhnpHgfw+VhAAQocFv4XhYCr2O0vqW5bZmUXWW1gDXcoknm91LK3vNL781oGw1a4bld2
-         +LMmrTNaZzussuR35otsiZLqApAh9ezYR66jXARcEyjNeFAyoEmwwJJInZx8fTYyu431
-         n18g==
+        bh=xpUA4tQkXNeG9xtZvt8WotR4TDH6DJJdjLxiEPVNVP4=;
+        b=E25H5NyvBv+rR9x8HIOsCMCpG3jpr/TmGdn6lrOg1acyCXThOTfgeHQMo9txJ1oLcu
+         Cc9AcfS95/01gFk7GbSx0Yh93k7nzQcZ8+tAyPR380PEOS3lmf6WQASQKOFh7h9dvfg9
+         up1JkSwDtnD9l3ncrjfkkxfEuHvoUgk5RDhFItRW+UrbyJ23JeiVSQ1ghWSYUtZo4vtA
+         3dmx3IJrn7HkgOnriuKu8mPoE4GrlURv1jHaRUK9ct265ATmz6sUzX99ts689E7BS9NU
+         fLUfj0BSXiGAgggYLWm8h3DazLmip6bVzMOUv6/uJAhtqGFqJUMZZ7g2aDxgamDKSNBE
+         1+Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=iRXDaKcuPFZ1g77tcHjhAIL2RDFfqyx64KolFOkHk6U=;
-        b=i1hkfBgGiM1O5y6oRoE8UcoPlhGk41i2mOAsqO1C6JUCyl6Yreb+7MzbnM+rsVEOdZ
-         LjTKHFUEDyNX/IqaUtOcMRMfQVQVehXhu0CxVKYRi7DKT5eSRBXLZhUt76lkOgfbCJja
-         HHZcH+xQPlQhtvOXRri8uyZJqhEcI0nVgQSAhT4HAMNHo7zjld7q4oR+XvMvFKVI4yQC
-         9QYGIPWxuhoOd29+UWYkFjcpqDgr/j4U6sU8TIpmiRgYzQDJPqgaeQ3p96eDVtlR1hPK
-         e1rwYPoeZAPfgSg6lJBFFPOs9uJ7dG12gJhscajtg40POqEVzWZkSGwiwacO/Nc3PJo/
-         2IvQ==
-X-Gm-Message-State: AOAM530UZ0I693dkb7DxfojOIzpSCtD5SROdBVkMaOLqCMqPJF77/Eej
-        YTUe4/m63RiPJye3AQ6Rs2uTXE5jVmbU8KDeTrPJXA==
-X-Google-Smtp-Source: ABdhPJzNRqmVODPGlcwJSngHDnaah4BYKFGgvm59Zu/LuEPWFcbvMKS/7k9Rb6xc6189AWvCE/XXZ1s9JAk6Cb3bluQ=
-X-Received: by 2002:a25:b74c:: with SMTP id e12mr11313396ybm.20.1612128527221;
- Sun, 31 Jan 2021 13:28:47 -0800 (PST)
+        bh=xpUA4tQkXNeG9xtZvt8WotR4TDH6DJJdjLxiEPVNVP4=;
+        b=qQLuexq/JzxDZufNx4FezxErl8xc8P+in8y30TSRHq0nEsn+Msq0kRmLQJ4VCf/Bzk
+         9QU/HHd8ZbcfnHzgwHfhm8qISywDlIsUeH1brjuY4W+XWf4JvO+lNg/9hPtw8/c1L4iV
+         1gDMMqbYyqI/HGLtBIQN0yzceUVAvqH4Hi3k7mjt96j432mSRAYSSHwyrP9wMC+XZ9ok
+         Oypuc+fWFFY2jj/KY+wKwNK9HJKUDGpbfGiiTD6Tc9QqRMa4wqFXGiTpehk0uRvWJZ0P
+         be715w0fxiyGeKS6THid7GAuLrkuQipNckmF+8BbGWhETpJVtHrHtJn6K/ZOdXMnzBBM
+         fgBg==
+X-Gm-Message-State: AOAM5319cnUVtkx1/Ht/tJH7kvjeOWPKq0/V8+/5FGntN5B740QNMzRG
+        a3xxGSay0S+G0Zgzdl6MOZHWcdphqiH3GVSGpY6JB+rcfec=
+X-Google-Smtp-Source: ABdhPJwY2quGjJdmByP+gMuoEbYEH34iJnCL9i9KVMyKc4bRYauNJYZpzjBnXt2wBEzF3EzPvzdi26YZ8JANKfkXC1M=
+X-Received: by 2002:a17:906:eddd:: with SMTP id sb29mr7734704ejb.383.1612168661707;
+ Mon, 01 Feb 2021 00:37:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20210122193600.1415639-1-saravanak@google.com> <544ad0e4-0954-274c-8e77-866aaa5661a8@gmail.com>
-In-Reply-To: <544ad0e4-0954-274c-8e77-866aaa5661a8@gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Sun, 31 Jan 2021 13:28:11 -0800
-Message-ID: <CAGETcx_CYKczo+geD7yDo+T2+_-tgGYwtjR-2sMPQYHuz-wAgw@mail.gmail.com>
-Subject: Re: [PATCH v5] gpiolib: Bind gpio_device to a driver to enable
- fw_devlink=on by default
-To:     Dmitry Osipenko <digetx@gmail.com>
+References: <20210129134624.9247-1-brgl@bgdev.pl> <20210130212009.2uugdj6vmisegau2@pengutronix.de>
+In-Reply-To: <20210130212009.2uugdj6vmisegau2@pengutronix.de>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 1 Feb 2021 09:37:30 +0100
+Message-ID: <CAMRc=MdwoJCw1-BdNRnfRFaXYfZD0+vn_8yq0J+rshHqZMdDXQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] gpio: implement the configfs testing module
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Android Kernel Team <kernel-team@android.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kent Gibson <warthog618@gmail.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+        linux-doc <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jan 30, 2021 at 9:39 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Sat, Jan 30, 2021 at 10:20 PM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 >
-> 22.01.2021 22:35, Saravana Kannan =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > There are multiple instances of GPIO device tree nodes of the form:
-> >
-> > foo {
-> >       compatible =3D "acme,foo";
-> >       ...
-> >
-> >       gpio0: gpio0@xxxxxxxx {
-> >               compatible =3D "acme,bar";
-> >               ...
-> >               gpio-controller;
-> >       };
-> >
-> >       gpio1: gpio1@xxxxxxxx {
-> >               compatible =3D "acme,bar";
-> >               ...
-> >               gpio-controller;
-> >       };
-> >
-> >       ...
-> > }
-> >
-> > bazz {
-> >       my-gpios =3D <&gpio0 ...>;
-> > }
-> >
-> > Case 1: The driver for "foo" populates struct device for these gpio*
-> > nodes and then probes them using a driver that binds with "acme,bar".
-> > This driver for "acme,bar" then registers the gpio* nodes with gpiolib.
-> > This lines up with how DT nodes with the "compatible" property are
-> > typically converted to struct devices and then registered with driver
-> > core to probe them. This also allows the gpio* devices to hook into all
-> > the driver core capabilities like runtime PM, probe deferral,
-> > suspend/resume ordering, device links, etc.
-> >
-> > Case 2: The driver for "foo" doesn't populate struct devices for these
-> > gpio* nodes before registering them with gpiolib. Instead it just loops
-> > through its child nodes and directly registers the gpio* nodes with
-> > gpiolib.
-> >
-> > Drivers that follow case 2 cause problems with fw_devlink=3Don. This is
-> > because fw_devlink will prevent bazz from probing until there's a struc=
-t
-> > device that has gpio0 as its fwnode (because bazz lists gpio0 as a GPIO
-> > supplier). Once the struct device is available, fw_devlink will create =
-a
-> > device link with gpio0 device as the supplier and bazz device as the
-> > consumer. After this point, since the gpio0 device will never bind to a
-> > driver, the device link will prevent bazz device from ever probing.
-> >
-> > Finding and refactoring all the instances of drivers that follow case 2
-> > will cause a lot of code churn and it is not something that can be done
-> > in one shot. In some instances it might not even be possible to refacto=
-r
-> > them cleanly. Examples of such instances are [1] [2].
-> >
-> > This patch works around this problem and avoids all the code churn by
-> > simply setting the fwnode of the gpio_device and creating a stub driver
-> > to bind to the gpio_device. This allows all the consumers to continue
-> > probing when the driver follows case 2.
-> >
-> > [1] - https://lore.kernel.org/lkml/20201014191235.7f71fcb4@xhacker.debi=
-an/
-> > [2] - https://lore.kernel.org/lkml/e28e1f38d87c12a3c714a6573beba6e1@ker=
-nel.org/
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> > Cc: Kever Yang <kever.yang@rock-chips.com>
-> > Fixes: e590474768f1 ("driver core: Set fw_devlink=3Don by default")
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> > v1 -> v2:
-> > - Fixed up compilation errors that were introduced accidentally
-> > - Fixed a missing put_device()
-> >
-> > v2 -> v3:
-> > - Changed chip_warn() to pr_warn()
-> > - Changed some variable names
-> >
-> > v3 -> v4:
-> > - Dropped the warning since it's not always valid
-> > - This simplifies the code a lot
-> > - Added comments and fixed up commit text
-> >
-> > v4 -> v5:
-> > - Fixed the code to not mess up non-DT cases.
-> > - Moved code into gpiolib-of.c
-> >
-> >  drivers/gpio/gpiolib-of.c | 11 +++++++++++
-> >  drivers/gpio/gpiolib-of.h |  5 +++++
-> >  drivers/gpio/gpiolib.c    | 38 +++++++++++++++++++++++++++++++-------
-> >  3 files changed, 47 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> > index b4a71119a4b0..baf0153b7bca 100644
-> > --- a/drivers/gpio/gpiolib-of.c
-> > +++ b/drivers/gpio/gpiolib-of.c
-> > @@ -1039,3 +1039,14 @@ void of_gpiochip_remove(struct gpio_chip *chip)
-> >  {
-> >       of_node_put(chip->of_node);
-> >  }
-> > +
-> > +void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
-> > +{
-> > +     /* If the gpiochip has an assigned OF node this takes precedence =
-*/
-> > +     if (gc->of_node)
-> > +             gdev->dev.of_node =3D gc->of_node;
-> > +     else
-> > +             gc->of_node =3D gdev->dev.of_node;
-> > +     if (gdev->dev.of_node)
-> > +             gdev->dev.fwnode =3D of_fwnode_handle(gdev->dev.of_node);
-> > +}
-> > diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
-> > index ed26664f1537..8af2bc899aab 100644
-> > --- a/drivers/gpio/gpiolib-of.h
-> > +++ b/drivers/gpio/gpiolib-of.h
-> > @@ -15,6 +15,7 @@ int of_gpiochip_add(struct gpio_chip *gc);
-> >  void of_gpiochip_remove(struct gpio_chip *gc);
-> >  int of_gpio_get_count(struct device *dev, const char *con_id);
-> >  bool of_gpio_need_valid_mask(const struct gpio_chip *gc);
-> > +void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev);
-> >  #else
-> >  static inline struct gpio_desc *of_find_gpio(struct device *dev,
-> >                                            const char *con_id,
-> > @@ -33,6 +34,10 @@ static inline bool of_gpio_need_valid_mask(const str=
-uct gpio_chip *gc)
-> >  {
-> >       return false;
-> >  }
-> > +static inline void of_gpio_dev_init(struct gpio_chip *gc,
-> > +                                 struct gpio_device *gdev)
-> > +{
-> > +}
-> >  #endif /* CONFIG_OF_GPIO */
-> >
-> >  extern struct notifier_block gpio_of_notifier;
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index b02cc2abd3b6..70fb15ae5d36 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -590,13 +590,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *g=
-c, void *data,
-> >               gdev->dev.of_node =3D gc->parent->of_node;
-> >       }
-> >
-> > -#ifdef CONFIG_OF_GPIO
-> > -     /* If the gpiochip has an assigned OF node this takes precedence =
-*/
-> > -     if (gc->of_node)
-> > -             gdev->dev.of_node =3D gc->of_node;
-> > -     else
-> > -             gc->of_node =3D gdev->dev.of_node;
-> > -#endif
-> > +     of_gpio_dev_init(gc, gdev);
-> >
-> >       gdev->id =3D ida_alloc(&gpio_ida, GFP_KERNEL);
-> >       if (gdev->id < 0) {
-> > @@ -4202,6 +4196,29 @@ void gpiod_put_array(struct gpio_descs *descs)
-> >  }
-> >  EXPORT_SYMBOL_GPL(gpiod_put_array);
-> >
-> > +static int gpio_stub_drv_probe(struct device *dev)
-> > +{
-> > +     /*
-> > +      * The DT node of some GPIO chips have a "compatible" property, b=
-ut
-> > +      * never have a struct device added and probed by a driver to reg=
-ister
-> > +      * the GPIO chip with gpiolib. In such cases, fw_devlink=3Don wil=
-l cause
-> > +      * the consumers of the GPIO chip to get probe deferred forever b=
-ecause
-> > +      * they will be waiting for a device associated with the GPIO chi=
-p
-> > +      * firmware node to get added and bound to a driver.
-> > +      *
-> > +      * To allow these consumers to probe, we associate the struct
-> > +      * gpio_device of the GPIO chip with the firmware node and then s=
-imply
-> > +      * bind it to this stub driver.
-> > +      */
-> > +     return 0;
-> > +}
-> > +
-> > +static struct device_driver gpio_stub_drv =3D {
-> > +     .name =3D "gpio_stub_drv",
-> > +     .bus =3D &gpio_bus_type,
-> > +     .probe =3D gpio_stub_drv_probe,
-> > +};
-> > +
-> >  static int __init gpiolib_dev_init(void)
-> >  {
-> >       int ret;
-> > @@ -4213,9 +4230,16 @@ static int __init gpiolib_dev_init(void)
-> >               return ret;
-> >       }
-> >
-> > +     if (driver_register(&gpio_stub_drv) < 0) {
-> > +             pr_err("gpiolib: could not register GPIO stub driver\n");
-> > +             bus_unregister(&gpio_bus_type);
-> > +             return ret;
-> > +     }
-> > +
-> >       ret =3D alloc_chrdev_region(&gpio_devt, 0, GPIO_DEV_MAX, GPIOCHIP=
-_NAME);
-> >       if (ret < 0) {
-> >               pr_err("gpiolib: failed to allocate char dev region\n");
-> > +             driver_unregister(&gpio_stub_drv);
-> >               bus_unregister(&gpio_bus_type);
-> >               return ret;
-> >       }
-> >
+> Hello,
 >
-> Hi,
+> On Fri, Jan 29, 2021 at 02:46:16PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > This series adds a new GPIO testing module based on configfs committabl=
+e items
+> > and sysfs. The goal is to provide a testing driver that will be configu=
+rable
+> > at runtime (won't need module reload) and easily extensible. The contro=
+l over
+> > the attributes is also much more fine-grained than in gpio-mockup.
+> >
+> > I am aware that Uwe submitted a virtual driver called gpio-simulator so=
+me time
+> > ago and I was against merging it as it wasn't much different from gpio-=
+mockup.
+> > I would ideally want to have a single testing driver to maintain so I a=
+m
+> > proposing this module as a replacement for gpio-mockup but since selfte=
+sts
+> > and libgpiod depend on it and it also has users in the community, we ca=
+n't
+> > outright remove it until everyone switched to the new interface. As for=
+ Uwe's
+> > idea for linking two simulated chips so that one controls the other - w=
+hile
+> > I prefer to have an independent code path for controlling the lines (he=
+nce
+> > the sysfs attributes), I'm open to implementing it in this new driver. =
+It
+> > should be much more feature friendly thanks to configfs than gpio-mocku=
+p.
 >
-> This patch causes these new errors on NVIDIA Tegra30 Nexus 7 using recent=
- linux-next:
->
->  gpio-1022 (cpu-pwr-req-hog): hogged as input
->  max77620-pinctrl max77620-pinctrl: pin gpio4 already requested by max776=
-20-pinctrl; cannot claim for gpiochip1
->  max77620-pinctrl max77620-pinctrl: pin-4 (gpiochip1) status -22
->  max77620-pinctrl max77620-pinctrl: could not request pin 4 (gpio4) from =
-group gpio4  on device max77620-pinctrl
->  gpio_stub_drv gpiochip1: Error applying setting, reverse things back
->  gpio_stub_drv: probe of gpiochip1 failed with error -22
->
-> Please fix, thanks in advance.
+> Funny you still think about my simulator driver. I recently thought
 
-I have a partial guess on why this is happening. So can you try this patch?
+It's because I always feel bad when I refuse to merge someone's hard work.
 
-Thanks,
-Saravana
+> about reanimating it for my private use. The idea was to implement a
+> rotary-encoder driver (that contrast to
+> drivers/input/misc/rotary_encoder.c really implements an encoder and not
+> a decoder). With the two linked chips I can plug
+> drivers/input/misc/rotary_encoder.c on one side and my encoder on the
+> other to test both drivers completely in software.
+>
+> I didn't look into your driver yet, but getting such a driver into
+> mainline would be very welcome!
+>
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4213,6 +4213,8 @@ static int gpio_stub_drv_probe(struct device *dev)
-         * gpio_device of the GPIO chip with the firmware node and then sim=
-ply
-         * bind it to this stub driver.
-         */
-+       if (dev->fwnode && dev->fwnode->dev !=3D dev)
-+               return -EBUSY;
-        return 0;
- }
+My idea for linking chips (although that's not implemented yet) is an
+attribute in each configfs group called 'link' or something like that,
+that would take as argument the name of the chip to link to making the
+'linker' the input and the 'linkee' the output.
+
+It would be tempting to use symbolic links too but I'm afraid this
+would need further extension of configfs.
+
+> I intend to look into your driver next week, but please don't hold back
+> on merging for my feedback.
+>
+
+Don't worry, I'm not really aiming at v5.12 with this.
+
+> Best regards
+> Uwe
+>
+
+Bart
