@@ -2,101 +2,213 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8445C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Feb 2021 22:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63663C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Feb 2021 07:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84AF564ECB
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Feb 2021 22:19:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E01064EE9
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Feb 2021 07:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbhBAWTm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 1 Feb 2021 17:19:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45396 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbhBAWTl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Feb 2021 17:19:41 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825ABC06174A
-        for <linux-gpio@vger.kernel.org>; Mon,  1 Feb 2021 14:19:00 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id c18so21627405ljd.9
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Feb 2021 14:19:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JoOcOIp9pmqrp1qTioUKGADrTN/MPY8QRHwxSL1dWME=;
-        b=mwwZbRqIq8Hcb+1h/XSg+kPG6q81pRWM8dTT18sEWfxNYmnw2/jhQoSR/kO/m39EqP
-         Ylh43BdjxKoY/iVdYdlnBWEujuFAnh+mEtVlzRGwEj4O/PC7wPJc+5bZDcKlZuVLWN2v
-         +KrL43zpQLHSiZMc9rdBqH0WzRMU0/rA5JTprLylEZPOV0Wpxqs3vGPLChKsSg/B92tN
-         jfdYD2swvZbgvMxuLiOdi8i0p0RsgDFzh0eMBqyQ6Ci+StGa4UsGngmDwfEgkdeViSpR
-         fEbsblQ1a9TDaXEY8T89V8w/AkI/LTfnV5D7utjjDaZWQlMIPaTl2HSCwAKLO7E6UuSU
-         Ai7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JoOcOIp9pmqrp1qTioUKGADrTN/MPY8QRHwxSL1dWME=;
-        b=ckomaEGPE3AC0RVQCyxjPm77gUDD8s6f08Me/PrUySLZVmRPngg5Tzg4b9vyRyCqe1
-         P+dApjKHTjo2Apmt+6wEN/iQyMHbHuq++GLWj92m+2Ca7m9At9E7RzeDOZeGaGMRDv6L
-         oKum7QphTCaBJKARLEw6rAolHm04MKRQ6BmT5W4rySjjwFHmlG2lZ4DH7QmyiDrVOA3r
-         5G4LxNNChQxluN98KHcLpE8/+neJ4eq0icn9OFNceXMFqqYD5fkZ//6TvetlN8Lhn/Zt
-         jjmEq6suUVD36jy3aOBnYPqen2EgCZsyqU24BKwBs6zCEuGPZJXZ3STYuYzKYovA8R2g
-         AvdA==
-X-Gm-Message-State: AOAM53006IAi3o0/XV/k5JcSIJ5gcLrqV79I6475yuoX9843GwoDgy+b
-        tIWAjFLJ9L+4GfIr3PRFJPAVWeL/nafdE2djTwjVRg==
-X-Google-Smtp-Source: ABdhPJwRklxnAxEoSAqER14OWeL4bolZvN8fDvJFrKp45Cr7zVMecgwvlYGDXTZMgdnRvD99CMSW7TgpgGhfN1zdO7E=
-X-Received: by 2002:a2e:9ec3:: with SMTP id h3mr11318983ljk.200.1612217939017;
- Mon, 01 Feb 2021 14:18:59 -0800 (PST)
+        id S231499AbhBBH7V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Feb 2021 02:59:21 -0500
+Received: from mga06.intel.com ([134.134.136.31]:48415 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229554AbhBBH7V (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Feb 2021 02:59:21 -0500
+IronPort-SDR: PfT01BHsTwBL4XSZUCDzlaHXSkRZZXBW8ty6C75ikRym5TbewprNPJOZxeDv5mTqH682y5c8zi
+ dIS42PS6rCdw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9882"; a="242330924"
+X-IronPort-AV: E=Sophos;i="5.79,394,1602572400"; 
+   d="scan'208";a="242330924"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 23:58:38 -0800
+IronPort-SDR: ocm0O5bAf3V2mPASzHpu2o2tA65btC//iUbjQBLWY/1/EPzDWerpwV5T4xQYHo3wpvmhnnFzsc
+ /c947+CY9EMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,394,1602572400"; 
+   d="scan'208";a="391337606"
+Received: from lkp-server02.sh.intel.com (HELO 625d3a354f04) ([10.239.97.151])
+  by orsmga008.jf.intel.com with ESMTP; 01 Feb 2021 23:58:37 -0800
+Received: from kbuild by 625d3a354f04 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1l6qa4-0009CR-Iy; Tue, 02 Feb 2021 07:58:36 +0000
+Date:   Tue, 02 Feb 2021 15:57:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:for-next] BUILD SUCCESS
+ d3e0c0572caf3a26f5d4ef4e0cbd577b9b6f94ff
+Message-ID: <60190605.7VmuQrpLpLNinA6Y%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <YBAd2HT9LFIugxEo@black.fi.intel.com> <CACRpkdb149uAwygJHEvwnjMPp=zXNTGTuf0HziE47CHXAGrQew@mail.gmail.com>
- <CAHp75Vd-_FnA+-f7+BDS3zV2kEaAGCb32A3Si02FnLDXuG=AoQ@mail.gmail.com>
-In-Reply-To: <CAHp75Vd-_FnA+-f7+BDS3zV2kEaAGCb32A3Si02FnLDXuG=AoQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 1 Feb 2021 23:18:48 +0100
-Message-ID: <CACRpkdYxvORq4isDPG65=_5HHiHbrGm7anPgNKKxyyrn5A+-dg@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-pinctrl for 5.12-1
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux pin control <linux-gpio@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 4:53 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, Jan 26, 2021 at 4:38 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Tue, Jan 26, 2021 at 2:49 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > > The following changes since commit e71ba9452f0b5b2e8dc8aa5445198cd9214a6a62:
-> > >
-> > >   Linux 5.11-rc2 (2021-01-03 15:55:30 -0800)
-> > >
-> > > are available in the Git repository at:
-> > >
-> > >   git@gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v5.12-1
-> > >
-> > > for you to fetch changes up to 0e793a4e283487378e9a5b7db37bc1781bc72fd7:
-> > >
-> > >   pinctrl: tigerlake: Add Alder Lake-P ACPI ID (2021-01-08 16:04:50 +0200)
-> >
-> > Thanks Andy, I merged in v5.11-rc2 and then pulled this on top!
->
-> JFYI: when you merge a branch that has been based on newer rc you
-> don't need to merge that rc first.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: d3e0c0572caf3a26f5d4ef4e0cbd577b9b6f94ff  Merge branch 'devel' into for-next
 
-True, it just gives me a feeling of understanding how the merges go when
-I do that, so I see there was first a really large diffstat "hm what is that..
-hmm seems to be based on -rc2 and my stuff is on -rc, OK I merge -rc2
-and voila OK the diffstat is small, now I understand the merges".
+elapsed time: 726m
 
-Just my little dance to convince myself that I'm doing the right thing.
+configs tested: 143
+configs skipped: 4
 
-Yours,
-Linus Walleij
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+m68k                            q40_defconfig
+powerpc                  storcenter_defconfig
+arm                           h5000_defconfig
+sh                           se7619_defconfig
+mips                  cavium_octeon_defconfig
+mips                         db1xxx_defconfig
+arm                         assabet_defconfig
+h8300                    h8300h-sim_defconfig
+arc                      axs103_smp_defconfig
+powerpc                      walnut_defconfig
+m68k                        mvme147_defconfig
+sh                           sh2007_defconfig
+ia64                             alldefconfig
+sh                      rts7751r2d1_defconfig
+powerpc                    amigaone_defconfig
+sh                          r7780mp_defconfig
+mips                            ar7_defconfig
+arm                         s5pv210_defconfig
+arm                             ezx_defconfig
+xtensa                           allyesconfig
+powerpc                      katmai_defconfig
+powerpc                         wii_defconfig
+mips                           ip32_defconfig
+mips                          ath25_defconfig
+xtensa                  cadence_csp_defconfig
+powerpc                       maple_defconfig
+arm                         at91_dt_defconfig
+powerpc                 mpc8313_rdb_defconfig
+powerpc                      ppc64e_defconfig
+mips                           ip27_defconfig
+mips                         bigsur_defconfig
+powerpc                       eiger_defconfig
+mips                           ip22_defconfig
+arm                          imote2_defconfig
+arm                        clps711x_defconfig
+powerpc                     tqm8555_defconfig
+arm                       multi_v4t_defconfig
+powerpc                     skiroot_defconfig
+s390                       zfcpdump_defconfig
+arm                          gemini_defconfig
+alpha                            alldefconfig
+mips                        omega2p_defconfig
+mips                      bmips_stb_defconfig
+xtensa                  audio_kc705_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                               tinyconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a001-20210202
+i386                 randconfig-a005-20210202
+i386                 randconfig-a003-20210202
+i386                 randconfig-a006-20210202
+i386                 randconfig-a002-20210202
+i386                 randconfig-a004-20210202
+i386                 randconfig-a001-20210201
+i386                 randconfig-a005-20210201
+i386                 randconfig-a003-20210201
+i386                 randconfig-a006-20210201
+i386                 randconfig-a002-20210201
+i386                 randconfig-a004-20210201
+x86_64               randconfig-a013-20210202
+x86_64               randconfig-a014-20210202
+x86_64               randconfig-a015-20210202
+x86_64               randconfig-a016-20210202
+x86_64               randconfig-a011-20210202
+x86_64               randconfig-a012-20210202
+x86_64               randconfig-a006-20210201
+x86_64               randconfig-a001-20210201
+x86_64               randconfig-a005-20210201
+x86_64               randconfig-a002-20210201
+x86_64               randconfig-a004-20210201
+x86_64               randconfig-a003-20210201
+i386                 randconfig-a013-20210202
+i386                 randconfig-a016-20210202
+i386                 randconfig-a014-20210202
+i386                 randconfig-a012-20210202
+i386                 randconfig-a015-20210202
+i386                 randconfig-a011-20210202
+i386                 randconfig-a013-20210201
+i386                 randconfig-a016-20210201
+i386                 randconfig-a014-20210201
+i386                 randconfig-a012-20210201
+i386                 randconfig-a015-20210201
+i386                 randconfig-a011-20210201
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                      rhel-8.3-kbuiltin
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a006-20210202
+x86_64               randconfig-a001-20210202
+x86_64               randconfig-a005-20210202
+x86_64               randconfig-a002-20210202
+x86_64               randconfig-a004-20210202
+x86_64               randconfig-a003-20210202
+x86_64               randconfig-a013-20210201
+x86_64               randconfig-a014-20210201
+x86_64               randconfig-a015-20210201
+x86_64               randconfig-a016-20210201
+x86_64               randconfig-a011-20210201
+x86_64               randconfig-a012-20210201
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
