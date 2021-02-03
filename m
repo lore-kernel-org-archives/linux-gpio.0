@@ -2,68 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878A2C43333
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 11:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99543C433DB
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 12:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 465F764F99
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 11:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F63564F74
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 12:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234183AbhBCL5T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Feb 2021 06:57:19 -0500
-Received: from mga06.intel.com ([134.134.136.31]:4129 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233972AbhBCL5S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 3 Feb 2021 06:57:18 -0500
-IronPort-SDR: 9mDBfjbpN4hHX8yCzSjTgrlox1hK75R3nDOS/vl46poyv4I0xYbtMa2JghixilrasC6CwzEp+y
- p9FtbFe7tUeg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="242539248"
-X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="242539248"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 03:55:32 -0800
-IronPort-SDR: J4LiDpMiqBngvDYi7kzzJwAShA/sl0y7VMFXFHMiq8AQjvqN9+M5xr4xGJxZ5IAhObF0zI5IE0
- T6L5zfwTFJUA==
-X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="372354870"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 03:55:31 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l7Gkq-001cmd-8g; Wed, 03 Feb 2021 13:55:28 +0200
-Date:   Wed, 3 Feb 2021 13:55:28 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1] gpio: msic: Drop driver from Makefile
-Message-ID: <YBqPMMIHadSrwZce@smile.fi.intel.com>
-References: <20210203112922.48629-1-andriy.shevchenko@linux.intel.com>
+        id S234469AbhBCMBA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Feb 2021 07:01:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234444AbhBCMAv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2021 07:00:51 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F024EC061788;
+        Wed,  3 Feb 2021 04:00:10 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id y142so8510665pfb.3;
+        Wed, 03 Feb 2021 04:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8Q1P72jDkAiYrJpjzWAvpbntKoausolrxBiuy4JKYsU=;
+        b=fDrx5Or5VRpfg0J7QHIKpfwG6BvxR2ERJWWHPjDfAaUejJVu1+Lphwm60HsVkuikLe
+         e1sHT1hZMPRRZ3ovKgUGew1dkaqdw4pBNiPnmB8yen/BctrP7HnMPXz/SbdK+Dp9x7vW
+         uPEYy2kznc4sybpKeRDjxyxaQgKUyb1Th9jiUpN7xJz2FGsasLJTXsT/vwA1NLWNzLJ+
+         KAcSG8Q5GXuMvXhOcivvt2fglEyHG2Ld6dZ1ym2InitH+U9vX2IJhgtkpeBWVRZsOpOO
+         dIpO0eQT9n283bMo/cN/iky+WD/FJi9DKoYX4aVStwDqZBZGFD3PCKQU9hsDwSdU36Ya
+         L01g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8Q1P72jDkAiYrJpjzWAvpbntKoausolrxBiuy4JKYsU=;
+        b=RXiZpETvF+DV8HNul5Vvj2oKjj5lxuWTjCAMuEONN9sj82hxwYVTp9YX8U06LfKh1U
+         1YFOFQgNpseRJgQ/x/3IQQj9pLVyLPxSfEyfPRNvJHYPUeSdTl06OjB0H/GkwCEhGJeb
+         XmELl/oNlnI6UCGBxj8UU7ubNgZHp4WNpk8kuUGUKzZbeIb7uwReIUSg2ApDT8X2/EvH
+         nwgCcR0tump+sJ3pevTngGo1xB2ipimACldNFZKgOv3AnpHL8ebIycpLEI5ups7tiV/5
+         l2XqpP5oKAmnpy2SkX+vb92cfHE6DFqKxsKxG/QiqiSvRQe3n80ewj8UXXpxM5uaFUFF
+         JxSw==
+X-Gm-Message-State: AOAM533qtcN2Lg3S5aMtTV/fp9lUJ8EDH2wmA0c51Qv/umfyVZ0WKAHI
+        9X2OMzw4Pn+3IH+kLuQqWGF18d71gukkHK2H+Ms=
+X-Google-Smtp-Source: ABdhPJwMYgHV+Be/xu9zUBwCMnm5ihAYrPPMqvnQFLvWfX6DEWf/Ni/nWT3r+LTx0J8aXQZzhafNyDhVWll2iLr9nUU=
+X-Received: by 2002:a62:5a86:0:b029:1ae:6b45:b6a9 with SMTP id
+ o128-20020a625a860000b02901ae6b45b6a9mr2753818pfb.7.1612353610466; Wed, 03
+ Feb 2021 04:00:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210203112922.48629-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <YBANNJ8XtoRf7SuW@smile.fi.intel.com> <CAMeQTsbGBrTvfkz6BStwL240Kz-dbrQVKtXbYkRtbD3OoUKCcg@mail.gmail.com>
+In-Reply-To: <CAMeQTsbGBrTvfkz6BStwL240Kz-dbrQVKtXbYkRtbD3OoUKCcg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 3 Feb 2021 13:59:54 +0200
+Message-ID: <CAHp75VeYroY5uG38NrsqwbHnjT0j_LMMD3JmNmRED3OY5ff7xA@mail.gmail.com>
+Subject: Re: [GIT PULL] ib-drm-gpio-pdx86-rtc-wdt-v5.12-1
+To:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>, linux-watchdog@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 01:29:22PM +0200, Andy Shevchenko wrote:
-> Driver is gone, no need to keep a Makefile entry for it. Remove.
+On Tue, Jan 26, 2021 at 5:25 PM Patrik Jakobsson
+<patrik.r.jakobsson@gmail.com> wrote:
+> On Tue, Jan 26, 2021 at 1:37 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > Hi guys,
+> >
+> > This is first part of Intel MID outdated platforms removal. It's collected into
+> > immutable branch with a given tag, please pull to yours subsystems.
+>
+> Hi Andy,
+> Do you plan on eventually removing X86_INTEL_MID completely? If so,
+> then I should probably start looking at removing the corresponding
+> parts in GMA500.
 
-To be precise, this is coupled with my two PRs, one for removal of bunch of the
-drivers (there is an immutable tag, I can apply it there and send a new PR,
-though) and one with Intel GPIO drivers, however it's included in the latter.
-
-TL;DR: it's harmless not to apply this one and basically sent to Hans as he
-reported this.
+I have noticed new commits in DRM against GMA500 and it seems now in a
+conflict with my immutable branch. Are you sure you don't forget to
+pull it?
 
 -- 
 With Best Regards,
 Andy Shevchenko
-
-
