@@ -2,153 +2,133 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB72C433DB
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 11:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C57C433DB
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 11:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9DD64F53
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 11:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D22B564F7C
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Feb 2021 11:57:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234383AbhBCLwQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Feb 2021 06:52:16 -0500
-Received: from mga05.intel.com ([192.55.52.43]:13808 "EHLO mga05.intel.com"
+        id S234377AbhBCL4q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Feb 2021 06:56:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44332 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234380AbhBCLwO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 3 Feb 2021 06:52:14 -0500
-IronPort-SDR: +DfdmeH5WsENUYlwf9DAxVcJK7t76gzldFX+lV2eeIfABb0n5EFknjIX8AARL+yc3iX2noENsb
- Fjq+Zo9DqUBw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="265861048"
-X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="265861048"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 03:51:33 -0800
-IronPort-SDR: qbZZ1+RYMkcGQ9Tu6paB57VwtXrYiNGWQYNoh7EzAxBpAdXwE7JHxF/juYBNqZXU/vD9vk7NPA
- wEdDfSu4W8Mw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="575871586"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 03 Feb 2021 03:51:32 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 3E766212; Wed,  3 Feb 2021 13:51:30 +0200 (EET)
-Date:   Wed, 3 Feb 2021 13:51:30 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linux GPIO <linux-gpio@vger.kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        id S234170AbhBCL4p (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 3 Feb 2021 06:56:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B2493AEE7;
+        Wed,  3 Feb 2021 11:56:02 +0000 (UTC)
+Message-ID: <fcf4d0934a1523975c325c9911c1830a2121b27a.camel@suse.de>
+Subject: Re: [PATCH 3/3] dt-bindings: Fix errors in 'if' schemas
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Palmer <daniel@thingy.jp>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [GIT PULL] intel-gpio for 5.12-1
-Message-ID: <YBqOQpaTpUbDcdKo@black.fi.intel.com>
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vincent Cheng <vincent.cheng.xh@renesas.com>,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-watchdog@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Date:   Wed, 03 Feb 2021 12:55:58 +0100
+In-Reply-To: <20210202205544.24812-3-robh@kernel.org>
+References: <20210202205544.24812-1-robh@kernel.org>
+         <20210202205544.24812-3-robh@kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-5GqMeNDA14mTF3lYuG5p"
+User-Agent: Evolution 3.38.3 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linux GPIO  maintainers,
 
-Non-traditional bunch for Intel GPIO drivers, because it includes an aggregator
-clean up with necessary libraries update and test cases. Besides that, it has
-nothing special, except removing couple of drivers from the subsystem. In any
-case this PR is independent, but would be nice to couple it with PR of
-ib-drm-gpio-pdx86-rtc-wdt-v5.12-1 which I had sent couple of weeks earlier.
+--=-5GqMeNDA14mTF3lYuG5p
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Tue, 2021-02-02 at 14:55 -0600, Rob Herring wrote:
+> Properties in if/then schemas weren't getting checked by the meta-schemas=
+.
+> Enabling meta-schema checks finds several errors.
+>=20
+> The use of an 'items' schema (as opposed to the list form) is wrong in
+> some cases as it applies to all entries. 'contains' is the correct schema
+> to use in the case of multiple entries.
+>=20
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: linux-crypto@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-leds@vger.kernel.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
 
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+--=-5GqMeNDA14mTF3lYuG5p
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-are available in the Git repository at:
+-----BEGIN PGP SIGNATURE-----
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v5.12-1
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmAaj04ACgkQlfZmHno8
+x/7Bywf9Ghk5CuwNSJHbRiqlKJ1q12tWeWcLF7LmZIFgm2sawjY0skG82SyJfJow
+cwKef8GMfZ51OrlO4VmeoOJ1sK8zmq6rkPz24dgE0Fe82CRAXneaxyr+m19SOgll
+vmrtNrEQpRqlVrOTo4A2jAufrJtStlw2VAy0jJT/QlRlyRwArJoUskuIqwNzj7wF
+KbgUjHD7GbVhRHlbfhsY7TdO6MYB4iKQek7IgiYoK8lB8TexlKr2ygDdBj1aXs4u
+omTYdJANyOFSbFAmnWfl3ScKeyS7lVHPUZybV6rHp6YDt+k1vjRivIzZXOLXrv14
+i2YyoJudc8K5ZBi0AE6j2Y0njKpi9A==
+=vnPw
+-----END PGP SIGNATURE-----
 
-for you to fetch changes up to c5318e248f527fc8753e361bb61439f4e0c6d745:
-
-  gpio: msic: Drop driver from Makefile (2021-02-03 13:05:56 +0200)
-
-----------------------------------------------------------------
-intel-gpio for v5.12-1
-
-* Use generic parser of the ranges in GPIO aggregator driver
-* Clean up Whiskey Cove driver to use new APIs and drop ambiguous casting
-* Remove couple of drivers for deprecated platforms
-
-The following is an automated git shortlog grouped by driver:
-
-aggregator:
- -  Remove trailing comma in terminator entries
- -  Use compound literal from the header
- -  Replace isrange() by using get_options()
-
-intel-mid:
- -  Remove driver for deprecated platform
-
-lib/cmdline:
- -  Allow get_options() to take 0 to validate the input
- -  Update documentation to reflect behaviour
-
-lib/cmdline_kunit:
- -  add a new test case for get_options()
-
-merrifield:
- -  Make bias configuration available for GPIOs
-
-msic:
- -  Drop driver from Makefile
- -  Remove driver for deprecated platform
-
-wcove:
- -  Split out to_ireg() helper and deduplicate the code
- -  Switch to use regmap_set_bits(), regmap_clear_bits()
- -  Get rid of error prone casting in IRQ handler
- -  convert comma to semicolon
-
-----------------------------------------------------------------
-Andy Shevchenko (13):
-      gpio: merrifield: Make bias configuration available for GPIOs
-      lib/cmdline_kunit: add a new test case for get_options()
-      lib/cmdline: Update documentation to reflect behaviour
-      lib/cmdline: Allow get_options() to take 0 to validate the input
-      gpio: aggregator: Replace isrange() by using get_options()
-      gpio: aggregator: Use compound literal from the header
-      gpio: aggregator: Remove trailing comma in terminator entries
-      gpio: msic: Remove driver for deprecated platform
-      gpio: intel-mid: Remove driver for deprecated platform
-      gpio: wcove: Get rid of error prone casting in IRQ handler
-      gpio: wcove: Switch to use regmap_set_bits(), regmap_clear_bits()
-      gpio: wcove: Split out to_ireg() helper and deduplicate the code
-      gpio: msic: Drop driver from Makefile
-
-Zheng Yongjun (1):
-      gpio: wcove: convert comma to semicolon
-
- MAINTAINERS                    |   2 -
- drivers/gpio/Kconfig           |  14 --
- drivers/gpio/Makefile          |   2 -
- drivers/gpio/TODO              |   2 +-
- drivers/gpio/gpio-aggregator.c |  40 +---
- drivers/gpio/gpio-intel-mid.c  | 414 -----------------------------------------
- drivers/gpio/gpio-merrifield.c |   5 +
- drivers/gpio/gpio-msic.c       | 314 -------------------------------
- drivers/gpio/gpio-wcove.c      |  65 +++----
- include/linux/gpio/machine.h   |   4 +-
- lib/cmdline.c                  |  21 ++-
- lib/cmdline_kunit.c            |  56 ++++++
- 12 files changed, 120 insertions(+), 819 deletions(-)
- delete mode 100644 drivers/gpio/gpio-intel-mid.c
- delete mode 100644 drivers/gpio/gpio-msic.c
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+--=-5GqMeNDA14mTF3lYuG5p--
 
