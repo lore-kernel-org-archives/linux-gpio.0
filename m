@@ -2,154 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DFDC433E9
-	for <linux-gpio@archiver.kernel.org>; Sat,  6 Feb 2021 03:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAABC433E9
+	for <linux-gpio@archiver.kernel.org>; Sun,  7 Feb 2021 04:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8683F64E26
-	for <linux-gpio@archiver.kernel.org>; Sat,  6 Feb 2021 03:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F4D164EA0
+	for <linux-gpio@archiver.kernel.org>; Sun,  7 Feb 2021 04:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbhBFD3E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Feb 2021 22:29:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232518AbhBFDV4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 5 Feb 2021 22:21:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6B28764F9D;
-        Sat,  6 Feb 2021 01:25:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612574755;
-        bh=/OO95ptKWwAfPKnln79sj7p50JlIFunorcpU1Za6txs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pGgQmtxfWDXFXdKv2lSHbQ8Hffg6ZF3khCddSyZagHNacjnJaiAhbckTqDOXSlJJw
-         smcT7P+JGZSL/MjDF4Cr8Rs6HfFWATUw/sTBGhUPRRRpjDs3haoC8wG9ic1njvO/iK
-         rA1Cyzbi+mBzO9SFOe5WFmN5JDg7RgiYb53u4NFEFWBc78kD1AKiH1wec60VpnljyX
-         5yAvAzFuWeaQAaZ5McL28B12bYT5mLA0y/C30Ug7IchPcpGuxmaACHs+AUk24p6dwI
-         S3tKhxddOqP8c9w+NOQxMKcPulyOZs43cf5XSh7rqi9xUyn0TiyVcGfr8ZD7n7HFTi
-         xaZJjX6p2Okig==
-Date:   Sat, 6 Feb 2021 02:25:51 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vincent Cheng <vincent.cheng.xh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: Fix undocumented compatible strings in
- examples
-Message-ID: <20210206012551.GB3847@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>, Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vincent Cheng <vincent.cheng.xh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-watchdog@vger.kernel.org
-References: <20210202205544.24812-1-robh@kernel.org>
+        id S229767AbhBGET3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 6 Feb 2021 23:19:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56950 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229763AbhBGETI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Feb 2021 23:19:08 -0500
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C76C061756;
+        Sat,  6 Feb 2021 20:18:27 -0800 (PST)
+Received: by mail-il1-x12a.google.com with SMTP id a16so9743459ilq.5;
+        Sat, 06 Feb 2021 20:18:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C0nh6s6iVQifHimFBlt9HsSWgh0AuZfoaMEvFjIFmTw=;
+        b=PXVstjrRPiSBUJHkTotsW1+xZIPbMhPQV5Z/9ECzLJcj9omaRFj/6zfj3OX82+S3ih
+         4w/Fs8HvInZDyln13YIVs84TWEv20e5JlM+hLuUBkx8JhC+7Ya2FeH6egJn9Gvj/uC0w
+         zmaw7JsHrGrkAVN7gBbG8l2NnPrGdoz7q/0vSzJgTZFRmUSKNdKu6zWNr/AuPlc06Pya
+         TADXJLoXyT+V0vCtPflXWT9WBl+pAbThonZAQRg0gMAt+PKYDU1+v8lZUy6X44QWMYPs
+         TdIlqmiX6q3jpt7L0LjxaceE+yaPwJzomfd4YU22pqHsqHjrDwDcBbt9DvoCfKx6hOs3
+         OOSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C0nh6s6iVQifHimFBlt9HsSWgh0AuZfoaMEvFjIFmTw=;
+        b=kmLw1bKaObUE+SvZzVJolTu1s/EVyMXQYyVTm/2W0/SRQUf4ehb1hRe5plP+2i6LRv
+         2hRfdCspqU5h9vFAVgzLRkVVDJkXCCMAUj1U6U6i4AOoeMFCLtsTd8dnPPkGVTKt68YP
+         ZaeNWsPhsyHQgfpVKKMZDkvspAuSdZgPBXlMqEVARgrhirSOuF35/Cgha0ddRJlxPbJm
+         UhOXnOS+N3pf3RJuL3S9lUktyUxJhM2Zp4DWcPgSklzXuQySVegsMFZxUd9/wwb3nTJA
+         6LMvzJZ3vmtNCzdPHUH5ZRp/mygGpORk4aw8BNv7ES5SbMzTcQPKcSXmUt8QFwaDPJWq
+         FsZQ==
+X-Gm-Message-State: AOAM533pEFQv5xru72vkZIqe4PUL5B8kaCtCtSStlMBnlpUNoKr1dwpc
+        6VuWO+TujL5Osirf5erW+jZ/mBi/2V3Y+G2G33g=
+X-Google-Smtp-Source: ABdhPJwuh8pvYd3UmzNgZcDRU1W1DbwxMv0Vdth/wCvy0cjMA/poeLmKteZhRQv890ip+9TXKH+FH3gDJI/8VK32ieo=
+X-Received: by 2002:a05:6e02:b2e:: with SMTP id e14mr10135604ilu.164.1612671507292;
+ Sat, 06 Feb 2021 20:18:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
-Content-Disposition: inline
-In-Reply-To: <20210202205544.24812-1-robh@kernel.org>
+References: <cover.1608963094.git.syednwaris@gmail.com> <da4eaafa84f32375319014f6e9af5c104a6153fd.1608963095.git.syednwaris@gmail.com>
+ <CAHp75VcSsfDKY3w4ufZktXzRB=GiObAV6voPfmeAHcbdwX0uqg@mail.gmail.com> <CACG_h5otB5hhAX0z9YzN8bT6Nz5WVRUQWbhENF+u8Z3WsCp_8A@mail.gmail.com>
+In-Reply-To: <CACG_h5otB5hhAX0z9YzN8bT6Nz5WVRUQWbhENF+u8Z3WsCp_8A@mail.gmail.com>
+From:   Syed Nayyar Waris <syednwaris@gmail.com>
+Date:   Sun, 7 Feb 2021 09:48:17 +0530
+Message-ID: <CACG_h5rLzpo-oz9uPe4d66-e088Y8YXiUhkLwEEf7MVyLDcJRg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] lib/test_bitmap.c: Add for_each_set_clump test cases
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "vilhelm.gray@gmail.com" <vilhelm.gray@gmail.com>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "rrichter@marvell.com" <rrichter@marvell.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Thu, Feb 4, 2021 at 2:25 PM Syed Nayyar Waris <syednwaris@gmail.com> wrote:
+>
+> On Sat, Dec 26, 2020 at 8:15 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> >
+> >
+> > On Saturday, December 26, 2020, Syed Nayyar Waris <syednwaris@gmail.com> wrote:
+> >>
+> >> The introduction of the generic for_each_set_clump macro need test
+> >> cases to verify the implementation. This patch adds test cases for
+> >> scenarios in which clump sizes are 8 bits, 24 bits, 30 bits and 6 bits.
+> >> The cases contain situations where clump is getting split at the word
+> >> boundary and also when zeroes are present in the start and middle of
+> >> bitmap.
+> >
+> >
+> > You have to split it to a separate test under drivers/gpio, because now it has no sense to be like this.
+>
+> Hi Andy,
+>
+> How do I split it into separate test under drivers/gpio ? I have
+> thought of making a test_clump_bits.c file in drivers/gpio.
+> But how do I integrate this test file so that tests are executed at
+> runtime? Similar to tests in lib/test_bitmap.c ?
+>
+> I believe I need to make changes in config files so that tests in
+> test_clump_bits.c ( in drivers/gpio ) are executed at runtime. Could
+> you please provide some steps on how to do that. Thank You !
+>
+> Regards
+> Syed Nayyar Waris
 
---ZfOjI3PrQbgiZnxM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Andy, could you please help me on the above. Thanks !
 
-On Tue, Feb 02, 2021 at 02:55:42PM -0600, Rob Herring wrote:
-> Running 'dt-validate -m' will flag any compatible strings missing a schem=
-a.
-> Fix all the errors found in DT binding examples. Most of these are just
-> typos.
->=20
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Daniel Palmer <daniel@thingy.jp>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Avi Fishman <avifishman70@gmail.com>
-> Cc: Tomer Maimon <tmaimon77@gmail.com>
-> Cc: Tali Perry <tali.perry1@gmail.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Andrew Jeffery <andrew@aj.id.au>
-> Cc: Joel Stanley <joel@jms.id.au>
-> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: Vincent Cheng <vincent.cheng.xh@renesas.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-i2c@vger.kernel.org
-> Cc: iommu@lists.linux-foundation.org
-> Cc: linux-watchdog@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
-
-
---ZfOjI3PrQbgiZnxM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAd8B4ACgkQFA3kzBSg
-KbbdSRAAtkrymAGNS5LGn321fm8TqaN3fodZIhNLfeeWULr/eImrk2RJCYzunjC6
-Nb8wJvEywJuB1E4YzkiFTgWxKVeLmFnUFodUSlufnefhzGl4Q+2udtIlUr3CqBaM
-K7b7RS452nISpyzJHTBfdWr4VwEUOHqmrYXG3jLExytI6Enrun7qqY6hu7WwXUIT
-tZ7CUUP30kMy3K1ahkItDx0SGBRf5hWrG+KAzSj9cyZKHFBaIv3WKV/bUMC6OC+Y
-h83LhJP40pBTFZWlk+jwchtr4ZWNF6GG9vuIcXWI35Y9tYUDsX0fWnRj3LSMdp8u
-QMK0sZFo4oIejPXH61NxPWZ6IHVcy21veXay4ZXApxNjsuwyitBb7/aRrJDEoJsr
-MlS6IMR7MXnujHlxwoJ+3sSIvPhRyeWgTC1pmp4qL2LwImDHrooS3pJANxAl7Ws6
-+RKt3Mkf0w5k5r2HiukAHI7Lywkwb74sit3LU3D6awsZicpRT9c/tNlGnTNsl6Hu
-+Mu9JP+//QSe+eRhOsXCnwMl8eEutYWvPadijYg87IbPxat3uDuiQz5E7S5dMTSR
-UerC7itsB9z9Hpb8zDdQAboNPdw04c+kfWn53Mu7cxhvxhzYyf+jZsu8tMIG60Bb
-LheRj95DOtU9bnIaQ8NdiBy3k9LESOW9ULADetyHoQZLM5Qb7Zk=
-=d/1y
------END PGP SIGNATURE-----
-
---ZfOjI3PrQbgiZnxM--
+Regards
+Syed Nayyar Waris
