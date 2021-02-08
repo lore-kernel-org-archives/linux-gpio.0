@@ -2,73 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6C5C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDEAC433E9
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9394564E88
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A483364E92
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:14:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231258AbhBHJIl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 04:08:41 -0500
-Received: from forward106p.mail.yandex.net ([77.88.28.109]:36707 "EHLO
-        forward106p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231284AbhBHJAz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 04:00:55 -0500
-Received: from iva3-2436f5349071.qloud-c.yandex.net (iva3-2436f5349071.qloud-c.yandex.net [IPv6:2a02:6b8:c0c:498b:0:640:2436:f534])
-        by forward106p.mail.yandex.net (Yandex) with ESMTP id 11A821C828E7;
-        Mon,  8 Feb 2021 12:00:01 +0300 (MSK)
-Received: from iva5-057a0d1fbbd8.qloud-c.yandex.net (iva5-057a0d1fbbd8.qloud-c.yandex.net [2a02:6b8:c0c:7f1c:0:640:57a:d1f])
-        by iva3-2436f5349071.qloud-c.yandex.net (mxback/Yandex) with ESMTP id plVk62kBPw-00Huw22K;
-        Mon, 08 Feb 2021 12:00:01 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1612774801;
-        bh=QivlRSg2glO+ZbFgQYWUy3CpeN6FzJgloLpPwkNnnfo=;
-        h=Date:Subject:To:From:Message-Id:Cc;
-        b=hXIIODv/mxiUBe0yQ1xS955HJphKDOIh1cVfNGb3vqy5UMQTwCert+ZQB9HhEhjLQ
-         h0gicTJsL1FgCqEZsTAg0ehIf6IyKM8cchpNTRwMkBFa/A+h2Te8/yCw/1m+3EyVax
-         TUUXzhlMnVYBYHDme/Tf9ibNex+7d3TPockumeyg=
-Authentication-Results: iva3-2436f5349071.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by iva5-057a0d1fbbd8.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id N9nOuejTfy-xxJmJdUX;
-        Mon, 08 Feb 2021 12:00:00 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-From:   Nikita Shubin <nikita.shubin@maquefel.me>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Nikita Shubin <nikita.shubin@maquefel.me>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/7] gpio: ep93xx: fixes series patch
-Date:   Mon,  8 Feb 2021 11:59:47 +0300
-Message-Id: <20210208085954.30050-1-nikita.shubin@maquefel.me>
-X-Mailer: git-send-email 2.26.2
+        id S231318AbhBHJNn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 04:13:43 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11700 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231325AbhBHJMP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 04:12:15 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DZ0bH0wXLzlDhn;
+        Mon,  8 Feb 2021 17:09:47 +0800 (CST)
+Received: from [127.0.0.1] (10.40.192.131) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Mon, 8 Feb 2021
+ 17:11:30 +0800
+Subject: Re: [Linuxarm] [PATCH for next v1 0/2] gpio: few clean up patches to
+ replace spin_lock_irqsave with spin_lock
+From:   luojiaxing <luojiaxing@huawei.com>
+To:     <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <andriy.shevchenko@linux.intel.com>, <grygorii.strashko@ti.com>,
+        <ssantosh@kernel.org>, <khilman@kernel.org>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@openeuler.org>
+References: <1612774577-55943-1-git-send-email-luojiaxing@huawei.com>
+Message-ID: <2b8001bb-0bcd-3fea-e15c-2722e7243209@huawei.com>
+Date:   Mon, 8 Feb 2021 17:11:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <1612774577-55943-1-git-send-email-luojiaxing@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.40.192.131]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-v2: 
-https://lore.kernel.org/linux-gpio/20210127104617.1173-1-nikita.shubin@maquefel.me/
+Sorry, my operation error causes a patch missing from this patch set. I 
+re-send the patch set. Please check the new one.
 
-v3:
-https://lore.kernel.org/linux-gpio/20210128122123.25341-1-nikita.shubin@maquefel.me/
-
-v4:
-https://lore.kernel.org/linux-gpio/20210205080507.16007-1-nikita.shubin@maquefel.me/
-
-v4->v5 changes
-
-[PATCH v5 1/7] gpio: ep93xx: fix BUG_ON port F usage
-Alexander Sverdlin:
-- make to_ep93xx_gpio_irq_chip() static 
-
-[PATCH v5 2/7] gpio: ep93xx: Fix single irqchip with multi gpiochips
-Alexander Sverdlin:
-- generate IRQ chip's names dynamicaly from label
+On 2021/2/8 16:56, Luo Jiaxing wrote:
+> There is no need to use API with _irqsave in hard IRQ handler, So replace
+> those with spin_lock.
+>
+> Luo Jiaxing (2):
+>    gpio: omap: Replace raw_spin_lock_irqsave with raw_spin_lock in
+>      omap_gpio_irq_handler()
+>    gpio: grgpio: Replace spin_lock_irqsave with spin_lock in
+>      grgpio_irq_handler()
+>
+>   drivers/gpio/gpio-grgpio.c |  5 ++---
+>   drivers/gpio/gpio-omap.c   | 15 ++++++---------
+>   2 files changed, 8 insertions(+), 12 deletions(-)
+>
 
