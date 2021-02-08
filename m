@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAFCC433E0
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32ED7C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3377264E7A
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8F1D64DDD
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231237AbhBHJAJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 04:00:09 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:12866 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231253AbhBHI54 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 03:57:56 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4DZ0Gl2z3Xz7hv4;
-        Mon,  8 Feb 2021 16:55:27 +0800 (CST)
-Received: from huawei.com (10.69.192.56) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.498.0; Mon, 8 Feb 2021
- 16:56:44 +0800
+        id S231303AbhBHJA6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 04:00:58 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12527 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230499AbhBHI7Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 03:59:25 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DZ0JS4BXYzMWHP;
+        Mon,  8 Feb 2021 16:56:56 +0800 (CST)
+Received: from huawei.com (10.69.192.56) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.498.0; Mon, 8 Feb 2021
+ 16:58:35 +0800
 From:   Luo Jiaxing <luojiaxing@huawei.com>
 To:     <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
         <andriy.shevchenko@linux.intel.com>, <grygorii.strashko@ti.com>,
@@ -32,11 +32,11 @@ To:     <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
 CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@openeuler.org>
 Subject: [PATCH for next v1 1/2] gpio: omap: Replace raw_spin_lock_irqsave with raw_spin_lock in omap_gpio_irq_handler()
-Date:   Mon, 8 Feb 2021 16:56:16 +0800
-Message-ID: <1612774577-55943-2-git-send-email-luojiaxing@huawei.com>
+Date:   Mon, 8 Feb 2021 16:57:56 +0800
+Message-ID: <1612774677-56758-2-git-send-email-luojiaxing@huawei.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1612774577-55943-1-git-send-email-luojiaxing@huawei.com>
-References: <1612774577-55943-1-git-send-email-luojiaxing@huawei.com>
+In-Reply-To: <1612774677-56758-1-git-send-email-luojiaxing@huawei.com>
+References: <1612774677-56758-1-git-send-email-luojiaxing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.69.192.56]
