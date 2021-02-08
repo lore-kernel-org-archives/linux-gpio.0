@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF439C4332D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCA9C4332B
 	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2DCE64E99
+	by mail.kernel.org (Postfix) with ESMTP id 8A86A64E9C
 	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbhBHJId (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 04:08:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56660 "EHLO
+        id S230488AbhBHJI3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 04:08:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbhBHJAu (ORCPT
+        with ESMTP id S231293AbhBHJAu (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 04:00:50 -0500
-Received: from forward103o.mail.yandex.net (forward103o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::606])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC553C0617A7;
-        Mon,  8 Feb 2021 01:00:08 -0800 (PST)
-Received: from iva3-4f441b146a71.qloud-c.yandex.net (iva3-4f441b146a71.qloud-c.yandex.net [IPv6:2a02:6b8:c0c:498c:0:640:4f44:1b14])
-        by forward103o.mail.yandex.net (Yandex) with ESMTP id 26C445F82683;
-        Mon,  8 Feb 2021 12:00:07 +0300 (MSK)
+Received: from forward104p.mail.yandex.net (forward104p.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:107])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7752C061794;
+        Mon,  8 Feb 2021 01:00:07 -0800 (PST)
+Received: from iva6-862b1c8daa54.qloud-c.yandex.net (iva6-862b1c8daa54.qloud-c.yandex.net [IPv6:2a02:6b8:c0c:6107:0:640:862b:1c8d])
+        by forward104p.mail.yandex.net (Yandex) with ESMTP id 1F62B4B0277B;
+        Mon,  8 Feb 2021 12:00:05 +0300 (MSK)
 Received: from iva5-057a0d1fbbd8.qloud-c.yandex.net (iva5-057a0d1fbbd8.qloud-c.yandex.net [2a02:6b8:c0c:7f1c:0:640:57a:d1f])
-        by iva3-4f441b146a71.qloud-c.yandex.net (mxback/Yandex) with ESMTP id 537mwW8XWl-06IWgjc3;
-        Mon, 08 Feb 2021 12:00:07 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1612774807;
-        bh=Dvew1cyWJB7ZvuR0min90f0IAtlia3k6CTMpUE02mQs=;
+        by iva6-862b1c8daa54.qloud-c.yandex.net (mxback/Yandex) with ESMTP id C3XTG39PHs-04Ga07VR;
+        Mon, 08 Feb 2021 12:00:05 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1612774805;
+        bh=kAj0mp7ZAXZrwLAHI3+98JSCy6v2QpaSUnUNgLKZJgw=;
         h=In-Reply-To:References:Date:Subject:To:From:Message-Id:Cc;
-        b=rm1yEwgGcBT57bCRzirWjiRr21wzo1JNQmrLeW68En+htxtJxVQ6g9XxryjLXyr2q
-         6IX88r0rW6XobBUYB+6I4yAUfNLTXso4NINdK6UwMEFCdiV5DYMIdPyWVX/LHtYF+2
-         a0khONknSlzw7ZAxa8kaCJgWHc91alQIKmGFSX58=
-Authentication-Results: iva3-4f441b146a71.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by iva5-057a0d1fbbd8.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id N9nOuejTfy-06JmU6jS;
-        Mon, 08 Feb 2021 12:00:06 +0300
+        b=n2h/BE0HS4yE5iwpjDfJscxgz4ykXU/fPQ7FziGNhHr3nmxtktAjvUCjQ0Ln+f1+z
+         fLXCtUjOft0TH10tAxUitH9eFgHcZY8G8gC/5WHHpWkYY9obHT8EsxHF4cfOkjXw/J
+         wg8tjs3Mop55AugbaOMlmPfs5+v1Iw0K4+cuyqvw=
+Authentication-Results: iva6-862b1c8daa54.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by iva5-057a0d1fbbd8.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id N9nOuejTfy-04JmmF6Q;
+        Mon, 08 Feb 2021 12:00:04 +0300
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (Client certificate not present)
 From:   Nikita Shubin <nikita.shubin@maquefel.me>
@@ -46,9 +46,9 @@ Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Alexander Sverdlin <alexander.sverdlin@gmail.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/7] gpio: ep93xx: refactor ep93xx_gpio_add_bank
-Date:   Mon,  8 Feb 2021 11:59:53 +0300
-Message-Id: <20210208085954.30050-7-nikita.shubin@maquefel.me>
+Subject: [PATCH v5 4/7] gpio: ep93xx: drop to_irq binding
+Date:   Mon,  8 Feb 2021 11:59:51 +0300
+Message-Id: <20210208085954.30050-5-nikita.shubin@maquefel.me>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210208085954.30050-1-nikita.shubin@maquefel.me>
 References: <20210208085954.30050-1-nikita.shubin@maquefel.me>
@@ -59,50 +59,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-- replace plain numbers with girq->num_parents in devm_kcalloc
-- replace plain numbers with girq->num_parents for port F
-- refactor i - 1 to i + 1 to make loop more readable
-- combine getting IRQ's loop and setting handler's into single loop
+As ->to_irq is redefined in gpiochip_add_irqchip, having it defined in
+driver is useless, so let's drop it.
 
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 ---
- drivers/gpio/gpio-ep93xx.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-ep93xx.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index 9ac8a8b830c1..e75f7a9e40a0 100644
+index 942da366220a..f8b21e1d55ed 100644
 --- a/drivers/gpio/gpio-ep93xx.c
 +++ b/drivers/gpio/gpio-ep93xx.c
-@@ -377,7 +377,7 @@ static int ep93xx_gpio_add_bank(struct ep93xx_gpio_chip *egc,
+@@ -327,11 +327,6 @@ static int ep93xx_gpio_set_config(struct gpio_chip *gc, unsigned offset,
+ 	return 0;
+ }
  
- 		girq->parent_handler = ep93xx_gpio_ab_irq_handler;
- 		girq->num_parents = 1;
--		girq->parents = devm_kcalloc(dev, 1,
-+		girq->parents = devm_kcalloc(dev, girq->num_parents,
- 					     sizeof(*girq->parents),
- 					     GFP_KERNEL);
- 		if (!girq->parents)
-@@ -399,15 +399,14 @@ static int ep93xx_gpio_add_bank(struct ep93xx_gpio_chip *egc,
- 		 */
- 		girq->parent_handler = ep93xx_gpio_f_irq_handler;
- 		girq->num_parents = 8;
--		girq->parents = devm_kcalloc(dev, 8,
-+		girq->parents = devm_kcalloc(dev, girq->num_parents,
- 					     sizeof(*girq->parents),
- 					     GFP_KERNEL);
- 		if (!girq->parents)
- 			return -ENOMEM;
- 		/* Pick resources 1..8 for these IRQs */
--		for (i = 1; i <= 8; i++)
--			girq->parents[i - 1] = platform_get_irq(pdev, i);
--		for (i = 0; i < 8; i++) {
-+		for (i = 0; i < girq->num_parents; i++) {
-+			girq->parents[i] = platform_get_irq(pdev, i + 1);
- 			gpio_irq = EP93XX_GPIO_F_IRQ_BASE + i;
- 			irq_set_chip_data(gpio_irq, &epg->gc[5]);
- 			irq_set_chip_and_handler(gpio_irq,
+-static int ep93xx_gpio_f_to_irq(struct gpio_chip *gc, unsigned offset)
+-{
+-	return EP93XX_GPIO_F_IRQ_BASE + offset;
+-}
+-
+ static void ep93xx_init_irq_chip(struct device *dev, struct irq_chip *ic, const char *label)
+ {
+ 	ic->name = devm_kasprintf(dev, GFP_KERNEL, "gpio-irq-%s", label);
+@@ -422,7 +417,6 @@ static int ep93xx_gpio_add_bank(struct ep93xx_gpio_chip *egc,
+ 		}
+ 		girq->default_type = IRQ_TYPE_NONE;
+ 		girq->handler = handle_level_irq;
+-		gc->to_irq = ep93xx_gpio_f_to_irq;
+ 		girq->first = EP93XX_GPIO_F_IRQ_BASE;
+ 	}
+ 
 -- 
 2.26.2
 
