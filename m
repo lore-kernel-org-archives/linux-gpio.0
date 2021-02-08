@@ -2,211 +2,98 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D1BC43381
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82689C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E776064E8C
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB4964E7B
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbhBHWY7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 17:24:59 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:40847 "EHLO
+        id S231478AbhBHWZA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 17:25:00 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:52711 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231243AbhBHWYy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:54 -0500
+        with ESMTP id S231271AbhBHWYz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:55 -0500
 Received: from orion.localdomain ([95.115.15.83]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MHWvH-1l4Vpb1y9R-00DYpE; Mon, 08 Feb 2021 23:22:18 +0100
+ 1N2VGj-1luhmR3RJ1-013sEY; Mon, 08 Feb 2021 23:22:16 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     rafael@kernel.org, info@metux.net, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, robh+dt@kernel.org,
         frowand.list@gmail.com, pantelis.antoniou@konsulko.com,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH 12/12] platform/x86/of: add support for PC Engines APU v2/3/4 boards
-Date:   Mon,  8 Feb 2021 23:22:03 +0100
-Message-Id: <20210208222203.22335-13-info@metux.net>
+Subject: [RFC PATCH 09/12] drivers: base: reintroduce find_bus()
+Date:   Mon,  8 Feb 2021 23:22:00 +0100
+Message-Id: <20210208222203.22335-10-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20210208222203.22335-1-info@metux.net>
 References: <20210208222203.22335-1-info@metux.net>
-X-Provags-ID: V03:K1:8voYo/lO6B6/0O0ejkXg6WyIxjmfqfu0KrstP1wAK9IPrXfjknO
- e8xQ2QnJZfpS+53a2DqZQ3/cE/M/5VU63xtsmnXjG+0xkueiICrRltIszgqUcBgVRrfsQTP
- S/irinwdJhe8tkv+7teK9hxZidhn4e1w8p0HV+uCY0cJdkpvrx2JwyDCwjpiuapnFJcu43Z
- 2iDZMb+BitooMtEtBDQIQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:K+1rOvTtpI8=:nDO2tq0z1i4Ki499omWlw0
- 2Di3wGsWFLe40rSklPL8terWi4QNYf9/CWVYtJD5xTSoT4HBUYYWaFZjkLL5/s9GLqqEQrwoQ
- p0V3JHgFHC1vWl+XLgIP/9ct4uWQFLpU1uVd5vR5bRiUeLQyol/S4gaogSrl7h0xVT6AG7btF
- z2ztsmZHyXoEh2sC1p9zR14kLGD4WvyjBpLL9yRFtK9pRfUMnXDDIc0uZqAT3KrsZDJPYMY1a
- J3iYXDCPxveGEv0w3JA8xveybwsQZffKg+qdQra5VyoIqehW2I05kkPlT2BgPa8Szhe0gOovG
- 5pMpLr4oiHlxcgkfj2fUi1+oEOdiB76jiLNc4UD2tn7/4D6nL1wBR78CPZeuh7QjRfxqdb/gx
- 3iUTXLpZAP2js0LHBilJV4LWBmxbXsMy0L4vvNtvLYGjBNiH5ErrqThZ72+Cl
+X-Provags-ID: V03:K1:rzHVi5GoHivXWlnfqQmxW9ROEO3dTvvCGJjkmHY1rYU58qOtQdB
+ BWExFeO+Lo7FQnJw4FivMBV8vVs5qdqC8Daz5Q4ov4Da0LJhOvhFlR2siSolW392MDgY9cH
+ 8XXxJ+Jsbc1T1eAY/QQvG6JTPj2JQU031dT6WF7IOT1GkP5PSJ/eJ5zfvyp2hkFU/FXNikO
+ 2tQpzN1WMr8i6gawh2pSQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3jDwSQW1sfw=:S+k5ohg/fvN1L6nK+an5kA
+ +R/OSvwPagPSZlWc9jBeQRyCOsKSYmcnZ6bF0GFMGDOmdX8fJtZJp1GS3sOshQtcqou/bjxDV
+ qdNYObRRD4gTkYQOGao7jMJzlMiH/Ac2uM4LBRda23m8yqNhnCPEk5/Loq96ANivz4m8CCcbj
+ /s+VFTolH9CbObyDG2qp+fF8tJrl/H0GwmVkxxV8NyVFHHHDHVXoyoDVsLqZVovSt7T1tTS6t
+ BMJQmQBWcjVricSiOzaFEpI+OgXkx1n4vG78rHYOe1xEXcm7gr85UmUGQloXjulge/oKPFkKj
+ vPAE5uZex4dZ9T+qQ6PLsHnt2nL01nQp67LXPvksmkPXP5n8/xzMIPYQFdcW2HereIzUKBRru
+ jjB4jWNWlZrcXptDCJjplCphEmEPyr9eMjg9IMJVdaFFGJ9xGkFyjo0GKfVOB
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add oftree based support for PC Engines APUv2/3/4 board family.
-This is entirely separate from the existing pcengines-apuv2 driver.
-
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/platform/of/Kconfig   | 15 ++++++++
- drivers/platform/of/Makefile  |  2 +
- drivers/platform/of/apu2x.dts | 86 +++++++++++++++++++++++++++++++++++++++++++
- drivers/platform/of/init.c    |  7 ++++
- 4 files changed, 110 insertions(+)
- create mode 100644 drivers/platform/of/apu2x.dts
+ drivers/base/bus.c         | 14 ++++++++++----
+ include/linux/device/bus.h |  2 ++
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/of/Kconfig b/drivers/platform/of/Kconfig
-index a0b5a641a7c6..e13b6ee8c316 100644
---- a/drivers/platform/of/Kconfig
-+++ b/drivers/platform/of/Kconfig
-@@ -38,4 +38,19 @@ config PLATFORM_OF_DRV_SYSFS_DT
- 	  Say Y here to enable exposing device tree nodes at
- 	  /sys/firmware/devicetree.
- 
-+config PLATFORM_OF_DRV_PCENGINES_APU2
-+	bool "Support PC Engines APU2/3/4 mainboards"
-+	depends on INPUT
-+	depends on GPIOLIB
-+	depends on X86
-+	select GPIO_AMD_FCH
-+	select KEYBOARD_GPIO_POLLED
-+	select LEDS_GPIO
-+	select INPUT_KEYBOARD
-+	help
-+	  Say Y to enable devicetree based support for PC Engines APU2/3/4
-+	  mainboards. This supersedes the older pcengines-apu2 driver.
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 450d3ed6cf1f..a06ae2786092 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -754,13 +754,19 @@ EXPORT_SYMBOL_GPL(device_reprobe);
+  *
+  * Note that kset_find_obj increments bus' reference count.
+  */
+-#if 0
+-struct bus_type *find_bus(char *name)
++struct bus_type *find_bus(const char *name)
+ {
+ 	struct kobject *k = kset_find_obj(bus_kset, name);
+-	return k ? to_bus(k) : NULL;
++	struct subsys_private *subsys_priv;
 +
-+	  Supports Gpios, front panel LEDs and front button.
++	if (!k)
++		return NULL;
 +
- endif # PLATFORM_OF_DRV
-diff --git a/drivers/platform/of/Makefile b/drivers/platform/of/Makefile
-index 84cf3003c500..dd4a13c18f16 100644
---- a/drivers/platform/of/Makefile
-+++ b/drivers/platform/of/Makefile
-@@ -2,4 +2,6 @@
- 
- ofboard-y := init.o drv.o
- 
-+ofboard-$(CONFIG_PLATFORM_OF_DRV_PCENGINES_APU2) += apu2x.dtb.o
++	subsys_priv = container_of(to_kset(k), struct subsys_private, subsys);
 +
- obj-$(CONFIG_PLATFORM_OF_DRV) += ofboard.o
-diff --git a/drivers/platform/of/apu2x.dts b/drivers/platform/of/apu2x.dts
-new file mode 100644
-index 000000000000..c16a59eb2a0e
---- /dev/null
-+++ b/drivers/platform/of/apu2x.dts
-@@ -0,0 +1,86 @@
-+/dts-v1/;
-+
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/amd-fch-gpio.h>
-+
-+/ {
-+    apu2x {
-+        compatible = "virtual,dmi-board";
-+        dmi-sys-vendor = "PC engines";
-+        dmi-board-name =
-+          "APU2",
-+          "apu2",
-+          "PC engines apu2",
-+          "APU3",
-+          "apu3",
-+          "PC engines apu3",
-+          "APU4",
-+          "apu4",
-+          "PC engines apu4";
-+        unbind {
-+            acpi = "PNP0076:00", "PNP0B00:00";
-+            platform = "platform-framebuffer.0", "PNP0103:00";
-+        };
-+        devices {
-+            gpio1: gpio1 {
-+                compatible = "amd,fch-gpio";
-+                gpio-controller;
-+                status = "okay";
-+                ngpios=<7>;
-+                #gpio-cells=<2>;
-+                gpio-regs = <
-+                    AMD_FCH_GPIO_REG_GPIO57 // led1
-+                    AMD_FCH_GPIO_REG_GPIO58 // led2
-+                    AMD_FCH_GPIO_REG_GPIO59_DEVSLP1 // led3
-+                    AMD_FCH_GPIO_REG_GPIO32_GE1 // modesw
-+                    AMD_FCH_GPIO_REG_GPIO33_GE2 // simawap
-+                    AMD_FCH_GPIO_REG_GPIO55_DEVSLP0 // mpcie2
-+                    AMD_FCH_GPIO_REG_GPIO51 // mpcie3
-+                >;
-+                gpio-line-names =
-+                    "front-led1",
-+                    "front-led2",
-+                    "front-led3",
-+                    "front-button",
-+                    "simswap",
-+                    "mpcie2_reset",
-+                    "mpcie3_reset";
-+            };
-+            front-leds {
-+                compatible = "gpio-leds";
-+                led@0 {
-+                    gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    default-state = "keep";
-+                    label = "apu:green:1";
-+                };
-+                led@1 {
-+                    gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    default-state = "keep";
-+                    label = "apu:green:2";
-+                };
-+                led@2 {
-+                    gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    default-state = "keep";
-+                    label = "apu:green:3";
-+                };
-+            };
-+            front-keys {
-+                compatible = "gpio-keys-polled";
-+                address-cells = <1>;
-+                size-cells = <0>;
-+                poll-interval = <100>;
-+                button@1 {
-+                    linux,code = <KEY_RESTART>;
-+                    label = "front button";
-+                    debounce-interval = <10>;
-+                    gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-+                };
-+            };
-+        };
-+    };
-+};
-diff --git a/drivers/platform/of/init.c b/drivers/platform/of/init.c
-index 3b8373cda77a..195120dad26d 100644
---- a/drivers/platform/of/init.c
-+++ b/drivers/platform/of/init.c
-@@ -47,7 +47,14 @@ static ssize_t fdt_image_raw_read(struct file *filep, struct kobject *kobj,
- 	return count;
++	return subsys_priv->bus;
  }
+-#endif  /*  0  */
++EXPORT_SYMBOL_GPL(find_bus);
  
-+#ifdef CONFIG_PLATFORM_OF_DRV_PCENGINES_APU2
-+DECLARE_FDT_EXTERN(apu2x);
-+#endif
+ static int bus_add_groups(struct bus_type *bus,
+ 			  const struct attribute_group **groups)
+diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
+index 36a1dae26c95..b4cbcfe176c5 100644
+--- a/include/linux/device/bus.h
++++ b/include/linux/device/bus.h
+@@ -254,6 +254,8 @@ void bus_sort_breadthfirst(struct bus_type *bus,
+ 			   int (*compare)(const struct device *a,
+ 					  const struct device *b));
+ 
++struct bus_type *find_bus(const char *name);
 +
- static struct fdt_image fdt[] = {
-+#ifdef CONFIG_PLATFORM_OF_DRV_PCENGINES_APU2
-+	FDT_IMAGE_ENT(apu2x)
-+#endif
- };
- 
- static int __init ofdrv_init_sysfs(struct fdt_image *image)
+ /**
+  * bus_unregister_device_by_name - remove device by bus id from specific bus
+  *                                 and unregister it from device core
 -- 
 2.11.0
 
