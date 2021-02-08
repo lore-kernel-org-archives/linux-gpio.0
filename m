@@ -2,98 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82689C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B38C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB4964E7B
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1A4E64E77
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231478AbhBHWZA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 17:25:00 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:52711 "EHLO
+        id S231576AbhBHWZU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 17:25:20 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:45149 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231271AbhBHWYz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:55 -0500
+        with ESMTP id S231473AbhBHWZD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:25:03 -0500
 Received: from orion.localdomain ([95.115.15.83]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N2VGj-1luhmR3RJ1-013sEY; Mon, 08 Feb 2021 23:22:16 +0100
+ 1MYe6H-1lMjTA0aKB-00VdwQ; Mon, 08 Feb 2021 23:22:15 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     rafael@kernel.org, info@metux.net, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, robh+dt@kernel.org,
         frowand.list@gmail.com, pantelis.antoniou@konsulko.com,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH 09/12] drivers: base: reintroduce find_bus()
-Date:   Mon,  8 Feb 2021 23:22:00 +0100
-Message-Id: <20210208222203.22335-10-info@metux.net>
+Subject: [RFC PATCH 06/12] of: kobj: introduce of_attach_tree_sysfs()
+Date:   Mon,  8 Feb 2021 23:21:57 +0100
+Message-Id: <20210208222203.22335-7-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20210208222203.22335-1-info@metux.net>
 References: <20210208222203.22335-1-info@metux.net>
-X-Provags-ID: V03:K1:rzHVi5GoHivXWlnfqQmxW9ROEO3dTvvCGJjkmHY1rYU58qOtQdB
- BWExFeO+Lo7FQnJw4FivMBV8vVs5qdqC8Daz5Q4ov4Da0LJhOvhFlR2siSolW392MDgY9cH
- 8XXxJ+Jsbc1T1eAY/QQvG6JTPj2JQU031dT6WF7IOT1GkP5PSJ/eJ5zfvyp2hkFU/FXNikO
- 2tQpzN1WMr8i6gawh2pSQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3jDwSQW1sfw=:S+k5ohg/fvN1L6nK+an5kA
- +R/OSvwPagPSZlWc9jBeQRyCOsKSYmcnZ6bF0GFMGDOmdX8fJtZJp1GS3sOshQtcqou/bjxDV
- qdNYObRRD4gTkYQOGao7jMJzlMiH/Ac2uM4LBRda23m8yqNhnCPEk5/Loq96ANivz4m8CCcbj
- /s+VFTolH9CbObyDG2qp+fF8tJrl/H0GwmVkxxV8NyVFHHHDHVXoyoDVsLqZVovSt7T1tTS6t
- BMJQmQBWcjVricSiOzaFEpI+OgXkx1n4vG78rHYOe1xEXcm7gr85UmUGQloXjulge/oKPFkKj
- vPAE5uZex4dZ9T+qQ6PLsHnt2nL01nQp67LXPvksmkPXP5n8/xzMIPYQFdcW2HereIzUKBRru
- jjB4jWNWlZrcXptDCJjplCphEmEPyr9eMjg9IMJVdaFFGJ9xGkFyjo0GKfVOB
+X-Provags-ID: V03:K1:ZtGzokklzdJEAZwPGATmrH1/M0zLFv6KzHuwBPz7+oXxl4Nxg1b
+ T2WWlO6QkPZXpRM1Fek92mrgiTDDi1HM4UyPU3mKz4QBO9Pec9Z03+jXoat9A4OWPnc+qTZ
+ GQpY0FB294LDM9mM68UB1WcUCHpIcSU5rAjnAwx6EpgOFzSD7ZA882En9rcIIDkIyV1dY9P
+ ZiFJ84GVJGUmb+x3Lzg9w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nx2Q60Qwd9I=:b8Ucwi6B5pI52GcH8caQh8
+ L+DLzZZ6WY7Cu3cRAtHCxlhyENquB3BP1CIlxK9wyXd9Nf4VDBAPh4PwWKGzi+f3sZETCWcCZ
+ LqjFZbz4XF2mUhd08TojxNMy2qS2pjezRtcn4hTEz6uAlKATI1c5/4K+bD3qZ8MclX+2EnQSG
+ ki69/8FFFb/IZnyYP+2Ke1opL6gBtGV9wXHifv+eob+31L/66TAVVl1ORHtQFFArNoToPfFV4
+ DuB1bSWhI/keD7yDi/wv6SYWhNjWYzU+uQPehAnq86ALhihBIs0Nmu738nu2KXpjVGF5PczLf
+ kHq75BLEfUNsZ2iPTHrItQBAqh8flYDq6bRX/NgYtQbGdlCK0LCQw9HBHkVyfnCr30w4A3Sjv
+ vWY6d0iwGvCr0kXEuSxvN0sEAOVRco5IpDWW4YN3wmKz37QevT9uy/rP3r5To
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
----
- drivers/base/bus.c         | 14 ++++++++++----
- include/linux/device/bus.h |  2 ++
- 2 files changed, 12 insertions(+), 4 deletions(-)
+Introduce helper for attaching an (separate) oftree into sysfs.
+This is useful, when drivers use their own internal device trees,
+separate from the platform's global one, and wanna make it visible
+to userspace via sysfs.
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 450d3ed6cf1f..a06ae2786092 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -754,13 +754,19 @@ EXPORT_SYMBOL_GPL(device_reprobe);
-  *
-  * Note that kset_find_obj increments bus' reference count.
-  */
--#if 0
--struct bus_type *find_bus(char *name)
-+struct bus_type *find_bus(const char *name)
- {
- 	struct kobject *k = kset_find_obj(bus_kset, name);
--	return k ? to_bus(k) : NULL;
-+	struct subsys_private *subsys_priv;
-+
-+	if (!k)
-+		return NULL;
-+
-+	subsys_priv = container_of(to_kset(k), struct subsys_private, subsys);
-+
-+	return subsys_priv->bus;
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/of/kobj.c  | 17 +++++++++++++++++
+ include/linux/of.h |  7 +++++++
+ 2 files changed, 24 insertions(+)
+
+diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
+index 511d7e8b9068..96dc5a2753f4 100644
+--- a/drivers/of/kobj.c
++++ b/drivers/of/kobj.c
+@@ -166,3 +166,20 @@ void __of_detach_node_sysfs(struct device_node *np)
+ 
+ 	of_node_put(np);
  }
--#endif  /*  0  */
-+EXPORT_SYMBOL_GPL(find_bus);
- 
- static int bus_add_groups(struct bus_type *bus,
- 			  const struct attribute_group **groups)
-diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
-index 36a1dae26c95..b4cbcfe176c5 100644
---- a/include/linux/device/bus.h
-+++ b/include/linux/device/bus.h
-@@ -254,6 +254,8 @@ void bus_sort_breadthfirst(struct bus_type *bus,
- 			   int (*compare)(const struct device *a,
- 					  const struct device *b));
- 
-+struct bus_type *find_bus(const char *name);
 +
++void of_attach_tree_sysfs(struct device_node *root, const char* base)
++{
++	struct device_node *np;
++
++	if (!root)
++		return;
++
++	/* need to from our parent, so we don't traverse above our root,
++	 * if it's actually a subtree */
++	root->parent = NULL;
++
++	__of_attach_node_sysfs(root, base);
++	for_each_of_allnodes_from(root, np)
++		__of_attach_node_sysfs(np, base);
++}
++EXPORT_SYMBOL_GPL(of_attach_tree_sysfs);
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 3612429632f4..c2fb12ce07f9 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -421,6 +421,8 @@ extern int of_update_property(struct device_node *np, struct property *newprop);
+ extern int of_attach_node(struct device_node *);
+ extern int of_detach_node(struct device_node *);
+ 
++extern void of_attach_tree_sysfs(struct device_node *root, const char* base);
++
+ #define of_match_ptr(_ptr)	(_ptr)
+ 
  /**
-  * bus_unregister_device_by_name - remove device by bus id from specific bus
-  *                                 and unregister it from device core
+@@ -1010,6 +1012,11 @@ static inline phys_addr_t of_dma_get_max_cpu_address(struct device_node *np)
+ 	return PHYS_ADDR_MAX;
+ }
+ 
++static inline void of_attach_tree_sysfs(struct device_node *root,
++					const char* base)
++{
++}
++
+ #define of_match_ptr(_ptr)	NULL
+ #define of_match_node(_matches, _node)	NULL
+ #endif /* CONFIG_OF */
 -- 
 2.11.0
 
