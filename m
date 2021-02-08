@@ -2,111 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 775BAC433DB
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5271FC433E6
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A38664E7A
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FFE664E7A
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231320AbhBHWYz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 17:24:55 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:53771 "EHLO
+        id S231330AbhBHWY4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 17:24:56 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:33945 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbhBHWYv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:51 -0500
+        with ESMTP id S231230AbhBHWYy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:54 -0500
 Received: from orion.localdomain ([95.115.15.83]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MXYAj-1lQ1n51B5b-00YxKI; Mon, 08 Feb 2021 23:22:16 +0100
+ 1M8QFi-1lDcdN1Uhs-004WHh; Mon, 08 Feb 2021 23:22:17 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     rafael@kernel.org, info@metux.net, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, robh+dt@kernel.org,
         frowand.list@gmail.com, pantelis.antoniou@konsulko.com,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH 08/12] drivers: base: introduce bus_remove_device_by_name()
-Date:   Mon,  8 Feb 2021 23:21:59 +0100
-Message-Id: <20210208222203.22335-9-info@metux.net>
+Subject: [RFC PATCH 10/12] export bus_get() / bus_put()
+Date:   Mon,  8 Feb 2021 23:22:01 +0100
+Message-Id: <20210208222203.22335-11-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20210208222203.22335-1-info@metux.net>
 References: <20210208222203.22335-1-info@metux.net>
-X-Provags-ID: V03:K1:0n2fIG2Rpu9ZJwXMl4tBwZ/3tnXlDtOxKiwWjJGncmHiDEu2Ots
- MuE3bpBi/A7oy19oFifjuPlJ6PNuFqxEZlQ/OaPdyABbvLmebIgN3ERFOzOA6iFdymsd52C
- 1/TbShxjwoGJfc3mL3HyEkwSdtnG8/xXUt3AxYt/GCiULEReqjGbTGBW1rVF6omosnLrzVx
- EHcfI++g4pju0RSD5/vjQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:umiqnbUS6cI=:6mZcagxU2YcHIT1ZeFWN0x
- ITMc0hS8D155f0MQv+OVwVUKXQT61SVKLu4HN3Z07T+lLzrKDunN87SkmokuFQFlu63oYqhhz
- kbQ28pJ5cvmCwOsgQvOXdmfZbmPgJcoXnVD5YytCPpf6SsYXovqatWtFv3hTLVOez2HBuV9Pk
- Tl2YeWF3q8QJ96tjYPJu0YMSVoUx3CzLOeBI0jpaHJPf9xYeAvB8sTJ4NbPBC2W/qO0vTcPBd
- ybhArh6Zlr5poXM1V1P6AKCYi2aeUFuC8su6oiHrYC39wkIOhwRATcJbzsITWPksn/k1ZYZdg
- kWZMVMi6QPKWy6qs83fwEm4V7NEBa0fSdNB/4+kq0xRSCcutLLZ0rJGNnx1HU/XCvsLf187WQ
- kjCnQUfA/kA5RbPqyL3Km1K3SJQ6Wyz/qEJ6oMttNvI1knDnRrTC8l8blHtD8
+X-Provags-ID: V03:K1:kDRmEzIQ/F5sQbE196NAs1VlxNWRXpNXbH/MXduf2nSFEhfshKh
+ Pho+/pjgZO0/8botPezg8A8IsqGKMi4GXn5N7nGB5CjPbdQUuG+mNHjXaZs4/KUm6Tg0ACu
+ d1hAzte3az5tvT8GsFsfwWicGAftGJo45kCNRkBjy1G2hE5omPD8bD9Rau5wP6IOhm+I0Jr
+ IShaMZT+84jKYiXPQa00g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pxUWDFfYvE4=:glNHz9gYCeZb+E7U3fAb5c
+ xJ0nCG21DGUYAjCD2bD0dAOOk4zbmeCuHKpmGHsEUpa6fNeTF2tqf1RETA5TR+ybt0GSpN9Dt
+ 7Xy3fcXl4u/HX02GUU6ZcytLsqs0Htc5/Vc0vchfsxaQPUGPN36UBmXNO4Q20paDFxhSf33tF
+ CzKe03kY2wfMyU6ElkDVybFUBkWjlpL7Kraz1Lh4GY0amWO6n2VoOLKNziuG3Tv/e8VDdwRLI
+ wJ8vIKpqu/Mkig89QwWt2nRqSeyDcrMqWvcU2YxK6D0mqyWm4hc+bIpGEySwpiv3IZbBd3Vd0
+ Lrdh6F4mXODb8DDDNYM6A+xecFnCRfMFpAHcjE9FYjrW4XG0EPNF4KNfimUCTfcr73rNIgY2w
+ XbW7WcHYv3sk0+W7JyHf82Q4Rt0iuG4dFRL7LP8H6f4CpImdWY8dDH6HwflUA
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce a helper for detaching a named device from bus and
-unregistering it. This is helpful eg. if some board specific driver
-needs to remove an unwanted device that had been probed via firmware,
-but should be handled differently.
-
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/base/bus.c         | 16 ++++++++++++++++
- include/linux/device/bus.h |  9 +++++++++
- 2 files changed, 25 insertions(+)
+ drivers/base/bus.c         | 6 ++++--
+ include/linux/device/bus.h | 3 +++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index a9c23ecebc7c..450d3ed6cf1f 100644
+index a06ae2786092..2ef92a3c5d7b 100644
 --- a/drivers/base/bus.c
 +++ b/drivers/base/bus.c
-@@ -178,6 +178,22 @@ static const struct kset_uevent_ops bus_uevent_ops = {
+@@ -39,7 +39,7 @@ static struct kset *system_kset;
+ static int __must_check bus_rescan_devices_helper(struct device *dev,
+ 						void *data);
  
- static struct kset *bus_kset;
+-static struct bus_type *bus_get(struct bus_type *bus)
++struct bus_type *bus_get(struct bus_type *bus)
+ {
+ 	if (bus) {
+ 		kset_get(&bus->p->subsys);
+@@ -47,12 +47,14 @@ static struct bus_type *bus_get(struct bus_type *bus)
+ 	}
+ 	return NULL;
+ }
++EXPORT_SYMBOL_GPL(bus_get);
  
-+int bus_unregister_device_by_name(struct bus_type *bus, const char *name)
-+{
-+	struct device *dev;
-+
-+	dev = bus_find_device_by_name(bus, NULL, name);
-+	if (!dev)
-+		return -ENOENT;
-+
-+	device_driver_detach(dev);
-+	device_unregister(dev);
-+	put_device(dev);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(bus_unregister_device_by_name);
-+
- /* Manually detach a device from its associated driver. */
- static ssize_t unbind_store(struct device_driver *drv, const char *buf,
- 			    size_t count)
+-static void bus_put(struct bus_type *bus)
++void bus_put(struct bus_type *bus)
+ {
+ 	if (bus)
+ 		kset_put(&bus->p->subsys);
+ }
++EXPORT_SYMBOL_GPL(bus_put);
+ 
+ static ssize_t drv_attr_show(struct kobject *kobj, struct attribute *attr,
+ 			     char *buf)
 diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
-index 1ea5e1d1545b..36a1dae26c95 100644
+index b4cbcfe176c5..8d6b45df0a82 100644
 --- a/include/linux/device/bus.h
 +++ b/include/linux/device/bus.h
-@@ -253,6 +253,15 @@ int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
- void bus_sort_breadthfirst(struct bus_type *bus,
- 			   int (*compare)(const struct device *a,
- 					  const struct device *b));
+@@ -120,6 +120,9 @@ extern void bus_unregister(struct bus_type *bus);
+ 
+ extern int __must_check bus_rescan_devices(struct bus_type *bus);
+ 
++struct bus_type *bus_get(struct bus_type *bus);
++void bus_put(struct bus_type *bus);
 +
-+/**
-+ * bus_unregister_device_by_name - remove device by bus id from specific bus
-+ *                                 and unregister it from device core
-+ * @bus: bus type
-+ * @name: name of the device to remove
-+ */
-+int bus_unregister_device_by_name(struct bus_type *bus, const char *name);
-+
- /*
-  * Bus notifiers: Get notified of addition/removal of devices
-  * and binding/unbinding of drivers to devices.
+ struct bus_attribute {
+ 	struct attribute	attr;
+ 	ssize_t (*show)(struct bus_type *bus, char *buf);
 -- 
 2.11.0
 
