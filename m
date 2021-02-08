@@ -2,194 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99015C4332B
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F1DC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 23:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7342364E7B
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0347C64E8F
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 23:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231627AbhBHWZZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 17:25:25 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:50717 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231549AbhBHWZE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:25:04 -0500
-Received: from orion.localdomain ([95.115.15.83]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MKKlN-1lUTlZ2RrT-00Lm3a; Mon, 08 Feb 2021 23:22:14 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     rafael@kernel.org, info@metux.net, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, robh+dt@kernel.org,
-        frowand.list@gmail.com, pantelis.antoniou@konsulko.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH 05/12] of: kobj: __of_attach_node_sysfs(): add optional basename parameter
-Date:   Mon,  8 Feb 2021 23:21:56 +0100
-Message-Id: <20210208222203.22335-6-info@metux.net>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20210208222203.22335-1-info@metux.net>
+        id S229554AbhBHXt2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 18:49:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229545AbhBHXt2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 8 Feb 2021 18:49:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0595A64E9A;
+        Mon,  8 Feb 2021 23:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612828127;
+        bh=cmdwZ4a6bUBFmfrZQNo71CTGPOcdnPqfAXXmNEvqVgc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fUWL1mbIkWT79Zn55+uY9X7SN+LOgH+aQgHzr3yZOl6MidpFg73v3bfAWuwyWVI7E
+         /64IeyHlICat37I0hlNrJqWqstWfxj/V8v3l+dgjn8VCnZby3hFbAaU+UzZ0wrA8jE
+         bEQkKDro5hYjWCSz/X4sAkV+cnIqSTgdyjO5M8H5fZG+czuJttNc3TFwN0F/Zjljzq
+         t+wIR9A3hrtwrRclPsdYqKedGeqzTeMXNcd7NHH/JnW0swH3GOUtG9M+5S+SAYDKw2
+         +n2B+2N/UoGN4JTlJrnLC/xLCqLgYQN1DKYgEB3EICl09DN69/DzAKOajagrLqCznX
+         /oXPi7bZqlTCg==
+Received: by mail-qk1-f182.google.com with SMTP id m144so589007qke.10;
+        Mon, 08 Feb 2021 15:48:46 -0800 (PST)
+X-Gm-Message-State: AOAM533BlyLIxUsugtY+aAdUaAJhqxcLi4jUdyoZoKr/ulkn6VVvRntF
+        gEzC+FcZMNbiTmbHyQtJmQN4KxTf37BvBqVB2g==
+X-Google-Smtp-Source: ABdhPJz4iZaPmQzqGVOhAKeyDYsJNBMn2bDqkbB6EyKrP7Ns/1yQf1ahrwrNCzJMVdqI8eyffQRaHHDCUmLMybIzC5Y=
+X-Received: by 2002:ae9:f20b:: with SMTP id m11mr19942215qkg.464.1612828126133;
+ Mon, 08 Feb 2021 15:48:46 -0800 (PST)
+MIME-Version: 1.0
 References: <20210208222203.22335-1-info@metux.net>
-X-Provags-ID: V03:K1:npTHoKrL2oZbIv5cy3FmU1KTINiQbH4qQhD55Xayo4OIGdDxoev
- gbzaBfDm82BI+WL0Q5XXfcw2bf1mhzCP5EfsMEH22W+YrQEoWvpFapetR8aW4a4Mn1BHh31
- Pm01SE0jNYzBPFs79nvITLiY849a6/f12ji880iUonxJzqoj9k+3PirBtebr4pjkU1/KWJ6
- kwWQTazNy00Vr3t1i8Sfg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8z86mJ3AC+k=:6VyNFzdPV/KSorHycOvmKI
- 5+mYc3CjznHOHfVs9RqH3PCNXVGIpSxUI9D+ViGXZNfZsZfe0TWmFDHPRI+NUnLnqq/y39poV
- M+L575DO+CQ79T2eODO2/7m92kauR41BCOyik0it83xhr/t4A2tKO+VyIoZ8bC5jsnKZxUzIK
- 2rz7fIDerNi3zIaY8d7u8BPJm2YXgaF+W8zNFYo7t/4e4pWC5AUFYk4IEeKpWJUjLB6LRtPYI
- TIe4V5y2mz7+h9eVfE34zXk8Hwtec2comFPyuCJ6F360VrgfAw6kOfUGC4zP/mtUnvP3ia2U4
- y4efzNucwczV+sryhyHUjKNumVF8H39Yk5wcuLIbuos8JJwu6Ic1eVMinOH5wmNNZ46rHiOV6
- 5Rx95sodEKfSXBQPIJjsPaZfsuThBd+efbCtI0KgSaeBgm0WPUNNFFIfkvIzF
+In-Reply-To: <20210208222203.22335-1-info@metux.net>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 8 Feb 2021 17:48:33 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ-bz35mUM3agYjq5x+Y+u9rL1RwesCaA-x=MW8uv5CrA@mail.gmail.com>
+Message-ID: <CAL_JsqJ-bz35mUM3agYjq5x+Y+u9rL1RwesCaA-x=MW8uv5CrA@mail.gmail.com>
+Subject: Re: RFC: oftree based setup of composite board devices
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce additional parameter for specifying the name of the base directory
-underneath /sys/firmware/devicetree. This is for scenarios where we want
-entirely separate oftree instances. Passing NULL falls back to the existing
-base name 'base'.
++Johan H
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/of/base.c       | 2 +-
- drivers/of/dynamic.c    | 4 ++--
- drivers/of/kobj.c       | 7 +++++--
- drivers/of/of_private.h | 6 +++---
- drivers/of/unittest.c   | 6 +++---
- 5 files changed, 14 insertions(+), 11 deletions(-)
+On Mon, Feb 8, 2021 at 4:22 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
+>
+> Hello folks,
+>
+> here's an RFC for using compiled-in dtb's for initializing board devices
+> that can't be probed via bus'es or firmware.
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 649c2a32bb48..be63493bd232 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -177,7 +177,7 @@ void __init of_core_init(void)
- 		return;
- 	}
- 	for_each_of_allnodes(np) {
--		__of_attach_node_sysfs(np);
-+		__of_attach_node_sysfs(np, NULL);
- 		if (np->phandle && !phandle_cache[of_phandle_cache_hash(np->phandle)])
- 			phandle_cache[of_phandle_cache_hash(np->phandle)] = np;
- 	}
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 9a824decf61f..63768f0dc60e 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -243,7 +243,7 @@ int of_attach_node(struct device_node *np)
- 	__of_attach_node(np);
- 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 
--	__of_attach_node_sysfs(np);
-+	__of_attach_node_sysfs(np, NULL);
- 	mutex_unlock(&of_mutex);
- 
- 	of_reconfig_notify(OF_RECONFIG_ATTACH_NODE, &rd);
-@@ -635,7 +635,7 @@ static int __of_changeset_entry_apply(struct of_changeset_entry *ce)
- 
- 	switch (ce->action) {
- 	case OF_RECONFIG_ATTACH_NODE:
--		__of_attach_node_sysfs(ce->np);
-+		__of_attach_node_sysfs(ce->np, NULL);
- 		break;
- 	case OF_RECONFIG_DETACH_NODE:
- 		__of_detach_node_sysfs(ce->np);
-diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
-index a32e60b024b8..511d7e8b9068 100644
---- a/drivers/of/kobj.c
-+++ b/drivers/of/kobj.c
-@@ -112,20 +112,23 @@ void __of_update_property_sysfs(struct device_node *np, struct property *newprop
- 	__of_add_property_sysfs(np, newprop);
- }
- 
--int __of_attach_node_sysfs(struct device_node *np)
-+int __of_attach_node_sysfs(struct device_node *np, const char *basename)
- {
- 	const char *name;
- 	struct kobject *parent;
- 	struct property *pp;
- 	int rc;
- 
-+	if (!basename)
-+		basename = "base";
-+
- 	if (!of_kset)
- 		return 0;
- 
- 	np->kobj.kset = of_kset;
- 	if (!np->parent) {
- 		/* Nodes without parents are new top level trees */
--		name = safe_name(&of_kset->kobj, "base");
-+		name = safe_name(&of_kset->kobj, basename);
- 		parent = NULL;
- 	} else {
- 		name = safe_name(&np->parent->kobj, kbasename(np->full_name));
-diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-index d9e6a324de0a..371f4da77161 100644
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -63,7 +63,7 @@ int __of_add_property_sysfs(struct device_node *np, struct property *pp);
- void __of_remove_property_sysfs(struct device_node *np, struct property *prop);
- void __of_update_property_sysfs(struct device_node *np, struct property *newprop,
- 		struct property *oldprop);
--int __of_attach_node_sysfs(struct device_node *np);
-+int __of_attach_node_sysfs(struct device_node *np, const char *basename);
- void __of_detach_node_sysfs(struct device_node *np);
- #else
- static inline int __of_add_property_sysfs(struct device_node *np, struct property *pp)
-@@ -73,7 +73,7 @@ static inline int __of_add_property_sysfs(struct device_node *np, struct propert
- static inline void __of_remove_property_sysfs(struct device_node *np, struct property *prop) {}
- static inline void __of_update_property_sysfs(struct device_node *np,
- 		struct property *newprop, struct property *oldprop) {}
--static inline int __of_attach_node_sysfs(struct device_node *np)
-+static inline int __of_attach_node_sysfs(struct device_node *np, const char *basename)
- {
- 	return 0;
- }
-@@ -135,7 +135,7 @@ extern int __of_update_property(struct device_node *np,
- extern void __of_update_property_sysfs(struct device_node *np,
- 		struct property *newprop, struct property *oldprop);
- 
--extern int __of_attach_node_sysfs(struct device_node *np);
-+extern int __of_attach_node_sysfs(struct device_node *np, const char *basename);
- extern void __of_detach_node(struct device_node *np);
- extern void __of_detach_node_sysfs(struct device_node *np);
- 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index eb51bc147440..caf4ade8b141 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -1391,7 +1391,7 @@ static void attach_node_and_children(struct device_node *np)
- 	of_node_clear_flag(np, OF_DETACHED);
- 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 
--	__of_attach_node_sysfs(np);
-+	__of_attach_node_sysfs(np, NULL);
- 	mutex_unlock(&of_mutex);
- 
- 	while (child) {
-@@ -1451,7 +1451,7 @@ static int __init unittest_data_add(void)
- 	if (!of_root) {
- 		of_root = unittest_data_node;
- 		for_each_of_allnodes(np)
--			__of_attach_node_sysfs(np);
-+			__of_attach_node_sysfs(np, NULL);
- 		of_aliases = of_find_node_by_path("/aliases");
- 		of_chosen = of_find_node_by_path("/chosen");
- 		of_overlay_mutex_unlock();
-@@ -3115,7 +3115,7 @@ static __init void of_unittest_overlay_high_level(void)
- 		of_root->child = overlay_base_root->child;
- 
- 	for_each_of_allnodes_from(overlay_base_root, np)
--		__of_attach_node_sysfs(np);
-+		__of_attach_node_sysfs(np, NULL);
- 
- 	if (of_symbols) {
- 		struct property *new_prop;
--- 
-2.11.0
+I'm not convinced compiled in is the mechanism we want.
 
+> Use cases are boards with non-oftree firmware (ACPI, etc) where certain
+> platform devices can't be directly enumerated via firmware. Traditionally
+> we had to write board specific drivers that check for board identification
+> (DMI strings, etc), then initialize the actual devices and their links
+> (eg. gpio<->leds/buttons, ...). Often this can be expressed just by DT.
+
+This is something I've wanted to see for a while. There's use cases
+for DT based systems too. The example I'd like to see supported are
+USB serial adapters with downstream serdev, GPIO, I2C, SPI, etc. Then
+plug more than one of those in.
+
+> This patch queue does a bunch of preparations in oftree code, so we can
+> support multiple fully independent DT's (not using DT overlays). And then
+> adds a generic driver parses compiled-in fdt blobs, checks for mathing
+> DMI strings and initializes the devices. As an example, the last patch
+> adds an alternative implementation for the PC engines APU2/3/4 board
+> family based on device tree.
+
+I think there's a couple of approaches we could take. Either support
+multiple root nodes as you have done or keep a single root and add
+child nodes to them. I think the latter would be less invasive. In the
+non-DT cases, we'd just always create an empty skeleton DT. A 3rd
+variation on a DT system is we could want to create parent nodes if
+they don't exist to attach this DT to so we have a full hierarchy.
+
+I'm not saying which one we should do, just laying out some of the options.
+
+> The approach can be easily be extended to other kinds of composite devices,
+> eg. PCI cards or USB dongles.
+>
+>
+> Yet some drawbacks of the current implementation:
+>
+>  * individual FDT's can't be modularized yet (IMHO, we don't have DMI-based
+>    modprobing anyways)
+
+I think we need to use either firmware loading or udev mechanisms to
+load the FDTs.
+
+>  * can't reconfigure or attach to devices outside the individual DT's
+>    (eg. probed by PCI, etc)
+
+Not sure I follow.
+
+Rob
