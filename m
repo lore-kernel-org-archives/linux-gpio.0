@@ -7,112 +7,106 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC22C43381
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775BAC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC8A664E77
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A38664E7A
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231256AbhBHWYx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 17:24:53 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:53483 "EHLO
+        id S231320AbhBHWYz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 17:24:55 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:53771 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbhBHWYt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:49 -0500
+        with ESMTP id S230515AbhBHWYv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:51 -0500
 Received: from orion.localdomain ([95.115.15.83]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MmD2M-1lZSw122Zk-00iCcL; Mon, 08 Feb 2021 23:22:13 +0100
+ 1MXYAj-1lQ1n51B5b-00YxKI; Mon, 08 Feb 2021 23:22:16 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     rafael@kernel.org, info@metux.net, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, robh+dt@kernel.org,
         frowand.list@gmail.com, pantelis.antoniou@konsulko.com,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH 03/12] of: base: record root node in interator and use it for phandle lookup
-Date:   Mon,  8 Feb 2021 23:21:54 +0100
-Message-Id: <20210208222203.22335-4-info@metux.net>
+Subject: [RFC PATCH 08/12] drivers: base: introduce bus_remove_device_by_name()
+Date:   Mon,  8 Feb 2021 23:21:59 +0100
+Message-Id: <20210208222203.22335-9-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20210208222203.22335-1-info@metux.net>
 References: <20210208222203.22335-1-info@metux.net>
-X-Provags-ID: V03:K1:L07WfYEKaUHFQXWge6SNQV7uWaSzApb9DBlUnN7eDKenKnVc9cR
- wReeAdO0XeeuDjURl89qC/QDWRLaPENdF+n1sDQVpo59lDEM1dNCE5i9CVo/W9irbkivn3M
- U9JZI099qVXl3Nji6F8vE0xyLS9fRj77i6N+b5JmiLhvG2PReQUZYeF6B2j8IxDWHe0+SeW
- EVCW878DP7MXUa/3HgaSA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3sXEFVMRuSo=:oizTkM24xt/Gez0Dn9xwqo
- 7zUxaRlqh3OeBp8Jjdj06fXRypKJp9Z2gz3RDogbgfNUe6A66ucDw5DD458kDsbKX3eEiZrnf
- MgAPqiDuLpgytc9GXNdlf1QMaVGRJ+FqSf1ev+EBU9/W3VYqdgkdC28D7FHt7dKrvmJKS0Qgm
- T256AyPwTPxAGRk3yhsglxBZ6Po/XBpMvC3gEPcqmH0k8trAHOOkCXzeXTuxx5shLtdd2VvA1
- v29px/uzWeqPZkKqS/id45qb0JzSWHekMjNBPSHYOTolmwCmzPO/hs6S7dnur5leVDB3ESNDY
- 5eZT47aNvvvjTkOLhTwXkrAT4S/rbWD6zTfr95T1koqx1oQ7sEXWUREX6RgKYC7B3xhcKFvrR
- +C8GmSmufHgHJJXV6pWMSjCPmBj47UZVS2cGTKSDWkf6uvCtu45wDs4aAmbdS
+X-Provags-ID: V03:K1:0n2fIG2Rpu9ZJwXMl4tBwZ/3tnXlDtOxKiwWjJGncmHiDEu2Ots
+ MuE3bpBi/A7oy19oFifjuPlJ6PNuFqxEZlQ/OaPdyABbvLmebIgN3ERFOzOA6iFdymsd52C
+ 1/TbShxjwoGJfc3mL3HyEkwSdtnG8/xXUt3AxYt/GCiULEReqjGbTGBW1rVF6omosnLrzVx
+ EHcfI++g4pju0RSD5/vjQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:umiqnbUS6cI=:6mZcagxU2YcHIT1ZeFWN0x
+ ITMc0hS8D155f0MQv+OVwVUKXQT61SVKLu4HN3Z07T+lLzrKDunN87SkmokuFQFlu63oYqhhz
+ kbQ28pJ5cvmCwOsgQvOXdmfZbmPgJcoXnVD5YytCPpf6SsYXovqatWtFv3hTLVOez2HBuV9Pk
+ Tl2YeWF3q8QJ96tjYPJu0YMSVoUx3CzLOeBI0jpaHJPf9xYeAvB8sTJ4NbPBC2W/qO0vTcPBd
+ ybhArh6Zlr5poXM1V1P6AKCYi2aeUFuC8su6oiHrYC39wkIOhwRATcJbzsITWPksn/k1ZYZdg
+ kWZMVMi6QPKWy6qs83fwEm4V7NEBa0fSdNB/4+kq0xRSCcutLLZ0rJGNnx1HU/XCvsLf187WQ
+ kjCnQUfA/kA5RbPqyL3Km1K3SJQ6Wyz/qEJ6oMttNvI1knDnRrTC8l8blHtD8
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-For detached oftree support, find the root node and record it, on iterator
-creation. If we find the root of the global oftree, record NULL, in order to
-have a clear distinction between detached and non-detached cases. The recorded
-root node is then used for resolving phandles.
-
-Note that in the detached case, phandle cache can't be used, so we have a
-little performance penalty on repeated phandle lookups.
+Introduce a helper for detaching a named device from bus and
+unregistering it. This is helpful eg. if some board specific driver
+needs to remove an unwanted device that had been probed via firmware,
+but should be handled differently.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/of/base.c  | 13 ++++++++++++-
- include/linux/of.h |  1 +
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/base/bus.c         | 16 ++++++++++++++++
+ include/linux/device/bus.h |  9 +++++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 6b3d1e817808..e5ef611ed233 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1249,6 +1249,7 @@ int of_phandle_iterator_init(struct of_phandle_iterator *it,
- {
- 	const __be32 *list;
- 	int size;
-+	struct device_node *walk;
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index a9c23ecebc7c..450d3ed6cf1f 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -178,6 +178,22 @@ static const struct kset_uevent_ops bus_uevent_ops = {
  
- 	memset(it, 0, sizeof(*it));
+ static struct kset *bus_kset;
  
-@@ -1270,6 +1271,16 @@ int of_phandle_iterator_init(struct of_phandle_iterator *it,
- 	it->phandle_end = list;
- 	it->cur = list;
- 
-+	/*
-+	 * find the root of our tree and record it, if we're dealing with an
-+	 * detached oftree - in non-detached case, we record NULL, for clear
-+	 * distinction between these two cases.
-+	 */
-+	for (walk=(struct device_node*)np;
-+	     walk->parent;
-+	     walk=(struct device_node*)walk->parent);
-+	it->root = ((walk == of_root) ? NULL : walk);
++int bus_unregister_device_by_name(struct bus_type *bus, const char *name)
++{
++	struct device *dev;
 +
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(of_phandle_iterator_init);
-@@ -1297,7 +1308,7 @@ int of_phandle_iterator_next(struct of_phandle_iterator *it)
- 		 * Find the provider node and parse the #*-cells property to
- 		 * determine the argument length.
- 		 */
--		it->node = of_find_node_by_phandle(it->phandle);
-+		it->node = of_find_node_by_phandle_from(it->root, it->phandle);
- 
- 		if (it->cells_name) {
- 			if (!it->node) {
-diff --git a/include/linux/of.h b/include/linux/of.h
-index c285141653e5..dbf2c7442389 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -82,6 +82,7 @@ struct of_phandle_iterator {
- 	const char *cells_name;
- 	int cell_count;
- 	const struct device_node *parent;
-+	struct device_node *root;
- 
- 	/* List size information */
- 	const __be32 *list_end;
++	dev = bus_find_device_by_name(bus, NULL, name);
++	if (!dev)
++		return -ENOENT;
++
++	device_driver_detach(dev);
++	device_unregister(dev);
++	put_device(dev);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(bus_unregister_device_by_name);
++
+ /* Manually detach a device from its associated driver. */
+ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+ 			    size_t count)
+diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
+index 1ea5e1d1545b..36a1dae26c95 100644
+--- a/include/linux/device/bus.h
++++ b/include/linux/device/bus.h
+@@ -253,6 +253,15 @@ int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+ void bus_sort_breadthfirst(struct bus_type *bus,
+ 			   int (*compare)(const struct device *a,
+ 					  const struct device *b));
++
++/**
++ * bus_unregister_device_by_name - remove device by bus id from specific bus
++ *                                 and unregister it from device core
++ * @bus: bus type
++ * @name: name of the device to remove
++ */
++int bus_unregister_device_by_name(struct bus_type *bus, const char *name);
++
+ /*
+  * Bus notifiers: Get notified of addition/removal of devices
+  * and binding/unbinding of drivers to devices.
 -- 
 2.11.0
 
