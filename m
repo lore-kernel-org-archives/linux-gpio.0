@@ -2,80 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9F6C433DB
-	for <linux-gpio@archiver.kernel.org>; Sun,  7 Feb 2021 17:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C65DC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 06:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF77264E02
-	for <linux-gpio@archiver.kernel.org>; Sun,  7 Feb 2021 17:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B78B64E6F
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 06:00:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbhBGRpT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 7 Feb 2021 12:45:19 -0500
-Received: from m12-13.163.com ([220.181.12.13]:38218 "EHLO m12-13.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229506AbhBGRpS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 7 Feb 2021 12:45:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=xRGMz2+Y98v+90gy3L
-        YVUzAcWLPNy7FWsh6R8cGnp+E=; b=WTCyWP5fn7t9lJ5WOYxufV7nmpCgIWJbyF
-        kddKV5jveaw4Hoa0Dk4+rLYrzMYAqAoP4dx4/AfvEYsHhFqFs+wzGkt4T4TdshDB
-        cP5p2ix7nWD2KJ9DN6Pj3u5UwOH9rEqeJaJBslGWK3NaxsiniQaxWqNG4Y7GNRYi
-        I3GCRr3T0=
-Received: from localhost.localdomain (unknown [223.87.231.49])
-        by smtp9 (Coremail) with SMTP id DcCowADXFDpRAiBgqDBEeQ--.361S2;
-        Sun, 07 Feb 2021 23:08:03 +0800 (CST)
-From:   alex_luca@163.com
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
+        id S229590AbhBHF7o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 00:59:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229565AbhBHF7m (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 00:59:42 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67A70C06174A
+        for <linux-gpio@vger.kernel.org>; Sun,  7 Feb 2021 21:59:02 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id w1so22649945ejf.11
+        for <linux-gpio@vger.kernel.org>; Sun, 07 Feb 2021 21:59:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tYtyn0t74f5TG7BO7dszPSjwDHfBRH5yigTfJIbsbfM=;
+        b=aeWwn0BgbGbDRQBcI8/6eoluPE32h4S3EtIGByH6JDWiCeGU3K5T+8F/B97iALgSra
+         f+BFFf+Tor0wO9iE6ZS5gVJa0dU+RcU1qManRecots4AbHQXSfvff35Kr4pTcJb6c9hX
+         q/SlYArWRJwvolJ8nJR1PbyZAjIwpDO6Zd8f4kJ/3t8jDi7NjCtfq/anS5eO5eLlRjBY
+         xGQiMwwb1NLgMbm/H2hrYeDeSooxd/1zywdN6lbriIxVAXpdmhsq5t+MkrBTPX8DGj4h
+         yVn8KuUUnPco8OGsiij+QHwkMBd45v5XjZmESkfBXv9AsmqsblSnNcTHJftF12jrBYEI
+         CnSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tYtyn0t74f5TG7BO7dszPSjwDHfBRH5yigTfJIbsbfM=;
+        b=hfHV9rxGbMLJ5ehV+tB9eSW21NEYcBxEdl5lITT4JoHNfKRKBKzRbW+J7Zp6Z45k0k
+         P0eSF7G41uqS8HE9k7obRD3grT5b4YATxjBrCbMEcZfyCpx1vvNghSyG6QkrFUiUx0q2
+         TuSBj3qrJho9j3y4eHTiLQXevHb+vrU+NFcKeL85cHW0Khlnd3cmVnkCM3PiH5dpai7l
+         t+7tKt9+ucc78W6vY78H92qTWnrM1w/prbJfAYjrIHivNGwrzGc4O9VLKyKd+DZpiYq4
+         qgY6SICIwmzLjEETqgl0h8zX4hZzs+mEcKhWmcqtrtkqRaSvUqqa0cwKzN5JXLssilyt
+         yE6w==
+X-Gm-Message-State: AOAM532a2KyABX6cefb+8bjs0mVXE+JCqJEFR+RSC3ksL+65RbplGiv+
+        UWoQxf1PAQmTXlmAk9bzAHdKPdDa5pG1lK/NH9VfAQ==
+X-Google-Smtp-Source: ABdhPJyTFOhTTEtE5CPLaZeX4AgDIqlLIdsxLW0RKMO4iPrPn5IUXGo7YJ5f2lAGr+DPh+XOu986MmDSfMRNwUlz4sg=
+X-Received: by 2002:a17:906:4707:: with SMTP id y7mr15220218ejq.445.1612763941155;
+ Sun, 07 Feb 2021 21:59:01 -0800 (PST)
+MIME-Version: 1.0
+References: <1612688430-54282-1-git-send-email-yang.lee@linux.alibaba.com>
+In-Reply-To: <1612688430-54282-1-git-send-email-yang.lee@linux.alibaba.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 8 Feb 2021 06:58:50 +0100
+Message-ID: <CAMpxmJU568mCzEo1MShA7rgp1bWh_3j44hQw3oMWggczj31f8w@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: cdev: convert stream-like files from
+To:     Yang Li <yang.lee@linux.alibaba.com>,
+        Kent Gibson <warthog618@gmail.com>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex_luca@163.com,
-        Zhang Kun <zhangkun@cdjrlc.com>
-Subject: [PATCH] pinctrl: renesas:fix possible null pointer dereference struct pinmux_range *
-Date:   Sun,  7 Feb 2021 23:07:36 +0800
-Message-Id: <20210207150736.24382-1-alex_luca@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: DcCowADXFDpRAiBgqDBEeQ--.361S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrurW8Kr47ArW7urWfCw17ZFb_yoW3twc_Ca
-        48ta4xAFW5C3Z3ur4xZF43Xr9FkF48ursYqrnFqF43A347Xr4YyF95urZ7G348Gw17XFWq
-        yFWvqr4ftr17AjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUHmh7UUUUU==
-X-Originating-IP: [223.87.231.49]
-X-CM-SenderInfo: xdoh5spoxftqqrwthudrp/1tbiThMyylUDHqWZUAAAsB
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Zhang Kun <zhangkun@cdjrlc.com>
+On Sun, Feb 7, 2021 at 10:00 AM Yang Li <yang.lee@linux.alibaba.com> wrote:
+>
+> Eliminate the following coccicheck warning:
+> ./drivers/gpio/gpiolib-cdev.c:2307:7-23: WARNING: gpio_fileops: .read()
+> has stream semantic; safe to change nonseekable_open -> stream_open.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  drivers/gpio/gpiolib-cdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> index 1631727..bad68ef 100644
+> --- a/drivers/gpio/gpiolib-cdev.c
+> +++ b/drivers/gpio/gpiolib-cdev.c
+> @@ -2304,7 +2304,7 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
+>         get_device(&gdev->dev);
+>         file->private_data = cdev;
+>
+> -       ret = nonseekable_open(inode, file);
+> +       ret = stream_open(inode, file);
+>         if (ret)
+>                 goto out_unregister_notifier;
+>
+> --
+> 1.8.3.1
+>
 
-The parameters of  sh_pfc_enum_in_range() pinmux_range *r should be checked
-first for possible null ponter, especially when PINMUX_TYPE_FUNCTION as the
-pinmux_type was passed by sh_pfc_config_mux().
+I think you have a false positive here - we don't even take the offset
+argument into account so I don't see how the line_watch_read callback
+could be interpreted as seekable.
 
-Signed-off-by: Zhang Kun <zhangkun@cdjrlc.com>
----
- drivers/pinctrl/renesas/core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 2cc457279345..40bbc8366668 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -128,6 +128,9 @@ int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin)
- 
- static int sh_pfc_enum_in_range(u16 enum_id, const struct pinmux_range *r)
- {
-+	if (!r)
-+		return 0;
-+
- 	if (enum_id < r->begin)
- 		return 0;
- 
--- 
-2.17.1
-
-
+Bart
