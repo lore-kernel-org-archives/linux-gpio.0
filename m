@@ -5,111 +5,435 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B38C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584A8C43381
 	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1A4E64E77
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ACA264E77
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:25:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbhBHWZU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 17:25:20 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:45149 "EHLO
+        id S231618AbhBHWZW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 17:25:22 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:41129 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbhBHWZD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:25:03 -0500
+        with ESMTP id S231518AbhBHWZE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:25:04 -0500
 Received: from orion.localdomain ([95.115.15.83]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MYe6H-1lMjTA0aKB-00VdwQ; Mon, 08 Feb 2021 23:22:15 +0100
+ 1Mf0yy-1lpQQN3nSc-00gcBn; Mon, 08 Feb 2021 23:22:18 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     rafael@kernel.org, info@metux.net, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, robh+dt@kernel.org,
         frowand.list@gmail.com, pantelis.antoniou@konsulko.com,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH 06/12] of: kobj: introduce of_attach_tree_sysfs()
-Date:   Mon,  8 Feb 2021 23:21:57 +0100
-Message-Id: <20210208222203.22335-7-info@metux.net>
+Subject: [RFC PATCH 11/12] platform/x86: skeleton for oftree based board device initialization
+Date:   Mon,  8 Feb 2021 23:22:02 +0100
+Message-Id: <20210208222203.22335-12-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20210208222203.22335-1-info@metux.net>
 References: <20210208222203.22335-1-info@metux.net>
-X-Provags-ID: V03:K1:ZtGzokklzdJEAZwPGATmrH1/M0zLFv6KzHuwBPz7+oXxl4Nxg1b
- T2WWlO6QkPZXpRM1Fek92mrgiTDDi1HM4UyPU3mKz4QBO9Pec9Z03+jXoat9A4OWPnc+qTZ
- GQpY0FB294LDM9mM68UB1WcUCHpIcSU5rAjnAwx6EpgOFzSD7ZA882En9rcIIDkIyV1dY9P
- ZiFJ84GVJGUmb+x3Lzg9w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nx2Q60Qwd9I=:b8Ucwi6B5pI52GcH8caQh8
- L+DLzZZ6WY7Cu3cRAtHCxlhyENquB3BP1CIlxK9wyXd9Nf4VDBAPh4PwWKGzi+f3sZETCWcCZ
- LqjFZbz4XF2mUhd08TojxNMy2qS2pjezRtcn4hTEz6uAlKATI1c5/4K+bD3qZ8MclX+2EnQSG
- ki69/8FFFb/IZnyYP+2Ke1opL6gBtGV9wXHifv+eob+31L/66TAVVl1ORHtQFFArNoToPfFV4
- DuB1bSWhI/keD7yDi/wv6SYWhNjWYzU+uQPehAnq86ALhihBIs0Nmu738nu2KXpjVGF5PczLf
- kHq75BLEfUNsZ2iPTHrItQBAqh8flYDq6bRX/NgYtQbGdlCK0LCQw9HBHkVyfnCr30w4A3Sjv
- vWY6d0iwGvCr0kXEuSxvN0sEAOVRco5IpDWW4YN3wmKz37QevT9uy/rP3r5To
+X-Provags-ID: V03:K1:5KSHO+mZyjEhDezzvwlTZtaq1BeKWhLjf5NtiYXIs+OFGBPy7EN
+ l1EpRKIOv8DC5JQZYZ4QQHdDC3f8UR4I2F/jkZ0aERqtQ8Mp/InvotLjkTmqi0pVp1hXlAr
+ Sy46hIhNUb8Yp+E/wqhUaaP21HkYGk8Ig6/PwmgoVHaZAxFlXFPBppI/z3bY9Dj0w063RFN
+ g49/Zgi270Mr1SU2U0oEw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vPnCi//+1uw=:oDvmtkqLFE+8f70CNahU/3
+ j+u1BKblgDLihU5g8YskOzPKg03rnnW+X0AIqPunJelZ8nlgiI7s09vkC49kK5yplL/mJ82dG
+ iwGK9QBVDGO6hSST2DYzqAEMVtdXiNw4JOPmFriVN29OExEJserhEVv7kPe+laPSmbAgJoqCj
+ i5jxkx30VqHNXaYOrPxE/2D75P7Rtb508bbe1P4WSP6vJxPKnGqkFwbnU9pAjEV6z6nVPHIBV
+ xXaRWaZZvflWs2UIiM6ymBvDzOYEv3/5xh2AjRxWjFSbZYCCWH17wSo2lVhQSwqYOWMkfM+CD
+ VrWLeqqzpKEXdfB9QbAxSYLjyV4s2lYTdNLg2tZbq/uA99Ld/wwnvdwr6/upbiJwFMOO53kBK
+ 4uUYtD4EPz97t7uap3JkPo26X48GrXbePqMkDm4kVuHnxDxZvuHmpm64VbE84
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce helper for attaching an (separate) oftree into sysfs.
-This is useful, when drivers use their own internal device trees,
-separate from the platform's global one, and wanna make it visible
-to userspace via sysfs.
+Lots of boards have extra devices that can't be fully probed via bus'es
+(like PCI) or generic firmware mechanisms like ACPI. Often those capabilities
+are just partial or even highly depend on firmware version.
+
+Instead of hand-writing board specific drivers merely for the correct
+initialization / parameterization of generic drivers, hereby introducing
+a generic mechanism, using the already well supported oftree.
+
+These oftrees are compiled into the driver, which first tries to match
+machine identifications (eg. DMI strings) against rules defined in the
+individual oftrees, and on success, probes the devices that are defined
+by them.
+
+For the time being, we just support matching on DMI_BOARD_NAME and
+DMI_SYS_VENDOR - other criteria, even bus- or ACPI-id's can be added later,
+when needed.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/of/kobj.c  | 17 +++++++++++++++++
- include/linux/of.h |  7 +++++++
- 2 files changed, 24 insertions(+)
+ drivers/platform/Kconfig      |   2 +
+ drivers/platform/Makefile     |   1 +
+ drivers/platform/of/Kconfig   |  41 ++++++++++++++
+ drivers/platform/of/Makefile  |   5 ++
+ drivers/platform/of/drv.c     | 123 +++++++++++++++++++++++++++++++++++++++++
+ drivers/platform/of/init.c    | 126 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/platform/of/ofboard.h |   8 +++
+ 7 files changed, 306 insertions(+)
+ create mode 100644 drivers/platform/of/Kconfig
+ create mode 100644 drivers/platform/of/Makefile
+ create mode 100644 drivers/platform/of/drv.c
+ create mode 100644 drivers/platform/of/init.c
+ create mode 100644 drivers/platform/of/ofboard.h
 
-diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
-index 511d7e8b9068..96dc5a2753f4 100644
---- a/drivers/of/kobj.c
-+++ b/drivers/of/kobj.c
-@@ -166,3 +166,20 @@ void __of_detach_node_sysfs(struct device_node *np)
+diff --git a/drivers/platform/Kconfig b/drivers/platform/Kconfig
+index 18fc6a08569e..9ac6d4e2a762 100644
+--- a/drivers/platform/Kconfig
++++ b/drivers/platform/Kconfig
+@@ -15,3 +15,5 @@ source "drivers/platform/mellanox/Kconfig"
+ source "drivers/platform/olpc/Kconfig"
  
- 	of_node_put(np);
- }
+ source "drivers/platform/surface/Kconfig"
 +
-+void of_attach_tree_sysfs(struct device_node *root, const char* base)
++source "drivers/platform/of/Kconfig"
+diff --git a/drivers/platform/Makefile b/drivers/platform/Makefile
+index 4de08ef4ec9d..ca4d74701fd7 100644
+--- a/drivers/platform/Makefile
++++ b/drivers/platform/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_OLPC_EC)		+= olpc/
+ obj-$(CONFIG_GOLDFISH)		+= goldfish/
+ obj-$(CONFIG_CHROME_PLATFORMS)	+= chrome/
+ obj-$(CONFIG_SURFACE_PLATFORMS)	+= surface/
++obj-$(CONFIG_PLATFORM_OF_DRV)	+= of/
+diff --git a/drivers/platform/of/Kconfig b/drivers/platform/of/Kconfig
+new file mode 100644
+index 000000000000..a0b5a641a7c6
+--- /dev/null
++++ b/drivers/platform/of/Kconfig
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# X86 Platform Specific Drivers
++#
++
++menuconfig PLATFORM_OF_DRV
++	tristate "Platform support via device tree"
++	select OF
++	select OF_FLATTREE
++	help
++	  Say Y here to get to see options for board support that's initialized
++	  via compiled-in flattened device trees.
++
++	  This is entirely independent from traditional DT-based booting (or DT
++	  overlays) and meant for additional devices on non-OF-based (eg. APCI)
++	  boards or composite devices behind probing-capable busses (eg. PCI).
++
++	  Instead of writing individual drivers for just the initialization of
++	  subdevices, this option provides a generic mechanism for describing
++	  these devices via device tree.
++
++	  If you say N, all options in this submenu will be skipped and disabled.
++
++if PLATFORM_OF_DRV
++
++config PLATFORM_OF_DRV_SYSFS_DTB
++	bool "Expose device tree binaries in sysfs"
++	default y
++	depends on SYSFS
++	help
++	  Say Y here to enable exposing device tree binaries at /sys/firmware.
++
++config PLATFORM_OF_DRV_SYSFS_DT
++	bool "Expose parsed device tree in sysfs"
++	default y
++	depends on SYSFS
++	help
++	  Say Y here to enable exposing device tree nodes at
++	  /sys/firmware/devicetree.
++
++endif # PLATFORM_OF_DRV
+diff --git a/drivers/platform/of/Makefile b/drivers/platform/of/Makefile
+new file mode 100644
+index 000000000000..84cf3003c500
+--- /dev/null
++++ b/drivers/platform/of/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++
++ofboard-y := init.o drv.o
++
++obj-$(CONFIG_PLATFORM_OF_DRV) += ofboard.o
+diff --git a/drivers/platform/of/drv.c b/drivers/platform/of/drv.c
+new file mode 100644
+index 000000000000..ff7006c24cf7
+--- /dev/null
++++ b/drivers/platform/of/drv.c
+@@ -0,0 +1,123 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * Copyright (C) 2021 metux IT consult
++ * Author: Enrico Weigelt <info@metux.net>
++ */
++
++#include <linux/dmi.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/slab.h>
++
++#include "ofboard.h"
++
++static bool __init ofboard_match_dmi(struct device *dev)
 +{
-+	struct device_node *np;
++#ifdef CONFIG_DMI
++	const char *board = dmi_get_system_info(DMI_BOARD_NAME);
++	const char *vendor = dmi_get_system_info(DMI_SYS_VENDOR);
++	const struct device_node *node = dev->of_node;
 +
-+	if (!root)
++	if (!of_match_string(node, "dmi-sys-vendor", vendor))
++		return false;
++
++	if (!of_match_string(node, "dmi-board-name", board))
++		return false;
++
++	dev_info(dev, "matched dmi: vendor=\"%s\" board=\"%s\"\n", vendor,
++		 board);
++
++	return true;
++#else
++	return false;
++#endif
++}
++
++static void __init ofboard_kick_devs(struct device *dev,
++				     struct device_node *np,
++				     const char *bus_name)
++{
++	struct property *prop;
++	const char *walk;
++	struct bus_type *bus;
++	int ret;
++
++	if (strcmp(bus_name, "name")==0)
 +		return;
 +
-+	/* need to from our parent, so we don't traverse above our root,
-+	 * if it's actually a subtree */
-+	root->parent = NULL;
++	bus = find_bus(bus_name);
++	if (!bus) {
++		dev_warn(dev, "cant find bus \"%s\"\n", bus_name);
++		return;
++	}
 +
-+	__of_attach_node_sysfs(root, base);
-+	for_each_of_allnodes_from(root, np)
-+		__of_attach_node_sysfs(np, base);
++	of_property_for_each_string(np, bus_name, prop, walk) {
++		ret = bus_unregister_device_by_name(bus, walk);
++		if (ret)
++			dev_warn(dev, "failed removing device \"%s\" on bus "
++				 "\"%s\": %d\n", walk, bus_name, ret);
++		else
++			dev_info(dev, "removed device \"%s\" from bus "
++				 "\"%s\"\n", walk, bus_name);
++	}
++
++	bus_put(bus);
 +}
-+EXPORT_SYMBOL_GPL(of_attach_tree_sysfs);
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 3612429632f4..c2fb12ce07f9 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -421,6 +421,8 @@ extern int of_update_property(struct device_node *np, struct property *newprop);
- extern int of_attach_node(struct device_node *);
- extern int of_detach_node(struct device_node *);
- 
-+extern void of_attach_tree_sysfs(struct device_node *root, const char* base);
 +
- #define of_match_ptr(_ptr)	(_ptr)
- 
- /**
-@@ -1010,6 +1012,11 @@ static inline phys_addr_t of_dma_get_max_cpu_address(struct device_node *np)
- 	return PHYS_ADDR_MAX;
- }
- 
-+static inline void of_attach_tree_sysfs(struct device_node *root,
-+					const char* base)
++static void __init ofboard_unbind(struct device *dev)
 +{
++	struct property *pr;
++	struct device_node *np = of_get_child_by_name(dev->of_node, "unbind");
++
++	if (!IS_ERR_OR_NULL(np))
++		for_each_property_of_node(np, pr)
++			ofboard_kick_devs(dev, np, pr->name);
 +}
 +
- #define of_match_ptr(_ptr)	NULL
- #define of_match_node(_matches, _node)	NULL
- #endif /* CONFIG_OF */
++static int ofboard_populate(struct device *dev)
++{
++	int ret;
++	struct device_node *of_node = dev->of_node;
++	struct device_node *np = of_get_child_by_name(of_node, "devices");
++
++	if (IS_ERR_OR_NULL(np)) {
++		dev_info(dev, "board oftree has no devices\n");
++		return -ENOENT;
++	}
++
++	ret = of_platform_populate(np, NULL, NULL, dev);
++	if (ret) {
++		dev_err(dev, "failed probing of childs: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int ofboard_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++
++	if (!ofboard_match_dmi(dev))
++		return -EINVAL;
++
++	ofboard_unbind(&pdev->dev);
++
++	return ofboard_populate(dev);
++}
++
++static const struct of_device_id ofboard_of_match[] = {
++	{ .compatible = "virtual,dmi-board" },
++	{}
++};
++
++struct platform_driver ofboard_driver = {
++	.driver = {
++		.name = "ofboard",
++		.of_match_table = ofboard_of_match,
++	},
++	.probe = ofboard_probe,
++};
+diff --git a/drivers/platform/of/init.c b/drivers/platform/of/init.c
+new file mode 100644
+index 000000000000..3b8373cda77a
+--- /dev/null
++++ b/drivers/platform/of/init.c
+@@ -0,0 +1,126 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * Copyright (C) 2021 metux IT consult
++ * Author: Enrico Weigelt <info@metux.net>
++ */
++
++#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
++
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_fdt.h>
++#include <linux/libfdt.h>
++#include <linux/of_platform.h>
++#include <linux/slab.h>
++#include "ofboard.h"
++
++#define DECLARE_FDT_EXTERN(n) \
++	extern char __dtb_##n##_begin[]; \
++	static struct bin_attribute __dtb_##n##_attr = { \
++		.attr = { .name = "fdt-" #n, .mode = S_IRUSR }, \
++		.private = __dtb_##n##_begin, \
++		.read = fdt_image_raw_read, \
++	};
++
++struct fdt_image {
++	char *begin;
++	size_t size;
++	char *basename;
++	struct bin_attribute *bin_attr;
++	struct device_node *root;
++};
++
++#define FDT_IMAGE_ENT(n)			\
++	{					\
++		.begin = __dtb_##n##_begin,	\
++		.bin_attr = &__dtb_##n##_attr,	\
++		.basename = "ofboard-" #n	\
++	}
++
++static ssize_t fdt_image_raw_read(struct file *filep, struct kobject *kobj,
++				  struct bin_attribute *bin_attr, char *buf,
++				  loff_t off, size_t count)
++{
++	memcpy(buf, bin_attr->private + off, count);
++	return count;
++}
++
++static struct fdt_image fdt[] = {
++};
++
++static int __init ofdrv_init_sysfs(struct fdt_image *image)
++{
++	image->bin_attr->size = image->size;
++	image->bin_attr->private = image->begin;
++
++	if (sysfs_create_bin_file(firmware_kobj, image->bin_attr))
++		pr_warn("failed creating sysfs bin_file\n");
++
++	of_attach_tree_sysfs(image->root, image->basename);
++
++	return 0;
++}
++
++static int __init ofdrv_parse_image(struct fdt_image *image)
++{
++	struct device_node* root;
++	void *new_fdt;
++
++	image->size = fdt_totalsize(image->begin);
++	new_fdt = kmemdup(image->begin, image->size, GFP_KERNEL);
++	if (!new_fdt)
++		return -ENOMEM;
++
++	image->begin = new_fdt;
++	of_fdt_unflatten_tree(new_fdt, NULL, &root);
++
++	if (IS_ERR_OR_NULL(root))
++		return PTR_ERR(root);
++
++	image->root = root;
++
++	return 0;
++}
++
++static int __init ofdrv_init_image(struct fdt_image *image)
++{
++	struct device_node *np;
++	int ret;
++
++	ret = ofdrv_parse_image(image);
++	if (ret)
++		return ret;
++
++	ofdrv_init_sysfs(image);
++
++	for_each_child_of_node(image->root, np) {
++		struct platform_device_info pdevinfo = {
++			.name = np->name,
++			.fwnode = &np->fwnode,
++			.id = PLATFORM_DEVID_NONE,
++		};
++		platform_device_register_full(&pdevinfo);
++	}
++
++	return 0;
++}
++
++static int __init ofdrv_init(void)
++{
++	int x;
++
++	platform_driver_register(&ofboard_driver);
++
++	for (x=0; x<ARRAY_SIZE(fdt); x++)
++		ofdrv_init_image(&fdt[x]);
++
++	return 0;
++}
++
++module_init(ofdrv_init);
++
++MODULE_AUTHOR("Enrico Weigelt, metux IT consult <info@metux.net>");
++MODULE_DESCRIPTION("Generic oftree based initialization of custom board devices");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/platform/of/ofboard.h b/drivers/platform/of/ofboard.h
+new file mode 100644
+index 000000000000..7516e5df4f18
+--- /dev/null
++++ b/drivers/platform/of/ofboard.h
+@@ -0,0 +1,8 @@
++#ifndef __DRIVERS_PLATFORM_OFBOARD_H
++#define __DRIVERS_PLATFORM_OFBOARD_H
++
++#include <linux/platform_device.h>
++
++extern struct platform_driver ofboard_driver;
++
++#endif
 -- 
 2.11.0
 
