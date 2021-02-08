@@ -2,89 +2,131 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E08B7C433E9
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 20:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB10BC433E6
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9529D64E45
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 20:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B4E864E77
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 22:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232632AbhBHU4c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 15:56:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40120 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230305AbhBHUyp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 8 Feb 2021 15:54:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BAD3EAE57;
-        Mon,  8 Feb 2021 20:53:54 +0000 (UTC)
-Message-ID: <5c69d62a7b4479d184b0ee8b8e5168e43cd494a0.camel@suse.de>
-Subject: Re: [PATCH v7 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-Date:   Mon, 08 Feb 2021 21:53:52 +0100
-In-Reply-To: <20210118123244.13669-12-nsaenzjulienne@suse.de>
-References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
-         <20210118123244.13669-12-nsaenzjulienne@suse.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-oVNnO66HmWqHkepYu506"
-User-Agent: Evolution 3.38.3 
-MIME-Version: 1.0
+        id S230055AbhBHWYt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 17:24:49 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:47129 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229698AbhBHWYs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 17:24:48 -0500
+Received: from orion.localdomain ([95.115.15.83]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MvrRB-1m1Lbn43eh-00stt0; Mon, 08 Feb 2021 23:22:13 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     rafael@kernel.org, info@metux.net, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, robh+dt@kernel.org,
+        frowand.list@gmail.com, pantelis.antoniou@konsulko.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [RFC PATCH 02/12] of: base: introduce of_find_node_by_phandle_from()
+Date:   Mon,  8 Feb 2021 23:21:53 +0100
+Message-Id: <20210208222203.22335-3-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20210208222203.22335-1-info@metux.net>
+References: <20210208222203.22335-1-info@metux.net>
+X-Provags-ID: V03:K1:ry3tr0lI+PQkmkLr//2b6GfCbmACQuG1weOU8C7zi3OIOShrzAX
+ KZYIZMNxk3imLFpt9WqyuTLIA4/Ey5/kHs/aTl8qdF3B1o20hMytkQmBXZQOhazzuVlkS1/
+ Y/R+KBhHdefL0pWd4ccpIOulWiGptaTq2vQmwAPWqUAQlTat+HghNL0OSEnIoiCCz5xJYYr
+ WbPmFyeerXQvua2JyBLxQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QSIQk1vZ/A4=:TeQE94IkBOZ6Cy8OV1zn0O
+ F4cui0rWYvrwlktcamo9z/hu7liVWTzMVAZGfNTm+4pAs38ftxLvXDtEPSDYPriYD4L+MU6Y6
+ Ug5zyUMkY76puEo64wVEL+BvTPG/rv4aN8tL3JT/SBoLsxISNo7wcZ7GEh8o03K2y267eiRsj
+ V47jPzxl775feQHYz3QDNUKQYxAPvIZJcjITmTI0ySqslyQLduWH9u82gvTAvkr9Cwk19ly7x
+ NS2b5gMzBzs5W6f2LlUJ+LE5jJvPsN9vdFDruS5OMj+0OHK9blm8iS66/hpiTDJQyTNYkmXfC
+ BesErPh6htPBtv3JCQCPbyJ7Zl5Yl9N7tV0Vc0G4PcPsOD+CLhw0WV+FT/kCqVrnCp0fEcna3
+ EoLE7XnNGvboBMTEzb44WlOox51fDL+jraqK/0ZtKF4W2MW7U+EEQjR79GeRQ
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Introducing a variant of of_find_node_by_phandle() that starts off a
+different root node. This root can also point to an detached oftree,
+which has no relations to primary oftree, even on platforms that natively
+don't have oftree at all (eg. ACPI platforms).
 
---=-oVNnO66HmWqHkepYu506
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Note that this has nothing to do with oftree overlays.
 
-On Mon, 2021-01-18 at 13:32 +0100, Nicolas Saenz Julienne wrote:
-> Adds support to control the PWM bus available in official Raspberry Pi
-> PoE HAT. Only RPi's co-processor has access to it, so commands have to
-> be sent through RPi's firmware mailbox interface.
->=20
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
->=20
-> ---
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/of/base.c  | 14 +++++++++-----
+ include/linux/of.h |  7 ++++++-
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-ping :)
-
-Regards,
-Nicolas
-
-
---=-oVNnO66HmWqHkepYu506
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmAhpOEACgkQlfZmHno8
-x/5Kegf+M/oVJydAlzbsZjeRxmVcRPlY/aU1YOdpfuIQyx991ny1JYSYaGMZ8b9g
-lJ4nBwIeNjAbsPMc0Th89250D6UkOhRb5L7C6grd0B++Ue01IMyQ2mA8UzxxhzYI
-aP/E3P1iwlnTpd/UbvgBr2xd2XBBEYEZ+CEeQohVX51Z/En4bEofLxQloVCwrAQ9
-z+4AWH9ZQDX3ItJ1zmdJGzmNuZjuNQV2igYjp0UuWY01wIkeau20FxDqFMweN9ul
-xMKBZ8zaX3T85TLQcYtj29KNQQGvUwV5xs8P36KJ5OfVUw4Ay4M5mSpb6nHb0GiU
-9YqIJIOQ+gzZH+tFpYr93phGwLoI7Q==
-=bPaD
------END PGP SIGNATURE-----
-
---=-oVNnO66HmWqHkepYu506--
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 8a348f0d3c5e..6b3d1e817808 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1187,13 +1187,15 @@ int of_modalias_node(struct device_node *node, char *modalias, int len)
+ EXPORT_SYMBOL_GPL(of_modalias_node);
+ 
+ /**
+- * of_find_node_by_phandle - Find a node given a phandle
++ * of_find_node_by_phandle_from - Find a node given a phandle
++ * @root:	root of the tree (on NULL default to of_root)
+  * @handle:	phandle of the node to find
+  *
+  * Returns a node pointer with refcount incremented, use
+  * of_node_put() on it when done.
+  */
+-struct device_node *of_find_node_by_phandle(phandle handle)
++struct device_node *of_find_node_by_phandle_from(struct device_node *root,
++						 phandle handle)
+ {
+ 	struct device_node *np = NULL;
+ 	unsigned long flags;
+@@ -1211,19 +1213,21 @@ struct device_node *of_find_node_by_phandle(phandle handle)
+ 		np = phandle_cache[handle_hash];
+ 
+ 	if (!np) {
+-		for_each_of_allnodes(np)
++		for_each_of_allnodes_from(root, np) {
+ 			if (np->phandle == handle &&
+ 			    !of_node_check_flag(np, OF_DETACHED)) {
+-				phandle_cache[handle_hash] = np;
++				if (!root)
++					phandle_cache[handle_hash] = np;
+ 				break;
+ 			}
++		}
+ 	}
+ 
+ 	of_node_get(np);
+ 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+ 	return np;
+ }
+-EXPORT_SYMBOL(of_find_node_by_phandle);
++EXPORT_SYMBOL(of_find_node_by_phandle_from);
+ 
+ void of_print_phandle_args(const char *msg, const struct of_phandle_args *args)
+ {
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 4b27c9a27df3..c285141653e5 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -282,7 +282,12 @@ static inline struct device_node *of_find_node_by_path(const char *path)
+ 	return of_find_node_opts_by_path(path, NULL);
+ }
+ 
+-extern struct device_node *of_find_node_by_phandle(phandle handle);
++extern struct device_node *of_find_node_by_phandle_from(
++	struct device_node* root, phandle handle);
++static inline struct device_node *of_find_node_by_phandle(phandle handle)
++{
++	return of_find_node_by_phandle_from(NULL, handle);
++}
+ extern struct device_node *of_get_parent(const struct device_node *node);
+ extern struct device_node *of_get_next_parent(struct device_node *node);
+ extern struct device_node *of_get_next_child(const struct device_node *node,
+-- 
+2.11.0
 
