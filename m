@@ -2,24 +2,25 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECEAC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAFCC433E0
 	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFCF64E7E
+	by mail.kernel.org (Postfix) with ESMTP id 3377264E7A
 	for <linux-gpio@archiver.kernel.org>; Mon,  8 Feb 2021 09:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbhBHI76 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Feb 2021 03:59:58 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:12865 "EHLO
+        id S231237AbhBHJAJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Feb 2021 04:00:09 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:12866 "EHLO
         szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231321AbhBHI5z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 03:57:55 -0500
+        with ESMTP id S231253AbhBHI54 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2021 03:57:56 -0500
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4DZ0Gl2gvjz7htx;
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4DZ0Gl2z3Xz7hv4;
         Mon,  8 Feb 2021 16:55:27 +0800 (CST)
 Received: from huawei.com (10.69.192.56) by DGGEMS401-HUB.china.huawei.com
  (10.3.19.201) with Microsoft SMTP Server id 14.3.498.0; Mon, 8 Feb 2021
@@ -30,10 +31,12 @@ To:     <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
         <ssantosh@kernel.org>, <khilman@kernel.org>
 CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@openeuler.org>
-Subject: [PATCH for next v1 0/2] gpio: few clean up patches to replace spin_lock_irqsave with spin_lock
-Date:   Mon, 8 Feb 2021 16:56:15 +0800
-Message-ID: <1612774577-55943-1-git-send-email-luojiaxing@huawei.com>
+Subject: [PATCH for next v1 1/2] gpio: omap: Replace raw_spin_lock_irqsave with raw_spin_lock in omap_gpio_irq_handler()
+Date:   Mon, 8 Feb 2021 16:56:16 +0800
+Message-ID: <1612774577-55943-2-git-send-email-luojiaxing@huawei.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1612774577-55943-1-git-send-email-luojiaxing@huawei.com>
+References: <1612774577-55943-1-git-send-email-luojiaxing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.69.192.56]
@@ -42,19 +45,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is no need to use API with _irqsave in hard IRQ handler, So replace
-those with spin_lock.
+There is no need to use API with _irqsave in omap_gpio_irq_handler(),
+because it already be in a irq-disabled context.
 
-Luo Jiaxing (2):
-  gpio: omap: Replace raw_spin_lock_irqsave with raw_spin_lock in
-    omap_gpio_irq_handler()
-  gpio: grgpio: Replace spin_lock_irqsave with spin_lock in
-    grgpio_irq_handler()
+Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
+---
+ drivers/gpio/gpio-omap.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
- drivers/gpio/gpio-grgpio.c |  5 ++---
- drivers/gpio/gpio-omap.c   | 15 ++++++---------
- 2 files changed, 8 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 41952bb..dc8bbf4 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -560,8 +560,6 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 	u32 enabled, isr, edge;
+ 	unsigned int bit;
+ 	struct gpio_bank *bank = gpiobank;
+-	unsigned long wa_lock_flags;
+-	unsigned long lock_flags;
+ 
+ 	isr_reg = bank->base + bank->regs->irqstatus;
+ 	if (WARN_ON(!isr_reg))
+@@ -572,7 +570,7 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 		return IRQ_NONE;
+ 
+ 	while (1) {
+-		raw_spin_lock_irqsave(&bank->lock, lock_flags);
++		raw_spin_lock(&bank->lock);
+ 
+ 		enabled = omap_get_gpio_irqbank_mask(bank);
+ 		isr = readl_relaxed(isr_reg) & enabled;
+@@ -586,7 +584,7 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 		if (edge)
+ 			omap_clear_gpio_irqbank(bank, edge);
+ 
+-		raw_spin_unlock_irqrestore(&bank->lock, lock_flags);
++		raw_spin_unlock(&bank->lock);
+ 
+ 		if (!isr)
+ 			break;
+@@ -595,7 +593,7 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 			bit = __ffs(isr);
+ 			isr &= ~(BIT(bit));
+ 
+-			raw_spin_lock_irqsave(&bank->lock, lock_flags);
++			raw_spin_lock(&bank->lock);
+ 			/*
+ 			 * Some chips can't respond to both rising and falling
+ 			 * at the same time.  If this irq was requested with
+@@ -606,15 +604,14 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 			if (bank->toggle_mask & (BIT(bit)))
+ 				omap_toggle_gpio_edge_triggering(bank, bit);
+ 
+-			raw_spin_unlock_irqrestore(&bank->lock, lock_flags);
++			raw_spin_unlock(&bank->lock);
+ 
+-			raw_spin_lock_irqsave(&bank->wa_lock, wa_lock_flags);
++			raw_spin_lock(&bank->wa_lock);
+ 
+ 			generic_handle_irq(irq_find_mapping(bank->chip.irq.domain,
+ 							    bit));
+ 
+-			raw_spin_unlock_irqrestore(&bank->wa_lock,
+-						   wa_lock_flags);
++			raw_spin_unlock(&bank->wa_lock);
+ 		}
+ 	}
+ exit:
 -- 
 2.7.4
 
