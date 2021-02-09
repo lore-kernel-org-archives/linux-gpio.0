@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E0DC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BD7C4332E
 	for <linux-gpio@archiver.kernel.org>; Tue,  9 Feb 2021 13:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0695364ED7
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Feb 2021 13:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E2DC64EDB
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Feb 2021 13:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbhBINcH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Feb 2021 08:32:07 -0500
-Received: from forward105p.mail.yandex.net ([77.88.28.108]:50204 "EHLO
-        forward105p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231217AbhBINcF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2021 08:32:05 -0500
-Received: from iva8-f240adbdb32e.qloud-c.yandex.net (iva8-f240adbdb32e.qloud-c.yandex.net [IPv6:2a02:6b8:c0c:1090:0:640:f240:adbd])
-        by forward105p.mail.yandex.net (Yandex) with ESMTP id 090084D40336;
-        Tue,  9 Feb 2021 16:31:22 +0300 (MSK)
+        id S231443AbhBINcK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Feb 2021 08:32:10 -0500
+Received: from forward103o.mail.yandex.net ([37.140.190.177]:58821 "EHLO
+        forward103o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231292AbhBINcH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2021 08:32:07 -0500
+Received: from iva6-b9aa172731b6.qloud-c.yandex.net (iva6-b9aa172731b6.qloud-c.yandex.net [IPv6:2a02:6b8:c0c:9a88:0:640:b9aa:1727])
+        by forward103o.mail.yandex.net (Yandex) with ESMTP id C54815F80737;
+        Tue,  9 Feb 2021 16:31:23 +0300 (MSK)
 Received: from iva1-bc1861525829.qloud-c.yandex.net (iva1-bc1861525829.qloud-c.yandex.net [2a02:6b8:c0c:a0e:0:640:bc18:6152])
-        by iva8-f240adbdb32e.qloud-c.yandex.net (mxback/Yandex) with ESMTP id LxUrp0zlDJ-VLHaWaEY;
-        Tue, 09 Feb 2021 16:31:21 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1612877481;
-        bh=lduRyAoxgIxVCQylqzBQTH5yxMhYzLooO1actsXv0Zw=;
+        by iva6-b9aa172731b6.qloud-c.yandex.net (mxback/Yandex) with ESMTP id 7x2E8nHkeE-VNIuLRIg;
+        Tue, 09 Feb 2021 16:31:23 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1612877483;
+        bh=dElC7nQ0BytxegF4+XkB3bMQiY+WpMtoh8a2xZVnmdw=;
         h=In-Reply-To:References:Date:Subject:To:From:Message-Id:Cc;
-        b=oL3DjYHxhTQ4LDWWRt3fqlJc9jsGukxLvaI2EN/TyVzrhtq7QYrvna+1hiVsV4EZX
-         4ZFP3/3LVUmZR18oJpcjXepC3mPh6CzTt2vAhzZKYW+DYWobZpmpmSFNyFKxmx9NTK
-         Lksw5woq70189/arxsZDH79LgwYVKJ43gCGJ92B0=
-Authentication-Results: iva8-f240adbdb32e.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by iva1-bc1861525829.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id aJNFhJtpP6-VLoaIiCG;
-        Tue, 09 Feb 2021 16:31:21 +0300
+        b=ICD3iVystfjcZxfTtjwYjbfUySrWT2Uth3SDLL91OqO7IK6wRIGwUk8GQqmoJ2ao8
+         eF2JYboZjSwvXxA8vAfjrghIvmb2HQsIUWd1SDleRhhD1z9FKu2eUhf7nNfj2MDTX0
+         hL/OqKNfiJ+eZibeWJGEAjHkY6WtWBbLkiYW6anw=
+Authentication-Results: iva6-b9aa172731b6.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by iva1-bc1861525829.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id aJNFhJtpP6-VNoas7eL;
+        Tue, 09 Feb 2021 16:31:23 +0300
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (Client certificate not present)
 From:   Nikita Shubin <nikita.shubin@maquefel.me>
@@ -43,9 +43,9 @@ Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Alexander Sverdlin <alexander.sverdlin@gmail.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/7] gpio: ep93xx: Fix wrong irq numbers in port F
-Date:   Tue,  9 Feb 2021 16:31:06 +0300
-Message-Id: <20210209133110.7383-4-nikita.shubin@maquefel.me>
+Subject: [PATCH v6 5/7] gpio: ep93xx: Fix typo s/hierarchial/hierarchical
+Date:   Tue,  9 Feb 2021 16:31:08 +0300
+Message-Id: <20210209133110.7383-6-nikita.shubin@maquefel.me>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210209133110.7383-1-nikita.shubin@maquefel.me>
 References: <20210209133110.7383-1-nikita.shubin@maquefel.me>
@@ -56,34 +56,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Port F IRQ's should be statically mapped to EP93XX_GPIO_F_IRQ_BASE.
-
-So we need to specify girq->first otherwise:
-
-"If device tree is used, then first_irq will be 0 and
-IRQ's get mapped dynamically on the fly"
-
-And that's not the thing we want.
+Fix typo in comment.
 
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 ---
- drivers/gpio/gpio-ep93xx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-ep93xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index 94d9fa0d6aa7..3dea4ce929ab 100644
+index a69bf3100f99..9760df7d1172 100644
 --- a/drivers/gpio/gpio-ep93xx.c
 +++ b/drivers/gpio/gpio-ep93xx.c
-@@ -416,6 +416,7 @@ static int ep93xx_gpio_add_bank(struct ep93xx_gpio_chip *egc,
- 		girq->default_type = IRQ_TYPE_NONE;
- 		girq->handler = handle_level_irq;
- 		gc->to_irq = ep93xx_gpio_f_to_irq;
-+		girq->first = EP93XX_GPIO_F_IRQ_BASE;
- 	}
+@@ -388,7 +388,7 @@ static int ep93xx_gpio_add_bank(struct ep93xx_gpio_chip *egc,
  
- 	return devm_gpiochip_add_data(dev, gc, epg);
+ 		/*
+ 		 * FIXME: convert this to use hierarchical IRQ support!
+-		 * this requires fixing the root irqchip to be hierarchial.
++		 * this requires fixing the root irqchip to be hierarchical.
+ 		 */
+ 		girq->parent_handler = ep93xx_gpio_f_irq_handler;
+ 		girq->num_parents = 8;
 -- 
 2.26.2
 
