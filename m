@@ -2,156 +2,153 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB6FC433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Feb 2021 01:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DA3C433DB
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Feb 2021 08:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30CE264E29
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Feb 2021 01:19:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1B764E6D
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Feb 2021 08:16:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229899AbhBOBTk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 14 Feb 2021 20:19:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        id S229597AbhBOIQV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Feb 2021 03:16:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbhBOBTj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Feb 2021 20:19:39 -0500
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435D6C061574;
-        Sun, 14 Feb 2021 17:18:59 -0800 (PST)
-Received: by mail-qv1-xf2b.google.com with SMTP id f18so2526601qvm.9;
-        Sun, 14 Feb 2021 17:18:59 -0800 (PST)
+        with ESMTP id S229595AbhBOIQS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2021 03:16:18 -0500
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39533C061574
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Feb 2021 00:15:37 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id v10so4325100qtq.7
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Feb 2021 00:15:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4l1VhsBHSasYP9te6SHg/IFFwtdw9tGkXjD2JBymXQ8=;
-        b=RS+Jc/9J+UqCEjEzQNPQt1YVEkN/AtmWnLz1pFwUcpKqf0+8K5K+WyqFk6YtK5vr7v
-         LYm1CDoNGJL1V8ZjO6lKsvwzEys6VbroKAiE73htrhRH/x9EEceaMLp+rZu1kJJdZfRS
-         zEDEga0rJ1OFXGVuARxfOgkcZSW23yGPUUfc5tFX1hMWHJ66QIvZbYGN8+au5OPt8gTJ
-         iWwysFnIunA2o2RYjCCM5Ysd+lyoKFmeRKSgp1XvJq1ogivlGFb/PuucjvJPN+Uqqddb
-         KwSTQOab4orWSdTGwqXJC7pmVRgggckDVqLANLmqbTnOjjM4wohMcR/SrXZ5UddOsvs5
-         f6Fw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2/5aD+Pft1i7EJUD5MLwm2C5HF3OHHKfP2GIeSPDb08=;
+        b=EKmetjoOrWqNm2V93BI0cdEQPrYYiuTvtAQGSxnebboGCT/NL8rXAw1b7pm62dreSN
+         Go+XUSFcEgHd//dx2ABtrjOLL1Hmc4ZErQwfrqCptofou/LOpkaTvMRdp28w9HyobmTk
+         AKaSAvY7geTJU1/YKouf47rcdPCOFdixOiyKieuNgdNkOWINxJDvvNQak1KK0IAzsWle
+         POIi8uPtYIU9qR0VIsDTUfhLCrrE8EJDbPwY4MBY5eyJo810tDuSN7jlVOxvXIlJ7Y0J
+         j5DoGk2+oqfgMhQYiQ1fqm9Bc5LuMD9mknMAqgbGovkH3jBE3A4diWDqqUPSNZO5k2aq
+         +FSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4l1VhsBHSasYP9te6SHg/IFFwtdw9tGkXjD2JBymXQ8=;
-        b=Jdqayib+pYdc5SwwGO0V47bFTeAlAIl6azjxSnnvQipBXI/L9P64guwUGnx74viS1Y
-         vD/ElC7t+ezdxUVgkSyPW2yB0Tk8ybmsBS0xkblgkkQd63SuD9GKF4PAZ6xjPWhCBs5a
-         xnOy65OZwRNPiqSurnBDjcJBpOPtH5FaP1tmc38KjORy0sZrxub0HGpmD4iEhLL9hFm1
-         3SXzGYy4SgRFeAI7XVDZ80i4K3afHkkgx48bzDnuAhURithhxxlf/kFUkzWSX9mwsLzD
-         KFwOYsIYz8PDoQrA0A/2dJUH6zSANaycN13jKMxEW1gW+YwNQP29gYFeMdSzhRw9l4p0
-         yAJA==
-X-Gm-Message-State: AOAM5308kcS9iPWUrEKlkKEFjVibKEJ7xA32GTS9rLp9kmr73utMqHJ7
-        bxsp3UKkLiMhTIL0MfIlzGLmvBUJkuY=
-X-Google-Smtp-Source: ABdhPJzkq9+FPRTG8MTlJMBHmj+KBYlFAAWestn5Vc2Xiyuy6MSnYzuVBZFK0ME+TFsg+KqdmHrBEw==
-X-Received: by 2002:a0c:f101:: with SMTP id i1mr12748218qvl.45.1613351938366;
-        Sun, 14 Feb 2021 17:18:58 -0800 (PST)
-Received: from [192.168.1.49] (c-67-187-90-124.hsd1.tn.comcast.net. [67.187.90.124])
-        by smtp.gmail.com with ESMTPSA id r44sm10643646qtb.28.2021.02.14.17.18.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Feb 2021 17:18:58 -0800 (PST)
-Subject: Re: [RFC PATCH 11/12] platform/x86: skeleton for oftree based board
- device initialization
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
-References: <20210208222203.22335-1-info@metux.net>
- <20210208222203.22335-12-info@metux.net>
- <CACRpkdYbOX_RDqwxaiugtYB4vSpSKChvKsPjcB_vv3Q74QeG2Q@mail.gmail.com>
- <c5ed2b27-21a2-5a07-8dd9-e080f9a6cd98@metux.net>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <f370fa7b-a5b1-4151-7018-10d1b75fa8b2@gmail.com>
-Date:   Sun, 14 Feb 2021 19:18:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2/5aD+Pft1i7EJUD5MLwm2C5HF3OHHKfP2GIeSPDb08=;
+        b=hsWIpgO9KDWeOZhuMooJoVE5GEkAZWjxgq04hDqdlqz6TjALue2lMViFWPeQwHyJTS
+         X8hbe86J/TpMFc8bmaV7OLdSILRN4A2l444uPCI+um7ipOmsya+efQ72Cd8UWFBeomIi
+         jqoF51XVGMDQUuqBRyHN+37CsxLbhTlSALdb55edLB/gAZp0JJuJiuuGhKDKS87hiWH/
+         NZE2iU4y0rCXSkVQDwctZGHfseHRKSC7YGRL5k1OWkaQ3GwFG0afHXX8s23+lwI7kMFF
+         y8IrNb3uG4zqFIVajji3fmqEcFez4SVZNT0j0pZIBeefzX5G+LMspeq3EMzkRW+6mHMy
+         oh6A==
+X-Gm-Message-State: AOAM532dVibecVlUa6z2QxIao9X+VAux6iqPF3/SKttR/t2zlgC8bqNq
+        jZGzvYDrjNP21TTeG8tSC0AcIUINPygWGu8d3w/v0t5j6Vg=
+X-Google-Smtp-Source: ABdhPJz+c1jNNt0AVzrYm2KLwZ1Re+aJu3vmFNrw/lvbJJb2ePEvGd6JsyhQLYlU1MmqXZYPoMmE3AXKbsAwX6JO6x0=
+X-Received: by 2002:ac8:c44:: with SMTP id l4mr13154353qti.155.1613376936127;
+ Mon, 15 Feb 2021 00:15:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c5ed2b27-21a2-5a07-8dd9-e080f9a6cd98@metux.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAJAEvhib-M-UQeoCDs+aex-hdE-vJSQk=C5B7z4A9WmR+JcxQQ@mail.gmail.com>
+ <20210213002336.GA7405@sol>
+In-Reply-To: <20210213002336.GA7405@sol>
+From:   Pedro Botella <pbotella@gmail.com>
+Date:   Mon, 15 Feb 2021 09:15:00 +0100
+Message-ID: <CAJAEvhjQv5hg9GvFXTFotq5ctsKnzXaTdb56KmkqQepAKcfAuA@mail.gmail.com>
+Subject: Re: [libgpiod] Bug in python binding when requesting output?
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, brgl@bgdev.pl
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2/12/21 5:54 AM, Enrico Weigelt, metux IT consult wrote:
-> On 12.02.21 10:58, Linus Walleij wrote:
-> 
-> Hi,
-> 
->> I think Intel people often take the stance that the ACPI DSDT (or whatever)
->> needs to be fixed.
-> 
-> It should, actually board/firmware vendors should think more carefully
-> and do it right in the first place. But reality is different. And
-> firmware upgrade often is anything but easy (as soon as we leave the
-> field of average Joh Doe's home PC)
-> 
->> If the usecase is to explicitly work around deployed firmware that cannot
->> and will not be upgraded/fixed by describing the hardware using DT
->> instead, based on just the DMI ID then we should spell that out
->> explicitly.
-> 
-> Okay, maybe I should have stated this more clearly.
-> 
-> OTOH, the scope is also a little bit greater: certain external cards
-> that don't need much special handling for the card itself, just
-> enumerate devices (and connections between them) using existing drivers.
-> 
-> That's a pretty common scenario in industrial backplane systems, where
-> we have lots of different (even application specific) cards, usually
-> composed of standard chips, that can be identified by some ID, but
-> cannot describe themselves. We have to write lots of specific drivers
-> for them, usually just for instantiating existing drivers. (we rarely
-> see such code going towards mainline).
-> 
-> A similar case (mainlined) seems to be the RCAR display unit - they're
-> using dt overlays that are built into the driver and applied by it
-> based on the detected DU at runtime. RCAR seems to be a pure DT
+Okay, got it. I have understood the function incorrectly then.
 
-The RCAR use of overlays that are built into the driver are a known
-pattern that is explicitly not to be repeated.  The driver has been
-granted a grandfathered in status, thus an exception as long as
-needed.
+What I wanted to achieve was for the output to keep its current state
+if it was already configured as an output, which I thought would be a
+reasonable behavior. So I will instead wrap my requests with this:
 
--Frank
+def gpiod_safe_request_out(line, consumer):
+    if line.direction() == gpiod.Line.DIRECTION_OUTPUT:
+        # already an output, request as is and the output value won't
+be modified
+        line.request(consumer=consumer, type=gpiod.LINE_REQ_DIR_AS_IS)
+    else:
+        # Read current value
+        line.request(consumer=consumer, type=gpiod.LINE_REQ_DIR_IN)
+        value = line.get_value()
+        line.release()
+        # Request as output current value as default value
+        line.request(consumer=consumer, type=gpiod.LINE_REQ_DIR_OUT,
+default_val=value)
 
-> platform, so that's an obvious move. APU2/3/4 is ACPI based, so I went
-> in a different direction - but I'm now investigating how to make DT
-> overlays work on an ACPI platform (eg. needs some initial nodes, ...)
-> In case that's successful, I'll rework my RFC to use overlays, and
-> it will become much smaller (my oftree core changes then won't be
-> necessary anymore).
-> 
->> It feels a bit like fixing a problem using a different hardware description
->> just because we can. Look in drivers/gpio/gpiolib-acpi.c
->> table gpiolib_acpi_quirks[]. It's just an example how this is fixed using
->> fine granular ACPI-specific mechanisms at several places in the kernel
->> instead of just tossing out the whole description and redoing it in
->> device tree.
-> 
-> I'm quite reluctant to put everything in there. Theoretically, for apu
-> case, I could prevent enumerating the incomplete gpios there, but the
-> actual driver setup still remains (certainly don't wanna put that into
-> such a global place). But the original problem of having to write so
-> much code for just instantiating generic drivers remains. And
-> distributing knowledge of certain devices over several places doesn't
-> feel like a good idea to me.
-> 
-> 
-> --mtx
-> 
+Which won't modify outputs, and if it is currently an input, will keep
+the value at the pin.
 
+I don't think I'm the most suitable for providing a patch for the
+uninitialized default_vals, I'm not very well versed in providing
+patches to the linux source tree, but I can give it a try if you want
+me to.
+
+Thanks for your help Kent!
+
+Pedro
+
+On Sat, Feb 13, 2021 at 1:23 AM Kent Gibson <warthog618@gmail.com> wrote:
+>
+> On Thu, Feb 11, 2021 at 09:54:22PM +0100, Pedro Botella wrote:
+> > Hi,
+> >
+> > I'm experiencing what I think is a bug in the python bindings for libgpiod.
+> > I believe a line.request with type gpiod.LINE_REQ_DIR_OUT always
+> > results in that line being set to '0'.
+>
+> That is correct - when requesting a line as output at the kernel uAPI
+> the initial value must always be provided.  If you do not provide
+> default_vals via the Python API then the output should be defaulted to
+> '0' by the Python binding.
+>
+> > To reproduce:
+> > 1. request a line with type gpiod.LINE_REQ_DIR_OUT
+> > 2. set the line to '1'
+> > 3. release the line
+> > 4. request the same line with type gpiod.LINE_REQ_DIR_OUT
+> > 5. get the value, it should now be '0'
+> >
+>
+> To clarify, the expected behaviour is that the output is defaulted
+> to '0' if default values are not provided.
+> So the problem you are seeing is that the output is not consistently '0'?
+>
+> If you are expecting to see a '1' then you are expecting the lack of
+> default_vals in the kwds to leave the output value as is, but that is
+> not the case - it should default to '0'.
+>
+> > I think the issue is in "gpiod_LineBulk_request" in
+> > https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/tree/bindings/python/gpiodmodule.c
+> > There a call to "gpiod_line_request_bulk" with default_vals being
+> > passed as a pointer. Later on in the code, this parameter is checked
+> > for NULL, if it is not NULL then the values in the array are used as
+> > default_vals.
+> > I believe that a NULL pointer should be passed instead if no
+> > default_vals have been requested when doing a Line.request from
+> > Python.
+> >
+>
+> Agreed - passing default_vals uninitialized to gpiod_line_request_bulk()
+> is a bug.
+> It should be zeroed, or a NULL pointer should be passed if the
+> default_vals were not provided in the kwds. Otherwise the output
+> value will be set based on the uninitializezd contents of default_vals.
+>
+> Would you like to provide a patch?
+>
+> In the meantime the obvious workaround is to always provide default_vals
+> in the kwds.
+>
+> Cheers,
+> Kent.
