@@ -7,75 +7,75 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88553C433E0
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B9AC433DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 455D664DDA
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1635C64EB7
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230479AbhBSO1q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Feb 2021 09:27:46 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:36381 "EHLO
+        id S230490AbhBSO1u (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Feb 2021 09:27:50 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:60447 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230467AbhBSO1b (ORCPT
+        by vger.kernel.org with ESMTP id S230471AbhBSO1k (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Feb 2021 09:27:31 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 7EC2F5803A8;
-        Fri, 19 Feb 2021 09:26:38 -0500 (EST)
+        Fri, 19 Feb 2021 09:27:40 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id BF0DF58036E;
+        Fri, 19 Feb 2021 09:26:17 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 19 Feb 2021 09:26:38 -0500
+  by compute4.internal (MEProxy); Fri, 19 Feb 2021 09:26:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
         :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=Ko3OKT6VnAb6a
-        e+1fgFzozhFm1BKXxGAhRiRJMA4uKI=; b=vH4Ba9AvGSO6JVBP2T7WU2wXlII7u
-        veXXceAKMCyyZ1oO/Ku2hUq9ix+azrKYEwy2OicoiJ16kcnxNZdJi1QvXJEGdDxD
-        jLEArwd3E2nmmHwHZj/748Vpe/bkO7DZtYLM9CGGjcrRxdohBLOCKlwlxYVypCB5
-        inbhE9JOzimciqc9gxmGbYw7adO3WKrECtBD4IHEOvzoympl6RWOZZMeBCymib1I
-        IKOSItc0a1YPUMlEupSzswbkph+JZN/Gv78uc57OWhJRZgp8vZy45h6Qgc6D+7y8
-        7lFEFPt9JKDaL5L+lAgX+tDbp40MdYWkLEYstgEpYEZJHatrvNxnIFASw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=jNbBcvWLt+Jil
+        WCwRd5v7udB5/AUekeRtyC2gytq2FQ=; b=KlsYLZ8ehpfqswl6zhzIoRvnIgcd+
+        k+10oSI816Qc8gCxdZh1kI4nIKnuMhvqiEEm6nYKEnT14g6bxIto99YYgZ/LFbg5
+        IuvSDPGgXPJPHCpoX4h4c1nbvEBZyKjdlpGspdM74JuPjbjqk74xatQOd5dw0cs8
+        hVkI/T+9fK7BZc1G5sdUIoAgyWc1sef9+0lI24K+GOTAq6G1XbrTWdQv3pMKScaa
+        2vF1hsJUs4f1hcoU3sTArFVCN9Ca4p2+WeBxBSAYbrlNBk/rccjRVHGgcMCJqX7J
+        It1+i5p556ghKTlSfgFq48zqZniQ64Xt1l6qb3aQ82uVNniVO5Oq/jNAw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=Ko3OKT6VnAb6ae+1fgFzozhFm1BKXxGAhRiRJMA4uKI=; b=KURsjUbH
-        veIGfA3ilzXnnC7pHvYsaRdhVjHyeuIzE9fOrZ0HL0fV5fhrrVqNWRS6Kb48J3th
-        OvVg6HTkKfhReRjyrU5zJaRw/HU9uSPz3Tv0gUfmvmpEAr0B77twGCX5Gm4uZICZ
-        IwjPlTDMFt9iIpZE3Zg1V2pL2n/H80bNhZ4Ud+cSZa/BINXDUkJvwvlc61upJef2
-        4aMR8K94aluBsRaFBg0q+mv0o12UHf30Aoh0rx36VnA4yBwKWCghdiqWKptnI6pd
-        TudHqyacT4ITAHoMBCc3ax9gOEs5vECH6RK1LWniKo7UQd5X9F31+Aw/Rn1ga3Ef
-        OlndWtniMCDuhw==
-X-ME-Sender: <xms:nsovYH5j6tOqkivY-5uRjdS9JPyVPRFOSlpW_TOSB6wcPnP1w8knXQ>
-    <xme:nsovYM6sTRSh7BMXR8htASNSEbG4AFaF1SwyOEqa9B-qQxG1X1ZZPLXGYfV16DCcj
-    a5lc_jiCVPbFRtVDw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeigecutefuodetggdotefrodftvf
+        fm2; bh=jNbBcvWLt+JilWCwRd5v7udB5/AUekeRtyC2gytq2FQ=; b=AUyrovFL
+        E7wE3KfsZ2+NxCCXkL8v2TwTd3GdQT58jkRS7OaXSGYuopDrc5LCrB0JbwVFSY9z
+        DYvfb8tbR6IWPsf/KkLTs+DO9w/wmmdSDgDpDDQ+QaOBSf6hQp+EotEZdiSGDLU9
+        LNfOg0wcPHjsRjbCjDFKm9YVAQs9ZesrvAmzXubkzEpDbFnjYZSGGbJElQJCDRYi
+        JcTIpMByhgkzkPqXXlPFR6XWw5tjT7ARIPXR9aCzxOrQrG3alqX8D4PokdgQ2niU
+        npcEmWBNwLvBzZu7LE+26B/TIzQjLNgepLYCbB1WzxwG6txqnDWYQcG+EDk9eaJ3
+        OBkkDPf8IpMKtw==
+X-ME-Sender: <xms:icovYD9I1TG4Ti2Eo6Y9ZH1xjGsvR1nPXz73JLmW2AJxqdgmN1rAoQ>
+    <xme:icovYFv8X-uokxIW9tweuNKp-aiCySZgzPLO8qcfjVTzqydjTCb-QAeF3TJmN6ka7
+    iS5GSCeVIf9-M3TeA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeifecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghj
-    rdhiugdrrghuqeenucggtffrrghtthgvrhhnpeejgfdvveehteekveeggeellefgleette
-    ejffelffdvudduveeiffegteelvefhteenucfkphepudegrddvrdeluddrfeejnecuvehl
-    uhhsthgvrhfuihiivgepgeenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifse
-    grjhdrihgurdgruh
-X-ME-Proxy: <xmx:nsovYOf_m1e6gG7axzPHOnXC040R6tUv0MAwYsBZZpwCNsPQCo5vyQ>
-    <xmx:nsovYILrLPUJjLfqmsZ8ONHu09ioxFsPNH70q168fYaGmHRLO31y6Q>
-    <xmx:nsovYLLW0tPUpkRqqS3fsFVHoQaCHA7xxBIgZlp0bAdV6_sFcJupPw>
-    <xmx:nsovYE5Rq-K8C7B7kZNDaiPpcqDDstG0DOkhZ0BSxc6t3uzdXFHLyA>
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehnughrvgif
+    ucflvghffhgvrhihuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrfgrthhtvg
+    hrnhepjefgvdevheetkeevgeegleelgfelteetjeffleffvdduudevieffgeetleevhfet
+    necukfhppedugedrvddrledurdefjeenucevlhhushhtvghrufhiiigvpedunecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:icovYOoqxTaDd78x_HViVss_lXQz4iKqrFVSAiwGTHrllwrIkiBNsQ>
+    <xmx:icovYKnKExqKumvRjfmIzF37_30hDwunUAVA6jijbUgkZ4EDonaEOw>
+    <xmx:icovYKydEy5i3Oewt9juYhP5nzQBzUhcplVBtRwoy4pERWlPBWl6Hw>
+    <xmx:icovYBrnWSJfsULUCr1wm43SujNH0v7rJuH71FxmShiR7Xq-TCnztg>
 Received: from localhost.localdomain (ppp14-2-91-37.adl-apt-pir-bras31.tpg.internode.on.net [14.2.91.37])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1E854240062;
-        Fri, 19 Feb 2021 09:26:31 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5180F24005A;
+        Fri, 19 Feb 2021 09:26:11 -0500 (EST)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     openipmi-developer@lists.sourceforge.net, openbmc@lists.ozlabs.org,
         minyard@acm.org
-Cc:     robh+dt@kernel.org, joel@jms.id.au, lee.jones@linaro.org,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        linus.walleij@linaro.org, chiawei_wang@aspeedtech.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Cc:     "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>, robh+dt@kernel.org,
+        joel@jms.id.au, lee.jones@linaro.org, avifishman70@gmail.com,
+        tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 08/19] ipmi: kcs_bmc: Rename {read,write}_{status,data}() functions
-Date:   Sat, 20 Feb 2021 00:55:12 +1030
-Message-Id: <20210219142523.3464540-9-andrew@aj.id.au>
+Subject: [PATCH 05/19] soc: aspeed: Adapt to new LPC device tree layout
+Date:   Sat, 20 Feb 2021 00:55:09 +1030
+Message-Id: <20210219142523.3464540-6-andrew@aj.id.au>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210219142523.3464540-1-andrew@aj.id.au>
 References: <20210219142523.3464540-1-andrew@aj.id.au>
@@ -85,179 +85,132 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Rename the functions in preparation for separating the IPMI chardev out
-from the KCS BMC core.
+From: "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Add check against LPC device v2 compatible string to
+ensure that the fixed device tree layout is adopted.
+The LPC register offsets are also fixed accordingly.
+
+Signed-off-by: Chia-Wei Wang <chiawei_wang@aspeedtech.com>
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Tested-by: Andrew Jeffery <andrew@aj.id.au>
 ---
- drivers/char/ipmi/kcs_bmc.c | 52 ++++++++++++++++++-------------------
- 1 file changed, 25 insertions(+), 27 deletions(-)
+ drivers/soc/aspeed/aspeed-lpc-ctrl.c  | 20 ++++++++++++++------
+ drivers/soc/aspeed/aspeed-lpc-snoop.c | 23 +++++++++++++++--------
+ 2 files changed, 29 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
-index 58fb1a7bd50d..c4336c1f2d6d 100644
---- a/drivers/char/ipmi/kcs_bmc.c
-+++ b/drivers/char/ipmi/kcs_bmc.c
-@@ -45,42 +45,42 @@ enum kcs_states {
- #define KCS_CMD_WRITE_END         0x62
- #define KCS_CMD_READ_BYTE         0x68
+diff --git a/drivers/soc/aspeed/aspeed-lpc-ctrl.c b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+index 439bcd6b8c4a..c557ffd0992c 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+@@ -18,15 +18,15 @@
  
--static inline u8 read_data(struct kcs_bmc *kcs_bmc)
-+static inline u8 kcs_bmc_read_data(struct kcs_bmc *kcs_bmc)
- {
- 	return kcs_bmc->io_inputb(kcs_bmc, kcs_bmc->ioreg.idr);
- }
+ #define DEVICE_NAME	"aspeed-lpc-ctrl"
  
--static inline void write_data(struct kcs_bmc *kcs_bmc, u8 data)
-+static inline void kcs_bmc_write_data(struct kcs_bmc *kcs_bmc, u8 data)
- {
- 	kcs_bmc->io_outputb(kcs_bmc, kcs_bmc->ioreg.odr, data);
- }
+-#define HICR5 0x0
++#define HICR5 0x80
+ #define HICR5_ENL2H	BIT(8)
+ #define HICR5_ENFWH	BIT(10)
  
--static inline u8 read_status(struct kcs_bmc *kcs_bmc)
-+static inline u8 kcs_bmc_read_status(struct kcs_bmc *kcs_bmc)
- {
- 	return kcs_bmc->io_inputb(kcs_bmc, kcs_bmc->ioreg.str);
- }
+-#define HICR6 0x4
++#define HICR6 0x84
+ #define SW_FWH2AHB	BIT(17)
  
--static inline void write_status(struct kcs_bmc *kcs_bmc, u8 data)
-+static inline void kcs_bmc_write_status(struct kcs_bmc *kcs_bmc, u8 data)
- {
- 	kcs_bmc->io_outputb(kcs_bmc, kcs_bmc->ioreg.str, data);
- }
+-#define HICR7 0x8
+-#define HICR8 0xc
++#define HICR7 0x88
++#define HICR8 0x8c
  
--static void update_status_bits(struct kcs_bmc *kcs_bmc, u8 mask, u8 val)
-+static void kcs_bmc_update_status(struct kcs_bmc *kcs_bmc, u8 mask, u8 val)
- {
- 	kcs_bmc->io_updateb(kcs_bmc, kcs_bmc->ioreg.str, mask, val);
- }
+ struct aspeed_lpc_ctrl {
+ 	struct miscdevice	miscdev;
+@@ -215,6 +215,7 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+ 	struct device_node *node;
+ 	struct resource resm;
+ 	struct device *dev;
++	struct device_node *np;
+ 	int rc;
  
- static inline void set_state(struct kcs_bmc *kcs_bmc, u8 state)
- {
--	update_status_bits(kcs_bmc, KCS_STATUS_STATE_MASK,
-+	kcs_bmc_update_status(kcs_bmc, KCS_STATUS_STATE_MASK,
- 					KCS_STATUS_STATE(state));
- }
- 
- static void kcs_force_abort(struct kcs_bmc *kcs_bmc)
- {
- 	set_state(kcs_bmc, ERROR_STATE);
--	read_data(kcs_bmc);
--	write_data(kcs_bmc, KCS_ZERO_DATA);
-+	kcs_bmc_read_data(kcs_bmc);
-+	kcs_bmc_write_data(kcs_bmc, KCS_ZERO_DATA);
- 
- 	kcs_bmc->phase = KCS_PHASE_ERROR;
- 	kcs_bmc->data_in_avail = false;
-@@ -99,9 +99,9 @@ static void kcs_bmc_handle_data(struct kcs_bmc *kcs_bmc)
- 	case KCS_PHASE_WRITE_DATA:
- 		if (kcs_bmc->data_in_idx < KCS_MSG_BUFSIZ) {
- 			set_state(kcs_bmc, WRITE_STATE);
--			write_data(kcs_bmc, KCS_ZERO_DATA);
-+			kcs_bmc_write_data(kcs_bmc, KCS_ZERO_DATA);
- 			kcs_bmc->data_in[kcs_bmc->data_in_idx++] =
--						read_data(kcs_bmc);
-+						kcs_bmc_read_data(kcs_bmc);
- 		} else {
- 			kcs_force_abort(kcs_bmc);
- 			kcs_bmc->error = KCS_LENGTH_ERROR;
-@@ -112,7 +112,7 @@ static void kcs_bmc_handle_data(struct kcs_bmc *kcs_bmc)
- 		if (kcs_bmc->data_in_idx < KCS_MSG_BUFSIZ) {
- 			set_state(kcs_bmc, READ_STATE);
- 			kcs_bmc->data_in[kcs_bmc->data_in_idx++] =
--						read_data(kcs_bmc);
-+						kcs_bmc_read_data(kcs_bmc);
- 			kcs_bmc->phase = KCS_PHASE_WRITE_DONE;
- 			kcs_bmc->data_in_avail = true;
- 			wake_up_interruptible(&kcs_bmc->queue);
-@@ -126,34 +126,34 @@ static void kcs_bmc_handle_data(struct kcs_bmc *kcs_bmc)
- 		if (kcs_bmc->data_out_idx == kcs_bmc->data_out_len)
- 			set_state(kcs_bmc, IDLE_STATE);
- 
--		data = read_data(kcs_bmc);
-+		data = kcs_bmc_read_data(kcs_bmc);
- 		if (data != KCS_CMD_READ_BYTE) {
- 			set_state(kcs_bmc, ERROR_STATE);
--			write_data(kcs_bmc, KCS_ZERO_DATA);
-+			kcs_bmc_write_data(kcs_bmc, KCS_ZERO_DATA);
- 			break;
+ 	dev = &pdev->dev;
+@@ -270,8 +271,15 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
  		}
+ 	}
  
- 		if (kcs_bmc->data_out_idx == kcs_bmc->data_out_len) {
--			write_data(kcs_bmc, KCS_ZERO_DATA);
-+			kcs_bmc_write_data(kcs_bmc, KCS_ZERO_DATA);
- 			kcs_bmc->phase = KCS_PHASE_IDLE;
- 			break;
- 		}
+-	lpc_ctrl->regmap = syscon_node_to_regmap(
+-			pdev->dev.parent->of_node);
++	np = pdev->dev.parent->of_node;
++	if (!of_device_is_compatible(np, "aspeed,ast2400-lpc-v2") &&
++	    !of_device_is_compatible(np, "aspeed,ast2500-lpc-v2") &&
++	    !of_device_is_compatible(np, "aspeed,ast2600-lpc-v2")) {
++		dev_err(dev, "unsupported LPC device binding\n");
++		return -ENODEV;
++	}
++
++	lpc_ctrl->regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(lpc_ctrl->regmap)) {
+ 		dev_err(dev, "Couldn't get regmap\n");
+ 		return -ENODEV;
+diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+index 682ba0eb4eba..ab0f0a54fea6 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
++++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+@@ -28,26 +28,25 @@
+ #define NUM_SNOOP_CHANNELS 2
+ #define SNOOP_FIFO_SIZE 2048
  
--		write_data(kcs_bmc,
-+		kcs_bmc_write_data(kcs_bmc,
- 			kcs_bmc->data_out[kcs_bmc->data_out_idx++]);
- 		break;
+-#define HICR5	0x0
++#define HICR5	0x80
+ #define HICR5_EN_SNP0W		BIT(0)
+ #define HICR5_ENINT_SNP0W	BIT(1)
+ #define HICR5_EN_SNP1W		BIT(2)
+ #define HICR5_ENINT_SNP1W	BIT(3)
+-
+-#define HICR6	0x4
++#define HICR6	0x84
+ #define HICR6_STR_SNP0W		BIT(0)
+ #define HICR6_STR_SNP1W		BIT(1)
+-#define SNPWADR	0x10
++#define SNPWADR	0x90
+ #define SNPWADR_CH0_MASK	GENMASK(15, 0)
+ #define SNPWADR_CH0_SHIFT	0
+ #define SNPWADR_CH1_MASK	GENMASK(31, 16)
+ #define SNPWADR_CH1_SHIFT	16
+-#define SNPWDR	0x14
++#define SNPWDR	0x94
+ #define SNPWDR_CH0_MASK		GENMASK(7, 0)
+ #define SNPWDR_CH0_SHIFT	0
+ #define SNPWDR_CH1_MASK		GENMASK(15, 8)
+ #define SNPWDR_CH1_SHIFT	8
+-#define HICRB	0x80
++#define HICRB	0x100
+ #define HICRB_ENSNP0D		BIT(14)
+ #define HICRB_ENSNP1D		BIT(15)
  
- 	case KCS_PHASE_ABORT_ERROR1:
- 		set_state(kcs_bmc, READ_STATE);
--		read_data(kcs_bmc);
--		write_data(kcs_bmc, kcs_bmc->error);
-+		kcs_bmc_read_data(kcs_bmc);
-+		kcs_bmc_write_data(kcs_bmc, kcs_bmc->error);
- 		kcs_bmc->phase = KCS_PHASE_ABORT_ERROR2;
- 		break;
+@@ -258,6 +257,7 @@ static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
+ {
+ 	struct aspeed_lpc_snoop *lpc_snoop;
+ 	struct device *dev;
++	struct device_node *np;
+ 	u32 port;
+ 	int rc;
  
- 	case KCS_PHASE_ABORT_ERROR2:
- 		set_state(kcs_bmc, IDLE_STATE);
--		read_data(kcs_bmc);
--		write_data(kcs_bmc, KCS_ZERO_DATA);
-+		kcs_bmc_read_data(kcs_bmc);
-+		kcs_bmc_write_data(kcs_bmc, KCS_ZERO_DATA);
- 		kcs_bmc->phase = KCS_PHASE_IDLE;
- 		break;
+@@ -267,8 +267,15 @@ static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
+ 	if (!lpc_snoop)
+ 		return -ENOMEM;
  
-@@ -168,9 +168,9 @@ static void kcs_bmc_handle_cmd(struct kcs_bmc *kcs_bmc)
- 	u8 cmd;
- 
- 	set_state(kcs_bmc, WRITE_STATE);
--	write_data(kcs_bmc, KCS_ZERO_DATA);
-+	kcs_bmc_write_data(kcs_bmc, KCS_ZERO_DATA);
- 
--	cmd = read_data(kcs_bmc);
-+	cmd = kcs_bmc_read_data(kcs_bmc);
- 	switch (cmd) {
- 	case KCS_CMD_WRITE_START:
- 		kcs_bmc->phase = KCS_PHASE_WRITE_START;
-@@ -212,7 +212,7 @@ int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc)
- 
- 	spin_lock_irqsave(&kcs_bmc->lock, flags);
- 
--	status = read_status(kcs_bmc);
-+	status = kcs_bmc_read_status(kcs_bmc);
- 	if (status & KCS_STATUS_IBF) {
- 		if (!kcs_bmc->running)
- 			kcs_force_abort(kcs_bmc);
-@@ -350,7 +350,7 @@ static ssize_t kcs_bmc_write(struct file *filp, const char __user *buf,
- 		kcs_bmc->data_out_idx = 1;
- 		kcs_bmc->data_out_len = count;
- 		memcpy(kcs_bmc->data_out, kcs_bmc->kbuffer, count);
--		write_data(kcs_bmc, kcs_bmc->data_out[0]);
-+		kcs_bmc_write_data(kcs_bmc, kcs_bmc->data_out[0]);
- 		ret = count;
- 	} else {
- 		ret = -EINVAL;
-@@ -373,13 +373,11 @@ static long kcs_bmc_ioctl(struct file *filp, unsigned int cmd,
- 
- 	switch (cmd) {
- 	case IPMI_BMC_IOCTL_SET_SMS_ATN:
--		update_status_bits(kcs_bmc, KCS_STATUS_SMS_ATN,
--				   KCS_STATUS_SMS_ATN);
-+		kcs_bmc_update_status(kcs_bmc, KCS_STATUS_SMS_ATN, KCS_STATUS_SMS_ATN);
- 		break;
- 
- 	case IPMI_BMC_IOCTL_CLEAR_SMS_ATN:
--		update_status_bits(kcs_bmc, KCS_STATUS_SMS_ATN,
--				   0);
-+		kcs_bmc_update_status(kcs_bmc, KCS_STATUS_SMS_ATN, 0);
- 		break;
- 
- 	case IPMI_BMC_IOCTL_FORCE_ABORT:
+-	lpc_snoop->regmap = syscon_node_to_regmap(
+-			pdev->dev.parent->of_node);
++	np = pdev->dev.parent->of_node;
++	if (!of_device_is_compatible(np, "aspeed,ast2400-lpc-v2") &&
++	    !of_device_is_compatible(np, "aspeed,ast2500-lpc-v2") &&
++	    !of_device_is_compatible(np, "aspeed,ast2600-lpc-v2")) {
++		dev_err(dev, "unsupported LPC device binding\n");
++		return -ENODEV;
++	}
++
++	lpc_snoop->regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(lpc_snoop->regmap)) {
+ 		dev_err(dev, "Couldn't get regmap\n");
+ 		return -ENODEV;
 -- 
 2.27.0
 
