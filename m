@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F380C433DB
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7044C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF2364E46
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 775E864EB7
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231169AbhBSO2p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Feb 2021 09:28:45 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:38783 "EHLO
+        id S231138AbhBSO2z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Feb 2021 09:28:55 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:60843 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230518AbhBSO2M (ORCPT
+        by vger.kernel.org with ESMTP id S231159AbhBSO2l (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Feb 2021 09:28:12 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 179B95803B0;
-        Fri, 19 Feb 2021 09:27:01 -0500 (EST)
+        Fri, 19 Feb 2021 09:28:41 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 80A695803C9;
+        Fri, 19 Feb 2021 09:27:55 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 19 Feb 2021 09:27:01 -0500
+  by compute3.internal (MEProxy); Fri, 19 Feb 2021 09:27:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
         :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=nKz4XmFfVVUhw
-        bo7d4A+YZ1zv8twYH09kSSgWmxRb6E=; b=syY9LauLhOepInaePT4NKDa6YH2iL
-        qTR8ezChrWswj6A1iK5C6rNIK+7DNR/fRsxHt06n1zw1byQEJFnQTmaz2z9fDv4K
-        hDQwI5QQ29p7lhQQoDf6FuV/Dg0/Zo+UlxJqhgpPehMmh3e91ZjZrtV9AYkzFJld
-        l/ooQZ/729pR6RipspLezksa/OnEtjWQOYZD4wgnrna1b0RYaeGZzwugg2sJTRps
-        v3OkSpbUKQ8zWhFzvBZJNbtmDQRwmSjoVUJMHcvE46+B5m5G4vGcTUOW2qK/PTrZ
-        xvW/B5v9JfrTb+3nlqnbmZy1Ry795ufrYZRhpcFxQa0VuoxBJhnQnwS1A==
+        :mime-version:content-transfer-encoding; s=fm2; bh=eL52M44QaOmJ7
+        n12M9JEL6DbKLp7KlrpIC3D8X1iNrs=; b=X4ME8ayqGC12R6dtdvODWFoxpFULE
+        DllcaPqKbK7xoPEssDM6+e0cTI31Oxi5MuTJ5prdLO0wE3lwQEqIA3miJjtbWe5n
+        fowAwcES3TkL+uSWQvxS8J4QPRWOXtF3lzDuoSFJoECWvqalW4Z4fiuePrYpsXdB
+        lIo5scrTh1vIUStXZT4OhmNHBArdl+y7vH9oYV3C6TknsU7r2kViL1QSJ3IStMDJ
+        fMwanTZjIbfHMOIvCCb3mTqHvJemFZNHXD+X+Gs6w0YdcrrJ+ATC3pwxO+xEdHRk
+        3h1OdBBwlYAf3kVs0orp6FYTssmXSfdRWTScA2uo1yvxwC5znLeVDEbTQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=nKz4XmFfVVUhwbo7d4A+YZ1zv8twYH09kSSgWmxRb6E=; b=DbXr4PdD
-        GGxYe8G6gKrO7xYx0e7gzD7kbfA08J+I/IdRsmAhyLbQ5J1w3TL+qqD6PN8vcIuX
-        chy1uJ8GejQl5OWzXD1rlsquPuTj5KOPo5wTi+jukR3E+pduigW5jrX8cuz8ZPQU
-        2aJUNjoEPWFO8AmJhiFmTBzOwyMRkD8uCZ/20uDUmoxr16Ay/ymdb3eexpFeyT/q
-        zPO2SDin/0Tr2s7OLYZPMQIAYOCZKszfArGn1HBeQUS96DuxGxtaPnLElN5Pqwh7
-        uChceVlZTojNACmow5AVCXv6nEbf12hkB3nQOtNjyxxjlZxCj0mQ0OcLE7SOxSZr
-        8YuEW4m1shGV0g==
-X-ME-Sender: <xms:s8ovYDOEMeAqj7AOoZ2YiBgtRV0CUdYfJFLD2jqfDgZrIN64QP9wRw>
-    <xme:s8ovYIAmyaPLDhbw4A5KwhFzV2OA5ls0wgHISqGkOf-CS0XCASeUHrBhUL9iXmevK
-    8M9vcC844Q0xAP_Kg>
+        fm2; bh=eL52M44QaOmJ7n12M9JEL6DbKLp7KlrpIC3D8X1iNrs=; b=gowFrtOT
+        1B3A2cT3y41aG5b0mAkKwbMRq5R1o6LYcL7jMqmbx6cQCg7Kdv/Qb+pe+nQhcciD
+        VM3pG1ivGS0sZpIvnK7zyTMggGPkiwO6VKTpMMBMdECX4wvqWaU3d/TVgJhV2wRB
+        dZqJDHclchyD/tYJTMMefZ8iRcI3JktKetrCDEhRLgGT2dD10TVvNZF6P7BJF565
+        JSRfmeopv6uN5RMLAzpUqlMsKJZpCcOoPm2cvnjaKoMo3X4aLbNodQ5u2WUalbgt
+        i/lrUT4L7OdXd/w9GQnPa8H+Y11ZGtiGmn430hgmjY4Ktho4kAmLo1yzI+kHva3p
+        bO+jTif9TGID8w==
+X-ME-Sender: <xms:68ovYHggMngx3kU0_qSAGNkEvpAlh8VbusJdVIqpXpOJxBDZhUBp1g>
+    <xme:68ovYEC_GX0CKk5R2cyULx2YXgiQmxqeGt1HqJaiZ4rZVLelnqvZ9uFmz76lwrPBr
+    E7AahfxfJ3o2w1S0w>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeigecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
     ertddtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghj
     rdhiugdrrghuqeenucggtffrrghtthgvrhhnpeejgfdvveehteekveeggeellefgleette
     ejffelffdvudduveeiffegteelvefhteenucfkphepudegrddvrdeluddrfeejnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifse
-    grjhdrihgurdgruh
-X-ME-Proxy: <xmx:s8ovYHOw5gBNoxst73lKDaH5KLOVk6wgMjNkef-adUcmVRuQymkDAQ>
-    <xmx:s8ovYPdVsoKEpmaYLoJ2lBUa7CCCrvHcRqECBZgVqVlrczcCqxQirw>
-    <xmx:s8ovYI53pO5gaPdK6vMiluoWZMS-vVWKjXtaUswtIPrzrf1d8zkdiQ>
-    <xmx:tcovYIiC7M4hYXhRN1UYcb71uFNtQqDqFu3XfESWQnj1sv_ayIQPHA>
+    uhhsthgvrhfuihiivgepuddunecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvfi
+    esrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:68ovYHFGKizQv4Vo0kIHnnS7Uwips8nsiHahb77H0tFcHYIyYpMXlA>
+    <xmx:68ovYETwWPwyGq2HghhbDcncpoVDxg0zb3i-IiAnuucH6S5GLut1dw>
+    <xmx:68ovYEwprwx9ptr_c6utLjmhNZON3jf-RoquAehbk8wAxMrb6T7tbw>
+    <xmx:68ovYJglG8YNfNo-eUNH4b64sUM9jJXlgoQh1FIo5M_Gg9RwwmtY_g>
 Received: from localhost.localdomain (ppp14-2-91-37.adl-apt-pir-bras31.tpg.internode.on.net [14.2.91.37])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 67A1124005D;
-        Fri, 19 Feb 2021 09:26:53 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id DBA8B240057;
+        Fri, 19 Feb 2021 09:27:48 -0500 (EST)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     openipmi-developer@lists.sourceforge.net, openbmc@lists.ozlabs.org,
         minyard@acm.org
@@ -73,9 +73,9 @@ Cc:     robh+dt@kernel.org, joel@jms.id.au, lee.jones@linaro.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 11/19] ipmi: kcs_bmc: Split headers into device and client
-Date:   Sat, 20 Feb 2021 00:55:15 +1030
-Message-Id: <20210219142523.3464540-12-andrew@aj.id.au>
+Subject: [PATCH 19/19] ipmi: kcs_bmc_aspeed: Fix IBFIE typo from datasheet
+Date:   Sat, 20 Feb 2021 00:55:23 +1030
+Message-Id: <20210219142523.3464540-20-andrew@aj.id.au>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210219142523.3464540-1-andrew@aj.id.au>
 References: <20210219142523.3464540-1-andrew@aj.id.au>
@@ -85,441 +85,69 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Strengthen the distinction between code that abstracts the
-implementation of the KCS behaviours (device drivers) and code that
-exploits KCS behaviours (clients). Neither needs to know about the APIs
-required by the other, so provide separate headers.
+Input Buffer Full Interrupt Enable (IBFIE) is typoed as IBFIF for some
+registers in the datasheet. Fix the driver to use the sensible acronym.
 
 Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 ---
- drivers/char/ipmi/kcs_bmc.c           | 21 ++++++++++-----
- drivers/char/ipmi/kcs_bmc.h           | 30 ++++++++++-----------
- drivers/char/ipmi/kcs_bmc_aspeed.c    | 20 +++++++++-----
- drivers/char/ipmi/kcs_bmc_cdev_ipmi.c | 38 ++++++++++++++++++---------
- drivers/char/ipmi/kcs_bmc_client.h    | 29 ++++++++++++++++++++
- drivers/char/ipmi/kcs_bmc_device.h    | 19 ++++++++++++++
- drivers/char/ipmi/kcs_bmc_npcm7xx.c   | 20 +++++++++-----
- 7 files changed, 129 insertions(+), 48 deletions(-)
- create mode 100644 drivers/char/ipmi/kcs_bmc_client.h
- create mode 100644 drivers/char/ipmi/kcs_bmc_device.h
+ drivers/char/ipmi/kcs_bmc_aspeed.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
-index 709b6bdec165..1046ce2bbefc 100644
---- a/drivers/char/ipmi/kcs_bmc.c
-+++ b/drivers/char/ipmi/kcs_bmc.c
-@@ -1,46 +1,52 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015-2018, Intel Corporation.
-+ * Copyright (c) 2021, IBM Corp.
-  */
- 
- #include <linux/module.h>
- 
- #include "kcs_bmc.h"
- 
-+/* Implement both the device and client interfaces here */
-+#include "kcs_bmc_device.h"
-+#include "kcs_bmc_client.h"
-+
-+/* Consumer data access */
-+
- u8 kcs_bmc_read_data(struct kcs_bmc *kcs_bmc)
- {
--	return kcs_bmc->io_inputb(kcs_bmc, kcs_bmc->ioreg.idr);
-+	return kcs_bmc->ops->io_inputb(kcs_bmc, kcs_bmc->ioreg.idr);
- }
- EXPORT_SYMBOL(kcs_bmc_read_data);
- 
- void kcs_bmc_write_data(struct kcs_bmc *kcs_bmc, u8 data)
- {
--	kcs_bmc->io_outputb(kcs_bmc, kcs_bmc->ioreg.odr, data);
-+	kcs_bmc->ops->io_outputb(kcs_bmc, kcs_bmc->ioreg.odr, data);
- }
- EXPORT_SYMBOL(kcs_bmc_write_data);
- 
- u8 kcs_bmc_read_status(struct kcs_bmc *kcs_bmc)
- {
--	return kcs_bmc->io_inputb(kcs_bmc, kcs_bmc->ioreg.str);
-+	return kcs_bmc->ops->io_inputb(kcs_bmc, kcs_bmc->ioreg.str);
- }
- EXPORT_SYMBOL(kcs_bmc_read_status);
- 
- void kcs_bmc_write_status(struct kcs_bmc *kcs_bmc, u8 data)
- {
--	kcs_bmc->io_outputb(kcs_bmc, kcs_bmc->ioreg.str, data);
-+	kcs_bmc->ops->io_outputb(kcs_bmc, kcs_bmc->ioreg.str, data);
- }
- EXPORT_SYMBOL(kcs_bmc_write_status);
- 
- void kcs_bmc_update_status(struct kcs_bmc *kcs_bmc, u8 mask, u8 val)
- {
--	kcs_bmc->io_updateb(kcs_bmc, kcs_bmc->ioreg.str, mask, val);
-+	kcs_bmc->ops->io_updateb(kcs_bmc, kcs_bmc->ioreg.str, mask, val);
- }
- EXPORT_SYMBOL(kcs_bmc_update_status);
- 
--int kcs_bmc_ipmi_event(struct kcs_bmc *kcs_bmc);
- int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc)
- {
--	return kcs_bmc_ipmi_event(kcs_bmc);
-+	return kcs_bmc->client.ops->event(&kcs_bmc->client);
- }
- EXPORT_SYMBOL(kcs_bmc_handle_event);
- 
-@@ -60,4 +66,5 @@ EXPORT_SYMBOL(kcs_bmc_remove_device);
- 
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Haiyue Wang <haiyue.wang@linux.intel.com>");
-+MODULE_AUTHOR("Andrew Jeffery <andrew@aj.id.au>");
- MODULE_DESCRIPTION("KCS BMC to handle the IPMI request from system software");
-diff --git a/drivers/char/ipmi/kcs_bmc.h b/drivers/char/ipmi/kcs_bmc.h
-index bf0ae327997f..a1350e567723 100644
---- a/drivers/char/ipmi/kcs_bmc.h
-+++ b/drivers/char/ipmi/kcs_bmc.h
-@@ -8,6 +8,15 @@
- 
- #include <linux/miscdevice.h>
- 
-+#include "kcs_bmc_client.h"
-+
-+#define KCS_BMC_EVENT_NONE	0
-+#define KCS_BMC_EVENT_HANDLED	1
-+
-+#define KCS_BMC_STR_OBF		BIT(0)
-+#define KCS_BMC_STR_IBF		BIT(1)
-+#define KCS_BMC_STR_CMD_DAT	BIT(3)
-+
- /* Different phases of the KCS BMC module.
-  *  KCS_PHASE_IDLE:
-  *            BMC should not be expecting nor sending any data.
-@@ -66,19 +75,21 @@ struct kcs_ioreg {
- 	u32 str;
- };
- 
-+struct kcs_bmc_device_ops;
-+
- struct kcs_bmc {
- 	struct device *dev;
- 
-+	const struct kcs_bmc_device_ops *ops;
-+
-+	struct kcs_bmc_client client;
-+
- 	spinlock_t lock;
- 
- 	u32 channel;
- 	int running;
- 
--	/* Setup by BMC KCS controller driver */
- 	struct kcs_ioreg ioreg;
--	u8 (*io_inputb)(struct kcs_bmc *kcs_bmc, u32 reg);
--	void (*io_outputb)(struct kcs_bmc *kcs_bmc, u32 reg, u8 b);
--	void (*io_updateb)(struct kcs_bmc *kcs_bmc, u32 reg, u8 mask, u8 val);
- 
- 	enum kcs_phases phase;
- 	enum kcs_errors error;
-@@ -97,15 +108,4 @@ struct kcs_bmc {
- 
- 	struct miscdevice miscdev;
- };
--
--int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc);
--int kcs_bmc_add_device(struct kcs_bmc *kcs_bmc);
--int kcs_bmc_remove_device(struct kcs_bmc *kcs_bmc);
--
--u8 kcs_bmc_read_data(struct kcs_bmc *kcs_bmc);
--void kcs_bmc_write_data(struct kcs_bmc *kcs_bmc, u8 data);
--u8 kcs_bmc_read_status(struct kcs_bmc *kcs_bmc);
--void kcs_bmc_write_status(struct kcs_bmc *kcs_bmc, u8 data);
--void kcs_bmc_update_status(struct kcs_bmc *kcs_bmc, u8 mask, u8 val);
--
- #endif /* __KCS_BMC_H__ */
 diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
-index 0416ac78ce68..1b313355b1c8 100644
+index 649d795a5a75..155f68b08eb9 100644
 --- a/drivers/char/ipmi/kcs_bmc_aspeed.c
 +++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
-@@ -21,7 +21,7 @@
- #include <linux/slab.h>
- #include <linux/timer.h>
+@@ -34,9 +34,9 @@
+ #define     LPC_HICR0_LPC2E          BIT(6)
+ #define     LPC_HICR0_LPC1E          BIT(5)
+ #define LPC_HICR2            0x008
+-#define     LPC_HICR2_IBFIF3         BIT(3)
+-#define     LPC_HICR2_IBFIF2         BIT(2)
+-#define     LPC_HICR2_IBFIF1         BIT(1)
++#define     LPC_HICR2_IBFIE3         BIT(3)
++#define     LPC_HICR2_IBFIE2         BIT(2)
++#define     LPC_HICR2_IBFIE1         BIT(1)
+ #define LPC_HICR4            0x010
+ #define     LPC_HICR4_LADR12AS       BIT(7)
+ #define     LPC_HICR4_KCSENBL        BIT(2)
+@@ -68,7 +68,7 @@
+ #define LPC_STR2             0x040
+ #define LPC_STR3             0x044
+ #define LPC_HICRB            0x100
+-#define     LPC_HICRB_IBFIF4         BIT(1)
++#define     LPC_HICRB_IBFIE4         BIT(1)
+ #define     LPC_HICRB_LPC4E          BIT(0)
+ #define LPC_HICRC            0x104
+ #define     LPC_HICRC_ID4IRQX_MASK   GENMASK(7, 4)
+@@ -339,20 +339,20 @@ static void aspeed_kcs_irq_mask_update(struct kcs_bmc_device *kcs_bmc, u8 mask,
  
--#include "kcs_bmc.h"
-+#include "kcs_bmc_device.h"
- 
- 
- #define DEVICE_NAME     "ast-kcs-bmc"
-@@ -220,14 +220,22 @@ static void aspeed_kcs_enable_channel(struct kcs_bmc *kcs_bmc, bool enable)
- 	}
- }
- 
-+static const struct kcs_bmc_device_ops aspeed_kcs_ops = {
-+	.io_inputb = aspeed_kcs_inb,
-+	.io_outputb = aspeed_kcs_outb,
-+	.io_updateb = aspeed_kcs_updateb,
-+};
-+
- static irqreturn_t aspeed_kcs_irq(int irq, void *arg)
- {
- 	struct kcs_bmc *kcs_bmc = arg;
-+	int rc;
- 
--	if (!kcs_bmc_handle_event(kcs_bmc))
--		return IRQ_HANDLED;
-+	rc = kcs_bmc_handle_event(kcs_bmc);
-+	if (rc < 0)
-+		dev_warn(kcs_bmc->dev, "Failed to service irq: %d\n", rc);
- 
--	return IRQ_NONE;
-+	return rc == KCS_BMC_EVENT_HANDLED ? IRQ_HANDLED : IRQ_NONE;
- }
- 
- static int aspeed_kcs_config_irq(struct kcs_bmc *kcs_bmc,
-@@ -362,9 +370,7 @@ static int aspeed_kcs_probe(struct platform_device *pdev)
- 	kcs_bmc->dev = &pdev->dev;
- 	kcs_bmc->channel = channel;
- 	kcs_bmc->ioreg = ast_kcs_bmc_ioregs[channel - 1];
--	kcs_bmc->io_inputb = aspeed_kcs_inb;
--	kcs_bmc->io_outputb = aspeed_kcs_outb;
--	kcs_bmc->io_updateb = aspeed_kcs_updateb;
-+	kcs_bmc->ops = &aspeed_kcs_ops;
- 
- 	priv->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
- 	if (IS_ERR(priv->map)) {
-diff --git a/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c b/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
-index c8922f94bafd..5472733b0005 100644
---- a/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
-+++ b/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
-@@ -22,7 +22,6 @@
- 
- #define KCS_ZERO_DATA     0
- 
--
- /* IPMI 2.0 - Table 9-1, KCS Interface Status Register Bits */
- #define KCS_STATUS_STATE(state) (state << 6)
- #define KCS_STATUS_STATE_MASK   GENMASK(7, 6)
-@@ -179,11 +178,19 @@ static void kcs_bmc_ipmi_handle_cmd(struct kcs_bmc *kcs_bmc)
- 	}
- }
- 
--int kcs_bmc_ipmi_event(struct kcs_bmc *kcs_bmc)
-+static inline struct kcs_bmc *client_to_kcs_bmc(struct kcs_bmc_client *client)
- {
-+	return container_of(client, struct kcs_bmc, client);
-+}
-+
-+static int kcs_bmc_ipmi_event(struct kcs_bmc_client *client)
-+{
-+	struct kcs_bmc *kcs_bmc;
- 	unsigned long flags;
--	int ret = -ENODATA;
- 	u8 status;
-+	int ret;
-+
-+	kcs_bmc = client_to_kcs_bmc(client);
- 
- 	spin_lock_irqsave(&kcs_bmc->lock, flags);
- 
-@@ -196,23 +203,28 @@ int kcs_bmc_ipmi_event(struct kcs_bmc *kcs_bmc)
- 		else
- 			kcs_bmc_ipmi_handle_data(kcs_bmc);
- 
--		ret = 0;
-+		ret = KCS_BMC_EVENT_HANDLED;
-+	} else {
-+		ret = KCS_BMC_EVENT_NONE;
- 	}
- 
- 	spin_unlock_irqrestore(&kcs_bmc->lock, flags);
- 
- 	return ret;
- }
--EXPORT_SYMBOL(kcs_bmc_ipmi_event);
- 
--static inline struct kcs_bmc *to_kcs_bmc(struct file *filp)
-+static const struct kcs_bmc_client_ops kcs_bmc_ipmi_client_ops = {
-+	.event = kcs_bmc_ipmi_event,
-+};
-+
-+static inline struct kcs_bmc *file_to_kcs_bmc(struct file *filp)
- {
- 	return container_of(filp->private_data, struct kcs_bmc, miscdev);
- }
- 
- static int kcs_bmc_ipmi_open(struct inode *inode, struct file *filp)
- {
--	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
-+	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
- 	int ret = 0;
- 
- 	spin_lock_irq(&kcs_bmc->lock);
-@@ -227,7 +239,7 @@ static int kcs_bmc_ipmi_open(struct inode *inode, struct file *filp)
- 
- static __poll_t kcs_bmc_ipmi_poll(struct file *filp, poll_table *wait)
- {
--	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
-+	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
- 	__poll_t mask = 0;
- 
- 	poll_wait(filp, &kcs_bmc->queue, wait);
-@@ -243,7 +255,7 @@ static __poll_t kcs_bmc_ipmi_poll(struct file *filp, poll_table *wait)
- static ssize_t kcs_bmc_ipmi_read(struct file *filp, char __user *buf,
- 			    size_t count, loff_t *ppos)
- {
--	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
-+	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
- 	bool data_avail;
- 	size_t data_len;
- 	ssize_t ret;
-@@ -305,7 +317,7 @@ static ssize_t kcs_bmc_ipmi_read(struct file *filp, char __user *buf,
- static ssize_t kcs_bmc_ipmi_write(struct file *filp, const char __user *buf,
- 			     size_t count, loff_t *ppos)
- {
--	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
-+	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
- 	ssize_t ret;
- 
- 	/* a minimum response size '3' : netfn + cmd + ccode */
-@@ -341,7 +353,7 @@ static ssize_t kcs_bmc_ipmi_write(struct file *filp, const char __user *buf,
- static long kcs_bmc_ipmi_ioctl(struct file *filp, unsigned int cmd,
- 			  unsigned long arg)
- {
--	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
-+	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
- 	long ret = 0;
- 
- 	spin_lock_irq(&kcs_bmc->lock);
-@@ -371,7 +383,7 @@ static long kcs_bmc_ipmi_ioctl(struct file *filp, unsigned int cmd,
- 
- static int kcs_bmc_ipmi_release(struct inode *inode, struct file *filp)
- {
--	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
-+	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
- 
- 	spin_lock_irq(&kcs_bmc->lock);
- 	kcs_bmc->running = 0;
-@@ -399,6 +411,8 @@ int kcs_bmc_ipmi_attach_cdev(struct kcs_bmc *kcs_bmc)
- 	mutex_init(&kcs_bmc->mutex);
- 	init_waitqueue_head(&kcs_bmc->queue);
- 
-+	kcs_bmc->client.dev = kcs_bmc;
-+	kcs_bmc->client.ops = &kcs_bmc_ipmi_client_ops;
- 	kcs_bmc->data_in = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
- 	kcs_bmc->data_out = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
- 	kcs_bmc->kbuffer = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
-diff --git a/drivers/char/ipmi/kcs_bmc_client.h b/drivers/char/ipmi/kcs_bmc_client.h
-new file mode 100644
-index 000000000000..140631d157d8
---- /dev/null
-+++ b/drivers/char/ipmi/kcs_bmc_client.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2021, IBM Corp. */
-+
-+#ifndef __KCS_BMC_CONSUMER_H__
-+#define __KCS_BMC_CONSUMER_H__
-+
-+#include <linux/list.h>
-+#include <linux/notifier.h>
-+#include <stdbool.h>
-+
-+struct kcs_bmc;
-+struct kcs_bmc_client_ops;
-+
-+struct kcs_bmc_client {
-+	const struct kcs_bmc_client_ops *ops;
-+
-+	struct kcs_bmc *dev;
-+};
-+
-+struct kcs_bmc_client_ops {
-+	int (*event)(struct kcs_bmc_client *client);
-+};
-+
-+u8 kcs_bmc_read_data(struct kcs_bmc *kcs_bmc);
-+void kcs_bmc_write_data(struct kcs_bmc *kcs_bmc, u8 data);
-+u8 kcs_bmc_read_status(struct kcs_bmc *kcs_bmc);
-+void kcs_bmc_write_status(struct kcs_bmc *kcs_bmc, u8 data);
-+void kcs_bmc_update_status(struct kcs_bmc *kcs_bmc, u8 mask, u8 val);
-+#endif
-diff --git a/drivers/char/ipmi/kcs_bmc_device.h b/drivers/char/ipmi/kcs_bmc_device.h
-new file mode 100644
-index 000000000000..33462174516d
---- /dev/null
-+++ b/drivers/char/ipmi/kcs_bmc_device.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2021, IBM Corp. */
-+
-+#ifndef __KCS_BMC_DEVICE_H__
-+#define __KCS_BMC_DEVICE_H__
-+
-+#include "kcs_bmc.h"
-+
-+struct kcs_bmc_device_ops {
-+	u8 (*io_inputb)(struct kcs_bmc *kcs_bmc, u32 reg);
-+	void (*io_outputb)(struct kcs_bmc *kcs_bmc, u32 reg, u8 b);
-+	void (*io_updateb)(struct kcs_bmc *kcs_bmc, u32 reg, u8 mask, u8 b);
-+};
-+
-+int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc);
-+int kcs_bmc_add_device(struct kcs_bmc *kcs_bmc);
-+int kcs_bmc_remove_device(struct kcs_bmc *kcs_bmc);
-+
-+#endif
-diff --git a/drivers/char/ipmi/kcs_bmc_npcm7xx.c b/drivers/char/ipmi/kcs_bmc_npcm7xx.c
-index 5d017498dc69..1d21697fc585 100644
---- a/drivers/char/ipmi/kcs_bmc_npcm7xx.c
-+++ b/drivers/char/ipmi/kcs_bmc_npcm7xx.c
-@@ -17,7 +17,7 @@
- #include <linux/regmap.h>
- #include <linux/slab.h>
- 
--#include "kcs_bmc.h"
-+#include "kcs_bmc_device.h"
- 
- #define DEVICE_NAME	"npcm-kcs-bmc"
- #define KCS_CHANNEL_MAX	3
-@@ -127,11 +127,13 @@ static void npcm7xx_kcs_enable_channel(struct kcs_bmc *kcs_bmc, bool enable)
- static irqreturn_t npcm7xx_kcs_irq(int irq, void *arg)
- {
- 	struct kcs_bmc *kcs_bmc = arg;
-+	int rc;
- 
--	if (!kcs_bmc_handle_event(kcs_bmc))
--		return IRQ_HANDLED;
-+	rc = kcs_bmc_handle_event(kcs_bmc);
-+	if (rc < 0)
-+		dev_warn(kcs_bmc->dev, "Failed to service irq: %d\n", rc);
- 
--	return IRQ_NONE;
-+	return rc == KCS_BMC_EVENT_HANDLED ? IRQ_HANDLED : IRQ_NONE;
- }
- 
- static int npcm7xx_kcs_config_irq(struct kcs_bmc *kcs_bmc,
-@@ -148,6 +150,12 @@ static int npcm7xx_kcs_config_irq(struct kcs_bmc *kcs_bmc,
- 				dev_name(dev), kcs_bmc);
- }
- 
-+static const struct kcs_bmc_device_ops npcm7xx_kcs_ops = {
-+	.io_inputb = npcm7xx_kcs_inb,
-+	.io_outputb = npcm7xx_kcs_outb,
-+	.io_updateb = npcm7xx_kcs_updateb,
-+};
-+
- static int npcm7xx_kcs_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -179,9 +187,7 @@ static int npcm7xx_kcs_probe(struct platform_device *pdev)
- 	kcs_bmc->ioreg.idr = priv->reg->dib;
- 	kcs_bmc->ioreg.odr = priv->reg->dob;
- 	kcs_bmc->ioreg.str = priv->reg->sts;
--	kcs_bmc->io_inputb = npcm7xx_kcs_inb;
--	kcs_bmc->io_outputb = npcm7xx_kcs_outb;
--	kcs_bmc->io_updateb = npcm7xx_kcs_updateb;
-+	kcs_bmc->ops = &npcm7xx_kcs_ops;
- 
- 	platform_set_drvdata(pdev, priv);
- 
+ 		switch (kcs_bmc->channel) {
+ 		case 1:
+-			regmap_update_bits(priv->map, LPC_HICR2, LPC_HICR2_IBFIF1,
+-					   enable * LPC_HICR2_IBFIF1);
++			regmap_update_bits(priv->map, LPC_HICR2, LPC_HICR2_IBFIE1,
++					   enable * LPC_HICR2_IBFIE1);
+ 			return;
+ 		case 2:
+-			regmap_update_bits(priv->map, LPC_HICR2, LPC_HICR2_IBFIF2,
+-					   enable * LPC_HICR2_IBFIF2);
++			regmap_update_bits(priv->map, LPC_HICR2, LPC_HICR2_IBFIE2,
++					   enable * LPC_HICR2_IBFIE2);
+ 			return;
+ 		case 3:
+-			regmap_update_bits(priv->map, LPC_HICR2, LPC_HICR2_IBFIF3,
+-					   enable * LPC_HICR2_IBFIF3);
++			regmap_update_bits(priv->map, LPC_HICR2, LPC_HICR2_IBFIE3,
++					   enable * LPC_HICR2_IBFIE3);
+ 			return;
+ 		case 4:
+-			regmap_update_bits(priv->map, LPC_HICRB, LPC_HICRB_IBFIF4,
+-					   enable * LPC_HICRB_IBFIF4);
++			regmap_update_bits(priv->map, LPC_HICRB, LPC_HICRB_IBFIE4,
++					   enable * LPC_HICRB_IBFIE4);
+ 			return;
+ 		default:
+ 			pr_warn("%s: Unsupported channel: %d", __func__, kcs_bmc->channel);
 -- 
 2.27.0
 
