@@ -7,75 +7,75 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3685C433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1064BC433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 707F364EBD
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D832564EB7
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbhBSO1H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Feb 2021 09:27:07 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:36607 "EHLO
+        id S230475AbhBSO1l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Feb 2021 09:27:41 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:37539 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230306AbhBSO06 (ORCPT
+        by vger.kernel.org with ESMTP id S230458AbhBSO1U (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Feb 2021 09:26:58 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id DFD7A5802B3;
-        Fri, 19 Feb 2021 09:26:10 -0500 (EST)
+        Fri, 19 Feb 2021 09:27:20 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C994058037F;
+        Fri, 19 Feb 2021 09:26:24 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Fri, 19 Feb 2021 09:26:10 -0500
+  by compute3.internal (MEProxy); Fri, 19 Feb 2021 09:26:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
         :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=ZNJkDZPQZ4qRn
-        0dZpJLR1k4wVs6r2KrWIHEsDySJPvg=; b=DoEoen05zG2OW4jmMQPm7XJzX77J6
-        S4Afnemd+rSyIi8BHWoJfFzWR1a8fBk/0liurwyUZK6tEtVS3lpMEjjGFRwHgv0Y
-        WBVDlNGmmpP13evFb6Hzv/ZVBmeWq83yRiIwt3rfUOUjIJSGa7PAsJ/GtDUKHfT6
-        zNn+Xfx8SlZ+glr7vBVuA6H14uglsMOs5qjfz1uwYzKOz5xml4YJj+SpMNGFFhmz
-        efcLLEI2bRr25BmulLf6ifYt/dHPzURuEN/kMlHy5jFGJUufXAIvEeMO42ljT13v
-        hulBKH0cvWDWVUfS9OxKpzROSOZkarBZGvFSz5XI+ruDGeyGrMupkJt1w==
+        :mime-version:content-transfer-encoding; s=fm2; bh=Wz3rX2JLSP5Um
+        Nsodg+6xxFvrCs/exUmWb2IW/KKfH8=; b=GBIevE0qUmg7yG7Po5bnyawiRA5Jx
+        sgf7eey621kylHh7nI/lxxBW5ONVU5O60nauiBuTBq7/TKkoEEqc3KfZFZ1xegJo
+        552tI19Wx/i6hIf/scSgBom8/xW0hVR54F5v9Bpg9dGIEmLpG3kLM3ntxxiCx0xs
+        lb5MrEb7ZVTvMxZIi4BS9vtwPixW1hORusVzjfVHDfh8YTZJtuawDZGgv0pHYBQT
+        Vd0irPLME4z615Sudgkuio47nlSn3dO6iQgZrbJVrQkKCe9Ojnb9OiuDpBaBYHL0
+        AlyvH+YHwoNsS3gzofnI49ov9E7BuFbSJ1Z/4nHhXkjMgnINV96HTyzqw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=ZNJkDZPQZ4qRn0dZpJLR1k4wVs6r2KrWIHEsDySJPvg=; b=cv6gwc+I
-        PJYNfTbWFHNDC8wHujEONVxLP2J2jpvpKpCUjiYYJJWnawgtBd2EzdxXS6i4qUqF
-        dw/fYsuopEyyvq9YJHp3MKZWjxsWNeU/JvaNHLm4AJ6nsbEOdgxmLZiH1sKvRmxp
-        xG9LZDSv0KOQawHXNxInNxA+XpDv0t8wTBNNAJKFxEnrwJ0ze/28+QBjpAbgSrnN
-        FHoKonT8VTWnPIi4G/vwnw2L5IsSdeTELoikwx6KSBK/jtyg7BDYX2xD6nCkHXaB
-        t1U9cMdqQKKI28iBZjn3XmT6NNVzjY7mDJyYQn2xFlxXLWJetxLV83PCOtEWkEHk
-        xshzwQw2bXIcZw==
-X-ME-Sender: <xms:gsovYI4vK-eLGP39pVPqfpF8X_q2u47E0hukAx5MGM6wX64G9UI58Q>
-    <xme:gsovYPLcA0S1G0eJECoUq0suxIScElGHWat_XMvQuBkViES1OQ6xCirbty3a6g8b3
-    SpxJMTZfd8zDLMewQ>
+        fm2; bh=Wz3rX2JLSP5UmNsodg+6xxFvrCs/exUmWb2IW/KKfH8=; b=aFR4zNHk
+        rbxP2mzGl6iG0BJns4R2dF0UB60/1T1dvDefSxl1fPaWDZVr/DuwiBd9Fwv47QpK
+        Tdmx1i6MajStQGgbldReYnilVzxCqllWiKVeh0nxxrjVTAKwG5SQY01yisiK8Lju
+        Wviai5E/L+3r8yrQmlgk/JPBykTCxcSMCb7dzMMapX4ZtUyj+uhdZjixNKo+sfny
+        KUdMVsphxNdGATjZ0avppy5/EjTlnTjVxG50N+XPp8mRPmYMyYZknAdy1AhOY9at
+        /c01Ra6gsSSlDjXhcIMMhnMJGjqwEF3fWyLZgns5jPiDKwJFCa8vX52N01m+uFWw
+        NNK97DChvrtvug==
+X-ME-Sender: <xms:kMovYDWpJZS0G4Qg3Tbq2s0jnEvg4jlp54O03BdoNCkPaV0v-c0pfg>
+    <xme:kMovYLnF4CSvZ-dFxQX8LPnhpcaUghEI4QLweoKi2jiGt6S5f5cI_cbi1rpPOD4cg
+    3PDm8mg_I8DZ6R2GQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeigecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehnughrvgif
-    ucflvghffhgvrhihuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrfgrthhtvg
-    hrnhepjefgvdevheetkeevgeegleelgfelteetjeffleffvdduudevieffgeetleevhfet
-    necukfhppedugedrvddrledurdefjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghu
-X-ME-Proxy: <xmx:gsovYJIe0tF9hhD1Ouan36CpSbJ9X9gKxgs0mQJNbXGAolr4Czkf8g>
-    <xmx:gsovYFUmzxx0HN6c9vHLJWt2FGmEO0MXD6Y0RCmkryydZu_RZ_YOpQ>
-    <xmx:gsovYDj52ZQpbcYl3lfu_uoTs3c1s8wUkjF6LkMWDOYZ4_SUL4borw>
-    <xmx:gsovYA6diHl5i84xvvE-jEBPZ2ZLjCAlSX_pNrX5KFYGl45hP1fDQQ>
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
+    ertddtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghj
+    rdhiugdrrghuqeenucggtffrrghtthgvrhhnpeejgfdvveehteekveeggeellefgleette
+    ejffelffdvudduveeiffegteelvefhteenucfkphepudegrddvrdeluddrfeejnecuvehl
+    uhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifse
+    grjhdrihgurdgruh
+X-ME-Proxy: <xmx:kMovYPa9RFEqMzNuzXqzbESfmAlT2-Zo5jj1dTsCW8JmxLUEInBTKA>
+    <xmx:kMovYOVRmxRXQmiSYeT9FZmT2-_bWDnVV8bsErGw-KYDT3YrPoxZQw>
+    <xmx:kMovYNlgFaNfLgP6TkgCK7p4nFV839VP56cc0X3LEAK09TlZ_GAz6w>
+    <xmx:kMovYP07RGA1J_6zLBYkSLv2wwZJLE7-wdZMmZ8DH41i-CGNJC2dLA>
 Received: from localhost.localdomain (ppp14-2-91-37.adl-apt-pir-bras31.tpg.internode.on.net [14.2.91.37])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8D7AC24005A;
-        Fri, 19 Feb 2021 09:26:04 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3AC8A24005A;
+        Fri, 19 Feb 2021 09:26:17 -0500 (EST)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     openipmi-developer@lists.sourceforge.net, openbmc@lists.ozlabs.org,
         minyard@acm.org
-Cc:     "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>, robh+dt@kernel.org,
-        joel@jms.id.au, lee.jones@linaro.org, avifishman70@gmail.com,
-        tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
-        yuenn@google.com, benjaminfair@google.com,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Cc:     robh+dt@kernel.org, joel@jms.id.au, lee.jones@linaro.org,
+        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        linus.walleij@linaro.org, chiawei_wang@aspeedtech.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 04/19] pinctrl: aspeed-g5: Adapt to new LPC device tree layout
-Date:   Sat, 20 Feb 2021 00:55:08 +1030
-Message-Id: <20210219142523.3464540-5-andrew@aj.id.au>
+Subject: [PATCH 06/19] ipmi: kcs_bmc_aspeed: Use of match data to extract KCS properties
+Date:   Sat, 20 Feb 2021 00:55:10 +1030
+Message-Id: <20210219142523.3464540-7-andrew@aj.id.au>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210219142523.3464540-1-andrew@aj.id.au>
 References: <20210219142523.3464540-1-andrew@aj.id.au>
@@ -85,58 +85,256 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>
+Unpack and remove the aspeed_kcs_probe_of_v[12]() functions to aid
+rearranging how the private device-driver memory is allocated.
 
-Add check against LPC device v2 compatible string to
-ensure that the fixed device tree layout is adopted.
-The LPC register offsets are also fixed accordingly.
-
-Signed-off-by: Chia-Wei Wang <chiawei_wang@aspeedtech.com>
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Tested-by: Andrew Jeffery <andrew@aj.id.au>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 ---
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/char/ipmi/kcs_bmc_aspeed.c | 146 ++++++++++++++---------------
+ 1 file changed, 68 insertions(+), 78 deletions(-)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-index 0cab4c2576e2..996ebcba4d38 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-@@ -60,7 +60,7 @@
- #define COND2		{ ASPEED_IP_SCU, SCU94, GENMASK(1, 0), 0, 0 }
+diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
+index eefe362f65f0..061f53676206 100644
+--- a/drivers/char/ipmi/kcs_bmc_aspeed.c
++++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/poll.h>
+ #include <linux/regmap.h>
+@@ -63,6 +64,10 @@ struct aspeed_kcs_bmc {
+ 	struct regmap *map;
+ };
  
- /* LHCR0 is offset from the end of the H8S/2168-compatible registers */
--#define LHCR0		0x20
-+#define LHCR0		0xa0
- #define GFX064		0x64
++struct aspeed_kcs_of_ops {
++	int (*get_channel)(struct platform_device *pdev);
++	int (*get_io_address)(struct platform_device *pdev);
++};
  
- #define B14 0
-@@ -2648,14 +2648,19 @@ static struct regmap *aspeed_g5_acquire_regmap(struct aspeed_pinmux_data *ctx,
+ static u8 aspeed_kcs_inb(struct kcs_bmc *kcs_bmc, u32 reg)
+ {
+@@ -231,13 +236,10 @@ static const struct kcs_ioreg ast_kcs_bmc_ioregs[KCS_CHANNEL_MAX] = {
+ 	{ .idr = LPC_IDR4, .odr = LPC_ODR4, .str = LPC_STR4 },
+ };
+ 
+-static struct kcs_bmc *aspeed_kcs_probe_of_v1(struct platform_device *pdev)
++static int aspeed_kcs_of_v1_get_channel(struct platform_device *pdev)
+ {
+-	struct aspeed_kcs_bmc *priv;
+ 	struct device_node *np;
+-	struct kcs_bmc *kcs;
+ 	u32 channel;
+-	u32 slave;
+ 	int rc;
+ 
+ 	np = pdev->dev.of_node;
+@@ -245,105 +247,78 @@ static struct kcs_bmc *aspeed_kcs_probe_of_v1(struct platform_device *pdev)
+ 	rc = of_property_read_u32(np, "kcs_chan", &channel);
+ 	if ((rc != 0) || (channel == 0 || channel > KCS_CHANNEL_MAX)) {
+ 		dev_err(&pdev->dev, "no valid 'kcs_chan' configured\n");
+-		return ERR_PTR(-EINVAL);
++		return -EINVAL;
  	}
  
- 	if (ip == ASPEED_IP_LPC) {
--		struct device_node *node;
-+		struct device_node *np;
- 		struct regmap *map;
+-	kcs = kcs_bmc_alloc(&pdev->dev, sizeof(struct aspeed_kcs_bmc), channel);
+-	if (!kcs)
+-		return ERR_PTR(-ENOMEM);
++	return channel;
++}
  
--		node = of_parse_phandle(ctx->dev->of_node,
-+		np = of_parse_phandle(ctx->dev->of_node,
- 					"aspeed,external-nodes", 1);
--		if (node) {
--			map = syscon_node_to_regmap(node->parent);
--			of_node_put(node);
-+		if (np) {
-+			if (!of_device_is_compatible(np->parent, "aspeed,ast2400-lpc-v2") &&
-+			    !of_device_is_compatible(np->parent, "aspeed,ast2500-lpc-v2") &&
-+			    !of_device_is_compatible(np->parent, "aspeed,ast2600-lpc-v2"))
-+				return ERR_PTR(-ENODEV);
+-	priv = kcs_bmc_priv(kcs);
+-	priv->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
+-	if (IS_ERR(priv->map)) {
+-		dev_err(&pdev->dev, "Couldn't get regmap\n");
+-		return ERR_PTR(-ENODEV);
+-	}
++static int aspeed_kcs_of_v1_get_io_address(struct platform_device *pdev)
++{
++	u32 slave;
++	int rc;
+ 
+-	rc = of_property_read_u32(np, "kcs_addr", &slave);
+-	if (rc) {
++	rc = of_property_read_u32(pdev->dev.of_node, "kcs_addr", &slave);
++	if (rc || slave > 0xffff) {
+ 		dev_err(&pdev->dev, "no valid 'kcs_addr' configured\n");
+-		return ERR_PTR(-EINVAL);
++		return -EINVAL;
+ 	}
+ 
+-	kcs->ioreg = ast_kcs_bmc_ioregs[channel - 1];
+-	aspeed_kcs_set_address(kcs, slave);
+-
+-	return kcs;
+-}
+-
+-static int aspeed_kcs_calculate_channel(const struct kcs_ioreg *regs)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(ast_kcs_bmc_ioregs); i++) {
+-		if (!memcmp(&ast_kcs_bmc_ioregs[i], regs, sizeof(*regs)))
+-			return i + 1;
+-	}
+-
+-	return -EINVAL;
++	return slave;
+ }
+ 
+-static struct kcs_bmc *aspeed_kcs_probe_of_v2(struct platform_device *pdev)
++static int aspeed_kcs_of_v2_get_channel(struct platform_device *pdev)
+ {
+-	struct aspeed_kcs_bmc *priv;
+ 	struct device_node *np;
+ 	struct kcs_ioreg ioreg;
+-	struct kcs_bmc *kcs;
+ 	const __be32 *reg;
+-	int channel;
+-	u32 slave;
+-	int rc;
++	int i;
+ 
+ 	np = pdev->dev.of_node;
+ 
+ 	/* Don't translate addresses, we want offsets for the regmaps */
+ 	reg = of_get_address(np, 0, NULL, NULL);
+ 	if (!reg)
+-		return ERR_PTR(-EINVAL);
++		return -EINVAL;
+ 	ioreg.idr = be32_to_cpup(reg);
+ 
+ 	reg = of_get_address(np, 1, NULL, NULL);
+ 	if (!reg)
+-		return ERR_PTR(-EINVAL);
++		return -EINVAL;
+ 	ioreg.odr = be32_to_cpup(reg);
+ 
+ 	reg = of_get_address(np, 2, NULL, NULL);
+ 	if (!reg)
+-		return ERR_PTR(-EINVAL);
++		return -EINVAL;
+ 	ioreg.str = be32_to_cpup(reg);
+ 
+-	channel = aspeed_kcs_calculate_channel(&ioreg);
+-	if (channel < 0)
+-		return ERR_PTR(channel);
+-
+-	kcs = kcs_bmc_alloc(&pdev->dev, sizeof(struct aspeed_kcs_bmc), channel);
+-	if (!kcs)
+-		return ERR_PTR(-ENOMEM);
+-
+-	kcs->ioreg = ioreg;
+-
+-	priv = kcs_bmc_priv(kcs);
+-	priv->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
+-	if (IS_ERR(priv->map)) {
+-		dev_err(&pdev->dev, "Couldn't get regmap\n");
+-		return ERR_PTR(-ENODEV);
++	for (i = 0; i < ARRAY_SIZE(ast_kcs_bmc_ioregs); i++) {
++		if (!memcmp(&ast_kcs_bmc_ioregs[i], &ioreg, sizeof(ioreg)))
++			return i + 1;
+ 	}
+ 
+-	rc = of_property_read_u32(np, "aspeed,lpc-io-reg", &slave);
+-	if (rc)
+-		return ERR_PTR(rc);
++	return -EINVAL;
++}
+ 
+-	aspeed_kcs_set_address(kcs, slave);
++static int aspeed_kcs_of_v2_get_io_address(struct platform_device *pdev)
++{
++	uint32_t slave;
++	int rc;
+ 
+-	return kcs;
++	rc = of_property_read_u32(pdev->dev.of_node, "aspeed,lpc-io-reg", &slave);
++	if (rc || slave > 0xffff)
++		return -EINVAL;
 +
-+			map = syscon_node_to_regmap(np->parent);
-+			of_node_put(np);
- 			if (IS_ERR(map))
- 				return map;
- 		} else
++	return slave;
+ }
+ 
+ static int aspeed_kcs_probe(struct platform_device *pdev)
+ {
++	const struct aspeed_kcs_of_ops *ops;
+ 	struct device *dev = &pdev->dev;
+ 	struct kcs_bmc *kcs_bmc;
+ 	struct device_node *np;
+-	int rc;
++	int rc, channel, addr;
+ 
+ 	np = dev->of_node->parent;
+ 	if (!of_device_is_compatible(np, "aspeed,ast2400-lpc-v2") &&
+@@ -352,23 +327,28 @@ static int aspeed_kcs_probe(struct platform_device *pdev)
+ 		dev_err(dev, "unsupported LPC device binding\n");
+ 		return -ENODEV;
+ 	}
+-
+-	np = dev->of_node;
+-	if (of_device_is_compatible(np, "aspeed,ast2400-kcs-bmc") ||
+-	    of_device_is_compatible(np, "aspeed,ast2500-kcs-bmc"))
+-		kcs_bmc = aspeed_kcs_probe_of_v1(pdev);
+-	else if (of_device_is_compatible(np, "aspeed,ast2400-kcs-bmc-v2") ||
+-		 of_device_is_compatible(np, "aspeed,ast2500-kcs-bmc-v2"))
+-		kcs_bmc = aspeed_kcs_probe_of_v2(pdev);
+-	else
++	ops = of_device_get_match_data(&pdev->dev);
++	if (!ops)
+ 		return -EINVAL;
+ 
+-	if (IS_ERR(kcs_bmc))
+-		return PTR_ERR(kcs_bmc);
++	channel = ops->get_channel(pdev);
++	if (channel < 0)
++		return channel;
+ 
++	kcs_bmc = kcs_bmc_alloc(&pdev->dev, sizeof(struct aspeed_kcs_bmc), channel);
++	if (!kcs_bmc)
++		return -ENOMEM;
++
++	kcs_bmc->ioreg = ast_kcs_bmc_ioregs[channel - 1];
+ 	kcs_bmc->io_inputb = aspeed_kcs_inb;
+ 	kcs_bmc->io_outputb = aspeed_kcs_outb;
+ 
++	addr = ops->get_io_address(pdev);
++	if (addr < 0)
++		return addr;
++
++	aspeed_kcs_set_address(kcs_bmc, addr);
++
+ 	rc = aspeed_kcs_config_irq(kcs_bmc, pdev);
+ 	if (rc)
+ 		return rc;
+@@ -400,11 +380,21 @@ static int aspeed_kcs_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct aspeed_kcs_of_ops of_v1_ops = {
++	.get_channel = aspeed_kcs_of_v1_get_channel,
++	.get_io_address = aspeed_kcs_of_v1_get_io_address,
++};
++
++static const struct aspeed_kcs_of_ops of_v2_ops = {
++	.get_channel = aspeed_kcs_of_v2_get_channel,
++	.get_io_address = aspeed_kcs_of_v2_get_io_address,
++};
++
+ static const struct of_device_id ast_kcs_bmc_match[] = {
+-	{ .compatible = "aspeed,ast2400-kcs-bmc" },
+-	{ .compatible = "aspeed,ast2500-kcs-bmc" },
+-	{ .compatible = "aspeed,ast2400-kcs-bmc-v2" },
+-	{ .compatible = "aspeed,ast2500-kcs-bmc-v2" },
++	{ .compatible = "aspeed,ast2400-kcs-bmc", .data = &of_v1_ops },
++	{ .compatible = "aspeed,ast2500-kcs-bmc", .data = &of_v1_ops },
++	{ .compatible = "aspeed,ast2400-kcs-bmc-v2", .data = &of_v2_ops },
++	{ .compatible = "aspeed,ast2500-kcs-bmc-v2", .data = &of_v2_ops },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ast_kcs_bmc_match);
 -- 
 2.27.0
 
