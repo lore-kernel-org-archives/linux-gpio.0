@@ -2,239 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 962CEC433E0
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F332C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 23:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6583564DDA
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:30:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C3AF64EAF
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 23:06:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbhBSO3s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Feb 2021 09:29:48 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:45143 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231173AbhBSO2q (ORCPT
+        id S229577AbhBSXGm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Feb 2021 18:06:42 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:44038 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229515AbhBSXGm (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Feb 2021 09:28:46 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6311E5803C1;
-        Fri, 19 Feb 2021 09:27:34 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 19 Feb 2021 09:27:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=VWc2JEncu0Xjp
-        jSk1gHgmKo9FZz2GeTal7pM7FnaRmE=; b=ZmxHCyKA+DmQpbU9OsyjEMSRvfGLn
-        i8ZGPSuEpTbDvpiAIPZAK+C3WnpOC9KbQODumo6lQzQje3zJjldGhYEuZTGSH8nH
-        XWLwnJuWINuEueYK1zPNirrRau5eBy45Xg7/Cb4Gi97TTFYHUFHAoXDOeAIbVxho
-        NZ07FCuL4La4Y+SsZgYUyeYsCBFtOevO+3Bk/vO3SmZjNdqBIEA2ea21kCEG1NKf
-        LKcgH7zSwqv8C3s7TVBRYX23ExuHPoqgi9bv8SdXMCIE6dSxo+1gGRprmvcQeXnh
-        XaKemHE+c85eucvF6UEX4WTxf2uswGOgKiDkU5CsdHliFr+JACoJ4fUAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=VWc2JEncu0XjpjSk1gHgmKo9FZz2GeTal7pM7FnaRmE=; b=wOjiBr6C
-        3FKA2E08WwIXAneLYATEvnwQQ6rq0Liz6uWDKoLWVaTpmMlxu3nNsFiK8yLhz1lz
-        LqeaOJMruYL2+6pNvsUxxEKZqb58PyWNWRkwjvU8JhaOUTwVq4CbdBpxFzqRfrw8
-        WY4BaKwNH6ecyaRr69RY+s3E1lm+eu6ViUjdXCCCrfq84HI3x1XXqqSlRSTDYvUa
-        CKTpQYzQy7bg90HnQa94q2IgXTk3WPyPK51dXG+MYmcZv5gSU0/UXuDGJ2pDllGQ
-        j3ZfRRuiD38IwUokjxfEyoMbduNbzg5xKEhhD3guQ2WfXlFJgmN1IXFW2hBoIO1I
-        FVnWzVC/GvtZpw==
-X-ME-Sender: <xms:1sovYJnPPN9wsanteCFAX4NtDIkV-GOiFxBh2C1FwRHwEr_VnXAHiA>
-    <xme:1sovYE32aQbolyg6BCf-q6IQqsNsUQqNqvlMm42uXfq4gvb86oCrC6CfjkMYw0omc
-    JuQR8DCV2BVTHKrMw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeigecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghj
-    rdhiugdrrghuqeenucggtffrrghtthgvrhhnpeeluedvvedtgffggefggfeugeevgffhje
-    efiedtvdehvdfhtefftefffeeihfevvdenucffohhmrghinhepuggvvhhitggvthhrvggv
-    rdhorhhgnecukfhppedugedrvddrledurdefjeenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghu
-X-ME-Proxy: <xmx:1sovYPpkw7rkIX7tN6pVChDLuOVvY7M6zKCfnzGWEDJpN9xKLmN0rw>
-    <xmx:1sovYJkGRjm2eUeJhkODiKsQHs1Xr-x76m0NTjoDDwRmoljdnoymEQ>
-    <xmx:1sovYH0JDkzcUMxTtE9r_1RbbNkofwtn3xR_HVAKNxEXKUlOJxJANA>
-    <xmx:1sovYIEof0nrw5RmzAnkiGUawSoPqqi8Cqzuz6xnyAYlfNii6ma8IQ>
-Received: from localhost.localdomain (ppp14-2-91-37.adl-apt-pir-bras31.tpg.internode.on.net [14.2.91.37])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F4057240057;
-        Fri, 19 Feb 2021 09:27:27 -0500 (EST)
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     openipmi-developer@lists.sourceforge.net, openbmc@lists.ozlabs.org,
-        minyard@acm.org
-Cc:     robh+dt@kernel.org, joel@jms.id.au, lee.jones@linaro.org,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        linus.walleij@linaro.org, chiawei_wang@aspeedtech.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 16/19] dt-bindings: ipmi: Convert ASPEED KCS binding to schema
-Date:   Sat, 20 Feb 2021 00:55:20 +1030
-Message-Id: <20210219142523.3464540-17-andrew@aj.id.au>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210219142523.3464540-1-andrew@aj.id.au>
-References: <20210219142523.3464540-1-andrew@aj.id.au>
+        Fri, 19 Feb 2021 18:06:42 -0500
+X-Greylist: delayed 1598 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Feb 2021 18:06:41 EST
+Received: from [77.244.183.192] (port=64500 helo=melee.fritz.box)
+        by hostingweb31.netsons.net with esmtpa (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1lDEQi-009zHK-Hu; Fri, 19 Feb 2021 23:39:20 +0100
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] mfd: lp87565: remove unused define
+Date:   Fri, 19 Feb 2021 23:39:09 +0100
+Message-Id: <20210219223910.1831-2-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210219223910.1831-1-luca@lucaceresoli.net>
+References: <20210219223910.1831-1-luca@lucaceresoli.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Given the deprecated binding, improve the ability to detect issues in
-the platform devicetrees. Further, a subsequent patch will introduce a
-new interrupts property for specifying SerIRQ behaviour, so convert
-before we do any further additions.
+This define appears incorrect, but it is completely unused so it can be
+removed.
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- .../bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml | 92 +++++++++++++++++++
- .../bindings/ipmi/aspeed-kcs-bmc.txt          | 33 -------
- 2 files changed, 92 insertions(+), 33 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml
- delete mode 100644 Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
+ include/linux/mfd/lp87565.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml b/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml
-new file mode 100644
-index 000000000000..1c1cc4265948
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml
-@@ -0,0 +1,92 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASPEED BMC KCS Devices
-+
-+maintainers:
-+  - Andrew Jeffery <andrew@aj.id.au>
-+
-+description: |
-+  The Aspeed BMC SoCs typically use the Keyboard-Controller-Style (KCS)
-+  interfaces on the LPC bus for in-band IPMI communication with their host.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - description: Channel ID derived from reg
-+        items:
-+          enum:
-+            - aspeed,ast2400-kcs-bmc-v2
-+            - aspeed,ast2500-kcs-bmc-v2
-+            - aspeed,ast2600-kcs-bmc
-+
-+      - description: Old-style with explicit channel ID, no reg
-+        deprecated: true
-+        items:
-+          enum:
-+            - aspeed,ast2400-kcs-bmc
-+            - aspeed,ast2500-kcs-bmc
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    minItems: 3
-+    maxItems: 3
-+    description: IDR, ODR and STR register addresses
-+
-+  aspeed,lpc-io-reg:
-+    $ref: '/schemas/types.yaml#/definitions/uint32'
-+    minItems: 1
-+    maxItems: 2
-+    description: |
-+      The host CPU LPC IO data and status addresses for the device. For most
-+      channels the status address is derived from the data address, but the
-+      status address may be optionally provided.
-+
-+  kcs_chan:
-+    deprecated: true
-+    $ref: '/schemas/types.yaml#/definitions/uint32'
-+    maxItems: 1
-+    description: The LPC channel number in the controller
-+
-+  kcs_addr:
-+    deprecated: true
-+    $ref: '/schemas/types.yaml#/definitions/uint32'
-+    maxItems: 1
-+    description: The host CPU IO map address
-+
-+required:
-+  - compatible
-+  - interrupts
-+
-+additionalProperties: false
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - aspeed,ast2400-kcs-bmc
-+              - aspeed,ast2500-kcs-bmc
-+    then:
-+      required:
-+        - kcs_chan
-+        - kcs_addr
-+    else:
-+      required:
-+        - reg
-+        - aspeed,lpc-io-reg
-+
-+examples:
-+  - |
-+    kcs3: kcs@24 {
-+        compatible = "aspeed,ast2600-kcs-bmc";
-+        reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
-+        aspeed,lpc-io-reg = <0xca2>;
-+        interrupts = <8>;
-+    };
-diff --git a/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt b/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
-deleted file mode 100644
-index 193e71ca96b0..000000000000
---- a/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--# Aspeed KCS (Keyboard Controller Style) IPMI interface
+diff --git a/include/linux/mfd/lp87565.h b/include/linux/mfd/lp87565.h
+index 2620554f357a..a8799ae50dcf 100644
+--- a/include/linux/mfd/lp87565.h
++++ b/include/linux/mfd/lp87565.h
+@@ -237,9 +237,6 @@ enum lp87565_device_type {
+ #define LP87565_GPIO2_OUT			BIT(1)
+ #define LP87565_GPIO1_OUT			BIT(0)
+ 
+-/* Number of step-down converters available */
+-#define LP87565_NUM_BUCK		6
 -
--The Aspeed SOCs (AST2400 and AST2500) are commonly used as BMCs
--(Baseboard Management Controllers) and the KCS interface can be
--used to perform in-band IPMI communication with their host.
--
--## v1
--Required properties:
--- compatible : should be one of
--    "aspeed,ast2400-kcs-bmc"
--    "aspeed,ast2500-kcs-bmc"
--- interrupts : interrupt generated by the controller
--- kcs_chan : The LPC channel number in the controller
--- kcs_addr : The host CPU IO map address
--
--## v2
--Required properties:
--- compatible : should be one of
--    "aspeed,ast2400-kcs-bmc-v2"
--    "aspeed,ast2500-kcs-bmc-v2"
--- reg : The address and size of the IDR, ODR and STR registers
--- interrupts : interrupt generated by the controller
--- aspeed,lpc-io-reg : The host CPU LPC IO address for the device
--
--Example:
--
--    kcs3: kcs@24 {
--        compatible = "aspeed,ast2500-kcs-bmc-v2";
--        reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
--        aspeed,lpc-reg = <0xca2>;
--        interrupts = <8>;
--        status = "okay";
--    };
+ enum LP87565_regulator_id {
+ 	/* BUCK's */
+ 	LP87565_BUCK_0,
 -- 
-2.27.0
+2.30.0
 
