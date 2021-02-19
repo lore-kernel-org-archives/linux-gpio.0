@@ -5,50 +5,50 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E12C433E9
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CE2C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DCB464EB7
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 008E064EBF
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230354AbhBSO1C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Feb 2021 09:27:02 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:51125 "EHLO
+        id S230389AbhBSO1G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Feb 2021 09:27:06 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:43519 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229636AbhBSO0w (ORCPT
+        by vger.kernel.org with ESMTP id S230305AbhBSO04 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Feb 2021 09:26:52 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 1654E580367;
-        Fri, 19 Feb 2021 09:26:06 -0500 (EST)
+        Fri, 19 Feb 2021 09:26:56 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 71E58580348;
+        Fri, 19 Feb 2021 09:25:49 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 19 Feb 2021 09:26:06 -0500
+  by compute3.internal (MEProxy); Fri, 19 Feb 2021 09:25:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
         :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=8f7naV3t492m2
-        6tJiqvpMdtN6bec5zlRMxz/eLIINok=; b=RTO8+duai9Z/7ITJpiq/rzQF2B5hL
-        XkHKHOwbu4qF95ISU+FRiS5cEsC/sDJcsMVLzjgHCVKG3I4ywSaasp96PKJ5j5CW
-        CsanyzcHQA/6YAk2RytYu0XKPCannn1wjgU2t3QpcDtkKxw1GU2OVmdntVFwIN8B
-        pjtlUfYfHb+FuWEjwUIQqhn3auNxfH0g6WxJsu0fdps58sFCgDn/0ALJ/bskja+K
-        aJXMt1AYpaRLCvJwJFFCmeV6GK4qyZqvr84PnYhNU7GIx026rrpXJ75ujHN+VM04
-        n0eBsLVfESzi2VNET8+KQuCKZ6Wqeo/A7HwbOXBF20QVeO1pzqvyVjkYg==
+        :mime-version:content-transfer-encoding; s=fm2; bh=Of9fXLwiHKbZL
+        z7SYjbDH9KiyUIl2ezf3PxW73gC+GE=; b=kVehsZZ7XShLXHhuPbxKT1C5qGW7x
+        XyWiEMjHj9BnjB+jMrcLAWQfFJwNuviwye5rP/lvaXCQc6ZtCQGkZj7r+drwbsxR
+        hMr8kjZj8s3ZTr+nsy4S2PG2lAG3OiImAQYmlpJKtsu5K0jTqBr9YOHr5n6D5D8I
+        KeJkzn3x6nT+zvhUBoK8NNxhMYFtabFqXa7ryoN7olS1F56C5wytbr5hLm7W0/Jp
+        tooAIITEEZd/9YRCzg40kZeeEYIrMStd2ik3CvtL+Ebi/YmM/xf3nQ/0A8Y1Heoa
+        PzdU4VPZ3tqjl1B6kLbI1UiAP/cwlMxcgxiLBeR8iRR0yZv92V6G3mI/g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=8f7naV3t492m26tJiqvpMdtN6bec5zlRMxz/eLIINok=; b=BBO74844
-        UPCEhEG0ST207xR0WwS6wMF0xQQsbC3zW0TLFVtanMzQ28yS0nD4gHHAhcIbiGcZ
-        Ry06MJD9FPMJL+6qyr3BZsdMZp1dtdnDeYUANY+7BYgPUk8HI7COHkPhz7j799bU
-        4+MzgNwyuoBx+IscnoJo3fl9z41mH3nJ0fGcK/Vgo+DXcGPv4ShFsfvrTm/FOuSk
-        3+tozBNYzKcz1p8wDCn35Q7KfMo5tdHKawBE2+mx7Y15gl7jyf8im1piPMMzJ3op
-        cBWanLWK3QXQ07NqHwJ4gXo69xsDnqVLGDvNyXsAE/uJEEJfqGWEdcTPfOI7lU8d
-        vlrxBRZdwk6A7g==
-X-ME-Sender: <xms:e8ovYGr_PuI4SR3VfsyJU0da_rsZYDaraE2Y8TV0AFgW_sMdSZbS1w>
-    <xme:e8ovYCcKJCk4uJhaelSd24cSunyLRjcioG9zcOQrdfTeMXQ6EHMmCX1Bn9l1sUgLM
-    HBXebSBK-M4SbX0Lg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeifecutefuodetggdotefrodftvf
+        fm2; bh=Of9fXLwiHKbZLz7SYjbDH9KiyUIl2ezf3PxW73gC+GE=; b=iVUYHjoR
+        OYwYg6zAazMsY4C/vVhxwwQuv/3IOJ7Ro93v+4OWv3/CuWlbAuOLNq+uySkeO+2b
+        K2j9d1vzwzxS/6AN/Cel6r6NLL+1IU2nQwvauavASrm5VxuplvFx0Cv8qwCu/ZxC
+        ZYGTHrXotRNKEm0wKIeJEWgZ0i5I5+vEb4i5IgWylQav7Urqme1lTX6qS3EUzgHE
+        rIwXnobp2NBbrR894OELx/Xnf0oehR7KapdngRWjQV+WwAeB2fPI37Q65l/VuIO4
+        DbhkwOVKVuEQESbRseq/QFuI5ZWaaa5bqgcC8u6Zc8ZIbklbxFGp1XQbv4b76vJS
+        pHiEKl7tlFQV+g==
+X-ME-Sender: <xms:bcovYEx9tdO6bV-bw2UiVNGzD8bTUz1yByBlmOIf8o-BR3jVncwGuQ>
+    <xme:bcovYIS93uRvbNlD1VklGwdxXvI0BWHZZwnCcLTDYmTUfURcGmHkQnM0gszQq5_vO
+    r5gbwU_LQU66BQxcQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeigecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehnughrvgif
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeifecutefuodetggdote
     hrnhepjefgvdevheetkeevgeegleelgfelteetjeffleffvdduudevieffgeetleevhfet
     necukfhppedugedrvddrledurdefjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
     grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghu
-X-ME-Proxy: <xmx:e8ovYFqSrMDeerYToCsMINUzXkvsNVK0yyZrC7g2aOH3VHnjWfFUJQ>
-    <xmx:e8ovYDF6hVpK6fdezL13A_Vk0Y8mJprnpEY8fH4MqdaleZq4TuvfPA>
-    <xmx:e8ovYFsgtCFP2UatsCf1lUVL9FAD982wivtUnmuK7a8C0NNUy8aWJQ>
-    <xmx:fsovYGwGVuzH-t7ZP3lMJ24oV_lO2ekhCESebRxFL0v8TAxEdeZiwQ>
+X-ME-Proxy: <xmx:bcovYGWhK7a5ZAUqwWdJiVfaK8LX6gho6mHjDqFWBcfNkL-qDNFJiQ>
+    <xmx:bcovYCjik2fiehnvOGkanWwWXJvN4wnrVo94C8qyvgtoRpo9g43Y6w>
+    <xmx:bcovYGD_SmDoIHJDaCIMhEvtli3pdEo5BYjGXknoz5i8qSO5k6pa5A>
+    <xmx:bcovYO3KgJ9ri94fSnxtCGKFt4oJ5_6gAhqKE69lpKmjoowJRkFqmg>
 Received: from localhost.localdomain (ppp14-2-91-37.adl-apt-pir-bras31.tpg.internode.on.net [14.2.91.37])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 19385240064;
-        Fri, 19 Feb 2021 09:25:56 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id BC8FC24005E;
+        Fri, 19 Feb 2021 09:25:42 -0500 (EST)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     openipmi-developer@lists.sourceforge.net, openbmc@lists.ozlabs.org,
         minyard@acm.org
@@ -73,11 +73,10 @@ Cc:     "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>, robh+dt@kernel.org,
         linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        Haiyue Wang <haiyue.wang@linux.intel.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 03/19] ipmi: kcs: aspeed: Adapt to new LPC DTS layout
-Date:   Sat, 20 Feb 2021 00:55:07 +1030
-Message-Id: <20210219142523.3464540-4-andrew@aj.id.au>
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 01/19] dt-bindings: aspeed-lpc: Remove LPC partitioning
+Date:   Sat, 20 Feb 2021 00:55:05 +1030
+Message-Id: <20210219142523.3464540-2-andrew@aj.id.au>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210219142523.3464540-1-andrew@aj.id.au>
 References: <20210219142523.3464540-1-andrew@aj.id.au>
@@ -89,75 +88,184 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>
 
-Add check against LPC device v2 compatible string to
-ensure that the fixed device tree layout is adopted.
-The LPC register offsets are also fixed accordingly.
+The LPC controller has no concept of the BMC and the Host partitions.
+This patch fixes the documentation by removing the description on LPC
+partitions. The register offsets illustrated in the DTS node examples
+are also fixed to adapt to the LPC DTS change.
 
 Signed-off-by: Chia-Wei Wang <chiawei_wang@aspeedtech.com>
 Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Acked-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-Acked-by: Corey Minyard <cminyard@mvista.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/char/ipmi/kcs_bmc_aspeed.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ .../devicetree/bindings/mfd/aspeed-lpc.txt    | 100 +++++-------------
+ 1 file changed, 25 insertions(+), 75 deletions(-)
 
-diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
-index a140203c079b..eefe362f65f0 100644
---- a/drivers/char/ipmi/kcs_bmc_aspeed.c
-+++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
-@@ -27,7 +27,6 @@
+diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
+index d0a38ba8b9ce..936aa108eab4 100644
+--- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
++++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
+@@ -9,13 +9,7 @@ primary use case of the Aspeed LPC controller is as a slave on the bus
+ conditions it can also take the role of bus master.
  
- #define KCS_CHANNEL_MAX     4
+ The LPC controller is represented as a multi-function device to account for the
+-mix of functionality it provides. The principle split is between the register
+-layout at the start of the I/O space which is, to quote the Aspeed datasheet,
+-"basically compatible with the [LPC registers from the] popular BMC controller
+-H8S/2168[1]", and everything else, where everything else is an eclectic
+-collection of functions with a esoteric register layout. "Everything else",
+-here labeled the "host" portion of the controller, includes, but is not limited
+-to:
++mix of functionality, which includes, but is not limited to:
  
--/* mapped to lpc-bmc@0 IO space */
- #define LPC_HICR0            0x000
- #define     LPC_HICR0_LPC3E          BIT(7)
- #define     LPC_HICR0_LPC2E          BIT(6)
-@@ -52,15 +51,13 @@
- #define LPC_STR1             0x03C
- #define LPC_STR2             0x040
- #define LPC_STR3             0x044
+ * An IPMI Block Transfer[2] Controller
+ 
+@@ -44,80 +38,36 @@ Required properties
+ ===================
+ 
+ - compatible:	One of:
+-		"aspeed,ast2400-lpc", "simple-mfd"
+-		"aspeed,ast2500-lpc", "simple-mfd"
+-		"aspeed,ast2600-lpc", "simple-mfd"
++		"aspeed,ast2400-lpc-v2", "simple-mfd", "syscon"
++		"aspeed,ast2500-lpc-v2", "simple-mfd", "syscon"
++		"aspeed,ast2600-lpc-v2", "simple-mfd", "syscon"
+ 
+ - reg:		contains the physical address and length values of the Aspeed
+                 LPC memory region.
+ 
+ - #address-cells: <1>
+ - #size-cells:	<1>
+-- ranges: 	Maps 0 to the physical address and length of the LPC memory
+-                region
 -
--/* mapped to lpc-host@80 IO space */
--#define LPC_HICRB            0x080
-+#define LPC_HICRB            0x100
- #define     LPC_HICRB_IBFIF4         BIT(1)
- #define     LPC_HICRB_LPC4E          BIT(0)
--#define LPC_LADR4            0x090
--#define LPC_IDR4             0x094
--#define LPC_ODR4             0x098
--#define LPC_STR4             0x09C
-+#define LPC_LADR4            0x110
-+#define LPC_IDR4             0x114
-+#define LPC_ODR4             0x118
-+#define LPC_STR4             0x11C
+-Required LPC Child nodes
+-========================
+-
+-BMC Node
+---------
+-
+-- compatible:	One of:
+-		"aspeed,ast2400-lpc-bmc"
+-		"aspeed,ast2500-lpc-bmc"
+-		"aspeed,ast2600-lpc-bmc"
+-
+-- reg:		contains the physical address and length values of the
+-                H8S/2168-compatible LPC controller memory region
+-
+-Host Node
+----------
+-
+-- compatible:   One of:
+-		"aspeed,ast2400-lpc-host", "simple-mfd", "syscon"
+-		"aspeed,ast2500-lpc-host", "simple-mfd", "syscon"
+-		"aspeed,ast2600-lpc-host", "simple-mfd", "syscon"
+-
+-- reg:		contains the address and length values of the host-related
+-                register space for the Aspeed LPC controller
+-
+-- #address-cells: <1>
+-- #size-cells:	<1>
+-- ranges: 	Maps 0 to the address and length of the host-related LPC memory
++- ranges:	Maps 0 to the physical address and length of the LPC memory
+                 region
  
- struct aspeed_kcs_bmc {
- 	struct regmap *map;
-@@ -348,12 +345,20 @@ static int aspeed_kcs_probe(struct platform_device *pdev)
- 	struct device_node *np;
- 	int rc;
+ Example:
  
--	np = pdev->dev.of_node;
-+	np = dev->of_node->parent;
-+	if (!of_device_is_compatible(np, "aspeed,ast2400-lpc-v2") &&
-+	    !of_device_is_compatible(np, "aspeed,ast2500-lpc-v2") &&
-+	    !of_device_is_compatible(np, "aspeed,ast2600-lpc-v2")) {
-+		dev_err(dev, "unsupported LPC device binding\n");
-+		return -ENODEV;
-+	}
+ lpc: lpc@1e789000 {
+-	compatible = "aspeed,ast2500-lpc", "simple-mfd";
++	compatible = "aspeed,ast2500-lpc-v2", "simple-mfd", "syscon";
+ 	reg = <0x1e789000 0x1000>;
+ 
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 	ranges = <0x0 0x1e789000 0x1000>;
+ 
+-	lpc_bmc: lpc-bmc@0 {
+-		compatible = "aspeed,ast2500-lpc-bmc";
++	lpc_snoop: lpc-snoop@0 {
++		compatible = "aspeed,ast2600-lpc-snoop";
+ 		reg = <0x0 0x80>;
+-	};
+-
+-	lpc_host: lpc-host@80 {
+-		compatible = "aspeed,ast2500-lpc-host", "simple-mfd", "syscon";
+-		reg = <0x80 0x1e0>;
+-		reg-io-width = <4>;
+-
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges = <0x0 0x80 0x1e0>;
++		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++		snoop-ports = <0x80>;
+ 	};
+ };
+ 
+-BMC Node Children
+-==================
+-
+-
+-Host Node Children
+-==================
+ 
+ LPC Host Interface Controller
+ -------------------
+@@ -149,14 +99,12 @@ Optional properties:
+ 
+ Example:
+ 
+-lpc-host@80 {
+-	lpc_ctrl: lpc-ctrl@0 {
+-		compatible = "aspeed,ast2500-lpc-ctrl";
+-		reg = <0x0 0x80>;
+-		clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
+-		memory-region = <&flash_memory>;
+-		flash = <&spi>;
+-	};
++lpc_ctrl: lpc-ctrl@80 {
++	compatible = "aspeed,ast2500-lpc-ctrl";
++	reg = <0x80 0x80>;
++	clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
++	memory-region = <&flash_memory>;
++	flash = <&spi>;
+ };
+ 
+ LPC Host Controller
+@@ -179,9 +127,9 @@ Required properties:
+ 
+ Example:
+ 
+-lhc: lhc@20 {
++lhc: lhc@a0 {
+ 	compatible = "aspeed,ast2500-lhc";
+-	reg = <0x20 0x24 0x48 0x8>;
++	reg = <0xa0 0x24 0xc8 0x8>;
+ };
+ 
+ LPC reset control
+@@ -192,16 +140,18 @@ state of the LPC bus. Some systems may chose to modify this configuration.
+ 
+ Required properties:
+ 
+- - compatible:		"aspeed,ast2600-lpc-reset" or
+-			"aspeed,ast2500-lpc-reset"
+-			"aspeed,ast2400-lpc-reset"
++ - compatible:		One of:
++			"aspeed,ast2600-lpc-reset";
++			"aspeed,ast2500-lpc-reset";
++			"aspeed,ast2400-lpc-reset";
 +
-+	np = dev->of_node;
- 	if (of_device_is_compatible(np, "aspeed,ast2400-kcs-bmc") ||
--			of_device_is_compatible(np, "aspeed,ast2500-kcs-bmc"))
-+	    of_device_is_compatible(np, "aspeed,ast2500-kcs-bmc"))
- 		kcs_bmc = aspeed_kcs_probe_of_v1(pdev);
- 	else if (of_device_is_compatible(np, "aspeed,ast2400-kcs-bmc-v2") ||
--			of_device_is_compatible(np, "aspeed,ast2500-kcs-bmc-v2"))
-+		 of_device_is_compatible(np, "aspeed,ast2500-kcs-bmc-v2"))
- 		kcs_bmc = aspeed_kcs_probe_of_v2(pdev);
- 	else
- 		return -EINVAL;
+  - reg:			offset and length of the IP in the LHC memory region
+  - #reset-controller	indicates the number of reset cells expected
+ 
+ Example:
+ 
+-lpc_reset: reset-controller@18 {
++lpc_reset: reset-controller@98 {
+         compatible = "aspeed,ast2500-lpc-reset";
+-        reg = <0x18 0x4>;
++        reg = <0x98 0x4>;
+         #reset-cells = <1>;
+ };
 -- 
 2.27.0
 
