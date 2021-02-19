@@ -3,214 +3,503 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B872FC433DB
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CFEC433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6979664EB7
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8659A64EBD
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 14:27:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbhBSO0e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Feb 2021 09:26:34 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:57041 "EHLO
+        id S230232AbhBSO0o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Feb 2021 09:26:44 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:57523 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229636AbhBSO0a (ORCPT
+        by vger.kernel.org with ESMTP id S229636AbhBSO0n (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Feb 2021 09:26:30 -0500
+        Fri, 19 Feb 2021 09:26:43 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 31E68580342;
-        Fri, 19 Feb 2021 09:25:44 -0500 (EST)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 8A76758035F;
+        Fri, 19 Feb 2021 09:25:56 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 19 Feb 2021 09:25:44 -0500
+  by compute3.internal (MEProxy); Fri, 19 Feb 2021 09:25:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=FsrzPsv6OPy2s0HzNgRya7RFf2
-        dKgOCEMkjhAogzc4Q=; b=UFpwJQswCMtAG9CPQyWnimBuOsUKGXxK/OvHOc5228
-        ykTtbpchX2ftZE3Seq9NLdH9lPtpGLn6oyR6dn9tf1A9DfqBOsmy67Ryzc9/tUFB
-        OCCFGFv8Tt6fQd/vRc3FQ1vE/H/GVC3l1o7NmVXzJmE3trq+65qvwYGglXijuJ2D
-        OxG57HFsYNScFaFNqjT71YkbwL+Nh1Mx7zTXXmAGvDMRZbnQVhQiCrobJqERyDnd
-        /uBYKvKIdYSleWdy6AKCqksG4vXlsl7adKqL1y2Fk+4OpDfokA9lsZ96PLE3ymkP
-        BE9+0FiWA3OG21EbjOAYslo4J0Yt71cDKTQMB9RS3SfA==
+        :to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm2; bh=ZSvondftxoXFn
+        EZwBY61UTNdenBTZ8VqhBJd5vnp4n0=; b=dip7gmO7hSpZJl1qXFHNTdHXbB81b
+        5e/vN/UqO2wem7vu/XWcQlTuljaGJ/CHxM648aCRWY2s3rMEAD0Iv/EcMiobFw/R
+        k5g5y2vTJ9s1mqlzJp+L1evpJRfr74W7rRBc+/QbeUgj85rDEPQCnyoBySB2hElN
+        9qmMFHzooVNL2N7AFPGm2xynRgyu2o9hyTbfpIJXul6/guHwGJZqQ7H68tX6GsS4
+        4YC7f5XU4MFXS6bvVp7Xr7qvwS4buTEP1N3tFVjrni+IVw2rpkLVftL3XSmoUyI1
+        /aoOnOAaV78wNeoUIRaFsqHhTjSfCsfmA7ama3VsoXLMmdmG8Y6w7HPrg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=FsrzPsv6OPy2s0HzN
-        gRya7RFf2dKgOCEMkjhAogzc4Q=; b=FoLOrDxhBbp9a0vOd1lxrfuWfjuBmf8m2
-        0IvMCil+cxA7AGG2mdFoZ7c0ZuScCF8NTpjJz1E99jMZKUIlHuFaFuGxhj4eD7r4
-        7wDQ7CKwkFhf/yqwfYUMrlxnO9aErp+xofXV+K950oE9i58But3yZcKFMHQom9lV
-        VDGwAA2iYn0+NhEz8G8yWF9k3mPgaaWzuFeJPt6JaL60cyFINgRbtbAB6nTSDYAI
-        8n4s/McgI7DN+hm9L4ciAiMVOgs2JS0dPuUNBdcAUI8MqhfXN02QLwQ8gX/ifQQJ
-        Pz+r2xqBkVQoX9g+Yofd1PGSfqP9LVwYXKRy0Pu94oSctM7LQHVPQ==
-X-ME-Sender: <xms:ZsovYDuP-ybKSjMmdXyd93-DYDIMxkwrZU_TLpyf-5bkjgacXO3L4g>
-    <xme:ZsovYEcaJRgGaaEVw4c9SRZMN4KsDoVpNkSnHgR6FEwHxXidXRw1NJmNLedfAgxpF
-    Cfxr9bUtlVdkt-YfA>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; bh=ZSvondftxoXFnEZwBY61UTNdenBTZ8VqhBJd5vnp4n0=; b=EH9xlbp4
+        mB37kBM57PYGntHRhs9HTdBcLxosr31K4rcFLSvWkU7w50xXzKMVNupmCxemFi6j
+        KOWbVgBEELqJ7wee6+KyplVUNV0q01zEe9qNRFeKVsjrnOoJ2x7BXgq953pHz06y
+        08p7Wzv3EegAiILEngAwg/U88El+lwsWtMA+ZyLj2ohvkMWhliU18Z0W9scPbD2B
+        SgD5DO7PyqQlmvsg+9ud+4VcXYRzxbxPjzTOOg+q7lIH88QPWeOeD6wjjs545EYm
+        bKA5ppoZP8i3reHJujj9Ih+wFqLr1Ea6Ckqwh5dOEPB1qYeOyGSYXjMd4sDFsuIt
+        7nzZHMz3Z5Lyrw==
+X-ME-Sender: <xms:dMovYNWHpWhnIbf7wQ-_BRd8Xl-tcs_RQUJeVN-TYyNlWYddr_aAjg>
+    <xme:dMovYNlP1nxs33t7XTaWcNbAhGLyv7padtGLgjeCPi19UsbnnKDaiopWmKyKq7l8r
+    IvexlR3E-j0cN8O4w>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdeigecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghjrdhi
-    ugdrrghuqeenucggtffrrghtthgvrhhnpeejgffffedvveekudfhheduffeuudethefhhe
-    egvefhlefggfffudefffduteffudenucffohhmrghinhepihhnthgvlhdrtghomhdpghhi
-    thhhuhgsrdgtohhmpdgumhhtfhdrohhrghenucfkphepudegrddvrdeluddrfeejnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgif
-    segrjhdrihgurdgruh
-X-ME-Proxy: <xmx:ZsovYGxSPGDtr989h1CfmmdiV91s6HL_p5FT7fBxxGtdOnBrUMvePw>
-    <xmx:ZsovYCOMLxSmL_8SfvpgP5GOMfC5HQcxRJCRl1dOY6nn0r9Z51RMxw>
-    <xmx:ZsovYD_hrRbrjyjHFF4mhYkAvM7xQOfFSgd65nTm51xQ5eFb65ZsYA>
-    <xmx:aMovYLNiH3Wqj8d2yMrBjUvZM4g1uyIHh9nwomtoM1DCWQ4-tLT-9Q>
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehnughrvgif
+    ucflvghffhgvrhihuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrfgrthhtvg
+    hrnhepjefgvdevheetkeevgeegleelgfelteetjeffleffvdduudevieffgeetleevhfet
+    necukfhppedugedrvddrledurdefjeenucevlhhushhtvghrufhiiigvpedunecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:dMovYJZNaXRB6xBn0meNbVgAHic9bTwE3j8JOUc5NzmwZuqgU2-wTw>
+    <xmx:dMovYAU5tgt7utCiSE8CM2D8AJFFF107gChvBwUrg-KvakJAc0XvXw>
+    <xmx:dMovYHmJsNajcpuN8h-yhL0_oy_yz4E43yjy7ix1TQulmFYpx-mhAQ>
+    <xmx:dMovYJ1HT7zIX6xh2rY_hT4rjb35Lt-nC14uL0DJtEKiS4mNt6ENfA>
 Received: from localhost.localdomain (ppp14-2-91-37.adl-apt-pir-bras31.tpg.internode.on.net [14.2.91.37])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A2EEE24005D;
-        Fri, 19 Feb 2021 09:25:35 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0948A24005A;
+        Fri, 19 Feb 2021 09:25:49 -0500 (EST)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     openipmi-developer@lists.sourceforge.net, openbmc@lists.ozlabs.org,
         minyard@acm.org
-Cc:     robh+dt@kernel.org, joel@jms.id.au, lee.jones@linaro.org,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        linus.walleij@linaro.org, chiawei_wang@aspeedtech.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Cc:     "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>, robh+dt@kernel.org,
+        joel@jms.id.au, lee.jones@linaro.org, avifishman70@gmail.com,
+        tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 00/19] ipmi: Allow raw access to KCS devices
-Date:   Sat, 20 Feb 2021 00:55:04 +1030
-Message-Id: <20210219142523.3464540-1-andrew@aj.id.au>
+Subject: [PATCH 02/19] ARM: dts: Remove LPC BMC and Host partitions
+Date:   Sat, 20 Feb 2021 00:55:06 +1030
+Message-Id: <20210219142523.3464540-3-andrew@aj.id.au>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210219142523.3464540-1-andrew@aj.id.au>
+References: <20210219142523.3464540-1-andrew@aj.id.au>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+From: "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>
 
-This series is a bit of a mix of things, but its primary purpose is to
-expose BMC KCS IPMI devices to userspace in a way that enables userspace
-to talk to host firmware using protocols that are not IPMI.  The new
-chardev implementation exposes the Input Data Register (IDR), Output
-Data Register (ODR) and Status Register (STR) via read() and write(),
-and implements poll() for event monitoring.
+The LPC controller has no concept of the BMC and the Host partitions.
 
-The existing /dev/ipmi-kcs* chardev interface exposes the KCS devices in
-a way which encoded the IPMI protocol in its behaviour. However, as
-LPC[0] KCS devices give us bi-directional interrupts between the host
-and a BMC with both a data and status byte, they are useful for purposes
-beyond IPMI.
+A concrete instance is that the HICRB[5:4] are for the I/O port address
+configurtaion of KCS channel 1/2. However, the KCS driver cannot access
+HICRB for channel 1/2 initialization via syscon regmap interface due to
+the parition boundary. (i.e. offset 80h)
 
-As a concrete example, libmctp[1] implements a vendor-defined
-host-interface MCTP[2] binding using a combination of LPC Firmware
-cycles for bulk data transfer and a KCS device via LPC IO cycles for
-out-of-band protocol control messages[3]. This gives a throughput
-improvement over the standard KCS binding[4] while continuing to exploit
-the ease of setup of the LPC bus for early boot firmware on the host
-processor.
+In addition, for the HW design backward compatibility, a newly added HW
+control bit could be located at any reserved one over the LPC addressing
+space. Thereby, this patch removes the lpc-bmc and lpc-host child node
+and thus the LPC partitioning.
 
-The series takes a bit of a winding path to achieve its aim:
+Note that this change requires the synchronization between device tree
+change and the driver change. To prevent the misuse of old devicetrees
+with new drivers, or vice versa, the v2 compatible strings are adopted
+for the LPC device as listed:
 
-1. It begins with patches 1-5 put together by Chia-Wei, which I've
-rebased on v5.11. These fix the ASPEED LPC bindings and other non-KCS
-LPC-related ASPEED device drivers in a way that enables the SerIRQ
-patches at the end of the series. With Joel's review I'm hoping these 5
-can go through the aspeed tree, and that the rest can go through the
-IPMI tree.
+	"aspeed,ast2400-lpc-v2"
+	"aspeed,ast2500-lpc-v2"
+	"aspeed,ast2600-lpc-v2"
 
-2. Next, patches 6-13 fairly heavily refactor the KCS support in the
-IPMI part of the tree, re-architecting things such that it's possible to
-support multiple chardev implementations sitting on top of the ASPEED
-and Nuvoton device drivers. However, the KCS code didn't really have
-great separation of concerns as it stood, so even if we disregard the
-multiple-chardev support I think the cleanups are worthwhile.
+Signed-off-by: Chia-Wei Wang <chiawei_wang@aspeedtech.com>
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Tested-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ arch/arm/boot/dts/aspeed-g4.dtsi |  68 +++++++----------
+ arch/arm/boot/dts/aspeed-g5.dtsi | 119 +++++++++++++-----------------
+ arch/arm/boot/dts/aspeed-g6.dtsi | 121 +++++++++++++------------------
+ 3 files changed, 130 insertions(+), 178 deletions(-)
 
-3. Patch 14 adds some interrupt management capabilities to the KCS
-device drivers in preparation for patch 15, which introduces the new
-"raw" KCS device interface. I'm not stoked about the device name/path,
-so if people are looking to bikeshed something then feel free to lay
-into that.
-
-4. The remaining patches switch the ASPEED KCS devicetree binding to
-dt-schema, add a new interrupt property to describe the SerIRQ behaviour
-of the device and finally clean up Serial IRQ support in the ASPEED KCS
-driver.
-
-Rob: The dt-binding patches still come before the relevant driver
-changes, I tried to keep the two close together in the series, hence the
-bindings changes not being patches 1 and 2.
-
-I've exercised the series under qemu with the rainier-bmc machine plus
-some preliminary KCS support[5]. I've also substituted this series in
-place of a hacky out-of-tree driver that we've been using for the
-libmctp stack and successfully booted the host processor under our
-internal full-platform simulation tools for a Rainier system.
-
-Note that this work touches the Nuvoton driver as well as ASPEED's, but
-I don't have the capability to test those changes or the IPMI chardev
-path. Tested-by tags would be much appreciated if you can exercise one
-or both.
-
-Please review!
-
-Andrew
-
-[0] https://www.intel.com/content/dam/www/program/design/us/en/documents/low-pin-count-interface-specification.pdf
-[1] https://github.com/openbmc/libmctp/
-[2] https://www.dmtf.org/sites/default/files/standards/documents/DSP0236_1.3.1.pdf
-[3] https://github.com/openbmc/libmctp/blob/master/docs/bindings/vendor-astlpc.md
-[4] https://www.dmtf.org/sites/default/files/standards/documents/DSP0254_1.0.0.pdf
-[5] https://github.com/amboar/qemu/tree/kcs
-
-Andrew Jeffery (14):
-  ipmi: kcs_bmc_aspeed: Use of match data to extract KCS properties
-  ipmi: kcs_bmc: Make status update atomic
-  ipmi: kcs_bmc: Rename {read,write}_{status,data}() functions
-  ipmi: kcs_bmc: Split out kcs_bmc_cdev_ipmi
-  ipmi: kcs_bmc: Turn the driver data-structures inside-out
-  ipmi: kcs_bmc: Split headers into device and client
-  ipmi: kcs_bmc: Strip private client data from struct kcs_bmc
-  ipmi: kcs_bmc: Decouple the IPMI chardev from the core
-  ipmi: kcs_bmc: Allow clients to control KCS IRQ state
-  ipmi: kcs_bmc: Add a "raw" character device interface
-  dt-bindings: ipmi: Convert ASPEED KCS binding to schema
-  dt-bindings: ipmi: Add optional SerIRQ property to ASPEED KCS devices
-  ipmi: kcs_bmc_aspeed: Implement KCS SerIRQ configuration
-  ipmi: kcs_bmc_aspeed: Fix IBFIE typo from datasheet
-
-Chia-Wei, Wang (5):
-  dt-bindings: aspeed-lpc: Remove LPC partitioning
-  ARM: dts: Remove LPC BMC and Host partitions
-  ipmi: kcs: aspeed: Adapt to new LPC DTS layout
-  pinctrl: aspeed-g5: Adapt to new LPC device tree layout
-  soc: aspeed: Adapt to new LPC device tree layout
-
- Documentation/ABI/testing/dev-raw-kcs         |  25 +
- .../bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml | 106 ++++
- .../bindings/ipmi/aspeed-kcs-bmc.txt          |  33 -
- .../devicetree/bindings/mfd/aspeed-lpc.txt    | 100 +--
- arch/arm/boot/dts/aspeed-g4.dtsi              |  68 +--
- arch/arm/boot/dts/aspeed-g5.dtsi              | 119 ++--
- arch/arm/boot/dts/aspeed-g6.dtsi              | 121 ++--
- drivers/char/ipmi/Kconfig                     |  30 +
- drivers/char/ipmi/Makefile                    |   2 +
- drivers/char/ipmi/kcs_bmc.c                   | 532 +++++-----------
- drivers/char/ipmi/kcs_bmc.h                   |  94 +--
- drivers/char/ipmi/kcs_bmc_aspeed.c            | 536 ++++++++++------
- drivers/char/ipmi/kcs_bmc_cdev_ipmi.c         | 570 ++++++++++++++++++
- drivers/char/ipmi/kcs_bmc_cdev_raw.c          | 442 ++++++++++++++
- drivers/char/ipmi/kcs_bmc_client.h            |  47 ++
- drivers/char/ipmi/kcs_bmc_device.h            |  20 +
- drivers/char/ipmi/kcs_bmc_npcm7xx.c           |  98 ++-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c    |  17 +-
- drivers/soc/aspeed/aspeed-lpc-ctrl.c          |  20 +-
- drivers/soc/aspeed/aspeed-lpc-snoop.c         |  23 +-
- 20 files changed, 2021 insertions(+), 982 deletions(-)
- create mode 100644 Documentation/ABI/testing/dev-raw-kcs
- create mode 100644 Documentation/devicetree/bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml
- delete mode 100644 Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
- create mode 100644 drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
- create mode 100644 drivers/char/ipmi/kcs_bmc_cdev_raw.c
- create mode 100644 drivers/char/ipmi/kcs_bmc_client.h
- create mode 100644 drivers/char/ipmi/kcs_bmc_device.h
-
+diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
+index b3dafbc8caca..ee22bc036440 100644
+--- a/arch/arm/boot/dts/aspeed-g4.dtsi
++++ b/arch/arm/boot/dts/aspeed-g4.dtsi
+@@ -343,58 +343,44 @@ vuart: serial@1e787000 {
+ 			};
+ 
+ 			lpc: lpc@1e789000 {
+-				compatible = "aspeed,ast2400-lpc", "simple-mfd";
++				compatible = "aspeed,ast2400-lpc-v2", "simple-mfd", "syscon";
+ 				reg = <0x1e789000 0x1000>;
++				reg-io-width = <4>;
+ 
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+ 				ranges = <0x0 0x1e789000 0x1000>;
+ 
+-				lpc_bmc: lpc-bmc@0 {
+-					compatible = "aspeed,ast2400-lpc-bmc";
+-					reg = <0x0 0x80>;
++				lpc_ctrl: lpc-ctrl@80 {
++					compatible = "aspeed,ast2400-lpc-ctrl";
++					reg = <0x80 0x10>;
++					clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
++					status = "disabled";
+ 				};
+ 
+-				lpc_host: lpc-host@80 {
+-					compatible = "aspeed,ast2400-lpc-host", "simple-mfd", "syscon";
+-					reg = <0x80 0x1e0>;
+-					reg-io-width = <4>;
+-
+-					#address-cells = <1>;
+-					#size-cells = <1>;
+-					ranges = <0x0 0x80 0x1e0>;
+-
+-					lpc_ctrl: lpc-ctrl@0 {
+-						compatible = "aspeed,ast2400-lpc-ctrl";
+-						reg = <0x0 0x10>;
+-						clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
+-						status = "disabled";
+-					};
+-
+-					lpc_snoop: lpc-snoop@10 {
+-						compatible = "aspeed,ast2400-lpc-snoop";
+-						reg = <0x10 0x8>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
++				lpc_snoop: lpc-snoop@90 {
++					compatible = "aspeed,ast2400-lpc-snoop";
++					reg = <0x90 0x8>;
++					interrupts = <8>;
++					status = "disabled";
++				};
+ 
+-					lhc: lhc@20 {
+-						compatible = "aspeed,ast2400-lhc";
+-						reg = <0x20 0x24 0x48 0x8>;
+-					};
++				lhc: lhc@a0 {
++					compatible = "aspeed,ast2400-lhc";
++					reg = <0xa0 0x24 0xc8 0x8>;
++				};
+ 
+-					lpc_reset: reset-controller@18 {
+-						compatible = "aspeed,ast2400-lpc-reset";
+-						reg = <0x18 0x4>;
+-						#reset-cells = <1>;
+-					};
++				lpc_reset: reset-controller@98 {
++					compatible = "aspeed,ast2400-lpc-reset";
++					reg = <0x98 0x4>;
++					#reset-cells = <1>;
++				};
+ 
+-					ibt: ibt@c0  {
+-						compatible = "aspeed,ast2400-ibt-bmc";
+-						reg = <0xc0 0x18>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
++				ibt: ibt@140 {
++					compatible = "aspeed,ast2400-ibt-bmc";
++					reg = <0x140 0x18>;
++					interrupts = <8>;
++					status = "disabled";
+ 				};
+ 			};
+ 
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index 5bc0de0f3365..10ca2100f69b 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -434,90 +434,73 @@ vuart: serial@1e787000 {
+ 			};
+ 
+ 			lpc: lpc@1e789000 {
+-				compatible = "aspeed,ast2500-lpc", "simple-mfd";
++				compatible = "aspeed,ast2500-lpc-v2", "simple-mfd", "syscon";
+ 				reg = <0x1e789000 0x1000>;
++				reg-io-width = <4>;
+ 
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+ 				ranges = <0x0 0x1e789000 0x1000>;
+ 
+-				lpc_bmc: lpc-bmc@0 {
+-					compatible = "aspeed,ast2500-lpc-bmc", "simple-mfd", "syscon";
+-					reg = <0x0 0x80>;
+-					reg-io-width = <4>;
+-
+-					#address-cells = <1>;
+-					#size-cells = <1>;
+-					ranges = <0x0 0x0 0x80>;
+-
+-					kcs1: kcs@24 {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
+-					kcs2: kcs@28 {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x28 0x1>, <0x34 0x1>, <0x40 0x1>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
+-					kcs3: kcs@2c {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x2c 0x1>, <0x38 0x1>, <0x44 0x1>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
++				kcs1: kcs@24 {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
++					interrupts = <8>;
++					status = "disabled";
+ 				};
+ 
+-				lpc_host: lpc-host@80 {
+-					compatible = "aspeed,ast2500-lpc-host", "simple-mfd", "syscon";
+-					reg = <0x80 0x1e0>;
+-					reg-io-width = <4>;
++				kcs2: kcs@28 {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x28 0x1>, <0x34 0x1>, <0x40 0x1>;
++					interrupts = <8>;
++					status = "disabled";
++				};
+ 
+-					#address-cells = <1>;
+-					#size-cells = <1>;
+-					ranges = <0x0 0x80 0x1e0>;
++				kcs3: kcs@2c {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x2c 0x1>, <0x38 0x1>, <0x44 0x1>;
++					interrupts = <8>;
++					status = "disabled";
++				};
+ 
+-					kcs4: kcs@94 {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x94 0x1>, <0x98 0x1>, <0x9c 0x1>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
++				kcs4: kcs@114 {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x114 0x1>, <0x118 0x1>, <0x11c 0x1>;
++					interrupts = <8>;
++					status = "disabled";
++				};
+ 
+-					lpc_ctrl: lpc-ctrl@0 {
+-						compatible = "aspeed,ast2500-lpc-ctrl";
+-						reg = <0x0 0x10>;
+-						clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
+-						status = "disabled";
+-					};
++				lpc_ctrl: lpc-ctrl@80 {
++					compatible = "aspeed,ast2500-lpc-ctrl";
++					reg = <0x80 0x10>;
++					clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
++					status = "disabled";
++				};
+ 
+-					lpc_snoop: lpc-snoop@10 {
+-						compatible = "aspeed,ast2500-lpc-snoop";
+-						reg = <0x10 0x8>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
++				lpc_snoop: lpc-snoop@90 {
++					compatible = "aspeed,ast2500-lpc-snoop";
++					reg = <0x90 0x8>;
++					interrupts = <8>;
++					status = "disabled";
++				};
+ 
+-					lpc_reset: reset-controller@18 {
+-						compatible = "aspeed,ast2500-lpc-reset";
+-						reg = <0x18 0x4>;
+-						#reset-cells = <1>;
+-					};
++				lpc_reset: reset-controller@98 {
++					compatible = "aspeed,ast2500-lpc-reset";
++					reg = <0x98 0x4>;
++					#reset-cells = <1>;
++				};
+ 
+-					lhc: lhc@20 {
+-						compatible = "aspeed,ast2500-lhc";
+-						reg = <0x20 0x24 0x48 0x8>;
+-					};
++				lhc: lhc@a0 {
++					compatible = "aspeed,ast2500-lhc";
++					reg = <0xa0 0x24 0xc8 0x8>;
++				};
+ 
+ 
+-					ibt: ibt@c0 {
+-						compatible = "aspeed,ast2500-ibt-bmc";
+-						reg = <0xc0 0x18>;
+-						interrupts = <8>;
+-						status = "disabled";
+-					};
++				ibt: ibt@140 {
++					compatible = "aspeed,ast2500-ibt-bmc";
++					reg = <0x140 0x18>;
++					interrupts = <8>;
++					status = "disabled";
+ 				};
+ 			};
+ 
+diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
+index 810b0676ab03..d91f48c3db62 100644
+--- a/arch/arm/boot/dts/aspeed-g6.dtsi
++++ b/arch/arm/boot/dts/aspeed-g6.dtsi
+@@ -460,90 +460,73 @@ wdt4: watchdog@1e7850c0 {
+ 			};
+ 
+ 			lpc: lpc@1e789000 {
+-				compatible = "aspeed,ast2600-lpc", "simple-mfd";
++				compatible = "aspeed,ast2600-lpc-v2", "simple-mfd", "syscon";
+ 				reg = <0x1e789000 0x1000>;
++				reg-io-width = <4>;
+ 
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+ 				ranges = <0x0 0x1e789000 0x1000>;
+ 
+-				lpc_bmc: lpc-bmc@0 {
+-					compatible = "aspeed,ast2600-lpc-bmc", "simple-mfd", "syscon";
+-					reg = <0x0 0x80>;
+-					reg-io-width = <4>;
+-
+-					#address-cells = <1>;
+-					#size-cells = <1>;
+-					ranges = <0x0 0x0 0x80>;
+-
+-					kcs1: kcs@24 {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
+-						interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+-						kcs_chan = <1>;
+-						status = "disabled";
+-					};
+-					kcs2: kcs@28 {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x28 0x1>, <0x34 0x1>, <0x40 0x1>;
+-						interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
+-						status = "disabled";
+-					};
+-					kcs3: kcs@2c {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x2c 0x1>, <0x38 0x1>, <0x44 0x1>;
+-						interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+-						status = "disabled";
+-					};
++				kcs1: kcs@24 {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
++					interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++					kcs_chan = <1>;
++					status = "disabled";
+ 				};
+ 
+-				lpc_host: lpc-host@80 {
+-					compatible = "aspeed,ast2600-lpc-host", "simple-mfd", "syscon";
+-					reg = <0x80 0x1e0>;
+-					reg-io-width = <4>;
++				kcs2: kcs@28 {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x28 0x1>, <0x34 0x1>, <0x40 0x1>;
++					interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
++					status = "disabled";
++				};
+ 
+-					#address-cells = <1>;
+-					#size-cells = <1>;
+-					ranges = <0x0 0x80 0x1e0>;
++				kcs3: kcs@2c {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x2c 0x1>, <0x38 0x1>, <0x44 0x1>;
++					interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
++					status = "disabled";
++				};
+ 
+-					kcs4: kcs@94 {
+-						compatible = "aspeed,ast2500-kcs-bmc-v2";
+-						reg = <0x94 0x1>, <0x98 0x1>, <0x9c 0x1>;
+-						interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
+-						status = "disabled";
+-					};
++				kcs4: kcs@114 {
++					compatible = "aspeed,ast2500-kcs-bmc-v2";
++					reg = <0x114 0x1>, <0x118 0x1>, <0x11c 0x1>;
++					interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
++					status = "disabled";
++				};
+ 
+-					lpc_ctrl: lpc-ctrl@0 {
+-						compatible = "aspeed,ast2600-lpc-ctrl";
+-						reg = <0x0 0x80>;
+-						clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
+-						status = "disabled";
+-					};
++				lpc_ctrl: lpc-ctrl@80 {
++					compatible = "aspeed,ast2600-lpc-ctrl";
++					reg = <0x80 0x80>;
++					clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
++					status = "disabled";
++				};
+ 
+-					lpc_snoop: lpc-snoop@0 {
+-						compatible = "aspeed,ast2600-lpc-snoop";
+-						reg = <0x0 0x80>;
+-						interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+-						status = "disabled";
+-					};
++				lpc_snoop: lpc-snoop@80 {
++					compatible = "aspeed,ast2600-lpc-snoop";
++					reg = <0x80 0x80>;
++					interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++					status = "disabled";
++				};
+ 
+-					lhc: lhc@20 {
+-						compatible = "aspeed,ast2600-lhc";
+-						reg = <0x20 0x24 0x48 0x8>;
+-					};
++				lhc: lhc@a0 {
++					compatible = "aspeed,ast2600-lhc";
++					reg = <0xa0 0x24 0xc8 0x8>;
++				};
+ 
+-					lpc_reset: reset-controller@18 {
+-						compatible = "aspeed,ast2600-lpc-reset";
+-						reg = <0x18 0x4>;
+-						#reset-cells = <1>;
+-					};
++				lpc_reset: reset-controller@98 {
++					compatible = "aspeed,ast2600-lpc-reset";
++					reg = <0x98 0x4>;
++					#reset-cells = <1>;
++				};
+ 
+-					ibt: ibt@c0 {
+-						compatible = "aspeed,ast2600-ibt-bmc";
+-						reg = <0xc0 0x18>;
+-						interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+-						status = "disabled";
+-					};
++				ibt: ibt@140 {
++					compatible = "aspeed,ast2600-ibt-bmc";
++					reg = <0x140 0x18>;
++					interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++					status = "disabled";
+ 				};
+ 			};
+ 
 -- 
 2.27.0
 
