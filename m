@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA058C433DB
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 23:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E08C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 23:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96D8C64EAF
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 23:07:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E219264EB3
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Feb 2021 23:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbhBSXH0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Feb 2021 18:07:26 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:36927 "EHLO
+        id S229755AbhBSXIP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Feb 2021 18:08:15 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:43814 "EHLO
         hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229745AbhBSXHZ (ORCPT
+        by vger.kernel.org with ESMTP id S229515AbhBSXII (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Feb 2021 18:07:25 -0500
+        Fri, 19 Feb 2021 18:08:08 -0500
 Received: from [77.244.183.192] (port=64500 helo=melee.fritz.box)
         by hostingweb31.netsons.net with esmtpa (Exim 4.93)
         (envelope-from <luca@lucaceresoli.net>)
-        id 1lDEQi-009zHK-65; Fri, 19 Feb 2021 23:39:20 +0100
+        id 1lDEQi-009zHK-Ux; Fri, 19 Feb 2021 23:39:21 +0100
 From:   Luca Ceresoli <luca@lucaceresoli.net>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
@@ -32,10 +32,12 @@ Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] mfd: lp87565: fix typo in define names
-Date:   Fri, 19 Feb 2021 23:39:08 +0100
-Message-Id: <20210219223910.1831-1-luca@lucaceresoli.net>
+Subject: [PATCH 3/3] mfd: lp87565: move LP87565_regulator_id to .c file
+Date:   Fri, 19 Feb 2021 23:39:10 +0100
+Message-Id: <20210219223910.1831-3-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210219223910.1831-1-luca@lucaceresoli.net>
+References: <20210219223910.1831-1-luca@lucaceresoli.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -52,75 +54,58 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-"GOIO" should be "GPIO" here.
+This enum is used only internally to the regulator driver for buck indexes.
 
 Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- drivers/gpio/gpio-lp87565.c |  6 +++---
- include/linux/mfd/lp87565.h | 28 ++++++++++++++--------------
- 2 files changed, 17 insertions(+), 17 deletions(-)
+ drivers/regulator/lp87565-regulator.c | 11 +++++++++++
+ include/linux/mfd/lp87565.h           | 11 -----------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
-index e1244520cf7d..fcde6708b5df 100644
---- a/drivers/gpio/gpio-lp87565.c
-+++ b/drivers/gpio/gpio-lp87565.c
-@@ -123,14 +123,14 @@ static int lp87565_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 		return regmap_update_bits(gpio->map,
- 					  LP87565_REG_GPIO_CONFIG,
- 					  BIT(offset +
--					      __ffs(LP87565_GOIO1_OD)),
-+					      __ffs(LP87565_GPIO1_OD)),
- 					  BIT(offset +
--					      __ffs(LP87565_GOIO1_OD)));
-+					      __ffs(LP87565_GPIO1_OD)));
- 	case PIN_CONFIG_DRIVE_PUSH_PULL:
- 		return regmap_update_bits(gpio->map,
- 					  LP87565_REG_GPIO_CONFIG,
- 					  BIT(offset +
--					      __ffs(LP87565_GOIO1_OD)), 0);
-+					      __ffs(LP87565_GPIO1_OD)), 0);
- 	default:
- 		return -ENOTSUPP;
- 	}
+diff --git a/drivers/regulator/lp87565-regulator.c b/drivers/regulator/lp87565-regulator.c
+index eeab9d3c824b..d059ae85047a 100644
+--- a/drivers/regulator/lp87565-regulator.c
++++ b/drivers/regulator/lp87565-regulator.c
+@@ -11,6 +11,17 @@
+ 
+ #include <linux/mfd/lp87565.h>
+ 
++enum LP87565_regulator_id {
++	/* BUCK's */
++	LP87565_BUCK_0,
++	LP87565_BUCK_1,
++	LP87565_BUCK_2,
++	LP87565_BUCK_3,
++	LP87565_BUCK_10,
++	LP87565_BUCK_23,
++	LP87565_BUCK_3210,
++};
++
+ #define LP87565_REGULATOR(_name, _id, _of, _ops, _n, _vr, _vm,		\
+ 			  _er, _em, _ev, _delay, _lr, _cr)		\
+ 	[_id] = {							\
 diff --git a/include/linux/mfd/lp87565.h b/include/linux/mfd/lp87565.h
-index d44ddfb6bb63..2620554f357a 100644
+index a8799ae50dcf..94cb581af34b 100644
 --- a/include/linux/mfd/lp87565.h
 +++ b/include/linux/mfd/lp87565.h
-@@ -222,20 +222,20 @@ enum lp87565_device_type {
- #define LP87565_GPIO2_SEL			BIT(1)
- #define LP87565_GPIO1_SEL			BIT(0)
+@@ -237,17 +237,6 @@ enum lp87565_device_type {
+ #define LP87565_GPIO2_OUT			BIT(1)
+ #define LP87565_GPIO1_OUT			BIT(0)
  
--#define LP87565_GOIO3_OD			BIT(6)
--#define LP87565_GOIO2_OD			BIT(5)
--#define LP87565_GOIO1_OD			BIT(4)
--#define LP87565_GOIO3_DIR			BIT(2)
--#define LP87565_GOIO2_DIR			BIT(1)
--#define LP87565_GOIO1_DIR			BIT(0)
+-enum LP87565_regulator_id {
+-	/* BUCK's */
+-	LP87565_BUCK_0,
+-	LP87565_BUCK_1,
+-	LP87565_BUCK_2,
+-	LP87565_BUCK_3,
+-	LP87565_BUCK_10,
+-	LP87565_BUCK_23,
+-	LP87565_BUCK_3210,
+-};
 -
--#define LP87565_GOIO3_IN			BIT(2)
--#define LP87565_GOIO2_IN			BIT(1)
--#define LP87565_GOIO1_IN			BIT(0)
--
--#define LP87565_GOIO3_OUT			BIT(2)
--#define LP87565_GOIO2_OUT			BIT(1)
--#define LP87565_GOIO1_OUT			BIT(0)
-+#define LP87565_GPIO3_OD			BIT(6)
-+#define LP87565_GPIO2_OD			BIT(5)
-+#define LP87565_GPIO1_OD			BIT(4)
-+#define LP87565_GPIO3_DIR			BIT(2)
-+#define LP87565_GPIO2_DIR			BIT(1)
-+#define LP87565_GPIO1_DIR			BIT(0)
-+
-+#define LP87565_GPIO3_IN			BIT(2)
-+#define LP87565_GPIO2_IN			BIT(1)
-+#define LP87565_GPIO1_IN			BIT(0)
-+
-+#define LP87565_GPIO3_OUT			BIT(2)
-+#define LP87565_GPIO2_OUT			BIT(1)
-+#define LP87565_GPIO1_OUT			BIT(0)
- 
- /* Number of step-down converters available */
- #define LP87565_NUM_BUCK		6
+ /**
+  * struct LP87565 - state holder for the LP87565 driver
+  * @dev: struct device pointer for MFD device
 -- 
 2.30.0
 
