@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED924C433E6
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Feb 2021 13:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3D5C433E6
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Feb 2021 13:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8FBE64E74
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Feb 2021 13:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3017764E29
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Feb 2021 13:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbhBVNKl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Feb 2021 08:10:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
+        id S231829AbhBVNKs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Feb 2021 08:10:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230444AbhBVNId (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Feb 2021 08:08:33 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCABDC06178A;
-        Mon, 22 Feb 2021 05:07:52 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id v14so18998132wro.7;
-        Mon, 22 Feb 2021 05:07:52 -0800 (PST)
+        with ESMTP id S231838AbhBVNIm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Feb 2021 08:08:42 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363FCC06178C;
+        Mon, 22 Feb 2021 05:07:55 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id f137so329162wmf.3;
+        Mon, 22 Feb 2021 05:07:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FJcro0M+ytwCFMFq3BOIPESMWrpP9oxj2MmSemg8LEw=;
-        b=ZMV6xWwrBQrEWuEKxkJvb6oDFeM2VJFkvddd2dHAka7o/K1BRYtpOqQMoLZWJRYvwd
-         8MXeuK83NEsaL0B3qS6jOh8u3DdHjnZKSP+kmvhj65asROB78EBYta/tUhMo0aoG57fh
-         ADl/r3ItZYcCyakqmjHrfetQCha0gyHJuQNGLwjWYJb//MH26IzOEalbBVr/he4i3s9G
-         iuDKLLEYcr6R0GyFJoCPb1RgE2RdIg/r5ys2Zy7rWhcb7CkQqXl53N5SnbS7RDwlcnue
-         pBHPbmKZ255yMzmeWxSGkw1A7s9nC2rcqYxO0gMtZBDU7gZB7wi15bNMJFkrdWkUucJv
-         shuA==
+        bh=dbElsHfI9FiCGYMopDy9JUfpf6k+IONRCYc0n0ZtrWA=;
+        b=LwEKG0enAUfqY9PBkbdb/b3D8cJPvPv1lV2DjHQtdkyYnkgDv2Mbxl9enjdZBx8Zyn
+         fSDgl6g+cFr7aLYE2pyNyhMcvOv8yjkL0So0O60jkVZSAbpmqn0+yjdNFsc5guDSL4pB
+         yQUNC+K4ouWatXruXhewIDcX2qKx833jCSfk162U87Km3/mGEtu0zF9uaNARcC3YyQqc
+         GHWv+rfd57Qf1mDvjVfTWs0IUZZO+nEeEVOqIakqe880753TEsXPlowtiCnzTJIRKRIN
+         yGvCcT9qtvrlQfwF0v15uA2k1cPA+hYXL/d5lQs03htQ8w+3RA+b+R6yfVS4vTNFTsPC
+         J4yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FJcro0M+ytwCFMFq3BOIPESMWrpP9oxj2MmSemg8LEw=;
-        b=Gcc81CVcQ74dtpO9/WnR//8HrKQ7YinBGkfHKY1O12cOAe31uxvObZRIt283XUr/8z
-         +5GR8xKXzsD4taAgf2arV5RL6KNxA3xtm6k5CvQ2tR6f3vGmxWnUUhospTcPNQ/Tagw/
-         VimywA0xfCQD1lqAiYvomPL4AhIR8S1tjaotnNeMMXNzHPlrd37yKzuTUoQuIHEWe3fR
-         ZOXNRin2lNXYVWgvCgAjgVO4zIGWR0/axO7PAHKkAiJ0ABls6YZyOhoU9SDvhG7704Sn
-         jWwKQS06YQzHm0EKFOtdInOmD9DYaAZhr4eKhjMk8Xy1JVpjpRI+zF0O6hKDauSWpaq0
-         2J/A==
-X-Gm-Message-State: AOAM530hGr3jlNCcofiujNEZzXETTdSJpCFWAFb3M/9JI3MF+6KJYPna
-        FPp65SiSBHepuXTn8G74Scs=
-X-Google-Smtp-Source: ABdhPJyihhA6n1SWGZYlAOk6ihzKQ5ZFA1SIaPDiVg2PFbN66LAkajUtWccl7dJMQ90I3MjEp7F9uw==
-X-Received: by 2002:adf:82ad:: with SMTP id 42mr21238137wrc.116.1613999271658;
-        Mon, 22 Feb 2021 05:07:51 -0800 (PST)
+        bh=dbElsHfI9FiCGYMopDy9JUfpf6k+IONRCYc0n0ZtrWA=;
+        b=KvS2VCJwncRiVAEF11VC2VR9o5Iyz/gtIlTAGNJ74UvZxAIkANq0VxguJ2ZHXzZ+PM
+         YurtI+DYMut/g0FMJTk0976uq/1kw/qb3iFxy0Dyfbbbvq4Z6WPwzK4r8loDHSGX1fUY
+         c94pFit19cZ6Uh5sr7YqWDOaurP03ZKXlxJPQYqvWxyMGFGOiiU5ttwfCo8ZEnFAhu2z
+         zedwn0Jkzoler8cWKKdSnKPZREcGQ9enSL1xmypSbUcIHX05Z9s4hLgukWGwcqihJdnB
+         oMS3JAUNUIZDtV78mzku6MYs1zwjdQfRlzm7UT2x8veli9FmaHJl/YsHxlwBdtPznvsC
+         m/XA==
+X-Gm-Message-State: AOAM530VkCFNyHs8HGjwWw4W1WTcvi5OcY4U1t5MhO6fFDTW6cY7gusk
+        gPw5ct2St/57RYzXqrvsVqU=
+X-Google-Smtp-Source: ABdhPJzrItRfPJkLeW/1fi5l1p4tXzhQigxb1aiRSDd23CDcF6k2V8cYpG4tvuBLUqTNN66a2kN0Dw==
+X-Received: by 2002:a7b:cc1a:: with SMTP id f26mr9915956wmh.19.1613999273965;
+        Mon, 22 Feb 2021 05:07:53 -0800 (PST)
 Received: from valhalla.home ([2.31.224.123])
-        by smtp.gmail.com with ESMTPSA id t198sm26575828wmt.7.2021.02.22.05.07.50
+        by smtp.gmail.com with ESMTPSA id t198sm26575828wmt.7.2021.02.22.05.07.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Feb 2021 05:07:51 -0800 (PST)
+        Mon, 22 Feb 2021 05:07:53 -0800 (PST)
 From:   Daniel Scally <djrscally@gmail.com>
 To:     tfiga@chromium.org, sakari.ailus@linux.intel.com,
         rajmohan.mani@intel.com, rjw@rjwysocki.net, lenb@kernel.org,
@@ -69,9 +69,9 @@ Cc:     andy.shevchenko@linux.intel.com,
         linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
         platform-driver-x86@vger.kernel.org, devel@acpica.org
-Subject: [PATCH v3 2/6] ACPI: scan: Add function to fetch dependent of acpi device
-Date:   Mon, 22 Feb 2021 13:07:31 +0000
-Message-Id: <20210222130735.1313443-3-djrscally@gmail.com>
+Subject: [PATCH v3 4/6] gpiolib: acpi: Export acpi_get_gpiod()
+Date:   Mon, 22 Feb 2021 13:07:33 +0000
+Message-Id: <20210222130735.1313443-5-djrscally@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210222130735.1313443-1-djrscally@gmail.com>
 References: <20210222130735.1313443-1-djrscally@gmail.com>
@@ -81,86 +81,125 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In some ACPI tables we encounter, devices use the _DEP method to assert
-a dependence on other ACPI devices as opposed to the OpRegions that the
-specification intends. We need to be able to find those devices "from"
-the dependee, so add a callback and a wrapper to walk over the
-acpi_dep_list and return the dependent ACPI device.
+I need to be able to translate GPIO resources in an ACPI device's _CRS
+into GPIO descriptor array. Those are represented in _CRS as a pathname
+to a GPIO device plus the pin's index number: this function is perfect
+for that purpose.
+
+As it's currently only used internally within the GPIO layer, provide and
+export a wrapper function that additionally holds a reference to the GPIO
+device.
 
 Signed-off-by: Daniel Scally <djrscally@gmail.com>
 ---
 Changes in v3:
-	- Switched from a standalone function to a callback passed to
-	  acpi_walk_dep_device_list().
 
- drivers/acpi/scan.c     | 34 ++++++++++++++++++++++++++++++++++
- include/acpi/acpi_bus.h |  1 +
- 2 files changed, 35 insertions(+)
+	- Having realised that it wasn't taking a reference to the GPIO device,
+	  I decided the best thing to do was leave the existing function as-is
+	  (apart from renaming) and provide a wrapper that simply passes
+	  through to the original and takes a reference before returning the
+	  struct gpio_desc
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index c9e4190316ef..55626925261c 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -2093,6 +2093,21 @@ static void acpi_bus_attach(struct acpi_device *device, bool first_pass)
- 		device->handler->hotplug.notify_online(device);
+	  Because of the change to that functionality, I dropped the R-b's from
+	  the last version.
+
+ drivers/gpio/gpiolib-acpi.c   | 36 +++++++++++++++++++++++++++++++----
+ include/linux/gpio/consumer.h |  7 +++++++
+ 2 files changed, 39 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index e4d728fda982..0cc7cc327757 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -102,7 +102,8 @@ static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
  }
  
-+static int __acpi_dev_get_dependent_dev(struct acpi_dep_data *dep, void *data)
-+{
-+	struct acpi_device *adev;
-+	int ret;
-+
-+	ret = acpi_bus_get_device(dep->consumer, &adev);
-+	if (ret)
-+		/* If we don't find an adev then we want to continue parsing */
-+		return 0;
-+
-+	*(struct acpi_device **)data = adev;
-+
-+	return 1;
-+}
-+
- static int __acpi_dev_flag_dependency_met(struct acpi_dep_data *dep,
- 					  void *data)
+ /**
+- * acpi_get_gpiod() - Translate ACPI GPIO pin to GPIO descriptor usable with GPIO API
++ * __acpi_get_gpiod() - Translate ACPI GPIO pin to GPIO descriptor usable with
++ *			GPIO API
+  * @path:	ACPI GPIO controller full path name, (e.g. "\\_SB.GPO1")
+  * @pin:	ACPI GPIO pin number (0-based, controller-relative)
+  *
+@@ -111,7 +112,7 @@ static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
+  * controller does not have GPIO chip registered at the moment. This is to
+  * support probe deferral.
+  */
+-static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
++static struct gpio_desc *__acpi_get_gpiod(char *path, int pin)
  {
-@@ -2145,6 +2160,25 @@ void acpi_dev_flag_dependency_met(acpi_handle handle)
+ 	struct gpio_chip *chip;
+ 	acpi_handle handle;
+@@ -128,6 +129,33 @@ static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
+ 	return gpiochip_get_desc(chip, pin);
  }
- EXPORT_SYMBOL_GPL(acpi_dev_flag_dependency_met);
  
 +/**
-+ * acpi_dev_get_dependent_dev - Return ACPI device dependent on @adev
-+ * @adev: Pointer to the dependee device
++ * acpi_get_gpiod() - Translate ACPI GPIO pin to GPIO descriptor usable with
++ *		      GPIO API, and hold a refcount to the GPIO device.
++ * @path:	ACPI GPIO controller full path name, (e.g. "\\_SB.GPO1")
++ * @pin:	ACPI GPIO pin number (0-based, controller-relative)
++ * @label:	Label to pass to gpiod_request()
 + *
-+ * Returns the first &struct acpi_device which declares itself dependent on
-+ * @adev via the _DEP buffer, parsed from the acpi_dep_list.
++ * This function is a simple pass-through to __acpi_get_gpiod(), except that as
++ * it is intended for use outside of the GPIO layer (in a similar fashion to
++ * gpiod_get_index() for example) it also holds a reference to the GPIO device.
 + */
-+struct acpi_device *
-+acpi_dev_get_dependent_dev(struct acpi_device *supplier)
++struct gpio_desc *acpi_get_gpiod(char *path, int pin, char *label)
 +{
-+	struct acpi_device *adev = NULL;
++	struct gpio_desc *gpio = __acpi_get_gpiod(path, pin);
++	int ret;
 +
-+	acpi_walk_dep_device_list(supplier->handle,
-+				  __acpi_dev_get_dependent_dev, &adev);
++	if (IS_ERR(gpio))
++		return gpio;
 +
-+	return adev;
++	ret = gpiod_request(gpio, label);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return gpio;
 +}
-+EXPORT_SYMBOL_GPL(acpi_dev_get_dependent_dev);
++EXPORT_SYMBOL_GPL(acpi_get_gpiod);
 +
- /**
-  * acpi_bus_scan - Add ACPI device node objects in a given namespace scope.
-  * @handle: Root of the namespace scope to scan.
-diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-index 91172af3a04d..5b14a9ae4ed5 100644
---- a/include/acpi/acpi_bus.h
-+++ b/include/acpi/acpi_bus.h
-@@ -690,6 +690,7 @@ static inline bool acpi_device_can_poweroff(struct acpi_device *adev)
- bool acpi_dev_hid_uid_match(struct acpi_device *adev, const char *hid2, const char *uid2);
+ static irqreturn_t acpi_gpio_irq_handler(int irq, void *data)
+ {
+ 	struct acpi_gpio_event *event = data;
+@@ -689,8 +717,8 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 		if (pin_index >= agpio->pin_table_length)
+ 			return 1;
  
- void acpi_dev_flag_dependency_met(acpi_handle handle);
-+struct acpi_device *acpi_dev_get_dependent_dev(struct acpi_device *supplier);
- struct acpi_device *
- acpi_dev_get_next_match_dev(struct acpi_device *adev, const char *hid, const char *uid, s64 hrv);
- struct acpi_device *
+-		lookup->desc = acpi_get_gpiod(agpio->resource_source.string_ptr,
+-					      agpio->pin_table[pin_index]);
++		lookup->desc = __acpi_get_gpiod(agpio->resource_source.string_ptr,
++						agpio->pin_table[pin_index]);
+ 		lookup->info.pin_config = agpio->pin_config;
+ 		lookup->info.debounce = agpio->debounce_timeout;
+ 		lookup->info.gpioint = gpioint;
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index ef49307611d2..6eee751f44dd 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -690,6 +690,8 @@ int devm_acpi_dev_add_driver_gpios(struct device *dev,
+ 				   const struct acpi_gpio_mapping *gpios);
+ void devm_acpi_dev_remove_driver_gpios(struct device *dev);
+ 
++struct gpio_desc *acpi_get_gpiod(char *path, int pin, char *label);
++
+ #else  /* CONFIG_GPIOLIB && CONFIG_ACPI */
+ 
+ struct acpi_device;
+@@ -708,6 +710,11 @@ static inline int devm_acpi_dev_add_driver_gpios(struct device *dev,
+ }
+ static inline void devm_acpi_dev_remove_driver_gpios(struct device *dev) {}
+ 
++struct gpio_desc *acpi_get_gpiod(char *path, int pin, char *label)
++{
++	return NULL;
++}
++
+ #endif /* CONFIG_GPIOLIB && CONFIG_ACPI */
+ 
+ 
 -- 
 2.25.1
 
