@@ -2,82 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E017C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 10:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CCDC433E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 10:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62CB164E32
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 10:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7AF364E57
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 10:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230482AbhBWKV7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Feb 2021 05:21:59 -0500
-Received: from lucky1.263xmail.com ([211.157.147.131]:60568 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbhBWKV6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2021 05:21:58 -0500
-Received: from localhost (unknown [192.168.167.70])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 13FFFB88A8;
-        Tue, 23 Feb 2021 18:19:40 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P31655T140707257894656S1614075578214864_;
-        Tue, 23 Feb 2021 18:19:39 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <18b2e2b5e8dfee53ac67983dde7c59ee>
-X-RL-SENDER: jay.xu@rock-chips.com
-X-SENDER: xjq@rock-chips.com
-X-LOGIN-NAME: jay.xu@rock-chips.com
-X-FST-TO: linus.walleij@linaro.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-System-Flag: 0
-From:   Jianqun Xu <jay.xu@rock-chips.com>
-To:     linus.walleij@linaro.org, heiko@sntech.de
+        id S230472AbhBWKYw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Feb 2021 05:24:52 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:57266 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230142AbhBWKYt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 Feb 2021 05:24:49 -0500
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1lEUrQ-00006b-AO; Tue, 23 Feb 2021 11:24:08 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     linus.walleij@linaro.org, Jianqun Xu <jay.xu@rock-chips.com>
 Cc:     linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
         Jianqun Xu <jay.xu@rock-chips.com>,
         Ziyuan Xu <xzy.xu@rock-chips.com>
-Subject: [PATCH] pinctrl: rockchip: clear int status when driver probed
-Date:   Tue, 23 Feb 2021 18:19:37 +0800
-Message-Id: <20210223101937.273085-1-jay.xu@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH] pinctrl: rockchip: clear int status when driver probed
+Date:   Tue, 23 Feb 2021 11:24:07 +0100
+Message-ID: <14836062.ZYm5mLc6kN@diego>
+In-Reply-To: <20210223101937.273085-1-jay.xu@rock-chips.com>
+References: <20210223101937.273085-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Some devices may do gpio interrupt trigger and make an int status before
-pinctrl driver probed, then the gpio handler will keep complain untill
-the device driver works to stop trigger.
+Am Dienstag, 23. Februar 2021, 11:19:37 CET schrieb Jianqun Xu:
+> Some devices may do gpio interrupt trigger and make an int status before
+> pinctrl driver probed, then the gpio handler will keep complain untill
+> the device driver works to stop trigger.
+> 
+> Signed-off-by: Ziyuan Xu <xzy.xu@rock-chips.com>
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 
-Signed-off-by: Ziyuan Xu <xzy.xu@rock-chips.com>
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
- drivers/pinctrl/pinctrl-rockchip.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index aa1a1c850d05..ec4cb88572cf 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3433,6 +3433,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 		 * things enabled, so for us that's all masked and all enabled.
- 		 */
- 		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTMASK);
-+		writel_relaxed(0xffffffff, bank->reg_base + GPIO_PORTS_EOI);
- 		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTEN);
- 		gc->mask_cache = 0xffffffff;
- 
--- 
-2.25.1
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index aa1a1c850d05..ec4cb88572cf 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -3433,6 +3433,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+>  		 * things enabled, so for us that's all masked and all enabled.
+>  		 */
+>  		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTMASK);
+> +		writel_relaxed(0xffffffff, bank->reg_base + GPIO_PORTS_EOI);
+>  		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTEN);
+>  		gc->mask_cache = 0xffffffff;
+>  
+> 
+
 
 
 
