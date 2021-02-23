@@ -2,92 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F468C433DB
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 08:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E748AC433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 10:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1EF064E4D
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 08:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A98A6148E
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Feb 2021 10:10:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232229AbhBWIhN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Feb 2021 03:37:13 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:56680 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232222AbhBWIhK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 Feb 2021 03:37:10 -0500
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lETB7-0007rd-72; Tue, 23 Feb 2021 09:36:21 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     linus.walleij@linaro.org, Jianqun Xu <jay.xu@rock-chips.com>
-Cc:     linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Wang Panzhenzhuan <randy.wang@rock-chips.com>,
-        Jianqun Xu <jay.xu@rock-chips.com>
-Subject: Re: [PATCH] pinctrl: rockchip: fix restore error in resume
-Date:   Tue, 23 Feb 2021 09:36:20 +0100
-Message-ID: <30831879.43St1lv6Oq@diego>
-In-Reply-To: <20210223064807.121358-1-jay.xu@rock-chips.com>
-References: <20210223064807.121358-1-jay.xu@rock-chips.com>
+        id S232457AbhBWKKF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Feb 2021 05:10:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232426AbhBWKIv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2021 05:08:51 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFA2C061574
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Feb 2021 02:08:11 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id j6so6562356eja.12
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Feb 2021 02:08:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ROyuuue68J3fLDExdnLzPZi5sO6o6bjOhvo+3Bf4zzA=;
+        b=SpdAy61NGEOL3U3BiDXcHcGiE6m98ALFU9VrnL3SytXSVkLWlCc526JADgIR094cDO
+         1r7DmCvBceTl3YROgT3kFMPLHsBJe/eyGHbGLvf6RGEpC+Bqfz4/FasCFG4oN5zaYZlT
+         xwY2L2jidKSGT4IlMkoTZK4Mlpb8DcbyehV4gpjmid6dhjzHUQ+FCYnHn/MgrIgaGtST
+         n6W60JWghn37Lpu0upjreXDZAvXQrGKoAO+kkN1BCzOOibXUzSn7hSlGsXg5exOgivJ4
+         YHRaHzJfqIpHd4SwfhAg/KI1PVw23JgRo0qeSnjfx2zTjDVtrsaxK503jbZuGm70ckyu
+         VKBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ROyuuue68J3fLDExdnLzPZi5sO6o6bjOhvo+3Bf4zzA=;
+        b=QPkAvGRbdQivUU7rwuT9kY7fQ8NDeV/PUriiTZ+S7FT5wwjsfGB3TPsK7c7jfBZNte
+         Krlq5Gvjr5fqS4uyl9oy83YS3c8fFhaSkYWr7FqZ0KPHH0t+zVTUORanZukA1cZgnP8+
+         US37zvw/aFv3A0AeZFBgQ1tZzf98p0n2BEpI7Omuo8k04PxMfRhMA98BOeBGScXh1X3R
+         F7zQe9qEzD1qwcfooCQFzc+98/5SLPLsa48MAm3MSz1si7O57o6N2DpnJaSeYqL1J4zn
+         T6vY1HXOmPeD7KaZS4y6vgi+qvIrx8+OZasIQ594MlJzIjKTVvTzs1VSmd3iNFtRYWmj
+         suuw==
+X-Gm-Message-State: AOAM533anHTwRRafJ3lLj+IgdoVU9kRKPMvLE8xCQRZ1OLgftAuwiNNK
+        ZwWJ4QZw84EEGbx7+hJByqg=
+X-Google-Smtp-Source: ABdhPJza/DR3mOZaLgwzC5Y9tWRDVAjF6MH1sIflJbClHHEDe5fut02toOIu/RGBwrnoE2LUdwRD+g==
+X-Received: by 2002:a17:906:34c3:: with SMTP id h3mr25264946ejb.132.1614074890245;
+        Tue, 23 Feb 2021 02:08:10 -0800 (PST)
+Received: from [192.168.2.2] (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id i7sm283406edq.87.2021.02.23.02.08.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Feb 2021 02:08:09 -0800 (PST)
+Subject: Re: [PATCH] pinctrl: rockchip: add support for rk3568
+To:     Jianqun Xu <jay.xu@rock-chips.com>, linus.walleij@linaro.org,
+        heiko@sntech.de
+Cc:     linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20210223072419.123308-1-jay.xu@rock-chips.com>
+From:   Johan Jonker <jbx6244@gmail.com>
+Message-ID: <9a725c5c-b5c8-0ac9-738e-ad89f1188345@gmail.com>
+Date:   Tue, 23 Feb 2021 11:08:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20210223072419.123308-1-jay.xu@rock-chips.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Am Dienstag, 23. Februar 2021, 07:48:07 CET schrieb Jianqun Xu:
-> From: Wang Panzhenzhuan <randy.wang@rock-chips.com>
+Hi Jianqun,
+
+Before a new compatible string is used in your code it must be added to
+the documentation with a separate patch to rockchip,pinctrl.txt .
+
+To get a ack-by you must include:
+
+robh+dt@kernel.org
+devicetree@vger.kernel.org
+
+Your patch should show up here after filtering:
+https://patchwork.ozlabs.org/project/devicetree-bindings/list/
+
+./scripts/checkpatch.pl --strict
+0001-pinctrl-rockchip-add-support-for-rk3568.patch
+
+WARNING: DT compatible string "rockchip,rk3568-pinctrl" appears
+un-documented -- check ./Documentation/devicetree/bindings/
+#424: FILE: drivers/pinctrl/pinctrl-rockchip.c:4547:
++	{ .compatible = "rockchip,rk3568-pinctrl",
+
+On 2/23/21 8:24 AM, Jianqun Xu wrote:
+> RK3568 SoCs have 5 gpio controllers, each gpio has 32 pins. GPIO supports
+> set iomux, pull, drive strength, schmitt and slew rate.
 > 
-> The restore in resume should match to suspend which only set for RK3288
-> SoCs pinctrl.
-> 
-> Fixes: 8dca933127024 ("pinctrl: rockchip: save and restore gpio6_c6 pinmux in suspend/resume")
-> Reviewed-by: Jianqun Xu <jay.xu@rock-chips.com>
-> Signed-off-by: Wang Panzhenzhuan <randy.wang@rock-chips.com>
 > Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
-
-Very good catch. Writing something to that register even on non-rk3288 socs
-probably can cause strange effects.
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
 > ---
->  drivers/pinctrl/pinctrl-rockchip.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index aa1a1c850d05..53a0badc6b03 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -3727,12 +3727,15 @@ static int __maybe_unused rockchip_pinctrl_suspend(struct device *dev)
->  static int __maybe_unused rockchip_pinctrl_resume(struct device *dev)
->  {
->  	struct rockchip_pinctrl *info = dev_get_drvdata(dev);
-> -	int ret = regmap_write(info->regmap_base, RK3288_GRF_GPIO6C_IOMUX,
-> -			       rk3288_grf_gpio6c_iomux |
-> -			       GPIO6C6_SEL_WRITE_ENABLE);
-> +	int ret;
+
+[..]
+
+>  static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+>  	{ .compatible = "rockchip,px30-pinctrl",
+>  		.data = &px30_pin_ctrl },
+> @@ -4239,6 +4544,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+>  		.data = &rk3368_pin_ctrl },
+>  	{ .compatible = "rockchip,rk3399-pinctrl",
+>  		.data = &rk3399_pin_ctrl },
+> +	{ .compatible = "rockchip,rk3568-pinctrl",
+> +		.data = &rk3568_pin_ctrl },
+>  	{},
+>  };
 >  
-> -	if (ret)
-> -		return ret;
-> +	if (info->ctrl->type == RK3288) {
-> +		ret = regmap_write(info->regmap_base, RK3288_GRF_GPIO6C_IOMUX,
-> +				   rk3288_grf_gpio6c_iomux |
-> +				   GPIO6C6_SEL_WRITE_ENABLE);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
->  	return pinctrl_force_default(info->pctl_dev);
->  }
 > 
-
-
-
 
