@@ -2,89 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF01C433E0
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Feb 2021 14:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B81C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Feb 2021 14:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02BAF64F03
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Feb 2021 14:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A1F64E20
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Feb 2021 14:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbhBZOYI convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Feb 2021 09:24:08 -0500
-Received: from aposti.net ([89.234.176.197]:41486 "EHLO aposti.net"
+        id S230008AbhBZOzn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Feb 2021 09:55:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229586AbhBZOYG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 26 Feb 2021 09:24:06 -0500
-Date:   Fri, 26 Feb 2021 14:23:11 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2] pinctrl: ingenic: add missing call to of_node_put()
-To:     Yang Li <yang.lee@linux.alibaba.com>
-Cc:     linus.walleij@linaro.org, linux-mips@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <NY35PQ.UZ27JQ71RLXE2@crapouillou.net>
-In-Reply-To: <1614303297-24178-1-git-send-email-yang.lee@linux.alibaba.com>
-References: <1614303297-24178-1-git-send-email-yang.lee@linux.alibaba.com>
+        id S229769AbhBZOzn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 26 Feb 2021 09:55:43 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D360464E20;
+        Fri, 26 Feb 2021 14:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614351303;
+        bh=PhR9gkTNFpRiPjJK44jCN9ors5BE/Ib0psiXx2bqJ/4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WB8CwCq8x5mC1s6JOqAuDy8bLQeaYfuztxMoZI8I6uWoN5zzI5fMvbBsiOfMjeorL
+         GSby4P4S3SNzU36de3iQE+2oUqU3XMSTK1j0qXd/xPaAl9EVSD6YYAMct9OKbioFe1
+         iQD41d6ORw9EtuCee44k6Q6TM/jspZWXwo3kkYkj/6pZLpBKJxW8yPiDy4XEdPcj6p
+         iDylENLoylWRbwEBVYRoy+4mKgG5BNOIYEGI4rB711a97WtGseTgKe1FkJBDFhOGRT
+         CROIL2CgYzH5BTz9ebF06cbU53c9Voea9GtfBnKRfjk3zajdjopC2OIma3fXVPQ78s
+         w1BLl8Pb4E0jg==
+Received: from johan by xi.lan with local (Exim 4.93.0.4)
+        (envelope-from <johan@kernel.org>)
+        id 1lFeWZ-0000K1-Cl; Fri, 26 Feb 2021 15:55:23 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>,
+        syzbot+d27b4c8adbbff70fbfde@syzkaller.appspotmail.com
+Subject: [PATCH 1/2] gpio: fix NULL-deref-on-deregistration regression
+Date:   Fri, 26 Feb 2021 15:52:45 +0100
+Message-Id: <20210226145246.1171-2-johan@kernel.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210226145246.1171-1-johan@kernel.org>
+References: <20210226145246.1171-1-johan@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Fix a NULL-pointer deference when deregistering the gpio character
+device that was introduced by the recent stub-driver hack. When the new
+"driver" is unbound as part of deregistration, driver core clears the
+driver-data pointer which is used to retrieve the struct gpio_device in
+its release callback.
 
-Le ven. 26 févr. 2021 à 9:34, Yang Li <yang.lee@linux.alibaba.com> a 
-écrit :
-> In one of the error paths of the for_each_child_of_node() loop in
-> ingenic_gpio_probe, add missing call to of_node_put().
-> 
-> Fix the following coccicheck warning:
-> ./drivers/pinctrl/pinctrl-ingenic.c:2485:1-23: WARNING: Function
-> "for_each_child_of_node" should have of_node_put() before return 
-> around
-> line 2489.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+Fix this by using container_of() in the release callback as should have
+been done all along.
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
+Fixes: 4731210c09f5 ("gpiolib: Bind gpio_device to a driver to enable fw_devlink=on by default")
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: syzbot+d27b4c8adbbff70fbfde@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
--Paul
-
-> ---
-> 
-> Changes in v2:
-> -add braces for if
-> 
->  drivers/pinctrl/pinctrl-ingenic.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c 
-> b/drivers/pinctrl/pinctrl-ingenic.c
-> index f274612..c8ecd01 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -2485,8 +2485,10 @@ static int __init ingenic_pinctrl_probe(struct 
-> platform_device *pdev)
->  	for_each_child_of_node(dev->of_node, node) {
->  		if (of_match_node(ingenic_gpio_of_match, node)) {
->  			err = ingenic_gpio_probe(jzpc, node);
-> -			if (err)
-> +			if (err) {
-> +				of_node_put(node);
->  				return err;
-> +			}
->  		}
->  	}
-> 
-> --
-> 1.8.3.1
-> 
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index adf55db080d8..e1016bc8cf14 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -474,7 +474,7 @@ EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
+ 
+ static void gpiodevice_release(struct device *dev)
+ {
+-	struct gpio_device *gdev = dev_get_drvdata(dev);
++	struct gpio_device *gdev = container_of(dev, struct gpio_device, dev);
+ 
+ 	list_del(&gdev->list);
+ 	ida_free(&gpio_ida, gdev->id);
+-- 
+2.26.2
 
