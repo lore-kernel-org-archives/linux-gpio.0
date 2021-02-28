@@ -2,143 +2,159 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE543C433E0
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Feb 2021 03:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17902C433E0
+	for <linux-gpio@archiver.kernel.org>; Sun, 28 Feb 2021 00:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8324A64F17
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Feb 2021 03:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B219964E02
+	for <linux-gpio@archiver.kernel.org>; Sun, 28 Feb 2021 00:19:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbhB0Dr3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Feb 2021 22:47:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52754 "EHLO
+        id S230139AbhB1ATE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 27 Feb 2021 19:19:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbhB0Dr3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Feb 2021 22:47:29 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E38BDC061756
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Feb 2021 19:46:48 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id o6so7249300pjf.5
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Feb 2021 19:46:48 -0800 (PST)
+        with ESMTP id S230086AbhB1ATD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 27 Feb 2021 19:19:03 -0500
+Received: from mail-oo1-xc2d.google.com (mail-oo1-xc2d.google.com [IPv6:2607:f8b0:4864:20::c2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF86C061756
+        for <linux-gpio@vger.kernel.org>; Sat, 27 Feb 2021 16:18:23 -0800 (PST)
+Received: by mail-oo1-xc2d.google.com with SMTP id i11so1578190ood.6
+        for <linux-gpio@vger.kernel.org>; Sat, 27 Feb 2021 16:18:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pHwELUqccdBmAIg0m7n6Box0vpJWKPugDvgpP9sWbf0=;
-        b=rw0XRB//u/XUtHFfv7BWAKOST6LsTCfGebmh8LKkSjXiN3EiI6oazPQnZBX1ad/3nh
-         Au0zZ7y4KQybuklU8FXDb1QGW+QLM9ilrpIUi1iClplzJi0dPsaLYNLgcrzQhZHZvBXa
-         NOrAczMeuEMsfvjJPcdRjX0LhwjMl5iBsxjHIEZXP3rxL3HxExKlvQ5SEdrUBrbBWRmj
-         lXspdBrLL4DYf7z9vlKhjX82zOlt+Nc6tUcREcv68kIryI1Nw9nLfy77JjUpPN2IA/0W
-         AsNeZr55fgu9XuEbHxZA5G56swtcS+c5a4pJfY3MhBOPp6gnfzRpZRu1ma52tsCAaxbB
-         YSXw==
+        d=nigauri-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=NhLpIka0l+DtQFwtRx94mGt+L2X3B8MlJkoRIBCnKqI=;
+        b=QOqtQjGU26d2NAUtBWHPknrvTdZ1ylgRr+M2MUBtjDDP6MnIYXeAt5FD11Xf2jA4N+
+         aejWHbxIE/kzqp3Lsn/UqZ//gVIwTtihPf2EilEIJkMtbVElBdIetmdzYEPnBVXA9vLG
+         sm9lQzP1+gMZ7qhx26iVtW0NQCoWQrDr/eodBpEoUDwlSjdqwqBzn7J7UDciQr05wrt4
+         z0kawfn1MVermx00h555cbyowYJdKWMhMlSKilntlYi40TfF+V8JHTrmI/6cLOwclJHd
+         TFHdoW4OXTBMj7N/fLoB2KCFfdcb60hPjiXgaew58p71/LfqGMabgPbWWuj6ghgyTaZn
+         aB/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pHwELUqccdBmAIg0m7n6Box0vpJWKPugDvgpP9sWbf0=;
-        b=XUQ7ojONCKC5zb52l2l+mkAfueesCZNq40tBPRPt5o7suq0pxetVfxiTVQZfT1F2Yx
-         3r+CDqIGecl6FaYV2T2vuPlKKAmLSkWWA8NatxsAEUnIM3srMdikB88R8h6BlfX9O+5j
-         UE+0EiVIvwiDksRvAoepMzXlEvyREBToPhgapABq4/MMTCJ4J0fAN+cwNQO2G+1yTBWR
-         iZbb5XxYD17vG0PB/c/GK7uEKKUijdO3tUaRbHqQtafZwYmmexLkexahegM2LZELh1XQ
-         IyQR7Is+eENkx+k5I5agPjFMQTqf5OSk6pBSU0yD4DwtXgkW6j+KuwniFlQmfH9L6RXH
-         10Fg==
-X-Gm-Message-State: AOAM530QA/DOzR4FdXmmj/HT1ujTHzTiUvBNWszd0mxvOaMSCXOhmcMU
-        9fB6drDafpoYJ5+I2bVKfqtNIbZ22AK0Cg==
-X-Google-Smtp-Source: ABdhPJxVo5cZ8UZ7+ZQdCP6vhhTjoRIDuAhSLuizUutQNwf977e+WstSfxUjh6j8GvVH0KqJ4inRrA==
-X-Received: by 2002:a17:90a:a10a:: with SMTP id s10mr6642891pjp.36.1614397608212;
-        Fri, 26 Feb 2021 19:46:48 -0800 (PST)
-Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id 72sm10568295pfv.5.2021.02.26.19.46.45
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Feb 2021 19:46:47 -0800 (PST)
-Date:   Sat, 27 Feb 2021 11:46:42 +0800
-From:   Shawn Guo <shawn.guo@linaro.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: support override broken GPIO number in
- ACPI table
-Message-ID: <20210227034641.GC24428@dragon>
-References: <20210226033919.8871-1-shawn.guo@linaro.org>
- <CAHp75Vcb=NO9OWjSpBeVC4c+9=aXE=yiDWVBwLD1DnzwdgFD6Q@mail.gmail.com>
- <20210226093925.GA24428@dragon>
- <CAHp75Vc6xYv+197SOrSefQHD2h4Xy_N20gQajW4uF2PU=sJfLg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NhLpIka0l+DtQFwtRx94mGt+L2X3B8MlJkoRIBCnKqI=;
+        b=pmlsOj673bfh5F1YTCBIUbHdLKVbaWTrXa/EAFd36Ha1c/JDqFD0dxOAdGalSe8EtN
+         DbpSYKXhj+twM5Ab9QuyKuDXSScXtwrBhBPnQYz7vZb60gT6BQgaC7mUoAxzIXKIuBu7
+         WbfP5KjXUz8W+z4PNWAnmDurltGySqMCsVP1ZNu9TJuPPY4cfZHWrajKpF0Xyp5CLk+T
+         7FV99Ijl11DUA3Y8FhMndkDdPoqEOl5a47Fd67HhuPj+8ztDP8DkxJmMJFnZQ21BRpZo
+         +5n1saepzxinbohSFlYQoWlyvLDS0y3QYHPxkecwR2N+QJS7vBAXxU6Ht9DUKDh50sP4
+         2TEw==
+X-Gm-Message-State: AOAM533lzRwf18USZ35WiF31aIHdrth+rY0N6FVrw7LKhikrrx6l3sMl
+        ytLdsi2IRyljGXnXvkyMPE7Jpho3rvuNMPUAyJSM
+X-Google-Smtp-Source: ABdhPJw/2qEE4T0GbsPjQnvhTu2B66k0NmG+hhEKuH+cliA0hP4hzMtaxjvZAsfFJlL5/xdYOd3pwOHIxdVMHZIFmdA=
+X-Received: by 2002:a4a:98a3:: with SMTP id a32mr7334179ooj.51.1614471502634;
+ Sat, 27 Feb 2021 16:18:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vc6xYv+197SOrSefQHD2h4Xy_N20gQajW4uF2PU=sJfLg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1613131643-60062-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+ <1613131643-60062-2-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+In-Reply-To: <1613131643-60062-2-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+From:   Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Date:   Sun, 28 Feb 2021 09:17:56 +0900
+Message-ID: <CABMQnVJ+hQ_sdXMdLzhv2Y65QW8Vi01VAjV=SCeOei-zOZ5dwQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] firmware: xilinx: Add pinctrl support
+To:     Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        git@xilinx.com, saikrishna12468@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Feb 26, 2021 at 12:57:37PM +0200, Andy Shevchenko wrote:
-> On Fri, Feb 26, 2021 at 11:39 AM Shawn Guo <shawn.guo@linaro.org> wrote:
-> >
-> > On Fri, Feb 26, 2021 at 11:12:07AM +0200, Andy Shevchenko wrote:
-> > > On Fri, Feb 26, 2021 at 5:42 AM Shawn Guo <shawn.guo@linaro.org> wrote:
-> > > >
-> > > > Running kernel with ACPI on Lenovo Flex 5G laptop, touchpad is just
-> > > > not working.  That's because the GpioInt number of TSC2 node in ACPI
-> > > > table is simply wrong, and the number even exceeds the maximum GPIO
-> > > > lines.  As the touchpad works fine with Windows on the same machine,
-> > > > presumably this is something Windows-ism.  Although it's obviously
-> > > > a specification violation, believe of that Microsoft will fix this in
-> > > > the near future is not really realistic.
-> > > >
-> > > > It adds the support of overriding broken GPIO number in ACPI table
-> > > > on particular machines, which are matched using DMI info.  Such
-> > > > mechanism for fixing up broken firmware and ACPI table is not uncommon
-> > > > in kernel.  And hopefully it can be useful for other machines that get
-> > > > broken GPIO number coded in ACPI table.
-> > >
-> > > Thanks for the report and patch.
-> > >
-> > > First of all, have you reported the issue to Lenovo? At least they
-> > > will know that they did wrong.
-> >
-> > Yes, we are reporting this to Lenovo, but to be honest, we are not sure
-> > how much they will care about it, as they are shipping the laptop with
-> > Windows only.
-> >
-> > > Second, is it possible to have somewhere output of `acpidump -o
-> > > flex5g.dat` (the flex5g.dat file)?
-> >
-> > https://raw.githubusercontent.com/aarch64-laptops/build/master/misc/lenovo-flex-5g/dsdt.dsl
-> >
-> > > And as Mika said once to one of mine patches "since you know the
-> > > number ahead there is no need to pollute GPIO ACPI library core with
-> > > this quirk". But in any case I would like to see the ACPI tables
-> > > first.
-> >
-> > Oh, so you had something similar already?  Could you point me to the
-> > patch and discussion?
-> 
-> Similar, but might be not the same:
->  - patches in the upstream [1] (v3 applied), discussion [2]
->  - new version with some additional fixes [3]
+Hi,
 
-Thanks for all the pointers.  It looks to me that it's the same problem
-- the GPIO number in ACPI table is broken and needs an override from
-kernel.  So I think what we need is a generic solution to a problem
-not uncommon.  Rather than asking all different drivers to resolve the
-same problem all over the kernel, I believe GPIO ACPI library is just
-the right place.
+2021=E5=B9=B42=E6=9C=8812=E6=97=A5(=E9=87=91) 21:10 Sai Krishna Potthuri
+<lakshmi.sai.krishna.potthuri@xilinx.com>:
+>
+> Adding pinctrl support to query platform specific information (pins)
+> from firmware.
+>
+> Signed-off-by: Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.=
+com>
+> Acked-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+>  drivers/firmware/xilinx/zynqmp.c     | 114 +++++++++++++++++++++++++++
+>  include/linux/firmware/xlnx-zynqmp.h |  90 +++++++++++++++++++++
+>  2 files changed, 204 insertions(+)
+>
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/z=
+ynqmp.c
+> index efb8a66efc68..299c3d5a9ebd 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -784,6 +784,120 @@ int zynqmp_pm_fpga_get_status(u32 *value)
+>  }
+>  EXPORT_SYMBOL_GPL(zynqmp_pm_fpga_get_status);
+>
 
-Looking at your platform and problem, I realise that to be a generic
-solution, my patch needs an additional device identification matching,
-as one GPIO number that is broken for one device could be correct for
-another.  I will improve it, so that your problem can be resolved by
-simply adding a new entry to acpi_gpio_pin_override_table[].
+<snip>
 
-Shawn
+> @@ -125,6 +131,12 @@ enum pm_query_id {
+>         PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS,
+>         PM_QID_CLOCK_GET_PARENTS,
+>         PM_QID_CLOCK_GET_ATTRIBUTES,
+> +       PM_QID_PINCTRL_GET_NUM_PINS =3D 6,
+> +       PM_QID_PINCTRL_GET_NUM_FUNCTIONS =3D 7,
+> +       PM_QID_PINCTRL_GET_NUM_FUNCTION_GROUPS =3D 8,
+> +       PM_QID_PINCTRL_GET_FUNCTION_NAME =3D 9,
+> +       PM_QID_PINCTRL_GET_FUNCTION_GROUPS =3D 10,
+> +       PM_QID_PINCTRL_GET_PIN_GROUPS =3D 11,
+
+These do not have to have values, Because PM_QID_INVALID is 0.
+
+>         PM_QID_CLOCK_GET_NUM_CLOCKS =3D 12,
+
+And you can drop value from this.
+
+>         PM_QID_CLOCK_GET_MAX_DIVISOR,
+>  };
+> @@ -288,6 +300,44 @@ enum dll_reset_type {
+>         PM_DLL_RESET_PULSE,
+>  };
+>
+> +enum pm_pinctrl_config_param {
+> +       PM_PINCTRL_CONFIG_SLEW_RATE =3D 0,
+> +       PM_PINCTRL_CONFIG_BIAS_STATUS =3D 1,
+> +       PM_PINCTRL_CONFIG_PULL_CTRL =3D 2,
+> +       PM_PINCTRL_CONFIG_SCHMITT_CMOS =3D 3,
+> +       PM_PINCTRL_CONFIG_DRIVE_STRENGTH =3D 4,
+> +       PM_PINCTRL_CONFIG_VOLTAGE_STATUS =3D 5,
+> +       PM_PINCTRL_CONFIG_TRI_STATE =3D 6,
+> +       PM_PINCTRL_CONFIG_MAX =3D 7,
+> +};
+
+Same as above.
+
+> +
+> +enum pm_pinctrl_slew_rate {
+> +       PM_PINCTRL_SLEW_RATE_FAST =3D 0,
+> +       PM_PINCTRL_SLEW_RATE_SLOW =3D 1,
+> +};
+
+Same as above. Others are also specified.
+
+> +
+> +enum pm_pinctrl_bias_status {
+> +       PM_PINCTRL_BIAS_DISABLE =3D 0,
+> +       PM_PINCTRL_BIAS_ENABLE =3D 1,
+> +};
+
+Best regards,
+  Nobuhiro
+--=20
+Nobuhiro Iwamatsu
+   iwamatsu at {nigauri.org / debian.org}
+   GPG ID: 40AD1FA6
