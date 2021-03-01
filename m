@@ -2,164 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D181C4332E
-	for <linux-gpio@archiver.kernel.org>; Sun, 28 Feb 2021 17:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86595C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 14:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB6B64EB7
-	for <linux-gpio@archiver.kernel.org>; Sun, 28 Feb 2021 17:13:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4961E64E01
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 14:33:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231326AbhB1RMq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 28 Feb 2021 12:12:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230461AbhB1RMj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Feb 2021 12:12:39 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10048C06174A;
-        Sun, 28 Feb 2021 09:11:58 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id g5so23843438ejt.2;
-        Sun, 28 Feb 2021 09:11:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dfQ46OGWItLgoKPUR/Czwfd0qqTUSj25+jf5yrElG/4=;
-        b=GzeA/aDB2UBhnNVhm++I/Jk3Up7Sjll8FWko6UUVrR8GbwUj6tdWvj7U7T3p1JnaWE
-         tuDT5n8KyfWwgonEFcDAlbP9Wnm/lzI5ynLZd5zXrmZLcqy0e5qJFV+Ury6tgPUdhcIC
-         ZnUpySrUVv3A0oExsLsVOkNej6wDTO/NVed1e1lRxfeovoJIixufVCuML3LKRgEXHaK6
-         AQIpA41ncR2vIctG/YIpRBR7PPh4Vs9caRlig7rCLuPUPKUXlteysI6kNYwN/3Yc//ci
-         tD2NQsug/MYd9mQ+dWSVvw0ZV+w1YK/V6hQL8df04yN35+nWGaht76tutf0kiQ1Fxgq5
-         E6Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dfQ46OGWItLgoKPUR/Czwfd0qqTUSj25+jf5yrElG/4=;
-        b=DFk3PQk4Tg5+x/JyUn1GIB9WRKbs4ZjvCjYZr9JKO8621MT6/JMbxVEVcdDoUwHVL+
-         For3KnKO03QZ25kxJo4JrfZHSkIeuz8ttxAxFkjgF2q6WYdlaegFsyL7pwebxMCJOuh/
-         NrMre9pjnYhb6I4oOeQe6UNOpaC6IPz2m13QnfLeVZ2YZGlmr1DYxmPi+bvVPkKasB7e
-         u9RBjICZzwxg7kg714yWmesb+O+Rtbcpc99VRzJxNj+AhqwCvcU1kFYQqrqosKdGeMu3
-         qv1KRTCKEbd/EDeY1ITs68EsyfQGwPqrqB4AdfJhZ2zoof+PofoZAtTFpktFx3ZcE2nA
-         XTjg==
-X-Gm-Message-State: AOAM5304vRkhWj/qH8naxa3syBxpk1crx5yAp/FsV3b7mRkxQxwuuOcN
-        4SYwXjH8z05UBhk34i8rBvOfdoP18tGg
-X-Google-Smtp-Source: ABdhPJw5sLbCUCcgxkhNvC6IgO3vmNaTgOeasYPBEho60Poa4WNRXoZ/cPiXNkLCHgbgyBJUziViqw==
-X-Received: by 2002:a17:906:acb:: with SMTP id z11mr3855755ejf.193.1614532316774;
-        Sun, 28 Feb 2021 09:11:56 -0800 (PST)
-Received: from localhost.localdomain ([46.53.249.223])
-        by smtp.gmail.com with ESMTPSA id fw3sm6654338ejb.82.2021.02.28.09.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Feb 2021 09:11:56 -0800 (PST)
-Date:   Sun, 28 Feb 2021 20:11:54 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, linux-arch@vger.kernel.org
-Subject: [PATCH 12/11] pragma once: scripted treewide conversion
-Message-ID: <YDvO2kmidKZaK26j@localhost.localdomain>
-References: <YDvLYzsGu+l1pQ2y@localhost.localdomain>
+        id S236404AbhCAOc2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Mar 2021 09:32:28 -0500
+Received: from mga01.intel.com ([192.55.52.88]:40501 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236379AbhCAOcQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 1 Mar 2021 09:32:16 -0500
+IronPort-SDR: QvXHoElGDeee9yA2PaPU8Wi1ahrcSgw/QZ+KT9i63TYLmLJCYJ27Qt1PEcWTSK6k6YeXequ6Ia
+ gVzS8b08Vtsg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="206090285"
+X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
+   d="scan'208";a="206090285"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 06:30:26 -0800
+IronPort-SDR: NwcDCNj7XqUq2dqA/wMXN8k6qUH7EnB3cPbBpvBsONTNpZiWHAfkW71mvbZ4evOnT2LbMhsizH
+ oLnGqg0Ar3GA==
+X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
+   d="scan'208";a="383074888"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 06:30:23 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lGjYx-0099w2-Dv; Mon, 01 Mar 2021 16:30:19 +0200
+Date:   Mon, 1 Mar 2021 16:30:19 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Yang Li <yang.lee@linux.alibaba.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gpiolib: acpi: Add missing IRQF_ONESHOT
+Message-ID: <YDz6e9POQuhzNgkp@smile.fi.intel.com>
+References: <1614069358-50943-1-git-send-email-yang.lee@linux.alibaba.com>
+ <YDTsWR/kXhd96ICI@smile.fi.intel.com>
+ <YDe8/2toCGEH2Mf1@smile.fi.intel.com>
+ <CAMpxmJV5go-fHR2RWWdyi5a6ONeXrhC5c958oNZNzszt2aGN9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YDvLYzsGu+l1pQ2y@localhost.localdomain>
+In-Reply-To: <CAMpxmJV5go-fHR2RWWdyi5a6ONeXrhC5c958oNZNzszt2aGN9A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-[  Bcc a lot of lists so that people understand what's this is all         ]
-[  about without creating uber-cc-thread.                                  ]
-[  Apologies if I missed your subsystem                                    ]
-[  Please see [PATCH 11/11: pragma once: conversion script (in Python 2)]  ]
+On Mon, Mar 01, 2021 at 02:57:53PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Feb 25, 2021 at 4:07 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Feb 23, 2021 at 01:51:53PM +0200, Andy Shevchenko wrote:
+> > > On Tue, Feb 23, 2021 at 04:35:58PM +0800, Yang Li wrote:
+> > > > fixed the following coccicheck:
+> > > > ./drivers/gpio/gpiolib-acpi.c:176:7-27: ERROR: Threaded IRQ with no
+> > > > primary handler requested without IRQF_ONESHOT
+> > > >
+> > > > Make sure threaded IRQs without a primary handler are always request
+> > > > with IRQF_ONESHOT
+> > >
+> > > Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >
+> > Bart, I guess I will collect this in my branch and send you a PR.
+> > I have more fixes to that file anyway.
+> 
+> Fine with me!
 
-Hi, Linus.
+Good! So, when you have time, please review [1] and I'll send PR for fixes.
 
-Please run the script below from top-level directory, it will convert
-most kernel headers to #pragma once directive advancing them into
-21-st century.
+[1]: https://lore.kernel.org/linux-gpio/20210225163320.71267-1-andriy.shevchenko@linux.intel.com/T/#u
 
-The advantages are:
-
-* less LOC
-
-	18087 files changed, 18878 insertions(+), 99804 deletions(-)
-	= -81 kLOC (give or take)
-
-* less mental tax on developers forced to name things which aren't even
-  real code
-
-* less junk in preprocessor hashtables and editors/IDEs autocompletion
-  lists
-
-There are two bit exceptions: UAPI headers and ACPICA.
-Given ubiquity of #pragma once, I personally think even these subsystems
-should be converted in the future.
-
-Compile tested on alpha, arc, arm, arm64, h8300, ia64, m68k, microblaze,
-mips, nios2, parisc, powerpc, riscv, s390, sh, sparc, um-i386, um-x86_64,
-i386, x86_64, xtensa (allnoconfig, all defconfigs, allmodconfig with or
-without SMP/DEBUG_KERNEL + misc stuff).
-
-Not compile tested on csky, hexagon, nds32, openrisc. 
-
-Love,
-	Alexey
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-#!/bin/sh -x
-find . -type f -name '*.h' -print	|\
-LC_ALL=C sort				|\
-sed -e 's#^./##g'			|\
-xargs ./scripts/pragma-once.py
-
-find . -type d -name 'uapi' | xargs git checkout -f
-git checkout -f arch/alpha/include/asm/cmpxchg.h
-git checkout -f arch/arm/mach-imx/hardware.h
-git checkout -f arch/arm/mach-ixp4xx/include/mach/hardware.h
-git checkout -f arch/arm/mach-sa1100/include/mach/hardware.h
-git checkout -f arch/mips/include/asm/mips-cps.h
-git checkout -f arch/x86/boot/boot.h
-git checkout -f arch/x86/boot/ctype.h
-git checkout -f arch/x86/include/asm/cpufeatures.h
-git checkout -f arch/x86/include/asm/disabled-features.h
-git checkout -f arch/x86/include/asm/required-features.h
-git checkout -f arch/x86/include/asm/vmxfeatures.h
-git checkout -f arch/x86/include/asm/vvar.h
-git checkout -f drivers/acpi/acpica/
-git checkout -f drivers/gpu/drm/amd/pm/inc/vega10_ppsmc.h
-git checkout -f drivers/gpu/drm/amd/pm/powerplay/ppsmc.h
-git checkout -f drivers/input/misc/yealink.h
-git checkout -f drivers/media/usb/dvb-usb-v2/mxl111sf-demod.h
-git checkout -f drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.h
-git checkout -f drivers/pcmcia/yenta_socket.h
-git checkout -f drivers/staging/rtl8723bs/include/hal_com_h2c.h
-git checkout -f include/linux/acpi.h
-git checkout -f include/linux/bitops.h
-git checkout -f include/linux/compiler_types.h
-git checkout -f include/linux/device.h
-git checkout -f include/linux/kbuild.h
-git checkout -f include/linux/libfdt_env.h
-git checkout -f include/linux/local_lock.h
-git checkout -f include/linux/spinlock.h
-git checkout -f include/linux/spinlock_api_smp.h
-git checkout -f include/linux/spinlock_types.h
-git checkout -f include/linux/tracepoint.h
-git checkout -f mm/gup_test.h
-git checkout -f net/batman-adv/main.h
-git checkout -f scripts/dtc/
-git checkout -f tools/include/linux/bitops.h
-git checkout -f tools/include/linux/compiler.h
-git checkout -f tools/testing/selftests/clone3/clone3_selftests.h
-git checkout -f tools/testing/selftests/futex/include/atomic.h
-git checkout -f tools/testing/selftests/futex/include/futextest.h
-git checkout -f tools/testing/selftests/futex/include/logging.h
-git checkout -f tools/testing/selftests/kselftest.h
-git checkout -f tools/testing/selftests/kselftest_harness.h
-git checkout -f tools/testing/selftests/pidfd/pidfd.h
-git checkout -f tools/testing/selftests/x86/helpers.h
