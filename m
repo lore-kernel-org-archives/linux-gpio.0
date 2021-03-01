@@ -2,98 +2,75 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A144C433E6
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 09:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441E7C433E6
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 09:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFBC964E22
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 09:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19DA464E01
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 09:06:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233297AbhCAJF1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:05:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233840AbhCAJEA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Mar 2021 04:04:00 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8899FC06174A
-        for <linux-gpio@vger.kernel.org>; Mon,  1 Mar 2021 01:03:19 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id q14so18502653ljp.4
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Mar 2021 01:03:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=gzxCVL+nyodcUSCU9VZAZpLakwe/w50q0cyfOXq54xY=;
-        b=ZHUFfp2IK9gllxOuG1MLe3/yFCuCVf6Rt1dzYQjCW6fB0DsV3A9CddVWKZEZteJrc+
-         /N7RGfW8KJHyFycLitpkrkMtclDQ6boIeedGTMkPoPS+Rn0QwakbKBH/pWDloaP6fEY8
-         EYjUR9AJ2AOzFkPdeYCNwGTvrB9PoFSPfKSarX6RB+fkfZ5swW+Ac9zpdvyE1eaLJw2p
-         Q7YdcSqtN5luoVeNLABnwl3RPxIo5fCVcJbtPLySVCevCZ44uq56skpiTScWp469ySPo
-         kwBsTm0SW/Fra67f3caKqpoQUo/Zt0DBuvC7X7gYFNYniYoHaeRmuGg/oyTSIxyz2wmL
-         rNwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=gzxCVL+nyodcUSCU9VZAZpLakwe/w50q0cyfOXq54xY=;
-        b=f3wlU9RRaHtNFkmpCIQgs8YTH4UAMe+pm+LBCrRUK36J462NIvLGOz28o3WB5K9myJ
-         guQcHvUc3ciNrjmaYbSCcibGFNzhmiP+Xu9ISsT17bmIDwnOBhcxTp/UXKsgrL+cHrpE
-         KSU342bq4k/QcfOkgSm7IJaKRmrV+CJwzmLHBx9Q6AssowLGD+smdI3VqJ1C/h+ny/Oc
-         NhYMkTqHUbuOiifDqacONLVdSt4ZgQEspTLvvfZaG47VoiVQCKBb/pZMW8NlNSunMMTm
-         ojr7opYkEff7WkbYWthqk9yL8SOnIcY0O04evLH8LWmgOX2UkmKR0Q7THTBSXO+JJRsf
-         9GSQ==
-X-Gm-Message-State: AOAM531mpPyjTbSNKATHBGWzFLnnh4h2O2wPygo9vzx7GPdltUptseef
-        5yJXvKBfqqcj4uumrZaWYXhMb1AInLMPln1h935zxfLwT7A=
-X-Google-Smtp-Source: ABdhPJzl9vwfVcM7lZPrUpqhZ6r0aRYAekXp0Ghs2HqGwlAIJhfdHwZkuwqYtc4pK0cwjK4stRX7Npv7BAkeSs9IzLo=
-X-Received: by 2002:a2e:1649:: with SMTP id 9mr178381ljw.74.1614589398090;
- Mon, 01 Mar 2021 01:03:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20210219174633.8646-1-michaelestner@web.de>
-In-Reply-To: <20210219174633.8646-1-michaelestner@web.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 1 Mar 2021 10:03:07 +0100
-Message-ID: <CACRpkdb1i=TXMWW5wNbxERBUAAsQp+QhoCcgsPTVte0vH5CQnQ@mail.gmail.com>
-Subject: Re: [PATCH] Signed-off-by: Michael Estner <michaelestner@web.de>
-To:     Michael Estner <michaelestner@web.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        id S233741AbhCAJGK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:06:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233700AbhCAJFt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:05:49 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8612564E04;
+        Mon,  1 Mar 2021 09:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614589508;
+        bh=MZVQyEykFEiKaPxHXQUeHA3EpjEPE1zGkLiaitaAfXk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sjqL5XOsHdzhHTiiKCtrYIBrQgOpr/3ayO0gknBc4SL9+LFjL28xPTa/ucUzFGQW0
+         6ZEEbA+0Kg9ChBCQ/E8bVYIER3GnR5SVLyusgRy2TSydxDdZlSjxI4dWKMPaLOl00J
+         YPgJlIAsRXAhTepPrKizFJLlnCPgxCGxfDZjH8eA3N9Dtzs5a+LryGt4qflaIwWXmA
+         3nx9iECPAy0jp3eYZ6kyObFu3bboNDhdBxCaDDy1LtDVPLbkm7VaGlc9nNYgESZoI+
+         WGy1niXjuktuT7ZFZNZHrjuivvsBB6OkeATsJSsaU1wvPK4o4hcSnL938TBdF1blzS
+         yzvmESmpDT40w==
+Received: from johan by xi.lan with local (Exim 4.93.0.4)
+        (envelope-from <johan@kernel.org>)
+        id 1lGeUX-0006pG-Ak; Mon, 01 Mar 2021 10:05:26 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH v2 0/2] gpio: regression fixes
+Date:   Mon,  1 Mar 2021 10:05:17 +0100
+Message-Id: <20210301090519.26192-1-johan@kernel.org>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Michael!
+Here's a fix for a regression in 5.12 due to the new stub-driver hack,
+and a fix for potential list corruption due to missing locking which has
+been there since the introduction of the character-device interface in
+4.6.
 
-Thanks for your patch!
+Johan
 
-Make sure to send patches to the linux-gpio list and Bartosz
-as well.
+Changes in v2
+ - drop the corresponding drv_set_drvdata() which is no longer needed
+   after patch 1/2
+ - add Saravanas's reviewed-by tag to patch 2/2
 
-On Fri, Feb 19, 2021 at 6:46 PM Michael Estner <michaelestner@web.de> wrote:
->
-> Delete unused else if iteration.
-> ---
->  drivers/gpio/gpiolib.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 97eec8d8dbdc..1fe38fc99b8f 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -612,9 +612,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->         dev_set_drvdata(&gdev->dev, gdev);
->         if (gc->parent && gc->parent->driver)
->                 gdev->owner = gc->parent->driver->owner;
-> -       else if (gc->owner)
-> -               /* TODO: remove chip->owner */
-> -               gdev->owner = gc->owner;
 
-As long as we have not resolved the TODO I think this needs to stay around.
+Johan Hovold (2):
+  gpio: fix NULL-deref-on-deregistration regression
+  gpio: fix gpio-device list corruption
 
-What makes you think this is not needed anymore?
+ drivers/gpio/gpiolib.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+-- 
+2.26.2
+
