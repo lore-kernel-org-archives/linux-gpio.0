@@ -2,73 +2,98 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C64C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D838AC43381
 	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 17:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB2764FFE
+	by mail.kernel.org (Postfix) with ESMTP id B0EFF65000
 	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 17:08:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232265AbhCARI1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 1 Mar 2021 12:08:27 -0500
-Received: from mga04.intel.com ([192.55.52.120]:27159 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236971AbhCARFs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 1 Mar 2021 12:05:48 -0500
-IronPort-SDR: jzFkkJ8xkimntsU8v9vzX+bJrj2WjrFgSRWHi6ZJzlpdV042/xCuMMbWY6jCPDNT6nvxyLW8e9
- pFNFRKfNK2JQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="184088036"
-X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="184088036"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 09:00:25 -0800
-IronPort-SDR: zMcPTAAj+Ck5b/wEusFaONFxoS25gXsd8WCICpontZ9GGrJ3fOEmRq2Wr+3c8G8G8HVp3BWwfg
- 3j5BEFpwqzVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="435446416"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Mar 2021 08:59:44 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 1CC4313A; Mon,  1 Mar 2021 18:59:37 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v1 1/2] lib/cmdline: Export next_arg() for being used in modules
-Date:   Mon,  1 Mar 2021 18:59:31 +0200
-Message-Id: <20210301165932.62352-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.1
+        id S235965AbhCARIl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Mar 2021 12:08:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237257AbhCARIB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Mar 2021 12:08:01 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0122C061788;
+        Mon,  1 Mar 2021 09:07:19 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id l18so12305760pji.3;
+        Mon, 01 Mar 2021 09:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=meNzHvtojOauHTFuv2tlbQj0jLwkt/JOAjAHzaQmqk8=;
+        b=szav/lCXU50Ov+1kbs32stTAAELOjuwRA/XKCcqZhrRIN8XE48XQ8Z7GfTI7Jb6AR1
+         juYoMz6Uv0S8JGEZOapL6c6K0Jx43h2dx7K+C9aQf/hOoTHSgHVsyYSYi3f3nxS1jUEo
+         oqt46EP4l2r4ih7GdZGuAFQdmX05W2Pe4pY99QrGUsWtAmrYCxbsaLHIBE65+87piyQ7
+         sLEC2nsc1B7puKD+KnmcQAz62wbN5r99AbRZvGalNfczRhTmGaM2x/VPMuyOJ+Dd6psG
+         zK9oSJXHjY8U+xxZyp+J001VpwwNSH4kA8LcLMuaaX1thrSuz143bJW8o7m1H7FlgYk3
+         7JRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=meNzHvtojOauHTFuv2tlbQj0jLwkt/JOAjAHzaQmqk8=;
+        b=UetyWwX+sTg9vi7rVpqW3hlPWOHBzLoL2IcGMd0lsJgNz1QfLEOecT4fnSApqt3U7d
+         2/m/dDEK7yAo3znMpPwo+elAuEWrpgDXxEHR+4hdBcnLcjkNGyza6SeDJnPu+xwLIsNH
+         LcvZHUZaoUW4ZWLX877uNMq+vmpQTJZECXm1keE96Qy3iE6XznQSFIUcux05fdTtXMZP
+         /GeDMUZrhAtT5xaPGl5siiNxSIggxcxm46I5daVtgkxok0OxmCiLnGoLQ9fUMbX0uXMR
+         /jE7jGdTFUt0vlR5pUueBin2XxTSKvQbjhsk3vyoDbgaScBo9+ewKeS8/yVZZGuGgI/7
+         b4GA==
+X-Gm-Message-State: AOAM530GBgw2lHwYzEcPwgNXbBHbX+CR2nNJDC1ktDwin2l2POgfDdJD
+        rqmqmpKlzpZUCGvjnpuTT/TIg/iFqTk86aorg96Xo6ckRWhKBw==
+X-Google-Smtp-Source: ABdhPJyTz5m/LfpTlTfgkKE9j3dztp2H8TrqvolgESP/XfKPuZoB0I9Py2CtdVxQleB39ET2oI6Q0DoGfm3tjc3NkU0=
+X-Received: by 2002:a17:902:a710:b029:e3:b18:7e5b with SMTP id
+ w16-20020a170902a710b02900e30b187e5bmr16204877plq.17.1614618439007; Mon, 01
+ Mar 2021 09:07:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210228025249.19684-1-shawn.guo@linaro.org>
+In-Reply-To: <20210228025249.19684-1-shawn.guo@linaro.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 1 Mar 2021 19:07:03 +0200
+Message-ID: <CAHp75Vdi1WuZxhBKqGS7xnVzZpBrKwNbXbp5k0Y5ibZ4aAyBrg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: support gpio_chip .set_config call
+To:     Shawn Guo <shawn.guo@linaro.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-At least one module will benefit from using next_arg() helper.
-Let's export it for that module and others if they consider it
-helpful.
+On Sun, Feb 28, 2021 at 4:55 AM Shawn Guo <shawn.guo@linaro.org> wrote:
+>
+> In case of ACPI boot, GPIO core does the right thing to parse GPIO pin
+> configs from ACPI table, and call into gpio_chip's .set_config hook for
+> setting them up.  It enables such support on qcom platform by using
+> generic config function, which in turn calls into .pin_config_set of
+> pinconf for setting up hardware.  For qcom platform, it's possible to
+> reuse pin group config functions for pin config hooks, because every pin
+> is maintained as a single group.
+>
+> This change fixes the problem that Touchpad of Lenovo Flex 5G laptop
+> doesn't work with ACPI boot, because PullUp config of Touchpad GpioInt
+> pin is not set up by kernel driver.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- lib/cmdline.c | 1 +
- 1 file changed, 1 insertion(+)
+by the kernel
 
-diff --git a/lib/cmdline.c b/lib/cmdline.c
-index 5d474c626e24..5546bf588780 100644
---- a/lib/cmdline.c
-+++ b/lib/cmdline.c
-@@ -272,3 +272,4 @@ char *next_arg(char *args, char **param, char **val)
- 	/* Chew up trailing spaces. */
- 	return skip_spaces(args);
- }
-+EXPORT_SYMBOL(next_arg);
+...
+
+>         .pin_config_group_get   = msm_config_group_get,
+>         .pin_config_group_set   = msm_config_group_set,
+> +       .pin_config_get         = msm_config_group_get,
+> +       .pin_config_set         = msm_config_group_set,
+
+This can't be right. They have different semantics.
+
 -- 
-2.30.1
-
+With Best Regards,
+Andy Shevchenko
