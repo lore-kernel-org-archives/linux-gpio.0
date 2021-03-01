@@ -2,138 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCAAC433E6
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 17:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB1EC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 17:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8644C64FFF
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 17:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C77465185
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Mar 2021 17:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232760AbhCARIc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 1 Mar 2021 12:08:32 -0500
-Received: from mga11.intel.com ([192.55.52.93]:32444 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236024AbhCARGE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 1 Mar 2021 12:06:04 -0500
-IronPort-SDR: CPt35T8bAeNmDGRQ+vwNAoOYfzAw5ucjLEd45Gie8ZzlT0+mWB62gqRsOu6bKQYwWTqnHE0DgU
- e6MmR/JmGJ2g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="183130147"
-X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="183130147"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 08:59:41 -0800
-IronPort-SDR: ulwloYRthgkrnhLed5rkUCfanQlnwbkuqi5xzZM2lM35hMGugJ3oucKxaaJqkxyBA3FytmDVPY
- 8XT/GzEKuX2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="505332951"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Mar 2021 08:59:39 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 48D9C1F1; Mon,  1 Mar 2021 18:59:39 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v1 2/2] gpio: aggregator: Replace custom get_arg() with a generic next_arg()
-Date:   Mon,  1 Mar 2021 18:59:32 +0200
-Message-Id: <20210301165932.62352-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210301165932.62352-1-andriy.shevchenko@linux.intel.com>
-References: <20210301165932.62352-1-andriy.shevchenko@linux.intel.com>
+        id S236529AbhCARJ5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Mar 2021 12:09:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232388AbhCARI2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Mar 2021 12:08:28 -0500
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7668FC06178B
+        for <linux-gpio@vger.kernel.org>; Mon,  1 Mar 2021 09:07:45 -0800 (PST)
+Received: by mail-yb1-xb35.google.com with SMTP id n195so17674469ybg.9
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Mar 2021 09:07:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OicOE3mre0h3AyQVp3nU/XHFNAr6XLpp3rW1VAOQfcs=;
+        b=q4DIapvl5CGpANyplWTase15rpB/6y/JyINXNKAwWfdKMZc/MzjB3Xh4O3ihj5IE3e
+         U5vCePaPQa8it2MEE8JQo5VL7dzFrOh9szmapfrvqKvG3RBQBzwfsKWU6ikZOwYXNxN+
+         3SJA0By2TQQbiZ0RMFaaAmIm+nKpMWX8u4RvAdc/JgAc379nP/3Ua7KekJgaxyB2Rqad
+         u03b48mESOH05GCEZbWPtYH4w5iykPlGOf3+d62+Gv9mmrFNJ1smkSf1cfP3iIW7fmYE
+         T4NHzGfg4GmopWLlBGJHN5B6rQyddZ1JFT42It3D/Cx5iBUXZKNUtr/FuHSvD+PDEr9V
+         sAKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OicOE3mre0h3AyQVp3nU/XHFNAr6XLpp3rW1VAOQfcs=;
+        b=M5bpdspMS/ik2VkWfp5Uw5NJocJmEeWPaGWOLOpyz2VCm7uOlKCpDJ0+/o0KYkSKx5
+         yocWD7eGIqj5btAWwNSkmlMXVudOTc+0Qwe6maprYmMZDfYLMFskNOYge5gmTGirs1dL
+         W9dJ1n0VEs5bvkebRXZedEJDT6MuY+fWgqm5KlpiRQvUzqnA2Dc+aBqKHpLUqQIdNOgu
+         ZNK0/fU2uAvGf7xITDfX8yziB9+tCpXKz+VOOxYaQwt4cD9ezCVKIyxMkTNCxDc9NC/e
+         /LGgWe3GFkTGCKyojz5lci2VSmAkr9OIEl2emTDE/pgg3DjYdjwGZpqlSJy58AxIzHpp
+         HxwQ==
+X-Gm-Message-State: AOAM531WKQaULl4FQKb27WITdLGTxj/V7kEae/knYvcNBwUdw41nRqpn
+        5B1VKvx4td5ofPB7Zehi4dGZEwmIG2lOBS1PZloIEg==
+X-Google-Smtp-Source: ABdhPJyMtrS9U6p4JJlZ8XJBzZx6DZiarptt1gQA8TbEfVZgHBwKYdbWAsgprV2lonmd0EcuADE+CIQKKz8dzjlDxaI=
+X-Received: by 2002:a25:dc94:: with SMTP id y142mr24538620ybe.346.1614618464592;
+ Mon, 01 Mar 2021 09:07:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210301090519.26192-1-johan@kernel.org> <CAMpxmJXfyM89vfFDQfvOU+CX5EQSp_n_UrbEYC5MP0T-0phc-Q@mail.gmail.com>
+In-Reply-To: <CAMpxmJXfyM89vfFDQfvOU+CX5EQSp_n_UrbEYC5MP0T-0phc-Q@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 1 Mar 2021 09:07:08 -0800
+Message-ID: <CAGETcx9QnxJaSJQNVskMNHMs-ysjiDq5Bky1WT6pfqbiUCiAmw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gpio: regression fixes
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-cmdline library provides next_arg() helper to traverse over parameters
-and their values given in command line. Replace custom approach in the driver
-by it.
+On Mon, Mar 1, 2021 at 1:12 AM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+>
+> On Mon, Mar 1, 2021 at 10:05 AM Johan Hovold <johan@kernel.org> wrote:
+> >
+> > Here's a fix for a regression in 5.12 due to the new stub-driver hack,
+> > and a fix for potential list corruption due to missing locking which has
+> > been there since the introduction of the character-device interface in
+> > 4.6.
+> >
+> > Johan
+> >
+> > Changes in v2
+> >  - drop the corresponding drv_set_drvdata() which is no longer needed
+> >    after patch 1/2
+> >  - add Saravanas's reviewed-by tag to patch 2/2
+> >
+> >
+> > Johan Hovold (2):
+> >   gpio: fix NULL-deref-on-deregistration regression
+> >   gpio: fix gpio-device list corruption
+> >
+> >  drivers/gpio/gpiolib.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > --
+> > 2.26.2
+> >
+>
+> Patches applied, thanks!
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-aggregator.c | 39 +++++-----------------------------
- 1 file changed, 5 insertions(+), 34 deletions(-)
+Thanks Johan and Bartosz!
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 08171431bb8f..34e35b64dcdc 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -37,31 +37,6 @@ struct gpio_aggregator {
- static DEFINE_MUTEX(gpio_aggregator_lock);	/* protects idr */
- static DEFINE_IDR(gpio_aggregator_idr);
- 
--static char *get_arg(char **args)
--{
--	char *start, *end;
--
--	start = skip_spaces(*args);
--	if (!*start)
--		return NULL;
--
--	if (*start == '"') {
--		/* Quoted arg */
--		end = strchr(++start, '"');
--		if (!end)
--			return ERR_PTR(-EINVAL);
--	} else {
--		/* Unquoted arg */
--		for (end = start; *end && !isspace(*end); end++) ;
--	}
--
--	if (*end)
--		*end++ = '\0';
--
--	*args = end;
--	return start;
--}
--
- static int aggr_add_gpio(struct gpio_aggregator *aggr, const char *key,
- 			 int hwnum, unsigned int *n)
- {
-@@ -83,8 +58,8 @@ static int aggr_add_gpio(struct gpio_aggregator *aggr, const char *key,
- 
- static int aggr_parse(struct gpio_aggregator *aggr)
- {
-+	char *args = skip_spaces(aggr->args);
- 	char *name, *offsets, *p;
--	char *args = aggr->args;
- 	unsigned long *bitmap;
- 	unsigned int i, n = 0;
- 	int error = 0;
-@@ -93,13 +68,9 @@ static int aggr_parse(struct gpio_aggregator *aggr)
- 	if (!bitmap)
- 		return -ENOMEM;
- 
--	for (name = get_arg(&args), offsets = get_arg(&args); name;
--	     offsets = get_arg(&args)) {
--		if (IS_ERR(name)) {
--			pr_err("Cannot get GPIO specifier: %pe\n", name);
--			error = PTR_ERR(name);
--			goto free_bitmap;
--		}
-+	args = next_arg(args, &name, &p);
-+	while (*args) {
-+		args = next_arg(args, &offsets, &p);
- 
- 		p = get_options(offsets, 0, &error);
- 		if (error == 0 || *p) {
-@@ -125,7 +96,7 @@ static int aggr_parse(struct gpio_aggregator *aggr)
- 				goto free_bitmap;
- 		}
- 
--		name = get_arg(&args);
-+		args = next_arg(args, &name, &p);
- 	}
- 
- 	if (!n) {
--- 
-2.30.1
-
+-Saravana
