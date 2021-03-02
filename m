@@ -2,239 +2,180 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215C9C4332B
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBB7C43332
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDB4E64F2A
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE29764F2C
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381705AbhCBVZn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:25:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42168 "EHLO
+        id S1383247AbhCBV1e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:27:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1579713AbhCBQ7r (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 11:59:47 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0CA1C061223;
-        Tue,  2 Mar 2021 08:59:05 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id a18so12427614wrc.13;
-        Tue, 02 Mar 2021 08:59:05 -0800 (PST)
+        with ESMTP id S1347494AbhCBSHN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 13:07:13 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA207C0617AA;
+        Tue,  2 Mar 2021 10:06:04 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id d15so5633667wrv.5;
+        Tue, 02 Mar 2021 10:06:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4Joww5io5viqVSd+UaO00H+TGmki8RVfz8V1MqY5mi0=;
-        b=uHjpRKRatRGXDcfmWtRFHrTty6gZLOwbV05D5+PgwhxXieWmboEhWb9oCuo2mf8Cal
-         chyejxSSlf/xnEBNHTXKi6Uu/VbDmGHhXc3epIErNbioCkJeiZgmpNZ/ud3BAtpX5zkB
-         cpRvn+afCYEIVtx1NiWCsY9Zdah4XgY3iKYAh5PdVbbqgE+SvDx2EmDderC6pojqlgjd
-         H06bRpdyCLbDsVmYy1el6oR8QRakJOJlCRpHBgYoA1iKO5OyoxQ2psRNPzrpiaAWOXjZ
-         /U9lncSItvOExk7cXbhxNBMgnIiVeL8i9FNuNpr/9U7BhrtccJld7/87RN8ks5Ll/qKv
-         4pkw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gnkuHuyViGY8zg3xnjKXTQqrs4pSICO7UYO1lK2VU+Q=;
+        b=AwnopjaXS2hX7IMjcz79ZlfUNKEp2Oxb8rO61mXVKKosI/G7j+5fB9/UKeDKlW6LBm
+         YagB0Xi20yf2qnJUZZv/xg9YKYXnaKgTNuvmihLjvKVPXGJ5CF2G8GCfw8yDI6gIk5iR
+         OhLUh+dZue30YHabqWtWSXUjqBqFw4mmai9uBPg72X78fYUHReUOBJ7FXkmbzo7u3w2X
+         0Q282JKskkEqTcKPDXfoeKbkIBOWK6qfFl2rySlsbsphIP8CZIzToWMjcrp2KWq4H9wS
+         uI9B5R1e4n2Jde3TTOth4ccq+Xk6ur/KjlmZeylJOwJqI+II59GmgxN5DAtXtIXHvLrX
+         XojA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=4Joww5io5viqVSd+UaO00H+TGmki8RVfz8V1MqY5mi0=;
-        b=kSzYAYka3DNFasECOve4UoXILQmq5WmsSUeweQAN36C/9R9Sfw7FaqN5MEyl2pvhD1
-         nSnAAA3WQc53835j4HllyhIl1RWTily2vA+yAk1nohdOGX6mroZrJaa6iN/EudltjqzT
-         ERoM4f+vxSSXoaZaOPfHL3VdwAFhe5U7pYSEnzMY7PGRJu3xZ4JMWZT0JPaGhRdprDr2
-         m+n4lEmNDu/3x+Lv1I5rcNRuW9zPpYWtLTa1r4t4GBARX3dJFVK4gazj67RFbkIF4JnO
-         +BS68Tw3CCcmQCCXA6gbTRnEV7FyG1s2x8rB+BbLAJaSgy6XGh6bD/uk5nY5TmaUeLGa
-         QiUA==
-X-Gm-Message-State: AOAM530beVzS5BcXDyV63XYrpFUB5uuaOm3PWxo+UB0lAjN3XjemmWuW
-        ONz7oz98iYJz4HIuUGE79TbcFg1ZJZU55Q==
-X-Google-Smtp-Source: ABdhPJxpIru1wVIoyQ17r07Hfbqpw4hvbjSdewNavsZrC1MH1cmBgWG6rFnA5vK1nzsIUmR6S8rD8A==
-X-Received: by 2002:adf:b611:: with SMTP id f17mr22460111wre.8.1614704344489;
-        Tue, 02 Mar 2021 08:59:04 -0800 (PST)
-Received: from [192.168.1.10] (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
-        by smtp.gmail.com with ESMTPSA id s84sm3220552wme.11.2021.03.02.08.59.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Mar 2021 08:59:04 -0800 (PST)
-Subject: Re: [PATCH 02/12] pinctrl: add a pincontrol driver for BCM6328
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210225164216.21124-1-noltari@gmail.com>
- <20210225164216.21124-3-noltari@gmail.com>
- <CACRpkdbxAQTft8dapGqBDxM8nbkPvK4i95ND0JBFb_riafZSSg@mail.gmail.com>
-From:   =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>
-Message-ID: <3959f3be-19bd-c9c4-36ee-e93959a7f8e1@gmail.com>
-Date:   Tue, 2 Mar 2021 17:59:03 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        bh=gnkuHuyViGY8zg3xnjKXTQqrs4pSICO7UYO1lK2VU+Q=;
+        b=g7VKO/MOhYfGxDkEgS2Ix5reC0b4OXZ95hpz5v8HU1ccuXrHyp/9QuFlIMh6ytMgPu
+         Z4f03bj3CuOGsV09T2GGxQPWpNUsFPrHTCaOZofD43ba1NbGpcaZI8R9Rf+OofJXrLVC
+         gPqJbMzmXXQJjfpn4AGbjSAOL6cFv8xbgTm29w11ZU34Dg6cY8xlDIKrIebAIhYZeXS7
+         uwx7ZSIxYtZQdlqhn87jAISEvic62k0ptDzH7oG4U2ajfUqk5BPf1n4oyfjRPvvqV+GY
+         8O+A9crA0NHA3Q7Ild2YTodc8opDtIp0JEB9GpaqPpZhlhAp/5Hf9Gvs8R3dPAW6C9Mt
+         YRgg==
+X-Gm-Message-State: AOAM532AA5ISrGxBv2oYL0tR9iOES/70g4zLMRhtrvpbnQGAqAAxzbjg
+        GC5MDujMqRtWXMdf6je0EoQ=
+X-Google-Smtp-Source: ABdhPJy/G47wvJRz10CO7RBiIR3rwtnapxBdAhWA/8PJFCD03yVzoaQSeHYOBhRemPCLmDfyxbud+Q==
+X-Received: by 2002:a5d:4592:: with SMTP id p18mr7576282wrq.244.1614708363488;
+        Tue, 02 Mar 2021 10:06:03 -0800 (PST)
+Received: from skynet.lan (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
+        by smtp.gmail.com with ESMTPSA id 3sm17136336wry.72.2021.03.02.10.06.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 10:06:02 -0800 (PST)
+From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>
+To:     Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>
+Subject: [PATCH] gpio: regmap: move struct gpio_regmap definition
+Date:   Tue,  2 Mar 2021 19:06:01 +0100
+Message-Id: <20210302180601.12082-1-noltari@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbxAQTft8dapGqBDxM8nbkPvK4i95ND0JBFb_riafZSSg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+struct gpio_regmap should be declared in gpio/regmap.h.
+This way other drivers can access the structure data when registering a gpio
+regmap controller.
 
-El 02/03/2021 a las 16:20, Linus Walleij escribió:
-> Hi Álvaro,
-> 
-> thanks for your patch!
-> 
-> On Thu, Feb 25, 2021 at 5:42 PM Álvaro Fernández Rojas
-> <noltari@gmail.com> wrote:
-> 
->> Add a pincontrol driver for BCM6328. BCM628 supports muxing 32 pins as
->> GPIOs, as LEDs for the integrated LED controller, or various other
->> functions. Its pincontrol mux registers also control other aspects, like
->> switching the second USB port between host and device mode.
->>
->> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
->> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-> 
-> Thanks for working on this. This SoC definitely need to come upstream.
+Fixes: ebe363197e52 ("gpio: add a reusable generic gpio_chip using regmap")
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+---
+ drivers/gpio/gpio-regmap.c  | 20 ------------------
+ include/linux/gpio/regmap.h | 41 ++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 40 insertions(+), 21 deletions(-)
 
-I will try my best :).
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 5412cb3b0b2a..23b0a8572f53 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -11,26 +11,6 @@
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+ 
+-struct gpio_regmap {
+-	struct device *parent;
+-	struct regmap *regmap;
+-	struct gpio_chip gpio_chip;
+-
+-	int reg_stride;
+-	int ngpio_per_reg;
+-	unsigned int reg_dat_base;
+-	unsigned int reg_set_base;
+-	unsigned int reg_clr_base;
+-	unsigned int reg_dir_in_base;
+-	unsigned int reg_dir_out_base;
+-
+-	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
+-			      unsigned int offset, unsigned int *reg,
+-			      unsigned int *mask);
+-
+-	void *driver_data;
+-};
+-
+ static unsigned int gpio_regmap_addr(unsigned int addr)
+ {
+ 	if (addr == GPIO_REGMAP_ADDR_ZERO)
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index ad76f3d0a6ba..ce2fc6e9b62b 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -4,13 +4,52 @@
+ #define _LINUX_GPIO_REGMAP_H
+ 
+ struct device;
+-struct gpio_regmap;
+ struct irq_domain;
+ struct regmap;
+ 
+ #define GPIO_REGMAP_ADDR_ZERO ((unsigned int)(-1))
+ #define GPIO_REGMAP_ADDR(addr) ((addr) ? : GPIO_REGMAP_ADDR_ZERO)
+ 
++/**
++ * struct gpio_regmap - GPIO regmap controller
++ * @parent:		The parent device
++ * @regmap:		The regmap used to access the registers
++ *			given, the name of the device is used
++ * @gpio_chip:		GPIO chip controller
++ * @ngpio_per_reg:	Number of GPIOs per register
++ * @reg_stride:		(Optional) May be set if the registers (of the
++ *			same type, dat, set, etc) are not consecutive.
++ * @reg_dat_base:	(Optional) (in) register base address
++ * @reg_set_base:	(Optional) set register base address
++ * @reg_clr_base:	(Optional) clear register base address
++ * @reg_dir_in_base:	(Optional) in setting register base address
++ * @reg_dir_out_base:	(Optional) out setting register base address
++ * @reg_mask_xlate:     (Optional) Translates base address and GPIO
++ *			offset to a register/bitmask pair. If not
++ *			given the default gpio_regmap_simple_xlate()
++ *			is used.
++ * @driver_data:	(Optional) driver-private data
++ */
++struct gpio_regmap {
++	struct device *parent;
++	struct regmap *regmap;
++	struct gpio_chip gpio_chip;
++
++	int reg_stride;
++	int ngpio_per_reg;
++	unsigned int reg_dat_base;
++	unsigned int reg_set_base;
++	unsigned int reg_clr_base;
++	unsigned int reg_dir_in_base;
++	unsigned int reg_dir_out_base;
++
++	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
++			      unsigned int offset, unsigned int *reg,
++			      unsigned int *mask);
++
++	void *driver_data;
++};
++
+ /**
+  * struct gpio_regmap_config - Description of a generic regmap gpio_chip.
+  * @parent:		The parent device
+-- 
+2.20.1
 
-> 
-> I think this driver can be simplified a bit and reuse some core infrastructure
-> to make it more maintainable. It might be a bit of challenge but definitely
-> worth it!
-> 
->> +config PINCTRL_BCM6328
->> +       bool "Broadcom BCM6328 GPIO driver"
->> +       depends on OF_GPIO && (BMIPS_GENERIC || COMPILE_TEST)
->> +       select PINMUX
->> +       select PINCONF
->> +       select GENERIC_PINCONF
->> +       select MFD_SYSCON
->> +       default BMIPS_GENERIC
->> +       help
->> +          Say Y here to enable the Broadcom BCM6328 GPIO driver.
-> 
-> I suggest
-> 
-> select GPIO_REGMAP
-> select GPIOLIB_IRQCHIP
-> select IRQ_DOMAIN_HIERARCHY
-> 
-> see below.
-> 
-> (...)
->> +#include <linux/bitops.h>
-> 
-> Just <linux/bits.h> maybe, if you only use BIT() and GENMASK().
-> 
->> +#include <linux/gpio.h>
->> +#include <linux/of_gpio.h>
-> 
-> Do not include these, just:
-> #include <linux/gpio/driver.h>
-> 
->> +#define BCM6328_DIROUT_REG     0x04
->> +#define BCM6328_DATA_REG       0x0c
->> +#define BCM6328_MODE_REG       0x18
-> 
-> This looks very much like it could use GPIO_REGMAP.
-> Can you look at:
-> drivers/gpio/gpio-regmap.c
-> drivers/gpio/gpio-sl28cpld.c
-> 
-> And see if you can do what that driver is doing and reuse
-> this core infrastructure?
-
-I've just checked drivers/gpio/gpio-regmap.c and it seems that "struct 
-gpio_regmap" should be declared in include/linux/gpio/regmap.h.
-Right now devm_gpio_regmap_register() is returning a pointer to a 
-structure which none except gpio-regmap knows. Does that make any sense?
-I need to access gpio_regmap->gpio_chip in order to gather 
-gpio_chip.base and pass it to pinctrl_add_gpio_range().
-
-> 
->> +static inline unsigned int bcm6328_bank_pin(unsigned int pin)
->> +{
->> +       return pin % PINS_PER_BANK;
->> +}
-> 
-> I am generally reluctant about registering several banks/instances
-> of the GPIO if it is possible to just use more devices in the
-> device tree, like one for each instance.
-> 
->> +static inline unsigned int bcm6328_reg_off(unsigned int reg, unsigned int pin)
->> +{
->> +       return reg - (pin / PINS_PER_BANK) * BANK_SIZE;
->> +}
-> 
-> Because it leads to this kind of weirdness to split out the devices
-> from the main device in practice.
-> 
->> +static int bcm6328_gpio_direction_input(struct gpio_chip *chip,
->> +                                       unsigned int pin)
->> +{
-> (...)
->> +       /*
->> +        * Check with the pinctrl driver whether this pin is usable as
->> +        * an input GPIO
->> +        */
->> +       ret = pinctrl_gpio_direction_input(chip->base + pin);
->> +       if (ret)
->> +               return ret;
-> 
-> This is very nice.
-> 
->> +static int bcm6328_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
->> +{
->> +       char irq_name[7];
->> +
->> +       sprintf(irq_name, "gpio%d", gpio);
->> +
->> +       return of_irq_get_byname(chip->of_node, irq_name);
->> +}
-> 
-> This is a clear indication that we are dealing with a hierarchical irqchip.
-> 
-> My assumption is that you have one IRQ per GPIO line, so each
-> GPIO has a dedicated IRQ on the interrupt controller. Correct?
-> 
-> This means:
-> 
-> - Do not add all the interrupts into the device tree by name.
-> 
-> - In Kconfig select GPIOLIB_IRQCHIP, select IRQ_DOMAIN_HIERARCHY
-> 
-> - Populate a simple struct gpio_irq_chip, if no local registers need
->    updating on interrupts, just pass interrupts through
->          .irq_mask       = irq_chip_mask_parent,
->          .irq_unmask     = irq_chip_unmask_parent,
->    etc.
-> 
-> - Implement bcm6328_gpio_child_to_parent_hwirq() for this chip
->    with hardcoded mappings between the hardware GPIO and interrupt
->    lines, using the parent interrupt controller hierarchically. This mapping
->    is determined from the compatible-string, and part of the property
->    of how the GPIO block is integrated with the SoC. If need be to
->    tell different chips apart, more precise compatible strings are needed.
-> 
-> - Examples:
->    drivers/gpio/gpio-ixp4xx.c
->    drivers/gpio/gpio-sifive.c
-> 
-> If you do this you will notice the core is more helpful to cut down on the
-> code.
-> 
-> Yours,
-> Linus Walleij
-> 
-
-Best regards,
-Álvaro.
