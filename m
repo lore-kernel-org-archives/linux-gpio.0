@@ -2,85 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADC6C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82ACC433E0
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD82864F2C
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E4A864F2A
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381675AbhCBVXC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:23:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1448907AbhCBPnQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:43:16 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB69BC06121F
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 06:44:49 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id 2so19709182ljr.5
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 06:44:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9feuLaRLYMtlgGOGr1daR8c2TEzfBi5+yLsyG2URtB8=;
-        b=JklTdr9IlRTbGAiHM56tbsNizr51DdFen7QQqTNEe4+kXWl9RFHlr+d7N01dM/Wz/d
-         bjnKc3qF4JXg6T/br+HXQP5dFpy0VNrIseTx3vedOER4EewKzx++0XzXXfKKPX93Tiwr
-         4ug2KpGIDbEnZmlgs3e3QoR+TTFrHIFppXsivwPcnGVfo+YNfAPdAWpEOTrLfeeC5TW1
-         +KAIlbavTCMgD2YNW6y05ODzsplG9RQndFYanGBz4i0kCe3C0N5SRlrxxHSxmKW1p0lt
-         dW+a52TlO+LKTrHiUpQ5ks0mnsgLXH1e4gU5ymC0IiNdVrH2xZAIVy1brxo5eytkM2sB
-         mUcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9feuLaRLYMtlgGOGr1daR8c2TEzfBi5+yLsyG2URtB8=;
-        b=p5esXP48+5QuePBAs5CAbg7eqqITv06WgnKqP9QA8pdDHT0GazArfLKrILLdcCxgDD
-         Tco5HKM1936h7Z7vIT682AIQTx0yWnVNSdGVx+1pWl+mJl1/HDJcunyS6ez6dVZdFg0V
-         R/rqGHC+6rxI11XiZsnXGgwONUkLMmt+is5ytorjBN8jjjgJ8gA8NucZvKTRgFG6SWc4
-         EM3Fg1lksqku3+UQAHTR+mvuhpTm52CybEWjfHqY/81kJsIiArBRWsNGG9rzWm7SkkLu
-         Qq2qohGsYP7SYTzl2PKc0tUCVozWAAlWdJ1KEQ8jlsYz9mmC6fo1pYdQhoPdnGDwkxCl
-         mwcg==
-X-Gm-Message-State: AOAM5330opU7Mh26kpv0CRibty4JAer8hBDsQcHqkdo/DcX55sfKH2ew
-        FivQUbVthMaIz3IgyrBa0i9x/xA7lpdVutSmAlKRtBxdfaFDXQ==
-X-Google-Smtp-Source: ABdhPJwUwDB4hBw580rpuMjcCg9Rc9naVpfnsju755C/7VCHrkfYZ4JZhz3B2iBHv/f5gsNYiaB5FME/2iHR6jMAthw=
-X-Received: by 2002:a2e:9cb:: with SMTP id 194mr3203087ljj.438.1614696288299;
- Tue, 02 Mar 2021 06:44:48 -0800 (PST)
+        id S1381678AbhCBVXK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:23:10 -0500
+Received: from mga11.intel.com ([192.55.52.93]:45308 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1575753AbhCBPoC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Mar 2021 10:44:02 -0500
+IronPort-SDR: SZRfZNVxEl/tHr9r5BvYAOibe+11yo4C7gZEVMRp6mqgqfT07T4Xv78niyjZS7eaTatUPtx7it
+ vHPgQkepiyTQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9911"; a="183457082"
+X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
+   d="scan'208";a="183457082"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 07:36:13 -0800
+IronPort-SDR: drYOvbiGuDNZ1H8x7/J/wyKXTBQSin7Lu0AbxgATrquuGyOTjIds7HMNRTQX11PIpfw5IQvrUB
+ 0OLYrrARjrPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
+   d="scan'208";a="435736821"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 02 Mar 2021 07:35:13 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id C33981F4; Tue,  2 Mar 2021 17:35:04 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v1 3/4] gpiolib: Introduce acpi_gpio_dev_init() and call it from core
+Date:   Tue,  2 Mar 2021 17:34:50 +0200
+Message-Id: <20210302153451.50593-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com>
+References: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20210224185316.17942-1-brgl@bgdev.pl>
-In-Reply-To: <20210224185316.17942-1-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 15:44:37 +0100
-Message-ID: <CACRpkdZ915TABrSt0A_1tM3Jt_op4gcCY1b-d2ocM7wjKJFoPA@mail.gmail.com>
-Subject: Re: [PATCH] selftests: gpio: update .gitignore
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Kent Gibson <warthog618@gmail.com>, Shuah Khan <shuah@kernel.org>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 7:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+In the ACPI case we may use the firmware node in the similar way
+as it's done for OF case. We may use that fwnode for other purposes
+in the future.
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> The executable that we build for GPIO selftests was renamed to
-> gpio-mockup-cdev. Let's update .gitignore so that we don't show it
-> as an untracked file.
->
-> Fixes: 8bc395a6a2e2 ("selftests: gpio: rework and simplify test implementation")
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 7 +++++++
+ drivers/gpio/gpiolib-acpi.h | 4 ++++
+ drivers/gpio/gpiolib.c      | 1 +
+ 3 files changed, 12 insertions(+)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 495f779b2ab9..27a4a4e0a48d 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1291,6 +1291,13 @@ void acpi_gpiochip_remove(struct gpio_chip *chip)
+ 	kfree(acpi_gpio);
+ }
+ 
++void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
++{
++	/* Set default fwnode to parent's one if present */
++	if (gc->parent)
++		ACPI_COMPANION_SET(&gdev->dev, ACPI_COMPANION(gc->parent));
++}
++
+ static int acpi_gpio_package_count(const union acpi_object *obj)
+ {
+ 	const union acpi_object *element = obj->package.elements;
+diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
+index e2edb632b2cc..e476558d9471 100644
+--- a/drivers/gpio/gpiolib-acpi.h
++++ b/drivers/gpio/gpiolib-acpi.h
+@@ -36,6 +36,8 @@ struct acpi_gpio_info {
+ void acpi_gpiochip_add(struct gpio_chip *chip);
+ void acpi_gpiochip_remove(struct gpio_chip *chip);
+ 
++void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev);
++
+ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip);
+ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip);
+ 
+@@ -58,6 +60,8 @@ int acpi_gpio_count(struct device *dev, const char *con_id);
+ static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
+ static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
+ 
++static inline void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev) { }
++
+ static inline void
+ acpi_gpiochip_request_interrupts(struct gpio_chip *chip) { }
+ 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 4af8a8c1316e..6827736ba05c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -590,6 +590,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	gc->gpiodev = gdev;
+ 
+ 	of_gpio_dev_init(gc, gdev);
++	acpi_gpio_dev_init(gc, gdev);
+ 
+ 	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+-- 
+2.30.1
 
-Yours,
-Linus Walleij
