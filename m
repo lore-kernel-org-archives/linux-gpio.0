@@ -7,107 +7,83 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8B9C4360C
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C04B7C4321A
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E11164F31
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79CDE64F2A
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444635AbhCBVSq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:18:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45486 "EHLO
+        id S1383821AbhCBVS2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:18:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384532AbhCBPFT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:05:19 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1397C061A2A
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 06:52:49 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id p15so15350741ljc.13
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 06:52:49 -0800 (PST)
+        with ESMTP id S1351092AbhCBNbJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 08:31:09 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C79B1C061794
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 05:16:28 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id a17so23879729ljq.2
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 05:16:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/M0iE7LYiQkzv/JWuS/1M9XYKrUbkxRvIVvQyWoD5T4=;
-        b=WBmAgrPqcHHbllyM/fX3Mjdcm+kDUPkno+SQSHhL8LJej4Avezled2lFqOOBYyOhSG
-         WFgJLJYGk1I77Q5qe5Du4NwWiXU0EpdNPJ6NaE2rr7pQHVvOFIkLIq5NUYi9x0AyE8NF
-         AkRDuKjs9KNZmbZcYCO3ZKGV3t6h4HsMy7/VIUGjP0Nm84JSeXCdSn4/VMiOkn/SLzMv
-         ikk3TkzMkBFaUh2Hn4foBw+2ToHqJzTGJCWZriWVcz9+E9WtFROQ+J2cv7rNL3kTNhO2
-         TYHJ0Ph2MjFE9d1MAFTrEDYJAp4iUmyQdFU3qZfy/ja7BsWd3Rtmp4BhPBNA8fA/wQek
-         oAXA==
+         :cc;
+        bh=w7TMxO/D7a8csr+JUQ9kpEy7RKNnYl515YUs0lqH6AQ=;
+        b=kpyPJ/xL4he3UejKB1Yg7LMDZ/4N3d/Jv8MsH0eBoX2a1nhUMsqMFENsdePu8i8v+I
+         VKgI+BsBfJ3yjbJBWjTlGF1C+bUNJMKawxkz4QqEEA1+AM3gMTxKdknG+MszyKQ/E9kj
+         luKyQvs0eSzodLiUNIqS0autQAuSluYfSKIE6+bQ+Fa7ZMqFvc10KYLCQrSxOQnD99Mn
+         QYmkKscHuLjwB52OY073RDQS11o0xFLv5vodbmQMPkyMShWhBF2Z5OPFZJ3BzQplrQlI
+         X2tBmvi975yCX94IjdKTQpTXQN+ouCCZhH5E2HwsyZhxuUfxYnNhUzshisz2/UYUqQpy
+         yzTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/M0iE7LYiQkzv/JWuS/1M9XYKrUbkxRvIVvQyWoD5T4=;
-        b=C6QNMdh/jYdBEFVWifcsjr7qUMmNpZawAXGb87PZygT4sUP6X9avVDDmTkDa6dYNjq
-         y+aZpJNujnmo9J2ttnkrz9rPQNJ1QLVmMP2rMHI9wDL2Q4WVAPCXqFx6+nrxxAfuC2w5
-         zU5JtQTTsQPRKtpHMAwnxsSX0yUyAMOuXMKxUvj+Tzf9e4gzVNZATY+M+MwxnowjOX3O
-         gY3Z2FeqpXazQ2+JiG0RrxdIFGim5utmfpcXkTy6JknA8TlgX8xVwavL2TYeKE6YdbjS
-         LhC/w7asBAuAdhZxwX34TD6nJACamDAzwZznBfTOq2oFC6L593QTdgzYLpxymuZ/mFBF
-         PB9A==
-X-Gm-Message-State: AOAM533AAIAwKVnVjWqJbjTt3Xp2JgzL1nhaDtAWYCPR1PNK3jnhlFJP
-        0TW+I08Ib+vc5ZfpoEPHZ7ZPdlpiJG6aoMd9Y6vFqA==
-X-Google-Smtp-Source: ABdhPJyXAjBUUClEYCZHtVdeFxB93e0KU/DaYNCaGJDseQVcIYSVpAd2vUIWhhLrI6o9uN4JZLtR9Hilte1ubUmv+wo=
-X-Received: by 2002:a2e:9041:: with SMTP id n1mr12338272ljg.273.1614696768477;
- Tue, 02 Mar 2021 06:52:48 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=w7TMxO/D7a8csr+JUQ9kpEy7RKNnYl515YUs0lqH6AQ=;
+        b=CXtobicgh73zaTgJHwnHDFq1M+sUsDcy+QbVj/8uHOnagEVIITj9gfLKHGakocQzTA
+         njo1mgQNVl+UAjhJLKoY/2uifXNSdkJQ53gWPS4foM4kbQ2753GId0TOe5oXPMGOdEnp
+         GD+p64fEa9CLtADB04e2VMPVxwDCB95lI6yUFvynbLSfBwrRMdgDc+DduxGrTfFPiFTJ
+         eFDYDzYz0KRhV7WJkI06qI3XAbu/T88hB6g62G41Z4N3+xDJZ4Y0NtSdc2C7p+ITiKQ6
+         PwPQL7VfbwkAlrCLV1bMYjySYu1UTuI3vtUF3SjRefLlxSkSjxy3kaVXKw6dAanK4Qyf
+         RL5w==
+X-Gm-Message-State: AOAM5333ZquXNijl13Amkq2gWg9f7RrRm93tOasMbCa1865LuvZnXGiw
+        Hp7KmiGwM0JEfaSHb54dwJZC7IdRwPCHp4q9MLOmWA==
+X-Google-Smtp-Source: ABdhPJwLz47BG52rBTGPeD1OfU09SQGX018BFmLiaSkLzxHfaN66OaFtwRNIy6YfAjwqwAxOmn5sbqQHJadbpIbGXUI=
+X-Received: by 2002:a2e:9754:: with SMTP id f20mr9797729ljj.200.1614690987196;
+ Tue, 02 Mar 2021 05:16:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20210225163320.71267-1-andriy.shevchenko@linux.intel.com> <20210225163320.71267-4-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210225163320.71267-4-andriy.shevchenko@linux.intel.com>
+References: <1613105974-28181-1-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1613105974-28181-1-git-send-email-rnayak@codeaurora.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 15:52:37 +0100
-Message-ID: <CACRpkdbeYkQiUjb0t2XWik1j1qQTUZZVyjkASMgpE24DWLx0fQ@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] gpio: pca953x: Set IRQ type when handle Intel
- Galileo Gen 2
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+Date:   Tue, 2 Mar 2021 14:16:16 +0100
+Message-ID: <CACRpkdbJ=4pctwDX9CSurkQC37TGF9KdUOkvTicspsqqS43kfA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: sc7280: Add GPIO wakeup interrupt map
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>
+        Maulik Shah <mkshah@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Feb 25, 2021 at 5:33 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, Feb 12, 2021 at 6:00 AM Rajendra Nayak <rnayak@codeaurora.org> wrote:
 
-> The commit 0ea683931adb ("gpio: dwapb: Convert driver to using the
-> GPIO-lib-based IRQ-chip") indeliberately made a regression on how
-> IRQ line from GPIO I=C2=B2C expander is handled. I.e. it reveals that
-> the quirk for Intel Galileo Gen 2 misses the part of setting IRQ type
-> which previously was predefined by gpio-dwapb driver. Now, we have to
-> reorganize the approach to call necessary parts, which can be done via
-> ACPI_GPIO_QUIRK_ABSOLUTE_NUMBER quirk.
+> From: Maulik Shah <mkshah@codeaurora.org>
 >
-> Without this fix and with above mentioned change the kernel hangs
-> on the first IRQ event with:
+> GPIOs that can be configured as wakeup sources, have their
+> interrupt lines routed to PDC interrupt controller.
 >
->     gpio gpiochip3: Persistence not supported for GPIO 1
->     irq 32, desc: 62f8fb50, depth: 0, count: 0, unhandled: 0
->     ->handle_irq():  41c7b0ab, handle_bad_irq+0x0/0x40
->     ->irq_data.chip(): e03f1e72, 0xc2539218
->     ->action(): 0ecc7e6f
->     ->action->handler(): 8a3db21e, irq_default_primary_handler+0x0/0x10
->        IRQ_NOPROBE set
->     unexpected IRQ trap at vector 20
+> Provide the interrupt map of the GPIO to its wakeup capable
+> interrupt parent.
 >
-> Fixes: ba8c90c61847 ("gpio: pca953x: Override IRQ for one of the expander=
-s on Galileo Gen 2")
-> Depends-on: 0ea683931adb ("gpio: dwapb: Convert driver to using the GPIO-=
-lib-based IRQ-chip")
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 
-I never saw that before, seems useful!
-
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Not only does it fix the bug, it also looks so much better by
-separation of concerns.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied.
 
 Yours,
 Linus Walleij
