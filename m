@@ -2,154 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A48C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20551C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5039E64F2A
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E672464F2E
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383738AbhCBVRk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:17:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42330 "EHLO
+        id S1383748AbhCBVRx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:17:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376889AbhCBIRM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 03:17:12 -0500
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C3EC06178C
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 00:09:59 -0800 (PST)
-Received: by mail-ot1-x329.google.com with SMTP id 40so10821075otu.0
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 00:09:59 -0800 (PST)
+        with ESMTP id S1377972AbhCBIqE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 03:46:04 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66083C061794
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 00:36:13 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id l12so24101599edt.3
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 00:36:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nigauri-org.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9Yp6IMdjr+fqwidy7ap2X/QWUwpISs2GQo/1YVRp7Ac=;
-        b=qAkKQwplIRSYPFSBTkFqpPss5lNeOKxBF1YZUQSp7kYRXZUqWrVQsFn12dHZ+LogaK
-         Mh6A+iegnW9TEbkFcua6807by2HnlA6kjS5zv37AiSb3lBibMdSfCTGRZhE/+lJgpyF3
-         RUu0x8vhBF61bb1z4Dwh+hQ9zJplN9iQsrI6V3j8fI0JHMtQ0y0ulvjjAme22e8/p0AD
-         y8ka3wOHtS/9jpqITKNEQM76IymEaSgsgCNVHbgWwRpoCadfJ2zONKNgnkJ1xYV+dJmH
-         jBiZcEHBgQTauvhMo4xDyjUeFnNSRIYz9mgChPParMuLUa687M2RMGb6c1OzlMABG9YM
-         20pQ==
+         :cc;
+        bh=XPEd3ZWOrDPdJsgpae0YrRdxIn9JORoOxr1+HhQ4nsQ=;
+        b=YP5OR8dqN/jG7rmEVnDIoEVcFqLwM6RLa8I2TgZ7OyhAk3kKbCUzALhYWDZECgBFVq
+         aqsHXXwlWW12fIyk/8AarK51wyYTVSALKsOGoy9yB9VLDl4dsrS5M47OxX7WCTNUzf2M
+         aQ2tsaoY9zVFjT2Ilpbo+HDU6YxUQj//eFvfkuh9q1BUOkuRs/uqPFCv97gX5IepGCQi
+         Gx5MmYiSu5DooNg6uzceOLJaUtPVkFEiNaXthVHOyXDpTfSX2bHjhp6K1aP+6tpCGZqb
+         Wiix9ho6dyHmeujZasdYsNLmSQwer4C1+tSapg+g8LW5Uaf5s1wIyvGZAO0yjj9UKsoQ
+         Qndw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9Yp6IMdjr+fqwidy7ap2X/QWUwpISs2GQo/1YVRp7Ac=;
-        b=TXtDL8vhgzHP2xnOR802dbZg8gdNU6sPcSgTggcDMeW2cIJDUN4r8NuzB9mh6KxLH0
-         Ww7VfTeDfLkAuQ8FRJZapbPlgiuACC0OV9Yhmqx97IHzJ5kqCoGTxWSJkuZV3/uh/pX0
-         H2XW55PqsdG/fyw03dWFLKj7XajPFvhZczuShXkB+48hAk/JYt8S+HjSoys3FIAzKGFE
-         AmU6n+lXD59vJC+MBQu10WKFHBVdFDls7qDk1/8NNQ2+VWyJhFaUi5RQyObzXBIO6BIH
-         H7X7naqr08BobslXpGq9vjRlo6hjG2QuXX5VdG49DJ9TpXbQsNUz+r7Mn/ALCSVxplp5
-         ZfIw==
-X-Gm-Message-State: AOAM533Cozcq2+vIlE50zALmeuX+CHAP0GgTDZJVuk+TSlIEkMTFLk+6
-        LLVMTCo+Tv5uuqsmWtdeyiAC0W7xmaG6q9y7ctHK
-X-Google-Smtp-Source: ABdhPJycQAU4H6nnBzd35FvJRpJes9uYQ1qv/FXAqvovHsqD1ff/W8fUGoryH984ghEAgEUX/l3Rc0jaCsNxcZcB5Xs=
-X-Received: by 2002:a9d:63ce:: with SMTP id e14mr16281721otl.347.1614672598987;
- Tue, 02 Mar 2021 00:09:58 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=XPEd3ZWOrDPdJsgpae0YrRdxIn9JORoOxr1+HhQ4nsQ=;
+        b=KQFFFwndF+NTXeT3fG5dTWjkXBizvUFCiZwsUR9QyokvCnJJf9M9X3PEoYN0vdGrVx
+         RuCG0MSHuIJkMPd/tWOt8jSmXKyyiMx9So8278fJ9ztf4tG3PrbnFKW2D0TESUAWRak2
+         M8UvGqLgmgbguC9Dhf5sjZ7dOnNIxIKQ7Uy1A3qPCDltcRUDRjJ2KjhXwA03qEVR7n/R
+         JSLtrV8QWAUk+2VNkoxfCmCAlLdGF5he3F6eCL9tkhyufRR7oOx95ehVykSWOXWxC5EB
+         1R5qIjCOaGntMipzNYzXaFOU3Ss16NDKYGD/wFQSvjMyrc/GP0vkirIAAuS0qR3dO5sY
+         GJYA==
+X-Gm-Message-State: AOAM531ETBqynE0HaJG1ScKh/odHO35IcrQBuQAd+re4I40Kr8NsKtqy
+        +cbI2RVwnveo3+1E4Emgxi26hQ1DjUR6Fu4rSwCKNQ==
+X-Google-Smtp-Source: ABdhPJx/bIxnUCaiO4mcXpkxxeCw7G9Tjsy5WYLNgO6oYK3hHdtHN4D7xyPKg5cGGEnq2EQMIZCFEmBauhr2OqioNbM=
+X-Received: by 2002:a05:6402:382:: with SMTP id o2mr5274208edv.238.1614674172145;
+ Tue, 02 Mar 2021 00:36:12 -0800 (PST)
 MIME-Version: 1.0
-References: <1613131643-60062-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
- <1613131643-60062-2-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
- <CABMQnVJ+hQ_sdXMdLzhv2Y65QW8Vi01VAjV=SCeOei-zOZ5dwQ@mail.gmail.com> <ecef1943-fec3-9b35-a326-87764512c691@monstr.eu>
-In-Reply-To: <ecef1943-fec3-9b35-a326-87764512c691@monstr.eu>
-From:   Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Date:   Tue, 2 Mar 2021 17:09:33 +0900
-Message-ID: <CABMQnVJLRZ18iZH4oQbZSaC6Bw4do9GnrAVH1sHh6hLa+B2b+A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] firmware: xilinx: Add pinctrl support
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>,
-        saikrishna12468@gmail.com, devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        git@xilinx.com, linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20210212223015.727608-1-drew@beagleboard.org> <20210212223015.727608-2-drew@beagleboard.org>
+In-Reply-To: <20210212223015.727608-2-drew@beagleboard.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 2 Mar 2021 09:36:01 +0100
+Message-ID: <CACRpkdb1-OqZU93nMD+iztPOfLEn3-j+-=uTEo+zbE2TmezmLQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] pinctrl: use to octal permissions for debugfs files
+To:     Drew Fustini <drew@beagleboard.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@beagleboard.org>,
+        Joe Perches <joe@perches.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+On Fri, Feb 12, 2021 at 11:30 PM Drew Fustini <drew@beagleboard.org> wrote:
 
-2021=E5=B9=B43=E6=9C=881=E6=97=A5(=E6=9C=88) 16:07 Michal Simek <monstr@mon=
-str.eu>:
+> Switch over pinctrl debugfs files to use octal permissions as they are
+> preferred over symbolic permissions. Refer to commit f90774e1fd27
+> ("checkpatch: look for symbolic permissions and suggest octal instead").
 >
-> Hi Noburiho,
+> Note: S_IFREG flag is added to the mode by __debugfs_create_file()
+> in fs/debugfs/inode.c
 >
-> On 2/28/21 1:17 AM, Nobuhiro Iwamatsu wrote:
-> > Hi,
-> >
-> > 2021=E5=B9=B42=E6=9C=8812=E6=97=A5(=E9=87=91) 21:10 Sai Krishna Potthur=
-i
-> > <lakshmi.sai.krishna.potthuri@xilinx.com>:
-> >>
-> >> Adding pinctrl support to query platform specific information (pins)
-> >> from firmware.
-> >>
-> >> Signed-off-by: Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xili=
-nx.com>
-> >> Acked-by: Michal Simek <michal.simek@xilinx.com>
-> >> ---
-> >>  drivers/firmware/xilinx/zynqmp.c     | 114 ++++++++++++++++++++++++++=
-+
-> >>  include/linux/firmware/xlnx-zynqmp.h |  90 +++++++++++++++++++++
-> >>  2 files changed, 204 insertions(+)
-> >>
-> >> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilin=
-x/zynqmp.c
-> >> index efb8a66efc68..299c3d5a9ebd 100644
-> >> --- a/drivers/firmware/xilinx/zynqmp.c
-> >> +++ b/drivers/firmware/xilinx/zynqmp.c
-> >> @@ -784,6 +784,120 @@ int zynqmp_pm_fpga_get_status(u32 *value)
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(zynqmp_pm_fpga_get_status);
-> >>
-> >
-> > <snip>
-> >
-> >> @@ -125,6 +131,12 @@ enum pm_query_id {
-> >>         PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS,
-> >>         PM_QID_CLOCK_GET_PARENTS,
-> >>         PM_QID_CLOCK_GET_ATTRIBUTES,
-> >> +       PM_QID_PINCTRL_GET_NUM_PINS =3D 6,
-> >> +       PM_QID_PINCTRL_GET_NUM_FUNCTIONS =3D 7,
-> >> +       PM_QID_PINCTRL_GET_NUM_FUNCTION_GROUPS =3D 8,
-> >> +       PM_QID_PINCTRL_GET_FUNCTION_NAME =3D 9,
-> >> +       PM_QID_PINCTRL_GET_FUNCTION_GROUPS =3D 10,
-> >> +       PM_QID_PINCTRL_GET_PIN_GROUPS =3D 11,
-> >
-> > These do not have to have values, Because PM_QID_INVALID is 0.
-> >
-> >>         PM_QID_CLOCK_GET_NUM_CLOCKS =3D 12,
-> >
-> > And you can drop value from this.
->
-> Please take a look at
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/include/linux/firmware/xlnx-zynqmp.h?h=3Dv5.12-rc1&id=3D1077d4367ab3b97f6d=
-b2f66c87289af863652215
->
-> We are using explicit values as was recommended by Greg.
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Drew Fustini <drew@beagleboard.org>
 
-Oh, sorry.
-I didn't see this comment. Thank you for this information.
+Patch applied, thanks for fixing this!
 
->
-> Thanks,
-> Michal
->
-
-Best regards,
-  Nobuhiro
-
-
---=20
-Nobuhiro Iwamatsu
-   iwamatsu at {nigauri.org / debian.org}
-   GPG ID: 40AD1FA6
+Yours,
+Linus Walleij
