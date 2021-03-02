@@ -4,84 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65174C432C3
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8B9C4360C
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF2964F2A
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E11164F31
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383804AbhCBVSY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:18:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52862 "EHLO
+        id S1444635AbhCBVSq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:18:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446134AbhCBN2y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 08:28:54 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05688C0611C3
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 05:27:34 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id h4so23723284ljl.0
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 05:27:34 -0800 (PST)
+        with ESMTP id S1384532AbhCBPFT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:05:19 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1397C061A2A
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 06:52:49 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id p15so15350741ljc.13
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 06:52:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kqFBMTe07JF336WaEgWvxl6JQ62X5Vu3BcUQAs9nHqk=;
-        b=RJ6ibPNww69Aio6ct00LUR9dKbPmy7OIT42sPAEHNaL6+GGQS54dMmwaDetMlumogq
-         TlJufOjnFhGZnU9gfhH5ojz97/hjWYLw8n4VqZ2p059/q6GXezEe5OTbHNTxh2yIa6zB
-         XERquy2W7DNi4npiGjUvXosNj7QxJqvS8YYRcfxDRpw5EJZ5FYrLdL7ofCf1peDgmbPJ
-         vdYzEGwkFoho4FuVJwSF9srgBO/Lz6d7tjSb+Li31DE5YnZj8qU7IHsg+PqROvpm5PmJ
-         a/yXQ+T/6rYvTf7TLGrlZEilH9x6dl0meUiPmSVa1K834FlxDMDbekAIZuE3nJxKjcst
-         f+qg==
+         :cc:content-transfer-encoding;
+        bh=/M0iE7LYiQkzv/JWuS/1M9XYKrUbkxRvIVvQyWoD5T4=;
+        b=WBmAgrPqcHHbllyM/fX3Mjdcm+kDUPkno+SQSHhL8LJej4Avezled2lFqOOBYyOhSG
+         WFgJLJYGk1I77Q5qe5Du4NwWiXU0EpdNPJ6NaE2rr7pQHVvOFIkLIq5NUYi9x0AyE8NF
+         AkRDuKjs9KNZmbZcYCO3ZKGV3t6h4HsMy7/VIUGjP0Nm84JSeXCdSn4/VMiOkn/SLzMv
+         ikk3TkzMkBFaUh2Hn4foBw+2ToHqJzTGJCWZriWVcz9+E9WtFROQ+J2cv7rNL3kTNhO2
+         TYHJ0Ph2MjFE9d1MAFTrEDYJAp4iUmyQdFU3qZfy/ja7BsWd3Rtmp4BhPBNA8fA/wQek
+         oAXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kqFBMTe07JF336WaEgWvxl6JQ62X5Vu3BcUQAs9nHqk=;
-        b=Nw63pxySQMl5CThls4AKIhOu9dZKGcbFjMP4r7UIZKwwCH+k7+Xt8+pJIBczqysF0S
-         PImlAOZ6UmKJtwAf2Txum8W7oaN9EKSV0GfP/SP5EcFUTTUABb2/SwtXlmobDiCy2hW6
-         xtQ/fSb4C2O65E9jzc+ijHpKmQ3H99wIoXwff3hvQJIQaTTpQL8bDTcJ5wAkCLGoqPCn
-         vh+0zQcUBNTCMSJT+HPsqbIVKgbhv5NeYyMukcvgZgQF6oIebIXU9dpPQpHOBpvAoAoU
-         x9aUTN/TJe5NMtoR3gpVD1tv3kH9Tvf3ig2hFHCrk+tblJqNEAvtUey1fPpg8lkvxt/8
-         GGCA==
-X-Gm-Message-State: AOAM532Gd2MQv9U+9nyfNtPY9xnkrrp0kFqVYHdIvd9kgU9mWKDwCHeJ
-        RqUTctYP/GNaaUPNSlJSvB7I8VA/pXdnjZn1zOIXuw==
-X-Google-Smtp-Source: ABdhPJx9UKU16bL/UniBoHtTrYHMA5gEsiMnQWYTWVuxpoS4J2UDt8TQoGZDBpwNpQ4V8qT768mkldiNlACEzrMIwtY=
-X-Received: by 2002:a2e:700a:: with SMTP id l10mr12191635ljc.368.1614691653392;
- Tue, 02 Mar 2021 05:27:33 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/M0iE7LYiQkzv/JWuS/1M9XYKrUbkxRvIVvQyWoD5T4=;
+        b=C6QNMdh/jYdBEFVWifcsjr7qUMmNpZawAXGb87PZygT4sUP6X9avVDDmTkDa6dYNjq
+         y+aZpJNujnmo9J2ttnkrz9rPQNJ1QLVmMP2rMHI9wDL2Q4WVAPCXqFx6+nrxxAfuC2w5
+         zU5JtQTTsQPRKtpHMAwnxsSX0yUyAMOuXMKxUvj+Tzf9e4gzVNZATY+M+MwxnowjOX3O
+         gY3Z2FeqpXazQ2+JiG0RrxdIFGim5utmfpcXkTy6JknA8TlgX8xVwavL2TYeKE6YdbjS
+         LhC/w7asBAuAdhZxwX34TD6nJACamDAzwZznBfTOq2oFC6L593QTdgzYLpxymuZ/mFBF
+         PB9A==
+X-Gm-Message-State: AOAM533AAIAwKVnVjWqJbjTt3Xp2JgzL1nhaDtAWYCPR1PNK3jnhlFJP
+        0TW+I08Ib+vc5ZfpoEPHZ7ZPdlpiJG6aoMd9Y6vFqA==
+X-Google-Smtp-Source: ABdhPJyXAjBUUClEYCZHtVdeFxB93e0KU/DaYNCaGJDseQVcIYSVpAd2vUIWhhLrI6o9uN4JZLtR9Hilte1ubUmv+wo=
+X-Received: by 2002:a2e:9041:: with SMTP id n1mr12338272ljg.273.1614696768477;
+ Tue, 02 Mar 2021 06:52:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223064807.121358-1-jay.xu@rock-chips.com>
-In-Reply-To: <20210223064807.121358-1-jay.xu@rock-chips.com>
+References: <20210225163320.71267-1-andriy.shevchenko@linux.intel.com> <20210225163320.71267-4-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20210225163320.71267-4-andriy.shevchenko@linux.intel.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 14:27:22 +0100
-Message-ID: <CACRpkdbUj850W7eOtLAKdFwQEg3KyuWnSeOL8Q5QhJBjDhLKxA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rockchip: fix restore error in resume
-To:     Jianqun Xu <jay.xu@rock-chips.com>
-Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+Date:   Tue, 2 Mar 2021 15:52:37 +0100
+Message-ID: <CACRpkdbeYkQiUjb0t2XWik1j1qQTUZZVyjkASMgpE24DWLx0fQ@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] gpio: pca953x: Set IRQ type when handle Intel
+ Galileo Gen 2
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Wang Panzhenzhuan <randy.wang@rock-chips.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 7:48 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
+On Thu, Feb 25, 2021 at 5:33 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
+> The commit 0ea683931adb ("gpio: dwapb: Convert driver to using the
+> GPIO-lib-based IRQ-chip") indeliberately made a regression on how
+> IRQ line from GPIO I=C2=B2C expander is handled. I.e. it reveals that
+> the quirk for Intel Galileo Gen 2 misses the part of setting IRQ type
+> which previously was predefined by gpio-dwapb driver. Now, we have to
+> reorganize the approach to call necessary parts, which can be done via
+> ACPI_GPIO_QUIRK_ABSOLUTE_NUMBER quirk.
 >
-> From: Wang Panzhenzhuan <randy.wang@rock-chips.com>
+> Without this fix and with above mentioned change the kernel hangs
+> on the first IRQ event with:
 >
-> The restore in resume should match to suspend which only set for RK3288
-> SoCs pinctrl.
+>     gpio gpiochip3: Persistence not supported for GPIO 1
+>     irq 32, desc: 62f8fb50, depth: 0, count: 0, unhandled: 0
+>     ->handle_irq():  41c7b0ab, handle_bad_irq+0x0/0x40
+>     ->irq_data.chip(): e03f1e72, 0xc2539218
+>     ->action(): 0ecc7e6f
+>     ->action->handler(): 8a3db21e, irq_default_primary_handler+0x0/0x10
+>        IRQ_NOPROBE set
+>     unexpected IRQ trap at vector 20
 >
-> Fixes: 8dca933127024 ("pinctrl: rockchip: save and restore gpio6_c6 pinmux in suspend/resume")
-> Reviewed-by: Jianqun Xu <jay.xu@rock-chips.com>
-> Signed-off-by: Wang Panzhenzhuan <randy.wang@rock-chips.com>
-> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+> Fixes: ba8c90c61847 ("gpio: pca953x: Override IRQ for one of the expander=
+s on Galileo Gen 2")
+> Depends-on: 0ea683931adb ("gpio: dwapb: Convert driver to using the GPIO-=
+lib-based IRQ-chip")
 
-Patch applied for fixes!
+I never saw that before, seems useful!
+
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Not only does it fix the bug, it also looks so much better by
+separation of concerns.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
