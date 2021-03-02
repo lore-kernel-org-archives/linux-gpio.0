@@ -2,59 +2,59 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8F1C433E6
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 973BFC433DB
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7ECB864F31
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48F1864F2D
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:20:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383611AbhCBVQX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:16:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35900 "EHLO
+        id S1383716AbhCBVRA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:17:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1576911AbhCBFfK (ORCPT
+        with ESMTP id S1576912AbhCBFfK (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 00:35:10 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39B25C0617AA
-        for <linux-gpio@vger.kernel.org>; Mon,  1 Mar 2021 21:32:16 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id x29so4876437pgk.6
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Mar 2021 21:32:16 -0800 (PST)
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0750C061794
+        for <linux-gpio@vger.kernel.org>; Mon,  1 Mar 2021 21:32:11 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id b15so1173296pjb.0
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Mar 2021 21:32:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Ht1wwu87z3JhpBjBpd8FKyeEduSGnqVohpzCm9+7/Ow=;
-        b=apVKSZWgoeLiDpHGcX9NymEg4gxI8eP1A0FI3ekhcDryElSYAp1Cv9S2hb5Q1Fvd94
-         qDppsqWoER9gr7I3cb6h159kaZJ47P/CzWeQL6Uh8umGZQyPgnugA+OZZwDL8BN5NqlF
-         aR58jeM97uEpZvimxpMIlzOMouImC/zkebnEwYU54EtMB7TFh3f10qA9KBwDZic2n1j3
-         qTiJVVF3qdm09EJeDi3YuYkU694RWSDSSFeBJvJ1zN/TRHJz0235FA6fFFxpwiAWOTwo
-         zjNpFfIi3IQa3uIh1N2rK6oCgqxWszWvg5CQG0iG7ICaR9hc2K7Z9WSSdZiv98+7I6lk
-         LF6g==
+        bh=OBtTzri1cScqDnwkEDlkQhcrUhTCJcMkyhXW4hdMGZI=;
+        b=jYWUj8OoBTXpu+pMQ4fcdORETfW/Bf/pxOZj7O7/gPDHthH3U+905vAkTuJzu9vK5l
+         u/+49Td2YCEo9A2dZODhfbjNE1RY07kueM/NwnbwTed5pst/lgg8MZYpCt9uV5cnBjYa
+         uM7YV/DT8Nqc8C2G848hHfdSCRR1oWZ4Nwc+yJXJ3q9Qn5/yJiLO8MqINOS1ixC8UhxG
+         Oe7cxGZCXmW2N1dnAXu3AycwBQmLLmWvOFJt7a5SKRwAOCLgv4okupl2ZzmIa2kmti4P
+         F8gCnC0SQuptVvpi6t63X9IKyJpbQvakCsnznznFBWn6G6WtAVGTBM02e4Z5ti9vhcnf
+         tnTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Ht1wwu87z3JhpBjBpd8FKyeEduSGnqVohpzCm9+7/Ow=;
-        b=Nu65uxDu3n7162DDrY6nfTjbhbDv1mVxRXtPQFKoIN1qmPbGRS5q1j4+6+EvGK0u6p
-         kLVpHSG3+2JTs15uWUdz3BCIQYOd2KPXwzNZtnnQmpD202xQ0pG6QQyAAjQlASVeUm31
-         3+FfOGDor/V+VJi1OmhnroAoVeJZfkYYHRdftq4LnACrmf5lswl6yqDZ/9rZWbOLCJmU
-         24y05yQNafXku30QoQaef17rgMOXmdvw8ylHEfphEABbN1gnp3IyKZoV/pdSXDYS0zlS
-         Hp7UvB9Nfgs+ZERfQFC+9hRxL+09DHwd8xVAuvah9LekhbazRndXMjwQA106GvKu8CnL
-         V2Jw==
-X-Gm-Message-State: AOAM532PkzUYTYjLRMa+u0FhMyHfze7QKuKj7hMxvDayALz1b7rbqH0e
-        80oIy2RerTbmtlI3vw4Wlqd7rQ==
-X-Google-Smtp-Source: ABdhPJxKSVFYlEEmAbq+oSCI5KZXWULv5hz+F0Clg77XGNbgbbBU2Yuq3l2SVsGYd7wf76F6Tso05A==
-X-Received: by 2002:a63:505d:: with SMTP id q29mr16349370pgl.218.1614663135741;
-        Mon, 01 Mar 2021 21:32:15 -0800 (PST)
+        bh=OBtTzri1cScqDnwkEDlkQhcrUhTCJcMkyhXW4hdMGZI=;
+        b=OPx9NvHYViZ/IZBVb6NAnE1Dj3FRvr4KiHkRS/f3kM/lHoXArz9FbDUiCyCY4RwqBb
+         u+r3GhOFBurjeuJFWTtqkCZ6hWaUFoqeihV91S/fHqX31E4FcRQFxFoXyKBS+aW7Mx7y
+         DAn83ZBbFO/A/LfndyP96iz0tZbaNMRoqjho15fdiB0WQb0ZegVgkWY9OxJrbv7MbnZN
+         JB+YWj063+qcuGHwGyPWN41YKaPA3FDGAzI9Rdop0mnXDTKFOm3qSnYgQopi4p0Of6xQ
+         ZD/d6ffwXPuhmHJ9nrlxnYq+FxbF/82bxxQfhktQUMA5pnByBpFlxfYzWGkZt3kHPfOv
+         752g==
+X-Gm-Message-State: AOAM530z3inF8TAkfSAzpteyXq5TWgjgqdI7g69WJKwxBFqJ4vRFIjap
+        I+aJzahG5Gg0dioYgQIG8xH3Dg==
+X-Google-Smtp-Source: ABdhPJxn8nC172YgtSyXX/HMh++2JDs6jjdJS7TaGnM1IMkw+enErGzNIsP7CpSmG9XYKTYoWn1r9Q==
+X-Received: by 2002:a17:90a:c84:: with SMTP id v4mr2619580pja.228.1614663131101;
+        Mon, 01 Mar 2021 21:32:11 -0800 (PST)
 Received: from x1.hsd1.or.comcast.net ([2601:1c0:4701:ae70:37ab:7b44:a136:e385])
-        by smtp.gmail.com with ESMTPSA id o129sm17929757pgo.27.2021.03.01.21.32.13
+        by smtp.gmail.com with ESMTPSA id o129sm17929757pgo.27.2021.03.01.21.32.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Mar 2021 21:32:14 -0800 (PST)
+        Mon, 01 Mar 2021 21:32:10 -0800 (PST)
 From:   Drew Fustini <drew@beagleboard.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -68,10 +68,11 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Joe Perches <joe@perches.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc:     Drew Fustini <drew@beagleboard.org>
-Subject: [PATCH v9 3/4] Documentation: rename pinctl to pin-control
-Date:   Mon,  1 Mar 2021 21:30:58 -0800
-Message-Id: <20210302053059.1049035-4-drew@beagleboard.org>
+Cc:     Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v9 1/4] pinctrl: use to octal permissions for debugfs files
+Date:   Mon,  1 Mar 2021 21:30:56 -0800
+Message-Id: <20210302053059.1049035-2-drew@beagleboard.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210302053059.1049035-1-drew@beagleboard.org>
 References: <20210302053059.1049035-1-drew@beagleboard.org>
@@ -81,62 +82,90 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-pinctl is not ideal as pinctrl (with an 'r') is much more common. Linus
-state that pin-control.rst would be the best name for the documentation.
+Switch over pinctrl debugfs files to use octal permissions as they are
+preferred over symbolic permissions. Refer to commit f90774e1fd27
+("checkpatch: look for symbolic permissions and suggest octal instead").
 
-Link: https://lore.kernel.org/linux-gpio/20210126050817.GA187797@x1/#t
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+Note: S_IFREG flag is added to the mode by __debugfs_create_file()
+in fs/debugfs/inode.c
+
+Suggested-by: Joe Perches <joe@perches.com>
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Drew Fustini <drew@beagleboard.org>
 ---
- Documentation/driver-api/gpio/legacy.rst                 | 2 +-
- Documentation/driver-api/index.rst                       | 2 +-
- Documentation/driver-api/{pinctl.rst => pin-control.rst} | 0
- MAINTAINERS                                              | 2 +-
- 4 files changed, 3 insertions(+), 3 deletions(-)
- rename Documentation/driver-api/{pinctl.rst => pin-control.rst} (100%)
+ drivers/pinctrl/core.c    | 12 ++++++------
+ drivers/pinctrl/pinconf.c |  4 ++--
+ drivers/pinctrl/pinmux.c  |  4 ++--
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/driver-api/gpio/legacy.rst b/Documentation/driver-api/gpio/legacy.rst
-index 9bc34ba697d9..9b12eeb89170 100644
---- a/Documentation/driver-api/gpio/legacy.rst
-+++ b/Documentation/driver-api/gpio/legacy.rst
-@@ -461,7 +461,7 @@ pin controller?
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 3663d87f51a0..07458742bc0f 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1888,11 +1888,11 @@ static void pinctrl_init_device_debugfs(struct pinctrl_dev *pctldev)
+ 			dev_name(pctldev->dev));
+ 		return;
+ 	}
+-	debugfs_create_file("pins", S_IFREG | S_IRUGO,
++	debugfs_create_file("pins", 0444,
+ 			    device_root, pctldev, &pinctrl_pins_fops);
+-	debugfs_create_file("pingroups", S_IFREG | S_IRUGO,
++	debugfs_create_file("pingroups", 0444,
+ 			    device_root, pctldev, &pinctrl_groups_fops);
+-	debugfs_create_file("gpio-ranges", S_IFREG | S_IRUGO,
++	debugfs_create_file("gpio-ranges", 0444,
+ 			    device_root, pctldev, &pinctrl_gpioranges_fops);
+ 	if (pctldev->desc->pmxops)
+ 		pinmux_init_device_debugfs(device_root, pctldev);
+@@ -1914,11 +1914,11 @@ static void pinctrl_init_debugfs(void)
+ 		return;
+ 	}
  
- This is done by registering "ranges" of pins, which are essentially
- cross-reference tables. These are described in
--Documentation/driver-api/pinctl.rst
-+Documentation/driver-api/pin-control.rst
+-	debugfs_create_file("pinctrl-devices", S_IFREG | S_IRUGO,
++	debugfs_create_file("pinctrl-devices", 0444,
+ 			    debugfs_root, NULL, &pinctrl_devices_fops);
+-	debugfs_create_file("pinctrl-maps", S_IFREG | S_IRUGO,
++	debugfs_create_file("pinctrl-maps", 0444,
+ 			    debugfs_root, NULL, &pinctrl_maps_fops);
+-	debugfs_create_file("pinctrl-handles", S_IFREG | S_IRUGO,
++	debugfs_create_file("pinctrl-handles", 0444,
+ 			    debugfs_root, NULL, &pinctrl_fops);
+ }
  
- While the pin allocation is totally managed by the pinctrl subsystem,
- gpio (under gpiolib) is still maintained by gpio drivers. It may happen
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index f357f3eb400c..cd382bda2cf9 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -60,7 +60,7 @@ available subsections can be seen below.
-    80211/index
-    uio-howto
-    firmware/index
--   pinctl
-+   pin-control
-    gpio/index
-    md/index
-    media/index
-diff --git a/Documentation/driver-api/pinctl.rst b/Documentation/driver-api/pin-control.rst
-similarity index 100%
-rename from Documentation/driver-api/pinctl.rst
-rename to Documentation/driver-api/pin-control.rst
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 281de213ef47..c54c98910dd4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13800,7 +13800,7 @@ L:	linux-gpio@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- F:	Documentation/devicetree/bindings/pinctrl/
--F:	Documentation/driver-api/pinctl.rst
-+F:	Documentation/driver-api/pin-control.rst
- F:	drivers/pinctrl/
- F:	include/linux/pinctrl/
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 02c075cc010b..d9d54065472e 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -370,9 +370,9 @@ DEFINE_SHOW_ATTRIBUTE(pinconf_groups);
+ void pinconf_init_device_debugfs(struct dentry *devroot,
+ 			 struct pinctrl_dev *pctldev)
+ {
+-	debugfs_create_file("pinconf-pins", S_IFREG | S_IRUGO,
++	debugfs_create_file("pinconf-pins", 0444,
+ 			    devroot, pctldev, &pinconf_pins_fops);
+-	debugfs_create_file("pinconf-groups", S_IFREG | S_IRUGO,
++	debugfs_create_file("pinconf-groups", 0444,
+ 			    devroot, pctldev, &pinconf_groups_fops);
+ }
+ 
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index bab888fe3f8e..c651b2db0925 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -676,9 +676,9 @@ DEFINE_SHOW_ATTRIBUTE(pinmux_pins);
+ void pinmux_init_device_debugfs(struct dentry *devroot,
+ 			 struct pinctrl_dev *pctldev)
+ {
+-	debugfs_create_file("pinmux-functions", S_IFREG | S_IRUGO,
++	debugfs_create_file("pinmux-functions", 0444,
+ 			    devroot, pctldev, &pinmux_functions_fops);
+-	debugfs_create_file("pinmux-pins", S_IFREG | S_IRUGO,
++	debugfs_create_file("pinmux-pins", 0444,
+ 			    devroot, pctldev, &pinmux_pins_fops);
+ }
  
 -- 
 2.25.1
