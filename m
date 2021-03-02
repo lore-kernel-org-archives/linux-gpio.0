@@ -2,88 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8CDC4332E
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E72ADC28E80
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1DBF64F2E
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B780364F2E
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1447926AbhCBVSw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:18:52 -0500
-Received: from mga05.intel.com ([192.55.52.43]:10890 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1578440AbhCBPQm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 2 Mar 2021 10:16:42 -0500
-IronPort-SDR: ovqFzCVenJr/Dsm+zJ2dZGOt7mhJpGyxtjp2fEomeQC1ipnxUsU8WfA18/KuOLXnzXo9dElOSj
- h6xoO7gxOSsQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9911"; a="271850938"
-X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="271850938"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 07:14:36 -0800
-IronPort-SDR: IXTKtYhxJFtSq1rLuoJt8j1eiwNkdkfz1CaCtEat5dq02qqfQUtsDRhPj9/1EQR92wKw/V/gzF
- tnxc6iz3CC6w==
-X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="434843030"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 07:14:33 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 02 Mar 2021 17:14:30 +0200
-Date:   Tue, 2 Mar 2021 17:14:30 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>
-Subject: Re: [PATCH v1 1/3] gpiolib: acpi: Add
- ACPI_GPIO_QUIRK_ABSOLUTE_NUMBER quirk
-Message-ID: <20210302151430.GY2542@lahna.fi.intel.com>
-References: <20210225163320.71267-1-andriy.shevchenko@linux.intel.com>
- <20210225163320.71267-2-andriy.shevchenko@linux.intel.com>
- <CACRpkdZj4TqOoJmfDhL1MuZCT9quz+5Gj8C6ckZ1i6cYCq9SOA@mail.gmail.com>
- <YD5VJMDC1TmIN/T8@smile.fi.intel.com>
+        id S1837360AbhCBVTN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:19:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1447310AbhCBPdo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:33:44 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91C7C0611BC
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 07:29:40 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id p21so31856145lfu.11
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 07:29:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sWSzaWWbzyPyu6uykYAaJrqhSOJqXcp+xt3SDSKUiT4=;
+        b=qCx1lcWswuw5DoTlpkHcllQN1I0UiiKbKHGIch77U8NidsjWcZ/WYscKhg+8gJQk7b
+         A+Aw4T9iYXS+hD8ZWVr/ylo6w7TpxVpXDL0BVxQm8ZAAAifYYBKShIBeLghuVjbVE+MK
+         zSSd1Yd0kiXBRNNyRc6X900oPd18UrslVtJ506N4CFYk+dG2ealuCagpqV8sPZ4X6/82
+         oFgwvXoWtsRwzfksjLccHfJRHrLg5T9DpPZTfbQ8VtJgQAP8wAwK+fRRatbNxTzSTaid
+         OPtWLlfw7G4PomP2Y9Mawa3+sCs8d5TrczolOh1FyTHeXrRdZXzthYBTmF31G7m4gg2r
+         CyyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sWSzaWWbzyPyu6uykYAaJrqhSOJqXcp+xt3SDSKUiT4=;
+        b=JIthIWCSoWWfONggxyWj3RhDBidgH2DnG/vGN/TUsCwgPvmM3C5Q60vMtHJxcVYsx3
+         btii0LKgfSWBwPINfoYEyHUJItS7mO50wdjSNcd6pCpwG3Vc2M43x3TrdfmfCaFgAmC5
+         /c1ZpowpYkI8NcKv0M9Mz2SuJV26jwFOGW5/EALnGb6hRc3iqre1fMAywP9e5Mm9yCaQ
+         YXRJCxpeL9gz5TGbYHbb4ujKKnLbVX8Cx170rTyNcpngPWZ7+GoLtTBUR6qfhjulaUcM
+         X7A+VTOVthwwKa0OJWxgOE+4Rl9fym+SDZQtwsA0+mOKQqcbKmniJHHcZO8pD/EFvt2C
+         8pdw==
+X-Gm-Message-State: AOAM533DzllTtVXPKwXBBCwS2gK5r41Q9tm3ctb8+wiDI49vjLvRUK5p
+        j/xfP4NjqqyBlHq3URuNJDBMwnP+y1RxLAqTrILhnw==
+X-Google-Smtp-Source: ABdhPJyaRDfvOXcbXwWIQg1BVpvxTAXseyBY7XMxnAuyhRJ/4QjBxTR7Kl6thFN4h7FWAkpFrwbEtu+nWwX56vMBeBI=
+X-Received: by 2002:a05:6512:74a:: with SMTP id c10mr12813240lfs.586.1614698979488;
+ Tue, 02 Mar 2021 07:29:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YD5VJMDC1TmIN/T8@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210225164216.21124-1-noltari@gmail.com> <20210225164216.21124-12-noltari@gmail.com>
+In-Reply-To: <20210225164216.21124-12-noltari@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 2 Mar 2021 16:29:28 +0100
+Message-ID: <CACRpkdbnNEE_c5VHv=42rvKzYz9rMw6JpnbWqnK0mLeAy656=g@mail.gmail.com>
+Subject: Re: [PATCH 11/12] Documentation: add BCM6318 pincontroller binding documentation
+To:     =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 02, 2021 at 05:09:24PM +0200, Andy Shevchenko wrote:
-> On Tue, Mar 02, 2021 at 03:48:43PM +0100, Linus Walleij wrote:
-> > On Thu, Feb 25, 2021 at 5:33 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > 
-> > > On some systems the ACPI tables has wrong pin number and instead of
-> > > having a relative one it provides an absolute one in the global GPIO
-> > > number space.
-> > >
-> > > Add ACPI_GPIO_QUIRK_ABSOLUTE_NUMBER quirk to cope with such cases.
-> > >
-> > > Fixes: ba8c90c61847 ("gpio: pca953x: Override IRQ for one of the expanders on Galileo Gen 2")
-> > > Depends-on: 0ea683931adb ("gpio: dwapb: Convert driver to using the GPIO-lib-based IRQ-chip")
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > OH THE HORROR!
-> > However, we discussed it before. It is as it is.
-> 
-> Unfortunately :-( (And recently it seems MS does something really "creative" on
-> ARM ACPI platform)
-> 
-> > It's the right place to fix the problem, so:
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I am waiting for Mika, but if he keeps silent let's say to the end of the day,
-> I will submit it as is to the v5.12-rcX fixes.
+On Thu, Feb 25, 2021 at 5:42 PM =C3=81lvaro Fern=C3=A1ndez Rojas
+<noltari@gmail.com> wrote:
 
-Sorry for the delay - I somehow missed this. Feel free to add my ACK too.
+> Add binding documentation for the pincontrol core found in BCM6318 SoCs.
+>
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+
+> +  interrupts-extended:
+> +    description:
+> +      One interrupt per each of the 2 GPIO ports supported by the contro=
+ller,
+> +      sorted by port number ascending order.
+> +    minItems: 2
+> +    maxItems: 2
+
+Same comment, hierarchical.
+
+Yours,
+Linus Walleij
