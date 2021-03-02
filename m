@@ -2,93 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D970BC4332E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAED5C4332D
 	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A75B864F1E
+	by mail.kernel.org (Postfix) with ESMTP id 8261164F2A
 	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378869AbhCBVWZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:22:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1448837AbhCBPnP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:43:15 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F13C0617AB
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 07:40:34 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id m11so23624273lji.10
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 07:40:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JoOi1VQKYJA6ZW+eLQKjH4JJ8KX9VGExJXoWL2AhruY=;
-        b=GYvzW/XasiKnxPmuWkbAzZbF5LKRI17d2RmV7gJqNx/LMDjfElx3+drTy5Ok9hoHwJ
-         0NdMg3c5pkaBawgYqv6MiudwMsaPEa17nwXwWPm67zE7MgW9sp3OGNwagru7DWgr8Z1E
-         QKyBxi71GaLJJ5dmGVyH52upR2fhfFaHdZWOXFNUf9AXub1NrEw4nfuDMZ/E6Ubu6GE2
-         /bQwOW20cMAhYMK0ww++42kk2FyzfETKTs8hsjPzPJiBUlAkMz3QbkFjm4UItoI/Ztxb
-         iWYfvthYa7VvqqgLM7olobJRHXXHIrzjUn10qclu/BiLjm9NEXk0zAYLhW6ejOR7PK3f
-         Wr4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JoOi1VQKYJA6ZW+eLQKjH4JJ8KX9VGExJXoWL2AhruY=;
-        b=tAVhU0DsHvtx44rNAy/wrh/A5kRAhIApYg8xyNOMf+H/Q7SUIl8JD4/CTYRPFG2hez
-         c9cJSbB/3E+Ofgxok2z/Oed+Hx4X0hUVZVs/jhbcNwlbiKBOR3XkEojPONVpBArNuSUN
-         Sa9VS/ttwzHgxyWH776+VJHDO8cAH5V1IHu2KEJ1LAP6X/gBhrFn2/ryhgAKzAtK7h1v
-         0cmguOv4ga6LjIQRMIu9p4vpyvYajFYGgAnqFmxSBlmunDubNbK+3a3i1kQySYj/yWaQ
-         xrzvE/tpjqOkPSIK41gc2WtO4uIh4Ljd32lhHkBxAJAeNRtmyRG9xCKd+pD1ADxjtlrx
-         zULQ==
-X-Gm-Message-State: AOAM530tlOmSuhQ2YNP39TqF4DWUOkiOYvDldOJ47O3Qz79VMF2TA2hf
-        em2qdBUQRm5ahCEAflN4hJLSUCvaMJZS+HMva75V5Ck/vozyUA==
-X-Google-Smtp-Source: ABdhPJxAF/jrM1Av5GDPesEvuTwFJDWud8eBzIJ9ciWNFS4BX/hg//rj+YkivMg+oKgMEexukt6ngmz5XGZ+SjvYNHU=
-X-Received: by 2002:a2e:700a:: with SMTP id l10mr12521528ljc.368.1614699633208;
- Tue, 02 Mar 2021 07:40:33 -0800 (PST)
+        id S1376889AbhCBVVL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:21:11 -0500
+Received: from mga05.intel.com ([192.55.52.43]:13558 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1448714AbhCBPhL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Mar 2021 10:37:11 -0500
+IronPort-SDR: 9NBSU9DTNdEmVH4Xmyv4bDVRtorhOLwOn00MguGhIpiK8y2MJvk2Bh8l4jvEn28vGpmPyp6grX
+ lzYVl7EbQ0mg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9911"; a="271859588"
+X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
+   d="scan'208";a="271859588"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 07:35:06 -0800
+IronPort-SDR: uo8POYjRavLVeZ2tWSnGM6poeBH6UqiOpg/i867Eed3+DHcpga+lokVay5NhaS6D4T79Hry/j+
+ +oFJdmi01lww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
+   d="scan'208";a="595831035"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 02 Mar 2021 07:35:04 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id F08D21F1; Tue,  2 Mar 2021 17:35:03 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v1 2/4] gpiolib: Move of_node operations to gpiolib-of and correct fwnode use
+Date:   Tue,  2 Mar 2021 17:34:49 +0200
+Message-Id: <20210302153451.50593-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com>
+References: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20210301090519.26192-1-johan@kernel.org> <20210301090519.26192-2-johan@kernel.org>
-In-Reply-To: <20210301090519.26192-2-johan@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 16:40:22 +0100
-Message-ID: <CACRpkdaif9UJ2SwyMFuYXB6U2b2ikT8QtCy9Se9zfswLkaJNkA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: fix NULL-deref-on-deregistration regression
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        syzbot+d27b4c8adbbff70fbfde@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 1, 2021 at 10:05 AM Johan Hovold <johan@kernel.org> wrote:
+The initial value of the OF node based on presence of parent, but
+at the same time this operation somehow appeared separately from others
+that handle the OF case. On the other hand there is no need to assign
+dev->fwnode in the OF case if code properly retrieves fwnode, i.e.
+via dev_fwnode() helper.
 
-> Fix a NULL-pointer deference when deregistering the gpio character
-> device that was introduced by the recent stub-driver hack. When the new
-> "driver" is unbound as part of deregistration, driver core clears the
-> driver-data pointer which is used to retrieve the struct gpio_device in
-> its release callback.
->
-> Fix this by using container_of() in the release callback as should have
-> been done all along.
->
-> Fixes: 4731210c09f5 ("gpiolib: Bind gpio_device to a driver to enable fw_devlink=on by default")
-> Cc: Saravana Kannan <saravanak@google.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reported-by: syzbot+d27b4c8adbbff70fbfde@syzkaller.appspotmail.com
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+Amend gpiolib.c and gpiolib-of.c code in order to group OF operations.
 
-Oh nice catch!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-of.c | 6 ++++--
+ drivers/gpio/gpiolib.c    | 9 ++++-----
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index baf0153b7bca..bbcc7c073f63 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -1042,11 +1042,13 @@ void of_gpiochip_remove(struct gpio_chip *chip)
+ 
+ void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
+ {
++	/* Set default OF node to parent's one if present */
++	if (gc->parent)
++		gdev->dev.of_node = gc->parent->of_node;
++
+ 	/* If the gpiochip has an assigned OF node this takes precedence */
+ 	if (gc->of_node)
+ 		gdev->dev.of_node = gc->of_node;
+ 	else
+ 		gc->of_node = gdev->dev.of_node;
+-	if (gdev->dev.of_node)
+-		gdev->dev.fwnode = of_fwnode_handle(gdev->dev.of_node);
+ }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 484ac92903ab..4af8a8c1316e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -585,12 +585,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	if (!gdev)
+ 		return -ENOMEM;
+ 	gdev->dev.bus = &gpio_bus_type;
++	gdev->dev.parent = gc->parent;
+ 	gdev->chip = gc;
+ 	gc->gpiodev = gdev;
+-	if (gc->parent) {
+-		gdev->dev.parent = gc->parent;
+-		gdev->dev.of_node = gc->parent->of_node;
+-	}
+ 
+ 	of_gpio_dev_init(gc, gdev);
+ 
+@@ -4212,11 +4209,13 @@ EXPORT_SYMBOL_GPL(gpiod_put_array);
+ 
+ static int gpio_bus_match(struct device *dev, struct device_driver *drv)
+ {
++	struct fwnode_handle *fwnode = dev_fwnode(dev);
++
+ 	/*
+ 	 * Only match if the fwnode doesn't already have a proper struct device
+ 	 * created for it.
+ 	 */
+-	if (dev->fwnode && dev->fwnode->dev != dev)
++	if (fwnode && fwnode->dev != dev)
+ 		return 0;
+ 	return 1;
+ }
+-- 
+2.30.1
+
