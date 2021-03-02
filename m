@@ -2,107 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AA3C4332D
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FB9C43332
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70EF964F23
+	by mail.kernel.org (Postfix) with ESMTP id 00ADE64F2A
 	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381723AbhCBVXh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:23:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59188 "EHLO
+        id S1381750AbhCBVXr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:23:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240890AbhCBQIQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 11:08:16 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C8DC061788
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 08:07:15 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id d13so20842315edp.4
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 08:07:15 -0800 (PST)
+        with ESMTP id S1384758AbhCBQKk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 11:10:40 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4E59C061356
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 08:09:34 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id u4so32141123lfs.0
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 08:09:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GIfeSEfmL8wAyn5TADy2HISNOXLZvpkt9t432wxDvWY=;
-        b=vyZbsxwrlYxjFHO7Cc7mMvqFh/M7mu7PpuET7PCvtmDP+W6Pv+1+rgFEO8TybiCyJy
-         9Yp4qA1gQZKIOM1b0ubIdVbOZdkXiwSnFfKWMlJKpnimsInqzhxXlCsA2lBsUWgM6eYX
-         /+XjZB2k7crAsVNBDYRJiOr1sVSuT7a/hS7vYq8K16p4/nexvblVwrqHINLPERKhbxr4
-         rJt8O8BOsN8acrKZgulVsP/wbz0w2+lkOk1i6H2ujGil7vAQS28r7UI8b92LGMpyl2jK
-         HJgTq1hX8BNTHmathm0HmsPyAjuhdfZ4CE7bPy4ogkzmuv7gIHFnvRPmzc+bpdTjH9ub
-         Z4Eg==
+        bh=cACSwzPT9Tad/UgCbDi2G+cU13fcnP499kD2jiD09qs=;
+        b=NJEiwMLgHFNNJlVEd6adJjw4zF5BqE8QNvPbKlU2qcF5nTbpvSfDqBcSIuLL2KrUG6
+         o4ZRMnW5m5wifSfjNQCh/iV5R+WDo020X3Va3Y8ITQgT8aY0KjjMv93nxbBrMzWeQwvr
+         MV/yt9UmqPHGnd1769eSqMi/PH2vZuoeJEYufm2h62VWUqAa0i5521oYCBx7oIar/YS9
+         zeNA/8Ui0uVsSrNy8cMBB3ZT35D3bMnig3CWx5MuyCzQ0UlNDG/TjQ5OrQTbN8aYq+pT
+         yNgOA9VdMye8b1idb0bhysNzSimNMKDFKCGWkCanMgcDb7V+qWvA1qNJsc/12iLfhR+H
+         CNmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GIfeSEfmL8wAyn5TADy2HISNOXLZvpkt9t432wxDvWY=;
-        b=hUXk7llu5ULcr+O689mDZOpEIZtOctZFhk7ODHf5297Axc6kZwsUEOQNFkzNnNtLDR
-         3YF+mQMalxgWSZ41Jqfnmd0toYgap/weng9+dyOx6MFWc9rcgLBH4WUcQqZmcUgLzrZ1
-         rI0HA2jFCW2JuRHrrQweLHUOoieCPhKYjSznLbRsYCt3A0jD6hB9KKp5dh2f4Ys5bKo4
-         CLuhR5fp1YkB8OJa3t350qkboaXXRjf0ZsCQqL4NfXeVpCI+b9Z8dfWwkShWWagk4oO9
-         TM3xDzoWMaaYHvRcb2k7kJeEEu0RgNgLTbqrGW9G/Ldn/3/xRWodRt596UXAHM9yexnA
-         yWDQ==
-X-Gm-Message-State: AOAM532O9kDOFqvQaUZnG1Upm8QKXkexPmAlt2Y6OF4sODhhqt5FIwTn
-        9zL8iBRtK3/AK91CdaYFnBR0GntAaWti8AsQx7lUuw==
-X-Google-Smtp-Source: ABdhPJwHuw1y3Y/v8jdMtjN1ZkyeSqxulDA1RDfV0AnDqqIe93CMsVo0jEsYKuMl36cJANkKqZoyE2G7jIaraKzXkGU=
-X-Received: by 2002:aa7:d588:: with SMTP id r8mr21122916edq.88.1614701233853;
- Tue, 02 Mar 2021 08:07:13 -0800 (PST)
+        bh=cACSwzPT9Tad/UgCbDi2G+cU13fcnP499kD2jiD09qs=;
+        b=Wit3rOiMbZlVblQnXDOv9CHen/uSHdKZsY5ISsT3QTGHTxsfq9GrVnCh10o7PZXV/G
+         ROrVVl+uXFMBNoDlFYT2Esdn3GRRVwyF4eHz8Z9UbrZyMJxVCU8wc9A5YOerVxC5W9/t
+         0CsgTeKRByqgQdYFOSggA9QOm4XhTcdLAZvwcxoCD+NhsccN4pxZzWn2JYSYGpvTJ23R
+         oR84pdD8/CpFD+faPIBvUuLvGhdd5Go1LAcF8Q8aBFpYYBd3c9+FL2eJ6ZX00r9AtmUS
+         9yGsYZp3gb8XzuMnZkJIe6Wyt9bEqo/e3gXIg/wPhNNgOB6ZLmQ6OYnA/J0m9S8qFQqD
+         AufA==
+X-Gm-Message-State: AOAM533r5Kgp7yeKy6hJKEi5f0oZfmE2AZ17UQzzXcrsxkU669k5wVb+
+        InpoocjgsYNW2caKfSXsZZfYh5EWmXJmlJNtEPPLJmMsWsSPaA==
+X-Google-Smtp-Source: ABdhPJydOO1OZgkTglTXFR9GH+FnIBDVeX/ZEwc/b8GDNcDcujJOMYreC/Hdjimh7pS7t4PRVV+TgNPXC3wo4iruuGE=
+X-Received: by 2002:a19:6b13:: with SMTP id d19mr12469725lfa.291.1614701373147;
+ Tue, 02 Mar 2021 08:09:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20210224185316.17942-1-brgl@bgdev.pl> <CACRpkdZ915TABrSt0A_1tM3Jt_op4gcCY1b-d2ocM7wjKJFoPA@mail.gmail.com>
- <b188690a-31e5-fca9-1226-9dbf7c9f9448@linuxfoundation.org>
-In-Reply-To: <b188690a-31e5-fca9-1226-9dbf7c9f9448@linuxfoundation.org>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 2 Mar 2021 17:07:02 +0100
-Message-ID: <CAMpxmJUu3x7iCT=Zsung1TFU-f2qY-oTujoDNkF+sMG4SXJXgw@mail.gmail.com>
-Subject: Re: [PATCH] selftests: gpio: update .gitignore
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>,
+References: <20210301165932.62352-1-andriy.shevchenko@linux.intel.com> <20210301165932.62352-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20210301165932.62352-2-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 2 Mar 2021 17:09:21 +0100
+Message-ID: <CACRpkdYsqF_Z4NpfxRCcTb5F2gZ1tLgVr0qALBfVm=LyfQWwiA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] gpio: aggregator: Replace custom get_arg() with a
+ generic next_arg()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 2, 2021 at 4:27 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->
-> On 3/2/21 7:44 AM, Linus Walleij wrote:
-> > On Wed, Feb 24, 2021 at 7:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>
-> >> The executable that we build for GPIO selftests was renamed to
-> >> gpio-mockup-cdev. Let's update .gitignore so that we don't show it
-> >> as an untracked file.
-> >>
-> >> Fixes: 8bc395a6a2e2 ("selftests: gpio: rework and simplify test implementation")
-> >> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > Yours,
-> > Linus Walleij
-> >
->
->
-> Thank you. I will queue this up.
->
-> thanks,
-> -- Shuah
+On Mon, Mar 1, 2021 at 6:00 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Hi Shuah,
+> cmdline library provides next_arg() helper to traverse over parameters
+> and their values given in command line. Replace custom approach in the driver
+> by it.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Please let me queue this through the GPIO tree as I have some more
-development coming up this cycle that will require this. This will be
-a new driver + selftests so it will all have to go through the GPIO
-tree anyway.
+Wow how nice!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Bart
+Yours,
+Linus Walleij
