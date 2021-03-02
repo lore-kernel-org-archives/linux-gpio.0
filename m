@@ -2,134 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFA1C4332B
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65174C432C3
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65DF164F2E
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AF2964F2A
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383783AbhCBVSG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:18:06 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:55848 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1838142AbhCBJ3P (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 04:29:15 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 1229RZbM117601;
-        Tue, 2 Mar 2021 03:27:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1614677255;
-        bh=VKa9ZLInAy2XzS1IUg7DGYoE6OxMM/zNE7tI2sgufOA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=nBxjVUfBlRsYk2MpVi97OJS/jowTlC6jCid6bRscRLGZNrHe9wRt63lIkr+MNtN2/
-         mqpHAEBGhvoT+ATAls/rEJsUrJKGrwFzUwUkHVVPQ772inAhNxvcin5ohos0G17bEg
-         fCGWJqE0kk3NsU8vEwXtP+cQ/zMx7skQSzb/+OpU=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 1229RZtZ004151
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 2 Mar 2021 03:27:35 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 2 Mar
- 2021 03:27:34 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 2 Mar 2021 03:27:34 -0600
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 1229RVZf054243;
-        Tue, 2 Mar 2021 03:27:32 -0600
-Subject: Re: [PATCH] gpio: omap: Honor "aliases" node
-To:     Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        <linux-omap@vger.kernel.org>
-CC:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20210302011813.2331879-1-alexander.sverdlin@gmail.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <eb34f303-4d05-4fcd-fb18-e304d06e6e2d@ti.com>
-Date:   Tue, 2 Mar 2021 11:27:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1383804AbhCBVSY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:18:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52862 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1446134AbhCBN2y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 08:28:54 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05688C0611C3
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 05:27:34 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id h4so23723284ljl.0
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 05:27:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kqFBMTe07JF336WaEgWvxl6JQ62X5Vu3BcUQAs9nHqk=;
+        b=RJ6ibPNww69Aio6ct00LUR9dKbPmy7OIT42sPAEHNaL6+GGQS54dMmwaDetMlumogq
+         TlJufOjnFhGZnU9gfhH5ojz97/hjWYLw8n4VqZ2p059/q6GXezEe5OTbHNTxh2yIa6zB
+         XERquy2W7DNi4npiGjUvXosNj7QxJqvS8YYRcfxDRpw5EJZ5FYrLdL7ofCf1peDgmbPJ
+         vdYzEGwkFoho4FuVJwSF9srgBO/Lz6d7tjSb+Li31DE5YnZj8qU7IHsg+PqROvpm5PmJ
+         a/yXQ+T/6rYvTf7TLGrlZEilH9x6dl0meUiPmSVa1K834FlxDMDbekAIZuE3nJxKjcst
+         f+qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kqFBMTe07JF336WaEgWvxl6JQ62X5Vu3BcUQAs9nHqk=;
+        b=Nw63pxySQMl5CThls4AKIhOu9dZKGcbFjMP4r7UIZKwwCH+k7+Xt8+pJIBczqysF0S
+         PImlAOZ6UmKJtwAf2Txum8W7oaN9EKSV0GfP/SP5EcFUTTUABb2/SwtXlmobDiCy2hW6
+         xtQ/fSb4C2O65E9jzc+ijHpKmQ3H99wIoXwff3hvQJIQaTTpQL8bDTcJ5wAkCLGoqPCn
+         vh+0zQcUBNTCMSJT+HPsqbIVKgbhv5NeYyMukcvgZgQF6oIebIXU9dpPQpHOBpvAoAoU
+         x9aUTN/TJe5NMtoR3gpVD1tv3kH9Tvf3ig2hFHCrk+tblJqNEAvtUey1fPpg8lkvxt/8
+         GGCA==
+X-Gm-Message-State: AOAM532Gd2MQv9U+9nyfNtPY9xnkrrp0kFqVYHdIvd9kgU9mWKDwCHeJ
+        RqUTctYP/GNaaUPNSlJSvB7I8VA/pXdnjZn1zOIXuw==
+X-Google-Smtp-Source: ABdhPJx9UKU16bL/UniBoHtTrYHMA5gEsiMnQWYTWVuxpoS4J2UDt8TQoGZDBpwNpQ4V8qT768mkldiNlACEzrMIwtY=
+X-Received: by 2002:a2e:700a:: with SMTP id l10mr12191635ljc.368.1614691653392;
+ Tue, 02 Mar 2021 05:27:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210302011813.2331879-1-alexander.sverdlin@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20210223064807.121358-1-jay.xu@rock-chips.com>
+In-Reply-To: <20210223064807.121358-1-jay.xu@rock-chips.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 2 Mar 2021 14:27:22 +0100
+Message-ID: <CACRpkdbUj850W7eOtLAKdFwQEg3KyuWnSeOL8Q5QhJBjDhLKxA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: rockchip: fix restore error in resume
+To:     Jianqun Xu <jay.xu@rock-chips.com>
+Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wang Panzhenzhuan <randy.wang@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Feb 23, 2021 at 7:48 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
 
+>
+> From: Wang Panzhenzhuan <randy.wang@rock-chips.com>
+>
+> The restore in resume should match to suspend which only set for RK3288
+> SoCs pinctrl.
+>
+> Fixes: 8dca933127024 ("pinctrl: rockchip: save and restore gpio6_c6 pinmux in suspend/resume")
+> Reviewed-by: Jianqun Xu <jay.xu@rock-chips.com>
+> Signed-off-by: Wang Panzhenzhuan <randy.wang@rock-chips.com>
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 
-On 02/03/2021 03:18, Alexander Sverdlin wrote:
-> Currently the naming of the GPIO chips depends on their order in the DT,
-> but also on the kernel version (I've noticed the change from v5.10.x to
-> v5.11). Honor the persistent enumeration in the "aliases" node like other
-> GPIO drivers do.
-> 
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> ---
-> Yes, I noticed checkpatch "WARNING: DT binding docs and includes should be
-> a separate patch."
-> However, the parts below are tiny and barely make sense separately.
-> 
->   Documentation/devicetree/bindings/gpio/gpio-omap.txt | 6 ++++++
->   drivers/gpio/gpio-omap.c                             | 5 +++++
->   2 files changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-omap.txt b/Documentation/devicetree/bindings/gpio/gpio-omap.txt
-> index e57b2cb28f6c..6050db3fd84e 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-omap.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-omap.txt
-> @@ -30,9 +30,15 @@ OMAP specific properties:
->   - ti,gpio-always-on: 	Indicates if a GPIO bank is always powered and
->   			so will never lose its logic state.
->   
-> +Note: GPIO ports can have an alias correctly numbered in "aliases" node for
-> +persistent enumeration.
->   
->   Example:
->   
-> +aliases {
-> +	gpio0 = &gpio0;
-> +};
-> +
->   gpio0: gpio@44e07000 {
->       compatible = "ti,omap4-gpio";
->       reg = <0x44e07000 0x1000>;
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 41952bb818ad..dd2a8f6d920f 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1014,6 +1014,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
->   			bank->chip.parent = &omap_mpuio_device.dev;
->   		bank->chip.base = OMAP_MPUIO(0);
->   	} else {
-> +#ifdef CONFIG_OF_GPIO
-> +		ret = of_alias_get_id(bank->chip.of_node, "gpio");
-> +		if (ret >= 0)
-> +			gpio = ret * bank->width;
-> +#endif
->   		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
->   				       gpio, gpio + bank->width - 1);
->   		if (!label)
-> 
+Patch applied for fixes!
 
-You're not the first one, this was not accepted. See [1]
-[1] https://patchwork.kernel.org/project/linux-omap/patch/1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de/
-
-
--- 
-Best regards,
-grygorii
+Yours,
+Linus Walleij
