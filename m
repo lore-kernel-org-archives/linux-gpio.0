@@ -2,98 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29639C28D14
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 687B2C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0060B64F2C
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D6BF64F30
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1836812AbhCBVTE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:19:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49898 "EHLO
+        id S1443071AbhCBVSb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:18:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382682AbhCBPas (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:30:48 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 072A4C061226
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 07:26:09 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id f1so31903147lfu.3
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 07:26:08 -0800 (PST)
+        with ESMTP id S1351174AbhCBNeg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 08:34:36 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE65C061794
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 05:33:21 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id z11so31225270lfb.9
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 05:33:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Zg8WKu5dAJAroGIZE1OueymB/BXbUruFVL/8wlwBQVI=;
-        b=HJBMbkl+8OdyK/6CJHV8JgUVKM5FptKC4GYsxcM4cEz0V12kU0hbfgjF7u/w9ixTH4
-         Nz+4bZHfQO7+pI6+ZqAammwT8wiLIDH2+AdjGOGvw325DRm1EBN5x+7sNmOdgYDwJdOn
-         GBQ67XfsZ+D8v5z8hgivjD+JurEojEqcB1UH54uXNuwgHbhGv0u6q8J0N7reIGwC2u9h
-         d5FAY52m3wCYfSO2QS+/aPPS+JpPmQQwpXAxU9raSVtlkJRDmqqP57aHWmKnCFiLdQ1U
-         Az1c5sDJ8gWAKtwBOf/OcqDd8uVcaiuuKfe5ebZhIWgYsPtvhsiNePbTrn4satROBSny
-         JMTA==
+         :cc;
+        bh=iSy8XDFMp0a7WSm8SRUUoPZjrV8zT9TVzmc4W+YVnt0=;
+        b=muTIlCk5kkvjyji32omYwf+paO3hraugCWesSpuLQsEWurrOtv2LkuCl6kR08bkfvg
+         A6GnCuAbiavXpP6X+RWNX7lHIkfAB0M8pik4fuBcTkyX+KWS7eB9P4AK6fMy4PSjqHzF
+         5KnqjvDB2QI67xes/P70H8yoAXPOvpsDSCaT/bAAzGvwusGzda3XPI3AQOJyQi94scJI
+         iWF71bvf56zWzmx0LJMa9rlv1NqnmUgyPwP6B9pW9/y5uzP1wyMeFMFpdmE7RlmwwPKa
+         +ahhi2xIdYnuy0TnkKnyvj4yGAq+UjuJmNT5XjAaepghP6qYE+xKENxLMqwATj0/K4B+
+         fTFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Zg8WKu5dAJAroGIZE1OueymB/BXbUruFVL/8wlwBQVI=;
-        b=OGZ5AXzpTPRpyzZD72FT3L3BugadJdfabER+khz3z5XAeYF1TieDNjskn9+zyeT1ZD
-         MKp89nJ/M/BZidqmWkkms8DYxp3jUKAO5zLn2pbBu88Oi90vFhMrx15odv8obEcM6s98
-         DtYSODbgZ9uZWJmu53NqJCH8i4ZANlhxFBQNmyVs9FA+c5Kchl7hXgYkv9i3VEhclcb8
-         e94deb2Dpipaa8EFbZI5Up1CaidZNXzCjAbynQfDT2v7AMLUboNyG35x0HIMHdo+yCGg
-         n/p1vIZTVxSEw6q7SRZaPB+r/8s33EghHsSd4tgLAcVdshry4JOk5tFFhVg9/E+jSut5
-         W9mw==
-X-Gm-Message-State: AOAM530Jw8hVD1IeBL6+1eNu3H90JRcBxjKY9nXRIp7kjoFcknZwYnvb
-        gcnWiC40cKIDMbhMBVsrn4vpIivlSA5DHvKCXEaBjg==
-X-Google-Smtp-Source: ABdhPJx6BROtKQDuW6LN/cJaUZXd62YlmBkeog+nHHu4iz00KLoYlRwWOEUbd/g+lL42oB+ZLq7UznLEmep0PmUbbIY=
-X-Received: by 2002:ac2:5d21:: with SMTP id i1mr12077181lfb.649.1614698767566;
- Tue, 02 Mar 2021 07:26:07 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=iSy8XDFMp0a7WSm8SRUUoPZjrV8zT9TVzmc4W+YVnt0=;
+        b=tZwdkbQSPLpIEEtBoi4rIg+7Pyo9lYNy8n8mkj2oNj/FRdu8AKDr0K08dqkEjKlEec
+         VyQ/uK1xTMpMDF+uUEz/KYAmk+LLwrsFNiGXMZAh6qi5tnrqP5smaWW2S79srkCxxqat
+         06cAhbDlXgYtIV4Cz8S6fjZRblutBzGmH/mwbkWYkp7G8jRLA3Ry1wUJByr4u8AMap11
+         EkKrbd83fmIHJh6jUm7ncDYMzR0cuJMYv53m8mm8Bv3HLTsNd8/Bb5cHCaiDrDvf01Wk
+         U8xZhfNev7QQFbhMgLXypGOMz2YyvlNz4CcmBQDQj0jcVFnakkXB2Ve3ikjCV6pGPAjV
+         tGtg==
+X-Gm-Message-State: AOAM5308JgWgFUgTGZ/rFXUr74lz6Rn99eHVbYKLTRitUEG6lAMFNw7u
+        UgyCVWHy0zLTcT9IJoEA7QrpTpAN/7jizzhoray04A==
+X-Google-Smtp-Source: ABdhPJx92UylmzN7UzJit4KOHJg5xSFTK0EOobHZawkbLd9lf5/TSOXqApb0TItqvbUM4jSbHtr8kr6+qxcDjcviWwI=
+X-Received: by 2002:a05:6512:547:: with SMTP id h7mr12700579lfl.529.1614692000450;
+ Tue, 02 Mar 2021 05:33:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20210225164216.21124-1-noltari@gmail.com> <20210225164216.21124-5-noltari@gmail.com>
-In-Reply-To: <20210225164216.21124-5-noltari@gmail.com>
+References: <20210208222203.22335-1-info@metux.net> <20210208222203.22335-12-info@metux.net>
+ <CACRpkdYbOX_RDqwxaiugtYB4vSpSKChvKsPjcB_vv3Q74QeG2Q@mail.gmail.com> <c5ed2b27-21a2-5a07-8dd9-e080f9a6cd98@metux.net>
+In-Reply-To: <c5ed2b27-21a2-5a07-8dd9-e080f9a6cd98@metux.net>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 16:25:56 +0100
-Message-ID: <CACRpkdbzqXU-iMKeSe-2sRM+h7CJ0_xYf65w6rmHMaOZsCYNkg@mail.gmail.com>
-Subject: Re: [PATCH 04/12] pinctrl: add a pincontrol driver for BCM6358
-To:     =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+Date:   Tue, 2 Mar 2021 14:33:09 +0100
+Message-ID: <CACRpkdZ1PvA6822YYPwzHNvVrvd+bNFRLwpQ=RRrXpitWmnrxQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 11/12] platform/x86: skeleton for oftree based board
+ device initialization
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        <devicetree@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Feb 25, 2021 at 5:42 PM =C3=81lvaro Fern=C3=A1ndez Rojas
-<noltari@gmail.com> wrote:
+On Fri, Feb 12, 2021 at 12:54 PM Enrico Weigelt, metux IT consult
+<lkml@metux.net> wrote:
+> On 12.02.21 10:58, Linus Walleij wrote:
 
-> Add a pincotrol driver for BCM6358. BCM6358 allow overlaying different
-> functions onto the GPIO pins. It does not support configuring individual
-> pins but only whole groups. These groups may overlap, and still require
-> the directions to be set correctly in the GPIO register. In addition the
-> functions register controls other, not directly mux related functions.
+> > If the usecase is to explicitly work around deployed firmware that cannot
+> > and will not be upgraded/fixed by describing the hardware using DT
+> > instead, based on just the DMI ID then we should spell that out
+> > explicitly.
 >
-> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> Okay, maybe I should have stated this more clearly.
+>
+> OTOH, the scope is also a little bit greater: certain external cards
+> that don't need much special handling for the card itself, just
+> enumerate devices (and connections between them) using existing drivers.
+>
+> That's a pretty common scenario in industrial backplane systems, where
+> we have lots of different (even application specific) cards, usually
+> composed of standard chips, that can be identified by some ID, but
+> cannot describe themselves. We have to write lots of specific drivers
+> for them, usually just for instantiating existing drivers. (we rarely
+> see such code going towards mainline).
+>
+> A similar case (mainlined) seems to be the RCAR display unit - they're
+> using dt overlays that are built into the driver and applied by it
+> based on the detected DU at runtime. RCAR seems to be a pure DT
+> platform, so that's an obvious move. APU2/3/4 is ACPI based, so I went
+> in a different direction - but I'm now investigating how to make DT
+> overlays work on an ACPI platform (eg. needs some initial nodes, ...)
+> In case that's successful, I'll rework my RFC to use overlays, and
+> it will become much smaller (my oftree core changes then won't be
+> necessary anymore).
 
-All of my review comments on the first driver in the series goes
-for this one as well, so copy/paste all my comments from there :D
+I understand. I have had the same problem with trying to fix 96boards
+mezzanines.
 
-The good thing is once you get it right in one driver you will get it
-right in all of them.
-
-Consider bringing all common code together in a main driver
-shared by all these pin controllers as per the pattern of other
-pin controllers (se qcom for example).
+I also tried to sidestep the DT overlays, and it was generally disliked.
+The DT people have made up their mind that overlays is what they
+want to use for this type of stuff.
 
 Yours,
 Linus Walleij
