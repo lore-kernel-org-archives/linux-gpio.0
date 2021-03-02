@@ -2,80 +2,134 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A667C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFA1C4332B
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1740764F2C
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65DF164F2E
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383831AbhCBVSa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:18:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351116AbhCBNbV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 08:31:21 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72166C0611C2
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 05:18:17 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id b1so20432178lfb.7
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 05:18:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3LFPoAfk7O5qeF3Y4rUX5gE1CQLUrhXp4Z8+GayD0FQ=;
-        b=IrumaFHcp/MnXfUwA+tJBdHp0hZ8wayBSy+H5vJVP9MdhhClsGzaU69AuZJ0EhkXfz
-         fxaM7ylsxwJgr92wqQtnfdHrOlb7RzZat6xwVDXjRlVnnz+ebFgOQG6EjKFu1eJ6tG68
-         aXYVdUO6+1zra//C2K73BYpbw8XsO7VHywkzE1BO6pfmH4IgmNp3ofzRQrR7BPtygmHQ
-         JvK4WRCzvRwqX+BWIu+gqVjgfPyuZEhqWiS+l52omHxfozAZAefka0OY4TMsElVeJDsj
-         iP4zy54OIhQTH9IBEUoUUMG8Ho6DPAwgGO8EdDVAL8yGwx3rKN/jPP684tJX0HRbVuAo
-         MZ7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3LFPoAfk7O5qeF3Y4rUX5gE1CQLUrhXp4Z8+GayD0FQ=;
-        b=ZOUloIGmTNWHKyepmBvLt5M/XrJjgYYE4uHCn2Dm4pefjQzK0q0oRIUjtb/tJIl4XT
-         edGOx587baGPx3x/+AEJ8VnEsbFAHk1w7y4ko3VXXW04pEMg12UCDEjHi6yPJpG1CeMj
-         a5JpvcFq8x3GsF0+R/Xg0QgiPEywRuQxMKAnQpWLPbkoNaoMxciL5VGWtoVwKXfpjnCw
-         9yiqlI6VkJVc2BvkA3/JDlvHgTN6cyo3Yt5CxX0di2NjyLS2kU7iU4JNEBpaf8IZCv1r
-         95xRImliA8wJJBcuAklMg1SXWYeZO0YNXIRtzIwB6Z4ChpxaD3TG4/XZETW9bIOgjLnt
-         kskg==
-X-Gm-Message-State: AOAM533nrB098LyCFUhYzm01LMrBFu4pXwiD4nIRCnGwU+vxaYkBoFvz
-        zjcZjS4EW1JPdvC6ctgdwe8PDLpDMaMQHAOBBzB/RoJvcWQiIg==
-X-Google-Smtp-Source: ABdhPJyXLXj1ElbNsZ8nYLMjQKDHPE2WIbQ64a9N7NA809dZ8rZFodCUWxqls+DIBYtN3FZw01VL+N1dWPfKnLeAfwo=
-X-Received: by 2002:a19:548:: with SMTP id 69mr10031398lff.465.1614691095978;
- Tue, 02 Mar 2021 05:18:15 -0800 (PST)
+        id S1383783AbhCBVSG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:18:06 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55848 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1838142AbhCBJ3P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 04:29:15 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 1229RZbM117601;
+        Tue, 2 Mar 2021 03:27:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1614677255;
+        bh=VKa9ZLInAy2XzS1IUg7DGYoE6OxMM/zNE7tI2sgufOA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=nBxjVUfBlRsYk2MpVi97OJS/jowTlC6jCid6bRscRLGZNrHe9wRt63lIkr+MNtN2/
+         mqpHAEBGhvoT+ATAls/rEJsUrJKGrwFzUwUkHVVPQ772inAhNxvcin5ohos0G17bEg
+         fCGWJqE0kk3NsU8vEwXtP+cQ/zMx7skQSzb/+OpU=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 1229RZtZ004151
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Mar 2021 03:27:35 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 2 Mar
+ 2021 03:27:34 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Tue, 2 Mar 2021 03:27:34 -0600
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 1229RVZf054243;
+        Tue, 2 Mar 2021 03:27:32 -0600
+Subject: Re: [PATCH] gpio: omap: Honor "aliases" node
+To:     Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        <linux-omap@vger.kernel.org>
+CC:     Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20210302011813.2331879-1-alexander.sverdlin@gmail.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <eb34f303-4d05-4fcd-fb18-e304d06e6e2d@ti.com>
+Date:   Tue, 2 Mar 2021 11:27:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210223064211.120935-1-jay.xu@rock-chips.com>
-In-Reply-To: <20210223064211.120935-1-jay.xu@rock-chips.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 14:18:05 +0100
-Message-ID: <CACRpkdbqkCEMuZdwgfPJAhnZBKW1KV0+1MnXqNvTjm300jaS9Q@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rockchip: make driver be tristate module
-To:     Jianqun Xu <jay.xu@rock-chips.com>
-Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210302011813.2331879-1-alexander.sverdlin@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 7:42 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
 
-> Make pinctrl-rockchip driver to be tristate module, support to build as
-> a module, this is useful for GKI.
->
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 
-Patch applied.
+On 02/03/2021 03:18, Alexander Sverdlin wrote:
+> Currently the naming of the GPIO chips depends on their order in the DT,
+> but also on the kernel version (I've noticed the change from v5.10.x to
+> v5.11). Honor the persistent enumeration in the "aliases" node like other
+> GPIO drivers do.
+> 
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> ---
+> Yes, I noticed checkpatch "WARNING: DT binding docs and includes should be
+> a separate patch."
+> However, the parts below are tiny and barely make sense separately.
+> 
+>   Documentation/devicetree/bindings/gpio/gpio-omap.txt | 6 ++++++
+>   drivers/gpio/gpio-omap.c                             | 5 +++++
+>   2 files changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-omap.txt b/Documentation/devicetree/bindings/gpio/gpio-omap.txt
+> index e57b2cb28f6c..6050db3fd84e 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-omap.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-omap.txt
+> @@ -30,9 +30,15 @@ OMAP specific properties:
+>   - ti,gpio-always-on: 	Indicates if a GPIO bank is always powered and
+>   			so will never lose its logic state.
+>   
+> +Note: GPIO ports can have an alias correctly numbered in "aliases" node for
+> +persistent enumeration.
+>   
+>   Example:
+>   
+> +aliases {
+> +	gpio0 = &gpio0;
+> +};
+> +
+>   gpio0: gpio@44e07000 {
+>       compatible = "ti,omap4-gpio";
+>       reg = <0x44e07000 0x1000>;
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 41952bb818ad..dd2a8f6d920f 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1014,6 +1014,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>   			bank->chip.parent = &omap_mpuio_device.dev;
+>   		bank->chip.base = OMAP_MPUIO(0);
+>   	} else {
+> +#ifdef CONFIG_OF_GPIO
+> +		ret = of_alias_get_id(bank->chip.of_node, "gpio");
+> +		if (ret >= 0)
+> +			gpio = ret * bank->width;
+> +#endif
+>   		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
+>   				       gpio, gpio + bank->width - 1);
+>   		if (!label)
+> 
 
-Yours,
-Linus Walleij
+You're not the first one, this was not accepted. See [1]
+[1] https://patchwork.kernel.org/project/linux-omap/patch/1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de/
+
+
+-- 
+Best regards,
+grygorii
