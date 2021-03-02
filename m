@@ -7,74 +7,72 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5B9C43332
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A667C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D64664F2C
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1740764F2C
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:21:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383809AbhCBVS1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:18:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53132 "EHLO
+        id S1383831AbhCBVSa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:18:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1447372AbhCBN32 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 08:29:28 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21FDC061A2D
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 05:28:47 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id z11so31203510lfb.9
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 05:28:47 -0800 (PST)
+        with ESMTP id S1351116AbhCBNbV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 08:31:21 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72166C0611C2
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 05:18:17 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id b1so20432178lfb.7
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 05:18:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=s80/8MNAZMPOuwZzNkynpuWzzNF35UpnoUBKn77qTOs=;
-        b=Xr5PtU7CD1IOPT1IhYf6kS5+jFkrtgNmoblkqQIIBFBwB6RBOZrkMYcuv/hwmapNif
-         ebAZkpI5EhzuCQ3d4FZpgBWJeKg4YOy4S96r9eb9v9asvfQCMJ5f5ZRwyxsCU5qbS8TP
-         TvT9Vhp6huvQJozFsblH2XcPHu6KeJqWQnUI1urhsedGuJESbcImt0RFFrvvwsc7MXj7
-         ykixu7d7vJGKgGZpzF4PrktSaO2dMNi6EL3yMi3taQXXUS5YZJ58RtPOycLnh8yRjaGH
-         4q9s8QzKRL5AINA1pTgXnzUGwL3CKJZgVXzNKuf/5PC+3nPt+VGw5Z2Rv+3wrNA19E7P
-         xjcw==
+        bh=3LFPoAfk7O5qeF3Y4rUX5gE1CQLUrhXp4Z8+GayD0FQ=;
+        b=IrumaFHcp/MnXfUwA+tJBdHp0hZ8wayBSy+H5vJVP9MdhhClsGzaU69AuZJ0EhkXfz
+         fxaM7ylsxwJgr92wqQtnfdHrOlb7RzZat6xwVDXjRlVnnz+ebFgOQG6EjKFu1eJ6tG68
+         aXYVdUO6+1zra//C2K73BYpbw8XsO7VHywkzE1BO6pfmH4IgmNp3ofzRQrR7BPtygmHQ
+         JvK4WRCzvRwqX+BWIu+gqVjgfPyuZEhqWiS+l52omHxfozAZAefka0OY4TMsElVeJDsj
+         iP4zy54OIhQTH9IBEUoUUMG8Ho6DPAwgGO8EdDVAL8yGwx3rKN/jPP684tJX0HRbVuAo
+         MZ7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=s80/8MNAZMPOuwZzNkynpuWzzNF35UpnoUBKn77qTOs=;
-        b=tzpjBuI0WYTpllF2rpleUANvNHiRI5f51pE9Th/+HfanuInl86K3qDgjGBfD/hg9m0
-         p52cOkew5f7ZKi+atfhzd1rXTyNYK/b0t3lkB06/p0WbvfbBt+GavdOF6SVeM9hYehBF
-         HfKp+mag+MnMGpOzva0ufObAKy3/q0zjhbtDSmRgiYo2knrhgdRnppoP5pNToAlb8lx8
-         NpNPh8H9FnFIpryfIub2LyD161uh2bhcrTr5FlttN6hnWcEjUmlvno+sXNynJnnlS1D0
-         E/YvbS/zNyzLYi/WEkOeE4kmD3nVGIWkzhwFps1SGKsITNssst/390mEn7LYJFZjemXA
-         kc+A==
-X-Gm-Message-State: AOAM530J/zoCewYyemXH56bk49DGGNmTmgSMtvPVZNDNqdZp7xl1CXDT
-        TBxOobr6fqn+NdIwHSJXH0SYKwXLtfbQS5wdPh9mpw==
-X-Google-Smtp-Source: ABdhPJw7e9Adz2B46qbB8NKAB22zPE9AMPJq/Rjd3y6K3ppW/uh6rKoQYCSoHMbhmRouWT4Zwck0Q1HXhFiSdaPXrr0=
-X-Received: by 2002:ac2:5d21:: with SMTP id i1mr11824168lfb.649.1614691726168;
- Tue, 02 Mar 2021 05:28:46 -0800 (PST)
+        bh=3LFPoAfk7O5qeF3Y4rUX5gE1CQLUrhXp4Z8+GayD0FQ=;
+        b=ZOUloIGmTNWHKyepmBvLt5M/XrJjgYYE4uHCn2Dm4pefjQzK0q0oRIUjtb/tJIl4XT
+         edGOx587baGPx3x/+AEJ8VnEsbFAHk1w7y4ko3VXXW04pEMg12UCDEjHi6yPJpG1CeMj
+         a5JpvcFq8x3GsF0+R/Xg0QgiPEywRuQxMKAnQpWLPbkoNaoMxciL5VGWtoVwKXfpjnCw
+         9yiqlI6VkJVc2BvkA3/JDlvHgTN6cyo3Yt5CxX0di2NjyLS2kU7iU4JNEBpaf8IZCv1r
+         95xRImliA8wJJBcuAklMg1SXWYeZO0YNXIRtzIwB6Z4ChpxaD3TG4/XZETW9bIOgjLnt
+         kskg==
+X-Gm-Message-State: AOAM533nrB098LyCFUhYzm01LMrBFu4pXwiD4nIRCnGwU+vxaYkBoFvz
+        zjcZjS4EW1JPdvC6ctgdwe8PDLpDMaMQHAOBBzB/RoJvcWQiIg==
+X-Google-Smtp-Source: ABdhPJyXLXj1ElbNsZ8nYLMjQKDHPE2WIbQ64a9N7NA809dZ8rZFodCUWxqls+DIBYtN3FZw01VL+N1dWPfKnLeAfwo=
+X-Received: by 2002:a19:548:: with SMTP id 69mr10031398lff.465.1614691095978;
+ Tue, 02 Mar 2021 05:18:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223101937.273085-1-jay.xu@rock-chips.com>
-In-Reply-To: <20210223101937.273085-1-jay.xu@rock-chips.com>
+References: <20210223064211.120935-1-jay.xu@rock-chips.com>
+In-Reply-To: <20210223064211.120935-1-jay.xu@rock-chips.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 14:28:35 +0100
-Message-ID: <CACRpkdaWi6QVYjcO+1oEVWEgudQkKgLgfxopOx8Du4dciCO8eQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rockchip: clear int status when driver probed
+Date:   Tue, 2 Mar 2021 14:18:05 +0100
+Message-ID: <CACRpkdbqkCEMuZdwgfPJAhnZBKW1KV0+1MnXqNvTjm300jaS9Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: rockchip: make driver be tristate module
 To:     Jianqun Xu <jay.xu@rock-chips.com>
 Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Ziyuan Xu <xzy.xu@rock-chips.com>
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 11:20 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
+On Tue, Feb 23, 2021 at 7:42 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
 
-> Some devices may do gpio interrupt trigger and make an int status before
-> pinctrl driver probed, then the gpio handler will keep complain untill
-> the device driver works to stop trigger.
+> Make pinctrl-rockchip driver to be tristate module, support to build as
+> a module, this is useful for GKI.
 >
-> Signed-off-by: Ziyuan Xu <xzy.xu@rock-chips.com>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 > Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 
 Patch applied.
