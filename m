@@ -2,95 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDCEC433DB
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADC6C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93EEA64F2C
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD82864F2C
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380265AbhCBVWq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:22:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53812 "EHLO
+        id S1381675AbhCBVXC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:23:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1448893AbhCBPnP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:43:15 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3760FC061221
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 06:46:17 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id b1so20883709lfb.7
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 06:46:17 -0800 (PST)
+        with ESMTP id S1448907AbhCBPnQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 10:43:16 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB69BC06121F
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 06:44:49 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id 2so19709182ljr.5
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 06:44:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=amBRx7OsHLG8syzyhriE5lIAg0ZcKXI0PCXzAll+h1g=;
-        b=okuph8tEua/vZwDWPYC/uAy6+lUKHcDrD7wDmdNTYki2O0N9YYTsjHFwEWansPyVVk
-         u4MrVkSqYu7nUvEFBc505YRebXnsIlOAy/nbQRQtXnnlt206p/R6WQtAWgtxIjvxzTA4
-         iJfhvoR4j2aUfQpH52Vql8KAXOuNXMYBCOJVZ2VFmzm+XrKNGpjh5jGOjGY4+ZzqAn1L
-         udCmOku/J1xw+GgD9hsw8AnK31U3wGI+Tf7lQ1+3TTdOxr3NzHa2ACuhyuhEuIaWmZed
-         ZhEJK/hQ062nIceopzoidmoOWZPJTMBQCAotC4oCUK2IZ8iegcp21ggzXO6qwgkAMGKK
-         V1kQ==
+        bh=9feuLaRLYMtlgGOGr1daR8c2TEzfBi5+yLsyG2URtB8=;
+        b=JklTdr9IlRTbGAiHM56tbsNizr51DdFen7QQqTNEe4+kXWl9RFHlr+d7N01dM/Wz/d
+         bjnKc3qF4JXg6T/br+HXQP5dFpy0VNrIseTx3vedOER4EewKzx++0XzXXfKKPX93Tiwr
+         4ug2KpGIDbEnZmlgs3e3QoR+TTFrHIFppXsivwPcnGVfo+YNfAPdAWpEOTrLfeeC5TW1
+         +KAIlbavTCMgD2YNW6y05ODzsplG9RQndFYanGBz4i0kCe3C0N5SRlrxxHSxmKW1p0lt
+         dW+a52TlO+LKTrHiUpQ5ks0mnsgLXH1e4gU5ymC0IiNdVrH2xZAIVy1brxo5eytkM2sB
+         mUcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=amBRx7OsHLG8syzyhriE5lIAg0ZcKXI0PCXzAll+h1g=;
-        b=rKb05A5vJZF7Rky0vf095RV6QzJMI84f8hYnSjckDmb5S5xCmCoHkg2nGw5BTH0LNQ
-         TPzv0smmBtF4Hu0/jS8rN5TPIQKydWrBjHH98O5mR3P2oNypgGws5XZD5vbjTi3K2KK2
-         0hQfEBNwwJ/wolb6aHzfAhxZHt3kp9Yzi3S7M23sQ66k88/6pqFJs3wH8D1YOeW3IeUj
-         KH4KAGTbnghiVNQ/JjmpTOHw0MwPBfVrpPVVq1/AaJZ8zTwk6NVBgrF2RJPKMP9e3DoC
-         EsxPQCGG5+yphPbQtHUF08Pv/2khJhvLVO7BFZyuyumPaBOj7qYNymuiDiMgoKf0iXRx
-         fBDg==
-X-Gm-Message-State: AOAM531z7jE83sEYCamN3u+Pasw1qJzop4B0TvY57A+T1fCJzG47jE3+
-        4AQvbamL5YGbwzJdn3HXjWasg7q5YaV0icCgayespQt5iDbPZQ==
-X-Google-Smtp-Source: ABdhPJwuRhVtn1XcskxjNr8/9I//fnLOXGY9UhY/X+BWNFWrCvkaK1bDMA6eSC3BaXsBL7YRKRHNw25G+cGXJe1GJUY=
-X-Received: by 2002:ac2:5d21:: with SMTP id i1mr11989893lfb.649.1614696375764;
- Tue, 02 Mar 2021 06:46:15 -0800 (PST)
+        bh=9feuLaRLYMtlgGOGr1daR8c2TEzfBi5+yLsyG2URtB8=;
+        b=p5esXP48+5QuePBAs5CAbg7eqqITv06WgnKqP9QA8pdDHT0GazArfLKrILLdcCxgDD
+         Tco5HKM1936h7Z7vIT682AIQTx0yWnVNSdGVx+1pWl+mJl1/HDJcunyS6ez6dVZdFg0V
+         R/rqGHC+6rxI11XiZsnXGgwONUkLMmt+is5ytorjBN8jjjgJ8gA8NucZvKTRgFG6SWc4
+         EM3Fg1lksqku3+UQAHTR+mvuhpTm52CybEWjfHqY/81kJsIiArBRWsNGG9rzWm7SkkLu
+         Qq2qohGsYP7SYTzl2PKc0tUCVozWAAlWdJ1KEQ8jlsYz9mmC6fo1pYdQhoPdnGDwkxCl
+         mwcg==
+X-Gm-Message-State: AOAM5330opU7Mh26kpv0CRibty4JAer8hBDsQcHqkdo/DcX55sfKH2ew
+        FivQUbVthMaIz3IgyrBa0i9x/xA7lpdVutSmAlKRtBxdfaFDXQ==
+X-Google-Smtp-Source: ABdhPJwUwDB4hBw580rpuMjcCg9Rc9naVpfnsju755C/7VCHrkfYZ4JZhz3B2iBHv/f5gsNYiaB5FME/2iHR6jMAthw=
+X-Received: by 2002:a2e:9cb:: with SMTP id 194mr3203087ljj.438.1614696288299;
+ Tue, 02 Mar 2021 06:44:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20210225083306.25792-1-julianbraha@gmail.com>
-In-Reply-To: <20210225083306.25792-1-julianbraha@gmail.com>
+References: <20210224185316.17942-1-brgl@bgdev.pl>
+In-Reply-To: <20210224185316.17942-1-brgl@bgdev.pl>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Mar 2021 15:46:04 +0100
-Message-ID: <CACRpkda2Jbm3DmOhxFyyxDZRrUk01TtPbD+OOG=U7o2mnxEB8A@mail.gmail.com>
-Subject: Re: [PATCH v1] drivers: pinctrl: qcom: fix Kconfig dependency on GPIOLIB
-To:     Julian Braha <julianbraha@gmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+Date:   Tue, 2 Mar 2021 15:44:37 +0100
+Message-ID: <CACRpkdZ915TABrSt0A_1tM3Jt_op4gcCY1b-d2ocM7wjKJFoPA@mail.gmail.com>
+Subject: Re: [PATCH] selftests: gpio: update .gitignore
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>, Shuah Khan <shuah@kernel.org>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Feb 25, 2021 at 9:33 AM Julian Braha <julianbraha@gmail.com> wrote:
+On Wed, Feb 24, 2021 at 7:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> When PINCTRL_MSM is enabled, and GPIOLIB is disabled,
-> Kbuild gives the following warning:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> WARNING: unmet direct dependencies detected for GPIOLIB_IRQCHIP
->   Depends on [n]: GPIOLIB [=n]
->   Selected by [y]:
->   - PINCTRL_MSM [=y] && PINCTRL [=y] && (ARCH_QCOM || COMPILE_TEST [=y])
+> The executable that we build for GPIO selftests was renamed to
+> gpio-mockup-cdev. Let's update .gitignore so that we don't show it
+> as an untracked file.
 >
-> This is because PINCTRL_MSM selects GPIOLIB_IRQCHIP,
-> without selecting or depending on GPIOLIB, despite
-> GPIOLIB_IRQCHIP depending on GPIOLIB. Having PINCTRL_MSM
-> select GPIOLIB will cause a recursive dependency error.
->
-> Signed-off-by: Julian Braha <julianbraha@gmail.com>
+> Fixes: 8bc395a6a2e2 ("selftests: gpio: rework and simplify test implementation")
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Does it work to just:
-
-select GPIOLIB
-
-instead?
-
-The driver needs the library so...
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
