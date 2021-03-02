@@ -2,90 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47559C4321A
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B15DC43331
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1695E64F31
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D1F64F2C
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Mar 2021 21:30:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383838AbhCBV15 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:27:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59674 "EHLO
+        id S1382137AbhCBV0o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:26:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1580756AbhCBSVK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 13:21:10 -0500
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88EB5C0617A7;
-        Tue,  2 Mar 2021 10:19:23 -0800 (PST)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 0F0B22223E;
-        Tue,  2 Mar 2021 19:16:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1614708977;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=f1o1gnNWlC/NUtDWxWJeDtEym9UtbhEVjLxvEBdBC2k=;
-        b=b6erdFrmE04Jmxg6LNKxUmw4U3GdXeLpLqt0J0FwK4Qui+KQdy0FiuRTezzE76+7npughH
-        Z2UIBUiRtY+tNDO2opH0zfTRLRCZLGsEuFcxco8cx9wRNRcadivkWpegmeX24S5JyQujIJ
-        HNqomz7cXV1wEL0JxfJqSNZTDPKk1aI=
+        with ESMTP id S1446557AbhCBRaZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 12:30:25 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C89C061222;
+        Tue,  2 Mar 2021 08:53:59 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id u16so2619486wrt.1;
+        Tue, 02 Mar 2021 08:53:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kfPm/MmuHPyrXBT7pNFqsbQwaiDlFHhCn7fgYFeu560=;
+        b=hctPdJW/dPVgJ1xsTxJMTvAmcnNlhUGPfqNozV8+fE1LtQNVt1cRtFpPCPEu+6jwNH
+         K3jepAkAnz6keN5HcMJzFUdReqiJJhG+6/hqaoxsiGThlmB7/ofnfMZLBWvRuZts6Lda
+         Gcx5L6W79retykYR6Fa7uGVGu9HqDkxGPwhRhnaZy0GR1bu82botLt5GEYGdjO3g09Gc
+         ogRvtqFoUh/x6msYMc3pyCHc4lP5jC4tVSun7QhDh4cQM5s6xisILE+oseG2liqL4xlP
+         /rO+apF6MH0+kGNILspQVlL/dOsIp6jBamTzOQrC5d1kQ6VchuL66eoEGVtURFYUwoT1
+         dbmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kfPm/MmuHPyrXBT7pNFqsbQwaiDlFHhCn7fgYFeu560=;
+        b=hqV8XW7kVQhhMhBv2ENjyyST0p5RvOlb3jSZy0Dfz+BDZM3DTi4PrNpZMZ5eLcbjF5
+         mRGe+/68pwzqcbrjL1Bp6ytlPfMXTXT7eJR/o/ddLhDprgzrfcpJEzKqvZNiurgjJ5K7
+         /pyB/pgofzSm5v0kZST+XaAK0Im/UABsU8+Pe1z7IUwUFV0bRXCEGBeXMQwRnXRE7n1o
+         OgbOix10Fl1vG+Zfk4wk6osY3uViV3PR/jpwUUgqYucvbp7NYsyF7I/+ltlSS6wyeyXn
+         vtzWH8FO/p6KXegrZkAdCPFVuhXfBD226dnjRCKJXQUcPLC465gaApfn4vGKQl8jOZKh
+         v5dw==
+X-Gm-Message-State: AOAM530993iGVMUBwNZl9xs4nAtw9EuxaTyCWJOnNK3VJSlmDJGrwiYI
+        jxWmsREgDXI+ozhlHH0jXBDo7PHlILhy0Q==
+X-Google-Smtp-Source: ABdhPJxXElj6RcrAJn+xaBwYo7URkz5TdLX+KTvayClag0RjH5JFA0HXEoGf5v9LMODPagMEoQnqOg==
+X-Received: by 2002:a5d:6810:: with SMTP id w16mr9328385wru.333.1614704037903;
+        Tue, 02 Mar 2021 08:53:57 -0800 (PST)
+Received: from [192.168.1.10] (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
+        by smtp.gmail.com with ESMTPSA id v6sm29753390wrx.32.2021.03.02.08.53.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Mar 2021 08:53:57 -0800 (PST)
+Subject: Re: [PATCH 01/12] Documentation: add BCM6328 pincontroller binding
+ documentation
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210225164216.21124-1-noltari@gmail.com>
+ <20210225164216.21124-2-noltari@gmail.com>
+ <CACRpkdbjhTfQ4EcjndgE_Y7_uCT2ohadTjj-rrQAFNm+c0whRg@mail.gmail.com>
+ <CACRpkdaN3pYMDiPkk109SwOKF56Oxe14_bC5edftGGG0PL7VsA@mail.gmail.com>
+From:   =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>
+Message-ID: <418daebd-b35b-2edc-6f33-591bd97ba1f9@gmail.com>
+Date:   Tue, 2 Mar 2021 17:53:56 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+In-Reply-To: <CACRpkdaN3pYMDiPkk109SwOKF56Oxe14_bC5edftGGG0PL7VsA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: es-ES
 Content-Transfer-Encoding: 8bit
-Date:   Tue, 02 Mar 2021 19:16:16 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: regmap: fix direction register check
-In-Reply-To: <20210302180621.12301-1-noltari@gmail.com>
-References: <20210302180621.12301-1-noltari@gmail.com>
-User-Agent: Roundcube Webmail/1.4.11
-Message-ID: <c05bf9228206786a09f4f17160a2edf9@walle.cc>
-X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Am 2021-03-02 19:06, schrieb Álvaro Fernández Rojas:
-> If there's a direction register, we should also have dat or set 
-> registers.
-> However, we only need one of them, not both.
+Hi Linus,
 
-Can you give some more context or an example? If there is a direction
-register, we'd need to set and get the value, no?
+I think it's better if we leave the interrupts out for now.
+It's not critical and it can be added later.
 
--michael
+Best regards,
+Álvaro.
 
-> Fixes: ebe363197e52 ("gpio: add a reusable generic gpio_chip using 
-> regmap")
-> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
-> ---
->  drivers/gpio/gpio-regmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+El 02/03/2021 a las 16:23, Linus Walleij escribió:
+> On Tue, Mar 2, 2021 at 3:57 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Thu, Feb 25, 2021 at 5:42 PM Álvaro Fernández Rojas
+>> <noltari@gmail.com> wrote:
+>>
+>>> Add binding documentation for the pincontrol core found in BCM6328 SoCs.
+>>>
+>>> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+>>> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+>> (...)
+>>> +  interrupts-extended:
+>>> +    description:
+>>> +      One interrupt per each of the 4 GPIO ports supported by the controller,
+>>> +      sorted by port number ascending order.
+>>> +    minItems: 4
+>>> +    maxItems: 4
+>>
+>> I don't know if this is advisable, there are different ways
+>> of specifying interrupts so this may become ambiguous,
+>> I think Rob will know how/if to do this though.
 > 
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> index 23b0a8572f53..5a9fca00b5e8 100644
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
-> @@ -194,7 +194,7 @@ struct gpio_regmap *gpio_regmap_register(const
-> struct gpio_regmap_config *config
+> After reading the code I conclude this gpiochip is hierarchical so this should
+> just be dropped, and we only need interrupt-parent assigned. The
+> driver will know the hardware offsets between the interrupt parent
+> and the GPIO block, this is generally the case for
+> hierarchical interrupt controllers.
 > 
->  	/* if we have a direction register we need both input and output */
->  	if ((config->reg_dir_out_base || config->reg_dir_in_base) &&
-> -	    (!config->reg_dat_base || !config->reg_set_base))
-> +	    (!config->reg_dat_base && !config->reg_set_base))
->  		return ERR_PTR(-EINVAL);
+> Yours,
+> Linus Walleij
 > 
->  	/* we don't support having both registers simultaneously for now */
