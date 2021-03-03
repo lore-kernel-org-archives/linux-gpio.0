@@ -2,116 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 424A2C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 689C4C43381
 	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E821A64EBB
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D2D601FF
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237189AbhCCMVy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:21:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37998 "EHLO
+        id S1344965AbhCCMV6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:21:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1843031AbhCCKYg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 05:24:36 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8D24C035438;
-        Wed,  3 Mar 2021 01:32:04 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id w11so22845558wrr.10;
-        Wed, 03 Mar 2021 01:32:04 -0800 (PST)
+        with ESMTP id S1843053AbhCCKY6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 05:24:58 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D46C0698D7
+        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 01:16:39 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id d3so35932853lfg.10
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 01:16:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UKH6JyNVGycrje635cm8/24AFBzoSarHf1U+e9Q+8Ts=;
-        b=aGGAUotLv4VqjycU5qpz5qXFjmjWfmlMEREwAEO1Dehpv6eXNl5IQuC2YOfXja3nCt
-         tuuJeFDypcPv/N9yLQkkv69RwZHY3lppJaJ/hofGtsUVlLHj4QrjIOp68IqLNsdPcELy
-         9E1lP9XfmEGd2+EDlL2OShmJb+/CeF537M0cdJ82rDR5mqp4EP+93kMpwr0xA7Z3v8qT
-         UXgYeoOjJHnAcMcgbpDYokCSwQ2/9BT1R0S412rd4pJq63mXJBYjLX9BocCC3azE5eyU
-         IEPiMatp3dKZhwl0aYRBvxlj2bbfKAn2AH8B63KBNWY81POEhNa4yEaDI0tAOZ0VVSdl
-         X99w==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=buRZjTCkPRscNUcgouTsLvhNWylzQC2Vu2Jj2dnDvlY=;
+        b=JanEXoUqmSxDacqDR+nKEc/kxryraHtUeHFnwycu6BONzCTOiWRBjALBiBwlfx5e78
+         ZM4cbGNZDa80DIBjWjbZ2BTmh/bTfU/pztwWhDbOXCyuO5Inl7kwcij9ZURFHJn6dGoD
+         UD6u/e6GJGukxlR4C+JGktCNDZNFhYJdJo+HsUD9jewcpNbVAwYRmV9TXTLefeLCaANA
+         FA5vJsiIvKMa/cADkYmxpsh4aeA4oA4nDt98zTYblsM9ibdNDEdD4FamSm1JsFm98Eha
+         3iVWyXyVIs5Cf9aq0+KyuHzX3J8Zv+J7qB2v9YJn8rfo7WOSw4qYG64AzrHWwI0RI4LT
+         PsmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UKH6JyNVGycrje635cm8/24AFBzoSarHf1U+e9Q+8Ts=;
-        b=WvkzV+8lu03B0vBcdAr7fxyf8BEwDVoTvJtbfwfEHuYuAr3tvY87Y28WEdBh5kz7ra
-         73XUrrcx2dht1tHyzgNvbK7Y96fOocKol43feZrf7ZtgpdTRzs9jsK4pQT/WTqWunwKA
-         EDaoB5KPCXYIEIhfx/Wowns2V8/cz5iKrdNsixQTuKG6qtMySP2QeAAMSNcZbkontg6x
-         Qe1EIajOVRE99JcO7/UKOQv51MfPZRGZ5slph70btI6zu+4aptFENgQ8M9JhBmU6anxW
-         0KZwMBppY1Zd2D829ZOFvoJs97rRxTmEmPsLrGcN6AXV9ud3geQt94vHF0q0cqBEs4rm
-         Bm5g==
-X-Gm-Message-State: AOAM530vAETTTOaQowi1sQxbPTWzX01wv+aTH+dGUkIumQsg40Ycjf2f
-        UFMSRR8Gnar8UiYSnLQWzcw=
-X-Google-Smtp-Source: ABdhPJw4+XfbVZwH3cNB0g9yh1a/RXbhCsHP024nurdnI5Ltn2OZODJhZunn9lJpDOCosVyxuLjTAQ==
-X-Received: by 2002:adf:f3cc:: with SMTP id g12mr17265889wrp.118.1614763923363;
-        Wed, 03 Mar 2021 01:32:03 -0800 (PST)
-Received: from macbook-pro-alvaro.lan (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
-        by smtp.gmail.com with ESMTPSA id z7sm3616216wrt.70.2021.03.03.01.32.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Mar 2021 01:32:03 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
-Subject: Re: [PATCH v2 00/12] pinctrl: add BCM63XX pincontrol support
-From:   =?utf-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>
-In-Reply-To: <CACRpkdZQRtTi75KMFDpM6eJ9hVuPLNJBBs6bHKMt7_PNW8gcFQ@mail.gmail.com>
-Date:   Wed, 3 Mar 2021 10:32:01 +0100
-Cc:     Michael Walle <michael@walle.cc>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=buRZjTCkPRscNUcgouTsLvhNWylzQC2Vu2Jj2dnDvlY=;
+        b=FepVmDp91uSRfQE/AdBY+aAXtlpp5L1mcgScCGEEvu0YmlBGFdDGKmIprB8a2mH9LJ
+         mWHR1KJefKm7k2Fun7Wr2JywGnjZ+HkZO9m3rXmfb5Wc8BJ1yo2sMNWFxar0yx95iDOw
+         LUUbJD5uMt1OHTWVsjeGlhpNAfKS9rhLbk7zpkut/Lgz1O5h5C3+j/HUXVQRBiIUN7zo
+         fInl1+vATNqn/E7orjahg6YZ5CGuQWNRf5x5AQX3JII11kndWnc+WbuQGVSLuC6fLeae
+         ktVpsN6CRDUrkMia6HEbbZRvj5aQg9I3lRt3WJmm00zmJc+W9itxhX6CbX6yPbkzFP3K
+         DR2w==
+X-Gm-Message-State: AOAM531HjfM5aaiwlcTav2BDi3n1bnlVDO+sKV3HqblRoLEpNqdZ+T0N
+        YGlOXeuIsEwfDOjQysWBVm5RzKERuh7J1nusD2guCQ==
+X-Google-Smtp-Source: ABdhPJy9aRQHMyc4qKY1gO36BOHVs6AyUE+pwQt9Kzv2pXSSRggMKgV9EEBjNSTc07PFy8N4HS0999U1MZ6NLJp5Nn0=
+X-Received: by 2002:ac2:5d21:: with SMTP id i1mr14044766lfb.649.1614762997648;
+ Wed, 03 Mar 2021 01:16:37 -0800 (PST)
+MIME-Version: 1.0
+References: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com> <20210302153451.50593-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20210302153451.50593-3-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 3 Mar 2021 10:16:26 +0100
+Message-ID: <CACRpkdYX-CuSmNk1Yx24y15+R7q=UbXqdhgKKdeWa+dzy3wKgQ@mail.gmail.com>
+Subject: Re: [PATCH v1 3/4] gpiolib: Introduce acpi_gpio_dev_init() and call
+ it from core
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3A67CEC5-C025-40F2-A0CE-0EFA10337E5A@gmail.com>
-References: <20210302191613.29476-1-noltari@gmail.com>
- <CACRpkdZQRtTi75KMFDpM6eJ9hVuPLNJBBs6bHKMt7_PNW8gcFQ@mail.gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: Apple Mail (2.3654.60.0.2.21)
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Tue, Mar 2, 2021 at 4:36 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-> El 3 mar 2021, a las 10:29, Linus Walleij <linus.walleij@linaro.org> =
-escribi=C3=B3:
->=20
-> On Tue, Mar 2, 2021 at 8:16 PM =C3=81lvaro Fern=C3=A1ndez Rojas =
-<noltari@gmail.com> wrote:
->=20
->> v2: introduce changes suggested by Linus Walleij and remove =
-interrupts
->> - In order to use GPIO_REGMAP, the need to get gpio_chip from =
-gpio_regmap
->> and use it for pinctrl_add_gpio_range() and =
-gpio_chip.direction_input()
->> and gpio_chip.direction_output().
->=20
-> Looking so much better don't you think? :)
+> In the ACPI case we may use the firmware node in the similar way
+> as it's done for OF case. We may use that fwnode for other purposes
+> in the future.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Yeah :)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
->=20
-> If you also get rid of the exposed struct using DT gpio-ranges we are
-> done I think, just need some DT review slack for the DT maintainers
-> for the bindings.
-
-I=E2=80=99m already preparing v3 series, introducing shared base code =
-and simplifying everything :).
-
->=20
-> Yours,
-> Linus Walleij
-
-Best regards,
-=C3=81lvaro.=
+Yours,
+Linus Walleij
