@@ -2,128 +2,241 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD3FC432C3
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34224C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A36B64E51
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 099ED6146D
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355648AbhCDAcR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:32:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47738 "EHLO
+        id S1355653AbhCDAcT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:32:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358967AbhCCNUa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 08:20:30 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C3DC06178B
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 05:19:09 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id t26so16359093pgv.3
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 05:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=NBfgEgCHA/tu7wvksJ+Ela7rKLrdKUo7I7MwiFrAmv4=;
-        b=UVIOXMDi9J8DJIbTxxVN3T+unZ5PfEZRT6U5wPV5+ZiFI3OpuuAPar8pLixj72ZMS3
-         gjt7fZE1bklpTr64mAUhy+vD2moGU/sUPMI3TLCuI43aa/KwKljZ2VEM00u9G2DOBBcY
-         FfyHkZVJ0wJYX+RGuqvR/of3FMRSpEJRFOG8XrxhHXN7on36wwYRXJGILgAGsJl9zr7U
-         OuVga7NsqZIGqq55jE3Db8DSzwpKyISuZKcMH6jInpPXxnoSaWxcRLRov2r1HXBgQ8rJ
-         C9sHia9DsaGsjVtYMbOuDhJm7ov4ZjiYZMaZ81oiz1qlGB40O8YbldSgKDeXr8eoHNvH
-         WoWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NBfgEgCHA/tu7wvksJ+Ela7rKLrdKUo7I7MwiFrAmv4=;
-        b=GXmZPaQeEg6X6cLyEmHX+M5glub1V4HYk3TDIqrplbsYst7ehYZK4On+PJqalKlwTL
-         cRsUtC+NUQomS2lnbS4cYsJwre9VMogC0xGiYnedW+Yj1D7BHyT/Erm2z4X9p8AYhkZb
-         mySZW2Z9ARyRsXCJAPZm4snDsn0cKeirByUEoYqsG3a3YORhkj0hzXmkC1kL0z6iVNn1
-         rHnM1Agg750jO1P8AOOq25dmfzSsDAOdDWgzmwOklKWhgybuDY0Wu2EohgAaiXHE3faU
-         WEuLfE6JpqeXy+CeUiOXyCHEbdM4T1ezvFhEATAaTnbazaJ76OHbDpS21tDXMzKIDSz0
-         Khow==
-X-Gm-Message-State: AOAM532XPUE+/e0BQZhutQe8H2x0KRkP9RUD9nVvrvOAG1ED8BhapGRJ
-        Rd7l6QrBuhIVOHGWYFHxA+R9rw==
-X-Google-Smtp-Source: ABdhPJyFG64TzDao/klei7BAxQjjNUPxrXhiYxy2Aog+3WrqisIR70Fz4GINTSd+BqMXiBAPMr7+MA==
-X-Received: by 2002:a63:eb05:: with SMTP id t5mr22653508pgh.389.1614777549243;
-        Wed, 03 Mar 2021 05:19:09 -0800 (PST)
-Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id i25sm22397099pgb.33.2021.03.03.05.19.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 05:19:08 -0800 (PST)
-From:   Shawn Guo <shawn.guo@linaro.org>
+        with ESMTP id S1359089AbhCCN2l (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 08:28:41 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61EE0C061794
+        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 05:26:28 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:cd47:42a6:c822:e50b])
+        by michel.telenet-ops.be with bizsmtp
+        id bpSR2400G4huzR806pSRhm; Wed, 03 Mar 2021 14:26:26 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lHRWD-004Ps2-Ad; Wed, 03 Mar 2021 14:26:25 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lHRWC-00GWVB-NS; Wed, 03 Mar 2021 14:26:24 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH v2] pinctrl: qcom: support gpio_chip .set_config call
-Date:   Wed,  3 Mar 2021 21:18:58 +0800
-Message-Id: <20210303131858.3976-1-shawn.guo@linaro.org>
-X-Mailer: git-send-email 2.17.1
+Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/6] pinctrl: renesas: Move R-Car bias helpers to sh_pfc.h
+Date:   Wed,  3 Mar 2021 14:26:15 +0100
+Message-Id: <20210303132619.3938128-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210303132619.3938128-1-geert+renesas@glider.be>
+References: <20210303132619.3938128-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In case of ACPI boot, GPIO core does the right thing to parse GPIO pin
-configs from ACPI table, and call into gpio_chip's .set_config hook for
-setting them up.  It enables such support on qcom platform by using
-generic config function, which in turn calls into .pin_config_set of
-pinconf for setting up hardware.  For qcom platform, it's possible to
-reuse pin group config functions for pin config hooks, because every pin
-is maintained as a single group.
+The Renesas Pin Function Controller driver uses two header files:
+  - sh_pfc.h, for use by both core code and SoC-specific drivers,
+  - core.h, for internal use by the core code only.
 
-This change fixes the problem that Touchpad of Lenovo Flex 5G laptop
-doesn't work with ACPI boot, because PullUp config of Touchpad GpioInt
-pin is not set up by the kernel.
+Hence move the R-Car bias helper declarations from core.h to sh_pfc.h,
+and drop the inclusion of core.h from SoC-specific drivers that no
+longer need it.
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes for v2:
-- Add pin config functions that simply call into group config ones.
+ drivers/pinctrl/renesas/core.h         | 4 ----
+ drivers/pinctrl/renesas/pfc-r8a7778.c  | 1 -
+ drivers/pinctrl/renesas/pfc-r8a7792.c  | 1 -
+ drivers/pinctrl/renesas/pfc-r8a77950.c | 1 -
+ drivers/pinctrl/renesas/pfc-r8a77951.c | 1 -
+ drivers/pinctrl/renesas/pfc-r8a7796.c  | 1 -
+ drivers/pinctrl/renesas/pfc-r8a77965.c | 1 -
+ drivers/pinctrl/renesas/pfc-r8a77970.c | 1 -
+ drivers/pinctrl/renesas/pfc-r8a77980.c | 1 -
+ drivers/pinctrl/renesas/pfc-r8a77990.c | 1 -
+ drivers/pinctrl/renesas/pfc-r8a77995.c | 1 -
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 1 -
+ drivers/pinctrl/renesas/sh_pfc.h       | 7 +++++++
+ 13 files changed, 7 insertions(+), 15 deletions(-)
 
- drivers/pinctrl/qcom/pinctrl-msm.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index af6ed7f43058..a59bb4cbd97e 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -489,10 +489,24 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
- 	return 0;
- }
+diff --git a/drivers/pinctrl/renesas/core.h b/drivers/pinctrl/renesas/core.h
+index 19f7b4308fac7a8f..51f391e9713ae9bc 100644
+--- a/drivers/pinctrl/renesas/core.h
++++ b/drivers/pinctrl/renesas/core.h
+@@ -29,8 +29,4 @@ void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data);
+ int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
+ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
  
-+static int msm_config_pin_get(struct pinctrl_dev *pctldev, unsigned int pin,
-+			      unsigned long *config)
-+{
-+	return msm_config_group_get(pctldev, pin, config);
-+}
-+
-+static int msm_config_pin_set(struct pinctrl_dev *pctldev, unsigned pin,
-+			      unsigned long *configs, unsigned num_configs)
-+{
-+	return msm_config_group_set(pctldev, pin, configs, num_configs);
-+}
-+
- static const struct pinconf_ops msm_pinconf_ops = {
- 	.is_generic		= true,
- 	.pin_config_group_get	= msm_config_group_get,
- 	.pin_config_group_set	= msm_config_group_set,
-+	.pin_config_get		= msm_config_pin_get,
-+	.pin_config_set		= msm_config_pin_set,
- };
+-unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
+-void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+-			  unsigned int bias);
+-
+ #endif /* __SH_PFC_CORE_H__ */
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7778.c b/drivers/pinctrl/renesas/pfc-r8a7778.c
+index 75f52b1798c3c5c9..6185af9c499006e7 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7778.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7778.c
+@@ -16,7 +16,6 @@
+ #include <linux/kernel.h>
+ #include <linux/pinctrl/pinconf-generic.h>
  
- static int msm_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-@@ -717,6 +731,7 @@ static const struct gpio_chip msm_gpio_template = {
- 	.get_direction    = msm_gpio_get_direction,
- 	.get              = msm_gpio_get,
- 	.set              = msm_gpio_set,
-+	.set_config       = gpiochip_generic_config,
- 	.request          = gpiochip_generic_request,
- 	.free             = gpiochip_generic_free,
- 	.dbg_show         = msm_gpio_dbg_show,
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define PORT_GP_PUP_1(bank, pin, fn, sfx)	\
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7792.c b/drivers/pinctrl/renesas/pfc-r8a7792.c
+index 258f82fb31c0ec10..f54a7c81005d0a78 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7792.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7792.c
+@@ -8,7 +8,6 @@
+ 
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CPU_ALL_GP(fn, sfx)						\
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77950.c b/drivers/pinctrl/renesas/pfc-r8a77950.c
+index 32fe8caca70a119e..ee4ce9349aae2654 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77950.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77950.c
+@@ -8,7 +8,6 @@
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77951.c b/drivers/pinctrl/renesas/pfc-r8a77951.c
+index bdd605e41303bf3a..1c14a3925bef909b 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77951.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77951.c
+@@ -9,7 +9,6 @@
+ #include <linux/kernel.h>
+ #include <linux/sys_soc.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7796.c b/drivers/pinctrl/renesas/pfc-r8a7796.c
+index 96b5b1509bb70d16..71e69f2a431e05d4 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7796.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7796.c
+@@ -14,7 +14,6 @@
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77965.c b/drivers/pinctrl/renesas/pfc-r8a77965.c
+index f15e29383d9b54fe..a5db0168fb86418e 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77965.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77965.c
+@@ -15,7 +15,6 @@
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77970.c b/drivers/pinctrl/renesas/pfc-r8a77970.c
+index e8a0fc468eb260c6..7935826cfae7c9a3 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77970.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77970.c
+@@ -16,7 +16,6 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CPU_ALL_GP(fn, sfx)						\
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77980.c b/drivers/pinctrl/renesas/pfc-r8a77980.c
+index ebd07bebaeebca07..20cff93a2a13ca17 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77980.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77980.c
+@@ -16,7 +16,6 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CPU_ALL_GP(fn, sfx)	\
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77990.c b/drivers/pinctrl/renesas/pfc-r8a77990.c
+index 0a32e3c317c1a0c5..04a74b5d08e16f4c 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77990.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77990.c
+@@ -14,7 +14,6 @@
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CFG_FLAGS (SH_PFC_PIN_CFG_PULL_UP_DOWN)
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77995.c b/drivers/pinctrl/renesas/pfc-r8a77995.c
+index 672251d86c2de3cd..b479f87a3b23f0f1 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77995.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77995.c
+@@ -14,7 +14,6 @@
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CPU_ALL_GP(fn, sfx)			\
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+index 2250ccd0470aa504..ad6532443a785b13 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+@@ -11,7 +11,6 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+-#include "core.h"
+ #include "sh_pfc.h"
+ 
+ #define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index 5934faeb23d756d8..2d511c7280fa49e3 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -773,4 +773,11 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+  */
+ #define RCAR_GP_PIN(bank, pin)		(((bank) * 32) + (pin))
+ 
++/*
++ * Bias helpers
++ */
++unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
++void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
++			  unsigned int bias);
++
+ #endif /* __SH_PFC_H */
 -- 
-2.17.1
+2.25.1
 
