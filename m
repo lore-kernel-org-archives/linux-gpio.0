@@ -2,242 +2,135 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72188C433E9
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A40C4332E
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49F1964EE3
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F091364EBB
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344465AbhCDAdL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:33:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54510 "EHLO
+        id S233737AbhCDAdT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:33:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233780AbhCCQCC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 11:02:02 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAFC1C061797;
-        Wed,  3 Mar 2021 06:23:17 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id u16so5875860wrt.1;
-        Wed, 03 Mar 2021 06:23:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=qbm9/SWx08/nIVkUic7xUt6DD5RVdbp6U4+K6ZbTeg0=;
-        b=K5gZGH8f/9lAkQI6saXlg+k6iI/LNE9XE5CUqwzb9uNJAQuUweKmhN0B71Xwnsrr0I
-         Y2opGvjU8KfUoNHIlplCTIcFck4FIAyIahjIFdnBvBGDksTOXLY9e4kj77vwJletkjT9
-         nQO7dho0/GVcjysRck8KVV0V8AUWP2lWZb3EBLz2uHf5jjpmUc1oLyupQLOlcCAabXgi
-         jFOC7w9aMMAaHOd9yBYRLybyz5hbid81w6z4CXTv/j5SQ1ciTgDG5sZQhlewu2Np//bc
-         WNRuYgOmbivwTufQFRAXRTHSM7i8qZY+Hy4bPs4PxzRsSTCRr8dTsrJIRc0/BjRrbbpq
-         u9hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qbm9/SWx08/nIVkUic7xUt6DD5RVdbp6U4+K6ZbTeg0=;
-        b=opc2HzsU2hCr2F5T7rTWAR4+4l97oflwCIkZPuKI5BV+v4j3aRiWiO0dwnCahm0XeN
-         +6Rw63TgOLaiagv2Wncxnt55eLpsfVl4gOf9d/mHrrnXfMP+53P5Yxb2Q7SqSJ4Ta65b
-         6RNbAM/DgQGOpPPbj3V/uim1LJzTLKttq0ovd4Z1EGLt60BwN99jZvS1DosPEN5+baqU
-         CJQCX2nqCKxXpn5f+ob5FpDguytINpFUCaKPOcO5lWVtQ5WpfMAHycKqh9HkCL23BbfP
-         iiAXjFZd58zjcVYJdcQGeOiJf31KSlTumGNMqahkhqdXvEfS13Gzw4wQblt8Y+JLW+WU
-         UP1g==
-X-Gm-Message-State: AOAM530pdISxwf9ibNWreDWZGW3xCjKYUzTtpDSz84gve6GtFTejSuPw
-        RKVAEImqDfl7jq2IBP4qgmY=
-X-Google-Smtp-Source: ABdhPJyPNGrlJSq/uk5ZfDC2jfp/a7tI6+vz1UNIemtM4xxVu06XF4usCEyeg5fLpxpK40/HvEgSwQ==
-X-Received: by 2002:adf:fe01:: with SMTP id n1mr27630282wrr.341.1614781396373;
-        Wed, 03 Mar 2021 06:23:16 -0800 (PST)
-Received: from skynet.lan (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
-        by smtp.gmail.com with ESMTPSA id b15sm7876219wmd.41.2021.03.03.06.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 06:23:16 -0800 (PST)
-From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S1384727AbhCCQJF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 11:09:05 -0500
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25DB5C061756;
+        Wed,  3 Mar 2021 08:08:23 -0800 (PST)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 271E62223A;
+        Wed,  3 Mar 2021 17:08:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1614787701;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AZ76YG/alRYTxnhFsgjOtuLThTbucEDar6wc/b9e3mI=;
+        b=WUGUj5chPvm41q4yT0EBirH+hpEObDg73+GrlRdcPzN51KUq1amNtzyX5oBEV7RBDO2cDY
+        c6GPB6gweq9dk9Wlc/GDMwsrsAviuxzsEGfmiPkf+UDnOyvNuPnqomL3MFUPgAYkhwutCu
+        lSxdMnzefg7hBis495xOHq08A48HG2Q=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 03 Mar 2021 17:08:21 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Walle <michael@walle.cc>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         bcm-kernel-feedback-list@broadcom.com,
         Jonas Gorski <jonas.gorski@gmail.com>,
-        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>,
         Necip Fazil Yildiran <fazilyildiran@gmail.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 05/14] Documentation: add BCM6358 pincontroller binding documentation
-Date:   Wed,  3 Mar 2021 15:23:01 +0100
-Message-Id: <20210303142310.6371-6-noltari@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210303142310.6371-1-noltari@gmail.com>
+Subject: Re: [PATCH v3 01/14] gpio: regmap: set gpio_chip of_node
+In-Reply-To: <20210303142310.6371-2-noltari@gmail.com>
 References: <20210303142310.6371-1-noltari@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <20210303142310.6371-2-noltari@gmail.com>
+User-Agent: Roundcube Webmail/1.4.11
+Message-ID: <40403445ae34e822474e5f39be75fd0b@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add binding documentation for the pincontrol core found in BCM6358 SoCs.
+Am 2021-03-03 15:22, schrieb Álvaro Fernández Rojas:
+> This is needed for properly registering gpio regmap as a child of a 
+> regmap
+> pin controller.
+> 
+> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+> ---
+>  v3: introduce patch needed for properly parsing gpio-ranges.
+> 
+>  drivers/gpio/gpio-regmap.c  | 1 +
+>  include/linux/gpio/regmap.h | 3 +++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> index 5412cb3b0b2a..752ccd780b7d 100644
+> --- a/drivers/gpio/gpio-regmap.c
+> +++ b/drivers/gpio/gpio-regmap.c
+> @@ -249,6 +249,7 @@ struct gpio_regmap *gpio_regmap_register(const
+> struct gpio_regmap_config *config
+> 
+>  	chip = &gpio->gpio_chip;
+>  	chip->parent = config->parent;
+> +	chip->of_node = config->of_node;
 
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
----
- v3: add new gpio node
- v2: remove interrupts
+chip->of_node = config->of_node ?: dev_of_node(config->parent);
 
- .../pinctrl/brcm,bcm6358-pinctrl.yaml         | 137 ++++++++++++++++++
- 1 file changed, 137 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.yaml
+As mentioned in my previous reply in this thread, for clarity
+reasons.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.yaml
-new file mode 100644
-index 000000000000..eb14dd4cdaaa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.yaml
-@@ -0,0 +1,137 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/brcm,bcm6358-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM6358 pin controller
-+
-+maintainers:
-+  - Álvaro Fernández Rojas <noltari@gmail.com>
-+  - Jonas Gorski <jonas.gorski@gmail.com>
-+
-+description: |+
-+  The pin controller node should be the child of a syscon node.
-+
-+  Refer to the the bindings described in
-+  Documentation/devicetree/bindings/mfd/syscon.yaml
-+
-+properties:
-+  compatible:
-+    const: brcm,bcm6358-pinctrl
-+
-+patternProperties:
-+  '^gpio$':
-+    type: object
-+    properties:
-+      compatible:
-+        const: brcm,bcm6358-gpio
-+
-+      data:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: |
-+          Offset in the register map for the data register (in bytes).
-+
-+      dirout:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: |
-+          Offset in the register map for the dirout register (in bytes).
-+
-+      gpio-controller: true
-+
-+      "#gpio-cells":
-+        const: 2
-+
-+      gpio-ranges:
-+        maxItems: 1
-+
-+    required:
-+      - gpio-controller
-+      - gpio-ranges
-+      - '#gpio-cells'
-+
-+  '^.*$':
-+    if:
-+      type: object
-+    then:
-+      properties:
-+        function:
-+          $ref: "/schemas/types.yaml#/definitions/string"
-+          enum: [ ebi_cs, uart1, serial_led, legacy_led, led, spi_cs, utopia,
-+                  pwm_syn_clk, sys_irq ]
-+
-+        pins:
-+          $ref: "/schemas/types.yaml#/definitions/string"
-+          enum: [ ebi_cs_grp, uart1_grp, serial_led_grp, legacy_led_grp,
-+                  led_grp, spi_cs_grp, utopia_grp, pwm_syn_clk, sys_irq_grp ]
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio_cntl@fffe0080 {
-+      compatible = "syscon", "simple-mfd";
-+      reg = <0xfffe0080 0x80>;
-+
-+      pinctrl: pinctrl {
-+        compatible = "brcm,bcm6358-pinctrl";
-+
-+        gpio {
-+          compatible = "brcm,bcm6358-gpio";
-+          data = <0xc>;
-+          dirout = <0x4>;
-+
-+          gpio-controller;
-+          gpio-ranges = <&pinctrl 0 0 40>;
-+          #gpio-cells = <2>;
-+        };
-+
-+        pinctrl_ebi_cs: ebi_cs {
-+          function = "ebi_cs";
-+          groups = "ebi_cs_grp";
-+        };
-+
-+        pinctrl_uart1: uart1 {
-+          function = "uart1";
-+          groups = "uart1_grp";
-+        };
-+
-+        pinctrl_serial_led: serial_led {
-+          function = "serial_led";
-+          groups = "serial_led_grp";
-+        };
-+
-+        pinctrl_legacy_led: legacy_led {
-+          function = "legacy_led";
-+          groups = "legacy_led_grp";
-+        };
-+
-+        pinctrl_led: led {
-+          function = "led";
-+          groups = "led_grp";
-+        };
-+
-+        pinctrl_spi_cs_23: spi_cs {
-+          function = "spi_cs";
-+          groups = "spi_cs_grp";
-+        };
-+
-+        pinctrl_utopia: utopia {
-+          function = "utopia";
-+          groups = "utopia_grp";
-+        };
-+
-+        pinctrl_pwm_syn_clk: pwm_syn_clk {
-+          function = "pwm_syn_clk";
-+          groups = "pwm_syn_clk_grp";
-+        };
-+
-+        pinctrl_sys_irq: sys_irq {
-+          function = "sys_irq";
-+          groups = "sys_irq_grp";
-+        };
-+      };
-+    };
--- 
-2.20.1
+>  	chip->base = -1;
+>  	chip->ngpio = config->ngpio;
+>  	chip->names = config->names;
+> diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+> index ad76f3d0a6ba..f6e638e32d2a 100644
+> --- a/include/linux/gpio/regmap.h
+> +++ b/include/linux/gpio/regmap.h
+> @@ -4,6 +4,7 @@
+>  #define _LINUX_GPIO_REGMAP_H
+> 
+>  struct device;
+> +struct device_node;
+>  struct gpio_regmap;
+>  struct irq_domain;
+>  struct regmap;
+> @@ -14,6 +15,7 @@ struct regmap;
+>  /**
+>   * struct gpio_regmap_config - Description of a generic regmap 
+> gpio_chip.
+>   * @parent:		The parent device
+> + * @of_node:		The device node
 
+Please add "(Optional)" and move it below @regmap. This should also
+mention that if not supplied parent->of_node is used.
+
+>   * @regmap:		The regmap used to access the registers
+>   *			given, the name of the device is used
+>   * @label:		(Optional) Descriptive name for GPIO controller.
+> @@ -56,6 +58,7 @@ struct regmap;
+>   */
+>  struct gpio_regmap_config {
+>  	struct device *parent;
+> +	struct device_node *of_node;
+>  	struct regmap *regmap;
+> 
+>  	const char *label;
+
+With these changes:
+Reviewed-by: Michael Walle <michael@walle.cc>
+
+-michael
