@@ -2,124 +2,116 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130C4C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424A2C433E6
 	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD102601FF
+	by mail.kernel.org (Postfix) with ESMTP id E821A64EBB
 	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237075AbhCCMVu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:21:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37798 "EHLO
+        id S237189AbhCCMVy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:21:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1843024AbhCCKYd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 05:24:33 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7338C0698DF
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 01:22:14 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id k12so18689309ljg.9
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 01:22:14 -0800 (PST)
+        with ESMTP id S1843031AbhCCKYg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 05:24:36 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8D24C035438;
+        Wed,  3 Mar 2021 01:32:04 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id w11so22845558wrr.10;
+        Wed, 03 Mar 2021 01:32:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Lffy/+3m67+T4Jg78wOzYp/uIqDyr2dG9zAtQWv6kSE=;
-        b=iZ9jBV3DgDRRSPB6PMDbYm+A0uZKdbOIW1yKNggIHUzDqTOR4KltoIiSe9Eq+FKKkE
-         SAaMx7qvGrcDhBxF4sv1TWZV6tyV6sJmwcOA+6Y1PQOuPFQIg+W55NHs8+aHKWjozH9Y
-         T7hNpwXNkfOJfFBUujKl5tULCYau500xqCbtYIaZsDCxdbksTDnzyrdYbEphRpofMMNV
-         E48rNXRKjUE2ssVp9DDB+0iVFKZab6hkpFf/MsIfrhf+DUVB9TUpJg01olJBnXcPhMU0
-         WFlA7jjLQej7iBE5V0C6uWs3rbE0Y9olEejSJL3f2+yOgqwqmC3SBBjyWTCqmBl1TeQO
-         JBew==
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=UKH6JyNVGycrje635cm8/24AFBzoSarHf1U+e9Q+8Ts=;
+        b=aGGAUotLv4VqjycU5qpz5qXFjmjWfmlMEREwAEO1Dehpv6eXNl5IQuC2YOfXja3nCt
+         tuuJeFDypcPv/N9yLQkkv69RwZHY3lppJaJ/hofGtsUVlLHj4QrjIOp68IqLNsdPcELy
+         9E1lP9XfmEGd2+EDlL2OShmJb+/CeF537M0cdJ82rDR5mqp4EP+93kMpwr0xA7Z3v8qT
+         UXgYeoOjJHnAcMcgbpDYokCSwQ2/9BT1R0S412rd4pJq63mXJBYjLX9BocCC3azE5eyU
+         IEPiMatp3dKZhwl0aYRBvxlj2bbfKAn2AH8B63KBNWY81POEhNa4yEaDI0tAOZ0VVSdl
+         X99w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Lffy/+3m67+T4Jg78wOzYp/uIqDyr2dG9zAtQWv6kSE=;
-        b=P6IpTrKrVACMnY45wAWEFEodWh8akRTS7AnsfInw4td22oWWZp8a9xcRApke0OS8t/
-         MiVJgRP9eLfXkIQ81lcJCOajpZwjcDobjXafXTsUTFzghZhSV+jDItjlq3PH9jA5z6H+
-         oU9O/U0AmDqJpOS0ds/euAzjjFp1WEDcsCawjezeI23IDT+m4sIILBUYNgKbu50xBm5B
-         lba4zq9Z7hSxu/VEfrzIXIMHJA+tjS3rCvqesaOlJhe+9i656sOn/+N63wfpHJkyayly
-         0xH/v0CfnoDgnPK23EgUkGa8uTzSnMRnyaLnKzQZopAbbpMYshy/KRgjn5yUGluLSw+s
-         sjaQ==
-X-Gm-Message-State: AOAM533bNrgpmXdGJ4U1p4+5Zjk/bJMApBHB2WuBn0zBVfFeYN1s/gUx
-        eOmOXqxIyxQvDbvzU8rKnuh/AOTJSv7AW/o2xmgBqV+vtIUM4A==
-X-Google-Smtp-Source: ABdhPJw/jMhdI0dgZp7+cH+S0T1kqPgX/eCSWYz4SJ4ExvDKzZObPLOHLJ4FEYdymMYnoKqA561mVbAWEMuwwwE7F+E=
-X-Received: by 2002:a2e:700a:: with SMTP id l10mr14629406ljc.368.1614763333165;
- Wed, 03 Mar 2021 01:22:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com> <20210302153451.50593-4-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210302153451.50593-4-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Mar 2021 10:22:02 +0100
-Message-ID: <CACRpkdYjs7y=YMoQmFc2iXoMEtSAk7S+zYsz1Y=yPYw=97T+Nw@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] gpiolib: Reuse device's fwnode to create IRQ domain
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=UKH6JyNVGycrje635cm8/24AFBzoSarHf1U+e9Q+8Ts=;
+        b=WvkzV+8lu03B0vBcdAr7fxyf8BEwDVoTvJtbfwfEHuYuAr3tvY87Y28WEdBh5kz7ra
+         73XUrrcx2dht1tHyzgNvbK7Y96fOocKol43feZrf7ZtgpdTRzs9jsK4pQT/WTqWunwKA
+         EDaoB5KPCXYIEIhfx/Wowns2V8/cz5iKrdNsixQTuKG6qtMySP2QeAAMSNcZbkontg6x
+         Qe1EIajOVRE99JcO7/UKOQv51MfPZRGZ5slph70btI6zu+4aptFENgQ8M9JhBmU6anxW
+         0KZwMBppY1Zd2D829ZOFvoJs97rRxTmEmPsLrGcN6AXV9ud3geQt94vHF0q0cqBEs4rm
+         Bm5g==
+X-Gm-Message-State: AOAM530vAETTTOaQowi1sQxbPTWzX01wv+aTH+dGUkIumQsg40Ycjf2f
+        UFMSRR8Gnar8UiYSnLQWzcw=
+X-Google-Smtp-Source: ABdhPJw4+XfbVZwH3cNB0g9yh1a/RXbhCsHP024nurdnI5Ltn2OZODJhZunn9lJpDOCosVyxuLjTAQ==
+X-Received: by 2002:adf:f3cc:: with SMTP id g12mr17265889wrp.118.1614763923363;
+        Wed, 03 Mar 2021 01:32:03 -0800 (PST)
+Received: from macbook-pro-alvaro.lan (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
+        by smtp.gmail.com with ESMTPSA id z7sm3616216wrt.70.2021.03.03.01.32.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Mar 2021 01:32:03 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
+Subject: Re: [PATCH v2 00/12] pinctrl: add BCM63XX pincontrol support
+From:   =?utf-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>
+In-Reply-To: <CACRpkdZQRtTi75KMFDpM6eJ9hVuPLNJBBs6bHKMt7_PNW8gcFQ@mail.gmail.com>
+Date:   Wed, 3 Mar 2021 10:32:01 +0100
+Cc:     Michael Walle <michael@walle.cc>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3A67CEC5-C025-40F2-A0CE-0EFA10337E5A@gmail.com>
+References: <20210302191613.29476-1-noltari@gmail.com>
+ <CACRpkdZQRtTi75KMFDpM6eJ9hVuPLNJBBs6bHKMt7_PNW8gcFQ@mail.gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: Apple Mail (2.3654.60.0.2.21)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 2, 2021 at 4:35 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Hi Linus,
 
-> When IRQ domain is created for an ACPI case, the name of it becomes unknown-%d
-> since for now it utilizes of_node member only and doesn't consider fwnode case.
-> Convert IRQ domain creation code to utilize fwnode instead.
->
-> Before/After the change on Intel Galileo Gen 2 with two GPIO (IRQ) controllers:
->
->   unknown-1     ==>     \_SB.PCI0.GIP0.GPO
->   unknown-2     ==>     \_SB.NIO3
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> El 3 mar 2021, a las 10:29, Linus Walleij <linus.walleij@linaro.org> =
+escribi=C3=B3:
+>=20
+> On Tue, Mar 2, 2021 at 8:16 PM =C3=81lvaro Fern=C3=A1ndez Rojas =
+<noltari@gmail.com> wrote:
+>=20
+>> v2: introduce changes suggested by Linus Walleij and remove =
+interrupts
+>> - In order to use GPIO_REGMAP, the need to get gpio_chip from =
+gpio_regmap
+>> and use it for pinctrl_add_gpio_range() and =
+gpio_chip.direction_input()
+>> and gpio_chip.direction_output().
+>=20
+> Looking so much better don't you think? :)
 
-This first part seems to do what you want,
+Yeah :)
 
-> @@ -1457,9 +1457,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
->                                 struct lock_class_key *lock_key,
->                                 struct lock_class_key *request_key)
->  {
-> +       struct fwnode_handle *fwnode = dev_fwnode(&gc->gpiodev->dev);
+>=20
+> If you also get rid of the exposed struct using DT gpio-ranges we are
+> done I think, just need some DT review slack for the DT maintainers
+> for the bindings.
 
-(...)
+I=E2=80=99m already preparing v3 series, introducing shared base code =
+and simplifying everything :).
 
-But this:
+>=20
+> Yours,
+> Linus Walleij
 
-> @@ -1504,15 +1497,14 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
->                         return ret;
->         } else {
->                 /* Some drivers provide custom irqdomain ops */
-> -               if (gc->irq.domain_ops)
-> -                       ops = gc->irq.domain_ops;
-> -
-> -               if (!ops)
-> -                       ops = &gpiochip_domain_ops;
-> -               gc->irq.domain = irq_domain_add_simple(np,
-> -                       gc->ngpio,
-> -                       gc->irq.first,
-> -                       ops, gc);
-> +               ops = gc->irq.domain_ops ?: &gpiochip_domain_ops;
-> +               if (gc->irq.first)
-> +                       gc->irq.domain = irq_domain_create_legacy(fwnode, gc->ngpio,
-> +                                                                 gc->irq.first, 0,
-> +                                                                 ops, gc);
-> +               else
-> +                       gc->irq.domain = irq_domain_create_linear(fwnode, gc->ngpio,
-> +                                                                 ops, gc);
-
-This looks like a refactoring and reimplementation of irq_domain_add_simple()?
-
-Why, and should it rather be a separate patch?
-
-Yours,
-Linus Walleij
+Best regards,
+=C3=81lvaro.=
