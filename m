@@ -2,101 +2,168 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313A3C4332D
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B64C4332E
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C6F764F14
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81C3164EBA
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239899AbhCDAdG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:33:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244778AbhCCPLo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 10:11:44 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5A72C061765
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 06:45:33 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id p21so16500142pgl.12
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 06:45:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=J/L9Vsw6/4k+W5B5jJbhVRSy0ZASEPs2i2qo9aGLtRI=;
-        b=VGb1t57vd1AnaLDcJVgN0jcQy4XECFfONFfDLkIfkz2Y2zxu1CIzs1wUoRVoUt5cBE
-         skF1UitNqMHZcMEaG27wih+EWlksdJA3G22qW1x6PpOHuSJQDxC6p9CQBWVyjkmuI6TQ
-         oIIGFKQBIkdztN5UFttnMGc3DQJPkHEDUqsLlMWzsJ4/x5jl5l36k5fUayG54ngnjAqr
-         FTc8XTaGF7QkIxxL7+r2awBrKJJpmUK2JkUY94had+VGDesrEJyxs/m5IXgjTyiHCyZG
-         j/y9+IVY+qqn1otynXFQIZvW3wyHtmNaU9htF4kN/blogsAGvdCg3x/EQbPycgC7Eaar
-         9ZiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J/L9Vsw6/4k+W5B5jJbhVRSy0ZASEPs2i2qo9aGLtRI=;
-        b=WsDq/DvytJXjVCzvgwDlSyi8jKnQ43Jf/Y2YHRV7NNmOQi0YSWbdNH6BK3wY/EQpVx
-         Ju0ENWbdGpCnB9ejp5xS4I865SFyDb2MOfKMzkWHMd0RLCD4sS3xAkOZA9Eklaq75YQ9
-         I/GD0vdGq2RkqrSLYrOBd7tIuKpVxrbbH29dvWtZDn4H4ulPQL7deA3jSvQREFycPDJC
-         dw7qQGnfONjB+LoV/oOLqCb95Y6pEs4opSGkwdtYyBKQ7lYXn2H0zsl7ey9j53J7O4FV
-         A2Ie/xSUWeeCwMPnWNfkAEEwYMU/LOSgstbODwzF/jEhLIgIcrvi08ObznpSLe0gV1hq
-         8DkQ==
-X-Gm-Message-State: AOAM532V+q1Os8ZEctbHewTFd2COOUvlX433dnuvrWM8dfCrr+rkszGh
-        q+4eaTxOC6Y+6XQvrC7EJ9obZg==
-X-Google-Smtp-Source: ABdhPJyxVLc/RTAHDPDHeJkezvj/md/ZQ4R/ctQEls9J9aAp1iO/W16NfVaxdhPgrjyYZxkQmSaBng==
-X-Received: by 2002:aa7:9f52:0:b029:1ee:db83:dac6 with SMTP id h18-20020aa79f520000b02901eedb83dac6mr3276872pfr.45.1614782732430;
-        Wed, 03 Mar 2021 06:45:32 -0800 (PST)
-Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id t6sm23716191pgp.57.2021.03.03.06.45.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Mar 2021 06:45:32 -0800 (PST)
-Date:   Wed, 3 Mar 2021 22:45:27 +0800
-From:   Shawn Guo <shawn.guo@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1351970AbhCDAdH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:33:07 -0500
+Received: from m42-2.mailgun.net ([69.72.42.2]:31904 "EHLO m42-2.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244822AbhCCPLz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 3 Mar 2021 10:11:55 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1614784282; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=sRQIESzJzYRECzNj+RqCqmuf8C0lz4OU1zfKTclwppQ=; b=JWrV6Z/SFRAkuj86eNfXduQ1kBspMZ96ZbgWNNhSeWdPmqdxi+CnUrxo3YyXZSin1iDFhrPg
+ z3cyqveqwwxNzZugPObBSmuf+u1PPePdK6nKCHNWz2ca8hn116+gJbAeiXQGsoX/DoB37YW1
+ 1e96zknWU4yXMkH2iIVARytphc4=
+X-Mailgun-Sending-Ip: 69.72.42.2
+X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 603fa6ffc862e1b9fdd2a74d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 03 Mar 2021 15:10:55
+ GMT
+Sender: jhugo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 47FB3C43463; Wed,  3 Mar 2021 15:10:55 +0000 (UTC)
+Received: from [10.226.59.216] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A73D8C433C6;
+        Wed,  3 Mar 2021 15:10:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A73D8C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH] gpiolib: acpi: support override broken GPIO number in
+ ACPI table
+To:     Shawn Guo <shawn.guo@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] pinctrl: qcom: handle tiles for ACPI boot
-Message-ID: <20210303144526.GC17424@dragon>
-References: <20210303132622.4115-1-shawn.guo@linaro.org>
- <20210303132622.4115-2-shawn.guo@linaro.org>
- <YD+YSS/s79gqwEpS@smile.fi.intel.com>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org
+References: <20210226033919.8871-1-shawn.guo@linaro.org>
+ <CAHp75Vcb=NO9OWjSpBeVC4c+9=aXE=yiDWVBwLD1DnzwdgFD6Q@mail.gmail.com>
+ <20210226093925.GA24428@dragon>
+ <CAHp75Vc6xYv+197SOrSefQHD2h4Xy_N20gQajW4uF2PU=sJfLg@mail.gmail.com>
+ <YDjZOU+VMWasjzUb@smile.fi.intel.com> <20210227031944.GB24428@dragon>
+ <YDzbQqHspfvpYS7Z@smile.fi.intel.com> <20210302002725.GE24428@dragon>
+ <YD4twyAGvDDOCv+n@smile.fi.intel.com>
+ <abbfcdfa-c287-3828-ed6f-bc1e1f13c6b2@codeaurora.org>
+ <20210303094300.GB17424@dragon>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <41593c7e-368b-cfb8-b24a-2e4dca48b465@codeaurora.org>
+Date:   Wed, 3 Mar 2021 08:10:52 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YD+YSS/s79gqwEpS@smile.fi.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20210303094300.GB17424@dragon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Mar 03, 2021 at 04:08:09PM +0200, Andy Shevchenko wrote:
-> On Wed, Mar 03, 2021 at 09:26:21PM +0800, Shawn Guo wrote:
-> > It's not always the case that DT and ACPI describe hardware resource in
-> > the same schema, even for a single platform.  For example, on SC8180X,
-> > DT uses the tiles schema while ACPI describe memory resource as a single
-> > region.  It patches msm_pinctrl_probe() function to map tiles regions
-> > only for DT.  While for ACPI, it maps the single memory resource and
-> > calculate tile bases with offsets passed from SoC data.
+On 3/3/2021 2:43 AM, Shawn Guo wrote:
+> On Tue, Mar 02, 2021 at 10:02:49PM -0700, Jeffrey Hugo wrote:
+>> Sorry, just joining the thread now.  Hopefully I'm addressing everything
+>> targeted at me.
+>>
+>> I used to do kernel work on MSMs, then kernel work on server CPUs, but now I
+>> do kernel work on AI accelerators.  Never was on the firmware team, but I
+>> have a lot of contacts in those areas.  On my own time, I support Linux on
+>> the Qualcomm laptops.
+>>
+>> Its not MS that needs to fix things (although there is plenty of things I
+>> could point to that MS could fix), its the Qualcomm Windows FW folks.  They
+>> have told me a while ago they were planning on fixing this issue on some
+>> future chipset, but apparently that hasn't happened yet.  Sadly, once these
+>> laptops ship, they are in a frozen maintenance mode.
+>>
+>> In my opinion, MS has allowed Qualcomm to get away with doing bad things in
+>> ACPI on the Qualcomm laptops.  The ACPI is not a true hardware description
+>> that is OS agnostic as it should be, and probably violates the spec in many
+>> ways.  Instead, the ACPI is written against the Windows drivers, and has a
+>> lot of OS driver crap pushed into it.
+>>
+>> The GPIO description is one such thing.
+>>
+>> As I understand it, any particular SoC will have a number of GPIOs supported
+>> by the TLMM.  0 - N.  Linux understands this.  However, in the ACPI of the
+>> Qualcomm Windows laptops, you will likely find atleast one GPIO number which
+>> exceeds this N.  These are "virtual" GPIOs, and are a construct of the
+>> Windows Qualcomm TLMM driver and how it interfaces with the frameworks
+>> within Windows.
+>>
+>> Some GPIO lines can be configured as wakeup sources by routing them to a
+>> specific hardware block in the SoC (which block it is varies from SoC to
+>> SoC).  Windows has a specific weird way of handling this which requires a
+>> unique "GPIO chip" to handle.  GPIO chips in Windows contain 32 GPIOs, so
+>> for each wakeup GPIO, the TLMM driver creates a GPIO chip (essentially
+>> creating 32 GPIOs), and assigns the added GPIOs numbers which exceed N.  The
+>> TLMM driver has an internal mapping of which virtual GPIO number corresponds
+>> to which real GPIO.
+>>
+>> So, ACPI says that some peripheral has GPIO N+X, which is not a real GPIO.
+>> That peripheral goes and requests that GPIO, which gets routed to the TLMM
+>> driver, and the TLMM driver translates that number to the real GPIO, and
+>> provides the reference back to the peripheral, while also setting up the
+>> special wakeup hardware.
+>>
+>> So, N+1 is the first supported wakup GPIO, N+1+32 is the next one, then
+>> N+1+32+32, and so on.
 > 
-> ...
+> Jeffrey,
 > 
-> > +#include <linux/acpi.h>
+> Thanks so much for these great information!
 > 
-> There are at least two possibilities to avoid this:
+> May I ask a bit more about how the virtual number N+1+32*n maps back to
+> the real number (R)?  For example of touchpad GPIO on Flex 5G, I think
+> we have:
+> 
+>    N+1+32*n = 0x0280
+>    N = 191
+>    R = 24
+> 
+> If my math not bad, n = 14.  How does 14 map to 24?
 
-So could you explain why we should avoid including this header?
 
-Shawn
+So, if this was 845, the wakeup hardware would be the PDC.  Only a 
+specific number of GPIOs are routed to the PDC.  When the TLMM is 
+powered off in suspend, the PDC pays attention to the GPIOs that are 
+routed to it, and are configured in the PDC as wakeup sources.  When the 
+GPIO is asserted, the signal to the TLMM gets lost, but the PDC catches 
+it.  The PDC will kick the CPU/SoC out of suspend, and then once the 
+wakup process is complete, replay the GPIO so that the TLMM has the signal.
 
->  - use is_of_node(dev_fwnode(dev)), or in case you need board files support,
->    !(fwnode && is_of_fwnode(fwnode))
->  - provide the tiles support directly from the driver thru internal data structures
-> 
->  And to me the second approach seems better, because there is no guarantee that
->  tiles support is only defined by the fwnode type.
+In your example, 14 would be the 14th GPIO that is routed to the PDC. 
+You would need SoC hardware documentation to know the mapping from PDC 
+line 14 to GPIO line X.  This is going to be SoC specific, so 845 
+documentation is not going to help you for SC8XXX.
+
+Chances are, you are going to need to get this documentation from 
+Qualcomm (I don't know if its in IPCatalog or not), and put SoC specific 
+lookup tables in the TLMM driver.
+
+Does that make sense, or did I not answer the question you were actually 
+asking?
+
+-- 
+Jeffrey Hugo
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
