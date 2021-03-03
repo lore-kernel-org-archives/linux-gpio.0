@@ -2,110 +2,128 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A32CC43332
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD3FC432C3
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 285E964E58
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A36B64E51
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352060AbhCCMWL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:22:11 -0500
-Received: from mga02.intel.com ([134.134.136.20]:21192 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1357324AbhCCKtZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 3 Mar 2021 05:49:25 -0500
-IronPort-SDR: uPPcHaxKRlcAtN+qt2JEdlzIzU0ym/EMNXERgUkCpTRzp6QjZIDthl7pNRVFUKJrMVJWpG7+/6
- Ut6bWMspZ2zQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9911"; a="174277732"
-X-IronPort-AV: E=Sophos;i="5.81,219,1610438400"; 
-   d="scan'208";a="174277732"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2021 01:42:33 -0800
-IronPort-SDR: 1a8Zp68hzl1fLUUysrZRL9nl1/vboccfQ8WKiaLQOJvR0N7DyN8WQYBAuup/pbpay3+bkK1qYv
- KS+YnBCrk+gw==
-X-IronPort-AV: E=Sophos;i="5.81,219,1610438400"; 
-   d="scan'208";a="445185719"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2021 01:42:31 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lHO1U-009beC-E8; Wed, 03 Mar 2021 11:42:28 +0200
-Date:   Wed, 3 Mar 2021 11:42:28 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: support override broken GPIO number in
- ACPI table
-Message-ID: <YD9aBB0a3V4OhTCV@smile.fi.intel.com>
-References: <20210226093925.GA24428@dragon>
- <CAHp75Vc6xYv+197SOrSefQHD2h4Xy_N20gQajW4uF2PU=sJfLg@mail.gmail.com>
- <YDjZOU+VMWasjzUb@smile.fi.intel.com>
- <20210227031944.GB24428@dragon>
- <YDzbQqHspfvpYS7Z@smile.fi.intel.com>
- <20210302002725.GE24428@dragon>
- <YD4twyAGvDDOCv+n@smile.fi.intel.com>
- <abbfcdfa-c287-3828-ed6f-bc1e1f13c6b2@codeaurora.org>
- <YD9DnWC4ht7AYjb/@smile.fi.intel.com>
- <20210303084508.GA17424@dragon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210303084508.GA17424@dragon>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S1355648AbhCDAcR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:32:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47738 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358967AbhCCNUa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 08:20:30 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C3DC06178B
+        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 05:19:09 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id t26so16359093pgv.3
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 05:19:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=NBfgEgCHA/tu7wvksJ+Ela7rKLrdKUo7I7MwiFrAmv4=;
+        b=UVIOXMDi9J8DJIbTxxVN3T+unZ5PfEZRT6U5wPV5+ZiFI3OpuuAPar8pLixj72ZMS3
+         gjt7fZE1bklpTr64mAUhy+vD2moGU/sUPMI3TLCuI43aa/KwKljZ2VEM00u9G2DOBBcY
+         FfyHkZVJ0wJYX+RGuqvR/of3FMRSpEJRFOG8XrxhHXN7on36wwYRXJGILgAGsJl9zr7U
+         OuVga7NsqZIGqq55jE3Db8DSzwpKyISuZKcMH6jInpPXxnoSaWxcRLRov2r1HXBgQ8rJ
+         C9sHia9DsaGsjVtYMbOuDhJm7ov4ZjiYZMaZ81oiz1qlGB40O8YbldSgKDeXr8eoHNvH
+         WoWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NBfgEgCHA/tu7wvksJ+Ela7rKLrdKUo7I7MwiFrAmv4=;
+        b=GXmZPaQeEg6X6cLyEmHX+M5glub1V4HYk3TDIqrplbsYst7ehYZK4On+PJqalKlwTL
+         cRsUtC+NUQomS2lnbS4cYsJwre9VMogC0xGiYnedW+Yj1D7BHyT/Erm2z4X9p8AYhkZb
+         mySZW2Z9ARyRsXCJAPZm4snDsn0cKeirByUEoYqsG3a3YORhkj0hzXmkC1kL0z6iVNn1
+         rHnM1Agg750jO1P8AOOq25dmfzSsDAOdDWgzmwOklKWhgybuDY0Wu2EohgAaiXHE3faU
+         WEuLfE6JpqeXy+CeUiOXyCHEbdM4T1ezvFhEATAaTnbazaJ76OHbDpS21tDXMzKIDSz0
+         Khow==
+X-Gm-Message-State: AOAM532XPUE+/e0BQZhutQe8H2x0KRkP9RUD9nVvrvOAG1ED8BhapGRJ
+        Rd7l6QrBuhIVOHGWYFHxA+R9rw==
+X-Google-Smtp-Source: ABdhPJyFG64TzDao/klei7BAxQjjNUPxrXhiYxy2Aog+3WrqisIR70Fz4GINTSd+BqMXiBAPMr7+MA==
+X-Received: by 2002:a63:eb05:: with SMTP id t5mr22653508pgh.389.1614777549243;
+        Wed, 03 Mar 2021 05:19:09 -0800 (PST)
+Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id i25sm22397099pgb.33.2021.03.03.05.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Mar 2021 05:19:08 -0800 (PST)
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v2] pinctrl: qcom: support gpio_chip .set_config call
+Date:   Wed,  3 Mar 2021 21:18:58 +0800
+Message-Id: <20210303131858.3976-1-shawn.guo@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Mar 03, 2021 at 04:45:09PM +0800, Shawn Guo wrote:
-> On Wed, Mar 03, 2021 at 10:06:53AM +0200, Andy Shevchenko wrote:
-> > Since the mapping of those wake IRQs is totally platform specific, it needs a
-> > platform driver. On above mentioned x86 platforms we have a one you may take as
-> > an example (good or bad it's another story):
-> > drivers/platform/x86/intel_int0002_vgpio.c.
-> > 
-> > I think you will need something like this somewhere in ARM platform
-> > infrastructure in the Linux kernel.
-> 
-> Well, you have the Virtual GPIO controller defined in ACPI as device
-> "INT0002", but we do not have such a thing.  I'm not sure it makes much
-> sense to create a baseless driver.
+In case of ACPI boot, GPIO core does the right thing to parse GPIO pin
+configs from ACPI table, and call into gpio_chip's .set_config hook for
+setting them up.  It enables such support on qcom platform by using
+generic config function, which in turn calls into .pin_config_set of
+pinconf for setting up hardware.  For qcom platform, it's possible to
+reuse pin group config functions for pin config hooks, because every pin
+is maintained as a single group.
 
-It has similarities and differences. In your case you need to have somewhere
-some piece of the code that will do proper things, but it shouldn't be GPIO
-ACPI layer.
+This change fixes the problem that Touchpad of Lenovo Flex 5G laptop
+doesn't work with ACPI boot, because PullUp config of Touchpad GpioInt
+pin is not set up by the kernel.
 
-> > That said, I don't see that those numbers are "broken", they have their own
-> > meaning and specific mapping to the real GPIOs and it's so platform specific,
-> > that we can't treat it as a quirk.
-> 
-> Those numbers have their own meaning only for Windows.  It's OS specific
-> rather than platform specific.
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+Changes for v2:
+- Add pin config functions that simply call into group config ones.
 
-Platform is a combination of hardware, PCB and uC firmwares. AFAIU that
-platform was never designed for use in Linux, correct? So, it is not the same
-as any other platform on the same SoC.
+ drivers/pinctrl/qcom/pinctrl-msm.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-> Snapdragon platform manual has explicit
-> numbering of every single GPIO pin.  Those broken numbers in ACPI table
-> violate the hardware specification and are *broken* to Linux which
-> implements GPIO driver properly.
-
-No, they are not broken. They have a specific (Windows way) meaning. There is
-no quirk implied.
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index af6ed7f43058..a59bb4cbd97e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -489,10 +489,24 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
++static int msm_config_pin_get(struct pinctrl_dev *pctldev, unsigned int pin,
++			      unsigned long *config)
++{
++	return msm_config_group_get(pctldev, pin, config);
++}
++
++static int msm_config_pin_set(struct pinctrl_dev *pctldev, unsigned pin,
++			      unsigned long *configs, unsigned num_configs)
++{
++	return msm_config_group_set(pctldev, pin, configs, num_configs);
++}
++
+ static const struct pinconf_ops msm_pinconf_ops = {
+ 	.is_generic		= true,
+ 	.pin_config_group_get	= msm_config_group_get,
+ 	.pin_config_group_set	= msm_config_group_set,
++	.pin_config_get		= msm_config_pin_get,
++	.pin_config_set		= msm_config_pin_set,
+ };
+ 
+ static int msm_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+@@ -717,6 +731,7 @@ static const struct gpio_chip msm_gpio_template = {
+ 	.get_direction    = msm_gpio_get_direction,
+ 	.get              = msm_gpio_get,
+ 	.set              = msm_gpio_set,
++	.set_config       = gpiochip_generic_config,
+ 	.request          = gpiochip_generic_request,
+ 	.free             = gpiochip_generic_free,
+ 	.dbg_show         = msm_gpio_dbg_show,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
