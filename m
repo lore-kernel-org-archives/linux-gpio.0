@@ -2,91 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56260C4332D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F517C433E6
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3960964F23
+	by mail.kernel.org (Postfix) with ESMTP id 0ACDE64E51
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350228AbhCDAcY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:32:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49766 "EHLO
+        id S1355582AbhCDAcX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:32:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380616AbhCCN3f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 08:29:35 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88837C061223
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 05:26:31 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id i14so4146824pjz.4
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 05:26:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=L6GPr+tPT+/4tcVANy2DgWP8y/cMrSyWJznHIgnnhM0=;
-        b=AFWAN08okyrxQhdPLMUpHy6dAp/iyoeGDbJEjwCW8PFLC1VRkKU71EiMvVkR8Bo7zu
-         9vatb1kA2bvH9wFFtRgnYA/8zKGV+xCuogESKv3PJ3Yo+yItZEthca5oBKXN3548sSVv
-         5SAhzTNL4KNdsOoBHU+ZJw9cNdA3N0w1Xg65kQHriF6cWhV02ftTeuiLn/v896n5s/2C
-         TsgfbGxW5TXGiKaQ8tAbNkmenvJ9Xrvf/+Qu4LzOmreZuKRU/WScaoKtdk2/qA5utFJe
-         4EGrcRoh9CJKhv9cCHsSbP1WlkNSCHWZ2zdtohy73KAfXNilHxlnaQi7Syv8LdAUfY6n
-         A1zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L6GPr+tPT+/4tcVANy2DgWP8y/cMrSyWJznHIgnnhM0=;
-        b=rz8yNpQBavNPE8ud/phE9UNBSxb1cTUh25O24C84QVRy6MmZzavHQypHtTZWjFWdGb
-         EaQ8r9UK8I9k7/mvmgja0cke3U050uTMXj/27m70DHaazp/Lz82RRd3JGjUxkPs6OS4e
-         31y4vxW8lvu5utCxM63fhXgiYEEeM0k+tw13pHR+qum10MxD0FhwsFyC3e1nOQIYY5eQ
-         5LXxKitaKVHMT19k/bcJbd74DD6gzmu4Fgx310WhMyMkCJkwwZQR2+4T/PUjXZV0vebe
-         2gm3o3puZRvs0oXp03H2XoJ/DhvudhJMARZ6+SddeHCD3Ygwt13SJXT4RNh2u79RMlFz
-         ue3A==
-X-Gm-Message-State: AOAM530msps5cbXxyym1Z1VXBZn1iJnLFP2A9WkUXHus1mKy4d60al3A
-        s+mOyK6/pa54CDBOwRxQTsoqCw==
-X-Google-Smtp-Source: ABdhPJx2J0YNTVr7SsOV30gjr/+9A22IXtR8PmoaSXmAqr4QzTELIFrS0nUdn+mPgoE1suCCUPaGig==
-X-Received: by 2002:a17:90a:1b4e:: with SMTP id q72mr9408706pjq.113.1614777991047;
-        Wed, 03 Mar 2021 05:26:31 -0800 (PST)
-Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id y20sm24425044pfo.210.2021.03.03.05.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 05:26:30 -0800 (PST)
-From:   Shawn Guo <shawn.guo@linaro.org>
+        with ESMTP id S1380274AbhCCN3J (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 08:29:09 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97B7CC06121E
+        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 05:26:28 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:cd47:42a6:c822:e50b])
+        by michel.telenet-ops.be with bizsmtp
+        id bpSR2400M4huzR806pSRho; Wed, 03 Mar 2021 14:26:26 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lHRWD-004Ps0-EN; Wed, 03 Mar 2021 14:26:25 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lHRWC-00GWV3-Lp; Wed, 03 Mar 2021 14:26:24 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH v2 0/2] Add ACPI support for SC8180X pinctrl driver
-Date:   Wed,  3 Mar 2021 21:26:20 +0800
-Message-Id: <20210303132622.4115-1-shawn.guo@linaro.org>
-X-Mailer: git-send-email 2.17.1
+Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/6] pinctrl: renesas: Bias improvements and r8a7791 support
+Date:   Wed,  3 Mar 2021 14:26:13 +0100
+Message-Id: <20210303132619.3938128-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is a couple of patches that enable ACPI probe for SC8180X pinctrl
-driver.  The msm core driver needs a bit change to handle tiles mapping
-differently between DT and ACPI.
+	Hi all,
 
-Changes for v2:
-- Pass soc_data pointer via .driver_data.
-- Drop use of CONFIG_ACPI and ACPI_PTR().
-- Add comment for sc8180x_acpi_reserved_gpios[] terminator.
-- Add comments for tiles handling.
+This patch series improves the existing bias support in the Renesas Pin
+Function Controller driver, and adds pull-up and pull-down support for
+the R-Car M2-W and M2-N, and RZ/G1M and RZ/G1N SoCs.
 
-Shawn Guo (2):
-  pinctrl: qcom: handle tiles for ACPI boot
-  pinctrl: qcom: sc8180x: add ACPI probe support
+The latter has been tested on the Koelsch development board by measuring
+the voltages on the GP5_[0-3] pins when the software switches (SW2) are
+closed:
+  - With internal bias disabled, the 2kΩ external pull-down resistors
+    pull the GPIO lines all the way to GND,
+  - With internal pull-up enabled, the internal pull-up resistors and the
+    external pull-down resistors form a voltage divider, showing the
+    internal pull-up resistors have a value of ca. 45kΩ.
 
- drivers/pinctrl/qcom/Kconfig           |  2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c     | 27 +++++++++++---
- drivers/pinctrl/qcom/pinctrl-msm.h     |  1 +
- drivers/pinctrl/qcom/pinctrl-sc8180x.c | 49 ++++++++++++++++++++++++--
- 4 files changed, 72 insertions(+), 7 deletions(-)
+To be queued in renesas-pinctrl-for-v5.13.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (6):
+  pinctrl: renesas: Make sh_pfc_pin_to_bias_reg() static
+  pinctrl: renesas: Move R-Car bias helpers to sh_pfc.h
+  pinctrl: renesas: Factor out common R-Mobile bias handling
+  pinctrl: renesas: Add PORT_GP_CFG_7 macros
+  pinctrl: renesas: Add support for R-Car SoCs with pull-down only pins
+  pinctrl: renesas: r8a7791: Add bias pinconf support
+
+ drivers/pinctrl/renesas/core.c         |  20 --
+ drivers/pinctrl/renesas/core.h         |   8 -
+ drivers/pinctrl/renesas/pfc-r8a73a4.c  |  48 +--
+ drivers/pinctrl/renesas/pfc-r8a7740.c  |  46 +--
+ drivers/pinctrl/renesas/pfc-r8a7778.c  |   1 -
+ drivers/pinctrl/renesas/pfc-r8a7791.c  | 387 ++++++++++++++++++++++++-
+ drivers/pinctrl/renesas/pfc-r8a7792.c  |   1 -
+ drivers/pinctrl/renesas/pfc-r8a77950.c |   1 -
+ drivers/pinctrl/renesas/pfc-r8a77951.c |   1 -
+ drivers/pinctrl/renesas/pfc-r8a7796.c  |   1 -
+ drivers/pinctrl/renesas/pfc-r8a77965.c |   1 -
+ drivers/pinctrl/renesas/pfc-r8a77970.c |   1 -
+ drivers/pinctrl/renesas/pfc-r8a77980.c |   1 -
+ drivers/pinctrl/renesas/pfc-r8a77990.c |   1 -
+ drivers/pinctrl/renesas/pfc-r8a77995.c |   1 -
+ drivers/pinctrl/renesas/pfc-r8a779a0.c |   1 -
+ drivers/pinctrl/renesas/pfc-sh73a0.c   |  46 +--
+ drivers/pinctrl/renesas/pinctrl.c      | 109 +++++--
+ drivers/pinctrl/renesas/sh_pfc.h       |  24 +-
+ 19 files changed, 497 insertions(+), 202 deletions(-)
 
 -- 
-2.17.1
+2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
