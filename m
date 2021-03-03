@@ -2,83 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9938BC4332B
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7877C432C3
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9AE64EBB
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A647264EBB
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345114AbhCCMWA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:22:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1843064AbhCCKZL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 05:25:11 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B01C0698CF
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 01:11:21 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id a17so27690289ljq.2
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 01:11:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pvXRasKDNnUplGKqzHk62n6lD6KnrrKXY+1eJIPLqe0=;
-        b=WiFl8QOb5leynrCtKe3zMsV9KlbTPbHg35wYGEgWIxoqyPP0cCLWwEGVii8/y/twcB
-         xR1RwxlK5Ohll6CJ6xQDjX73wl4MGPtZsVJrMT6WEVZTUsf6n3loIcl7zfYWiBS/FYyC
-         FfvTzQfpQU6W2eZ59V7XtFzQlNcoSsRa1+wTpwAP4J/UV3EH4YU7psNWmHTvall9bZHH
-         WLRxgQKcPwQUUe2DSABPa2aSWFOYGh4b1Hjs/YSPAkMMXM4NXlQTyXa5iiDPZtQ87RxJ
-         vgcFpekosl3g2vts8OT3rCEYp6yZLhNts8p7pM3oHGR5d37Q8qEVdw/HHTEclmNxjhCx
-         NIzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pvXRasKDNnUplGKqzHk62n6lD6KnrrKXY+1eJIPLqe0=;
-        b=W/Iq56wzVmERsOnE7DZ2JkUV1/EdFR4Hup0/IHqOSlLMcLxaYgHwXBijOjLMRHPGuR
-         qEIq5DHfDQQ/j+y4JSS1UWHAVcf21J7dXsd7o77GkTLCJx0dlKtBqdyQRCigTBNV0j4y
-         aywu7sW4vuy6v29N7d07oKa5elyUMgsKgHKqtpjQptZFg3wwBCKe26/ZcDn8si3QD4QI
-         6U5eZbxoGUdpozCoYo50DP46aDV+UB9KdHXTd0Cf5frVvJzNPjSHfMoqgy1VfRrnYmS/
-         IgqdWANipAh8R96QmQ5zHKwsGS7zDvDNenkWmfi8LKSRc9fTsdSgOXiMi3HEE38LmfIa
-         Nn0g==
-X-Gm-Message-State: AOAM5313QBz580xMWEzFK5+9PaKDan4oARbYrgcwBBWYmnAHTQ2qEC0p
-        Xls4qRDX/vw1FT5H4XktKBZ3Ccsrxvgg9DUSUmB+yA==
-X-Google-Smtp-Source: ABdhPJwRAdGtZseF4AGCcWugqL080PWu2zQkl7W3itQgLw4vUj76ghMl0LRAP1ir1rNQSyMXtIt2o5cPqOPa3q+AHYs=
-X-Received: by 2002:a2e:9004:: with SMTP id h4mr11225796ljg.326.1614762679638;
- Wed, 03 Mar 2021 01:11:19 -0800 (PST)
+        id S1352075AbhCCMWQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:22:16 -0500
+Received: from mga03.intel.com ([134.134.136.65]:7092 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1344353AbhCCLCS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 3 Mar 2021 06:02:18 -0500
+IronPort-SDR: CGC6y+AKu2zphTak8ddJ+/GEuoRv2MIJw+38xI5x9Bebb5MtX52LmiPAlVdorp26pZDibKONX1
+ D8s/0xsTn1Vg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9911"; a="187201719"
+X-IronPort-AV: E=Sophos;i="5.81,219,1610438400"; 
+   d="scan'208";a="187201719"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2021 00:38:16 -0800
+IronPort-SDR: QHKceo83s07dhZ95jjEQlocYrhYDj15IZiCOQn3itZ2bzOAjRyxrNhxNgr41BMFsCG31SPB5gl
+ xnA1+EoqbM5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,219,1610438400"; 
+   d="scan'208";a="367525470"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga003.jf.intel.com with ESMTP; 03 Mar 2021 00:38:08 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 4A83DF4; Wed,  3 Mar 2021 10:38:08 +0200 (EET)
+Date:   Wed, 3 Mar 2021 10:38:08 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux GPIO <linux-gpio@vger.kernel.org>, linux-acpi@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: [GIT PULL] intel-gpio for 5.12-2
+Message-ID: <YD9K8LzSFpuAhDvW@black.fi.intel.com>
 MIME-Version: 1.0
-References: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Mar 2021 10:11:08 +0100
-Message-ID: <CACRpkdZX=kipnYukV6Y5GZmmB_GEB6htM5HP4fJbPOOhiLBtHQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] gpiolib: Unify the checks on fwnode type
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 2, 2021 at 4:35 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Hi Linux GPIO and ACPI maintainers,
 
-> We have (historically) different approaches how we identify the type
-> of a given fwnode. Let's standardize them across the library code.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This is material for v5.12-rcX (presumably -rc2). Since it touches ACPI, this
+PR is to both subsystems.
 
-Looks way better like this, with your follow-up fix folded in:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks,
 
-Yours,
-Linus Walleij
+With Best Regards,
+Andy Shevchenko
+
+The following changes since commit fe07bfda2fb9cdef8a4d4008a409bb02f35f1bd8:
+
+  Linux 5.12-rc1 (2021-02-28 16:05:19 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v5.12-2
+
+for you to fetch changes up to 437b57d2085950a813c028215513fe941ca2e616:
+
+  gpio: pca953x: Set IRQ type when handle Intel Galileo Gen 2 (2021-03-03 09:49:47 +0200)
+
+----------------------------------------------------------------
+intel-gpio for v5.12-2
+
+* Fix IRQ flags for ACPI event handler
+* Redo Intel Galileo Gen 2 quirk due to revealed regression
+
+The following is an automated git shortlog grouped by driver:
+
+gpiolib:
+ -  acpi: Allow to find GpioInt() resource by name and index
+ -  acpi: Add ACPI_GPIO_QUIRK_ABSOLUTE_NUMBER quirk
+ -  acpi: Add missing IRQF_ONESHOT
+
+pca953x:
+ -  Set IRQ type when handle Intel Galileo Gen 2
+
+----------------------------------------------------------------
+Andy Shevchenko (3):
+      gpiolib: acpi: Add ACPI_GPIO_QUIRK_ABSOLUTE_NUMBER quirk
+      gpiolib: acpi: Allow to find GpioInt() resource by name and index
+      gpio: pca953x: Set IRQ type when handle Intel Galileo Gen 2
+
+Yang Li (1):
+      gpiolib: acpi: Add missing IRQF_ONESHOT
+
+ drivers/gpio/gpio-pca953x.c   | 78 +++++++++++++------------------------------
+ drivers/gpio/gpiolib-acpi.c   | 21 ++++++++----
+ include/linux/acpi.h          | 10 ++++--
+ include/linux/gpio/consumer.h |  2 ++
+ 4 files changed, 48 insertions(+), 63 deletions(-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
