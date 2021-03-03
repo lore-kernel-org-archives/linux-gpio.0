@@ -2,84 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07748C43332
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BE5C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D397364EBA
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 008B064EE3
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236237AbhCDAdT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:33:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57034 "EHLO
+        id S233856AbhCDAdV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:33:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234833AbhCCQOm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 11:14:42 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A178EC061762;
-        Wed,  3 Mar 2021 08:12:38 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id b18so17812186wrn.6;
-        Wed, 03 Mar 2021 08:12:38 -0800 (PST)
+        with ESMTP id S241597AbhCCQZ0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 11:25:26 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A49C06175F;
+        Wed,  3 Mar 2021 08:23:23 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id m1so6900850wml.2;
+        Wed, 03 Mar 2021 08:23:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=+esVDoo5iSfzTZlFC03UaiUxOtwcJzAgay1XsaeRfDM=;
-        b=NQzVWHwRMy6kPKhLvaTEp1qFufAbIAoWBrfM30EGM1hDrGCuGDzuXXmMIKz7Ue3KIJ
-         BfHt5gB0+xLuczBamCKjG8NBbnfiTxxb4C/zKqDSp4UthA7aL3RxoQKMB0T5JGu+uZzD
-         sxG1KFIpvxo1Un428cYIC+LoOizyZTNFVV3cNEUCTHcxvrA8+U3i90Rlu00GYAoTTu/0
-         0DtTmg0uwOY/c77SvIXPzvkTJTpHYq91ockLDOdmx8IUjxS8BqNjeegkZgQwaYdh73ri
-         8DBpK8Rgqls/dh+suw125F0ituJCKqsttYbFxD1EXH3hxAdtHKOULJDjoGQIEY3mfTi3
-         DEyg==
+        bh=0rnULfJA+dYkhzmaotW5cjGQwlA6v+gAKaZV3ZR+x3k=;
+        b=cgxPBvWJIqEXf2Us8oeryoY9S0BtbIfK0ujDM0ov1KuQ2B7smEuDfeKA1vmqEgXuaI
+         l7a9bfW+mAY1ldg+9vN4QmZDDHaKT9pWprGPANBmotUkfSlTtIg7doQ8dC1sjNrRcZMI
+         Dt0esyI5GZucPenCoZszXf8KOWoaGgzIDtY0k5rdfjYuoqDXaPfC4PkVbxorqxQ6c/7X
+         VGgmRVDUiYSD4JmdX692zI3auwtH1uwDl3wVLUaQoY74OEp1awbHUr+rIwZO0A5YScek
+         s9lvE7Y8ihcQb/nVLQohNGwVjOKVTKqkw5cI6Aqip8YGnIqjawRucNtUnbtgT8RiVQCh
+         wtDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=+esVDoo5iSfzTZlFC03UaiUxOtwcJzAgay1XsaeRfDM=;
-        b=gf7s3joM/YzOPTX/HzWttsGLuEFG8b+odMEmzzB4+CEbXqulA+EdGivvYe3Ka8Qjfp
-         B1djJiwplWCCxTeTkhg1aAONyZkhNd70F520IFLteKl7YPZYk/X/No46nMijoVNcG7nB
-         eCjBUajLXCYjGM8xGyznAe0OUvX7nEffKnFRHDSCkr5wED6ijSKP5d8SuLcm9jPDXXoE
-         VW8tKtTaDoZ4PZWfwm45IYMrK6gUy2fnPMlCJNsJqVftr64c4oJjqPzUR6xz4dD5XSBy
-         sqc75uQAFETpfy/JzAb89fdu2njcY4iY3LuMLMGhdOk/b+RE8Cl5+P3gYKMtE7BWW98P
-         5V8g==
-X-Gm-Message-State: AOAM5323MGiNVJVeuFjYCDlCjiMwFiEAAGEh++K/Weg1k9DQ7Fr6wWvv
-        iM4xJJ41NNEAUJ4iQMPn340=
-X-Google-Smtp-Source: ABdhPJwG5MD3K8iGd853L2bIAh2Htqvyzse1GJP9e26dvtDpdzAbLIAA+1XURoR2U16O+rskOglP6g==
-X-Received: by 2002:a5d:528f:: with SMTP id c15mr27955555wrv.142.1614787957367;
-        Wed, 03 Mar 2021 08:12:37 -0800 (PST)
+        bh=0rnULfJA+dYkhzmaotW5cjGQwlA6v+gAKaZV3ZR+x3k=;
+        b=cVs8gPu1+zqugHt+lY7s6wP++MInv3IzPIx+o/bHHR/Y0S1nxNB6Qi2vNO4F/7Ug6X
+         ZMcJJhWUmjqq40eRmrA/MheJSpgYZDHAymq7qtr3uldS0mtMCvVhMM+IMNCLCV34teV5
+         fRiIXFPtOmjAJ1lRkHhA8bjsb7lRmBRWjj5jim3Em3O6TVak09uIsfRdT7WbuD+D4NWC
+         0mjzgE81E+Fngf/c8Q8i8apmBOchBUraFtz+4O0iQwYkaQ9gnTNoYeajAGgeA35ZoiCE
+         JLJVlW4BXvmpiVbB6PXpU/fk44ogq0hQxebuZljwwsRZrOB/Iu8pAAj5gN+NQREdaSFx
+         nU7w==
+X-Gm-Message-State: AOAM530D6lrYXPR54zZWTGx5IkEGmHb49UmFCk1UYzpFMLJGPC8Hx1iU
+        fRfTlTXhOHNURrye80RSYGM=
+X-Google-Smtp-Source: ABdhPJwyElgMdoeajhuX8+SusPE3j4+qg9nI1cOEAOZrhiOnZthD6B5B8i2EjrA0QvPHChek6gos9A==
+X-Received: by 2002:a1c:7312:: with SMTP id d18mr9689530wmb.155.1614788602097;
+        Wed, 03 Mar 2021 08:23:22 -0800 (PST)
 Received: from macbook-pro-alvaro.lan (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
-        by smtp.gmail.com with ESMTPSA id o13sm37119531wro.15.2021.03.03.08.12.36
+        by smtp.gmail.com with ESMTPSA id n6sm8575079wmd.27.2021.03.03.08.23.21
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Mar 2021 08:12:36 -0800 (PST)
+        Wed, 03 Mar 2021 08:23:21 -0800 (PST)
 Content-Type: text/plain;
         charset=utf-8
 Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
-Subject: Re: [PATCH v3 01/14] gpio: regmap: set gpio_chip of_node
+Subject: Re: [PATCH v3 00/14] pinctrl: add BCM63XX pincontrol support
 From:   =?utf-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>
-In-Reply-To: <40403445ae34e822474e5f39be75fd0b@walle.cc>
-Date:   Wed, 3 Mar 2021 17:12:35 +0100
-Cc:     Rob Herring <robh+dt@kernel.org>,
+In-Reply-To: <CACRpkdbi77SBsssMOnx43fP9RgqnzkUUw=TXaE2_LDexpE2WEg@mail.gmail.com>
+Date:   Wed, 3 Mar 2021 17:23:20 +0100
+Cc:     Rob Herring <robh+dt@kernel.org>, Michael Walle <michael@walle.cc>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
         Jonas Gorski <jonas.gorski@gmail.com>,
         Necip Fazil Yildiran <fazilyildiran@gmail.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <E341768B-BF42-4749-8D43-8C5CB24D64C3@gmail.com>
+Message-Id: <D875EBA4-F881-4F1E-A251-78CEF8E6A40B@gmail.com>
 References: <20210303142310.6371-1-noltari@gmail.com>
- <20210303142310.6371-2-noltari@gmail.com>
- <40403445ae34e822474e5f39be75fd0b@walle.cc>
-To:     Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>
+ <CACRpkdbi77SBsssMOnx43fP9RgqnzkUUw=TXaE2_LDexpE2WEg@mail.gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: Apple Mail (2.3654.60.0.2.21)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -87,78 +86,48 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Hi Linus,
 
-Do you want me to send v4 with these changes?
-Or maybe just this single patch?
-
-Best regards,
-=C3=81lvaro.
-
-> El 3 mar 2021, a las 17:08, Michael Walle <michael@walle.cc> =
+> El 3 mar 2021, a las 16:29, Linus Walleij <linus.walleij@linaro.org> =
 escribi=C3=B3:
 >=20
-> Am 2021-03-03 15:22, schrieb =C3=81lvaro Fern=C3=A1ndez Rojas:
->> This is needed for properly registering gpio regmap as a child of a =
-regmap
->> pin controller.
->> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
->> ---
->> v3: introduce patch needed for properly parsing gpio-ranges.
->> drivers/gpio/gpio-regmap.c  | 1 +
->> include/linux/gpio/regmap.h | 3 +++
->> 2 files changed, 4 insertions(+)
->> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
->> index 5412cb3b0b2a..752ccd780b7d 100644
->> --- a/drivers/gpio/gpio-regmap.c
->> +++ b/drivers/gpio/gpio-regmap.c
->> @@ -249,6 +249,7 @@ struct gpio_regmap *gpio_regmap_register(const
->> struct gpio_regmap_config *config
->> 	chip =3D &gpio->gpio_chip;
->> 	chip->parent =3D config->parent;
->> +	chip->of_node =3D config->of_node;
+> On Wed, Mar 3, 2021 at 3:23 PM =C3=81lvaro Fern=C3=A1ndez Rojas =
+<noltari@gmail.com> wrote:
 >=20
-> chip->of_node =3D config->of_node ?: dev_of_node(config->parent);
+>> v3: introduce new files for shared code and add more changes =
+suggested by
+>> Linus Walleij. Also add a new patch needed for properly parsing =
+gpio-ranges.
 >=20
-> As mentioned in my previous reply in this thread, for clarity
-> reasons.
+> This looks very appetizing, I am ready to merge this once we cut some
+> slack for DT review (a week or two).
 >=20
->> 	chip->base =3D -1;
->> 	chip->ngpio =3D config->ngpio;
->> 	chip->names =3D config->names;
->> diff --git a/include/linux/gpio/regmap.h =
-b/include/linux/gpio/regmap.h
->> index ad76f3d0a6ba..f6e638e32d2a 100644
->> --- a/include/linux/gpio/regmap.h
->> +++ b/include/linux/gpio/regmap.h
->> @@ -4,6 +4,7 @@
->> #define _LINUX_GPIO_REGMAP_H
->> struct device;
->> +struct device_node;
->> struct gpio_regmap;
->> struct irq_domain;
->> struct regmap;
->> @@ -14,6 +15,7 @@ struct regmap;
->> /**
->>  * struct gpio_regmap_config - Description of a generic regmap =
-gpio_chip.
->>  * @parent:		The parent device
->> + * @of_node:		The device node
+> I'd like to merge it soon so you can start working on the IRQ add-on.
 >=20
-> Please add "(Optional)" and move it below @regmap. This should also
-> mention that if not supplied parent->of_node is used.
->=20
->>  * @regmap:		The regmap used to access the registers
->>  *			given, the name of the device is used
->>  * @label:		(Optional) Descriptive name for GPIO controller.
->> @@ -56,6 +58,7 @@ struct regmap;
->>  */
->> struct gpio_regmap_config {
->> 	struct device *parent;
->> +	struct device_node *of_node;
->> 	struct regmap *regmap;
->> 	const char *label;
->=20
-> With these changes:
-> Reviewed-by: Michael Walle <michael@walle.cc>
->=20
-> -michael
+> I'd probably drop the IRQ-related selects from Kconfig
+> when applying though (no big deal, no need to resend over that).
 
+About that, it seems that GPIO_REGMAP should select GPIOLIB_IRQCHIP, =
+since I couldn=E2=80=99t build the kernel due to the following error =
+when I removed the IRQ-related selects:
+  LD      vmlinux.o
+  MODPOST vmlinux.symvers
+  MODINFO modules.builtin.modinfo
+  GEN     modules.builtin
+  LD      .tmp_vmlinux.kallsyms1
+mips-linux-gnu-ld: drivers/gpio/gpio-regmap.o: in function =
+`gpio_regmap_register':
+gpio-regmap.c:(.text+0x704): undefined reference to =
+`gpiochip_irqchip_add_domain'
+make: *** [Makefile:1197: vmlinux] Error 1
+
+Or maybe we could guard these lines of gpio-regmap.c with #ifdef =
+GPIOLIB_IRQCHIP:
+=
+https://github.com/torvalds/linux/blob/f69d02e37a85645aa90d18cacfff36dba37=
+0f797/drivers/gpio/gpio-regmap.c#L282-L286
+
+>=20
+> Yours,
+> Linus Walleij
+
+Best regards,
+=C3=81lvaro.=
