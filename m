@@ -2,84 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689C4C43381
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02410C43331
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25D2D601FF
+	by mail.kernel.org (Postfix) with ESMTP id BF0C764EBB
 	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344965AbhCCMV6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:21:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37796 "EHLO
+        id S1348571AbhCCMWG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:22:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1843053AbhCCKY6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 05:24:58 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D46C0698D7
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 01:16:39 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id d3so35932853lfg.10
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 01:16:39 -0800 (PST)
+        with ESMTP id S1843075AbhCCKZT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 05:25:19 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BA1C0611BE
+        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 00:45:16 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id d13-20020a17090abf8db02900c0590648b1so2556787pjs.1
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 00:45:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=buRZjTCkPRscNUcgouTsLvhNWylzQC2Vu2Jj2dnDvlY=;
-        b=JanEXoUqmSxDacqDR+nKEc/kxryraHtUeHFnwycu6BONzCTOiWRBjALBiBwlfx5e78
-         ZM4cbGNZDa80DIBjWjbZ2BTmh/bTfU/pztwWhDbOXCyuO5Inl7kwcij9ZURFHJn6dGoD
-         UD6u/e6GJGukxlR4C+JGktCNDZNFhYJdJo+HsUD9jewcpNbVAwYRmV9TXTLefeLCaANA
-         FA5vJsiIvKMa/cADkYmxpsh4aeA4oA4nDt98zTYblsM9ibdNDEdD4FamSm1JsFm98Eha
-         3iVWyXyVIs5Cf9aq0+KyuHzX3J8Zv+J7qB2v9YJn8rfo7WOSw4qYG64AzrHWwI0RI4LT
-         PsmQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iSIb0xgaCgC+aCcwfRzO1TQQvKt5CzxSqRNrFTdkvfQ=;
+        b=huJnKgSZDMoWitgZnQc7pXqwd7FRofIR7KDj6HnGtfcYMEb+ozQD5VbFRDxJclNv1s
+         e68bkT1XyTvYs6hTdfetK9agvV5yY5T+HSYwXD0oVRaUglKEAWyq/t1FlbFxwlzGTWG9
+         xmh+OFL0qoIYhUMx/VvsqRU4MRPZBCjmxfI5WspLnANXTosXcIxJbfP2YaGRkXLhh8SU
+         oi/MoZgAKiwIbpH4REM70KfLMTo1SmKPPoSOGZ/2R5qvq2K8wEFavyVVxQRT358qI9k1
+         Bo8BnuyIhKGS9XsizWOqF00Wi8cMNR9k5ryyfXOJzlV03vzPmpkUDn0SwS2R3A6sifZc
+         SgGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=buRZjTCkPRscNUcgouTsLvhNWylzQC2Vu2Jj2dnDvlY=;
-        b=FepVmDp91uSRfQE/AdBY+aAXtlpp5L1mcgScCGEEvu0YmlBGFdDGKmIprB8a2mH9LJ
-         mWHR1KJefKm7k2Fun7Wr2JywGnjZ+HkZO9m3rXmfb5Wc8BJ1yo2sMNWFxar0yx95iDOw
-         LUUbJD5uMt1OHTWVsjeGlhpNAfKS9rhLbk7zpkut/Lgz1O5h5C3+j/HUXVQRBiIUN7zo
-         fInl1+vATNqn/E7orjahg6YZ5CGuQWNRf5x5AQX3JII11kndWnc+WbuQGVSLuC6fLeae
-         ktVpsN6CRDUrkMia6HEbbZRvj5aQg9I3lRt3WJmm00zmJc+W9itxhX6CbX6yPbkzFP3K
-         DR2w==
-X-Gm-Message-State: AOAM531HjfM5aaiwlcTav2BDi3n1bnlVDO+sKV3HqblRoLEpNqdZ+T0N
-        YGlOXeuIsEwfDOjQysWBVm5RzKERuh7J1nusD2guCQ==
-X-Google-Smtp-Source: ABdhPJy9aRQHMyc4qKY1gO36BOHVs6AyUE+pwQt9Kzv2pXSSRggMKgV9EEBjNSTc07PFy8N4HS0999U1MZ6NLJp5Nn0=
-X-Received: by 2002:ac2:5d21:: with SMTP id i1mr14044766lfb.649.1614762997648;
- Wed, 03 Mar 2021 01:16:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20210302153451.50593-1-andriy.shevchenko@linux.intel.com> <20210302153451.50593-3-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210302153451.50593-3-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Mar 2021 10:16:26 +0100
-Message-ID: <CACRpkdYX-CuSmNk1Yx24y15+R7q=UbXqdhgKKdeWa+dzy3wKgQ@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] gpiolib: Introduce acpi_gpio_dev_init() and call
- it from core
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iSIb0xgaCgC+aCcwfRzO1TQQvKt5CzxSqRNrFTdkvfQ=;
+        b=YFPBmnjcfIycI/xbwCbbPpCPqvAzsQbQ4QbD9t3MM3bdIeFDeqx9EZwwnPBjjfUqgr
+         KL6eVrcafIbYaSKKBnAW6mju//ToedvskPP7P/qFnqbWWJbLZryx/F2GrakoDGHJmHyY
+         QS3oiiJbn4+4KatAFf3kMgRpDo9Zrmmm00CbMl59Xk5UD3r9iLGZ7mk6/OvfqJ87US4+
+         pwwbdg+h25OI0dOvnEp4nudiIHVUiAf73mDDS1giqE9LO0I4CKxKy5wtzqbuaNZH7r+P
+         rGzPXVY5NVFW5a0TX8bdgFjxQrvZ1fhz3CJ5dOig3eyrgsrtOPfL3lFu+pRXw4YIyWZ9
+         ZxMg==
+X-Gm-Message-State: AOAM533vlKyxGTL5S4B0pwWa37wcDDqM630Ukcp/dW0alU6lXUgI9z9l
+        iHMZXn5bdMD65YaT0BxdKB6TNuoKXu8ulA==
+X-Google-Smtp-Source: ABdhPJxNDp9Ua4ii/mm6SqQgm1n6fnSN3b0KMoyfdZEGT5y6O3miiV+hJpRnr2HSGnoNeI/c+CrD8A==
+X-Received: by 2002:a17:90a:d516:: with SMTP id t22mr8782767pju.51.1614761116299;
+        Wed, 03 Mar 2021 00:45:16 -0800 (PST)
+Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id w207sm22324837pff.62.2021.03.03.00.45.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Mar 2021 00:45:15 -0800 (PST)
+Date:   Wed, 3 Mar 2021 16:45:09 +0800
+From:   Shawn Guo <shawn.guo@linaro.org>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: acpi: support override broken GPIO number in
+ ACPI table
+Message-ID: <20210303084508.GA17424@dragon>
+References: <CAHp75Vcb=NO9OWjSpBeVC4c+9=aXE=yiDWVBwLD1DnzwdgFD6Q@mail.gmail.com>
+ <20210226093925.GA24428@dragon>
+ <CAHp75Vc6xYv+197SOrSefQHD2h4Xy_N20gQajW4uF2PU=sJfLg@mail.gmail.com>
+ <YDjZOU+VMWasjzUb@smile.fi.intel.com>
+ <20210227031944.GB24428@dragon>
+ <YDzbQqHspfvpYS7Z@smile.fi.intel.com>
+ <20210302002725.GE24428@dragon>
+ <YD4twyAGvDDOCv+n@smile.fi.intel.com>
+ <abbfcdfa-c287-3828-ed6f-bc1e1f13c6b2@codeaurora.org>
+ <YD9DnWC4ht7AYjb/@smile.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YD9DnWC4ht7AYjb/@smile.fi.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 2, 2021 at 4:36 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Mar 03, 2021 at 10:06:53AM +0200, Andy Shevchenko wrote:
+> Since the mapping of those wake IRQs is totally platform specific, it needs a
+> platform driver. On above mentioned x86 platforms we have a one you may take as
+> an example (good or bad it's another story):
+> drivers/platform/x86/intel_int0002_vgpio.c.
+> 
+> I think you will need something like this somewhere in ARM platform
+> infrastructure in the Linux kernel.
 
-> In the ACPI case we may use the firmware node in the similar way
-> as it's done for OF case. We may use that fwnode for other purposes
-> in the future.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Well, you have the Virtual GPIO controller defined in ACPI as device
+"INT0002", but we do not have such a thing.  I'm not sure it makes much
+sense to create a baseless driver.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> That said, I don't see that those numbers are "broken", they have their own
+> meaning and specific mapping to the real GPIOs and it's so platform specific,
+> that we can't treat it as a quirk.
 
-Yours,
-Linus Walleij
+Those numbers have their own meaning only for Windows.  It's OS specific
+rather than platform specific.  Snapdragon platform manual has explicit
+numbering of every single GPIO pin.  Those broken numbers in ACPI table
+violate the hardware specification and are *broken* to Linux which
+implements GPIO driver properly.
+
+Shawn
