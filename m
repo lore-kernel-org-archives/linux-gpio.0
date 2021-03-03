@@ -2,105 +2,130 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77949C432C3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4CEC4361B
 	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E95864EBB
+	by mail.kernel.org (Postfix) with ESMTP id 970B264EBB
 	for <linux-gpio@archiver.kernel.org>; Wed,  3 Mar 2021 12:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234389AbhCCMS0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:18:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37090 "EHLO
+        id S236422AbhCCMUF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:20:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239761AbhCCDdz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Mar 2021 22:33:55 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A397C06121F
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Mar 2021 19:31:27 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id 201so15288410pfw.5
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Mar 2021 19:31:27 -0800 (PST)
+        with ESMTP id S1842438AbhCCHGK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 02:06:10 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 396E6C061756;
+        Tue,  2 Mar 2021 23:05:30 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id o16so5167183wmh.0;
+        Tue, 02 Mar 2021 23:05:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+0F+pGitTgwubWfG1pa09cZYXP+gzbeba4SznEWwqGI=;
-        b=NxviuoedHqex1136fXmzceOOH1rLLDrZKHeclScAeylCEzqGB6HNwfHBLw+VRSNWKE
-         w9LyE+UAP79zJPoq/6XzaJY61r86/ZzpLuy1c9H0Vhjx3EfeKAbUZYaZciNMwfWNf8Vv
-         jMr1X72Fpznz/NB53A1Mfdiq+wBBASamhhqg/HrxSUInvWRHCK8hPdlwnm3gtP30lKWi
-         BTc8zYoBhkxDKXwnQ89aDbWDv5hyae5xbqvIP9BCsr0FlOQxNMLXfXz+aHn0YqLwlyae
-         Q0JKkG6eFj4iMPrGgNudgSZPuCuFAFy6Zloj5LMSUEbR/YxEFM8QXwx9HaTySPEip6SY
-         thkA==
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=gAq60drMyiinIRI3LPgOZbcKj8NSqmxYko+HQBe0/Ro=;
+        b=IDOX6nDRgVNa1VUfes0ZvyCre5DrtFWuFCYvmlVM3Eijwf+CmpjfPcAoFiRtIt1Sud
+         GudyeFZbmJMkluOM4fhLAbsSpZCxaKIA2QQXFOrJLxjJU+k9VCSMOMB7LZMyh16LruXx
+         6ZFJK6jmCHgdNUAstV4fvtatL+PGm+VGZKIIls8er/tqZURXYYr0JCHrFy4BfrwX/FgA
+         +LhfTokPOJjfy2eATq8rJLHNarXYtUT2xtBWCB2QLXvUP0cR45cPoAxAZD6szlcD1rm8
+         4HrHA1mv6VyM29xCmkuIGiGOWgiXN7z6wZzrgu0ZGk9d4HVFgQvH5yAviFbBnWFypDU5
+         U7Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+0F+pGitTgwubWfG1pa09cZYXP+gzbeba4SznEWwqGI=;
-        b=lxmNeSmwo4uOcVgoZSA4hp2JnfA0aDVbhUG9wNID7IonbUCRnri1oseMdII76VRiqS
-         WqJSKoE8Fp/yafNt8QP1llj/xm3X0pNllb7CDBj8fDr7jxZCs8MgFsz39Td7eIXbyRzw
-         j5fo8zR2R12hNrEBlPowA1pXOwV1+TXkQBqCjgj/qztSjWuGYQSq4kqjQf2PeWB+2C/W
-         yunwWF9wEb5ARyvl1DHxsx6yKfSGG19ash4l94Ti3JtxJj0IWdaE2Tx9dnMyUVWCG+Tz
-         xJNjV7q42aiAm0tqCauRjG/EotD4CtNCa3wBemka0ck2bq7/Yl7XuHAUW4+p5yQSTbDE
-         hq6Q==
-X-Gm-Message-State: AOAM531InN6o9xTVSUaMyhrYy7h01c+UjQe2vMkBORA14URdLuW8ccoy
-        iSph6VsWiV9i7WmzEZ00NAgcGg==
-X-Google-Smtp-Source: ABdhPJznP8usQoH+CSTZzZ7Cbg6it5ya6bVS9YOZmFL7I1t4ENQgoxl77nM/aFPWJzl6dz1yh27qmA==
-X-Received: by 2002:a62:6444:0:b029:1ee:67c6:a169 with SMTP id y65-20020a6264440000b02901ee67c6a169mr15389830pfb.47.1614742286942;
-        Tue, 02 Mar 2021 19:31:26 -0800 (PST)
-Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id c4sm16057511pfo.2.2021.03.02.19.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 19:31:26 -0800 (PST)
-From:   Shawn Guo <shawn.guo@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4/4] arm64: dts: qcom: sm8350: fix number of pins in 'gpio-ranges'
-Date:   Wed,  3 Mar 2021 11:31:06 +0800
-Message-Id: <20210303033106.549-5-shawn.guo@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210303033106.549-1-shawn.guo@linaro.org>
-References: <20210303033106.549-1-shawn.guo@linaro.org>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=gAq60drMyiinIRI3LPgOZbcKj8NSqmxYko+HQBe0/Ro=;
+        b=BIzLOZY5Va8pT+YZHutkIlu5fla5ol6gSYMJKFg511gQrnN6B6/Ow4uPu9gv1a1Biz
+         rF5t2BqajPEbfuZimfnXwmatG0sVdlj1COiaGQu8SVgVY0jHfqxUXTfA0JwDAjk6ijPK
+         dLFjDt+SfToesh6BW8lKjGIF4iJUN+oPWR66cZlCRMG8UGLrkyZm/UgOyYUUmWumYR+h
+         Y1YCnZR5w0v/ljsTtIeOHsRhiPsZL5+TtH8M0GTP0W3vvbcpVvbKi/8re/fRHcO/h8Bz
+         +f4k5tdj5R1mt/YAVLsLBoTXoJxmcasJDA3YXGceNO4Y6Kfp7kLn8pjvKRUuSiL3svEp
+         AD4w==
+X-Gm-Message-State: AOAM5325F/VZhed72S6zjHwMjTeTyu0imskhrupjBRL489iRYF1XO8zj
+        +JxcE+/JY3GuInGj8wzzx1U=
+X-Google-Smtp-Source: ABdhPJzHbDeMvcf+JgymfeNDX1BciFJkjZcGav/McpS8E1RwSBuGweBlRfqJ1SiTkknCmM1FM+T3cQ==
+X-Received: by 2002:a7b:cb81:: with SMTP id m1mr7663900wmi.117.1614755128753;
+        Tue, 02 Mar 2021 23:05:28 -0800 (PST)
+Received: from macbook-pro-alvaro.lan (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
+        by smtp.gmail.com with ESMTPSA id y62sm6561512wmy.9.2021.03.02.23.05.27
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Mar 2021 23:05:28 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
+Subject: Re: [PATCH] gpio: regmap: move struct gpio_regmap definition
+From:   =?utf-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>
+In-Reply-To: <CACRpkdbHV+HCfTw__2u_EF1SbmG_0Ce-6VMs7wbAe+HtJXYM_A@mail.gmail.com>
+Date:   Wed, 3 Mar 2021 08:05:26 +0100
+Cc:     Michael Walle <michael@walle.cc>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4197E9C5-56BD-44A2-A250-FC6BAE13480C@gmail.com>
+References: <20210302180601.12082-1-noltari@gmail.com>
+ <b4a344af55ad238a554c56e31b1b87ed@walle.cc>
+ <4af4b519-84eb-3cb4-bb0e-9c5ac6204348@gmail.com>
+ <CACRpkdbHV+HCfTw__2u_EF1SbmG_0Ce-6VMs7wbAe+HtJXYM_A@mail.gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: Apple Mail (2.3654.60.0.2.21)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The last cell of 'gpio-ranges' should be number of GPIO pins, and in
-case of qcom platform it should match msm_pinctrl_soc_data.ngpio rather
-than msm_pinctrl_soc_data.ngpio - 1.
+Hi Linus,
 
-This fixes the problem that when the last GPIO pin in the range is
-configured with the following call sequence, it always fails with
--EPROBE_DEFER.
+> El 2 mar 2021, a las 23:39, Linus Walleij <linus.walleij@linaro.org> =
+escribi=C3=B3:
+>=20
+> On Tue, Mar 2, 2021 at 7:14 PM =C3=81lvaro Fern=C3=A1ndez Rojas =
+<noltari@gmail.com> wrote:
+>=20
+>> I'm trying to add support for bcm63xx pin controllers, and Linus
+>> suggested that I could use gpio regmap instead of adding duplicated =
+code.
+>> However, I need to access gpio_chip inside gpio_regmap to call
+>> pinctrl_add_gpio_range() with gpio_chip.base.
+>=20
+> Can't you just put the ranges in the device tree using the standard
+> property gpio-ranges?
 
-    pinctrl_gpio_set_config()
-        pinctrl_get_device_gpio_range()
-            pinctrl_match_gpio_range()
+Ok, I=E2=80=99ll use that on v3 :).
 
-Fixes: b7e8f433a673 ("arm64: dts: qcom: Add basic devicetree support for SM8350 SoC")
-Cc: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8350.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So I guess that I should also call gpio_direction_input() and =
+gpio_direction_output() directly to replace gpio_chip->direction_input() =
+and gpio_chip->direction_output() for the two drivers that need it =
+(BCM6358 and BCM6368).
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-index 5ef460458f5c..fab211298c35 100644
---- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-@@ -382,7 +382,7 @@
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
--			gpio-ranges = <&tlmm 0 0 203>;
-+			gpio-ranges = <&tlmm 0 0 204>;
- 
- 			qup_uart3_default_state: qup-uart3-default-state {
- 				rx {
--- 
-2.17.1
+>=20
+> These will be added automatically after the chip is added.
+>=20
+> It is documented in
+> Documentation/devicetree/bindings/gpio/gpio.txt
+> a bit down the file.
 
+Thanks for the link :)
+
+>=20
+> The code is in of_gpiochip_add_pin_range() in gpiolib-of.c
+> called from of_gpiochip_add() which is always called
+> when gpiochip_add_data_with_key(), the main gpiochip
+> registering function is called.
+>=20
+> This would just do the work for you with no effort in the driver.
+>=20
+> It is a bit counterintuitive that this can be done in the device
+> tree but the hierarchical IRQs cannot do the same clever
+> manouver to map IRQs, sorry.
+>=20
+> Yours,
+> Linus Walleij
+
+Best regards,
+=C3=81lvaro.=
