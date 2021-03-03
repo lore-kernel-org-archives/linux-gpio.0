@@ -2,112 +2,190 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F517C433E6
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AC8C433DB
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACDE64E51
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6167B64EBB
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355582AbhCDAcX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:32:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49542 "EHLO
+        id S1380274AbhCDAc0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:32:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380274AbhCCN3J (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 08:29:09 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97B7CC06121E
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 05:26:28 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:cd47:42a6:c822:e50b])
-        by michel.telenet-ops.be with bizsmtp
-        id bpSR2400M4huzR806pSRho; Wed, 03 Mar 2021 14:26:26 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lHRWD-004Ps0-EN; Wed, 03 Mar 2021 14:26:25 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lHRWC-00GWV3-Lp; Wed, 03 Mar 2021 14:26:24 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
+        with ESMTP id S1380352AbhCCN3m (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 08:29:42 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D98DC0611C0
+        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 05:26:36 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id b15so4161790pjb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 05:26:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=oS9tdC9Z8IoMZXBDO08ijI5tila7vbTI9+MBWjUlrPE=;
+        b=jN2+VCZ8qhkcG9kSkKR4Rm+4Qxby1UZ1QSj6jnzn3clp+XpQm3YybKOgRHN2zhmrKw
+         egKARPxkkfAfN49nQPFzu/lXBlMMmQEIfkyMLwybVDSMvJhb6omFiByUhYjkHLg8zFIT
+         YoxI/Y+On9DuZWNHP2hn+wyB2+s+J/bEoR4kVmh7wbL71ajpWwFf+Gi50xTXFwvdnFTW
+         rBJAkycWvNzY4HD22IVCgLSDFrgvsT+az8+5ZbRBgxP/lG6y+mQTWLaOqyg5LpRJWptw
+         j1j08YEyePo+fHh23+LVCL7aYjPZT4ko00GWAh0nyvXRgyPK5YaSE8D1mScrO9H9SMzr
+         BnTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=oS9tdC9Z8IoMZXBDO08ijI5tila7vbTI9+MBWjUlrPE=;
+        b=Fh9H8agjcGVDWIcf/PDhZCvQOJr2cHQE/Ze6+SaoLJwoYsvkVHs3fRIY1JIZtjdGhY
+         hWpEtm+N6aoHbIKl9vCuPtw55T2oEN3UM/UVd1zb0g7V6w+IOTVEiomX3rtvpX4jfqp7
+         TT0XcMhzwkcLCIXLQ+TMMlEcHHQUAnfrZwcF65CPls4b/WEHNIZgYDi/ICRLKnFkoF1G
+         S/jXNyvIcP+ygYsliVZW6hYJTbUg7xM2bMFkCnX4qiZNYKUPM+vy0xXXxGSooo8W9H4l
+         tpfza4vOjPd0YZ2EJsBCT4tZQlrtaSLuxL7w1d3madB6pU3pFcZLrTeDL6hNqbbMLuYw
+         AT2A==
+X-Gm-Message-State: AOAM533AA9mf4S6IDqIg8GBF2vFeHMthyog+6vyfx42H4lPS/gPfPNJy
+        bZ93dDEsYhUGfZ+xfa/nRxlOyg==
+X-Google-Smtp-Source: ABdhPJzB4Zh0P7iqxY8N3A/mlvmnQFHYVH5MLLvcOnf5uUMP2bFrHK/cttwIbVrFv65Y6UHjpFcfdg==
+X-Received: by 2002:a17:902:e806:b029:e5:cb85:dc4d with SMTP id u6-20020a170902e806b02900e5cb85dc4dmr2024856plg.11.1614777996033;
+        Wed, 03 Mar 2021 05:26:36 -0800 (PST)
+Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id y20sm24425044pfo.210.2021.03.03.05.26.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Mar 2021 05:26:35 -0800 (PST)
+From:   Shawn Guo <shawn.guo@linaro.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/6] pinctrl: renesas: Bias improvements and r8a7791 support
-Date:   Wed,  3 Mar 2021 14:26:13 +0100
-Message-Id: <20210303132619.3938128-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v2 2/2] pinctrl: qcom: sc8180x: add ACPI probe support
+Date:   Wed,  3 Mar 2021 21:26:22 +0800
+Message-Id: <20210303132622.4115-3-shawn.guo@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210303132622.4115-1-shawn.guo@linaro.org>
+References: <20210303132622.4115-1-shawn.guo@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-	Hi all,
+It adds ACPI probe support with tile offsets passed over to msm core
+driver via sc8180x_tile_offsets, as TLMM is described a single memory
+region in ACPI DSDT.
 
-This patch series improves the existing bias support in the Renesas Pin
-Function Controller driver, and adds pull-up and pull-down support for
-the R-Car M2-W and M2-N, and RZ/G1M and RZ/G1N SoCs.
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+ drivers/pinctrl/qcom/Kconfig           |  2 +-
+ drivers/pinctrl/qcom/pinctrl-sc8180x.c | 49 ++++++++++++++++++++++++--
+ 2 files changed, 48 insertions(+), 3 deletions(-)
 
-The latter has been tested on the Koelsch development board by measuring
-the voltages on the GP5_[0-3] pins when the software switches (SW2) are
-closed:
-  - With internal bias disabled, the 2kΩ external pull-down resistors
-    pull the GPIO lines all the way to GND,
-  - With internal pull-up enabled, the internal pull-up resistors and the
-    external pull-down resistors form a voltage divider, showing the
-    internal pull-up resistors have a value of ca. 45kΩ.
-
-To be queued in renesas-pinctrl-for-v5.13.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (6):
-  pinctrl: renesas: Make sh_pfc_pin_to_bias_reg() static
-  pinctrl: renesas: Move R-Car bias helpers to sh_pfc.h
-  pinctrl: renesas: Factor out common R-Mobile bias handling
-  pinctrl: renesas: Add PORT_GP_CFG_7 macros
-  pinctrl: renesas: Add support for R-Car SoCs with pull-down only pins
-  pinctrl: renesas: r8a7791: Add bias pinconf support
-
- drivers/pinctrl/renesas/core.c         |  20 --
- drivers/pinctrl/renesas/core.h         |   8 -
- drivers/pinctrl/renesas/pfc-r8a73a4.c  |  48 +--
- drivers/pinctrl/renesas/pfc-r8a7740.c  |  46 +--
- drivers/pinctrl/renesas/pfc-r8a7778.c  |   1 -
- drivers/pinctrl/renesas/pfc-r8a7791.c  | 387 ++++++++++++++++++++++++-
- drivers/pinctrl/renesas/pfc-r8a7792.c  |   1 -
- drivers/pinctrl/renesas/pfc-r8a77950.c |   1 -
- drivers/pinctrl/renesas/pfc-r8a77951.c |   1 -
- drivers/pinctrl/renesas/pfc-r8a7796.c  |   1 -
- drivers/pinctrl/renesas/pfc-r8a77965.c |   1 -
- drivers/pinctrl/renesas/pfc-r8a77970.c |   1 -
- drivers/pinctrl/renesas/pfc-r8a77980.c |   1 -
- drivers/pinctrl/renesas/pfc-r8a77990.c |   1 -
- drivers/pinctrl/renesas/pfc-r8a77995.c |   1 -
- drivers/pinctrl/renesas/pfc-r8a779a0.c |   1 -
- drivers/pinctrl/renesas/pfc-sh73a0.c   |  46 +--
- drivers/pinctrl/renesas/pinctrl.c      | 109 +++++--
- drivers/pinctrl/renesas/sh_pfc.h       |  24 +-
- 19 files changed, 497 insertions(+), 202 deletions(-)
-
+diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+index 6853a896c476..9f0218c4f9b3 100644
+--- a/drivers/pinctrl/qcom/Kconfig
++++ b/drivers/pinctrl/qcom/Kconfig
+@@ -222,7 +222,7 @@ config PINCTRL_SC7280
+ 
+ config PINCTRL_SC8180X
+ 	tristate "Qualcomm Technologies Inc SC8180x pin controller driver"
+-	depends on GPIOLIB && OF
++	depends on GPIOLIB && (OF || ACPI)
+ 	select PINCTRL_MSM
+ 	help
+ 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc8180x.c b/drivers/pinctrl/qcom/pinctrl-sc8180x.c
+index b765bf667574..3ec74ea37c1b 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc8180x.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc8180x.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2020-2021, Linaro Ltd.
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -17,6 +18,12 @@ static const char * const sc8180x_tiles[] = {
+ 	"west"
+ };
+ 
++static const u32 sc8180x_tile_offsets[] = {
++	0x00d00000,
++	0x00500000,
++	0x00100000
++};
++
+ enum {
+ 	SOUTH,
+ 	EAST,
+@@ -1557,6 +1564,13 @@ static const struct msm_pingroup sc8180x_groups[] = {
+ 	[193] = SDC_QDSD_PINGROUP(sdc2_data, 0x4b2000, 9, 0),
+ };
+ 
++static const int sc8180x_acpi_reserved_gpios[] = {
++	0, 1, 2, 3,
++	47, 48, 49, 50,
++	126, 127, 128, 129,
++	-1 /* terminator */
++};
++
+ static const struct msm_gpio_wakeirq_map sc8180x_pdc_map[] = {
+ 	{ 3, 31 }, { 5, 32 }, { 8, 33 }, { 9, 34 }, { 10, 100 }, { 12, 104 },
+ 	{ 24, 37 }, { 26, 38 }, { 27, 41 }, { 28, 42 }, { 30, 39 }, { 36, 43 },
+@@ -1588,13 +1602,43 @@ static struct msm_pinctrl_soc_data sc8180x_pinctrl = {
+ 	.nwakeirq_map = ARRAY_SIZE(sc8180x_pdc_map),
+ };
+ 
++static const struct msm_pinctrl_soc_data sc8180x_acpi_pinctrl = {
++	.tiles = sc8180x_tiles,
++	.ntiles = ARRAY_SIZE(sc8180x_tiles),
++	.tile_offsets = sc8180x_tile_offsets,
++	.pins = sc8180x_pins,
++	.npins = ARRAY_SIZE(sc8180x_pins),
++	.groups = sc8180x_groups,
++	.ngroups = ARRAY_SIZE(sc8180x_groups),
++	.reserved_gpios = sc8180x_acpi_reserved_gpios,
++	.ngpios = 191,
++};
++
+ static int sc8180x_pinctrl_probe(struct platform_device *pdev)
+ {
+-	return msm_pinctrl_probe(pdev, &sc8180x_pinctrl);
++	const struct msm_pinctrl_soc_data *soc_data;
++
++	soc_data = device_get_match_data(&pdev->dev);
++	if (!soc_data)
++		return -EINVAL;
++
++	return msm_pinctrl_probe(pdev, soc_data);
+ }
+ 
++static const struct acpi_device_id sc8180x_pinctrl_acpi_match[] = {
++	{
++		.id = "QCOM040D",
++		.driver_data = (kernel_ulong_t) &sc8180x_acpi_pinctrl,
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, sc8180x_pinctrl_acpi_match);
++
+ static const struct of_device_id sc8180x_pinctrl_of_match[] = {
+-	{ .compatible = "qcom,sc8180x-tlmm", },
++	{
++		.compatible = "qcom,sc8180x-tlmm",
++		.data = &sc8180x_pinctrl,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, sc8180x_pinctrl_of_match);
+@@ -1603,6 +1647,7 @@ static struct platform_driver sc8180x_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "sc8180x-pinctrl",
+ 		.of_match_table = sc8180x_pinctrl_of_match,
++		.acpi_match_table = sc8180x_pinctrl_acpi_match,
+ 	},
+ 	.probe = sc8180x_pinctrl_probe,
+ 	.remove = msm_pinctrl_remove,
 -- 
-2.25.1
+2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
