@@ -2,157 +2,276 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E17C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4162C433DB
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B45964EBA
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81ACA64EBA
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 00:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351876AbhCDAc7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:32:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39512 "EHLO
+        id S242006AbhCDAdE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:33:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242006AbhCCOzW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 09:55:22 -0500
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A3DC0613E3
-        for <linux-gpio@vger.kernel.org>; Wed,  3 Mar 2021 06:51:09 -0800 (PST)
-Received: by mail-oi1-x236.google.com with SMTP id j1so26226238oiw.3
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Mar 2021 06:51:09 -0800 (PST)
+        with ESMTP id S239899AbhCCPLo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Mar 2021 10:11:44 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E88DDC061793;
+        Wed,  3 Mar 2021 06:23:15 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id k66so6520889wmf.1;
+        Wed, 03 Mar 2021 06:23:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ws/0H/NBtbGAfBsufQouIyZBnJjYNp6N//wE944yD2A=;
-        b=PBx9BOiiU9F8cKscjuanYUvBgUjV1VF+fWKhzW/8b/FHiQLg5W/BAeg0Us0cHwFvUS
-         XCViMM+N7ql6JsXW81H/1HY6Z5wTm90hpXJ/DIQVxDUhl1FleP2tCgBamhUWQ/1c/s9a
-         EYhwNqWwrizarG5JRentlw6KFxAgKzFDSwsFGO0iKIDtubff+6ToTAF8Ji6G/UM/mFCD
-         Y/EG2wErU2z+HBwTk2Qv8jlUwIcqnCpVxKR7qqTKABh6xpRklmJUcjw/luF2OZld0ob2
-         Bi14vKkIYuVs1EzSUuyGOuakYhRCc7xBm2t8coFynRdvdAllyBMzh6wJSKyq3YtF56pC
-         5Jbg==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=mrF7YuY2e0TOKUItC+mcZ8du9RTkpgqp0UmvueCRZj0=;
+        b=c9OPNFW96sC3Ljr5VRohzpthUKhLoBQNV0Ud1izbaXIO/VmkZpy1N7RAtuFHwABPOZ
+         COuCbXxZc2qudAgWJuSUfcUVhYklOROor+ltSoD9i4GR6BuM8ttFIqID4PbEgbgXJxuc
+         gpf0T/v6k4Z9AtCwK6ch3m1CB8nTqySbEV6JeMTYSD2RWHF8d5Oi4h2gmBoi2xVMPZ5f
+         Jd23Zb1PRfvRvWozUHUrFf0UQ0LybaaU8H0TUdJShyMZKK4GTDMt+UVKH+FkE8lRhlda
+         4WRZvhS0dYsxPFPit0yV4JZ0ry35hvXJghurdycS/sCxXcHPltbo3VtcEhsqF9kGwQoy
+         Shkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ws/0H/NBtbGAfBsufQouIyZBnJjYNp6N//wE944yD2A=;
-        b=pbyrfkeHnDnpCmkPwVZNfX+xCTzpRryJKlUb2xxov1zru/ehXj56IOgQeqFset0Bk6
-         OS2zISpsD+RuK7tpApBn5+RN7MbHHif70bf+qLaMu4vM8trp+3C05klsDTHc9YHrBxqB
-         1fbiAdPk4m3u9mleqOdDN+iorOHV6FvLWgjX/OCzAZ8Ne80aUpnY2mJ3Em++rQGUlyDJ
-         4vh/fMDjD3nMbqLH4bT56oQszsW4TOstoA16h4IaRyNGoW0kN00OIQO4GA4CGZDrq2Nf
-         15izF5mCVgE9gi/1406+4pqTQ3Mm8YLchbiExgCqctB5r1cEpGH5JtyeGDeyiOeRfgat
-         wiLw==
-X-Gm-Message-State: AOAM531AC6xp92DE5wO88iAQzMIe0EaueDuWHo6Nvi+1MDe4clHeI/si
-        lELAh/vm09fLhG6SJa75zEekcA==
-X-Google-Smtp-Source: ABdhPJzofhTGYtIsBJ7sqsu7289D2ieSzP7iLSu2PUtje7TbDa7z3ZM8WEgDeRZX4SxvpFZGqwsBvg==
-X-Received: by 2002:aca:cf05:: with SMTP id f5mr7657309oig.32.1614783069005;
-        Wed, 03 Mar 2021 06:51:09 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id s21sm4842863oos.5.2021.03.03.06.51.08
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mrF7YuY2e0TOKUItC+mcZ8du9RTkpgqp0UmvueCRZj0=;
+        b=gUvIhbFmboO3Ps9gopf1uStbzfL/+Vrv73aw3cfjiysdXfcGXhQeSI3dTEPSIQK3g8
+         2YikntIdKsw8zeSpNj1mCCPl2s0Bi50JaXMLkkPFrL5y12xJbxP9pjBQ4zd8ki+oIl9O
+         TTqM/taKfMHaT4Iy4vdeY0oFOFucZCBMkRouw1UJkXprpoFXCrH1QrL5PdWw8yRcO04c
+         e7p5HRAm/LviEBnhOlDIJgfEHkTAuazIAozUr06fmzbbniVTfC+pjy1GvPV61nxWK1d9
+         NshJ8/Mdov+EerDjiRHwrxWyGkjoFOBI0uMOE+4QRFI1xkRe+UydhDMqt5RXRz16yONY
+         fxFw==
+X-Gm-Message-State: AOAM531IK8r1Bbe60qBjiclYAq4sJWo1Kv2hh9AJhW5qim1kelukZ+NR
+        9WxNPj8sLXSDxTZW9bHbKqQ=
+X-Google-Smtp-Source: ABdhPJzM8bUQnu5SaPHBoXZ2vOcLrH/dugJWK4316stWD4ZpOUprodKY+9/dW9idagvynra9nZZLWA==
+X-Received: by 2002:a1c:4b15:: with SMTP id y21mr9577314wma.94.1614781394628;
+        Wed, 03 Mar 2021 06:23:14 -0800 (PST)
+Received: from skynet.lan (170.red-88-1-105.dynamicip.rima-tde.net. [88.1.105.170])
+        by smtp.gmail.com with ESMTPSA id b15sm7876219wmd.41.2021.03.03.06.23.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 06:51:08 -0800 (PST)
-Date:   Wed, 3 Mar 2021 08:51:06 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2] pinctrl: qcom: support gpio_chip .set_config call
-Message-ID: <YD+iWuLS/9knWLFb@builder.lan>
-References: <20210303131858.3976-1-shawn.guo@linaro.org>
+        Wed, 03 Mar 2021 06:23:14 -0800 (PST)
+From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Walle <michael@walle.cc>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 03/14] Documentation: add BCM6328 pincontroller binding documentation
+Date:   Wed,  3 Mar 2021 15:22:59 +0100
+Message-Id: <20210303142310.6371-4-noltari@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210303142310.6371-1-noltari@gmail.com>
+References: <20210303142310.6371-1-noltari@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210303131858.3976-1-shawn.guo@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed 03 Mar 07:18 CST 2021, Shawn Guo wrote:
+Add binding documentation for the pincontrol core found in BCM6328 SoCs.
 
-> In case of ACPI boot, GPIO core does the right thing to parse GPIO pin
-> configs from ACPI table, and call into gpio_chip's .set_config hook for
-> setting them up.  It enables such support on qcom platform by using
-> generic config function, which in turn calls into .pin_config_set of
-> pinconf for setting up hardware.  For qcom platform, it's possible to
-> reuse pin group config functions for pin config hooks, because every pin
-> is maintained as a single group.
-> 
-> This change fixes the problem that Touchpad of Lenovo Flex 5G laptop
-> doesn't work with ACPI boot, because PullUp config of Touchpad GpioInt
-> pin is not set up by the kernel.
-> 
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
+ v3: add new gpio node
+ v2: remove interrupts
 
-I like the fact that this solves your gpio configuration issue, but I'm
-uncertain if just adding support for configuring pins (in addition to
-groups) in the driver is the right solution.
+ .../pinctrl/brcm,bcm6328-pinctrl.yaml         | 171 ++++++++++++++++++
+ 1 file changed, 171 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.yaml
 
-@Linus, to summarize, the Qualcomm TLMM configures pingroups, but all
-gpios are defined as a single pin. pinctrl_gpio_set_config() is invoked
-based on the configuration provided in the ACPI tables, so Shawn's
-proposal is to just implement "config by pin" as well.
-Would this not be a problem shared with all pinctrl drivers that
-configure gpios in groups?
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.yaml
+new file mode 100644
+index 000000000000..d4e3c7897f19
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.yaml
+@@ -0,0 +1,171 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/brcm,bcm6328-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom BCM6328 pin controller
++
++maintainers:
++  - Álvaro Fernández Rojas <noltari@gmail.com>
++  - Jonas Gorski <jonas.gorski@gmail.com>
++
++description: |+
++  The pin controller node should be the child of a syscon node.
++
++  Refer to the the bindings described in
++  Documentation/devicetree/bindings/mfd/syscon.yaml
++
++properties:
++  compatible:
++    const: brcm,bcm6328-pinctrl
++
++patternProperties:
++  '^gpio$':
++    type: object
++    properties:
++      compatible:
++        const: brcm,bcm6328-gpio
++
++      data:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: |
++          Offset in the register map for the data register (in bytes).
++
++      dirout:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: |
++          Offset in the register map for the dirout register (in bytes).
++
++      gpio-controller: true
++
++      "#gpio-cells":
++        const: 2
++
++      gpio-ranges:
++        maxItems: 1
++
++    required:
++      - gpio-controller
++      - gpio-ranges
++      - '#gpio-cells'
++
++  '^.*$':
++    if:
++      type: object
++    then:
++      properties:
++        function:
++          $ref: "/schemas/types.yaml#/definitions/string"
++          enum: [ serial_led_data, serial_led_clk, inet_act_led, pcie_clkreq,
++                  led, ephy0_act_led, ephy1_act_led, ephy2_act_led,
++                  ephy3_act_led, hsspi_cs1, usb_device_port, usb_host_port ]
++
++        pins:
++          $ref: "/schemas/types.yaml#/definitions/string"
++          enum: [ gpio6, gpio7, gpio11, gpio16, gpio17, gpio18, gpio19,
++                  gpio20, gpio25, gpio26, gpio27, gpio28, hsspi_cs1,
++                  usb_port1 ]
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio_cntl@10000080 {
++      compatible = "syscon", "simple-mfd";
++      reg = <0x10000080 0x80>;
++
++      pinctrl: pinctrl {
++        compatible = "brcm,bcm6328-pinctrl";
++
++        gpio {
++          compatible = "brcm,bcm6328-gpio";
++          data = <0xc>;
++          dirout = <0x4>;
++
++          gpio-controller;
++          gpio-ranges = <&pinctrl 0 0 32>;
++          #gpio-cells = <2>;
++        };
++
++        pinctrl_serial_led: serial_led {
++          pinctrl_serial_led_data: serial_led_data {
++            function = "serial_led_data";
++            pins = "gpio6";
++          };
++
++          pinctrl_serial_led_clk: serial_led_clk {
++            function = "serial_led_clk";
++            pins = "gpio7";
++          };
++        };
++
++        pinctrl_inet_act_led: inet_act_led {
++          function = "inet_act_led";
++          pins = "gpio11";
++        };
++
++        pinctrl_pcie_clkreq: pcie_clkreq {
++          function = "pcie_clkreq";
++          pins = "gpio16";
++        };
++
++        pinctrl_ephy0_spd_led: ephy0_spd_led {
++          function = "led";
++          pins = "gpio17";
++        };
++
++        pinctrl_ephy1_spd_led: ephy1_spd_led {
++          function = "led";
++          pins = "gpio18";
++        };
++
++        pinctrl_ephy2_spd_led: ephy2_spd_led {
++          function = "led";
++          pins = "gpio19";
++        };
++
++        pinctrl_ephy3_spd_led: ephy3_spd_led {
++          function = "led";
++          pins = "gpio20";
++        };
++
++        pinctrl_ephy0_act_led: ephy0_act_led {
++          function = "ephy0_act_led";
++          pins = "gpio25";
++        };
++
++        pinctrl_ephy1_act_led: ephy1_act_led {
++          function = "ephy1_act_led";
++          pins = "gpio26";
++        };
++
++        pinctrl_ephy2_act_led: ephy2_act_led {
++          function = "ephy2_act_led";
++          pins = "gpio27";
++        };
++
++        pinctrl_ephy3_act_led: ephy3_act_led {
++          function = "ephy3_act_led";
++          pins = "gpio28";
++        };
++
++        pinctrl_hsspi_cs1: hsspi_cs1 {
++          function = "hsspi_cs1";
++          pins = "hsspi_cs1";
++        };
++
++        pinctrl_usb_port1_device: usb_port1_device {
++          function = "usb_device_port";
++          pins = "usb_port1";
++        };
++
++        pinctrl_usb_port1_host: usb_port1_host {
++          function = "usb_host_port";
++          pins = "usb_port1";
++        };
++      };
++    };
+-- 
+2.20.1
 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
-> Changes for v2:
-> - Add pin config functions that simply call into group config ones.
-> 
->  drivers/pinctrl/qcom/pinctrl-msm.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index af6ed7f43058..a59bb4cbd97e 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -489,10 +489,24 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
->  	return 0;
->  }
->  
-> +static int msm_config_pin_get(struct pinctrl_dev *pctldev, unsigned int pin,
-> +			      unsigned long *config)
-> +{
-> +	return msm_config_group_get(pctldev, pin, config);
-> +}
-> +
-> +static int msm_config_pin_set(struct pinctrl_dev *pctldev, unsigned pin,
-> +			      unsigned long *configs, unsigned num_configs)
-> +{
-> +	return msm_config_group_set(pctldev, pin, configs, num_configs);
-> +}
-> +
->  static const struct pinconf_ops msm_pinconf_ops = {
->  	.is_generic		= true,
->  	.pin_config_group_get	= msm_config_group_get,
->  	.pin_config_group_set	= msm_config_group_set,
-> +	.pin_config_get		= msm_config_pin_get,
-> +	.pin_config_set		= msm_config_pin_set,
->  };
->  
->  static int msm_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-> @@ -717,6 +731,7 @@ static const struct gpio_chip msm_gpio_template = {
->  	.get_direction    = msm_gpio_get_direction,
->  	.get              = msm_gpio_get,
->  	.set              = msm_gpio_set,
-> +	.set_config       = gpiochip_generic_config,
-
-Generally the pinconf/pinmux part of the driver deals with groups, and
-the gpio_chip deals with gpio numbers. So I think that either
-gpiochip_generic_config() should somehow do the translation, or we
-should use a different function that does it (even though there's no
-translation).
-
-Regards,
-Bjorn
-
->  	.request          = gpiochip_generic_request,
->  	.free             = gpiochip_generic_free,
->  	.dbg_show         = msm_gpio_dbg_show,
-> -- 
-> 2.17.1
-> 
