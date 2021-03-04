@@ -2,129 +2,170 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C9CC433E9
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70561C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82D5E64F70
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C17964F6D
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237982AbhCDUQV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Mar 2021 15:16:21 -0500
-Received: from mga07.intel.com ([134.134.136.100]:17133 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237483AbhCDUQK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 4 Mar 2021 15:16:10 -0500
-IronPort-SDR: FJ/WzgRQoDv+2VzFgA/E46hdQvXw3ZEDiTyOMkfKUrz6wZ7hkZ/VSdOnuQQO17gZ0WH2BBmg6h
- AgaAyTtj2BJg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9913"; a="251537524"
-X-IronPort-AV: E=Sophos;i="5.81,223,1610438400"; 
-   d="scan'208";a="251537524"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2021 12:13:03 -0800
-IronPort-SDR: jDvoZbqh1YyXX2x7kCfpMk0WbIt+wBeQ6z8VNiOjeUQAf47LnitebRNrPQqO08piskAjNBZe16
- dYtnP1XBW/YA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,223,1610438400"; 
-   d="scan'208";a="518783505"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 04 Mar 2021 12:13:00 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9009F29E; Thu,  4 Mar 2021 22:13:00 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc:     Marc Zyngier <maz@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH v3 3/5] gpiolib: Move of_node operations to gpiolib-of and correct fwnode use
-Date:   Thu,  4 Mar 2021 22:12:51 +0200
-Message-Id: <20210304201253.14652-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210304201253.14652-1-andriy.shevchenko@linux.intel.com>
-References: <20210304201253.14652-1-andriy.shevchenko@linux.intel.com>
+        id S238659AbhCDUQx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Mar 2021 15:16:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237534AbhCDUQW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 15:16:22 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B078DC061574
+        for <linux-gpio@vger.kernel.org>; Thu,  4 Mar 2021 12:15:41 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id l12so36628317edt.3
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Mar 2021 12:15:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w5jLuTPwmQtRh5LkNxQ0rgOEhjoPWcJ+o8G/ZVzu4EU=;
+        b=RY7ZjM39neNt3ha6ii8uWFcQxr80X5YMwMUA0Ejq7ZGnIXSjRA/JXlAOahRjyCQBIH
+         8XD714pj5JMyrz/3SxcmOxxe6Uy6Q+a0m0782DT4l2BUxpWGRaglT2myg3EU/TnsVVES
+         3MejCu+RDHyUXgOCFczHYp3vNzDaLnEakeyOlGHx17JsOjPkBY1hcwD4acqJVhIapfpJ
+         r2XEV0fGZu284sk++Ba93oXDdnWTXKlvEcInRkMoIKA13kE1jvsewnVdsA+MOQzE6LQM
+         3/lMiG4vUpZ88UWLKA5VQyF4pBMzeR9SgJeMxZPDtdEA9gcSVY3NFf5tHUqORB2IlJR3
+         axBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w5jLuTPwmQtRh5LkNxQ0rgOEhjoPWcJ+o8G/ZVzu4EU=;
+        b=P43KrZ87gxq5JOqon0Au8/s+ZPZX9miyoYwhMAT/JBs+DQClKoVjbGIpFR0PbX27X3
+         wxJpLrZNE7RQGNFj8IlJQaU5prMMhqy+H7ufaTdTP2YP8D9vc27f3Xmxs829vkK4Tvx3
+         ceDh8Ba1ycJzhHMTvFTeMKmiJ1Zs6/v3zBueXFxQH3+efTeGvAGPy9yR/lWSOTumCI4O
+         irS3G83U/t8jNavhyFzXMsXcRJcHXKUxzCjIFu0oF5gr4yic5RwnPcwiWITwqZ+JRVg/
+         K0gJOqpzwMalkADcsHwgQze4y1bQeqdqPhAFhOClyhMzuMPnQz1jOgCnOmh4fv5md/8q
+         q9Nw==
+X-Gm-Message-State: AOAM530AQxw1i3ZddE3fXlXCl9wVhmu+DmNA7wHGItgpX2d6zVfuqf+c
+        exSv/r53vR8OPJVILnZQGN28Mfs8AzPjNAi2yZOR9Q==
+X-Google-Smtp-Source: ABdhPJx2PyGszUmMp+TYoXheeUf4o74MJoSxZjKQywmWIz4lq6/KuKp5DkM8GrPix6AlM3A1T3fpATVU0q+wlP/HQAU=
+X-Received: by 2002:a50:ee05:: with SMTP id g5mr6420181eds.164.1614888940442;
+ Thu, 04 Mar 2021 12:15:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210304102452.21726-1-brgl@bgdev.pl> <20210304102452.21726-10-brgl@bgdev.pl>
+ <YEDdbfbM9abHJpIO@smile.fi.intel.com>
+In-Reply-To: <YEDdbfbM9abHJpIO@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 4 Mar 2021 21:15:29 +0100
+Message-ID: <CAMRc=MdRxXzoZuyLs-24dXfOft=OQqDneTHa4-ZKqFE1kMBWcg@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] gpio: sim: new testing module
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
+        Shuah Khan <shuah@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The initial value of the OF node based on presence of parent, but
-at the same time this operation somehow appeared separately from others
-that handle the OF case. On the other hand there is no need to assign
-dev->fwnode in the OF case if code properly retrieves fwnode, i.e.
-via dev_fwnode() helper.
+On Thu, Mar 4, 2021 at 2:15 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Mar 04, 2021 at 11:24:49AM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Implement a new, modern GPIO testing module controlled by configfs
+> > attributes instead of module parameters. The goal of this driver is
+> > to provide a replacement for gpio-mockup that will be easily extensible
+> > with new features and doesn't require reloading the module to change
+> > the setup.
+>
+> Shall we put a reference to this in the gpio-mockup documentation and mark the
+> latter deprecated?
+>
 
-Amend gpiolib.c and gpiolib-of.c code in order to group OF operations.
+I don't think it's necessary right away. Let's phase out gpio-mockup
+once this one gets some attention (for example: after libgpiod
+switches to using it).
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib-of.c | 6 ++++--
- drivers/gpio/gpiolib.c    | 9 ++++-----
- 2 files changed, 8 insertions(+), 7 deletions(-)
+[snip]
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index baf0153b7bca..bbcc7c073f63 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -1042,11 +1042,13 @@ void of_gpiochip_remove(struct gpio_chip *chip)
- 
- void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
- {
-+	/* Set default OF node to parent's one if present */
-+	if (gc->parent)
-+		gdev->dev.of_node = gc->parent->of_node;
-+
- 	/* If the gpiochip has an assigned OF node this takes precedence */
- 	if (gc->of_node)
- 		gdev->dev.of_node = gc->of_node;
- 	else
- 		gc->of_node = gdev->dev.of_node;
--	if (gdev->dev.of_node)
--		gdev->dev.fwnode = of_fwnode_handle(gdev->dev.of_node);
- }
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 083d7e1c7cde..2a3d562eb8c1 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -585,12 +585,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 	if (!gdev)
- 		return -ENOMEM;
- 	gdev->dev.bus = &gpio_bus_type;
-+	gdev->dev.parent = gc->parent;
- 	gdev->chip = gc;
- 	gc->gpiodev = gdev;
--	if (gc->parent) {
--		gdev->dev.parent = gc->parent;
--		gdev->dev.of_node = gc->parent->of_node;
--	}
- 
- 	of_gpio_dev_init(gc, gdev);
- 
-@@ -4212,11 +4209,13 @@ EXPORT_SYMBOL_GPL(gpiod_put_array);
- 
- static int gpio_bus_match(struct device *dev, struct device_driver *drv)
- {
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
-+
- 	/*
- 	 * Only match if the fwnode doesn't already have a proper struct device
- 	 * created for it.
- 	 */
--	if (dev->fwnode && dev->fwnode->dev != dev)
-+	if (fwnode && fwnode->dev != dev)
- 		return 0;
- 	return 1;
- }
--- 
-2.30.1
+>
+> > +             dev_attr->attr.name = devm_kasprintf(dev, GFP_KERNEL,
+> > +                                                  "gpio%u", i);
+>
+> Reads better as one line.
+>
 
+Yeah, so the removal of the 80 characters limit should not be abused
+when there's no need for it - this doesn't look that bad really with a
+broken line. Same elsewhere where the limit is exceeded.
+
+[snip]
+
+>
+> > +             ret = sprintf(page + written,
+> > +                     i < config->num_line_names - 1 ?
+> > +                             "\"%s\", " : "\"%s\"\n",
+> > +                     config->line_names[i] ?: "");
+>
+> Indentation here looks not the best...
+>
+
+So this is the place where it may make sense to go over 80 chars.
+
+[snip]
+
+> > +
+> > +     /*
+> > +      * FIXME If anyone knows a better way to parse that - please let me
+> > +      * know.
+> > +      */
+>
+> If comma can be replaced with ' ' (space) then why not to use next_arg() from
+> cmdline.c? I.o.w. do you have strong opinion why should we use comma here?
+>
+
+My opinion is not very strong but I wanted to make the list of names
+resemble what we pass to the gpio-line-names property in device tree.
+Doesn't next_arg() react differently to string of the form: "foo=bar"?
+
+[snip]
+
+> > +
+> > +static int gpio_sim_config_uncommit_item(struct config_item *item)
+> > +{
+> > +     struct gpio_sim_chip_config *config = to_gpio_sim_chip_config(item);
+> > +     int id;
+> > +
+> > +     mutex_lock(&config->lock);
+> > +     id = config->pdev->id;
+> > +     platform_device_unregister(config->pdev);
+> > +     config->pdev = NULL;
+>
+> > +     ida_free(&gpio_sim_ida, id);
+>
+> Isn't it atomic per se? I mean that IDA won't give the same ID until you free
+> it. I.o.w. why is it under the mutex?
+>
+
+You're right but if we rapidly create and destroy chips we'll be left
+with holes in the numbering (because new devices would be created
+before the IDA numbers are freed, so the driver would take a larger
+number that's currently free). It doesn't hurt but it would look worse
+IMO. Do you have a strong opinion on this?
+
+[snip]
+
+I'll address issues I didn't comment on.
+
+Thanks for the review!
+Bart
