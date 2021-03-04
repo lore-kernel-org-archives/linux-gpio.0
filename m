@@ -5,36 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB4BC433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C11CC4332D
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBE5864F7A
+	by mail.kernel.org (Postfix) with ESMTP id CCD5F64F7B
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235414AbhCDUPU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Mar 2021 15:15:20 -0500
-Received: from mga01.intel.com ([192.55.52.88]:6975 "EHLO mga01.intel.com"
+        id S236857AbhCDUPR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Mar 2021 15:15:17 -0500
+Received: from mga04.intel.com ([192.55.52.120]:44580 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231734AbhCDUOt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 4 Mar 2021 15:14:49 -0500
-IronPort-SDR: pmSfc2n60SSZetXu5lhD3mMRzc7XgTFFf7JhPMjwKHu9qsuFsjpZrvQO2ktQ/Gm6+hMa4844F7
- jkICx3PHUT1g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9913"; a="207217334"
+        id S232049AbhCDUOu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 4 Mar 2021 15:14:50 -0500
+IronPort-SDR: +w8cJvAokE4zmdBMzlmMWrgXK/Z1J5bNQa3lkl2hdsT85xRz2gcbnMu19JA92kOXYTU15gOKDJ
+ f9E6NwkxN0hg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9913"; a="185091347"
 X-IronPort-AV: E=Sophos;i="5.81,223,1610438400"; 
-   d="scan'208";a="207217334"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2021 12:13:03 -0800
-IronPort-SDR: vnRBuhcgY1/n8X16CGB2tqmuUMhu5j4qSZynT7Q+4kaAYs3mq6wjEIvTJni88B1feN1uyn3l72
- CTc2xY5aC1vA==
+   d="scan'208";a="185091347"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2021 12:13:05 -0800
+IronPort-SDR: 9BvWGDsfn+yqJvSNB/jCpOizBB3vYdQStCf6oWHjICd4IwmPPwEF0i/fWSgO/YJ2EaqTjaPwUr
+ tc2Uw7zcS53g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,223,1610438400"; 
-   d="scan'208";a="406981974"
+   d="scan'208";a="368308590"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 04 Mar 2021 12:13:00 -0800
+  by orsmga003.jf.intel.com with ESMTP; 04 Mar 2021 12:13:01 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A52C83C1; Thu,  4 Mar 2021 22:13:00 +0200 (EET)
+        id 8557F2B7; Thu,  4 Mar 2021 22:13:00 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
@@ -45,9 +45,9 @@ Cc:     Marc Zyngier <maz@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH v3 4/5] gpiolib: Introduce acpi_gpio_dev_init() and call it from core
-Date:   Thu,  4 Mar 2021 22:12:52 +0200
-Message-Id: <20210304201253.14652-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 2/5] gpiolib: Unify the checks on fwnode type
+Date:   Thu,  4 Mar 2021 22:12:50 +0200
+Message-Id: <20210304201253.14652-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210304201253.14652-1-andriy.shevchenko@linux.intel.com>
 References: <20210304201253.14652-1-andriy.shevchenko@linux.intel.com>
@@ -57,70 +57,81 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In the ACPI case we may use the firmware node in the similar way
-as it's done for OF case. We may use that fwnode for other purposes
-in the future.
+We have (historically) different approaches how we identify the type
+of a given fwnode. Let's standardize them across the library code.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpiolib-acpi.c | 7 +++++++
- drivers/gpio/gpiolib-acpi.h | 4 ++++
- drivers/gpio/gpiolib.c      | 1 +
- 3 files changed, 12 insertions(+)
+ drivers/gpio/gpiolib.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 1aacd2a5a1fd..21750be9c489 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1291,6 +1291,13 @@ void acpi_gpiochip_remove(struct gpio_chip *chip)
- 	kfree(acpi_gpio);
- }
- 
-+void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
-+{
-+	/* Set default fwnode to parent's one if present */
-+	if (gc->parent)
-+		ACPI_COMPANION_SET(&gdev->dev, ACPI_COMPANION(gc->parent));
-+}
-+
- static int acpi_gpio_package_count(const union acpi_object *obj)
- {
- 	const union acpi_object *element = obj->package.elements;
-diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
-index e2edb632b2cc..e476558d9471 100644
---- a/drivers/gpio/gpiolib-acpi.h
-+++ b/drivers/gpio/gpiolib-acpi.h
-@@ -36,6 +36,8 @@ struct acpi_gpio_info {
- void acpi_gpiochip_add(struct gpio_chip *chip);
- void acpi_gpiochip_remove(struct gpio_chip *chip);
- 
-+void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev);
-+
- void acpi_gpiochip_request_interrupts(struct gpio_chip *chip);
- void acpi_gpiochip_free_interrupts(struct gpio_chip *chip);
- 
-@@ -58,6 +60,8 @@ int acpi_gpio_count(struct device *dev, const char *con_id);
- static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
- static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
- 
-+static inline void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev) { }
-+
- static inline void
- acpi_gpiochip_request_interrupts(struct gpio_chip *chip) { }
- 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2a3d562eb8c1..46ab1ce67ba0 100644
+index adf55db080d8..083d7e1c7cde 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -590,6 +590,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 	gc->gpiodev = gdev;
+@@ -3678,11 +3678,12 @@ EXPORT_SYMBOL_GPL(fwnode_gpiod_get_index);
+  */
+ int gpiod_count(struct device *dev, const char *con_id)
+ {
++	const struct fwnode_handle *fwnode = dev ? dev_fwnode(dev) : NULL;
+ 	int count = -ENOENT;
  
- 	of_gpio_dev_init(gc, gdev);
-+	acpi_gpio_dev_init(gc, gdev);
+-	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
++	if (is_of_node(fwnode))
+ 		count = of_gpio_get_count(dev, con_id);
+-	else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev))
++	else if (is_acpi_node(fwnode))
+ 		count = acpi_gpio_count(dev, con_id);
  
- 	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
- 	if (gdev->id < 0) {
+ 	if (count < 0)
+@@ -3820,18 +3821,17 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+ 	int ret;
+ 	/* Maybe we have a device name, maybe not */
+ 	const char *devname = dev ? dev_name(dev) : "?";
++	const struct fwnode_handle *fwnode = dev ? dev_fwnode(dev) : NULL;
+ 
+ 	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
+ 
+-	if (dev) {
+-		/* Using device tree? */
+-		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+-			dev_dbg(dev, "using device tree for GPIO lookup\n");
+-			desc = of_find_gpio(dev, con_id, idx, &lookupflags);
+-		} else if (ACPI_COMPANION(dev)) {
+-			dev_dbg(dev, "using ACPI for GPIO lookup\n");
+-			desc = acpi_find_gpio(dev, con_id, idx, &flags, &lookupflags);
+-		}
++	/* Using device tree? */
++	if (is_of_node(fwnode)) {
++		dev_dbg(dev, "using device tree for GPIO lookup\n");
++		desc = of_find_gpio(dev, con_id, idx, &lookupflags);
++	} else if (is_acpi_node(fwnode)) {
++		dev_dbg(dev, "using ACPI for GPIO lookup\n");
++		desc = acpi_find_gpio(dev, con_id, idx, &flags, &lookupflags);
+ 	}
+ 
+ 	/*
+@@ -3915,9 +3915,6 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+ 	int ret;
+ 
+-	if (!fwnode)
+-		return ERR_PTR(-EINVAL);
+-
+ 	if (is_of_node(fwnode)) {
+ 		desc = gpiod_get_from_of_node(to_of_node(fwnode),
+ 					      propname, index,
+@@ -3933,7 +3930,8 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 
+ 		acpi_gpio_update_gpiod_flags(&dflags, &info);
+ 		acpi_gpio_update_gpiod_lookup_flags(&lflags, &info);
+-	}
++	} else
++		return ERR_PTR(-EINVAL);
+ 
+ 	/* Currently only ACPI takes this path */
+ 	ret = gpiod_request(desc, label);
 -- 
 2.30.1
 
