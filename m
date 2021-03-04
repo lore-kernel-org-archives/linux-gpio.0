@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20780C4321A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6922FC4360C
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C42B64F36
+	by mail.kernel.org (Postfix) with ESMTP id 59F9B64F41
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238607AbhCDKcB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Mar 2021 05:32:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39602 "EHLO
+        id S238577AbhCDKcC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Mar 2021 05:32:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238572AbhCDKbo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 05:31:44 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB32FC061788
-        for <linux-gpio@vger.kernel.org>; Thu,  4 Mar 2021 02:30:15 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id m7so798676wmq.0
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Mar 2021 02:30:15 -0800 (PST)
+        with ESMTP id S238582AbhCDKb4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 05:31:56 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 262C7C0613E0
+        for <linux-gpio@vger.kernel.org>; Thu,  4 Mar 2021 02:30:12 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id w7so7532981wmb.5
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Mar 2021 02:30:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5N+MBnaBVQGCO/pRFImYa4+XMDd5iqbeG7mNtUIosOw=;
-        b=gHpN5klU7JQxNonCvCtMPp1igK591qAoysgQeeGZdcjlrws6Bp58/0R1uU1wAPHPEh
-         12xujkbkBQ1YDhyNQPmjh9HvqXy+74U4WRbaRhbKa/j9spySctNtmDhDu2ssrfIUj2sX
-         NNcV2f1gfs1RyJR9h3pwB8jqsghUh/THuhF8/V6pvQO+adFFB9wQ25RF4xdFJueJOYtq
-         HraM02Ebds+0qONLE4N8lxu770LXGqZWtdZ5uY5sYZeAy/ces5SNSbDE+OHklyyXD1UA
-         a9vtBKQ6eclmRKm/jQ03RWVL4TTkp1ptuaxrpRJLn306h6FWQRxDlvPetAhRxdpL3FDn
-         OGzw==
+        bh=pCe90PiqGmxROg4pfqFFTH25K7JQCv+JP3yxH8AOnKc=;
+        b=EnueNiX6NpYKxBrj0wY36yyGp38a1izgQNX8Hx89b9vCl82p35QuJoeFi0PlgUEKdu
+         adhL2KupJr9zBnoE0Qj3UPOk5DXG8PTYa5do55m2LDWTrih9GhieMQGmMBel92zrhQMP
+         SCOQ89LyCAgrDjvE/GGe6WITNj68OMGsE2uQ/aHKJvaYrYVEBdBMJ1ro6OAp/GkchOFM
+         QLTa526fTJMiNYEzS4msmOreeOBYRGRZoGlmYhUax5bQZNM+bFN17TIrx4urSvta/XbJ
+         cgxuZAvzP/tJdV8HivrZ+Tq3Op8aL12FAm2laj/AgEFHrerOZpyLfbUC1dbjTcSrQ0FY
+         CEZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5N+MBnaBVQGCO/pRFImYa4+XMDd5iqbeG7mNtUIosOw=;
-        b=K8x0XUcyMUtHjIruega+6t24UU7FFhB9YUqW/HeQRz14X1Bvn78CbYfNfBjhVEfmBd
-         /TVmZmmxT56Sb2EvqbZuu40Hwa+6W7r8vd4lYdMVGGGE/SAet4G6Wn5pVoD2O9YN7rPH
-         b7k5kdGbp9L9d1M6IuY/xHGj4O6VLKDaQhdZcznoVE8ma3qlxAK1NBgnlmWbpxrVJ9nw
-         3FOym5lBRElqOn/IKsvzwYYz4XFT7q1JXyAsUbnbO4n+9r6ig2Ap6rIaJsPInYKo70+m
-         ra2tjUK0Ym7pim4LJRZhnXJWNyiyJeE+p46aUc/h9sz8fRHUhSGQJJ+JOvAytRTmKaSG
-         EA6g==
-X-Gm-Message-State: AOAM531WG4UK46nErRByYaZSqO4GTty9lEVxE+jQ7zs8k0dGnFeEohQ5
-        DAXoQiJdnfgHGIcroqZV5I+e5g==
-X-Google-Smtp-Source: ABdhPJxGsvjrc2QvO6hHXj4n4kIhldbkPug4Ob8YItFemOynzGAlYw814WIwxJ8ZYo+M3I49ZbV27w==
-X-Received: by 2002:a05:600c:3550:: with SMTP id i16mr3222940wmq.170.1614853814702;
-        Thu, 04 Mar 2021 02:30:14 -0800 (PST)
+        bh=pCe90PiqGmxROg4pfqFFTH25K7JQCv+JP3yxH8AOnKc=;
+        b=NYLGMS0OLf6cTYv1H6OwC25LLmlk+1ODbSiC8K0kGe/wMBZiMuhH6M/ReuBdretHlp
+         OpiYKs9SYtwDh5GSbgSe7bB3xnNpUp5kiyGZa6noZGpBnneoUvlcTdAMCXxWO0ZQxRcf
+         JwyxPo9SY4PF+VvBpYyeNxi5cgnsBlrq47llcLuQ9TqUcT6cyApZLFBgxrhm1/eys7l0
+         KNBaVQbmkdmQGGaGyCkl9mPaCUEG0UYBwNG8z86l9QOXTaNaK2jmUFWpGlg8QgmBRUWn
+         1y8oJdDNrxyy7QvpAdAQkgnDIkTk5nHBoP9S3Sx0NWnMa1jy0s61s9LNYJtSt/Xxic9S
+         aAQQ==
+X-Gm-Message-State: AOAM533bBcErg4y6pgQCeBL7eFMCCUojb2TzQBpAgf2S6hoIXNxmbEze
+        oFXE7qbuyZjJfJlhm5+89+icJw==
+X-Google-Smtp-Source: ABdhPJzXMkznue5E1BXwSAv/5Jnk3qYctYhg0S8yF4gHZKgRkHzuNTIh1oPe4Fqhe5HmfeqXk9SRtA==
+X-Received: by 2002:a1c:2016:: with SMTP id g22mr3213575wmg.137.1614853810754;
+        Thu, 04 Mar 2021 02:30:10 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id f7sm35501854wre.78.2021.03.04.02.30.14
+        by smtp.gmail.com with ESMTPSA id f7sm35501854wre.78.2021.03.04.02.30.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 02:30:14 -0800 (PST)
+        Thu, 04 Mar 2021 02:30:10 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
         Shuah Khan <shuah@kernel.org>,
@@ -68,9 +68,9 @@ To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 10/12] selftests: gpio: provide a helper for reading chip info
-Date:   Thu,  4 Mar 2021 11:24:50 +0100
-Message-Id: <20210304102452.21726-11-brgl@bgdev.pl>
+Subject: [PATCH v2 05/12] lib: bitmap: remove the 'extern' keyword from function declarations
+Date:   Thu,  4 Mar 2021 11:24:45 +0100
+Message-Id: <20210304102452.21726-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20210304102452.21726-1-brgl@bgdev.pl>
 References: <20210304102452.21726-1-brgl@bgdev.pl>
@@ -82,100 +82,173 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a simple program that allows to retrieve chip properties from the
-GPIO character device. This will be used in gpio-sim selftests.
+The 'extern' keyword doesn't have any benefits in header files. Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- tools/testing/selftests/gpio/.gitignore       |  1 +
- tools/testing/selftests/gpio/Makefile         |  2 +-
- tools/testing/selftests/gpio/gpio-chip-info.c | 57 +++++++++++++++++++
- 3 files changed, 59 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/gpio/gpio-chip-info.c
+ include/linux/bitmap.h | 115 ++++++++++++++++++++---------------------
+ 1 file changed, 57 insertions(+), 58 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/.gitignore b/tools/testing/selftests/gpio/.gitignore
-index a4969f7ee020..4ea4f58dab1a 100644
---- a/tools/testing/selftests/gpio/.gitignore
-+++ b/tools/testing/selftests/gpio/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- gpio-mockup-cdev
-+gpio-chip-info
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 39f2bbe8dd3d..84b48547f94c 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -2,6 +2,6 @@
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 70a932470b2d..6939a8983026 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -118,54 +118,53 @@
+  * Allocation and deallocation of bitmap.
+  * Provided in lib/bitmap.c to avoid circular dependency.
+  */
+-extern unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
+-extern unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
+-extern void bitmap_free(const unsigned long *bitmap);
++unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
++unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
++void bitmap_free(const unsigned long *bitmap);
  
- TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh
--TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev
-+TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info
+ /*
+  * lib/bitmap.c provides these functions:
+  */
  
- include ../lib.mk
-diff --git a/tools/testing/selftests/gpio/gpio-chip-info.c b/tools/testing/selftests/gpio/gpio-chip-info.c
-new file mode 100644
-index 000000000000..4d26fa7c254a
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-chip-info.c
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * GPIO character device helper for reading chip information.
-+ *
-+ * Copyright (C) 2021 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ */
+-extern int __bitmap_equal(const unsigned long *bitmap1,
+-			  const unsigned long *bitmap2, unsigned int nbits);
+-extern bool __pure __bitmap_or_equal(const unsigned long *src1,
+-				     const unsigned long *src2,
+-				     const unsigned long *src3,
+-				     unsigned int nbits);
+-extern void __bitmap_complement(unsigned long *dst, const unsigned long *src,
+-			unsigned int nbits);
+-extern void __bitmap_shift_right(unsigned long *dst, const unsigned long *src,
+-				unsigned int shift, unsigned int nbits);
+-extern void __bitmap_shift_left(unsigned long *dst, const unsigned long *src,
+-				unsigned int shift, unsigned int nbits);
+-extern void bitmap_cut(unsigned long *dst, const unsigned long *src,
+-		       unsigned int first, unsigned int cut,
+-		       unsigned int nbits);
+-extern int __bitmap_and(unsigned long *dst, const unsigned long *bitmap1,
++int __bitmap_equal(const unsigned long *bitmap1,
++		   const unsigned long *bitmap2, unsigned int nbits);
++bool __pure __bitmap_or_equal(const unsigned long *src1,
++			      const unsigned long *src2,
++			      const unsigned long *src3,
++			      unsigned int nbits);
++void __bitmap_complement(unsigned long *dst, const unsigned long *src,
++			 unsigned int nbits);
++void __bitmap_shift_right(unsigned long *dst, const unsigned long *src,
++			  unsigned int shift, unsigned int nbits);
++void __bitmap_shift_left(unsigned long *dst, const unsigned long *src,
++			 unsigned int shift, unsigned int nbits);
++void bitmap_cut(unsigned long *dst, const unsigned long *src,
++		unsigned int first, unsigned int cut, unsigned int nbits);
++int __bitmap_and(unsigned long *dst, const unsigned long *bitmap1,
++		 const unsigned long *bitmap2, unsigned int nbits);
++void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
++		 const unsigned long *bitmap2, unsigned int nbits);
++void __bitmap_xor(unsigned long *dst, const unsigned long *bitmap1,
++		  const unsigned long *bitmap2, unsigned int nbits);
++int __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
++		    const unsigned long *bitmap2, unsigned int nbits);
++void __bitmap_replace(unsigned long *dst,
++		      const unsigned long *old, const unsigned long *new,
++		      const unsigned long *mask, unsigned int nbits);
++int __bitmap_intersects(const unsigned long *bitmap1,
+ 			const unsigned long *bitmap2, unsigned int nbits);
+-extern void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern void __bitmap_xor(unsigned long *dst, const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern int __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern void __bitmap_replace(unsigned long *dst,
+-			const unsigned long *old, const unsigned long *new,
+-			const unsigned long *mask, unsigned int nbits);
+-extern int __bitmap_intersects(const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern int __bitmap_subset(const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern int __bitmap_weight(const unsigned long *bitmap, unsigned int nbits);
+-extern void __bitmap_set(unsigned long *map, unsigned int start, int len);
+-extern void __bitmap_clear(unsigned long *map, unsigned int start, int len);
+-
+-extern unsigned long bitmap_find_next_zero_area_off(unsigned long *map,
+-						    unsigned long size,
+-						    unsigned long start,
+-						    unsigned int nr,
+-						    unsigned long align_mask,
+-						    unsigned long align_offset);
++int __bitmap_subset(const unsigned long *bitmap1,
++		    const unsigned long *bitmap2, unsigned int nbits);
++int __bitmap_weight(const unsigned long *bitmap, unsigned int nbits);
++void __bitmap_set(unsigned long *map, unsigned int start, int len);
++void __bitmap_clear(unsigned long *map, unsigned int start, int len);
 +
-+#include <fcntl.h>
-+#include <linux/gpio.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/types.h>
-+
-+static void print_usage(void)
-+{
-+	printf("usage:\n");
-+	printf("  gpio-chip-info <chip path> [name|label|num-lines]\n");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct gpiochip_info info;
-+	int fd, ret;
-+
-+	if (argc !=3) {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	fd = open(argv[1], O_RDWR);
-+	if (fd < 0) {
-+		perror("unable to open the GPIO chip");
-+		return EXIT_FAILURE;
-+	}
-+
-+	memset(&info, 0, sizeof(info));
-+	ret = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &info);
-+	if (ret) {
-+		perror("chip info ioctl failed");
-+		return EXIT_FAILURE;
-+	}
-+
-+	if (strcmp(argv[2], "name") == 0) {
-+		printf("%s\n", info.name);
-+	} else if (strcmp(argv[2], "label") == 0) {
-+		printf("%s\n", info.label);
-+	} else if (strcmp(argv[2], "num-lines") == 0) {
-+		printf("%u\n", info.lines);
-+	} else {
-+		fprintf(stderr, "unknown command: %s\n", argv[2]);
-+		return EXIT_FAILURE;
-+	}
-+
-+	return EXIT_SUCCESS;
-+}
++unsigned long bitmap_find_next_zero_area_off(unsigned long *map,
++					     unsigned long size,
++					     unsigned long start,
++					     unsigned int nr,
++					     unsigned long align_mask,
++					     unsigned long align_offset);
+ 
+ /**
+  * bitmap_find_next_zero_area - find a contiguous aligned zero area
+@@ -190,33 +189,33 @@ bitmap_find_next_zero_area(unsigned long *map,
+ 					      align_mask, 0);
+ }
+ 
+-extern int bitmap_parse(const char *buf, unsigned int buflen,
++int bitmap_parse(const char *buf, unsigned int buflen,
+ 			unsigned long *dst, int nbits);
+-extern int bitmap_parse_user(const char __user *ubuf, unsigned int ulen,
++int bitmap_parse_user(const char __user *ubuf, unsigned int ulen,
+ 			unsigned long *dst, int nbits);
+-extern int bitmap_parselist(const char *buf, unsigned long *maskp,
++int bitmap_parselist(const char *buf, unsigned long *maskp,
+ 			int nmaskbits);
+-extern int bitmap_parselist_user(const char __user *ubuf, unsigned int ulen,
++int bitmap_parselist_user(const char __user *ubuf, unsigned int ulen,
+ 			unsigned long *dst, int nbits);
+-extern void bitmap_remap(unsigned long *dst, const unsigned long *src,
++void bitmap_remap(unsigned long *dst, const unsigned long *src,
+ 		const unsigned long *old, const unsigned long *new, unsigned int nbits);
+-extern int bitmap_bitremap(int oldbit,
++int bitmap_bitremap(int oldbit,
+ 		const unsigned long *old, const unsigned long *new, int bits);
+-extern void bitmap_onto(unsigned long *dst, const unsigned long *orig,
++void bitmap_onto(unsigned long *dst, const unsigned long *orig,
+ 		const unsigned long *relmap, unsigned int bits);
+-extern void bitmap_fold(unsigned long *dst, const unsigned long *orig,
++void bitmap_fold(unsigned long *dst, const unsigned long *orig,
+ 		unsigned int sz, unsigned int nbits);
+-extern int bitmap_find_free_region(unsigned long *bitmap, unsigned int bits, int order);
+-extern void bitmap_release_region(unsigned long *bitmap, unsigned int pos, int order);
+-extern int bitmap_allocate_region(unsigned long *bitmap, unsigned int pos, int order);
++int bitmap_find_free_region(unsigned long *bitmap, unsigned int bits, int order);
++void bitmap_release_region(unsigned long *bitmap, unsigned int pos, int order);
++int bitmap_allocate_region(unsigned long *bitmap, unsigned int pos, int order);
+ 
+ #ifdef __BIG_ENDIAN
+-extern void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int nbits);
++void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int nbits);
+ #else
+ #define bitmap_copy_le bitmap_copy
+ #endif
+-extern unsigned int bitmap_ord_to_pos(const unsigned long *bitmap, unsigned int ord, unsigned int nbits);
+-extern int bitmap_print_to_pagebuf(bool list, char *buf,
++unsigned int bitmap_ord_to_pos(const unsigned long *bitmap, unsigned int ord, unsigned int nbits);
++int bitmap_print_to_pagebuf(bool list, char *buf,
+ 				   const unsigned long *maskp, int nmaskbits);
+ 
+ #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
+@@ -265,9 +264,9 @@ static inline void bitmap_copy_clear_tail(unsigned long *dst,
+  * therefore conversion is not needed when copying data from/to arrays of u32.
+  */
+ #if BITS_PER_LONG == 64
+-extern void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf,
++void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf,
+ 							unsigned int nbits);
+-extern void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap,
++void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap,
+ 							unsigned int nbits);
+ #else
+ #define bitmap_from_arr32(bitmap, buf, nbits)			\
 -- 
 2.29.1
 
