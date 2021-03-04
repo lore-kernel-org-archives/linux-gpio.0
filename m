@@ -2,60 +2,59 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B84C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4C0C433E6
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72FE964F34
+	by mail.kernel.org (Postfix) with ESMTP id 9C6B564F2B
 	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238685AbhCDKcb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Mar 2021 05:32:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39768 "EHLO
+        id S238687AbhCDKcc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Mar 2021 05:32:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238671AbhCDKcJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 05:32:09 -0500
+        with ESMTP id S238656AbhCDKcI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 05:32:08 -0500
 Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1AC7C061793
-        for <linux-gpio@vger.kernel.org>; Thu,  4 Mar 2021 02:30:16 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id m7so798714wmq.0
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Mar 2021 02:30:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058B6C0613E3
+        for <linux-gpio@vger.kernel.org>; Thu,  4 Mar 2021 02:30:13 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id k66so9130327wmf.1
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Mar 2021 02:30:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jvONDvt0z0lDvIPYURd0mL7FvKxWbTnZ85Tag2PzNjQ=;
-        b=cRP+06aq2xL14nQrl4MaDz4ppkm/L6hnQOKerm3lS92Pz/iQEdmyY0XGzMkz7Lgs6x
-         B/BblaeXYey4aqFUVWohfJbHr4FmTL/RMZIHGc5Q4p6kdouMnuxuf/x54py6JcUNVFXx
-         jgqw0HE8/fajgRpyMTSbj9DjfR7syL7F3dODxiVwX5oeHGUs6nGtmt1q280TNqDd8Cps
-         MYq7yFh5OkPSvBCi6n++HK7ShXsnYo+RzLTWliTL86sEcnM0JmQiTqgMroGtAvONAuTY
-         sAKky2BsZn4haLIxKtyCGzaSb+4jFK4Ff+1E/XXI/WzjrARDFWEpQ0PLv4SASmJ4QMjs
-         LlEw==
+        bh=jzLcn/9JFFu/zAnz2fz4llMxe0ZNESpsBe/AAdOPAB8=;
+        b=tuRBMG8HzrbDNFK8qAYS22PR4XQ2So85s7DniK8OWce7W92hEoiJwjeBU2i2PY3X6l
+         ouGt9uuEdG/TNzuKbXDdMBzv60SNx9ywfNVhzNiAo7JXpYnaKPPFL11M4k2tl7iFSrte
+         ZXlJOQfCvCeEvhP5Xt9/W1FScPmHLQgb+PHAu3Tb8sSdiF8LUGhBpuPjC8OYpwIdJDaT
+         9+JTGwgtBqmhkH5eT0PzY0YZ+w2S7TY5fiHBnRcNEr5rmRDDOVv5KNekn9HZ8xJTwDjO
+         5WhJoGB6Q6g96ok0hzPlUyDW1B1RJyptPiXTZ84Amg1hKWsWGlLuwuY6lpZNoJTg6gTU
+         jMhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jvONDvt0z0lDvIPYURd0mL7FvKxWbTnZ85Tag2PzNjQ=;
-        b=piYd0ydrnLEMJhE4UIsj67SYrxXG1NovELje07pKbitbeDlzqNRxBcLezvCxoUwOrA
-         mAB5zCp2rfiYv5EC9EnjXFJxY/Xm42Y48smiF+6y3w7fY7DckgopztMLusQliWWkKeGz
-         qzDt+2AUtGIJAcbqik4rKh4hfH24NWKLU7d72BkwZUE5ps8SdibEliNMiViDZCd5ZIbt
-         2SWYvjfrxsO5doxl5jdFEDWKfADt5fRV+3bHXyZZ2VC6+j4sdJD+s+NLoX/CpMf1wLEg
-         8mnuYIfCqYXlrnRCl61n2FWYATI7qE8EwZnGYxX71Eg3JHxjocxF7N4MFZMAJlIjFuVj
-         ZuWQ==
-X-Gm-Message-State: AOAM530t3QZx7UxnGA41F001v2X9JDyZceGBqBQ9Bu1UYHAG1EbESh/I
-        URtCFTCnvZjEogQBaASnMWPax5jKhU+GfA==
-X-Google-Smtp-Source: ABdhPJzfc9BRGfSahto3YKKYnRFPnO7vWQ5WUUf+KGC0JT+woS1VxullKbwJpmqu5FwFCNaVFldpRA==
-X-Received: by 2002:a1c:c20a:: with SMTP id s10mr3203464wmf.144.1614853815558;
-        Thu, 04 Mar 2021 02:30:15 -0800 (PST)
+        bh=jzLcn/9JFFu/zAnz2fz4llMxe0ZNESpsBe/AAdOPAB8=;
+        b=LLRceZx9BwYWfaoPeA+3vniqbCRjEh+1hGGWomgOOFOqNlvG3TVP+I/tZR6ghmmpt4
+         Kl7YlGYMS7/f6blWSb301ECxyBh3cMSwgKiAVq7m1+uVh94FYO6aIofpL6tdde6Ki4w1
+         j+1o0Wo7tetPrSmR2nb8qd5zz2TAtINS5xF1+GFCUvplLW2oatFfU3IWTotOW0sBkO4A
+         KYVSuoNKA9XtI/5LTk7MIKVrAaIigefEKscoVA9FzVCv/5wKGv2PqDqZZ4EcAEpj9Prv
+         vUTsudJxxJ4Z1tT6F5P4m/lByvf/IQ2gzeIQ7juH+zlXh7gBxO+5er6Nvig8wM9MJufl
+         mAgA==
+X-Gm-Message-State: AOAM532mBwHdHJb0ouXyrYorZXjZk7lKSj0deqoIt0CM0vGda7bK/h7B
+        +EYalv05AvaDhmKGfkTbDiha8g==
+X-Google-Smtp-Source: ABdhPJwOYvL1KO3KRXjN8n30tg8GfdxYxQb08ru+C3Jv/q3rkh1v5cZ0T6iJXrCdfEmnn+bpte48GA==
+X-Received: by 2002:a05:600c:2204:: with SMTP id z4mr3303682wml.31.1614853811561;
+        Thu, 04 Mar 2021 02:30:11 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id f7sm35501854wre.78.2021.03.04.02.30.14
+        by smtp.gmail.com with ESMTPSA id f7sm35501854wre.78.2021.03.04.02.30.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 02:30:15 -0800 (PST)
+        Thu, 04 Mar 2021 02:30:11 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
         Shuah Khan <shuah@kernel.org>,
@@ -69,9 +68,9 @@ To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 11/12] selftests: gpio: add a helper for reading GPIO line names
-Date:   Thu,  4 Mar 2021 11:24:51 +0100
-Message-Id: <20210304102452.21726-12-brgl@bgdev.pl>
+Subject: [PATCH v2 06/12] lib: bitmap: order includes alphabetically
+Date:   Thu,  4 Mar 2021 11:24:46 +0100
+Message-Id: <20210304102452.21726-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20210304102452.21726-1-brgl@bgdev.pl>
 References: <20210304102452.21726-1-brgl@bgdev.pl>
@@ -83,99 +82,59 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a simple program that allows to read GPIO line names from the
-character device. This will be used in gpio-sim selftests.
+For better readability and maintenance: order the includes in bitmap
+source files alphabetically.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- tools/testing/selftests/gpio/.gitignore       |  1 +
- tools/testing/selftests/gpio/Makefile         |  2 +-
- tools/testing/selftests/gpio/gpio-line-name.c | 55 +++++++++++++++++++
- 3 files changed, 57 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/gpio/gpio-line-name.c
+ include/linux/bitmap.h | 4 ++--
+ lib/bitmap.c           | 9 +++++----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/.gitignore b/tools/testing/selftests/gpio/.gitignore
-index 4ea4f58dab1a..ededb077a3a6 100644
---- a/tools/testing/selftests/gpio/.gitignore
-+++ b/tools/testing/selftests/gpio/.gitignore
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- gpio-mockup-cdev
- gpio-chip-info
-+gpio-line-name
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 84b48547f94c..d7d8f1985d99 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -2,6 +2,6 @@
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 6939a8983026..3282db97e06c 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -4,10 +4,10 @@
  
- TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh
--TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info
-+TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
+ #ifndef __ASSEMBLY__
  
- include ../lib.mk
-diff --git a/tools/testing/selftests/gpio/gpio-line-name.c b/tools/testing/selftests/gpio/gpio-line-name.c
-new file mode 100644
-index 000000000000..a52e75bc37ba
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-line-name.c
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * GPIO character device helper for reading line names.
-+ *
-+ * Copyright (C) 2021 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ */
+-#include <linux/types.h>
+ #include <linux/bitops.h>
+-#include <linux/string.h>
+ #include <linux/kernel.h>
++#include <linux/string.h>
++#include <linux/types.h>
+ 
+ /*
+  * bitmaps provide bit arrays that consume one or more unsigned
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index 75006c4036e9..78f70d9007ad 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -3,17 +3,18 @@
+  * lib/bitmap.c
+  * Helper functions for bitmap.h.
+  */
+-#include <linux/export.h>
+-#include <linux/thread_info.h>
+-#include <linux/ctype.h>
+-#include <linux/errno.h>
 +
-+#include <fcntl.h>
-+#include <linux/gpio.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/types.h>
-+
-+static void print_usage(void)
-+{
-+	printf("usage:\n");
-+	printf("  gpio-line-name <chip path> <line offset>\n");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct gpio_v2_line_info info;
-+	int fd, ret;
-+	char *endp;
-+
-+	if (argc != 3) {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	fd = open(argv[1], O_RDWR);
-+	if (fd < 0) {
-+		perror("unable to open the GPIO chip");
-+		return EXIT_FAILURE;
-+	}
-+
-+	memset(&info, 0, sizeof(info));
-+	info.offset = strtoul(argv[2], &endp, 10);
-+	if (*endp != '\0') {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	ret = ioctl(fd, GPIO_V2_GET_LINEINFO_IOCTL, &info);
-+	if (ret) {
-+		perror("line info ioctl failed");
-+		return EXIT_FAILURE;
-+	}
-+
-+	printf("%s\n", info.name);
-+
-+	return EXIT_SUCCESS;
-+}
+ #include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/bug.h>
++#include <linux/ctype.h>
++#include <linux/errno.h>
++#include <linux/export.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
++#include <linux/thread_info.h>
+ #include <linux/uaccess.h>
+ 
+ #include <asm/page.h>
 -- 
 2.29.1
 
