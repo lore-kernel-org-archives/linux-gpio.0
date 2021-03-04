@@ -2,139 +2,129 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4C0C433E6
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C041C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6B564F2B
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3976164F2B
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 10:34:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238687AbhCDKcc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Mar 2021 05:32:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39750 "EHLO
+        id S236771AbhCDKeH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Mar 2021 05:34:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238656AbhCDKcI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 05:32:08 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058B6C0613E3
-        for <linux-gpio@vger.kernel.org>; Thu,  4 Mar 2021 02:30:13 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id k66so9130327wmf.1
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Mar 2021 02:30:12 -0800 (PST)
+        with ESMTP id S235607AbhCDKd7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 05:33:59 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C60C061574;
+        Thu,  4 Mar 2021 02:33:19 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id u12so6601600pjr.2;
+        Thu, 04 Mar 2021 02:33:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jzLcn/9JFFu/zAnz2fz4llMxe0ZNESpsBe/AAdOPAB8=;
-        b=tuRBMG8HzrbDNFK8qAYS22PR4XQ2So85s7DniK8OWce7W92hEoiJwjeBU2i2PY3X6l
-         ouGt9uuEdG/TNzuKbXDdMBzv60SNx9ywfNVhzNiAo7JXpYnaKPPFL11M4k2tl7iFSrte
-         ZXlJOQfCvCeEvhP5Xt9/W1FScPmHLQgb+PHAu3Tb8sSdiF8LUGhBpuPjC8OYpwIdJDaT
-         9+JTGwgtBqmhkH5eT0PzY0YZ+w2S7TY5fiHBnRcNEr5rmRDDOVv5KNekn9HZ8xJTwDjO
-         5WhJoGB6Q6g96ok0hzPlUyDW1B1RJyptPiXTZ84Amg1hKWsWGlLuwuY6lpZNoJTg6gTU
-         jMhA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DbTGwtwN+3FwBHptevJXZkE1kRcgS++9qmkLPqlJEgM=;
+        b=DEMEpGAJ8h04MK/Ux5i21+AZZ4hE66NtW86NckRm18a0lCmN3Ib9iR7vc29mpZlQEp
+         6snIV33kEKDq/gumlRe6dbRFX7pv93WLSXjPvlEj8OciNFSSKhtoMsTstJKZlzAPbXys
+         PM/z6Mgq0atzVfBcxMP4x10J4Re2LX78ZLtKRGxNHvfhBYFkFeWdaHD2w5AcN0893q5U
+         SM3MZvQvOVms5NGjx3fyte8bdTpRtnFGjl3HcyCoIvXLMleqNmKMvxIvOOdGqKS7O1yh
+         5xeyY7+XJygG2taB12Cm51CMCdHCbBLorZ03tHtWQ+oXsjD/+EOU5jXN64dv5ufw0gQv
+         4Nhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jzLcn/9JFFu/zAnz2fz4llMxe0ZNESpsBe/AAdOPAB8=;
-        b=LLRceZx9BwYWfaoPeA+3vniqbCRjEh+1hGGWomgOOFOqNlvG3TVP+I/tZR6ghmmpt4
-         Kl7YlGYMS7/f6blWSb301ECxyBh3cMSwgKiAVq7m1+uVh94FYO6aIofpL6tdde6Ki4w1
-         j+1o0Wo7tetPrSmR2nb8qd5zz2TAtINS5xF1+GFCUvplLW2oatFfU3IWTotOW0sBkO4A
-         KYVSuoNKA9XtI/5LTk7MIKVrAaIigefEKscoVA9FzVCv/5wKGv2PqDqZZ4EcAEpj9Prv
-         vUTsudJxxJ4Z1tT6F5P4m/lByvf/IQ2gzeIQ7juH+zlXh7gBxO+5er6Nvig8wM9MJufl
-         mAgA==
-X-Gm-Message-State: AOAM532mBwHdHJb0ouXyrYorZXjZk7lKSj0deqoIt0CM0vGda7bK/h7B
-        +EYalv05AvaDhmKGfkTbDiha8g==
-X-Google-Smtp-Source: ABdhPJwOYvL1KO3KRXjN8n30tg8GfdxYxQb08ru+C3Jv/q3rkh1v5cZ0T6iJXrCdfEmnn+bpte48GA==
-X-Received: by 2002:a05:600c:2204:: with SMTP id z4mr3303682wml.31.1614853811561;
-        Thu, 04 Mar 2021 02:30:11 -0800 (PST)
-Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id f7sm35501854wre.78.2021.03.04.02.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 02:30:11 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
-        Shuah Khan <shuah@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 06/12] lib: bitmap: order includes alphabetically
-Date:   Thu,  4 Mar 2021 11:24:46 +0100
-Message-Id: <20210304102452.21726-7-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.29.1
-In-Reply-To: <20210304102452.21726-1-brgl@bgdev.pl>
-References: <20210304102452.21726-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DbTGwtwN+3FwBHptevJXZkE1kRcgS++9qmkLPqlJEgM=;
+        b=rD8egkSv5lZ4kNoL4uBh+rZ4wwHND51GMmLTlklYPRBqfCcc6BbCouMPZXaf8VsUx9
+         zcP0HPPAKowniVi3MvP8zzsBVNWdqfPgPMfh/p4YKQlKfZqxw8cXl3BBcSaT6QMxvntr
+         xTCxi7PMzPN+K0m0fBfG/G5lMu9je7Cj543PzjLa7FR50E73BcUTYTIg37ESLWZ62bJw
+         SqTgL7z3if+0OVRQeuEEqZHhFaAyo53hCrwMaEhnPN2B9mvdcTrqnjZQcWjGbcyHofat
+         75Bizpa1JSZOQ1JmQ3d3HqhjKrdBxHsY34R4q5rCMttFOQiLafxP6LudE2ak8sjDoCAr
+         Uoog==
+X-Gm-Message-State: AOAM532WqOr6JpM50CFmwL3W7mzg6TGEFAwQlmkLA9sPkxO6vinIYsZL
+        3OARCLFaKTJO8OvNvw9Dv+W6eddlzDlAkFNfbJg=
+X-Google-Smtp-Source: ABdhPJxNQSj0S3iGBlwnK8egDCqTMJ+MAyl7DDSfnL4kOfExCG5mu9h72f+jq68lZPe/6mS1ajKMEMejq2LS/diUXJ8=
+X-Received: by 2002:a17:90a:4586:: with SMTP id v6mr2220656pjg.129.1614853998595;
+ Thu, 04 Mar 2021 02:33:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210304085710.7128-1-noltari@gmail.com> <20210304085710.7128-2-noltari@gmail.com>
+In-Reply-To: <20210304085710.7128-2-noltari@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 4 Mar 2021 12:33:02 +0200
+Message-ID: <CAHp75VftSREbd=k6tr5VCk7rZu3Ftsv-5wr1MOv0eVHRD5PJTA@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] gpio: guard gpiochip_irqchip_add_domain() with GPIOLIB_IRQCHIP
+To:     =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Walle <michael@walle.cc>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Thu, Mar 4, 2021 at 10:57 AM =C3=81lvaro Fern=C3=A1ndez Rojas
+<noltari@gmail.com> wrote:
+>
+> The current code doesn't check if GPIOLIB_IRQCHIP is enabled, which resul=
+ts in
+> a compilation error when trying to build gpio-regmap if CONFIG_GPIOLIB_IR=
+QCHIP
+> isn't enabled.
 
-For better readability and maintenance: order the includes in bitmap
-source files alphabetically.
+Suggested-by: ?
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- include/linux/bitmap.h | 4 ++--
- lib/bitmap.c           | 9 +++++----
- 2 files changed, 7 insertions(+), 6 deletions(-)
+> Fixes: 6a45b0e2589f ("gpiolib: Introduce gpiochip_irqchip_add_domain()")
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> ---
+>  v4: add patch (fix include instead of gpio-regmap.c)
+>
+>  include/linux/gpio/driver.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 286de0520574..ecf0032a0995 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -624,8 +624,17 @@ void gpiochip_irq_domain_deactivate(struct irq_domai=
+n *domain,
+>  bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gc,
+>                                 unsigned int offset);
+>
+> +#ifdef CONFIG_GPIOLIB_IRQCHIP
+>  int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
+>                                 struct irq_domain *domain);
+> +#else
+> +static inline int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
+> +                                             struct irq_domain *domain)
+> +{
+> +       WARN_ON(1);
+> +       return -EINVAL;
+> +}
+> +#endif
+>
+>  int gpiochip_generic_request(struct gpio_chip *gc, unsigned int offset);
+>  void gpiochip_generic_free(struct gpio_chip *gc, unsigned int offset);
+> --
+> 2.20.1
+>
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 6939a8983026..3282db97e06c 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -4,10 +4,10 @@
- 
- #ifndef __ASSEMBLY__
- 
--#include <linux/types.h>
- #include <linux/bitops.h>
--#include <linux/string.h>
- #include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
- 
- /*
-  * bitmaps provide bit arrays that consume one or more unsigned
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 75006c4036e9..78f70d9007ad 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -3,17 +3,18 @@
-  * lib/bitmap.c
-  * Helper functions for bitmap.h.
-  */
--#include <linux/export.h>
--#include <linux/thread_info.h>
--#include <linux/ctype.h>
--#include <linux/errno.h>
-+
- #include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/bug.h>
-+#include <linux/ctype.h>
-+#include <linux/errno.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/thread_info.h>
- #include <linux/uaccess.h>
- 
- #include <asm/page.h>
--- 
-2.29.1
 
+--=20
+With Best Regards,
+Andy Shevchenko
