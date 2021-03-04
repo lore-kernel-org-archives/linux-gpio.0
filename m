@@ -2,135 +2,198 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76542C433DB
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94986C433DB
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33D3C64F67
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1A564F51
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Mar 2021 20:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231144AbhCDUXt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Mar 2021 15:23:49 -0500
-Received: from polaris.svanheule.net ([84.16.241.116]:33676 "EHLO
-        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbhCDUXk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 15:23:40 -0500
-X-Greylist: delayed 567 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Mar 2021 15:23:40 EST
-Received: from terra.local.svanheule.net (unknown [IPv6:2a02:a03f:eaff:9701:81b5:1a59:96d9:b1e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 61A7E1D7A84;
-        Thu,  4 Mar 2021 21:13:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1614888812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Zmq7LhwLXDkC8+O15emRxYgrzslnS0/S4UsDcEdoTvs=;
-        b=UP5NdzAu6Kjeo6x9neIm7USP4HYjuMRdibUeQGC1dy5MFT527844vB6Nnw4d1lbHjJAMWb
-        j8zl5XXpRa5QpL/Kvi/Uv0riDWfGF36witUj2fhv3rzssOnQSQ9fkkMjw3VKiepvQ+MQOu
-        m/mPxL5z0jUQ4wH3kVn5tmWF5eZo9jhXYA3us2J/80fv/2QcBuv2krPEr3yl7H0V3ZRJtz
-        nxBQsv77WoIqMkfdZW4Htc7cj/Q7HP8p5MUx3zjkt93I9o7hzayDJXTXFHS+U3WbNxJnnh
-        pAUtwDSApdBGtr/wWmUSQn2W28if1zoEBlPy67apxc0mRH/EWAppCPydnjD0Lw==
-From:   Sander Vanheule <sander@svanheule.net>
-To:     linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Sander Vanheule <sander@svanheule.net>,
-        Gregory Bean <gbean@codeaurora.org>
-Subject: [PATCH] pinctrl: sx150x: support building as module
-Date:   Thu,  4 Mar 2021 21:11:20 +0100
-Message-Id: <20210304201119.702637-1-sander@svanheule.net>
-X-Mailer: git-send-email 2.29.2
+        id S229794AbhCDU03 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Mar 2021 15:26:29 -0500
+Received: from mga17.intel.com ([192.55.52.151]:57527 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232933AbhCDU01 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 4 Mar 2021 15:26:27 -0500
+IronPort-SDR: L54fK8jbMmkA5XHUluoVA67LIyJTyUQ7sQvUnTJPOt/JpH6lsIx/XBFjxcT6iS+osizQl292gG
+ 2Yo5b+F/p+UQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9913"; a="167399823"
+X-IronPort-AV: E=Sophos;i="5.81,223,1610438400"; 
+   d="scan'208";a="167399823"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2021 12:25:46 -0800
+IronPort-SDR: KXqlBZdi/zTvhYz/vMKP+MaHlyKuoTYA+epmiJgaF8MZUoZ2yL3db2vjNKGUyvNtNKr4iTwoNo
+ pMIzigIjRhFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,223,1610438400"; 
+   d="scan'208";a="369871185"
+Received: from lkp-server02.sh.intel.com (HELO 2482ff9f8ac0) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 04 Mar 2021 12:25:45 -0800
+Received: from kbuild by 2482ff9f8ac0 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1lHuXY-0002N8-KP; Thu, 04 Mar 2021 20:25:44 +0000
+Date:   Fri, 05 Mar 2021 04:25:37 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:devel] BUILD SUCCESS
+ 1ccb486315127946d59bc9c6c14b210615aae5e8
+Message-ID: <60414241.+BH12pgbSP+7QWGd%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The SX150x GPIO expander driver, and the subsystems it depends on, have
-seen some development since its initial introduction. Let's add some
-extra bits to enable building it as a module.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 1ccb486315127946d59bc9c6c14b210615aae5e8  pinctrl: ingenic: add missing call to of_node_put()
 
-Build tested on 5.12-rc1. Run tested on a MIPS device with OpenWrt,
-kernel version 5.4.101, to confirm unloading/reloading works.
+elapsed time: 720m
 
-Signed-off-by: Sander Vanheule <sander@svanheule.net>
+configs tested: 128
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                             pxa_defconfig
+xtensa                         virt_defconfig
+powerpc                          allyesconfig
+powerpc                 mpc8313_rdb_defconfig
+powerpc                        icon_defconfig
+arm                         axm55xx_defconfig
+sparc                               defconfig
+mips                           jazz_defconfig
+h8300                    h8300h-sim_defconfig
+riscv                          rv32_defconfig
+mips                malta_kvm_guest_defconfig
+arm                          badge4_defconfig
+arm                            mps2_defconfig
+arm                        multi_v7_defconfig
+mips                      maltaaprp_defconfig
+arc                          axs103_defconfig
+powerpc                     ep8248e_defconfig
+mips                      bmips_stb_defconfig
+alpha                               defconfig
+arm                        multi_v5_defconfig
+mips                        vocore2_defconfig
+sh                           se7780_defconfig
+mips                         tb0287_defconfig
+m68k                        m5307c3_defconfig
+arc                 nsimosci_hs_smp_defconfig
+arm                          imote2_defconfig
+arm                         hackkit_defconfig
+um                             i386_defconfig
+mips                        maltaup_defconfig
+powerpc                     sequoia_defconfig
+arm                             ezx_defconfig
+arm                         s3c2410_defconfig
+powerpc                 mpc832x_rdb_defconfig
+mips                      malta_kvm_defconfig
+m68k                         amcore_defconfig
+arm                          ep93xx_defconfig
+powerpc                      pmac32_defconfig
+microblaze                          defconfig
+mips                      fuloong2e_defconfig
+m68k                       m5208evb_defconfig
+powerpc                       ebony_defconfig
+sh                            titan_defconfig
+mips                     loongson1c_defconfig
+riscv                            allmodconfig
+powerpc                     akebono_defconfig
+powerpc                 mpc8272_ads_defconfig
+powerpc               mpc834x_itxgp_defconfig
+powerpc                      pasemi_defconfig
+powerpc64                           defconfig
+ia64                                defconfig
+powerpc                      bamboo_defconfig
+powerpc                     mpc83xx_defconfig
+powerpc                      chrp32_defconfig
+xtensa                generic_kc705_defconfig
+m68k                        m5407c3_defconfig
+arm64                            alldefconfig
+mips                          rb532_defconfig
+arm                        trizeps4_defconfig
+powerpc                 mpc8315_rdb_defconfig
+ia64                             allmodconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+parisc                              defconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+i386                               tinyconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+x86_64               randconfig-a006-20210304
+x86_64               randconfig-a001-20210304
+x86_64               randconfig-a004-20210304
+x86_64               randconfig-a005-20210304
+x86_64               randconfig-a002-20210304
+x86_64               randconfig-a003-20210304
+i386                 randconfig-a005-20210304
+i386                 randconfig-a003-20210304
+i386                 randconfig-a002-20210304
+i386                 randconfig-a004-20210304
+i386                 randconfig-a006-20210304
+i386                 randconfig-a001-20210304
+i386                 randconfig-a016-20210304
+i386                 randconfig-a012-20210304
+i386                 randconfig-a013-20210304
+i386                 randconfig-a014-20210304
+i386                 randconfig-a011-20210304
+i386                 randconfig-a015-20210304
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                      rhel-8.3-kbuiltin
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a013-20210304
+x86_64               randconfig-a016-20210304
+x86_64               randconfig-a015-20210304
+x86_64               randconfig-a014-20210304
+x86_64               randconfig-a012-20210304
+x86_64               randconfig-a011-20210304
+
 ---
-This is the first time I've attempted to create a driver that can be
-built as a module, so there's a reasonable chance I missed some things.
-
-As the commit message notes, I've tested loading/unloading on a 5.4
-kernel in OpenWrt, and no obvious regressions were encountered.
-
-MODULE_LICENSE/_AUTHOR were copied from the driver's comment header.
-
- drivers/pinctrl/Kconfig          |  2 +-
- drivers/pinctrl/pinctrl-sx150x.c | 13 +++++++------
- 2 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index b7675cce0027..50ce0caf18f0 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -227,7 +227,7 @@ config PINCTRL_SINGLE
- 	  This selects the device tree based generic pinctrl driver.
- 
- config PINCTRL_SX150X
--	bool "Semtech SX150x I2C GPIO expander pinctrl driver"
-+	tristate "Semtech SX150x I2C GPIO expander pinctrl driver"
- 	depends on I2C=y
- 	select PINMUX
- 	select PINCONF
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index 484a3b9e875c..ac589c1e939a 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -13,9 +13,9 @@
- 
- #include <linux/regmap.h>
- #include <linux/i2c.h>
--#include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-+#include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
- #include <linux/of.h>
-@@ -829,6 +829,7 @@ static const struct i2c_device_id sx150x_id[] = {
- 	{"sx1509q", (kernel_ulong_t) &sx1509q_device_data },
- 	{}
- };
-+MODULE_DEVICE_TABLE(i2c, sx150x_id);
- 
- static const struct of_device_id sx150x_of_match[] = {
- 	{ .compatible = "semtech,sx1501q", .data = &sx1501q_device_data },
-@@ -842,6 +843,7 @@ static const struct of_device_id sx150x_of_match[] = {
- 	{ .compatible = "semtech,sx1509q", .data = &sx1509q_device_data },
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, sx150x_of_match);
- 
- static int sx150x_reset(struct sx150x_pinctrl *pctl)
- {
-@@ -1258,9 +1260,8 @@ static struct i2c_driver sx150x_driver = {
- 	.probe    = sx150x_probe,
- 	.id_table = sx150x_id,
- };
-+module_i2c_driver(sx150x_driver);
- 
--static int __init sx150x_init(void)
--{
--	return i2c_add_driver(&sx150x_driver);
--}
--subsys_initcall(sx150x_init);
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Gregory Bean <gbean@codeaurora.org>");
-+MODULE_DESCRIPTION("Semtech SX150x I2C GPIO expander");
--- 
-2.29.2
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
