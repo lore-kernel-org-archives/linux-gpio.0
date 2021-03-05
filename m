@@ -2,26 +2,25 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0063FC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590CDC433E0
 	for <linux-gpio@archiver.kernel.org>; Fri,  5 Mar 2021 00:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3C8164F6A
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Mar 2021 00:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DBFB65010
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Mar 2021 00:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230455AbhCEAjP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Mar 2021 19:39:15 -0500
-Received: from lucky1.263xmail.com ([211.157.147.132]:36596 "EHLO
+        id S230214AbhCEAjQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Mar 2021 19:39:16 -0500
+Received: from lucky1.263xmail.com ([211.157.147.130]:51568 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229465AbhCEAjP (ORCPT
+        with ESMTP id S230051AbhCEAjP (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Mar 2021 19:39:15 -0500
 Received: from localhost (unknown [192.168.167.224])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 18503F2C17;
-        Fri,  5 Mar 2021 08:39:11 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id C0F55D0616;
+        Fri,  5 Mar 2021 08:39:10 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
@@ -31,7 +30,7 @@ Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P26158T139991629948672S1614904748986290_;
         Fri, 05 Mar 2021 08:39:10 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <bb8288ed45656e582667a741c4fdc546>
+X-UNIQUE-TAG: <adc5252af9cc13c74d0ac0f323da289b>
 X-RL-SENDER: jay.xu@rock-chips.com
 X-SENDER: xjq@rock-chips.com
 X-LOGIN-NAME: jay.xu@rock-chips.com
@@ -44,61 +43,28 @@ To:     linus.walleij@linaro.org, heiko@sntech.de, catalin.marinas@arm.com,
         will@kernel.org
 Cc:     linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
         Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH 1/2] arm64: remove select PINCTRL_ROCKCHIP from ARCH_ROCKCHIP
-Date:   Fri,  5 Mar 2021 08:39:06 +0800
-Message-Id: <20210305003907.1692515-2-jay.xu@rock-chips.com>
+Subject: [PATCH 0/2] make rockchip pinctrl module able
+Date:   Fri,  5 Mar 2021 08:39:05 +0800
+Message-Id: <20210305003907.1692515-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210305003907.1692515-1-jay.xu@rock-chips.com>
-References: <20210305003907.1692515-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Prepare to make pinctrl driver of rockchip to be module able, this patch
-remove the select of PINCTRL_ROCKCHIP from ARCH_ROCKCHIP.
+Make the rockchip pinctrl driver able to be module by unselect
+PINCTRL_ROCKCHIP from ARCH_ROCKCHIP, then modify driver module define.
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
- arch/arm64/Kconfig.platforms | 2 --
- drivers/pinctrl/Kconfig      | 4 ++++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Jianqun Xu (2):
+  arm64: remove select PINCTRL_ROCKCHIP from ARCH_ROCKCHIP
+  pinctrl: rockchip: make driver be tristate module
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6eecdef538bd..0371cc02b448 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -227,9 +227,7 @@ config ARCH_RENESAS
- config ARCH_ROCKCHIP
- 	bool "Rockchip Platforms"
- 	select ARCH_HAS_RESET_CONTROLLER
--	select GPIOLIB
- 	select PINCTRL
--	select PINCTRL_ROCKCHIP
- 	select PM
- 	select ROCKCHIP_TIMER
- 	help
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 03c62e1cb395..bf88aac7bcc6 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -210,11 +210,15 @@ config PINCTRL_OXNAS
- config PINCTRL_ROCKCHIP
- 	bool
- 	depends on OF
-+	select GPIOLIB
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GENERIC_IRQ_CHIP
- 	select MFD_SYSCON
- 	select OF_GPIO
-+	default ARCH_ROCKCHIP
-+	help
-+          This support pinctrl and gpio driver for Rockchip SoCs.
- 
- config PINCTRL_SINGLE
- 	tristate "One-register-per-pin type device tree based pinctrl driver"
+ arch/arm64/Kconfig.platforms       |  2 --
+ drivers/pinctrl/Kconfig            |  6 +++++-
+ drivers/pinctrl/pinctrl-rockchip.c | 13 +++++++++++++
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+
 -- 
 2.25.1
 
