@@ -2,90 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F142C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B97C4332B
 	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 16:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E0396523B
+	by mail.kernel.org (Postfix) with ESMTP id 72F6865227
 	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 16:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbhCHQtW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Mar 2021 11:49:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51968 "EHLO mail.kernel.org"
+        id S230250AbhCHQtX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Mar 2021 11:49:23 -0500
+Received: from mga07.intel.com ([134.134.136.100]:24714 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230453AbhCHQs4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 8 Mar 2021 11:48:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B85C6518D;
-        Mon,  8 Mar 2021 16:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615222136;
-        bh=1sJP0A1ykSZC1GASB0lTJr+JzrmjpwHCZUx6r9lCowk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=j7VmwyqH5W47cGgHc1JQN+T+OHW99tMpBLdgza6daA13dg9pfK7zJJU3De0FDyclS
-         VD46v3CFl01yPtwvJQ4nM7nkgeA+cWj3Wnh6ApTmPtHmChijd3FP4GelGxr6KHvnj/
-         QuAMG/mAg1DDKvdIbBYW2304YuyTyrJQHPIH3wBF1KVzu/ZSp6TwxGAqYAQ6LK4j9N
-         RMGkxjvcs7/woLxTNW+vs9sTqQndq6tk6+nNfXDMd7Iem7Q94mlnWWMnvXJClDDfWu
-         8MtzDboPQRcf7FS75e5bG0TYF2i31o9Qaftbc7uRGeZxbkHOyRofaWNBB4nrQgnIRD
-         u4MIiTfn7os8Q==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: pinctrl: qcom-pmic-gpio: Add pm8350 and friends
-Date:   Mon,  8 Mar 2021 22:18:44 +0530
-Message-Id: <20210308164845.3210393-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.26.2
+        id S229701AbhCHQtS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 8 Mar 2021 11:49:18 -0500
+IronPort-SDR: 49jO2p3SBEq0G2YSzBv518NuJXTEEE7UA9l7vo/KVjgbBNwn3miTGhG7dlHJDV4rryqGIvBVi1
+ bgv5UJsl4XtA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="252091658"
+X-IronPort-AV: E=Sophos;i="5.81,232,1610438400"; 
+   d="scan'208";a="252091658"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 08:49:18 -0800
+IronPort-SDR: 1W/47mG3zvkWr4PTUfxIvDb2TyCYtp/6P6ryksukLDIcejkN5GAjUi9hqkxLIUPntPiEmh89L+
+ +p7GA86ZZomg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,232,1610438400"; 
+   d="scan'208";a="402886480"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 08 Mar 2021 08:49:16 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 7F71E147; Mon,  8 Mar 2021 18:49:16 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>
+Subject: [PATCH v1 1/1] pinctrl: intel: Show the GPIO base calculation explicitly
+Date:   Mon,  8 Mar 2021 18:49:10 +0200
+Message-Id: <20210308164910.87286-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for the PM8350, PM8350B, PM8350C, PMK8350, PMR735A and
-PMR735B GPIO support to the Qualcomm PMIC GPIO binding.
+During the split of intel_pinctrl_add_padgroups(), the _by_size() variant
+missed the GPIO base calculations and hence made unable to retrieve proper
+GPIO number.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Assign the gpio_base explicitly in _by_size() variant.
+
+While at it, differentiate NOMAP case with the rest in _by_gpps() variant.
+
+Fixes: 036e126c72eb ("pinctrl: intel: Split intel_pinctrl_add_padgroups() for better maintenance")
+Reported-and-tested-by: Maximilian Luz <luzmaximilian@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt   | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/pinctrl/intel/pinctrl-intel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-index 7648ab00f4e2..70e119b39c48 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-@@ -27,6 +27,12 @@ PMIC's from Qualcomm.
- 		    "qcom,pm660l-gpio"
- 		    "qcom,pm8150-gpio"
- 		    "qcom,pm8150b-gpio"
-+		    "qcom,pm8350-gpio"
-+		    "qcom,pm8350b-gpio"
-+		    "qcom,pm8350c-gpio"
-+		    "qcom,pmk8350-gpio"
-+		    "qcom,pmr735a-gpio"
-+		    "qcom,pmr735b-gpio"
- 		    "qcom,pm6150-gpio"
- 		    "qcom,pm6150l-gpio"
- 		    "qcom,pmx55-gpio"
-@@ -109,6 +115,12 @@ to specify in a pin configuration subnode:
- 					     and gpio8)
- 		    gpio1-gpio12 for pm8150b (holes on gpio3, gpio4, gpio7)
- 		    gpio1-gpio12 for pm8150l (hole on gpio7)
-+		    gpio1-gpio10 for pm8350
-+		    gpio1-gpio8 for pm8350b
-+		    gpio1-gpio9 for pm8350c
-+		    gpio1-gpio4 for pmk8350
-+		    gpio1-gpio4 for pmr735a
-+		    gpio1-gpio4 for pmr735b
- 		    gpio1-gpio10 for pm6150
- 		    gpio1-gpio12 for pm6150l
- 		    gpio1-gpio11 for pmx55 (holes on gpio3, gpio7, gpio10
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index e015345bf8f4..795d60d9ebba 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1356,6 +1356,7 @@ static int intel_pinctrl_add_padgroups_by_gpps(struct intel_pinctrl *pctrl,
+ 				gpps[i].gpio_base = 0;
+ 				break;
+ 			case INTEL_GPIO_BASE_NOMAP:
++				break;
+ 			default:
+ 				break;
+ 		}
+@@ -1392,6 +1393,7 @@ static int intel_pinctrl_add_padgroups_by_size(struct intel_pinctrl *pctrl,
+ 		gpps[i].size = min(gpp_size, npins);
+ 		npins -= gpps[i].size;
+ 
++		gpps[i].gpio_base = gpps[i].base;
+ 		gpps[i].padown_num = padown_num;
+ 
+ 		/*
 -- 
-2.26.2
+2.30.1
 
