@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB3CC433DB
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6DEC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6217F6512B
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08720651D3
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229848AbhCHOEt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Mar 2021 09:04:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51544 "EHLO
+        id S229872AbhCHOID (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Mar 2021 09:08:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbhCHOEo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Mar 2021 09:04:44 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C1FAC06175F
-        for <linux-gpio@vger.kernel.org>; Mon,  8 Mar 2021 06:04:44 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id j4-20020a05600c4104b029010c62bc1e20so3881104wmi.3
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Mar 2021 06:04:44 -0800 (PST)
+        with ESMTP id S229797AbhCHOHs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Mar 2021 09:07:48 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18DDDC06175F
+        for <linux-gpio@vger.kernel.org>; Mon,  8 Mar 2021 06:07:48 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id u14so11613168wri.3
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Mar 2021 06:07:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=oI6X2MifW0N1KwImsVj+ePRWB3MSjLj4erm+zxgelkc=;
-        b=XVQf3UFOHOTd9CQ30QMqYSt5hbJr64Ndyglt6OHyBhKrkp1rca+y2cd3MyDIutMUH2
-         pvaMccQnEeAoODb+J8REZZelxhYX6r4E10+TO+24wojw4u56YzBqmIDdrpJ16AFCl0mj
-         QjyzF0LMJIMN47NV83DRmfeU2H5ywDby5nRUVeCeWq+qQqehqADGnG+BidpQuxvrtMnG
-         hHieEqlAfhQ5GZSpDp2YAN07Dr8J+aJaWD0Jhvvu9CZ7Uexs4LfJAjDxig6Ntr/KXhcU
-         MEWL6jLx7lqG63PDIvzTvFb/AYezqpzCjSfXNsR5UsPkMZr7mgCdgbbj1i2X1lQuykUp
-         nzyw==
+        bh=67p4kVEdQcLqsqeRNFk9Be2uM7oDzD/JRQWZyk0AvmY=;
+        b=kncpZpypUCLKk3aF15ZYEnmqI/KTHACwNEMW6S5FT9TYje5pJ/VXRcHoaA5Rag0KmT
+         +II1YZIE1PH12BMWDXGlqKqSclkTnnVehfrO7HSrzSPty+cySja4pzqRwSxM1heE7hQi
+         gEdU66nlyTc571ouyggnGeOo4Ztb+puOYZ+OaseXrwMAsUK2nAICNgqPhrhpt2O62LOI
+         XuyZPvSJ/i2Y3IpSAVRSPLpZzxb5ZHc1p+/C+uH7wVtPMV3FSDIvIHwsWVAVk4BrNRCz
+         2a4Ud4kI4lGjNEDACBvEHnNaKvN4QyIbvUbADhQUWSjgU2+kRBXeiG9fqJijnuCn9yyz
+         GVrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=oI6X2MifW0N1KwImsVj+ePRWB3MSjLj4erm+zxgelkc=;
-        b=TPLy5KCMaMONpu4Dg6ifDdeSzAeK1MIgXZMsDWntJYWQJYTkpk+mb/G8TvlrDHVcTy
-         VgJprQ//U/tPqzVa76pYpIhDcjI7ZaGc6SCN95nL37eJeuMNidjbVmkopEQil6xklBBa
-         yFPjNQwP3k9HkAM1NRgxt+Nqxunl+1VymeOFGnpUGRCVxmvabNsUV3fbMQXPefMyRsBm
-         tVcFCGPDEaZbMRIcphwRZSTWe+Xd2aIJKoAnJNg0udePZZHUNF2Zkh1EZnqCIT+S7Cyn
-         +b/8G3L6ClH/Xe77dEqvMcIoeVbyfmqe6nHPu2PBXyMbtcYr8+kvng4L/7Csxgc1lu9n
-         uf8A==
-X-Gm-Message-State: AOAM531S8uQh35lZinbBovLoNPPD+Mp7hCQu4cVU13GakECtwsyms6Ku
-        71R75TaN1MOGORS4NzZyBHF3JQelUUUk9w==
-X-Google-Smtp-Source: ABdhPJxcwvKzFlG03y4UwEFL3La1o4zq+/k5j1GZWA57CcjSYNzcbGyHJWBxsiYggRiHDDfzhSfhAA==
-X-Received: by 2002:a1c:e244:: with SMTP id z65mr6212143wmg.130.1615212282984;
-        Mon, 08 Mar 2021 06:04:42 -0800 (PST)
+        bh=67p4kVEdQcLqsqeRNFk9Be2uM7oDzD/JRQWZyk0AvmY=;
+        b=eAwErsT+rAm5Aml7ncvQUAVQzlqtmEgkSipbycJ5B/9IdlkkoJaAikFuG1C4T8g8pM
+         MFZ/NK2813a+hPsVbTz5Nxu8XShNIXeH/usMQiMeKZej0wQAQc/4C1qbng4ePoEJxtuU
+         cc//HKcjyBPA/VWm0oxdE7UBtJT3YrXm8AWYwkxMQxvXH+5rUwTIBHB2MAvKVSFoSFHn
+         YqYqvvO+cT2bkSIXudzDg7Todc0/i2d6tcEdG7OD6WqJD7D+pKz+lC8xWVm0VySfXxEM
+         5SHcSaxcUdKzoHApj9ZyF2jAKbfhPKhJDl52O6GbNfllokkxkkQ1w8kTVZasWlP0MGJz
+         kn1Q==
+X-Gm-Message-State: AOAM531MuEnz1QrUD9kw7ZcsDqdEwZcgn/Uy9/bY4k4uwOXZ7kRT47LL
+        7Lw7srFhfX6xzYicGxNbaK8ekg==
+X-Google-Smtp-Source: ABdhPJyrNSEKao0oh/Ds9oN0i3eOUKR+2NZcXAzKeV9pu6rKMUFDYYkK0htjHP+3MbpphcEVt5pn3A==
+X-Received: by 2002:adf:ec46:: with SMTP id w6mr22706119wrn.213.1615212466860;
+        Mon, 08 Mar 2021 06:07:46 -0800 (PST)
 Received: from dell ([91.110.221.130])
-        by smtp.gmail.com with ESMTPSA id u3sm18835619wrt.82.2021.03.08.06.04.41
+        by smtp.gmail.com with ESMTPSA id b131sm19226315wmb.34.2021.03.08.06.07.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 06:04:42 -0800 (PST)
-Date:   Mon, 8 Mar 2021 14:04:40 +0000
+        Mon, 08 Mar 2021 06:07:46 -0800 (PST)
+Date:   Mon, 8 Mar 2021 14:07:44 +0000
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Luca Ceresoli <luca@lucaceresoli.net>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -64,27 +64,28 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mfd: lp87565: fix typo in define names
-Message-ID: <20210308140440.GH4931@dell>
+Subject: Re: [PATCH 3/3] mfd: lp87565: move LP87565_regulator_id to .c file
+Message-ID: <20210308140744.GJ4931@dell>
 References: <20210219223910.1831-1-luca@lucaceresoli.net>
+ <20210219223910.1831-3-luca@lucaceresoli.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210219223910.1831-1-luca@lucaceresoli.net>
+In-Reply-To: <20210219223910.1831-3-luca@lucaceresoli.net>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 On Fri, 19 Feb 2021, Luca Ceresoli wrote:
 
-> "GOIO" should be "GPIO" here.
+> This enum is used only internally to the regulator driver for buck indexes.
 > 
 > Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 > ---
->  drivers/gpio/gpio-lp87565.c |  6 +++---
->  include/linux/mfd/lp87565.h | 28 ++++++++++++++--------------
->  2 files changed, 17 insertions(+), 17 deletions(-)
+>  drivers/regulator/lp87565-regulator.c | 11 +++++++++++
+>  include/linux/mfd/lp87565.h           | 11 -----------
+>  2 files changed, 11 insertions(+), 11 deletions(-)
 
 For my own reference (apply this as-is to your sign-off block):
 
