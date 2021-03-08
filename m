@@ -2,95 +2,141 @@ Return-Path: <SRS0=//XZ=IG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B34C433E6
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B052BC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20788651DD
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72014651DC
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Mar 2021 14:24:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbhCHOID (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Mar 2021 09:08:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52142 "EHLO
+        id S230142AbhCHOXt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Mar 2021 09:23:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbhCHOHc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Mar 2021 09:07:32 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9CD1C06175F
-        for <linux-gpio@vger.kernel.org>; Mon,  8 Mar 2021 06:07:31 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id u187so6123736wmg.4
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Mar 2021 06:07:31 -0800 (PST)
+        with ESMTP id S229701AbhCHOXn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Mar 2021 09:23:43 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195C5C06175F
+        for <linux-gpio@vger.kernel.org>; Mon,  8 Mar 2021 06:23:43 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id w9so14916519edt.13
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Mar 2021 06:23:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=M7jM+0OrLB6QVDekXKRCuxohSVO4XVKq9e2g8QLuZEk=;
-        b=JKj9LoZRxAfQh7cEqSLhIKQh/UA1UElKuo8gXh9cdrgdlqG7SRxWSmc8HrJjFa3ZbI
-         kBQo6E30YZQ71/IGFjckY+/grHawNmWlCn0d9nRQ3PRyGtxSX5OU3EQ60Vl58DFHvMob
-         6Ao78f0qkPNCRSU1U/7k2eMqkBaIhqnLEHwh8wMfWEqRV2KFkpZml7Zz9e/Db2414CuW
-         Z+S3USY6kEQHFezV8HtuQiajbOogXx/OyDwBQp5rJQDh99WllmgdcPE0v3MLYt1N1ohp
-         q/E340akbnY2t4IZmkycncvaePMiJJgqAlusSBYhgkZjvWcHw3Ulx0JQ9ed6zkTp7oFB
-         Y96Q==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kkxtPSP0Xi4lX5Wx+/32tPbjIn3SdpQg5a9ZAGNqcyg=;
+        b=hYVpWVrIwf5fngjt5ImHdSEt8Qlz5tu/Fg3V+OqirMtF96qmwL5uNlEYCt4X1qjaZs
+         Ia64wAB8nNSfK9lkk5ioEzHpyGUkfUaMup2sKVCPja2oHGQdvbXXUIg82G9N0D3gcfz1
+         P3W2YXR5baN/N63WfysYcZ6m0Te7yNKUNZzga5T/xB3epK+A3HKvnOTq4vqH9F3OUzS0
+         S+nwJDc6t0GnIRXY0LoKZVp4TE6XldTLzQ4lGrWOHGVmRr2VKFWreBIVmZzCnOzYBKRX
+         3G1OyWwejQEO8cc5aWGlTHlGx5CxBR4O0v4SxWU74Rd22eTXEsfe5van6md1HZTT0UVx
+         1zYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=M7jM+0OrLB6QVDekXKRCuxohSVO4XVKq9e2g8QLuZEk=;
-        b=esO44WGWDKefwDqWiU0jxI5AyrFr7MIvBrXB6xUVscNYJs2do+ybxuldsjA/GJRpe4
-         7G/54+asi1Tobd0bxLuLVM37k0IQZEZeqV5DB69ScP461O2raohHHYQdfo9b77hHItIJ
-         JfjIuCaoCDUgMOjiYb54+dBhlb74LpPV7r5MMp15te0V7V9QxL3HzBxOHlG5ZX0+S8P2
-         BDTTf7UUVwwijOP+xL6/XmeodmFaSnpYa8Zz9hMtDx4kTQISYJPHVoksXYFn9+XNv6xP
-         uyD88BzPwnyo1FnujJ4q9Zwi0Q4ORw3KNSMqYKXvt5Rg+zOpXc2fGeEz2ld0sEC0nUde
-         cA6g==
-X-Gm-Message-State: AOAM531WUOE4EZTxOd5ADeJPr0v1P2DRTD4taoA1uPWTvJ+Z/8cDwAv7
-        lDy1nfh2M6xlUCK6yyF2Jixmog==
-X-Google-Smtp-Source: ABdhPJwrfpHBVYwqwNBazvKTeYv7H+uCi1xwvL7RQyspYP5YQia6RfoUlYer3crNxyAHHHRkl2Tb9Q==
-X-Received: by 2002:a05:600c:22cd:: with SMTP id 13mr22002039wmg.90.1615212450276;
-        Mon, 08 Mar 2021 06:07:30 -0800 (PST)
-Received: from dell ([91.110.221.130])
-        by smtp.gmail.com with ESMTPSA id i8sm20864325wry.90.2021.03.08.06.07.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 06:07:29 -0800 (PST)
-Date:   Mon, 8 Mar 2021 14:07:28 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mfd: lp87565: remove unused define
-Message-ID: <20210308140728.GI4931@dell>
-References: <20210219223910.1831-1-luca@lucaceresoli.net>
- <20210219223910.1831-2-luca@lucaceresoli.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kkxtPSP0Xi4lX5Wx+/32tPbjIn3SdpQg5a9ZAGNqcyg=;
+        b=Ps95ranCGR9Xbcct3clRZuOlqr7L1TsWqGHZHAdQm1w2XxckKc3jqv3/Dz+80XlEOK
+         80W/0hMDldfSMyXZNs0wZoOdLDWIISI9bJsrnU+AceSVi2bvGm5Prt2CJGkNysUmsFQI
+         WqYaosQEowJfs5fFYg8qZ2v5hUsJWRtxzDxKFuAMEisys8BqrezzC7PptgqatUYnwhrT
+         c+eEk6/x7RDeJqoZZI9uvxG8uuQmRVM7BSbbmy0SGfRq3p0WadctfXeJ5H13QQ+edwbk
+         1ewc1H1qpDSDeNFS+rBKPheOYfopARwIdwqSFowmi/5zHxMbLpkYLVA7bebIufCj8UHr
+         ncfg==
+X-Gm-Message-State: AOAM532882rdIAWRf1qTgZvzTRR0HVrwhPobsHJH6Qepbi9Tp2LsyxkR
+        8t8L6nT2JcqIlaTWhLmfPnzE0lsrO/4yZB2Ml0aYvw==
+X-Google-Smtp-Source: ABdhPJyu97PFuV+ZX1moMZXEZpLArfz/muWiBc/dgpOg9ss0Iagg551x4SlUz4EA8WfJpBbOJg2+ufU0NUAR/IT+S4k=
+X-Received: by 2002:a50:ee05:: with SMTP id g5mr22313526eds.164.1615213421770;
+ Mon, 08 Mar 2021 06:23:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210219223910.1831-2-luca@lucaceresoli.net>
+References: <20210304102452.21726-1-brgl@bgdev.pl> <20210304102452.21726-10-brgl@bgdev.pl>
+ <YEDdbfbM9abHJpIO@smile.fi.intel.com> <CAMRc=MdRxXzoZuyLs-24dXfOft=OQqDneTHa4-ZKqFE1kMBWcg@mail.gmail.com>
+ <YEIE1nG8lZ4V2MXq@smile.fi.intel.com>
+In-Reply-To: <YEIE1nG8lZ4V2MXq@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 8 Mar 2021 15:23:31 +0100
+Message-ID: <CAMRc=MekGnK17rYf3Bx_UHumVVrpmJphOnMfO352NB9SaOJCGw@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] gpio: sim: new testing module
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
+        Shuah Khan <shuah@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 19 Feb 2021, Luca Ceresoli wrote:
+On Fri, Mar 5, 2021 at 11:15 AM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Mar 04, 2021 at 09:15:29PM +0100, Bartosz Golaszewski wrote:
+> > On Thu, Mar 4, 2021 at 2:15 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Mar 04, 2021 at 11:24:49AM +0100, Bartosz Golaszewski wrote:
+> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> > > > +
+> > > > +     /*
+> > > > +      * FIXME If anyone knows a better way to parse that - please let me
+> > > > +      * know.
+> > > > +      */
+> > >
+> > > If comma can be replaced with ' ' (space) then why not to use next_arg() from
+> > > cmdline.c? I.o.w. do you have strong opinion why should we use comma here?
+> > >
+> >
+> > My opinion is not very strong but I wanted to make the list of names
+> > resemble what we pass to the gpio-line-names property in device tree.
+> > Doesn't next_arg() react differently to string of the form: "foo=bar"?
+>
+> It's ambiguous here.
+>
+> So, the strings '"foo=bar"' and 'foo=bar' (w/o single quotes!) are indeed
+> parsed differently, i.e.
+>         '"foo=bar"' -> 'foo=bar',
+> while
+>         "foo=bar" -> 'foo' + 'bar'.
+>
 
-> This define appears incorrect, but it is completely unused so it can be
-> removed.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> ---
->  include/linux/mfd/lp87565.h | 3 ---
->  1 file changed, 3 deletions(-)
+IMO '"foo", "bar", "", "foobar"' looks better than '"foo" "bar" ""
+"foobar"' and I'm also not sure next_arg will understand an empty
+quote?
 
-Applied, thanks.
+If you're not objecting strongly, then I would prefer my version.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> ...
+>
+> > > > +     ida_free(&gpio_sim_ida, id);
+> > >
+> > > Isn't it atomic per se? I mean that IDA won't give the same ID until you free
+> > > it. I.o.w. why is it under the mutex?
+> > >
+> >
+> > You're right but if we rapidly create and destroy chips we'll be left
+> > with holes in the numbering (because new devices would be created
+> > before the IDA numbers are freed, so the driver would take a larger
+> > number that's currently free). It doesn't hurt but it would look worse
+> > IMO. Do you have a strong opinion on this?
+>
+> It's not strong per se, but I would rather follow the 2nd rule of locking:
+> don't protect something which doesn't need it.
+>
+
+OK, makes sense.
+
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
