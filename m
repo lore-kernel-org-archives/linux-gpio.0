@@ -2,136 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6BEC4361B
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8503DC433E0
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5101565266
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5820B6523D
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbhCIJiC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Mar 2021 04:38:02 -0500
-Received: from mga18.intel.com ([134.134.136.126]:33412 "EHLO mga18.intel.com"
+        id S230094AbhCIJlr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Mar 2021 04:41:47 -0500
+Received: from mga03.intel.com ([134.134.136.65]:43335 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229649AbhCIJht (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Mar 2021 04:37:49 -0500
-IronPort-SDR: kSgwqjBL4xhu97k6y21ydpPe4HJ/TU4LIuafLYP2EOLdcZdw6+UWicA+dHpvS4115erlEHl6Cs
- jT98OYcyXjMQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="175802436"
+        id S230089AbhCIJl1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 9 Mar 2021 04:41:27 -0500
+IronPort-SDR: YAXP2GH/e0kOetX0FCCuqEs15INVoUonjJNl8qBL0EQlQIly1hrDFtnX6wQCfR5XWedZVvAJ0F
+ R/+4+H8DJa1Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="188241596"
 X-IronPort-AV: E=Sophos;i="5.81,234,1610438400"; 
-   d="scan'208";a="175802436"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2021 01:37:40 -0800
-IronPort-SDR: F3cw82QTEjRFAEaDiraLXuF1BborSLskO6Qyi371vv+yiWUNKos1+i3q2eCwSjo4IKhqObRk1r
- /ilPoNi4Mcjw==
-X-ExtLoop1: 1
+   d="scan'208";a="188241596"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2021 01:41:26 -0800
+IronPort-SDR: BdkZpLfxzqmExKJN/qVCYqQXuxLHx/PHNnHpY5k/VZ15joBiqkNA1LCWCeYf5u64BzOg/ajAOv
+ +8B9cctpTMow==
 X-IronPort-AV: E=Sophos;i="5.81,234,1610438400"; 
-   d="scan'208";a="599256167"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Mar 2021 01:37:37 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 611BD490; Tue,  9 Mar 2021 11:37:38 +0200 (EET)
+   d="scan'208";a="437841215"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2021 01:41:24 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lJYrh-00B1mG-3h; Tue, 09 Mar 2021 11:41:21 +0200
+Date:   Tue, 9 Mar 2021 11:41:21 +0200
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc:     Marc Zyngier <maz@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH v6 2/6] gpiolib: Unify the checks on fwnode type
-Date:   Tue,  9 Mar 2021 11:37:32 +0200
-Message-Id: <20210309093736.67925-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210309093736.67925-1-andriy.shevchenko@linux.intel.com>
-References: <20210309093736.67925-1-andriy.shevchenko@linux.intel.com>
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 0/5] gpiolib: switch to fwnode in the core
+Message-ID: <YEdCwfYRaQuKJFtA@smile.fi.intel.com>
+References: <20210304201253.14652-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0gR=gN2ROo9JSOGHokw5imscMBwDERni8X83p0eWt634w@mail.gmail.com>
+ <CAMpxmJUQ3r0YCeQvPq=SW57w-5BLtoTO1_bv=2uw6CX_1-EXcQ@mail.gmail.com>
+ <CAJZ5v0h7zUMU9DMofa3fhop9fYY6UJQ6Nm3xBOmG48bcmLCj3w@mail.gmail.com>
+ <CAMpxmJXa2Qxznss3c79Zf-PzsX=SY6WOJorAMvS-UxKoViKP_w@mail.gmail.com>
+ <YEZ81OraApPIu8d9@smile.fi.intel.com>
+ <YEaAY37PsqT6WQB9@smile.fi.intel.com>
+ <CAMpxmJUQ+Fhz8XTh14eHiqdQc3jBEwr8wuezw+NcgtU8XXFUQg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJUQ+Fhz8XTh14eHiqdQc3jBEwr8wuezw+NcgtU8XXFUQg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We have (historically) different approaches how we identify the type
-of a given fwnode. Let's standardize them across the library code.
+On Tue, Mar 09, 2021 at 09:19:19AM +0100, Bartosz Golaszewski wrote:
+> On Mon, Mar 8, 2021 at 8:52 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Mar 08, 2021 at 09:36:52PM +0200, Andy Shevchenko wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+...
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7ec0822c0505..1b3b0acdb803 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3677,11 +3677,12 @@ EXPORT_SYMBOL_GPL(fwnode_gpiod_get_index);
-  */
- int gpiod_count(struct device *dev, const char *con_id)
- {
-+	const struct fwnode_handle *fwnode = dev ? dev_fwnode(dev) : NULL;
- 	int count = -ENOENT;
- 
--	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
-+	if (is_of_node(fwnode))
- 		count = of_gpio_get_count(dev, con_id);
--	else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev))
-+	else if (is_acpi_node(fwnode))
- 		count = acpi_gpio_count(dev, con_id);
- 
- 	if (count < 0)
-@@ -3819,18 +3820,17 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	int ret;
- 	/* Maybe we have a device name, maybe not */
- 	const char *devname = dev ? dev_name(dev) : "?";
-+	const struct fwnode_handle *fwnode = dev ? dev_fwnode(dev) : NULL;
- 
- 	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
- 
--	if (dev) {
--		/* Using device tree? */
--		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
--			dev_dbg(dev, "using device tree for GPIO lookup\n");
--			desc = of_find_gpio(dev, con_id, idx, &lookupflags);
--		} else if (ACPI_COMPANION(dev)) {
--			dev_dbg(dev, "using ACPI for GPIO lookup\n");
--			desc = acpi_find_gpio(dev, con_id, idx, &flags, &lookupflags);
--		}
-+	/* Using device tree? */
-+	if (is_of_node(fwnode)) {
-+		dev_dbg(dev, "using device tree for GPIO lookup\n");
-+		desc = of_find_gpio(dev, con_id, idx, &lookupflags);
-+	} else if (is_acpi_node(fwnode)) {
-+		dev_dbg(dev, "using ACPI for GPIO lookup\n");
-+		desc = acpi_find_gpio(dev, con_id, idx, &flags, &lookupflags);
- 	}
- 
- 	/*
-@@ -3914,9 +3914,6 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
- 	int ret;
- 
--	if (!fwnode)
--		return ERR_PTR(-EINVAL);
--
- 	if (is_of_node(fwnode)) {
- 		desc = gpiod_get_from_of_node(to_of_node(fwnode),
- 					      propname, index,
-@@ -3932,7 +3929,8 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 
- 		acpi_gpio_update_gpiod_flags(&dflags, &info);
- 		acpi_gpio_update_gpiod_lookup_flags(&lflags, &info);
--	}
-+	} else
-+		return ERR_PTR(-EINVAL);
- 
- 	/* Currently only ACPI takes this path */
- 	ret = gpiod_request(desc, label);
+> > So, I will send v6 with those included.
+> 
+> Does this series depend on patches already in Rafael's tree? If so,
+> maybe Rafael can provide me with an immutable tag to merge in?
+
+Not anymore since v5.12-rc2 has a necessary fix.
+
+In any case I have sent a v6. It should be clean to apply on top of your for-next.
+
 -- 
-2.30.1
+With Best Regards,
+Andy Shevchenko
+
 
