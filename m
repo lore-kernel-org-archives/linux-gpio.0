@@ -2,121 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF16C433E6
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 08:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448BBC433DB
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E60556527D
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 08:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F37F365147
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:38:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbhCIITm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Mar 2021 03:19:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34690 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbhCIITb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Mar 2021 03:19:31 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 295E7C06175F
-        for <linux-gpio@vger.kernel.org>; Tue,  9 Mar 2021 00:19:31 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id hs11so25702194ejc.1
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Mar 2021 00:19:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ktw6Vy0vKj0+IWZr4PuUcyXC0kFObus7a2EmBpNWdj4=;
-        b=tH0VLSft5rYfI6ehechyQeyeheTGF4WBZ+zVPMOcqhQtUjwdPp/ZIgO6N92PQP22nv
-         jv7WqiKtR4Ey4bLqONv4Cj7l3pDkLs/Ut7+UGvl0J6MV8P/IBpSgq+AWKTRoOM21azGt
-         y9fA0kV7UhDZjTp4r94mkOrBYZxy0UAfHbRrceqBC2ydMnRvAi+JH40r3yqJkX4N1qiZ
-         IAy8wffkslT8wuq9LrR6DpBc8ENsmvCBVL/hdRRKe7oEw5DgjxIvF276O+mp1q1Fw57v
-         SjeBUjPf1gBQ1xzkmpHLkS8xjnd3+tSha2HFaHHjS7fZI/YJ2nXKW8wUl9CVqd937/+g
-         mX3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ktw6Vy0vKj0+IWZr4PuUcyXC0kFObus7a2EmBpNWdj4=;
-        b=m5I2zMctB/KhrR3cDAxP//Dd0TlpnvyBEzCTINsFDX77VJDuJvY7619opmTd5ZEn3G
-         hWuhzgOWCZzlfe0sJHLVLir5ICz/NGdSk6UrFGQiNkiriMaBfv0qUt4ToYnfQbzL2pQo
-         owFaEZAljFdDCgT/Tgi8guoOdXWC3AOrEgVkY4LXpqWcimpPv3+anK2zNsGogPZE7mmB
-         12ebWMUnhNUFeHFuhJggfSd1rn1aBMKbutxXuD7aKSd4TC80VWlkXz2OG8fP3mqWuMp7
-         2GkbRufx5AvMXlCePF7VD6/qnrcEpP15Qu/d1w8pNDHElqXakdbxGAkAj4ZAXLMklM/k
-         3MQg==
-X-Gm-Message-State: AOAM531f9yzLpTsJEkeccF8G3a5ohtdLEk9Xu91sxF18dTCiJTik9tpC
-        B0HE4aTUV14iQRHjozpZpTZkXMDY4TOAr34OvE0KJg==
-X-Google-Smtp-Source: ABdhPJxccaY07lvzI3pyPNA1B4j+TqZ/AgQnJSiW91vnn1Z11jeetk9yG4K3pnXMtESj7nJOyz2L+HZGYHjmyyoztkU=
-X-Received: by 2002:a17:907:76c7:: with SMTP id kf7mr18687281ejc.470.1615277969766;
- Tue, 09 Mar 2021 00:19:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20210304201253.14652-1-andriy.shevchenko@linux.intel.com>
- <CAJZ5v0gR=gN2ROo9JSOGHokw5imscMBwDERni8X83p0eWt634w@mail.gmail.com>
- <CAMpxmJUQ3r0YCeQvPq=SW57w-5BLtoTO1_bv=2uw6CX_1-EXcQ@mail.gmail.com>
- <CAJZ5v0h7zUMU9DMofa3fhop9fYY6UJQ6Nm3xBOmG48bcmLCj3w@mail.gmail.com>
- <CAMpxmJXa2Qxznss3c79Zf-PzsX=SY6WOJorAMvS-UxKoViKP_w@mail.gmail.com>
- <YEZ81OraApPIu8d9@smile.fi.intel.com> <YEaAY37PsqT6WQB9@smile.fi.intel.com>
-In-Reply-To: <YEaAY37PsqT6WQB9@smile.fi.intel.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 9 Mar 2021 09:19:19 +0100
-Message-ID: <CAMpxmJUQ+Fhz8XTh14eHiqdQc3jBEwr8wuezw+NcgtU8XXFUQg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] gpiolib: switch to fwnode in the core
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        id S229815AbhCIJh6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Mar 2021 04:37:58 -0500
+Received: from mga03.intel.com ([134.134.136.65]:43063 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229599AbhCIJhl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 9 Mar 2021 04:37:41 -0500
+IronPort-SDR: Ry/Sf24IzWpYMHkJHlwEryvNVq7qmY/fnWvmYc3wkwrncwg2QtVRO2xoOWUDzpphk59YQaXCmI
+ rcQ6lt23SowA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="188240933"
+X-IronPort-AV: E=Sophos;i="5.81,234,1610438400"; 
+   d="scan'208";a="188240933"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2021 01:37:40 -0800
+IronPort-SDR: 5B9uJ4FbXNqRvB+2m0JkeVbnJXwMNOl1v+uc2PPGp8wmRlRUUdtQUlW7T2EmxeF2vSyl7YGp9Q
+ z3vzH3gi/Bew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,234,1610438400"; 
+   d="scan'208";a="408581527"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 09 Mar 2021 01:37:38 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 7D52E56B; Tue,  9 Mar 2021 11:37:38 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc:     Marc Zyngier <maz@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH v6 4/6] gpiolib: Introduce acpi_gpio_dev_init() and call it from core
+Date:   Tue,  9 Mar 2021 11:37:34 +0200
+Message-Id: <20210309093736.67925-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210309093736.67925-1-andriy.shevchenko@linux.intel.com>
+References: <20210309093736.67925-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 8, 2021 at 8:52 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, Mar 08, 2021 at 09:36:52PM +0200, Andy Shevchenko wrote:
-> > On Mon, Mar 08, 2021 at 08:29:27PM +0100, Bartosz Golaszewski wrote:
-> > > On Mon, Mar 8, 2021 at 8:26 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > > On Mon, Mar 8, 2021 at 8:23 PM Bartosz Golaszewski
-> > > > <bgolaszewski@baylibre.com> wrote:
-> >
-> > ...
-> >
-> > > > My impression was that Andy wanted me to take them.
-> > > >
-> > > > However, if you'd rather take care of them yourself, there you go!
-> > > >
-> > > > I'll drop them now and assume that they will be routed through the GPIO tree.
-> > > >
-> > > > Thanks!
-> > >
-> > > They touch a lot of core GPIO code and are likely to conflict if any
-> > > other changes show up this release cycle. I'd rather take them through
-> > > the usual channel. Thanks!
-> >
-> > Since now we have v4 based on Rafael's bleeding-edge, what do you want me to
-> > do? Resend a v5 with all patches included?
->
-> I have decided to resend as usually it's better for maintainers.
->
-> But it appears I was too quick to miss Rafael's review tag / comments.
->
-> So, I will send v6 with those included.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+In the ACPI case we may use the firmware node in the similar way
+as it's done for OF case. We may use that fwnode for other purposes
+in the future.
 
-Does this series depend on patches already in Rafael's tree? If so,
-maybe Rafael can provide me with an immutable tag to merge in?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib-acpi.c | 7 +++++++
+ drivers/gpio/gpiolib-acpi.h | 4 ++++
+ drivers/gpio/gpiolib.c      | 1 +
+ 3 files changed, 12 insertions(+)
 
-Bartosz
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 1aacd2a5a1fd..21750be9c489 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1291,6 +1291,13 @@ void acpi_gpiochip_remove(struct gpio_chip *chip)
+ 	kfree(acpi_gpio);
+ }
+ 
++void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
++{
++	/* Set default fwnode to parent's one if present */
++	if (gc->parent)
++		ACPI_COMPANION_SET(&gdev->dev, ACPI_COMPANION(gc->parent));
++}
++
+ static int acpi_gpio_package_count(const union acpi_object *obj)
+ {
+ 	const union acpi_object *element = obj->package.elements;
+diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
+index e2edb632b2cc..e476558d9471 100644
+--- a/drivers/gpio/gpiolib-acpi.h
++++ b/drivers/gpio/gpiolib-acpi.h
+@@ -36,6 +36,8 @@ struct acpi_gpio_info {
+ void acpi_gpiochip_add(struct gpio_chip *chip);
+ void acpi_gpiochip_remove(struct gpio_chip *chip);
+ 
++void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev);
++
+ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip);
+ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip);
+ 
+@@ -58,6 +60,8 @@ int acpi_gpio_count(struct device *dev, const char *con_id);
+ static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
+ static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
+ 
++static inline void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev) { }
++
+ static inline void
+ acpi_gpiochip_request_interrupts(struct gpio_chip *chip) { }
+ 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 41a57f042843..1853075df741 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -590,6 +590,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	gc->gpiodev = gdev;
+ 
+ 	of_gpio_dev_init(gc, gdev);
++	acpi_gpio_dev_init(gc, gdev);
+ 
+ 	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+-- 
+2.30.1
+
