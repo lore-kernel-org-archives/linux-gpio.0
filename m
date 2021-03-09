@@ -2,97 +2,277 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73773C433E6
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 16:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC75C433E6
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 16:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 413FC6523A
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 16:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32B42651A8
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 16:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbhCIQfn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Mar 2021 11:35:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57858 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbhCIQfM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Mar 2021 11:35:12 -0500
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B33C061761
-        for <linux-gpio@vger.kernel.org>; Tue,  9 Mar 2021 08:35:12 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id m11so21427937lji.10
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Mar 2021 08:35:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MPh3fYrpynT8qqoQI9nObnRXX03m69XX0kkoxFbQtug=;
-        b=GN41IGu42t9gXi3ED2C8ne+gWDPFIl3Cz+zhDgMErK/I8nl0dGuUEVs/SOVXHoc9Oe
-         ilKTLAhuugELeyAiW1l7FwDwfoafn8RPjAlAQhZ2l6o/ZwZsSBLL7iOi20PgRZRw16rn
-         zKT7aEBeaKpc5NwhEGaXJHg9+xQe2yJ3WMLdeKBKjNY0ecbISMGm4+UsVsBtN+9zbyAC
-         1GTmuw3QVL1jWa8r409pZCvBeVAeiPTmtIhmdtVk0hhFgyMIrpnQ824GfENt38eoogfl
-         QBtR1A3uCoHEQkvKOGVKhz3FGPwmdcvg0irrgkrAXnE7tQ0LRRfabW5cEhPNALjc1guq
-         RSAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MPh3fYrpynT8qqoQI9nObnRXX03m69XX0kkoxFbQtug=;
-        b=ifJnf6uif1MVSBtf1fGqrGR2RnPim5dj5SuwH14aQH/uhs6pbRqDvikrcAxRjPcLiU
-         yp3BQd5Trvcxr9snavUMPwACNW5THKc3dsy/PqsGmPR4POv9BjVPuilHMouLaQYbpBq4
-         oy3x2ZgcKhY4eFVvSZulb+I9MhV715sT0KXT2m9Ei4nPZkdoDT0GDyHnv52DE2KFs6yR
-         M0cvVDpgbE65i0BOUkyNNMrPOAGpIz6OagZAZQSuHnlKmEVcmbRED9bMFHRxW8MJT0x/
-         TmaDb+17VISGuyJKzXtj92JaANF9NnsJSRP65Rx2v6LqZsnebLBWM//YOeBn6J3AVjKA
-         GHvQ==
-X-Gm-Message-State: AOAM530EbCBjFo9lB2oTG07R7TUEFw+dIbNzIwdlsiDWBLpyc4fWSBt8
-        fBYPr72HpZ5WE0ou6jvsGajnNOuZLFsv6WzBCdAVkQ==
-X-Google-Smtp-Source: ABdhPJwx+vgRcYzzK5JGSjQMsz6ywP+zUvsGmW7juH6Hhh85o5Hv3QjRB3wk0V6V/HIy9NeuR+ZZD90xGrXYfnhHYpA=
-X-Received: by 2002:a05:651c:103a:: with SMTP id w26mr14919558ljm.273.1615307710918;
- Tue, 09 Mar 2021 08:35:10 -0800 (PST)
+        id S230495AbhCIQlj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Mar 2021 11:41:39 -0500
+Received: from out28-172.mail.aliyun.com ([115.124.28.172]:48736 "EHLO
+        out28-172.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231386AbhCIQlb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Mar 2021 11:41:31 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0321826-0.000113673-0.967704;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047198;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.JibD5S0_1615308080;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.JibD5S0_1615308080)
+          by smtp.aliyun-inc.com(10.147.40.44);
+          Wed, 10 Mar 2021 00:41:27 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linus.walleij@linaro.org, robh+dt@kernel.org, paul@crapouillou.net
+Cc:     linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        hns@goldelico.com, paul@boddie.org.uk, dongsheng.qiu@ingenic.com,
+        aric.pzqi@ingenic.com, sernia.zhou@foxmail.com
+Subject: [PATCH 1/3] pinctrl: Ingenic: Fix bug and reformat the code.
+Date:   Wed, 10 Mar 2021 00:40:55 +0800
+Message-Id: <1615308057-88387-2-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1615308057-88387-1-git-send-email-zhouyanjie@wanyeetech.com>
+References: <1615308057-88387-1-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-References: <20210308194535.66394-1-andriy.shevchenko@linux.intel.com> <20210308194535.66394-6-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210308194535.66394-6-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 9 Mar 2021 17:34:59 +0100
-Message-ID: <CACRpkdZmE2wCfhJsdCaVaaJbVDtvgReogVgx9_fpG=0YRS-U+Q@mail.gmail.com>
-Subject: Re: [PATCH v5 5/6] gpiolib: Reuse device's fwnode to create IRQ domain
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 8, 2021 at 8:45 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+1.Add tabs before values to align the code in the macro definition section.
+2.Fix bugs related to the MAC of JZ4770, add missing pins to the MII group.
+3.Adjust the sequence of X1830's SSI related codes to make it consistent
+  with other Ingenic SoCs.
+4.Fix bug in "ingenic_pinconf_get()", so that it can read the configuration
+  of X1830 SoC correctly.
 
-> When IRQ domain is created for an ACPI case, the name of it becomes unknown-%d
-> since for now it utilizes of_node member only and doesn't consider fwnode case.
-> Convert IRQ domain creation code to utilize fwnode instead.
->
-> Before/After the change on Intel Galileo Gen 2 with two GPIO (IRQ) controllers:
->
->   unknown-1     ==>     \_SB.PCI0.GIP0.GPO
->   unknown-2     ==>     \_SB.NIO3
->
-> Due to the nature of this change we may also deduplicate the WARN():s
-> because in either case (DT or ACPI) the fwnode will be set correctly
-> and %pfw is an equivalent to what the current code prints as a prefix.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 161 +++++++++++++++++++++++---------------
+ 1 file changed, 100 insertions(+), 61 deletions(-)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index f274612..ac5ad8a 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -26,37 +26,48 @@
+ #include "pinconf.h"
+ #include "pinmux.h"
+ 
+-#define GPIO_PIN	0x00
+-#define GPIO_MSK	0x20
++#define GPIO_PIN					0x00
++#define GPIO_MSK					0x20
+ 
+-#define JZ4740_GPIO_DATA	0x10
+-#define JZ4740_GPIO_PULL_DIS	0x30
+-#define JZ4740_GPIO_FUNC	0x40
+-#define JZ4740_GPIO_SELECT	0x50
+-#define JZ4740_GPIO_DIR		0x60
+-#define JZ4740_GPIO_TRIG	0x70
+-#define JZ4740_GPIO_FLAG	0x80
++#define JZ4740_GPIO_DATA			0x10
++#define JZ4740_GPIO_PULL_DIS		0x30
++#define JZ4740_GPIO_FUNC			0x40
++#define JZ4740_GPIO_SELECT			0x50
++#define JZ4740_GPIO_DIR				0x60
++#define JZ4740_GPIO_TRIG			0x70
++#define JZ4740_GPIO_FLAG			0x80
+ 
+-#define JZ4770_GPIO_INT		0x10
+-#define JZ4770_GPIO_PAT1	0x30
+-#define JZ4770_GPIO_PAT0	0x40
+-#define JZ4770_GPIO_FLAG	0x50
+-#define JZ4770_GPIO_PEN		0x70
++#define JZ4770_GPIO_INT				0x10
++#define JZ4770_GPIO_PAT1			0x30
++#define JZ4770_GPIO_PAT0			0x40
++#define JZ4770_GPIO_FLAG			0x50
++#define JZ4770_GPIO_PEN				0x70
+ 
+-#define X1830_GPIO_PEL			0x110
+-#define X1830_GPIO_PEH			0x120
++#define X1830_GPIO_PEL				0x110
++#define X1830_GPIO_PEH				0x120
+ 
+-#define REG_SET(x) ((x) + 0x4)
+-#define REG_CLEAR(x) ((x) + 0x8)
++#define REG_SET(x)					((x) + 0x4)
++#define REG_CLEAR(x)				((x) + 0x8)
+ 
+-#define REG_PZ_BASE(x) ((x) * 7)
+-#define REG_PZ_GID2LD(x) ((x) * 7 + 0xf0)
++#define REG_PZ_BASE(x)				((x) * 7)
++#define REG_PZ_GID2LD(x)			((x) * 7 + 0xf0)
+ 
+-#define GPIO_PULL_DIS	0
+-#define GPIO_PULL_UP	1
+-#define GPIO_PULL_DOWN	2
++#define GPIO_PULL_DIS				0
++#define GPIO_PULL_UP				1
++#define GPIO_PULL_DOWN				2
+ 
+-#define PINS_PER_GPIO_CHIP 32
++#define PINS_PER_GPIO_CHIP			32
++
++#define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
++	{						\
++		name,					\
++		id##_pins,				\
++		ARRAY_SIZE(id##_pins),			\
++		funcs,					\
++	}
++
++#define INGENIC_PIN_GROUP(name, id, func)		\
++	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
+ 
+ enum jz_version {
+ 	ID_JZ4740,
+@@ -134,18 +145,6 @@ static int jz4740_pwm_pwm5_pins[] = { 0x7c, };
+ static int jz4740_pwm_pwm6_pins[] = { 0x7e, };
+ static int jz4740_pwm_pwm7_pins[] = { 0x7f, };
+ 
+-
+-#define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		funcs,					\
+-	}
+-
+-#define INGENIC_PIN_GROUP(name, id, func)		\
+-	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
+-
+ static const struct group_desc jz4740_groups[] = {
+ 	INGENIC_PIN_GROUP("mmc-1bit", jz4740_mmc_1bit, 0),
+ 	INGENIC_PIN_GROUP("mmc-4bit", jz4740_mmc_4bit, 0),
+@@ -667,7 +666,9 @@ static int jz4770_pwm_pwm7_pins[] = { 0x6b, };
+ static int jz4770_mac_rmii_pins[] = {
+ 	0xa9, 0xab, 0xaa, 0xac, 0xa5, 0xa4, 0xad, 0xae, 0xa6, 0xa8,
+ };
+-static int jz4770_mac_mii_pins[] = { 0xa7, 0xaf, };
++static int jz4770_mac_mii_pins[] = {
++	0x7b, 0x7a, 0x7d, 0x7c, 0xa7, 0x24, 0xaf,
++};
+ 
+ static const struct group_desc jz4770_groups[] = {
+ 	INGENIC_PIN_GROUP("uart0-data", jz4770_uart0_data, 0),
+@@ -1471,16 +1472,16 @@ static int x1830_ssi0_gpc_pins[] = { 0x4d, };
+ static int x1830_ssi0_ce0_pins[] = { 0x50, };
+ static int x1830_ssi0_ce1_pins[] = { 0x4e, };
+ static int x1830_ssi1_dt_c_pins[] = { 0x53, };
+-static int x1830_ssi1_dr_c_pins[] = { 0x54, };
+-static int x1830_ssi1_clk_c_pins[] = { 0x57, };
+-static int x1830_ssi1_gpc_c_pins[] = { 0x55, };
+-static int x1830_ssi1_ce0_c_pins[] = { 0x58, };
+-static int x1830_ssi1_ce1_c_pins[] = { 0x56, };
+ static int x1830_ssi1_dt_d_pins[] = { 0x62, };
++static int x1830_ssi1_dr_c_pins[] = { 0x54, };
+ static int x1830_ssi1_dr_d_pins[] = { 0x63, };
++static int x1830_ssi1_clk_c_pins[] = { 0x57, };
+ static int x1830_ssi1_clk_d_pins[] = { 0x66, };
++static int x1830_ssi1_gpc_c_pins[] = { 0x55, };
+ static int x1830_ssi1_gpc_d_pins[] = { 0x64, };
++static int x1830_ssi1_ce0_c_pins[] = { 0x58, };
+ static int x1830_ssi1_ce0_d_pins[] = { 0x67, };
++static int x1830_ssi1_ce1_c_pins[] = { 0x56, };
+ static int x1830_ssi1_ce1_d_pins[] = { 0x65, };
+ static int x1830_mmc0_1bit_pins[] = { 0x24, 0x25, 0x20, };
+ static int x1830_mmc0_4bit_pins[] = { 0x21, 0x22, 0x23, };
+@@ -2107,31 +2108,69 @@ static int ingenic_pinconf_get(struct pinctrl_dev *pctldev,
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
+ 	unsigned int idx = pin % PINS_PER_GPIO_CHIP;
+ 	unsigned int offt = pin / PINS_PER_GPIO_CHIP;
++	unsigned int bias;
+ 	bool pull;
+ 
+-	if (jzpc->info->version >= ID_JZ4770)
+-		pull = !ingenic_get_pin_config(jzpc, pin, JZ4770_GPIO_PEN);
+-	else
+-		pull = !ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_PULL_DIS);
++	if (jzpc->info->version >= ID_X1830) {
++		unsigned int half = PINS_PER_GPIO_CHIP / 2;
++		unsigned int idxh = pin % half * 2;
+ 
+-	switch (param) {
+-	case PIN_CONFIG_BIAS_DISABLE:
+-		if (pull)
+-			return -EINVAL;
+-		break;
++		if (idx < half)
++			regmap_read(jzpc->map, offt * jzpc->info->reg_offset +
++					X1830_GPIO_PEL, &bias);
++		else
++			regmap_read(jzpc->map, offt * jzpc->info->reg_offset +
++					X1830_GPIO_PEH, &bias);
+ 
+-	case PIN_CONFIG_BIAS_PULL_UP:
+-		if (!pull || !(jzpc->info->pull_ups[offt] & BIT(idx)))
+-			return -EINVAL;
+-		break;
++		bias = (bias >> idxh) & 3;
+ 
+-	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		if (!pull || !(jzpc->info->pull_downs[offt] & BIT(idx)))
+-			return -EINVAL;
+-		break;
++		switch (param) {
++		case PIN_CONFIG_BIAS_DISABLE:
++			if (bias)
++				return -EINVAL;
++			break;
+ 
+-	default:
+-		return -ENOTSUPP;
++		case PIN_CONFIG_BIAS_PULL_UP:
++			if ((bias != PIN_CONFIG_BIAS_PULL_UP) ||
++					!(jzpc->info->pull_ups[offt] & BIT(idx)))
++				return -EINVAL;
++			break;
++
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			if ((bias != PIN_CONFIG_BIAS_PULL_DOWN) ||
++					!(jzpc->info->pull_downs[offt] & BIT(idx)))
++				return -EINVAL;
++			break;
++
++		default:
++			return -ENOTSUPP;
++		}
++
++	} else {
++		if (jzpc->info->version >= ID_JZ4770)
++			pull = !ingenic_get_pin_config(jzpc, pin, JZ4770_GPIO_PEN);
++		else
++			pull = !ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_PULL_DIS);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_DISABLE:
++			if (pull)
++				return -EINVAL;
++			break;
++
++		case PIN_CONFIG_BIAS_PULL_UP:
++			if (!pull || !(jzpc->info->pull_ups[offt] & BIT(idx)))
++				return -EINVAL;
++			break;
++
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			if (!pull || !(jzpc->info->pull_downs[offt] & BIT(idx)))
++				return -EINVAL;
++			break;
++
++		default:
++			return -ENOTSUPP;
++		}
+ 	}
+ 
+ 	*config = pinconf_to_config_packed(param, 1);
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
