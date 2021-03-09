@@ -2,66 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A668C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 20:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7E0C43381
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 21:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 570AE6523B
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 20:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 567F765253
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 21:00:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231753AbhCIUPl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Mar 2021 15:15:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231387AbhCIUPK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Mar 2021 15:15:10 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 2861464F64;
-        Tue,  9 Mar 2021 20:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615320910;
-        bh=bCQFVTvbowoHiQJO4CgyE4q1znbQhIwCk4PAWzsp4F0=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=KVEODTaHO4q/8v361GWcf8hHuUu9y9qUKbP8PTpAMzepm426fhAegvJtw/0+0/rze
-         nACveXtB8i5LmGsqMzLm7GIsBo3Y9HLi9OFqhfr2zwaf+45P3H/HQrxX2Jj32MK+A0
-         ZQ493f594aQo45EwLJTWTPWA4L51v2kcIwINnJaZJhpC45/huqaFgo3h2kAE3ET0pM
-         xt+QZstppJ7wpFa2gOG4D9rsZnH69+p1gl5lbCbnVrYahAN0qq5oFE4FR5k9sd7tkW
-         AcDWbG9sTocAOum+eQo+8jAG8D0000ZfXFONJ9RTkWOkYnkof12UjHGOJeEwaOGtTq
-         BQ3HP5nzuXJDw==
-Subject: Re: [GIT PULL] gpio: fixes for v5.12-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210309153443.16647-1-brgl@bgdev.pl>
-References: <20210309153443.16647-1-brgl@bgdev.pl>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210309153443.16647-1-brgl@bgdev.pl>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v5.12-rc3
-X-PR-Tracked-Commit-Id: b41ba2ec54a70908067034f139aa23d0dd2985ce
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4b3d9f9cf108ebf2c48fbbbf30a8d1346d9cc7d6
-Message-Id: <161532091006.26915.7204180747862496077.pr-tracker-bot@kernel.org>
-Date:   Tue, 09 Mar 2021 20:15:10 +0000
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S231935AbhCIU7j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Mar 2021 15:59:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231607AbhCIU7f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Mar 2021 15:59:35 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB27CC06175F
+        for <linux-gpio@vger.kernel.org>; Tue,  9 Mar 2021 12:59:34 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id y124-20020a1c32820000b029010c93864955so8124674wmy.5
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Mar 2021 12:59:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=h87jccumC6oS/Oglf5H2ioMoJmQRJZD6wd7xhfpKIok=;
+        b=fZVB/QGG9EbB5+T+UR94Xnpw6QNQ921+Fz8r5lwjpB9Khl+Tow82FJsb9Io2XFA5SA
+         bR9K9JlxSqYTckTQ3Ts7ONMkXbCR5kGgUKjI0JzOwAnGvXUCTr8Rvi5CA3aoEdGUYinl
+         TsgIAftrebZgUyQXtW2B3vq+l6m8gX55cEDN19ZPrpQIejK7HV4eVB/BO4a1pztV21rs
+         0SOoqh2pJcdVdlx6ge/S62DsUY3VqZkqx8jcUuM5p7gXS2J6/Uye4re3fJnHwa+69osm
+         j8fCAxmQe0CKoNhp3WpA/DyfgxmwqRwtzbympBm/v3uMd/BybE/xDuYS4RR+dnOioZkP
+         U92Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=h87jccumC6oS/Oglf5H2ioMoJmQRJZD6wd7xhfpKIok=;
+        b=fijv14vmlGmJm843c3JI9detVANpkUgZr5nbGSxmYAIA41m8v6b9INTzeipZfoj1kv
+         NJAcof7uLHnBOedAhRw8qNWinOl0O5Y4M23ahMQqvbtzzW3Y84tiGAasnj3eJ7b8g6XU
+         vfqB6toePB2NTRIP6ktsAEzSPHb9wDCBkHLPBvHCW0akPpskPLDxr5TrRFFUuNUKXm+s
+         mUVRl9qxKzgJXdf/rdKfUQ2uLh2m1eajik/44uQx/0RLP8Px0UzvaxkIydkls+KsvZPP
+         Qcw+cZciaKAaDDqseG1o3a5aoQMxkgi2i6R5rV1TPUdS70zjJIuSC+ZnHXmCt4IydxQt
+         VBWQ==
+X-Gm-Message-State: AOAM532gQPWMAXx4pMCOv1PPoeFcnNzFhbtd3mcM9gMX+0I6Io0icec8
+        V3+t9Ym5xurNu+9B+BSiLF+nNA==
+X-Google-Smtp-Source: ABdhPJwj2H2vR6x+JBM8OMVIat1b7I4XyvRBqoZlPgrqY7coics7xEB+cMJzqKv3wVFqDlnCyVkg2g==
+X-Received: by 2002:a1c:a5cb:: with SMTP id o194mr5962641wme.129.1615323573594;
+        Tue, 09 Mar 2021 12:59:33 -0800 (PST)
+Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
+        by smtp.gmail.com with ESMTPSA id j6sm5501305wmq.16.2021.03.09.12.59.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Mar 2021 12:59:33 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
+        Shuah Khan <shuah@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 01/11] configfs: increase the item name length
+Date:   Tue,  9 Mar 2021 21:59:11 +0100
+Message-Id: <20210309205921.15992-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210309205921.15992-1-brgl@bgdev.pl>
+References: <20210309205921.15992-1-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Tue,  9 Mar 2021 16:34:43 +0100:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v5.12-rc3
+20 characters limit for item name is relatively small. Let's increase it
+to 32 to fit '04-committable-children' - a name we'll use in the sample
+code for committable items.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4b3d9f9cf108ebf2c48fbbbf30a8d1346d9cc7d6
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ include/linux/configfs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/include/linux/configfs.h b/include/linux/configfs.h
+index 2e8c69b43c64..4f76dcc08134 100644
+--- a/include/linux/configfs.h
++++ b/include/linux/configfs.h
+@@ -27,7 +27,7 @@
+ #include <linux/kref.h>   /* struct kref */
+ #include <linux/mutex.h>  /* struct mutex */
+ 
+-#define CONFIGFS_ITEM_NAME_LEN	20
++#define CONFIGFS_ITEM_NAME_LEN	32
+ 
+ struct module;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.30.1
+
