@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EC3C43142
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6BEC4361B
 	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6979B6525D
+	by mail.kernel.org (Postfix) with ESMTP id 5101565266
 	for <linux-gpio@archiver.kernel.org>; Tue,  9 Mar 2021 09:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230116AbhCIJiB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Mar 2021 04:38:01 -0500
+        id S230126AbhCIJiC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Mar 2021 04:38:02 -0500
 Received: from mga18.intel.com ([134.134.136.126]:33412 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229764AbhCIJht (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S229649AbhCIJht (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 9 Mar 2021 04:37:49 -0500
-IronPort-SDR: 3KJtAWYgNJLBY6fmanfe2ytT6vYC3JxyEqCztJgt3RrST9A6jwGcZR7uWa8TTSzSBZvolYKaEo
- KJX84XAq3Ncw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="175802442"
+IronPort-SDR: kSgwqjBL4xhu97k6y21ydpPe4HJ/TU4LIuafLYP2EOLdcZdw6+UWicA+dHpvS4115erlEHl6Cs
+ jT98OYcyXjMQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="175802436"
 X-IronPort-AV: E=Sophos;i="5.81,234,1610438400"; 
-   d="scan'208";a="175802442"
+   d="scan'208";a="175802436"
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2021 01:37:44 -0800
-IronPort-SDR: 8WDxPkCdsq0mGe5Ei7z0HIONgPNBc8YGb8vbdBDD0jnYnJBeCY66/871bnbWlPRFok2ZIf0w7H
- O1cjOVXC3pEg==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2021 01:37:40 -0800
+IronPort-SDR: F3cw82QTEjRFAEaDiraLXuF1BborSLskO6Qyi371vv+yiWUNKos1+i3q2eCwSjo4IKhqObRk1r
+ /ilPoNi4Mcjw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,234,1610438400"; 
-   d="scan'208";a="599256187"
+   d="scan'208";a="599256167"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Mar 2021 01:37:41 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 09 Mar 2021 01:37:37 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 89CEA5BD; Tue,  9 Mar 2021 11:37:38 +0200 (EET)
+        id 611BD490; Tue,  9 Mar 2021 11:37:38 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -44,11 +44,10 @@ To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
 Cc:     Marc Zyngier <maz@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v6 5/6] gpiolib: Reuse device's fwnode to create IRQ domain
-Date:   Tue,  9 Mar 2021 11:37:35 +0200
-Message-Id: <20210309093736.67925-6-andriy.shevchenko@linux.intel.com>
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH v6 2/6] gpiolib: Unify the checks on fwnode type
+Date:   Tue,  9 Mar 2021 11:37:32 +0200
+Message-Id: <20210309093736.67925-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210309093736.67925-1-andriy.shevchenko@linux.intel.com>
 References: <20210309093736.67925-1-andriy.shevchenko@linux.intel.com>
@@ -58,76 +57,81 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When IRQ domain is created for an ACPI case, the name of it becomes unknown-%d
-since for now it utilizes of_node member only and doesn't consider fwnode case.
-Convert IRQ domain creation code to utilize fwnode instead.
-
-Before/After the change on Intel Galileo Gen 2 with two GPIO (IRQ) controllers:
-
-  unknown-1	==>	\_SB.PCI0.GIP0.GPO
-  unknown-2	==>	\_SB.NIO3
-
-Due to the nature of this change we may also deduplicate the WARN():s
-because in either case (DT or ACPI) the fwnode will be set correctly
-and %pfw is an equivalent to what the current code prints as a prefix.
+We have (historically) different approaches how we identify the type
+of a given fwnode. Let's standardize them across the library code.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpiolib.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/gpio/gpiolib.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 1853075df741..afee48e7dd41 100644
+index 7ec0822c0505..1b3b0acdb803 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -1456,9 +1456,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
- 				struct lock_class_key *lock_key,
- 				struct lock_class_key *request_key)
+@@ -3677,11 +3677,12 @@ EXPORT_SYMBOL_GPL(fwnode_gpiod_get_index);
+  */
+ int gpiod_count(struct device *dev, const char *con_id)
  {
-+	struct fwnode_handle *fwnode = dev_fwnode(&gc->gpiodev->dev);
- 	struct irq_chip *irqchip = gc->irq.chip;
- 	const struct irq_domain_ops *ops = NULL;
--	struct device_node *np;
- 	unsigned int type;
- 	unsigned int i;
++	const struct fwnode_handle *fwnode = dev ? dev_fwnode(dev) : NULL;
+ 	int count = -ENOENT;
  
-@@ -1470,7 +1470,6 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
- 		return -EINVAL;
+-	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
++	if (is_of_node(fwnode))
+ 		count = of_gpio_get_count(dev, con_id);
+-	else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev))
++	else if (is_acpi_node(fwnode))
+ 		count = acpi_gpio_count(dev, con_id);
+ 
+ 	if (count < 0)
+@@ -3819,18 +3820,17 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+ 	int ret;
+ 	/* Maybe we have a device name, maybe not */
+ 	const char *devname = dev ? dev_name(dev) : "?";
++	const struct fwnode_handle *fwnode = dev ? dev_fwnode(dev) : NULL;
+ 
+ 	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
+ 
+-	if (dev) {
+-		/* Using device tree? */
+-		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+-			dev_dbg(dev, "using device tree for GPIO lookup\n");
+-			desc = of_find_gpio(dev, con_id, idx, &lookupflags);
+-		} else if (ACPI_COMPANION(dev)) {
+-			dev_dbg(dev, "using ACPI for GPIO lookup\n");
+-			desc = acpi_find_gpio(dev, con_id, idx, &flags, &lookupflags);
+-		}
++	/* Using device tree? */
++	if (is_of_node(fwnode)) {
++		dev_dbg(dev, "using device tree for GPIO lookup\n");
++		desc = of_find_gpio(dev, con_id, idx, &lookupflags);
++	} else if (is_acpi_node(fwnode)) {
++		dev_dbg(dev, "using ACPI for GPIO lookup\n");
++		desc = acpi_find_gpio(dev, con_id, idx, &flags, &lookupflags);
  	}
  
--	np = gc->gpiodev->dev.of_node;
- 	type = gc->irq.default_type;
- 
  	/*
-@@ -1478,16 +1477,10 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
- 	 * used to configure the interrupts, as you may end up with
- 	 * conflicting triggers. Tell the user, and reset to NONE.
- 	 */
--	if (WARN(np && type != IRQ_TYPE_NONE,
--		 "%s: Ignoring %u default trigger\n", np->full_name, type))
-+	if (WARN(fwnode && type != IRQ_TYPE_NONE,
-+		 "%pfw: Ignoring %u default trigger\n", fwnode, type))
- 		type = IRQ_TYPE_NONE;
+@@ -3914,9 +3914,6 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+ 	int ret;
  
--	if (has_acpi_companion(gc->parent) && type != IRQ_TYPE_NONE) {
--		acpi_handle_warn(ACPI_HANDLE(gc->parent),
--				 "Ignoring %u default trigger\n", type);
--		type = IRQ_TYPE_NONE;
--	}
+-	if (!fwnode)
+-		return ERR_PTR(-EINVAL);
 -
- 	if (gc->to_irq)
- 		chip_warn(gc, "to_irq is redefined in %s and you shouldn't rely on it\n", __func__);
+ 	if (is_of_node(fwnode)) {
+ 		desc = gpiod_get_from_of_node(to_of_node(fwnode),
+ 					      propname, index,
+@@ -3932,7 +3929,8 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
  
-@@ -1508,7 +1501,7 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
+ 		acpi_gpio_update_gpiod_flags(&dflags, &info);
+ 		acpi_gpio_update_gpiod_lookup_flags(&lflags, &info);
+-	}
++	} else
++		return ERR_PTR(-EINVAL);
  
- 		if (!ops)
- 			ops = &gpiochip_domain_ops;
--		gc->irq.domain = irq_domain_add_simple(np,
-+		gc->irq.domain = irq_domain_create_simple(fwnode,
- 			gc->ngpio,
- 			gc->irq.first,
- 			ops, gc);
+ 	/* Currently only ACPI takes this path */
+ 	ret = gpiod_request(desc, label);
 -- 
 2.30.1
 
