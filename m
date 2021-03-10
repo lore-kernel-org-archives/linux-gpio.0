@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3E2C433DB
-	for <linux-gpio@archiver.kernel.org>; Wed, 10 Mar 2021 12:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741F8C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 10 Mar 2021 12:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D87F64F4D
-	for <linux-gpio@archiver.kernel.org>; Wed, 10 Mar 2021 12:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30F0264F4D
+	for <linux-gpio@archiver.kernel.org>; Wed, 10 Mar 2021 12:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231867AbhCJMzc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 10 Mar 2021 07:55:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39416 "EHLO
+        id S232587AbhCJMze (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 10 Mar 2021 07:55:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232587AbhCJMzI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Mar 2021 07:55:08 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79908C061761;
-        Wed, 10 Mar 2021 04:55:08 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id w7so7027595wmb.5;
-        Wed, 10 Mar 2021 04:55:08 -0800 (PST)
+        with ESMTP id S232604AbhCJMzK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Mar 2021 07:55:10 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB562C061760;
+        Wed, 10 Mar 2021 04:55:09 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id w11so23209810wrr.10;
+        Wed, 10 Mar 2021 04:55:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=z9wafjPmliogQilYQ/SiuahhJr0k+q3femmouDI2IPQ=;
-        b=GnGmjSvP81qVujYQaO8vAOoxvzoCz63Gh1OAU9amDWWXXY5Sh0s2+28ALqRcM0EJdX
-         +x51MSt5umL6Y/B8rykylZqZ7nGwyzN/wWJZFfHIRs65gGDh+lsOkHH9WeKR9fdWCyRG
-         HjyjPaY4W5cymyy2AvT5y3pElkpxoy+JWWj+yF9dhU9Mrx0OeBHBVSZPlSipS2xED+g0
-         wUQLXVCRvuHoNGawE02AQsPFBFRGdPKu0alNjrMiFoYBWH/D07xPTHe9Md0+L8QWhOmW
-         2GGl9BaU+XmxWoGry/9MdVm+AVRXxj/rwAMhAgvkpy6N2T2wuJXE/ccEKnBLVzH0om+4
-         trQw==
+        bh=PAJAtWRkOAd1GAbdY1wbENWkeMEKWY/41w1iBmNjTLI=;
+        b=cazss+i4tQDmShbLOPgzyz+hTJ+DcsxQmLGpcenNbyn+nRyLZgYb4FEX6eQ6iH1sms
+         6WuV1tFBGn3TJNXpphOQy5OZIp4fIJKNwV/bVwtjqz90sUs0N9aysxJ0mQeL462kRwoC
+         jA5zJ8esGY4/t+V7r/PVR473ZtnppYJZCJMynJJZAxApOskbL9t/L2su9ZXAuwYNOK07
+         HlTBNx77fR5yTUUG0bf8L2g/MXYuVU25HjSZjTnvIzZZFMHsDIhQb+db1Mfa875+XLvF
+         UaOMY0XGlABF98uaGNIdDJUhZCVilazp+oVyT/GdFbyVJa5c5eLUixMkeqWYhQetm27i
+         vF5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z9wafjPmliogQilYQ/SiuahhJr0k+q3femmouDI2IPQ=;
-        b=EHNG7J/E6pxY1IaJ9vyBSg4KpexAOBvvkwoK+yb6ZOeLg9oFkHMZqM1M2w+6xjAkPX
-         T69J1EvEAhtPO42obo9MVcVul1SS8EQ1WxF3W1geAv+2m4shbwNd9dSOo2tRQEtnDVdX
-         E8N7DsVFbkkBuQIDOSzkt+zyYT3oPJ3iC3eZNhetlnnkY3ycmEsuWTPKWQ1yuif+7o9H
-         PEsB+vr2oBdiodN3NbuUmy4rhZ0ZpfcNUw39L/KlCTOjutVMVN8K/dJydwyS9cgG7j6R
-         Ad8WnSQr/QrZ6k8HXN3OlpNi7X7fuX7+/Z4JwSOhK+EXlH8XgoTO/4b7pKixvZsaesMQ
-         ZbCw==
-X-Gm-Message-State: AOAM531gwL+hklUTj/26Jq0gHd/27Vk62HoqpWFS2IMNAYD0i98GDPZi
-        Cg8IWlDiYEgjVlb3iBL3EeA=
-X-Google-Smtp-Source: ABdhPJzPMNjl9Bu4OpYJp5hMRraEC7fFVMMjBS7mWnkqs4LpWC2CM7OSkjjm6ZR0azGS+TQMeraNOw==
-X-Received: by 2002:a1c:bc8a:: with SMTP id m132mr3156396wmf.6.1615380906998;
-        Wed, 10 Mar 2021 04:55:06 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PAJAtWRkOAd1GAbdY1wbENWkeMEKWY/41w1iBmNjTLI=;
+        b=rWVKHy08cWhVeJKegYA0MXF9I5/F4Gax47AC0SuPK5CAHuh2HJ+VyZi5VXu5mNx9ae
+         7oZc1anHgtxvDi3xoDTIFv0JuZ2x/mRd8O4R9Y0tlu4hG0Q5mf6hEgCq/Ogxqg13cipX
+         EG6TZU0Yzi+jHciwyOG0XYw6WQmjAyecOLsBxtxR1fA4PpKKvJ4vvI8Ze+Pzhlrw8fgS
+         lzFCCRLEsZSAm7Ahf7v4l/WhYlThSaRGysuK7b/rkN1yH82jVUO+FFnzwV/hbmq/WH7i
+         oC50EzKazeBfWuRnXsEgS3F42IPToc8/lK3HIulcQTnzie6us48cYuz4jaUz4JEUOdpe
+         c9xg==
+X-Gm-Message-State: AOAM532b4ucH2yP0+UCnsoyKcYL3UXG4sr3lOlM3kcsw/V15Jyag78cz
+        xIf6U1YXVU1i5DRU/jnjibs=
+X-Google-Smtp-Source: ABdhPJzxO4akgYd8HXWjCFx0nCm0awc9dI0zGCOnlB0OxUCYnUMZ+9e8/904IpOxNxHlkV+9J9pf6A==
+X-Received: by 2002:a5d:6945:: with SMTP id r5mr3328286wrw.367.1615380908661;
+        Wed, 10 Mar 2021 04:55:08 -0800 (PST)
 Received: from skynet.lan ([80.31.204.166])
-        by smtp.gmail.com with ESMTPSA id v6sm29403398wrx.32.2021.03.10.04.55.05
+        by smtp.gmail.com with ESMTPSA id v6sm29403398wrx.32.2021.03.10.04.55.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 04:55:06 -0800 (PST)
+        Wed, 10 Mar 2021 04:55:08 -0800 (PST)
 From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
         <noltari@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -71,10 +71,12 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 00/15] pinctrl: add BCM63XX pincontrol support
-Date:   Wed, 10 Mar 2021 13:54:48 +0100
-Message-Id: <20210310125504.31886-1-noltari@gmail.com>
+Subject: [PATCH v6 02/15] gpio: regmap: set gpio_chip of_node
+Date:   Wed, 10 Mar 2021 13:54:50 +0100
+Message-Id: <20210310125504.31886-3-noltari@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210310125504.31886-1-noltari@gmail.com>
+References: <20210310125504.31886-1-noltari@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -82,90 +84,62 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-First of all, I've based this on the patches sent by Jonas Gorski back in
-2016:
-https://www.spinics.net/lists/linux-gpio/msg15983.html
-http://patchwork.ozlabs.org/project/linux-gpio/patch/1471604025-21575-2-git-send-email-jonas.gorski@gmail.com/
+This is needed for properly registering GPIO regmap as a child of a regmap
+pin controller.
 
-I've tried to address all coments from Linus Walleij, but I know that
-this may still need some other modifications
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+Reviewed-by: Michael Walle <michael@walle.cc>
+---
+ v6: add comment and simplify of_node assignment
+ v5: switch to fwnode
+ v4: fix documentation
+ v3: introduce patch needed for properly parsing gpio-range
 
-This patchset adds appropriate binding documentation and drivers for
-pin controller cores found in the BCM63XX MIPS SoCs currently supported.
+ drivers/gpio/gpio-regmap.c  | 1 +
+ include/linux/gpio/regmap.h | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-While the GPIO part is always the same, the pinmux part varies quite a
-lot between different SoCs. Sometimes they have defined groups which
-can be muxed into different functions, sometimes each function has a
-different group. Sometimes you can mux individual pins. Often it is a
-combination of single pins and groups.
-
-Some core versions require the GPIO direction to be set according to the
-function, most do not. Sometimes the mux register(s) contain bits for
-unrelated other functions.
-
-v6: introduce changes suggested by Rob Herring and Andy Shevchenko.
-v5: introduce changes suggested by Andy Shevchenko.
-v4: fix gpiochip_irqchip_add_domain(), remove IRQ Kconfig selections and add
- missing of_node_put().
-v3: introduce new files for shared code and add more changes suggested by
- Linus Walleij. Also add a new patch needed for properly parsing gpio-ranges.
-v2: introduce changes suggested by Linus Walleij and remove interrupts
- - In order to use GPIO_REGMAP, the need to get gpio_chip from gpio_regmap
- and use it for pinctrl_add_gpio_range() and gpio_chip.direction_input()
- and gpio_chip.direction_output().
-
-Álvaro Fernández Rojas (15):
-  gpio: guard gpiochip_irqchip_add_domain() with GPIOLIB_IRQCHIP
-  gpio: regmap: set gpio_chip of_node
-  pinctrl: bcm: add bcm63xx base code
-  dt-bindings: add BCM6328 pincontroller binding documentation
-  pinctrl: add a pincontrol driver for BCM6328
-  dt-bindings: add BCM6358 pincontroller binding documentation
-  pinctrl: add a pincontrol driver for BCM6358
-  dt-bindings: add BCM6362 pincontroller binding documentation
-  pinctrl: add a pincontrol driver for BCM6362
-  dt-bindings: add BCM6368 pincontroller binding documentation
-  pinctrl: add a pincontrol driver for BCM6368
-  dt-bindings: add BCM63268 pincontroller binding documentation
-  pinctrl: add a pincontrol driver for BCM63268
-  dt-bindings: add BCM6318 pincontroller binding documentation
-  pinctrl: add a pincontrol driver for BCM6318
-
- .../pinctrl/brcm,bcm6318-pinctrl.yaml         | 190 ++++++
- .../pinctrl/brcm,bcm63268-pinctrl.yaml        | 211 ++++++
- .../pinctrl/brcm,bcm6328-pinctrl.yaml         | 174 +++++
- .../pinctrl/brcm,bcm6358-pinctrl.yaml         | 140 ++++
- .../pinctrl/brcm,bcm6362-pinctrl.yaml         | 253 +++++++
- .../pinctrl/brcm,bcm6368-pinctrl.yaml         | 264 +++++++
- drivers/gpio/gpio-regmap.c                    |   1 +
- drivers/pinctrl/bcm/Kconfig                   |  55 ++
- drivers/pinctrl/bcm/Makefile                  |   7 +
- drivers/pinctrl/bcm/pinctrl-bcm6318.c         | 498 ++++++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm63268.c        | 643 ++++++++++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm6328.c         | 404 +++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm6358.c         | 369 ++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm6362.c         | 617 +++++++++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm6368.c         | 523 ++++++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm63xx.c         | 113 +++
- drivers/pinctrl/bcm/pinctrl-bcm63xx.h         |  43 ++
- include/linux/gpio/driver.h                   |   9 +
- include/linux/gpio/regmap.h                   |   4 +
- 19 files changed, 4518 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6318-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm63268-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6362-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6368-pinctrl.yaml
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm6318.c
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm63268.c
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm6328.c
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm6358.c
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm6362.c
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm6368.c
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm63xx.c
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm63xx.h
-
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 5412cb3b0b2a..d4fc656e70b0 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -249,6 +249,7 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 
+ 	chip = &gpio->gpio_chip;
+ 	chip->parent = config->parent;
++	chip->of_node = to_of_node(config->fwnode);
+ 	chip->base = -1;
+ 	chip->ngpio = config->ngpio;
+ 	chip->names = config->names;
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index ad76f3d0a6ba..334dd928042b 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -4,6 +4,7 @@
+ #define _LINUX_GPIO_REGMAP_H
+ 
+ struct device;
++struct fwnode_handle;
+ struct gpio_regmap;
+ struct irq_domain;
+ struct regmap;
+@@ -16,6 +17,8 @@ struct regmap;
+  * @parent:		The parent device
+  * @regmap:		The regmap used to access the registers
+  *			given, the name of the device is used
++ * @fwnode:		(Optional) The firmware node.
++ *			If not given, the fwnode of the parent is used.
+  * @label:		(Optional) Descriptive name for GPIO controller.
+  *			If not given, the name of the device is used.
+  * @ngpio:		Number of GPIOs
+@@ -57,6 +60,7 @@ struct regmap;
+ struct gpio_regmap_config {
+ 	struct device *parent;
+ 	struct regmap *regmap;
++	struct fwnode_handle *fwnode;
+ 
+ 	const char *label;
+ 	int ngpio;
 -- 
 2.20.1
 
