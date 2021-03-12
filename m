@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3753FC28E87
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7883BC4361B
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4CD6516C
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 506FF6508F
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233572AbhCLJ5v (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Mar 2021 04:57:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56638 "EHLO
+        id S233384AbhCLJ5s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Mar 2021 04:57:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233552AbhCLJ5f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 04:57:35 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC18C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:34 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id o14so646019wrm.11
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:34 -0800 (PST)
+        with ESMTP id S233471AbhCLJ52 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 04:57:28 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3270EC061761
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:28 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id x16so1421904wrn.4
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=w8ZvtWniN1Nax9s0y7bdXk3w3tCDYUtn2uEyXco2kqg=;
-        b=SZH8M5e6SXdYyyqxc9p4J0ayUKrveztf0uydAsqUZY1taypoM0tqIWZMQKkW/tjB6e
-         ob4gTzbqPuKdT0D2X55y4/HtUdvPJNeKZm6WF4qH+1BIzPsQ1cyDIJARvd/HFE4a/e5l
-         +R/YhcC0baWqVZ2P8MpFn9ieEkbepY163HXsVsiJWgn9KSBpGPOwAR6KBsSIHv8HRIqz
-         whQPCunmTaI33OZ0uDUMO0PO4ra+LrOO2iumnx6Q7hVTPx4MLf/Q4w3EFfgSfaiUskXs
-         cPHlu5I76iQLg6/k4qGoUVal20aD3pjk02RiQ+lqgDlDLDip8C3vlb5Fl8rlb3yzveUn
-         GDdw==
+        bh=YQC6wFy2J65Y28BJx46C1FfvB3e/Gw51qsSfNp1Q/wg=;
+        b=xhxUA7+WYoiDuZ/QtV3NygWcjE5AdLlO5qB9+Qo4uEQHulumk7GQTGyZxeyasoe0ea
+         w3NwNxHzvNaUSHGqOQcsjJL/+WWiw97WVwpdO7CcUhxjSd9bU72nJw8OolxG7a8A4wHF
+         P9zXUwQ+Wq+puYoJcP2czS1jJNqQvRtBGyFZ/Z68F0qqtfUQ5zEDIYELaV9YUct6zYsg
+         zcVZ3Ahkp/hWyBbrSuwdmg6jIZSmpP5WntcMujve57XNrFg6fWpJHXaPX5pm29w42hT5
+         1IzaxLuw4XH0rcxQbgGMNRO8aKbSTKloJvq9d7LAZNzOfPayRZod/WGiGuSDDrDx5FKO
+         owNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=w8ZvtWniN1Nax9s0y7bdXk3w3tCDYUtn2uEyXco2kqg=;
-        b=cRz1fgQmerqpPsOONN8bMLvlHXpSTI2DEptzRZ4NRppg2a0IwKx/mV8f6iZ/Q4ngUz
-         ed5+2MbA5oV54JqctsK5h3YYN1AYt3HiXRHF+dN+V7lDoN16QEIzHixcnJb1r85s9yT7
-         iaeVMPGT+J3pLEsoT59n//zOKldLmKR+m5oYmWp+rAaPA41J1SElUtbgYKJVZqL/Tj3d
-         mH/DXJyYJj03PaVQp+1RHJHOT/vYvHR4VDAzO/Mda3Q88XaVdL2L7gSLNti47qOLghmf
-         CbxWQbsHeo8YuqhPej7QTT813Qn0xQqS+RWi8sIOz6Gimtsb71m2sLJeGL5g3oivmdRf
-         fknw==
-X-Gm-Message-State: AOAM530ZjiWEvchgr3jG6pGbTiqvp0vMVDUYdtWx1npG/x+PNSQOhXWM
-        zKolpWrHM6KnJgEhuAmnw+u9qw==
-X-Google-Smtp-Source: ABdhPJyyv2INX2DarS3jsmEYtGRwN57uMrCzvJW3bZPuZO05mSRjGsqa1iZDPJJYMarRhpyX5Ll0vg==
-X-Received: by 2002:adf:dcd2:: with SMTP id x18mr13491450wrm.361.1615543053546;
-        Fri, 12 Mar 2021 01:57:33 -0800 (PST)
+        bh=YQC6wFy2J65Y28BJx46C1FfvB3e/Gw51qsSfNp1Q/wg=;
+        b=V+xzwl46J1O6zq2pyjXtcsXzDH22aGQVJ3CcChr8NmGxwRqEe19BBCgFsOqF8lOFZn
+         fiLkID0JOq/n9E4lj8c329WGcqeodLgo/eQZwPgveStUyduEmm+2P6UH/n8bkRsRMxcI
+         ABL65tdfS9Hx1W3WFXXsSzL2OhLkL/HEGa6Vp+r2SKmWMj3MV08SdMlNaoZ6IiCajoCb
+         aNHuCi89tStLvWk2427cTaiXVIDoehIy6uHZZTtx9mUlNMJYA9YivqlGD2nKKsmCNa5b
+         dTS/R9q+spGX8b2rVPkHag2riWCoI0DHf/8zYGYjiptwwkRC/QDiyFXUnDvS32UynnDL
+         pXIA==
+X-Gm-Message-State: AOAM531BpvDCQU1Yq2xuqsGrKLhaAoKqZ+deWC+CN3w36WC392IiqTHS
+        vZNjc8TA0D+L4CiE51jZnN5hOA==
+X-Google-Smtp-Source: ABdhPJzjYlutpfhjnWI4uL6g9A4wK/mVdnRfrd++5vVpecsLHGfuQJ5GTJzCn5RXj5PrVCp0hMfnrw==
+X-Received: by 2002:a5d:6a87:: with SMTP id s7mr13119509wru.312.1615543046893;
+        Fri, 12 Mar 2021 01:57:26 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id x13sm7031630wrt.75.2021.03.12.01.57.32
+        by smtp.gmail.com with ESMTPSA id x13sm7031630wrt.75.2021.03.12.01.57.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 01:57:33 -0800 (PST)
+        Fri, 12 Mar 2021 01:57:26 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
         Shuah Khan <shuah@kernel.org>,
@@ -69,9 +69,9 @@ To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 11/11] selftests: gpio: add test cases for gpio-sim
-Date:   Fri, 12 Mar 2021 10:57:00 +0100
-Message-Id: <20210312095700.16277-12-brgl@bgdev.pl>
+Subject: [PATCH v4 05/11] lib: bitmap: remove the 'extern' keyword from function declarations
+Date:   Fri, 12 Mar 2021 10:56:54 +0100
+Message-Id: <20210312095700.16277-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210312095700.16277-1-brgl@bgdev.pl>
 References: <20210312095700.16277-1-brgl@bgdev.pl>
@@ -83,275 +83,174 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a set of tests for the new gpio-sim module. This is a pure shell
-test-suite and uses the helper programs available in the gpio selftests
-directory. These test-cases only test the functionalities exposed by the
-gpio-sim driver, not those handled by core gpiolib code.
+The 'extern' keyword doesn't have any benefits in header files. Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- tools/testing/selftests/gpio/Makefile    |   2 +-
- tools/testing/selftests/gpio/config      |   1 +
- tools/testing/selftests/gpio/gpio-sim.sh | 229 +++++++++++++++++++++++
- 3 files changed, 231 insertions(+), 1 deletion(-)
- create mode 100755 tools/testing/selftests/gpio/gpio-sim.sh
+ include/linux/bitmap.h | 115 ++++++++++++++++++++---------------------
+ 1 file changed, 57 insertions(+), 58 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index d7d8f1985d99..4c6df61c76a8 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 70a932470b2d..6939a8983026 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -118,54 +118,53 @@
+  * Allocation and deallocation of bitmap.
+  * Provided in lib/bitmap.c to avoid circular dependency.
+  */
+-extern unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
+-extern unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
+-extern void bitmap_free(const unsigned long *bitmap);
++unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
++unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
++void bitmap_free(const unsigned long *bitmap);
  
--TEST_PROGS := gpio-mockup.sh
-+TEST_PROGS := gpio-mockup.sh gpio-sim.sh
- TEST_FILES := gpio-mockup-sysfs.sh
- TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
+ /*
+  * lib/bitmap.c provides these functions:
+  */
  
-diff --git a/tools/testing/selftests/gpio/config b/tools/testing/selftests/gpio/config
-index ce100342c20b..409a8532facc 100644
---- a/tools/testing/selftests/gpio/config
-+++ b/tools/testing/selftests/gpio/config
-@@ -1,3 +1,4 @@
- CONFIG_GPIOLIB=y
- CONFIG_GPIO_CDEV=y
- CONFIG_GPIO_MOCKUP=m
-+CONFIG_GPIO_SIM=m
-diff --git a/tools/testing/selftests/gpio/gpio-sim.sh b/tools/testing/selftests/gpio/gpio-sim.sh
-new file mode 100755
-index 000000000000..fcca6ec611f8
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-sim.sh
-@@ -0,0 +1,229 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2021 Bartosz Golaszewski <bgolaszewski@baylibre.com>
+-extern int __bitmap_equal(const unsigned long *bitmap1,
+-			  const unsigned long *bitmap2, unsigned int nbits);
+-extern bool __pure __bitmap_or_equal(const unsigned long *src1,
+-				     const unsigned long *src2,
+-				     const unsigned long *src3,
+-				     unsigned int nbits);
+-extern void __bitmap_complement(unsigned long *dst, const unsigned long *src,
+-			unsigned int nbits);
+-extern void __bitmap_shift_right(unsigned long *dst, const unsigned long *src,
+-				unsigned int shift, unsigned int nbits);
+-extern void __bitmap_shift_left(unsigned long *dst, const unsigned long *src,
+-				unsigned int shift, unsigned int nbits);
+-extern void bitmap_cut(unsigned long *dst, const unsigned long *src,
+-		       unsigned int first, unsigned int cut,
+-		       unsigned int nbits);
+-extern int __bitmap_and(unsigned long *dst, const unsigned long *bitmap1,
++int __bitmap_equal(const unsigned long *bitmap1,
++		   const unsigned long *bitmap2, unsigned int nbits);
++bool __pure __bitmap_or_equal(const unsigned long *src1,
++			      const unsigned long *src2,
++			      const unsigned long *src3,
++			      unsigned int nbits);
++void __bitmap_complement(unsigned long *dst, const unsigned long *src,
++			 unsigned int nbits);
++void __bitmap_shift_right(unsigned long *dst, const unsigned long *src,
++			  unsigned int shift, unsigned int nbits);
++void __bitmap_shift_left(unsigned long *dst, const unsigned long *src,
++			 unsigned int shift, unsigned int nbits);
++void bitmap_cut(unsigned long *dst, const unsigned long *src,
++		unsigned int first, unsigned int cut, unsigned int nbits);
++int __bitmap_and(unsigned long *dst, const unsigned long *bitmap1,
++		 const unsigned long *bitmap2, unsigned int nbits);
++void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
++		 const unsigned long *bitmap2, unsigned int nbits);
++void __bitmap_xor(unsigned long *dst, const unsigned long *bitmap1,
++		  const unsigned long *bitmap2, unsigned int nbits);
++int __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
++		    const unsigned long *bitmap2, unsigned int nbits);
++void __bitmap_replace(unsigned long *dst,
++		      const unsigned long *old, const unsigned long *new,
++		      const unsigned long *mask, unsigned int nbits);
++int __bitmap_intersects(const unsigned long *bitmap1,
+ 			const unsigned long *bitmap2, unsigned int nbits);
+-extern void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern void __bitmap_xor(unsigned long *dst, const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern int __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern void __bitmap_replace(unsigned long *dst,
+-			const unsigned long *old, const unsigned long *new,
+-			const unsigned long *mask, unsigned int nbits);
+-extern int __bitmap_intersects(const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern int __bitmap_subset(const unsigned long *bitmap1,
+-			const unsigned long *bitmap2, unsigned int nbits);
+-extern int __bitmap_weight(const unsigned long *bitmap, unsigned int nbits);
+-extern void __bitmap_set(unsigned long *map, unsigned int start, int len);
+-extern void __bitmap_clear(unsigned long *map, unsigned int start, int len);
+-
+-extern unsigned long bitmap_find_next_zero_area_off(unsigned long *map,
+-						    unsigned long size,
+-						    unsigned long start,
+-						    unsigned int nr,
+-						    unsigned long align_mask,
+-						    unsigned long align_offset);
++int __bitmap_subset(const unsigned long *bitmap1,
++		    const unsigned long *bitmap2, unsigned int nbits);
++int __bitmap_weight(const unsigned long *bitmap, unsigned int nbits);
++void __bitmap_set(unsigned long *map, unsigned int start, int len);
++void __bitmap_clear(unsigned long *map, unsigned int start, int len);
 +
-+BASE_DIR=`dirname $0`
-+CONFIGFS_DIR="/sys/kernel/config/gpio-sim"
-+PENDING_DIR=$CONFIGFS_DIR/pending
-+LIVE_DIR=$CONFIGFS_DIR/live
-+MODULE="gpio-sim"
-+
-+fail() {
-+	echo "$*" >&2
-+	echo "GPIO $MODULE test FAIL"
-+	exit 1
-+}
-+
-+skip() {
-+	echo "$*" >&2
-+	echo "GPIO $MODULE test SKIP"
-+	exit 4
-+}
-+
-+configfs_cleanup() {
-+	for DIR in `ls $LIVE_DIR`; do
-+		mv $LIVE_DIR/$DIR $PENDING_DIR
-+	done
-+
-+	for DIR in `ls $PENDING_DIR`; do
-+		rmdir $PENDING_DIR/$DIR
-+	done
-+}
-+
-+create_pending_chip() {
-+	local NAME="$1"
-+	local LABEL="$2"
-+	local NUM_LINES="$3"
-+	local LINE_NAMES="$4"
-+	local CHIP_DIR="$PENDING_DIR/$NAME"
-+
-+	mkdir $CHIP_DIR
-+	test -n "$LABEL" && echo $LABEL > $CHIP_DIR/label
-+	test -n "$NUM_LINES" && echo $NUM_LINES > $CHIP_DIR/num_lines
-+	if [ -n "$LINE_NAMES" ]; then
-+		echo $LINE_NAMES 2> /dev/null > $CHIP_DIR/line_names
-+		# This one can fail
-+		if [ "$?" -ne "0" ]; then
-+			return 1
-+		fi
-+	fi
-+}
-+
-+create_live_chip() {
-+	local CHIP_DIR="$PENDING_DIR/$1"
-+
-+	create_pending_chip "$@" || fail "unable to create the chip configfs item"
-+	mv $CHIP_DIR $LIVE_DIR || fail "unable to commit the chip configfs item"
-+}
-+
-+remove_pending_chip() {
-+	local NAME="$1"
-+
-+	rmdir $PENDING_DIR/$NAME || fail "unable to remove the chip configfs item"
-+}
-+
-+remove_live_chip() {
-+	local NAME="$1"
-+
-+	mv $LIVE_DIR/$NAME $PENDING_DIR || fail "unable to uncommit the chip configfs item"
-+	remove_pending_chip "$@"
-+}
-+
-+configfs_chip_name() {
-+	local CHIP="$1"
-+
-+	cat $LIVE_DIR/$CHIP/chip_name 2> /dev/null || return 1
-+}
-+
-+configfs_dev_name() {
-+	local CHIP="$1"
-+
-+	cat $LIVE_DIR/$CHIP/dev_name 2> /dev/null || return 1
-+}
-+
-+get_chip_num_lines() {
-+	local CHIP="$1"
-+
-+	$BASE_DIR/gpio-chip-info /dev/`configfs_chip_name $CHIP` num-lines
-+}
-+
-+get_chip_label() {
-+	local CHIP="$1"
-+
-+	$BASE_DIR/gpio-chip-info /dev/`configfs_chip_name $CHIP` label
-+}
-+
-+get_line_name() {
-+	local CHIP="$1"
-+	local OFFSET="$2"
-+
-+	$BASE_DIR/gpio-line-name /dev/`configfs_chip_name $CHIP` $OFFSET
-+}
-+
-+sysfs_set_pull() {
-+	local CHIP="$1"
-+	local OFFSET="$2"
-+	local PULL="$3"
-+	local SYSFSPATH="/sys/devices/platform/`configfs_dev_name $CHIP`/line-ctrl/gpio$OFFSET"
-+
-+	echo $PULL > $SYSFSPATH
-+}
-+
-+# Load the gpio-sim module. This will pull in configfs if needed too.
-+modprobe gpio-sim || skip "unable to load the gpio-sim module"
-+# Make sure configfs is mounted at /sys/kernel/config. Wait a bit if needed.
-+for IDX in `seq 5`; do
-+	if [ "$IDX" -eq "5" ]; then
-+		skip "configfs not mounted at /sys/kernel/config"
-+	fi
-+
-+	mountpoint -q /sys/kernel/config && break
-+	sleep 0.1
-+done
-+# If the module was already loaded: remove all previous chips
-+configfs_cleanup
-+
-+trap "exit 1" SIGTERM SIGINT
-+trap configfs_cleanup EXIT
-+
-+echo "1. chip_name and dev_name attributes"
-+
-+echo "1.1. Chip name is communicated to user"
-+create_live_chip chip
-+test -n `cat $LIVE_DIR/chip/chip_name` || fail "chip_name doesn't work"
-+remove_live_chip chip
-+
-+echo "1.2. chip_name returns 'none' if the chip is still pending"
-+create_pending_chip chip
-+test "`cat $PENDING_DIR/chip/chip_name`" = "none" || fail "chip_name doesn't return 'none' for a pending chip"
-+remove_pending_chip chip
-+
-+echo "1.3. Device name is communicated to user"
-+create_live_chip chip
-+test -n `cat $LIVE_DIR/chip/dev_name` || fail "dev_name doesn't work"
-+remove_live_chip chip
-+
-+echo "1.4. dev_name returns 'none' if chip is still pending"
-+create_pending_chip chip
-+test "`cat $PENDING_DIR/chip/dev_name`" = "none" || fail "dev_name doesn't return 'none' for a pending chip"
-+remove_pending_chip chip
-+
-+echo "2. Creating simulated chips"
-+
-+echo "2.1. Default number of lines is 1"
-+create_live_chip chip
-+test "`get_chip_num_lines chip`" = "1" || fail "default number of lines is not 1"
-+remove_live_chip chip
-+
-+echo "2.2. Number of lines can be specified"
-+create_live_chip chip test-label 16
-+test "`get_chip_num_lines chip`" = "16" || fail "number of lines is not 16"
-+remove_live_chip chip
-+
-+echo "2.3. Label can be set"
-+create_live_chip chip foobar
-+test "`get_chip_label chip`" = "foobar" || fail "label is incorrect"
-+remove_live_chip chip
-+
-+echo "2.4. Label can be left empty"
-+create_live_chip chip
-+test -z "`cat $LIVE_DIR/chip/label`" || fail "label is not empty"
-+remove_live_chip chip
-+
-+echo "2.5. Line names can be configured"
-+create_live_chip chip test-label 16 '"foo", "", "bar"'
-+test "`get_line_name chip 0`" = "foo" || fail "line name is incorrect"
-+test "`get_line_name chip 2`" = "bar" || fail "line name is incorrect"
-+remove_live_chip chip
-+
-+echo "2.6. Errors in line names are detected"
-+create_pending_chip chip test-label 8 '"foo", bar' && fail "incorrect line name accepted"
-+remove_pending_chip chip
-+create_pending_chip chip test-label 8 '"foo" "bar"' && fail "incorrect line name accepted"
-+remove_pending_chip chip
-+
-+echo "2.7. Multiple chips can be created"
-+create_live_chip chip0
-+create_live_chip chip1
-+create_live_chip chip2
-+remove_live_chip chip0
-+remove_live_chip chip1
-+remove_live_chip chip2
-+
-+echo "3. Controlling simulated chips"
-+
-+echo "3.3. Pull can be set over sysfs"
-+create_live_chip chip test-label 8
-+sysfs_set_pull chip 0 1
-+$BASE_DIR/gpio-mockup-cdev /dev/`configfs_chip_name chip` 0
-+test "$?" = "1" || fail "pull set incorrectly"
-+sysfs_set_pull chip 0 0
-+$BASE_DIR/gpio-mockup-cdev /dev/`configfs_chip_name chip` 1
-+test "$?" = "0" || fail "pull set incorrectly"
-+remove_live_chip chip
-+
-+echo "3.4. Incorrect input in sysfs is rejected"
-+create_live_chip chip test-label 8
-+SYSFS_PATH="/sys/devices/platform/`configfs_dev_name chip`/line-ctrl/gpio0"
-+echo 2 > $SYSFS_PATH 2> /dev/null && fail "invalid input not detectec"
-+remove_live_chip chip
-+
-+echo "4. Simulated GPIO chips are functional"
-+
-+echo "4.1. Values can be read from sysfs"
-+create_live_chip chip test-label 8
-+SYSFS_PATH="/sys/devices/platform/`configfs_dev_name chip`/line-ctrl/gpio0"
-+test `cat $SYSFS_PATH` = "0" || fail "incorrect value read from sysfs"
-+$BASE_DIR/gpio-mockup-cdev -s 1 /dev/`configfs_chip_name chip` 0 &
-+sleep 0.1 # FIXME Any better way?
-+test `cat $SYSFS_PATH` = "1" || fail "incorrect value read from sysfs"
-+kill $!
-+remove_live_chip chip
-+
-+echo "4.2. Bias settings work correctly"
-+create_live_chip chip test-label 8
-+$BASE_DIR/gpio-mockup-cdev -b pull-up /dev/`configfs_chip_name chip` 0
-+test `cat $SYSFS_PATH` = "1" || fail "bias setting does not work"
-+remove_live_chip chip
-+
-+echo "GPIO $MODULE test PASS"
++unsigned long bitmap_find_next_zero_area_off(unsigned long *map,
++					     unsigned long size,
++					     unsigned long start,
++					     unsigned int nr,
++					     unsigned long align_mask,
++					     unsigned long align_offset);
+ 
+ /**
+  * bitmap_find_next_zero_area - find a contiguous aligned zero area
+@@ -190,33 +189,33 @@ bitmap_find_next_zero_area(unsigned long *map,
+ 					      align_mask, 0);
+ }
+ 
+-extern int bitmap_parse(const char *buf, unsigned int buflen,
++int bitmap_parse(const char *buf, unsigned int buflen,
+ 			unsigned long *dst, int nbits);
+-extern int bitmap_parse_user(const char __user *ubuf, unsigned int ulen,
++int bitmap_parse_user(const char __user *ubuf, unsigned int ulen,
+ 			unsigned long *dst, int nbits);
+-extern int bitmap_parselist(const char *buf, unsigned long *maskp,
++int bitmap_parselist(const char *buf, unsigned long *maskp,
+ 			int nmaskbits);
+-extern int bitmap_parselist_user(const char __user *ubuf, unsigned int ulen,
++int bitmap_parselist_user(const char __user *ubuf, unsigned int ulen,
+ 			unsigned long *dst, int nbits);
+-extern void bitmap_remap(unsigned long *dst, const unsigned long *src,
++void bitmap_remap(unsigned long *dst, const unsigned long *src,
+ 		const unsigned long *old, const unsigned long *new, unsigned int nbits);
+-extern int bitmap_bitremap(int oldbit,
++int bitmap_bitremap(int oldbit,
+ 		const unsigned long *old, const unsigned long *new, int bits);
+-extern void bitmap_onto(unsigned long *dst, const unsigned long *orig,
++void bitmap_onto(unsigned long *dst, const unsigned long *orig,
+ 		const unsigned long *relmap, unsigned int bits);
+-extern void bitmap_fold(unsigned long *dst, const unsigned long *orig,
++void bitmap_fold(unsigned long *dst, const unsigned long *orig,
+ 		unsigned int sz, unsigned int nbits);
+-extern int bitmap_find_free_region(unsigned long *bitmap, unsigned int bits, int order);
+-extern void bitmap_release_region(unsigned long *bitmap, unsigned int pos, int order);
+-extern int bitmap_allocate_region(unsigned long *bitmap, unsigned int pos, int order);
++int bitmap_find_free_region(unsigned long *bitmap, unsigned int bits, int order);
++void bitmap_release_region(unsigned long *bitmap, unsigned int pos, int order);
++int bitmap_allocate_region(unsigned long *bitmap, unsigned int pos, int order);
+ 
+ #ifdef __BIG_ENDIAN
+-extern void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int nbits);
++void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int nbits);
+ #else
+ #define bitmap_copy_le bitmap_copy
+ #endif
+-extern unsigned int bitmap_ord_to_pos(const unsigned long *bitmap, unsigned int ord, unsigned int nbits);
+-extern int bitmap_print_to_pagebuf(bool list, char *buf,
++unsigned int bitmap_ord_to_pos(const unsigned long *bitmap, unsigned int ord, unsigned int nbits);
++int bitmap_print_to_pagebuf(bool list, char *buf,
+ 				   const unsigned long *maskp, int nmaskbits);
+ 
+ #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
+@@ -265,9 +264,9 @@ static inline void bitmap_copy_clear_tail(unsigned long *dst,
+  * therefore conversion is not needed when copying data from/to arrays of u32.
+  */
+ #if BITS_PER_LONG == 64
+-extern void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf,
++void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf,
+ 							unsigned int nbits);
+-extern void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap,
++void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap,
+ 							unsigned int nbits);
+ #else
+ #define bitmap_from_arr32(bitmap, buf, nbits)			\
 -- 
 2.30.1
 
