@@ -2,181 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9B2C28E89
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ED2C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 11:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9F065171
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B249C64FE0
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 11:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233567AbhCLJ5u (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Mar 2021 04:57:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56620 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233525AbhCLJ5c (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 04:57:32 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84B56C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:32 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id v15so4450994wrx.4
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=aInBliwrC9dHKGFsbWV5Kx8fY6sxq6tzoBmO7q92930=;
-        b=NX4mIX5zT3RkA68dsuxbhUlX6TqJT0IcPt2i9YRr8Lt1dtVRVG/dko+xvyCSdjsf8f
-         AqOfNgTqexPpiWLwrnXNaRjyczrfmJTQnCatKBNN6ACialpkdj19sxMc7Pj/+4WHOf4q
-         2AcRKKJQ3aO2GbuWLSHXHL9IolUMCZJ8CXz5TfBNuDUEekA9zlxSY3GEIfOH+5A4tR7N
-         K72C20Nc/Bm39ToYLT0pm4U49Jf6huN5t7R5+MLt8UQfP1d67unPLgChvIuBin6gSXco
-         HBoKEDkAGfiPXpN54MvACZrYr7gyhrc/LqR+yMfCBLEA7p2fveetvWojskb+BdTcfhI8
-         jj6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aInBliwrC9dHKGFsbWV5Kx8fY6sxq6tzoBmO7q92930=;
-        b=Imdqax5yqfZkzh7vH4kgxwgI3B92XOjowcajfd/ONl7PRaEAM6juQ1Nprh0Unjl3PT
-         mt56CuUNYErwDdeZFR5HG+KwBuedQrDHGjVv5I7sOYSolQde49GT9HKq2ZeTfN/5y59k
-         wCDkceF7oNg47O0mIcvi0ik/K3Nxlf1NOAC73zZn/F1G+1yeujB6K0wDqcCKxk3NYMr+
-         yW5euk2chIo2iFMRozhogTrigSGqBUbOzil9D/zJQs2fTW31c5jXFF59nbdH6JFfFtOH
-         RGAstiDKL3Kf2FSbNhvurbqntPo54C+Z7oFUk1pJoxcF4AmtWsbqskrf7c9nKZEd6u8W
-         OZvg==
-X-Gm-Message-State: AOAM531AuFvEDl6pvviBE38KTxCeYJ3vyUCrdyJL6Ma+g7O4bguCgLnP
-        QIjGxoyCEHbT5aq5keS26QFMug==
-X-Google-Smtp-Source: ABdhPJzW7I/UvgyEU61xuRBHuMNUDFO3dYl4QYi+OMv0hpU/3PX8b1Sd4evM403IjAi1n/RJP6vd/g==
-X-Received: by 2002:adf:e3c9:: with SMTP id k9mr13732851wrm.308.1615543051281;
-        Fri, 12 Mar 2021 01:57:31 -0800 (PST)
-Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id x13sm7031630wrt.75.2021.03.12.01.57.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 01:57:30 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
+        id S233898AbhCLLEa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Mar 2021 06:04:30 -0500
+Received: from mga02.intel.com ([134.134.136.20]:5499 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233554AbhCLLEA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 12 Mar 2021 06:04:00 -0500
+IronPort-SDR: Mz/uavYLg1nriw4SDf7sOW10LDGJs9/+ZuAZT6qKGKbt6WBOEuWtTXOMEAKRfqZvh92rdtbeIY
+ ZnKIoa24iBOQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9920"; a="175939530"
+X-IronPort-AV: E=Sophos;i="5.81,243,1610438400"; 
+   d="scan'208";a="175939530"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2021 03:03:58 -0800
+IronPort-SDR: /6TpBsSEM7T8QD3s4i9cejjiudGvvwuwTdPHMSBWm5BAzAXBnCnAaOftdYr8trlo9hlgCVfEBG
+ uvC4xBrDbpzQ==
+X-IronPort-AV: E=Sophos;i="5.81,243,1610438400"; 
+   d="scan'208";a="521392591"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2021 03:03:55 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lKfaB-00BpeO-JN; Fri, 12 Mar 2021 13:03:51 +0200
+Date:   Fri, 12 Mar 2021 13:03:51 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
         Shuah Khan <shuah@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
         <u.kleine-koenig@pengutronix.de>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Kent Gibson <warthog618@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 09/11] selftests: gpio: provide a helper for reading chip info
-Date:   Fri, 12 Mar 2021 10:56:58 +0100
-Message-Id: <20210312095700.16277-10-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210312095700.16277-1-brgl@bgdev.pl>
-References: <20210312095700.16277-1-brgl@bgdev.pl>
+Subject: Re: [PATCH v3 08/11] gpio: sim: new testing module
+Message-ID: <YEtKlyV13h2fbwJR@smile.fi.intel.com>
+References: <20210309205921.15992-1-brgl@bgdev.pl>
+ <20210309205921.15992-9-brgl@bgdev.pl>
+ <YEi7fth6sZWgKd+q@smile.fi.intel.com>
+ <CAMRc=MfeCWNnXwqBBu3CcdHXQ5QnNPBh8EJRTCtyZau+RqE-0w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfeCWNnXwqBBu3CcdHXQ5QnNPBh8EJRTCtyZau+RqE-0w@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, Mar 12, 2021 at 09:54:58AM +0100, Bartosz Golaszewski wrote:
+> On Wed, Mar 10, 2021 at 1:28 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 
-Add a simple program that allows to retrieve chip properties from the
-GPIO character device. This will be used in gpio-sim selftests.
+...
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- tools/testing/selftests/gpio/.gitignore       |  1 +
- tools/testing/selftests/gpio/Makefile         |  2 +-
- tools/testing/selftests/gpio/gpio-chip-info.c | 57 +++++++++++++++++++
- 3 files changed, 59 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/gpio/gpio-chip-info.c
+> > > +             ret = sprintf(page, "n/a\n");
+> >
+> > I dunno '/' (slash) is a good character to be handled in a shell.
+> > I would prefer 'none' or 'not available' (I think space is easier,
+> > because the rules to escape much simpler: need just to take it into
+> > quotes, while / needs to be escaped separately).
+> >
+> 
+> My test cases work fine with 'n/a' but I can change it to 'none' if
+> it's less controversial.
 
-diff --git a/tools/testing/selftests/gpio/.gitignore b/tools/testing/selftests/gpio/.gitignore
-index a4969f7ee020..4ea4f58dab1a 100644
---- a/tools/testing/selftests/gpio/.gitignore
-+++ b/tools/testing/selftests/gpio/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- gpio-mockup-cdev
-+gpio-chip-info
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 39f2bbe8dd3d..84b48547f94c 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -2,6 +2,6 @@
- 
- TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh
--TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev
-+TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/gpio/gpio-chip-info.c b/tools/testing/selftests/gpio/gpio-chip-info.c
-new file mode 100644
-index 000000000000..4d26fa7c254a
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-chip-info.c
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * GPIO character device helper for reading chip information.
-+ *
-+ * Copyright (C) 2021 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ */
-+
-+#include <fcntl.h>
-+#include <linux/gpio.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/types.h>
-+
-+static void print_usage(void)
-+{
-+	printf("usage:\n");
-+	printf("  gpio-chip-info <chip path> [name|label|num-lines]\n");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct gpiochip_info info;
-+	int fd, ret;
-+
-+	if (argc !=3) {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	fd = open(argv[1], O_RDWR);
-+	if (fd < 0) {
-+		perror("unable to open the GPIO chip");
-+		return EXIT_FAILURE;
-+	}
-+
-+	memset(&info, 0, sizeof(info));
-+	ret = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &info);
-+	if (ret) {
-+		perror("chip info ioctl failed");
-+		return EXIT_FAILURE;
-+	}
-+
-+	if (strcmp(argv[2], "name") == 0) {
-+		printf("%s\n", info.name);
-+	} else if (strcmp(argv[2], "label") == 0) {
-+		printf("%s\n", info.label);
-+	} else if (strcmp(argv[2], "num-lines") == 0) {
-+		printf("%u\n", info.lines);
-+	} else {
-+		fprintf(stderr, "unknown command: %s\n", argv[2]);
-+		return EXIT_FAILURE;
-+	}
-+
-+	return EXIT_SUCCESS;
-+}
+
+% git grep -n -w '"none"' -- drivers/ arch/ | wc -l
+371
+
+% git grep -n -w '"n/a"' -- drivers/ arch/ | wc -l
+15
+
+% git grep -n -w '"not available"' -- drivers/ arch/ | wc -l
+5
+
+...
+
+> But I would be creating empty properties for nothing. Better to just
+> not have them at all.
+
+Up to you.
+
 -- 
-2.30.1
+With Best Regards,
+Andy Shevchenko
+
 
