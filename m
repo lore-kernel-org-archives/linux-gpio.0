@@ -2,74 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689FFC2BB53
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 12:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36E2C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 12:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7D564FE0
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 12:26:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62CD064FE0
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 12:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231594AbhCLMZj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Mar 2021 07:25:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57112 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231166AbhCLMZX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 Mar 2021 07:25:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AE3C4B0B7;
-        Fri, 12 Mar 2021 12:25:21 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v8 05/11] reset: raspberrypi: Release firmware handle on unbind
-Date:   Fri, 12 Mar 2021 13:24:48 +0100
-Message-Id: <20210312122454.24480-6-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210312122454.24480-1-nsaenzjulienne@suse.de>
-References: <20210312122454.24480-1-nsaenzjulienne@suse.de>
+        id S229530AbhCLMqZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Mar 2021 07:46:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36774 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229677AbhCLMqD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 07:46:03 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12148C061574;
+        Fri, 12 Mar 2021 04:46:03 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id 16so9373005pgo.13;
+        Fri, 12 Mar 2021 04:46:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WQYnUu+syC+gJ8SAwcXk3ME3qoa+YQ2AJhsnB1gGC0o=;
+        b=aE5NM6ZW1qYl1zkoxxXT5WOAWfDxAjW7iffwXjfiGY1vogvex3Gu6OIEfPk3pkHj02
+         Zz0n/mYS6yu3DIevEIKnQMxpaheWsldXpzbT1a+4GsiRzh0EwvSz5THfKlyeOJwYHEtv
+         fQbd0v9cr9j+ZTmbPc2NxodMfpRA2ZoW3UzIBemBJXRwE2QotCjknpoGroRvjniBw24E
+         90wAYskdbVDJMCzi0XkZjYk2UgyXgPkgArT/VFNv6IDw/l4x17uKa+Dw4UymII8AgY42
+         pQ+HoHkO8Bgs+x+uLgK66G/bRtgl13CXh17Va0pE3gDuCUKTj1FyBOi6V5kk6Qr3wOzn
+         gqOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WQYnUu+syC+gJ8SAwcXk3ME3qoa+YQ2AJhsnB1gGC0o=;
+        b=LpPTv1qShx7GDSDQEgrYyNgpu1ngE0WexFg/OHhZrnDTnP+csdFg1bqnwsV+ZOBPhb
+         gwxeXQN79NK0wyn8mB38elgV/EemYcKlrrK6TNKJe1TELrWaIO5Z/qLC20VtRRLfQr0m
+         nfU3J0G6kaAw7+QZvNnoQ5MxGW79dm1i+0vKk6lsmL6rElD4F7cZ0UOl2PJhOe7NBFv0
+         cP807FnyKJxJ8gsw+DtwkmCHD/4f4CxT9msOGPdUYy+sZyWKwwHPMUQGCOpq9ky/DTZz
+         Cc1fkSknteDiwb3f1N+kE3eiIOsYPVgQu3jZ483pzNxbvlpRr582Da8vI0E0QFMxqTDL
+         uYvQ==
+X-Gm-Message-State: AOAM533sTfCNiLI9SHxZZfEHY6KS8dG6fW1Mr34plfQL1ie/fU/l5WcI
+        jVmyxPw3sfTdkXCPurD572FCIyCnAi5aWxyntCYNgtJaN78+6g==
+X-Google-Smtp-Source: ABdhPJy1gLF+5uC+aMtgLHYJCioOBbsbw6QtQSyMU0wEp3yZFAWTbWaTPUhjfHXLYs31TP/ommj/TrjwbDUVXTSbb1Q=
+X-Received: by 2002:a65:4bc5:: with SMTP id p5mr11478206pgr.74.1615553162596;
+ Fri, 12 Mar 2021 04:46:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <d66e78e3-2000-611b-cd74-8a61461153e8@canonical.com>
+ <5c08bd61-688f-e95b-5fa3-584f190ed4bf@xilinx.com> <bf508c29-4a51-5f97-8459-06c1fe74b60f@canonical.com>
+In-Reply-To: <bf508c29-4a51-5f97-8459-06c1fe74b60f@canonical.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 12 Mar 2021 14:45:46 +0200
+Message-ID: <CAHp75VcEU=Axi7k41rUxps4LehEzbG12z410VVBbwPtMCbJHrQ@mail.gmail.com>
+Subject: Re: pinctrl: core: Handling pinmux and pinconf separately
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
-interface when unbinding the device.
+On Thu, Mar 11, 2021 at 1:26 PM Colin Ian King <colin.king@canonical.com> wrote:
+> On 11/03/2021 11:16, Michal Simek wrote:
+> > On 3/11/21 11:57 AM, Colin Ian King wrote:
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/reset/reset-raspberrypi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >> For the PIN_MAP_TYPE_CONFIGS_PIN and PIN_MAP_TYPE_CONFIGS_GROUP
+> >> setting->type cases the loop can break out with ret not being set. Since
+> >> ret has not been initialized it the ret < 0 check is checking against an
+> >> uninitialized value.
+> >>
+> >> I was not sure if the PIN_MAP_TYPE_CONFIGS_PIN and
+> >> PIN_MAP_TYPE_CONFIGS_GROUP cases should be setting ret and if so, what
+> >> the value of ret should be set to (is it an error condition or not?). Or
+> >> should ret be initialized to 0 or a default error value at the start of
+> >> the function.
+> >>
+> >> Hence I'm reporting this issue.
+> >
+> > What about this? Is this passing static analysis?
+>
+> It will take me 2 hours to re-run the analysis, but from eyeballing the
+> code I think the assignments will fix this.
 
-diff --git a/drivers/reset/reset-raspberrypi.c b/drivers/reset/reset-raspberrypi.c
-index 02f59c06f69b..fa23db554bcf 100644
---- a/drivers/reset/reset-raspberrypi.c
-+++ b/drivers/reset/reset-raspberrypi.c
-@@ -82,7 +82,7 @@ static int rpi_reset_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	fw = rpi_firmware_get(np);
-+	fw = devm_rpi_firmware_get(&pdev->dev, np);
- 	of_node_put(np);
- 	if (!fw)
- 		return -EPROBE_DEFER;
+It surprises me that tools in the 21st century can't run on a subset
+of the data.
+
+Had you filed a bug to the Coverity team that they will provide a way
+to rerun analysis on a subset of the data?
+
+
 -- 
-2.30.1
-
+With Best Regards,
+Andy Shevchenko
