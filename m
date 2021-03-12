@@ -2,59 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BED0C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8054CC28E88
 	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D53FC6512C
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55A5C6510B
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 09:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233357AbhCLJ5t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Mar 2021 04:57:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56600 "EHLO
+        id S233554AbhCLJ5v (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Mar 2021 04:57:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233517AbhCLJ5a (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 04:57:30 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22849C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:30 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id n11-20020a05600c4f8bb029010e5cf86347so4249192wmq.1
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:30 -0800 (PST)
+        with ESMTP id S233550AbhCLJ5e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 04:57:34 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C6CAC061761
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:33 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id e18so1418432wrt.6
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Mar 2021 01:57:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=b9JrBKuO/UMxqLp0dR5QODxDjy8Sowg28gDkd3Cd158=;
-        b=bHHoNDW3JRGsD6bPfO5HboJCO/DehCeddkWOaLZ9vSGTsmAg0oVXJ9+gQtURgmNP7I
-         n++im+iQ6YWB0vmkGEf745KDWKRrqSgfZ2KLo90Sh6oTjTmK/FFUc+zLbD2hJagMHfS0
-         mMqCprQNRAx3IcXo4YFwXB9+6XguRg+BvDxD9hPgPIsoufWytlSgkWOHa0/8bkC+kjJl
-         PtbolL+SFbeuNgQAyzAQzkjF+Sp1aIj+DI9sOurvCX/BcpHVPPvWX8OfIwtrzFurZ8cF
-         9Fiw+P72fYeXix3mf/tpg0ZllBC6xQjA4ZKLcB/oOgpcgqGNFMR/HYzhe0B77++Qg/dA
-         RiUw==
+        bh=dRcQM8tGux3x7pZPyJ5Bh3crA9EoJU0QA79n6uNLXsw=;
+        b=P9SK2h1Lf3ggsrHeYHXLZxMKAGxcxqa8kmwdBQcFTFpdCFejurpew9ucEYA9r+3+KG
+         I1yLXBaxor/bAd5OEvUF55p0cj4FRY8ooSdcIcOKjBiE7H1weFrJU6l50CucuUHuZvFN
+         7uNzwhONjYWa6HrFd3x8IIz3UF+LR25VunOsEXW095lAVQmdb+OZe9MbLb5vLXKWl001
+         uximaecjFI49QrgtpC6iNy0F1DpcQFWP3DDEE4nE2tOeIvAKyY1WDyRQD0rvy367tqj+
+         9ZyoZS7rti2glssRqg+yOTFm74JBGSd+LyFfAoZJaztX3zaLVJRzNLxqxBOWPpnWLxIx
+         w+3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=b9JrBKuO/UMxqLp0dR5QODxDjy8Sowg28gDkd3Cd158=;
-        b=hJK7q8NA63JsE4Bf5PTt5BC6807YaOQdQC/x4Dn35eFTSXe+lyEGaLTtiGfBdrM7Pg
-         OFz64ekxDZ/Rji6zf3nkZoY6IYO5G01CxNEUsYascbAer8P+gQYyaEWH1iA2OPr4Qe9R
-         am88ldwXfBkETUkNy2jhp12mIw6u3XxXs4BJFa+fj3F4lQzuUQ5wuGYRLLmiybKJU3Fr
-         +Fv8WR2gJyLT3nQRVlgjIRUG/8ROxy6Z8sc9huIWNMvLc/zCzlxPaT4ku5ifjqcpmyzn
-         OQ4xD0AOYakYWNPmKVvkj3AKXyzewRF6T4J2/air3U4TkXSvNDAz/fwgfGpiZo7sUbHa
-         wxwQ==
-X-Gm-Message-State: AOAM533jjP4RE3k3AG/O10T6Hqc2L8O+cXQ+UK9unokIFTKGdrZmUaEA
-        NZnPBTeh8NBu4+RyupqR3oZbeg==
-X-Google-Smtp-Source: ABdhPJz/VCNVA1h2Dh1IIDQLX4482piL9UIP1+SIueczxwwCxKy9iyV8C1qVEFLMrj0+PNukBJKO2g==
-X-Received: by 2002:a1c:1f04:: with SMTP id f4mr12505897wmf.12.1615543048903;
-        Fri, 12 Mar 2021 01:57:28 -0800 (PST)
+        bh=dRcQM8tGux3x7pZPyJ5Bh3crA9EoJU0QA79n6uNLXsw=;
+        b=XrCij8tiKGkKvwjRHQvkQkaYzIhwLiXOCqH1ZrZK6wg+Hmnfo6oBO+xTxI7blbyscv
+         r+7YDMubUnvrvObvC2ZO1kanGj5qlPRou2K61inPK9a8bewWPoG/DhMMN+REmBDSEwwm
+         uJAhAX4L30qgXfzF/fHPfhD84TMQlgPuZ136iXyhQcvby2bsQgfAYFFx+SrhlM+zSdCD
+         WteGb6++F6IcVL7b+XKcVi8U90e6lOAEDiodbqi/4ByVVCDI1ucIilhFRtqeJt31+3ud
+         hox5iQDnXg75WUy2OmoH2NI4ZknSPdnk9GHOgnR3SU7oZxjlawwbarH7QK0optids4iQ
+         F07g==
+X-Gm-Message-State: AOAM533OSxJHpMgsuW/7pGY8msVwb4WjANXT67YcHBTHs4N+ifRxZSPb
+        LMJWHX+65K+kX8Nj9hnwj6WlEQ==
+X-Google-Smtp-Source: ABdhPJyw14CY/RuV1jbKSc7VRGh47nMosERJ/hrNsf9NOn3t1iwRZX3tNGrCafcVq2D6FHYcXLtFNQ==
+X-Received: by 2002:adf:a18a:: with SMTP id u10mr13179976wru.197.1615543052394;
+        Fri, 12 Mar 2021 01:57:32 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id x13sm7031630wrt.75.2021.03.12.01.57.28
+        by smtp.gmail.com with ESMTPSA id x13sm7031630wrt.75.2021.03.12.01.57.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 01:57:28 -0800 (PST)
+        Fri, 12 Mar 2021 01:57:32 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
         Shuah Khan <shuah@kernel.org>,
@@ -69,9 +70,9 @@ To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 07/11] lib: bitmap: provide devm_bitmap_alloc() and devm_bitmap_zalloc()
-Date:   Fri, 12 Mar 2021 10:56:56 +0100
-Message-Id: <20210312095700.16277-8-brgl@bgdev.pl>
+Subject: [PATCH v4 10/11] selftests: gpio: add a helper for reading GPIO line names
+Date:   Fri, 12 Mar 2021 10:56:59 +0100
+Message-Id: <20210312095700.16277-11-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210312095700.16277-1-brgl@bgdev.pl>
 References: <20210312095700.16277-1-brgl@bgdev.pl>
@@ -83,92 +84,99 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Provide managed variants of bitmap_alloc() and bitmap_zalloc().
+Add a simple program that allows to read GPIO line names from the
+character device. This will be used in gpio-sim selftests.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- include/linux/bitmap.h |  8 ++++++++
- lib/bitmap.c           | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
+ tools/testing/selftests/gpio/.gitignore       |  1 +
+ tools/testing/selftests/gpio/Makefile         |  2 +-
+ tools/testing/selftests/gpio/gpio-line-name.c | 55 +++++++++++++++++++
+ 3 files changed, 57 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/gpio/gpio-line-name.c
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 3282db97e06c..73d039476fa4 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -9,6 +9,8 @@
- #include <linux/string.h>
- #include <linux/types.h>
+diff --git a/tools/testing/selftests/gpio/.gitignore b/tools/testing/selftests/gpio/.gitignore
+index 4ea4f58dab1a..ededb077a3a6 100644
+--- a/tools/testing/selftests/gpio/.gitignore
++++ b/tools/testing/selftests/gpio/.gitignore
+@@ -1,3 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ gpio-mockup-cdev
+ gpio-chip-info
++gpio-line-name
+diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+index 84b48547f94c..d7d8f1985d99 100644
+--- a/tools/testing/selftests/gpio/Makefile
++++ b/tools/testing/selftests/gpio/Makefile
+@@ -2,6 +2,6 @@
  
-+struct device;
+ TEST_PROGS := gpio-mockup.sh
+ TEST_FILES := gpio-mockup-sysfs.sh
+-TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info
++TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
+ 
+ include ../lib.mk
+diff --git a/tools/testing/selftests/gpio/gpio-line-name.c b/tools/testing/selftests/gpio/gpio-line-name.c
+new file mode 100644
+index 000000000000..a52e75bc37ba
+--- /dev/null
++++ b/tools/testing/selftests/gpio/gpio-line-name.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * GPIO character device helper for reading line names.
++ *
++ * Copyright (C) 2021 Bartosz Golaszewski <bgolaszewski@baylibre.com>
++ */
 +
- /*
-  * bitmaps provide bit arrays that consume one or more unsigned
-  * longs.  The bitmap interface and available operations are listed
-@@ -122,6 +124,12 @@ unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
- unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
- void bitmap_free(const unsigned long *bitmap);
- 
-+/* Managed variants of the above. */
-+unsigned long *devm_bitmap_alloc(struct device *dev,
-+				 unsigned int nbits, gfp_t flags);
-+unsigned long *devm_bitmap_zalloc(struct device *dev,
-+				  unsigned int nbits, gfp_t flags);
++#include <fcntl.h>
++#include <linux/gpio.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/types.h>
 +
- /*
-  * lib/bitmap.c provides these functions:
-  */
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 78f70d9007ad..b4fd7fd084c6 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -8,6 +8,7 @@
- #include <linux/bitops.h>
- #include <linux/bug.h>
- #include <linux/ctype.h>
-+#include <linux/device.h>
- #include <linux/errno.h>
- #include <linux/export.h>
- #include <linux/kernel.h>
-@@ -1263,6 +1264,38 @@ void bitmap_free(const unsigned long *bitmap)
- }
- EXPORT_SYMBOL(bitmap_free);
- 
-+static void devm_bitmap_free(void *data)
++static void print_usage(void)
 +{
-+	unsigned long *bitmap = data;
-+
-+	bitmap_free(bitmap);
++	printf("usage:\n");
++	printf("  gpio-line-name <chip path> <line offset>\n");
 +}
 +
-+unsigned long *devm_bitmap_alloc(struct device *dev,
-+				 unsigned int nbits, gfp_t flags)
++int main(int argc, char **argv)
 +{
-+	unsigned long *bitmap;
-+	int ret;
++	struct gpio_v2_line_info info;
++	int fd, ret;
++	char *endp;
 +
-+	bitmap = bitmap_alloc(nbits, flags);
-+	if (!bitmap)
-+		return NULL;
++	if (argc != 3) {
++		print_usage();
++		return EXIT_FAILURE;
++	}
 +
-+	ret = devm_add_action_or_reset(dev, devm_bitmap_free, bitmap);
-+	if (ret)
-+		return NULL;
++	fd = open(argv[1], O_RDWR);
++	if (fd < 0) {
++		perror("unable to open the GPIO chip");
++		return EXIT_FAILURE;
++	}
 +
-+	return bitmap;
++	memset(&info, 0, sizeof(info));
++	info.offset = strtoul(argv[2], &endp, 10);
++	if (*endp != '\0') {
++		print_usage();
++		return EXIT_FAILURE;
++	}
++
++	ret = ioctl(fd, GPIO_V2_GET_LINEINFO_IOCTL, &info);
++	if (ret) {
++		perror("line info ioctl failed");
++		return EXIT_FAILURE;
++	}
++
++	printf("%s\n", info.name);
++
++	return EXIT_SUCCESS;
 +}
-+EXPORT_SYMBOL(devm_bitmap_alloc);
-+
-+unsigned long *devm_bitmap_zalloc(struct device *dev,
-+				  unsigned int nbits, gfp_t flags)
-+{
-+	return devm_bitmap_alloc(dev, nbits, flags | __GFP_ZERO);
-+}
-+EXPORT_SYMBOL(devm_bitmap_zalloc);
-+
- #if BITS_PER_LONG == 64
- /**
-  * bitmap_from_arr32 - copy the contents of u32 array of bits to bitmap
 -- 
 2.30.1
 
