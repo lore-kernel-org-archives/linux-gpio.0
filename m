@@ -2,148 +2,111 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6D6C433E0
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 06:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A37C433DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 07:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA7964F85
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 06:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 733D964F81
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Mar 2021 07:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231191AbhCLG5A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Mar 2021 01:57:00 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:32806 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbhCLG4s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 01:56:48 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12C6jNJX007730;
-        Fri, 12 Mar 2021 06:56:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=6FjNKIInCKv9n54WCI+xjYWQrcvh4+qiys6BNfE0MQM=;
- b=y4dllEcOOdvAKWfYG6CvufDkx3aloItsb6PSVvdxxDZIKKX/RHLCYXGGnsKMVQJJw/kJ
- ivpwpOFrMUp4AB/p3AqhqaYTVPKnVL6jzeHK81LGhU7o7qjIEoa3+V1nD4R1jBeAzhoA
- UleEkqKiU0Ttf8kHAoah5tYO+Qq2RriXH0WXTLNXjZHWI+514Sz5N64kDCiNW8vgkk4n
- pAf+tMk+UPnkNb4KTO109O/5AogXkLWe+DVfh2SPHbHWVEKIUl+QZhvmE41G0Yehywft
- 85X5ivN2gBwXVV34ZzoU+74v4Df4KCeUZa6w79Kkxh7H4V/LJiP1yKiuUX3H2H60Gu4p SA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 3742cngyw9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Mar 2021 06:56:47 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12C6jZXU156247;
-        Fri, 12 Mar 2021 06:56:45 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 374kp24x57-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Mar 2021 06:56:45 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12C6uiPh011636;
-        Fri, 12 Mar 2021 06:56:44 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 12 Mar 2021 06:56:44 +0000
-Date:   Fri, 12 Mar 2021 09:56:37 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     michal.simek@xilinx.com
-Cc:     linux-gpio@vger.kernel.org
-Subject: Re: [bug report] pinctrl: core: Handling pinmux and pinconf
- separately
-Message-ID: <20210312065637.GM21246@kadam>
-References: <YEsPXZ40nXAHnm4O@mwanda>
+        id S229688AbhCLHbw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Mar 2021 02:31:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53476 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231613AbhCLHbl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Mar 2021 02:31:41 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F4AC061574
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Mar 2021 23:31:40 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id bx7so6542234edb.12
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Mar 2021 23:31:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=85FTr8CtWZi7ZTbKGT7x0/typLYu/sxAfnMblivg5KA=;
+        b=his6owhZa67rd6+8ImNixx8KFUBCqUHledGahWGFtejo2HliAv4AwHeShz619wuPSa
+         PPXwLSeBYsnD7NNHganXwlqztk8SIKPl+UU0sw7YFh1ehUy6p6y+T+IXxCBvtFHxhYfN
+         px6B93b/Lk2lVNAI1kIlEhXxRVgrdPwWfiWZBvIXNF0FBwoPWD/YY3UhtBwXAdzErc3P
+         MK93j0pL6zaChQRp19UQ8n4CTFM9SjduSsQ/lmvDU0erVUsfCC9jCC9jqL4VNW/9r4Gs
+         QAQ7ltWBzWeOFQSR0vrcpTHHnWtcSUtxTKGFzN+0+YiZwsPadphR0emWYbmQOEVEDAUO
+         jcaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=85FTr8CtWZi7ZTbKGT7x0/typLYu/sxAfnMblivg5KA=;
+        b=MiI/hW6ImuL4VuMNyfygjJxT6mV5ezEMHeiDra4OrZqnIu1/XZMkbln6RseNb9yKLu
+         fIII4Ce1QBJJBPe47mZal8dOr6E/3CIflgFZhFzhsLvGqvgfPG676cYJfRVdDDrGGOLH
+         /HIxYAeoAfemCEYAJycsekJT/OlJ7XtoT4Tz2ipCV5qHUjTz70iMp24VDyWLxg+maDb4
+         3+SlT+YsQeGry7JQL10bTsnEMr6ruIMCPY0Z46qxHP5nEKRgp6na3Aluqkwgf/oUdLob
+         5iEIN9pPknbbKWm7VfL+hhhIlo4N2xfZ1z6AbRA9P+nUf9bbIh40Zs9x7by1v08UCT1m
+         MADQ==
+X-Gm-Message-State: AOAM532l8HRbUcZz2p5Wy0az9mYxWqdkj3OB1EFaKeSzrphC/pgFVMR3
+        s+25IUoFECdFQEoKqeJAguEs9Uz785XzXw9o
+X-Google-Smtp-Source: ABdhPJw98Ym+p9UPqE9aBe2e/cvMX9+FBoTewDHD+AIzg1CYVml7UPcdtDFkJYG/Rv2lAhWI9i/uhA==
+X-Received: by 2002:aa7:cd0e:: with SMTP id b14mr12862709edw.354.1615534298928;
+        Thu, 11 Mar 2021 23:31:38 -0800 (PST)
+Received: from localhost ([2a02:768:2307:40d6::45a])
+        by smtp.gmail.com with ESMTPSA id l18sm2326832ejk.86.2021.03.11.23.31.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Mar 2021 23:31:38 -0800 (PST)
+Sender: Michal Simek <monstr@monstr.eu>
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     colin.king@canonical.com, dan.carpenter@oracle.com,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH] pinctrl: core: Set ret to 0 when group is skipped
+Date:   Fri, 12 Mar 2021 08:31:34 +0100
+Message-Id: <e5203bae68eb94b4b8b4e67e5e7b4d86bb989724.1615534291.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YEsPXZ40nXAHnm4O@mwanda>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9920 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103120045
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9920 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- clxscore=1015 phishscore=0 adultscore=0 mlxlogscore=999 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 mlxscore=0 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103120045
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It also complains about the next loop but that's a false positive
-because dealing with lists of data is tricky.
+Static analyzer tool found that the ret variable is not initialized but
+code expects ret value >=0 when pinconf is skipped in the first pinmux
+loop. The same expectation is for pinmux in a pinconf loop.
+That's why initialize ret to 0 to avoid uninitialized ret value in first
+loop or reusing ret value from first loop in second.
 
-drivers/pinctrl/core.c:1297 pinctrl_commit_state() error: uninitialized symbol 'ret'.
+Addresses-Coverity: ("Uninitialized variables")
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+CC: Colin Ian King <colin.king@canonical.com>
+CC: Dan Carpenter <dan.carpenter@oracle.com>
+---
 
-I saw these two warnings initially from zero day bot but didn't forward
-it on because I only noticed the issue with second loop and not the
-first one.  #LifeLessonOrSomething
+ drivers/pinctrl/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-regards,
-dan carpenter
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index f5c32d2a3c91..136c323d855e 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1266,6 +1266,7 @@ static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
+ 			break;
+ 		case PIN_MAP_TYPE_CONFIGS_PIN:
+ 		case PIN_MAP_TYPE_CONFIGS_GROUP:
++			ret = 0;
+ 			break;
+ 		default:
+ 			ret = -EINVAL;
+@@ -1284,6 +1285,7 @@ static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
+ 	list_for_each_entry(setting, &state->settings, node) {
+ 		switch (setting->type) {
+ 		case PIN_MAP_TYPE_MUX_GROUP:
++			ret = 0;
+ 			break;
+ 		case PIN_MAP_TYPE_CONFIGS_PIN:
+ 		case PIN_MAP_TYPE_CONFIGS_GROUP:
+-- 
+2.30.1
 
-On Fri, Mar 12, 2021 at 09:51:09AM +0300, Dan Carpenter wrote:
-> Hello Michal Simek,
-> 
-> The patch 0952b7ec1614: "pinctrl: core: Handling pinmux and pinconf
-> separately" from Mar 10, 2021, leads to the following static checker
-> warning:
-> 
-> 	drivers/pinctrl/core.c:1275 pinctrl_commit_state()
-> 	error: uninitialized symbol 'ret'.
-> 
-> drivers/pinctrl/core.c
->   1239  static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
->   1240  {
->   1241          struct pinctrl_setting *setting, *setting2;
->   1242          struct pinctrl_state *old_state = p->state;
->   1243          int ret;
->   1244  
->   1245          if (p->state) {
->   1246                  /*
->   1247                   * For each pinmux setting in the old state, forget SW's record
->   1248                   * of mux owner for that pingroup. Any pingroups which are
->   1249                   * still owned by the new state will be re-acquired by the call
->   1250                   * to pinmux_enable_setting() in the loop below.
->   1251                   */
->   1252                  list_for_each_entry(setting, &p->state->settings, node) {
->   1253                          if (setting->type != PIN_MAP_TYPE_MUX_GROUP)
->   1254                                  continue;
->   1255                          pinmux_disable_setting(setting);
->   1256                  }
->   1257          }
->   1258  
->   1259          p->state = NULL;
->   1260  
->   1261          /* Apply all the settings for the new state - pinmux first */
->   1262          list_for_each_entry(setting, &state->settings, node) {
->   1263                  switch (setting->type) {
->   1264                  case PIN_MAP_TYPE_MUX_GROUP:
->   1265                          ret = pinmux_enable_setting(setting);
->   1266                          break;
->   1267                  case PIN_MAP_TYPE_CONFIGS_PIN:
->   1268                  case PIN_MAP_TYPE_CONFIGS_GROUP:
->   1269                          break;
-> 
-> "ret" not set on these cases.
-> 
->   1270                  default:
->   1271                          ret = -EINVAL;
->   1272                          break;
->   1273                  }
->   1274  
->   1275                  if (ret < 0)
->   1276                          goto unapply_new_state;
->   1277  
->   1278                  /* Do not link hogs (circular dependency) */
->   1279                  if (p != setting->pctldev->p)
-> 
-> regards,
-> dan carpenter
