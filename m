@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2587C43331
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 09:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704DAC43619
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 09:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CEED64EB2
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 09:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49EC164EC6
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 09:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbhCOJOg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Mar 2021 05:14:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39518 "EHLO
+        id S229623AbhCOJOh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Mar 2021 05:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbhCOJON (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Mar 2021 05:14:13 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2658C06175F
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Mar 2021 02:14:12 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id 61so5282992wrm.12
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Mar 2021 02:14:12 -0700 (PDT)
+        with ESMTP id S229692AbhCOJOV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Mar 2021 05:14:21 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226C4C0613D7
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Mar 2021 02:14:20 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id c76-20020a1c9a4f0000b029010c94499aedso19773169wme.0
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Mar 2021 02:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ae9O+vV6Y1U8UdtXoNtbk0v4I3Tsz6Ni9lKyTQf2Zag=;
-        b=v6nt/lZet5RL6fKizILe25hqkpNkJwD70MY69RPjnaruBnKwx7yseZRnrN7skgLTrv
-         QXJFeppbzjhLndknXzEOSYRWN/wjjlZUMvGaL4fw4/v7zKg1lgAqunWJy6ubjtsv2Bi0
-         I3k0zuCSlS+34VwjfI102PbyRRaSWLUgvd4ZA59mOkoLmGaeWaqq8Kw60rOoj1ZkHDt0
-         HEEBnfadhdgIf2CAlUDdGaEwPzdw8AfzYls9Mmn9ALSb0AvP8/6/7VOOOFKYHWC1osg8
-         v2IUvyQiCxWU//l8aW7VOcht2ns/teK7qlDB4Iu35No8ZLw4igJib/1ilgbKvUI1kc3m
-         sN9w==
+        bh=aInBliwrC9dHKGFsbWV5Kx8fY6sxq6tzoBmO7q92930=;
+        b=SV7lh/y43e26RRrPn+oAiAANr1HwfGFqwXIUJ3gGvEE7qVlA9xm/nRgUkZvfFeT5J1
+         h2XyXh+cttDEYXFHmMbx+mWK+mMU2sqdnHZhpH9AHx51oTu2arazwxvL/eBiOUJR30ti
+         UdTZnzvGVbprBD0Of4kCYvar3xWGCkttSYOpmJDHFQ6xnpo1kLsHJnS5FJE8E4B9/AGG
+         31C8D69oRcIMDvvOEK/QSxyf5RAnDUvIvCV/bdvlkvlBVFR9MlBZPt83ibglfPT1KnH7
+         B0SylZFrdOS/njB49WkwW56i/Zd2cvKDgpEXRb05d5nRkkRNBTzgF4ZMZYQM6eWrogCp
+         vf8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ae9O+vV6Y1U8UdtXoNtbk0v4I3Tsz6Ni9lKyTQf2Zag=;
-        b=X71D9SQLb0W6ryl6J3kDn3v8d0M7c+qK2jdCFeDKL56d/eZQi7UCHf9yFg2mhGndLK
-         za4xYoJtvjUau1jRHSVelggZ8DtDjGbN3b9WA+HDWTUFQ4wj0TQuQWFXiFFKFpca7+bd
-         bxkLJieUNxkM3Q4waSYuaZC4hBhjlkThVc7fpK0mwcXa6b3qtjvZVXZLqolki7430aCm
-         hSlpTir1LAL1OMFoNi3/SQC7NbAzW7FpqWUW1mfqXVluyVfrcold0WnVRVcsrWCkNzUr
-         KN+sUhL6vTbNi5EMM9EtxhsYOhRCVwBh2fd0QHUxrlx1nLM75TwXcNGElpZW7GpsFtVV
-         7OJQ==
-X-Gm-Message-State: AOAM533yM1IrMrPmb2UNbxikozcR+s1PMWKGoG4u7Vlj8n+gRKZqfjkj
-        uAIQWBKNpfAasdJTyEPK6a+KrQ==
-X-Google-Smtp-Source: ABdhPJxJcD9pfqsBilZVQWRafLubvQU8C1cgsgZpLkDCCcbZEJRHgUnxAJ5dVwUP8+dvyU8Yvoa49w==
-X-Received: by 2002:a5d:5487:: with SMTP id h7mr26810851wrv.348.1615799651560;
-        Mon, 15 Mar 2021 02:14:11 -0700 (PDT)
+        bh=aInBliwrC9dHKGFsbWV5Kx8fY6sxq6tzoBmO7q92930=;
+        b=fE2CxviAci7X9h6ynfM9qqtd7xOqZGp5gRzl5E6nTQR+eVFGusP3krZOWnsEbYJgYu
+         CqUTPZ8+6c5HAG0zshyfGhpVne/gTWks7VyLPbCvmpvJdXxg1YJd6+1EBHbAXyCm+xvX
+         XesydZDJQrexaK1/1Olk/5W/8SXuhesNraOxAqSMoqZyv+spVtRFbUJgwDiJT4hMpW25
+         JHbWOGiTH48vL5U5pkJT8E/9hNXx0gtnNgZAA3yEgsjFlgmlIdHndATvzij+QuqfAjI1
+         gGUKKEAj0kDRUEuy6N6P730LXFByi/3sZy/nQ4Vu6NeNQsdWuAcg8HOxcAnAKcnsh9JZ
+         /pYg==
+X-Gm-Message-State: AOAM533rVhoGSOVZ0Wqim/4j09O+GXyFRcPpyGvCfHnc70fsD5/J6H20
+        0NFZdz61pIbjCjjqzxD55nDplA==
+X-Google-Smtp-Source: ABdhPJxF49qHP7oJNRQIx5jZGdjzzKWCWPjM0JEkWQhKkBDBnxP4JkXCgYsoHL8vW3WVFtagzIaDcQ==
+X-Received: by 2002:a1c:5416:: with SMTP id i22mr25017102wmb.146.1615799659587;
+        Mon, 15 Mar 2021 02:14:19 -0700 (PDT)
 Received: from debian-brgl.home (lfbn-nic-1-149-6.w2-15.abo.wanadoo.fr. [2.15.231.6])
-        by smtp.gmail.com with ESMTPSA id z3sm17978822wrw.96.2021.03.15.02.14.10
+        by smtp.gmail.com with ESMTPSA id z3sm17978822wrw.96.2021.03.15.02.14.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 02:14:11 -0700 (PDT)
+        Mon, 15 Mar 2021 02:14:19 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
         Shuah Khan <shuah@kernel.org>,
@@ -69,9 +69,9 @@ To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 04/11] samples: configfs: add a committable group
-Date:   Mon, 15 Mar 2021 10:13:53 +0100
-Message-Id: <20210315091400.13772-5-brgl@bgdev.pl>
+Subject: [PATCH v5 09/11] selftests: gpio: provide a helper for reading chip info
+Date:   Mon, 15 Mar 2021 10:13:58 +0100
+Message-Id: <20210315091400.13772-10-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210315091400.13772-1-brgl@bgdev.pl>
 References: <20210315091400.13772-1-brgl@bgdev.pl>
@@ -83,189 +83,100 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add an example of using committable items to configfs samples. Each
-config item has two attributes: read-write 'storeme' which works
-similarly to other examples in this file and a read-only 'committed'
-attribute which changes its value between false and true depending on
-whether it's committed or not at the moment.
+Add a simple program that allows to retrieve chip properties from the
+GPIO character device. This will be used in gpio-sim selftests.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- samples/configfs/configfs_sample.c | 153 +++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+ tools/testing/selftests/gpio/.gitignore       |  1 +
+ tools/testing/selftests/gpio/Makefile         |  2 +-
+ tools/testing/selftests/gpio/gpio-chip-info.c | 57 +++++++++++++++++++
+ 3 files changed, 59 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/gpio/gpio-chip-info.c
 
-diff --git a/samples/configfs/configfs_sample.c b/samples/configfs/configfs_sample.c
-index f9008be7a8a1..9bef74e4369d 100644
---- a/samples/configfs/configfs_sample.c
-+++ b/samples/configfs/configfs_sample.c
-@@ -315,6 +315,158 @@ static struct configfs_subsystem group_children_subsys = {
+diff --git a/tools/testing/selftests/gpio/.gitignore b/tools/testing/selftests/gpio/.gitignore
+index a4969f7ee020..4ea4f58dab1a 100644
+--- a/tools/testing/selftests/gpio/.gitignore
++++ b/tools/testing/selftests/gpio/.gitignore
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ gpio-mockup-cdev
++gpio-chip-info
+diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+index 39f2bbe8dd3d..84b48547f94c 100644
+--- a/tools/testing/selftests/gpio/Makefile
++++ b/tools/testing/selftests/gpio/Makefile
+@@ -2,6 +2,6 @@
  
- /* ----------------------------------------------------------------- */
+ TEST_PROGS := gpio-mockup.sh
+ TEST_FILES := gpio-mockup-sysfs.sh
+-TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev
++TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info
  
+ include ../lib.mk
+diff --git a/tools/testing/selftests/gpio/gpio-chip-info.c b/tools/testing/selftests/gpio/gpio-chip-info.c
+new file mode 100644
+index 000000000000..4d26fa7c254a
+--- /dev/null
++++ b/tools/testing/selftests/gpio/gpio-chip-info.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * 04-committable-children
++ * GPIO character device helper for reading chip information.
 + *
-+ * This is an example of a committable group.  It's similar to the simple
-+ * children example but each config_item has an additional 'committed'
-+ * attribute which is read-only and is only modified when the config_item
-+ * is moved from the 'pending' to the 'live' directory.
++ * Copyright (C) 2021 Bartosz Golaszewski <bgolaszewski@baylibre.com>
 + */
 +
-+struct committable_child {
-+	struct config_item item;
-+	int storeme;
-+	bool committed;
-+};
++#include <fcntl.h>
++#include <linux/gpio.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/types.h>
 +
-+static inline struct committable_child *
-+to_committable_child(struct config_item *item)
++static void print_usage(void)
 +{
-+	return container_of(item, struct committable_child, item);
++	printf("usage:\n");
++	printf("  gpio-chip-info <chip path> [name|label|num-lines]\n");
 +}
 +
-+static ssize_t
-+committable_child_storeme_show(struct config_item *item, char *page)
++int main(int argc, char **argv)
 +{
-+	return sprintf(page, "%d\n", to_committable_child(item)->storeme);
++	struct gpiochip_info info;
++	int fd, ret;
++
++	if (argc !=3) {
++		print_usage();
++		return EXIT_FAILURE;
++	}
++
++	fd = open(argv[1], O_RDWR);
++	if (fd < 0) {
++		perror("unable to open the GPIO chip");
++		return EXIT_FAILURE;
++	}
++
++	memset(&info, 0, sizeof(info));
++	ret = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &info);
++	if (ret) {
++		perror("chip info ioctl failed");
++		return EXIT_FAILURE;
++	}
++
++	if (strcmp(argv[2], "name") == 0) {
++		printf("%s\n", info.name);
++	} else if (strcmp(argv[2], "label") == 0) {
++		printf("%s\n", info.label);
++	} else if (strcmp(argv[2], "num-lines") == 0) {
++		printf("%u\n", info.lines);
++	} else {
++		fprintf(stderr, "unknown command: %s\n", argv[2]);
++		return EXIT_FAILURE;
++	}
++
++	return EXIT_SUCCESS;
 +}
-+
-+static ssize_t committable_child_storeme_store(struct config_item *item,
-+					       const char *page, size_t count)
-+{
-+	struct committable_child *child = to_committable_child(item);
-+	int ret;
-+
-+	if (child->committed)
-+		return -EPERM;
-+
-+	ret = kstrtoint(page, 10, &child->storeme);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+CONFIGFS_ATTR(committable_child_, storeme);
-+
-+static ssize_t
-+committable_child_committed_show(struct config_item *item, char *page)
-+{
-+	return sprintf(page, "%s\n",
-+		to_committable_child(item)->committed ? "true" : "false");
-+}
-+
-+CONFIGFS_ATTR_RO(committable_child_, committed);
-+
-+static struct configfs_attribute *committable_child_attrs[] = {
-+	&committable_child_attr_storeme,
-+	&committable_child_attr_committed,
-+	NULL,
-+};
-+
-+static void committable_child_release(struct config_item *item)
-+{
-+	kfree(to_committable_child(item));
-+}
-+
-+static struct configfs_item_operations committable_child_item_ops = {
-+	.release	= committable_child_release,
-+};
-+
-+static const struct config_item_type committable_child_type = {
-+	.ct_item_ops	= &committable_child_item_ops,
-+	.ct_attrs	= committable_child_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+struct committable_children {
-+	struct config_group group;
-+};
-+
-+static struct config_item *
-+committable_children_make_item(struct config_group *group, const char *name)
-+{
-+	struct committable_child *child;
-+
-+	child = kzalloc(sizeof(*child), GFP_KERNEL);
-+	if (!child)
-+		return ERR_PTR(-ENOMEM);
-+
-+	config_item_init_type_name(&child->item, name, &committable_child_type);
-+
-+	return &child->item;
-+}
-+
-+static ssize_t
-+committable_children_description_show(struct config_item *item, char *page)
-+{
-+	return sprintf(page,
-+"[04-committable-children]\n"
-+"\n"
-+"This subsystem allows creation of committable config_items.  The subsystem\n"
-+"has two subdirectories: pending and live.  New config_items can only be\n"
-+"created in pending/ and they have one writable and readable attribute as\n"
-+"well as a single read-only attribute.  The latter is only changed once the\n"
-+"item is 'committed'.  This is done by moving the config_item (using\n"
-+"rename()) to the live/ directory.  In this example, the storeme attribute\n"
-+"becomes 'read-only' once committed.\n");
-+}
-+
-+CONFIGFS_ATTR_RO(committable_children_, description);
-+
-+static struct configfs_attribute *committable_children_attrs[] = {
-+	&committable_children_attr_description,
-+	NULL,
-+};
-+
-+static int committable_children_commit_item(struct config_item *item)
-+{
-+	to_committable_child(item)->committed = true;
-+
-+	return 0;
-+}
-+
-+static int committable_children_uncommit_item(struct config_item *item)
-+{
-+	to_committable_child(item)->committed = false;
-+
-+	return 0;
-+}
-+
-+static struct configfs_group_operations committable_children_group_ops = {
-+	.make_item	= committable_children_make_item,
-+	.commit_item	= committable_children_commit_item,
-+	.uncommit_item	= committable_children_uncommit_item,
-+};
-+
-+static const struct config_item_type committable_children_type = {
-+	.ct_group_ops	= &committable_children_group_ops,
-+	.ct_attrs	= committable_children_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem committable_children_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_namebuf = "04-committable-children",
-+			.ci_type = &committable_children_type,
-+		},
-+	},
-+};
-+
-+/* ----------------------------------------------------------------- */
-+
- /*
-  * We're now done with our subsystem definitions.
-  * For convenience in this module, here's a list of them all.  It
-@@ -326,6 +478,7 @@ static struct configfs_subsystem *example_subsys[] = {
- 	&childless_subsys.subsys,
- 	&simple_children_subsys,
- 	&group_children_subsys,
-+	&committable_children_subsys,
- 	NULL,
- };
- 
 -- 
 2.30.1
 
