@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1CDC2BA1E
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 11:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2DCC2BB1F
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 11:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F01C64EFB
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 11:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042B064EE1
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 11:43:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbhCOLm4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Mar 2021 07:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43226 "EHLO
+        id S230425AbhCOLm6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Mar 2021 07:42:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbhCOLma (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Mar 2021 07:42:30 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577CFC061574;
-        Mon, 15 Mar 2021 04:42:30 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id c76-20020a1c9a4f0000b029010c94499aedso20059682wme.0;
-        Mon, 15 Mar 2021 04:42:30 -0700 (PDT)
+        with ESMTP id S229652AbhCOLmf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Mar 2021 07:42:35 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52043C061574;
+        Mon, 15 Mar 2021 04:42:35 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id j4-20020a05600c4104b029010c62bc1e20so19266779wmi.3;
+        Mon, 15 Mar 2021 04:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=XSO2q4PIg+nUNBFVrVotzGnDBm3zQja9bVPzmJr21TI=;
-        b=LIvv97NAO0Am6OvxlPRf08WQAnFjm5dq5NDdmDe5LEkr/11kgLl1wShhk05W1FlOCQ
-         3vWaI4HxESfgy1RufQQK7dfebE1+SPMFGxTxhh0d3OmT7IjlZoKx5XKRNY0HWWwGdMO0
-         qbsBfmRFM4AYUwcvAhnZWxErAcO33YXVS02JCuDnYI+vjgwY2a3Oxs6d60GZs2VC0HAo
-         ggAiMNVzAg4KT9LOXNv/YuuDosjmh+2O5c5cUf7kgz/+9yxI9NgRAU5uZxm4KFciEC3U
-         1jBzV9yOBjQr5OPeKc5Dyl6XXeW+ahEBZ24H/wHXGidKWnlvT9r3jgdeumy/QrjgujEc
-         01mQ==
+        bh=2TCx7RrG3IG3AoexbQC2rRtKLkwhVusuxmN6RWmjY6w=;
+        b=BG0fci+a0tBToTu39ITWT35xyz23dqy/wk/YmMcS9P8yMCECJg9kTlNRPLoxSTt2V+
+         Y4CfVFLwgUUfG+wwI2axsi/VnoElzKay2T89cUXBXb4Hweh78CjN7W/5FCJ1ivMtdool
+         pEzjy9RGMJBEFg6dW6eyaK8qpcSxHuPm24cSGqnXizct0Xd7q1jEY7GPSXBLe5ZNTMwL
+         jo430gqaOhFMCrpeiKsGYaDqBsDahPQN1UcGSDxYrH769HGiVtAhHcTdNsnjPo3FtNW4
+         jO5nTQsO4FAqSulrgy8Dw5qrkhI+FNA4v0zvS3Zx2FfxJeeX9HKQ4tIOH1vrDFWZWj8T
+         x56A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XSO2q4PIg+nUNBFVrVotzGnDBm3zQja9bVPzmJr21TI=;
-        b=ZbeJk2XwU+uoDU5KQMhczggVYT5Hc7qE89z6KCIFHXYDp/4V6PdTE/bjR/m3MF9QMm
-         iTmNZEG+b25Lu2kVPsMWBz6T/JrQ/HpISdQ/MEbLBGPWgwfLKrPj5/BAFNbPZeUhj9mz
-         cJKpoyXOdZvVvcY4uZQHD+4RiEqma/hg+1UhUFKxQQddCVnyfc2oPLi/MemENTW4gD2T
-         WXCsK+TzePmhUjbIHIk0C+25J7ITr28Z0ANvDuxB+vz5LZ0rer1l7RIImEb4UXIGu+iE
-         g6386286BAwTOznlQ/LSoI+dO+9glbOEPpZjZQ9onsbmbqYgQ+4OjCB5RwZGfxKIlGht
-         qWFA==
-X-Gm-Message-State: AOAM531dqghpGuiOeKZOcDlScNxH4JJftUeOCNwlTYqyQjvDTyZ3SdJS
-        wOoC11lDymipkp4axLQk/Lo=
-X-Google-Smtp-Source: ABdhPJwONMPwgE+vHdmfbrgNd942yr2S3pGcsAAZWnZDErBtCjS7a5mmCpd4ssmmY1bQ3WJmAT5Ndw==
-X-Received: by 2002:a05:600c:190a:: with SMTP id j10mr25420603wmq.140.1615808549017;
-        Mon, 15 Mar 2021 04:42:29 -0700 (PDT)
+        bh=2TCx7RrG3IG3AoexbQC2rRtKLkwhVusuxmN6RWmjY6w=;
+        b=nPr3IYIiukXic0aYZLUusyYV9LiuZtGTA6DXoG7Es2V6jzNqyZKcjVSfiLbg/owFmD
+         zByuWg1FVKv5AA/2mPkZRsqPfKiB/5kG7nQ7WfrELr6qHD/TV94G2W8qhb8dJuVsP42i
+         3c71drRwoOOQ9uLIzBqnD0w5a+ayMm3Fz0nB5RkOu2RnJG3vfSea42IupN6B6WMc2EU4
+         ZsyoK9jzwS/w0PHWVWDS0il00QnPTyVaAblKTuqjVuYE/ZosCISibN2VQ5SUYQte5gjt
+         iiaCCyIZpOCuTMGW2B3x3hRAJ/PlCg61ZGVsyz25reoeUAlQBBDxfhu+hIv2S6sB69Wv
+         mYng==
+X-Gm-Message-State: AOAM53321x925C2vlBQNGA+PIfCR7HLRJedYPV08jzNp1Jd4ujfbP5Fr
+        /ix86gVIHMuu4xaa7nzM8dM=
+X-Google-Smtp-Source: ABdhPJweLXbJUlrNp1Tu//dYLYqccYRHJsUcAv3Qe8shFNfnAU9IIPg8YU5N9Kt9Jh6AEfv22fD3kg==
+X-Received: by 2002:a1c:e18b:: with SMTP id y133mr25749127wmg.22.1615808554026;
+        Mon, 15 Mar 2021 04:42:34 -0700 (PDT)
 Received: from skynet.lan ([80.31.204.166])
-        by smtp.gmail.com with ESMTPSA id v189sm12648187wme.39.2021.03.15.04.42.28
+        by smtp.gmail.com with ESMTPSA id v189sm12648187wme.39.2021.03.15.04.42.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 04:42:28 -0700 (PDT)
+        Mon, 15 Mar 2021 04:42:33 -0700 (PDT)
 From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
         <noltari@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -71,9 +71,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 12/22] dt-bindings: add BCM6362 GPIO sysctl binding documentation
-Date:   Mon, 15 Mar 2021 12:42:04 +0100
-Message-Id: <20210315114214.3096-13-noltari@gmail.com>
+Subject: [PATCH v7 17/22] dt-bindings: add BCM63268 pincontroller binding documentation
+Date:   Mon, 15 Mar 2021 12:42:09 +0100
+Message-Id: <20210315114214.3096-18-noltari@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210315114214.3096-1-noltari@gmail.com>
 References: <20210315114214.3096-1-noltari@gmail.com>
@@ -84,258 +84,197 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add binding documentation for the GPIO sysctl found in BCM6362 SoCs.
+Add binding documentation for the pincontrol core found in the BCM63268
+family SoCs.
 
+Co-developed-by: Jonas Gorski <jonas.gorski@gmail.com></jonas.gorski>
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 ---
  v7: add changes suggested by Rob Herring
+ v6: add changes suggested by Rob Herring
+ v5: change Documentation to dt-bindings in commit title
+ v4: no changes
+ v3: add new gpio node
+ v2: remove interrupts
 
- .../mfd/brcm,bcm6362-gpio-sysctl.yaml         | 238 ++++++++++++++++++
- 1 file changed, 238 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/brcm,bcm6362-gpio-sysctl.yaml
+ .../pinctrl/brcm,bcm63268-pinctrl.yaml        | 169 ++++++++++++++++++
+ 1 file changed, 169 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm63268-pinctrl.yaml
 
-diff --git a/Documentation/devicetree/bindings/mfd/brcm,bcm6362-gpio-sysctl.yaml b/Documentation/devicetree/bindings/mfd/brcm,bcm6362-gpio-sysctl.yaml
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm63268-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,bcm63268-pinctrl.yaml
 new file mode 100644
-index 000000000000..aaf8892bdfe3
+index 000000000000..4efaa01142fa
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/brcm,bcm6362-gpio-sysctl.yaml
-@@ -0,0 +1,238 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm63268-pinctrl.yaml
+@@ -0,0 +1,169 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/mfd/brcm,bcm6362-gpio-sysctl.yaml#
++$id: http://devicetree.org/schemas/pinctrl/brcm,bcm63268-pinctrl.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Broadcom BCM6362 GPIO System Controller Device Tree Bindings
++title: Broadcom BCM63268 pin controller
 +
 +maintainers:
 +  - Álvaro Fernández Rojas <noltari@gmail.com>
 +  - Jonas Gorski <jonas.gorski@gmail.com>
 +
-+description:
-+  Broadcom BCM6362 SoC GPIO system controller which provides a register map
-+  for controlling the GPIO and pins of the SoC.
++description: |+
++  The pin controller node should be the child of a syscon node.
++
++  Refer to the the bindings described in
++  Documentation/devicetree/bindings/mfd/syscon.yaml
 +
 +properties:
-+  "#address-cells": true
-+
-+  "#size-cells": true
-+
 +  compatible:
-+    items:
-+      - const: brcm,bcm6362-gpio-sysctl
-+      - const: syscon
-+      - const: simple-mfd
-+
-+  ranges:
-+    maxItems: 1
++    const: brcm,bcm63268-pinctrl
 +
 +  reg:
-+    maxItems: 1
++    maxItems: 3
 +
 +patternProperties:
-+  "^gpio@[0-9a-f]+$":
-+    # Child node
-+    type: object
-+    $ref: "../gpio/brcm,bcm63xx-gpio.yaml"
-+    description:
-+      GPIO controller for the SoC GPIOs. This child node definition
-+      should follow the bindings specified in
-+      Documentation/devicetree/bindings/gpio/brcm,bcm63xx-gpio.yaml.
++  '^.*-pins$':
++    if:
++      type: object
++    then:
++      properties:
++        function:
++          $ref: "pinmux-node.yaml#/properties/function"
++          enum: [ serial_led_clk, serial_led_data, hsspi_cs4, hsspi_cs5,
++                  hsspi_cs6, hsspi_cs7, adsl_spi_miso, adsl_spi_mosi,
++                  vreq_clk, pcie_clkreq_b, robosw_led_clk, robosw_led_data,
++                  nand, gpio35_alt, dectpd, vdsl_phy_override_0,
++                  vdsl_phy_override_1, vdsl_phy_override_2,
++                  vdsl_phy_override_3, dsl_gpio8, dsl_gpio9 ]
 +
-+  "^pinctrl@[0-9a-f]+$":
-+    # Child node
-+    type: object
-+    $ref: "../pinctrl/brcm,bcm6362-pinctrl.yaml"
-+    description:
-+      Pin controller for the SoC pins. This child node definition
-+      should follow the bindings specified in
-+      Documentation/devicetree/bindings/pinctrl/brcm,bcm6362-pinctrl.yaml.
++        pins:
++          $ref: "pinmux-node.yaml#/properties/pins"
++          enum: [ gpio0, gpio1, gpio16, gpio17, gpio8, gpio9, gpio18, gpio19,
++                  gpio22, gpio23, gpio30, gpio31, nand_grp, gpio35
++                  dectpd_grp, vdsl_phy_override_0_grp,
++                  vdsl_phy_override_1_grp, vdsl_phy_override_2_grp,
++                  vdsl_phy_override_3_grp, dsl_gpio8, dsl_gpio9 ]
 +
 +required:
-+  - "#address-cells"
 +  - compatible
-+  - ranges
 +  - reg
-+  - "#size-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    syscon@10000080 {
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+      compatible = "brcm,bcm6362-gpio-sysctl", "syscon", "simple-mfd";
-+      reg = <0x10000080 0x80>;
-+      ranges = <0 0x10000080 0x80>;
++    pinctrl@10 {
++      compatible = "brcm,bcm63268-pinctrl";
++      reg = <0x10 0x4>, <0x18 0x8>, <0x38 0x4>;
 +
-+      gpio@0 {
-+        compatible = "brcm,bcm6362-gpio";
-+        reg = <0x0 0x10>;
-+
-+        data = <0xc>;
-+        dirout = <0x4>;
-+
-+        gpio-controller;
-+        gpio-ranges = <&pinctrl 0 0 48>;
-+        #gpio-cells = <2>;
-+      };
-+
-+      pinctrl: pinctrl@18 {
-+        compatible = "brcm,bcm6362-pinctrl";
-+        reg = <0x18 0x10>, <0x38 0x4>;
-+
-+        pinctrl_usb_device_led: usb_device_led-pins {
-+          function = "usb_device_led";
++      pinctrl_serial_led: serial_led-pins {
++        pinctrl_serial_led_clk: serial_led_clk-pins {
++          function = "serial_led_clk";
 +          pins = "gpio0";
 +        };
 +
-+        pinctrl_sys_irq: sys_irq-pins {
-+          function = "sys_irq";
++        pinctrl_serial_led_data: serial_led_data-pins {
++          function = "serial_led_data";
 +          pins = "gpio1";
 +        };
++      };
 +
-+        pinctrl_serial_led: serial_led-pins {
-+          pinctrl_serial_led_clk: serial_led_clk-pins {
-+            function = "serial_led_clk";
-+            pins = "gpio2";
-+          };
++      pinctrl_hsspi_cs4: hsspi_cs4-pins {
++        function = "hsspi_cs4";
++        pins = "gpio16";
++      };
 +
-+          pinctrl_serial_led_data: serial_led_data-pins {
-+            function = "serial_led_data";
-+            pins = "gpio3";
-+          };
++      pinctrl_hsspi_cs5: hsspi_cs5-pins {
++        function = "hsspi_cs5";
++        pins = "gpio17";
++      };
++
++      pinctrl_hsspi_cs6: hsspi_cs6-pins {
++        function = "hsspi_cs6";
++        pins = "gpio8";
++      };
++
++      pinctrl_hsspi_cs7: hsspi_cs7-pins {
++        function = "hsspi_cs7";
++        pins = "gpio9";
++      };
++
++      pinctrl_adsl_spi: adsl_spi-pins {
++        pinctrl_adsl_spi_miso: adsl_spi_miso-pins {
++          function = "adsl_spi_miso";
++          pins = "gpio18";
 +        };
 +
-+        pinctrl_robosw_led_data: robosw_led_data-pins {
-+          function = "robosw_led_data";
-+          pins = "gpio4";
++        pinctrl_adsl_spi_mosi: adsl_spi_mosi-pins {
++          function = "adsl_spi_mosi";
++          pins = "gpio19";
 +        };
++      };
 +
-+        pinctrl_robosw_led_clk: robosw_led_clk-pins {
-+          function = "robosw_led_clk";
-+          pins = "gpio5";
-+        };
++      pinctrl_vreq_clk: vreq_clk-pins {
++        function = "vreq_clk";
++        pins = "gpio22";
++      };
 +
-+        pinctrl_robosw_led0: robosw_led0-pins {
-+          function = "robosw_led0";
-+          pins = "gpio6";
-+        };
++      pinctrl_pcie_clkreq_b: pcie_clkreq_b-pins {
++        function = "pcie_clkreq_b";
++        pins = "gpio23";
++      };
 +
-+        pinctrl_robosw_led1: robosw_led1-pins {
-+          function = "robosw_led1";
-+          pins = "gpio7";
-+        };
++      pinctrl_robosw_led_clk: robosw_led_clk-pins {
++        function = "robosw_led_clk";
++        pins = "gpio30";
++      };
 +
-+        pinctrl_inet_led: inet_led-pins {
-+          function = "inet_led";
-+          pins = "gpio8";
-+        };
++      pinctrl_robosw_led_data: robosw_led_data-pins {
++        function = "robosw_led_data";
++        pins = "gpio31";
++      };
 +
-+        pinctrl_spi_cs2: spi_cs2-pins {
-+          function = "spi_cs2";
-+          pins = "gpio9";
-+        };
++      pinctrl_nand: nand-pins {
++        function = "nand";
++        group = "nand_grp";
++      };
 +
-+        pinctrl_spi_cs3: spi_cs3-pins {
-+          function = "spi_cs3";
-+          pins = "gpio10";
-+        };
++      pinctrl_gpio35_alt: gpio35_alt-pins {
++        function = "gpio35_alt";
++        pin = "gpio35";
++      };
 +
-+        pinctrl_ntr_pulse: ntr_pulse-pins {
-+          function = "ntr_pulse";
-+          pins = "gpio11";
-+        };
++      pinctrl_dectpd: dectpd-pins {
++        function = "dectpd";
++        group = "dectpd_grp";
++      };
 +
-+        pinctrl_uart1_scts: uart1_scts-pins {
-+          function = "uart1_scts";
-+          pins = "gpio12";
-+        };
++      pinctrl_vdsl_phy_override_0: vdsl_phy_override_0-pins {
++        function = "vdsl_phy_override_0";
++        group = "vdsl_phy_override_0_grp";
++      };
 +
-+        pinctrl_uart1_srts: uart1_srts-pins {
-+          function = "uart1_srts";
-+          pins = "gpio13";
-+        };
++      pinctrl_vdsl_phy_override_1: vdsl_phy_override_1-pins {
++        function = "vdsl_phy_override_1";
++        group = "vdsl_phy_override_1_grp";
++      };
 +
-+        pinctrl_uart1: uart1-pins {
-+          pinctrl_uart1_sdin: uart1_sdin-pins {
-+            function = "uart1_sdin";
-+            pins = "gpio14";
-+          };
++      pinctrl_vdsl_phy_override_2: vdsl_phy_override_2-pins {
++        function = "vdsl_phy_override_2";
++        group = "vdsl_phy_override_2_grp";
++      };
 +
-+          pinctrl_uart1_sdout: uart1_sdout-pins {
-+            function = "uart1_sdout";
-+            pins = "gpio15";
-+          };
-+        };
++      pinctrl_vdsl_phy_override_3: vdsl_phy_override_3-pins {
++        function = "vdsl_phy_override_3";
++        group = "vdsl_phy_override_3_grp";
++      };
 +
-+        pinctrl_adsl_spi: adsl_spi-pins {
-+          pinctrl_adsl_spi_miso: adsl_spi_miso-pins {
-+            function = "adsl_spi_miso";
-+            pins = "gpio16";
-+          };
++      pinctrl_dsl_gpio8: dsl_gpio8-pins {
++        function = "dsl_gpio8";
++        group = "dsl_gpio8";
++      };
 +
-+          pinctrl_adsl_spi_mosi: adsl_spi_mosi-pins {
-+            function = "adsl_spi_mosi";
-+            pins = "gpio17";
-+          };
-+
-+          pinctrl_adsl_spi_clk: adsl_spi_clk-pins {
-+            function = "adsl_spi_clk";
-+            pins = "gpio18";
-+          };
-+
-+          pinctrl_adsl_spi_cs: adsl_spi_cs-pins {
-+            function = "adsl_spi_cs";
-+            pins = "gpio19";
-+          };
-+        };
-+
-+        pinctrl_ephy0_led: ephy0_led-pins {
-+          function = "ephy0_led";
-+          pins = "gpio20";
-+        };
-+
-+        pinctrl_ephy1_led: ephy1_led-pins {
-+          function = "ephy1_led";
-+          pins = "gpio21";
-+        };
-+
-+        pinctrl_ephy2_led: ephy2_led-pins {
-+          function = "ephy2_led";
-+          pins = "gpio22";
-+        };
-+
-+        pinctrl_ephy3_led: ephy3_led-pins {
-+          function = "ephy3_led";
-+          pins = "gpio23";
-+        };
-+
-+        pinctrl_ext_irq0: ext_irq0-pins {
-+          function = "ext_irq0";
-+          pins = "gpio24";
-+        };
-+
-+        pinctrl_ext_irq1: ext_irq1-pins {
-+          function = "ext_irq1";
-+          pins = "gpio25";
-+        };
-+
-+        pinctrl_ext_irq2: ext_irq2-pins {
-+          function = "ext_irq2";
-+          pins = "gpio26";
-+        };
-+
-+        pinctrl_ext_irq3: ext_irq3-pins {
-+          function = "ext_irq3";
-+          pins = "gpio27";
-+        };
-+
-+        pinctrl_nand: nand-pins {
-+          function = "nand";
-+          group = "nand_grp";
-+        };
++      pinctrl_dsl_gpio9: dsl_gpio9-pins {
++        function = "dsl_gpio9";
++        group = "dsl_gpio9";
 +      };
 +    };
 -- 
