@@ -2,114 +2,132 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECC1C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 15:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2552FC433E9
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 15:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F04164DDF
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 15:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E48A064E41
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 15:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232531AbhCOPCv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Mar 2021 11:02:51 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:41256 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232487AbhCOPCW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Mar 2021 11:02:22 -0400
+        id S231491AbhCOPKo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Mar 2021 11:10:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59910 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231860AbhCOPKk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Mar 2021 11:10:40 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35258C06174A
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Mar 2021 08:10:40 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id y1so16658256ljm.10
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Mar 2021 08:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1615820542; x=1647356542;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=MClbUWH/t1IvBDSDmoru1ZjJma+KywzZ9kr5JOM7eLk=;
-  b=gbsP9FGlUoSouH8kguFHRqRt/aOXUUS7vME1CS1iDMf2jJJaxgJYXQaE
-   RCb1A9rS63nTXTbSeZXc+kbIjR4Xw7qqTUERu/g9dpWfhgmADYpGtPCkq
-   DnDukodVyLEaoXjXEzPdEaMpQ7zpHo682DdpjslFziIPUHiXhfInFbFvv
-   w=;
-IronPort-HdrOrdr: A9a23:0j59v6x32Mi2f4cBFNHyKrPxVOskLtp033Aq2lEZdDV/dNCenc
- y12OkcvCWE7Ao5cntIo769EYOHRm7R8oMw3JkJMd6ZLWvbkUaLDKUn14vtxDX8Bzbzn9Q3v5
- tIXqBiBLTLfCFHpOn37ASyG9wjhPmrmZrY/tv24GxqSWhRBp1IyydcJkKlHlZtRA9AbKBJd6
- a0wsZcvTKvdTA2Q62AZ0UtZOTIq93VmJ+OW3dvOzcd5BCKnXeU7tfBfySw5AsUUD9E3N4ZkV
- TtrgqR3MqemsD+4jv15En1q7B/uP6k8fdnLPzJt/gtBlzX+2OVTbUkc5mrjxYT5MWC1X4GuO
- Tlyi1QWPhb2jf2ZWG6oRzk3k3F3Cw143Hv6XLwuwqEneXJAAgXMY5mmZ9WdBvf5SMbzalB7J
- 4=
-X-IronPort-AV: E=Sophos;i="5.81,249,1610409600"; 
-   d="scan'208";a="93106824"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.43.8.2])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 15 Mar 2021 15:00:14 +0000
-Received: from EX13D19EUB003.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
-        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (Postfix) with ESMTPS id 118FCA1C3C;
-        Mon, 15 Mar 2021 15:00:13 +0000 (UTC)
-Received: from u8a88181e7b2355.ant.amazon.com (10.43.160.180) by
- EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Mon, 15 Mar 2021 15:00:06 +0000
-From:   Hanna Hawa <hhhawa@amazon.com>
-To:     <tony@atomide.com>, <haojian.zhuang@linaro.org>,
-        <linus.walleij@linaro.org>
-CC:     <dwmw@amazon.co.uk>, <benh@amazon.com>, <ronenk@amazon.com>,
-        <talel@amazon.com>, <jonnyc@amazon.com>, <hanochu@amazon.com>,
-        <tgershi@amazon.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hhhawa@amazon.com>
-Subject: [PATCH 1/2] pinctrl: pinctrl-single: remove unused parameter
-Date:   Mon, 15 Mar 2021 16:59:43 +0200
-Message-ID: <20210315145944.20412-2-hhhawa@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210315145944.20412-1-hhhawa@amazon.com>
-References: <20210315145944.20412-1-hhhawa@amazon.com>
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZKKaLOkrBz3/GtouDwoCOZ4KdSWppOkZ3d+IwHT4siU=;
+        b=c6eKxW5xWF2yHUtA3SSpLusB0wRtKknAR/Nh5Tr2gXXnW44RK0sLvd+3h6Pz93DHNY
+         w19hFNTgapAFNIKubbphTkJRAE6WEsngPV47qDO9cFouoUxk5Tvp9BGFJdOdZrmzON24
+         f3CoJSaBbg5BKn3HlofWSf/wJP5Q5X7y0oc9OVlbSrPzs+TZfazUn9F1N9s5lEpQ6Rk9
+         IxOin93qBmQgRxpjBvYq6CseUksefDrn58hpWGxrdLPXBrMLlb5BtCMtewlqhlgnNFld
+         77tzY1zS2wC0OoUy/or1jzRZzd0YBL+GYzvpbNGCH0VMuiivv3yqPkmII7SAsUDPaUdx
+         UGJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZKKaLOkrBz3/GtouDwoCOZ4KdSWppOkZ3d+IwHT4siU=;
+        b=i7Zrs2j6W3cbiSkR0Sc8c5rO9tZizgWfqHBwsQqehVljJM9ETYtann3XxDxgfz8fxR
+         zcJ0yE8jjaiFQ9aKp3zQncSJWKg3sYImeVEU3c35psTZ5Kj3SWb6ZK+C+wVhX9VAWK/f
+         39aQSaBNjSJGLULiToxyaeMrcd5ZXJxi7xYjmINJS6r9UH8i2WBL4iph8YJgVwwy1iPk
+         aWwvrmj7rvQXFRweR7Fqm4ApkOR/bDQXhwRJuRrdht3qb92EAA/mbPYgojnxwZy4cXIR
+         0Um34m6dHHhynYpoDdgCT4pqomLUmzbLsb9FHrJukv2kxbU1yZGMK9xM6ljsw/NuEQzX
+         0iMA==
+X-Gm-Message-State: AOAM531leUGCAS/N9K7ehbJVCr7R44EgqhzItwnt2myTAKDavZ4DGiAZ
+        VncqhckFW88+I4vynxZ1cz2F/F3E9FIHSY3fSXA4XA==
+X-Google-Smtp-Source: ABdhPJzFKvnw8E5Zqkbhku2Z16o1dIIxQeveiTHejHx5D5hme652oeKJbanFEjDTx3Ueaw0f3mDtMGe8gxtiixlajpU=
+X-Received: by 2002:a2e:864a:: with SMTP id i10mr10417943ljj.467.1615821038699;
+ Mon, 15 Mar 2021 08:10:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.180]
-X-ClientProxiedBy: EX13D32UWB002.ant.amazon.com (10.43.161.139) To
- EX13D19EUB003.ant.amazon.com (10.43.166.69)
+References: <20210315082339.9787-1-sander@svanheule.net> <20210315082339.9787-3-sander@svanheule.net>
+In-Reply-To: <20210315082339.9787-3-sander@svanheule.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 15 Mar 2021 16:10:27 +0100
+Message-ID: <CACRpkdZ7zWQPBgQ+AjFM7up8x8HJES2EDfBKGmPU9LJwWzB8EA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: Add Realtek Otto GPIO support
+To:     Sander Vanheule <sander@svanheule.net>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bert Vermeulen <bert@biot.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove unused parameter 'pin_pos' from pcs_add_pin().
+On Mon, Mar 15, 2021 at 9:26 AM Sander Vanheule <sander@svanheule.net> wrote:
 
-Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
----
- drivers/pinctrl/pinctrl-single.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+> Realtek MIPS SoCs (platform name Otto) have GPIO controllers with up to
+> 64 GPIOs, divided over two banks. Each bank has a set of registers for
+> 32 GPIOs, with support for edge-triggered interrupts.
+>
+> Each GPIO bank consists of four 8-bit GPIO ports (ABCD and EFGH). Most
+> registers pack one bit per GPIO, except for the IMR register, which
+> packs two bits per GPIO (AB-CD).
+>
+> Although the byte order is currently assumed to have port A..D at offset
+> 0x0..0x3, this has been observed to be reversed on other, Lexra-based,
+> SoCs (e.g. RTL8196E/97D/97F).
+>
+> Interrupt support is disabled for the fallback devicetree-compatible
+> 'realtek,otto-gpio'. This allows for quick support of GPIO banks in
+> which the byte order would be unknown. In this case, the port ordering
+> in the IMR registers may not match the reversed order in the other
+> registers (DCBA, and BA-DC or DC-BA).
+>
+> Signed-off-by: Sander Vanheule <sander@svanheule.net>
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 7771316dfffa..8a7922459896 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -656,10 +656,8 @@ static const struct pinconf_ops pcs_pinconf_ops = {
-  * pcs_add_pin() - add a pin to the static per controller pin array
-  * @pcs: pcs driver instance
-  * @offset: register offset from base
-- * @pin_pos: unused
-  */
--static int pcs_add_pin(struct pcs_device *pcs, unsigned offset,
--		unsigned pin_pos)
-+static int pcs_add_pin(struct pcs_device *pcs, unsigned int offset)
- {
- 	struct pcs_soc_data *pcs_soc = &pcs->socdata;
- 	struct pinctrl_pin_desc *pin;
-@@ -729,16 +727,14 @@ static int pcs_allocate_pin_table(struct pcs_device *pcs)
- 		unsigned offset;
- 		int res;
- 		int byte_num;
--		int pin_pos = 0;
- 
- 		if (pcs->bits_per_mux) {
- 			byte_num = (pcs->bits_per_pin * i) / BITS_PER_BYTE;
- 			offset = (byte_num / mux_bytes) * mux_bytes;
--			pin_pos = i % num_pins_in_register;
- 		} else {
- 			offset = i * mux_bytes;
- 		}
--		res = pcs_add_pin(pcs, offset, pin_pos);
-+		res = pcs_add_pin(pcs, offset);
- 		if (res < 0) {
- 			dev_err(pcs->dev, "error adding pins: %i\n", res);
- 			return res;
--- 
-2.17.1
+Overall this is a beautiful driver and it makes use of all the generic
+frameworks I can think of. I don't see any reason not to merge
+it so:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+The following is some notes and nitpicks, nothing blocking any
+merge, more like discussion.
+
+> +enum realtek_gpio_flags {
+> +       GPIO_INTERRUPTS = BIT(0),
+> +};
+
+I suppose this looks like this because more flags will be introduced
+when you add more functionality to the driver. Otherwise it seems
+like overkill so a bool would suffice.
+
+I would add a comment /* TODO: this will be expanded */
+
+> +static inline u32 realtek_gpio_imr_bits(unsigned int pin, u32 value)
+> +{
+> +       return ((value & 0x3) << 2*(pin % 16));
+> +}
+
+I would explain a bit about this, obviouslt it is two bit per
+line, but it took me some time to parse, so a comment
+about the bit layout would be nice.
+
+> +       unsigned int offset = pin/16;
+
+Here that number appears again.
+
+The use of GPIO_GENERIC and GPIO irqchip is flawless
+and first class.
+
+Thanks!
+Linus Walleij
