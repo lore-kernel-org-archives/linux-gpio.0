@@ -2,97 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD984C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 17:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93719C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 18:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C18F64DF4
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 17:07:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5211564F3F
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Mar 2021 18:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234788AbhCORGt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Mar 2021 13:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234773AbhCORGT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Mar 2021 13:06:19 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139F9C06175F;
-        Mon, 15 Mar 2021 10:06:18 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id a22-20020a17090aa516b02900c1215e9b33so14737723pjq.5;
-        Mon, 15 Mar 2021 10:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V7IMmjZ2ome4sKp2EWacQS62zqJ+CHMpQY1RgLXOEn8=;
-        b=RWstzBctQjzNlskjf25HMDG8FuSbPRmreqUDL8nLvOZqOShocJCmVa5j2lJuWoQEvm
-         cVPaJOu+o9x4duK9xCpJjRJu7+EEPmAZQb41FuwNa9BzpA2zQVR1F3T8u1PHNomoK2yY
-         rNWtzOaFFZAETSjiNAiFrKNkfCAoRZx8Rd3yRVq6XBrJWmzNu9q3u6AXm7MZaeEQJbBw
-         6eVU9cqu/OPB8tXk5zPTyU+dKYNuYkXsTHqHahDYPjOoGMXleMYkSNvjSNSJbJL2p8jg
-         tSxjUWUGgZ66EzQNQ4LOOZUpWds2YEY9Kkm+aAo9dnBm4lvvg5s44umWo9uOCUxQZYxN
-         zffQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V7IMmjZ2ome4sKp2EWacQS62zqJ+CHMpQY1RgLXOEn8=;
-        b=nRBxT20pcbBNbJivfCTvK0A1BvDcjwEO17YYyuy9P2iEf8x2Q3qaGNkv/E7/aphfcX
-         ph5+2B4q1QE+PeLl+ltgjpiskd0FV8Wzgj6c0LN6ta1PSeLLFknSlgBbEb+bUcZoLnk+
-         7GlYRCnRWkDF8rAzmTS1d9JpTWyWHH1YuN0PLDYQ4N0J7AS+YE+0Ziz+EHEsmHjf7miE
-         1UuSoqMDpd+32Q3T1EYGwgSBHwgRVDG5+8ZBoZTsDk24CG/mNGbs1YX7s4TbpB9CCFYF
-         J9gjDOIG6PHqVaUEd02OMSv/yr4HDzXzDI4W9Jsb7oA/f18luH7mb7eSiUccWdPwr8jy
-         RnLQ==
-X-Gm-Message-State: AOAM532Rc+nCxx7XMGBt8gxndO/NYPaHig2p6LiGk/zqVOxdsiK/9GA6
-        G+xjSFCFDLbWTsfu5aHtB2V5oPrYZuJjiDu5A4r62/db2rWKOA==
-X-Google-Smtp-Source: ABdhPJwokREzA5Kz3WMcEdCsj14E7nTUPnlAIe9WUeNdjUp5oJiT1aycDnGrpWKlL3l2x3i9SAWaR5c/bEbQniz+r0A=
-X-Received: by 2002:a17:902:ee02:b029:e6:5397:d79c with SMTP id
- z2-20020a170902ee02b02900e65397d79cmr12525321plb.21.1615827977610; Mon, 15
- Mar 2021 10:06:17 -0700 (PDT)
+        id S232319AbhCOSol (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Mar 2021 14:44:41 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24292 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232160AbhCOSob (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Mar 2021 14:44:31 -0400
+IronPort-SDR: 0wwzIrJpxMNNNFW4cLUZY0HUgkcY0Qv8cqAe0NbB8iDZTJftUqbZ4l4KDzTGQ9pVlOeyY8cPHY
+ dZFP37mYh45Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9924"; a="253154950"
+X-IronPort-AV: E=Sophos;i="5.81,251,1610438400"; 
+   d="scan'208";a="253154950"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 11:44:27 -0700
+IronPort-SDR: GFBLKvJVxYXOZ4sXiVf+of8xkR8iT1GQngpxTJJ1mKq1mdQjXAnDcBU3J+CfTwzUROstMABWAM
+ CAhRPfECjhbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,251,1610438400"; 
+   d="scan'208";a="371724628"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga003.jf.intel.com with ESMTP; 15 Mar 2021 11:44:24 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 835C411C; Mon, 15 Mar 2021 20:44:36 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpiolib: Assign fwnode to parent's if no primary one provided
+Date:   Mon, 15 Mar 2021 20:44:30 +0200
+Message-Id: <20210315184430.17755-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20210315165940.90055-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210315165940.90055-1-andriy.shevchenko@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 15 Mar 2021 19:06:01 +0200
-Message-ID: <CAHp75Vcr86EPO2MX3z7z_mpiE=RrMHVN=1YCfzoYUh9Kcfnxzw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpio: mockup: Adjust documentation to the code
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 7:01 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> First of all one of the parameter missed 'mockup' in its name,
-> Second, the semantics of the integer pairs depends on the sign
-> of the base (the first value in the pair).
+In case when the properties are supplied in the secondary fwnode
+(for example, built-in device properties) the fwnode pointer left
+unassigned. This makes unable to retrieve them.
 
->          This parameter takes an argument in the form of an array of integer
-> -        pairs. Each pair defines the base GPIO number (if any) and the number
-> -        of lines exposed by the chip. If the base GPIO is -1, the gpiolib
-> -        will assign it automatically.
-> +        pairs. Each pair defines the base GPIO number (non-negative integer)
-> +        and the first number after the last of this chip. If the base GPIO
-> +        is -1, the gpiolib will assign it automatically. while the following
-> +        parameter is the number of lines exposed by the chip.
->
-> -        Example: gpio_mockup_ranges=-1,8,-1,16,405,4
-> +        Example: gpio_mockup_ranges=-1,8,-1,16,405,409
+Assign fwnode to parent's if no primary one provided.
 
-Just a side note: it was always like this (I've checked the initial
-gpio-mockup.c code). I think you have to add more test cases.
+Fixes: 7cba1a4d5e16 ("gpiolib: generalize devprop_gpiochip_set_names() for device properties")
+Fixes: 2afa97e9868f ("gpiolib: Read "gpio-line-names" from a firmware node")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 7ec0822c0505..569c62863748 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -571,6 +571,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 			       struct lock_class_key *lock_key,
+ 			       struct lock_class_key *request_key)
+ {
++	struct fwnode_handle *fwnode = gc->parent ? dev_fwnode(gc->parent) : NULL;
+ 	unsigned long	flags;
+ 	int		ret = 0;
+ 	unsigned	i;
+@@ -594,6 +595,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 
+ 	of_gpio_dev_init(gc, gdev);
+ 
++	/*
++	 * Assign fwnode depending on the result of the previous calls,
++	 * if none of them succeed, assign it to the parent's one.
++	 */
++	gdev->dev.fwnode = dev_fwnode(&gdev->dev) ?: fwnode;
++
+ 	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+ 		ret = gdev->id;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.30.2
+
