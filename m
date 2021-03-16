@@ -2,216 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFDBC433E6
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Mar 2021 16:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D88C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Mar 2021 17:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C2B965116
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Mar 2021 16:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D2265114
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Mar 2021 17:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235649AbhCPQ0r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Mar 2021 12:26:47 -0400
-Received: from mga11.intel.com ([192.55.52.93]:63821 "EHLO mga11.intel.com"
+        id S239008AbhCPRGT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Mar 2021 13:06:19 -0400
+Received: from mga17.intel.com ([192.55.52.151]:32050 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238712AbhCPQ0X (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 16 Mar 2021 12:26:23 -0400
-IronPort-SDR: 8RSvLALoWtG4rlC79p9Dnm1eOWdbXmZhj7m0pe4BaXuss2fc9s8qW/qrRgB8Gm/qMCd0vFNYB8
- 87wUTIFbGhWA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9925"; a="185929453"
-X-IronPort-AV: E=Sophos;i="5.81,251,1610438400"; 
-   d="scan'208";a="185929453"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2021 09:26:16 -0700
-IronPort-SDR: Fi9nJjCJjLtXR/ZWsbkJnfXUotHnKO7bUv10Lwciq5XQW4gSoPq6Y5ie36B4aNcztZOWJXhxQC
- +HkWj2MaNwUQ==
-X-ExtLoop1: 1
+        id S239014AbhCPRFz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 16 Mar 2021 13:05:55 -0400
+IronPort-SDR: Qn0wfbxoMZUatrpKtYDN4yobilay2fQFalwfaqCl+510QvKtsyTygHV93UBpY0Z7Yvc0HFJY75
+ HL8sAHKO3hRg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9925"; a="169213788"
 X-IronPort-AV: E=Sophos;i="5.81,254,1610438400"; 
-   d="scan'208";a="449772039"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 16 Mar 2021 09:26:14 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D0FD42D8; Tue, 16 Mar 2021 18:26:26 +0200 (EET)
+   d="scan'208";a="169213788"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2021 10:05:53 -0700
+IronPort-SDR: FA3KiXXjyqZfFiLvNVY1Ehj/bzd5P2bj8V8My5izYkm9lIoSrtSDYT6GG4DsKtdhkrzeu/HMB6
+ pCbIZDHxzcLg==
+X-IronPort-AV: E=Sophos;i="5.81,254,1610438400"; 
+   d="scan'208";a="405605306"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2021 10:05:51 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lMD8e-00D0vn-MK; Tue, 16 Mar 2021 19:05:48 +0200
+Date:   Tue, 16 Mar 2021 19:05:48 +0200
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Jan Kiszka <jan.kiszka@siemens.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 1/2] gpio: sch: Add edge event support
-Date:   Tue, 16 Mar 2021 18:26:12 +0200
-Message-Id: <20210316162613.87710-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210316162613.87710-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 2/2] gpio: sch: Hook into ACPI SCI handler to catch
+ GPIO edge events
+Message-ID: <YFDlbKD4Q13lDmM3@smile.fi.intel.com>
 References: <20210316162613.87710-1-andriy.shevchenko@linux.intel.com>
+ <20210316162613.87710-3-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210316162613.87710-3-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On Tue, Mar 16, 2021 at 06:26:13PM +0200, Andy Shevchenko wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> Neither the ACPI description on the Quark platform provides the required
+> information is to do establish generic handling nor hardware capable of
+> doing it. According to the datasheet the hardware can generate SCI events.
+> Therefore, we need to hook from the driver directly into SCI handler of
+> the ACPI subsystem in order to catch and report GPIO-related events.
 
-Add the required infrastructure to enable and report edge events of the pins
-to the gpio core. The actual hook-up of the event interrupt will happen
-separately.
+> Validated on the Quark-based IOT2000 platform.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Co-developed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-sch.c | 91 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 85 insertions(+), 6 deletions(-)
+This depends on the test by Jan or somebody with the same hardware available.
 
-diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-index 3a1b1adb08c6..bbf8ee0b54de 100644
---- a/drivers/gpio/gpio-sch.c
-+++ b/drivers/gpio/gpio-sch.c
-@@ -18,9 +18,14 @@
- #define GEN	0x00
- #define GIO	0x04
- #define GLV	0x08
-+#define GTPE	0x0c
-+#define GTNE	0x10
-+#define GGPE	0x14
-+#define GTS	0x1c
- 
- struct sch_gpio {
- 	struct gpio_chip chip;
-+	struct irq_chip irqchip;
- 	spinlock_t lock;
- 	unsigned short iobase;
- 	unsigned short resume_base;
-@@ -79,10 +84,11 @@ static void sch_gpio_reg_set(struct sch_gpio *sch, unsigned int gpio, unsigned i
- static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned int gpio_num)
- {
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	unsigned long flags;
- 
--	spin_lock(&sch->lock);
-+	spin_lock_irqsave(&sch->lock, flags);
- 	sch_gpio_reg_set(sch, gpio_num, GIO, 1);
--	spin_unlock(&sch->lock);
-+	spin_unlock_irqrestore(&sch->lock, flags);
- 	return 0;
- }
- 
-@@ -96,20 +102,22 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned int gpio_num)
- static void sch_gpio_set(struct gpio_chip *gc, unsigned int gpio_num, int val)
- {
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	unsigned long flags;
- 
--	spin_lock(&sch->lock);
-+	spin_lock_irqsave(&sch->lock, flags);
- 	sch_gpio_reg_set(sch, gpio_num, GLV, val);
--	spin_unlock(&sch->lock);
-+	spin_unlock_irqrestore(&sch->lock, flags);
- }
- 
- static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned int gpio_num,
- 				  int val)
- {
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	unsigned long flags;
- 
--	spin_lock(&sch->lock);
-+	spin_lock_irqsave(&sch->lock, flags);
- 	sch_gpio_reg_set(sch, gpio_num, GIO, 0);
--	spin_unlock(&sch->lock);
-+	spin_unlock_irqrestore(&sch->lock, flags);
- 
- 	/*
- 	 * according to the datasheet, writing to the level register has no
-@@ -144,6 +152,65 @@ static const struct gpio_chip sch_gpio_chip = {
- 	.get_direction		= sch_gpio_get_direction,
- };
- 
-+static int sch_irq_type(struct irq_data *d, unsigned int type)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	irq_hw_number_t gpio_num = irqd_to_hwirq(d);
-+	unsigned long flags;
-+	int rising, falling;
-+
-+	switch (type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		rising = 1;
-+		falling = 0;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		rising = 0;
-+		falling = 1;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		rising = 1;
-+		falling = 1;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	spin_lock_irqsave(&sch->lock, flags);
-+
-+	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
-+	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
-+
-+	irq_set_handler_locked(d, handle_edge_irq);
-+
-+	spin_unlock_irqrestore(&sch->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void sch_irq_set_enable(struct irq_data *d, int val)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	irq_hw_number_t gpio_num = irqd_to_hwirq(d);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sch->lock, flags);
-+	sch_gpio_reg_set(sch, gpio_num, GGPE, val);
-+	spin_unlock_irqrestore(&sch->lock, flags);
-+}
-+
-+static void sch_irq_mask(struct irq_data *d)
-+{
-+	sch_irq_set_enable(d, 0);
-+}
-+
-+static void sch_irq_unmask(struct irq_data *d)
-+{
-+	sch_irq_set_enable(d, 1);
-+}
-+
- static int sch_gpio_probe(struct platform_device *pdev)
- {
- 	struct sch_gpio *sch;
-@@ -207,6 +274,18 @@ static int sch_gpio_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, sch);
- 
-+	sch->irqchip.name = "sch_gpio";
-+	sch->irqchip.irq_mask = sch_irq_mask;
-+	sch->irqchip.irq_unmask = sch_irq_unmask;
-+	sch->irqchip.irq_set_type = sch_irq_type;
-+
-+	sch->chip.irq.chip = &sch->irqchip;
-+	sch->chip.irq.num_parents = 0;
-+	sch->chip.irq.parents = NULL;
-+	sch->chip.irq.parent_handler = NULL;
-+	sch->chip.irq.default_type = IRQ_TYPE_NONE;
-+	sch->chip.irq.handler = handle_bad_irq;
-+
- 	return devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
- }
- 
+> +static u32 sch_gpio_sci_handler(void *context)
+> +{
+> +	struct sch_gpio *sch = context;
+> +	struct gpio_chip *gc = &sch->chip;
+> +	unsigned long core_status, resume_status;
+> +	unsigned long pending;
+> +	int offset;
+
+> +	core_status = inl(sch->iobase + GTS + 0x00);
+> +	resume_status = inl(sch->iobase + GTS + 0x20);
+> +
+> +	pending = (resume_status << sch->resume_base) | core_status;
+> +
+> +	for_each_set_bit(offset, &pending, sch->chip.ngpio)
+> +		generic_handle_irq(irq_find_mapping(gc->irq.domain, offset));
+> +
+> +	outl(core_status, sch->iobase + GTS + 0x00);
+> +	outl(resume_status, sch->iobase + GTS + 0x20);
+
+I guess this still needs to be protected by spin_lock.
+
+> +	return pending ? ACPI_INTERRUPT_HANDLED : ACPI_INTERRUPT_NOT_HANDLED;
+> +}
+
+...
+
+Also I am in doubt that we need to instantiate an IRQ chip if the ACPI SCI
+handler registration fails. But I don't know what is better approach here, to
+NULL the pointer, or try to register handler before we will have an IRQ chip in
+place. Any recommendations?
+
 -- 
-2.30.2
+With Best Regards,
+Andy Shevchenko
+
 
