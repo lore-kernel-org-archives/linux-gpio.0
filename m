@@ -2,102 +2,243 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C45C433E6
-	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 10:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F6FC433DB
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 10:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8558764F20
-	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 10:27:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90C4864F6A
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 10:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbhCQK1V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Mar 2021 06:27:21 -0400
-Received: from gecko.sbs.de ([194.138.37.40]:40387 "EHLO gecko.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229996AbhCQK1L (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Mar 2021 06:27:11 -0400
-X-Greylist: delayed 1162 seconds by postgrey-1.27 at vger.kernel.org; Wed, 17 Mar 2021 06:27:11 EDT
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 12HA7fur024269
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Mar 2021 11:07:41 +0100
-Received: from [167.87.41.130] ([167.87.41.130])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 12H9vdCQ006344;
-        Wed, 17 Mar 2021 10:57:40 +0100
-Subject: Re: [PATCH v4 2/2] gpio: sch: Hook into ACPI SCI handler to catch
- GPIO edge events
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20210316162613.87710-1-andriy.shevchenko@linux.intel.com>
- <20210316162613.87710-3-andriy.shevchenko@linux.intel.com>
- <YFEZ6GYuXGaX/LP2@smile.fi.intel.com>
- <a3a6c80a-724c-e2fb-9597-b14a302c5ff4@siemens.com>
- <YFHRWm6YIh9NU1I/@smile.fi.intel.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <86f3a770-3b90-5fdb-7811-789118dad375@siemens.com>
-Date:   Wed, 17 Mar 2021 10:57:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
-MIME-Version: 1.0
-In-Reply-To: <YFHRWm6YIh9NU1I/@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S230358AbhCQKrL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Mar 2021 06:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229952AbhCQKqv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Mar 2021 06:46:51 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90CDC06174A;
+        Wed, 17 Mar 2021 03:46:50 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id p19so1188372wmq.1;
+        Wed, 17 Mar 2021 03:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=mBhYd1whOo+t48mTdmJpbe2HyNgyGZFf5/2QgCIN15w=;
+        b=E+8UnBvqBwHgWNDYiiDGGavXPU8l6OxlTZq4s3u9CtM09j79Vv4SPCaSsY7dWq9IGo
+         +GK/YHoWshQffxDeoJIpDJq3sdt4l2vwh+fncOS3sL7c2gR5EHxiAA/DPaobRUbNFSZu
+         SHxpYLx0YkyVRYZkLg6MLRnzyPVVKDxWa/cKKAXn6g3Wsz35n/knZl1UNT9rBh41a3X8
+         k49fRVgPB3gvkpug/NWpygedMcX9ibkjL3sv8FihVKrSP3jlVbrCvycUiVjZrq9Cs1ee
+         aZwZZc8+qtAs85H64q8DpSyn4d+kvLcCdIVWcMX1KOTFiCsSXlhbNdlyyTJ1RxN/U/2Y
+         1Vlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=mBhYd1whOo+t48mTdmJpbe2HyNgyGZFf5/2QgCIN15w=;
+        b=VjXZXG24cu5XwpQ1zzMMXK/u8JfVxh32P0Jw+01JbBbmg6GpMoN8Zy8mb+tzEyLmEX
+         sbOxhxJG3gTu+JCVV1ixQ73AQbfA3yrt16BP5t5JlbqDlEKgHQjS6wnFroxMyn8w4rLJ
+         gwpQDwfUGLXWBKSb++g+yIy/Osj7sZiO1xCXJeQQ1RDW8DE5ujI6ujk5Ss8PBwuWcjVu
+         E88Gzy5i1TFL+i9hZqd3Ljry48QjidHomfguSIcwfTAQEYoD+7huJBePtV7WdAL39eIL
+         WLGi+YhLzIVQU+URV8QfPq2blWbC0e57jjo5tHU4iAppvJl3zoD1pPWSmLGVwAZ7RWW9
+         i3eg==
+X-Gm-Message-State: AOAM5307eoE0MikFOlynGXwDYGHovlOpiZScs3GS7ZV2IyoATnVUZnp+
+        Jl2uNIXpM2Mvizf9wIbGV8dqX285ZgkoYg==
+X-Google-Smtp-Source: ABdhPJzvU+zUdzdQEuvMKKXVkMFzwCcIdjE03EAvmUNWLs/uTk6mEz+K+A4T7ENLNVtNdm3BL9fp5A==
+X-Received: by 2002:a05:600c:22c7:: with SMTP id 7mr3096514wmg.85.1615978009406;
+        Wed, 17 Mar 2021 03:46:49 -0700 (PDT)
+Received: from macbook-pro-alvaro.lan ([80.31.204.166])
+        by smtp.gmail.com with ESMTPSA id s84sm2095526wme.11.2021.03.17.03.46.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Mar 2021 03:46:49 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
+Subject: Re: [PATCH v7 03/22] dt-bindings: add BCM63XX GPIO binding
+ documentation
+From:   =?utf-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>
+In-Reply-To: <20210316205451.GA3629500@robh.at.kernel.org>
+Date:   Wed, 17 Mar 2021 11:46:46 +0100
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Michael Walle <michael@walle.cc>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4079680C-60B0-492D-B94A-814EED12F7DF@gmail.com>
+References: <20210315114214.3096-1-noltari@gmail.com>
+ <20210315114214.3096-4-noltari@gmail.com>
+ <20210316205451.GA3629500@robh.at.kernel.org>
+To:     Rob Herring <robh@kernel.org>
+X-Mailer: Apple Mail (2.3654.60.0.2.21)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 17.03.21 10:52, Andy Shevchenko wrote:
-> On Wed, Mar 17, 2021 at 07:57:44AM +0100, Jan Kiszka wrote:
->> On 16.03.21 21:49, Andy Shevchenko wrote:
->>> On Tue, Mar 16, 2021 at 06:26:13PM +0200, Andy Shevchenko wrote:
->>>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>>
->>>> Neither the ACPI description on the Quark platform provides the required
->>>> information is to do establish generic handling nor hardware capable of
->>>> doing it. According to the datasheet the hardware can generate SCI events.
->>>> Therefore, we need to hook from the driver directly into SCI handler of
->>>> the ACPI subsystem in order to catch and report GPIO-related events.
->>>>
->>>> Validated on the Quark-based IOT2000 platform.
->>>
->>> This patch must be dropped completely. SCI handler is not correct way to do
->>> this. The proper way (and we have already few examples in the kernel) is to
->>> register GPE event.
->>
->> As explained above, this is not supported by the preexisting firmware,
->> and there won't be any updates to it anymore.
->>
->> This platform is history, the SoC was discontinued by Intel long ago,
->> and our devices reaching their support end as well. The race to upstream
->> was lost in this case - backlog too long, we being too slow.
-> 
-> So you have no device to test and there is actually no device which has this
-> capability in the wild.
-> 
-> Am I reading this correct?
+Hi Rob,
 
-No. We do have devices but we don't have the time to invest further into
-bringing missing features upstream - not to speak of changing the
-firmware in order to support cleaner upstream integration.
+> El 16 mar 2021, a las 21:54, Rob Herring <robh@kernel.org> escribi=C3=B3=
+:
+>=20
+> On Mon, Mar 15, 2021 at 12:41:55PM +0100, =C3=81lvaro Fern=C3=A1ndez =
+Rojas wrote:
+>> Add binding documentation for the GPIO controller found in BCM6318, =
+BCM6328,
+>> BCM6358, BCM6362, BCM6368 and BCM63268 SoCs.
+>>=20
+>> Co-developed-by: Jonas Gorski <jonas.gorski@gmail.com>
+>> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+>> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+>> ---
+>> v7: new patch, splitted from pinctrl documentation
+>>=20
+>> .../bindings/gpio/brcm,bcm63xx-gpio.yaml      | 83 =
++++++++++++++++++++
+>> 1 file changed, 83 insertions(+)
+>> create mode 100644 =
+Documentation/devicetree/bindings/gpio/brcm,bcm63xx-gpio.yaml
+>>=20
+>> diff --git =
+a/Documentation/devicetree/bindings/gpio/brcm,bcm63xx-gpio.yaml =
+b/Documentation/devicetree/bindings/gpio/brcm,bcm63xx-gpio.yaml
+>> new file mode 100644
+>> index 000000000000..94a4f00ae2c7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/brcm,bcm63xx-gpio.yaml
+>> @@ -0,0 +1,83 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/gpio/brcm,bcm63xx-gpio.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Broadcom BCM63xx GPIO controller
+>> +
+>> +maintainers:
+>> +  - =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+>> +  - Jonas Gorski <jonas.gorski@gmail.com>
+>> +
+>> +description: |+
+>> +  The GPIO controller node should be the child of a syscon node.
+>> +
+>> +  Refer to the the bindings described in
+>> +  Documentation/devicetree/bindings/mfd/syscon.yaml
+>=20
+> The above description is not too useful because it should hopefully=20
+> later on in the series be expressed as a schema. IOW, the syscon =
+schema=20
+> should have a gpio child node with a $ref to this schema.
 
-For the remaining lifetime of the devices, we are stuck on 4.4.y-cip
-with a few additional patches, including this one.
+Is the following OK?
+description:
+  BCM63XX GPIO controller driver which supports the SoC system =
+controller supplied GPIO registers.
+  The BCM63XX GPIO controller node must be defined as a child node of =
+the BCM63XX GPIO system controller node.
 
-> 
-> In any case, we have platforms in the wild that actually support GPEs and this
-> makes sense for them.
+>=20
+> What would be useful is to say something about the GPIO block.
 
-Sure, I don't want to judge for them. Just our original target of this
-patch is no longer relevant for upstream.
+Something like=E2=80=A6?
 
-Jan
+>=20
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - brcm,bcm6318-gpio
+>> +      - brcm,bcm6328-gpio
+>> +      - brcm,bcm6358-gpio
+>> +      - brcm,bcm6362-gpio
+>> +      - brcm,bcm6368-gpio
+>> +      - brcm,bcm63268-gpio
+>> +
+>> +  data:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      Offset in the register map for the data register (in bytes).
+>> +
+>> +  dirout:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      Offset in the register map for the dirout register (in bytes).
+>=20
+> As I said earlier, copy what brcm,bcm6345-gpio.txt did and use reg=20
+> instead of data and dirout properties.
 
--- 
-Siemens AG, T RDA IOT
-Corporate Competence Center Embedded Linux
+Ok, I will remove dirout and data properties.
+
+>=20
+> That binding says it is for bcm63xx SoCs, too. So that should be=20
+> resolved. It looks like it should be 1 binding IMO. The only =
+difference=20
+> I see is the number of GPIO lines and register size. The fact that the=20=
+
+> parent is a syscon in some cases is irrelevant.
+
+Please be more specific.
+What do you want me to do with this? How should I handle that?
+
+>=20
+>> +
+>> +  gpio-controller: true
+>> +
+>> +  "#gpio-cells":
+>> +    const: 2
+>> +
+>> +  gpio-ranges:
+>> +    maxItems: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - gpio-controller
+>> +  - gpio-ranges
+>> +  - '#gpio-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    gpio@0 {
+>> +      compatible =3D "brcm,bcm6328-gpio";
+>> +      reg =3D <0x0 0x10>;
+>> +
+>> +      data =3D <0xc>;
+>> +      dirout =3D <0x4>;
+>> +
+>> +      gpio-controller;
+>> +      gpio-ranges =3D <&pinctrl 0 0 32>;
+>> +      #gpio-cells =3D <2>;
+>> +    };
+>> +
+>> +  - |
+>> +    gpio@0 {
+>> +      compatible =3D "brcm,bcm63268-gpio";
+>> +      reg =3D <0x0 0x10>;
+>> +
+>> +      data =3D <0xc>;
+>> +      dirout =3D <0x4>;
+>> +
+>> +      gpio-controller;
+>> +      gpio-ranges =3D <&pinctrl 0 0 52>;
+>> +      #gpio-cells =3D <2>;
+>> +    };
+>> --=20
+>> 2.20.1
+
