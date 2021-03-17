@@ -2,194 +2,133 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A2DC433E6
-	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 15:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387D0C433DB
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 16:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0157A64F4D
-	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 15:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 008E664F4D
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 16:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232023AbhCQPzJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Mar 2021 11:55:09 -0400
-Received: from mga17.intel.com ([192.55.52.151]:55905 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231961AbhCQPzE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Mar 2021 11:55:04 -0400
-IronPort-SDR: aSo9lqesUJdDRtfJR241JwXhuzSFxxULWr6uV3/Ta4Pgm7d2SFQYsHuCJWQEUPkowBL9ky3z/H
- /6wJC+2kRBLg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9926"; a="169399688"
-X-IronPort-AV: E=Sophos;i="5.81,256,1610438400"; 
-   d="scan'208";a="169399688"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 08:19:39 -0700
-IronPort-SDR: Pbekg6sELx4Dy01OalG5iTq5LAhILCOexCcQvG0S9v4UAhMWHWqwR1j+7oUm3lo3/857WhPfd9
- m0KFUCAG6JAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,256,1610438400"; 
-   d="scan'208";a="591100697"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 17 Mar 2021 08:19:37 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B017318E; Wed, 17 Mar 2021 17:19:50 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andy@kernel.org>,
+        id S232049AbhCQP77 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Mar 2021 11:59:59 -0400
+Received: from mail-eopbgr00111.outbound.protection.outlook.com ([40.107.0.111]:23936
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232118AbhCQP7d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 17 Mar 2021 11:59:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cFDjHf8bwBG4UuJBst0Ek3NoKQHQ2ROf0WqtQoeKplnzWlvdiX8ayH6H3AYNvuX70c9cFwHrlSzX6b51rohzvMdj03WYBNBCQ/OVAPAT/DWGILmn0zpzLzUQNga/FLQk0mn5AJO04JsWds4GImrZCnFkvopqvep0gs9u2snvTJ0AdtLKKVQMwYXO/IbAzpl/ClK9M6cjQPvcjR5+FyTpN7tBW/sUlxtmCkihYu2U5fw3nOgHl74kWglEvdDkflY5+s+8paRXts27e0eiHMcHKkP1fgfsu+0oo9f/P6/aiBHr4xOVr5NhiJTiOUM22hAvVgMuWghcXA7SNZb9CJF8HQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MhaeGqroqamQbhxdh9RtApPKBe08FECchRCMDMkPRL0=;
+ b=eP2EoAzu0/mKWhBPRX2Ezcs97zFSVzrX/TXK2gpfEV3yA5HXtmoO7RsjqCNFvvXhvCJ6JYYdWsitNGyEVs1A1vJ1HVoO1KvMQ5OQ88nUX7PwfM7duLE781uHF8fcZ1HLP6SJ7OrWINjvYOF1uu+MtDNCrDLoo0kzHOPp+F+N2TZCoVNBIK72oxCBxbooy/Ja6BtCBC5G8vdb8Lm/ycydmPJRqWPIERRYwVbmH94/h//5eo75AL+za3vKavxUnng8vXyQi5uBwAEV/nvCYy278Z32NR2Z7jaAIqdi/2sS4525R29Ojpx/TQTKHi7S1eDrD2db7tMmDGiLZ9ckh1271Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 131.228.2.8) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nokia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nokia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MhaeGqroqamQbhxdh9RtApPKBe08FECchRCMDMkPRL0=;
+ b=mYfY1PeJ+oi4RgXU2nkVTtm4QfTWBAvxWyevwnED3j79+wMRmJdt0F2lhnEYSsFN1BMQZnL6852mKp2S+W4Kpd1d2wct4ZG2y9/li44K+57hbpCR+w63CmiwEr+/75wA+8VCdoemKLFT3vwUzcls5hv/FVBqwmKMXOiRZVw+/CM=
+Received: from DB6PR0802CA0028.eurprd08.prod.outlook.com (2603:10a6:4:a3::14)
+ by AS8PR07MB7768.eurprd07.prod.outlook.com (2603:10a6:20b:351::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.10; Wed, 17 Mar
+ 2021 15:59:32 +0000
+Received: from DB5EUR03FT004.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:4:a3:cafe::a5) by DB6PR0802CA0028.outlook.office365.com
+ (2603:10a6:4:a3::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18 via Frontend
+ Transport; Wed, 17 Mar 2021 15:59:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 131.228.2.8)
+ smtp.mailfrom=nokia.com; baylibre.com; dkim=none (message not signed)
+ header.d=none;baylibre.com; dmarc=pass action=none header.from=nokia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nokia.com designates
+ 131.228.2.8 as permitted sender) receiver=protection.outlook.com;
+ client-ip=131.228.2.8; helo=fihe3nok0734.emea.nsn-net.net;
+Received: from fihe3nok0734.emea.nsn-net.net (131.228.2.8) by
+ DB5EUR03FT004.mail.protection.outlook.com (10.152.20.128) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3955.18 via Frontend Transport; Wed, 17 Mar 2021 15:59:32 +0000
+Received: from ulegcparamis.emea.nsn-net.net (ulegcparamis.emea.nsn-net.net [10.151.74.146])
+        by fihe3nok0734.emea.nsn-net.net (GMO) with ESMTP id 12HFxRUT016614;
+        Wed, 17 Mar 2021 15:59:30 GMT
+From:   Alexander A Sverdlin <alexander.sverdlin@nokia.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     Alexander Sverdlin <alexander.sverdlin@nokia.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 2/2] gpio: sch: Hook into ACPI GPE handler to catch GPIO edge events
-Date:   Wed, 17 Mar 2021 17:19:28 +0200
-Message-Id: <20210317151928.41544-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210317151928.41544-1-andriy.shevchenko@linux.intel.com>
-References: <20210317151928.41544-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] gpio: pl061: Warn when IRQ line has not been configured
+Date:   Wed, 17 Mar 2021 16:59:19 +0100
+Message-Id: <20210317155919.41450-3-alexander.sverdlin@nokia.com>
+X-Mailer: git-send-email 2.10.2
+In-Reply-To: <20210317155919.41450-1-alexander.sverdlin@nokia.com>
+References: <20210317155919.41450-1-alexander.sverdlin@nokia.com>
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 9d05d5e5-f074-4493-8b93-08d8e95da74c
+X-MS-TrafficTypeDiagnostic: AS8PR07MB7768:
+X-Microsoft-Antispam-PRVS: <AS8PR07MB77685A2D22353531E7AB7F6B886A9@AS8PR07MB7768.eurprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GIWuZ5U2BzRpxbiuLKK1wl3pieqJGYZABC+n3+c62eY0I+uTWFPiDwNdRnhhY17z1/dd6/GLHPizBNsKqb9epQ2QyaHpFttb2qHi2miW3p6LO3yYhqfp4QfLeGrhT4eDJz/CkhSQpRxWwglrhPS6C+ul1hE4sX85RdIJhU9QINUIOXs2Kf9GECUsiT0OLtupXuJzUotNXiaQ6wZ21PeSNHfGTAV2uvaOFpwqjOqxOpS85A9bXih4JMCuAE4PojMCIuYWtd5yxDIXP8VuAwyzNzSwFFULdqv3kPZWNI36nXEh3LqlzGo3tJ8UyKuUW44FbF8Z6VBlN46p/RVQFCf85S5uP8gC1wklRFv2g671N8M3AmJlX1PJsxCc9crWtXZXcZ7c8j9U/LE5FUnZthTfGbxBpOEEORp19HiwFysiwfeLmbN0jRrNJOyTXjQYekQURerO2qRM9NGlIyyiwhvSsV3tPlNOao4+2mjnu01hdOuBPrWrToPd4BPgxc7NyVxWsWoX/8c0OugjNOX+CKw4zy+NgIddqTC4f6dzzWtYa23TTIArADkQoKYZHU6pQNCxniwkPhU1qLFUD+9doeXLNqgC875PTWSxKpT8bS3+c4F5IxLwUNA/AskhAF772sW5TTJZd7aQ3/G34fPKn2+Q9rHjk5VwfHpVaA7/W2Tgy6XcvE41FYTm8ty7afPEIxWZ
+X-Forefront-Antispam-Report: CIP:131.228.2.8;CTRY:FI;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:fihe3nok0734.emea.nsn-net.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(39860400002)(376002)(346002)(136003)(396003)(46966006)(36840700001)(86362001)(36860700001)(6666004)(5660300002)(82310400003)(47076005)(4326008)(8676002)(1076003)(316002)(70586007)(81166007)(356005)(54906003)(336012)(8936002)(36756003)(82740400003)(2906002)(83380400001)(186003)(70206006)(26005)(6916009)(2616005)(478600001)(36900700001);DIR:OUT;SFP:1102;
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2021 15:59:32.0087
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d05d5e5-f074-4493-8b93-08d8e95da74c
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5d471751-9675-428d-917b-70f44f9630b0;Ip=[131.228.2.8];Helo=[fihe3nok0734.emea.nsn-net.net]
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR03FT004.eop-EUR03.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB7768
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Neither the ACPI description on Intel Minnowboard (v1) platform provides
-the required information to establish a generic handling nor the hardware
-capable of doing it. According to the data sheet the hardware can generate
-SCI events. Therefore, we need to hook from the driver into GPE handler of
-the ACPI subsystem in order to catch and report GPIO-related events.
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-Validated on the Inlel Minnowboard (v1) platform.
+Existing (irq < 0) condition is always false because adev->irq has unsigned
+type and contains 0 in case of failed irq_of_parse_and_map(). Up to now all
+the mapping errors were silently ignored.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Seems that repairing this check would be backwards-incompatible and might
+break the probe() for the implementations without IRQ support. Therefore
+warn the user instead.
+
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 ---
- drivers/gpio/gpio-sch.c | 82 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ drivers/gpio/gpio-pl061.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-index 5e08e26d0b86..f043ae9982bd 100644
---- a/drivers/gpio/gpio-sch.c
-+++ b/drivers/gpio/gpio-sch.c
-@@ -7,6 +7,7 @@
-  */
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 5df7782..3439120 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -326,10 +326,8 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
  
- #include <linux/acpi.h>
-+#include <linux/bitops.h>
- #include <linux/errno.h>
- #include <linux/gpio/driver.h>
- #include <linux/io.h>
-@@ -29,12 +30,22 @@
- #define CORE_BANK_OFFSET	0x00
- #define RESUME_BANK_OFFSET	0x20
+ 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+-	if (irq < 0) {
+-		dev_err(&adev->dev, "invalid IRQ\n");
+-		return -ENODEV;
+-	}
++	if (!irq)
++		dev_warn(&adev->dev, "IRQ support disabled\n");
+ 	pl061->parent_irq = irq;
  
-+/*
-+ * iLB datasheet describes GPE0BLK registers, in particular GPE0E.GPIO bit.
-+ * Document Number: 328195-001
-+ */
-+#define GPE0E_GPIO	14
-+
- struct sch_gpio {
- 	struct gpio_chip chip;
- 	struct irq_chip irqchip;
- 	spinlock_t lock;
- 	unsigned short iobase;
- 	unsigned short resume_base;
-+
-+	/* GPE handling */
-+	u32 gpe;
-+	acpi_gpe_handler gpe_handler;
- };
- 
- static unsigned int sch_gpio_offset(struct sch_gpio *sch, unsigned int gpio,
-@@ -229,10 +240,73 @@ static void sch_irq_unmask(struct irq_data *d)
- 	sch_irq_mask_unmask(d, 1);
- }
- 
-+static u32 sch_gpio_gpe_handler(acpi_handle gpe_device, u32 gpe, void *context)
-+{
-+	struct sch_gpio *sch = context;
-+	struct gpio_chip *gc = &sch->chip;
-+	unsigned long core_status, resume_status;
-+	unsigned long pending;
-+	unsigned long flags;
-+	int offset;
-+	u32 ret;
-+
-+	spin_lock_irqsave(&sch->lock, flags);
-+
-+	core_status = inl(sch->iobase + CORE_BANK_OFFSET + GTS);
-+	resume_status = inl(sch->iobase + RESUME_BANK_OFFSET + GTS);
-+
-+	spin_unlock_irqrestore(&sch->lock, flags);
-+
-+	pending = (resume_status << sch->resume_base) | core_status;
-+	for_each_set_bit(offset, &pending, sch->chip.ngpio)
-+		generic_handle_irq(irq_find_mapping(gc->irq.domain, offset));
-+
-+	/* Set returning value depending on whether we handled an interrupt */
-+	ret = pending ? ACPI_INTERRUPT_HANDLED : ACPI_INTERRUPT_NOT_HANDLED;
-+
-+	/* Acknowledge GPE to ACPICA */
-+	ret |= ACPI_REENABLE_GPE;
-+
-+	return ret;
-+}
-+
-+static void sch_gpio_remove_gpe_handler(void *data)
-+{
-+	struct sch_gpio *sch = data;
-+
-+	acpi_disable_gpe(NULL, sch->gpe);
-+	acpi_remove_gpe_handler(NULL, sch->gpe, sch->gpe_handler);
-+}
-+
-+static int sch_gpio_install_gpe_handler(struct sch_gpio *sch)
-+{
-+	struct device *dev = sch->chip.parent;
-+	acpi_status status;
-+
-+	status = acpi_install_gpe_handler(NULL, sch->gpe, ACPI_GPE_EDGE_TRIGGERED,
-+					  sch->gpe_handler, sch);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(dev, "Failed to install GPE handler for %u: %s\n",
-+			sch->gpe, acpi_format_exception(status));
-+		return -ENODEV;
-+	}
-+
-+	status = acpi_enable_gpe(NULL, sch->gpe);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(dev, "Failed to enable GPE handler for %u: %s\n",
-+			sch->gpe, acpi_format_exception(status));
-+		acpi_remove_gpe_handler(NULL, sch->gpe, sch->gpe_handler);
-+		return -ENODEV;
-+	}
-+
-+	return devm_add_action_or_reset(dev, sch_gpio_remove_gpe_handler, sch);
-+}
-+
- static int sch_gpio_probe(struct platform_device *pdev)
- {
- 	struct sch_gpio *sch;
- 	struct resource *res;
-+	int ret;
- 
- 	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
- 	if (!sch)
-@@ -305,6 +379,14 @@ static int sch_gpio_probe(struct platform_device *pdev)
- 	sch->chip.irq.default_type = IRQ_TYPE_NONE;
- 	sch->chip.irq.handler = handle_bad_irq;
- 
-+	/* GPE setup is optional */
-+	sch->gpe = GPE0E_GPIO;
-+	sch->gpe_handler = sch_gpio_gpe_handler;
-+
-+	ret = sch_gpio_install_gpe_handler(sch);
-+	if (ret)
-+		dev_warn(&pdev->dev, "Can't setup GPE, no IRQ support\n");
-+
- 	return devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
- }
- 
+ 	girq = &pl061->gc.irq;
 -- 
-2.30.2
+2.4.6
 
