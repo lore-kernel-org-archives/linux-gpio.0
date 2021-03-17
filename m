@@ -2,27 +2,27 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C9DC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B625C4332D
 	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 09:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD48564F77
-	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 09:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 320CA64F79
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 09:59:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbhCQJ6i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Mar 2021 05:58:38 -0400
-Received: from out28-148.mail.aliyun.com ([115.124.28.148]:35256 "EHLO
-        out28-148.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbhCQJ6T (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Mar 2021 05:58:19 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1697783|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.00566828-2.56148e-05-0.994306;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047187;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.JmJVfKa_1615975087;
+        id S230099AbhCQJ6k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Mar 2021 05:58:40 -0400
+Received: from out28-98.mail.aliyun.com ([115.124.28.98]:48793 "EHLO
+        out28-98.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229537AbhCQJ6Y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Mar 2021 05:58:24 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07651106|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.120746-0.00035721-0.878897;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047194;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.JmJVfKa_1615975087;
 Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.JmJVfKa_1615975087)
           by smtp.aliyun-inc.com(10.147.40.200);
-          Wed, 17 Mar 2021 17:58:16 +0800
+          Wed, 17 Mar 2021 17:58:20 +0800
 From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
         <zhouyanjie@wanyeetech.com>
 To:     linus.walleij@linaro.org, robh+dt@kernel.org, paul@crapouillou.net
@@ -31,10 +31,12 @@ Cc:     linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org,
         hns@goldelico.com, paul@boddie.org.uk, andy.shevchenko@gmail.com,
         dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
         sernia.zhou@foxmail.com
-Subject: [PATCH v3 00/10] Fix bugs and add support for new Ingenic SoCs.
-Date:   Wed, 17 Mar 2021 17:57:54 +0800
-Message-Id: <1615975084-68203-1-git-send-email-zhouyanjie@wanyeetech.com>
+Subject: [PATCH v3 03/10] pinctrl: Ingenic: Adjust the sequence of X1830 SSI pin groups.
+Date:   Wed, 17 Mar 2021 17:57:57 +0800
+Message-Id: <1615975084-68203-4-git-send-email-zhouyanjie@wanyeetech.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1615975084-68203-1-git-send-email-zhouyanjie@wanyeetech.com>
+References: <1615975084-68203-1-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -42,29 +44,49 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-v1->v2:
-1.Split [1/3] in v1 to [1/6] [2/6] [3/6] [4/6] in v2.
-2.Fix the uninitialized warning.
+Adjust the sequence of X1830's SSI related codes to make it consistent
+with other Ingenic SoCs.
 
-v2->v3:
-Split [6/6] in v2 to [6/10] [7/10] [8/10] [9/10] [10/10] in v3.
+Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-周琰杰 (Zhou Yanjie) (10):
-  pinctrl: Ingenic: Add missing pins to the JZ4770 MAC MII group.
-  pinctrl: Ingenic: Add support for read the pin configuration of X1830.
-  pinctrl: Ingenic: Adjust the sequence of X1830 SSI pin groups.
-  pinctrl: Ingenic: Reformat the code.
-  dt-bindings: pinctrl: Add bindings for new Ingenic SoCs.
-  pinctrl: Ingenic: Add pinctrl driver for JZ4730.
-  pinctrl: Ingenic: Add pinctrl driver for JZ4750.
-  pinctrl: Ingenic: Add pinctrl driver for JZ4755.
-  pinctrl: Ingenic: Add pinctrl driver for JZ4775.
-  pinctrl: Ingenic: Add pinctrl driver for X2000.
+Notes:
+    v2:
+    New patch.
+    
+    v2->v3:
+    Add Paul Cercueil's Reviewed-by.
 
- .../bindings/pinctrl/ingenic,pinctrl.yaml          |   23 +-
- drivers/pinctrl/pinctrl-ingenic.c                  | 1381 ++++++++++++++++++--
- 2 files changed, 1322 insertions(+), 82 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 1d43b98..7179fd8 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -1473,16 +1473,16 @@ static int x1830_ssi0_gpc_pins[] = { 0x4d, };
+ static int x1830_ssi0_ce0_pins[] = { 0x50, };
+ static int x1830_ssi0_ce1_pins[] = { 0x4e, };
+ static int x1830_ssi1_dt_c_pins[] = { 0x53, };
+-static int x1830_ssi1_dr_c_pins[] = { 0x54, };
+-static int x1830_ssi1_clk_c_pins[] = { 0x57, };
+-static int x1830_ssi1_gpc_c_pins[] = { 0x55, };
+-static int x1830_ssi1_ce0_c_pins[] = { 0x58, };
+-static int x1830_ssi1_ce1_c_pins[] = { 0x56, };
+ static int x1830_ssi1_dt_d_pins[] = { 0x62, };
++static int x1830_ssi1_dr_c_pins[] = { 0x54, };
+ static int x1830_ssi1_dr_d_pins[] = { 0x63, };
++static int x1830_ssi1_clk_c_pins[] = { 0x57, };
+ static int x1830_ssi1_clk_d_pins[] = { 0x66, };
++static int x1830_ssi1_gpc_c_pins[] = { 0x55, };
+ static int x1830_ssi1_gpc_d_pins[] = { 0x64, };
++static int x1830_ssi1_ce0_c_pins[] = { 0x58, };
+ static int x1830_ssi1_ce0_d_pins[] = { 0x67, };
++static int x1830_ssi1_ce1_c_pins[] = { 0x56, };
+ static int x1830_ssi1_ce1_d_pins[] = { 0x65, };
+ static int x1830_mmc0_1bit_pins[] = { 0x24, 0x25, 0x20, };
+ static int x1830_mmc0_4bit_pins[] = { 0x21, 0x22, 0x23, };
 -- 
 2.7.4
 
