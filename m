@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600B7C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C326AC4332B
 	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 14:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2085D64F69
+	by mail.kernel.org (Postfix) with ESMTP id 86DC964F6C
 	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 14:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231969AbhCQOiR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Mar 2021 10:38:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56998 "EHLO
+        id S231935AbhCQOiU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Mar 2021 10:38:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231949AbhCQOiI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Mar 2021 10:38:08 -0400
+        with ESMTP id S231952AbhCQOiK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Mar 2021 10:38:10 -0400
 Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE657C06174A;
-        Wed, 17 Mar 2021 07:38:07 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id j4-20020a05600c4104b029010c62bc1e20so1429339wmi.3;
-        Wed, 17 Mar 2021 07:38:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B32C06175F;
+        Wed, 17 Mar 2021 07:38:09 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id m20-20020a7bcb940000b029010cab7e5a9fso3507906wmi.3;
+        Wed, 17 Mar 2021 07:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=1idDhBR6sHz3yNmB9rvAHE1elX2hdNaMi/nnqFKAAEA=;
-        b=tVzttT7i+DgQChJCd+w5jWcpOjufTlHEbRVPP7M1iNapVIdmKpzaR1PmwSp9zwWfhQ
-         +d6jSAom8DBCOeyak8ZpEgor+TG17i7igsEEhhM4iJxIMlFhcX2veN/nwcHOnJAmTKe0
-         Jt1jsBvlqI0KbCAoZL52gwey1AwZ4xOWuXOTYO6TA/j/tf8ef8kKKxCs5w6k4HfGKhwy
-         krnqaD0RxVNXki38+/nDHjeXT+LPv1uUT6cgpz9nmi5PjyS6NsdOgHSelJdlx62ZkHoC
-         Ih8coZ4DheGtOWT9qVMvVXzCwyWvogZL9xNUOdiLwd21rS4HH7uJ+nxZmm6XRK3T215c
-         CPRQ==
+        bh=zaqQRUtAb3uSwzWtE/yzFhrGf0VNbJCfjDysS0z5cjw=;
+        b=Hl2CJMM1bjULnbrR5FRtSQbH90B7ip/PfX8LSIJ2VSE9xMgzQLuG8mtX8Zh07JC9lb
+         DddLHzgNGY5yJfWrYBfPNl9QpfaGFXXxSkrY+0AA69HMBvLSphXt4/Jy6/zg1fkTwukQ
+         enkWV8UPt9S1n6x89Q9WhxktmH6PY+yMGPAwbLpiyk5XDApauqeBqAmCXX5ZYkp7f42Q
+         LmemU7vg8oE2fgYLfiRxgGpxszbyq+/wxQVELsjMLn8L4nT7Ct4OFBy0GA5gbdemQU13
+         exs6pp4d27+nmk6haH8x85XPRLe7TliKqgNRy+J5VUZM5HVZd4FmPnWbVYZKLjRfvkn7
+         +g+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1idDhBR6sHz3yNmB9rvAHE1elX2hdNaMi/nnqFKAAEA=;
-        b=iEG3rr7lBJJL8ySaJnMUNrz2lZLcsmVFM3Hdtjiy+u0atW6rt3MNZojVYaj9u9/jTr
-         j6Wlid1x+jEoalfy5us+fRX+kkBG7JBvZVjJsozuT/ZvnVKTc/tSFy5+i61fbLc/0zBJ
-         rjT4ara/QZt6CBINnylieHxmeN3CFtj2UIgLgDcR1huKgxJLI0djkm5g4xB4gWC7o/8f
-         qFWcKGPU55CDIrS/xUWStuBHvj+SNrgi+BbbdjJYwDxteKc+8SeIEbFQSbzuk38tA1Fu
-         +tnTTlPWtcY9sisP6ULVE3VDfgTLsz5w2rbfnVnoHq/K+gGMZb/ReprH+cznNsNKFV/3
-         yxwg==
-X-Gm-Message-State: AOAM532lWh6QeuK4QFOnMnVBXsxCk89qK0tKDzNLoRRhC8JYNECTlfwu
-        OOfiqPDrvbPGsjXCjEPrQlA=
-X-Google-Smtp-Source: ABdhPJyPEXpSV8JQyGQJOeMyEkk4QTe76xmD4tPEoU17EnjG+cQwX36wm+1LGjxzWUPOvCB666a70w==
-X-Received: by 2002:a1c:7415:: with SMTP id p21mr4040460wmc.187.1615991886690;
-        Wed, 17 Mar 2021 07:38:06 -0700 (PDT)
+        bh=zaqQRUtAb3uSwzWtE/yzFhrGf0VNbJCfjDysS0z5cjw=;
+        b=PajgVY/e7Hk7fXZ+bD1rOXzvfOzgwFCUgcginKB5iwx7L/b+l6kbnCmeo1yAX1uiwd
+         gAIaphtxPCS+bdbmcC6wMjA4GuyvgrC+cpLC28wQeo5p4vm6CieFQ/0xmX9CGXtnrT8g
+         vaTmx3p4kC3MCZRgVKmYECFN98gBVL/YbtBzy6fwc1afHjlt7m3VGeFdsGK44xMHKPSX
+         FzRXXijcurWGX0v/9SR5bZ58e1n+wC8L1TonqshWjxq2lfKyrPQykXWdAkOmsKnZfWMx
+         95nPzRTZ3PF0KS5+hCaGBKwIx63YFMZglnipBT3NS163VUE0p50cfIOoz4lUm1OsJvyM
+         lp7w==
+X-Gm-Message-State: AOAM5328H0KCJHnyMumgw6GsuTYe/MRiFElg4fDV8JMs62Gfa+e3rjFS
+        WyRoA/hJjs5Ex0LkOBfkc88=
+X-Google-Smtp-Source: ABdhPJz/TWDS6pYlnyAq6KPaEz/CcCu2p9saRchcEeh2KuGEUkheDgt/tVt9HMjkojQAi5eEG1Rlbg==
+X-Received: by 2002:a1c:7ed4:: with SMTP id z203mr3822784wmc.89.1615991888410;
+        Wed, 17 Mar 2021 07:38:08 -0700 (PDT)
 Received: from skynet.lan ([80.31.204.166])
-        by smtp.gmail.com with ESMTPSA id a75sm2518948wme.10.2021.03.17.07.38.05
+        by smtp.gmail.com with ESMTPSA id a75sm2518948wme.10.2021.03.17.07.38.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 07:38:06 -0700 (PDT)
+        Wed, 17 Mar 2021 07:38:08 -0700 (PDT)
 From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
         <noltari@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -72,9 +72,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v8 01/22] gpio: guard gpiochip_irqchip_add_domain() with GPIOLIB_IRQCHIP
-Date:   Wed, 17 Mar 2021 15:37:42 +0100
-Message-Id: <20210317143803.26127-2-noltari@gmail.com>
+Subject: [PATCH v8 03/22] dt-bindings: improve BCM6345 GPIO binding documentation
+Date:   Wed, 17 Mar 2021 15:37:44 +0100
+Message-Id: <20210317143803.26127-4-noltari@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210317143803.26127-1-noltari@gmail.com>
 References: <20210317143803.26127-1-noltari@gmail.com>
@@ -85,47 +85,159 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The current code doesn't check if GPIOLIB_IRQCHIP is enabled, which results in
-a compilation error when trying to build gpio-regmap if CONFIG_GPIOLIB_IRQCHIP
-isn't enabled.
+Convert existing BCM6345 GPIO binding documentation to YAML and add binding
+documentation for the GPIO controller found in BCM6318, BCM6328, BCM6358,
+BCM6362, BCM6368 and BCM63268 SoCs.
 
-Fixes: 6a45b0e2589f ("gpiolib: Introduce gpiochip_irqchip_add_domain()")
-Suggested-by: Michael Walle <michael@walle.cc>
+Co-developed-by: Jonas Gorski <jonas.gorski@gmail.com>
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Michael Walle <michael@walle.cc>
 ---
- v8: no changes
- v7: no changes
- v6: no changes
- v5: add missing Suggested-by tag
- v4: add patch (fix include instead of gpio-regmap.c)
+ v8: introduce changes suggested by Rob Herring
+ v7: new patch, splitted from pinctrl documentation
 
- include/linux/gpio/driver.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../bindings/gpio/brcm,bcm6345-gpio.txt       | 46 -----------
+ .../bindings/gpio/brcm,bcm6345-gpio.yaml      | 78 +++++++++++++++++++
+ 2 files changed, 78 insertions(+), 46 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 286de0520574..ecf0032a0995 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -624,8 +624,17 @@ void gpiochip_irq_domain_deactivate(struct irq_domain *domain,
- bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gc,
- 				unsigned int offset);
- 
-+#ifdef CONFIG_GPIOLIB_IRQCHIP
- int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
- 				struct irq_domain *domain);
-+#else
-+static inline int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
-+					      struct irq_domain *domain)
-+{
-+	WARN_ON(1);
-+	return -EINVAL;
-+}
-+#endif
- 
- int gpiochip_generic_request(struct gpio_chip *gc, unsigned int offset);
- void gpiochip_generic_free(struct gpio_chip *gc, unsigned int offset);
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt
+deleted file mode 100644
+index e7853143fa42..000000000000
+--- a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt
++++ /dev/null
+@@ -1,46 +0,0 @@
+-Bindings for the Broadcom's brcm,bcm6345-gpio memory-mapped GPIO controllers.
+-
+-These bindings can be used on any BCM63xx SoC. However, BCM6338 and BCM6345
+-are the only ones which don't need a pinctrl driver.
+-BCM6338 have 8-bit data and dirout registers, where GPIO state can be read
+-and/or written, and the direction changed from input to output.
+-BCM6345 have 16-bit data and dirout registers, where GPIO state can be read
+-and/or written, and the direction changed from input to output.
+-
+-Required properties:
+-	- compatible: should be "brcm,bcm6345-gpio"
+-	- reg-names: must contain
+-		"dat" - data register
+-		"dirout" - direction (output) register
+-	- reg: address + size pairs describing the GPIO register sets;
+-		order must correspond with the order of entries in reg-names
+-	- #gpio-cells: must be set to 2. The first cell is the pin number and
+-			the second cell is used to specify the gpio polarity:
+-			0 = active high
+-			1 = active low
+-	- gpio-controller: Marks the device node as a gpio controller.
+-
+-Optional properties:
+-	- native-endian: use native endian memory.
+-
+-Examples:
+-	- BCM6338:
+-	gpio: gpio-controller@fffe0407 {
+-		compatible = "brcm,bcm6345-gpio";
+-		reg-names = "dirout", "dat";
+-		reg = <0xfffe0407 1>, <0xfffe040f 1>;
+-
+-		#gpio-cells = <2>;
+-		gpio-controller;
+-	};
+-
+-	- BCM6345:
+-	gpio: gpio-controller@fffe0406 {
+-		compatible = "brcm,bcm6345-gpio";
+-		reg-names = "dirout", "dat";
+-		reg = <0xfffe0406 2>, <0xfffe040a 2>;
+-		native-endian;
+-
+-		#gpio-cells = <2>;
+-		gpio-controller;
+-	};
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
+new file mode 100644
+index 000000000000..d1d34a347a1f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
+@@ -0,0 +1,78 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/brcm,bcm6345-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom BCM6345 GPIO controller
++
++maintainers:
++  - Álvaro Fernández Rojas <noltari@gmail.com>
++  - Jonas Gorski <jonas.gorski@gmail.com>
++
++description: |+
++  Bindings for Broadcom's BCM63xx memory-mapped GPIO controllers.
++
++  These bindings can be used on any BCM63xx SoC. However, BCM6338 and BCM6345
++  are the only ones which don't need a pinctrl driver.
++
++properties:
++  compatible:
++    enum:
++      - brcm,bcm6318-gpio
++      - brcm,bcm6328-gpio
++      - brcm,bcm6345-gpio
++      - brcm,bcm6358-gpio
++      - brcm,bcm6362-gpio
++      - brcm,bcm6368-gpio
++      - brcm,bcm63268-gpio
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-ranges:
++    maxItems: 1
++
++  native-endian: true
++
++  reg:
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: dirout
++      - const: dat
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio-controller@fffe0406 {
++      compatible = "brcm,bcm6345-gpio";
++      reg-names = "dirout", "dat";
++      reg = <0xfffe0406 2>, <0xfffe040a 2>;
++      native-endian;
++
++      gpio-controller;
++      #gpio-cells = <2>;
++    };
++
++  - |
++    gpio@0 {
++      compatible = "brcm,bcm63268-gpio";
++      reg-names = "dirout", "dat";
++      reg = <0x0 0x8>, <0x8 0x8>;
++
++      gpio-controller;
++      gpio-ranges = <&pinctrl 0 0 52>;
++      #gpio-cells = <2>;
++    };
 -- 
 2.20.1
 
