@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701B0C4332E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF10C4360C
 	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 09:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B97964F7B
+	by mail.kernel.org (Postfix) with ESMTP id C871664F75
 	for <linux-gpio@archiver.kernel.org>; Wed, 17 Mar 2021 09:59:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbhCQJ6j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Mar 2021 05:58:39 -0400
-Received: from out28-149.mail.aliyun.com ([115.124.28.149]:36438 "EHLO
-        out28-149.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbhCQJ6W (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Mar 2021 05:58:22 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2338176|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0278291-0.000114168-0.972057;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047207;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.JmJVfKa_1615975087;
+        id S230140AbhCQJ6l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Mar 2021 05:58:41 -0400
+Received: from out28-77.mail.aliyun.com ([115.124.28.77]:38524 "EHLO
+        out28-77.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229730AbhCQJ6Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Mar 2021 05:58:25 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07638787|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.0210386-0.000128823-0.978833;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047213;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.JmJVfKa_1615975087;
 Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.JmJVfKa_1615975087)
           by smtp.aliyun-inc.com(10.147.40.200);
-          Wed, 17 Mar 2021 17:58:19 +0800
+          Wed, 17 Mar 2021 17:58:21 +0800
 From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
         <zhouyanjie@wanyeetech.com>
 To:     linus.walleij@linaro.org, robh+dt@kernel.org, paul@crapouillou.net
@@ -31,9 +31,9 @@ Cc:     linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org,
         hns@goldelico.com, paul@boddie.org.uk, andy.shevchenko@gmail.com,
         dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
         sernia.zhou@foxmail.com
-Subject: [PATCH v3 02/10] pinctrl: Ingenic: Add support for read the pin configuration of X1830.
-Date:   Wed, 17 Mar 2021 17:57:56 +0800
-Message-Id: <1615975084-68203-3-git-send-email-zhouyanjie@wanyeetech.com>
+Subject: [PATCH v3 04/10] pinctrl: Ingenic: Reformat the code.
+Date:   Wed, 17 Mar 2021 17:57:58 +0800
+Message-Id: <1615975084-68203-5-git-send-email-zhouyanjie@wanyeetech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1615975084-68203-1-git-send-email-zhouyanjie@wanyeetech.com>
 References: <1615975084-68203-1-git-send-email-zhouyanjie@wanyeetech.com>
@@ -44,12 +44,11 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add X1830 support in "ingenic_pinconf_get()", so that it can read the
-configuration of X1830 SoC correctly.
-
-Fixes: d7da2a1e4e08 ("pinctrl: Ingenic: Add pinctrl driver for X1830.")
+1.Move the "INGENIC_PIN_GROUP_FUNCS" to the macro definition section.
+2.Add tabs before values to align the code in the macro definition section.
 
 Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
 ---
 
 Notes:
@@ -57,73 +56,107 @@ Notes:
     New patch.
     
     v2->v3:
-    1.Add fixes tag.
-    2.Adjust the code, simplify the ingenic_pinconf_get() function.
+    Add Paul Cercueil's Reviewed-by.
 
- drivers/pinctrl/pinctrl-ingenic.c | 38 ++++++++++++++++++++++++++++++--------
- 1 file changed, 30 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c | 71 +++++++++++++++++++--------------------
+ 1 file changed, 35 insertions(+), 36 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 05dfa0a..1d43b98 100644
+index 7179fd8..b8165f5 100644
 --- a/drivers/pinctrl/pinctrl-ingenic.c
 +++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -2109,26 +2109,48 @@ static int ingenic_pinconf_get(struct pinctrl_dev *pctldev,
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 	unsigned int idx = pin % PINS_PER_GPIO_CHIP;
- 	unsigned int offt = pin / PINS_PER_GPIO_CHIP;
--	bool pull;
-+	unsigned int bias;
-+	bool pull, pullup, pulldown;
+@@ -26,37 +26,48 @@
+ #include "pinconf.h"
+ #include "pinmux.h"
  
--	if (jzpc->info->version >= ID_JZ4770)
--		pull = !ingenic_get_pin_config(jzpc, pin, JZ4770_GPIO_PEN);
--	else
--		pull = !ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_PULL_DIS);
-+	if (jzpc->info->version >= ID_X1830) {
-+		unsigned int half = PINS_PER_GPIO_CHIP / 2;
-+		unsigned int idxh = pin % half * 2;
+-#define GPIO_PIN	0x00
+-#define GPIO_MSK	0x20
++#define GPIO_PIN					0x00
++#define GPIO_MSK					0x20
+ 
+-#define JZ4740_GPIO_DATA	0x10
+-#define JZ4740_GPIO_PULL_DIS	0x30
+-#define JZ4740_GPIO_FUNC	0x40
+-#define JZ4740_GPIO_SELECT	0x50
+-#define JZ4740_GPIO_DIR		0x60
+-#define JZ4740_GPIO_TRIG	0x70
+-#define JZ4740_GPIO_FLAG	0x80
++#define JZ4740_GPIO_DATA			0x10
++#define JZ4740_GPIO_PULL_DIS		0x30
++#define JZ4740_GPIO_FUNC			0x40
++#define JZ4740_GPIO_SELECT			0x50
++#define JZ4740_GPIO_DIR				0x60
++#define JZ4740_GPIO_TRIG			0x70
++#define JZ4740_GPIO_FLAG			0x80
+ 
+-#define JZ4770_GPIO_INT		0x10
+-#define JZ4770_GPIO_PAT1	0x30
+-#define JZ4770_GPIO_PAT0	0x40
+-#define JZ4770_GPIO_FLAG	0x50
+-#define JZ4770_GPIO_PEN		0x70
++#define JZ4770_GPIO_INT				0x10
++#define JZ4770_GPIO_PAT1			0x30
++#define JZ4770_GPIO_PAT0			0x40
++#define JZ4770_GPIO_FLAG			0x50
++#define JZ4770_GPIO_PEN				0x70
+ 
+-#define X1830_GPIO_PEL			0x110
+-#define X1830_GPIO_PEH			0x120
++#define X1830_GPIO_PEL				0x110
++#define X1830_GPIO_PEH				0x120
+ 
+-#define REG_SET(x) ((x) + 0x4)
+-#define REG_CLEAR(x) ((x) + 0x8)
++#define REG_SET(x)					((x) + 0x4)
++#define REG_CLEAR(x)				((x) + 0x8)
+ 
+-#define REG_PZ_BASE(x) ((x) * 7)
+-#define REG_PZ_GID2LD(x) ((x) * 7 + 0xf0)
++#define REG_PZ_BASE(x)				((x) * 7)
++#define REG_PZ_GID2LD(x)			((x) * 7 + 0xf0)
+ 
+-#define GPIO_PULL_DIS	0
+-#define GPIO_PULL_UP	1
+-#define GPIO_PULL_DOWN	2
++#define GPIO_PULL_DIS				0
++#define GPIO_PULL_UP				1
++#define GPIO_PULL_DOWN				2
+ 
+-#define PINS_PER_GPIO_CHIP 32
++#define PINS_PER_GPIO_CHIP			32
 +
-+		if (idx < half)
-+			regmap_read(jzpc->map, offt * jzpc->info->reg_offset +
-+					X1830_GPIO_PEL, &bias);
-+		else
-+			regmap_read(jzpc->map, offt * jzpc->info->reg_offset +
-+					X1830_GPIO_PEH, &bias);
-+
-+		bias = (bias >> idxh) & (GPIO_PULL_UP | GPIO_PULL_DOWN);
-+
-+		pullup = (bias == GPIO_PULL_UP) && (jzpc->info->pull_ups[offt] & BIT(idx));
-+		pulldown = (bias == GPIO_PULL_DOWN) && (jzpc->info->pull_downs[offt] & BIT(idx));
-+
-+	} else {
-+		if (jzpc->info->version >= ID_JZ4770)
-+			pull = !ingenic_get_pin_config(jzpc, pin, JZ4770_GPIO_PEN);
-+		else
-+			pull = !ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_PULL_DIS);
-+
-+		pullup = pull && (jzpc->info->pull_ups[offt] & BIT(idx));
-+		pulldown = pull && (jzpc->info->pull_downs[offt] & BIT(idx));
++#define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
++	{						\
++		name,					\
++		id##_pins,				\
++		ARRAY_SIZE(id##_pins),			\
++		funcs,					\
 +	}
++
++#define INGENIC_PIN_GROUP(name, id, func)		\
++	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		if (pull)
-+		if (pullup || pulldown)
- 			return -EINVAL;
- 		break;
+ enum jz_version {
+ 	ID_JZ4740,
+@@ -134,18 +145,6 @@ static int jz4740_pwm_pwm5_pins[] = { 0x7c, };
+ static int jz4740_pwm_pwm6_pins[] = { 0x7e, };
+ static int jz4740_pwm_pwm7_pins[] = { 0x7f, };
  
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		if (!pull || !(jzpc->info->pull_ups[offt] & BIT(idx)))
-+		if (!pullup)
- 			return -EINVAL;
- 		break;
- 
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		if (!pull || !(jzpc->info->pull_downs[offt] & BIT(idx)))
-+		if (!pulldown)
- 			return -EINVAL;
- 		break;
- 
+-
+-#define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		funcs,					\
+-	}
+-
+-#define INGENIC_PIN_GROUP(name, id, func)		\
+-	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
+-
+ static const struct group_desc jz4740_groups[] = {
+ 	INGENIC_PIN_GROUP("mmc-1bit", jz4740_mmc_1bit, 0),
+ 	INGENIC_PIN_GROUP("mmc-4bit", jz4740_mmc_4bit, 0),
 -- 
 2.7.4
 
