@@ -2,156 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0ED1C433DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Mar 2021 09:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32939C43381
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Mar 2021 11:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 555D164F04
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Mar 2021 09:51:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEB9364F6B
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Mar 2021 11:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbhCRJum (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 18 Mar 2021 05:50:42 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:55708 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229896AbhCRJuW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 18 Mar 2021 05:50:22 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id 43A0FCFA
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Mar 2021 10:50:21 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
-Received: from mail.thorsis.com ([127.0.0.1])
-        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id o7qCYSbmDQ5G for <linux-gpio@vger.kernel.org>;
-        Thu, 18 Mar 2021 10:50:21 +0100 (CET)
-Received: by mail.thorsis.com (Postfix, from userid 109)
-        id 21EA22A82; Thu, 18 Mar 2021 10:50:21 +0100 (CET)
-Date:   Thu, 18 Mar 2021 10:50:14 +0100 (CET)
-From:   Alexander Dahl <ada@thorsis.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Message-ID: <854891727.11376.1616061014891@seven.thorsis.com>
-In-Reply-To: <CAHp75VczovYQB70HVEmDA=xfTBcNuSm2f8x9Mnbj0P0Z4UHRMQ@mail.gmail.com>
-References: <946021874.11132.1615900079722@seven.thorsis.com>
- <CAHp75Vf05NN0dXUrMSOXBRuYRnQRHO_92itZ3ndOyX1oERWt=g@mail.gmail.com>
- <CAHp75VczovYQB70HVEmDA=xfTBcNuSm2f8x9Mnbj0P0Z4UHRMQ@mail.gmail.com>
-Subject: Re: setting gpio-line-names in dts for sama5d2 SoC
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
-X-Originating-Client: open-xchange-appsuite
+        id S231161AbhCRLMU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 18 Mar 2021 07:12:20 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:34993 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230525AbhCRLMB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Mar 2021 07:12:01 -0400
+Received: from [192.168.1.155] ([77.4.36.33]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MZCvh-1l9O8s3yIz-00V96z; Thu, 18 Mar 2021 12:12:00 +0100
+Subject: Re: replacement for persistence of values written to sysfs files
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-gpio@vger.kernel.org
+References: <af518806-f473-8979-6d32-38c94a29b762@rasmusvillemoes.dk>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <0d35c328-600e-60ed-1bc2-a65ba4530509@metux.net>
+Date:   Thu, 18 Mar 2021 12:11:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
+MIME-Version: 1.0
+In-Reply-To: <af518806-f473-8979-6d32-38c94a29b762@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:uDCg/8NdDMoanGecnZkL5eUPdYREjascbO4kQdzPih27yBAhUII
+ W1QnVqQmq+bvqnqVHcu94ZxztbR7/i4UyHUqbocZ9eQTwlHuuJ6dGht1oiNqiMCtSVxgOlR
+ iZchdpQ5bPIWe8AClAdEYpzGziO/LsLYq2j0HuaPmby4UnfJFeSGK0UL4XtdgVAVJ11NmFA
+ VI9QXYNHEClWe4u04sQuw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dfOXJPGbA+U=:pgHrFm6Dvx53sWUxE9eA/S
+ 3f4eBJzggRkmMfCFZOZWYh1V4sp8iTnOSDYDZHwNmSwu3hthDBnGjarqCiz+ZQ4eNE532YbhZ
+ e1UrqD8LftBy9qEiRmwD+NgKgqyI8L8jfB4kCHI03wMfdInun57A7274R1NvIBy02RegAnM96
+ IM+cQgi5XyceQsuHssfySIX+I+9flEFk2KlqHbcfYM/pHbOC443NKknpgNvwNI3Z8FsoNP5ej
+ PbSYsp5Vp/N+nuw65oDrHeo2lPPncBz2vD9Gn6tOrY4P0X6qvly6SirZCnhomNBmoaEBgbDsA
+ AJwT4j1fGbcxpdwLGIbvtA7EsG0b6s9yT3RjI+t7I6aWjqcCopr6ScxRzocs3fuj2NG2lUqaj
+ R0/oRwItZSG1q5tCIae4JvirTAORq14I/K4v0lNpkjaI6TVTUiuwCdxzCeBK5
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hei hei,
+On 15.03.21 12:46, Rasmus Villemoes wrote:
 
-meanwhile I tried to proof my hypothesis. See below.
+Hi,
 
-> Andy Shevchenko <andy.shevchenko@gmail.com> hat am 17.03.2021 13:33 gesch=
-rieben:
->=20
-> =20
-> +Cc: Bart, Linus
->=20
-> On Wed, Mar 17, 2021 at 1:22 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> >
-> >
-> > On Tuesday, March 16, 2021, Alexander Dahl <ada@thorsis.com> wrote:
-> >>
-> >> Hei hei,
-> >>
-> >> for a Microchip SAMA5D2 SoC based device I try to set gpio-line-names =
-in .dts file like this:
-> >>
-> >> 257 &pioA {
-> >> 258         gpio-line-names =3D "",                   /* PA0  */
-> >> 259                           "",                   /* PA1  */
-> >> 260                           "",                   /* PA2  */
-> >> 261                           "FOO",                /* PA3  */
-> >> 262                           "BAR",                /* PA4  */
-> >> 263                           "",                   /* PA5  */
-> >>
-> >> =E2=80=A6 and so on for all 4 * 32 GPIO Pins. However when calling `gp=
-ioinfo` in userspace, I always get this:
-> >>
-> >> $ gpioinfo
-> >> gpiochip0 - 128 lines:
-> >>         line   0:        "PA0"       unused   input  active-high
-> >>         line   1:        "PA1"       unused   input  active-high
-> >>         line   2:        "PA2"       unused   input  active-high
-> >>         line   3:        "PA3"       unused   input  active-high
-> >>         line   4:        "PA4"       unused   input  active-high
-> >>         line   5:        "PA5"       unused   input  active-high
-> >>
-> >> =E2=80=A6 and so on. Those "PA0" line names are set by the pinctrl dri=
-ver in drivers/pinctrl/pinctrl-at91-pio4.c before calling gpiochip_add_data=
-() and from reading the code in drivers/gpio/gpiolib.c I suspect devprop_gp=
-iochip_set_names() is never called then, so those names in .dts are simply =
-ignored.
-> >>
-> >> Those default names from the at91 pio4 pinctrl driver are certainly co=
-rrect speaking of pin names, but from a userspace point of view it would be=
- better if I could override those from dts, so an application using libgpio=
-d could look for a name like e.g. "VALVE7_EN" without caring to which pin t=
-hat's actually connected. Can I override those with a currently present ker=
-nel?=20
+> So how is one supposed to get the kernel to set and maintain a value for
+> a gpio, without having to keep a dummy process around? Also, with the
+> sysfs interface, another process can later change the gpio value; I
+> don't think that's possible with a dummy process hanging onto it.
 
-I don't think I can override with a recent kernel.
+I've got a few remaining legacy systems in the field, where I still use
+the classic sysfs interface for exactly that reason: separate 
+short-running programs (shell scripts) do certain things on the gpio and 
+then
+exit.
 
->>> Or is it a problem in either the at91 pio4 driver or the gpiolib core? =
-Or is that no real usecase and should I do it differently?
+For newer applications, I don't use raw gpios anymore (except for rare
+things like generic PLCs, where I have no influence on the actual
+workloads)
 
-If I disable the name assignment in the pinctrl-at91-pio4 driver, I get the=
- line names from the dts. I used the following diff:
+> So, for example, one init script we have first configures a temperature
+> sensor with a high-temp alert threshold, and after that value has been
+> written, sets a gpio that will make such an alert trigger a reset of the
+> board.
+
+Bind a proper driver to it. Either IIO or hwmon (depending on what that
+sensor is actually for).
 
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-=
-at91-pio4.c
-index 578b387100d9..f994a2468cc3 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -1095,7 +1095,9 @@ static int atmel_pinctrl_probe(struct platform_device=
- *pdev)
-        atmel_pioctrl->gpio_chip->ngpio =3D atmel_pioctrl->npins;
-        atmel_pioctrl->gpio_chip->label =3D dev_name(dev);
-        atmel_pioctrl->gpio_chip->parent =3D dev;
-+#if 0
-        atmel_pioctrl->gpio_chip->names =3D atmel_pioctrl->group_names;
-+#endif
-=20
-        atmel_pioctrl->pm_wakeup_sources =3D devm_kcalloc(dev,
-                        atmel_pioctrl->nbanks,
+--mtx
 
-
-Now gpioinfo shows what I set in dts, more or less similar to this:
-
-gpiochip0 - 128 lines:
-        line   0:      unnamed       unused   input  active-high=20
-        line   1:      unnamed       unused   input  active-high=20
-        line   2:      unnamed       unused   input  active-high=20
-        line   3:        "FOO"       unused   input  active-high=20
-        line   4:        "BAR"       unused   input  active-high=20
-        line   5:      unnamed       unused   input  active-high=20
-
-> >
-> >
-> > I would like to know the consequences if allow this, but to me it sound=
-s like a bug in the gpiolib.c.
-
-At least the documentation recommends to not use pin names: https://www.ker=
-nel.org/doc/Documentation/devicetree/bindings/gpio/gpio.txt
-
-If anyone has an idea how to fix this, let me know. I can try to make a pat=
-ch then. Currently however, I'm not familiar enough with the gpio subsystem=
- to just start that.
-
-Greets
-Alex
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
