@@ -7,132 +7,99 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA684C433C1
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Mar 2021 12:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A31C433E1
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Mar 2021 12:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1F9F6199F
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Mar 2021 12:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D01961992
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Mar 2021 12:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbhCVMSE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Mar 2021 08:18:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48910 "EHLO
+        id S229692AbhCVM0c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Mar 2021 08:26:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbhCVMRj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Mar 2021 08:17:39 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9459AC061574
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Mar 2021 05:17:38 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id f16so20800632ljm.1
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Mar 2021 05:17:38 -0700 (PDT)
+        with ESMTP id S229879AbhCVMZv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Mar 2021 08:25:51 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C57B8C061574
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Mar 2021 05:25:50 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id u4so20769225ljo.6
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Mar 2021 05:25:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LHJdSqMJsAMLhWC6ZVJQV8NXmp+oAmJkXXQd26aDoiE=;
-        b=h3NcVGiCg2wo98bvXiJ0lMcVh5njwSc1Xi8m6u7tmaEYPqdmxi83dAutZkV+QyZvIB
-         zpReLX3GyZwoPcKHpRps1q1qzqtIIhn+9K5nxnXIAS+y/TfsyWQ0yODdHWfdmMT/pdsV
-         HjT6CVtsIMzgGTNqqg6ijCeO+I121yQAUPz4mIOrZiX72X6PJmoo+5loGjFZoGkHU5k0
-         QEUr+fGnrtvGn/uGpjzTecvbRMrN3O1FW7SJWYbTcD5HqZjIlI07aHxbSsrFoWsIXc3W
-         V5f7iJj4PMwXpqhXNCbJG86p0PTEpo/NLRUHPY62gdLWWx2mTJY/ibZMpreOKU62HFMo
-         3QuQ==
+        bh=fuo280atv3rGFAaPpppT2Wxn8+EtdvpQB31ZsKqGltY=;
+        b=sXX2S914CM7roxiZphqcuiN1/f2TsW4WZBMDqhGuX9WDQEDRDYAmpFXHU8PYuL/6qo
+         u6s1Ab+L6XTTh3Xsdk7Bb3g9Jn5asUv8FK2n/cMkunEkSAtjRkYLlLi2z89p4Ki8maiO
+         QB3LIOANGWtWgXP09QSlTSXcxXHWqEQlPwFsIAYSqNrdDdb2inVMrjh9pQykL0NN+FiJ
+         cR/Qhc+hqV3WsKqzUeo8in5tQKgpOry4lZ9whdWHd7cd5mwMvwqQJIWeezIlJzx3M6UA
+         DstVxYLk6CvqQ9Dg4YWgbgTy7k1qJyvi5O+U6rmekfxLrAo1rJU3Sk0Cwdc3RTv9ymEe
+         LOBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LHJdSqMJsAMLhWC6ZVJQV8NXmp+oAmJkXXQd26aDoiE=;
-        b=Yaf9rxBztfikjrNdyPKCrwYmzBoFftG9jNP4pcgtMKEGsbP5z74HOJgYRAqteucxYc
-         /rYYdsF8Kxu51r8PtX/jV3umxHC5K2C51YBmb3ZwxcCzY/36sk5xwOa+P48P4BEC1EYL
-         5SxUay+vukL9/z1GMooLEpm+e0S2CArCZ4Dh6w9NmtaWFYC5YEIb0gFrpetybs7HCI53
-         Sisz1lOnLnQUgexVO1W/obvzCSpk5xcWzlokGjYljUMJWtnrMdITJl6a+KvwLZ6nk07y
-         oiFberSX7jpDBDhMSWJTK99KM5M/RcZuTfqLma2zrRVNMpyVe8OP5/EKjfY8FPz3FmGe
-         Y9Bw==
-X-Gm-Message-State: AOAM531kdyPPV1P57DyxYCcz/aFPYe2ULYRGALxgcr3pxxlTdGE/6yFe
-        rjkycovpyhsXgesWwy4b0CmHTp5VGUXkr2ojsTL22A==
-X-Google-Smtp-Source: ABdhPJwL/fBiStggm4HK4L8KFT8+MpOV109yIULqWwKA14grJh36M71RZErLfkRWe7YsbLo5Isti53ifQckF8sBwPQc=
-X-Received: by 2002:a2e:9004:: with SMTP id h4mr9618443ljg.326.1616415457130;
- Mon, 22 Mar 2021 05:17:37 -0700 (PDT)
+        bh=fuo280atv3rGFAaPpppT2Wxn8+EtdvpQB31ZsKqGltY=;
+        b=sH55hcRL1yBXSjH3vqevP8GmagbY+nm8aXReATYJ7/osih6j7K1ODsyzAeFS7Kkkqy
+         eihqgXbs5wwzhJFMnIFGasbx5Sh1kQxdiirHI6pEplrGU1Pfe5WwNZjprjOZghBxj8w6
+         vTrpBbV6YMUEo/D6BdTo+qsJbMO8DO09gZkiEr4TF6exMfiBwgK4WZQQ6eb3Z7xodBUP
+         9mSAChZ04UCJJeIK16nfU2Qg8V24YLwjy3MAxKOabaFtkZkLEcb9qWFgYYsbuvfZSRHD
+         IKbYOwY01d3JtU5b5NBVPiOKgHdVb0Ujb7Db+5u9L1kWIpwsQ/LdZ2ez1TRx6rLjbpNc
+         cLsg==
+X-Gm-Message-State: AOAM531qldWE/yY8VNjW1W15yDqIIGNT6pEtsG9HWE+RaiyFv17PrmOH
+        aXbY6GqX4YYQVviTH+nH9th8ebn3lpPYVQ3IuVPxOapVoKGe3q8+
+X-Google-Smtp-Source: ABdhPJzRQZKRjwj2HhO1dkBUyHQ1xfTus66GJVxGV6QlKNseh4c7tZZy/wrFv+Tksfh9lCo5fHbh1PRWsApS8p/8FOw=
+X-Received: by 2002:a2e:700a:: with SMTP id l10mr9518822ljc.368.1616415949178;
+ Mon, 22 Mar 2021 05:25:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210317155919.41450-1-alexander.sverdlin@nokia.com>
- <20210317155919.41450-2-alexander.sverdlin@nokia.com> <CACRpkdbnc2UHM8w85DjsoMKoim-pSX7-7c2YOUnUDdthNc9Vpw@mail.gmail.com>
- <5a163661-ec37-c8d0-24ce-440336e32c33@nokia.com> <CACRpkdYoK03nYRYCHS-0Fj=i3pTuN1-EyrVW2jaG92AyVogYJw@mail.gmail.com>
- <ee619663-80e7-f6c0-9f73-d3ff7438773f@nokia.com> <CACRpkdYnxfb1wQDxpLOs7H9-3cTm+dtQRpNxmQBGLce_TYwOCg@mail.gmail.com>
-In-Reply-To: <CACRpkdYnxfb1wQDxpLOs7H9-3cTm+dtQRpNxmQBGLce_TYwOCg@mail.gmail.com>
+References: <1042421616413081@mail.yandex.ru>
+In-Reply-To: <1042421616413081@mail.yandex.ru>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 22 Mar 2021 13:17:26 +0100
-Message-ID: <CACRpkdZn9EHTH+MJtph3MUF1WxuTZzbTqRmtec=XgVUoy5VZsg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pl061: Support implementations without GPIOINTR line
-To:     Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Date:   Mon, 22 Mar 2021 13:25:38 +0100
+Message-ID: <CACRpkdaUi6VM7LNE=NkFw4uDynfZjPA9gxXG6u1RPx31ntVFBA@mail.gmail.com>
+Subject: Re: RFC Need advice on reworking gpio-ep93xx.c to DT support
+To:     Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 1:04 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Mon, Mar 22, 2021 at 1:19 PM <nikita.shubin@maquefel.me> wrote:
 
-> The thing is that hierarchical interrupts are supposed to
-> connect the lines by absolute offsets that are *not* coming
-> from the device tree. This is the pattern taken by other
-> in-tree hierarchical GPIO controllers. We have repeatedly
-> NACKed patches adding all the IRQs to hierarchical
-> GPIO interrupt controllers, in favor of using hardcoded
-> offsets in the driver.
+> So the work will be split into 2 stages:
+> - breaking gpio platform data into pieces, adapting gpio-ep93xx.c
+> - adding DT support for gpio-ep93xx.c
 >
-> Do you have some good idea of how we can achieve that?
+> Please advise me on this issue.
 
-One way would be to stack more compatible strings:
+If that is your preferred way of working then use that, seems OK to me.
 
-compatible = "lsi,axm5516-primary-gpio", "arm,pl061", "arm,primecell";
+What I have done traditionally has been lazier: I just write the specification
+for the device tree bindings as the hardware shall be described (noadays
+using the YAML syntax) then adapt the driver to probing from that.
 
-Going from more to less specific. We see that this is a
-PL061 and that it is a primecell, but we also see that
-it is a version specifically integrated into the axm5516.
+Then when all non-DT users are gone I just delete the old code.
 
-I do see that today it looks like this
-arch/arm/boot/dts/axm55xx.dtsi:
+During transitions from boardfile to DT we have often taken this
+approach:
 
-gpio0: gpio@2010092000 {
-    #gpio-cells = <2>;
-    compatible = "arm,pl061", "arm,primecell";
-    gpio-controller;
-    reg = <0x20 0x10092000 0x00 0x1000>;
-    interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-        <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-        <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-        <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-        <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-        <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-        <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-        <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-    clocks = <&clks AXXIA_CLK_PER>;
-    clock-names = "apb_pclk";
-    status = "disabled";
-};
+1. Add a specific DT boardfile
+2. Make this boot
+3. Add DT support to all drivers
+4. Delete the old boardfiles
+5. Delete the old platform data handling from the drivers
 
-(Indeed this doesn't currently work with Linux, thus this
-patch.)
+As you see, this makes the kernel bigger, then shrinks it.
+This is what we have usually done: not refactor stuff into the
+form it needs for DT support, instead implement DT on the
+side and then eventually delete the old non-DT code.
 
-It is indeed specified in the schema right now as:
-
-  interrupts:
-    oneOf:
-      - maxItems: 1
-      - maxItems: 8
-
-So from a devicetree PoV all is good. But it is not the
-way hierarchical IRQs are supposed to be done IIUC.
-The preferred solution is to use a specific compatible
-string and hardcoded offsets.
-
-It'd be nice if the interrupt or DT binding people would say
-something about how they expect these hierarchical IRQs
-to be specified from the device tree. I'm just representing
-earlier review comments here, maybe they've changed
-their mind.
+Smoother transitions can work as well, I just never attempted
+that, believeing that it is much more work.
 
 Yours,
 Linus Walleij
