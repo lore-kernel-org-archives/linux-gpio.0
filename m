@@ -2,111 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA06C433E3
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 22:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4128CC433F4
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 22:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF76619D1
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 22:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C5C6619C2
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 22:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233977AbhCWWU4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Mar 2021 18:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38156 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233931AbhCWWTO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Mar 2021 18:19:14 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 018F2C061764;
-        Tue, 23 Mar 2021 15:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:MIME-Version
-        :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=BH8l4rhqM3j+tO6C1MABX7MjnINoZWw3fSlsoKWejbk=; b=CKCciv/I0u+Qfnd5B1gRD0tTiW
-        TIpbeMTbmRB3cySGrns8wOsyxr5bd4CffbtAc69cJZONuueAlFSzz6USI8syCBPltEd0jZr8uwYvu
-        zDdghVKxUqvJYqOX3/+wU+2pCqioS4dg3rUAzd7jljOpf1kD/c5OWGt0FbGf8W/NcXmbgWmJ+MyZo
-        OSHQOXSeq6iWKdMLs9hkIhhLHH+6C/+pkLAQ1NRXuSY+ZmIe9iWqPzD+ppAQM/ZQn9bFKpanZQO6N
-        eIrQlN4XWqEXamYdCRb70VO/l078T7uFcybq+y+4sTWkTjCadsNbmZoPQYvdBfd+kr4TzwV8zuGei
-        2z3X+EvQ==;
-Received: from [2601:1c0:6280:3f0::3ba4] (helo=smtpauth.infradead.org)
-        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lOpMi-00Fq9a-KZ; Tue, 23 Mar 2021 22:19:09 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        id S233959AbhCWWVn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Mar 2021 18:21:43 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:36804 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234057AbhCWWTw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Mar 2021 18:19:52 -0400
+Received: by mail-io1-f50.google.com with SMTP id f19so19416703ion.3;
+        Tue, 23 Mar 2021 15:19:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=eobTKQLYqR+i7ZkZ2HN+deQRJnLYXWvwoZqWhBGMD7Y=;
+        b=k8iXDBx3oxWgBOQT/ActnONpSpfVsx9BzMjqre0OvItfUy8C7v2dvDsfpqfy4x4eCu
+         e76SK9yrnmOld1TC/zB8MAOf7VpUzNIwAp96A5oPeYxpXFRsqqxKJjIIRj5Mm6J4K63l
+         77OdU+RQERvWvrbAf1n80oSmdKV3IJs1FLTvkoc6dzR2QVZLiqTC1tL/md30SPn8B0C0
+         7JYlhwrIrKFm8QBlR6VoCpKJM6EkuYl7UshOTqTjq/14QpNlyVvrEqxy7+s3kYHuOh4U
+         dhk8zoZdq6QDtMeIBSBL4QNzU9h3l5Q7dZ0VK5D5PpKnDcfQ8hwqL5F+qJ65D7I5LqW4
+         kcKg==
+X-Gm-Message-State: AOAM533JIFXiusWSh9Dy09iimOyugTKUG49RpH6fMR1A9ZqYijmsoQnO
+        SMlrg2odl5YGokL0tXt36vWF8jd1cw==
+X-Google-Smtp-Source: ABdhPJxaAJw1NqElngz54v4tKHzSXxMGBWWnblkdNjvjGsnu3zHWcgChnkx7eBn8+c9lqmFJ2VHHsw==
+X-Received: by 2002:a05:6602:2355:: with SMTP id r21mr228497iot.62.1616537992107;
+        Tue, 23 Mar 2021 15:19:52 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id 13sm96378ioz.40.2021.03.23.15.19.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Mar 2021 15:19:51 -0700 (PDT)
+Received: (nullmailer pid 1444932 invoked by uid 1000);
+        Tue, 23 Mar 2021 22:19:49 -0000
+Date:   Tue, 23 Mar 2021 16:19:49 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Michael Walle <michael@walle.cc>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH] linux/gpio/driver.h: some edits for clarity
-Date:   Tue, 23 Mar 2021 15:19:05 -0700
-Message-Id: <20210323221905.19529-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.26.2
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v8 08/22] dt-bindings: add BCM6358 pincontroller binding
+ documentation
+Message-ID: <20210323221949.GA1444858@robh.at.kernel.org>
+References: <20210317143803.26127-1-noltari@gmail.com>
+ <20210317143803.26127-9-noltari@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210317143803.26127-9-noltari@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix a few typos and some punctuation.
-Also, change CONFIG_OF to CONFIG_OF_GPIO in one comment.
+On Wed, 17 Mar 2021 15:37:49 +0100, Álvaro Fernández Rojas wrote:
+> Add binding documentation for the pincontrol core found in BCM6358 SoCs.
+> 
+> Co-developed-by: Jonas Gorski <jonas.gorski@gmail.com>
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+> ---
+>  v8: add changes suggested by Rob Herring
+>  v7: add changes suggested by Rob Herring
+>  v6: add changes suggested by Rob Herring
+>  v5: change Documentation to dt-bindings in commit title
+>  v4: no changes
+>  v3: add new gpio node
+>  v2: remove interrupts
+> 
+>  .../pinctrl/brcm,bcm6358-pinctrl.yaml         | 93 +++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.yaml
+> 
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org
----
- include/linux/gpio/driver.h |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
---- linux-next-20210323.orig/include/linux/gpio/driver.h
-+++ linux-next-20210323/include/linux/gpio/driver.h
-@@ -227,7 +227,7 @@ struct gpio_irq_chip {
- 	/**
- 	 * @valid_mask:
- 	 *
--	 * If not %NULL holds bitmask of GPIOs which are valid to be included
-+	 * If not %NULL, holds bitmask of GPIOs which are valid to be included
- 	 * in IRQ domain of the chip.
- 	 */
- 	unsigned long *valid_mask;
-@@ -346,7 +346,7 @@ struct gpio_irq_chip {
-  *	output.
-  *
-  * A gpio_chip can help platforms abstract various sources of GPIOs so
-- * they can all be accessed through a common programing interface.
-+ * they can all be accessed through a common programming interface.
-  * Example sources would be SOC controllers, FPGAs, multifunction
-  * chips, dedicated GPIO expanders, and so on.
-  *
-@@ -435,15 +435,15 @@ struct gpio_chip {
- 	/**
- 	 * @valid_mask:
- 	 *
--	 * If not %NULL holds bitmask of GPIOs which are valid to be used
-+	 * If not %NULL, holds bitmask of GPIOs which are valid to be used
- 	 * from the chip.
- 	 */
- 	unsigned long *valid_mask;
- 
- #if defined(CONFIG_OF_GPIO)
- 	/*
--	 * If CONFIG_OF is enabled, then all GPIO controllers described in the
--	 * device tree automatically may have an OF translation
-+	 * If CONFIG_OF_GPIO is enabled, then all GPIO controllers described in
-+	 * the device tree automatically may have an OF translation
- 	 */
- 
- 	/**
-@@ -508,7 +508,7 @@ extern int gpiochip_add_data_with_key(st
-  * for GPIOs will fail rudely.
-  *
-  * gpiochip_add_data() must only be called after gpiolib initialization,
-- * ie after core_initcall().
-+ * i.e. after core_initcall().
-  *
-  * If gc->base is negative, this requests dynamic assignment of
-  * a range of valid GPIOs.
+Reviewed-by: Rob Herring <robh@kernel.org>
