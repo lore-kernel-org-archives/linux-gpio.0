@@ -2,172 +2,153 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B12C433DB
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 01:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAEBC433C1
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 02:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF04619A9
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 01:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 480A8619AC
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Mar 2021 02:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbhCWBu3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Mar 2021 21:50:29 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:34907 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbhCWBuL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Mar 2021 21:50:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1616464211; x=1648000211;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=HcV/aD+VFzmilUAfal6zKlnXmKOdBHt4u4BK2w/aSTo=;
-  b=K+oFjr5JKo1S3p9sNvNS+b7ySNd1nkifI0ZQ4xk94nTFQ0RaN595X+6u
-   JLI3htRHGclurq/AM+nkD/ZeHayQLcTHJnlMDpGpLL0R3Uk/3S9VIB0HT
-   C17HczcWDGpIlfD8QMkbx5QGB4wbCE1J0WBHiXXwms4bcDDIf43LwiCpp
-   RvSxx8RDaQs/hD70XNM8MPEUNJyhS0qs9rO4LvKtsvZFMGrfPXckhq2nn
-   N1ZHDz0EiDx1DoBoC0Py5GJ/32xmASJ5Od88BpCv78jRSO0OjcAaaq1GA
-   CQebIJBdZJhcmEeSN52lWsmbaJGtjw/YJ/Zpr+5mdlc5wWKt2ZTUCJhdV
-   A==;
-IronPort-SDR: X0uwr+WVN4Adl1JL0KnrhN+zdpHZ/CpSWwVSLKb6uJfYxJazcfyckAfvBeJBhVaIFk76gCGNS/
- vRxSNSV/DEq3bJ/J+/os2vRBoJzOLrzofQ+DRYndD/+cGw23Br4A7SB8MdsxrcdbWHLeetOuah
- Ur0V1EzLlshxYsy+m1Tf6E7ZX/AhXVNmcHiyfCSaTiVEARrDa4bsCvtMavItqKmrXzIJ0PTFUh
- 2OmedbLRFTGfJdT+TrO0q3JCVy2KC5RtvgW9AvxURhgyVe+2HWwPKZq2P4fH0zT0LvRbgdj8c8
- 7/8=
-X-IronPort-AV: E=Sophos;i="5.81,270,1610380800"; 
-   d="scan'208";a="162748361"
-Received: from mail-dm6nam11lp2174.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.174])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Mar 2021 09:50:10 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Uj0nxLLj2Io0uzk7OWKNR+221wNLgsI4oDScCXFYCj5vANJ2FrqRBxICFEnrtsQL2ocG8xzJaGqQ3uMrWFKxSURShV8oQmfX0kGGOj9xcQBfVCWGaYq2y/MJNdRsmBOtf3Ekiw+jxqhvoTsYDPN6VzcgU9YpJgibuCV0kaWqo8uAYYAjWkD/Sh8FhJOd+jBLFedF+AI2auq7sgeFkJtntTvoQKCZ65bGZBkSu03Fc6aABDnRcVsI+3vZG1UKCqywxcqqdrpv3f69tFKx13DgWd+INgZs+UCUdxxMqdplQl+GmRXeyAr55eOxiWzsC86UuUWJq56Psa0hud/ZaY8B/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DoKyNpvpyqDHDBW4mg5oT6KniNYK3Sbsc+Ldcey3gk8=;
- b=EJCdguR1SJaSfXK8wCdwyrbjEAHp9AhjTF1bzlcq5AY4a0hcAhWvqRvX2XGrQiG9a/Rr59anbYyl+mT0vYEMzRr2YtIuMcsYZSwn1OrpBfrmd94WHkaKVpT0B9MeVmN/455nS6hItYHtd3HiNKGB1D82MNgsIuyN/JODApzYCkk7Rya1DHE3OLIJlnitqmUAhTGi2oSiUjaRAMQp7XVhG50EaVdTiwIfb4C/22XKDqZBgg9xfbJ9ajk2h2lIjzscmm0uqvj5dMG3ncX5iJSYczzXWc1x0sO8V8ltFDKPlCLzisu1Tm4PwvymM/5IJi1U7x4ScVvsbpjmUgyZdYGvaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        id S229537AbhCWCnE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Mar 2021 22:43:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37882 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230079AbhCWCmh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Mar 2021 22:42:37 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80899C061574
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Mar 2021 19:42:36 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id l123so12746158pfl.8
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Mar 2021 19:42:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DoKyNpvpyqDHDBW4mg5oT6KniNYK3Sbsc+Ldcey3gk8=;
- b=QyPEP3rZlIdPnNhxAqU1t2nw0RZTwgZfKtwHa4ReHX40Y6BVvZcW+MsLY+l3JbfgPCI5xaqQMwVBqqqcYArYFV6lyhPdkWqSuphW0/Zb2Y9rmdxJu/PoW/oWbGD4ihghHJ7bgACsNOjwmiqdOJJR00KMP8Z83KzUZYXOp07rxbc=
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
- by BL0PR04MB4739.namprd04.prod.outlook.com (2603:10b6:208:48::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Tue, 23 Mar
- 2021 01:50:06 +0000
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::e9c5:588:89e:6887]) by BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::e9c5:588:89e:6887%3]) with mapi id 15.20.3955.027; Tue, 23 Mar 2021
- 01:50:06 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Wan Jiabing <wanjiabing@vivo.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "kael_w@yeah.net" <kael_w@yeah.net>
-Subject: Re: [PATCH] drivers: pinctrl: Remove duplicate include of io.h
-Thread-Topic: [PATCH] drivers: pinctrl: Remove duplicate include of io.h
-Thread-Index: AQHXH4UpNyri6rPE4UuTaZ9qCWr98w==
-Date:   Tue, 23 Mar 2021 01:50:06 +0000
-Message-ID: <BL0PR04MB6514CC42B4BD551A7C2C77E0E7649@BL0PR04MB6514.namprd04.prod.outlook.com>
-References: <20210323013727.135571-1-wanjiabing@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: vivo.com; dkim=none (message not signed)
- header.d=none;vivo.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2400:2411:43c0:6000:f01f:effc:52e2:7eda]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 9db72f98-8046-4bff-1d9a-08d8ed9dfbd2
-x-ms-traffictypediagnostic: BL0PR04MB4739:
-x-microsoft-antispam-prvs: <BL0PR04MB4739711EC7A7AC41B1125AA6E7649@BL0PR04MB4739.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1417;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ANiNFGxsxkVVd7orRPo9byPGmeCquP+LK3boa1qiPZ9nQHcUFR0rokzC5s/KOP4YjxgCHUwQTUuAvzsXvJ6Y0ebJrWZz604SqbRy4/e5sDlc0BWKRyu753eYTIXqHOZ0d3gXX2HnQFt0qhesGgrGBEJ45OQsP1b7/m1JPQK5VJHZrcfGobHVL5fIxuVt+pF48vzAivAOn5x2UMW6jZyKr07xI+tlA2cnO2ssxCSVd2vGzm99EEwJXwpTqJ1plrsKDFsSZVpminpmxGhkE+flRiTy7tFRDD5/f3uHR/SKMkCqhs4hGiyAExCJjSWo9w6tBbtmKGurNjVPv7A4i1RjN2gHkIL+80QD4c4yWPMXfxfkoDxiKBrbf0yL9Auv2n7qQfxfMFGXaer9cIgKxsZNeTMjps6HliFl7Up7AyTKoJIn0INXKTQPuRTC+dCPLPew7OsYT8GgiVYvuP8weBZZqIx9cMiVq8AAWLVjetltnLMfvThT+YLq10o19luhWMi3SxL5aboK3U8HDQQXmQO6bercEPCTn6RGlKUkIWtE1Vl0XBrEosqv13SPLJTVeEiy/ouPSxtwTKrEj98QsXWyu+cd2QwhzFTFl6v1SnUxX47CJFIz6Pz2reIBvFaJA7jgXJD8BCXpTlmp4EwxDfagai345qaKc+iSvF8xxMB3NBQ=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(39860400002)(396003)(136003)(346002)(478600001)(4744005)(8676002)(8936002)(86362001)(33656002)(53546011)(7696005)(2906002)(316002)(110136005)(186003)(66556008)(91956017)(66446008)(64756008)(66476007)(76116006)(6506007)(5660300002)(66946007)(4326008)(52536014)(38100700001)(71200400001)(9686003)(55016002)(83380400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?LzH3Uy/rYY3XatoNBpj+FUOsq3XfvPu6ev+az5T6LBFlsZ/h/AtX2SowZW7K?=
- =?us-ascii?Q?YDqWy1UzNukOACnhCgCSHytiCeigk9cSRhbHpZs9tF+6PsV/x+4QIPsq8krr?=
- =?us-ascii?Q?iQoeW57Zxe0LOygJvxBBQ8vHmt9UI+hs5qRMDATX2hry5IdgJIFLK94qTME2?=
- =?us-ascii?Q?5CoD4eKN6O03T4qx+DJnB5oYwnpc91iQrQDHlf3Qaej2V61vQdkIokBLjjVK?=
- =?us-ascii?Q?ruVXxuRyK+ZoLOyr64tH+gpIoqwf1zF/qy6zrV0AxRvtkc73ibXKdeEKJg05?=
- =?us-ascii?Q?cTWt6LyxYii+s5YNAuyLo/yr/A8g/4gj1lHjA3Iy8Lqo/96nk4GNs3iL7qvi?=
- =?us-ascii?Q?iQtDc81fEDYMeoM4Wa8bqSWjJ39+KoAEUpDT/Wx9fxWlSAsKEP7XVTM9vcxt?=
- =?us-ascii?Q?PzAk+yGHEC9u5Q4VU1WYw5xYsboJFTi9ypO/rVcF76bU7P8cA04lFt1iXx6l?=
- =?us-ascii?Q?8/9JbetjG8HjIdXze91N8+vAG5LXpEMbZJz1+gL6js4yu8YF1GiFkr0n3cUD?=
- =?us-ascii?Q?GjnXOG7Pn7bP1T1vvu8SVploJJtD98DRB/eQeRjjGJvjLcVNHh6neby3TGws?=
- =?us-ascii?Q?OwNhwfWzOQrxqnSNMR1wW4iAtDXgubAXQpuVVMl+CwsvH7dpZtLZHYTRwTZx?=
- =?us-ascii?Q?Mj6k7kM7/OgxKv2zktFeansuHTVfqsnGtjpDdgsKHAlHiPyKIhZL7HZM79Yo?=
- =?us-ascii?Q?N72g11XQc4q/B9etLo8Orvur+gLHpaiUqxj6awAAFLfbnTywqt+xpxzGC0N/?=
- =?us-ascii?Q?83kUo9Cy8pqUtg7tG6H2NIymc4kEzv5YwBuijshEhWAensdIynu8k/PWvHls?=
- =?us-ascii?Q?Px+hEzG+eXj+8OFCS0QLHScnJp1uMlJw9fqqzBUUIowgDoNuZhA5VeP1RR4h?=
- =?us-ascii?Q?IVPEk2H2+cNrALNHHEcCC9TkC6M+WfXNHmnNs5+G10DjRkTy2GHPDugNvWVY?=
- =?us-ascii?Q?7IYwrUpLzZmBpVd0VcqACn/b+mJ68nydp3I9sHpDjGY6EjEtUgYkEq7cUo+d?=
- =?us-ascii?Q?1KoUk8Y/TCDYiFTOLu5LwWZoYXT1vhtl4eoOQ4+RMYszUAELAZUR8ytrxcCe?=
- =?us-ascii?Q?Da38/1OSpNZfCP2FObLywDoH+9XkV9lYM/rAcRsesg9pTeoL22PXiQldYoFj?=
- =?us-ascii?Q?mTIh0oav6Ui9sm3IhXUQOSWwrqdpwIWlICX3+4RvMieca5kh9/6PI19YpTl+?=
- =?us-ascii?Q?/al6kBeXmurdLtwUJRFa6w9VNnSYA3A9fnu+YFiVcusKVy480O4mm6ObrW1L?=
- =?us-ascii?Q?448tFl5GupVyJJgXQOPn8r89cJpVIqn0ywDhGozFgPwP0mOmMfJ5FTXbBMJl?=
- =?us-ascii?Q?g7CsKZqtiuC9Xh1pAmJCjiXoMyxnEs5DJq9qb5T6TemGVUC50ZCa/aPsHjfE?=
- =?us-ascii?Q?UbLmR9mvMU7flOwJ2i6+L+2+Weh4Ap3Ip7uBymGb7CsfB84nqQ=3D=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0En3mkBS0z/4yv4J4cbe8NVwfq4ngxqOyzQ1Lfh8Eqs=;
+        b=v8EAXvolQATdUneBvaH9tvmKkwZ43JlDhtMWk6Zt4tBkiAny01O+dlFb2/7nlzhXEQ
+         cIufV1LThb41gXsVmGpbKKYGaW2fBZbGk33OhbUImPHuUf7jnFZT5f2YNK0GcyyXjqtW
+         Emtp6c7LGkqEdz14TbfgDWaf44GI9Lm2g1sNwDX+dXeQTd35PhOg8dMSXA+KI+kzB3x5
+         iXsMMkn6goH0W1nNBJnfcH6ND1NXiJFcOhZJWsa5dNKyZx1+m7UuamaD9XmwZZFYwbGE
+         at09OdBqrgpCXyNqin3upHEJDxvr3QWMFRECvgqGAthFFrcmiLtQi6uZ6DUYbUeRLDFC
+         cd7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0En3mkBS0z/4yv4J4cbe8NVwfq4ngxqOyzQ1Lfh8Eqs=;
+        b=bYv+qUoWricXBiUxfQZG2fX5bMh3locsKdKKhMyCO4tLzv5KMgdzrfI0JX80ze3GVX
+         yuEWr9XJ6nIt5zQGMLGSgdqxqNg7QQWkc85lzl089C6FzWKswbmwCJeUXl3oqlNH00c0
+         RpVnRNLIBtznoJ8guEcdJ8Nd8TY8OkAyTwgi0SVvUYUJqCOPePw3/xDtGy1F+SolvL1V
+         iOvbfPwDKps2ODIEHFZkTuj4FDVVlz9Fqdq+yf6D8IQ9Ov+D+bff03NJ1+LEdrQO+8xo
+         +T9WfxKHwGG6IYqh6KWyh9jrhBcvdgsSuWUV6EyeNBV1UTX0G1EzaUCk3FoLh/NxU7Hi
+         xTWQ==
+X-Gm-Message-State: AOAM530IS3mmXfHnsTLLYkFvZjWQxo/uj10VLeoR/oTv+K19tacVgCxu
+        F+hmCgDDl9EViqlZTlY1twrh0g==
+X-Google-Smtp-Source: ABdhPJwB2E0FHpoNSrvjGzI3rjhxfMRFX58vZEfOKEvRhdDQHBnqpH1KiPOgbDbwWKRlXtyX+1M8FA==
+X-Received: by 2002:a17:902:b78a:b029:e4:8ce6:fb64 with SMTP id e10-20020a170902b78ab02900e48ce6fb64mr2775357pls.77.1616467356038;
+        Mon, 22 Mar 2021 19:42:36 -0700 (PDT)
+Received: from x1 ([2601:1c0:4701:ae70:75f9:d347:f722:e669])
+        by smtp.gmail.com with ESMTPSA id 11sm15396408pfn.146.2021.03.22.19.42.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Mar 2021 19:42:35 -0700 (PDT)
+Date:   Mon, 22 Mar 2021 19:42:33 -0700
+From:   Drew Fustini <drew@beagleboard.org>
+To:     Mauri Sandberg <sandberg@mailfence.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux GPIO <linux-gpio@vger.kernel.org>
+Subject: Re: RFC for a GPIO input muxer
+Message-ID: <20210323024233.GH505022@x1>
+References: <545111184.50061.1615922388276@ichabod.co-bxl>
+ <CAHp75VdhX1iC_JKyDigFrwzn7mUvvk0PGC-fgVUvJtYS+Dz6Hw@mail.gmail.com>
+ <CAHp75Vd-OT7SVBKMjhZNbVdo24Ep5Jv6_xMY39JDRLTrB0pi-A@mail.gmail.com>
+ <20210322061916.GC392062@x1>
+ <1911385944.526128.1616432980719@ichabod.co-bxl>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9db72f98-8046-4bff-1d9a-08d8ed9dfbd2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2021 01:50:06.0686
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bEv5w0JYspk7M/IOxlkd1lFW/MkRXjXQSo9Xe2tYNGHIITjvYsXFWomb2IWl7zSbPwzKYtTSyF7RgY28PQzO8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR04MB4739
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1911385944.526128.1616432980719@ichabod.co-bxl>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2021/03/23 10:38, Wan Jiabing wrote:=0A=
-> linux/io.h has been included at line 6, so remove the =0A=
-> duplicate include at line 18.=0A=
-> =0A=
-> Signed-off-by: Wan Jiabing <wanjiabing@vivo.com>=0A=
-> ---=0A=
->  drivers/pinctrl/pinctrl-k210.c | 1 -=0A=
->  1 file changed, 1 deletion(-)=0A=
-> =0A=
-> diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k21=
-0.c=0A=
-> index 8a733cf77ba0..f831526d06ff 100644=0A=
-> --- a/drivers/pinctrl/pinctrl-k210.c=0A=
-> +++ b/drivers/pinctrl/pinctrl-k210.c=0A=
-> @@ -15,7 +15,6 @@=0A=
->  #include <linux/pinctrl/pinmux.h>=0A=
->  #include <linux/pinctrl/pinconf.h>=0A=
->  #include <linux/pinctrl/pinconf-generic.h>=0A=
-> -#include <linux/io.h>=0A=
->  =0A=
->  #include <dt-bindings/pinctrl/k210-fpioa.h>=0A=
->  =0A=
-> =0A=
-=0A=
-Good catch !=0A=
-=0A=
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Mon, Mar 22, 2021 at 06:09:40PM +0100, Mauri Sandberg wrote:
+> 
+> 
+> > ----------------------------------------
+> > From: Drew Fustini <drew@beagleboard.org>
+> > Sent: Mon Mar 22 07:19:16 CET 2021
+> > To: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Cc: Mauri Sandberg <sandberg@mailfence.com>, Linux GPIO <linux-gpio@vger.kernel.org>
+> > Subject: Re: RFC for a GPIO input muxer
+> > 
+> > 
+> > On Wed, Mar 17, 2021 at 02:30:50PM +0200, Andy Shevchenko wrote:
+> > > +Cc: Drew, I believe he has some thoughts about.
+> > > 
+> > > On Wed, Mar 17, 2021 at 1:17 AM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > >
+> > > >
+> > > >
+> > > > On Tuesday, March 16, 2021, Mauri Sandberg <sandberg@mailfence.com> wrote:
+> > > >>
+> > > >> I am writing to you to ask for comments on the preferred way of implementing a 4-way GPIO multiplexer in the most generic way. The situation is that there is a dual 4-way multiplexer on my device and its select pins a controlled with GPIOs. The output pins of the multiplexer are connected to two other GPIOs. The datasheet of the multiplexer is here: https://assets.nexperia.com/documents/data-sheet/74HC_HCT153.pdf
+> > > >>
+> > > >> This is what I have been contemplating on but I am not aware if the same could be achieved with existing pinctrl or gpio driver or combination of those.
+> > > >
+> > > >
+> > > > To me looks like a typical pinmux. Dunno if pinctrl supports pure pinmux and how it can handle that at runtime.
+> > 
+> > Regarding runtime pinmux, this patchset by myself was recently merged
+> > and might be of interest [1].
+> Thanks, I'll have a look.
+> 
+> > 
+> > > >
+> > > >  That said, I would consider what has been done in pinctrl for that.
+> > > >>
+> > > >>
+> > > >> The 'key-mux1' below implements a gpio-controller that drives the multiplexer and provides gpios for reading device key presses. At the moment it has to be polled as interrupts are not being generated by the key presses. I tried looking around but software interrupts did not give me any hits.
+> > > >>
+> > > >> I have omitted 'key-mux2' from this for clarity.
+> > > >>
+> > > >> mux: mux-controller {
+> > > >>         compatible = "gpio-mux";
+> > > >>         #mux-control-cells = <0>;
+> > > >>
+> > > >>         mux-gpios = <&gpio 9 GPIO_ACTIVE_HIGH>,         /* s0 */
+> > > >>                     <&gpio 11 GPIO_ACTIVE_HIGH>;        /* s1 */
+> > > >> };
+> > > >>
+> > > >> gpio2: key-mux1 {
+> > > >>         compatible = "gpio-mux-input";
+> > > >>         mux-controls = <&mux>;
+> > > >>
+> > > >>         gpio-controller;
+> > > >>         #gpio-cells = <2>;
+> > > >>
+> > > >>         // GPIOs used by this node, mux pin
+> > > >>         pin-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;        /* 1y */
+> > > >> };
+> > 
+> > I don't see "gpio-mux-input" in mainline so I presume you wrote a driver
+> > than uses this binding?  If so, could you share the code?
+> Oh yes, the code is at [2]. I  must apologize as it's still WIP but it should convey the general idea. It looks for a multiplexer, then proceeds to grab a GPIO pin and finally creates a gpio_chip.
+> 
+> Before polishing up I though it might be better to ask first if it is even the right approach.
+
+I would recommend posting your RFC again but as a RFC patch containing
+the new code. I was confused at first until I realized that you were
+refering to new code that you had written but not yet shared. I believe
+it is ok for the code in an RFC to have some problems if your goal is
+to get feedback on the general approach.
+
+I think regular gpio reviewers like Andy, Bartosz, Geert, Kent and Linus
+will provide some opinions if you post the code.
+
+
+Regards,
+Drew
