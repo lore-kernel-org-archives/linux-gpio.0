@@ -2,671 +2,178 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A9FC4332D
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Mar 2021 08:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FA9C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Mar 2021 08:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DED05619AE
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Mar 2021 08:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1836619D3
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Mar 2021 08:30:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236121AbhCXIUW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 24 Mar 2021 04:20:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54038 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233580AbhCXITo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Mar 2021 04:19:44 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 688FCC0613DC;
-        Wed, 24 Mar 2021 01:19:43 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id y124-20020a1c32820000b029010c93864955so630564wmy.5;
-        Wed, 24 Mar 2021 01:19:43 -0700 (PDT)
+        id S233580AbhCXI33 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 24 Mar 2021 04:29:29 -0400
+Received: from mail-dm6nam11on2049.outbound.protection.outlook.com ([40.107.223.49]:11424
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233445AbhCXI32 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 Mar 2021 04:29:28 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RWv+UaUvbvBVKygnSqln4oQ8SGqZ0XpMeSMU1rbZLE3gnuuC4EAsZYIYG4ho/SiCi0xlTvXm1c9LBOhsbeAbD1QI0+uvLc3hcXyVNQuvH850kJa9ceovh3MnbM1LoKU3jUunsG6ph0ekARoiqJjFh+V5c+39vsP/B0itVH2ggR+vVJ+wR39lHtUHRIyl3ELCO7IdganPD0ePhi440gcsdT6fLAcZuFm/1zAZOGCn9Zmq19ncDLIoX5gZc7rClCQ9cM9RjdKPaw9jxRyTiOUSyGHV6tPIjXVSuEyo4/5tt3eRfmlIwUf4yC+MTwSqGRhkdlZLuPczVkCG++3xebfsjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AeCLMJdUc6yYv9Z02Dz3LWUkuNFkCAoXXZ61w8uCHJQ=;
+ b=lrHYncDuTMPGbnPLcyN/qE2bQ2+YRkqaGWfrGoccTuDPE11wIvzalK3ZvN9eXl5x3M9Mxmppceig+xH89QwxKCgRpuFVTYsdS62ur7DAfv+hN7ZWOfuSfunLYojHqT4eQOm7uc4xJvlyyFAi86rwIFx48S06pDbQbry/tgDecBP2oNWWm8X3Y15pg+f7vz6jMTV6AHECgURkqm9WZ5MEb64CirddlUc2aKF7oUBxAowZQGbcU02aMOsy/xJU+MK35pExUO/PiCfpI6YyawoMH2anNnTekYaJbIjkJPwkpqiDIxpd+QR1EJnw+6ZzwpiXVvDYh4mOUPuV2CqWwTBzmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=nBekn0zB4O7mrv13ZxVYMfLLI+quIkOdXbfpsLxsNSc=;
-        b=Jjuqp/jOipLUburufXtKsHyTfXOell+WNZo+9iMRdjCmU9VHkQwAZrvNbSq3ksGWff
-         1KIp2Y89iqVH/5Fd87/3MVEdgRriMNqNncX3oZcXgkoO/19Nwj1mg3Wq81L+C2JD8Msh
-         XgeH2R19rn3qz9s9+tuej23XipOnfjkj7tqfIyhdvSuhgi08HU9iT98F29dtcheUblvi
-         WTbOjtmw81fj2xPW8GkvI6PJZAFpi62FlcWSr/jXh77E1OmEwRjWA9XI0b1EVlPD1Jgm
-         Ji6ojf0Up4PisXGsVJSYhmkm6fCVpg3vMQK2s2AhF8odt97bQHDEUfUOdZJx1NKQyK9m
-         6PLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nBekn0zB4O7mrv13ZxVYMfLLI+quIkOdXbfpsLxsNSc=;
-        b=W6oq/iGPFr3tZpEeYzrZI0koH/Ii6nJmSIiXEtVq1yOrasJ2AOebY29RQL0gXkyYZJ
-         cT0P7X8fOLcKyqpCSqhJ47O1Ghga/WLIJwLN8Ej1v5oO6orZXh0hnbMymFFUczpKt7pl
-         l9vF4WgTA0OB88DXlROfgtuXGcP2NNvsm09L3gGEksGysvOTmmNFQlBbAsyedDQyIWDL
-         s7v/YCfZ3FG+BUv4cnOZjw+/EA+9JyVUtr7lv+WWn+dd9lhjp22+02B5bF25JCQjkfrK
-         BfjESlAx2lw4UJPSafoAM+YjfbUf4QyJtlaiXmNkgE2a53EaicZttkmAVx51MR2+aKWW
-         avzw==
-X-Gm-Message-State: AOAM531RkXDXwh67k3ooCSThDzC2jwE8XDMJXZqcg6WfstoBvA4cyeZn
-        k3XPsXIEd4mJ/L38mgR0Fbc=
-X-Google-Smtp-Source: ABdhPJzRrBBvfBaZdEHKiLtOz47i9pizukZpmTA1FggYs9X0vBnL9/g38DDj2kmToKFCtp68hOMPYA==
-X-Received: by 2002:a1c:5f54:: with SMTP id t81mr1719018wmb.84.1616573982070;
-        Wed, 24 Mar 2021 01:19:42 -0700 (PDT)
-Received: from skynet.lan (51.red-83-44-13.dynamicip.rima-tde.net. [83.44.13.51])
-        by smtp.gmail.com with ESMTPSA id x25sm1498578wmj.14.2021.03.24.01.19.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 01:19:41 -0700 (PDT)
-From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AeCLMJdUc6yYv9Z02Dz3LWUkuNFkCAoXXZ61w8uCHJQ=;
+ b=dep+/Z5A9fsul0TdtCTdjvODfCvYhQXdQ8AXhX0xPsoWKPFOL3/XQpmGPbN7Rr/vriYyk63J+std0UasKj7nzF6AnSI7vyLfNbNP/nPsJgFJlnVsomFHDkATDE0uoXKbFi8ZanCziZS7vuoQRxW9Yg1pEzuh3NncVfRmIMaJeHc=
+Received: from DS7PR03CA0047.namprd03.prod.outlook.com (2603:10b6:5:3b5::22)
+ by MWHPR02MB2704.namprd02.prod.outlook.com (2603:10b6:300:112::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Wed, 24 Mar
+ 2021 08:29:26 +0000
+Received: from DM3NAM02FT009.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:5:3b5:cafe::a8) by DS7PR03CA0047.outlook.office365.com
+ (2603:10b6:5:3b5::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.25 via Frontend
+ Transport; Wed, 24 Mar 2021 08:29:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ DM3NAM02FT009.mail.protection.outlook.com (10.13.5.5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.3977.25 via Frontend Transport; Wed, 24 Mar 2021 08:29:26 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Wed, 24 Mar 2021 01:29:17 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2106.2 via Frontend Transport; Wed, 24 Mar 2021 01:29:17 -0700
+Envelope-to: git@xilinx.com,
+ saikrishna12468@gmail.com,
+ linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ robh+dt@kernel.org,
+ linus.walleij@linaro.org,
+ gregkh@linuxfoundation.org
+Received: from [172.30.17.109] (port=36948)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1lOytA-0008TP-7b; Wed, 24 Mar 2021 01:29:16 -0700
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michael Walle <michael@walle.cc>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v9 16/22] pinctrl: add a pincontrol driver for BCM6368
-Date:   Wed, 24 Mar 2021 09:19:17 +0100
-Message-Id: <20210324081923.20379-17-noltari@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210324081923.20379-1-noltari@gmail.com>
-References: <20210324081923.20379-1-noltari@gmail.com>
+        Michal Simek <michal.simek@xilinx.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <git@xilinx.com>,
+        <saikrishna12468@gmail.com>
+References: <1615969516-87663-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+ <1615969516-87663-4-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+ <YFnwN6mqXml5xdR3@kroah.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v4 3/3] pinctrl: Add Xilinx ZynqMP pinctrl driver support
+Message-ID: <e0a2c5b6-ff05-644c-8c88-b614a37b4929@xilinx.com>
+Date:   Wed, 24 Mar 2021 09:29:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <YFnwN6mqXml5xdR3@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 15d01e30-c927-4fd3-4993-08d8ee9eef9e
+X-MS-TrafficTypeDiagnostic: MWHPR02MB2704:
+X-Microsoft-Antispam-PRVS: <MWHPR02MB270467C955ED62AEEF97B77BC6639@MWHPR02MB2704.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0S4vtVY3mzbsVbZ4sYZEpu7z5AJf3HfKnH5++r6W59B0iG84xBhd1IccAMKDxNIGtzxjB6WvgwI6j/StN1bOJgKR3HSlixM2V1E5SyzbzmjLyKNJ98b2DyN9+WEKCs7CbvL7BpgpSRB3jMqAjPj3PDfJNVmFn0JHMPdJKXs8E/xikVaEeDJKuBzlF0PpUc/LOJiQyZMWeuwLJL1uhA0sBqT8BD+cR8dNfnDy+l61gfPxuGmEAk78ujm4gNj8Lcj/cEB5N9tXx7Dbk65Xn5vggL06B5ID7E/dumALSNPp6TR4WJmQ2mM3osxAsNtxE8FNfpeO/FGBxcUA1UX+P/Fb04zHtUBXp6DpUoqh94DgT20Vraod53zyyMEVQKNGPSCY0hVeiiVC2OIyhvwej7uxoRreGIEQxc012vh5blzd1sNsYqMvTWzd5ry+WIBKQQPThfIzp8z8DcQ9T5cwQS4h3UGTTqWJbh+BKyglopRz8h4uPzfpxAVQTo89gEnZgeH106Z1b4Ecx3U3qnZtDpFfU0t9AGao79pOoVVKHrNgD5GPNxBEzF8KOnHmoKjePbisvBi+IwQynt4eBAykF0p6fcu+bf2dMjgnKqol+AyYbrb7LmzdBmoC7UGRB27o8USgBpKB0iCCbk0L6rZkvfU9JzgzVRKqBzGFODYNqs+74W5H9WHvsmRsSn5WQxrLKe2WfVyA0pXYmtx3VPYqfQURWA==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(39860400002)(396003)(136003)(346002)(376002)(46966006)(36840700001)(5660300002)(8936002)(47076005)(82740400003)(478600001)(31686004)(356005)(83380400001)(9786002)(4326008)(7636003)(31696002)(54906003)(110136005)(70586007)(36906005)(2616005)(36756003)(8676002)(2906002)(6636002)(6666004)(36860700001)(26005)(82310400003)(426003)(53546011)(44832011)(186003)(70206006)(316002)(336012)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2021 08:29:26.4397
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15d01e30-c927-4fd3-4993-08d8ee9eef9e
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT009.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2704
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a pincontrol driver for BCM6368. BCM6368 allows muxing the first 32
-GPIOs onto alternative functions. Not all are documented.
+On 3/23/21 2:42 PM, Greg Kroah-Hartman wrote:
+> On Wed, Mar 17, 2021 at 01:55:16PM +0530, Sai Krishna Potthuri wrote:
+>> Adding pinctrl driver for Xilinx ZynqMP platform.
+>> This driver queries pin information from firmware and registers
+>> pin control accordingly.
+>>
+>> Signed-off-by: Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
+>> ---
+>>  drivers/pinctrl/Kconfig          |   13 +
+>>  drivers/pinctrl/Makefile         |    1 +
+>>  drivers/pinctrl/pinctrl-zynqmp.c | 1030 ++++++++++++++++++++++++++++++
+>>  3 files changed, 1044 insertions(+)
+>>  create mode 100644 drivers/pinctrl/pinctrl-zynqmp.c
+>>
+>> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+>> index 815095326e2d..25d3c7208975 100644
+>> --- a/drivers/pinctrl/Kconfig
+>> +++ b/drivers/pinctrl/Kconfig
+>> @@ -341,6 +341,19 @@ config PINCTRL_ZYNQ
+>>  	help
+>>  	  This selects the pinctrl driver for Xilinx Zynq.
+>>  
+>> +config PINCTRL_ZYNQMP
+>> +	bool "Pinctrl driver for Xilinx ZynqMP"
+> 
+> Please make this work as a module.
 
-Co-developed-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
----
- v9: no changes
- v8: no changes
- v7: no changes
- v6: no changes
- v5: add changes suggested by Andy Shevchenko
- v4: no changes
- v3: use new shared code
- v2: switch to GPIO_REGMAP
+The most of pinctrl drivers are builtin modules now which is not excuse
+it is just fact.
+$ git grep module_pla drivers/pinctrl/ | wc -l
+40
+$ git grep  builtin_pla drivers/pinctrl/ | wc -l
+64
 
- drivers/pinctrl/bcm/Kconfig           |   8 +
- drivers/pinctrl/bcm/Makefile          |   1 +
- drivers/pinctrl/bcm/pinctrl-bcm6368.c | 523 ++++++++++++++++++++++++++
- 3 files changed, 532 insertions(+)
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm6368.c
+Also at least last 3 pinctrl drivers which have been merged are not modules.
+d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
+7e5ea974e61c ("pinctrl: pinctrl-microchip-sgpio: Add pinctrl driver for
+Microsemi Serial GPIO")
+a68a7844264e ("pinctrl: visconti: Add Toshiba Visconti SoCs pinctrl
+support")
 
-diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
-index d3101d5e750f..aabd4b762aed 100644
---- a/drivers/pinctrl/bcm/Kconfig
-+++ b/drivers/pinctrl/bcm/Kconfig
-@@ -60,6 +60,14 @@ config PINCTRL_BCM6362
- 	help
- 	   Say Y here to enable the Broadcom BCM6362 GPIO driver.
- 
-+config PINCTRL_BCM6368
-+	bool "Broadcom BCM6368 GPIO driver"
-+	depends on (BMIPS_GENERIC || COMPILE_TEST)
-+	select PINCTRL_BCM63XX
-+	default BMIPS_GENERIC
-+	help
-+	   Say Y here to enable the Broadcom BCM6368 GPIO driver.
-+
- config PINCTRL_IPROC_GPIO
- 	bool "Broadcom iProc GPIO (with PINCONF) driver"
- 	depends on OF_GPIO && (ARCH_BCM_IPROC || COMPILE_TEST)
-diff --git a/drivers/pinctrl/bcm/Makefile b/drivers/pinctrl/bcm/Makefile
-index b9b09e5b914c..a1331bb9680e 100644
---- a/drivers/pinctrl/bcm/Makefile
-+++ b/drivers/pinctrl/bcm/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_PINCTRL_BCM63XX)		+= pinctrl-bcm63xx.o
- obj-$(CONFIG_PINCTRL_BCM6328)		+= pinctrl-bcm6328.o
- obj-$(CONFIG_PINCTRL_BCM6358)		+= pinctrl-bcm6358.o
- obj-$(CONFIG_PINCTRL_BCM6362)		+= pinctrl-bcm6362.o
-+obj-$(CONFIG_PINCTRL_BCM6368)		+= pinctrl-bcm6368.o
- obj-$(CONFIG_PINCTRL_IPROC_GPIO)	+= pinctrl-iproc-gpio.o
- obj-$(CONFIG_PINCTRL_CYGNUS_MUX)	+= pinctrl-cygnus-mux.o
- obj-$(CONFIG_PINCTRL_NS)		+= pinctrl-ns.o
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm6368.c b/drivers/pinctrl/bcm/pinctrl-bcm6368.c
-new file mode 100644
-index 000000000000..838095f9e890
---- /dev/null
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm6368.c
-@@ -0,0 +1,523 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Driver for BCM6368 GPIO unit (pinctrl + GPIO)
-+ *
-+ * Copyright (C) 2021 Álvaro Fernández Rojas <noltari@gmail.com>
-+ * Copyright (C) 2016 Jonas Gorski <jonas.gorski@gmail.com>
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "../pinctrl-utils.h"
-+
-+#include "pinctrl-bcm63xx.h"
-+
-+#define BCM6368_NUM_GPIOS	38
-+
-+#define BCM6368_MODE_REG	0x18
-+#define BCM6368_BASEMODE_REG	0x38
-+#define  BCM6368_BASEMODE_MASK	0x7
-+#define  BCM6368_BASEMODE_GPIO	0x0
-+#define  BCM6368_BASEMODE_UART1	0x1
-+
-+struct bcm6368_pingroup {
-+	const char *name;
-+	const unsigned * const pins;
-+	const unsigned num_pins;
-+};
-+
-+struct bcm6368_function {
-+	const char *name;
-+	const char * const *groups;
-+	const unsigned num_groups;
-+
-+	unsigned dir_out:16;
-+	unsigned basemode:3;
-+};
-+
-+struct bcm6368_priv {
-+	struct regmap_field *overlays;
-+};
-+
-+#define BCM6368_BASEMODE_PIN(a, b)		\
-+	{					\
-+		.number = a,			\
-+		.name = b,			\
-+		.drv_data = (void *)true	\
-+	}
-+
-+static const struct pinctrl_pin_desc bcm6368_pins[] = {
-+	PINCTRL_PIN(0, "gpio0"),
-+	PINCTRL_PIN(1, "gpio1"),
-+	PINCTRL_PIN(2, "gpio2"),
-+	PINCTRL_PIN(3, "gpio3"),
-+	PINCTRL_PIN(4, "gpio4"),
-+	PINCTRL_PIN(5, "gpio5"),
-+	PINCTRL_PIN(6, "gpio6"),
-+	PINCTRL_PIN(7, "gpio7"),
-+	PINCTRL_PIN(8, "gpio8"),
-+	PINCTRL_PIN(9, "gpio9"),
-+	PINCTRL_PIN(10, "gpio10"),
-+	PINCTRL_PIN(11, "gpio11"),
-+	PINCTRL_PIN(12, "gpio12"),
-+	PINCTRL_PIN(13, "gpio13"),
-+	PINCTRL_PIN(14, "gpio14"),
-+	PINCTRL_PIN(15, "gpio15"),
-+	PINCTRL_PIN(16, "gpio16"),
-+	PINCTRL_PIN(17, "gpio17"),
-+	PINCTRL_PIN(18, "gpio18"),
-+	PINCTRL_PIN(19, "gpio19"),
-+	PINCTRL_PIN(20, "gpio20"),
-+	PINCTRL_PIN(21, "gpio21"),
-+	PINCTRL_PIN(22, "gpio22"),
-+	PINCTRL_PIN(23, "gpio23"),
-+	PINCTRL_PIN(24, "gpio24"),
-+	PINCTRL_PIN(25, "gpio25"),
-+	PINCTRL_PIN(26, "gpio26"),
-+	PINCTRL_PIN(27, "gpio27"),
-+	PINCTRL_PIN(28, "gpio28"),
-+	PINCTRL_PIN(29, "gpio29"),
-+	BCM6368_BASEMODE_PIN(30, "gpio30"),
-+	BCM6368_BASEMODE_PIN(31, "gpio31"),
-+	BCM6368_BASEMODE_PIN(32, "gpio32"),
-+	BCM6368_BASEMODE_PIN(33, "gpio33"),
-+	PINCTRL_PIN(34, "gpio34"),
-+	PINCTRL_PIN(35, "gpio35"),
-+	PINCTRL_PIN(36, "gpio36"),
-+	PINCTRL_PIN(37, "gpio37"),
-+};
-+
-+static unsigned gpio0_pins[] = { 0 };
-+static unsigned gpio1_pins[] = { 1 };
-+static unsigned gpio2_pins[] = { 2 };
-+static unsigned gpio3_pins[] = { 3 };
-+static unsigned gpio4_pins[] = { 4 };
-+static unsigned gpio5_pins[] = { 5 };
-+static unsigned gpio6_pins[] = { 6 };
-+static unsigned gpio7_pins[] = { 7 };
-+static unsigned gpio8_pins[] = { 8 };
-+static unsigned gpio9_pins[] = { 9 };
-+static unsigned gpio10_pins[] = { 10 };
-+static unsigned gpio11_pins[] = { 11 };
-+static unsigned gpio12_pins[] = { 12 };
-+static unsigned gpio13_pins[] = { 13 };
-+static unsigned gpio14_pins[] = { 14 };
-+static unsigned gpio15_pins[] = { 15 };
-+static unsigned gpio16_pins[] = { 16 };
-+static unsigned gpio17_pins[] = { 17 };
-+static unsigned gpio18_pins[] = { 18 };
-+static unsigned gpio19_pins[] = { 19 };
-+static unsigned gpio20_pins[] = { 20 };
-+static unsigned gpio21_pins[] = { 21 };
-+static unsigned gpio22_pins[] = { 22 };
-+static unsigned gpio23_pins[] = { 23 };
-+static unsigned gpio24_pins[] = { 24 };
-+static unsigned gpio25_pins[] = { 25 };
-+static unsigned gpio26_pins[] = { 26 };
-+static unsigned gpio27_pins[] = { 27 };
-+static unsigned gpio28_pins[] = { 28 };
-+static unsigned gpio29_pins[] = { 29 };
-+static unsigned gpio30_pins[] = { 30 };
-+static unsigned gpio31_pins[] = { 31 };
-+static unsigned uart1_grp_pins[] = { 30, 31, 32, 33 };
-+
-+#define BCM6368_GROUP(n)				\
-+	{						\
-+		.name = #n,				\
-+		.pins = n##_pins,			\
-+		.num_pins = ARRAY_SIZE(n##_pins),	\
-+	}
-+
-+static struct bcm6368_pingroup bcm6368_groups[] = {
-+	BCM6368_GROUP(gpio0),
-+	BCM6368_GROUP(gpio1),
-+	BCM6368_GROUP(gpio2),
-+	BCM6368_GROUP(gpio3),
-+	BCM6368_GROUP(gpio4),
-+	BCM6368_GROUP(gpio5),
-+	BCM6368_GROUP(gpio6),
-+	BCM6368_GROUP(gpio7),
-+	BCM6368_GROUP(gpio8),
-+	BCM6368_GROUP(gpio9),
-+	BCM6368_GROUP(gpio10),
-+	BCM6368_GROUP(gpio11),
-+	BCM6368_GROUP(gpio12),
-+	BCM6368_GROUP(gpio13),
-+	BCM6368_GROUP(gpio14),
-+	BCM6368_GROUP(gpio15),
-+	BCM6368_GROUP(gpio16),
-+	BCM6368_GROUP(gpio17),
-+	BCM6368_GROUP(gpio18),
-+	BCM6368_GROUP(gpio19),
-+	BCM6368_GROUP(gpio20),
-+	BCM6368_GROUP(gpio21),
-+	BCM6368_GROUP(gpio22),
-+	BCM6368_GROUP(gpio23),
-+	BCM6368_GROUP(gpio24),
-+	BCM6368_GROUP(gpio25),
-+	BCM6368_GROUP(gpio26),
-+	BCM6368_GROUP(gpio27),
-+	BCM6368_GROUP(gpio28),
-+	BCM6368_GROUP(gpio29),
-+	BCM6368_GROUP(gpio30),
-+	BCM6368_GROUP(gpio31),
-+	BCM6368_GROUP(uart1_grp),
-+};
-+
-+static const char * const analog_afe_0_groups[] = {
-+	"gpio0",
-+};
-+
-+static const char * const analog_afe_1_groups[] = {
-+	"gpio1",
-+};
-+
-+static const char * const sys_irq_groups[] = {
-+	"gpio2",
-+};
-+
-+static const char * const serial_led_data_groups[] = {
-+	"gpio3",
-+};
-+
-+static const char * const serial_led_clk_groups[] = {
-+	"gpio4",
-+};
-+
-+static const char * const inet_led_groups[] = {
-+	"gpio5",
-+};
-+
-+static const char * const ephy0_led_groups[] = {
-+	"gpio6",
-+};
-+
-+static const char * const ephy1_led_groups[] = {
-+	"gpio7",
-+};
-+
-+static const char * const ephy2_led_groups[] = {
-+	"gpio8",
-+};
-+
-+static const char * const ephy3_led_groups[] = {
-+	"gpio9",
-+};
-+
-+static const char * const robosw_led_data_groups[] = {
-+	"gpio10",
-+};
-+
-+static const char * const robosw_led_clk_groups[] = {
-+	"gpio11",
-+};
-+
-+static const char * const robosw_led0_groups[] = {
-+	"gpio12",
-+};
-+
-+static const char * const robosw_led1_groups[] = {
-+	"gpio13",
-+};
-+
-+static const char * const usb_device_led_groups[] = {
-+	"gpio14",
-+};
-+
-+static const char * const pci_req1_groups[] = {
-+	"gpio16",
-+};
-+
-+static const char * const pci_gnt1_groups[] = {
-+	"gpio17",
-+};
-+
-+static const char * const pci_intb_groups[] = {
-+	"gpio18",
-+};
-+
-+static const char * const pci_req0_groups[] = {
-+	"gpio19",
-+};
-+
-+static const char * const pci_gnt0_groups[] = {
-+	"gpio20",
-+};
-+
-+static const char * const pcmcia_cd1_groups[] = {
-+	"gpio22",
-+};
-+
-+static const char * const pcmcia_cd2_groups[] = {
-+	"gpio23",
-+};
-+
-+static const char * const pcmcia_vs1_groups[] = {
-+	"gpio24",
-+};
-+
-+static const char * const pcmcia_vs2_groups[] = {
-+	"gpio25",
-+};
-+
-+static const char * const ebi_cs2_groups[] = {
-+	"gpio26",
-+};
-+
-+static const char * const ebi_cs3_groups[] = {
-+	"gpio27",
-+};
-+
-+static const char * const spi_cs2_groups[] = {
-+	"gpio28",
-+};
-+
-+static const char * const spi_cs3_groups[] = {
-+	"gpio29",
-+};
-+
-+static const char * const spi_cs4_groups[] = {
-+	"gpio30",
-+};
-+
-+static const char * const spi_cs5_groups[] = {
-+	"gpio31",
-+};
-+
-+static const char * const uart1_groups[] = {
-+	"uart1_grp",
-+};
-+
-+#define BCM6368_FUN(n, out)				\
-+	{						\
-+		.name = #n,				\
-+		.groups = n##_groups,			\
-+		.num_groups = ARRAY_SIZE(n##_groups),	\
-+		.dir_out = out,				\
-+	}
-+
-+#define BCM6368_BASEMODE_FUN(n, val, out)		\
-+	{						\
-+		.name = #n,				\
-+		.groups = n##_groups,			\
-+		.num_groups = ARRAY_SIZE(n##_groups),	\
-+		.basemode = BCM6368_BASEMODE_##val,	\
-+		.dir_out = out,				\
-+	}
-+
-+static const struct bcm6368_function bcm6368_funcs[] = {
-+	BCM6368_FUN(analog_afe_0, 1),
-+	BCM6368_FUN(analog_afe_1, 1),
-+	BCM6368_FUN(sys_irq, 1),
-+	BCM6368_FUN(serial_led_data, 1),
-+	BCM6368_FUN(serial_led_clk, 1),
-+	BCM6368_FUN(inet_led, 1),
-+	BCM6368_FUN(ephy0_led, 1),
-+	BCM6368_FUN(ephy1_led, 1),
-+	BCM6368_FUN(ephy2_led, 1),
-+	BCM6368_FUN(ephy3_led, 1),
-+	BCM6368_FUN(robosw_led_data, 1),
-+	BCM6368_FUN(robosw_led_clk, 1),
-+	BCM6368_FUN(robosw_led0, 1),
-+	BCM6368_FUN(robosw_led1, 1),
-+	BCM6368_FUN(usb_device_led, 1),
-+	BCM6368_FUN(pci_req1, 0),
-+	BCM6368_FUN(pci_gnt1, 0),
-+	BCM6368_FUN(pci_intb, 0),
-+	BCM6368_FUN(pci_req0, 0),
-+	BCM6368_FUN(pci_gnt0, 0),
-+	BCM6368_FUN(pcmcia_cd1, 0),
-+	BCM6368_FUN(pcmcia_cd2, 0),
-+	BCM6368_FUN(pcmcia_vs1, 0),
-+	BCM6368_FUN(pcmcia_vs2, 0),
-+	BCM6368_FUN(ebi_cs2, 1),
-+	BCM6368_FUN(ebi_cs3, 1),
-+	BCM6368_FUN(spi_cs2, 1),
-+	BCM6368_FUN(spi_cs3, 1),
-+	BCM6368_FUN(spi_cs4, 1),
-+	BCM6368_FUN(spi_cs5, 1),
-+	BCM6368_BASEMODE_FUN(uart1, UART1, 0x6),
-+};
-+
-+static int bcm6368_pinctrl_get_group_count(struct pinctrl_dev *pctldev)
-+{
-+	return ARRAY_SIZE(bcm6368_groups);
-+}
-+
-+static const char *bcm6368_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-+						  unsigned group)
-+{
-+	return bcm6368_groups[group].name;
-+}
-+
-+static int bcm6368_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
-+					  unsigned group, const unsigned **pins,
-+					  unsigned *num_pins)
-+{
-+	*pins = bcm6368_groups[group].pins;
-+	*num_pins = bcm6368_groups[group].num_pins;
-+
-+	return 0;
-+}
-+
-+static int bcm6368_pinctrl_get_func_count(struct pinctrl_dev *pctldev)
-+{
-+	return ARRAY_SIZE(bcm6368_funcs);
-+}
-+
-+static const char *bcm6368_pinctrl_get_func_name(struct pinctrl_dev *pctldev,
-+						 unsigned selector)
-+{
-+	return bcm6368_funcs[selector].name;
-+}
-+
-+static int bcm6368_pinctrl_get_groups(struct pinctrl_dev *pctldev,
-+				      unsigned selector,
-+				      const char * const **groups,
-+				      unsigned * const num_groups)
-+{
-+	*groups = bcm6368_funcs[selector].groups;
-+	*num_groups = bcm6368_funcs[selector].num_groups;
-+
-+	return 0;
-+}
-+
-+static int bcm6368_pinctrl_set_mux(struct pinctrl_dev *pctldev,
-+				   unsigned selector, unsigned group)
-+{
-+	struct bcm63xx_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
-+	struct bcm6368_priv *priv = pc->driver_data;
-+	const struct bcm6368_pingroup *pg = &bcm6368_groups[group];
-+	const struct bcm6368_function *fun = &bcm6368_funcs[selector];
-+	int i, pin;
-+
-+	if (fun->basemode) {
-+		unsigned int mask = 0;
-+
-+		for (i = 0; i < pg->num_pins; i++) {
-+			pin = pg->pins[i];
-+			if (pin < BCM63XX_BANK_GPIOS)
-+				mask |= BIT(pin);
-+		}
-+
-+		regmap_update_bits(pc->regs, BCM6368_MODE_REG, mask, 0);
-+		regmap_field_write(priv->overlays, fun->basemode);
-+	} else {
-+		pin = pg->pins[0];
-+
-+		if (bcm6368_pins[pin].drv_data)
-+			regmap_field_write(priv->overlays,
-+					   BCM6368_BASEMODE_GPIO);
-+
-+		regmap_update_bits(pc->regs, BCM6368_MODE_REG, BIT(pin),
-+				   BIT(pin));
-+	}
-+
-+	for (pin = 0; pin < pg->num_pins; pin++) {
-+		struct pinctrl_gpio_range *range;
-+		int hw_gpio = bcm6368_pins[pin].number;
-+
-+		range = pinctrl_find_gpio_range_from_pin(pctldev, hw_gpio);
-+		if (range) {
-+			struct gpio_chip *gc = range->gc;
-+
-+			if (fun->dir_out & BIT(pin))
-+				gc->direction_output(gc, hw_gpio, 0);
-+			else
-+				gc->direction_input(gc, hw_gpio);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int bcm6368_gpio_request_enable(struct pinctrl_dev *pctldev,
-+				       struct pinctrl_gpio_range *range,
-+				       unsigned offset)
-+{
-+	struct bcm63xx_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
-+	struct bcm6368_priv *priv = pc->driver_data;
-+
-+	if (offset >= BCM63XX_BANK_GPIOS && !bcm6368_pins[offset].drv_data)
-+		return 0;
-+
-+	/* disable all functions using this pin */
-+	if (offset < BCM63XX_BANK_GPIOS)
-+		regmap_update_bits(pc->regs, BCM6368_MODE_REG, BIT(offset), 0);
-+
-+	if (bcm6368_pins[offset].drv_data)
-+		regmap_field_write(priv->overlays, BCM6368_BASEMODE_GPIO);
-+
-+	return 0;
-+}
-+
-+static struct pinctrl_ops bcm6368_pctl_ops = {
-+	.dt_free_map = pinctrl_utils_free_map,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.get_group_name = bcm6368_pinctrl_get_group_name,
-+	.get_group_pins = bcm6368_pinctrl_get_group_pins,
-+	.get_groups_count = bcm6368_pinctrl_get_group_count,
-+};
-+
-+static struct pinmux_ops bcm6368_pmx_ops = {
-+	.get_function_groups = bcm6368_pinctrl_get_groups,
-+	.get_function_name = bcm6368_pinctrl_get_func_name,
-+	.get_functions_count = bcm6368_pinctrl_get_func_count,
-+	.gpio_request_enable = bcm6368_gpio_request_enable,
-+	.set_mux = bcm6368_pinctrl_set_mux,
-+	.strict = true,
-+};
-+
-+static const struct bcm63xx_pinctrl_soc bcm6368_soc = {
-+	.ngpios = BCM6368_NUM_GPIOS,
-+	.npins = ARRAY_SIZE(bcm6368_pins),
-+	.pctl_ops = &bcm6368_pctl_ops,
-+	.pins = bcm6368_pins,
-+	.pmx_ops = &bcm6368_pmx_ops,
-+};
-+
-+static int bcm6368_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct reg_field overlays = REG_FIELD(BCM6368_BASEMODE_REG, 0, 15);
-+	struct device *dev = &pdev->dev;
-+	struct bcm63xx_pinctrl *pc;
-+	struct bcm6368_priv *priv;
-+	int err;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	err = bcm63xx_pinctrl_probe(pdev, &bcm6368_soc, (void *) priv);
-+	if (err)
-+		return err;
-+
-+	pc = platform_get_drvdata(pdev);
-+
-+	priv->overlays = devm_regmap_field_alloc(dev, pc->regs, overlays);
-+	if (IS_ERR(priv->overlays))
-+		return PTR_ERR(priv->overlays);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id bcm6368_pinctrl_match[] = {
-+	{ .compatible = "brcm,bcm6368-pinctrl", },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver bcm6368_pinctrl_driver = {
-+	.probe = bcm6368_pinctrl_probe,
-+	.driver = {
-+		.name = "bcm6368-pinctrl",
-+		.of_match_table = bcm6368_pinctrl_match,
-+	},
-+};
-+
-+builtin_platform_driver(bcm6368_pinctrl_driver);
--- 
-2.20.1
+None is saying that it can't be done but that cases where you use
+pinctrl as module are really very limited. When you start to use pinctrl
+and its functionality you need to have it as the part of the kernel to
+be to get console, mmc, ethernet, usb, etc.
+
+That's why I would like to know what functionality and use case you have
+in mind that this driver should be made module.
+
+Thanks,
+Michal
 
