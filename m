@@ -2,53 +2,55 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 871C6C433DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6194DC433E3
+	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40A8361582
-	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4816961A26
+	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbhCYM3e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 25 Mar 2021 08:29:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52972 "EHLO
+        id S230155AbhCYM3f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 25 Mar 2021 08:29:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbhCYM3V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Mar 2021 08:29:21 -0400
+        with ESMTP id S230204AbhCYM3Y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Mar 2021 08:29:24 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6896C06174A
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Mar 2021 05:29:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDE5AC06174A
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Mar 2021 05:29:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=IOdMP1Fd8w8HfaeQ5Eg6DNJzYGqcRl+YXQjx+Aj5AdM=; b=TLiklu/ynzak7XGyouTEGuq/+t
-        ZIzNzBqlbz0aznjLMTd+5sqtPaPTSvuNlWR/HUFpvbD62iJ1J3ac1pOUNEh92NSE8ijS/ff5rICD2
-        zCq55fkfaCXi6G9+nBD4VKZ+y4CFbiTSxHrSxtW2LL6yxyoB0KsF9C0fIchvTlz3S7sbPkiEZxQVI
-        gjeS5SAjJonsujbLEBwmCVFgUSF/4YgwW7RN4BBC97tU8+J3xJ8AsGeSeu006Oe2xxkcDWEL8Y1Yp
-        fjJpCjSxUmPO/l8zrFmZD51wnhjTS8xCtOiCk8Tb92dK1DVNhhRaqvbxqyyy5J20I94Y3FEUNFeCF
-        W7WjMblg==;
+        bh=To/IbCmae+7r3GZ+mwza5PKigW3IoMiD3wBa9D4YBzY=; b=blHc6JqEFKfNjefr9PYdzFC9oP
+        y4cJxCyPPgH61q/9OllneSNc8W7P9Y0YZ0UwbPDOu61moLK+8kr6GvOj6C20vScjNosWRF4/KSLkt
+        qUY72JIVA9ZfnM6+BKy3UtNbGQaeLSJ6+QUns7vd3PehjXnUB2OQj4DJZcuW1n+bfMlj1Gjyyok1y
+        Qugehexv+btevveu9Jbao9V0q4GxfuQP4Sq6mrTZi8cuZLs+tF1r2mrfZbE/HYZ7KSDpA36BOFGjw
+        kSRuZIiKPn/oxebAMU+Zun9pOemuyNwgmKdAIkaHNUbjnTFddP+W5W1j0gCIcKzWC1kn1Ya48IEgI
+        KcudNzxA==;
 Received: from 97-173-191-90.dyn.estpak.ee ([90.191.173.97] helo=ubuntu)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <sandberg@mailfence.com>)
-        id 1lPP6y-00034Q-GZ; Thu, 25 Mar 2021 14:29:17 +0200
-Received: by ubuntu (sSMTP sendmail emulation); Thu, 25 Mar 2021 14:29:13 +0200
+        id 1lPP73-00036j-Fa; Thu, 25 Mar 2021 14:29:22 +0200
+Received: by ubuntu (sSMTP sendmail emulation); Thu, 25 Mar 2021 14:29:20 +0200
 From:   Mauri Sandberg <sandberg@mailfence.com>
 To:     linux-gpio@vger.kernel.org
 Cc:     andy.shevchenko@gmail.com, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, geert+renesas@glider.be,
         Mauri Sandberg <sandberg@mailfence.com>
-Subject: [RFC gpio/for-next 0/2]  gpio: add generic gpio input multiplexer
-Date:   Thu, 25 Mar 2021 14:28:30 +0200
-Message-Id: <20210325122832.119147-1-sandberg@mailfence.com>
+Subject: [RFC gpio/for-next 2/2] gpio: gpio-mux-input: add generic gpio input multiplexer
+Date:   Thu, 25 Mar 2021 14:28:32 +0200
+Message-Id: <20210325122832.119147-3-sandberg@mailfence.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210325122832.119147-1-sandberg@mailfence.com>
+References: <20210325122832.119147-1-sandberg@mailfence.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 90.191.173.97
@@ -58,33 +60,199 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+Suppport for a general GPIO multiplexer. To drive the multiplexer a
+mux-controller is needed. The output pin of the multiplexer is a GPIO
+pin.
 
-I obtained the list of people in CC: after discussions with Drew Fustini and I
-hope I am not bothering any of you. Here I am sending for review a couple of
-patches that add a multiplexer that uses a GPIO pin as its output.
-
-I welcome all ideas how to improve this or, more importantly, pointers if
-similar can be achieved with something that is already present in the kernel
-code.
-
-Thanks,
-Mauri
-
-Mauri Sandberg (2):
-  dt-bindings: gpio-mux-input: add documentation
-  gpio: gpio-mux-input: add generic gpio input multiplexer
-
- .../bindings/gpio/gpio-mux-input.yaml         |  55 +++++++
- drivers/gpio/Kconfig                          |  11 ++
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-mux-input.c                 | 143 ++++++++++++++++++
- 4 files changed, 210 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
+Signed-off-by: Mauri Sandberg <sandberg@mailfence.com>
+---
+ drivers/gpio/Kconfig          |  11 +++
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-mux-input.c | 143 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 155 insertions(+)
  create mode 100644 drivers/gpio/gpio-mux-input.c
 
-
-base-commit: 7ac554888233468a9fd7c4f28721396952dd9959
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index c70f46e80a3b..41062d8f7d93 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1641,4 +1641,15 @@ config GPIO_MOCKUP
+ 
+ endmenu
+ 
++comment "Other GPIO expanders"
++
++config GPIO_MUX_INPUT
++	tristate "General GPIO input multiplexer"
++	select MULTIPLEXER
++	select MUX_GPIO
++	depends on OF_GPIO
++	help
++	  Say yes here to enable support for generic GPIO input multiplexer. This
++	  needs a multiplexer controller to drive the select pins.
++
+ endif
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 35e3b6026665..00f7576ce23f 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -105,6 +105,7 @@ obj-$(CONFIG_GPIO_MPC8XXX)		+= gpio-mpc8xxx.o
+ obj-$(CONFIG_GPIO_MSC313)		+= gpio-msc313.o
+ obj-$(CONFIG_GPIO_MSIC)			+= gpio-msic.o
+ obj-$(CONFIG_GPIO_MT7621)		+= gpio-mt7621.o
++obj-$(CONFIG_GPIO_MUX_INPUT)		+= gpio-mux-input.o
+ obj-$(CONFIG_GPIO_MVEBU)		+= gpio-mvebu.o
+ obj-$(CONFIG_GPIO_MXC)			+= gpio-mxc.o
+ obj-$(CONFIG_GPIO_MXS)			+= gpio-mxs.o
+diff --git a/drivers/gpio/gpio-mux-input.c b/drivers/gpio/gpio-mux-input.c
+new file mode 100644
+index 000000000000..ec0c7acbab2f
+--- /dev/null
++++ b/drivers/gpio/gpio-mux-input.c
+@@ -0,0 +1,143 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ *  A generic GPIO input multiplexer driver
++ *
++ *  Copyright (C) 2021 Mauri Sandberg <sandberg@mailfence.com>
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/gpio/consumer.h>
++#include <linux/gpio/driver.h>
++#include <linux/slab.h>
++#include <linux/platform_device.h>
++#include <linux/mux/consumer.h>
++
++struct gpio_mux_input {
++	struct device		*parent;
++	struct gpio_chip	gpio_chip;
++	struct mux_control	*mux_control;
++	struct gpio_desc	*mux_pin;
++};
++
++static struct gpio_mux_input *gpio_to_mux(struct gpio_chip *gc)
++{
++	return container_of(gc, struct gpio_mux_input, gpio_chip);
++}
++
++static int gpio_mux_input_direction_input(struct gpio_chip *gc,
++				       unsigned int offset)
++{
++	return 0;
++}
++
++static int gpio_mux_input_direction_output(struct gpio_chip *gc,
++					unsigned int offset, int val)
++{
++	return -EINVAL;
++}
++
++static int gpio_mux_input_get_value(struct gpio_chip *gc, unsigned int offset)
++{
++	struct gpio_mux_input *mux;
++	int ret;
++
++	mux = gpio_to_mux(gc);
++	ret = mux_control_select(mux->mux_control, offset);
++	if (ret)
++		return ret;
++
++	ret = gpiod_get_value(mux->mux_pin);
++	mux_control_deselect(mux->mux_control);
++	return ret;
++}
++
++static void gpio_mux_input_set_value(struct gpio_chip *gc,
++				  unsigned int offset, int val)
++{
++	/* not supported */
++}
++
++static int gpio_mux_input_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct gpio_mux_input *mux;
++	struct gpio_chip *gc;
++	struct mux_control *mc;
++	struct gpio_desc *pin;
++	int err;
++
++	mux = kzalloc(sizeof(struct gpio_mux_input), GFP_KERNEL);
++	if (mux == NULL)
++		return -ENOMEM;
++
++	mc = mux_control_get(&pdev->dev, NULL);
++	if (IS_ERR(mc)) {
++		err = (int) PTR_ERR(mc);
++		if (err != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "unable to get mux-control: %d\n",
++				err);
++		goto err_free_mux;
++	}
++
++	mux->mux_control = mc;
++	pin = gpiod_get(&pdev->dev, "pin",  GPIOD_IN);
++	if (IS_ERR(pin)) {
++		err = (int) PTR_ERR(pin);
++		dev_err(&pdev->dev, "unable to claim pin GPIOs: %d\n", err);
++		goto err_free_mc;
++	}
++
++	mux->mux_pin = pin;
++	mux->parent = &pdev->dev;
++
++	gc = &mux->gpio_chip;
++	gc->direction_input  = gpio_mux_input_direction_input;
++	gc->direction_output = gpio_mux_input_direction_output;
++	gc->get = gpio_mux_input_get_value;
++	gc->set = gpio_mux_input_set_value;
++	gc->can_sleep = 1;
++
++	gc->base = -1;
++	gc->ngpio = mux_control_states(mc);
++	gc->label = dev_name(mux->parent);
++	gc->parent = mux->parent;
++	gc->owner = THIS_MODULE;
++	gc->of_node = np;
++
++	err = gpiochip_add(&mux->gpio_chip);
++	if (err) {
++		dev_err(&pdev->dev, "unable to add gpio chip, err=%d\n", err);
++		goto err_free_pin;
++	}
++
++	platform_set_drvdata(pdev, mux);
++	return 0;
++
++err_free_pin:
++	gpiod_put(pin);
++err_free_mc:
++	mux_control_put(mc);
++err_free_mux:
++	kfree(mux);
++	return err;
++}
++
++static const struct of_device_id gpio_mux_input_id[] = {
++	{
++		.compatible = "gpio-mux-input",
++		.data = NULL,
++	},
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, gpio_mux_input_id);
++
++static struct platform_driver gpio_mux_input_driver = {
++	.driver	= {
++		.name		= "gpio-mux-input",
++		.owner		= THIS_MODULE,
++		.of_match_table = gpio_mux_input_id,
++	},
++	.probe	= gpio_mux_input_probe,
++};
++module_platform_driver(gpio_mux_input_driver);
 -- 
 2.25.1
 
