@@ -2,133 +2,119 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46257C433E8
-	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC70C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2306E61A16
-	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CCFB61A11
+	for <linux-gpio@archiver.kernel.org>; Thu, 25 Mar 2021 12:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230273AbhCYM3e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 25 Mar 2021 08:29:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230155AbhCYM3W (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Mar 2021 08:29:22 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11C3EC06174A
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Mar 2021 05:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=m2kaDDOf+6H3SMKnNi1wsR8XKbDRWWv9yzDVx2W/C6E=; b=CBHUp/OwLeYSBy9XH2moe1tzsW
-        hQQqhFTyG/CXO+rUmyemNM+D/AGDDnhewjIBwEBwvBL4aHeTOz7xumQBR6PHuX7qXWBSGAP0Hve1E
-        sp4Xj9D9W1H8ARZKMPjkvfX1NoeY9xSY9SafaD5WLBTHVYrPuESuILbvHXgGG0abcWmYTKduowPB7
-        PSiUgekq3xSfa2nl+JgTICJQ+JjOypks45SPxFQo+co5CZOubYgSiPfip5BL36iHTXC0B0yqrO8dA
-        dHiU99ib0ZoVywvoSqbvP2haIaqkLuaM4aUPCGfrbaK6t4VGCLTGn2l1dcNj87OTQzil2MlY+WAaT
-        bfIr686g==;
-Received: from 97-173-191-90.dyn.estpak.ee ([90.191.173.97] helo=ubuntu)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sandberg@mailfence.com>)
-        id 1lPP71-00035U-Mp; Thu, 25 Mar 2021 14:29:20 +0200
-Received: by ubuntu (sSMTP sendmail emulation); Thu, 25 Mar 2021 14:29:17 +0200
-From:   Mauri Sandberg <sandberg@mailfence.com>
-To:     linux-gpio@vger.kernel.org
-Cc:     andy.shevchenko@gmail.com, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, geert+renesas@glider.be,
-        Mauri Sandberg <sandberg@mailfence.com>
-Subject: [RFC gpio/for-next 1/2] dt-bindings: gpio-mux-input: add documentation
-Date:   Thu, 25 Mar 2021 14:28:31 +0200
-Message-Id: <20210325122832.119147-2-sandberg@mailfence.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210325122832.119147-1-sandberg@mailfence.com>
-References: <20210325122832.119147-1-sandberg@mailfence.com>
+        id S230182AbhCYMyd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 25 Mar 2021 08:54:33 -0400
+Received: from mga17.intel.com ([192.55.52.151]:32934 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230377AbhCYMyR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 25 Mar 2021 08:54:17 -0400
+IronPort-SDR: Sx7xwz8KGMAlYuDKOd+DCtUxEW6VtALRBJ24th0Absde/zChsQzCRTIEknvtrjK31Qz0uWQ4PO
+ teDr40wZrytQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="170899352"
+X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
+   d="scan'208";a="170899352"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 05:54:17 -0700
+IronPort-SDR: 0UZcZSDDN+4EZ6NdZE6wdeQVxlVSZPThBvSUsY1Z0jpTq41Ef7NW/naabCdg2U6qVoUzWm2rBJ
+ jJr85sXM+nUA==
+X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
+   d="scan'208";a="375057264"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 05:54:15 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lPPV6-00G2tJ-5t; Thu, 25 Mar 2021 14:54:12 +0200
+Date:   Thu, 25 Mar 2021 14:54:12 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Roger Pau Monne <roger.pau@citrix.com>
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3] intel/pinctrl: check REVID register value for device
+ presence
+Message-ID: <YFyH9Fk5d+289/f/@smile.fi.intel.com>
+References: <20210325090947.73729-1-roger.pau@citrix.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 90.191.173.97
-X-SA-Exim-Mail-From: sandberg@mailfence.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+In-Reply-To: <20210325090947.73729-1-roger.pau@citrix.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add documentation for a general GPIO multiplexer.
+On Thu, Mar 25, 2021 at 10:09:47AM +0100, Roger Pau Monne wrote:
+> Use the value read from the REVID register in order to check for the
+> presence of the device. A read of all ones is treated as if the device
+> is not present, and hence probing is ended.
+> 
+> This fixes an issue when running as a Xen PVH dom0, where the ACPI
+> DSDT table is provided unmodified to dom0 and hence contains the
+> pinctrl devices, but the MMIO region(s) containing the device
+> registers might not be mapped in the guest physical memory map if such
+> region(s) are not exposed on a PCI device BAR or marked as reserved in
+> the host memory map.
 
-Signed-off-by: Mauri Sandberg <sandberg@mailfence.com>
----
- .../bindings/gpio/gpio-mux-input.yaml         | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
+Applied for fixes, thanks!
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml b/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
-new file mode 100644
-index 000000000000..f436000fe138
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/gpio-mux-input.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: GPIO input multiplexer
-+
-+maintainers:
-+  - Mauri Sandberg <sandberg@mailfence.com>
-+
-+description: |
-+  A generic GPIO based input multiplexer
-+
-+  This driver uses mux-controller to drive the multiplexer.
-+
-+  For consumer use see gpio.txt.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - gpio-mux-input
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  pin-gpios:
-+    description: |
-+      The GPIO pin used the output from the multiplexer
-+
-+required:
-+  - compatible
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - pin-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    gpio2: key-mux1 {
-+        compatible = "gpio-mux-input";
-+        mux-controls = <&mux>;
-+
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+
-+        // GPIOs used by this node, mux output pin
-+        pin-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;	/* 1y */
-+    };
-+
-+...
+> 91d898e51e60 ('pinctrl: intel: Convert capability list to features')
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> ---
+> Changes since v2:
+>  - Return ENODEV.
+>  - Adjust code comment.
+> 
+> Changes since v1:
+>  - New in this version.
+> ---
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> ---
+>  drivers/pinctrl/intel/pinctrl-intel.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+> index 8085782cd8f9..9fc5bba514ea 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -1491,8 +1491,13 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
+>  		if (IS_ERR(regs))
+>  			return PTR_ERR(regs);
+>  
+> -		/* Determine community features based on the revision */
+> +		/*
+> +		 * Determine community features based on the revision.
+> +		 * A value of all ones means the device is not present.
+> +		 */
+>  		value = readl(regs + REVID);
+> +		if (value == ~0u)
+> +			return -ENODEV;
+>  		if (((value & REVID_MASK) >> REVID_SHIFT) >= 0x94) {
+>  			community->features |= PINCTRL_FEATURE_DEBOUNCE;
+>  			community->features |= PINCTRL_FEATURE_1K_PD;
+> -- 
+> 2.30.1
+> 
+
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
