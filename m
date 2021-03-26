@@ -2,82 +2,65 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC191C433DB
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Mar 2021 01:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7333EC433C1
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Mar 2021 06:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89BF161A44
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Mar 2021 01:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4413B61938
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Mar 2021 06:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbhCZBt6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 25 Mar 2021 21:49:58 -0400
-Received: from mail-io1-f41.google.com ([209.85.166.41]:40643 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbhCZBt4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Mar 2021 21:49:56 -0400
-Received: by mail-io1-f41.google.com with SMTP id n21so3888346ioa.7;
-        Thu, 25 Mar 2021 18:49:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=N9Te2GQTu4UomMNR5C1yrVqQ8Ms/2vbp9BYJ7j0G8SY=;
-        b=Xk2/sUavNcmDqB0E6AhW/FpBZniUmqgfMwBP/tXDVJRImh9eC3YlAvZZBR/XwMi7Vr
-         q7xhqlfKyWVxYvq6UXXIxA6Xfk3NVbwV+oqnhFKdWnFrfBxE+o/v/Jsav1SUG9sswL5k
-         7GTugXdPuztsD5Tuh7ZNhsAbYNM/vKgQqumk/v8u/FnWIu+YYShdhMXzsjYO7QZG4SzU
-         O/2DCznYwIYmS0Mw0hq/fyezP8T/dh+TWjd5Z42nb5SQRjnJKks5VJQstG/v5miF6ml0
-         nD0e3j0kxY2PyyVPBWJhW+1wG2/pdunvBQzzeOASJ9UwGwOPIBtBIAq+0RD8sg6kXrA9
-         2CLA==
-X-Gm-Message-State: AOAM5304DO5lZaKdAseKojS/jpIEtmuqPj8dAh4rVGKctr+XthDdepMF
-        GFEMYwSnbpgvIN0jiKxIfA==
-X-Google-Smtp-Source: ABdhPJzoTwDGhGHQRCjyGQmKg+KE2sK/7QlyDCM2mrD6AWIkiUxBHRzesApHsW7lgBo9JGVADjnmEg==
-X-Received: by 2002:a6b:ea04:: with SMTP id m4mr8486022ioc.160.1616723396206;
-        Thu, 25 Mar 2021 18:49:56 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id g8sm3140676ile.44.2021.03.25.18.49.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 18:49:55 -0700 (PDT)
-Received: (nullmailer pid 2160116 invoked by uid 1000);
-        Fri, 26 Mar 2021 01:49:47 -0000
-Date:   Thu, 25 Mar 2021 19:49:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     linux-gpio@vger.kernel.org, joel@jms.id.au,
-        openbmc@lists.ozlabs.org, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        avifishman70@gmail.com, lee.jones@linaro.org,
-        ryan_chen@aspeedtech.com, devicetree@vger.kernel.org,
-        tali.perry1@gmail.com, robh+dt@kernel.org, venture@google.com,
-        benjaminfair@google.com, linux-aspeed@lists.ozlabs.org,
-        minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        chiawei_wang@aspeedtech.com, tmaimon77@gmail.com
-Subject: Re: [PATCH v2 18/21] dt-bindings: ipmi: Add optional SerIRQ property
- to ASPEED KCS devices
-Message-ID: <20210326014947.GA2160061@robh.at.kernel.org>
-References: <20210319062752.145730-1-andrew@aj.id.au>
- <20210319062752.145730-18-andrew@aj.id.au>
+        id S230096AbhCZGeq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Mar 2021 02:34:46 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:14909 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229580AbhCZGeV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Mar 2021 02:34:21 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F6Bwn60DVzkggH;
+        Fri, 26 Mar 2021 14:32:41 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.82) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 26 Mar 2021 14:34:11 +0800
+From:   Zheng Yongjun <zhengyongjun3@huawei.com>
+To:     <zhengyongjun3@huawei.com>, Damien Le Moal <damien.lemoal@wdc.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>
+CC:     <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] pinctrl: Remove duplicated include from pinctrl-k210.c
+Date:   Fri, 26 Mar 2021 14:48:04 +0800
+Message-ID: <20210326064804.3262477-1-zhengyongjun3@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210319062752.145730-18-andrew@aj.id.au>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.104.82]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 19 Mar 2021 16:57:49 +1030, Andrew Jeffery wrote:
-> Allocating IO and IRQ resources to LPC devices is in-theory an operation
-> for the host, however ASPEED don't appear to expose this capability
-> outside the BMC (e.g. SuperIO). Instead, we are left with BMC-internal
-> registers for managing these resources, so introduce a devicetree
-> property for KCS devices to describe SerIRQ properties.
-> 
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> ---
->  .../bindings/ipmi/aspeed,ast2400-kcs-bmc.yaml      | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
+Remove duplicated include.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+---
+ drivers/pinctrl/pinctrl-k210.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
+index 8a733cf77ba0..f831526d06ff 100644
+--- a/drivers/pinctrl/pinctrl-k210.c
++++ b/drivers/pinctrl/pinctrl-k210.c
+@@ -15,7 +15,6 @@
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+-#include <linux/io.h>
+ 
+ #include <dt-bindings/pinctrl/k210-fpioa.h>
+ 
+
