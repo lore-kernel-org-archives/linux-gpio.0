@@ -2,76 +2,76 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAE2C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 10:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A18FC433E2
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 380C961938
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 10:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81C0E6195B
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:18:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232745AbhC2KvO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Mar 2021 06:51:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53480 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232742AbhC2Ku4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 06:50:56 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92615C061574
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Mar 2021 03:50:56 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id x126so9576255pfc.13
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Mar 2021 03:50:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=satztO+VQ1S8ilUifK0SKeeA12xdhue7rWHZqa5tcQ0=;
-        b=eb3V1H3me2pzSve/RPcEVCJvXKI8e7t+LBUAJ+ZNZdO1/WPk/Mw7xVEECx7GWAL9fz
-         igcXzA9F4RpSsxBoOXS2d1eGm/bS7aX4YfTkeAoe2K/X3gQa17Okn3AS5yPuw6ThlFra
-         JnMQYoDcrpOSF9c6ca+eE5+yoQ+rEXZMfUGL53q1M0ybBTboClC1wPprekLwfGlSyCDe
-         gcts2muVmrf9C+MAU9MUFIKG8vYKjthzVHduyQTTjW5NjrL0sa/VkElrTlf4TnGwc37v
-         A2I5gev/Eoj4XoB7XIVIal/sa1pODjr3nT8Oj01Y8vBSN5AOYoyAhzRcX/FJ0Vv/xI/i
-         AbQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=satztO+VQ1S8ilUifK0SKeeA12xdhue7rWHZqa5tcQ0=;
-        b=ZZGavxOZTUSEatbt8QfgETiudW6keSaAELMr2u9kjjTZ70ChgElutFEppswX7Jkiz2
-         qTZJbVXLSAwrk5t/i0UfYmDEYHsoPjYHLH8vXyH8ORpioPOC6JcrTnpIaLN7sKfMdE5r
-         RQs9F6Wt5VxW0poeQHGuYFEtswlZqSALULyLGSvFfBWtMSZ4rVd5//ThSNNKEORL0x5v
-         bNK77Qo4DQbfJcnrCV+eaC2hSqROfYHrrQACleiyZmWMgXPj7es1v8eXEY/OS518RXNg
-         ZOqhl4/D7fkzCrZVYUZR2uZ62UTq4BfxCKD5i1LGHjmuorq4RJP7ked+pvmPT2JAXPcg
-         KmXQ==
-X-Gm-Message-State: AOAM530WTCjP4g98iiMrTTN8OlR4M44PAzF2J2qaxHgBL4xvu9Q7JTbX
-        u4nd3hXBQ5On1y+cmDIOIcIrMIz/bBELy/xnasXGLi7AIO0mHjUW
-X-Google-Smtp-Source: ABdhPJxWUJfKF99zZrTIZ1KAKcRnGgRHXQU49eZKGLLoiZT5ZnGwtNh32caBr0R9DybhgeU8g+6MBfVG1I/Bs7/Q4Ow=
-X-Received: by 2002:a63:c48:: with SMTP id 8mr1352767pgm.74.1617015055984;
- Mon, 29 Mar 2021 03:50:55 -0700 (PDT)
-MIME-Version: 1.0
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 29 Mar 2021 13:50:40 +0300
-Message-ID: <CAHp75VfFfJ8g-mHSneNbk4ujDdTbfu3CypSY_e106+3jhS6SWA@mail.gmail.com>
-Subject: gpio_is_valid()
-To:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S231944AbhC2LRa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Mar 2021 07:17:30 -0400
+Received: from mail.thorsis.com ([92.198.35.195]:55158 "EHLO mail.thorsis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232039AbhC2LRU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 29 Mar 2021 07:17:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.thorsis.com (Postfix) with ESMTP id 0768235D7;
+        Mon, 29 Mar 2021 13:17:19 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
+Received: from mail.thorsis.com ([127.0.0.1])
+        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lApW-tkxq7lu; Mon, 29 Mar 2021 13:17:18 +0200 (CEST)
+Received: by mail.thorsis.com (Postfix, from userid 109)
+        id CD2CA35D8; Mon, 29 Mar 2021 13:17:18 +0200 (CEST)
+From:   Alexander Dahl <ada@thorsis.com>
+To:     linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Dahl <ada@thorsis.com>
+Subject: [PATCH 1/3] docs: gpio: mockup: Fix parameter name
+Date:   Mon, 29 Mar 2021 13:16:46 +0200
+Message-Id: <20210329111648.7969-2-ada@thorsis.com>
+In-Reply-To: <20210329111648.7969-1-ada@thorsis.com>
+References: <20210329111648.7969-1-ada@thorsis.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi!
+Module probing with the parameter documented yielded this in kernel log:
 
-Anybody to shed a light why we have two stubs of gpio_is_valid() and
-one actual declaration?
-% git grep -n -w gpio_is_valid -- include/
-include/asm-generic/gpio.h:44:static inline bool gpio_is_valid(int number)
-include/asm-generic/gpio.h:143:static inline bool gpio_is_valid(int number)
-include/linux/gpio.h:109:static inline bool gpio_is_valid(int number)
+        gpio_mockup: unknown parameter 'gpio_named_lines' ignored
 
+The parameter documented did not match the parameter actually
+implemented with commit 8a68ea00a62e ("gpio: mockup: implement naming
+the lines") long before introducing the documentation.
 
+Fixes: commit 2fd1abe99e5f ("Documentation: gpio: add documentation for gpio-mockup")
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
+---
+ Documentation/admin-guide/gpio/gpio-mockup.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/gpio/gpio-mockup.rst b/Documentation/admin-guide/gpio/gpio-mockup.rst
+index 9fa1618b3adc..e3cafb4451aa 100644
+--- a/Documentation/admin-guide/gpio/gpio-mockup.rst
++++ b/Documentation/admin-guide/gpio/gpio-mockup.rst
+@@ -27,7 +27,7 @@ module.
+         the second 16 and the third 4. The base GPIO for the third chip is set
+         to 405 while for two first chips it will be assigned automatically.
+ 
+-    gpio_named_lines
++    gpio_mockup_named_lines
+ 
+         This parameter doesn't take any arguments. It lets the driver know that
+         GPIO lines exposed by it should be named.
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
+
