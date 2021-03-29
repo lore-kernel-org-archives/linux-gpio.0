@@ -2,253 +2,111 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F73EC433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 14:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF1AC433DB
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 14:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9A46192F
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 14:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 776DC61938
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 14:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbhC2OBB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Mar 2021 10:01:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbhC2OAc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 10:00:32 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEDA6C061574
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Mar 2021 07:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=of8bQ9zYa4l4SnBKzVyIDF5BYg8RrxRcJw3f1zs5Wfg=; b=cMcxTyVBY+GheGQX1sLxIMsKsN
-        9cxoBFGUZkyYisk3P5JXvCFlQeCwtFBqh6RhXhPuDo7T0x5zuKPCb05ls2y0kzp1LhjhyABZ8ISg1
-        N0JpFK3SoAF56iwbNWQbZ8m8BQM4SiDuhQFW9HHaEGsrDZ0ZisbUML9ah2Z2oGr5qF8UGM6SqOU0s
-        cTptAnruZeuGxku7aPY0AiuT2flSSCfuF/Se1Q/VtP1w64xandyT+OWAl0hD2gWj1GxQma+VZM7Th
-        gx2j0UuohfR+ahQ2skxNiIl0JvClPi7vjAcFJ8aPmvwuajlD1Wy23SOofLNcEukZ8TjN3okmwe12N
-        hTx3WEhA==;
-Received: from 97-173-191-90.dyn.estpak.ee ([90.191.173.97] helo=ubuntu)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sandberg@mailfence.com>)
-        id 1lQsRL-0006Yt-0g; Mon, 29 Mar 2021 17:00:24 +0300
-Received: by ubuntu (sSMTP sendmail emulation); Mon, 29 Mar 2021 17:00:19 +0300
-From:   Mauri Sandberg <sandberg@mailfence.com>
-To:     sandberg@mailfence.com
-Cc:     andy.shevchenko@gmail.com, bgolaszewski@baylibre.com,
-        geert+renesas@glider.be, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, drew@beagleboard.org,
-        kernel test robot <lkp@intel.com>
-Subject: [RFC v2 2/2] gpio: gpio-mux-input: add generic gpio input multiplexer
-Date:   Mon, 29 Mar 2021 16:57:29 +0300
-Message-Id: <20210329135729.10523-3-sandberg@mailfence.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210329135729.10523-1-sandberg@mailfence.com>
-References: <20210325122832.119147-1-sandberg@mailfence.com>
- <20210329135729.10523-1-sandberg@mailfence.com>
+        id S230280AbhC2OQb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Mar 2021 10:16:31 -0400
+Received: from mga07.intel.com ([134.134.136.100]:42966 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230220AbhC2OQS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 29 Mar 2021 10:16:18 -0400
+IronPort-SDR: zPWG9NwH07hdw/ovDMOqHZaocWW0+X30qC3PIzF6GsDc2PLMKkb2aZdck1SccoO6OB2tUvwCvR
+ YYh2enff87Dw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9938"; a="255553684"
+X-IronPort-AV: E=Sophos;i="5.81,288,1610438400"; 
+   d="scan'208";a="255553684"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2021 07:16:17 -0700
+IronPort-SDR: 7is4lmsP7vAQMXbwtDcpYUKd0j8dSLF7KG8reIVPpv3YHlrQ2c37HbdF4Pav961t4Lb+GUUVHF
+ 9SC3nOUOS2gQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,288,1610438400"; 
+   d="scan'208";a="516035321"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Mar 2021 07:16:15 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 521DEF2; Mon, 29 Mar 2021 17:16:30 +0300 (EEST)
+Date:   Mon, 29 Mar 2021 17:16:30 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux GPIO <linux-gpio@vger.kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL] intel-gpio for 5.13-1
+Message-ID: <YGHhPlK5Ej4QywNH@black.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 90.191.173.97
-X-SA-Exim-Mail-From: sandberg@mailfence.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Adds support for a generic GPIO multiplexer. To drive the multiplexer a
-mux-controller is needed. The output pin of the multiplexer is a GPIO
-pin.
+Hi Linux GPIO  maintainers,
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Mauri Sandberg <sandberg@mailfence.com>
----
- drivers/gpio/Kconfig          |  13 ++++
- drivers/gpio/Makefile         |   1 +
- drivers/gpio/gpio-mux-input.c | 134 ++++++++++++++++++++++++++++++++++
- 3 files changed, 148 insertions(+)
- create mode 100644 drivers/gpio/gpio-mux-input.c
+So far collected stuff for Intel GPIO drivers (including aggregator clean up).
+No conflicts are expected.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b6b6150d0d04..7bf8021e0239 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1643,4 +1643,17 @@ config GPIO_SIM
- 
- endmenu
- 
-+comment "Other GPIO expanders"
-+
-+config GPIO_MUX_INPUT
-+	tristate "General GPIO input multiplexer"
-+	depends on OF_GPIO
-+	select MULTIPLEXER
-+	select MUX_GPIO
-+	help
-+	  Say yes here to enable support for generic GPIO input multiplexer.
-+
-+  	  This driver uses a mux-controller to drive the multiplexer and has a
-+  	  single output pin for reading the inputs to the mux.
-+
- endif
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index d717aa85f8e1..e843e1bcfc20 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -103,6 +103,7 @@ obj-$(CONFIG_GPIO_MPC5200)		+= gpio-mpc5200.o
- obj-$(CONFIG_GPIO_MPC8XXX)		+= gpio-mpc8xxx.o
- obj-$(CONFIG_GPIO_MSC313)		+= gpio-msc313.o
- obj-$(CONFIG_GPIO_MT7621)		+= gpio-mt7621.o
-+obj-$(CONFIG_GPIO_MUX_INPUT)		+= gpio-mux-input.o
- obj-$(CONFIG_GPIO_MVEBU)		+= gpio-mvebu.o
- obj-$(CONFIG_GPIO_MXC)			+= gpio-mxc.o
- obj-$(CONFIG_GPIO_MXS)			+= gpio-mxs.o
-diff --git a/drivers/gpio/gpio-mux-input.c b/drivers/gpio/gpio-mux-input.c
-new file mode 100644
-index 000000000000..2de198a84bb9
---- /dev/null
-+++ b/drivers/gpio/gpio-mux-input.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ *  A generic GPIO input multiplexer driver
-+ *
-+ *  Copyright (C) 2021 Mauri Sandberg <sandberg@mailfence.com>
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/slab.h>
-+#include <linux/platform_device.h>
-+#include <linux/mux/consumer.h>
-+
-+struct gpio_mux_input {
-+	struct device		*parent;
-+	struct gpio_chip	gpio_chip;
-+	struct mux_control	*mux_control;
-+	struct gpio_desc	*mux_pin;
-+};
-+
-+static struct gpio_mux_input *gpio_to_mux(struct gpio_chip *gc)
-+{
-+	return container_of(gc, struct gpio_mux_input, gpio_chip);
-+}
-+
-+static int gpio_mux_input_get_direction(struct gpio_chip *gc,
-+					unsigned int offset)
-+{
-+	return GPIO_LINE_DIRECTION_IN;
-+}
-+
-+static int gpio_mux_input_get_value(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_mux_input *mux;
-+	int ret;
-+
-+	mux = gpio_to_mux(gc);
-+	ret = mux_control_select(mux->mux_control, offset);
-+	if (ret)
-+		return ret;
-+
-+	ret = gpiod_get_value(mux->mux_pin);
-+	mux_control_deselect(mux->mux_control);
-+	return ret;
-+}
-+
-+static int gpio_mux_input_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct gpio_mux_input *mux;
-+	struct gpio_chip *gc;
-+	struct mux_control *mc;
-+	struct gpio_desc *pin;
-+	int err;
-+
-+	mux = kzalloc(sizeof(struct gpio_mux_input), GFP_KERNEL);
-+	if (mux == NULL)
-+		return -ENOMEM;
-+
-+	mc = mux_control_get(&pdev->dev, NULL);
-+	if (IS_ERR(mc)) {
-+		err = (int) PTR_ERR(mc);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "unable to get mux-control: %d\n",
-+				err);
-+		goto err_free_mux;
-+	}
-+
-+	mux->mux_control = mc;
-+	pin = gpiod_get(&pdev->dev, "pin",  GPIOD_IN);
-+	if (IS_ERR(pin)) {
-+		err = (int) PTR_ERR(pin);
-+		dev_err(&pdev->dev, "unable to claim pin GPIO: %d\n", err);
-+		goto err_free_mc;
-+	}
-+
-+	mux->mux_pin = pin;
-+	mux->parent = &pdev->dev;
-+
-+	gc = &mux->gpio_chip;
-+	gc->get = gpio_mux_input_get_value;
-+	gc->get_direction = gpio_mux_input_get_direction;
-+
-+	gc->base = -1;
-+	gc->ngpio = mux_control_states(mc);
-+	gc->label = dev_name(mux->parent);
-+	gc->parent = mux->parent;
-+	gc->owner = THIS_MODULE;
-+	gc->of_node = np;
-+
-+	err = gpiochip_add(&mux->gpio_chip);
-+	if (err) {
-+		dev_err(&pdev->dev, "unable to add gpio chip, err=%d\n", err);
-+		goto err_free_pin;
-+	}
-+
-+	platform_set_drvdata(pdev, mux);
-+
-+	dev_info(&pdev->dev, "registered %u input GPIOs\n", gc->ngpio);
-+
-+	return 0;
-+
-+err_free_pin:
-+	gpiod_put(pin);
-+err_free_mc:
-+	mux_control_put(mc);
-+err_free_mux:
-+	kfree(mux);
-+	return err;
-+}
-+
-+static const struct of_device_id gpio_mux_input_id[] = {
-+	{
-+		.compatible = "gpio-mux-input",
-+		.data = NULL,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, gpio_mux_input_id);
-+
-+static struct platform_driver gpio_mux_input_driver = {
-+	.driver	= {
-+		.name		= "gpio-mux-input",
-+		.of_match_table = gpio_mux_input_id,
-+	},
-+	.probe	= gpio_mux_input_probe,
-+};
-+module_platform_driver(gpio_mux_input_driver);
-+
-+MODULE_AUTHOR("Mauri Sandberg <sandberg@mailfence.com>");
-+MODULE_DESCRIPTION("Generic GPIO input multiplexer");
-+MODULE_LICENSE("GPL");
+Thanks,
+
+With Best Regards,
+Andy Shevchenko
+
+The following changes since commit b41ba2ec54a70908067034f139aa23d0dd2985ce:
+
+  gpiolib: Read "gpio-line-names" from a firmware node (2021-03-08 11:59:17 +0100)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v5.13-1
+
+for you to fetch changes up to 6c46215d6b626cb0981f8332da506b69b98c4b49:
+
+  gpio: sch: Hook into ACPI GPE handler to catch GPIO edge events (2021-03-27 23:48:55 +0200)
+
+----------------------------------------------------------------
+intel-gpio for v5.13-1
+
+* Implement event support (GPE) in Intel SCH GPIO driver
+* Clean up GPIO aggregator driver to use more of the generic code
+
+The following is an automated git shortlog grouped by driver:
+
+aggregator:
+ -  Replace custom get_arg() with a generic next_arg()
+
+lib/cmdline:
+ -  Export next_arg() for being used in modules
+
+sch:
+ -  Hook into ACPI GPE handler to catch GPIO edge events
+ -  Add edge event support
+
+----------------------------------------------------------------
+Andy Shevchenko (3):
+      lib/cmdline: Export next_arg() for being used in modules
+      gpio: aggregator: Replace custom get_arg() with a generic next_arg()
+      gpio: sch: Hook into ACPI GPE handler to catch GPIO edge events
+
+Jan Kiszka (1):
+      gpio: sch: Add edge event support
+
+ drivers/gpio/Kconfig           |   3 +-
+ drivers/gpio/gpio-aggregator.c |  39 ++------
+ drivers/gpio/gpio-sch.c        | 198 +++++++++++++++++++++++++++++++++++++++--
+ lib/cmdline.c                  |   1 +
+ 4 files changed, 198 insertions(+), 43 deletions(-)
+
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
