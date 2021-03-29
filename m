@@ -2,45 +2,46 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597ADC433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD67FC433C1
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31C526193A
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 937506193A
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbhC2Llc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Mar 2021 07:41:32 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:46789 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbhC2LlD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 07:41:03 -0400
-Received: by mail-lf1-f51.google.com with SMTP id 12so7552198lfq.13;
-        Mon, 29 Mar 2021 04:41:02 -0700 (PDT)
+        id S231317AbhC2LmG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Mar 2021 07:42:06 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:41691 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231219AbhC2Llj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 07:41:39 -0400
+Received: by mail-lj1-f177.google.com with SMTP id f26so15526705ljp.8;
+        Mon, 29 Mar 2021 04:41:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=0NXghuK6J2p/ROcymalVkTDQkV7uB5KSR64W6RUq5WU=;
-        b=H4RgJNgK3lxQa8nULbqrEdmmu6SgcGeDXLA9KaiGbLWfIrx5vylTImN8XoxgxAZAHk
-         YHwhRiEAo9wzHS23pJYwpf5dCn1d77+Lgrnze5IWqcBrwo/PyTKltDRHvCVbW3LQXpde
-         lltKYgG20BvzGibZGz2o2BCK5I3tO4nDc+BiAtwqGcw/D6dbUmDncJkSxI9TWN+g7wnr
-         3JsTMNLWoBwazbLt2VaQQfSRw8APz8fx32X/GijsLxfKX9QH1LLlHdbGWbpWUBZK25Cs
-         fPg/VBaGTRQQHeqnqU3ervOnPHQjCn/V7Wg5KzOzK5IwxMqhXvUsmAmvkrzRbsyRaKsP
-         hVdA==
-X-Gm-Message-State: AOAM530LC9myUFXeLHqGJBDJ62WvBrvGxp/nXFnHwTXDfEywtwR7qVCI
-        a2xGaTW/yMFP3BbpwKnBr+A=
-X-Google-Smtp-Source: ABdhPJy9wjEmvwWzgpE8+6dO7bbkmx8DNwI+fDv6Wx9APGvhVvbn5OSE4fk/hPhmggCIMpxXZaQG6w==
-X-Received: by 2002:a05:6512:b26:: with SMTP id w38mr16264361lfu.152.1617018061778;
-        Mon, 29 Mar 2021 04:41:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uzzBZzKSh0uKl45q2UqHsjLSh2lEI+XdSkO4BJlUPus=;
+        b=CntSlwy+2CwPDmM+89ZJNmfQz/tJjpp6z+1pS5km9BOW9IajVj3VpRrp48rSi3Zh73
+         WIbMB2jLDpsSKP21p5jp1Zz65nEj4xdjmZbDFYCKusmm39qHrpKHmYEdfQcWGj4RgnQp
+         I40rBBqFeZstHKkP/pwAo/Ce6i2JN6o6vbDJQxUqkUaWsh4En/bwll5diZPAUNfSzIyh
+         rONjHvfg9ininLaY0mu+XoXDFZuCYhxqYpIBwnNREcSBDic8cPpc57FEqVUrpS3w6oI5
+         puYXluUQWmfnZMjhcUuvlvJxxVcHV8jSAjimG+K8GM0S1+bmjDLVzfAbNIQ8+ZkSIyU+
+         +/SQ==
+X-Gm-Message-State: AOAM53003s1qpwO534a4YWU8SaQ2MzlLYxcfwXWGB+5ov8QVaiqEawKq
+        ld2kp4+SVFVAH8j2r6vqquyOqMrp5DTeiQ==
+X-Google-Smtp-Source: ABdhPJwBzTv/bSfcMTTjPl3RbfBy5JY0KZf+i3hKzVc/blLmEU44IQq/kRyZsQnQRLWoSJ4K13qucg==
+X-Received: by 2002:a2e:7a11:: with SMTP id v17mr18071884ljc.403.1617018097908;
+        Mon, 29 Mar 2021 04:41:37 -0700 (PDT)
 Received: from dc7vkhyh15000m40t6jht-3.rev.dnainternet.fi (dc7vkhyyyyyyyyyyyyyby-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::2])
-        by smtp.gmail.com with ESMTPSA id f20sm984843lfk.207.2021.03.29.04.41.00
+        by smtp.gmail.com with ESMTPSA id z13sm1809648lfh.144.2021.03.29.04.41.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Mar 2021 04:41:01 -0700 (PDT)
-Date:   Mon, 29 Mar 2021 14:40:55 +0300
+        Mon, 29 Mar 2021 04:41:37 -0700 (PDT)
+Date:   Mon, 29 Mar 2021 14:41:31 +0300
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -48,46 +49,41 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] gpiolib: misc fixups
-Message-ID: <cover.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH 2/2] gpiolib: Allow drivers to return EOPNOTSUPP from config
+Message-ID: <d2c8b7f9a3b420c2764f645da531a57db16905f3.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Patch 1/2:
-The deprecated and obsoleted - but still used (especially in older
-releases) /sys/class/gpio interface allows modifying GPIOs which are
-excluded by the "valid_mask". This makes the valid_mask not suitable for
-cases where toggling GPIO can cause damage. Patch adds validity
-check to export.
+The checkpacth instructs to switch from ENOSUPP to EOPNOTSUPP.
+> WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
 
-I assume many people are still using the /sys/class/gpio at least for
-testing purposes - especially with older releases. Thus it might be
-worth the hassle to exclude invalid GPIOs - they're probably set invalid
-for a good reason. (Actually, I noticed this when trying to use the
-valid_mask to invalidate undocumented GPO on BD71815 - which may be
-connected to GND. The people using BD71815 are likely to be using some
-stable-release, which probably supports the (deprected, obsolete) sysfs
-until the end of the days => valid_mask is not safe way unless fix to
-this is backported to stable).
+Make the gpiolib allow drivers to return both so driver developers
+can avoid one of the checkpatch complaints.
 
-Patch 2/2:
-checkpatch nowadays reminds us that ENOTSUPP is not valid error and
-should be replaced by EOPNOTSUPP. It'd be nice if GPIO drivers could
-return also the EOPNOTSUPP from config and avoid being nagged by
-checkpatch.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Matti Vaittinen (2):
-  gpio: sysfs: Obey valid_mask
-  gpiolib: Allow drivers to return EOPNOTSUPP from config
-
- drivers/gpio/gpiolib-sysfs.c | 8 ++++++++
- drivers/gpio/gpiolib.c       | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6367646dce83..60d61a6314b0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2134,7 +2134,7 @@ static int gpio_set_config_with_argument_optional(struct gpio_desc *desc,
+ 	int ret;
+ 
+ 	ret = gpio_set_config_with_argument(desc, mode, argument);
+-	if (ret != -ENOTSUPP)
++	if (ret != -ENOTSUPP && ret != -EOPNOTSUPP)
+ 		return ret;
+ 
+ 	switch (mode) {
 -- 
 2.25.4
 
