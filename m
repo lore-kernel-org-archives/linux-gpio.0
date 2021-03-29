@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FBC8C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3994C433E5
 	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 06:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E87D61477
+	by mail.kernel.org (Postfix) with ESMTP id DB9006196F
 	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 06:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230292AbhC2GvZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Mar 2021 02:51:25 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58203 "EHLO
+        id S230466AbhC2Gv1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Mar 2021 02:51:27 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58283 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230344AbhC2Guz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 02:50:55 -0400
-X-UUID: c73173cc492e4759a94f7ffe8fabfda5-20210329
-X-UUID: c73173cc492e4759a94f7ffe8fabfda5-20210329
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        with ESMTP id S230411AbhC2GvA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 02:51:00 -0400
+X-UUID: ca51aa794aa840bc8a5ec6eb0d7046f0-20210329
+X-UUID: ca51aa794aa840bc8a5ec6eb0d7046f0-20210329
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
         (envelope-from <zhiyong.tao@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1731230162; Mon, 29 Mar 2021 14:50:51 +0800
+        with ESMTP id 716296764; Mon, 29 Mar 2021 14:50:58 +0800
 Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 29 Mar 2021 14:50:50 +0800
+ mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 29 Mar 2021 14:50:56 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 29 Mar 2021 14:50:49 +0800
+ Transport; Mon, 29 Mar 2021 14:50:55 +0800
 From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
 To:     <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
         <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
@@ -44,10 +44,12 @@ CC:     <srv_heupstream@mediatek.com>, <zhiyong.tao@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-Subject: [PATCH 0/6] Mediatek pinctrl patch on mt8195 
-Date:   Mon, 29 Mar 2021 14:50:41 +0800
-Message-ID: <20210329065047.8388-1-zhiyong.tao@mediatek.com>
+Subject: [PATCH 5/6] pinctrl: add drive for I2C related pins on MT8195
+Date:   Mon, 29 Mar 2021 14:50:46 +0800
+Message-ID: <20210329065047.8388-6-zhiyong.tao@mediatek.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20210329065047.8388-1-zhiyong.tao@mediatek.com>
+References: <20210329065047.8388-1-zhiyong.tao@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -55,39 +57,111 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series includes 6 patches:
-1.add pinctrl file on mt8195.
-2.add pinctrl binding document on mt8195.
-3.add pinctrl device node on mt8195.
-4.add pinctrl driver on MT8195.
-5.add pinctrl drive for I2C related pins on MT8195.
-6.add pinctrl rsel setting on MT8195.
+This patch provides the advanced drive raw data setting version
+for I2C used pins on MT8195.
 
-Zhiyong Tao (6):
-  dt-bindings: pinctrl: mt8195: add pinctrl file
-  dt-bindings: pinctrl: mt8195: add binding document
-  arm64: dts: mt8195: add pinctrl device node
-  pinctrl: add pinctrl driver on mt8195
-  pinctrl: add drive for I2C related pins on MT8195
-  pinctrl: add rsel setting on MT8195
+Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt8195.c     | 22 +++++++++++++++++++
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 14 ++++++++++++
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  5 +++++
+ 3 files changed, 41 insertions(+)
 
- .../bindings/pinctrl/pinctrl-mt8195.yaml      |  152 ++
- arch/arm64/boot/dts/mediatek/mt8195.dtsi      |   21 +
- drivers/pinctrl/mediatek/Kconfig              |    6 +
- drivers/pinctrl/mediatek/Makefile             |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt8195.c     |  872 +++++++++
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |   29 +
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |   14 +
- drivers/pinctrl/mediatek/pinctrl-mtk-mt8195.h | 1669 +++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-paris.c      |   16 +
- include/dt-bindings/pinctrl/mt8195-pinfunc.h  |  961 ++++++++++
- 10 files changed, 3741 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8195.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8195.h
- create mode 100644 include/dt-bindings/pinctrl/mt8195-pinfunc.h
-
---
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8195.c b/drivers/pinctrl/mediatek/pinctrl-mt8195.c
+index 063f164d7c9b..a7500e18bb1d 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8195.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8195.c
+@@ -760,6 +760,25 @@ static const struct mtk_pin_field_calc mt8195_pin_drv_range[] = {
+ 	PIN_FIELD_BASE(143, 143, 1, 0x020, 0x10, 24, 3),
+ };
+ 
++static const struct mtk_pin_field_calc mt8195_pin_drv_adv_range[] = {
++	PIN_FIELD_BASE(8, 8, 4, 0x020, 0x10, 15, 3),
++	PIN_FIELD_BASE(9, 9, 4, 0x020, 0x10, 0, 3),
++	PIN_FIELD_BASE(10, 10, 4, 0x020, 0x10, 18, 3),
++	PIN_FIELD_BASE(11, 11, 4, 0x020, 0x10, 3, 3),
++	PIN_FIELD_BASE(12, 12, 4, 0x020, 0x10, 21, 3),
++	PIN_FIELD_BASE(13, 13, 4, 0x020, 0x10, 6, 3),
++	PIN_FIELD_BASE(14, 14, 4, 0x020, 0x10, 24, 3),
++	PIN_FIELD_BASE(15, 15, 4, 0x020, 0x10, 9, 3),
++	PIN_FIELD_BASE(16, 16, 4, 0x020, 0x10, 27, 3),
++	PIN_FIELD_BASE(17, 17, 4, 0x020, 0x10, 12, 3),
++	PIN_FIELD_BASE(29, 29, 2, 0x020, 0x10, 0, 3),
++	PIN_FIELD_BASE(30, 30, 2, 0x020, 0x10, 3, 3),
++	PIN_FIELD_BASE(34, 34, 1, 0x040, 0x10, 0, 3),
++	PIN_FIELD_BASE(35, 35, 1, 0x040, 0x10, 3, 3),
++	PIN_FIELD_BASE(44, 44, 1, 0x040, 0x10, 6, 3),
++	PIN_FIELD_BASE(45, 45, 1, 0x040, 0x10, 9, 3),
++};
++
+ static const struct mtk_pin_reg_calc mt8195_reg_cals[PINCTRL_PIN_REG_MAX] = {
+ 	[PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt8195_pin_mode_range),
+ 	[PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt8195_pin_dir_range),
+@@ -773,6 +792,7 @@ static const struct mtk_pin_reg_calc mt8195_reg_cals[PINCTRL_PIN_REG_MAX] = {
+ 	[PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt8195_pin_pupd_range),
+ 	[PINCTRL_PIN_REG_R0] = MTK_RANGE(mt8195_pin_r0_range),
+ 	[PINCTRL_PIN_REG_R1] = MTK_RANGE(mt8195_pin_r1_range),
++	[PINCTRL_PIN_REG_DRV_ADV] = MTK_RANGE(mt8195_pin_drv_adv_range),
+ };
+ 
+ static const char * const mt8195_pinctrl_register_base_names[] = {
+@@ -801,6 +821,8 @@ static const struct mtk_pin_soc mt8195_data = {
+ 	.bias_get_combo = mtk_pinconf_bias_get_combo,
+ 	.drive_set = mtk_pinconf_drive_set_rev1,
+ 	.drive_get = mtk_pinconf_drive_get_rev1,
++	.adv_drive_get = mtk_pinconf_adv_drive_get_raw,
++	.adv_drive_set = mtk_pinconf_adv_drive_set_raw,
+ };
+ 
+ static const struct of_device_id mt8195_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 72f17f26acd8..2b51f4a9b860 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -1027,6 +1027,20 @@ int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
+ }
+ EXPORT_SYMBOL_GPL(mtk_pinconf_adv_drive_get);
+ 
++int mtk_pinconf_adv_drive_set_raw(struct mtk_pinctrl *hw,
++				  const struct mtk_pin_desc *desc, u32 arg)
++{
++	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_ADV, arg);
++}
++EXPORT_SYMBOL_GPL(mtk_pinconf_adv_drive_set_raw);
++
++int mtk_pinconf_adv_drive_get_raw(struct mtk_pinctrl *hw,
++				  const struct mtk_pin_desc *desc, u32 *val)
++{
++	return mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_ADV, val);
++}
++EXPORT_SYMBOL_GPL(mtk_pinconf_adv_drive_get_raw);
++
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+ MODULE_DESCRIPTION("Pin configuration library module for mediatek SoCs");
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+index e2aae285b5fc..fd5ce9c5dcbd 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+@@ -66,6 +66,7 @@ enum {
+ 	PINCTRL_PIN_REG_DRV_EN,
+ 	PINCTRL_PIN_REG_DRV_E0,
+ 	PINCTRL_PIN_REG_DRV_E1,
++	PINCTRL_PIN_REG_DRV_ADV,
+ 	PINCTRL_PIN_REG_MAX,
+ };
+ 
+@@ -314,6 +315,10 @@ int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
+ 			      const struct mtk_pin_desc *desc, u32 arg);
+ int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
+ 			      const struct mtk_pin_desc *desc, u32 *val);
++int mtk_pinconf_adv_drive_set_raw(struct mtk_pinctrl *hw,
++				  const struct mtk_pin_desc *desc, u32 arg);
++int mtk_pinconf_adv_drive_get_raw(struct mtk_pinctrl *hw,
++				  const struct mtk_pin_desc *desc, u32 *val);
+ 
+ bool mtk_is_virt_gpio(struct mtk_pinctrl *hw, unsigned int gpio_n);
+ #endif /* __PINCTRL_MTK_COMMON_V2_H */
+-- 
 2.18.0
-
 
