@@ -2,293 +2,95 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC7EC433E1
-	for <linux-gpio@archiver.kernel.org>; Sun, 28 Mar 2021 18:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A238C433E1
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 00:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50D346196B
-	for <linux-gpio@archiver.kernel.org>; Sun, 28 Mar 2021 18:32:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0015C6195D
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 00:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbhC1Sbb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 28 Mar 2021 14:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40254 "EHLO
+        id S231633AbhC2AzJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 28 Mar 2021 20:55:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229950AbhC1SbN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Mar 2021 14:31:13 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B448C061756
-        for <linux-gpio@vger.kernel.org>; Sun, 28 Mar 2021 11:31:13 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id g15so10436180qkl.4
-        for <linux-gpio@vger.kernel.org>; Sun, 28 Mar 2021 11:31:13 -0700 (PDT)
+        with ESMTP id S229656AbhC2Ay7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Mar 2021 20:54:59 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40004C061574
+        for <linux-gpio@vger.kernel.org>; Sun, 28 Mar 2021 17:54:59 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id b16so12379503eds.7
+        for <linux-gpio@vger.kernel.org>; Sun, 28 Mar 2021 17:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5Q1MlGPc2yU9CGm4dEHwkWVivbKD4LZDpmBT9hFu1d4=;
-        b=aQnYao5F9f+pvECDkho0WhobE0ZTzBhAhX57qyhpjRpYM/0fNN+pHDGK0L5/VQLRj2
-         RG7x2rK29EbGr2Mp2BgPtQD38wYxFRcPiihr7ya8vV1SH4teXaYUSwEwS3pRBZhaaV9w
-         clBv2fxcu3Hh8H+LZVYfpMB3nOo7M8+moSehHDCCrZE4M8M9uON9jNE5SSBZbITUJmGm
-         cuaAanus7v6VBuoP3m5g/ErVaxkF9srQjVWbSBGiGQ4CZH5Mnc1aO7mfIVT3Br4N2sSg
-         Eyc9RsGuSrdw/HbU4Uz48yaDFDw1BiKty7J7c+ZeJsn9qLfz2F2bpfBailsVhns48uo8
-         0I5g==
+        d=pensando.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yVAc9b+mBnGmiPe0hQUBS5bq7gPTXTsIqeLgC0QKuYo=;
+        b=NoS1GIebv3iSWHAId4v66ODhmcXKQ/qQgeX+r/F705yNSzRoWkVkukYHE2U4SXzj7l
+         3idkz2/42j4ZbHW78CX53X7tItXmV94qnWB5OdZOyQnbEsoGPsYkSWpOSMDnWm16M77n
+         hxLk9rcJsK2WKGOofwpCR6fzZNHzRZZeic4Bas0Ki4nLhez/wE3QZpZS5gvML/zDm3gi
+         g9leOVIkOl3WZlwloo/rXhtFJIOSID1WTvNwZfezLQYLQIB7EwNVLn3S61HwpAQcPDRX
+         zaOUJcL6r/q364sBH0DBnzDGmlTYrO8r0TFMDJUmBAMxfPzwh2rVjOLSrojRZRucPjUH
+         TVZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5Q1MlGPc2yU9CGm4dEHwkWVivbKD4LZDpmBT9hFu1d4=;
-        b=l/8TdNYE4K2px3F3B0u6BamAFAMYTHN0vgIGCJptxauwBUtV1nv/JetEPTlzyugbRQ
-         sSU6rDy5MH+idmICczaC8mnT+EnLlA68jR7aAR17mTieDVGT10Zgq62td/Tc4HFagSn2
-         FxqomJS7i2sg5gRzz+762eA+fj8j3Y+v2BjuaF8PYdlVoI7s72vTCuuPrKrWBbdTcIAK
-         PIYR/fp8tqJsirK4XomsM5lweWj5W5x5kbR6VGgfIC5CeLm5g0Tb+hL2PvDzTazM14Iu
-         sJO3JXlTet3v0LsxI6WGlZn5kdsGagTo35flCFSV3Bv6+VEHp4P/RuMuUOrnUrZpKyWF
-         ME3w==
-X-Gm-Message-State: AOAM530JnkxYzaQ/nLApvi8ZR31V4esEEK3+MA9XINxxtXuyUVhuQOhB
-        6y0n1ao0vsPB9VyWEBG9cio=
-X-Google-Smtp-Source: ABdhPJxyaHXF0bYTWFDc1OogEU+jj3DLZ74bNkspx3I2rYrITnkv+E3gEnXTLIbJq1H7bMnND/oJYA==
-X-Received: by 2002:a37:638f:: with SMTP id x137mr21745067qkb.199.1616956272644;
-        Sun, 28 Mar 2021 11:31:12 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14c:482:919:7898:56c:200:f2a5])
-        by smtp.gmail.com with ESMTPSA id g186sm11831801qke.0.2021.03.28.11.31.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Mar 2021 11:31:11 -0700 (PDT)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     linus.walleij@linaro.org
-Cc:     linux-imx@nxp.com, linux-gpio@vger.kernel.org,
-        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH 1/2] pinctrl: imx: Remove unneeded of_match_ptr()
-Date:   Sun, 28 Mar 2021 15:30:33 -0300
-Message-Id: <20210328183034.555702-1-festevam@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yVAc9b+mBnGmiPe0hQUBS5bq7gPTXTsIqeLgC0QKuYo=;
+        b=t1s/Ty9W+10SE74YFU5d5Id3y4y7xCDIuY26gI57+y4kgfMyntq78JxWxuodKlAtxF
+         JeZdwL8Fl5SiBjAy8PIadkzBqgFQQDYdlxdSfU8mtdwPyogO5yKrjvukwoA2oWGHGiED
+         8+vSp/QBa28kwa75zvmpJRx7nuMYVR6HvQQ0E/Z1WfG4As2OYUANaRv3kQ5kpzt6kVTZ
+         2JByPj6z2dquUEjHTyb9QqhrDirJhT+Ytx12jOMVpNMFiEHzd6dwf51EHeu6r/VoezYe
+         /AuQhKMVvulUkfvbehsTy81gxr6t6ZQAYfFHis2qRFoxuixqhTocLpzTEPki6wDJCpPc
+         vdxg==
+X-Gm-Message-State: AOAM5308ZOO2IdKb4eLn6HMvidIIoGukvpgXJ4YA7UqT+D9uoT2Lw7l8
+        COFiRqZhPXXOe3r+e/EcDwjYtKOHUxZlhNsHsZ/9QA==
+X-Google-Smtp-Source: ABdhPJx+4A/Txkzyq838knHsu1E43Gon6mva2bR+kHkuk+1ju7bFnu+zuJhSeTQ6qkrvnEusq0RO4FBMrBSodVEvcoE=
+X-Received: by 2002:a05:6402:10c9:: with SMTP id p9mr26382778edu.268.1616979297849;
+ Sun, 28 Mar 2021 17:54:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210304034141.7062-1-brad@pensando.io> <20210304034141.7062-8-brad@pensando.io>
+ <CACRpkdZr8qrQ+b15z_zRP3wAntQeW7T0Z515sUv6e2gL9GzDyg@mail.gmail.com>
+In-Reply-To: <CACRpkdZr8qrQ+b15z_zRP3wAntQeW7T0Z515sUv6e2gL9GzDyg@mail.gmail.com>
+From:   Brad Larson <brad@pensando.io>
+Date:   Sun, 28 Mar 2021 17:54:47 -0700
+Message-ID: <CAK9rFnw6cM9UsNoD1-37JfM0n2h6fATSTZYqAP0DBhwwigqBzA@mail.gmail.com>
+Subject: Re: [PATCH 7/8] arm64: dts: Add Pensando Elba SoC support
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Olof Johansson <olof@lixom.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-i.MX is a DT-only platform, so of_match_ptr() can be safely
-removed.
+On Thu, Mar 4, 2021 at 12:52 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Thu, Mar 4, 2021 at 4:42 AM Brad Larson <brad@pensando.io> wrote:
+>
+> > Add Pensando common and Elba SoC specific device nodes
+> > and corresponding binding documentation.
+> >
+> > Signed-off-by: Brad Larson <brad@pensando.io>
+> (...)
+> >  .../bindings/gpio/pensando,elba-spics.txt     |  24 ++
+>
+> Please use YAML schema for this.
 
-Remove the unneeded of_match_ptr().
-
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
----
- drivers/pinctrl/freescale/pinctrl-imx25.c   | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx27.c   | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx50.c   | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx6sll.c | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx6sx.c  | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx6ul.c  | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx7d.c   | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8dxl.c | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8mm.c  | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8mn.c  | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8mp.c  | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8mq.c  | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8qm.c  | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8qxp.c | 2 +-
- 15 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx25.c b/drivers/pinctrl/freescale/pinctrl-imx25.c
-index a899a398b6bb..d7acd532ca8c 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx25.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx25.c
-@@ -323,7 +323,7 @@ static int imx25_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx25_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx25-pinctrl",
--		.of_match_table = of_match_ptr(imx25_pinctrl_of_match),
-+		.of_match_table = imx25_pinctrl_of_match,
- 	},
- 	.probe = imx25_pinctrl_probe,
- };
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx27.c b/drivers/pinctrl/freescale/pinctrl-imx27.c
-index b4dfc1676cbc..e87e7798e89d 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx27.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx27.c
-@@ -396,7 +396,7 @@ static int imx27_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx27_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx27-pinctrl",
--		.of_match_table = of_match_ptr(imx27_pinctrl_of_match),
-+		.of_match_table = imx27_pinctrl_of_match,
- 	},
- 	.probe = imx27_pinctrl_probe,
- };
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx50.c b/drivers/pinctrl/freescale/pinctrl-imx50.c
-index cf182c040e0b..7069a2fcd10a 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx50.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx50.c
-@@ -399,7 +399,7 @@ static int imx50_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx50_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx50-pinctrl",
--		.of_match_table = of_match_ptr(imx50_pinctrl_of_match),
-+		.of_match_table = imx50_pinctrl_of_match,
- 	},
- 	.probe = imx50_pinctrl_probe,
- };
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx6sll.c b/drivers/pinctrl/freescale/pinctrl-imx6sll.c
-index 0618f4d887fd..dfefcecbe072 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx6sll.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx6sll.c
-@@ -345,7 +345,7 @@ static int imx6sll_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx6sll_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx6sll-pinctrl",
--		.of_match_table = of_match_ptr(imx6sll_pinctrl_of_match),
-+		.of_match_table = imx6sll_pinctrl_of_match,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx6sll_pinctrl_probe,
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx6sx.c b/drivers/pinctrl/freescale/pinctrl-imx6sx.c
-index c7e2b1f94f01..594185745029 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx6sx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx6sx.c
-@@ -382,7 +382,7 @@ static int imx6sx_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx6sx_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx6sx-pinctrl",
--		.of_match_table = of_match_ptr(imx6sx_pinctrl_of_match),
-+		.of_match_table = imx6sx_pinctrl_of_match,
- 	},
- 	.probe = imx6sx_pinctrl_probe,
- };
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx6ul.c b/drivers/pinctrl/freescale/pinctrl-imx6ul.c
-index 7e37627c63f5..3c62bb38e551 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx6ul.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx6ul.c
-@@ -342,7 +342,7 @@ static int imx6ul_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx6ul_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx6ul-pinctrl",
--		.of_match_table = of_match_ptr(imx6ul_pinctrl_of_match),
-+		.of_match_table = imx6ul_pinctrl_of_match,
- 	},
- 	.probe = imx6ul_pinctrl_probe,
- };
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx7d.c b/drivers/pinctrl/freescale/pinctrl-imx7d.c
-index 369d3e59fdd6..38cbad3dba3a 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx7d.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx7d.c
-@@ -386,7 +386,7 @@ static int imx7d_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx7d_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx7d-pinctrl",
--		.of_match_table = of_match_ptr(imx7d_pinctrl_of_match),
-+		.of_match_table = imx7d_pinctrl_of_match,
- 	},
- 	.probe = imx7d_pinctrl_probe,
- };
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-index 922ff73c7087..1915378d92b2 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-@@ -303,7 +303,7 @@ static int imx7ulp_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx7ulp_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx7ulp-pinctrl",
--		.of_match_table = of_match_ptr(imx7ulp_pinctrl_of_match),
-+		.of_match_table = imx7ulp_pinctrl_of_match,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx7ulp_pinctrl_probe,
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8dxl.c b/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
-index d3020c0cd55d..041455c13d0d 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
-@@ -184,7 +184,7 @@ static int imx8dxl_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx8dxl_pinctrl_driver = {
- 	.driver = {
- 		.name = "fsl,imx8dxl-iomuxc",
--		.of_match_table = of_match_ptr(imx8dxl_pinctrl_of_match),
-+		.of_match_table = imx8dxl_pinctrl_of_match,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx8dxl_pinctrl_probe,
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mm.c b/drivers/pinctrl/freescale/pinctrl-imx8mm.c
-index 31c5d8861406..39dc73281ce6 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8mm.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mm.c
-@@ -337,7 +337,7 @@ static int imx8mm_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx8mm_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx8mm-pinctrl",
--		.of_match_table = of_match_ptr(imx8mm_pinctrl_of_match),
-+		.of_match_table = imx8mm_pinctrl_of_match,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx8mm_pinctrl_probe,
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mn.c b/drivers/pinctrl/freescale/pinctrl-imx8mn.c
-index 14c9deb51fec..448a79eb4568 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8mn.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mn.c
-@@ -337,7 +337,7 @@ static int imx8mn_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx8mn_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx8mn-pinctrl",
--		.of_match_table = of_match_ptr(imx8mn_pinctrl_of_match),
-+		.of_match_table = imx8mn_pinctrl_of_match,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx8mn_pinctrl_probe,
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mp.c b/drivers/pinctrl/freescale/pinctrl-imx8mp.c
-index bf4bbb5e2446..0cacf5ba162c 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8mp.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mp.c
-@@ -335,7 +335,7 @@ static int imx8mp_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx8mp_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx8mp-pinctrl",
--		.of_match_table = of_match_ptr(imx8mp_pinctrl_of_match),
-+		.of_match_table = imx8mp_pinctrl_of_match,
- 	},
- 	.probe = imx8mp_pinctrl_probe,
- };
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mq.c b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-index ae3ea5b5c204..3ed3c98bcedb 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-@@ -340,7 +340,7 @@ static int imx8mq_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx8mq_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx8mq-pinctrl",
--		.of_match_table = of_match_ptr(imx8mq_pinctrl_of_match),
-+		.of_match_table = imx8mq_pinctrl_of_match,
- 		.pm = &imx_pinctrl_pm_ops,
- 		.suppress_bind_attrs = true,
- 	},
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8qm.c b/drivers/pinctrl/freescale/pinctrl-imx8qm.c
-index 8f46b9404cd7..2e2d30dc13f7 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8qm.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8qm.c
-@@ -317,7 +317,7 @@ static int imx8qm_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx8qm_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx8qm-pinctrl",
--		.of_match_table = of_match_ptr(imx8qm_pinctrl_of_match),
-+		.of_match_table = imx8qm_pinctrl_of_match,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx8qm_pinctrl_probe,
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8qxp.c b/drivers/pinctrl/freescale/pinctrl-imx8qxp.c
-index 6776ad6a3a27..4f97813ba8b7 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8qxp.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8qxp.c
-@@ -223,7 +223,7 @@ static int imx8qxp_pinctrl_probe(struct platform_device *pdev)
- static struct platform_driver imx8qxp_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx8qxp-pinctrl",
--		.of_match_table = of_match_ptr(imx8qxp_pinctrl_of_match),
-+		.of_match_table = imx8qxp_pinctrl_of_match,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx8qxp_pinctrl_probe,
--- 
-2.25.1
-
+In patchset v2 changed to YAML schema and passed dt_binding_check and
+dtbs_check.
