@@ -2,104 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC113C433DB
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267DEC433C1
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86D156193A
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE5CC6193A
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbhC2Lfk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Mar 2021 07:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35536 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbhC2LfX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 07:35:23 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72808C061574;
-        Mon, 29 Mar 2021 04:35:20 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id q6-20020a17090a4306b02900c42a012202so5764998pjg.5;
-        Mon, 29 Mar 2021 04:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Umme6mEPlLLIx55BS0/fsIeUWDF0jAkw4yGXSPzrUwc=;
-        b=brFXGjZHymZcp686J9d/6p2f8IT65PLY2NBImZxpbx5+mGPhPaKBwL+hAGI1XLqNWU
-         nB3ac5y5ej+oc5dRA8Y0pIj6Ywpcib2ECoDJLC2AC7wvbvYdBNIXejmAQWr6M9vEYGlm
-         XGemkv431JO08H5OPHM0pLE4OaLfs4vS+eaG3jYmizQU6Ek/eqe2fZMMPClEtpODUkxU
-         ff8NLv9S+KzN+vVr8CMFY1AUwPHgth2vrZrwzcWkfiGTWmzyq3LduA5Vj+v22rldOWtm
-         kZ2wm+it+9TY5ZZQqvWTiplmGjslQJu+WC6YXdO6sU+tlVwqHnkzGskt96p21B1W61QQ
-         Nq0g==
+        id S230297AbhC2Llc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Mar 2021 07:41:32 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:43663 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230167AbhC2LlT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Mar 2021 07:41:19 -0400
+Received: by mail-lj1-f177.google.com with SMTP id y1so15499884ljm.10;
+        Mon, 29 Mar 2021 04:41:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Umme6mEPlLLIx55BS0/fsIeUWDF0jAkw4yGXSPzrUwc=;
-        b=qgk64eJ5q91nAWLct1CvRHjnemipstaK6m2eCxt/b/CyoSgfkJgEzRfR3LkEEyUdAr
-         m7n5FKydlVvaIBTWWtH77W1n4ROiQyH1Kiv/Gd2fCYpIKvR7llcbJXu3yqZr06AXXFJp
-         APeTTyLz6H5kz9AmyWDde5uBK1h3D/9BLuKveSgO6DSTVOEkLVC1YAKs/70CMilwe5Sg
-         GHkgSR3N83qxHo87U7sN4TSSKo+Hz5R0yYpMvGbXJrGbqsxuF+uXnpdM5hOL2QuVXao/
-         HDqjzcszTM3ilIiRQEMhDU+bvUcoCYaoWBz2ORP1kQHvTvnRe2YsdNauWA3LGdYBiMq+
-         8t2Q==
-X-Gm-Message-State: AOAM530bmUsJKY7Y4qPEBjgUmQwgEkIqASbP2pyvKbt7mFRLjoGXqltp
-        e2zjVf4lBVKO35+ERxnFN/kTMuZGQ2AUJ0Gj33M=
-X-Google-Smtp-Source: ABdhPJw9Z3cD04cZW1D9XRH2rAhuFWVzadwm4hfCMZEGCTzN1BM+n77RrvvFbcEELGixncXb6MLAn2pEtP2QhPhPYic=
-X-Received: by 2002:a17:902:ee02:b029:e6:5397:d79c with SMTP id
- z2-20020a170902ee02b02900e65397d79cmr28359551plb.21.1617017720012; Mon, 29
- Mar 2021 04:35:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DuIPGQD/Ekez1kZGizx8nUHGdnGihW0Vg6tpYb7UMwo=;
+        b=VPzBPUx7KDFXskAY00NBANEq8upHAdqZ/4WKh+FyE0gVY/jMfFWfpteSjKuRdsl7Tz
+         P6ChX6/Mej3hnVUEQyHl083RbUm4dEP0OtIWt9/fx/WCHAeW2zBmtxMA2eGIq1DQ5rx+
+         D/g9g4maBEOYgGxgcZChKeu0PkuzVXJEMNm0Ce4AmQTx2YRtK/uRf9wdl/67z6cXxJ3Q
+         6nR2oxziUFUi/ohDWK9D2mXLU/oGHpxPKVyMHtzxFkIHoUnQbTiTACCAUcq9ICZZGKYV
+         EYy+/SV6UHJ4crEj0Va6GG7jA/N0NUx9peeiYddUna4Z8u2xg3P3NAOKx/ioIxaESqIn
+         2QjA==
+X-Gm-Message-State: AOAM531byC+pWX7xqdUZk04du2mtjafrJVYp+nYkK2NUN20elyu9PTy3
+        8I6W5T7evbIxx5Pb/MA02+c=
+X-Google-Smtp-Source: ABdhPJztmsJn5FM5DJhB6xLbYoR5N8QZv5nTi1FeSCIXoCdE822eOg8zpr2IRdVEQNIULt/Y8cu/Ww==
+X-Received: by 2002:a2e:9715:: with SMTP id r21mr17870769lji.224.1617018078135;
+        Mon, 29 Mar 2021 04:41:18 -0700 (PDT)
+Received: from dc7vkhyh15000m40t6jht-3.rev.dnainternet.fi (dc7vkhyyyyyyyyyyyyyby-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::2])
+        by smtp.gmail.com with ESMTPSA id a17sm1748598lfr.204.2021.03.29.04.41.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Mar 2021 04:41:17 -0700 (PDT)
+Date:   Mon, 29 Mar 2021 14:41:12 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] gpio: sysfs: Obey valid_mask
+Message-ID: <d1ec9f4cb6dd9afcfbeecfa717e863d75e18133b.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20210329113103.11003-1-zhiyong.tao@mediatek.com>
-In-Reply-To: <20210329113103.11003-1-zhiyong.tao@mediatek.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 29 Mar 2021 14:35:04 +0300
-Message-ID: <CAHp75Vc7x=VoNqQKXOyxhkixR3SivQn3yGkejTkZ8bO0Tv6bDA@mail.gmail.com>
-Subject: Re: [PATCH Resend v0 0/6] Mediatek pinctrl patch on mt8195
-To:     Zhiyong Tao <zhiyong.tao@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        sean.wang@kernel.org, srv_heupstream <srv_heupstream@mediatek.com>,
-        hui.liu@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>,
-        jg_poxu@mediatek.com, biao.huang@mediatek.com,
-        hongzhou.yang@mediatek.com, erin.lo@mediatek.com,
-        Sean Wang <sean.wang@mediatek.com>, seiya.wang@mediatek.com,
-        Sj Huang <sj.huang@mediatek.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 2:32 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
->
-> This series includes 6 patches:
-> 1.add pinctrl file on mt8195.
-> 2.add pinctrl binding document on mt8195.
-> 3.add pinctrl device node on mt8195.
-> 4.add pinctrl driver on MT8195.
-> 5.add pinctrl drive for I2C related pins on MT8195.
-> 6.add pinctrl rsel setting on MT8195.
+Do not allow exporting GPIOs which are set invalid
+by the driver's valid mask.
 
-Patch series w/o version is de facto v1.
-Dropping to v0 seems not right.
-You missed changelog.
+Fixes: 726cb3ba49692bdae6caff457755e7cdb432efa4
 
-So, send v2 properly.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/gpio/gpiolib-sysfs.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Material to study:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 26c5466b8179..ae49bb23c6ed 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -458,6 +458,8 @@ static ssize_t export_store(struct class *class,
+ 	long			gpio;
+ 	struct gpio_desc	*desc;
+ 	int			status;
++	struct gpio_chip	*gc;
++	int			offset;
+ 
+ 	status = kstrtol(buf, 0, &gpio);
+ 	if (status < 0)
+@@ -469,6 +471,12 @@ static ssize_t export_store(struct class *class,
+ 		pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+ 		return -EINVAL;
+ 	}
++	gc = desc->gdev->chip;
++	offset = gpio_chip_hwgpio(desc);
++	if (!gpiochip_line_is_valid(gc, offset)) {
++		pr_warn("%s: GPIO %ld masked\n", __func__, gpio);
++		return -EINVAL;
++	}
+ 
+ 	/* No extra locking here; FLAG_SYSFS just signifies that the
+ 	 * request and export were done by on behalf of userspace, so
+-- 
+2.25.4
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
