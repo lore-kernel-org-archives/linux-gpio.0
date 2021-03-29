@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EDAC433E9
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11617C433EB
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCDED6195B
+	by mail.kernel.org (Postfix) with ESMTP id F1D8A6195B
 	for <linux-gpio@archiver.kernel.org>; Mon, 29 Mar 2021 11:18:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232165AbhC2LRb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S232183AbhC2LRb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 29 Mar 2021 07:17:31 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:55178 "EHLO mail.thorsis.com"
+Received: from mail.thorsis.com ([92.198.35.195]:55194 "EHLO mail.thorsis.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232048AbhC2LRW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 29 Mar 2021 07:17:22 -0400
+        id S232053AbhC2LRY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 29 Mar 2021 07:17:24 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id B345935AD;
-        Mon, 29 Mar 2021 13:17:20 +0200 (CEST)
+        by mail.thorsis.com (Postfix) with ESMTP id CD1AE35AD;
+        Mon, 29 Mar 2021 13:17:22 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
 Received: from mail.thorsis.com ([127.0.0.1])
         by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 333pmk5DOojx; Mon, 29 Mar 2021 13:17:20 +0200 (CEST)
+        with ESMTP id Db6Qi0dBYn4c; Mon, 29 Mar 2021 13:17:22 +0200 (CEST)
 Received: by mail.thorsis.com (Postfix, from userid 109)
-        id 83F6E3585; Mon, 29 Mar 2021 13:17:20 +0200 (CEST)
+        id A3ABC35D7; Mon, 29 Mar 2021 13:17:22 +0200 (CEST)
 From:   Alexander Dahl <ada@thorsis.com>
 To:     linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Alexander Dahl <ada@thorsis.com>
-Subject: [PATCH 2/3] docs: kernel-parameters: Move gpio-mockup for alphabetic order
-Date:   Mon, 29 Mar 2021 13:16:47 +0200
-Message-Id: <20210329111648.7969-3-ada@thorsis.com>
+Subject: [PATCH 3/3] docs: kernel-parameters: Add gpio_mockup_named_lines
+Date:   Mon, 29 Mar 2021 13:16:48 +0200
+Message-Id: <20210329111648.7969-4-ada@thorsis.com>
 In-Reply-To: <20210329111648.7969-1-ada@thorsis.com>
 References: <20210329111648.7969-1-ada@thorsis.com>
 Content-Transfer-Encoding: 8bit
@@ -45,38 +45,27 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fixes: commit 0f98dd1b27d2 ("gpio/mockup: add virtual gpio device")
+Missing since introduced in the driver.
+
+Fixes: commit 8a68ea00a62e ("gpio: mockup: implement naming the lines")
 Signed-off-by: Alexander Dahl <ada@thorsis.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 04545725f187..782dc6d9b7fb 100644
+index 782dc6d9b7fb..4b12f944ca44 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1461,6 +1461,10 @@
- 			Don't use this when you are not running on the
- 			android emulator
+@@ -1464,6 +1464,8 @@
+ 	gpio-mockup.gpio_mockup_ranges
+ 			[HW] Sets the ranges of gpiochip of for this device.
+ 			Format: <start1>,<end1>,<start2>,<end2>...
++	gpio-mockup.gpio_mockup_named_lines
++			[HW] Let the driver know GPIO lines should be named.
  
-+	gpio-mockup.gpio_mockup_ranges
-+			[HW] Sets the ranges of gpiochip of for this device.
-+			Format: <start1>,<end1>,<start2>,<end2>...
-+
  	gpt		[EFI] Forces disk with valid GPT signature but
  			invalid Protective MBR to be treated as GPT. If the
- 			primary GPT is corrupted, it enables the backup/alternate
-@@ -1484,10 +1488,6 @@
- 			Format: <unsigned int> such that (rxsize & ~0x1fffc0) == 0.
- 			Default: 1024
- 
--	gpio-mockup.gpio_mockup_ranges
--			[HW] Sets the ranges of gpiochip of for this device.
--			Format: <start1>,<end1>,<start2>,<end2>...
--
- 	hardlockup_all_cpu_backtrace=
- 			[KNL] Should the hard-lockup detector generate
- 			backtraces on all cpus.
 -- 
 2.20.1
 
