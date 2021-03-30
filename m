@@ -2,118 +2,142 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CCDC433E4
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 17:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0D9C433C1
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 18:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB0B9619D1
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 17:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEAF2619CA
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 18:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231979AbhC3Rt2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Mar 2021 13:49:28 -0400
-Received: from polaris.svanheule.net ([84.16.241.116]:49804 "EHLO
-        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232450AbhC3RtE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Mar 2021 13:49:04 -0400
-Received: from terra.local.svanheule.net (47.118-244-81.adsl-dyn.isp.belgacom.be [81.244.118.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 638021E7EA0;
-        Tue, 30 Mar 2021 19:48:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1617126537;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nCFGQouq1/RHGcmybWwvVFLi0aJCyfwl4mdLTH6VcuI=;
-        b=KYX0qnZpNcuMZqAegQ7XvtrXLfVIa7L3FDUxaqVq41ZZGvZ4sMLwOvNMnikTiMZxKO/lIR
-        qCmX7GvRGZ7TE7ljUoxu2jVIx+e1utteWPMLIuvj9nF3/s6EG24Nb1HGhsvKrh+GQYB1DK
-        u2rGxCHymbSwA1c194tOrr4hMztCAkNdWQY+b1GyqaxMx7fHRKmNwIMHbmTymCj6w3iEvs
-        9vPDbA3IBTJboD0nzCSwvmtJUai4l8JXxvxf0WSUkGIz3fkvHakP9dtELGf9EXb/LxHoQ5
-        1t4PvtCAXsEN17OKUKV6Qt5j1D4GFmYPqWVZhsvwOwyedmhrrmokbhNiBsxxNQ==
-From:   Sander Vanheule <sander@svanheule.net>
-To:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     andy.shevchenko@gmail.com, bert@biot.com,
-        bgolaszewski@baylibre.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, maz@kernel.org, robh+dt@kernel.org,
-        Sander Vanheule <sander@svanheule.net>
-Subject: [PATCH v6 0/2] Add Realtek Otto GPIO support
-Date:   Tue, 30 Mar 2021 19:48:41 +0200
-Message-Id: <cover.1617126277.git.sander@svanheule.net>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210315082339.9787-1-sander@svanheule.net>
-References: <20210315082339.9787-1-sander@svanheule.net>
+        id S232789AbhC3STF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Mar 2021 14:19:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232782AbhC3SSr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Mar 2021 14:18:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C918C061574;
+        Tue, 30 Mar 2021 11:18:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=KxGoy1weYbtqCANsJUAKQtRWb25OeKHfyfClNVXIBaM=; b=gbPTeAjgahdLzSFS7IrPEdFOWG
+        +5DgazEYkC/GgEruOlW/Hbb6e82wb0caoCT3AxFssyjF98qFWKiaqxManyYPM2dKrDpGWwNxXO/Qk
+        hUjY20ZPidsEh1h3xJL5VsWkBeAgdcJoLnUusm3Q+FPeBbgkxbhnJ5ZFeFzZk3F9VbCA9qEsXUIo8
+        R+dYBRK3ldbTMRybAOrQoddsWb16bNbRBLbS9oVSc/rrL0Sq50GzzFjCT1HoN7lozeociZMGq5RrK
+        BiP/fYKQm0k6Hysxd/+KyJ6TavmJD53Iu+Xo41pytJEKdM4C+DvlknOTYKP8iMrskljP3gDJibM1L
+        e/fz6THQ==;
+Received: from [2601:1c0:6280:3f0::4557]
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lRIwc-003QJf-5Y; Tue, 30 Mar 2021 18:18:35 +0000
+Subject: Re: [PATCH RFC/RFT 1/1] misc: add simple logic analyzer using polling
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20210330085655.12615-1-wsa+renesas@sang-engineering.com>
+ <20210330085655.12615-2-wsa+renesas@sang-engineering.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c74ddbd9-900a-0817-4c16-86f7cf9d96cc@infradead.org>
+Date:   Tue, 30 Mar 2021 11:18:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210330085655.12615-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for the GPIO controller employed by Realtek in multiple series of
-MIPS SoCs. These include the supported RTL838x and RTL839x. The register layout
-also matches the one found in the GPIO controller of other (Lexra-based) SoCs
-such as RTL8196E, RTL8197D, and RTL8197F.
+Hi--
 
-For the platform name 'otto', I am not aware of any official resources as to
-what hardware this specifically applies to. However, in all of the GPL archives
-we've received, from vendors using compatible SoCs in their design, the
-platform under the MIPS architecture is referred to by this name.
+On 3/30/21 1:56 AM, Wolfram Sang wrote:
+> diff --git a/Documentation/dev-tools/gpio-logic-analyzer.rst b/Documentation/dev-tools/gpio-logic-analyzer.rst
+> new file mode 100644
+> index 000000000000..2847260736d4
+> --- /dev/null
+> +++ b/Documentation/dev-tools/gpio-logic-analyzer.rst
+> @@ -0,0 +1,63 @@
+> +Linux Kernel GPIO based logic analyzer
+> +======================================
+> +
+> +:Author: Wolfram Sang
+> +
+> +Introduction
+> +------------
+> +
+> +This document briefly describes how to run the software based in-kernel logic
+> +analyzer.
+> +
+> +Note that this is still a last resort analyzer which can be affected by
+> +latencies and non-determinant code paths. However, for e.g. remote development,
+> +it may be useful to get a first view and aid further debugging.
+> +
+> +Setup
+> +-----
+> +
+> +Tell the kernel which GPIOs are used as probes. For a DT based system:
+> +
+> +    i2c-analyzer {
+> +            compatible = "gpio-logic-analyzer";
+> +            probe-gpios = <&gpio6 21 GPIO_OPEN_DRAIN>, <&gpio6 4 GPIO_OPEN_DRAIN>;
+> +            probe-names = "SCL", "SDA";
+> +    };
+> +
+> +The binding documentation is in the ``misc`` folder of the Kernel binding
+> +documentation.
+> +
+> +Usage
+> +-----
+> +
+> +The logic analyzer is configurable via files in debugfs. However, it is
+> +strongly recommended to not use them directly, but to to use the
+> +``gpio-logic-analyzer`` script in the ``tools/debugging`` directory. Besides
+> +checking parameters more extensively, it will isolate a CPU core for you, so
+> +you will have least disturbance while measuring.
+> +
+> +The script has a help option explaining the parameters. For the above DT
+> +snipplet which analyzes an I2C bus at 400KHz on a Renesas Salvator-XS board,
 
-The GPIO ports have been tested on a Zyxel GS1900-8 (RTL8380), and Zyxel
-GS1900-48 (RTL8393). Furthermore, the GPIO ports and interrupt controller have
-been tested on a Netgear GS110TPPv1 (RTL8381).
+   snippet
 
-Changes in v6:
-- Use devm_gpiochip_add_data()
-- Code style for reading ngpios, header order
-- Add Andy's Reviewed-by tag
+> +the following settings are used: The isolated CPU shall be CPU1 because it is a
+> +big core in a big.LITTLE setup. Because CPU1 is the default, we don't need a
+> +parameter. The bus speed is 400kHz. So, the sampling theorem says we need to
+> +sample at least at 800kHz. However, falling of both, SDA and SCL, in a start
 
-Changes in v5:
-- Edited code comments
-- Fold functions that were used only once or twice (ISR/IMR accessors)
-- Drop trivial functions for line to port/pin calculations
-- Use gpio_irq_chip->init_hw() to initialise IRQ registers
-- Invert GPIO_INTERRUPTS flag to GPIO_INTERRUPTS_DISABLED
-- Support building as module
-- Add Rob's Reviewed-by tag
+Is "falling" like a falling edge of a signal?
+If not, then I think "failing" would make more sense.
+Even "failing both".
 
-Changes in v4:
-- Fix pointer notation style
-- Drop unused read_u16_reg() function
-- Drop 'inline' specifier from functions
+> +condition is faster, so we need a higher sampling frequency, e.g. ``-s
+> +1500000`` for 1.5MHz. Also, we don't want to sample right away but wait for a
+> +start condition on an idle bus. So, we need to set a trigger to a falling edge
+> +on SDA, i.e. ``-t "2F"``. Last is the duration, let us assume 15ms here which
+> +results in the parameter ``-d 15000``. So, altogether:
+> +
+> +    gpio-logic-analyzer -s 1500000 -t "2F" -d 15000
+> +
+> +Note that the process will return you back to the prompt but a sub-process is
+> +still sampling in the background. Unless this finished, you will not find a
+> +result file in the current or specified directory. Please also note that
+> +currently this sub-process is not killable! For the above example, we will then
+> +need to trigger I2C communication:
+> +
+> +    i2cdetect -y -r <your bus number>
+> +
+> +Result is a .sr file to be consumed with PulseView from the free Sigrok project. It is
+> +a zip file which also contains the binary sample data which may be consumed by others.
+> +The filename is the logic analyzer instance name plus a since-epoch timestamp.
 
-Changes in v3:
-- Remove OF dependencies in driver probe
-- Don't accept IRQ_TYPE_NONE as a valid interrupt type
-- Remove (now unused) dev property from control structure
-- Use u8/u16 port registers, instead of raw u32 registers
-- Use 'line' name for gpiochip, 'port' and 'pin' names for hardware
-- Renamed DT bindings file
-- Dropped fallback-only DT compatible
-- Various code style clean-ups
 
-Changes in v2:
-- Clarify structure and usage of IMR registers
-- Added Linus' Reviewed-by tags
-
-Sander Vanheule (2):
-  dt-bindings: gpio: Binding for Realtek Otto GPIO
-  gpio: Add Realtek Otto GPIO support
-
- .../bindings/gpio/realtek,otto-gpio.yaml      |  78 +++++
- drivers/gpio/Kconfig                          |  13 +
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-realtek-otto.c              | 325 ++++++++++++++++++
- 4 files changed, 417 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
- create mode 100644 drivers/gpio/gpio-realtek-otto.c
-
+thanks.
 -- 
-2.30.2
+~Randy
 
