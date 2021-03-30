@@ -2,113 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A86DC433C1
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8543CC433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA74B61983
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D1426198A
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbhC3IdE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Mar 2021 04:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231511AbhC3Ic6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Mar 2021 04:32:58 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B41C061762;
-        Tue, 30 Mar 2021 01:32:57 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id v4so15325034wrp.13;
-        Tue, 30 Mar 2021 01:32:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ab+TCkydtH+tYtbFjC0Gk4G/1CHDXmMcZaDxCNSx3+M=;
-        b=SafZ5eEsbY70iFtlqxXZa58vTR/+NvL+Nf9K9PxnVfgInKDPCkZR36BEiNID/OZP9W
-         sc7HCBwcJLjC1tamX+2zYoJx2f0Qdj60uAEq/sklW8Uiva9V8v1pThtwfbaIPxpe9DLy
-         bL61RW7COC+NvHDHkPgCRc4xCgyuqqbWKNSjVemW/gdpMxz2Lnhy6JLZiJxQm9m38WOA
-         O5q77dnzdUhtPFv0R4cuJkNhGZA66FixxFt27jQdEDhCJVv/Ib9ILAO/BjGYlkUhi4Nq
-         dpWNNdNg7R42W7fzron2ShDd30XTHfoW/eHt+gMR1mSJoo13XkEqsou0ngU7CNwcYgiB
-         inLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ab+TCkydtH+tYtbFjC0Gk4G/1CHDXmMcZaDxCNSx3+M=;
-        b=L555E+BIN42oEgXfzCj7zouCZlVs/BWSrrD0j5dx6kg977+sn/jqbZ76+wKkcpQPOi
-         K6x3VHsvFO+CDJtG3k7Ih7kIL261e4fitygGu/VkRHmmmaqFdGUEb2doLiGvxRjr6WAu
-         VTsb9Zt1fl6BwT6EAAb6qcCa6CsFUr/KQu5XDePEGsnf5C4lceVySLwk9QsFKjEQ+JBP
-         a/OlKh9u6tS2DOtYNbkd0+gZOpv9rQVS6BBBScv4pBJS7CEsWOFJkdeEch2mLiUhoGmF
-         tIrIgeZbh7CR5Bxdm+0aflCK/Q7Lxbgx9XK51EduoGPqVb06ucc9R44ah4x6CNqfSYG+
-         ESqg==
-X-Gm-Message-State: AOAM532mHgsA/dmWbv9TfwmewQaNFiS5A1BTAfCgRyShMKjiMsDcrP1h
-        lXP1fLiP/Rcs+RHF1HycqFs=
-X-Google-Smtp-Source: ABdhPJzx0Gr4USoUjxnh3dPlspVL89OYegdD5GoHzw2ugBjU9R+v4x+ApjGgfzeTUAp1HAKQhQYWOw==
-X-Received: by 2002:a5d:6152:: with SMTP id y18mr32874295wrt.255.1617093176335;
-        Tue, 30 Mar 2021 01:32:56 -0700 (PDT)
-Received: from skynet.lan (176.red-79-148-190.dynamicip.rima-tde.net. [79.148.190.176])
-        by smtp.gmail.com with ESMTPSA id t14sm34013690wru.64.2021.03.30.01.32.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Mar 2021 01:32:55 -0700 (PDT)
-From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-To:     sfr@canb.auug.org.au, Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>, Jonas Gorski <jonas.gorski@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: bcm: bcm6362: fix warning
-Date:   Tue, 30 Mar 2021 10:32:54 +0200
-Message-Id: <20210330083254.15817-1-noltari@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S230224AbhC3IkH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Mar 2021 04:40:07 -0400
+Received: from m12-12.163.com ([220.181.12.12]:34731 "EHLO m12-12.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231481AbhC3Ijq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 30 Mar 2021 04:39:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=8yDcz
+        dMrd5NinK+fgDO57txeiD55po9jM0BzukzBidc=; b=mTheZg7eMK1V+KWlOP4yr
+        wpOFHY/N2mem6wV1ZjwxwCsk5w9QzO21UKzHH1qaNA4K2GZ/p4J8rTnDqfyE8NdT
+        nqVfE26foccq442LlT1TqagZP63381Qp4dkrg9Kp+vVc/CQqnhvcH5Qa6BkV7kVZ
+        yN3wQU4Hh6KNvdBP7+BGz0=
+Received: from yangjunlin.ccdomain.com (unknown [119.137.52.39])
+        by smtp8 (Coremail) with SMTP id DMCowAAHDg6r42JgWtZ5XA--.134S2;
+        Tue, 30 Mar 2021 16:39:11 +0800 (CST)
+From:   angkery <angkery@163.com>
+To:     linus.walleij@linaro.org, grandmaster@al2klimov.de,
+        baijiaju1990@gmail.com, zhengyongjun3@huawei.com,
+        jrdr.linux@gmail.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Junlin Yang <yangjunlin@yulong.com>
+Subject: [PATCH] pinctrl: ti: fix error return code of ti_iodelay_dt_node_to_map()
+Date:   Tue, 30 Mar 2021 14:26:55 +0800
+Message-Id: <20210330062655.1027-1-angkery@163.com>
+X-Mailer: git-send-email 2.24.0.windows.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DMCowAAHDg6r42JgWtZ5XA--.134S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZF4UWF45tw1kKF4xKw4rZrb_yoWfWFX_ua
+        y0v34UXrykK3WfZF1DKr4fZFy0kF4kur1SvrnYqay3Zry7J397Cr97Xr45Ww4xW3yxAr9r
+        Zr12vwn3ZrnrCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0Ab1UUUUUU==
+X-Originating-IP: [119.137.52.39]
+X-CM-SenderInfo: 5dqjyvlu16il2tof0z/xtbBFA9lI1aD+3qKGgAAsZ
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The current implementation of bcm6362_set_gpio() produces the following
-warning on x86_64:
-drivers/pinctrl/bcm/pinctrl-bcm6362.c: In function 'bcm6362_set_gpio':
-drivers/pinctrl/bcm/pinctrl-bcm6362.c:503:8: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-  503 |        (uint32_t) desc->drv_data, 0);
-      |        ^
+From: Junlin Yang <yangjunlin@yulong.com>
 
-Modify the code to make it similar to bcm63268_set_gpio() in order to fix the
-warning.
+when devm_kcalloc fails, use -ENOMEM instead of -EINVAL,
+and consistent with other devm_kcalloc return values.
 
-Fixes: 705791e23ecd ("pinctrl: add a pincontrol driver for BCM6362")
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+Signed-off-by: Junlin Yang <yangjunlin@yulong.com>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm6362.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm6362.c b/drivers/pinctrl/bcm/pinctrl-bcm6362.c
-index eb7ec80353e9..6b5a1dfc2367 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm6362.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm6362.c
-@@ -496,11 +496,12 @@ static int bcm6362_pinctrl_get_groups(struct pinctrl_dev *pctldev,
- static void bcm6362_set_gpio(struct bcm63xx_pinctrl *pc, unsigned pin)
- {
- 	const struct pinctrl_pin_desc *desc = &bcm6362_pins[pin];
-+	unsigned int basemode = (unsigned long) desc->drv_data;
- 	unsigned int mask = bcm63xx_bank_pin(pin);
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index e584826..4e23827 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -511,8 +511,10 @@ static int ti_iodelay_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	}
  
--	if (desc->drv_data)
--		regmap_update_bits(pc->regs, BCM6362_BASEMODE_REG,
--				   (uint32_t) desc->drv_data, 0);
-+	if (basemode)
-+		regmap_update_bits(pc->regs, BCM6362_BASEMODE_REG, basemode,
-+				   0);
+ 	pins = devm_kcalloc(iod->dev, rows, sizeof(*pins), GFP_KERNEL);
+-	if (!pins)
++	if (!pins) {
++		error = -ENOMEM;
+ 		goto free_group;
++	}
  
- 	if (pin < BCM63XX_BANK_GPIOS) {
- 		/* base mode 0 => gpio 1 => mux function */
+ 	cfg = devm_kcalloc(iod->dev, rows, sizeof(*cfg), GFP_KERNEL);
+ 	if (!cfg) {
 -- 
-2.20.1
+1.9.1
+
 
