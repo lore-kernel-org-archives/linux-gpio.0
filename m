@@ -2,89 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76736C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8160C433E5
 	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF8F61959
+	by mail.kernel.org (Postfix) with ESMTP id C72446198A
 	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231629AbhC3I5c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S231602AbhC3I5c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 30 Mar 2021 04:57:32 -0400
-Received: from www.zeus03.de ([194.117.254.33]:42638 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231602AbhC3I5N (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 30 Mar 2021 04:57:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=qEj0gd9b5dP6yH2NCFYOIYkYymz
-        6y2EV8e9qLz0MKYY=; b=S/GGt3/TbG73K7KvnKHZf/c5gwy6sus4pgmcYRp8/fU
-        HkQzwxvl2+jhIu3xbqOhZLELIBZJwzs+ryRS77popBDEi9+w9LkEDg9fa8l7sjna
-        PZxs90ECJWp8bdLWEKw0GgZ4QNxNYryADKbUKtWDeMfdywtUzgD5mG+nyyLoWfjQ
-        =
-Received: (qmail 144548 invoked from network); 30 Mar 2021 10:57:11 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 Mar 2021 10:57:11 +0200
-X-UD-Smtp-Session: l3s3148p1@scjjLr2+htMgARa4RV5TAXqFgB02ZUaY
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFC/RFT 0/1] add simple logic analyzer using polling
-Date:   Tue, 30 Mar 2021 10:56:54 +0200
-Message-Id: <20210330085655.12615-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.30.0
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231614AbhC3I5Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Mar 2021 04:57:25 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C1EC061762;
+        Tue, 30 Mar 2021 01:57:25 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso7981656wmi.0;
+        Tue, 30 Mar 2021 01:57:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MVk3x6ly3uTfXv9OyHlmA2lht7ASwMRy2yMGeaAU04s=;
+        b=PCZ0Bt4HUBMbaIE4ap2fsbPrFjmMEw7kqtUHhEqR3rh1xtZFns+5FEcLcDsY/ygtMX
+         ifwQt0i2MRHu+orfHe/1QEqvxvuWYp6Qo9d1KpHeWUgb/BdeYOt70GbBxnHEBbpd0SRC
+         xZiHlF4C3SmeqfGPQs9yctsZ00+HxkoT4UITpjGd9s6Dly0+aDzkZxgqtZbuLCvdqGXe
+         72wyvZiFTwK/IuwyQcHEqxurnyKCC8DRmVLm/coYZqgxRMcFbRzfI/c9cmg0/QftRHFv
+         /BNTfQC1xzLmak16Zp/7kXBBhhzOEh3xaKBwFB6/r3P8PH2a82l+82Wgz3UXvCH+RSYj
+         eLfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MVk3x6ly3uTfXv9OyHlmA2lht7ASwMRy2yMGeaAU04s=;
+        b=SLQbKFW2F0Uw0PbTzOS2Bi3/bGe/J4l/zRJK2HrNOUe6f8awERkYK4hVFRvPcPzP52
+         LuLt9EspBC/vl3WxPj+gOJAq2f5mvm0j9TBfqGcA6TlPJx3JRyQdtAWFMnOgVZ322X69
+         r8XA6D3GAmCZ5W6MQy/dPcXEVE8xatuZFDW1Gnpx1NXPoDedMt7dH/SQ409+6iCbsqTN
+         Cc+zavJT4STvhPHY0BzrLUvtdG4JoLAt/cugYWzDPcMRY6cOqZoZBVh+Yw/fOek99g9h
+         K4AmdttAzDgjt0Hs6zLKvnDflbJUhAnM4vtvpOeBp916RB/KAV1PnblttSBEFc9uiXFM
+         wS6g==
+X-Gm-Message-State: AOAM530LhpCLzMzERfvBBRM17MiysWfelEKd1tU8xqMc5RG6g3rhWRlU
+        m8LdV1PieIIsTHw76KC1mx5oi31HheIRow==
+X-Google-Smtp-Source: ABdhPJy+NVavPPoVso7DUmLFx9qjpMJ8wh5HMbnY+yuGrAD54aoYMEamo2kTfTK2ef9pGXb93JGTUA==
+X-Received: by 2002:a7b:ce91:: with SMTP id q17mr3051502wmj.28.1617094643995;
+        Tue, 30 Mar 2021 01:57:23 -0700 (PDT)
+Received: from [192.168.1.10] (176.red-79-148-190.dynamicip.rima-tde.net. [79.148.190.176])
+        by smtp.gmail.com with ESMTPSA id w6sm33352228wrl.49.2021.03.30.01.57.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Mar 2021 01:57:23 -0700 (PDT)
+Subject: Re: [PATCH v9 00/22] pinctrl: add BCM63XX pincontrol support
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michael Walle <michael@walle.cc>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20210324081923.20379-1-noltari@gmail.com>
+ <CACRpkdZE55ixxSp6H1SKx19trGE_uVGgkLttzAVQuLzw4=Jutw@mail.gmail.com>
+From:   =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>
+Message-ID: <609f038d-3037-5cda-b489-f0816eb95658@gmail.com>
+Date:   Tue, 30 Mar 2021 10:57:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
+In-Reply-To: <CACRpkdZE55ixxSp6H1SKx19trGE_uVGgkLttzAVQuLzw4=Jutw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: es-ES
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Okay, this one is maybe a bit brave, let's see if it is suitable for
-upstream. This is an in-kernel logic analyzer based on GPIO polling with
-local irqs disabled. Besides the driver, there is a script which
-isolates a CPU to get towards the best possible result. I am aware of
-the latency limitations. However, the intention is only for debugging.
-Especially for remote debugging and to get a first impression, this has
-already been useful. So, I wonder if we want to provide this for others,
-too, and have it in Linus' tree. Documentation is within the patch, to
-get a better idea what this is all about.
+Hi Linus,
 
-A branch with preparation for the Renesas Salvator-XS boards is here:
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/gpio-logic-analyzer
+El 29/03/2021 a las 12:19, Linus Walleij escribió:
+> On Wed, Mar 24, 2021 at 9:19 AM Álvaro Fernández Rojas
+> <noltari@gmail.com> wrote:
+> 
+>> This patchset adds appropriate binding documentation and drivers for
+>> pin controller cores found in the BCM63XX MIPS SoCs currently supported.
+> 
+> I have applied and pushed the v9 patch series with all the ACKs
+> to the "devel" branch so the build servers can churn at it! Later
+> today I will integrate it into linux-next.
+> 
+> Any remaining issues can certainly be fixed in-tree.
+> 
+> Thanks for your perseverance in cleaning up these SoCs!!
 
-The documentation is also available online on the elinux wiki:
-https://elinux.org/Kernel_GPIO_Logic_analyzer
+Many thanks for your support! :D
 
-Looking forward to comments. If somebody has a pointer how to detect if
-a task was requested to be killed (while irqs and preemption are
-disabled), I'd appreciate that to avoid the currently unkillable
-sub-process.
+> 
+> Now, what about a patch set for the IRQ support? :)
 
-All the best,
+If you could give me some guidance on that matter it would be much 
+appreciated, because your comments [1] are now outdated since I switched 
+to GPIO_REGMAP
+[1] 
+http://patchwork.ozlabs.org/project/linux-gpio/patch/20210225164216.21124-3-noltari@gmail.com/
 
-   Wolfram
+> 
+> Yours,
+> Linus Walleij
+> 
 
-
-Wolfram Sang (1):
-  misc: add simple logic analyzer using polling
-
- .../dev-tools/gpio-logic-analyzer.rst         |  63 ++++
- Documentation/dev-tools/index.rst             |   1 +
- .../bindings/misc/gpio-logic-analyzer.yaml    |  40 ++
- drivers/misc/Kconfig                          |  12 +
- drivers/misc/Makefile                         |   1 +
- drivers/misc/gpio-logic-analyzer.c            | 355 ++++++++++++++++++
- tools/debugging/gpio-logic-analyzer           | 156 ++++++++
- 7 files changed, 628 insertions(+)
- create mode 100644 Documentation/dev-tools/gpio-logic-analyzer.rst
- create mode 100644 Documentation/devicetree/bindings/misc/gpio-logic-analyzer.yaml
- create mode 100644 drivers/misc/gpio-logic-analyzer.c
- create mode 100755 tools/debugging/gpio-logic-analyzer
-
--- 
-2.30.0
-
+Best regards,
+Álvaro.
