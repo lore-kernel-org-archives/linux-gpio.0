@@ -2,238 +2,163 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0190BC433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 14:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAA1C433C1
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 15:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF1C3619C2
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 14:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 879566196A
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 15:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231735AbhC3OxP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Mar 2021 10:53:15 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31065 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231998AbhC3Owu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 30 Mar 2021 10:52:50 -0400
-IronPort-SDR: 2RG1taShuCt7K1KZxPEySdTOFPEuPZh2eS1BNvNQtoD4w2MQ+z569iyBCfW2w6IhTdUOzji99h
- oZqRgeBGOLmg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9939"; a="191812667"
-X-IronPort-AV: E=Sophos;i="5.81,291,1610438400"; 
-   d="scan'208";a="191812667"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2021 07:52:49 -0700
-IronPort-SDR: 4DNewzWfWK9kDsaOIUz2HOJIW9cuWpywNALLMZczsOQ0u3BQwRr3Ek/m06FgKH7XF2udeGVeFj
- 4/0LkS5siBnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,291,1610438400"; 
-   d="scan'208";a="527364774"
-Received: from lkp-server01.sh.intel.com (HELO 69d8fcc516b7) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 30 Mar 2021 07:52:48 -0700
-Received: from kbuild by 69d8fcc516b7 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1lRFjb-0005KU-LF; Tue, 30 Mar 2021 14:52:47 +0000
-Date:   Tue, 30 Mar 2021 22:52:45 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:devel] BUILD SUCCESS
- 762bee3e3e9f42cafdb3ead64b7aee37f9b7369f
-Message-ID: <60633b3d.uXLzQHbGSL2ji2hb%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S232064AbhC3P1Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Mar 2021 11:27:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232445AbhC3P1L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Mar 2021 11:27:11 -0400
+Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D20FC061765
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Mar 2021 08:27:10 -0700 (PDT)
+Received: from terra.local.svanheule.net (47.118-244-81.adsl-dyn.isp.belgacom.be [81.244.118.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sander@svanheule.net)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 8EAFF1E7DD2;
+        Tue, 30 Mar 2021 17:27:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+        s=mail1707; t=1617118026;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=n+RZIlQPEpgRSpt4D9bbTuj3H2K/8fduAo3gs+jU6bU=;
+        b=vm2/7WR42WBG9hy97YGz5G5iHjI/j6U1KUCBU2+KzwfXi4byoNQ0pU2c/AU3/Ki6r3VR0K
+        uZZCvZMwRCFhBtz+GHt1X4iy+qPHP3RWNyIXJ9jPrDrpufwwGJIPGGj0Z6kANmHTmkIYUW
+        3HTYuBDOLAVhPgp5tT4GC9ye92jvctYgO11dt/GJSyUNLfmCPi/pxkr2bYsuhxbSNe1HNR
+        vRqtYm7xo00f4KeQI8mJnJp5QBZYGQ5rtZliW/m9D/HYNOgPMC3p0etGreXDzv4BjRNJfR
+        AYGwHcJVvyUMkA++yne/Q9lNiKprysK24nrC6KY59AkKEiQ6GZOdtakcb3qbjw==
+From:   Sander Vanheule <sander@svanheule.net>
+To:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     andy.shevchenko@gmail.com, bert@biot.com,
+        bgolaszewski@baylibre.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, maz@kernel.org, robh+dt@kernel.org,
+        Sander Vanheule <sander@svanheule.net>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 1/2] dt-bindings: gpio: Binding for Realtek Otto GPIO
+Date:   Tue, 30 Mar 2021 17:26:51 +0200
+Message-Id: <136eeef65e3abcdb237d812889f576a32f0abc0f.1617117762.git.sander@svanheule.net>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <cover.1617117762.git.sander@svanheule.net>
+References: <cover.1617117762.git.sander@svanheule.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 762bee3e3e9f42cafdb3ead64b7aee37f9b7369f  Merge branch 'ib-bcm63xx' into devel
+Add a binding description for Realtek's GPIO controller found on several
+of their MIPS-based SoCs (codenamed Otto), such as the RTL838x and
+RTL839x series of switch SoCs.
 
-elapsed time: 947m
+A fallback binding 'realtek,otto-gpio' is provided for cases where the
+actual port ordering is not known yet, and enabling the interrupt
+controller may result in uncaught interrupts.
 
-configs tested: 168
-configs skipped: 2
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                               defconfig
-arm64                            allyesconfig
-arm                              allyesconfig
-arm                              allmodconfig
-x86_64                           allyesconfig
-riscv                            allmodconfig
-i386                             allyesconfig
-powerpc               mpc834x_itxgp_defconfig
-mips                         bigsur_defconfig
-parisc                generic-64bit_defconfig
-sh                   secureedge5410_defconfig
-m68k                            q40_defconfig
-mips                     loongson1c_defconfig
-sh                   sh7770_generic_defconfig
-powerpc                mpc7448_hpc2_defconfig
-sh                            migor_defconfig
-mips                         cobalt_defconfig
-m68k                       m5208evb_defconfig
-powerpc                 mpc832x_mds_defconfig
-arm                         vf610m4_defconfig
-arm                        cerfcube_defconfig
-arm                          lpd270_defconfig
-m68k                        stmark2_defconfig
-powerpc                      pasemi_defconfig
-xtensa                  audio_kc705_defconfig
-arm                        magician_defconfig
-arm                       spear13xx_defconfig
-powerpc                           allnoconfig
-nios2                         3c120_defconfig
-sh                          polaris_defconfig
-sh                 kfr2r09-romimage_defconfig
-mips                        maltaup_defconfig
-arc                     nsimosci_hs_defconfig
-mips                   sb1250_swarm_defconfig
-arc                        vdk_hs38_defconfig
-mips                       capcella_defconfig
-arm                         lubbock_defconfig
-powerpc                       ppc64_defconfig
-arm                           h5000_defconfig
-arm                         orion5x_defconfig
-powerpc                    klondike_defconfig
-mips                      loongson3_defconfig
-xtensa                  cadence_csp_defconfig
-powerpc                 mpc836x_mds_defconfig
-mips                             allyesconfig
-arm                         shannon_defconfig
-powerpc                     akebono_defconfig
-arm                         socfpga_defconfig
-m68k                          atari_defconfig
-arc                    vdk_hs38_smp_defconfig
-sparc64                             defconfig
-arm                         hackkit_defconfig
-m68k                             alldefconfig
-riscv                    nommu_virt_defconfig
-alpha                               defconfig
-arc                          axs101_defconfig
-powerpc                      chrp32_defconfig
-mips                           xway_defconfig
-arm                      pxa255-idp_defconfig
-powerpc                 canyonlands_defconfig
-arm                       omap2plus_defconfig
-arm                          gemini_defconfig
-arm                          exynos_defconfig
-sh                            shmin_defconfig
-sh                        edosk7705_defconfig
-sh                               alldefconfig
-sh                          r7780mp_defconfig
-arm                        spear6xx_defconfig
-arc                         haps_hs_defconfig
-mips                          malta_defconfig
-arm                         cm_x300_defconfig
-arm                      footbridge_defconfig
-arm                          iop32x_defconfig
-mips                      pistachio_defconfig
-s390                       zfcpdump_defconfig
-arm                      tct_hammer_defconfig
-x86_64                           alldefconfig
-m68k                        mvme147_defconfig
-powerpc                      ppc64e_defconfig
-powerpc                      ppc6xx_defconfig
-powerpc                         wii_defconfig
-arc                        nsimosci_defconfig
-powerpc                 mpc836x_rdk_defconfig
-nios2                            alldefconfig
-arm                          collie_defconfig
-arm                             pxa_defconfig
-arm                       mainstone_defconfig
-sh                         ap325rxa_defconfig
-sh                           se7724_defconfig
-arm                            lart_defconfig
-arm                         lpc32xx_defconfig
-sh                     magicpanelr2_defconfig
-sparc64                          alldefconfig
-openrisc                 simple_smp_defconfig
-mips                        nlm_xlp_defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                                defconfig
-m68k                             allmodconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-nds32                               defconfig
-csky                                defconfig
-alpha                            allyesconfig
-nios2                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-s390                                defconfig
-parisc                              defconfig
-s390                             allmodconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-x86_64               randconfig-a004-20210330
-x86_64               randconfig-a003-20210330
-x86_64               randconfig-a002-20210330
-x86_64               randconfig-a001-20210330
-x86_64               randconfig-a005-20210330
-x86_64               randconfig-a006-20210330
-i386                 randconfig-a004-20210330
-i386                 randconfig-a006-20210330
-i386                 randconfig-a003-20210330
-i386                 randconfig-a002-20210330
-i386                 randconfig-a001-20210330
-i386                 randconfig-a005-20210330
-i386                 randconfig-a003-20210329
-i386                 randconfig-a004-20210329
-i386                 randconfig-a002-20210329
-i386                 randconfig-a006-20210329
-i386                 randconfig-a005-20210329
-i386                 randconfig-a001-20210329
-i386                 randconfig-a015-20210330
-i386                 randconfig-a011-20210330
-i386                 randconfig-a014-20210330
-i386                 randconfig-a013-20210330
-i386                 randconfig-a016-20210330
-i386                 randconfig-a012-20210330
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-um                               allmodconfig
-um                                allnoconfig
-um                               allyesconfig
-um                                  defconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                      rhel-8.3-kbuiltin
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a012-20210330
-x86_64               randconfig-a015-20210330
-x86_64               randconfig-a014-20210330
-x86_64               randconfig-a016-20210330
-x86_64               randconfig-a013-20210330
-x86_64               randconfig-a011-20210330
-
+Signed-off-by: Sander Vanheule <sander@svanheule.net>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ .../bindings/gpio/realtek,otto-gpio.yaml      | 78 +++++++++++++++++++
+ 1 file changed, 78 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
+new file mode 100644
+index 000000000000..100f20cebd76
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
+@@ -0,0 +1,78 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/realtek,otto-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Realtek Otto GPIO controller
++
++maintainers:
++  - Sander Vanheule <sander@svanheule.net>
++  - Bert Vermeulen <bert@biot.com>
++
++description: |
++  Realtek's GPIO controller on their MIPS switch SoCs (Otto platform) consists
++  of two banks of 32 GPIOs. These GPIOs can generate edge-triggered interrupts.
++  Each bank's interrupts are cascased into one interrupt line on the parent
++  interrupt controller, if provided.
++  This binding allows defining a single bank in the devicetree. The interrupt
++  controller is not supported on the fallback compatible name, which only
++  allows for GPIO port use.
++
++properties:
++  $nodename:
++    pattern: "^gpio@[0-9a-f]+$"
++
++  compatible:
++    items:
++      - enum:
++          - realtek,rtl8380-gpio
++          - realtek,rtl8390-gpio
++      - const: realtek,otto-gpio
++
++  reg:
++    maxItems: 1
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++  ngpios:
++    minimum: 1
++    maximum: 32
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - "#gpio-cells"
++  - gpio-controller
++
++additionalProperties: false
++
++dependencies:
++  interrupt-controller: [ interrupts ]
++
++examples:
++  - |
++      gpio@3500 {
++        compatible = "realtek,rtl8380-gpio", "realtek,otto-gpio";
++        reg = <0x3500 0x1c>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        ngpios = <24>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        interrupt-parent = <&rtlintc>;
++        interrupts = <23>;
++      };
++
++...
+-- 
+2.30.2
+
