@@ -2,83 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8543CC433DB
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E6DC433C1
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D1426198A
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7977F60C41
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 08:53:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230224AbhC3IkH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Mar 2021 04:40:07 -0400
-Received: from m12-12.163.com ([220.181.12.12]:34731 "EHLO m12-12.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231481AbhC3Ijq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 30 Mar 2021 04:39:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=8yDcz
-        dMrd5NinK+fgDO57txeiD55po9jM0BzukzBidc=; b=mTheZg7eMK1V+KWlOP4yr
-        wpOFHY/N2mem6wV1ZjwxwCsk5w9QzO21UKzHH1qaNA4K2GZ/p4J8rTnDqfyE8NdT
-        nqVfE26foccq442LlT1TqagZP63381Qp4dkrg9Kp+vVc/CQqnhvcH5Qa6BkV7kVZ
-        yN3wQU4Hh6KNvdBP7+BGz0=
-Received: from yangjunlin.ccdomain.com (unknown [119.137.52.39])
-        by smtp8 (Coremail) with SMTP id DMCowAAHDg6r42JgWtZ5XA--.134S2;
-        Tue, 30 Mar 2021 16:39:11 +0800 (CST)
-From:   angkery <angkery@163.com>
-To:     linus.walleij@linaro.org, grandmaster@al2klimov.de,
-        baijiaju1990@gmail.com, zhengyongjun3@huawei.com,
-        jrdr.linux@gmail.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Junlin Yang <yangjunlin@yulong.com>
-Subject: [PATCH] pinctrl: ti: fix error return code of ti_iodelay_dt_node_to_map()
-Date:   Tue, 30 Mar 2021 14:26:55 +0800
-Message-Id: <20210330062655.1027-1-angkery@163.com>
-X-Mailer: git-send-email 2.24.0.windows.2
+        id S231512AbhC3IxL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Mar 2021 04:53:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57090 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231220AbhC3IxF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Mar 2021 04:53:05 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4211BC061762
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Mar 2021 01:53:05 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id j18so15429870wra.2
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Mar 2021 01:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uBksXsVr3EOftVJO4jegYtTjXvXDW8BhOpwxvtku7rQ=;
+        b=tVpNQYNwNqop4UIaUcZUuGLUS3Dw4a8XAQjMEsfyL8bNlHCUboADMDZIj2W9QXmkFr
+         Uzv3I3n/AvAFoVcWbuY6EEAMGvo/eoP+eqvCULwbqEDJekt5NUg1h+qWdfWZdUlTheEm
+         f7qcdfwH8D3W+FszU3r1biac/MO8rO2eKX7B3AdeZT39r5oR7Y/1H2kjktmcJbDXubqE
+         kmco2R3SVd/DxYvyoSweE6J63hJ/kaoP7sTHe6DwIVs4gTTqgB88qN6Ctcmad/DIv+Sl
+         zVjLv5HJRnm43PxHnW/oUgVV8YuiuFFPrCNpnB0orKmD9UoUZaf8LMrAVle/07zFJA/R
+         Ovyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uBksXsVr3EOftVJO4jegYtTjXvXDW8BhOpwxvtku7rQ=;
+        b=tdT4AdZBPFj1pXBzOg/p4S1WJoUCpeC/Y7HhMTLQiLf3i7MmNdAf+8c+EfvnN2ro7N
+         YPPIq8WiEZz+DcptV5unmOrjq4tzSP/Cx/iv7WUwQP5PPrp9bf3n6IZcUXWIF0AHwcDS
+         re53RREBSssLyy4LiXO5bp26jMr7evL18BMaEA5hoYgiWbmjQDIeoVvolK540Y9y1j+6
+         oYJUYtWTUnMKBAb1UyxzOIUgkx/pWzYPZ3WFuLFVlYRdnh22o6h8N+EBAEXMWvqCffYP
+         mQelTbpI6oddn18cuNZ3X0zQzU+cdGDR6wX6KjeZn4klbNnpLcjAS6YkvwbfsArV/xUU
+         o/NQ==
+X-Gm-Message-State: AOAM532iQvJYvfB4BlWk9IRNSSCGsOIVgMgWS8OejATv+IkX/zWVmOGX
+        Gon//ZrV3axaEsUXjf5FEnY=
+X-Google-Smtp-Source: ABdhPJxQeNIR2CBBXWaGn9QGvOgMtuQRoGjje4kHVTCt3OBtAc/xc33aUeOP9Io0O+v2kGjmDzlysw==
+X-Received: by 2002:adf:f0cb:: with SMTP id x11mr32044908wro.206.1617094383978;
+        Tue, 30 Mar 2021 01:53:03 -0700 (PDT)
+Received: from [192.168.1.10] (176.red-79-148-190.dynamicip.rima-tde.net. [79.148.190.176])
+        by smtp.gmail.com with ESMTPSA id j16sm4380998wmi.2.2021.03.30.01.53.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Mar 2021 01:53:03 -0700 (PDT)
+Subject: Re: [pinctrl:ib-bcm63xx 7/22]
+ pinctrl-bcm6328.c:(.text.pinconf_generic_dt_node_to_map_pin+0x34): undefined
+ reference to `pinconf_generic_dt_node_to_map'
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     kbuild-all@lists.01.org, linux-gpio@vger.kernel.org,
+        Jonas Gorski <jonas.gorski@gmail.com>
+References: <202103301631.ZPi7Mix1-lkp@intel.com>
+From:   =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>
+Message-ID: <4f19acd6-31d6-88bc-3143-d750d3762bfc@gmail.com>
+Date:   Tue, 30 Mar 2021 10:53:02 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
+In-Reply-To: <202103301631.ZPi7Mix1-lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: es-ES
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DMCowAAHDg6r42JgWtZ5XA--.134S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF4UWF45tw1kKF4xKw4rZrb_yoWfWFX_ua
-        y0v34UXrykK3WfZF1DKr4fZFy0kF4kur1SvrnYqay3Zry7J397Cr97Xr45Ww4xW3yxAr9r
-        Zr12vwn3ZrnrCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0Ab1UUUUUU==
-X-Originating-IP: [119.137.52.39]
-X-CM-SenderInfo: 5dqjyvlu16il2tof0z/xtbBFA9lI1aD+3qKGgAAsZ
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Junlin Yang <yangjunlin@yulong.com>
+Hi Linus,
 
-when devm_kcalloc fails, use -ENOMEM instead of -EINVAL,
-and consistent with other devm_kcalloc return values.
+PINCTRL_BCM6328 depends on PINCTRL_BCM63XX, which selects 
+GENERIC_PINCONF, so I've no idea why this happens on mips64...
 
-Signed-off-by: Junlin Yang <yangjunlin@yulong.com>
----
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Any hints/help?
 
-diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-index e584826..4e23827 100644
---- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-+++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-@@ -511,8 +511,10 @@ static int ti_iodelay_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	}
- 
- 	pins = devm_kcalloc(iod->dev, rows, sizeof(*pins), GFP_KERNEL);
--	if (!pins)
-+	if (!pins) {
-+		error = -ENOMEM;
- 		goto free_group;
-+	}
- 
- 	cfg = devm_kcalloc(iod->dev, rows, sizeof(*cfg), GFP_KERNEL);
- 	if (!cfg) {
--- 
-1.9.1
+Best regards,
+Álvaro.
 
-
+El 30/03/2021 a las 10:17, kernel test robot escribió:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git ib-bcm63xx
+> head:   d28039fccf948a407de69106465caa465b1dcf32
+> commit: 9bf34ac5ab5805f0a798d40423c05596b7a0cee6 [7/22] pinctrl: add a pincontrol driver for BCM6328
+> config: mips-randconfig-r024-20210330 (attached as .config)
+> compiler: mips64-linux-gcc (GCC) 9.3.0
+> reproduce (this is a W=1 build):
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?id=9bf34ac5ab5805f0a798d40423c05596b7a0cee6
+>          git remote add pinctrl https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+>          git fetch --no-tags pinctrl ib-bcm63xx
+>          git checkout 9bf34ac5ab5805f0a798d40423c05596b7a0cee6
+>          # save the attached .config to linux build tree
+>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=mips
+> 
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     mips64-linux-ld: drivers/pinctrl/bcm/pinctrl-bcm6328.o: in function `pinconf_generic_dt_node_to_map_pin':
+>>> pinctrl-bcm6328.c:(.text.pinconf_generic_dt_node_to_map_pin+0x34): undefined reference to `pinconf_generic_dt_node_to_map'
+> 
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> 
