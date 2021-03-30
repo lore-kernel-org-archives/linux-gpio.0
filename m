@@ -2,163 +2,116 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAA1C433C1
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 15:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C14C433DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 15:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 879566196A
+	by mail.kernel.org (Postfix) with ESMTP id 02292619D0
 	for <linux-gpio@archiver.kernel.org>; Tue, 30 Mar 2021 15:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232064AbhC3P1Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S232240AbhC3P1Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 30 Mar 2021 11:27:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232445AbhC3P1L (ORCPT
+        with ESMTP id S232449AbhC3P1L (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Mar 2021 11:27:11 -0400
 Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D20FC061765
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Mar 2021 08:27:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31A74C061574
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Mar 2021 08:27:06 -0700 (PDT)
 Received: from terra.local.svanheule.net (47.118-244-81.adsl-dyn.isp.belgacom.be [81.244.118.47])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 8EAFF1E7DD2;
-        Tue, 30 Mar 2021 17:27:06 +0200 (CEST)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 6BCC81E7DD1;
+        Tue, 30 Mar 2021 17:27:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1617118026;
+        s=mail1707; t=1617118024;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=n+RZIlQPEpgRSpt4D9bbTuj3H2K/8fduAo3gs+jU6bU=;
-        b=vm2/7WR42WBG9hy97YGz5G5iHjI/j6U1KUCBU2+KzwfXi4byoNQ0pU2c/AU3/Ki6r3VR0K
-        uZZCvZMwRCFhBtz+GHt1X4iy+qPHP3RWNyIXJ9jPrDrpufwwGJIPGGj0Z6kANmHTmkIYUW
-        3HTYuBDOLAVhPgp5tT4GC9ye92jvctYgO11dt/GJSyUNLfmCPi/pxkr2bYsuhxbSNe1HNR
-        vRqtYm7xo00f4KeQI8mJnJp5QBZYGQ5rtZliW/m9D/HYNOgPMC3p0etGreXDzv4BjRNJfR
-        AYGwHcJVvyUMkA++yne/Q9lNiKprysK24nrC6KY59AkKEiQ6GZOdtakcb3qbjw==
+        bh=3ACTtDwLrd6MhIlUOxZYT4FyKfrTiQy/cUhDCuM0ixc=;
+        b=nPv7Ax2plVIYUVUntMblYQZiJSg0v471Mohhw4UZALHK5lm8ZzHpBgWLGqujYwA2b5mG4i
+        BAd5MnLCM8IYb31aqv+6qthnMaXVvfiXUWkcRVi8L0a21ikNzs9MmOL+0gYQejUU7wuSYv
+        AhvFVCRWsBKsHjtZVN82y+dLtTj5wQEDBW2aBiHvUxfYe+DoK76+la/2tiFVUd1HYNnCAR
+        +6213IF1JPHeHkwplj2eGNIAZwj4uUCt1QLjJpy0z8Wf9GylS0yCgeF7icg8IpbvoFqoFV
+        YdKsmUy/MEEUdzhjhJxiHUA6aS/fr7Fe0KOIW1PzXHpBkH4twTqAxplyhxDcHQ==
 From:   Sander Vanheule <sander@svanheule.net>
 To:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     andy.shevchenko@gmail.com, bert@biot.com,
         bgolaszewski@baylibre.com, linus.walleij@linaro.org,
         linux-kernel@vger.kernel.org, maz@kernel.org, robh+dt@kernel.org,
-        Sander Vanheule <sander@svanheule.net>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 1/2] dt-bindings: gpio: Binding for Realtek Otto GPIO
-Date:   Tue, 30 Mar 2021 17:26:51 +0200
-Message-Id: <136eeef65e3abcdb237d812889f576a32f0abc0f.1617117762.git.sander@svanheule.net>
+        Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v5 0/2] Add Realtek Otto GPIO support
+Date:   Tue, 30 Mar 2021 17:26:50 +0200
+Message-Id: <cover.1617117762.git.sander@svanheule.net>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1617117762.git.sander@svanheule.net>
-References: <cover.1617117762.git.sander@svanheule.net>
+In-Reply-To: <20210315082339.9787-1-sander@svanheule.net>
+References: <20210315082339.9787-1-sander@svanheule.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a binding description for Realtek's GPIO controller found on several
-of their MIPS-based SoCs (codenamed Otto), such as the RTL838x and
-RTL839x series of switch SoCs.
+Add support for the GPIO controller employed by Realtek in multiple series of
+MIPS SoCs. These include the supported RTL838x and RTL839x. The register layout
+also matches the one found in the GPIO controller of other (Lexra-based) SoCs
+such as RTL8196E, RTL8197D, and RTL8197F.
 
-A fallback binding 'realtek,otto-gpio' is provided for cases where the
-actual port ordering is not known yet, and enabling the interrupt
-controller may result in uncaught interrupts.
+For the platform name 'otto', I am not aware of any official resources as to
+what hardware this specifically applies to. However, in all of the GPL archives
+we've received, from vendors using compatible SoCs in their design, the
+platform under the MIPS architecture is referred to by this name.
 
-Signed-off-by: Sander Vanheule <sander@svanheule.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/gpio/realtek,otto-gpio.yaml      | 78 +++++++++++++++++++
- 1 file changed, 78 insertions(+)
+The GPIO ports have been tested on a Zyxel GS1900-8 (RTL8380), and Zyxel
+GS1900-48 (RTL8393). Furthermore, the GPIO ports and interrupt controller have
+been tested on a Netgear GS110TPPv1 (RTL8381).
+
+Changes in v5:
+- Edited code comments
+- Fold functions that were used only once or twice (ISR/IMR accessors)
+- Drop trivial functions for line to port/pin calculations
+- Use gpio_irq_chip->init_hw() to initialise IRQ registers
+- Invert GPIO_INTERRUPTS flag to GPIO_INTERRUPTS_DISABLED
+- Support building as module
+- Add Rob's Reviewed-by tag
+
+Changes in v4:
+- Fix pointer notation style
+- Drop unused read_u16_reg() function
+- Drop 'inline' specifier from functions
+
+Changes in v3:
+- Remove OF dependencies in driver probe
+- Don't accept IRQ_TYPE_NONE as a valid interrupt type
+- Remove (now unused) dev property from control structure
+- Use u8/u16 port registers, instead of raw u32 registers
+- Use 'line' name for gpiochip, 'port' and 'pin' names for hardware
+- Renamed DT bindings file
+- Dropped fallback-only DT compatible
+- Various code style clean-ups
+
+Changes in v2:
+- Clarify structure and usage of IMR registers
+- Added Linus' Reviewed-by tags
+
+Sander Vanheule (2):
+  dt-bindings: gpio: Binding for Realtek Otto GPIO
+  gpio: Add Realtek Otto GPIO support
+
+ .../bindings/gpio/realtek,otto-gpio.yaml      |  78 +++++
+ drivers/gpio/Kconfig                          |  13 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-realtek-otto.c              | 326 ++++++++++++++++++
+ 4 files changed, 418 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
+ create mode 100644 drivers/gpio/gpio-realtek-otto.c
 
-diff --git a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-new file mode 100644
-index 000000000000..100f20cebd76
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-@@ -0,0 +1,78 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/realtek,otto-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Realtek Otto GPIO controller
-+
-+maintainers:
-+  - Sander Vanheule <sander@svanheule.net>
-+  - Bert Vermeulen <bert@biot.com>
-+
-+description: |
-+  Realtek's GPIO controller on their MIPS switch SoCs (Otto platform) consists
-+  of two banks of 32 GPIOs. These GPIOs can generate edge-triggered interrupts.
-+  Each bank's interrupts are cascased into one interrupt line on the parent
-+  interrupt controller, if provided.
-+  This binding allows defining a single bank in the devicetree. The interrupt
-+  controller is not supported on the fallback compatible name, which only
-+  allows for GPIO port use.
-+
-+properties:
-+  $nodename:
-+    pattern: "^gpio@[0-9a-f]+$"
-+
-+  compatible:
-+    items:
-+      - enum:
-+          - realtek,rtl8380-gpio
-+          - realtek,rtl8390-gpio
-+      - const: realtek,otto-gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  ngpios:
-+    minimum: 1
-+    maximum: 32
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#gpio-cells"
-+  - gpio-controller
-+
-+additionalProperties: false
-+
-+dependencies:
-+  interrupt-controller: [ interrupts ]
-+
-+examples:
-+  - |
-+      gpio@3500 {
-+        compatible = "realtek,rtl8380-gpio", "realtek,otto-gpio";
-+        reg = <0x3500 0x1c>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        ngpios = <24>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        interrupt-parent = <&rtlintc>;
-+        interrupts = <23>;
-+      };
-+
-+...
 -- 
 2.30.2
 
