@@ -2,107 +2,118 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41A0C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3833C433E0
 	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 11:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 891D3619A9
+	by mail.kernel.org (Postfix) with ESMTP id AAAE861981
 	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 11:44:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235205AbhCaLn3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S235119AbhCaLn3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 31 Mar 2021 07:43:29 -0400
-Received: from mx1.tq-group.com ([93.104.207.81]:12578 "EHLO mx1.tq-group.com"
+Received: from mx1.tq-group.com ([93.104.207.81]:49146 "EHLO mx1.tq-group.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235085AbhCaLnT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 31 Mar 2021 07:43:19 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Mar 2021 07:43:19 EDT
+        id S235115AbhCaLnZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 31 Mar 2021 07:43:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1617190999; x=1648726999;
+  t=1617191004; x=1648727004;
   h=from:to:cc:subject:date:message-id;
-  bh=PduPPRM2NzqbWS0miuL9W7dSI7e2jWuOJrDqBANWxp0=;
-  b=IdKKQB98soFh5KsqsuCHin2C/pweEkMiDxq/+hnLcoeZBAREjzYmbEZR
-   JkOlO66YZEUX/jQQncazww6ExLXIxpPYiLSmmSuXJ68FwBMMgqCWSbK2c
-   xzGTZWAXdvQsbrbuTjwy9Okw6CES2dcxAAFD5HQGSPoih6922q6AVVApn
-   r+XMvQEknlilwkQwXw/nhnFnzJT+/W+41izuC72zhtP7HgCIyoOioZEUw
-   5GDeenYIc+PcVaP62UrIZv5y0B0spV+iIM5hTfgbP3QAxvzaXBFmtvPD4
-   A9FJnveAoNg4/1O1oRTEImMN2Oz/1U3/9C9Kju8oX746/Tdb6BEc1dK9N
-   w==;
-IronPort-SDR: NMerk/w2FR/wZuA+hpH2m8wOa2iEJgKE51I8SCNLA8DzRvhCHDfzICg6HC5SaY2A+paESqJ2MJ
- oHwAeM2jrjeDQTzQAjs1TkjAqA9BrASQKgB5hWvkjeLb5dwo9Ozl9LX1jakbJHf7ScGG6XZCYD
- LZpg3xn64f9QiYb3tlxkMl368yb/QBFHPZi63awdNjEcjVfthuh1y/nERA/B16eZ8ZHaxcDwZn
- jjihyJECVgH4xtgvAhUUd+a6cTohEpGabGDQWVM+v42rMkS0wWh4t+NgA0IJy5U7q3pq7OFzu1
- 5BQ=
+  bh=X5Gmo/4ZuyeqnIOkoGKQMLD98RQXFlOM0T/todCgfX4=;
+  b=bSocJmAbjvjtjgeWdPNeUin2JnRUDjQ4lmse+7sN/K/TeyPaiQIVZFb9
+   LBhcthWnkYhlE0jPpg05Etpjlxe3YI6l5q8AvrOS3iPtBxrG9sFF1x7bR
+   8wKBBiiO2K/MCgonubbF3LQNlopIuzeJF+hsFD8W967MLZU0tfLtCyhMO
+   HVxXlpF4oPckvdyY/8i7CoDHjs154j/qvfCYemEBufNEjcNSNrOwvFk9i
+   uTFuEIVJN3uAw/YIZvQpgCR/5uiSRVWq5ORx+HwNSS4+NYJGESQYo0/2q
+   R/gebA1uJAZuExkCegZZaJQEXUZIoiHkin9kV39t4FCvObqRC21HJvmrH
+   Q==;
+IronPort-SDR: EIjX4UL5pgCuvBRGTSXtJMPw7X5B0bbvw/aQMRBVg2YEMIFTTbcBWwkRVWPkn0upGOd6pYSNwz
+ MCur4k6bd6+AOrP/A1xoD8Oy7kDcUnaf9o9P4KujoCcK5j5IrcAaUR1RyqjpebXl9nWVE9kDEn
+ vgO4rvpiZZ0Yt+czPlwhN96MEUouW7nBegO6LBfbiQ1fGRGWj7Nt8a3ogr0Khi4PIAEV5SQuxM
+ lVyryr9lFgCVdJB3jSrNaMBwqcPCWY5hskG2qgM8fJ3n9JFMogkmsirbF4BDdAkkZO2Ocga4uF
+ AcM=
 X-IronPort-AV: E=Sophos;i="5.81,293,1610406000"; 
-   d="scan'208";a="16742375"
+   d="scan'208";a="16742380"
 Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 31 Mar 2021 13:36:10 +0200
+  by mx1-pgp.tq-group.com with ESMTP; 31 Mar 2021 13:36:11 +0200
 Received: from mx1.tq-group.com ([192.168.6.7])
   by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 31 Mar 2021 13:36:10 +0200
+  Wed, 31 Mar 2021 13:36:11 +0200
 X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 31 Mar 2021 13:36:10 +0200
+        by tq-pgp-pr1.tq-net.de on Wed, 31 Mar 2021 13:36:11 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1617190570; x=1648726570;
+  t=1617190571; x=1648726571;
   h=from:to:cc:subject:date:message-id;
-  bh=PduPPRM2NzqbWS0miuL9W7dSI7e2jWuOJrDqBANWxp0=;
-  b=FmojG0ilaDbk0qeByHlkt50tOiXSSrziN7gPzSDYU04L67XTKUJ3S6oo
-   r1NxsCLaOU7ifs/JPiit6s4RLBQpJpvKKcjE1WzSZX9pCw+GF7zz7oeyk
-   +UP/qaQXk9FP9Xe0v2rkhND4jrESjyad+apNtEM0lpde4q5iPa8fM+dOu
-   HotQyHLy2PJvJMRbEDfP+dafhWWeSlWJQOhOtznfK4wUbExW5mlKC1MIg
-   92PxZdAiB34/HK5IwafJacq0wc8+bF+sv3zdTtyYKVky5RTNbY+swWgtY
-   EqGuPqVRhgU5GTDcO40TRqcH6fYNwGEomotOaLYx1PtvCXsV+DgRpl7jB
-   w==;
-IronPort-SDR: lSoEZDF/rnmI8sDFJbzN2P5HTbr2MGqeG8tNVxoVd3jgKmhQWUosRrnCjCG/l4V7lc0E3g2lNE
- 8gZXcaUoPerwv4rKO7xvMFT879+OX5IV8W2RKYY6E/mIPQKe6Xdx1k0m5RRzpiFJyrLw4nvx4v
- fOxHdHXWWeeB1gWgtesIEPm8gM6TPoKyjxKqn1iI3SKjLmfQWEqn8X8RtfoOLEXb37CDXhCrsj
- zBTapWywROOJTbOkETSTxKHCTd/1++Xk7GTDjKCDQc5nj9cg6eQb7I7i64h+ba/l17JuAxF63a
- qsw=
+  bh=X5Gmo/4ZuyeqnIOkoGKQMLD98RQXFlOM0T/todCgfX4=;
+  b=jDPMc8Tz16rDGY2hIW7wv0Cl8HtoQloGLn2ZGebCA4KUv6xD7tVi00Q0
+   bpXeBHdemRnWLAtX10u3BEWzr2lziBcB6kgyqefzsE40LXcXvctn5Vxbi
+   FMLPrnJDz9qxzXVe4m93AC3+CxsD+19qUAKRgNCkuSkcz6xABgvHAPpKr
+   2xlYQi53jWRQ8jQ1vS3myZxKhU6WhuINqCjRHAGcv78kYQrUv6CPT020m
+   muV3jO6BtZ88TynkwkyewTEHYnpO74ewOU7cNXjqdbU2Ti28Z+QYekQC4
+   AH3hWnsSxHcUBg9IJKoc2WhzC4NgRwQ4OHzzK6kWYgS6V+tXXiunMpZmi
+   g==;
+IronPort-SDR: z4lzFvsXXpZ2CqB61sfz2roATZXvfdKY2stu/02aH0emegtjwe2riikCScvstEOzt0aR2SI3P/
+ YPiDtR3xNJhKbEo9BWTei5JBHODKf//r3Le5Lk7PD1OqgqkeM3N/1+OEtLtkeNI4woJIeF/u6h
+ mRyVJOpovgwK4mthgRvKEJZd3G6V6Y2DLf5MrCsII5Kt05AZw0gVzt3CZpRJNsfgAi5kq9h7FX
+ d51ZaUlnUMT+wSXfa3Us0eotV2EySJVGZxM7+UC6uJEvq93CWvP3VLBka+p9T3u75FuZXVhyad
+ 214=
 X-IronPort-AV: E=Sophos;i="5.81,293,1610406000"; 
-   d="scan'208";a="16742374"
+   d="scan'208";a="16742379"
 Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 31 Mar 2021 13:36:10 +0200
+  by mx1.tq-group.com with ESMTP; 31 Mar 2021 13:36:11 +0200
 Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.121.48.12])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 1EAEE280070;
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id C4CFA280070;
         Wed, 31 Mar 2021 13:36:10 +0200 (CEST)
 X-CheckPoint: {60645E92-3-486672D-C0FA7804}
-X-MAIL-CPID: E147051C322BD6D64161476F71C5EBFF_2
-X-Control-Analysis: str=0001.0A782F29.60645EAA.0054,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-MAIL-CPID: EC9732B570E100E35CD847992BE1ACF9_2
+X-Control-Analysis: str=0001.0A782F29.60645EAB.0011,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
 From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc:     Lee Jones <lee.jones@linaro.org>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH 0/3] tqmx86: TQMxE40M support
-Date:   Wed, 31 Mar 2021 13:35:42 +0200
-Message-Id: <cover.1617189926.git.matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH 2/3] mfd: tqmx86: clear GPIO IRQ resource when no IRQ is set
+Date:   Wed, 31 Mar 2021 13:35:44 +0200
+Message-Id: <f38e80b6b439e4a9cc349a090923207865b3d3ed.1617189926.git.matthias.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1617189926.git.matthias.schiffer@ew.tq-group.com>
+References: <cover.1617189926.git.matthias.schiffer@ew.tq-group.com>
+In-Reply-To: <cover.1617189926.git.matthias.schiffer@ew.tq-group.com>
+References: <cover.1617189926.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This fixes a bug in the IRQ setup of the tqmx86 MFD / GPIO drivers and
-adds support for our upcoming Elkhart Lake module TQMxE40M (as well as
-future SoMs).
+The driver was registering IRQ 0 when no IRQ was set. This leads to
+warnings with newer kernels.
 
-As patch 2 depends on patch 1, it would make sense to push the whole
-series through the same tree.
+Clear the resource flags, so no resource is registered at all in this
+case.
 
-Matthias Schiffer (3):
-  gpio: tqmx86: really make IRQ optional
-  mfd: tqmx86: clear GPIO IRQ resource when no IRQ is set
-  mfd: tqmx86: add support for TQMxE40M
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+---
+ drivers/mfd/tqmx86.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/gpio/gpio-tqmx86.c |  6 +++---
- drivers/mfd/tqmx86.c       | 13 ++++++-------
- 2 files changed, 9 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+index ddddf08b6a4c..732013f40e4e 100644
+--- a/drivers/mfd/tqmx86.c
++++ b/drivers/mfd/tqmx86.c
+@@ -209,6 +209,8 @@ static int tqmx86_probe(struct platform_device *pdev)
+ 
+ 		/* Assumes the IRQ resource is first. */
+ 		tqmx_gpio_resources[0].start = gpio_irq;
++	} else {
++		tqmx_gpio_resources[0].flags = 0;
+ 	}
+ 
+ 	ocores_platfom_data.clock_khz = tqmx86_board_id_to_clk_rate(board_id);
 -- 
 2.17.1
 
