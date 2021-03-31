@@ -2,110 +2,146 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B07E8C433B4
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896CDC43460
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC9D6196C
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848F461A3B
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235534AbhCaMhz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Mar 2021 08:37:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49856 "EHLO
+        id S235513AbhCaMb5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Mar 2021 08:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235454AbhCaMhn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Mar 2021 08:37:43 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA5CC061574;
-        Wed, 31 Mar 2021 05:37:43 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id l123so14439851pfl.8;
-        Wed, 31 Mar 2021 05:37:43 -0700 (PDT)
+        with ESMTP id S235536AbhCaMbs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Mar 2021 08:31:48 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F5EC061574
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Mar 2021 05:31:48 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id b14so28872224lfv.8
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Mar 2021 05:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GShH3kQrnRMf0b2uqJ73S0gCwVnnyAi3nGPppvV8rRc=;
-        b=L8KCTZ21CX1o/NJul1TS7q9AjCMHp9H5b/LEkF1FN+PlSOfsrRja7YCVfjZGD4tK8j
-         wBAFfzIgdf5+CcWSbxeCuaw7sVAVtEOQJQY0Ooicg9gGSSijo7LC681W4s+PeitV7nLu
-         /RTXd5LwEXbAzSL0TDukvHiIFyq/EbajNIaerdqj4ajl55oYBd6A59Kg3mcCpmbr5rU6
-         V/LtlCv4ie8Ir1gvOoIcx5T15wu+QywxAR+EG+QFohcODJ1+CpGWfVIc9pP2tgYeUL2W
-         hMO28U9cJQa2LdYIxEWWBLNKDTonHopHRHl0OQg47pUDn5B4EF6NlkWcYB/4yRhm6I1f
-         RdQg==
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=S6EU2YnOpdkBtjQGKeotICcap66rhKHJa003CpMwvsc=;
+        b=NMSrUSVupyaOh9cd4emHPeGipu/j7X2gWfOhsL2kEl3GrOaQM4rCxOQ/ZFBZPyKsmP
+         vHt69Jn4kH51ZPYe+xRKlgpSkP6R5K2aeGQZ86f9VHFD3VQFy3caHGLvwkRDEEHBfBod
+         qbyEo+efvrJKTfLanB1l/C++xwcZwLlKAYwurbth4ymdQVpqxd6CyMJivGs7+8JOnAUx
+         oKw+QKpcDVqbTRc/RB9DvIam0CUllJPYrLHPRW/zIPGrxdmWJVRk3lt67RbQM4eC/uWs
+         fbUPXWAOeNo5w49l/gPSjOdmwszwVGNgB+w0dEj59Ck5VztiLhc8BEWFbcvQmSS62BNT
+         w/sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GShH3kQrnRMf0b2uqJ73S0gCwVnnyAi3nGPppvV8rRc=;
-        b=alMil0yaqCaHoM1DGcBK1fVHCwXbeck0z7hew+Y1gHdGU0A15hLm1GMOVM2OkHUqG9
-         08qXy3IKGFYuS1uUOoEd8Pt4OU1u9+D5iVxAlG7CS9IUtmKXsABHv8cnZvZBgbLdB8Cf
-         bjZ/vyHBkCr5tpkYcKngxrUtgcRdlHDjIDJAbWy98otpGapVPAbCRS/AQxm92Rc2qlqW
-         miRjQ3SkBepvnooALcyNQXZRW1yhEuOByAFwMyjrdPB03WjzbTeOHU7GplDkh2MoEyqJ
-         J7/8Rdta9zBCY2FIpr46wSgBTTru9YZZtOTr+aGvO1xm8aNsdKirPfGH2yMQd180/V8L
-         49Ew==
-X-Gm-Message-State: AOAM530MiS+d49xwUWU2UxyGwL2w6YWwY3FNTVv3KfX0HPo6h41sZT5q
-        ADji0TIKijHgLF7k59lYNmGMedQxRMUiyJL1CCo=
-X-Google-Smtp-Source: ABdhPJxCac/ehMc6eK8HGYgViF7DcnJIOPloIfTVQi7jSyOiQ7Q+gFKJVnxp3k1bMcusI72RhpQxhPc16OMmfwA3yu4=
-X-Received: by 2002:a63:c48:: with SMTP id 8mr3071744pgm.74.1617194263310;
- Wed, 31 Mar 2021 05:37:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=S6EU2YnOpdkBtjQGKeotICcap66rhKHJa003CpMwvsc=;
+        b=bKoeuAVqpt5DopTfdFRzpSXfDwF6bze37r39fTXzNxiqvJx4OjNm3joOlwI3zI7uv3
+         R5JPnFhUD9Rq40rNLit9Pz0oTa0/nSS8i3Bhvdm28doeQWpPsyak3yog5NIngJg/mxgJ
+         SCfm/fg7cj1XQEUZYMo/ASGbwfYnWmEyhJ65NBBSC3CrmGvIR9CBviaFVVSE7mlyfZ3C
+         /2E7slORLX3hrBK7A1zTBILtp1s3STSUGgLM/RbEx10NAWpYpyR3IElaC5snJSrCon/C
+         pxY9r4P4i3J3ZWLRn7mgbtsdo8XkCn+LspoEzKlx9kXx4BBaL9hrFnrCrXXyuCCaTChA
+         /Mdg==
+X-Gm-Message-State: AOAM531s7H/wCpybbmf7Q03IQEzYWq4t/eVpezM0Kba9rIZ/cbrue+Ry
+        JapHZ8hSfZSIwhiiUqb1P720dRq9sk3J13IJjFQ4Ig==
+X-Google-Smtp-Source: ABdhPJzgNGDqwWJ0zqQx8Ru8esLLNouGO90hnzko0scZwHQnRkLnOlZhCOMa/zz2I7pmU7SzXhXxRPZ7oh17nTDgH6c=
+X-Received: by 2002:a19:4c08:: with SMTP id z8mr1996596lfa.157.1617193906617;
+ Wed, 31 Mar 2021 05:31:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1617189926.git.matthias.schiffer@ew.tq-group.com> <3c19d714645f788913956223097adc360ceb6203.1617189926.git.matthias.schiffer@ew.tq-group.com>
-In-Reply-To: <3c19d714645f788913956223097adc360ceb6203.1617189926.git.matthias.schiffer@ew.tq-group.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 31 Mar 2021 15:37:27 +0300
-Message-ID: <CAHp75Vdk4rxiD_nm8Cb53oTYNvMqkAOM4U5zEn5tchtptQZEBw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mfd: tqmx86: add support for TQMxE40M
-To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Lee Jones <lee.jones@linaro.org>,
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 31 Mar 2021 14:31:36 +0200
+Message-ID: <CACRpkdazjQ0jPdXYPNsC6BmYEHZgf7_zUObHTEa+B9LZCmaT8g@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for the v5.12 kernel
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 2:38 PM Matthias Schiffer
-<matthias.schiffer@ew.tq-group.com> wrote:
->
-> All future TQMx86 SoMs will use a 24MHz LPC clock, so we can use that as
-> a default instead of listing each new module individually.
+Hi Linus,
 
-...
+here are some overly ripe fixes for the v5.12 kernel. I should
+have sent earlier but had my head stuck in GDB.
 
->         case TQMX86_REG_BOARD_ID_90UC:
->                 return "TQMx90UC";
-> +       case TQMX86_REG_BOARD_ID_E40M:
-> +               return "TQMxE40M";
->         default:
->                 return "Unknown";
->         }
-> @@ -138,12 +141,6 @@ static const char *tqmx86_board_id_to_name(u8 board_id)
->  static int tqmx86_board_id_to_clk_rate(u8 board_id)
->  {
->         switch (board_id) {
-> -       case TQMX86_REG_BOARD_ID_50UC:
-> -       case TQMX86_REG_BOARD_ID_60EB:
-> -       case TQMX86_REG_BOARD_ID_70EB:
-> -       case TQMX86_REG_BOARD_ID_80UC:
-> -       case TQMX86_REG_BOARD_ID_90UC:
-> -               return 24000;
->         case TQMX86_REG_BOARD_ID_E39M:
->         case TQMX86_REG_BOARD_ID_E39C:
->         case TQMX86_REG_BOARD_ID_E39x:
-> @@ -152,7 +149,7 @@ static int tqmx86_board_id_to_clk_rate(u8 board_id)
->         case TQMX86_REG_BOARD_ID_E38C:
->                 return 33000;
->         default:
-> -               return 0;
-> +               return 24000;
+All are driver fixes. Details in the signed tag.
 
-AFAICS it will return 24 MHz for "Unknown" board. Is it okay to be so brave?
+Please pull it in!
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
+
+The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
+
+  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.12-2
+
+for you to fetch changes up to ba845907b23a6584e5944f6fbffda3efb010c28b:
+
+  Merge tag 'intel-pinctrl-v5.12-3' of
+gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel into fixes
+(2021-03-30 00:46:49 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for the v5.12 kernel cycle:
+
+- Fix up some Intel GPIO base calculations.
+- Fix a register offset in the Microchip driver.
+- Fix suspend/resume bug in the Rockchip driver.
+- Default pull up strength in the Qualcomm LPASS
+  driver.
+- Fix two pingroup offsets in the Qualcomm SC7280
+  driver.
+- Fix SDC1 register offset in the Qualcomm SC7280
+  driver.
+- Fix a nasty string concatenation in the
+  Qualcomm SDX55 driver.
+- Check the REVID register to see if the device is
+  real or virtualized during virtualization in the
+  Intel driver.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      pinctrl: intel: Show the GPIO base calculation explicitly
+
+Arnd Bergmann (1):
+      pinctrl: qcom: fix unintentional string concatenation
+
+Jonathan Marek (1):
+      pinctrl: qcom: lpass lpi: use default pullup/strength values
+
+Lars Povlsen (1):
+      pinctrl: microchip-sgpio: Fix wrong register offset for IRQ trigger
+
+Linus Walleij (2):
+      Merge tag 'intel-pinctrl-v5.12-2' of
+gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel into fixes
+      Merge tag 'intel-pinctrl-v5.12-3' of
+gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel into fixes
+
+Rajendra Nayak (2):
+      pinctrl: qcom: sc7280: Fix SDC_QDSD_PINGROUP and UFS_RESET offsets
+      pinctrl: qcom: sc7280: Fix SDC1_RCLK configurations
+
+Roger Pau Monne (1):
+      pinctrl: intel: check REVID register value for device presence
+
+Wang Panzhenzhuan (1):
+      pinctrl: rockchip: fix restore error in resume
+
+ drivers/pinctrl/intel/pinctrl-intel.c     |  9 ++++++++-
+ drivers/pinctrl/pinctrl-microchip-sgpio.c |  2 +-
+ drivers/pinctrl/pinctrl-rockchip.c        | 13 ++++++++-----
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c  |  2 +-
+ drivers/pinctrl/qcom/pinctrl-sc7280.c     | 16 ++++++++--------
+ drivers/pinctrl/qcom/pinctrl-sdx55.c      |  2 +-
+ 6 files changed, 27 insertions(+), 17 deletions(-)
