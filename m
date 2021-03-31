@@ -2,94 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820E0C433ED
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ED2C433B4
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9965619E5
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB62961996
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Mar 2021 12:35:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235586AbhCaM1r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Mar 2021 08:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47586 "EHLO
+        id S235537AbhCaMfL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Mar 2021 08:35:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235607AbhCaM1V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Mar 2021 08:27:21 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 585E7C061574;
-        Wed, 31 Mar 2021 05:27:21 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id kr3-20020a17090b4903b02900c096fc01deso1140695pjb.4;
-        Wed, 31 Mar 2021 05:27:21 -0700 (PDT)
+        with ESMTP id S235289AbhCaMex (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Mar 2021 08:34:53 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7996DC061574
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Mar 2021 05:34:53 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id z8so23574357ljm.12
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Mar 2021 05:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XBSMntEex66iPKIFZdF6l21leD2WIluDlLwMwMUQjy0=;
-        b=IWSqarJl3ihff0wkELtkTWUfUDLeE08oFUbjg6D1AikmaBNkO8nGCnR9jmsnXZ3hZ6
-         rmqAAaBHI7og/yurW0Iae7aI5Z2hHlKoxlKY/k9adNbh9GLN6V8fQVlNsNbByak3vePd
-         gCw8Goi0AjxAbC1akmp0lPHG0wM9tzS/Bmz1FzTTIAK5zm0J2dvkwDfgFxOQafXL8YEO
-         Kz8VWQWLtIg8sgY6KD/7NkQ6m5k9IUpAtR6/MyuC8ueky2XZFgV9FBg/kfgaEnIUmlZM
-         9J47ceQ4LYXqs/scVsT5035q2dxzLMbOR1g0/LgGTLiCuEWoutK/60bQIxX26R7mOKmX
-         7CqQ==
+         :cc:content-transfer-encoding;
+        bh=dFqjU9npbfAiJPjQLmI+M+RybtJ5vhGUyhsF6doSqyI=;
+        b=h0SNS0Wa7EhYwbikHHJIVisUd4LFJSO2Nz44p7BadySlsBJ62fo0hFepZxl2aWHIqK
+         dtMieivVFKi0ZKeVvHhSYJ1B6nzORdk3MAD15n/jaqdllb/no7mRu/qagqBhg9yKUjf/
+         VaakvGRVrFeVQKcEAironzNCOcgn9/2etFkRpKRP1Bw/2vNJ9ngzhXQdFxE72eFBzbdd
+         e/myUoCdhWzGEPhS2L7DrFmwfpxL55vnBS1zNaJeI1305MQXwr65h5QldndkhgxkDLAe
+         mpCvzXTVsGA7Tb2YbJFGg2NVxKN+aylib2XHPy1vLeU96imgAEOd8jMz5TsM4DxZS7Zf
+         YC2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XBSMntEex66iPKIFZdF6l21leD2WIluDlLwMwMUQjy0=;
-        b=NA4XyMGkaXYfAf+UgOP8QFK5mjo06zJQKUMGu0JlCPI3ln6zCwrN1unEGeuEFKcv0R
-         cf9C6x8J+dBJ3O5/MX4PZI7ITxQhO89krCTE3+XN8OV6st/uvY0ke+8pRRcsDJO+3Z23
-         ztVb71m3UZZ+agBaawf5Z6c198acWyszemtf4hPY6pP/HsxuYWAG7p9lQRcDDx2sVDVq
-         9mj3wX8WON3PPd9AjBQNlGY0eWo4cwqDBFdyt5ZIU4xgEgYIRRw16mP3BfVHXieRQrOi
-         vIFiBCterZN88kTenfahXh/735A49H5tunzU5YUPtNSkaGEyAnSGCMq/+IlOEKxZ6ivb
-         wTdA==
-X-Gm-Message-State: AOAM5331ZAPc3DkWPlSgckp6g90fSGDflrhsyjB/JGDDBpG5sE7OlIhX
-        L4h2DFABOoXa4mUMhrI2D33nVOfPiTUjJn++qOA=
-X-Google-Smtp-Source: ABdhPJx3ECcz21f3ZEbz0rXPVEq69zVLoBvtvUmmQkt6g+sDul4/HOxnkqwCd3ldqlKS33g3bpWprXbEwtoj63yDjFE=
-X-Received: by 2002:a17:90a:e454:: with SMTP id jp20mr3373321pjb.129.1617193640933;
- Wed, 31 Mar 2021 05:27:20 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dFqjU9npbfAiJPjQLmI+M+RybtJ5vhGUyhsF6doSqyI=;
+        b=JnyD+LfZ1NpRHSonlv11bXzn7R41qQWlCTEuAWOwqlRlyR2FtRVcxVSnDDqM4pcGbP
+         7VWv3czasv5aKXkGoDJDux5nKrTF95fGIVOYb2pb589PfQ4zWcemo6quqTrPNxTzw9pa
+         w4Dd/mYVg2K5ZhWDBLOFHge7C9OvJttUBnbECHLUUlTELnY/Hj+F8XBzungWPVtySzgQ
+         RFLBu3+RzdadPCG0PrShzTZMqdTDogt/ejcDFKhFVZ6fuQeUJho4UingEtbxVRo5e9Yr
+         E2wWePcCkBDV88DEntQECxPXFXK6Zb3zaYQq//OpuuDbWbs7p3phsL7FRbnPhCL/ssu1
+         wokw==
+X-Gm-Message-State: AOAM531jWl0LYbEAfEJRwJpLsGGI3Uit7RLQKyKf/dls8X05CtkA5V9d
+        Ul9j4oK6FLriUnvzF5vZpQ4rspQnE7MymWmc5+nzL1dxBRgzfw==
+X-Google-Smtp-Source: ABdhPJw3cme6kjK0vmUWk+gv2oZ2HGJXaQ1HG6k80Zij8UVamoe61YuHvdLVzeCEM/kTpX91grpKC/ENa+Lxb8pR6sc=
+X-Received: by 2002:a2e:864a:: with SMTP id i10mr1866248ljj.467.1617194092044;
+ Wed, 31 Mar 2021 05:34:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210329111648.7969-1-ada@thorsis.com> <20210329111648.7969-2-ada@thorsis.com>
-In-Reply-To: <20210329111648.7969-2-ada@thorsis.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 31 Mar 2021 15:27:05 +0300
-Message-ID: <CAHp75VdqtWS15YPvaPvy4yj5TdW7DDgFB+_bbavFqPBp1zm6eg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] docs: gpio: mockup: Fix parameter name
-To:     Alexander Dahl <ada@thorsis.com>
-Cc:     Linux Documentation List <linux-doc@vger.kernel.org>,
+References: <20210330103225.3949-1-noltari@gmail.com>
+In-Reply-To: <20210330103225.3949-1-noltari@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 31 Mar 2021 14:34:40 +0200
+Message-ID: <CACRpkdYMSy-gmcmFKsj2fKzFbrb29RLyU=ah4Qa4c4gdXwnCnA@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: bcm: bcm6362: fix warning
+To:     =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 2:18 PM Alexander Dahl <ada@thorsis.com> wrote:
->
-> Module probing with the parameter documented yielded this in kernel log:
->
->         gpio_mockup: unknown parameter 'gpio_named_lines' ignored
->
-> The parameter documented did not match the parameter actually
-> implemented with commit 8a68ea00a62e ("gpio: mockup: implement naming
-> the lines") long before introducing the documentation.
->
-> Fixes: commit 2fd1abe99e5f ("Documentation: gpio: add documentation for gpio-mockup")
+On Tue, Mar 30, 2021 at 12:32 PM =C3=81lvaro Fern=C3=A1ndez Rojas
+<noltari@gmail.com> wrote:
 
-Alexander, in the entire series you are using the wrong format for the
-Fixes tag.
-I highly recommend to add in your .gitconfig file an alias:
-        one = show -s --pretty='format:%h (\"%s\")'
+> The current implementation of bcm6362_set_gpio() produces the following
+> warning on x86_64:
+> drivers/pinctrl/bcm/pinctrl-bcm6362.c: In function 'bcm6362_set_gpio':
+> drivers/pinctrl/bcm/pinctrl-bcm6362.c:503:8: warning: cast from pointer t=
+o integer of different size [-Wpointer-to-int-cast]
+>   503 |        (uint32_t) desc->drv_data, 0);
+>       |        ^
+>
+> Modify the code to make it similar to bcm63268_set_gpio() in order to fix
+> the warning.
+>
+> Fixes: 705791e23ecd ("pinctrl: add a pincontrol driver for BCM6362")
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
 
-`git one <commit ID>` will give you proper value to refer to the
-commit in question.
+Patch applied! Thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
