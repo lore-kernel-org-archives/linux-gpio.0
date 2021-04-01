@@ -2,102 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E4AC43461
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77968C43460
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C414D60FD9
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5970261151
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237592AbhDASdl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:33:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25297 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240306AbhDASaC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 14:30:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617301802;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=BYqcPFvd7erxJJQksdxDiamrI2D3JHsuC1F2bJEaarg=;
-        b=N7a7d+h9Wh+JtGP5gAlbib4fomLJLF/DDXYj2taiBobbrzhxIo9qjx6SSJ4Rm0lvEAI+/X
-        RkW1atvlBk1oqkywnb07ofFy/ZL9BujwB3FHjDXc9CTbp97SYLsjsQ4NprdF7hd+qY1Vq0
-        QyAWKAQGC9YvsEzs2dydaLGTimt2lSs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-577-yFeNfdZDMlazm9Y6sTUXBg-1; Thu, 01 Apr 2021 12:27:44 -0400
-X-MC-Unique: yFeNfdZDMlazm9Y6sTUXBg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B1EBA0CA0;
-        Thu,  1 Apr 2021 16:27:42 +0000 (UTC)
-Received: from x1.localdomain (ovpn-112-79.ams2.redhat.com [10.36.112.79])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BD5517BB6;
-        Thu,  1 Apr 2021 16:27:40 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH] gpiolib: acpi: Add quirk to ignore EC wakeups on Dell Venue 10 Pro 5055
-Date:   Thu,  1 Apr 2021 18:27:40 +0200
-Message-Id: <20210401162740.4602-1-hdegoede@redhat.com>
+        id S237185AbhDASwZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:52:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236560AbhDASqn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 14:46:43 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2CCDC03117E;
+        Thu,  1 Apr 2021 10:47:26 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id r193so83139ior.9;
+        Thu, 01 Apr 2021 10:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3ABGeqwVjSflF2v2NwkfGGEvt0FHlPNp2jDD7Wn08AU=;
+        b=dbI+llyCF1qsXCU+57jJILTQijq3LOuUqHcBa+PDsJZd+qYeLYTTrxhGY6p/hL6FS9
+         wAJbCLjYGbywRHj93PpB4vFmO+m5MtJRbkLixlRiIF+GJFoT8DOzAUMnhjB9PD4sKCXc
+         s0TXQ4V052qyHV9jW8fqVjxsCpESkWxaV/4bHZdtuPi5sH7i2s7q1qWvS6T9+oRlXDEU
+         dzx7L1iiHq1TQGJzzO/cUXcOAYWh+tNNocM46kBm3uBWldpm2KKOlGOqM/iQ3yKMAqJH
+         oTNyJVPgFuvSz2K5pLp5cRqdr4eQ4AChyDiR/J92aOEoJ8OKbqahX9atC34oh+XoDhT1
+         7J+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3ABGeqwVjSflF2v2NwkfGGEvt0FHlPNp2jDD7Wn08AU=;
+        b=Nd/8EpV3kHK/YrFjULvnc4XYxnHtYdqs8Y6LT66j+gk5hgcJHK/00FwlWKaQT8besN
+         gekkQSY8gqkE13mceOetcJbzjqZfTLr9S4yVZMGmCRv/vi2JlX+iFNo/3k/2nz+V32yM
+         BDNZhzl//+w0Q6Y9l9T4jpRE6sEDpO+unCV4xVP7SVY4kqjnxhwsMqPk/1G8+kBDd2zo
+         aoSxxL2bXEe/x6kPnQ0eArDCNFD7xgYMGVim49NAHIobjHWnvF/989gN3V8OxtRwPxv8
+         AHP1HHkamDC4vOzsCJiUEwstEQEPqzEljmbWl56xlclRzzVV2MVnbmbwYRbcl9pgs2hs
+         mcfA==
+X-Gm-Message-State: AOAM531CT3hpTnIz+wS6Hso2/SH4YM6ic8edcX2hI0XbMfgssom+znLd
+        lxuLl2IY2tLW7J94iw3Lm2n3VV0KjRGzav41q00=
+X-Google-Smtp-Source: ABdhPJygL2fEG9ynxvRZd0xI2Sl72GRxKCKZUvZoJJ82A3PudPrn5eaoXRizLdc40BLb9nIB+DYon8bznwjnQa0X3Ew=
+X-Received: by 2002:a05:6602:21cd:: with SMTP id c13mr7436621ioc.44.1617299246197;
+ Thu, 01 Apr 2021 10:47:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <cover.1615038553.git.syednwaris@gmail.com> <4c259d34b5943bf384fd3cb0d98eccf798a34f0f.1615038553.git.syednwaris@gmail.com>
+ <YGHxNFXAjcg4PfnE@smile.fi.intel.com>
+In-Reply-To: <YGHxNFXAjcg4PfnE@smile.fi.intel.com>
+From:   Syed Nayyar Waris <syednwaris@gmail.com>
+Date:   Thu, 1 Apr 2021 23:17:14 +0530
+Message-ID: <CACG_h5pOJKUQd6h+75_Tiv_VVaUn9Dg9O5UBvQBu_2QWE0E9iw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] gpio: xilinx: Utilize generic bitmap_get_value and _set_value
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     bgolaszewski@baylibre.com, vilhelm.gray@gmail.com,
+        michal.simek@xilinx.com, arnd@arndb.de, rrichter@marvell.com,
+        linus.walleij@linaro.org, yamada.masahiro@socionext.com,
+        akpm@linux-foundation.org, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        linux-arch@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Like some other Bay and Cherry Trail SoC based devices the Dell Venue
-10 Pro 5055 has an embedded-controller which uses ACPI GPIO events to
-report events instead of using the standard ACPI EC interface for this.
+On Mon, Mar 29, 2021 at 8:54 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Sat, Mar 06, 2021 at 07:36:30PM +0530, Syed Nayyar Waris wrote:
+> > This patch reimplements the xgpio_set_multiple() function in
+> > drivers/gpio/gpio-xilinx.c to use the new generic functions:
+> > bitmap_get_value() and bitmap_set_value(). The code is now simpler
+> > to read and understand. Moreover, instead of looping for each bit
+> > in xgpio_set_multiple() function, now we can check each channel at
+> > a time and save cycles.
+>
+> ...
+>
+> > +     u32 *const state = chip->gpio_state;
+>
+> Looking at this... What's the point of the const here?
+>
+> Am I right that this tells: pointer is a const, while the data underneath
+> can be modified?
+>
+> > +     unsigned int *const width = chip->gpio_width;
+>
+> Ditto.
+>
+> Putting const:s here and there for sake of the const is not good practice.
+> It makes code harder to read.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+Okay. I will incorporate your comments in my next submission. Thank You.
 
-The EC interrupt is only used to report battery-level changes and
-it keeps doing this while the system is suspended, causing the system
-to not stay suspended.
-
-Add an ignore-wake quirk for the GPIO pin used by the EC to fix the
-spurious wakeups from suspend.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpio/gpiolib-acpi.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 1aacd2a5a1fd..174839f3772f 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1438,6 +1438,20 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
- 			.no_edge_events_on_boot = true,
- 		},
- 	},
-+	{
-+		/*
-+		 * The Dell Venue 10 Pro 5055, with Bay Trail SoC + TI PMIC uses an
-+		 * external embedded-controller connected via I2C + an ACPI GPIO
-+		 * event handler on INT33FFC:02 pin 12, causing spurious wakeups.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Venue 10 Pro 5055"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_wake = "INT33FC:02@12",
-+		},
-+	},
- 	{
- 		/*
- 		 * HP X2 10 models with Cherry Trail SoC + TI PMIC use an
--- 
-2.30.2
-
+Regards
+Syed Nayyar Waris
