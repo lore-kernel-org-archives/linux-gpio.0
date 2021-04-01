@@ -2,150 +2,107 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470E8C43470
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 01:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F25C433B4
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 03:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 202C461076
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 01:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F5D460FEE
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 03:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230248AbhDAB0o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Mar 2021 21:26:44 -0400
-Received: from mga07.intel.com ([134.134.136.100]:62043 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230073AbhDAB0N (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 31 Mar 2021 21:26:13 -0400
-IronPort-SDR: 40a5FJQmZRnxaoiXbHahHVl9v4ch/dOv9JmFXyYq+8luyT1va6xdJYMldnF2OPu7ub3R2PnbpU
- ln8XDqpekraw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9940"; a="256112013"
-X-IronPort-AV: E=Sophos;i="5.81,295,1610438400"; 
-   d="scan'208";a="256112013"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2021 18:26:12 -0700
-IronPort-SDR: BbsEryPMnknVDPOk2wOCrcGkPGKWqdLlXEcbZLfsNdQwkor7+Ho/TgsNGN9psnfv1Z2aGNXvIg
- WvdYnu1B0q2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,295,1610438400"; 
-   d="scan'208";a="379107956"
-Received: from lkp-server01.sh.intel.com (HELO 69d8fcc516b7) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 31 Mar 2021 18:26:11 -0700
-Received: from kbuild by 69d8fcc516b7 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1lRm66-0006Dx-PN; Thu, 01 Apr 2021 01:26:10 +0000
-Date:   Thu, 01 Apr 2021 09:25:41 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:devel] BUILD SUCCESS
- 26ea7ac92836ba616f75a1ab57e64ffc21da7758
-Message-ID: <60652115.YNK8tHSoreYTa8iG%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S230073AbhDAD5i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Mar 2021 23:57:38 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:46765 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229497AbhDAD5I (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Mar 2021 23:57:08 -0400
+Received: by mail-lf1-f43.google.com with SMTP id 12so718921lfq.13;
+        Wed, 31 Mar 2021 20:57:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc
+         :in-reply-to:references:mime-version:date:user-agent
+         :content-transfer-encoding;
+        bh=MwONN4d6rrT80wZ3Iz7r/IZaJzF+PvdbGzECpd/Wl7I=;
+        b=Dij3ivapn+8VnJmd5rjp/bPE5XYleHGYLAFeEg3rYfOAscgEY5P5bYuBmoq53nBwXi
+         gh2cuplRkfgmNDLnLqGzUGR8IznlVLHiEtAZbkYUamtMzM2JyOtgMrTo4GvBLeosqOMx
+         lRqwzUHD5aGhxr7Xa+SrQacUXmwh+X4ahiYUczXDbijP3im7PDOx0MKbQSN1leHwtoN+
+         JhnuoKaOsFsQUFxfKkEzp0kFLr14C9ZT6qaBv65TjeQhcyRL77ikAqrHRVbsbGjsibim
+         +OkmKK5sjlltzwewIX3BiO/Shm6bF5mO7rqB/ESl5ialTWDHtgoqeR/iyuvn6IEQJcSq
+         1S5w==
+X-Gm-Message-State: AOAM532G1lFUcxYtjPc9q4BJxyP4ovbs3CHqy8g+FUdRDLVpnoU96RvU
+        cqhUGnLe2RaN9nFna4nUPDKxiBIgMn5+Kw==
+X-Google-Smtp-Source: ABdhPJwF85vDNANqevWvVd2s+5bSTGz5C94VM1WKq4RE53hXjUCkOjG66ZPNtrJuSfJFfTBAPe/ryA==
+X-Received: by 2002:a05:6512:348c:: with SMTP id v12mr3993548lfr.271.1617249427460;
+        Wed, 31 Mar 2021 20:57:07 -0700 (PDT)
+Received: from dc7vkhyyyyyyyyyyyyyby-3.rev.dnainternet.fi (dc7vkhyyyyyyyyyyyyyby-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::2])
+        by smtp.gmail.com with ESMTPSA id e11sm470945ljj.59.2021.03.31.20.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Mar 2021 20:57:06 -0700 (PDT)
+Message-ID: <a91d2eba2a01a060fdf25a5665fee0f0f15b034c.camel@fi.rohmeurope.com>
+Subject: Re: [PATCH 1/2] gpio: sysfs: Obey valid_mask
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reply-To: matti.vaittinen@fi.rohmeurope.com
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAMpxmJXL=_8MBwb0Dy4d8vKM8SCbzyXJaE78azo1Es8hY7mN7w@mail.gmail.com>
+References: <cover.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
+         <d1ec9f4cb6dd9afcfbeecfa717e863d75e18133b.1617017060.git.matti.vaittinen@fi.rohmeurope.com>
+         <CAMpxmJVKmBp06_2Hd4XF-eL4KfgZFy1o+xUvvs6H=TaAnkmYhA@mail.gmail.com>
+         <CAHp75Vcsw8uQOL9RAxOU3jeq4mGAiK3cNMYbKyWGe7F8Dz2dZQ@mail.gmail.com>
+         <CAMpxmJXL=_8MBwb0Dy4d8vKM8SCbzyXJaE78azo1Es8hY7mN7w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Date:   Thu, 01 Apr 2021 06:56:56 +0300
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 26ea7ac92836ba616f75a1ab57e64ffc21da7758  pinctrl: bcm63xx: Fix dependencies
 
-elapsed time: 725m
+On Wed, 2021-03-31 at 20:29 +0200, Bartosz Golaszewski wrote:
+> On Wed, Mar 31, 2021 at 2:25 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Wed, Mar 31, 2021 at 10:58 AM Bartosz Golaszewski
+> > <bgolaszewski@baylibre.com> wrote:
+> > > On Mon, Mar 29, 2021 at 1:41 PM Matti Vaittinen
+> > > <matti.vaittinen@fi.rohmeurope.com> wrote:
+> > > > Do not allow exporting GPIOs which are set invalid
+> > > > by the driver's valid mask.
+> > > > 
+> > > > Fixes: 726cb3ba49692bdae6caff457755e7cdb432efa4
+> > 
+> > I have just noticed that this is invalid format for the Fixes tag
+> > (luckily, haha, due to a blank line it's not recognized as a tag!).
+> > 
+> > Matti, I highly recommend to add in your .gitconfig file an alias:
+> >         one = show -s --pretty='format:%h (\"%s\")'
+> > 
+> > Bart, there are real Fixes tag issues from another series. I will
+> > comment there as well to let an author know.
+> > 
+> > --
+> 
+> Eek, sorry I should have looked more carefully. I'll fix it in my
+> tree.
 
-configs tested: 80
-configs skipped: 2
+Thanks for fixing this Bartosz.
+Andy - well spotted. And the alias you pointed is something I've missed
+:)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Sorry for the trouble! I should have used the correct tag format.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-i386                             allyesconfig
-riscv                            allyesconfig
-m68k                        m5307c3_defconfig
-mips                            gpr_defconfig
-mips                        nlm_xlp_defconfig
-mips                        workpad_defconfig
-sh                           se7722_defconfig
-arm                         lpc32xx_defconfig
-xtensa                       common_defconfig
-sh                        sh7757lcr_defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a004-20210330
-i386                 randconfig-a006-20210330
-i386                 randconfig-a003-20210330
-i386                 randconfig-a002-20210330
-i386                 randconfig-a001-20210330
-i386                 randconfig-a005-20210330
-i386                 randconfig-a015-20210330
-i386                 randconfig-a011-20210330
-i386                 randconfig-a014-20210330
-i386                 randconfig-a013-20210330
-i386                 randconfig-a016-20210330
-i386                 randconfig-a012-20210330
-riscv                    nommu_k210_defconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-um                               allmodconfig
-um                                allnoconfig
-um                               allyesconfig
-um                                  defconfig
-x86_64                           allyesconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                      rhel-8.3-kbuiltin
-x86_64                                  kexec
+Thanks again!
 
-clang tested configs:
-x86_64               randconfig-a012-20210330
-x86_64               randconfig-a015-20210330
-x86_64               randconfig-a014-20210330
-x86_64               randconfig-a016-20210330
-x86_64               randconfig-a013-20210330
-x86_64               randconfig-a011-20210330
+Best Regards
+	Matti Vaittinen
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+
