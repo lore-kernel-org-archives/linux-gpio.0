@@ -2,63 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E23CC433B4
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E4AC43461
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73B0260FE6
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C414D60FD9
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235263AbhDASdk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:33:40 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:34157 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237946AbhDASXy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 14:23:54 -0400
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 01 Apr 2021 05:36:17 -0700
-X-QCInternal: smtphost
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 01 Apr 2021 05:36:15 -0700
-X-QCInternal: smtphost
-Received: from c-skakit-linux.ap.qualcomm.com (HELO c-skakit-linux.qualcomm.com) ([10.242.51.242])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 01 Apr 2021 18:05:49 +0530
-Received: by c-skakit-linux.qualcomm.com (Postfix, from userid 2344709)
-        id F0DD34A43; Thu,  1 Apr 2021 18:05:47 +0530 (IST)
-From:   satya priya <skakit@codeaurora.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     kgunda@codeaurora.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, satya priya <skakit@codeaurora.org>
-Subject: [PATCH V2 0/3] Add GPIO support for PM7325, PM8350c, PMK8350 and PMR735A
-Date:   Thu,  1 Apr 2021 18:05:42 +0530
-Message-Id: <1617280546-9583-1-git-send-email-skakit@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S237592AbhDASdl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:33:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25297 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240306AbhDASaC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 14:30:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617301802;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BYqcPFvd7erxJJQksdxDiamrI2D3JHsuC1F2bJEaarg=;
+        b=N7a7d+h9Wh+JtGP5gAlbib4fomLJLF/DDXYj2taiBobbrzhxIo9qjx6SSJ4Rm0lvEAI+/X
+        RkW1atvlBk1oqkywnb07ofFy/ZL9BujwB3FHjDXc9CTbp97SYLsjsQ4NprdF7hd+qY1Vq0
+        QyAWKAQGC9YvsEzs2dydaLGTimt2lSs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-577-yFeNfdZDMlazm9Y6sTUXBg-1; Thu, 01 Apr 2021 12:27:44 -0400
+X-MC-Unique: yFeNfdZDMlazm9Y6sTUXBg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B1EBA0CA0;
+        Thu,  1 Apr 2021 16:27:42 +0000 (UTC)
+Received: from x1.localdomain (ovpn-112-79.ams2.redhat.com [10.36.112.79])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BD5517BB6;
+        Thu,  1 Apr 2021 16:27:40 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH] gpiolib: acpi: Add quirk to ignore EC wakeups on Dell Venue 10 Pro 5055
+Date:   Thu,  1 Apr 2021 18:27:40 +0200
+Message-Id: <20210401162740.4602-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-satya priya (3):
-  pinctrl: qcom: spmi-gpio: Add support for four variants
-  dt-bindings: pinctrl: qcom-pmic-gpio: Update the binding to add four
-    new variants
-  dt-bindings: pinctrl: qcom-pmic-gpio: Convert qcom pmic gpio bindings
-    to YAML
+Like some other Bay and Cherry Trail SoC based devices the Dell Venue
+10 Pro 5055 has an embedded-controller which uses ACPI GPIO events to
+report events instead of using the standard ACPI EC interface for this.
 
- .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 272 --------------------
- .../bindings/pinctrl/qcom,pmic-gpio.yaml           | 281 +++++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |   4 +
- 3 files changed, 285 insertions(+), 272 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+The EC interrupt is only used to report battery-level changes and
+it keeps doing this while the system is suspended, causing the system
+to not stay suspended.
 
+Add an ignore-wake quirk for the GPIO pin used by the EC to fix the
+spurious wakeups from suspend.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 1aacd2a5a1fd..174839f3772f 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1438,6 +1438,20 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
+ 			.no_edge_events_on_boot = true,
+ 		},
+ 	},
++	{
++		/*
++		 * The Dell Venue 10 Pro 5055, with Bay Trail SoC + TI PMIC uses an
++		 * external embedded-controller connected via I2C + an ACPI GPIO
++		 * event handler on INT33FFC:02 pin 12, causing spurious wakeups.
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Venue 10 Pro 5055"),
++		},
++		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
++			.ignore_wake = "INT33FC:02@12",
++		},
++	},
+ 	{
+ 		/*
+ 		 * HP X2 10 models with Cherry Trail SoC + TI PMIC use an
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
-of Code Aurora Forum, hosted by The Linux Foundation
+2.30.2
 
