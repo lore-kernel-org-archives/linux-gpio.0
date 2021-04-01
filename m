@@ -2,115 +2,137 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F26C433ED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C3FC43460
 	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97DDB60201
+	by mail.kernel.org (Postfix) with ESMTP id B2F9660724
 	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235271AbhDASXb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:23:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239674AbhDASQp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:16:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C419E6121D;
-        Thu,  1 Apr 2021 12:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617279476;
-        bh=9PoexKn9B5sUWryT4Sa8hCkGzVDwIievA60/TyPSyHs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iFRlkOcszOpL6rWYIXnLOz+v6RhlW0xR5evg1Ll2AA62ktfi/CR1Z40nb9/3TKtyM
-         Ij7WycN2aDV9Vte8hYEs2IKLipd7tYAbRADCjP8Z6vVtwZ0AJ07X9qR7Zaso83jQwH
-         /lGiwH1uRCD8wPDNkTGZ+Mrx+ndm+ArqMweiUnE5+9AyevgTCc05fvQjhEL5XTLJ0j
-         IobUl/1sEL+cdG45cX0iGS7jIff4q243+Cs0tKiMGa3dP3qvS3L9XyHJIRmxDTOj5c
-         mKGDsjiQlwnMMIbmmmtIrloOb85ZpfgMyVHQVMbBakxVk40r4CETe1quWzCI7L3ozn
-         hyLHuE4zBYZXg==
-Received: by mail.kernel.org with local (Exim 4.94)
-        (envelope-from <mchehab@kernel.org>)
-        id 1lRwGo-001c3n-OB; Thu, 01 Apr 2021 14:17:54 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        alsa-devel@alsa-project.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: [PATCH 32/32] pinctrl: update pin-control.rst references
-Date:   Thu,  1 Apr 2021 14:17:52 +0200
-Message-Id: <f056e1e16adff1df42416f0033fdb730169edf44.1617279356.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1617279355.git.mchehab+huawei@kernel.org>
-References: <cover.1617279355.git.mchehab+huawei@kernel.org>
+        id S235096AbhDASXd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:23:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235200AbhDASRH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 14:17:07 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1363C0045D7
+        for <linux-gpio@vger.kernel.org>; Thu,  1 Apr 2021 07:25:49 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id l15so2018813ybm.0
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Apr 2021 07:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WH+kAbagll9akxuUHqMFh3rNKMar4o3v6gTYdJcUIiE=;
+        b=1ypL8Wa8sUdG73EO99/NVS2TpkfsaRCNg8yduWkR4ElYHj8J8Veicor1vdONTuA43n
+         OJ2XHHopXV7W098Eo3dJsRU0SXAv2NMUywQSpWHPKw2RDZDGKUe707+8boGVlO8R4hTE
+         OcSGw7v8oQOoyhB+GQcoRumTPvBLcJRAIHWcBlY8JN/AXaFjjGShd+3NBaSJ4/CQ2CmH
+         HJoIl5WCTiDE7TglOXNvw5dmdGLa7oystpeEqIum56FPlPSwTVOkSAi59pE32FHVSc60
+         IZu4xxJOo6ZEXUup1WASLcIybVdw4j8naIvtiX3dmlVW+mrFVeCQCevrRyou8PKwWnYn
+         ynUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WH+kAbagll9akxuUHqMFh3rNKMar4o3v6gTYdJcUIiE=;
+        b=BybrCCaBKjU0lzXrtL2oqX4acC2Lu2cVxodPwlMV9RPqYEHHP4JepeDbUo6t+hS4Zs
+         dGxE5bn5ovKL/Ue73K2O8DoDrI5Mk7ZCdtrbQCPMk3KErFOvejxsnM+PxMkjRp6eHjG3
+         GRzMBSPAqOo8gG1FpwKsuIRrSqBpf6m0ik7zmgT+Hf3Zcjn10+ktyzLFTbv2HiA8HHVx
+         L8AxTB604t54RnFNal64+YdhbPONEWY/t6iK2DOJndfbhdo/CIeLyz1hrD0K+GNTfTTe
+         Sb9mnjBi5SPFqdsDsulJsbf0V8/wJuTQNjG0h4ZpJjpBvLEX++3fC9NcSyUNafukmUe2
+         fOYA==
+X-Gm-Message-State: AOAM5335pQWHSPmdjd0z9Yn86q5vKLxTxvtgQPYmzHXS9xzBpOZNOyFa
+        BK0tSKwoMKOYnr/KF5GtHbIm8LAWaKEiOh+72WVuNg==
+X-Google-Smtp-Source: ABdhPJxupg8K9QOvfQqfplXb9385y7HzeRg1j4Fbtc/ryhIPKrlK5XiQrBgMkwdJ6XBrJHjAp/YvxoFroo98g+XW918=
+X-Received: by 2002:a25:c588:: with SMTP id v130mr12117757ybe.312.1617287149038;
+ Thu, 01 Apr 2021 07:25:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20210330085655.12615-1-wsa+renesas@sang-engineering.com>
+ <20210330085655.12615-2-wsa+renesas@sang-engineering.com> <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
+In-Reply-To: <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 1 Apr 2021 16:25:38 +0200
+Message-ID: <CAMpxmJWihGgdThmisvqjpvK6NsORg1+SOE7+wz4HZVkM5Xj77A@mail.gmail.com>
+Subject: Re: [PATCH RFC/RFT 1/1] misc: add simple logic analyzer using polling
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Changeset 5513b411ea5b ("Documentation: rename pinctl to pin-control")
-renamed: Documentation/driver-api/pinctl.rst
-to: Documentation/driver-api/pin-control.rst.
+On Thu, Apr 1, 2021 at 3:08 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Tue, Mar 30, 2021 at 10:58 AM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>
+> > This is a simple logic analyzer using GPIO polling. It comes with a
+> > script to isolate a CPU for polling. While this is definately not a
+> > production level analyzer, it can be a helpful first view when remote
+> > debugging. Read the documentation for details.
+> >
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> I am a great supporter of this idea.
+>
+> When we created gpiod_get_array_value() and friends, the idea
+> was exactly to be able to do things like this. It's a good way to
+> utilize the fact that several GPIO lines can often be read from a single
+> register read.
+>
+> > +    i2c-analyzer {
+> > +            compatible = "gpio-logic-analyzer";
+> > +            probe-gpios = <&gpio6 21 GPIO_OPEN_DRAIN>, <&gpio6 4 GPIO_OPEN_DRAIN>;
+> > +            probe-names = "SCL", "SDA";
+> > +    };
+> > +
+> > +The binding documentation is in the ``misc`` folder of the Kernel binding
+> > +documentation.
+> (...)
+> > +++ b/Documentation/devicetree/bindings/misc/gpio-logic-analyzer.yaml
+>
+> When other debugging tools for GPIO got DT bindings it was concluded that
+> it is possible to create bindings like this for debugging without even
+> specifying
+> any formal bindings. They are just for debugging after all.
+>
+> Personally I like the bindings anyway.
+>
+> > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+>
+> I would consider housing this tool under drivers/gpio actually.
+> We have other funky things like gpio-sim and gpio-aggregator
+> so why not.
+>
 
-Update the cross-references accordingly.
+We have actually created a sub-menu for "Virtual GPIO drivers".
 
-Fixes: 5513b411ea5b ("Documentation: rename pinctl to pin-control")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- include/linux/device.h                  | 2 +-
- include/linux/mfd/madera/pdata.h        | 2 +-
- include/linux/pinctrl/pinconf-generic.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+> I would create a Kconfig menu with "GPIO hardware hacking tools".
+>
+> But Bartosz would need to agree on that idea.
+>
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 38a2071cf776..d1183cfdc8fb 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -399,7 +399,7 @@ struct dev_links_info {
-  * 		along with subsystem-level and driver-level callbacks.
-  * @em_pd:	device's energy model performance domain
-  * @pins:	For device pin management.
-- *		See Documentation/driver-api/pinctl.rst for details.
-+ *		See Documentation/driver-api/pin-control.rst for details.
-  * @msi_list:	Hosts MSI descriptors
-  * @msi_domain: The generic MSI domain this device is using.
-  * @numa_node:	NUMA node this device is close to.
-diff --git a/include/linux/mfd/madera/pdata.h b/include/linux/mfd/madera/pdata.h
-index 601cbbc10370..32e3470708ed 100644
---- a/include/linux/mfd/madera/pdata.h
-+++ b/include/linux/mfd/madera/pdata.h
-@@ -31,7 +31,7 @@ struct pinctrl_map;
-  * @irq_flags:	    Mode for primary IRQ (defaults to active low)
-  * @gpio_base:	    Base GPIO number
-  * @gpio_configs:   Array of GPIO configurations (See
-- *		    Documentation/driver-api/pinctl.rst)
-+ *		    Documentation/driver-api/pin-control.rst)
-  * @n_gpio_configs: Number of entries in gpio_configs
-  * @gpsw:	    General purpose switch mode setting. Depends on the external
-  *		    hardware connected to the switch. (See the SW1_MODE field
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 6aeb711f7cd1..fdcd773adba3 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -88,7 +88,7 @@ struct pinctrl_map;
-  * 	it.
-  * @PIN_CONFIG_OUTPUT: this will configure the pin as an output and drive a
-  * 	value on the line. Use argument 1 to indicate high level, argument 0 to
-- *	indicate low level. (Please see Documentation/driver-api/pinctl.rst,
-+ *	indicate low level. (Please see Documentation/driver-api/pin-control.rst,
-  *	section "GPIO mode pitfalls" for a discussion around this parameter.)
-  * @PIN_CONFIG_POWER_SOURCE: if the pin can select between different power
-  *	supplies, the argument to this parameter (on a custom format) tells
--- 
-2.30.2
+It's perfect! If we ever get something like a generic bitbanging
+driver or something, it could go in there too.
 
+Bart
+
+> > +config GPIO_LOGIC_ANALYZER
+> > +       tristate "Simple GPIO logic analyzer"
+> > +       depends on GPIOLIB || COMPILE_TEST
+> > +       help
+>
+> depends on EXPERT
+>
+> I would say. Definitely not something for the average user.
+>
+> Yours,
+> Linus Walleij
