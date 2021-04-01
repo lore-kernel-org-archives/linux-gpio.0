@@ -2,114 +2,118 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B05CC43460
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D61C433ED
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1626760232
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:13:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B413601FC
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234788AbhDASNU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:13:20 -0400
-Received: from mga01.intel.com ([192.55.52.88]:47208 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238578AbhDASJi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:09:38 -0400
-IronPort-SDR: offd/N88rhCbvf/9fmdqvQ6Rf3DeJzh0Ms2aTAnkFEdlGYjSS5dlPQWlC0Tt5MnxvMYNS038ts
- Nvx03cojV+0Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9941"; a="212564704"
-X-IronPort-AV: E=Sophos;i="5.81,296,1610438400"; 
-   d="scan'208";a="212564704"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2021 11:01:23 -0700
-IronPort-SDR: IDBDKz+I8V6htBKuc+Do0PO0b9eaBU67Dz/wppZo6sdncBWX8vwnIH5Ut5bFjv9Ee3ZaEHgfdE
- bZZCsJ8K8+uQ==
-X-IronPort-AV: E=Sophos;i="5.81,296,1610438400"; 
-   d="scan'208";a="456086447"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2021 11:01:20 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lS1d7-000Jzm-VO; Thu, 01 Apr 2021 21:01:17 +0300
-Date:   Thu, 1 Apr 2021 21:01:17 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: Add quirk to ignore EC wakeups on Dell
- Venue 10 Pro 5055
-Message-ID: <YGYKbXDu1QlYCXew@smile.fi.intel.com>
-References: <20210401162740.4602-1-hdegoede@redhat.com>
+        id S236369AbhDASX3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:23:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237059AbhDASNm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 14:13:42 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16EACC02259C
+        for <linux-gpio@vger.kernel.org>; Thu,  1 Apr 2021 08:25:16 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id x2so2154892oiv.2
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Apr 2021 08:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=s7L863S6WftXFsxqZvYmVjzveQfmGvn/T8RuaDXdB8Y=;
+        b=Quy7GKECsPq78+y0j2fMJeEExk2GgslmoEZfLbEM9G2zAStbR93VF+oUHs2OByX3Vm
+         Nxke/8gDcf02HyaifYKB0a9+yjihUm9KXxgg6SfnQWepA7aXZVWTPJRjLb72rF9Gs16I
+         9o+a6Sc1j6nrNmX8fs7Kd8VpHuqIt6bEUmwHCJpmzgLxNt+RYvVODBPqm7bqHNhdBLLD
+         VQu17bH6nU6cBql7ThLXY845wcX4jGgQScssItzMaMaiJ737oNgoXSNd5XsJOaasS5yL
+         6EwjAnoBqGDMPSpDQMkzgyIRySyE8jElg6lNtNZnwavawwms28vn6xgd5sbChdmcNsgG
+         2XHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=s7L863S6WftXFsxqZvYmVjzveQfmGvn/T8RuaDXdB8Y=;
+        b=RwpbgDq0G1GKqgIo7p3Dqg8VreIVOAd7y19CUXAYi8aEB18UM/t7VqTHbLn/TCTN+y
+         pR70+1pxRhrEQuNm0tVJWKDtwCF3NlEk1wWAQHF+DkEtITn0/20ARKn3H3vjbZ7jMWEh
+         Yzc/gLim8K5u8fIRMg6b4RUuZoYAvFs36QHe1b5AdfPr2Fw74JaL+atqoN6k/WD+tfcs
+         GknMD2RcVh6UczpzoMg59Z5jkK6AHrsQQjru9CtmM6WnpGh9AtICCDR9yKBY7vrsAq4U
+         qYXeES8O/616Ds0V/64VLxTzifZesKVcWoCgaR6C7JmG4yHZnj/gYhBSpnflbEW0UQ8k
+         pv6A==
+X-Gm-Message-State: AOAM530W2IHAxwRWAteVFXU+ArC98UweDxH5bL4HF7JkxmsmEgPMUkGC
+        ZV1pGn5njZrdp8ZQYFKUU7/aSg==
+X-Google-Smtp-Source: ABdhPJzC7iaCFKp+0pSiFTwGsaf2QZnZFDySAjw3sBt/KwdJRmPcDHJ9ke9EElJHbtdrxPuO4rnEjQ==
+X-Received: by 2002:aca:db85:: with SMTP id s127mr6238984oig.142.1617290715450;
+        Thu, 01 Apr 2021 08:25:15 -0700 (PDT)
+Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 24sm1083622oij.58.2021.04.01.08.25.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 08:25:15 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 10:25:12 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     satya priya <skakit@codeaurora.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>, kgunda@codeaurora.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V2 1/3] pinctrl: qcom: spmi-gpio: Add support for four
+ variants
+Message-ID: <20210401152512.GP904837@yoga>
+References: <1617280546-9583-1-git-send-email-skakit@codeaurora.org>
+ <1617280546-9583-2-git-send-email-skakit@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210401162740.4602-1-hdegoede@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1617280546-9583-2-git-send-email-skakit@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 06:27:40PM +0200, Hans de Goede wrote:
-> Like some other Bay and Cherry Trail SoC based devices the Dell Venue
-> 10 Pro 5055 has an embedded-controller which uses ACPI GPIO events to
-> report events instead of using the standard ACPI EC interface for this.
+On Thu 01 Apr 07:35 CDT 2021, satya priya wrote:
+
+> Add PM7325, PM8350c, PMK8350 and PMR735A compatibles for GPIO
+> support.
 > 
-> The EC interrupt is only used to report battery-level changes and
-> it keeps doing this while the system is suspended, causing the system
-> to not stay suspended.
-> 
-> Add an ignore-wake quirk for the GPIO pin used by the EC to fix the
-> spurious wakeups from suspend.
-
-Fine by me,
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-I have sent my PR to Bart few days ago and today he applied it.
-So, since I'm not expecting much going on in this cycle, I assume
-it's okay to go directly to Bart's tree.
-
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: satya priya <skakit@codeaurora.org>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/gpio/gpiolib-acpi.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Changes in V2:
+>  - No change.
 > 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 1aacd2a5a1fd..174839f3772f 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -1438,6 +1438,20 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
->  			.no_edge_events_on_boot = true,
->  		},
->  	},
-> +	{
-> +		/*
-> +		 * The Dell Venue 10 Pro 5055, with Bay Trail SoC + TI PMIC uses an
-> +		 * external embedded-controller connected via I2C + an ACPI GPIO
-> +		 * event handler on INT33FFC:02 pin 12, causing spurious wakeups.
-> +		 */
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Venue 10 Pro 5055"),
-> +		},
-> +		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-> +			.ignore_wake = "INT33FC:02@12",
-> +		},
-> +	},
->  	{
->  		/*
->  		 * HP X2 10 models with Cherry Trail SoC + TI PMIC use an
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> index 9801c71..90f4f78 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> @@ -1131,6 +1131,10 @@ static const struct of_device_id pmic_gpio_of_match[] = {
+>  	{ .compatible = "qcom,pm6150l-gpio", .data = (void *) 12 },
+>  	/* pmx55 has 11 GPIOs with holes on 3, 7, 10, 11 */
+>  	{ .compatible = "qcom,pmx55-gpio", .data = (void *) 11 },
+> +	{ .compatible = "qcom,pm7325-gpio", .data = (void *) 10 },
+> +	{ .compatible = "qcom,pm8350c-gpio", .data = (void *) 9 },
+> +	{ .compatible = "qcom,pmk8350-gpio", .data = (void *) 4 },
+
+Please try to keep the list sorted alphabetically, that way you'd see
+that linux-next already has pm8350c and pmk8350 defined - or at least
+Linus would notice when he tries to apply your patch.
+
+Regards,
+Bjorn
+
+> +	{ .compatible = "qcom,pmr735a-gpio", .data = (void *) 4 },
+>  	{ },
+>  };
+>  
 > -- 
-> 2.30.2
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
+> of Code Aurora Forum, hosted by The Linux Foundation
 > 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
