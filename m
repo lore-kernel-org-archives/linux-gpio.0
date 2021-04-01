@@ -2,92 +2,127 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07ADBC4706F
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EDFC05054
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4AB7F61165
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3D25613CF
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234694AbhDARqA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Apr 2021 13:46:00 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:20746 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234950AbhDARlj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 13:41:39 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 131CQciw030126;
-        Thu, 1 Apr 2021 07:40:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=ykBmYInzEvGFT1JMPiXc1lkaeT/jxWDhFNP9Q/A6/08=;
- b=JBN2pNqg6a9pM8wgveEEAANKekva129o80Za/JlxEa8yD9XTaahdQCrZWxWqWjBwfcYA
- 0XYzN9+i9q1Ss9rGlQnUB195BidXC4ru+YqBxESdQ4N7OZLyoJecSdcAkjJpuyEvnTvt
- FNJaZW69K+/zJ8SgI/MnMCZ50GOWsh0fhKFwGI5udmLIsQlczCRU/3VhYx97IEAzXf1k
- LYUXLt17d7ZQyRHP+iKYdWEtgulGMPeNxam5CdJ2GKWfv803Y1Sz7l19l4npFT2ajTIH
- 1saSDKNKacvdUPxwIl2wJKSfGee1JrZJWiO+bDuNW66PDn2kQr8QOI45ayj7ASVEpdWS JA== 
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0a-001ae601.pphosted.com with ESMTP id 37n2948wfu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 01 Apr 2021 07:40:16 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 1 Apr 2021
- 13:40:14 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Thu, 1 Apr 2021 13:40:14 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 7C81E11D6;
-        Thu,  1 Apr 2021 12:40:13 +0000 (UTC)
-Date:   Thu, 1 Apr 2021 12:40:13 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Drew Fustini <drew@beagleboard.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        <alsa-devel@alsa-project.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 32/32] pinctrl: update pin-control.rst references
-Message-ID: <20210401124013.GT106851@ediswmail.ad.cirrus.com>
-References: <cover.1617279355.git.mchehab+huawei@kernel.org>
- <f056e1e16adff1df42416f0033fdb730169edf44.1617279356.git.mchehab+huawei@kernel.org>
+        id S236046AbhDARp6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Apr 2021 13:45:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234694AbhDARjM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 13:39:12 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CA8C0225A1
+        for <linux-gpio@vger.kernel.org>; Thu,  1 Apr 2021 08:26:31 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so2456224otk.5
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Apr 2021 08:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=y1kLTUZ2DutDMLECPCDo/9HBwkSTm4jPer4fs/ISbQw=;
+        b=omBsYOeENt7SVjBE01WDqu8qkh6IuqJn18S0GxB8wH2g235QZGZzREfvWVIVJaIfO/
+         1TBmzjcHZeaLC1gXmZ6rI8Tlon9Hb6qxp1KLHxDAhJ20so+bIy87AGTfgQ+Q22cqtCJw
+         H4WvKG6fHJxtHglO3JEZM4qD/GaeefgOmd+tXSeqLdk4SklBHGNyWmy/0Hn/jBYf+HsX
+         pFbuUB1HhJH98ir9FIYsXxZb6i+xtPJzpKLENPuOd8GgAfqvlWooyCQaAIFJVGoEmGe0
+         EOqoltRJIhpiPjTBvaTbju0ULDdXLW5Hf688IH6WMu7qG0p1vO6emJ83VHxl7hPSfcP+
+         rkqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y1kLTUZ2DutDMLECPCDo/9HBwkSTm4jPer4fs/ISbQw=;
+        b=Ivge0T4VAmDOI5a6PXi+9qk7zSciqLRoU1H45CIwqrepqg2kNmEvLs2iKLGy6/r4Zo
+         cRyqv2pvGXK3nFqA5URC9q663O4h9x2Akw9iNLRySUKOhC2SGveTvJ7Iu3eiGjII1pmB
+         y0nEwLmW1Gbdftb8IU5iLUcclkvVgpnwSfrE5DuFd6Cxypd8HdaNNAIML/42hwZr/6Qe
+         lhjQGUmY9m0pgP+fUgLOqvVYPwRLt8xUuFGjCkgup+apInSv/KBP6+JDMTcmQry/S8ge
+         HICcynrLqNfy41BFgKmZJN+K9VtCXnUjxEaCRVcsmz+qG7lOhha2komoTWWP9LiP3FSB
+         59pg==
+X-Gm-Message-State: AOAM530HV+1hGVik1eQI1IWSqGON3fV7YBf4DnLlIbkNMRWtn621qL8d
+        lU8QxIEWKqw7xGMoN1oRYWD4rw==
+X-Google-Smtp-Source: ABdhPJwuxhgyUQPNdxqijp4NxdjFRqjeSz9/Ag+fpV3UkbEs/6cB1Wjoefn5mCAup82be648Kb/y8w==
+X-Received: by 2002:a9d:6013:: with SMTP id h19mr7353121otj.72.1617290791027;
+        Thu, 01 Apr 2021 08:26:31 -0700 (PDT)
+Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id m127sm1093411oib.32.2021.04.01.08.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 08:26:30 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 10:26:28 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     satya priya <skakit@codeaurora.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>, kgunda@codeaurora.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V2 2/3] dt-bindings: pinctrl: qcom-pmic-gpio: Update the
+ binding to add four new variants
+Message-ID: <20210401152628.GQ904837@yoga>
+References: <1617280546-9583-1-git-send-email-skakit@codeaurora.org>
+ <1617280546-9583-3-git-send-email-skakit@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f056e1e16adff1df42416f0033fdb730169edf44.1617279356.git.mchehab+huawei@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-GUID: Io7iL6F3WDP7ZvGws1tN_zCpZy0zXWMf
-X-Proofpoint-ORIG-GUID: Io7iL6F3WDP7ZvGws1tN_zCpZy0zXWMf
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=979 phishscore=0
- bulkscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- malwarescore=0 clxscore=1011 adultscore=0 impostorscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
- definitions=main-2104010088
+In-Reply-To: <1617280546-9583-3-git-send-email-skakit@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 02:17:52PM +0200, Mauro Carvalho Chehab wrote:
-> Changeset 5513b411ea5b ("Documentation: rename pinctl to pin-control")
-> renamed: Documentation/driver-api/pinctl.rst
-> to: Documentation/driver-api/pin-control.rst.
+On Thu 01 Apr 07:35 CDT 2021, satya priya wrote:
+
+> Update the binding to add PM7325, PM8350C, PMK8350 and PMR735A GPIO support.
 > 
-> Update the cross-references accordingly.
-> 
-> Fixes: 5513b411ea5b ("Documentation: rename pinctl to pin-control")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: satya priya <skakit@codeaurora.org>
 > ---
+> Changes in V2:
+>  - Placed this patch before conversion patch and updated commit text
+>    to be more clear.
+> 
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> index 7648ab0..da7c35e 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> @@ -30,6 +30,10 @@ PMIC's from Qualcomm.
+>  		    "qcom,pm6150-gpio"
+>  		    "qcom,pm6150l-gpio"
+>  		    "qcom,pmx55-gpio"
+> +		    "qcom,pm7325-gpio"
+> +		    "qcom,pm8350c-gpio"
+> +		    "qcom,pmk8350-gpio"
+> +		    "qcom,pmr735a-gpio"
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+As with the driver, please try to keep these sorted alphabetically and
+please rebase on linux-next, which already defines 2 of these.
 
-Thanks,
-Charles
+Regards,
+Bjorn
+
+>  
+>  		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
+>  		    if the device is on an spmi bus or an ssbi bus respectively
+> @@ -113,6 +117,10 @@ to specify in a pin configuration subnode:
+>  		    gpio1-gpio12 for pm6150l
+>  		    gpio1-gpio11 for pmx55 (holes on gpio3, gpio7, gpio10
+>  					    and gpio11)
+> +		    gpio1-gpio10 for pm7325
+> +		    gpio1-gpio9 for pm8350c
+> +		    gpio1-gpio4 for pmk8350
+> +		    gpio1-gpio4 for pmr735a
+>  
+>  - function:
+>  	Usage: required
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
