@@ -2,138 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C04CC433B4
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F8FC43460
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 21:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE0B61007
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 18:53:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF7F4610CE
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 21:45:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236102AbhDASxi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:53:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44790 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240508AbhDASvo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 14:51:44 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66509C061793;
-        Thu,  1 Apr 2021 10:50:31 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id h7so2733823ilj.8;
-        Thu, 01 Apr 2021 10:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+XaU3R90qixaVV7aW+rUvI7mZW0sgqPkaDVLLZSANpk=;
-        b=PAOXjaNp3KR9wkaqwzGajUV+bY15zWzlA+x/vHCeUTnxF2zu1Fe2viAmSmIB7UJ3km
-         c3MirZ6IcUQH/AU93wLX+XRldUcJznMOZksUvqClnSPh2zMf7QzNRNen5iAhTA2iAvQx
-         +uCXc64hqKPVmXXWLUZx7NNiOkaaO6LuB1AHrvI1qB4c2wIZbXLt8BWASpzpQod59IWQ
-         UPMMUaMA5OkGaeCztLQukKuWJL2sdH7uijreieUDBAu+O8aStfDW9wLyJFDLaefvLL96
-         kEH1/vjzh2KmRxFH52PKsfxCeij4a6x/bbRWimLfVxFmdPlXDlGRdSxbrN9MJY1v4waV
-         mPWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+XaU3R90qixaVV7aW+rUvI7mZW0sgqPkaDVLLZSANpk=;
-        b=gPzNhUnFOvuG9NaoEb98icE06z27rBgw+jNI6Qq2o5aTbHM5+BD420OdNVQ2pdVRal
-         asauFsGuz5nRZYSv4Op8wCydxezz4ttsHRZdCeNYZ4i7mOQNkNRhIPgPAytI7cEqG+Ug
-         RgRY76TGoZLxC+VC5srVyfpJkHQA1FKChfmdK6uw2vxqPrFlK6TodFFGPayVdbgDcGnj
-         zdBlEAiiJLsOu5kuBG4LEOqL3elqJvyOcVRV/XZcXWdTjNdna31DnG2MKvtm1FHA4fs5
-         Cm33wygJhZJ6Q851knxCwpxsdyDqwpd9SEkKlQjQePbKpTd+HgQUK6szmsH45f7D2FLa
-         U7sg==
-X-Gm-Message-State: AOAM533a4knUpQdDGqtlPf9adG7nhxhrydx602gnaMENSZXOMrHuJZ3R
-        WIn+45a6nPLZJ4iHNb1TXzJ4rIYUmexkiJHpOho=
-X-Google-Smtp-Source: ABdhPJypdKxpeEkzgLCokUxyMCMz480lSKKdcgSUnSJMv1uQm0VHIbMAqvXRye1H8rAFcLAtk2dSHPm1P2RfBItEowg=
-X-Received: by 2002:a05:6e02:8:: with SMTP id h8mr7415793ilr.164.1617299430937;
- Thu, 01 Apr 2021 10:50:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1615038553.git.syednwaris@gmail.com> <4c259d34b5943bf384fd3cb0d98eccf798a34f0f.1615038553.git.syednwaris@gmail.com>
- <CAHp75VfJ5bGaPkai_adsBoT6=7nS2K8ze0ka3gzZkQARkM5evA@mail.gmail.com>
- <CACG_h5pb0pA+cTNPGircAM3UrV5BGmqgk45LF_9phU_J4FaRyw@mail.gmail.com>
- <CAHp75VfDZbJjCOEGdHc=-D6W8_7m2=CinXj-itwn6hvoVqdWYQ@mail.gmail.com>
- <YF8evJTkiBYjnDON@shinobu> <CAHp75VektkxSH7S3qTkYd1De613HGrBDvXn36FFex_p1n9BDng@mail.gmail.com>
-In-Reply-To: <CAHp75VektkxSH7S3qTkYd1De613HGrBDvXn36FFex_p1n9BDng@mail.gmail.com>
-From:   Syed Nayyar Waris <syednwaris@gmail.com>
-Date:   Thu, 1 Apr 2021 23:20:19 +0530
-Message-ID: <CACG_h5pox5CCmhy7+itc7cpjCSYtzSXGA85ow14nPrAThyNTDA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: xilinx: Utilize generic bitmap_get_value and _set_value
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Robert Richter <rrichter@marvell.com>,
+        id S235020AbhDAVph (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Apr 2021 17:45:37 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54030 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234978AbhDAVpg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 1 Apr 2021 17:45:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=0re/4MhL/HVSNQlJ26P2awZytOoB
+        TZt9SWkXNDLXpXg=; b=UelA4teuQjS5OAMHUdyUHY0u1WQXlz7ul/8OSE9VS99a
+        1p0kZlVayGtboNEwx/aiKMa9yeocX2V5VRkRHqkB4RwKFXk971XeVPXjiu2iAMM/
+        q7eZZ38+3keT5NMMUH/nofj4WTd3a3wlA+eMiCnXwxBykKVLNaOFha8U21X0am8=
+Received: (qmail 1102382 invoked from network); 1 Apr 2021 23:45:33 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Apr 2021 23:45:33 +0200
+X-UD-Smtp-Session: l3s3148p1@msp2JvC+HI0gAwDPXw1NAMt9GTaBIvNo
+Date:   Thu, 1 Apr 2021 23:45:28 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH RFC/RFT 1/1] misc: add simple logic analyzer using polling
+Message-ID: <20210401214528.GA892@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Zhang, Rui" <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20210330085655.12615-1-wsa+renesas@sang-engineering.com>
+ <20210330085655.12615-2-wsa+renesas@sang-engineering.com>
+ <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Mar 27, 2021 at 10:05 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Sat, Mar 27, 2021 at 2:02 PM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> > On Sat, Mar 27, 2021 at 09:29:26AM +0200, Andy Shevchenko wrote:
-> > > On Saturday, March 27, 2021, Syed Nayyar Waris <syednwaris@gmail.com> wrote:
-> > > > On Fri, Mar 26, 2021 at 11:32 PM Andy Shevchenko
-> > > > <andy.shevchenko@gmail.com> wrote:
-> > > > > On Sat, Mar 6, 2021 at 4:08 PM Syed Nayyar Waris <syednwaris@gmail.com>
-> > > > wrote:
-> > > > >
-> > > > > > +       bitmap_set_value(old, 64, state[0], 32, 0);
-> > > > > > +       bitmap_set_value(old, 64, state[1], 32, 32);
-> > > > >
-> > > > > Isn't it effectively bitnap_from_arr32() ?
-> > > > >
-> > > > > > +       bitmap_set_value(new, 64, state[0], 32, 0);
-> > > > > > +       bitmap_set_value(new, 64, state[1], 32, 32);
-> > > > >
-> > > > > Ditto.
->
-> > > > With bitmap_set_value() we are also specifying the offset (or start)
-> > > > position too. so that the remainder of the array remains unaffected. I
-> > > > think it would not be feasible to use bitmap_from/to_arr32()  here.
-> > >
-> > >
-> > > You have hard coded start and nbits parameters to 32. How is it not the
-> > > same?
-> >
-> > Would these four lines become something like this:
-> >
-> >         bitmap_from_arr32(old, state, 64);
-> >         ...
-> >         bitmap_from_arr32(new, state, 64);
->
-> This is my understanding, but I might miss something. I mean driver
-> specifics that make my proposal incorrect.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
 
-I initially (incorrectly) thought that all of the bitmap_set_value()
-statements have to be replaced. But now I realised, only those
-specific bitmap_set_value() calls containing 32 bits width have to
-replaced.
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will incorporate the above review comments in my next v4 submission.
+Hi Linus,
 
-Regards
-Syed Nayyar Waris
+> I am a great supporter of this idea.
+
+Great, thanks!
+
+> When other debugging tools for GPIO got DT bindings it was concluded that
+> it is possible to create bindings like this for debugging without even
+> specifying
+> any formal bindings. They are just for debugging after all.
+
+So, I remove the yaml file and add the bindings to the documenation,
+then? Makes sense to me because it is for debugging and not really
+official.
+
+> I would consider housing this tool under drivers/gpio actually.
+> We have other funky things like gpio-sim and gpio-aggregator
+> so why not.
+
+Heh, my first draft was placed in drivers/gpio. I'd be happy to have it
+there.
+
+> I would create a Kconfig menu with "GPIO hardware hacking tools".
+>=20
+> But Bartosz would need to agree on that idea.
+
+Since he agreed, I'll update this in v2.
+
+> > +config GPIO_LOGIC_ANALYZER
+> > +       tristate "Simple GPIO logic analyzer"
+> > +       depends on GPIOLIB || COMPILE_TEST
+> > +       help
+>=20
+> depends on EXPERT
+
+Yes, good point!
+
+All the best,
+
+   Wolfram
+
+
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBmPvMACgkQFA3kzBSg
+KbYdLA/+IU2QMANxwSFRdg2A9RK83WiwfbmbESqKoyLf/8u/F0JwkANKUW11ECxO
+whmec/QfqCFWNQxyJEA50B+M5/hRfl4cRJFfzXR8tXJrRjA06hw9NAibzlHtOLoX
+y5dq89MeMwnkJi0oZAE4s+CobDvuHLRU0XHW5IaQDKoai4TK+WTla5dmqbUmGvXK
+zo0jLm+EPS8lWBxZBLTd0jYqQMFJKhNUQ+1nQmDVc6t4H9lpHMeDow3wCcXqUgpI
+10Lydp0sqX7gaMJ0O/x3W/X0/XzuRwS9kgNLeTx6qJbkJCN9uarfOaUa4ho5jneW
+PCWxE0AB9YEyKLlvRS9NptlOpeLo1pz+kqvwnymk9FTciKi7+ei7JKCtN6LH+X6K
+TUtfg9/iYQtW4i55CCWsGs+4JYnlrmFkzFKlv2d62kJ+TFh3tPa6iKYOAMoWJISs
+oyFKLLfWZ5y98i5qifaVaa8PCwdTzQW7l52VlR/XOCFXVc4lET77UveFrMNe/5ZB
+5vzgNhQVzYgIWDQHO2bz445oUp5ZEvOKTaT98FrZnjfSSpW9CX29v2ej6bJEH8aG
+WpThl2pNgZaR7PewhLPMETS+q9ixNhkwGqlPDLTP3ftDYdC03nNDM4wChFpQV5d/
+b1yFsmOAwIRUd+xhf8EZO39Vgx7pqf0FG3Iq+D0nysRwq/Mrq4c=
+=9CKg
+-----END PGP SIGNATURE-----
+
+--envbJBWh7q8WU6mo--
