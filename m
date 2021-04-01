@@ -2,135 +2,245 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A56C433ED
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 10:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6A3C43603
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 910786100C
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 10:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7471B61399
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233780AbhDAKEl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Apr 2021 06:04:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45826 "EHLO
+        id S235555AbhDARpy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Apr 2021 13:45:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233616AbhDAKET (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 06:04:19 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBE7C0613E6
-        for <linux-gpio@vger.kernel.org>; Thu,  1 Apr 2021 03:04:19 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id u5so2010203ejn.8
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Apr 2021 03:04:19 -0700 (PDT)
+        with ESMTP id S234637AbhDARii (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Apr 2021 13:38:38 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84755C05BD10
+        for <linux-gpio@vger.kernel.org>; Thu,  1 Apr 2021 05:51:48 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id o66so1645402ybg.10
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Apr 2021 05:51:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tdJu4NzPjRKxf7IHGvtWzEypzz/sgqEq/MXKxQfclPc=;
-        b=AKT0Kecm1iHwnk7ipLWshLWGG0F6hYxwTeRpDgr9kkfIe8SY/IHl8nVr8DfungkOyw
-         mcaPb3Hh47Hb1JiFanSC0l5ZoMlU7ofH1xIY/XOkBN0sxiP16cnDnav+TnVJMv+4uj64
-         bmyoXOXY6pJkMM2xwMx+cOKsUNQwoAXFIAURcZk+lRaVEvgLNGyXlFP4g89Q1tXJ7cXz
-         wpqv7jZHH4Z8wBbAbqpNTiWtSBLJpXf8R1ppDS2jXesK6sMTG//LjQtPVDEcZfOUYuS8
-         tlG3JmXQj6cgC3RTd3PBQ6HrlPejMSLv8t68eyAJCQfAEEI9ecdmRqhNn2xfQ4O0zZAe
-         mCfw==
+        bh=M1VB1ralBR7+e/H7JqA/6mMiYo3JOylCfFNbfyvT27M=;
+        b=C8Z1fGmD0ugXE9aGQpDEEcbJPwy2biu89w6Y8hjTLRV+uZ6Y+fa5ayeevztvzJk+dU
+         PX2Rwh+sIiRbjGzRPRKXUXZk7IfGSsgtMCvqlVkz2WF9P4XXjC9JtmvDJGd8cQp5iUEW
+         7h6YWHc3ZAchF/U59kTlgfc/r1dtfTFNnoFrMgOKzlAVOcb3zHPu9VtojLYbJwtLFk/6
+         +oKvoicUnGd7b8+54QGsxVhMEFiJZjn8JHAoY4jACV/jFQTp8R152wz4eg52V/LGZfJp
+         JojHcn5GNEp6DijbKwabno/N5j2/fkHlrKTeccFq0wC3lrmyC7nKB0xUN6+/ttzTnaXt
+         bEpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tdJu4NzPjRKxf7IHGvtWzEypzz/sgqEq/MXKxQfclPc=;
-        b=tbVkjUbmrSu34QO1P/mnjkOa0bXMfPENOmxcbKmcH0damunkJB+lgC0tZnpcLVRzwt
-         z+Od9yU8EeFAfvmDbGG+wwoIGUBNSMRij3dGiPYkZ3loY/tSq/9Me9icaQVFprYLYhgH
-         rOeA9sYKparo/gzZzl5WR1pp9YIfN3jAkz7rDkv9g6adgFApqUvHNVfhZV0ATu4yTBQC
-         ybOcnDmky1cLIlkoVdLHiGUa4Jbrm4vLIJbw8Pvt9Pj7beBhmTCw/T/thUtrr6klyNGE
-         gVXKh3VJSL6PKXkBpPVGmboyWN9Cmz1GnzgNXwNdjPHOgEbGmdA1ObtoXwmjLJzO6ddk
-         bDlg==
-X-Gm-Message-State: AOAM531oOvXCn7/x7A4P2yDUoWYOljaxci5gq3L0XJQzFX2hiwx4jXd9
-        jWmHmEEkcuCbCShNCmRI5RC3P0ZlGoPEiZAlx4OGxg==
-X-Google-Smtp-Source: ABdhPJzHdvylMX6Bu6zBm9RnvurGoOQTywfu4c1iZpW+Dom2fsBqXYVajD2pWqqZHTQ9qVJm9X08DbYyYFfsmbbKN4I=
-X-Received: by 2002:a17:906:3b48:: with SMTP id h8mr8129952ejf.261.1617271458228;
- Thu, 01 Apr 2021 03:04:18 -0700 (PDT)
+        bh=M1VB1ralBR7+e/H7JqA/6mMiYo3JOylCfFNbfyvT27M=;
+        b=mwCIOHO1N48cKBYuDu9ZAjk8KOQMsAFCn9n04pilrd1ni+ZWPnhR314idXj6jVwSPt
+         WBvbYw/CXZ23Rqzyequa/+TEIdPbZAgbF9eYAgztC55jgRU/bwIS1DmpFlEfPZWWUl0k
+         vXI6NHt4OwAgoCOGPT71TrjtDudbqt8+EIUWjVhLUhwhmurWZ+PivGK2EqP2SL/L5CK6
+         SWQGUQlU9pYeUA4QgSr92/l7i7tlK4lSzLFhZVZaZiVj7ReYTBef01oAjW8SHXPXnP+2
+         LXBTuStDTcQF0vTUKyqfyURBJDaxdJxgBJb6vRlzNzNXzoAIZe6iBATLWorxqT3Bvvbr
+         2RsA==
+X-Gm-Message-State: AOAM53075+C9oufZQaSy48thw8r5Zu6NdDXUaG8VSjtIHSHrAkP/X4pC
+        Rf2A9pjNSWGX+1FgEXnhwQq+AJEL60I5NoAezHik6A==
+X-Google-Smtp-Source: ABdhPJzvynb+mFT6Mi7hEx6IXLxnNBonNu1ObAo/1/4cv6eeRaXfFt+HU09XZQgNU5/AQabX6bp6nFyK8dybNvj64T8=
+X-Received: by 2002:a25:d2d3:: with SMTP id j202mr11341988ybg.157.1617281507590;
+ Thu, 01 Apr 2021 05:51:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <YGHhPlK5Ej4QywNH@black.fi.intel.com>
-In-Reply-To: <YGHhPlK5Ej4QywNH@black.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 1 Apr 2021 12:04:07 +0200
-Message-ID: <CAMRc=MfWiqUKq82M-9dCVKRO=RFKGJ+ARTTfhEy9Pbog2Txk1g@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-gpio for 5.13-1
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linux GPIO <linux-gpio@vger.kernel.org>,
+References: <cover.1615038553.git.syednwaris@gmail.com> <4c259d34b5943bf384fd3cb0d98eccf798a34f0f.1615038553.git.syednwaris@gmail.com>
+ <36db7be3-73b6-c822-02e8-13e3864b0463@xilinx.com> <CAMpxmJUv0iU0Ntmks1f6ThDAG6x_eJLYYCaDSjy+1Syedzc5dQ@mail.gmail.com>
+ <DM6PR02MB53863852A28F782B0942ECD8AF7C9@DM6PR02MB5386.namprd02.prod.outlook.com>
+ <CACG_h5q6P5NiNByttQ-NZvq8x3GCTKfSU=Yyywk7PcO6_=i2Mw@mail.gmail.com>
+In-Reply-To: <CACG_h5q6P5NiNByttQ-NZvq8x3GCTKfSU=Yyywk7PcO6_=i2Mw@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 1 Apr 2021 14:51:36 +0200
+Message-ID: <CAMpxmJUO48Aor0zSofOPJgtKJPL-DKe01a=FOd-Aqz-OHYeZOg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] gpio: xilinx: Utilize generic bitmap_get_value and _set_value
+To:     Syed Nayyar Waris <syednwaris@gmail.com>
+Cc:     Michal Simek <michals@xilinx.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Robert Richter <rrichter@marvell.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-pm <linux-pm@vger.kernel.org>,
+        Srinivas Goud <sgoud@xilinx.com>,
+        Srinivas Neeli <sneeli@xilinx.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 4:17 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Thu, Apr 1, 2021 at 1:16 PM Syed Nayyar Waris <syednwaris@gmail.com> wrote:
 >
-> Hi Linux GPIO  maintainers,
+> On Wed, Mar 31, 2021 at 8:56 PM Srinivas Neeli <sneeli@xilinx.com> wrote:
+> >
+> > Hi,
+> >
+> > > -----Original Message-----
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > Sent: Friday, March 26, 2021 10:58 PM
+> > > To: Michal Simek <michals@xilinx.com>
+> > > Cc: Syed Nayyar Waris <syednwaris@gmail.com>; Srinivas Neeli
+> > > <sneeli@xilinx.com>; Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com>; William Breathitt Gray
+> > > <vilhelm.gray@gmail.com>; Arnd Bergmann <arnd@arndb.de>; Robert
+> > > Richter <rrichter@marvell.com>; Linus Walleij <linus.walleij@linaro.org>;
+> > > Masahiro Yamada <yamada.masahiro@socionext.com>; Andrew Morton
+> > > <akpm@linux-foundation.org>; Zhang Rui <rui.zhang@intel.com>; Daniel
+> > > Lezcano <daniel.lezcano@linaro.org>; Amit Kucheria
+> > > <amit.kucheria@verdurent.com>; Linux-Arch <linux-arch@vger.kernel.org>;
+> > > linux-gpio <linux-gpio@vger.kernel.org>; LKML <linux-
+> > > kernel@vger.kernel.org>; arm-soc <linux-arm-kernel@lists.infradead.org>;
+> > > linux-pm <linux-pm@vger.kernel.org>; Srinivas Goud <sgoud@xilinx.com>
+> > > Subject: Re: [PATCH v3 3/3] gpio: xilinx: Utilize generic bitmap_get_value and
+> > > _set_value
+> > >
+> > > On Mon, Mar 8, 2021 at 8:13 AM Michal Simek <michal.simek@xilinx.com>
+> > > wrote:
+> > > >
+> > > >
+> > > >
+> > > > On 3/6/21 3:06 PM, Syed Nayyar Waris wrote:
+> > > > > This patch reimplements the xgpio_set_multiple() function in
+> > > > > drivers/gpio/gpio-xilinx.c to use the new generic functions:
+> > > > > bitmap_get_value() and bitmap_set_value(). The code is now simpler
+> > > > > to read and understand. Moreover, instead of looping for each bit in
+> > > > > xgpio_set_multiple() function, now we can check each channel at a
+> > > > > time and save cycles.
+> > > > >
+> > > > > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > > Cc: Michal Simek <michal.simek@xilinx.com>
+> > > > > Signed-off-by: Syed Nayyar Waris <syednwaris@gmail.com>
+> > > > > Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> > > > > ---
+> > > > >  drivers/gpio/gpio-xilinx.c | 63
+> > > > > +++++++++++++++++++-------------------
+> > > > >  1 file changed, 32 insertions(+), 31 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> > > > > index be539381fd82..8445e69cf37b 100644
+> > > > > --- a/drivers/gpio/gpio-xilinx.c
+> > > > > +++ b/drivers/gpio/gpio-xilinx.c
+> > > > > @@ -15,6 +15,7 @@
+> > > > >  #include <linux/of_device.h>
+> > > > >  #include <linux/of_platform.h>
+> > > > >  #include <linux/slab.h>
+> > > > > +#include "gpiolib.h"
+> > > > >
+> > > > >  /* Register Offset Definitions */
+> > > > >  #define XGPIO_DATA_OFFSET   (0x0)    /* Data register  */
+> > > > > @@ -141,37 +142,37 @@ static void xgpio_set_multiple(struct
+> > > > > gpio_chip *gc, unsigned long *mask,  {
+> > > > >       unsigned long flags;
+> > > > >       struct xgpio_instance *chip = gpiochip_get_data(gc);
+> > > > > -     int index = xgpio_index(chip, 0);
+> > > > > -     int offset, i;
+> > > > > -
+> > > > > -     spin_lock_irqsave(&chip->gpio_lock[index], flags);
+> > > > > -
+> > > > > -     /* Write to GPIO signals */
+> > > > > -     for (i = 0; i < gc->ngpio; i++) {
+> > > > > -             if (*mask == 0)
+> > > > > -                     break;
+> > > > > -             /* Once finished with an index write it out to the register */
+> > > > > -             if (index !=  xgpio_index(chip, i)) {
+> > > > > -                     xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+> > > > > -                                    index * XGPIO_CHANNEL_OFFSET,
+> > > > > -                                    chip->gpio_state[index]);
+> > > > > -                     spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
+> > > > > -                     index =  xgpio_index(chip, i);
+> > > > > -                     spin_lock_irqsave(&chip->gpio_lock[index], flags);
+> > > > > -             }
+> > > > > -             if (__test_and_clear_bit(i, mask)) {
+> > > > > -                     offset =  xgpio_offset(chip, i);
+> > > > > -                     if (test_bit(i, bits))
+> > > > > -                             chip->gpio_state[index] |= BIT(offset);
+> > > > > -                     else
+> > > > > -                             chip->gpio_state[index] &= ~BIT(offset);
+> > > > > -             }
+> > > > > -     }
+> > > > > -
+> > > > > -     xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+> > > > > -                    index * XGPIO_CHANNEL_OFFSET, chip->gpio_state[index]);
+> > > > > -
+> > > > > -     spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
+> > > > > +     u32 *const state = chip->gpio_state;
+> > > > > +     unsigned int *const width = chip->gpio_width;
+> > > > > +
+> > > > > +     DECLARE_BITMAP(old, 64);
+> > > > > +     DECLARE_BITMAP(new, 64);
+> > > > > +     DECLARE_BITMAP(changed, 64);
+> > > > > +
+> > > > > +     spin_lock_irqsave(&chip->gpio_lock[0], flags);
+> > > > > +     spin_lock(&chip->gpio_lock[1]);
+> > > > > +
+> > > > > +     bitmap_set_value(old, 64, state[0], width[0], 0);
+> > > > > +     bitmap_set_value(old, 64, state[1], width[1], width[0]);
+> > > > > +     bitmap_replace(new, old, bits, mask, gc->ngpio);
+> > > > > +
+> > > > > +     bitmap_set_value(old, 64, state[0], 32, 0);
+> > > > > +     bitmap_set_value(old, 64, state[1], 32, 32);
+> > > > > +     state[0] = bitmap_get_value(new, 0, width[0]);
+> > > > > +     state[1] = bitmap_get_value(new, width[0], width[1]);
+> > > > > +     bitmap_set_value(new, 64, state[0], 32, 0);
+> > > > > +     bitmap_set_value(new, 64, state[1], 32, 32);
+> > > > > +     bitmap_xor(changed, old, new, 64);
+> > > > > +
+> > > > > +     if (((u32 *)changed)[0])
+> > > > > +             xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET,
+> > > > > +                             state[0]);
+> > > > > +     if (((u32 *)changed)[1])
+> > > > > +             xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+> > > > > +                             XGPIO_CHANNEL_OFFSET, state[1]);
+> > > > > +
+> > > > > +     spin_unlock(&chip->gpio_lock[1]);
+> > > > > +     spin_unlock_irqrestore(&chip->gpio_lock[0], flags);
+> > > > >  }
+> > > > >
+> > > > >  /**
+> > > > >
+> > > >
+> > > > Srinivas N: Can you please test this code?
+> > > >
+> > > > Thanks,
+> > > > Michal
+> > >
+> > > Hey, any chance of getting that Tested-by?
+> > I tested patches with few modifications in code (spin_lock handling and merge conflict).
+> > functionality wise it's working fine.
+> >
+> > >
+> > > Bart
 >
-> So far collected stuff for Intel GPIO drivers (including aggregator clean up).
-> No conflicts are expected.
+> Hi Bartosz,
 >
-> Thanks,
+> May I please know the URL of the tree that you are using. I had been
+> using the tree below for submitting this patchset on GPIO to you.
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
 >
-> With Best Regards,
-> Andy Shevchenko
+> I think I am using the wrong tree. On which tree should I base my
+> patches on for my next  (v4) submission? Should I use the tree below?
+> :
+> https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
 >
-> The following changes since commit b41ba2ec54a70908067034f139aa23d0dd2985ce:
->
->   gpiolib: Read "gpio-line-names" from a firmware node (2021-03-08 11:59:17 +0100)
->
-> are available in the Git repository at:
->
->   git@gitolite.kernel.org:pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v5.13-1
->
-> for you to fetch changes up to 6c46215d6b626cb0981f8332da506b69b98c4b49:
->
->   gpio: sch: Hook into ACPI GPE handler to catch GPIO edge events (2021-03-27 23:48:55 +0200)
->
-> ----------------------------------------------------------------
-> intel-gpio for v5.13-1
->
-> * Implement event support (GPE) in Intel SCH GPIO driver
-> * Clean up GPIO aggregator driver to use more of the generic code
->
-> The following is an automated git shortlog grouped by driver:
->
-> aggregator:
->  -  Replace custom get_arg() with a generic next_arg()
->
-> lib/cmdline:
->  -  Export next_arg() for being used in modules
->
-> sch:
->  -  Hook into ACPI GPE handler to catch GPIO edge events
->  -  Add edge event support
->
-> ----------------------------------------------------------------
-> Andy Shevchenko (3):
->       lib/cmdline: Export next_arg() for being used in modules
->       gpio: aggregator: Replace custom get_arg() with a generic next_arg()
->       gpio: sch: Hook into ACPI GPE handler to catch GPIO edge events
->
-> Jan Kiszka (1):
->       gpio: sch: Add edge event support
->
->  drivers/gpio/Kconfig           |   3 +-
->  drivers/gpio/gpio-aggregator.c |  39 ++------
->  drivers/gpio/gpio-sch.c        | 198 +++++++++++++++++++++++++++++++++++++++--
->  lib/cmdline.c                  |   1 +
->  4 files changed, 198 insertions(+), 43 deletions(-)
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+> Regards
+> Syed Nayyar Waris
 
-Pulled, thanks!
+Yes this is the one. Please address new issues raised by reviewers.
 
-Bartosz
+Bart
