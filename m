@@ -2,200 +2,163 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2A3C433ED
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 15:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60263C433ED
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 16:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6868D6113A
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 15:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 246DB610F8
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 16:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231925AbhDHPy0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Apr 2021 11:54:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232021AbhDHPy0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Apr 2021 11:54:26 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D707C061760;
-        Thu,  8 Apr 2021 08:54:14 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id e186so2738736iof.7;
-        Thu, 08 Apr 2021 08:54:14 -0700 (PDT)
+        id S231772AbhDHQRO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Apr 2021 12:17:14 -0400
+Received: from mail-dm6nam12on2067.outbound.protection.outlook.com ([40.107.243.67]:25568
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231655AbhDHQRN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 8 Apr 2021 12:17:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XQxUnkpqm1Vq+N9r6yHnrvRwDfaFTQpVNYlsy0GcVW5f8kznzJl1NPZCz8I5mDMTjngGkGeoQ5jIJ+AshZT+KP2bPcsQk1lIxdyd2LWQnaVGITJBDpu9HO2W5fEz2EtbX7YwuHiaUkM2cRfjJs6k5SiTk3myDI2VTZhYWbKXpEH7D+7wGFBKyEriQoRTvW3WyWISWRS7uZCuvuyNiSOhihMRygYTE3bK3p9xk7vYYkBiFSTeDWLRRdHM4IQ0UCLUUoxzq+yyGnmgXQ/oyJVpso2ElK2/PSEBud9xoNoTrCq8yQO62OG0CIyysZX8yIsU3cWr2fWgJYjxQNq3yjc5Fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3e7gARQArOuzuYh7n0YhBtkwMqrOGRvsxGykYqolBZE=;
+ b=BitU6lU0gRAClQWB27rY0KKs5NRmRbdpccbNZkdceBqSVj0cHvSqZ+qXnqGt3IRCHtV9okSe6lQxDmHu/sJrJ5uNHrC/+A+UbJvSdDGcDG0ho48/uezC/enSeZCNHmxP9DEvoXGidO1QNdl8M3GCWjMRvSg7vwK/m1CwLBiL/VP2jY8sPHzgZg1o8N2nsLvib1118YlpdONQ+1a75nBlxS0KINZPHB7kCi2NgI20AVvUZ4sJZ+nFcgCNNomj7yXkrkLmyqiKbffIhghK6MqHmuMqNdiBaW2cazEWRSjRShbuc8OEE1y4ftp+/c+B8i0RTuFz9EqZeNEvf2nmZG2clg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rIN8pFCeaL2LoZFYDNHo3e85mHPCiEYXPwyKOYGtHaE=;
-        b=KrZZDITGFhojERnsGR8KbTUSZbtk2xO0nBn8F+jYUkCPdGr4cnqz69qOZdOmX0nkFP
-         QU6GYIOaFOftunS3/+RuVzO1J+pZHV3B6VNxImBVphRXlyGV7gSRE1FjJ7k8P7m0y8eU
-         Ps8STwkDR51xbMxXqQHEzOi/YlK6y/mYO8Ha0IBaOzQT0j6RpQLusQyeZQ7H6LAS0rDv
-         F66pThJEIoDdYsiVHABaQgz+uTlHxGMuA+whU0ZMvFQgj2Z3TWYhHlnfJtt2vp4IB/ds
-         Yl9aK0x4DrZ6el0HxLIgC6mcdBp0Sid0siS+OfEQq+uqDjLcZF/egqz8A+zeidCFWqfN
-         4mmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rIN8pFCeaL2LoZFYDNHo3e85mHPCiEYXPwyKOYGtHaE=;
-        b=fl4Yz1JA+L/TZ6n97OwijYjnBIBfMp7of1yrUhXo+YzWfpyAmMwOT4yvmy9Lphm7Vq
-         GnFPh2/8F85m+crN5PMuKxEjC/0nPDVYoliQuWHmPLVD5MykjFMGHQCpRu/MjxouMdKJ
-         EyfDml+m1cO9aB/J5zp6DNYydZARw6+OlMnkW89aqwmGEjmgShzl6mFWkG/ZjW+f81oj
-         fjiBK4I7OWhnvp4vS5RiszyeEFAj0qPuWuF5R/wAK8iEjpIeIHiomcKiOW3CXKNUHtAR
-         1i1RWYgBUXqjVWMb48UBEoCb9J54dtNN9Rqxs2dFNIu2rRvLPG1WoZHgZAlEoqSZaDqI
-         sJow==
-X-Gm-Message-State: AOAM531Qh6/V2nMzbyW4bpknJ/UHN0d6OIW63ZbI2kSriDKmKHnkkIth
-        AO7+XgXXhTlIMkpO0Pj6hrZ5tjs34cjSM5q8
-X-Google-Smtp-Source: ABdhPJxYKEFHrqjRpiXMINjjaX8WFGq5kHiicHt+ZbEM9GII5uK4VSe0JbWh5S5Jly5JeK1j3nlR5A==
-X-Received: by 2002:a05:6638:371e:: with SMTP id k30mr9555521jav.4.1617897253918;
-        Thu, 08 Apr 2021 08:54:13 -0700 (PDT)
-Received: from Ubu (97-116-48-27.mpls.qwest.net. [97.116.48.27])
-        by smtp.gmail.com with ESMTPSA id z12sm15962435ilb.18.2021.04.08.08.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Apr 2021 08:54:13 -0700 (PDT)
-From:   Barney Goette <barneygoette@gmail.com>
-To:     vilhelm.gray@gmail.com, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Barney Goette <barneygoette@gmail.com>
-Subject: [PATCH v2] gpio: gpio-104-dio-48e: Fixed coding style issues (revised)
-Date:   Thu,  8 Apr 2021 10:53:34 -0500
-Message-Id: <20210408155334.12919-1-barneygoette@gmail.com>
-X-Mailer: git-send-email 2.25.1
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3e7gARQArOuzuYh7n0YhBtkwMqrOGRvsxGykYqolBZE=;
+ b=O1J/24Z4n8A0gzQNIl+8wcAJnJ4Zm0+Pm9nwCs89qYTzuuq2rp44SGo52OoQWtrR7Qnnvo1xMjvoIeLUC/8r7/qt3pIYA1XN4f6tJ//cW5SOCT5jEcPdf9WkPRQDVIqD94mmo0Ix0yDQUOR/YU4qY4GFmDo99ewZL0YjLiEYGDA=
+Received: from BL0PR02CA0120.namprd02.prod.outlook.com (2603:10b6:208:35::25)
+ by BY5PR02MB6275.namprd02.prod.outlook.com (2603:10b6:a03:1b6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.29; Thu, 8 Apr
+ 2021 16:17:00 +0000
+Received: from BL2NAM02FT020.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:208:35:cafe::5d) by BL0PR02CA0120.outlook.office365.com
+ (2603:10b6:208:35::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.16 via Frontend
+ Transport; Thu, 8 Apr 2021 16:17:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ BL2NAM02FT020.mail.protection.outlook.com (10.152.77.162) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4020.17 via Frontend Transport; Thu, 8 Apr 2021 16:17:00 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Thu, 8 Apr 2021 09:16:58 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2106.2 via Frontend Transport; Thu, 8 Apr 2021 09:16:58 -0700
+Envelope-to: vilhelm.gray@gmail.com,
+ syednwaris@gmail.com,
+ linux@rasmusvillemoes.dk,
+ yury.norov@gmail.com,
+ bgolaszewski@baylibre.com,
+ linus.walleij@linaro.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-gpio@vger.kernel.org,
+ andriy.shevchenko@linux.intel.com
+Received: from [172.30.17.109] (port=39010)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1lUXKz-0006UV-Rg; Thu, 08 Apr 2021 09:16:58 -0700
+Subject: Re: [PATCH v1 2/5] gpio: xilinx: Correct kernel doc for xgpio_probe()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Syed Nayyar Waris <syednwaris@gmail.com>,
+        <vilhelm.gray@gmail.com>
+References: <20210408145601.68651-1-andriy.shevchenko@linux.intel.com>
+ <20210408145601.68651-3-andriy.shevchenko@linux.intel.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <c40ae975-5e11-8873-6784-1fa4303591f9@xilinx.com>
+Date:   Thu, 8 Apr 2021 18:16:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210408145601.68651-3-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 984e7345-0de4-44fd-c6bc-08d8faa9bd1a
+X-MS-TrafficTypeDiagnostic: BY5PR02MB6275:
+X-Microsoft-Antispam-PRVS: <BY5PR02MB62755903A9F234CC489ECAC8C6749@BY5PR02MB6275.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yphdYeykGrr+1CBm7q0Mz1je4n7QMGyH4UH/w/cilsgJnuPU0iG7RF/RXKSrGOlC065aUuQLiLEnD5COlsEUwvH7iHvF99L0xb8TrtePX/XwZBFACYNQav19ZiVMmPM3u5pgGUT+Q2UK7J1MpQWdDZNy8tTcVR7dzyP+ncL6tRi6qtjOtX207l8h6f8/WvP2WIVTXfMaG9BaHbSapwXkTuIN3+CTRC0NMo+8pVLfArmSBLSay/K0lcvMXmHk5b658liPqCop2ydcwpvFCm8pJVi5kbYsLC2oGmTQUHzYLZX8ZPhZ2kBmEaVeHSeX7dJU6+B5OD15VigvaOWb0MyG7Kr3Pjvlu7DP4nhVVM0sahRBx2SGTpYTmIrnI/ds/zEPsos+k25yVg5pjV+1Uafi8QlS/xbO+KCnuZbdSx5ZDnSiKJ+SJaVp56CZZodgjmXBayN0insUZQK8NWIuQ437LueVe9RDVlvw2FBjlju2OPAs64cZPI/vjLDYhLt8zSiVSbK5x0xjIh1uDodaEoKIJVJMcgaMpBwyA0kS2YgJDIC0tF8IK/XGylMyNJkz7CY6UwibLrvaBrySm6c/dxcw/GUkC9hBqkX1HJmJQKPsvkwRIsam5ISqLy8JgBZ3gdj5UNJ2XzrSfJuf79JibUnD9P0HzD6oJ6mQPO0s3xV1xjrVBckDl2UpPKV85yRhCPlefJYePl8HwwduwHRi0KemZtg6ln59uiEsb337D8LhcXo=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(346002)(396003)(136003)(46966006)(36840700001)(36906005)(7416002)(426003)(47076005)(336012)(4326008)(70586007)(478600001)(44832011)(36756003)(83380400001)(316002)(53546011)(31686004)(8676002)(9786002)(8936002)(110136005)(82310400003)(36860700001)(2616005)(82740400003)(26005)(356005)(186003)(31696002)(5660300002)(70206006)(6666004)(54906003)(7636003)(2906002)(50156003)(2101003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2021 16:17:00.0531
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 984e7345-0de4-44fd-c6bc-08d8faa9bd1a
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT020.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6275
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fixed multiple bare uses of 'unsigned' without 'int'.
-Fixed space around "*" operator.
-Fixed function parameter alignment to opening parenthesis.
-Reported by checkpatch.
 
-Signed-off-by: Barney Goette <barneygoette@gmail.com>
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-104-dio-48e.c | 50 ++++++++++++++++-----------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
-index 7a9021c4fa48..71c0bea34d7b 100644
---- a/drivers/gpio/gpio-104-dio-48e.c
-+++ b/drivers/gpio/gpio-104-dio-48e.c
-@@ -49,15 +49,15 @@ struct dio48e_gpio {
- 	unsigned char out_state[6];
- 	unsigned char control[2];
- 	raw_spinlock_t lock;
--	unsigned base;
-+	unsigned int base;
- 	unsigned char irq_mask;
- };
- 
--static int dio48e_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-+static int dio48e_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
--	const unsigned port = offset / 8;
--	const unsigned mask = BIT(offset % 8);
-+	const unsigned int port = offset / 8;
-+	const unsigned int mask = BIT(offset % 8);
- 
- 	if (dio48egpio->io_state[port] & mask)
- 		return  GPIO_LINE_DIRECTION_IN;
-@@ -65,14 +65,14 @@ static int dio48e_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- 	return GPIO_LINE_DIRECTION_OUT;
- }
- 
--static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-+static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
--	const unsigned io_port = offset / 8;
-+	const unsigned int io_port = offset / 8;
- 	const unsigned int control_port = io_port / 3;
--	const unsigned control_addr = dio48egpio->base + 3 + control_port*4;
-+	const unsigned int control_addr = dio48egpio->base + 3 + control_port * 4;
- 	unsigned long flags;
--	unsigned control;
-+	unsigned int control;
- 
- 	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
- 
-@@ -104,17 +104,17 @@ static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 	return 0;
- }
- 
--static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
--	int value)
-+static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
-+					int value)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
--	const unsigned io_port = offset / 8;
-+	const unsigned int io_port = offset / 8;
- 	const unsigned int control_port = io_port / 3;
--	const unsigned mask = BIT(offset % 8);
--	const unsigned control_addr = dio48egpio->base + 3 + control_port*4;
--	const unsigned out_port = (io_port > 2) ? io_port + 1 : io_port;
-+	const unsigned int mask = BIT(offset % 8);
-+	const unsigned int control_addr = dio48egpio->base + 3 + control_port * 4;
-+	const unsigned int out_port = (io_port > 2) ? io_port + 1 : io_port;
- 	unsigned long flags;
--	unsigned control;
-+	unsigned int control;
- 
- 	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
- 
-@@ -154,14 +154,14 @@ static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 	return 0;
- }
- 
--static int dio48e_gpio_get(struct gpio_chip *chip, unsigned offset)
-+static int dio48e_gpio_get(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
--	const unsigned port = offset / 8;
--	const unsigned mask = BIT(offset % 8);
--	const unsigned in_port = (port > 2) ? port + 1 : port;
-+	const unsigned int port = offset / 8;
-+	const unsigned int mask = BIT(offset % 8);
-+	const unsigned int in_port = (port > 2) ? port + 1 : port;
- 	unsigned long flags;
--	unsigned port_state;
-+	unsigned int port_state;
- 
- 	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
- 
-@@ -202,12 +202,12 @@ static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	return 0;
- }
- 
--static void dio48e_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-+static void dio48e_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
--	const unsigned port = offset / 8;
--	const unsigned mask = BIT(offset % 8);
--	const unsigned out_port = (port > 2) ? port + 1 : port;
-+	const unsigned int port = offset / 8;
-+	const unsigned int mask = BIT(offset % 8);
-+	const unsigned int out_port = (port > 2) ? port + 1 : port;
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
-@@ -306,7 +306,7 @@ static void dio48e_irq_unmask(struct irq_data *data)
- 	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
- }
- 
--static int dio48e_irq_set_type(struct irq_data *data, unsigned flow_type)
-+static int dio48e_irq_set_type(struct irq_data *data, unsigned int flow_type)
- {
- 	const unsigned long offset = irqd_to_hwirq(data);
- 
--- 
-2.25.1
+On 4/8/21 4:55 PM, Andy Shevchenko wrote:
+> Kernel doc validator complains:
+> 
+> .../gpio-xilinx.c:556: warning: expecting prototype for xgpio_of_probe(). Prototype was for xgpio_probe() instead
+> 
+> Correct as suggested by changing the name of the function in the doc..
+> 
+> Fixes: 749564ffd52d ("gpio/xilinx: Convert the driver to platform device interface")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/gpio/gpio-xilinx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> index b411d3156e0b..136557e7dd3c 100644
+> --- a/drivers/gpio/gpio-xilinx.c
+> +++ b/drivers/gpio/gpio-xilinx.c
+> @@ -542,7 +542,7 @@ static void xgpio_irqhandler(struct irq_desc *desc)
+>  }
+>  
+>  /**
+> - * xgpio_of_probe - Probe method for the GPIO device.
+> + * xgpio_probe - Probe method for the GPIO device.
+>   * @pdev: pointer to the platform device
+>   *
+>   * Return:
+> 
 
+Reviewed-by: Michal Simek <michal.simek@xilinx.com>
+
+Thanks,
+Michal
