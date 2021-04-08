@@ -2,38 +2,39 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEE3C433ED
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 14:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3042FC43460
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 14:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E03A610F9
+	by mail.kernel.org (Postfix) with ESMTP id 0282261107
 	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 14:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231895AbhDHO4E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Apr 2021 10:56:04 -0400
-Received: from mga12.intel.com ([192.55.52.136]:23179 "EHLO mga12.intel.com"
+        id S231952AbhDHO4F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Apr 2021 10:56:05 -0400
+Received: from mga05.intel.com ([192.55.52.43]:31802 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231557AbhDHO4D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S231630AbhDHO4D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Thu, 8 Apr 2021 10:56:03 -0400
-IronPort-SDR: HiMqLgjD+mwKO4L7yQBaMNoTqnfKIy0MhVc1287gWNqwTUlmeOIn8u6QOcwcn5At4w5S6a4pCO
- Y6cMc7mQVY9A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="173033285"
+IronPort-SDR: uOo1kMmi3yOSA+hixSM7/2r7ALftnR7X91qtJD+vUzeQjtGqUNPjDU8z5upzG621lfgU2wyqFb
+ YWF48vzic5xQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="278832332"
 X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="173033285"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 07:55:52 -0700
-IronPort-SDR: dgf9RWywikSAzthwS691EXZl6/fOl7kLiVbTciktdFgqtU1LTXY2jXSI/nYXzHVZd1WtVwMQMT
- HGLUUUljGp4Q==
+   d="scan'208";a="278832332"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 07:55:52 -0700
+IronPort-SDR: xLnxC6AVhroBeVuXPsCn8pBUA58qZJNQdg7tO32LBdcgIIPOhroycBeWwjKQsvSReo/JJDNBiv
+ 7aGJB7DrDP1g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="613364323"
+   d="scan'208";a="530626168"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Apr 2021 07:55:48 -0700
+  by orsmga004.jf.intel.com with ESMTP; 08 Apr 2021 07:55:49 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id ECC3AFC; Thu,  8 Apr 2021 17:56:04 +0300 (EEST)
+        id 15ED3567; Thu,  8 Apr 2021 17:56:05 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -47,39 +48,43 @@ Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Syed Nayyar Waris <syednwaris@gmail.com>,
         vilhelm.gray@gmail.com
-Subject: [RFT, PATCH v1 0/5] gpio: xilinx: convert to use bitmap API
-Date:   Thu,  8 Apr 2021 17:55:56 +0300
-Message-Id: <20210408145601.68651-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/5] gpio: xilinx: Correct kernel doc for xgpio_probe()
+Date:   Thu,  8 Apr 2021 17:55:58 +0300
+Message-Id: <20210408145601.68651-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210408145601.68651-1-andriy.shevchenko@linux.intel.com>
+References: <20210408145601.68651-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The change in the series has been inspired by [1], which, I think,
-can be improved. Here I present the view how it can be done.
+Kernel doc validator complains:
 
-The series marked as RFT since I have no hardware and I perform
-compile test only.
+.../gpio-xilinx.c:556: warning: expecting prototype for xgpio_of_probe(). Prototype was for xgpio_probe() instead
 
-The patches 1 and 2 can be (independently) applied for v5.13, but I'm not in
-hurry with the series, due to above (lack of real testing). So I'm flexible in
-a way how it can be proceed.
+Correct as suggested by changing the name of the function in the doc..
 
-[1]: cover.1617380819.git.syednwaris@gmail.com
+Fixes: 749564ffd52d ("gpio/xilinx: Convert the driver to platform device interface")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-xilinx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Andy Shevchenko (5):
-  bitmap: Make bitmap_remap() and bitmap_bitremap() available to users
-  gpio: xilinx: Correct kernel doc for xgpio_probe()
-  gpio: xilinx: Introduce xgpio_read_chan() / xgpio_write_chan()
-  gpio: xilinx: Switch to use bitmap APIs
-  gpio: xilinx: No need to disable IRQs in the handler
-
- drivers/gpio/gpio-xilinx.c | 377 ++++++++++++++++++-------------------
- lib/bitmap.c               |   5 +-
- 2 files changed, 190 insertions(+), 192 deletions(-)
-
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index b411d3156e0b..136557e7dd3c 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -542,7 +542,7 @@ static void xgpio_irqhandler(struct irq_desc *desc)
+ }
+ 
+ /**
+- * xgpio_of_probe - Probe method for the GPIO device.
++ * xgpio_probe - Probe method for the GPIO device.
+  * @pdev: pointer to the platform device
+  *
+  * Return:
 -- 
 2.30.2
 
