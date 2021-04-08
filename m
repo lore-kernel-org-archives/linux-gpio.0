@@ -2,82 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4A5C433ED
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 14:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285FBC433B4
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 14:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF7261139
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 14:03:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E907460C3D
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 14:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230467AbhDHODl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Apr 2021 10:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46452 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231574AbhDHODk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Apr 2021 10:03:40 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08B6BC061761
-        for <linux-gpio@vger.kernel.org>; Thu,  8 Apr 2021 07:03:26 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 184so2398025ljf.9
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Apr 2021 07:03:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EuaDV5PFzJtGwP30IwdE97tcENsaGWJZ27LkFoNdlRE=;
-        b=iDwn8tUVD9hBlSLhZZ0w4Bnih9Vx+R/uMXMbfYvvfK/BE8dJSRvxkKkQbttlBRuWy8
-         UkmYVW8ZjgP7eao4YvSaUP0ny3Ocp65OkcLk1qwx5C8flM3nfBRn81rV5R5ONN1HFv+p
-         B1N6lB4KaPu6NKVvOUxuZ9xyPjXGmXlA9tNCN5ElfqECGpu6/1tXwp95Txg/lrjyUiok
-         LFcEwLk1PH9/2Z/rdQiwOx4Hm2Ddgey0xDXKF2fhwU/YzXOpjpXSghE7luLvsfc+DT9M
-         EeoVqWgLS4E73OLAU177MBBZ3iWggzNmcAKOsgzl+6TdCEKjhAUekOwcJiFxWqdVB/0O
-         hU9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EuaDV5PFzJtGwP30IwdE97tcENsaGWJZ27LkFoNdlRE=;
-        b=Nj5HzXdlat/EJ+kSeM2ArWjCdhSXWc/ri0Q45th67bDIRPxw+lSMgPtaaHS+ePtNQ3
-         otFzQn6+3g3158CAL716wlFZ5V4QpxRtTT+IBpayYw3fQ+spWwYb8r4v8EbN40BZBAQc
-         Th0WvsUr/LwZJF3R4kmvJCVyZ4yrUWXh8KRuetJ2qV9BgjAP1HX1ifVCmih2SqBoIGy+
-         TwMz5Mpmqj9yHb3yLTkGBXMouF2daWvi8O41/BDASCHDax9ydspARaNMzG5AX91cqHPp
-         fsbOSQtjhMjxRu61iPNItoMEcMO77TCrIZCnm/ehq0FHkTAmFFhOdjYJr/nJBKjsSveA
-         5dNQ==
-X-Gm-Message-State: AOAM533umta2LmQumu7+ZR46sCmD8JfAma21BunbA8COw56tIabEZ6rR
-        JSc8a5eo79NbxXAt/zkavmw/CmCQXKZyNsBIk2oC3Q==
-X-Google-Smtp-Source: ABdhPJzaHapit3W4Z0PRJSrkxM0lTe9VKjj4klFARLjv+msdrPSeZ8yCS0Jwc7SQYxAM8UFn5ifpK906CRiek58aRtU=
-X-Received: by 2002:a2e:9cb:: with SMTP id 194mr5792845ljj.438.1617890602657;
- Thu, 08 Apr 2021 07:03:22 -0700 (PDT)
+        id S231779AbhDHO4D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Apr 2021 10:56:03 -0400
+Received: from mga14.intel.com ([192.55.52.115]:56204 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231370AbhDHO4D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 8 Apr 2021 10:56:03 -0400
+IronPort-SDR: bqdhx42IfTgNa7h1KoNkdpCxPeSB4hDR/gtp9s3r0vvsKmBYDEXRm7DyOLZlnI9ivB6bSY56e0
+ B1nAscgXXxhw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="193098971"
+X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
+   d="scan'208";a="193098971"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 07:55:52 -0700
+IronPort-SDR: u3SAzauGM3qMBFzJYep86skF9gApXYXbhGx7vZs839F5et0Sgjej8ukSdJC9sjQYY0cWlpe4qR
+ kRpLouaWSlmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
+   d="scan'208";a="449705839"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Apr 2021 07:55:49 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 03A5B93; Thu,  8 Apr 2021 17:56:04 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Syed Nayyar Waris <syednwaris@gmail.com>,
+        vilhelm.gray@gmail.com
+Subject: [PATCH v1 1/5] bitmap: Make bitmap_remap() and bitmap_bitremap() available to users
+Date:   Thu,  8 Apr 2021 17:55:57 +0300
+Message-Id: <20210408145601.68651-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210408145601.68651-1-andriy.shevchenko@linux.intel.com>
+References: <20210408145601.68651-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20210328164222.720525-1-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20210328164222.720525-1-niklas.soderlund+renesas@ragnatech.se>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 8 Apr 2021 16:03:11 +0200
-Message-ID: <CACRpkdZ_COOJcJtg8G5-GfTcBCX97qMnQukYzRYVkCK8von7UQ@mail.gmail.com>
-Subject: Re: [PATCH] docs: pin-control: Fix error path for control state example
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Mar 28, 2021 at 6:42 PM Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
+Currently the bitmap_remap() and bitmap_bitremap() are available
+only for CONFIG_NUMA=y case, while some users may benefit out of it
+and being independent to NUMA code. Make them available to users
+by moving out of ifdeffery and exporting for modules.
 
-> The error is constructed using the wrong variable.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ lib/bitmap.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Patch applied!
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index 74ceb02f45e3..7b6b2a67a6a6 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -784,8 +784,6 @@ int bitmap_parse(const char *start, unsigned int buflen,
+ }
+ EXPORT_SYMBOL(bitmap_parse);
+ 
+-
+-#ifdef CONFIG_NUMA
+ /**
+  * bitmap_pos_to_ord - find ordinal of set bit at given position in bitmap
+  *	@buf: pointer to a bitmap
+@@ -894,6 +892,7 @@ void bitmap_remap(unsigned long *dst, const unsigned long *src,
+ 			set_bit(bitmap_ord_to_pos(new, n % w, nbits), dst);
+ 	}
+ }
++EXPORT_SYMBOL(bitmap_remap);
+ 
+ /**
+  * bitmap_bitremap - Apply map defined by a pair of bitmaps to a single bit
+@@ -931,7 +930,9 @@ int bitmap_bitremap(int oldbit, const unsigned long *old,
+ 	else
+ 		return bitmap_ord_to_pos(new, n % w, bits);
+ }
++EXPORT_SYMBOL(bitmap_bitremap);
+ 
++#ifdef CONFIG_NUMA
+ /**
+  * bitmap_onto - translate one bitmap relative to another
+  *	@dst: resulting translated bitmap
+-- 
+2.30.2
 
-Yours,
-Linus Walleij
