@@ -2,82 +2,129 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 515AEC433B4
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 16:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAD6C433B4
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 16:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D776610D1
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 16:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B276861131
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Apr 2021 16:53:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232328AbhDHQYk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Apr 2021 12:24:40 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20635 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232305AbhDHQYd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 8 Apr 2021 12:24:33 -0400
-IronPort-SDR: NhwO+HoaHOFfk+U5LyXwlscehcUqKDQP9TGnF/PeS4C34Slv16z3iPl90HGSl6zXw5EIxvugHD
- b8Ve2C9Hy1Iw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="213990972"
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="213990972"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 09:24:21 -0700
-IronPort-SDR: d/IE0sWcHZh5xgKihrQ2CewyAwpUg+gzsh7bStmHK//u84plAhrj2epd8SP5CmIKBfc3urM4vK
- NxFCiVDxTTrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="448724413"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Apr 2021 09:24:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 80BFDFC; Thu,  8 Apr 2021 19:24:22 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S231655AbhDHQxK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Apr 2021 12:53:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231699AbhDHQxK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Apr 2021 12:53:10 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66608C061760;
+        Thu,  8 Apr 2021 09:52:57 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id y5so2873404qkl.9;
+        Thu, 08 Apr 2021 09:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Peqg9+DN2xDTvABOSV5xd4jxeGrojR9AJ8MkT215+f8=;
+        b=Av0kWGFRKustfWNyGATPKHlwJJNxZerOktWVJZcex6eUn6KJvEXoDhrgg5vmVzclOa
+         om2btBkdBjUj5Jta+3Szk0J33+LQqYj5oIscDrVrHK5VxfdUAYN/I0MGuHSlVcfhUuFa
+         kcon9cLCCG1VDIx4vVeQqG1OWIGR8Ottb2clg4XB9kv1VFwCNhDnYuaZL0ktGS7gVrBe
+         CpbOH1SoGPn/APrNUKF1q14u7MQ5juQk9iD/dN+pwdLoFKlSG8MIAlM2R8x2Qd3eEFjD
+         mbPJam+u6UDFCUdha22S/Bk2Dov9zv5nZQ2v8LKA0bSqVrnamGuPGsorP1P4VgW41tYA
+         Y0XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Peqg9+DN2xDTvABOSV5xd4jxeGrojR9AJ8MkT215+f8=;
+        b=H3uBwbwSkZg9hsCG2TXKQlb/UE1r/o3NW1XsyNeCXVfm58tlptjyqhGCM7BEkPoD3i
+         VBB3mJjIF4cqeB0hDliJ2PXSNGL2LXuswp/+kKYjR8if5PntUDxGLKp1WClZSGk5zLDm
+         HG5z1IGpHFO4SBOGRY4w+TLEyoW+IXHGiEv3BofATX7XYteyITJFEXhdyC7+tLcR3KQ9
+         v3VjxCTVb3+0JXYeN7RhFofTJYeMp+JtYxSIBMsbiEgY+lD0+AhQ8ctNEo+17nQb4PUK
+         0J1J79EXrVl/21WxMmU92/NznNqPx97J4Bwf29G5eaa+Hrdx6ZjVjv6eede2XaS9hvcz
+         wquQ==
+X-Gm-Message-State: AOAM532kjR1uGePBbR0uYCHbtmhcHrsyrNs4yw2dhvjHnu+Tp+E6jwoh
+        qTQXyHuCfxVEOx3cxapmoHA=
+X-Google-Smtp-Source: ABdhPJxrxGlmXWR0qPQZrPJ3seGTzEpltbmaw7AEilMnmCNaLg7YMvIBQRnLkQyb/bXOKO/TMgmSoQ==
+X-Received: by 2002:a05:620a:2095:: with SMTP id e21mr9454310qka.135.1617900776480;
+        Thu, 08 Apr 2021 09:52:56 -0700 (PDT)
+Received: from localhost ([73.19.182.124])
+        by smtp.gmail.com with ESMTPSA id e3sm7506qtj.28.2021.04.08.09.52.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 09:52:55 -0700 (PDT)
+Date:   Thu, 8 Apr 2021 09:52:54 -0700
+From:   Yury Norov <yury.norov@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: [PATCH v1 1/1] gpio: sim: Initialize attribute allocated on the heap
-Date:   Thu,  8 Apr 2021 18:55:06 +0300
-Message-Id: <20210408155506.12636-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Syed Nayyar Waris <syednwaris@gmail.com>,
+        vilhelm.gray@gmail.com
+Subject: Re: [PATCH v1 1/5] bitmap: Make bitmap_remap() and bitmap_bitremap()
+ available to users
+Message-ID: <20210408165254.GA1186882@yury-ThinkPad>
+References: <20210408145601.68651-1-andriy.shevchenko@linux.intel.com>
+ <20210408145601.68651-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210408145601.68651-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The attributes on the heap must be initialized before use.
-Neglecting that will produce an Oops in some configurations:
+On Thu, Apr 08, 2021 at 05:55:57PM +0300, Andy Shevchenko wrote:
+> Currently the bitmap_remap() and bitmap_bitremap() are available
+> only for CONFIG_NUMA=y case, while some users may benefit out of it
+> and being independent to NUMA code. Make them available to users
+> by moving out of ifdeffery and exporting for modules.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  lib/bitmap.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/bitmap.c b/lib/bitmap.c
+> index 74ceb02f45e3..7b6b2a67a6a6 100644
+> --- a/lib/bitmap.c
+> +++ b/lib/bitmap.c
+> @@ -784,8 +784,6 @@ int bitmap_parse(const char *start, unsigned int buflen,
+>  }
+>  EXPORT_SYMBOL(bitmap_parse);
+>  
+> -
+> -#ifdef CONFIG_NUMA
+>  /**
+>   * bitmap_pos_to_ord - find ordinal of set bit at given position in bitmap
+>   *	@buf: pointer to a bitmap
+> @@ -894,6 +892,7 @@ void bitmap_remap(unsigned long *dst, const unsigned long *src,
+>  			set_bit(bitmap_ord_to_pos(new, n % w, nbits), dst);
+>  	}
+>  }
+> +EXPORT_SYMBOL(bitmap_remap);
+>  
+>  /**
+>   * bitmap_bitremap - Apply map defined by a pair of bitmaps to a single bit
+> @@ -931,7 +930,9 @@ int bitmap_bitremap(int oldbit, const unsigned long *old,
+>  	else
+>  		return bitmap_ord_to_pos(new, n % w, bits);
+>  }
+> +EXPORT_SYMBOL(bitmap_bitremap);
+>  
+> +#ifdef CONFIG_NUMA
+>  /**
+>   * bitmap_onto - translate one bitmap relative to another
+>   *	@dst: resulting translated bitmap
+> -- 
+> 2.30.2
 
-  BUG: key ffff000800eba398 has not been registered!
-
-Initialize attribute allocated on the heap.
-
-Fixes: 3f0279eb9e37 ("gpio: sim: new testing module")
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-sim.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index ea17289a869c..92493b98c51b 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -284,6 +284,7 @@ static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
- 		line_attr->offset = i;
- 
- 		dev_attr = &line_attr->dev_attr;
-+		sysfs_attr_init(&dev_attr->attr);
- 
- 		dev_attr->attr.name = devm_kasprintf(dev, GFP_KERNEL,
- 						     "gpio%u", i);
--- 
-2.30.2
-
+Acked-by: Yury Norov <yury.norov@gmail.com>
