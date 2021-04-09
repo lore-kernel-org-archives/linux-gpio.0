@@ -2,233 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520E9C43460
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 09:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C793EC4363C
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 10:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B82361108
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 09:38:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98EA261181
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 10:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231638AbhDIJjG convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:39:06 -0400
-Received: from aposti.net ([89.234.176.197]:38162 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230181AbhDIJjG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Apr 2021 05:39:06 -0400
-Date:   Fri, 09 Apr 2021 10:38:39 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 1/2] linux/kconfig.h: replace IF_ENABLED() with PTR_IF()
- in <linux/kernel.h>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org
-Message-Id: <FSIARQ.A8L3BEWP5IQK3@crapouillou.net>
-In-Reply-To: <CAK7LNATzaKiUewn-ixnDEAWbfQUy8xZL4yjkR1BxrhV3G1=Zng@mail.gmail.com>
-References: <20210408205858.51751-1-masahiroy@kernel.org>
-        <20210408205858.51751-2-masahiroy@kernel.org>
-        <YXEARQ.LGKNU44HTZP01@crapouillou.net>
-        <CAK7LNATzaKiUewn-ixnDEAWbfQUy8xZL4yjkR1BxrhV3G1=Zng@mail.gmail.com>
+        id S233846AbhDIKHE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Apr 2021 06:07:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234366AbhDIKGF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Apr 2021 06:06:05 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10838C061763
+        for <linux-gpio@vger.kernel.org>; Fri,  9 Apr 2021 03:05:04 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id g18-20020a7bc4d20000b0290116042cfdd8so4417602wmk.4
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Apr 2021 03:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P88VtW8jrwemR6nWNOnkRyeqoWX7xwJZBD4Bm9OKNe4=;
+        b=JggcRlqG1TxIOgB+6wN5M26WqSIjScZMkhNeKA9GTQXVjLZ8QtVu5tICLCsuK/1E8J
+         WMEHEbAQbOZJWbZHsAjuox1f4wv9rXLeeIYsd0sleUvK4vFyO+5Kx1I0xijoPQZd7jKt
+         u8UfO9uNgbA065vy8JkRtIiSCzA7D+G08KE1oworiOZKmMqlxt4xVtEYXXjAfBo/s/BD
+         EElcJKsCYPODzbD7GQomEFlHBUMjgppIhx7Wa41+/k+ObbFz2sVoeLsWHFSB4sJrUlp+
+         gOG9+d+2zx9T2KlQ1SjjVM/V+ItlQwOxAOjciYuCjl4AWlqfETjMnmM04ykpnZnyOEft
+         BpHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P88VtW8jrwemR6nWNOnkRyeqoWX7xwJZBD4Bm9OKNe4=;
+        b=UG+uU8CqdNJFyMgkZeMDScwK0Qko8f+Hya9jL40P3sSr3Dlj5lGyawp82CBs40v2Jo
+         wE655rTuHrP4NGrkIW/8P38lbn3yxux60NGhO3+tMdAyyYh5wcLEIBkfaj8wjBDLpVFF
+         CFjBjIoFSc2fZHKxPmBTbZMZHvO4utSR5a5heMfwbFPPVcefXrwGOURWm8NweLS9IjYM
+         k0LrnpuhCylgWvuaek2JfD8SWUAHanPp+fvgRjsii/PxTIuAtbUccAX5GEF/b7pVG1t1
+         udLG2XoaqVaoaQ16lPMlNR0ZSxOS9EwVrGDJuyJeHdxegla4OpUtz3eDYjHjzQURjp0y
+         2SIA==
+X-Gm-Message-State: AOAM533mjYPz7ABmzmjq83MbBUIQq+K5aNOxpTB1AtWOoDxn8WVPUFNd
+        B3g6W26CWd6l505U6t4weV3Kni7I4al+drQHfu6ECDrzuz8=
+X-Google-Smtp-Source: ABdhPJycj08rHm3ljtaNcliVekF0EMFMqAUWuCitg7V3H1EZgW8B43ZTG82NFSB19DEmAfefiEJxLDa3oOP4f1o4MW8=
+X-Received: by 2002:a1c:7ec4:: with SMTP id z187mr13079745wmc.3.1617962702830;
+ Fri, 09 Apr 2021 03:05:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+References: <1617693639-49182-1-git-send-email-jiapeng.chong@linux.alibaba.com>
+ <20210406083549.GR25703@kw.sim.vm.gnt>
+In-Reply-To: <20210406083549.GR25703@kw.sim.vm.gnt>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 9 Apr 2021 12:04:51 +0200
+Message-ID: <CAMpxmJXRqMuNSvojF3KK1g4b1XWkc57qLKK1LhGNbb=WkWppfQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpio-it87: remove unused code
+To:     Simon Guinot <simon.guinot@sequanux.org>
+Cc:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Apr 6, 2021 at 10:35 AM Simon Guinot <simon.guinot@sequanux.org> wrote:
+>
+> On Tue, Apr 06, 2021 at 03:20:39PM +0800, Jiapeng Chong wrote:
+> > Fix the following clang warning:
+> >
+> > drivers/gpio/gpio-it87.c:128:20: warning: unused function 'superio_outw'
+> > [-Wunused-function].
+> >
+> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+>
+> Acked-by: Simon Guinot <simon.guinot@sequanux.org>
+>
+> > ---
+> >  drivers/gpio/gpio-it87.c | 8 --------
+> >  1 file changed, 8 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
+> > index 8f1be34..f332341 100644
+> > --- a/drivers/gpio/gpio-it87.c
+> > +++ b/drivers/gpio/gpio-it87.c
+> > @@ -125,14 +125,6 @@ static inline int superio_inw(int reg)
+> >       return val;
+> >  }
+> >
+> > -static inline void superio_outw(int val, int reg)
+> > -{
+> > -     outb(reg++, REG);
+> > -     outb(val >> 8, VAL);
+> > -     outb(reg, REG);
+> > -     outb(val, VAL);
+> > -}
+> > -
+> >  static inline void superio_set_mask(int mask, int reg)
+> >  {
+> >       u8 curr_val = superio_inb(reg);
+> > --
+> > 1.8.3.1
 
+Patch applied, thanks!
 
-Le ven. 9 avril 2021 à 17:30, Masahiro Yamada <masahiroy@kernel.org> a 
-écrit :
-> On Fri, Apr 9, 2021 at 5:15 PM Paul Cercueil <paul@crapouillou.net> 
-> wrote:
->> 
->>  Hi Masahiro,
->> 
->>  Le ven. 9 avril 2021 à 5:58, Masahiro Yamada 
->> <masahiroy@kernel.org> a
->>  écrit :
->>  > <linux/kconfig.h> is included from all the kernel-space source 
->> files,
->>  > including C, assembly, linker scripts. It is intended to contain
->>  > minimal
->>  > set of macros to evaluate CONFIG options.
->>  >
->>  > IF_ENABLED() is an intruder here because (x ? y : z) is C code, 
->> which
->>  > should not be included from assembly files or linker scripts.
->>  >
->>  > Also, <linux/kconfig.h> is no longer self-contained because NULL 
->> is
->>  > defined in <linux/stddef.h>.
->>  >
->>  > Move IF_ENABLED() out to <linux/kernel.h> as PTR_IF().
->>  >
->>  > PTR_IF(IS_ENABLED(CONFIG_FOO), ...) is slightly longer than
->>  > IF_ENABLED(CONFIG_FOO, ...), but it is not a big deal because
->>  > sub-systems often define dedicated macros such as of_match_ptr(),
->>  > pm_ptr() etc. for common use-cases.
->> 
->>  What's the idea behind changing IF_ENABLED() to PTR_IF()? You didn't
->>  explain that. What's wrong with IF_ENABLED()?
-> 
-> 
-> PTR_IF() is a more generalized variant, which I believe is
-> a better fit in <linux/kernel.h>
-> The first parameter does not need to be a CONFIG option,
-> but any expression.
-
-Fair enough, but we could still have IF_ENABLED as a specialized 
-variant of PTR_IF:
-
-#define IF_ENABLED(cfg, ptr) PTR_IF(IS_ENABLED(cfg), (ptr))
-
--Paul
-
-> 
-> 
->>  Cheers,
->>  -Paul
->> 
->>  > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->>  > ---
->>  >
->>  >  drivers/pinctrl/pinctrl-ingenic.c | 20 ++++++++++----------
->>  >  include/linux/kconfig.h           |  6 ------
->>  >  include/linux/kernel.h            |  2 ++
->>  >  3 files changed, 12 insertions(+), 16 deletions(-)
->>  >
->>  > diff --git a/drivers/pinctrl/pinctrl-ingenic.c
->>  > b/drivers/pinctrl/pinctrl-ingenic.c
->>  > index f2746125b077..b21e2ae4528d 100644
->>  > --- a/drivers/pinctrl/pinctrl-ingenic.c
->>  > +++ b/drivers/pinctrl/pinctrl-ingenic.c
->>  > @@ -2496,43 +2496,43 @@ static int __init
->>  > ingenic_pinctrl_probe(struct platform_device *pdev)
->>  >  static const struct of_device_id ingenic_pinctrl_of_match[] = {
->>  >       {
->>  >               .compatible = "ingenic,jz4740-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_JZ4740, 
->> &jz4740_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_JZ4740), 
->> &jz4740_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,jz4725b-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_JZ4725B, 
->> &jz4725b_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_JZ4725B), 
->> &jz4725b_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,jz4760-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_JZ4760, 
->> &jz4760_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_JZ4760), 
->> &jz4760_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,jz4760b-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_JZ4760, 
->> &jz4760_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_JZ4760), 
->> &jz4760_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,jz4770-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_JZ4770, 
->> &jz4770_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_JZ4770), 
->> &jz4770_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,jz4780-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_JZ4780, 
->> &jz4780_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_JZ4780), 
->> &jz4780_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,x1000-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_X1000, 
->> &x1000_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_X1000), 
->> &x1000_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,x1000e-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_X1000, 
->> &x1000_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_X1000), 
->> &x1000_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,x1500-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_X1500, 
->> &x1500_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_X1500), 
->> &x1500_chip_info)
->>  >       },
->>  >       {
->>  >               .compatible = "ingenic,x1830-pinctrl",
->>  > -             .data = IF_ENABLED(CONFIG_MACH_X1830, 
->> &x1830_chip_info)
->>  > +             .data = PTR_IF(IS_ENABLED(CONFIG_MACH_X1830), 
->> &x1830_chip_info)
->>  >       },
->>  >       { /* sentinel */ },
->>  >  };
->>  > diff --git a/include/linux/kconfig.h b/include/linux/kconfig.h
->>  > index 24a59cb06963..cc8fa109cfa3 100644
->>  > --- a/include/linux/kconfig.h
->>  > +++ b/include/linux/kconfig.h
->>  > @@ -70,10 +70,4 @@
->>  >   */
->>  >  #define IS_ENABLED(option) __or(IS_BUILTIN(option),
->>  > IS_MODULE(option))
->>  >
->>  > -/*
->>  > - * IF_ENABLED(CONFIG_FOO, ptr) evaluates to (ptr) if CONFIG_FOO 
->> is
->>  > set to 'y'
->>  > - * or 'm', NULL otherwise.
->>  > - */
->>  > -#define IF_ENABLED(option, ptr) (IS_ENABLED(option) ? (ptr) : 
->> NULL)
->>  > -
->>  >  #endif /* __LINUX_KCONFIG_H */
->>  > diff --git a/include/linux/kernel.h b/include/linux/kernel.h
->>  > index 5b7ed6dc99ac..8685ca4cf287 100644
->>  > --- a/include/linux/kernel.h
->>  > +++ b/include/linux/kernel.h
->>  > @@ -38,6 +38,8 @@
->>  >  #define PTR_ALIGN_DOWN(p, a) ((typeof(p))ALIGN_DOWN((unsigned
->>  > long)(p), (a)))
->>  >  #define IS_ALIGNED(x, a)             (((x) & ((typeof(x))(a) - 
->> 1)) == 0)
->>  >
->>  > +#define PTR_IF(cond, ptr)    ((cond) ? (ptr) : NULL)
->>  > +
->>  >  /* generic data direction definitions */
->>  >  #define READ                 0
->>  >  #define WRITE                        1
->>  > --
->>  > 2.27.0
->>  >
->> 
->> 
-> 
-> 
-> --
-> Best Regards
-> Masahiro Yamada
-
-
+Bartosz
