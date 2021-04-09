@@ -2,144 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D783C433ED
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 14:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8101CC433B4
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 14:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB222610F9
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 14:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B9E610C7
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 14:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233599AbhDIOI6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Apr 2021 10:08:58 -0400
-Received: from mail-co1nam11on2045.outbound.protection.outlook.com ([40.107.220.45]:34881
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233729AbhDIOI5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Apr 2021 10:08:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GxpPiHZ9Rd69Un0A42RW/U33zS8QkuJ94ZEcNVnSmwhrHiRoxc5i+QpbWq6CFPmWI5dr/5j0ZCnJP97eg0qWoDMiqBgTfHR8ARtkxpXUiIcETHyBvGpirfq6ng/mkRIVf5KNwU7n0eanksdc+rQYigMBpAIXdd83UWILE+vMPioH3XROpS3uIibQQ3YDiO2sVUdelv3mKDuCjTpF9JCjAhx0eMlDaY8tUgti5dT+tS8k+zdxCfSAvq5/WxP8DScDBED/6UCjQjKnhddJZfLlbYgU0/grJDkKXVEZRtSAKdplL9avKkcOjrXriPyblkKApdmT4yN5ib9DzFgBDkc07A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YhK+TtMuJsUx2jnPqGZBZ/tD9kAKlYS3EoOa6faW+Dk=;
- b=nhOUukpvq2dWRxDzomh+i3/frIxrpFfyCNZERqaaWwbXhhT5LbqQxEZ614/40A2AbCNgjoLi5KBg4f/RnW2jgIx+zAB5kHkj5gcedPqp9OBoDLaziCV3tbHHSJpKFPSsrIs+/UTpKnhrVpZLphEzgj2wtgQlt80yRLEyBk6w8y8vp+JNSEjg7g9VWVurLi80cqP6PygydVlBObKTQ7PU6Zl4hgx4vKVKzXIhVXKQIBE23F7p0sk1nRmGGBk65aJKo/LrPP0iI/X5/nH9fH/ftxUZ8UA+YzeXsgnpU97dtm89CuOriN4WaBgAoxq4NM0ZXMBsfuQJONTq2LsHHFA1zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YhK+TtMuJsUx2jnPqGZBZ/tD9kAKlYS3EoOa6faW+Dk=;
- b=HrSMbmocx4glAl6jP5IQU0+sLVXmwNspytPZVhql6vKNS1rdG30gUCcBOf41gumoCCvP84dPJsgF4ULdL+crST/VARXyFRFyE13aQtLAdxvshaUp/JzghzsT6SRufRxS5+PGbzKhDB4T60CPtxyh8T3+SUQfWGp5WAoQZ/V7bz4=
-Received: from DM6PR04CA0015.namprd04.prod.outlook.com (2603:10b6:5:334::20)
- by BL0PR02MB3777.namprd02.prod.outlook.com (2603:10b6:207:4a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.21; Fri, 9 Apr
- 2021 14:08:42 +0000
-Received: from CY1NAM02FT039.eop-nam02.prod.protection.outlook.com
- (2603:10b6:5:334:cafe::e9) by DM6PR04CA0015.outlook.office365.com
- (2603:10b6:5:334::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.17 via Frontend
- Transport; Fri, 9 Apr 2021 14:08:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- CY1NAM02FT039.mail.protection.outlook.com (10.152.75.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4020.17 via Frontend Transport; Fri, 9 Apr 2021 14:08:42 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Fri, 9 Apr 2021 07:08:25 -0700
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2106.2 via Frontend Transport; Fri, 9 Apr 2021 07:08:25 -0700
-Envelope-to: git@xilinx.com,
- linus.walleij@linaro.org,
- bgolaszewski@baylibre.com,
- linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Received: from [172.23.80.241] (port=38546 helo=xhdsneeli40x.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1lUro7-0005KB-Sg; Fri, 09 Apr 2021 07:08:24 -0700
-From:   Srinivas Neeli <srinivas.neeli@xilinx.com>
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <michal.simek@xilinx.com>, <shubhrajyoti.datta@xilinx.com>,
-        <sgoud@xilinx.com>
-CC:     <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <git@xilinx.com>,
-        Srinivas Neeli <srinivas.neeli@xilinx.com>
-Subject: [PATCH 2/3] gpio: zynq: Check return value of pm_runtime_get_sync
-Date:   Fri, 9 Apr 2021 19:38:05 +0530
-Message-ID: <20210409140806.31824-3-srinivas.neeli@xilinx.com>
-X-Mailer: git-send-email 2.9.1
-In-Reply-To: <20210409140806.31824-1-srinivas.neeli@xilinx.com>
-References: <20210409140806.31824-1-srinivas.neeli@xilinx.com>
+        id S233687AbhDIOxc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Apr 2021 10:53:32 -0400
+Received: from mail-ot1-f43.google.com ([209.85.210.43]:46003 "EHLO
+        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233019AbhDIOxa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Apr 2021 10:53:30 -0400
+Received: by mail-ot1-f43.google.com with SMTP id f75-20020a9d03d10000b0290280def9ab76so822163otf.12;
+        Fri, 09 Apr 2021 07:53:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wEUFq75l0cPqrW8PpOEi09xtkWWpE4+uw14yF7Xi3VI=;
+        b=TuL4x5lSETn/wcnrLuH3u/uH4eCIT61fY3M9bRH22HbJd9jb2N7EC3deIBFXMhviV+
+         SBdRo4xtNV5f7IpU2vlFVAa/zBPiwezcpSqqPE4XZZtt2gx1nAi4TUVok4GF3QFMeTq1
+         cHc0XtXMJ1o6K2y56QCZDkIlN9BD3BjFkq2Gcb5BfXQNNTHMlyf1aTCeckV8kcl65Q1J
+         Llypivl4f0G8sk+dz0BxisyyJV9pKjRLZuZkqXToeiibsZ0HjKt8xOfOpspNPUdWm2bn
+         VSW5byC6d/TK53XDYppcwttUTVV8tfyp0oKJRsbv3pSSEn+S070GRFJhmgI4KjFjDNZ9
+         HbMw==
+X-Gm-Message-State: AOAM5339zkMYGfz/V2FdkD/S/wn/fGjX428PSGBoNKBxnESwMYR/hRZZ
+        PE5eSlLcazdKsKURJYgE6A==
+X-Google-Smtp-Source: ABdhPJwYlry7cBcHl3An98IkFAakpdZGXr7d89QYyHIEr/PdgViXwKc3NwNCFvhCD4zPLEKK4EAqIA==
+X-Received: by 2002:a9d:d0d:: with SMTP id 13mr12066019oti.134.1617979997370;
+        Fri, 09 Apr 2021 07:53:17 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m14sm658418otn.69.2021.04.09.07.53.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 07:53:16 -0700 (PDT)
+Received: (nullmailer pid 3635689 invoked by uid 1000);
+        Fri, 09 Apr 2021 14:53:15 -0000
+Date:   Fri, 9 Apr 2021 09:53:15 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] dt-bindings: gpio: fairchild,74hc595: Convert to
+ json-schema
+Message-ID: <20210409145315.GA3635654@robh.at.kernel.org>
+References: <df145e77bd124721f28cbc58fb3c58c138f13d86.1617365710.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3e8cd944-7102-4e13-60cd-08d8fb60fb61
-X-MS-TrafficTypeDiagnostic: BL0PR02MB3777:
-X-Microsoft-Antispam-PRVS: <BL0PR02MB37772B95DB656FD904CCF3D0AF739@BL0PR02MB3777.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xtsoLGqDWl30I5vPgGJw15wny5Ea1bVfbKeKLds5lnnznaHZ6S6UxTbiYFGCNNbTsMWJkutZxenTEOGa508kYOAD58rFz5nQJhK32gHui60JGmQJ7dFmA5PzlAjEOpK4gGQSo5RdW+vROAZg5q1vZXPdgJRuSLEYQsH8hZxKm22Ow4woXJnYEVBr5B/MpdyU4949xjbCJTNgOnuyQPRyZ3cPX9DlUQmEVl++RkjMn4xxe6trIJLcNpvA6FgNfCnFjrTgDMBL/6j2xDMufNKFiAm3Di8MzWcmkdAwfTVLRPbYWKdLQ5xFJwhoqjawQIVZ7TfMhpAHBH1PMl5CgCHofmDIC6uvJx2zMARRAZDik/ppUTmFXjP3bxOtzxjZHzaThmiw+Tdt6aJ108VimFqQZ0fEjW5JrbRiX4F5mjnYskTvaU+6n3kP/uQLaMJximhFKvDGQeojQuFHQNOIs0AgH1nKSLepggPgKWPmSPL5lsovoIad+vvW0JrPWDMX+l46HOObhAEcqc33PQPw5WkrBNF3fcKcTixAXREXlSA417rxB+XZ9cMTYQOHiJ2lrUdnQQkcyRTCm9jNQWmXCRKVj8iWZjGytcZeX8YJm0wyakhM/ogsXzk4F/2glu+P+pikHbzF4O4fvxw0ipR0qSxH1vdjxjb0nqSGs7/KC6aOo+JhRmeFTdO2D8d/jU9ETwT+
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(136003)(396003)(346002)(46966006)(36840700001)(8676002)(36860700001)(316002)(47076005)(356005)(54906003)(6636002)(5660300002)(4744005)(83380400001)(7636003)(70586007)(9786002)(478600001)(110136005)(70206006)(26005)(1076003)(107886003)(2616005)(82310400003)(82740400003)(4326008)(7696005)(186003)(8936002)(36906005)(6666004)(336012)(44832011)(2906002)(36756003)(426003)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2021 14:08:42.5201
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e8cd944-7102-4e13-60cd-08d8fb60fb61
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT039.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB3777
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df145e77bd124721f28cbc58fb3c58c138f13d86.1617365710.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Return value of "pm_runtime_get_sync" API was neither captured nor checked.
-Fixed it by capturing the return value and then checking for any warning.
+On Fri, 02 Apr 2021 14:19:58 +0200, Geert Uytterhoeven wrote:
+> Convert the Generic 8-bit shift register Device Tree binding
+> documentation to json-schema.
+> 
+> Rename from gpio-74x164 to fairchild,74hc595, as the former refers to
+> the Linux driver, and not to a hardware name.
+> Add the missing hog description.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> The original file did not contain license information, so I used the
+> most popular/recommended one for DT bindings.
+> I listed the original author of the bindings as maintainer.
+> ---
+>  .../bindings/gpio/fairchild,74hc595.yaml      | 77 +++++++++++++++++++
+>  .../devicetree/bindings/gpio/gpio-74x164.txt  | 27 -------
+>  2 files changed, 77 insertions(+), 27 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-74x164.txt
+> 
 
-Addresses-Coverity: "check_return"
-Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
----
- drivers/gpio/gpio-zynq.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index bb1ac0c5cf26..c91302a16c77 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -1001,8 +1001,11 @@ static int zynq_gpio_probe(struct platform_device *pdev)
- static int zynq_gpio_remove(struct platform_device *pdev)
- {
- 	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
-+	int ret;
- 
--	pm_runtime_get_sync(&pdev->dev);
-+	ret = pm_runtime_get_sync(&pdev->dev);
-+	if (ret < 0)
-+		dev_warn(&pdev->dev, "pm_runtime_get_sync() Failed\n");
- 	gpiochip_remove(&gpio->chip);
- 	clk_disable_unprepare(gpio->clk);
- 	device_set_wakeup_capable(&pdev->dev, 0);
--- 
-2.9.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
