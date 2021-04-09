@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8106CC433ED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEF7C433B4
 	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 14:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5705760FF1
+	by mail.kernel.org (Postfix) with ESMTP id B4F7C61165
 	for <linux-gpio@archiver.kernel.org>; Fri,  9 Apr 2021 14:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231402AbhDIOIz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S233528AbhDIOIz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 9 Apr 2021 10:08:55 -0400
-Received: from mail-mw2nam12on2085.outbound.protection.outlook.com ([40.107.244.85]:8439
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr750047.outbound.protection.outlook.com ([40.107.75.47]:48238
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233009AbhDIOIw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Apr 2021 10:08:52 -0400
+        id S233019AbhDIOIx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Apr 2021 10:08:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mYiav54/wgqliTo0qmYs9q0ZeaeavGo5EYyJNIxbBDtYPPt9yrjFYNborvlZcwppLyMtkKoigz+xG3WeW+Q4yTGAR9Gh1yOLftcnzvgoDwitfPXcaJM1ehDsiX+tGnt6KPrejwXc9QnhvhoifrHkfTBQ1RMz9IPjT/pusJqtsntK924ODWNbAcYO7nYVMv9qp18l8dlkIEkLCH90TVG6H0WwVSML+ZI8zs5nylrg5DcwJRBD1oXm/sLl4o1HnMcBUilD93IPQrygdaAA5jsdnVu6sJ+AtUNiNOdm9PK7DGaPacKJW1NnzIFekITJvay1zpZnacOHCZYkLKoLX66QxQ==
+ b=iuqrnzfyagxA7yOGfAafTPCMJgx4Gcj+tXvQabJmVzsytVEMYk59P04Jn7nhrF9Ia69FMOEjy4QI4ApfknQNC8rl8KEQkRjl+xADCtOvK/5qd32SVHpBUegu8fTXpacrLT0gCelh4ayKzRSCKFnlSZ4pPIYutXxZzDcttrb9bmxtK9jwNm4cwgoSmlMpboFWDqLFzWUcQOemfIwuXrVrCz/ys1X/3MHxy0blFURtRgSx9kPCLme+po/tJxrNP0iCMxHa/iPjET3B7Px6frWeeimLo+u9ErZ9woh1FlUTUQ6Z4kLqwOBZ4CCeipfwky0j1ZaSfHtPSWlw7cRa4MbJFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wcX+I0oO6tCUrm3FHhb5h5u/UXaWk6B32HUO9NKx/YY=;
- b=BXwxroabjoPuueUkkt/yrRTPnIhFlQxn6Eo8OM/MyWFH5ruWjSeTRwcUQXfC0VZmOmptbu2J5hyPhivlrivVK9Ks2i/QB2zHcN0rMXnDe+EdHzHlv2A1nlEFMnrbsQldI1xcmYf+yV9FfuQ2nYBKzmP/B/AtciS9+8exPJ+kX7G+JvXC5Q8SvvDOitWvXCXWEOCj3N3hJab3S2UhAcBML8l59bUvPyE5zJ9mNKTOgYJALuGWQsS237hsGpRaRuxXveuEVzQbW2zXuR41kwwL341d1Ilj8BRtf/d2iGzZwWRqFp40ZK8VSKjqYiNMeUb1FhtU2Qp85qM9waIYFB5KoA==
+ bh=mCNzw2wYH/2IVIIN3RXfystupPqj13GJMWZw5r3BkGk=;
+ b=arXMysgRy5eDovWx8qzH71Lo0SKz2CjCtgoloK0H+5kOASc3BDkKxqeT/r2NLeFVHmbve7Yr8rPQLifs11bCNQUUpHl0DkxTvuuSMdQ5+/9BAm9f3S8qRqbTG+GWCj9ry0ihdrFjiWIXa1V9h8AfX8as7dZ1l6ys51BXbdBYVcZZTIUxHgs1+gkOYhNR5BYbjyLYBra8hSRRqIjp1sYAmFtWZXdVpkqPJVy/YSXMsgMVCaRh+Z2Z4Z/XI2bZzvY1NzWt8S/JLYJGoWL/jV15rQsaD7grV1TzcKUTECYy8Iy47P36VFjGSai3qOZ5zpgB2GQ19r2EmI07bmH5tONCqA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
@@ -34,35 +34,35 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wcX+I0oO6tCUrm3FHhb5h5u/UXaWk6B32HUO9NKx/YY=;
- b=mGCSOH7VuIdjYK4/4q6b8ZkxwbjfKb5b4i3MGl5tZCtP/Sv2jSP1jH2juTF63/8cq6hRtnCyBfCIzwnRCleZN8O4do5mNkBr8dN1C2tZTiSn+LfnmLch8qLP0BuP/pE+f9aoJ2wfwduqkt8g0UWGccmN2A6NmO/314aVHZ/O1Sg=
-Received: from CY4PR18CA0063.namprd18.prod.outlook.com (2603:10b6:903:13f::25)
- by SN6PR02MB5055.namprd02.prod.outlook.com (2603:10b6:805:67::28) with
+ bh=mCNzw2wYH/2IVIIN3RXfystupPqj13GJMWZw5r3BkGk=;
+ b=ALOeYLhkxfDyXCZIIZJhZCFmyEkqM/Y2pZS90hFhJWY7/9V9uYfLY3hlTePrBV8He4ieX2lxf6H7oCF+zUBum0vQ4g/+toeof+A3j6C4WIDr93fkb+2molY7Hz2PMSotc0EpvXI+R76oPQmKFk+qVKXtTDAeLcCwZLW14yb3Pw4=
+Received: from CY4PR16CA0019.namprd16.prod.outlook.com (2603:10b6:903:102::29)
+ by BYAPR02MB4503.namprd02.prod.outlook.com (2603:10b6:a03:56::28) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.17; Fri, 9 Apr
- 2021 14:08:37 +0000
-Received: from CY1NAM02FT055.eop-nam02.prod.protection.outlook.com
- (2603:10b6:903:13f:cafe::b6) by CY4PR18CA0063.outlook.office365.com
- (2603:10b6:903:13f::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.16; Fri, 9 Apr
+ 2021 14:08:38 +0000
+Received: from CY1NAM02FT058.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:903:102:cafe::21) by CY4PR16CA0019.outlook.office365.com
+ (2603:10b6:903:102::29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.17 via Frontend
- Transport; Fri, 9 Apr 2021 14:08:37 +0000
+ Transport; Fri, 9 Apr 2021 14:08:38 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
  header.d=none;linaro.org; dmarc=pass action=none header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- CY1NAM02FT055.mail.protection.outlook.com (10.152.74.80) with Microsoft SMTP
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ CY1NAM02FT058.mail.protection.outlook.com (10.152.74.149) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.20.4020.17 via Frontend Transport; Fri, 9 Apr 2021 14:08:37 +0000
 Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Fri, 9 Apr 2021 07:08:28 -0700
+ 15.1.2106.2; Fri, 9 Apr 2021 07:08:22 -0700
 Received: from smtp.xilinx.com (172.19.127.96) by
  xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2106.2 via Frontend Transport; Fri, 9 Apr 2021 07:08:28 -0700
+ 15.1.2106.2 via Frontend Transport; Fri, 9 Apr 2021 07:08:22 -0700
 Envelope-to: git@xilinx.com,
  linus.walleij@linaro.org,
  bgolaszewski@baylibre.com,
@@ -72,7 +72,7 @@ Envelope-to: git@xilinx.com,
 Received: from [172.23.80.241] (port=38546 helo=xhdsneeli40x.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1lUroB-0005KB-6s; Fri, 09 Apr 2021 07:08:27 -0700
+        id 1lUro4-0005KB-IS; Fri, 09 Apr 2021 07:08:21 -0700
 From:   Srinivas Neeli <srinivas.neeli@xilinx.com>
 To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
         <michal.simek@xilinx.com>, <shubhrajyoti.datta@xilinx.com>,
@@ -81,9 +81,9 @@ CC:     <linux-gpio@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <git@xilinx.com>,
         Srinivas Neeli <srinivas.neeli@xilinx.com>
-Subject: [PATCH 3/3] gpio: zynq: Check return value of irq_get_irq_data
-Date:   Fri, 9 Apr 2021 19:38:06 +0530
-Message-ID: <20210409140806.31824-4-srinivas.neeli@xilinx.com>
+Subject: [PATCH 1/3] gpio: zynq: use module_platform_driver to simplify the code
+Date:   Fri, 9 Apr 2021 19:38:04 +0530
+Message-ID: <20210409140806.31824-2-srinivas.neeli@xilinx.com>
 X-Mailer: git-send-email 2.9.1
 In-Reply-To: <20210409140806.31824-1-srinivas.neeli@xilinx.com>
 References: <20210409140806.31824-1-srinivas.neeli@xilinx.com>
@@ -91,67 +91,65 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f24e1bc3-dec6-4583-8e1f-08d8fb60f85c
-X-MS-TrafficTypeDiagnostic: SN6PR02MB5055:
-X-Microsoft-Antispam-PRVS: <SN6PR02MB5055D40DAF3B9D4BC96202C1AF739@SN6PR02MB5055.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 888a38d7-70d1-4f7a-1af4-08d8fb60f8a5
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4503:
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4503C9DF91F9F835E1F059D8AF739@BYAPR02MB4503.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
+X-MS-Oob-TLC-OOBClassifiers: OLM:497;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JnGIdhXZQYcmCcdM6wvBQN8j9XkpSd3WMUHeSDVWgKnDFizENX5rluAYrEMWhnfnrKd62SISH/5HHXICWxI/3VZjxQWxeoE+9pTleWqsrhZclZeUTujD06xUVuwjUF+xKRZr8Iwa/170+2xQsMNBmIBIi7J26TkHueO5NbeqZuaJqjLL5SiMTxcqnckgsweUeOhX75dp4ujzQD24NN44t97/fMx1nrXou/DAJt6XS2xQR/Wbh30FqibUa3XnO3m3bI338/pmVUnDs4nuaBGoTiSLicQCjhDTyYO9FkCZCJW/ZEJ9KHhn7tNLEjiyFA8/kHCaylLHWtxRHa/N24JBSQwhUSo+LqbY1WBk+X7YV+fRzgnuR4eDPu58U2duHV8+o/7+63PC7RdBeoP9UpvMp6Wrhrigh50AzpU7o/kgYJaeTBXuTKRQnO71H66OKWJxM/926pbzdAzAc9vjr6LUy+O043afw1jiEhVlJ5yPY8+U9znzjcOrfAIZpgOUkiohQEzubSgb9s3EttRaryHHmNY4IJJlmTwafjTncSk/+2eUtKqLX2uC/+bM6OlsMgkUZ2hCxymnQ8oDD4QsW94Zr26nk5nBS2mJZmbYh3JLKtMRT570RTU2zC2grxF9mv5WTBUABrMLcIYCua0KqdCBAoMd/rwM1xnwU9HIUAwJEkl36LZiUCXgiZV0YmO7kAyX
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(136003)(39860400002)(396003)(376002)(36840700001)(46966006)(107886003)(44832011)(4326008)(356005)(83380400001)(1076003)(36756003)(82740400003)(7636003)(2616005)(8936002)(110136005)(316002)(54906003)(9786002)(36906005)(6636002)(5660300002)(7696005)(6666004)(8676002)(478600001)(36860700001)(82310400003)(47076005)(186003)(426003)(336012)(70206006)(2906002)(26005)(70586007)(102446001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: dKx85zHmvXcAGLC4otbgsommMTxFOpKkpa1YnNH2naLHOMg3DlxWZ0R6wghFFhM4svCEvBD2BVnItdYR4gVlD5VoFtfMDx+ncYHb/3izZKZxkV9Yn2TFDlBsXr2YFt08WAAWqNYFg4dCjjauEOoJlTJc7J6UumcDufzfj7Fe6KaR0XeBSc5fOT+8xH/F9KdARTikg9b7DjmLAhLmkJ4FRKT2tVKCyU7NOqd5M2XfFuomvh/rH9/+uYeMwiSPIB6YdmhUG0gD92SEYLea6aaQWvbDsx6n63iO2apImS/zSQFb5JRmtQOfovbQu4S69dqrBSIy46QhIaFhamA8C3n1pl1NpDhXviSy1VcVjzmuS2yUgaNtYJpvtPlD/FuSF9x1mYVU6WZVg1fO1R7/3VFzhh9y7Ca351NLjfV6JhEqfTaD0rghfejGgdAmcvRVBBzzQjSFyV7Jbh31YYRMoKYbKdCzWHZJZokv4bAlfcDOEr49Xft/jrudpscXhE3CROErp6RFhkQpB1x8hYEelJgB5l4DZ7+bMs2NQhw0Av9SlcDuGVn0QtFxJSc9hANzNGs4xukJ/srWHDIzumgpYSZ5iWphgWllmB9XojDLq3kQQ7hmXbU8bDufVT/y0iJPvRuizg/aSizfGyPHE0kSR8yAQf5rkq1VRZC/yJDsabaup8dbbHdspSgGiE/iDgoJeDLL
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(376002)(136003)(39860400002)(396003)(346002)(46966006)(36840700001)(83380400001)(1076003)(8936002)(2906002)(7636003)(356005)(70206006)(36756003)(47076005)(36860700001)(7696005)(9786002)(6636002)(4326008)(70586007)(336012)(316002)(107886003)(36906005)(82310400003)(44832011)(186003)(8676002)(2616005)(478600001)(54906003)(82740400003)(110136005)(6666004)(426003)(26005)(5660300002)(102446001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2021 14:08:37.4543
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2021 14:08:37.9287
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f24e1bc3-dec6-4583-8e1f-08d8fb60f85c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 888a38d7-70d1-4f7a-1af4-08d8fb60f8a5
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT055.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT058.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB5055
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4503
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In two different instances the return value of "irq_get_irq_data"
-API was neither captured nor checked.
-Fixed it by capturing the return value and then checking for any error.
+module_platform_driver() makes the code simpler by eliminating
+boilerplate code.
 
-Addresses-Coverity: "returned_null"
 Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
 ---
- drivers/gpio/gpio-zynq.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpio/gpio-zynq.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
 diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index c91302a16c77..f0cb8ccd03ed 100644
+index 3521c1dc3ac0..bb1ac0c5cf26 100644
 --- a/drivers/gpio/gpio-zynq.c
 +++ b/drivers/gpio/gpio-zynq.c
-@@ -736,6 +736,11 @@ static int __maybe_unused zynq_gpio_suspend(struct device *dev)
- 	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 	struct irq_data *data = irq_get_irq_data(gpio->irq);
+@@ -1020,22 +1020,7 @@ static struct platform_driver zynq_gpio_driver = {
+ 	.remove = zynq_gpio_remove,
+ };
  
-+	if (!data) {
-+		dev_err(dev, "irq_get_irq_data() failed\n");
-+		return -EINVAL;
-+	}
-+
- 	if (!device_may_wakeup(dev))
- 		disable_irq(gpio->irq);
+-/**
+- * zynq_gpio_init - Initial driver registration call
+- *
+- * Return: value from platform_driver_register
+- */
+-static int __init zynq_gpio_init(void)
+-{
+-	return platform_driver_register(&zynq_gpio_driver);
+-}
+-postcore_initcall(zynq_gpio_init);
+-
+-static void __exit zynq_gpio_exit(void)
+-{
+-	platform_driver_unregister(&zynq_gpio_driver);
+-}
+-module_exit(zynq_gpio_exit);
++module_platform_driver(zynq_gpio_driver);
  
-@@ -753,6 +758,11 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
- 	struct irq_data *data = irq_get_irq_data(gpio->irq);
- 	int ret;
- 
-+	if (!data) {
-+		dev_err(dev, "irq_get_irq_data() failed\n");
-+		return -EINVAL;
-+	}
-+
- 	if (!device_may_wakeup(dev))
- 		enable_irq(gpio->irq);
- 
+ MODULE_AUTHOR("Xilinx Inc.");
+ MODULE_DESCRIPTION("Zynq GPIO driver");
 -- 
 2.9.1
 
