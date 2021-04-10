@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A5EC43460
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Apr 2021 12:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B90AC43462
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Apr 2021 12:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3A8610F9
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Apr 2021 12:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AAC1610F9
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Apr 2021 12:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234619AbhDJMkg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 10 Apr 2021 08:40:36 -0400
-Received: from mga07.intel.com ([134.134.136.100]:13691 "EHLO mga07.intel.com"
+        id S234091AbhDJMkj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 10 Apr 2021 08:40:39 -0400
+Received: from mga03.intel.com ([134.134.136.65]:41735 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234377AbhDJMkf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 10 Apr 2021 08:40:35 -0400
-IronPort-SDR: FjlkMVriUlt1pEqb+N956U1cImgUWAJaFUKjj/Vif72lwfl4H0rBY+ZZiiNKG4DbaMqN1xm9zQ
- pKGxLHFC55mA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9950"; a="257899426"
+        id S234587AbhDJMkg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 10 Apr 2021 08:40:36 -0400
+IronPort-SDR: /l+t+/HB0Hbc4GK9xQqQV9w9It0b+D5txjlc/rjntHk1QqJTc6wsACe0G4jMe9KIW/BO7mSXAe
+ uCaoPYMcHnww==
+X-IronPort-AV: E=McAfee;i="6000,8403,9950"; a="193956397"
 X-IronPort-AV: E=Sophos;i="5.82,210,1613462400"; 
-   d="scan'208";a="257899426"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2021 05:40:18 -0700
-IronPort-SDR: ar3ddGHP9EvzPp3wwUyOcYbjMMa6vQ79gYpkTBNcEWBWKzhKazdKQiJHsrw2DtJcYNhDTtAlqD
- R8oG1W/RtGog==
+   d="scan'208";a="193956397"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2021 05:40:20 -0700
+IronPort-SDR: sT1LiTBtRG2R0DpLDz428Y+03oGHVS8EWa9cxNq16MadWi66B70LqlP2qaN50K/28s1IIC1rba
+ 5uGpSsXq74og==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.82,210,1613462400"; 
-   d="scan'208";a="416648891"
+   d="scan'208";a="397788186"
 Received: from lkp-server01.sh.intel.com (HELO 69d8fcc516b7) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Apr 2021 05:40:17 -0700
+  by orsmga002.jf.intel.com with ESMTP; 10 Apr 2021 05:40:18 -0700
 Received: from kbuild by 69d8fcc516b7 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1lVCuO-000IMO-Ly; Sat, 10 Apr 2021 12:40:16 +0000
-Date:   Sat, 10 Apr 2021 20:40:08 +0800
+        id 1lVCuQ-000IMT-2D; Sat, 10 Apr 2021 12:40:18 +0000
+Date:   Sat, 10 Apr 2021 20:40:06 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:for-next] BUILD SUCCESS
- 2421dc2a76384e9236f2a8cee31549fc47910eab
-Message-ID: <60719ca8.7q/ck2FJOal88QSA%lkp@intel.com>
+Subject: [pinctrl:devel] BUILD SUCCESS
+ 2cfebcb2a22f4b41726e6a134fbd66e74ed0f49f
+Message-ID: <60719ca6.yfyQdCEpxGR+Fohk%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,12 +50,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: 2421dc2a76384e9236f2a8cee31549fc47910eab  Merge branch 'devel' into for-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 2cfebcb2a22f4b41726e6a134fbd66e74ed0f49f  pinctrl: at91-pio4: Fix slew rate disablement
 
 elapsed time: 722m
 
-configs tested: 138
+configs tested: 115
 configs skipped: 4
 
 The following configs have been built successfully.
@@ -69,62 +69,38 @@ arm                              allyesconfig
 arm                              allmodconfig
 x86_64                           allyesconfig
 riscv                            allmodconfig
-i386                             allyesconfig
 riscv                            allyesconfig
-arm64                            alldefconfig
-powerpc                      bamboo_defconfig
-m68k                       bvme6000_defconfig
-mips                      pistachio_defconfig
-openrisc                 simple_smp_defconfig
+i386                             allyesconfig
 sh                           se7750_defconfig
 powerpc                       ebony_defconfig
 mips                           xway_defconfig
 powerpc                     mpc83xx_defconfig
 ia64                      gensparse_defconfig
 arm                          simpad_defconfig
-s390                       zfcpdump_defconfig
-powerpc                      pasemi_defconfig
-powerpc                 linkstation_defconfig
-um                             i386_defconfig
-s390                             allmodconfig
-powerpc                      tqm8xx_defconfig
-openrisc                         alldefconfig
-arm                            mmp2_defconfig
+arm                          gemini_defconfig
+powerpc                     ep8248e_defconfig
+powerpc                  mpc885_ads_defconfig
+powerpc                    socrates_defconfig
+sh                           se7751_defconfig
+arm                         s3c6400_defconfig
+sh                         apsh4a3a_defconfig
+mips                        bcm63xx_defconfig
 arc                     haps_hs_smp_defconfig
 arm                             mxs_defconfig
 powerpc                      arches_defconfig
 sh                        dreamcast_defconfig
-arm                             rpc_defconfig
-powerpc                   currituck_defconfig
-powerpc                 mpc837x_mds_defconfig
-microblaze                      mmu_defconfig
-mips                         tb0287_defconfig
-mips                         tb0219_defconfig
-sh                          urquell_defconfig
-arm                        spear6xx_defconfig
-sh                            titan_defconfig
-powerpc                 mpc8315_rdb_defconfig
-powerpc                   bluestone_defconfig
-mips                      loongson3_defconfig
-m68k                          multi_defconfig
+mips                        workpad_defconfig
+mips                       bmips_be_defconfig
+sh                            shmin_defconfig
+arm                        multi_v7_defconfig
 arm                             pxa_defconfig
 arc                                 defconfig
 powerpc                      walnut_defconfig
+mips                      loongson3_defconfig
 mips                       lemote2f_defconfig
-sh                          sdk7780_defconfig
-arm                     am200epdkit_defconfig
-sh                        sh7757lcr_defconfig
-arm                         nhk8815_defconfig
 arm                         shannon_defconfig
-sh                           se7751_defconfig
 arm                        multi_v5_defconfig
 sh                           se7619_defconfig
-xtensa                  audio_kc705_defconfig
-arm                          badge4_defconfig
-arm                      jornada720_defconfig
-sh                           se7780_defconfig
-sh                          lboxre2_defconfig
-arm                         s3c6400_defconfig
 sh                          r7785rp_defconfig
 powerpc                     asp8347_defconfig
 powerpc                     sbc8548_defconfig
@@ -153,6 +129,7 @@ h8300                            allyesconfig
 sh                               allmodconfig
 parisc                              defconfig
 s390                             allyesconfig
+s390                             allmodconfig
 parisc                           allyesconfig
 s390                                defconfig
 sparc                            allyesconfig
