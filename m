@@ -2,382 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66922C43461
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Apr 2021 22:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7676EC433B4
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Apr 2021 23:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A634613C0
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Apr 2021 22:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B7DD61042
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Apr 2021 23:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240983AbhDLWgu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 12 Apr 2021 18:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49028 "EHLO
+        id S1343646AbhDLXS0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 12 Apr 2021 19:18:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240974AbhDLWgt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Apr 2021 18:36:49 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 886EEC061574;
-        Mon, 12 Apr 2021 15:36:27 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id e14so22804799ejz.11;
-        Mon, 12 Apr 2021 15:36:27 -0700 (PDT)
+        with ESMTP id S243892AbhDLXSZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Apr 2021 19:18:25 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E3BEC061574
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Apr 2021 16:18:07 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so14427821otk.5
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Apr 2021 16:18:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lLwjdfFdp3zRi4PK8zglE9mVb84ajZiNMIXRGSeC74w=;
-        b=uaj9y2bz5k3eZZGDylatN9ASgJjpPcw5q85e0ub3OKibxRuRcGvih3/tLeXsN82Dej
-         Wph9+5cQWRp/Ngja7aUyLwjQqIb71zWzi+tZAbgjFiGeuIKQYMZWALgxj7DNojlRXHh7
-         m+4pjZDzv4VwZxns4b8O5KTVLa6cBNv89t5KrNfF7lneR+PSKhLUEpG5Em4YZuHzUGmA
-         UfkDNUahociAzdy7EEaQKoo1RB1/lhmi/LuYlVQ+/ck/wz4R7Ktk16BlVncG5Vme3IC/
-         Rit6PgJkiZW4FhgM1MPPwqUF99JSMPnIm5n+xRYqRGXvJctbVUCpZJKt5FtZTXaUXfRZ
-         D0Cw==
+        d=purestorage.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w7n3vBtKnZ3DFHMlcl+TEKd1DZ3COz1Ei4sifdIcY+c=;
+        b=E/Fw3ZxOG9WnbwXOeYTUXDJ5Sw2eIAjcBWHJHeoaJ4vB24UIpsY4BexySlR6v158oM
+         Q3njiQGKYmZc1bbWI4F9Rbjgiww7WHrNHC61UQ4dbskb/ADM1Ze07BT+YX0nbUgh6pfv
+         4ALpc2l7CELoqF1jWvf5XE8N/A4zsXiZ3iOc8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lLwjdfFdp3zRi4PK8zglE9mVb84ajZiNMIXRGSeC74w=;
-        b=T//pvzydbJYQmsqktNks1zNm3DFPRse9P0Adjz5gzLgdUhThlAU3UOxTPXRL4dQunO
-         r7pOZiPKZxS/xSFYiehMFg2FBXk+CpUnB7cGGvXnPzjvYo1g2xn5TNRIW4eBcCHKjCbJ
-         BvBMlDXGvRjTswbTxPZ2POvD6kB9ACltvcDhT4zPI6hLPJMinEk5bz4qDQ4q3P2G8G5s
-         hpOGByM8raNSIueOGvKTAUn8MbQk+bMBT79/RLc1x2PjVyndesREwrjZW1as/bYCzA2N
-         DiLCBYyV9jbMf9gBGSNuCgpAviyTWtzqhIdZ1DOVo28KS7GbCrXoLYn6NsVHWG6AK2F9
-         4Lew==
-X-Gm-Message-State: AOAM533uQxnd55bqMH2erceXfNywbNMk0I9ZZoc6udD2E8j7d99ptazY
-        ibDovK3AmM+5EuJMCfOj+dE=
-X-Google-Smtp-Source: ABdhPJxs5rIWJ913wkFrbZmj7COR+OK3FJ6qBQGScfnHbGx7n7mKSA8P/fdMEBLketsfhK7YU1yJgg==
-X-Received: by 2002:a17:906:9598:: with SMTP id r24mr26858876ejx.397.1618266986260;
-        Mon, 12 Apr 2021 15:36:26 -0700 (PDT)
-Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id d10sm7817209edp.77.2021.04.12.15.36.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Apr 2021 15:36:25 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] ARM: dts: rockchip: change gpio nodenames
-Date:   Tue, 13 Apr 2021 00:36:16 +0200
-Message-Id: <20210412223617.8634-2-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20210412223617.8634-1-jbx6244@gmail.com>
-References: <20210412223617.8634-1-jbx6244@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w7n3vBtKnZ3DFHMlcl+TEKd1DZ3COz1Ei4sifdIcY+c=;
+        b=qfbDKpLblMr1C67XhAc9mSlb1c2zPqUAXQzqpl573PeXCRTJfsAUe65jrzYYMhgBRX
+         rCiQGrfK9YEIDwQLnPVUmAsLBSkvkdeJrZzu30sWUiUhLNSkkeIH3BasQKwyS4AxtJ6r
+         mK6a78WA7hqThSlRBXJ+lKvjc8JT54p2ysBBWSV2qFpsTSgYcoxgqGVdDfLqI5siYp8m
+         VurEMfNaTkOr05Nc9P0T2RySbWEX80PFpxYx8JGctGEkqaTAgbELELQ/xUsByN/yaNEo
+         JXszQoUoj+KFQgnUBQxW++n1RRlvICWD3B3m1AqAXnkhotPuhulDq4euMcI9l++VG0G+
+         iN2Q==
+X-Gm-Message-State: AOAM532j8KCH+0LNJrWs5ZjUX2e+D7DvCGMpF4HQ3V3FjVNMmZz3mxs6
+        uryu8CZqdXOEzVP4Zy+iSy9JdpxuZ7o6vG4nldo=
+X-Google-Smtp-Source: ABdhPJwI9j1ZLvLpzRi9U8XLACkHrVtiG3V+sNGi6k/w7tYQbVNVDhI3sun3z75PbB8MconNck8dPg==
+X-Received: by 2002:a9d:694a:: with SMTP id p10mr26253206oto.319.1618269486801;
+        Mon, 12 Apr 2021 16:18:06 -0700 (PDT)
+Received: from dev-yzhong.dev.purestorage.com ([192.30.188.252])
+        by smtp.googlemail.com with ESMTPSA id j21sm342893ota.6.2021.04.12.16.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Apr 2021 16:18:06 -0700 (PDT)
+From:   Yuanyuan Zhong <yzhong@purestorage.com>
+To:     mika.westerberg@linux.intel.com, andy@kernel.org,
+        linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, Yuanyuan Zhong <yzhong@purestorage.com>
+Subject: [PATCH] pinctrl: lewisburg: Update number of pins in community
+Date:   Mon, 12 Apr 2021 17:17:59 -0600
+Message-Id: <20210412231759.15474-1-yzhong@purestorage.com>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently all gpio nodenames are sort of identical to there label.
-Nodenames should be of a generic type, so change them all.
+When updating pin names for Intel Lewisburg, the numbers of pins were
+left behind. Update them accordingly.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+Fixes: e66ff71fd0db ("pinctrl: lewisburg: Update pin list according to v1.1v6")
+Signed-off-by: Yuanyuan Zhong <yzhong@purestorage.com>
 ---
- arch/arm/boot/dts/rk3036.dtsi  |  6 +++---
- arch/arm/boot/dts/rk3066a.dtsi | 12 ++++++------
- arch/arm/boot/dts/rk3188.dtsi  |  8 ++++----
- arch/arm/boot/dts/rk322x.dtsi  |  8 ++++----
- arch/arm/boot/dts/rk3288.dtsi  | 18 +++++++++---------
- arch/arm/boot/dts/rv1108.dtsi  |  8 ++++----
- 6 files changed, 30 insertions(+), 30 deletions(-)
+ drivers/pinctrl/intel/pinctrl-lewisburg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
-index e24230d50..33ddede4b 100644
---- a/arch/arm/boot/dts/rk3036.dtsi
-+++ b/arch/arm/boot/dts/rk3036.dtsi
-@@ -505,7 +505,7 @@
- 		#size-cells = <1>;
- 		ranges;
+diff --git a/drivers/pinctrl/intel/pinctrl-lewisburg.c b/drivers/pinctrl/intel/pinctrl-lewisburg.c
+index 7fdf4257df1e..ad4b446d588e 100644
+--- a/drivers/pinctrl/intel/pinctrl-lewisburg.c
++++ b/drivers/pinctrl/intel/pinctrl-lewisburg.c
+@@ -299,9 +299,9 @@ static const struct pinctrl_pin_desc lbg_pins[] = {
+ static const struct intel_community lbg_communities[] = {
+ 	LBG_COMMUNITY(0, 0, 71),
+ 	LBG_COMMUNITY(1, 72, 132),
+-	LBG_COMMUNITY(3, 133, 144),
+-	LBG_COMMUNITY(4, 145, 180),
+-	LBG_COMMUNITY(5, 181, 246),
++	LBG_COMMUNITY(3, 133, 143),
++	LBG_COMMUNITY(4, 144, 178),
++	LBG_COMMUNITY(5, 179, 246),
+ };
  
--		gpio0: gpio0@2007c000 {
-+		gpio0: gpio@2007c000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2007c000 0x100>;
- 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-@@ -518,7 +518,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@20080000 {
-+		gpio1: gpio@20080000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20080000 0x100>;
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-@@ -531,7 +531,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@20084000 {
-+		gpio2: gpio@20084000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20084000 0x100>;
- 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
-index 252750c97..cf3ea32e5 100644
---- a/arch/arm/boot/dts/rk3066a.dtsi
-+++ b/arch/arm/boot/dts/rk3066a.dtsi
-@@ -297,7 +297,7 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		gpio0: gpio0@20034000 {
-+		gpio0: gpio@20034000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20034000 0x100>;
- 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-@@ -310,7 +310,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@2003c000 {
-+		gpio1: gpio@2003c000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003c000 0x100>;
- 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-@@ -323,7 +323,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@2003e000 {
-+		gpio2: gpio@2003e000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003e000 0x100>;
- 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-@@ -336,7 +336,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio3: gpio3@20080000 {
-+		gpio3: gpio@20080000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20080000 0x100>;
- 			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-@@ -349,7 +349,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio4: gpio4@20084000 {
-+		gpio4: gpio@20084000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20084000 0x100>;
- 			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-@@ -362,7 +362,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio6: gpio6@2000a000 {
-+		gpio6: gpio@2000a000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2000a000 0x100>;
- 			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk3188.dtsi b/arch/arm/boot/dts/rk3188.dtsi
-index 2298a8d84..08aac5452 100644
---- a/arch/arm/boot/dts/rk3188.dtsi
-+++ b/arch/arm/boot/dts/rk3188.dtsi
-@@ -247,7 +247,7 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		gpio0: gpio0@2000a000 {
-+		gpio0: gpio@2000a000 {
- 			compatible = "rockchip,rk3188-gpio-bank0";
- 			reg = <0x2000a000 0x100>;
- 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-@@ -260,7 +260,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@2003c000 {
-+		gpio1: gpio@2003c000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003c000 0x100>;
- 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-@@ -273,7 +273,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@2003e000 {
-+		gpio2: gpio@2003e000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003e000 0x100>;
- 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-@@ -286,7 +286,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio3: gpio3@20080000 {
-+		gpio3: gpio@20080000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20080000 0x100>;
- 			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index 118d96424..d9ac1d08c 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -823,7 +823,7 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		gpio0: gpio0@11110000 {
-+		gpio0: gpio@11110000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11110000 0x100>;
- 			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-@@ -836,7 +836,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@11120000 {
-+		gpio1: gpio@11120000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11120000 0x100>;
- 			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-@@ -849,7 +849,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@11130000 {
-+		gpio2: gpio@11130000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11130000 0x100>;
- 			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-@@ -862,7 +862,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio3: gpio3@11140000 {
-+		gpio3: gpio@11140000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11140000 0x100>;
- 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 05557ad02..e96a70ebe 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -1424,7 +1424,7 @@
- 		#size-cells = <2>;
- 		ranges;
- 
--		gpio0: gpio0@ff750000 {
-+		gpio0: gpio@ff750000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff750000 0x0 0x100>;
- 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1437,7 +1437,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@ff780000 {
-+		gpio1: gpio@ff780000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff780000 0x0 0x100>;
- 			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1450,7 +1450,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@ff790000 {
-+		gpio2: gpio@ff790000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff790000 0x0 0x100>;
- 			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1463,7 +1463,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio3: gpio3@ff7a0000 {
-+		gpio3: gpio@ff7a0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7a0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1476,7 +1476,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio4: gpio4@ff7b0000 {
-+		gpio4: gpio@ff7b0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7b0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1489,7 +1489,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio5: gpio5@ff7c0000 {
-+		gpio5: gpio@ff7c0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7c0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1502,7 +1502,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio6: gpio6@ff7d0000 {
-+		gpio6: gpio@ff7d0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7d0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1515,7 +1515,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio7: gpio7@ff7e0000 {
-+		gpio7: gpio@ff7e0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7e0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1528,7 +1528,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio8: gpio8@ff7f0000 {
-+		gpio8: gpio@ff7f0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7f0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index 68e2282f7..3ace88e8c 100644
---- a/arch/arm/boot/dts/rv1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -582,7 +582,7 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		gpio0: gpio0@20030000 {
-+		gpio0: gpio@20030000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20030000 0x100>;
- 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-@@ -595,7 +595,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@10310000 {
-+		gpio1: gpio@10310000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10310000 0x100>;
- 			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-@@ -608,7 +608,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@10320000 {
-+		gpio2: gpio@10320000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10320000 0x100>;
- 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-@@ -621,7 +621,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio3: gpio3@10330000 {
-+		gpio3: gpio@10330000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10330000 0x100>;
- 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+ static const struct intel_pinctrl_soc_data lbg_soc_data = {
 -- 
-2.11.0
+2.31.1
 
