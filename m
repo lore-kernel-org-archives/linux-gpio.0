@@ -2,154 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A59C433B4
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 11:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA931C433B4
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 11:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB495613AB
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 11:13:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6443613BA
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 11:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345308AbhDMLOQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Apr 2021 07:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345300AbhDMLOP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Apr 2021 07:14:15 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D638C061574
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Apr 2021 04:13:54 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id j5so15056611wrn.4
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Apr 2021 04:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version:content-transfer-encoding;
-        bh=Cu3neruluoSCQXicI1kgn+ehmqNJHkuNyetxZuBFmfY=;
-        b=hfiiqOLquAbv0Zo8WwVW2P07q1yK3rArOdZiB3bFdqqgKEY4lhM+0k9N7CEc6B7dmD
-         //pm3E0tK9HCL2QxUb6/PVLhUGdQc10kea72DZarCyaqCO0WxxJqcCLQmwn7hJEkjfoH
-         2Iiqt6IqBtzKI9PfTgrsHx2BGKb2PpShkXb0fjnkpqqjDf78j39yJlk3ZbEDkvgPa93c
-         2/cJipB4xQ+mHSaKtRMPfX/Lxs8cPxa8S+O7QT1OJ0UHk1/ZbjFuQ8awzP/0P8bG1Q6w
-         hzU5VD/Pn9vta+7UKZmMtV44h1AS9WC2Ii173EYi71sMGuGasWPvDVwjcwUHvycImZde
-         gRSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version:content-transfer-encoding;
-        bh=Cu3neruluoSCQXicI1kgn+ehmqNJHkuNyetxZuBFmfY=;
-        b=U+dzeiJr7LpccsxkhD+7Ggykwx3yGu6gv6GXgGqyqgqM/SoRpIYA4B4/FcYYQAeawp
-         GpwY/FiObdTlHUDRBcwMD5/KHbts3BvI6wphYNTgQxSAIiKWIhXcgpDEQjGcHxRdkWw1
-         c7hLPBBFV8HssR3CzvQujxf+3sjXuYW9IygHFcjpLVQHwDYynDgYmVRAuOkoIbcMm90V
-         hmn8o01cUK8FxPGhvGdnaSd4YMiztl5n1bhicpvDGv7fM7PQoTCHdt3R1XNRWCRm63CX
-         sbE6umx+oEuksiBm8Tb3ca0FKnz9VgtxeY4WlEImeHT6X1lvkY2g9kHtpep61aDWSvzs
-         PU6g==
-X-Gm-Message-State: AOAM531iEX4TUb3HyhF+udlqHqhgYewZ4tiQQ1ADsxEAJBBAErmHulff
-        N/x42kdLCGRVItm86LHp8eBKEw==
-X-Google-Smtp-Source: ABdhPJzY9shCczKjSRW6Y2rpwOvSTMSuxueUgRqhkgPrE9aInqm3+aebb0vYVhHDuo9TmXBtfSBYUQ==
-X-Received: by 2002:a5d:43c1:: with SMTP id v1mr11267064wrr.419.1618312432810;
-        Tue, 13 Apr 2021 04:13:52 -0700 (PDT)
-Received: from zen.linaroharston ([51.148.130.216])
-        by smtp.gmail.com with ESMTPSA id j6sm2130276wmq.16.2021.04.13.04.13.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 04:13:51 -0700 (PDT)
-Received: from zen (localhost [127.0.0.1])
-        by zen.linaroharston (Postfix) with ESMTP id 012321FF7E;
-        Tue, 13 Apr 2021 12:13:50 +0100 (BST)
-References: <20201203191135.21576-1-info@metux.net>
- <20201203191135.21576-2-info@metux.net>
- <8209ce55-a4aa-f256-b9b9-f7eb3cac877b@redhat.com>
- <43f1ee89-89f3-95a3-58f1-7a0a12c2b92f@metux.net>
-User-agent: mu4e 1.5.11; emacs 28.0.50
-From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, mst@redhat.com,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-riscv@lists.infradead.org,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>
-Subject: Re: [PATCH v2 2/2] drivers: gpio: add virtio-gpio guest driver
-Date:   Tue, 13 Apr 2021 12:07:58 +0100
-In-reply-to: <43f1ee89-89f3-95a3-58f1-7a0a12c2b92f@metux.net>
-Message-ID: <87lf9mmo7l.fsf@linaro.org>
+        id S237443AbhDMLOi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Apr 2021 07:14:38 -0400
+Received: from mga11.intel.com ([192.55.52.93]:27252 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237361AbhDMLOg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 13 Apr 2021 07:14:36 -0400
+IronPort-SDR: RscC7hm72fSnttjZ91pATTQPB/sCvl7rfppdAbAhbWvAAKXGcbE3385HVDTw/fx1KVDAqJ1fOj
+ 8mWAXyElKGtg==
+X-IronPort-AV: E=McAfee;i="6200,9189,9952"; a="191202498"
+X-IronPort-AV: E=Sophos;i="5.82,219,1613462400"; 
+   d="scan'208";a="191202498"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2021 04:14:13 -0700
+IronPort-SDR: ylyBCYWElf4bSo5pFI0VfaEkrRF0RP86V1pGfMdAfAha23R7cX4tWrHsF7HIfbsYLBYLis+ZAw
+ 3j8uZvgL/swQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.82,219,1613462400"; 
+   d="scan'208";a="420763209"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 13 Apr 2021 04:14:12 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id AF2DC17E; Tue, 13 Apr 2021 14:14:28 +0300 (EEST)
+Date:   Tue, 13 Apr 2021 14:14:28 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux pin control <linux-gpio@vger.kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL] intel-pinctrl for 5.12-4
+Message-ID: <YHV9FBeAosyf1Efj@black.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Linux pin control  maintainers,
 
-"Enrico Weigelt, metux IT consult" <info@metux.net> writes:
+One patch for v5.12 cycle.
 
-> On 04.12.20 04:35, Jason Wang wrote:
->
-> Hi,
->
->> Is the plan to keep this doc synced with the one in the virtio
->> specification?
->
-> Yes, of course. I'm still in progress of doing the beaurocratic stuff w/
-> virtio-tc folks (ID registration, ...) - yet have to see whether they
-> wanna add it to their spec documents ...
->
-> BTW: if you feel, sometings not good w/ the current spec, please raise
-> your voice now.
->
->> I think it's better to use u8 ot uint8_t here.Git grep told me the
->> former is more popular under Documentation/.
->
-> thx, I'll fix that
->
->>> +- for version field currently only value 1 supported.
->>> +- the line names block holds a stream of zero-terminated strings,
->>> +=C2=A0 holding the individual line names.
->>=20
->> I'm not sure but does this mean we don't have a fixed length of config
->> space? Need to check whether it can bring any trouble to
->> migration(compatibility).
->
-> Yes, it depends on how many gpio lines are present and how much space
-> their names take up.
->
-> A fixed size would either put unpleasent limits on the max number of
-> lines or waste a lot space when only few lines present.
->
-> Not that virtio-gpio is also meant for small embedded workloads running
-> under some hypervisor.
->
->>> +- unspecified fields are reserved for future use and should be zero.
->>> +
->>> +------------------------
->>> +Virtqueues and messages:
->>> +------------------------
->>> +
->>> +- Queue #0: transmission from host to guest
->>> +- Queue #1: transmission from guest to host
->>=20
->>=20
->> Virtio became more a popular in the area without virtualization. So I
->> think it's better to use "device/driver" instead of "host/guest" here.
->
-> Good point. But I'd prefer "cpu" instead of "driver" in that case.
+Thanks,
 
-I think you are going to tie yourself up in knots if you don't move this
-to the OASIS spec. The reason being the VirtIO spec has definitions for
-what a "Device" and a "Driver" is that are clear and unambiguous. The
-upstream spec should be considered the canonical source of truth for any
-implementation (Linux or otherwise).
+With Best Regards,
+Andy Shevchenko
 
-By all means have the distilled documentation for the driver in the
-kernel source tree but trying to upstream an implementation before
-starting the definition in the standard is a little back to front IMHO*.
+The following changes since commit 39c1f1bd8adf29840ef52225ce95f390e3d7b2cf:
 
-* that's not to say these things can't be done in parallel as the spec
-  is reviewed and worked on and the kinks worked out but you want the
-  final order of upstreaming to start with the spec.
+  pinctrl: intel: check REVID register value for device presence (2021-03-25 15:07:10 +0200)
 
---=20
-Alex Benn=C3=A9e
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v5.12-4
+
+for you to fetch changes up to 196d941753297d0ca73c563ccd7d00be049ec226:
+
+  pinctrl: lewisburg: Update number of pins in community (2021-04-13 14:09:48 +0300)
+
+----------------------------------------------------------------
+intel-pinctrl for v5.12-4
+
+* Fix pin numbering per community in Intel Lewisburg driver
+
+The following is an automated git shortlog grouped by driver:
+
+lewisburg:
+ -  Update number of pins in community
+
+----------------------------------------------------------------
+Yuanyuan Zhong (1):
+      pinctrl: lewisburg: Update number of pins in community
+
+ drivers/pinctrl/intel/pinctrl-lewisburg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
