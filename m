@@ -2,91 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F002CC433ED
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 11:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65222C433ED
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 15:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEB2E613AB
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 11:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A423611CE
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Apr 2021 15:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237361AbhDMLOt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Apr 2021 07:14:49 -0400
-Received: from mga11.intel.com ([192.55.52.93]:27266 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237697AbhDMLOs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 13 Apr 2021 07:14:48 -0400
-IronPort-SDR: vQxWAXxSIgbVZVH2oTu2xRdtZmtVLdwsvivW+rxw+m6ljB34crYqg/bdd3rI6CebwwfkW7hDFj
- +kqdcmZSJLQA==
-X-IronPort-AV: E=McAfee;i="6200,9189,9952"; a="191202522"
-X-IronPort-AV: E=Sophos;i="5.82,219,1613462400"; 
-   d="scan'208";a="191202522"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2021 04:14:29 -0700
-IronPort-SDR: AxhDKi/U5SSsDVmgdciE0ZdxKu4gSARdxXxFVCRxafb/rKSECuhg/wk37H/GVh1S6IQ81N2ibu
- rtcjlRx1oNEQ==
-X-IronPort-AV: E=Sophos;i="5.82,219,1613462400"; 
-   d="scan'208";a="381937166"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2021 04:14:27 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1lWGzw-003k1g-Tj; Tue, 13 Apr 2021 14:14:24 +0300
-Date:   Tue, 13 Apr 2021 14:14:24 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Yuanyuan Zhong <yzhong@purestorage.com>
-Cc:     mika.westerberg@linux.intel.com, andy@kernel.org,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: lewisburg: Update number of pins in community
-Message-ID: <YHV9ENRnQPBJBQ9R@smile.fi.intel.com>
-References: <20210412231759.15474-1-yzhong@purestorage.com>
+        id S238160AbhDMPWy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Apr 2021 11:22:54 -0400
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:43521 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231485AbhDMPWv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Apr 2021 11:22:51 -0400
+Received: by mail-ot1-f41.google.com with SMTP id p6-20020a9d69460000b029028bb7c6ff64so339130oto.10;
+        Tue, 13 Apr 2021 08:22:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=M5LRlWktXGo8iA/Vsd38aM0WTulSItsG6aBATWd3DBQ=;
+        b=U0xKdxvL7NL/c9ONKtKpcFKzocW2rrGgtoeocUAWokGhItnIXib67gs1ybfeIXUBDJ
+         nBKJIFAlmbImRdmfRRNkXR58RW1HW/GQC8iUkEHzSz6Ge8ILVnslQlFYC8RkHSJxhmbZ
+         OCVVcuDg7WInxY/kpwjnyew7R+lFkv8TEx5uu3CZ3kjj2v1BB5a/8DWlNYATyr215SZ0
+         bj1nSCRMBNtW28HaIGWskQC5Fmi9GLfek8iAi0viKAXznkdYz0Inr+bvWXW7dxuIWLJn
+         9hsh9sYvSD/duptmWNE5uOCzqo5NSrENyCIthLDJqTORi+DIBqdqfnGwMln8vLSypIE4
+         eFTg==
+X-Gm-Message-State: AOAM53065pYZceMlA5yApwlagFwC2f2/cK8WEgqjMAD5lYckJ65GWmZz
+        JKSGKuk8uLMppijhk3jO0Q==
+X-Google-Smtp-Source: ABdhPJyE2+W7kpfnEGRVoGJRA12pV2gliQPOhMv99rM2tC2m7lXueFZ++JfkU3wSS8oiV9TXYajDtw==
+X-Received: by 2002:a05:6830:3115:: with SMTP id b21mr28240296ots.318.1618327351138;
+        Tue, 13 Apr 2021 08:22:31 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t3sm579967ooa.18.2021.04.13.08.22.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 08:22:30 -0700 (PDT)
+Received: (nullmailer pid 1702387 invoked by uid 1000);
+        Tue, 13 Apr 2021 15:22:29 -0000
+Date:   Tue, 13 Apr 2021 10:22:29 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        bgolaszewski@baylibre.com, robh+dt@kernel.org,
+        linux-rockchip@lists.infradead.org, heiko@sntech.de,
+        linus.walleij@linaro.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: add YAML description for
+ rockchip, gpio-bank
+Message-ID: <20210413152229.GA1702359@robh.at.kernel.org>
+References: <20210412223617.8634-1-jbx6244@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210412231759.15474-1-yzhong@purestorage.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20210412223617.8634-1-jbx6244@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 05:17:59PM -0600, Yuanyuan Zhong wrote:
-> When updating pin names for Intel Lewisburg, the numbers of pins were
-> left behind. Update them accordingly.
-
-Applied, thanks!
-
-> Fixes: e66ff71fd0db ("pinctrl: lewisburg: Update pin list according to v1.1v6")
-> Signed-off-by: Yuanyuan Zhong <yzhong@purestorage.com>
+On Tue, 13 Apr 2021 00:36:15 +0200, Johan Jonker wrote:
+> Current dts files with "rockchip,gpio-bank" subnodes
+> are manually verified. In order to automate this process
+> the text that describes the compatible in rockchip,pinctrl.txt
+> is removed and converted to YAML in rockchip,gpio-bank.yaml.
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 > ---
->  drivers/pinctrl/intel/pinctrl-lewisburg.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-lewisburg.c b/drivers/pinctrl/intel/pinctrl-lewisburg.c
-> index 7fdf4257df1e..ad4b446d588e 100644
-> --- a/drivers/pinctrl/intel/pinctrl-lewisburg.c
-> +++ b/drivers/pinctrl/intel/pinctrl-lewisburg.c
-> @@ -299,9 +299,9 @@ static const struct pinctrl_pin_desc lbg_pins[] = {
->  static const struct intel_community lbg_communities[] = {
->  	LBG_COMMUNITY(0, 0, 71),
->  	LBG_COMMUNITY(1, 72, 132),
-> -	LBG_COMMUNITY(3, 133, 144),
-> -	LBG_COMMUNITY(4, 145, 180),
-> -	LBG_COMMUNITY(5, 181, 246),
-> +	LBG_COMMUNITY(3, 133, 143),
-> +	LBG_COMMUNITY(4, 144, 178),
-> +	LBG_COMMUNITY(5, 179, 246),
->  };
->  
->  static const struct intel_pinctrl_soc_data lbg_soc_data = {
-> -- 
-> 2.31.1
+> Changed V2:
+>   changed example gpio nodename
+> ---
+>  .../bindings/gpio/rockchip,gpio-bank.yaml          | 82 ++++++++++++++++++++++
+>  .../bindings/pinctrl/rockchip,pinctrl.txt          | 58 +--------------
+>  2 files changed, 83 insertions(+), 57 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
 > 
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
