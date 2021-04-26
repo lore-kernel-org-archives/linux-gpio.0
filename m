@@ -7,35 +7,34 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE20C433ED
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 08:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0376C433ED
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44F0260BD3
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 08:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AC0E6023C
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232103AbhDZIwN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Apr 2021 04:52:13 -0400
-Received: from smtpcmd01-sp1.aruba.it ([62.149.158.218]:60050 "EHLO
-        smtpcmd01-sp1.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232068AbhDZIwL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Apr 2021 04:52:11 -0400
-X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Apr 2021 04:52:11 EDT
+        id S232080AbhDZJRf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Apr 2021 05:17:35 -0400
+Received: from smtpcmd01-g.aruba.it ([62.149.158.217]:47533 "EHLO
+        smtpcmd01-g.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232078AbhDZJRf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Apr 2021 05:17:35 -0400
 Received: from [192.168.1.128] ([79.0.204.227])
         by Aruba Outgoing Smtp  with ESMTPSA
-        id awqrlwcRLkdBBawqulpyHF; Mon, 26 Apr 2021 10:44:26 +0200
+        id axMElxVEPkdBBaxMHlqa4B; Mon, 26 Apr 2021 11:16:52 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1619426667; bh=0lin7PRsaVUh9+pc8RNX6uCUFrWzouDNtCUoLZfmI70=;
+        t=1619428612; bh=xngmwhFikqISVkfo/nez+Zdkk/XeKXm3Q0dY+3DmJkk=;
         h=Subject:To:From:Date:MIME-Version:Content-Type;
-        b=dhg4Js3DemfxCCkyZ6zYWGSGN4g2eLfPtEIF4tWNSgWw81k4ND8+jjVvN0SxCzNZD
-         qL4FwbxB6XBlUUFXfiWyzqyEhDqqNajO7Qkgf9ZsvQ4gz/DrJZVjmisD3m6ZgCndu/
-         R06vDY3XOBEoyLvPzEvq7PFWYjUevO0lK+PJEhnVm1akc9h7Qq7eYXVX5LPjaA89ag
-         ztGplN2vlLzePPlY20w0CKD4wEhn7BVHKEQMSS5vT1r0nCsTHMtYZZi21+i1J1ydWW
-         MNNhJ0M8EYXQt3fR0cdigqi2DlaZps2trlMISrf2tkRvaAlbbq4P5cCdOHIqLYqE1h
-         ezk4fgmXNhKdA==
+        b=dOR9TkTYRv86CyXVyyqY7JYUaYt+7bXDml7pceUL4HMWdziUY8X6nBbCqiHB7Seti
+         qzkgbQ6G8EPmhHko2ayDLx42u7frrIqyKaU6bGvSgYgz4L2MzZ5ifwrDBWWLz+q9+k
+         qWnOMwBnGT/M+VTb7bQBwAjwyOkABcYo4YY23gzDYTgU62jkg3kYHwiycAnhYTf77l
+         FPzfl/q9MVFpa/4dgjkSzco/IQ1BPNw9gp8dFiYCl578nWPSx5YFZjOvJnxoUTGklq
+         JyTAmZfZjrhPDH1aWgSX+cay4lWCcrme2d7SaxDggDMqWSCx4BzwdrnSAaCSP4f1PE
+         +tGf/cIKMMmEw==
 Subject: Re: [RFC v2 GPIO lines [was: GPIO User I/O]
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -43,8 +42,6 @@ Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>
 References: <01afcac0-bd34-3fd0-b991-a8b40d4b4561@enneenne.com>
- <1c4f1a83-835a-9317-3647-b55f6f39c0ba@enneenne.com>
- <CACRpkdZPjJSryJc+RtYjRN=X7xKMcao5pYek1fUM2+sE9xgdFQ@mail.gmail.com>
  <CAMuHMdUtguuu4FWU4nRS=pBUyEwKM1JZ8DYPdCQHXBYN0i_Frg@mail.gmail.com>
  <87efe96c-3679-14d5-4d79-569b6c047b00@enneenne.com>
  <CAMuHMdUght0hkJT1N8ub5xR5GB+U18MAhAg+zDmAAuxoRSRaYg@mail.gmail.com>
@@ -58,48 +55,57 @@ References: <01afcac0-bd34-3fd0-b991-a8b40d4b4561@enneenne.com>
  <80bf1236-aacd-1044-b0e5-5b5718b7e9f0@enneenne.com>
  <CAHp75Vc1ezuW9m8OCQUmEJoNVoD-Z3eWF=Lzcr2v32Br8Gr60w@mail.gmail.com>
  <CACRpkdY+amtrDE4gaSU5Du2CUivxo6gnUV5zZOcaJJ8=md-4Kg@mail.gmail.com>
+ <87207962-5848-3e5c-4d8d-f4a66c864413@enneenne.com>
+ <CAHp75VdrRx7kc9OfRuGjqHHvM9akvzsHYSJgWKfr783wvTdhuA@mail.gmail.com>
 From:   Rodolfo Giometti <giometti@enneenne.com>
-Message-ID: <87207962-5848-3e5c-4d8d-f4a66c864413@enneenne.com>
-Date:   Mon, 26 Apr 2021 10:44:21 +0200
+Message-ID: <0de973db-daa7-4dde-161f-a6f477b06e9b@enneenne.com>
+Date:   Mon, 26 Apr 2021 11:16:45 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdY+amtrDE4gaSU5Du2CUivxo6gnUV5zZOcaJJ8=md-4Kg@mail.gmail.com>
+In-Reply-To: <CAHp75VdrRx7kc9OfRuGjqHHvM9akvzsHYSJgWKfr783wvTdhuA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfKQhStgCTDV54jL+H/lv8XTBhVN2mr/bovATWRl0fdTX5xSIqVkPP/AFvJODB9PVF6Dc/smS2RPd+PdoNk5ltEeHPygbdc38X3QQcsFREgpx0QX+59LH
- eS0HJWphhe7vZ0DAzzKn3VedcYtzdqx/4Bzgjx3gA4jOYb+C7P/eqeuon8TRyRQfXpYjHa1RitIv/7N94UN8Ky36D+IKYy+zTVIMe+ZUc40iNiMEL5130rX/
- 47YmIzVXJXfsygobk74m4fi2NP16dSrB8JXlta1LzkxI9pL1lQgFlTZFH4EYZ0DHViucuFrP8g2pLqMmOX+ml+k1+EI1AD0eeC76S0UbzKCFOde5DK+qlRp+
- tmKaf2JM8OzMvK/V5eLObQrNRuwI4jwOHkFFIJ1aTS/SvatvBNsxgGHg8tXf7DbGA/yvNca7xLiOnSkglDQGDvFgwh6eIQ==
+X-CMAE-Envelope: MS4wfDMiSpx6Dh918brawoQwREDxs+0AibdOJu8qz9Vi20pa8xDQVPEB9jegQW+O3sTniwHogHQzPTkeZrO1kwcOfm7Ex5zt0Md2DNPVocOccwzTBD1hLbZc
+ TS1LvbrVzH2aDFTnbR8LCTAM10+DR+ehCi350uZ9YLRlpDotCJCKj13ZLXxrCr3HY6QSz3mIODl1jtNskrc5lk1Jd0c6Ryp2X1n5DeRtBTAInlcqiCLSHUmi
+ fB05Qh5qSEkmj+xSv+z/6ylgIx7dDMo2jTSPRfCjfC0vr046X1T2fz8sSxR9OfBOFrpx+um4tkV6X0cdr8Lb0wLK7yMZwOMCQ05AhJDbNLZ3hy319evjZuoN
+ 1Np1Gupk4My2xRI5BIfeVrn9aLi5YmLSBfjirP4JjYW13FBgsIBczjeAd2gAXtW6gov3Ca+cWQCmn3+IIEVN6/c3ngV4Ew==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 20/07/20 10:17, Linus Walleij wrote:
-> IIUC Rodolfo's idea is to provide this with a DT compatible.
-> The use case will be industrial automation-ish tasks from userspace.
+On 26/04/21 10:48, Andy Shevchenko wrote:
+> On Mon, Apr 26, 2021 at 11:44 AM Rodolfo Giometti <giometti@enneenne.com> wrote:
+>>
+>> On 20/07/20 10:17, Linus Walleij wrote:
+>>> IIUC Rodolfo's idea is to provide this with a DT compatible.
+>>> The use case will be industrial automation-ish tasks from userspace.
+>>>
+>>> Currently the only mechanism we have in the device tree to
+>>> assign a use for a line is the "gpio-line-names" property,
+>>> which creates a name that is reported upward to the character
+>>> device.
+>>>
+>>> Rodolfo's patch is for scripting use cases, assigning some lines
+>>> for some cases to be handled by scripts, not the character device.
+>>>
+>>> What I am a bit worried about is if this would be a Linuxism, as DT
+>>> should be OS neutral.
 > 
-> Currently the only mechanism we have in the device tree to
-> assign a use for a line is the "gpio-line-names" property,
-> which creates a name that is reported upward to the character
-> device.
+> Not only neutral but be software'isms free!
+> It's only about hardware.
 > 
-> Rodolfo's patch is for scripting use cases, assigning some lines
-> for some cases to be handled by scripts, not the character device.
-> 
-> What I am a bit worried about is if this would be a Linuxism, as DT
-> should be OS neutral.
+> What I understand here is that we have missed the intermediate layer
+> (let's call it 'platform abstraction') where it's related to the
+> platform and neither strictly speaking hardware, nor software per se.
 
-Hello Linus,
+Maybe I don't well understand the-problem(TM), but why people are currently
+using led and uinput layers to describes their output or input lines?
 
-I'm currently using my solution for GPIOs management as input or output lines
-described in the DT on several systems.
+Why don't providing a dedicated layer for this special scope?
 
-Are you re-thinking about this topic? Can we go further for inclusion or should
-I continue doing out-of-tree? :(
-
-Ciao,
+My two cents,
 
 Rodolfo
 
