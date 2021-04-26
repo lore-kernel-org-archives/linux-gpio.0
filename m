@@ -2,194 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D750CC433ED
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 07:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1DCC433ED
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 08:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFEA611BD
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 07:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2DC61157
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 08:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231816AbhDZHRy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Apr 2021 03:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34824 "EHLO
+        id S232167AbhDZItM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Apr 2021 04:49:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232062AbhDZHRy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Apr 2021 03:17:54 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9BAC061756
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Apr 2021 00:17:00 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id n21so6657460eji.1
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Apr 2021 00:17:00 -0700 (PDT)
+        with ESMTP id S232068AbhDZItM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Apr 2021 04:49:12 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE6FC061574;
+        Mon, 26 Apr 2021 01:48:28 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id y1so12909381plg.11;
+        Mon, 26 Apr 2021 01:48:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MH933JiX/H5vIrqO4AxOURlaNcW6gFjmPwklzI1FH0I=;
-        b=0jMzRzgE2kkoPMhWjrzPZDGwEhuG4SrR2M46DjrE2hcFtECln0zCGdsFIHAIk+lU8J
-         C/ofDwawrfFnQsRbEVwFk2oJrIP6NNtECIKxLOBg3Jx0IQ8xmfuO5qbrGHnTKWcxG3BP
-         jv7VSQzCLqlFGYxl5IGbDEetukm4DVndeNrr0BFKM4Qus5NMmL8pI/E7DGUYKkV/Ud08
-         WlXJcmsc7rFzz+o4bqXvppOaBCYe3OmISqDDKo+2clXRPnwjV3BKWWhIsb980vzfjnAU
-         InP8KodM2gBESaSibTvil3tI/5R7S7vyW72mElKABVS3PhGDvt2DH1GqIMlw0Op9PgQk
-         fvcg==
+        bh=GrsQ0OopQ5XAi0kLHAMeMV1+0k283ypQv+yqfPMB/F8=;
+        b=BqQzW0Ir23ShYJNmIqDQYVPFYHiFAvs+kzU55ONptIb9lCBQDIUfAZQYyayCcJg6qb
+         N4C2Ft6QgMaGQKdbNZHOtqmOILPrN8/+hqPdFrIaPwIK4gFZz5/yAGayc0JHFaWypSTa
+         vwaXyIkfjg5k0zGP18249IhB3K0kIQSjQu+wLQoXgdqJB92ezZdO95slMXqPwGgilHwV
+         EBVeDbbLEJp5GCvqAMDzkxc1a3OchRXkJ94Kx2q/9Xi5NuZ8DENy+feMSh6+flrYSuzQ
+         YUoIppLHhafWTaAZGEYUHpqvQN9D5w9CRvqKyIYwMq0pQ7oRRcThZE7TJibzz7P5Eqs6
+         D7LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MH933JiX/H5vIrqO4AxOURlaNcW6gFjmPwklzI1FH0I=;
-        b=SaWzcy3XkaWFI5BhFY8vDx0vIEDVGVHfYgQCokmtypxvpzLpGhtvPNFODyoOhQP5bP
-         o6H9R3rPQ/ibd86rWkvV5QvXvmFEK6gnjWYm2aLRfJ3EgP2fH1Nltlm3ktQNBCi1dmFS
-         KRD+ln6dZf7dkEOuT34N9pQO7BMRXtHTJ+KE5iq2JPWdndZimYsZvXVuKJ3z7lNGXov0
-         zDdTO0GvxB9t2pGCpW8fA6RBAnkvr+KaJBEr3eHlv1oB3PEFIbO0542l0cN67I5m7OQQ
-         c989Oy7JiU8O5JY7kyEWWeBGhpjKpkqzHdPGEAT8BSxa3wclEExT1OEBknCDhWZqkwMD
-         kqiw==
-X-Gm-Message-State: AOAM532gfcQCN0XZDfTsMlsRjkbJTST5TdYiOurpxRttKxiZI5aqosRQ
-        4Lq56Hkpq70nYdtmtdcCB8OhB07m7MlXSH31WZ3ulw==
-X-Google-Smtp-Source: ABdhPJxY8aQGlMeoZmTW3iZo4yxpbbqK8ctIDP9CUlsJ2+2Kgs9avQ0jY3hRJX2eCaEU3f5jCMkHZHFKbTM+mlpys2M=
-X-Received: by 2002:a17:906:7842:: with SMTP id p2mr17682145ejm.87.1619421419222;
- Mon, 26 Apr 2021 00:16:59 -0700 (PDT)
+        bh=GrsQ0OopQ5XAi0kLHAMeMV1+0k283ypQv+yqfPMB/F8=;
+        b=GTL77W7tsLc0elPkJXmJ+rUyIwWkDJ7m/LjwtWAKca0uXV/TJNxRQb4GoN3OZNWtBj
+         gASJOakeDS8W06SxqWmNbQK0KOH2ndPIGWaxhzQDR7WVBiB3dvvwqzug8SOsi/j30ilo
+         DSveS7/7Ow7CY9EXun7l2OkbpisUxBNFQa2X3pPxSckPoLtMHPSfo7MVRNxM+ZGyIBXX
+         8QpS3Q2+feqmuGPSeIYs1hL2OuH+bMZbbTnLn+wt6GjRwyVl62M+APEOM6qoqZPXT/ZJ
+         0Khn21GHhyNoOYazEKb48OKMgpReWRy+QOJWvKMXoRH4+m837vmKc6YHSnmwc4kEDVUW
+         ykpA==
+X-Gm-Message-State: AOAM532Zd+at0HPt0HdXDD+h0/DT++MDLkyqJ7Da0VGBpT+pARBvfMrz
+        KzAzAiuRGqwQ0QWI/+ZpljixEZWmKpjIiSLiKXcipm8nE64=
+X-Google-Smtp-Source: ABdhPJydJ1eIT1CJnoDDThCgrG1lYxFSYGV1Wcvb+xuHCUEdev1b/ECaOlKz2CZ1bjX6kesYMdJjTn7gzeU5OgEa4kI=
+X-Received: by 2002:a17:902:264:b029:eb:3d3a:a09c with SMTP id
+ 91-20020a1709020264b02900eb3d3aa09cmr17493642plc.0.1619426907826; Mon, 26 Apr
+ 2021 01:48:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210423152333.6299-1-brgl@bgdev.pl> <CAHp75VcprveU4UiCeezJrnR5n3gWoP5dM1x6E7G1tE2HqOo8Rg@mail.gmail.com>
-In-Reply-To: <CAHp75VcprveU4UiCeezJrnR5n3gWoP5dM1x6E7G1tE2HqOo8Rg@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 26 Apr 2021 09:16:48 +0200
-Message-ID: <CAMRc=MdTYEyw_0Dmq_6fgtmwvKXS-bWe=VQGPDnOqw8L-S=5cA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sim: allocate IDA numbers earlier
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+References: <01afcac0-bd34-3fd0-b991-a8b40d4b4561@enneenne.com>
+ <1c4f1a83-835a-9317-3647-b55f6f39c0ba@enneenne.com> <CACRpkdZPjJSryJc+RtYjRN=X7xKMcao5pYek1fUM2+sE9xgdFQ@mail.gmail.com>
+ <CAMuHMdUtguuu4FWU4nRS=pBUyEwKM1JZ8DYPdCQHXBYN0i_Frg@mail.gmail.com>
+ <87efe96c-3679-14d5-4d79-569b6c047b00@enneenne.com> <CAMuHMdUght0hkJT1N8ub5xR5GB+U18MAhAg+zDmAAuxoRSRaYg@mail.gmail.com>
+ <d30e64c9-ad7f-7cd5-51a4-3f37d6f1e3d8@enneenne.com> <070fa558-6e20-0fbf-d3e4-0a0eca4fe82c@enneenne.com>
+ <CACRpkdYFAW2bcB53M3_b2LsveJO_PWZJhprGhdTtfmW11B1WmQ@mail.gmail.com>
+ <f66dc9c4-b164-c934-72a8-d4aca063fca5@enneenne.com> <CACRpkdbjc6vvpHVjnJNGisRw6LiLZd-95aHWJJORwvaRNigPcw@mail.gmail.com>
+ <cb6e208b-446e-eba4-b324-d88aec94a69b@enneenne.com> <CACRpkdZBUw5UPyZB-aeVwh8-GiCifbwABZ9mOsyK90t3cdMQ+w@mail.gmail.com>
+ <80bf1236-aacd-1044-b0e5-5b5718b7e9f0@enneenne.com> <CAHp75Vc1ezuW9m8OCQUmEJoNVoD-Z3eWF=Lzcr2v32Br8Gr60w@mail.gmail.com>
+ <CACRpkdY+amtrDE4gaSU5Du2CUivxo6gnUV5zZOcaJJ8=md-4Kg@mail.gmail.com> <87207962-5848-3e5c-4d8d-f4a66c864413@enneenne.com>
+In-Reply-To: <87207962-5848-3e5c-4d8d-f4a66c864413@enneenne.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 26 Apr 2021 11:48:11 +0300
+Message-ID: <CAHp75VdrRx7kc9OfRuGjqHHvM9akvzsHYSJgWKfr783wvTdhuA@mail.gmail.com>
+Subject: Re: [RFC v2 GPIO lines [was: GPIO User I/O]
+To:     Rodolfo Giometti <giometti@enneenne.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Apr 23, 2021 at 5:40 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Mon, Apr 26, 2021 at 11:44 AM Rodolfo Giometti <giometti@enneenne.com> wrote:
 >
-> On Fri, Apr 23, 2021 at 6:24 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> On 20/07/20 10:17, Linus Walleij wrote:
+> > IIUC Rodolfo's idea is to provide this with a DT compatible.
+> > The use case will be industrial automation-ish tasks from userspace.
 > >
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > Currently the only mechanism we have in the device tree to
+> > assign a use for a line is the "gpio-line-names" property,
+> > which creates a name that is reported upward to the character
+> > device.
 > >
-> > Instead of allocating the device ID number for gpio-sim platform devices
-> > when the associated configfs item is committed, do it already when the
-> > item is created. This way we can display the device name even when the
-> > chip is still pending. Once it's committed the user can easily identify
-> > the chip by its real device name. This will allow launching concurrent
-> > user-space test suites with gpio-sim.
->
-> Thanks!
-> With or without below comment addressed:
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->
-> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> > ---
-> > Hi all! This is a late one for which I'm sorry but I realized that this
-> > change will allow us to launch test-suites concurrently if we allow the
-> > user-space to read the device name before the device is created and then
-> > wait for this specific name to appear in a udev add event.
+> > Rodolfo's patch is for scripting use cases, assigning some lines
+> > for some cases to be handled by scripts, not the character device.
 > >
-> >  drivers/gpio/gpio-sim.c | 21 ++++++++++-----------
-> >  1 file changed, 10 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-> > index 92493b98c51b..2e2e6399e453 100644
-> > --- a/drivers/gpio/gpio-sim.c
-> > +++ b/drivers/gpio/gpio-sim.c
-> > @@ -409,6 +409,7 @@ struct gpio_sim_chip_config {
-> >          * item is 'live'.
-> >          */
-> >         struct platform_device *pdev;
-> > +       int id;
-> >
-> >         /*
-> >          * Each configfs filesystem operation is protected with the subsystem
-> > @@ -442,7 +443,7 @@ static ssize_t gpio_sim_config_dev_name_show(struct config_item *item,
-> >         if (pdev)
-> >                 ret = sprintf(page, "%s\n", dev_name(&pdev->dev));
-> >         else
-> > -               ret = sprintf(page, "none\n");
-> > +               ret = sprintf(page, "gpio-sim.%d\n", config->id);
->
-> Wondering if you need to have one place of definition, i.e. "gpio-sim" part.
->
+> > What I am a bit worried about is if this would be a Linuxism, as DT
+> > should be OS neutral.
 
-I applied it as is for 5.13. Feel free to submit a patch if you think
-this is useful.
+Not only neutral but be software'isms free!
+It's only about hardware.
 
-Bart
+What I understand here is that we have missed the intermediate layer
+(let's call it 'platform abstraction') where it's related to the
+platform and neither strictly speaking hardware, nor software per se.
 
-> >         mutex_unlock(&config->lock);
-> >
-> >         return ret;
-> > @@ -724,6 +725,7 @@ static void gpio_sim_chip_config_release(struct config_item *item)
-> >         struct gpio_sim_chip_config *config = to_gpio_sim_chip_config(item);
-> >
-> >         mutex_destroy(&config->lock);
-> > +       ida_free(&gpio_sim_ida, config->id);
-> >         kfree_strarray(config->line_names, config->num_line_names);
-> >         kfree(config);
-> >  }
-> > @@ -747,6 +749,12 @@ gpio_sim_config_make_item(struct config_group *group, const char *name)
-> >         if (!config)
-> >                 return ERR_PTR(-ENOMEM);
-> >
-> > +       config->id = ida_alloc(&gpio_sim_ida, GFP_KERNEL);
-> > +       if (config->id < 0) {
-> > +               kfree(config);
-> > +               return ERR_PTR(config->id);
-> > +       }
-> > +
-> >         config_item_init_type_name(&config->item, name,
-> >                                    &gpio_sim_chip_config_type);
-> >         config->num_lines = 1;
-> > @@ -781,18 +789,12 @@ static int gpio_sim_config_commit_item(struct config_item *item)
-> >                                                 config->line_names,
-> >                                                 config->num_line_names);
-> >
-> > -       pdevinfo.id = ida_alloc(&gpio_sim_ida, GFP_KERNEL);
-> > -       if (pdevinfo.id < 0) {
-> > -               mutex_unlock(&config->lock);
-> > -               return pdevinfo.id;
-> > -       }
-> > -
-> >         pdevinfo.name = "gpio-sim";
-> >         pdevinfo.properties = properties;
-> > +       pdevinfo.id = config->id;
-> >
-> >         pdev = platform_device_register_full(&pdevinfo);
-> >         if (IS_ERR(pdev)) {
-> > -               ida_free(&gpio_sim_ida, pdevinfo.id);
-> >                 mutex_unlock(&config->lock);
-> >                 return PTR_ERR(pdev);
-> >         }
-> > @@ -806,15 +808,12 @@ static int gpio_sim_config_commit_item(struct config_item *item)
-> >  static int gpio_sim_config_uncommit_item(struct config_item *item)
-> >  {
-> >         struct gpio_sim_chip_config *config = to_gpio_sim_chip_config(item);
-> > -       int id;
-> >
-> >         mutex_lock(&config->lock);
-> > -       id = config->pdev->id;
-> >         platform_device_unregister(config->pdev);
-> >         config->pdev = NULL;
-> >         mutex_unlock(&config->lock);
-> >
-> > -       ida_free(&gpio_sim_ida, id);
-> >         return 0;
-> >  }
-> >
-> > --
-> > 2.30.1
-> >
+> I'm currently using my solution for GPIOs management as input or output lines
+> described in the DT on several systems.
 >
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+> Are you re-thinking about this topic? Can we go further for inclusion or should
+> I continue doing out-of-tree? :(
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
