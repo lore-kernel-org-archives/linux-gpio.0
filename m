@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48825C43460
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 02:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DED4C433B4
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 02:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0C06109E
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 02:39:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D56966105A
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 02:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231734AbhDZCjk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 25 Apr 2021 22:39:40 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:55768 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231608AbhDZCji (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Apr 2021 22:39:38 -0400
-X-UUID: ef687ba002234fd98d870d860413af58-20210426
-X-UUID: ef687ba002234fd98d870d860413af58-20210426
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        id S231550AbhDZCqV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 25 Apr 2021 22:46:21 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33603 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231502AbhDZCqV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Apr 2021 22:46:21 -0400
+X-UUID: b7ca71ebd67645f19152bc396427ec68-20210426
+X-UUID: b7ca71ebd67645f19152bc396427ec68-20210426
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
         (envelope-from <zhiyong.tao@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1657546101; Mon, 26 Apr 2021 10:38:53 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 405022291; Mon, 26 Apr 2021 10:45:38 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
  mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 26 Apr 2021 10:38:51 +0800
+ 15.0.1497.2; Mon, 26 Apr 2021 10:45:36 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 26 Apr 2021 10:38:50 +0800
+ Transport; Mon, 26 Apr 2021 10:45:35 +0800
 From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
 To:     <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
         <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
@@ -42,12 +42,12 @@ CC:     <srv_heupstream@mediatek.com>, <zhiyong.tao@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-Subject: [PATCH] pinctrl: mediatek: dd rsel setting on MT8195
-Date:   Mon, 26 Apr 2021 10:38:47 +0800
-Message-ID: <20210426023847.20746-2-zhiyong.tao@mediatek.com>
+Subject: [PATCH v7] pinctrl: mediatek: add rsel setting on MT8195
+Date:   Mon, 26 Apr 2021 10:45:33 +0800
+Message-ID: <20210426024533.20840-2-zhiyong.tao@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20210426023847.20746-1-zhiyong.tao@mediatek.com>
-References: <20210426023847.20746-1-zhiyong.tao@mediatek.com>
+In-Reply-To: <20210426024533.20840-1-zhiyong.tao@mediatek.com>
+References: <20210426024533.20840-1-zhiyong.tao@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
