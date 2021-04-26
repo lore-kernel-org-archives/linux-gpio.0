@@ -2,71 +2,37 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD3EC433B4
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3313DC433B4
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 098986052B
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:31:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEC5561075
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232570AbhDZJc3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Apr 2021 05:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36936 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232078AbhDZJc3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Apr 2021 05:32:29 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 609AFC061756
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Apr 2021 02:31:46 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 124so6234821lff.5
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Apr 2021 02:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AUK2VLb2h/aghhGuRyQu+vL3L73eWxKFqQuj5HuuBYQ=;
-        b=CDdJaObR40rip9MxTz1LdVemkRQSvAkocNvoLrGdPfFD8OG1yQx/xe5OJPzMeYvm/A
-         bi5Dt6n7tBEyePqlTy9ROiBzPlz4+VGL3lL3BbUV0fO7Upk5Aln0t8qp513/c/63MEjz
-         SCwCyuNhOjxV6tPKZO+zfbw2yP8/kh4mr8F/OAN0yLKnBsZHlyBwILpjyWHWXXJ1NHAS
-         UqyPZ3d858jg1mNhktP58Frt7fVhK9b0GQNQ8o63HWTWg81/f5xSMmNPCXBVoAqczXS/
-         mGTxkiO5+Pjtk5MQbln4g33IbXar0NI8fkFbT8bsA53wXkWDCCcGW8D8q7GKn490UgYl
-         RyYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AUK2VLb2h/aghhGuRyQu+vL3L73eWxKFqQuj5HuuBYQ=;
-        b=YkuUp7Ix1NrGY4DfyOx1WazNQVAsg+1Qnna7GireCxU1xBiNHc4w8EZklP1WKtUyEe
-         sU4g7FWzgTArbiHqHwmAyzyMRv5Wbra40F37jT/aLWhVfEcKC3q8fOVy4zCP5L0nFAbt
-         xJ9uds0Q+CPUpYlrkR+PyfDPaDulTYPQa0tvtT5C2P8Uu8irKE+9mTPM0LXmZ329RlRF
-         2aM0E3EtXVVshdDPA0HEsM/JbeH6KEWA36tYK76EYwNGEH5h/hhVr7fj98X8XT9JEIiQ
-         lwxJmPSLKIL+iPXe1XLuUrqqh3bgG66C+47zxipJgfSp4cfIFMRstDlMB12qtqBq2o8b
-         dzXA==
-X-Gm-Message-State: AOAM5314Pc/6XjArnsMjsyb0+weHj8fMwEZlMFrzMwl3RUTfuHj8VrJY
-        /QgqqkMA0RSXk+Wh9+7XXeElvV22snMapSsE22F1Gw==
-X-Google-Smtp-Source: ABdhPJwj+NTYA7RNA+Fft20gDnLHQJ6Yl87q4n7aqAjFFgRBXX2MuSAUioyuFradzv9MIRK00Of03/JYZLoF/3yEBLE=
-X-Received: by 2002:ac2:4a87:: with SMTP id l7mr12474738lfp.586.1619429504851;
- Mon, 26 Apr 2021 02:31:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <01afcac0-bd34-3fd0-b991-a8b40d4b4561@enneenne.com>
- <1c4f1a83-835a-9317-3647-b55f6f39c0ba@enneenne.com> <CACRpkdZPjJSryJc+RtYjRN=X7xKMcao5pYek1fUM2+sE9xgdFQ@mail.gmail.com>
- <CAMuHMdUtguuu4FWU4nRS=pBUyEwKM1JZ8DYPdCQHXBYN0i_Frg@mail.gmail.com>
- <87efe96c-3679-14d5-4d79-569b6c047b00@enneenne.com> <CAMuHMdUght0hkJT1N8ub5xR5GB+U18MAhAg+zDmAAuxoRSRaYg@mail.gmail.com>
- <d30e64c9-ad7f-7cd5-51a4-3f37d6f1e3d8@enneenne.com> <070fa558-6e20-0fbf-d3e4-0a0eca4fe82c@enneenne.com>
- <CACRpkdYFAW2bcB53M3_b2LsveJO_PWZJhprGhdTtfmW11B1WmQ@mail.gmail.com>
- <f66dc9c4-b164-c934-72a8-d4aca063fca5@enneenne.com> <CACRpkdbjc6vvpHVjnJNGisRw6LiLZd-95aHWJJORwvaRNigPcw@mail.gmail.com>
- <cb6e208b-446e-eba4-b324-d88aec94a69b@enneenne.com> <CACRpkdZBUw5UPyZB-aeVwh8-GiCifbwABZ9mOsyK90t3cdMQ+w@mail.gmail.com>
- <80bf1236-aacd-1044-b0e5-5b5718b7e9f0@enneenne.com> <CAHp75Vc1ezuW9m8OCQUmEJoNVoD-Z3eWF=Lzcr2v32Br8Gr60w@mail.gmail.com>
- <CACRpkdY+amtrDE4gaSU5Du2CUivxo6gnUV5zZOcaJJ8=md-4Kg@mail.gmail.com> <87207962-5848-3e5c-4d8d-f4a66c864413@enneenne.com>
-In-Reply-To: <87207962-5848-3e5c-4d8d-f4a66c864413@enneenne.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 26 Apr 2021 11:31:34 +0200
-Message-ID: <CACRpkdYCdhi_Vb_+0cfD02WRzOhvenoFt5tbowe91RMjQBfeug@mail.gmail.com>
+        id S232630AbhDZJo4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Apr 2021 05:44:56 -0400
+Received: from smtpcmd01-sp1.aruba.it ([62.149.158.218]:35394 "EHLO
+        smtpcmd01-sp1.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232626AbhDZJoz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Apr 2021 05:44:55 -0400
+Received: from [192.168.1.128] ([79.0.204.227])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id axmYlyOK0kdBBaxmblr2LF; Mon, 26 Apr 2021 11:44:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1619430252; bh=wZi1+/un9KXEzwZfs0USwJMBSnH9Sra/mxHMIZT2T6g=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=dQux+IYvjQGVuM5Tpimzn8HLp6wkvxnt+MtZZz15eDxR0lHNPWhxK7BUZTm7KffUZ
+         n5y0AlakYBYlPR/MkTOWXB9Npyumz1/FMIniqRAtJe9vMWwWa5c1AWn7i5cE7c0T6E
+         RSA2CL6pbUo18RQxJAbLQxyBwoLe89cBsP4lrk+Nyd4MFnaMu6xF7GnqN8ksROE+u7
+         5Ywg7oBfCDTeL4q3LN6uyRVh5wLvBW2M4DNVLSnOIKKdUtr14EiCS/5Wl9Ju3yodTM
+         bH253V3NrO8Z5aDc+9xP/WfCVOB7LgX2eoAN1VRVy07r911w1lSfbGlkTftSF2Dswg
+         UTM6I0z0nR72w==
 Subject: Re: [RFC v2 GPIO lines [was: GPIO User I/O]
-To:     Rodolfo Giometti <giometti@enneenne.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -75,46 +41,85 @@ Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <01afcac0-bd34-3fd0-b991-a8b40d4b4561@enneenne.com>
+ <CAMuHMdUtguuu4FWU4nRS=pBUyEwKM1JZ8DYPdCQHXBYN0i_Frg@mail.gmail.com>
+ <87efe96c-3679-14d5-4d79-569b6c047b00@enneenne.com>
+ <CAMuHMdUght0hkJT1N8ub5xR5GB+U18MAhAg+zDmAAuxoRSRaYg@mail.gmail.com>
+ <d30e64c9-ad7f-7cd5-51a4-3f37d6f1e3d8@enneenne.com>
+ <070fa558-6e20-0fbf-d3e4-0a0eca4fe82c@enneenne.com>
+ <CACRpkdYFAW2bcB53M3_b2LsveJO_PWZJhprGhdTtfmW11B1WmQ@mail.gmail.com>
+ <f66dc9c4-b164-c934-72a8-d4aca063fca5@enneenne.com>
+ <CACRpkdbjc6vvpHVjnJNGisRw6LiLZd-95aHWJJORwvaRNigPcw@mail.gmail.com>
+ <cb6e208b-446e-eba4-b324-d88aec94a69b@enneenne.com>
+ <CACRpkdZBUw5UPyZB-aeVwh8-GiCifbwABZ9mOsyK90t3cdMQ+w@mail.gmail.com>
+ <80bf1236-aacd-1044-b0e5-5b5718b7e9f0@enneenne.com>
+ <CAHp75Vc1ezuW9m8OCQUmEJoNVoD-Z3eWF=Lzcr2v32Br8Gr60w@mail.gmail.com>
+ <CACRpkdY+amtrDE4gaSU5Du2CUivxo6gnUV5zZOcaJJ8=md-4Kg@mail.gmail.com>
+ <87207962-5848-3e5c-4d8d-f4a66c864413@enneenne.com>
+ <CACRpkdYCdhi_Vb_+0cfD02WRzOhvenoFt5tbowe91RMjQBfeug@mail.gmail.com>
+From:   Rodolfo Giometti <giometti@enneenne.com>
+Message-ID: <474f975d-3fb6-8345-cfbf-79ee313c0850@enneenne.com>
+Date:   Mon, 26 Apr 2021 11:43:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdYCdhi_Vb_+0cfD02WRzOhvenoFt5tbowe91RMjQBfeug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNPKHPVlWE1XyHHI+VDg7UuxoHO5/pvy8Xsz12HOYegKil6JNWeCErm6U6U7XvIZevfEiESeXfQzWmsDlhCeYWD7vDAwSs6vCJ6V9yWB0SLKtp7wrlyd
+ BtVM2QQ7+qKi+jfFiHhIzoeiVaQHbCBRm6ekTy39zdNFfgN3SFRRZwCfHvS+9Qy3s7+yfxix0mHLplLLhuc/XB+NRw6HWDLDoZ46I18hZ2nV7JEPPk/F71Bg
+ 5jbMInVm1ffh2bRLBuFi/b9OrDKCsvIfg3qF/0VeQ/65j6K2PH6ro3uq68/GzsUSDq/EK+FvQM/XLg1ikYApBQYYELc0kRqpElY3wiWpiofVhkcnB/Jv+t9o
+ sgt5anNTS4s9apxTqGq+13P4Bc9byW1XIIgJ+DagLnXMt7DUB3sv21hoxMlQAs5pfGsB+QdrqTRdqqKJMuxfBQ7Pq+szHg==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Apr 26, 2021 at 10:44 AM Rodolfo Giometti <giometti@enneenne.com> wrote:
->
-> On 20/07/20 10:17, Linus Walleij wrote:
-> > IIUC Rodolfo's idea is to provide this with a DT compatible.
-> > The use case will be industrial automation-ish tasks from userspace.
-> >
-> > Currently the only mechanism we have in the device tree to
-> > assign a use for a line is the "gpio-line-names" property,
-> > which creates a name that is reported upward to the character
-> > device.
-> >
-> > Rodolfo's patch is for scripting use cases, assigning some lines
-> > for some cases to be handled by scripts, not the character device.
-> >
-> > What I am a bit worried about is if this would be a Linuxism, as DT
-> > should be OS neutral.
->
-> Hello Linus,
->
-> I'm currently using my solution for GPIOs management as input or output lines
-> described in the DT on several systems.
->
-> Are you re-thinking about this topic? Can we go further for inclusion or should
-> I continue doing out-of-tree? :(
+On 26/04/21 11:31, Linus Walleij wrote:
+> On Mon, Apr 26, 2021 at 10:44 AM Rodolfo Giometti <giometti@enneenne.com> wrote:
+>>
+>> On 20/07/20 10:17, Linus Walleij wrote:
+>>> IIUC Rodolfo's idea is to provide this with a DT compatible.
+>>> The use case will be industrial automation-ish tasks from userspace.
+>>>
+>>> Currently the only mechanism we have in the device tree to
+>>> assign a use for a line is the "gpio-line-names" property,
+>>> which creates a name that is reported upward to the character
+>>> device.
+>>>
+>>> Rodolfo's patch is for scripting use cases, assigning some lines
+>>> for some cases to be handled by scripts, not the character device.
+>>>
+>>> What I am a bit worried about is if this would be a Linuxism, as DT
+>>> should be OS neutral.
+>>
+>> Hello Linus,
+>>
+>> I'm currently using my solution for GPIOs management as input or output lines
+>> described in the DT on several systems.
+>>
+>> Are you re-thinking about this topic? Can we go further for inclusion or should
+>> I continue doing out-of-tree? :(
+> 
+> It is a system description question, and I think you will need to discuss it
+> on the devicetree@vger.kernel.org mailing list.
+> 
+> The people there are working with things like the system device tree which
+> is intended to describe aspects of a system apart from what Linux or
+> any operating system is doing with the hardware.
 
-It is a system description question, and I think you will need to discuss it
-on the devicetree@vger.kernel.org mailing list.
+That sounds great to me! :-)
 
-The people there are working with things like the system device tree which
-is intended to describe aspects of a system apart from what Linux or
-any operating system is doing with the hardware.
+> I would send an RFC of the proposed DT bindings there.
 
-I would send an RFC of the proposed DT bindings there.
+I agree. Please, let me know if you need some help.
 
-They have been Cced in the past but not addressed directly.
+Ciao,
 
-Yours,
-Linus Walleij
+Rodolfo
+
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming                     skype:  rodolfo.giometti
