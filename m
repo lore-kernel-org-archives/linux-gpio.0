@@ -2,137 +2,62 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1757C43460
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86313C433ED
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E88B61006
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:54:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46F80611C9
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Apr 2021 09:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232890AbhDZJzS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Apr 2021 05:55:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35128 "EHLO mx2.suse.de"
+        id S232483AbhDZJ6g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Apr 2021 05:58:36 -0400
+Received: from elvis.franken.de ([193.175.24.41]:43385 "EHLO elvis.franken.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232547AbhDZJzN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 26 Apr 2021 05:55:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D5B43B183;
-        Mon, 26 Apr 2021 09:54:30 +0000 (UTC)
+        id S232140AbhDZJ6g (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 26 Apr 2021 05:58:36 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1lay01-000823-00; Mon, 26 Apr 2021 11:57:53 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 1C898C0BB9; Mon, 26 Apr 2021 11:33:13 +0200 (CEST)
+Date:   Mon, 26 Apr 2021 11:33:13 +0200
 From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] dt-bindings: gpio: Add devicetree binding for IDT 79RC32434 GPIO controller
-Date:   Mon, 26 Apr 2021 11:54:26 +0200
-Message-Id: <20210426095426.118356-2-tsbogend@alpha.franken.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210426095426.118356-1-tsbogend@alpha.franken.de>
-References: <20210426095426.118356-1-tsbogend@alpha.franken.de>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] gpio: Add support for IDT 79RC3243x GPIO
+ controller
+Message-ID: <20210426093313.GA7488@alpha.franken.de>
+References: <20210422152055.85544-1-tsbogend@alpha.franken.de>
+ <CAHp75VdToRrxxLSAnNPtN4sSoVfJ1yHQffUAuVL+SpsxkmYu5Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdToRrxxLSAnNPtN4sSoVfJ1yHQffUAuVL+SpsxkmYu5Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add YAML devicetree binding for IDT 79RC32434 GPIO controller
+On Fri, Apr 23, 2021 at 06:56:23PM +0300, Andy Shevchenko wrote:
+> On Thu, Apr 22, 2021 at 6:21 PM Thomas Bogendoerfer
+> <tsbogend@alpha.franken.de> wrote:
+> >
+> > IDT 79RC3243x SoCs integrated a gpio controller, which handles up
+> > to 32 gpios. All gpios could be used as interrupt source.
+> 
+> One missed question: No I/O serialization in the entire driver? Is it
+> taken care of by bgpio wrapper or ...?
 
-Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
----
-Changes in v4:
- - renamed to idt,32434-gpio this time for real
+for gpios bggpio takes care of it, for irqs I've added them in coming v4.
 
-Changes in v3:
- - renamed to idt,32434-gpio
- - drop ngpio description
- - use gpio0: gpio@50004 in example
+Thomas.
 
- .../bindings/gpio/idt,32434-gpio.yaml         | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/idt,32434-gpio.yaml
-
-diff --git a/Documentation/devicetree/bindings/gpio/idt,32434-gpio.yaml b/Documentation/devicetree/bindings/gpio/idt,32434-gpio.yaml
-new file mode 100644
-index 000000000000..517d14b6c2e2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/idt,32434-gpio.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/idt,32434-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IDT 79RC32434 GPIO controller
-+
-+maintainers:
-+  - Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-+
-+properties:
-+  compatible:
-+    const: idt,32434-gpio
-+
-+  reg:
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: gpio
-+      - const: pic
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  ngpios:
-+    minimum: 1
-+    maximum: 32
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - ngpios
-+  - interrupt-controller
-+  - "#interrupt-cells"
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio0: gpio@50004 {
-+        compatible = "idt,32434-gpio";
-+        reg = <0x50004 0x10>, <0x38030 0x0c>;
-+        reg-names = "gpio", "pic";
-+
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+
-+        interrupt-parent = <&cpuintc>;
-+        interrupts = <6>;
-+
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+
-+        ngpios = <14>;
-+    };
 -- 
-2.29.2
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
