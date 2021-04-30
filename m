@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E284C43461
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FF1C433B4
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31A3B6142A
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E632E61477
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbhD3MgO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Apr 2021 08:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50132 "EHLO
+        id S232202AbhD3MgQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Apr 2021 08:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231696AbhD3MgM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Apr 2021 08:36:12 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E7DC06138C
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:35:23 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id w3so105034436ejc.4
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:35:22 -0700 (PDT)
+        with ESMTP id S232089AbhD3MgO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Apr 2021 08:36:14 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82C2EC06138D
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:35:26 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id bf4so2697337edb.11
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:35:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sartura-hr.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EFs7L5e2ICQbQU3zEtC2UFHPBcpNTWgH/d2niDhfdDA=;
-        b=qG3u5EKd3EYArbSxfgXycYhJUwLsuX679AjHs+5XsDAsvr6Vqu+QZdiweWYTUV/SUp
-         n/ti64M+rZfKLgt7lFLdaxJGDIkcNe4k3UxlfHBetmc4K1QYOa93XsHmhLb+mPFwJ2ck
-         hsFqMenR9of1JAR7FpY18XoEzHCljmNCNKO4ucxxSdHLCq9V8ZnJSu6qd3Z/pqw9TGOK
-         ev3t4piRFQqx1uzhFqYHptpGcCHyVFbDtireqvdBoBW2t5DaKQjCt3dLlvHNTWNtp5bv
-         4AyHp7vNqbGNFeqfxJtxVaaHaOoSYbUipmfO8w3p4hlXI1D60VpfJp32Yl0a6kDL+gtv
-         inKw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=i0cSCbcDHWG/8GaSaPh7T/5+VrTGI0FCz2o91j0PTnQ=;
+        b=h3hpWtCxwdwT6lTCfhAxK3+Ql8i6N0Igt1R4A0SuVHRuIqBS9JWrX7dv87ptzXCw9j
+         hV3EECstOGdU7Ue3xtbR5fdUG3b7deYCIR0fo2IhFotkqWtuhV50pb11AzvFgLWAlo59
+         MT/2PyU09yq159Fq4Zh+oonB76JhyFHhjJ8QIGPB92+pCfLu4S9JtGcpNLOCanOjWLhK
+         slHB7JtuKOLoBjlzLnsr4HBAaH9fLFzgeLIDgcVNWG6VRPMOrrR2bSp6dgo4rMFGqCzl
+         1/W5xOSQ/Us4nB0fbdWrsOcqnk3ZDWGxKkJnaAmuOk1fvEIYCooQT71YYC58F6q77Y7s
+         TE2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EFs7L5e2ICQbQU3zEtC2UFHPBcpNTWgH/d2niDhfdDA=;
-        b=mhxzQDHKD8kkVhxSU6k2sY34RSrxOjgWV+CxSHyjIJkp33aLyUlvtc1eFraUV8ht7o
-         dXXGtA1+STiw64FGFtwsZdiftbahWypB4dDR7pdvcIahoHDzxEjUqV/divkjY/zkqGwv
-         NM5wTWRzEXabR+BPWFjWwrSxYB4cLE7RQgPTU7WcEgPUq9C+wFniekoMbz3GqnP7coaD
-         q6JRCaKc+EvPHRSf8clIBQrzg4gCKUy79IlYJU4EKv0NscQFkZOJZrVYMnkMfISc1Egd
-         AgLN0jyER03Ix7brWXAPy3HYorgzpGT5mL9ATGCkgs5E7RDSrtRWiG+K7so/jwrtQw+x
-         2Guw==
-X-Gm-Message-State: AOAM530ZpMiErQGkwjTA4jQzIZKffy4ovknjr8PYi61X0wLK7HqWSTaE
-        FW+r1g+w+Bb7P5N+/zVmFdrGhg==
-X-Google-Smtp-Source: ABdhPJxp7LwL0cFAMV0aJSYBcj3ZbLngIAwieRg6R3F+waTsfcY0hjwoD8vTJt5PnnWArMrsntnGkw==
-X-Received: by 2002:a17:906:3f88:: with SMTP id b8mr4195085ejj.36.1619786121639;
-        Fri, 30 Apr 2021 05:35:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=i0cSCbcDHWG/8GaSaPh7T/5+VrTGI0FCz2o91j0PTnQ=;
+        b=T08UV33N9EEMBaOqZk1MMoRDpndCP7vqzmk7j1B/flzS5LuiwBHJ+cqAvcN4xLxlYp
+         JKPktGRZECXGbCpCkK8Ua5+5GhZDNvyxo8/ACXP0oW5PMATpv7qGqB2aasnVsOOXP/Nc
+         L2DBd2mOpFuGLnYFHLwP5ohxs3YOhHCNV7CCnUzsbd9YjKhHUxQU7oppufoCoa4JhUpL
+         kf+eeR0s/jos3RBqndBF5ZwxKPLRy+LRAp1XTI0S8F+LsSBASF+VopJw5y+MBkvk6ysn
+         8sZxerS+oBjTKvoSzoxH51Wc1txMXM82nqa3IAgJxDi4w7zAHSQuL4XW32psxl4BkjTw
+         hfNA==
+X-Gm-Message-State: AOAM5306ir1WBo9owOqKqCfsojwjDU7kw1+SBwkisb2xUt57ShbBp4Y1
+        Jn9FnUa9BmoZhXiizo54FRmotg==
+X-Google-Smtp-Source: ABdhPJytqxGq0ddEG+C0dxahGrKQzDVHu5R9tF/X8QdWH3+ovV8Syn3VuMaxGGTS7Lf6fLtxLtjUWw==
+X-Received: by 2002:aa7:c7cc:: with SMTP id o12mr5720466eds.291.1619786125022;
+        Fri, 30 Apr 2021 05:35:25 -0700 (PDT)
 Received: from localhost.localdomain (dh207-97-15.xnet.hr. [88.207.97.15])
-        by smtp.googlemail.com with ESMTPSA id d15sm1822988ejj.42.2021.04.30.05.35.20
+        by smtp.googlemail.com with ESMTPSA id d15sm1822988ejj.42.2021.04.30.05.35.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Apr 2021 05:35:21 -0700 (PDT)
+        Fri, 30 Apr 2021 05:35:24 -0700 (PDT)
 From:   Robert Marko <robert.marko@sartura.hr>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, jdelvare@suse.com, linux@roeck-us.net,
@@ -62,289 +62,298 @@ To:     lee.jones@linaro.org, robh+dt@kernel.org, linus.walleij@linaro.org,
         linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org
 Cc:     luka.perkov@sartura.hr, jmp@epiphyte.org, pmenzel@molgen.mpg.de,
         buczek@molgen.mpg.de, Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH 1/6] mfd: Add Delta TN48M CPLD driver
-Date:   Fri, 30 Apr 2021 14:35:06 +0200
-Message-Id: <20210430123511.116057-1-robert.marko@sartura.hr>
+Subject: [PATCH 3/6] gpio: Add Delta TN48M CPLD GPIO driver
+Date:   Fri, 30 Apr 2021 14:35:08 +0200
+Message-Id: <20210430123511.116057-3-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210430123511.116057-1-robert.marko@sartura.hr>
+References: <20210430123511.116057-1-robert.marko@sartura.hr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Delta TN48M switches have a Lattice CPLD that serves
-multiple purposes including being a GPIO expander.
-So lets add the MFD core driver for it.
+Delta TN48M CPLD is used as a GPIO expander for the SFP GPIOs.
+
+It is a mix of input only and output only pins.
+
+Since there is no logical GPIO numbering arbitrary one is used
+along dt-bindings to make it humanly readable.
 
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 ---
- drivers/mfd/Kconfig       |  13 +++
- drivers/mfd/Makefile      |   1 +
- drivers/mfd/tn48m-cpld.c  | 181 ++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/tn48m.h |  30 +++++++
- 4 files changed, 225 insertions(+)
- create mode 100644 drivers/mfd/tn48m-cpld.c
- create mode 100644 include/linux/mfd/tn48m.h
+ drivers/gpio/Kconfig      |  12 +++
+ drivers/gpio/Makefile     |   1 +
+ drivers/gpio/gpio-tn48m.c | 191 ++++++++++++++++++++++++++++++++++++++
+ drivers/mfd/tn48m-cpld.c  |   6 +-
+ include/linux/mfd/tn48m.h |   3 +
+ 5 files changed, 212 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-tn48m.c
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b74efa469e90..809041f98d71 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -297,6 +297,19 @@ config MFD_ASIC3
- 	  This driver supports the ASIC3 multifunction chip found on many
- 	  PDAs (mainly iPAQ and HTC based ones)
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index e3607ec4c2e8..e17d4416786a 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1310,6 +1310,18 @@ config GPIO_TIMBERDALE
+ 	help
+ 	Add support for the GPIO IP in the timberdale FPGA.
  
-+config MFD_TN48M_CPLD
-+	tristate "Delta Networks TN48M switch CPLD driver"
-+	depends on I2C
-+	select MFD_CORE
-+	select REGMAP_I2C
++config GPIO_TN48M_CPLD
++	tristate "Delta Networks TN48M switch CPLD GPIO driver"
++	depends on MFD_TN48M_CPLD
++	depends on OF_GPIO
 +	help
-+	  Select this option to enable support for Delta Networks TN48M switch
-+	  CPLD. It consists of GPIO and hwmon drivers.
-+	  CPLD provides GPIOS-s for the SFP slots as well as power supply
-+	  related information.
-+	  Driver provides debugfs information about the board model as
-+	  well as hardware and CPLD revision information.
++	  This enables support for the GPIOs found on the Delta
++	  Networks TN48M switch CPLD.
++	  They are used for inputs and outputs on the SFP slots.
 +
- config PMIC_DA903X
- 	bool "Dialog Semiconductor DA9030/DA9034 PMIC Support"
- 	depends on I2C=y
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 834f5463af28..974663341f08 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_MFD_TI_LP87565)	+= lp87565.o
- obj-$(CONFIG_MFD_DAVINCI_VOICECODEC)	+= davinci_voicecodec.o
- obj-$(CONFIG_MFD_DM355EVM_MSP)	+= dm355evm_msp.o
- obj-$(CONFIG_MFD_TI_AM335X_TSCADC)	+= ti_am335x_tscadc.o
-+obj-$(CONFIG_MFD_TN48M_CPLD)	+= tn48m-cpld.o
- 
- obj-$(CONFIG_MFD_STA2X11)	+= sta2x11-mfd.o
- obj-$(CONFIG_MFD_STMPE)		+= stmpe.o
-diff --git a/drivers/mfd/tn48m-cpld.c b/drivers/mfd/tn48m-cpld.c
++	  This driver can also be built as a module. If so, the
++	  module will be called gpio-tn48m.
++
+ config GPIO_TPS65086
+ 	tristate "TI TPS65086 GPO"
+ 	depends on MFD_TPS65086
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index c58a90a3c3b1..271fb806475e 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -145,6 +145,7 @@ obj-$(CONFIG_GPIO_TEGRA186)		+= gpio-tegra186.o
+ obj-$(CONFIG_GPIO_TEGRA)		+= gpio-tegra.o
+ obj-$(CONFIG_GPIO_THUNDERX)		+= gpio-thunderx.o
+ obj-$(CONFIG_GPIO_TIMBERDALE)		+= gpio-timberdale.o
++obj-$(CONFIG_GPIO_TN48M_CPLD)		+= gpio-tn48m.o
+ obj-$(CONFIG_GPIO_TPIC2810)		+= gpio-tpic2810.o
+ obj-$(CONFIG_GPIO_TPS65086)		+= gpio-tps65086.o
+ obj-$(CONFIG_GPIO_TPS65218)		+= gpio-tps65218.o
+diff --git a/drivers/gpio/gpio-tn48m.c b/drivers/gpio/gpio-tn48m.c
 new file mode 100644
-index 000000000000..b84510fb630a
+index 000000000000..4e859e4c339c
 --- /dev/null
-+++ b/drivers/mfd/tn48m-cpld.c
-@@ -0,0 +1,181 @@
++++ b/drivers/gpio/gpio-tn48m.c
+@@ -0,0 +1,191 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Delta TN48M CPLD parent driver
++ * Delta TN48M CPLD GPIO driver
 + *
 + * Copyright 2020 Sartura Ltd
 + *
 + * Author: Robert Marko <robert.marko@sartura.hr>
 + */
 +
-+#include <linux/debugfs.h>
-+#include <linux/i2c.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/tn48m.h>
++#include <linux/gpio/driver.h>
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
 +
-+static const struct mfd_cell tn48m_cell[] = {};
++#include <linux/mfd/tn48m.h>
++#include <dt-bindings/gpio/tn48m-gpio.h>
 +
-+static const struct regmap_config tn48m_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = 0x40,
++struct tn48m_gpio {
++	struct gpio_chip chip;
++	struct tn48m_data *data;
 +};
 +
-+static int hardware_version_show(struct seq_file *s, void *data)
++static int tn48m_gpio_get_direction(struct gpio_chip *chip,
++				    unsigned int offset)
 +{
-+	struct tn48m_data *priv = s->private;
-+	unsigned int regval;
-+	char *buf;
-+
-+	regmap_read(priv->regmap, HARDWARE_VERSION_ID, &regval);
-+
-+	switch (FIELD_GET(HARDWARE_VERSION_MASK, regval)) {
-+	case HARDWARE_VERSION_EVT1:
-+		buf = "EVT1";
-+		break;
-+	case HARDWARE_VERSION_EVT2:
-+		buf = "EVT2";
-+		break;
-+	case HARDWARE_VERSION_DVT:
-+		buf = "DVT";
-+		break;
-+	case HARDWARE_VERSION_PVT:
-+		buf = "PVT";
-+		break;
++	switch (offset) {
++	case SFP_TX_DISABLE_52:
++	case SFP_TX_DISABLE_51:
++	case SFP_TX_DISABLE_50:
++	case SFP_TX_DISABLE_49:
++		return GPIO_LINE_DIRECTION_OUT;
++	case SFP_PRESENT_52:
++	case SFP_PRESENT_51:
++	case SFP_PRESENT_50:
++	case SFP_PRESENT_49:
++	case SFP_LOS_52:
++	case SFP_LOS_51:
++	case SFP_LOS_50:
++	case SFP_LOS_49:
++		return GPIO_LINE_DIRECTION_IN;
 +	default:
-+		buf = "Unknown";
-+		break;
++		return -EINVAL;
 +	}
-+
-+	seq_printf(s, "%s\n", buf);
-+
-+	return 0;
 +}
 +
-+DEFINE_SHOW_ATTRIBUTE(hardware_version);
-+
-+static int board_id_show(struct seq_file *s, void *data)
++static int tn48m_gpio_get_reg(unsigned int offset)
 +{
-+	struct tn48m_data *priv = s->private;
-+	unsigned int regval;
-+	char *buf;
-+
-+	regmap_read(priv->regmap, BOARD_ID, &regval);
-+
-+	switch (regval) {
-+	case BOARD_ID_TN48M:
-+		buf = "TN48M";
-+		break;
-+	case BOARD_ID_TN48M_P:
-+		buf = "TN48-P";
-+		break;
++	switch (offset) {
++	case SFP_TX_DISABLE_52:
++	case SFP_TX_DISABLE_51:
++	case SFP_TX_DISABLE_50:
++	case SFP_TX_DISABLE_49:
++		return SFP_TX_DISABLE;
++	case SFP_PRESENT_52:
++	case SFP_PRESENT_51:
++	case SFP_PRESENT_50:
++	case SFP_PRESENT_49:
++		return SFP_PRESENT;
++	case SFP_LOS_52:
++	case SFP_LOS_51:
++	case SFP_LOS_50:
++	case SFP_LOS_49:
++		return SFP_LOS;
 +	default:
-+		buf = "Unknown";
-+		break;
++		return -EINVAL;
 +	}
-+
-+	seq_printf(s, "%s\n", buf);
-+
-+	return 0;
 +}
 +
-+DEFINE_SHOW_ATTRIBUTE(board_id);
-+
-+static int code_version_show(struct seq_file *s, void *data)
++static int tn48m_gpio_get_mask(unsigned int offset)
 +{
-+	struct tn48m_data *priv = s->private;
++	switch (offset) {
++	case SFP_TX_DISABLE_52:
++	case SFP_PRESENT_52:
++	case SFP_LOS_52:
++		return BIT(3);
++	case SFP_TX_DISABLE_51:
++	case SFP_PRESENT_51:
++	case SFP_LOS_51:
++		return BIT(2);
++	case SFP_TX_DISABLE_50:
++	case SFP_PRESENT_50:
++	case SFP_LOS_50:
++		return BIT(1);
++	case SFP_TX_DISABLE_49:
++	case SFP_PRESENT_49:
++	case SFP_LOS_49:
++		return BIT(0);
++	default:
++		return -EINVAL;
++	}
++}
++
++static int tn48m_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	struct tn48m_gpio *gpio = gpiochip_get_data(chip);
 +	unsigned int regval;
-+
-+	regmap_read(priv->regmap, CPLD_CODE_VERSION, &regval);
-+
-+	seq_printf(s, "%d\n", regval);
-+
-+	return 0;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(code_version);
-+
-+static void tn48m_init_debugfs(struct tn48m_data *data)
-+{
-+	data->debugfs_dir = debugfs_create_dir(data->client->name, NULL);
-+
-+	debugfs_create_file("hardware_version",
-+			    0400,
-+			    data->debugfs_dir,
-+			    data,
-+			    &hardware_version_fops);
-+
-+	debugfs_create_file("board_id",
-+			    0400,
-+			    data->debugfs_dir,
-+			    data,
-+			    &board_id_fops);
-+
-+	debugfs_create_file("code_version",
-+			    0400,
-+			    data->debugfs_dir,
-+			    data,
-+			    &code_version_fops);
-+}
-+
-+static int tn48m_probe(struct i2c_client *client)
-+{
-+	struct tn48m_data *data;
 +	int ret;
 +
-+	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
++	ret = regmap_read(gpio->data->regmap,
++			  tn48m_gpio_get_reg(offset),
++			  &regval);
++	if (ret < 0)
++		return ret;
 +
-+	data->client = client;
-+	data->dev = &client->dev;
-+	i2c_set_clientdata(client, data);
-+
-+	data->regmap = devm_regmap_init_i2c(client, &tn48m_regmap_config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(data->dev, "Failed to allocate regmap\n");
-+		return PTR_ERR(data->regmap);
-+	}
-+
-+	ret = devm_mfd_add_devices(data->dev, PLATFORM_DEVID_AUTO, tn48m_cell,
-+				   ARRAY_SIZE(tn48m_cell), NULL, 0, NULL);
-+	if (ret)
-+		dev_err(data->dev, "Failed to register sub-devices %d\n", ret);
-+
-+	tn48m_init_debugfs(data);
-+
-+	return ret;
++	return regval & tn48m_gpio_get_mask(offset);
 +}
 +
-+static int tn48m_remove(struct i2c_client *client)
++static void tn48m_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			   int value)
 +{
-+	struct tn48m_data *data = i2c_get_clientdata(client);
++	struct tn48m_gpio *gpio = gpiochip_get_data(chip);
 +
-+	debugfs_remove_recursive(data->debugfs_dir);
++	regmap_update_bits(gpio->data->regmap,
++			   tn48m_gpio_get_reg(offset),
++			   tn48m_gpio_get_mask(offset),
++			   value ? tn48m_gpio_get_mask(offset) : 0);
++}
++
++static int tn48m_gpio_direction_output(struct gpio_chip *chip,
++				       unsigned int offset, int value)
++{
++	tn48m_gpio_set(chip, offset, value);
 +
 +	return 0;
 +}
 +
-+static const struct of_device_id tn48m_of_match[] = {
-+	{ .compatible = "delta,tn48m-cpld"},
++/*
++ * Required for SFP as it calls gpiod_direction_input()
++ * and if its missing TX disable GPIO will print an
++ * error and not be controlled anymore.
++ */
++static int tn48m_gpio_direction_input(struct gpio_chip *chip,
++				      unsigned int offset)
++{
++	return 0;
++}
++
++static const struct gpio_chip tn48m_template_chip = {
++	.label			= "tn48m-gpio",
++	.owner			= THIS_MODULE,
++	.get_direction		= tn48m_gpio_get_direction,
++	.direction_output	= tn48m_gpio_direction_output,
++	.direction_input	= tn48m_gpio_direction_input,
++	.get			= tn48m_gpio_get,
++	.set			= tn48m_gpio_set,
++	.base			= -1,
++	.ngpio			= 12,
++	.can_sleep		= true,
++};
++
++static int tn48m_gpio_probe(struct platform_device *pdev)
++{
++	struct tn48m_gpio *gpio;
++	int ret;
++
++	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
++	if (!gpio)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, gpio);
++
++	gpio->data = dev_get_drvdata(pdev->dev.parent);
++	gpio->chip = tn48m_template_chip;
++	gpio->chip.parent = gpio->data->dev;
++
++	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct platform_device_id tn48m_gpio_id_table[] = {
++	{ "delta,tn48m-gpio", },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(of, tn48m_of_match);
++MODULE_DEVICE_TABLE(platform, tn48m_gpio_id_table);
 +
-+static struct i2c_driver tn48m_driver = {
++static struct platform_driver tn48m_gpio_driver = {
 +	.driver = {
-+		.name = "tn48m-cpld",
-+		.of_match_table = tn48m_of_match,
++		.name = "tn48m-gpio",
 +	},
-+	.probe_new	= tn48m_probe,
-+	.remove		= tn48m_remove,
++	.probe = tn48m_gpio_probe,
++	.id_table = tn48m_gpio_id_table,
 +};
-+module_i2c_driver(tn48m_driver);
++module_platform_driver(tn48m_gpio_driver);
 +
 +MODULE_AUTHOR("Robert Marko <robert.marko@sartura.hr>");
-+MODULE_DESCRIPTION("Delta TN48M CPLD parent driver");
++MODULE_DESCRIPTION("Delta TN48M CPLD GPIO driver");
 +MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/tn48m.h b/include/linux/mfd/tn48m.h
-new file mode 100644
-index 000000000000..551c550efa54
---- /dev/null
-+++ b/include/linux/mfd/tn48m.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright 2020 Sartura Ltd
-+ */
-+
-+#ifndef __TN48M_H__
-+#define __TN48M_H__
-+
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+
-+#define HARDWARE_VERSION_ID	0x0
-+#define HARDWARE_VERSION_MASK	GENMASK(3, 0)
-+#define HARDWARE_VERSION_EVT1	0
-+#define HARDWARE_VERSION_EVT2	1
-+#define HARDWARE_VERSION_DVT	2
-+#define HARDWARE_VERSION_PVT	3
-+#define BOARD_ID		0x1
-+#define BOARD_ID_TN48M		0xa
-+#define BOARD_ID_TN48M_P	0xb
-+#define CPLD_CODE_VERSION	0x2
-+
-+struct tn48m_data {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct i2c_client *client;
-+	struct dentry *debugfs_dir;
+diff --git a/drivers/mfd/tn48m-cpld.c b/drivers/mfd/tn48m-cpld.c
+index b84510fb630a..f22a15ddd22d 100644
+--- a/drivers/mfd/tn48m-cpld.c
++++ b/drivers/mfd/tn48m-cpld.c
+@@ -17,7 +17,11 @@
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ 
+-static const struct mfd_cell tn48m_cell[] = {};
++static const struct mfd_cell tn48m_cell[] = {
++	{
++		.name = "delta,tn48m-gpio",
++	}
 +};
-+
-+#endif
+ 
+ static const struct regmap_config tn48m_regmap_config = {
+ 	.reg_bits = 8,
+diff --git a/include/linux/mfd/tn48m.h b/include/linux/mfd/tn48m.h
+index 551c550efa54..9cc2b04c8d69 100644
+--- a/include/linux/mfd/tn48m.h
++++ b/include/linux/mfd/tn48m.h
+@@ -19,6 +19,9 @@
+ #define BOARD_ID_TN48M		0xa
+ #define BOARD_ID_TN48M_P	0xb
+ #define CPLD_CODE_VERSION	0x2
++#define SFP_TX_DISABLE		0x31
++#define SFP_PRESENT		0x3a
++#define SFP_LOS			0x40
+ 
+ struct tn48m_data {
+ 	struct device *dev;
 -- 
 2.31.1
 
