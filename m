@@ -2,126 +2,119 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5EAC43140
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C2BC43462
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDC9561466
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2E86145A
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Apr 2021 12:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232130AbhD3McO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Apr 2021 08:32:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
+        id S232064AbhD3MgO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Apr 2021 08:36:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbhD3McJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Apr 2021 08:32:09 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27FE9C06138B
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:31:21 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id u17so105083220ejk.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:31:21 -0700 (PDT)
+        with ESMTP id S229875AbhD3MgN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Apr 2021 08:36:13 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADCCBC061342
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:35:24 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id t4so21697706ejo.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Apr 2021 05:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F8aGJi1NqHUUqxfwnc8G8P5tzdBIe1FDGwMat5QhH2k=;
-        b=VW21q59J8oGKtp/kvH8bedVKnXY48Vcyptd6saLdH5LnbmoV6uOVTDykxy0r61dDGI
-         elP8kIUnWqEUP8z/VXrj+MABr50KZrEzaG6rBOVWgGYA3CrttYvzN1h/SpnZBRPdaC47
-         lu2eb5rE/WpGjWDiKoJa7PL/L2JRm1Yorf/Xv+qJ3SUETusj9pmtOXy+lrr6oAtJnRXk
-         7abshrdrgikzJZmpShDkYQww2yQhjYzmzpD0kOcYVq4mmu68MO3DU26xNL77WeudA8Bs
-         2XlrB42XGmfOBoDpPG8VnRug0c5jCPy0SToP5wKZGRHmzBi8QSW1JjlwTCxgZ89ZNlgH
-         IU/Q==
+        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=k1xgkQIQAXFIiUoyaG4mWCe3d5IAOycQwU/Qso6LJ1Q=;
+        b=mHj4oOVWHkjSWEixwh283R2+eii9GUPhAXQjx8b2ssCcBqe3rOTw0PN5aLBzzGLu7M
+         36unXq22romf3vSfJfm+iZhhiffE+0yY6VYia5/cTvbq5GFsLrjZNmcNWUYkTE0m3Upc
+         Ptd9An7vCjHFAKWeWZ1hrUjAOVEDobeFmzMfhGt4Uf02xwYmdBZVl/vt55CUiQpGbR6C
+         e8gaNKzcnUqxy9wYsqbOLf+LBQDS3zHcPR3RIYbqkKb3GfmrZ6Xsv4OHQ2+cRX9H4lGl
+         GuCIvhR/74RX64gcvOURLP9vAc5157kmDUBEG6nm7Vt5FEnAinFDqw/PgLEeHttyBJfR
+         Atgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F8aGJi1NqHUUqxfwnc8G8P5tzdBIe1FDGwMat5QhH2k=;
-        b=S5zthcTVbK6NRcH3LxP5vlq3/azCQ8iujcjaseK8NPxCg9qGo5QtqdY8r1OGkro7YU
-         NLqoIEQs2HTFARmpZvMyyK5foca9qULIAQxz4JM8RaFqs8HA26JmfJFkhOXWkonCfQBg
-         i2F0E+IQR2cyCKCloUt3bfQ81caf5Jp811eZ7DRTL/u4M68H3/vtwE6e4DTnx9PLwzas
-         52bnwc4kwGPwPR4XIpgWoyFZpTeHXUCN7q+BgKifWi6B/h35wASbjF6Desy9DrUrUB8c
-         UKpGnzZX+YcDlNERN1gy9UXVJod1unMVGhLOPdcCVLUBqEdEYYDHxlnniJkhMYRZV+IQ
-         u5/w==
-X-Gm-Message-State: AOAM531Cg+LIj4+xIbXYWU70byOKht/GsH5BfG5pWBF96WFtMv3mV7b4
-        dcX2CHTtgHaqjUm/nMX7UO7NBoCfUrTBj6bDNi3Arg==
-X-Google-Smtp-Source: ABdhPJxJr0vhs0tjmo9vdtHrj1YjisYFoxifym173DRXFPnw3MKmW7UX8s1dN5xlGKH8nR6/ma6dwCo9G+xk9NK0tcg=
-X-Received: by 2002:a17:906:4881:: with SMTP id v1mr3972211ejq.383.1619785879853;
- Fri, 30 Apr 2021 05:31:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=k1xgkQIQAXFIiUoyaG4mWCe3d5IAOycQwU/Qso6LJ1Q=;
+        b=TKDWmwOrlzkxLhnVw3fns0fRqHS3bj/3BUpezK6zVE16j3oAJI/zBrX0Av3IWXved1
+         ZBaoNC/wa4T68rnfIV4YNLl0o/llb4BzXsD9LswyIoM4H8Zu3ps+uKefSH/V4zaEnBOB
+         6bBHeKBPsnXbyqJJWAmfls202UVfrBNASQ4rAclZKLJpj3+AGzSXj4VKXYYL+qs0q5vY
+         fSxZ59K7Rr+pmmL4/OxT1Fr80viQhXyG4ekQcySgP88RCyU3fnIm/htkVgni3CvTpCvU
+         LRial2SMQjcWCR3qIKYXG6DpJABf4Y1i+AxHXYbPC/fO2ABY0SWG8nK6uYQT75Wj6Ly9
+         diyQ==
+X-Gm-Message-State: AOAM533MhWXEFMMLES0fL4HXBhkOR15jOAy/7ATS42W5KfCmmBukA6Q+
+        IDz3O5LVlPHfY8CjTDIWmtNsCg==
+X-Google-Smtp-Source: ABdhPJzY310x0/M6PR54dBF4kM3yoLIWCb2LRVDpaEmyWtp04drhNKX4L8OS+/jY30OiUs/NzjMLYg==
+X-Received: by 2002:a17:906:6044:: with SMTP id p4mr4221114ejj.82.1619786123449;
+        Fri, 30 Apr 2021 05:35:23 -0700 (PDT)
+Received: from localhost.localdomain (dh207-97-15.xnet.hr. [88.207.97.15])
+        by smtp.googlemail.com with ESMTPSA id d15sm1822988ejj.42.2021.04.30.05.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Apr 2021 05:35:22 -0700 (PDT)
+From:   Robert Marko <robert.marko@sartura.hr>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, jdelvare@suse.com, linux@roeck-us.net,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org
+Cc:     luka.perkov@sartura.hr, jmp@epiphyte.org, pmenzel@molgen.mpg.de,
+        buczek@molgen.mpg.de, Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH 2/6] dt-bindings: gpio: Add Delta TN48M CPLD GPIO bindings
+Date:   Fri, 30 Apr 2021 14:35:07 +0200
+Message-Id: <20210430123511.116057-2-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210430123511.116057-1-robert.marko@sartura.hr>
+References: <20210430123511.116057-1-robert.marko@sartura.hr>
 MIME-Version: 1.0
-References: <20210429094734.9585-1-brgl@bgdev.pl> <20210429094734.9585-3-brgl@bgdev.pl>
- <YIqXHXU/tqxXjaKA@smile.fi.intel.com> <CAMRc=MeKciVDxdFvq6_d8mN8M08tqDSc1qDqmywswF2gbUa=Dg@mail.gmail.com>
- <YIrmHkaKnrr4IdCT@smile.fi.intel.com>
-In-Reply-To: <YIrmHkaKnrr4IdCT@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 30 Apr 2021 14:31:09 +0200
-Message-ID: <CAMRc=McD5CvF=ybpHRmD7Okh4xrKud_TrhdSnX5+j+Ea2yyp7Q@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH 2/3] libgpiosim: new library for controlling the
- gpio-sim module
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 7:00 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Apr 29, 2021 at 03:07:49PM +0200, Bartosz Golaszewski wrote:
-> > On Thu, Apr 29, 2021 at 1:23 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Thu, Apr 29, 2021 at 11:47:33AM +0200, Bartosz Golaszewski wrote:
->
-> ...
->
-> > > > +/* We don't have mkdtempat()... :( */
-> > >
-> > > But we have tmpnam() / tmpnam_r(), why to reinvent it below?
-> > >
-> >
-> > Because of this:
-> >
-> > $man tmpnam_r
-> > ...
-> > The created pathname has a directory prefix P_tmpdir.
-> > ...
-> >
-> > And this:
-> >
-> > ./stdio.h:120:# define P_tmpdir "/tmp"
->
-> Still you may advance the pointer by the length of P_tmpdir + 1.
->
-> ...
->
-> > > > +     for (i = 0; i < num_names; i++)
-> > > > +             written += snprintf(buf + written, size - written,
-> > > > +                                 "\"%s\", ", names[i] ?: "");
-> > > > +     buf[size - 2] = '\0';
-> > >
-> > > Dunno if you can use asprintf() and actually replace NULL by "" in the original
-> > > array. Ah, see you already using it somewhere else, why not here?
-> > >
-> >
-> > Not sure what you mean, we can't use asprintf() to create a composite
-> > string like what is needed here. Can you give me an example?
->
-> I have got this after sending. Either you need to create a format string with
-> va_args, or do it manually.
->
->
+CPLD inside of the Delta TN48M does not number GPIOs
+at all, so in order to ensure numbering lets use bindigs.
 
-No can do, you can't create a va_list out of thin air.
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+ include/dt-bindings/gpio/tn48m-gpio.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/tn48m-gpio.h
 
-Bart
+diff --git a/include/dt-bindings/gpio/tn48m-gpio.h b/include/dt-bindings/gpio/tn48m-gpio.h
+new file mode 100644
+index 000000000000..4ece4826d746
+--- /dev/null
++++ b/include/dt-bindings/gpio/tn48m-gpio.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * GPIO definitions for Delta TN48M CPLD GPIO driver
++ *
++ * Copyright 2020 Sartura Ltd
++ *
++ * Author: Robert Marko <robert.marko@sartura.hr>
++ */
++
++#ifndef _DT_BINDINGS_TN48M_GPIO_H
++#define _DT_BINDINGS_TN48M_GPIO_H
++
++#define SFP_TX_DISABLE_52	0
++#define SFP_TX_DISABLE_51	1
++#define SFP_TX_DISABLE_50	2
++#define SFP_TX_DISABLE_49	3
++#define SFP_PRESENT_52		4
++#define SFP_PRESENT_51		5
++#define SFP_PRESENT_50		6
++#define SFP_PRESENT_49		7
++#define SFP_LOS_52		8
++#define SFP_LOS_51		9
++#define SFP_LOS_50		10
++#define SFP_LOS_49		11
++
++#endif /* _DT_BINDINGS_TN48M_GPIO_H */
+-- 
+2.31.1
 
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
