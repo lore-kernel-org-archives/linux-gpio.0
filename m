@@ -2,88 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A58B1C433ED
-	for <linux-gpio@archiver.kernel.org>; Tue,  4 May 2021 17:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B06E4C433ED
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 May 2021 13:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7329761166
-	for <linux-gpio@archiver.kernel.org>; Tue,  4 May 2021 17:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F346139A
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 May 2021 13:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231800AbhEDRnC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 4 May 2021 13:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45184 "EHLO
+        id S233045AbhEENlf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 5 May 2021 09:41:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbhEDRnC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 May 2021 13:43:02 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA0AC061574;
-        Tue,  4 May 2021 10:42:07 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id h11so8564702pfn.0;
-        Tue, 04 May 2021 10:42:07 -0700 (PDT)
+        with ESMTP id S230047AbhEENle (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 May 2021 09:41:34 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B31C061574;
+        Wed,  5 May 2021 06:40:37 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a4so2955105ejk.1;
+        Wed, 05 May 2021 06:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SglDWfuEzwD2ZuEt5Yy/WwMNvHiyKUl+FRTkRohMPAQ=;
-        b=TVbHP+Q3oP1gC/blTdNXdztQyAMtGnwSUEA1Hi0IjaNnXWtKXYL9i5L3uQrrJxBpXY
-         JikpDT2GWp+NTiEXz531RMHpCTZ5HaLt1I7iWnqkQgcAt2nZdbccFife2Cq9/oco0Iqm
-         GapluggfxiSUKjiK41TYnN7r2D2/PNYjtWwo/ngsYchBF08yatD21yK2AhOxsiuDPeg9
-         c5FteI2OukDusV/zd4udZ6qH0kOuZB0z769rmGmPL7GDLjaEBnTOD80jspwpeHncaA9s
-         YQT8DgLO01Espgr2Z/t1C5Ak9UouAxAyOsx1e2j+PUKG49Uy3V5LVtQtLRLip4icYHw4
-         TBgw==
+        h=from:to:cc:subject:date:message-id;
+        bh=8DE9fNr9EuacMp+VfxXdaYtUegetqhQ1PCtV40q/ryA=;
+        b=oa0M/vbKpWcQQuzRtJS243ok+9cbAB8dUGDZbI73dZZ4gJzRX8bUuO8fw4DnLgS/jM
+         srsju6tx8pR6VXpNVF98+5RcrVB+3rmToGSQ75Yb0SqEguGf3GMBQub1rJmc5E5pJZgA
+         898a3k1S1GpxqkJiAFK738ctwc45f4G5ldzyy4ckQbONGv9faGlpSqmBhmeVDFULNte7
+         7C1g/wUqUIiOzfYVExgnZM5kbhwILN8gpR9jDnWsbyx3PGfZfe21YlHgl9/bGuJih/tD
+         E2pjmcO+7l231DP1aoInrJmkTCbFo7d/lCa2ntyOY8sAGFqE5Pq0WKGrYvbD3Li2GeJ8
+         NhxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SglDWfuEzwD2ZuEt5Yy/WwMNvHiyKUl+FRTkRohMPAQ=;
-        b=S7DOmzxGRKcLxTVsuksAC7keefQv05rw9sB1pAaW5SwlB+lg86cZl5z/XjXgb3K8Y6
-         o7n/qFLoMqtJVGcDJa7/i/WplYG2wszNeEXE1gGvu+IuIayNSoWzTF5qkdBN6btenJUF
-         bi4qPUPVSeypvgdsZNvlcIcmmHWx5BPyST9OdJKKtlN48HsczctezGnAxC8jXJ0UmOWw
-         NZ/wa2MW/H3RXk4DgRmY9w8k/ndZWNlrps/7NrNjQ/IBhdA/GLrasB8Dy3NQg/qiUH/q
-         q/O2JQpc7lXyr0oQfzeYO/6iWE8yqmyAm0qkIocl7GrBtV0XmIjczxAQD03aol2D+m/A
-         7sxA==
-X-Gm-Message-State: AOAM5308ZtsGjVqy6ggzD/r9X57c6YoWFlizLGwdQFtiGkpu1OdogrTn
-        R3beMNTzrVIAPNOjFn02Y9YwFDqKKMs9QVyjKHQ=
-X-Google-Smtp-Source: ABdhPJzkwRKKoqIThn0Dd6gmy2yZ+6nezkkhd1L/O0RirTqwlLCde363PaXstRJiascjOSrDR7EoJ07QqJWdQzWFCW8=
-X-Received: by 2002:a17:90a:246:: with SMTP id t6mr14358173pje.228.1620150127211;
- Tue, 04 May 2021 10:42:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210502193216.24872-1-brgl@bgdev.pl> <CAHk-=whSWp3exv8tZ2th5im_P7HF=c6iuOOVb9iSrNrd6405WA@mail.gmail.com>
- <YJBA1iYK7npit9vn@zeniv-ca.linux.org.uk> <YJCpnvKUNx+Tc+vg@zeniv-ca.linux.org.uk>
- <CAMRc=Mdh9LvUQCxcyt7ZBjitDB2noVnOptft_VORDhffxJaeCA@mail.gmail.com> <YJGFsrPBoQsKj+JZ@zeniv-ca.linux.org.uk>
-In-Reply-To: <YJGFsrPBoQsKj+JZ@zeniv-ca.linux.org.uk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 4 May 2021 20:41:51 +0300
-Message-ID: <CAHp75VcbWE+2d=LpkwLGcLEdO14vhhPVk2bD0+jKKnXiGoeZXQ@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio: updates for v5.13
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8DE9fNr9EuacMp+VfxXdaYtUegetqhQ1PCtV40q/ryA=;
+        b=oS2qMxyNb8QN5ROC2l9vFxUCWfrjWiR1VgR9pA5L7gbsZpIyORKPN1898XXU7O80HI
+         FdOIgKXAETwpvEL8ybO1HyXHTN585uZ/bQ5ADbwzLgt5Tw9FLF0ySYlEkvuwKa4xTsFC
+         oY1SLdfF0Jc+drit6lqHTBgRzTP7UpfCk9LHhvE37t8CY826NEgjIH3AUfhVfhj+cmcS
+         yf/cIpM/siIEnF5RcO43OqLgRp/edANRsbFK64JSdv4DGV3DgciHBtG9MWhYi5vx1Th2
+         4ZonsjfoNAxwAHT0QrE+qxw8LqgQCtiAealRziP1cJz8CuwFWD1pZcjdP1+Oal4FEX9o
+         PHqg==
+X-Gm-Message-State: AOAM530jtM1ts7x5LLyoBRpCpIFtH+xVaR1Ch32SY8oySZsUa5R6V7KY
+        TzD8TEln/4gX5VZz8cHRyWA=
+X-Google-Smtp-Source: ABdhPJyWi/HIdyv4/qKEbV/r1BvCiys4IUqt6dqmOCQV5S/EJEKw1Fn1i/4ga8P8ag18sDXG3OiLpQ==
+X-Received: by 2002:a17:906:4486:: with SMTP id y6mr27141527ejo.466.1620222036731;
+        Wed, 05 May 2021 06:40:36 -0700 (PDT)
+Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id t7sm15397264eds.26.2021.05.05.06.40.34
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 May 2021 06:40:36 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, jay.xu@rock-chips.com,
+        shawn.lin@rock-chips.com, david.wu@rock-chips.com,
+        zhangqing@rock-chips.com, huangtao@rock-chips.com,
+        cl@rock-chips.com, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] convert grf.txt to YAML
+Date:   Wed,  5 May 2021 15:40:24 +0200
+Message-Id: <20210505134028.13431-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, May 4, 2021 at 8:35 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Tue, May 04, 2021 at 04:17:02PM +0200, Bartosz Golaszewski wrote:
+Changed V2:
+  add rockchip,rk3328-grf-gpio.yaml
+  rename grf-gpio nodename
 
-...
+Johan Jonker (4):
+  dt-bindings: gpio: convert rk3328-grf-gpio.txt to YAML
+  dt-bindings: soc: rockchip: convert grf.txt to YAML
+  ARM: dts: rockchip: add grf register compatible for rk3066/rk3188
+  arm64: dts: rename grf-gpio nodename in rk3328.dtsi
 
-> So I would like to see the specifics on that as well.  _Before_ signing
-> up on anything, including "we can fix it up after merge".
-
-Bart, I think we need to split your PR to the patches w/o configfs et
-al and submit to Linus to avoid missing a merge window. This stuff can
-be queued later as an additional part in case being ready.
+ .../bindings/gpio/rockchip,rk3328-grf-gpio.txt     |  32 ---
+ .../bindings/gpio/rockchip,rk3328-grf-gpio.yaml    |  51 ++++
+ .../devicetree/bindings/soc/rockchip/grf.txt       |  61 -----
+ .../devicetree/bindings/soc/rockchip/grf.yaml      | 280 +++++++++++++++++++++
+ arch/arm/boot/dts/rk3xxx.dtsi                      |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi           |   2 +-
+ 6 files changed, 333 insertions(+), 95 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/soc/rockchip/grf.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/rockchip/grf.yaml
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
