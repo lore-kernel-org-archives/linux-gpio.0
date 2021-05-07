@@ -2,70 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E42C433ED
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 May 2021 20:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC913C433B4
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 May 2021 20:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D51C66145A
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 May 2021 20:48:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA0ED61401
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 May 2021 20:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbhEGUtN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 May 2021 16:49:13 -0400
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:42605 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230185AbhEGUtM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 May 2021 16:49:12 -0400
-Received: by mail-oi1-f182.google.com with SMTP id v24so9869663oiv.9;
-        Fri, 07 May 2021 13:48:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HU+cc6QB3f1fPnYktuf5XnUl4ynjpynUl2t6lVOEa5M=;
-        b=l8/bcf+nK5g9EqOijMPA3yCTADX9MILg7fwXx6ihYpiQlOA8WXm99jE9hhC68vKkF9
-         JThrckHorJbhR0p3BCq/sk7/3lQWiRhG5RWC9TVQTHqqCdn81CVExA7/uOa7RQm8rErW
-         f7F7ansFG2cgZHzwuN84xhMphFaRmvHuVQ6g/83VapxiMRGPeNjTYMsbbD9HOXJ20Go3
-         JjEmhd1hg0dkJcZQj2+TU2wT7HdcaKnsI8ktQ+OlP0F4u4624xn51ljFAOfvnV/qh2Qt
-         wyWDat2iO1zgHFqmOZvw6POC4lxzFR1jAuQYBQMVw93Sih92vkyOwQtAVAVKGl/Y7mzt
-         N9zA==
-X-Gm-Message-State: AOAM531T3fcYmWOfiMYsrE42a7SgQZ2EUiM18IATAvh1ZOsTZCS4UxTz
-        FSxhomytY5f6isj3qHy9wU71lSZXvg==
-X-Google-Smtp-Source: ABdhPJxsDYwiJwIh4yaHta4SS11PTmwCu05WiwyrFfAqWHDIsc+5n85jx0lFK7+D6RTXRfkE0h1OeQ==
-X-Received: by 2002:aca:c30f:: with SMTP id t15mr8519964oif.145.1620420491792;
-        Fri, 07 May 2021 13:48:11 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z6sm246025oiz.39.2021.05.07.13.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 May 2021 13:48:10 -0700 (PDT)
-Received: (nullmailer pid 2856423 invoked by uid 1000);
-        Fri, 07 May 2021 20:48:09 -0000
-Date:   Fri, 7 May 2021 15:48:09 -0500
-From:   Rob Herring <robh@kernel.org>
+        id S230218AbhEGVAV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 May 2021 17:00:21 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:42510 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230216AbhEGVAV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 7 May 2021 17:00:21 -0400
+Received: from p5b127e83.dip0.t-ipconnect.de ([91.18.126.131] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1lf7Z1-000525-5N; Fri, 07 May 2021 22:59:11 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
 To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     cl@rock-chips.com, jay.xu@rock-chips.com,
-        linux-arm-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        linux-kernel@vger.kernel.org, zhangqing@rock-chips.com,
+Cc:     robh+dt@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, jay.xu@rock-chips.com,
+        shawn.lin@rock-chips.com, david.wu@rock-chips.com,
+        zhangqing@rock-chips.com, huangtao@rock-chips.com,
+        cl@rock-chips.com, linux-gpio@vger.kernel.org,
         linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        huangtao@rock-chips.com, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, david.wu@rock-chips.com,
-        robh+dt@kernel.org, shawn.lin@rock-chips.com, heiko@sntech.de
-Subject: Re: [PATCH v2 1/4] dt-bindings: gpio: convert rk3328-grf-gpio.txt to
- YAML
-Message-ID: <20210507204809.GA2856332@robh.at.kernel.org>
-References: <20210505134028.13431-1-jbx6244@gmail.com>
- <20210505134028.13431-2-jbx6244@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: gpio: convert rk3328-grf-gpio.txt to YAML
+Date:   Fri, 07 May 2021 22:59:09 +0200
+Message-ID: <4104568.ejJDZkT8p0@phil>
 In-Reply-To: <20210505134028.13431-2-jbx6244@gmail.com>
+References: <20210505134028.13431-1-jbx6244@gmail.com> <20210505134028.13431-2-jbx6244@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 05 May 2021 15:40:25 +0200, Johan Jonker wrote:
+Hi Bartosz,
+
+Am Mittwoch, 5. Mai 2021, 15:40:25 CEST schrieb Johan Jonker:
 > Current dts files with RK3328 GRF 'gpio' nodes are manually verified.
 > In order to automate this process rk3328-grf-gpio.txt has to be
 > converted to YAML.
@@ -73,12 +54,11 @@ On Wed, 05 May 2021 15:40:25 +0200, Johan Jonker wrote:
 > Rename 'grf-gpio' nodename to 'gpio'.
 > 
 > Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> ---
->  .../bindings/gpio/rockchip,rk3328-grf-gpio.txt     | 32 --------------
->  .../bindings/gpio/rockchip,rk3328-grf-gpio.yaml    | 51 ++++++++++++++++++++++
->  2 files changed, 51 insertions(+), 32 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt
->  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.yaml
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+just to not step on any toes, do you plan to apply this patch1 later on?
+Patches 2-4 are in my domain so I'll get them after -rc1, but in theory
+the gpio binding should go through the gpio tree.
+
+Heiko
+
+
