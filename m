@@ -2,103 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_24_48,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFE7C43460
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4312C43600
 	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 20:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F600613FB
+	by mail.kernel.org (Postfix) with ESMTP id C497E60E09
 	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 20:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239558AbhELUNd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 May 2021 16:13:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353179AbhELSKy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 12 May 2021 14:10:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D386D61462;
-        Wed, 12 May 2021 18:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620842738;
-        bh=pQZEfyZEKinmQBCrr9LaO4EAPD5z60u7vxCjGfHI8cg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AdUxtCy73S6mBHNGxDa/DtFs+Z3VhKNaQ1X1qp8QHDKPkZBnxidRlq3WV7WzuNiQr
-         yyyddIOALAU3c3grXdCqEPJwm5bklP0d3/EHpIkwSxZY8eysHP1H6CZcQTtlMM/ZaO
-         0HewPH/8x6MXxphjdhBVTX8uyvibXiqIi9t9jVn6Uqmh6bWrRxs8d6pesas1q59awo
-         RqG3rlT85MQBjWIzj66IspY3NGGwx99vzwbmgMWV3LbbPIcgvp3M64dWXay6sy8dqN
-         BNvBH71fPgyeHxyp6iC5cZ3Bm/TvGS2bD2nDLnatqZkfUkfB5stsjdhnJVYZ+hHWhN
-         k1dpo6JNiqIbw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 09/12] gpiolib: acpi: Add quirk to ignore EC wakeups on Dell Venue 10 Pro 5055
-Date:   Wed, 12 May 2021 14:05:19 -0400
-Message-Id: <20210512180522.665788-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210512180522.665788-1-sashal@kernel.org>
-References: <20210512180522.665788-1-sashal@kernel.org>
+        id S241178AbhELUNi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 May 2021 16:13:38 -0400
+Received: from mail-oi1-f176.google.com ([209.85.167.176]:34681 "EHLO
+        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1385253AbhELUHv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 May 2021 16:07:51 -0400
+Received: by mail-oi1-f176.google.com with SMTP id u11so2262995oiv.1;
+        Wed, 12 May 2021 13:06:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=G314866YQpgK6Og9SPK+7F1yLW6LxWxUdwMljvXz8GA=;
+        b=ntS1mHXkqk3pEdLJ8WoYnJ9bFVv4l5t98IzytclKC4aOoMekUirmmBCPnPDroLckTj
+         /wMt3hE1K/DF5N8k6FwkHAQuTZKZXERsnKTssbeoyjTUTcBDp73vaES6QtvXZfOMJtx+
+         cZYAhkC66111ZaRvfiZ79d339Q/4Aue7gbC7UFjUGtDTs7Kp6OqdwPcPmJN3PL8fiMqr
+         HsuaIAG73N5lvBwfihCa7uykzHb/2Bu8VRECt42YnvGybuI6MiUNwPrazU0moQI3d6A7
+         L5FYgRcX36g22BFioMrEqv5+1EqFLZK5w7zjBunZY3HXU9UZAQXDDZUyKdTRP2D5OEYn
+         4erw==
+X-Gm-Message-State: AOAM530f7dKn12hl+yRsUMIyLVvSRaPLhuBM//Y/l/l/24LeUcyW7PYi
+        jxZqauP2KfBFNXtdqqMQTw==
+X-Google-Smtp-Source: ABdhPJwxNouj8PhjvD5RQRalpsF56HCQ4sFcehx28dXWzUBDKpftaaS5YowOQ3Pe+GG7+R6Wi5KHlw==
+X-Received: by 2002:aca:b8d4:: with SMTP id i203mr155393oif.61.1620850002606;
+        Wed, 12 May 2021 13:06:42 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x141sm195890oif.13.2021.05.12.13.06.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 May 2021 13:06:41 -0700 (PDT)
+Received: (nullmailer pid 2232127 invoked by uid 1000);
+        Tue, 11 May 2021 16:28:02 -0000
+Date:   Tue, 11 May 2021 11:28:02 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     linus.walleij@linaro.org, huangtao@rock-chips.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        robh+dt@kernel.org, bgolaszewski@baylibre.com,
+        shawn.lin@rock-chips.com, linux-gpio@vger.kernel.org,
+        zhangqing@rock-chips.com, heiko@sntech.de,
+        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        jay.xu@rock-chips.com, cl@rock-chips.com, david.wu@rock-chips.com
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: rockchip: convert grf.txt to
+ YAML
+Message-ID: <20210511162802.GA2232097@robh.at.kernel.org>
+References: <20210511050511.5973-1-jbx6244@gmail.com>
+ <20210511050511.5973-3-jbx6244@gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210511050511.5973-3-jbx6244@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+On Tue, 11 May 2021 07:05:09 +0200, Johan Jonker wrote:
+> Current dts files with 'grf' nodes are manually verified.
+> In order to automate this process grf.txt has to be
+> converted to YAML.
+> 
+> Most compatibility strings are in use with "simple-mfd" added.
+> 
+> Add description already in use:
+> "rockchip,rv1108-pmugrf", "syscon"
+> 
+> Add new descriptions for:
+> "rockchip,rk3568-grf", "syscon", "simple-mfd"
+> "rockchip,rk3568-pmugrf", "syscon", "simple-mfd"
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+> 
+> Changed V4:
+>   revert separate schemas for each 'if' subset
+>   add additionalProperties
+>   move properties to top level
+> 
+> Changed V3:
+>   remove select
+>   change unevaluatedProperties
+>   add separate schemas for each 'if' subset
+> 
+> Changed V2:
+>   add rockchip,rk3328-grf-gpio.yaml
+>   rename grf-gpio nodename
+> ---
+>  .../devicetree/bindings/soc/rockchip/grf.txt       |  61 -----
+>  .../devicetree/bindings/soc/rockchip/grf.yaml      | 246 +++++++++++++++++++++
+>  2 files changed, 246 insertions(+), 61 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/soc/rockchip/grf.txt
+>  create mode 100644 Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+> 
 
-[ Upstream commit da91ece226729c76f60708efc275ebd4716ad089 ]
-
-Like some other Bay and Cherry Trail SoC based devices the Dell Venue
-10 Pro 5055 has an embedded-controller which uses ACPI GPIO events to
-report events instead of using the standard ACPI EC interface for this.
-
-The EC interrupt is only used to report battery-level changes and
-it keeps doing this while the system is suspended, causing the system
-to not stay suspended.
-
-Add an ignore-wake quirk for the GPIO pin used by the EC to fix the
-spurious wakeups from suspend.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpiolib-acpi.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index ab5de5196080..c380ce957d8d 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1404,6 +1404,20 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] = {
- 			.no_edge_events_on_boot = true,
- 		},
- 	},
-+	{
-+		/*
-+		 * The Dell Venue 10 Pro 5055, with Bay Trail SoC + TI PMIC uses an
-+		 * external embedded-controller connected via I2C + an ACPI GPIO
-+		 * event handler on INT33FFC:02 pin 12, causing spurious wakeups.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Venue 10 Pro 5055"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_wake = "INT33FC:02@12",
-+		},
-+	},
- 	{
- 		/*
- 		 * HP X2 10 models with Cherry Trail SoC + TI PMIC use an
--- 
-2.30.2
-
+Reviewed-by: Rob Herring <robh@kernel.org>
