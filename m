@@ -7,31 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1689C433ED
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 May 2021 09:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1159C433B4
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 May 2021 10:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A54726157F
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 May 2021 09:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7979761006
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 May 2021 10:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbhEKJK6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 May 2021 05:10:58 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2559 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbhEKJK6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 May 2021 05:10:58 -0400
+        id S231204AbhEKKIG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 May 2021 06:08:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2775 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231468AbhEKKIG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 May 2021 06:08:06 -0400
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FfX9q4dg0zkWMH;
-        Tue, 11 May 2021 17:07:11 +0800 (CST)
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FfYQx53Gszmfn6;
+        Tue, 11 May 2021 18:03:37 +0800 (CST)
 Received: from thunder-town.china.huawei.com (10.174.177.72) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 11 May 2021 17:09:40 +0800
+ 14.3.498.0; Tue, 11 May 2021 18:06:52 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio <linux-gpio@vger.kernel.org>
 CC:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH 1/1] pinctrl: ocelot: Remove redundant error printing in ocelot_pinctrl_probe()
-Date:   Tue, 11 May 2021 17:09:36 +0800
-Message-ID: <20210511090936.4452-1-thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] gpio: logicvc: Remove redundant error printing in logicvc_gpio_probe()
+Date:   Tue, 11 May 2021 18:06:46 +0800
+Message-ID: <20210511100646.5156-1-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.26.0.windows.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -53,25 +54,25 @@ binary size.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- drivers/pinctrl/pinctrl-ocelot.c | 4 +---
+ drivers/gpio/gpio-logicvc.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index 2fd18e356d0c6f2..e470c16718dea20 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -1362,10 +1362,8 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-logicvc.c b/drivers/gpio/gpio-logicvc.c
+index 015632cf159f0b8..992cc958a43fd1e 100644
+--- a/drivers/gpio/gpio-logicvc.c
++++ b/drivers/gpio/gpio-logicvc.c
+@@ -114,10 +114,8 @@ static int logicvc_gpio_probe(struct platform_device *pdev)
+ 		}
  
- 	base = devm_ioremap_resource(dev,
- 			platform_get_resource(pdev, IORESOURCE_MEM, 0));
--	if (IS_ERR(base)) {
--		dev_err(dev, "Failed to ioremap registers\n");
-+	if (IS_ERR(base))
- 		return PTR_ERR(base);
--	}
+ 		base = devm_ioremap_resource(dev, &res);
+-		if (IS_ERR(base)) {
+-			dev_err(dev, "Failed to map I/O base\n");
++		if (IS_ERR(base))
+ 			return PTR_ERR(base);
+-		}
  
- 	info->stride = 1 + (info->desc->npins - 1) / 32;
- 
+ 		logicvc_gpio_regmap_config.max_register = resource_size(&res) -
+ 			logicvc_gpio_regmap_config.reg_stride;
 -- 
 2.26.0.106.g9fadedd
 
