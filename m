@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A89F0C2B9FA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45C9C2B9F9
 	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 20:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78FC661408
+	by mail.kernel.org (Postfix) with ESMTP id BA8F060BBB
 	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 20:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352268AbhELUN0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 May 2021 16:13:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
+        id S235029AbhELUN1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 May 2021 16:13:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1352338AbhELSDC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 12 May 2021 14:03:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1ADD36142D;
-        Wed, 12 May 2021 18:01:52 +0000 (UTC)
+        id S1352705AbhELSEF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 12 May 2021 14:04:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 24A2F6143C;
+        Wed, 12 May 2021 18:02:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620842513;
+        s=k20201202; t=1620842577;
         bh=UjQUOpWqT3OOhOM23CXJxNmF8TRm8vywivc9vcIMoks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQKACgomJUdUv8U3N4MPZt3a9mhvEWHpE0ErSO1E0cQDxTAZlTSViskp1DP/uQGag
-         v9Uz5e5swjbRsv1WHZRZQmHHz5w7IN2rtvxfTQYhUVJMU03GwUEgeqYTE5TZu9qqE8
-         15oB1ynE6oA9GpQiksjiEzYNfCLHw3YGsoMkw/m9u2S/aezdnN6dmnSXZaoWwsvm0J
-         i3yYXU9TpGxVXys7mZMJmZb0BAR0KRrHAy4Wtae81a6qVfMKx7NRDTrCdr7JT0n5aO
-         +7dw+vlhyDZyRDZpwwYiN01dC+PRiIZSAUeUq9PVmPNiAStj9+xrfL6qN7dFxHm8GZ
-         c5ueEEX4KiDIA==
+        b=F7NKzZfCG+eBRQ7DKoQMD25wS4MNBGxpY8xnGjBU0sswwD5aQ3g5XiF/UTrOF8TJy
+         xntwvWrYAyD+YQR2ldIo8KA86awVlxUhGV/BFiZlWvJO/UYGrNDsrlfeoQw/x/Bm7t
+         ZOV+P5h+bD8S7jjNBbZkcDM3zmeQ6FOVOUwB6WW4FLzPCwCgExoaxEJSzkR+INAcLj
+         Bwpp1SVzHEkvLsRhbTzRcRadtCk2aJ8UM00BEHD0MF1vAoh1KJfJS+lIqHLGGi2HfK
+         9RfjGg9Rq5xcG88TFMeDl1apaOpB6ddss63ffEbfBt2PyLh7HKxeue9XgtLzd9D2rD
+         Tl7DHRBPHPgSg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Hans de Goede <hdegoede@redhat.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 32/37] gpiolib: acpi: Add quirk to ignore EC wakeups on Dell Venue 10 Pro 5055
-Date:   Wed, 12 May 2021 14:00:59 -0400
-Message-Id: <20210512180104.664121-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.11 30/35] gpiolib: acpi: Add quirk to ignore EC wakeups on Dell Venue 10 Pro 5055
+Date:   Wed, 12 May 2021 14:02:00 -0400
+Message-Id: <20210512180206.664536-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210512180104.664121-1-sashal@kernel.org>
-References: <20210512180104.664121-1-sashal@kernel.org>
+In-Reply-To: <20210512180206.664536-1-sashal@kernel.org>
+References: <20210512180206.664536-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
