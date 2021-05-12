@@ -2,107 +2,156 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F62C433ED
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 13:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF08C43470
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 20:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9D0613D6
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 13:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E314A60BBB
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 20:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbhELNam (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 May 2021 09:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48582 "EHLO
+        id S241626AbhELULQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 May 2021 16:11:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230196AbhELNal (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 May 2021 09:30:41 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB348C06174A
-        for <linux-gpio@vger.kernel.org>; Wed, 12 May 2021 06:29:32 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id s20so29473317ejr.9
-        for <linux-gpio@vger.kernel.org>; Wed, 12 May 2021 06:29:32 -0700 (PDT)
+        with ESMTP id S1352268AbhELSCy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 May 2021 14:02:54 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97878C061574;
+        Wed, 12 May 2021 11:01:45 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id g4so5577572lfv.6;
+        Wed, 12 May 2021 11:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V2Xm0zvt+awRTlmfOBDWYmZKbcrwWg30pJhiDIwcPTA=;
-        b=urBYN7ecbgtyQef30Glwk8bNUDY42SI4LloNazJn8gqCtA2H7kJ1C6oQWM6Gb6FGEh
-         LPrcNpnRg7o30MxHMXob72hOOWZBQ4sjp18v7g/quUUksFlP/0Tzef31SrQiRzp2SWXp
-         Qny2CVZ0EpbrY6z4BFTjElB9EYUueEeNCBXd+btD5wJYlp7vyyo4lY5hwUbfjj7jaBT+
-         hZL9SZdSgVjBHho5XdD6r1V34qY4+l4JcKOkiassPaD7DLn3Hl4JSWFgnJ5hbwR5koCj
-         L53ukQvIPuSYRGQ3sbMjYxKGKPIspFA+FqM+oD62Kl1ccyPXzotOlBIW4pCM5qAtDH0L
-         B1SA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4mB2Sy8f/RdfyHgUhquFJEEonvYuVEw1zWLlnmUy+Jk=;
+        b=GOeogpmgKqdqij54HrOemUOhcctTu8jcqropTAi1PhgWpwzcfgL8goQkwh5mD9gxmp
+         hGQA18ryam3usNDZXHSpFya5bNAuGEyhEX6kfFgTAI0VK1PLDyWnT4zCS/RK66DSo+8t
+         C1CQHGu5SXCcB+nDeff6NZRrdo6srMq807onM1kI1D8ELXeEKgf7pIjVLbA5jOnHOaF4
+         ND+I4Rld7sRw1RHPpF2PplJNsa4fZweLnUeZkHxLA/re0OVuO+9mSDuQUbalPW0vpOdo
+         v+PomfqmTPF78ytzL3z6LHjD0LZQUHQNBexCQ3qaEFjrtwcW0gKfYMMSJ9O1ZC5U6QR/
+         EgCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V2Xm0zvt+awRTlmfOBDWYmZKbcrwWg30pJhiDIwcPTA=;
-        b=hkJ3I2UAimTyidy6LWNKRIa9eLjGXSVkIsrIpIEZS9Ar147westFnlw3W4NvlXAzkR
-         FEhKUp4uIRWjSZ2d409PbrLQ5eZVDsiyYWlvoZcvgGzUPK7cs12jqOUC+dEWGtqY7lo0
-         Ay5clXzSzfq4jIt2v5TYYypiBOtOCW7xjSCmsTdzV4HNp2FeeUESiK3eqmQV6M72H4+R
-         LWLHMGG6NwXH9AxcStOaEqFOhkuWDLrbsIobPP6nxQeFLLgXr9g+tGu+99lv3rR0O0Va
-         ZSnP+LvWe+uw79lqwL4AQP9mLyULIhHeFBJg4eCfpeGF3kvaMlqqreV9gEOB9WUB5KyT
-         iCUQ==
-X-Gm-Message-State: AOAM532v+a9dlMgutY8pQS0YHPHHqCktq+UIWaott/JPruIeZ9SBAHlJ
-        /qvI/rvZKB4uLwvLmyYXTT4hSx5zkQ97ZBz+b/zfMw==
-X-Google-Smtp-Source: ABdhPJzJND28/5zCNEuN6yQt6amOBLo1vpCnc/DKTzTtz3QIsjgaSayxUHgqB1W155wwKouhuYsoCV8wPo3/2Qb8U6s=
-X-Received: by 2002:a17:906:82d4:: with SMTP id a20mr37693177ejy.14.1620826171029;
- Wed, 12 May 2021 06:29:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4mB2Sy8f/RdfyHgUhquFJEEonvYuVEw1zWLlnmUy+Jk=;
+        b=DvpUW15LXj2HDJxGywdvSlH5KM4dwZenFg/Qbv81hTegyKhc0gHb7JrIrv2O0xCSyt
+         kIhsH4fmJalmR7y/k7GPQxXtTssx52rtwxK0xfo8xjxz0aZl51O1w8n57RN9HlXSOgFd
+         +bCzmFPy9zl8UwL7knu45HHLjEKCrcx5rIQL8t3tG2lR2Rk55LLdHkrqJFcjd/+UTpVd
+         kbPDeiE7/QJKanqeM7HPUr1L913vAmIKOa37whqcz9sckLAWzQjVw+RlBBXJ7tsdZxuq
+         U7HvC1G1NlJhuWqfwXktGg9ccvSDwtfs+7Vi5pCg71EDa3kZc5/yjKnEpgPaDIoagFpD
+         tqrw==
+X-Gm-Message-State: AOAM531mToVsm+Qggot/c9kAMSTcYQ0rqD7Ecrxs05DN+KZpWIuw+7ni
+        JWbC4/AoZ2RVRFwhXksgofI=
+X-Google-Smtp-Source: ABdhPJwPZWErJLIGbAnsOEYzbfXRz/LctoJgDaFyC/CSa7AmmSWoglX9vgFF2q4Q7FMy79yiBn+NIg==
+X-Received: by 2002:a05:6512:402:: with SMTP id u2mr24816582lfk.68.1620842504155;
+        Wed, 12 May 2021 11:01:44 -0700 (PDT)
+Received: from localhost.localdomain (h-98-128-228-193.NA.cust.bahnhof.se. [98.128.228.193])
+        by smtp.gmail.com with ESMTPSA id y3sm73772ljj.121.2021.05.12.11.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 May 2021 11:01:43 -0700 (PDT)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: [PATCH] pinctrl: at91: Constify struct at91_pinctrl_mux_ops
+Date:   Wed, 12 May 2021 20:01:40 +0200
+Message-Id: <20210512180140.33293-1-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <20210510063602.505829-1-jay.xu@rock-chips.com> <CAAEAJfALROYg5awL88Uux0yXyMxBthbFjRgJCyhvu4hWioSO2w@mail.gmail.com>
-In-Reply-To: <CAAEAJfALROYg5awL88Uux0yXyMxBthbFjRgJCyhvu4hWioSO2w@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 12 May 2021 15:29:20 +0200
-Message-ID: <CAMRc=MfqzrjxZBbnmpqjgR6KP6O7zr5xTwTq26oqhwu39kaLHw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] gpio-rockchip driver
-To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc:     Jianqun Xu <jay.xu@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, May 11, 2021 at 12:16 AM Ezequiel Garcia
-<ezequiel@vanguardiasur.com.ar> wrote:
->
-> Hi Jianqun,
->
-> Thanks a lot for the patch, and for pushing this work forward.
->
-> On Mon, 10 May 2021 at 03:36, Jianqun Xu <jay.xu@rock-chips.com> wrote:
-> >
-> > Separate gpio driver from pinctrl driver, and support v2 controller.
-> >
->
-> Usually, we expect to see a changelog here, with some information
-> about the changes from in v2, v3, etc. Also, note that only the cover
-> letter says "v4", and the individual patches are missing that. You can
-> use git-format-patch --subject-prefix="PATCH v4", and then all the patches
-> will get the same prefix.
->
-> However, the last patchset I can find in lore.kernel.org (or my
-> mailbox) is a v2:
->
-> https://lore.kernel.org/linux-gpio/20210411133030.1663936-1-pgwipeout@gmail.com/
->
-> .. which was sent by Peter Geis (so you should have Cced him).
->
-> These are just some friendly tips on the submission process,
-> for you to keep in mind,  you don't really need to resend the
-> series or do anything else.
->
-> Also, I added Bartosz the GPIO maintainer in Cc.
->
+The at91_pinctrl_mux_ops struct is never modified by the driver. Make it
+const wherever it is possible to allow the compiler to put the static
+variables in read-only memory. Note that sam9x60_ops was already const,
+but the const was cast away when the return value of of_match_device() was
+cast to a pointer to a non-const struct at91_pinctrl_mux_ops.
 
-Thanks. Jianqun: please resend the series so that I get it in my inbox.
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+---
+ drivers/pinctrl/pinctrl-at91.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Bart
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index fc61aaec34cc..72e6df7abe8c 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -42,7 +42,7 @@ struct at91_gpio_chip {
+ 	int			pioc_idx;	/* PIO bank index */
+ 	void __iomem		*regbase;	/* PIO bank virtual address */
+ 	struct clk		*clock;		/* associated clock */
+-	struct at91_pinctrl_mux_ops *ops;	/* ops */
++	const struct at91_pinctrl_mux_ops *ops;	/* ops */
+ };
+ 
+ static struct at91_gpio_chip *gpio_chips[MAX_GPIO_BANKS];
+@@ -210,7 +210,7 @@ struct at91_pinctrl {
+ 	struct at91_pin_group	*groups;
+ 	int			ngroups;
+ 
+-	struct at91_pinctrl_mux_ops *ops;
++	const struct at91_pinctrl_mux_ops *ops;
+ };
+ 
+ static inline const struct at91_pin_group *at91_pinctrl_find_group_by_name(
+@@ -688,7 +688,7 @@ static void at91_mux_sam9x60_set_slewrate(void __iomem *pio, unsigned pin,
+ 	writel_relaxed(tmp, pio + SAM9X60_PIO_SLEWR);
+ }
+ 
+-static struct at91_pinctrl_mux_ops at91rm9200_ops = {
++static const struct at91_pinctrl_mux_ops at91rm9200_ops = {
+ 	.get_periph	= at91_mux_get_periph,
+ 	.mux_A_periph	= at91_mux_set_A_periph,
+ 	.mux_B_periph	= at91_mux_set_B_periph,
+@@ -697,7 +697,7 @@ static struct at91_pinctrl_mux_ops at91rm9200_ops = {
+ 	.irq_type	= gpio_irq_type,
+ };
+ 
+-static struct at91_pinctrl_mux_ops at91sam9x5_ops = {
++static const struct at91_pinctrl_mux_ops at91sam9x5_ops = {
+ 	.get_periph	= at91_mux_pio3_get_periph,
+ 	.mux_A_periph	= at91_mux_pio3_set_A_periph,
+ 	.mux_B_periph	= at91_mux_pio3_set_B_periph,
+@@ -737,7 +737,7 @@ static const struct at91_pinctrl_mux_ops sam9x60_ops = {
+ 	.irq_type	= alt_gpio_irq_type,
+ };
+ 
+-static struct at91_pinctrl_mux_ops sama5d3_ops = {
++static const struct at91_pinctrl_mux_ops sama5d3_ops = {
+ 	.get_periph	= at91_mux_pio3_get_periph,
+ 	.mux_A_periph	= at91_mux_pio3_set_A_periph,
+ 	.mux_B_periph	= at91_mux_pio3_set_B_periph,
+@@ -1284,7 +1284,7 @@ static int at91_pinctrl_probe_dt(struct platform_device *pdev,
+ 		return -ENODEV;
+ 
+ 	info->dev = &pdev->dev;
+-	info->ops = (struct at91_pinctrl_mux_ops *)
++	info->ops = (const struct at91_pinctrl_mux_ops *)
+ 		of_match_device(at91_pinctrl_of_match, &pdev->dev)->data;
+ 	at91_pinctrl_child_count(info, np);
+ 
+@@ -1849,7 +1849,7 @@ static int at91_gpio_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	at91_chip->ops = (struct at91_pinctrl_mux_ops *)
++	at91_chip->ops = (const struct at91_pinctrl_mux_ops *)
+ 		of_match_device(at91_gpio_of_match, &pdev->dev)->data;
+ 	at91_chip->pioc_virq = irq;
+ 	at91_chip->pioc_idx = alias_idx;
+-- 
+2.31.1
+
