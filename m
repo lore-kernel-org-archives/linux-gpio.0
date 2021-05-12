@@ -2,80 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0F5C433B4
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 11:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86A3C43460
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 11:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B63A61412
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 11:13:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F4D7613DA
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 May 2021 11:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230292AbhELLOy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 May 2021 07:14:54 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:49396 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbhELLOw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 May 2021 07:14:52 -0400
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 12 May 2021 04:13:45 -0700
-X-QCInternal: smtphost
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 12 May 2021 04:13:42 -0700
-X-QCInternal: smtphost
-Received: from c-skakit-linux.ap.qualcomm.com (HELO c-skakit-linux.qualcomm.com) ([10.242.51.242])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 12 May 2021 16:43:14 +0530
-Received: by c-skakit-linux.qualcomm.com (Postfix, from userid 2344709)
-        id 818EE2B27; Wed, 12 May 2021 16:43:13 +0530 (IST)
-From:   satya priya <skakit@codeaurora.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     kgunda@codeaurora.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, satya priya <skakit@codeaurora.org>
-Subject: [PATCH V3 1/3] pinctrl: qcom: spmi-gpio: Add support for pm7325
-Date:   Wed, 12 May 2021 16:43:06 +0530
-Message-Id: <1620817988-18809-2-git-send-email-skakit@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1620817988-18809-1-git-send-email-skakit@codeaurora.org>
-References: <1620817988-18809-1-git-send-email-skakit@codeaurora.org>
+        id S230291AbhELLaK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 May 2021 07:30:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49660 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230267AbhELLaJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 May 2021 07:30:09 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D06C061574
+        for <linux-gpio@vger.kernel.org>; Wed, 12 May 2021 04:29:01 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id h202so30230600ybg.11
+        for <linux-gpio@vger.kernel.org>; Wed, 12 May 2021 04:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oYW19CtIYX5b303IOQcUpayuvfixsQxy2ywXap3Gdw8=;
+        b=Wj0OwZiHkM6iRX5HATAPY4QjiL19CWgBhNUCmTbESC8KXGVWxuOQ4faOLt9qDhMruz
+         ryQu0gae6t1zldbjD7Avs4M7FFVelazppGMwNove7SVFlkI7zQbAviqGnxdOqRi10zZQ
+         h3pZ3s04LdoMze7oFWPOIr/YD0AvFTgw4+JiREWY9XuIAtae62ZFO2QU8iEinc86GgYS
+         gc4pfVGhcDxegiHbqaZMI0P5lAWdfQbwuIvYDz5cG3nD7mDnI6xMks8ajyorINLak/80
+         UzGKR5PPnbSHZRcHux+8Dwqo6vM9+jG65cpt6vCaOVKkkXWCfu4Isny2qWnIbbnOHAl3
+         ly/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oYW19CtIYX5b303IOQcUpayuvfixsQxy2ywXap3Gdw8=;
+        b=Rj9yCP6WJXz98qGYvFvNJVLSI91elQ/xULl1kCXcHUb50ARfGGH8S/8+oA690lTGMn
+         TpG0mFZUmIE5HFbY00LdV7PBeTj5UCYJ+2TW9Rg7OoZZRw8ttkGS9o6hOitgs88CFJN4
+         x4+79+J9vAMRLCRmex1RDG40eOrnvBGPAny6Q2RfzqFdAuTeAmVqsvz1WCQPMKf8tZDn
+         wMWw8LCUKcYEi0cLkm1A/r1yIAG1fX3k/ieDt6vCwxxt/IEgoj+IqISJspIsaEImAEJL
+         JekuZy/MizN4oOJAGmBoBYpTXnpd1CKDHkkUiMedHZrAQ+aCToD7BDUXnYE3uCR7kSWY
+         nHyA==
+X-Gm-Message-State: AOAM532Xa8g8CJ7PdwVMId20s9mgxYfwYnnVDaBrIEC6pBNjhGJKvrQ2
+        pFIwSxlxk+N/kht5hWujrASVJfF3QQS1V4H4WE0F4w==
+X-Google-Smtp-Source: ABdhPJwWtMZXoSwSYR+0ZdiTaVOc7tWGTRp9rkRLD3gw7rnAptbJhgCV5tVck4DFUGDCsMQj112BK3NUqSifyozJc/Y=
+X-Received: by 2002:a25:cb96:: with SMTP id b144mr41691498ybg.312.1620818940410;
+ Wed, 12 May 2021 04:29:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <1620789467-15227-1-git-send-email-zou_wei@huawei.com>
+In-Reply-To: <1620789467-15227-1-git-send-email-zou_wei@huawei.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 12 May 2021 13:28:49 +0200
+Message-ID: <CAMpxmJX2dt1=_yW14df5tpEiRN0_LAgLdamNx+3d==CRxM6s8w@mail.gmail.com>
+Subject: Re: [PATCH -next] gpio: cadence: Add missing MODULE_DEVICE_TABLE
+To:     Zou Wei <zou_wei@huawei.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add compatible string for PM7325 pmic GPIO support to the
-Qualcomm PMIC GPIO driver.
+On Wed, May 12, 2021 at 5:01 AM Zou Wei <zou_wei@huawei.com> wrote:
+>
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Zou Wei <zou_wei@huawei.com>
+> ---
+>  drivers/gpio/gpio-cadence.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpio/gpio-cadence.c b/drivers/gpio/gpio-cadence.c
+> index a4d3239..4ab3fcd 100644
+> --- a/drivers/gpio/gpio-cadence.c
+> +++ b/drivers/gpio/gpio-cadence.c
+> @@ -278,6 +278,7 @@ static const struct of_device_id cdns_of_ids[] = {
+>         { .compatible = "cdns,gpio-r1p02" },
+>         { /* sentinel */ },
+>  };
+> +MODULE_DEVICE_TABLE(of, cdns_of_ids);
+>
+>  static struct platform_driver cdns_gpio_driver = {
+>         .driver = {
+> --
+> 2.6.2
+>
 
-Signed-off-by: satya priya <skakit@codeaurora.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-Changes in V2:
- - No change.
+The tag should be just regular [PATCH] as this driver has been
+upstream for a long time.
 
-Changes in V3:
- - Rebased the patch and added only pm7325 as others are already present.
-   updated the commit text accordingly.
+Applied for fixes, thanks!
 
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 00870da..a89d24a 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1131,6 +1131,7 @@ static const struct of_device_id pmic_gpio_of_match[] = {
- 	{ .compatible = "qcom,pm8350b-gpio", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8350c-gpio", .data = (void *) 9 },
- 	{ .compatible = "qcom,pmk8350-gpio", .data = (void *) 4 },
-+	{ .compatible = "qcom,pm7325-gpio", .data = (void *) 10 },
- 	{ .compatible = "qcom,pmr735a-gpio", .data = (void *) 4 },
- 	{ .compatible = "qcom,pmr735b-gpio", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm6150-gpio", .data = (void *) 10 },
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Bartosz
