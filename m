@@ -7,62 +7,64 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AABFFC433B4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 11:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74151C43462
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 11:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBA361369
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 11:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 550B161261
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 11:36:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236750AbhEQLhX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 May 2021 07:37:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
+        id S236831AbhEQLh0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 May 2021 07:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236774AbhEQLhW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 May 2021 07:37:22 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991F8C061573
-        for <linux-gpio@vger.kernel.org>; Mon, 17 May 2021 04:36:05 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id v5so6439512edc.8
-        for <linux-gpio@vger.kernel.org>; Mon, 17 May 2021 04:36:05 -0700 (PDT)
+        with ESMTP id S236828AbhEQLhZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 May 2021 07:37:25 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B82C061760
+        for <linux-gpio@vger.kernel.org>; Mon, 17 May 2021 04:36:07 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id lz27so8660534ejb.11
+        for <linux-gpio@vger.kernel.org>; Mon, 17 May 2021 04:36:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=deviqon.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4tviugaqYYD/qDQshMzP6z0fQJQ4qs4SDge/5xfu2sQ=;
-        b=R7NOoJLMh5XqQ268Ix/yo1dMCK2Y0qS7nGzpVCyEJsNPth7tB7RQFruRAMJf3MWj/J
-         gOS8C0KxgQ5OjGnJ/SglX69VNSZ7w/1a1mB9nFFcumO1NTaSWasgIULHiJD/pTsmLQ1x
-         MgxszqcgkpgBLvxS/U2etggFjerrD0ahIY4pCzZu2uQYAvpM8G2lH6HAqKn0qhU2Bk5R
-         EU0MeC/W65+5SNsSJds6Wq5w9QKvKrXddvpE+er+wj3VLcvJ/ohzAwCIuC0DyDWRjOeV
-         hJmavNkaDTfugMYAlPEzYgSMg4Wd8the5xj1gEuZybe5fh6A8O1dDsol2FSV8BFmwxtY
-         FOtw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=B3U4sFVt7KjRPqeulougyIA4myDGMkTfpXl0wugLAP8=;
+        b=vGuA9zYVOz5i6yfV/p5x6UO8dLJWh4heuAb1VjYaYcaBGPYw1uED4k2J6HY9qzg2nA
+         T1cxTEQhMJr+5lDtyWpYn+k7CZpMLMdjnmKUylnjNcUUMfJvkddE6QsnNnT5r4KkD7nw
+         yjUdLgXSmO+4hyYNZG3bIO8OYb+1+e3pWar51voyxBlMRQ5963L+o+aS0otfGEDIqCia
+         aCIknv7SY+2zMkVl5k3l+uHLLtRsULEo6LitmcGZEvYA6asDqw2oGCDpkTo/6bV2rOMx
+         bmMiWHcEZkGlVCkcEyVmT9Q9j6dJCsuWzXVGdczcuDjtiT87M8HZgCeG2p7FbuGkGbM+
+         mZQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4tviugaqYYD/qDQshMzP6z0fQJQ4qs4SDge/5xfu2sQ=;
-        b=CEulajWpuZkM6UaHErOFjyZHoRso0yEzDWnkZyvHUVOn/Vln1oWZucbuhTSqNuXc98
-         ucu8IjZXihrLkPmmUss6OQxGl16JsG6wJqmxkZK61M6hM2+uNAlzlDH9nun59l6m8lBe
-         lYoexZVeEHU11IVnw2jUy3/KOgXUeBHlvCCIR4bUL74J1ZTJ7J0Yg8JZCKK5RY7toML+
-         CC7iYwLXBK7v6Z5tRWdiyX20AMsPijM4skK/Z2JeS/WBDIElLxchwiEKL3yFmCcO3kOK
-         M5kWU0N1mIRpS180eBfVZtr4I9hPW7UjiQqohJlQKGXm1TaVJmUo+XpP6JJaf5RdjZO9
-         A2pA==
-X-Gm-Message-State: AOAM530jthGA3l07qieUp95nLa2BnDIeZlRFvhLYrXlK7z9BcFNHgf3I
-        2gVtqOAQC6kS/x9fKEfjoaQ79MtvG6jRf7CCqT8=
-X-Google-Smtp-Source: ABdhPJyZDR9blfB9nMtRodGlEHRNYwmozwuZ2lvgcm/HDmsOSOFFvHmSksisSzixW8x6xIM0t/qsPQ==
-X-Received: by 2002:aa7:d491:: with SMTP id b17mr24989029edr.376.1621251364085;
-        Mon, 17 May 2021 04:36:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=B3U4sFVt7KjRPqeulougyIA4myDGMkTfpXl0wugLAP8=;
+        b=r1HggqOTcf1M5BNA0UA9kMZwjiub10NZLAoe4vIzMatJTlftIDjTyn7LcFNYzcxfSy
+         TJb1wv5HrhfF4vutBO0wdk7YWBsWOqgSlaL07F3dnikwU9/EWTsFbYx2zOBX/851zHNP
+         pFgM/ioTnJA4BSLshQkr7pMTzXtWp3V7rmqTATLibXZg+JB870nhkLU4j0gcs/6zwRKX
+         hDNbh7SdQMfwp6nPcIt/p0gFWDAsTpI86Z9s2f2P4Puzx0GZN5Oji+SXEFK85O97zTd9
+         RSXAW6v0/UuDshuGEmmXSUOmag3o8IgyEU8yk0ZrKJEetJBq/W43lDFnGRZBhxhifAZY
+         mcSw==
+X-Gm-Message-State: AOAM5334Lw9vFp+GUnSby1bSuBNnW9fO4uPi+MqP0/UhY2VVbgRcsi9k
+        hcF7qrelCaidFD5VLt4q4z1Ijs/UYeV8N0X0zHw=
+X-Google-Smtp-Source: ABdhPJxfbICzaIghksBO0l9YVZgy9DbYgwPQ43Kd4QE3T2c8/Jf29r/4PJgbARe6s1SYQ643JHhweA==
+X-Received: by 2002:a17:907:9008:: with SMTP id ay8mr21043176ejc.474.1621251365894;
+        Mon, 17 May 2021 04:36:05 -0700 (PDT)
 Received: from neptune.. ([5.2.193.191])
-        by smtp.gmail.com with ESMTPSA id v24sm2903703eds.19.2021.05.17.04.36.03
+        by smtp.gmail.com with ESMTPSA id v24sm2903703eds.19.2021.05.17.04.36.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 May 2021 04:36:03 -0700 (PDT)
+        Mon, 17 May 2021 04:36:05 -0700 (PDT)
 From:   Alexandru Ardelean <aardelean@deviqon.com>
 To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         Alexandru Ardelean <aardelean@deviqon.com>
-Subject: [PATCH] gpio: gpio-wm831x: remove platform_set_drvdata() + cleanup probe
-Date:   Mon, 17 May 2021 14:35:38 +0300
-Message-Id: <20210517113540.237495-1-aardelean@deviqon.com>
+Subject: [PATCH] gpio: gpio-wm8994: remove platform_set_drvdata() + cleanup probe
+Date:   Mon, 17 May 2021 14:35:40 +0300
+Message-Id: <20210517113540.237495-3-aardelean@deviqon.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210517113540.237495-1-aardelean@deviqon.com>
+References: <20210517113540.237495-1-aardelean@deviqon.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -79,39 +81,40 @@ there are other ways to log/see this during probe.
 
 Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
 ---
- drivers/gpio/gpio-wm831x.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/gpio/gpio-wm8994.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
-index a3a32a77041f..9cf1e5ebb352 100644
---- a/drivers/gpio/gpio-wm831x.c
-+++ b/drivers/gpio/gpio-wm831x.c
-@@ -261,7 +261,6 @@ static int wm831x_gpio_probe(struct platform_device *pdev)
- 	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
- 	struct wm831x_pdata *pdata = &wm831x->pdata;
- 	struct wm831x_gpio *wm831x_gpio;
+diff --git a/drivers/gpio/gpio-wm8994.c b/drivers/gpio/gpio-wm8994.c
+index 9af89cf7f6bc..f4a474cef32d 100644
+--- a/drivers/gpio/gpio-wm8994.c
++++ b/drivers/gpio/gpio-wm8994.c
+@@ -263,7 +263,6 @@ static int wm8994_gpio_probe(struct platform_device *pdev)
+ 	struct wm8994 *wm8994 = dev_get_drvdata(pdev->dev.parent);
+ 	struct wm8994_pdata *pdata = dev_get_platdata(wm8994->dev);
+ 	struct wm8994_gpio *wm8994_gpio;
 -	int ret;
  
- 	wm831x_gpio = devm_kzalloc(&pdev->dev, sizeof(*wm831x_gpio),
+ 	wm8994_gpio = devm_kzalloc(&pdev->dev, sizeof(*wm8994_gpio),
  				   GFP_KERNEL);
-@@ -280,16 +279,7 @@ static int wm831x_gpio_probe(struct platform_device *pdev)
- 	wm831x_gpio->gpio_chip.of_node = wm831x->dev->of_node;
- #endif
+@@ -279,17 +278,7 @@ static int wm8994_gpio_probe(struct platform_device *pdev)
+ 	else
+ 		wm8994_gpio->gpio_chip.base = -1;
  
--	ret = devm_gpiochip_add_data(&pdev->dev, &wm831x_gpio->gpio_chip,
--				     wm831x_gpio);
+-	ret = devm_gpiochip_add_data(&pdev->dev, &wm8994_gpio->gpio_chip,
+-				     wm8994_gpio);
 -	if (ret < 0) {
--		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+-		dev_err(&pdev->dev, "Could not register gpiochip, %d\n",
+-			ret);
 -		return ret;
 -	}
 -
--	platform_set_drvdata(pdev, wm831x_gpio);
+-	platform_set_drvdata(pdev, wm8994_gpio);
 -
 -	return ret;
-+	return devm_gpiochip_add_data(&pdev->dev, &wm831x_gpio->gpio_chip, wm831x_gpio);
++	return devm_gpiochip_add_data(&pdev->dev, &wm8994_gpio->gpio_chip, wm8994_gpio);
  }
  
- static struct platform_driver wm831x_gpio_driver = {
+ static struct platform_driver wm8994_gpio_driver = {
 -- 
 2.31.1
 
