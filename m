@@ -2,143 +2,118 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB4C43461
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 08:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF7CC43460
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 11:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93931611CA
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 08:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E81436121F
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 May 2021 11:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235734AbhEQIwR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 May 2021 04:52:17 -0400
-Received: from polaris.svanheule.net ([84.16.241.116]:45492 "EHLO
-        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235446AbhEQIwR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 May 2021 04:52:17 -0400
-Received: from [IPv6:2a02:a03f:eafb:ee01:404a:340a:91cb:c07b] (unknown [IPv6:2a02:a03f:eafb:ee01:404a:340a:91cb:c07b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id CBB6E1FF8B2;
-        Mon, 17 May 2021 10:50:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1621241460;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=h5tsms5xI9mYoU2aDfH9/YdSGrBfg2Dt6aTgdrqgN0M=;
-        b=lEd4V0jDDjiTkNzNAmUv+3XSNCwDDz3bv9rUAqw3pFigetdsit0+mGGJuHYsU4owuoAolv
-        hs9gEkmRWMg0coyZFZ/28vTjmh8VxGQSs46OC2vWHLc/H6LTutZBnziBMvHMMDasNfFNzy
-        NOZO4iPtKGPiDRrKSeWXELv1T8jotVNIkqaBRyVn+N7ta8ZlOp/bRXPjwSrGvLkBjY+5rv
-        vrEHx8VY0EVopDg/fi/zGVU9OG2RSBQIiqobJg9YHxOW48zHZDKvUOIH/AGusM4DOUV/ov
-        yhl7bdh4BSG4nnSoB5B34ekyketrpKTRQuO8GVIB5q24DXtus0X8kDz60dcgfA==
-Message-ID: <a717bd96509b38bdfd8883847b8d085f9bdd919f.camel@svanheule.net>
-Subject: Re: [PATCH 0/5] RTL8231 GPIO expander support
-From:   Sander Vanheule <sander@svanheule.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 17 May 2021 10:50:57 +0200
-In-Reply-To: <CAHp75VdS63n55b3RG7ZL1=uVgB=7ZiBtTOmV0t+5hw6xKoLFSg@mail.gmail.com>
-References: <cover.1620735871.git.sander@svanheule.net>
-         <CAHp75VffoKyyPJbdtKMLx575c9LT0S8+EHOk7Mw36j=aTL6Q4Q@mail.gmail.com>
-         <b7d39a26bc3a90de4d8e4fdbf8f944de43d12a56.camel@svanheule.net>
-         <CAHp75VdS63n55b3RG7ZL1=uVgB=7ZiBtTOmV0t+5hw6xKoLFSg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S236827AbhEQLhY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 May 2021 07:37:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236828AbhEQLhX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 May 2021 07:37:23 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842A3C06175F
+        for <linux-gpio@vger.kernel.org>; Mon, 17 May 2021 04:36:06 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id l1so8693593ejb.6
+        for <linux-gpio@vger.kernel.org>; Mon, 17 May 2021 04:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=deviqon.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QcGpt5wEDtLrk+3qFVLpoBXykB2bKeqmmLwp+4JjPkI=;
+        b=hts47UB0XM6AOcqV/LviB/gWfvERufgRTDuGVN9j62F/YZLXmRh+2H0qBsWeYsuwmA
+         m4ow7P70AuciBQzi8X95xn7fV6SRs2/M6iwc12H/5SLNlqoazp9dV84i0WTYn7p5xV2A
+         6Mds/B9+1hB4jHrhGhgyFYDC3hmGRPv0soTyQJiqNffB8+OfWoXAv/Z8JDbaW3qkGshE
+         +wHf6oSbYcNVUa+86ITzVWQ4Ih7+g1Y3KBgyQlvbbvenyQrnYThMibgckWZdP34PML85
+         bF89QfGYaAqFE7Msyeras4UVmV4DBTHGnU0OZrB6yhG/7+4/rMqhABqZxye8f/J2qxpx
+         u/xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QcGpt5wEDtLrk+3qFVLpoBXykB2bKeqmmLwp+4JjPkI=;
+        b=R0jF7d8ITITcpsnWTo3XAfGIklkPmJSC8lGbOFY7Y8jsq+k4kWacd63TYiA1NPp+i/
+         JWJ6AHub86yiOCGs2hordFLhBmcrxh6FOlhbXyoB93inI8Alzmd8HA6Q85S3ch67FHOg
+         4AkpTQ4ncbyS03yDGlVNx6nJNNGPmiAC8RQH9bEt81qn6Ie4EBoJieOyq1D9M9Azfvzl
+         ohYYHLzOHjSeQxuwVFS2qw9qTC8rQhO1Dys4mnCyxQSYoXmgQrzwQmRabkn6A3TnmaLJ
+         dtF8djZHifrTJB7bDr9L0wZpOMXzha6oK9Dz1FecmcIYbyKC7GuA7kGxZ9t7z9Vq/SAC
+         3raw==
+X-Gm-Message-State: AOAM530MFOYeehd7ZMvr7M5hG0Am6hySYiJhRp3G2Ymme2HI9KSvJ0Vz
+        1tFlfhwSAf2elBmpjk5D97dqRTWsNztnbRUCOE8=
+X-Google-Smtp-Source: ABdhPJwPKYk3uJ3oyv7F8e1AJaekAuEiddr//uyl/5NGsUR0Th3h8MG9EQ4bb3BCMwyndvQvv2tdIA==
+X-Received: by 2002:a17:907:98a9:: with SMTP id ju9mr11736205ejc.257.1621251365062;
+        Mon, 17 May 2021 04:36:05 -0700 (PDT)
+Received: from neptune.. ([5.2.193.191])
+        by smtp.gmail.com with ESMTPSA id v24sm2903703eds.19.2021.05.17.04.36.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 May 2021 04:36:04 -0700 (PDT)
+From:   Alexandru Ardelean <aardelean@deviqon.com>
+To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        Alexandru Ardelean <aardelean@deviqon.com>
+Subject: [PATCH] gpio: gpio-wm8350: remove platform_set_drvdata() + cleanup probe
+Date:   Mon, 17 May 2021 14:35:39 +0300
+Message-Id: <20210517113540.237495-2-aardelean@deviqon.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210517113540.237495-1-aardelean@deviqon.com>
+References: <20210517113540.237495-1-aardelean@deviqon.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 2021-05-17 at 11:13 +0300, Andy Shevchenko wrote:
-> On Mon, May 17, 2021 at 12:40 AM Sander Vanheule <sander@svanheule.net> wrote:
-> > On Wed, 2021-05-12 at 18:29 +0300, Andy Shevchenko wrote:
-> > > On Tuesday, May 11, 2021, Sander Vanheule <sander@svanheule.net> wrote:
-> 
-> ...
-> 
-> > >  * > > > I have several comments to the series, but I may give them next
-> > >    week.
-> > > 
-> > > Just couple here:
-> > > 1. If subsystem provides a regmap API I would suggest to use it, I.o.w.
-> > > try
-> > > again to understand what is wrong with MDIO case.
-> > 
-> > Are you referring to the MDIO regmap interface, or the GPIO regmap
-> > interface?
-> 
-> MDIO
-> 
-> > For the MDIO regmap interface, I have been able to resolve the Kconfig
-> > dependency issue. So I can reintroduce that, if that's preferred over the
-> > solution in this v1.
-> > 
-> > With an extra patch, I was able to use the gpio-regmap interface, dropping
-> > most
-> > of the GPIO code. The current gpio-regmap implementation makes the
-> > assumption
-> > that an output value can be set while a pin is configured as an input. That
-> > assumption is invalid for this chip, so I had to provide an extra flag for
-> > gpio_regmap_config, similar to how this is handled in gpio-mmio.
-> > 
-> > 
-> > > 2. Please, switch to fwnode API in LED driver
-> > 
-> > Since you had the same comment on my previous patch set, I had already tried
-> > to
-> > this this into account as much as possible.
-> > 
-> > There's a few things I couldn't find the fwnode-equivalent for:
-> >  * I use of_node_name_prefix to enforce the naming required by the binding.
-> > I
-> >    could just walk over all (available) child nodes, which would be mostly
-> >    equivalent.
-> 
-> AFAIU the LED traditional bindings is that you define LED compatible
-> nodes and all child nodes of it are the one-per-LED ones, there
-> shouldn't be others.
+The platform_set_drvdata() call is only useful if we need to retrieve back
+the private information.
+Since the driver doesn't do that, it's not useful to have it.
 
-OK, then I can just iterate over all child fwnodes.
+If this is removed, we can also just do a direct return on
+devm_gpiochip_add_data(). We don't need to print that this call failed as
+there are other ways to log/see this during probe.
 
+Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
+---
+ drivers/gpio/gpio-wm8350.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-> >  * To get the address of an LED child node, I use of_get_address, since this
-> >    appeared to provide what I want to do: get the address of the node. I
-> > know
-> >    next to nothing about ACPI. Does the equivalent exist there? Or am I
-> > taking
-> >    the wrong approach?
-> 
-> What are the means of an address in this case?
-
-The chip appears to be intended for use with ethernet switches. The registers
-are organised to into a few groups, to provide 2 or 3 status LEDs per switch
-port:
-
- * "LED0" group for 32 ports,
- * "LED1" group for 32 ports,
- * "LED2" group for 24 ports
-
-The number of LEDs that can be used depends on the output mode, so I use a two-
-part <#PORT #LED> address, resembling how this is defined by Realtek.
-
-A single linear LED address space would get awkward gaps in bi-color mode (where
-only the lower 24 ports can be used), but would still require addresses to be
-able to specify which LED is where. For example in case the user want to link
-them to a phy trigger for a specific switch port.
-
-Best,
-Sander
+diff --git a/drivers/gpio/gpio-wm8350.c b/drivers/gpio/gpio-wm8350.c
+index 460f0a4b04bd..b1b131fb9804 100644
+--- a/drivers/gpio/gpio-wm8350.c
++++ b/drivers/gpio/gpio-wm8350.c
+@@ -105,7 +105,6 @@ static int wm8350_gpio_probe(struct platform_device *pdev)
+ 	struct wm8350 *wm8350 = dev_get_drvdata(pdev->dev.parent);
+ 	struct wm8350_platform_data *pdata = dev_get_platdata(wm8350->dev);
+ 	struct wm8350_gpio_data *wm8350_gpio;
+-	int ret;
+ 
+ 	wm8350_gpio = devm_kzalloc(&pdev->dev, sizeof(*wm8350_gpio),
+ 				   GFP_KERNEL);
+@@ -121,16 +120,7 @@ static int wm8350_gpio_probe(struct platform_device *pdev)
+ 	else
+ 		wm8350_gpio->gpio_chip.base = -1;
+ 
+-	ret = devm_gpiochip_add_data(&pdev->dev, &wm8350_gpio->gpio_chip,
+-				     wm8350_gpio);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+-		return ret;
+-	}
+-
+-	platform_set_drvdata(pdev, wm8350_gpio);
+-
+-	return ret;
++	return devm_gpiochip_add_data(&pdev->dev, &wm8350_gpio->gpio_chip, wm8350_gpio);
+ }
+ 
+ static struct platform_driver wm8350_gpio_driver = {
+-- 
+2.31.1
 
