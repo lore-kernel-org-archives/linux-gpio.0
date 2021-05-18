@@ -2,53 +2,55 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC05C433ED
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 09:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7091C433ED
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 09:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D3F261285
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 09:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8681861350
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 09:38:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347702AbhERJHF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 May 2021 05:07:05 -0400
-Received: from smtp-32-i2.italiaonline.it ([213.209.12.32]:45851 "EHLO
+        id S241611AbhERJj6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 May 2021 05:39:58 -0400
+Received: from smtp-36-i2.italiaonline.it ([213.209.12.36]:50007 "EHLO
         libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1347059AbhERJHE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 18 May 2021 05:07:04 -0400
-Received: from oxapps-11-062.iol.local ([10.101.8.72])
-        by smtp-32.iol.local with ESMTPA
-        id ivXflS2QoBc6YivXflyVc1; Tue, 18 May 2021 10:57:31 +0200
+        id S239636AbhERJj5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 18 May 2021 05:39:57 -0400
+Received: from oxapps-10-056.iol.local ([10.101.8.66])
+        by smtp-36.iol.local with ESMTPA
+        id iwBSlou6lQTiRiwBSluMWg; Tue, 18 May 2021 11:38:38 +0200
 x-libjamoibt: 1601
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1621328251; bh=NVnw5g+VXhVolsNBA9uOez+5YRjViDjU8xB516saj4c=;
+        t=1621330718; bh=RX3VysOeZND07OSeQShv9fUFNUFVbaB2i05WydIcxeo=;
         h=From;
-        b=KV2KAo9X6fPXwYtzH3q+0GN7GvtyTZlWnripOO/8qsxlHQDhU3GJuxpxND0ojAX7G
-         lWvRNSoAxsWi8o3KN0uXmHrjexb7lRQGCF+0dFsNUjH1FvQjcQfdu0oAX+J+KAinpp
-         6DcL+o7shC0KSna31mxXfVqm2qAFtQYeQgiSCFePD1BYQDECvQvHMDg0wSDH5WxQCX
-         iRFiUwImB6H1uJUxluBXg+sGiobMOdfaNl1GoPb3rCy0+7Rk8tiSZqY9fSRuV1DlYD
-         TSNbIwdFV52wCerr0D8OZT6/UEM8SzYHTZopH48AwQ81ny9PZm32oxEXSOU3UXAgSx
-         YQ5FR+DRZQ86w==
-X-CNFS-Analysis: v=2.4 cv=B6l8bMhM c=1 sm=1 tr=0 ts=60a3817b cx=a_exe
- a=ArCppHiS2LX9rvfu7+HyXQ==:117 a=C-c6dMTymFoA:10 a=IkcTkHD0fZMA:10
- a=vesc6bHxzc4A:10 a=2KMo9-giAAAA:8 a=D_9wInirL2l4cj3dWgsA:9 a=QEXdDO2ut3YA:10
- a=UeCTMeHK7YUBiLmz_SX7:22
-Date:   Tue, 18 May 2021 10:57:31 +0200 (CEST)
+        b=GlIteFyFXSPcd4cg7t8JjvlsMLzV9RQZgw+abU1zDCPqwxE113JpF3izpzcsyRLgq
+         4GxFNEuyw7HwYNkRAyXxDOH8BHN83dmYcHi3REgQK+9sc33KjvZxkgie0ur67eBwRZ
+         qd/rx5GPDyYwTN38HXyAAeJej2AxiG3UC5LpkJCF2ogZARoVojkBOhBwKhPKdDsbbh
+         DuyV+297mvEiVmn6+uiDgc7Oszjymb9YaWpi19Mticj0wjQLxTea3hFVYOgfm8uDHU
+         QK9uni0LdAYDI5q4UAORH5ddjjpo0ifLKWuO2xUQN4v36usBQQ7UVzml05/tX49/ZR
+         92LC4N7Struog==
+X-CNFS-Analysis: v=2.4 cv=TeVTCTch c=1 sm=1 tr=0 ts=60a38b1e cx=a_exe
+ a=jBhkkplKmJJfLUdjeloIeA==:117 a=C-c6dMTymFoA:10 a=IkcTkHD0fZMA:10
+ a=vesc6bHxzc4A:10 a=fGhLjsSNAAAA:8 a=VwQbUJbxAAAA:8 a=k0ZWKtjwVB-qIq3JdvgA:9
+ a=QEXdDO2ut3YA:10 a=LYKFdyShAPKLkGq8p7WX:22 a=AjGcO6oz07-iQ99wixmX:22
+Date:   Tue, 18 May 2021 11:38:38 +0200 (CEST)
 From:   Dario Binacchi <dariobin@libero.it>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
+To:     Drew Fustini <drew@beagleboard.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Message-ID: <1340368809.152927.1621328251188@mail1.libero.it>
-In-Reply-To: <YKNZIzyO5Q/XGLRs@atomide.com>
-References: <20210517200002.6316-1-dariobin@libero.it>
- <20210517200002.6316-3-dariobin@libero.it> <YKNZIzyO5Q/XGLRs@atomide.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: single: set pinmux from pins debug file
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Message-ID: <960608833.161310.1621330718253@mail1.libero.it>
+In-Reply-To: <20210517225713.GB2936462@x1>
+References: <20210516135531.2203-1-dariobin@libero.it>
+ <20210516135531.2203-2-dariobin@libero.it>
+ <CAHp75Vd8875hRNk1JK6gkmfxjqxBSu4cRNE1zJt9TyEW7TvsMg@mail.gmail.com>
+ <20210517225713.GB2936462@x1>
+Subject: Re: [PATCH 1/2] pinctrl: core: configure pinmux from pins debug
+ file
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -57,83 +59,68 @@ Importance: Normal
 X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
 X-Originating-IP: 185.33.57.41
 X-Originating-Client: open-xchange-appsuite
-x-libjamsun: B0TjijWmrbfJWP3WAkKFWo1lCjhGy9T6
-x-libjamv: ghWYi9jvb6w=
-X-CMAE-Envelope: MS4xfCr5xJ5H3yfOGVmZvzF4wcZgFaf0rRSXvIEcInlgH1v5EZ/YwGVek1PyBI+EJJvi7FRHYPUjrF/2YiYR2VT7/91Fg7GaZuHmZYk6kh8kS7A4hBeOREmu
- 0flGY6ZewK/uspSQ0HLHmyr2/6a+q4L3vhIkXqXEasYtNwx20D+Kdsel1635GBLQoG1GDB6FQdz5bGgFHM3dJA7ZEKS8uLBoKzrdoTNSbopQ1irMLEgUp6/V
- y+eW+mIQ86THswG+MKbNcQRBB1Chdu+CEEJ0WOG9vVddkLd46N/yKcAKiTSlM8l+DJnsyvDWwzBOxcxqMy4Zu3Uj+WQzN9elFOhzbk7UwF57GQ9HD4HwxPDL
- Xni1zqz9pznlUCr/woNVIHlJQ2uJFwxGgseyJ0vKV+Ma7LEbe8R53Vfi+cdSOMZUp4JRvZqqMknbgQYShnEVQGP1A0C1yA==
+x-libjamsun: jugf+bqEB+2gl7i8I6Yt2LjItx5DHhHk
+x-libjamv: XzFQ/hJAbmQ=
+X-CMAE-Envelope: MS4xfNBgZt30XIYL3+/IEZzLHbj1AGZw0iBcP6+Gn2hxLutIfavg2IWrNnKxvNjEKa8Nj8XOQohvkFczm6ofGlSyh9jsKTqnSZuIAd+P/nI7ZSPgzpdRxUak
+ r1Q9202e2Rkj/VgPkWjB+UrZgTWvclNqC9os7ZifDw8KdY48IkYJ0LlrFSYNYLU0v9kK2/piZmbEa+XkFP/IJ5A4PlpIcApAwhwFtU7okuoDwEVjpYDyWoMF
+ tMRVRsxcKYue8xubNcvLLa67TnSJwLJYy1hIS1mcuShT0hpblvAylHxQBhkpA0bZ/LKhxiurDYmZQqhaDh9QKEY7JFTmBpVlyYTXc9a7Z6kkW5jgER/UnoXc
+ EsdyMOaZ
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Tony,
+Hi,
 
-> Il 18/05/2021 08:05 Tony Lindgren <tony@atomide.com> ha scritto:
+> Il 18/05/2021 00:57 Drew Fustini <drew@beagleboard.org> ha scritto:
 > 
 >  
-> Hi,
+> On Mon, May 17, 2021 at 11:02:00PM +0300, Andy Shevchenko wrote:
+> > On Sun, May 16, 2021 at 7:43 PM Dario Binacchi <dariobin@libero.it> wrote:
+> > >
+> > > The MPUs of some architectures (e.g AM335x) must be in privileged
+> > > operating mode to write on the pinmux
+> > 
+> > pinmux is not pin configuration. You need to rethink the approach.
+> > 
+> > > registers. In such cases, where
+> > > writes will not work from user space, now it can be done from the pins
+> > > debug file if the platform driver exports the pin_dbg_set() helper among
+> > > the registered operations.
+> > 
+> > Drew, is it similar to what you are trying to achieve?
 > 
-> I noticed few more things I started to wonder about after
-> looking at this again.
+> Yes, I would say this similar to what I was trying to accomplish: being
+> able to change contents of conf_<module>_<pin> register [table 9-60]
+> from userspace.
 > 
-> * Dario Binacchi <dariobin@libero.it> [210517 20:00]:
-> > +static int pcs_pin_dbg_set(struct pinctrl_dev *pctldev, unsigned int pin,
-> > +			   char *buf)
-> > +{
-> > +	struct pcs_device *pcs;
-> > +	unsigned int val, mux_bytes;
-> > +
-> > +	buf = skip_spaces(buf);
-> > +	if (kstrtouint(buf, 0, &val))
-> > +		return -EINVAL;
-> > +
-> > +	pcs = pinctrl_dev_get_drvdata(pctldev);
-> > +
-> > +	mux_bytes = pcs->width / BITS_PER_BYTE;
-> > +	pcs->write(val, pcs->base + pin * mux_bytes);
-> > +	return 0;
-> > +}
+> However, I was specifically looking to change bits 2:0 which is mux
+> mode. My motivation was to allow BeagleBone users to easily switch
+> between pin functions on the expansion headers during runtime to make
+> rapid prototyping with a breadboard easier (such as changing header pin
+> from GPIO to SPI mode). Most of the header pins have 7 different modes.
 > 
-> Since you're adding a new interface, how about pass unsigned
-> int val instead of char *buf?
+> Ultimately, the solution I settled on with feedback from this list was
+> to create pinmux-select debugfs file that can activate desired fucntion:
+> 6199f6becc86 ("pinctrl: pinmux: Add pinmux-select debugfs file")
+> 
+> Bits 6:3 are related to what this subsystem would refer to as pin conf
+> such as slew, input enable and bias. Thus it might make sense to expose
+> something like a select-pinconf file to activate pin conf settings from
+> userspace. This would require using 'pinconf-single' compatible.
+> 
+> I fixed pinctrl-single bug regarding pinconf last year so it should be
+> possible to use 'pinconf-single' compatible for the am33xx_pinmux node:
+> f46fe79ff1b6 ("pinctrl-single: fix pcs_parse_pinconf() return value")
+> 
 
-I thought about passing char *buf because it seemed more generic 
-to me. As the output of pin_dbg_show() depends on the platform 
-driver, perhaps pin_dbg_set() may need driver-dependent data.
-Is it possible that only the value to be set in the register 
-(unsigned int) is required?
-
-> 
-> >  static void pcs_dt_free_map(struct pinctrl_dev *pctldev,
-> >  				struct pinctrl_map *map, unsigned num_maps)
-> >  {
-> > @@ -331,6 +348,9 @@ static const struct pinctrl_ops pcs_pinctrl_ops = {
-> >  	.get_group_name = pinctrl_generic_get_group_name,
-> >  	.get_group_pins = pinctrl_generic_get_group_pins,
-> >  	.pin_dbg_show = pcs_pin_dbg_show,
-> > +#if IS_ENABLED(CONFIG_DEVMEM)
-> > +	.pin_dbg_set = pcs_pin_dbg_set,
-> > +#endif
-> >  	.dt_node_to_map = pcs_dt_node_to_map,
-> >  	.dt_free_map = pcs_dt_free_map,
-> >  };
-> 
-> It might be better to always have the .pin_dbg_set around to
-> avoid the IS_ENABLED(CONFIG_DEVMEM).
-
-Ok, I'll remove the CONFIG_DEVMEM dependency
-
-> 
-> Does the new interface need something under Documentation too?
-
-Yes, the description of `pins` in Documentation/driver-api/pin-control.rst 
-needs to be updated. I'll add another patch to the series.
+In the kernel version 4.1.6 that I am using on my custom board, I have fixed
+the commit f07512e615dd ("pinctrl/pinconfig: add debug interface"). However, 
+this feature was later removed (https://lore.kernel.org/patchwork/patch/1033755/). 
+Do you think it is better to bring that functionality back to life or the submitted
+patch could be fine too?
 
 Thanks and regards,
 Dario
 
-> 
-> Regards,
-> 
-> Tony
+> Thanks,
+> Drew
