@@ -2,84 +2,131 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1729C433ED
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 08:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211BCC433B4
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 09:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACA7B611BD
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 08:46:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0507360720
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 May 2021 09:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344473AbhERIrU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 May 2021 04:47:20 -0400
-Received: from mga04.intel.com ([192.55.52.120]:7956 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241591AbhERIrU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 18 May 2021 04:47:20 -0400
-IronPort-SDR: 8m2V8OvAnkkuCncGQQxPx1ysS0dtfjRIvoLCPcq8TBjA5MwaBwQE5NBfibdQxW6himuDlx1Ae2
- OPVTh62bQpyQ==
-X-IronPort-AV: E=McAfee;i="6200,9189,9987"; a="198709108"
-X-IronPort-AV: E=Sophos;i="5.82,309,1613462400"; 
-   d="scan'208";a="198709108"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2021 01:46:02 -0700
-IronPort-SDR: 1OhvR54lf+z3hOso0yxPAraZUYsiKZGue2FajJF2hyKCwgZ0pJfSi8257SJuDLNvd3xCQIped7
- Yhg5Q8/74PPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,309,1613462400"; 
-   d="scan'208";a="438570309"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 18 May 2021 01:46:00 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 19A6D12F; Tue, 18 May 2021 11:46:21 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v1 1/1] gpiolib: Make use of assign_bit() API (part 2)
-Date:   Tue, 18 May 2021 11:46:19 +0300
-Message-Id: <20210518084619.29949-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
+        id S242344AbhERJD6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 May 2021 05:03:58 -0400
+Received: from smtp-32-i2.italiaonline.it ([213.209.12.32]:49497 "EHLO
+        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1347641AbhERJD5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 18 May 2021 05:03:57 -0400
+X-Greylist: delayed 306 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 May 2021 05:03:57 EDT
+Received: from oxapps-11-062.iol.local ([10.101.8.72])
+        by smtp-32.iol.local with ESMTPA
+        id ivbalS4jHBc6YivbalyXMh; Tue, 18 May 2021 11:01:34 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1621328494; bh=dCjsQAfcFLyylyqtLv7TqgGQj6to6Y+JT7pvXc9F4+Q=;
+        h=From;
+        b=kRE7WFmZjbFYRkbvZWfGZLIz41Kg+Dd0HWB5UXKAdNI2gX6YCMkQTjVDGs2ckoIqR
+         ULOO1CqfFgBT6ZZJi4iMTYmnfwx47/pJL2yJPgOMh3tmZfoS7augDcAR9JqhcWR3ey
+         hRodECv1slQJ3cGE7D3f4lMVcT7fCoTj+KxeZczw+wJA11cgwQuvEq6czVDf77JHO/
+         IzHrYgdAFniaI0kEvjar4fb4kEPRFHC09Cvs9oEIO9BqnwCBKXBnnnqSspflJ+7/bX
+         +nzDFX4mKoREqDryLW18hfMRQoNb7SUhBdJ4p5Ygxfo08cDMvDtlWpUYZUYB4coH0/
+         7FEISW99oEmUA==
+X-CNFS-Analysis: v=2.4 cv=B6l8bMhM c=1 sm=1 tr=0 ts=60a3826e cx=a_exe
+ a=ArCppHiS2LX9rvfu7+HyXQ==:117 a=C-c6dMTymFoA:10 a=IkcTkHD0fZMA:10
+ a=vesc6bHxzc4A:10 a=2KMo9-giAAAA:8 a=KpX_iGQJn2wPZywkGhQA:9 a=QEXdDO2ut3YA:10
+ a=UeCTMeHK7YUBiLmz_SX7:22
+Date:   Tue, 18 May 2021 11:01:34 +0200 (CEST)
+From:   Dario Binacchi <dariobin@libero.it>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Message-ID: <2040526232.153231.1621328494564@mail1.libero.it>
+In-Reply-To: <YKNZ0A7umnk4LwKU@atomide.com>
+References: <20210514163818.12178-1-dariobin@libero.it>
+ <YKNZ0A7umnk4LwKU@atomide.com>
+Subject: Re: [PATCH] pinctrl: single: config: enable the pin's input
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
+X-Originating-IP: 185.33.57.41
+X-Originating-Client: open-xchange-appsuite
+x-libjamsun: q/hUXHlUwh+9tn5dDm21/ongciy3C3ZO
+x-libjamv: UVlXRZ3VyHE=
+X-CMAE-Envelope: MS4xfNGA8rsVkMTJ+iguaKDKNS72UlJRmS33n9u1M6eJ5DOYVyJ3pHhfKSfAMjnvBoDZyPQTIV+f2j7wZPwLdHdYqPte0bB9v4HrktHeDkCvlzQha//OlGpV
+ VMf+shAgq+/pJCW1v2jc/s9Kd3zVQrOC4DRcjnCr9C6xHVvvXy0qPiPgL0heiF7lv8p6hN4nFEIdTmz/EwDl5eLtDpEwmGv1CmcIr5lSLOlr87xVeStcT8Z4
+ 08DaytR0l4PVtiX5K8fyYoTKxvw5Qsb74dpa/1cqghLUqgcSINOxJiiVWqmC3BQkBubrvtiLRMybnLM+nuR5q38mFGYN+NlfLeIXTAAfdCuamejSxk7NA2nl
+ 4SGJJ5U2VPIMqet538yq0WIenOT0BtpCht4p7fDj1RE7DVprgw/04Iw1cZeWpRg7fl43HC7T1ROgEKZYhU/eDXY8sXPq5A==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We have for some time the assign_bit() API to replace open coded
+Hi Tony,
 
-	if (foo)
-		set_bit(n, bar);
-	else
-		clear_bit(n, bar);
+> Il 18/05/2021 08:08 Tony Lindgren <tony@atomide.com> ha scritto:
+> 
+>  
+> * Dario Binacchi <dariobin@libero.it> [210514 16:38]:
+> > It enables / disables the input buffer. As explained in the description
+> > of 'enum pin_config_param' this does not affect the pin's ability to
+> > drive output.
+> > 
+> > Signed-off-by: Dario Binacchi <dariobin@libero.it>
+> > ---
+> > 
+> >  drivers/pinctrl/pinctrl-single.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+> > index 2c9c9835f375..4e7cdb9ee855 100644
+> > --- a/drivers/pinctrl/pinctrl-single.c
+> > +++ b/drivers/pinctrl/pinctrl-single.c
+> > @@ -534,6 +534,7 @@ static int pcs_pinconf_get(struct pinctrl_dev *pctldev,
+> >  		case PIN_CONFIG_DRIVE_STRENGTH:
+> >  		case PIN_CONFIG_SLEW_RATE:
+> >  		case PIN_CONFIG_MODE_LOW_POWER:
+> > +		case PIN_CONFIG_INPUT_ENABLE:
+> >  		default:
+> >  			*config = data;
+> >  			break;
+> > @@ -572,6 +573,7 @@ static int pcs_pinconf_set(struct pinctrl_dev *pctldev,
+> >  			case PIN_CONFIG_DRIVE_STRENGTH:
+> >  			case PIN_CONFIG_SLEW_RATE:
+> >  			case PIN_CONFIG_MODE_LOW_POWER:
+> > +			case PIN_CONFIG_INPUT_ENABLE:
+> >  				shift = ffs(func->conf[i].mask) - 1;
+> >  				data &= ~func->conf[i].mask;
+> >  				data |= (arg << shift) & func->conf[i].mask;
+> > @@ -918,6 +920,7 @@ static int pcs_parse_pinconf(struct pcs_device *pcs, struct device_node *np,
+> >  	static const struct pcs_conf_type prop2[] = {
+> >  		{ "pinctrl-single,drive-strength", PIN_CONFIG_DRIVE_STRENGTH, },
+> >  		{ "pinctrl-single,slew-rate", PIN_CONFIG_SLEW_RATE, },
+> > +		{ "pinctrl-single,input-enable", PIN_CONFIG_INPUT_ENABLE, },
+> >  		{ "pinctrl-single,input-schmitt", PIN_CONFIG_INPUT_SCHMITT, },
+> >  		{ "pinctrl-single,low-power-mode", PIN_CONFIG_MODE_LOW_POWER, },
+> >  	};
+> 
+> Looks OK to me if this works for Linus W. You need another patch to
+> update the binding though:
+> 
+> Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+> 
+> Or if there is such a patch floating around, I was not in Cc :)
 
-Use this API in GPIO library code.
+I'll add a documentation patch and CC you.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-sysfs.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Thanks and regards,
+Dario
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 41b3b782bf3f..7c5afd999210 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -312,10 +312,7 @@ static int gpio_sysfs_set_active_low(struct device *dev, int value)
- 	if (!!test_bit(FLAG_ACTIVE_LOW, &desc->flags) == !!value)
- 		return 0;
- 
--	if (value)
--		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
--	else
--		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+	assign_bit(FLAG_ACTIVE_LOW, &desc->flags, value);
- 
- 	/* reconfigure poll(2) support if enabled on one edge only */
- 	if (flags == GPIO_IRQF_TRIGGER_FALLING ||
--- 
-2.30.2
-
+> 
+> Regards,
+> 
+> Tony
