@@ -2,207 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 410F0C43461
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 May 2021 12:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E84BC433B4
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 May 2021 13:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C82360FF0
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 May 2021 12:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E69B61355
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 May 2021 13:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353444AbhESMpt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 May 2021 08:45:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:28954 "EHLO mga18.intel.com"
+        id S1353656AbhESN1a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 May 2021 09:27:30 -0400
+Received: from www.zeus03.de ([194.117.254.33]:51232 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238150AbhESMps (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 19 May 2021 08:45:48 -0400
-IronPort-SDR: BPLNm1DHGmYD1jYLJMHJOdfxxIGE3sBNwuV6LGhumdua3AetSQYAzp6kvH3bS922r6BejSFWwu
- mj6Is3nbDDkA==
-X-IronPort-AV: E=McAfee;i="6200,9189,9988"; a="188373333"
-X-IronPort-AV: E=Sophos;i="5.82,312,1613462400"; 
-   d="scan'208";a="188373333"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2021 05:44:26 -0700
-IronPort-SDR: cUgxuyPxUeTfNPAp1UcOABFh2f2f2QAa3PpCVIcw2Haxst6GPzf1MkoeRaBZ5b3s8iQLKigK6/
- CYd+Gjo/8DNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,312,1613462400"; 
-   d="scan'208";a="467008738"
-Received: from lkp-server02.sh.intel.com (HELO 1b329be5b008) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 May 2021 05:44:24 -0700
-Received: from kbuild by 1b329be5b008 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1ljLYl-000089-SW; Wed, 19 May 2021 12:44:23 +0000
-Date:   Wed, 19 May 2021 20:43:39 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:for-next] BUILD SUCCESS
- 6fc5a68d23b7378573d5df4eae873cd9e7ba14c4
-Message-ID: <60a507fb.7FdOHrqE3aEcDb3I%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1353659AbhESN12 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 19 May 2021 09:27:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=D4WTcDSnFA5CD6imsXF4T5RU9Bl
+        RhYKlVSgW61z0jYA=; b=E/gBYmjhyzzAegIXyLarHyk6myV2BewRfPIeqJ2tvzu
+        L7MiP/YORhFU44P2Yh7xqysTBVN3qnar8yMfr7kb+nGicZTrYI5uYX8t56wgW5aR
+        u+/cXrbxPRyYGeztwlM5FbhCULcDezLnJs6UkwsIC39KrQus746iaryOeTOtiIaQ
+        =
+Received: (qmail 3334756 invoked from network); 19 May 2021 15:26:07 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 May 2021 15:26:07 +0200
+X-UD-Smtp-Session: l3s3148p1@3WfhxK7CNMwgAwDPXwaBAEltFu20ukzh
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v2 0/1] gpio: add simple logic analyzer using polling
+Date:   Wed, 19 May 2021 15:25:27 +0200
+Message-Id: <20210519132528.4394-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: 6fc5a68d23b7378573d5df4eae873cd9e7ba14c4  Merge branch 'devel' into for-next
+The bravery continues with the second RFC for the in-kernel logic
+analyzer based on GPIO polling with local irqs disabled. Besides the
+driver, there is also a script which isolates a CPU to achieve the best
+possible result. I am aware of the latency limitations. However, the
+intention is only for debugging. Especially for remote debugging and to
+get a first impression, this has already been useful. Documentation is
+within the patch, to get a better idea what this is all about.
 
-elapsed time: 722m
+Changes since RFC v1:
 
-configs tested: 137
-configs skipped: 3
+* moved from misc/ to gpio/. Thanks to Linus and Bartosz for offering a
+  home for this
+* renamed from "simple logic analyzer" to "sloppy logic analyzer"
+  everywhere to make its limitations crystal clear
+* moved the parser for trigger data from the kernel into the script.
+  Much cleaner kernel code but passing binary data now. We'll see...
+* all gpios now must be named. This removes ugly fallback code and
+  allows to use generic device properties instead of OF properties only.
+* added and updated documentation
+* triggers are also now checked at sample speed, not full speed
+* replaced pr_* printouts with dev_*
+* removed bashisms in the script (tested with bash, dash, and busybox
+  ash)
+* depends on EXPERT now
+* small bugfixes, refactoring, cleanups all around
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Thanks to Andy, Linus, Randy, and Ulrich for suggestions and testing.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm64                               defconfig
-arm                          pxa3xx_defconfig
-arm                         axm55xx_defconfig
-powerpc                      arches_defconfig
-mips                        maltaup_defconfig
-arm                        realview_defconfig
-arc                              alldefconfig
-sh                           se7722_defconfig
-mips                         mpc30x_defconfig
-um                            kunit_defconfig
-powerpc                      makalu_defconfig
-powerpc                 mpc8315_rdb_defconfig
-sh                      rts7751r2d1_defconfig
-sh                         apsh4a3a_defconfig
-s390                             allmodconfig
-arm                          exynos_defconfig
-mips                     loongson2k_defconfig
-m68k                       m5475evb_defconfig
-powerpc                   lite5200b_defconfig
-arm                           u8500_defconfig
-um                                  defconfig
-h8300                    h8300h-sim_defconfig
-ia64                            zx1_defconfig
-powerpc                      pcm030_defconfig
-mips                     cu1000-neo_defconfig
-mips                            gpr_defconfig
-arm                         s3c2410_defconfig
-arm                        spear3xx_defconfig
-s390                       zfcpdump_defconfig
-arm                     davinci_all_defconfig
-m68k                         amcore_defconfig
-arm                          pxa168_defconfig
-arm                      integrator_defconfig
-arm                          ep93xx_defconfig
-riscv             nommu_k210_sdcard_defconfig
-sh                ecovec24-romimage_defconfig
-arm                       cns3420vb_defconfig
-powerpc                      ppc6xx_defconfig
-arc                           tb10x_defconfig
-sh                          sdk7786_defconfig
-csky                                defconfig
-mips                         tb0226_defconfig
-mips                           ci20_defconfig
-nios2                         3c120_defconfig
-parisc                generic-64bit_defconfig
-x86_64                              defconfig
-arm                       multi_v4t_defconfig
-xtensa                    xip_kc705_defconfig
-m68k                        mvme16x_defconfig
-powerpc                    klondike_defconfig
-powerpc                     tqm8560_defconfig
-microblaze                          defconfig
-arm                       imx_v4_v5_defconfig
-arm                        spear6xx_defconfig
-sparc                       sparc64_defconfig
-arm                          collie_defconfig
-arm                       omap2plus_defconfig
-arm                        shmobile_defconfig
-mips                            ar7_defconfig
-mips                  decstation_64_defconfig
-m68k                        stmark2_defconfig
-openrisc                    or1ksim_defconfig
-x86_64                            allnoconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-nds32                               defconfig
-nios2                            allyesconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a003-20210519
-i386                 randconfig-a001-20210519
-i386                 randconfig-a005-20210519
-i386                 randconfig-a004-20210519
-i386                 randconfig-a002-20210519
-i386                 randconfig-a006-20210519
-x86_64               randconfig-a012-20210519
-x86_64               randconfig-a015-20210519
-x86_64               randconfig-a013-20210519
-x86_64               randconfig-a011-20210519
-x86_64               randconfig-a016-20210519
-x86_64               randconfig-a014-20210519
-i386                 randconfig-a014-20210519
-i386                 randconfig-a016-20210519
-i386                 randconfig-a011-20210519
-i386                 randconfig-a015-20210519
-i386                 randconfig-a012-20210519
-i386                 randconfig-a013-20210519
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-um                               allmodconfig
-um                                allnoconfig
-um                               allyesconfig
-x86_64                           allyesconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                               rhel-8.3
-x86_64                      rhel-8.3-kbuiltin
-x86_64                                  kexec
+A branch with preparation for the Renesas Salvator-XS boards is here:
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/gpio-logic-analyzer-v2
 
-clang tested configs:
-x86_64               randconfig-b001-20210519
-x86_64               randconfig-a003-20210519
-x86_64               randconfig-a004-20210519
-x86_64               randconfig-a005-20210519
-x86_64               randconfig-a001-20210519
-x86_64               randconfig-a002-20210519
-x86_64               randconfig-a006-20210519
+The documentation is also available online on the elinux wiki:
+https://elinux.org/Kernel_GPIO_Logic_analyzer
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Looking forward to comments and especially further tests with different
+use cases than mine. I have looked enough at the code, fresh view would
+really help. And still, if somebody has a pointer how to detect if a
+task was requested to be killed (while irqs and preemption are
+disabled), I'd appreciate that to avoid the currently unkillable
+sub-process.
+
+All the best,
+
+   Wolfram
+
+Wolfram Sang (1):
+  misc: add sloppy logic analyzer using polling
+
+ .../dev-tools/gpio-sloppy-logic-analyzer.rst  |  72 ++++
+ Documentation/dev-tools/index.rst             |   1 +
+ drivers/gpio/Kconfig                          |  17 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-sloppy-logic-analyzer.c     | 317 ++++++++++++++++++
+ tools/gpio/gpio-sloppy-logic-analyzer         | 200 +++++++++++
+ 6 files changed, 608 insertions(+)
+ create mode 100644 Documentation/dev-tools/gpio-sloppy-logic-analyzer.rst
+ create mode 100644 drivers/gpio/gpio-sloppy-logic-analyzer.c
+ create mode 100755 tools/gpio/gpio-sloppy-logic-analyzer
+
+-- 
+2.30.2
+
