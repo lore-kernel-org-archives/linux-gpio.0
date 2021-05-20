@@ -2,98 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73F5C433ED
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 20:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C415EC433B4
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 20:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 854CC61355
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 20:00:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2F5360FE3
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 20:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237967AbhETUBb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 May 2021 16:01:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46598 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237298AbhETUBa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 May 2021 16:01:30 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305CAC061574;
-        Thu, 20 May 2021 13:00:09 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:104d::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id D3783301;
-        Thu, 20 May 2021 20:00:07 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D3783301
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1621540808; bh=2WNLJX/xlZc5xTtT/m0BAIjR0dGVeWDMrn8wfYaNCUM=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=JWiESVFNzhYgP3LIrHH+2tY7pTjoh+gKnctlpgARBvgwBWg4BACU+o/zkUA8eRdPF
-         jS85XmMhRO5jK77x2BlQkPxDSbCrzhxlhaMXvDctoM1+BMQOa0yL/SZHdunNPbhAgt
-         4USigcfd0H+vMC4CmQMvwXkhr8hvfRf3UC0K6z2vi4HY7A5m+ShwS2LJ/UDdBlnsDP
-         SPBGKoeOrTvsAjV7A36ox1hL3nOjKNp5cU8ATBlHyBRqSKzr5ElccrOeoSfEDcgg8h
-         LH4udeqBoy+VzdXLKBnnbzSb6qpvpqwupJQPHnbWB4IHmqCdgQ0/NFGZsiTs5E64Wr
-         JxMzmR3UeuhAA==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
+        id S235990AbhETU3R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 May 2021 16:29:17 -0400
+Received: from smtp-34.italiaonline.it ([213.209.10.34]:55772 "EHLO libero.it"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238545AbhETU3Q (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 20 May 2021 16:29:16 -0400
+Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
+ ([82.60.150.250])
+        by smtp-34.iol.local with ESMTPA
+        id jpGWlKVEa5WrZjpGqlTUNb; Thu, 20 May 2021 22:27:52 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1621542472; bh=o/VOXlmBh1ZPZnnDv+64KXqpTUEGPerJE1a/PoV9LoU=;
+        h=From;
+        b=h+mYj61r2xOt1YhNmBxJpHL+MEu5uTWM9JEshHiHXHgKd2RJCbGXEVHZTgBjZKLJx
+         MrRhmRkF0LQNxRNxY0mLgv1YJWqE1hniHZYFqeNY8pPx7SKJXtAwM+966MCwLj1xPx
+         DObtLPpYi/ct5fcL4DtBdvKi3DznMOLJNTKnlsvH1VRP3dfp6ck8ugE13ZXaunllTh
+         +6tyk6UPIzNeLBSUmFAnizce9J94YRznIbC3vjm/Dt9HgoA3fvZS/LvFvYTXP9jEdH
+         83xoHKJhoK1Ndmfar3IBiDWffx4yKLXrNBYijq7Ue2CoVxHZHtjcpyUafO6P2O3Gtt
+         RJle74aI88PRQ==
+X-CNFS-Analysis: v=2.4 cv=W4/96Tak c=1 sm=1 tr=0 ts=60a6c648 cx=a_exe
+ a=QSJ1svMVA5tvcuOEAX2Bgw==:117 a=QSJ1svMVA5tvcuOEAX2Bgw==:17
+ a=SMixqbvZskzAqJ1qg7QA:9
+From:   Dario Binacchi <dariobin@libero.it>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dario Binacchi <dariobin@libero.it>,
+        Tony Lindgren <tony@atomide.com>,
+        Drew Fustini <drew@beagleboard.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-iio@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 00/10] Documentation build warning fixes
-In-Reply-To: <cover.1621413933.git.mchehab+huawei@kernel.org>
-References: <cover.1621413933.git.mchehab+huawei@kernel.org>
-Date:   Thu, 20 May 2021 14:00:07 -0600
-Message-ID: <87wnrtnpko.fsf@meer.lwn.net>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v3 1/3] docs/pinctrl: update `pins' description under debugfs
+Date:   Thu, 20 May 2021 22:27:28 +0200
+Message-Id: <20210520202730.4444-2-dariobin@libero.it>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210520202730.4444-1-dariobin@libero.it>
+References: <20210520202730.4444-1-dariobin@libero.it>
+X-CMAE-Envelope: MS4xfC4IQyqC8yCTSZda7J5PnkJEZPbrYTBhBMpEICGiISDhj3SIApr58H3eUSX81XdpOeXFDgL4V8j6laxA6ZXoeDcOKIUSg9cKw9BjupDw/smTuSgUSlBr
+ souIJhr6BvMOTnSpF4hwcJZS2Wqo/yklxTVGnC3TB8HlcSbXC3rsDCkzKfsgd1p6638feX3hC6nWXWDZcvgmMmXO3wW/tFtS6uaEKFqgATGlgZOQ+hSrwAFe
+ Et0byIGpu8McQQG78e6hnTxI1qp0Hg5AJyXexs7/jTHJityWfH/4UoeKEZstSCnwPQViTVNeGaHRmyeyanWUEgGxPVIsL+OXs7edxmOzRXv6HYa85nOVaQeK
+ bGX30ln9MURWLXnNh4dLXP7lZkgCY/DjJkMTBi5F6HuPhDWw7XKwz5i57vxVJ7KS0zSz3ZdI34sAT0LyKluvUvBb1Q0ldjgiY7+QdDLqmhghcrhdhytYHtq4
+ /Hf8Cn07xvWV+J06QPnjBubUpIFRw2ZizMnkwg==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Optionally the `pins' file created inside the `/sys/kernel/debug/pinctrl'
+subdirectory of each pin controller device now allows you to set the
+mux register of a pin.
 
-> Hi Jon,
->
-> This small series contain a series of fixes for the documentation. it is
-> against your docs-next branch.
->
-> Three of the patches fix duplicated symbols at the ABI documents.
-> There are still some ABI warnings from IIO, but all but one were
-> already fixed at linux-next. So, hopefully, after having everything
-> merged, the ABI warnings will be solved.
->
-> Mauro Carvalho Chehab (10):
->   docs: update sysfs-platform_profile.rst reference
->   docs: vcpu-requests.rst: fix reference for atomic ops
->   docs: translations/zh_CN: fix a typo at 8.Conclusion.rst
->   docs: sched-bwc.rst: fix a typo on a doc name
->   docs: update pin-control.rst references
->   docs: virt: api.rst: fix a pointer to SGX documentation
->   docs: ABI: iommu: remove duplicated definition for
->     sysfs-kernel-iommu_groups
->   docs: ABI: sysfs-class-backlight: unify ambient light zone nodes
->   docs: ABI: sysfs-class-led-trigger-pattern: remove repeat duplication
->   iio: documentation: fix a typo
+Signed-off-by: Dario Binacchi <dariobin@libero.it>
+---
 
-Seems like good stuff.  The last patch in the series, though, adds a
-warning:
+(no changes since v1)
 
-  Documentation/ABI/testing/sysfs-bus-iio:799: WARNING: Inline emphasis start-string without end-string.
+ Documentation/driver-api/pin-control.rst | 3 +++
+ 1 file changed, 3 insertions(+)
 
-So I left that one out and applied the rest.
+diff --git a/Documentation/driver-api/pin-control.rst b/Documentation/driver-api/pin-control.rst
+index e2474425fb0c..3d8192fa45a3 100644
+--- a/Documentation/driver-api/pin-control.rst
++++ b/Documentation/driver-api/pin-control.rst
+@@ -1447,6 +1447,9 @@ controller device containing these files:
+ 
+ - ``pins``: prints a line for each pin registered on the pin controller. The
+   pinctrl driver may add additional information such as register contents.
++  Optionally writes the mux register for the selected pin.
++  e.g. to write the value 0x73 in the mux register of pin 19:
++  echo 19 0x73 >/sys/kernel/debug/pinctrl/pins
+ 
+ - ``gpio-ranges``: print ranges that map gpio lines to pins on the controller
+ 
+-- 
+2.17.1
 
-Thanks,
-
-jon
