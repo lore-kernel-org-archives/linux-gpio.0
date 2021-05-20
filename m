@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532FFC43461
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 14:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0806C43460
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 14:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A7766100A
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 14:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4D7361244
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 14:12:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243756AbhETON1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 May 2021 10:13:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
+        id S243868AbhETONn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 May 2021 10:13:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239356AbhETOMj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 May 2021 10:12:39 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0D09C061360;
-        Thu, 20 May 2021 07:09:46 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id j14so16089455wrq.5;
-        Thu, 20 May 2021 07:09:46 -0700 (PDT)
+        with ESMTP id S237559AbhETOMm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 May 2021 10:12:42 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BB8C061373;
+        Thu, 20 May 2021 07:09:53 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id d11so17800287wrw.8;
+        Thu, 20 May 2021 07:09:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KDoc5xeYWeYU512Wm3d18mdOADpuvy7ld0OqNa7izfs=;
-        b=BisTvPuF4Xk2mSdE5bIv/gwo9hRcuiQbs2gjplPiPe0+aURCkd8g5ddQulG0eLfIwT
-         /FkKERmDOu6qQ4mwzf0HFSHxHafK/rFzBhPwTVeuif0u/IlR+fFglDbJGZkJ9i2moplY
-         +bASBUvQ0jO3iO1iA7WHSKU2sZQn0cNOaGtJyscw2LoULIozDXY0G1sfPLzI7pZiL+/9
-         oPMoQR6xQhhhw1HSMgNWkOYFxl018A8rTjvjfwkUeMcQCgBtusMSXJZ+haMfG0iUVQE2
-         4dsv40SMZf3dXutpohAs0o+LNrF/UbLRZ1ozgCl9+7UmAlzcASkIKYqXI/Q3BuObQcG2
-         uZtQ==
+        bh=yjDsyccgx95yt9RzzidTLsNAX8yZMrQ+XHQIqoQUo80=;
+        b=Zj84UjEuUFeFLrtOfNkQTUHfM7f+NonQZMp8l4yuQfBjn9qaWTRDmwH7BQTbrNG7WC
+         RDFdLRCQ4sPsxDySU1L9uJcPFVfISjaMMDQY2tjOM0AFP7yMPEdGWLqul1DW+z9csRxa
+         6lsJ3P5Eu5A/RmFN1gtZTzMUei2GeVVnXyXhfSEal2Ob3rvR/lWAqQ90BRmeIiT/bP6M
+         MN+Mc3yQVG53rrUxnkTsX+8jiDAu8iZhVKtbylsCu/W5WTeNqx6XVxSuK2yQLGPYOGr6
+         BJkK/4nKJ6Gwzt0/V7oI4+650AvQVga7JPmNhWgiU16GFoXWBydCLqOxKKF2uCajjOdA
+         G2zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KDoc5xeYWeYU512Wm3d18mdOADpuvy7ld0OqNa7izfs=;
-        b=W5vqVfy2/7VsTWhz2om8+GiJYIbSWkKQzBAw9tX0vT11FlvuZV5Gv6VLgMgUiNX7hx
-         Asjo32oGwf1mzHE4u1BYEnmfk4ByKTPMnfXH17jmB715kZi/PpiyRqMGmaxIORl6NzBE
-         uZg29QlBCTvgb5S9YuPQUPO3zqM6LzMSF1ljwPBT3PoUozl5jFpCji9ZeE9cC0BF8jvL
-         i0tDb1FxO0TVoWZ151sJdTHwKyUixvrGwmkv9R1Ee3fms0gWRqvMWaIiAfLsA9zaQRXE
-         U0Z8jO8GqIgTTqCnPDR12fYHB8NGzQ0CaF0jh3YNkl5Yb9c+OjNACLmH/6dtSex3e+xX
-         wyyg==
-X-Gm-Message-State: AOAM532EKM3u4+ob6X0Iqi7LzdkTpvUFtFGrACD8SFu92K6yMijU9NPM
-        tiMBc9hHU5wMndDs0rylMZQ=
-X-Google-Smtp-Source: ABdhPJxA2TbO813ryCP8bj191enw1wM7kxjE/0km1fqqMpYb8222YuAkdkbYQKcuug/tVCPHtfDGpg==
-X-Received: by 2002:adf:9d8c:: with SMTP id p12mr4625583wre.310.1621519785265;
-        Thu, 20 May 2021 07:09:45 -0700 (PDT)
+        bh=yjDsyccgx95yt9RzzidTLsNAX8yZMrQ+XHQIqoQUo80=;
+        b=FJPT/w4yuNMVZf4B9Ns7R4OF84hUReaY0/Hl3LoolxKTAlugRgOZdkMbDMWBatrfco
+         HAq5haJhg5GLqt5X2gUrUclaIMWEAfU3Zo5m6BLpkvMSn0pKw3R6Tod78cBcS2vSZFqa
+         goP5NjCCrIA5+jb0MSmPL3+7NKhCMeuxAzwh0BiKpkN3/sWBJvfoYkghWL+vzTAWz49T
+         iLmLqrgbtZT/P8W7JGaImtvEgS3eARfTuygRIdSaGQ+pecw7avvr/bwwmkAiFTLqAQCK
+         KndxrKRYRO6IAwdnmAE5gm9tWCvJ7W1oQK5D+bkZPJmSoogiH4mUpo5aTRT0cBTh1Gik
+         FRRg==
+X-Gm-Message-State: AOAM531q0FcnOYbbaNvlUejV3KOEF+IeKIBGmEaSz70a4GEoCaVkr7kz
+        CCrtJGdSfVoFZrLqUDqkZKg=
+X-Google-Smtp-Source: ABdhPJyKS8Yj0VhuVVnqYHumuHPCARTH05E8Qok5qkhQwihhA1SnL5SE5L1yjyFyfA2az0wfBRNeyA==
+X-Received: by 2002:a5d:40cd:: with SMTP id b13mr4596854wrq.356.1621519790002;
+        Thu, 20 May 2021 07:09:50 -0700 (PDT)
 Received: from valhalla.home ([91.110.20.117])
-        by smtp.gmail.com with ESMTPSA id m6sm8411974wml.3.2021.05.20.07.09.44
+        by smtp.gmail.com with ESMTPSA id m6sm8411974wml.3.2021.05.20.07.09.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 May 2021 07:09:44 -0700 (PDT)
+        Thu, 20 May 2021 07:09:49 -0700 (PDT)
 From:   Daniel Scally <djrscally@gmail.com>
 To:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -78,9 +78,9 @@ Cc:     Len Brown <lenb@kernel.org>,
         Erik Kaneda <erik.kaneda@intel.com>,
         laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
         Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v4 4/8] gpiolib: acpi: Export acpi_get_gpiod()
-Date:   Thu, 20 May 2021 15:09:24 +0100
-Message-Id: <20210520140928.3252671-5-djrscally@gmail.com>
+Subject: [PATCH v4 8/8] mfd: tps68470: Remove tps68470 MFD driver
+Date:   Thu, 20 May 2021 15:09:28 +0100
+Message-Id: <20210520140928.3252671-9-djrscally@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210520140928.3252671-1-djrscally@gmail.com>
 References: <20210520140928.3252671-1-djrscally@gmail.com>
@@ -90,79 +90,197 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We need to be able to translate GPIO resources in an ACPI device's _CRS
-into GPIO descriptor array. Those are represented in _CRS as a pathname
-to a GPIO device plus the pin's index number: the acpi_get_gpiod()
-function is perfect for that purpose.
+This driver only covered one scenario in which ACPI devices with _HID
+INT3472 are found, and its functionality has been taken over by the
+intel-skl-int3472 module, so remove it.
 
-As it's currently only used internally within the GPIO layer, provide and
-export a wrapper function that additionally holds a reference to the GPIO
-device.
-
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Daniel Scally <djrscally@gmail.com>
 ---
 Changes since v3:
 
-	- Renamed function to acpi_get_and_request_gpiod() - and no longer
-	renaming acpi_get_gpiod()
+	- None
 
- drivers/gpio/gpiolib-acpi.c   | 28 ++++++++++++++++++++++++++++
- include/linux/gpio/consumer.h |  2 ++
- 2 files changed, 30 insertions(+)
+ drivers/acpi/pmic/Kconfig |  2 +-
+ drivers/gpio/Kconfig      |  2 +-
+ drivers/mfd/Kconfig       | 18 --------
+ drivers/mfd/Makefile      |  1 -
+ drivers/mfd/tps68470.c    | 97 ---------------------------------------
+ 5 files changed, 2 insertions(+), 118 deletions(-)
+ delete mode 100644 drivers/mfd/tps68470.c
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 5b4111e4be3f..684ddb35d83b 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -128,6 +128,34 @@ static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
- 	return gpiochip_get_desc(chip, pin);
- }
+diff --git a/drivers/acpi/pmic/Kconfig b/drivers/acpi/pmic/Kconfig
+index 56bbcb2ce61b..f84b8f6038dc 100644
+--- a/drivers/acpi/pmic/Kconfig
++++ b/drivers/acpi/pmic/Kconfig
+@@ -52,7 +52,7 @@ endif	# PMIC_OPREGION
  
-+/**
-+ * acpi_get_and_request_gpiod() - Translate ACPI GPIO pin to GPIO descriptor
-+ *                               and hold a refcount to the GPIO device.
-+ * @path:      ACPI GPIO controller full path name, (e.g. "\\_SB.GPO1")
-+ * @pin:       ACPI GPIO pin number (0-based, controller-relative)
-+ * @label:     Label to pass to gpiod_request()
-+ *
-+ * This function is a simple pass-through to acpi_get_gpiod(), except that
-+ * as it is intended for use outside of the GPIO layer (in a similar fashion to
-+ * gpiod_get_index() for example) it also holds a reference to the GPIO device.
-+ */
-+struct gpio_desc *acpi_get_and_request_gpiod(char *path, int pin, char *label)
-+{
-+	struct gpio_desc *gpio;
-+	int ret;
-+
-+	gpio = acpi_get_gpiod(path, pin);
-+	if (IS_ERR(gpio))
-+		return gpio;
-+
-+	ret = gpiod_request(gpio, label);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return gpio;
-+}
-+EXPORT_SYMBOL_GPL(acpi_get_and_request_gpiod);
-+
- static irqreturn_t acpi_gpio_irq_handler(int irq, void *data)
- {
- 	struct acpi_gpio_event *event = data;
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index c73b25bc9213..566feb56601f 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -692,6 +692,8 @@ int devm_acpi_dev_add_driver_gpios(struct device *dev,
- 				   const struct acpi_gpio_mapping *gpios);
- void devm_acpi_dev_remove_driver_gpios(struct device *dev);
+ config TPS68470_PMIC_OPREGION
+ 	bool "ACPI operation region support for TPS68470 PMIC"
+-	depends on MFD_TPS68470
++	depends on INTEL_SKL_INT3472
+ 	help
+ 	  This config adds ACPI operation region support for TI TPS68470 PMIC.
+ 	  TPS68470 device is an advanced power management unit that powers
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 1dd0ec6727fd..10228abeee56 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1367,7 +1367,7 @@ config GPIO_TPS65912
  
-+struct gpio_desc *acpi_get_and_request_gpiod(char *path, int pin, char *label);
-+
- #else  /* CONFIG_GPIOLIB && CONFIG_ACPI */
+ config GPIO_TPS68470
+ 	bool "TPS68470 GPIO"
+-	depends on MFD_TPS68470
++	depends on INTEL_SKL_INT3472
+ 	help
+ 	  Select this option to enable GPIO driver for the TPS68470
+ 	  chip family.
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 5c7f2b100191..99c4e1a80ae0 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1499,24 +1499,6 @@ config MFD_TPS65217
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called tps65217.
  
- struct acpi_device;
+-config MFD_TPS68470
+-	bool "TI TPS68470 Power Management / LED chips"
+-	depends on ACPI && PCI && I2C=y
+-	depends on I2C_DESIGNWARE_PLATFORM=y
+-	select MFD_CORE
+-	select REGMAP_I2C
+-	help
+-	  If you say yes here you get support for the TPS68470 series of
+-	  Power Management / LED chips.
+-
+-	  These include voltage regulators, LEDs and other features
+-	  that are often used in portable devices.
+-
+-	  This option is a bool as it provides an ACPI operation
+-	  region, which must be available before any of the devices
+-	  using this are probed. This option also configures the
+-	  designware-i2c driver to be built-in, for the same reason.
+-
+ config MFD_TI_LP873X
+ 	tristate "TI LP873X Power Management IC"
+ 	depends on I2C
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 4f6d2b8a5f76..8b322d89a0c5 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -105,7 +105,6 @@ obj-$(CONFIG_MFD_TPS65910)	+= tps65910.o
+ obj-$(CONFIG_MFD_TPS65912)	+= tps65912-core.o
+ obj-$(CONFIG_MFD_TPS65912_I2C)	+= tps65912-i2c.o
+ obj-$(CONFIG_MFD_TPS65912_SPI)  += tps65912-spi.o
+-obj-$(CONFIG_MFD_TPS68470)	+= tps68470.o
+ obj-$(CONFIG_MFD_TPS80031)	+= tps80031.o
+ obj-$(CONFIG_MENELAUS)		+= menelaus.o
+ 
+diff --git a/drivers/mfd/tps68470.c b/drivers/mfd/tps68470.c
+deleted file mode 100644
+index 4a4df4ffd18c..000000000000
+--- a/drivers/mfd/tps68470.c
++++ /dev/null
+@@ -1,97 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * TPS68470 chip Parent driver
+- *
+- * Copyright (C) 2017 Intel Corporation
+- *
+- * Authors:
+- *	Rajmohan Mani <rajmohan.mani@intel.com>
+- *	Tianshu Qiu <tian.shu.qiu@intel.com>
+- *	Jian Xu Zheng <jian.xu.zheng@intel.com>
+- *	Yuning Pu <yuning.pu@intel.com>
+- */
+-
+-#include <linux/acpi.h>
+-#include <linux/delay.h>
+-#include <linux/i2c.h>
+-#include <linux/init.h>
+-#include <linux/mfd/core.h>
+-#include <linux/mfd/tps68470.h>
+-#include <linux/regmap.h>
+-
+-static const struct mfd_cell tps68470s[] = {
+-	{ .name = "tps68470-gpio" },
+-	{ .name = "tps68470_pmic_opregion" },
+-};
+-
+-static const struct regmap_config tps68470_regmap_config = {
+-	.reg_bits = 8,
+-	.val_bits = 8,
+-	.max_register = TPS68470_REG_MAX,
+-};
+-
+-static int tps68470_chip_init(struct device *dev, struct regmap *regmap)
+-{
+-	unsigned int version;
+-	int ret;
+-
+-	/* Force software reset */
+-	ret = regmap_write(regmap, TPS68470_REG_RESET, TPS68470_REG_RESET_MASK);
+-	if (ret)
+-		return ret;
+-
+-	ret = regmap_read(regmap, TPS68470_REG_REVID, &version);
+-	if (ret) {
+-		dev_err(dev, "Failed to read revision register: %d\n", ret);
+-		return ret;
+-	}
+-
+-	dev_info(dev, "TPS68470 REVID: 0x%x\n", version);
+-
+-	return 0;
+-}
+-
+-static int tps68470_probe(struct i2c_client *client)
+-{
+-	struct device *dev = &client->dev;
+-	struct regmap *regmap;
+-	int ret;
+-
+-	regmap = devm_regmap_init_i2c(client, &tps68470_regmap_config);
+-	if (IS_ERR(regmap)) {
+-		dev_err(dev, "devm_regmap_init_i2c Error %ld\n",
+-			PTR_ERR(regmap));
+-		return PTR_ERR(regmap);
+-	}
+-
+-	i2c_set_clientdata(client, regmap);
+-
+-	ret = tps68470_chip_init(dev, regmap);
+-	if (ret < 0) {
+-		dev_err(dev, "TPS68470 Init Error %d\n", ret);
+-		return ret;
+-	}
+-
+-	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, tps68470s,
+-			      ARRAY_SIZE(tps68470s), NULL, 0, NULL);
+-	if (ret < 0) {
+-		dev_err(dev, "devm_mfd_add_devices failed: %d\n", ret);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+-static const struct acpi_device_id tps68470_acpi_ids[] = {
+-	{"INT3472"},
+-	{},
+-};
+-
+-static struct i2c_driver tps68470_driver = {
+-	.driver = {
+-		   .name = "tps68470",
+-		   .acpi_match_table = tps68470_acpi_ids,
+-	},
+-	.probe_new = tps68470_probe,
+-};
+-builtin_i2c_driver(tps68470_driver);
 -- 
 2.25.1
 
