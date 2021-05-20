@@ -2,242 +2,390 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B876BC433ED
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 12:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F478C433B4
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 13:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3196100C
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 12:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51ABC611AD
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 May 2021 13:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243550AbhETNAI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 May 2021 09:00:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33182 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243254AbhETM5c (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 May 2021 08:57:32 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 748D2C0612AC;
-        Thu, 20 May 2021 05:22:21 -0700 (PDT)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S243118AbhETNIB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 May 2021 09:08:01 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:51406 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233191AbhETNH4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 20 May 2021 09:07:56 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1621515995; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=JPtC60RO41+P3OoBocVeVFv4X8kpV/bjSY64w/T+SJ4=;
+ b=VJJeX/lmxRiD6meaOfzmDWWjFe4btVo0hAOppsL2fUQjx+0nFZORSUFKpEOdILMTh0o17GJ7
+ H6fuH6wgKWhzfnoffxxA+VD9Zf79JohtWdhp1/bGoEje3ygwU/x6/QzArXgYsoDpg/yL+Ujm
+ 0EA6t/7aAqrP85I5mWCYduHH2w4=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 60a65e95d1aee7698dcb4b18 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 20 May 2021 13:05:25
+ GMT
+Sender: skakit=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0BAEBC43146; Thu, 20 May 2021 13:05:24 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 714FC2224A;
-        Thu, 20 May 2021 14:22:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1621513339;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mIfVSkJEirj47E9KJ0wuZ5dlcFpXTDZau4I97gIiTbE=;
-        b=s7yLCURY52qU1bLR4OljUp6wUU43vm13SVrHHidtRyEx2J/F8qWbmNVf1NEEPjtWtWIBWF
-        DqWjpxm/JkDXUScEQBDpqCDUCBgdf94IQ0N+gdMLfl+rqmLVbwZwiZYHW7ZzNfNguA2sGy
-        JEdIiB9jXXTTYwEthCKsVCjTUD5LJ8s=
+        (Authenticated sender: skakit)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 44FD9C43143;
+        Thu, 20 May 2021 13:05:23 +0000 (UTC)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 20 May 2021 14:22:19 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     matti.vaittinen@fi.rohmeurope.com
+Date:   Thu, 20 May 2021 18:35:23 +0530
+From:   skakit@codeaurora.org
+To:     Rob Herring <robh@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com
-Subject: Re: [PATCH 1/2] gpio: regmap: Support few IC specific operations
-In-Reply-To: <c6acc28e87d43973561a66bdb4d78905882f2940.camel@fi.rohmeurope.com>
-References: <09091e75157ea28dcad1605008532016304356a4.1621509932.git.matti.vaittinen@fi.rohmeurope.com>
- <7d6f71e0a79e6ccd2a9f69be189993a9@walle.cc>
- <c6acc28e87d43973561a66bdb4d78905882f2940.camel@fi.rohmeurope.com>
-User-Agent: Roundcube Webmail/1.4.11
-Message-ID: <689539b24f9dc57ec0bfc92fdd9d3464@walle.cc>
-X-Sender: michael@walle.cc
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        kgunda@codeaurora.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V3 3/3] dt-bindings: pinctrl: qcom-pmic-gpio: Convert qcom
+ pmic gpio bindings to YAML
+In-Reply-To: <20210518005531.GA3539579@robh.at.kernel.org>
+References: <1620817988-18809-1-git-send-email-skakit@codeaurora.org>
+ <1620817988-18809-4-git-send-email-skakit@codeaurora.org>
+ <20210518005531.GA3539579@robh.at.kernel.org>
+Message-ID: <68ccd08a4aa89582aa499f510ea4b1a6@codeaurora.org>
+X-Sender: skakit@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Am 2021-05-20 14:00, schrieb Matti Vaittinen:
-> On Thu, 2021-05-20 at 13:42 +0200, Michael Walle wrote:
->> Am 2021-05-20 13:28, schrieb Matti Vaittinen:
->> > The set_config and init_valid_mask GPIO operations are usually very
->> > IC
->> > specific. Allow IC drivers to provide these custom operations at
->> > gpio-regmap registration.
->> >
->> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
->> > ---
->> >  drivers/gpio/gpio-regmap.c  | 49
->> > +++++++++++++++++++++++++++++++++++++
->> >  include/linux/gpio/regmap.h | 13 ++++++++++
->> >  2 files changed, 62 insertions(+)
->> >
->> > diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-
->> > regmap.c
->> > index 134cedf151a7..315285cacd3f 100644
->> > --- a/drivers/gpio/gpio-regmap.c
->> > +++ b/drivers/gpio/gpio-regmap.c
->> > @@ -27,6 +27,10 @@ struct gpio_regmap {
->> >  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int
->> > base,
->> >  			      unsigned int offset, unsigned int *reg,
->> >  			      unsigned int *mask);
->> > +	int (*set_config)(struct regmap *regmap, void *drvdata,
->> > +			  unsigned int offset, unsigned long config);
->> > +	int (*init_valid_mask)(struct regmap *regmap, void *drvdata,
->> > +				unsigned long *valid_mask, unsigned int
->> > ngpios);
+On 2021-05-18 06:25, Rob Herring wrote:
+> On Wed, May 12, 2021 at 04:43:08PM +0530, satya priya wrote:
+>> Convert Qualcomm PMIC GPIO bindings from .txt to .yaml format.
 >> 
->> Maybe we should also make the first argument a "struct gpio_regmap"
->> and provide a new gpio_regmap_get_regmap(struct gpio_regmap). Thus
->> having a similar api as for the reg_mask_xlate(). Andy?
-> 
-> I don't really see the reason of making this any more complicated for
-> IC drivers. If we don't open the struct gpio_regmap to IC drivers -
-> then they never need the struct gpio_regmap pointer itself but each IC
-> driver would need to do some unnecessary function call
-> (gpio_regmap_get_regmap() in this case). I'd say that would be
-> unnecessary bloat.
-
-If there is ever the need of additional parameters, you'll have to
-modify that parameter list. Otherwise you'll just have to add a new
-function. Thus might be more future proof.
-
-But I won't object to it.
-
->> >  	void *driver_data;
->> >  };
->> > @@ -39,6 +43,43 @@ static unsigned int gpio_regmap_addr(unsigned
->> > int
->> > addr)
->> >  	return addr;
->> >  }
->> >
->> > +static int regmap_gpio_init_valid_mask(struct gpio_chip *gc,
->> > +					unsigned long *valid_mask,
->> > +					unsigned int ngpios)
->> > +{
->> > +	struct gpio_regmap *gpio;
->> > +	void *drvdata;
->> > +
->> > +	gpio = gpiochip_get_data(gc);
->> > +
->> > +	if (!gpio->init_valid_mask) {
->> > +		WARN_ON(!gpio->init_valid_mask);
->> > +		return -EINVAL;
->> > +	}
+>> Signed-off-by: satya priya <skakit@codeaurora.org>
+>> ---
+>> Changes in V3:
+>>  - As per Rob's comments fixed bot erros.
+>>  - Moved this patch to end of the series so that other patches are not
+>>    blocked on this.
 >> 
->> Why not the following?
+>> Changes in V4:
+>>  - As per Rob's comments, added maxItems for reg and interrupts.
+>>    Added reference of "pinmux-node.yaml" and "pincfg-node.yaml".
+>>    Made 'additionalProperties' as false.
 >> 
->> if (!gpio->init_valid_mask)
->>      return 0;
+>>  .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 288 
+>> ---------------------
+>>  .../bindings/pinctrl/qcom,pmic-gpio.yaml           | 245 
+>> ++++++++++++++++++
+>>  2 files changed, 245 insertions(+), 288 deletions(-)
+>>  delete mode 100644 
+>> Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
 > 
-> It just feels like an error if regmap_gpio_init_valid_mask() is ever
-> called by core without having the gpio->init_valid_mask set. Probably
-> this would mean that the someone has errorneously modified the gpio-
->> init_valid_mask set after gpio_regmap registration - whih smells like
-> a problem. Thus the WARN() sounds like a correct course of action to
-> me. (I may be wrong though - see below)
 > 
->> Thus copying the behavior of gpiolib.
+>> diff --git 
+>> a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml 
+>> b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+>> new file mode 100644
+>> index 0000000..85381a0
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+>> @@ -0,0 +1,245 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pinctrl/qcom,pmic-gpio.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm PMIC GPIO block
+>> +
+>> +maintainers:
+>> +  - Bjorn Andersson <bjorn.andersson@sonymobile.com>
+>> +
+>> +description: |
+>> +  This binding describes the GPIO block(s) found in the 8xxx series 
+>> of
+>> +  PMIC's from Qualcomm.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - qcom,pm8005-gpio
+>> +          - qcom,pm8018-gpio
+>> +          - qcom,pm8038-gpio
+>> +          - qcom,pm8058-gpio
+>> +          - qcom,pm8916-gpio
+>> +          - qcom,pm8917-gpio
+>> +          - qcom,pm8921-gpio
+>> +          - qcom,pm8941-gpio
+>> +          - qcom,pm8950-gpio
+>> +          - qcom,pm8994-gpio
+>> +          - qcom,pm8998-gpio
+>> +          - qcom,pma8084-gpio
+>> +          - qcom,pmi8950-gpio
+>> +          - qcom,pmi8994-gpio
+>> +          - qcom,pmi8998-gpio
+>> +          - qcom,pms405-gpio
+>> +          - qcom,pm660-gpio
+>> +          - qcom,pm660l-gpio
+>> +          - qcom,pm8150-gpio
+>> +          - qcom,pm8150b-gpio
+>> +          - qcom,pm6150-gpio
+>> +          - qcom,pm6150l-gpio
+>> +          - qcom,pmx55-gpio
+>> +          - qcom,pm7325-gpio
+>> +          - qcom,pm8350c-gpio
+>> +          - qcom,pmk8350-gpio
+>> +          - qcom,pmr735a-gpio
+>> +
+>> +      - enum:
+>> +          - qcom,spmi-gpio
+>> +          - qcom,ssbi-gpio
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    minItems: 1
+>> +    maxItems: 44
 > 
-> I must admit I didn't check how this is implemented in gpiolib. But the
-> gpio_chip's init_valid_mask should not be set if regmap_gpio_config
-> does not have valid init_valid_mask pointer at registration. Thus it
-> smells like an error to me if the GPIO core calls the
-> regmap_gpio_init_valid_mask() and regmap_gpio has not set the
-> init_valid_mask pointer. But as I said, I haven't looked in gpiolib for
-> this so I may be wrong.
+> Please say something about what the 1-44 interrupts are if you can't
+> define each one.
+> 
 
-Oh, I missed that you only set it when it is set in the
-gpio_regmap_config. Thus, I'd say drop it entirely? It is only within
-this module where things might go wrong.
+Okay, will add the description back.
 
->> > +
->> > +	drvdata = gpio_regmap_get_drvdata(gpio);
->> > +
->> > +	return gpio->init_valid_mask(gpio->regmap, drvdata,
->> > valid_mask,
->> > ngpios);
->> > +}
->> > +
->> > +static int gpio_regmap_set_config(struct gpio_chip *gc, unsigned
->> > int
->> > offset,
->> > +				  unsigned long config)
->> > +{
->> > +	struct gpio_regmap *gpio;
->> > +	void *drvdata;
->> > +
->> > +	gpio = gpiochip_get_data(gc);
->> > +
->> > +	if (!gpio->set_config) {
->> > +		WARN_ON(!gpio->set_config);
->> > +		return -EINVAL;
->> > +	}
+>> +
+>> +  '#interrupt-cells':
+>> +    const: 2
+>> +
+>> +  interrupt-controller: true
+>> +
+>> +  gpio-controller: true
+>> +
+>> +  gpio-ranges:
+>> +    maxItems: 1
+>> +
+>> +  '#gpio-cells':
+>> +    const: 2
+>> +    description: |
+>> +        The first cell will be used to define gpio number and the
+>> +        second denotes the flags for this gpio
+>> +
+>> +  gpio-keys:
+>> +    type: object
+>> +    properties:
+>> +      volume-keys:
+>> +        type: object
+>> +        anyOf:
+>> +          - $ref: "pinmux-node.yaml"
+>> +          - $ref: "pincfg-node.yaml"
+>> +        properties:
+>> +          pins:
+>> +            description: |
+>> +                List of gpio pins affected by the properties 
+>> specified in
+>> +                this subnode.  Valid pins are
+>> +                     - gpio1-gpio4 for pm8005
+>> +                     - gpio1-gpio6 for pm8018
+>> +                     - gpio1-gpio12 for pm8038
+>> +                     - gpio1-gpio40 for pm8058
+>> +                     - gpio1-gpio4 for pm8916
+>> +                     - gpio1-gpio38 for pm8917
+>> +                     - gpio1-gpio44 for pm8921
+>> +                     - gpio1-gpio36 for pm8941
+>> +                     - gpio1-gpio8 for pm8950 (hole on gpio3)
+>> +                     - gpio1-gpio22 for pm8994
+>> +                     - gpio1-gpio26 for pm8998
+>> +                     - gpio1-gpio22 for pma8084
+>> +                     - gpio1-gpio2 for pmi8950
+>> +                     - gpio1-gpio10 for pmi8994
+>> +                     - gpio1-gpio12 for pms405 (holes on gpio1, gpio9
+>> +                                                and gpio10)
+>> +                     - gpio1-gpio10 for pm8150 (holes on gpio2, 
+>> gpio5,
+>> +                                                gpio7 and gpio8)
+>> +                     - gpio1-gpio12 for pm8150b (holes on gpio3, 
+>> gpio4
+>> +                                                 and gpio7)
+>> +                     - gpio1-gpio12 for pm8150l (hole on gpio7)
+>> +                     - gpio1-gpio10 for pm6150
+>> +                     - gpio1-gpio12 for pm6150l
+>> +                     - gpio1-gpio10 for pm7325
+>> +                     - gpio1-gpio9 for pm8350c
+>> +                     - gpio1-gpio4 for pmk8350
+>> +                     - gpio1-gpio4 for pmr735a
+>> +
+>> +            items:
+>> +              pattern: "^gpio([0-9]+)$"
+>> +
+>> +          function:
+>> +            description: |
+>> +                Specify the alternative function to be configured for 
+>> the
+>> +                specified pins.
+> 
+> No need to redescribe a common property.
+> 
+
+okay, will remove.
+
+>> +            items:
+>> +              - enum:
+>> +                  - normal
+>> +                  - paired
+>> +                  - func1
+>> +                  - func2
+>> +                  - dtest1
+>> +                  - dtest2
+>> +                  - dtest3
+>> +                  - dtest4
+>> +                  - func3  # supported by LV/MV GPIO subtypes
+>> +                  - func4  # supported by LV/MV GPIO subtypes
+>> +
+>> +          bias-disable: true
+>> +
+>> +          bias-pull-down: true
+>> +
+>> +          bias-pull-up: true
+>> +
+>> +          qcom,pull-up-strength:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +            description: |
+>> +                Specifies the strength to use for pull up, if 
+>> selected.
+>> +                Valid values are defined in
+>> +                <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+>> +                If this property is omitted 30uA strength will be 
+>> used
+>> +                if pull up is selected
+>> +
+>> +          bias-high-impedance: true
+>> +
+>> +          input-enable: true
+>> +
+>> +          output-high: true
+>> +
+>> +          output-low: true
+>> +
+>> +          power-source: true
+>> +
+>> +          qcom,drive-strength:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +            description: |
+>> +                Selects the drive strength for the specified pins
+>> +                Valid drive strength values are defined in
+>> +                <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> 
+> Please define the constraints here.
+> 
+
+Okay.
+
+>> +
+>> +          drive-push-pull: true
+>> +
+>> +          drive-open-drain: true
+>> +
+>> +          drive-open-source: true
+>> +
+>> +          qcom,analog-pass:
+>> +            $ref: /schemas/types.yaml#/definitions/flag
+>> +            description: |
+>> +                The specified pins are configured in
+>> +                analog-pass-through mode.
+>> +
+>> +          qcom,atest:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +            description: |
+>> +                Selects ATEST rail to route to GPIO when it's
+>> +                configured in analog-pass-through mode.
+>> +            enum: [1 2 3 4]
+> 
+> enum: [ 1, 2, 3, 4 ]
+> 
+
+Okay.
+
+>> +
+>> +          qcom,dtest-buffer:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +            description: |
+>> +                Selects DTEST rail to route to GPIO when it's
+>> +                configured as digital input.
+>> +            enum: [1 2 3 4]
+> 
+> Ditto.
+> 
+>> +
+>> +        required:
+>> +          - pins
+>> +          - function
+>> +
+>> +        additionalProperties: false
+>> +
+>> +additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+>> +
+>> +    pm8921_gpio: gpio@150 {
+>> +      compatible = "qcom,pm8921-gpio", "qcom,ssbi-gpio";
+>> +      reg = <0x150 0x160>;
+>> +      interrupts = <192 1>, <193 1>, <194 1>,
+>> +                   <195 1>, <196 1>, <197 1>,
+>> +                   <198 1>, <199 1>, <200 1>,
+>> +                   <201 1>, <202 1>, <203 1>,
+>> +                   <204 1>, <205 1>, <206 1>,
+>> +                   <207 1>, <208 1>, <209 1>,
+>> +                   <210 1>, <211 1>, <212 1>,
+>> +                   <213 1>, <214 1>, <215 1>,
+>> +                   <216 1>, <217 1>, <218 1>,
+>> +                   <219 1>, <220 1>, <221 1>,
+>> +                   <222 1>, <223 1>, <224 1>,
+>> +                   <225 1>, <226 1>, <227 1>,
+>> +                   <228 1>, <229 1>, <230 1>,
+>> +                   <231 1>, <232 1>, <233 1>,
+>> +                   <234 1>, <235 1>;
+>> +
+>> +      gpio-controller;
+>> +      #gpio-cells = <2>;
+>> +
+>> +      pm8921_gpio_keys: gpio-keys {
+>> +        volume-keys {
+>> +          pins = "gpio20", "gpio21";
+>> +          function = "normal";
+>> +
+>> +          input-enable;
+>> +          bias-pull-up;
+>> +          drive-push-pull;
+>> +          qcom,drive-strength = <PMIC_GPIO_STRENGTH_NO>;
+>> +          power-source = <PM8921_GPIO_S4>;
+>> +        };
+>> +      };
+>> +    };
+>> +...
+>> --
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+>> member
+>> of Code Aurora Forum, hosted by The Linux Foundation
 >> 
->> same here, return -ENOTSUPP.
-> 
-> As above -
-> if (!gpio->set_config) {
-> 	the gpio-core should never call gpio_regmap_set_config() if the
-> }
-> 
-> Maybe I should add a comment to clarify the WARN() ?
->> 
->> > +
->> > +	drvdata = gpio_regmap_get_drvdata(gpio);
->> > +
->> > +	return gpio->set_config(gpio->regmap, drvdata, offset, config);
->> > +}
->> > +
->> >  static int gpio_regmap_simple_xlate(struct gpio_regmap *gpio,
->> >  				    unsigned int base, unsigned int
->> > offset,
->> >  				    unsigned int *reg, unsigned int
->> > *mask)
->> > @@ -235,6 +276,8 @@ struct gpio_regmap *gpio_regmap_register(const
->> > struct gpio_regmap_config *config
->> >  	gpio->reg_clr_base = config->reg_clr_base;
->> >  	gpio->reg_dir_in_base = config->reg_dir_in_base;
->> >  	gpio->reg_dir_out_base = config->reg_dir_out_base;
->> > +	gpio->set_config = config->set_config;
->> > +	gpio->init_valid_mask = config->init_valid_mask;
->> >
->> >  	/* if not set, assume there is only one register */
->> >  	if (!gpio->ngpio_per_reg)
->> > @@ -253,6 +296,10 @@ struct gpio_regmap *gpio_regmap_register(const
->> > struct gpio_regmap_config *config
->> >  	chip->ngpio = config->ngpio;
->> >  	chip->names = config->names;
->> >  	chip->label = config->label ?: dev_name(config->parent);
->> > +	if (gpio->set_config)
->> > +		chip->set_config = gpio_regmap_set_config;
->> > +	if (gpio->init_valid_mask)
->> > +		chip->init_valid_mask = regmap_gpio_init_valid_mask;
->> >
->> >  #if defined(CONFIG_OF_GPIO)
->> >  	/* gpiolib will use of_node of the parent if chip->of_node is
->> > NULL */
->> > @@ -280,6 +327,8 @@ struct gpio_regmap *gpio_regmap_register(const
->> > struct gpio_regmap_config *config
->> >  		chip->direction_output = gpio_regmap_direction_output;
->> >  	}
->> >
->> > +	gpio_regmap_set_drvdata(gpio, config->drvdata);
->> 
->> I'm wondering if we need the gpio_regmap_set_drvdata() anymore or if
->> we can just drop it entirely.
-> 
-> I wouldn't drop it. I think there _may_ be cases where the drvdata is
-> set only after the registration. (Just my gut-feeling, I may be wrong
-> though)
-
-Ok, but as you already mentioned on IRC, it could be a bit of a trap
-because it might already be used after gpiochip_add_data() and thus
-be NULL if not provided by gpio_regmap_config().
-
--michael
