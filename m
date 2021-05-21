@@ -2,82 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CE1C43617
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 May 2021 07:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEE1C433B4
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 May 2021 08:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4AEBE613CA
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 May 2021 07:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C619613AC
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 May 2021 08:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235367AbhEUHzm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 May 2021 03:55:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36748 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231605AbhEUHzl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 May 2021 03:55:41 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440EAC06138E
-        for <linux-gpio@vger.kernel.org>; Fri, 21 May 2021 00:54:18 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:18b5:4195:d4ed:57e1])
-        by albert.telenet-ops.be with bizsmtp
-        id 7KuD2500646MpxJ06KuDnv; Fri, 21 May 2021 09:54:16 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ljzz2-007iyc-M8; Fri, 21 May 2021 09:54:12 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ljzz2-00A3uu-8r; Fri, 21 May 2021 09:54:12 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        id S229875AbhEUIGV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 May 2021 04:06:21 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:46101 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229755AbhEUIGU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 May 2021 04:06:20 -0400
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 819662224D;
+        Fri, 21 May 2021 10:04:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1621584296;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nSTicCgFPLz8bT6sxCt7FpN97fVeykecr1m01Xg8n20=;
+        b=ixYBu6tQYrinQxyy4HnnIhjTjzUEo7r0s4aZff1OB2QqG9ntle3yw9OzAki68noXUycFx3
+        AmVpoys+Go1NsLsuyP37GXwzLwow/ph5c2OT72zu6G1eCHvPx77ESyJrx74b5LDfHgo9Uk
+        SsPOky+paYP+SZOPSIg8YzfPDniyAjI=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 21 May 2021 10:04:56 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jan Tuerk <jan.tuerk@emtrion.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] ARM: dts: imx: emcon-avari: Fix nxp,pca8574 #gpio-cells
-Date:   Fri, 21 May 2021 09:54:07 +0200
-Message-Id: <6cd916fc8c0a133cd216eee06cac86716b66eff4.1621583562.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1621583562.git.geert+renesas@glider.be>
-References: <cover.1621583562.git.geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com
+Subject: Re: [PATCH v2 1/3] gpio: regmap: Support few IC specific operations
+In-Reply-To: <6e319c22b41747e3911c7a5cad877134cabc9231.1621577204.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1621577204.git.matti.vaittinen@fi.rohmeurope.com>
+ <6e319c22b41747e3911c7a5cad877134cabc9231.1621577204.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Roundcube Webmail/1.4.11
+Message-ID: <2044737db51904355817a5ca2771df91@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-According to the DT bindings, #gpio-cells must be two.
+Am 2021-05-21 08:27, schrieb Matti Vaittinen:
+> The set_config and init_valid_mask GPIO operations are usually very IC
+> specific. Allow IC drivers to provide these custom operations at
+> gpio-regmap registration.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 
-Fixes: 63e71fedc07c4ece ("ARM: dts: Add support for emtrion emCON-MX6 series")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/imx6qdl-emcon-avari.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Michael Walle <michael@walle.cc>
 
-diff --git a/arch/arm/boot/dts/imx6qdl-emcon-avari.dtsi b/arch/arm/boot/dts/imx6qdl-emcon-avari.dtsi
-index 828cf3e39784afd6..c4e146f3341bb85d 100644
---- a/arch/arm/boot/dts/imx6qdl-emcon-avari.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-emcon-avari.dtsi
-@@ -126,7 +126,7 @@ boardid: gpio@3a {
- 		compatible = "nxp,pca8574";
- 		reg = <0x3a>;
- 		gpio-controller;
--		#gpio-cells = <1>;
-+		#gpio-cells = <2>;
- 	};
- };
- 
--- 
-2.25.1
-
+-michael
