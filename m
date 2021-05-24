@@ -2,129 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6283EC2B9F8
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 10:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9966C2B9F8
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47DFB611CD
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 10:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB24D611CD
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232636AbhEXK0S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 May 2021 06:26:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33142 "EHLO
+        id S232118AbhEXL2o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 May 2021 07:28:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232629AbhEXK0S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 06:26:18 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B56C061574;
-        Mon, 24 May 2021 03:24:49 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id n6-20020a17090ac686b029015d2f7aeea8so10993630pjt.1;
-        Mon, 24 May 2021 03:24:49 -0700 (PDT)
+        with ESMTP id S232050AbhEXL2n (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 07:28:43 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CCFC061574;
+        Mon, 24 May 2021 04:27:16 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id w206so5923345ybg.7;
+        Mon, 24 May 2021 04:27:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MEQuDKUSQKw0MZlz9rMkXgWLUEoc5fj6IhTPOzDj8iU=;
-        b=Qv4TPYvwJysNuGU2x2gZCJJZc/CsezboC7ejkinAqyTwUOPW2sQqSFyRm7Hg5oQmkZ
-         hHkbkbfd4OVdLDim98PFHsvRh46B4g67lkzIrqgNCTFjMfuHEFfrzd/sFinLOhnGhS8L
-         xFFinXINswnbZ5sMvCdGJ1I81XHwaYmhi9oRsrklreqbqE6nLbtgAG+LH/fbyXKx5+i6
-         N9a0sU0M0p8u8TnP4+otmeCJxhtED7Bp89OWdoYuxxEQtEq7134CVFOUSLR6W1iuacQt
-         w+0d3Jcg1hQPPB2OiofQYu6b++9NKmHO14Qj3DlKJ+rP2emse7HAu+6H2fkb8t/urcvZ
-         5qGg==
+        bh=n4lZKQ7D/b+Y1RnAe1IHv907xEM4UrKrYxjGnKdhmJs=;
+        b=kCzxdZSgQ+Qvkuemg1RliV7PQ15KS5a1Qe+OwDcyfwKRqZeAeqlfwqbMGUopNBnIGO
+         xV7tKYPuyGNDSKbtaR5y5JTrluPYIrSv+x8WL4KkqbqDpwfn8gmHIv8y1mjjlb32uubI
+         mpZujOUm6T+yU1K4psAp0SByHHHZxtsFW91ACMCFLavQWd+vdcrJzhfeJABoSlyFw8mq
+         5VImmopVl4M+pEntrlWzGFmO4UESaMhuUe1vhotgHvf1w0503oYPNlau5+SvFNteTdZD
+         SPgs1sG5x09+Z1s4CBdp50r+5+w3KJxgzfxR5YRlYN3J8gUZk/+1Fp7P038BtOhnedpi
+         H0NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MEQuDKUSQKw0MZlz9rMkXgWLUEoc5fj6IhTPOzDj8iU=;
-        b=l0s2uTuhtVZV0khlBleRMLk0Pa5PVlLpvIMjDqtBzzM9BTojBt/esVT+71AVgg425e
-         J1SXZuptj+MlzSybG7OK3eBGlgko6xyt0FCtiIm4I5mFY1YYw+NfXB0Ziel1iQGIXrfs
-         Ka1jK9Dl6jt6vsSfRbkUIDhNkRyyUEPXPfQ8STcJJ8AHeBBWVg7jNPljzQHs1Co4u1qv
-         zylelW0cQ7EsvWQQ9uh1VGsPxH8Zr3oz6CN2W+SKM0237J2OW2lZuOyfJ90/R0LlM6oF
-         /hux8bzhHjeJeiAetTO8j5on0dmAaE0si9SHFV9gdFav8W2KT0rDvEYafHjSaJdsmeCs
-         H2sg==
-X-Gm-Message-State: AOAM5314KEfgTqemUt6MnMxZxAw8UkyhNJV2gu+maK0kEyOUMuX89k6W
-        Y1kQonIlxY5zScQnr2YQsVpWY86dW+T1laNqIfs=
-X-Google-Smtp-Source: ABdhPJx+rTrdBTgdPKGW3YRrFwFVcsETKQkPqTT0e3PgCx+XWECpiRV/lfsemIIjh58HUe7/Dq9qZgoi01trTtQ3tHQ=
-X-Received: by 2002:a17:90a:17ad:: with SMTP id q42mr24585537pja.181.1621851889142;
- Mon, 24 May 2021 03:24:49 -0700 (PDT)
+        bh=n4lZKQ7D/b+Y1RnAe1IHv907xEM4UrKrYxjGnKdhmJs=;
+        b=ZoeBGi/pzX0HzljNBaPniT7DYWTyAlMXqpIOYwMDrBZRukRxgFjdK3H4q5l59SIKiq
+         ZPjap28EAosKsICc/bXQGOg2cNYdOuGjmaB9hT4Nm+zL7mcBWrkIY0WvPosxUhzQhKnx
+         ox86/3pza4XEehs8xkBG4RlEm0iuaEVANqWRmkdoxjqquZ0Nvo6JkhWX85YGYuiDKwgU
+         og7WNaOIZSX8eDkRdTbUbAsWYR2efjMsAkGzTLGGgLz+MQYTC1ytanAkEG2Sx3EzT5+b
+         R66hdgmegnRUgvNvgDhP/1R8AuZWrCXf5IcKtRXEX1muh1ToFNPaHGp9Wr63vXOmsSzN
+         kALg==
+X-Gm-Message-State: AOAM5318jFPClJkN2sV/F2n7vQZvsrZycUR4T1xCytdBcjhLHCHaQX/5
+        b8aX9YNttlb54EHffKF+AMNLR3XT91NARkPSmg8=
+X-Google-Smtp-Source: ABdhPJy2CiQGQD9PVjlvfc77AiGZksg4u2goErRpB2fkP/7pbqKE9HS5KbzuJSWj6Tjl5TG5N7AmZEE5geyLUdWuD1U=
+X-Received: by 2002:a25:b78e:: with SMTP id n14mr35491542ybh.474.1621855635345;
+ Mon, 24 May 2021 04:27:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1621809029.git.sander@svanheule.net> <213ab7580a1d3229d32f7aac67bf4e828612153a.1621809029.git.sander@svanheule.net>
-In-Reply-To: <213ab7580a1d3229d32f7aac67bf4e828612153a.1621809029.git.sander@svanheule.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 24 May 2021 13:24:33 +0300
-Message-ID: <CAHp75VdoSfO3Y9Lf+fcoG2=Rb+SBJKq+B0tG+gS7TaHUmN-iYg@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] leds: Add support for RTL8231 LED scan matrix
-To:     Sander Vanheule <sander@svanheule.net>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20201203191135.21576-1-info@metux.net> <20201203191135.21576-2-info@metux.net>
+In-Reply-To: <20201203191135.21576-2-info@metux.net>
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+Date:   Mon, 24 May 2021 16:57:03 +0530
+Message-ID: <CAOh2x=kcM351ObubnQSzUa=FVBQUmAUhz4u8ExORUthQQ0WbGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] drivers: gpio: add virtio-gpio guest driver
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        bgolaszewski@baylibre.com, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, May 24, 2021 at 1:34 AM Sander Vanheule <sander@svanheule.net> wrote:
+On Fri, Dec 4, 2020 at 12:51 AM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 >
-> Both single and bi-color scanning modes are supported. The driver will
-> verify that the addresses are valid for the current mode, before
-> registering the LEDs. LEDs can be turned on, off, or toggled at one of
-> six predefined rates from 40ms to 1280ms.
+> Introducing new gpio driver for virtual GPIO devices via virtio.
 >
-> Implements a platform device for use as a child device with RTL8231 MFD,
-> and uses the parent regmap to access the required registers.
+> The driver allows routing gpio control into VM guests, eg. brigding
+> virtual gpios to specific host gpios, or attaching simulators for
+> automatic application testing.
+>
+> Changes v2:
+>     * fixed uapi header license
+>     * sorted include's
+>     * fixed formatting
+>     * fixed unneeded devm allocation - plain kzalloc/kfree is enough
+>     * fixed missing devm_kzalloc fail check
+>     * use devm_kcalloc() for array allocation
+>     * added virtio-gpio protocol specification
 
-...
+Hi Enrico,
 
-> +         This options enables support for using the LED scanning matrix output
+We (Linaro's Project Stratos
+https://linaro.atlassian.net/wiki/spaces/STR/overview)
+ are interested in this stuff. I was trying to look at the last status
+of all this. Few
+questions for you:
 
-option
+- Was the spec ever posted to virtio-dev list ? I thought that's the
+very first step before
+we merge the code.
 
-> +         of the RTL8231 GPIO and LED expander chip.
-> +         When built as a module, this module will be named leds-rtl8231.
+- Any follow up on this patchset ?
 
-...
+Thanks. I will be happy to help otherwise and have cycles to work on
+this if you need my help.
 
-> +               interval_ms = 500;
-
-Does this deserve a #define?
-
-...
-
-> +       ret = fwnode_property_count_u32(fwnode, "reg");
-> +       if (ret < 0)
-> +               return ret;
-> +       if (ret != 2)
-> +               return -ENODEV;
-
-I would say -EINVAL, but -ENODEV is similarly okay.
-
-...
-
-> +       int err;
-
-ret or err? Be consistent across a single driver.
-
-...
-
-> +       int err;
-
-Ditto.
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+--
+viresh
