@@ -2,112 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9966C2B9F8
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 062A6C04FF3
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB24D611CD
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4CA861151
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232118AbhEXL2o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 May 2021 07:28:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232050AbhEXL2n (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 07:28:43 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CCFC061574;
-        Mon, 24 May 2021 04:27:16 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id w206so5923345ybg.7;
-        Mon, 24 May 2021 04:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n4lZKQ7D/b+Y1RnAe1IHv907xEM4UrKrYxjGnKdhmJs=;
-        b=kCzxdZSgQ+Qvkuemg1RliV7PQ15KS5a1Qe+OwDcyfwKRqZeAeqlfwqbMGUopNBnIGO
-         xV7tKYPuyGNDSKbtaR5y5JTrluPYIrSv+x8WL4KkqbqDpwfn8gmHIv8y1mjjlb32uubI
-         mpZujOUm6T+yU1K4psAp0SByHHHZxtsFW91ACMCFLavQWd+vdcrJzhfeJABoSlyFw8mq
-         5VImmopVl4M+pEntrlWzGFmO4UESaMhuUe1vhotgHvf1w0503oYPNlau5+SvFNteTdZD
-         SPgs1sG5x09+Z1s4CBdp50r+5+w3KJxgzfxR5YRlYN3J8gUZk/+1Fp7P038BtOhnedpi
-         H0NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n4lZKQ7D/b+Y1RnAe1IHv907xEM4UrKrYxjGnKdhmJs=;
-        b=ZoeBGi/pzX0HzljNBaPniT7DYWTyAlMXqpIOYwMDrBZRukRxgFjdK3H4q5l59SIKiq
-         ZPjap28EAosKsICc/bXQGOg2cNYdOuGjmaB9hT4Nm+zL7mcBWrkIY0WvPosxUhzQhKnx
-         ox86/3pza4XEehs8xkBG4RlEm0iuaEVANqWRmkdoxjqquZ0Nvo6JkhWX85YGYuiDKwgU
-         og7WNaOIZSX8eDkRdTbUbAsWYR2efjMsAkGzTLGGgLz+MQYTC1ytanAkEG2Sx3EzT5+b
-         R66hdgmegnRUgvNvgDhP/1R8AuZWrCXf5IcKtRXEX1muh1ToFNPaHGp9Wr63vXOmsSzN
-         kALg==
-X-Gm-Message-State: AOAM5318jFPClJkN2sV/F2n7vQZvsrZycUR4T1xCytdBcjhLHCHaQX/5
-        b8aX9YNttlb54EHffKF+AMNLR3XT91NARkPSmg8=
-X-Google-Smtp-Source: ABdhPJy2CiQGQD9PVjlvfc77AiGZksg4u2goErRpB2fkP/7pbqKE9HS5KbzuJSWj6Tjl5TG5N7AmZEE5geyLUdWuD1U=
-X-Received: by 2002:a25:b78e:: with SMTP id n14mr35491542ybh.474.1621855635345;
- Mon, 24 May 2021 04:27:15 -0700 (PDT)
+        id S232726AbhEXL3E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 May 2021 07:29:04 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:21159 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232674AbhEXL3B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 07:29:01 -0400
+X-Greylist: delayed 825 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 May 2021 07:29:01 EDT
+Received: from twspam01.aspeedtech.com (localhost [127.0.0.2] (may be forged))
+        by twspam01.aspeedtech.com with ESMTP id 14OB0tiC025007
+        for <linux-gpio@vger.kernel.org>; Mon, 24 May 2021 19:00:55 +0800 (GMT-8)
+        (envelope-from steven_lee@aspeedtech.com)
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 14OB0oks024990;
+        Mon, 24 May 2021 19:00:50 +0800 (GMT-8)
+        (envelope-from steven_lee@aspeedtech.com)
+Received: from slee-VirtualBox.localdomain (192.168.100.253) by
+ TWMBX02.aspeed.com (192.168.0.24) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 24 May 2021 19:13:44 +0800
+From:   Steven Lee <steven_lee@aspeedtech.com>
+To:     Andrew Jeffery <andrew@aj.id.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        "moderated list:ASPEED PINCTRL DRIVERS" 
+        <linux-aspeed@lists.ozlabs.org>,
+        "moderated list:ASPEED PINCTRL DRIVERS" <openbmc@lists.ozlabs.org>,
+        "open list:ASPEED PINCTRL DRIVERS" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     <steven_lee@aspeedtech.com>, <Hongweiz@ami.com>,
+        <ryan_chen@aspeedtech.com>, <billy_tsai@aspeedtech.com>
+Subject: [PATCH v1 0/3] pinctrl: pinctrl-g6: Add the 2nd sgpio
+Date:   Mon, 24 May 2021 19:13:34 +0800
+Message-ID: <20210524111338.16049-1-steven_lee@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20201203191135.21576-1-info@metux.net> <20201203191135.21576-2-info@metux.net>
-In-Reply-To: <20201203191135.21576-2-info@metux.net>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Mon, 24 May 2021 16:57:03 +0530
-Message-ID: <CAOh2x=kcM351ObubnQSzUa=FVBQUmAUhz4u8ExORUthQQ0WbGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] drivers: gpio: add virtio-gpio guest driver
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        bgolaszewski@baylibre.com, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Linux Documentation <linux-doc@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [192.168.100.253]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 14OB0oks024990
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Dec 4, 2020 at 12:51 AM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
->
-> Introducing new gpio driver for virtual GPIO devices via virtio.
->
-> The driver allows routing gpio control into VM guests, eg. brigding
-> virtual gpios to specific host gpios, or attaching simulators for
-> automatic application testing.
->
-> Changes v2:
->     * fixed uapi header license
->     * sorted include's
->     * fixed formatting
->     * fixed unneeded devm allocation - plain kzalloc/kfree is enough
->     * fixed missing devm_kzalloc fail check
->     * use devm_kcalloc() for array allocation
->     * added virtio-gpio protocol specification
+AST2600 has 2 SGPIO master interfaces one with 128 pins and another one
+has 80 pins, it also supports 2 SGPIO slave interfaces.
+However, there is only the first sgpio master/slave interface defined in
+dtsi and pinctrl driver.
+The patch series adds the second SGPIO master and slave interfaces
+in dt-bindings, dtsi and pinctrl driver.
 
-Hi Enrico,
+Please help to review.
 
-We (Linaro's Project Stratos
-https://linaro.atlassian.net/wiki/spaces/STR/overview)
- are interested in this stuff. I was trying to look at the last status
-of all this. Few
-questions for you:
+Thanks,
+Steven
 
-- Was the spec ever posted to virtio-dev list ? I thought that's the
-very first step before
-we merge the code.
+Steven Lee (3):
+  dt-bindings: pinctrl: Update enum for adding SGPM2 and SGPS2
+  ARM: dts: aspeed-g6: Add pinctrl settings
+  pinctrl: pinctrl-aspeed-g6: Add sgpio pinctrl settings
 
-- Any follow up on this patchset ?
+ .../pinctrl/aspeed,ast2600-pinctrl.yaml       | 10 ++++----
+ arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi      | 10 ++++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c    | 24 +++++++++++++++----
+ drivers/pinctrl/aspeed/pinmux-aspeed.h        |  9 +++++++
+ 4 files changed, 44 insertions(+), 9 deletions(-)
 
-Thanks. I will be happy to help otherwise and have cycles to work on
-this if you need my help.
+-- 
+2.17.1
 
---
-viresh
