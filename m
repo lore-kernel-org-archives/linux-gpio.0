@@ -2,87 +2,155 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC2DC2B9F8
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 16:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBCDC04FF3
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 16:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA0ED61403
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 16:13:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E223C61074
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 16:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234384AbhEXQPV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 May 2021 12:15:21 -0400
-Received: from vern.gendns.com ([98.142.107.122]:43838 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237025AbhEXQOR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 May 2021 12:14:17 -0400
-X-Greylist: delayed 1212 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 May 2021 12:14:16 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mu76QB4BKzjBdZu1ybVuQhnhYDd8LEq/NCibHuc/NpI=; b=QT3nO2BecZHEyvyRTzcV140qNW
-        wnc8wO8/dZnmXj7LljHXe6bvyvzEfV5wOW/crRLjTIH8UVfV2EQVQCJdmiUqzUuHVyYTr/fZOTRE1
-        zBxYfK7KKHs/76InpIy1G9nI6orSo3NCLB89p8N3RQ7tC4MMBBNSlHdmdEHDtZt6f4BOXCBjEsPCI
-        vzDkhuw5GUs0LQByGyYPZsrtemtE96Kwl1DKqQpIzNDGSMjQhbMvwFQw8YsLyvQrxBbZ34Guayc4L
-        W11hjip8t/a/xYIpwTf924GIkAdGXiLxisXslMjDreIhNu8dCfYwYVSPilkRys+uM2LFgTTyFM/Wo
-        p4pZ2Ilw==;
-Received: from [2600:1700:4830:165f::fb2] (port=33546)
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <david@lechnology.com>)
-        id 1llCsV-0002Ll-5n; Mon, 24 May 2021 11:52:30 -0400
-Subject: Re: [PATCH v3 1/2] ARM: dts: da850-lego-ev3: align GPIO hog names
- with dt-schema
-To:     Aswath Govindraju <a-govindraju@ti.com>
-Cc:     Lokesh Vutla <lokeshvutla@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Keerthy <j-keerthy@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20210524151955.8008-1-a-govindraju@ti.com>
- <20210524151955.8008-2-a-govindraju@ti.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <4fbab5e8-f957-0927-c9fd-3127ae30b746@lechnology.com>
-Date:   Mon, 24 May 2021 10:52:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S233550AbhEXQbw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 May 2021 12:31:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59966 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233401AbhEXQbi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 12:31:38 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3DC0C06138B
+        for <linux-gpio@vger.kernel.org>; Mon, 24 May 2021 09:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=FNchyohTk64OPI3ZQ9BXTbaOFALE2D5YS8PQlfIT8Q4=; b=phFSGRWYYk5RAYehzI+oFJ6ACn
+        9ORUV2yQivMh+O/un7FjjkkCCnQ0GEyDHEZ77xH/z0NG/4dg+ZFAThJNqcWXGJAC5cHrUvcoI/O7s
+        CSjkHpfy6sNcZt0EtTFsr6pYiKXajZjbMmltn5cE6EJp+/sUKSI5d+PmUJfBfZ5v0YavjKmrS/eOD
+        lgdgjNz2zvYXkKhMgS2bz3m7DDbN8VxkLMlGzGvm49ltHEcNvIMmwoonh4oadysqt+8KbBuV8T0M1
+        c+k844mjQ6sIRWhwmp+a754+L/tXSZuxLBduxqgIwUCLSzPHalGhZ8j1bynRNn/aTbY2q3h2tD1fo
+        BF5cchkw==;
+Received: from 164-105-191-90.dyn.estpak.ee ([90.191.105.164] helo=ubuntu)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sandberg@mailfence.com>)
+        id 1llDSW-0005nU-7z; Mon, 24 May 2021 19:29:41 +0300
+Received: by ubuntu (sSMTP sendmail emulation); Mon, 24 May 2021 19:29:36 +0300
+From:   Mauri Sandberg <sandberg@mailfence.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     bgolaszewski@baylibre.com, Mauri Sandberg <sandberg@mailfence.com>
+Subject: [PATCH v3 1/2] dt-bindings: gpio-mux-input: add documentation
+Date:   Mon, 24 May 2021 19:29:05 +0300
+Message-Id: <20210524162906.30784-2-sandberg@mailfence.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210524162906.30784-1-sandberg@mailfence.com>
+References: <20210325122832.119147-1-sandberg@mailfence.com>
+ <20210524162906.30784-1-sandberg@mailfence.com>
 MIME-Version: 1.0
-In-Reply-To: <20210524151955.8008-2-a-govindraju@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 90.191.105.164
+X-SA-Exim-Mail-From: sandberg@mailfence.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 5/24/21 10:19 AM, Aswath Govindraju wrote:
-> The GPIO hog dt-schema node naming convention expect GPIO hogs node names
-> to end with a 'hog' suffix.
-> 
-> Signed-off-by: Aswath Govindraju <a-govindraju@ti.com>
-> ---
+Add documentation for a general GPIO multiplexer.
 
-Acked-by: David Lechner <david@lechnology.com>
+Signed-off-by: Mauri Sandberg <sandberg@mailfence.com>
+---
+v2 -> v3: added a complete example on dual 4-way multiplexer
+v1 -> v2: added a little bit more text in the binding documenation
+---
+ .../bindings/gpio/gpio-mux-input.yaml         | 75 +++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml b/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
+new file mode 100644
+index 000000000000..a7ff5d1fd6f3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/gpio-mux-input.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Generic GPIO input multiplexer
++
++maintainers:
++  - Mauri Sandberg <sandberg@mailfence.com>
++
++description: |
++  A generic GPIO based input multiplexer
++
++  This driver uses a mux-controller to drive the multiplexer and has a single
++  output pin for reading the inputs to the mux.
++
++  For GPIO consumer documentation see gpio.txt.
++
++properties:
++  compatible:
++    enum:
++      - gpio-mux-input
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  pin-gpios:
++    description: |
++      The GPIO pin used as the output from the multiplexer
++
++required:
++  - compatible
++  - gpio-controller
++  - "#gpio-cells"
++  - pin-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    mux: mux-controller {
++        compatible = "gpio-mux";
++        #mux-control-cells = <0>;
++
++        mux-gpios = <&gpio 9 GPIO_ACTIVE_HIGH>,
++                    <&gpio 11 GPIO_ACTIVE_HIGH>;
++    };
++
++    gpio2: key-mux1 {
++        compatible = "gpio-mux-input";
++        mux-controls = <&mux>;
++
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        // GPIOs used by this node, mux pin
++        pin-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
++    };
++
++    gpio3: key-mux2 {
++        compatible = "gpio-mux-input";
++        mux-controls = <&mux>;
++
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        // GPIOs used by this node, mux pin
++        pin-gpios = <&gpio 14 GPIO_ACTIVE_HIGH>;
++    };
++
++...
+-- 
+2.25.1
 
