@@ -2,179 +2,157 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD15C2B9F7
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5151C04FF3
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 993F060BBB
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99F4361132
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 11:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232110AbhEXL3K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 May 2021 07:29:10 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:29353 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232603AbhEXL3K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 07:29:10 -0400
-Received: from twspam01.aspeedtech.com (localhost [127.0.0.2] (may be forged))
-        by twspam01.aspeedtech.com with ESMTP id 14OB1CF7025066
-        for <linux-gpio@vger.kernel.org>; Mon, 24 May 2021 19:01:12 +0800 (GMT-8)
-        (envelope-from steven_lee@aspeedtech.com)
-Received: from mail.aspeedtech.com ([192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id 14OB0qgP024993;
-        Mon, 24 May 2021 19:00:52 +0800 (GMT-8)
-        (envelope-from steven_lee@aspeedtech.com)
-Received: from slee-VirtualBox.localdomain (192.168.100.253) by
- TWMBX02.aspeed.com (192.168.0.24) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 24 May 2021 19:13:46 +0800
-From:   Steven Lee <steven_lee@aspeedtech.com>
-To:     Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        "moderated list:ASPEED PINCTRL DRIVERS" 
-        <linux-aspeed@lists.ozlabs.org>,
-        "moderated list:ASPEED PINCTRL DRIVERS" <openbmc@lists.ozlabs.org>,
-        "open list:ASPEED PINCTRL DRIVERS" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-CC:     <steven_lee@aspeedtech.com>, <Hongweiz@ami.com>,
-        <ryan_chen@aspeedtech.com>, <billy_tsai@aspeedtech.com>
-Subject: [PATCH v1 3/3] pinctrl: pinctrl-aspeed-g6: Add sgpio pinctrl settings
-Date:   Mon, 24 May 2021 19:13:37 +0800
-Message-ID: <20210524111338.16049-4-steven_lee@aspeedtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210524111338.16049-1-steven_lee@aspeedtech.com>
-References: <20210524111338.16049-1-steven_lee@aspeedtech.com>
+        id S232547AbhEXLe5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 May 2021 07:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48608 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232494AbhEXLep (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 07:34:45 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB8CC061574
+        for <linux-gpio@vger.kernel.org>; Mon, 24 May 2021 04:33:16 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id v13so14469613ple.9
+        for <linux-gpio@vger.kernel.org>; Mon, 24 May 2021 04:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=x46gnLIGsJq8N7jGrCH9lPhfRM+Zfds2ZLfr1wKusVE=;
+        b=jC0voObdRyc6r9TnwWBCRQchvULo+zIFEuHpIywiy+UwGYvIFA7Vn/kqZ+MMqG5/ho
+         h217vZg0BccSzdx3NCqhJh3jhn2avoWyLnOOysPU43hrWTXAF1obKrNQrdHKfJqsm7BK
+         Ip3o20XhNt4Y7PZW9ie26Rgl9P2ILX4Gp5O5kuf/G/lbofeQySYVDtpEiXcylFZmlyk7
+         LsgO7idyPudGWLRxJ7Ti9V+NKlefwgnpBJqAwuXZzFxKCZ+hzTn+vODAdVbdl3aRhflJ
+         Ib7zVBQDh9q95kLJAoiQNKbCnzg+In9UHHdORsbHg0a5iZvLIlB/lLwMH3di/Ze3M45k
+         La5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=x46gnLIGsJq8N7jGrCH9lPhfRM+Zfds2ZLfr1wKusVE=;
+        b=o2r+vGuL8j08S244pfZCv1xSxZHWV5HJEIXKPtO5V2E+vm5/RuXyj6prV6I2ieN5UJ
+         h9iP5kms4HyI0Qxa+lxF9+8bRKxP0fs8WTLN0ZTaqXG6skY6VEMGG2uyyq25apE7VVBb
+         L03nsG0xuIgFgPQRDuYrIsogfWiiTnOCzFrqsVuHfXcS+HkNYhwVZT1evUEmbNoDI4Kt
+         R/Au6/4+mcRATG2rsEppU0ILMebDOEhuAzM4/Yg+SysK97GYYzaAB6ZyxY3BCnGcQhll
+         Vl+8YIiiSMAP3GxS99lQidgokelIv/PuzaniQ5HlU7a9rSLRO/wEAvSx5h+4cTpl8Vuk
+         7+ag==
+X-Gm-Message-State: AOAM531oS+OXb+qB5zADTM5dIjOsJuP1qz0Wuj7/LDEUqnUArdjK90qb
+        wQnFS7ctIVcCdQJI4Z9vwyBbVq8s9QHQqy06tKvxLu2A72c=
+X-Google-Smtp-Source: ABdhPJynzscYstFTvqH/U5z21Kxt25zlQkvNifrNTQCC9/nDBg3l9jMhHvWxCDExmJ4vAaFnomsHiMeDiuAhg5vJ/dw=
+X-Received: by 2002:a17:90a:17ad:: with SMTP id q42mr24853372pja.181.1621855995917;
+ Mon, 24 May 2021 04:33:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.100.253]
-X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
- (192.168.0.24)
-X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com 14OB0qgP024993
+References: <cover.1621809029.git.sander@svanheule.net> <185e8c61893502575c542750c8f27b09029e3078.1621809029.git.sander@svanheule.net>
+ <CAHp75VfCCFd9SQwqv-JhdHMudYWdaa1tcVp4ZNescioWTaoXFQ@mail.gmail.com>
+In-Reply-To: <CAHp75VfCCFd9SQwqv-JhdHMudYWdaa1tcVp4ZNescioWTaoXFQ@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 24 May 2021 14:32:59 +0300
+Message-ID: <CAHp75VceQ_Wiaf8zFN+f4uk6nv=ZmhE_rGgbEcB1hYh2Kz5VyA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] pinctrl: Add RTL8231 pin control and GPIO support
+To:     Sander Vanheule <sander@svanheule.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-AST2600 supports 2 SGPIO master interfaces and 2 SGPIO slave interfaces.
-Current pinctrl driver only define the first sgpio master and slave
-interfaces.
-The sencond SGPIO master and slave interfaces should be added in
-pinctrl driver as well.
+Oops, I had sent this privately, Cc'ing to ML.
 
-Signed-off-by: Steven Lee <steven_lee@aspeedtech.com>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 24 ++++++++++++++++++----
- drivers/pinctrl/aspeed/pinmux-aspeed.h     |  9 ++++++++
- 2 files changed, 29 insertions(+), 4 deletions(-)
+On Mon, May 24, 2021 at 12:08 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, May 24, 2021 at 1:34 AM Sander Vanheule <sander@svanheule.net> wrote:
+> >
+> > This driver implements the GPIO and pin muxing features provided by the
+> > RTL8231. The device should be instantiated as an MFD child, where the
+> > parent device has already configured the regmap used for register
+> > access.
+> >
+> > Although described in the bindings, pin debouncing and drive strength
+> > selection are currently not implemented. Debouncing is only available
+> > for the six highest GPIOs, and must be emulated when other pins are used
+> > for (button) inputs anyway.
+>
+> ...
+>
+> > +struct rtl8231_function {
+> > +       const char *name;
+> > +       unsigned int ngroups;
+> > +       const char **groups;
+>
+> const char * const * groups?
+> (Double check this, because I don't know if it's really const in your case)
+>
+> > +};
+>
+> ...
+>
+> > +       const struct rtl8231_pin_desc *desc =
+> > +               (struct rtl8231_pin_desc *) &rtl8231_pins[group_selector].drv_data;
+>
+> Casting from/to void * is redundant in C.
+>
+> ...
+>
+> > +       struct rtl8231_pin_desc *desc =
+> > +               (struct rtl8231_pin_desc *) &rtl8231_pins[offset].drv_data;
+>
+> Ditto.
+>
+> ...
+>
+> > +       ctrl->nfunctions = ARRAY_SIZE(rtl8231_pin_function_names);
+> > +       ctrl->functions = devm_kcalloc(dev, ctrl->nfunctions, sizeof(*ctrl->functions), GFP_KERNEL);
+> > +       if (!ctrl->functions) {
+>
+> > +               dev_err(dev, "failed to allocate pin function descriptors\n");
+>
+> Dtop this noisy message, user space will print the similar one.
+>
+> > +               return -ENOMEM;
+> > +       }
+>
+> ...
+>
+> > +       ctrl->map = dev_get_regmap(dev->parent, NULL);
+> > +       if (!ctrl->map)
+> > +               return -ENODEV;
+> > +
+> > +       if (IS_ERR(ctrl->map))
+> > +               return PTR_ERR(ctrl->map);
+>
+> Hmm... Is it really the case that you have to check for different values?
+> What does NULL mean? Optional?
+>
+> ...
+>
+> > +       gr = devm_gpio_regmap_register(dev, &gpio_cfg);
+> > +       if (IS_ERR(gr)) {
+>
+> > +               dev_err(dev, "failed to register gpio controller\n");
+> > +               return PTR_ERR(gr);
+>
+> Is it possible to get a deferred probe here? If so, use dev_err_probe()
+>
+> > +       }
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-index 5c1a109842a7..d0e9ab9d1a9c 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-@@ -46,8 +46,10 @@
- #define SCU620		0x620 /* Disable GPIO Internal Pull-Down #4 */
- #define SCU634		0x634 /* Disable GPIO Internal Pull-Down #5 */
- #define SCU638		0x638 /* Disable GPIO Internal Pull-Down #6 */
-+#define SCU690		0x690 /* Multi-function Pin Control #24 */
- #define SCU694		0x694 /* Multi-function Pin Control #25 */
- #define SCU69C		0x69C /* Multi-function Pin Control #27 */
-+#define SCU6D0		0x6D0 /* Multi-function Pin Control #29 */
- #define SCUC20		0xC20 /* PCIE configuration Setting Control */
- 
- #define ASPEED_G6_NR_PINS 256
-@@ -81,13 +83,17 @@ FUNC_GROUP_DECL(I2C12, L26, K24);
- #define K26 4
- SIG_EXPR_LIST_DECL_SESG(K26, MACLINK1, MACLINK1, SIG_DESC_SET(SCU410, 4));
- SIG_EXPR_LIST_DECL_SESG(K26, SCL13, I2C13, SIG_DESC_SET(SCU4B0, 4));
--PIN_DECL_2(K26, GPIOA4, MACLINK1, SCL13);
-+SIG_EXPR_LIST_DECL_SESG(K26, SGPS2CK, SGPS2, SIG_DESC_SET(SCU690, 4));
-+SIG_EXPR_LIST_DECL_SESG(K26, SGPM2CLK, SGPM2, SIG_DESC_SET(SCU6D0, 4));
-+PIN_DECL_4(K26, GPIOA4, SGPM2CLK, SGPS2CK, MACLINK1, SCL13);
- FUNC_GROUP_DECL(MACLINK1, K26);
- 
- #define L24 5
- SIG_EXPR_LIST_DECL_SESG(L24, MACLINK2, MACLINK2, SIG_DESC_SET(SCU410, 5));
- SIG_EXPR_LIST_DECL_SESG(L24, SDA13, I2C13, SIG_DESC_SET(SCU4B0, 5));
--PIN_DECL_2(L24, GPIOA5, MACLINK2, SDA13);
-+SIG_EXPR_LIST_DECL_SESG(L24, SGPS2LD, SGPS2, SIG_DESC_SET(SCU690, 5));
-+SIG_EXPR_LIST_DECL_SESG(L24, SGPM2LD, SGPM2, SIG_DESC_SET(SCU6D0, 5));
-+PIN_DECL_4(L24, GPIOA5, SGPM2LD, SGPS2LD, MACLINK2, SDA13);
- FUNC_GROUP_DECL(MACLINK2, L24);
- 
- FUNC_GROUP_DECL(I2C13, K26, L24);
-@@ -95,16 +101,22 @@ FUNC_GROUP_DECL(I2C13, K26, L24);
- #define L23 6
- SIG_EXPR_LIST_DECL_SESG(L23, MACLINK3, MACLINK3, SIG_DESC_SET(SCU410, 6));
- SIG_EXPR_LIST_DECL_SESG(L23, SCL14, I2C14, SIG_DESC_SET(SCU4B0, 6));
--PIN_DECL_2(L23, GPIOA6, MACLINK3, SCL14);
-+SIG_EXPR_LIST_DECL_SESG(L23, SGPS2O, SGPS2, SIG_DESC_SET(SCU690, 6));
-+SIG_EXPR_LIST_DECL_SESG(L23, SGPM2O, SGPM2, SIG_DESC_SET(SCU6D0, 6));
-+PIN_DECL_4(L23, GPIOA6, SGPM2O, SGPS2O, MACLINK3, SCL14);
- FUNC_GROUP_DECL(MACLINK3, L23);
- 
- #define K25 7
- SIG_EXPR_LIST_DECL_SESG(K25, MACLINK4, MACLINK4, SIG_DESC_SET(SCU410, 7));
- SIG_EXPR_LIST_DECL_SESG(K25, SDA14, I2C14, SIG_DESC_SET(SCU4B0, 7));
--PIN_DECL_2(K25, GPIOA7, MACLINK4, SDA14);
-+SIG_EXPR_LIST_DECL_SESG(K25, SGPS2I, SGPS2, SIG_DESC_SET(SCU690, 7));
-+SIG_EXPR_LIST_DECL_SESG(K25, SGPM2I, SGPM2, SIG_DESC_SET(SCU6D0, 7));
-+PIN_DECL_4(K25, GPIOA7, SGPM2I, SGPS2I, MACLINK4, SDA14);
- FUNC_GROUP_DECL(MACLINK4, K25);
- 
- FUNC_GROUP_DECL(I2C14, L23, K25);
-+FUNC_GROUP_DECL(SGPM2, K26, L24, L23, K25);
-+FUNC_GROUP_DECL(SGPS2, K26, L24, L23, K25);
- 
- #define J26 8
- SIG_EXPR_LIST_DECL_SESG(J26, SALT1, SALT1, SIG_DESC_SET(SCU410, 8));
-@@ -2060,7 +2072,9 @@ static const struct aspeed_pin_group aspeed_g6_groups[] = {
- 	ASPEED_PINCTRL_GROUP(EMMCG4),
- 	ASPEED_PINCTRL_GROUP(EMMCG8),
- 	ASPEED_PINCTRL_GROUP(SGPM1),
-+	ASPEED_PINCTRL_GROUP(SGPM2),
- 	ASPEED_PINCTRL_GROUP(SGPS1),
-+	ASPEED_PINCTRL_GROUP(SGPS2),
- 	ASPEED_PINCTRL_GROUP(SIOONCTRL),
- 	ASPEED_PINCTRL_GROUP(SIOPBI),
- 	ASPEED_PINCTRL_GROUP(SIOPBO),
-@@ -2276,7 +2290,9 @@ static const struct aspeed_pin_function aspeed_g6_functions[] = {
- 	ASPEED_PINCTRL_FUNC(SD1),
- 	ASPEED_PINCTRL_FUNC(SD2),
- 	ASPEED_PINCTRL_FUNC(SGPM1),
-+	ASPEED_PINCTRL_FUNC(SGPM2),
- 	ASPEED_PINCTRL_FUNC(SGPS1),
-+	ASPEED_PINCTRL_FUNC(SGPS2),
- 	ASPEED_PINCTRL_FUNC(SIOONCTRL),
- 	ASPEED_PINCTRL_FUNC(SIOPBI),
- 	ASPEED_PINCTRL_FUNC(SIOPBO),
-diff --git a/drivers/pinctrl/aspeed/pinmux-aspeed.h b/drivers/pinctrl/aspeed/pinmux-aspeed.h
-index dba5875ff276..125df796af36 100644
---- a/drivers/pinctrl/aspeed/pinmux-aspeed.h
-+++ b/drivers/pinctrl/aspeed/pinmux-aspeed.h
-@@ -730,6 +730,15 @@ struct aspeed_pin_desc {
- 			SIG_EXPR_LIST_PTR(pin, low), \
- 			SIG_EXPR_LIST_PTR(pin, other))
- 
-+#define PIN_DECL_4(pin, other, high, medium, low1, low2) \
-+	SIG_EXPR_LIST_DECL_SESG(pin, other, other); \
-+	PIN_DECL_(pin, \
-+			SIG_EXPR_LIST_PTR(pin, high), \
-+			SIG_EXPR_LIST_PTR(pin, medium), \
-+			SIG_EXPR_LIST_PTR(pin, low1), \
-+			SIG_EXPR_LIST_PTR(pin, low2), \
-+			SIG_EXPR_LIST_PTR(pin, other))
-+
- #define GROUP_SYM(group) group_pins_ ## group
- #define GROUP_DECL(group, ...) \
- 	static const int GROUP_SYM(group)[] = { __VA_ARGS__ }
+
+
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
