@@ -4,44 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F3CC47085
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 14:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECE2C47084
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 14:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28DA7617ED
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 14:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1112161002
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 14:57:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233144AbhEXOwS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 May 2021 10:52:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55762 "EHLO mail.kernel.org"
+        id S233122AbhEXO6Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 May 2021 10:58:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233485AbhEXOuS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 May 2021 10:50:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 93D3C61406;
-        Mon, 24 May 2021 14:47:46 +0000 (UTC)
+        id S233637AbhEXO4W (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 May 2021 10:56:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9521E61442;
+        Mon, 24 May 2021 14:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621867667;
+        s=k20201202; t=1621867746;
         bh=40J/3GWj3gKLWslHKs2Yo2Y6QSbX0dqakuseEQRoHDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z7caE7byj2+1x3fdWDH5d3g7dEMGirPmlc97sQnvgDlb5kr6Y9Xd4p1CG/T3x79Zb
-         AkW4radanYpkNb0OGc/In1Smm3cOUDwwJJTbOBmw2ndNgbNDpb42QEfprjMdsPgSCr
-         OmEGedOW/W4Wml0a0XHnnHxbAH9O2ElpdkxTfFxaxW9w0/Pm+2GFMDfdh/MPWn+FxL
-         igN17Z2HxYHDcBDqHSsXi4LIWBuIqAM7TUV7HWZhf77mdqXXuObVjrXmrBFx4RRY33
-         nN02PVCrWuX/R4CkHnYfbi4XxxhzXijMMcgrmr7w7x5C4ZdEtBJbtvihUVFFVHoCAg
-         SpwFzWfr7dqAg==
+        b=PMkV/zZ6M7gsca9KTPuUQPXHXBPkmsumwHlJjSj0zUqowRAIn9yiqsyiGdOJkyjvB
+         BKLqIgRlY/3k5xFVVJ09Ij7aSBx821DcPg6g9T8dTZCfqtrkm7JdR7hiPsE0T17s95
+         l9xu1lFFDhpawYFLn0Y72c3Tab9AREZF4TqfVhmr+jVHxqdkx4EcZZ+3OPd+t8vHO4
+         viTLpkFgDGQys/K8ecIAqfM+i7F8JU1Ze1f0v1ekVdM5CmlIvdB+2+tvEx99XTAEyt
+         8lM7JymXmpiNvzEByGAxm946IrjQLNkqrqcOZc1I/VGoXrmQzgkA2D7xmL8SUct5QJ
+         3jcNgt6KU6j3A==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Zou Wei <zou_wei@huawei.com>, Hulk Robot <hulkci@huawei.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 02/62] gpio: cadence: Add missing MODULE_DEVICE_TABLE
-Date:   Mon, 24 May 2021 10:46:43 -0400
-Message-Id: <20210524144744.2497894-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 02/52] gpio: cadence: Add missing MODULE_DEVICE_TABLE
+Date:   Mon, 24 May 2021 10:48:12 -0400
+Message-Id: <20210524144903.2498518-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210524144744.2497894-1-sashal@kernel.org>
-References: <20210524144744.2497894-1-sashal@kernel.org>
+In-Reply-To: <20210524144903.2498518-1-sashal@kernel.org>
+References: <20210524144903.2498518-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
