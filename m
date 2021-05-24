@@ -2,147 +2,225 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20678C47084
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 08:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932E7C04FF3
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 09:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEB8B61241
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 08:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D06E610C7
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 May 2021 09:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232418AbhEXIZH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 May 2021 04:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34098 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232413AbhEXIZH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 May 2021 04:25:07 -0400
-Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84499C06138A
-        for <linux-gpio@vger.kernel.org>; Mon, 24 May 2021 01:23:39 -0700 (PDT)
-Received: from [IPv6:2a02:a03f:eafb:ee01:cbcc:e481:3e58:4db1] (unknown [IPv6:2a02:a03f:eafb:ee01:cbcc:e481:3e58:4db1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 9DDD6202DEE;
-        Mon, 24 May 2021 10:23:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1621844617;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uOEL5PVKTSUVqkse2nPy0LK4tHDeHxRnITwOHkYlUW8=;
-        b=rqSTd/u4vzlzBctH2x2b+Ywq6+PBJXlKX09/61rlwGcukDMom3rzHQIF2HFoNf1RS4gzwH
-        kJsdq9Cm4gvMxI3rpEloPpZjl9Sn861VEXq3qmkK20JWnzVZMnoOmehF5paEaMoS9HKpfh
-        n3i/gRp+zCcIscFKFjUiZc4J1fJ5DVnUWZcNVOFBCy0aPEOGVTpUFEmoYjl4A+Yz5MXgnT
-        PSTIs9wPUen+mefNSF6Y83gSHEcvMJib7B2ftSh15c9Wnyr+rKG4uWUDo7vFbPmG3buL4A
-        MwEC2I5Ajz8DZWetaWNjvugtwJFh0O64eTdXKHLNH7O9O6tmOhUrt6RdbomGOQ==
-Message-ID: <cb8593ab7a70528528bae3de45e33fae68a9ec1c.camel@svanheule.net>
-Subject: Re: [PATCH v3 4/6] mfd: Add RTL8231 core device
-From:   Sander Vanheule <sander@svanheule.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel test robot <lkp@intel.com>
-Date:   Mon, 24 May 2021 10:23:35 +0200
-In-Reply-To: <CAHp75VcbRKGYSJZK_Rg969-Uck=h+8byWt0B3MtQJDqwbdf2sw@mail.gmail.com>
-References: <cover.1621809029.git.sander@svanheule.net>
-         <6d14b72bc545a818675d99c8e91e99c96cc3e286.1621809029.git.sander@svanheule.net>
-         <CAHp75VcbRKGYSJZK_Rg969-Uck=h+8byWt0B3MtQJDqwbdf2sw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S232549AbhEXJ1m (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 May 2021 05:27:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:49299 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232545AbhEXJ1l (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 May 2021 05:27:41 -0400
+IronPort-SDR: WvoqCkZJaT9HajsEpKNI64TcTtcXMkNvPnULzO8QU6IqqFm5F82uWX4iSGnh0XEozg3czIm7Bi
+ 0ybqJzR9V0cw==
+X-IronPort-AV: E=McAfee;i="6200,9189,9993"; a="263104318"
+X-IronPort-AV: E=Sophos;i="5.82,319,1613462400"; 
+   d="scan'208";a="263104318"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2021 02:26:10 -0700
+IronPort-SDR: dDXyde/0bQZfpEFSxfwGo+Y0yTNs1UEuEcj+Qdq8kH2EuYDScl8kiNjknrbj6PhAOK0qCyzt+v
+ vNcylzO0IXTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.82,319,1613462400"; 
+   d="scan'208";a="478450457"
+Received: from inlubt0177.iind.intel.com ([10.223.67.91])
+  by fmsmga002.fm.intel.com with ESMTP; 24 May 2021 02:26:08 -0700
+From:   lakshmi.sowjanya.d@intel.com
+To:     linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lakshmi.bai.raja.subramanian@intel.com, tamal.saha@intel.com,
+        lakshmi.sowjanya.d@intel.com
+Subject: [PATCH 1/2] dt-bindings: pinctrl: Add bindings for Intel Keembay pinctrl driver
+Date:   Mon, 24 May 2021 14:56:04 +0530
+Message-Id: <20210524092605.734-2-lakshmi.sowjanya.d@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210524092605.734-1-lakshmi.sowjanya.d@intel.com>
+References: <20210524092605.734-1-lakshmi.sowjanya.d@intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy,
+From: "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
 
-On Mon, 2021-05-24 at 11:02 +0300, Andy Shevchenko wrote:
-> On Mon, May 24, 2021 at 1:34 AM Sander Vanheule <sander@svanheule.net> wrote:
-> > 
-> > The RTL8231 is implemented as an MDIO device, and provides a regmap
-> > interface for register access by the core and child devices.
-> > 
-> > The chip can also be a device on an SMI bus, an I2C-like bus by Realtek.
-> > Since kernel support for SMI is limited, and no real-world SMI
-> > implementations have been encountered for this device, this is currently
-> > unimplemented. The use of the regmap interface should make any future
-> > support relatively straightforward.
-> > 
-> > After reset, all pins are muxed to GPIO inputs before the pin drivers
-> > are enabled. This is done to prevent accidental system resets, when a
-> > pin is connected to the parent SoC's reset line.
-> 
-> ...
-> 
-> > [missing MDIO_BUS dependency, provided via REGMAP_MDIO]
-> > Reported-by: kernel test robot <lkp@intel.com>
-> 
-> What does this fix? Shouldn't it have a Fixes tag? (Yes, I know that
-> you answered in the other email, but here is a hint: before settling
-> these kinds of things do not send a new version. Instead of speeding
-> up the review you are closer to the chance to have this been not
-> applied for v5.14 at all)
-> 
+Add Device Tree bindings documentation for Intel Keem Bay
+SoC's pin controller.
+Add entry for INTEL Keem Bay pinctrl driver in MAINTAINERS file
 
-I'll drop this from the commit message, if this isn't appropriate without a
-Fixes-tag (which I can't provide anyway).
+Signed-off-by: Vineetha G. Jaya Kumaran <vineetha.g.jaya.kumaran@intel.com>
+Signed-off-by: Vijayakannan Ayyathurai <vijayakannan.ayyathurai@intel.com>
+Signed-off-by: D, Lakshmi Sowjanya <lakshmi.sowjanya.d@intel.com>
+Acked-by: Mark Gross <mgross@linux.intel.com>
+---
+ .../pinctrl/intel,pinctrl-keembay.yaml        | 135 ++++++++++++++++++
+ MAINTAINERS                                   |   5 +
+ 2 files changed, 140 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
 
-
-> ...
-> 
-> > +       /* SOFT_RESET bit self-clears when done */
-> > +       regmap_update_bits(map, RTL8231_REG_PIN_HI_CFG,
-> > +               RTL8231_PIN_HI_CFG_SOFT_RESET,
-> > RTL8231_PIN_HI_CFG_SOFT_RESET);
-> 
-> > +       usleep_range(1000, 10000);
-> 
-> It's strange to see this big range of minimum and maximum sleep.
-> Usually the ratio should not be bigger than ~3-4 between the values.
-
-I could also change this from a usleep to a polling loop that checks (with a
-loop limit) if the reset bit has self-cleared already. 
-
-The datasheet that I have doesn't mention how fast it should self-clear. So I
-checked, and it appears to be done after one loop iteration already. So,
-certainly faster than the current usleep.
-
-Would a polling loop (with maybe like max. 10 iterations) be a good alternative
-for you?
-
-> 
-> ...
-> 
-> > +       regmap_write(map, RTL8231_REG_PIN_MODE0, 0xffff);
-> > +       regmap_write(map, RTL8231_REG_GPIO_DIR0, 0xffff);
-> > +       regmap_write(map, RTL8231_REG_PIN_MODE1, 0xffff);
-> > +       regmap_write(map, RTL8231_REG_GPIO_DIR1, 0xffff);
-> 
-> GENMASK() ?
-> Actually it seems it deserves a special definition like
-> 
-> ..._ALL_PIN_MASK  GENMASK(15, 0)
-
-Ok, I'll add the extra macro to clarify the intent of the values.
-
-
-Best,
-Sander
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
+new file mode 100644
+index 000000000000..8d45eddf972f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
+@@ -0,0 +1,135 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/intel,pinctrl-keembay.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Intel Keem Bay pin controller Device Tree Bindings
++
++maintainers:
++  - Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
++
++description: |
++  Intel Keem Bay SoC integrates a pin controller which enables control
++  of pin directions, input/output values and configuration
++  for a total of 80 pins.
++
++properties:
++  compatible:
++    const: intel,keembay-pinctrl
++
++  reg:
++    maxItems: 2
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  interrupts:
++    description:
++      Specifies the interrupt lines to be used by the controller.
++    maxItems: 8
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++patternProperties:
++  '^.$':
++    type: object
++
++    description:
++      Child nodes can be specified to contain pin configuration information,
++      which can then be utilized by pinctrl client devices.
++      The following properties are supported.
++
++    properties:
++      pins:
++        description: |
++          The name(s) of the pins to be configured in the child node.
++          Supported pin names are "GPIO0" up to "GPIO79".
++
++      bias-disable:
++        type: boolean
++
++      bias-pull-down:
++        type: boolean
++
++      bias-pull-up:
++        type: boolean
++
++      drive-strength:
++        enum: [2, 4, 8, 12]
++
++      bias-bus-hold:
++        type: boolean
++
++      input-schmitt-enable:
++        type: boolean
++
++      slew-rate:
++        description: |
++         0: Fast
++         1: Slow
++        enum: [0, 1]
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    // Example 1
++    pinctrl@600B0000 {
++        compatible = "intel,keembay-pinctrl";
++        reg = <0x600b0000 0x88>,
++              <0x600b0190 0x1ac>;
++        gpio-controller;
++        #gpio-cells = <0x2>;
++        interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++    };
++
++    // Example 2
++    pinctrl@600C0000 {
++        compatible = "intel,keembay-pinctrl";
++        reg = <0x600c0000 0x88>,
++              <0x600c0190 0x1ac>;
++        gpio-controller;
++        #gpio-cells = <0x2>;
++        interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        spi_pinconf {
++            pins = "GPIO10", "GPIO11";
++            drive-strength = <4>;
++            bias-pull-down;
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 81e1edeceae4..1991899c12e1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14445,6 +14445,11 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git
+ F:	drivers/pinctrl/intel/
+ 
++PIN CONTROLLER - KEEMBAY
++M:	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
++S:	Supported
++F:	drivers/pinctrl/pinctrl-keembay*
++
+ PIN CONTROLLER - MEDIATEK
+ M:	Sean Wang <sean.wang@kernel.org>
+ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+-- 
+2.17.1
 
