@@ -2,110 +2,70 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3415DC2B9F8
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 04:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2C0C2B9F8
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 05:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05971613D6
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 04:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A15C613F6
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 05:15:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbhEYEi7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 May 2021 00:38:59 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:49849 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229476AbhEYEi6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 May 2021 00:38:58 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 8DF82581068;
-        Tue, 25 May 2021 00:37:29 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute3.internal (MEProxy); Tue, 25 May 2021 00:37:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm2; bh=zFo1oGVlR9BWzHQX/BoXdwfOJEHWy/V
-        aAoNOqIJAtPQ=; b=futuX7gOOBwrT6oJVQPSupBN1R1Ob4fVnF9YYDRvvjsQUMP
-        Y5HHsGOGuTh0vmwxs9NtIMkwTGElxuuAWADC14Ujy2iOBxcZWQJ1UPAFNLaGJ+gZ
-        17vy4KFu1mH1znFquCKgNEu/t4OOvKgA1o2g+ULakueirIA8UN2SOxSYDWbF0KmZ
-        af2zsiYtkXjh1ruSbgtzeJdOqWhS2o2OU9Zjlx6j86EdTgGA+YeNIiFrBj0CrIqR
-        ZA3LMfoQ++KK7Yddanj9/VBrqpDFJyFqtwdf6e8oh8RJ1Lb79/puVBbrAYe2ytli
-        NnsjmmIewizUb5msxd0MxaQdC/8EShEAC5TAIvg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=zFo1oG
-        VlR9BWzHQX/BoXdwfOJEHWy/VaAoNOqIJAtPQ=; b=NeMLdSOvPC0GVg8cTUC+v9
-        NN0unXHXvIcxihEhFtLGFMQqiEKpqt9PHxr2fAvDhKfkmyt/Fckars9EPIy0phOd
-        FA1DEGNzvET7uPlUxU6/4D4Q8QLpNwngQo+Ib7x+PLk/ocG1evLo8fXfQ59K4w7X
-        ImnD5tRzFSzRJGjOme7BCzMUz/fxFJnCZgwoIo73V7P1oApyjCdnQWfpJCzH25Cl
-        4Y5RxL8Gtc5fmnlrmcPw9DNogptN6F5Gdv15JQVoIbzpVVieSnjuunUcHfa+REXI
-        LJfP6p5MwLnps3LF6QG9VW6VJ06rtZvw4Nzmp73wWlYFEivdnBcC17sz7F8TzPXQ
-        ==
-X-ME-Sender: <xms:CH-sYOD_4v8QbYfZqpFzj02pmQTjMxgoUCI9-H1D39NPv3FL-OEp_Q>
-    <xme:CH-sYIhOAFAfnEUzB6_MwNLXuTItp2aKyHUO4auMoxKoclVFRBXub5hQ3MjCdBK6Q
-    VZisNYOPOImxsNUQQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdektddgkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrf
-    grthhtvghrnhepuddttdekueeggedvtddtueekiedutdfguedutdefieeuteefieelteet
-    vddthfeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghnughrvgifsegrjhdrihgurdgruh
-X-ME-Proxy: <xmx:CH-sYBn4b6NkIap0_2dg9sPDWagHjtvUVTgnpxUQwsK0yp1i7B6uzQ>
-    <xmx:CH-sYMyEgtlytQYMsItyZ4J_Lrleo2-RwgSz-EuqbrAOdJV_M4y4Gw>
-    <xmx:CH-sYDSXNXCoVsCGPhXLZh5HDIBTFkI1EwVnwhiEja_o9shd-T7N4g>
-    <xmx:CX-sYIJewHwr4gW-amogiccRpA1IQS5dfHR3zg0Gf5hUQHOU4Wn-XQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 76510A00079; Tue, 25 May 2021 00:37:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.5.0-alpha0-448-gae190416c7-fm-20210505.004-gae190416
-Mime-Version: 1.0
-Message-Id: <7f673953-7a90-4143-a475-444a1096e55f@www.fastmail.com>
-In-Reply-To: <20210525042736.10379-4-steven_lee@aspeedtech.com>
-References: <20210525042736.10379-1-steven_lee@aspeedtech.com>
- <20210525042736.10379-4-steven_lee@aspeedtech.com>
-Date:   Tue, 25 May 2021 14:07:07 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Steven Lee" <steven_lee@aspeedtech.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "moderated list:ASPEED PINCTRL DRIVERS" 
-        <linux-aspeed@lists.ozlabs.org>,
-        "moderated list:ASPEED PINCTRL DRIVERS" <openbmc@lists.ozlabs.org>,
-        "open list:ASPEED PINCTRL DRIVERS" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list" <linux-kernel@vger.kernel.org>
-Cc:     "Hongwei Zhang" <Hongweiz@ami.com>,
-        "Ryan Chen" <ryan_chen@aspeedtech.com>,
-        "Billy Tsai" <billy_tsai@aspeedtech.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v2_3/3]_pinctrl:_pinctrl-aspeed-g6:_Add_sgpio_pinct?=
- =?UTF-8?Q?rl_settings?=
-Content-Type: text/plain
+        id S230412AbhEYFQw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 May 2021 01:16:52 -0400
+Received: from muru.com ([72.249.23.125]:59920 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230218AbhEYFQt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 May 2021 01:16:49 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 64F1D807E;
+        Tue, 25 May 2021 05:15:24 +0000 (UTC)
+Date:   Tue, 25 May 2021 08:15:12 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     Dario Binacchi <dariobin@libero.it>, linux-kernel@vger.kernel.org,
+        Drew Fustini <drew@beagleboard.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] pinctrl: core: configure pinmux from pins debug
+ file
+Message-ID: <YKyH4BPypsfXiw1o@atomide.com>
+References: <20210520202730.4444-1-dariobin@libero.it>
+ <20210520202730.4444-3-dariobin@libero.it>
+ <87ea9971-9e15-c595-95cc-14c68b0b68d8@mleia.com>
+ <1972814783.387983.1621877304255@mail1.libero.it>
+ <414c9176-7922-929f-e82e-f80f07e91b2c@mleia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <414c9176-7922-929f-e82e-f80f07e91b2c@mleia.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi,
 
+* Vladimir Zapolskiy <vz@mleia.com> [210524 18:52]:
+> Thus a higher level of abstraction is wanted:
+> 
+> * writing data to I/O mem -- not good enough,
+> * writing data to pinmux/pinconf I/O mem -- better, but not good enough,
+> * writing *valid* data to pinmux/pinconf I/O mem -- that's right.
+> 
+> The validity of data is defined by a developer, the abstraction name
+> has been mentioned multiple times, it's pin groups and pin group functions.
 
-On Tue, 25 May 2021, at 13:57, Steven Lee wrote:
-> AST2600 supports 2 SGPIO master interfaces and 2 SGPIO slave interfaces.
-> Current pinctrl driver only define the first sgpio master and slave
-> interfaces.
-> The sencond SGPIO master and slave interfaces should be added in
+Sounds like the planned interface should only allow changing between
+already defined pingroups, and only if the pins are unclaimed. That
+would leave out the issues tinkering with raw register data.
 
-Typo here: 'second', 
+And it probably should also allow adding and removing new pingroups out
+of the already defined pin functions that are unclaimed.
 
-Regardless, this looks good to me.
+I also think such interface should be sysfs and not debugfs eventually.
 
-Thanks Steven!
+Regards,
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Tony
