@@ -2,108 +2,202 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C66C4707F
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 07:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BD8C2B9F8
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 08:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 040C16141C
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 07:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23A6B61378
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 May 2021 08:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231477AbhEYHsZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 May 2021 03:48:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40236 "EHLO
+        id S231285AbhEYINQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 May 2021 04:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231868AbhEYHsX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 May 2021 03:48:23 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC46C061574
-        for <linux-gpio@vger.kernel.org>; Tue, 25 May 2021 00:46:52 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id n4so5142063wrw.3
-        for <linux-gpio@vger.kernel.org>; Tue, 25 May 2021 00:46:52 -0700 (PDT)
+        with ESMTP id S231303AbhEYIMU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 May 2021 04:12:20 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18887C0612A6
+        for <linux-gpio@vger.kernel.org>; Tue, 25 May 2021 01:08:41 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id p39so6646071pfw.8
+        for <linux-gpio@vger.kernel.org>; Tue, 25 May 2021 01:08:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=v55P6S5W7xrOd/7SzhygqC9B4BMec90s1TTSAj2EVxE=;
-        b=JajTsqVKIfsWuZ1YrQXqPuTRbCnCPA8rGan8mjq6zPyXX2H4MFK5L3fnVH7R22ucVi
-         1SYgnolIifkRimEssKJG31YS1HT2fFeZB3zvVt3J9IaFtNnJSThrbl5Yf+TGlZVd59ta
-         D+8wOIOStaAQaJ8ifPspoDD77EDjnSSMhTZGTE+EcuAClrkId1vNjEeWZIXmbYNIqMRu
-         bWqGjVzBQd+FBecuDWce1Pw2msLiJK67HHr2EGDzSkjMeJs9U583NdjCRPKI9Od2S2rZ
-         NDe6OmegGTq7eTb5/TiycCAdK/52GDNoVy+6/062Qq3HZUE4GW8Xp5US/V23Wv48k1Pk
-         29lQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=75XRIfIEgHlJfl/WDjj50cBlBJrq+0slcEaWeiveqgo=;
+        b=rxvAw4SR2G0PDjav9NZ4aH3jmi3+m70MdvFyB9W/KLLMeI2d1Zjr3awxGryrbD3j9d
+         ZGtk1yYT/8hr944kePRjTylWaasPuncblxA+F1RxeliDghDHwl+VtR9YiPBgZhbbE9gp
+         BU3AKSssadF9wwBR/i0O5zWRHTzvn3nZSYQBpDIyo1r1Im+XdKm2XmoUYA9wSL0eToep
+         BWg7uSuQwYD/LPyxI5PoEuBY1Zbv6S2t2ngMoYBiVjMU3RnxHLRrRkBOPHOU/OHlaUgk
+         f0CrzLMuvB0s6L3AqkgE0SN1KwRFDIEv66Em6COyZpd0O8GfsmXRnbmySh1bMPnDBvVr
+         szYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=v55P6S5W7xrOd/7SzhygqC9B4BMec90s1TTSAj2EVxE=;
-        b=udVyG3DQ6NDMh6gjj+NDMdYlu+WHWDsDH7rIx9cGScepdJyfkmVe/CIbV8g7tuK1J3
-         D5ccKio4YMos+5ErvMBom58eXbGoa+4f+oXuzPCFQI5lXilLnpUUPRsyRdHYevg+Zzt3
-         zusyXH0uxBLsv1V8zcFdRmMXE3LMVYU/cKpx1B66Zo5jevWNy9y+SJDlt/P7whR+Oylo
-         zFkTP+7ntSzCueIZWb+H1B4qD9MpWaXn9hbDScM5GkdbvRbrF8ecpdOf+FJRr3KTds2g
-         +4EYf23rbiY73eB98G8d/zMSaJawxqmXMIz592UV7u2geBM6rYF3pkerC9XFyfHB+Qw6
-         gy3g==
-X-Gm-Message-State: AOAM531wXmDkOPxZEzL9bePbQg7pl9qmA1WyRammvzw+VhnvEJKu4TmK
-        gdZ/NJOYE3uA7fQIivjpX3rElw==
-X-Google-Smtp-Source: ABdhPJxra+VdD0HTsZR+c2d1us85Dq8lMeLNrROWhWra+R6dRK5Bqzi5HZanKgKfTsSKdJMTHwMgdg==
-X-Received: by 2002:a5d:4408:: with SMTP id z8mr26244243wrq.2.1621928811370;
-        Tue, 25 May 2021 00:46:51 -0700 (PDT)
-Received: from dell ([91.110.221.223])
-        by smtp.gmail.com with ESMTPSA id y6sm1749432wmy.23.2021.05.25.00.46.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 00:46:50 -0700 (PDT)
-Date:   Tue, 25 May 2021 08:46:49 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Robert Marko <robert.marko@sartura.hr>, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luka.perkov@sartura.hr, jmp@epiphyte.org, pmenzel@molgen.mpg.de,
-        buczek@molgen.mpg.de
-Subject: Re: [PATCH v2 3/4] dt-bindings: mfd: Add Delta TN48M CPLD drivers
- bindings
-Message-ID: <20210525074649.GC4005783@dell>
-References: <20210524120539.3267145-1-robert.marko@sartura.hr>
- <20210524120539.3267145-3-robert.marko@sartura.hr>
- <20210524230940.GA1350504@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=75XRIfIEgHlJfl/WDjj50cBlBJrq+0slcEaWeiveqgo=;
+        b=SOQp5Z+3KRxg05sVAYpeNOxdhnaI5YXpYimwKXPh2EvQykaYZOXAsRdBqLWwHZuimm
+         2Tr8VdDT+kTWXCBq2IXEOTbYWfGOXdOc/GBWf4FzKY4lrap52+qfmEkn/XwsMIcxaFno
+         UzerNRZF5afk5KeMeZuVXu3CGrOPO+utPJtypRQD8yNhzY0ve8nt3C+8KQ0yBIpLMbA7
+         7tCZNBVGDY9o9ONvkzK+r79MJ5wxm0iSbvfl8czhvcQZ58HnPkLYeINOYqKb2xRJfYzq
+         McBiwwGNK0TVTQ2dLI2jENpML8n+E0R8FaHdyKs3SmRhaiYOS6LlgSV/d/Pnbp8juQ9B
+         rPNQ==
+X-Gm-Message-State: AOAM5314Qf2AQ9K/eVUvXkTX179/ei/XbMkJkHdYay36bevXt69J1DHb
+        tSuGzA7pcVw5jk5tmhxLCJdnKI9JiLzXBlv3HJI=
+X-Google-Smtp-Source: ABdhPJwNEJimO6Xc3pFsJifT10Y18RGcK2TNfzMl+FfyP+eKkz+h4t20IXJSrn9/deIxlC2It5Hz2U6fKcp/pibFf1Q=
+X-Received: by 2002:a62:bd07:0:b029:2df:2c0a:d5e9 with SMTP id
+ a7-20020a62bd070000b02902df2c0ad5e9mr28532152pff.7.1621930120106; Tue, 25 May
+ 2021 01:08:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210524230940.GA1350504@robh.at.kernel.org>
+References: <20210525054149.1792-1-kunyang_fan@asus.com> <20210525054149.1792-2-kunyang_fan@asus.com>
+In-Reply-To: <20210525054149.1792-2-kunyang_fan@asus.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 25 May 2021 11:08:24 +0300
+Message-ID: <CAHp75VfHEv9xOZT6BKUcjwL2RcoDyv+ZknvvLqU1exZJW=uNRQ@mail.gmail.com>
+Subject: Re: [PATCH 2/5] gpio: add driver for AAEON devices
+To:     aaeon.asus@gmail.com
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        AceLan Kao <acelan.kao@canonical.com>,
+        Kunyang_Fan <kunyang_fan@asus.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 24 May 2021, Rob Herring wrote:
+On Tue, May 25, 2021 at 8:42 AM <aaeon.asus@gmail.com> wrote:
+>
+> From: Kunyang_Fan <kunyang_fan@asus.com>
+>
+> This patch add support for the GPIO pins whose control are
+> transported to BIOS through ASUS WMI interface.
+>
+> Signed-off-by: Kunyang_Fan <kunyang_fan@asus.com>
 
-> On Mon, May 24, 2021 at 02:05:38PM +0200, Robert Marko wrote:
-> > Add binding documents for the Delta TN48M CPLD drivers.
-> > 
-> > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > ---
-> > Changes in v2:
-> > * Implement MFD as a simple I2C MFD
-> > * Add GPIO bindings as separate
-> 
-> I don't understand why this changed. This doesn't look like an MFD to 
-> me. Make your binding complete if there are missing functions. 
-> Otherwise, stick with what I already ok'ed.
+Missed SoB of the submitter. Dunno if it's a critical issue.
 
-Right.  What else, besides GPIO, does this do?
+...
 
-> >  .../bindings/gpio/delta,tn48m-gpio.yaml       | 42 ++++++++++
-> >  .../bindings/mfd/delta,tn48m-cpld.yaml        | 81 +++++++++++++++++++
-> >  2 files changed, 123 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/delta,tn48m-cpld.yaml
+> +obj-$(CONFIG_GPIO_AAEON)                += gpio-aaeon.o
+
+Way too generic file name. So the configuration option name.
+
+...
+
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+
+Same as for all patches.
+
+...
+
+> +static int aaeon_gpio_get_number(void);
+> +static int aaeon_gpio_get_direction(struct gpio_chip *chip,
+> +                                unsigned int offset);
+> +static int aaeon_gpio_output_set_direction(struct gpio_chip *chip,
+> +                                unsigned int offset, int value);
+> +static int aaeon_gpio_input_set_direction(struct gpio_chip *chip,
+> +                                unsigned int offset);
+> +static int aaeon_gpio_get(struct gpio_chip *chip,
+> +                                unsigned int offset);
+> +static void aaeon_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +                                int value);
+
+Why forward declarations?!
+
+...
+
+> +static int aaeon_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+> +{
+
+> +       int err, retval;
+> +       u32 dev_id = 0x0;
+
+Reversed xmas tree order.
+
+> +       dev_id |= offset;
+
+Just keep it in the definition block
+
+       u32 dev_id = offset;
+
+Ditto for all the rest similar lines.
+
+> +       err = asus_wmi_evaluate_method(GET_DIRECTION_METHOD_ID, dev_id,
+> +                                      0, &retval);
+> +       if (err)
+> +               return err;
+> +
+> +       return retval;
+> +}
+
+...
+
+> +static int __init aaeon_gpio_probe(struct platform_device *pdev)
+> +{
+> +       int err, i;
+> +       int dio_number = 0;
+> +       struct aaeon_gpio_data *data;
+> +       struct aaeon_gpio_bank *bank;
+
+Reversed xmas tree order, same for the all similar places across the series.
+
+
+> +       /* Prevent other drivers adding this platfom device */
+> +       if (!wmi_has_guid(AAEON_WMI_MGMT_GUID)) {
+> +               pr_debug("AAEON Management GUID not found\n");
+> +               return -ENODEV;
+> +       }
+
+Dead code?
+
+> +       dio_number = aaeon_gpio_get_number();
+> +       if (dio_number < 0)
+> +               return -ENODEV;
+
+Why shadowing error code?
+
+> +       data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       data->nr_bank = ARRAY_SIZE(aaeon_gpio_bank);
+> +       data->bank = aaeon_gpio_bank;
+> +       platform_set_drvdata(pdev, data);
+> +       bank = &data->bank[0];
+> +       bank->chip.parent = &pdev->dev;
+> +       bank->chip.ngpio = dio_number;
+> +       bank->data = data;
+
++ blank line
+
+> +       err = devm_gpiochip_add_data(&pdev->dev, &bank->chip, bank);
+> +       if (err)
+> +               pr_debug("Failed to register gpiochip %d: %d\n", i, err);
+> +
+> +       return err;
+
+Besides the fact of using dev_dbg() and another fact that it is not
+needed (device core can print it for you)
+
+return devm_...(...);
+
+> +}
+
+...
+
+> +
+
+Redundant blank line (same applies for entire series).
+
+> +module_platform_driver_probe(aaeon_gpio_driver, aaeon_gpio_probe);
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+With Best Regards,
+Andy Shevchenko
