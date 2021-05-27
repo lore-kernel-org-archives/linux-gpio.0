@@ -2,121 +2,226 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 158A4C4708B
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 00:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD543C4708C
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 00:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBF30613F9
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 00:18:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2AAA613C5
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 00:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231968AbhE0ATm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 May 2021 20:19:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233689AbhE0ATl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 May 2021 20:19:41 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58158C06175F
-        for <linux-gpio@vger.kernel.org>; Wed, 26 May 2021 17:18:08 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id o8so4034661ljp.0
-        for <linux-gpio@vger.kernel.org>; Wed, 26 May 2021 17:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5pNc1j9V/0p6zuELiqNdygegiQOxBrIeUuvDW7TcIWY=;
-        b=u1Rl4xfL89iqxQ3I4P3oGZ4wpAe+PBGqDwKdqMyu9mYOVCP4ALL2gPHog/RNWZ1TgA
-         JUC7/WtiRrgGzJNcyAOh6NKGy1vybU5k6WIju9Fu/vqJXYW7nQ2ZkkjqoYOwefdICDWb
-         jivNPY5ydsGtU+CWGSLtZk6oT1qxC2bvWq1l+w+m0TcnmFqMh3i1VbI3KyQ5Xe3Zib/O
-         SCaF/YvlU2sZ5YHCFp6sxgNlRAd/yWt+ZgpKI+V7dFTe5MhTJn9GO2CnrjUqm0QRETw5
-         ZGBz1Kdm2EBcuwT2850nF8W4PNN5as6mET0G8wiBTjSTHd1bOW/dMo8pnrnzntj7iUHd
-         jcuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5pNc1j9V/0p6zuELiqNdygegiQOxBrIeUuvDW7TcIWY=;
-        b=Ip+XC9aPIhIFogfs6Rh7cEG/+sP5YEHNTPPN3k2XVo1F0s6ohhO18V4FDrJ/j2W7d2
-         8A1ybd1NnHJ/cGH9K+ZcoUWW/FBdx1MOypLmdRT5SFxTUZMJwfy7KxrX7+8LfLihClDf
-         vk6bNl+GgKKRHSeJSEwg0PM9iTeI6JQo8Gs/fQSXC1XvluOTkZFoyDekCaLa6hXTWwsm
-         HNX2whYjldSq7fepT7IWfhLmZpOTX9SgKygpXFgLiTOBnmbIC0svI4jrdHyNqjcMn0K8
-         s6PF0+kwUpmUvvLdGqjL9Rzf7l1HI4QXnxbDtD3pmAOBkP6AwLuwKj9G5m9khpDA7d9l
-         IhJg==
-X-Gm-Message-State: AOAM533HSPxNsROevmB/pZqvu8/vhNUdsFdRHjozXORqWrpebMaaDwkD
-        YdQliBEjbSiVWlGzK2Ghx1woU+LLKpbmuFn3ph+im18gYbA=
-X-Google-Smtp-Source: ABdhPJyE/PptaUPKadiYFnKrDVT7amcN42lpe+YkWB2i/2zdRUhO2B3HU8uvdIUr3250T1J7qnllzV/KArMH3sKr7mk=
-X-Received: by 2002:a2e:90c7:: with SMTP id o7mr469746ljg.368.1622074685623;
- Wed, 26 May 2021 17:18:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210511090122.6995-1-a-govindraju@ti.com>
-In-Reply-To: <20210511090122.6995-1-a-govindraju@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 27 May 2021 02:17:54 +0200
-Message-ID: <CACRpkdZ829w3p+axRMBxQU7jyeWuyUew5MoFMSkuJ4dzpg9HgA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: gpio-davinci: Convert to json-schema
-To:     Aswath Govindraju <a-govindraju@ti.com>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        id S234148AbhE0A5M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 May 2021 20:57:12 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:19978 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235047AbhE0A5L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 May 2021 20:57:11 -0400
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 14R0fsRi067371;
+        Thu, 27 May 2021 08:41:54 +0800 (GMT-8)
+        (envelope-from steven_lee@aspeedtech.com)
+Received: from slee-VirtualBox.localdomain (192.168.100.253) by
+ TWMBX02.aspeed.com (192.168.0.24) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 27 May 2021 08:54:57 +0800
+From:   Steven Lee <steven_lee@aspeedtech.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Keerthy <j-keerthy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-aspeed@lists.ozlabs.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     <steven_lee@aspeedtech.com>, <Hongweiz@ami.com>,
+        <ryan_chen@aspeedtech.com>, <billy_tsai@aspeedtech.com>
+Subject: [PATCH v2 1/4] dt-bindings: aspeed-sgpio: Convert txt bindings to yaml.
+Date:   Thu, 27 May 2021 08:54:50 +0800
+Message-ID: <20210527005455.25758-2-steven_lee@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210527005455.25758-1-steven_lee@aspeedtech.com>
+References: <20210527005455.25758-1-steven_lee@aspeedtech.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [192.168.100.253]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 14R0fsRi067371
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, May 11, 2021 at 11:01 AM Aswath Govindraju <a-govindraju@ti.com> wrote:
+SGPIO bindings should be converted as yaml format.
+In addition to the file conversion, a new property max-ngpios is
+added in the yaml file as well.
+The new property is required by the enhanced sgpio driver for
+making the configuration of the max number of gpio pins more flexible.
 
-Just a drive-by comment (not your problem right now)
+Signed-off-by: Steven Lee <steven_lee@aspeedtech.com>
+---
+ .../bindings/gpio/aspeed,sgpio.yaml           | 91 +++++++++++++++++++
+ .../devicetree/bindings/gpio/sgpio-aspeed.txt | 46 ----------
+ 2 files changed, 91 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
 
-> +      /* HW Interrupts mapped to GPIO pins */
-> +      interrupts = <GIC_SPI 120 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 121 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 123 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 124 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 125 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 126 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 127 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 128 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 129 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 130 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 131 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 132 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 133 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 134 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 135 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 136 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 137 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 138 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 139 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 140 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 145 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 146 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 147 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 148 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 149 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 150 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 151 IRQ_TYPE_EDGE_RISING>;
+diff --git a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+new file mode 100644
+index 000000000000..02eb0c5023e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+@@ -0,0 +1,91 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/aspeed,sgpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Aspeed SGPIO controller
++
++maintainers:
++  - Andrew Jeffery <andrew@aj.id.au>
++
++description:
++  This SGPIO controller is for ASPEED AST2400, AST2500 and AST2600 SoC,
++  AST2600 have two sgpio master one with 128 pins another one with 80 pins,
++  AST2500/AST2400 have one sgpio master with 80 pins. Each of the Serial
++  GPIO pins can be programmed to support the following options
++  - Support interrupt option for each input port and various interrupt
++    sensitivity option (level-high, level-low, edge-high, edge-low)
++  - Support reset tolerance option for each output port
++  - Directly connected to APB bus and its shift clock is from APB bus clock
++    divided by a programmable value.
++  - Co-work with external signal-chained TTL components (74LV165/74LV595)
++
++properties:
++  compatible:
++    enum:
++      - aspeed,ast2400-sgpiom
++      - aspeed,ast2500-sgpiom
++      - aspeed,ast2600-sgpiom
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  clocks:
++    maxItems: 1
++
++  ngpios:
++    minimum: 0
++    maximum: 128
++
++  max-ngpios:
++    description:
++      represents the number of actual hardware-supported GPIOs (ie,
++      slots within the clocked serial GPIO data). Since each HW GPIO is both an
++      input and an output, we provide max_ngpios * 2 lines on our gpiochip
++      device. We also use it to define the split between the inputs and
++      outputs; the inputs start at line 0, the outputs start at max_ngpios.
++    minimum: 0
++    maximum: 128
++
++  bus-frequency: true
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++  - interrupts
++  - interrupt-controller
++  - ngpios
++  - max-ngpios
++  - clocks
++  - bus-frequency
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/aspeed-clock.h>
++    sgpio: sgpio@1e780200 {
++        #gpio-cells = <2>;
++        compatible = "aspeed,ast2500-sgpiom";
++        gpio-controller;
++        interrupts = <40>;
++        reg = <0x1e780200 0x0100>;
++        clocks = <&syscon ASPEED_CLK_APB>;
++        interrupt-controller;
++        ngpios = <8>;
++        max-ngpios = <80>;
++        bus-frequency = <12000000>;
++    };
+diff --git a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
+deleted file mode 100644
+index be329ea4794f..000000000000
+--- a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
++++ /dev/null
+@@ -1,46 +0,0 @@
+-Aspeed SGPIO controller Device Tree Bindings
+---------------------------------------------
+-
+-This SGPIO controller is for ASPEED AST2500 SoC, it supports up to 80 full
+-featured Serial GPIOs. Each of the Serial GPIO pins can be programmed to
+-support the following options:
+-- Support interrupt option for each input port and various interrupt
+-  sensitivity option (level-high, level-low, edge-high, edge-low)
+-- Support reset tolerance option for each output port
+-- Directly connected to APB bus and its shift clock is from APB bus clock
+-  divided by a programmable value.
+-- Co-work with external signal-chained TTL components (74LV165/74LV595)
+-
+-Required properties:
+-
+-- compatible : Should be one of
+-  "aspeed,ast2400-sgpio", "aspeed,ast2500-sgpio"
+-- #gpio-cells : Should be 2, see gpio.txt
+-- reg : Address and length of the register set for the device
+-- gpio-controller : Marks the device node as a GPIO controller
+-- interrupts : Interrupt specifier, see interrupt-controller/interrupts.txt
+-- interrupt-controller : Mark the GPIO controller as an interrupt-controller
+-- ngpios : number of *hardware* GPIO lines, see gpio.txt. This will expose
+-  2 software GPIOs per hardware GPIO: one for hardware input, one for hardware
+-  output. Up to 80 pins, must be a multiple of 8.
+-- clocks : A phandle to the APB clock for SGPM clock division
+-- bus-frequency : SGPM CLK frequency
+-
+-The sgpio and interrupt properties are further described in their respective
+-bindings documentation:
+-
+-- Documentation/devicetree/bindings/gpio/gpio.txt
+-- Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+-
+-  Example:
+-	sgpio: sgpio@1e780200 {
+-		#gpio-cells = <2>;
+-		compatible = "aspeed,ast2500-sgpio";
+-		gpio-controller;
+-		interrupts = <40>;
+-		reg = <0x1e780200 0x0100>;
+-		clocks = <&syscon ASPEED_CLK_APB>;
+-		interrupt-controller;
+-		ngpios = <8>;
+-		bus-frequency = <12000000>;
+-	};
+-- 
+2.17.1
 
-This is quite obviously a hiearchical interrupt controller. I think
-this appeared in the kernel before the GIC could even deal with
-hierarchical IRQs but it should really be fixed to make the platform
-modern.
-
-Yours,
-Linus Walleij
