@@ -2,26 +2,25 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCD0C47089
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 07:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE57C4707F
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 07:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 755F161132
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 07:13:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B058F613C0
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 May 2021 07:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234828AbhE0HOy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 May 2021 03:14:54 -0400
-Received: from lucky1.263xmail.com ([211.157.147.130]:33892 "EHLO
+        id S234865AbhE0HPD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 May 2021 03:15:03 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:44462 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234709AbhE0HOy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 May 2021 03:14:54 -0400
+        with ESMTP id S234857AbhE0HPD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 May 2021 03:15:03 -0400
 Received: from localhost (unknown [192.168.167.235])
-        by lucky1.263xmail.com (Postfix) with ESMTP id CD9F5D1AE2;
-        Thu, 27 May 2021 15:12:57 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id B873DC84CF;
+        Thu, 27 May 2021 15:12:51 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
@@ -29,9 +28,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P31748T140095105496832S1622099560886623_;
-        Thu, 27 May 2021 15:12:57 +0800 (CST)
+        Thu, 27 May 2021 15:12:42 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <1fc5d24b3c1f9c3b539feca0aa35ccc8>
+X-UNIQUE-TAG: <4303caa03c9633abae8e6f6d37bdf977>
 X-RL-SENDER: jay.xu@rock-chips.com
 X-SENDER: xjq@rock-chips.com
 X-LOGIN-NAME: jay.xu@rock-chips.com
@@ -44,46 +43,42 @@ From:   Jianqun Xu <jay.xu@rock-chips.com>
 To:     heiko@sntech.de, linus.walleij@linaro.org, robh+dt@kernel.org
 Cc:     linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
         linux-kernel@vger.kernel.org, Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH v5 2/7] pinctrl/pinctrl-rockchip.h: add pinctrl device to gpio bank struct
-Date:   Thu, 27 May 2021 15:12:34 +0800
-Message-Id: <20210527071239.1424430-3-jay.xu@rock-chips.com>
+Subject: [PATCH v5 0/7] gpio-rockchip driver
+Date:   Thu, 27 May 2021 15:12:32 +0800
+Message-Id: <20210527071239.1424430-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210527071239.1424430-1-jay.xu@rock-chips.com>
-References: <20210527071239.1424430-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Store a pointer from the pinctrl device for the gpio bank.
+Separate gpio driver from pinctrl driver, and support v2 controller.
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
- drivers/pinctrl/pinctrl-rockchip.h | 2 ++
- 1 file changed, 2 insertions(+)
+Jianqun Xu (7):
+  pinctrl/rockchip: separate struct rockchip_pin_bank to a head file
+  pinctrl/pinctrl-rockchip.h: add pinctrl device to gpio bank struct
+  gpio: separate gpio driver from pinctrl-rockchip driver
+  gpio/rockchip: use struct rockchip_gpio_regs for gpio controller
+  gpio/rockchip: support next version gpio controller
+  gpio/rockchip: always enable clock for gpio controller
+  gpio/rockchip: drop irq_gc_lock/irq_gc_unlock for irq set type
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl-rockchip.h
-index dba9e9540633..4aa3d2f1fa67 100644
---- a/drivers/pinctrl/pinctrl-rockchip.h
-+++ b/drivers/pinctrl/pinctrl-rockchip.h
-@@ -81,6 +81,7 @@ struct rockchip_drv {
- 
- /**
-  * struct rockchip_pin_bank
-+ * @dev: the pinctrl device bind to the bank
-  * @reg_base: register base of the gpio bank
-  * @regmap_pull: optional separate register for additional pull settings
-  * @clk: clock of the gpio bank
-@@ -105,6 +106,7 @@ struct rockchip_drv {
-  * @route_mask: bits describing the routing pins of per bank
-  */
- struct rockchip_pin_bank {
-+	struct device			*dev;
- 	void __iomem			*reg_base;
- 	struct regmap			*regmap_pull;
- 	struct clk			*clk;
+ drivers/gpio/Kconfig               |   8 +
+ drivers/gpio/Makefile              |   1 +
+ drivers/gpio/gpio-rockchip.c       | 758 ++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-rockchip.c | 910 +----------------------------
+ drivers/pinctrl/pinctrl-rockchip.h | 287 +++++++++
+ 5 files changed, 1073 insertions(+), 891 deletions(-)
+ create mode 100644 drivers/gpio/gpio-rockchip.c
+ create mode 100644 drivers/pinctrl/pinctrl-rockchip.h
+
 -- 
+v5:
+ - fix rebase confilcts
+v4:
+ - change to devel branch
+
 2.25.1
 
 
