@@ -2,156 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6423C47087
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 08:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2B6C47087
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 09:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5FF61278
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 08:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92F616113D
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 09:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235038AbhE1IhZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 May 2021 04:37:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38274 "EHLO
+        id S236542AbhE1JKG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 May 2021 05:10:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234926AbhE1IhZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 May 2021 04:37:25 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E38C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 28 May 2021 01:35:50 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id r5so4178582lfr.5
-        for <linux-gpio@vger.kernel.org>; Fri, 28 May 2021 01:35:50 -0700 (PDT)
+        with ESMTP id S236689AbhE1JJq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 May 2021 05:09:46 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4059C06134D
+        for <linux-gpio@vger.kernel.org>; Fri, 28 May 2021 02:08:02 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id v8so4278409lft.8
+        for <linux-gpio@vger.kernel.org>; Fri, 28 May 2021 02:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qXzQIPasUcthmSDz8eSF+P9ruKadFcmRFPG5VSNQtL8=;
-        b=eKWJz4art9JMWcy6y6iWK9LFwP2pQvAov+Vsbn1np7ccpJfXlVE+B9uDjzPJkkISWg
-         2jHaOl5Oe3gGxfXA6LgeTrMqL3Gcw59pnwKpxvt8qVyoVD3gBZ5kgubk2uIVa3+XtnMV
-         2V92ED5sEIA5YUZIqSGlECauLUkp+VLy0BPS29E5R4b1OW/oEDzMGfRYxzM+31d+6868
-         uf5AXz1khjan90xUAKlOHv+5eb4/32xWzgjOA4a4yMZ67GancPJwneDU6vE1rcZ2041T
-         2ZfGpbwNnxRzyB+Cw/7D8H11DdXHZHN53I7V1Mhgpvu3OZ8ELlLXIA0P4KJczeoWtWpC
-         AsSw==
+        bh=VJUFVUjwMi3jp1lDpVisyiJzn7Zhoa8E+bQf9DwQVqs=;
+        b=fpYeaAiobh84ePdqE0lJtTQRLx27OqasFcegutrZktiaCGsASz+DMX4fKBLm26YlY5
+         M7A6YWw3xaofHKY0wgdSuH1fc9F8P7AaH3mngotvTgh8lFRMa6ky7HvX6MZgBPWYYB0Z
+         yT6Z3ymqSzYfEstFNYIvNPKqwp7fnMbcUwMVqJtZ98ZE2Z0WoF7qORBprrS/YW3LaG/A
+         Ucd8lp1sbFF4vtWkEZ54MCc7R1NjuiRe//fgzBXCjU68LLCuIn97/TWMQ5wDwiqs93jz
+         8LLzxcaNWPAxW/pYgxCyB9/FU/uHoupokEXnqZ3uT+NFXAfoqI2pZOZBHAcHGddIGqbj
+         Gq7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qXzQIPasUcthmSDz8eSF+P9ruKadFcmRFPG5VSNQtL8=;
-        b=JUHZvQDzfHdBQm6/6rlz6CoZnIwza32FzfIpfz4myyrxRN66Qhaw51lz1fVI8lr3EN
-         u4tNC+OGIgA6+F2aNJzD15WRHGqe2tZEAU/7WpCFauqrJzPl7IMbm2ynGeQlrr5AXTg5
-         xOF60uiLwr0We3ZdaU8xYGZsP+MLccYV4gcMGI2oH5xolD9lK49535naRGRitXh2tsXS
-         npFOh/fDuZwkv+CQIcGWUq7jOpUH11wCPYkLziMUAdKu4Q90iZBj1odEOc3/zKUt6Plr
-         K2hoEN1rJ6w9ubycmCtUM8TaSO5YBID1zT03VK4zuHyWMGRQzEBQpO4/PomMbU9pBmiC
-         pvGA==
-X-Gm-Message-State: AOAM531QCfP+mdApZk1VaHcGv62dx0xfLOvPG98ZmHWxs4g5hljmAuEb
-        /Qdfqkz7LOzjLAvGBnwU3bjSi1po4OGETe36Nnnq7g==
-X-Google-Smtp-Source: ABdhPJx7fY2eoo3ewpiwsQcdfnOZOMZDOGzICz8TqAeiPIIG9rFXZg0ycCOFOJyYz6YC0EypW/bfzb3UTuupkbD3PwU=
-X-Received: by 2002:ac2:47e6:: with SMTP id b6mr5005230lfp.649.1622190949032;
- Fri, 28 May 2021 01:35:49 -0700 (PDT)
+        bh=VJUFVUjwMi3jp1lDpVisyiJzn7Zhoa8E+bQf9DwQVqs=;
+        b=Dn266u/RZylSw+v4jG8eyEnHNFjTHO4gDXt4dBIlJstFl7Jl4EOrdH4n5+KNE20dXM
+         9H1OCKVeQlg6orGFHiQp5a7GgbkKTgF1Lw/WKvV1n24TMvWXE+ggntTo8u8QJ5tsZeOO
+         bTrSXNIz8xXXAJX+g82gyEwRyR6G1C/4wuD/5i17OKbcVT3r+nRyXC/uZVVdUrFRdw9D
+         Fk2EjJyeaiJ/dWoNCnO3Gn16Tjt9h0OQx/j5UZ9dtgo2hw2SVHRQt6EDw8x0Qfz8GK56
+         ViYyWrmcCl98imV559Xd3dYQfPkvHGDbUzKtXCPcmrjdNwLgLGoWmsqNFtgc6gI5cx9P
+         iP2g==
+X-Gm-Message-State: AOAM5329i5NJSKJDO4FhF/lWunr25MFJhVf9XooE/sRET72F6JLOCa1m
+        JIEX2iTCxZRyzVcnipPw+LNeNmSWCcWGsaJLHpiytQ==
+X-Google-Smtp-Source: ABdhPJx+MczqJp0WaFPiI1m6x20/PKlEQDY+9K+GCnZ31rKGFb2DvTQymQLi+07iXyF2+WSjeSbcPFZAxbRKsMGeaqY=
+X-Received: by 2002:ac2:47e6:: with SMTP id b6mr5079578lfp.649.1622192881082;
+ Fri, 28 May 2021 02:08:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210527005455.25758-1-steven_lee@aspeedtech.com>
- <20210527005455.25758-2-steven_lee@aspeedtech.com> <CACRpkdZFcFuT9rdrc8BfEBmhy0--9uLMSJWfr=A+nU117_BT8A@mail.gmail.com>
- <20210528040934.GA28403@aspeedtech.com>
-In-Reply-To: <20210528040934.GA28403@aspeedtech.com>
+References: <20210520202730.4444-1-dariobin@libero.it> <20210520202730.4444-3-dariobin@libero.it>
+ <87ea9971-9e15-c595-95cc-14c68b0b68d8@mleia.com> <1972814783.387983.1621877304255@mail1.libero.it>
+ <414c9176-7922-929f-e82e-f80f07e91b2c@mleia.com> <106030092.519428.1622143415836@mail1.libero.it>
+ <b25a0e33-d7e8-322a-2a73-bda6e88c8f8b@mleia.com> <2062056721.520514.1622147634190@mail1.libero.it>
+In-Reply-To: <2062056721.520514.1622147634190@mail1.libero.it>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 May 2021 10:35:37 +0200
-Message-ID: <CACRpkdYnvzOW_86QgLAsNpNXWZXpaMiE7g9_jHZ0ZsFyhOjjAg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: aspeed-sgpio: Convert txt bindings to yaml.
-To:     Steven Lee <steven_lee@aspeedtech.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-aspeed@lists.ozlabs.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Hongwei Zhang <Hongweiz@ami.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>,
-        Billy Tsai <billy_tsai@aspeedtech.com>
+Date:   Fri, 28 May 2021 11:07:49 +0200
+Message-ID: <CACRpkdZb4WZS8cd=nFz_J0GrBc5HJ8SMYtniB2W_Jpq_vtPTYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] pinctrl: core: configure pinmux from pins debug file
+To:     Dario Binacchi <dariobin@libero.it>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Drew Fustini <drew@beagleboard.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, May 28, 2021 at 6:10 AM Steven Lee <steven_lee@aspeedtech.com> wrote:
-> The 05/28/2021 07:51, Linus Walleij wrote:
-> > On Thu, May 27, 2021 at 2:55 AM Steven Lee <steven_lee@aspeedtech.com> wrote:
-> >
-> > > +  max-ngpios:
-> > > +    description:
-> > > +      represents the number of actual hardware-supported GPIOs (ie,
-> > > +      slots within the clocked serial GPIO data). Since each HW GPIO is both an
-> > > +      input and an output, we provide max_ngpios * 2 lines on our gpiochip
-> > > +      device. We also use it to define the split between the inputs and
-> > > +      outputs; the inputs start at line 0, the outputs start at max_ngpios.
-> > > +    minimum: 0
-> > > +    maximum: 128
-> >
-> > Why can this not be derived from the compatible value?
-> >
-> > Normally there should be one compatible per hardware variant
-> > of the block. And this should be aligned with that, should it not?
-> >
-> > If this is not the case, maybe more detailed compatible strings
-> > are needed, maybe double compatibles with compatible per
-> > family and SoC?
-> >
+On Thu, May 27, 2021 at 10:33 PM Dario Binacchi <dariobin@libero.it> wrote:
+> > Il 27/05/2021 21:57 Vladimir Zapolskiy <vz@mleia.com> ha scritto:
+
+> > Unfortunately you continue to cling to the broken interface, while I see no
+> > comments from you about asked to consider pin groups and pin group functions.
 >
-> Thanks for your suggestion.
-> I add max-ngpios in dt-bindings as there is ngpios defined in
-> dt-bindings, users can get the both max-ngpios and ngpios information
-> from dtsi without digging sgpio driver.
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/aspeed-g5.dtsi#n354
->
-> If adding more detailed compatibles is better, I will add them to sgpio driver
-> in V3 patch and remove max-ngpios from dt-bindings.
->
-> Since AST2600 has 2 sgpio controller one with 128 pins and another one with 80 pins.
-> For supporting max-ngpios in compatibles, 2 platform data for each
-> ast2600 sgpio controller as follows are necessary.
->
-> ```
-> static const struct aspeed_sgpio_pdata ast2600_sgpiom1_pdata = {
->         .max_ngpios = 128;
-> };
-> static const struct aspeed_sgpio_pdata ast2600_sgpiom2_pdata = {
->         .max_ngpios = 80;
-> };
->
-> { .compatible = "aspeed,ast2500-sgpio" , .data = &ast2400_sgpio_pdata, },
-> { .compatible = "aspeed,ast2600-sgpiom1", .data = &ast2600_sgpiom1_pdata, },
-> { .compatible = "aspeed,ast2600-sgpiom2", .data = &ast2600_sgpiom2_pdata, },
+> Could you kindly explain to me, with some practical examples, what kind of interface
+> would you implement ?
 
-There is a soft border between two IP blocks being "compatible"
-and parameterized and two IP blocks being different and having
-unique compatibles.
+I am not fully understanding this discussion.
 
-For example we know for sure we don't use different compatibles
-because of how interrupt lines or DMA channels are connected.
+I get the feeling that this is caused by the early architectural decisions with
+pinctrl-single to put all configuration of pin groups and functions per pin into
+the device tree.
 
-So if this is an external thing, outside of the IP itself, I might back
-off on this and say it shall be a parameter.
+Tony specifically wanted this because what he gets from TI are some raw
+ASIC data dumps from the designers, that he could make a script to process
+into device tree rather than into .h files, and get this out of the kernel.
+(As I remember it, Tony correct me if I'm wrong.)
 
-But max-ngpios? It is confusingly similar to ngpios.
+This makes it hard to align some concepts of the pin control subsystem such
+as functions and groups because pinctrl-single assume a 1-to-1 mapping
+between one pin and one group, which in turn has a 1-to-many mapping
+to functions.
 
-So we need to think about this name.
+Is the patch trying to debugfs around this somehow?
 
-Something like gpio-hardware-slots or something else that
-really describe what this is.
+If this hack is only needed for pinctrl-single.c then it should be placed in
+that driver, so Tony can review it and maintain it as applicable in that
+driver's context only, not in the pinctrl core as it appears the general
+applicability for other drivers is not there.
 
-Does this always strictly follow ngpios so that the number
-of gpio slots == ngpios * 2? In that case only put ngpios into
-the device tree and multiply by 2 in the driver, because ngpios
-is exactly for this: parameterizing hardware limitations.
+Would this really be useful for other drivers than pinctrl-single.c?
 
 Yours,
 Linus Walleij
