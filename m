@@ -2,113 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81883C47087
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 09:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D319FC47093
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 10:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5520160FE4
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 09:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0ABD61248
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 May 2021 10:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234038AbhE1JX0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 May 2021 05:23:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48682 "EHLO
+        id S236473AbhE1Khb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 May 2021 06:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230205AbhE1JX0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 May 2021 05:23:26 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DADC061574
-        for <linux-gpio@vger.kernel.org>; Fri, 28 May 2021 02:21:51 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id b26so4340564lfq.4
-        for <linux-gpio@vger.kernel.org>; Fri, 28 May 2021 02:21:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RjwPM80jhf7QqwxBuTnbQa++n8LEjK65ba/1tBbzVfA=;
-        b=wu7qxvtd9OJZMNKIdVAeANWw7VckJe0RlTmrWmCd2gVchxil2AMg1WiWdrsjttM6yO
-         C2C+iWzGbdVEUTRS55wDUl7i6/zp/Z8IARku9mL8lgjcDRQ+6zp8o9QXM6qId7teZW8c
-         rKKF5Ki5nHD96lPmFCUnZw1Yyw3+mVemnVzktDeWnQ5Wddqqm9nizZzAE6yU4seeb71t
-         7Q3eCtYK6GlITJWa21EZkOz88WA+DkpjbV2bUvm2uQXQhzCLSLkTXiPifs9W+vAjaXW+
-         9qsQBB/OzbPqsqP2Ilmw4hlc+30BHnUYzkueR/rLQeLg76PqE9mJg1HJHRJuZt/Uz0DL
-         w15A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RjwPM80jhf7QqwxBuTnbQa++n8LEjK65ba/1tBbzVfA=;
-        b=eMm7NuWiHgKOhbbmbqi89TerYAtN+okIHlqKlh8nroK+jU04FwD1XI6VsFuCMA/MtW
-         WDRXTEZM2f+FlTAqFtp+46U5uOUANwn961vV/Bqh6IGJhpTxgC3W5lqhtNx850Sy6/hO
-         tgT+DFWRQpQDcnfAe/6SEgG1WRJka+r0C35OFHjV+4Pj3vHhTT/lEIIMU1KISwQsAOEL
-         SBTbgFaDf+wcA4tYnHN95Vi44cDOtf0HusLdWxZ8I/hEkF901Ki2/aqpgQj1+dsRGiIp
-         KDlRwwNSmAsbG8mPgBvcUl6eA2AMngRJFo29tiTRUAZwhAP3/+uTNFQ6B6dbJnex/eKX
-         fUjQ==
-X-Gm-Message-State: AOAM531zctq2hjnkfWiS6aM5bm6K9w+JeCo7rb3vRp5/xg+9GUeTUbk3
-        rKnfr6+k2DzRhlAthR3VEwXdVV40QyZC5A==
-X-Google-Smtp-Source: ABdhPJw8PFmbP9HkmnrGbK0n1IEf8aMX6vyMKLQ4vHz2OgKqo+BvjIekuj64H9miMsvB38FKIjwU0Q==
-X-Received: by 2002:ac2:43d9:: with SMTP id u25mr5322114lfl.54.1622193709676;
-        Fri, 28 May 2021 02:21:49 -0700 (PDT)
-Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id m5sm498649ljg.118.2021.05.28.02.21.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 May 2021 02:21:49 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Fabien Parent <fparent@baylibre.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        linux-mediatek@lists.infradead.org,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] pinctrl: mediatek: move bit assignment
-Date:   Fri, 28 May 2021 11:19:45 +0200
-Message-Id: <20210528091945.411471-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.31.1
+        with ESMTP id S236492AbhE1Kha (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 May 2021 06:37:30 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95EB5C06138B
+        for <linux-gpio@vger.kernel.org>; Fri, 28 May 2021 03:35:54 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:751e:82a3:f2a2:3459])
+        by baptiste.telenet-ops.be with bizsmtp
+        id AAbs2500P20MPSF01AbsAb; Fri, 28 May 2021 12:35:52 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lmZqK-00AD9W-B3; Fri, 28 May 2021 12:35:52 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lmYG8-007Gbk-Nt; Fri, 28 May 2021 10:54:24 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: sh-pfc: Updates for v5.14
+Date:   Fri, 28 May 2021 10:54:23 +0200
+Message-Id: <cover.1622191662.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The bit needs offset to be defined which happens some lines
-below. Looks like a bug. The kernel test robot complains:
+	Hi Linus,
 
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c:137:12:
-warning: variable 'offset' is uninitialized when used here [-Wuninitialized]
-           bit = BIT(offset & pctl->devdata->mode_mask);
-                     ^~~~~~
+The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
-Fix it up by reverting to what was done before.
+  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
 
-Cc: Fabien Parent <fparent@baylibre.com>
-Cc: Sean Wang <sean.wang@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-Cc: linux-mediatek@lists.infradead.org
-Fixes: 9f940d8ecf92 ("pinctrl: mediatek: don't hardcode mode encoding in common code")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 9fe91e11a877..525b1aa7f7a6 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -134,7 +134,7 @@ static int mtk_pconf_set_ies_smt(struct mtk_pinctrl *pctl, unsigned pin,
- 			pin, pctl->devdata->port_align, value, arg);
- 	}
- 
--	bit = BIT(offset & pctl->devdata->mode_mask);
-+	bit = BIT(pin & 0xf);
- 
- 	if (arg == PIN_CONFIG_INPUT_ENABLE)
- 		offset = pctl->devdata->ies_offset;
--- 
-2.31.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.14-tag1
 
+for you to fetch changes up to 904ec4bebc1df908a943bf3178f6c633672ce47b:
+
+  pinctrl: renesas: r8a779{51,6,65}: Reduce non-functional differences (2021-05-11 10:04:42 +0200)
+
+----------------------------------------------------------------
+pinctrl: renesas: Updates for v5.14
+
+  - Minor fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (5):
+      pinctrl: renesas: r8a7796: Add missing bias for PRESET# pin
+      pinctrl: renesas: r8a77990: JTAG pins do not have pull-down capabilities
+      pinctrl: renesas: r8a77990: Drop bogus PUEN_ prefixes in comments
+      pinctrl: renesas: r8a7778: Remove unused PORT_GP_PUP_1() macro
+      pinctrl: renesas: r8a779{51,6,65}: Reduce non-functional differences
+
+ drivers/pinctrl/renesas/pfc-r8a7778.c  |  3 --
+ drivers/pinctrl/renesas/pfc-r8a77951.c |  4 +-
+ drivers/pinctrl/renesas/pfc-r8a7796.c  | 10 +++--
+ drivers/pinctrl/renesas/pfc-r8a77965.c | 79 +++++++++++++++++-----------------
+ drivers/pinctrl/renesas/pfc-r8a77990.c | 16 +++----
+ 5 files changed, 56 insertions(+), 56 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
