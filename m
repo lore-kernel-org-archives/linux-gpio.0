@@ -2,134 +2,194 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BBBC4708F
-	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 01:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D65C47093
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 16:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE507610CE
-	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 01:27:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15231611BD
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 16:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbhE3B3E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 May 2021 21:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbhE3B3E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 May 2021 21:29:04 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0083BC061574
-        for <linux-gpio@vger.kernel.org>; Sat, 29 May 2021 18:27:25 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id q25so6257753pfn.1
-        for <linux-gpio@vger.kernel.org>; Sat, 29 May 2021 18:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0Mp3Vt9uM1eRHFLwjMG5T9Kreh4tfm69JlsfGya9kmo=;
-        b=GUBPWO3Rz3dFP8cazZqfnu6FmKEdt+pL65c2t5WSabsGHZ5I8ePwI8TwSzo/uZxLtR
-         ke7Tx8IxfebwnqwOEd5DTq6YoJGx8gBlBD1xPgJA1DnTRpZ9KGAMeUEKUZOMqCym9EPf
-         U3WkIahX2uDwcr0Z/ZeJpusKdR4SBuubUv3cOKunBbKq2SCcdAqsJyotz6SZVuvpFYll
-         zlyTPmGuGeeWhbunKevNGtu9WCp9VoEBmAmRVijOYreBKGWV5RNhKZjlc7QZpiIbM9Li
-         EH81O/KJpJa6JwelVWzUXOkleal32oh6TD0oa6iZxBfD/McHwrRYaYDQsnPiXmtESnVB
-         +bUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0Mp3Vt9uM1eRHFLwjMG5T9Kreh4tfm69JlsfGya9kmo=;
-        b=BifhOwwzJmEC5XOkNNrzEszFZksIdj3ggLzUEGpacPBQsWTr0OeEg/SykzZ2sNmWlF
-         qf10vTRoKSuZlcLa4Nyu/J6mF0B/QAn9YVV5c4JYR3RRV/+pxIWidij5yzoKLxC5dT7y
-         DB0lu9q56wyHssAttoOpPP/Q+EBAIoLbjYMYsKFfi4navYt+VogKiQuRxk4K7zpYC1Au
-         WyE7a9lO8IIJN6QhiBUl3V7Nef6JMxL/LsODnefqxBYXRWU/tk/LnaYCImx7WVH8F6jC
-         89Aia6gm9OATMqk74ljOqZw48osqra4mqDV23O4ODByKhimLZqfnxSW3XvOiq/KYXTNA
-         XI6w==
-X-Gm-Message-State: AOAM531KT03/bIysf39dWb1HB8/1mCmLBTxx4TP9+xAytFB7mf68kxo9
-        GkK3HqQKlDPMHp4UxLJXRS8=
-X-Google-Smtp-Source: ABdhPJyhMTYDK9jZYWPAMM5+xN7sHsRebaH0sEEDUJmQP+eYLcCCWU1o4JhURRaEddefyyitDRb9fw==
-X-Received: by 2002:a05:6a00:1a92:b029:2ca:4c19:e4c1 with SMTP id e18-20020a056a001a92b02902ca4c19e4c1mr10614350pfv.32.1622338045501;
-        Sat, 29 May 2021 18:27:25 -0700 (PDT)
-Received: from sol (106-69-175-91.dyn.iinet.net.au. [106.69.175.91])
-        by smtp.gmail.com with ESMTPSA id x13sm8477697pja.3.2021.05.29.18.27.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 May 2021 18:27:25 -0700 (PDT)
-Date:   Sun, 30 May 2021 09:27:20 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [libgpiod][RFC v2] core: implement v2.0 API
-Message-ID: <20210530012720.GA11390@sol>
-References: <20210518191855.12647-1-brgl@bgdev.pl>
- <20210527112705.GA20965@sol>
- <CAMRc=Mff+=PNNqZUGO7Mq=OdmywYgS8+QuTqVYr4eOmA6Et_5g@mail.gmail.com>
- <20210528232320.GA5165@sol>
- <CAMRc=MfP5jEDqONYA0b7Dmm1hi38C8V1XSaX6xm03Cv4mpCJMQ@mail.gmail.com>
+        id S229599AbhE3QVG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 May 2021 12:21:06 -0400
+Received: from polaris.svanheule.net ([84.16.241.116]:49502 "EHLO
+        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229671AbhE3QVE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 May 2021 12:21:04 -0400
+Received: from [IPv6:2a02:a03f:eafb:ee01:a756:1e02:6cce:3504] (unknown [IPv6:2a02:a03f:eafb:ee01:a756:1e02:6cce:3504])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sander@svanheule.net)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 64C01205E94;
+        Sun, 30 May 2021 18:19:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+        s=mail1707; t=1622391563;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/0P6CVHHg6RZwUWJA6l55L+Il6NoiaeliitajqQ74PA=;
+        b=E/YTB8HwYl53MqEGwFx2ZBtPMvVii8PbE2fQjRrGXEHw9hixHHyEuiFCNUNkSyFJ2qtLG0
+        +qUzsHjnlPGzph5pVzcRIk+AXy+XgzCAvgIMC7pnlxpViOK6p+OoOA6+1GwmE0bDOhCVkG
+        WCZ8yKQwvC4u9C9mGnGjllaqrfq7v5EUotSBhm1oymoANrC3x/LH5EQ7LEoF8OZ6FdisBe
+        VewSy/PDkjqWN/D+qPG7M3eaiv8AYdPKPDBHJ/viwzgc4oT3Oeq+H4Vax1B+LAbsWKSXSj
+        oMiC8CDVxOpj0eizgf/aeGs89MS3LkWWWBn5TSSKF+gU0hLZ2cgqqQo9bE4KEw==
+Message-ID: <84352c93f27d7c8b7afea54f3932020e9cd97d02.camel@svanheule.net>
+Subject: Re: [PATCH v3 0/6] RTL8231 GPIO expander support
+From:   Sander Vanheule <sander@svanheule.net>
+To:     Michael Walle <michael@walle.cc>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Date:   Sun, 30 May 2021 18:19:21 +0200
+In-Reply-To: <f03d5cdc958110fc7d95cfc4258dac4e@walle.cc>
+References: <cover.1620735871.git.sander@svanheule.net>
+         <cover.1621809029.git.sander@svanheule.net> <YKr9G3EfrM34gCsL@lunn.ch>
+         <CAHp75VewCw8ES_9S48qmeCtSXMkGWt0s4iub0Fu4ZuwWANHpaQ@mail.gmail.com>
+         <02bbf73ea8a14119247f07a677993aad2f45b088.camel@svanheule.net>
+         <f03d5cdc958110fc7d95cfc4258dac4e@walle.cc>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfP5jEDqONYA0b7Dmm1hi38C8V1XSaX6xm03Cv4mpCJMQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, May 29, 2021 at 08:19:32PM +0200, Bartosz Golaszewski wrote:
-> On Sat, May 29, 2021 at 1:23 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
+Hi Michael, Andy,
+
+On Fri, 2021-05-28 at 08:37 +0200, Michael Walle wrote:
+> Am 2021-05-24 13:41, schrieb Sander Vanheule:
+> > Hi Andy, Andrew,
+> > 
+> > On Mon, 2021-05-24 at 10:53 +0300, Andy Shevchenko wrote:
+> > > On Mon, May 24, 2021 at 4:11 AM Andrew Lunn <andrew@lunn.ch> wrote:
+> > > > 
+> > > > > Changes since v2:
+> > > > >   - MDIO regmap support was merged, so patch is dropped here
+> > > > 
+> > > > Do you have any idea how this will get merged. It sounds like one of
+> > > > the Maintainers will need a stable branch of regmap.
+> > > 
+> > > This is not a problem if Mark provides an immutable branch to pull 
+> > > from.
+> > 
+> > Mark has a tag (regmap-mdio) for this patch:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/tag/?h=regmap-mdio
+> > 
+> > > 
+> > > > >   - Introduce GPIO regmap quirks to set output direction first
+> > > > 
+> > > > I thought you had determined it was possible to set output before
+> > > > direction?
+> > > 
+> > > Same thoughts when I saw an updated version of that patch. My
+> > > anticipation was to not see it at all.
+> > 
+> > The two devices I've been trying to test the behaviour on are:
+> >  * Netgear GS110TPP: has an RTL8231 with three LEDs, each driven via a 
+> > pin
+> >    configured as (active-low) GPIO. The LEDs are easy for a quick 
+> > visual check.
+> >  * Zyxel GS1900-8: RTL8231 used for the front panel button, and an 
+> > active-low
+> >    GPIO used to hard reset the main SoC (an RTL8380). I've modified 
+> > this board
+> >    to change some of the strapping pin values, but testing with the 
+> > jumpers and
+> >    pull-up/down resistors is a bit more tedious.
+> > 
+> > On the Netgear, I tested the following with and without the quirk:
+> > 
+> >    # Set as OUT-LOW twice, to avoid the quirk. Always turns the LED on
+> >    gpioset 1 32=0; gpioset 1 32=0
+> >    # Get value to change to input, turns the LED off (high impedance)
+> >    # Will return 1 due to (weak) internal pull-up
+> >    gpioget 1 32
+> >    # Set as OUT-HIGH, should result in LED off
+> >    # When the quirk is disabled, the LED turns on (i.e. old OUT-LOW 
+> > value)
+> >    # When the quirk is enabled, the LED remains off (i.e. correct
+> > OUT-HIGH value)
+> >    gpioset 1 32=1
+> > 
+> > Now, what's confusing (to me) is that the inverse doesn't depend on the 
+> > quirk:
+> > 
+> >    # Set as OUT-HIGH twice
+> >    gpioset 1 32=1; gpioset 1 32=1
+> >    # Change to high-Z
+> >    gpioget 1 32
+> >    # Set to OUT-LOW, always results in LED on, with or without quirk
+> >    gpioset 1 32=0
+> > 
+> > Any idea why this would be (or appear) broken on the former case, but 
+> > not on the
+> > latter?
 > 
-
-[snip]
-
-I meant to reply to this section as well but managed to snip it out...
-
-> > > > the gpiod_chip_request_lines() or gpiod_line_request_reconfigure_lines()
-> > > > is called it isn't too complex and so can be translated to the uAPI.
-> > > > The check has to be performed as part of those functions either way, and
-> > > > validating a transitional config doesn't prove anything.
-> > > >
-> > >
-> > > Indeed. OTOH with return values in mutators taking integer values we
-> > > would throw errors on invalid values passed. I need to think about it
-> > > some more.
-> > >
-> >
-> > I was assuming separate mutators for each of the enum values, as you do
-> > for the active level but, with the offset and subset variants
-> > multiplying the number of mutators, I can see why you would go with the
-> > parameterized versions.  While you could still perform the range
-> > checking as part of the translation to uAPI, that can more difficult for
-> > the user to debug - depending on how many mutators they have applied.
-> >
-> > It is a trade-off, but I still lean towards the error-less mutators as
-> > it simplifies user code - consolidating the error checking into one
-> > place. A parameter being out of range means the user is doing something
-> > stupid, or running a future app against an old libgpiod, in which case
-> > they should be fine with slightly tougher debugging.
-> >
+> Before reading this, I'd have guessed that they switch the internal 
+> register
+> depending on the GPIO direction; I mean there is only one register 
+> address
+> for both the input and the output register. Hm.
 > 
-> Having error-less mutators here would mean something like a hundred
-> functions just for setting the line config. I think that even with
-> mutators taking enums we already have enough symbols. Let's keep them.
+> Did you try playing around with raw register accesses and see if the 
+> value
+> of the GPIO data register is changing when you switch GPIOs to 
+> input/output.
 > 
+> Eg. you could try https://github.com/kontron/miitool to access the 
+> registers
+> from userspace (your ethernet controller has to have support for the 
+> ioctl's
+> though, see commit a613bafec516 ("enetc: add ioctl() support for 
+> PHY-related
+> ops") for an example).
 
-We don't want separate mutators for each enum value as that would
-explode the symbol space.  Agreed.
+I think I found a solution!
 
-To be clear, in my "trade-off" paragraph above I was referring to your
-existing parameterised error-less mutators, not the parameter-less
-error-less mutators that I had been assuming.
-Different paragraph and different things.
+As Michael suggested, I tried raw register reads and writes, to eliminate any
+side effects of the intermediate code. I didn't use the ioctls (this isn't a
+netdev), but I found regmap's debugfs write functionality, which allowed me to
+do the same.
 
-So, to conclude, I would lean towards keeping your existing mutators that
-don't return error codes, rather than adding error codes.
-And only performing the validation when the config is translated to uAPI,
-not providing some functions to perform interim validation.
-i.e. wrt error handling I'm fine with the mutators as they are.
+I was trying to reproduce the behaviour I reported earlier, but couldn't. The
+output levels were always the intended ones. At some point I realised that the
+regmap_update_bits function does a read-modify-write, which might shadow the
+actual current output value.
+For example:
+ * Set output low: current out is low
+ * Change to input with pull-up: current out is still low, but DATAx reads high
+ * Set output high: RMW reads a high value (the input), so assumes a write is
+   not necessary, leaving the old output value (low).
 
-OK?
+Currently, I see two options:
+ * Use regmap_update_bits_base to avoid the lazy RMW behaviour
+ * Add a cache for the output data values to the driver, and only use these
+   values to write to the output registers. This would allow keeping lazy RMW
+   behaviour, which may be a benefit on slow busses.
 
-Cheers,
-Kent.
+With either of these implemented, if I set the output value before the
+direction, everything works! :-)
+
+Would you like this to be added to regmap-gpio, or should I revert back to a
+device-specific implementation?
+
+
+Best,
+Sander
+
