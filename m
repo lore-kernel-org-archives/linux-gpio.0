@@ -2,165 +2,228 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B841C47098
-	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 16:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE52C47092
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 16:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3665611EE
-	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 16:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACE8461209
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 May 2021 16:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229976AbhE3Qv4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 30 May 2021 12:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbhE3Qvx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 May 2021 12:51:53 -0400
-Received: from mailserv1.kapsi.fi (mailserv1.kapsi.fi [IPv6:2001:67c:1be8::25:1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63563C061761;
-        Sun, 30 May 2021 09:50:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=ext.kapsi.fi; s=20161220; h=Subject:Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=sqayVbWJxMwOJbb2ISlKd5CFS46e4OV067XCFUWNdfs=; b=xCgjQ9j1j6Ds+n9uOzWGSaW1cj
-        F4yXNfwBo04FGlpPMTLggyiy7GzHpWmLnlM7vhRf/v2PSBP9QmZMxF15SRkGY4CwInqftogSIH1Mf
-        Xf6OaR2GNImzW7lSVjfmqTGdm+4rvWhnj6jqjlSlq11W/NfWP4nJZOG19+tbCPYp2o+vYXCb3ZRuZ
-        hT+fsB65yBMQMXBYr59wy3lD34R/Z9Stg3NNEku7fEJ+2BdmObDgFiRbFDX3wZ49w5EPpzRBpGtg9
-        HjHbe+EU/WgHuiqqf3IqJpJv2jU5UAZOYgM34ObKkX++sprB5V0TiCO7h9yDkSl9c5ZyNEHVm9IlX
-        iiEuG9ig==;
-Received: from 164-105-191-90.dyn.estpak.ee ([90.191.105.164]:50316 helo=localdomain)
-        by mailserv1.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <maukka@ext.kapsi.fi>)
-        id 1lnO6X-0001fO-6h; Sun, 30 May 2021 19:15:58 +0300
-Received: by localdomain (sSMTP sendmail emulation); Sun, 30 May 2021 19:15:53 +0300
-From:   Mauri Sandberg <maukka@ext.kapsi.fi>
-To:     sandberg@mailfence.com
-Cc:     andy.shevchenko@gmail.com, bgolaszewski@baylibre.com,
-        geert+renesas@glider.be, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        drew@beagleboard.org, Mauri Sandberg <maukka@ext.kapsi.fi>
-Date:   Sun, 30 May 2021 19:13:32 +0300
-Message-Id: <20210530161333.3996-2-maukka@ext.kapsi.fi>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210530161333.3996-1-maukka@ext.kapsi.fi>
-References: <20210325122832.119147-1-sandberg@mailfence.com>
- <20210530161333.3996-1-maukka@ext.kapsi.fi>
+        id S229828AbhE3QxE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 May 2021 12:53:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25628 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229599AbhE3QxD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 30 May 2021 12:53:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622393485;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=g4DresjxbvYoLZHzt/csc15CCgwHH4raEtpTQ0nPVeg=;
+        b=Fcu1h/lnLIzizDPmfEaPG1iWOusN2/zxNxHGdk3DYD5EUQbLCUer/qAoRYrqRSruwHKjs9
+        nGq0DJl9ezp2Fc2NyQFsyVoNZK/xoTFmYCKPWCcZdjqXFYkHU741Id7u4qHVdW6EG5laYl
+        HJFmuu/W0thUbbclOT0wD/w97r85k0g=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-376-od5QQmIFNdy2zZkKYwX9GA-1; Sun, 30 May 2021 12:51:23 -0400
+X-MC-Unique: od5QQmIFNdy2zZkKYwX9GA-1
+Received: by mail-ed1-f72.google.com with SMTP id q18-20020a0564025192b02903888712212fso5032524edd.19
+        for <linux-gpio@vger.kernel.org>; Sun, 30 May 2021 09:51:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g4DresjxbvYoLZHzt/csc15CCgwHH4raEtpTQ0nPVeg=;
+        b=hK1MGxN4UpiKBr7GUSiEHmJ4wrKSUkCLYBdfpprUmUIm5hK8x0RkgvbK0xcpQYFSK8
+         8xuwvAoa70SLolh0u9QcdMHaOWCymarvuxyV/ZSmo/j2LGP+QkxCmi6AE4sujzwzwirE
+         uVGBmp9Lka4caqjdG9zwVdh1Wti6IRgclWdTuqlrX1WPW/2xSWT5rbnPCojwZUUytvUv
+         TGHksvMiBlQ+HVAy70jUdrDtPNs9hp0GYn14wxkSAA1eF5p7k0691KRlZbh6zhwcpdeo
+         0T7xro0vchQovMQ8J2H3fm5Jg6kFhSakzMiXMalKxTUPIEBjrnIkulLFK70BEHGlk+zp
+         aweA==
+X-Gm-Message-State: AOAM5303kMew9iUS6Jo00uI1tWPe8TO9/d0cIxea++VuEyM/q95NvmOM
+        mxFgvSlWlQqAdP9V5nQmz/nIdNjAr5mPlbZgtv1kBNu7VVQ+mTmXP10yBj+L3NMcEil4jQ+DtxM
+        VQsPV3GajHf/xyWgQfkjxgA==
+X-Received: by 2002:a17:907:1b06:: with SMTP id mp6mr18971671ejc.292.1622393481701;
+        Sun, 30 May 2021 09:51:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwv4NXBGWEOUlsCBK8dv4d5a9MPJ7elGrzUox4+WgpDpgPxKMZzzPtUpEpX5BfjGTpigSbKpg==
+X-Received: by 2002:a17:907:1b06:: with SMTP id mp6mr18971650ejc.292.1622393481352;
+        Sun, 30 May 2021 09:51:21 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id p11sm5737751edt.22.2021.05.30.09.51.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 May 2021 09:51:20 -0700 (PDT)
+Subject: Re: [PATCH v3 0/6] RTL8231 GPIO expander support
+To:     Sander Vanheule <sander@svanheule.net>,
+        Michael Walle <michael@walle.cc>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1620735871.git.sander@svanheule.net>
+ <cover.1621809029.git.sander@svanheule.net> <YKr9G3EfrM34gCsL@lunn.ch>
+ <CAHp75VewCw8ES_9S48qmeCtSXMkGWt0s4iub0Fu4ZuwWANHpaQ@mail.gmail.com>
+ <02bbf73ea8a14119247f07a677993aad2f45b088.camel@svanheule.net>
+ <f03d5cdc958110fc7d95cfc4258dac4e@walle.cc>
+ <84352c93f27d7c8b7afea54f3932020e9cd97d02.camel@svanheule.net>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <a644b8fa-c90a-eab6-9cca-08344abec532@redhat.com>
+Date:   Sun, 30 May 2021 18:51:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <84352c93f27d7c8b7afea54f3932020e9cd97d02.camel@svanheule.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 90.191.105.164
-X-SA-Exim-Mail-From: maukka@ext.kapsi.fi
-Subject: [PATCH v4 1/2] dt-bindings: gpio-mux-input: add documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on mailserv1.kapsi.fi)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add documentation for a general GPIO multiplexer.
+Hi,
 
-Signed-off-by: Mauri Sandberg <maukka@ext.kapsi.fi>
-Tested-by: Drew Fustini <drew@beagleboard.org>
-Reviewed-by: Drew Fustini <drew@beagleboard.org>
----
-v3 -> v4:
- - Changed author email
- - Included Tested-by and Reviewed-by from Drew
-v2 -> v3: added a complete example on dual 4-way multiplexer
-v1 -> v2: added a little bit more text in the binding documenation
----
- .../bindings/gpio/gpio-mux-input.yaml         | 75 +++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
+On 5/30/21 6:19 PM, Sander Vanheule wrote:
+> Hi Michael, Andy,
+> 
+> On Fri, 2021-05-28 at 08:37 +0200, Michael Walle wrote:
+>> Am 2021-05-24 13:41, schrieb Sander Vanheule:
+>>> Hi Andy, Andrew,
+>>>
+>>> On Mon, 2021-05-24 at 10:53 +0300, Andy Shevchenko wrote:
+>>>> On Mon, May 24, 2021 at 4:11 AM Andrew Lunn <andrew@lunn.ch> wrote:
+>>>>>
+>>>>>> Changes since v2:
+>>>>>>   - MDIO regmap support was merged, so patch is dropped here
+>>>>>
+>>>>> Do you have any idea how this will get merged. It sounds like one of
+>>>>> the Maintainers will need a stable branch of regmap.
+>>>>
+>>>> This is not a problem if Mark provides an immutable branch to pull 
+>>>> from.
+>>>
+>>> Mark has a tag (regmap-mdio) for this patch:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/tag/?h=regmap-mdio
+>>>
+>>>>
+>>>>>>   - Introduce GPIO regmap quirks to set output direction first
+>>>>>
+>>>>> I thought you had determined it was possible to set output before
+>>>>> direction?
+>>>>
+>>>> Same thoughts when I saw an updated version of that patch. My
+>>>> anticipation was to not see it at all.
+>>>
+>>> The two devices I've been trying to test the behaviour on are:
+>>>  * Netgear GS110TPP: has an RTL8231 with three LEDs, each driven via a 
+>>> pin
+>>>    configured as (active-low) GPIO. The LEDs are easy for a quick 
+>>> visual check.
+>>>  * Zyxel GS1900-8: RTL8231 used for the front panel button, and an 
+>>> active-low
+>>>    GPIO used to hard reset the main SoC (an RTL8380). I've modified 
+>>> this board
+>>>    to change some of the strapping pin values, but testing with the 
+>>> jumpers and
+>>>    pull-up/down resistors is a bit more tedious.
+>>>
+>>> On the Netgear, I tested the following with and without the quirk:
+>>>
+>>>    # Set as OUT-LOW twice, to avoid the quirk. Always turns the LED on
+>>>    gpioset 1 32=0; gpioset 1 32=0
+>>>    # Get value to change to input, turns the LED off (high impedance)
+>>>    # Will return 1 due to (weak) internal pull-up
+>>>    gpioget 1 32
+>>>    # Set as OUT-HIGH, should result in LED off
+>>>    # When the quirk is disabled, the LED turns on (i.e. old OUT-LOW 
+>>> value)
+>>>    # When the quirk is enabled, the LED remains off (i.e. correct
+>>> OUT-HIGH value)
+>>>    gpioset 1 32=1
+>>>
+>>> Now, what's confusing (to me) is that the inverse doesn't depend on the 
+>>> quirk:
+>>>
+>>>    # Set as OUT-HIGH twice
+>>>    gpioset 1 32=1; gpioset 1 32=1
+>>>    # Change to high-Z
+>>>    gpioget 1 32
+>>>    # Set to OUT-LOW, always results in LED on, with or without quirk
+>>>    gpioset 1 32=0
+>>>
+>>> Any idea why this would be (or appear) broken on the former case, but 
+>>> not on the
+>>> latter?
+>>
+>> Before reading this, I'd have guessed that they switch the internal 
+>> register
+>> depending on the GPIO direction; I mean there is only one register 
+>> address
+>> for both the input and the output register. Hm.
+>>
+>> Did you try playing around with raw register accesses and see if the 
+>> value
+>> of the GPIO data register is changing when you switch GPIOs to 
+>> input/output.
+>>
+>> Eg. you could try https://github.com/kontron/miitool to access the 
+>> registers
+>> from userspace (your ethernet controller has to have support for the 
+>> ioctl's
+>> though, see commit a613bafec516 ("enetc: add ioctl() support for 
+>> PHY-related
+>> ops") for an example).
+> 
+> I think I found a solution!
+> 
+> As Michael suggested, I tried raw register reads and writes, to eliminate any
+> side effects of the intermediate code. I didn't use the ioctls (this isn't a
+> netdev), but I found regmap's debugfs write functionality, which allowed me to
+> do the same.
+> 
+> I was trying to reproduce the behaviour I reported earlier, but couldn't. The
+> output levels were always the intended ones. At some point I realised that the
+> regmap_update_bits function does a read-modify-write, which might shadow the
+> actual current output value.
+> For example:
+>  * Set output low: current out is low
+>  * Change to input with pull-up: current out is still low, but DATAx reads high
+>  * Set output high: RMW reads a high value (the input), so assumes a write is
+>    not necessary, leaving the old output value (low).
+> 
+> Currently, I see two options:
+>  * Use regmap_update_bits_base to avoid the lazy RMW behaviour
+>  * Add a cache for the output data values to the driver, and only use these
+>    values to write to the output registers. This would allow keeping lazy RMW
+>    behaviour, which may be a benefit on slow busses.
+> 
+> With either of these implemented, if I set the output value before the
+> direction, everything works! :-)
+> 
+> Would you like this to be added to regmap-gpio, or should I revert back to a
+> device-specific implementation?
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml b/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
-new file mode 100644
-index 000000000000..1ca4c3c8d64b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mux-input.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/gpio-mux-input.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Generic GPIO input multiplexer
-+
-+maintainers:
-+  - Mauri Sandberg <maukka@ext.kapsi.fi>
-+
-+description: |
-+  A generic GPIO based input multiplexer
-+
-+  This driver uses a mux-controller to drive the multiplexer and has a single
-+  output pin for reading the inputs to the mux.
-+
-+  For GPIO consumer documentation see gpio.txt.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - gpio-mux-input
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  pin-gpios:
-+    description: |
-+      The GPIO pin used as the output from the multiplexer
-+
-+required:
-+  - compatible
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - pin-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    mux: mux-controller {
-+        compatible = "gpio-mux";
-+        #mux-control-cells = <0>;
-+
-+        mux-gpios = <&gpio 9 GPIO_ACTIVE_HIGH>,
-+                    <&gpio 11 GPIO_ACTIVE_HIGH>;
-+    };
-+
-+    gpio2: key-mux1 {
-+        compatible = "gpio-mux-input";
-+        mux-controls = <&mux>;
-+
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+
-+        // GPIOs used by this node, mux pin
-+        pin-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
-+    };
-+
-+    gpio3: key-mux2 {
-+        compatible = "gpio-mux-input";
-+        mux-controls = <&mux>;
-+
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+
-+        // GPIOs used by this node, mux pin
-+        pin-gpios = <&gpio 14 GPIO_ACTIVE_HIGH>;
-+    };
-+
-+...
--- 
-2.25.1
+Regmap allows you to mark certain ranges as volatile, so that they will not
+be cached, these GPIO registers containing the current pin value seems like
+a good candidate for this. This is also necessary to make reading the GPIO
+work without getting back a stale, cached value.
+
+Regards,
+
+Hans
 
