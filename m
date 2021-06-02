@@ -2,60 +2,59 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53D2C4708F
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 12:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EC5C4708F
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 12:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DA1F613B8
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 12:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA4F9613BF
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 12:25:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbhFBM0p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Jun 2021 08:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39208 "EHLO
+        id S229833AbhFBM04 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Jun 2021 08:26:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbhFBM0o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jun 2021 08:26:44 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA0ADC061756
-        for <linux-gpio@vger.kernel.org>; Wed,  2 Jun 2021 05:24:52 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id u24so2643452edy.11
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Jun 2021 05:24:52 -0700 (PDT)
+        with ESMTP id S229727AbhFBM0w (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jun 2021 08:26:52 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FE80C061760
+        for <linux-gpio@vger.kernel.org>; Wed,  2 Jun 2021 05:24:56 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id e18so3564055eje.5
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Jun 2021 05:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sartura-hr.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zY5RLk/fd5DiVsCKJBYSJiTcCIwghmyi0mxOi7Ll8fE=;
-        b=myuHSwFtL2/YUh4FO4mQ8h7gkARescYFpoyoRFASTiAjEKgVNdg5XBrUaTCLAGRvLW
-         Warw75tIjzGehaAgCugjI5o3++/Yk6C6czh1JG8AQ9AWvfBMnNF+UOi1XdwlnQK9S1EL
-         myvmwLPnjeMM00iA5+HGKTp0kBxTAv3HChJb1OC5DOH2iqYS81Z3dfrZgwaLmuWC5A0x
-         HceYWWZQJPqd1UybsmL43f9z0TW+5QNNHAKy9anj75+Iaaw8nzKpZ8QP9NZWGqYN1vsk
-         iNVOD0s0B5zYGe57YxeE1xfCVRzU/BbOwr/KpH6m9pu/dXVfFpPLa5RS7w976zVpddsf
-         wQNw==
+        bh=KwzIciJcRMLFeuSk+73IfkH7cFnyIlKyHf0qK2B6F5s=;
+        b=YLu782R4rDcdufVKCWyFar1u0k6ZHIS149dEuY/M5/REZQmi81VEd0HYxa83bcsHrq
+         Ph/aAm5w6euQn1Gk2P/2HibUDzDJaszXa6Sh8AoWF1dxeSubYazVzxeNMy+UsHgq4lZq
+         r0mWTqK5wk9E5LZkcU7TtLXMdyLzQv5fGG1I8VHGX1ePRV3zQdnpuRYnSPTcwDCHD96a
+         +Srku5qHx4JSQsrRe/JyFM+JhmjOwFSc8AQ/JrkqHFgdDHBpQq412gKfzpJ1Mb33UOeG
+         0t1++gb+1Q1nIvrnzdh2c0tESVfU4RuGgK7aJBu24qrb/h+/684mjxJxvDZ9xkgt3bYH
+         HsBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zY5RLk/fd5DiVsCKJBYSJiTcCIwghmyi0mxOi7Ll8fE=;
-        b=HulnpevnHmpD6PsD2S0a8nZKiMR6z/83K84tc1y8K3s/a5lF1sha2ekDXCGJsvtMpw
-         ZqKTAZBooLDYBuD+32tYyzZ7oqbVN16k4dGhqOFSaqu2ommwdsD7nmmSsCXiRH19MiL3
-         x5sO5hDmb77TyTc8FdC98E5aWm4C7L2CPgFxbIGvCtm2CQVArh+K4BCYcGhHEHrCoSJ9
-         9jWzFEAI39gWR5W5P4NocHHfBnk3pI1y7ZnjVI0ErOb4+3hAa3pFjtLZY2R/Fu6gR6mn
-         aBiP5glM0WmReIginUc7Y7cvzkIiOaCLsQK/q51cmKCAWFxMCJzNUde1N8uOGNTU8z42
-         ucOA==
-X-Gm-Message-State: AOAM532uTLmLRssDzd1SRQKOoODtPPAdmt2IDXyAn5vAVA6/SlSwVfd6
-        gU2oywpG53A6K6D3yTvbZ/4MxSVWMb8+iQ==
-X-Google-Smtp-Source: ABdhPJy5ofvIiPNeXoT4V0LnHXMzOtDXc/5wn7Zw8XOphC0k6/VfbbAAL8yPnQTatcqnsiwLdFlVqg==
-X-Received: by 2002:a50:a6c2:: with SMTP id f2mr31273549edc.39.1622636689739;
-        Wed, 02 Jun 2021 05:24:49 -0700 (PDT)
+        bh=KwzIciJcRMLFeuSk+73IfkH7cFnyIlKyHf0qK2B6F5s=;
+        b=D9L7VfMizqJZpMi19VUjx98BeM1zadBF0d2nOhII+IOPCr0FmMQutamKKHxOYMwsEC
+         O/SZGzmSwKsb615+q/dEYAJtnF6VzFovTPFH6jS3JJLkPLL8zn5VhTwI5rQGkg3aq7Zv
+         6pyOCjzwJUh3e1NKjKBqbnMvK1Thbuzt1lyFc8osPrZk5LZujN38TYE/yzM6rVzDjNu5
+         OklokAlxiTvFVoCyrofg4KQBggSOFPidh2WGsTbtLbQwd745zaAx+ToX7l7G1gI7N09w
+         No/SrPN3V5e1i/r0NHVYL1bsvJNekACSko8/49koGo+25hfSJnnF5RU3GtDhKrqE4FVW
+         9k1g==
+X-Gm-Message-State: AOAM532FJjeTGqh+0KL23Ky3TSR/y1OvVd0Iuu1izvVRGv5Gui3bxn2X
+        7KG90sK/cv1RHipMzbQVFlKZsQ==
+X-Google-Smtp-Source: ABdhPJyUATHNryaU2UdW7mbUDR3V6ErfrzvZ7r7XgrMT94yfOmagV2tucEdTb8VY/t4Cv9cfiRAjEg==
+X-Received: by 2002:a17:906:1848:: with SMTP id w8mr631935eje.277.1622636694788;
+        Wed, 02 Jun 2021 05:24:54 -0700 (PDT)
 Received: from localhost.localdomain (dh207-96-250.xnet.hr. [88.207.96.250])
-        by smtp.googlemail.com with ESMTPSA id z17sm8539340ejc.69.2021.06.02.05.24.48
+        by smtp.googlemail.com with ESMTPSA id z17sm8539340ejc.69.2021.06.02.05.24.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 05:24:49 -0700 (PDT)
+        Wed, 02 Jun 2021 05:24:54 -0700 (PDT)
 From:   Robert Marko <robert.marko@sartura.hr>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         robh+dt@kernel.org, lee.jones@linaro.org, p.zabel@pengutronix.de,
@@ -63,9 +62,9 @@ To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         linux-kernel@vger.kernel.org
 Cc:     luka.perkov@sartura.hr, jmp@epiphyte.org, pmenzel@molgen.mpg.de,
         buczek@molgen.mpg.de, Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v4 3/6] dt-bindings: reset: Add Delta TN48M
-Date:   Wed,  2 Jun 2021 14:24:36 +0200
-Message-Id: <20210602122439.2084775-3-robert.marko@sartura.hr>
+Subject: [PATCH v4 6/6] MAINTAINERS: Add Delta Networks TN48M CPLD drivers
+Date:   Wed,  2 Jun 2021 14:24:39 +0200
+Message-Id: <20210602122439.2084775-6-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210602122439.2084775-1-robert.marko@sartura.hr>
 References: <20210602122439.2084775-1-robert.marko@sartura.hr>
@@ -75,41 +74,34 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add header for the Delta TN48M CPLD provided
-resets.
+Add maintainers entry for the Delta Networks TN48M
+CPLD MFD drivers.
 
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 ---
- include/dt-bindings/reset/delta,tn48m-reset.h | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 include/dt-bindings/reset/delta,tn48m-reset.h
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/include/dt-bindings/reset/delta,tn48m-reset.h b/include/dt-bindings/reset/delta,tn48m-reset.h
-new file mode 100644
-index 000000000000..659a3f6c4d47
---- /dev/null
-+++ b/include/dt-bindings/reset/delta,tn48m-reset.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Delta TN48M CPLD GPIO driver
-+ *
-+ * Copyright 2021 Sartura Ltd
-+ *
-+ * Author: Robert Marko <robert.marko@sartura.hr>
-+ */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9450e052f1b1..82d9c2943c34 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5096,6 +5096,15 @@ W:	https://linuxtv.org
+ T:	git git://linuxtv.org/media_tree.git
+ F:	drivers/media/platform/sti/delta
+ 
++DELTA NETWORKS TN48M CPLD DRIVERS
++M:	Robert Marko <robert.marko@sartura.hr>
++S:	Maintained
++F:	Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml
++F:	Documentation/devicetree/bindings/mfd/delta,tn48m-cpld.yaml
++F:	Documentation/devicetree/bindings/reset/delta,tn48m-reset.yaml
++F:	drivers/gpio/gpio-tn48m.c
++F:	include/dt-bindings/reset/delta,tn48m-reset.h
 +
-+#ifndef _DT_BINDINGS_RESET_TN48M_H
-+#define _DT_BINDINGS_RESET_TN48M_H
-+
-+#define CPU_88F7040_RESET	0
-+#define CPU_88F6820_RESET	1
-+#define MAC_98DX3265_RESET	2
-+#define PHY_88E1680_RESET	3
-+#define PHY_88E1512_RESET	4
-+#define POE_RESET		5
-+
-+#endif /* _DT_BINDINGS_RESET_TN48M_H */
+ DENALI NAND DRIVER
+ L:	linux-mtd@lists.infradead.org
+ S:	Orphan
 -- 
 2.31.1
 
