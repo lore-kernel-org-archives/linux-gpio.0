@@ -2,113 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF92FC47096
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 15:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA09C47083
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 18:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF8A261405
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 15:43:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 189BE61359
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 18:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232437AbhFBPpN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Jun 2021 11:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232376AbhFBPpG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:45:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7867E6140C;
-        Wed,  2 Jun 2021 15:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622648602;
-        bh=0MELa+vkFf8qciInEiANCeWuJgsCWdc+iIN4XgabBlU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ow5ucdX+cLyyshfYKKgUmaN7u1vT8JE6wpcqUKxTUm3f4VAqfL+vN/ipg7eINBHcs
-         5myl1FE98NtMXFFNDejrwHifMf/IbOWqgFNtE+klnW+5/PCO4dWEcwpTfDeeVN6Ckn
-         JvczV9Y13kiuvQ2CanTKQdGdOzLB1jTQO4uU50i8/+hZ241IyBQ7yZ1+WRb4p5SFpk
-         EUvYoaJtuDfi/UdKVyvZWcnoFLquBLPz4d3uwoHmZIEwE+ahs53PrxMsQovuDF6qo9
-         sI0gAHsVnC3iacI5pyrpN+81xksmA46ctCWF+HtJhVLTBaKuRBj1aOhgCo0bi3Z0n0
-         AK5H0lWSJ7oUA==
-Received: by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1loT1b-006XbY-6u; Wed, 02 Jun 2021 17:43:19 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Keerthy <j-keerthy@ti.com>, Lars-Peter Clausen <lars@metafoo.de>,
+        id S229554AbhFBSvI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Jun 2021 14:51:08 -0400
+Received: from mail-ot1-f54.google.com ([209.85.210.54]:45626 "EHLO
+        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229467AbhFBSvH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jun 2021 14:51:07 -0400
+Received: by mail-ot1-f54.google.com with SMTP id t10-20020a05683022eab0290304ed8bc759so3328542otc.12;
+        Wed, 02 Jun 2021 11:49:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RlxUj7bGsFvw2USIB98VuWjgVTpSrZLSh88VYHOyjxA=;
+        b=QnGFM0E8v5y48nSkgN0iN7TD4rsuCt4GapuUaagKy2h0kn96EVx+0fwSGU/Iu9FUnj
+         5NTkQ+vzrLDtKOPHvhcQ5CA5yg2KDfcwBXhK9FYO3R/MG+iWk07lYvN9SiaL+kipdrMN
+         TpIl9Mop7jwv/LtyR0xoIspKseEZfZicvExovusV/C80Mpmf4u+HeBm8s6kctFJa4UYL
+         vaVATcoxKTqO5gcLb4vzVoUl5ub9iu/Mf9dVCB9rgbUv5kkH65kaYYqiqLuKneEaoRLv
+         pz5+QqbcLX36KwWaDoaxk65yl5vlOd0oXfSuVCxd/CT4jEplGoFlZr2BO8j1G1uyjZ/w
+         8e+A==
+X-Gm-Message-State: AOAM532/L/YiCZDboiUJvaHE4MNFIp2cyLmIerthDIcWeSku3HJQV43m
+        aaVJbc1850we8x+q+AKSaw==
+X-Google-Smtp-Source: ABdhPJx5XNMY1INJmrlMN0TFHO/2shEZyUm45YJTxt3+Wj19EVMqfUT3u4NxHJre+JeoflKmJQZw6Q==
+X-Received: by 2002:a05:6830:119a:: with SMTP id u26mr4585253otq.87.1622659764221;
+        Wed, 02 Jun 2021 11:49:24 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x8sm140181oiv.51.2021.06.02.11.49.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jun 2021 11:49:23 -0700 (PDT)
+Received: (nullmailer pid 3762130 invoked by uid 1000);
+        Wed, 02 Jun 2021 18:49:22 -0000
+Date:   Wed, 2 Jun 2021 13:49:22 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     satya priya <skakit@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-gpio@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        devicetree@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Peter Rosin <peda@axentia.se>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 00/12] Fix broken docs references at next-20210602
-Date:   Wed,  2 Jun 2021 17:43:06 +0200
-Message-Id: <cover.1622648507.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.31.1
+        kgunda@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4] dt-bindings: pinctrl: qcom-pmic-gpio: Convert qcom
+ pmic gpio bindings to YAML
+Message-ID: <20210602184922.GA3762097@robh.at.kernel.org>
+References: <1621578615-4613-1-git-send-email-skakit@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1621578615-4613-1-git-send-email-skakit@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are some broken references at today's linux-next with regards
-to files inside Documentation/.
+On Fri, 21 May 2021 12:00:15 +0530, satya priya wrote:
+> Convert Qualcomm PMIC GPIO bindings from .txt to .yaml format.
+> 
+> Signed-off-by: satya priya <skakit@codeaurora.org>
+> ---
+> Changes in V2:
+>  - As per Rob's comments fixed bot erros.
+>  - Moved this patch to end of the series so that other patches are not
+>    blocked on this.
+> 
+> Changes in V3:
+>  - As per Rob's comments, added maxItems for reg and interrupts.
+>    Added reference of "pinmux-node.yaml" and "pincfg-node.yaml".
+>    Made 'additionalProperties' as false.
+> 
+> Changes in V4:
+>  - As per Rob's comments, added description for interrupts, defined
+>    constraints for "qcom,drive-strength", dropped description for function
+>    property.
+> 
+>  .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 286 ---------------------
+>  .../bindings/pinctrl/qcom,pmic-gpio.yaml           | 256 ++++++++++++++++++
+>  2 files changed, 256 insertions(+), 286 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+> 
 
-Address them.
-
-Mauro Carvalho Chehab (12):
-  dt-bindings: power: supply: cpcap-battery: update cpcap-battery.yaml
-    reference
-  dt-bindings: power: supply: cpcap-charger: update cpcap-charger.yaml
-    reference
-  dt-bindings: soc: ti: update sci-pm-domain.yaml references
-  dt-bindings: clock: update ti,sci-clk.yaml references
-  dt-bindings: reset: update ti,sci-reset.yaml references
-  dt-bindings: iio: io-channel-mux.yaml: fix a typo
-  docs: accounting: update delay-accounting.rst reference
-  MAINTAINERS: update faraday,ftrtc010.yaml reference
-  MAINTAINERS: update marvell,armada-3700-utmi-phy.yaml reference
-  MAINTAINERS: update ti,omap-gpio.yaml reference
-  MAINTAINERS: update ti,sci.yaml reference
-  MAINTAINERS: update nxp,imx8-jpeg.yaml reference
-
- Documentation/admin-guide/sysctl/kernel.rst      |  2 +-
- .../devicetree/bindings/dma/ti-edma.txt          |  4 ++--
- .../devicetree/bindings/gpio/gpio-davinci.txt    |  2 +-
- .../devicetree/bindings/i2c/i2c-davinci.txt      |  4 ++--
- .../bindings/iio/multiplexer/io-channel-mux.yaml |  2 +-
- .../devicetree/bindings/mfd/motorola-cpcap.txt   |  4 ++--
- .../devicetree/bindings/mmc/ti-omap-hsmmc.txt    |  4 ++--
- .../devicetree/bindings/net/can/c_can.txt        |  4 ++--
- .../bindings/remoteproc/ti,keystone-rproc.txt    |  4 ++--
- .../devicetree/bindings/spi/spi-davinci.txt      |  2 +-
- .../devicetree/bindings/usb/ti,j721e-usb.yaml    |  2 +-
- .../bindings/usb/ti,keystone-dwc3.yaml           |  2 +-
- MAINTAINERS                                      | 16 ++++++++--------
- 13 files changed, 26 insertions(+), 26 deletions(-)
-
--- 
-2.31.1
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
