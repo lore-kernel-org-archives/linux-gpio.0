@@ -2,93 +2,166 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,TVD_SPACE_RATIO,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE66FC47083
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 15:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BABC47099
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 15:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3737613B8
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 15:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 142E161413
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Jun 2021 15:43:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232250AbhFBPmy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Jun 2021 11:42:54 -0400
-Received: from mga17.intel.com ([192.55.52.151]:21723 "EHLO mga17.intel.com"
+        id S232229AbhFBPpM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Jun 2021 11:45:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232143AbhFBPmx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:42:53 -0400
-IronPort-SDR: E0CjcHGYWAXYyWvv/zl78j9BZGzK+Aic2Ep6r2Llk8chXgKkzA57VMYitrjCZFm+qW1BIWZPVs
- 2zPCDfy19RMg==
-X-IronPort-AV: E=McAfee;i="6200,9189,10003"; a="184185304"
-X-IronPort-AV: E=Sophos;i="5.83,242,1616482800"; 
-   d="scan'208";a="184185304"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2021 08:41:05 -0700
-IronPort-SDR: dmRL/EnHUrnb3++01jCu6QmRSwK7sNLzM7SKFg0rCY6kIQeeNinfsBe7FWitid7W59MSCUxjDk
- zjI9b27TeQHA==
-X-IronPort-AV: E=Sophos;i="5.83,242,1616482800"; 
-   d="scan'208";a="617244221"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2021 08:41:02 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1loSzM-00Gk0t-4X; Wed, 02 Jun 2021 18:41:00 +0300
-Date:   Wed, 2 Jun 2021 18:41:00 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hoan Tran <hoan@os.amperecomputing.com>,
+        id S232363AbhFBPpG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 2 Jun 2021 11:45:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 749A96140A;
+        Wed,  2 Jun 2021 15:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622648602;
+        bh=j4vbbGMmkpw6vv8LF4aIg9gX2V7O+Y4hZhiS1MaxEmc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AB7FT6nD0+rEQCgHBe5Cc5z4DRLD3icjFOBiw6oUwpll2X2vUmNqYYA86Mis0nQok
+         GUVdVQnl5wZ5UdKS1IFtwJmMOJbRm/TuUiIAkVHY4l1NYVVQAn1lpXU4WDZAJjZiIt
+         Zj3vPyUaPqYduitPsdm0HQRG0b4aNL/BErsSx7TEcKpEaV42FMxSH3GWTMWGTilfOy
+         EIHbJD4Wjmd3Kx44o49Q3rESdin3UZo0Het2NItM/PG8dKGKjyvqsS87KI7Dshih5t
+         LrRX46kAZV/zWvGzK5YQGEZTeNLdZD56yEF4sDICfrD6yFi4PlcnBGdp103t4oyP/V
+         easJ3WNVtDkDA==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1loT1b-006Xbn-D0; Wed, 02 Jun 2021 17:43:19 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jakub Kicinski <kuba@kernel.org>, Keerthy <j-keerthy@ti.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v1 2/2] gpio: dwapb: Switch to use fwnode_irq_get()
-Message-ID: <YLemjDc1hhuXUojl@smile.fi.intel.com>
-References: <20210601162128.35663-1-andriy.shevchenko@linux.intel.com>
- <20210601162128.35663-2-andriy.shevchenko@linux.intel.com>
- <20210602140546.b7o43jnrvdmtdam4@mobilestation>
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Rob Herring <robh+dt@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH 04/12] dt-bindings: clock: update ti,sci-clk.yaml references
+Date:   Wed,  2 Jun 2021 17:43:10 +0200
+Message-Id: <0fae687366c09dfb510425b3c88316a727b27d6d.1622648507.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1622648507.git.mchehab+huawei@kernel.org>
+References: <cover.1622648507.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210602140546.b7o43jnrvdmtdam4@mobilestation>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 05:05:46PM +0300, Serge Semin wrote:
-> On Tue, Jun 01, 2021 at 07:21:28PM +0300, Andy Shevchenko wrote:
-> > We have open coded variant of fwnode_irq_get() in dwapb_get_irq().
-> > Replace it with a simple call.
-> 
-> Sometime ago I was trying to figure out a way to simplify this part of
-> the driver by using the platform_get_irq_optional() method for both
-> ACPI and OF cases. As you must have already found out by yourself it
-> didn't work out because of DW APB GPIO DT-nodes are supposed to have
-> sub-nodes with ports description. The OF-descriptors of these
-> sub-nodes aren't touched by the platform_get_irq_optional() method, it
-> just fails to detect IRQ-controller because it only works with the
-> device OF-node. So I gave up and decided to leave the code as is. I
-> can't remember now why I haven't used fwnode_irq_get() here. Most
-> likely I just preferred a direct of_irq_get() invocation here just for
-> clarity, since the only way we'd be calling fwnode_irq_get() here is
-> to actually get IRQ number from the OF-node anyway, while the
-> acpi_irq_get() method call made from the method fwnode_irq_get() will
-> hardly ever be required here. If you think otherwise or I missing
-> something please tell me.
-> 
-> Anyway by applying your patch at least we'll save a few lines of the
-> code and may in future have swnode-base IRQs support in the
-> fwnode_irq_get() method. So it still worths merging in. Thanks for
-> suggesting this change.
-> 
-> Acked-by: Serge Semin <fancer.lancer@gmail.com>
-> Tested-by: Serge Semin <fancer.lancer@gmail.com>
+Changeset a7dbfa6f3877 ("dt-bindings: clock: Convert ti,sci-clk to json schema")
+renamed: Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+to: Documentation/devicetree/bindings/clock/ti,sci-clk.yaml.
 
-Thanks for testing!
+Update the cross-references accordingly.
 
+Fixes: a7dbfa6f3877 ("dt-bindings: clock: Convert ti,sci-clk to json schema")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/devicetree/bindings/gpio/gpio-davinci.txt | 2 +-
+ Documentation/devicetree/bindings/i2c/i2c-davinci.txt   | 2 +-
+ Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt | 2 +-
+ Documentation/devicetree/bindings/net/can/c_can.txt     | 2 +-
+ Documentation/devicetree/bindings/spi/spi-davinci.txt   | 2 +-
+ MAINTAINERS                                             | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+index 696ea46227d1..8ad4fd9aaffd 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+@@ -32,7 +32,7 @@ Required Properties:
+           Documentation/devicetree/bindings/clock/keystone-gate.txt
+                             for 66AK2HK/66AK2L/66AK2E SoCs or,
+ 
+-          Documentation/devicetree/bindings/clock/ti,sci-clk.txt
++          Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+                             for 66AK2G SoCs
+ 
+ - clock-names: Name should be "gpio";
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-davinci.txt b/Documentation/devicetree/bindings/i2c/i2c-davinci.txt
+index b35ad748ed68..6590501c53d4 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-davinci.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-davinci.txt
+@@ -8,7 +8,7 @@ Required properties:
+ - reg : Offset and length of the register set for the device
+ - clocks: I2C functional clock phandle.
+ 	  For 66AK2G this property should be set per binding,
+-	  Documentation/devicetree/bindings/clock/ti,sci-clk.txt
++	  Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+ 
+ SoC-specific Required Properties:
+ 
+diff --git a/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt b/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt
+index 0663e7648ef9..57d077c0b7c1 100644
+--- a/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt
++++ b/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt
+@@ -28,7 +28,7 @@ The following are mandatory properties for 66AK2G SoCs only:
+ 		Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+ - clocks:	Must contain an entry for each entry in clock-names. Should
+ 		be defined as per the he appropriate clock bindings consumer
+-		usage in Documentation/devicetree/bindings/clock/ti,sci-clk.txt
++		usage in Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+ - clock-names:	Shall be "fck" for the functional clock,
+ 		and "mmchsdb_fck" for the debounce clock.
+ 
+diff --git a/Documentation/devicetree/bindings/net/can/c_can.txt b/Documentation/devicetree/bindings/net/can/c_can.txt
+index febd2cc1ca14..366479806acb 100644
+--- a/Documentation/devicetree/bindings/net/can/c_can.txt
++++ b/Documentation/devicetree/bindings/net/can/c_can.txt
+@@ -22,7 +22,7 @@ The following are mandatory properties for Keystone 2 66AK2G SoCs only:
+ 			  Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+ - clocks		: CAN functional clock phandle. This property is as per the
+ 			  binding,
+-			  Documentation/devicetree/bindings/clock/ti,sci-clk.txt
++			  Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+ 
+ Optional properties:
+ - syscon-raminit	: Handle to system control region that contains the
+diff --git a/Documentation/devicetree/bindings/spi/spi-davinci.txt b/Documentation/devicetree/bindings/spi/spi-davinci.txt
+index e2198a389484..200c7fc7b089 100644
+--- a/Documentation/devicetree/bindings/spi/spi-davinci.txt
++++ b/Documentation/devicetree/bindings/spi/spi-davinci.txt
+@@ -25,7 +25,7 @@ Required properties:
+ - interrupts: interrupt number mapped to CPU.
+ - clocks: spi clk phandle
+           For 66AK2G this property should be set per binding,
+-          Documentation/devicetree/bindings/clock/ti,sci-clk.txt
++          Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+ 
+ SoC-specific Required Properties:
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0f0a01b54c1b..790eff88b53e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18193,7 +18193,7 @@ L:	linux-arm-kernel@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml
+ F:	Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+-F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
++F:	Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.yaml
+ F:	Documentation/devicetree/bindings/reset/ti,sci-reset.txt
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.31.1
 
