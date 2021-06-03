@@ -2,144 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B85C47082
-	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 11:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F33C47096
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 13:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 530E9613E7
-	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 11:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DDEA613E9
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 13:57:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229747AbhFCLab (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 3 Jun 2021 07:30:31 -0400
-Received: from polaris.svanheule.net ([84.16.241.116]:35130 "EHLO
-        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbhFCLaa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Jun 2021 07:30:30 -0400
-Received: from [IPv6:2a02:a03f:eafb:ee01:398f:956e:2c86:f184] (unknown [IPv6:2a02:a03f:eafb:ee01:398f:956e:2c86:f184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 35D2B2080B3;
-        Thu,  3 Jun 2021 13:28:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1622719725;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uy7edqnqtaAtBfOfz9dzIFfc/RSIZezcm98QJ+kd+pE=;
-        b=rjue1kvPQCF8teUA4zwFe2KhhwYS58jf/JZvoxI2Z2CeeO6RERVPNNTrN+01Bi1VBdNwnC
-        FrGIN2vSuHzr/rZrK4pmMPVjPvoJn9mTge44lYbJavcC+tkgeQ8nrWuz9RPhIX1bgEwc4K
-        yxCpBCt2ejTJRaEPyqxf2oOsxhPAdCufUu1UWcevbDk/jRJln+tds0HvcZiEWvqTYnlFES
-        E62QrB5ah+CPN35IsglmUoS76Ee9PNycwvVhVqwYKOpIBVtehDwG3ELV6KcjFbKYcGZb0F
-        udI5N0Fl3biJbM8fOFPoZyPGAlLmwnfD24b9cc6Ohbl0AOKIPGTVFuMmxanD5g==
-Message-ID: <acc18a3b1c02b8f89023451d816031e70bec9320.camel@svanheule.net>
-Subject: Re: [PATCH v4 3/5] mfd: Add RTL8231 core device
-From:   Sander Vanheule <sander@svanheule.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Walle <michael@walle.cc>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Thu, 03 Jun 2021 13:28:42 +0200
-In-Reply-To: <CAHp75VeLUufwYagvQ2M+VKsivUzmnHHHQeH4E8-uN2avRWmBag@mail.gmail.com>
-References: <cover.1620735871.git.sander@svanheule.net>
-         <cover.1622713678.git.sander@svanheule.net>
-         <56fb027587fa067a249237ecaf40828cd508cdcc.1622713678.git.sander@svanheule.net>
-         <CAHp75VeLUufwYagvQ2M+VKsivUzmnHHHQeH4E8-uN2avRWmBag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S230333AbhFCN6v (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 3 Jun 2021 09:58:51 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:7095 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229738AbhFCN6u (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Jun 2021 09:58:50 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4FwnSV4w68zYqSw;
+        Thu,  3 Jun 2021 21:54:18 +0800 (CST)
+Received: from dggema762-chm.china.huawei.com (10.1.198.204) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Thu, 3 Jun 2021 21:57:04 +0800
+Received: from huawei.com (10.175.127.227) by dggema762-chm.china.huawei.com
+ (10.1.198.204) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 3 Jun
+ 2021 21:57:03 +0800
+From:   Yu Kuai <yukuai3@huawei.com>
+To:     <sean.wang@kernel.org>, <linus.walleij@linaro.org>,
+        <matthias.bgg@gmail.com>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>
+Subject: [PATCH] pinctrl: mediatek: fix build error without CONFIG_PINCTRL_MTK
+Date:   Thu, 3 Jun 2021 22:06:18 +0800
+Message-ID: <20210603140618.3044976-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggema762-chm.china.huawei.com (10.1.198.204)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 2021-06-03 at 13:58 +0300, Andy Shevchenko wrote:
-> On Thu, Jun 3, 2021 at 1:01 PM Sander Vanheule <sander@svanheule.net> wrote:
-> > 
-> > The RTL8231 is implemented as an MDIO device, and provides a regmap
-> > interface for register access by the core and child devices.
-> > 
-> > The chip can also be a device on an SMI bus, an I2C-like bus by Realtek.
-> > Since kernel support for SMI is limited, and no real-world SMI
-> > implementations have been encountered for this device, this is currently
-> > unimplemented. The use of the regmap interface should make any future
-> > support relatively straightforward.
-> > 
-> > After reset, all pins are muxed to GPIO inputs before the pin drivers
-> > are enabled. This is done to prevent accidental system resets, when a
-> > pin is connected to the parent SoC's reset line.
-> > 
-> > To provide different read and write semantics for the GPIO data
-> > registers, a secondary virtual register range is used to enable separate
-> > cacheing properties of pin input and output values.
-> 
-> caching
-> 
-> ...
-> 
-> 
-> > +static int rtl8231_reg_read(void *context, unsigned int reg, unsigned int
-> > *val)
-> > +{
-> > +       struct mdio_device *mdio_dev = context;
-> > +       int ret;
-> > +
-> > +       ret = mdiobus_read(mdio_dev->bus, mdio_dev->addr,
-> > RTL8231_REAL_REG(reg));
-> > +
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       *val = ret & 0xffff;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int rtl8231_reg_write(void *context, unsigned int reg, unsigned int
-> > val)
-> > +{
-> > +       struct mdio_device *mdio_dev = context;
-> > +
-> > +       return mdiobus_write(mdio_dev->bus, mdio_dev->addr,
-> > RTL8231_REAL_REG(reg), val);
-> > +}
-> 
-> Hmm... Maybe we can amend regmap-mdio to avoid duplication of the
-> above? Something like xlate in gpio-regmap or so?
-> 
+If CONFIG_PINCTRL_MT8365 is set without CONFIG_PINCTRL_MTK,
+following build errors will be triggered:
 
-I wanted to make the masking explicit, but since regmap-mdio currently requires
-a register address width of 5 bit, it could move there.
+aarch64-linux-gnu-ld: drivers/pinctrl/mediatek/pinctrl-mt8365.o: in function `mtk_pinctrl_probe':
+pinctrl-mt8365.c:(.text+0x20): undefined reference to `mtk_pctrl_init'
+aarch64-linux-gnu-ld: drivers/pinctrl/mediatek/pinctrl-mt8365.o: in function `mt8365_spec_pull_set':
+pinctrl-mt8365.c:(.text+0x64): undefined reference to `mtk_pctrl_spec_pull_set_samereg'
+aarch64-linux-gnu-ld: drivers/pinctrl/mediatek/pinctrl-mt8365.o: in function `mt8365_ies_smt_set':
+pinctrl-mt8365.c:(.text+0xbc): undefined reference to `mtk_pconf_spec_set_ies_smt_range'
+aarch64-linux-gnu-ld: pinctrl-mt8365.c:(.text+0xf0): undefined reference to `mtk_pconf_spec_set_ies_smt_range'
+aarch64-linux-gnu-ld: drivers/pinctrl/mediatek/pinctrl-mt8365.o:(.data+0xa0): undefined reference to `mtk_eint_pm_ops'
 
-Actually, can we safely assume that any MDIO driver implementing clause-22
-access (5-bit register address width) will just ignore higher bits? In that
-case, I could just drop these functions and not even modify regmap-mdio. It
-appears to work for bitbanged MDIO.
+Fix it by adding the dependency that CONFIG_PINCTRL_MT8365 will be
+relied on CONFIG_PINCTRL_MTK.
 
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/pinctrl/mediatek/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > +       mdiodev->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-> > GPIOD_OUT_LOW);
-> 
-> Missed
-> 
->   if (IS_ERR(mdiodev->reset_gpio))
->     return PTR_ERR(mdiodev->reset_gpio);
-> 
-
-Will fix.
-
-Best,
-Sander
-
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index b27c2070559a..3ec12651d4ef 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -157,6 +157,7 @@ config PINCTRL_MT8365
+ 	bool "Mediatek MT8365 pin control"
+ 	depends on OF
+ 	depends on ARM64 || COMPILE_TEST
++	depends on PINCTRL_MTK
+ 	default ARM64 && ARCH_MEDIATEK
+ 
+ config PINCTRL_MT8516
+-- 
+2.31.1
 
