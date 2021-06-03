@@ -2,126 +2,163 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A56C4709A
-	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 20:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8C5C47096
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 22:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E6BC61402
-	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 20:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90D8461402
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Jun 2021 22:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbhFCUKv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 3 Jun 2021 16:10:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230083AbhFCUKu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 3 Jun 2021 16:10:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8EBE8611C9;
-        Thu,  3 Jun 2021 20:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622750945;
-        bh=vouxc5KMLEMa3QrqPqXja2Z4KHWtjXXf/sVDLuzgUZE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UYeXhRQkhsFG2wW4pMFx1ENgilnnfZtGlHetX3wkENSTPOwGglvuReS2frt1cjTtl
-         JLKCPkpKMa+NFqpLVPYTtBPL0W7QDpwuraSUhXTED5ruFCTZ9l/ZX9j2f0fTHd72HX
-         kez6g1QVBsDVie8+Ol70lWcbLUVi1CXU1PW0xR/2pCdlEh0uFsIt5t1odTPh3MK5Rr
-         a5Km3PlwQZ/OU5n1g2kWDQQWpus4Z5O11Vo1RXQubZjb3F/M7e1Zij82vHdp1Vv0Lw
-         PNnhqdSX0wMy7B0BUu9GlN4yLxGGR/WG4yMmJYO7tsywLyQGMS7Po49eXeaSRMo1qA
-         +IfEKzjVtpXVQ==
-Date:   Thu, 3 Jun 2021 22:09:02 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jakub Kicinski <kuba@kernel.org>, Keerthy <j-keerthy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 04/12] dt-bindings: clock: update ti,sci-clk.yaml
- references
-Message-ID: <YLk23rrWN9ze+zru@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jakub Kicinski <kuba@kernel.org>, Keerthy <j-keerthy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <kristo@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfgang Grandegger <wg@grandegger.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org,
+        id S229726AbhFCWmY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 3 Jun 2021 18:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229704AbhFCWmY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Jun 2021 18:42:24 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50CF0C06174A;
+        Thu,  3 Jun 2021 15:40:26 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id b145-20020a1c80970000b029019c8c824054so6767140wmd.5;
+        Thu, 03 Jun 2021 15:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=9bSfSMQxktukE2bkFT53oq75scSeKdwwSpf8Uvj1M/U=;
+        b=MzlWxnd2BvsZFZ8024ZTALS1je1zPZkCqP70AnL0JswJnOjzEdugOeY1JH0peylslc
+         tv9T/QyHwC9P9iK4XUr82xk/b2oyJPCELFhgo0zLVhglRQZXx0wSicmbdXWOaQlgYw1s
+         w5BaReBCQRkit6RDLLnIu7ivwaFf07rAUmUIwYqWKBQtS8ZyoV+EWLctY/tZNo5MeJv3
+         SlZtjRMV4AVMqJr/sCkUMqwItrpIZR8Zh3mij9zIbcbuIYPAtKl5L62obxtrTLhS2CeB
+         knHgCyCOPe0nitYiuavZhJAVnhGDD7NHgn9eiZyJ+vqOWVR1P2rLEjsjp1wNiG1Gq8Yn
+         joeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9bSfSMQxktukE2bkFT53oq75scSeKdwwSpf8Uvj1M/U=;
+        b=VoV2KQQ+02+caT8ub9/+oM8mVVl+YhVyCYW9wphl4bpJ4KHl77+nG2hiWsO1luyrXO
+         cn53l32r8ae5ahdq4j4JaiWdtMlPNHYeMZYLAsmjnhr22iT0K1Y8Bhnmd569rmUCYngE
+         N21FzKvtL9QbQHPi/9o9J++dpyEZEdqS2JiGSqmOpGf2v26FdPDfHre0HYlPyxDqA7BU
+         l2dU0G67GjiEq9DnmwAe9wW9RVhM/9AfyDidjR9ho1tmSjQPhym3s6H2AUQ19FyhOZuR
+         x9g0rpVxG/FJN7QzwgxpJJUgtXwuFIAT4AG9CDGjUx6KUiL0B79X2Uew5tCq1T5JoM5F
+         3Pfw==
+X-Gm-Message-State: AOAM530UI3zyQQB2ZWDACzDtoPXETfTXspAjIn+5VeNZVNIgUkcpFdyP
+        4QLfaAtZ4+CZVCcQxw0rxHM=
+X-Google-Smtp-Source: ABdhPJwSTyy/UEJQ5uIrxum+kq4DojYedsdQto1Q/RdQRtly0MAoQIPvCRI7CPKWSvqg6p6/oJRYKw==
+X-Received: by 2002:a05:600c:2194:: with SMTP id e20mr557589wme.173.1622760024967;
+        Thu, 03 Jun 2021 15:40:24 -0700 (PDT)
+Received: from valhalla.home ([91.110.88.218])
+        by smtp.gmail.com with ESMTPSA id f14sm4612103wry.40.2021.06.03.15.40.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jun 2021 15:40:24 -0700 (PDT)
+From:   Daniel Scally <djrscally@gmail.com>
+To:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-spi@vger.kernel.org, netdev@vger.kernel.org
-References: <cover.1622648507.git.mchehab+huawei@kernel.org>
- <0fae687366c09dfb510425b3c88316a727b27d6d.1622648507.git.mchehab+huawei@kernel.org>
+        platform-driver-x86@vger.kernel.org, devel@acpica.org
+Cc:     Len Brown <lenb@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Kaneda <erik.kaneda@intel.com>,
+        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
+Subject: [PATCH v5 4/6] gpiolib: acpi: Add acpi_gpio_get_io_resource()
+Date:   Thu,  3 Jun 2021 23:40:05 +0100
+Message-Id: <20210603224007.120560-5-djrscally@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210603224007.120560-1-djrscally@gmail.com>
+References: <20210603224007.120560-1-djrscally@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HwDyggedf9K45ZIg"
-Content-Disposition: inline
-In-Reply-To: <0fae687366c09dfb510425b3c88316a727b27d6d.1622648507.git.mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Add a function to verify that a given acpi_resource represents an IO
+type GPIO resource, and return it if so.
 
---HwDyggedf9K45ZIg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Daniel Scally <djrscally@gmail.com>
+---
+Changes since v4:
+	- None
 
-On Wed, Jun 02, 2021 at 05:43:10PM +0200, Mauro Carvalho Chehab wrote:
-> Changeset a7dbfa6f3877 ("dt-bindings: clock: Convert ti,sci-clk to json s=
-chema")
-> renamed: Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> to: Documentation/devicetree/bindings/clock/ti,sci-clk.yaml.
->=20
-> Update the cross-references accordingly.
->=20
-> Fixes: a7dbfa6f3877 ("dt-bindings: clock: Convert ti,sci-clk to json sche=
-ma")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+ drivers/gpio/gpiolib-acpi.c | 23 +++++++++++++++++++++++
+ include/linux/acpi.h        |  7 +++++++
+ 2 files changed, 30 insertions(+)
 
-Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 684ddb35d83b..9887bb684575 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -196,6 +196,29 @@ bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
+ }
+ EXPORT_SYMBOL_GPL(acpi_gpio_get_irq_resource);
+ 
++/**
++ * acpi_gpio_get_io_resource - Fetch details of an ACPI resource if it is a GPIO
++ *			       I/O resource or return False if not.
++ * @ares:	Pointer to the ACPI resource to fetch
++ * @agpio:	Pointer to a &struct acpi_resource_gpio to store the output pointer
++ */
++bool acpi_gpio_get_io_resource(struct acpi_resource *ares,
++			       struct acpi_resource_gpio **agpio)
++{
++	struct acpi_resource_gpio *gpio;
++
++	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
++		return false;
++
++	gpio = &ares->data.gpio;
++	if (gpio->connection_type != ACPI_RESOURCE_GPIO_TYPE_IO)
++		return false;
++
++	*agpio = gpio;
++	return true;
++}
++EXPORT_SYMBOL_GPL(acpi_gpio_get_io_resource);
++
+ static void acpi_gpiochip_request_irq(struct acpi_gpio_chip *acpi_gpio,
+ 				      struct acpi_gpio_event *event)
+ {
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 170b9bebdb2b..e8ba7063c000 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -1098,6 +1098,8 @@ void __acpi_handle_debug(struct _ddebug *descriptor, acpi_handle handle, const c
+ #if defined(CONFIG_ACPI) && defined(CONFIG_GPIOLIB)
+ bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
+ 				struct acpi_resource_gpio **agpio);
++bool acpi_gpio_get_io_resource(struct acpi_resource *ares,
++			       struct acpi_resource_gpio **agpio);
+ int acpi_dev_gpio_irq_get_by(struct acpi_device *adev, const char *name, int index);
+ #else
+ static inline bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
+@@ -1105,6 +1107,11 @@ static inline bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
+ {
+ 	return false;
+ }
++static inline bool acpi_gpio_get_io_resource(struct acpi_resource *ares,
++					     struct acpi_resource_gpio **agpio)
++{
++	return false;
++}
+ static inline int acpi_dev_gpio_irq_get_by(struct acpi_device *adev,
+ 					   const char *name, int index)
+ {
+-- 
+2.25.1
 
-
---HwDyggedf9K45ZIg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmC5Nt4ACgkQFA3kzBSg
-KbYA5BAAmxrTszpFm+SFwkhyzevlAeZO+O6tTPRp2hAT0FogM2Us0fUzfwLEFgWP
-dR+9Lw8BinKXs9tNQwP3RGM6/azDSnS8tL5a1l0aaI52mxwwu0zGKPZmCvvMizT2
-AQX51DP3llTCDdTc85P1C7TYhRyhYy1GWPJrfhAxfUBS+maMcJJ3VX7rfnmQlAWG
-6FOy1eZaCP2d2DxVZNlMi0TXsYuudltp75a0T7k8wesRQv+BEEE4MpyfFwDquX/N
-3BtPLsuwSDnSQ1hL3gEPEbrm++yG+3g0PHdhWxdrDeRV/eRW8EM4rjJ0xHutgimp
-LyQ0SnSdM6/EMF0h4jjQ2CPLGedDPpKkBdXsAH0yU8GqD2P5mijVUJHZqqyCKdz4
-8elfRdDzaLOrwvZrqTQYqGpeup/953O/m8mbKfy0zhkc2X0Ceqmqb2iKDzvemODe
-OpVnrneL06Fo3k9Mi0c828teZf7T4kZPBFI896XMP8MYeT7ghBaOrRBt6mIaefTN
-dCZGUE9vm2SbKqBOJ88QHbyFwDwHDj7UU4O9uhZH77nUj3kzQC+yfp0xLhkkT3lE
-ME9gAuT18XacriGNwHQVpMUPTvMAcLUWeHqfYIvPVd/HQRNMwV/IB2paBkGThO7/
-gzP8cd9cYoh9D2thXE0J/EnXq+MPeo6KVP9Uirz9eSo6jxKoggM=
-=2IA3
------END PGP SIGNATURE-----
-
---HwDyggedf9K45ZIg--
