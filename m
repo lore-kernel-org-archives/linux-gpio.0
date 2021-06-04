@@ -2,65 +2,65 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DC3C4708F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBC5C47098
 	for <linux-gpio@archiver.kernel.org>; Fri,  4 Jun 2021 11:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F51461421
+	by mail.kernel.org (Postfix) with ESMTP id BED626141E
 	for <linux-gpio@archiver.kernel.org>; Fri,  4 Jun 2021 11:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230303AbhFDLzF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 4 Jun 2021 07:55:05 -0400
-Received: from mail-wm1-f53.google.com ([209.85.128.53]:55284 "EHLO
-        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbhFDLzF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Jun 2021 07:55:05 -0400
-Received: by mail-wm1-f53.google.com with SMTP id o127so5204706wmo.4;
-        Fri, 04 Jun 2021 04:53:06 -0700 (PDT)
+        id S230207AbhFDLzG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 4 Jun 2021 07:55:06 -0400
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:53154 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230300AbhFDLzG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Jun 2021 07:55:06 -0400
+Received: by mail-wm1-f46.google.com with SMTP id f17so5210503wmf.2;
+        Fri, 04 Jun 2021 04:53:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZNR9p4VgiVu7yYxDJVH8PlI9perHlh/Y4+Fq2hecbWg=;
-        b=tOITfdNfl2wUf1EfgjaKk0yZbv6/IGw7MnJv15vm73LsksJoaNPeaPJ0QnhAp3c2CV
-         RcmAgScjCF2w9beSzLWllHDNeKTpdKljKlOpL6L7aOlmFqMhymrSAnmEV9eyl4RvRpOT
-         iFRkAct67CSRsjXvoltFXT/gCaX91s4DSozISrqcjUMRjy1xvEhSl3k4I6ZugJtHdvi+
-         RbORWKc+jI1K4ChqNiLxfPG21Rda7vRklrAFR+TeDYUUZEb4Y5uSJDZah2v8v1fCZr/1
-         8woLkiFLWIeYn8dJJZnbrRPhq7UQnEOXHYlNd4Hb5kcFZdfhdLG7kafT7aKUsDgO6waB
-         PQ+A==
+        bh=IFkFZkUEu8pyfmElOSW0LNkJkb9AwGYnZod3dF9RUZA=;
+        b=VFs6VVQEwxaV72eFc/7Yd+SN5Vx3VqIMOhPcU1YHG3PwUfWT1fikGPakgkTT6LZWpp
+         uZSWxVPKcNVOSGKitgF+njSLldoa1/STR8S1Y/ewxnXUE0Fu7SO6uAJ1dFxr6V5rkTLK
+         GQ8keo8x/kKOTRpvjBNGbbFj3K3xQzRb6M45HZV+SATuj22DefGSCgGYTw5bEpqIX3gW
+         oHPAFQua5W31PHBvE7rHgYxEcLLXNkn92jOqFQX+C8gOluflEITmo+yWLRAjgsEX0DTR
+         qkY8IYR+GbPmdRuL65AGLXcLe0dJXcb3w8e2FztDkjIgGLdfqfOlHyrbooSzLFYV9luz
+         o6yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZNR9p4VgiVu7yYxDJVH8PlI9perHlh/Y4+Fq2hecbWg=;
-        b=R+fH6InciSw+xRUdHk05t9cZvBvctvQnAR+d7+h2otqRABecWQLVOtFxsq8jPZj38E
-         njKtTVlWLN9tvMaO5Ffrd5BONmpMeXG5GcOtPXPOUX3kM4bdCoS2PcQi3zNu6c5F6NNZ
-         IpXUFvAj9FJ5sCDMd/iz8m0YZMhjDh/Caa+OebLCqOK2SEapWLtTeeL/WpBnb7e4KgDs
-         6/4zeVKSWJM4A6xiKCGAbIZUTt/daxhN9phOlx/alTZFBHz/WeD3KLqobAiP+TeHdULU
-         wHyIvwrty+wCxkasWvWRp3l03g0yiHMg1a1fkUYFH/BuD8rWxTPBxklbHYkutmK1pNPF
-         bFYA==
-X-Gm-Message-State: AOAM5324F5UY3VFAryRhhhmJPTKBE8V73yoYHYKGO+kGlvMG6urz0lUd
-        zoqwNPDCcA6lTuRqDXpV0to=
-X-Google-Smtp-Source: ABdhPJyb15SnfLWJmyPp9aCsgpsv+cyxqSfNn4L1Avn5mkVnCDnov85vyYHhp4eSgbT5xF/p0TIvIQ==
-X-Received: by 2002:a1c:1dd5:: with SMTP id d204mr3290044wmd.140.1622807525834;
-        Fri, 04 Jun 2021 04:52:05 -0700 (PDT)
+        bh=IFkFZkUEu8pyfmElOSW0LNkJkb9AwGYnZod3dF9RUZA=;
+        b=dLBJZZz8nhNii1mwGDPn7lWZy3mjDUSCCBK1UZLjmBAa25TZ08QrSl80yHliXWJn0j
+         t6mZk2ORM9ht8PM0dvZYKqOI0tipXhIEIHyqlqcg1kN1yRKWZ3pi2HkLW//xz7UNeolB
+         W6xeGm0L64zK0e9FU1mBIcgM9oS1XHlNnn3hsJfeFK2ebT1tcTm7TsnnE5BvF6QyT3D/
+         e8nt9jIM83kbZ8H/eZoUE6tJTGJCi3qp5AzCdx5qOWWDJvsMMhlyWsGB3pgP59FdR9j8
+         qZ2Cy2hjjr6GBlB9lyZCdxaEYk0GJKKLJ/cj0AZf/N6HD1VUvXRjXI1CZDR1mhEC/y6u
+         lfmQ==
+X-Gm-Message-State: AOAM530PNdb1nhz9b10PDhTTVdfVg1YnMxiYLkUq20BNFKBuOMxAsyZV
+        2VqjAOplnDpQXAM3LFg3/v1aWu5vtTdsSQ==
+X-Google-Smtp-Source: ABdhPJyWEukUTZm93KgnHtIegIsQ9XsuyDLECPOmv6AmlQCJYurXj4Bi2a94xpxpJ8wiZ5/gD07OMA==
+X-Received: by 2002:a05:600c:4285:: with SMTP id v5mr3300821wmc.184.1622807523930;
+        Fri, 04 Jun 2021 04:52:03 -0700 (PDT)
 Received: from localhost.localdomain (113.red-88-4-247.dynamicip.rima-tde.net. [88.4.247.113])
-        by smtp.gmail.com with ESMTPSA id v10sm6924530wre.33.2021.06.04.04.52.04
+        by smtp.gmail.com with ESMTPSA id v10sm6924530wre.33.2021.06.04.04.52.03
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jun 2021 04:52:05 -0700 (PDT)
+        Fri, 04 Jun 2021 04:52:03 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     john@phrozen.org
 Cc:     linus.walleij@linaro.org, tsbogend@alpha.franken.de,
         linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org,
         ilya.lipnitskiy@gmail.com, neil@brown.name
-Subject: [PATCH 5/6] pinctrl: ralink: move MT7620 SoC pinmux config into a new 'pinctrl-mt7620.c' file
-Date:   Fri,  4 Jun 2021 13:51:58 +0200
-Message-Id: <20210604115159.8834-6-sergio.paracuellos@gmail.com>
+Subject: [PATCH 3/6] pinctrl: ralink: move RT3883 SoC pinmux config into a new 'pinctrl-rt3883.c' file
+Date:   Fri,  4 Jun 2021 13:51:56 +0200
+Message-Id: <20210604115159.8834-4-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210604115159.8834-1-sergio.paracuellos@gmail.com>
 References: <20210604115159.8834-1-sergio.paracuellos@gmail.com>
@@ -70,950 +70,265 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Move all related code for SoC MT7620 into a new driver located
-in 'pinctrl-mt7620.c' source file.
+Move all related code for SoC RT3883 into a new driver located
+in 'pinctrl-rt3883.c' source file
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- arch/mips/include/asm/mach-ralink/mt7620.h    |  53 +-
- arch/mips/ralink/mt7620.c                     | 320 ------------
- drivers/pinctrl/ralink/Kconfig                |   5 +
- drivers/pinctrl/ralink/Makefile               |   1 +
- .../pinctrl/ralink/pinctrl-mt7620.c           | 472 +++---------------
- 5 files changed, 85 insertions(+), 766 deletions(-)
- copy arch/mips/ralink/mt7620.c => drivers/pinctrl/ralink/pinctrl-mt7620.c (51%)
+ arch/mips/include/asm/mach-ralink/rt3883.h |  34 -------
+ arch/mips/ralink/rt3883.c                  |  45 ---------
+ drivers/pinctrl/ralink/Kconfig             |   5 +
+ drivers/pinctrl/ralink/Makefile            |   1 +
+ drivers/pinctrl/ralink/pinctrl-rt3883.c    | 107 +++++++++++++++++++++
+ 5 files changed, 113 insertions(+), 79 deletions(-)
+ create mode 100644 drivers/pinctrl/ralink/pinctrl-rt3883.c
 
-diff --git a/arch/mips/include/asm/mach-ralink/mt7620.h b/arch/mips/include/asm/mach-ralink/mt7620.h
-index 757ce53d00e6..d51dfad8f543 100644
---- a/arch/mips/include/asm/mach-ralink/mt7620.h
-+++ b/arch/mips/include/asm/mach-ralink/mt7620.h
-@@ -83,52 +83,13 @@
- #define MT7620_DDR2_SIZE_MIN		32
- #define MT7620_DDR2_SIZE_MAX		256
+diff --git a/arch/mips/include/asm/mach-ralink/rt3883.h b/arch/mips/include/asm/mach-ralink/rt3883.h
+index 565f2548496a..f250de9c055b 100644
+--- a/arch/mips/include/asm/mach-ralink/rt3883.h
++++ b/arch/mips/include/asm/mach-ralink/rt3883.h
+@@ -109,40 +109,6 @@
+ #define RT3883_CLKCFG1_PCI_CLK_EN	BIT(19)
+ #define RT3883_CLKCFG1_UPHY0_CLK_EN	BIT(18)
  
--#define MT7620_GPIO_MODE_UART0_SHIFT	2
--#define MT7620_GPIO_MODE_UART0_MASK	0x7
--#define MT7620_GPIO_MODE_UART0(x)	((x) << MT7620_GPIO_MODE_UART0_SHIFT)
--#define MT7620_GPIO_MODE_UARTF		0x0
--#define MT7620_GPIO_MODE_PCM_UARTF	0x1
--#define MT7620_GPIO_MODE_PCM_I2S	0x2
--#define MT7620_GPIO_MODE_I2S_UARTF	0x3
--#define MT7620_GPIO_MODE_PCM_GPIO	0x4
--#define MT7620_GPIO_MODE_GPIO_UARTF	0x5
--#define MT7620_GPIO_MODE_GPIO_I2S	0x6
--#define MT7620_GPIO_MODE_GPIO		0x7
+-#define RT3883_GPIO_MODE_UART0_SHIFT	2
+-#define RT3883_GPIO_MODE_UART0_MASK	0x7
+-#define RT3883_GPIO_MODE_UART0(x)	((x) << RT3883_GPIO_MODE_UART0_SHIFT)
+-#define RT3883_GPIO_MODE_UARTF		0x0
+-#define RT3883_GPIO_MODE_PCM_UARTF	0x1
+-#define RT3883_GPIO_MODE_PCM_I2S	0x2
+-#define RT3883_GPIO_MODE_I2S_UARTF	0x3
+-#define RT3883_GPIO_MODE_PCM_GPIO	0x4
+-#define RT3883_GPIO_MODE_GPIO_UARTF	0x5
+-#define RT3883_GPIO_MODE_GPIO_I2S	0x6
+-#define RT3883_GPIO_MODE_GPIO		0x7
 -
--#define MT7620_GPIO_MODE_NAND		0
--#define MT7620_GPIO_MODE_SD		1
--#define MT7620_GPIO_MODE_ND_SD_GPIO	2
--#define MT7620_GPIO_MODE_ND_SD_MASK	0x3
--#define MT7620_GPIO_MODE_ND_SD_SHIFT	18
+-#define RT3883_GPIO_MODE_I2C		0
+-#define RT3883_GPIO_MODE_SPI		1
+-#define RT3883_GPIO_MODE_UART1		5
+-#define RT3883_GPIO_MODE_JTAG		6
+-#define RT3883_GPIO_MODE_MDIO		7
+-#define RT3883_GPIO_MODE_GE1		9
+-#define RT3883_GPIO_MODE_GE2		10
 -
--#define MT7620_GPIO_MODE_PCIE_RST	0
--#define MT7620_GPIO_MODE_PCIE_REF	1
--#define MT7620_GPIO_MODE_PCIE_GPIO	2
--#define MT7620_GPIO_MODE_PCIE_MASK	0x3
--#define MT7620_GPIO_MODE_PCIE_SHIFT	16
+-#define RT3883_GPIO_MODE_PCI_SHIFT	11
+-#define RT3883_GPIO_MODE_PCI_MASK	0x7
+-#define RT3883_GPIO_MODE_PCI		(RT3883_GPIO_MODE_PCI_MASK << RT3883_GPIO_MODE_PCI_SHIFT)
+-#define RT3883_GPIO_MODE_LNA_A_SHIFT	16
+-#define RT3883_GPIO_MODE_LNA_A_MASK	0x3
+-#define _RT3883_GPIO_MODE_LNA_A(_x)	((_x) << RT3883_GPIO_MODE_LNA_A_SHIFT)
+-#define RT3883_GPIO_MODE_LNA_A_GPIO	0x3
+-#define RT3883_GPIO_MODE_LNA_A		_RT3883_GPIO_MODE_LNA_A(RT3883_GPIO_MODE_LNA_A_MASK)
+-#define RT3883_GPIO_MODE_LNA_G_SHIFT	18
+-#define RT3883_GPIO_MODE_LNA_G_MASK	0x3
+-#define _RT3883_GPIO_MODE_LNA_G(_x)	((_x) << RT3883_GPIO_MODE_LNA_G_SHIFT)
+-#define RT3883_GPIO_MODE_LNA_G_GPIO	0x3
+-#define RT3883_GPIO_MODE_LNA_G		_RT3883_GPIO_MODE_LNA_G(RT3883_GPIO_MODE_LNA_G_MASK)
 -
--#define MT7620_GPIO_MODE_WDT_RST	0
--#define MT7620_GPIO_MODE_WDT_REF	1
--#define MT7620_GPIO_MODE_WDT_GPIO	2
--#define MT7620_GPIO_MODE_WDT_MASK	0x3
--#define MT7620_GPIO_MODE_WDT_SHIFT	21
--
--#define MT7620_GPIO_MODE_MDIO		0
--#define MT7620_GPIO_MODE_MDIO_REFCLK	1
--#define MT7620_GPIO_MODE_MDIO_GPIO	2
--#define MT7620_GPIO_MODE_MDIO_MASK	0x3
--#define MT7620_GPIO_MODE_MDIO_SHIFT	7
--
--#define MT7620_GPIO_MODE_I2C		0
--#define MT7620_GPIO_MODE_UART1		5
--#define MT7620_GPIO_MODE_RGMII1		9
--#define MT7620_GPIO_MODE_RGMII2		10
--#define MT7620_GPIO_MODE_SPI		11
--#define MT7620_GPIO_MODE_SPI_REF_CLK	12
--#define MT7620_GPIO_MODE_WLED		13
--#define MT7620_GPIO_MODE_JTAG		15
--#define MT7620_GPIO_MODE_EPHY		15
--#define MT7620_GPIO_MODE_PA		20
-+extern enum ralink_soc_type ralink_soc;
-+
-+static inline int is_mt76x8(void)
-+{
-+	return ralink_soc == MT762X_SOC_MT7628AN ||
-+	       ralink_soc == MT762X_SOC_MT7688;
-+}
- 
- static inline int mt7620_get_eco(void)
- {
-diff --git a/arch/mips/ralink/mt7620.c b/arch/mips/ralink/mt7620.c
-index 53a5969e61af..ae1fa0391c88 100644
---- a/arch/mips/ralink/mt7620.c
-+++ b/arch/mips/ralink/mt7620.c
-@@ -15,7 +15,6 @@
+ #define RT3883_GPIO_I2C_SD		1
+ #define RT3883_GPIO_I2C_SCLK		2
+ #define RT3883_GPIO_SPI_CS0		3
+diff --git a/arch/mips/ralink/rt3883.c b/arch/mips/ralink/rt3883.c
+index ff91f3531ad0..d9875f146d66 100644
+--- a/arch/mips/ralink/rt3883.c
++++ b/arch/mips/ralink/rt3883.c
+@@ -14,52 +14,9 @@
  #include <asm/mipsregs.h>
  #include <asm/mach-ralink/ralink_regs.h>
- #include <asm/mach-ralink/mt7620.h>
+ #include <asm/mach-ralink/rt3883.h>
 -#include <asm/mach-ralink/pinmux.h>
  
  #include "common.h"
  
-@@ -50,320 +49,6 @@
- /* does the board have sdram or ddram */
- static int dram_type;
- 
--static struct rt2880_pmx_func i2c_grp[] =  { FUNC("i2c", 0, 1, 2) };
--static struct rt2880_pmx_func spi_grp[] = { FUNC("spi", 0, 3, 4) };
--static struct rt2880_pmx_func uartlite_grp[] = { FUNC("uartlite", 0, 15, 2) };
--static struct rt2880_pmx_func mdio_grp[] = {
--	FUNC("mdio", MT7620_GPIO_MODE_MDIO, 22, 2),
--	FUNC("refclk", MT7620_GPIO_MODE_MDIO_REFCLK, 22, 2),
+-static struct rt2880_pmx_func i2c_func[] =  { FUNC("i2c", 0, 1, 2) };
+-static struct rt2880_pmx_func spi_func[] = { FUNC("spi", 0, 3, 4) };
+-static struct rt2880_pmx_func uartf_func[] = {
+-	FUNC("uartf", RT3883_GPIO_MODE_UARTF, 7, 8),
+-	FUNC("pcm uartf", RT3883_GPIO_MODE_PCM_UARTF, 7, 8),
+-	FUNC("pcm i2s", RT3883_GPIO_MODE_PCM_I2S, 7, 8),
+-	FUNC("i2s uartf", RT3883_GPIO_MODE_I2S_UARTF, 7, 8),
+-	FUNC("pcm gpio", RT3883_GPIO_MODE_PCM_GPIO, 11, 4),
+-	FUNC("gpio uartf", RT3883_GPIO_MODE_GPIO_UARTF, 7, 4),
+-	FUNC("gpio i2s", RT3883_GPIO_MODE_GPIO_I2S, 7, 4),
 -};
--static struct rt2880_pmx_func rgmii1_grp[] = { FUNC("rgmii1", 0, 24, 12) };
--static struct rt2880_pmx_func refclk_grp[] = { FUNC("spi refclk", 0, 37, 3) };
--static struct rt2880_pmx_func ephy_grp[] = { FUNC("ephy", 0, 40, 5) };
--static struct rt2880_pmx_func rgmii2_grp[] = { FUNC("rgmii2", 0, 60, 12) };
--static struct rt2880_pmx_func wled_grp[] = { FUNC("wled", 0, 72, 1) };
--static struct rt2880_pmx_func pa_grp[] = { FUNC("pa", 0, 18, 4) };
--static struct rt2880_pmx_func uartf_grp[] = {
--	FUNC("uartf", MT7620_GPIO_MODE_UARTF, 7, 8),
--	FUNC("pcm uartf", MT7620_GPIO_MODE_PCM_UARTF, 7, 8),
--	FUNC("pcm i2s", MT7620_GPIO_MODE_PCM_I2S, 7, 8),
--	FUNC("i2s uartf", MT7620_GPIO_MODE_I2S_UARTF, 7, 8),
--	FUNC("pcm gpio", MT7620_GPIO_MODE_PCM_GPIO, 11, 4),
--	FUNC("gpio uartf", MT7620_GPIO_MODE_GPIO_UARTF, 7, 4),
--	FUNC("gpio i2s", MT7620_GPIO_MODE_GPIO_I2S, 7, 4),
+-static struct rt2880_pmx_func uartlite_func[] = { FUNC("uartlite", 0, 15, 2) };
+-static struct rt2880_pmx_func jtag_func[] = { FUNC("jtag", 0, 17, 5) };
+-static struct rt2880_pmx_func mdio_func[] = { FUNC("mdio", 0, 22, 2) };
+-static struct rt2880_pmx_func lna_a_func[] = { FUNC("lna a", 0, 32, 3) };
+-static struct rt2880_pmx_func lna_g_func[] = { FUNC("lna g", 0, 35, 3) };
+-static struct rt2880_pmx_func pci_func[] = {
+-	FUNC("pci-dev", 0, 40, 32),
+-	FUNC("pci-host2", 1, 40, 32),
+-	FUNC("pci-host1", 2, 40, 32),
+-	FUNC("pci-fnc", 3, 40, 32)
 -};
--static struct rt2880_pmx_func wdt_grp[] = {
--	FUNC("wdt rst", 0, 17, 1),
--	FUNC("wdt refclk", 0, 17, 1),
--	};
--static struct rt2880_pmx_func pcie_rst_grp[] = {
--	FUNC("pcie rst", MT7620_GPIO_MODE_PCIE_RST, 36, 1),
--	FUNC("pcie refclk", MT7620_GPIO_MODE_PCIE_REF, 36, 1)
--};
--static struct rt2880_pmx_func nd_sd_grp[] = {
--	FUNC("nand", MT7620_GPIO_MODE_NAND, 45, 15),
--	FUNC("sd", MT7620_GPIO_MODE_SD, 47, 13)
--};
+-static struct rt2880_pmx_func ge1_func[] = { FUNC("ge1", 0, 72, 12) };
+-static struct rt2880_pmx_func ge2_func[] = { FUNC("ge2", 0, 84, 12) };
 -
--static struct rt2880_pmx_group mt7620a_pinmux_data[] = {
--	GRP("i2c", i2c_grp, 1, MT7620_GPIO_MODE_I2C),
--	GRP("uartf", uartf_grp, MT7620_GPIO_MODE_UART0_MASK,
--		MT7620_GPIO_MODE_UART0_SHIFT),
--	GRP("spi", spi_grp, 1, MT7620_GPIO_MODE_SPI),
--	GRP("uartlite", uartlite_grp, 1, MT7620_GPIO_MODE_UART1),
--	GRP_G("wdt", wdt_grp, MT7620_GPIO_MODE_WDT_MASK,
--		MT7620_GPIO_MODE_WDT_GPIO, MT7620_GPIO_MODE_WDT_SHIFT),
--	GRP_G("mdio", mdio_grp, MT7620_GPIO_MODE_MDIO_MASK,
--		MT7620_GPIO_MODE_MDIO_GPIO, MT7620_GPIO_MODE_MDIO_SHIFT),
--	GRP("rgmii1", rgmii1_grp, 1, MT7620_GPIO_MODE_RGMII1),
--	GRP("spi refclk", refclk_grp, 1, MT7620_GPIO_MODE_SPI_REF_CLK),
--	GRP_G("pcie", pcie_rst_grp, MT7620_GPIO_MODE_PCIE_MASK,
--		MT7620_GPIO_MODE_PCIE_GPIO, MT7620_GPIO_MODE_PCIE_SHIFT),
--	GRP_G("nd_sd", nd_sd_grp, MT7620_GPIO_MODE_ND_SD_MASK,
--		MT7620_GPIO_MODE_ND_SD_GPIO, MT7620_GPIO_MODE_ND_SD_SHIFT),
--	GRP("rgmii2", rgmii2_grp, 1, MT7620_GPIO_MODE_RGMII2),
--	GRP("wled", wled_grp, 1, MT7620_GPIO_MODE_WLED),
--	GRP("ephy", ephy_grp, 1, MT7620_GPIO_MODE_EPHY),
--	GRP("pa", pa_grp, 1, MT7620_GPIO_MODE_PA),
+-static struct rt2880_pmx_group rt3883_pinmux_data[] = {
+-	GRP("i2c", i2c_func, 1, RT3883_GPIO_MODE_I2C),
+-	GRP("spi", spi_func, 1, RT3883_GPIO_MODE_SPI),
+-	GRP("uartf", uartf_func, RT3883_GPIO_MODE_UART0_MASK,
+-		RT3883_GPIO_MODE_UART0_SHIFT),
+-	GRP("uartlite", uartlite_func, 1, RT3883_GPIO_MODE_UART1),
+-	GRP("jtag", jtag_func, 1, RT3883_GPIO_MODE_JTAG),
+-	GRP("mdio", mdio_func, 1, RT3883_GPIO_MODE_MDIO),
+-	GRP("lna a", lna_a_func, 1, RT3883_GPIO_MODE_LNA_A),
+-	GRP("lna g", lna_g_func, 1, RT3883_GPIO_MODE_LNA_G),
+-	GRP("pci", pci_func, RT3883_GPIO_MODE_PCI_MASK,
+-		RT3883_GPIO_MODE_PCI_SHIFT),
+-	GRP("ge1", ge1_func, 1, RT3883_GPIO_MODE_GE1),
+-	GRP("ge2", ge2_func, 1, RT3883_GPIO_MODE_GE2),
 -	{ 0 }
 -};
 -
--static struct rt2880_pmx_func pwm1_grp_mt7628[] = {
--	FUNC("sdxc d6", 3, 19, 1),
--	FUNC("utif", 2, 19, 1),
--	FUNC("gpio", 1, 19, 1),
--	FUNC("pwm1", 0, 19, 1),
--};
--
--static struct rt2880_pmx_func pwm0_grp_mt7628[] = {
--	FUNC("sdxc d7", 3, 18, 1),
--	FUNC("utif", 2, 18, 1),
--	FUNC("gpio", 1, 18, 1),
--	FUNC("pwm0", 0, 18, 1),
--};
--
--static struct rt2880_pmx_func uart2_grp_mt7628[] = {
--	FUNC("sdxc d5 d4", 3, 20, 2),
--	FUNC("pwm", 2, 20, 2),
--	FUNC("gpio", 1, 20, 2),
--	FUNC("uart2", 0, 20, 2),
--};
--
--static struct rt2880_pmx_func uart1_grp_mt7628[] = {
--	FUNC("sw_r", 3, 45, 2),
--	FUNC("pwm", 2, 45, 2),
--	FUNC("gpio", 1, 45, 2),
--	FUNC("uart1", 0, 45, 2),
--};
--
--static struct rt2880_pmx_func i2c_grp_mt7628[] = {
--	FUNC("-", 3, 4, 2),
--	FUNC("debug", 2, 4, 2),
--	FUNC("gpio", 1, 4, 2),
--	FUNC("i2c", 0, 4, 2),
--};
--
--static struct rt2880_pmx_func refclk_grp_mt7628[] = { FUNC("refclk", 0, 37, 1) };
--static struct rt2880_pmx_func perst_grp_mt7628[] = { FUNC("perst", 0, 36, 1) };
--static struct rt2880_pmx_func wdt_grp_mt7628[] = { FUNC("wdt", 0, 38, 1) };
--static struct rt2880_pmx_func spi_grp_mt7628[] = { FUNC("spi", 0, 7, 4) };
--
--static struct rt2880_pmx_func sd_mode_grp_mt7628[] = {
--	FUNC("jtag", 3, 22, 8),
--	FUNC("utif", 2, 22, 8),
--	FUNC("gpio", 1, 22, 8),
--	FUNC("sdxc", 0, 22, 8),
--};
--
--static struct rt2880_pmx_func uart0_grp_mt7628[] = {
--	FUNC("-", 3, 12, 2),
--	FUNC("-", 2, 12, 2),
--	FUNC("gpio", 1, 12, 2),
--	FUNC("uart0", 0, 12, 2),
--};
--
--static struct rt2880_pmx_func i2s_grp_mt7628[] = {
--	FUNC("antenna", 3, 0, 4),
--	FUNC("pcm", 2, 0, 4),
--	FUNC("gpio", 1, 0, 4),
--	FUNC("i2s", 0, 0, 4),
--};
--
--static struct rt2880_pmx_func spi_cs1_grp_mt7628[] = {
--	FUNC("-", 3, 6, 1),
--	FUNC("refclk", 2, 6, 1),
--	FUNC("gpio", 1, 6, 1),
--	FUNC("spi cs1", 0, 6, 1),
--};
--
--static struct rt2880_pmx_func spis_grp_mt7628[] = {
--	FUNC("pwm_uart2", 3, 14, 4),
--	FUNC("utif", 2, 14, 4),
--	FUNC("gpio", 1, 14, 4),
--	FUNC("spis", 0, 14, 4),
--};
--
--static struct rt2880_pmx_func gpio_grp_mt7628[] = {
--	FUNC("pcie", 3, 11, 1),
--	FUNC("refclk", 2, 11, 1),
--	FUNC("gpio", 1, 11, 1),
--	FUNC("gpio", 0, 11, 1),
--};
--
--static struct rt2880_pmx_func p4led_kn_grp_mt7628[] = {
--	FUNC("jtag", 3, 30, 1),
--	FUNC("utif", 2, 30, 1),
--	FUNC("gpio", 1, 30, 1),
--	FUNC("p4led_kn", 0, 30, 1),
--};
--
--static struct rt2880_pmx_func p3led_kn_grp_mt7628[] = {
--	FUNC("jtag", 3, 31, 1),
--	FUNC("utif", 2, 31, 1),
--	FUNC("gpio", 1, 31, 1),
--	FUNC("p3led_kn", 0, 31, 1),
--};
--
--static struct rt2880_pmx_func p2led_kn_grp_mt7628[] = {
--	FUNC("jtag", 3, 32, 1),
--	FUNC("utif", 2, 32, 1),
--	FUNC("gpio", 1, 32, 1),
--	FUNC("p2led_kn", 0, 32, 1),
--};
--
--static struct rt2880_pmx_func p1led_kn_grp_mt7628[] = {
--	FUNC("jtag", 3, 33, 1),
--	FUNC("utif", 2, 33, 1),
--	FUNC("gpio", 1, 33, 1),
--	FUNC("p1led_kn", 0, 33, 1),
--};
--
--static struct rt2880_pmx_func p0led_kn_grp_mt7628[] = {
--	FUNC("jtag", 3, 34, 1),
--	FUNC("rsvd", 2, 34, 1),
--	FUNC("gpio", 1, 34, 1),
--	FUNC("p0led_kn", 0, 34, 1),
--};
--
--static struct rt2880_pmx_func wled_kn_grp_mt7628[] = {
--	FUNC("rsvd", 3, 35, 1),
--	FUNC("rsvd", 2, 35, 1),
--	FUNC("gpio", 1, 35, 1),
--	FUNC("wled_kn", 0, 35, 1),
--};
--
--static struct rt2880_pmx_func p4led_an_grp_mt7628[] = {
--	FUNC("jtag", 3, 39, 1),
--	FUNC("utif", 2, 39, 1),
--	FUNC("gpio", 1, 39, 1),
--	FUNC("p4led_an", 0, 39, 1),
--};
--
--static struct rt2880_pmx_func p3led_an_grp_mt7628[] = {
--	FUNC("jtag", 3, 40, 1),
--	FUNC("utif", 2, 40, 1),
--	FUNC("gpio", 1, 40, 1),
--	FUNC("p3led_an", 0, 40, 1),
--};
--
--static struct rt2880_pmx_func p2led_an_grp_mt7628[] = {
--	FUNC("jtag", 3, 41, 1),
--	FUNC("utif", 2, 41, 1),
--	FUNC("gpio", 1, 41, 1),
--	FUNC("p2led_an", 0, 41, 1),
--};
--
--static struct rt2880_pmx_func p1led_an_grp_mt7628[] = {
--	FUNC("jtag", 3, 42, 1),
--	FUNC("utif", 2, 42, 1),
--	FUNC("gpio", 1, 42, 1),
--	FUNC("p1led_an", 0, 42, 1),
--};
--
--static struct rt2880_pmx_func p0led_an_grp_mt7628[] = {
--	FUNC("jtag", 3, 43, 1),
--	FUNC("rsvd", 2, 43, 1),
--	FUNC("gpio", 1, 43, 1),
--	FUNC("p0led_an", 0, 43, 1),
--};
--
--static struct rt2880_pmx_func wled_an_grp_mt7628[] = {
--	FUNC("rsvd", 3, 44, 1),
--	FUNC("rsvd", 2, 44, 1),
--	FUNC("gpio", 1, 44, 1),
--	FUNC("wled_an", 0, 44, 1),
--};
--
--#define MT7628_GPIO_MODE_MASK		0x3
--
--#define MT7628_GPIO_MODE_P4LED_KN	58
--#define MT7628_GPIO_MODE_P3LED_KN	56
--#define MT7628_GPIO_MODE_P2LED_KN	54
--#define MT7628_GPIO_MODE_P1LED_KN	52
--#define MT7628_GPIO_MODE_P0LED_KN	50
--#define MT7628_GPIO_MODE_WLED_KN	48
--#define MT7628_GPIO_MODE_P4LED_AN	42
--#define MT7628_GPIO_MODE_P3LED_AN	40
--#define MT7628_GPIO_MODE_P2LED_AN	38
--#define MT7628_GPIO_MODE_P1LED_AN	36
--#define MT7628_GPIO_MODE_P0LED_AN	34
--#define MT7628_GPIO_MODE_WLED_AN	32
--#define MT7628_GPIO_MODE_PWM1		30
--#define MT7628_GPIO_MODE_PWM0		28
--#define MT7628_GPIO_MODE_UART2		26
--#define MT7628_GPIO_MODE_UART1		24
--#define MT7628_GPIO_MODE_I2C		20
--#define MT7628_GPIO_MODE_REFCLK		18
--#define MT7628_GPIO_MODE_PERST		16
--#define MT7628_GPIO_MODE_WDT		14
--#define MT7628_GPIO_MODE_SPI		12
--#define MT7628_GPIO_MODE_SDMODE		10
--#define MT7628_GPIO_MODE_UART0		8
--#define MT7628_GPIO_MODE_I2S		6
--#define MT7628_GPIO_MODE_CS1		4
--#define MT7628_GPIO_MODE_SPIS		2
--#define MT7628_GPIO_MODE_GPIO		0
--
--static struct rt2880_pmx_group mt7628an_pinmux_data[] = {
--	GRP_G("pwm1", pwm1_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_PWM1),
--	GRP_G("pwm0", pwm0_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_PWM0),
--	GRP_G("uart2", uart2_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_UART2),
--	GRP_G("uart1", uart1_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_UART1),
--	GRP_G("i2c", i2c_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_I2C),
--	GRP("refclk", refclk_grp_mt7628, 1, MT7628_GPIO_MODE_REFCLK),
--	GRP("perst", perst_grp_mt7628, 1, MT7628_GPIO_MODE_PERST),
--	GRP("wdt", wdt_grp_mt7628, 1, MT7628_GPIO_MODE_WDT),
--	GRP("spi", spi_grp_mt7628, 1, MT7628_GPIO_MODE_SPI),
--	GRP_G("sdmode", sd_mode_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_SDMODE),
--	GRP_G("uart0", uart0_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_UART0),
--	GRP_G("i2s", i2s_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_I2S),
--	GRP_G("spi cs1", spi_cs1_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_CS1),
--	GRP_G("spis", spis_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_SPIS),
--	GRP_G("gpio", gpio_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_GPIO),
--	GRP_G("wled_an", wled_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_WLED_AN),
--	GRP_G("p0led_an", p0led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P0LED_AN),
--	GRP_G("p1led_an", p1led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P1LED_AN),
--	GRP_G("p2led_an", p2led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P2LED_AN),
--	GRP_G("p3led_an", p3led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P3LED_AN),
--	GRP_G("p4led_an", p4led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P4LED_AN),
--	GRP_G("wled_kn", wled_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_WLED_KN),
--	GRP_G("p0led_kn", p0led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P0LED_KN),
--	GRP_G("p1led_kn", p1led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P1LED_KN),
--	GRP_G("p2led_kn", p2led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P2LED_KN),
--	GRP_G("p3led_kn", p3led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P3LED_KN),
--	GRP_G("p4led_kn", p4led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
--				1, MT7628_GPIO_MODE_P4LED_KN),
--	{ 0 }
--};
--
--static inline int is_mt76x8(void)
--{
--	return ralink_soc == MT762X_SOC_MT7628AN ||
--	       ralink_soc == MT762X_SOC_MT7688;
--}
--
- static __init u32
- mt7620_calc_rate(u32 ref_rate, u32 mul, u32 div)
+ void __init ralink_clk_init(void)
  {
-@@ -710,9 +395,4 @@ void __init prom_soc_init(struct ralink_soc_info *soc_info)
- 		(pmu0 & PMU_SW_SET) ? ("sw") : ("hw"));
- 	pr_info("Digital PMU set to %s control\n",
- 		(pmu1 & DIG_SW_SEL) ? ("sw") : ("hw"));
+ 	unsigned long cpu_rate, sys_rate;
+@@ -142,7 +99,5 @@ void __init prom_soc_init(struct ralink_soc_info *soc_info)
+ 	soc_info->mem_size_min = RT3883_MEM_SIZE_MIN;
+ 	soc_info->mem_size_max = RT3883_MEM_SIZE_MAX;
+ 
+-	rt2880_pinmux_data = rt3883_pinmux_data;
 -
--	if (is_mt76x8())
--		rt2880_pinmux_data = mt7628an_pinmux_data;
--	else
--		rt2880_pinmux_data = mt7620a_pinmux_data;
+ 	ralink_soc = RT3883_SOC;
  }
 diff --git a/drivers/pinctrl/ralink/Kconfig b/drivers/pinctrl/ralink/Kconfig
-index 705a63d34d3c..6edf0589cf0a 100644
+index ef8990a4c1eb..6f5fb3dc0a41 100644
 --- a/drivers/pinctrl/ralink/Kconfig
 +++ b/drivers/pinctrl/ralink/Kconfig
-@@ -11,6 +11,11 @@ config PINCTRL_RT2880
-         select PINMUX
-         select GENERIC_PINCONF
+@@ -16,4 +16,9 @@ config PINCTRL_MT7621
+         depends on RALINK && SOC_MT7621
+         select PINCTRL_RT2880
  
-+config PINCTRL_MT7620
-+        bool "mt7620 pinctrl driver for RALINK/Mediatek SOCs"
-+        depends on RALINK && SOC_MT7620
++config PINCTRL_RT3883
++        bool "RT3883 pinctrl driver for RALINK/Mediatek SOCs"
++        depends on RALINK && SOC_RT3883
 +        select PINCTRL_RT2880
 +
- config PINCTRL_MT7621
-         bool "mt7621 pinctrl driver for RALINK/Mediatek SOCs"
-         depends on RALINK && SOC_MT7621
+ endmenu
 diff --git a/drivers/pinctrl/ralink/Makefile b/drivers/pinctrl/ralink/Makefile
-index 119d30ecea98..9b99b20e51e6 100644
+index 470855290ff6..86d6f8253afa 100644
 --- a/drivers/pinctrl/ralink/Makefile
 +++ b/drivers/pinctrl/ralink/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
+@@ -2,3 +2,4 @@
  obj-$(CONFIG_PINCTRL_RT2880)   += pinctrl-rt2880.o
  
-+obj-$(CONFIG_PINCTRL_MT7620)   += pinctrl-mt7620.o
  obj-$(CONFIG_PINCTRL_MT7621)   += pinctrl-mt7621.o
- obj-$(CONFIG_PINCTRL_RT305X)   += pinctrl-rt305x.o
- obj-$(CONFIG_PINCTRL_RT3883)   += pinctrl-rt3883.o
-diff --git a/arch/mips/ralink/mt7620.c b/drivers/pinctrl/ralink/pinctrl-mt7620.c
-similarity index 51%
-copy from arch/mips/ralink/mt7620.c
-copy to drivers/pinctrl/ralink/pinctrl-mt7620.c
-index 53a5969e61af..425d55a2ee19 100644
---- a/arch/mips/ralink/mt7620.c
-+++ b/drivers/pinctrl/ralink/pinctrl-mt7620.c
-@@ -1,54 +1,57 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/*
-- *
-- * Parts of this file are based on Ralink's 2.6.21 BSP
-- *
-- * Copyright (C) 2008-2011 Gabor Juhos <juhosg@openwrt.org>
-- * Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- * Copyright (C) 2013 John Crispin <john@phrozen.org>
-- */
--
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/bug.h>
--
--#include <asm/mipsregs.h>
--#include <asm/mach-ralink/ralink_regs.h>
--#include <asm/mach-ralink/mt7620.h>
--#include <asm/mach-ralink/pinmux.h>
--
--#include "common.h"
--
--/* analog */
--#define PMU0_CFG		0x88
--#define PMU_SW_SET		BIT(28)
--#define A_DCDC_EN		BIT(24)
--#define A_SSC_PERI		BIT(19)
--#define A_SSC_GEN		BIT(18)
--#define A_SSC_M			0x3
--#define A_SSC_S			16
--#define A_DLY_M			0x7
--#define A_DLY_S			8
--#define A_VTUNE_M		0xff
--
--/* digital */
--#define PMU1_CFG		0x8C
--#define DIG_SW_SEL		BIT(25)
--
--/* clock scaling */
--#define CLKCFG_FDIV_MASK	0x1f00
--#define CLKCFG_FDIV_USB_VAL	0x0300
--#define CLKCFG_FFRAC_MASK	0x001f
--#define CLKCFG_FFRAC_USB_VAL	0x0003
--
--/* EFUSE bits */
--#define EFUSE_MT7688		0x100000
- 
--/* DRAM type bit */
--#define DRAM_TYPE_MT7628_MASK	0x1
--
--/* does the board have sdram or ddram */
--static int dram_type;
-+#include <asm/mach-ralink/mt7620.h>
++obj-$(CONFIG_PINCTRL_RT3883)   += pinctrl-rt3883.o
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt3883.c b/drivers/pinctrl/ralink/pinctrl-rt3883.c
+new file mode 100644
+index 000000000000..3e0e1b4caa64
+--- /dev/null
++++ b/drivers/pinctrl/ralink/pinctrl-rt3883.c
+@@ -0,0 +1,107 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
 +#include <linux/of.h>
 +#include "pinmux.h"
 +
-+#define MT7620_GPIO_MODE_UART0_SHIFT	2
-+#define MT7620_GPIO_MODE_UART0_MASK	0x7
-+#define MT7620_GPIO_MODE_UART0(x)	((x) << MT7620_GPIO_MODE_UART0_SHIFT)
-+#define MT7620_GPIO_MODE_UARTF		0x0
-+#define MT7620_GPIO_MODE_PCM_UARTF	0x1
-+#define MT7620_GPIO_MODE_PCM_I2S	0x2
-+#define MT7620_GPIO_MODE_I2S_UARTF	0x3
-+#define MT7620_GPIO_MODE_PCM_GPIO	0x4
-+#define MT7620_GPIO_MODE_GPIO_UARTF	0x5
-+#define MT7620_GPIO_MODE_GPIO_I2S	0x6
-+#define MT7620_GPIO_MODE_GPIO		0x7
++#define RT3883_GPIO_MODE_UART0_SHIFT	2
++#define RT3883_GPIO_MODE_UART0_MASK	0x7
++#define RT3883_GPIO_MODE_UART0(x)	((x) << RT3883_GPIO_MODE_UART0_SHIFT)
++#define RT3883_GPIO_MODE_UARTF		0x0
++#define RT3883_GPIO_MODE_PCM_UARTF	0x1
++#define RT3883_GPIO_MODE_PCM_I2S	0x2
++#define RT3883_GPIO_MODE_I2S_UARTF	0x3
++#define RT3883_GPIO_MODE_PCM_GPIO	0x4
++#define RT3883_GPIO_MODE_GPIO_UARTF	0x5
++#define RT3883_GPIO_MODE_GPIO_I2S	0x6
++#define RT3883_GPIO_MODE_GPIO		0x7
 +
-+#define MT7620_GPIO_MODE_NAND		0
-+#define MT7620_GPIO_MODE_SD		1
-+#define MT7620_GPIO_MODE_ND_SD_GPIO	2
-+#define MT7620_GPIO_MODE_ND_SD_MASK	0x3
-+#define MT7620_GPIO_MODE_ND_SD_SHIFT	18
++#define RT3883_GPIO_MODE_I2C		0
++#define RT3883_GPIO_MODE_SPI		1
++#define RT3883_GPIO_MODE_UART1		5
++#define RT3883_GPIO_MODE_JTAG		6
++#define RT3883_GPIO_MODE_MDIO		7
++#define RT3883_GPIO_MODE_GE1		9
++#define RT3883_GPIO_MODE_GE2		10
 +
-+#define MT7620_GPIO_MODE_PCIE_RST	0
-+#define MT7620_GPIO_MODE_PCIE_REF	1
-+#define MT7620_GPIO_MODE_PCIE_GPIO	2
-+#define MT7620_GPIO_MODE_PCIE_MASK	0x3
-+#define MT7620_GPIO_MODE_PCIE_SHIFT	16
++#define RT3883_GPIO_MODE_PCI_SHIFT	11
++#define RT3883_GPIO_MODE_PCI_MASK	0x7
++#define RT3883_GPIO_MODE_PCI		(RT3883_GPIO_MODE_PCI_MASK << RT3883_GPIO_MODE_PCI_SHIFT)
++#define RT3883_GPIO_MODE_LNA_A_SHIFT	16
++#define RT3883_GPIO_MODE_LNA_A_MASK	0x3
++#define _RT3883_GPIO_MODE_LNA_A(_x)	((_x) << RT3883_GPIO_MODE_LNA_A_SHIFT)
++#define RT3883_GPIO_MODE_LNA_A_GPIO	0x3
++#define RT3883_GPIO_MODE_LNA_A		_RT3883_GPIO_MODE_LNA_A(RT3883_GPIO_MODE_LNA_A_MASK)
++#define RT3883_GPIO_MODE_LNA_G_SHIFT	18
++#define RT3883_GPIO_MODE_LNA_G_MASK	0x3
++#define _RT3883_GPIO_MODE_LNA_G(_x)	((_x) << RT3883_GPIO_MODE_LNA_G_SHIFT)
++#define RT3883_GPIO_MODE_LNA_G_GPIO	0x3
++#define RT3883_GPIO_MODE_LNA_G		_RT3883_GPIO_MODE_LNA_G(RT3883_GPIO_MODE_LNA_G_MASK)
 +
-+#define MT7620_GPIO_MODE_WDT_RST	0
-+#define MT7620_GPIO_MODE_WDT_REF	1
-+#define MT7620_GPIO_MODE_WDT_GPIO	2
-+#define MT7620_GPIO_MODE_WDT_MASK	0x3
-+#define MT7620_GPIO_MODE_WDT_SHIFT	21
++static struct rt2880_pmx_func i2c_func[] =  { FUNC("i2c", 0, 1, 2) };
++static struct rt2880_pmx_func spi_func[] = { FUNC("spi", 0, 3, 4) };
++static struct rt2880_pmx_func uartf_func[] = {
++	FUNC("uartf", RT3883_GPIO_MODE_UARTF, 7, 8),
++	FUNC("pcm uartf", RT3883_GPIO_MODE_PCM_UARTF, 7, 8),
++	FUNC("pcm i2s", RT3883_GPIO_MODE_PCM_I2S, 7, 8),
++	FUNC("i2s uartf", RT3883_GPIO_MODE_I2S_UARTF, 7, 8),
++	FUNC("pcm gpio", RT3883_GPIO_MODE_PCM_GPIO, 11, 4),
++	FUNC("gpio uartf", RT3883_GPIO_MODE_GPIO_UARTF, 7, 4),
++	FUNC("gpio i2s", RT3883_GPIO_MODE_GPIO_I2S, 7, 4),
++};
++static struct rt2880_pmx_func uartlite_func[] = { FUNC("uartlite", 0, 15, 2) };
++static struct rt2880_pmx_func jtag_func[] = { FUNC("jtag", 0, 17, 5) };
++static struct rt2880_pmx_func mdio_func[] = { FUNC("mdio", 0, 22, 2) };
++static struct rt2880_pmx_func lna_a_func[] = { FUNC("lna a", 0, 32, 3) };
++static struct rt2880_pmx_func lna_g_func[] = { FUNC("lna g", 0, 35, 3) };
++static struct rt2880_pmx_func pci_func[] = {
++	FUNC("pci-dev", 0, 40, 32),
++	FUNC("pci-host2", 1, 40, 32),
++	FUNC("pci-host1", 2, 40, 32),
++	FUNC("pci-fnc", 3, 40, 32)
++};
++static struct rt2880_pmx_func ge1_func[] = { FUNC("ge1", 0, 72, 12) };
++static struct rt2880_pmx_func ge2_func[] = { FUNC("ge2", 0, 84, 12) };
 +
-+#define MT7620_GPIO_MODE_MDIO		0
-+#define MT7620_GPIO_MODE_MDIO_REFCLK	1
-+#define MT7620_GPIO_MODE_MDIO_GPIO	2
-+#define MT7620_GPIO_MODE_MDIO_MASK	0x3
-+#define MT7620_GPIO_MODE_MDIO_SHIFT	7
++static struct rt2880_pmx_group rt3883_pinmux_data[] = {
++	GRP("i2c", i2c_func, 1, RT3883_GPIO_MODE_I2C),
++	GRP("spi", spi_func, 1, RT3883_GPIO_MODE_SPI),
++	GRP("uartf", uartf_func, RT3883_GPIO_MODE_UART0_MASK,
++		RT3883_GPIO_MODE_UART0_SHIFT),
++	GRP("uartlite", uartlite_func, 1, RT3883_GPIO_MODE_UART1),
++	GRP("jtag", jtag_func, 1, RT3883_GPIO_MODE_JTAG),
++	GRP("mdio", mdio_func, 1, RT3883_GPIO_MODE_MDIO),
++	GRP("lna a", lna_a_func, 1, RT3883_GPIO_MODE_LNA_A),
++	GRP("lna g", lna_g_func, 1, RT3883_GPIO_MODE_LNA_G),
++	GRP("pci", pci_func, RT3883_GPIO_MODE_PCI_MASK,
++		RT3883_GPIO_MODE_PCI_SHIFT),
++	GRP("ge1", ge1_func, 1, RT3883_GPIO_MODE_GE1),
++	GRP("ge2", ge2_func, 1, RT3883_GPIO_MODE_GE2),
++	{ 0 }
++};
 +
-+#define MT7620_GPIO_MODE_I2C		0
-+#define MT7620_GPIO_MODE_UART1		5
-+#define MT7620_GPIO_MODE_RGMII1		9
-+#define MT7620_GPIO_MODE_RGMII2		10
-+#define MT7620_GPIO_MODE_SPI		11
-+#define MT7620_GPIO_MODE_SPI_REF_CLK	12
-+#define MT7620_GPIO_MODE_WLED		13
-+#define MT7620_GPIO_MODE_JTAG		15
-+#define MT7620_GPIO_MODE_EPHY		15
-+#define MT7620_GPIO_MODE_PA		20
- 
- static struct rt2880_pmx_func i2c_grp[] =  { FUNC("i2c", 0, 1, 2) };
- static struct rt2880_pmx_func spi_grp[] = { FUNC("spi", 0, 3, 4) };
-@@ -358,361 +361,30 @@ static struct rt2880_pmx_group mt7628an_pinmux_data[] = {
- 	{ 0 }
- };
- 
--static inline int is_mt76x8(void)
--{
--	return ralink_soc == MT762X_SOC_MT7628AN ||
--	       ralink_soc == MT762X_SOC_MT7688;
--}
--
--static __init u32
--mt7620_calc_rate(u32 ref_rate, u32 mul, u32 div)
-+static int mt7620_pinmux_probe(struct platform_device *pdev)
- {
--	u64 t;
--
--	t = ref_rate;
--	t *= mul;
--	do_div(t, div);
--
--	return t;
--}
--
--#define MHZ(x)		((x) * 1000 * 1000)
--
--static __init unsigned long
--mt7620_get_xtal_rate(void)
--{
--	u32 reg;
--
--	reg = rt_sysc_r32(SYSC_REG_SYSTEM_CONFIG0);
--	if (reg & SYSCFG0_XTAL_FREQ_SEL)
--		return MHZ(40);
--
--	return MHZ(20);
--}
--
--static __init unsigned long
--mt7620_get_periph_rate(unsigned long xtal_rate)
--{
--	u32 reg;
--
--	reg = rt_sysc_r32(SYSC_REG_CLKCFG0);
--	if (reg & CLKCFG0_PERI_CLK_SEL)
--		return xtal_rate;
--
--	return MHZ(40);
--}
--
--static const u32 mt7620_clk_divider[] __initconst = { 2, 3, 4, 8 };
--
--static __init unsigned long
--mt7620_get_cpu_pll_rate(unsigned long xtal_rate)
--{
--	u32 reg;
--	u32 mul;
--	u32 div;
--
--	reg = rt_sysc_r32(SYSC_REG_CPLL_CONFIG0);
--	if (reg & CPLL_CFG0_BYPASS_REF_CLK)
--		return xtal_rate;
--
--	if ((reg & CPLL_CFG0_SW_CFG) == 0)
--		return MHZ(600);
--
--	mul = (reg >> CPLL_CFG0_PLL_MULT_RATIO_SHIFT) &
--	      CPLL_CFG0_PLL_MULT_RATIO_MASK;
--	mul += 24;
--	if (reg & CPLL_CFG0_LC_CURFCK)
--		mul *= 2;
--
--	div = (reg >> CPLL_CFG0_PLL_DIV_RATIO_SHIFT) &
--	      CPLL_CFG0_PLL_DIV_RATIO_MASK;
--
--	WARN_ON(div >= ARRAY_SIZE(mt7620_clk_divider));
--
--	return mt7620_calc_rate(xtal_rate, mul, mt7620_clk_divider[div]);
--}
--
--static __init unsigned long
--mt7620_get_pll_rate(unsigned long xtal_rate, unsigned long cpu_pll_rate)
--{
--	u32 reg;
--
--	reg = rt_sysc_r32(SYSC_REG_CPLL_CONFIG1);
--	if (reg & CPLL_CFG1_CPU_AUX1)
--		return xtal_rate;
--
--	if (reg & CPLL_CFG1_CPU_AUX0)
--		return MHZ(480);
--
--	return cpu_pll_rate;
--}
--
--static __init unsigned long
--mt7620_get_cpu_rate(unsigned long pll_rate)
--{
--	u32 reg;
--	u32 mul;
--	u32 div;
--
--	reg = rt_sysc_r32(SYSC_REG_CPU_SYS_CLKCFG);
--
--	mul = reg & CPU_SYS_CLKCFG_CPU_FFRAC_MASK;
--	div = (reg >> CPU_SYS_CLKCFG_CPU_FDIV_SHIFT) &
--	      CPU_SYS_CLKCFG_CPU_FDIV_MASK;
--
--	return mt7620_calc_rate(pll_rate, mul, div);
-+	if (is_mt76x8())
-+		return rt2880_pinmux_init(pdev, mt7628an_pinmux_data);
-+	else
-+		return rt2880_pinmux_init(pdev, mt7620a_pinmux_data);
- }
- 
--static const u32 mt7620_ocp_dividers[16] __initconst = {
--	[CPU_SYS_CLKCFG_OCP_RATIO_2] = 2,
--	[CPU_SYS_CLKCFG_OCP_RATIO_3] = 3,
--	[CPU_SYS_CLKCFG_OCP_RATIO_4] = 4,
--	[CPU_SYS_CLKCFG_OCP_RATIO_5] = 5,
--	[CPU_SYS_CLKCFG_OCP_RATIO_10] = 10,
-+static const struct of_device_id mt7620_pinmux_match[] = {
++static int rt3883_pinmux_probe(struct platform_device *pdev)
++{
++	return rt2880_pinmux_init(pdev, rt3883_pinmux_data);
++}
++
++static const struct of_device_id rt3883_pinmux_match[] = {
 +	{ .compatible = "ralink,rt2880-pinmux" },
 +	{}
 +};
-+MODULE_DEVICE_TABLE(of, mt7620_pinmux_match);
++MODULE_DEVICE_TABLE(of, rt3883_pinmux_match);
 +
-+static struct platform_driver mt7620_pinmux_driver = {
-+	.probe = mt7620_pinmux_probe,
++static struct platform_driver rt3883_pinmux_driver = {
++	.probe = rt3883_pinmux_probe,
 +	.driver = {
 +		.name = "rt2880-pinmux",
-+		.of_match_table = mt7620_pinmux_match,
++		.of_match_table = rt3883_pinmux_match,
 +	},
- };
- 
--static __init unsigned long
--mt7620_get_dram_rate(unsigned long pll_rate)
--{
--	if (dram_type == SYSCFG0_DRAM_TYPE_SDRAM)
--		return pll_rate / 4;
--
--	return pll_rate / 3;
--}
--
--static __init unsigned long
--mt7620_get_sys_rate(unsigned long cpu_rate)
--{
--	u32 reg;
--	u32 ocp_ratio;
--	u32 div;
--
--	reg = rt_sysc_r32(SYSC_REG_CPU_SYS_CLKCFG);
--
--	ocp_ratio = (reg >> CPU_SYS_CLKCFG_OCP_RATIO_SHIFT) &
--		    CPU_SYS_CLKCFG_OCP_RATIO_MASK;
--
--	if (WARN_ON(ocp_ratio >= ARRAY_SIZE(mt7620_ocp_dividers)))
--		return cpu_rate;
--
--	div = mt7620_ocp_dividers[ocp_ratio];
--	if (WARN(!div, "invalid divider for OCP ratio %u", ocp_ratio))
--		return cpu_rate;
--
--	return cpu_rate / div;
--}
--
--void __init ralink_clk_init(void)
--{
--	unsigned long xtal_rate;
--	unsigned long cpu_pll_rate;
--	unsigned long pll_rate;
--	unsigned long cpu_rate;
--	unsigned long sys_rate;
--	unsigned long dram_rate;
--	unsigned long periph_rate;
--	unsigned long pcmi2s_rate;
--
--	xtal_rate = mt7620_get_xtal_rate();
--
--#define RFMT(label)	label ":%lu.%03luMHz "
--#define RINT(x)		((x) / 1000000)
--#define RFRAC(x)	(((x) / 1000) % 1000)
--
--	if (is_mt76x8()) {
--		if (xtal_rate == MHZ(40))
--			cpu_rate = MHZ(580);
--		else
--			cpu_rate = MHZ(575);
--		dram_rate = sys_rate = cpu_rate / 3;
--		periph_rate = MHZ(40);
--		pcmi2s_rate = MHZ(480);
--
--		ralink_clk_add("10000d00.uartlite", periph_rate);
--		ralink_clk_add("10000e00.uartlite", periph_rate);
--	} else {
--		cpu_pll_rate = mt7620_get_cpu_pll_rate(xtal_rate);
--		pll_rate = mt7620_get_pll_rate(xtal_rate, cpu_pll_rate);
--
--		cpu_rate = mt7620_get_cpu_rate(pll_rate);
--		dram_rate = mt7620_get_dram_rate(pll_rate);
--		sys_rate = mt7620_get_sys_rate(cpu_rate);
--		periph_rate = mt7620_get_periph_rate(xtal_rate);
--		pcmi2s_rate = periph_rate;
--
--		pr_debug(RFMT("XTAL") RFMT("CPU_PLL") RFMT("PLL"),
--			 RINT(xtal_rate), RFRAC(xtal_rate),
--			 RINT(cpu_pll_rate), RFRAC(cpu_pll_rate),
--			 RINT(pll_rate), RFRAC(pll_rate));
--
--		ralink_clk_add("10000500.uart", periph_rate);
--	}
--
--	pr_debug(RFMT("CPU") RFMT("DRAM") RFMT("SYS") RFMT("PERIPH"),
--		 RINT(cpu_rate), RFRAC(cpu_rate),
--		 RINT(dram_rate), RFRAC(dram_rate),
--		 RINT(sys_rate), RFRAC(sys_rate),
--		 RINT(periph_rate), RFRAC(periph_rate));
--#undef RFRAC
--#undef RINT
--#undef RFMT
--
--	ralink_clk_add("cpu", cpu_rate);
--	ralink_clk_add("10000100.timer", periph_rate);
--	ralink_clk_add("10000120.watchdog", periph_rate);
--	ralink_clk_add("10000900.i2c", periph_rate);
--	ralink_clk_add("10000a00.i2s", pcmi2s_rate);
--	ralink_clk_add("10000b00.spi", sys_rate);
--	ralink_clk_add("10000b40.spi", sys_rate);
--	ralink_clk_add("10000c00.uartlite", periph_rate);
--	ralink_clk_add("10000d00.uart1", periph_rate);
--	ralink_clk_add("10000e00.uart2", periph_rate);
--	ralink_clk_add("10180000.wmac", xtal_rate);
--
--	if (IS_ENABLED(CONFIG_USB) && !is_mt76x8()) {
--		/*
--		 * When the CPU goes into sleep mode, the BUS clock will be
--		 * too low for USB to function properly. Adjust the busses
--		 * fractional divider to fix this
--		 */
--		u32 val = rt_sysc_r32(SYSC_REG_CPU_SYS_CLKCFG);
--
--		val &= ~(CLKCFG_FDIV_MASK | CLKCFG_FFRAC_MASK);
--		val |= CLKCFG_FDIV_USB_VAL | CLKCFG_FFRAC_USB_VAL;
--
--		rt_sysc_w32(val, SYSC_REG_CPU_SYS_CLKCFG);
--	}
--}
--
--void __init ralink_of_remap(void)
--{
--	rt_sysc_membase = plat_of_remap_node("ralink,mt7620a-sysc");
--	rt_memc_membase = plat_of_remap_node("ralink,mt7620a-memc");
--
--	if (!rt_sysc_membase || !rt_memc_membase)
--		panic("Failed to remap core resources");
--}
--
--static __init void
--mt7620_dram_init(struct ralink_soc_info *soc_info)
--{
--	switch (dram_type) {
--	case SYSCFG0_DRAM_TYPE_SDRAM:
--		pr_info("Board has SDRAM\n");
--		soc_info->mem_size_min = MT7620_SDRAM_SIZE_MIN;
--		soc_info->mem_size_max = MT7620_SDRAM_SIZE_MAX;
--		break;
--
--	case SYSCFG0_DRAM_TYPE_DDR1:
--		pr_info("Board has DDR1\n");
--		soc_info->mem_size_min = MT7620_DDR1_SIZE_MIN;
--		soc_info->mem_size_max = MT7620_DDR1_SIZE_MAX;
--		break;
--
--	case SYSCFG0_DRAM_TYPE_DDR2:
--		pr_info("Board has DDR2\n");
--		soc_info->mem_size_min = MT7620_DDR2_SIZE_MIN;
--		soc_info->mem_size_max = MT7620_DDR2_SIZE_MAX;
--		break;
--	default:
--		BUG();
--	}
--}
--
--static __init void
--mt7628_dram_init(struct ralink_soc_info *soc_info)
--{
--	switch (dram_type) {
--	case SYSCFG0_DRAM_TYPE_DDR1_MT7628:
--		pr_info("Board has DDR1\n");
--		soc_info->mem_size_min = MT7620_DDR1_SIZE_MIN;
--		soc_info->mem_size_max = MT7620_DDR1_SIZE_MAX;
--		break;
--
--	case SYSCFG0_DRAM_TYPE_DDR2_MT7628:
--		pr_info("Board has DDR2\n");
--		soc_info->mem_size_min = MT7620_DDR2_SIZE_MIN;
--		soc_info->mem_size_max = MT7620_DDR2_SIZE_MAX;
--		break;
--	default:
--		BUG();
--	}
--}
--
--void __init prom_soc_init(struct ralink_soc_info *soc_info)
-+static int __init mt7620_pinmux_init(void)
- {
--	void __iomem *sysc = (void __iomem *) KSEG1ADDR(MT7620_SYSC_BASE);
--	unsigned char *name = NULL;
--	u32 n0;
--	u32 n1;
--	u32 rev;
--	u32 cfg0;
--	u32 pmu0;
--	u32 pmu1;
--	u32 bga;
--
--	n0 = __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
--	n1 = __raw_readl(sysc + SYSC_REG_CHIP_NAME1);
--	rev = __raw_readl(sysc + SYSC_REG_CHIP_REV);
--	bga = (rev >> CHIP_REV_PKG_SHIFT) & CHIP_REV_PKG_MASK;
--
--	if (n0 == MT7620_CHIP_NAME0 && n1 == MT7620_CHIP_NAME1) {
--		if (bga) {
--			ralink_soc = MT762X_SOC_MT7620A;
--			name = "MT7620A";
--			soc_info->compatible = "ralink,mt7620a-soc";
--		} else {
--			ralink_soc = MT762X_SOC_MT7620N;
--			name = "MT7620N";
--			soc_info->compatible = "ralink,mt7620n-soc";
--		}
--	} else if (n0 == MT7620_CHIP_NAME0 && n1 == MT7628_CHIP_NAME1) {
--		u32 efuse = __raw_readl(sysc + SYSC_REG_EFUSE_CFG);
--
--		if (efuse & EFUSE_MT7688) {
--			ralink_soc = MT762X_SOC_MT7688;
--			name = "MT7688";
--		} else {
--			ralink_soc = MT762X_SOC_MT7628AN;
--			name = "MT7628AN";
--		}
--		soc_info->compatible = "ralink,mt7628an-soc";
--	} else {
--		panic("mt762x: unknown SoC, n0:%08x n1:%08x\n", n0, n1);
--	}
--
--	snprintf(soc_info->sys_type, RAMIPS_SYS_TYPE_LEN,
--		"MediaTek %s ver:%u eco:%u",
--		name,
--		(rev >> CHIP_REV_VER_SHIFT) & CHIP_REV_VER_MASK,
--		(rev & CHIP_REV_ECO_MASK));
--
--	cfg0 = __raw_readl(sysc + SYSC_REG_SYSTEM_CONFIG0);
--	if (is_mt76x8()) {
--		dram_type = cfg0 & DRAM_TYPE_MT7628_MASK;
--	} else {
--		dram_type = (cfg0 >> SYSCFG0_DRAM_TYPE_SHIFT) &
--			    SYSCFG0_DRAM_TYPE_MASK;
--		if (dram_type == SYSCFG0_DRAM_TYPE_UNKNOWN)
--			dram_type = SYSCFG0_DRAM_TYPE_SDRAM;
--	}
--
--	soc_info->mem_base = MT7620_DRAM_BASE;
--	if (is_mt76x8())
--		mt7628_dram_init(soc_info);
--	else
--		mt7620_dram_init(soc_info);
--
--	pmu0 = __raw_readl(sysc + PMU0_CFG);
--	pmu1 = __raw_readl(sysc + PMU1_CFG);
--
--	pr_info("Analog PMU set to %s control\n",
--		(pmu0 & PMU_SW_SET) ? ("sw") : ("hw"));
--	pr_info("Digital PMU set to %s control\n",
--		(pmu1 & DIG_SW_SEL) ? ("sw") : ("hw"));
--
--	if (is_mt76x8())
--		rt2880_pinmux_data = mt7628an_pinmux_data;
--	else
--		rt2880_pinmux_data = mt7620a_pinmux_data;
-+	return platform_driver_register(&mt7620_pinmux_driver);
- }
-+core_initcall_sync(mt7620_pinmux_init);
++};
++
++static int __init rt3883_pinmux_init(void)
++{
++	return platform_driver_register(&rt3883_pinmux_driver);
++}
++core_initcall_sync(rt3883_pinmux_init);
 -- 
 2.25.1
 
