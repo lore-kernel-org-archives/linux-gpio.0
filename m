@@ -2,90 +2,139 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6094C4743D
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Jun 2021 19:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA85C4743D
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Jun 2021 19:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C97BB61248
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Jun 2021 19:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CFBC6136D
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Jun 2021 19:08:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbhFETCW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Jun 2021 15:02:22 -0400
-Received: from mail-lf1-f49.google.com ([209.85.167.49]:46681 "EHLO
-        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbhFETCV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Jun 2021 15:02:21 -0400
-Received: by mail-lf1-f49.google.com with SMTP id m21so3437900lfg.13;
-        Sat, 05 Jun 2021 12:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tHFb84Yr5bHh72fIcUnmCqMMARMO9r3vbW9LsistKmw=;
-        b=oKDMbDuRCkuwvcxkxsP44pQi7G58ijMtDt+v5FjpBkiphdW8zp9DOaaL5lwXNOHY7e
-         EwcDg0utMSXSHDrl86cSgQ+WHOcgMwnJiKZxP4nmXROVhuV425ooKulrI/vKqjZdSsft
-         0+3Sd/9NevIlB4DvYJt/XK57DiKJxddzunBIpBDiBg9GipGm6JKq01xE9vHFBqjmXkCb
-         Cbdx5IAm4iIGhdbNnGhQNB1z/9vQm4d9wnFHARZw44faGbtpkBSm8RDgtGHmjICCZma6
-         YghZAHaAlgGR8MCWWFPsyiHqmZjz4oFRpGqKsnzwCsmaSLIgOFpbJUdBYumQXTPfCDED
-         tDlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tHFb84Yr5bHh72fIcUnmCqMMARMO9r3vbW9LsistKmw=;
-        b=PaWvuUxjbnqD2BYLK0FyGqwU/C1hXUxmu8zxbi0XJXCEooMJSep7Eql03A4pSHg6bI
-         PCqsw1cwcxpNtBLiRtYiBXqw6RY/l5LPZ/A4DIZn5iGDinWNQqI+EHZSSzsz9Rw9qbJ7
-         VMf+4z2HcTB5VPr2WiP4mFSceJfTpt0HSOelNsUMRnXW9Gkgg0asKMYqOTC3QleDp5QV
-         QOaFcMiYJQZbT9pemuX8We44SlRZVqSNJWLgcdmRvv7611/ZgkTxCWNtrYZKDzGDUOn/
-         DTg5cHk0/wM8l+ugqmH9rGvXqaM/tD+R9U0HGAm7JX6y7uYmItIfoTeE23FZ7Ov5u0ZS
-         brUg==
-X-Gm-Message-State: AOAM532x2RdM8xxMlA1O99bL7xiH6f22ttFDsQhdkVX1t9w3u7aEP4Jr
-        Pv7zQSyrax1gxg0s2hm8VEdmwH3SGdgq/w==
-X-Google-Smtp-Source: ABdhPJwFVuSssjNDi+AtBZgWyeUKziGR8r3K/UD94N4o7KHjzWACH5+pbwgyUmyHAuEOQxjwPwLGrA==
-X-Received: by 2002:ac2:4c8f:: with SMTP id d15mr6430281lfl.157.1622919556262;
-        Sat, 05 Jun 2021 11:59:16 -0700 (PDT)
-Received: from localhost.localdomain (h-98-128-228-193.NA.cust.bahnhof.se. [98.128.228.193])
-        by smtp.gmail.com with ESMTPSA id d40sm116607lfv.102.2021.06.05.11.59.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jun 2021 11:59:15 -0700 (PDT)
-From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: [PATCH 0/2] pinctrl: bcm: Constify static ops structs
-Date:   Sat,  5 Jun 2021 20:59:06 +0200
-Message-Id: <20210605185908.39982-1-rikard.falkeborn@gmail.com>
-X-Mailer: git-send-email 2.31.1
+        id S230049AbhFETKe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Jun 2021 15:10:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229994AbhFETKd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 5 Jun 2021 15:10:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C76CD61073;
+        Sat,  5 Jun 2021 19:08:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622920125;
+        bh=tTJEbMfaqLm+MQIdZ6b17P+wEJbY3/9z+X1SQ27izYw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JkQm3FNW5iQVYmgT/Gt9sN9r1LoTem2cqXUl0EjU+fiv82NY1pLAYU3Bw6unpEki9
+         JXsjuSgQIFHSyh38wM93iu29TbJXvLcRhJNrLaI3uPlTWuv27IKsdkFioKL4INshFP
+         X6wWHZCeoF+O8iMlmhkcXx84GYrwHdtLzik9jQie2+N1FEL3MtfoR0dRqJZtRSpa3B
+         75ZFgP9ntAFhWGSiwsFlzS8kJV4vdjx4gNxci+2IKGEj7omJo8VOW1W/h4rNmExnEf
+         Cyd+38BTHzfhwZ6TVmr+dpfprstE/6hddhXmgX9dnEe4dYMoT8QPViKF/MrmqKI8pR
+         fNqEWypa3GLOg==
+Date:   Sat, 5 Jun 2021 21:08:36 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     "=?UTF-8?B?TsOtY29sYXM=?= F. R. A. Prado" <n@nfraprado.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 00/34] docs: avoid using ReST :doc:`foo` tag
+Message-ID: <20210605210836.540577d4@coco.lan>
+In-Reply-To: <20210605151109.axm3wzbcstsyxczp@notapiano>
+References: <cover.1622898327.git.mchehab+huawei@kernel.org>
+        <20210605151109.axm3wzbcstsyxczp@notapiano>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Constify a number of pinctrl_ops and pinmux_ops that are never modified
-to allow the compiler to put them in read-only memory.
+Em Sat, 5 Jun 2021 12:11:09 -0300
+N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
 
-Rikard Falkeborn (2):
-  pinctrl: bcm: Constify static pinctrl_ops
-  pinctrl: bcm: Constify static pinmux_ops
+> Hi Mauro,
+>=20
+> On Sat, Jun 05, 2021 at 03:17:59PM +0200, Mauro Carvalho Chehab wrote:
+> > As discussed at:
+> > 	https://lore.kernel.org/linux-doc/871r9k6rmy.fsf@meer.lwn.net/
+> >=20
+> > It is better to avoid using :doc:`foo` to refer to Documentation/foo.rs=
+t, as the
+> > automarkup.py extension should handle it automatically, on most cases.
+> >=20
+> > There are a couple of exceptions to this rule:
+> >=20
+> > 1. when :doc:  tag is used to point to a kernel-doc DOC: markup;
+> > 2. when it is used with a named tag, e. g. :doc:`some name <foo>`;
+> >=20
+> > It should also be noticed that automarkup.py has currently an issue:
+> > if one use a markup like:
+> >=20
+> > 	Documentation/dev-tools/kunit/api/test.rst
+> > 	  - documents all of the standard testing API excluding mocking
+> > 	    or mocking related features.
+> >=20
+> > or, even:
+> >=20
+> > 	Documentation/dev-tools/kunit/api/test.rst
+> > 	    documents all of the standard testing API excluding mocking
+> > 	    or mocking related features.
+> > =09
+> > The automarkup.py will simply ignore it. Not sure why. This patch series
+> > avoid the above patterns (which is present only on 4 files), but it wou=
+ld be
+> > nice to have a followup patch fixing the issue at automarkup.py. =20
+>=20
+> What I think is happening here is that we're using rST's syntax for defin=
+ition
+> lists [1]. automarkup.py ignores literal nodes, and perhaps a definition =
+is
+> considered a literal by Sphinx. Adding a blank line after the Documentati=
+on/...
+> or removing the additional indentation makes it work, like you did in your
+> 2nd and 3rd patch, since then it's not a definition anymore, although the=
+n the
+> visual output is different as well.
 
- drivers/pinctrl/bcm/pinctrl-bcm6318.c  | 4 ++--
- drivers/pinctrl/bcm/pinctrl-bcm63268.c | 4 ++--
- drivers/pinctrl/bcm/pinctrl-bcm6328.c  | 4 ++--
- drivers/pinctrl/bcm/pinctrl-bcm6358.c  | 4 ++--
- drivers/pinctrl/bcm/pinctrl-bcm6362.c  | 4 ++--
- drivers/pinctrl/bcm/pinctrl-bcm6368.c  | 4 ++--
- drivers/pinctrl/bcm/pinctrl-bcm63xx.h  | 4 ++--
- 7 files changed, 14 insertions(+), 14 deletions(-)
+A literal has a different output. I think that this is not the case, but I=
+=20
+didn't check the python code from docutils/Sphinx.
+=20
+> I'm not sure this is something we need to fix. Does it make sense to use
+> definition lists for links like that? If it does, I guess one option woul=
+d be to
+> whitelist definition lists so they aren't ignored by automarkup, but I fe=
+el
+> this could get ugly really quickly.
 
--- 
-2.31.1
+Yes, we should avoid handling literal blocks, as this can be a nightmare.
 
+> FWIW note that it's also possible to use relative paths to docs with auto=
+markup.
+
+Not sure if you meant to say using something like ../driver-api/foo.rst.
+If so, relative paths are a problem, as it will pass unnoticed by this scri=
+pt:
+
+	./scripts/documentation-file-ref-check
+
+which is meant to warn when a file is moved to be elsewhere. Ok, it
+could be taught to use "../" to identify paths, but I suspect that this
+could lead to false positives, like here:
+
+	Documentation/usb/gadget-testing.rst:  # ln -s ../../uncompressed/u
+	Documentation/usb/gadget-testing.rst:  # cd ../../class/fs
+	Documentation/usb/gadget-testing.rst:  # ln -s ../../header/h
+
+If you meant, instead, :doc:`../foo`, this series address those too.
+
+Regards,
+Mauro
