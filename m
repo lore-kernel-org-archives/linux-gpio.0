@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3925AC47082
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E97BC47094
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 223726120F
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:39:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 537A861278
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230463AbhFGLlP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Jun 2021 07:41:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43568 "EHLO
+        id S231485AbhFGLll (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Jun 2021 07:41:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230403AbhFGLlP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 07:41:15 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BAA0C061766
-        for <linux-gpio@vger.kernel.org>; Mon,  7 Jun 2021 04:39:24 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id k15so12858425pfp.6
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jun 2021 04:39:24 -0700 (PDT)
+        with ESMTP id S230289AbhFGLlk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 07:41:40 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 334B3C06178B
+        for <linux-gpio@vger.kernel.org>; Mon,  7 Jun 2021 04:39:49 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id i34so7172121pgl.9
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Jun 2021 04:39:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zrsK6owk2kow8C6W/boob0YZ4Vh4KO+fRL2h89xnMCE=;
-        b=T38jYMX0/r08xRHtkOEQEWpqqyuOrGZVGvLLYOC8bTeEGhl+qTAnZ9LFslh+Lj1xlD
-         xuF+XnWRuPq9britTriAt1f2i3otpZhJZGaxlTikG4DpxoaKMfMajbKiVtKSXOp9YDgI
-         RkqVz3vqzKNKrVCqT4/4sEbTLIgJeNow2a3iMmTdv7HPTX6nsU1AUnHkmYp55eYTX+it
-         OowSRXxl7f03e+o0WboWhPyWLlMeC2sib1ijeAdm6UKUqDh3hvsd65/DOOtFs4AjnVNp
-         0u3JZmXisKNpNBTQdfbKg7QFTnpni7onbvCPNK9+lNws3WmeMK57RWIHZWGWvBbllIMp
-         +Xdg==
+        bh=Pxk9jMy8Cjya3/7I3jpQbZX9wqd4VZaOXPNFzD47/JM=;
+        b=FF16jz4FI0rZqKWnRUvm2o0+/OmsmpwT+6kqMjthc/XZ4V+EElUaK2TiW6IPXb0t6C
+         i7zkj1MV9ysof0hl1ZmSQixVGSiEXSk5USyHlzeNHJBBuXKuyzrZmi2+1x43pZaArB8M
+         aGRMX3MxcksyyGDDVD9lWBIYHZzv+PGvWkFnxIDFMfPFjnWsT2yKmuCupvL2YOBP6L0V
+         wK6iugn3A9dJYCbp2xYuTxFh3BshePrdrfaDspC9H4VPAxVlb31l0yQAEu8abckVOaDU
+         T3BBGw1cy91fnwfwusP5+dyt5b1xKM4WvsIlLVL+p4PSQwwQPWpa7AmgC+Br6PktPP1X
+         nGAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zrsK6owk2kow8C6W/boob0YZ4Vh4KO+fRL2h89xnMCE=;
-        b=K9kQ9E4TLx8ThGu86+KDq43hk0Cdtnc+s3u0g1JlDoGobVX5IJQhAhMb+7WMQfc+g+
-         8QLoYikTCIZ061+PQoSD/TZsjWPFwJ5bs89vjT+pEtIsvwY8PoEtFHvG6V27gTczZUhJ
-         ldwhai7+bpXcFuYemklYoEB9j2923hhH+f2yNHMgj9lv45aqAU1ui2IFdqLIOsY24JDY
-         y/tbLvUWQaF+JlZsUS5+AQdWyledEzkXoaV4BE2gwu3aW3U9XlCjyBzB7ibKot+wcgXc
-         w17xqDyb2uuqJdCdbziZ7ZR02+2bVfpo65TSD9c7Xm0RcoI5xmU56UG1tnsclkkm+GjB
-         aclg==
-X-Gm-Message-State: AOAM530eKepeMLMWiIFUcRhaD/g3P5oHmyveMSfAXzwpxTGBlInAlyR6
-        Ei3icc4iy6NGq6e/R58GcEywOCInG+r0fQ==
-X-Google-Smtp-Source: ABdhPJzRjBjRbRZst+j3DIMIPLbY3+2Q3WsXW5lJA9uzDhbKzEXk5GILCKC0rffIR0xKhhiDnwpqKQ==
-X-Received: by 2002:aa7:8114:0:b029:2e9:c437:1121 with SMTP id b20-20020aa781140000b02902e9c4371121mr16492936pfi.7.1623065963772;
-        Mon, 07 Jun 2021 04:39:23 -0700 (PDT)
+        bh=Pxk9jMy8Cjya3/7I3jpQbZX9wqd4VZaOXPNFzD47/JM=;
+        b=Pqhwr60og/TJn3cESrbjjZD1zCCbH9E91WDE6SmN0joTUtFRQTxYGlUR0EkHFJ2zrp
+         BwQ5LH4mJFldRY4aoFgevoE8hlVuhrKOTpN8ikFhPPRiUmifC5WIu22vvOlNb5C3wMTm
+         hP/17huKf/lSZJA55wZ5dvumo1gdZd0fCx5NdeZUBNH19g8khPqALc0oKqUOAiPxnmeP
+         d4Q0Ahsxz32j/hLka+DlifoZdAXtBUmfnvT9wiRxR8qNIi3H8Drrimhk4HVEnUej8ktV
+         3jRoDTbwTBx7U1gyF1H+8vLATGecz4BjALPIVW0noB/pR4T30+9qXTC4A3v9cHtWwBKi
+         ii8w==
+X-Gm-Message-State: AOAM530KoYexrRkmICQR0NLB9HG/UnxziiG0VNFt25KjlKEwkU+bAVp9
+        ZPehLwoFBRFp6X4X0D5ZP7SWvg==
+X-Google-Smtp-Source: ABdhPJwzMzOEx8SwHal3OfYVwIxhxRZyKdEQNqAYVNTnH+6PzRiTH9uUq+wNTGRQMFyWWWasIlxzIQ==
+X-Received: by 2002:a05:6a00:1a41:b029:2ef:9721:879e with SMTP id h1-20020a056a001a41b02902ef9721879emr5775585pfv.74.1623065988689;
+        Mon, 07 Jun 2021 04:39:48 -0700 (PDT)
 Received: from localhost.localdomain.name ([122.177.177.211])
-        by smtp.gmail.com with ESMTPSA id j7sm7223939pjf.0.2021.06.07.04.39.18
+        by smtp.gmail.com with ESMTPSA id j7sm7223939pjf.0.2021.06.07.04.39.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 04:39:23 -0700 (PDT)
+        Mon, 07 Jun 2021 04:39:48 -0700 (PDT)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org,
@@ -67,9 +67,9 @@ Cc:     bhupesh.sharma@linaro.org,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: [PATCH 3/8] dt-bindings: arm: qcom: Add compatible for SA8155p-adp board
-Date:   Mon,  7 Jun 2021 17:08:35 +0530
-Message-Id: <20210607113840.15435-4-bhupesh.sharma@linaro.org>
+Subject: [PATCH 8/8] arm64: dts: qcom: sa8155p-adp: Add base dts file
+Date:   Mon,  7 Jun 2021 17:08:40 +0530
+Message-Id: <20210607113840.15435-9-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210607113840.15435-1-bhupesh.sharma@linaro.org>
 References: <20210607113840.15435-1-bhupesh.sharma@linaro.org>
@@ -79,10 +79,10 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-SA8155p-adp board is based on Qualcomm Snapdragon sm8150
-SoC.
+Add base DTS file for sa8155p-adp and enable boot to console,
+tlmm reserved range and also include pmic file(s).
 
-Add support for the same.
+SA8155p-adp board is based on sm8150 Qualcomm Snapdragon SoC.
 
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Liam Girdwood <lgirdwood@gmail.com>
@@ -97,40 +97,392 @@ Cc: linux-gpio@vger.kernel.org
 Cc: bhupesh.linux@gmail.com
 Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/qcom/Makefile        |   1 +
+ arch/arm64/boot/dts/qcom/sa8155p-adp.dts | 363 +++++++++++++++++++++++
+ 2 files changed, 364 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sa8155p-adp.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 9b27e991bddc..b5897f1f9695 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -42,11 +42,13 @@ description: |
-         sdm660
-         sdm845
-         sdx55
-+        sm8150
-         sm8250
-         sm8350
- 
-   The 'board' element must be one of the following strings:
- 
-+        adp
-         cdp
-         cp01-c1
-         dragonboard
-@@ -198,6 +200,12 @@ properties:
-               - qcom,ipq6018-cp01-c1
-           - const: qcom,ipq6018
- 
-+      - items:
-+          - enum:
-+              - qcom,sa8155p-adp
-+              - qcom,sm8150-mtp
-+          - const: qcom,sm8150
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index 456502aeee49..38d3a4728871 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -71,6 +71,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-xiaomi-beryllium.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sdm850-lenovo-yoga-c630.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-hdk.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-mtp.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8250-hdk.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8250-mtp.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8350-hdk.dtb
+diff --git a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+new file mode 100644
+index 000000000000..470d740e060a
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+@@ -0,0 +1,363 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Copyright (c) 2021, Linaro Limited
++ */
 +
-       - items:
-           - enum:
-               - qcom,qrb5165-rb5
++/dts-v1/;
++
++#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
++#include <dt-bindings/gpio/gpio.h>
++#include "sm8150.dtsi"
++#include "pmm8155au_1.dtsi"
++#include "pmm8155au_2.dtsi"
++
++/ {
++	model = "Qualcomm Technologies, Inc. SA8155P ADP";
++	compatible = "qcom,sa8155p-adp";
++
++	aliases {
++		serial0 = &uart2;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	vreg_3p3: vreg_3p3_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "vreg_3p3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	/*
++	 * Apparently RPMh does not provide support for PM8150 S4 because it
++	 * is always-on; model it as a fixed regulator.
++	 */
++	vreg_s4a_1p8: smps4 {
++		compatible = "regulator-fixed";
++		regulator-name = "vreg_s4a_1p8";
++
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++
++		regulator-always-on;
++		regulator-boot-on;
++
++		vin-supply = <&vreg_3p3>;
++	};
++};
++
++&apps_rsc {
++	pmm8155au-1-rpmh-regulators {
++		compatible = "qcom,pmm8155au-1-rpmh-regulators";
++		qcom,pmic-id = "a";
++
++		vdd-s1-supply = <&vreg_3p3>;
++		vdd-s2-supply = <&vreg_3p3>;
++		vdd-s3-supply = <&vreg_3p3>;
++		vdd-s4-supply = <&vreg_3p3>;
++		vdd-s5-supply = <&vreg_3p3>;
++		vdd-s6-supply = <&vreg_3p3>;
++		vdd-s7-supply = <&vreg_3p3>;
++		vdd-s8-supply = <&vreg_3p3>;
++		vdd-s9-supply = <&vreg_3p3>;
++		vdd-s10-supply = <&vreg_3p3>;
++
++		vdd-l1-l8-l11-supply = <&vreg_s6a_0p92>;
++		vdd-l2-l10-supply = <&vreg_3p3>;
++		vdd-l3-l4-l5-l18-supply = <&vreg_s6a_0p92>;
++		vdd-l6-l9-supply = <&vreg_s6a_0p92>;
++		vdd-l7-l12-l14-l15-supply = <&vreg_s5a_2p04>;
++		vdd-l13-l16-l17-supply = <&vreg_3p3>;
++
++		vreg_s5a_2p04: smps5 {
++			regulator-min-microvolt = <1904000>;
++			regulator-max-microvolt = <2000000>;
++		};
++
++		vreg_s6a_0p92: smps6 {
++			regulator-min-microvolt = <920000>;
++			regulator-max-microvolt = <1128000>;
++		};
++
++		vdda_wcss_pll:
++		vreg_l1a_0p752: ldo1 {
++			regulator-min-microvolt = <752000>;
++			regulator-max-microvolt = <752000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vdda_usb_hs_3p1:
++		vreg_l2a_3p072: ldo2 {
++			regulator-min-microvolt = <3072000>;
++			regulator-max-microvolt = <3072000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l3a_0p8: ldo3 {
++			regulator-min-microvolt = <800000>;
++			regulator-max-microvolt = <800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vdd_usb_hs_core:
++		vdda_pll_hv_cc_ebi01:
++		vdda_pll_hv_cc_ebi23:
++		vdda_ufs_2ln_core:
++		vdda_ufs_2ln_core:
++		vdda_usb_ss_core:
++		vdda_usb_ss_dp_core_1:
++		vdda_usb_ss_dp_core_2:
++		vdda_sp_sensor:
++		vdda_qlink_lv:
++		vdda_qlink_lv_ck:
++		vdda_qrefs_0p875_5:
++		vreg_l5a_0p88: ldo5 {
++			regulator-min-microvolt = <880000>;
++			regulator-max-microvolt = <880000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l7a_1p8: ldo7 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l10a_2p96: ldo10 {
++			regulator-min-microvolt = <2504000>;
++			regulator-max-microvolt = <2960000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l11a_0p8: ldo11 {
++			regulator-min-microvolt = <800000>;
++			regulator-max-microvolt = <800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vdd_qfprom:
++		vdd_qfprom_sp:
++		vdda_usb_hs_1p8:
++		vdda_apc_cs_1p8:
++		vdda_gfx_cs_1p8:
++		vddpx_11:
++		vreg_l12a_1p8: ldo12 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l13a_2p7: ldo13 {
++			regulator-min-microvolt = <2704000>;
++			regulator-max-microvolt = <2704000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l15a_1p7: ldo15 {
++			regulator-min-microvolt = <1704000>;
++			regulator-max-microvolt = <1704000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l16a_2p7: ldo16 {
++			regulator-min-microvolt = <2704000>;
++			regulator-max-microvolt = <2960000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l17a_2p96: ldo17 {
++			regulator-min-microvolt = <2504000>;
++			regulator-max-microvolt = <2960000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++	};
++
++	pmm8155au-2-rpmh-regulators {
++		compatible = "qcom,pmm8155au-2-rpmh-regulators";
++		qcom,pmic-id = "c";
++
++		vdd-s1-supply = <&vreg_3p3>;
++		vdd-s2-supply = <&vreg_3p3>;
++		vdd-s3-supply = <&vreg_3p3>;
++		vdd-s4-supply = <&vreg_3p3>;
++		vdd-s5-supply = <&vreg_3p3>;
++		vdd-s6-supply = <&vreg_3p3>;
++		vdd-s7-supply = <&vreg_3p3>;
++		vdd-s8-supply = <&vreg_3p3>;
++		vdd-s9-supply = <&vreg_3p3>;
++		vdd-s10-supply = <&vreg_3p3>;
++
++		vdd-l1-l8-l11-supply = <&vreg_s4c_1p352>;
++		vdd-l2-l10-supply = <&vreg_3p3>;
++		vdd-l3-l4-l5-l18-supply = <&vreg_s4c_1p352>;
++		vdd-l6-l9-supply = <&vreg_s6c_1p128>;
++		vdd-l7-l12-l14-l15-supply = <&vreg_s5c_2p04>;
++		vdd-l13-l16-l17-supply = <&vreg_3p3>;
++
++		vreg_s4c_1p352: smps4 {
++			regulator-min-microvolt = <1352000>;
++			regulator-max-microvolt = <1352000>;
++		};
++
++		vreg_s5c_2p04: smps5 {
++			regulator-min-microvolt = <1904000>;
++			regulator-max-microvolt = <2000000>;
++		};
++
++		vreg_s6c_1p128: smps6 {
++			regulator-min-microvolt = <1128000>;
++			regulator-max-microvolt = <1128000>;
++		};
++
++		vdda_wcss_adcdac_1:
++		vdda_wcss_adcdac_2:
++		vreg_l1c_1p304: ldo1 {
++			regulator-min-microvolt = <1304000>;
++			regulator-max-microvolt = <1304000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vddpx_5:
++		vreg_l2c_1p808: ldo2 {
++			regulator-min-microvolt = <1704000>;
++			regulator-max-microvolt = <2928000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vddpx_10:
++		vreg_l5c_1p2: ldo5 {
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l7c_1p8: ldo7 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vdda_qlink_hv_ck:
++		vdda_pcie_1ln_pll_1p2:
++		vdda_pcie_2ln_pll_1p2:
++		vdda_hv_refgen0:
++		vdda_ufs_2ln_1p2:
++		vdda_usb_ss_1p2:
++		vdda_usb_ss_dp_1p2:
++		vdda_csi_1p2:
++		vdda_dsi_1p2:
++		vreg_l8c_1p2: ldo8 {
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l10c_3p3: ldo10 {
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <3312000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l11c_0p8: ldo11 {
++			regulator-min-microvolt = <800000>;
++			regulator-max-microvolt = <800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vddpx_6:
++		vreg_l12c_1p808: ldo12 {
++			regulator-min-microvolt = <1704000>;
++			regulator-max-microvolt = <2928000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vddpx_2:
++		vreg_l13c_2p96: ldo13 {
++			regulator-min-microvolt = <2504000>;
++			regulator-max-microvolt = <2960000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l15c_1p9: ldo15 {
++			regulator-min-microvolt = <1704000>;
++			regulator-max-microvolt = <2928000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l16c_3p008: ldo16 {
++			regulator-min-microvolt = <3008000>;
++			regulator-max-microvolt = <3008000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vdda_pcie_1ln_core:
++		vdda_pcie_2ln_core:
++		vdda_csi_0_0p9:
++		vdda_csi_1_0p9:
++		vdda_csi_2_0p9:
++		vdda_csi_3_0p9:
++		vreg_l18c_0p88: ldo18 {
++			regulator-min-microvolt = <880000>;
++			regulator-max-microvolt = <880000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++	};
++};
++
++&tlmm {
++	gpio-reserved-ranges = <0 4>;
++};
++
++&uart2 {
++	status = "okay";
++};
++
++&ufs_mem_hc {
++	status = "okay";
++
++	reset-gpios = <&tlmm 175 GPIO_ACTIVE_LOW>;
++
++	vcc-supply = <&vreg_l10a_2p96>;
++	vcc-max-microamp = <750000>;
++	vccq-supply = <&vreg_l5c_1p2>;
++	vccq-max-microamp = <700000>;
++	vccq2-supply = <&vreg_s4a_1p8>;
++	vccq2-max-microamp = <750000>;
++};
++
++&ufs_mem_phy {
++	status = "okay";
++
++	vdda-phy-supply = <&vreg_l8c_1p2>;
++	vdda-max-microamp = <87100>;
++	vdda-pll-supply = <&vreg_l5a_0p88>;
++	vdda-pll-max-microamp = <18300>;
++};
++
++
++&usb_1_hsphy {
++	status = "okay";
++	vdda-pll-supply = <&vdd_usb_hs_core>;
++	vdda33-supply = <&vdda_usb_hs_3p1>;
++	vdda18-supply = <&vdda_usb_hs_1p8>;
++};
++
++&usb_1_qmpphy {
++	status = "okay";
++	vdda-phy-supply = <&vreg_l8c_1p2>;
++	vdda-pll-supply = <&vdda_usb_ss_dp_core_1>;
++};
++
++&usb_1 {
++	status = "okay";
++};
++
++&usb_1_dwc3 {
++	dr_mode = "peripheral";
++};
++
++&qupv3_id_1 {
++	status = "okay";
++};
 -- 
 2.31.1
 
