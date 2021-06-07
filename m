@@ -2,99 +2,275 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F768C47082
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 15:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B6CC47094
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 20:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C69661107
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 15:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B568D61108
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 20:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbhFGPY3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Jun 2021 11:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60590 "EHLO mail.kernel.org"
+        id S230425AbhFGUHU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Jun 2021 16:07:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:38694 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230212AbhFGPY2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 7 Jun 2021 11:24:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A693C60C3D;
-        Mon,  7 Jun 2021 15:22:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623079357;
-        bh=AkvIZcOQR2MjwlCMTjuU8Ke8Ur/AqM0yyXCdXSHEmT0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r4trKSgMEv1ujYT26qffTcHnjCB78vQbzvPmedPzR04Wif7Dvy9GUxCHND6d0Ufcy
-         vjX9kz8BjVDrRZoJpAQd3zXMmz7jLo+nwZ+UZ9W5+PsaCpxD1qsGMTM3AuC3blgENQ
-         Bb/hga9U+05XmSNQa2ucPjtEOZUJH5gXGibW3MOTEBHcU4hBidQRTHISicPnyRkVSf
-         q2fLCRl8ZIl7GCRbr9bzNfOawa9Y6rldJ4AsSxLrcz/mzMvEq34RMMaMvdb2wAgNK1
-         T41iF6yM6/pSg9aLJs7HU7qNZ+6ZPJm6Gx/vVrFb6o1V2MxPkPcSNxMKybKLY0/wep
-         9jFkL3bBBxWqQ==
-Date:   Mon, 7 Jun 2021 20:52:33 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bhupesh.linux@gmail.com
-Subject: Re: [PATCH 8/8] arm64: dts: qcom: sa8155p-adp: Add base dts file
-Message-ID: <YL45uRr6+Q3jvPrO@vkoul-mobl>
-References: <20210607113840.15435-1-bhupesh.sharma@linaro.org>
- <20210607113840.15435-9-bhupesh.sharma@linaro.org>
+        id S230353AbhFGUHU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 7 Jun 2021 16:07:20 -0400
+IronPort-SDR: p5zuoTlPmCPRWmp812nc6ej9zKVW76pTaMEHcRcgf3PVOrOwCojW283bmp+jx5lAoW7YW37KFB
+ G2LbwjiTjC2A==
+X-IronPort-AV: E=McAfee;i="6200,9189,10008"; a="290328587"
+X-IronPort-AV: E=Sophos;i="5.83,255,1616482800"; 
+   d="scan'208";a="290328587"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2021 13:05:28 -0700
+IronPort-SDR: 59jw/2QbBI8WKdg9phxYRB1+MBXpsslxtSTjknm7mDEXHanOH5ufPp1Bt+N58nlB8sRGnc9e+z
+ fZkR+56vo9aQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,255,1616482800"; 
+   d="scan'208";a="634830252"
+Received: from lkp-server02.sh.intel.com (HELO 1ec8406c5392) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Jun 2021 13:05:27 -0700
+Received: from kbuild by 1ec8406c5392 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1lqLV0-0008UH-DW; Mon, 07 Jun 2021 20:05:26 +0000
+Date:   Tue, 08 Jun 2021 04:04:51 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:fixes] BUILD SUCCESS
+ eb367d875f94a228c17c8538e3f2efcf2eb07ead
+Message-ID: <60be7be3.w5H9ymdXu+QXscDd%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210607113840.15435-9-bhupesh.sharma@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 07-06-21, 17:08, Bhupesh Sharma wrote:
-> Add base DTS file for sa8155p-adp and enable boot to console,
-> tlmm reserved range and also include pmic file(s).
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: eb367d875f94a228c17c8538e3f2efcf2eb07ead  pinctrl: ralink: rt2880: avoid to error in calls is pin is already enabled
 
-I see ufs added too, pls mention that as well
+elapsed time: 730m
 
- --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -71,6 +71,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-xiaomi-beryllium.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sdm850-lenovo-yoga-c630.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-hdk.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-mtp.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
+configs tested: 206
+configs skipped: 3
 
-I think this should go before sdm..
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+sh                           se7705_defconfig
+um                             i386_defconfig
+arc                            hsdk_defconfig
+arm                          lpd270_defconfig
+mips                  cavium_octeon_defconfig
+arm                         lpc18xx_defconfig
+mips                     decstation_defconfig
+arm                          iop32x_defconfig
+powerpc                   currituck_defconfig
+powerpc                 canyonlands_defconfig
+powerpc                   motionpro_defconfig
+arm                          moxart_defconfig
+sh                             sh03_defconfig
+powerpc                     pseries_defconfig
+m68k                        mvme147_defconfig
+um                               alldefconfig
+m68k                        m5407c3_defconfig
+powerpc                     rainier_defconfig
+arm                             rpc_defconfig
+arm                            xcep_defconfig
+sh                           sh2007_defconfig
+h8300                            alldefconfig
+arm                         s5pv210_defconfig
+arm                         mv78xx0_defconfig
+powerpc                     ksi8560_defconfig
+openrisc                 simple_smp_defconfig
+um                           x86_64_defconfig
+powerpc                    sam440ep_defconfig
+m68k                         amcore_defconfig
+arm                           viper_defconfig
+sh                     sh7710voipgw_defconfig
+s390                          debug_defconfig
+mips                             allyesconfig
+mips                            e55_defconfig
+powerpc                 mpc85xx_cds_defconfig
+powerpc                  mpc885_ads_defconfig
+arm                         axm55xx_defconfig
+powerpc                      katmai_defconfig
+arm                        cerfcube_defconfig
+sh                             shx3_defconfig
+m68k                           sun3_defconfig
+mips                     loongson2k_defconfig
+mips                          rm200_defconfig
+powerpc                 mpc8560_ads_defconfig
+arm                           omap1_defconfig
+sh                          sdk7780_defconfig
+sparc64                          alldefconfig
+h8300                    h8300h-sim_defconfig
+s390                                defconfig
+arm                           stm32_defconfig
+ia64                         bigsur_defconfig
+mips                            gpr_defconfig
+xtensa                              defconfig
+sh                        sh7785lcr_defconfig
+openrisc                         alldefconfig
+powerpc                    mvme5100_defconfig
+mips                  decstation_64_defconfig
+mips                          ath79_defconfig
+powerpc                      ppc44x_defconfig
+sh                   sh7724_generic_defconfig
+powerpc                     tqm8555_defconfig
+mips                       bmips_be_defconfig
+um                            kunit_defconfig
+arm                        mvebu_v7_defconfig
+mips                       rbtx49xx_defconfig
+microblaze                      mmu_defconfig
+arm                     davinci_all_defconfig
+mips                      malta_kvm_defconfig
+arm                          ep93xx_defconfig
+powerpc                mpc7448_hpc2_defconfig
+sh                        sh7757lcr_defconfig
+alpha                            allyesconfig
+powerpc                  mpc866_ads_defconfig
+sh                 kfr2r09-romimage_defconfig
+x86_64                           allyesconfig
+arm                            lart_defconfig
+mips                           ip32_defconfig
+riscv                          rv32_defconfig
+arm                        realview_defconfig
+m68k                            mac_defconfig
+x86_64                            allnoconfig
+powerpc                     tqm8548_defconfig
+powerpc                     tqm8540_defconfig
+arm                           sunxi_defconfig
+powerpc                 mpc834x_itx_defconfig
+powerpc                    adder875_defconfig
+x86_64                           alldefconfig
+arm                            hisi_defconfig
+mips                           gcw0_defconfig
+arc                     haps_hs_smp_defconfig
+sh                               alldefconfig
+powerpc                      pmac32_defconfig
+arm                          collie_defconfig
+powerpc64                        alldefconfig
+mips                  maltasmvp_eva_defconfig
+sh                             espt_defconfig
+powerpc                  iss476-smp_defconfig
+powerpc                      pasemi_defconfig
+sh                          r7780mp_defconfig
+mips                           ci20_defconfig
+sh                          rsk7264_defconfig
+arm                             mxs_defconfig
+powerpc                      ppc6xx_defconfig
+riscv                    nommu_k210_defconfig
+arc                              allyesconfig
+h8300                     edosk2674_defconfig
+mips                      pic32mzda_defconfig
+arm                      jornada720_defconfig
+nds32                             allnoconfig
+mips                           jazz_defconfig
+arm                        mvebu_v5_defconfig
+arc                        nsimosci_defconfig
+xtensa                  nommu_kc705_defconfig
+powerpc                    ge_imp3a_defconfig
+arm                             ezx_defconfig
+mips                           mtx1_defconfig
+powerpc                          g5_defconfig
+powerpc                     tqm8541_defconfig
+mips                           rs90_defconfig
+mips                        jmr3927_defconfig
+arm                         assabet_defconfig
+sh                              ul2_defconfig
+mips                          rb532_defconfig
+mips                         tb0226_defconfig
+powerpc                     ppa8548_defconfig
+arc                      axs103_smp_defconfig
+powerpc                   lite5200b_defconfig
+mips                       lemote2f_defconfig
+s390                       zfcpdump_defconfig
+arm                      footbridge_defconfig
+sh                            hp6xx_defconfig
+arm                         socfpga_defconfig
+powerpc                 mpc8313_rdb_defconfig
+powerpc                        fsp2_defconfig
+mips                   sb1250_swarm_defconfig
+powerpc                     akebono_defconfig
+powerpc                          allmodconfig
+powerpc                 xes_mpc85xx_defconfig
+powerpc               mpc834x_itxgp_defconfig
+arc                           tb10x_defconfig
+x86_64                              defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                           allnoconfig
+i386                 randconfig-a003-20210607
+i386                 randconfig-a006-20210607
+i386                 randconfig-a004-20210607
+i386                 randconfig-a001-20210607
+i386                 randconfig-a002-20210607
+i386                 randconfig-a005-20210607
+x86_64               randconfig-a015-20210607
+x86_64               randconfig-a011-20210607
+x86_64               randconfig-a014-20210607
+x86_64               randconfig-a012-20210607
+x86_64               randconfig-a016-20210607
+x86_64               randconfig-a013-20210607
+i386                 randconfig-a015-20210607
+i386                 randconfig-a011-20210607
+i386                 randconfig-a012-20210607
+i386                 randconfig-a013-20210607
+i386                 randconfig-a016-20210607
+i386                 randconfig-a014-20210607
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                            allmodconfig
+x86_64                    rhel-8.3-kselftests
+x86_64                               rhel-8.3
+x86_64                      rhel-8.3-kbuiltin
+x86_64                                  kexec
 
-> +		vdd_usb_hs_core:
-> +		vdda_pll_hv_cc_ebi01:
-> +		vdda_pll_hv_cc_ebi23:
-> +		vdda_ufs_2ln_core:
-> +		vdda_ufs_2ln_core:
-> +		vdda_usb_ss_core:
-> +		vdda_usb_ss_dp_core_1:
-> +		vdda_usb_ss_dp_core_2:
-> +		vdda_sp_sensor:
-> +		vdda_qlink_lv:
-> +		vdda_qlink_lv_ck:
-> +		vdda_qrefs_0p875_5:
+clang tested configs:
+x86_64               randconfig-b001-20210607
+x86_64               randconfig-a002-20210607
+x86_64               randconfig-a004-20210607
+x86_64               randconfig-a003-20210607
+x86_64               randconfig-a006-20210607
+x86_64               randconfig-a005-20210607
+x86_64               randconfig-a001-20210607
 
-I didnt find these labels very useful, so maybe remove?
-It helped me to understand that a regulator is vreg_l5a_0p88 as it
-implies I am using l5a with 0p88V :)
-
-> +		vreg_l5a_0p88: ldo5 {
-> +			regulator-min-microvolt = <880000>;
-> +			regulator-max-microvolt = <880000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-
-Pls do add regulator-name property, it helps in understanding which ldo
-in logs/debugfs, otherwise ldo5 will comes for both pmics
-
--- 
-~Vinod
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
