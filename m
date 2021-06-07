@@ -2,213 +2,97 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D15C47082
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3C3C47082
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE59961249
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3C1A61208
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231621AbhFGLmu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Jun 2021 07:42:50 -0400
-Received: from mail-pl1-f173.google.com ([209.85.214.173]:33356 "EHLO
-        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231617AbhFGLmt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 07:42:49 -0400
-Received: by mail-pl1-f173.google.com with SMTP id c13so8519174plz.0
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jun 2021 04:40:44 -0700 (PDT)
+        id S230225AbhFGMBD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Jun 2021 08:01:03 -0400
+Received: from mail-pf1-f180.google.com ([209.85.210.180]:37408 "EHLO
+        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230127AbhFGMBC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 08:01:02 -0400
+Received: by mail-pf1-f180.google.com with SMTP id y15so12885909pfl.4;
+        Mon, 07 Jun 2021 04:59:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ix3Z3iu5Sdv/B7LYx2J6tZXgGiemwrKhiSlqqq85Tao=;
-        b=kTSgf7cpzEefZXwj/Gi0pLErE2/d8Xz0i2MKmf7fPxskKtL4Ap66mCqhKSxUMkFVsD
-         e1NCuuSbL2YSOLMHyXqroWjo11J/c274RGqMf+oktKFxpcirue7p9iZxoqvjq5ktINvx
-         QWaT2Nu+IflBUPy5SeuBJjteB6xokggeABOEwvzP/iIEE996+vye1MGS1CeTi/jd4noq
-         Z4aSpIaKzATfZk20ADAtdXhvRwPNsDyW1CpyFsGdR26x+jnmHN0hcVulg0YUd6h3zAJj
-         XuSfh0akC5UQL46cqiWFnHPrU3Zglyj0exMkUsLu2Pxb1ltDxYAJ2Zwd7NyYpnx8hTXQ
-         l+TQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xkWMYgreNs4FoJqpSjqW/hTbdY/R1Pbk1QYq7eymfWA=;
+        b=Oqh+Ku4/AV3qvBUgClIWyUzJeaGXkXkmGeDC2fW27FUBL3lYEhkH99zj12DZtQziV9
+         LsXstrZ105TdejRGo8EN07n9O9Mg3mp9+X97Zk2wobmjqQ0ysWzOsuPw2N67Sk3uHM82
+         WUDF5Wqt/ozYFMii8ptV5Nl5cXHrp5gZzGm0H85zT/P8AwPkR8QMWycqkpd9wCR5J8Db
+         5oyPM+82oOSVCul4/8PWY8RrQBQNp8lnH9NJ1asfAEDVwdK5cQtDrLX5bf11ABA1ouIy
+         S0ibywqrI1ICrTMIFTyL+3MWyNUomC4nOXTI9EmVvj1RLMdjy6pG0fRfEUZZZV8moPu9
+         8uQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ix3Z3iu5Sdv/B7LYx2J6tZXgGiemwrKhiSlqqq85Tao=;
-        b=rsaEGsessOtcxuq597a7wVrtZNLnFQatmAtd7BTkGq1V1g1cxVnqrjh5CmpXyZPHa3
-         fhCEMnS5xdIqXUShn2uPiATq3buushHUvFTaqXLxWfNQC+AMRh47zEV/3Gur9/JXPhF5
-         xtH0B5eLjMvya8J72R+VSc6U8LM1DdZVW4kRebvMmVy6w1VAV2ZBSImL8Wc2lDpbV2BT
-         ypHJwXDPtTCGCnO1JyviTsOcnoF5IptuNEbYJHSFBv/ymPAid6FcLfQbxP5nWvH6v9dD
-         OHM2TTmc1P8UN5VCDWcSvWSUHhEvOq2PAGaGxirpPJ+yYpueN4Jd8Q7qn248zJLv8lMa
-         axHw==
-X-Gm-Message-State: AOAM5315NRTwCEg0pxD/KUn/tNrQ+KypxGli0zjwsa7nRiIXARril3l3
-        HPPgX9Ph1VUmU/bSeVW5dGKXWA==
-X-Google-Smtp-Source: ABdhPJxws8tbeEWl/MSug9iQQCtBEVPomYu6qYlDUP9up54p9iqpvXvSgdNOKLMUmgy6S2lqDqgc0w==
-X-Received: by 2002:a17:90b:3ecb:: with SMTP id rm11mr19723250pjb.95.1623065983941;
-        Mon, 07 Jun 2021 04:39:43 -0700 (PDT)
-Received: from localhost.localdomain.name ([122.177.177.211])
-        by smtp.gmail.com with ESMTPSA id j7sm7223939pjf.0.2021.06.07.04.39.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 04:39:43 -0700 (PDT)
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     bhupesh.sharma@linaro.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bhupesh.linux@gmail.com
-Subject: [PATCH 7/8] arm64: dts: qcom: pmm8155au_2: Add base dts file
-Date:   Mon,  7 Jun 2021 17:08:39 +0530
-Message-Id: <20210607113840.15435-8-bhupesh.sharma@linaro.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210607113840.15435-1-bhupesh.sharma@linaro.org>
-References: <20210607113840.15435-1-bhupesh.sharma@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xkWMYgreNs4FoJqpSjqW/hTbdY/R1Pbk1QYq7eymfWA=;
+        b=eSzWTqI+hqGA4Y6jeQQ75PZfvGIGoPErYGESxr9UWWRwoqrnZ+GXgohqKuSzwQ+t82
+         N2FTcE61e5wfNuEASyvLS0nhdxTO7raTIgn7nlM0gTxysLLtQg7NE8c1WKfWpRuAtz3B
+         tre+8QdDky6vAL6OSd218gm+vbb9a2JtRX+qUFEvOfhyhhnHmM/2DSQ2O6ASlPs/Hb0G
+         TI1IIs1SeHHcw/2yinYfIVFlsNg5T8AIhm1Edg8rSGSJOpEuLgJjgFoMYXgWnkjDPO+T
+         BldOh6PLNL9Q962IQPT72MempoKdbYgXAU4FHjgaoVI6OeTwrwGzaQ7cBxghqkPQ8qft
+         pDYg==
+X-Gm-Message-State: AOAM533zdeWdADvVuhTG+ddrENPRx22WxSJulh67sP+l/nSPdCoylizg
+        u5UY++3JwIyNFlA9mUBASMC0HqwRdEEaEU286PZu8nR66VM=
+X-Google-Smtp-Source: ABdhPJxBoHk1eWAy7Bm/ZDKhdzjoD0dMSMjIZvJM+vliwkEJxvZ1gu5g/w8Nf6rNzmvEJ8m7ufjYrUHWS8wEnFcxs2Q=
+X-Received: by 2002:a63:79c3:: with SMTP id u186mr17416326pgc.203.1623067081386;
+ Mon, 07 Jun 2021 04:58:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210606225037.26130-1-chrisrblake93@gmail.com>
+In-Reply-To: <20210606225037.26130-1-chrisrblake93@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 7 Jun 2021 14:57:45 +0300
+Message-ID: <CAHp75VchKgVwxKq5OP=LrLaDhg-_rpwYnYz2Op9PQm4+N9Tn7g@mail.gmail.com>
+Subject: Re: [PATCH v2] mfd: lpc_ich: Enable GPIO driver for DH89xxCC
+To:     Chris Blake <chrisrblake93@gmail.com>
+Cc:     ptyser@xes-inc.com, Lee Jones <lee.jones@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add base DTS file for pmm8155au_2 along with GPIOs, power-on, rtc and vadc
-nodes.
+On Mon, Jun 7, 2021 at 1:52 AM Chris Blake <chrisrblake93@gmail.com> wrote:
+>
+> Based on the Intel Datasheet for the DH89xxCC PCH, the GPIO driver
+> is the same as ICH_v5_GPIO, minus the fact the DH89xxCC also has
+> blink support. However, blink support isn't supported by the GPIO
+> driver so we should use ICH_v5_GPIO. Tested and working on a Meraki
+> MX100-HW.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Andy Gross <agross@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: bhupesh.linux@gmail.com
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
----
- arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi | 107 ++++++++++++++++++++++
- 1 file changed, 107 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi
+Thanks for your contribution!
 
-diff --git a/arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi b/arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi
-new file mode 100644
-index 000000000000..11c0c203a4e2
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi
-@@ -0,0 +1,107 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2021, Linaro Limited
-+ */
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/spmi/spmi.h>
-+
-+/ {
-+	thermal-zones {
-+		pmm8155au-2-thermal {
-+			polling-delay-passive = <100>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors = <&pmm8155au_2_temp>;
-+
-+			trips {
-+				trip0 {
-+					temperature = <95000>;
-+					hysteresis = <0>;
-+					type = "passive";
-+				};
-+
-+				trip1 {
-+					temperature = <115000>;
-+					hysteresis = <0>;
-+					type = "hot";
-+				};
-+
-+				trip2 {
-+					temperature = <145000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&spmi_bus {
-+	pmic@4 {
-+		compatible = "qcom,pmm8155au-2", "qcom,spmi-pmic";
-+		reg = <0x4 SPMI_USID>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		power-on@800 {
-+			compatible = "qcom,pm8916-pon";
-+			reg = <0x0800>;
-+
-+			status = "disabled";
-+		};
-+
-+		pmm8155au_2_temp: temp-alarm@2400 {
-+			compatible = "qcom,spmi-temp-alarm";
-+			reg = <0x2400>;
-+			interrupts = <0x4 0x24 0x0 IRQ_TYPE_EDGE_BOTH>;
-+			io-channels = <&pmm8155au_2_adc ADC5_DIE_TEMP>;
-+			io-channel-names = "thermal";
-+			#thermal-sensor-cells = <0>;
-+		};
-+
-+		pmm8155au_2_adc: adc@3100 {
-+			compatible = "qcom,spmi-adc5";
-+			reg = <0x3100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#io-channel-cells = <1>;
-+			interrupts = <0x4 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-+
-+			ref-gnd@0 {
-+				reg = <ADC5_REF_GND>;
-+				qcom,pre-scaling = <1 1>;
-+				label = "ref_gnd";
-+			};
-+
-+			vref-1p25@1 {
-+				reg = <ADC5_1P25VREF>;
-+				qcom,pre-scaling = <1 1>;
-+				label = "vref_1p25";
-+			};
-+
-+			die-temp@6 {
-+				reg = <ADC5_DIE_TEMP>;
-+				qcom,pre-scaling = <1 1>;
-+				label = "die_temp";
-+			};
-+		};
-+
-+		pmm8155au_2_gpios: gpio@c000 {
-+			compatible = "qcom,pmm8155au-2-gpio";
-+			reg = <0xc000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	pmic@5 {
-+		compatible = "qcom,pmm8155au-2", "qcom,spmi-pmic";
-+		reg = <0x5 SPMI_USID>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+};
+> V2: Updated commit message, and added Christian Lamparter as a
+> contributor.
+
+First of all, changelog is placed after the cutter '---' line below.
+
+> Signed-off-by: Chris Blake <chrisrblake93@gmail.com>
+> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+
+Second, please utilize the Co-developed-by tag.
+
+> ---
+
+(changelog)
+
+>  drivers/mfd/lpc_ich.c | 1 +
+>  1 file changed, 1 insertion(+)
+
 -- 
-2.31.1
-
+With Best Regards,
+Andy Shevchenko
