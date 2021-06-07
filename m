@@ -2,100 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B19FC47082
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 07:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6E4C48BC2
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 07:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3513C60FEB
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 07:12:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE6A46120F
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 07:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbhFGHOX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Jun 2021 03:14:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbhFGHOW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 03:14:22 -0400
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65A7C061766;
-        Mon,  7 Jun 2021 00:12:16 -0700 (PDT)
-Received: by mail-ot1-x32c.google.com with SMTP id i12-20020a05683033ecb02903346fa0f74dso15763512otu.10;
-        Mon, 07 Jun 2021 00:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4laDKWizxMRTWJeK1bmtcZo8viWJSxK47fdeYF6K918=;
-        b=YLLpsZnf3HZnm8LmxGahyfPr4u6yFkot1cfYVSVPpCO2MpvA4Y7PxR6JlzzU0xiU+j
-         O9M0oWIXf/cBZVK+6e+JX5+Vd5Y5VJo8bBVuC+IXmlxPfW5jLyeBlUkwwFI6OwYM45HP
-         iHaWfJav0phhM+OE14+mmPzonbtyTVbmH7zL2oZ+lQr063TPy/hlucGwgn9IboxWDM/J
-         +mGBa5i1a8Ivpy0hqX6tCscEQlD90oDGLBc8i1Ea2i/h6k1iU7yMPFlRtLVeOyuVB3i8
-         RH5R4m3y/1XmFY0+x3riK6kPGGs2CeZ5al3/ZZ+1ctKG5F+vaf2e9I9ipKMypsuHv4tD
-         SVqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4laDKWizxMRTWJeK1bmtcZo8viWJSxK47fdeYF6K918=;
-        b=BMyGTBZyowhZTe2/6AEDRsa5D2y88gSdzasNZ+wVCJgTedBDFssWxyy/j9trK5/6zk
-         T3VhuH1SSOw1tBzkErURJuoibO/ZQX6SFlFWfTmAxIwUMLDO6KCy0umnwF1yfc3Eod+b
-         GE33lyfRMID03ro4Pt3hDcvpGLHBlJHL4Xtu47BEdVP3olt5gZdRohYDvBz4BxWJeEu2
-         IgO0uv3+R6IBBlZz06Lg4OFnyssFv/IZTj9djbEx3Ha6yhoZB5N4MvNBmXBvDWZKEuPB
-         XPRc6INhKe16fuHzZVdY4a7HG8mS9HkVVTqWhJ74yzixwvqMrNQhJ0gPGGZsTsm79a8K
-         vBtw==
-X-Gm-Message-State: AOAM532fPz0OoJT+Ug4rP9XpUp8LWKTCz7iOXlH+oFCEK6iWBToytvt1
-        HRpRI5NyVR82BgaMMG4ZKt9NkQ08Dpl+Jxi9CdkMAHz/MXE=
-X-Google-Smtp-Source: ABdhPJza2sXXp8y/aoj4BcEn4Gs/f1mRIKtiVhnDLh90E3441M+NY5kHL2KdYO0iRpA4HCCarFx6FT4jXH4+JHtoYMU=
-X-Received: by 2002:a9d:4592:: with SMTP id x18mr12612447ote.74.1623049936152;
- Mon, 07 Jun 2021 00:12:16 -0700 (PDT)
+        id S230343AbhFGHRr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Jun 2021 03:17:47 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:35917 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230333AbhFGHRq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 03:17:46 -0400
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 15771Yca056319;
+        Mon, 7 Jun 2021 15:01:34 +0800 (GMT-8)
+        (envelope-from steven_lee@aspeedtech.com)
+Received: from slee-VirtualBox.localdomain (192.168.100.253) by
+ TWMBX02.aspeed.com (192.168.0.24) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 7 Jun 2021 15:15:19 +0800
+From:   Steven Lee <steven_lee@aspeedtech.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-aspeed@lists.ozlabs.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     <steven_lee@aspeedtech.com>, <Hongweiz@ami.com>,
+        <ryan_chen@aspeedtech.com>, <billy_tsai@aspeedtech.com>
+Subject: [PATCH v4 2/7] dt-bindings: aspeed-sgpio: Add ast2600 sgpio compatibles.
+Date:   Mon, 7 Jun 2021 15:15:07 +0800
+Message-ID: <20210607071514.11727-3-steven_lee@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210607071514.11727-1-steven_lee@aspeedtech.com>
+References: <20210607071514.11727-1-steven_lee@aspeedtech.com>
 MIME-Version: 1.0
-References: <20210604055536.20606-1-sergio.paracuellos@gmail.com> <CACRpkdbmu32csSoptceUcaVYxXSFwk316k5Ru09KCodvLXMOPA@mail.gmail.com>
-In-Reply-To: <CACRpkdbmu32csSoptceUcaVYxXSFwk316k5Ru09KCodvLXMOPA@mail.gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Mon, 7 Jun 2021 09:12:05 +0200
-Message-ID: <CAMhs-H9q4ZX_wpO1m6Dk-+LJtXBHiHVcfdE20GB3-u_49===+g@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: ralink: pinctrl-rt2880: avoid to error in
- calls if pin is already enabled
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [192.168.100.253]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 15771Yca056319
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+AST2600 SoC has 2 SGPIO master interfaces one with 128 pins another one
+with 80 pins. Add ast2600-sgpiom0-80 and ast2600-sgpiom-128 compatibles
+and update descriptions to introduce the max number of available gpio
+pins that AST2600 supported.
 
-On Mon, Jun 7, 2021 at 9:10 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Fri, Jun 4, 2021 at 7:55 AM Sergio Paracuellos
-> <sergio.paracuellos@gmail.com> wrote:
->
-> > In 'rt2880_pmx_group_enable' driver is printing an error and returning
-> > -EBUSY if a pin has been already enabled. This becomes in anoying messages
-> > in the caller when this happens like the following:
-> >
-> > rt2880-pinmux pinctrl: pcie is already enabled
-> > mt7621-pci 1e140000.pcie: Error applying setting, reverse things back
-> >
-> > To avoid this just print the already enabled message in the pinctrl
-> > driver and return 0 instead to don't confuse the user with a real
-> > bad problem.
-> >
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > ---
-> > Changes in v2:
-> >     - Fix commit message s/is/if
->
-> I just fixed up the commit manually instead, no big deal.
+Signed-off-by: Steven Lee <steven_lee@aspeedtech.com>
+---
+ Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Oh, I see :)
+diff --git a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+index b2ae211411ff..0e42eded3c1e 100644
+--- a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+@@ -10,9 +10,10 @@ maintainers:
+   - Andrew Jeffery <andrew@aj.id.au>
+ 
+ description:
+-  This SGPIO controller is for ASPEED AST2500 SoC, it supports up to 80 full
+-  featured Serial GPIOs. Each of the Serial GPIO pins can be programmed to
+-  support the following options
++  This SGPIO controller is for ASPEED AST2400, AST2500 and AST2600 SoC,
++  AST2600 have two sgpio master one with 128 pins another one with 80 pins,
++  AST2500/AST2400 have one sgpio master with 80 pins. Each of the Serial
++  GPIO pins can be programmed to support the following options
+   - Support interrupt option for each input port and various interrupt
+     sensitivity option (level-high, level-low, edge-high, edge-low)
+   - Support reset tolerance option for each output port
+@@ -25,6 +26,8 @@ properties:
+     enum:
+       - aspeed,ast2400-sgpio
+       - aspeed,ast2500-sgpio
++      - aspeed,ast2600-sgpiom-80
++      - aspeed,ast2600-sgpiom-128
+ 
+   reg:
+     maxItems: 1
+-- 
+2.17.1
 
-Thanks!!
-    Sergio Paracuellos
->
-> Thanks!
-> Linus Walleij
