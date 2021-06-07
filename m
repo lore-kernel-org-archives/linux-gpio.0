@@ -2,67 +2,66 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 869DBC47095
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 10:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A326C47082
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 10:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E201611C0
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 10:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F0C961073
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 10:53:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbhFGKy3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Jun 2021 06:54:29 -0400
-Received: from mail-ej1-f53.google.com ([209.85.218.53]:35406 "EHLO
-        mail-ej1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230519AbhFGKy1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 06:54:27 -0400
-Received: by mail-ej1-f53.google.com with SMTP id h24so25948318ejy.2
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jun 2021 03:52:36 -0700 (PDT)
+        id S231286AbhFGKyx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Jun 2021 06:54:53 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:37420 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231287AbhFGKys (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 06:54:48 -0400
+Received: by mail-ed1-f49.google.com with SMTP id b11so19788837edy.4
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Jun 2021 03:52:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sartura-hr.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HnsBV9+SaqA7SSr/e4/pLlJDmVEvCyduIpG+v1vPt2g=;
-        b=YOyduQ7z3LsMZWwZbLjEehXuOMaeXCIccM4U1mr6Srqowtbsek7tKAQJ8OhGw21ayj
-         k3NGMpyGiTP7YzvmRV2/DhBtrzEeCyYOwjo0FUJkRH+Y0V6GqzqHJuTgRidHiga74dhZ
-         SGGOEWFZszzL15T+ZX18n1QWb+JQu9emXD0JnlEH+MpFIhg2DwJP0eYVesHx3Pd0yzry
-         tuaQbwTIylGoPaozV9IE3G3jIvwDbnhZgELvhJE6aix1/UmgrdiYHyLHdsW9Sa6eSR78
-         5tUfbtipZcqOiJMwdF4x3fZXYOV0h64Vwclp7SJz3jkbbFtJFkCgjrpl4xaA6vPy4P15
-         5/pg==
+        bh=2o3lod6/tQHJli1HMNUrlxY009C4XIUm342TOsfm420=;
+        b=IDblBJOC6V9zP5f7LWfXEcaceHMvkrZvOa8yV6hifBe1VNPbmasGY76ZoNwEbmJUXf
+         a4wuIkXjW0rajqvi8oEp4HLaxLJZI6ty3T3F8RT7HSQRirWsNev3zAiiqQ0Pt/JVkLAp
+         tV/5UpfQ9JzyjPjjwHdOlEcNNhwNHRLsOQrFedTfKH1CEZAhMzONRY1VB/g9NbcsDpFk
+         ZEPcY5l/UI4m/2ls2yq8wE4vp2YBTVXJUmD1y0K9F+1TjB+svCTAeo52AaxIeAU9oRQo
+         oIqNsxa4GDByyI1en2vnRcN3rHSxMKLcEkS2JYdTFuu/hUonPuVmhjYmqRLGYtYTEHIh
+         X2KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HnsBV9+SaqA7SSr/e4/pLlJDmVEvCyduIpG+v1vPt2g=;
-        b=kvMORVqjqrVRXm0ppFOZmcxXJ/Hn9jmVlJwvWqjMviO539enxp2x5IpGNDZo0b4EEV
-         Dx2dQX+8z2K6EcF3eByAHm4TNW3LjTYUuesAh7GS8oi53KIgOBv8u2L1rQxgFREmuOCE
-         FNwhLCpXIFgwZb1gppSNjuJAp9UkiKTM0ZCf7vQAKHB7Wh52TvykiBfr4aEqQfZ5fXID
-         nR/zZKipkQYUFJd9Zx+vrrfvgncyjFFE1biZfWRD2x3+yOmBZOmhPCFfzjJbDxsIW7LE
-         mIaaQvCjnM+1ObiWGJwETy7iYijurXC2S40qvCBb7R4FlpkmVogpvCKnK8L6ur4PLdtA
-         pZTw==
-X-Gm-Message-State: AOAM5325dhb0VR5OnKXXK3qzk6Gqi66NvD/Em/iif/UG72GTKFIhT392
-        ySyzo6B2J6GaRRj3DZ53W1bYcw==
-X-Google-Smtp-Source: ABdhPJzGMn7UooqbLaOY0Shv91AT8vru8Li8IbtJDqh2fHrQ9oF4HXFKDM6ABcjgqoCL+fiUj8S2FA==
-X-Received: by 2002:a17:907:948f:: with SMTP id dm15mr13917017ejc.476.1623063095487;
-        Mon, 07 Jun 2021 03:51:35 -0700 (PDT)
+        bh=2o3lod6/tQHJli1HMNUrlxY009C4XIUm342TOsfm420=;
+        b=UXG6i2pNugU6UEHHfKmq+t0g45eYjtZ7mew1j5llXaFKA2eIZCF+/jQV3/Pj8e4XOO
+         VipTClD+Ono8FM3/2BRULi8l3+WRg0Rq1D1h0udMMRjQPlUPBw7QY9IDSZPmrqy12IUr
+         6tCV5p2k3mYe+TfeIFVYAspnJQRAmvxJvK4U0iZLCVJeXUyI3+7wIoUr1N/7Ekg0fk1S
+         ZetdYsj0z46f5glLeVYZQ+93jm3+lMw2Yef+qPIaCUNAjhsgYBC1tkGFLiNYDFUanJMp
+         kxdSL1Obj7P4aSRtVSgswYX4WPYRC6z/+64GfWaP3QjiShV4pa4r6JuyhoJZvZaJfksy
+         N4/w==
+X-Gm-Message-State: AOAM531q1SjonrwLvWz8wv237xR7X6WHX7P/amx9k2FM5C5GhpBqD8JN
+        szdby4qyAlsvygBK1sPYWbxr3w==
+X-Google-Smtp-Source: ABdhPJx4Ct/adIB5Q8H0U4N3keddlIjXCjd7JyHgiTLDw9+AlwtyGjYmdmxaLq1m06KpolO9YYNo1g==
+X-Received: by 2002:a05:6402:31f3:: with SMTP id dy19mr19383237edb.153.1623063105759;
+        Mon, 07 Jun 2021 03:51:45 -0700 (PDT)
 Received: from localhost.localdomain (dh207-96-76.xnet.hr. [88.207.96.76])
-        by smtp.googlemail.com with ESMTPSA id f6sm6340003eja.108.2021.06.07.03.51.34
+        by smtp.googlemail.com with ESMTPSA id f6sm6340003eja.108.2021.06.07.03.51.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 03:51:35 -0700 (PDT)
+        Mon, 07 Jun 2021 03:51:45 -0700 (PDT)
 From:   Robert Marko <robert.marko@sartura.hr>
 To:     linus.walleij@linaro.org, robh+dt@kernel.org, lee.jones@linaro.org,
         p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bgolaszewski@baylibre.com
 Cc:     luka.perkov@sartura.hr, jmp@epiphyte.org, pmenzel@molgen.mpg.de,
-        buczek@molgen.mpg.de, Robert Marko <robert.marko@sartura.hr>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v5 2/6] gpio: Add Delta TN48M CPLD GPIO driver
-Date:   Mon,  7 Jun 2021 12:51:18 +0200
-Message-Id: <20210607105122.2047212-2-robert.marko@sartura.hr>
+        buczek@molgen.mpg.de, Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH v5 6/6] MAINTAINERS: Add Delta Networks TN48M CPLD drivers
+Date:   Mon,  7 Jun 2021 12:51:22 +0200
+Message-Id: <20210607105122.2047212-6-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210607105122.2047212-1-robert.marko@sartura.hr>
 References: <20210607105122.2047212-1-robert.marko@sartura.hr>
@@ -72,155 +71,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Delta TN48M CPLD is used as a GPIO expander for the SFP GPIOs.
-
-It is a mix of input only and output only pins.
+Add maintainers entry for the Delta Networks TN48M
+CPLD MFD drivers.
 
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
+Changes in v3:
+* Add reset driver documentation
+
 Changes in v2:
-* Rewrite to use simple I2C MFD and GPIO regmap
-* Drop DT bindings for pin numbering
+* Drop no more existing files
 
- drivers/gpio/Kconfig      | 12 ++++++
- drivers/gpio/Makefile     |  1 +
- drivers/gpio/gpio-tn48m.c | 89 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+)
- create mode 100644 drivers/gpio/gpio-tn48m.c
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index e3607ec4c2e8..472f7764508e 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1310,6 +1310,18 @@ config GPIO_TIMBERDALE
- 	help
- 	Add support for the GPIO IP in the timberdale FPGA.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9450e052f1b1..82d9c2943c34 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5096,6 +5096,15 @@ W:	https://linuxtv.org
+ T:	git git://linuxtv.org/media_tree.git
+ F:	drivers/media/platform/sti/delta
  
-+config GPIO_TN48M_CPLD
-+	tristate "Delta Networks TN48M switch CPLD GPIO driver"
-+	depends on MFD_TN48M_CPLD
-+	select GPIO_REGMAP
-+	help
-+	  This enables support for the GPIOs found on the Delta
-+	  Networks TN48M switch CPLD.
-+	  They are used for inputs and outputs on the SFP slots.
++DELTA NETWORKS TN48M CPLD DRIVERS
++M:	Robert Marko <robert.marko@sartura.hr>
++S:	Maintained
++F:	Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml
++F:	Documentation/devicetree/bindings/mfd/delta,tn48m-cpld.yaml
++F:	Documentation/devicetree/bindings/reset/delta,tn48m-reset.yaml
++F:	drivers/gpio/gpio-tn48m.c
++F:	include/dt-bindings/reset/delta,tn48m-reset.h
 +
-+	  This driver can also be built as a module. If so, the
-+	  module will be called gpio-tn48m.
-+
- config GPIO_TPS65086
- 	tristate "TI TPS65086 GPO"
- 	depends on MFD_TPS65086
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index c58a90a3c3b1..271fb806475e 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -145,6 +145,7 @@ obj-$(CONFIG_GPIO_TEGRA186)		+= gpio-tegra186.o
- obj-$(CONFIG_GPIO_TEGRA)		+= gpio-tegra.o
- obj-$(CONFIG_GPIO_THUNDERX)		+= gpio-thunderx.o
- obj-$(CONFIG_GPIO_TIMBERDALE)		+= gpio-timberdale.o
-+obj-$(CONFIG_GPIO_TN48M_CPLD)		+= gpio-tn48m.o
- obj-$(CONFIG_GPIO_TPIC2810)		+= gpio-tpic2810.o
- obj-$(CONFIG_GPIO_TPS65086)		+= gpio-tps65086.o
- obj-$(CONFIG_GPIO_TPS65218)		+= gpio-tps65218.o
-diff --git a/drivers/gpio/gpio-tn48m.c b/drivers/gpio/gpio-tn48m.c
-new file mode 100644
-index 000000000000..41484c002826
---- /dev/null
-+++ b/drivers/gpio/gpio-tn48m.c
-@@ -0,0 +1,89 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Delta TN48M CPLD GPIO driver
-+ *
-+ * Copyright 2021 Sartura Ltd
-+ *
-+ * Author: Robert Marko <robert.marko@sartura.hr>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/gpio/regmap.h>
-+#include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+enum tn48m_gpio_type {
-+	TN48M_SFP_TX_DISABLE = 1,
-+	TN48M_SFP_PRESENT,
-+	TN48M_SFP_LOS,
-+};
-+
-+static int tn48m_gpio_probe(struct platform_device *pdev)
-+{
-+	struct gpio_regmap_config config = {0};
-+	enum tn48m_gpio_type type;
-+	struct regmap *regmap;
-+	u32 base;
-+	int ret;
-+
-+	if (!pdev->dev.parent)
-+		return -ENODEV;
-+
-+	type = (uintptr_t)device_get_match_data(&pdev->dev);
-+	if (!type)
-+		return -ENODEV;
-+
-+	ret = device_property_read_u32(&pdev->dev, "reg", &base);
-+	if (ret)
-+		return -EINVAL;
-+
-+	regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!regmap)
-+		return -ENODEV;
-+
-+	config.regmap = regmap;
-+	config.parent = &pdev->dev;
-+	config.ngpio = 4;
-+
-+	switch (type) {
-+	case TN48M_SFP_TX_DISABLE:
-+		config.reg_set_base = base;
-+		break;
-+	case TN48M_SFP_PRESENT:
-+		config.reg_dat_base = base;
-+		break;
-+	case TN48M_SFP_LOS:
-+		config.reg_dat_base = base;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "unknown type %d\n", type);
-+		return -ENODEV;
-+	}
-+
-+	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(&pdev->dev, &config));
-+}
-+
-+static const struct of_device_id tn48m_gpio_of_match[] = {
-+	{ .compatible = "delta,tn48m-gpio-sfp-tx-disable", .data = (void *)TN48M_SFP_TX_DISABLE },
-+	{ .compatible = "delta,tn48m-gpio-sfp-present", .data = (void *)TN48M_SFP_PRESENT },
-+	{ .compatible = "delta,tn48m-gpio-sfp-los", .data = (void *)TN48M_SFP_LOS },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tn48m_gpio_of_match);
-+
-+static struct platform_driver tn48m_gpio_driver = {
-+	.driver = {
-+		.name = "delta-tn48m-gpio",
-+		.of_match_table = tn48m_gpio_of_match,
-+	},
-+	.probe = tn48m_gpio_probe,
-+};
-+module_platform_driver(tn48m_gpio_driver);
-+
-+MODULE_AUTHOR("Robert Marko <robert.marko@sartura.hr>");
-+MODULE_DESCRIPTION("Delta TN48M CPLD GPIO driver");
-+MODULE_LICENSE("GPL");
+ DENALI NAND DRIVER
+ L:	linux-mtd@lists.infradead.org
+ S:	Orphan
 -- 
 2.31.1
 
