@@ -2,109 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A326C47082
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 10:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED7EC47095
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0C961073
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 10:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1175A61245
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Jun 2021 11:39:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231286AbhFGKyx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Jun 2021 06:54:53 -0400
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:37420 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231287AbhFGKys (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 06:54:48 -0400
-Received: by mail-ed1-f49.google.com with SMTP id b11so19788837edy.4
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jun 2021 03:52:46 -0700 (PDT)
+        id S230237AbhFGLlF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Jun 2021 07:41:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230434AbhFGLlE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jun 2021 07:41:04 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A937BC061766
+        for <linux-gpio@vger.kernel.org>; Mon,  7 Jun 2021 04:39:13 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id g4so167502pjk.0
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Jun 2021 04:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2o3lod6/tQHJli1HMNUrlxY009C4XIUm342TOsfm420=;
-        b=IDblBJOC6V9zP5f7LWfXEcaceHMvkrZvOa8yV6hifBe1VNPbmasGY76ZoNwEbmJUXf
-         a4wuIkXjW0rajqvi8oEp4HLaxLJZI6ty3T3F8RT7HSQRirWsNev3zAiiqQ0Pt/JVkLAp
-         tV/5UpfQ9JzyjPjjwHdOlEcNNhwNHRLsOQrFedTfKH1CEZAhMzONRY1VB/g9NbcsDpFk
-         ZEPcY5l/UI4m/2ls2yq8wE4vp2YBTVXJUmD1y0K9F+1TjB+svCTAeo52AaxIeAU9oRQo
-         oIqNsxa4GDByyI1en2vnRcN3rHSxMKLcEkS2JYdTFuu/hUonPuVmhjYmqRLGYtYTEHIh
-         X2KQ==
+        bh=jfeGYJOtKlcuIHOfL8nGiu8SwZWAHSC11095aJQL1jY=;
+        b=JHIeh6i4kE/pt7r7xB6cVQFnOBlfdoMPUc9uaALbGoaDkRTvaO9dV8g3kLCTqJaMew
+         PgQQTQN5faxzpFWEyvCApGxKzC3V0ye1fFTZ5nW8tRcfRUzQLqreV4vmcKYT9A58co9t
+         O/PYB+6dFkL8h7oVN3/07N3mSFbXY/3Pa1ub5P2MaQTrgZtbqETDZkrRHQT0bDRU9pNx
+         2uTldSGLqUVCLLGKxcxPEFUdXatG2thtO0BEn7iU2KhT4vkPq4RK0/BJr63W0ksyIbvp
+         qRTFeZzAwdRfRiDpmskkukNJtFpyHJ6ltvMgSgqFyPtka4AaPoQ0NEHhE6nr8rHI6fza
+         Ou2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2o3lod6/tQHJli1HMNUrlxY009C4XIUm342TOsfm420=;
-        b=UXG6i2pNugU6UEHHfKmq+t0g45eYjtZ7mew1j5llXaFKA2eIZCF+/jQV3/Pj8e4XOO
-         VipTClD+Ono8FM3/2BRULi8l3+WRg0Rq1D1h0udMMRjQPlUPBw7QY9IDSZPmrqy12IUr
-         6tCV5p2k3mYe+TfeIFVYAspnJQRAmvxJvK4U0iZLCVJeXUyI3+7wIoUr1N/7Ekg0fk1S
-         ZetdYsj0z46f5glLeVYZQ+93jm3+lMw2Yef+qPIaCUNAjhsgYBC1tkGFLiNYDFUanJMp
-         kxdSL1Obj7P4aSRtVSgswYX4WPYRC6z/+64GfWaP3QjiShV4pa4r6JuyhoJZvZaJfksy
-         N4/w==
-X-Gm-Message-State: AOAM531q1SjonrwLvWz8wv237xR7X6WHX7P/amx9k2FM5C5GhpBqD8JN
-        szdby4qyAlsvygBK1sPYWbxr3w==
-X-Google-Smtp-Source: ABdhPJx4Ct/adIB5Q8H0U4N3keddlIjXCjd7JyHgiTLDw9+AlwtyGjYmdmxaLq1m06KpolO9YYNo1g==
-X-Received: by 2002:a05:6402:31f3:: with SMTP id dy19mr19383237edb.153.1623063105759;
-        Mon, 07 Jun 2021 03:51:45 -0700 (PDT)
-Received: from localhost.localdomain (dh207-96-76.xnet.hr. [88.207.96.76])
-        by smtp.googlemail.com with ESMTPSA id f6sm6340003eja.108.2021.06.07.03.51.44
+        bh=jfeGYJOtKlcuIHOfL8nGiu8SwZWAHSC11095aJQL1jY=;
+        b=BJkbkFSUJelfDW3rXDGii/Qxay7lhqu+7axrz6OtA/s7zz2/IXeVB186iUJHZv/mT8
+         +6l/lhaRcQNDVHWzdwfGVEAObNNvS0gv30KCo4qHE5d3FE15ob7qQyoV8i6hzaxll7BY
+         aZrPEiQqOaB6Y69voytGc8YHl0hGjKElS7kiykJ68J04gvcNJlTzQ9QAisKWwBZd3BGV
+         KnX7n3HhnzpcVxI0MuxuiynLzziChAU4gAecg04L5FmvFSxbdIbYH+ulu3LYqcKUM2U8
+         jJXKgPwVd2lC4hqSmZwlx8wRdbswFfP86MZmebh04O80h/e4iVlzeeb1W1asoN08lQAi
+         dCZg==
+X-Gm-Message-State: AOAM531ld7QYpKThddT2YMeIeGQkwb2MKhTPO7+bVLu48hrx/t4trgPl
+        ZUkH/djIphJTloDxheOytpyiCQ==
+X-Google-Smtp-Source: ABdhPJxYaHxB0tXydPhuS9V12XDKPhoHPORk1mH4GYgbPCASYdKQq6J4FwMijmqQprfcbnYEGhgeww==
+X-Received: by 2002:a17:90a:bd04:: with SMTP id y4mr16602615pjr.127.1623065953309;
+        Mon, 07 Jun 2021 04:39:13 -0700 (PDT)
+Received: from localhost.localdomain.name ([122.177.177.211])
+        by smtp.gmail.com with ESMTPSA id j7sm7223939pjf.0.2021.06.07.04.39.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 03:51:45 -0700 (PDT)
-From:   Robert Marko <robert.marko@sartura.hr>
-To:     linus.walleij@linaro.org, robh+dt@kernel.org, lee.jones@linaro.org,
-        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bgolaszewski@baylibre.com
-Cc:     luka.perkov@sartura.hr, jmp@epiphyte.org, pmenzel@molgen.mpg.de,
-        buczek@molgen.mpg.de, Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v5 6/6] MAINTAINERS: Add Delta Networks TN48M CPLD drivers
-Date:   Mon,  7 Jun 2021 12:51:22 +0200
-Message-Id: <20210607105122.2047212-6-robert.marko@sartura.hr>
+        Mon, 07 Jun 2021 04:39:13 -0700 (PDT)
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     bhupesh.sharma@linaro.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        bhupesh.linux@gmail.com
+Subject: [PATCH 1/8] dt-bindings: qcom: rpmh-regulator: Add compatible for SA8155p-adp board pmics
+Date:   Mon,  7 Jun 2021 17:08:33 +0530
+Message-Id: <20210607113840.15435-2-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210607105122.2047212-1-robert.marko@sartura.hr>
-References: <20210607105122.2047212-1-robert.marko@sartura.hr>
+In-Reply-To: <20210607113840.15435-1-bhupesh.sharma@linaro.org>
+References: <20210607113840.15435-1-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add maintainers entry for the Delta Networks TN48M
-CPLD MFD drivers.
+Add compatible strings for pmm8155au_1 and pmm8155au_2 pmics
+found on SA8155p-adp board.
 
-Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Andy Gross <agross@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: bhupesh.linux@gmail.com
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 ---
-Changes in v3:
-* Add reset driver documentation
+ .../devicetree/bindings/regulator/qcom,rpmh-regulator.yaml      | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v2:
-* Drop no more existing files
-
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9450e052f1b1..82d9c2943c34 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5096,6 +5096,15 @@ W:	https://linuxtv.org
- T:	git git://linuxtv.org/media_tree.git
- F:	drivers/media/platform/sti/delta
- 
-+DELTA NETWORKS TN48M CPLD DRIVERS
-+M:	Robert Marko <robert.marko@sartura.hr>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml
-+F:	Documentation/devicetree/bindings/mfd/delta,tn48m-cpld.yaml
-+F:	Documentation/devicetree/bindings/reset/delta,tn48m-reset.yaml
-+F:	drivers/gpio/gpio-tn48m.c
-+F:	include/dt-bindings/reset/delta,tn48m-reset.h
-+
- DENALI NAND DRIVER
- L:	linux-mtd@lists.infradead.org
- S:	Orphan
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
+index e561a5b941e4..ea5cd71aa0c7 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
++++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
+@@ -55,6 +55,8 @@ properties:
+       - qcom,pm8009-1-rpmh-regulators
+       - qcom,pm8150-rpmh-regulators
+       - qcom,pm8150l-rpmh-regulators
++      - qcom,pmm8155au-1-rpmh-regulators
++      - qcom,pmm8155au-2-rpmh-regulators
+       - qcom,pm8350-rpmh-regulators
+       - qcom,pm8350c-rpmh-regulators
+       - qcom,pm8998-rpmh-regulators
 -- 
 2.31.1
 
