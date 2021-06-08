@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836F3C4743F
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 10:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADC7C47082
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 10:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 672F46124C
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 10:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 606A860FF1
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 10:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbhFHK31 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Jun 2021 06:29:27 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:22650 "EHLO
+        id S231363AbhFHK3c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Jun 2021 06:29:32 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:22665 "EHLO
         twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230522AbhFHK30 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jun 2021 06:29:26 -0400
+        with ESMTP id S230522AbhFHK3b (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jun 2021 06:29:31 -0400
 Received: from mail.aspeedtech.com ([192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id 158AC6LR009880;
-        Tue, 8 Jun 2021 18:12:06 +0800 (GMT-8)
+        by twspam01.aspeedtech.com with ESMTP id 158ACALd009900;
+        Tue, 8 Jun 2021 18:12:10 +0800 (GMT-8)
         (envelope-from steven_lee@aspeedtech.com)
 Received: from slee-VirtualBox.localdomain (192.168.100.253) by
  TWMBX02.aspeed.com (192.168.0.24) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 8 Jun 2021 18:25:56 +0800
+ 15.0.1497.2; Tue, 8 Jun 2021 18:25:59 +0800
 From:   Steven Lee <steven_lee@aspeedtech.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -42,9 +42,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         open list <linux-kernel@vger.kernel.org>
 CC:     <steven_lee@aspeedtech.com>, <Hongweiz@ami.com>,
         <ryan_chen@aspeedtech.com>, <billy_tsai@aspeedtech.com>
-Subject: [PATCH v5 04/10] ARM: dts: aspeed-g5: Remove ngpios from sgpio node.
-Date:   Tue, 8 Jun 2021 18:25:39 +0800
-Message-ID: <20210608102547.4880-5-steven_lee@aspeedtech.com>
+Subject: [PATCH v5 06/10] gpio: gpio-aspeed-sgpio: Add AST2400 and AST2500 platform data.
+Date:   Tue, 8 Jun 2021 18:25:41 +0800
+Message-ID: <20210608102547.4880-7-steven_lee@aspeedtech.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210608102547.4880-1-steven_lee@aspeedtech.com>
 References: <20210608102547.4880-1-steven_lee@aspeedtech.com>
@@ -54,31 +54,89 @@ X-Originating-IP: [192.168.100.253]
 X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
  (192.168.0.24)
 X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com 158AC6LR009880
+X-MAIL: twspam01.aspeedtech.com 158ACALd009900
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove ngpios property from sgpio node as it should be defined in the
-platform dts.
+We use platform data to store GPIO pin mask and the max number of
+available GPIO pins for AST2600.
+Refactor driver to also add the platform data for AST2400/AST2500 and
+remove unused MAX_NR_HW_SGPIO and ASPEED_SGPIO_PINS_MASK macros.
 
 Signed-off-by: Steven Lee <steven_lee@aspeedtech.com>
 ---
- arch/arm/boot/dts/aspeed-g5.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpio/gpio-aspeed-sgpio.c | 34 +++++++++++---------------------
+ 1 file changed, 12 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
-index d733c1f161c1..2701a58a5ab7 100644
---- a/arch/arm/boot/dts/aspeed-g5.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-@@ -351,7 +351,6 @@
- 				reg = <0x1e780200 0x0100>;
- 				clocks = <&syscon ASPEED_CLK_APB>;
- 				interrupt-controller;
--				ngpios = <8>;
- 				bus-frequency = <12000000>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_sgpm_default>;
+diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
+index ea20a0127748..7d0a4f6fd9d1 100644
+--- a/drivers/gpio/gpio-aspeed-sgpio.c
++++ b/drivers/gpio/gpio-aspeed-sgpio.c
+@@ -17,21 +17,8 @@
+ #include <linux/spinlock.h>
+ #include <linux/string.h>
+ 
+-/*
+- * MAX_NR_HW_GPIO represents the number of actual hardware-supported GPIOs (ie,
+- * slots within the clocked serial GPIO data). Since each HW GPIO is both an
+- * input and an output, we provide MAX_NR_HW_GPIO * 2 lines on our gpiochip
+- * device.
+- *
+- * We use SGPIO_OUTPUT_OFFSET to define the split between the inputs and
+- * outputs; the inputs start at line 0, the outputs start at OUTPUT_OFFSET.
+- */
+-#define MAX_NR_HW_SGPIO			80
+-#define SGPIO_OUTPUT_OFFSET		MAX_NR_HW_SGPIO
+-
+ #define ASPEED_SGPIO_CTRL		0x54
+ 
+-#define ASPEED_SGPIO_PINS_MASK		GENMASK(9, 6)
+ #define ASPEED_SGPIO_CLK_DIV_MASK	GENMASK(31, 16)
+ #define ASPEED_SGPIO_ENABLE		BIT(0)
+ #define ASPEED_SGPIO_PINS_SHIFT		6
+@@ -484,6 +471,11 @@ static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
+ 	return 0;
+ }
+ 
++static const struct aspeed_sgpio_pdata ast2400_sgpio_pdata = {
++	.max_ngpios = 80,
++	.pin_mask = GENMASK(9, 6),
++};
++
+ static const struct aspeed_sgpio_pdata ast2600_sgpiom_128_pdata = {
+ 	.max_ngpios = 128,
+ 	.pin_mask = GENMASK(10, 6),
+@@ -495,8 +487,8 @@ static const struct aspeed_sgpio_pdata ast2600_sgpiom_80_pdata = {
+ };
+ 
+ static const struct of_device_id aspeed_sgpio_of_table[] = {
+-	{ .compatible = "aspeed,ast2400-sgpio" },
+-	{ .compatible = "aspeed,ast2500-sgpio" },
++	{ .compatible = "aspeed,ast2400-sgpio", .data = &ast2400_sgpio_pdata, },
++	{ .compatible = "aspeed,ast2500-sgpio", .data = &ast2400_sgpio_pdata, },
+ 	{ .compatible = "aspeed,ast2600-sgpiom-128", .data = &ast2600_sgpiom_128_pdata, },
+ 	{ .compatible = "aspeed,ast2600-sgpiom-80", .data = &ast2600_sgpiom_80_pdata, },
+ 	{}
+@@ -521,13 +513,11 @@ static int __init aspeed_sgpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(gpio->base);
+ 
+ 	pdata = device_get_match_data(&pdev->dev);
+-	if (pdata) {
+-		gpio->max_ngpios = pdata->max_ngpios;
+-		pin_mask = pdata->pin_mask;
+-	} else {
+-		gpio->max_ngpios = MAX_NR_HW_SGPIO;
+-		pin_mask = ASPEED_SGPIO_PINS_MASK;
+-	}
++	if (!pdata)
++		return -EINVAL;
++
++	gpio->max_ngpios = pdata->max_ngpios;
++	pin_mask = pdata->pin_mask;
+ 
+ 	rc = of_property_read_u32(pdev->dev.of_node, "ngpios", &nr_gpios);
+ 	if (rc < 0) {
 -- 
 2.17.1
 
