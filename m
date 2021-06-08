@@ -2,174 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2A9C47082
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 09:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D84C4743E
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 10:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D99AB611BD
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 09:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0501C6128A
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Jun 2021 10:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbhFHJfo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Jun 2021 05:35:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbhFHJfo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jun 2021 05:35:44 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70051C061574;
-        Tue,  8 Jun 2021 02:33:51 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 562F73E6;
-        Tue,  8 Jun 2021 11:33:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1623144829;
-        bh=OFltWdjgbl2i1zvXlb4e6VeZ33EjH6WYdsDnL6NUN0Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A2xCVhCp4hsB4y/r2Ch1xBKDyPLc0U9DeHLpx8CxUxrNxj8qqHE+MqnDpGvEKjnq7
-         Ip3CexhiOlo/1sCdXGrBt3TNcbuyjpP9kJ1n91fGPc4t3hNYnp4x+zsiINKrlYg+nn
-         WpO75bogCTLyYX9kkftBFKO/j/TDEVrws9cjKBcU=
-Date:   Tue, 8 Jun 2021 12:33:34 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Daniel Scally <djrscally@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, devel@acpica.org,
-        Len Brown <lenb@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        id S231520AbhFHK3F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Jun 2021 06:29:05 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:22617 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230448AbhFHK3E (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jun 2021 06:29:04 -0400
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 158ACEYV009915;
+        Tue, 8 Jun 2021 18:12:14 +0800 (GMT-8)
+        (envelope-from steven_lee@aspeedtech.com)
+Received: from slee-VirtualBox.localdomain (192.168.100.253) by
+ TWMBX02.aspeed.com (192.168.0.24) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 8 Jun 2021 18:26:03 +0800
+From:   Steven Lee <steven_lee@aspeedtech.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Mark Gross <mgross@linux.intel.com>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Kaneda <erik.kaneda@intel.com>,
-        kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v5 0/6] Introduce intel_skl_int3472 module
-Message-ID: <YL85bqGwuBXkoqy3@pendragon.ideasonboard.com>
-References: <20210603224007.120560-1-djrscally@gmail.com>
- <4400512a-b788-7074-d3c6-0ec228b43d7e@redhat.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-aspeed@lists.ozlabs.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     <steven_lee@aspeedtech.com>, <Hongweiz@ami.com>,
+        <ryan_chen@aspeedtech.com>, <billy_tsai@aspeedtech.com>
+Subject: [PATCH v5 08/10] gpio: gpio-aspeed-sgpio: Move irq_chip to aspeed-sgpio struct
+Date:   Tue, 8 Jun 2021 18:25:43 +0800
+Message-ID: <20210608102547.4880-9-steven_lee@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210608102547.4880-1-steven_lee@aspeedtech.com>
+References: <20210608102547.4880-1-steven_lee@aspeedtech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4400512a-b788-7074-d3c6-0ec228b43d7e@redhat.com>
+Content-Type: text/plain
+X-Originating-IP: [192.168.100.253]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 158ACEYV009915
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Hans,
+The current design initializes irq->chip from a global irqchip struct,
+which causes multiple sgpio devices use the same irq_chip.
+The patch moves irq_chip to aspeed_sgpio struct for initializing
+irq_chip from their private gpio struct.
 
-On Tue, Jun 08, 2021 at 11:00:24AM +0200, Hans de Goede wrote:
-> On 6/4/21 12:40 AM, Daniel Scally wrote:
-> > Hello all
-> > 
-> > Bit longer than hoped but here's v5.
-> > 
-> > v4:
-> > https://lore.kernel.org/lkml/20210520140928.3252671-1-djrscally@gmail.com/
-> > 
-> > v3
-> > https://lore.kernel.org/lkml/20210222130735.1313443-1-djrscally@gmail.com/
-> > 
-> > v2
-> > https://lore.kernel.org/platform-driver-x86/20210118003428.568892-1-djrscally@gmail.com/
-> > 
-> > v1
-> > https://lore.kernel.org/linux-media/20201130133129.1024662-1-djrscally@gmail.com/T/#m91934e12e3d033da2e768e952ea3b4a125ee3e67
-> > 
-> > The only changes are the dropped patches, renamed functions in 2/6 and most of
-> > Andy's suggestions on 5/6 - I didn't hit them all yet but didn't want to delay
-> > this any more.
-> > 
-> > Series level changelog:
-> > 
-> > 	- Dropped all but the essential patches to simplify merge plan - thanks
-> > 	Hans.
-> 
-> Thank you. Andy has already sends me a pull-req for the gpiolib-acpi changes
-> and I expect Rafael to send me a pull-req (from an immutable branch) for the
-> ACPI bits soon-ish.
-> 
-> When I merge those both into pdx86 I should be able to pick-up 5/6.
-> 
-> Given the long time this has been in the making I'm tempted to do that
-> (pick up 5/6 as is) and then we can do further cleanups like looking into
-> using the existing fixed-regulator code later. My mean reason to do this
-> would be to get this code into the hands of users starting with the 5.14
-> kernel.
+Signed-off-by: Steven Lee <steven_lee@aspeedtech.com>
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ drivers/gpio/gpio-aspeed-sgpio.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-That would be great !
-
-> So question, how usable is this (from the kernel pov, I know userspace
-> needs work too) once I merge 5/6. Is the kernel-side support for the cameras
-> on some Surface devices then complete or are more patches necessary in
-> other subsystems ?
-
-Camera sensor drivers are the other piece of the puzzle that is
-required. Daniel is working on an ov5693 driver which can be found at
-https://github.com/djrscally/media_tree/tree/ov5693-v2. It's nearing
-completion too.
-
-With those two pieces, we have support for the Microsoft Surface Go 2 in
-libcamera, as well as a few other devices whose exact model escapes me
-at this minute.
-
-> Note another advantage of just merging 5/6 as is and doing the fixed-regulator
-> bits on top, is that having those in a separate commit makes it easier to
-> see if these indeed result in a nice cleanup (vs sticking with the current code).
-> 
-> > Daniel Scally (6):
-> >   ACPI: scan: Extend acpi_walk_dep_device_list()
-> >   ACPI: scan: Add function to fetch dependent of acpi device
-> >   gpiolib: acpi: Export acpi_get_gpiod()
-> >   gpiolib: acpi: Add acpi_gpio_get_io_resource()
-> >   platform/x86: Add intel_skl_int3472 driver
-> >   mfd: tps68470: Remove tps68470 MFD driver
-> > 
-> >  MAINTAINERS                                   |   5 +
-> >  drivers/acpi/ec.c                             |   2 +-
-> >  drivers/acpi/pmic/Kconfig                     |   2 +-
-> >  drivers/acpi/pmic/intel_pmic_chtdc_ti.c       |   2 +-
-> >  drivers/acpi/scan.c                           | 104 ++++-
-> >  drivers/gpio/Kconfig                          |   2 +-
-> >  drivers/gpio/gpiolib-acpi.c                   |  61 ++-
-> >  drivers/i2c/i2c-core-acpi.c                   |   8 +-
-> >  drivers/mfd/Kconfig                           |  18 -
-> >  drivers/mfd/Makefile                          |   1 -
-> >  drivers/mfd/tps68470.c                        |  97 ----
-> >  drivers/platform/surface/aggregator/core.c    |   6 +-
-> >  drivers/platform/surface/surface3_power.c     |  22 +-
-> >  .../platform/surface/surface_acpi_notify.c    |   7 +-
-> >  drivers/platform/x86/Kconfig                  |   2 +
-> >  drivers/platform/x86/Makefile                 |   1 +
-> >  drivers/platform/x86/intel-int3472/Kconfig    |  30 ++
-> >  drivers/platform/x86/intel-int3472/Makefile   |   5 +
-> >  .../intel_skl_int3472_clk_and_regulator.c     | 196 ++++++++
-> >  .../intel-int3472/intel_skl_int3472_common.c  | 106 +++++
-> >  .../intel-int3472/intel_skl_int3472_common.h  | 118 +++++
-> >  .../intel_skl_int3472_discrete.c              | 417 ++++++++++++++++++
-> >  .../intel_skl_int3472_tps68470.c              | 137 ++++++
-> >  include/acpi/acpi_bus.h                       |   8 +
-> >  include/linux/acpi.h                          |  11 +-
-> >  include/linux/gpio/consumer.h                 |   2 +
-> >  26 files changed, 1205 insertions(+), 165 deletions(-)
-> >  delete mode 100644 drivers/mfd/tps68470.c
-> >  create mode 100644 drivers/platform/x86/intel-int3472/Kconfig
-> >  create mode 100644 drivers/platform/x86/intel-int3472/Makefile
-> >  create mode 100644 drivers/platform/x86/intel-int3472/intel_skl_int3472_clk_and_regulator.c
-> >  create mode 100644 drivers/platform/x86/intel-int3472/intel_skl_int3472_common.c
-> >  create mode 100644 drivers/platform/x86/intel-int3472/intel_skl_int3472_common.h
-> >  create mode 100644 drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c
-> >  create mode 100644 drivers/platform/x86/intel-int3472/intel_skl_int3472_tps68470.c
-
+diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
+index 31475846c5fc..38f4900d84bd 100644
+--- a/drivers/gpio/gpio-aspeed-sgpio.c
++++ b/drivers/gpio/gpio-aspeed-sgpio.c
+@@ -30,6 +30,7 @@ struct aspeed_sgpio_pdata {
+ 
+ struct aspeed_sgpio {
+ 	struct gpio_chip chip;
++	struct irq_chip intc;
+ 	struct clk *pclk;
+ 	spinlock_t lock;
+ 	void __iomem *base;
+@@ -425,14 +426,6 @@ static void aspeed_sgpio_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(ic, desc);
+ }
+ 
+-static struct irq_chip aspeed_sgpio_irqchip = {
+-	.name       = "aspeed-sgpio",
+-	.irq_ack    = aspeed_sgpio_irq_ack,
+-	.irq_mask   = aspeed_sgpio_irq_mask,
+-	.irq_unmask = aspeed_sgpio_irq_unmask,
+-	.irq_set_type   = aspeed_sgpio_set_type,
+-};
+-
+ static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
+ 				   struct platform_device *pdev)
+ {
+@@ -455,8 +448,14 @@ static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
+ 		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_status));
+ 	}
+ 
++	gpio->intc.name = dev_name(&pdev->dev);
++	gpio->intc.irq_ack = aspeed_sgpio_irq_ack;
++	gpio->intc.irq_mask = aspeed_sgpio_irq_mask;
++	gpio->intc.irq_unmask = aspeed_sgpio_irq_unmask;
++	gpio->intc.irq_set_type = aspeed_sgpio_set_type;
++
+ 	irq = &gpio->chip.irq;
+-	irq->chip = &aspeed_sgpio_irqchip;
++	irq->chip = &gpio->intc;
+ 	irq->init_valid_mask = aspeed_sgpio_irq_init_valid_mask;
+ 	irq->handler = handle_bad_irq;
+ 	irq->default_type = IRQ_TYPE_NONE;
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
