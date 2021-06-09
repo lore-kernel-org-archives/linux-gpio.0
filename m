@@ -2,91 +2,98 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E68FC48BCF
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Jun 2021 11:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8D9C48BCF
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Jun 2021 11:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 811076139A
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Jun 2021 11:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF9B610C7
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Jun 2021 11:21:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238143AbhFILVX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Jun 2021 07:21:23 -0400
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:38478 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234508AbhFILVW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jun 2021 07:21:22 -0400
-Received: by mail-lf1-f43.google.com with SMTP id r5so37488640lfr.5
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Jun 2021 04:19:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b9O4t6ei1D8lp6tbh7xKEJ5OiZwVBxTMlh+LjUyHQ54=;
-        b=JJZhVBK8XAeaFL6DQ8+82CH3Tn27KdaGFCTgYUZmudfX3Q/cnQXnIZvxUARhticvpC
-         JycTC4ZOyQIZfYn0/HlZ6zKqQYWsLVhkD2xM6H21LShj4YIaMowxdtUPl0sHreMG6pfg
-         iogNmtktJywuOe7b7Zs/BMrpw2PHEZMoYqW+XS8uqi3iI6xXJgP8NSFZqDZTDnNw+yEU
-         qcsSnKO99UJcGNn3K6R3FY7XpYqPCtPh4FcbMjP0x4Lqe2J3Zna34PNL5b4Gnj2QInhO
-         2dLE0mxaniEQcolKdtm+vSIkMkMQA3y49Y6nx38isVwhIQsyOa5RKQFoiWJOwEvK9ymm
-         6AuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b9O4t6ei1D8lp6tbh7xKEJ5OiZwVBxTMlh+LjUyHQ54=;
-        b=CTuY56r8CdxIUyIldEPau2MhZWWGE+vWFmgLTRu/pCr9KNR5owme8nDa6JixKADD+6
-         9pztC5OQbkWrhNZvr+90C+cbImVZEX5tmanxr418FOUUdF76+UJ0OLtfWnQ8f/0LgTGj
-         d/Dti0DC7u+hD5Mu0gExMl7Euw8IVnnEqPHbMyhGu4HGCEu4DCkS1NaXtvmnSSJcqetn
-         EKGG5ESHJmikcOouuBSyA2G8cKnDYaOHICHEWcXGLFkKagcgOf7/Th+agZt4w6+5ZPZA
-         hgSzYAG4xauwOy4Z+eHRIAwzlQgzViXI8i6opJ5yV9xtnM0b/MuoIR+zPPMWEGpl3OqZ
-         dUZg==
-X-Gm-Message-State: AOAM532ZW22KsfzUpOsF2qX8NQ8EVrME8Igrm0NLqCyZCHhGb/QdpEIz
-        K9lg2ByQtn4UkcYzRNPKoAlnI12Cap3xaNc0Gf+j0A==
-X-Google-Smtp-Source: ABdhPJz6NHE+0gvKyfv7+YEJSuyHHStlfocuRfWgrhgqSQh4vX6owc1UlB2pSgkAV6u9cWfZUZXY08Yzd+FfgNCdZtI=
-X-Received: by 2002:a05:6512:2105:: with SMTP id q5mr18131046lfr.649.1623237507147;
- Wed, 09 Jun 2021 04:18:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210608150656.29007-1-matthias.bgg@kernel.org>
-In-Reply-To: <20210608150656.29007-1-matthias.bgg@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 9 Jun 2021 13:18:16 +0200
-Message-ID: <CACRpkdZ+9LeokSfZDhMWyR4yE-oq4CSbSPRqwJncOS0rm_f8Tg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: fix mode encoding
-To:     matthias.bgg@kernel.org
-Cc:     Sean Wang <sean.wang@kernel.org>,
+        id S233970AbhFILXG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Jun 2021 07:23:06 -0400
+Received: from gecko.sbs.de ([194.138.37.40]:35422 "EHLO gecko.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239011AbhFILXG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 9 Jun 2021 07:23:06 -0400
+X-Greylist: delayed 540 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Jun 2021 07:23:05 EDT
+Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+        by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 159BBxIE010037
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Jun 2021 13:11:59 +0200
+Received: from md1za8fc.ad001.siemens.net ([139.22.32.109])
+        by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 159B8Hm0019317;
+        Wed, 9 Jun 2021 13:08:17 +0200
+Date:   Wed, 9 Jun 2021 13:08:16 +0200
+From:   Henning Schild <henning.schild@siemens.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: intel: fix NULL pointer deref
+Message-ID: <20210609130816.3631f0aa@md1za8fc.ad001.siemens.net>
+In-Reply-To: <CAHp75Vcj9wmM7H908sqGmXs10BQN8ty1C4qfmk_nXpG_s=BjTQ@mail.gmail.com>
+References: <20210609062722.9132-1-henning.schild@siemens.com>
+        <YMCT+izizEg0gPLD@lahna.fi.intel.com>
+        <CAHp75Vcj9wmM7H908sqGmXs10BQN8ty1C4qfmk_nXpG_s=BjTQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 8, 2021 at 5:07 PM <matthias.bgg@kernel.org> wrote:
+Am Wed, 9 Jun 2021 13:33:34 +0300
+schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
 
-> From: Matthias Brugger <mbrugger@suse.com>
->
-> Pin modes are encoded in the SoC data structure. Use that value to set
-> IES SMT.
->
-> Cc: Fabien Parent <fparent@baylibre.com>
-> Cc: Sean Wang <sean.wang@kernel.org>
-> Cc: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-> Cc: linux-mediatek@lists.infradead.org
-> Fixes: 696beef77521 ("pinctrl: mediatek: move bit assignment")
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> On Wed, Jun 9, 2021 at 1:12 PM Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > On Wed, Jun 09, 2021 at 08:27:22AM +0200, Henning Schild wrote:  
+> > > match could be NULL in which case we do not go ACPI after all  
+> 
+> ...
+> 
+> > >       adev = ACPI_COMPANION(&pdev->dev);
+> > > -     if (adev) {
+> > > -             const void *match =
+> > > device_get_match_data(&pdev->dev); -
+> > > +     match = device_get_match_data(&pdev->dev);  
+> >
+> > Actually we don't even call intel_pinctrl_get_soc_data() if the
+> > ACPI ID is not listed in the corresponding driver's module table.
+> > So I don't think match can ever be NULL.
+> >
+> > But feel free to prove me wrong ;-)  
+> 
+> It's possible to have bugs in this driver, but can we see the real
+> case here?
 
-Patch applied!
+Yes that is indeed only showing when using a kernel that has seen other
+patches. To be precise i applied "[rfc, PATCH v1 0/7] PCI: introduce
+p2sb helper" before running into the problem. Something in there must
+be calling the function without the ACPI ID.
 
-Yours,
-Linus Walleij
+I am still working on a series of device drivers for Siemens PCs,
+adding i.e. LEDs which are in fact GPIO. Those PCs have a hidden p2sb
+and no ACPI entries for the LEDs.
+
+In order to use GPIO from the drivers i need to make sure
+"broxton-pinctrl" comes up even if p2sb is hidden.
+
+Long story short, i thought the patch was simple enough to merge even
+taken out of my special context.
+
+Currently intel_pinctl only works if "ps2b is not hidden by BIOS" or
+"ACPI tables are correct", lifting the ban on the hidden p2sb seems
+like a useful thing in general (i.e. sysfs gpio interface). And i was
+hoping Andy would take the lead on that. It is something my Siemens
+drivers would depend on, but really a generic thing as far as i
+understand it.
+
+regards,
+Henning
