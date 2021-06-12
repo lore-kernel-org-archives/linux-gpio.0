@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2277C48BE8
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Jun 2021 21:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8EFC48BE5
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Jun 2021 21:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA10611AD
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Jun 2021 21:13:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D573A61029
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Jun 2021 21:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231629AbhFLVPn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 12 Jun 2021 17:15:43 -0400
-Received: from polaris.svanheule.net ([84.16.241.116]:48122 "EHLO
+        id S231657AbhFLVPt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 12 Jun 2021 17:15:49 -0400
+Received: from polaris.svanheule.net ([84.16.241.116]:48196 "EHLO
         polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231477AbhFLVPk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Jun 2021 17:15:40 -0400
+        with ESMTP id S231596AbhFLVPl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Jun 2021 17:15:41 -0400
 Received: from terra.local.svanheule.net (unknown [IPv6:2a02:a03f:eafb:ee01:a4dd:c59:8cbd:ee0d])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id C491A20C9D0;
-        Sat, 12 Jun 2021 23:13:36 +0200 (CEST)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 2D8C920C9D2;
+        Sat, 12 Jun 2021 23:13:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1623532417;
+        s=mail1707; t=1623532418;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=f5mr+MlnIy9lffstirWmm7R6i+j2XPTmdzJExTuP9HA=;
-        b=YWFOokkP3Ny8wSOF+mq66dXtxsTaBmpYrOrOplgow/luS8yaURbKqwrJWDdUki3RzuFQbw
-        CljUgM9O06V7C1UzImeUxT8xLt2ZOx8Q+Mh3ds+mUb840ygsgxtrNVj59giv9iOWSicuG5
-        ezaHlZCjm2VgwlWCBReUbQQYylanZl6lAe//6otW7I22oF+qYygyTpHwihPAUxwKAx23Ti
-        moUboIkkcym8xxXiJTaDH/PrPK94SLaYznL6ala/dHdqsuFIzkGlhj1uH1u5W9/WHytpBe
-        e4MQ6Tb/Jw/CIfL//fpo0WOJNJDYxR0a0Yi698a0it6F+xdAp/6z0QhHy6tC2Q==
+        bh=nd86q1kDb1mXeIWbOZhAww5aGMl2Xo7d2OZBQSkQ0is=;
+        b=kvXNDnU1ErJs8n+hJ1cjugtFpqwA27WCPKEsbHWhB7BntTykKvAVvhDgRCuqujhZ8AHAaI
+        TtQ1Zc7jYd6YaUla1D3IcEOfS+Q9tmlS3MIWOwgDB4RzB31NxzljL/laDuPhJqn8f7dsE4
+        +30LrGtZM+cQkovIh3Jv51iMIEfpQOaHoEBlsM07W9IM9OSvR61OsH+y2F58HJS9bMalEA
+        ChJxtngOxBNvNE2+Xty407Ymjm8AumKHW6BxLRQ9UtIVu+osnfxeu+CWPYae/nAq/pOQtL
+        Un0Mt3cSzkwMtIft9tivio6Hj30QRtBVWj5/StPUkg/aMpnFzLeD8jOGzruNaw==
 From:   Sander Vanheule <sander@svanheule.net>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
@@ -51,11 +51,10 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
 Cc:     Andrew Lunn <andrew@lunn.ch>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-kernel@vger.kernel.org,
-        Sander Vanheule <sander@svanheule.net>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 4/8] dt-bindings: mfd: Binding for RTL8231
-Date:   Sat, 12 Jun 2021 23:12:34 +0200
-Message-Id: <2211fe04dca61d6ac806f16c3b94ab2fc998a267.1623532208.git.sander@svanheule.net>
+        Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v5 6/8] pinctrl: Add RTL8231 pin control and GPIO support
+Date:   Sat, 12 Jun 2021 23:12:36 +0200
+Message-Id: <d546cda53108276c5fe17e147d9111deb4d9de9f.1623532208.git.sander@svanheule.net>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1623532208.git.sander@svanheule.net>
 References: <cover.1623532208.git.sander@svanheule.net>
@@ -65,223 +64,525 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a binding description for the Realtek RTL8231, a GPIO and LED
-expander chip commonly used in ethernet switches based on a Realtek
-switch SoC. These chips can be addressed via an MDIO or SMI bus, or used
-as a plain 36-bit shift register.
+This driver implements the GPIO and pin muxing features provided by the
+RTL8231. The device should be instantiated as an MFD child, where the
+parent device has already configured the regmap used for register
+access.
 
-This binding only describes the feature set provided by the MDIO/SMI
-configuration, and covers the GPIO, PWM, and pin control properties. The
-LED properties are defined in a separate binding.
+Debouncing is only available for the six highest GPIOs, and must be
+emulated when other pins are used for (button) inputs. Although
+described in the bindings, drive strength selection is currently not
+implemented.
 
 Signed-off-by: Sander Vanheule <sander@svanheule.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 ---
-v4:
-- Add Rob's and Linus' review tags
----
- .../bindings/mfd/realtek,rtl8231.yaml         | 190 ++++++++++++++++++
- 1 file changed, 190 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+v5:
+- Add Andy's and Linus' review tags
+- Use uintptr_t for integer stored in void* field
+  Reported by: kernel test robot <lkp@intel.com>
+- Replace virtual registers by GPIO_REGMAP_QUIRK_ALIASED_DATA
 
-diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+v4:
+- Switch to pinmux_generic for pin functions
+- Add pin debounce pinconf
+- Virtual addresses and caching
+- Use PRT_ERR_OR_ZERO in pinctrl/gpio probe
+- Drop direction-first quirk for gpio-regmap
+
+v3:
+- Use static pin description for pin controller
+- Fix gpio consumer resource leak
+
+v2:
+- Use gpio-regmap with direction-before-value output
+---
+ drivers/pinctrl/Kconfig           |  11 +
+ drivers/pinctrl/Makefile          |   1 +
+ drivers/pinctrl/pinctrl-rtl8231.c | 438 ++++++++++++++++++++++++++++++
+ 3 files changed, 450 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-rtl8231.c
+
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index c2c7e7963ed0..a02c1befbee4 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -221,6 +221,17 @@ config PINCTRL_ROCKCHIP
+ 	help
+           This support pinctrl and gpio driver for Rockchip SoCs.
+ 
++config PINCTRL_RTL8231
++	tristate "Realtek RTL8231 GPIO expander's pin controller"
++	depends on MFD_RTL8231
++	default MFD_RTL8231
++	select GPIO_REGMAP
++	select GENERIC_PINCONF
++	select GENERIC_PINMUX_FUNCTIONS
++	help
++	  Support for RTL8231 expander's GPIOs and pin controller.
++	  When built as a module, the module will be called pinctrl-rtl8231.
++
+ config PINCTRL_SINGLE
+ 	tristate "One-register-per-pin type device tree based pinctrl driver"
+ 	depends on OF
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 5ef5334a797f..239603efb317 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_PINCTRL_PALMAS)	+= pinctrl-palmas.o
+ obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
+ obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+ obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
++obj-$(CONFIG_PINCTRL_RTL8231)	+= pinctrl-rtl8231.o
+ obj-$(CONFIG_PINCTRL_SINGLE)	+= pinctrl-single.o
+ obj-$(CONFIG_PINCTRL_SX150X)	+= pinctrl-sx150x.o
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+diff --git a/drivers/pinctrl/pinctrl-rtl8231.c b/drivers/pinctrl/pinctrl-rtl8231.c
 new file mode 100644
-index 000000000000..4e2326401560
+index 000000000000..d3b52022f224
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
-@@ -0,0 +1,190 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/realtek,rtl8231.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/pinctrl/pinctrl-rtl8231.c
+@@ -0,0 +1,438 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +
-+title: Realtek RTL8231 GPIO and LED expander.
++#include <linux/bitfield.h>
++#include <linux/gpio/driver.h>
++#include <linux/gpio/regmap.h>
++#include <linux/module.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
 +
-+maintainers:
-+  - Sander Vanheule <sander@svanheule.net>
++#include "core.h"
++#include "pinmux.h"
++#include <linux/mfd/rtl8231.h>
 +
-+description: |
-+  The RTL8231 is a GPIO and LED expander chip, providing up to 37 GPIOs, up to
-+  88 LEDs, and up to one PWM output. This device is frequently used alongside
-+  Realtek switch SoCs, to provide additional I/O capabilities.
++#define RTL8231_NUM_GPIOS		37
++#define RTL8231_DEBOUNCE_USEC		100000
++#define RTL8231_DEBOUNCE_MIN_OFFSET	31
 +
-+  To manage the RTL8231's features, its strapping pins can be used to configure
-+  it in one of three modes: shift register, MDIO device, or SMI device. The
-+  shift register mode does not need special support. In MDIO or SMI mode, most
-+  pins can be configured as a GPIO output, LED matrix scan line/column, or as a
-+  PWM output.
++struct rtl8231_pin_ctrl {
++	struct pinctrl_desc pctl_desc;
++	struct regmap *map;
++};
 +
-+  The GPIO, PWM, and pin control are part of the main node. LED support is
-+  configured as a sub-node.
++/*
++ * Pin controller functionality
++ */
++static const char * const rtl8231_pin_function_names[] = {
++	"gpio",
++	"led",
++	"pwm",
++};
 +
-+properties:
-+  compatible:
-+    const: realtek,rtl8231
++enum rtl8231_pin_function {
++	RTL8231_PIN_FUNCTION_GPIO = BIT(0),
++	RTL8231_PIN_FUNCTION_LED = BIT(1),
++	RTL8231_PIN_FUNCTION_PWM = BIT(2),
++};
 +
-+  reg:
-+    description: MDIO or SMI device address.
-+    maxItems: 1
++struct rtl8231_pin_desc {
++	const enum rtl8231_pin_function functions;
++	const u8 reg;
++	const u8 offset;
++	const u8 gpio_function_value;
++};
 +
-+  # GPIO support
-+  gpio-controller: true
++#define RTL8231_PIN_DESC(_num, _func, _reg, _fld, _val)		\
++	[_num] = {						\
++		.functions = RTL8231_PIN_FUNCTION_GPIO | _func,	\
++		.reg = _reg,					\
++		.offset = _fld,					\
++		.gpio_function_value = _val,			\
++	}
++#define RTL8231_GPIO_PIN_DESC(_num, _reg, _fld)			\
++	RTL8231_PIN_DESC(_num, 0, _reg, _fld, RTL8231_PIN_MODE_GPIO)
++#define RTL8231_LED_PIN_DESC(_num, _reg, _fld)			\
++	RTL8231_PIN_DESC(_num, RTL8231_PIN_FUNCTION_LED, _reg, _fld, RTL8231_PIN_MODE_GPIO)
++#define RTL8231_PWM_PIN_DESC(_num, _reg, _fld)			\
++	RTL8231_PIN_DESC(_num, RTL8231_PIN_FUNCTION_PWM, _reg, _fld, 0)
 +
-+  "#gpio-cells":
-+    const: 2
-+    description: |
-+      The first cell is the pin number and the second cell is used to specify
-+      the GPIO active state.
++/*
++ * All pins have a GPIO/LED mux bit, but the bits for pins 35/36 are read-only. Use this bit
++ * for the GPIO-only pin instead of a placeholder, so the rest of the logic can stay generic.
++ */
++static struct rtl8231_pin_desc rtl8231_pin_data[RTL8231_NUM_GPIOS] = {
++	RTL8231_LED_PIN_DESC(0, RTL8231_REG_PIN_MODE0, 0),
++	RTL8231_LED_PIN_DESC(1, RTL8231_REG_PIN_MODE0, 1),
++	RTL8231_LED_PIN_DESC(2, RTL8231_REG_PIN_MODE0, 2),
++	RTL8231_LED_PIN_DESC(3, RTL8231_REG_PIN_MODE0, 3),
++	RTL8231_LED_PIN_DESC(4, RTL8231_REG_PIN_MODE0, 4),
++	RTL8231_LED_PIN_DESC(5, RTL8231_REG_PIN_MODE0, 5),
++	RTL8231_LED_PIN_DESC(6, RTL8231_REG_PIN_MODE0, 6),
++	RTL8231_LED_PIN_DESC(7, RTL8231_REG_PIN_MODE0, 7),
++	RTL8231_LED_PIN_DESC(8, RTL8231_REG_PIN_MODE0, 8),
++	RTL8231_LED_PIN_DESC(9, RTL8231_REG_PIN_MODE0, 9),
++	RTL8231_LED_PIN_DESC(10, RTL8231_REG_PIN_MODE0, 10),
++	RTL8231_LED_PIN_DESC(11, RTL8231_REG_PIN_MODE0, 11),
++	RTL8231_LED_PIN_DESC(12, RTL8231_REG_PIN_MODE0, 12),
++	RTL8231_LED_PIN_DESC(13, RTL8231_REG_PIN_MODE0, 13),
++	RTL8231_LED_PIN_DESC(14, RTL8231_REG_PIN_MODE0, 14),
++	RTL8231_LED_PIN_DESC(15, RTL8231_REG_PIN_MODE0, 15),
++	RTL8231_LED_PIN_DESC(16, RTL8231_REG_PIN_MODE1, 0),
++	RTL8231_LED_PIN_DESC(17, RTL8231_REG_PIN_MODE1, 1),
++	RTL8231_LED_PIN_DESC(18, RTL8231_REG_PIN_MODE1, 2),
++	RTL8231_LED_PIN_DESC(19, RTL8231_REG_PIN_MODE1, 3),
++	RTL8231_LED_PIN_DESC(20, RTL8231_REG_PIN_MODE1, 4),
++	RTL8231_LED_PIN_DESC(21, RTL8231_REG_PIN_MODE1, 5),
++	RTL8231_LED_PIN_DESC(22, RTL8231_REG_PIN_MODE1, 6),
++	RTL8231_LED_PIN_DESC(23, RTL8231_REG_PIN_MODE1, 7),
++	RTL8231_LED_PIN_DESC(24, RTL8231_REG_PIN_MODE1, 8),
++	RTL8231_LED_PIN_DESC(25, RTL8231_REG_PIN_MODE1, 9),
++	RTL8231_LED_PIN_DESC(26, RTL8231_REG_PIN_MODE1, 10),
++	RTL8231_LED_PIN_DESC(27, RTL8231_REG_PIN_MODE1, 11),
++	RTL8231_LED_PIN_DESC(28, RTL8231_REG_PIN_MODE1, 12),
++	RTL8231_LED_PIN_DESC(29, RTL8231_REG_PIN_MODE1, 13),
++	RTL8231_LED_PIN_DESC(30, RTL8231_REG_PIN_MODE1, 14),
++	RTL8231_LED_PIN_DESC(31, RTL8231_REG_PIN_MODE1, 15),
++	RTL8231_LED_PIN_DESC(32, RTL8231_REG_PIN_HI_CFG, 0),
++	RTL8231_LED_PIN_DESC(33, RTL8231_REG_PIN_HI_CFG, 1),
++	RTL8231_LED_PIN_DESC(34, RTL8231_REG_PIN_HI_CFG, 2),
++	RTL8231_PWM_PIN_DESC(35, RTL8231_REG_FUNC1, 3),
++	RTL8231_GPIO_PIN_DESC(36, RTL8231_REG_PIN_HI_CFG, 4),
++};
 +
-+  gpio-ranges:
-+    description: |
-+      Must reference itself, and provide a zero-based mapping for 37 pins.
-+    maxItems: 1
++#define RTL8231_PIN(_num)				\
++	{						\
++		.number = _num,				\
++		.name = "gpio" #_num,			\
++		.drv_data = &rtl8231_pin_data[_num]	\
++	}
 +
-+  # Pin muxing and configuration
-+  drive-strength:
-+    description: |
-+      Common drive strength used for all GPIO output pins, must be 4mA or 8mA.
-+      On reset, this value will default to 8mA.
-+    enum: [4, 8]
++static const struct pinctrl_pin_desc rtl8231_pins[RTL8231_NUM_GPIOS] = {
++	RTL8231_PIN(0),
++	RTL8231_PIN(1),
++	RTL8231_PIN(2),
++	RTL8231_PIN(3),
++	RTL8231_PIN(4),
++	RTL8231_PIN(5),
++	RTL8231_PIN(6),
++	RTL8231_PIN(7),
++	RTL8231_PIN(8),
++	RTL8231_PIN(9),
++	RTL8231_PIN(10),
++	RTL8231_PIN(11),
++	RTL8231_PIN(12),
++	RTL8231_PIN(13),
++	RTL8231_PIN(14),
++	RTL8231_PIN(15),
++	RTL8231_PIN(16),
++	RTL8231_PIN(17),
++	RTL8231_PIN(18),
++	RTL8231_PIN(19),
++	RTL8231_PIN(20),
++	RTL8231_PIN(21),
++	RTL8231_PIN(22),
++	RTL8231_PIN(23),
++	RTL8231_PIN(24),
++	RTL8231_PIN(25),
++	RTL8231_PIN(26),
++	RTL8231_PIN(27),
++	RTL8231_PIN(28),
++	RTL8231_PIN(29),
++	RTL8231_PIN(30),
++	RTL8231_PIN(31),
++	RTL8231_PIN(32),
++	RTL8231_PIN(33),
++	RTL8231_PIN(34),
++	RTL8231_PIN(35),
++	RTL8231_PIN(36),
++};
 +
-+  # LED scanning matrix
-+  led-controller:
-+    $ref: ../leds/realtek,rtl8231-leds.yaml#
++static int rtl8231_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(rtl8231_pins);
++}
 +
-+  # PWM output
-+  "#pwm-cells":
-+    description: |
-+      Twos cells with PWM index (must be 0) and PWM frequency in Hz. To use
-+      the PWM output, gpio35 must be muxed to its 'pwm' function. Valid
-+      frequency values for consumers are 1200, 1600, 2000, 2400, 2800, 3200,
-+      4000, and 4800.
-+    const: 2
++static const char *rtl8231_get_group_name(struct pinctrl_dev *pctldev, unsigned int selector)
++{
++	return rtl8231_pins[selector].name;
++}
 +
-+patternProperties:
-+  "-pins$":
-+    type: object
-+    $ref: ../pinctrl/pinmux-node.yaml#
++static int rtl8231_get_group_pins(struct pinctrl_dev *pctldev, unsigned int selector,
++	const unsigned int **pins, unsigned int *num_pins)
++{
++	if (selector >= ARRAY_SIZE(rtl8231_pins))
++		return -EINVAL;
 +
-+    properties:
-+      pins:
-+        items:
-+          enum: ["gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6",
-+                 "gpio7", "gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13",
-+                 "gpio14", "gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20",
-+                 "gpio21", "gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27",
-+                 "gpio28", "gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34",
-+                 "gpio35", "gpio36"]
-+        minItems: 1
-+        maxItems: 37
-+      function:
-+        description: |
-+          Select which function to use. "gpio" is supported for all pins, "led" is supported
-+          for pins 0-34, "pwm" is supported for pin 35.
-+        enum: ["gpio", "led", "pwm"]
++	*pins = &rtl8231_pins[selector].number;
++	*num_pins = 1;
 +
-+    required:
-+      - pins
-+      - function
++	return 0;
++}
 +
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - gpio-ranges
++static const struct pinctrl_ops rtl8231_pinctrl_ops = {
++	.get_groups_count = rtl8231_get_groups_count,
++	.get_group_name = rtl8231_get_group_name,
++	.get_group_pins = rtl8231_get_group_pins,
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
++	.dt_free_map = pinconf_generic_dt_free_map,
++};
 +
-+additionalProperties: false
++static int rtl8231_set_mux(struct pinctrl_dev *pctldev, unsigned int func_selector,
++	unsigned int group_selector)
++{
++	const struct function_desc *func = pinmux_generic_get_function(pctldev, func_selector);
++	const struct rtl8231_pin_desc *desc = rtl8231_pins[group_selector].drv_data;
++	const struct rtl8231_pin_ctrl *ctrl = pinctrl_dev_get_drvdata(pctldev);
++	unsigned int func_flag = (uintptr_t) func->data;
++	unsigned int function_mask;
++	unsigned int gpio_function;
 +
-+examples:
-+  - |
-+    // Minimal example
-+    mdio {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++	if (!(desc->functions & func_flag))
++		return -EINVAL;
 +
-+        expander0: expander@0 {
-+            compatible = "realtek,rtl8231";
-+            reg = <0>;
++	function_mask = BIT(desc->offset);
++	gpio_function = desc->gpio_function_value << desc->offset;
 +
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-ranges = <&expander0 0 0 37>;
-+        };
-+    };
-+  - |
-+    // All bells and whistles included
-+    #include <dt-bindings/leds/common.h>
-+    mdio {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++	if (func_flag == RTL8231_PIN_FUNCTION_GPIO)
++		return regmap_update_bits(ctrl->map, desc->reg, function_mask, gpio_function);
++	else
++		return regmap_update_bits(ctrl->map, desc->reg, function_mask, ~gpio_function);
++}
 +
-+        expander1: expander@1 {
-+            compatible = "realtek,rtl8231";
-+            reg = <1>;
++static int rtl8231_gpio_request_enable(struct pinctrl_dev *pctldev,
++	struct pinctrl_gpio_range *range, unsigned int offset)
++{
++	const struct rtl8231_pin_desc *desc = rtl8231_pins[offset].drv_data;
++	struct rtl8231_pin_ctrl *ctrl = pinctrl_dev_get_drvdata(pctldev);
++	unsigned int function_mask;
++	unsigned int gpio_function;
 +
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-ranges = <&expander1 0 0 37>;
++	function_mask = BIT(desc->offset);
++	gpio_function = desc->gpio_function_value << desc->offset;
 +
-+            #pwm-cells = <2>;
++	return regmap_update_bits(ctrl->map, desc->reg, function_mask, gpio_function);
++}
 +
-+            drive-strength = <4>;
++static const struct pinmux_ops rtl8231_pinmux_ops = {
++	.get_functions_count = pinmux_generic_get_function_count,
++	.get_function_name = pinmux_generic_get_function_name,
++	.get_function_groups = pinmux_generic_get_function_groups,
++	.set_mux = rtl8231_set_mux,
++	.gpio_request_enable = rtl8231_gpio_request_enable,
++	.strict = true,
++};
 +
-+            button-pins {
-+                pins = "gpio36";
-+                function = "gpio";
-+                input-debounce = "100000";
-+            };
++static int rtl8231_pin_config_get(struct pinctrl_dev *pctldev, unsigned int offset,
++	unsigned long *config)
++{
++	struct rtl8231_pin_ctrl *ctrl = pinctrl_dev_get_drvdata(pctldev);
++	unsigned int param = pinconf_to_config_param(*config);
++	unsigned int arg;
++	int err;
++	int v;
 +
-+            pwm-pins {
-+                pins = "gpio35";
-+                function = "pwm";
-+            };
++	switch (param) {
++	case PIN_CONFIG_INPUT_DEBOUNCE:
++		if (offset < RTL8231_DEBOUNCE_MIN_OFFSET)
++			return -EINVAL;
 +
-+            led-pins {
-+                pins = "gpio0", "gpio1", "gpio3", "gpio4";
-+                function = "led";
-+            };
++		err = regmap_read(ctrl->map, RTL8231_REG_FUNC1, &v);
++		if (err)
++			return err;
 +
-+            led-controller {
-+                compatible = "realtek,rtl8231-leds";
-+                #address-cells = <2>;
-+                #size-cells = <0>;
++		v = FIELD_GET(RTL8231_FUNC1_DEBOUNCE_MASK, v);
++		if (v & BIT(offset - RTL8231_DEBOUNCE_MIN_OFFSET))
++			arg = RTL8231_DEBOUNCE_USEC;
++		else
++			arg = 0;
++		break;
++	default:
++		return -ENOTSUPP;
++	}
 +
-+                realtek,led-scan-mode = "single-color";
++	*config = pinconf_to_config_packed(param, arg);
 +
-+                led@0,0 {
-+                    reg = <0 0>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <0>;
-+                };
++	return 0;
++}
 +
-+                led@0,1 {
-+                    reg = <0 1>;
-+                    color = <LED_COLOR_ID_AMBER>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <0>;
-+                };
++static int rtl8231_pin_config_set(struct pinctrl_dev *pctldev, unsigned int offset,
++	unsigned long *configs, unsigned int num_configs)
++{
++	struct rtl8231_pin_ctrl *ctrl = pinctrl_dev_get_drvdata(pctldev);
++	unsigned int param, arg;
++	unsigned int pin_mask;
++	int err;
++	int i;
 +
-+                led@1,0 {
-+                    reg = <1 0>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <1>;
-+                };
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
 +
-+                led@1,1 {
-+                    reg = <1 1>;
-+                    color = <LED_COLOR_ID_AMBER>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <1>;
-+                };
-+            };
-+        };
-+    };
++		switch (param) {
++		case PIN_CONFIG_INPUT_DEBOUNCE:
++			if (offset < RTL8231_DEBOUNCE_MIN_OFFSET)
++				return -EINVAL;
++
++			pin_mask = FIELD_PREP(RTL8231_FUNC1_DEBOUNCE_MASK,
++				BIT(offset - RTL8231_DEBOUNCE_MIN_OFFSET));
++
++			switch (arg) {
++			case 0:
++				err = regmap_update_bits(ctrl->map, RTL8231_REG_FUNC1,
++					pin_mask, 0);
++				break;
++			case RTL8231_DEBOUNCE_USEC:
++				err = regmap_update_bits(ctrl->map, RTL8231_REG_FUNC1,
++					pin_mask, pin_mask);
++				break;
++			default:
++				return -EINVAL;
++			}
++
++			break;
++		default:
++			return -ENOTSUPP;
++		}
++	}
++
++	return err;
++}
++
++static const struct pinconf_ops rtl8231_pinconf_ops = {
++	.is_generic = true,
++	.pin_config_get = rtl8231_pin_config_get,
++	.pin_config_set = rtl8231_pin_config_set,
++};
++
++static int rtl8231_pinctrl_init_functions(struct pinctrl_dev *pctl, struct rtl8231_pin_ctrl *ctrl)
++{
++	const char *function_name;
++	const char **groups;
++	unsigned int f_idx;
++	unsigned int pin;
++	int num_groups;
++	int err;
++
++	for (f_idx = 0; f_idx < ARRAY_SIZE(rtl8231_pin_function_names); f_idx++) {
++		function_name = rtl8231_pin_function_names[f_idx];
++
++		for (pin = 0, num_groups = 0; pin < ctrl->pctl_desc.npins; pin++)
++			if (rtl8231_pin_data[pin].functions & BIT(f_idx))
++				num_groups++;
++
++		groups = devm_kcalloc(pctl->dev, num_groups, sizeof(*groups), GFP_KERNEL);
++		if (!groups)
++			return -ENOMEM;
++
++		for (pin = 0, num_groups = 0; pin < ctrl->pctl_desc.npins; pin++)
++			if (rtl8231_pin_data[pin].functions & BIT(f_idx))
++				groups[num_groups++] = rtl8231_pins[pin].name;
++
++		err = pinmux_generic_add_function(pctl, function_name, groups, num_groups,
++			(void *) BIT(f_idx));
++		if (err < 0)
++			return err;
++	}
++
++	return 0;
++}
++
++static int rtl8231_pinctrl_init(struct device *dev, struct rtl8231_pin_ctrl *ctrl)
++{
++	struct pinctrl_dev *pctldev;
++	int err;
++
++	ctrl->pctl_desc.name = "rtl8231-pinctrl";
++	ctrl->pctl_desc.owner = THIS_MODULE;
++	ctrl->pctl_desc.confops = &rtl8231_pinconf_ops;
++	ctrl->pctl_desc.pctlops = &rtl8231_pinctrl_ops;
++	ctrl->pctl_desc.pmxops = &rtl8231_pinmux_ops;
++	ctrl->pctl_desc.npins = ARRAY_SIZE(rtl8231_pins);
++	ctrl->pctl_desc.pins = rtl8231_pins;
++
++	err = devm_pinctrl_register_and_init(dev->parent, &ctrl->pctl_desc, ctrl, &pctldev);
++	if (err) {
++		dev_err(dev, "failed to register pin controller\n");
++		return err;
++	}
++
++	err = rtl8231_pinctrl_init_functions(pctldev, ctrl);
++	if (err)
++		return err;
++
++	err = pinctrl_enable(pctldev);
++	if (err)
++		dev_err(dev, "failed to enable pin controller\n");
++
++	return err;
++}
++
++/*
++ * GPIO controller functionality
++ */
++static int rtl8231_gpio_reg_mask_xlate(struct gpio_regmap *gpio, unsigned int base,
++	unsigned int offset, unsigned int *reg, unsigned int *mask)
++{
++	unsigned int pin_mask = BIT(offset % RTL8231_BITS_VAL);
++
++	if (base == RTL8231_REG_GPIO_DATA0 || offset < 32) {
++		*reg = base + offset / RTL8231_BITS_VAL;
++		*mask = pin_mask;
++	} else if (base == RTL8231_REG_GPIO_DIR0) {
++		*reg = RTL8231_REG_PIN_HI_CFG;
++		*mask = FIELD_PREP(RTL8231_PIN_HI_CFG_DIR_MASK, pin_mask);
++	} else {
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int rtl8231_pinctrl_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rtl8231_pin_ctrl *ctrl;
++	struct gpio_regmap_config gpio_cfg = {};
++	int err;
++
++	ctrl = devm_kzalloc(dev, sizeof(*ctrl), GFP_KERNEL);
++	if (!ctrl)
++		return -ENOMEM;
++
++	ctrl->map = dev_get_regmap(dev->parent, NULL);
++	if (!ctrl->map)
++		return -ENODEV;
++
++	err = rtl8231_pinctrl_init(dev, ctrl);
++	if (err)
++		return err;
++
++	gpio_cfg.regmap = ctrl->map;
++	gpio_cfg.parent = dev->parent;
++	gpio_cfg.ngpio = RTL8231_NUM_GPIOS;
++	gpio_cfg.ngpio_per_reg = RTL8231_BITS_VAL;
++	gpio_cfg.quirks = GPIO_REGMAP_QUIRK_ALIASED_DATA;
++
++	gpio_cfg.reg_dat_base = GPIO_REGMAP_ADDR(RTL8231_REG_GPIO_DATA0);
++	gpio_cfg.reg_set_base = GPIO_REGMAP_ADDR(RTL8231_REG_GPIO_DATA0);
++	gpio_cfg.reg_dir_in_base = GPIO_REGMAP_ADDR(RTL8231_REG_GPIO_DIR0);
++
++	gpio_cfg.reg_mask_xlate = rtl8231_gpio_reg_mask_xlate;
++
++	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_cfg));
++}
++
++static struct platform_driver rtl8231_pinctrl_driver = {
++	.driver = {
++		.name = "rtl8231-pinctrl",
++	},
++	.probe = rtl8231_pinctrl_probe,
++};
++module_platform_driver(rtl8231_pinctrl_driver);
++
++MODULE_AUTHOR("Sander Vanheule <sander@svanheule.net>");
++MODULE_DESCRIPTION("Realtek RTL8231 pin control and GPIO support");
++MODULE_LICENSE("GPL v2");
 -- 
 2.31.1
 
