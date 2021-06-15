@@ -2,478 +2,326 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5786EC49361
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Jun 2021 07:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821D5C48BDF
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Jun 2021 08:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3491F61428
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Jun 2021 07:50:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66DD3613FA
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Jun 2021 08:06:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231214AbhFOHwX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Jun 2021 03:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230363AbhFOHwK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Jun 2021 03:52:10 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08EFC0613A4
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Jun 2021 00:50:05 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id e7so8026825plj.7
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Jun 2021 00:50:05 -0700 (PDT)
+        id S230508AbhFOII4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Jun 2021 04:08:56 -0400
+Received: from mail-dm6nam11on2064.outbound.protection.outlook.com ([40.107.223.64]:43360
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230332AbhFOII4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 15 Jun 2021 04:08:56 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MHBEN02DHC5ApdyHLIuDwVHTtwgDkvsKfd1jBvutKiTnf6IYhE0ykEN5ojx5lzYOJcNzZJMyo2/Ur+TvbQuoeEG2jcXqU58ljYcYNMlkbD0Nm1cEKGLsG7EnEQ7+xSfHbj2ZFHzL9YtEzYruq6Ax87mLzudYJkq2GXiRpDvummLJSKQLh1IAqm5H/8G22Cfci6SQv3pX4wIeOdEKoAIGXFzChuy7OMrwBSMrrNOkJn+ZU4YGmYaDyGFt5UukcsA4lonmYQgaib3YF852ior1sRx9Njhxzu70P0vOYyFoLKIRXtROsHd0ieVqLdsrkEAaBMjr23AKAavJZlZk7u8Fdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0z+ajz9oJTabMq/lg1C/vnSrptLSuNT9aIfqDf71ICI=;
+ b=NzNIaYX97g6uHbN1RFGgtZAWZj87GrM33gvrvMWrGxzPXenHQJkFs8PrY5lDvllIoaFSoSGxEFmigvFyRNkz7UwN6Z318yCVLtWJ3e4/8MzJ3uV3LLleHf7V/mBzmR58wWxkZdcn7MXXUJq7sLGlm0KkpbziXDE8YIgsbKMFnzWT3GdswbjTexz+uXNWRjYoNGGQAhXuAYrU5bsZBADlmjlYlViORXjMYXTlh2mHVJna3QPecas3O9YniqC9beUM1M37GT0Y8RS6KD9zRgtgcxcYNZumBhweAvDKMy5AvOy1TxCnvs4FAF3o2UU2HR6YiXq0f6DkK6A6HRM1gDcoKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GMhPu3BiG5kAU5dJHB11IoT/djSJ1XjVnSCY4gcI06g=;
-        b=YyZVwktBXjMFhvQVZcpFcEEzN+k8Lfb+ohGd0bWY+HDCI27+MopnD3GskmC+JxVGXI
-         u0zzEqcL6cV/YSpTbUT5jjzA7CZHzRnfAvzYYUQAcrGFY0x2jUa/qmGCf1ry4bIwc4et
-         QyzAu5wseC5LVC/2Z/qPUrnWdyC0M1B2z5SXh97W/dQVg4qqtFZ4V72Q7vmR/BPZ4EhO
-         Es+w93w9SbgdwtuCn1LQHvgGt/epBLJhpWNde/q6+KvZrmqwCYXldl7TSSL7ZMHIEYKD
-         JqlBoUOWcMQ0dPPONZ5p97hLLadA+pYpLvUJ06Sqd4WnTVMMLBx/K3i7tJUHgpohUGho
-         IgfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GMhPu3BiG5kAU5dJHB11IoT/djSJ1XjVnSCY4gcI06g=;
-        b=N4cZXOsYmBHxYJel0m8aK09yLyrymenDoTJAsn7saRafRa5X34WLbNGavD6UUmcUjd
-         /of+YRiAaxsCPewErRz4TnJo2iXO1ExIc9Y3p47h0TXeHXqWoPr3Hroe5Gqmxi0eA8S0
-         noAVkF2wRL1MWZUccjd6Zg+kHi0QDHaeWSawqUv+nfSKX3I3vF2HPnr2b6aHb9MOjBEi
-         Z2AwBdOsV7o6ZLaWRnlY0l/X1ULzx5TfJq0/2sWTlB6PlW7gnMjoM6xEu3XOqPw9Crks
-         EL/X0nAM2SS5JcO/AjaZonewq3VeeB8hsTsJ/JHslnOzNQxIMfglVB2lYxo3Mwd0iuut
-         Gsaw==
-X-Gm-Message-State: AOAM53366ip0tjry4IHYGhkOrX5FugdxBC0ppkt8ZMw48tFA8vFcWVGZ
-        V3tiDeEmoflruF7suBGZX+O95w==
-X-Google-Smtp-Source: ABdhPJzMLLh2FGnKBaUEAk1b5liA91SuEiLtD/c3udH4Ljtz82RNPfydMj7VPHHjLlS0rfdL0piNUw==
-X-Received: by 2002:a17:902:d3ca:b029:104:ebfd:a554 with SMTP id w10-20020a170902d3cab0290104ebfda554mr2325454plb.13.1623743405280;
-        Tue, 15 Jun 2021 00:50:05 -0700 (PDT)
-Received: from localhost.localdomain.name ([122.177.197.114])
-        by smtp.gmail.com with ESMTPSA id c25sm14273097pfo.130.2021.06.15.00.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jun 2021 00:50:04 -0700 (PDT)
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     bhupesh.sharma@linaro.org, bhupesh.linux@gmail.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>
-Subject: [PATCH v2 10/10] arm64: dts: qcom: sa8155p-adp: Add base dts file
-Date:   Tue, 15 Jun 2021 13:15:43 +0530
-Message-Id: <20210615074543.26700-11-bhupesh.sharma@linaro.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210615074543.26700-1-bhupesh.sharma@linaro.org>
-References: <20210615074543.26700-1-bhupesh.sharma@linaro.org>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0z+ajz9oJTabMq/lg1C/vnSrptLSuNT9aIfqDf71ICI=;
+ b=M3gKXZ+L8IWDpGn1tgr0mL5A4fNQtTinYxcD7L60MdOxVvAA82Egep927P0LHvTB6YF8Uo9nTM8AEp/p91jjFhhpmaqj9ebNWArazotkyAvb8unzq7jaBtBK08UI7VBZLV4e8pdRxnpdA1htxMYD3eJ/9+EcPVkPldm+ThBi2aY=
+Received: from DM5PR13CA0030.namprd13.prod.outlook.com (2603:10b6:3:7b::16) by
+ BL3PR02MB8185.namprd02.prod.outlook.com (2603:10b6:208:338::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.24; Tue, 15 Jun
+ 2021 08:06:50 +0000
+Received: from DM3NAM02FT011.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:3:7b:cafe::19) by DM5PR13CA0030.outlook.office365.com
+ (2603:10b6:3:7b::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.9 via Frontend
+ Transport; Tue, 15 Jun 2021 08:06:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ DM3NAM02FT011.mail.protection.outlook.com (10.13.5.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4219.21 via Frontend Transport; Tue, 15 Jun 2021 08:06:50 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 15 Jun 2021 01:06:43 -0700
+Received: from smtp.xilinx.com (172.19.127.95) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.2 via Frontend Transport; Tue, 15 Jun 2021 01:06:43 -0700
+Envelope-to: git@xilinx.com,
+ linus.walleij@linaro.org,
+ bgolaszewski@baylibre.com,
+ robh+dt@kernel.org,
+ linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Received: from [10.140.6.35] (port=43350 helo=xhdsaipava40.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <piyush.mehta@xilinx.com>)
+        id 1lt45p-0002dn-UA; Tue, 15 Jun 2021 01:06:42 -0700
+From:   Piyush Mehta <piyush.mehta@xilinx.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <robh+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>, <git@xilinx.com>,
+        <sgoud@xilinx.com>, <michal.simek@xilinx.com>,
+        Piyush Mehta <piyush.mehta@xilinx.com>
+Subject: [PATCH 2/2] gpio: modepin: Add driver support for modepin GPIO controller
+Date:   Tue, 15 Jun 2021 13:35:53 +0530
+Message-ID: <20210615080553.2021061-3-piyush.mehta@xilinx.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210615080553.2021061-1-piyush.mehta@xilinx.com>
+References: <20210615080553.2021061-1-piyush.mehta@xilinx.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6942f690-db2b-4194-9218-08d92fd487ad
+X-MS-TrafficTypeDiagnostic: BL3PR02MB8185:
+X-Microsoft-Antispam-PRVS: <BL3PR02MB8185A40BFC76586AE646EC30D4309@BL3PR02MB8185.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:229;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jgk+qwwWKEYohWMQbCl1lRPzjlhZMLPpVCvLwpLkV43oQIYuqljZSCQhT1rwW7HImZmVmr2JbUD1Y5wGpdq9/SuEcctuJvpydS5o86d4k6dCityw+2JQLdeoCboLon2P0OD9Yr6WuJ4ayevzDINCAggGFrt6lTIZxyVE+Hb9D5LGnLheO5C6xd7g3H6cHqFGaEWkO39qzk53t6MUzXEI7sPLx/V6zwc0sj1ZqtdAwX5exKlV/wIQQnQkWiW07196Cz7mbIfFPVMdOY8h7gAAQb7hZFnCAzwJVLiTzxg6tcgZPyk4aoMeA62L/GPAxl8k/drCWX1kdl3qcDZ25xvHFzwmuSfzYqxVK9dqN9H/laV4sAqFujk9mCCHa5xVaR9PTQ8NMgWxFHtuCacMFlGcptgsdEh5uisvYWnd9Q0SIbF5aw+7UnlMU2H6CNtb3kJBIV9xUsv6NRLDOcBxuQlFoShGyzvAXr0smz/DPHfRXUrZy7w2QhSxlf44ILR2sSehumX+PxgJToC+zf7oclQ2mvtd+XPey3jNjbIyo+4f8ss1JVE3rBItpOAdcmCIzc/X85/sRTNzktcIHenRUFVP00j1S1rRI3FHYcaRFlTXFlzA4BF9fSI54jR8BM/Czl+WcnsUQtwwTZxsY1bw0IyBHL2hc1dEYsdPc90/OEcqyFouWJB3QRbix8aDdj9Bnud7
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(376002)(39850400004)(396003)(136003)(36840700001)(46966006)(336012)(426003)(2616005)(6666004)(44832011)(478600001)(2906002)(186003)(54906003)(26005)(316002)(110136005)(8936002)(36906005)(7696005)(36860700001)(107886003)(4326008)(1076003)(8676002)(5660300002)(47076005)(36756003)(82310400003)(7636003)(70206006)(356005)(70586007)(9786002)(82740400003)(102446001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2021 08:06:50.4597
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6942f690-db2b-4194-9218-08d92fd487ad
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT011.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR02MB8185
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add base DTS file for SA8155p Automotive Development Platform.
-It enables boot to console, adds tlmm reserved range and ufs flash.
-It also includes pmic file.
+This patch adds support for the mode pin GPIO controller. GPIO Modepin
+driver set and get the value and status of the PS_MODE pin, based on
+device-tree pin configuration. These 4-bits boot-mode pins are dedicated
+configurable as input/output. After the stabilization of the system,
+these mode pins are sampled.
 
-SA8155p-adp board is based on sa8155p Qualcomm Snapdragon SoC.
-SA8155p platform is similar to the SM8150, so use this as base
-for now.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Andy Gross <agross@kernel.org>
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Signed-off-by: Piyush Mehta <piyush.mehta@xilinx.com>
 ---
- arch/arm64/boot/dts/qcom/Makefile        |   1 +
- arch/arm64/boot/dts/qcom/sa8155p-adp.dts | 355 +++++++++++++++++++++++
- 2 files changed, 356 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+ drivers/gpio/Kconfig               |  12 +++
+ drivers/gpio/Makefile              |   1 +
+ drivers/gpio/gpio-zynqmp-modepin.c | 154 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 167 insertions(+)
+ create mode 100644 drivers/gpio/gpio-zynqmp-modepin.c
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 456502aeee49..666f3528697d 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -32,6 +32,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-oneplus-dumpling.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qrb5165-rb5.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-trogdor-coachz-r1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-trogdor-coachz-r1-lte.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 1dd0ec6..30e0dbf 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -755,6 +755,18 @@ config GPIO_ZYNQ
+ 	help
+ 	  Say yes here to support Xilinx Zynq GPIO controller.
+ 
++config GPIO_ZYNQMP_MODEPIN
++	tristate "ZynqMP ps-mode pin gpio configuration driver"
++	depends on ZYNQMP_FIRMWARE
++	default ZYNQMP_FIRMWARE
++	help
++	  Say yes here to support the ZynqMP ps-mode pin gpio configuration
++	  driver.
++
++	  This ps-mode pin gpio driver is based on GPIO framework, PS_MODE
++	  is 4-bits boot mode pins. It sets and gets the status of
++	  the ps-mode pin. Every pin can be configured as input/output.
++
+ config GPIO_LOONGSON1
+ 	tristate "Loongson1 GPIO support"
+ 	depends on MACH_LOONGSON32
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index d7c81e1..62bfa73 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -182,3 +182,4 @@ obj-$(CONFIG_GPIO_XRA1403)		+= gpio-xra1403.o
+ obj-$(CONFIG_GPIO_XTENSA)		+= gpio-xtensa.o
+ obj-$(CONFIG_GPIO_ZEVIO)		+= gpio-zevio.o
+ obj-$(CONFIG_GPIO_ZYNQ)			+= gpio-zynq.o
++obj-$(CONFIG_GPIO_ZYNQMP_MODEPIN)	+= gpio-zynqmp-modepin.o
+diff --git a/drivers/gpio/gpio-zynqmp-modepin.c b/drivers/gpio/gpio-zynqmp-modepin.c
 new file mode 100644
-index 000000000000..95e0a6612e6b
+index 0000000..27052f0
 --- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: BSD-3-Clause
++++ b/drivers/gpio/gpio-zynqmp-modepin.c
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2021, Linaro Limited
++ * Driver for the ps-mode pin configuration.
++ *
++ * Copyright (c) 2021 Xilinx, Inc.
 + */
 +
-+/dts-v1/;
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/firmware/xlnx-zynqmp.h>
 +
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "sm8150.dtsi"
-+#include "pmm8155au_1.dtsi"
-+#include "pmm8155au_2.dtsi"
++#define MODE_PINS			4
++#define GET_OUTEN_PIN(pin)		(1U << (pin))
 +
-+/ {
-+	model = "Qualcomm Technologies, Inc. SA8155P ADP";
-+	compatible = "qcom,sa8155p-adp", "qcom,sa8155p";
++/*
++ * modepin_gpio_get_value - Get the state of the specified pin of GPIO device
++ * @chip:	gpio_chip instance to be worked on
++ * @pin:	gpio pin number within the device
++ *
++ * This function reads the state of the specified pin of the GPIO device.
++ *
++ * Return: 0 if the pin is low, 1 if pin is high, -EINVAL wrong pin configured
++ *         or error value.
++ */
++static int modepin_gpio_get_value(struct gpio_chip *chip, unsigned int pin)
++{
++	u32 out_en;
++	u32 regval = 0;
++	int ret;
 +
-+	aliases {
-+		serial0 = &uart2;
-+	};
++	out_en = GET_OUTEN_PIN(pin);
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
++	ret = zynqmp_pm_bootmode_read(&regval);
++	if (ret) {
++		pr_err("modepin: get value err %d\n", ret);
++		return ret;
++	}
 +
-+	vreg_3p3: vreg_3p3_regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_3p3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
++	return (out_en & (regval >> 8U)) ? 1 : 0;
++}
 +
-+	/*
-+	 * S4A is always on and not controllable through RPMh.
-+	 * So model it as a fixed regulator.
-+	 */
-+	vreg_s4a_1p8: smps4 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_s4a_1p8";
++/*
++ * modepin_gpio_set_value - Modify the state of the pin with specified value
++ * @chip:	gpio_chip instance to be worked on
++ * @pin:	gpio pin number within the device
++ * @state:	value used to modify the state of the specified pin
++ *
++ * Return:	None.
++ */
++static void modepin_gpio_set_value(struct gpio_chip *chip, unsigned int pin,
++				   int state)
++{
++	u32 out_en;
++	u32 bootpin_val = 0;
++	int ret;
 +
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
++	out_en = GET_OUTEN_PIN(pin);
++	state = state != 0 ? out_en : 0;
++	bootpin_val = (state << (8U)) | out_en;
 +
-+		regulator-always-on;
-+		regulator-boot-on;
++	/* Configure bootpin value */
++	ret = zynqmp_pm_bootmode_write(bootpin_val);
++	if (ret)
++		pr_err("modepin: %s failed\n", __func__);
++}
 +
-+		vin-supply = <&vreg_3p3>;
-+	};
++/*
++ * modepin_gpio_dir_in - Set the direction of the specified GPIO pin as input
++ * @chip:	gpio_chip instance to be worked on
++ * @pin:	gpio pin number within the device
++ *
++ * Return: 0 always
++ */
++static int modepin_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
++{
++	return 0;
++}
++
++/*
++ * modepin_gpio_dir_out - Set the direction of the specified GPIO pin as output
++ * @chip:	gpio_chip instance to be worked on
++ * @pin:	gpio pin number within the device
++ * @state:	value to be written to specified pin
++ *
++ * Return: 0 always
++ */
++static int modepin_gpio_dir_out(struct gpio_chip *chip, unsigned int pin,
++				int state)
++{
++	return 0;
++}
++
++/*
++ * modepin_gpio_probe - Initialization method for modepin_gpio
++ * @pdev:		platform device instance
++ *
++ * Return: 0 on success, negative error otherwise.
++ */
++static int modepin_gpio_probe(struct platform_device *pdev)
++{
++	struct gpio_chip *chip;
++	int status;
++
++	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, chip);
++
++	/* configure the gpio chip */
++	chip->base = -1;
++	chip->ngpio = MODE_PINS;
++	chip->owner = THIS_MODULE;
++	chip->parent = &pdev->dev;
++	chip->get = modepin_gpio_get_value;
++	chip->set = modepin_gpio_set_value;
++	chip->direction_input = modepin_gpio_dir_in;
++	chip->direction_output = modepin_gpio_dir_out;
++	chip->label = dev_name(&pdev->dev);
++
++	/* modepin gpio registration */
++	status = devm_gpiochip_add_data(&pdev->dev, chip, chip);
++	if (status)
++		dev_err_probe(&pdev->dev, status,
++			      "Failed to add GPIO chip\n");
++
++	return status;
++}
++
++static const struct of_device_id modepin_platform_id[] = {
++	{ .compatible = "xlnx,zynqmp-gpio-modepin", },
++	{ }
 +};
 +
-+&apps_rsc {
-+	pmm8155au-1-rpmh-regulators {
-+		compatible = "qcom,pmm8155au-rpmh-regulators";
-+		qcom,pmic-id = "a";
-+
-+		vdd-s1-supply = <&vreg_3p3>;
-+		vdd-s2-supply = <&vreg_3p3>;
-+		vdd-s3-supply = <&vreg_3p3>;
-+		vdd-s4-supply = <&vreg_3p3>;
-+		vdd-s5-supply = <&vreg_3p3>;
-+		vdd-s6-supply = <&vreg_3p3>;
-+		vdd-s7-supply = <&vreg_3p3>;
-+		vdd-s8-supply = <&vreg_3p3>;
-+		vdd-s9-supply = <&vreg_3p3>;
-+		vdd-s10-supply = <&vreg_3p3>;
-+
-+		vdd-l1-l8-l11-supply = <&vreg_s6a_0p92>;
-+		vdd-l2-l10-supply = <&vreg_3p3>;
-+		vdd-l3-l4-l5-l18-supply = <&vreg_s6a_0p92>;
-+		vdd-l6-l9-supply = <&vreg_s6a_0p92>;
-+		vdd-l7-l12-l14-l15-supply = <&vreg_s5a_2p04>;
-+		vdd-l13-l16-l17-supply = <&vreg_3p3>;
-+
-+		vreg_s5a_2p04: smps5 {
-+			regulator-name = "vreg_s5a_2p04";
-+			regulator-min-microvolt = <1904000>;
-+			regulator-max-microvolt = <2000000>;
-+		};
-+
-+		vreg_s6a_0p92: smps6 {
-+			regulator-name = "vreg_s6a_0p92";
-+			regulator-min-microvolt = <920000>;
-+			regulator-max-microvolt = <1128000>;
-+		};
-+
-+		vreg_l1a_0p752: ldo1 {
-+			regulator-name = "vreg_l1a_0p752";
-+			regulator-min-microvolt = <752000>;
-+			regulator-max-microvolt = <752000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vdda_usb_hs_3p1:
-+		vreg_l2a_3p072: ldo2 {
-+			regulator-name = "vreg_l2a_3p072";
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3a_0p8: ldo3 {
-+			regulator-name = "vreg_l3a_0p8";
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vdd_usb_hs_core:
-+		vdda_usb_ss_dp_core_1:
-+		vreg_l5a_0p88: ldo5 {
-+			regulator-name = "vreg_l5a_0p88";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7a_1p8: ldo7 {
-+			regulator-name = "vreg_l7a_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l10a_2p96: ldo10 {
-+			regulator-name = "vreg_l10a_2p96";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l11a_0p8: ldo11 {
-+			regulator-name = "vreg_l11a_0p8";
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vdda_usb_hs_1p8:
-+		vreg_l12a_1p8: ldo12 {
-+			regulator-name = "vreg_l12a_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l13a_2p7: ldo13 {
-+			regulator-name = "vreg_l13a_2p7";
-+			regulator-min-microvolt = <2704000>;
-+			regulator-max-microvolt = <2704000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l15a_1p7: ldo15 {
-+			regulator-name = "vreg_l15a_1p7";
-+			regulator-min-microvolt = <1704000>;
-+			regulator-max-microvolt = <1704000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l16a_2p7: ldo16 {
-+			regulator-name = "vreg_l16a_2p7";
-+			regulator-min-microvolt = <2704000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l17a_2p96: ldo17 {
-+			regulator-name = "vreg_l17a_2p96";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	pmm8155au-2-rpmh-regulators {
-+		compatible = "qcom,pmm8155au-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vdd-s1-supply = <&vreg_3p3>;
-+		vdd-s2-supply = <&vreg_3p3>;
-+		vdd-s3-supply = <&vreg_3p3>;
-+		vdd-s4-supply = <&vreg_3p3>;
-+		vdd-s5-supply = <&vreg_3p3>;
-+		vdd-s6-supply = <&vreg_3p3>;
-+		vdd-s7-supply = <&vreg_3p3>;
-+		vdd-s8-supply = <&vreg_3p3>;
-+		vdd-s9-supply = <&vreg_3p3>;
-+		vdd-s10-supply = <&vreg_3p3>;
-+
-+		vdd-l1-l8-l11-supply = <&vreg_s4c_1p352>;
-+		vdd-l2-l10-supply = <&vreg_3p3>;
-+		vdd-l3-l4-l5-l18-supply = <&vreg_s4c_1p352>;
-+		vdd-l6-l9-supply = <&vreg_s6c_1p128>;
-+		vdd-l7-l12-l14-l15-supply = <&vreg_s5c_2p04>;
-+		vdd-l13-l16-l17-supply = <&vreg_3p3>;
-+
-+		vreg_s4c_1p352: smps4 {
-+			regulator-name = "vreg_s4c_1p352";
-+			regulator-min-microvolt = <1352000>;
-+			regulator-max-microvolt = <1352000>;
-+		};
-+
-+		vreg_s5c_2p04: smps5 {
-+			regulator-name = "vreg_s5c_2p04";
-+			regulator-min-microvolt = <1904000>;
-+			regulator-max-microvolt = <2000000>;
-+		};
-+
-+		vreg_s6c_1p128: smps6 {
-+			regulator-name = "vreg_s6c_1p128";
-+			regulator-min-microvolt = <1128000>;
-+			regulator-max-microvolt = <1128000>;
-+		};
-+
-+		vreg_l1c_1p304: ldo1 {
-+			regulator-name = "vreg_l1c_1p304";
-+			regulator-min-microvolt = <1304000>;
-+			regulator-max-microvolt = <1304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2c_1p808: ldo2 {
-+			regulator-name = "vreg_l2c_1p808";
-+			regulator-min-microvolt = <1704000>;
-+			regulator-max-microvolt = <2928000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l5c_1p2: ldo5 {
-+			regulator-name = "vreg_l5c_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7c_1p8: ldo7 {
-+			regulator-name = "vreg_l7c_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8c_1p2: ldo8 {
-+			regulator-name = "vreg_l8c_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l10c_3p3: ldo10 {
-+			regulator-name = "vreg_l10c_3p3";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3312000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l11c_0p8: ldo11 {
-+			regulator-name = "vreg_l11c_0p8";
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l12c_1p808: ldo12 {
-+			regulator-name = "vreg_l12c_1p808";
-+			regulator-min-microvolt = <1704000>;
-+			regulator-max-microvolt = <2928000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l13c_2p96: ldo13 {
-+			regulator-name = "vreg_l13c_2p96";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l15c_1p9: ldo15 {
-+			regulator-name = "vreg_l15c_1p9";
-+			regulator-min-microvolt = <1704000>;
-+			regulator-max-microvolt = <2928000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l16c_3p008: ldo16 {
-+			regulator-name = "vreg_l16c_3p008";
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3008000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l18c_0p88: ldo18 {
-+			regulator-name = "vreg_l18c_0p88";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
++static struct platform_driver modepin_platform_driver = {
++	.driver = {
++		.name = "modepin-gpio",
++		.of_match_table = modepin_platform_id,
++	},
++	.probe = modepin_gpio_probe,
 +};
 +
-+&tlmm {
-+	gpio-reserved-ranges = <0 4>;
-+};
++module_platform_driver(modepin_platform_driver);
 +
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&ufs_mem_hc {
-+	status = "okay";
-+
-+	reset-gpios = <&tlmm 175 GPIO_ACTIVE_LOW>;
-+
-+	vcc-supply = <&vreg_l10a_2p96>;
-+	vcc-max-microamp = <750000>;
-+	vccq-supply = <&vreg_l5c_1p2>;
-+	vccq-max-microamp = <700000>;
-+	vccq2-supply = <&vreg_s4a_1p8>;
-+	vccq2-max-microamp = <750000>;
-+};
-+
-+&ufs_mem_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l8c_1p2>;
-+	vdda-max-microamp = <87100>;
-+	vdda-pll-supply = <&vreg_l5a_0p88>;
-+	vdda-pll-max-microamp = <18300>;
-+};
-+
-+
-+&usb_1_hsphy {
-+	status = "okay";
-+	vdda-pll-supply = <&vdd_usb_hs_core>;
-+	vdda33-supply = <&vdda_usb_hs_3p1>;
-+	vdda18-supply = <&vdda_usb_hs_1p8>;
-+};
-+
-+&usb_1_qmpphy {
-+	status = "okay";
-+	vdda-phy-supply = <&vreg_l8c_1p2>;
-+	vdda-pll-supply = <&vdda_usb_ss_dp_core_1>;
-+};
-+
-+&usb_1 {
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3 {
-+	dr_mode = "peripheral";
-+};
-+
-+&qupv3_id_1 {
-+	status = "okay";
-+};
++MODULE_AUTHOR("Piyush Mehta <piyush.mehta@xilinx.com>");
++MODULE_DESCRIPTION("ZynqMP Boot PS_MODE Configuration");
++MODULE_LICENSE("GPL v2");
 -- 
-2.31.1
+2.7.4
 
