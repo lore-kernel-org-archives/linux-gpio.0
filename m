@@ -2,85 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1828C2B9F4
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 14:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07755C49EA3
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 14:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C77E861406
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 14:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7FEA61369
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 14:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232909AbhFQOif (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Jun 2021 10:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbhFQOif (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Jun 2021 10:38:35 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7207C061574
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Jun 2021 07:36:27 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id t3so4329542edc.7
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Jun 2021 07:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x3Omp+uAzmiY19Ehy5DELKA4o//eS6NE3U4qZdYmIBo=;
-        b=hODCj/T3P1W8V/HsxTIdk71dPSQ65X21QybM9xkmjD9c4r2mq6aGCYRMOMSqE4U3PX
-         4OmA/+a5edYgr/v0FAZewF3bkdqzAU4u7M68rARHY+cdLAxM0Z4AIKU+ekiKnJARvQ7i
-         LXkoUcLX7FV7WQ3wxWYy581pw8QIUGoRyUn45pntJYv2Qkr6+tqrXwLgM/G3mt/6gvYz
-         qt5j1WOdYo5U9A7ymGFto9fPNyvJtZk9JYU56miO4PkVkG3/UF9a+C4mmehmv26vdBP4
-         U5aeKvtYI/ggniaoy80fGhIXRgNQEU8r/q38oh1fx4i24hkxZOHGv86TVDULQYeNF/9S
-         g0uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x3Omp+uAzmiY19Ehy5DELKA4o//eS6NE3U4qZdYmIBo=;
-        b=MhG9HHMs0tHLiJ91xyWE06yz5UfPe5/fCTHpV6iRFIsJiBu2KP/3Cr7n4AsZAyJdnf
-         xHoYLPWaC7RDiD1Qng1j6dC82arm6a3CyZV0QPWEb1imVDPdfP3M0vFXNPFAu/hboWzT
-         s6CoMtSa5gKlL0hr+7sYAC9BQgxZ5v9KB0TWnliXFpHMywh7J3SEZMXZ04mjzpjtWrhd
-         7Knjsw5cXm9Ukcr2I/UyQ++GjLMGWxIzWnOP1CzTbiI0NMcBCakqxfP8ymarVuAyusRR
-         2juCX9wVeTUzLBG+RS+Qm/h7VKo5AqSenI54D+PBDVJ1oWSdGehWWhz0w/zR9aghH1GG
-         XQLw==
-X-Gm-Message-State: AOAM531Rbpn94MVMso0QIm1ml0I3ctys1w7//OyAYaGApXi+kpLUvJJ0
-        OmFcpGppICk2bCCK35q1kyI76j6M/XY3zVPmDDZRNA==
-X-Google-Smtp-Source: ABdhPJyZnFMiQIZ9fwFzpEk1mE8MftS/MaQdnl4xTCoY519E1pBV/j1OP3/x87B8xx30SZgQ9cUzZzDw/1yVBUX0b9k=
-X-Received: by 2002:a05:6402:cb1:: with SMTP id cn17mr7018107edb.42.1623940586437;
- Thu, 17 Jun 2021 07:36:26 -0700 (PDT)
+        id S232837AbhFQOs4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Jun 2021 10:48:56 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8540 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231648AbhFQOs4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Jun 2021 10:48:56 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HEgirB011994;
+        Thu, 17 Jun 2021 16:46:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=avLfCjHnAKA4LJReou8M+UnwauUV5c1NRmYnNmCKNw0=;
+ b=vmUHd9hTT3DdQQMeMQwLMqg8ZYI/MJP3Yh5wIg5wJDRuKFKNDhlfd/CGb3I8RKVOSO2F
+ I73ehuN2wdFC0QU9EIZrNncbSlRN8vqOjWMjhRRI1BBAjYIpHYWpOLmijCDZBp7EWGU/
+ dMg+PchjDGw2nOY8yFsRhfnJLU0D161AACHkPoaHv3TpN6T3HKPiAeSOHAtfJDSFgD++
+ mxyID76w8eipPzlqG3ggiVOgViykqhWLF2g0leDEi+UG704T0nbTwiYoLQanAEwp+94U
+ MG1IkR1xiIOAUxsuRLjCczzkWagkoEz6MlFGCp2vsRm5/cQ2Dxq6usisVG9N4x4Eq5lZ 0w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 3984bm1kny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Jun 2021 16:46:39 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0B560100038;
+        Thu, 17 Jun 2021 16:46:39 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EB33522D619;
+        Thu, 17 Jun 2021 16:46:38 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun 2021 16:46:38
+ +0200
+From:   Fabien Dessenne <fabien.dessenne@foss.st.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Fabien Dessenne <fabien.dessenne@foss.st.com>
+Subject: [PATCH] pinctrl: stm32: fix the reported number of GPIO lines per bank
+Date:   Thu, 17 Jun 2021 16:46:29 +0200
+Message-ID: <20210617144629.2557693-1-fabien.dessenne@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <1623938053-790-1-git-send-email-loic.poulain@linaro.org>
-In-Reply-To: <1623938053-790-1-git-send-email-loic.poulain@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 17 Jun 2021 16:36:15 +0200
-Message-ID: <CACRpkda=6-VkRtrBzxkzWYzcRWEYEcYUy15ALuRv6GFb=oCyZg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mxc: Fix disabled interrupt wake-up support
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        michal.koziel@emlogic.no
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-17_13:2021-06-15,2021-06-17 signatures=0
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 3:44 PM Loic Poulain <loic.poulain@linaro.org> wrote:
+Each GPIO bank supports a variable number of lines which is usually 16, but
+is less in some cases : this is specified by the last argument of the
+"gpio-ranges" bank node property.
+Report to the framework, the actual number of lines, so the libgpiod
+gpioinfo command lists the actually existing GPIO lines.
 
-> A disabled/masked interrupt marked as wakeup source must be re-enable
-> and unmasked in order to be able to wake-up the host. That can be done
-> by flaging the irqchip with IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND.
->
-> Note: It 'sometimes' works without that change, but only thanks to the
-> lazy generic interrupt disabling (keeping interrupt unmasked).
->
-> Reported-by: Michal Koziel <michal.koziel@emlogic.no>
-> Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Fixes: 1dc9d289154b ("pinctrl: stm32: add possibility to use gpio-ranges to declare bank range")
+Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Looks correct:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index ad9eb5ed8e81..c14d12d54cc5 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1224,7 +1224,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
+ 	struct device *dev = pctl->dev;
+ 	struct resource res;
+ 	int npins = STM32_GPIO_PINS_PER_BANK;
+-	int bank_nr, err;
++	int bank_nr, err, i = 0;
+ 
+ 	if (!IS_ERR(bank->rstc))
+ 		reset_control_deassert(bank->rstc);
+@@ -1246,9 +1246,14 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
+ 
+ 	of_property_read_string(np, "st,bank-name", &bank->gpio_chip.label);
+ 
+-	if (!of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args)) {
++	if (!of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, i, &args)) {
+ 		bank_nr = args.args[1] / STM32_GPIO_PINS_PER_BANK;
+ 		bank->gpio_chip.base = args.args[1];
++
++		npins = args.args[2];
++		while (!of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
++							 ++i, &args))
++			npins += args.args[2];
+ 	} else {
+ 		bank_nr = pctl->nbanks;
+ 		bank->gpio_chip.base = bank_nr * STM32_GPIO_PINS_PER_BANK;
+-- 
+2.25.1
 
-Yours,
-Linus Walleij
