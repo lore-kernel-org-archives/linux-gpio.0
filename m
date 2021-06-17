@@ -2,64 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D52C48BE5
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 07:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FD3C49361
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 07:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84C5A6135C
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 07:31:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6E2613C1
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Jun 2021 07:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbhFQHd3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Jun 2021 03:33:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230161AbhFQHd3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Jun 2021 03:33:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 26A03613BF;
-        Thu, 17 Jun 2021 07:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623915081;
-        bh=B+8PluC5gn7PaaKMr6F+x7FROpiA8NE9BPOp7pIbW30=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1AbMsNS+L7wOdvtcLLG0BWoG35WDrhc8RYxBB1YDWHN19qXYhjQRLPC3xgigZ+6HB
-         ZEUi6T3Kxdm950FfKr/ivFPqSmlWnHvts/zogwtNrBUJrmWLOeHhl4PzNV0KfiH7P/
-         4hrv7Dgy04/79wanH2jY+V3DfxZ/S4na+Ilq/wPE=
-Date:   Thu, 17 Jun 2021 09:31:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sai Krishna Potthuri <lakshmis@xilinx.com>
+        id S229897AbhFQHj4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Jun 2021 03:39:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56214 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229846AbhFQHjz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Jun 2021 03:39:55 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C02CC061574
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Jun 2021 00:37:48 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id nb6so8114976ejc.10
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Jun 2021 00:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s7+p5mopcGPNeOpZtCt9thAeymr13+2bHjNv9xZ1nl8=;
+        b=niYhYVfl46lvmqWIoCx871hzP9WrXbrxylSJ60+8RRaDkzZSQJn5A/UKdFSewsdYXd
+         EN57hvkzdPYRg1VTDE94kRapKL9ee+2Th8XdiCgRjSuexDV3uiFyBjPvTElyCOxCt6SP
+         LPRhijHzHTE7vuTYNXqhGOyM24QKdxQsWu9uzRexHprydb/jPOcEl8XaxUraEfJ9QYhP
+         OBhD2BiKjlyJ1BE3qFHji1zc5yz0nmg3zHGXoj8ltHPnFpv4TjK+6rOpveO5FNf3i0eP
+         r+ZbgC2Oj0f1BG7VE96JXSE/e7E9XbojIUMaO0pJ9/ccucZd5Gm7j+Ggnm7hAJqxvrco
+         jZzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s7+p5mopcGPNeOpZtCt9thAeymr13+2bHjNv9xZ1nl8=;
+        b=LKHDbiwgBVDzTHTpY4w2S3pKDvhOc7/Xcfbyi3PuOa6ODXbz3fb1uC9/dV5RqbFsZT
+         IdlhqlLw/QdFpk1J0pxS09AN44XZllmSJ+9DfY2CJ1eoxHSsR0n/gbVQOKq39MtA+YMn
+         OQDTWEY7wQCYDroua/YiGccQrU3vXYMJa96hUsLEpM7/yC0jWSvzzsp2m79FGkjmu+4E
+         fDnAC+LDr3h+IqiSGJsw8nCrDRXXtTvxSQT6fjED4PxDSo0Yc+Eh2WqwPzXj2cldF/fS
+         S7a2C+tDD5DmI9NgVyxvyRAICaINTxcv/ZqM3XR0Nc0oJridggIvqnx2u9ovG2W4pwcf
+         zkPw==
+X-Gm-Message-State: AOAM532vwIM7i77OjF7NiojJxgBXbavj0rqvPFirEjXygxTOJGDcOHZJ
+        ic98JIHT46FtD8DwnbA81QxSVfhq4vY7M6USdAp+hYcsh6Q=
+X-Google-Smtp-Source: ABdhPJwUwVdSjxIyBbGgOX1LCI1VYjG+HDD21nIGmKO0SUzLBS1j92JXDVJhkQfHRmQhMTNvLzqN+Caq5MSIIVxy9ng=
+X-Received: by 2002:a17:907:2648:: with SMTP id ar8mr3676065ejc.521.1623915466668;
+ Thu, 17 Jun 2021 00:37:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210613220326.831040-1-pbrobinson@gmail.com> <CAHp75Vc91=PSj+4F652Wo4iEHsek_NuLGuQmyovWtQ1UMO2xeA@mail.gmail.com>
+ <CAMpxmJWt0N_O+P=NrX2-GMtGmaLU6kz3W+JHJo2U+UTmEhcycw@mail.gmail.com>
+In-Reply-To: <CAMpxmJWt0N_O+P=NrX2-GMtGmaLU6kz3W+JHJo2U+UTmEhcycw@mail.gmail.com>
+From:   Peter Robinson <pbrobinson@gmail.com>
+Date:   Thu, 17 Jun 2021 08:37:35 +0100
+Message-ID: <CALeDE9PAUiQWBz=A-i=vyLqtGT2Kk3V6xY7NG1zHfM1=kvBWtA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: Add support for the On Semi pca9655
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        git <git@xilinx.com>,
-        "saikrishna12468@gmail.com" <saikrishna12468@gmail.com>
-Subject: Re: [PATCH v6 3/3] pinctrl: Add Xilinx ZynqMP pinctrl driver support
-Message-ID: <YMr6R34n2j2BWXlf@kroah.com>
-References: <1619080202-31924-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
- <1619080202-31924-4-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
- <CAHp75VfCbbnN-TBJiYFb=6Rhf30jA-Hz1p1UORsubF7UG6-ATw@mail.gmail.com>
- <DM5PR02MB3877B234F85F3B4887DF3A95BD429@DM5PR02MB3877.namprd02.prod.outlook.com>
- <CAHp75VfugGqLNU8LKJ_K3dPr=-eh6LHx75eV=33jH9OnryBoGA@mail.gmail.com>
- <DM5PR02MB387726AB4144F0DB28105007BD409@DM5PR02MB3877.namprd02.prod.outlook.com>
- <DM5PR02MB38771A8BEEB3E01006B14E46BD539@DM5PR02MB3877.namprd02.prod.outlook.com>
- <MW2PR02MB388198021497399F280A374EBD0E9@MW2PR02MB3881.namprd02.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MW2PR02MB388198021497399F280A374EBD0E9@MW2PR02MB3881.namprd02.prod.outlook.com>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 06:37:18AM +0000, Sai Krishna Potthuri wrote:
-> Ping!
+On Wed, Jun 16, 2021 at 8:28 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+>
+> On Mon, Jun 14, 2021 at 10:10 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Mon, Jun 14, 2021 at 1:05 AM Peter Robinson <pbrobinson@gmail.com> wrote:
+> > >
+> > > The On Semi pca9655 is a 16 bit variant of the On Semi pca9654 GPIO
+> > > expander, with 16 GPIOs and interrupt functionality.
+> >
+> > I don't remember the context...
+> >
+> > >         { .compatible = "onnn,cat9554", .data = OF_953X( 8, PCA_INT), },
+> > >         { .compatible = "onnn,pca9654", .data = OF_953X( 8, PCA_INT), },
+> > > +       { .compatible = "onnn,pca9655", .data = OF_953X( 16, PCA_INT), },
+> >
+> > ...but the first space (before 16) seems not necessary and the idea as
+> > far as I can see from here is to have those columns to be indented
+> > nicely.
+> >
+> > >         { .compatible = "exar,xra1202", .data = OF_953X( 8, 0), },
+> > >         { }
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+>
+> I applied the patch and fixed the indentation problem in my tree. Thanks!
 
-ping what?
+Awesome, thanks!
