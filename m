@@ -2,236 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8B2C49361
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Jun 2021 10:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E28C48BDF
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Jun 2021 12:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10F93610A3
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Jun 2021 10:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B8DB610CD
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Jun 2021 12:57:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233274AbhFRKPC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Jun 2021 06:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43954 "EHLO
+        id S233607AbhFRM7k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Jun 2021 08:59:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233321AbhFRKPB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Jun 2021 06:15:01 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF28C061760
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Jun 2021 03:12:51 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id w23-20020a0568301117b029044c37262dadso3819425otq.8
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Jun 2021 03:12:51 -0700 (PDT)
+        with ESMTP id S229782AbhFRM7k (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Jun 2021 08:59:40 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1DA3C061574
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Jun 2021 05:57:30 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id z22so13877000ljh.8
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Jun 2021 05:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ziEgOzcP1HByIwM5tzkw38PrntEO3ToJbYWi+oRdGcs=;
-        b=PdJl0ncgrhfekyPHp+KqwLByDJx2Zx1fUgbF2xiq4jALmjPa09pYQTcwt9o5SZ3FDq
-         +mmWaE4r4lH84yr6Q/F09ayO2bq98b2RuKnwAaqZzUXy1D5F6sNGkfD1cdXOPGC+eBXT
-         3QnVHBsPfKkchYlmwi850FIBz+aseO7hgkfjWNoCil1YxCXyhg1OzuIstRmIUAoLA1gE
-         T41vAbLC7LANLbus+TouLLqdAVDBCRPb5Yoihh14+97GnWw+k8u/txz2z7884qrYQeue
-         NiQEl77YaIM5a9ZxsLj3JTYo+Y8GqNm4LfOvYqwVnXVzPbUQCSeROhWaZo8FGGC8D4Vt
-         9v9Q==
+        bh=jF9pURhxENYTan5Ye25myNYhrCwRUkpmo9Dhc1bSoEw=;
+        b=Fn1HoqFQ7nmte0xZq2YGQaecysC995DoLNw0dPEbpUb29LBrXndNbXR8166YRlUJVB
+         Hy5Q6qC6HbdEUIG416kJGF77qu0h+b36HZ0i8dYKtv2L/V+Q5PVcBGj9hfKxJDmyn7++
+         IDk/xnxQMETjdsM23PqVYNggB6Ab1iaWEp4L30wxFtLNm98sN3mPcE4vMhrMfBWsMVJ8
+         CJEzNUprRnBYhC5CUduiA79pcyarIlvhq+Jbuafl6nJAZcD08KzAKZy3mXhd1+vhAJw7
+         As65MkJlZnyuBGf524rGROXZwOJDYoQ8jJp6cO5tXS8Z+7ruRhDdb+oFnAtvMgDbPJDn
+         MGiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ziEgOzcP1HByIwM5tzkw38PrntEO3ToJbYWi+oRdGcs=;
-        b=esHt8DelPlSpPcrz6LA8u3fqn8ahtZAoHrZJRmPtZRFou+CdFbXK9ttFVrWP+6kkdH
-         8bNf33/SSh8cytNwmwPCAqN5HQTnI1vWzPE5lPB6Oo91V+5j4SnhtdxjwNx+dpxwntDp
-         5sCSbJhlmou8C6st2f3IUpaEsW7GZpuHkhey6sxtRBOaXnJMnzEnxqR5VLAuQ4BRUjfZ
-         fce6V8M7/mIpfAw4MP5Zl6IrIgTLTiqWLcDdElG1Mj8FoCVwD6OUqUOnd7/cE/UT476Y
-         2g70OSRMOKBJOSjiXXGB2PPltD5ZazS5mxyBFsTlGz2/iveqZESB6AKHCTUJjUE6EUvE
-         bhNg==
-X-Gm-Message-State: AOAM533abgMc0g7fMLIPYRHMvrA4xXnZokq35YbygrS4XyzEgb3h7cAw
-        j0J5nLD9kh3qLzdLdvfeiW7BVJFdlJMrk+r6MFmzkw==
-X-Google-Smtp-Source: ABdhPJzA9Ime81OAPZIz8ZFv0L/PCg9uztC6yCsFB33iXVicxGaKxCR3bjdzuMVRn5C3JruCfUO7TrEKZB+nh/CFwRo=
-X-Received: by 2002:a9d:74d4:: with SMTP id a20mr8644554otl.28.1624011170558;
- Fri, 18 Jun 2021 03:12:50 -0700 (PDT)
+        bh=jF9pURhxENYTan5Ye25myNYhrCwRUkpmo9Dhc1bSoEw=;
+        b=JgoZJO4zfY2C2jS8BmMAeJ/+O5wTnN9Cn+8Igu0Np0m9I8QRtHg41sqtmrbX8diqHM
+         57fuOB9aNZ9QiSveigvzWzoZm8dy2B4cAa0aCsQzyhTRAzlOWa/GIRK4oER9cDIvUGtV
+         3rv+b91fpnK9iJWUJVC2ZBs3gQXFCahSfkfOJB9KaczcDoWUyCtUw3/4Td5vO7k55OOJ
+         23PIWn0yxtCMt7fNCmwVwkTUUDnuZxuXZ4rvSCasoyvnSBXthWRvig4mPUedhRHEyrcJ
+         kdKCM1uOVxS4e1+qRlBCuJL/sSspqiWVuTv2Hra3r+KIpfu8ajzxgLBzWDfVLmTw2ftc
+         aZlQ==
+X-Gm-Message-State: AOAM530Q+GQbap7Coa1ZY7A3kSBZ9Lr/NThvv4VoCmO4rlUPbj+bsjmD
+        2NrxEKizwAUe/b0DihyXB67ufxxGWpxmkXJTaUloOw==
+X-Google-Smtp-Source: ABdhPJyh4rUqU+FLUB8CGIiTuIm71e/bqTQUmglrgI5HwwqBSedgi9V+DbUL9LCrHJeLKACwerPho5HhQJ7qZLptpDw=
+X-Received: by 2002:a05:651c:1501:: with SMTP id e1mr9644806ljf.74.1624021049247;
+ Fri, 18 Jun 2021 05:57:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210617054548.353293-1-bhupesh.sharma@linaro.org>
- <20210617054548.353293-5-bhupesh.sharma@linaro.org> <6011130d-8ce8-420b-6e55-5d168fef0347@somainline.org>
-In-Reply-To: <6011130d-8ce8-420b-6e55-5d168fef0347@somainline.org>
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Date:   Fri, 18 Jun 2021 15:42:39 +0530
-Message-ID: <CAH=2Ntw5uZOLmc8b3oB5CizYQQ_Oxie3Hk_Z68WwHb=u2Xx05w@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] arm64: dts: qcom: pmm8155au_2: Add base dts file
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
+References: <20210617144629.2557693-1-fabien.dessenne@foss.st.com>
+In-Reply-To: <20210617144629.2557693-1-fabien.dessenne@foss.st.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 18 Jun 2021 14:57:18 +0200
+Message-ID: <CACRpkdYmE6qU=UXp-K0AXbAhmS7Drk44FT9nYz4ibswHoD5r-g@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: stm32: fix the reported number of GPIO lines per bank
+To:     Fabien Dessenne <fabien.dessenne@foss.st.com>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Konrad,
+On Thu, Jun 17, 2021 at 4:46 PM Fabien Dessenne
+<fabien.dessenne@foss.st.com> wrote:
 
-Thanks for your review.
+> Each GPIO bank supports a variable number of lines which is usually 16, but
+> is less in some cases : this is specified by the last argument of the
+> "gpio-ranges" bank node property.
+> Report to the framework, the actual number of lines, so the libgpiod
+> gpioinfo command lists the actually existing GPIO lines.
+>
+> Fixes: 1dc9d289154b ("pinctrl: stm32: add possibility to use gpio-ranges to declare bank range")
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
 
-On Fri, 18 Jun 2021 at 04:02, Konrad Dybcio
-<konrad.dybcio@somainline.org> wrote:
->
->
-> > Add base DTS file for pmm8155au_2 along with GPIOs, power-on, rtc and vadc
-> > nodes.
-> >
-> > Cc: Mark Brown <broonie@kernel.org>
-> > Cc: Vinod Koul <vkoul@kernel.org>
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi | 107 ++++++++++++++++++++++
-> >  1 file changed, 107 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi b/arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi
-> > new file mode 100644
-> > index 000000000000..0c7d7a66c0b5
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/pmm8155au_2.dtsi
-> > @@ -0,0 +1,107 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +/*
-> > + * Copyright (c) 2021, Linaro Limited
-> > + */
-> > +
-> > +#include <dt-bindings/input/input.h>
-> > +#include <dt-bindings/interrupt-controller/irq.h>
-> > +#include <dt-bindings/spmi/spmi.h>
-> > +
-> > +/ {
-> > +     thermal-zones {
-> > +             pmm8155au-2-thermal {
-> > +                     polling-delay-passive = <100>;
-> > +                     polling-delay = <0>;
-> > +
-> > +                     thermal-sensors = <&pmm8155au_2_temp>;
-> > +
-> > +                     trips {
-> > +                             trip0 {
-> > +                                     temperature = <95000>;
-> > +                                     hysteresis = <0>;
-> > +                                     type = "passive";
-> > +                             };
-> > +
-> > +                             trip1 {
-> > +                                     temperature = <115000>;
-> > +                                     hysteresis = <0>;
-> > +                                     type = "hot";
-> > +                             };
-> > +
-> > +                             trip2 {
-> > +                                     temperature = <145000>;
-> > +                                     hysteresis = <0>;
-> > +                                     type = "critical";
-> > +                             };
-> > +                     };
-> > +             };
-> > +     };
-> > +};
-> > +
-> > +&spmi_bus {
-> > +     pmic@4 {
-> > +             compatible = "qcom,pmm8155au", "qcom,spmi-pmic";
-> > +             reg = <0x4 SPMI_USID>;
-> > +             #address-cells = <1>;
-> > +             #size-cells = <0>;
-> > +
-> > +             power-on@800 {
-> > +                     compatible = "qcom,pm8916-pon";
-> > +                     reg = <0x0800>;
->
-> No common debounce, interrupts, bias- property or pwrkey key code?
->
-> Besides, (as a question to Bjorn and others) do we pad reg to 4 digits in PMIC DTs now?
+Patch applied for fixes.
 
-Maybe Bjorn can pitch in with his thoughts here.
-
-> > +
-> > +                     status = "disabled";
-> > +             };
-> > +
-> > +             pmm8155au_2_temp: temp-alarm@2400 {
-> > +                     compatible = "qcom,spmi-temp-alarm";
-> > +                     reg = <0x2400>;
-> > +                     interrupts = <0x4 0x24 0x0 IRQ_TYPE_EDGE_BOTH>;
-> > +                     io-channels = <&pmm8155au_2_adc ADC5_DIE_TEMP>;
-> > +                     io-channel-names = "thermal";
-> > +                     #thermal-sensor-cells = <0>;
-> > +             };
-> > +
-> > +             pmm8155au_2_adc: adc@3100 {
-> > +                     compatible = "qcom,spmi-adc5";
-> > +                     reg = <0x3100>;
-> > +                     #address-cells = <1>;
-> > +                     #size-cells = <0>;
-> > +                     #io-channel-cells = <1>;
-> > +                     interrupts = <0x4 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-> > +
-> > +                     ref-gnd@0 {
-> > +                             reg = <ADC5_REF_GND>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                             label = "ref_gnd";
-> > +                     };
-> > +
-> > +                     vref-1p25@1 {
-> > +                             reg = <ADC5_1P25VREF>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                             label = "vref_1p25";
-> > +                     };
-> > +
-> > +                     die-temp@6 {
-> > +                             reg = <ADC5_DIE_TEMP>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                             label = "die_temp";
-> > +                     };
-> > +             };
-> > +
-> > +             pmm8155au_2_gpios: gpio@c000 {
-> > +                     compatible = "qcom,pmm8155au-gpio";
-> > +                     reg = <0xc000>;
-> > +                     gpio-controller;
-> > +                     #gpio-cells = <2>;
-> > +                     interrupt-controller;
-> > +                     #interrupt-cells = <2>;
-> > +             };
->
-> Don't we do gpio-ranges anymore?
-
-Maybe Bjorn can pitch in with his thoughts here as he may have more
-historical context, but I personally think that since the mapping
-between the  pin controller local number space and the pins in the
-GPIO controller local number space is 1:1 (same) here, adding
-gpio-ranges property here is optional (as it provides little
-additional information).
-
-But I might have missed something here, so I will wait for more
-thoughts from Bjorn.
-
-Thanks,
-Bhupesh
-
->
->
-> > +     };
-> > +
-> > +     pmic@5 {
-> > +             compatible = "qcom,pmm8155au", "qcom,spmi-pmic";
-> > +             reg = <0x5 SPMI_USID>;
-> > +             #address-cells = <1>;
-> > +             #size-cells = <0>;
-> > +     };
-> > +};
->
->
-> Konrad
->
+Yours,
+Linus Walleij
