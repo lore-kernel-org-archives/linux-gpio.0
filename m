@@ -2,157 +2,226 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E6DC2B9F4
-	for <linux-gpio@archiver.kernel.org>; Sat, 19 Jun 2021 04:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D59C2B9F4
+	for <linux-gpio@archiver.kernel.org>; Sat, 19 Jun 2021 07:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97D3D61358
-	for <linux-gpio@archiver.kernel.org>; Sat, 19 Jun 2021 04:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D02BF6117A
+	for <linux-gpio@archiver.kernel.org>; Sat, 19 Jun 2021 07:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230464AbhFSEOE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 19 Jun 2021 00:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
+        id S230268AbhFSHiH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 19 Jun 2021 03:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230308AbhFSEOE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Jun 2021 00:14:04 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F157C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Jun 2021 21:11:51 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id v13so5682125ple.9
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Jun 2021 21:11:51 -0700 (PDT)
+        with ESMTP id S229466AbhFSHiG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Jun 2021 03:38:06 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C19AC061574;
+        Sat, 19 Jun 2021 00:35:55 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id f2so13276628wri.11;
+        Sat, 19 Jun 2021 00:35:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to;
-        bh=Jl0W1E+T79cuWaOOVMDL4OpuRn06uzU0wTXyYvHMGy4=;
-        b=p9JaVTSTZKxmidIyn3LMv8wps6CMEjAj6GTAt9Dp+mJOTQkcLriiPk9vNPvr6OPfSg
-         b4e0k1GVVcNnQn13MhsTO4az6Xas79YbJKjwypwfxk0e2HvYK4wxPKRWHSrhgXgo0J5N
-         dgtFfb9aVdHuUGPWukwZtKG7uGKz0LP5HzAhBa2GSLc8bEpqPOYK6Bfuj6plteGYZr9o
-         5rlpuLMtCZf5NGjh0m5BmdcM4hbRdAGS0m7KEdriVxgSDxB4OjwHzif8Eg0VZgklpysl
-         6cx3sfDuG9fUhBepcLkv3fwlFAQzIG3IzILeEByp3JIefaRQ2Rdp3a7vXOr4zDCyNG1i
-         mIYw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j1UV+eCGR6xhxc4h+iLn1/NGTjBqvr9FXOOIW7R6KwA=;
+        b=j1Zm2V0Eo34JM6rNERbEPhTuS6cwuFWq7eEQRgpUgOkQmmDqNAhOiqxXGGooSnucEF
+         yY9me4h6y/2EAdNvhG3DS+L/DESdr3otyoHnozZIKn28XF4fuPmW27TzxOK00O4grNyb
+         AoGJ1OopdRupSixXE0lKmlSl9YGOGsdrgpJVOErSP3bBJ1iWDzgTJT8x92x3a7p6f+0d
+         zfhh3vGLyEruYpyRFiPziletDfEyuUsMZ0WxbnKEkoAW6RprQVjxz3moSXNAGpMWRvFJ
+         PRHMoLWxUwRE0e7bvYy8Ef2dX9LVH4QC1Hyr/nt6SHHmPHFIgWexej9WKQAG8rtJ+XY2
+         OJKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to;
-        bh=Jl0W1E+T79cuWaOOVMDL4OpuRn06uzU0wTXyYvHMGy4=;
-        b=pY8GLbzK2DeGNsof7yjRFLI9ZbdT+WCGe+2QxcV3LzvayJ1gA5dprXqE3XLSvXi4VG
-         xNApaGbEIewJH7BhAcR2az5wE7zE6rRbOVp4PWFrctgUnj04d1iEi2wA9kAJN+0XJuMp
-         0T19hIXGd8voPwN4f4pb3yDOGEBtu1K/8kY5NWO/vyTq2J8z+YYBJ3wL3I7/8XtbFE8I
-         yqacicoZ26RC65Sn4Ilm/nFniJ7F2x2R0Dl/0f+m2gpbAVetKkQ+SeBRZEJWvx4IIcv8
-         N5cr2NelSGdWVa7BSm+yJqYbD62z/L5gyZaRE11qFq62LrC/Xn5gdSGQZqQ3GfQRSB9F
-         svfw==
-X-Gm-Message-State: AOAM533Pe6084nEWUBPjREbDAGyKHmHV8ctqXsEe2vifL52IXdbQ+60f
-        0vqWTLLi/YRU/aoYILCRuX8=
-X-Google-Smtp-Source: ABdhPJyWKBMmq0N40tsGTwTARBAc10RznrWDo7Bi9ynlgPfu8dZjv6sAOCBKoPK+5asQi6/Ej2pVtQ==
-X-Received: by 2002:a17:90a:7e0c:: with SMTP id i12mr25689964pjl.172.1624075910792;
-        Fri, 18 Jun 2021 21:11:50 -0700 (PDT)
-Received: from sol (106-69-169-160.dyn.iinet.net.au. [106.69.169.160])
-        by smtp.gmail.com with ESMTPSA id w123sm2166780pff.186.2021.06.18.21.11.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 21:11:50 -0700 (PDT)
-Date:   Sat, 19 Jun 2021 12:11:44 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Gabriel Knezek <gabeknez@linux.microsoft.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Gabriel Knezek <gabeknez@microsoft.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] gpiolib: cdev: zero padding during conversion to
- gpioline_info_changed
-Message-ID: <20210619041144.GA15015@sol>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j1UV+eCGR6xhxc4h+iLn1/NGTjBqvr9FXOOIW7R6KwA=;
+        b=R7eOsft5879SZ3lx5Ay/QwFbJCvIXI4sGteRK/mVNdtaOswM87kRsIZciJleuDWRTa
+         yu5cVtOm30Gt1I9uNZajEacA6TQDm6GzuV6z4t1vbyolNAAvtyhz2VfiaAEBBfHAK+hG
+         RivpOQM//Wj2kSCK3Q9eOKtVI2/A2MJd+KjGVWko5dtXYqZrtvf+peLc2c6al7cTGS2C
+         kqKNw51ebEJ9LL4AeF2mMypsbYuPOQI/IczivWT4amAOc/GcHn5osw/hkzliaicaWuaS
+         h4meRe5YJtWq+cjEzk4SQ0GE+yRSe6rixBgRsCDkfItfmXPMn2cipYFqWWa1P5PKdLYc
+         xXBw==
+X-Gm-Message-State: AOAM531DUM92w/kGtIlU+u1IFBu8vdsWh6FfUVBpABS70qZzBd/QHSXT
+        FB8E6yJxC00L59kMwt74nA2TrC8qQ5w=
+X-Google-Smtp-Source: ABdhPJwn/JAdv/hQSrl/altaR0JHVsAVa7QmQkkHTnMJn+/1itbz5FlVWU5YaIHDJlSkMD2i8Xpjtg==
+X-Received: by 2002:a5d:4383:: with SMTP id i3mr3388056wrq.255.1624088153742;
+        Sat, 19 Jun 2021 00:35:53 -0700 (PDT)
+Received: from localhost.localdomain (98.red-81-38-58.dynamicip.rima-tde.net. [81.38.58.98])
+        by smtp.gmail.com with ESMTPSA id k2sm10628278wrw.93.2021.06.19.00.35.52
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jun 2021 00:35:53 -0700 (PDT)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     bgolaszewski@baylibre.com, matthias.bgg@gmail.com,
+        linus.walleij@linaro.org, git@johnthomson.fastmail.com.au,
+        linux-kernel@vger.kernel.org, neil@brown.name,
+        opensource@vdorst.com, hofrat@osadl.org
+Subject: [PATCH] gpio: mt7621: support gpio-line-names property
+Date:   Sat, 19 Jun 2021 09:35:51 +0200
+Message-Id: <20210619073551.13703-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1624056311-6836-1-git-send-email-gabeknez@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 03:45:11PM -0700, Gabriel Knezek wrote:
+The default handling of the gpio-line-names property by the
+gpiolib-of implementation does not work with the multiple
+gpiochip banks per device structure used by the gpio-mt7621
+driver.
 
-Probably should've been [PATCH v2], despite the subject rename.
+This commit adds driver level support for the device tree
+property so that GPIO lines can be assigned friendly names.
 
-And CC the maintainers (LinusW and Bart here) and past reviewers (Andy
-and me).
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+Hi,
 
-> From: Gabriel Knezek <gabeknez@microsoft.com>
-> 
+This driver has three gpiochips with 32 gpios each. Core implmentation
+got gpio's repeated along each gpio chip if chip.names is not assigned.
+To avoid this behaviour driver will set this names as empty or
+with desired friendly line names. Consider the following sample with
+minimal entries for the first chip with this patch changes applied:
 
-A second From: header?  With a different address?
-Perhaps you could pick one?
-Neither git nor checkpatch.pl seem to mind, but it is odd.
+&gpio {
+    gpio-line-names = "", "", "", "",
+                      "", "", "SFP LOS", "extcon port5 PoE compat",
+                      "SFP module def0", "LED blue SFP", "SFP tx disable", "",
+                      "switch USB power", "mode", "", "buzzer",
+                      "LED blue pwr", "switch port5 PoE out", "reset";
+};
 
-> When userspace requests a GPIO v1 line info changed event, the kernel
-> populates and returns the gpioline_info_changed structure. That structure
-> contains 5 words of padding at the end of the structure that are not
-> initialized before being returned to usermode:
-> 
+gpioinfo
+gpiochip0 - 32 lines:
+  line   0:      unnamed       unused  output  active-high
+  line   1:      unnamed       unused   input  active-high
+  line   2:      unnamed       unused   input  active-high
+  line   3:      unnamed       unused   input  active-high
+  line   4:      unnamed       unused   input  active-high
+  line   5:      unnamed       unused   input  active-high
+  line   6:    "SFP LOS"        "los"   input  active-high [used]
+  line   7: "extcon port5 PoE compat" unused input active-high
+  line   8: "SFP module def0" "mod-def0" input active-low [used]
+  line   9: "LED blue SFP" "blue:sfp" output active-high [used]
+  line  10: "SFP tx disable" "tx-disable" output active-high [used]
+  line  11:      unnamed       unused  output  active-high
+  line  12: "switch USB power" "usb_power" output active-high [used]
+  line  13:       "mode"       "mode"   input  active-high [used]
+  line  14:      unnamed       unused   input  active-high
+  line  15:     "buzzer"     "buzzer"  output  active-high [used]
+  line  16: "LED blue pwr" "blue:pwr" output active-high [used]
+  line  17: "switch port5 PoE out" "sysfs" input active-high [used]
+  line  18:      "reset"      "reset"   input  active-high [used]
+  line  19:      unnamed       unused   input  active-high
+  line  20:      unnamed       unused   input  active-high
+  line  21:      unnamed       unused   input  active-high
+  line  22:      unnamed       unused   input  active-high
+  line  23:      unnamed       unused   input  active-high
+  line  24:      unnamed       unused   input  active-high
+  line  25:      unnamed       unused   input  active-high
+  line  26:      unnamed       unused   input  active-high
+  line  27:      unnamed       unused   input  active-high
+  line  28:      unnamed       unused   input  active-high
+  line  29:      unnamed       unused   input  active-high
+  line  30:      unnamed       unused   input  active-high
+  line  31:      unnamed       unused   input  active-high 
+gpiochip1 - 32 lines:
+  line   0:      unnamed       unused   input  active-high
+  line   1:      unnamed       unused   input  active-high 
+  ...
+  line  31:      unnamed       unused   input  active-high 
+gpiochip2 - 32 lines:
+  line   0:      unnamed       unused   input  active-high
+  line   1:      unnamed       unused   input  active-high 
+  ...
+  line  31:      unnamed       unused   input  active-high 
 
-Avoid code snippets in checkin comments - try to stick to plain English.
-So replace "the kernel" with "lineinfo_watch_read()" and drop the
-snippets.
+To avoid gpiochip1 and gpiochip2 entries repeated with this
+minimal lines definition change, we assign empty reserved
+'names' in driver code.
 
-And "usermode" -> "userspace".
+Note that we also don't want to to prevent the driver from
+succeeding at probe due to an error in the gpio-line-names
+property and the ENODATA error is considered a valid result
+to terminate any further labeling so there is no need for
+an error message in that case. Other error results are
+unexpected so an error message indicating the consequence
+of the error is appropriate here.
 
-> struct gpioline_info_changed {
->                 struct gpioline_info info;
->                 __u64 timestamp;
->                 __u32 event_type;
->                 __u32 padding[5]; /* for future use */
-> };
-> 
-> Which is used here in the lineinfo_watch_read routine:
-> } else {
->                 struct gpioline_info_changed event_v1;
->                 gpio_v2_line_info_changed_to_v1(&event, &event_v1);
->                 if (copy_to_user(buf + bytes_read, &event_v1,
->                                                 event_size))
->                                 return -EFAULT;
-> 
-> Fix this by zeroing the structure in gpio_v2_line_info_change_to_v1
-> before populating its contents.
-> 
+Thanks in advance for your time.
 
-Make that "gpio_v2_line_info_change_to_v1()" as you are referring to a
-function.
+Best regards,
+    Sergio Paracuellos
 
-And maybe "Fix this by zeroing" to just "Zero"?
+ drivers/gpio/gpio-mt7621.c | 41 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-> Signed-off-by: Gabriel Knezek <gabeknez@microsoft.com>
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index 82fb20dca53a..b5f8fd8e928a 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -206,6 +206,45 @@ mediatek_gpio_xlate(struct gpio_chip *chip,
+ 	return gpio % MTK_BANK_WIDTH;
+ }
+ 
++static void
++mediatek_gpio_set_names(struct device *dev, struct mtk_gc *rg)
++{
++	struct device_node *np = dev->of_node;
++	const char **names;
++	int nstrings, base;
++	unsigned int i;
++
++	names = devm_kcalloc(dev, MTK_BANK_WIDTH, sizeof(*names),
++			     GFP_KERNEL);
++	if (!names)
++		return;
++
++	base = rg->bank * MTK_BANK_WIDTH;
++	nstrings = of_property_count_strings(np, "gpio-line-names");
++	if (nstrings <= base)
++		goto assign_names;
++
++	for (i = 0; i < MTK_BANK_WIDTH; i++) {
++		const char *name;
++		int ret;
++
++		ret = of_property_read_string_index(np, "gpio-line-names",
++						    base + i, &name);
++		if (ret) {
++			if (ret != -ENODATA)
++				dev_err(dev, "unable to name line %d: %d\n",
++					base + i, ret);
++			break;
++		}
++
++		if (*name)
++			names[i] = name;
++	}
++
++assign_names:
++	rg->chip.names = names;
++}
++
+ static int
+ mediatek_gpio_bank_probe(struct device *dev,
+ 			 struct device_node *node, int bank)
+@@ -241,6 +280,8 @@ mediatek_gpio_bank_probe(struct device *dev,
+ 	if (!rg->chip.label)
+ 		return -ENOMEM;
+ 
++	mediatek_gpio_set_names(dev, rg);
++
+ 	rg->irq_chip.name = dev_name(dev);
+ 	rg->irq_chip.parent_device = dev;
+ 	rg->irq_chip.irq_unmask = mediatek_gpio_irq_unmask;
+-- 
+2.25.1
 
-You should retain the Fixes tag from v1 - it is important to identify
-where this patch will need to be backported to.
-And include at least the first twelve characters of the SHA-1 [1].
-
-> ---
->  drivers/gpio/gpiolib-cdev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index ee5903aac497..af68532835fe 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -1865,6 +1865,7 @@ static void gpio_v2_line_info_changed_to_v1(
->  		struct gpio_v2_line_info_changed *lic_v2,
->  		struct gpioline_info_changed *lic_v1)
->  {
-> +	memset(lic_v1, 0, sizeof(*lic_v1));
->  	gpio_v2_line_info_to_v1(&lic_v2->info, &lic_v1->info);
->  	lic_v1->timestamp = lic_v2->timestamp_ns;
->  	lic_v1->event_type = lic_v2->event_type;
-> -- 
-> 2.25.1
-> 
-
-Still good with this bit ;)
-
-Cheers,
-Kent.
-[1] https://www.kernel.org/doc/html/v5.12/process/submitting-patches.html
