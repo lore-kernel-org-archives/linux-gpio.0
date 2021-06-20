@@ -2,117 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBC7C48BDF
-	for <linux-gpio@archiver.kernel.org>; Sun, 20 Jun 2021 07:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE01C49EA3
+	for <linux-gpio@archiver.kernel.org>; Sun, 20 Jun 2021 21:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE90B61001
-	for <linux-gpio@archiver.kernel.org>; Sun, 20 Jun 2021 07:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C33A2611CC
+	for <linux-gpio@archiver.kernel.org>; Sun, 20 Jun 2021 21:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbhFTHcW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 20 Jun 2021 03:32:22 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35742 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbhFTHcW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Jun 2021 03:32:22 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15K7TGOW128776;
-        Sun, 20 Jun 2021 02:29:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1624174156;
-        bh=h9LqqfdxaQYb6zdSSB63yS3PBHdKaqQkJWOXyEZFk8k=;
-        h=Subject:CC:References:To:From:Date:In-Reply-To;
-        b=V5pfwoVMejHdKvAsTtQIPaBQQ+lrePpYVXjr8H5FtpuJNBqLLQuC1pmJXkqsR/KZM
-         rz9670cw/5aDYb7CQGgi/nDjB2XLdyHb4434V5DeujqX716vmC12ZnT5NMbx8Jj2Iv
-         QENE+Y0vJ1/34q7Ag5ssLndwIWpPfyKgIiOwmlEo=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15K7TGSF079823
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 20 Jun 2021 02:29:16 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Sun, 20
- Jun 2021 02:29:15 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Sun, 20 Jun 2021 02:29:15 -0500
-Received: from [10.250.235.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15K7T8wO082125;
-        Sun, 20 Jun 2021 02:29:09 -0500
-Subject: Re: [PATCH v3 0/2] dt-bindings: gpio: davinci: Convert to json-schema
-CC:     Lokesh Vutla <lokeshvutla@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, Keerthy <j-keerthy@ti.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20210524151955.8008-1-a-govindraju@ti.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-From:   Aswath Govindraju <a-govindraju@ti.com>
-Message-ID: <f011d613-0fe6-e921-91e9-79367f185284@ti.com>
-Date:   Sun, 20 Jun 2021 12:59:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230290AbhFTVK5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 20 Jun 2021 17:10:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230211AbhFTVK5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 20 Jun 2021 17:10:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8CF3C610EA;
+        Sun, 20 Jun 2021 21:08:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624223324;
+        bh=RV1dRe0q665rCNfncnH89ttrqFNtElN2unqX84acxys=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vCmKbaXvanXPec+PW1+BZooyGCUSyt4KNHWz5AQ/cxQrd8zooIkSvV3NVjDcVy1M0
+         lev8GonTnS6dA5tZcayI4PxkXuJhnhljHIVpA/itbL6f3Hy3rM1srP/s0yFR9mn71h
+         sOSjfQcEtX2rtb29fvtC0W7he5nriw5NU4S2j9lLX8OvqFWdfH4XpfMRbiVpmk7wb0
+         HS4RbaWpQMLswvjL3fLh9kmIKF0YfQcdAbDM97gN/oDe1GVh7/nT2WozhPr1wJb486
+         zORZrhVcBf5n1i4hJzCl6xrqGOTily1gQrpBUnIfn+Oamgvj6keBnnso+aDJA9lK6X
+         D5Sd9fuYoMXiw==
+Date:   Sun, 20 Jun 2021 23:08:41 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, x86@kernel.org,
+        linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: i2c: ce4100: Replace "ti,pcf8575" by
+ "nxp,pcf8575"
+Message-ID: <YM+uWXoCvi7Y/s24@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, x86@kernel.org,
+        linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <cover.1622560799.git.geert+renesas@glider.be>
+ <9b560b7f5ded90430c989a211f2aee009aefc595.1622560799.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20210524151955.8008-1-a-govindraju@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yGK4jxv6o8Tg62fU"
+Content-Disposition: inline
+In-Reply-To: <9b560b7f5ded90430c989a211f2aee009aefc595.1622560799.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Bart, Linus,
 
-On 24/05/21 8:49 pm, Aswath Govindraju wrote:
-> Convert the davinci GPIO device tree binding documentation to json-schema.
-> The GPIO hog node names are defined to end with a 'hog' suffix.
-> 
-> All existing GPIO hogs are fixed to follow above naming convention
-> before changing the binding to avoid dtbs_check warnings.
-> 
-> changes since v2:
-> - Used gpio-hog.yaml for gpio-hog property
-> - Added constraints on gpio-hog node name
-> - Corrected the gpio hog dt node names to align
->   with the dt-schema
-> 
+--yGK4jxv6o8Tg62fU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-May I know if the following series is okay to be merged ?
+On Tue, Jun 01, 2021 at 05:25:44PM +0200, Geert Uytterhoeven wrote:
+> The TI part is equivalent to the NXP part, and its compatible value is
+> not documented in the DT bindings.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
-Aswath
+Applied to for-next, thanks!
 
-> changes since v1:
-> - combined the individual compatible properties into one enum
-> - added maxItems and minItems properties for gpio-line-names and
->   interrupts
-> - updated the description of interrupts property
-> - removed the description for properties that are general
-> - updated the pattern property for gpio hog to indicate any sort
->   node name based on its usage
-> - corrected the example wakeup gpio node name
-> 
-> Aswath Govindraju (2):
->   ARM: dts: da850-lego-ev3: align GPIO hog names with dt-schema
->   dt-bindings: gpio: gpio-davinci: Convert to json-schema
-> 
->  .../devicetree/bindings/gpio/gpio-davinci.txt | 167 ----------------
->  .../bindings/gpio/gpio-davinci.yaml           | 186 ++++++++++++++++++
->  MAINTAINERS                                   |   2 +-
->  arch/arm/boot/dts/da850-lego-ev3.dts          |  10 +-
->  4 files changed, 192 insertions(+), 173 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.yaml
-> 
 
+--yGK4jxv6o8Tg62fU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmDPrlkACgkQFA3kzBSg
+KbZFSRAAlvHQWYn7WuznFBAm3WzUAuqHEpUbbz32vQiJxtrX+3RgQ2ylWfaEi30P
+LwMnfIUuQxQYUhNF5f+Q/zYIdcHyscL8YdYlbMl2grtmKa68Lm1SeUZj0kJbBZ6c
+0hv7k4yT0/2wRFc3pNOi2E5fnU9oKKKdXEB+7J5zrfotCIcyOfMSmekVfcg7e/Lc
+dPm3MxH4Aixm2eNxuPRiXAXRvn4WXaf42EEdwERYx/OTIEe+ndm+OmhoQFB4PsqP
+7aglnSl+5mCrlGw3mU6/qt9gE+zXd36c1Y1DOMdu6ArMOc0zRugPon57oBSWrAA1
+IwvTDnrCAtY2Z8MnDFyYT+BCrxeWHs6y66nFT1M/w9m2t6YBB0r2ZsbstRkYHzK6
+4YE3UcZc6bvulO2ds+LZPSdLD6U0CqWjMi/Wv/1tsIz1eHuwl54J/SSneY4R+fU1
+k7pzOZF6sVk1MwvZ7iGKIxXakQ0q5YLgTFHrX1XTSAmO9tKFWwaz5tP1qrP7psnY
+p6BBWNdxYDqYnyGyzV/ujdoLT/OOHWizJceV+afJNL24fj5NDJU0ERpEH+HnwA0U
+vdubHHZN7Feqm059L3EFEA/B5f9yNSpfc359yCR4jE7HbIRiFz5fgVwIF78Q8RUf
+Dbf03mWpY2Z4GKdcxPxS7D3Pmq9qtxoLF1tK+ENHSbY1mZ9QvS8=
+=fIsi
+-----END PGP SIGNATURE-----
+
+--yGK4jxv6o8Tg62fU--
