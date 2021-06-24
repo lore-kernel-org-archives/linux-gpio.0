@@ -2,199 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA7BC49EA6
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Jun 2021 21:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA67DC49EA7
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Jun 2021 23:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 204E9613C7
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Jun 2021 21:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4B41613B7
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Jun 2021 23:52:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232300AbhFXVyA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Jun 2021 17:54:00 -0400
-Received: from perseus.uberspace.de ([95.143.172.134]:41290 "EHLO
-        perseus.uberspace.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232664AbhFXVx7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Jun 2021 17:53:59 -0400
-Received: (qmail 6749 invoked from network); 24 Jun 2021 21:44:56 -0000
-Received: from localhost (HELO localhost) (127.0.0.1)
-  by perseus.uberspace.de with SMTP; 24 Jun 2021 21:44:56 -0000
-From:   David Bauer <mail@david-bauer.net>
-To:     linus.walleij@linaro.org, robh+dt@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 1/2] dt-bindings: pinctrl: Add bindings for Awinic AW9523/AW9523B
-Date:   Thu, 24 Jun 2021 23:44:57 +0200
-Message-Id: <20210624214458.68716-1-mail@david-bauer.net>
-X-Mailer: git-send-email 2.32.0
+        id S229585AbhFXXzM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Jun 2021 19:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229521AbhFXXzL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Jun 2021 19:55:11 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D3CC061574
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Jun 2021 16:52:51 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id k10so13181253lfv.13
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Jun 2021 16:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k3uL9uUsNColE6ZbE0jQCntXxYrV1I0UHZeKGGm8+Jo=;
+        b=N3ZUZieEySpiWkuxq1uCc5G3O96ZDMOq2SVmvQAXPsIyqPaZltKhh5UCcx8J19fz+e
+         QuF3X2GPsztEf6Bb9YuToC4ybUGSewUJU00coVUwVuWEo+J0HTnsQNroKSQmksyfSoJH
+         luk98GIj56tJjF21dlAkEhWR0GZJP1Wy58gE5yCHUdO4LWexYiKchVAPGzaVg2c/Ay1R
+         HSoKUJN6j+uPeVGMH0cDYRhOm8XYXla+RnnOoIP5XyLbGEEiDYPsZpYDtQMWvHttq0GC
+         SXIC2sblUzh5WNUUUXlQDDKLzdZIQ82AoquWn6YfFiQjdxqMp+IJ8DY/yr95nk3TKuSp
+         Pj1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k3uL9uUsNColE6ZbE0jQCntXxYrV1I0UHZeKGGm8+Jo=;
+        b=bcbdwbGqpwqK7pMb9WnkqgklfhxZ1pQrOuHCTZFyJU5dOFhuNfoj+Xw/PgfUcap4rM
+         ndx9uAXCRt7q6+6jPUyoAYPJXayrj7aTj2UwBg9mjBIlE7/tYiSVMAUD5uBD4cCgiYnZ
+         PUV529HEXXb7HyiWMK4I46hHZFw50kT8m3wmaQT+Is1DDTUeADHvUVl945w1NS4CHDcs
+         Wv7zU5Uk+m86HyFtlSyhGWQuBi86z3FexJywqKEJAugSp919lOmuql1ujwHpXfcidKAj
+         B5SlOauA/zGPea1DaPElb0PDLhBlGOSSevYGpIEMxdiojlesRTwb8hLO8ssZXq1/gqEY
+         YYBQ==
+X-Gm-Message-State: AOAM530ugQwW4oWQ/mwlbDyC13XTBo79N2PFpd64K9LY5FlOC7JQE2sG
+        tfClp22xSr7kbkVQyob4ApVR9P0JWdr8+/CcK900oQ==
+X-Google-Smtp-Source: ABdhPJya0UU35aIqBdB6oQEoLdOlL/Q6P5BYrz6alkYk1ULvJsJMbZSY++MpFbGyHC2W5fN0FRMM7kSGyg+/4FhkHos=
+X-Received: by 2002:ac2:544f:: with SMTP id d15mr5719898lfn.465.1624578769560;
+ Thu, 24 Jun 2021 16:52:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210615145903.634565-1-linus.walleij@linaro.org> <CAMpxmJXqGgPiXqR1kq+nts-=HBkxSP_7Cqzn=N5-EmKWADh0CQ@mail.gmail.com>
+In-Reply-To: <CAMpxmJXqGgPiXqR1kq+nts-=HBkxSP_7Cqzn=N5-EmKWADh0CQ@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 25 Jun 2021 01:52:38 +0200
+Message-ID: <CACRpkdZwcd8jznvzEvzO0rmF7ug3o_TxC=xUeCPYgfhg00rEQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3 v5] gpio: pcf857x: Name instance after dev_name()
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+On Tue, Jun 22, 2021 at 2:58 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
 
-Add bindings for the Awinic AW9523/AW9523B I2C GPIO Expander driver.
+> This makes sense but the i2c names are often not very descriptive. How
+> about adding a DEVID_AUTO/DEVID_NONE like mechanism to GPIO labels?
+> Nvmem has a thing like that precisely because labels can repeat.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../pinctrl/awinic,aw9523-pinctrl.yaml        | 139 ++++++++++++++++++
- 1 file changed, 139 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
+Yeah :/ it feels like the subsystem should name the device properly
+though. Like we're solving someone elses problem.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
-new file mode 100644
-index 000000000000..640d4d7e4cab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
-@@ -0,0 +1,139 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/awinic,aw9523-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Awinic AW9523/AW9523B I2C GPIO Expander
-+
-+maintainers:
-+  - AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-+
-+description: |
-+  The Awinic AW9523/AW9523B I2C GPIO Expander featuring 16 multi-function
-+  I/O, 256 steps PWM mode and interrupt support.
-+
-+properties:
-+  compatible:
-+    const: awinic,aw9523-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#gpio-cells':
-+    description: |
-+      Specifying the pin number and flags, as defined in
-+      include/dt-bindings/gpio/gpio.h
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  interrupts:
-+    maxItems: 1
-+    description: Specifies the INTN pin IRQ.
-+
-+  '#interrupt-cells':
-+    description:
-+      Specifies the PIN numbers and Flags, as defined in defined in
-+      include/dt-bindings/interrupt-controller/irq.h
-+    const: 2
-+
-+  reset-gpios:
-+    maxItems: 1
-+
-+#PIN CONFIGURATION NODES
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+    $ref: "/schemas/pinctrl/pincfg-node.yaml"
-+
-+    properties:
-+      pins:
-+        description:
-+          List of gpio pins affected by the properties specified in
-+          this subnode.
-+        items:
-+          pattern: "^gpio([0-9]|1[0-5])$"
-+        minItems: 1
-+        maxItems: 16
-+
-+      function:
-+        description:
-+          Specify the alternative function to be configured for the
-+          specified pins.
-+
-+        enum: [ gpio, pwm ]
-+
-+      bias-disable: true
-+      bias-pull-down: true
-+      bias-pull-up: true
-+      drive-open-drain: true
-+      drive-push-pull: true
-+      input-enable: true
-+      input-disable: true
-+      output-high: true
-+      output-low: true
-+
-+    required:
-+      - pins
-+      - function
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  # Example configuration to drive pins for a keyboard matrix
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        aw9523: gpio-expander@58 {
-+                compatible = "awinic,aw9523-pinctrl";
-+                reg = <0x58>;
-+                interrupt-parent = <&tlmm>;
-+                interrupts = <50 IRQ_TYPE_EDGE_FALLING>;
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+                gpio-ranges = <&tlmm 0 0 16>;
-+                interrupt-controller;
-+                #interrupt-cells = <2>;
-+                reset-gpios = <&tlmm 51 GPIO_ACTIVE_HIGH>;
-+
-+                keyboard-matrix-col-pins {
-+                        pins = "gpio8", "gpio9", "gpio10", "gpio11",
-+                               "gpio12", "gpio13", "gpio14", "gpio15";
-+                        function = "gpio";
-+                        input-disable;
-+                        output-low;
-+                };
-+
-+                keyboard-matrix-row-pins {
-+                        pins = "gpio0", "gpio1", "gpio2", "gpio3",
-+                               "gpio4", "gpio5", "gpio6", "gpio7";
-+                        function = "gpio";
-+                        bias-pull-up;
-+                        drive-open-drain;
-+                        input-enable;
-+                };
-+        };
-+    };
--- 
-2.32.0
+In this case the other patches provides .names in the I2C
+board info so that the dev_name() ends up something
+like "i2c-u2" and "i2c-u15". The u2 and u15 are common
+names for components on a board so from an electronic point
+of view that naming makes for good topology.
 
+Yours,
+Linus Walleij
