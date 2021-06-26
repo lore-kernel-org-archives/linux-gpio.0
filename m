@@ -2,89 +2,66 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DCEC2B9F4
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Jun 2021 23:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE11C2B9F4
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Jun 2021 02:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2C196195D
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Jun 2021 23:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD8561963
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Jun 2021 02:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbhFYX4Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Jun 2021 19:56:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41748 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229882AbhFYX4Y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Jun 2021 19:56:24 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE2FC061574
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Jun 2021 16:54:01 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id a11so19047816lfg.11
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Jun 2021 16:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b02+MQS+K/2ylHUHsg/KpB4uE2GVIVGma+PmBOheS/A=;
-        b=AVEmQBfjU5ZUxZePdyPtiXWRVilsLPxAJLayjfsbdbyHz1DblFJ6Tp7ohyXY2u2Zp8
-         emfZJh3lE0JPvmZMYL28V2WTt7j2o7kf7epNP3DSCShbqipZkEqNclXkAH+U3u9wbhYb
-         bclJ+QFiNecqz/QGkVLl5d9hKW2vJrxIwI84AXKLlAcSwzIkYInvfKXpUxkb3eVtKmk5
-         eeTaSJOktEHW++XRcj/dFJn/t6EIqeLC5gFruDRXVTLUP6cz2PvtTzzcZQQce7nHAzqV
-         7XCG5kajX/woXMj1jvn74ztVk3tSQXF+lWIENbI5Y2Ue4jeULe6jdhzOmeIJEYRC7fCP
-         ZjAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b02+MQS+K/2ylHUHsg/KpB4uE2GVIVGma+PmBOheS/A=;
-        b=azOqlnrRLqr+m/IwvmdoKU9qJ8YsPc3yC4fnV8EQ1Tya3b2KhJx7r64JEqgVa2WZ9X
-         eo9Z99HV6GB+0jCjo2EnX1AThmCjjP0qfAs26Vn/AEwupyq6yQXF9NypvN928Xqn1ARQ
-         29M2E1YJomDUf8zkjtsmzzzIjTH/vIoTny82gGM10XVRz1c3hfT9d3+SbiOJCuWGb1M+
-         vm6drCJzwbhPoiiqtejYYWyRzf2hp6JcDX0AQBD+Q/Pl1EbNCG8lDSxgBRJBWqbvteU5
-         w6s1C3F321uP4aIWOQbkTtKJoFSDEwojLHN4tWIQm4NZbhmGdt6b1agq6kC+ex7e7X0a
-         iB3Q==
-X-Gm-Message-State: AOAM532OyW5yD86Jo1imXvCex1s3Diy9zRsQ5yCFjX/lS9myOFzPgzZ9
-        m44aIxcfoYUMyxeUJ/5TA7TQcQ3zttM6Yo9N9p610A==
-X-Google-Smtp-Source: ABdhPJyHtENVDOxhMvPBYXGHJTHQZYmleVXRR6DQgQo2NmaMqGvMXTEd23T6XvjSTCwCc1CSM77tuw4mj6tKVJ+GKtk=
-X-Received: by 2002:ac2:4d25:: with SMTP id h5mr7698391lfk.291.1624665239810;
- Fri, 25 Jun 2021 16:53:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210617144602.2557619-1-fabien.dessenne@foss.st.com>
-In-Reply-To: <20210617144602.2557619-1-fabien.dessenne@foss.st.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 26 Jun 2021 01:53:48 +0200
-Message-ID: <CACRpkdYOk8TgrQbEOMb-ZgZ8a6ZOYPgkfyWDr-Li6w0mfFO7KQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: stm32: check for IRQ MUX validity during alloc()
-To:     Fabien Dessenne <fabien.dessenne@foss.st.com>
-Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        id S229934AbhFZCMY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Jun 2021 22:12:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229906AbhFZCMY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 25 Jun 2021 22:12:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 6FC7F61941;
+        Sat, 26 Jun 2021 02:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624673402;
+        bh=LWj40Z4yKsLe4e4OkelHtGTuR65Xje+sfgl8wSxT9yc=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=AciPhdbvhU8x3Py1Et6Oscy0XjXYCzrvhgYBLxHdMETw7ebOtH4TLxFrrHY7v3Z9m
+         mfbZnik5Zm5RevBnIMmBxNUjLeQ7OZsFfOSjygDk5TT4tIhjyapktIQM6J89xCkn8H
+         wWGKsL3TtfxyoXKxeLaO+MlXYHk8Rp7e6bEm1If3txeCkGYV3QnTE1HLwZQhgAiuqW
+         WCnGCGLwq/IHnD07mkvI1ZdrsxJOQTY7NmPy/zsnkDpRjjA5KuUYTGlB9Pi4s3iPC9
+         6Yc+ZV6tU8bDWhjsNt6AVnXp2YkWaVtFAyZRqw9xPu4ICCHaG6Ohane1BPVxcVhxfh
+         8Slf9d2G18GDQ==
+Subject: Re: [GIT PULL] Last pin control fixes for v5.13
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdaVqdFPKTxOuhFt=auFYjxCivRmRz7mQ7ank6rbcVQsQw@mail.gmail.com>
+References: <CACRpkdaVqdFPKTxOuhFt=auFYjxCivRmRz7mQ7ank6rbcVQsQw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdaVqdFPKTxOuhFt=auFYjxCivRmRz7mQ7ank6rbcVQsQw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.13-3
+X-PR-Tracked-Commit-Id: 67e2996f72c71ebe4ac2fcbcf77e54479bb7aa11
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b7050b242430f3170e0b57f5f55136e44cb8dc66
+Message-Id: <162467340230.13453.14696485961492233602.pr-tracker-bot@kernel.org>
+Date:   Sat, 26 Jun 2021 02:10:02 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 4:46 PM Fabien Dessenne
-<fabien.dessenne@foss.st.com> wrote:
+The pull request you sent on Sat, 26 Jun 2021 01:34:01 +0200:
 
-> Considering the following irq_domain_ops call chain:
-> - .alloc() is called when a clients calls platform_get_irq() or
->   gpiod_to_irq()
-> - .activate() is called next, when the clients calls
->   request_threaded_irq()
-> Check for the IRQ MUX conflict during the first stage (alloc instead of
-> activate). This avoids to provide the client with an IRQ that can't be
-> used.
->
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.13-3
 
-Patch applied!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b7050b242430f3170e0b57f5f55136e44cb8dc66
 
-Yours,
-Linus Walleij
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
