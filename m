@@ -2,66 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE11C2B9F4
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Jun 2021 02:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98384C49EA5
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Jun 2021 05:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECD8561963
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Jun 2021 02:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74A0861939
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Jun 2021 05:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhFZCMY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Jun 2021 22:12:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37582 "EHLO mail.kernel.org"
+        id S229462AbhFZFSx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Jun 2021 01:18:53 -0400
+Received: from mga03.intel.com ([134.134.136.65]:8535 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229906AbhFZCMY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 25 Jun 2021 22:12:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 6FC7F61941;
-        Sat, 26 Jun 2021 02:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624673402;
-        bh=LWj40Z4yKsLe4e4OkelHtGTuR65Xje+sfgl8wSxT9yc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=AciPhdbvhU8x3Py1Et6Oscy0XjXYCzrvhgYBLxHdMETw7ebOtH4TLxFrrHY7v3Z9m
-         mfbZnik5Zm5RevBnIMmBxNUjLeQ7OZsFfOSjygDk5TT4tIhjyapktIQM6J89xCkn8H
-         wWGKsL3TtfxyoXKxeLaO+MlXYHk8Rp7e6bEm1If3txeCkGYV3QnTE1HLwZQhgAiuqW
-         WCnGCGLwq/IHnD07mkvI1ZdrsxJOQTY7NmPy/zsnkDpRjjA5KuUYTGlB9Pi4s3iPC9
-         6Yc+ZV6tU8bDWhjsNt6AVnXp2YkWaVtFAyZRqw9xPu4ICCHaG6Ohane1BPVxcVhxfh
-         8Slf9d2G18GDQ==
-Subject: Re: [GIT PULL] Last pin control fixes for v5.13
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdaVqdFPKTxOuhFt=auFYjxCivRmRz7mQ7ank6rbcVQsQw@mail.gmail.com>
-References: <CACRpkdaVqdFPKTxOuhFt=auFYjxCivRmRz7mQ7ank6rbcVQsQw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdaVqdFPKTxOuhFt=auFYjxCivRmRz7mQ7ank6rbcVQsQw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.13-3
-X-PR-Tracked-Commit-Id: 67e2996f72c71ebe4ac2fcbcf77e54479bb7aa11
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b7050b242430f3170e0b57f5f55136e44cb8dc66
-Message-Id: <162467340230.13453.14696485961492233602.pr-tracker-bot@kernel.org>
-Date:   Sat, 26 Jun 2021 02:10:02 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        id S229451AbhFZFSx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 26 Jun 2021 01:18:53 -0400
+IronPort-SDR: Pi9AVzDkVgOCw6w7GzYPbebA6/yuyY330WPHIcvjROrMKZEoayqj/qX4nS55lNxwmS7Z92/hCw
+ X8nyjaV15tAw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10026"; a="207807114"
+X-IronPort-AV: E=Sophos;i="5.83,300,1616482800"; 
+   d="scan'208";a="207807114"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2021 22:16:31 -0700
+IronPort-SDR: 8vFNxcevQjARPkDRB818aMU0Ba3psoQlzC6H1MgNHKOWhSIV1FPLEKsxAcXHyKOwZLwI+WSQ2z
+ K+DfDtWWJvzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,300,1616482800"; 
+   d="scan'208";a="624703316"
+Received: from lkp-server01.sh.intel.com (HELO 4aae0cb4f5b5) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 25 Jun 2021 22:16:29 -0700
+Received: from kbuild by 4aae0cb4f5b5 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1lx0g9-0007a4-5u; Sat, 26 Jun 2021 05:16:29 +0000
+Date:   Sat, 26 Jun 2021 13:15:50 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Fabien Parent <fparent@baylibre.com>
+Cc:     kbuild-all@lists.01.org, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: mediatek: fix platform_no_drv_owner.cocci warnings
+Message-ID: <20210626051550.GA37544@d0c207d51ce8>
+References: <202106261334.j23TFDJm-lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202106261334.j23TFDJm-lkp@intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Sat, 26 Jun 2021 01:34:01 +0200:
+From: kernel test robot <lkp@intel.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.13-3
+drivers/pinctrl/mediatek/pinctrl-mt8365.c:488:3-8: No need to set .owner here. The core will do it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b7050b242430f3170e0b57f5f55136e44cb8dc66
+ Remove .owner field if calls are used which set it automatically
 
-Thank you!
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Fixes: e94d8b6fb83a ("pinctrl: mediatek: add support for mt8365 SoC")
+CC: Fabien Parent <fparent@baylibre.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: kernel test robot <lkp@intel.com>
+---
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+head:   db0f032512443678d30aa26c247099220e3e5aee
+commit: e94d8b6fb83a81fa8c6595fadcada7b349e7694a [16/44] pinctrl: mediatek: add support for mt8365 SoC
+:::::: branch date: 5 hours ago
+:::::: commit date: 4 weeks ago
+
+ pinctrl-mt8365.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8365.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8365.c
+@@ -485,7 +485,6 @@ static struct platform_driver mtk_pinctr
+ 	.probe = mtk_pinctrl_probe,
+ 	.driver = {
+ 		.name = "mediatek-mt8365-pinctrl",
+-		.owner = THIS_MODULE,
+ 		.of_match_table = mt8365_pctrl_match,
+ 		.pm = &mtk_eint_pm_ops,
+ 	},
