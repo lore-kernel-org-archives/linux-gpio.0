@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DD1C07E96
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46775C11F67
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC47461CBB
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CE6E61FF2
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233892AbhGFLd1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Jul 2021 07:33:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35478 "EHLO mail.kernel.org"
+        id S231689AbhGFLvA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Jul 2021 07:51:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233590AbhGFL05 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:26:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8658C61D68;
-        Tue,  6 Jul 2021 11:19:54 +0000 (UTC)
+        id S237361AbhGFLgG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:36:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 852BC61D6A;
+        Tue,  6 Jul 2021 11:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570395;
-        bh=+DqxFN9ITQT8/uYsw9hTN5wttBWimqS6cfsrA3DFqjI=;
+        s=k20201202; t=1625570827;
+        bh=rz6HuaKLWeUglRhVWMbMuuqcGoxkJpO71ZRphdknjdA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rOVeT01Tqf9WnYGZAEMBDAuTpJG6yRlvE7qL/xp+BggdzZ1iozl3q+5E+sXggL9gw
-         HQ8AeJKBi00cHwzlVkatMoXr9NdtcqlfPanp8ftGJYfMWwjSWITAzkjVVH1z4Yx0z7
-         XM73Sf+Qz3/mizzQRZbIs1uXuosK/w6Yufb6DKK1XWzqd7rwxms78KRYocF3tL3pMS
-         guAp6oLe7I8wUD13J7fvB3i/iTB/Bt6EiMz29EJLhFjzyMtsTk5eRQspQXSRDoPnl1
-         1yf+F7nYAsk3CCoXALsWwtu3j3Z4WSTcXQm1ohMweFLxV49fMz48ezkzuCh1etIxEp
-         cFIwyZYFfj6/g==
+        b=Bif97AyVpmR8s26zNCYryq+DBBo3rIWU9kIpOtOsff6uPg6Ur+D/ANXWIDVMtQmgx
+         K/56s4TpjdXAjPAF5EgNVw3er21isf46rwjyobUj78p8sPEW9R7I+Vd8buqV4ZvZi1
+         0B5vKPqxazsi1QWdaAV2u09O2QOwteXAvvmCpzIHMoVdfbi3xQKR5+ost7TIstt/BY
+         LPO4cDJLHwx3HmVPtWJ0DUAQxGvHFV+A2v/8q4V7mwMEfk9G0iZiZVtKLJxszw5XYZ
+         yy9gdpixGupZwDASBKYlVJJLRmuyxXkUF3QXnVPHeKl9cnK0OG8S6FTWhHvcCFQBCG
+         NKGIMCXXNE6Eg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Radim Pavlik <radim.pavlik@tbs-biometrics.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 066/160] pinctrl: mcp23s08: fix race condition in irq handler
-Date:   Tue,  6 Jul 2021 07:16:52 -0400
-Message-Id: <20210706111827.2060499-66-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 22/55] pinctrl: mcp23s08: fix race condition in irq handler
+Date:   Tue,  6 Jul 2021 07:26:05 -0400
+Message-Id: <20210706112638.2065023-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706111827.2060499-1-sashal@kernel.org>
-References: <20210706111827.2060499-1-sashal@kernel.org>
+In-Reply-To: <20210706112638.2065023-1-sashal@kernel.org>
+References: <20210706112638.2065023-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -74,10 +74,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index ce2d8014b7e0..799d596a1a4b 100644
+index 5b5a4323ae63..f22999129269 100644
 --- a/drivers/pinctrl/pinctrl-mcp23s08.c
 +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -351,6 +351,11 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+@@ -458,6 +458,11 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
  	if (mcp_read(mcp, MCP_INTF, &intf))
  		goto unlock;
  
@@ -89,7 +89,7 @@ index ce2d8014b7e0..799d596a1a4b 100644
  	if (mcp_read(mcp, MCP_INTCAP, &intcap))
  		goto unlock;
  
-@@ -368,11 +373,6 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+@@ -475,11 +480,6 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
  	mcp->cached_gpio = gpio;
  	mutex_unlock(&mcp->lock);
  
