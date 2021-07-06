@@ -2,43 +2,43 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5B5C07E9E
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6D3C07E9B
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7E861C40
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 493F061C52
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jul 2021 11:16:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232192AbhGFLRl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Jul 2021 07:17:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52706 "EHLO mail.kernel.org"
+        id S232689AbhGFLS5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Jul 2021 07:18:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232152AbhGFLRk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:17:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B18561C31;
-        Tue,  6 Jul 2021 11:15:01 +0000 (UTC)
+        id S232483AbhGFLSg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:18:36 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1482761C4E;
+        Tue,  6 Jul 2021 11:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570102;
-        bh=BbBjFFzx3hsiDDbjqsIrvBKyNqlKdtuOHcXFoZnj/iU=;
+        s=k20201202; t=1625570157;
+        bh=+DqxFN9ITQT8/uYsw9hTN5wttBWimqS6cfsrA3DFqjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O624hqqLgA570iwgW2WjtsupLOOUMPWSxIgXSWHKt0ecgBb1LTMuSb9mvkHfHClAm
-         Vq2w3bT0EeJkzAwSDxcayWJVBqDYulWq0mfj1t2S/N60ZS3DZOk/6dgW8z/FxKoyJB
-         0L9oHXDGC/3bz+N9w/vaxWlHFkSeQlkRR84xdxJ3TL/cyb4NpFi4fxogiQ5LsIkrFj
-         hAl6RGSuopvSMoc6SpSi1XRguFRNA7eD6jIGL7IwXLHG1FfWfXO+aogs8/+RkGnSwn
-         6vNnRud67e3xNjctsZm33dZrpIqJKglKfdUgIlNg2KeQq/66OvG5KSMjPZlmFryHTK
-         i8wAtQxpVlnTQ==
+        b=ERBabhvHAm1lVbiX1VwYMDLzPIK9PAwBU0RE1kgEKTxtmtc6KLce7NIhL95lYMvv5
+         lznFegRdZrdvNEOAn1vIeRiVJeQSH49tt8u6XXcOerPGbLEvBqrWlYNyQTj5pbiOkb
+         g3T3oAGSuA7CEK+LLKdv8Mt4C3quxD/L7I/s6H6WCiUFq893HgNWB0Y3XPfr/xLuaF
+         4OnmkbJ4991BU8gbFZci3M1YeY3oAhOjv1xgbBQ/113I6BxxS6vV4y87u63cgelQZV
+         6leLEx1j1TSGZigCrBG+XhXDye7kulCNsjeDBHnAAkgLSJEqplc4eNIEWeJNOf1EEm
+         KoTO2DUREW6PQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bixuan Cui <cuibixuan@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+Cc:     Radim Pavlik <radim.pavlik@tbs-biometrics.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 036/189] pinctrl: equilibrium: Add missing MODULE_DEVICE_TABLE
-Date:   Tue,  6 Jul 2021 07:11:36 -0400
-Message-Id: <20210706111409.2058071-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 079/189] pinctrl: mcp23s08: fix race condition in irq handler
+Date:   Tue,  6 Jul 2021 07:12:19 -0400
+Message-Id: <20210706111409.2058071-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210706111409.2058071-1-sashal@kernel.org>
 References: <20210706111409.2058071-1-sashal@kernel.org>
@@ -50,35 +50,57 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bixuan Cui <cuibixuan@huawei.com>
+From: Radim Pavlik <radim.pavlik@tbs-biometrics.com>
 
-[ Upstream commit d7f444499d6faf9a6ae3b27ec094109528d2b9a7 ]
+[ Upstream commit 897120d41e7afd9da435cb00041a142aeeb53c07 ]
 
-This patch adds missing MODULE_DEVICE_TABLE definition which generates
-correct modalias for automatic loading of this driver when it is built
-as an external module.
+Checking value of MCP_INTF in mcp23s08_irq suggests that the handler may be
+called even when there is no interrupt pending.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
-Link: https://lore.kernel.org/r/20210508031502.53637-1-cuibixuan@huawei.com
+But the actual interrupt could happened between reading MCP_INTF and MCP_GPIO.
+In this situation we got nothing from MCP_INTF, but the event gets acknowledged
+on the expander by reading MCP_GPIO. This leads to losing events.
+
+Fix the problem by not reading any register until we see something in MCP_INTF.
+
+The error was reproduced and fix tested on MCP23017.
+
+Signed-off-by: Radim Pavlik <radim.pavlik@tbs-biometrics.com>
+Link: https://lore.kernel.org/r/AM7PR06MB6769E1183F68DEBB252F665ABA3E9@AM7PR06MB6769.eurprd06.prod.outlook.com
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-equilibrium.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
-index a194d8089b6f..38cc20fa9d5a 100644
---- a/drivers/pinctrl/pinctrl-equilibrium.c
-+++ b/drivers/pinctrl/pinctrl-equilibrium.c
-@@ -939,6 +939,7 @@ static const struct of_device_id eqbr_pinctrl_dt_match[] = {
- 	{ .compatible = "intel,lgm-io" },
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, eqbr_pinctrl_dt_match);
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index ce2d8014b7e0..799d596a1a4b 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -351,6 +351,11 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 	if (mcp_read(mcp, MCP_INTF, &intf))
+ 		goto unlock;
  
- static struct platform_driver eqbr_pinctrl_driver = {
- 	.probe	= eqbr_pinctrl_probe,
++	if (intf == 0) {
++		/* There is no interrupt pending */
++		return IRQ_HANDLED;
++	}
++
+ 	if (mcp_read(mcp, MCP_INTCAP, &intcap))
+ 		goto unlock;
+ 
+@@ -368,11 +373,6 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 	mcp->cached_gpio = gpio;
+ 	mutex_unlock(&mcp->lock);
+ 
+-	if (intf == 0) {
+-		/* There is no interrupt pending */
+-		return IRQ_HANDLED;
+-	}
+-
+ 	dev_dbg(mcp->chip.parent,
+ 		"intcap 0x%04X intf 0x%04X gpio_orig 0x%04X gpio 0x%04X\n",
+ 		intcap, intf, gpio_orig, gpio);
 -- 
 2.30.2
 
