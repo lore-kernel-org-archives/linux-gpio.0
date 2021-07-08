@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB45C07E9C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C82FC11F66
 	for <linux-gpio@archiver.kernel.org>; Thu,  8 Jul 2021 07:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3471F61CDF
+	by mail.kernel.org (Postfix) with ESMTP id 4FA2561CE3
 	for <linux-gpio@archiver.kernel.org>; Thu,  8 Jul 2021 07:04:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbhGHHH0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S230488AbhGHHH0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 8 Jul 2021 03:07:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34374 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230440AbhGHHHR (ORCPT
+        with ESMTP id S230442AbhGHHHR (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jul 2021 03:07:17 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EAECC061760;
-        Thu,  8 Jul 2021 00:04:34 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id q17so6136565wrv.2;
-        Thu, 08 Jul 2021 00:04:34 -0700 (PDT)
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8916C061762;
+        Thu,  8 Jul 2021 00:04:35 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id f17so6118721wrt.6;
+        Thu, 08 Jul 2021 00:04:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0cYXJNeVgZpP/hW6to/t3J7jOfhWKeqEA89IWXaC5Ug=;
-        b=qDZ/aJsgkd0mSiKwPSdBHNbOgx2VrLOeHfgBkSTxRjyCCZClj7cPeBeizJAVXlh38/
-         DKYESVB7ByXTW3h9oQzZz+8xvx4WEpTAOkuIeymSf/Pm4G25Kl6clW70b+Ds0um8ivD9
-         R7GvNcxW3tZ0fnkF0/eFWTdZV6/pagfSXatlml7U7AJzkPzWcD2+z6C9HCRrzk5mQ82z
-         LH3xRwYtxyDz1/azyN5MzPdpN7yv9qEYk0kFO/iFPSzMj9wCmBH0tlF/B+PWsgHKi3Dj
-         BMsrLddP5G44QT27aTgKy17FzqcXXp2R3XH03CFd/pvHbKN6grE00AfvOxq99eC4t7aS
-         OhRg==
+        bh=tNTInr5IxLa0v7wLilD1mcRTGKqtOCNhhjsXECS7NAM=;
+        b=i4Dg+LJaiQMGqhyyUKyrEmb6dSSY274TTdFXoaZgUiT7aXCQHuTs4GLMqHfN+HwOh9
+         QGcGpOXVavm/bjH5hfJNQX/rmP8z1iiTL+h5CSDsT5pXSITZUXTrAaIManekzaGJ2qdY
+         xJx3jn38/Rip5KMj8x3bq4wU6pzG3+hkSKQZRlXzWJ7DGX9MxFoIDYFN9PzJCsuMnMPb
+         T6BmzngO94C2UBYElE4pEa5Ap5gi2OHaY40M5I8BQxeIw7E6oTJ+d4YOJB8OkJOrfkJF
+         Y/LyFukavxgm33QbXCrTQCxNAkWELi+bdGQVUsMM0ajWwO+e0ec5hzBDUfYBPuXbUS4u
+         7xtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0cYXJNeVgZpP/hW6to/t3J7jOfhWKeqEA89IWXaC5Ug=;
-        b=AIMHZBahy3pE9cv8HMqaRNQ2TvZbjavOp9wSDKjZZI1CpHTniNoKa3/Q3ldJFuWDpZ
-         mSWTU6q/BFJFEfGhY+rOn33RWe1d8wSQ92srbR/iAmfmKnga+Dci3/3t+A3lEtIn9fRN
-         OdYnys5YdVmcO7nCyqYegPUFayyneBwAnJVCvhu6HqFmIRsdE1UJsRoni8xvg1YxELRM
-         2uzCH+2rA/01WAn3Forh9O8A33WxrRojxzQ3yFMzAfO9I6twgCPbDeiJSmJKrR4vXMId
-         xaG2dCSNmImm+VJEvS8+P44nIY2fIaiARlybPgPg77hEtHN6QBAzbiCt6ItTuUQcXi9d
-         YTLQ==
-X-Gm-Message-State: AOAM531iFAgNhw7T3wM0fmln3mg1+cO9skTYSBzANxZogld6k0fq0Pxi
-        fav4YC+RrAfU+r9N/EKKxCByK2JAag6uWA==
-X-Google-Smtp-Source: ABdhPJx0T7iLqBLryGo1YoR+ceHN4tAoSHOGBKGkEv/iL56BdLtVfdOAQLJNjeI3jHFb/Smn5DlSMA==
-X-Received: by 2002:adf:f710:: with SMTP id r16mr31210880wrp.124.1625727872929;
-        Thu, 08 Jul 2021 00:04:32 -0700 (PDT)
+        bh=tNTInr5IxLa0v7wLilD1mcRTGKqtOCNhhjsXECS7NAM=;
+        b=OBuCw0zRruwikJgvsOLEh7Xlzr2jaBk+ri/McIYkBGmrluwlgrcWz5FvtREfY42XGJ
+         u0N38MJ2x09/hl2pg/1h2K9y0SacBMyLkOHRcp30xzK6U74v9c5gvHfS4D7KRPrRMc5A
+         vhHE9wQ5+Dqoh3ae29qDvJnvcLH9G/Jcvl5qOqH33RgAwCSlEmKxTVeV13IxSBUR7sD/
+         qLKieeRoHFFBJ8jfF6n1uYKa2Cbtfr3vqlMRnAbJ+UeuX6GJhtq47vbSN7SPEBpkuvvo
+         w5tInod0ndgmnCeigNM/BfJFVHUyl2rI84cY90IqWcRdVFGoKG+/ePE68RIO+O8Vke0f
+         R0QA==
+X-Gm-Message-State: AOAM532VOq6hDUAqhi2zkAwaeajsnxoN3GV9DXALaEnij25wlQk+JmpZ
+        HlxkBqvAJGiWbV/uNK2WXUNkkVpL+HHHjA==
+X-Google-Smtp-Source: ABdhPJzwc7jUz4l6lCr6vRLP7M5sCIq1Nl4php9uprqZPIU5nxSk/qywCKNlfOhKLVeiVYTs13f/kw==
+X-Received: by 2002:a5d:4e43:: with SMTP id r3mr32661749wrt.132.1625727874198;
+        Thu, 08 Jul 2021 00:04:34 -0700 (PDT)
 Received: from localhost.localdomain (98.red-81-38-58.dynamicip.rima-tde.net. [81.38.58.98])
-        by smtp.gmail.com with ESMTPSA id u15sm8093305wmq.1.2021.07.08.00.04.31
+        by smtp.gmail.com with ESMTPSA id u15sm8093305wmq.1.2021.07.08.00.04.32
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Jul 2021 00:04:32 -0700 (PDT)
+        Thu, 08 Jul 2021 00:04:33 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linux-gpio@vger.kernel.org
 Cc:     linus.walleij@linaro.org, gregory.0xf0@gmail.com,
@@ -63,9 +63,9 @@ Cc:     linus.walleij@linaro.org, gregory.0xf0@gmail.com,
         matthias.bgg@gmail.com, opensource@vdorst.com,
         andy.shevchenko@gmail.com, git@johnthomson.fastmail.com.au,
         neil@brown.name, hofrat@osadl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] gpiolib: convert 'devprop_gpiochip_set_names' to support multiple gpiochip baks per device
-Date:   Thu,  8 Jul 2021 09:04:27 +0200
-Message-Id: <20210708070429.31871-2-sergio.paracuellos@gmail.com>
+Subject: [PATCH 2/3] gpio: mt7621: support gpio-line-names property
+Date:   Thu,  8 Jul 2021 09:04:28 +0200
+Message-Id: <20210708070429.31871-3-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210708070429.31871-1-sergio.paracuellos@gmail.com>
 References: <20210708070429.31871-1-sergio.paracuellos@gmail.com>
@@ -75,99 +75,27 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The default gpiolib-of implementation does not work with the multiple
-gpiochip banks per device structure used for example by the gpio-mt7621
-and gpio-brcmstb drivers. To fix these kind of situations driver code
-is forced to fill the names to avoid the gpiolib code to set names
-repeated along the banks. Instead of continue with that antipattern
-fix the gpiolib core function to get expected behaviour for every
-single situation adding a field 'offset' in the gpiochip structure.
-Doing in this way, we can assume this offset will be zero for normal
-driver code where only one gpiochip bank per device is used but
-can be set explicitly in those drivers that really need more than
-one gpiochip.
+This driver uses multiple gpiochip banks per device.
+To support 'gpio-line-names' along the banks 'offset'
+for each bank must be set explicitly.
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- drivers/gpio/gpiolib.c      | 34 ++++++++++++++++++++++++++++------
- include/linux/gpio/driver.h |  4 ++++
- 2 files changed, 32 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-mt7621.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 27c07108496d..f3f45b804542 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -382,11 +382,16 @@ static int devprop_gpiochip_set_names(struct gpio_chip *chip)
- 	if (count < 0)
- 		return 0;
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index 82fb20dca53a..5854a9343491 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -241,6 +241,7 @@ mediatek_gpio_bank_probe(struct device *dev,
+ 	if (!rg->chip.label)
+ 		return -ENOMEM;
  
--	if (count > gdev->ngpio) {
--		dev_warn(&gdev->dev, "gpio-line-names is length %d but should be at most length %d",
--			 count, gdev->ngpio);
--		count = gdev->ngpio;
--	}
-+	/*
-+	 * When offset is set in the driver side we assume the driver internally
-+	 * is using more than one gpiochip per the same device. We have to stop
-+	 * setting friendly names if the specified ones with 'gpio-line-names'
-+	 * are less than the offset in the device itself. This means all the
-+	 * lines are not present for every single pin within all the internal
-+	 * gpiochips.
-+	 */
-+	if (count <= chip->offset)
-+		return 0;
- 
- 	names = kcalloc(count, sizeof(*names), GFP_KERNEL);
- 	if (!names)
-@@ -400,8 +405,25 @@ static int devprop_gpiochip_set_names(struct gpio_chip *chip)
- 		return ret;
- 	}
- 
-+	/*
-+	 * When more that one gpiochip per device is used, 'count' can
-+	 * contain at most number gpiochips x chip->ngpio. We have to
-+	 * correctly distribute all defined lines taking into account
-+	 * chip->offset as starting point from where we will assign
-+	 * the names to pins from the 'names' array. Since property
-+	 * 'gpio-line-names' cannot contains gaps, we have to be sure
-+	 * we only assign those pins that really exists since chip->ngpio
-+	 * can be different of the chip->offset.
-+	 */
-+	count = (count > chip->offset) ? count - chip->offset : count;
-+	if (count > chip->ngpio) {
-+		dev_warn(&gdev->dev, "gpio-line-names is length %d but should be at most length %d",
-+			 count, chip->ngpio);
-+		count = chip->ngpio;
-+	}
-+
- 	for (i = 0; i < count; i++)
--		gdev->descs[i].name = names[i];
-+		gdev->descs[i].name = names[chip->offset + i];
- 
- 	kfree(names);
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 3a268781fcec..a0f9901dcae6 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -312,6 +312,9 @@ struct gpio_irq_chip {
-  *	get rid of the static GPIO number space in the long run.
-  * @ngpio: the number of GPIOs handled by this controller; the last GPIO
-  *	handled is (base + ngpio - 1).
-+ * @offset: when multiple gpio chips belong to the same device this
-+ *	can be used as offset within the device so friendly names can
-+ *	be properly assigned.
-  * @names: if set, must be an array of strings to use as alternative
-  *      names for the GPIOs in this chip. Any entry in the array
-  *      may be NULL if there is no alias for the GPIO, however the
-@@ -398,6 +401,7 @@ struct gpio_chip {
- 
- 	int			base;
- 	u16			ngpio;
-+	u16			offset;
- 	const char		*const *names;
- 	bool			can_sleep;
- 
++	rg->chip.offset = bank * MTK_BANK_WIDTH;
+ 	rg->irq_chip.name = dev_name(dev);
+ 	rg->irq_chip.parent_device = dev;
+ 	rg->irq_chip.irq_unmask = mediatek_gpio_irq_unmask;
 -- 
 2.25.1
 
