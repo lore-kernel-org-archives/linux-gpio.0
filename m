@@ -3,132 +3,159 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85324C07E96
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC3EC07E9C
 	for <linux-gpio@archiver.kernel.org>; Thu,  8 Jul 2021 07:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60E9261CE0
+	by mail.kernel.org (Postfix) with ESMTP id ACCF961CDF
 	for <linux-gpio@archiver.kernel.org>; Thu,  8 Jul 2021 07:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230500AbhGHHHa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Jul 2021 03:07:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34410 "EHLO
+        id S230494AbhGHHH3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Jul 2021 03:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbhGHHHZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jul 2021 03:07:25 -0400
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EACFEC061766
-        for <linux-gpio@vger.kernel.org>; Thu,  8 Jul 2021 00:04:39 -0700 (PDT)
-Received: by mail-vs1-xe33.google.com with SMTP id r24so3046927vsg.4
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Jul 2021 00:04:39 -0700 (PDT)
+        with ESMTP id S229872AbhGHHHY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jul 2021 03:07:24 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2987CC061764;
+        Thu,  8 Jul 2021 00:04:37 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id t14-20020a05600c198eb029020c8aac53d4so16379055wmq.1;
+        Thu, 08 Jul 2021 00:04:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=deviqon.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FWLMvmJ06qlpZlYeyp85/42QieZqDC8JnqSE+Eqvf7U=;
-        b=kywxS9+6ZBdXU/YBRnFUBFYI+UzePgHvwWx4n2S4iAr+Z1mkqzYEv+1uZg3TC4yZTD
-         cNwUCdqvaJDNCKaua+IDEO6xNcIypW9+5g8fJC8A9GyTKZbJmDfgjJRNbNYZN71aQC7O
-         VB7PZCMJhuXIh0mBUoxyiF2N0gUJ0Ph5ALTOJ1xEdIKGFXqwEYpA67WkMq+z6GgjRPT0
-         N6ywvoSsnmPVGHurBy3Y2qIPYAw0y3YadoRnSIS3MW1ldSZQPUxQRiOnuey2KhAAla3u
-         PnudPmWrbGyE5nCScwDvJzNb/3kUr99QG6hjQPkSbFXicGmGXsXTzUnYxJWHtd/achYl
-         AbqQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Qi7EPW8pW/I0yAkgaQOKC9ugDNgF35OVARmaEmgJKWw=;
+        b=Cwn8F5vy9JikZKZheIsJEDo2QKqWrbdmcrE4AkBuaH8/kk2Ef7dMtZXzqGLk3X5hGI
+         WfOuhv7vRTl7hSuvYcmx6aRhKu+mEDa9tqzl+hWR9hpVu0LRZMA9wBqj3a08M4e++PFR
+         lrPErK5riYTt+57XBSjmgj6RJmM/escT7YiRJT3O0irt3UvkxvPsbK+soASuHZnOlecl
+         1o+QP8jAKtrBM7bUPAAVNxgdGOEVbsYXHTpQ/CYopq6hjuU/D0JivaHaP8uSjlxCKbw4
+         LEWqRALNDHv954PUwwMXq/JLi7f5PGpGJHHDpr6bJEa9sDRb/aJpgy/+x6VQoomsZGsI
+         C6jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FWLMvmJ06qlpZlYeyp85/42QieZqDC8JnqSE+Eqvf7U=;
-        b=Tk9DRtQgA8RmntiLE+wpay73c1UkBaBVDNmXvWyRIxut9Fd8HJ9iW5W/SfbVlmgeF5
-         RYuRlEXoC/9MKOeEA4TiM8oxNs4GP0HeT9RTSiatv2jKTHK7VbwKRRLKjG5wPbHupkJW
-         KHu4lDJtfHQjJSJuWiVvMT1dWE9HcEwFC9c+zTqaVv2xFh66rC3ow+RLHjoE285Ax9PP
-         BiZHDlxRSGTPt5RHJt+bBqgn9Z5m+gkY13XOXhcXTQPRgbTZb7GKwNdvhWIpoOmA+QGJ
-         94yWYAX2bEKXxw5ca9Sjjy7QPfO1Y5DQBvMB3lO5Kh4kIG73p6bIt15ncv2C3kRR7YwR
-         vx6Q==
-X-Gm-Message-State: AOAM530/MNvcN2/xvGHoeMoecqlTQS5dNzNT4GU1IXwnKV+nINz/1kU8
-        Dq00Qy8CiRaLsEZQCS9taje1Oq6e8GgaDXJktT+Xxzyxl+7rX6L1
-X-Google-Smtp-Source: ABdhPJwbbYIIbW4g48dqAUz2xrhWgdEfW+Y1LAZXkBYjt9y9zdl9+V5Nl/QKCidJaXgecYPgAdEtJpkeV/Xvs7u10xg=
-X-Received: by 2002:a67:f3c1:: with SMTP id j1mr26699267vsn.43.1625727878939;
- Thu, 08 Jul 2021 00:04:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Qi7EPW8pW/I0yAkgaQOKC9ugDNgF35OVARmaEmgJKWw=;
+        b=Xm9yDStJRn6nGDZot793SSTeJqxquRr9+VPeIewKsNa2mbQ8Jq3MH889pQVdfLopDR
+         uHpj8grOUTgHWRI/LcJNjlMwTm+AasADVfTCJX0HnOYkl6ZWtZ7Uu6hxKGH+ws86G+b+
+         vIAXsB1a0SrA+VsyPtpMgugBkuimLCf1+J66BDuM9KLBdITssASpiKJTO2A5LW76f/KU
+         mJB9sWgLn/OD1LRTOfs/zU5Zar1aAvdspvMt5YU+GeEyxXKIu1K+XV1b9cJE635g3geN
+         A+0GtBuLL+E50iKQ7qKjl3IPTu/+aV85EruY4Or8Fc+u3c7UOB2hTlkQ7/7+f7WvnEqi
+         ceiw==
+X-Gm-Message-State: AOAM530MNYyqgL1JzsZMtL5X8qfnp6iltWB4U5O+8X+SbI3hNKZKlqNa
+        TDJsMfBRU4G4RQT9AXSggCKxFm9konxIhA==
+X-Google-Smtp-Source: ABdhPJziVIvppULck7oF3vVM83VrYcTW4RZzJVVQbvoYI82XxRS+fCrLP94/iSsWpIsCPOTjXiVNXA==
+X-Received: by 2002:a7b:c0c1:: with SMTP id s1mr28990524wmh.70.1625727875543;
+        Thu, 08 Jul 2021 00:04:35 -0700 (PDT)
+Received: from localhost.localdomain (98.red-81-38-58.dynamicip.rima-tde.net. [81.38.58.98])
+        by smtp.gmail.com with ESMTPSA id u15sm8093305wmq.1.2021.07.08.00.04.34
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Jul 2021 00:04:35 -0700 (PDT)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     linus.walleij@linaro.org, gregory.0xf0@gmail.com,
+        bgolaszewski@baylibre.com, f.fainelli@gmail.com,
+        matthias.bgg@gmail.com, opensource@vdorst.com,
+        andy.shevchenko@gmail.com, git@johnthomson.fastmail.com.au,
+        neil@brown.name, hofrat@osadl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] gpio: brcmstb: remove custom 'brcmstb_gpio_set_names'
+Date:   Thu,  8 Jul 2021 09:04:29 +0200
+Message-Id: <20210708070429.31871-4-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210708070429.31871-1-sergio.paracuellos@gmail.com>
+References: <20210708070429.31871-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
-References: <20210707135109.191238-1-aardelean@deviqon.com>
-In-Reply-To: <20210707135109.191238-1-aardelean@deviqon.com>
-From:   Alexandru Ardelean <aardelean@deviqon.com>
-Date:   Thu, 8 Jul 2021 10:04:28 +0300
-Message-ID: <CAASAkoYknBtci5+Q5=zFdCC8mFaaw7tezfH6pKiAX0vQNKcrAQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sama5d2-piobu: remove platform_set_drvdata() +
- cleanup probe
-To:     linux-gpio <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 7 Jul 2021 at 16:51, Alexandru Ardelean <aardelean@deviqon.com> wrote:
->
-> The platform_set_drvdata() call is only useful if we need to retrieve back
-> the private information.
-> Since the driver doesn't do that, it's not useful to have it.
->
-> This change also changes the probe order a bit, moving the
-> devm_gpiochip_add_data() as the last call. This means that when the
-> gpiochip is registered [and available to consumers], it should be
-> initialized.
->
-> It's still possible that the devm_gpiochip_add_data() call could fail,
-> leaving the chip in a partially initialized state, but that was possible
-> even before this change; it was just some other partially initialized
-> state.
->
+Gpiolib core code has been updated to support setting
+friendly names through properly 'gpio-line-names'.
+Instead of redefine behaviour here to skip the core
+to be executed, just properly assign the desired offset
+per bank to get in the core the expected behaviour.
 
-Please disregard this.
-It seems I have not taken into consideration the fact that interrupts
-are enabled after the gpiochip is registered.
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 45 +------------------------------------
+ 1 file changed, 1 insertion(+), 44 deletions(-)
 
-> Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
-> ---
->  drivers/gpio/gpio-sama5d2-piobu.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-sama5d2-piobu.c b/drivers/gpio/gpio-sama5d2-piobu.c
-> index b7c950658170..dfaa069b1466 100644
-> --- a/drivers/gpio/gpio-sama5d2-piobu.c
-> +++ b/drivers/gpio/gpio-sama5d2-piobu.c
-> @@ -189,7 +189,6 @@ static int sama5d2_piobu_probe(struct platform_device *pdev)
->         if (!piobu)
->                 return -ENOMEM;
->
-> -       platform_set_drvdata(pdev, piobu);
->         piobu->chip.label = pdev->name;
->         piobu->chip.parent = &pdev->dev;
->         piobu->chip.of_node = pdev->dev.of_node;
-> @@ -210,12 +209,6 @@ static int sama5d2_piobu_probe(struct platform_device *pdev)
->                 return PTR_ERR(piobu->regmap);
->         }
->
-> -       ret = devm_gpiochip_add_data(&pdev->dev, &piobu->chip, piobu);
-> -       if (ret) {
-> -               dev_err(&pdev->dev, "Failed to add gpiochip %d\n", ret);
-> -               return ret;
-> -       }
-> -
->         for (i = 0; i < PIOBU_NUM; ++i) {
->                 ret = sama5d2_piobu_setup_pin(&piobu->chip, i);
->                 if (ret) {
-> @@ -225,7 +218,7 @@ static int sama5d2_piobu_probe(struct platform_device *pdev)
->                 }
->         }
->
-> -       return 0;
-> +       return devm_gpiochip_add_data(&pdev->dev, &piobu->chip, piobu);
->  }
->
->  static const struct of_device_id sama5d2_piobu_ids[] = {
-> --
-> 2.31.1
->
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index fcfc1a1f1a5c..a7275159052e 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -603,49 +603,6 @@ static const struct dev_pm_ops brcmstb_gpio_pm_ops = {
+ 	.resume_noirq = brcmstb_gpio_resume,
+ };
+ 
+-static void brcmstb_gpio_set_names(struct device *dev,
+-				   struct brcmstb_gpio_bank *bank)
+-{
+-	struct device_node *np = dev->of_node;
+-	const char **names;
+-	int nstrings, base;
+-	unsigned int i;
+-
+-	base = bank->id * MAX_GPIO_PER_BANK;
+-
+-	nstrings = of_property_count_strings(np, "gpio-line-names");
+-	if (nstrings <= base)
+-		/* Line names not present */
+-		return;
+-
+-	names = devm_kcalloc(dev, MAX_GPIO_PER_BANK, sizeof(*names),
+-			     GFP_KERNEL);
+-	if (!names)
+-		return;
+-
+-	/*
+-	 * Make sure to not index beyond the end of the number of descriptors
+-	 * of the GPIO device.
+-	 */
+-	for (i = 0; i < bank->width; i++) {
+-		const char *name;
+-		int ret;
+-
+-		ret = of_property_read_string_index(np, "gpio-line-names",
+-						    base + i, &name);
+-		if (ret) {
+-			if (ret != -ENODATA)
+-				dev_err(dev, "unable to name line %d: %d\n",
+-					base + i, ret);
+-			break;
+-		}
+-		if (*name)
+-			names[i] = name;
+-	}
+-
+-	bank->gc.names = names;
+-}
+-
+ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -759,6 +716,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 		gc->of_xlate = brcmstb_gpio_of_xlate;
+ 		/* not all ngpio lines are valid, will use bank width later */
+ 		gc->ngpio = MAX_GPIO_PER_BANK;
++		gc->offset = bank->id * MAX_GPIO_PER_BANK;
+ 		if (priv->parent_irq > 0)
+ 			gc->to_irq = brcmstb_gpio_to_irq;
+ 
+@@ -769,7 +727,6 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 		need_wakeup_event |= !!__brcmstb_gpio_get_active_irqs(bank);
+ 		gc->write_reg(reg_base + GIO_MASK(bank->id), 0);
+ 
+-		brcmstb_gpio_set_names(dev, bank);
+ 		err = gpiochip_add_data(gc, bank);
+ 		if (err) {
+ 			dev_err(dev, "Could not add gpiochip for bank %d\n",
+-- 
+2.25.1
+
