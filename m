@@ -2,77 +2,221 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12E1C07E9C
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Jul 2021 23:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 329A5C07E9C
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Jul 2021 06:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1B5661456
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Jul 2021 23:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A2F96144F
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Jul 2021 06:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbhGHXnQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Jul 2021 19:43:16 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:32351 "EHLO rere.qmqm.pl"
+        id S230193AbhGIGeU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Jul 2021 02:34:20 -0400
+Received: from mga12.intel.com ([192.55.52.136]:25205 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229491AbhGHXnQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 8 Jul 2021 19:43:16 -0400
-X-Greylist: delayed 412 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Jul 2021 19:43:15 EDT
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4GLXfq4rKlzMT;
-        Fri,  9 Jul 2021 01:33:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1625787220; bh=qGNg7hSbfzBvr5magCDMkvgViKrImUwppARwb6jC+qA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FBlLRDt3tje8tO2OFphoFwEHC3eQ8/MU1ItlKZ7Hwfw+Y9sCzFfsvS36Aiqt0iK6G
-         KCZnWjpD6vWkn/MNP48ZnZ9wzh6xwE8miH73lnGN3SiWaFO1UXOApuBNNSccS+qw7Z
-         kXdgF0sFTMuakQlEC/IpdJNVaJQ3iU0O/Rlxm8D3sozTrsUe/0+QH6jgE2C0TR02TF
-         PsuSyzvmqN3WvjxbKE0VgQDxldX1N5fXtVDQps5xbE7XtzPGidg2qJuZMEKcMoSzYE
-         oIIOj5P/S3Dgw6B9pslzLHvZlEY4whdIVTAMsKRHCiu4U6hRc4KY7safXtsNr2DijO
-         M2fmG/hHVVN+Q==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.2 at mail
-Date:   Fri, 9 Jul 2021 01:33:35 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, warthog618@gmail.com,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        robh+dt@kernel.org
-Subject: Re: [RFC 03/11] hte: Add tegra194 HTE kernel provider
-Message-ID: <YOeLT4T5stjsAUMr@qmqm.qmqm.pl>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-4-dipenp@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210625235532.19575-4-dipenp@nvidia.com>
+        id S229887AbhGIGeR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Jul 2021 02:34:17 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10039"; a="189334187"
+X-IronPort-AV: E=Sophos;i="5.84,226,1620716400"; 
+   d="scan'208";a="189334187"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2021 23:31:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.84,226,1620716400"; 
+   d="scan'208";a="498805997"
+Received: from inlubt0177.iind.intel.com ([10.223.67.91])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Jul 2021 23:31:32 -0700
+From:   lakshmi.sowjanya.d@intel.com
+To:     linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        lakshmi.bai.raja.subramanian@intel.com, tamal.saha@intel.com,
+        lakshmi.sowjanya.d@intel.com
+Subject: [PATCH v2 1/2] dt-bindings: pinctrl: Add bindings for Intel Keembay pinctrl driver
+Date:   Fri,  9 Jul 2021 12:01:28 +0530
+Message-Id: <20210709063129.11651-2-lakshmi.sowjanya.d@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210709063129.11651-1-lakshmi.sowjanya.d@intel.com>
+References: <20210709063129.11651-1-lakshmi.sowjanya.d@intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 25, 2021 at 04:55:24PM -0700, Dipen Patel wrote:
-> Tegra194 device has multiple HTE instances also known as GTE
-> (Generic hardware Timestamping Engine) which can timestamp subset of
-> SoC lines/signals. This provider driver focuses on IRQ and GPIO lines
-> and exposes timestamping ability on those lines to the consumers
-> through HTE subsystem.
-[...]
-> +	ret = of_property_read_u32(dev->of_node, "slices", &slices);
-> +	if (ret != 0) {
-> +		dev_err(dev, "Could not read slices\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	hte_dev->sl = devm_kzalloc(dev, sizeof(struct hte_slices) * slices,
-> +				   GFP_KERNEL);
+From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 
-Nit: There is devm_kcalloc() that will check for overflow in the
-multiply in case @slices from DT is broken.
+Add Device Tree bindings documentation for Intel Keem Bay
+SoC's pin controller.
+Add entry for INTEL Keem Bay pinctrl driver in MAINTAINERS file
 
-Best Regards
-Micha³ Miros³aw
+Acked-by: Mark Gross <mgross@linux.intel.com>
+Signed-off-by: Vineetha G. Jaya Kumaran <vineetha.g.jaya.kumaran@intel.com>
+Signed-off-by: Vijayakannan Ayyathurai <vijayakannan.ayyathurai@intel.com>
+Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+---
+ .../pinctrl/intel,pinctrl-keembay.yaml        | 134 ++++++++++++++++++
+ MAINTAINERS                                   |   5 +
+ 2 files changed, 139 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
+new file mode 100644
+index 000000000000..6c6f45ac75a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
+@@ -0,0 +1,134 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/intel,pinctrl-keembay.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Intel Keem Bay pin controller Device Tree Bindings
++
++maintainers:
++  - Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
++
++description: |
++  Intel Keem Bay SoC integrates a pin controller which enables control
++  of pin directions, input/output values and configuration
++  for a total of 80 pins.
++
++properties:
++  compatible:
++    const: intel,keembay-pinctrl
++
++  reg:
++    maxItems: 2
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  ngpios:
++    description: The number of GPIOs exposed.
++    const: 80
++
++  interrupts:
++    description:
++      Specifies the interrupt lines to be used by the controller.
++    maxItems: 8
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++patternProperties:
++  '^gpio@[0-9a-f]*$':
++    type: object
++
++    description:
++      Child nodes can be specified to contain pin configuration information,
++      which can then be utilized by pinctrl client devices.
++      The following properties are supported.
++
++    properties:
++      pins:
++        description: |
++          The name(s) of the pins to be configured in the child node.
++          Supported pin names are "GPIO0" up to "GPIO79".
++
++      bias-disable: true
++
++      bias-pull-down: true
++
++      bias-pull-up: true
++
++      drive-strength:
++        description: IO pads drive strength in milli Ampere.
++        enum: [2, 4, 8, 12]
++
++      bias-bus-hold:
++        type: boolean
++
++      input-schmitt-enable:
++        type: boolean
++
++      slew-rate:
++        description: GPIO slew rate control.
++                      0 - Fast(~100MHz)
++                      1 - Slow(~50MHz)
++        enum: [0, 1]
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - ngpios
++  - '#gpio-cells'
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    // Example 1
++    gpio@0 {
++        compatible = "intel,keembay-pinctrl";
++        reg = <0x600b0000 0x88>,
++              <0x600b0190 0x1ac>;
++        gpio-controller;
++        ngpios = <0x50>;
++        #gpio-cells = <0x2>;
++        interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++    };
++
++    // Example 2
++    gpio@1 {
++        compatible = "intel,keembay-pinctrl";
++        reg = <0x600c0000 0x88>,
++              <0x600c0190 0x1ac>;
++        gpio-controller;
++        ngpios = <0x50>;
++        #gpio-cells = <0x2>;
++        interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c7456776ace5..7d3a75e03626 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14612,6 +14612,11 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git
+ F:	drivers/pinctrl/intel/
+ 
++PIN CONTROLLER - KEEMBAY
++M:	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
++S:	Supported
++F:	drivers/pinctrl/pinctrl-keembay*
++
+ PIN CONTROLLER - MEDIATEK
+ M:	Sean Wang <sean.wang@kernel.org>
+ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+-- 
+2.17.1
+
