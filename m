@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0BEC07E9B
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01286C11F6A
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A9C4613C9
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDBE6613C5
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234879AbhGJCgp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:36:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53536 "EHLO mail.kernel.org"
+        id S234029AbhGJCkH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:40:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234151AbhGJCfc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Jul 2021 22:35:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8E8BA61414;
-        Sat, 10 Jul 2021 02:32:32 +0000 (UTC)
+        id S235896AbhGJCju (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:39:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 15B1461453;
+        Sat, 10 Jul 2021 02:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625884353;
-        bh=To1gUqapLgeZjXIKulL3uwXVhMqJs/4HoSOsGhsuboE=;
+        s=k20201202; t=1625884582;
+        bh=KotAUrAl+RS3cUxE3mRhWKLWrAvMmX+ljQlrGK8O/Gg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=snJxFKexuBL99uPvN7qv0OBzdNxMFVn9toqdbJmPkfHyxMu2EOQuMNvZXc8uLXT1j
-         AOHueQ3gHyKEDGsvyB4Sh79RhvG/TqyndjwN2YOG2iYKZoDz5qEIESqnX469efkEga
-         2N43C5BeXnjmJjGqxTYmc2Zrz/5bQAsh6O1pwD7cUtvIWn9a1GEs6PX5tB+yehryHW
-         Q6ZBneiiCl7j6mJQuvbl0Cx5gvAQA+tdYpOXFcxJl4C1oft3v0TWBbtD6SFW+Anvoa
-         WqyZESGgslW42NfgEYhomdBaFVEX+uJ8gsaSPRVOtFxm7sCtomYJzSDA/AhqGzFhbL
-         7RHZP9Vlt+Gbw==
+        b=Hhg6Gc45STzJSmWZuFicY5p7B4mjT2KXgymo/jJUUCjlcpsHR6ArgH3TGh6bgcwfd
+         p1+cg93QSrGmyYkkmhrRxLszFJNroyQhmas4jAY7tvH7cUwS/tPgOtKp0VYuJS3K8r
+         RfH6uD1QEC+JnY1nIA3ENVbL8aFyvZoJFvoDJeIRTF8ehOPg8YD9aathbv34+w3GGG
+         NiG5Co5SfWZ7eBnTtui69q/WgV8MO/QqDD1Oq3x9vmJAiASMC+MWftJtrA2yiwef3O
+         4F4hAMcCT1bjxvVVhbIWGChH3a5dh18PJurXu0oIBug4qTWzfuYfFXg69V2suxBuvi
+         aWbeN95LYxnFw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Srinivas Neeli <srinivas.neeli@xilinx.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 23/39] gpio: zynq: Check return value of pm_runtime_get_sync
-Date:   Fri,  9 Jul 2021 22:31:48 -0400
-Message-Id: <20210710023204.3171428-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 14/26] gpio: zynq: Check return value of pm_runtime_get_sync
+Date:   Fri,  9 Jul 2021 22:35:52 -0400
+Message-Id: <20210710023604.3172486-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710023204.3171428-1-sashal@kernel.org>
-References: <20210710023204.3171428-1-sashal@kernel.org>
+In-Reply-To: <20210710023604.3172486-1-sashal@kernel.org>
+References: <20210710023604.3172486-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -67,10 +67,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 5dec96155814..c2279b28bcb9 100644
+index 6b4d10d6e10f..5038d771ac6e 100644
 --- a/drivers/gpio/gpio-zynq.c
 +++ b/drivers/gpio/gpio-zynq.c
-@@ -919,8 +919,11 @@ static int zynq_gpio_probe(struct platform_device *pdev)
+@@ -778,8 +778,11 @@ static int zynq_gpio_probe(struct platform_device *pdev)
  static int zynq_gpio_remove(struct platform_device *pdev)
  {
  	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
