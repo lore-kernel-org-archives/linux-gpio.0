@@ -5,41 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B9BC07E9C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D16C11F67
 	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFE0A60BD3
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7221613B7
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:20:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232847AbhGJCWn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:22:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38684 "EHLO mail.kernel.org"
+        id S233036AbhGJCWp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:22:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232838AbhGJCWL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S232837AbhGJCWL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 9 Jul 2021 22:22:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7CC18613EB;
-        Sat, 10 Jul 2021 02:19:23 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4BE6E613DF;
+        Sat, 10 Jul 2021 02:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625883564;
-        bh=kkzpB9mHtqsTDc8yH38cr0ZSYOzrQ8stVA5/0TR9GAE=;
+        s=k20201202; t=1625883563;
+        bh=ryTTaVA44sGuLatGbFmEcoxmJyTLZaMZkUGnrbDWVsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s8sOlP1CUkMI4+1aiOYKardLXNHxFqXc1aQb8CijYedy/uXj4MEt9+9B0Y9bCMyPc
-         30j/qHEthC/itO3lEuJt95JRp2rL8P59l1RNIHENvvmr8D6Wxsl+1Ip9WyhWGDTtuR
-         tkleF4X3PoWSYgowU74/pbPwSkpritRM3+MMGiV0f729wC0rn/FCpeZ0uYSBC07W7O
-         k8CX5Ra//OGrKnvUWQnm0Kh9MzjvqaA0N0hquJAJjZcZh7rvbXf1hlsRC7acx41/Vd
-         0L1nlmhz/a+HHYZZGn+oZhxXkkfNwHiMtjogSy80qTVNd0hgZLeiYkoQNPKWCvONv7
-         +DKoeDUvTsDUw==
+        b=rSzN2L611nOCWRhL1Uq7m12SvizO3LYgvzr6Ta0umSpJw8uoCVTDHKlE4bnzaQLYU
+         59ZrikDqqNUrAD9TyIfkFTpfpULh2JwkbP5L/3CldYwJqPqtIXeoBJXOxGjppMC9Z1
+         +aO3G5eRRhph3/ey/UrjJ6/WqL843DnMzgl9Z35QrW195rFvSxzdtbAfrvN70v4x5+
+         3sOeV+rqXZ3iQaAGf3iUOqGYDJc1Mz2kDlgXCQ0Lkcz6+QxibS3VJJRUSMC+MJxhGh
+         f+qmg5XYYtS42I5ne6ae74ORFhgT32PF7o4uUDAxzAhfitYrwjpFYphpfVn/kLdHC3
+         0gE8ddIXRwQAw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Srinivas Neeli <srinivas.neeli@xilinx.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.13 071/114] gpio: zynq: Check return value of irq_get_irq_data
-Date:   Fri,  9 Jul 2021 22:17:05 -0400
-Message-Id: <20210710021748.3167666-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 070/114] gpio: zynq: Check return value of pm_runtime_get_sync
+Date:   Fri,  9 Jul 2021 22:17:04 -0400
+Message-Id: <20210710021748.3167666-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210710021748.3167666-1-sashal@kernel.org>
 References: <20210710021748.3167666-1-sashal@kernel.org>
@@ -53,48 +53,36 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Srinivas Neeli <srinivas.neeli@xilinx.com>
 
-[ Upstream commit 35d7b72a632bc7afb15356f44005554af8697904 ]
+[ Upstream commit a51b2fb94b04ab71e53a71b9fad03fa826941254 ]
 
-In two different instances the return value of "irq_get_irq_data"
-API was neither captured nor checked.
-Fixed it by capturing the return value and then checking for any error.
+Return value of "pm_runtime_get_sync" API was neither captured nor checked.
+Fixed it by capturing the return value and then checking for any warning.
 
-Addresses-Coverity: "returned_null"
+Addresses-Coverity: "check_return"
 Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-zynq.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpio/gpio-zynq.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index fb8684d70fe3..c288a7502de2 100644
+index 3521c1dc3ac0..fb8684d70fe3 100644
 --- a/drivers/gpio/gpio-zynq.c
 +++ b/drivers/gpio/gpio-zynq.c
-@@ -736,6 +736,11 @@ static int __maybe_unused zynq_gpio_suspend(struct device *dev)
- 	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 	struct irq_data *data = irq_get_irq_data(gpio->irq);
+@@ -1001,8 +1001,11 @@ static int zynq_gpio_probe(struct platform_device *pdev)
+ static int zynq_gpio_remove(struct platform_device *pdev)
+ {
+ 	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
++	int ret;
  
-+	if (!data) {
-+		dev_err(dev, "irq_get_irq_data() failed\n");
-+		return -EINVAL;
-+	}
-+
- 	if (!device_may_wakeup(dev))
- 		disable_irq(gpio->irq);
- 
-@@ -753,6 +758,11 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
- 	struct irq_data *data = irq_get_irq_data(gpio->irq);
- 	int ret;
- 
-+	if (!data) {
-+		dev_err(dev, "irq_get_irq_data() failed\n");
-+		return -EINVAL;
-+	}
-+
- 	if (!device_may_wakeup(dev))
- 		enable_irq(gpio->irq);
- 
+-	pm_runtime_get_sync(&pdev->dev);
++	ret = pm_runtime_get_sync(&pdev->dev);
++	if (ret < 0)
++		dev_warn(&pdev->dev, "pm_runtime_get_sync() Failed\n");
+ 	gpiochip_remove(&gpio->chip);
+ 	clk_disable_unprepare(gpio->clk);
+ 	device_set_wakeup_capable(&pdev->dev, 0);
 -- 
 2.30.2
 
