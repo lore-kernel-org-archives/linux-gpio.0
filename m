@@ -5,43 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D64CC11F70
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38093C11F6F
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27DBD613EE
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E414613D9
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233530AbhGJC04 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:26:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42484 "EHLO mail.kernel.org"
+        id S233459AbhGJCbO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:31:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233527AbhGJC02 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Jul 2021 22:26:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D33D6613DC;
-        Sat, 10 Jul 2021 02:23:39 +0000 (UTC)
+        id S234330AbhGJC3W (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:29:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 98A9861430;
+        Sat, 10 Jul 2021 02:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625883820;
-        bh=9zY3xMgQT4AeEHLyvTQjoZoyHJvvalLEv9eMVRj/HMk=;
+        s=k20201202; t=1625883947;
+        bh=kkzpB9mHtqsTDc8yH38cr0ZSYOzrQ8stVA5/0TR9GAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oqQKoGjyAMhWm8ep3NJEDlHBRh4/Nsb1mg++EpIiIyf1GzamUe5cG5vuI6nkPEC8+
-         K/ZwRAbormKnWXk65PfduSghYTA8JmbK+/jnKyiFthXoZ3sjfK6aVnr0PWVpC8bvRg
-         OcZ723UuDQRcvl0mOElXYnum4/td58DqAgnYRRPf8Qf0HZKOyHgoQlI3u80lSZ4M9U
-         oSeEyxI54vWjVkVpkpIKMGcm0Z2zdxHJhUKJtYxkORahXfpkaV3b51wo3C58MkYvzW
-         XO362AMxP9ua1to2Yc8Xb8IuFgTy7QnQkoPN2U3zWL8BbZs381X5+38XL2lKkkWxeC
-         Sn2p5RXAqbZdA==
+        b=t1Ky3r4KF8Qu3tISqr/sKNNEzZPzrSmi32ZHudi5tS1VZlJ06Pdib+XmqN+EwLhz9
+         yEoZ+lZI/9JZg5VZEhVIFnJs+XINeHh8/W3JSC+m7qsjDLFDdbWgpwZ3biR4jiMn8+
+         YoEiL6UoBzQf6KbQa5cBZzqcBTh4mU6qDknFLhrKcwhFAOVES+dkUWl2Cni/B2B3DI
+         zIoYUrGleeafcya0rdNRQ1MwaARt2Rjyzepmht9qOqtlvi4OsdmLqDqyA+tljF/9mE
+         km/ZrbojdvshIM5cKn54+pYdot5cuhTzujWSPW2XfvrKnJVk8ooAM5D93oN7fwpcGf
+         LqOoCcp5qbj3Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Robinson <pbrobinson@gmail.com>,
+Cc:     Srinivas Neeli <srinivas.neeli@xilinx.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 069/104] gpio: pca953x: Add support for the On Semi pca9655
-Date:   Fri,  9 Jul 2021 22:21:21 -0400
-Message-Id: <20210710022156.3168825-69-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.10 60/93] gpio: zynq: Check return value of irq_get_irq_data
+Date:   Fri,  9 Jul 2021 22:23:54 -0400
+Message-Id: <20210710022428.3169839-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710022156.3168825-1-sashal@kernel.org>
-References: <20210710022156.3168825-1-sashal@kernel.org>
+In-Reply-To: <20210710022428.3169839-1-sashal@kernel.org>
+References: <20210710022428.3169839-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -50,33 +51,50 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Peter Robinson <pbrobinson@gmail.com>
+From: Srinivas Neeli <srinivas.neeli@xilinx.com>
 
-[ Upstream commit 6d49b3a0f351925b5ea5047166c112b7590b918a ]
+[ Upstream commit 35d7b72a632bc7afb15356f44005554af8697904 ]
 
-The On Semi pca9655 is a 16 bit variant of the On Semi pca9654 GPIO
-expander, with 16 GPIOs and interrupt functionality.
+In two different instances the return value of "irq_get_irq_data"
+API was neither captured nor checked.
+Fixed it by capturing the return value and then checking for any error.
 
-Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
-[Bartosz: fixed indentation as noted by Andy]
+Addresses-Coverity: "returned_null"
+Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-pca953x.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-zynq.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index c91d05651596..f5cfc0698799 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -1241,6 +1241,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index fb8684d70fe3..c288a7502de2 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -736,6 +736,11 @@ static int __maybe_unused zynq_gpio_suspend(struct device *dev)
+ 	struct zynq_gpio *gpio = dev_get_drvdata(dev);
+ 	struct irq_data *data = irq_get_irq_data(gpio->irq);
  
- 	{ .compatible = "onnn,cat9554", .data = OF_953X( 8, PCA_INT), },
- 	{ .compatible = "onnn,pca9654", .data = OF_953X( 8, PCA_INT), },
-+	{ .compatible = "onnn,pca9655", .data = OF_953X(16, PCA_INT), },
++	if (!data) {
++		dev_err(dev, "irq_get_irq_data() failed\n");
++		return -EINVAL;
++	}
++
+ 	if (!device_may_wakeup(dev))
+ 		disable_irq(gpio->irq);
  
- 	{ .compatible = "exar,xra1202", .data = OF_953X( 8, 0), },
- 	{ }
+@@ -753,6 +758,11 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
+ 	struct irq_data *data = irq_get_irq_data(gpio->irq);
+ 	int ret;
+ 
++	if (!data) {
++		dev_err(dev, "irq_get_irq_data() failed\n");
++		return -EINVAL;
++	}
++
+ 	if (!device_may_wakeup(dev))
+ 		enable_irq(gpio->irq);
+ 
 -- 
 2.30.2
 
