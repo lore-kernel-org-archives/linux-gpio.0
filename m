@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D16C11F67
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E42C07E9E
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7221613B7
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:20:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E873761413
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Jul 2021 02:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233036AbhGJCWp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:22:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37724 "EHLO mail.kernel.org"
+        id S233450AbhGJC0r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:26:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232837AbhGJCWL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Jul 2021 22:22:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4BE6E613DF;
-        Sat, 10 Jul 2021 02:19:22 +0000 (UTC)
+        id S233455AbhGJC0H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:26:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3ECFF613FA;
+        Sat, 10 Jul 2021 02:23:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625883563;
+        s=k20201202; t=1625883801;
         bh=ryTTaVA44sGuLatGbFmEcoxmJyTLZaMZkUGnrbDWVsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rSzN2L611nOCWRhL1Uq7m12SvizO3LYgvzr6Ta0umSpJw8uoCVTDHKlE4bnzaQLYU
-         59ZrikDqqNUrAD9TyIfkFTpfpULh2JwkbP5L/3CldYwJqPqtIXeoBJXOxGjppMC9Z1
-         +aO3G5eRRhph3/ey/UrjJ6/WqL843DnMzgl9Z35QrW195rFvSxzdtbAfrvN70v4x5+
-         3sOeV+rqXZ3iQaAGf3iUOqGYDJc1Mz2kDlgXCQ0Lkcz6+QxibS3VJJRUSMC+MJxhGh
-         f+qmg5XYYtS42I5ne6ae74ORFhgT32PF7o4uUDAxzAhfitYrwjpFYphpfVn/kLdHC3
-         0gE8ddIXRwQAw==
+        b=WL5U2MStGBSRYTyopcWXgxlDXkKBIpq9TH/2nv4Iuy3iSMEVmy0wMzPqknMUql5NI
+         6iFF8Pb+N1iFib/obJoeQG6w9GHezccYJuin/ITBltSfypltEHt9o859boMgTaJz6u
+         giKqL9v5l8oH1GwhEcK5i17o/iUqsx43Vx2gxHzGnjQ16CqKFYVK/8Fgy98SVCPiOD
+         DTcSPYVQKMEtwg//qp5vHib7xXeuPOnp9zHcIHk5c8fZ1v4BZjrqkO6FuoefXF9mBz
+         dGIzNgSiup/DDNOudGlExG632nJSte0wCLgAlE3+Bq8J+f9QqXTt1YZIaP9cO2Nhtk
+         qI+Tnplz8tPpA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Srinivas Neeli <srinivas.neeli@xilinx.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.13 070/114] gpio: zynq: Check return value of pm_runtime_get_sync
-Date:   Fri,  9 Jul 2021 22:17:04 -0400
-Message-Id: <20210710021748.3167666-70-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.12 064/104] gpio: zynq: Check return value of pm_runtime_get_sync
+Date:   Fri,  9 Jul 2021 22:21:16 -0400
+Message-Id: <20210710022156.3168825-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710021748.3167666-1-sashal@kernel.org>
-References: <20210710021748.3167666-1-sashal@kernel.org>
+In-Reply-To: <20210710022156.3168825-1-sashal@kernel.org>
+References: <20210710022156.3168825-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
