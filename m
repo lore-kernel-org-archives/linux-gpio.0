@@ -2,124 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB29C11F66
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jul 2021 09:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD1CC07E95
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jul 2021 09:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFE6761375
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jul 2021 09:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB0616138C
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jul 2021 09:17:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234819AbhGMJC4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Jul 2021 05:02:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53242 "EHLO
+        id S234849AbhGMJUY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Jul 2021 05:20:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234815AbhGMJC4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jul 2021 05:02:56 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC207C0613DD
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jul 2021 02:00:06 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id t17so49044593lfq.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jul 2021 02:00:06 -0700 (PDT)
+        with ESMTP id S234726AbhGMJUY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jul 2021 05:20:24 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C44E6C0613DD
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jul 2021 02:17:34 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id s18so21063255pgg.8
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jul 2021 02:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=auooqGend/MpgDzrAxPulB+LTrlAKF1M6jC9r1DHfm4=;
-        b=YewyrC2cjM63ymEp0Y0p663ELwRfw/RHQwzpyR0GigFKynIrn8GTs3GlKlRv+BQZjh
-         g23GoCFQEYrTIJWAsb+qPxppLienpkZgWOKqoGv6APbWQ/9tyPQbd7+r0FS4TO6lyY39
-         ruA3lQyrz15qRLLqrYcqFJWgJYupBQsgTprw+WTn8+QDJ9SaceCUvtyy7KKrfgaaZURE
-         a1yQAKmq2gcz1nH4B7/0DXtqG/aDPpw4kNsdrQraLIBeYQeACZRTuWmFrlu6LVcpPbfJ
-         pNMDj2gmz4l7ZRWVo9IbrZdTpG9G14YjauihkYxtUXsFD/DREw2bZoSXNQ9L30zSpO6U
-         SW4A==
+        bh=3uqNhBNG+4fjzTOl7sjGDlkVinj+WYeIv4tJx8HDvc4=;
+        b=nMnp599LusQm69nlZwtjgkns9ZcMncO5rgjHNEjzMSZVtmzxow7AeRE8qfRjLHXco/
+         9auDrn6ZIQBxSSJ6f2x+imo4E7asdEED1oubWq2jqATsef/f4Hnpr4bacRsit0hxJBG3
+         Wpw2xao+n23tY4pierLE4U7fwlpy+w1Iysjf4QRf3HAJCSoeNfS52s9vUtZbCTymwP9U
+         r2Uhab5syzXIUG9Mhmv7MOfYs1IzJl+YguCHkXZHn6k2EN1qZdkDTri49nClcX7gbE92
+         CL/hIwFtSTKVz+AczNREkvX7QdYfBGa9Kq7mWgAaaq6nNe0QjY21M1Fr8BJG38DqQpVn
+         U2Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=auooqGend/MpgDzrAxPulB+LTrlAKF1M6jC9r1DHfm4=;
-        b=JMNOX3tzRiAoUA4/Y9kJNCsUyVuMm7VSFwFQxqgfmoQQ5DSMMRLkCrJkb3gOuy9Hxd
-         BPQMzFdI6a42MZmvoNPIm5VIZX6Szv9AWJ4woxYzm0wJg9vG0aqeG5iEFm61npQWqqzM
-         KgOVrmI1nu/iP1L91SmsvP6NmH92NR/aFHoFBu6pXB2oGezAOWkaQSkAUYwgjqYW/Q9U
-         HmCsQDpm9gdxupLohjvo2I+H2Nami4GDnVqgDIjG22cN1rP0MsC7xv6cegnU14DOEYnu
-         di1cTDmCWEoCQmL7ah0qG4uHx+XB2KDOQuuXfE6MuXcnTnHJpUbUJE/2HytvyrZi08R+
-         3NxA==
-X-Gm-Message-State: AOAM530PBYU4XyNScLZl9RdDyiV9d/eF7f0978Tht6KCi++6fVCyXngq
-        VT+zSL734FLQZ8xy8KsdVmc922R76wKC/T0OIXIx6A==
-X-Google-Smtp-Source: ABdhPJz5BHsQ1V41B0ZOTtW9XeAJmBUmOzSB8o4bj4ZLB02n7lL8RL7XfT5Kjqw569hfnGdCOJXWkoXLP8XavixQNaY=
-X-Received: by 2002:a19:5018:: with SMTP id e24mr2816820lfb.29.1626166805038;
- Tue, 13 Jul 2021 02:00:05 -0700 (PDT)
+        bh=3uqNhBNG+4fjzTOl7sjGDlkVinj+WYeIv4tJx8HDvc4=;
+        b=L631evrbkWDEXvk3KsylCehGZL+Ytk7GgAYqpdJCqj2qEHHdSXR+/Di06N6brr8Om8
+         IOcsnjihGUAVyOJCHl2eDULBUSGBciTxkumxULJbG6hhqLGdHOMGwjc9I8jKPhotpWuG
+         EUEJploryz2aBS1382Er8OoRfB9UHPFNgWv/8fC/9goz17AQ+HbabTWYtulxLn+SOT/v
+         WH5xFqmgu04d7yXfmqmxZqRLXDlaE1/dL2t4HqplC35mjCKDJAR8jVQzfpjNJkOrUkl/
+         AxHrpSjJ+i75CkWndXN8/Wnvesg8KXIY6iP7mXZK87D5eBU4QAed5bDGu1coAek+tZA4
+         WtLA==
+X-Gm-Message-State: AOAM531t3J7pVvkeJ4QcfKpRooCg82yS/usgsrJvBBSGKP7Brml1czBm
+        ZekDFqDEYRQZ6i54Nfvmnb6PxaiCGtWEh1fC5hs2qUtRHoW9NBDt
+X-Google-Smtp-Source: ABdhPJxejWwk04y9+zOm3WNF/rUZxHSXrc4eFIwFoJFoNxRBgNbPbWiyJjufoJsuzlsB9kprrEz732+AV09S7irgPnU=
+X-Received: by 2002:a63:5a5b:: with SMTP id k27mr3449827pgm.74.1626167854361;
+ Tue, 13 Jul 2021 02:17:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAG4TOxMzf1Wn6PcWk=XfB+SV+MHwbxUq8t1RNswie5e3=Y+OXQ@mail.gmail.com>
- <CACRpkdZyJd0TW5aVRfxSSWknzCyVhjMwQuAj9i9iuQ6pW9vftQ@mail.gmail.com>
- <20210707105000.GA4394@sirena.org.uk> <c24c61f498f43f589eafd423e51f997134d198b7.camel@HansenPartnership.com>
- <YOWcCG9Pm/S+EXFw@kroah.com> <11c07bc291b443c2683a2baff5b180ff5b0729a5.camel@HansenPartnership.com>
- <YOWh0Dq+2v+wH3B4@kroah.com> <YOXhlDsMAZUn1EBg@pendragon.ideasonboard.com>
- <YOagA4bgdGYos5aa@kroah.com> <CACRpkdasOaNgBAZVx5qpKJdU7h41jHDG2jWi2+pi9a1JBh7RTQ@mail.gmail.com>
- <YOh/JC//dotfm5J9@google.com>
-In-Reply-To: <YOh/JC//dotfm5J9@google.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 13 Jul 2021 10:59:53 +0200
-Message-ID: <CACRpkdb1W=M5EJkGbSS4QxObU-Gd5yZ1qE439k_D4K=jevgcrQ@mail.gmail.com>
-Subject: Re: cdev/devm_* issues (was Re: [TECH TOPIC] Rust for Linux)
-To:     Wedson Almeida Filho <wedsonaf@google.com>
-Cc:     Greg KH <greg@kroah.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Mark Brown <broonie@kernel.org>,
-        Roland Dreier <roland@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        ksummit@lists.linux.dev, Daniel Vetter <daniel@ffwll.ch>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20210712210836.GA3636@cephalopod>
+In-Reply-To: <20210712210836.GA3636@cephalopod>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 13 Jul 2021 12:16:52 +0300
+Message-ID: <CAHp75VdSVB4shmAO2Oww=UU_5pqR=W3JZ98ChjZwZaRZ9gbVdQ@mail.gmail.com>
+Subject: Re: [libgpiod] How stable is the v2 API?
+To:     Ben Hutchings <ben.hutchings@essensium.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 9, 2021 at 6:54 PM Wedson Almeida Filho <wedsonaf@google.com> wrote:
+On Tue, Jul 13, 2021 at 12:09 AM Ben Hutchings
+<ben.hutchings@essensium.com> wrote:
+>
+> I'm working on a project that requires GPIO debouncing and is planned
+> to use libgpiod.  But debouncing is only available on the unreleased
+> next/libgpiod-2.0 branch.
+>
+> What we'd like to know is whether the current C API on that branch is
+> expected to change much before release.  I don't expect any commitment
+> to API or ABI stability, but it would be helpful to have some
+> indication of how much change is likely to be needed in a client that
+> is written for the current API.
 
-> In preparation for writing the abstractions to implement a gpio driver in Rust,
-> I was reading through some of the code you describe above.
+I believe this is the right thread to discuss and influence if needed.
 
-Nice, bonus review :)
+https://lore.kernel.org/linux-gpio/20210621191830.10628-1-brgl@bgdev.pl/T/#ma70b1ab80804c09644f4a018ff5eff10464b195a
 
-> Unless I'm missing something (very much possible!), this "numbing" seems to not
-> be synchronised, that is, there are still race windows when userspace may cause
-> UAFs in the kernel.
-
-That's possible.
-
-> For example, gpiochip_remove sets gdev->chip to NULL; gpio_ioctl returns -ENODEV
-> if gdev->chip is NULL, which I believe is an instance of what you describe
-> above.
-
-Yes.
-
-> However, what ensures that it remains non-null?
-(...)
-> I see that in functions
-> called by gpio_ioctl (e.g., lineinfo_get), gdev->chip is used as if it were
-> guaranteed to be valid.
-(...)
-> Is my reading correct or is there some synchronisation that I'm missing?
-
-No there are definately possible synchronization bugs there.
-
-We probably need a few more
-if (!gdev->chip) return -ENODEV;
-in some of these callbacks for example.
-There are probably also more narrow possible sync bugs.
-
-They are a bit hard to reproduce in practice because people do not
-unplug their GPIO devices so much, the one case that is used a bit
-would be USB-based GPIO expanders which happens on e.g.
-serial dongles (FTDI with additional GPIO is the most common).
-These are used in practice for controlling lab boards and stuff
-but when people unplug them it is usually part of tearing down an
-entire setup so the circumstances are a bit chaotic and subtle
-bugs are not noticed.
-
-Yours,
-Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
