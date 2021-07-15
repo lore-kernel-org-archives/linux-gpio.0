@@ -7,63 +7,62 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0A1C07E96
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 15:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2334C636CA
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 19:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B78A613C4
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 15:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8908261285
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 19:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238859AbhGOPb4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jul 2021 11:31:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38346 "EHLO
+        id S243755AbhGOTcI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jul 2021 15:32:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238855AbhGOPb4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jul 2021 11:31:56 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA82C061760
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 08:29:03 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id bn5so9050896ljb.10
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 08:29:03 -0700 (PDT)
+        with ESMTP id S1345000AbhGOTaj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jul 2021 15:30:39 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D070C08EC75
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 12:08:10 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id q16so11750520lfa.5
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 12:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=4zXOWLxK3mPjdxHJneIRA4HXCtIcK5HkOCCx6jSBP68=;
-        b=wHMHNF4OguhcOZhW/m1XpozEkYUZoDuvjK+tWO4VAs8w/R6IxnFTohcLH+qEezHDd0
-         x5Io1lPFtHTnrHaceFZ30wp0VrRdeBT9NB2ATz4aebDMIThaUTbn19EVZDqIP0gr8qgq
-         0okJmAbuV5OSv1rTK7P98CCSbfhO4EW1PkwIVDZoTWmPRicQqDoh6SAEaZNBXtszwXke
-         k4ze0XK9EUBFv3Q6TNXjeRXtwjDc2RJdekzKcVpNp/5jNdWJtLWBVmWbIYtfZZnjvHwX
-         2mRzolJmJGhwDU3uMLAvA3U9dXuBV28aVCUIWnTtxjfOXnp37Tw7Atybg1Lgijg99Uem
-         wPHA==
+        bh=lKQRAlePlTMlxkEvsDgVWIhm5eYPypHEzL5OrGHVjJI=;
+        b=gU5afgnHt6RHmCo+fr9n2ut1P1aFxcoE+WoQB1vwKsMcnGhR73sfI6/YfpJBIJnpqh
+         CGHyDzjNSYRsvrQ9sB+7b3CTTTiX8K405mqs0xPkpBhodaUdMcetjAcIeOjaWqFGrpPc
+         Gn5/F1eE4K7Tfd7GhDOm0yKCzplxDwwhdLyX4ijdZ/fS1NbKB3yDU5mB1anfTv0iAsHc
+         RxEBEzqb0PNIjn409FJjKyKoaaq+c7L4BbhGqsttdY+v4urd79w4o36lzTqve54Vv+zH
+         94F/Wf0z63OlfAAM2CZoRGydfZHlXat6rLzUes8MY5631HQbcAI/4TtijzM8zU8SJRoh
+         pciQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=4zXOWLxK3mPjdxHJneIRA4HXCtIcK5HkOCCx6jSBP68=;
-        b=PRZMnDllbWbGrR5ff7tTaLSiF26itn9xrosO4mGNONHCRnyo5eJcMVlx3RR5J/ZY9k
-         uHL+2zg3IxNeIMyroCGIBnWcWM+fau0ZJC/ifu/kOekf0EzrrLNLucsqIzK07fBcF1I8
-         97UoQjSTRxQ84Iv8Zb3kFphRz/RUl+2eOOZ6P8l6xXnGeAI3y6epJJ1GrcGM1Q+FPioX
-         pnjm8cDBDVOdYAfPpoNpg8XmM+Fk4LPXDJMmKY3P6xoskGkNCqJzG53b5m5Ib82ELuKj
-         DFE8xdpXrf8L9Xfwi8dx81qZKzWVJ7MLKPfN9Y8yhBJ5r4IBkxJSpXkmaVJEHOjBsUJe
-         +eEA==
-X-Gm-Message-State: AOAM531nRysp7iLBkTKNISxELy8rgb2HTxuz2w5WKPu5tr/aUNP8qazC
-        54lpUvxJqtBfaHQ85Lz7J/O28A==
-X-Google-Smtp-Source: ABdhPJzx5J4Ka8IS6E1arp4w6wJbg294hGBpyIBi5rf8ELg2F7ZX8zceScs+VJOmG5OYHTFaCSKgDQ==
-X-Received: by 2002:a2e:6111:: with SMTP id v17mr4688272ljb.27.1626362941508;
-        Thu, 15 Jul 2021 08:29:01 -0700 (PDT)
+        bh=lKQRAlePlTMlxkEvsDgVWIhm5eYPypHEzL5OrGHVjJI=;
+        b=qhxYQmUIsXcOq6ZOcbtMblzBFhf7ReV0AzJFSriCa6sd2LwFk2czTKLV5DcYdJTTxL
+         tE6wpcxXlFoOdTB0FKo9f1/tc8cae+F4qvYd1rEANOaE2dd8lLHg5a9IF1+xZ5SiMzh4
+         bpWKGVhEuA8Lt8MYq2nTqCSPV3BIQqOFih54JKx22vG5o6FGsQRm2kFHoS3cZzA7lX6L
+         jran6OBndGwnFzMvy+O6NAbJW+i0q8QkaYK9nfWQ+Gk9n+QyrYOXhDscJtDMSacCAHXc
+         6dL8wr22LL60em2nUScy/72iqZghCkk3Ur68TaSWLQGFrDVMOX5mRQzChLWRphXXEcul
+         A0sA==
+X-Gm-Message-State: AOAM530B2NoY4XFzynoJmxBHaktB64J5jzmXuXS+0LVV+9tzghi7zVO2
+        IqzM1zw4I/DpTma7m1ASegG7Pw==
+X-Google-Smtp-Source: ABdhPJxAlbu5YugiR3VVgcx8jzlq4Lf7DJUoJ/mXxwjj5EjvRt5VMzewDCJYH37BtZZlf9eulah+cw==
+X-Received: by 2002:a05:6512:b96:: with SMTP id b22mr4789014lfv.155.1626376088904;
+        Thu, 15 Jul 2021 12:08:08 -0700 (PDT)
 Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id m5sm53599ljq.22.2021.07.15.08.29.01
+        by smtp.gmail.com with ESMTPSA id c6sm469646lfp.196.2021.07.15.12.08.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jul 2021 08:29:01 -0700 (PDT)
+        Thu, 15 Jul 2021 12:08:08 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] extcon: max3355: Drop unused include
-Date:   Thu, 15 Jul 2021 17:26:57 +0200
-Message-Id: <20210715152657.396185-1-linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] extcon: usb-gpio: Use the right includes
+Date:   Thu, 15 Jul 2021 21:06:06 +0200
+Message-Id: <20210715190606.429251-1-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -71,27 +70,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This driver includes the legacy <linux/gpio.h> header but
-does not use it. Drop this include.
+The USB GPIO extcon driver does not use any of the legacy
+includes <linux/gpio.h> or <linux/of_gpio.h> but
+exploits the fact that this brings in <linux/mod_device_table.h>.
+Fix this up by using the right includes.
 
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/extcon/extcon-max3355.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/extcon/extcon-usb-gpio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/extcon/extcon-max3355.c b/drivers/extcon/extcon-max3355.c
-index fa01926c09f1..d7795607f693 100644
---- a/drivers/extcon/extcon-max3355.c
-+++ b/drivers/extcon/extcon-max3355.c
-@@ -7,7 +7,6 @@
+diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
+index f06be6d4e2a9..0cb440bdd5cb 100644
+--- a/drivers/extcon/extcon-usb-gpio.c
++++ b/drivers/extcon/extcon-usb-gpio.c
+@@ -7,18 +7,17 @@
   */
  
  #include <linux/extcon-provider.h>
 -#include <linux/gpio.h>
  #include <linux/gpio/consumer.h>
+ #include <linux/init.h>
  #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
  #include <linux/module.h>
+-#include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/mod_devicetable.h>
+ 
+ #define USB_GPIO_DEBOUNCE_MS	20	/* ms */
+ 
 -- 
 2.31.1
 
