@@ -2,59 +2,59 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AABC636CA
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B716EC636C8
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A11CD613CF
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD65613BB
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343790AbhGOUNi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jul 2021 16:13:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47500 "EHLO
+        id S1344594AbhGOUNh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jul 2021 16:13:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343805AbhGOUNA (ORCPT
+        with ESMTP id S1343790AbhGOUNA (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jul 2021 16:13:00 -0400
 Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0D1C061767
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:06 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id k4so9320713wrc.8
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46D5C061762
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:04 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id f9so9315297wrq.11
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GQHT9sYOHLp0/eUog0CpJJpFZ9Bs9jPNWEkLf94mgh8=;
-        b=CZ6Z2biHdUa/V+oAuIqpPjKk+GOkGp/u385DXN4H1IB3b42uM4LZL3e7ilQFtiGPiA
-         YisI+z2I84Fg15fteDAwFqafS3YC5NxYvKJQRr4Mr0bR6hHCC3Lm+gepyJ+rtCe6fQTP
-         TfgK12kkKcN3WRTekOMfb18HD6lqvD6SHw3E3Z3g1+OSSvz2YVEdjj/MCwE8EvdbuiwG
-         LZHPXmm1RPyVHoXyAkc8hj+vXLwooFs2R0uPRIY2AeBA8W9wn7UY2PQBg8mYdgiPX5jn
-         6y1ViR1Xi0QQ8CKazIB9xQkgYMYihNCEFddhVCqLsL38CDsQ37tebJSnZnaxl9QqFhPs
-         11hw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qWWlyzoi+LtKiOl1UjLpyBrn4i31LGLB1Up1HMOFCQg=;
+        b=H/OMeehNaQeXtnQmvvE1za+7kzLIQPc6KtFbjCFbZGJZ+MwpKVgc19GTQ+faO5VT7V
+         xO2pL22vJkQCfk0ihhbtaTxnO0PiOwOLpC1VzP3LSoKPCmE30C7VadQUkrNitE4ewCfD
+         wMjnGjY4M34BmSRhC6L5yJGYVRDONrsPkqlHoew0b2chNypOdy4OyBEqqcJcchdX3NlC
+         KMylkWYQ5zc4Oet4Ks2P68VkAjICyLNZO/OQQZWEArw0qNi4LlXPR05EI6kjnJOP7c6v
+         M9xjRXUrYJBGgtAH/kGUlmXVIs9ivgueGfzsrug6Ri1GF/kDVt3VD1xSxK5aaxaUDt+e
+         d5/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GQHT9sYOHLp0/eUog0CpJJpFZ9Bs9jPNWEkLf94mgh8=;
-        b=AWkOOKxudTQHxFGJ/+7prxGVIEl2HEmOm/sbTiTlmnfwniWeFRSdGpma12/lglc19i
-         vLouBT/qTX3C4ZN1dUEhCjMT3v7EyikmoFWnyTALnKiQaZVFzIBxBOT3zVEBTDGi2vSO
-         yWJ56jQideNRsMoPfbwbezJnZTTZtvobwQKQiLGfvF1t5F1wd3lGzRmQ6atMVhsZCU6D
-         xHeMGq983b5kHfx9Pdgr59clK3oieLAwZBsUhlKhPaxf+ayXpOiPaeLJ4cuCeiezC/E6
-         YueEiIvTkGCIfHj2Vgz57RYMG6ALSRIy5vo4Wx4kAIdRsbR5VLuAF2dRlumu5iaFkFgf
-         T5VA==
-X-Gm-Message-State: AOAM530pFj3WLFJlch6b6QzQjXuCFcYdn6I2LYU19TuOxHGtoZtROxBp
-        NGO+y0ek13G0k8Lx8ZVjXSd91Q==
-X-Google-Smtp-Source: ABdhPJwCh2u9oOum4WxU6mzsRdJJugBbUrFWCMq56V8HefU4O57tFboNHcsihALXIyrrKD01GeCyiw==
-X-Received: by 2002:adf:fbce:: with SMTP id d14mr7846576wrs.236.1626379804620;
-        Thu, 15 Jul 2021 13:10:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qWWlyzoi+LtKiOl1UjLpyBrn4i31LGLB1Up1HMOFCQg=;
+        b=kKoONe0NfZ/XSPVNcSL7OKmsnS/75vMGhUINRABmoyUWGI4oKwYJsBUttmHMyZgX6v
+         uG3aI+BJ2EiY9fLAOdX+hQctyTf72IVJJ/of1sfGLTeIaZnvB2to9wk8mAYPnTDj4n5S
+         ruCN+K28ayXDEZjCTxysF6ca6/b32r+tAEHm1iJNXe1FGL58XpFC1FzvFa6Gn5/9sr+6
+         h7MAuGtslbMvtyKO1oV28NYlkrFxPBndZwdpL1ngIJflONpPP8kfzYwTecTdl63Qwrt+
+         nFY4fKf/qV03hIoUqZ8STRmk10E8HvUppnuBJ2beKI8PRD3FzpKW4IjAltMkJwGUSIsR
+         yqPg==
+X-Gm-Message-State: AOAM532KmsMJgNNJr7KfAucKzesihr+Ru9nA3WrlPxUfyS6eC8qq7Div
+        AZKVTxZwzbWuk8ePvc+AREcV2Q==
+X-Google-Smtp-Source: ABdhPJwMxjzTLB6a9XC+gdEny3F6ZIkd5ZIvBHOOTSVu0yMvnDKjBciD3TpJ7y3qA1f/GeU1jGzzIw==
+X-Received: by 2002:adf:ed46:: with SMTP id u6mr7798281wro.252.1626379803475;
+        Thu, 15 Jul 2021 13:10:03 -0700 (PDT)
 Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
-        by smtp.gmail.com with ESMTPSA id m32sm8860986wms.23.2021.07.15.13.10.04
+        by smtp.gmail.com with ESMTPSA id m32sm8860986wms.23.2021.07.15.13.10.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jul 2021 13:10:04 -0700 (PDT)
+        Thu, 15 Jul 2021 13:10:03 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -63,235 +63,114 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Helmut Grohne <helmut.grohne@intenta.de>,
         Ben Hutchings <ben.hutchings@essensium.com>
 Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [libgpiod][PATCH v2 2/3] API: extend the line request functionality
-Date:   Thu, 15 Jul 2021 22:10:00 +0200
-Message-Id: <20210715201001.23726-3-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH v2 0/3] libgpiod v2: C++ bindings
+Date:   Thu, 15 Jul 2021 22:09:58 +0200
+Message-Id: <20210715201001.23726-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210715201001.23726-1-brgl@bgdev.pl>
-References: <20210715201001.23726-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds new public functions for interacting with line request objects.
-First we implement getters for the number of lines in a request and for
-the array of offsets of requested lines. Next we rename the existing
-gpiod_line_request_get/set_values() functions to
-gpiod_line_request_get/set_values_subset() and add new functions that are
-named gpiod_line_request_get/set_values() but allow to get/set the values
-of all requested lines.
+This series contains the implementation of the C++ bindings for libgpiod v2.
+In general the C++ library follows the data structure model as defined by
+the C library with one notable exception: objects that represent immutable
+snapshots of kernel data (line_info and edge & info events) are copyable
+(or rather shared behind the scenes using ::std::shared_ptr). The rest of
+the classes delete their copy constructors and assignment operators and
+are only move constructible and move assignable.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- include/gpiod.h    | 54 ++++++++++++++++++++++++++++++++++++++++------
- lib/line-request.c | 50 +++++++++++++++++++++++++++++++++---------
- tools/gpioget.c    |  3 +--
- 3 files changed, 89 insertions(+), 18 deletions(-)
+All classes follow the pimpl idiom - using either shared_ptr or unique_ptr -
+and all implementations are hidden from the user for easier maintenance and
+less ABI breakage in the future.
 
-diff --git a/include/gpiod.h b/include/gpiod.h
-index 8fc20ed..51e93be 100644
---- a/include/gpiod.h
-+++ b/include/gpiod.h
-@@ -814,6 +814,22 @@ gpiod_request_config_set_event_buffer_size(struct gpiod_request_config *config,
-  */
- void gpiod_line_request_release(struct gpiod_line_request *request);
- 
-+/**
-+ * @brief Get the number of lines in this request.
-+ * @param request Line request object.
-+ * @return Number of requested lines.
-+ */
-+unsigned int gpiod_line_request_get_num_lines(struct gpiod_line_request *request);
-+
-+/**
-+ * @brief Get the hardware offsets of lines in this request.
-+ * @param request Line request object.
-+ * @param offsets Array to store offsets in. Must hold at least the number of
-+ *                lines returned by ::gpiod_line_request_get_num_lines.
-+ */
-+void gpiod_line_request_get_offsets(struct gpiod_line_request *request,
-+				    unsigned int *offsets);
-+
- /**
-  * @brief Read the value of a single line associated with this request.
-  * @param request Line request object.
-@@ -824,7 +840,7 @@ int gpiod_line_request_get_value(struct gpiod_line_request *request,
- 				 unsigned int offset);
- 
- /**
-- * @brief Read values of lines associated with this request.
-+ * @brief Read values of a subset of lines associated with this request.
-  * @param request GPIO line request.
-  * @param num_lines Number of lines for which to read values.
-  * @param offsets Array of offsets corresponding with the lines associated with
-@@ -832,9 +848,23 @@ int gpiod_line_request_get_value(struct gpiod_line_request *request,
-  * @param values Array in which the values will be stored.
-  * @return 0 on success, -1 on failure.
-  */
-+int gpiod_line_request_get_values_subset(struct gpiod_line_request *request,
-+					 unsigned num_lines,
-+					 const unsigned int *offsets,
-+					 int *values);
-+
-+/**
-+ * @brief Read values of all lines associated with this request.
-+ * @param request GPIO line request.
-+ * @param values Array in which the values will be stored. Must hold at least
-+ *               the number of lines returned by
-+ *               ::gpiod_line_request_get_num_lines. The index of each value
-+ *               will be associated with the offset at the same index in the
-+ *               offset array returned by ::gpiod_line_request_get_offsets.
-+ * @return 0 on success, -1 on failure.
-+ */
- int gpiod_line_request_get_values(struct gpiod_line_request *request,
--				  unsigned num_lines,
--				  const unsigned int *offsets, int *values);
-+				  int *values);
- 
- /**
-  * @brief Set the value of a single line associated with this request.
-@@ -846,7 +876,7 @@ int gpiod_line_request_set_value(struct gpiod_line_request *request,
- 				 unsigned int offset, int value);
- 
- /**
-- * @brief Set values of lines associated with this line request.
-+ * @brief Set values of a subset of lines associated with this line request.
-  * @param request GPIO line request.
-  * @param num_lines Number of lines for which to set values.
-  * @param offsets Array of offsets corresponding with the lines associated with
-@@ -855,9 +885,21 @@ int gpiod_line_request_set_value(struct gpiod_line_request *request,
-  *               correspond with the offsets in the previous argument.
-  * @return 0 on success, -1 on failure.
-  */
-+int gpiod_line_request_set_values_subset(struct gpiod_line_request *request,
-+					 unsigned int num_lines,
-+					 const unsigned int *offsets,
-+					 const int *values);
-+
-+/**
-+ * @brief Set values of all lines associated with this request.
-+ * @param request GPIO line request.
-+ * @param values Array containing the values to set. Must hold at least the
-+ *               number of lines returned by ::gpiod_line_request_get_num_lines.
-+ *               The index of each value be associated with the offset at the
-+ *               same index in the offset array returned by
-+ *               ::gpiod_line_request_get_offsets.
-+ */
- int gpiod_line_request_set_values(struct gpiod_line_request *request,
--				  unsigned int num_lines,
--				  const unsigned int *offsets,
- 				  const int *values);
- 
- /**
-diff --git a/lib/line-request.c b/lib/line-request.c
-index 6cbb08a..8008b89 100644
---- a/lib/line-request.c
-+++ b/lib/line-request.c
-@@ -45,13 +45,27 @@ GPIOD_API void gpiod_line_request_release(struct gpiod_line_request *request)
- 	free(request);
- }
- 
-+GPIOD_API unsigned int
-+gpiod_line_request_get_num_lines(struct gpiod_line_request *request)
-+{
-+	return request->num_lines;
-+}
-+
-+GPIOD_API void
-+gpiod_line_request_get_offsets(struct gpiod_line_request *request,
-+			       unsigned int *offsets)
-+{
-+	memcpy(offsets, request->offsets,
-+	       sizeof(*offsets) * request->num_lines);
-+}
-+
- GPIOD_API int gpiod_line_request_get_value(struct gpiod_line_request *request,
- 					   unsigned int offset)
- {
- 	unsigned int ret;
- 	int val;
- 
--	ret = gpiod_line_request_get_values(request, 1, &offset, &val);
-+	ret = gpiod_line_request_get_values_subset(request, 1, &offset, &val);
- 	if (ret)
- 		return -1;
- 
-@@ -71,10 +85,10 @@ static int offset_to_bit(struct gpiod_line_request *request,
- 	return -1;
- }
- 
--GPIOD_API int gpiod_line_request_get_values(struct gpiod_line_request *request,
--					    unsigned num_lines,
--					    const unsigned int *offsets,
--					    int *values)
-+GPIOD_API int
-+gpiod_line_request_get_values_subset(struct gpiod_line_request *request,
-+				     unsigned num_lines,
-+				     const unsigned int *offsets, int *values)
- {
- 	struct gpio_v2_line_values buf;
- 	uint64_t mask = 0, bits = 0;
-@@ -119,16 +133,25 @@ GPIOD_API int gpiod_line_request_get_values(struct gpiod_line_request *request,
- 	return 0;
- }
- 
-+GPIOD_API int gpiod_line_request_get_values(struct gpiod_line_request *request,
-+					    int *values)
-+{
-+	return gpiod_line_request_get_values_subset(request, request->num_lines,
-+						    request->offsets, values);
-+}
-+
- GPIOD_API int gpiod_line_request_set_value(struct gpiod_line_request *request,
- 					   unsigned int offset, int value)
- {
--	return gpiod_line_request_set_values(request, 1, &offset, &value);
-+	return gpiod_line_request_set_values_subset(request, 1,
-+						    &offset, &value);
- }
- 
--GPIOD_API int gpiod_line_request_set_values(struct gpiod_line_request *request,
--					    unsigned int num_lines,
--					    const unsigned int *offsets,
--					    const int *values)
-+GPIOD_API int
-+gpiod_line_request_set_values_subset(struct gpiod_line_request *request,
-+				     unsigned int num_lines,
-+				     const unsigned int *offsets,
-+				     const int *values)
- {
- 	struct gpio_v2_line_values buf;
- 	uint64_t mask = 0, bits = 0;
-@@ -153,6 +176,13 @@ GPIOD_API int gpiod_line_request_set_values(struct gpiod_line_request *request,
- 	return ioctl(request->fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &buf);
- }
- 
-+GPIOD_API int gpiod_line_request_set_values(struct gpiod_line_request *request,
-+					    const int *values)
-+{
-+	return gpiod_line_request_set_values_subset(request, request->num_lines,
-+						    request->offsets, values);
-+}
-+
- GPIOD_API int
- gpiod_line_request_reconfigure_lines(struct gpiod_line_request *request,
- 				     struct gpiod_line_config *config)
-diff --git a/tools/gpioget.c b/tools/gpioget.c
-index e0c630d..afa2ccb 100644
---- a/tools/gpioget.c
-+++ b/tools/gpioget.c
-@@ -129,8 +129,7 @@ int main(int argc, char **argv)
- 	if (!request)
- 		die_perror("unable to request lines");
- 
--	ret = gpiod_line_request_get_values(request, num_lines,
--					    offsets, values);
-+	ret = gpiod_line_request_get_values(request, values);
- 	if (ret)
- 		die_perror("unable to read GPIO line values");
- 
+The edge_event class is a bit of a special case. While it looks the same
+as other copyable objects to the user, the implementation uses a tiny bit of
+polymorphism (although it never crosses the ABI boundary). This is done
+to make it possible to use the edge_event_buffer without any memory
+allocations like what the C API enables. The edge_event objects stored
+in the buffer only contain a raw pointer to the C object stored in the
+underlying C edge_event_buffer. The event is copied into a fully managed
+object once the copy assignment operator is called.
+
+I'm Cc'ing people who showed interest and helped me with C++ bindings
+before for review.
+
+v1 -> v2:
+Kent: I addressed most points from your review. Some are unaddressed due to
+personal preference (for instance: I still allow creating of empty line-request
+objects as they may be reused in subsequent requests). I also kept the 'watch'
+argument in get_line_info() as well as the boolean operators for chip and
+request - although with (hopefully) better documentation.
+
+The first two patches extend the core C API of libgpiod as discussed.
+
+Bartosz Golaszewski (3):
+  API: add a function for retrieving the capacity of edge event buffers
+  API: extend the line request functionality
+  bindings: cxx: implement C++ bindings for libgpiod v2.0
+
+ Doxyfile.in                                 |   4 +-
+ bindings/cxx/Makefile.am                    |  16 +-
+ bindings/cxx/chip.cpp                       | 214 +++--
+ bindings/cxx/edge-event-buffer.cpp          | 103 +++
+ bindings/cxx/edge-event.cpp                 | 123 +++
+ bindings/cxx/examples/Makefile.am           |  12 +-
+ bindings/cxx/examples/gpiodetectcxx.cpp     |   3 +-
+ bindings/cxx/examples/gpiogetcxx.cpp        |  12 +-
+ bindings/cxx/examples/gpioinfocxx.cpp       |  63 +-
+ bindings/cxx/examples/gpiomoncxx.cpp        |  39 +-
+ bindings/cxx/examples/gpiosetcxx.cpp        |  19 +-
+ bindings/cxx/gpiod.hpp                      | 938 +-------------------
+ bindings/cxx/gpiodcxx/Makefile.am           |  14 +
+ bindings/cxx/gpiodcxx/chip.hpp              | 180 ++++
+ bindings/cxx/gpiodcxx/edge-event-buffer.hpp | 115 +++
+ bindings/cxx/gpiodcxx/edge-event.hpp        | 124 +++
+ bindings/cxx/gpiodcxx/info-event.hpp        | 107 +++
+ bindings/cxx/gpiodcxx/line-config.hpp       | 244 +++++
+ bindings/cxx/gpiodcxx/line-info.hpp         | 205 +++++
+ bindings/cxx/gpiodcxx/line-request.hpp      | 207 +++++
+ bindings/cxx/gpiodcxx/misc.hpp              |  49 +
+ bindings/cxx/gpiodcxx/request-config.hpp    |  97 ++
+ bindings/cxx/info-event.cpp                 |  89 ++
+ bindings/cxx/internal.hpp                   | 168 +++-
+ bindings/cxx/iter.cpp                       |  60 --
+ bindings/cxx/line-config.cpp                | 226 +++++
+ bindings/cxx/line-info.cpp                  | 150 ++++
+ bindings/cxx/line-request.cpp               | 194 ++++
+ bindings/cxx/line.cpp                       | 321 -------
+ bindings/cxx/line_bulk.cpp                  | 366 --------
+ bindings/cxx/misc.cpp                       |  18 +
+ bindings/cxx/request-config.cpp             |  80 ++
+ configure.ac                                |   1 +
+ include/gpiod.h                             |  63 +-
+ lib/edge-event.c                            |   6 +
+ lib/line-request.c                          |  50 +-
+ tools/gpioget.c                             |   3 +-
+ 37 files changed, 2838 insertions(+), 1845 deletions(-)
+ create mode 100644 bindings/cxx/edge-event-buffer.cpp
+ create mode 100644 bindings/cxx/edge-event.cpp
+ create mode 100644 bindings/cxx/gpiodcxx/Makefile.am
+ create mode 100644 bindings/cxx/gpiodcxx/chip.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/edge-event-buffer.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/edge-event.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/info-event.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/line-config.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/line-info.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/line-request.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/misc.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/request-config.hpp
+ create mode 100644 bindings/cxx/info-event.cpp
+ delete mode 100644 bindings/cxx/iter.cpp
+ create mode 100644 bindings/cxx/line-config.cpp
+ create mode 100644 bindings/cxx/line-info.cpp
+ create mode 100644 bindings/cxx/line-request.cpp
+ delete mode 100644 bindings/cxx/line.cpp
+ delete mode 100644 bindings/cxx/line_bulk.cpp
+ create mode 100644 bindings/cxx/misc.cpp
+ create mode 100644 bindings/cxx/request-config.cpp
+
 -- 
 2.30.1
 
