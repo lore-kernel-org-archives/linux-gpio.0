@@ -2,178 +2,126 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14858C636C8
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 19:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66219C636C8
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F08D461158
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 19:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43D5D613BB
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245459AbhGOTqB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jul 2021 15:46:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39942 "EHLO
+        id S1344060AbhGOUNJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jul 2021 16:13:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345823AbhGOTp0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jul 2021 15:45:26 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A99C0770E5
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 12:14:48 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id b26so11798089lfo.4
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 12:14:48 -0700 (PDT)
+        with ESMTP id S1343503AbhGOUNA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jul 2021 16:13:00 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64F32C061766
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:05 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id a13so9316363wrf.10
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QW0aUbvWdjxupRfZicN/X4Nb3halAcxZpcGi/DnPSvg=;
-        b=k2pGEOm5ZFBny6IKQmoQQihuFJAq/F9XJz1d3ckRHotg9l8L7PulMWh8sUsj4tPTa9
-         BdCkJEO8fCafJ8lssepvfYG/O4vAS9O5XyBdIReDFNR5eamWIgOAy4ynHASs98owCe6E
-         z30v/yzw4dkeJcS/5smFh5MU5liFlQgy1McmLqYZAaZCQ4MZi1V7LtI+ql6hYiOCDb0d
-         +LBfr0Vgv/wiFMihRd/NNHuyOVI5swnduZ98fm2JGbY9W9Noyd/S1/ziCxR2gyUKoK0C
-         mlk/ps1WCUMy6Obn1mGTOu9J2Cb9c16hZhD2vJTKEaIegY355bcf/4bQVSrBPWmRP0bC
-         sIOA==
+        bh=u9O5guoqttI58O/2VLr0rXY16we6o4mZCD6vhjnKygc=;
+        b=cNPdta4wZJmJbn7RsM49EcWmHhQQJ751G6eK2ITF6jDqTTmJhgPkVSJAYsqMaQxSNM
+         wXslnBikxnvgUgX8VsRMIyMoXGoHYXKAnzpWSB/m6otlB0npE1XOPZRwfsX5pv03lFWX
+         iUzeS28eiUbBHgThnIEnNCEJUhuDePjcwIUxLv5fsRiELawdhY8sfdo03KUKuzyUeXF+
+         kmW46SA7+0ee9/WwIQwR8Gq825nJOMniYausmIlHayuWHpxokLQaSwzr7aAchTtMb0kL
+         whGc5VFuqyd+IJj5NUtw4vx2W9bLZFa6WbnF50dfo98VPbc6Lnr/BYYyxct3Np+nkzsU
+         0TuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QW0aUbvWdjxupRfZicN/X4Nb3halAcxZpcGi/DnPSvg=;
-        b=gkLMXpHK4oHW0Esg2Jw1lcyuY8sFGiVyphhCAkhAqXj5Xj7CVCLHrP7AAxEsEB5aN6
-         s+Hb/nGxbqKAvMOrV2iWFY/Sm/Iv18D4RNlieU7QcHWEpcI3sIlMJ5EYo7YG+cM234Yu
-         Tea2pEuyJAstq+VAzZajwvEOW15scCNcjX4XrF0xHhzIjVsnFxylA151fGDCLilMkMIO
-         CdpHWaA/A3c8IeAW7AVPDk2UcJOAjOeUASA7nGu4tobeVN0tiY4zC1WRtzek6lY3xBnX
-         6YRyDpyk5xKJKOXYsiCq7Z9JBwcJ1zJIeIKEEiviptYFzaHcVmRoy6b0oACxFU/hUSYW
-         Gi9Q==
-X-Gm-Message-State: AOAM532iYTuE3fpqUN4dZTevP2vPvOW6m4y3YoHZM39kr4C2TZAakv1k
-        QfVPLoMdwkiqbuTR3c0c0xXtOiudnDtePA==
-X-Google-Smtp-Source: ABdhPJydsm0c7fTrPlKR03JCV4b93R4fiJt66Q1PHzeQ5d1zRqRAyScsf7VNoMp1PnfE8UqpFulVrg==
-X-Received: by 2002:ac2:4824:: with SMTP id 4mr4575512lft.553.1626376487202;
-        Thu, 15 Jul 2021 12:14:47 -0700 (PDT)
-Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id y22sm472357lfh.154.2021.07.15.12.14.46
+        bh=u9O5guoqttI58O/2VLr0rXY16we6o4mZCD6vhjnKygc=;
+        b=E1UT0MvW6X0d7md5FM85YaPVWm5/b2A1WBa5rbTsJKt5Iqy8MVd5mkmG+SpiSFaZBc
+         neA/7gbpRd7DZptUVLRH2IsoTr/1HERaaGOS+GnwIsZuM+nrvF4WUKQW6B4flywrxcsa
+         E952SyogrjyD59lUWx+JImb28tUNY9Cpz7/2h/ZXAB5iU0htdXTRs5B5saQ6Vopb1Y/x
+         3juBOn50H/k/491mhrKGYiiYRZKdnngaN3M5eNJVpkcmLigNDLvfAGnuSU0o7ANNlBvH
+         L4UiV5S/7Nn8BQvbWM5BL6J3qzZ8rE05UnBYOO5VBwF9hJGHu48fY5NoeZtckZWgFLwn
+         pckQ==
+X-Gm-Message-State: AOAM533Fh6UCeL5R2ED59QgW6S9VeYmn/i8x0Emq8/nmdR2Dyx/vTwLj
+        oUkjHDxGegoGHRzcslwhNsmCqg==
+X-Google-Smtp-Source: ABdhPJwmw2ea3GHvfL22kCP8jYnPjFZdKkuAAVH0RmdnaPhiZYl6806KAUOWSdfIUP88YmQFXwirOw==
+X-Received: by 2002:a5d:457b:: with SMTP id a27mr7552384wrc.280.1626379804078;
+        Thu, 15 Jul 2021 13:10:04 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
+        by smtp.gmail.com with ESMTPSA id m32sm8860986wms.23.2021.07.15.13.10.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jul 2021 12:14:47 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/3 v6] ARM: davinci: dm646x: Convert LEDs to GPIO descriptor table
-Date:   Thu, 15 Jul 2021 21:11:41 +0200
-Message-Id: <20210715191141.430307-3-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210715191141.430307-1-linus.walleij@linaro.org>
-References: <20210715191141.430307-1-linus.walleij@linaro.org>
+        Thu, 15 Jul 2021 13:10:03 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jack Winch <sunt.un.morcov@gmail.com>,
+        Helmut Grohne <helmut.grohne@intenta.de>,
+        Ben Hutchings <ben.hutchings@essensium.com>
+Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [libgpiod][PATCH v2 1/3] API: add a function for retrieving the capacity of edge event buffers
+Date:   Thu, 15 Jul 2021 22:09:59 +0200
+Message-Id: <20210715201001.23726-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210715201001.23726-1-brgl@bgdev.pl>
+References: <20210715201001.23726-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This converts the DaVinci DM646x LEDs to use GPIO
-descriptor look-ups.
+Add a getter for the edge-event buffer capacity property. This is useful
+if we want to read the maximum number of events that can be stored in
+a buffer object without externally storing its capacity.
 
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
-ChangeLog v5->v6:
-- Rebase on v5.14-rc1
-ChangeLog v4->v5:
-- Name each I2C expander instance explicitly as "u2" etc.
-- Tie the LEDs to the generated "i2c-u2" device name.
-ChangeLog v3->v4:
-- Rebase on v5.13-rc1
-- Resend
-- LED maintainers: please apply this patch, it is ACKed by a DaVinci
-  maintainer
-ChangeLog v2->v3:
-- Rebase on v5.10-rc1
-- Resend
-ChangeLog v1->v2:
-- Collect Bartosz' review tag
-- Rebase on v5.9-rc1
-- Resend
----
- arch/arm/mach-davinci/board-dm646x-evm.c | 34 +++++++++++++++++-------
- 1 file changed, 25 insertions(+), 9 deletions(-)
+ include/gpiod.h  | 9 +++++++++
+ lib/edge-event.c | 6 ++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index ee91d81ebbfd..00c074fddce6 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -20,6 +20,7 @@
- #include <linux/init.h>
- #include <linux/leds.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
- #include <linux/property.h>
-@@ -202,10 +203,10 @@ static struct i2c_driver dm6467evm_cpld_driver = {
- /* LEDS */
+diff --git a/include/gpiod.h b/include/gpiod.h
+index 66e6c12..8fc20ed 100644
+--- a/include/gpiod.h
++++ b/include/gpiod.h
+@@ -989,6 +989,15 @@ unsigned long gpiod_edge_event_get_line_seqno(struct gpiod_edge_event *event);
+ struct gpiod_edge_event_buffer *
+ gpiod_edge_event_buffer_new(unsigned int capacity);
  
- static struct gpio_led evm_leds[] = {
--	{ .name = "DS1", .active_low = 1, },
--	{ .name = "DS2", .active_low = 1, },
--	{ .name = "DS3", .active_low = 1, },
--	{ .name = "DS4", .active_low = 1, },
-+	{ .name = "DS1" },
-+	{ .name = "DS2" },
-+	{ .name = "DS3" },
-+	{ .name = "DS4" },
- };
- 
- static const struct gpio_led_platform_data evm_led_data = {
-@@ -213,18 +214,32 @@ static const struct gpio_led_platform_data evm_led_data = {
- 	.leds     = evm_leds,
- };
- 
-+static struct gpiod_lookup_table evm_leds_gpio_table = {
-+	.dev_id = "leds-gpio.0",
-+	.table = {
-+		/*
-+		 * These GPIOs are on a PCF8574a GPIO expander, which
-+		 * is in turn named after the I2C device name. This is
-+		 * device "u2" on I2C bus 1 with address 0x38. These
-+		 * leds are at offset 4, 5, 6, 7.
-+		 */
-+		GPIO_LOOKUP_IDX("i2c-u2", 4, NULL, 0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("i2c-u2", 5, NULL, 1, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("i2c-u2", 6, NULL, 2, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("i2c-u2", 7, NULL, 3, GPIO_ACTIVE_LOW),
-+		{ },
-+	},
-+};
++/**
++ * @brief Get the capacity (the max number of events that can be stored) of
++ *        the event buffer.
++ * @param buffer Edge event buffer.
++ * @return The capacity of the buffer.
++ */
++unsigned int
++gpiod_edge_event_buffer_get_capacity(struct gpiod_edge_event_buffer *buffer);
 +
- static struct platform_device *evm_led_dev;
+ /**
+  * @brief Free the edge event buffer and release all associated resources.
+  * @param buffer Edge event buffer to free.
+diff --git a/lib/edge-event.c b/lib/edge-event.c
+index 4aece4b..ab484ad 100644
+--- a/lib/edge-event.c
++++ b/lib/edge-event.c
+@@ -109,6 +109,12 @@ gpiod_edge_event_buffer_new(unsigned int capacity)
+ 	return buf;
+ }
  
- static int evm_led_setup(struct i2c_client *client, int gpio,
- 			unsigned int ngpio, void *c)
++GPIOD_API unsigned int
++gpiod_edge_event_buffer_get_capacity(struct gpiod_edge_event_buffer *buffer)
++{
++	return buffer->capacity;
++}
++
+ GPIOD_API void
+ gpiod_edge_event_buffer_free(struct gpiod_edge_event_buffer *buffer)
  {
--	struct gpio_led *leds = evm_leds;
- 	int status;
- 
--	while (ngpio--) {
--		leds->gpio = gpio++;
--		leds++;
--	}
-+	/* Add the lookup table */
-+	gpiod_add_lookup_table(&evm_leds_gpio_table);
- 
- 	evm_led_dev = platform_device_alloc("leds-gpio", 0);
- 	platform_device_add_data(evm_led_dev, &evm_led_data,
-@@ -438,6 +453,7 @@ static struct i2c_board_info __initdata i2c_info[] =  {
- 	},
- 	{
- 		I2C_BOARD_INFO("pcf8574a", 0x38),
-+		.dev_name = "u2",
- 		.platform_data	= &pcf_data,
- 	},
- 	{
 -- 
-2.31.1
+2.30.1
 
