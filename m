@@ -2,175 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B716EC636C8
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBE0C636C9
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 21:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD65613BB
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 20:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 068C261374
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jul 2021 21:36:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344594AbhGOUNh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jul 2021 16:13:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47430 "EHLO
+        id S231158AbhGOVjq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jul 2021 17:39:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343790AbhGOUNA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jul 2021 16:13:00 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46D5C061762
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:04 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id f9so9315297wrq.11
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jul 2021 13:10:04 -0700 (PDT)
+        with ESMTP id S229794AbhGOVjp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jul 2021 17:39:45 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30AF1C06175F;
+        Thu, 15 Jul 2021 14:36:52 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id y4so7855454pgl.10;
+        Thu, 15 Jul 2021 14:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qWWlyzoi+LtKiOl1UjLpyBrn4i31LGLB1Up1HMOFCQg=;
-        b=H/OMeehNaQeXtnQmvvE1za+7kzLIQPc6KtFbjCFbZGJZ+MwpKVgc19GTQ+faO5VT7V
-         xO2pL22vJkQCfk0ihhbtaTxnO0PiOwOLpC1VzP3LSoKPCmE30C7VadQUkrNitE4ewCfD
-         wMjnGjY4M34BmSRhC6L5yJGYVRDONrsPkqlHoew0b2chNypOdy4OyBEqqcJcchdX3NlC
-         KMylkWYQ5zc4Oet4Ks2P68VkAjICyLNZO/OQQZWEArw0qNi4LlXPR05EI6kjnJOP7c6v
-         M9xjRXUrYJBGgtAH/kGUlmXVIs9ivgueGfzsrug6Ri1GF/kDVt3VD1xSxK5aaxaUDt+e
-         d5/w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JUT3BjBpFrMnzwekbW4hJQmcBSwFAN435ggGnFZPrzQ=;
+        b=rEUlMnAesd4+FZg5AmXrIFesdnA5Z2NCElMCjCED4saDaoNwrjGF6+Ps2/FGf+RAVk
+         z43fWujFQe4FEyQBsBVERqslDnrTIYoxITmWGxP3vxIC3+vRagNC4gJ+rcnlnTeUUOsV
+         CBvXlgHWSK/6/C1fmIF7HhHjNhFhlmy9LHugyDFajsOeb06NbcNbjvcVfUi012M49/B3
+         VVzK3jAaRyVTXJZbwJSle3OUdyxeqVD59cvHwkAQ6SZRKh9+NgtwokU5J38IVHHNttQo
+         SfbqgXCprcsqbWfh1w9i+3f2V1MQaFMuyJRTioMgjWOcCEWoAQz+VyNPtwtk51n/7WfL
+         YDCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qWWlyzoi+LtKiOl1UjLpyBrn4i31LGLB1Up1HMOFCQg=;
-        b=kKoONe0NfZ/XSPVNcSL7OKmsnS/75vMGhUINRABmoyUWGI4oKwYJsBUttmHMyZgX6v
-         uG3aI+BJ2EiY9fLAOdX+hQctyTf72IVJJ/of1sfGLTeIaZnvB2to9wk8mAYPnTDj4n5S
-         ruCN+K28ayXDEZjCTxysF6ca6/b32r+tAEHm1iJNXe1FGL58XpFC1FzvFa6Gn5/9sr+6
-         h7MAuGtslbMvtyKO1oV28NYlkrFxPBndZwdpL1ngIJflONpPP8kfzYwTecTdl63Qwrt+
-         nFY4fKf/qV03hIoUqZ8STRmk10E8HvUppnuBJ2beKI8PRD3FzpKW4IjAltMkJwGUSIsR
-         yqPg==
-X-Gm-Message-State: AOAM532KmsMJgNNJr7KfAucKzesihr+Ru9nA3WrlPxUfyS6eC8qq7Div
-        AZKVTxZwzbWuk8ePvc+AREcV2Q==
-X-Google-Smtp-Source: ABdhPJwMxjzTLB6a9XC+gdEny3F6ZIkd5ZIvBHOOTSVu0yMvnDKjBciD3TpJ7y3qA1f/GeU1jGzzIw==
-X-Received: by 2002:adf:ed46:: with SMTP id u6mr7798281wro.252.1626379803475;
-        Thu, 15 Jul 2021 13:10:03 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
-        by smtp.gmail.com with ESMTPSA id m32sm8860986wms.23.2021.07.15.13.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jul 2021 13:10:03 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jack Winch <sunt.un.morcov@gmail.com>,
-        Helmut Grohne <helmut.grohne@intenta.de>,
-        Ben Hutchings <ben.hutchings@essensium.com>
-Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [libgpiod][PATCH v2 0/3] libgpiod v2: C++ bindings
-Date:   Thu, 15 Jul 2021 22:09:58 +0200
-Message-Id: <20210715201001.23726-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.30.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JUT3BjBpFrMnzwekbW4hJQmcBSwFAN435ggGnFZPrzQ=;
+        b=FkUXVxqEnXZ1Jw5zJ4rpXoIAu2qpfpq+bf6NvTMiyz5IFc0joWTl3qLQ+U6Wn5GkLz
+         rwnmuQUCq6nDwm98AQEDBJdCZc3KHEcIkMdW+wN4yAysO6+yNxCFQ8lIZW0QbqaqOpOY
+         lKwTHvF9KLHGln8HIvrLWR9r+LZTK36m37ej46aeOzAR8HBHVaMpG/uKa/TTq0+EFj2I
+         lcwzAiHzRJG55RlSKm3Ww9LNQU3fdhvAauvtKpIAUzeMzboIweg4sJCWeMWahFvnq9Bk
+         f9HCPLoeQfE+veumotxQRxTx823Ca/30p8DsdXj8Mqyy7PYQohGHC5EmM7F55VLUUCbf
+         hJJw==
+X-Gm-Message-State: AOAM5335q7M1yzt/aNXMEHXD+YXYV1oLoDKqusTpn8Aj/CUHgV444l8u
+        YWpstmDjOdob+v69AUfZI0MTpuovMWuTFWOOCSA=
+X-Google-Smtp-Source: ABdhPJz5pdzy00r4wIwE4o5cfHcjizfOUbebDuelwJmCUWQPsIGRXS6nu3XGGDzWDux8/hnommPz+symYQn4hqxAez0=
+X-Received: by 2002:aa7:800b:0:b029:330:455f:57a8 with SMTP id
+ j11-20020aa7800b0000b0290330455f57a8mr6438104pfi.7.1626385011604; Thu, 15 Jul
+ 2021 14:36:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210715190606.429251-1-linus.walleij@linaro.org>
+In-Reply-To: <20210715190606.429251-1-linus.walleij@linaro.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 16 Jul 2021 00:36:15 +0300
+Message-ID: <CAHp75Vfrs4rVYTUH6O4toGoWHgx+qfVS1PGYaWPm_TFJqvEOHA@mail.gmail.com>
+Subject: Re: [PATCH] extcon: usb-gpio: Use the right includes
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series contains the implementation of the C++ bindings for libgpiod v2.
-In general the C++ library follows the data structure model as defined by
-the C library with one notable exception: objects that represent immutable
-snapshots of kernel data (line_info and edge & info events) are copyable
-(or rather shared behind the scenes using ::std::shared_ptr). The rest of
-the classes delete their copy constructors and assignment operators and
-are only move constructible and move assignable.
+On Thu, Jul 15, 2021 at 10:35 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> The USB GPIO extcon driver does not use any of the legacy
+> includes <linux/gpio.h> or <linux/of_gpio.h> but
+> exploits the fact that this brings in <linux/mod_device_table.h>.
+> Fix this up by using the right includes.
 
-All classes follow the pimpl idiom - using either shared_ptr or unique_ptr -
-and all implementations are hidden from the user for easier maintenance and
-less ABI breakage in the future.
+I like it!
+Only one comment below, after addressing,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-The edge_event class is a bit of a special case. While it looks the same
-as other copyable objects to the user, the implementation uses a tiny bit of
-polymorphism (although it never crosses the ABI boundary). This is done
-to make it possible to use the edge_event_buffer without any memory
-allocations like what the C API enables. The edge_event objects stored
-in the buffer only contain a raw pointer to the C object stored in the
-underlying C edge_event_buffer. The event is copied into a fully managed
-object once the copy assignment operator is called.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/extcon/extcon-usb-gpio.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
+> index f06be6d4e2a9..0cb440bdd5cb 100644
+> --- a/drivers/extcon/extcon-usb-gpio.c
+> +++ b/drivers/extcon/extcon-usb-gpio.c
+> @@ -7,18 +7,17 @@
+>   */
+>
+>  #include <linux/extcon-provider.h>
+> -#include <linux/gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/pinctrl/consumer.h>
 
-I'm Cc'ing people who showed interest and helped me with C++ bindings
-before for review.
+> +#include <linux/mod_devicetable.h>
 
-v1 -> v2:
-Kent: I addressed most points from your review. Some are unaddressed due to
-personal preference (for instance: I still allow creating of empty line-request
-objects as they may be reused in subsequent requests). I also kept the 'watch'
-argument in get_line_info() as well as the boolean operators for chip and
-request - although with (hopefully) better documentation.
+Can it be squeezed more or less in an ordered manner?
+(before module.h I suppose)
 
-The first two patches extend the core C API of libgpiod as discussed.
+>
+>  #define USB_GPIO_DEBOUNCE_MS   20      /* ms */
+>
+> --
+> 2.31.1
+>
 
-Bartosz Golaszewski (3):
-  API: add a function for retrieving the capacity of edge event buffers
-  API: extend the line request functionality
-  bindings: cxx: implement C++ bindings for libgpiod v2.0
-
- Doxyfile.in                                 |   4 +-
- bindings/cxx/Makefile.am                    |  16 +-
- bindings/cxx/chip.cpp                       | 214 +++--
- bindings/cxx/edge-event-buffer.cpp          | 103 +++
- bindings/cxx/edge-event.cpp                 | 123 +++
- bindings/cxx/examples/Makefile.am           |  12 +-
- bindings/cxx/examples/gpiodetectcxx.cpp     |   3 +-
- bindings/cxx/examples/gpiogetcxx.cpp        |  12 +-
- bindings/cxx/examples/gpioinfocxx.cpp       |  63 +-
- bindings/cxx/examples/gpiomoncxx.cpp        |  39 +-
- bindings/cxx/examples/gpiosetcxx.cpp        |  19 +-
- bindings/cxx/gpiod.hpp                      | 938 +-------------------
- bindings/cxx/gpiodcxx/Makefile.am           |  14 +
- bindings/cxx/gpiodcxx/chip.hpp              | 180 ++++
- bindings/cxx/gpiodcxx/edge-event-buffer.hpp | 115 +++
- bindings/cxx/gpiodcxx/edge-event.hpp        | 124 +++
- bindings/cxx/gpiodcxx/info-event.hpp        | 107 +++
- bindings/cxx/gpiodcxx/line-config.hpp       | 244 +++++
- bindings/cxx/gpiodcxx/line-info.hpp         | 205 +++++
- bindings/cxx/gpiodcxx/line-request.hpp      | 207 +++++
- bindings/cxx/gpiodcxx/misc.hpp              |  49 +
- bindings/cxx/gpiodcxx/request-config.hpp    |  97 ++
- bindings/cxx/info-event.cpp                 |  89 ++
- bindings/cxx/internal.hpp                   | 168 +++-
- bindings/cxx/iter.cpp                       |  60 --
- bindings/cxx/line-config.cpp                | 226 +++++
- bindings/cxx/line-info.cpp                  | 150 ++++
- bindings/cxx/line-request.cpp               | 194 ++++
- bindings/cxx/line.cpp                       | 321 -------
- bindings/cxx/line_bulk.cpp                  | 366 --------
- bindings/cxx/misc.cpp                       |  18 +
- bindings/cxx/request-config.cpp             |  80 ++
- configure.ac                                |   1 +
- include/gpiod.h                             |  63 +-
- lib/edge-event.c                            |   6 +
- lib/line-request.c                          |  50 +-
- tools/gpioget.c                             |   3 +-
- 37 files changed, 2838 insertions(+), 1845 deletions(-)
- create mode 100644 bindings/cxx/edge-event-buffer.cpp
- create mode 100644 bindings/cxx/edge-event.cpp
- create mode 100644 bindings/cxx/gpiodcxx/Makefile.am
- create mode 100644 bindings/cxx/gpiodcxx/chip.hpp
- create mode 100644 bindings/cxx/gpiodcxx/edge-event-buffer.hpp
- create mode 100644 bindings/cxx/gpiodcxx/edge-event.hpp
- create mode 100644 bindings/cxx/gpiodcxx/info-event.hpp
- create mode 100644 bindings/cxx/gpiodcxx/line-config.hpp
- create mode 100644 bindings/cxx/gpiodcxx/line-info.hpp
- create mode 100644 bindings/cxx/gpiodcxx/line-request.hpp
- create mode 100644 bindings/cxx/gpiodcxx/misc.hpp
- create mode 100644 bindings/cxx/gpiodcxx/request-config.hpp
- create mode 100644 bindings/cxx/info-event.cpp
- delete mode 100644 bindings/cxx/iter.cpp
- create mode 100644 bindings/cxx/line-config.cpp
- create mode 100644 bindings/cxx/line-info.cpp
- create mode 100644 bindings/cxx/line-request.cpp
- delete mode 100644 bindings/cxx/line.cpp
- delete mode 100644 bindings/cxx/line_bulk.cpp
- create mode 100644 bindings/cxx/misc.cpp
- create mode 100644 bindings/cxx/request-config.cpp
 
 -- 
-2.30.1
-
+With Best Regards,
+Andy Shevchenko
