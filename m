@@ -2,115 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639C8C636CB
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Jul 2021 10:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5475AC636CA
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Jul 2021 13:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D316608FC
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Jul 2021 10:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 398B8613F3
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Jul 2021 13:13:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236561AbhGPKEV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Jul 2021 06:04:21 -0400
-Received: from mx1.tq-group.com ([93.104.207.81]:62523 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235911AbhGPKES (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 16 Jul 2021 06:04:18 -0400
+        id S239803AbhGPNQu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Jul 2021 09:16:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239822AbhGPNQt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jul 2021 09:16:49 -0400
+Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A938C06175F
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Jul 2021 06:13:53 -0700 (PDT)
+Received: by mail-vs1-xe2f.google.com with SMTP id a22so5011751vso.1
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Jul 2021 06:13:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1626429683; x=1657965683;
-  h=from:to:cc:subject:date:message-id;
-  bh=m1miCgAtNKc3nn2OMQtUNYsE5POmpRrmibH48qI+v4g=;
-  b=bxbtOIq8G4WGLm7K8iTOc8vhyHbK6AMmnjJXhcnBLCHEh4u5X09wdERa
-   KBei3534cBIRxUdKiuoDK+UzbAH4LqkbBQ23RuJuBi7L3wTl3aVJvyrDK
-   nn0qmPZcxyNNwaK3VfDOgTB6pIavuCgoSSGU+t6q0IVw7n2POJqiTrg1I
-   pvUlybZgwJzoPMoXZXCKV0teBC1Doa8mdTkkZKzBUpdCr0QoqLWi9YFjK
-   1gz5I7ky0U/u/knVELtLotNkmixf+C9ydBdZRpLEyWDGBSeUOssMdtWkA
-   ggIJU3nXfIZx8/HhK6fajB4XRlrSDsoNYy9sZnG/e7uPlrxWI0o5GFfeb
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.84,244,1620684000"; 
-   d="scan'208";a="18492076"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 16 Jul 2021 12:01:19 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 16 Jul 2021 12:01:19 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 16 Jul 2021 12:01:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1626429679; x=1657965679;
-  h=from:to:cc:subject:date:message-id;
-  bh=m1miCgAtNKc3nn2OMQtUNYsE5POmpRrmibH48qI+v4g=;
-  b=aO4wEPwQBuWDH/kTyKNS8Wizcs6TW6RWbprRDVxn9c5ihp/hrhtbAXFU
-   qBE8gdR8Ii/pkYXkv0zbosE91MvqeCy1RAmYDYfFre2YHZG24l1wprgDE
-   0MaPDP9utMB9db1aMq1aCeJkcF7Ea8LE7KHLVlTQ770K3PMzuubGrneId
-   S5EUE4baysBfUdDlMgbwkiNCR+yV3RoVtnLziBsd0em8BGa5nWXo/eGYi
-   P2ohzF+uebce+DM5SYv7A+tGuhGalzHL/Ud9umba0HhX1HNpTpSPi+yTt
-   +wANK1345of7K7oFu3UTtZvHGYNIkXIvAsQi8u5KKMC3zV2SMN9mmaqao
-   g==;
-X-IronPort-AV: E=Sophos;i="5.84,244,1620684000"; 
-   d="scan'208";a="18492075"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 16 Jul 2021 12:01:19 +0200
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.121.48.12])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id C759D280078;
-        Fri, 16 Jul 2021 12:01:18 +0200 (CEST)
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v3 6/7] mfd: tqmx86: add support for TQ-Systems DMI IDs
-Date:   Fri, 16 Jul 2021 12:00:52 +0200
-Message-Id: <595d1697231e00629913d43799c0be89f9822734.1626429286.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1626429286.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1626429286.git.matthias.schiffer@ew.tq-group.com>
-In-Reply-To: <cover.1626429286.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1626429286.git.matthias.schiffer@ew.tq-group.com>
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Jt7KsHHJ0QRR2aeG4nrHvfyry7JeoeiUDEakBZ0Su8=;
+        b=pLxDeA+DFRiaep1wQr3SbLMy2KCzdY4gFH4vlbDfWUvWycwnAMqiZVDseklr4vMQ8O
+         Kcu7KadrYxfkGljA8u8FAZvuqfE9FwCB/QVzcWT2fvYvjh3y/z042DxS8RR8iiJIJGy2
+         UU6W4mjym3GXp2WEEbbRjNojoxCGklHbD3Ww8J1h8K4cmrnPWYdKQ+indkAXI+wnnZME
+         koA3d7diY3lqnAU0cf+k+RqldZLnsCkLQccW6d8LQwkE4LNpYsEDisgZYPMXcFrJTtuI
+         Lefdw47IdpJfbavrJZheCBwUvet8YfUOgru3cIaFdL5pK3UHvZZ60nzM0EDVsNZrJicg
+         ovmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Jt7KsHHJ0QRR2aeG4nrHvfyry7JeoeiUDEakBZ0Su8=;
+        b=n8h5U/7yZenDs72fpAUekG8RnTUN6XVgXO9ZFjEHmVZTLQNsTw2rplUqWFTkpN7bKw
+         pG8N/keNQhjm5ptriqyLE5WGitIWPzXmqeqnIDfOXKAiexeu1/V1spDt9f8JTi+y7oo/
+         N09VPWcQLy+unz3ZYYDhPUQYiI+8yRjg/53nZTYlLgqeGhhPc+AGA+Rb0J0okVyxaMiD
+         PavGkMUoy/lLld7slWDn3W2aR63ExOBeaAAecaZPiEtmdyb1Wly8LpVHLcAIqx+lemFv
+         Y6D8ey3q+Ug8yKJTpnnINwPnkkfa8syQh/BigoEXF9LP+nvi8NubGZxjJ5aFMqU+EYOw
+         9TZw==
+X-Gm-Message-State: AOAM532Pj0CRl3qlPhLQ41Ihep++gkAunsTa4O7Y0hzr3TpJo1BrbN2F
+        dCe2ohOafZyuyp4B4pBE5xBg7oKxdFpi2g==
+X-Google-Smtp-Source: ABdhPJy7ocqT5v3LgeTs2QXor67+YWig9mPB3c8okuAzv+ZsCiO37dLlM517DrH1crHW4nw0o0wi2w==
+X-Received: by 2002:a67:7142:: with SMTP id m63mr12235936vsc.8.1626441232580;
+        Fri, 16 Jul 2021 06:13:52 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14c:485:504a:9f0b:cb12:835a:e9f9])
+        by smtp.gmail.com with ESMTPSA id z23sm1175608vsk.32.2021.07.16.06.13.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jul 2021 06:13:52 -0700 (PDT)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, shawnguo@kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH] pinctrl: imx8dxl: Constify imx_pinctrl_soc_info
+Date:   Fri, 16 Jul 2021 10:13:41 -0300
+Message-Id: <20210716131341.3370620-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Newer TQMx86 modules use TQ-Systems instead of TQ-Group as their vendor
-ID.
+The imx_pinctrl_soc_info structure content is never changed, so it can be
+declared as 'const', like it is done on all other i.MX pinctrl drivers.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Make it 'const' in this driver too.
+
+Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
 ---
+ drivers/pinctrl/freescale/pinctrl-imx8dxl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: new patch
-v3: no changes
-
- drivers/mfd/tqmx86.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-index 9eb05b3ef573..58f35c8b5a45 100644
---- a/drivers/mfd/tqmx86.c
-+++ b/drivers/mfd/tqmx86.c
-@@ -271,6 +271,14 @@ static const struct dmi_system_id tqmx86_dmi_table[] __initconst = {
- 		},
- 		.callback = tqmx86_create_platform_device,
- 	},
-+	{
-+		.ident = "TQMX86",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "TQ-Systems"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "TQMx"),
-+		},
-+		.callback = tqmx86_create_platform_device,
-+	},
- 	{}
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8dxl.c b/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
+index 041455c13d0d..f947b1d0d1aa 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
+@@ -155,7 +155,7 @@ static const struct pinctrl_pin_desc imx8dxl_pinctrl_pads[] = {
  };
- MODULE_DEVICE_TABLE(dmi, tqmx86_dmi_table);
+ 
+ 
+-static struct imx_pinctrl_soc_info imx8dxl_pinctrl_info = {
++static const struct imx_pinctrl_soc_info imx8dxl_pinctrl_info = {
+ 	.pins = imx8dxl_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx8dxl_pinctrl_pads),
+ 	.flags = IMX_USE_SCU,
 -- 
-2.17.1
+2.25.1
 
