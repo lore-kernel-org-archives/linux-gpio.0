@@ -2,67 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDB1C636CE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA6CC6377A
 	for <linux-gpio@archiver.kernel.org>; Wed, 21 Jul 2021 03:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13D4061029
+	by mail.kernel.org (Postfix) with ESMTP id A403161264
 	for <linux-gpio@archiver.kernel.org>; Wed, 21 Jul 2021 03:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbhGUCWE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Jul 2021 22:22:04 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:42857 "EHLO
+        id S231617AbhGUCWG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Jul 2021 22:22:06 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:32829 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231432AbhGUCVs (ORCPT
+        by vger.kernel.org with ESMTP id S231512AbhGUCWB (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 20 Jul 2021 22:21:48 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id 779282B0050A;
-        Tue, 20 Jul 2021 23:02:24 -0400 (EDT)
+        Tue, 20 Jul 2021 22:22:01 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 712282B004FC;
+        Tue, 20 Jul 2021 23:02:37 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 20 Jul 2021 23:02:25 -0400
+  by compute4.internal (MEProxy); Tue, 20 Jul 2021 23:02:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=NmMGZALgUPfiC
-        ccQxTOVbNtmDLubEwgB51Zr56BaCn0=; b=PcEaaYDu52lvwFxg5OyLeD/V10jvi
-        RDRHWOI0ewk2d9okT13W8mOIpTSDMS4M/+IfY3ppQ3zqFDaDW4SNiuZ2IXQoZU5m
-        FQGA+31XVxYRBK8ppPIEfWTR6n7jTCT1wNSJfNn47okps5LWnlGJMHa7YuRYjNrn
-        KKdiCVboIkMRlnADvxN8zj9FHqdUdJxdlpVjpi8Z+tFi/036Q3Yx2nixo9po5ue0
-        nZEpuZzCvLGBRcCzAxUVIkBWL7tN11laZcS25qUTsNie9xhI8lduMJ2Kmc/gDl0r
-        n3QeX6Qowcb5FtAaP9mrvXfg64QocqwQHhzevzfvxGquTT5iestbsr5Mg==
+        :mime-version:content-transfer-encoding; s=fm2; bh=izRxClR9rmdMb
+        QxNobmULuQgWdizJr1NuVHnqGsRHa4=; b=Meqd1jZhgWbw1K61vQskE88ZbgA96
+        prD1GIp77u952S5A2YiZtNzwoinS4858CeKjeAHpog7lAbPHW/qZbjcvODj9aR1u
+        VKtKG+KDl5V1qNxHGCZlAF5bl04uonTvaxNdHm2/GcKF2tOI47rBK83C5y3yUc/p
+        sCCgJi7D5RFT61GjQAk72zTXsJVvF7GWUYLAQnpZSsZN4cAAfRcEhSHJkC6jh+9+
+        0Yp2T+U4XP9vF1gGuFiA9lviGGoxSYw7znbxsDbkHQwtY/fpZSfpApDwjDBlWRHu
+        kn5wAqpEz+fjD9WyvSbitsu0I0s598W5DGiwTXz2fMu2jsZStpXAH2Usg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=NmMGZALgUPfiCccQxTOVbNtmDLubEwgB51Zr56BaCn0=; b=Px378Bsg
-        GWj8+NsXIduf199Dd+W51fFOuAcWpskFNbUeNVuDwN2iTMnb8/7tvq6Ptw3Ytpr8
-        0s1DeetpJpX0SLTGSA3sLY2E89584v2kSaSeowJiTBntkJnqz6GIKZJel9PPTqoK
-        fuaIwuK/KuAfl+PJW4sEpJBQUA9YLUaoUwTq6Dz8V3G8AjQEmsvwuUIUlcOgi6Hy
-        RUxDDjXGeOYakNZvZJEJ0ixNMl37O1DdwsJBgQoZid6lWwrBJC4/GyPN31Z9pkdI
-        +Z+XbCI9zzRxbDVUcY5WjkLWpv2CNjmQfpCD1Bnzthp/sotOAd6vNzgmZ2o0yNVw
-        Nj+RIYOgoWi/ug==
-X-ME-Sender: <xms:QI73YHP3wcek5iGG1S7B1sAVo8MB7rAmSJiokaKdEd3ymig630QKGw>
-    <xme:QI73YB_K4XGihIZDxcarNfgda9ByDxnHsAhEjmQWQImwPPBTrGDjro2Vpz4F4fQDS
-    V6Hgs9jgVsznYjGenA>
-X-ME-Received: <xmr:QI73YGRBr4Y6QhY1b_7aQ9aTfq7IyAsaBOpckG16VmXbTsqCBZK_Lc9grK8vjwCesbcuBYWPC7ym>
+        fm3; bh=izRxClR9rmdMbQxNobmULuQgWdizJr1NuVHnqGsRHa4=; b=YWQXb++M
+        Etq8Dci2mMl8J/rGo3zAX2ufrA0EIYCPRx/D42xCKUSTgv6J3RCaMwVFjakqmlGa
+        r9/Beq72h5rCjwUOrmddGop01ta3Iv9oCAp4qjR94lbcrgxUiHq+WoBEDYD8S31j
+        AX9cXLOUhGxXkVsb11W1cOrnDfcH0vKQ6cg5Zdq15fZe3r0S+PxclJVCUy1qkrvq
+        cQc+54oJgYvNwg+EtnV0fPpMeHoQK4M9vtGK7zHoV7xToi8bmAb24P9nE6/3D+Uo
+        QYT+MoOUH0EpWAOUnMwcv5aF2gznnbjl4H3SfIbx7wuVgmM4ycSE6sFml+orQYG6
+        Cuxw3zkjKHcdcg==
+X-ME-Sender: <xms:TI73YLEwMpvV6EWTqqBWeoxwGoc5P9OSOe-48Zz6_U6h8vKsgW5ZUw>
+    <xme:TI73YIXdP9ViknyndM2ktVLH9EBIo1BZ2pr62zkZTTgCHNrEsx-JmoWx6rOrMY3ST
+    P9zjdUWQyqzoWNasE0>
+X-ME-Received: <xmr:TI73YNInM7EE3ykBeHDJSlWpLAs-lkrk_6pO8aSBF7a752zOeUioG4ewBW1utXzQv7DTcVLYjMtB>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrfeefgdehiecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
     ertddtnecuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghes
     fhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeeihffgteelkeelffduke
     dtheevudejvdegkeekjeefhffhhfetudetgfdtffeunecuvehluhhsthgvrhfuihiivgep
-    udenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgoh
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgoh
     grthdrtghomh
-X-ME-Proxy: <xmx:QI73YLsbchLa6d1rxTFxqJxF5omI4W3eo-bi5KgXStnaiaIRpqjcCA>
-    <xmx:QI73YPeUJ1Y9yigbY-NyxW9Y4IM26TtCqGSrfQ_FPUDuWWJk4TZADg>
-    <xmx:QI73YH3zSkVjTGfmCUzFnOklV6WmPIgWbhUUstxmHyOpFgU4VzSjwg>
-    <xmx:QI73YAVTid84vKVRvSblxq9crjVv3T0W9qh2cl3dX7rZ1SdfsonRwNAkigc>
+X-ME-Proxy: <xmx:TI73YJEMCn8eMG2abmdW3QprCaKPILBz5BMx-wbsWXH10hNOhju4xg>
+    <xmx:TI73YBVkga5zF4R6aPlgpmvoRqyq4ccLKJ1iE1HzQe4f6-N1bCUdNg>
+    <xmx:TI73YEMXRYfyy1-Dt6IZksxeks7QI57NwCURoCo1g4gnN4qA3qUTxQ>
+    <xmx:TY73YKMljRvaO8NWZMl8ZucHkWrz3yeRSTTcbsEAwbvL6XhC1OP8TEiTRBQ>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 Jul 2021 23:02:19 -0400 (EDT)
+ 20 Jul 2021 23:02:31 -0400 (EDT)
 From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
 To:     linux-mips@vger.kernel.org
 Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
@@ -71,9 +72,9 @@ Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
         Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v3 5/9] phy: pistachio-usb: Depend on MIPS || COMPILE_TEST
-Date:   Wed, 21 Jul 2021 11:01:30 +0800
-Message-Id: <20210721030134.10562-6-jiaxun.yang@flygoat.com>
+Subject: [PATCH v3 7/9] MIPS: config: generic: Add config for Marduk board
+Date:   Wed, 21 Jul 2021 11:01:32 +0800
+Message-Id: <20210721030134.10562-8-jiaxun.yang@flygoat.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210721030134.10562-1-jiaxun.yang@flygoat.com>
 References: <20210721030134.10562-1-jiaxun.yang@flygoat.com>
@@ -83,26 +84,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-So it will be avilable for generic MIPS kernel.
+The config is minimal config to allow it boot from SD Card.
 
 Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 ---
- drivers/phy/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/configs/generic/board-marduk.config | 53 +++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 arch/mips/configs/generic/board-marduk.config
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 54c1f2f0985f..f3b08722261d 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -37,7 +37,7 @@ config PHY_LPC18XX_USB_OTG
- 
- config PHY_PISTACHIO_USB
- 	tristate "IMG Pistachio USB2.0 PHY driver"
--	depends on MACH_PISTACHIO
-+	depends on MIPS || COMPILE_TEST
- 	select GENERIC_PHY
- 	help
- 	  Enable this to support the USB2.0 PHY on the IMG Pistachio SoC.
+diff --git a/arch/mips/configs/generic/board-marduk.config b/arch/mips/configs/generic/board-marduk.config
+new file mode 100644
+index 000000000000..05ca34cd5a73
+--- /dev/null
++++ b/arch/mips/configs/generic/board-marduk.config
+@@ -0,0 +1,53 @@
++CONFIG_FIT_IMAGE_FDT_MARDUK=y
++
++CONFIG_SCSI=y
++CONFIG_BLK_DEV_SD=y
++
++CONFIG_CLKSRC_PISTACHIO=y
++
++CONFIG_COMMON_CLK_PISTACHIO=y
++
++CONFIG_DMADEVICES=y
++CONFIG_IMG_MDC_DMA=y
++
++CONFIG_GPIOLIB=y
++CONFIG_GPIO_SYSFS=y
++CONFIG_GPIO_PCH=y
++
++CONFIG_I2C=y
++CONFIG_I2C_IMG=y
++
++CONFIG_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_DW=y
++CONFIG_MMC_DW_PLTFM=y
++
++CONFIG_NETDEVICES=y
++CONFIG_STMMAC_ETH=y
++CONFIG_STMMAC_PLATFORM=y
++
++CONFIG_PHY_PISTACHIO_USB=y
++
++CONFIG_PINCTRL=y
++CONFIG_PINCTRL_PISTACHIO=y
++
++CONFIG_RESET_PISTACHIO=y
++
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_OF_PLATFORM=y
++CONFIG_SERIAL_8250_DW=y
++
++CONFIG_SPI=y
++CONFIG_SRAM=y
++
++CONFIG_USB=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_DWC2=y
++
++CONFIG_CRYPTO_DEV_IMGTEC_HASH=y
++CONFIG_IMGPDC_WDT=y
++CONFIG_IR_IMG=y
++CONFIG_CC10001_ADC=y
++CONFIG_SND_SOC_IMG=y
 -- 
 2.32.0
 
