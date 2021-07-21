@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B41C636CA
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Jul 2021 03:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85260C636C8
+	for <linux-gpio@archiver.kernel.org>; Wed, 21 Jul 2021 03:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48C1E61178
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Jul 2021 03:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69C2B610A0
+	for <linux-gpio@archiver.kernel.org>; Wed, 21 Jul 2021 03:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232037AbhGUCW5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Jul 2021 22:22:57 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:47513 "EHLO
+        id S231544AbhGUCY5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Jul 2021 22:24:57 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:52113 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231467AbhGUCVy (ORCPT
+        by vger.kernel.org with ESMTP id S231426AbhGUCWM (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 20 Jul 2021 22:21:54 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id 836962B00513;
-        Tue, 20 Jul 2021 23:02:30 -0400 (EDT)
+        Tue, 20 Jul 2021 22:22:12 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 722CE2B004FC;
+        Tue, 20 Jul 2021 23:02:49 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 20 Jul 2021 23:02:31 -0400
+  by compute4.internal (MEProxy); Tue, 20 Jul 2021 23:02:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=l9PH4QLd/cM4/
-        cQPPaMBDFls0x1FzgEX2pJ1FwyEWZE=; b=cZcSPfT5nsjjHMnKkcGG4XUIp3fUn
-        lVTfUhUBnD0sEZAZxcO5JLQyhNrfPihJq8cjYa9Dc4vG7I8L2Sm1qO0/XW9TzFV/
-        GJdDKjNwXmmH2w6hhmMRc9fkhlrLB0xfssZeMjIb4F28e3pG7s8vBXZ/PUqAQ9Xb
-        F7YuX6ZODSCrZHdE0WT39bubElqe1j2u2t49yJF3i1rP5mWwIgTwbjv2EAJjISg/
-        0ezy4afrUBwW18uFMIUGUZKP1Q1qfxIauaNdzt/lNLsmcy8SnQOnJ5p5ndJMkiUj
-        2iq2oJr9ol0740UlZiTrGPuCcvY+Hu/pGvnSf1CXVg/qKDnlLLb1wjMNw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=juuqFtaoRobQQ
+        sYNJO/H9QK58gSnRD3PdI9BHJOIPdI=; b=N3V4TmMuagRkUZ8V5vQ0mdpd46Zzb
+        yYWMtJKFJoojLwgSATkjuDZ3ekBCPfMH23gt2FqRXDuimT8sqBjuG6jPvovxKurG
+        W/QB5TNCNX+X88P5piqPckJn6UaZNHo81jj/8dbjO3ExyrB5h3p0uO9Qluic9Vag
+        2qjNoD3as4UMqbRRjwxiDcpbJBudomKkx4CyvQkteS03oTjzeY4adVxdXm67Q0r9
+        c71xuF5lGGz+AVBdIjoB1Yy14UcrrbWafJ9tZd3sRx6pE6NiebZADfrjE76yy6M+
+        mKee7YoF3afZSv+vy48SLb+YBoDIp3i5M71tTvohoN4EEWUKUZVL9QuIQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=l9PH4QLd/cM4/cQPPaMBDFls0x1FzgEX2pJ1FwyEWZE=; b=vunWxpF3
-        uuKUM6YB6XS6QSZKOE0H+AkNwupXkbVZEngcYsIOVh8iKdcoRK6i1A9woMjXTwLs
-        gIS58kw0Zlv/daSi84xOU1fMgmXvZrFt2Co/uaPStn3DVfeUURFgt18sVNHK3i5o
-        MWpyn7Ezm/Rpvzc/cmGM+Y1bliJX79vV6fxPNmt9j78P/Fu5Mvivrx3lZwQQCQjP
-        Y8fIv7MUe7r9nzeAD6Xa1qhqM1bFQznmm+Eo9kp7K1Lgw0TXWLEz3s07+x7jIdnD
-        h3/Gd40mVbNd8c3zGOXuRDKLoZPm6bqsjSVIxuAsdIiKkHO8y5GZifRiEHZcPZHJ
-        ahGStgAfpR232Q==
-X-ME-Sender: <xms:Ro73YOtff6AAhz5vCgIkNpp-8y4GwJVuaAEaYeRp-EV1NRU0PKZwNQ>
-    <xme:Ro73YDcVA0U0Pq1dxbjDXIdyTv7xu7-XeyU_ZJHIKwe5_Baee3C91g8PaF5VznFUE
-    4I9hO6i9oI7IDuY_AM>
-X-ME-Received: <xmr:Ro73YJzKc18epeX5tVFiIXuZuIMRcJ7AJ3_5cWSHmxDLQ6QbIK9BJk80lYOCncIQ1W7ErB-gwS9D>
+        fm3; bh=juuqFtaoRobQQsYNJO/H9QK58gSnRD3PdI9BHJOIPdI=; b=Ah7eMR7f
+        DbcWHT/5QGSJCGVe1cyzMPCMLZTDS5DmJhrIvemBcakIffHvaVy1HNpFztTzntjr
+        rouvpfgk9k7R4ONIoD7luqJbyqD+eY8FKjDilm9RTGi4A96wH8kYG1sWSQ2xNBmp
+        Pd6zDis4D+xEzjMTzF4ZispFlSSukqVJDX/ShQGmwqHcUqTvTSVOZW4ueHahfy7N
+        u+FS8bC20Y5Un5ddX8M552NXwbojEgrRBuNuUv9zhjEEY26Di+jRBM2nKppKg0sD
+        N6KVuwV+o3FXPoagtXDsY499iV1pLQmZPknDq81rgjuCJiLHJRWzYdXxypcJ1hav
+        Cl593vFSkoHnuA==
+X-ME-Sender: <xms:WI73YH5un-vJVw7sFD3QrpHhSSXmo6ySkWnZsZneFaPyr0LRHJnkbQ>
+    <xme:WI73YM5bRfjwcMO7Il36rlfv2iDSEfaJ9yG7L9ceVLjzGH90gbvHHPjFP8HEIcdtG
+    a2jDukyv7rKrMau8t0>
+X-ME-Received: <xmr:WI73YOeCS0MAQkpxpW6wePjHoE0hj4BEZvjOwQ69UmHXuL8B3O23c_sVPGSmRkJY-S40PGeRgS4S>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrfeefgdehiecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
     ertddtnecuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghes
     fhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeeihffgteelkeelffduke
     dtheevudejvdegkeekjeefhffhhfetudetgfdtffeunecuvehluhhsthgvrhfuihiivgep
-    vdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgoh
+    udenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgoh
     grthdrtghomh
-X-ME-Proxy: <xmx:Ro73YJPYCAFKXpYcGNRWE1R5jqw4fsJy_vI09Df-msnn0RhbcZYKQQ>
-    <xmx:Ro73YO8MIMGM_ZPYPsyyDc32Txm86m_lhT7mHHqgqrdWMYODZh1qVw>
-    <xmx:Ro73YBXYfrXRWvymNMQwLitWd1b6LS58vi5pAS1XqaQ4svQouYu_gg>
-    <xmx:Ro73YP2471XS2PsYEUO0Fiosw63bVz3GWkWgUd9Yp3UMML3cOLNmM6FZR2s>
+X-ME-Proxy: <xmx:WY73YIKymcKrByOFVQ7T_4Wvr_LvzbI6A6GGjEGmuzOWltq85wJuag>
+    <xmx:WY73YLKR7XlsU12E0BojPWj_pmWnyQ5o8zKpNsZPENpaQ9Gh-f9wag>
+    <xmx:WY73YByRC4jhYajC3l3coqO_dzeMrAwI-RM2IBqN2Kx3a5I6cra_ZQ>
+    <xmx:WY73YID0gyUfaSUGCoo1JT5tohEig7qivS52czNkXCJaVmyIdl5dZogTyl0>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 Jul 2021 23:02:25 -0400 (EDT)
+ 20 Jul 2021 23:02:44 -0400 (EDT)
 From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
 To:     linux-mips@vger.kernel.org
 Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
@@ -71,9 +71,9 @@ Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
         Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v3 6/9] pinctrl: pistachio: Make it as an option
-Date:   Wed, 21 Jul 2021 11:01:31 +0800
-Message-Id: <20210721030134.10562-7-jiaxun.yang@flygoat.com>
+Subject: [PATCH v3 9/9] MIPS: Make a alias for pistachio_defconfig
+Date:   Wed, 21 Jul 2021 11:01:34 +0800
+Message-Id: <20210721030134.10562-10-jiaxun.yang@flygoat.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210721030134.10562-1-jiaxun.yang@flygoat.com>
 References: <20210721030134.10562-1-jiaxun.yang@flygoat.com>
@@ -83,36 +83,30 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-So it will be avilable for generic MIPS kernel.
+For those who miss the old defconfig, make a alias to generic
+kernel.
 
 Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
---
-v3: Depend on OF as well
 ---
- drivers/pinctrl/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+v2: Fix typo 'xilfpga
+---
+ arch/mips/Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index c2c7e7963ed0..295f5eec58a9 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -248,12 +248,15 @@ config PINCTRL_SX150X
- 	  - 16 bits: sx1509q, sx1506q
+diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+index 258234c35a09..c299c6ae91af 100644
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -563,6 +563,9 @@ sead3micro_defconfig-y		:= micro32r2el_defconfig BOARDS=sead-3
+ legacy_defconfigs		+= xilfpga_defconfig
+ xilfpga_defconfig-y		:= 32r2el_defconfig BOARDS=xilfpga
  
- config PINCTRL_PISTACHIO
--	def_bool y if MACH_PISTACHIO
-+	bool "IMG Pistachio SoC pinctrl driver"
-+	depends on OF && (MIPS || COMPILE_TEST)
- 	depends on GPIOLIB
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GPIOLIB_IRQCHIP
- 	select OF_GPIO
-+    help
-+	  This support pinctrl and gpio driver for IMG Pistachio SoC.
- 
- config PINCTRL_ST
- 	bool
++legacy_defconfigs		+= pistachio_defconfig
++pistachio_defconfig-y		:= 32r2el_defconfig BOARDS=marduk
++
+ .PHONY: $(legacy_defconfigs)
+ $(legacy_defconfigs):
+ 	$(Q)$(MAKE) -f $(srctree)/Makefile $($@-y)
 -- 
 2.32.0
 
