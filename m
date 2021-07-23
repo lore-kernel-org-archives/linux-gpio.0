@@ -2,78 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A50C4338F
-	for <linux-gpio@archiver.kernel.org>; Fri, 23 Jul 2021 12:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96FFC432BE
+	for <linux-gpio@archiver.kernel.org>; Fri, 23 Jul 2021 13:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1443C60EE2
-	for <linux-gpio@archiver.kernel.org>; Fri, 23 Jul 2021 12:21:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B91BA60EE2
+	for <linux-gpio@archiver.kernel.org>; Fri, 23 Jul 2021 13:28:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234705AbhGWLlC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 23 Jul 2021 07:41:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234530AbhGWLlC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 23 Jul 2021 07:41:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 28E5A60ED7;
-        Fri, 23 Jul 2021 12:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1627042895;
-        bh=9ttASHB3pgtVphs5ThtFEDTZUlMESs+xc3gYhWNXu7s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w8IhHX/JqYeqrily4pkMsNcEcIDmcxFfFNBZXaGyZTBjf6hUdb/ck+vVeZvSyXSp+
-         SmMMlgNE+z41L+q3vq6Sk5Fwc81ryx7vTXKK32xXimXI+vBPYpfZxeJ1mnXRrLK540
-         yRVB2mJ+xoqZQgiFMdQEszARPi6wZbMnytYLkBrg=
-Date:   Fri, 23 Jul 2021 14:21:33 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Maulik Shah <mkshah@codeaurora.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH] firmware: QCOM_SCM: Allow qcom_scm driver to be loadable
- as a permenent module
-Message-ID: <YPq0Td5ZDNVwvQ8r@kroah.com>
-References: <20210707045320.529186-1-john.stultz@linaro.org>
- <YPgK50dmV7Z69WsL@kroah.com>
- <CALAqxLUVgUT+1DyDGsFbF0138S0OYzpKADk__PsYbR4B4mbMhw@mail.gmail.com>
+        id S235118AbhGWMsD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 23 Jul 2021 08:48:03 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:51398 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234988AbhGWMsC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 23 Jul 2021 08:48:02 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16NDBpmi019207;
+        Fri, 23 Jul 2021 15:28:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=XhswAGJy0KaG+hF+K6NXqnL9VJ5xv+ZMnAp1aClpQ+0=;
+ b=rLG0XS+yJ+rJxVRR+UDZDjHh1AApHnQeA62f4bt81mH/aUHoe8KKCndGMRKgVtuwaKG3
+ t4HUzf/PxeXVVxTKCYaWN3MEeTIDqjAK88m2KyPXlO3yAPCidTrJHLGIhJ5LPEuwfRN1
+ Dmggn9zM/w9z1GNH5Otx2LGoqZbE6fYljCRYl8jyzA/UzAgB6cHGHLkqqxPJsLiPjsTX
+ cFROCUUnPtmjnDCFY4/UdtEyI0Gwcbpfwv0YHr7gQHqcNo0GeCh/87rETFpk7jsr6Zx2
+ FHaY0AzxdN1P45h5YhbRcecpYpA6z3vKWsWGfFhpW54TpH3GZrT19i3jqE/gtd7j1kvU tg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 39ypq8jp0c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jul 2021 15:28:17 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C657E10002A;
+        Fri, 23 Jul 2021 15:28:16 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B6232221783;
+        Fri, 23 Jul 2021 15:28:16 +0200 (CEST)
+Received: from localhost (10.75.127.45) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 23 Jul 2021 15:28:16
+ +0200
+From:   Alexandre Torgue <alexandre.torgue@foss.st.com>
+To:     Linus Walleij <linus.walleij@linaro.org>, <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>
+CC:     <linux-gpio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Subject: [PATCH 6/7] dt-bindings: stm32: document stm32mp135f-dk board
+Date:   Fri, 23 Jul 2021 15:28:09 +0200
+Message-ID: <20210723132810.25728-7-alexandre.torgue@foss.st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210723132810.25728-1-alexandre.torgue@foss.st.com>
+References: <20210723132810.25728-1-alexandre.torgue@foss.st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALAqxLUVgUT+1DyDGsFbF0138S0OYzpKADk__PsYbR4B4mbMhw@mail.gmail.com>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-23_05:2021-07-23,2021-07-23 signatures=0
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 10:24:01AM -0700, John Stultz wrote:
-> On Wed, Jul 21, 2021 at 4:54 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Jul 07, 2021 at 04:53:20AM +0000, John Stultz wrote:
-> > > Allow the qcom_scm driver to be loadable as a permenent module.
-> >
-> > This feels like a regression, it should be allowed to be a module.
-> 
-> I'm sorry, I'm not sure I'm following you, Greg.  This patch is trying
-> to enable the driver to be able to be loaded as a module.
+Add new entry for stm32mp135f-dk board.
 
-Ah, sorry, you are right, my mistake.
+Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
 
-nevermind...
+diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+index 9a77ab74be99..9ac7da01c6c3 100644
+--- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
++++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+@@ -55,6 +55,10 @@ properties:
+           - enum:
+               - st,stm32h750i-art-pi
+           - const: st,stm32h750
++      - items:
++          - enum:
++              - st,stm32mp135f-dk
++          - const: st,stm32mp135
+       - items:
+           - enum:
+               - shiratech,stm32mp157a-iot-box # IoT Box
+-- 
+2.17.1
+
