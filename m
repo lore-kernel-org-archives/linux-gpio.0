@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A607C4338F
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB5DC432BE
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDB961AFF
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84FFC61A61
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:50:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236847AbhG0Ost (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Jul 2021 10:48:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52738 "EHLO
+        id S236879AbhG0OtZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Jul 2021 10:49:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236701AbhG0Osl (ORCPT
+        with ESMTP id S232579AbhG0Osl (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jul 2021 10:48:41 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8672AC0613CF;
-        Tue, 27 Jul 2021 07:48:22 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id f18-20020a05600c4e92b0290253c32620e7so1836128wmq.5;
-        Tue, 27 Jul 2021 07:48:22 -0700 (PDT)
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 585FBC061764;
+        Tue, 27 Jul 2021 07:48:20 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id l18so7851654wrv.5;
+        Tue, 27 Jul 2021 07:48:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=omWjBOX/3h/WM2lUnp6VftQHp2MdTaSELvMcM6S+KNc=;
-        b=Gk1f014+yncZXzcpUjGLdkTPgzpUeaL/lpz0BR/YEjnKLkq48Tipo/39UuBbBYjPaf
-         kJTSDwKFk+wfZZnrihgvR1ebNbJmWQFvQtHDbXjOVAm69Khr7o6mJHRSsqfQXYshFxzm
-         uJOHJywcCsXu7cD0rcOj+KWFhUURmnXubWvvwrl9QollfJVJ3i8C5uMJeBAj4eWyyVXq
-         wdbT6kQXd+emOgi6jHOvvjHOrsxYBLcXYcF2pVTpjv0Lo/9s1SQYJYrpeJw9CLn4dG0P
-         GWydd7Qex95nlkp4B93O9lX9dN7HFVFXaSmK0gvsXychwiJIvL+lq/OAlttoKqRbMpjl
-         qYSA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LZvm4USQdqsCZD69NMVXLAHolwkxVoNmXAwlJdJ9QRo=;
+        b=l88ukeEGX5jtKr/To2msfjzkB6kiirKXMZSs6WULJ55O4vZf8eufoKKlpUKkxS5tV0
+         3CiBFTX56zNMW7BzSnqLDn2iFIj/zQTuRRBrOku2+RF+94CUEGOT+35BpxsV/fsMWU3F
+         bhf7/xKm/FWMH6gm8+KPj4JkE/8vQKOFw+JlvKsaq9LGYjcdFrHq4bbQKPSoB62hNY2r
+         usS+QZTen8DjPEcljDpQkntRrgHRNX61aB5iVECo/Y17ActcFa0YQ43urp+Y+ZMw62kg
+         Ck9nBs+BXJ4evHbTh9CPASfHgXgD6V5SAiTu+fZcubBY0L5oumqccT4oVqY4p8uP4Cf9
+         MjTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=omWjBOX/3h/WM2lUnp6VftQHp2MdTaSELvMcM6S+KNc=;
-        b=j3tq06s748ClnaETLNiOZBg761x246tS+f+WWhoi2db6V8BQI4MqQwvPck/LLpJojP
-         OnvFEC/QFjOAY+41VcAx2BECoglbPoowRLeQaXS9BmxSjYXJLV0+jamGq9MyHn91jzHs
-         ajBJDmNI+1r3fGRi6hBovqQStsLjRLe03eiNaVsl4O+wFvoOekG1dUvTVN+345PXmD5O
-         GfUt+9Zg3m15jjV3UHjuNao6jL/wsbjns3EZfH/jXeLlCtcausbYHqh+2bqEomofzbci
-         1DjzlZJKRVnR56oULAesodGxr2sFuX4oeRgzE/RB+kLEM1kj+VJSlecvRwvGbA4YH+AL
-         guRw==
-X-Gm-Message-State: AOAM531ruAwPdcHIY+Fm+Jw5ZMn/+6U5g/4sF6Rp8/C4MVKV+M2oRyvz
-        A3e/iYR9WiMYGNFV0iqqTy/AvIO98dDlAAt5
-X-Google-Smtp-Source: ABdhPJxs+BJSVXEjy5Z/abPwqOGSp7NtJ2xjEEZXCsGBor5wPH1o0P/a9eU0DX3CkL4Jc7FriWobZA==
-X-Received: by 2002:a05:600c:198a:: with SMTP id t10mr4542669wmq.32.1627397300903;
-        Tue, 27 Jul 2021 07:48:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LZvm4USQdqsCZD69NMVXLAHolwkxVoNmXAwlJdJ9QRo=;
+        b=T6ULH9Qyv2FlJ1W7dxwEnU4G7AlPpUjtiRxZkM5Z9i9OqBVjLJpeHgRkmuZblaaPUv
+         iYOLYyR5Lvj1PCh5c8wY7pOFTGwM41jMepetB5QJ1yl/jrcOo2571rGnDf9U5ER/5eex
+         iktk+P16SCv0y5qCSxIWkfD2BvOhkarUwDqDkGBxh23RqKzV54x2QxJheiKdDnBL0yHX
+         8yWjoS/HxEvGqa8kvSUOCz/ooy3OCjkFFeUN6HTXnRR2A+pnlZEAqOggEtlmb2LIVp2I
+         PWhl4mSHMMGIXXzt+05+37re4s20jSxKrsU9uc6iKnpdQaWns896NUV6pzJTf/I9u86i
+         VnaQ==
+X-Gm-Message-State: AOAM532siLKTYTNp6b4mpejq8nYoC7oDDbt6pPUgBGTlf7tWpUyNeH7X
+        Ja4IUzIwuPgYKAci6GPErVcaGzSr9Kvf2FGl
+X-Google-Smtp-Source: ABdhPJx6Ps0GzyHegkECeAPH2KDt1wz7Jl1ELL7imvYbcuCUSBt4yKmQhFCVE0qK1eEzIyJCa1/DSw==
+X-Received: by 2002:a5d:4c87:: with SMTP id z7mr25008047wrs.405.1627397298754;
+        Tue, 27 Jul 2021 07:48:18 -0700 (PDT)
 Received: from localhost.localdomain (189.red-83-51-242.dynamicip.rima-tde.net. [83.51.242.189])
-        by smtp.gmail.com with ESMTPSA id o14sm3002555wmq.31.2021.07.27.07.48.19
+        by smtp.gmail.com with ESMTPSA id o14sm3002555wmq.31.2021.07.27.07.48.17
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Jul 2021 07:48:20 -0700 (PDT)
+        Tue, 27 Jul 2021 07:48:18 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linux-gpio@vger.kernel.org
 Cc:     linus.walleij@linaro.org, gregory.0xf0@gmail.com,
@@ -63,40 +63,59 @@ Cc:     linus.walleij@linaro.org, gregory.0xf0@gmail.com,
         matthias.bgg@gmail.com, opensource@vdorst.com,
         andy.shevchenko@gmail.com, git@johnthomson.fastmail.com.au,
         neil@brown.name, hofrat@osadl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] gpio: mt7621: support gpio-line-names property
-Date:   Tue, 27 Jul 2021 16:48:15 +0200
-Message-Id: <20210727144816.8697-3-sergio.paracuellos@gmail.com>
+Subject: [PATCH v2 0/3] gpiolib: convert 'devprop_gpiochip_set_names' to support multiple gpiochip per device
+Date:   Tue, 27 Jul 2021 16:48:13 +0200
+Message-Id: <20210727144816.8697-1-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210727144816.8697-1-sergio.paracuellos@gmail.com>
-References: <20210727144816.8697-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This driver uses multiple gpiochip banks per device.
-To support 'gpio-line-names' along the banks 'offset'
-for each bank must be set explicitly.
+There are some unfortunate cases where the DT representation
+of the device and the Linux internal representation differs.
+Such drivers for devices are forced to implement a custom function
+to avoid the core code 'devprop_gpiochip_set_names' to be executed
+since in any other case every gpiochip inside will got repeated
+names through its internal gpiochip banks. To avoid this antipattern
+this changes are introduced trying to adapt core 'devprop_gpiochip_set_names'
+to get a correct behaviour for every single situation.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- drivers/gpio/gpio-mt7621.c | 1 +
- 1 file changed, 1 insertion(+)
+This series introduces a new 'offset' field in the gpiochip structure
+that can be used for those unfortunate drivers that must define multiple
+gpiochips per device.
 
-diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-index 82fb20dca53a..5854a9343491 100644
---- a/drivers/gpio/gpio-mt7621.c
-+++ b/drivers/gpio/gpio-mt7621.c
-@@ -241,6 +241,7 @@ mediatek_gpio_bank_probe(struct device *dev,
- 	if (!rg->chip.label)
- 		return -ENOMEM;
- 
-+	rg->chip.offset = bank * MTK_BANK_WIDTH;
- 	rg->irq_chip.name = dev_name(dev);
- 	rg->irq_chip.parent_device = dev;
- 	rg->irq_chip.irq_unmask = mediatek_gpio_irq_unmask;
+Drivers affected by this situation are also updated. These are
+'gpio-mt7621' and 'gpio-brcmstb'.
+
+Motivation for this series available at [0].
+
+Thanks in advance for your feedback.
+
+Best regards,
+    Sergio Paracuellos
+
+Changes in v2:
+ - Address Gregory Fong comments in v1 of the series [1].
+ - Collect Andy Shevchenko Reviewed-by for the series.
+ - Collect Gregory Fong Acked-by for PATCH 3/3.
+
+[0]: https://lkml.org/lkml/2021/6/26/198
+[1]: https://lkml.org/lkml/2021/7/8/47
+
+Sergio Paracuellos (3):
+  gpiolib: convert 'devprop_gpiochip_set_names' to support multiple
+    gpiochip banks per device
+  gpio: mt7621: support gpio-line-names property
+  gpio: brcmstb: remove custom 'brcmstb_gpio_set_names'
+
+ drivers/gpio/gpio-brcmstb.c | 45 +------------------------------------
+ drivers/gpio/gpio-mt7621.c  |  1 +
+ drivers/gpio/gpiolib.c      | 33 ++++++++++++++++++++++-----
+ include/linux/gpio/driver.h |  4 ++++
+ 4 files changed, 34 insertions(+), 49 deletions(-)
+
 -- 
 2.25.1
 
