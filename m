@@ -2,81 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997B7C4320A
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A607C4338F
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B69461B04
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:44:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CDB961AFF
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Jul 2021 14:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233321AbhG0OoE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Jul 2021 10:44:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232419AbhG0OoE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 27 Jul 2021 10:44:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0797761AFF;
-        Tue, 27 Jul 2021 14:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627397044;
-        bh=DCZF5vBtRxSN3Atl2JhvAAXniNqQ9yKfWqAuw901/g0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hXmkITMiD+G++yOdjW8wvcqV7BEWConYzRL7641nwDZEuw3AsVgfogwi2oLfraOAi
-         eCpITE1ME7ar+yxsaWsDT6BqcgMhr6goj4e2jzTyDjsoANtCbVbCB4+F0IRmnW8QfI
-         2yKPtVByc5VwdN+++Fo4CdqnT/LTpEWaUXVHLYVJV5ii0yMRKy+wgT7lAdPr85tC7G
-         ZR5MoP9Aed3Xt1rtxWSxJmeM0XSfNdVH7kFEhdGOtTp/3EYfgS6P2vCRjUDzsFI0aS
-         geDl2wujqFTNaN/23At38LkTBaLLw3kO99hI/FLsyAjtZvITSpbH1TwOPdNu7vhKEq
-         qd7n6CC9zW7YQ==
-Received: by mail-ed1-f54.google.com with SMTP id u12so15696008eds.2;
-        Tue, 27 Jul 2021 07:44:03 -0700 (PDT)
-X-Gm-Message-State: AOAM5304AhnuUB1i7sTjf3Xha6V4SCP6D+FAVWT4zHvmdMFNd16zOISy
-        d39dH/ldQa76KU8sLALeOveOckwqMeHVG1ulsg==
-X-Google-Smtp-Source: ABdhPJx8n4J+Z7UVlfNp/CVCcr9EQN4eY3722ljng8pzZMprzmkjsfd/Smzx7DvX5NOBodU83zHEZApOaOyOxc/Uv34=
-X-Received: by 2002:aa7:df12:: with SMTP id c18mr28268276edy.62.1627397042636;
- Tue, 27 Jul 2021 07:44:02 -0700 (PDT)
+        id S236847AbhG0Ost (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Jul 2021 10:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52738 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236701AbhG0Osl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jul 2021 10:48:41 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8672AC0613CF;
+        Tue, 27 Jul 2021 07:48:22 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id f18-20020a05600c4e92b0290253c32620e7so1836128wmq.5;
+        Tue, 27 Jul 2021 07:48:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=omWjBOX/3h/WM2lUnp6VftQHp2MdTaSELvMcM6S+KNc=;
+        b=Gk1f014+yncZXzcpUjGLdkTPgzpUeaL/lpz0BR/YEjnKLkq48Tipo/39UuBbBYjPaf
+         kJTSDwKFk+wfZZnrihgvR1ebNbJmWQFvQtHDbXjOVAm69Khr7o6mJHRSsqfQXYshFxzm
+         uJOHJywcCsXu7cD0rcOj+KWFhUURmnXubWvvwrl9QollfJVJ3i8C5uMJeBAj4eWyyVXq
+         wdbT6kQXd+emOgi6jHOvvjHOrsxYBLcXYcF2pVTpjv0Lo/9s1SQYJYrpeJw9CLn4dG0P
+         GWydd7Qex95nlkp4B93O9lX9dN7HFVFXaSmK0gvsXychwiJIvL+lq/OAlttoKqRbMpjl
+         qYSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=omWjBOX/3h/WM2lUnp6VftQHp2MdTaSELvMcM6S+KNc=;
+        b=j3tq06s748ClnaETLNiOZBg761x246tS+f+WWhoi2db6V8BQI4MqQwvPck/LLpJojP
+         OnvFEC/QFjOAY+41VcAx2BECoglbPoowRLeQaXS9BmxSjYXJLV0+jamGq9MyHn91jzHs
+         ajBJDmNI+1r3fGRi6hBovqQStsLjRLe03eiNaVsl4O+wFvoOekG1dUvTVN+345PXmD5O
+         GfUt+9Zg3m15jjV3UHjuNao6jL/wsbjns3EZfH/jXeLlCtcausbYHqh+2bqEomofzbci
+         1DjzlZJKRVnR56oULAesodGxr2sFuX4oeRgzE/RB+kLEM1kj+VJSlecvRwvGbA4YH+AL
+         guRw==
+X-Gm-Message-State: AOAM531ruAwPdcHIY+Fm+Jw5ZMn/+6U5g/4sF6Rp8/C4MVKV+M2oRyvz
+        A3e/iYR9WiMYGNFV0iqqTy/AvIO98dDlAAt5
+X-Google-Smtp-Source: ABdhPJxs+BJSVXEjy5Z/abPwqOGSp7NtJ2xjEEZXCsGBor5wPH1o0P/a9eU0DX3CkL4Jc7FriWobZA==
+X-Received: by 2002:a05:600c:198a:: with SMTP id t10mr4542669wmq.32.1627397300903;
+        Tue, 27 Jul 2021 07:48:20 -0700 (PDT)
+Received: from localhost.localdomain (189.red-83-51-242.dynamicip.rima-tde.net. [83.51.242.189])
+        by smtp.gmail.com with ESMTPSA id o14sm3002555wmq.31.2021.07.27.07.48.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Jul 2021 07:48:20 -0700 (PDT)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     linus.walleij@linaro.org, gregory.0xf0@gmail.com,
+        bgolaszewski@baylibre.com, f.fainelli@gmail.com,
+        matthias.bgg@gmail.com, opensource@vdorst.com,
+        andy.shevchenko@gmail.com, git@johnthomson.fastmail.com.au,
+        neil@brown.name, hofrat@osadl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/3] gpio: mt7621: support gpio-line-names property
+Date:   Tue, 27 Jul 2021 16:48:15 +0200
+Message-Id: <20210727144816.8697-3-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210727144816.8697-1-sergio.paracuellos@gmail.com>
+References: <20210727144816.8697-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
-References: <20210721191558.22484-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210721191558.22484-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20210721191558.22484-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 27 Jul 2021 08:43:51 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKLGf5VGwt9fbs4nYuxkq12sfTnuvmENTLshz45jPE+GA@mail.gmail.com>
-Message-ID: <CAL_JsqKLGf5VGwt9fbs4nYuxkq12sfTnuvmENTLshz45jPE+GA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Add
- DT bindings for RZ/G2L pinctrl
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 1:16 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->
-> Add device tree binding documentation and header file for Renesas
-> RZ/G2L pinctrl.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  .../pinctrl/renesas,rzg2l-pinctrl.yaml        | 155 ++++++++++++++++++
->  include/dt-bindings/pinctrl/rzg2l-pinctrl.h   |  23 +++
->  2 files changed, 178 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
->  create mode 100644 include/dt-bindings/pinctrl/rzg2l-pinctrl.h
+This driver uses multiple gpiochip banks per device.
+To support 'gpio-line-names' along the banks 'offset'
+for each bank must be set explicitly.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ drivers/gpio/gpio-mt7621.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index 82fb20dca53a..5854a9343491 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -241,6 +241,7 @@ mediatek_gpio_bank_probe(struct device *dev,
+ 	if (!rg->chip.label)
+ 		return -ENOMEM;
+ 
++	rg->chip.offset = bank * MTK_BANK_WIDTH;
+ 	rg->irq_chip.name = dev_name(dev);
+ 	rg->irq_chip.parent_device = dev;
+ 	rg->irq_chip.irq_unmask = mediatek_gpio_irq_unmask;
+-- 
+2.25.1
+
