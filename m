@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DC4C4338F
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE60C4320E
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9034060184
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B83F26023E
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:56:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236672AbhG1N4D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Jul 2021 09:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59464 "EHLO
+        id S236809AbhG1N4E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Jul 2021 09:56:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236689AbhG1N4A (ORCPT
+        with ESMTP id S236691AbhG1N4A (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jul 2021 09:56:00 -0400
-Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A293CC061764;
-        Wed, 28 Jul 2021 06:55:57 -0700 (PDT)
-Received: by mail-qk1-x72f.google.com with SMTP id t66so2304722qkb.0;
-        Wed, 28 Jul 2021 06:55:57 -0700 (PDT)
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CBFC061765;
+        Wed, 28 Jul 2021 06:55:59 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id w6so1551680qvh.3;
+        Wed, 28 Jul 2021 06:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LMidoks8VqIeotRW3zF6aKDdq4qcQbLbMvTzDQDS3NE=;
-        b=SNAMGLrcZebiKazFrHoVd9aU6/z8YYqD/8zVNXKQQkOmk9aL5qEuZNhLvp5JyL+pho
-         bWy3HlMMU2RdJ0rLJavw3lyZCSJzYRamnPdeQmW4Hyvlr0kv0udwDohAV0Shj1Q4kegg
-         CjDrQ4Q8hl3OiBaLLDQB42R1z2T61GXkvXZRO/8sYoOqHB8OPYc7ZpBGniNOAttDJomf
-         iASjOfVDaQsY7qpkSjgtpo5zr7wfDx1nsgfs0Y/buahRPn14PAN78oqYUM4r9rUZzCOX
-         8AZDE7Cbhvtp/HIBWv3z2nCODoPBnAqzrhMJTAyRTvs5yQjk/wOlW57XBb2iyHZ66/hz
-         j+5w==
+        bh=rg5BgE/uGT7G9Q0TLIac/vS9ZXh8BbNch3GcxmLfwSM=;
+        b=KCMf4446wjqkcLAvYc/vbvupqGYrOHZZ1b02HVjhPcRI1c6i7NsQaGzfkq1QnfTT31
+         2YKT54nBCT6qx31A1U62D7cYJLst9iGtgFl6GlTWuuJeR31jSGibVdt0akxtzC+WvfKk
+         UMzycK+q3Oj2QCgKtVMCysTOssh9c5XXnbQq4HLgtZpDl80b2IVvGdJ2lYIqMUSA8ijP
+         A2owYG8DvECR7B6mux0+ZiX+whWSAm9poS7pQp0++qrg5bXJYdJzIPjMCfI2ChemRP/n
+         wQ+0ggx1uDKhckqHt2AT+eXPbFLR9UmMM7MwD8g7ES8/ZHw97N+Y4VMhteaeRBZ+BiW9
+         Sd+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LMidoks8VqIeotRW3zF6aKDdq4qcQbLbMvTzDQDS3NE=;
-        b=Z3FpjnmPzFlT9VVn6GosXvQTXFRnGn2AEK+h4Ml9YZawUf47BoMSoc9MGqCovmWsoR
-         xIS7keKNFDtg2dtoPorSve0F5jJ2vuVB+4TyNbUmcG+BA+LpRWyFF3r1Elm3cfThYYow
-         j7sMEgejZnITK0IdJKzDDBeiXnzBPqCdvJTaGj2sdSQsHPPFJ7qb2uAG4d032s/QJAm3
-         xBwLiJ1QiYoDLtYws2Ju/XOTevhlBCnSfoW8eulbDJlJXbj/UaEFtP0NKVIuvWxUtYYC
-         +7vwQby7wUJg3peM67nkQsIALZ3pQhgMR0RYhSt/XjCdtcU1pYrh3Bl1CNhqbHpZEBmU
-         q/WQ==
-X-Gm-Message-State: AOAM531iV0kA3/SccwxG+X2RHK30XIr67gynWw+SOrdnYs77AxdWQUq8
-        RklG3Ml0E0NjNRqPgmFDcrE=
-X-Google-Smtp-Source: ABdhPJyKgSrOrkUUbUuHwY2CzyhrPvSL5W+t2O8/1LtVM+F5E+MM8rI3uHJAZ7Ilz+Rivd6lb3oO5g==
-X-Received: by 2002:ae9:e60b:: with SMTP id z11mr27953183qkf.8.1627480556819;
-        Wed, 28 Jul 2021 06:55:56 -0700 (PDT)
+        bh=rg5BgE/uGT7G9Q0TLIac/vS9ZXh8BbNch3GcxmLfwSM=;
+        b=qtbDFDO7oXO2mXclzCHbv8uAcdCGdrdQsIoXAJ0UcSWiwcj7nU5v/sNqtyTl0vsdMj
+         fO0O5bZNi7Qn3iLMBYL9uLq5v0UO4E6elD7rvCiIpTrU13/GuBBC5Ttuk/LZU+2Wki6g
+         1f6a5dBgP1eFl7SkQ5u4nD4Jxya/84+mrJY+WiYnZa85gdgkpSgP8xKMmg5u8eea1kTZ
+         3ypeDZ1DAVm78bDIRkbwSVR7e3jY1X0W8OEq899vNdCe9NOsP8YALeBbcQhbLpwjvRYR
+         9LIjx33GVEfDXjfnj9KgvMHCy7xasGcC79UsCMqrnTwB1FPE1ynRlkn2FPJP5Izpy8Cs
+         Hr/A==
+X-Gm-Message-State: AOAM533iasASpk//zHysSfCf04qDEBOzubCl/YCrCc+qXgjsO5gW/0NT
+        c/FdBmf2JhW4HM/b1maXp3Y=
+X-Google-Smtp-Source: ABdhPJx8XWhJEjfq2Fvj726/Hw5wJ13Qv7bdtDwqT3fTu3+dsAeyAiYP3xpg2dW5kECYjUuFPVmy1w==
+X-Received: by 2002:a05:6214:188c:: with SMTP id cx12mr30649qvb.7.1627480558176;
+        Wed, 28 Jul 2021 06:55:58 -0700 (PDT)
 Received: from master-laptop.sparksnet ([2601:153:980:85b1:b58:2ae8:d75f:660a])
-        by smtp.gmail.com with ESMTPSA id t64sm27202qkd.71.2021.07.28.06.55.56
+        by smtp.gmail.com with ESMTPSA id t64sm27202qkd.71.2021.07.28.06.55.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jul 2021 06:55:56 -0700 (PDT)
+        Wed, 28 Jul 2021 06:55:57 -0700 (PDT)
 From:   Peter Geis <pgwipeout@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -65,9 +65,9 @@ Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH 6/9] arm64: dts: rockchip: add missing rk3568 cru phandles
-Date:   Wed, 28 Jul 2021 09:55:31 -0400
-Message-Id: <20210728135534.703028-7-pgwipeout@gmail.com>
+Subject: [PATCH 8/9] arm64: dts: rockchip: enable gmac node on quartz64-a
+Date:   Wed, 28 Jul 2021 09:55:33 -0400
+Message-Id: <20210728135534.703028-9-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210728135534.703028-1-pgwipeout@gmail.com>
 References: <20210728135534.703028-1-pgwipeout@gmail.com>
@@ -77,36 +77,75 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The grf and pmugrf phandles are necessary for the pmucru and cru to
-modify clocks. Add these phandles to permit adjusting the clock rates
-and muxes.
+Enable the gmac controller on the Pine64 Quartz64 Model A.
 
 Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk356x.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ .../boot/dts/rockchip/rk3566-quartz64-a.dts   | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-index 0905fac0726a..8ba0516eedd8 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-@@ -218,6 +218,8 @@ grf: syscon@fdc60000 {
- 	pmucru: clock-controller@fdd00000 {
- 		compatible = "rockchip,rk3568-pmucru";
- 		reg = <0x0 0xfdd00000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
-+		rockchip,pmugrf = <&pmugrf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+index a3cdb6c2bec6..90cdabfac86b 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+@@ -19,6 +19,13 @@ chosen: chosen {
+ 		stdout-path = "serial2:1500000n8";
  	};
-@@ -225,6 +227,7 @@ pmucru: clock-controller@fdd00000 {
- 	cru: clock-controller@fdd20000 {
- 		compatible = "rockchip,rk3568-cru";
- 		reg = <0x0 0xfdd20000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
+ 
++	gmac1_clkin: external-gmac1-clock {
++		compatible = "fixed-clock";
++		clock-frequency = <125000000>;
++		clock-output-names = "gmac1_clkin";
++		#clock-cells = <0>;
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -116,6 +123,29 @@ &cpu3 {
+ 	cpu-supply = <&vdd_cpu>;
+ };
+ 
++&gmac1 {
++	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru SCLK_GMAC1>;
++	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru SCLK_GMAC1>, <&gmac1_clkin>;
++	clock_in_out = "input";
++	phy-supply = <&vcc_3v3>;
++	phy-mode = "rgmii";
++	pinctrl-names = "default";
++	pinctrl-0 = <&gmac1m0_miim
++		     &gmac1m0_tx_bus2
++		     &gmac1m0_rx_bus2
++		     &gmac1m0_rgmii_clk
++		     &gmac1m0_clkinout
++		     &gmac1m0_rgmii_bus>;
++	snps,reset-gpio = <&gpio0 RK_PC3 GPIO_ACTIVE_LOW>;
++	snps,reset-active-low;
++	/* Reset time is 20ms, 100ms for rtl8211f */
++	snps,reset-delays-us = <0 20000 100000>;
++	tx_delay = <0x30>;
++	rx_delay = <0x10>;
++	phy-handle = <&rgmii_phy1>;
++	status = "okay";
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -336,6 +366,13 @@ regulator-state-mem {
  	};
+ };
+ 
++&mdio1 {
++	rgmii_phy1: ethernet-phy@0 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <0>;
++	};
++};
++
+ &pinctrl {
+ 	bt {
+ 		bt_enable_h: bt-enable-h {
 -- 
 2.25.1
 
