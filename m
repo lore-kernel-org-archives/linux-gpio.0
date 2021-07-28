@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DE4C4338F
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2746C432BE
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B102860EC0
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:55:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C8E260184
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jul 2021 13:55:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236577AbhG1Nz6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Jul 2021 09:55:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59448 "EHLO
+        id S236665AbhG1Nz7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Jul 2021 09:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236292AbhG1Nz4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jul 2021 09:55:56 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111FAC061757;
-        Wed, 28 Jul 2021 06:55:55 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id az7so2246667qkb.5;
-        Wed, 28 Jul 2021 06:55:55 -0700 (PDT)
+        with ESMTP id S236585AbhG1Nz6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jul 2021 09:55:58 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C6B8C061765;
+        Wed, 28 Jul 2021 06:55:56 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id t66so2304655qkb.0;
+        Wed, 28 Jul 2021 06:55:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vXk/J4q5mPEjnLuepFqEKq93BJsZukmkkBYD3V+Z3Tk=;
-        b=FMHCoImVFrprWfhN8LCCWjfLHbL6/mwjUYPLJrawre3JFTHn4wzbqn05g3hX5vP42x
-         5B56hqiX7ej/9k4CjBcisgJMI+iAmJdkc4jIm/lJtVQ4TrbYWvEPy1EgtvMAKRgp1xkA
-         bDlm9XRdoJ2o5Zr+RFnCxhwG+Xclsyd3mSaS8lulGeXwIrLmHCQfBqA4QRLT2kVqrPKo
-         Pb2SOa30d457++7mwzRkEgo4L05L9ZMCXa8LLtAJi+LIyQUgdWneKqp9rkAmZMyOPxEp
-         5qgB1rRKUpfCrUd3sYdoZg7NRE2MpkKQmOiHnhQY0eTxeVatCP0fIj/Ek7tI4xZu3vAo
-         FBZw==
+        bh=GgO3gM/qgV5j5bSek0cT3huCLqsL7htsJRkhag9gcPQ=;
+        b=nUonId8Ux9H+Q1PLhPVCcvVhhM2ufdC1ixNx/TtrNFGyrsPxlqL5nbT78pupBjE41z
+         5PVaMChvHpl8pjp/nSotW01U3CGoPjozNv0lVpi/fXVOmhaNWAnQpJkMa41tqGzqmvXp
+         NM+//0YGIsel7Dhg6AA5Gz47xgZisq86xNW8trsMJ6uMD0G2Z4WgeYbTyK0hOQBoIw5U
+         JXBAjinAoPxWxgZ7uzszDrpPxvPaZvT0GWqI/HtAWuPnMOqPHdCYTTCqR4SFa12IevCT
+         3l8BAbpKIdyya0jd451Zuq3E6Fr4egz09EanhOoyNpHBB48JL5wq/9XSBabD7ns+PY/9
+         dvxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vXk/J4q5mPEjnLuepFqEKq93BJsZukmkkBYD3V+Z3Tk=;
-        b=kTfUJIXB6FIaYHWIEtfFAN3B1ZxuljHJX/5ilKQPRu6i7+wzGjit6bVwnowOWW9ssU
-         nVgdeGiJJwXw+wLCZzUFSQcCccQNBUb21aUC0/KxvB2us8fQ+AL40yNMOZqucAUKgrM3
-         RFy99WtRMWD3qP2kouTgoAIX72THbbfxFQRTvB34zTs4uK1nS8akZusx96S8EgfsSeaZ
-         xRMKOhWG4L8VfpymwWUjStKRvG18upLjT5k9drgu5kfCbJm1ofgIKwtqKokAbcz5Ai2H
-         h9RjIVsTA7+Rka+M2vATPsuuGkSjk7A14VPp3D+MVuXLi8Ro0BOi2AaVb7j9upp8E4hU
-         ibDg==
-X-Gm-Message-State: AOAM530BD1ko8gjkgoUOjqv8F3B64dZY74Me7p1GxFaNoDc/MIQtPB40
-        QPRwco/AcMNWytOXzvJQcXs=
-X-Google-Smtp-Source: ABdhPJz6f8hVcTQd5Bpdw7dmeHdhawQ5NdaItj5fYAXgvjQHsKkaWbMr6OGvUs/d0SCvBFkFtwwQTQ==
-X-Received: by 2002:a05:620a:5f6:: with SMTP id z22mr27262899qkg.195.1627480554191;
-        Wed, 28 Jul 2021 06:55:54 -0700 (PDT)
+        bh=GgO3gM/qgV5j5bSek0cT3huCLqsL7htsJRkhag9gcPQ=;
+        b=AjXdKnbKM48GiTt05qLSjKh1AiKkO8pidFs25tJRRWWWitrwbjQYqQuOvPwgaRrBmw
+         aHcCa5vGgsp1JHO3wj/0AUCYCNGEG5Cny0TUWbC3yGPFxaDJmjUS9Mn3MAWSbPsihqWr
+         hZh+suHCB8h7mTlzl0GMcC7tXh9Sd0gplG+6brMPIPJGFlaSHCADtXrQDQV/XpjPAWBH
+         XKwvJao90t4eLRoGUE1NRcFh17wxWfnrjaPke+1ozYjgS1wKrZAgr3b7FDPIL3Zth3T1
+         vHK87N0ZmCcVEnxvj0QisL2qllO0WCWyS7rrU0sLLFveixHaXEyrnJC7M+83z1pnzjx0
+         DWlA==
+X-Gm-Message-State: AOAM5317uwnBZoCqyCNZfH2EL4uwcAYZOTtkZ3HdiKE86GJAwykOKYMJ
+        xOtaLn4iKyAB/Fg1yq0SU3k=
+X-Google-Smtp-Source: ABdhPJy2oT201nlumhEghSYmup93Xi96Yjn/wFnGRnKG9n1L0wCYEgxK0QLaj120CZ2Df3+Bo14ooA==
+X-Received: by 2002:a37:a413:: with SMTP id n19mr27085612qke.462.1627480555518;
+        Wed, 28 Jul 2021 06:55:55 -0700 (PDT)
 Received: from master-laptop.sparksnet ([2601:153:980:85b1:b58:2ae8:d75f:660a])
-        by smtp.gmail.com with ESMTPSA id t64sm27202qkd.71.2021.07.28.06.55.53
+        by smtp.gmail.com with ESMTPSA id t64sm27202qkd.71.2021.07.28.06.55.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jul 2021 06:55:53 -0700 (PDT)
+        Wed, 28 Jul 2021 06:55:55 -0700 (PDT)
 From:   Peter Geis <pgwipeout@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -65,9 +65,9 @@ Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH 2/9] arm64: dts: rockchip: fix rk3568 mbi-alias
-Date:   Wed, 28 Jul 2021 09:55:27 -0400
-Message-Id: <20210728135534.703028-3-pgwipeout@gmail.com>
+Subject: [PATCH 4/9] arm64: dts: rockchip: add rk356x gmac1 node
+Date:   Wed, 28 Jul 2021 09:55:29 -0400
+Message-Id: <20210728135534.703028-5-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210728135534.703028-1-pgwipeout@gmail.com>
 References: <20210728135534.703028-1-pgwipeout@gmail.com>
@@ -77,31 +77,80 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The mbi-alias incorrectly points to 0xfd100000 when it should point to
-0xfd410000.
-This fixes MSIs on rk3568.
-
-Fixes: a3adc0b9071d ("arm64: dts: rockchip: add core dtsi for RK3568
-SoC")
+Add the gmac1 controller to the rk356x device tree.
+This is the controller common to both the rk3568 and rk3566.
 
 Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk356x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi | 48 ++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-index 322971318d5a..f7ecdfd66f86 100644
+index c2aa7aeec58d..77c679304916 100644
 --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-@@ -195,7 +195,7 @@ gic: interrupt-controller@fd400000 {
- 		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-controller;
- 		#interrupt-cells = <3>;
--		mbi-alias = <0x0 0xfd100000>;
-+		mbi-alias = <0x0 0xfd410000>;
- 		mbi-ranges = <296 24>;
- 		msi-controller;
+@@ -18,6 +18,7 @@ / {
+ 	#size-cells = <2>;
+ 
+ 	aliases {
++		ethernet1 = &gmac1;
+ 		gpio0 = &gpio0;
+ 		gpio1 = &gpio1;
+ 		gpio2 = &gpio2;
+@@ -344,6 +345,53 @@ sdmmc2: mmc@fe000000 {
+ 		status = "disabled";
  	};
+ 
++	gmac1: ethernet@fe010000 {
++		compatible = "rockchip,rk3568-gmac", "snps,dwmac-4.20a";
++		reg = <0x0 0xfe010000 0x0 0x10000>;
++		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "macirq", "eth_wake_irq";
++		clocks = <&cru SCLK_GMAC1>, <&cru SCLK_GMAC1_RX_TX>,
++			 <&cru SCLK_GMAC1_RX_TX>, <&cru CLK_MAC1_REFOUT>,
++			 <&cru ACLK_GMAC1>, <&cru PCLK_GMAC1>,
++			 <&cru SCLK_GMAC1_RX_TX>, <&cru CLK_GMAC1_PTP_REF>;
++		clock-names = "stmmaceth", "mac_clk_rx",
++			      "mac_clk_tx", "clk_mac_refout",
++			      "aclk_mac", "pclk_mac",
++			      "clk_mac_speed", "ptp_ref";
++		resets = <&cru SRST_A_GMAC1>;
++		reset-names = "stmmaceth";
++		rockchip,grf = <&grf>;
++		snps,mixed-burst;
++		snps,tso;
++		snps,axi-config = <&gmac1_stmmac_axi_setup>;
++		snps,mtl-rx-config = <&gmac1_mtl_rx_setup>;
++		snps,mtl-tx-config = <&gmac1_mtl_tx_setup>;
++		status = "disabled";
++
++		mdio1: mdio {
++			compatible = "snps,dwmac-mdio";
++			#address-cells = <0x1>;
++			#size-cells = <0x0>;
++		};
++
++		gmac1_stmmac_axi_setup: stmmac-axi-config {
++			snps,wr_osr_lmt = <4>;
++			snps,rd_osr_lmt = <8>;
++			snps,blen = <0 0 0 0 16 8 4>;
++		};
++
++		gmac1_mtl_rx_setup: rx-queues-config {
++			snps,rx-queues-to-use = <1>;
++			queue0 {};
++		};
++
++		gmac1_mtl_tx_setup: tx-queues-config {
++			snps,tx-queues-to-use = <1>;
++			queue0 {};
++		};
++	};
++
+ 	qos_gpu: qos@fe128000 {
+ 		compatible = "rockchip,rk3568-qos", "syscon";
+ 		reg = <0x0 0xfe128000 0x0 0x20>;
 -- 
 2.25.1
 
