@@ -2,200 +2,123 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3DAC432BE
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Jul 2021 20:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E85CC4338F
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Jul 2021 22:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48EEF60F4A
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Jul 2021 20:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44A5B60F48
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Jul 2021 22:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230316AbhG3UpU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Jul 2021 16:45:20 -0400
-Received: from mga02.intel.com ([134.134.136.20]:12737 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230217AbhG3UpU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 30 Jul 2021 16:45:20 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10061"; a="200337779"
-X-IronPort-AV: E=Sophos;i="5.84,282,1620716400"; 
-   d="scan'208";a="200337779"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2021 13:45:14 -0700
-X-IronPort-AV: E=Sophos;i="5.84,282,1620716400"; 
-   d="scan'208";a="499746795"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2021 13:45:13 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1m9ZNS-003WK5-L4; Fri, 30 Jul 2021 23:45:06 +0300
-Date:   Fri, 30 Jul 2021 23:45:06 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
+        id S230077AbhG3W2S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Jul 2021 18:28:18 -0400
+Received: from mail-io1-f42.google.com ([209.85.166.42]:46706 "EHLO
+        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229543AbhG3W2S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jul 2021 18:28:18 -0400
+Received: by mail-io1-f42.google.com with SMTP id z7so12383289iog.13;
+        Fri, 30 Jul 2021 15:28:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=1SioxWYOB4GKQF75otjmPAgYQGJ4juMB4TymylBvulE=;
+        b=P0oOjp24LssnbVlPk3D5V1NeORXdoYw0NAbgnpFs3zBRQAUzC5OqCIUA5FEGXWfXSC
+         jtBE5lf9imS4oP7f6dBARdZ44IL1MaShg/6APgsop5KA7NdUYEpTQuNv61ePpXIZYp+/
+         wntmrXX1/lxxcK86eGdFAVbvdocNTWJcu0w6qcxPcPnu9YQqpf6GB70G35GBI6SsFQk7
+         dTHbtWz65RQsdcewEqMiMcy2bj5WU4425dZydAyhKc81XkwVTGOrfTBMP9SMtm+Uob9Y
+         yNksvrVoGsOxM/ZGkwUuIQPuvhujvZTYkRvGsgRjXkxh5klou8WIhW9tz18dXUug/70r
+         /uAQ==
+X-Gm-Message-State: AOAM530dv4Y0kUN7WRRr9UZJDnzVMhYrTnW3XcsEtTu3ZXNVe4MVM0g4
+        oB42/vJCkjV7z1WDgXD9IOPEcvF8xw==
+X-Google-Smtp-Source: ABdhPJw92Pxgc45lpYhnZL98mHP5QmwqnkzlX6tQ6SiGz6QcI3EsfiGGEi2BDOlTWCaMN4QVg4tTIA==
+X-Received: by 2002:a02:90cb:: with SMTP id c11mr3909371jag.53.1627684092766;
+        Fri, 30 Jul 2021 15:28:12 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id q1sm1887882ioi.42.2021.07.30.15.28.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jul 2021 15:28:12 -0700 (PDT)
+Received: (nullmailer pid 3442792 invoked by uid 1000);
+        Fri, 30 Jul 2021 22:28:10 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     Andy Teng <andy.teng@mediatek.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: Re: [RFC PATCH v2 1/1] misc: add sloppy logic analyzer using polling
-Message-ID: <YQRk0vpo1V709z/Z@smile.fi.intel.com>
-References: <20210519132528.4394-1-wsa+renesas@sang-engineering.com>
- <20210519132528.4394-2-wsa+renesas@sang-engineering.com>
- <YKUlbsWhT45l5Zm0@smile.fi.intel.com>
- <YQRZkFApESOIMRmv@ninjato>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YQRZkFApESOIMRmv@ninjato>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Enric Balletbo Serra <eballetbo@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20210730120937.1435204-3-hsinyi@chromium.org>
+References: <20210730120937.1435204-1-hsinyi@chromium.org> <20210730120937.1435204-3-hsinyi@chromium.org>
+Subject: Re: [PATCH v2 3/3] dt-bindings: mediatek: convert pinctrl to yaml
+Date:   Fri, 30 Jul 2021 16:28:10 -0600
+Message-Id: <1627684090.548356.3442791.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 30, 2021 at 09:57:04PM +0200, Wolfram Sang wrote:
-
-...
-
-> > 'For ACPI one may use PRP0001 approach with the following ASL excerpt example::
-> > 
-> >     Device (GSLA) {
-> >         Name (_HID, "PRP0001")
-> >         Name (_DDN, "GPIO sloppy logic analyzer")
-> >         Name (_CRS, ResourceTemplate () {
-> >             GpioIo(Exclusive, PullNone, 0, 0, IoRestrictionNone,
-> >                 "\\_SB.PCI0.GPIO", 0, ResourceConsumer, , ) { 13 }
-> >             PinConfig(Exclusive, 0x07, 0, "\\_SB.PCI0.GPIO", 0, ResourceConsumer, ) { 7 }
-> >             GpioIo(Exclusive, PullNone, 0, 0, IoRestrictionNone,
-> >                 "\\_SB.PCI0.GPIO", 0, ResourceConsumer, , ) { 12 }
-> >             PinConfig(Exclusive, 0x07, 0, "\\_SB.PCI0.GPIO", 0, ResourceConsumer, ) { 6 }
-> >         })
-> > 
-> >         Name (_DSD, Package () {
-> >             ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-> >             Package () {
-> >                 Package () { "compatible", Package () { "gpio-sloppy-logic-analyzer" } },
-> >                 Package () {
-> >                     "probe-gpios", Package () {
-> >                         ^GSLA, 0, 0, 0,
-> >                         ^GSLA, 1, 0, 0,
-> >                     },
-> >                 Package () {
-> >                     "probe-names", Package () {
-> >                         "SCL",
-> >                         "SDA",
-> >                     },
-> >             }
-> >         })
-> > 
-> > Note, that pin configuration uses pin numbering space, while GPIO resources
-> > are in GPIO numbering space, which may be different in ACPI. In other words,
-> > there is no guarantee that GPIO and pins are mapped 1:1, that's why there are
-> > two different pairs in the example, i.e. {13,12} GPIO vs. {7,6} pin.
-> > 
-> > Yet pin configuration support in Linux kernel is subject to implement.'
+On Fri, 30 Jul 2021 20:09:37 +0800, Hsin-Yi Wang wrote:
+> Convert mt65xx, mt6796, mt7622, mt8183 bindings to yaml.
 > 
-> Have you tested this snippet?
-
-Nope. Below is the compile-tested one:
-
-    Device (GSLA) {
-        Name (_HID, "PRP0001")
-        Name (_DDN, "GPIO sloppy logic analyzer")
-        Name (_CRS, ResourceTemplate () {
-            GpioIo(Exclusive, PullNone, 0, 0, IoRestrictionNone,
-                "\\_SB.PCI0.GPIO", 0, ResourceConsumer, , ) { 13 }
-            PinConfig(Exclusive, 0x07, 0, "\\_SB.PCI0.GPIO", 0, ResourceConsumer, ) { 7 }
-            GpioIo(Exclusive, PullNone, 0, 0, IoRestrictionNone,
-                "\\_SB.PCI0.GPIO", 0, ResourceConsumer, , ) { 12 }
-            PinConfig(Exclusive, 0x07, 0, "\\_SB.PCI0.GPIO", 0, ResourceConsumer, ) { 6 }
-        })
-
-        Name (_DSD, Package () {
-            ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-            Package () {
-                Package () { "compatible", Package () { "gpio-sloppy-logic-analyzer" } },
-                Package () {
-                    "probe-gpios", Package () {
-                        ^GSLA, 0, 0, 0,
-                        ^GSLA, 1, 0, 0,
-                    },
-                },
-                Package () {
-                    "probe-names", Package () {
-                        "SCL",
-                        "SDA",
-                    },
-                },
-            }
-        })
-    }
-
-
-> I am totally open to add ACPI but it
-> should be tested, of course. Is there any on-going effort to add ACPI
-> pin config?
-
-Very slowly but yes, the pin configuration from ACPI to pin control is not
-forgotten.
-
-...
-
-> > > +	unsigned int trig_len;
-> > 
-> > On 64-bit arch you may save 4 bytes by moving this to be together with u32
-> > member above.
+> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> ---
+> v1->v2:
+> - fix comments in v1.
+> - fix mt7622 where groups is not required for conf node.
+> ---
+>  .../pinctrl/mediatek,mt65xx-pinctrl.yaml      | 206 ++++++++
+>  .../pinctrl/mediatek,mt6797-pinctrl.yaml      | 173 +++++++
+>  .../pinctrl/mediatek,mt7622-pinctrl.yaml      | 416 +++++++++++++++
+>  .../pinctrl/mediatek,mt8183-pinctrl.yaml      | 228 ++++++++
+>  .../bindings/pinctrl/pinctrl-mt65xx.txt       | 156 ------
+>  .../bindings/pinctrl/pinctrl-mt6797.txt       |  83 ---
+>  .../bindings/pinctrl/pinctrl-mt7622.txt       | 490 ------------------
+>  .../bindings/pinctrl/pinctrl-mt8183.txt       | 132 -----
+>  8 files changed, 1023 insertions(+), 861 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt6797-pinctrl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7622-pinctrl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
 > 
-> I don't want to save bytes here. I sorted the struct for cachelines,
-> important members first.
 
-Add a comment then.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-...
+yamllint warnings/errors:
 
-> > > +static struct dentry *gpio_la_poll_debug_dir;
-> > 
-> > I have seen the idea of looking up the debugfs entry. That said, do we actually
-> > need this global variable?
-> 
-> I don't understand the first sentence. And we still need it to clean up?
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.example.dts:21:18: fatal error: dt-bindings/pinctrl/mt8183-pinfunc.h: No such file or directory
+   21 |         #include <dt-bindings/pinctrl/mt8183-pinfunc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1419: dt_binding_check] Error 2
+\ndoc reference errors (make refcheckdocs):
+Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+MAINTAINERS: Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+MAINTAINERS: Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
 
-If you know the name of the folder, you may look up it, no need to keep a
-variable for that.
+See https://patchwork.ozlabs.org/patch/1511632
 
-...
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-> > > +		/* '10' is length of 'probe00=\n\0' */
-> > > +		add_len = strlen(gpio_names[i]) + 10;
-> > > +		meta = devm_krealloc(dev, meta, meta_len + add_len, GFP_KERNEL);
-> > 
-> > First of all, this realloc() pattern *) is bad. While it's tricky and has side
-> > effects (i.e. it has no leaks) better not to use it to avoid confusion.
-> > 
-> > *) foo = realloc(foo, ...); is 101 mistake.
-> 
-> Because generally you lose the old pointer on error. But we don't here
-> because we are using managed devices.
-> 
-> However, I see that all kernel users of devm_krealloc() are using a
-> seperate variable and then update the old one. I can do this, too.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-As I said, it is a nasty side effect that may provoke real bugs in the future
-with simple realloc() cases.
+pip3 install dtschema --upgrade
 
-...
-
-> > > +	[ ! -d $CPUSETDIR ] && mkdir $CPUSETDIR
-> > 
-> > [ -d ... ] || ...
-> 
-> Will think about it. I think the former is a tad more readable.
-
-Shell is nice when the script is a) short, b) readable. Neither I see in the
-former, sorry. Ah, and there is subtle difference between two. You may easily
-learn it if you start using -efu flags in shebang.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Please check and re-submit.
 
