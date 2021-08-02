@@ -2,117 +2,106 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47325C4320E
-	for <linux-gpio@archiver.kernel.org>; Sun,  1 Aug 2021 20:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D6FC4320E
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Aug 2021 08:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22ADB61057
-	for <linux-gpio@archiver.kernel.org>; Sun,  1 Aug 2021 20:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08008610A2
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Aug 2021 08:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbhHAUtA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 1 Aug 2021 16:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51606 "EHLO
+        id S232688AbhHBILu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 Aug 2021 04:11:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbhHAUtA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 1 Aug 2021 16:49:00 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E195C06175F;
-        Sun,  1 Aug 2021 13:48:51 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id c7-20020a9d27870000b02904d360fbc71bso15598963otb.10;
-        Sun, 01 Aug 2021 13:48:51 -0700 (PDT)
+        with ESMTP id S232657AbhHBILt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Aug 2021 04:11:49 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F317C06175F
+        for <linux-gpio@vger.kernel.org>; Mon,  2 Aug 2021 01:11:39 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id n12so20417069wrr.2
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Aug 2021 01:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3wDs4TscZnBfih/RoUBpjRLjosLDw2uLwbF2csntLTo=;
-        b=IxfENPjH2e4w5qRT7ASIYRIozgQ+/sX8NCAKqSMc6b8w5WRry3ukSep3aE2Fdahxn6
-         06QxofQwMZSunlFhvJ35+J6SYxpVw2+IItEPpV3WL1PO9zjtPi3cPwE4M4guMKfNdiTn
-         d06Vtv5iYNjJAk6E3J1cmLMEqxDXekYvaqh8C3R2LpUrtBoMXTXuHEp7GWlQfesx7fKI
-         ZmAVqd7Z/Xjr6/bA44sAEb95fSmTPw3Apd/Up7D3P/GfAn3D4X6TmYn4VU0nBl12ATDj
-         KCwnHIE1lE8wm7IwmhLBMER1of3SIGWivzBShnm66w1mNspn295cJaqgc5CW/yRPXXY/
-         0YTw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=0x3dgReXcWC1iYS+qAFXrajP0ewYcayc6ZfVqT+YfLM=;
+        b=c4ULYQYnFODtSFxOCRIK+uB3bc4g+h2xCaHtmtontDioQWPqE11fRSw1pyTYLspiWE
+         ynH5XhNaQuIZnrNns4h7VPbDlJZbNI7igjlBg4Qoukcsq/yuCqJIFUZW7pu0OetCguZn
+         OPvV03I9iVBdyZ9BUheiOG+dTxelg9mYMVnUm3BIaq7zyDwTAfNV3+Yp1RMVgPZd3sJz
+         U+2oTQwS+YTK6fhoi6hxbZ5nvJYWifv3c55QahSuXEhWLPijdSH+0hnQv+ZtLuY8m2e5
+         PWbfXLGnNVBRUqrXXNjiShXRgSBBPhO3doI7jSfTimAn+aw5zMqtpGoFYrDs6rNzCvqz
+         6x4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=3wDs4TscZnBfih/RoUBpjRLjosLDw2uLwbF2csntLTo=;
-        b=duCQPL6C6rFZ9lVO21qEAQz/CC9lC1KScbt3yZox+09MfKhslBZpyWW/0FcEVUHKd6
-         LxF1tNa418mes8hVr5/aaDXl4tG8EIeFM9j4mdJslLyR+aCpWrGHwmqU+th2YyRFxzA8
-         Zp2Br76PK440LkTVBoxlJTVzOPcH3qACyH43M3LApouNLTqDFUUoQEDyncdhmPoQV7vd
-         f1pZIn6ruWSgVYy4j4+298ooC2tAAGmfYtTzZoqjVCWh5r4avvPIRfrOpdT8CL5SwNsC
-         aKFJa7bJI54wUG1epTWXRwhQU/JdVSW4AEVA+zk0zjvnS4tcaMy4Q8i0pZlmF4+KkkES
-         Y00w==
-X-Gm-Message-State: AOAM531/ra+0E64sHJ1R99ee+uhmtWskrv7g0jiJ4fWFzvQtEagtlLXI
-        LlEa4maE6aDQ3M//fMR2vpA=
-X-Google-Smtp-Source: ABdhPJzlGbNGz7fO6f3aMCFJPAHsiwpnrYGwxdWj9tPS+NunUjP161qUG9vYt6Ii2t5StdpPw6vNDQ==
-X-Received: by 2002:a9d:26a:: with SMTP id 97mr9282002otb.333.1627850930545;
-        Sun, 01 Aug 2021 13:48:50 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c11sm1559290otm.37.2021.08.01.13.48.49
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=0x3dgReXcWC1iYS+qAFXrajP0ewYcayc6ZfVqT+YfLM=;
+        b=TytjhcIIs+6qAHMCB1PBpw/jp9RbrVASXq93Bf9x37oynfmgptOiBFql7bUJUqI9sw
+         4PoxQ5GMh4yR0OCjUDdl0emXfGOV3l3iDp62wE9AcmZ9NulTlabI+dPNrnp7jpmZjho8
+         N/kd0yuENbFX1YltdjFW3w15uZAsJW1OfTJqBdxYH/pBofWSOK2Hc21RWz6/hk4AoXbx
+         9K71yV7FGrIpudC/BmVqkv/mm3UCIpO6vi1T/ydD8Fo8srNnCYbv9metv4FQg4oh+ANS
+         xEYcy03S4kIk4nzVv4H1xtTfRBqGbspaJniS7s/7xfXk4uNNKQGXJwNjP2RXNSjTucuQ
+         RoUQ==
+X-Gm-Message-State: AOAM5333jG7IglRjVIKMfZLS+wxX3SONgikTisaewwlwawCzQ0TjwYWS
+        ON8ADPVtigP+lvHmOeoeLHbrsA==
+X-Google-Smtp-Source: ABdhPJyytz0qtGBKDG8wz0JExBsJg4sVp89R90AMZHsqTJLfgh0N2TC4adR2r3yMg0+e/RVuP4cveA==
+X-Received: by 2002:adf:eb4a:: with SMTP id u10mr5296618wrn.11.1627891898264;
+        Mon, 02 Aug 2021 01:11:38 -0700 (PDT)
+Received: from google.com ([109.180.115.228])
+        by smtp.gmail.com with ESMTPSA id d15sm10299636wrn.28.2021.08.02.01.11.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Aug 2021 13:48:50 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 1 Aug 2021 13:48:48 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-clk@vger.kernel.org, John Crispin <john@phrozen.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>
-Subject: Re: [PATCH 10/12] dt-bindings: watchdog: Add compatible for Mediatek
- MT7986
-Message-ID: <20210801204848.GA2800586@roeck-us.net>
-References: <20210726071439.14248-1-sam.shih@mediatek.com>
- <20210726071439.14248-11-sam.shih@mediatek.com>
+        Mon, 02 Aug 2021 01:11:37 -0700 (PDT)
+Date:   Mon, 2 Aug 2021 09:11:35 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     satya priya <skakit@codeaurora.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Das Srinagesh <gurus@codeaurora.org>, kgunda@codeaurora.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V7 1/3] dt-bindings: mfd: pm8008: Add gpio-ranges and
+ spmi-gpio compatible
+Message-ID: <YQeot5xqsiQqxXkR@google.com>
+References: <1627029074-23449-1-git-send-email-skakit@codeaurora.org>
+ <1627029074-23449-2-git-send-email-skakit@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210726071439.14248-11-sam.shih@mediatek.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1627029074-23449-2-git-send-email-skakit@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 26, 2021 at 03:14:37PM +0800, Sam Shih wrote:
-> This commit adds dt-binding documentation of watchdog for Mediatek MT7986
-> SoC Platform.
+On Fri, 23 Jul 2021, satya priya wrote:
+
+> Add gpio-ranges and "qcom,spmi-gpio" compatible to match with the
+> parent qcom,pmic-gpio.yaml binding.
 > 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Signed-off-by: satya priya <skakit@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/watchdog/mtk-wdt.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Changes in V7:
+>  - This is newly added in V7 to resolve below error.
+>  dtschema/dtc warnings/errors:
+>  /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/qcom,pm8008.example.dt.yaml: gpio@c000: compatible: ['qcom,pm8008-gpio'] is too short
+> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+>  /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/qcom,pm8008.example.dt.yaml: gpio@c000: 'gpio-ranges' is a required property
+> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-> index 416d716403f6..a4e31ce96e0e 100644
-> --- a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-> @@ -13,6 +13,7 @@ Required properties:
->  	"mediatek,mt7622-wdt", "mediatek,mt6589-wdt": for MT7622
->  	"mediatek,mt7623-wdt", "mediatek,mt6589-wdt": for MT7623
->  	"mediatek,mt7629-wdt", "mediatek,mt6589-wdt": for MT7629
-> +	"mediatek,mt7986-wdt", "mediatek,mt6589-wdt": for MT7986
->  	"mediatek,mt8183-wdt": for MT8183
->  	"mediatek,mt8516-wdt", "mediatek,mt6589-wdt": for MT8516
->  	"mediatek,mt8192-wdt": for MT8192
+>  Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+
+Applied, thanks.
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
