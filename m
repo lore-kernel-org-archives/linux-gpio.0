@@ -2,123 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C64C4338F
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Aug 2021 13:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5834C4320A
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Aug 2021 13:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09B6260EE3
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Aug 2021 13:22:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47956112D
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Aug 2021 13:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233939AbhHBNWR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 2 Aug 2021 09:22:17 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:1522 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233887AbhHBNWR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Aug 2021 09:22:17 -0400
-Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
-  by alexa-out.qualcomm.com with ESMTP; 02 Aug 2021 06:22:08 -0700
-X-QCInternal: smtphost
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 02 Aug 2021 06:22:04 -0700
-X-QCInternal: smtphost
-Received: from c-skakit-linux.ap.qualcomm.com (HELO c-skakit-linux.qualcomm.com) ([10.242.51.242])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 02 Aug 2021 18:51:25 +0530
-Received: by c-skakit-linux.qualcomm.com (Postfix, from userid 2344709)
-        id 4FC705368; Mon,  2 Aug 2021 18:51:24 +0530 (IST)
-From:   satya priya <skakit@codeaurora.org>
+        id S233785AbhHBNX6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 Aug 2021 09:23:58 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:45812
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233767AbhHBNX4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Aug 2021 09:23:56 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id 888913F113
+        for <linux-gpio@vger.kernel.org>; Mon,  2 Aug 2021 13:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627910626;
+        bh=PcYv7A5UtpI/HN8IQPlYCtcicRurm0AO4HjAfUXrPFg=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=JQ0GHuP65vX9piz3MEAq0p3R6U46Vua9V/4LJX0J8Pojfuw6HrFuY3oHI938PWvHR
+         82WoZm4nUsCTPaL2rfBYo4qSyhfe1d8rSvh+xlsSeB2xcqAhtUxoqDou42BCISf2+u
+         JGLRI+mvNBIzwUGdfXWPDr9NWUZVFx0zD86FVK3ETZqWig6k7pt+Ka7dlkFSsPAXCj
+         MaO0MsvKR74ZCDkBBJKQnsNLXRUFHcAMDyjJ7g8og3343ljk8BVn2hvfptI1XvQQ9c
+         j3+qbuI5MBCQ3trgd9J4tiwKDfOip1kMsBQ5SngvK0SvRSrwDlhzvzXYYOhB3W/uBv
+         Ly/3mclpBU13A==
+Received: by mail-ed1-f70.google.com with SMTP id k14-20020a05640212ceb02903bc50d32c17so8773115edx.12
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Aug 2021 06:23:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PcYv7A5UtpI/HN8IQPlYCtcicRurm0AO4HjAfUXrPFg=;
+        b=W508BSDFachJl0MA1cfdc9PxC1ShX6kJZnPBpBprI3E1ty7t8WiqzsCp4aux/OeXEf
+         6j+osBdBnDpida6GgPnNzNWqJJcDw7UF4iSvtrA1c5VtNEKRAw5IXD9P8Ud/445XJCRR
+         4p+zmk9xyrKvI4BBfWXwGKJ5/0JdysNWsKAaTRiBUtZEiz63AR9Kq3CtnBaoPubnbW2X
+         cvvWZsbNCMzH+Q4FJGASy738yqLQW0W4kBdJFiR66jYsIAK9Utsh+aC2A0dfpf4+Bkdj
+         FOZwfK3HAWx+j16iW+NuuuqaEESsqA0XnufnCB5wg2amkX0Bdk4pZKinW1duvc08Y/vb
+         htrA==
+X-Gm-Message-State: AOAM530Dr94aITIkydtz7tQIqYrEZ7vIsCGlHxrUFJQzZNjxG+CpKv7Y
+        w36n4mKfV3H1JNOXPpxsgvbRJtqAKN1rlFUFpPx0NTKc/RF8kIu/0vxxJ6OtJEPM5Q/frVY7tW3
+        worJ4tNgpHJ7aZjMWMoEIp/Af9hUOE8CY9OhlpKs=
+X-Received: by 2002:a17:906:3042:: with SMTP id d2mr15817504ejd.234.1627910626320;
+        Mon, 02 Aug 2021 06:23:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzrA4flDvX+BAKewMQjdgTQYWuHYej9xPjsM1AuxVjzU8xxeUklp6WM1diAO6OrzbRfygP/bA==
+X-Received: by 2002:a17:906:3042:: with SMTP id d2mr15817484ejd.234.1627910626191;
+        Mon, 02 Aug 2021 06:23:46 -0700 (PDT)
+Received: from localhost.localdomain ([86.32.43.172])
+        by smtp.gmail.com with ESMTPSA id gv7sm4648671ejc.5.2021.08.02.06.23.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Aug 2021 06:23:45 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     bhupesh.sharma@linaro.org, Das Srinagesh <gurus@codeaurora.org>,
-        kgunda@codeaurora.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, satya priya <skakit@codeaurora.org>
-Subject: [RESEND PATCH V7 1/3] dt-bindings: mfd: pm8008: Add gpio-ranges and spmi-gpio compatible
-Date:   Mon,  2 Aug 2021 18:51:02 +0530
-Message-Id: <1627910464-19363-2-git-send-email-skakit@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1627910464-19363-1-git-send-email-skakit@codeaurora.org>
-References: <1627910464-19363-1-git-send-email-skakit@codeaurora.org>
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] pinctrl: samsung: Fix pinctrl bank pin count
+Date:   Mon,  2 Aug 2021 15:23:42 +0200
+Message-Id: <162791061524.24470.4507251211900093020.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210730192905.7173-1-semen.protsenko@linaro.org>
+References: <20210730192905.7173-1-semen.protsenko@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add gpio-ranges and "qcom,spmi-gpio" compatible to match with the
-parent qcom,pmic-gpio.yaml binding.
+On Fri, 30 Jul 2021 22:29:05 +0300, Sam Protsenko wrote:
+> Commit 1abd18d1a51a ("pinctrl: samsung: Register pinctrl before GPIO")
+> changes the order of GPIO and pinctrl registration: now pinctrl is
+> registered before GPIO. That means gpio_chip->ngpio is not set when
+> samsung_pinctrl_register() called, and one cannot rely on that value
+> anymore. Use `pin_bank->nr_pins' instead of `pin_bank->gpio_chip.ngpio'
+> to fix mentioned inconsistency.
 
-Signed-off-by: satya priya <skakit@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Guru Das Srinagesh <gurus@codeaurora.org>
----
-Changes in V7:
- - This is newly added in V7 to resolve below error.
- dtschema/dtc warnings/errors:
- /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/qcom,pm8008.example.dt.yaml: gpio@c000: compatible: ['qcom,pm8008-gpio'] is too short
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
- /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/qcom,pm8008.example.dt.yaml: gpio@c000: 'gpio-ranges' is a required property
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+Applied, thanks!
 
-Changes in RESEND V7:
- - Rebased on linux-next.
+[1/1] pinctrl: samsung: Fix pinctrl bank pin count
+      commit: 70115558ab02fe8d28a6634350b3491a542aaa02
 
- Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
-index 7799368..ec3138c 100644
---- a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
-+++ b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
-@@ -53,7 +53,9 @@ patternProperties:
- 
-     properties:
-       compatible:
--        const: qcom,pm8008-gpio
-+        items:
-+          - const: qcom,pm8008-gpio
-+          - const: qcom,spmi-gpio
- 
-       reg:
-         description: Peripheral address of one of the two GPIO peripherals.
-@@ -61,6 +63,9 @@ patternProperties:
- 
-       gpio-controller: true
- 
-+      gpio-ranges:
-+        maxItems: 1
-+
-       interrupt-controller: true
- 
-       "#interrupt-cells":
-@@ -75,6 +80,7 @@ patternProperties:
-       - gpio-controller
-       - interrupt-controller
-       - "#gpio-cells"
-+      - gpio-ranges
-       - "#interrupt-cells"
- 
-     additionalProperties: false
-@@ -107,10 +113,11 @@ examples:
-         interrupt-parent = <&tlmm>;
-         interrupts = <32 IRQ_TYPE_EDGE_RISING>;
- 
--        gpio@c000 {
--          compatible = "qcom,pm8008-gpio";
-+        pm8008_gpios: gpio@c000 {
-+          compatible = "qcom,pm8008-gpio", "qcom,spmi-gpio";
-           reg = <0xc000>;
-           gpio-controller;
-+          gpio-ranges = <&pm8008_gpios 0 0 2>;
-           #gpio-cells = <2>;
-           interrupt-controller;
-           #interrupt-cells = <2>;
+Best regards,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
