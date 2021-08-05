@@ -2,104 +2,215 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AF4C4338F
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Aug 2021 14:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3339BC4338F
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Aug 2021 15:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 422EF61131
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Aug 2021 14:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14C7861158
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Aug 2021 15:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241960AbhHEO35 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Aug 2021 10:29:57 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:40964 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240801AbhHEO35 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Aug 2021 10:29:57 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 175EBmGX031318;
-        Thu, 5 Aug 2021 16:29:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=64HVz0Gg+wUo7z89cmaaEfQ54A59MSPLHnaUZCxYN+8=;
- b=4L4CeUNf2sOsb8dX3pB3ooJ6Sbv97tbMXVQiszaUfnQ1dr/ytgBL5M5jfcezU+g66R45
- tvaUPcthHSfmduxSGx7CsZMlX99N4BDWHGISL5LdG6pcgAb5wuiFBNZuJ6H6bmSq4M2k
- WBh0uxqTxp54H/erqxdmyKxrlmR7MmORGbYYyZW5sBL+HbmwHpLx0HA3XxJLBqaiO1lG
- UmwkhNgF57MZQcIEDX1N7rGWSQPxHoQPmdrl2vg4SwdkwfashSazYfhOd7i8SjA0u4W3
- R9hdzF3LlxDCsDd4LNtjDLigyz47TTcxl7Pi0cSkef0OOmudIEu0BqaVgoccTi4UkWeg yQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3a854tkmf9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Aug 2021 16:29:23 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1C97410002A;
-        Thu,  5 Aug 2021 16:29:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 008BD22FA5A;
-        Thu,  5 Aug 2021 16:29:21 +0200 (CEST)
-Received: from lmecxl0912.lme.st.com (10.75.127.45) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 5 Aug
- 2021 16:29:21 +0200
-Subject: Re: [PATCH 1/7] dt-bindings: pinctrl: stm32: add new compatible for
- STM32MP135 SoC
-To:     Linus Walleij <linus.walleij@linaro.org>, <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>
-CC:     <linux-gpio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-References: <20210723132810.25728-1-alexandre.torgue@foss.st.com>
- <20210723132810.25728-2-alexandre.torgue@foss.st.com>
-From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
-Message-ID: <1d7fe9a6-bf37-e8ca-1bc3-fda536a10359@foss.st.com>
-Date:   Thu, 5 Aug 2021 16:29:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S241881AbhHEPau (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Aug 2021 11:30:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239933AbhHEPat (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Aug 2021 11:30:49 -0400
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B076C061798
+        for <linux-gpio@vger.kernel.org>; Thu,  5 Aug 2021 08:30:35 -0700 (PDT)
+Received: by mail-vs1-xe30.google.com with SMTP id n22so3300763vsq.11
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Aug 2021 08:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2HwiUKZxqy53dDfBp1901/849S4t5mjJtJjeA2wMPec=;
+        b=wg/GjsYLif0ZYYHMg3KnRLOxv3tYLMjO5yw61rpFo2U6f/PHccXPTRMbf7TjDmFtIy
+         SaTMUBl6mtykhQHxwVxwXJdpsqEsHECguuguS4suj2+mcgflMfdF0s+ZKBY/mMwQDdPU
+         akilIu+Sq0Sui1mKolQYpIPGxSkmZDxq5dA+WIymASwSwHXudWOYS2o/qCTkvAHocnl3
+         C/RrpZm24VqvSY06dlB6yx07zS4xtnbXplFKA/cAVOVuu+r+47pbvV9OUzUTh6gqIuEK
+         Ra4N9BqLgbBx/+PV59gv17Jp1pvOjvaqtB6MrhpxChT5YJ6s07YTularepv+VbeBnprM
+         biwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2HwiUKZxqy53dDfBp1901/849S4t5mjJtJjeA2wMPec=;
+        b=EqGQzc5vyr3RnBk0WrkotNhjzmcuhAZAfu7rs07oOly7uVUKUmtBxLjHU5+jH2ijrf
+         jvlb4g4/b6fMOxsEC02HXs7vEUScqrlEsBUIj1YUex8GtzY7NuUS5T3mIkD060BJN92P
+         6R6A7OnaPeKYzEZfigacBaoYj/0ug+O9XKRt8ZZlQSaB+2pa8+hUGPKvjrSfL4cVR0oW
+         lquYpqIbCSrQqzFhNurQHVstOFNhSuNTKsVjabn9BFCdD13V56TxTGa6LfbqIE2eCT1I
+         f9FmNUe01WaFv1nmJAIOkmFISnXH3MWLjXa9AT5TbM9O+pYHCP2+HbVkYp0Aj2keXaSv
+         0prg==
+X-Gm-Message-State: AOAM530uLn1F5vXIQbLd82R/Gk8KUNqvHgHqNLRsgTKBKggCFQRQ5Jjj
+        35YTUQp4fDRZE8J4XcVUv/hQz7MpFCK+1UDLu/Mg1w==
+X-Google-Smtp-Source: ABdhPJz7ndSuSpMNkkGlw9G/nEeHBUu9O9atQyI5vE3atZWBaEoYd/rSmKp8dYwaj/T41dDFjGZta+VdrhSjdEuiiNo=
+X-Received: by 2002:a67:de06:: with SMTP id q6mr5210772vsk.57.1628177434529;
+ Thu, 05 Aug 2021 08:30:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210723132810.25728-2-alexandre.torgue@foss.st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-05_05:2021-08-05,2021-08-05 signatures=0
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+ <20210730144922.29111-13-semen.protsenko@linaro.org> <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
+ <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
+ <87k0l1w8y5.wl-maz@kernel.org> <CAPLW+4mMF9B2BiY2hTgHz5=DNbDJZ7TDzt=Xefb5tDKwQhpEew@mail.gmail.com>
+ <87y29gbas7.wl-maz@kernel.org>
+In-Reply-To: <87y29gbas7.wl-maz@kernel.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 5 Aug 2021 18:30:23 +0300
+Message-ID: <CAPLW+4nCfSBfwMcemaVvU5MgBACgnhXaW9eAAjw66G6Zhz2Gbw@mail.gmail.com>
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus
+On Thu, 5 Aug 2021 at 10:39, Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Wed, 04 Aug 2021 19:37:24 +0100,
+> Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> >
+> > On Wed, 4 Aug 2021 at 18:01, Marc Zyngier <maz@kernel.org> wrote:
+> > >
+> > > On Wed, 04 Aug 2021 15:39:38 +0100,
+> > > Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> > >
+> > > > > You are also missing the hypervisor virtual timer interrupt.
+> > > > >
+> > > >
+> > > > Checked SoC TRM, there is no PPI for hypervisor virtual timer
+> > > > interrupt, and no mentioning of it at all. Likewise, I checked ARMv8
+> > > > ARM and TRM, almost no description of it. Also, I checked other
+> > > > platforms, and seems like everyone does the same (having only 4
+> > > > interrupts). And I wasn't able to find any documentation on that, so I
+> > > > guess I'll leave it as is, if you don't mind.
+> > >
+> > > I *do* mind, and other DTs being wrong isn't a good enough excuse! ;-)
+> > >
+> > > From the ARMv8 ARM (ARM DDI 0487G.b)
+> > > <quote>
+> > > D11.2.4 Timers
+> > >
+> > > In an implementation of the Generic Timer that includes EL3, if EL3
+> > > can use AArch64, the following timers are implemented:
+> > >
+> > > * An EL1 physical timer, that:
+> > >   - In Secure state, can be accessed from EL1.
+> > >   - In Non-secure state, can be accessed from EL1 unless those
+> > >     accesses are trapped to EL2.
+> > >     When this timer can be accessed from EL1, an EL1 control
+> > >     determines whether it can be accessed from EL0.
+> > > * A Non-secure EL2 physical timer.
+> > > * A Secure EL3 physical timer. An EL3 control determines whether this
+> > >   register is accessible from Secure EL1.
+> > > * An EL1 virtual timer.
+> > > * When FEAT_VHE is implemented, a Non-secure EL2 virtual timer.
+> > > * When FEAT_SEL2 is implemented, a Secure EL2 physical timer.
+> > > * When FEAT_SEL2 is implemented, a Secure EL2 virtual timer.
+> > > </quote>
+> > >
+> > > Cortex-A55 being an ARMv8.2 implementation, it has FEAT_VHE, and thus
+> > > it does have a NS-EL2 virtual timer. This is further confirmed by the
+> > > TRM which documents CNTHV*_EL2 as valid system registers[1].
+> > >
+> > > So the timer exists, the signal is routed out of the core, and it
+> > > is likely that it is connected to the GIC.
+> > >
+> > > If the designers have omitted it, then it needs to be documented as
+> > > such.
+> > >
+> >
+> > Ok, I've checked thoroughly all docs again, and it seems like there is
+> > no dedicated PPI number for this "EL2 Hypervisor Virtual Timer" in
+> > Exynos850 SoC. The timer instance itself might exist of course, but
+> > interrupt line is probably wasn't connected to GIC by SoC designers,
+> > at least it's not documented.
+>
+> Can you try and check this? You can directly program the virtual timer
+> so that it has a pending interrupt, and then check the pending
+> register on the same CPU to see if there is anything appearing there.
+>
+> > Moreover, from [1,2] it looks like if it were existing it would have
+> > been PPI=12 (INTID=28). But in GIC-400 TRM this PPI is assigned to
+> > "Legacy FIQ signal",
+>
+> No. That's only if you set the bypass bits in GICD_CTLR, which nobody
+> with half a brain would consider doing.
+>
+> > and all there is no PPI for Hypervisor Virtual
+> > Timer documented there as well. In Exynos850 TRM the source for this
+> > PPI's interrupt source is marked as "-", which means it's not used.
+> >
+> > So if you know something that I don't know -- please point me out the
+> > doc where this PPI line is documented. Otherwise I can add the comment
+> > to device tree, stating that this interrupt line is not present in
+> > SoC's GIC, i.e. something like this:
+> >
+> > 8<------------------------------------------------------------------------------->8
+> >     timer {
+> >         compatible = "arm,armv8-timer";
+> >         interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
+> >                       IRQ_TYPE_LEVEL_LOW)>,
+> >                  <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
+> >                       IRQ_TYPE_LEVEL_LOW)>,
+> >                  <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
+> >                       IRQ_TYPE_LEVEL_LOW)>,
+> >                  <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
+> >                       IRQ_TYPE_LEVEL_LOW)>;
+> >         /* Hypervisor Virtual Timer PPI is not present in this SoC GIC */
+> >     };
+> > 8<------------------------------------------------------------------------------->8
+> >
+> > Is that ok with you?
+>
+> I'd rather you verify the above first. And if you can't, I'd like a
+> comment that is a bit more explicit:
+>
 
-On 7/23/21 3:28 PM, Alexandre Torgue wrote:
-> New compatible to manage ball out and pin muxing of STM32MP135 SoC.
-> 
-> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> index 72877544ca78..dfee6d38a701 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> @@ -24,6 +24,7 @@ properties:
->         - st,stm32f746-pinctrl
->         - st,stm32f769-pinctrl
->         - st,stm32h743-pinctrl
-> +      - st,stm32mp135-pinctrl
->         - st,stm32mp157-pinctrl
->         - st,stm32mp157-z-pinctrl
->   
-> 
+I'm afraid I won't be able to verify your idea: seems like CNTHV_EL2
+can be only modified (or read) in EL2. I tried to read that reg
+anyway, which unsurprisingly resulted in el1_undef() BUG. The kernel
+on my board is running in EL1, and I don't have access to the source
+code for EL3 bootloaders. I have the source code for the last
+bootloader, but it's already running in EL1.
 
-If you are ok with this patch, can I take it in my tree to avoid yaml 
-validation issue ? If you disagree I'll wait the next cycle to take DT 
-patches.
+> /* The vendor couldn't be bothered to wire the EL2 Virtual Timers */
+>
 
-cheers
-alex
+I'll add the comment as you suggested. I propose we come back to this
+issue later, either when the need for HV timer arises or when I have
+some means to test your theory about existing PPI.
+
+Thanks!
+
+> Thanks,
+>
+>         M.
+>
+> --
+> Without deviation from the norm, progress is not possible.
