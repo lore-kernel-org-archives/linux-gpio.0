@@ -2,90 +2,172 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB96C4338F
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Aug 2021 13:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4732BC4338F
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Aug 2021 14:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF0761165
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Aug 2021 13:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FC1F61184
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Aug 2021 14:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233560AbhHFN7t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Aug 2021 09:59:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233195AbhHFN7s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Aug 2021 09:59:48 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9581CC0613CF;
-        Fri,  6 Aug 2021 06:59:31 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id u2so7160906plg.10;
-        Fri, 06 Aug 2021 06:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KRjDRWgaNwkdAtRmE+wENibg7DwdZ2FHjDrltJLcerM=;
-        b=lkv4+Zm1+rKewfeLyXqO6tc6do22YxiIq73VskDjwQNWY+u3eNrhNacPC9tM5Xpcdt
-         CyEFBibxXzhXYNAqH6oljkuRgMqn9GEbi4ems927fsbo1upfN3RDzBqlLerwX7Rk0n+q
-         NKydbA6wptRSMBKpdPmTEz51Fkg8zaVUsvjNBj3J5VyZRObmKNT4QC1Yruebg3PZC4uT
-         xzAaMrIGwfchmlqkKa2wv21SBZO/UnTlVKlhCDhZwObJqi2nE/Lv4VgnfYInq/X6N8xF
-         Lhfrm2rE030eHHPbZI7XZWLg87Kxdubm7BVckfFxpy2UY6+pnGEuBUzRRwEVAl20QN79
-         b6Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KRjDRWgaNwkdAtRmE+wENibg7DwdZ2FHjDrltJLcerM=;
-        b=WWZgUbHCjY+Ly+BTKrKVKWoGodCqLGXwZEhsymfGXwaxJR+WPopSdaCvM0tvrRuWsm
-         Lsw4jvwcf+A6X4a+v+eUpTf0exBXPyIHWOIzFYRYNrFdU4TEo8L7QFFD8uNqJXwbjEDP
-         D09HSPcDRpzVDx23pf5rf53mIhTZOknnxRbXvxrRV4LejVMsf8I8husPXITPOJ8rUA/J
-         E3bcxQQ1opUr7xSd8RvUhUhs/0TaexfgA1tuldjebTavCX0iCt0FMC916FwQ5KnHuNAG
-         ZwY21NayKejM2yV2LuizvZOTgcnQKRZYZ1s/2Xo9PZs9aN1reRpRMtVLOhdfKobvFV32
-         ntrg==
-X-Gm-Message-State: AOAM533ItH1gpyRtYmY/nPR6q/+tnoLYHrLrajrNsQ3JmoAlFY/viOdr
-        o6MOS7J1qeTiJzL9yoj1vj2dSE6RXrxQ+22PDVQ=
-X-Google-Smtp-Source: ABdhPJxWUsy/GtwYEOqq/xcPJsJT6Qn4hf4gJpXGviRrI0Fg0P22SphYXeoEFZZmtuN23wPiRb5tU1hdG/xyjK3SNH4=
-X-Received: by 2002:a17:90a:b10b:: with SMTP id z11mr21318327pjq.181.1628258370971;
- Fri, 06 Aug 2021 06:59:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210806005755.2295193-1-chrisrblake93@gmail.com>
- <CAHp75VenSw9BanwH58VSCNpw4cNFf7h3uSWTXLb5n0+OPtnDTQ@mail.gmail.com> <b5430038-c18c-6037-44d1-a3c0089645a1@redhat.com>
-In-Reply-To: <b5430038-c18c-6037-44d1-a3c0089645a1@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 6 Aug 2021 16:58:51 +0300
-Message-ID: <CAHp75VeUcrHuBOW9LJ=sPR0atxoEEe19mpD32UfjY1NncD5dLA@mail.gmail.com>
-Subject: Re: [PATCH v2] platform/x86: add meraki-mx100 platform driver
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Chris Blake <chrisrblake93@gmail.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Christian Lamparter <chunkeey@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S238286AbhHFOZr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Aug 2021 10:25:47 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17257 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238173AbhHFOZr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 6 Aug 2021 10:25:47 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10068"; a="211274586"
+X-IronPort-AV: E=Sophos;i="5.84,300,1620716400"; 
+   d="scan'208";a="211274586"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2021 07:25:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.84,300,1620716400"; 
+   d="scan'208";a="420742652"
+Received: from inlubt0177.iind.intel.com ([10.223.67.91])
+  by orsmga003.jf.intel.com with ESMTP; 06 Aug 2021 07:25:27 -0700
+From:   lakshmi.sowjanya.d@intel.com
+To:     linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        lakshmi.bai.raja.subramanian@intel.com, tamal.saha@intel.com,
+        lakshmi.sowjanya.d@intel.com
+Subject: [PATCH v4 0/2] Add pinctrl support for Intel Keem Bay SoC
+Date:   Fri,  6 Aug 2021 19:55:25 +0530
+Message-Id: <20210806142527.29113-1-lakshmi.sowjanya.d@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 6, 2021 at 4:55 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> On 8/6/21 9:52 AM, Andy Shevchenko wrote:
-> > On Fri, Aug 6, 2021 at 5:47 AM Chris Blake <chrisrblake93@gmail.com> wrote:
+From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 
-...
+Hi,
 
-> >> +#include <linux/gpio/machine.h>
-> >
-> > Does this provide a GPIO controller driver? I don't think so.
->
-> Actually GPIO controller drivers use <linux/gpio/driver.h>
-> <linux/gpio/machine.h> for board files / glue code which
-> e.g. needs to add lookup-tables, which this code does,
-> so including this header is correct.
+This patch set enables the support for the integrated pin controller in
+the Intel Keem Bay SoC.
 
-Ah, indeed. I stand corrected.
+Patch 1 holds the implementation of pinctrl driver.
+Patch 2 holds the relevant Device Tree bindings documentation and an
+entry in MAINTAINERS file
+
+High-Level Architecture:
+-----------------------
+
+                                   +----------------------------+
+     ------------------------------|MODE 0 -                    |
+      -----------------------------|MODE 1      PIN MUX         |
+       ----------------------------|...                         |
+        ---------------------------|...                         | PAD M
+         +-------------------------|MODE 7(GPIO)		-------
+         |                         |                            |    .
+         |                         |  +---------------------+   |    .
+         |                         |  |  GPIO_MODE (0-79)   |   |    .
+         |                         |  | INV|PU|PD|DIR|MODE  |   |    .
+         |                         |  +---------------------+   |    .
+         |                         |    PIN CONFIGURATION       |    .
+         |                         +----------------------------+    .
+         |                                                           .
+         |                         +----------------------------+    .
+         |        -----------------|MODE 0 -                    |    .
+         |         ----------------|MODE 1      PIN MUX         |    .
+         |          ---------------|...                         |
+         |            -------------|...                         | PAD N
+         |                +--------|MODE 7(GPIO)		-------
+         |                |        |                            |
+         |                |        |  +---------------------+   |
+         |                |        |  |  GPIO_MODE (0-79)   |   |
+         |                |        |  | INV|PU|PD|DIR|MODE  |   |
+         |                |        |  +---------------------+   |
+         |                |        |    PIN CONFIGURATION       |
+         |                |        +----------------------------+
+         |                |
+         |                |
+         |                |
+         |                |	   +------------------------------------+
+         |                |        |       GPIO PIN CONTROL		|
+         |                |        |					|
+         |                |        |    +-------------------------+	|
+         |                |        |    | GPIO_DATA_IN (0-2)      |	|
+         |                |        |    +-------------------------+	|
+     0   1..28   29  30  31  -------    +-------------------------+	|
+     |   |   |   |   |    |        |    | GPIO_DATA_OUT_HIGH (0-2)|	|
+     \   \   \   \   \    |        |    | GPIO_DATA_OUT_LOW (0-2) |	|
+      |   |   |   |   |   |        |    +-------------------------+	|
+      |   |   |   |   |   |        |					|
+      |   |   |   |   |   |	   +------------------------------------+
+      \   \   \   \   \   |
+       |   |   |   |   |  |              GPIO_INT_CFG (Bits)
+       |   |   |   |   |  |     +---|-------|--|------|--|----|--|---+
+      +-------------------+-+   |31   30     23    16  15 14-8 7 6-0 |
+      | GPIO_INT_CFG(0-7)   |   +---|-------|--|------^--|----|--|---+
+      +---------------------+   |En   Idx   |En| Idx  |En| Idx|En|Idx|
+        |   |    |  |           +---|-------|--|------|--|----|--|---+
+       0|  1|...6| 7|
+        |   |    |  |
+     +-------------------+
+     |                   |
+     |                   |
+     |                   |
+     |                   |
+     |  Interrupt        |
+     |  Control          |
+     |                   |
+     |                   |
+     |                   |
+     |                   |
+     +-------------------+
+
+Explored registering GPIOCHIP per 32 bits, from the IP there are
+registers
+for set/clear and read pins which falls under the category of per
+register
+handling 32 bits, but for other functionality like direction, config,
+interrupt mux, there is a need to have customised solution.
+
+Using gpiochip per 32 bits involves additional data structures, and
+it has an impact in the device tree for all the users of these
+PADs.
+
+Spinlock is not required for all the operations like set/get as there
+are separate for each. Configuring all the registers in a single driver
+is preferred as it is easy to debug.
+
+Please help to review this patch set.
+
+Thanks in advance,
+Sowjanya
+
+Changes from v3:
+ - Initialized ret variable 
+
+Changes from v2:
+ - Removed unused variable trig
+
+Changes from v1:
+ - Changed the boolean to true in yaml
+ - Removed spinlock for all the transactions except irq transactions
+ - Added standard ngpios instead of num-gpios
+ - Added gpiochip_generic_config() api
+ - Added check for IRQ_ENABLE and removed the check for the mask
+   IRQ_TYPE_SENSE_MASK
+
+Lakshmi Sowjanya D (2):
+  dt-bindings: pinctrl: Add bindings for Intel Keembay pinctrl driver
+  pinctrl: Add Intel Keem Bay pinctrl driver
+
+ .../pinctrl/intel,pinctrl-keembay.yaml        |  135 ++
+ MAINTAINERS                                   |    5 +
+ drivers/pinctrl/Kconfig                       |   19 +
+ drivers/pinctrl/Makefile                      |    1 +
+ drivers/pinctrl/pinctrl-keembay.c             | 1731 +++++++++++++++++
+ 5 files changed, 1891 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
+ create mode 100644 drivers/pinctrl/pinctrl-keembay.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
