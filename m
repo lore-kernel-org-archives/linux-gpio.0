@@ -2,156 +2,427 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5D6C432BE
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 Aug 2021 05:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AE5C4338F
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Aug 2021 08:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85C2A61158
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 Aug 2021 05:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60059610A1
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Aug 2021 08:48:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbhHGFmi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 7 Aug 2021 01:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34530 "EHLO
+        id S231509AbhHGIsf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 7 Aug 2021 04:48:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230377AbhHGFmh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Aug 2021 01:42:37 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9FCEC0613CF;
-        Fri,  6 Aug 2021 22:42:19 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id k2so9952668plk.13;
-        Fri, 06 Aug 2021 22:42:19 -0700 (PDT)
+        with ESMTP id S229803AbhHGIse (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Aug 2021 04:48:34 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19F6C0613CF
+        for <linux-gpio@vger.kernel.org>; Sat,  7 Aug 2021 01:48:16 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id lw7-20020a17090b1807b029017881cc80b7so146059pjb.3
+        for <linux-gpio@vger.kernel.org>; Sat, 07 Aug 2021 01:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=h3Id8M67EDYA4oftmPt0MF1yxlKi4SAv+ZwAi66z1h0=;
-        b=IxnCXHoKkR+Av77wnIM3ZpSCpu6fUNWfPJuD4gm+L0PAmGaKxbGoFOQW4u7Y4tBJGX
-         IpeOtCette2U9I0N1Y8uJVjjkbTUczX9S4DD+f37zdGfUSXQAJwXPC//ppiNlo4Z5Xay
-         wkR/Nuq4KkOMyHYfqnJSlx0/XqSQKzt7JmgWLfdKIFwybhBulYrIO9HNMA74K2hulD92
-         lH9V0nOrsF/z7JRGqmt6RzMR/TkP0KSZAxEnCgO/Rp+zKJQvjmIiSB7d4/QmbB3Te1co
-         +5tmF1F1BeJQdBQZtz4IdHMIru54aXv77IgO15EzSRhJLMMGWN+Qi5e4WJpwZjjTlpzD
-         6CqQ==
+        bh=tKdAcbVVZmkchOYJFAx87mvOne0ix+Ln92JkyD3Dfl8=;
+        b=cnj/lItWmb95e4oobz6ZcY7MOgGEMgZG9HkFTeLKW6CofZpsxAytFq+6jveaFImV4f
+         qBRCj1J+v1IGNcXe4T7RXBmWxZDj7GiAcZ9VPsv0wjRDfHB69J6MuFOxWyNmflVEr6qI
+         tE+bk19E9L8SU4weGDOZ7n07v9hzLhSvnDyzpoe5ZHQTJMNlyVKvd5R+abMQte8ZcbR+
+         e0P8XMwPCqlh5YxEtWF9f5IDwe+aGrpOyqrmuq3YfBud12amJYGy3vutCDyuTFUnGE31
+         jjUz3AefsIM2A8DsUPDFXbK5KomOxM0pNdrelWycEmc75j5I53r+li7oeRnHmdNLCAjO
+         ncOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=h3Id8M67EDYA4oftmPt0MF1yxlKi4SAv+ZwAi66z1h0=;
-        b=ryj95+GpIXGBhua7G5NuirqkTBqb3SBpYbPZFSmnmkRyhS6JlW4GBP3k9reVxjchD9
-         vp68SjEN/hmVOn4eQf6x3GfhAKegNNZ/enMEzYm7S7VQ+GTA32a28MrcShcrqBSjuvcN
-         Uvu/p/gSWqPRrX5wEwVWPGQ/US2wdjJfy6WoZkPyqdOi5HgJ75wY/Ysg5w3q3dh+3A7w
-         ddc7liz321ajUDtrWcZSaS73pbpFRrVSHkQqwNRtKGUFAWGtbPgfDuOFH4HOGvP/xWIL
-         gLi4TCHhkJNvAJ1qPBHjyrBN6hepS7NhO8R8xt5Kb5K4y+SACulzdVJyOfTgkmijqwxx
-         yMtw==
-X-Gm-Message-State: AOAM531BrVE9b5cPOyFv6Yeqd2eTxYzWMuXy8CL8bM50zIOYBTtFQFlb
-        p5nDpyCX/GUV0E8gPU4jR2o=
-X-Google-Smtp-Source: ABdhPJyzrF+tgC9Wbm12wjUmhBB+JbW7ppgrwCGpjq81d7/agN2NEHw5koO9dr3kkJR5gUGy/IlDGw==
-X-Received: by 2002:a63:5641:: with SMTP id g1mr84757pgm.33.1628314939371;
-        Fri, 06 Aug 2021 22:42:19 -0700 (PDT)
+        bh=tKdAcbVVZmkchOYJFAx87mvOne0ix+Ln92JkyD3Dfl8=;
+        b=gvLdq7Msna8+DGIvedv07cDvwVX+oEO2bHXGdidyGaPcqf22lW6UiC51O+KZjjvkgd
+         jL+3oI2MZmPyQTBEdODHaUC7/TqaJTe5pS+fEYPOgHFOegYdl8fwZZKWelflvcI1ZfzV
+         klEyRTxXYyP9rdL65EmhROu1W8jX7UmFi9mFEpb4dcjHRs4R834phvQqj615bNHb846t
+         w1nwi2ob2i0BKTOeNe2zOCK9CFLO/Kcs206c+fa2LKVJarjWGrM6jmfDAHZo66RhZmG4
+         j/dmekPmg1eToI5zuYo2l4SVtkpmM5gyd0qVTXmZJl2u9Cv2Kik7YYLtS9kYbfdAhU3k
+         BByw==
+X-Gm-Message-State: AOAM532cjZ5OxoWMN69Vjg75rUxAx3SaTftA8lxf3GQp0t7C4WgB3agS
+        amRTcIcSPsLEDlCMOKYfbPM=
+X-Google-Smtp-Source: ABdhPJxSC5H6+OqMFxM5S21IQY8Oe5lfq+bAalEzfbkDKr3Sllymrq3RAjjjbmMjmrBYT2LA++xs+A==
+X-Received: by 2002:a17:90a:a78d:: with SMTP id f13mr14321861pjq.206.1628326095969;
+        Sat, 07 Aug 2021 01:48:15 -0700 (PDT)
 Received: from sol (106-69-178-229.dyn.iinet.net.au. [106.69.178.229])
-        by smtp.gmail.com with ESMTPSA id h24sm12747632pfn.180.2021.08.06.22.42.14
+        by smtp.gmail.com with ESMTPSA id c12sm14904372pjm.16.2021.08.07.01.48.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Aug 2021 22:42:18 -0700 (PDT)
-Date:   Sat, 7 Aug 2021 13:42:12 +0800
+        Sat, 07 Aug 2021 01:48:15 -0700 (PDT)
+Date:   Sat, 7 Aug 2021 16:48:09 +0800
 From:   Kent Gibson <warthog618@gmail.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [RFC 03/11] hte: Add tegra194 HTE kernel provider
-Message-ID: <20210807054212.GA15085@sol>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-4-dipenp@nvidia.com>
- <20210701142156.GA34285@sol>
- <52768891-6c01-7588-e557-5c9eae5375b6@nvidia.com>
- <20210731154323.GA24906@sol>
- <1ff6df66-9895-bd42-322a-515327f30366@nvidia.com>
- <20210807030746.GA9850@sol>
- <91a173b3-18dc-5d6b-002f-893e7478717b@nvidia.com>
- <20210807045116.GA13675@sol>
- <7f6a2591-c264-e005-18ae-242320d4a22e@nvidia.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jack Winch <sunt.un.morcov@gmail.com>,
+        Helmut Grohne <helmut.grohne@intenta.de>,
+        Ben Hutchings <ben.hutchings@essensium.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [libgpiod v2.0][PATCH] core: extend config objects
+Message-ID: <20210807084809.GA17852@sol>
+References: <20210806132810.23556-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7f6a2591-c264-e005-18ae-242320d4a22e@nvidia.com>
+In-Reply-To: <20210806132810.23556-1-brgl@bgdev.pl>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 06, 2021 at 10:35:10PM -0700, Dipen Patel wrote:
+On Fri, Aug 06, 2021 at 03:28:10PM +0200, Bartosz Golaszewski wrote:
+> Kent suggested that we may want to add getters for the config objects in
+> his reviews under the C++ patches. Indeed when working on Python bindings
+> I noticed it would be useful for implementing __str__ and __repr__
+> callbacks. In C++ too we could use them for overloading stream operators.
 > 
-> On 8/6/21 9:51 PM, Kent Gibson wrote:
-> > On Fri, Aug 06, 2021 at 09:52:54PM -0700, Dipen Patel wrote:
-> >> On 8/6/21 8:07 PM, Kent Gibson wrote:
-> >>> On Fri, Aug 06, 2021 at 07:41:09PM -0700, Dipen Patel wrote:
-> >>>> On 7/31/21 8:43 AM, Kent Gibson wrote:
-> >>>>> On Wed, Jul 28, 2021 at 04:59:08PM -0700, Dipen Patel wrote:
-> >>>>>> Thanks Kent for the review comment. My responses inline.
-> >>>>>>
-> > <snip>
-> >
-> >>>> 2. Does hte handler solution create race between two handlers? i.e. edge_irq_handler and
-> >>>>
-> >>>> hte_handler, for the worst case scenario as below?
-> >>>>
-> >>> No.  If hardware timestamp is selected then no irq is requested from the
-> >>> irq subsystem for that line - only from the hte subsystem instead.
-> >>> So there will be no edge_irq_handler call for that line, so no possible race.
-> >> That is not possible for certain providers, for example the one I am dealing
-> >>
-> >> with which requires GPIO line to be requested as input and IRQ needs to
-> >>
-> >> be enabled on them.
-> >>
-> > So, for your hte subsystem to work, the consumer has to also request
-> > a line from the irq subsystem?
+> This extends the config objects with getters. They are straightforward for
+> the request config but for the line config, they allow to only read
+> per-offset values that would be used if the object was used in a request
+> at this moment. We also add getters for the output values: both taking
+> the line offset as argument as well as ones that take the index and allow
+> to iterate over all configured output values.
 > 
-> Yes
+> The sanitization of input for the getters has subsequently been changed
+> so that we never return invalid values. The input values are verified
+> immediately and if an invalid value is passed, it's silently replaced
+> by the default value for given setting.
 > 
-> >   That makes sense to you?
-> Its not me, its peculiarity of the hardware that I am dealing with.
+> This patch also adds the reset function for the line config object - it
+> can be used to reset all stored configuration if - for example - the
+> config has become too complex.
+> 
+> As this patch will be squashed into the big v2 patch anyway, I allowed
+> myself to include some additional changes: some variable renames and
+> other minor tweaks.
+> 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 
-My point is that the peculiarities of the hardware should be hidden from
-the hte API user, especially if it is only necessary for some hardware.
-
-> > Have hte do that, rather than the consumer.
-> 
-> Sure, for cdev it would mean to duplicate (most of) the edge* or line_create
-> 
-> code in HTE.
-
-And your current way every other hte user will have to duplicate the
-gpiolib-cdev code....
-
-> For such hardware, my initial doubt remains the same about
-> 
-> the worst case scenario between two handlers, but perhaps that's
-> 
-> implementation details for hte to handle.
-> 
-
-Indeed.
+A few minor nit-picks in the gpiod.h documentation below...
 
 Cheers,
 Kent.
 
-> >
-> > And another reason it makes sense to integrate this with irq...
+> ---
+>  include/gpiod.h      | 189 +++++++++++++++++++++++-
+>  lib/line-config.c    | 340 ++++++++++++++++++++++++++++++++++---------
+>  lib/request-config.c |  42 +++++-
+>  3 files changed, 487 insertions(+), 84 deletions(-)
 > 
-> Alright, will explore this route as well. I remember both Thierry[1] and
-> 
-> Marc[2] raised some doubts (time to revive that discussion).
-> 
-> 
-> [1]: https://lore.kernel.org/lkml/YFm9r%2FtFkzVlYDEp@orome.fritz.box/
-> 
-> [2]: https://lore.kernel.org/lkml/87h7l1k9yi.wl-maz@kernel.org/
-> 
-> >
-> > Cheers,
-> > Kent.
+> diff --git a/include/gpiod.h b/include/gpiod.h
+> index 885b472..d186df7 100644
+> --- a/include/gpiod.h
+> +++ b/include/gpiod.h
+> @@ -451,11 +451,11 @@ gpiod_info_event_get_line_info(struct gpiod_info_event *event);
+>   * The line-config object stores the configuration for lines that can be used
+>   * in two cases: when making a line request and when reconfiguring a set of
+>   * already requested lines. The mutators for the line request don't return
+> - * errors. If the configuration is invalid - the set of options is too complex
+> - * to be translated into kernel uAPI structures or invalid values have been
+> - * passed to any of the functions - the error will be returned at the time of
+> - * the request or reconfiguration. Each option can be set globally, for
+> - * a single line offset or for multiple line offsets.
+> + * errors. If the set of options is too complex to be translated into kernel
+> + * uAPI structures - the error will be returned at the time of the request or
+> + * reconfiguration. If an invalid value was passed to any of the getters - the
+> + * default value will be silently used instead. Each option can be set
+> + * globally, for a single line offset or for multiple line offsets.
+>   */
+>  
+>  /**
+> @@ -470,6 +470,15 @@ struct gpiod_line_config *gpiod_line_config_new(void);
+>   */
+>  void gpiod_line_config_free(struct gpiod_line_config *config);
+>  
+> +/**
+> + * @brief Reset the line config object.
+> + * @param config Line config object to free.
+> + *
+> + * Resets the entire configuration stored in this object. This is useful if
+> + * the user wants to reuse the object without reallocating it.
+> + */
+> +void gpiod_line_config_reset(struct gpiod_line_config *config);
+> +
+>  /**
+>   * @brief Set the direction of all lines.
+>   * @param config Line config object.
+> @@ -499,6 +508,18 @@ void gpiod_line_config_set_direction_subset(struct gpiod_line_config *config,
+>  					    unsigned int num_offsets,
+>  					    const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Get the direction setting for the line at given offset.
+
+"for a given line" reads better for me, especially when combined with a
+minor tweak to the offset description below.
+
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the direction setting.
+
+"Offset of the line from which to read".  Throughout.
+
+> + * @return Direction setting that would have been used for given offset if the
+> + *         config object was used in a request at the time of the call.
+> + * @note If an offset is used for which no config was provided, the function
+> + *       will return the global, default value.
+> + */
+
+No comma necessary - "global default value" is fine. Throughout.
+
+> +int gpiod_line_config_get_direction(struct gpiod_line_config *config,
+> +				    unsigned int offset);
+> +
+>  /**
+>   * @brief Set the edge event detection for all lines.
+>   * @param config Line config object.
+> @@ -529,6 +550,19 @@ gpiod_line_config_set_edge_detection_subset(struct gpiod_line_config *config,
+>  					    int edge, unsigned int num_offsets,
+>  					    const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Get the edge event detection setting for the line at given offset.
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the edge event detection setting.
+> + * @return Edge event detection setting that would have been used for given
+> + *         offset if the config object was used in a request at the time of
+> + *         the call.
+> + * @note If an offset is used for which no config was provided, the function
+> + *       will return the global, default value.
+> + */
+> +int gpiod_line_config_get_edge_detection(struct gpiod_line_config *config,
+> +					 unsigned int offset);
+> +
+>  /**
+>   * @brief Set the bias of all lines.
+>   * @param config Line config object.
+> @@ -556,6 +590,18 @@ void gpiod_line_config_set_bias_subset(struct gpiod_line_config *config,
+>  				       int bias, unsigned int num_offsets,
+>  				       const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Get the bias setting for the line at given offset.
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the bias setting.
+> + * @return Bias setting that would have been used for given offset if the
+> + *         config object was used in a request at the time of the call.
+> + * @note If an offset is used for which no config was provided, the function
+> + *       will return the global, default value.
+> + */
+> +int gpiod_line_config_get_bias(struct gpiod_line_config *config,
+> +			       unsigned int offset);
+> +
+>  /**
+>   * @brief Set the drive of all lines.
+>   * @param config Line config object.
+> @@ -583,6 +629,18 @@ void gpiod_line_config_set_drive_subset(struct gpiod_line_config *config,
+>  					int drive, unsigned int num_offsets,
+>  					const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Get the drive setting for the line at given offset.
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the drive setting.
+> + * @return Drive setting that would have been used for given offset if the
+> + *         config object was used in a request at the time of the call.
+> + * @note If an offset is used for which no config was provided, the function
+> + *       will return the global, default value.
+> + */
+> +int gpiod_line_config_get_drive(struct gpiod_line_config *config,
+> +				unsigned int offset);
+> +
+>  /**
+>   * @brief Set all lines as active-low.
+>   * @param config Line config object.
+> @@ -607,6 +665,18 @@ void gpiod_line_config_set_active_low_subset(struct gpiod_line_config *config,
+>  					     unsigned int num_offsets,
+>  					     const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Check if the line at given offset was configured as active-low.
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the active-low setting.
+> + * @return Active-low setting that would have been used for given offset if the
+> + *         config object was used in a request at the time of the call.
+> + * @note If an offset is used for which no config was provided, the function
+> + *       will return the global, default value.
+> + */
+> +bool gpiod_line_config_is_active_low(struct gpiod_line_config *config,
+> +				     unsigned int offset);
+> +
+>  /**
+>   * @brief Set all lines as active-high.
+>   * @param config Line config object.
+> @@ -663,6 +733,19 @@ gpiod_line_config_set_debounce_period_subset(struct gpiod_line_config *config,
+>  					     unsigned int num_offsets,
+>  					     const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Get the debounce period for the line at given offset.
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the debounce period.
+> + * @return Debounce period that would have been used for given offset if the
+> + *         config object was used in a request at the time of the call.
+> + * @note If an offset is used for which no config was provided, the function
+> + *       will return the global, default value.
+> + */
+> +unsigned long
+> +gpiod_line_config_get_debounce_period(struct gpiod_line_config *config,
+> +				      unsigned int offset);
+> +
+>  /**
+>   * @brief Set the event timestamp clock for all lines.
+>   * @param config Line config object.
+> @@ -692,6 +775,18 @@ void gpiod_line_config_set_event_clock_subset(struct gpiod_line_config *config,
+>  					      unsigned int num_offsets,
+>  					      const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Get the event clock setting for the line at given offset.
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the event clock setting.
+> + * @return Event clock setting that would have been used for given offset if
+> + *         the config object was used in a request at the time of the call.
+> + * @note If an offset is used for which no config was provided, the function
+> + *       will return the global, default value.
+> + */
+> +int gpiod_line_config_get_event_clock(struct gpiod_line_config *config,
+> +				      unsigned int offset);
+> +
+>  /**
+>   * @brief Set the output value for a single offset.
+>   * @param config Line config object.
+> @@ -704,16 +799,63 @@ void gpiod_line_config_set_output_value(struct gpiod_line_config *config,
+>  /**
+>   * @brief Set the output values for a set of offsets.
+>   * @param config Line config object.
+> - * @param num_offsets Number of offsets for which to set values.
+> + * @param num_values Number of offsets for which to set values.
+>   * @param offsets Array of line offsets to set values for.
+>   * @param values Array of output values associated with the offsets passed in
+>   *               the previous argument.
+>   */
+>  void gpiod_line_config_set_output_values(struct gpiod_line_config *config,
+> -					 unsigned int num_offsets,
+> +					 unsigned int num_values,
+>  					 const unsigned int *offsets,
+>  					 const int *values);
+>  
+> +/**
+> + * @brief Get the number of line offsets for which this config object stores
+> + *        output values.
+> + * @param config Line config object.
+> + * @return Number of output values currently configured for this object.
+> + */
+> +unsigned int
+> +gpiod_line_config_num_output_values(struct gpiod_line_config *config);
+> +
+> +/**
+> + * @brief Get the output value configured for the line at given offset.
+> + * @param config Line config object.
+> + * @param offset Line offset for which to read the value.
+> + * @return 1 or 0 if the value was configured for this line, -1 otherwise.
+> + */
+> +int gpiod_line_config_get_output_value(struct gpiod_line_config *config,
+> +				       unsigned int offset);
+> +
+> +/**
+> + * @brief Get the output value mapping (offset -> value) at given index.
+> + * @param config Line config object.
+> + * @param index Position of the mapping in the internal array.
+> + * @param offset Buffer for storing the offset of the line.
+> + * @param value Buffer for storing the value mapped for the offset.
+
+"value corresponding to the offset"
+
+> + * @return Returns 0 on success, -1 if the index is out of range.
+> + *
+> + * This function together with ::gpiod_line_config_num_output_values allows to
+> + * iterate over all output value mappings currently held by this object.
+> + */
+> +int gpiod_line_config_get_output_value_index(struct gpiod_line_config *config,
+> +					     unsigned int index,
+> +					     unsigned int *offset, int *value);
+> +
+> +/**
+> + * @brief Get all output value mappings stored in this config object.
+> + * @param config Line config object.
+> + * @param offsets Buffer in which offsets will be stored.
+> + * @param values Buffer in which values will be stored.
+> + * @note Both the offsets and values buffers must be able to hold at least the
+> + *       number of elements returned by ::gpiod_line_config_num_output_values.
+> + *
+> + * Each offset in the offsets array corresponds with the value in the values
+> + * array at the same index.
+> + */
+
+"corresponds to", not with.
+
+> +void gpiod_line_config_get_output_values(struct gpiod_line_config *config,
+> +					 unsigned int *offsets, int *values);
+> +
+>  /**
+>   * @}
+>   *
+> @@ -750,6 +892,14 @@ void gpiod_request_config_free(struct gpiod_request_config *config);
+>  void gpiod_request_config_set_consumer(struct gpiod_request_config *config,
+>  				       const char *consumer);
+>  
+> +/**
+> + * @brief Get the consumer string.
+> + * @param config Request config object.
+> + * @return Current consumer string stored in this request config.
+> + */
+> +const char *
+> +gpiod_request_config_get_consumer(struct gpiod_request_config *config);
+> +
+>  /**
+>   * @brief Set line offsets for this request.
+>   * @param config Request config object.
+> @@ -762,6 +912,23 @@ void gpiod_request_config_set_offsets(struct gpiod_request_config *config,
+>  				      unsigned int num_offsets,
+>  				      const unsigned int *offsets);
+>  
+> +/**
+> + * @brief Get the number of offsets configured in this request config.
+> + * @param config Request config object.
+> + * @return Number of line offsets in this request config.
+> + */
+> +unsigned int
+> +gpiod_request_config_get_num_offsets(struct gpiod_request_config *config);
+> +
+> +/**
+> + * @brief Get the hardware offsets of lines in this request config.
+> + * @param config Request config object.
+> + * @param offsets Array to store offsets in. Must hold at least the number of
+> + *                lines returned by ::gpiod_request_config_get_num_offsets.
+> + */
+
+"Array to store offsets."
+
+> +void gpiod_request_config_get_offsets(struct gpiod_request_config *config,
+> +				      unsigned int *offsets);
+> +
+>  /**
+>   * @brief Set the size of the kernel event buffer.
+>   * @param config Request config object.
+> @@ -773,6 +940,14 @@ void
+>  gpiod_request_config_set_event_buffer_size(struct gpiod_request_config *config,
+>  					   unsigned int event_buffer_size);
+>  
+> +/**
+> + * @brief Get the edge event buffer size from this request config.
+> + * @param config Request config object.
+> + * @return Current edge event buffer size setting.
+> + */
+> +unsigned int
+> +gpiod_request_config_get_event_buffer_size(struct gpiod_request_config *config);
+> +
+>  /**
+>   * @}
+>   *
