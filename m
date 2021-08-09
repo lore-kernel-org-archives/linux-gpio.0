@@ -2,132 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C43C4338F
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Aug 2021 23:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3A6C4338F
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 04:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4789E60F35
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Aug 2021 23:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9276460FC2
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 04:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231350AbhHHXKj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 8 Aug 2021 19:10:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231168AbhHHXKi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Aug 2021 19:10:38 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C693C061760
-        for <linux-gpio@vger.kernel.org>; Sun,  8 Aug 2021 16:10:19 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id w13-20020a17090aea0db029017897a5f7bcso3447765pjy.5
-        for <linux-gpio@vger.kernel.org>; Sun, 08 Aug 2021 16:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=buE9OT7smem/0uBqDtX2bGBwBzJPb8RjYqkei4Ibrc0=;
-        b=Z6soBGy7C6b6u/HQ3ZtKpbhuFYn084HsudVc1zHNe1nuSSA9gZ49/oGen/7ad8p85u
-         IRTBRpfqAkxCj6e5ibkuTjZb+9mcpTe4WuQCepMClG1ob2kQduuYEzNonufr83Sia9Xk
-         H6oFwKA6dxKbRyVF6qdsZ2SlkP6CRvgxyUr7A131eOfJyWsHIvBOgFh/pF523SUMZIUH
-         O+Q8ETzGmtd+dbD5FXe9943KXlQ7SWuIG5GjmDV+YR8sfyhwKEuj8Rq7W4YXkq62CQu+
-         L/QbqCwNmAfNsfriTBKy8MugR0GsAkGzXiODdfm3ZX/vJ+lZquUgS1qbKm4pZ2zhllMW
-         qVxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=buE9OT7smem/0uBqDtX2bGBwBzJPb8RjYqkei4Ibrc0=;
-        b=PXZVTgoq7cvbaHz83DYYCEEAT3aFCJJyCEhJO4Asj1UbNigPEhANNZISg5sWk34KV7
-         5KaMXaEICUyZpt1MVg+TAjN3H9Br9xTsk+r9htQxEhUYLWzy5TiO/NBYFosZAe1IzyVQ
-         DvHqoFxWu4cY3sM2pWw8TkCMYu+2iIRUVjqwjJwIjSS0s6btCYBf0zVDb+JWtocYPTIQ
-         mFjFPSRoA4WDzOu+s3cql3driXwrT+XMJoKYDRDGJeWhJyNo2f/6oU2DMYEe858pxZpk
-         dRqxa487E8HKb7IxRkedgRkzQADDutiFJdfZFNKqnAWE40VZPaDYaUObl2PWPeMbeDZ9
-         kZWA==
-X-Gm-Message-State: AOAM533i/OPGCoPCP/dCus/xnwUh7oY9EzKUx9NFoGGdnLbSwQr3mlnl
-        jEN0suw+9KBEuCxTyzgkkdw=
-X-Google-Smtp-Source: ABdhPJxYcL4yMzQjw9XJNFVpJeiK12P8SHxJsSnQJEgGzl3clafjPy4o7ivjFSX5X8NXvvQ2RWa/mA==
-X-Received: by 2002:a17:902:a609:b029:12b:858e:d116 with SMTP id u9-20020a170902a609b029012b858ed116mr17941168plq.25.1628464218563;
-        Sun, 08 Aug 2021 16:10:18 -0700 (PDT)
-Received: from sol (106-69-178-229.dyn.iinet.net.au. [106.69.178.229])
-        by smtp.gmail.com with ESMTPSA id fh2sm15790190pjb.12.2021.08.08.16.10.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Aug 2021 16:10:17 -0700 (PDT)
-Date:   Mon, 9 Aug 2021 07:10:12 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jack Winch <sunt.un.morcov@gmail.com>,
-        Helmut Grohne <helmut.grohne@intenta.de>,
-        Ben Hutchings <ben.hutchings@essensium.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [libgpiod v2.0][PATCH] core: extend config objects
-Message-ID: <20210808231012.GA6224@sol>
-References: <20210806132810.23556-1-brgl@bgdev.pl>
- <20210807084809.GA17852@sol>
- <CAMRc=McQOcWDexBeWKcA9CosxfG_59quusnVLYN7qu-p86BPag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=McQOcWDexBeWKcA9CosxfG_59quusnVLYN7qu-p86BPag@mail.gmail.com>
+        id S231157AbhHIEFt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Aug 2021 00:05:49 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:37854 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230491AbhHIEFs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Aug 2021 00:05:48 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1628481929; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=Vbpd/GuClOmGWBsNoX7W4sL/Zu3cwNTKNWcrglilN1g=; b=oAlpi27Zctqge+8w1XwN7wYIWz6ok0Jmnq9N361v7wPGsgq/fuOBASfTPpv4AfjfvTVEp22H
+ 1u5VvcUUsOKR8ydST4o/q1Lp8z8GqwVcb5o/LgtL9aVQQrkpqFj37dYZb13b8sH1EkxpM6WO
+ mhZQ1KX0gMPjwTTxtcGZEqy8rD4=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
+ 6110a982b14e7e2ecb658920 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 09 Aug 2021 04:05:22
+ GMT
+Sender: miaoqing=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8077CC433D3; Mon,  9 Aug 2021 04:05:22 +0000 (UTC)
+Received: from miaoqing-HP-Z220-SFF-Workstation.ap.qualcomm.com (unknown [180.166.53.21])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: miaoqing)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4B476C433D3;
+        Mon,  9 Aug 2021 04:05:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B476C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=miaoqing@codeaurora.org
+From:   Miaoqing Pan <miaoqing@codeaurora.org>
+To:     linux-wireless@vger.kernel.org
+Cc:     ath9k-devel@qca.qualcomm.com, kvalo@codeaurora.org,
+        dan.carpenter@oracle.com, linux-gpio@vger.kernel.org,
+        Miaoqing Pan <miaoqing@codeaurora.org>
+Subject: [PATCH] ath9k: fix sleeping in atomic context
+Date:   Mon,  9 Aug 2021 12:05:16 +0800
+Message-Id: <1628481916-15030-1-git-send-email-miaoqing@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Aug 08, 2021 at 09:11:14PM +0200, Bartosz Golaszewski wrote:
-> On Sat, Aug 7, 2021 at 10:48 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Fri, Aug 06, 2021 at 03:28:10PM +0200, Bartosz Golaszewski wrote:
-> > > Kent suggested that we may want to add getters for the config objects in
-> > > his reviews under the C++ patches. Indeed when working on Python bindings
-> > > I noticed it would be useful for implementing __str__ and __repr__
-> > > callbacks. In C++ too we could use them for overloading stream operators.
-> > >
-> > > This extends the config objects with getters. They are straightforward for
-> > > the request config but for the line config, they allow to only read
-> > > per-offset values that would be used if the object was used in a request
-> > > at this moment. We also add getters for the output values: both taking
-> > > the line offset as argument as well as ones that take the index and allow
-> > > to iterate over all configured output values.
-> > >
-> > > The sanitization of input for the getters has subsequently been changed
-> > > so that we never return invalid values. The input values are verified
-> > > immediately and if an invalid value is passed, it's silently replaced
-> > > by the default value for given setting.
-> > >
-> > > This patch also adds the reset function for the line config object - it
-> > > can be used to reset all stored configuration if - for example - the
-> > > config has become too complex.
-> > >
-> > > As this patch will be squashed into the big v2 patch anyway, I allowed
-> > > myself to include some additional changes: some variable renames and
-> > > other minor tweaks.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> >
-> > A few minor nit-picks in the gpiod.h documentation below...
-> >
-> > Cheers,
-> > Kent.
-> >
-> 
-> Thanks,
-> 
-> With that fixed, do you think it's good to be applied?
-> 
+The problem is that gpio_free() can sleep and the cfg_soc() can be
+called with spinlocks held. One problematic call tree is:
 
-Sure.
+--> ath_reset_internal() takes &sc->sc_pcu_lock spin lock
+   --> ath9k_hw_reset()
+      --> ath9k_hw_gpio_request_in()
+         --> ath9k_hw_gpio_request()
+            --> ath9k_hw_gpio_cfg_soc()
 
-I was also wondering if anything could be done to simplify the
-structures in line-config.c, but that isn't specific to this patch.
-Not having access to the offsets, or even num_lines, and doing the
-allocation up-front makes it rather painful.  Especially if the most
-common case is only one or two lines.
-But, as long as you are happy with the external API, that is just
-implementation detail that can be optimised later.
+Remove gpio_free(), use error message instead, so we should make sure
+there is no GPIO conflict.
 
-Cheers,
-Kent.
+Also remove ath9k_hw_gpio_free() from ath9k_hw_apply_gpio_override(),
+as gpio_mask will never be set for SOC chips.
+
+Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
+---
+ drivers/net/wireless/ath/ath9k/hw.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/hw.c b/drivers/net/wireless/ath/ath9k/hw.c
+index 2ca3b86..172081f 100644
+--- a/drivers/net/wireless/ath/ath9k/hw.c
++++ b/drivers/net/wireless/ath/ath9k/hw.c
+@@ -1621,7 +1621,6 @@ static void ath9k_hw_apply_gpio_override(struct ath_hw *ah)
+ 		ath9k_hw_gpio_request_out(ah, i, NULL,
+ 					  AR_GPIO_OUTPUT_MUX_AS_OUTPUT);
+ 		ath9k_hw_set_gpio(ah, i, !!(ah->gpio_val & BIT(i)));
+-		ath9k_hw_gpio_free(ah, i);
+ 	}
+ }
+ 
+@@ -2728,14 +2727,17 @@ static void ath9k_hw_gpio_cfg_output_mux(struct ath_hw *ah, u32 gpio, u32 type)
+ static void ath9k_hw_gpio_cfg_soc(struct ath_hw *ah, u32 gpio, bool out,
+ 				  const char *label)
+ {
++	int err;
++
+ 	if (ah->caps.gpio_requested & BIT(gpio))
+ 		return;
+ 
+-	/* may be requested by BSP, free anyway */
+-	gpio_free(gpio);
+-
+-	if (gpio_request_one(gpio, out ? GPIOF_OUT_INIT_LOW : GPIOF_IN, label))
++	err = gpio_request_one(gpio, out ? GPIOF_OUT_INIT_LOW : GPIOF_IN, label);
++	if (err) {
++		ath_err(ath9k_hw_common(ah), "request GPIO%d failed:%d\n",
++			gpio, err);
+ 		return;
++	}
+ 
+ 	ah->caps.gpio_requested |= BIT(gpio);
+ }
+-- 
+2.7.4
+
