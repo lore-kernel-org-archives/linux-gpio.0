@@ -2,205 +2,147 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1414C43214
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 19:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331BCC4338F
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 20:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A55CF6101D
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 19:49:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08C0E6101D
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 20:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236116AbhHITte (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Aug 2021 15:49:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236167AbhHITtd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Aug 2021 15:49:33 -0400
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC3DC06179B
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Aug 2021 12:49:12 -0700 (PDT)
-Received: by mail-ua1-x932.google.com with SMTP id m39so2275263uad.9
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Aug 2021 12:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hS6mugWBVrdBQ+s7IARTItkpVBPXB78DcP4vbl3NLWs=;
-        b=QY6l0sqm3EoO1m/gimf3XnQgtuS8sTIBI7UqsEBihWhm5H7qzrLmVtwxNt0QmHTT3J
-         t1VgtqEiZaEuEO++9s7QLSzCvVvQbM5k7ZdkksIDZ+g4wC48oPtTeVNDz+lSDR6VVkiB
-         SUSEgu7LOJVX/1Gr9kFZk0RTKoBSpIPX0e9dLq8tmGwwq7q3wlamtQy5c8lpUo/E3QJQ
-         TnD8XnZZt29w18gb/nz1EMdtolhsYjU9f94oB4MQsGeqfVx8q/Xt0zTlr47cLtdhvuVY
-         kfFoAOMgnJSV4oOjRrN1B7bLOXzRTBrrLMJF1dvsK2ZsKigwAjsrW5D6yM2VU4fTVogy
-         aVKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hS6mugWBVrdBQ+s7IARTItkpVBPXB78DcP4vbl3NLWs=;
-        b=jVJGcEZ+achQ3rp07fGAZamrJGq3sw/zc4GYPysOv7bD7q8IOhDQwgGEGPOadpwbqI
-         BrCwa/8qeTOT1fLYri3bSBzSVJz0qbdvtU51UcKE83xidcCZii4qgF8/6E2ub6VD62Kv
-         xm2fkrSIoCMh/pyGrbxMFryPRubpmJ2UAca/ebCDzB+A0Z6ztqGYqnfGe5wcm0PThck3
-         1/71h3R1o5/z24c8sWnYxAKMUFc5rVY54XRy7HZqBdQdT2Z085eFl2JpBxW0+RunzqQ0
-         tBIj+vU3dXFMRJHhvTmAV+qXt5lYFd5e5JKNKdCeXmcbmvjGVw2yNiDlejeH4iu1Vi3o
-         KuZw==
-X-Gm-Message-State: AOAM533nBu3xUGKPmmisFWezNKfC+jiOBG+D6x2TDxgWlBZRT9j8Fu14
-        o8GnXub7KADhKcns/In4k2AlYEDq7y0b/uxIOx8xhg==
-X-Google-Smtp-Source: ABdhPJy/Qhm5JfnmTrQPU4LpGpAFA7J5SesGxho4OVHDozLtLefBxN5PeCdlTmo330sDP43G5PnlmowL0u+AlzB4BG4=
-X-Received: by 2002:ab0:7014:: with SMTP id k20mr3973392ual.9.1628538551175;
- Mon, 09 Aug 2021 12:49:11 -0700 (PDT)
+        id S231793AbhHIUPw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Aug 2021 16:15:52 -0400
+Received: from mail-bn7nam10on2050.outbound.protection.outlook.com ([40.107.92.50]:12261
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231127AbhHIUPw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Aug 2021 16:15:52 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=atVVmLxpQtME6L7fddT/u7G3wKKctaeanu5n5g/PpB7/VapUBZBRVFwIvwqA+n8jYARXW/22v0t9iEmHuHZ1oPGxIU+8NES7jqdfubcfolh/KZSBsNc2awR1NkCVBCdWyi2FLcXxHTs2AJgc+W6c8waxlJ75y0yIqAGDi+9snHe0DJ3aFL7kku/YQp3vNItUJz0uxJCbUuGIqbQ06ydX5ppR91cFmqK/8bHn950joGgDEtmkiF3HwLMzH7UzpM/EB9Hmsy+3Fe11qjMqZEAkRoTP2oekEL0E8JXZzzGqW930qAyadg/i97lT4nFmRenJjs8Oaxv3FFVmbrckKPYV5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dl+2fhG/bRH2ArXFhel/A8dD9wEXzEd+tRy20ExMRPM=;
+ b=KJD7R2a3yDKF+SbZYV7xfLqTZQzoC4tomsrGgVXAQeJbIYCxmnHUt4sbVdUgCSwsddkFpD9c6AVz1SWoW+oBbcfPS0lj17lNPtlSauX1Cf1G0uff+Gk30TqgybIr90dp859LMXpol6SrwsCPX5kfW8zEI+TRDsU7cfhlToSOBECeIxmuMiNdURYgHpB5ptWyXkUjtCJulK7pgm4IDi4ZQtYW75ObIcBuAJsSQurWrRYFxr8FLz+NPh0/IoqhTGKWR8s9myno/dZJpH6MEBWxmaIGAC5dtigNWW349TCx5jiuWkrD4cPVCtuMS6/dyVNqEb+LShXxpXZs8DQqyMweXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dl+2fhG/bRH2ArXFhel/A8dD9wEXzEd+tRy20ExMRPM=;
+ b=DerSC6StxaY8zJJ8dzJHMF2xGm+wX14ZYcWRJLHQBUJTzI4jpI5evPYSSzscuUANzxnpInyvn2KuFb7GwFFgOOje0DyDWmJ4LToCANppAI1WkzWnMSkduwJP2niHSEJBhQXAyBK7V3vfr0ttdoRkPe3zoaVKqoHlWZMWFZD+1JM=
+Authentication-Results: linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=none action=none header.from=amd.com;
+Received: from SA0PR12MB4510.namprd12.prod.outlook.com (2603:10b6:806:94::8)
+ by SA0PR12MB4510.namprd12.prod.outlook.com (2603:10b6:806:94::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.20; Mon, 9 Aug
+ 2021 20:15:30 +0000
+Received: from SA0PR12MB4510.namprd12.prod.outlook.com
+ ([fe80::e8ae:ebd6:7f5d:4b36]) by SA0PR12MB4510.namprd12.prod.outlook.com
+ ([fe80::e8ae:ebd6:7f5d:4b36%7]) with mapi id 15.20.4394.023; Mon, 9 Aug 2021
+ 20:15:30 +0000
+From:   Mario Limonciello <mario.limonciello@amd.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Raul E Rangel <rrangel@chromium.org>
+Cc:     linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list),
+        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        nix.or.die@googlemail.com
+Subject: [PATCH] pinctrl: amd: Fix an issue with shutdown when system set to s0ix
+Date:   Mon,  9 Aug 2021 15:15:13 -0500
+Message-Id: <20210809201513.12367-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BN6PR13CA0059.namprd13.prod.outlook.com
+ (2603:10b6:404:11::21) To SA0PR12MB4510.namprd12.prod.outlook.com
+ (2603:10b6:806:94::8)
 MIME-Version: 1.0
-References: <20210806152146.16107-1-semen.protsenko@linaro.org>
- <20210806152146.16107-8-semen.protsenko@linaro.org> <3add6f87-7293-e1ae-8f9e-c69e9de18cf5@canonical.com>
-In-Reply-To: <3add6f87-7293-e1ae-8f9e-c69e9de18cf5@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 9 Aug 2021 22:48:59 +0300
-Message-ID: <CAPLW+4=-uUcoLCjjBAC2K5NLswnXGXW1qrsTJrb_uZDgOQ5Ehw@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] clk: samsung: Add Exynos850 clock driver stub
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from AUS-LX-MLIMONCI.amd.com (165.204.84.11) by BN6PR13CA0059.namprd13.prod.outlook.com (2603:10b6:404:11::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.4 via Frontend Transport; Mon, 9 Aug 2021 20:15:29 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4f6ae3d4-22f2-4923-d66c-08d95b726f39
+X-MS-TrafficTypeDiagnostic: SA0PR12MB4510:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SA0PR12MB45100E4A540667C80CC34274E2F69@SA0PR12MB4510.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:227;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qrxJwDpurnDxwBGH+n8jzp0ojrh5cLgAkG7DIA4NhXvPsP8PFDAOk6Rpe5lJGd+JELDjRhZ2dzurHZP0ty+5w0sv67QznSMrsnR6+1okisFQj7NOCqJ23jFuParETE6drT5QVXKysJq/ZM4HwExyzPtsIQpDjtA1R0L5wBcFxmjK7a5YVvgEUz3rzlkWXBiJDT58RG4mZEV5GZCl0v1AQUcFv7nlwfb8hrq7GBhjppJ2g9piV5W0SgrONyMqXk83/L1yhlRpIo7YlJra91pf8rssafaQJN/HRln982xYSzUudDTvB0wNOzJWcdUqkfDc5vUOgcWfbKKp9vURdBSYTgolxNnVAllq3lOyRQIV0o/8pKJ+lm4lzXzaDPHhHBSNtO417bzH1ZlhtTowbiAaSzjetsDt0Q1yjTFhvj3LYpjQ0UQMenf4DEfHjiXQuzResqfqthMEvmXjLL57TeFBQiVQ5LKMNFdispmHHV0VrtBmXlHsx/icX0bA99g6+rex80HoQkxWARhtvzNnCT9UJ57Jz6dlSSqV0CZ0kLKbmxjQarzYvKQUGHnon+bH2QEVoElzY6kMUQxCmt+FI2K+llAP8TINtoUN2DsKw5ntCUb4+Dbxb4H56m5OHwsBEaNWLx2woSijjTZ+5+ibIYksj6u/w4epTW51hCjiu6r86pPv9fjmbSeyKpmSS6JHhViAoiN2V0o5p5gFzSW+7uAzFjr++Icz7K0j42bcXmBl3IjUUhGUkw4pRUaKiIfcWXU7/4J+ulhWLtVLqugq8MiLnArjJ7DQHKD0DUQRlP+fJLUGU0X6taRVdHJsMsCpnVq5
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4510.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66476007)(2906002)(110136005)(6486002)(66946007)(66556008)(36756003)(4326008)(26005)(44832011)(83380400001)(5660300002)(54906003)(186003)(1076003)(8676002)(7696005)(52116002)(2616005)(956004)(86362001)(966005)(316002)(508600001)(38100700002)(38350700002)(8936002)(6666004)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CD1GJX+K8pJmcs/cgTpYzyHkQ7Ok7UiDAQ2ulJizeTnC9cM06fLlzRruFASP?=
+ =?us-ascii?Q?PPvFmrOOfFi5XznQrmGmhU/0LCaIK1aJjkhrkvzBZKJ4MbH+rpN768Wmo3bW?=
+ =?us-ascii?Q?Pw59nC+xq0Mizkd2vvSyen85c07FQY9SLvLtHIpxH/q9kQ9HhcHdt3QyAm+f?=
+ =?us-ascii?Q?BzZ4L2jMSoE0pOMglpGoNSHB54HTV6VXlzjn+K38p4qHfFJGD9Ff70gvXv3h?=
+ =?us-ascii?Q?sSvciwFzXONUQIbC0NuU3Se+2SdvtMIu9B7KB6LG2pT9Cs0B+xpQZoADywno?=
+ =?us-ascii?Q?Q3IJikQTZDv6HnsOsqBkoc6rAdd7/nwXj58wDotKlQiPB2pM74BPyt8fQ/E+?=
+ =?us-ascii?Q?P3CF9sAo9/0jIjwbdzcInvEh5LeYzf8iNwADYjiRFp74wOQKK02bAw28j57b?=
+ =?us-ascii?Q?d+ejqsjVhEV9x9jCkSDszAF7B2EKzv8Yc4HOU9v7YWtuj5x+YR53PnntFYTz?=
+ =?us-ascii?Q?KiEClqp0qn2nAllofEouTYgjyg76m9BMaoJekZyv0sxNNbAB9fM3xvSrzl7O?=
+ =?us-ascii?Q?H6Di8YdFX8nPwZU8jqh4qz+YkteZF4xoqs3AE+zXRBVKGlnyAQ5dczdqrXmw?=
+ =?us-ascii?Q?WX+pevdBw4ldruG/9kyao+ocsa46vG9vOJaOepsl2xf9Jr21ecq9z2bHItzh?=
+ =?us-ascii?Q?teRee0zraXjfD5Kcr4sjBYMM9YjaBEmhgu+pxwKA6h26i8w0uf3x+qoqE5kF?=
+ =?us-ascii?Q?dQHIC893jj3LkNZZdlPoqDVGDH7fdnel7Vd2PSIWCyAMZOlt7CXvzj/+tD7A?=
+ =?us-ascii?Q?gGWFN3YdK/FbLFYKj91KFLNgQxnL+DlNpxB4ZFwQFNt2RmZ/d/7hmxonjfN1?=
+ =?us-ascii?Q?UVH+Nkggq8p/BqGQwXTk9xUc1O4cVMDIxDt4Y4EEmlg5q1zwoMoD5gZRSdA0?=
+ =?us-ascii?Q?ntfxFnf4NUCQvkUjuy8HC3Gmh+XnnBi0W3pXkgw6KT+VSDd7Zc36zzb2f9/c?=
+ =?us-ascii?Q?C6x/odHrAGSHiskiV8rKcEGbOpyjxvipUyQ9j6LSOouyDSF+6+c+zraLY+Ya?=
+ =?us-ascii?Q?+J0Y+GhLu8sgOF4mhK2bKJiLdtbIwyBsHLbtyPqzmG9wkAsYAs79FowkfBfT?=
+ =?us-ascii?Q?8SLXRwQMoxoImGUYyGYL3IyK7fX4urNIO9W2r5KxNPariz+9tA5qsjz2AF6R?=
+ =?us-ascii?Q?vkZbyX0UiMjCnRICQ4Whcn4oNPe2322/10diOmX52T1f0t7lHNo9FX5UtmGU?=
+ =?us-ascii?Q?juJO5SD/3uIc9CE1t6Ac+YEALRDBJECYs67AzMU7h8HGDTvoiyVCCWicssYP?=
+ =?us-ascii?Q?LC1YJ+h1CjAogcnCXF/ldIdwIA4Uwm8Pb2YUIRqRhncWg0vhHJ2KUDSjWGwj?=
+ =?us-ascii?Q?1/DZgxHsxx3lWMvMgK6P2QuE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f6ae3d4-22f2-4923-d66c-08d95b726f39
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4510.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2021 20:15:30.2545
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ja9WQBagpc38bNuYAnH0zouEWcQivxJ2O1L7AohqXKg+0gzMtWZgwE2q5Q6bglZgIRZ8maG38JLhZLBtXrtBWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4510
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 9 Aug 2021 at 14:23, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 06/08/2021 17:21, Sam Protsenko wrote:
-> > For now it's just a stub driver to make the serial driver work. Later it
-> > will be implemented properly. This driver doesn't really change clocks,
-> > only registers the UART clock as a fixed-rate clock. Without this clock
-> > driver the UART driver won't work, as it's trying to obtain "uart" clock
-> > and fails if it's not able to.
-> >
-> > In order to get a functional serial console we have to implement that
-> > minimal clock driver with "uart" clock. It's not necessary to actually
-> > configure clocks, as those are already configured in bootloader, so
-> > kernel can rely on that for now.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> > Changes in v2:
-> >   - Used hard coded clock indexes, as clock bindings were removed; will
-> >     add clock bindings back (reimplemented) once proper clock driver is
-> >     ready
-> >   - Removed .data = 0 for exynos850-oscclk, as it's in BSS section
-> >   - Removed comma for terminator {}
-> >   - Made exynos850_clk_init() static
-> >   - Removed checking np for NULL, as it's already done in of_iomap()
-> >
-> >  drivers/clk/samsung/Makefile        |  1 +
-> >  drivers/clk/samsung/clk-exynos850.c | 64 +++++++++++++++++++++++++++++
-> >  2 files changed, 65 insertions(+)
-> >  create mode 100644 drivers/clk/samsung/clk-exynos850.c
-> >
-> > diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> > index 028b2e27a37e..c46cf11e4d0b 100644
-> > --- a/drivers/clk/samsung/Makefile
-> > +++ b/drivers/clk/samsung/Makefile
-> > @@ -17,6 +17,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)       += clk-exynos5433.o
-> >  obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
-> >  obj-$(CONFIG_EXYNOS_CLKOUT)  += clk-exynos-clkout.o
-> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        += clk-exynos7.o
-> > +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        += clk-exynos850.o
-> >  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
-> >  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
-> >  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
-> > diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-> > new file mode 100644
-> > index 000000000000..36c7c7fe7cf0
-> > --- /dev/null
-> > +++ b/drivers/clk/samsung/clk-exynos850.c
-> > @@ -0,0 +1,64 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2019 Samsung Electronics Co., Ltd.
-> > + * Copyright (C) 2021 Linaro Ltd.
-> > + *
-> > + * Common Clock Framework support for Exynos850 SoC.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/clkdev.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +/* Will be extracted to bindings header once proper clk driver is implemented */
-> > +#define OSCCLK               1
-> > +#define DOUT_UART    2
-> > +#define CLK_NR_CLKS  3
-> > +
-> > +/* Fixed rate clocks generated outside the SoC */
-> > +static struct samsung_fixed_rate_clock exynos850_fixed_rate_ext_clks[] __initdata = {
-> > +     FRATE(OSCCLK, "fin_pll", NULL, 0, 26000000),
-> > +};
-> > +
-> > +/*
-> > + * Model the UART clock as a fixed-rate clock for now, to make serial driver
-> > + * work. This clock is already configured in the bootloader.
-> > + */
-> > +static const struct samsung_fixed_rate_clock exynos850_peri_clks[] __initconst = {
-> > +     FRATE(DOUT_UART, "DOUT_UART", NULL, 0, 200000000),
-> > +};
-> > +
-> > +static const struct of_device_id ext_clk_match[] __initconst = {
-> > +     { .compatible = "samsung,exynos850-oscclk" },
->
-> One more thing - I am not sure anymore if this is correct. AFAIR, we
-> wanted to drop compatibles for external clocks.
->
+IRQs are getting armed on shutdown causing the system to immediately
+wake back up.
 
-I'll remove oscclk from the clock driver and device tree. It's not
-needed right now anyway, as that driver is just a stub.
+Link: https://lkml.org/lkml/2021/8/2/1114
+Reported-by: nix.or.die@googlemail.com
+CC: Raul E Rangel <rrangel@chromium.org>
+Fixes: d62bd5ce12d7 ("pinctrl: amd: Implement irq_set_wake")
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-But I'd still like to know the proper way to define external clocks. I
-can see that in exynos7.dtsi and exynos5433.dtsi there is just regular
-fixed clock defined for "oscclk" (or "fin_pll"), and then that clock
-is referenced in corresponding clock driver by its
-'clock-output-names' property. I guess that approach is the
-recommended one?
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index a76be6cc26ee..5b764740b829 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -444,8 +444,7 @@ static int amd_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	unsigned long flags;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+-	u32 wake_mask = BIT(WAKE_CNTRL_OFF_S0I3) | BIT(WAKE_CNTRL_OFF_S3) |
+-			BIT(WAKE_CNTRL_OFF_S4);
++	u32 wake_mask = BIT(WAKE_CNTRL_OFF_S0I3) | BIT(WAKE_CNTRL_OFF_S3);
+ 
+ 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+ 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
+-- 
+2.25.1
 
-> Chanwoo, Sylwester, Tomasz,
-> Do you remember the recommended approach? Shall it be like Exynos542x
-> (samsung,exynos5420-oscclk) or Exynos5433?
->
->
-> BTW, I am now converting some of existing clock controller bindings to
-> dtschema.
->
-
-I'll try to review those in a day, that might also be helpful when I
-get to clk implementation. Btw, thank you for reviewing my patches in
-such a quick pace!
-
-> Best regards,
-> Krzysztof
