@@ -2,122 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCFBC4338F
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 07:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993FCC432BE
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 09:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD4E60720
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 07:55:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C21F60EE7
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Aug 2021 09:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbhHIHzq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Aug 2021 03:55:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233605AbhHIHzo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Aug 2021 03:55:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8FF056105A;
-        Mon,  9 Aug 2021 07:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628495724;
-        bh=ySbGgGfzqBAEJSratUSjhe+L3/0DiQlQC21ixFHniJs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bokvUlouuBYaecUg9mjkN7kVKqM4Ne+L4MB9WrBfcNkS52PGq4SeNeHgIybnElMPf
-         7f9mpfPSv0ccYy9EBCX0/P7zuxpueOVqplPQPhlsVlj3IN8cm5orUkrYUjGercUIA9
-         r0VP0Hz/xGMFP0fZgkmb17emo679NtTRo0MxZ0LLS6h6JtZ96BBnRb9hFbQ2wt3CPk
-         MVUwqlIJwT9vyNY7EafhEgq5kSen72z6UPZM1Iszg8DBhBL7ZGnRfDqKSpBDJZQkjk
-         6VYGrY+pnJ87byXORLkkwbSVks9RRg3Lyve3ZAdK9+oNjgXWLYPpnF6nEqYbyzgEH0
-         ZPLKtDmtcl55A==
-Received: by mail-wm1-f46.google.com with SMTP id f9-20020a05600c1549b029025b0f5d8c6cso13818047wmg.4;
-        Mon, 09 Aug 2021 00:55:24 -0700 (PDT)
-X-Gm-Message-State: AOAM5314ihqiQdazj/ao4qWgIayW7liDHfdknJF6fxI4NodM5RICRGPa
-        g5AKlbgNxRU2CpoNVBhxm2ebD7+QpfAWwCx1MUc=
-X-Google-Smtp-Source: ABdhPJwsHCGJweUWTaO/pnRagqo6mk9Ys2poZ+HUYdQPTlaYEGh/x99mdZSs5F4drrQlZ4IykGD39tpMoLMC+pA/62s=
-X-Received: by 2002:a05:600c:3b08:: with SMTP id m8mr32513254wms.84.1628495723088;
- Mon, 09 Aug 2021 00:55:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1627989586.git.viresh.kumar@linaro.org> <75c8e6e5e8dfa1889938f3a6b2d991763c7a3717.1627989586.git.viresh.kumar@linaro.org>
- <CAK8P3a29NfFWwtGHhqos1P8f_SmzPJTXvEY5BZJAEMbV2SKe-Q@mail.gmail.com>
- <0100017b1610f711-c53c79f2-9e28-4c45-bb42-8db09688b18e-000000@email.amazonses.com>
- <CAK8P3a0DWkfQcZpmyfKcdNt1MHf8ha6a9L2LmLt1Tv-j0HDr3w@mail.gmail.com>
- <20210805124922.j7lts7tfmm4t2kpf@vireshk-i7> <CAK8P3a0kbmPLGCBrjAv7-dW=JWq-pdSBeGUHCxUFmMKvKhCg7w@mail.gmail.com>
- <0100017b1a6c0a05-e41dc16c-b326-4017-a63d-a24a6c1fde70-000000@email.amazonses.com>
- <CAK8P3a2rrueXJHZxuiiShgVmLD916RaxW7xQHHjQXNFkM3Fpvg@mail.gmail.com> <20210809073020.y6ruibdm37xnx7hg@vireshk-i7>
-In-Reply-To: <20210809073020.y6ruibdm37xnx7hg@vireshk-i7>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Mon, 9 Aug 2021 09:55:07 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3TabswETDAUec-2rbiNBk_K48-UdpTA5Ckvu5ogOyHjQ@mail.gmail.com>
-Message-ID: <CAK8P3a3TabswETDAUec-2rbiNBk_K48-UdpTA5Ckvu5ogOyHjQ@mail.gmail.com>
-Subject: Re: [Stratos-dev] [PATCH V4 2/2] gpio: virtio: Add IRQ support
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QEMU'S CIRRUS DEVICE" 
-        <virtualization@lists.linux-foundation.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        id S234061AbhHIJGM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Aug 2021 05:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234095AbhHIJGM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Aug 2021 05:06:12 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47330C0613CF
+        for <linux-gpio@vger.kernel.org>; Mon,  9 Aug 2021 02:05:51 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id i10-20020a05600c354ab029025a0f317abfso13990974wmq.3
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Aug 2021 02:05:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=90uNnlJE5iHK79/8GYVpG/M6EW6OsXMEoHMUbHWYZbc=;
+        b=LXg512mauFVdZqBZuUfn8USTSGm4NLLMcdLW88SJ/u0Sa1w8EHb6zM9bt8408x5vxL
+         C3Rx4IHDQ4+VnVWPK+VE7kPw5csGgL5L10tgPn3DG0bq/ShCthfbEo2U74eYzYGkpNNd
+         qV8dPAdnOcfCHYwupSLouUCjAmxAbmysOkXgx4KgUdDUhkEhTBI05Pe/PrianrKSX4wc
+         mzkkVXa7eEm/O8Lwz4SC/vuPGoe++NB4OGOpWGsimEQovWr117juEqVK+n1RNpyDlzEL
+         vC0DnLX8ThougFfHAQkPXwVIpGSWzBtCBQ4FNrgrSCz5SOY10Pnw/rbgDVZsr5Pddic5
+         sQvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=90uNnlJE5iHK79/8GYVpG/M6EW6OsXMEoHMUbHWYZbc=;
+        b=Aqr0URDC0pmZKTVL1Tm3O7LqSM+KnbAtiEDY/+1qO1jLILRSjNBlMjPUbgei2pRErX
+         P8NyQte24JnPjHdO/dtuiV/5AeQL6qLvSAAdklPihwYUII6pYcUhLi7gmZWaJEuTQGUm
+         WBx+/9Y3loSRpecqDyrK8RFWqot3nehc1YFUefsgDfPFgbDo5D8o/4+2f4kNphnqec+L
+         wFmuSeSIIJ9UqMnP4Wx175CL/8YNrBb8AfhuVrF6cYzVdpxzvZUYKEyRUb+YQmERm9nR
+         BpCxbeFVE2CG+xnyTRSzZNi2TLtzsfdvnt4y7X3eaPG55nVEqceVuGtZI44NadJ6XJQH
+         pDnA==
+X-Gm-Message-State: AOAM533UXL7x4wvb19e3SJAQhFzU6bmdQps+4311kRTrFkI+QoLltakZ
+        AJAg1H4rrkjUeZwy6AEs6CVHjA==
+X-Google-Smtp-Source: ABdhPJxYuYeHY8fFHmkbqr9+K9X8cx3jH9r/IAs6cTIqFLHWwpnHcJ1kR7JylqUwlmjs50g6e6+iig==
+X-Received: by 2002:a05:600c:154d:: with SMTP id f13mr15817826wmg.0.1628499949941;
+        Mon, 09 Aug 2021 02:05:49 -0700 (PDT)
+Received: from google.com ([95.146.142.85])
+        by smtp.gmail.com with ESMTPSA id q14sm17943641wrs.8.2021.08.09.02.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Aug 2021 02:05:49 -0700 (PDT)
+Date:   Mon, 9 Aug 2021 10:05:47 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Chris <chrisrblake93@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Jason Wang <jasowang@redhat.com>,
-        Stratos Mailing List <stratos-dev@op-lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christian Lamparter <chunkeey@gmail.com>
+Subject: Re: [PATCH v2] platform/x86: add meraki-mx100 platform driver
+Message-ID: <YRDv61SWABt8kJjx@google.com>
+References: <20210806005755.2295193-1-chrisrblake93@gmail.com>
+ <CAHp75VenSw9BanwH58VSCNpw4cNFf7h3uSWTXLb5n0+OPtnDTQ@mail.gmail.com>
+ <b5430038-c18c-6037-44d1-a3c0089645a1@redhat.com>
+ <CAHp75VeUcrHuBOW9LJ=sPR0atxoEEe19mpD32UfjY1NncD5dLA@mail.gmail.com>
+ <CALpBJjosR8WvG=8QB=i12JSpbS3wyPbWLC_N1YM+8FSfVyL1rQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALpBJjosR8WvG=8QB=i12JSpbS3wyPbWLC_N1YM+8FSfVyL1rQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 9, 2021 at 9:30 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 06-08-21, 10:00, Arnd Bergmann wrote:
-> > On Fri, Aug 6, 2021 at 9:44 AM Viresh Kumar via Stratos-dev
-> > <stratos-dev@op-lists.linaro.org> wrote:
+On Fri, 06 Aug 2021, Chris wrote:
+
+> On Fri, Aug 6, 2021 at 8:59 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Fri, Aug 6, 2021 at 4:55 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> > > On 8/6/21 9:52 AM, Andy Shevchenko wrote:
+> > > > On Fri, Aug 6, 2021 at 5:47 AM Chris Blake <chrisrblake93@gmail.com> wrote:
+> >
+> > ...
+> >
+> > > >> +#include <linux/gpio/machine.h>
+> > > >
+> > > > Does this provide a GPIO controller driver? I don't think so.
 > > >
-> > > On 05-08-21, 15:10, Arnd Bergmann wrote:
-> > > > I hope this can still be simplified by working out better which state
-> > > > transitions are needed exactly. In particular, I would expect that we
-> > > > can get away with not sending a VIRTIO_GPIO_MSG_IRQ_TYPE
-> > > > for 'mask' state changes at all, but use that only for forcing 'enabled'
-> > > > state changes.
-> > >
-> > > Something like this ?
+> > > Actually GPIO controller drivers use <linux/gpio/driver.h>
+> > > <linux/gpio/machine.h> for board files / glue code which
+> > > e.g. needs to add lookup-tables, which this code does,
+> > > so including this header is correct.
 > >
-> > > static void virtio_gpio_irq_mask(struct irq_data *d)
-> > > {
-> > >         /* Nothing to do here */
-> > > }
+> > Ah, indeed. I stand corrected.
 > >
-> > You'd have to do /something/ here I think, if only setting the flag
-> > that we don't want to deliver the next interrupt.
-> >
-> > > static void virtio_gpio_irq_unmask(struct irq_data *d)
-> > > {
-> > >         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> > >         struct virtio_gpio *vgpio = gpiochip_get_data(gc);
-> > >
-> > >         /* Queue the buffer unconditionally on unmask */
-> > >         virtio_gpio_irq_prepare(vgpio, d->hwirq);
-> > > }
-> >
-> > And check the flag here to not requeue it if it's masked.
->
-> I am not sure I understand why this would be required. If the
-> interrupt is getting disabled, then unmask will not get called here
-> and so we won't requeue anything. Same will happen with threaded
-> handlers where the interrupt gets unmasked at a later point of time.
+> 
+> Hello,
+> 
+> Thank you both for the feedback, i'll work on getting the fixes
+> implemented. The only one I have issues with is finding the git hash
+> for the dependency commit in mfd, since I don't see it merged up yet
+> to the maintainers staging branch at
+> https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/.
 
-Ah, right. There is already a flag that gets checked by the caller.
+Check again. :)
 
-It does feel odd to have an empty 'irq_mask' callback though, so
-maybe there is still something missing, just not what I thought.
+> @Lee, sorry to tag you in but any chance you have the git hash for the
+> PR I did earlier that you accepted for 5.15? It was named: mfd:
+> lpc_ich: Enable GPIO driver for DH89xxCC.
 
-It's probably the result of calling handle_level_irq(), which as you
-said is closer to what we want, but is not exactly what we need for
-this protocol.
+ef0eea5b151ae ("mfd: lpc_ich: Enable GPIO driver for DH89xxCC")
 
-        Arnd
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
