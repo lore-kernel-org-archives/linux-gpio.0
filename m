@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81537C4320A
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 11:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468C2C4338F
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65C3F60E93
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 11:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E0BA60E52
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237438AbhHKL7d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Aug 2021 07:59:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49086 "EHLO
+        id S237453AbhHKMA1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Aug 2021 08:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237416AbhHKL7c (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 07:59:32 -0400
+        with ESMTP id S236497AbhHKMA1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 08:00:27 -0400
 Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFADCC0613D3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 04:59:08 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id g13so5066508lfj.12
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 04:59:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1E1C061765
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 05:00:03 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id c24so5090168lfi.11
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 05:00:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=mCS3awkzA8RWLuNBik5eKT8lyl2fZPoNsKZCtZjxeHM=;
-        b=hvGuv1nPXE5fSGfW1StTPNwEqjNezSk92PHiyyiwzWfzWx7F0QIB9jS+QRo2gn28to
-         Bt64oCxPp3gWybq9VyJQI5P6eRwZEgBjuXSJJc+1E7kBWo3mN8sS88EWk9TwwiOnItDa
-         amJIUrEvP3YE23YIkI6LfcTBNzAKd6NeAfHjBDqcTZhFdfThXqGlbvcjMmAbGcrWIlmo
-         XpNL3bXIBIV9C0BofYvuV7jNV2Z7IgZFUzIj6rbEjkZHVLos3+R6gksqlU8S4+NSHXbN
-         4xrYzpcGqlVg8xY+eQ1bG7ML0svz3zlO3T1CRl0yOyjFtKvTxyH1gEEcWh5pHroP2Pmk
-         WMxw==
+        bh=QntYPwFND9ivHl8sCJvuIY4mpIehwKkRWinAMkSwKQI=;
+        b=Q0Rl26bYxsSXpjb/CTuzjeMm5nCjftG0kx2CothuzSLlucNNJW0/NiYUD+62g5T/7F
+         Z6Kfdw4iijdQB++sg5aqqT5FQ0Tb3T5im+W0cIQIlxEl/a066C0h+hS3qpvE4YxDcHjf
+         6jBnQ1Rd6eFzB3xnkAlhaTdmU88Vw6bFzINRxoDxd0bGZTCqRQIG7K+by4B9VecmTBmd
+         md+lPrseDhnPsickBg5Ex4+ZC+BL370H+N8yZipMuK1n/5klrHg5Zp8AdANs3POX0LYd
+         KR8d5D3i3fl6Lev3XJrkthKG2Y/zZvfBJWQH7X8WGaIvMNexPiteMDzi85vfI244aZFe
+         uaFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mCS3awkzA8RWLuNBik5eKT8lyl2fZPoNsKZCtZjxeHM=;
-        b=gsXsHoWUzmKXXuba+/V6Y9G/J8pb9eS2dhlQzzNsOGsxPbRyfMrv50xSf6NCndWjUk
-         HhRZDqc6k4zw9l0hx12LATKrUeYF9+8d3M+zVo52nwxxgFl6a5Ovos2vT7oBo+6xs8bX
-         oC8Hui+IX9mTNUy4jqRjgPNGp/PqIlT2Fws1mYC/YSNk3TJN/WLjiMLRy9bFzMl3rvHb
-         S8BwK8w3oMkJJZyoun1x/7dDQ/bmZIvzsjobn78C2QEU7sBAE0kHe1BRyE0bNn6NE4EW
-         c+L+88W9bURydy1vp6DpED6jeEOii0JfsO2N0G5OveV5WZXVE+xAxSuL77m2CNeYO4v1
-         BJZA==
-X-Gm-Message-State: AOAM5318SQwjNg+HKizT0HxNHbLSF6CR/CfPIXxZVO+ylM0vtxB3WXsd
-        acd1dxV2vSg7kyOEZwdhzlkLYC2FJgppTsRDD6DWAA==
-X-Google-Smtp-Source: ABdhPJzpYp6+24xONNd2RkFQ9OJS/necpcEFr9NwCBDIxjwF+49VMogiOFbS/tQWPsgHQZdMikO98rimMH1Xw8RSdJc=
-X-Received: by 2002:a19:c7cd:: with SMTP id x196mr24889464lff.465.1628683147259;
- Wed, 11 Aug 2021 04:59:07 -0700 (PDT)
+        bh=QntYPwFND9ivHl8sCJvuIY4mpIehwKkRWinAMkSwKQI=;
+        b=a9gsfx3QKrvgPMN10RgmczFKhRty2IoBMkWXgrTXX5w06T9v36tmoIVp6loPRvXeRM
+         xwV9Umrp7QCYIbc2Jo+9tvtJiyKPMxz8NqIau09sp47+saIUA6H/KwSlKkEGhm0WNezy
+         g/Dm4iwrR0MK7T6Bcru/dICTE6lj6c8bQOq/GTB1CqYEdX68CNakUbTvof9znD3ifYzr
+         n0mHn3h8wMxxFJOptwO0TJfZD1LWPIPk6FSZcAvXx3AcBtW25iDxJETgtH1Lj5VewT0/
+         xkDKMNntXquDNeTSwkBy6dtx9fmcQAS336wR9cdGceVl7stFJjF/lVaGdsKI3lg5yKoU
+         D+HQ==
+X-Gm-Message-State: AOAM53211VNRG50X4j2JRmG7W20ghr0HKOFLnXmkt8Hx4Ulsns4RkSr0
+        ezCV6bdfOqD/KFyYmLg83tlRLsBBmChD4PNemqx7vg==
+X-Google-Smtp-Source: ABdhPJzqoMybmK8uaattKPYwTnFX/Xb8AOXz9OVi7tq94+ZUBT0mQ9v5TUujLzeL/jhAn7u4PSiH8KInRYVs+H4KkXk=
+X-Received: by 2002:ac2:5d4a:: with SMTP id w10mr25656028lfd.529.1628683201902;
+ Wed, 11 Aug 2021 05:00:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <1627910464-19363-1-git-send-email-skakit@codeaurora.org> <1627910464-19363-3-git-send-email-skakit@codeaurora.org>
-In-Reply-To: <1627910464-19363-3-git-send-email-skakit@codeaurora.org>
+References: <1627910464-19363-1-git-send-email-skakit@codeaurora.org> <1627910464-19363-4-git-send-email-skakit@codeaurora.org>
+In-Reply-To: <1627910464-19363-4-git-send-email-skakit@codeaurora.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Aug 2021 13:58:55 +0200
-Message-ID: <CACRpkdYMp6d7hhKSMknsGCQLuytRwow6+5UuiLs=yh9Oh6JFaQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH V7 2/3] dt-bindings: pinctrl: qcom-pmic-gpio:
- Convert qcom pmic gpio bindings to YAML
+Date:   Wed, 11 Aug 2021 13:59:50 +0200
+Message-ID: <CACRpkda6f0QTuW2p13OyPDer4B2NgAMWC5FMN3XrGx5NfL=zUQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH V7 3/3] dt-bindings: pinctrl: qcom-pmic-gpio:
+ Remove the interrupts property
 To:     satya priya <skakit@codeaurora.org>
 Cc:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -77,15 +77,13 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 On Mon, Aug 2, 2021 at 3:22 PM satya priya <skakit@codeaurora.org> wrote:
 
-> Convert Qualcomm PMIC GPIO bindings from .txt to .yaml format.
+> Remove the interrupts property as we no longer specify it.
 >
 > Signed-off-by: satya priya <skakit@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-This version applied.
-
-It didn't work first so I had to force-apply it. I don't know why.
-Check the result.
+Patch applied!
 
 Yours,
 Linus Walleij
