@@ -2,63 +2,62 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6D9C4338F
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3AFC4338F
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBF7860F22
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F6C6601FD
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:51:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230178AbhHKMtY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Aug 2021 08:49:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33012 "EHLO
+        id S230399AbhHKMvY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Aug 2021 08:51:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbhHKMtW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 08:49:22 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C5B9C0613D3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 05:48:58 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id y7so4386992ljp.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 05:48:58 -0700 (PDT)
+        with ESMTP id S230294AbhHKMvX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 08:51:23 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F24C061765
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 05:50:59 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id x27so5484212lfu.5
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 05:50:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GR+MMrd9XOW5rm81dzQfCFtmEkUJfv7NwFWFwbfborQ=;
-        b=W0Nm8Bqom8fG2CTvOVOdaNHCmOv6POACotv2jUKnioHaQeTQussn1eFGzrt/w9UsAq
-         703Br3qPDFM7IX0gEmpWCGAUNtbu07XUX1dUD4quYbTrk7cgGz+CusQiCuwB8URnXmPf
-         UX5vCB94aDC1bVzQ1dy45r2lRdBZF8fPLrbCp6vNc5+fi+qWj4gi+cTMxVzUxTftaCVF
-         01Os8GwxsJXLRiNKj10Ks3e8OP3Jm+pfXhic6lgRq5WfszfgLF9v2j1N0P5CE6/UI3+G
-         wnQhGsZmSZw5wAhjf6u+wpXc0JNpkevf/962ZfS091JjBTwOcHSCGlajTII3jS8qvrpf
-         x6nA==
+        bh=6XnUn5xinC7TQ7DvlWdoMJyb/x+Aa8xU1z0K8iDHsyQ=;
+        b=AcGwxD/FnbxwTyP2occSnOgePQTrd8gNQMPZn1jZwyqRKXcEHH/I/Af5viIELcErf2
+         xL6nKEJhaBUvsVQrW591BTCyqQSY96Hn+sEDyhHTQrlJw/lLG+ac2SywlO0aqM0lE5SO
+         SV21UaDrPxaX+wx1AODnYn0fAWufXEXsKX+mFa295Y9SWUQoAId5iXP/nXVz3IZCuBPI
+         /u68XZkSYbd4ehElQaRJp8FcfUvgKoiIPA0XW7Mlr8oku6VTMln47uo8V9ZoLdXyTXuK
+         75vn+Pfx26FJFsymhCg9Aylg782SZUlm2rBXmBUHtHx/UX3W7+HFF5+hIvsaBqpy4rdx
+         89aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GR+MMrd9XOW5rm81dzQfCFtmEkUJfv7NwFWFwbfborQ=;
-        b=alRO6DQNbvKVj16DLWSMU3kbqCM38PLLwhdAMyXXbUovuGzHYz6FPJrBYN+UkZPv8g
-         3bwrSNYWKsScyOE1lM6b7gnwpKhj+U5zzUauUKWUZfP4LbkCu/ZayaLyppjVZEpMP366
-         LS++8s9rt2b2lClgdhqX7rDXrxSgp0bEsitHne/KCvWoFyP3YK4+6fuWkXrkS2q1Q52v
-         lZQlCm9M/SGFGRljErrzzIRkX2nIaqr+JhvbCh7MamBu9AeHX05WViYBQOYJ2KhWDOcF
-         X7GtXMu/EQfzM/iMuSRp67OOhbrBfQTfrhqx9ZryAj9g2HZ4TfAXF6skB4WIhx7qlGDa
-         nOgQ==
-X-Gm-Message-State: AOAM530Yo5nKY6BjQs9+7h4kZatjMrP1sdthx1WMkR2xOnnn781aF3kW
-        s2xLU0/eReLy5sKhZRXgA+WOJGraEy7F9edt4AY4nQ==
-X-Google-Smtp-Source: ABdhPJxEQ5PFNvYyQbJDXisGpYVk211iTHo7KxNddvwCfd2v00OKJtPRjt1cj2iKS63HHjuTyrT0pUXhoclMSkvvZNM=
-X-Received: by 2002:a05:651c:1318:: with SMTP id u24mr23231122lja.200.1628686136709;
- Wed, 11 Aug 2021 05:48:56 -0700 (PDT)
+        bh=6XnUn5xinC7TQ7DvlWdoMJyb/x+Aa8xU1z0K8iDHsyQ=;
+        b=kn2SS81VbTbfhP+47LBQKkIzpZKqmokfp7vOtswdveYOTttkN+PMWyKMSfADILPH11
+         OQNQ3PmLaVvDYhKKlx3WaugB8H6QmF3YI6HA2XhCyaWG3BBuA1Ml2RqKjn9HzK0+3X+S
+         HnDXeh6HvPCLewSWFyv2TjHNTvuwhrAE5QoW8SB+hVGfDYtPhIRnzTcUoDppWrxuy230
+         wg7jT/wn0jQvTTdyxxu+D/4xMNfVdLj/lA4G5j5Q5+jL1nxKnYbtD9wEAE8CaVJEg4Kc
+         76Rix8uEvPlH5Bta5fV4xTmFfwtXWALk+jiCb+PTLc3DKu4VAEOCQ0gPRvLV8IrRwst7
+         gNWA==
+X-Gm-Message-State: AOAM531bKihFt7JbzDkLv3pBs6rUioXPfbUYlrnPkKYuPrHC6FuZjOBO
+        aTUn7bVFughRujG+fwiiMhA3DO+r5QaLwSSlSnjKiA==
+X-Google-Smtp-Source: ABdhPJwxNT+YoriB7cWMW6ao5YcwKQ6uFM5ecY9hyynvKPtHvY9BmvMGGjUuJzY+I0e+9bS3wnMJE2R7Kxtgv+mfR2E=
+X-Received: by 2002:a19:ac04:: with SMTP id g4mr9257110lfc.29.1628686257120;
+ Wed, 11 Aug 2021 05:50:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210804160019.77105-1-andriy.shevchenko@linux.intel.com> <20210804160019.77105-3-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210804160019.77105-3-andriy.shevchenko@linux.intel.com>
+References: <20210804160019.77105-1-andriy.shevchenko@linux.intel.com> <20210804160019.77105-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20210804160019.77105-2-andriy.shevchenko@linux.intel.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Aug 2021 14:48:45 +0200
-Message-ID: <CACRpkdZghJFGV8g2wq01VtigKNnb0nTpZ=WtY0tp2j0tVjeNrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] mfd: intel_quark_i2c_gpio: Convert GPIO to use
- software nodes
+Date:   Wed, 11 Aug 2021 14:50:46 +0200
+Message-ID: <CACRpkdazSqdOaoCknv=0wo3vw-FjrZKAy0rgh1hFbgd6au0vYw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] gpio: dwapb: Read GPIO base from gpio-base property
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Lee Jones <lee.jones@linaro.org>,
@@ -75,15 +74,35 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 On Wed, Aug 4, 2021 at 6:15 PM Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 
-> The driver can provide a software node group instead of
-> passing legacy platform data. This will allow to drop
-> the legacy platform data structures along with unifying
-> a child device driver to use same interface for all
-> property providers, i.e. Device Tree, ACPI, and board files.
+> For backward compatibility with some legacy devices introduce
+> a new (*) property gpio-base to read GPIO base. This will allow
+> further cleaning up of the driver.
+>
+> *) Note, it's not new for the GPIO library since the mockup driver
+>    is using it already.
 >
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Tested-by: Serge Semin <fancer.lancer@gmail.com>
+> ---
+> v2: added check to ensure that the property won't be used by FW (Serge)
+>  drivers/gpio/gpio-dwapb.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 4c7153cb646c..674e91e69cc5 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -584,6 +584,10 @@ static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
+>
+>                 pp->gpio_base   = -1;
+>
+> +               /* For internal use only, new platforms mustn't exercise this */
+> +               if (is_software_node(fwnode))
+> +                       fwnode_property_read_u32(fwnode, "gpio-base", &pp->gpio_base);
 
+You rewrite the code quicker than I can review  :D
+
+So this is elegant, I would prefer "linux,gpio-base" but the
+overall change is more important, with or without that change:
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
