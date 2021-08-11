@@ -2,78 +2,95 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D34C4338F
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 13:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B292C432BE
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 13:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26D4060E52
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 13:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EFC860FC4
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 13:15:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230486AbhHKNMe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Aug 2021 09:12:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38522 "EHLO
+        id S231132AbhHKNPg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Aug 2021 09:15:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230233AbhHKNMH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 09:12:07 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A23A0C061765
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 06:11:38 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id n7so4581329ljq.0
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 06:11:38 -0700 (PDT)
+        with ESMTP id S230204AbhHKNPf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 09:15:35 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B6CDC0613D3
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 06:15:11 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id u13so4509088lje.5
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 06:15:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lgZlLOQSGd7JAZDlhlp6F842HBfgrwr0OPnh9kA6XCg=;
-        b=xCvv2dHMI1dReAdeb7Lg/ttkEnbPTWf4OMmhHRNg9SjPOqYCOLuoE7827o0igZdq4H
-         DWMsbcOwyjpidwjxkpoUbs6qAX4sYuy0pWPbZskTqv9OtyaEQuWRRcr9v1ulOlGAnDKB
-         xnhq3u2GufuFscsk703hi7lMuIBACYzk4g3FlphtbHas09lbiSjBTKLjWX1eI6ElO4Xx
-         h7G7AV9HeY39slC509jtyj3CTYoonPhs7DVYQjNV9imOfo/dx/0Z07/4vfAFIj74s+5H
-         AXJOPphc0/zIh3ZB2pPU4uBDqRHjdmkSvdM9I8YqD+iFC0s6dB58X3Qnh0I/AzrZ9hqf
-         BD2A==
+        bh=QnPec/eU3m5mrGi8LuznMYLQZYcf94FA0C0JW0LKAsE=;
+        b=Z4BGEDcFQm40VEQZa5db/CsHBKubqcnothoCk6vr63Kwm23e7kpfoTtbP9DkxWfq/k
+         OBwPNlz/60Okj2o50QasFWalTeAD/fPzCn4fyX4SPIdcwFBFKcSX01jhHr1Mt+jf8ohx
+         KM1+id+XqrMN2DDKx51q7KnlSRDnN14Bfd7nnw4ulJTXzQyPBb8/epwSZUb17GURgoe5
+         zI+jLan16F1BAo3FKdCbX5cc8vVIXN5f0/oPkS4wC9tkyNTQdsopFxXJBOAwdsH2G/3D
+         5JcwGmw0v/q7CuKUqxvWgxym/CKP2Iz2f+jC3YcCINT+ogwGHQqR/uHlOgjJeUvwDweN
+         nbKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lgZlLOQSGd7JAZDlhlp6F842HBfgrwr0OPnh9kA6XCg=;
-        b=q3lDOlBV64oWjQqyq/NvYp3JsWcghlHoaHwfjEPy8EHnLxCfSZQgdQTOaC4yBrl7Md
-         2fMKYC8qBXHt2aa3ihxXbyZDT6xZC9IUEQtX5Tn7aOyJlxxIgO8o91VzfmSCJdyEziWJ
-         Su8mB4LZOUizaypW+Y50+2Bc+OtFGN9F95kOPCMgmXeGI6vi6mEgHfFJYB42NUPiUfqz
-         6BLNMpWZsA0dDH1OapjZc+4VSq/mZC3uJ/j9l1CKXkyMv+OeQXgmazKZcN6XKAIky+UW
-         p0EQWliFlu0NlLFfyMM8bHFXhz0/m0ndGA7kxhyi1fDfSPeOBJ/P0/VeFHjGiAjwF1Y3
-         E9bg==
-X-Gm-Message-State: AOAM533fWB+pjSiSPjzr1gN8Z0ggK5ZLjnTYutJ2Le2bm4EQl1d11BIA
-        XDG6iHntuoapoDdPpBqzKXximF4LbDPqrmjmLxtV+A==
-X-Google-Smtp-Source: ABdhPJx1DLEuFr8Fad8R4D/BUmaXsH6vX2SPni+p3ktOQcDloaMJer+ukeY+anfpsispsRqP64vLhRToFvZuNtrE8tQ=
-X-Received: by 2002:a05:651c:1318:: with SMTP id u24mr23326114lja.200.1628687497061;
- Wed, 11 Aug 2021 06:11:37 -0700 (PDT)
+        bh=QnPec/eU3m5mrGi8LuznMYLQZYcf94FA0C0JW0LKAsE=;
+        b=f2hw7WfUcHEUpouxyTRQsmVXRs1MeL6+0R7Ie7wfeQJUM4M8o+gjZyoaedQlo3AtPv
+         F06bRPrBfFr22sJNdqKGm7mzuAOmNZlvnklm3MCgCiCIFPvAn1bd1zLq/UHdRIGdMs/z
+         d07DIpCQutAGKaHCRkgJYZis2XI2O8QwbRW1lgxOGT2aO+pe4qmzqbGLed1zbTXQUL9T
+         zbezHwoOfRY3Vnn4FE/az01+sztDzYg2ZTxvpW87UKSXBPZqJZUWYBucynzlVKCUWiop
+         vQNWwobqbT9ZT6HWbI3cCYOlv2qO5bHgDizI1wRCL58lwbhf04G1h+KIM3JQHCNtGiF+
+         MRKg==
+X-Gm-Message-State: AOAM531Zl7JDDoS9u1zAtdPxE7y1E7XzCrmpSeRJLSDV0nea43pxypb8
+        PwvOTzxsaXllQmSO3XpMy9TZrjwCNogoAG4J2hm6fw==
+X-Google-Smtp-Source: ABdhPJzQ49y/p7eQbXtrGCUwcwb6bOnAuZY/TiJOLyqHA715bqGHS/zInWLNhWv/fFJqtrPHcKCUiQBx2ORHGgB2UZw=
+X-Received: by 2002:a2e:a231:: with SMTP id i17mr12773519ljm.467.1628687709990;
+ Wed, 11 Aug 2021 06:15:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <YQz9VXAHPcvQOSi2@black.fi.intel.com>
-In-Reply-To: <YQz9VXAHPcvQOSi2@black.fi.intel.com>
+References: <20210806143711.37553-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20210806143711.37553-1-andriy.shevchenko@linux.intel.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Aug 2021 15:11:26 +0200
-Message-ID: <CACRpkdaFz3Je4GmEgBzbm85nHxBNw8OSB3C6fA_KvVL1nYPxQw@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-pinctrl for 5.14-2
+Date:   Wed, 11 Aug 2021 15:14:59 +0200
+Message-ID: <CACRpkda+t4ZhL1bP1a6Cwnh9rYH9Hj59_7VLg45KV+Va5iBR9w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] x86/platform: Increase maximum GPIO number for X86_64
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linux pin control <linux-gpio@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 6, 2021 at 11:20 AM Andy Shevchenko
+On Fri, Aug 6, 2021 at 4:44 PM Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 
-> Hi Linux pin control  maintainers,
+> By default the 512 GPIOs is a maximum on any x86 platform.
+> With, for example, Intel Tiger Lake-H the SoC based controller
+> occupies up to 480 pins. This leaves only 32 available for
+> GPIO expanders or other drivers, like PMIC. Hence, bump the
+> maximum GPIO number to 1024 for X86_64 and leave 512 for X86_32.
 >
-> One fix for number of bug reports. Should go as soon as possible to v5.14.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thanks Andy, pulled into my fixes branch!
+Looks reasonable to me.
+The goal with the whole descriptor refactoring is to get this
+completely dynamic but it turns out to take forever. It is as it
+is.
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
