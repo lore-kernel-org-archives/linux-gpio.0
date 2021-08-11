@@ -2,68 +2,70 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE66C4338F
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA28C4338F
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A26C60F22
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A39F760F38
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 12:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbhHKM4I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Aug 2021 08:56:08 -0400
-Received: from mga02.intel.com ([134.134.136.20]:13614 "EHLO mga02.intel.com"
+        id S230018AbhHKM4g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Aug 2021 08:56:36 -0400
+Received: from mga07.intel.com ([134.134.136.100]:51935 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229473AbhHKM4I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Aug 2021 08:56:08 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10072"; a="202301506"
+        id S229737AbhHKM4e (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Aug 2021 08:56:34 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10072"; a="278862257"
 X-IronPort-AV: E=Sophos;i="5.84,313,1620716400"; 
-   d="scan'208";a="202301506"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 05:55:44 -0700
+   d="scan'208";a="278862257"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 05:56:10 -0700
 X-IronPort-AV: E=Sophos;i="5.84,313,1620716400"; 
-   d="scan'208";a="439705010"
+   d="scan'208";a="639153610"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 05:55:42 -0700
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 05:56:09 -0700
 Received: from andy by smile with local (Exim 4.94.2)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1mDnlg-007pM3-A5; Wed, 11 Aug 2021 15:55:36 +0300
-Date:   Wed, 11 Aug 2021 15:55:36 +0300
+        id 1mDnm7-007pMn-81; Wed, 11 Aug 2021 15:56:03 +0300
+Date:   Wed, 11 Aug 2021 15:56:03 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Cc:     Hoan Tran <hoan@os.amperecomputing.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 1/4] gpio: dwapb: Unify ACPI enumeration checks in
- get_irq() and configure_irqs()
-Message-ID: <YRPIyK7OjAERc9uD@smile.fi.intel.com>
-References: <20210804160019.77105-1-andriy.shevchenko@linux.intel.com>
- <YRPFs7qoACdN+bEw@smile.fi.intel.com>
+Subject: Re: [PATCH v1 1/1] gpiolib: Deduplicate forward declaration in the
+ consumer.h header
+Message-ID: <YRPI4+weWaSZWYJg@smile.fi.intel.com>
+References: <20210803173925.57216-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdawS25uPOf4c2m+Z0aNSN2UMNouhd6SrmRhNrLecnwzEQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YRPFs7qoACdN+bEw@smile.fi.intel.com>
+In-Reply-To: <CACRpkdawS25uPOf4c2m+Z0aNSN2UMNouhd6SrmRhNrLecnwzEQ@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Aug 11, 2021 at 03:42:27PM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 04, 2021 at 07:00:16PM +0300, Andy Shevchenko wrote:
-> > Shared IRQ is only enabled for ACPI enumeration, there is no need
-> > to have a special flag for that, since we simple can test if device
-> > has been enumerated by ACPI. This unifies the checks in dwapb_get_irq()
-> > and dwapb_configure_irqs().
+On Wed, Aug 11, 2021 at 02:05:40PM +0200, Linus Walleij wrote:
+> On Tue, Aug 3, 2021 at 7:39 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> Bart, are you okay with the series? Can it be applied, please?
+> > struct acpi_device is repeated in two branches of ifdeffery.
+> > Move it out and hence deduplicate.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> That's neat!
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-I can send it inside my PR if you prefer, btw. (I jest realized that I have
-already couple of patches in the queue.
+Thanks!
+
+Bart, I'll send this inside my usual PR in terms of GPIO ACPI support.
 
 -- 
 With Best Regards,
