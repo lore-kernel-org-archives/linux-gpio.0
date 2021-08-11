@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD9BC4320E
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 11:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41259C4320A
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 11:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBF2560FC4
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 11:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 297CA6024A
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Aug 2021 11:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237472AbhHKLtL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Aug 2021 07:49:11 -0400
+        id S237579AbhHKLtT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Aug 2021 07:49:19 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237430AbhHKLtC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 07:49:02 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D9AC0617B0
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 04:48:35 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id b15so3661333ejg.10
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 04:48:35 -0700 (PDT)
+        with ESMTP id S237507AbhHKLtE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Aug 2021 07:49:04 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B73C0613D5
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 04:48:38 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id k9so3250957edr.10
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Aug 2021 04:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dVbMUoW3ODB/HqrQj9QMsvg4UcjoOQphLtGJOfXQLG4=;
-        b=tLqQ1Q4ZmDF0GWwO+C3F55BzoRVX2dKIyhgtgjHKKcJn/PcEISO/vhg4T66jllGPyg
-         TjL2SEOYBd7o3vq+4AF3hONbsZpQByl/Rk2hxzZOAGtutCcFzU52yl9J+ILf6urD6uWk
-         3t5Jn8isV1aAB6i+H0GzYszNThuxbsDspjFZ3A/anNv1LF1M3h/KRpVJ3Xveg4LiBPXt
-         7WP3eNNpcEqwwR0rFHbuaOYmivA4J05/89x6Bko10CbWApIzxD0+KQdxxTtG6Gab2uAA
-         OCrlQrN1jcMFhV/PJcP27Mks2CN71g1Hoy/V/qTiQq+3EGsfugqpRtw2o9PGX9/IjGTl
-         zzCw==
+        bh=HPjQiKeY/Pm3cwK5bLlcgaOU8O6PA1oY+1ashl1tZII=;
+        b=IBsFx07oFf+vCulkJ+TaU4TZ8+TJY7oRmjHzjramGo3IIB07cb0AjF6zdiGjwHYAW1
+         Tqpupcr9JZsUIoJFv1IAonhPLja4SYBbpCNk3GPYB/qAtLnsD0IiIE6ENOhM2pqkGIaI
+         DlOftRgyt6Bms1W57ULog+ewElYtugxn1FuQZRM33zfR4PP0cjXG1gn/cJpD6Sa2FwZc
+         irT8vkNxP1o74fHgkJXCSPt8ggwKVdCqyPX+/i+Ezu0Tdba8YHfaDLvUnZzFWtmzCevp
+         SS4oLTSxNCSMx15LdVhMiCi6HdkCWUNefTItnCF1Y8977X4crqedED2lFf/7d3JVpwmu
+         8Kgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dVbMUoW3ODB/HqrQj9QMsvg4UcjoOQphLtGJOfXQLG4=;
-        b=oQ8+FH7gNW8z0hCFEzQJ2zOCuiHEkJiDicN7jxsSvtoFwKutX/gUVKlkWL662nP0cW
-         PyXbu1+Wi5b3YawaF7o0FVdz1kp3QiMYsymV7em7ka/+1zodL9eC1rk4lg9JLp+JdwC7
-         Jhrfsqj7bHqEgfjT2NXHBN11DZuw8PXAVXg0V2nF2NOIJfXGJhWzxAoYJS89a7FdGB1U
-         2Di4pLPdl5CLBN2rbBqoQVbYbFWcX9K9CmTaIT61dl4094YFBZo+JSyMz+urKBhTQSgI
-         QqLUKv6RPJs1RzE2vLV6Zwn1ryDCEvrBtNpZVvSRfsaxKI3XrlMinfsC69SLky2rLETl
-         5B8w==
-X-Gm-Message-State: AOAM533fUc4rGUxhhrnvDwAkPsUXhakJWg4+qGX1asmFqzkw5nPSZHh6
-        oN5d9UF7BDHAWlLkdkPKYAlHrpSOf7MPyHL9
-X-Google-Smtp-Source: ABdhPJxJLRHsH9CfRsfHJsy6TvmFx2W6Ic3KvGkXHyeQaKob/XnyuXcDZvw12C575KwVBsfnb1InOA==
-X-Received: by 2002:a17:906:5413:: with SMTP id q19mr3265627ejo.422.1628682513955;
-        Wed, 11 Aug 2021 04:48:33 -0700 (PDT)
+        bh=HPjQiKeY/Pm3cwK5bLlcgaOU8O6PA1oY+1ashl1tZII=;
+        b=CkiY/+a8njwdGXG48XfH1oreyz1rhNvZIgwU5D48x1xmeAqjxval7GBtOra8XRXu3g
+         K01bNca5c+qq9YIYZYB4YTD4FbOj2+mLwTX+eJZMIvKYe8ieZBemXWv6ufmtKzHmFyIb
+         5Av8MzIhHnuPjs04XGefEPASl/4J6oaulf30zCWWMLizVGLhEnMEA7wJopxUZhEuQf6z
+         SdY0kMwflImeS5L8X6CEZncu68+j1aNSeEgkpFmUNDf7WPx4apV/C6zHfWKkZpAUtcRZ
+         2Jp8NFAusOQZ+ThU7tJDrAMweE5rkqYlybbcDXKI6676MqGeIrmKtdNm6sNyhMARuyIK
+         1dxA==
+X-Gm-Message-State: AOAM531C00KmGelqT6yJJqXa9HYiY47ZGFsBNV/EVgKA5OvG+E9rxfIH
+        9Tk0ZCNuvCZ7PWs/4NWx9A4xmA==
+X-Google-Smtp-Source: ABdhPJwwQlTLXrsIYXHANtNL1PihNzfAw6ogeS76lZDqO+9edFnOzfqvWzpuGkVw7nv8oKZ34mb/SA==
+X-Received: by 2002:a50:ed05:: with SMTP id j5mr11111037eds.256.1628682516768;
+        Wed, 11 Aug 2021 04:48:36 -0700 (PDT)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id i10sm11096232edf.12.2021.08.11.04.48.33
+        by smtp.gmail.com with ESMTPSA id lw15sm8073337ejb.50.2021.08.11.04.48.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 04:48:33 -0700 (PDT)
+        Wed, 11 Aug 2021 04:48:36 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -77,9 +77,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH v3 3/7] dt-bindings: serial: samsung: Add Exynos850 doc
-Date:   Wed, 11 Aug 2021 14:48:23 +0300
-Message-Id: <20210811114827.27322-4-semen.protsenko@linaro.org>
+Subject: [PATCH v3 5/7] tty: serial: samsung: Fix driver data macros style
+Date:   Wed, 11 Aug 2021 14:48:25 +0300
+Message-Id: <20210811114827.27322-6-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210811114827.27322-1-semen.protsenko@linaro.org>
 References: <20210811114827.27322-1-semen.protsenko@linaro.org>
@@ -89,7 +89,13 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add compatible string for Exynos850 SoC.
+Make checkpatch happy by fixing this error:
+
+    ERROR: Macros with complex values should be enclosed in parentheses
+
+Although this change is made to keep macros consistent with consequent
+patches (adding driver data for new SoC), it's intentionally added as a
+separate patch to ease possible porting efforts in future.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
@@ -98,23 +104,26 @@ Changes in v3:
   - None
 
 Changes in v2:
-  - None
+  - Added Reviewed-by tag by Krzysztof Kozlowski
 
- Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/serial/samsung_tty.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index f064e5b76cf1..2940afb874b3 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -26,6 +26,7 @@ properties:
-           - samsung,s3c6400-uart
-           - samsung,s5pv210-uart
-           - samsung,exynos4210-uart
-+          - samsung,exynos850-uart
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index b8034c1168e0..130bdc978e93 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -2816,8 +2816,8 @@ static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
+ #define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos4210_serial_drv_data)
+ #define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos5433_serial_drv_data)
+ #else
+-#define EXYNOS4210_SERIAL_DRV_DATA (kernel_ulong_t)NULL
+-#define EXYNOS5433_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
++#define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #endif
  
-   reg:
-     maxItems: 1
+ #ifdef CONFIG_ARCH_APPLE
 -- 
 2.30.2
 
