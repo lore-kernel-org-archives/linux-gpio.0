@@ -2,96 +2,72 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E3AC4338F
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Aug 2021 14:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 243F0C4338F
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Aug 2021 14:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9D0F61077
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Aug 2021 14:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 017E96103E
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Aug 2021 14:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235930AbhHLODd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Aug 2021 10:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232351AbhHLODc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Aug 2021 10:03:32 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25796C061756
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Aug 2021 07:03:07 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id o23so11802289ejc.3
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Aug 2021 07:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BBQDInrqpR3xNcXu6R7F9TeNSiq2ysaFJIauTDeAHqg=;
-        b=mwTSayquVOz29wg29ZqDA/d6jDDXhuOYFbifCg6dh3eKWxk1QyV3ioE+35Vg5kYpbG
-         AueH7kVrQkMbfLm9JK8Vijv5p74sux4VpG48BAD2ePNnjKDN/ZofhDtQFJIjRR13J42x
-         Z0GkVtiJnQXUd22bh7h4g1pfQsE/vz+g/YRpTyJMnSvj4moo0/Dzi3w4IhDevlvS3Krn
-         gMBzUxmaX+WVVaz/b1+srtp1jT8JDjtWabiojS6igt7Y6LkugEAb+la6q2g+ytT2dngb
-         xaSLsR2bc9m2RkzEp1pMFiEwycnhpFru0yPVqcOwilEOc4P3osoEoSgvnlBhKXgATcG+
-         kejQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BBQDInrqpR3xNcXu6R7F9TeNSiq2ysaFJIauTDeAHqg=;
-        b=TPKJNoB8zSwC0A0I5dgRxhdtcHETKh/hXxEh4F0IhkowvubeoCzgG+yK4xz9sm+V3O
-         mkYQvfSEnZrFLmPtRS/++ILVfVwxSrVkriZ1TvpLnPiehrICII0Moin/9nVKPu539Mf1
-         JOekXVJRuFa6AS9t+pl2lSQWYVTIQGYH+sV0TT5Vu4D/o3Yi7lURgGOZxXqJDcGV1E15
-         5FMdyxU/hc5OqJ06PxnLLUZLSWCRgRIXxyvZbEAmQfD4T1SkNQCvR3CKdQVX1ym+jLic
-         4LFtINjGgQN3DIX7xr0pB2H5O9K3ZI2SI/c6AzgA5OtX+AzMl4oTig1x2TiD0ZaNEijA
-         Fsmw==
-X-Gm-Message-State: AOAM532Tt6/BHuWdL+U1bqIP12eSkZixmOHBCnP7U9XLU9XWge9bkKkD
-        e9rBXH6PonSMqHKnEUME2xkSt+SyJ/GrrOW4Xy2VVQ==
-X-Google-Smtp-Source: ABdhPJxjP3LTXj9hI9iuCQ1QhAhFaWUXkt+B96Wiui6Xpjb0V5O6nfUiMHxVi4x7Mctgt6bCRxUuVYodiaU8U1MaM1E=
-X-Received: by 2002:a17:907:2706:: with SMTP id w6mr3805112ejk.101.1628776985628;
- Thu, 12 Aug 2021 07:03:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210806132810.23556-1-brgl@bgdev.pl> <20210807084809.GA17852@sol>
- <CAMRc=McQOcWDexBeWKcA9CosxfG_59quusnVLYN7qu-p86BPag@mail.gmail.com>
- <20210808231012.GA6224@sol> <CAMRc=Me5N=gthd4ESrh5ChStEkHQmG1AuzKf6nZNbq2ZXtTrGQ@mail.gmail.com>
- <20210810103113.GA6637@sol> <CAMRc=MeKB4wmZw2FS79H0W75394MpzS6sq+2iehD4tXkdDGGzQ@mail.gmail.com>
- <20210812102913.GA21938@sol> <CAMRc=MfzGh7ER4VankzR5qStbrW=hCxK-d_1rF+SzD3zik=z2w@mail.gmail.com>
- <YRUcJ0kbNRa3ORl4@smile.fi.intel.com>
-In-Reply-To: <YRUcJ0kbNRa3ORl4@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 12 Aug 2021 16:02:54 +0200
-Message-ID: <CAMRc=Md1EN4Fk4D5+aO-iqr2uG2UiiW91_knpgZH8K_0RdOocg@mail.gmail.com>
-Subject: Re: [libgpiod v2.0][PATCH] core: extend config objects
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
+        id S237937AbhHLOON (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Aug 2021 10:14:13 -0400
+Received: from mga17.intel.com ([192.55.52.151]:19633 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237893AbhHLOON (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Aug 2021 10:14:13 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10074"; a="195628171"
+X-IronPort-AV: E=Sophos;i="5.84,316,1620716400"; 
+   d="scan'208";a="195628171"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2021 07:13:47 -0700
+X-IronPort-AV: E=Sophos;i="5.84,316,1620716400"; 
+   d="scan'208";a="673619429"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2021 07:13:44 -0700
+Received: from andy by smile with local (Exim 4.94.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1mEBSk-008fEr-5m; Thu, 12 Aug 2021 17:13:38 +0300
+Date:   Thu, 12 Aug 2021 17:13:38 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux GPIO <linux-gpio@vger.kernel.org>,
+        linux-acpi@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Jack Winch <sunt.un.morcov@gmail.com>,
-        Helmut Grohne <helmut.grohne@intenta.de>,
-        Ben Hutchings <ben.hutchings@essensium.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     David Thompson <davthompson@nvidia.com>,
+        Asmaa Mnebhi <asmaa@nvidia.com>,
+        Liming Sun <limings@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Possible ACPI abuse in Mellanox BlueField Gigabit Ethernet driver
+Message-ID: <YRUskkALrPLa2cSf@smile.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 3:03 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Aug 12, 2021 at 02:51:02PM +0200, Bartosz Golaszewski wrote:
-> > On Thu, Aug 12, 2021 at 12:29 PM Kent Gibson <warthog618@gmail.com> wrote:
->
-> > As you said - it's on the heap, so who cares. But this is also an
-> > internal structure and so we can use bit fields. That should reduce
-> > the memory footprint significantly as we now don't require more than 3
-> > bits for any given enum. That would leave us with the debounce period
-> > and offset as full size variables.
->
-> Side note (I believe you know about): bit fields are the beasts when you have
-> to have a locked access.
->
+Hi!
 
-The library isn't thread-safe. AFAIK a simple mutex around every
-operation on a struct containing bitfields will be enough for a user
-to guarantee no race conditions in user-space.
+From time to time I do grep kernel for ACPI_RESOURCE_TYPE_GPIO usage.
+Recently the drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_gpio.c
+caught my eye.
 
-Bart
+Looking into the code I see that it looks like misunderstanding of how ACPI
+works with GPIOs. First of all, I would like to inform that this code has
+been properly reviewed neither by GPIO nor by ACPI maintainers. Second, before
+going it to the real conclusions (and potential revert of this), I would like
+to see the real ACPI tables for this and some explanations from the authors of
+the driver about GPIO usage here (from hw and sw perspectives).
+
+It makes sense to discuss ASAP, otherwise I would really want to revert it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
