@@ -2,140 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7073C4320A
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Aug 2021 00:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD97C4338F
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 01:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B294960FF2
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Aug 2021 00:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EC97613D0
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 01:19:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235321AbhHOAPu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 14 Aug 2021 20:15:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234094AbhHOAPs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Aug 2021 20:15:48 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 377DFC0617AD
-        for <linux-gpio@vger.kernel.org>; Sat, 14 Aug 2021 17:15:19 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id w13-20020a17090aea0db029017897a5f7bcso21584584pjy.5
-        for <linux-gpio@vger.kernel.org>; Sat, 14 Aug 2021 17:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GsfztjF57m3pL2gpDk9eS3kN08NB38RijkWdKD4fIL8=;
-        b=Ijb2VXbwoUHuzDWiyRBuMXsOhkd6pjhfxXiPKMEPoskiFUHqoqUEWjFGYMRYt+uvqc
-         fKBDDdLuej4O5AmXcr4D7zVjnSSyoo8do5wJPy9Qr/nGKQtr98yf9cXzrsGAnpaI65Qd
-         RqRBb7ia2bDNBiOeZbMNgfWgY5qN6zLyvjXlOaZumF0Ht39z1uVwReWbCpse6QCAljmp
-         b6IYUxMsQxEvIon1U9DLy1ZWpDPbnxHS0Aiwa0oVawFVFnbLMsdFb6c4u34/w3Lh8k2s
-         M3x5IDpcBlK6IXooSX0lYlRt8k0XfFz5u4X1x4wkYRDY9gQKDR0nBaJF1BvNQXsig2D0
-         svSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GsfztjF57m3pL2gpDk9eS3kN08NB38RijkWdKD4fIL8=;
-        b=ANpLJhQeSGb4wIWEoAKKmVMy1UyYYQm+IOtZhRocQtGtfnnw5EXYApLkvshA6za2rQ
-         lhgsbzp3F0Y+niFxQA3Iw9OEHHXbt3eAIpkxOB1NOQcJgQXh/5uT6/XfVegG89DOwkx6
-         b3mAd+DIvZB8BSlJvmu9j7+EtygVrtqOKUb6gqBWF0cXla6WjbB/iYSa5Wa3lxcV8BNH
-         YRfceZ2DNDspd+RwQZZOlGWnmiqulx5PRCHIkv0lloxMH43yPYUDUhZUhQ2ax8Iro4Pf
-         q3fFVehR01flMDDdHNZPY8Kusw5VztpV0obGQCQ3T09JrLFyFvDQD/jhs7BfoJSi4bUS
-         QZSA==
-X-Gm-Message-State: AOAM531+J93vzh5RjSNh10DKLGJI6PZfi6Wc0Yht4D6QMnabjUKUE1VJ
-        xNd2Am9ucwLMuBFS2p01Ucg=
-X-Google-Smtp-Source: ABdhPJzVKPE1HY2gHKHQP7gaYykw/QEvhRg7xruqsMpXUgpyzVMb5otRaDHud2fJn1Y6N8GG5wdwyg==
-X-Received: by 2002:aa7:8ec1:0:b029:3cd:cd3c:b85c with SMTP id b1-20020aa78ec10000b02903cdcd3cb85cmr8810530pfr.15.1628986518606;
-        Sat, 14 Aug 2021 17:15:18 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:ee1a:c78f:4b31:7139])
-        by smtp.gmail.com with ESMTPSA id f1sm6897982pfk.115.2021.08.14.17.15.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Aug 2021 17:15:17 -0700 (PDT)
-Date:   Sat, 14 Aug 2021 17:15:14 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [bug report] tty: st-asc: switch to using devm_gpiod_get()
-Message-ID: <YRhckpqbyqQh1Jtc@google.com>
-References: <20210813124155.GA7367@kili>
+        id S231772AbhHPBU0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 15 Aug 2021 21:20:26 -0400
+Received: from lucky1.263xmail.com ([211.157.147.133]:45892 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229594AbhHPBU0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Aug 2021 21:20:26 -0400
+Received: from localhost (unknown [192.168.167.16])
+        by lucky1.263xmail.com (Postfix) with ESMTP id CB635D63BE;
+        Mon, 16 Aug 2021 09:19:51 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P26933T140041269528320S1629076790609014_;
+        Mon, 16 Aug 2021 09:19:51 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <2bb0cc66aeba7389703dedd80a74259f>
+X-RL-SENDER: jay.xu@rock-chips.com
+X-SENDER: xjq@rock-chips.com
+X-LOGIN-NAME: jay.xu@rock-chips.com
+X-FST-TO: linus.walleij@linaro.org
+X-RCPT-COUNT: 9
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Jianqun Xu <jay.xu@rock-chips.com>
+To:     linus.walleij@linaro.org, heiko@sntech.de
+Cc:     bgolaszewski@baylibre.com, robh+dt@kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jianqun Xu <jay.xu@rock-chips.com>
+Subject: [PATCH v8 0/9] gpio-rockchip driver
+Date:   Mon, 16 Aug 2021 09:19:39 +0800
+Message-Id: <20210816011948.1118959-1-jay.xu@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210813124155.GA7367@kili>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Dan,
+Separate gpio driver from pinctrl driver, and support gpio v2 controller.
 
-On Fri, Aug 13, 2021 at 03:41:55PM +0300, Dan Carpenter wrote:
-> Hello Dmitry Torokhov,
-> 
-> The patch 8c44f9b566a3: "tty: st-asc: switch to using
-> devm_gpiod_get()" from Jan 4, 2020, leads to the following
-> Smatch static checker warning:
-> 
-> 	drivers/gpio/gpiolib.c:3066 gpiod_set_consumer_name()
-> 	warn: sleeping in atomic context
-> 
-> drivers/gpio/gpiolib.c
->     3062 int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
->     3063 {
->     3064 	VALIDATE_DESC(desc);
->     3065 	if (name) {
-> --> 3066 		name = kstrdup_const(name, GFP_KERNEL);
-> 
-> asc_set_termios() <- disables preempt
-> -> gpiod_set_consumer_name()
-> 
->     3067 		if (!name)
->     3068 			return -ENOMEM;
->     3069 	}
->     3070 
->     3071 	kfree_const(desc->label);
->     3072 	desc_set_label(desc, name);
->     3073 
->     3074 	return 0;
->     3075 }
+Jianqun Xu (9):
+  pinctrl/rockchip: always enable clock for gpio controller
+  pinctrl/rockchip: separate struct rockchip_pin_bank to a head file
+  pinctrl/rockchip: add pinctrl device to gpio bank struct
+  dt-bindings: gpio: change items restriction of clock for
+    rockchip,gpio-bank
+  gpio/rockchip: add driver for rockchip gpio
+  gpio/rockchip: use struct rockchip_gpio_regs for gpio controller
+  gpio/rockchip: support next version gpio controller
+  gpio/rockchip: drop irq_gc_lock/irq_gc_unlock for irq set type
+  pinctrl/rockchip: drop the gpio related codes
 
-Thank you for the bug report, but that is not the offending commit, as
-it simply swapped one devm_* call for another, and devres_alloc() that
-is being used in almost all devm calls, including the ones in this
-particular case, uses GFP_KERNEL allocation.
+ .../bindings/gpio/rockchip,gpio-bank.yaml     |   5 +-
+ drivers/gpio/Kconfig                          |   8 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-rockchip.c                  | 771 +++++++++++++++
+ drivers/pinctrl/pinctrl-rockchip.c            | 909 +-----------------
+ drivers/pinctrl/pinctrl-rockchip.h            | 287 ++++++
+ 6 files changed, 1089 insertions(+), 892 deletions(-)
+ create mode 100644 drivers/gpio/gpio-rockchip.c
+ create mode 100644 drivers/pinctrl/pinctrl-rockchip.h
 
-The problem originally comes from:
+--
+v8:
+ - fix rockchip,gpio-bank.yaml about clocks and clock-names
+ - fix commit author of rockchip,gpio-bank.yaml patch to me
 
-commit d7356256488c544b8fdc2c3a775ce069546d7933
-Author: Lee Jones <lee.jones@linaro.org>
-Date:   Fri Feb 3 10:23:13 2017 +0000
+v7:
+ - include <linux/gpio/driver.h> instead of <linux/gpio.h>
+ - use gpio align id instead of gpio-name
 
-    serial: st-asc: (De)Register GPIOD and swap Pinctrl profiles
+v6:
+ - new gpio-driver first and then drop gpio from pinctrl
+ - reorder patches
+ - cherry-pick gpio dt-binding from chenliang
 
-    When hardware flow-control is disabled, manual toggling of the UART's
-    reset line (RTS) using userland applications (e.g. stty) is not
-    possible, since the ASC IP does not provide this functionality in the
-    same was as some other IPs do.  Thus, we have to do this manually.
+v5:
+ - change to devel branch
 
-    This patch ensures that when HW flow-control is disabled the RTS/CTS
-    lines are free to be registered via the GPIO API.  It also ensures
-    any registered GPIO lines are unregistered when HW flow-control is
-    requested, allowing the IP to control them automatically.
+2.25.1
 
-    Acked-by: Peter Griffin <peter.griffin@linaro.org>
-    Signed-off-by: Lee Jones <lee.jones@linaro.org>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-that added the problematic devm use under spinlock; I'll leave it to Lee
-and Greg to sort this out.
 
-Thanks.
-
--- 
-Dmitry
