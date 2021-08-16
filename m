@@ -2,105 +2,98 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3E0C4338F
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C58BC4338F
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F6FD63250
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:37:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A92A63250
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236968AbhHPNhx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Aug 2021 09:37:53 -0400
-Received: from mga01.intel.com ([192.55.52.88]:60290 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237230AbhHPNhR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 16 Aug 2021 09:37:17 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10077"; a="237925164"
-X-IronPort-AV: E=Sophos;i="5.84,326,1620716400"; 
-   d="scan'208";a="237925164"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2021 06:35:48 -0700
-X-IronPort-AV: E=Sophos;i="5.84,326,1620716400"; 
-   d="scan'208";a="509701852"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2021 06:35:45 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1mFcmA-00APGI-NO; Mon, 16 Aug 2021 16:35:38 +0300
-Date:   Mon, 16 Aug 2021 16:35:38 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v1 1/1] x86/platform: Increase maximum GPIO number for
- X86_64
-Message-ID: <YRppqnAqJ1G+4mva@smile.fi.intel.com>
-References: <20210806143711.37553-1-andriy.shevchenko@linux.intel.com>
- <CAJZ5v0iTNwQfh6ZZxry16hOjokGOOSZthq6C_yed07a2HQ7h2Q@mail.gmail.com>
+        id S231297AbhHPNjx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Aug 2021 09:39:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52386 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240689AbhHPNjj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Aug 2021 09:39:39 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D834C025266;
+        Mon, 16 Aug 2021 06:18:54 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d17so20629497plr.12;
+        Mon, 16 Aug 2021 06:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=881XdB9vU/nigAnWih80+R4v8yge7h7oioJ/rj6JcZo=;
+        b=Ekh5QJmcg6Lk1hsn1Aw1QnIXMacXTw+C2N04gAZ73bnSuziHZWuxY2SDdUxVvmTMcT
+         FoRKM2ESt8GwWGjZjnYpatGs9Ep8CWgfJI0ZN0t2uV68R7dIIARAu94BU1eFL+TsE1eF
+         RX8cfFvAuNOyuQCdHKGbolovDHVNDHQBNhClWP8/oGRpR1AxeMDm60UCciWbcCdbT41c
+         gnCP8QKL4QueCKnGRD/xqsKKDzeRaD0T028GdrcdieMIH1TxwMmCmTM4XFRz/g6TWH3N
+         qoJn1O5rUzUtIG+nAoaTc0XfsU1aGJkMGur6CxfH1W7rFX7jIpH0NaFgdL/eiMfo0TDT
+         LPSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=881XdB9vU/nigAnWih80+R4v8yge7h7oioJ/rj6JcZo=;
+        b=lKkLqgGglTr48yCbonDQPUK7OYCXAa31nz0C1ACkywhKzdPvlwhnXRDOcvOkV7GAmb
+         7Ix71MkHrOL5Rkd1q/9tSB60lWvSZ+jQ1djYn55uddXL4uHUP4rzcTeYsNB9r8nHmIXP
+         r3n4WJiNDUrxxQsDuJH7RK84sySsnq8qkKb1g7xglM5uxqW94LCeo5tzvCV5aNidc9gw
+         JEPiFTiRUe6MYFMI5B3YvbBSy61p/GAeVv1/YSpjg4/4cpeQyjLczHPbuKh2GgPBJFGR
+         Lr5+QJVvHhVrAlnEg5EAinPBMjGpu3NzsYCGX/QN0Xb+ha1avJPDLC+KzqDYY6bvNyRY
+         HgAg==
+X-Gm-Message-State: AOAM530siyQqtCOf5wC6K3pc1H2DhjF6JDoY/nt9n3bRY+vcik396QvN
+        sSayobXYsUDOnsRWRHD1uF2xJkR5tZgwohLfi9E=
+X-Google-Smtp-Source: ABdhPJwAFCvKCT3L168GgeP6F6IpC3Yj2gZWMsGtllzXqlFmeOxBdlOH3QmysjW2ofu8LxHX2FTv7gX/fz6m1yTohb8=
+X-Received: by 2002:a17:902:e786:b029:12d:2a7:365f with SMTP id
+ cp6-20020a170902e786b029012d02a7365fmr13347209plb.21.1629119933482; Mon, 16
+ Aug 2021 06:18:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0iTNwQfh6ZZxry16hOjokGOOSZthq6C_yed07a2HQ7h2Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210726125436.58685-1-andriy.shevchenko@linux.intel.com>
+ <20210726125436.58685-3-andriy.shevchenko@linux.intel.com> <YRpihHP3kDz5nYV9@google.com>
+In-Reply-To: <YRpihHP3kDz5nYV9@google.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 16 Aug 2021 16:18:14 +0300
+Message-ID: <CAHp75VdcWsNFervoU7e4_m7qVKAnWXzF2z2mUgKg06-qmwn-2A@mail.gmail.com>
+Subject: Re: [PATCH v1 3/4] mfd: intel_quark_i2c_gpio: Convert GPIO to use
+ software nodes
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 03:25:13PM +0200, Rafael J. Wysocki wrote:
-> On Fri, Aug 6, 2021 at 4:44 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
+On Mon, Aug 16, 2021 at 4:11 PM Lee Jones <lee.jones@linaro.org> wrote:
+> On Mon, 26 Jul 2021, Andy Shevchenko wrote:
+>
+> > The driver can provide a software node group instead of
+> > passing legacy platform data. This will allow to drop
+> > the legacy platform data structures along with unifying
+> > a child device driver to use same interface for all
+> > property providers, i.e. Device Tree, ACPI, and board files.
 > >
-> > By default the 512 GPIOs is a maximum on any x86 platform.
-> > With, for example, Intel Tiger Lake-H the SoC based controller
-> > occupies up to 480 pins. This leaves only 32 available for
-> > GPIO expanders or other drivers, like PMIC. Hence, bump the
-> > maximum GPIO number to 1024 for X86_64 and leave 512 for X86_32.
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  drivers/mfd/intel_quark_i2c_gpio.c | 70 ++++++++++++++++--------------
+> >  1 file changed, 37 insertions(+), 33 deletions(-)
+>
+> Doesn't seem to want to apply.
 
-Thanks for review, my answers below.
-
-> > +# The GPIO number here must be sorted by descending number. In case of
-> > +# a multiplatform kernel, we just want the highest value required by the
-> > +# selected platforms.
-> > +config ARCH_NR_GPIO
-> > +       int
-> > +       default 1024 if X86_64
-> > +       default 512 if X86_32
-> > +       default 0
-> 
-> Wouldn't
-> 
-> default 1024 if X86_64
-> default 512
-> 
-> be sufficient?
-> 
-> It's either X86_64 or X86_32 anyway AFAICS.
-
-I guess so.
-
-> > +       help
-> > +         Maximum number of GPIOs in the system.
-> > +
-> > +         If unsure, leave the default value.
-
-Btw, what do you think. do we need comment above and help text here? I copied
-these from ARM, but I'm not sure it would be useful on x86 as much.
-
+Would it be okay for you to pull the immutable tag?
 
 -- 
 With Best Regards,
 Andy Shevchenko
-
-
