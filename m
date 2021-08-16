@@ -2,111 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D401C4338F
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE6FC4320A
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3AD6323E
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0007A632D1
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Aug 2021 13:56:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238435AbhHPNnn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Aug 2021 09:43:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52946 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237436AbhHPNni (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Aug 2021 09:43:38 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2629BC077B53
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Aug 2021 06:33:32 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id r6so23693784wrt.4
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Aug 2021 06:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=mZFg4xEN3Bxhc0hUWQKABU041LJFnqWbJu4YrSNKR7w=;
-        b=AnmI6+P/ZIIlH7o0KaSk/b+Dpr/NS2SOnfJ9FiwQ1nJFwJbm/bA4LOlsFoy6sSv8pG
-         Pt5+zAAQPVFAEl/ZR8NvhFinTcoRgkM5H1NhA7eETZKjQqeNTo839BJQWuNrAAToM/mD
-         vxEvJiIvrLtfE+O6/5Ului1L1KjUhMyRVZQVx28M+nS3bkHhb8/jyAzbUpVDT+SUq50r
-         3g8ihz3T+VCOQ/+O/GDLTIbrVklwV178Kj6+bS+cilDyUsQF6BLeoOhs+Z9gvhGxsRyj
-         ufqAl3nNbXIQiq8o3r9MdfOYbB2ybBiemd4dX487bOA2QyGCShkGANVgI/PHE+jnarJM
-         NJBg==
+        id S229714AbhHPN46 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Aug 2021 09:56:58 -0400
+Received: from mail-oi1-f181.google.com ([209.85.167.181]:38628 "EHLO
+        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229517AbhHPN45 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Aug 2021 09:56:57 -0400
+Received: by mail-oi1-f181.google.com with SMTP id u25so26782416oiv.5;
+        Mon, 16 Aug 2021 06:56:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mZFg4xEN3Bxhc0hUWQKABU041LJFnqWbJu4YrSNKR7w=;
-        b=sPiPXz26toQP0v4hyrsid3T2YF1o01BFHQDXsU5pwFioodOyl3VSwA3dKnsoq4ZWll
-         rlrKSRL5m9HCXZsjPT7Ahw7JJ44m/1Pll2rB8Q9QhkM93iqqieTHXixZVnTL8w2wWCur
-         rydbJ2wAwAbXBaNWKhx+sLLVnERWcdEsGs4iW05Q0CDd/id54aKRAfyOZSdJVoukEIXd
-         oAYDazazzVaGKkx0qvyW0DtVqtFr4L3znHlSKqCqgHrg13RcTWPoID+/d5ZaPhdhlKvP
-         TsgYgkjLQ+dfm4LgHjUYzym6/9VkDYXSfXmWfJQT5aieiLRieyJ1MQRvXgkaKyQ9FVf0
-         JEoA==
-X-Gm-Message-State: AOAM532BjSx6/7Yky3F6rjHOuCXXQk+KqnxvZpCUbtWlDaMUaHiwOcBp
-        jjym1O8DZqPFvTZIrkFVl366yA==
-X-Google-Smtp-Source: ABdhPJxhP6si53hvzcde8UfcYZRShfYYtrA+OlcdUQoeifyfNzAtOHpkX5O+H/nXCggbhWeaTlka0w==
-X-Received: by 2002:adf:a3cc:: with SMTP id m12mr9987121wrb.97.1629120810815;
-        Mon, 16 Aug 2021 06:33:30 -0700 (PDT)
-Received: from google.com ([2.31.167.59])
-        by smtp.gmail.com with ESMTPSA id y4sm10280669wmi.22.2021.08.16.06.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 06:33:30 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 14:33:28 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0uKKAqouMrQ5RgAbl37XN2HPKshvq14pMZ68Q1KvZR4=;
+        b=GoE6oa48lNfNl1J4y5toavcHOWmP+I7MQpWI+llmbsBWT/bsFQw+3xWrh669vhyagO
+         DkY/KJNHivFeg3qXwnex4KVyhQruDt31sPOpPAoQ6vb0wRondhnzQaVpR4mm7XoeR3O/
+         1RLXISFU5urDA8eGKOIVicFacEGmh0kwuD3v3t8fwc4ow+cduQ+Brfnui2j0tB2YyG2R
+         C7Kuvo1y1obDz4IYSD5PIonRANsIyKuXF4PQW0TTULv+E7qnQiGMTosO3csvYpHe3T49
+         2njrR2N5ziOT6jF6wuEX7gZlHLwrTmU874nX0i4GSKRDngMNs5opLlh4KtI9XESm0hV9
+         di3g==
+X-Gm-Message-State: AOAM530sx8cho9lAiOcPWTJbeVfJ1cex5TbluSKaRh7RF7HFFdAVlIFJ
+        zen15Yif3xHxSE9ZH3bSV0XKRoHl9OXKxc/bE1c=
+X-Google-Smtp-Source: ABdhPJzr4FSgkxW5uRL0cvQgUoHQ2a9lqILSFnzzFljV07kigV/zFHRKEVbH4KzCPm8eekeCuQ0eIA+Kxb0DZTa0IdE=
+X-Received: by 2002:a05:6808:220c:: with SMTP id bd12mr12147522oib.157.1629122185765;
+ Mon, 16 Aug 2021 06:56:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210806143711.37553-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0iTNwQfh6ZZxry16hOjokGOOSZthq6C_yed07a2HQ7h2Q@mail.gmail.com> <YRppqnAqJ1G+4mva@smile.fi.intel.com>
+In-Reply-To: <YRppqnAqJ1G+4mva@smile.fi.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 16 Aug 2021 15:55:59 +0200
+Message-ID: <CAJZ5v0ib7oP5EG2k6_Q0Yiq=_WGu01iGVDmV+QoVRLaxTXZHDw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] x86/platform: Increase maximum GPIO number for X86_64
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v1 3/4] mfd: intel_quark_i2c_gpio: Convert GPIO to use
- software nodes
-Message-ID: <YRppKOxp4Jya5iEI@google.com>
-References: <20210726125436.58685-1-andriy.shevchenko@linux.intel.com>
- <20210726125436.58685-3-andriy.shevchenko@linux.intel.com>
- <YRpihHP3kDz5nYV9@google.com>
- <CAHp75VdcWsNFervoU7e4_m7qVKAnWXzF2z2mUgKg06-qmwn-2A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VdcWsNFervoU7e4_m7qVKAnWXzF2z2mUgKg06-qmwn-2A@mail.gmail.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 16 Aug 2021, Andy Shevchenko wrote:
-
-> On Mon, Aug 16, 2021 at 4:11 PM Lee Jones <lee.jones@linaro.org> wrote:
-> > On Mon, 26 Jul 2021, Andy Shevchenko wrote:
-> >
-> > > The driver can provide a software node group instead of
-> > > passing legacy platform data. This will allow to drop
-> > > the legacy platform data structures along with unifying
-> > > a child device driver to use same interface for all
-> > > property providers, i.e. Device Tree, ACPI, and board files.
+On Mon, Aug 16, 2021 at 3:35 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Aug 16, 2021 at 03:25:13PM +0200, Rafael J. Wysocki wrote:
+> > On Fri, Aug 6, 2021 at 4:44 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
 > > >
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > ---
-> > >  drivers/mfd/intel_quark_i2c_gpio.c | 70 ++++++++++++++++--------------
-> > >  1 file changed, 37 insertions(+), 33 deletions(-)
+> > > By default the 512 GPIOs is a maximum on any x86 platform.
+> > > With, for example, Intel Tiger Lake-H the SoC based controller
+> > > occupies up to 480 pins. This leaves only 32 available for
+> > > GPIO expanders or other drivers, like PMIC. Hence, bump the
+> > > maximum GPIO number to 1024 for X86_64 and leave 512 for X86_32.
+>
+> Thanks for review, my answers below.
+>
+> > > +# The GPIO number here must be sorted by descending number. In case of
+> > > +# a multiplatform kernel, we just want the highest value required by the
+> > > +# selected platforms.
+> > > +config ARCH_NR_GPIO
+> > > +       int
+> > > +       default 1024 if X86_64
+> > > +       default 512 if X86_32
+> > > +       default 0
 > >
-> > Doesn't seem to want to apply.
-> 
-> Would it be okay for you to pull the immutable tag?
+> > Wouldn't
+> >
+> > default 1024 if X86_64
+> > default 512
+> >
+> > be sufficient?
+> >
+> > It's either X86_64 or X86_32 anyway AFAICS.
+>
+> I guess so.
+>
+> > > +       help
+> > > +         Maximum number of GPIOs in the system.
+> > > +
+> > > +         If unsure, leave the default value.
+>
+> Btw, what do you think. do we need comment above and help text here? I copied
+> these from ARM, but I'm not sure it would be useful on x86 as much.
 
-What immutable tag?
+Both the comment and the help text aren't particularly useful IMO.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The comment is a bit confusing even, because x86 kernels are
+multiplatform as a rule.
