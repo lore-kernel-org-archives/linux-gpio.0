@@ -2,144 +2,186 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13602C4338F
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Aug 2021 13:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6083BC432BE
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Aug 2021 14:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC79661053
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Aug 2021 13:05:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F7FF610A7
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Aug 2021 14:08:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235482AbhHRNGK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Aug 2021 09:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235793AbhHRNGI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Aug 2021 09:06:08 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53DDFC061764
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Aug 2021 06:05:33 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1mGLG6-0002LF-3u; Wed, 18 Aug 2021 15:05:30 +0200
-Subject: Re: [PATCH V3 3/3] gpio: modepin: Add driver support for modepin GPIO
- controller
-To:     Piyush Mehta <piyushm@xilinx.com>, "arnd@arndb.de" <arnd@arndb.de>,
-        "zou_wei@huawei.com" <zou_wei@huawei.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        Michal Simek <michals@xilinx.com>,
-        Jiaying Liang <jliang@xilinx.com>,
-        "iwamatsu@nigauri.org" <iwamatsu@nigauri.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Rajan Vaja <RAJANV@xilinx.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Srinivas Goud <sgoud@xilinx.com>,
+        id S238217AbhHROIu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Aug 2021 10:08:50 -0400
+Received: from mga07.intel.com ([134.134.136.100]:11730 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238406AbhHROIu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 18 Aug 2021 10:08:50 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10080"; a="280066329"
+X-IronPort-AV: E=Sophos;i="5.84,330,1620716400"; 
+   d="scan'208";a="280066329"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2021 07:08:14 -0700
+X-IronPort-AV: E=Sophos;i="5.84,330,1620716400"; 
+   d="scan'208";a="511212717"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2021 07:08:07 -0700
+Received: from andy by smile with local (Exim 4.94.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1mGMEW-00B8AF-Ie; Wed, 18 Aug 2021 17:07:56 +0300
+Date:   Wed, 18 Aug 2021 17:07:56 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Asmaa Mnebhi <asmaa@nvidia.com>
+Cc:     David Thompson <davthompson@nvidia.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        git <git@xilinx.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20210818081018.2620544-1-piyush.mehta@xilinx.com>
- <20210818081018.2620544-4-piyush.mehta@xilinx.com>
- <b3d718af-6eb7-a212-f599-d0d91273afdc@pengutronix.de>
- <SJ0PR02MB86443029095BF5949E51808AD4FF9@SJ0PR02MB8644.namprd02.prod.outlook.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <a1bd7d9f-5746-2d4c-8658-beb804468846@pengutronix.de>
-Date:   Wed, 18 Aug 2021 15:05:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Liming Sun <limings@nvidia.com>
+Subject: Re: [PATCH v1 5/6] TODO: gpio: mlxbf2: Introduce IRQ support
+Message-ID: <YR0UPG2451aGt9Xg@smile.fi.intel.com>
+References: <20210816115953.72533-1-andriy.shevchenko@linux.intel.com>
+ <20210816115953.72533-6-andriy.shevchenko@linux.intel.com>
+ <CH2PR12MB3895ACF821C8242AA55A1DCDD7FD9@CH2PR12MB3895.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <SJ0PR02MB86443029095BF5949E51808AD4FF9@SJ0PR02MB8644.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CH2PR12MB3895ACF821C8242AA55A1DCDD7FD9@CH2PR12MB3895.namprd12.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Piyush,
+On Mon, Aug 16, 2021 at 09:34:50PM +0000, Asmaa Mnebhi wrote:
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com> 
+> Sent: Monday, August 16, 2021 8:00 AM
 
-On 18.08.21 12:09, Piyush Mehta wrote:
-> Hi Ahmad,
-> 
-> -----Original Message-----
-> From: Ahmad Fatoum <a.fatoum@pengutronix.de> 
-> Sent: Wednesday, August 18, 2021 2:22 PM
-> To: Piyush Mehta <piyushm@xilinx.com>; arnd@arndb.de; zou_wei@huawei.com; gregkh@linuxfoundation.org; linus.walleij@linaro.org; Michal Simek <michals@xilinx.com>; Jiaying Liang <jliang@xilinx.com>; iwamatsu@nigauri.org; bgolaszewski@baylibre.com; robh+dt@kernel.org; Rajan Vaja <RAJANV@xilinx.com>
-> Cc: linux-gpio@vger.kernel.org; devicetree@vger.kernel.org; git <git@xilinx.com>; Srinivas Goud <sgoud@xilinx.com>; linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Pengutronix Kernel Team <kernel@pengutronix.de>
-> Subject: Re: [PATCH V3 3/3] gpio: modepin: Add driver support for modepin GPIO controller
-> 
-> On 18.08.21 10:10, Piyush Mehta wrote:
->> This patch adds driver support for the zynqmp modepin GPIO controller.
->> GPIO modepin driver set and get the value and status of the PS_MODE 
->> pin, based on device-tree pin configuration. These four mode pins are 
->> configurable as input/output. The mode pin has a control register, 
->> which have lower four-bits [0:3] are configurable as input/output, 
->> next four-bits can be used for reading the data  as input[4:7], and 
->> next setting the output pin state output[8:11].
->>
->> Signed-off-by: Piyush Mehta <piyush.mehta@xilinx.com>
->> Acked-by: Michal Simek <michal.simek@xilinx.com>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
-> 
->> +/**
->> + * modepin_gpio_dir_in - Set the direction of the specified GPIO pin as input
->> + * @chip:	gpio_chip instance to be worked on
->> + * @pin:	gpio pin number within the device
->> + *
->> + * Return: 0 always
->> + */
->> +static int modepin_gpio_dir_in(struct gpio_chip *chip, unsigned int 
->> +pin) {
->> +	return 0;
->> +}
-> 
-> You say the gpio controller can configure pins as inputs or outputs.
-> These pins are controller via firmware driver. We are updating BOOT_PIN_CTRL 	0xFF5E0250 register.
-> [0:3]  = When 0, the pins will be inputs from the board to the PS. When 1, the PS will drive these pins
+...
 
-Ok. So if you want to configure the pin as input, you should call zynqmp_pm_bootmode_write
-to write a zero into that bit.
+> +static irqreturn_t mlxbf2_gpio_irq_handler(int irq, void *ptr) {
+> 
+> So how do you suggest registering this handler?
 
-But there's only one zynqmp_pm_bootmode_write in the GPIO driver and it's in modepin_gpio_set_value,
-which does output, not input. If I understand you right, there should be a modepin_gpio_set_value in
-modepin_gpio_dir_in as well?
- 
-> Yet, .direction_input is doing nothing. So, it's not clear to me, how this sequence could work:
-> 
->  - set gpio output high (writes bootmode)
->  - set gpio to input (no-op, pin will remain high, not high impedance)
+As usual. This handler should be probably registered via standard mechanisms.
+Perhaps it's hierarchical IRQ, then use that facility of GPIO library.
+(see gpio-dwapb.c for the example).
 
-This is a valid sequence for a GPIO consumer and I don't see how this GPIO driver could
-honor it. Could you clarify?
+> 1) should I still use BF_RSH0_DEVICE_YU_INT shared interrupt signal?
 
-Cheers,
-Ahmad
+I don't know your hardware connection between GPIO and GIC. You have to look
+into TRM and see how they are connected and what should be programmed for the
+mode you want to run this in.
 
-> 
-> 
-> 
-> 
-> 
-> 
-> I didn't check the previous discussions, but if this indeed works as intended, the how should be written here into the driver. That is a more useful comment than kernel doc for a stub function.
-> 
+> 2) or does Linux kernel know (based on parsing GpioInt) how trigger the
+> handler based on the GPIO datain changing (active low/high)? In this case,
+> the kernel will call this handler whenever the GPIO pin (9 or 12) value
+> changes.
 
+After driver in place kernel will know how to map, register and handle the GPIO
+interrupt. But the GIC part is out of the picture here. It may be you will need
+additional stuff there, like disabling (or else) the interrupts, or providing a
+bypass. I can't answer to this.
+
+> I need to check whether GPIO is active low/high but lets assume for
+> now it is open drain active low. We will use acpi_dev_gpio_irq_get to
+> translate GpioInt to a Linux IRQ number:
+
+> irq = acpi_dev_gpio_irq_get_by(ACPI_COMPANION(dev), "phy-gpios", 0);
+> ret = devm_request_irq(dev, irq, mlxbf2_gpio_irq_handler, IRQF_ONESHOT | IRQF_SHARED, dev_name(dev), gs);
+
+Yes.
+(I dunno about one short and shared flags, but you should know it better than me)
+
+> And I will need to add GpioInt to the GPI0 ACPI table as follows:
+
+But you told me that it's already on the market, how are you suppose to change
+existing tables?
+
+> // GPIO Controller
+>       Device(GPI0) {
+>        Name(_HID, "MLNXBF22")
+>         Name(_UID, Zero)
+>         Name(_CCA, 1)
+>         Name(_CRS, ResourceTemplate() {
+>           // for gpio[0] yu block
+>          Memory32Fixed(ReadWrite, 0x0280c000, 0x00000100)
+>          GpioInt (Level, ActiveLow, Exclusive, PullDefault, , " \\_SB.GPI0") {9}
+>         })
+>         Name(_DSD, Package() {
+>           ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+>           Package() {
+>             Package () { "phy-gpios", Package() {^GPI0, 0, 0, 0 }},
+>             Package () { "rst-pin", 32 }, // GPIO pin triggering soft reset on BlueSphere and PRIS
+>           }
+>         })
+>       }
+
+No, it's completely wrong. The resources are provided by GPIO controller and
+consumed by devices. You showed me the table for the consumer, which is good
+(of course if you wish to use Edge triggered interrupts there).
+
+...
+
+> +		handle_nested_irq(nested_irq);
+
+> Now how can the mlxbf_gige_main.c driver also retrieve this nested_irq to
+> register its interrupt handler as well? This irq.domain is only visible to
+> the gpio-mlxbf2.c driver isn't it?  phydev->irq (below) should be populated
+> with nested_irq at init time because it is used to register the phy interrupt
+> in this generic function:
+
+nested here is an example, you have to check which one to use.
+
+Moreover the code misses ->irq_set_type() callback.
+
+So, yes, domain will be GPIOs but IRQ core will handle it properly.
+
+> void phy_request_interrupt(struct phy_device *phydev)
+> {
+> 	int err;
+> 
+> 	err = request_threaded_irq(phydev->irq, NULL, phy_interrupt,
+> 				   IRQF_ONESHOT | IRQF_SHARED,
+> 				   phydev_name(phydev), phydev);
+
+You have several IRQ resources (Interrupt() and GpioInt() ones) in the consumer
+device node. I don't know how your hardware is designed, but if you want to use
+GPIO, then this phydev->irq should be a Linux vIRQ returned from above
+mentioned acpi_dev_gpio_irq_get_by() call. Everything else is magically happens.
+
+...
+
+> +	int offset = irqd_to_hwirq(irqd) % MLXBF2_GPIO_MAX_PINS_PER_BLOCK;
+
+> Why is the modulo needed? Isn't the hwirq returned a number between 0 and
+> MLXBF2_GPIO_MAX_PINS_PER_BLOCK-1 ?
+
+It's copy'n'paste from somewhere, since you have device per bank you don't
+need it.
+
+...
+
+> We also need to make sure that the gpio driver is loaded before the
+> mlxbf-gige driver. Otherwise, the mlxbf-gige 1G interface fails to come up.
+> I have implemented this dependency on the gpio driver before, something like
+> this at the end of the mlxbf-gige driver:
+
+> MODULE_SOFTDEP("pre: gpio_mlxbf2");
+
+No, when you have GPIO device is listed in the tables the IRQ mapping will
+return you deferred probe. It doesn't matter when device will appear, but it
+will be functional only when all resource requirements are satisfied.
+
+Above soft dependency doesn't guarantee this, deferred probe does.
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+With Best Regards,
+Andy Shevchenko
+
+
