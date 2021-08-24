@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB4EC4320E
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Aug 2021 16:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4543C432BE
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Aug 2021 16:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58A406127B
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Aug 2021 16:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0DCE6127B
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Aug 2021 16:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232594AbhHXQuR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S233126AbhHXQuR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 24 Aug 2021 12:50:17 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10295 "EHLO mga02.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:10292 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233500AbhHXQuL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Aug 2021 12:50:11 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10086"; a="204550815"
+        id S233118AbhHXQtu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 24 Aug 2021 12:49:50 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10086"; a="204550777"
 X-IronPort-AV: E=Sophos;i="5.84,347,1620716400"; 
-   d="scan'208";a="204550815"
+   d="scan'208";a="204550777"
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2021 09:48:56 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2021 09:48:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,347,1620716400"; 
-   d="scan'208";a="684036954"
+   d="scan'208";a="684036904"
 Received: from inlubt0177.iind.intel.com ([10.223.67.91])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Aug 2021 09:48:53 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 24 Aug 2021 09:48:41 -0700
 From:   lakshmi.sowjanya.d@intel.com
 To:     linus.walleij@linaro.org
 Cc:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com,
         linux-kernel@vger.kernel.org, mgross@linux.intel.com,
         andriy.shevchenko@linux.intel.com, tamal.saha@intel.com,
         bala.senthil@intel.com, lakshmi.sowjanya.d@intel.com
-Subject: [RFC PATCH v1 17/20] pwm: Add second alignment to the core PWM interface
-Date:   Tue, 24 Aug 2021 22:17:58 +0530
-Message-Id: <20210824164801.28896-18-lakshmi.sowjanya.d@intel.com>
+Subject: [RFC PATCH v1 13/20] tools: gpio: Add event count capability to event monitor application
+Date:   Tue, 24 Aug 2021 22:17:54 +0530
+Message-Id: <20210824164801.28896-14-lakshmi.sowjanya.d@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210824164801.28896-1-lakshmi.sowjanya.d@intel.com>
 References: <20210824164801.28896-1-lakshmi.sowjanya.d@intel.com>
@@ -47,10 +47,10 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 
-The Intel(R) PMC Timed I/O driver uses the PWM interface to export a
-clock from the platform. Normally, PWM output is not phase aligned to
-any clock. To remedy this: add an additional PWM state parameter
-specifying alignment in nanoseconds within the output period.
+Add -t command line flag requesting event count to the gpio-event-mon
+application. If event count is unsupported an invalid argument error is
+returned by GPIOlib and the application exits with an error. The event
+count is printed with the event type and timestamp.
 
 Co-developed-by: Christopher Hall <christopher.s.hall@intel.com>
 Signed-off-by: Christopher Hall <christopher.s.hall@intel.com>
@@ -58,125 +58,80 @@ Signed-off-by: Tamal Saha <tamal.saha@intel.com>
 Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 Reviewed-by: Mark Gross <mgross@linux.intel.com>
 ---
- drivers/pwm/core.c  |  7 +++++--
- drivers/pwm/sysfs.c | 37 +++++++++++++++++++++++++++++++++++++
- include/linux/pwm.h |  2 ++
- 3 files changed, 44 insertions(+), 2 deletions(-)
+ tools/gpio/gpio-event-mon.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index c658585ac3bc..5d6c64916e51 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -271,6 +271,7 @@ int pwmchip_add(struct pwm_chip *chip)
- 		pwm->chip = chip;
- 		pwm->pwm = chip->base + i;
- 		pwm->hwpwm = i;
-+		pwm->state.alignment = 0;
+diff --git a/tools/gpio/gpio-event-mon.c b/tools/gpio/gpio-event-mon.c
+index d8f0bbf78728..4bdd6b3d6ad8 100644
+--- a/tools/gpio/gpio-event-mon.c
++++ b/tools/gpio/gpio-event-mon.c
+@@ -33,6 +33,9 @@ int monitor_device(const char *device_name,
+ 		   int verbosity)
+ {
+ 	struct gpio_v2_line_values values;
++	struct gpio_v2_line_event *event;
++	bool req_event_count;
++	size_t event_size;
+ 	char *chrdev_name;
+ 	int cfd, lfd;
+ 	int ret;
+@@ -55,6 +58,10 @@ int monitor_device(const char *device_name,
+ 		goto exit_device_close;
+ 	else
+ 		lfd = ret;
++	req_event_count = config->flags & GPIO_V2_LINE_FLAG_EVENT_COUNT;
++	event_size = sizeof(*event);
++	event_size += req_event_count ? sizeof(event->ext[0]) : 0;
++	event = alloca(event_size);
  
- 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
- 	}
-@@ -535,7 +536,8 @@ int pwm_apply_state(struct pwm_device *pwm, const struct pwm_state *state)
- 	int err;
+ 	/* Read initial states */
+ 	values.mask = 0;
+@@ -111,7 +118,7 @@ int monitor_device(const char *device_name,
+ 			}
+ 		}
  
- 	if (!pwm || !state || !state->period ||
--	    state->duty_cycle > state->period)
-+	    state->duty_cycle > state->period ||
-+	    state->alignment >= state->period)
- 		return -EINVAL;
+-		if (ret != sizeof(event)) {
++		if (ret != event_size) {
+ 			fprintf(stderr, "Reading event failed\n");
+ 			ret = -EIO;
+ 			break;
+@@ -133,6 +140,9 @@ int monitor_device(const char *device_name,
+ 			fprintf(stdout, "unknown event spec: %x", event.id);
+ 		}
+ 		fprintf(stdout, "\n");
++		if (req_event_count)
++			fprintf(stdout, "Event count: %u\n",
++				event.ext[0].event_count);
  
- 	chip = pwm->chip;
-@@ -544,7 +546,8 @@ int pwm_apply_state(struct pwm_device *pwm, const struct pwm_state *state)
- 	    state->duty_cycle == pwm->state.duty_cycle &&
- 	    state->polarity == pwm->state.polarity &&
- 	    state->enabled == pwm->state.enabled &&
--	    state->usage_power == pwm->state.usage_power)
-+	    state->usage_power == pwm->state.usage_power &&
-+	    state->alignment == pwm->state.alignment)
- 		return 0;
+ 		i++;
+ 		if (i == loops)
+@@ -163,6 +173,7 @@ void print_usage(void)
+ 		"  -w         Report the wall-clock time for events\n"
+ 		"  -b <n>     Debounce the line with period n microseconds\n"
+ 		"  -v	      Verbosity\n"
++		"  -t         Request event count\n"
+ 		" [-c <n>]    Do <n> loops (optional, infinite loop if not stated)\n"
+ 		"  -?         This helptext\n"
+ 		"\n"
+@@ -188,7 +199,7 @@ int main(int argc, char **argv)
  
- 	if (chip->ops->apply) {
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 9903c3a7eced..5d020618d8ba 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -33,6 +33,41 @@ static struct pwm_device *child_to_pwm_device(struct device *child)
- 	return export->pwm;
- }
- 
-+static ssize_t alignment_show(struct device *child,
-+			      struct device_attribute *attr,
-+			      char *buf)
-+{
-+	const struct pwm_device *pwm = child_to_pwm_device(child);
-+	struct pwm_state state;
-+
-+	pwm_get_state(pwm, &state);
-+
-+	return sprintf(buf, "%llu\n", state.alignment);
-+}
-+
-+static ssize_t alignment_store(struct device *child,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t size)
-+{
-+	struct pwm_export *export = child_to_pwm_export(child);
-+	struct pwm_device *pwm = export->pwm;
-+	struct pwm_state state;
-+	unsigned int val;
-+	int ret;
-+
-+	ret = kstrtouint(buf, 0, &val);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&export->lock);
-+	pwm_get_state(pwm, &state);
-+	state.alignment = val;
-+	ret = pwm_apply_state(pwm, &state);
-+	mutex_unlock(&export->lock);
-+
-+	return ret ? : size;
-+}
-+
- static ssize_t period_show(struct device *child,
- 			   struct device_attribute *attr,
- 			   char *buf)
-@@ -219,6 +254,7 @@ static DEVICE_ATTR_RW(period);
- static DEVICE_ATTR_RW(duty_cycle);
- static DEVICE_ATTR_RW(enable);
- static DEVICE_ATTR_RW(polarity);
-+static DEVICE_ATTR_RW(alignment);
- static DEVICE_ATTR_RO(capture);
- 
- static struct attribute *pwm_attrs[] = {
-@@ -226,6 +262,7 @@ static struct attribute *pwm_attrs[] = {
- 	&dev_attr_duty_cycle.attr,
- 	&dev_attr_enable.attr,
- 	&dev_attr_polarity.attr,
-+	&dev_attr_alignment.attr,
- 	&dev_attr_capture.attr,
- 	NULL
- };
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index d805fee81e2c..17ca1ea7ba94 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -59,6 +59,7 @@ enum {
-  *               output but has more freedom regarding signal form.
-  *               If supported, the signal can be optimized, for example to
-  *               improve EMI by phase shifting individual channels.
-+ * @alignment: offset in ns to device clock second
-  */
- struct pwm_state {
- 	u64 period;
-@@ -66,6 +67,7 @@ struct pwm_state {
- 	enum pwm_polarity polarity;
- 	bool enabled;
- 	bool usage_power;
-+	u64 alignment;
- };
- 
- /**
+ 	memset(&config, 0, sizeof(config));
+ 	config.flags = GPIO_V2_LINE_FLAG_INPUT;
+-	while ((c = getopt(argc, argv, "c:n:o:b:dsrfwv?")) != -1) {
++	while ((c = getopt(argc, argv, "c:n:o:b:dsrfwvt?")) != -1) {
+ 		switch (c) {
+ 		case 'c':
+ 			loops = strtoul(optarg, NULL, 10);
+@@ -225,6 +236,9 @@ int main(int argc, char **argv)
+ 		case 'v':
+ 			++verbosity;
+ 			break;
++		case 't':
++			config.flags |= GPIO_V2_LINE_FLAG_EVENT_COUNT;
++			break;
+ 		case '?':
+ 			print_usage();
+ 			return -1;
 -- 
 2.17.1
 
