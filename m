@@ -2,71 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8EEC4338F
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Aug 2021 08:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C78C4320A
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Aug 2021 11:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AAFC61357
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Aug 2021 08:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94AD461181
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Aug 2021 11:50:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbhHYI0a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Aug 2021 04:26:30 -0400
-Received: from mx20.baidu.com ([111.202.115.85]:58754 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239005AbhHYI0a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 25 Aug 2021 04:26:30 -0400
-Received: from BC-Mail-HQEX01.internal.baidu.com (unknown [172.31.51.57])
-        by Forcepoint Email with ESMTPS id 1E71A41DADF01886D878;
-        Wed, 25 Aug 2021 16:25:43 +0800 (CST)
-Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BC-Mail-HQEX01.internal.baidu.com (172.31.51.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.12; Wed, 25 Aug 2021 16:25:42 +0800
-Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
- BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Wed, 25 Aug 2021 16:25:42 +0800
-From:   Cai Huoqing <caihuoqing@baidu.com>
-To:     <linus.walleij@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Cai Huoqing <caihuoqing@baidu.com>
-Subject: [PATCH] pinctrl: nomadik: Kconfig: Remove repeated config dependency
-Date:   Wed, 25 Aug 2021 16:25:36 +0800
-Message-ID: <20210825082536.2547-1-caihuoqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+        id S240216AbhHYLvQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Aug 2021 07:51:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239331AbhHYLvP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Aug 2021 07:51:15 -0400
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 248B1C0613C1
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Aug 2021 04:50:30 -0700 (PDT)
+Received: by mail-qt1-x832.google.com with SMTP id d2so19540999qto.6
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Aug 2021 04:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qCJ85EGARublB/DPvAvE10PnE4a7leOnf3RaeUHyVEw=;
+        b=LbgNAJLQqHwAL5o3fCfBl02muzZ1EDYGsw9kaLlV5AIpxM304WhNYiKrtPyriOVTJ0
+         vR/ZYlWUBsRvQJGduZnAr6glcn9UK60ie6/B3hYHNHjMHqwJe2etGZeqHSD8YavpfS4X
+         ck6aIrtwSrsy6FHdMefOTvN2PFyEhkk53ZCfw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qCJ85EGARublB/DPvAvE10PnE4a7leOnf3RaeUHyVEw=;
+        b=DaOxizV3RbhYvkZ8+3ZADm3rFsXsrBGuphQNb4xD4G3kK3Wkbh05JfrlpUMdzbLWWK
+         2rKFDLiJK51jZw/eg/2Eda1z4rXcBsliUx3wQidmjzGgrYrNxNzZuM36SZrYGe5djp2V
+         JITiSx+aMYJ9Qu1A7yOC4/EC5wdVIgjzWj00AptbP5SdjZQ9Zfs2WkRmNsnxbmYVpQJq
+         +9efN0QoGCfgJDHW1hoNMMXxeU1YtJsJgL1uyJzBjB5XvpWaT6PDvYhVDehESyCYAELE
+         7Wwq00Hxuig3tcpbjtjHq8KxDusjh9cxKpMqv20Sj8d532F7x/fls3jdTYpjlqLJVqIE
+         JAUw==
+X-Gm-Message-State: AOAM533Cv0UfKGf0pZ/QYsDxToBoGudRG9UdoDm6jePtPomzLBXg7i+o
+        RUnxIwWWdF5/Y9wahhSe/tDGxjipLe8yR6HVDnjlGg==
+X-Google-Smtp-Source: ABdhPJxpqXw6fKZPDYAWX50CG23urulDwyDXfcLlrB94FwnQrKdRN9La8xXFxfd9Pqw4CB14ACowRv7d8m7fucB7vZg=
+X-Received: by 2002:ac8:7ee4:: with SMTP id r4mr7602882qtc.148.1629892229184;
+ Wed, 25 Aug 2021 04:50:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.31.63.8]
-X-ClientProxiedBy: BJHW-Mail-Ex15.internal.baidu.com (10.127.64.38) To
- BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42)
+References: <20210717045627.1739959-1-daniel@0x0f.com> <CACRpkdbE+_DJFhBCmtz5JwJupf7QkkWZhXrgf1KG_3rPqvEm0w@mail.gmail.com>
+In-Reply-To: <CACRpkdbE+_DJFhBCmtz5JwJupf7QkkWZhXrgf1KG_3rPqvEm0w@mail.gmail.com>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Wed, 25 Aug 2021 20:50:18 +0900
+Message-ID: <CAFr9PXmFHanrx4Frg3hQwo-RbAY-UXxC=FOAj++cshSHa99z3g@mail.gmail.com>
+Subject: Re: [PATCH 00/10] gpio: msc313: Add gpio support for ssd20xd
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Romain Perier <romain.perier@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-remove it because "if (ARCH_U8500 || ARCH_NOMADIK)" is already used
++ Bartosz
 
-Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
----
- drivers/pinctrl/nomadik/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+Hi Linus, Bartosz,
 
-diff --git a/drivers/pinctrl/nomadik/Kconfig b/drivers/pinctrl/nomadik/Kconfig
-index d6d849e51c74..0fea167c283f 100644
---- a/drivers/pinctrl/nomadik/Kconfig
-+++ b/drivers/pinctrl/nomadik/Kconfig
-@@ -22,7 +22,6 @@ if (ARCH_U8500 || ARCH_NOMADIK)
- 
- config PINCTRL_NOMADIK
- 	bool "Nomadik pin controller driver"
--	depends on ARCH_U8500 || ARCH_NOMADIK
- 	depends on OF && GPIOLIB
- 	select PINMUX
- 	select PINCONF
--- 
-2.25.1
+On Fri, 30 Jul 2021 at 19:12, Linus Walleij <linus.walleij@linaro.org> wrote:
+> I suppose Bartosz can just merge the 4 first patches into the
+> GPIO tree and you can take the rest into the SoC tree?
+>
+> Yours,
+> Linus Walleij
 
+I just noticed I hadn't to'd Bartosz about these. Is there anything I
+need to do for the first patches?
+
+Cheers,
+
+Daniel
