@@ -2,96 +2,129 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDABEC432BE
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Aug 2021 16:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF41C4320A
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Aug 2021 07:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9F8261183
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Aug 2021 16:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96B93610FB
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Aug 2021 07:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233522AbhHXQu1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Aug 2021 12:50:27 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10298 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233970AbhHXQtw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Aug 2021 12:49:52 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10086"; a="204550799"
-X-IronPort-AV: E=Sophos;i="5.84,347,1620716400"; 
-   d="scan'208";a="204550799"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2021 09:48:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.84,347,1620716400"; 
-   d="scan'208";a="684036936"
-Received: from inlubt0177.iind.intel.com ([10.223.67.91])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Aug 2021 09:48:48 -0700
-From:   lakshmi.sowjanya.d@intel.com
-To:     linus.walleij@linaro.org
-Cc:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com,
-        linux-kernel@vger.kernel.org, mgross@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tamal.saha@intel.com,
-        bala.senthil@intel.com, lakshmi.sowjanya.d@intel.com
-Subject: [RFC PATCH v1 15/20] pwm: Add capability for PWM Driver managed state
-Date:   Tue, 24 Aug 2021 22:17:56 +0530
-Message-Id: <20210824164801.28896-16-lakshmi.sowjanya.d@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210824164801.28896-1-lakshmi.sowjanya.d@intel.com>
-References: <20210824164801.28896-1-lakshmi.sowjanya.d@intel.com>
+        id S239198AbhHYHDK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Aug 2021 03:03:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239123AbhHYHCu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Aug 2021 03:02:50 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F14EBC061757
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Aug 2021 00:02:04 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id ia27so27258546ejc.10
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Aug 2021 00:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=deviqon.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ejMs/5dhUynEVzAUaCGRN6F3/ti7cOnDiR6ZoSB0tPA=;
+        b=c6O3dXO8+ghpyR+PV4yUq7w3PTw2Fcv8Vj3CAjBPWFm1MseFK0FGPNEAVTn1TMBHpf
+         EpDM301+y1CLdQzjhUJpbpSOzfpc2PPgd//dLeGG9xxxJfLBobunVwZrjo5SJjy0Oaf3
+         Z+bmvXnhDnBqtUTzLko+DVHYth9nmYf4U//4D7ZnOa/hm0QSuyOkdyLQ2+Cq8vYUNLY6
+         qjUyb0WCenrIuDS0QTkT5T2yE7hAsknBz1Sbi9dE61qbqRnTaE9UjXe9DJZeCdw6YMXm
+         422oCbOPAcESpoaGo8qbqrWy3DjTz570+d1MYaVNEj0hpbf2nkFyQdE264D8aFemHH/v
+         kwPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ejMs/5dhUynEVzAUaCGRN6F3/ti7cOnDiR6ZoSB0tPA=;
+        b=c77kzYHBdlxXgVtPn/qRFZH0JyXLhVKh8WiQO0YgpRJLQ8Ud+4YHwtzCrWEPRdE6Le
+         HR0ScsP1ErlWjsIhxltRZpNhtvjki1MFY42IWIifrczcklZioYIxqDYah97d1Cgl9vi6
+         AeBeiUwAzcV0msCMHnZJPkz6ihoV4hA5vIbEM5PY4bLIcKiLAQYpvJFl02hW98FWn8SZ
+         iGYeWhwtRnvW5JNR0AVlgWUUc2p3zwGaW7DBJk50KOsG1e8PH5+fYtYajq5/ZBUrjDjX
+         kuckhweFnwIjcEyiD5pIV+3In7P+7vAxC6MgOxu5gqqicWl6ZwKsOD/cN8IMleDztZfT
+         aU1g==
+X-Gm-Message-State: AOAM530RzzbnWet8I/WF5BVzXufSpmI3U1nSCyjUwMMmzIr8Gfca3J/m
+        dU2FYN6FE7jMU0s7qRuV8eAc5Lp+CxviH1X5
+X-Google-Smtp-Source: ABdhPJwzLOe3KIOxj0DYLa9cbtZTe9lqRd7Rux32hJcSUztznRZBHnJ7R6x/KxM9NtFQR1PSrCH7dw==
+X-Received: by 2002:a17:906:354a:: with SMTP id s10mr4807156eja.357.1629874923308;
+        Wed, 25 Aug 2021 00:02:03 -0700 (PDT)
+Received: from neptune.. ([5.2.193.191])
+        by smtp.gmail.com with ESMTPSA id w13sm13755183ede.24.2021.08.25.00.02.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Aug 2021 00:02:02 -0700 (PDT)
+From:   Alexandru Ardelean <aardelean@deviqon.com>
+To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bgolaszewski@baylibre.com, linus.walleij@linaro.org,
+        Alexandru Ardelean <aardelean@deviqon.com>
+Subject: [PATCH v2] gpio: viperboard: remove platform_set_drvdata() call in probe
+Date:   Wed, 25 Aug 2021 10:01:25 +0300
+Message-Id: <20210825070125.32918-1-aardelean@deviqon.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210707135144.191567-1-aardelean@deviqon.com>
+References: <20210707135144.191567-1-aardelean@deviqon.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Christopher Hall <christopher.s.hall@intel.com>
+The platform_set_drvdata() call is only useful if we need to retrieve back
+the private information.
+Since the driver doesn't do that, it's not useful to have it.
 
-Add additional flag that can be set by drivers to indicate that the
-driver will manage its own PWM state. When calling pwm_ops.apply the
-driver applies the requested state change to the pwm_device reconciling,
-if possible, any conflicting requests.
+This change removes it.
+Also removing with this change is some logging about the failure to init
+the gpio chip data. There are other logging methods to view that this
+failed.
 
-Intel(R) Timed I/O devices support very limited PWM capabilities. The
-duty cycle must always be 50% of the period. When changing one parameter
-at a time through the sysfs interface, it isn't possible for the user or
-the PWM subsystem to maintain this relation.
-
-Signed-off-by: Christopher Hall <christopher.s.hall@intel.com>
-Signed-off-by: Tamal Saha <tamal.saha@intel.com>
-Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-Reviewed-by: Mark Gross <mgross@linux.intel.com>
+Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
 ---
- drivers/pwm/core.c  | 3 ++-
- include/linux/pwm.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 35e894f4a379..c658585ac3bc 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -554,7 +554,8 @@ int pwm_apply_state(struct pwm_device *pwm, const struct pwm_state *state)
+Changelog v1 -> v2:
+* remove dev_err() prints
+* [styling] added empty line before first devm_gpiochip_add_data()
+
+ drivers/gpio/gpio-viperboard.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpio/gpio-viperboard.c b/drivers/gpio/gpio-viperboard.c
+index c301c1d56dd2..e55d28a8a66f 100644
+--- a/drivers/gpio/gpio-viperboard.c
++++ b/drivers/gpio/gpio-viperboard.c
+@@ -404,11 +404,10 @@ static int vprbrd_gpio_probe(struct platform_device *pdev)
+ 	vb_gpio->gpioa.get = vprbrd_gpioa_get;
+ 	vb_gpio->gpioa.direction_input = vprbrd_gpioa_direction_input;
+ 	vb_gpio->gpioa.direction_output = vprbrd_gpioa_direction_output;
++
+ 	ret = devm_gpiochip_add_data(&pdev->dev, &vb_gpio->gpioa, vb_gpio);
+-	if (ret < 0) {
+-		dev_err(vb_gpio->gpioa.parent, "could not add gpio a");
++	if (ret < 0)
+ 		return ret;
+-	}
  
- 		trace_pwm_apply(pwm, state);
+ 	/* registering gpio b */
+ 	vb_gpio->gpiob.label = "viperboard gpio b";
+@@ -421,15 +420,8 @@ static int vprbrd_gpio_probe(struct platform_device *pdev)
+ 	vb_gpio->gpiob.get = vprbrd_gpiob_get;
+ 	vb_gpio->gpiob.direction_input = vprbrd_gpiob_direction_input;
+ 	vb_gpio->gpiob.direction_output = vprbrd_gpiob_direction_output;
+-	ret = devm_gpiochip_add_data(&pdev->dev, &vb_gpio->gpiob, vb_gpio);
+-	if (ret < 0) {
+-		dev_err(vb_gpio->gpiob.parent, "could not add gpio b");
+-		return ret;
+-	}
+-
+-	platform_set_drvdata(pdev, vb_gpio);
  
--		pwm->state = *state;
-+		if (!test_bit(PWMF_DRIVERMANAGEDSTATE, &pwm->flags))
-+			pwm->state = *state;
+-	return ret;
++	return devm_gpiochip_add_data(&pdev->dev, &vb_gpio->gpiob, vb_gpio);
+ }
  
- 		/*
- 		 * only do this after pwm->state was applied as some
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index a0b7e43049d5..d805fee81e2c 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -46,6 +46,7 @@ struct pwm_args {
- enum {
- 	PWMF_REQUESTED = 1 << 0,
- 	PWMF_EXPORTED = 1 << 1,
-+	PWMF_DRIVERMANAGEDSTATE = 1 << 2,
- };
- 
- /*
+ static struct platform_driver vprbrd_gpio_driver = {
 -- 
-2.17.1
+2.31.1
 
