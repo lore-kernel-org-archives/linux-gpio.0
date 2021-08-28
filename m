@@ -2,141 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EE8C432BE
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Aug 2021 02:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B4CC432BE
+	for <linux-gpio@archiver.kernel.org>; Sat, 28 Aug 2021 12:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2E4260F25
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Aug 2021 02:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0D0260725
+	for <linux-gpio@archiver.kernel.org>; Sat, 28 Aug 2021 12:10:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244040AbhH0CWe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Aug 2021 22:22:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
+        id S233999AbhH1MLG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 28 Aug 2021 08:11:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243961AbhH0CWd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Aug 2021 22:22:33 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F88C061757
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Aug 2021 19:21:45 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id w19-20020a17090aaf9300b00191e6d10a19so3765706pjq.1
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Aug 2021 19:21:45 -0700 (PDT)
+        with ESMTP id S233646AbhH1MLF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Aug 2021 08:11:05 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67BB9C061756;
+        Sat, 28 Aug 2021 05:10:15 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id dm15so13979529edb.10;
+        Sat, 28 Aug 2021 05:10:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=bjD0Uz/cN/4nx+XcJh8zqTxxVtwBVye7zvXQTKmnUz4=;
-        b=Ua0WJGCH5UnZviQiqy2LAxKhr8aIlpFq0nHIEvoJTRkACA2+oU/GrM32O9ia1uHRaP
-         C7DFBw3GQ21rs8gsMLzdlDEVXsm8gN/DDbBhlp348u8eKHu8v16AoGfrGu1lCbnClWh0
-         u9CGrzNvdJbHkSEL78UbeR9fdZV+yjb2Cp2kBMqygAXdaBWWy+4RJ7lIaPvuNcg9KVKy
-         ARcvUVuyZkc1j6pu0qS+wXGvlXY0LrVIBey3QvMFgliwOSEEZKMfVMLFBDMME2RM5W0E
-         meb8hC01NkwPo7jNQsVPeWo3uqsrIlDYMYSaZNhWMT2Mp59m24qYbp+YwyIQ+UAJLAAl
-         ibOA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9HhIK54AGWzBDeJbtkac7rFYNxv2dm4g1nGUaF4jiys=;
+        b=LLaSrDdw/XsSEGWew/5HiNsDUf4ckqEcisOTs/R6p/n0z+Ic4XgmNXCDiZq5kJD5ZC
+         oD0FbAoY2j/nM9MNWIJHwfFCQ+La2CfAdg23GgS5vYWmucbQZYxfgjyFIPA0e7e/b1Nc
+         YyXQPG6hvqZqaBqOtHFxT7oz8ydKC+qjgWcdntglfYYP5Gp28ZAhVJSGNTY2tLLz00V0
+         N71tSuMx4X0fPJsYQe8406bbN5pfYxUIjk7LB4UTJDKVJlmcEHL/C1ZOGEt40xk49SjB
+         IJrpKRyrKlD7UB+W578XflpABs0MN5tPMPs6O7HchQIBkyLW7lm0HK2Z6QQ4XZdub7QB
+         FS2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bjD0Uz/cN/4nx+XcJh8zqTxxVtwBVye7zvXQTKmnUz4=;
-        b=dqWGqN+Te7kHWHODuYBmH/Kk9PVknu24msGVPMueBLMHq9GACi/GTwNOEVxKkSTvA5
-         kaVP7aumSXbHc57a2vFcRIh/VD5H4X4kHuADXnbzql2kwjh5QEU8QTriEh7H+KI496Qk
-         Yk8jlv9ys9XipYCMdDbkLY362ujtwWxuEBNsV3BPfRcW2MFyMFJXpGCApejLVoqbeRJc
-         szz50vIRrz9IBLOLFCXCgg2Aznqd1PNsDLhou1l6bky9p9Usi/euwFeEf3w0YtD7kgJW
-         98ReYTC0wJzQc1qDAJGYV2LTr8CWqecSxOQ0qXySRyguTpYTNvSM6L7zdOIB/08k6E90
-         fkiw==
-X-Gm-Message-State: AOAM533IUTanaZmk5GysAXCBWgjtrKoF6Fo0D+BrWvGK80pRFNjP9rni
-        RPgCpPRlxCZOhtukkTqzuSE=
-X-Google-Smtp-Source: ABdhPJy4X8DinC6r8o5CtTdiDWuMF+i9702ZAowZSoAw7mwNZyt4Y9dGfTzCnElhruC6QbiyRwApqg==
-X-Received: by 2002:a17:90a:4306:: with SMTP id q6mr19922959pjg.202.1630030905222;
-        Thu, 26 Aug 2021 19:21:45 -0700 (PDT)
-Received: from sol (106-69-178-229.dyn.iinet.net.au. [106.69.178.229])
-        by smtp.gmail.com with ESMTPSA id u24sm4567416pfm.27.2021.08.26.19.21.42
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9HhIK54AGWzBDeJbtkac7rFYNxv2dm4g1nGUaF4jiys=;
+        b=Bq0OHYkL3Y0Iz5OMpB3vs8HZg08UZjcRE1l4t6PpSv8tqokkMp+JZTAi5Awi3kr7I7
+         OzY9D8b0ndjJRDqELW3q2If99yxg/8IYZLcFbW3MG/z4nPEp6I5LnvfS6tGizzGbbBIq
+         AXaoyGyGfZtBqUEHEm26WljvUBO84t4tSi3dCT4iPIA7egnB/eLYGwTbGz13e4Zl2EOX
+         30m7tPuHugXz+bv642NP+R/WaeP7qca0sHaTgQxEf9M31P9tcN/ybdHY0ZyKzAzwMtgb
+         IfkceYtqNJBT+KyansKxm6HWUEnAgbjgdxIR8uUjwMOJxh0gzqZxOLu0ErI3V+Vsp457
+         O2hA==
+X-Gm-Message-State: AOAM5327wYvIph2hKJiI25Xdf1USQJN5xHbibUb0z9W3KVd7ko2fBtZq
+        sbO2JTOgveayRc1ccP9uRdE=
+X-Google-Smtp-Source: ABdhPJx0+wK7fWPp5Hv+wMocus2PrJup2Vhy39ZlTiCIOvxouNrRI0kG1Igi7cW/tlsfsCK4uHaXKg==
+X-Received: by 2002:a05:6402:1653:: with SMTP id s19mr13890586edx.163.1630152613976;
+        Sat, 28 Aug 2021 05:10:13 -0700 (PDT)
+Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id h10sm4706922edb.74.2021.08.28.05.10.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Aug 2021 19:21:44 -0700 (PDT)
-Date:   Fri, 27 Aug 2021 10:21:40 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Riz <mdrizwan827@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org
-Subject: Re: Regarding export of GPIOs
-Message-ID: <20210827022140.GA8509@sol>
-References: <CA+FSg4rJcDPhPoBbEYjsq_UOysLUdp6YnBh+3XeHL7UkH2cfdA@mail.gmail.com>
- <CAHp75Vct=K1Nh+UDS9tZgvgF1ju_c8417wzfHg9YCA2ay0jtCA@mail.gmail.com>
+        Sat, 28 Aug 2021 05:10:13 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: gpio: add gpio-line-names to rockchip,gpio-bank.yaml
+Date:   Sat, 28 Aug 2021 14:10:07 +0200
+Message-Id: <20210828121007.14865-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vct=K1Nh+UDS9tZgvgF1ju_c8417wzfHg9YCA2ay0jtCA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 20, 2021 at 05:04:03PM +0300, Andy Shevchenko wrote:
-> On Fri, Aug 20, 2021 at 6:27 AM Riz <mdrizwan827@gmail.com> wrote:
-> >
-> > Hello,
-> > I have some basic questions around the exporting of a GPIO.
-> >
-> > 1. Regarding gpio-hog mechanism:
-> > The gpio-hog mechanism would help us to initialise a GPIO to either
-> > high/low & in/out during bootup.
-> > This is fine.
-> >
-> > So my question is, if we hog a GPIO, does it also gets exported to the
-> > userspace by default?
-> >
-> >
-> > 2. With the older sysfs interface, we would be using "echo x >
-> > /sys/class/gpio/export" to export the gpiox to userspace.
-> >
-> > I wanted to know what would be the right way to do this with the newer
-> > interface?
-> >
-> > 3. To check if a GPIO is being exported or not, we would see the
-> > /sys/class/gpio with the sysfs interface.
-> >
-> > With the newer character device interface, what would be the right way
-> > to check what GPIOs are exported to userspace?
-> >
-> > Looking forward to hearing from you
-> 
-> https://stackoverflow.com/questions/68856801/regarding-gpio-export ?
-> 
-> I think I pretty much answered there.
-> 
+Some people and companies may want to add more description
+to there gpio pins. Add a gpio-line-names property to the
+rockchip,gpio-bank.yaml file to reduce the notifications
+from the existing mainline DT.
 
-Continuing that thread and in response to your  comment:
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> I agree with you. Even I looked into the kernel code, it sets the right
-> direction of the hogged GPIO. I suspect this could be some issue with
-> gpioinfo tool. I hog a GPIO as below
->
-> pX { gpio-hog; gpios = < X 0 >; output-high; };
->
-> The gpinfo reveals following info about the GPIO:
->
-> line 13: "p.X" "some_name" input active-high [used]
->
-> It shows it as [used] but the direction still says input
-> 
-
-I doubt that gpioinfo is the problem - it merely reports the flags
-returned by the kernel and is known to correctly decode the flags for
-lines requested using the GPIO API.
-You could confirm that by comparing the output of lsgpio or the
-libgpiod equivalent tools in my Go library[1].
-You could also use strace to decode the GPIO ioctls with:
-
-strace --trace=ioctl gpioinfo
-
-That requires strace 5.11 or later.
-
-If any of those demonstrate that the output flag is not being set then
-the problem would appear to lie on the kernel side.
-
-Cheers,
-Kent.
-
-[1] https://github.com/warthog618/gpiod
+diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml b/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
+index 0d62c28fb..d4e42c2b9 100644
+--- a/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
++++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
+@@ -29,6 +29,8 @@ properties:
+ 
+   gpio-controller: true
+ 
++  gpio-line-names: true
++
+   "#gpio-cells":
+     const: 2
+ 
+-- 
+2.20.1
 
