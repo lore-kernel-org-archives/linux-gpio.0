@@ -2,161 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C540C4320A
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 12:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E1DC4320E
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 14:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81D846103A
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 12:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A59261076
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 14:25:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241662AbhHaMID (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 31 Aug 2021 08:08:03 -0400
-Received: from mail-bn7nam10on2064.outbound.protection.outlook.com ([40.107.92.64]:24929
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S241705AbhHaMHk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 31 Aug 2021 08:07:40 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ak0t07LA+zJk/wSTZdooHcYKkLkne9G+Vh+VrzRAV164K7jdnZk2W6oUjoLpRxUHugvM7gjzMWL3eO87v+emih0zDWQx2INhKvsjJgfbCmX1Ze+nrv2cJwt/elzPk4MD/nrXFokQ6BTT6zrycWKdODrvMNqc2ifobZPOOxSr04yDfwmjuISmLDPA/5KLyuS7/ZsfqpPx16fo1UNcy0y3XW5G8Y7z7xsUouqiARanEOPJhtTP1YWdIUWrRashnlAVFUiSIi3KasoUL43/7eBjHqOwOayAmetWgEdpcpLGTYR8mOi/VVtrM99TTFMpFjSO5tpgUYmCnCMGKHWIS9Bliw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vSA1z2MW4Xo+PXeQci9/NfTF7suOFtgWtBzWSNB1PDs=;
- b=DN6ftDWLKbW2sbKQ4+WxkPjamzLpae6VSQhuUcsoIdwLKnT8yCNRlktPt6w7NCXrbnYad/VzMhtu9JqvGW4rLhdZGvlMHoe/urxFhNHhJSNVfsaEyRIce0hDG9kpNd9Juw541VnXhC1/SMoBIK65gNVKLN+GfJnQ0lMPVzu1AhTmQWqmscTsveGHxAAemZ/aHeEcH+2Al3kWhUmkYbVjBxm0fZmZiOMUrYBxvVWRR1OKvJiIpmLks+jBZ5n0k76gRLmngIZVe9d3g3R4CMqg6CYieuVx4STavAGQSE38aoVS2+S3WWdPt9pcIICzbIuf+ETpEBrm0Dbxtpap4B/Rjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vSA1z2MW4Xo+PXeQci9/NfTF7suOFtgWtBzWSNB1PDs=;
- b=lKCmF9xSaJK6poRLZ5p9ZiaqalD6y4RnNCKSzMWjdQmom13HrM9AsTHYpyHaAiMFnYTmxqxwbAy+u6fn5v2RHPRNL0brdwaq4QZnFD3r9pagC+jg/EPAGxOdwSKP/jGy+sNP1F9GAZaA63BjDzAaxu3wA8vpFkvz8e0oWOSf938=
-Received: from BN9PR03CA0637.namprd03.prod.outlook.com (2603:10b6:408:13b::12)
- by BYAPR12MB3207.namprd12.prod.outlook.com (2603:10b6:a03:135::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.24; Tue, 31 Aug
- 2021 12:06:42 +0000
-Received: from BN8NAM11FT024.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:13b:cafe::bf) by BN9PR03CA0637.outlook.office365.com
- (2603:10b6:408:13b::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20 via Frontend
- Transport; Tue, 31 Aug 2021 12:06:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com;
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN8NAM11FT024.mail.protection.outlook.com (10.13.177.38) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4457.17 via Frontend Transport; Tue, 31 Aug 2021 12:06:41 +0000
-Received: from jatayu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.12; Tue, 31 Aug
- 2021 07:06:33 -0500
-From:   Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-To:     <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
-        <Shyam-sundar.S-k@amd.com>
-CC:     Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-Subject: [PATCH 1/2] pinctrl: amd: Add irq field data
-Date:   Tue, 31 Aug 2021 17:36:12 +0530
-Message-ID: <20210831120613.1514899-2-Basavaraj.Natikar@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210831120613.1514899-1-Basavaraj.Natikar@amd.com>
-References: <20210831120613.1514899-1-Basavaraj.Natikar@amd.com>
+        id S234827AbhHaO0X (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 Aug 2021 10:26:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27858 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233558AbhHaO0X (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 31 Aug 2021 10:26:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630419927;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OA/jhyLAYtK1tYZ39fbir6HGMf0iZmNE8/Rh8O+Ui3Q=;
+        b=Ee2oFBqiEdBsw45OB+cwbDyOThwixg1+zYqbSLlcixvOiukyHna+tFznnPYbnt1oNAbCLi
+        H3oru32Wn3CgT13dWzkPPOm/De7il63fxbWn8OhCVMEgmI9gAIC5zyhBO5UwnmpPN3arfn
+        jSyf4QsNVPHRleLsZtim4xiSHblXjpU=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-285-c8xnKk3_Pc24Nr0qf0joaw-1; Tue, 31 Aug 2021 10:25:26 -0400
+X-MC-Unique: c8xnKk3_Pc24Nr0qf0joaw-1
+Received: by mail-ej1-f71.google.com with SMTP id x6-20020a170906710600b005c980192a39so991255ejj.9
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Aug 2021 07:25:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OA/jhyLAYtK1tYZ39fbir6HGMf0iZmNE8/Rh8O+Ui3Q=;
+        b=FNDFbHXmLX/fvTnWV+0jtXtFewWjLxaHm0hgcWCuolhh7Kl8gWlQzqRkw8ft/7sUvN
+         rsofY/V5hmnH2GHc6JGFoIoYaHr/XFasgfjoygGvpKWGjlSY6Pd3fMwfrYzMFm2bHbIY
+         KUBrfr6DF0jmNjgZTt6K5aHvsOj4ojOBzON5n4gcUo5OaK48I3jOVA6p/ugqQ0250o6v
+         j7GSdrDUlzaAnTnNJ9rIQayH0ImaFFE/4BXfijb9hKMPBwGFXM+AcuXILQAbr6B/0oNh
+         TvLD6uvQz3xQiNHagFq6wEFqUHCgJG+qIJ4kyL7xmPAyX6RrkSwPIYoBAuL/L8ydfgHX
+         K/LQ==
+X-Gm-Message-State: AOAM5318dc+4KRiDY2sA6c/g0C4OfUTOtPIMbMjtrWgS0WVwVOb5pa72
+        0+SA4gmqwnTuZxBqhusg4fXkFSoATwtQSBuVEFLszJsydvn8JBkMcLNJdhjMmQkCntshkUtdMS4
+        BlsX+KrKaLfhRits7CRDAvg==
+X-Received: by 2002:a17:906:70b:: with SMTP id y11mr31329818ejb.274.1630419925019;
+        Tue, 31 Aug 2021 07:25:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwSzD9zkr7wPpktKq9Ktr39dANS1nu+utRyQ0BSDOUx3yoPFWOxowvAJPabM1ziUJDcXh+Mmg==
+X-Received: by 2002:a17:906:70b:: with SMTP id y11mr31329801ejb.274.1630419924831;
+        Tue, 31 Aug 2021 07:25:24 -0700 (PDT)
+Received: from redhat.com ([2.55.138.60])
+        by smtp.gmail.com with ESMTPSA id b2sm8403019ejj.124.2021.08.31.07.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Aug 2021 07:25:24 -0700 (PDT)
+Date:   Tue, 31 Aug 2021 10:25:19 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Jason Wang <jasowang@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Bill Mills <bill.mills@linaro.org>,
+        Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Jie Deng <jie.deng@intel.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, Wolfram Sang <wsa@kernel.org>
+Subject: Re: [PATCH V4 0/5] virtio: Add virtio-device bindings
+Message-ID: <20210831102514-mutt-send-email-mst@kernel.org>
+References: <cover.1627362340.git.viresh.kumar@linaro.org>
+ <20210831053105.ut73bmvxcop65nuv@vireshk-i7>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: edbf6498-b404-49fc-d5ce-08d96c77cb63
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3207:
-X-Microsoft-Antispam-PRVS: <BYAPR12MB32070E2B248922D22DD90E06E6CC9@BYAPR12MB3207.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2089;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 14veuVXFWX7ihghG5NJg7ZXqejBg/yfwLf/2syQt/dEp/lgMCN6d5Of3l3gEfNz1NbCSe/mrzwsY+f+EUweWmKMXvDmCJ2eQvyyfaK8sSD1HMBVBolCira4O2pTCQVX8sHyy7BALSG2lVt/C3qLQBYCnpvnqH/m1qMcptNRjM36gvyuxsXGWoC9dLhmmD5oI3jBI5nx/BebdwQP5wS/wlMqHU7d8oL191p7Gcq9oqEBb7FMKSZbocZyJVXfXD1UyZ0J4sxiXGJlfBV+DEMKvUEr0XoBIf6UgOgkvSjfUzD0F4uQfBAVyHHxP5U0C3LLatbJ/qo8gWeoOnyL79b5Ygw3Wtl4cZiHooNk2L7yrY38cWN/9rjiAfbvOekCYNhl5H7aDwLSOpIc7zK9n1LMNTIHvq82RxHMfXwLLHycaVuFGMrvY1WagN8ZG5EXIiu0FUYH+2sMVcE45+j7a3PA+pfqd5MjrYl1XvDGpIOm94OgY7MN+aKROmQtnY432Pt6DTsFpeMVFwbw4qs/va91N3DmgBtf0RGAhBcccXnOwlCuTAFaawHaT46gfOPMZ5kad1sq0ZEBDJNMRxZbSvEY6PmLSNwO4SzbRUczUfUT15pmc3XmX5U8daUwnrCnJXbi4+kmXHpKVnv/gyAc+Z1UIgwb2qyn3SozgJVOGajvbf8mlYhGbbI5OeDWoJX/wY/sXt9YOqRHHzhLzsgFnpB1FumcGRYOq3c1U2BBQkoFq0nmCgR2Lm9xL/bg4Jzq4UcFj
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(136003)(376002)(396003)(346002)(39860400002)(36840700001)(46966006)(6666004)(8676002)(478600001)(1076003)(82740400003)(16526019)(82310400003)(186003)(47076005)(83380400001)(336012)(4326008)(81166007)(426003)(36860700001)(110136005)(7696005)(316002)(36756003)(6636002)(5660300002)(70206006)(2616005)(8936002)(356005)(26005)(86362001)(70586007)(2906002)(2101003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2021 12:06:41.8051
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: edbf6498-b404-49fc-d5ce-08d96c77cb63
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT024.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3207
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210831053105.ut73bmvxcop65nuv@vireshk-i7>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-pinctrl_amd use gpiochip_get_data() to get their local state containers
-back from the gpiochip passed as amd_gpio chip data.
+On Tue, Aug 31, 2021 at 11:01:05AM +0530, Viresh Kumar wrote:
+> On 27-07-21, 10:53, Viresh Kumar wrote:
+> > Hi,
+> > 
+> > Currently the DT only provides support for following node types for virtio-mmio
+> > nodes:
+> > 
+> >         virtio_mmio@a000000 {
+> >                 dma-coherent;
+> >                 interrupts = <0x00 0x10 0x01>;
+> >                 reg = <0x00 0xa000000 0x00 0x200>;
+> >                 compatible = "virtio,mmio";
+> >         };
+> > 
+> > Here, each virtio-mmio corresponds to a virtio-device. But there is no way for
+> > other users in the DT to show their dependency on virtio devices.
+> > 
+> > This patchset provides that support.
+> > 
+> > The first patch adds virtio-device bindings to allow for device sub-nodes to be
+> > present and the second patch updates the virtio core to update the of_node.
+> > 
+> > Other patches add bindings for i2c and gpio devices.
+> > 
+> > Tested on x86 with qemu for arm64.
+> 
+> Michael, are you picking these up for 5.15 ?
 
-Hence added irq field data to get directly using amd_gpio chip data.
+Okay.
 
-Signed-off-by: Basavaraj Natikar <Basavaraj.Natikar@amd.com>
----
- drivers/pinctrl/pinctrl-amd.c | 9 ++++-----
- drivers/pinctrl/pinctrl-amd.h | 1 +
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 5b764740b829..79b8b7f91996 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -904,7 +904,6 @@ static struct pinctrl_desc amd_pinctrl_desc = {
- static int amd_gpio_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
--	int irq_base;
- 	struct resource *res;
- 	struct amd_gpio *gpio_dev;
- 	struct gpio_irq_chip *girq;
-@@ -927,9 +926,9 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 	if (!gpio_dev->base)
- 		return -ENOMEM;
- 
--	irq_base = platform_get_irq(pdev, 0);
--	if (irq_base < 0)
--		return irq_base;
-+	gpio_dev->irq = platform_get_irq(pdev, 0);
-+	if (gpio_dev->irq < 0)
-+		return gpio_dev->irq;
- 
- #ifdef CONFIG_PM_SLEEP
- 	gpio_dev->saved_regs = devm_kcalloc(&pdev->dev, amd_pinctrl_desc.npins,
-@@ -989,7 +988,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 		goto out2;
- 	}
- 
--	ret = devm_request_irq(&pdev->dev, irq_base, amd_gpio_irq_handler,
-+	ret = devm_request_irq(&pdev->dev, gpio_dev->irq, amd_gpio_irq_handler,
- 			       IRQF_SHARED, KBUILD_MODNAME, gpio_dev);
- 	if (ret)
- 		goto out2;
-diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
-index 95e763424042..1d4317073654 100644
---- a/drivers/pinctrl/pinctrl-amd.h
-+++ b/drivers/pinctrl/pinctrl-amd.h
-@@ -98,6 +98,7 @@ struct amd_gpio {
- 	struct resource         *res;
- 	struct platform_device  *pdev;
- 	u32			*saved_regs;
-+	int			irq;
- };
- 
- /*  KERNCZ configuration*/
--- 
-2.25.1
+> -- 
+> viresh
 
