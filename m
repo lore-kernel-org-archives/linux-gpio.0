@@ -2,109 +2,97 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA3EC432BE
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 15:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE2CC432BE
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 19:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04DEA6103A
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 15:08:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A0761058
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 19:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232858AbhHaPJK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 31 Aug 2021 11:09:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47086 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232438AbhHaPJK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Aug 2021 11:09:10 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 935D1C061575
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Aug 2021 08:08:14 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id e21so39430764ejz.12
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Aug 2021 08:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0n377XHsnHanfkCpW4uQxyJLZ2CHI+mItltHrowkJVE=;
-        b=gt+xra7sEukKch06D9Gmva4taH6IPRw9QMxVwBarU959lsST3SgZ9c0dNBuqzsD3VL
-         lU6XcAbFMrH/Vo3MvBp3QPOA1OIErSR0pYWU1fyfSeIfeFUUSXgRRUrgMPTMvtFa7LG9
-         abQexgKhU4cziiwImj9tiAz3I+E2czQaYp5r2KoMtvEEj3KLsuDOmC6gAWgfSTeRdBQU
-         GasXBwJ/h+EbX1gD4kntHJ4Zsh/k1a69GGzeKVMQYylwU4YrRMw8Sy4rFqAPpELxzX+H
-         S8QxWZUBNkSvhxp56VzAcIJeJEaGmDpe+Yu8fCG7zKifT05uuK8b1Vipgfcwkes//7HI
-         eyRQ==
+        id S240792AbhHaT21 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 Aug 2021 15:28:27 -0400
+Received: from mail-oi1-f180.google.com ([209.85.167.180]:38868 "EHLO
+        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240607AbhHaT20 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Aug 2021 15:28:26 -0400
+Received: by mail-oi1-f180.google.com with SMTP id u25so567486oiv.5;
+        Tue, 31 Aug 2021 12:27:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0n377XHsnHanfkCpW4uQxyJLZ2CHI+mItltHrowkJVE=;
-        b=czdKU56u/1SCNEHVFamI/CLmjPCuVmC4nX37HY/i4KZvrpnr2QeUqXk4DfegV4rt2q
-         nlpO3bwVl4hD8Q7JeBrvLx4Y3OhFcpuUfdSJYkrjhWBXLhLtvdE5qy92praruRSuUZGT
-         4Ka1ZlRqvpInqezN0FP6ys9f1oo05pacCS4jYPu8Ug9t7PMp4+kuHVTMaRhLRys9TiC2
-         aTKX6G1BtYrkd/J7xNcv3nyVr8VxNsDgTadXT5L5l740XvN+DpxqCDA9OYSV3srxy5kn
-         3xZbHBCOS41gvAezriHncn5C+W4PeohpF2h1e7f2jPldlEZdEzn7Q2e5+Hhr/g/+MNhj
-         q2vQ==
-X-Gm-Message-State: AOAM5312XWaRHeIJWSBbYxTjtuEri5fJ3vgZERMju1KOZuW7EdllrazU
-        kgOLMauSZEllip+fFBD4yWSbPW2DIuq0YWZvFCoZ4rAG+ih0Pg==
-X-Google-Smtp-Source: ABdhPJzNnFfHAjFiM+JR3u04JU5nNix//xrRrTS81nFqM+UdUYNB0T+3GlUaQ52tyKUtkEBjxI9Ub7mabKXdxX4W1eg=
-X-Received: by 2002:a17:906:8597:: with SMTP id v23mr24306482ejx.178.1630422493170;
- Tue, 31 Aug 2021 08:08:13 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=B18XCxdh5roXXYBkgIgsolQaF3/RyCT+RYjyoh97Brk=;
+        b=p/K7gazXe3lixbGJQhpSlMMBsSaHaLL9r11KMAZPuYN6euzDBiqxKMoPvLu397c0Fx
+         0Yjhxb7elnwVI+RgLm0KersY5tqv1Rn3KROfZfKxND20+0QCkXuP3JFfZxcVpMz1CZbY
+         +V7xCMOeN4zKnCvltLRJLyV48jfcJzBAzL8N0BA5WtNoeaJy7OhTjINMYi78FGsiwEo9
+         st42Pp1rtkSUYeb/kvshA/f4l7aYkJN3TnjEQgTErml7RKRAxGgG+QkQGadiLe3rE6Jk
+         aYBMpz17HUCKL/FONrAzgqigRS4N3MR3OojosvZv9lJS6rsfW41gOdrgh9eoQD+doIMT
+         k10g==
+X-Gm-Message-State: AOAM532L1Ck3ANTACeGOZLg6bMaXtLx0U3s460Y6JEANYkSIwjxNqYhX
+        3tvAg7MDFWyFsVd5Ezq+mjwbX5pO7g==
+X-Google-Smtp-Source: ABdhPJyISGNvUkiwv/aZwGtTy7OmqleXpitzw8KMrZYdmigKN/S7wGPQvq/Drjnoa3iN8bG0Uc6OpA==
+X-Received: by 2002:a54:4182:: with SMTP id 2mr4533320oiy.66.1630438050741;
+        Tue, 31 Aug 2021 12:27:30 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id o8sm3712041oiw.55.2021.08.31.12.27.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Aug 2021 12:27:30 -0700 (PDT)
+Received: (nullmailer pid 515234 invoked by uid 1000);
+        Tue, 31 Aug 2021 19:27:28 -0000
+Date:   Tue, 31 Aug 2021 14:27:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-clk@vger.kernel.org, John Crispin <john@phrozen.org>,
+        Ryder Lee <Ryder.Lee@mediatek.com>
+Subject: Re: [v2,05/12] dt-bindings: pinctrl: update bindings for MT7986 SoC
+Message-ID: <YS6CoAxnarhqdTl+@robh.at.kernel.org>
+References: <20210817074557.30953-1-sam.shih@mediatek.com>
+ <20210817074557.30953-6-sam.shih@mediatek.com>
 MIME-Version: 1.0
-References: <CA+FSg4rJcDPhPoBbEYjsq_UOysLUdp6YnBh+3XeHL7UkH2cfdA@mail.gmail.com>
- <CAHp75Vct=K1Nh+UDS9tZgvgF1ju_c8417wzfHg9YCA2ay0jtCA@mail.gmail.com>
- <20210827022140.GA8509@sol> <CA+FSg4qxArwg67YCbpknJciOfraV-WxSUwsFrq1DmNLKHZHqLw@mail.gmail.com>
-In-Reply-To: <CA+FSg4qxArwg67YCbpknJciOfraV-WxSUwsFrq1DmNLKHZHqLw@mail.gmail.com>
-From:   Riz <mdrizwan827@gmail.com>
-Date:   Tue, 31 Aug 2021 20:38:01 +0530
-Message-ID: <CA+FSg4rE8h0hdGa2UmvNyX1B2ChjJPfwobRdEsi_dSnyvT0p=Q@mail.gmail.com>
-Subject: Re: Regarding export of GPIOs
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210817074557.30953-6-sam.shih@mediatek.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Sorry the kernel log was:
-[    0.251788] GPIO line <num> (name) hogged as output/low
+On Tue, Aug 17, 2021 at 03:45:50PM +0800, Sam Shih wrote:
+> This updates bindings for MT7986 pinctrl driver.
+> The difference of pinctrl between mt7986a and mt7986b
+> is that pin-41 to pin-65 do not exist on mt7986b
+> 
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> 
+> ---
+> v2 : deleted the redundant description of mt7986a/mt7986b
+> 
+> ---
+>  .../bindings/pinctrl/pinctrl-mt7622.txt       | 170 ++++++++++++++++++
+>  1 file changed, 170 insertions(+)
 
-Regards.
+This is adding a lot to not be in schema format. I imagine this will 
+need to be a separate file if the pin and function names are different 
+for each SoC.
 
-On Tue, Aug 31, 2021 at 8:35 PM Riz <mdrizwan827@gmail.com> wrote:
->
-> Hi Kent,
-> Thank you for your response.
->
-> I am observing a strange thing here.
->
-> The kernel logs for the hogged GPIO reports as:
-> [    0.251788] GPIO line <num> (name) hogged as output/high
->
-> The corresponding dts changes are:
-> >
-> > pNum {
-> > gpio-hog;
-> > gpios = <num GPIO_ACTIVE_LOW>;
-> > output-low;
-> > line-name = "name";
-> > };
->
->
-> Based on the kernel log, I could say that it is hogging the GPIO as expected.
->
-> But using the gpioinfo and lsgpio tools always show the direction as
-> "input" for the hogged GPIO.
-> gpioinfo <chipname>:
-> line  X:      "pX" "name"   input   active-low [used]
->
-> lsgpio -n <chipname>:
-> line X: "pX" "name" [kernel active-low]
->
-> I tried following the kernel by adding some logs, it seems to set the
-> correct direction.
-> I have really ran out of options here, any leads would be helpful.
->
-> Thanks
+Rob
