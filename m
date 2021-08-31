@@ -2,266 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 252FCC432BE
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Aug 2021 09:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205CBC4320A
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 05:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0123A61059
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Aug 2021 09:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5A4B6101C
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Aug 2021 05:29:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235604AbhH3JzF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Aug 2021 05:55:05 -0400
-Received: from mail-mw2nam12on2087.outbound.protection.outlook.com ([40.107.244.87]:36983
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        id S233873AbhHaF3z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 Aug 2021 01:29:55 -0400
+Received: from mail-bn8nam12on2063.outbound.protection.outlook.com ([40.107.237.63]:2400
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233248AbhH3JzE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 30 Aug 2021 05:55:04 -0400
+        id S229526AbhHaF3x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 31 Aug 2021 01:29:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ocp3g7UQiiP3rGyd7n3xGuwQMoO8ES0fEQziwwxvnS4b+FkSG63r/wSsTI9OIPzFmEdi8EZ8K5hH7KPS8RdZTGiqpq23eQbGMa96TU6+v0JkI0aEpqqXlkqQhyMIPXfc3I+qE1DBATlX6o9klfUxk7txv7AuaW+XoTRkBgpa85s2s64ZwZjb3PQ+Kwqz/gtysMTWh0UVxy2Hix0dVH4/mPkbwg44hUC2KhxInq2asmLejf1UGgoId7Ps7KVj0pqF55pmwtGkJpxkpJ78JORVV2bRO0WIk4p4PzDqqAORnATFAbDscs042ep9RGcuNeg4jtL607T/Nh+6lEm2wiLoIg==
+ b=WpI1vtGxCGfFVTjAYZQ/PoHb9zXrNEZed6yjCb+gOuc/zX+7KGb+UK/RDXVVr+mtLvSDjyNg3zEru2MtcYOh8i4bu3Dh17exujg1WS+fKn/8Qh0/2yxU40iRGBFe4jW9S6Olo/kIldw9pLhFlkmjU76GGONFu0wvXajZSy/7vDvS9vpi5YOlzc+VhaD71TyOT/k3DOOs5znMYgxaW/DQMmX2crNdH68+hVnLqDBrMcmfc8i6KTLa3lSRJyDZFnCdrishw6cWFHE07pfhUve0YTysynP2ENgGs8YF060Ga9WY7aBE0rihqndpDg0lGWMcJBUD+PBolZPPXK738zFruQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s47QFcFmSRPiolz2fjDz2yIY91VrxZQ1u5Adv/EuPIA=;
- b=iGpzSQdBhFrjppkS95CWOG7SuKNLMnuTyIntOdYuHiYsycdJx61Es5WTankCLNgooInJpWwAud1MzkeRYt0poaqgaXcixxFi6iq8WoWMDx0Ku2o3uknrech3lzic/TabVWFtU3yTp0kkmziqZGmmbQAba8cLDlc51hg6vDEzekQlElIFOPx8/RLYTNsPBGuKmhXBzkvGhqtK7hCted0mitc5AN93NfZLuLlrYoJAw8QtSKPQbDRc7b/oSZoP2tlW3iUNNuaCDRcuyiuRFSkqD1jmdpdtJY8PlcdktLjhPL7xLHD7Ix8WAcb9TPY1zm6U5CYIF00QHUAPTyG+eQ7mVQ==
+ bh=M75efZuaRpOGftCoZlLD1i8lz6Itdfkg5OKhT0KWOZk=;
+ b=aw13L2khehWhOqE84wz9MHNHNc3gq/H0mEM+1oizEW+K48NqhAxrZz8B55RY2VHpMbYTb+lt34O2XcNLXLAGls88y8/w2keRv+Pjd1Cabxivom1vQHFVJfXjQpCX8xFNBElXGFFeXwPbr/hXJbNlD0TOPuvkc2BXzwh/O7E8JUHwypjycA75hY3TWRr4mVYTEKdWRf5+IegM9JxfZ7h6GBPazM1YDYPOigUT6VTBYMOOShbwOFbuhgT5I0F5XmGmBscUQAs+pcyyMBo+AxQ9zdAtPs7Bg4yeu1ICOuIVobN56hJtBLqGjqiDbYKWyS02qS8qLJwb/d/NZq7wjDdx+g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.35) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.112.36) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s47QFcFmSRPiolz2fjDz2yIY91VrxZQ1u5Adv/EuPIA=;
- b=SAFz1ip4CAZZdBaB+bLB8EPfLHZWfTN5v47FcmTyWLAgZPaoO3GDyciCzJYuyaH3l88ByMVaeBNQ9mmcqnaaR4R9u6XOUL0TqP6mPDd5dauBnIVrT+UEG+m/XG8a1AT+0CG+O0tfk6uPLyaYKIASAgteB7iETQADqguK07XDrCSIz2TwDDeoafqDoet4v6VhvAB6ejTR+xYaBOTMuzbN59+TkQY/VO8ncdKByEw1UwtNlRNWALXJyDVV/ra9VnvcBtq74vluS73JW58WgD+prBcc3BZIwtHZpyqVmuysCFqmrg8VeycEIPpOBW0bNuIeYDrMzRxWZ9zIxh+5D6tRxw==
-Received: from CO1PR15CA0097.namprd15.prod.outlook.com (2603:10b6:101:21::17)
- by MWHPR1201MB0271.namprd12.prod.outlook.com (2603:10b6:301:57::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20; Mon, 30 Aug
- 2021 09:54:03 +0000
-Received: from CO1NAM11FT060.eop-nam11.prod.protection.outlook.com
- (2603:10b6:101:21:cafe::c4) by CO1PR15CA0097.outlook.office365.com
- (2603:10b6:101:21::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.21 via Frontend
- Transport; Mon, 30 Aug 2021 09:54:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+ bh=M75efZuaRpOGftCoZlLD1i8lz6Itdfkg5OKhT0KWOZk=;
+ b=OeQ3m5KewSRy6fzhBYeDyZZrSOnS/ap1xzx99MQ+6KszCay+ZgGFboqjgAirI5orsqBloQctUbrWwF4xqaSlT6ANWRZE5/QznOmsf/pqlBwd+assYbuvvQuCe8XbONY3Q7X1Wcb3lTP21WkxaeejtTecqJ/tn0HkxgM1X3kHPFKAuqq+rcjWOt1VAqq7oUabjIHwQ5s7Ue+TOXz7hw2f5XdhT5YEiXBsA8B+qSFwkj/cK468HyEFXGjBy3bqFGBpR6RgAN015Jr44ztSGBdhtJDs5GFBbWP0MqwHKjIpRV3L0HABGgZqxNFE0i0kKIvJorR1RnJODpUPls0IuiaNKg==
+Received: from DM5PR06CA0061.namprd06.prod.outlook.com (2603:10b6:3:37::23) by
+ MN2PR12MB3648.namprd12.prod.outlook.com (2603:10b6:208:c1::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4457.24; Tue, 31 Aug 2021 05:28:56 +0000
+Received: from DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:37:cafe::53) by DM5PR06CA0061.outlook.office365.com
+ (2603:10b6:3:37::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20 via Frontend
+ Transport; Tue, 31 Aug 2021 05:28:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.35; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.35) by
- CO1NAM11FT060.mail.protection.outlook.com (10.13.175.132) with Microsoft SMTP
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ DM6NAM11FT008.mail.protection.outlook.com (10.13.172.85) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4457.17 via Frontend Transport; Mon, 30 Aug 2021 09:54:02 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 30 Aug
- 2021 09:54:02 +0000
+ 15.20.4457.17 via Frontend Transport; Tue, 31 Aug 2021 05:28:56 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 31 Aug
+ 2021 05:28:54 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 31 Aug
+ 2021 05:28:52 +0000
 Received: from pshete-ubuntu.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 30 Aug 2021 09:54:01 +0000
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 31 Aug 2021 05:28:49 +0000
 From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <linux-gpio@vger.kernel.org>
-Subject: [PATCH] gpio: tegra: add multiple interrupt support
-Date:   Mon, 30 Aug 2021 15:23:57 +0530
-Message-ID: <20210830095357.21108-1-pshete@nvidia.com>
+To:     <linus.walleij@linaro.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
+        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>
+Subject: [PATCH 0/2] pinctrl: support to save and restore GPIO conf.
+Date:   Tue, 31 Aug 2021 10:58:32 +0530
+Message-ID: <20210831052834.4136-1-pshete@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bcc138f5-4175-4852-752e-08d96b9c1924
-X-MS-TrafficTypeDiagnostic: MWHPR1201MB0271:
-X-Microsoft-Antispam-PRVS: <MWHPR1201MB027156690EBE881BE0FC242FB7CB9@MWHPR1201MB0271.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
+X-MS-Office365-Filtering-Correlation-Id: d858a876-435e-40a6-c160-08d96c403aaa
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3648:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB36489A06DB61E254625D3B47B7CC9@MN2PR12MB3648.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2399;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HQHxIIAyJ77atvsB+fcHo0COS3EbJ4Laa3CajQSs94jMWiyl+gaEEFQApyytLCucxmgSLVMSEmh6H7YvNuhE3oDPTu0j7YPu52iNZ1l0EbYWdLU5RamzNcckwF2djvGDPKGn6uGrmKfUjRWGeKkPDzZbkYuxDz7rACpORJl8LuLAiM+fKIpKic1myqPLiQ5nzKtt3CraSGmzzt7Oou66Jf1JBFJHYUZEG7qQiWDDbTv4GG/7J7l3GlZEw7EEDJwig6a0nBnTTJ4pn1cvo2I34mLAzBNaUAUSMtgKIowoB1iQUJQg5ivE8UjBdkIi+e8L2NUnbW5xrUEU/wqEScsutSnV7wchZRlvAnBH9251BW1VYoiV9hNXHU96s+h4fri9zp6Kb6f9IijekP2cvMIV8XoNMHauPlayUOYZu3n8QLRGZy+nMgamifBZaxpb71H4+NDDtk/w4iqDkTZ+pX3mO+qZp+fryMJvb3ocGCGVgEgE0BPCglvMpXMavdWeOFTZKcIbk1EBVz0flTKAFyVE6vft3u2IS5OXc1jYYEuWuQU6XzXoIVMVuIkHLqbxwKlwzcO3+O1nwJV6qLTgaWeK/Oarn/N37rqDzxU9Qu6wFtpLwZNcuF3rsEnw82r731rh/jT9DnLng/gEm5KYYkBhLO7A4IoiJB+cT95Lw8lqVsY+zZwK2JJg3qU+D7Ctt8zikvt+PozWrp5EoPzK42ca3w==
-X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(396003)(376002)(39860400002)(136003)(36840700001)(46966006)(5660300002)(82310400003)(36906005)(2906002)(186003)(86362001)(6916009)(7696005)(1076003)(336012)(36860700001)(426003)(8676002)(26005)(36756003)(6666004)(356005)(7636003)(478600001)(8936002)(47076005)(82740400003)(70206006)(70586007)(316002)(83380400001)(2616005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: aXPbZNRO6cTkB0pkSHWczj6C1ekeu+jZ985bYI07vO+g4OC/oUxjxkf6J3IZBuGRAZxt4Hl/90kyYq4QfiSKh8wuTG62dD6iJ8Y62frK9JKvhl6FtZ1QCybE2YRC3bpvrBXWJuhUtk5wo2C4/ZKTETF9uVXpupS6EJW4YpwGlLesNeDEZSbXe8+God7kbtohHW4dwsBVgkJmO+13MWPkCmasUmoGkhXgU+w7epaEyMw8ew6ViMoVwKg3/JjI8ZecuV9lUIcneHa4xwrwvDqPJx04q1ziDwGxIK/aTSoQlR2RU1NK+nf0f4U+MDlfHAiIxbi6FZWuPPdetkxDoGr6aY0/8xOl+Ve6tuNp2LhQRggQjGj+ntWDmBF6oMPS9vfM9zKvs6dZE0cMBnfk2LhoNFZXS7vHFPR9Oc6wOFEaiVLsoirvgH5MGC2xN0zjIbzRlcCopvIEEGQjBqT6AY9wWmGOK+e46tMlcDHoziaD0FOluzf5szH4e/udALM0hv4ex6UOF85gMia3Va/JwRleWGcx7fPABmxcOwnawYCS/ueEzE0RA765vcIbrqZoBVlhyilWQ3hKHfJI6x71xVGOZrWE6oBbyXIJTfbvZj758FiPJ4fvBhNWlMEHsIkN4Kr5eC3YtdVev3DaDFarZn/d+DrKguRO9j4+/MXriE0yOqe7ivFqfhXsGlLwDXQSemR/SCgrL5XmOcumLkJ8l1syZHw1zghy67PMOvhvzwwaHC4=
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(7636003)(110136005)(5660300002)(54906003)(7696005)(508600001)(70586007)(8676002)(86362001)(4744005)(316002)(82310400003)(36906005)(356005)(70206006)(36756003)(47076005)(6666004)(8936002)(4326008)(2906002)(26005)(2616005)(83380400001)(426003)(107886003)(186003)(36860700001)(336012)(1076003)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2021 09:54:02.9476
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2021 05:28:56.6362
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcc138f5-4175-4852-752e-08d96b9c1924
+X-MS-Exchange-CrossTenant-Network-Message-Id: d858a876-435e-40a6-c160-08d96c403aaa
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT060.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0271
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3648
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: pshete <pshete@nvidia.com>
 
-T19x GPIO controller's support multiple interrupts. The GPIO
-controller is capable to route 8 interrupts per controller in
-case of NON-AON GPIO's and 4 interrupts per controller in AON GPIO.
+This change adds support to save and restore GPIO configurations
 
-Signed-off-by: pshete <pshete@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 49 +++++++++++++++++++++++-
- drivers/gpio/gpio-tegra186.c             | 25 ++++++++++--
- 2 files changed, 68 insertions(+), 6 deletions(-)
+Laxman Dewangan (2):
+  pinctrl: pimux: Add support to save and restore HW register
+  pinctrl: tegra: Implement pinmux register save and restore
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index b7d532841390..c681a79c44ec 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -34,11 +34,53 @@
- 			reg = <0x2200000 0x10000>,
- 			      <0x2210000 0x10000>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>;
-+				     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			#gpio-cells = <2>;
-@@ -1273,7 +1315,10 @@
- 			reg-names = "security", "gpio";
- 			reg = <0xc2f0000 0x1000>,
- 			      <0xc2f1000 0x1000>;
--			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index d38980b9923a..36bd8de6d401 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2016-2017 NVIDIA Corporation
-+ * Copyright (c) 2016-2021 NVIDIA Corporation
-  *
-  * Author: Thierry Reding <treding@nvidia.com>
-  */
-@@ -68,6 +68,7 @@ struct tegra_gpio_soc {
- 	unsigned int num_ports;
- 	const char *name;
- 	unsigned int instance;
-+	bool multi_ints;
- 
- 	const struct tegra186_pin_range *pin_ranges;
- 	unsigned int num_pin_ranges;
-@@ -451,6 +452,7 @@ static void tegra186_gpio_irq(struct irq_desc *desc)
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	unsigned int parent = irq_desc_get_irq(desc);
- 	unsigned int i, offset = 0;
-+	int j, flag;
- 
- 	chained_irq_enter(chip, desc);
- 
-@@ -462,9 +464,20 @@ static void tegra186_gpio_irq(struct irq_desc *desc)
- 
- 		base = gpio->base + port->bank * 0x1000 + port->port * 0x200;
- 
--		/* skip ports that are not associated with this bank */
--		if (parent != gpio->irq[port->bank])
--			goto skip;
-+		if (!gpio->soc->multi_ints) {
-+			/* skip ports that are not associated with this bank */
-+			if (parent != gpio->irq[port->bank])
-+				goto skip;
-+
-+		} else {
-+			flag = 0;
-+			for (j = 0; j < 8; j++) {
-+				if (parent != gpio->irq[(port->bank * 8) + j])
-+					flag++;
-+			}
-+			if (!(flag & 0xF))
-+				goto skip;
-+		}
- 
- 		value = readl(base + TEGRA186_GPIO_INTERRUPT_STATUS(1));
- 
-@@ -772,6 +785,7 @@ static const struct tegra_gpio_soc tegra186_main_soc = {
- 	.ports = tegra186_main_ports,
- 	.name = "tegra186-gpio",
- 	.instance = 0,
-+	.multi_ints = false,
- };
- 
- #define TEGRA186_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -798,6 +812,7 @@ static const struct tegra_gpio_soc tegra186_aon_soc = {
- 	.ports = tegra186_aon_ports,
- 	.name = "tegra186-gpio-aon",
- 	.instance = 1,
-+	.multi_ints = false,
- };
- 
- #define TEGRA194_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -852,6 +867,7 @@ static const struct tegra_gpio_soc tegra194_main_soc = {
- 	.num_pin_ranges = ARRAY_SIZE(tegra194_main_pin_ranges),
- 	.pin_ranges = tegra194_main_pin_ranges,
- 	.pinmux = "nvidia,tegra194-pinmux",
-+	.multi_ints = true,
- };
- 
- #define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -875,6 +891,7 @@ static const struct tegra_gpio_soc tegra194_aon_soc = {
- 	.ports = tegra194_aon_ports,
- 	.name = "tegra194-gpio-aon",
- 	.instance = 1,
-+	.multi_ints = true,
- };
- 
- static const struct of_device_id tegra186_gpio_of_match[] = {
+ drivers/pinctrl/pinmux.c              | 24 ++++++++++
+ drivers/pinctrl/pinmux.h              | 18 ++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 66 +++++++++++++++++++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h |  1 +
+ include/linux/pinctrl/pinmux.h        |  9 ++++
+ 5 files changed, 118 insertions(+)
+
 -- 
 2.17.1
 
