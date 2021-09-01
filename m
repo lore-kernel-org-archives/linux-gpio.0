@@ -2,167 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0200CC432BE
-	for <linux-gpio@archiver.kernel.org>; Wed,  1 Sep 2021 10:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA10BC4320E
+	for <linux-gpio@archiver.kernel.org>; Wed,  1 Sep 2021 19:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D98696103A
-	for <linux-gpio@archiver.kernel.org>; Wed,  1 Sep 2021 10:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A765460F3A
+	for <linux-gpio@archiver.kernel.org>; Wed,  1 Sep 2021 19:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233356AbhIAKWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 1 Sep 2021 06:22:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233230AbhIAKWr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Sep 2021 06:22:47 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D15DC061760
-        for <linux-gpio@vger.kernel.org>; Wed,  1 Sep 2021 03:21:50 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id f2so4041117ljn.1
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Sep 2021 03:21:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mgYfR3/CpQ3YFz8SbMrcJmhQtblgI9cHByyIJ0goOBI=;
-        b=eWVsHdCtUIQxAlqIqaA9KKdn3ovd4zMoXEx2w4VxVZ4sy2vrn74BKX9DJH6nV6/1Al
-         aLop/fzzMw45Lo6jMK04X/WVagNiH7iG2IYhIoKUvHwFiedVaFaXUiVBEdCcMUQwnJMd
-         sVDmB0MR92tBXbGf2gdX/3C2Kc33dlgSVrhXc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mgYfR3/CpQ3YFz8SbMrcJmhQtblgI9cHByyIJ0goOBI=;
-        b=HG+AaStRev0jBPkJuC188+G/vXRW3OfGrpy4B+v1IV2RszXVrfQi5KmP8UPHuTC6X2
-         lZH9f3bj3irQDpQze3PbofnCD8jonlZCPVPltB88Tph59IvgXtHcryaESxhcKS9jG7Ef
-         zRXnChw7wZSHWhtxQK0Q1kxHAtPiJ8pn4JyOGFgsqAt0z2cFVt765rK0nsgBN1VahgvG
-         yTSsVnFTVf/n9hCg63xcWQRW85DpofsqETXF3dVZ9kApQIy2+zkXDgsOLjXKDrLl7SqP
-         nJf4XrApQPKsuQfB0XzgoDqaE1oSvmUuRtH0bvJg7EXDPTGiw0ZxxPpNwWCBUOabdc4o
-         dVQA==
-X-Gm-Message-State: AOAM530vhDMg706iL2cQHSUpvYZXoQdB1OQu/gAgL7fS5oNRa98k/ggF
-        yyvHse/Bc+nztjj2C+qkkQlTeUnIwDHLPuRrwVuoSA==
-X-Google-Smtp-Source: ABdhPJyrlHHkley1jLqdJEA9M3j2B5m5WxNfwf3JuAH+EwmCKfYibJMfqcFndwA7usdLIL6NyzfXvJC3GLizwiSgejs=
-X-Received: by 2002:a2e:964b:: with SMTP id z11mr17242550ljh.91.1630491708890;
- Wed, 01 Sep 2021 03:21:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210830003603.31864-1-zhiyong.tao@mediatek.com>
- <20210830003603.31864-3-zhiyong.tao@mediatek.com> <YS6pbO4hmNyX//tP@robh.at.kernel.org>
- <1630461636.21764.1.camel@mhfsdcap03>
-In-Reply-To: <1630461636.21764.1.camel@mhfsdcap03>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Wed, 1 Sep 2021 18:21:37 +0800
-Message-ID: <CAGXv+5H2-o91VGHwBUB_Gui1pa5m9jz6xTjHvP3+ue8=-ZWGvQ@mail.gmail.com>
-Subject: Re: [PATCH v11 2/4] dt-bindings: pinctrl: mt8195: change pull up/down description
-To:     "zhiyong.tao" <zhiyong.tao@mediatek.com>
-Cc:     Rob Herring <robh@kernel.org>,
+        id S1343712AbhIATs1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 1 Sep 2021 15:48:27 -0400
+Received: from www.zeus03.de ([194.117.254.33]:36524 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1343505AbhIATs1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 1 Sep 2021 15:48:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=o3WveLW81BDHsV2epXosq3kZpkL
+        Zc1B0Ik5zl4hkcJY=; b=wdW69VSCr353jZLX1z33RAzULcdDHeJrvbPbitzd2ix
+        M1fkJv3taHW7bp9IPwYx9L4+qiqtC1pMK1lQXVJxGKcjlFQOqaRhBQTb1uUaXalr
+        WLgLQbfBYw6LnBxlw/l4UfRgn/esLss/ETM19zj8Ak6tKC7yAez1lQHgPh47rmpg
+        =
+Received: (qmail 3153047 invoked from network); 1 Sep 2021 21:47:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Sep 2021 21:47:27 +0200
+X-UD-Smtp-Session: l3s3148p1@LJOCVfTKwOYgAwDPXwmvAFZKlTMHlX5i
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        hui.liu@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>,
-        Light Hsieh <light.hsieh@mediatek.com>,
-        Biao Huang <biao.huang@mediatek.com>,
-        Hongzhou Yang <hongzhou.yang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/1] gpio: add simple logic analyzer using polling
+Date:   Wed,  1 Sep 2021 21:45:48 +0200
+Message-Id: <20210901194549.3999-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 1, 2021 at 10:01 AM zhiyong.tao <zhiyong.tao@mediatek.com> wrote:
->
-> On Tue, 2021-08-31 at 17:13 -0500, Rob Herring wrote:
-> > On Mon, Aug 30, 2021 at 08:36:01AM +0800, Zhiyong Tao wrote:
-> > > Change pull up/down description
-> >
-> > Every commit is a 'change'. Your commit msg should explain 'why', not
-> > what the diff is.
-> >
-> Hi robh,
-> we will add 'why' explanation in the commit msg in v12.
->
->
-> > >
-> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > ---
-> > >  .../bindings/pinctrl/pinctrl-mt8195.yaml      | 32 +++++++++++++++++--
-> > >  1 file changed, 29 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
-> > > index 2f12ec59eee5..a341ed9f0095 100644
-> > > --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
-> > > @@ -85,9 +85,35 @@ patternProperties:
-> > >            2/4/6/8/10/12/14/16mA in mt8195.
-> > >          enum: [0, 1, 2, 3, 4, 5, 6, 7]
-> > >
-> > > -      bias-pull-down: true
-> > > -
-> > > -      bias-pull-up: true
-> > > +      bias-pull-down:
-> > > +        description: |
-> > > +          For pull down type is normal, it don't need add RSEL & R1R0 define
-> > > +          and resistance value.
-> > > +          For pull down type is PUPD/R0/R1 type, it can add R1R0 define to
-> > > +          set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
-> > > +          "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" & "MTK_PUPD_SET_R1R0_11"
-> > > +          define in mt8195.
-> > > +          For pull down type is RSEL, it can add RSEL define & resistance value(ohm)
-> > > +          to set different resistance. It can support "MTK_PULL_SET_RSEL_000" &
-> > > +          "MTK_PULL_SET_RSEL_001" & "MTK_PULL_SET_RSEL_010" & "MTK_PULL_SET_RSEL_011" &
-> > > +          "MTK_PULL_SET_RSEL_100" & "MTK_PULL_SET_RSEL_101" & "MTK_PULL_SET_RSEL_110" &
-> > > +          "MTK_PULL_SET_RSEL_111" define in mt8195. It can also support resistance value(ohm)
-> > > +          "75000" & "5000" in mt8195.
-> >
-> > Sounds like constraints on the values. Please write a schema.
-> >
-> we will add a schema here in v12.
+The bravery continues with the next update and first non-RFC version of
+the in-kernel logic analyzer based on GPIO polling with local irqs
+disabled. It has been been tested locally and remotely. It provided
+satisfactory results. Besides the driver, there is also a script which
+isolates a CPU to achieve the best possible result. I am aware of the
+latency limitations. However, the intention is for debugging only, not
+mass production. Especially for remote debugging and to get a first
+impression, this has already been useful. Documentation is within the
+patch, to get a better idea what this is all about.
 
-Could the description be written to encourage device tree authors to
-use SI units instead of the macros?
+Changes since RFC v2:
 
-Thanks
-ChenYu
+* took most of the suggestions from Andy's review. For the things I did
+  not take, I added comments when appropriate.
+* A *lot* of cleanups to the shell script guided by checkers, mainly
+  'shellcheck'. This is mainly to ensure that the scripts works on most
+  minimal shells. Tested are 'busybox ash', 'dash', and 'bash'.
+* a *lot* more error checking and reporting in the script
+* I found fatal_signal_pending(), so the sampling process is now
+  finally killable \o/
+* script sets CPUfreq now to "performance" for the isolated CPU
+* the acquisition_delay is now measured before each sampling and not
+  only during probe because the probing core is likely not the one
+  used for sampling later
 
->
-> Thanks
-> > > +
-> > > +      bias-pull-up:
-> > > +        description: |
-> > > +          For pull up type is normal, it don't need add RSEL & R1R0 define
-> > > +          and resistance value.
-> > > +          For pull up type is PUPD/R0/R1 type, it can add R1R0 define to
-> > > +          set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
-> > > +          "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" & "MTK_PUPD_SET_R1R0_11"
-> > > +          define in mt8195.
-> > > +          For pull up type is RSEL, it can add RSEL define & resistance value(ohm)
-> > > +          to set different resistance. It can support "MTK_PULL_SET_RSEL_000" &
-> > > +          "MTK_PULL_SET_RSEL_001" & "MTK_PULL_SET_RSEL_010" & "MTK_PULL_SET_RSEL_011" &
-> > > +          "MTK_PULL_SET_RSEL_100" & "MTK_PULL_SET_RSEL_101" & "MTK_PULL_SET_RSEL_110" &
-> > > +          "MTK_PULL_SET_RSEL_111" define in mt8195. It can also support resistance value(ohm)
-> > > +          "1000" & "1500" & "2000" & "3000" & "4000" & "5000" & "10000" & "75000" in mt8195.
-> > >
-> > >        bias-disable: true
-> > >
-> > > --
-> > > 2.18.0
-> > >
-> > >
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+Thanks to Andy for many suggestions.
+
+A branch with preparation for the Renesas Salvator-XS (R-Car H3 ES2.0
+and M3-N tested) and Falcon boards (R-Car V3U) is here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/gpio-logic-analyzer-v3
+
+The documentation is also available online on the elinux wiki:
+https://elinux.org/Kernel_GPIO_Logic_analyzer
+
+Looking forward to comments and especially further tests with different
+use cases than mine.
+
+Thanks and all the best,
+
+   Wolfram
+
+
+Wolfram Sang (1):
+  gpio: add sloppy logic analyzer using polling
+
+ .../dev-tools/gpio-sloppy-logic-analyzer.rst  |  71 ++++
+ Documentation/dev-tools/index.rst             |   1 +
+ drivers/gpio/Kconfig                          |  17 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-sloppy-logic-analyzer.c     | 340 ++++++++++++++++++
+ tools/gpio/gpio-sloppy-logic-analyzer         | 214 +++++++++++
+ 6 files changed, 644 insertions(+)
+ create mode 100644 Documentation/dev-tools/gpio-sloppy-logic-analyzer.rst
+ create mode 100644 drivers/gpio/gpio-sloppy-logic-analyzer.c
+ create mode 100755 tools/gpio/gpio-sloppy-logic-analyzer
+
+-- 
+2.30.2
+
