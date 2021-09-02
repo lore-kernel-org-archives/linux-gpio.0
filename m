@@ -2,175 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B8EC432BE
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Sep 2021 09:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6543FC4320E
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Sep 2021 09:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFBD061058
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Sep 2021 09:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 451A56108B
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Sep 2021 09:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245001AbhIBJQh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Sep 2021 05:16:37 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:27017 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244999AbhIBJQa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Sep 2021 05:16:30 -0400
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 02 Sep 2021 02:15:32 -0700
-X-QCInternal: smtphost
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 02 Sep 2021 02:15:31 -0700
-X-QCInternal: smtphost
-Received: from c-skakit-linux.ap.qualcomm.com (HELO c-skakit-linux.qualcomm.com) ([10.242.51.242])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 02 Sep 2021 14:45:09 +0530
-Received: by c-skakit-linux.qualcomm.com (Postfix, from userid 2344709)
-        id 8B817ADF; Thu,  2 Sep 2021 14:45:08 +0530 (IST)
-From:   satya priya <skakit@codeaurora.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        David Collins <collinsd@codeaurora.org>, kgunda@codeaurora.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        satya priya <skakit@codeaurora.org>
-Subject: [PATCH V2 1/2] pinctrl: qcom: spmi-gpio: correct parent irqspec translation
-Date:   Thu,  2 Sep 2021 14:45:05 +0530
-Message-Id: <1630574106-3394-2-git-send-email-skakit@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1630574106-3394-1-git-send-email-skakit@codeaurora.org>
-References: <1630574106-3394-1-git-send-email-skakit@codeaurora.org>
+        id S1343551AbhIBJsb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Sep 2021 05:48:31 -0400
+Received: from mga02.intel.com ([134.134.136.20]:27018 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241297AbhIBJsb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 2 Sep 2021 05:48:31 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10094"; a="206273283"
+X-IronPort-AV: E=Sophos;i="5.84,371,1620716400"; 
+   d="scan'208";a="206273283"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2021 02:47:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.84,371,1620716400"; 
+   d="scan'208";a="532969607"
+Received: from pl-dbox.sh.intel.com (HELO pl-dbox) ([10.239.159.39])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Sep 2021 02:47:30 -0700
+Date:   Thu, 2 Sep 2021 17:39:18 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     Li Zhijian <lizhijian@cn.fujitsu.com>
+Cc:     bamv2005@gmail.com, shuah@kernel.org, linux-gpio@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] selftests/gpio: Fix gpio compiling error
+Message-ID: <20210902093918.GA411030@pl-dbox>
+References: <20210902084635.103622-1-lizhijian@cn.fujitsu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210902084635.103622-1-lizhijian@cn.fujitsu.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: David Collins <collinsd@codeaurora.org>
-
-pmic_gpio_child_to_parent_hwirq() and
-gpiochip_populate_parent_fwspec_fourcell() translate a pinctrl-
-spmi-gpio irqspec to an SPMI controller irqspec.  When they do
-this, they use a fixed SPMI slave ID of 0 and a fixed GPIO
-peripheral offset of 0xC0 (corresponding to SPMI address 0xC000).
-This translation results in an incorrect irqspec for secondary
-PMICs that don't have a slave ID of 0 as well as for PMIC chips
-which have GPIO peripherals located at a base address other than
-0xC000.
-
-Correct this issue by passing the slave ID of the pinctrl-spmi-
-gpio device's parent in the SPMI controller irqspec and by
-calculating the peripheral ID base from the device tree 'reg'
-property of the pinctrl-spmi-gpio device.
-
-Signed-off-by: David Collins <collinsd@codeaurora.org>
-Signed-off-by: satya priya <skakit@codeaurora.org>
-Fixes: ca69e2d165eb ("qcom: spmi-gpio: add support for hierarchical IRQ chip")
----
-Changes in V2:
- - Added a fixes tag.
-
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 37 +++++++++++++++++++++++++++++---
- 1 file changed, 34 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 98bf0e2..dbae168 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2012-2014, 2016-2021 The Linux Foundation. All rights reserved.
-  */
- 
- #include <linux/gpio/driver.h>
-@@ -14,6 +14,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-+#include <linux/spmi.h>
- #include <linux/types.h>
- 
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-@@ -171,6 +172,8 @@ struct pmic_gpio_state {
- 	struct pinctrl_dev *ctrl;
- 	struct gpio_chip chip;
- 	struct irq_chip irq;
-+	u8 usid;
-+	u8 pid_base;
- };
- 
- static const struct pinconf_generic_params pmic_gpio_bindings[] = {
-@@ -949,12 +952,36 @@ static int pmic_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
- 					   unsigned int *parent_hwirq,
- 					   unsigned int *parent_type)
- {
--	*parent_hwirq = child_hwirq + 0xc0;
-+	struct pmic_gpio_state *state = gpiochip_get_data(chip);
-+
-+	*parent_hwirq = child_hwirq + state->pid_base;
- 	*parent_type = child_type;
- 
- 	return 0;
- }
- 
-+static void *pmic_gpio_populate_parent_fwspec(struct gpio_chip *chip,
-+					     unsigned int parent_hwirq,
-+					     unsigned int parent_type)
-+{
-+	struct pmic_gpio_state *state = gpiochip_get_data(chip);
-+	struct irq_fwspec *fwspec;
-+
-+	fwspec = kzalloc(sizeof(*fwspec), GFP_KERNEL);
-+	if (!fwspec)
-+		return NULL;
-+
-+	fwspec->fwnode = chip->irq.parent_domain->fwnode;
-+
-+	fwspec->param_count = 4;
-+	fwspec->param[0] = state->usid;
-+	fwspec->param[1] = parent_hwirq;
-+	fwspec->param[2] = 0;
-+	fwspec->param[3] = parent_type;
-+
-+	return fwspec;
-+}
-+
- static int pmic_gpio_probe(struct platform_device *pdev)
- {
- 	struct irq_domain *parent_domain;
-@@ -965,6 +992,7 @@ static int pmic_gpio_probe(struct platform_device *pdev)
- 	struct pmic_gpio_pad *pad, *pads;
- 	struct pmic_gpio_state *state;
- 	struct gpio_irq_chip *girq;
-+	const struct spmi_device *parent_spmi_dev;
- 	int ret, npins, i;
- 	u32 reg;
- 
-@@ -984,6 +1012,9 @@ static int pmic_gpio_probe(struct platform_device *pdev)
- 
- 	state->dev = &pdev->dev;
- 	state->map = dev_get_regmap(dev->parent, NULL);
-+	parent_spmi_dev = to_spmi_device(dev->parent);
-+	state->usid = parent_spmi_dev->usid;
-+	state->pid_base = reg >> 8;
- 
- 	pindesc = devm_kcalloc(dev, npins, sizeof(*pindesc), GFP_KERNEL);
- 	if (!pindesc)
-@@ -1059,7 +1090,7 @@ static int pmic_gpio_probe(struct platform_device *pdev)
- 	girq->fwnode = of_node_to_fwnode(state->dev->of_node);
- 	girq->parent_domain = parent_domain;
- 	girq->child_to_parent_hwirq = pmic_gpio_child_to_parent_hwirq;
--	girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_fourcell;
-+	girq->populate_parent_alloc_arg = pmic_gpio_populate_parent_fwspec;
- 	girq->child_offset_to_irq = pmic_gpio_child_offset_to_irq;
- 	girq->child_irq_domain_ops.translate = pmic_gpio_domain_translate;
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
-of Code Aurora Forum, hosted by The Linux Foundation
-
+applied
+On Thu, Sep 02, 2021 at 04:46:35PM +0800, Li Zhijian wrote:
+> [root@iaas-rpma gpio]# make
+> gcc     gpio-mockup-cdev.c  -o /home/lizhijian/linux/tools/testing/selftests/gpio/gpio-mockup-cdev
+> gpio-mockup-cdev.c: In function ‘request_line_v2’:
+> gpio-mockup-cdev.c:24:30: error: storage size of ‘req’ isn’t known
+>    24 |  struct gpio_v2_line_request req;
+>       |                              ^~~
+> gpio-mockup-cdev.c:32:14: error: ‘GPIO_V2_LINE_FLAG_OUTPUT’ undeclared (first use in this function); did you mean ‘GPIOLINE_FLAG_IS_OUT’?
+>    32 |  if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
+>       |              ^~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Search headers from linux tree like others, such as sched
+> 
+> CC: Philip Li <philip.li@intel.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+> ---
+>  tools/testing/selftests/gpio/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+> index 39f2bbe8dd3d..42ea7d2aa844 100644
+> --- a/tools/testing/selftests/gpio/Makefile
+> +++ b/tools/testing/selftests/gpio/Makefile
+> @@ -3,5 +3,6 @@
+>  TEST_PROGS := gpio-mockup.sh
+>  TEST_FILES := gpio-mockup-sysfs.sh
+>  TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev
+> +CFLAGS += -I../../../../usr/include
+>  
+>  include ../lib.mk
+> -- 
+> 2.31.1
+> 
+> 
+> 
