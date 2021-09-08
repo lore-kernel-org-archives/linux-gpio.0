@@ -4,183 +4,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2887C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Sep 2021 21:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300CCC433F5
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Sep 2021 07:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C279D6109D
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Sep 2021 21:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 106C061051
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Sep 2021 07:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245641AbhIGVDa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Sep 2021 17:03:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
+        id S1347505AbhIHH1j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Sep 2021 03:27:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbhIGVD2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Sep 2021 17:03:28 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B569AC061757
-        for <linux-gpio@vger.kernel.org>; Tue,  7 Sep 2021 14:02:21 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id b10so283588ioq.9
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Sep 2021 14:02:21 -0700 (PDT)
+        with ESMTP id S1347449AbhIHH1h (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Sep 2021 03:27:37 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4C3C061757
+        for <linux-gpio@vger.kernel.org>; Wed,  8 Sep 2021 00:26:29 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id h9so2237809ejs.4
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Sep 2021 00:26:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=L/rKcATmeaNcVjKXqpdxqEp5aNsfDE5SuF1Ce5K5Gx8=;
-        b=mxNNVn+9KgZZoIHCC6VzlavgyutyjZLLVbhFpg2s55PnctD9B1o6C/zYwQASPWXKqU
-         mQAYbyFkKZVkpeBtaIvR6Wy2b6tngmGQkkqnI9+4/s6MmZKqSRXDaHudZ2C6cir2xsvC
-         BBjdtmU0oV9uZfRIYetYhp32KbIifOOO++bTZlG56KqA2dhJux5krzk2FZlIJURMQwuI
-         khMaJRFIgfoJU4/hKoUzFLuuvu0qS8m6hlElLDz0s2khpSuPqBmgK4AbrjgHm+NMKePO
-         Op8iJNpfhoYzdd861cy5OzDtVQrOKxq/Gv36kOkf8i9b6t7HrGuFwOaKaCEyujumtUQs
-         IyAQ==
+        bh=Y5oxOfqa+jGQ0fJQGJq3gmhfZxrLYBOPvpDpkldQke0=;
+        b=VRPBDw4QfPjww0fyYwOqFu/b8UuEbcoxYHSj1pdxJocHmI2o5m42MLColTh1dR8D8H
+         bt5CZzTfmwZHU0i7fogiiktK1HVMdH8e/Z0xZYIoZV2uSRftpTI9g1P4TufpwKEkCLJj
+         iABFYRoQ/QqK53LlnzWnR7kGgGUN++dvbN7XW4nays2KyVC+5cQ+XDLaV9ahmZWeefXs
+         gbTmd5eqfBQJeb2fOENiRnjMz2EZAcY/ef1MKwXQwqCPudANuaNquG85Ka+jh6+ZS74g
+         5EA5eLlJS8xi5TfIJCjonp1tnAlbBw3XiBBTg7NN4IR7+oTbKkseJidonOpsZkg4oiw7
+         67Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=L/rKcATmeaNcVjKXqpdxqEp5aNsfDE5SuF1Ce5K5Gx8=;
-        b=raou9IMOGGXfyFHrDUB2NXZkrGx3DEU0huGrGEmqpSFGKVZxllFsMYPXgYlpb6Q62X
-         ha5/gCze9UX/bLvs9UWX7VlJRy84Js7/VebSg3lIJqudRYwhyJYd4OAuDntvH2isyypI
-         J0OXNgwdB0DxUXz/HwIMHsE+ZpofnSWyAYxe2tV5cUqMg6ZqukhD0BxhClJzw76Ufyu9
-         vCfUdMAmSpBXR7SM32auTSOvwDcjc5gcnzKb3gtJ7IUVyP792vi7OiMwT1ddTpL0hkY/
-         93McsP1kTi5SuECMFxm2UdQAHu+rFWCfAgwmyjiEkkSvHpqw7Uq/IXhMBz64uEdEA5fE
-         gvDg==
-X-Gm-Message-State: AOAM532pnFVK2YMXTU2ZvSpVGYE809kTT6gQ7Svc44cNwWeFRLFJQkvB
-        LNoS/lPhZ0ggBohXhHrnChzg8/iEDG4DrvDO/kDJ1WAGilWkHw==
-X-Google-Smtp-Source: ABdhPJx4Bs0nFKfl5CTgJd/xkkt44Qk/bcR6QdLGXuvFbumHbGkb9Vll29PZl3UYk8Jpd3ENi2eDa1vgYa6cvn2mSNA=
-X-Received: by 2002:a6b:3e89:: with SMTP id l131mr142240ioa.74.1631048541182;
- Tue, 07 Sep 2021 14:02:21 -0700 (PDT)
+        bh=Y5oxOfqa+jGQ0fJQGJq3gmhfZxrLYBOPvpDpkldQke0=;
+        b=uRm1NCPkGYNdt6jWKF/as5AoCZiZkBZa56SK38Ar/56ExJt6yJrXaTNzBR6PA6nBcE
+         Aq1revb/QFi4z1AalNHOTcNhfp57OH/rryv6rN4b70Z8LqHccpR/UUaenAueapizWUTK
+         ST7u9wECeDkKId8yZ3oghXL1VXv8JW3ZG4OQB6LET3muXtIL2l70its+/gcKMvOS8vGg
+         jB1LHl7VC8wc6jKUX8hzJbbii2mbuVL3oFwEjwQvHf3MdhMh3Zi927OWy6YzorYgCuGP
+         NzWwT5t901LhVA5M4s/p5q1RLOi1JhTzvZCOCE5te57z/JslXo7LcdwPCfnTSS437aWL
+         I/NA==
+X-Gm-Message-State: AOAM530OkdtFbmfplxuiVTqiyOSqtmcbm9bBv06C+R72InqSkwcscX88
+        k+W8f/NGxHobO1zq4WN/2N5EXAmpS/P1N7ZUXrmPlA==
+X-Google-Smtp-Source: ABdhPJwhE7rBpdZTJieuGvVC085G3HLnlR/XC9ofe1Zhw1bZwAPzYtYLpGCxF+HzbU3M+xqqRJ71oRA1DwdNZQxafAk=
+X-Received: by 2002:a17:906:a018:: with SMTP id p24mr2529713ejy.349.1631085987755;
+ Wed, 08 Sep 2021 00:26:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210607123317.3242031-1-robert.marko@sartura.hr>
- <20210607123317.3242031-5-robert.marko@sartura.hr> <CA+HBbNH7wcpfQOX2=vZmW78GoWy_WL3Pz-dMKe0N0ebZDp+oUw@mail.gmail.com>
- <20210713222528.GA952399@robh.at.kernel.org> <CA+HBbNFj5+6sLKxmL8XtsZQ48ch8OjTbJ1bwkDC8dfRiOyWY1Q@mail.gmail.com>
- <20210719225906.GA2769608@robh.at.kernel.org> <CACRpkdbq6Jow6AT9OpsR7Q0JVCWVMcmamh9KHPXMtUnkoe7ZFw@mail.gmail.com>
- <CA+HBbNFEs-=5XTK7PUL+LsgBCcPfwHsCPe4v6byK0x=O_7TRPA@mail.gmail.com>
- <CACRpkdZfZLQMgpMAF2FwSVt1YAzhQJ9ZWkVUjVc2xpmWL7yEvQ@mail.gmail.com> <CA+HBbNHZyYnnyz9=4Hgav96ZH8-R-nYoi300j2x3fgei8aa4zQ@mail.gmail.com>
-In-Reply-To: <CA+HBbNHZyYnnyz9=4Hgav96ZH8-R-nYoi300j2x3fgei8aa4zQ@mail.gmail.com>
-From:   Robert Marko <robert.marko@sartura.hr>
-Date:   Tue, 7 Sep 2021 23:02:10 +0200
-Message-ID: <CA+HBbNE_U3dbnWh-8QasaxfQrQHS4YK8TEr0YebH9mCJsc0JTQ@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] dt-bindings: mfd: Add Delta TN48M CPLD drivers bindings
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+References: <20210907083613.31268-1-brgl@bgdev.pl> <CAHk-=wgQBgkut6zXTbZN45AtJmSceXwDw6Y60ZmwrPkOL__A8g@mail.gmail.com>
+In-Reply-To: <CAHk-=wgQBgkut6zXTbZN45AtJmSceXwDw6Y60ZmwrPkOL__A8g@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 8 Sep 2021 09:26:17 +0200
+Message-ID: <CAMRc=MdFCOiei0xxDuChfM0puu2XDkAKC9nsr+Cw5kyCFSjYZA@mail.gmail.com>
+Subject: Re: [GIT PULL] gpio: updates for v5.15
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luka Perkov <luka.perkov@sartura.hr>, jmp@epiphyte.org,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Donald Buczek <buczek@molgen.mpg.de>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Aug 24, 2021 at 10:03 AM Robert Marko <robert.marko@sartura.hr> wrote:
+On Tue, Sep 7, 2021 at 9:36 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Wed, Aug 11, 2021 at 2:17 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Sep 7, 2021 at 1:36 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > >
-> > On Tue, Aug 3, 2021 at 9:23 PM Robert Marko <robert.marko@sartura.hr> wrote:
-> >
-> > > The pins that this driver wants to expose are used for SFP-s only,
-> > > they are provided by the Lattice CPLD which also does other things.
-> > >
-> > > Linux has a generic SFP driver which is used to manage these SFP
-> > > ports, but it only supports GPIO-s, it has no concept of anything else.
-> > > Since the driver is fully generic, I have no idea how could one extend it
-> > > to effectively handle these pins internally, especially since I have more
-> > > switches that use the CPLD for SFP-s as well, even for 48 ports and 192
-> > > pins for them.
-> >
-> > Which file is this driver in so I can look?
+> >  We also have a new/old GPIO driver for rockchip - this
+> > one has been split out of the pinctrl driver, hence the pull from the
+> > pinctrl tree you can see in my branch. Another merge in the tree is from Andy
+> > for the intel drivers.
 >
-> Hi Linus,
-> Sorry for the late reply.
+> I appreciate the heads-up, but just *look* at those merges.
 >
-> Sure, here is the generic Linux driver that is used for SFP handling:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/sfp.c?h=v5.14-rc7
+> The intel GPIO merge at least talks about what it does, and looks
+> sane. I'm not convinced that automated shortlogs are great, but
+> whatever. The merge isn't bad.
 >
-> >
-> > Maybe it is not a good idea to look for generic code just because
-> > it is convenient? I have had this problem before with GPIO, along
-> > the lines "lemme just do this dirty thing this one time because it
-> > is so convenient for me" (more or less) and the answer is still
-> > "no".
-> >
-> > Can you either augment the driver to handle a regmap with bit indices
-> > instead or write a new similar driver for that or refactor it some other
-> > way?
-> >
-> > It is not a simple solution to your problem, but it might be the right
-> > solution even if it means some more work.
+> The rockchip one?
 >
-> I understand your position, believe me, I spend some time looking at
-> what would be the logical way for these switches.
-> But I see no way how could the SFP driver be extended in a generic way
-> that would allow supporting different register layouts when it comes to pins.
+> All I can say is "WTF?"
 >
-> >
-> > > GPIO regmap works perfectly for this as its generic enough to cover all of
-> > > these cases.
-> >
-> > Yeah but it might be the wrong thing to do even if it is simple
-> > to use and works.
-> >
-> > > CPLD also provides pins to test the port LED-s per color as well,
-> > > but I have chosen not to expose them so far.
-> >
-> > Have you considered
-> > Documentation/devicetree/bindings/leds/register-bit-led.txt
+> This is the complete and full commit message:
 >
-> Yeah, but unfortunately in this case it wont work as the LED-s
-> are for debugging/test purposes only and you first need to switch
-> the CPLD out of it interpreting the LED state with a BIT flip.
+>     Merge branch 'ib-rockchip' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+> into gpio/for-next
 >
-> Regards,
-> Robert
-> >
-> > > > If it is a regmap in Linux then that is fine, just pass the regmap
-> > > > around inside the kernel, OK finished. But really that is an OS
-> > > > detail.
-> > >
-> > > Yes, its regmap but I cant really pass it to the SFP driver as I don't have
-> > > special driver handling the SFP but rather the generic kernel one.
-> > > It only knows how to handle GPIO-s.
-> >
-> > Of course you have to program it. If I know which driver it
-> > is it is easier to provide architecture ideas.
-> >
-> > Yours,
-> > Linus Walleij
+> what part of that screams "that's an acceptable commit message" to you?
+>
+> If the reason for that merge was that you want to have the current
+> state so that you can split it up, then SAY SO, for chrissake!
+>
+> Not that useless commit message.
+>
+> Why do I have to tell this to people SEVERAL TIMES EVERY SINGLE MERGE WINDOW?
+>
+> Merge commits need explanations. They need explanations for why the
+> merge is done, and what the merge pulls in. Not this "single line that
+> doesn't explain anything".
+>
+> Dammit.
+>
+> I've pulled this, but I'm upset. I'm upset because I've told people
+> literally hundreds of times by now. Merge commits are not some trivial
+> thing that should be ignored. Quite the reverse. Merge commits are
+> generally worth *more* explanation than normal commits, and should
+> take *more* effort and thought than some random code commit that is
+> obvious from just the code.
+>
+> Exactly because merges are *not* obvious from just looking at the
+> code. It's not some one-liner that is self-explanatory.
+>
+> If you cannot be bothered to make proper merge messages, then don't do
+> the merge. If y ou don't have a good reason for the merge that you can
+> articulate, then don't do the merge. If you can't explain what you are
+> merging, then don't do the merge.
+>
+> It really is that simple.
+>
+> I've pulled this, but I'm really fed up.
+>
+>             Linus
 
-Linus,
+Hi Linus,
 
-can I offer some further explanation?
+Thanks and sorry, noted for the future PRs.
 
-Regards,
-Robert
->
->
->
-> --
-> Robert Marko
-> Staff Embedded Linux Engineer
-> Sartura Ltd.
-> Lendavska ulica 16a
-> 10000 Zagreb, Croatia
-> Email: robert.marko@sartura.hr
-> Web: www.sartura.hr
-
-
-
--- 
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura Ltd.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+Bartosz
