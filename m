@@ -2,73 +2,71 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FB7C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Sep 2021 22:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6096C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Sep 2021 22:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3279F60F6F
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Sep 2021 22:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC6DB60EFF
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Sep 2021 22:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350043AbhIMWxh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Sep 2021 18:53:37 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:51184 "EHLO gloria.sntech.de"
+        id S1350122AbhIMWxk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Sep 2021 18:53:40 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:51186 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1349678AbhIMWvB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1349679AbhIMWvB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Mon, 13 Sep 2021 18:51:01 -0400
 Received: from ip5f5a6e92.dynamic.kabel-deutschland.de ([95.90.110.146] helo=localhost.localdomain)
         by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <heiko@sntech.de>)
-        id 1mPulV-0003SX-PC; Tue, 14 Sep 2021 00:49:29 +0200
+        id 1mPulW-0003SX-C6; Tue, 14 Sep 2021 00:49:30 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
 Cc:     heiko@sntech.de, jay.xu@rock-chips.com, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] gpio/pinctrl-rockchip: Fixes for the recently separated gpio/pinctrl driver
-Date:   Tue, 14 Sep 2021 00:49:22 +0200
-Message-Id: <20210913224926.1260726-1-heiko@sntech.de>
+Subject: [PATCH 2/4] gpio/rockchip: fix get_direction value handling
+Date:   Tue, 14 Sep 2021 00:49:24 +0200
+Message-Id: <20210913224926.1260726-3-heiko@sntech.de>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210913224926.1260726-1-heiko@sntech.de>
+References: <20210913224926.1260726-1-heiko@sntech.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It looks like rk3288-veyron(-pinky) was the one device in my boardfarm
-I didn't test the pinctrl/gpio patches on and it seems this one uses
-some specific parts none of the other do. So when I did my v5.15-rc1
-testrun I got a surprise.
+The function uses the newly introduced rockchip_gpio_readl_bit()
+which directly returns the actual value of the requeste bit.
+So using the existing bit-wise check for the bit inside the value
+will always return 0.
 
-Not only did the pinctrl-hogs cause a null-pointer exception but the
-device also entered a reset loop a bit later in the boot.
+Fix this by dropping the bit manipulation on the result.
 
-This series addresses the issues in hopefully a nice way and should
-ideally become part of 5.15 before other people run into issues.
+Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/gpio/gpio-rockchip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* Patch 1 addresses the reset-loop, which is caused by a not-ideal
-  check vor v1 vs. v2 controller in the debounce code
-* Patch 2 is just a find when looking through the code
-* Patches 3+4 address the pinctrl-hogs issue by creating a deferred
-  queue where the pinctrl can temporarily store these hog settings
-  if needed and the pinctrl driver can retrieve them during probe.
-
-
-Heiko Stuebner (4):
-  gpio/rockchip: extended debounce support is only available on v2
-  gpio/rockchip: fix get_direction value handling
-  pinctrl/rockchip: add a queue for deferred pin output settings on
-    probe
-  gpio/rockchip: fetch deferred output settings on probe
-
- drivers/gpio/gpio-rockchip.c       | 26 +++++++++++-
- drivers/pinctrl/pinctrl-rockchip.c | 67 ++++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-rockchip.h | 10 +++++
- 3 files changed, 101 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 16d9bf7188e3..3335bd57761d 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -141,7 +141,7 @@ static int rockchip_gpio_get_direction(struct gpio_chip *chip,
+ 	u32 data;
+ 
+ 	data = rockchip_gpio_readl_bit(bank, offset, bank->gpio_regs->port_ddr);
+-	if (data & BIT(offset))
++	if (data)
+ 		return GPIO_LINE_DIRECTION_OUT;
+ 
+ 	return GPIO_LINE_DIRECTION_IN;
 -- 
 2.29.2
 
