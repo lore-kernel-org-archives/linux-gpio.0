@@ -2,78 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF04C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 02:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5260C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 02:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A44A46113A
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 02:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9DC9610C8
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 02:32:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242643AbhIQCMZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Sep 2021 22:12:25 -0400
-Received: from mx22.baidu.com ([220.181.50.185]:44446 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242642AbhIQCMY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Sep 2021 22:12:24 -0400
-X-Greylist: delayed 987 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Sep 2021 22:12:24 EDT
-Received: from BC-Mail-Ex25.internal.baidu.com (unknown [172.31.51.19])
-        by Forcepoint Email with ESMTPS id D007E98AF78AADBE57E8;
-        Fri, 17 Sep 2021 09:54:34 +0800 (CST)
-Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BC-Mail-Ex25.internal.baidu.com (172.31.51.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.12; Fri, 17 Sep 2021 09:54:34 +0800
-Received: from localhost (172.31.63.8) by BJHW-MAIL-EX27.internal.baidu.com
- (10.127.64.42) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Fri, 17
- Sep 2021 09:54:34 +0800
-Date:   Fri, 17 Sep 2021 09:54:34 +0800
-From:   Cai Huoqing <caihuoqing@baidu.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>, open list:
-        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, ;
-        linux-kernel <linux-kernel@vger.kernel.org>
-Illegal-Object: Syntax error in CC: address found on vger.kernel.org:
-        CC:     ;linux-kernel <linux-kernel@vger.kernel.org>
-                        ^-missing semicolon to end mail group, extraneous tokens in mailbox, missing end of mailbox
-Subject: Re: [PATCH] pinctrl: freescale: Add helper dependency on COMPILE_TEST
-Message-ID: <20210917015434.GA17483@LAPTOP-UKSR4ENP.internal.baidu.com>
-References: <20210825082251.2484-1-caihuoqing@baidu.com>
- <CACRpkdYekS+2WKoyT5ssSp28XR4pxb+4yMZnP9PPRXpG+UE-LA@mail.gmail.com>
+        id S242746AbhIQCdp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Sep 2021 22:33:45 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:35344 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S242742AbhIQCdn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Sep 2021 22:33:43 -0400
+X-UUID: d1e630a93d2a4dacaa920baf23234d13-20210917
+X-UUID: d1e630a93d2a4dacaa920baf23234d13-20210917
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <zhiyong.tao@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 484394002; Fri, 17 Sep 2021 10:32:20 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 17 Sep 2021 10:32:18 +0800
+Received: from localhost.localdomain (10.17.3.154) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 17 Sep 2021 10:32:17 +0800
+From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
+To:     <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
+        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
+        <sean.wang@kernel.org>
+CC:     <srv_heupstream@mediatek.com>, <zhiyong.tao@mediatek.com>,
+        <hui.liu@mediatek.com>, <light.hsieh@mediatek.com>,
+        <biao.huang@mediatek.com>, <hongzhou.yang@mediatek.com>,
+        <sean.wang@mediatek.com>, <seiya.wang@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v12 1/5] dt-bindings: pinctrl: mt8195: add rsel define
+Date:   Fri, 17 Sep 2021 10:32:12 +0800
+Message-ID: <20210917023216.18384-2-zhiyong.tao@mediatek.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210917023216.18384-1-zhiyong.tao@mediatek.com>
+References: <20210917023216.18384-1-zhiyong.tao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdYekS+2WKoyT5ssSp28XR4pxb+4yMZnP9PPRXpG+UE-LA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [172.31.63.8]
-X-ClientProxiedBy: BC-Mail-Ex27.internal.baidu.com (172.31.51.21) To
- BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 17 9月 21 00:07:32, Linus Walleij wrote:
-> On Wed, Aug 25, 2021 at 10:23 AM Cai Huoqing <caihuoqing@baidu.com> wrote:
-> 
-> > it's helpful for complie test in other platform(e.g.X86)
-> >
-> > Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
-> 
-> It seems weird to only enable this on a few select subdrivers rather
-> than all of the Freescale drivers?
-The others seem to depend on SOC_IMX arch related headers
-but it's ok for ARCH_IMX related to use COMPILE_TEST.
-> 
-> (Also: the Freescale maintainers are very silent, some feedback
-> would be helpful.)
-> 
-> Yours,
-> Linus Walleij
+This patch adds rsel define for mt8195.
+
+Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ include/dt-bindings/pinctrl/mt65xx.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/include/dt-bindings/pinctrl/mt65xx.h b/include/dt-bindings/pinctrl/mt65xx.h
+index 7e16e58fe1f7..f5934abcd1bd 100644
+--- a/include/dt-bindings/pinctrl/mt65xx.h
++++ b/include/dt-bindings/pinctrl/mt65xx.h
+@@ -16,6 +16,15 @@
+ #define MTK_PUPD_SET_R1R0_10 102
+ #define MTK_PUPD_SET_R1R0_11 103
+ 
++#define MTK_PULL_SET_RSEL_000  200
++#define MTK_PULL_SET_RSEL_001  201
++#define MTK_PULL_SET_RSEL_010  202
++#define MTK_PULL_SET_RSEL_011  203
++#define MTK_PULL_SET_RSEL_100  204
++#define MTK_PULL_SET_RSEL_101  205
++#define MTK_PULL_SET_RSEL_110  206
++#define MTK_PULL_SET_RSEL_111  207
++
+ #define MTK_DRIVE_2mA  2
+ #define MTK_DRIVE_4mA  4
+ #define MTK_DRIVE_6mA  6
+-- 
+2.25.1
+
