@@ -2,514 +2,136 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE224C4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 02:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75FAC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 04:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B94B1610C8
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 02:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE62611C0
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Sep 2021 04:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242750AbhIQCdz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Sep 2021 22:33:55 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:37536 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S242784AbhIQCdu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Sep 2021 22:33:50 -0400
-X-UUID: f59dea137a0d4c78bb3359de1ef2da72-20210917
-X-UUID: f59dea137a0d4c78bb3359de1ef2da72-20210917
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-        (envelope-from <zhiyong.tao@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1873056277; Fri, 17 Sep 2021 10:32:24 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 17 Sep 2021 10:32:22 +0800
-Received: from localhost.localdomain (10.17.3.154) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 17 Sep 2021 10:32:21 +0800
-From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
-To:     <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
-        <sean.wang@kernel.org>
-CC:     <srv_heupstream@mediatek.com>, <zhiyong.tao@mediatek.com>,
-        <hui.liu@mediatek.com>, <light.hsieh@mediatek.com>,
-        <biao.huang@mediatek.com>, <hongzhou.yang@mediatek.com>,
-        <sean.wang@mediatek.com>, <seiya.wang@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-Subject: [PATCH v12 4/5] pinctrl: mediatek: support rsel feature
-Date:   Fri, 17 Sep 2021 10:32:15 +0800
-Message-ID: <20210917023216.18384-5-zhiyong.tao@mediatek.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210917023216.18384-1-zhiyong.tao@mediatek.com>
-References: <20210917023216.18384-1-zhiyong.tao@mediatek.com>
+        id S244132AbhIQEMH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Sep 2021 00:12:07 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:13493 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244635AbhIQEJh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Sep 2021 00:09:37 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1631851696; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=YRrg8XUL8FJqo8KoauQn9l5TvQY7Cfbt6ieu0fU9ExE=;
+ b=BIkeAxKe3YBPvChm/GJcBxHRff0QoQXCXIwIRomVDlRlxwZ+GwYnCcXMBkd4TJpiYIxZcBH4
+ /67cGF/UrmF70grMYaE1Ppa9Qi6IaTWDag7UvOtezpv0Zd4PKPIBrXNwcEzJm+/p9GHcqYxj
+ sZdkVFoCbI3DGDm5hQHLoOZTupc=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 614414acb585cc7d2468e1db (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 17 Sep 2021 04:08:12
+ GMT
+Sender: skakit=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5FBA1C4361A; Fri, 17 Sep 2021 04:08:12 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: skakit)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 85DDBC4360C;
+        Fri, 17 Sep 2021 04:08:11 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 17 Sep 2021 09:38:11 +0530
+From:   skakit@codeaurora.org
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Collins <collinsd@codeaurora.org>, kgunda@codeaurora.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V5 2/2] arm64: dts: sc7280: Add volume up support for
+ sc7280-idp
+In-Reply-To: <CAE-0n53i4pU==W-dc=md_x+0Tqbd1gtwkPBFode+rtupSFi0WQ@mail.gmail.com>
+References: <1631798498-10864-1-git-send-email-skakit@codeaurora.org>
+ <1631798498-10864-3-git-send-email-skakit@codeaurora.org>
+ <CAE-0n53i4pU==W-dc=md_x+0Tqbd1gtwkPBFode+rtupSFi0WQ@mail.gmail.com>
+Message-ID: <baa5c4b4dd19e0a24d28b8bff559b868@codeaurora.org>
+X-Sender: skakit@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch supports rsel(resistance selection) feature for I2C pins.
-It provides more resistance selection solution in different ICs.
-It provides rsel define and si unit solution by identifying
-"mediatek,rsel_resistance_in_si_unit" property in pio dtsi node.
+On 2021-09-17 00:32, Stephen Boyd wrote:
+> Quoting Satya Priya (2021-09-16 06:21:38)
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi 
+>> b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>> index 371a2a9..cbbb0ee 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>> @@ -12,6 +12,26 @@
+>>  #include "pm8350c.dtsi"
+>>  #include "pmk8350.dtsi"
+>> 
+>> +/ {
+>> +       gpio-keys {
+>> +               compatible = "gpio-keys";
+>> +               label = "gpio-keys";
+>> +
+>> +               pinctrl-names = "default";
+>> +               pinctrl-0 = <&key_vol_up_default>;
+>> +
+>> +               volume-up {
+>> +                       label = "volume_up";
+>> +                       gpios = <&pm7325_gpios 6 GPIO_ACTIVE_LOW>;
+>> +                       linux,input-type = <1>;
+>> +                       linux,code = <KEY_VOLUMEUP>;
+> 
+> Is there an include for this define? Looks like
+> <dt-bindings/input/input.h> should be added as well? Did you try
+> compiling?
+> 
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
----
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 231 +++++++++++++++---
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  45 ++++
- drivers/pinctrl/mediatek/pinctrl-paris.c      |  60 +++--
- 3 files changed, 288 insertions(+), 48 deletions(-)
+Yeah, it needs <dt-bindings/input/linux-event-codes.h> to be included. 
+This header was included in pmk8350.dtsi which is added in this file.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 5b3b048725cc..a73a5f624228 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -661,6 +661,181 @@ static int mtk_pinconf_bias_set_pupd_r1_r0(struct mtk_pinctrl *hw,
- 	return err;
- }
- 
-+static int mtk_hw_pin_rsel_lookup(struct mtk_pinctrl *hw,
-+				  const struct mtk_pin_desc *desc,
-+				  u32 pullup, u32 arg, u32 *rsel_val)
-+{
-+	const struct mtk_pin_rsel *rsel;
-+	int check;
-+	bool found = false;
-+
-+	rsel = hw->soc->pin_rsel;
-+
-+	for (check = 0; check <= hw->soc->npin_rsel - 1; check++) {
-+		if (desc->number >= rsel[check].s_pin &&
-+		    desc->number <= rsel[check].e_pin) {
-+			if (pullup) {
-+				if (rsel[check].up_rsel == arg) {
-+					found = true;
-+					*rsel_val = rsel[check].rsel_index;
-+					break;
-+				}
-+			} else {
-+				if (rsel[check].down_rsel == arg) {
-+					found = true;
-+					*rsel_val = rsel[check].rsel_index;
-+					break;
-+				}
-+			}
-+		}
-+	}
-+
-+	if (!found) {
-+		dev_err(hw->dev, "Not support rsel value %d Ohm for pin = %d (%s)\n",
-+			arg, desc->number, desc->name);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mtk_pinconf_bias_set_rsel(struct mtk_pinctrl *hw,
-+				     const struct mtk_pin_desc *desc,
-+				     u32 pullup, u32 arg)
-+{
-+	int err, rsel_val;
-+
-+	if (hw->rsel_si_unit) {
-+		/* find pin rsel_index from pin_rsel array*/
-+		err = mtk_hw_pin_rsel_lookup(hw, desc, pullup, arg, &rsel_val);
-+		if (err)
-+			goto out;
-+	} else {
-+		if (arg < MTK_PULL_SET_RSEL_000 ||
-+		    arg > MTK_PULL_SET_RSEL_111) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		rsel_val = arg - MTK_PULL_SET_RSEL_000;
-+	}
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_RSEL, rsel_val);
-+	if (err)
-+		goto out;
-+
-+	err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, MTK_ENABLE);
-+
-+out:
-+	return err;
-+}
-+
-+int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc,
-+			       u32 pullup, u32 arg)
-+{
-+	int err = -EOPNOTSUPP;
-+	u32 try_all_type;
-+
-+	if (hw->soc->pull_type)
-+		try_all_type = hw->soc->pull_type[desc->number];
-+	else
-+		try_all_type = MTK_PULL_TYPE_MASK;
-+
-+	if (try_all_type & MTK_PULL_RSEL_TYPE) {
-+		err = mtk_pinconf_bias_set_rsel(hw, desc, pullup, arg);
-+		if (!err)
-+			return err;
-+	}
-+
-+	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
-+		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg);
-+		if (!err)
-+			return err;
-+	}
-+
-+	if (try_all_type & MTK_PULL_PULLSEL_TYPE) {
-+		err = mtk_pinconf_bias_set_pullsel_pullen(hw, desc,
-+							  pullup, arg);
-+		if (!err)
-+			return err;
-+	}
-+
-+	if (try_all_type & MTK_PULL_PUPD_R1R0_TYPE)
-+		err = mtk_pinconf_bias_set_pupd_r1_r0(hw, desc, pullup, arg);
-+
-+	if (err)
-+		dev_err(hw->dev, "Invalid pull argument\n");
-+
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(mtk_pinconf_bias_set_combo);
-+
-+static int mtk_rsel_get_si_unit(struct mtk_pinctrl *hw,
-+				const struct mtk_pin_desc *desc,
-+				u32 pullup, u32 rsel_val, u32 *si_unit)
-+{
-+	const struct mtk_pin_rsel *rsel;
-+	int check;
-+
-+	rsel = hw->soc->pin_rsel;
-+
-+	for (check = 0; check <= hw->soc->npin_rsel - 1; check++) {
-+		if (desc->number >= rsel[check].s_pin &&
-+		    desc->number <= rsel[check].e_pin) {
-+			if (rsel_val == rsel[check].rsel_index) {
-+				if (pullup)
-+					*si_unit = rsel[check].up_rsel;
-+				else
-+					*si_unit = rsel[check].down_rsel;
-+				break;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int mtk_pinconf_bias_get_rsel(struct mtk_pinctrl *hw,
-+				     const struct mtk_pin_desc *desc,
-+				     u32 *pullup, u32 *enable)
-+{
-+	int pu, pd, rsel, err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_RSEL, &rsel);
-+	if (err)
-+		goto out;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_PU, &pu);
-+	if (err)
-+		goto out;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_PD, &pd);
-+
-+	if (pu == 0 && pd == 0) {
-+		*pullup = 0;
-+		*enable = MTK_DISABLE;
-+	} else if (pu == 1 && pd == 0) {
-+		*pullup = 1;
-+		if (hw->rsel_si_unit)
-+			mtk_rsel_get_si_unit(hw, desc, *pullup, rsel, enable);
-+		else
-+			*enable = rsel + MTK_PULL_SET_RSEL_000;
-+	} else if (pu == 0 && pd == 1) {
-+		*pullup = 0;
-+		if (hw->rsel_si_unit)
-+			mtk_rsel_get_si_unit(hw, desc, *pullup, rsel, enable);
-+		else
-+			*enable = rsel + MTK_PULL_SET_RSEL_000;
-+	} else {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+out:
-+	return err;
-+}
-+
- static int mtk_pinconf_bias_get_pu_pd(struct mtk_pinctrl *hw,
- 				const struct mtk_pin_desc *desc,
- 				u32 *pullup, u32 *enable)
-@@ -742,44 +917,40 @@ static int mtk_pinconf_bias_get_pupd_r1_r0(struct mtk_pinctrl *hw,
- 	return err;
- }
- 
--int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
--				const struct mtk_pin_desc *desc,
--				u32 pullup, u32 arg)
--{
--	int err;
--
--	err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg);
--	if (!err)
--		goto out;
--
--	err = mtk_pinconf_bias_set_pullsel_pullen(hw, desc, pullup, arg);
--	if (!err)
--		goto out;
--
--	err = mtk_pinconf_bias_set_pupd_r1_r0(hw, desc, pullup, arg);
--
--out:
--	return err;
--}
--EXPORT_SYMBOL_GPL(mtk_pinconf_bias_set_combo);
--
- int mtk_pinconf_bias_get_combo(struct mtk_pinctrl *hw,
- 			      const struct mtk_pin_desc *desc,
- 			      u32 *pullup, u32 *enable)
- {
--	int err;
-+	int err = -EOPNOTSUPP;
-+	u32 try_all_type;
- 
--	err = mtk_pinconf_bias_get_pu_pd(hw, desc, pullup, enable);
--	if (!err)
--		goto out;
-+	if (hw->soc->pull_type)
-+		try_all_type = hw->soc->pull_type[desc->number];
-+	else
-+		try_all_type = MTK_PULL_TYPE_MASK;
- 
--	err = mtk_pinconf_bias_get_pullsel_pullen(hw, desc, pullup, enable);
--	if (!err)
--		goto out;
-+	if (try_all_type & MTK_PULL_RSEL_TYPE) {
-+		err = mtk_pinconf_bias_get_rsel(hw, desc, pullup, enable);
-+		if (!err)
-+			return err;
-+	}
- 
--	err = mtk_pinconf_bias_get_pupd_r1_r0(hw, desc, pullup, enable);
-+	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
-+		err = mtk_pinconf_bias_get_pu_pd(hw, desc, pullup, enable);
-+		if (!err)
-+			return err;
-+	}
-+
-+	if (try_all_type & MTK_PULL_PULLSEL_TYPE) {
-+		err = mtk_pinconf_bias_get_pullsel_pullen(hw, desc,
-+							  pullup, enable);
-+		if (!err)
-+			return err;
-+	}
-+
-+	if (try_all_type & MTK_PULL_PUPD_R1R0_TYPE)
-+		err = mtk_pinconf_bias_get_pupd_r1_r0(hw, desc, pullup, enable);
- 
--out:
- 	return err;
- }
- EXPORT_SYMBOL_GPL(mtk_pinconf_bias_get_combo);
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index a6f1bdb2083b..4908c7aedbe0 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -17,6 +17,22 @@
- #define MTK_ENABLE     1
- #define MTK_PULLDOWN   0
- #define MTK_PULLUP     1
-+#define MTK_PULL_PU_PD_TYPE		BIT(0)
-+#define MTK_PULL_PULLSEL_TYPE		BIT(1)
-+#define MTK_PULL_PUPD_R1R0_TYPE		BIT(2)
-+/* MTK_PULL_RSEL_TYPE can select resistance and can be
-+ * turned on/off itself. But it can't be selected pull up/down
-+ */
-+#define MTK_PULL_RSEL_TYPE		BIT(3)
-+/* MTK_PULL_PU_PD_RSEL_TYPE is a type which is controlled by
-+ * MTK_PULL_PU_PD_TYPE and MTK_PULL_RSEL_TYPE.
-+ */
-+#define MTK_PULL_PU_PD_RSEL_TYPE	(MTK_PULL_PU_PD_TYPE \
-+					| MTK_PULL_RSEL_TYPE)
-+#define MTK_PULL_TYPE_MASK	(MTK_PULL_PU_PD_TYPE |\
-+				 MTK_PULL_PULLSEL_TYPE |\
-+				 MTK_PULL_PUPD_R1R0_TYPE |\
-+				 MTK_PULL_RSEL_TYPE)
- 
- #define EINT_NA	U16_MAX
- #define NO_EINT_SUPPORT	EINT_NA
-@@ -42,6 +58,14 @@
- 	PIN_FIELD_CALC(_s_pin, _e_pin, 0, _s_addr, _x_addrs, _s_bit,	\
- 		       _x_bits, 32, 1)
- 
-+#define PIN_RSEL(_s_pin, _e_pin, _rsel_index, _up_resl, _down_rsel) {	\
-+		.s_pin = _s_pin,					\
-+		.e_pin = _e_pin,					\
-+		.rsel_index = _rsel_index,				\
-+		.up_rsel = _up_resl,					\
-+		.down_rsel = _down_rsel,				\
-+	}
-+
- /* List these attributes which could be modified for the pin */
- enum {
- 	PINCTRL_PIN_REG_MODE,
-@@ -67,6 +91,7 @@ enum {
- 	PINCTRL_PIN_REG_DRV_E0,
- 	PINCTRL_PIN_REG_DRV_E1,
- 	PINCTRL_PIN_REG_DRV_ADV,
-+	PINCTRL_PIN_REG_RSEL,
- 	PINCTRL_PIN_REG_MAX,
- };
- 
-@@ -129,6 +154,21 @@ struct mtk_pin_field_calc {
- 	u8  fixed;
- };
- 
-+/* struct mtk_pin_rsel - the structure that provides bias resistance selection.
-+ * @s_pin:		the start pin within the rsel range
-+ * @e_pin:		the end pin within the rsel range
-+ * @rsel_index:	the rsel bias resistance index
-+ * @up_rsel:	the pullup rsel bias resistance value
-+ * @down_rsel:	the pulldown rsel bias resistance value
-+ */
-+struct mtk_pin_rsel {
-+	u16 s_pin;
-+	u16 e_pin;
-+	u16 rsel_index;
-+	u32 up_rsel;
-+	u32 down_rsel;
-+};
-+
- /* struct mtk_pin_reg_calc - the structure that holds all ranges used to
-  *			     determine which register the pin would make use of
-  *			     for certain pin attribute.
-@@ -206,6 +246,9 @@ struct mtk_pin_soc {
- 	bool				ies_present;
- 	const char * const		*base_names;
- 	unsigned int			nbase_names;
-+	const unsigned int		*pull_type;
-+	const struct mtk_pin_rsel	*pin_rsel;
-+	unsigned int			npin_rsel;
- 
- 	/* Specific pinconfig operations */
- 	int (*bias_disable_set)(struct mtk_pinctrl *hw,
-@@ -254,6 +297,8 @@ struct mtk_pinctrl {
- 	const char          **grp_names;
- 	/* lock pin's register resource to avoid multiple threads issue*/
- 	spinlock_t lock;
-+	/* identify rsel setting by si unit or rsel define in dts node */
-+	bool rsel_si_unit;
- };
- 
- void mtk_rmw(struct mtk_pinctrl *pctl, u8 i, u32 reg, u32 mask, u32 set);
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 38aec0177d15..d4e02c5d74a8 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -579,8 +579,9 @@ static int mtk_hw_get_value_wrap(struct mtk_pinctrl *hw, unsigned int gpio, int
- ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
- 	unsigned int gpio, char *buf, unsigned int buf_len)
- {
--	int pinmux, pullup, pullen, len = 0, r1 = -1, r0 = -1;
-+	int pinmux, pullup, pullen, len = 0, r1 = -1, r0 = -1, rsel = -1;
- 	const struct mtk_pin_desc *desc;
-+	u32 try_all_type;
- 
- 	if (gpio >= hw->soc->npins)
- 		return -EINVAL;
-@@ -591,24 +592,39 @@ ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
- 		pinmux -= hw->soc->nfuncs;
- 
- 	mtk_pinconf_bias_get_combo(hw, desc, &pullup, &pullen);
--	if (pullen == MTK_PUPD_SET_R1R0_00) {
--		pullen = 0;
--		r1 = 0;
--		r0 = 0;
--	} else if (pullen == MTK_PUPD_SET_R1R0_01) {
--		pullen = 1;
--		r1 = 0;
--		r0 = 1;
--	} else if (pullen == MTK_PUPD_SET_R1R0_10) {
--		pullen = 1;
--		r1 = 1;
--		r0 = 0;
--	} else if (pullen == MTK_PUPD_SET_R1R0_11) {
-+
-+	if (hw->soc->pull_type)
-+		try_all_type = hw->soc->pull_type[desc->number];
-+
-+	if (hw->rsel_si_unit && (try_all_type & MTK_PULL_RSEL_TYPE)) {
-+		rsel = pullen;
- 		pullen = 1;
--		r1 = 1;
--		r0 = 1;
--	} else if (pullen != MTK_DISABLE && pullen != MTK_ENABLE) {
--		pullen = 0;
-+	} else {
-+		/* Case for: R1R0 */
-+		if (pullen == MTK_PUPD_SET_R1R0_00) {
-+			pullen = 0;
-+			r1 = 0;
-+			r0 = 0;
-+		} else if (pullen == MTK_PUPD_SET_R1R0_01) {
-+			pullen = 1;
-+			r1 = 0;
-+			r0 = 1;
-+		} else if (pullen == MTK_PUPD_SET_R1R0_10) {
-+			pullen = 1;
-+			r1 = 1;
-+			r0 = 0;
-+		} else if (pullen == MTK_PUPD_SET_R1R0_11) {
-+			pullen = 1;
-+			r1 = 1;
-+			r0 = 1;
-+		}
-+
-+		/* Case for: RSEL */
-+		if (pullen >= MTK_PULL_SET_RSEL_000 &&
-+		    pullen <= MTK_PULL_SET_RSEL_111) {
-+			rsel = pullen - MTK_PULL_SET_RSEL_000;
-+			pullen = 1;
-+		}
- 	}
- 	len += scnprintf(buf + len, buf_len - len,
- 			"%03d: %1d%1d%1d%1d%02d%1d%1d%1d%1d",
-@@ -626,6 +642,8 @@ ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
- 	if (r1 != -1) {
- 		len += scnprintf(buf + len, buf_len - len, " (%1d %1d)\n",
- 			r1, r0);
-+	} else if (rsel != -1) {
-+		len += scnprintf(buf + len, buf_len - len, " (%1d)\n", rsel);
- 	} else {
- 		len += scnprintf(buf + len, buf_len - len, "\n");
- 	}
-@@ -970,6 +988,12 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
- 
- 	hw->nbase = hw->soc->nbase_names;
- 
-+	if (of_find_property(hw->dev->of_node,
-+			     "mediatek,rsel_resistance_in_si_unit", NULL))
-+		hw->rsel_si_unit = true;
-+	else
-+		hw->rsel_si_unit = false;
-+
- 	spin_lock_init(&hw->lock);
- 
- 	err = mtk_pctrl_build_state(pdev);
--- 
-2.25.1
-
+>> +                       gpio-key,wakeup;
+>> +                       debounce-interval = <15>;
+>> +                       linux,can-disable;
+>> +               };
+>> +       };
+>> +};
+>> +
+>>  &apps_rsc {
+>>         pm7325-regulators {
+>>                 compatible = "qcom,pm7325-rpmh-regulators";
+>> @@ -284,6 +304,17 @@
+>> 
+>>  /* PINCTRL - additions to nodes defined in sc7280.dtsi */
+>> 
+>> +&pm7325_gpios {
+>> +       key_vol_up_default: key-vol-up-default {
+>> +               pins = "gpio6";
+>> +               function = "normal";
+>> +               input-enable;
+>> +               bias-pull-up;
+>> +               power-source = <0>;
+>> +               qcom,drive-strength = <3>;
+>> +       };
+>> +};
+>> +
+>>  &qup_uart5_default {
+>>         tx {
+>>                 pins = "gpio46";
+>> --
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+>> member
+>> of Code Aurora Forum, hosted by The Linux Foundation
+>> 
