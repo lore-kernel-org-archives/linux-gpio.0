@@ -2,118 +2,127 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-25.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	HK_RANDOM_FROM,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40316C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Sep 2021 03:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C8EC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Sep 2021 04:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E54E60235
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Sep 2021 03:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C125861156
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Sep 2021 04:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231361AbhIUDPx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Sep 2021 23:15:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349509AbhIUC0p (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Sep 2021 22:26:45 -0400
-Received: from mail-qt1-x84a.google.com (mail-qt1-x84a.google.com [IPv6:2607:f8b0:4864:20::84a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB495C0619E8
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Sep 2021 12:05:03 -0700 (PDT)
-Received: by mail-qt1-x84a.google.com with SMTP id n19-20020ac81e13000000b0029f679691eeso185604456qtl.20
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Sep 2021 12:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=341NPsK1ybPLUbD5QtJe4YMBG0Z2roU4z5iQWq3CxjE=;
-        b=PY2KzdrPPFD4VV7+T49T1pYsHJHNpfX+Yb4N83tMgwWRKpG8VTQwwypwHR0xTEaO7Y
-         KujqtZxRb/QqvZU6nzLfNz9z4pP3L1tn9ERsb3qyD+jlkqruHiN9FUGcAAsQxCIVzLYT
-         N4XNEC8hiDrDVWHw3FvjQuhLg0lhIRW4tL6IN3R39HF3CnpkS7X7Oh9gveDpBWz0Ljx7
-         BhqR2Q1avZIE30a24d5cL23W+EUIfhZJeRE60EVAL31bOCo+CQg5RyC+d6oCzrNz1FKQ
-         T8hELjPZC1TTzhG+n0yG2rg+8XaFhavT9So4+d1utCeW0j8DGOQBtyZ52O9yD5gwZGMF
-         8o3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=341NPsK1ybPLUbD5QtJe4YMBG0Z2roU4z5iQWq3CxjE=;
-        b=bau+3X++wZlZvRpo6+9JKuk29wtV7NmNOb1F9KAw/o6nlQMHU3l17qS+A9hdGkcADz
-         plYNI1aE00AFN2kAwsNKJwvw9/xd33DkDtgCe6B/EhWdV+lyI66oZ/3b7obdoJkaQWc5
-         4aCUHv0LtJeN/yEAZaU78wnwDX7/LbaufVZVg9mHT/uLFmQAM93p4sDh87l1DXhA1ThP
-         oHsHeU6ehXZ73FeF7oou5uoO4aTgUkuna/+HqmGbviExm7p+h01r/gXtYfVzSjtgGgm1
-         MaDtL+bNpbLD0f/o+6l06XQuKoa/L14BAiWZWPxMFcbWqdozqQpizGr9irYfv7+r8r+Y
-         0Hng==
-X-Gm-Message-State: AOAM531VjlcpHCso8Ehb97kNw0+VZBTIr4L9quOVETZ0vuRQCwMtrLwM
-        dxZJ2IljYyzt4wSNF/Rk78237CVutQpC/M4mD7c=
-X-Google-Smtp-Source: ABdhPJx92NOBqmltQd2ehK4f/WwOBUNSGREkXv8mTXpax7NQQDNXJUOgCnldX1b1QMJdT+igRJpcRZgk+LTJWoLX5qA=
-X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
- (user=willmcvicker job=sendgmr) by 2002:a05:6214:12af:: with SMTP id
- w15mr17401131qvu.66.1632164680013; Mon, 20 Sep 2021 12:04:40 -0700 (PDT)
-Date:   Mon, 20 Sep 2021 19:03:48 +0000
-In-Reply-To: <20210920190350.3860821-1-willmcvicker@google.com>
-Message-Id: <20210920190350.3860821-4-willmcvicker@google.com>
-Mime-Version: 1.0
-References: <20210920190350.3860821-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.33.0.464.g1972c5931b-goog
-Subject: [PATCH v1 3/4] pinctrl: samsung: change PINCTRL_EXYNOS default config logic
-From:   Will McVicker <willmcvicker@google.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Will McVicker <willmcvicker@google.com>,
-        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S229532AbhIUElV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 21 Sep 2021 00:41:21 -0400
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:59391 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229498AbhIUElU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 21 Sep 2021 00:41:20 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id 01FA52B01422;
+        Tue, 21 Sep 2021 00:39:51 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 21 Sep 2021 00:39:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=I4ve/cgxK4c8BY7+UtD8bEL+nk
+        Zo9i2k6Rhodknqgww=; b=E61X9XFXPJOOQayHDvUcuo+rTPfjF/ky5zk3Mi4hS2
+        rVVK7HKI5BQweODHKuu2SNklSikLEnAOIzatUf1x7kuwKzatQtG8tUPknIs5tEwC
+        WeIgCgSwgZnqaYJajBac1iUb5AEU7Crh7uNRm4PudjOuvyrWKcwmt9GooSEqsKH9
+        CYmYdY9A5VMxgX62Qu87Jsm9OC9KHz5PIv8rCwVpdF8khFJoT9I/55qqnn1HRQT8
+        GQPGdPZRlM4kemArr9OEUtxrC47/24fL2tFGdsL4y9rYZ8UUsMYUxWenQrbWKH/w
+        GMqT7P2AKDB/oK7+vfBqLNGXOajv2TfAVNMWd2Ap72gA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=I4ve/cgxK4c8BY7+U
+        tD8bEL+nkZo9i2k6Rhodknqgww=; b=QY39RzHwtcUTsQe560mXBFfewJazNxmHD
+        kwLUpf7ulzx9P9K3cbWHYtxi73rS8UXVYnkpWgoNnUWYVwmBe5MIKYeoPJqwYS7p
+        8vdPnFh/xwbXc/Y0lcfECT9cswW4rB3WpfzGetDElmk99o6KkJywz3cZZ/0q/QdQ
+        TOT14YNDOEY4N5PeZ6qzRHueeixC8eUkNUKd/Gg8yDHzkXjBgdahpO2UkJFXDtKV
+        bhpxE91z17KsYiSiBa9KZrXRv1b30oKbhiFR4j9MdF/lrOkveu8Po4QdJY5VRFur
+        Q/jpmVZwhK+fYOmEguV54k4krU1zeC/MYZDeXMEY0Yw1zCpbTogsw==
+X-ME-Sender: <xms:FmJJYZHJLT_T9fV3dqW3bn9m2U46-eGylFh4XlKuzQXB_3YE8gqlxQ>
+    <xme:FmJJYeU0OeEl9zSWJOabAYrzoNaha1yRsl6ZE8cCPK2NpZFfuU-tv5XvBJb-KbBj-
+    bR0YyIfbpkgG96sgg>
+X-ME-Received: <xmr:FmJJYbKbXZvDlhXv7C8ptlPjqRKPl3orZ4pXxhhk09hj8_genBMP718FbOqfRUpDvoX8pAvKaZbliGvmUvhI_zCcMW6dY7EueWDqSrYWDlzhZrBJpPe8Pa3_2mNKuo_Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeifedgkeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
+    dttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegrjhdr
+    ihgurdgruheqnecuggftrfgrthhtvghrnhepieetheduveelhfdvvdejleeuhfelteevhe
+    ffgfeitdefgeekjeefieevgfehhefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurh
+    gvfiesrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:FmJJYfGiuGlE5cw--FLcNStViYGe8Uy1h9DQ4UQTwmfdb66xrBaeeA>
+    <xmx:FmJJYfWqcVZH0UBaIn9YnzwLehPcyxlDMEUPUf-0McBBRXb6O-4wXQ>
+    <xmx:FmJJYaOEwH6J_x2IEnl145O3Y_kw28D3KNxTrG4gxdHtfVTs1-ViLA>
+    <xmx:F2JJYYPknL0ldam98KQi0LPq5Ky-KgSwjxjyJmQM9K7vP2J_MHVekGZfzYw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Sep 2021 00:39:45 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     clg@kaod.org, robh+dt@kernel.org, joel@jms.id.au, pavel@ucw.cz,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        andy.shevchenko@gmail.com
+Subject: [PATCH 0/2] leds: pca955x: Expose GPIOs for all pins
+Date:   Tue, 21 Sep 2021 14:09:34 +0930
+Message-Id: <20210921043936.468001-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Switching the default config logic of PINCTRL_EXYNOS to use "default
-y if ARCH_EXYNOS" versus having ARCH_EXYNOS directly select the config.
-This gives vendors the flexibility to disable the config or modularize
-it in the presence of a generic kernel.
+Hello,
 
-Verified this change doesn't effect the .config.
+This is a rework of a Rube Goldberg-inspired RFC I posted previously:
 
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- arch/arm64/Kconfig.platforms    | 1 -
- drivers/pinctrl/samsung/Kconfig | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+https://lore.kernel.org/lkml/20210723075858.376378-1-andrew@aj.id.au/
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6a006490c9b9..a884e5da8b0f 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -93,7 +93,6 @@ config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select PINCTRL
--	select PINCTRL_EXYNOS
- 	select PM_GENERIC_DOMAINS if PM
- 	help
- 	  This enables support for ARMv8 based Samsung Exynos SoC family.
-diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
-index dfd805e76862..483acb8ac1f6 100644
---- a/drivers/pinctrl/samsung/Kconfig
-+++ b/drivers/pinctrl/samsung/Kconfig
-@@ -12,6 +12,7 @@ config PINCTRL_EXYNOS
- 	bool "Pinctrl common driver part for Samsung Exynos SoCs"
- 	depends on OF_GPIO
- 	depends on ARCH_EXYNOS || ARCH_S5PV210 || COMPILE_TEST
-+	default y if ARCH_EXYNOS
- 	select PINCTRL_SAMSUNG
- 	select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
- 	select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
+This time around there's a lot less Rube - the series:
+
+1. Contains no (ab)use of pinctrl
+2. Always exposes all pins as GPIOs
+3. Internally tracks the active pins
+
+Without these patches the driver limits the number of pins exposed on
+the gpiochip to the number of pins specified as GPIO in the devicetree,
+but doesn't map between the GPIO and pin number spaces. The result is
+that specifying offset or interleaved GPIOs in the devicetree gives
+unexpected behaviour in userspace.
+
+By always exposing all pins as GPIOs the patches resolve the lack of
+mapping between GPIO offsets and pins on the package in the driver by
+ensuring we always have a 1-to-1 mapping.
+
+The issue is primarily addressed by patch 1/2. Patch 2/2 makes it
+possible to not expose any pins as LEDs (and therefore make them all
+accessible as GPIOs). This has a follow-on effect of allowing the driver
+to bind to a device instantiated at runtime without requiring a
+description in the devicetree.
+
+I've tested the series under qemu to inspect the various interactions
+between LEDs vs GPIOs as well as conflicting GPIO requests.
+
+Please review!
+
+Andrew
+
+Andrew Jeffery (2):
+  leds: pca955x: Make the gpiochip always expose all pins
+  leds: pca955x: Allow zero LEDs to be specified
+
+ drivers/leds/leds-pca955x.c | 65 +++++++++++++++++++------------------
+ 1 file changed, 34 insertions(+), 31 deletions(-)
+
+
+base-commit: 239f32b4f161c1584cd4b386d6ab8766432a6ede
 -- 
-2.33.0.464.g1972c5931b-goog
+2.30.2
 
