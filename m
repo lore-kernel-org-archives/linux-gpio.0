@@ -2,177 +2,90 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF40C433F5
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Sep 2021 20:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 508A7C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Sep 2021 23:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63964611C9
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Sep 2021 20:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35EBC611C4
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Sep 2021 23:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237381AbhIVUML (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Sep 2021 16:12:11 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53674 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237402AbhIVUMK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Sep 2021 16:12:10 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 18MKAcV8016902;
-        Wed, 22 Sep 2021 15:10:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1632341438;
-        bh=HwsQ1px6ElVAM7E7RMWeh+ei1nZgXj6vInZm6WaZNw8=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=YPVkgH20ROH3+t8VxnCiy/LKUh9/64L6wI6Gl66Nz9s3aRtUj7huPfD62/X+b+p55
-         P98NzFFSnqThEGDmBaAXyyC+YRvgn6cPFj2aCvWGGmSXd7VBzZMIcvT+qDD6OAXvFV
-         gIX81trDCc8J1nfpeX8ZuyUnZkViqKfqCgz5ITf8=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 18MKAcEX034008
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Sep 2021 15:10:38 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 22
- Sep 2021 15:10:37 -0500
-Received: from DFLE111.ent.ti.com ([fe80::6c89:b1ca:ee8f:1a6f]) by
- DFLE111.ent.ti.com ([fe80::6c89:b1ca:ee8f:1a6f%17]) with mapi id
- 15.01.2308.014; Wed, 22 Sep 2021 15:10:37 -0500
-From:   "M, Aparna" <a-m1@ti.com>
-To:     "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "Govindraju, Aswath" <a-govindraju@ti.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Raghavendra, Vignesh" <vigneshr@ti.com>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>
-Subject: RE: [PATCH RESEND] dt-bindings: gpio: Convert TI TPIC2810 GPIO
- Controller bindings to yaml
-Thread-Topic: [PATCH RESEND] dt-bindings: gpio: Convert TI TPIC2810 GPIO
- Controller bindings to yaml
-Thread-Index: AQHXr6pP3EiJdIl1NkOu403Qgaj9n6uwezcw
-Date:   Wed, 22 Sep 2021 20:10:37 +0000
-Message-ID: <90c368f366e440a58928e222e1683139@ti.com>
-References: <20210922120631.21948-1-a-m1@ti.com>
-In-Reply-To: <20210922120631.21948-1-a-m1@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.250.235.184]
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S238598AbhIVXwh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Sep 2021 19:52:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46154 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238558AbhIVXwg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Sep 2021 19:52:36 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB2B6C061574
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 16:51:05 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id g41so18771385lfv.1
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 16:51:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X6DdH0xnghaB9Dt/aDxkwOs5ayvQ920sKlagKXTBlV0=;
+        b=iUpf03D4/FlCV4qFLHKa1g+SmrJe1teeAzesCA3+8k69/vwBegVS8voipKW99acdJd
+         4Zfw0jdQ9EV7+e7gEr8950niZxnpnzf0Y53qOL+fTgP57jc3xvhQ4NKBVQfaouDK21k+
+         masfKB7xBMPIKbp3er5DSVV37LhvrjmdyB5vQI/JTSUDMFthVo+/HtiJgSEH73sVrNww
+         a3TJrmrQD8zgbeUR0TSiTKbr5JKaOZDaMz/973V0Df6pnU158KgKaRRw14OZ+S0clp59
+         DGw10xpNF8dkxCRwE/MD8InhywHNsS8zmOnf5PBctLEYsUnFdtDsFVW/3oGwXRJo2Zwf
+         Q7vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X6DdH0xnghaB9Dt/aDxkwOs5ayvQ920sKlagKXTBlV0=;
+        b=wx9MFuD6VIJORicxe6IBv5XVHqFXbAB6u9lEtvJjpxh+nTOXzkMCYUjNQwA6fzCsWh
+         Mz07B9HqcBv2/QlFGM1ubZgSkkUuhSVGc6S6miVc+15NVFCGgvC6me4p/q8EV8DRsPx0
+         lgI4WqiyKMyp81P6T4I6GJurDGrgxeVwBEpdTUR34SJSZH3W05Gy//Sh/crQr07UIcr9
+         K2aZNHpsDxnn+n9umrABPAShy63CmDoh7BRcMVALD8Zn5wQhpUqHNm+zdMIyp0+CNM8i
+         AOpFVfae96sb3a0dGwuKYL07qxNdMarvI8kiC5kb/HU5OOu8sLU15cAlzRRVzutyrl2j
+         HRvg==
+X-Gm-Message-State: AOAM530gLYLAqF9RMYoDzVq6sIvuhYwERSHS+Qmren42pMEgcgfW+Qv3
+        xRO12BsXKDVAUgxVRuRsYJGZ2ENTc4rqt4+U0PJdfQ==
+X-Google-Smtp-Source: ABdhPJwP0jQYm2qHzZkkETLwbgCuF3BpNy8NQFc9OF4emblJl1PauuJ9+IpNO3fApqvvgiNo+eSll9OtWwFQZ38MSdA=
+X-Received: by 2002:a05:6512:e82:: with SMTP id bi2mr1479994lfb.95.1632354664167;
+ Wed, 22 Sep 2021 16:51:04 -0700 (PDT)
 MIME-Version: 1.0
+References: <20210717045627.1739959-1-daniel@0x0f.com> <CACRpkdbE+_DJFhBCmtz5JwJupf7QkkWZhXrgf1KG_3rPqvEm0w@mail.gmail.com>
+ <CAFr9PXmFHanrx4Frg3hQwo-RbAY-UXxC=FOAj++cshSHa99z3g@mail.gmail.com>
+ <CAMpxmJUoG7qPhy2CxapCn1M=w_AssOQsEmyvXO18OpedM6hBjw@mail.gmail.com>
+ <CAHp75VdU52rwKY3AA0Nxt3VGOFr71XtjCDqZbSxR4GNczSqihQ@mail.gmail.com> <CAMpxmJUSvBSa=T1a1Bq_YhAGib9BcXf4xYMSOfyprHbG0t_QWw@mail.gmail.com>
+In-Reply-To: <CAMpxmJUSvBSa=T1a1Bq_YhAGib9BcXf4xYMSOfyprHbG0t_QWw@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 Sep 2021 01:50:53 +0200
+Message-ID: <CACRpkdZSdCuA59O5CYjb9FvXA_+ZSBcrp2tc2Hu5=gzCrFBnEg@mail.gmail.com>
+Subject: Re: [PATCH 00/10] gpio: msc313: Add gpio support for ssd20xd
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Daniel Palmer <daniel@0x0f.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Romain Perier <romain.perier@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Bart,
+On Wed, Sep 22, 2021 at 2:50 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> On Wed, Sep 22, 2021 at 12:52 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
 
-This is the latest patch resend. I'm not sure why patchwork has not been ab=
-le to pick it up.
+> > Have you tried to use the `b4` tool? It is capable of getting
+> > everything from the lore archive.
+>
+> I haven't tried it because I have never heard of it. :) Thanks for the heads-up.
 
+I use this all the time, it is awesome.
 
-Regards,
-Aparna
-
------Original Message-----
-From: M, Aparna=20
-Sent: Wednesday, September 22, 2021 5:37 PM
-To: Govindraju, Aswath <a-govindraju@ti.com>; linus.walleij@linaro.org; rob=
-h+dt@kernel.org; Raghavendra, Vignesh <vigneshr@ti.com>; Strashko, Grygorii=
- <grygorii.strashko@ti.com>
-Cc: devicetree@vger.kernel.org; linux-gpio@vger.kernel.org; bgolaszewski@ba=
-ylibre.com; M, Aparna <a-m1@ti.com>
-Subject: [PATCH RESEND] dt-bindings: gpio: Convert TI TPIC2810 GPIO Control=
-ler bindings to yaml
-
-* Convert gpio-tpic2810 bindings to yaml format
-* Remove outdated gpio-tpic2810 bindings in .txt format
-
-Signed-off-by: Aparna M <a-m1@ti.com>
----
- .../bindings/gpio/gpio-tpic2810.txt           | 16 --------
- .../bindings/gpio/gpio-tpic2810.yaml          | 41 +++++++++++++++++++
- 2 files changed, 41 insertions(+), 16 deletions(-)  delete mode 100644 Doc=
-umentation/devicetree/bindings/gpio/gpio-tpic2810.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tpic2810.ya=
-ml
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-tpic2810.txt b/Doc=
-umentation/devicetree/bindings/gpio/gpio-tpic2810.txt
-deleted file mode 100644
-index 1afc2de7a537..000000000000
---- a/Documentation/devicetree/bindings/gpio/gpio-tpic2810.txt
-+++ /dev/null
-@@ -1,16 +0,0 @@
--TPIC2810 GPIO controller bindings
--
--Required properties:
-- - compatible		: Should be "ti,tpic2810".
-- - reg			: The I2C address of the device
-- - gpio-controller	: Marks the device node as a GPIO controller.
-- - #gpio-cells		: Should be two. For consumer use see gpio.txt.
--
--Example:
--
--	gpio@60 {
--		compatible =3D "ti,tpic2810";
--		reg =3D <0x60>;
--		gpio-controller;
--		#gpio-cells =3D <2>;
--	};
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-tpic2810.yaml b/Do=
-cumentation/devicetree/bindings/gpio/gpio-tpic2810.yaml
-new file mode 100644
-index 000000000000..64f475eb4278
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-tpic2810.yaml
-@@ -0,0 +1,41 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/gpio-tpic2810.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TPIC2810 GPIO controller bindings
-+
-+maintainers:
-+   - Aswath Govindraju <a-govindraju@ti.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,tpic2810
-+
-+  reg:
-+    maxItems: 1
-+    description: The I2C address of the device
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+required:
-+    - compatible
-+    - reg
-+    - gpio-controller
-+    - "#gpio-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio1: gpio@60 {
-+        compatible =3D "ti,tpic2810";
-+        reg =3D <0x60>;
-+        gpio-controller;
-+        #gpio-cells =3D <2>;
-+    };
---
-2.17.1
-
+Yours,
+Linus Walleij
