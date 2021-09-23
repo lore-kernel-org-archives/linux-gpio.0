@@ -5,53 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E76C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F09CC433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BDDF61107
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18DD861131
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239622AbhIWG54 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Sep 2021 02:57:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55434 "EHLO
+        id S239544AbhIWG6K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Sep 2021 02:58:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239654AbhIWG5o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Sep 2021 02:57:44 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 400BEC0613DF
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:56:09 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id n23so2027130pfv.4
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:56:09 -0700 (PDT)
+        with ESMTP id S239559AbhIWG53 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Sep 2021 02:57:29 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88957C061766
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:55:58 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id f129so5397957pgc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=0x0f.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4+bVI50/U/Px2zafLKGxljVTDM1XHyN1eJT93Wdky9A=;
-        b=bXaP7hsMAlQQDjWuf7Lz+35buzCADQS6gm4KXJB3lS7Z0C732tfosARG3sqLV7KaA9
-         Fdtg9gllDyWvAqwNtq5gOg8E4PPyJWnJKEWJGrhNJDWtV8tZ0r4r8KQpGXkN9zoG3RL6
-         RHY6xQi1+tKzCWgd8EEy5+exMwsDMAf5zp5Eo=
+        bh=b5um0KbUElUK2wie3g8IJWfKY61kEEr/d9t4jOM2pdo=;
+        b=Yl+g9sgjL87WjxEchbxLIx4mctvhOvd2EOr+XETwlyUq/v/IjHMcLsKWuAEkhQ1sA4
+         /VTGZRb6/GPqjujTVUIVXBTte8W4nlH3mP/pTEHm969g+5QM/ZhaldDShiLnRGIdAH9r
+         LneMJ4i0TW5BuEvpWlt/jf2AIRE5Y43RJDr5U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4+bVI50/U/Px2zafLKGxljVTDM1XHyN1eJT93Wdky9A=;
-        b=WWVP1eBV+LsB0w0cL1nZzghokQkkakxgJjCY76MBolxsAX2KH8q8XoZfzGm7qUCbwz
-         3YG/g1wwii4hCiTg3Q97GNNp9DkcOHF+V6oNrspJ4bWcsQFGE8u0d2Qs7jnrq+Tj/KgL
-         vYNeZsNzBmj6u+1nrFtWxVUXoXh1mg/XtIMum3cJ/Ec9i/N9PyvZw6Fy/3SB5eLwhQVx
-         aFjNcdKrMEDW25mKTVqMDsn8C+nJmgWT8MCfH9N8lYGx/NSIx3gOGCjKJ60VhCdSvVYq
-         M7WJDf+RyUFlmokAxxe8zGd5CqR+4QPXQnyIbCjSQ9qot+M98vZlxvmg568BjbM5HbEB
-         njGg==
-X-Gm-Message-State: AOAM531tP963MP5J9+MY8ts51waqu0311XXyRHK8uLVvueXA8QF2BoPy
-        45lPXXlIdItrMy8k3P8JxmWwnw==
-X-Google-Smtp-Source: ABdhPJxVSpxmZt6T0yS0J0POEvpxKeFeTedQKq5tV5O5Ar/V2msMW3vnS2WcW7sX52oHPQC1n+bDgQ==
-X-Received: by 2002:a63:b505:: with SMTP id y5mr2775207pge.91.1632380168827;
-        Wed, 22 Sep 2021 23:56:08 -0700 (PDT)
+        bh=b5um0KbUElUK2wie3g8IJWfKY61kEEr/d9t4jOM2pdo=;
+        b=ei3WWqzJiBcY/1Ur4PLZN6AiRiyhnuJg2N5dMMMN++amDQ+6Cg3gPJVzJEy1iU/Q+j
+         c8n7L7SlcNiXQX7MaO10qlQEsAohmxSMW8E5W7k6PLMsXPbDbdP3xIH4CTKrzL8kGpvh
+         39mjkc7jYwLWwmH1eX6nQObZt7oQny8K3VPURWVlmViV7nrkL1xifuQgAjSRApv15Dj8
+         anYqZwrk4AIujBi91RB+g+0mCsvrYmQ7VPeKVTllFfms0Kd0UNPpUjbb73eCOfCNLPs3
+         tO0Zc9/ndu8GKOyZLjl0Mvezi0EaWLwGHMukJnO2Z+JnFGMJSe04v51/9bEuniL9iS5O
+         rRgg==
+X-Gm-Message-State: AOAM531qPXbNXs+vNNDv9WCDuB+xdSQj28a8ldsaJtvClgWksjt7DHRm
+        fHMUBhjX+gL0eHPxRZ0NAtfNXg==
+X-Google-Smtp-Source: ABdhPJyAYw4vY+PeNDnKquee0BRHunZM0V1nMhmMGrfEU4yxbmb3vew+RZHPJ7QrsR7mUOiOF35pqw==
+X-Received: by 2002:a62:5a86:0:b0:445:4b23:9fe5 with SMTP id o128-20020a625a86000000b004454b239fe5mr2667508pfb.65.1632380158092;
+        Wed, 22 Sep 2021 23:55:58 -0700 (PDT)
 Received: from shiro.work ([2400:4162:2428:2f01:7285:c2ff:fe8e:66d7])
-        by smtp.googlemail.com with ESMTPSA id e12sm1581888pgv.82.2021.09.22.23.56.06
+        by smtp.googlemail.com with ESMTPSA id e12sm1581888pgv.82.2021.09.22.23.55.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 23:56:08 -0700 (PDT)
+        Wed, 22 Sep 2021 23:55:57 -0700 (PDT)
 From:   Daniel Palmer <daniel@0x0f.com>
 To:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-leds@vger.kernel.org
@@ -59,9 +59,9 @@ Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         robh+dt@kernel.org, pavel@ucw.cz,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH v2 11/11] ARM: dts: mstar: unitv2: Add wifi switch
-Date:   Thu, 23 Sep 2021 15:55:00 +0900
-Message-Id: <20210923065500.2284347-12-daniel@0x0f.com>
+Subject: [PATCH v2 07/11] ARM: dts: mstar: unitv2: Wire up LEDs
+Date:   Thu, 23 Sep 2021 15:54:56 +0900
+Message-Id: <20210923065500.2284347-8-daniel@0x0f.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210923065500.2284347-1-daniel@0x0f.com>
 References: <20210923065500.2284347-1-daniel@0x0f.com>
@@ -71,29 +71,41 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a GPIO controlled fixed regulator for the Realtek WiFi
-connected via USB.
+Add the red and white leds present on the unitv2.
 
 Signed-off-by: Daniel Palmer <daniel@0x0f.com>
 ---
- arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../boot/dts/mstar-infinity2m-ssd202d-unitv2.dts   | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts b/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts
-index ec8da9cc8cb2..b3eaffa6ee06 100644
+index a81684002e45..a51490defabc 100644
 --- a/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts
 +++ b/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts
-@@ -56,6 +56,14 @@ reg_vcc_dram: regulator-vcc-dram {
- 		regulator-max-microvolt = <1500000>;
- 		regulator-boot-on;
+@@ -7,6 +7,8 @@
+ /dts-v1/;
+ #include "mstar-infinity2m-ssd202d.dtsi"
+ 
++#include <dt-bindings/gpio/gpio.h>
++
+ / {
+ 	model = "UnitV2";
+ 	compatible = "m5stack,unitv2", "mstar,infinity2m";
+@@ -18,6 +20,18 @@ aliases {
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
  	};
 +
-+	reg_vcc_wifi: regulator-vcc-wifi {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_wifi";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&gpio SSD20XD_GPIO_GPIO14 0>;
++	leds {
++		compatible = "gpio-leds";
++		led-white {
++			gpios = <&gpio SSD20XD_GPIO_GPIO0 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "activity";
++		};
++		led-red {
++			gpios = <&gpio SSD20XD_GPIO_GPIO1 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "heartbeat";
++		};
 +	};
  };
  
