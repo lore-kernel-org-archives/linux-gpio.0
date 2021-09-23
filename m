@@ -5,43 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BAC4C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 09:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621CEC433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 09:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17F3F61131
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 09:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4468860F6F
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 09:31:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240129AbhIWJ2I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Sep 2021 05:28:08 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:50638 "EHLO m43-7.mailgun.net"
+        id S240033AbhIWJdP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Sep 2021 05:33:15 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:28501 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240088AbhIWJ2I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 23 Sep 2021 05:28:08 -0400
+        id S240164AbhIWJdP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 23 Sep 2021 05:33:15 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1632389197; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=9lAWu7qXiRa6Lg9nIaX5b3wiRkjVA3UvWRrWVenAW08=; b=ST0ZKD64JRTcaPod41vSeG1/aUdW3O8/z+m1RKbjmjJewFHeatx1LD2Vaww/2fhRhQlDWJIi
- t4m80xtIzdh/oNfVplcx7/OVtcnIo5qhDSL4U0Xt9JVrcTahp+Mf+ZVyXWEyj4s61jIRvteQ
- MX3WD0wZhJe311NJvWh2zEGRvBE=
+ s=smtp; t=1632389504; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=HUjX19DF/7HCrz+wEr0zp2J5Mmr+3WVnjRWsuaUlPGM=; b=CO5sI5qFiWspvZfEiDArkahSLJAgNlE0REEod4Vpe3A0/mSIAVWK/Qq+MlZ22PSmD2MLh9KD
+ imRIsmq0Jr+nUehgUOlr8rq69B84jvpxdKt7eujPBUyEOaQRNM3LlNXqoRN2YOZ273oJF5e1
+ 2iDYEZDu5O5FsZiJHtTvLpeLitI=
 X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 614c484cec62f57c9a0c65e2 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 23 Sep 2021 09:26:36
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 614c497ebd6681d8ed829b44 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 23 Sep 2021 09:31:42
  GMT
 Sender: rnayak=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B9093C43616; Thu, 23 Sep 2021 09:26:35 +0000 (UTC)
+        id C5B5DC4360C; Thu, 23 Sep 2021 09:31:41 +0000 (UTC)
 Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rnayak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E6C82C43460;
-        Thu, 23 Sep 2021 09:26:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org E6C82C43460
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EE825C4338F;
+        Thu, 23 Sep 2021 09:31:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org EE825C4338F
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 From:   Rajendra Nayak <rnayak@codeaurora.org>
@@ -50,9 +50,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
 Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH] pinctrl: qcom: sc7280: Add PM suspend callbacks
-Date:   Thu, 23 Sep 2021 14:56:16 +0530
-Message-Id: <1632389176-7768-1-git-send-email-rnayak@codeaurora.org>
+Subject: [PATCH v2] pinctrl: qcom: sc7280: Add PM suspend callbacks
+Date:   Thu, 23 Sep 2021 15:01:27 +0530
+Message-Id: <1632389487-11283-1-git-send-email-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -63,17 +63,16 @@ pins don't change state in suspend.
 
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- arch/arm64/boot/dts/qcom/sc7280-idp2.dts | 6 ++++--
- drivers/char/mem.c                       | 2 +-
- drivers/pinctrl/core.c                   | 9 +++++++--
- drivers/pinctrl/qcom/pinctrl-sc7280.c    | 1 +
- 4 files changed, 13 insertions(+), 5 deletions(-)
+v2: removed some stale diffstat
+
+ drivers/pinctrl/qcom/pinctrl-sc7280.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pinctrl/qcom/pinctrl-sc7280.c b/drivers/pinctrl/qcom/pinctrl-sc7280.c
-index afddf6d..9017ede 100644
+index 607d459..1cbf2cc 100644
 --- a/drivers/pinctrl/qcom/pinctrl-sc7280.c
 +++ b/drivers/pinctrl/qcom/pinctrl-sc7280.c
-@@ -1496,6 +1496,7 @@ static const struct of_device_id sc7280_pinctrl_of_match[] = {
+@@ -1498,6 +1498,7 @@ static const struct of_device_id sc7280_pinctrl_of_match[] = {
  static struct platform_driver sc7280_pinctrl_driver = {
  	.driver = {
  		.name = "sc7280-pinctrl",
