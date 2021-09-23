@@ -7,62 +7,61 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6227C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F75C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D090B61152
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE34460F23
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Sep 2021 06:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239561AbhIWG53 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Sep 2021 02:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55460 "EHLO
+        id S239590AbhIWG5j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Sep 2021 02:57:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239557AbhIWG50 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Sep 2021 02:57:26 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B54C061768
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:55:55 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id g184so5372183pgc.6
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:55:55 -0700 (PDT)
+        with ESMTP id S239610AbhIWG5c (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Sep 2021 02:57:32 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36602C0613DE
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:56:01 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id w8so5385393pgf.5
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Sep 2021 23:56:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=0x0f.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HWkPJQnBYWO0UoAROs+LYuUnTEN18xbOgEvLmjHNQ2E=;
-        b=K57hlYfZH/c0u4bvewER/uCp/TROMyen4d88wZUUKGe2ADNnJFfvYrSDkVN3rpGY8B
-         cRzDWlULDQ++tMtq3fQXj2s2Pzr6HwRl8TFuxBl2zUxfnkE4cMyjTVk42fk35yrCKqF8
-         ggX3PW3hZl4DMXRDp4REcirh431S2mFwl9aH8=
+        bh=isyvnOyWHI/5QEFWR32h8ywjPk7SKlWMocpKRpE+H2I=;
+        b=mp9UAldhWy9Z8dDXvhARlu0yfTRe9BRTKVs5mpcE1yE4XbUNsX+5R1wMiVHeJHVDtZ
+         o1Ikgo2qAzfSaIMrMjSBdIriHFgeAnRi7K0AZrK3ska6LFydNc1+obKRrYTKXMFaBlzl
+         KsQbsFlkd40Wbh6Sb20tJJXv2cVx6UIY265jc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HWkPJQnBYWO0UoAROs+LYuUnTEN18xbOgEvLmjHNQ2E=;
-        b=tQfkDGdJx6xTTR4eq5huAtJSX95HZi402y6AKTQlCFGc6rUrnWyVlSpcs09s7w2Dfu
-         WmlTYxg7DwBnY0pDkrZlEzA9pkIEgKpo2J+cbjpVWNAX+mVSkOcGOyHKler3yz+NEhfF
-         2WUOzjza60fIonfjwNAk7rwejl5HSt0BYKgHulauOFgJlmSV74D0g+YhXhES3xs9g4F1
-         I2eAXCpDLpbStniYBFiISV6ghYNDRSG+I+KnHtGVZ8KJ5zgMR4oEpOsw68a+s4hfXB/A
-         KIzcEiv2HV/4gldp6BeuLPVJZ7irEuijd3mAcfRiDVnK9AryuZwB+UcRFyPlsd1yuMfk
-         aLKA==
-X-Gm-Message-State: AOAM533qPzqMM0w5lqZMoRK5XmXVkvDn9qRWlYlRES//pXnzhhDi8Unw
-        KmhmgLduOj7x07LKaM5A1xVmjw==
-X-Google-Smtp-Source: ABdhPJwCK4xrkr0D8IpC8dpfTICDN6wLW8gqz8i9CzG9LE5GxevJC5MMGaQ+ByAp/EgW2BUwIKQzTA==
-X-Received: by 2002:a62:144f:0:b0:447:c2d8:f381 with SMTP id 76-20020a62144f000000b00447c2d8f381mr2697344pfu.83.1632380155343;
-        Wed, 22 Sep 2021 23:55:55 -0700 (PDT)
+        bh=isyvnOyWHI/5QEFWR32h8ywjPk7SKlWMocpKRpE+H2I=;
+        b=A7Yfo8zMDuufr/xTF56xVWN0VM6bL7wkWJsC9xBs1qolk8SNMjixd3+cC+XmB+Jk4G
+         zfCrSdbcZU+OqlCyULS+tskUBpPt/Jm0iRwHnDixNcJBOxb76wAWJAhHJ3blPcNWQSW/
+         DNcAkFp3ZtGfCiZCsvjZre1dWZR3Lg+GOYApDNNw96aOo9ckBKmCZs76EPrin1FScLRo
+         BzeP0Jd6wcbVHflzwu83NFO8QI79XLnYCVHFUHppi6iPbbDwBjHpkpg8uf7RTN6i4Eug
+         +X1YM0ookqj54rc1yW7rfrkmeFqL7Dt0ZrSt3RCpoqqwjKFlE9CQt8HQEUiLSLRQrChc
+         U+6Q==
+X-Gm-Message-State: AOAM532dJrSyLNyg0+GkKVdSIFGnjgtjspqKG1Y7scesdgkW4EYdDUvq
+        KEKgxKcjcveVdje2hgwiNgASKavlUdbKsw==
+X-Google-Smtp-Source: ABdhPJzQ49jQC2+GK3VVpNeNn/CiSeuoUext/mJFYl9r/LWWOwGq5y9VKyO0YmwdOZkAgL/lAK4v5g==
+X-Received: by 2002:aa7:8426:0:b0:438:3550:f190 with SMTP id q6-20020aa78426000000b004383550f190mr2768687pfn.19.1632380160759;
+        Wed, 22 Sep 2021 23:56:00 -0700 (PDT)
 Received: from shiro.work ([2400:4162:2428:2f01:7285:c2ff:fe8e:66d7])
-        by smtp.googlemail.com with ESMTPSA id e12sm1581888pgv.82.2021.09.22.23.55.52
+        by smtp.googlemail.com with ESMTPSA id e12sm1581888pgv.82.2021.09.22.23.55.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 23:55:54 -0700 (PDT)
+        Wed, 22 Sep 2021 23:56:00 -0700 (PDT)
 From:   Daniel Palmer <daniel@0x0f.com>
 To:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-leds@vger.kernel.org
 Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         robh+dt@kernel.org, pavel@ucw.cz,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Daniel Palmer <daniel@0x0f.com>,
-        Romain Perier <romain.perier@gmail.com>
-Subject: [PATCH v2 06/11] ARM: dts: mstar: Set gpio compatible for ssd20xd
-Date:   Thu, 23 Sep 2021 15:54:55 +0900
-Message-Id: <20210923065500.2284347-7-daniel@0x0f.com>
+        Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH v2 08/11] ARM: dts: mstar: unitv2: Add core regulator
+Date:   Thu, 23 Sep 2021 15:54:57 +0900
+Message-Id: <20210923065500.2284347-9-daniel@0x0f.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210923065500.2284347-1-daniel@0x0f.com>
 References: <20210923065500.2284347-1-daniel@0x0f.com>
@@ -72,31 +71,32 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Now there is gpio support for ssd20xd set the right compatible in the gpio node.
+Add a fixed regulator for the "core" (mainly CPU) voltage.
 
 Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-Reviewed-by: Romain Perier <romain.perier@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/boot/dts/mstar-infinity2m-ssd20xd.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mstar-infinity2m-ssd20xd.dtsi b/arch/arm/boot/dts/mstar-infinity2m-ssd20xd.dtsi
-index 7a5e28b33f96..6f067da61ba3 100644
---- a/arch/arm/boot/dts/mstar-infinity2m-ssd20xd.dtsi
-+++ b/arch/arm/boot/dts/mstar-infinity2m-ssd20xd.dtsi
-@@ -6,6 +6,11 @@
- 
- #include "mstar-infinity2m.dtsi"
- 
-+&gpio {
-+	compatible = "sstar,ssd20xd-gpio";
-+	status = "okay";
-+};
+diff --git a/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts b/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts
+index a51490defabc..7fba3a772fb2 100644
+--- a/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts
++++ b/arch/arm/boot/dts/mstar-infinity2m-ssd202d-unitv2.dts
+@@ -32,6 +32,14 @@ led-red {
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
 +
- &smpctrl {
- 	compatible = "sstar,ssd201-smpctrl", "mstar,smpctrl";
- 	status = "okay";
++	reg_vcc_core: regulator-vcc-core {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_core";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <900000>;
++		regulator-boot-on;
++	};
+ };
+ 
+ &pm_uart {
 -- 
 2.33.0
 
