@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AFFC4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Sep 2021 08:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EAFC4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Sep 2021 08:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 560BF61090
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Sep 2021 08:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32AE860F3A
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Sep 2021 08:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244544AbhIXIIX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 24 Sep 2021 04:08:23 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:53652 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S237965AbhIXIIW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Sep 2021 04:08:22 -0400
-X-UUID: 2b071b8f61d24529ba1c1b5f85e63a0b-20210924
-X-UUID: 2b071b8f61d24529ba1c1b5f85e63a0b-20210924
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        id S237965AbhIXIIZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 24 Sep 2021 04:08:25 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:40356 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S244555AbhIXIIY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Sep 2021 04:08:24 -0400
+X-UUID: 646cc5ea3a6b45b5a02c8e683d35cf34-20210924
+X-UUID: 646cc5ea3a6b45b5a02c8e683d35cf34-20210924
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
         (envelope-from <zhiyong.tao@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1855317345; Fri, 24 Sep 2021 16:06:45 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 2037810613; Fri, 24 Sep 2021 16:06:49 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 24 Sep 2021 16:06:44 +0800
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 24 Sep 2021 16:06:48 +0800
 Received: from localhost.localdomain (10.17.3.154) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 24 Sep 2021 16:06:43 +0800
+ Transport; Fri, 24 Sep 2021 16:06:46 +0800
 From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
 To:     <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
         <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
@@ -41,11 +41,14 @@ CC:     <srv_heupstream@mediatek.com>, <zhiyong.tao@mediatek.com>,
         <sean.wang@mediatek.com>, <seiya.wang@mediatek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-Subject: [PATCH v14 0/5] Mediatek pinctrl patch on mt8195 
-Date:   Fri, 24 Sep 2021 16:06:27 +0800
-Message-ID: <20210924080632.28410-1-zhiyong.tao@mediatek.com>
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        Chen-Yu Tsai <wenst@chromium.org>
+Subject: [PATCH v14 3/5] pinctrl: mediatek: fix coding style
+Date:   Fri, 24 Sep 2021 16:06:30 +0800
+Message-ID: <20210924080632.28410-4-zhiyong.tao@mediatek.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210924080632.28410-1-zhiyong.tao@mediatek.com>
+References: <20210924080632.28410-1-zhiyong.tao@mediatek.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -54,96 +57,50 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series includes 5 patches:
-1.add rsel define.
-2.change pull up/down description
-3.fix coding style
-4.support rsel feature for common ICs
-5.add rsel setting on MT8195
+Fix Camel spelling coding style to avoid checkpatch
+warning in a following patch.
 
-Changes in patch v14:
-1)add a schema and new property "mediatek, rsel_resistance_in_si_unit"
-  on patch 2/5.
-2)fix kernel-doc style comment on patch 4/5.
-3)add review-by on patch 3/5 and 5/5.
+Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ drivers/pinctrl/mediatek/pinctrl-paris.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Changes in patch v13:
-1)change "-EOPNOTSUPP" to "-ENOTSUPP" in patch 4/5.
-2)fix description on 2/5.
-
-Changes in patch v12:
-1)add "ack-by" on "rsel define" patch.
-2)add "change reason" in commit message and write a shema
-  on patch document patch 2/5.
-3)separate eint pm_ops fucntion support patch
-4)separate rsel patch, the common parts as patch 4/5 to support
-  common ICs. The mt8195 specific changes as patch 5/5.
-5)add fix coding style patch to fix Camel spelling to avoid checkpatch
-  warning in a following patch.
-6)remove unrelated changes in rsel patch.
-7)change ternary ops in resel patch
-8)add "rsel_is_unit" property on struct mtk_pinctrl, and itendify
-  "mediatek,rsel_resistance_in_si_unit" property in probe function.
-9)add explanation for "MTK_PULL_RSEL_TYPE" and "MTK_PULL_PU_PD_RSEL_TYPE".
-10) fix spell warning in rsel patch.
-
-Changes in patch v11:
-1)add pm_ops fucntion support
-2)change pull up/down description
-3)add resistance value feature support.
-
-Changes in patch v10:
-1)fix PARENTHESIS_ALIGNMENT of mtk_pinconf_bias_set_rsel
-2)fix LONG_LINE warning in 615 in pinctrl-paris.c.
-
-Changes in patch v9:
-1)fix "mtk_pinconf_bias_set_rsel" build warning.
-
-Changes in patch v8:
-1)add rsel define patch
-2)avoid  CamelCase
-3)add pinctrl rsel setting patch which is another resistance selection
-  solution for I2C on MT8195.
-
-Changes in patch v7:
-1)add version in patch and fix spelling mistakes.
-
-Changes in patch v6:
-1)add "pintcrl: mediatek" as prefix.
-
-Changes in patch v5:
-1)document and driver patch are apploed.
-2)change '-EOPNOTSUPP' to '-ENOTSUPP'
-
-Changes in patch v4:
-1)fix pinctrl-mt8195.yaml warning error.
-2)remove pinctrl device node patch which is based on "mt8195.dtsi".
-
-Changes in patch v3:
-1)change '^pins' to '-pins$'.
-2)change 'state_0_node_a' to 'gpio_pin' which is defined in dts.
-3)change 'state_0_node_b' to 'i2c0_pin' which is defined in dts.
-4)reorder this series patches. change pinctrl file and binding document
-together in one patch.
-
-There are no changes in v1 & v2.
-
-Zhiyong Tao (5):
-  dt-bindings: pinctrl: mt8195: add rsel define
-  dt-bindings: pinctrl: mt8195: change pull up/down description
-  pinctrl: mediatek: fix coding style
-  pinctrl: mediatek: support rsel feature
-  pinctrl: mediatek: add rsel setting on MT8195
-
- .../bindings/pinctrl/pinctrl-mt8195.yaml      |  86 ++++++-
- drivers/pinctrl/mediatek/pinctrl-mt8195.c     | 133 ++++++++++
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 231 +++++++++++++++---
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  46 ++++
- drivers/pinctrl/mediatek/pinctrl-paris.c      |  68 ++++--
- include/dt-bindings/pinctrl/mt65xx.h          |   9 +
- 6 files changed, 519 insertions(+), 54 deletions(-)
-
---
-2.18.0
-
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 85db2e4377f0..38aec0177d15 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -577,7 +577,7 @@ static int mtk_hw_get_value_wrap(struct mtk_pinctrl *hw, unsigned int gpio, int
+ 	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DRV)
+ 
+ ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
+-	unsigned int gpio, char *buf, unsigned int bufLen)
++	unsigned int gpio, char *buf, unsigned int buf_len)
+ {
+ 	int pinmux, pullup, pullen, len = 0, r1 = -1, r0 = -1;
+ 	const struct mtk_pin_desc *desc;
+@@ -610,7 +610,7 @@ ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
+ 	} else if (pullen != MTK_DISABLE && pullen != MTK_ENABLE) {
+ 		pullen = 0;
+ 	}
+-	len += scnprintf(buf + len, bufLen - len,
++	len += scnprintf(buf + len, buf_len - len,
+ 			"%03d: %1d%1d%1d%1d%02d%1d%1d%1d%1d",
+ 			gpio,
+ 			pinmux,
+@@ -624,10 +624,10 @@ ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
+ 			pullup);
+ 
+ 	if (r1 != -1) {
+-		len += scnprintf(buf + len, bufLen - len, " (%1d %1d)\n",
++		len += scnprintf(buf + len, buf_len - len, " (%1d %1d)\n",
+ 			r1, r0);
+ 	} else {
+-		len += scnprintf(buf + len, bufLen - len, "\n");
++		len += scnprintf(buf + len, buf_len - len, "\n");
+ 	}
+ 
+ 	return len;
+-- 
+2.25.1
 
