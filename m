@@ -2,58 +2,59 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29D3C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1A6C4167B
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 998846136F
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D9F0613A9
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243513AbhI1X64 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Sep 2021 19:58:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43168 "EHLO
+        id S243567AbhI1X67 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Sep 2021 19:58:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243527AbhI1X6v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Sep 2021 19:58:51 -0400
-Received: from mail-qv1-xf49.google.com (mail-qv1-xf49.google.com [IPv6:2607:f8b0:4864:20::f49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A975C061770
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Sep 2021 16:57:02 -0700 (PDT)
-Received: by mail-qv1-xf49.google.com with SMTP id e6-20020a0cb446000000b0037eeb9851dfso2409227qvf.17
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Sep 2021 16:57:02 -0700 (PDT)
+        with ESMTP id S243543AbhI1X6x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Sep 2021 19:58:53 -0400
+Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C624C061777
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Sep 2021 16:57:07 -0700 (PDT)
+Received: by mail-pf1-x44a.google.com with SMTP id r4-20020aa79624000000b0044b2d81afd9so412120pfg.4
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Sep 2021 16:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=0xU4rMhQf+Tsh4aGgPmL2VLP+qQMedKrbqJYsYtJvB8=;
-        b=FTmdfSXZII7cRm19ecx75o8eAllYwqePg0NuCytvZQYsu0X/kUlzn7IL8ZeM/3z4ja
-         ZLxBRz3wowKQUTP2PFV5gX3ESiyJcR4aH9wi1Bgcnw8DRlxUhWx/YFPBDqKHfEH+vxNZ
-         cSU3SmdXvpusOlXyjNep2n+mzycENEL8nX5N4xL+wDPAkVYMzyVGKzEuXiFRmw4jjmh8
-         ++Cz3M/FDUY0WukzbPkIqUDEzhDjIi1+Eo/eK2TZ2gQgOn8zz0pRZoIgB2McJjePq0uw
-         uic1+Yv4HruxWjTzDDf3GC4w+FJmQOaZecctiPMnp6RQ+M4dYt0OVyK8EvWZCsA7IvzU
-         4+Zw==
+        bh=DjQX0rmtYmtVJ75AljDj9ozfBfZdMqL0Po1o8FwRztQ=;
+        b=PVmCAsU6FWM7arTDm8LIMtp834CqK3hJ8eh78bve2d4u27FniVQggLqO5m0M7NzVz1
+         n9uJniN0JnfMjLOTSysI6BZ/4gNxVsXN+yiQynmUaE52kUTp+Hb0hWLnKF+M80dCVczH
+         uEo2JL+bhdeI0res1nhnXWrNGziPqxGh87NYn/WA3QI/MCzju53xK9ABg+HCx0e1qYCs
+         GBclciPCZzlfdlcpFPRwEtWcMF28l6ZG6eOOa+n13GlsTakyQrG1RnXKSiqx4Pkaoyz1
+         u3d/feZl6+uZglsgxIAOipbvbUr1DL09sd0BffKLoOBYIixMGXde3YbM3RdlSoKiMcpl
+         XT8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=0xU4rMhQf+Tsh4aGgPmL2VLP+qQMedKrbqJYsYtJvB8=;
-        b=QaZ9x2rGc4pNmukzB/2OSbJdLIwX1dUHXDstBd5Qa4xYQcz1Rv2wntTStt7Rk4N50z
-         j9brynJxp2mBTRcGewxP/w1TBUOvfk0nQrnk6NqR/zM1h9MtiiNrso8b32xXT/QdjuSh
-         nIOh3/sr1JdaFSMlL27rXqkIELVMvHZj1qWtsEhYRpGOmqGn7Vt1cs7+BLcD8Yv5we4c
-         11bqADg89S0P1eCYQBYXHi3m5pHWQ5Ee8K9OEyf/8O4rUVthUhnoNCzpiMCnfDEhRCYy
-         ZhaMPI5//m9t6YvXCeCJlGXcgfLVj3dC/xzQuJtkMKYHmtXkWTwwZOKLCa++XhR+9sQ2
-         q+Eg==
-X-Gm-Message-State: AOAM533m2UXbCQOB/1U//kZ0Mw3R1RUbxqMw4wSqhVEUUe1NkuwEXdnS
-        loEH06nqQYIlSn2m2VikWganfTMflmzY+hQbCCs=
-X-Google-Smtp-Source: ABdhPJxXnGbQVYIKPCX7yNjY7ijrlFpSIGUian9jiU0yLqRqfT6gSGW3vVD1t8tBVnpZPavgKlT5Hlw9NDYqIMPa9/k=
+        bh=DjQX0rmtYmtVJ75AljDj9ozfBfZdMqL0Po1o8FwRztQ=;
+        b=1wg/bd3eQhZReSrPnYz6cLlFFbOi5Qhy0bUKZdyhbgCtRoCOy33p+SEYCJFrjL9bxm
+         jh+N9CZ2JQGiI6vx/6q7ZEyKscpW3/eeg2cSHBvkcwB1aM4hVeUIKmAHLR3xTQ6E+rX7
+         p8IfqHxBp89R5WBQ5UqScsoeJXkhrSSxIycBDfd+RoM63zbHzGvBVMopMMJkHPprDaf/
+         B6be5g+3X/8ywXLG+PnMTJAFNwAHn3AVgGKIi6rEfzCPxwVJRQ151P+4ZJe4+s1G0hRa
+         tUnxcif7LJ+wPKDyNRqGSOgpwJXZmT6mxEeCalHl8H9M4PZqknbvMq7Ju6CxKvlBiU+Y
+         AFdw==
+X-Gm-Message-State: AOAM5316CAVchGY1/afGwYvAnwpsBGmCVOh+YAZKFFP6ujglehSFya4Q
+        Sy2bCs+L66lBYMLLX79PggDiFpcYZ8HR3fBUqdw=
+X-Google-Smtp-Source: ABdhPJw9COqBlMTA4Zr9DmBfv5Dx8uBsdTDKgOtq9BaILmXCWbs/lYaV7SMppz0TKyuEFa+256t3BYuHmk/0Nk8SwBk=
 X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
- (user=willmcvicker job=sendgmr) by 2002:a05:6214:98d:: with SMTP id
- dt13mr8482075qvb.13.1632873421401; Tue, 28 Sep 2021 16:57:01 -0700 (PDT)
-Date:   Tue, 28 Sep 2021 23:56:22 +0000
+ (user=willmcvicker job=sendgmr) by 2002:aa7:8f2b:0:b0:43e:393:e855 with SMTP
+ id y11-20020aa78f2b000000b0043e0393e855mr7885033pfr.18.1632873427115; Tue, 28
+ Sep 2021 16:57:07 -0700 (PDT)
+Date:   Tue, 28 Sep 2021 23:56:24 +0000
 In-Reply-To: <20210928235635.1348330-1-willmcvicker@google.com>
-Message-Id: <20210928235635.1348330-6-willmcvicker@google.com>
+Message-Id: <20210928235635.1348330-8-willmcvicker@google.com>
 Mime-Version: 1.0
 References: <20210928235635.1348330-1-willmcvicker@google.com>
 X-Mailer: git-send-email 2.33.0.685.g46640cef36-goog
-Subject: [PATCH v2 05/12] clk: export __clk_lookup
+Subject: [PATCH v2 07/12] clk: samsung: set exynos arm64 clk driver as tristate
 From:   Will McVicker <willmcvicker@google.com>
 To:     Russell King <linux@armlinux.org.uk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -82,26 +83,89 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This symbol is needed to modularize the samsung clk drivers. It's used
-to get the clock using the clock name.
+This sets the COMMON_CLK_SAMSUNG and EXYNOS_ARM64_COMMON_CLK drivers as
+tristate so that we can compile them as modules.
 
 Signed-off-by: Will McVicker <willmcvicker@google.com>
 ---
- drivers/clk/clk.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-exynos/Kconfig      | 1 -
+ arch/arm/mach-s3c/Kconfig.s3c64xx | 1 -
+ arch/arm/mach-s5pv210/Kconfig     | 1 -
+ arch/arm64/Kconfig.platforms      | 1 -
+ drivers/clk/samsung/Kconfig       | 5 +++--
+ 5 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 65508eb89ec9..f2aa4b49adfc 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -612,6 +612,7 @@ struct clk *__clk_lookup(const char *name)
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 30f930e20599..01b8e8b8d95d 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -12,7 +12,6 @@ menuconfig ARCH_EXYNOS
+ 	select ARM_AMBA
+ 	select ARM_GIC
+ 	select EXYNOS_IRQ_COMBINER
+-	select COMMON_CLK_SAMSUNG
+ 	select EXYNOS_THERMAL
+ 	select EXYNOS_PMU
+ 	select EXYNOS_SROM
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index f3fcb570edf5..f65117bb9f4c 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -9,7 +9,6 @@ menuconfig ARCH_S3C64XX
+ 	select ARM_AMBA
+ 	select ARM_VIC
+ 	select CLKSRC_SAMSUNG_PWM
+-	select COMMON_CLK_SAMSUNG
+ 	select GPIO_SAMSUNG if ATAGS
+ 	select GPIOLIB
+ 	select HAVE_S3C2410_I2C if I2C
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index d644b45bc29d..3d7e0b5739d8 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -10,7 +10,6 @@ config ARCH_S5PV210
+ 	depends on ARCH_MULTI_V7
+ 	select ARM_VIC
+ 	select CLKSRC_SAMSUNG_PWM
+-	select COMMON_CLK_SAMSUNG
+ 	select GPIOLIB
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C_RTC if RTC_CLASS
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 90c5cf4856e1..e6d4abadacd8 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -91,7 +91,6 @@ config ARCH_BRCMSTB
  
- 	return !core ? NULL : core->hw->clk;
- }
-+EXPORT_SYMBOL_GPL(__clk_lookup);
+ config ARCH_EXYNOS
+ 	bool "ARMv8 based Samsung Exynos SoC family"
+-	select COMMON_CLK_SAMSUNG
+ 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ 	select EXYNOS_PMU
+ 	select HAVE_S3C_RTC if RTC_CLASS
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index 0441c4f73ac9..f987d386979d 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ # Recent Exynos platforms should just select COMMON_CLK_SAMSUNG:
+ config COMMON_CLK_SAMSUNG
+-	bool "Samsung Exynos clock controller support" if COMPILE_TEST
++	tristate "Samsung Exynos clock controller support"
++	default y if ARCH_EXYNOS || ARCH_S5PV210 || ARCH_S3C64XX
+ 	select S3C64XX_COMMON_CLK if ARM && ARCH_S3C64XX
+ 	select S5PV210_COMMON_CLK if ARM && ARCH_S5PV210
+ 	select EXYNOS_3250_COMMON_CLK if ARM && SOC_EXYNOS3250
+@@ -70,7 +71,7 @@ config EXYNOS_5420_COMMON_CLK
+ 	  Exynos5420 SoCs. Choose Y here only if you build for this SoC.
  
- static void clk_core_get_boundaries(struct clk_core *core,
- 				    unsigned long *min_rate,
+ config EXYNOS_ARM64_COMMON_CLK
+-	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
++	tristate "Samsung Exynos ARMv8-family clock controller support"
+ 	depends on COMMON_CLK_SAMSUNG
+ 
+ config EXYNOS_AUDSS_CLK_CON
 -- 
 2.33.0.685.g46640cef36-goog
 
