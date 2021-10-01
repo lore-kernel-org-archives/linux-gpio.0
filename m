@@ -2,135 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6181C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 09:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9DAC433FE
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 11:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87F5661A58
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 09:58:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D41F161AAD
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 11:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238512AbhJAKA1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Oct 2021 06:00:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46722 "EHLO
+        id S1354085AbhJALkK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Oct 2021 07:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353252AbhJAKA1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Oct 2021 06:00:27 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F12CC06177C
-        for <linux-gpio@vger.kernel.org>; Fri,  1 Oct 2021 02:58:43 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id r4so19348943ybp.4
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Oct 2021 02:58:43 -0700 (PDT)
+        with ESMTP id S1354007AbhJALkJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Oct 2021 07:40:09 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42486C06177C
+        for <linux-gpio@vger.kernel.org>; Fri,  1 Oct 2021 04:38:25 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id i25so37564962lfg.6
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Oct 2021 04:38:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+uUHmF2RAI7sGbaKJoO4TbpCYkh0FNhqLtnQn6C5nRU=;
-        b=B/w1+gFIDYDBBVD5ke/IYcG9PiVaGQrFIW+FP7bHGT0AHZNr3RXHy+r41P5ZSriwVd
-         qyKrX7I+hmEdtb6G9DDDj0guwCOeZn705q5suOzsPBeiI3x6y6S6GmVYptwR/BNejdB/
-         Rxj/zob1caMoNb7I/Z2GwwZMWqsn64/7A/ZjqcOt+RFAL6cQ8leOaSA3vQ/JchDB7GZG
-         iJn0nKcPfAS0BNfHpBaMDevGHbhdlemAy6N/IH/+ykTZa9x/oGPMAcJ95H5nMEMMcykd
-         rPnY99D090Ilp1EUnxhAxsc6A85epbVewDQsA8P6rSzmQZvuhVgAlcRdxrzdSucu4ylT
-         j/5A==
+        bh=PgQJwBmVLBdUeAFbcJpLOUvKI5KGsOalaorIVrJziYU=;
+        b=ulGdV921YPSj31Yv4v5aF/syTvWDzr0emxFqFfTXLGaac8eOgGmUwTS2oQqs9+4MaT
+         ycJJ4EGMFd1wiR/zE0HlRhLZMtUDrYcG8Cr0hZxQmBlm3f6VfnGmWUYOyEGuccqje6Kd
+         f4GITEqFG47ZwzLDHw9uq53A5+pAdnhsw17ahJv5ZuVf4U9IJ2d3AwJBGWDMAfF5AhZm
+         MrXvj+pMDYf7U5gRFhMMsvAqNMb/OCUK9FxDr6neZzgERJ4g+QgUNRGh/nG+POoPyV28
+         vf9j6BK1UWjNCQXLmoyAqCerQFmcdJzzsxVO48fBV8Tiiwq75Yk8tA868/lhicBoEji6
+         WTSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+uUHmF2RAI7sGbaKJoO4TbpCYkh0FNhqLtnQn6C5nRU=;
-        b=trhMvWO/EufIPVUSF14yiLYf6Lze3XGGsgPWnw9skRQrYDBxfJKKDauRfbFqDeC88l
-         DpyfgZj8/MwNezjiEIXTjc9LuhVq/A+ZhIWlBQ+0KzLpsdrtbj4lzdTjC+LEiJoPaxnD
-         joAGGf//MDtbMfKZ4mM4OvCRmuOf1YNegZDgGbfW4rWebxlbGPj3H8El6E6bsgEjzh+8
-         L9l3acKcCBu694U9gR532ZuOc+aNLGdz/TK68ZSnaiJ3IPaSo7X5lfumh5orwtsnl8uS
-         s/L3Y0pq43GmSrYPLthffGyLEXfQyL9vORLT9ZtVZGvCmkivAEgoS/z1krvowXuYAvon
-         TLMA==
-X-Gm-Message-State: AOAM533MEHL3px2zUIqpNYbsmAW8djmRxWUat3JGVbN9k0atD34AgmcC
-        DYNHTlRIYads4boOiHy8roUs/ILqNSfqakYJIFLqKQfVIyY=
-X-Google-Smtp-Source: ABdhPJz0BOFm+x8/UFrf+y3CI5cVPYOdCxxnW3Sif8MwolFw8b0XI6lihHmRXLsz2GG1NReXzKCrbVzH9S4X793QBGw=
-X-Received: by 2002:a5b:783:: with SMTP id b3mr4867872ybq.328.1633082322563;
- Fri, 01 Oct 2021 02:58:42 -0700 (PDT)
+        bh=PgQJwBmVLBdUeAFbcJpLOUvKI5KGsOalaorIVrJziYU=;
+        b=nDOuejhaIeFHijN5WKVzYogAhYJaIDZtr+3A20dYpMw/XuboZHgVZWMEW1nAqRYUs+
+         JRJOIDgtrQdlimfja0689OJXJZWHjN0Ud7E1N5usaDhEb7q/Qp5+zl5r/BkPgEQPgffX
+         I5iusmKPBJzQakHS8cp8pbqLRs68BLTB/5uSmxPOGWfOAWBzipv7u8cp0ryMuox5Yds6
+         F9OutV5rJeh3YqFPzBT6XZmjJ41AeQ+BkGC4di0cVaeiK3RTXvKQzGMpESbL+RZz8EVE
+         +suiGfDYKhoyCmcVd6FzReeP+y/Ro5XiEPTpjh1wqHhR4nBr04FyknBz09W3tp3UJNmQ
+         SENg==
+X-Gm-Message-State: AOAM532dIKxb2ZkW2sCG7TxQXVgfvraPhww2lhvCg7/iAB+XlmaxoWib
+        fFNFRPt+KqDil50DRs3ygN6lGZQ78YVdlx2ZbGcy0w==
+X-Google-Smtp-Source: ABdhPJxco3cL637mdMjAYhbk4AYPbPN/02smOY4EnT08ERaI7xmLVT0QYUwcEKNdpq2dlrNPhyl+AzDtpyyabfLalGs=
+X-Received: by 2002:a2e:8011:: with SMTP id j17mr10931191ljg.145.1633088303563;
+ Fri, 01 Oct 2021 04:38:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210923224640.62258-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210923224640.62258-1-andriy.shevchenko@linux.intel.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 1 Oct 2021 11:58:31 +0200
-Message-ID: <CAMpxmJWG1rO69i9WmFu-a23W2cjNtabyySoAyOB-NXCN5VjNHw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpio: pca953x: Improve bias setting
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
+ <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com> <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+In-Reply-To: <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 1 Oct 2021 13:38:11 +0200
+Message-ID: <CACRpkdajAwysiTOGuFcEySJjePp774J+4Z_YHXaoquTXk6cA+g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc <linux-rtc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 12:46 AM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> The commit 15add06841a3 ("gpio: pca953x: add ->set_config implementation")
-> introduced support for bias setting. However this, due to being half-baked,
-> brought potential issues:
->  - the turning bias via disabling makes the pin floating for a while;
->  - once enabled, bias can't be disabled.
->
-> Fix all these by adding support for bias disabling and move the disabling
-> part under the corresponding conditional.
->
-> While at it, add support for default setting, since it's cheap to add.
->
-> Fixes: 15add06841a3 ("gpio: pca953x: add ->set_config implementation")
-> Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/gpio/gpio-pca953x.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index f5cfc0698799..dac4d772a4d1 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -566,21 +566,21 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
->
->         mutex_lock(&chip->i2c_lock);
->
-> -       /* Disable pull-up/pull-down */
-> -       ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, 0);
-> -       if (ret)
-> -               goto exit;
-> -
->         /* Configure pull-up/pull-down */
->         if (config == PIN_CONFIG_BIAS_PULL_UP)
->                 ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, bit);
->         else if (config == PIN_CONFIG_BIAS_PULL_DOWN)
->                 ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, 0);
-> +       else
-> +               ret = 0;
->         if (ret)
->                 goto exit;
->
-> -       /* Enable pull-up/pull-down */
-> -       ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, bit);
-> +       /* Disable/Enable pull-up/pull-down */
-> +       if (config == PIN_CONFIG_BIAS_DISABLE)
-> +               ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, 0);
-> +       else
-> +               ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, bit);
->
->  exit:
->         mutex_unlock(&chip->i2c_lock);
-> @@ -594,7 +594,9 @@ static int pca953x_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
->
->         switch (pinconf_to_config_param(config)) {
->         case PIN_CONFIG_BIAS_PULL_UP:
-> +       case PIN_CONFIG_BIAS_PULL_PIN_DEFAULT:
->         case PIN_CONFIG_BIAS_PULL_DOWN:
-> +       case PIN_CONFIG_BIAS_DISABLE:
->                 return pca953x_gpio_set_pull_up_down(chip, offset, config);
->         default:
->                 return -ENOTSUPP;
-> --
-> 2.33.0
->
+On Fri, Oct 1, 2021 at 7:36 AM Olof Johansson <olof@lixom.net> wrote:
 
-Applied, thanks!
+> A much more valuable approach would be to work towards being able to
+> free up memory by un-probed drivers at the end of boot. That would
+> possibly benefit all platforms on all architectures.
 
-Bart
+This would be really neat.
+
+Also the ages-old problem of discarding unreferenced strings which
+apparently still isn't possible would be great to have solved. E.g.
+to couple strings to the file/module it belongs with and discard them
+if the code is not probed.
+
+Yours,
+Linus Walleij
