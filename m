@@ -2,34 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B04C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 19:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E55C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 19:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0018761AD0
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 19:12:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746E861ABD
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 19:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354617AbhJATOf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Oct 2021 15:14:35 -0400
-Received: from mail-eopbgr130054.outbound.protection.outlook.com ([40.107.13.54]:11591
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1355947AbhJATOr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Oct 2021 15:14:47 -0400
+Received: from mail-eopbgr20061.outbound.protection.outlook.com ([40.107.2.61]:24524
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1353931AbhJATOe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 1 Oct 2021 15:14:34 -0400
+        id S239579AbhJATOq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 1 Oct 2021 15:14:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/4EseGjI7xtn/yK0baf59GHLfepg7UeA+A66KZ6UUQc=;
- b=PD1J8gtBf0f2ur5ERMsOAiTRcGmN929ViDk9VHXI5Bz0pNOLdniMYaZpu/v9k7TY6l97d25elgv5sI7Ui9FOOuKsa9Tk5Ogae1XH6AxpLEm2+1so6Erv0u2NFXI0DkstthLmajsMUkBFeqWLP1EDHr+diizykJZKBAMhWW8jnwQ=
-Received: from DU2PR04CA0031.eurprd04.prod.outlook.com (2603:10a6:10:234::6)
- by AS8PR08MB6455.eurprd08.prod.outlook.com (2603:10a6:20b:338::16) with
+ bh=nelbOXPLv8fev78xBHWETIY5joEG4gwdmrwF3OY8MxQ=;
+ b=lbOePArdj5zIU9L/StLbSmMMvHu77GNgxzp74rQmVgIJuEmXo0TQR1qqcfS4duBobbHuDdu3Zv3nbejjCfVJMDkJazLPKdMwol4ZYkaeF/pBOcpuf3lmCT02hQqzjAMx/r/rKTTOxy9Y/5nnyV+M+aXNowxu/VUJA4+cWzK3d+k=
+Received: from AM6P191CA0059.EURP191.PROD.OUTLOOK.COM (2603:10a6:209:7f::36)
+ by PAXPR08MB6985.eurprd08.prod.outlook.com (2603:10a6:102:1dd::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15; Fri, 1 Oct
- 2021 19:12:46 +0000
-Received: from DB5EUR03FT003.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:10:234:cafe::4b) by DU2PR04CA0031.outlook.office365.com
- (2603:10a6:10:234::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15 via Frontend
- Transport; Fri, 1 Oct 2021 19:12:46 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.13; Fri, 1 Oct
+ 2021 19:12:47 +0000
+Received: from VE1EUR03FT040.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:209:7f:cafe::35) by AM6P191CA0059.outlook.office365.com
+ (2603:10a6:209:7f::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.16 via Frontend
+ Transport; Fri, 1 Oct 2021 19:12:47 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
  header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=pass action=none
@@ -38,27 +38,27 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  63.35.35.123 as permitted sender) receiver=protection.outlook.com;
  client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5EUR03FT003.mail.protection.outlook.com (10.152.20.157) with Microsoft SMTP
+ VE1EUR03FT040.mail.protection.outlook.com (10.152.18.210) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.20.4566.14 via Frontend Transport; Fri, 1 Oct 2021 19:12:46 +0000
-Received: ("Tessian outbound 78bf72cc015a:v103"); Fri, 01 Oct 2021 19:12:46 +0000
+Received: ("Tessian outbound a492f2284909:v103"); Fri, 01 Oct 2021 19:12:46 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: 936af47bb9866f01
+X-CR-MTA-CID: e2ec5db6b44e1e0e
 X-CR-MTA-TID: 64aa7808
-Received: from f856d1c6bb9d.1
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id B83EE0AC-0C78-4AE4-A840-376EE5AD4607.1;
-        Fri, 01 Oct 2021 19:12:34 +0000
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id f856d1c6bb9d.1
+Received: from 79ed60b74e76.1
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 0627F36B-F3C9-4EEC-B7FA-317DE0B6AB6F.1;
+        Fri, 01 Oct 2021 19:12:33 +0000
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 79ed60b74e76.1
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Fri, 01 Oct 2021 19:12:34 +0000
+    Fri, 01 Oct 2021 19:12:33 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OisE+4s3Yo7DQfob5OsiGvzuz9A8HuKD6jUbbrv+pLmN64HhWYhhwdSBX2R/fbmOPmgBbs9sO3co0ivVaTxhCEyCtgH1saS+NBeP8FUS9JCiHCSoQJ57W/ajsLv2lwHFLIJrwRYToLIXQrOzG8uwuTrlJdi9xAN6uuDH3jIQRK9Sc8IyDgAb2WDWZbgclwTK8XYhw6pRhgFXzqggX8y7mw2k21peDlvfb9jDVsQ6Mh0SNkeeXBN84y0rC5p5uznJ/QQHNLoXpSCH3Yyo9RMtwNBg1qrBdu+iCD2ohYNOgGrqnd05uL2mGI10x3H9Vob6fsJxmzuHWIgumacgK1DwHQ==
+ b=BGKxb0F5dXzkiRVIZY/4f/UychaGxJKpkNkNPV3LqO9Q/my6DslaYFVsz6K7QWFnRBzd5blVxzXawBhYQ1M8xuHYK+M+QgEod8jbNt2n8NL3EpLDV1gsHQv4HYyxPS7zrnDsC+vWXnNRz4rxwIBFIeRprguAy/c+2XVhHmnjLrzZs0CABGxzy7Mrm/i9JhNoyf9DQ/vE2ZjGt244f/rDu61kJ/nJj5IoQhrchV9eeUDEaekq/xRCUvUNrH1X24OSXH2Emxir4R+6G3N5LstAsygO8TUjtscl4v8HsdEjFcthDdAI1FiKjfg0S9znmvxc9KcffqaaLMo5G4vOq3VJcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/4EseGjI7xtn/yK0baf59GHLfepg7UeA+A66KZ6UUQc=;
- b=Aj0acZMKuw89wHx3WAeVwnvQmcQMfJ4FT2pKCdHvJw5Qk/OjCI2gCu1mx5N+OYcY8Waeb/J7kvlSAvr+OmJAjRK+cbeLXFZj1d38LfKgvRHtWaXFiua+GJ0cUHyYEFj0+qJJRbubv40cGni8wR0XITne9S6RlnlY+QNqqsES2LMv7ZMfDsO6rEipnxoAidXzHKxtDNKIcquXZAlNMshB4gEHxWJACmBZpXIOe7j1BeH7attoq6JgcJjZ/Ddbe4XAqvh6emUfofUdb8XtCzBgjnaU+k/8b1p/3B67REVOItTCUAEaLuP3874fMFQs/rrq0pl5D4lypT6NUTTbePfyAw==
+ bh=nelbOXPLv8fev78xBHWETIY5joEG4gwdmrwF3OY8MxQ=;
+ b=k3jVw7wZlikhXWOO9HFLwtmbquB+EvT8Z4i6kzFNAYPSiicsZQXHjgH5jy7EKHar22MekjKN3QybXP6tW4FAVTiwN81YWkOV59jVt+fMJTgbo50NOjg6x4s+i+BjkYM490BMMAzv+JLoIxASnHrHUSQGPcLMAebhtkiLXNQ30jTAxGv555V0zsxGyRsSyjjq3KnLyciwCgCxguYr/Xu7KT4jexmv8RkEnFJQTZX/5sUaNtK1YDFdGdZNrAziJKGA3DiALjdkrht8oBaCFVFJi+yJECxha1AVYkwwzyYqwO1pJIrZWOVDsz1KLFw/t0rH2lG4VdIv1DO6ycgufN+OdQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  40.67.248.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
@@ -66,18 +66,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/4EseGjI7xtn/yK0baf59GHLfepg7UeA+A66KZ6UUQc=;
- b=PD1J8gtBf0f2ur5ERMsOAiTRcGmN929ViDk9VHXI5Bz0pNOLdniMYaZpu/v9k7TY6l97d25elgv5sI7Ui9FOOuKsa9Tk5Ogae1XH6AxpLEm2+1so6Erv0u2NFXI0DkstthLmajsMUkBFeqWLP1EDHr+diizykJZKBAMhWW8jnwQ=
-Received: from AM6PR10CA0073.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:209:8c::14)
- by AM6PR08MB3061.eurprd08.prod.outlook.com (2603:10a6:209:4b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.18; Fri, 1 Oct
- 2021 19:12:29 +0000
-Received: from AM5EUR03FT029.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:209:8c:cafe::bc) by AM6PR10CA0073.outlook.office365.com
- (2603:10a6:209:8c::14) with Microsoft SMTP Server (version=TLS1_2,
+ bh=nelbOXPLv8fev78xBHWETIY5joEG4gwdmrwF3OY8MxQ=;
+ b=lbOePArdj5zIU9L/StLbSmMMvHu77GNgxzp74rQmVgIJuEmXo0TQR1qqcfS4duBobbHuDdu3Zv3nbejjCfVJMDkJazLPKdMwol4ZYkaeF/pBOcpuf3lmCT02hQqzjAMx/r/rKTTOxy9Y/5nnyV+M+aXNowxu/VUJA4+cWzK3d+k=
+Received: from AM5PR0601CA0028.eurprd06.prod.outlook.com
+ (2603:10a6:203:68::14) by DB6PR0802MB2518.eurprd08.prod.outlook.com
+ (2603:10a6:4:94::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13; Fri, 1 Oct
+ 2021 19:12:25 +0000
+Received: from AM5EUR03FT050.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:203:68:cafe::f4) by AM5PR0601CA0028.outlook.office365.com
+ (2603:10a6:203:68::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.14 via Frontend
- Transport; Fri, 1 Oct 2021 19:12:29 +0000
+ Transport; Fri, 1 Oct 2021 19:12:25 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 40.67.248.234)
  smtp.mailfrom=arm.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=pass action=none header.from=arm.com;
@@ -85,16 +85,16 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  40.67.248.234 as permitted sender) receiver=protection.outlook.com;
  client-ip=40.67.248.234; helo=nebula.arm.com;
 Received: from nebula.arm.com (40.67.248.234) by
- AM5EUR03FT029.mail.protection.outlook.com (10.152.16.150) with Microsoft SMTP
+ AM5EUR03FT050.mail.protection.outlook.com (10.152.17.47) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4566.14 via Frontend Transport; Fri, 1 Oct 2021 19:12:29 +0000
-Received: from AZ-NEU-EX04.Arm.com (10.251.24.32) by AZ-NEU-EX04.Arm.com
- (10.251.24.32) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.4566.14 via Frontend Transport; Fri, 1 Oct 2021 19:12:24 +0000
+Received: from AZ-NEU-EX04.Arm.com (10.251.24.32) by AZ-NEU-EX03.Arm.com
+ (10.251.24.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.14; Fri, 1 Oct
- 2021 19:12:32 +0000
+ 2021 19:12:27 +0000
 Received: from e124191.cambridge.arm.com (10.11.7.12) by mail.arm.com
  (10.251.24.32) with Microsoft SMTP Server id 15.1.2308.14 via Frontend
- Transport; Fri, 1 Oct 2021 19:12:31 +0000
+ Transport; Fri, 1 Oct 2021 19:12:27 +0000
 From:   Joey Gouly <joey.gouly@arm.com>
 To:     <linux-gpio@vger.kernel.org>
 CC:     Linus Walleij <linus.walleij@linaro.org>,
@@ -103,12 +103,10 @@ CC:     Linus Walleij <linus.walleij@linaro.org>,
         Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
         Sven Peter <sven@svenpeter.dev>, <devicetree@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Kettenis <kettenis@openbsd.org>, <nd@arm.com>,
-        Stan Skowronek <stan@corellium.com>,
-        Joey Gouly <joey.gouly@arm.com>
-Subject: [PATCH v2 3/3] pinctrl: add pinctrl/GPIO driver for Apple SoCs
-Date:   Fri, 1 Oct 2021 20:12:09 +0100
-Message-ID: <20211001191209.29988-4-joey.gouly@arm.com>
+        Mark Kettenis <kettenis@openbsd.org>, <nd@arm.com>
+Subject: [PATCH v2 1/3] gpio: Allow per-parent interrupt data
+Date:   Fri, 1 Oct 2021 20:12:07 +0100
+Message-ID: <20211001191209.29988-2-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211001191209.29988-1-joey.gouly@arm.com>
 References: <20211001191209.29988-1-joey.gouly@arm.com>
@@ -116,671 +114,120 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 1
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fbe2ab7e-1eaf-48e7-8382-08d9850f73fa
-X-MS-TrafficTypeDiagnostic: AM6PR08MB3061:|AS8PR08MB6455:
-X-Microsoft-Antispam-PRVS: <AS8PR08MB645594DE6378F3A24505DAEF94AB9@AS8PR08MB6455.eurprd08.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: a8285a89-fb5d-466e-4914-08d9850f741e
+X-MS-TrafficTypeDiagnostic: DB6PR0802MB2518:|PAXPR08MB6985:
+X-Microsoft-Antispam-PRVS: <PAXPR08MB69855A91A49D30C584766AD894AB9@PAXPR08MB6985.eurprd08.prod.outlook.com>
 x-checkrecipientrouted: true
 NoDisclaimer: true
-X-MS-Oob-TLC-OOBClassifiers: OLM:1923;OLM:1923;
+X-MS-Oob-TLC-OOBClassifiers: OLM:3383;OLM:3383;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: EoeMyP2Dj1uH0zkCroqV8ePkokaecc2xmF7pl71E/Sy2MPnUm9xFVZanierJwJwfTbonPakjHuEWftj7ixlUnACoiMOJIzRpByqVty1Gvls/Hk/XOxo0naHQiyz6aaQCXSjR1dT0W5Cm2BG1cWr/DjApeK365Nl4AgMqox9ta73l+cbflorgxkr7opJgZxhVWGtVHrs3i8peYsv7PF0HbrWFI/XbKEYaqQKzjZSBSTMukr5Xi9tfWhzuk2yZIu9IzuXPQdjabfLkfd7GZ4tnBPMR8yCtTk3smjUAjp4/PXjcAvJHJAZlQP+fpc80SkfJlxqaTFXnz91I71Q6WTBq00QbUgZ0BL7WotSw6i1WxCbIb2vpq9tqgP4C6wPBxOoiRMbZUptsELiET+CV+J5tiYGnX+xiS6jI7G7Lko+QY//6q39ubnn91mM3vi9n2+SXmWaGXXQD7urxxzDlUi3B9ksKuNqRaxlUSIuJ+TCYun9HZputVW5DdKO+uxoCADr9BwjI5yp786SP5ZMKng+74TNlnI0jhsRGlgB+d6lBg9iv4qJqGvWGGxalGnFlgVpgYFW/Ng4croggABJq04oTGyjssEzrvxzK0EFSN8LfvAjszudxLg7dzKqoJAbq3YdPqVx/17dIitki4752EBbXue5R8+sKQdtTOB14tiYQpak3iw6q1zsmrAxEyZzaoPOpiXOTSjP695HUanzURnIVnioi9ZRgdHPKfuvL616p2/c=
-X-Forefront-Antispam-Report-Untrusted: CIP:40.67.248.234;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:nebula.arm.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(6029001)(4636009)(47660400002)(36840700001)(46966006)(1076003)(36756003)(81166007)(36860700001)(356005)(4326008)(5660300002)(336012)(30864003)(86362001)(8676002)(82310400003)(6666004)(26005)(8936002)(70586007)(70206006)(83380400001)(47076005)(7696005)(54906003)(186003)(7416002)(44832011)(2906002)(316002)(508600001)(6916009)(2616005)(426003)(36900700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3061
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT003.eop-EUR03.prod.protection.outlook.com
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 961aa553-b599-444e-0eb4-08d9850f69c1
+X-Microsoft-Antispam-Message-Info-Original: RJb3+7Wf/x7rQFvRX8/N/wvoKW1hid9EU7oxyzj3XGcnSqIWRVSchu7WxUE4phoFNDSQEaXzFB+cDFvWE6fEvGvBzeLyGKJECdoQzdDS26+J1k3iXGJSm8pE2iLLmjgn6Imkg3QV+SdwYi9bjAqMdiBGL8wTTx84Qws/C7GDgI85SQIgj3/owXEUubl/C8FiJnX4e6+1daez+uaG093m9pE5/oRP/pTb7aNV2E3Q/kjq4KtXertvlFGp+LXjshRRmsY9MMNifEva2bwVy4hblxYoej/7s9yuwXSRmZ7kb4Zc3ISPwi8z0q6RSrnR47naC3hpgZc79RPPavINnzgYu2NSVqsNlTqpWQGML3SVcwYhIOpTRTAgt1V6n+4BrhaTZRrpl6FWyiv3Muuz7LImozuMiquWLZWWVBPn4dFjB+g9GY9rTD7YIQhdq8o2SPTirJgstAHlkVNxXgxFJQBo5hSWiIW2mGT/xQ+vCG329DAIOWCE0IJ6eiNtDOqS1MGxMpEXsw9/giOghwvjDWq2VPSnXDHJjn2o8Mp/LiUUm7Twz9MEmQGlk7bZVgP+wHBR+NlIpZv+KVgjOXJz20HET6ewNrFJ3g3QFx6phszcgKWwz0/9UHvNiCz3IRSbjHoQzHodNQVO7U8y/fNZFBICw4QX4LFjg9xkx5Pv31yKS5pEwid9SJSeCFfbYNwMDMrE/s2Zg7C5EcLNaGOrV+Xp0lP3nMFvVtPlgsj5VIDyEAc=
+X-Forefront-Antispam-Report-Untrusted: CIP:40.67.248.234;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:nebula.arm.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(2616005)(7696005)(70586007)(86362001)(336012)(8676002)(36756003)(426003)(316002)(2906002)(5660300002)(508600001)(44832011)(54906003)(4326008)(6916009)(47076005)(186003)(36860700001)(82310400003)(1076003)(26005)(70206006)(81166007)(8936002)(83380400001)(356005)(6666004)(36900700001);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2518
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT040.eop-EUR03.prod.protection.outlook.com
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 23384a97-e640-4956-d53a-08d9850f6719
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UUpGQKRr8NJnsY5xgil4bSJymauGBfgYIrlaDbnVjf+UcTnfu0/IEHBBsWTePrPjwQcCWq5Kl30pASVnJMb6GG0X9Xfd9du98GIt147UUKHRdEyWPIC6H8wfVxkdQJV4vwSc96dFjnTXI7mP7iA8RLpPxHknl9O15dppx/3mEmM+OzfirDxmFRfVzICJqcuLdIDnuLA4LpKEfWHK7uXdPqFjzhG6Zr1IVHtnlvJhIXguqGCMzqE/H7vFsnQZ39+EaS1zL1yYdqh0EVXiaN1qKcEJk7cP0XSfZd1qVRjuQyymlQpKLcQX5FUYDEM2DorYUf7Xim1SP+6pnVmrWraS2XRWh/xYMauq2EcUcbnXLgLJgZsBNmgIhT3J3+SEUzd9vYCf6xQ4dEq627+2NuM8ij9rPick3ba4mpDOCP6SvYtv51qGm/nr7NHEkewG1eg9lnrSqtX+zFcrIMQVYp4L84EsYMqmZFeCHc9hXeimBg3Ax1khGcnmo1WUXDok8Scc7VeNMVuZgx8bhpoa+JS1IfOMw+gupIwTvW7k/QxAg2yq6IbP8NqjGv/cIqZvRrEm+1YtjC0auU1k+mt9FCYp7aHv2fl8jF0AiduveYkUUTglJhRxWSyFOsqRozVjXQRrkgMAQJz9w+izDBFy65BcdOgzk5Y4zT8u22haUvT4v6Z8FNQ51XBVXQcirW+yoy+b5klhQJu7sOMUvTB8sbnC541I8+GkrbxxNAEuG35qEgw=
-X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(6029001)(4636009)(47660400002)(46966006)(36840700001)(1076003)(5660300002)(2616005)(508600001)(186003)(8676002)(30864003)(426003)(54906003)(83380400001)(336012)(6666004)(36860700001)(7696005)(86362001)(6916009)(70586007)(70206006)(8936002)(316002)(26005)(47076005)(450100002)(4326008)(2906002)(44832011)(81166007)(82310400003)(36756003)(46800400005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: z9dqIdBIfDHHxeTzrUWs+5T7cu5RRjtsA5NdIn3Ky9QF4VL1eMG6algNXaKZy4fi22+8Q0HOU5BR1+L7s+xKg3InhzF9auYEp8FkDcV4dUWRgyZlb9HdDVZgk/HmTgMMvv21/3Q/AWHwEFkxVsn6IZJ8TtBLxHf8GeXQMraLX29Ri+hcgQ+VED7t7eOaJ65QRynpyJVdupH9YVl6St5TSjM/tP8/wyUjWTZS3pzD7Iot3QCDvSU6g1eFEiDbRrA8CtgfjXw6r6VYxNUvE4LUTk/vk02j+4CqKStYOeHIgX7GpfIy0GPNOHApU36+sUXAnELS45vcOyOjXDDeuJxonnycqpGOghLss7f3BnXx1jyNJ7r38oK9e03+aOjzY6Ue/qJIqSpNwhdan4CQY3iOX2QxRe7WcNVn4H6zLgH64Q3W6YRTQN7p3omI8pb32eNbbcSK7GEpq4UsTekHCBd3LZkDUcYxWhbkR/9qKwraxWVbqME+ME+ZZMi1+SNTJkLsZO2ecYfcs81inZXqEovSwVRfDzVR9zXHY2K1QNDGzXhO4xLxigwyoOr38vt5JU6drdcgb23ICdrpcSS1IaesDqYgWJNzFXmg0x7t4eqg4CC9WL9HG4TbUULKommC7Vr8rci4R/wD332rgw1qf7efavsfwk5Pi5hTjjS/qAD8hNM1jOHJDimh5f/ZRmZKipYnKbAoTH05U5AVufD4cC+7JA==
+X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(44832011)(8676002)(83380400001)(1076003)(86362001)(508600001)(36860700001)(316002)(47076005)(26005)(81166007)(54906003)(70206006)(426003)(2906002)(82310400003)(36756003)(450100002)(7696005)(186003)(336012)(70586007)(5660300002)(4326008)(8936002)(6666004)(6916009)(2616005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2021 19:12:46.6327
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2021 19:12:46.7350
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbe2ab7e-1eaf-48e7-8382-08d9850f73fa
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8285a89-fb5d-466e-4914-08d9850f741e
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB5EUR03FT003.eop-EUR03.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: VE1EUR03FT040.eop-EUR03.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6455
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB6985
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Stan Skowronek <stan@corellium.com>
+From: Marc Zyngier <maz@kernel.org>
 
-This driver adds support for the pinctrl / GPIO hardware found
-on some Apple SoCs.
+The core gpiolib code is able to deal with multiple interrupt parents
+for a single gpio irqchip. It however only allows a single piece
+of data to be conveyed to all flow handlers (either the gpio_chip
+or some other, driver-specific data).
 
-Co-developed-by: Joey Gouly <joey.gouly@arm.com>
-Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-Signed-off-by: Stan Skowronek <stan@corellium.com>
+This means that drivers have to go through some interesting dance
+to find the correct context, something that isn't great in interrupt
+context (see aebdc8abc9db86e2bd33070fc2f961012fff74b4 for a prime
+example).
+
+Instead, offer an optional way for a pinctrl/gpio driver to provide
+an array of pointers which gets used to provide the correct context
+to the flow handler.
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- MAINTAINERS                          |   1 +
- drivers/pinctrl/Kconfig              |  16 +
- drivers/pinctrl/Makefile             |   1 +
- drivers/pinctrl/pinctrl-apple-gpio.c | 561 +++++++++++++++++++++++++++
- 4 files changed, 579 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-apple-gpio.c
+ drivers/gpio/gpiolib.c      |  9 +++++++--
+ include/linux/gpio/driver.h | 19 +++++++++++++++++--
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ca6d6fde85cf..e83e992b8ada 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1722,6 +1722,7 @@ F:	Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
- F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	arch/arm64/boot/dts/apple/
- F:	drivers/irqchip/irq-apple-aic.c
-+F:	drivers/pinctrl/pinctrl-apple-gpio.c
- F:	include/dt-bindings/interrupt-controller/apple-aic.h
- F:	include/dt-bindings/pinctrl/apple.h
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d1b9b721218f..abfbf546d159 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1534,9 +1534,14 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
+ 	}
  
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 31921108e456..6a961d5f8726 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -31,6 +31,22 @@ config DEBUG_PINCTRL
- 	help
- 	  Say Y here to add some extra checks and diagnostics to PINCTRL calls.
+ 	if (gc->irq.parent_handler) {
+-		void *data = gc->irq.parent_handler_data ?: gc;
+-
+ 		for (i = 0; i < gc->irq.num_parents; i++) {
++			void *data;
++
++			if (gc->irq.per_parent_data)
++				data = gc->irq.parent_handler_data_array[i];
++			else
++				data = gc->irq.parent_handler_data ?: gc;
++
+ 			/*
+ 			 * The parent IRQ chip is already using the chip_data
+ 			 * for this IRQ chip, so our callbacks simply use the
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index a0f9901dcae6..a673a359e20b 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -168,11 +168,18 @@ struct gpio_irq_chip {
  
-+config PINCTRL_APPLE_GPIO
-+	tristate "Apple SoC GPIO pin controller driver"
-+	depends on ARCH_APPLE
-+	select PINMUX
-+	select GPIOLIB
-+	select GPIOLIB_IRQCHIP
-+	select GENERIC_PINCTRL_GROUPS
-+	select GENERIC_PINMUX_FUNCTIONS
-+	select OF_GPIO
-+	help
-+	  This is the driver for the GPIO controller found on Apple ARM SoCs,
-+	  including M1.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called pinctrl-apple-gpio.
-+
- config PINCTRL_ARTPEC6
- 	bool "Axis ARTPEC-6 pin controller driver"
- 	depends on MACH_ARTPEC6
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 200073bcc2c1..5e63de2ffcf4 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_PINMUX)		+= pinmux.o
- obj-$(CONFIG_PINCONF)		+= pinconf.o
- obj-$(CONFIG_OF)		+= devicetree.o
- obj-$(CONFIG_GENERIC_PINCONF)	+= pinconf-generic.o
-+obj-$(CONFIG_PINCTRL_APPLE_GPIO) += pinctrl-apple-gpio.o
- obj-$(CONFIG_PINCTRL_ARTPEC6)	+= pinctrl-artpec6.o
- obj-$(CONFIG_PINCTRL_AS3722)	+= pinctrl-as3722.o
- obj-$(CONFIG_PINCTRL_AXP209)	+= pinctrl-axp209.o
-diff --git a/drivers/pinctrl/pinctrl-apple-gpio.c b/drivers/pinctrl/pinctrl-apple-gpio.c
-new file mode 100644
-index 000000000000..cfec37e3627a
---- /dev/null
-+++ b/drivers/pinctrl/pinctrl-apple-gpio.c
-@@ -0,0 +1,561 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Apple SoC pinctrl+GPIO+external IRQ driver
-+ *
-+ * Copyright (C) 2021 The Asahi Linux Contributors
-+ * Copyright (C) 2020 Corellium LLC
-+ *
-+ * Based on: pinctrl-pistachio.c
-+ * Copyright (C) 2014 Imagination Technologies Ltd.
-+ * Copyright (C) 2014 Google, Inc.
-+ */
-+
-+#include <dt-bindings/pinctrl/apple.h>
-+#include <linux/clk.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_irq.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+
-+#include "pinctrl-utils.h"
-+#include "core.h"
-+#include "pinmux.h"
-+
-+struct apple_gpio_irq_data {
-+	struct apple_gpio_pinctrl *pctl;
-+	int irqgrp;
-+};
-+
-+struct apple_gpio_pinctrl {
-+	struct device *dev;
-+	struct pinctrl_dev *pctldev;
-+
-+	// Shadow the pin values, the REG_GPIOx_DATA bit can read back stale values.
-+	u32 *pin_shadow;
-+
-+	void __iomem *base;
-+	unsigned int nirqgrps;
-+
-+	struct pinctrl_desc pinctrl_desc;
-+	struct gpio_chip gpio_chip;
-+	struct irq_chip irq_chip;
-+};
-+
-+#define REG_GPIO(x)          (4 * (x))
-+#define REG_GPIOx_DATA       BIT(0)
-+#define REG_GPIOx_MODE_MASK  GENMASK(3, 1)
-+#define REG_GPIOx_OUT        1
-+#define REG_GPIOx_IN_IRQ_HI  2
-+#define REG_GPIOx_IN_IRQ_LO  3
-+#define REG_GPIOx_IN_IRQ_UP  4
-+#define REG_GPIOx_IN_IRQ_DN  5
-+#define REG_GPIOx_IN_IRQ_ANY 6
-+#define REG_GPIOx_IN_IRQ_OFF 7
-+#define REG_GPIOx_PERIPH     BIT(5)
-+#define REG_GPIOx_CFG_DONE   BIT(9)
-+#define REG_GPIOx_GRP_MASK   GENMASK(18, 16)
-+#define REG_IRQ(g, x)        (0x800 + 0x40 * (g) + 4 * ((x) >> 5))
-+
-+// No locking needed to mask/unmask IRQs as the interrupt mode is per pin-register.
-+static void apple_gpio_set_reg(struct apple_gpio_pinctrl *pctl,
-+			       unsigned int pin, uint32_t clr, uint32_t set)
-+{
-+	void __iomem *ppin = pctl->base + REG_GPIO(pin);
-+	uint32_t prev, cfg;
-+
-+	prev = pctl->pin_shadow[pin];
-+	cfg = (prev & ~clr) | set;
-+
-+	if (!(prev & REG_GPIOx_CFG_DONE))
-+		writel_relaxed(cfg & ~REG_GPIOx_CFG_DONE, ppin);
-+	writel_relaxed(cfg, ppin);
-+	pctl->pin_shadow[pin] = cfg;
-+}
-+
-+static uint32_t apple_gpio_get_reg(struct apple_gpio_pinctrl *pctl,
-+				   unsigned int pin)
-+{
-+	return readl_relaxed(pctl->base + REG_GPIO(pin));
-+}
-+
-+/* Pin controller functions */
-+
-+static int apple_gpio_dt_node_to_map(struct pinctrl_dev *pctldev,
-+				     struct device_node *node,
-+				     struct pinctrl_map **map,
-+				     unsigned *num_maps)
-+{
-+	unsigned reserved_maps;
-+	struct apple_gpio_pinctrl *pctl;
-+	u32 pinfunc, pin, func;
-+	int num_pins, i, ret;
-+	const char *group_name;
-+	const char *function_name;
-+
-+	*map = NULL;
-+	*num_maps = 0;
-+	reserved_maps = 0;
-+
-+	pctl = pinctrl_dev_get_drvdata(pctldev);
-+
-+	ret = of_property_count_u32_elems(node, "pinmux");
-+	if (ret <= 0) {
-+		dev_err(pctl->dev,
-+			"missing or empty pinmux property in node %pOFn.\n",
-+			node);
-+		return -EINVAL;
-+	}
-+
-+	num_pins = ret;
-+
-+	ret = pinctrl_utils_reserve_map(pctldev, map, &reserved_maps, num_maps,
-+					num_pins);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < num_pins; i++) {
-+		ret = of_property_read_u32_index(node, "pinmux", i, &pinfunc);
-+		if (ret)
-+			goto free_map;
-+
-+		pin = APPLE_PIN(pinfunc);
-+		func = APPLE_FUNC(pinfunc);
-+
-+		if (func >= pinmux_generic_get_function_count(pctldev)) {
-+			ret = -EINVAL;
-+			goto free_map;
-+		}
-+
-+		group_name = pinctrl_generic_get_group_name(pctldev, pin);
-+		function_name =
-+			pinmux_generic_get_function_name(pctl->pctldev, func);
-+		ret = pinctrl_utils_add_map_mux(pctl->pctldev, map,
-+						&reserved_maps, num_maps,
-+						group_name, function_name);
-+		if (ret)
-+			goto free_map;
-+	}
-+
-+free_map:
-+	if (ret < 0) {
-+		pinctrl_utils_free_map(pctldev, *map, *num_maps);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops apple_gpio_pinctrl_ops = {
-+	.get_groups_count = pinctrl_generic_get_group_count,
-+	.get_group_name = pinctrl_generic_get_group_name,
-+	.get_group_pins = pinctrl_generic_get_group_pins,
-+	.dt_node_to_map = apple_gpio_dt_node_to_map,
-+	.dt_free_map = pinctrl_utils_free_map,
-+};
-+
-+/* Pin multiplexer functions */
-+
-+static int apple_gpio_pinmux_enable(struct pinctrl_dev *pctldev, unsigned func,
-+				    unsigned group)
-+{
-+	struct apple_gpio_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+
-+	if (func)
-+		apple_gpio_set_reg(pctl, group, 0,
-+				   REG_GPIOx_PERIPH | REG_GPIOx_CFG_DONE);
-+	else
-+		apple_gpio_set_reg(pctl, group, REG_GPIOx_PERIPH,
-+				   REG_GPIOx_CFG_DONE);
-+
-+	return 0;
-+}
-+
-+static const struct pinmux_ops apple_gpio_pinmux_ops = {
-+	.get_functions_count = pinmux_generic_get_function_count,
-+	.get_function_name = pinmux_generic_get_function_name,
-+	.get_function_groups = pinmux_generic_get_function_groups,
-+	.set_mux = apple_gpio_pinmux_enable,
-+	.strict = true,
-+};
-+
-+/* GPIO chip functions */
-+
-+static int apple_gpio_gpio_get_direction(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
-+
-+	return (FIELD_GET(REG_GPIOx_MODE_MASK, pctl->pin_shadow[offset]) ==
-+		REG_GPIOx_OUT) ?
-+		       GPIO_LINE_DIRECTION_OUT :
-+			     GPIO_LINE_DIRECTION_IN;
-+}
-+
-+static int apple_gpio_gpio_get(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
-+	uint32_t reg;
-+
-+	if (FIELD_GET(REG_GPIOx_MODE_MASK, pctl->pin_shadow[offset]) ==
-+	    REG_GPIOx_OUT) {
-+		return pctl->pin_shadow[offset] & REG_GPIOx_DATA;
-+	}
-+
-+	reg = apple_gpio_get_reg(pctl, offset);
-+	return !!(reg & REG_GPIOx_DATA);
-+}
-+
-+static void apple_gpio_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+				int value)
-+{
-+	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
-+
-+	apple_gpio_set_reg(pctl, offset, REG_GPIOx_DATA,
-+			   REG_GPIOx_CFG_DONE | (value & REG_GPIOx_DATA));
-+}
-+
-+static int apple_gpio_gpio_direction_input(struct gpio_chip *chip,
-+					   unsigned int offset)
-+{
-+	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
-+
-+	apple_gpio_set_reg(pctl, offset, REG_GPIOx_MODE_MASK | REG_GPIOx_DATA,
-+			   FIELD_PREP(REG_GPIOx_MODE_MASK,
-+				      REG_GPIOx_IN_IRQ_OFF) |
-+				   REG_GPIOx_CFG_DONE);
-+	return 0;
-+}
-+
-+static int apple_gpio_gpio_direction_output(struct gpio_chip *chip,
-+					    unsigned int offset, int value)
-+{
-+	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
-+
-+	apple_gpio_set_reg(pctl, offset, REG_GPIOx_PERIPH | REG_GPIOx_DATA,
-+			   FIELD_PREP(REG_GPIOx_MODE_MASK, REG_GPIOx_OUT) |
-+				   (value & REG_GPIOx_DATA) |
-+				   REG_GPIOx_CFG_DONE);
-+	return 0;
-+}
-+
-+/* IRQ chip functions */
-+
-+static void apple_gpio_gpio_irq_ack(struct irq_data *data)
-+{
-+	struct apple_gpio_pinctrl *pctl =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+	unsigned int irqgrp = FIELD_GET(REG_GPIOx_GRP_MASK,
-+					apple_gpio_get_reg(pctl, data->hwirq));
-+
-+	writel(BIT(data->hwirq & 31),
-+	       pctl->base + REG_IRQ(irqgrp, data->hwirq));
-+}
-+
-+static int apple_gpio_irq_type(unsigned int type)
-+{
-+	switch (type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		return REG_GPIOx_IN_IRQ_UP;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		return REG_GPIOx_IN_IRQ_DN;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		return REG_GPIOx_IN_IRQ_ANY;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		return REG_GPIOx_IN_IRQ_HI;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		return REG_GPIOx_IN_IRQ_LO;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static void apple_gpio_gpio_irq_mask(struct irq_data *data)
-+{
-+	struct apple_gpio_pinctrl *pctl =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_MODE_MASK,
-+			   FIELD_PREP(REG_GPIOx_MODE_MASK,
-+				      REG_GPIOx_IN_IRQ_OFF) |
-+				   REG_GPIOx_CFG_DONE);
-+}
-+
-+static void apple_gpio_gpio_irq_unmask(struct irq_data *data)
-+{
-+	struct apple_gpio_pinctrl *pctl =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+	u32 irqtype = apple_gpio_irq_type(irqd_get_trigger_type(data));
-+
-+	if (WARN_ON(irqtype < 0))
-+		return;
-+	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_MODE_MASK,
-+			   FIELD_PREP(REG_GPIOx_MODE_MASK, irqtype) |
-+				   REG_GPIOx_CFG_DONE);
-+}
-+
-+static unsigned int apple_gpio_gpio_irq_startup(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
-+
-+	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_GRP_MASK,
-+			   FIELD_PREP(REG_GPIOx_GRP_MASK, 0));
-+
-+	apple_gpio_gpio_direction_input(chip, data->hwirq);
-+	apple_gpio_gpio_irq_unmask(data);
-+
-+	return 0;
-+}
-+
-+static int apple_gpio_gpio_irq_set_type(struct irq_data *data,
-+					unsigned int type)
-+{
-+	struct apple_gpio_pinctrl *pctl =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+	u32 irqtype = apple_gpio_irq_type(type);
-+
-+	if (irqtype < 0)
-+		return irqtype;
-+
-+	irqd_set_trigger_type(data, type);
-+
-+	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_MODE_MASK,
-+			   FIELD_PREP(REG_GPIOx_MODE_MASK, irqtype) |
-+				   REG_GPIOx_CFG_DONE);
-+
-+	if (type & IRQ_TYPE_LEVEL_MASK)
-+		irq_set_handler_locked(data, handle_level_irq);
-+	else
-+		irq_set_handler_locked(data, handle_edge_irq);
-+	return 0;
-+}
-+
-+static void apple_gpio_gpio_irq_handler(struct irq_desc *desc)
-+{
-+	struct apple_gpio_irq_data *data = irq_desc_get_handler_data(desc);
-+	struct apple_gpio_pinctrl *pctl = data->pctl;
-+	struct gpio_chip *gc = &pctl->gpio_chip;
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned int irqgrp = data->irqgrp;
-+	unsigned int pinh, pinl;
-+	unsigned long pending;
-+
-+	chained_irq_enter(chip, desc);
-+	for (pinh = 0; pinh < gc->ngpio; pinh += 32) {
-+		pending = readl(pctl->base + REG_IRQ(irqgrp, pinh));
-+		for_each_set_bit(pinl, &pending, 32)
-+			generic_handle_domain_irq(gc->irq.domain, pinh + pinl);
-+	}
-+	chained_irq_exit(chip, desc);
-+}
-+
-+/* Probe & register */
-+
-+static int apple_gpio_gpio_register(struct apple_gpio_pinctrl *pctl)
-+{
-+	struct device_node *node = pctl->dev->of_node;
-+	struct gpio_irq_chip *girq;
-+	struct apple_gpio_irq_data **irq_data;
-+	int i;
-+	int ret;
-+
-+	if (!of_find_property(node, "gpio-controller", NULL)) {
-+		dev_err(pctl->dev,
-+			"Apple GPIO must have 'gpio-controller' property.\n");
-+		return -ENODEV;
-+	}
-+
-+	pctl->gpio_chip.label = dev_name(pctl->dev);
-+	pctl->gpio_chip.request = gpiochip_generic_request;
-+	pctl->gpio_chip.free = gpiochip_generic_free;
-+	pctl->gpio_chip.get_direction = apple_gpio_gpio_get_direction;
-+	pctl->gpio_chip.direction_input = apple_gpio_gpio_direction_input;
-+	pctl->gpio_chip.direction_output = apple_gpio_gpio_direction_output;
-+	pctl->gpio_chip.get = apple_gpio_gpio_get;
-+	pctl->gpio_chip.set = apple_gpio_gpio_set;
-+	pctl->gpio_chip.base = -1;
-+	pctl->gpio_chip.ngpio = pctl->pinctrl_desc.npins;
-+	pctl->gpio_chip.parent = pctl->dev;
-+	pctl->gpio_chip.of_node = node;
-+
-+	if (of_property_read_bool(node, "interrupt-controller")) {
-+		ret = platform_irq_count(to_platform_device(pctl->dev));
-+		if (ret < 0)
-+			return ret;
-+
-+		pctl->nirqgrps = ret;
-+
-+		pctl->irq_chip.name = "Apple-GPIO";
-+		pctl->irq_chip.irq_startup = apple_gpio_gpio_irq_startup;
-+		pctl->irq_chip.irq_ack = apple_gpio_gpio_irq_ack;
-+		pctl->irq_chip.irq_mask = apple_gpio_gpio_irq_mask;
-+		pctl->irq_chip.irq_unmask = apple_gpio_gpio_irq_unmask;
-+		pctl->irq_chip.irq_set_type = apple_gpio_gpio_irq_set_type;
-+
-+		girq = &pctl->gpio_chip.irq;
-+		girq->chip = &pctl->irq_chip;
-+		girq->parent_handler = apple_gpio_gpio_irq_handler;
-+		girq->num_parents = pctl->nirqgrps;
-+
-+		girq->parents = kmalloc_array(
-+			pctl->nirqgrps, sizeof(*girq->parents), GFP_KERNEL);
-+		if (!girq->parents)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < pctl->nirqgrps; i++) {
-+			ret = platform_get_irq(to_platform_device(pctl->dev),
-+					       i);
-+			if (ret < 0) {
-+				return dev_err_probe(pctl->dev, ret,
-+						     "Failed to map IRQ %d\n",
-+						     i);
-+			}
-+			girq->parents[i] = ret;
-+		}
-+
-+		irq_data = kmalloc_array(pctl->nirqgrps, sizeof(*irq_data),
-+					 GFP_KERNEL);
-+		if (!irq_data) {
-+			kfree(girq->parents);
-+			return -ENOMEM;
-+		}
-+		for (i = 0; i < pctl->nirqgrps; i++) {
-+			irq_data[i] = devm_kzalloc(
-+				pctl->dev, sizeof(*irq_data[i]), GFP_KERNEL);
-+			irq_data[i]->pctl = pctl;
-+			irq_data[i]->irqgrp = i;
-+		}
-+
-+		girq->parent_handler_data_array = (void **)irq_data;
-+		girq->per_parent_data = true;
-+		girq->default_type = IRQ_TYPE_NONE;
-+		girq->handler = handle_level_irq;
-+	}
-+
-+	ret = devm_gpiochip_add_data(pctl->dev, &pctl->gpio_chip, pctl);
-+
-+	if (of_property_read_bool(node, "interrupt-controller")) {
-+		kfree(girq->parents);
-+		kfree(irq_data);
-+	}
-+
-+	return ret;
-+}
-+
-+static int apple_gpio_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct apple_gpio_pinctrl *pctl;
-+	struct pinctrl_pin_desc *pins;
-+	unsigned int npins;
-+	const char **pin_names;
-+	unsigned int *pin_nums;
-+	unsigned int i, reg;
-+	int res;
-+
-+	pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
-+	if (!pctl)
-+		return -ENOMEM;
-+	pctl->dev = &pdev->dev;
-+	dev_set_drvdata(&pdev->dev, pctl);
-+
-+	if (of_property_read_u32(pdev->dev.of_node, "apple,npins", &npins)) {
-+		dev_err(&pdev->dev, "gpio-ranges property not found\n");
-+		npins = 512;
-+		return -EINVAL;
-+	}
-+
-+	pins = devm_kmalloc_array(&pdev->dev, npins, sizeof(pins[0]),
-+				  GFP_KERNEL);
-+	if (!pins)
-+		return -ENOMEM;
-+	pin_names = devm_kmalloc_array(&pdev->dev, npins, sizeof(pin_names[0]),
-+				       GFP_KERNEL);
-+	if (!pin_names)
-+		return -ENOMEM;
-+	pin_nums = devm_kmalloc_array(&pdev->dev, npins, sizeof(pin_nums[0]),
-+				      GFP_KERNEL);
-+	if (!pin_nums)
-+		return -ENOMEM;
-+	pctl->pin_shadow = devm_kmalloc_array(
-+		&pdev->dev, npins, sizeof(pctl->pin_shadow[0]), GFP_KERNEL);
-+	if (!pctl->pin_shadow)
-+		return -ENOMEM;
-+
-+	pctl->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(pctl->base))
-+		return PTR_ERR(pctl->base);
-+
-+	for (i = 0; i < npins; i++) {
-+		reg = apple_gpio_get_reg(pctl, i);
-+		pctl->pin_shadow[i] = reg;
-+		pins[i].number = i;
-+		pins[i].name =
-+			devm_kasprintf(&pdev->dev, GFP_KERNEL, "PIN%u", i);
-+		pins[i].drv_data = pctl;
-+		pin_names[i] = pins[i].name;
-+		pin_nums[i] = i;
-+	}
-+
-+	pctl->pinctrl_desc.name = dev_name(pctl->dev);
-+	pctl->pinctrl_desc.pins = pins;
-+	pctl->pinctrl_desc.npins = npins;
-+	pctl->pinctrl_desc.pctlops = &apple_gpio_pinctrl_ops;
-+	pctl->pinctrl_desc.pmxops = &apple_gpio_pinmux_ops;
-+
-+	pctl->pctldev =
-+		devm_pinctrl_register(&pdev->dev, &pctl->pinctrl_desc, pctl);
-+	if (IS_ERR(pctl->pctldev)) {
-+		dev_err(&pdev->dev, "Failed to register pinctrl device.\n");
-+		return PTR_ERR(pctl->pctldev);
-+	}
-+
-+	for (i = 0; i < npins; i++) {
-+		res = pinctrl_generic_add_group(pctl->pctldev, pins[i].name,
-+						pin_nums + i, 1, pctl);
-+		if (res < 0) {
-+			dev_err(pctl->dev, "Failed to register group.");
-+			return res;
-+		}
-+	}
-+
-+	res = pinmux_generic_add_function(pctl->pctldev, "gpio", pin_names,
-+					  npins, pctl);
-+	if (res < 0) {
-+		dev_err(pctl->dev, "Failed to register function.");
-+		return res;
-+	}
-+
-+	res = pinmux_generic_add_function(pctl->pctldev, "periph", pin_names,
-+					  npins, pctl);
-+	if (res < 0) {
-+		dev_err(pctl->dev, "Failed to register function.");
-+		return res;
-+	}
-+
-+	return apple_gpio_gpio_register(pctl);
-+}
-+
-+static const struct of_device_id apple_gpio_pinctrl_of_match[] = {
-+	{ .compatible = "apple,t8103-pinctrl", },
-+	{ .compatible = "apple,pinctrl", },
-+	{ }
-+};
-+
-+static struct platform_driver apple_gpio_pinctrl_driver = {
-+	.driver = {
-+		.name = "apple-gpio-pinctrl",
-+		.of_match_table = apple_gpio_pinctrl_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = apple_gpio_pinctrl_probe,
-+};
-+module_platform_driver(apple_gpio_pinctrl_driver);
-+
-+MODULE_DESCRIPTION("Apple pinctrl/GPIO driver");
-+MODULE_AUTHOR("Stan Skowronek <stan@corellium.com>");
-+MODULE_AUTHOR("Joey Gouly <joey.gouly@arm.com>");
-+MODULE_LICENSE("GPL v2");
+ 	/**
+ 	 * @parent_handler_data:
++	 * @parent_handler_data_array:
+ 	 *
+ 	 * Data associated, and passed to, the handler for the parent
+-	 * interrupt.
++	 * interrupt. Can either be a single pointer if @per_parent_data
++	 * is false, or an array of @num_parents pointers otherwise.  If
++	 * @per_parent_data is true, @parent_handler_data_array cannot be
++	 * NULL.
+ 	 */
+-	void *parent_handler_data;
++	union {
++		void *parent_handler_data;
++		void **parent_handler_data_array;
++	};
+ 
+ 	/**
+ 	 * @num_parents:
+@@ -203,6 +210,14 @@ struct gpio_irq_chip {
+ 	 */
+ 	bool threaded;
+ 
++	/**
++	 * @per_parent_data:
++	 *
++	 * True if parent_handler_data_array describes a @num_parents
++	 * sized array to be used as parent data.
++	 */
++	bool per_parent_data;
++
+ 	/**
+ 	 * @init_hw: optional routine to initialize hardware before
+ 	 * an IRQ chip will be added. This is quite useful when
 -- 
 2.17.1
 
