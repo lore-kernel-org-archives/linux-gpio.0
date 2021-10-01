@@ -2,391 +2,93 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1E7C43217
-	for <linux-gpio@archiver.kernel.org>; Thu, 30 Sep 2021 23:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 169E1C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 04:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AD3661184
-	for <linux-gpio@archiver.kernel.org>; Thu, 30 Sep 2021 23:27:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E66EE61A52
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 04:03:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350692AbhI3X2i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 30 Sep 2021 19:28:38 -0400
-Received: from mail-bn8nam12on2064.outbound.protection.outlook.com ([40.107.237.64]:26113
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1350183AbhI3X20 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 30 Sep 2021 19:28:26 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mbX7b2PdR2Hau1YlwOr0c7kvahAFexsuvPb3XYeX+9taTyF9LCqyRxYKWNbIixGrNzfpif1rFM44RHYGNWD0HTQX6KMeR4I7nVODnvv1ifkAc3HEKPKxgLE3lEkTGRoJ/h0CJAUGNmfXySvBQ0GpLCkgWOFWu72rHMt0RIbWuSIUJ8JX0xVbNybVbbZILObpmWEPFNmJ9rZxa58HnUGtgeYP5d8UdJ0oY3WvBFZIPqOX5SYDcv1lvdP/rWAAjQV+3Q/Nvzy4OODHBIAb5W0xcxVvERAWuhChg1tu4XqiZE5MexKs4Yt9faFMvIA0rHNp7FZmdbWRLkBgBJ98YHSyaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vQAw0L8ErqgSOkehkNgBBTcvvIEYxjNEmn8wasgEMjk=;
- b=Rq2YSfVz2X8DyuyRhWGZ7Eib0INOaYcOQvcf7gyui6e3YIdQ4loi5KCfnbRD8x302Noj5eWjoZ4tOnhalrFzemf3gloU1Ds8h3438fiz3iucN0gEvMSrh8MBCtCKjJjg9C47ulsIXVth1bcG/RkT7sM8qF4y4rS8mc5/EeDEokqZTtdmOrdlMypZMwAxioUZWkFUg3IzLL8CbzdZfYIi7vlIha7xKoqn0Da+dTjyjqebaVatNY1iFspyei9EE31eaFO2H0MVO7dvLFmcPs7fn9yq/KeAYLImQ1EqA5prl21oZZRfWgZAYZlUoNNiOYJ9zA/IcRi20k3UDdZ4/I9KdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vQAw0L8ErqgSOkehkNgBBTcvvIEYxjNEmn8wasgEMjk=;
- b=hROIn+GbU+8Jj1Naa97vS9V6eDrfexYHYBN5cAe6kuSDA2PwnAuxxdrVLkNTW0MzhuuERY/3DY6zT8hmmNNLGZgv+Rq7Jn3zbOyuGfc/ln4VKc//ZBZIo2FtoNiDQZ5ipTp2dZvGHi5rYaYMpgQKerRDeuRCKrAz6kndA7/DpGtu6Ke/uDE0srN6ixRtyCBSsWyvUqr9PaHBzCRQzVQJFztWqIDy7Spx8dLDxW8v6xtZKs/xTXBhKavhT9roZuMm3GkNWcvqu7ja4t5v8JPjuIdmH9xOo/R2eH2jdyF7axRCsf3U4kf2qGHTZvEH5AWEp6Yl2JtZZzntoP4gNA+zFQ==
-Received: from DM5PR12CA0064.namprd12.prod.outlook.com (2603:10b6:3:103::26)
- by MN2PR12MB3261.namprd12.prod.outlook.com (2603:10b6:208:108::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.14; Thu, 30 Sep
- 2021 23:26:41 +0000
-Received: from DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:103:cafe::f5) by DM5PR12CA0064.outlook.office365.com
- (2603:10b6:3:103::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.17 via Frontend
- Transport; Thu, 30 Sep 2021 23:26:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- DM6NAM11FT041.mail.protection.outlook.com (10.13.172.98) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4566.14 via Frontend Transport; Thu, 30 Sep 2021 23:26:40 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 30 Sep
- 2021 23:26:39 +0000
-Received: from dipenp.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Thu, 30 Sep 2021 23:26:39 +0000
-From:   Dipen Patel <dipenp@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <bgolaszewski@baylibre.com>, <warthog618@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh+dt@kernel.org>
-CC:     Dipen Patel <dipenp@nvidia.com>
-Subject: [RFC v2 08/11] gpiolib: cdev: Add hardware timestamp clock type
-Date:   Thu, 30 Sep 2021 16:26:14 -0700
-Message-ID: <20210930232617.6396-9-dipenp@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210930232617.6396-1-dipenp@nvidia.com>
-References: <20210930232617.6396-1-dipenp@nvidia.com>
-X-NVConfidentiality: public
+        id S230501AbhJAEFX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Oct 2021 00:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230365AbhJAEFX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Oct 2021 00:05:23 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63AE1C06176A;
+        Thu, 30 Sep 2021 21:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l1N8Q92br4UA/MbVypFtkW95ihkVHD2seHhnh8CX54Y=; b=bdiZHUH9Zl9Ix8k5QUmEq5g1yk
+        P6geezCXSrKp1xmxX6Cln0BYNphiCc1tr7nPVveemsVE0O9WN06UaDAHIenHbHd1cuKFuIPBpNJaM
+        DvbL36Exb80gTm6Vym3rgHz5+1+oeCxW/mf5Rmutl0nThGlAjx6j74KHUJg8/NwSdRSJ2ZnGAp6+x
+        tTc3q0GcfeWlfM6Dy1fCJXTOdocpBcv9JbLLH7fVJMXSR+z8GEUq+DnyWpmLAtxOmcuT1RoXOeUGa
+        gj6+7mTX4f53YNkOl73mNv1rKosg25WO6tskcHiLyNyiZJ8mIXdSgsmfaq8Yk6Kx3Urk0XH6IFOmO
+        aWHzAVsw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mW9jX-00DXBa-Gm; Fri, 01 Oct 2021 04:01:30 +0000
+Date:   Fri, 1 Oct 2021 05:01:15 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+Message-ID: <YVaIC8GTzvLKmZ5z@infradead.org>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+ <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
+ <YVWCK5QO331rfhJJ@google.com>
+ <CA+Ln22EbXKsRFZ=3L4A_jqciRxG2hnAh9iKTfQ_Ypr2NJgDzQQ@mail.gmail.com>
+ <YVWkxnc8wTdBgRsv@google.com>
+ <CA+Ln22FBy2ks9gX3df=rQw-6W3iftMVoqsoqBPchGCqDDoMaLg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 96d40a7d-a50f-4cb0-2457-08d98469c1d5
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3261:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB3261AE82B18BA29516D07157AEAA9@MN2PR12MB3261.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HcJzX0hrcDKpROnpubkCMybS1Za64C9xLEexnlWZLd+UvpnrnEBl8pvIfplm3WFUWWyICVTNnkYl7OPM371kzDSBHqWUoHBx5baKNkhK3sCNQgcJHuazo8dBRirqg7xMwzKd20fz5SufU70ew9pU1dIg68gAabxGylU5xe1yUiWJU15dExfsUEI6AM1fjzremiVjQs0EFPhlFrMFctLq/rCtIEHPwMC7J3knbFN721zNiWcjwOlIILZzf8Kk24mCOxE6yq3PFXU6OCbgxzSdB813l6eeu6hlVlk7lggMnMtlJrCaVLT7ToEN7Ow1PGBPnICNjn73Z6oJihUci8aFLqhRdXzGSpm2q5sVZPAvbbYt4Se4Lk+jEhNdekKQEKpsehpMLA05aQpMQnffJOg3URNvJVqEd+wBYiPYaHkAlT5c/wIUcenCZVQo0qbaWISUBo2P5cFpzOaZhWzFTaEUdmhzJsyF6C7QE0oCqL/ld7E8wkxIHRzWhmFqDyiA/rM3t9uKY9Hi4k9WeoZleeUT8cpXRsnmo65x0n1FHGZbTLGHU9YhQwLpKOlU4Jql0zaJLDh1HRFHBqVNwTjGq5oQ+mLZqnlRCccBFsPKSyN588eutjzTTTyFlr/5E+uo9YK4RV9h79MAlVmJq5eBUu4jbOjdV1mv7sZeP/LIOzhHmExvIXXL90lf+LlLSnZeo+om5O3zdZtqu1A8UhxXln960raowkF39YxYfva3sr8Nlinx/qgYSK3LXK1hyvB1geZsIRwUjBMdakuaQ8i8sP1s5A==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(4326008)(47076005)(8936002)(336012)(6666004)(2616005)(2906002)(5660300002)(921005)(426003)(70206006)(316002)(8676002)(36756003)(83380400001)(110136005)(7416002)(70586007)(26005)(186003)(7696005)(7636003)(36860700001)(508600001)(82310400003)(1076003)(107886003)(356005)(86362001)(83996005)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2021 23:26:40.6910
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96d40a7d-a50f-4cb0-2457-08d98469c1d5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3261
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+Ln22FBy2ks9gX3df=rQw-6W3iftMVoqsoqBPchGCqDDoMaLg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds new clock type for the GPIO controller which can
-timestamp gpio lines in realtime using hardware means. To expose such
-functionalities to the userspace, code has been added in this patch
-where during line create call, it checks for new clock type and if
-requested, calls hardware timestamp related API from gpiolib.c.
-During line change event, the HTE subsystem pushes timestamp data
-through callbacks.
+On Thu, Sep 30, 2021 at 09:10:31PM +0900, Tomasz Figa wrote:
+> Generally, the subsystems being mentioned here are so basic (clock,
+> pinctrl, rtc), that I really can't imagine what kind of rocket science
+> one might want to hide for competitive reasons... If it's for an
+> entire SoC, I wonder why Intel and AMD don't have similar concerns and
+> contribute support for their newest hardware far before the release.
 
-Signed-off-by: Dipen Patel <dipenp@nvidia.com>
----
-Changes in v2:
-- Added hte_dir and static structure hte_ts_desc.
-- Added callbacks which get invoked by HTE when new data is available.
-- Better use of hte_dir and seq from hte_ts_desc.
-- Modified sw debounce function to accommodate hardware timestamping.
-
- drivers/gpio/gpiolib-cdev.c | 161 ++++++++++++++++++++++++++++++++++--
- include/uapi/linux/gpio.h   |   1 +
- 2 files changed, 153 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index c7b5446d01fd..1736ad54e3ec 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -464,6 +464,12 @@ struct line {
- 	 * stale value.
- 	 */
- 	unsigned int level;
-+	/*
-+	 * dir will be touched in HTE callbacks hte_ts_cb_t and
-+	 * hte_ts_threaded_cb_t and they are mutually exclusive. This will be
-+	 * unused when HTE is not supported/disabled.
-+	 */
-+	enum hte_dir dir;
- };
- 
- /**
-@@ -518,6 +524,7 @@ struct linereq {
- 	 GPIO_V2_LINE_DRIVE_FLAGS | \
- 	 GPIO_V2_LINE_EDGE_FLAGS | \
- 	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME | \
-+	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE | \
- 	 GPIO_V2_LINE_BIAS_FLAGS)
- 
- static void linereq_put_event(struct linereq *lr,
-@@ -546,6 +553,94 @@ static u64 line_event_timestamp(struct line *line)
- 	return ktime_get_ns();
- }
- 
-+static hte_return_t process_hw_ts_thread(void *p)
-+{
-+	struct line *line = p;
-+	struct linereq *lr = line->req;
-+	struct gpio_v2_line_event le;
-+	u64 eflags;
-+
-+	memset(&le, 0, sizeof(le));
-+
-+	le.timestamp_ns = line->timestamp_ns;
-+	line->timestamp_ns = 0;
-+
-+	if (line->dir >= HTE_DIR_NOSUPP) {
-+		eflags = READ_ONCE(line->eflags);
-+		if (eflags == GPIO_V2_LINE_FLAG_EDGE_BOTH) {
-+			int level = gpiod_get_value_cansleep(line->desc);
-+
-+			if (level)
-+				/* Emit low-to-high event */
-+				le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-+			else
-+				/* Emit high-to-low event */
-+				le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+		} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_RISING) {
-+			/* Emit low-to-high event */
-+			le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-+		} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_FALLING) {
-+			/* Emit high-to-low event */
-+			le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+		} else {
-+			return HTE_CB_ERROR;
-+		}
-+	} else {
-+		if (line->dir == HTE_RISING_EDGE_TS)
-+			le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-+		else
-+			le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+	}
-+
-+	le.line_seqno = line->line_seqno;
-+	le.seqno = (lr->num_lines == 1) ? le.line_seqno : line->req_seqno;
-+	le.offset = gpio_chip_hwgpio(line->desc);
-+
-+	linereq_put_event(lr, &le);
-+
-+	return HTE_CB_HANDLED;
-+}
-+
-+static hte_return_t process_hw_ts(struct hte_ts_data *ts, void *p)
-+{
-+	struct line *line = p;
-+	struct linereq *lr = line->req;
-+
-+	if (!ts)
-+		return HTE_CB_ERROR;
-+
-+	line->timestamp_ns = ts->tsc;
-+	line->dir = ts->dir;
-+
-+	/*
-+	 * It is possible that HTE engine detects spurious edges for the
-+	 * lines where software debounce is enabled. This primary callback
-+	 * will be called multiple times in that case. It will be better to
-+	 * let debounce_work_func handle instead of process_hw_ts_thread.
-+	 * The timestamp_ns will be overwritten here which is fine as we are
-+	 * interested in the last value anyway. The debounce_work_func will
-+	 * then just read whatever last line->timestamp_ns is stored. Because
-+	 * this callback can be called multiple times, we are not really
-+	 * interested in ts->seq.
-+	 */
-+	if (!READ_ONCE(line->sw_debounced)) {
-+		line->line_seqno = ts->seq;
-+
-+		/*
-+		 * Increment in this callback incase all the lines in linereq
-+		 * are enabled for hw timestamping. This will work even if
-+		 * subset of lines are enabled for hw timestamping as
-+		 * edge_irq_* callbacks will proceed as usual for them.
-+		 */
-+		if (lr->num_lines != 1)
-+			line->req_seqno = atomic_inc_return(&lr->seqno);
-+
-+		return HTE_RUN_THREADED_CB;
-+	}
-+
-+	return HTE_CB_HANDLED;
-+}
-+
- static irqreturn_t edge_irq_thread(int irq, void *p)
- {
- 	struct line *line = p;
-@@ -553,6 +648,10 @@ static irqreturn_t edge_irq_thread(int irq, void *p)
- 	struct gpio_v2_line_event le;
- 	u64 eflags;
- 
-+	/* Let process_hw_ts_thread handle */
-+	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags))
-+		return IRQ_HANDLED;
-+
- 	/* Do not leak kernel stack to userspace */
- 	memset(&le, 0, sizeof(le));
- 
-@@ -604,6 +703,10 @@ static irqreturn_t edge_irq_handler(int irq, void *p)
- 	struct line *line = p;
- 	struct linereq *lr = line->req;
- 
-+	/* Let HTE supplied callbacks handle */
-+	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags))
-+		return IRQ_HANDLED;
-+
- 	/*
- 	 * Just store the timestamp in hardirq context so we get it as
- 	 * close in time as possible to the actual event.
-@@ -682,14 +785,6 @@ static void debounce_work_func(struct work_struct *work)
- 	/* Do not leak kernel stack to userspace */
- 	memset(&le, 0, sizeof(le));
- 
--	lr = line->req;
--	le.timestamp_ns = line_event_timestamp(line);
--	le.offset = gpio_chip_hwgpio(line->desc);
--	line->line_seqno++;
--	le.line_seqno = line->line_seqno;
--	le.seqno = (lr->num_lines == 1) ?
--		le.line_seqno : atomic_inc_return(&lr->seqno);
--
- 	if (level)
- 		/* Emit low-to-high event */
- 		le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-@@ -697,6 +792,23 @@ static void debounce_work_func(struct work_struct *work)
- 		/* Emit high-to-low event */
- 		le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
- 
-+	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags)) {
-+		le.timestamp_ns = line->timestamp_ns;
-+		if (line->dir < HTE_DIR_NOSUPP)
-+			le.id = (line->dir == HTE_RISING_EDGE_TS) ?
-+				 GPIO_V2_LINE_EVENT_RISING_EDGE :
-+				 GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+	} else {
-+		le.timestamp_ns = line_event_timestamp(line);
-+	}
-+
-+	lr = line->req;
-+	le.offset = gpio_chip_hwgpio(line->desc);
-+	line->line_seqno++;
-+	le.line_seqno = line->line_seqno;
-+	le.seqno = (lr->num_lines == 1) ?
-+		le.line_seqno : atomic_inc_return(&lr->seqno);
-+
- 	linereq_put_event(lr, &le);
- }
- 
-@@ -891,7 +1003,6 @@ static int gpio_v2_line_flags_validate(u64 flags)
- 	/* Return an error if an unknown flag is set */
- 	if (flags & ~GPIO_V2_LINE_VALID_FLAGS)
- 		return -EINVAL;
--
- 	/*
- 	 * Do not allow both INPUT and OUTPUT flags to be set as they are
- 	 * contradictory.
-@@ -900,6 +1011,11 @@ static int gpio_v2_line_flags_validate(u64 flags)
- 	    (flags & GPIO_V2_LINE_FLAG_OUTPUT))
- 		return -EINVAL;
- 
-+	/* Only allow one event clock source */
-+	if ((flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME) &&
-+	    (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE))
-+		return -EINVAL;
-+
- 	/* Edge detection requires explicit input. */
- 	if ((flags & GPIO_V2_LINE_EDGE_FLAGS) &&
- 	    !(flags & GPIO_V2_LINE_FLAG_INPUT))
-@@ -992,6 +1108,8 @@ static void gpio_v2_line_config_flags_to_desc_flags(u64 flags,
- 
- 	assign_bit(FLAG_EVENT_CLOCK_REALTIME, flagsp,
- 		   flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME);
-+	assign_bit(FLAG_EVENT_CLOCK_HARDWARE, flagsp,
-+		   flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE);
- }
- 
- static long linereq_get_values(struct linereq *lr, void __user *ip)
-@@ -1154,6 +1272,21 @@ static long linereq_set_config_unlocked(struct linereq *lr,
- 				return ret;
- 		}
- 
-+		/* Check if new config sets hardware assisted clock */
-+		if (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE) {
-+			ret = gpiod_req_hw_timestamp_ns(desc, process_hw_ts,
-+							process_hw_ts_thread,
-+							&lr->lines[i]);
-+			if (ret)
-+				return ret;
-+		} else {
-+			/*
-+			 * HTE subsys will do nothing if there is nothing to
-+			 * release.
-+			 */
-+			gpiod_rel_hw_timestamp_ns(desc);
-+		}
-+
- 		blocking_notifier_call_chain(&desc->gdev->notifier,
- 					     GPIO_V2_LINE_CHANGED_CONFIG,
- 					     desc);
-@@ -1409,6 +1542,14 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
- 					flags & GPIO_V2_LINE_EDGE_FLAGS);
- 			if (ret)
- 				goto out_free_linereq;
-+
-+			if (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE) {
-+				ret = gpiod_req_hw_timestamp_ns(desc, process_hw_ts,
-+							process_hw_ts_thread,
-+							&lr->lines[i]);
-+				if (ret)
-+					goto out_free_linereq;
-+			}
- 		}
- 
- 		blocking_notifier_call_chain(&desc->gdev->notifier,
-@@ -1959,6 +2100,8 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
- 
- 	if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &desc->flags))
- 		info->flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME;
-+	else if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &desc->flags))
-+		info->flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE;
- 
- 	debounce_period_us = READ_ONCE(desc->debounce_period_us);
- 	if (debounce_period_us) {
-diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
-index eaaea3d8e6b4..d360545b4c21 100644
---- a/include/uapi/linux/gpio.h
-+++ b/include/uapi/linux/gpio.h
-@@ -80,6 +80,7 @@ enum gpio_v2_line_flag {
- 	GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN	= _BITULL(9),
- 	GPIO_V2_LINE_FLAG_BIAS_DISABLED		= _BITULL(10),
- 	GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME	= _BITULL(11),
-+	GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE	= _BITULL(12),
- };
- 
- /**
--- 
-2.17.1
-
+There is no reason at all, and to be honest this whole discussion with
+these bullshit arguments from the Google/Linaro/SoC vendor crowd just
+shows how on crack these people are, and shows a good example of why
+we should not support these models at all.  There is no good reason
+to "overide" uptream functionality EVER.  Stop digging yourselves into
+your ever bigger holes and just f***king contribute upstream NOW.  Just
+as we always have we should not give you more rope to shoot yoursel
+while ausing us extra overhead.
