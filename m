@@ -2,38 +2,38 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D442C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 13:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70520C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 13:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7DD61A57
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 13:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B2F7619F9
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Oct 2021 13:42:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231352AbhJAN0g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Oct 2021 09:26:36 -0400
-Received: from mga05.intel.com ([192.55.52.43]:17789 "EHLO mga05.intel.com"
+        id S231329AbhJANog (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Oct 2021 09:44:36 -0400
+Received: from mga12.intel.com ([192.55.52.136]:21833 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230422AbhJAN0g (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 1 Oct 2021 09:26:36 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10123"; a="310976617"
+        id S231267AbhJANog (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 1 Oct 2021 09:44:36 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10123"; a="204920316"
 X-IronPort-AV: E=Sophos;i="5.85,339,1624345200"; 
-   d="scan'208";a="310976617"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2021 06:24:51 -0700
+   d="scan'208";a="204920316"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2021 06:42:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.85,339,1624345200"; 
-   d="scan'208";a="708616083"
+   d="scan'208";a="565011916"
 Received: from lkp-server01.sh.intel.com (HELO 72c3bd3cf19c) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 01 Oct 2021 06:24:50 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 01 Oct 2021 06:42:50 -0700
 Received: from kbuild by 72c3bd3cf19c with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mWIWv-0001CO-Kb; Fri, 01 Oct 2021 13:24:49 +0000
-Date:   Fri, 01 Oct 2021 21:24:13 +0800
+        id 1mWIoM-0001EG-2m; Fri, 01 Oct 2021 13:42:50 +0000
+Date:   Fri, 01 Oct 2021 21:42:02 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
- 28406a21999152ff7faa30b194f734565bdd8e0d
-Message-ID: <61570bfd.PMheL/JUlusvTbmg%lkp@intel.com>
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ e4978fd02375b1f6e9b3fbd061bca639ce4d2470
+Message-ID: <6157102a.34r1C/E94GNmjQgX%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -42,10 +42,10 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
-branch HEAD: 28406a21999152ff7faa30b194f734565bdd8e0d  pinctrl: qcom: sc7280: Add PM suspend callbacks
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: e4978fd02375b1f6e9b3fbd061bca639ce4d2470  Merge branch 'devel' into for-next
 
-elapsed time: 1489m
+elapsed time: 1501m
 
 configs tested: 262
 configs skipped: 4
@@ -272,9 +272,9 @@ riscv                            allyesconfig
 riscv                            allmodconfig
 x86_64                    rhel-8.3-kselftests
 um                           x86_64_defconfig
+x86_64                           allyesconfig
 x86_64                               rhel-8.3
 x86_64                                  kexec
-x86_64                           allyesconfig
 
 clang tested configs:
 x86_64               randconfig-c007-20211001
