@@ -2,54 +2,54 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF7EC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C76AC4167B
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Oct 2021 14:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1761361371
+	by mail.kernel.org (Postfix) with ESMTP id 9007B613E6
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Oct 2021 14:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235325AbhJEOpd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Oct 2021 10:45:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48776 "EHLO
+        id S235335AbhJEOpe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Oct 2021 10:45:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235289AbhJEOpc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Oct 2021 10:45:32 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78C5C061766
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Oct 2021 07:43:41 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id u18so87525130lfd.12
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Oct 2021 07:43:41 -0700 (PDT)
+        with ESMTP id S235263AbhJEOpb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Oct 2021 10:45:31 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C59C061765
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Oct 2021 07:43:40 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id j5so82272283lfg.8
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Oct 2021 07:43:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=E2YJV+cRv0tFDhiSivfR6SvH37WdzUlDmvLwCor6dDY=;
-        b=RNO75ywst6VusRTOSyrP3384uvp9Io+Kr0VZ6hSkOXSkwALBRjXIyk51iRKNeCFPA2
-         r9621ip4YjSvLjNE7Eq3ZINWyeiByJqNJliNuoaGSBwxvzU5cJfAA74DefpokBzIf6VV
-         BGHplVtWfLYZ2bI7Ct+QQYi8bkcnnfDNoCzNOnWEvvCh/l8wTyB5gyMlaqQCYuqEWAzN
-         4ZRgFQzETdFf7l5dMYUjAkDE/qZ6cez+DBQf4x6GIbIFRIDQPrvxFwLXemgy3LDmxnUT
-         6CJutLLxL5/EIWJAcDNyJnTgJ8lsL/OweKuR99+Gow6YVWoKsAKqF9wzRM8Q3VRkoRyJ
-         6bTA==
+        bh=eb7cvTiXllNW2wJwYsGoR2tpvILpnhXsuAIehYc3HJU=;
+        b=ViN3AXWf9Zcsb6/WPIK8EYFxRwaeVN7xS+ehn/nRG90cPZoHHFdxuQ1lZh6I09M9cL
+         j8kJnjrwCgP2vIYhmWjvTn6awt2E9CzFKWx2tjBDD8/Zp8igQR2JYq0jAMw/hlM4ExEq
+         YIBNScmU8dMxI1bva9AINi4bmqqUOoEzc8Dh0+JoKWhsMb3vS6bGAZmItuG39meAH8ix
+         56XkP9KWsXdbH1AeVoLinAe838tYBw7ebvcpLdDUcG+dWT0Pl54ALgcoIET/U7UdB2UM
+         bNg1amlEULaSbsG+Xw+CwqVeyySk4VrTvkWppGQqKM76zKnDrGtvdVehUnTHS9zZKkE4
+         kQuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=E2YJV+cRv0tFDhiSivfR6SvH37WdzUlDmvLwCor6dDY=;
-        b=0nrGT0lTkwEbsw4lYXgB0SEyASL4OCg3YVAESFcJmqyXcYdewxkGpThq17KwxCkbZf
-         CTsIUY3rTN/jh1/3gPCC4VsadH7P4liSQZriGPD2pV51lHhrYhHE2AiXN2itgUgcDRQP
-         sVyAO194bNLlh3jXctSpFiyRAZj8y+CvSm8Burs1mm89c+41o/dbC5oZAwXs2mr13aFv
-         xLaCkGnVyaT7ZDlm03MuywKwXOP2XXrllVvD96d5x2OfE54fZCPFMX0Ua8P1JvQ3Db6I
-         IXKS6yL6F5NUjsp6GwHOirvULVc6osRYKHZq62bSnxeGE3LAl99N/8cEj28HdAO2kPQN
-         hyUg==
-X-Gm-Message-State: AOAM531JeMAMJAzQQtBOIyAyj+2dNJ98vyYbSSy1v5W8nhc3H+t4yake
-        JSeFI92ifbYrjY0MUSHsRWMJ5Q==
-X-Google-Smtp-Source: ABdhPJwz6Wcl94gRDUuXQqk3D99wuFnF0Zgc0vx8qCPNjS61Fatmf+enEuNGqpqGaoJX2KNPMemtuA==
-X-Received: by 2002:a05:6512:128b:: with SMTP id u11mr4097553lfs.24.1633445020052;
-        Tue, 05 Oct 2021 07:43:40 -0700 (PDT)
+        bh=eb7cvTiXllNW2wJwYsGoR2tpvILpnhXsuAIehYc3HJU=;
+        b=cxozJWe3CUsRf5liqhVJUtor5HSYHutHxxXqgqNFZSISnuz4FnwzgGv0chivk+I23G
+         ko6vAGorKXhqWnO4muEM6Ypr5ZV+xPZq6qyJwUA7Owt3WcXO2oaIDZvXbvMV364iMK8z
+         bAfvRBeUlktsSPNt8zQ0cTd63f3blPhm2d5DeyCjy+K4Fcf16/sg3MgZv/CZxukvQGya
+         UtMqjsbaopPVtmTYemob9jSUAAnd7VNwAbFLRuFsVoRitN1uFZwEB0ZpfZyUWqImEtJ3
+         8OS3U92XlZSjRRU/xJ1C6V2vV5nzgT0dK9RbUL4yQvQe4AcorvbVlgjiMcayYOk0f7wG
+         lfJw==
+X-Gm-Message-State: AOAM532Kl7xtrRBCtf3YbhsAM6ENdsNizDdYQWco8k8XtPSQ596Xdm18
+        LIIz3C/4kOPq3EN2PSYDVr1/nw==
+X-Google-Smtp-Source: ABdhPJylKuhxFgyH5Vzh9Q50gFqyoCKEaaYNaHrg0W3hGYe42i8sVk1RERpXmdRvoqigA8cNuW89MA==
+X-Received: by 2002:ac2:5e9c:: with SMTP id b28mr3863549lfq.468.1633445015822;
+        Tue, 05 Oct 2021 07:43:35 -0700 (PDT)
 Received: from umbar.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id t22sm1987173ljc.120.2021.10.05.07.43.39
+        by smtp.gmail.com with ESMTPSA id t22sm1987173ljc.120.2021.10.05.07.43.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Oct 2021 07:43:39 -0700 (PDT)
+        Tue, 05 Oct 2021 07:43:33 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 6/6] pinctrl: qcom: spmi-mpp: add support for hierarchical IRQ chip
-Date:   Tue,  5 Oct 2021 17:43:29 +0300
-Message-Id: <20211005144329.2405315-7-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 2/6] dt-bindings: pinctrl: qcom,pmic-mpp: switch to #interrupt-cells
+Date:   Tue,  5 Oct 2021 17:43:25 +0300
+Message-Id: <20211005144329.2405315-3-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211005144329.2405315-1-dmitry.baryshkov@linaro.org>
 References: <20211005144329.2405315-1-dmitry.baryshkov@linaro.org>
@@ -69,171 +69,54 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-spmi-mpp did not have any irqchip support so consumers of this in
-device tree would need to call gpio[d]_to_irq() in order to get the
-proper IRQ on the underlying PMIC. IRQ chips in device tree should be
-usable from the start without the consumer having to make an additional
-call to get the proper IRQ on the parent. This patch adds hierarchical
-IRQ chip support to the spmi-mpp code to correct this issue.
+Stop specifying individual interrupts properties. Use #interrupt-cells
+instead as we are switching qcom,spmi-mpp and qcom,ssbi-mpp to
+hierarchical IRQ setup.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 86 ++++++++++++++++++++-----
- 1 file changed, 69 insertions(+), 17 deletions(-)
+ .../devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index a9f994863126..b80723928b7e 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -103,7 +103,6 @@
- /**
-  * struct pmic_mpp_pad - keep current MPP settings
-  * @base: Address base in SPMI device.
-- * @irq: IRQ number which this MPP generate.
-  * @is_enabled: Set to false when MPP should be put in high Z state.
-  * @out_value: Cached pin output value.
-  * @output_enabled: Set to true if MPP output logic is enabled.
-@@ -121,7 +120,6 @@
-  */
- struct pmic_mpp_pad {
- 	u16		base;
--	int		irq;
- 	bool		is_enabled;
- 	bool		out_value;
- 	bool		output_enabled;
-@@ -143,6 +141,7 @@ struct pmic_mpp_state {
- 	struct regmap	*map;
- 	struct pinctrl_dev *ctrl;
- 	struct gpio_chip chip;
-+	struct irq_chip irq;
- };
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml
+index 6066857b5964..8a01a9b22e07 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml
+@@ -40,12 +40,10 @@ properties:
+   reg:
+     maxItems: 1
  
- static const struct pinconf_generic_params pmic_mpp_bindings[] = {
-@@ -622,16 +621,6 @@ static int pmic_mpp_of_xlate(struct gpio_chip *chip,
- 	return gpio_desc->args[0] - PMIC_MPP_PHYSICAL_OFFSET;
- }
+-  interrupts:
+-    minItems: 1
+-    maxItems: 12
+-    description:
+-      Must contain an array of encoded interrupt specifiers for
+-      each available MPP
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
  
--static int pmic_mpp_to_irq(struct gpio_chip *chip, unsigned pin)
--{
--	struct pmic_mpp_state *state = gpiochip_get_data(chip);
--	struct pmic_mpp_pad *pad;
--
--	pad = state->ctrl->desc->pins[pin].drv_data;
--
--	return pad->irq;
--}
--
- static void pmic_mpp_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- {
- 	struct pmic_mpp_state *state = gpiochip_get_data(chip);
-@@ -651,7 +640,6 @@ static const struct gpio_chip pmic_mpp_gpio_template = {
- 	.request		= gpiochip_generic_request,
- 	.free			= gpiochip_generic_free,
- 	.of_xlate		= pmic_mpp_of_xlate,
--	.to_irq			= pmic_mpp_to_irq,
- 	.dbg_show		= pmic_mpp_dbg_show,
- };
+   gpio-controller: true
+   gpio-line-names: true
+@@ -67,6 +65,7 @@ required:
+   - gpio-controller
+   - '#gpio-cells'
+   - gpio-ranges
++  - interrupt-controller
  
-@@ -796,13 +784,53 @@ static int pmic_mpp_populate(struct pmic_mpp_state *state,
- 	return 0;
- }
+ patternProperties:
+   '-state$':
+@@ -163,7 +162,8 @@ examples:
+       gpio-ranges = <&pm8841_mpp 0 0 4>;
+       gpio-line-names = "VDD_PX_BIAS", "WLAN_LED_CTRL",
+               "BT_LED_CTRL", "GPIO-F";
+-      interrupts = <4 0xa0 0 0>, <4 0xa1 0 0>, <4 0xa2 0 0>, <4 0xa3 0 0>;
++      interrupt-controller;
++      #interrupt-cells = <2>;
  
-+static int pmic_mpp_domain_translate(struct irq_domain *domain,
-+				      struct irq_fwspec *fwspec,
-+				      unsigned long *hwirq,
-+				      unsigned int *type)
-+{
-+	struct pmic_mpp_state *state = container_of(domain->host_data,
-+						     struct pmic_mpp_state,
-+						     chip);
-+
-+	if (fwspec->param_count != 2 ||
-+	    fwspec->param[0] < 1 || fwspec->param[0] > state->chip.ngpio)
-+		return -EINVAL;
-+
-+	*hwirq = fwspec->param[0] - PMIC_MPP_PHYSICAL_OFFSET;
-+	*type = fwspec->param[1];
-+
-+	return 0;
-+}
-+
-+static unsigned int pmic_mpp_child_offset_to_irq(struct gpio_chip *chip,
-+						  unsigned int offset)
-+{
-+	return offset + PMIC_MPP_PHYSICAL_OFFSET;
-+}
-+
-+static int pmic_mpp_child_to_parent_hwirq(struct gpio_chip *chip,
-+					   unsigned int child_hwirq,
-+					   unsigned int child_type,
-+					   unsigned int *parent_hwirq,
-+					   unsigned int *parent_type)
-+{
-+	*parent_hwirq = child_hwirq + 0xc0;
-+	*parent_type = child_type;
-+
-+	return 0;
-+}
-+
- static int pmic_mpp_probe(struct platform_device *pdev)
- {
-+	struct irq_domain *parent_domain;
-+	struct device_node *parent_node;
- 	struct device *dev = &pdev->dev;
- 	struct pinctrl_pin_desc *pindesc;
- 	struct pinctrl_desc *pctrldesc;
- 	struct pmic_mpp_pad *pad, *pads;
- 	struct pmic_mpp_state *state;
-+	struct gpio_irq_chip *girq;
- 	int ret, npins, i;
- 	u32 reg;
- 
-@@ -857,10 +885,6 @@ static int pmic_mpp_probe(struct platform_device *pdev)
- 		pindesc->number = i;
- 		pindesc->name = pmic_mpp_groups[i];
- 
--		pad->irq = platform_get_irq(pdev, i);
--		if (pad->irq < 0)
--			return pad->irq;
--
- 		pad->base = reg + i * PMIC_MPP_ADDRESS_RANGE;
- 
- 		ret = pmic_mpp_populate(state, pad);
-@@ -880,6 +904,34 @@ static int pmic_mpp_probe(struct platform_device *pdev)
- 	if (IS_ERR(state->ctrl))
- 		return PTR_ERR(state->ctrl);
- 
-+	parent_node = of_irq_find_parent(state->dev->of_node);
-+	if (!parent_node)
-+		return -ENXIO;
-+
-+	parent_domain = irq_find_host(parent_node);
-+	of_node_put(parent_node);
-+	if (!parent_domain)
-+		return -ENXIO;
-+
-+	state->irq.name = "spmi-mpp",
-+	state->irq.irq_ack = irq_chip_ack_parent,
-+	state->irq.irq_mask = irq_chip_mask_parent,
-+	state->irq.irq_unmask = irq_chip_unmask_parent,
-+	state->irq.irq_set_type = irq_chip_set_type_parent,
-+	state->irq.irq_set_wake = irq_chip_set_wake_parent,
-+	state->irq.flags = IRQCHIP_MASK_ON_SUSPEND,
-+
-+	girq = &state->chip.irq;
-+	girq->chip = &state->irq;
-+	girq->default_type = IRQ_TYPE_NONE;
-+	girq->handler = handle_level_irq;
-+	girq->fwnode = of_node_to_fwnode(state->dev->of_node);
-+	girq->parent_domain = parent_domain;
-+	girq->child_to_parent_hwirq = pmic_mpp_child_to_parent_hwirq;
-+	girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_fourcell;
-+	girq->child_offset_to_irq = pmic_mpp_child_offset_to_irq;
-+	girq->child_irq_domain_ops.translate = pmic_mpp_domain_translate;
-+
- 	ret = gpiochip_add_data(&state->chip, state);
- 	if (ret) {
- 		dev_err(state->dev, "can't add gpio chip\n");
+       pinctrl-names = "default";
+       pinctrl-0 = <&pm8841_default>;
 -- 
 2.30.2
 
