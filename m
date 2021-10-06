@@ -2,91 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C66C4167B
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Oct 2021 17:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1466C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Oct 2021 19:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 552CF61183
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Oct 2021 17:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAE0061175
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Oct 2021 19:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238119AbhJFRdS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Oct 2021 13:33:18 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37987 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231678AbhJFRdR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 6 Oct 2021 13:33:17 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10129"; a="226368285"
-X-IronPort-AV: E=Sophos;i="5.85,352,1624345200"; 
-   d="scan'208";a="226368285"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2021 10:31:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,352,1624345200"; 
-   d="scan'208";a="484200637"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Oct 2021 10:31:20 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5DEDD159; Wed,  6 Oct 2021 20:31:27 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        id S239225AbhJFTKN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Oct 2021 15:10:13 -0400
+Received: from mail-oi1-f176.google.com ([209.85.167.176]:43653 "EHLO
+        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239194AbhJFTKM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Oct 2021 15:10:12 -0400
+Received: by mail-oi1-f176.google.com with SMTP id o4so5424125oia.10;
+        Wed, 06 Oct 2021 12:08:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=0xIolMsWNMus3qJwhgGl45wy3tQx3DQv3XGTqM+vTLk=;
+        b=F29pBaEp/sNsmqZ7hwL1hPK73Xe2kCSUlxcfjoM8UArsY3bohdmbw/dfSYPUGQgjST
+         UQLYLQ4X2L6RikpIGeJ7H4QzmVUE30jtxZTjeXtfdqeQpPY1GQ+4KW1HZ3buHH+Gz6cL
+         dyiYXPnhTz+qnT8V77kzQ7pnfKcJnQc4lORX0GYC76P26fJWaSQI+M++ue2aWJ7vNc9F
+         wNw66E/IBNP1+AlZbrO5cCMCOBqnW/JQxr1Z/XcWP/KOBI4IBPMSrzgUD1F0Ga2Yz3Tk
+         f8LTjnnkTf8GkyP4O1AwBbiis7H7cPCvWAM84OnW9gmUzeNOWCF3tjYTetBPrPT8F+tF
+         mitw==
+X-Gm-Message-State: AOAM530OQO6q8Z4J3b0lYZ3sudrejsehe1Qpy/PGVH2mXCki2swV3exF
+        01ojBv4B+IaOp+DsuUOYwA==
+X-Google-Smtp-Source: ABdhPJy1kBzMU6zdZ+h8Ykw9XssXwJUCydJJOI1gleXOB7lXtcoPgfmyimwEKXHkOXkmkG62VJQYow==
+X-Received: by 2002:a05:6808:1a04:: with SMTP id bk4mr31213oib.85.1633547299133;
+        Wed, 06 Oct 2021 12:08:19 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id e28sm909490oth.40.2021.10.06.12.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Oct 2021 12:08:18 -0700 (PDT)
+Received: (nullmailer pid 2218066 invoked by uid 1000);
+        Wed, 06 Oct 2021 19:08:13 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH v2 1/3] driver core: Provide device_match_acpi_handle() helper
-Date:   Wed,  6 Oct 2021 20:31:23 +0300
-Message-Id: <20211006173125.84423-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.33.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1633518606-8298-3-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1633518606-8298-1-git-send-email-hayashi.kunihiko@socionext.com> <1633518606-8298-3-git-send-email-hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: uniphier: Add NX1 pinctrl binding
+Date:   Wed, 06 Oct 2021 14:08:13 -0500
+Message-Id: <1633547293.534465.2218065.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We have couple of users of this helper, make it available for them.
+On Wed, 06 Oct 2021 20:10:05 +0900, Kunihiko Hayashi wrote:
+> Update pinctrl binding document for UniPhier NX1 SoC.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+>  .../devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml          | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: fixed compilation error (Greg)
- drivers/base/core.c        | 6 ++++++
- include/linux/device/bus.h | 1 +
- 2 files changed, 7 insertions(+)
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index c4a2c97a21a2..3a5623ea1369 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4840,6 +4840,12 @@ int device_match_acpi_dev(struct device *dev, const void *adev)
- }
- EXPORT_SYMBOL(device_match_acpi_dev);
- 
-+int device_match_acpi_handle(struct device *dev, const void *handle)
-+{
-+	return ACPI_HANDLE(dev) == handle;
-+}
-+EXPORT_SYMBOL(device_match_acpi_handle);
-+
- int device_match_any(struct device *dev, const void *unused)
- {
- 	return 1;
-diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
-index 062777a45a74..a039ab809753 100644
---- a/include/linux/device/bus.h
-+++ b/include/linux/device/bus.h
-@@ -143,6 +143,7 @@ int device_match_of_node(struct device *dev, const void *np);
- int device_match_fwnode(struct device *dev, const void *fwnode);
- int device_match_devt(struct device *dev, const void *pdevt);
- int device_match_acpi_dev(struct device *dev, const void *adev);
-+int device_match_acpi_handle(struct device *dev, const void *handle);
- int device_match_any(struct device *dev, const void *unused);
- 
- /* iterator helpers for buses */
--- 
-2.33.0
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
+
+Full log is available here: https://patchwork.ozlabs.org/patch/1537066
+
+
+pinctrl: 'ain1', 'ain2', 'ainiec1', 'aout', 'aout1', 'aout2', 'aout3', 'aoutiec1', 'aoutiec2', 'emmc', 'ether-mii', 'ether-rgmii', 'ether-rmii', 'ether1-rgmii', 'ether1-rmii', 'i2c0', 'i2c1', 'i2c2', 'i2c3', 'i2c4', 'i2c5', 'i2c6', 'nand', 'nand2cs', 'pcie', 'sd', 'sd-uhs', 'sd1', 'spi0', 'spi1', 'spi2', 'spi3', 'system-bus', 'uart0', 'uart1', 'uart2', 'uart3', 'usb0', 'usb1', 'usb2', 'usb3' do not match any of the regexes: 'pinctrl-[0-9]+'
+	arch/arm64/boot/dts/socionext/uniphier-ld11-global.dt.yaml
+	arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dt.yaml
+	arch/arm64/boot/dts/socionext/uniphier-ld20-akebi96.dt.yaml
+	arch/arm64/boot/dts/socionext/uniphier-ld20-global.dt.yaml
+	arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dt.yaml
+	arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dt.yaml
+	arch/arm/boot/dts/uniphier-ld4-ref.dt.yaml
+	arch/arm/boot/dts/uniphier-ld6b-ref.dt.yaml
+	arch/arm/boot/dts/uniphier-pro4-ace.dt.yaml
+	arch/arm/boot/dts/uniphier-pro4-ref.dt.yaml
+	arch/arm/boot/dts/uniphier-pro4-sanji.dt.yaml
+	arch/arm/boot/dts/uniphier-pxs2-gentil.dt.yaml
+	arch/arm/boot/dts/uniphier-pxs2-vodka.dt.yaml
+	arch/arm/boot/dts/uniphier-sld8-ref.dt.yaml
 
