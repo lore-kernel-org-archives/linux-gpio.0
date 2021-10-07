@@ -2,380 +2,197 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E51AC433EF
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Oct 2021 14:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C56C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Oct 2021 15:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4789D61262
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Oct 2021 14:40:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7000E61245
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Oct 2021 15:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242138AbhJGOmb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Oct 2021 10:42:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242116AbhJGOmZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Oct 2021 10:42:25 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21340C061570;
-        Thu,  7 Oct 2021 07:40:31 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id t16so2142198eds.9;
-        Thu, 07 Oct 2021 07:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GA15vuvos0oczlLfpuCDOpYp37wLRBfXoooLAFVqzuA=;
-        b=MPvmpr/3bV5J+KXybfvsLjk/0QfsiT4GDj420TsWuzP3kH8MSO/KAurh/NN1YbiKQs
-         C3aCleYJFPhLTpndWz/VLh/rUzK3uQOT4Ho9jPBAyj77yr5cMhpb1lZRXk7IdsiiWSft
-         FhZSP75NP9hoSeGpdITFO7S9ZicQZa3BnJ56kdPmzy9Ib+eoOU3jpRIbcUZbZobUc9Cs
-         if52E2FhSlUBEnWGSNXZGXSBzh3WT1lCf28AmMJpMNITHYUuWWdhZ5Q3dQAIu6i+S3YU
-         OfqybUZuYdaF80aTcSiQabV9vuUVNHi8ATe4UihxLZyGtYrd4jtPKHpaKTYgIcXNdWnX
-         vMww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GA15vuvos0oczlLfpuCDOpYp37wLRBfXoooLAFVqzuA=;
-        b=AZLe3uL9/Qdm0n7roYwhnAvUSEd9JbBiFRFDLnFp/a5WV3Kq+GJdYGFJanxIbLxxC1
-         i0iMdYGUfoYwD8zo3JapO+xG3F8rXePOByxQd0j9kUV2nZG0Krj/E+2xhR5V+m6Rupvw
-         OcBPsbV2odf3hSbcDG86WJqxQCiOa2CT2g6LtPC1RgIu1VrwMytpDfuRHaQN/i6Okwk1
-         B06e5Np+PWu3v++GM6vagRZjOo3xlPM4Vbz/sKLA3w8cuk8+pzTfg4H2PTEc77u69UlJ
-         toanOrpjMTmzXlk+tTCZsfiY55PuAxxs9oE8vS8LF1kKHrXysvB/YOR6s8Pr4XGrdAzQ
-         k58g==
-X-Gm-Message-State: AOAM53215tw49pUaLPYMQckMo2GtkLDwVyOyzLSueFRL0E4Dic5jl4ex
-        iB67Yq8+1J7j16yY0JKFhfA=
-X-Google-Smtp-Source: ABdhPJwv+3Ac5k0kcrEuN/rqw1ySOu0e011kMHv3y37500CKd4cTa4u+TJLpZozZUblRqovMqIb/IA==
-X-Received: by 2002:a05:6402:3591:: with SMTP id y17mr6953017edc.343.1633617629051;
-        Thu, 07 Oct 2021 07:40:29 -0700 (PDT)
-Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id 21sm10086523ejv.54.2021.10.07.07.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 07:40:28 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] ARM: dts: rockchip: change gpio nodenames
-Date:   Thu,  7 Oct 2021 16:40:18 +0200
-Message-Id: <20211007144019.7461-2-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20211007144019.7461-1-jbx6244@gmail.com>
-References: <20211007144019.7461-1-jbx6244@gmail.com>
+        id S242321AbhJGPMS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Oct 2021 11:12:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S242275AbhJGPMR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 7 Oct 2021 11:12:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B0B26113E;
+        Thu,  7 Oct 2021 15:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633619423;
+        bh=6XparVng5W/AReJHiKchmXlIe9lsC3Z91YzkLUlPNCg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uGBU3w5ZPcovOtfzM/FIsHTD7h3JxuPJygqvsc/Akx8WIgRCpgs3UgXZBZTV82I1O
+         pW+TIPVurN88xf3WvDzFDkgp4KUNa7HpHH0yruRMhNm5135jx5bqq+/CKSzQGvE9Do
+         ViwsXF7lFqxOsI6bHhr9Jy2jv4XcchqTsLVaQi+z5d/b1rYbgoS7hR41kw3y30v3an
+         GfXh2Vp3SSFv+/Ic2Yauk4D9evUCiGVqN10/ZzGkA3ER8QQimEVtKd0+OTGa/g7KUM
+         0ggiEgI2DrGim19ev5P6YtxGkOvCy0ZLC7gw6ICyGtfCMR5AINWv1keeKoUptUyCZ3
+         OdUDZ2/BTlnCQ==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Simon Trimmer <simont@opensource.cirrus.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH v2 1/2] firmware: include drivers/firmware/Kconfig unconditionally
+Date:   Thu,  7 Oct 2021 17:10:09 +0200
+Message-Id: <20211007151010.333516-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently all gpio nodenames are sort of identical to there label.
-Nodenames should be of a generic type, so change them all.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Compile-testing drivers that require access to a firmware layer
+fails when that firmware symbol is unavailable. This happened
+twice this week:
+
+ - My proposed to change to rework the QCOM_SCM firmware symbol
+   broke on ppc64 and others.
+
+ - The cs_dsp firmware patch added device specific firmware loader
+   into drivers/firmware, which broke on the same set of
+   architectures.
+
+We should probably do the same thing for other subsystems as well,
+but fix this one first as this is a dependency for other patches
+getting merged.
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Will Deacon <will@kernel.org>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Simon Trimmer <simont@opensource.cirrus.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/boot/dts/rk3036.dtsi  |  6 +++---
- arch/arm/boot/dts/rk3066a.dtsi | 12 ++++++------
- arch/arm/boot/dts/rk3188.dtsi  |  8 ++++----
- arch/arm/boot/dts/rk322x.dtsi  |  8 ++++----
- arch/arm/boot/dts/rk3288.dtsi  | 18 +++++++++---------
- arch/arm/boot/dts/rv1108.dtsi  |  8 ++++----
- 6 files changed, 30 insertions(+), 30 deletions(-)
+No changes in v2, but it's now queued in my asm-generic
+tree for v5.15
 
-diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
-index ffa9bc7ed..9d2d44381 100644
---- a/arch/arm/boot/dts/rk3036.dtsi
-+++ b/arch/arm/boot/dts/rk3036.dtsi
-@@ -575,7 +575,7 @@
- 		#size-cells = <1>;
- 		ranges;
+ arch/arm/Kconfig    | 2 --
+ arch/arm64/Kconfig  | 2 --
+ arch/ia64/Kconfig   | 2 --
+ arch/mips/Kconfig   | 2 --
+ arch/parisc/Kconfig | 2 --
+ arch/riscv/Kconfig  | 2 --
+ arch/x86/Kconfig    | 2 --
+ drivers/Kconfig     | 2 ++
+ 8 files changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index fc196421b2ce..59baf6c132a7 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1989,8 +1989,6 @@ config ARCH_HIBERNATION_POSSIBLE
  
--		gpio0: gpio0@2007c000 {
-+		gpio0: gpio@2007c000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2007c000 0x100>;
- 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-@@ -588,7 +588,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ endmenu
  
--		gpio1: gpio1@20080000 {
-+		gpio1: gpio@20080000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20080000 0x100>;
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-@@ -601,7 +601,7 @@
- 			#interrupt-cells = <2>;
- 		};
+-source "drivers/firmware/Kconfig"
+-
+ if CRYPTO
+ source "arch/arm/crypto/Kconfig"
+ endif
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 077f2ec4eeb2..407b4addea36 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1931,8 +1931,6 @@ source "drivers/cpufreq/Kconfig"
  
--		gpio2: gpio2@20084000 {
-+		gpio2: gpio@20084000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20084000 0x100>;
- 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
-index ae4055428..6688a1a3b 100644
---- a/arch/arm/boot/dts/rk3066a.dtsi
-+++ b/arch/arm/boot/dts/rk3066a.dtsi
-@@ -273,7 +273,7 @@
- 		#size-cells = <1>;
- 		ranges;
+ endmenu
  
--		gpio0: gpio0@20034000 {
-+		gpio0: gpio@20034000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20034000 0x100>;
- 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-@@ -286,7 +286,7 @@
- 			#interrupt-cells = <2>;
- 		};
+-source "drivers/firmware/Kconfig"
+-
+ source "drivers/acpi/Kconfig"
  
--		gpio1: gpio1@2003c000 {
-+		gpio1: gpio@2003c000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003c000 0x100>;
- 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-@@ -299,7 +299,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ source "arch/arm64/kvm/Kconfig"
+diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+index 045792cde481..1e33666fa679 100644
+--- a/arch/ia64/Kconfig
++++ b/arch/ia64/Kconfig
+@@ -388,8 +388,6 @@ config CRASH_DUMP
+ 	  help
+ 	    Generate crash dump after being started by kexec.
  
--		gpio2: gpio2@2003e000 {
-+		gpio2: gpio@2003e000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003e000 0x100>;
- 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-@@ -312,7 +312,7 @@
- 			#interrupt-cells = <2>;
- 		};
+-source "drivers/firmware/Kconfig"
+-
+ endmenu
  
--		gpio3: gpio3@20080000 {
-+		gpio3: gpio@20080000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20080000 0x100>;
- 			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-@@ -325,7 +325,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ menu "Power management and ACPI options"
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 771ca53af06d..6b8f591c5054 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -3316,8 +3316,6 @@ source "drivers/cpuidle/Kconfig"
  
--		gpio4: gpio4@20084000 {
-+		gpio4: gpio@20084000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20084000 0x100>;
- 			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-@@ -338,7 +338,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ endmenu
  
--		gpio6: gpio6@2000a000 {
-+		gpio6: gpio@2000a000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2000a000 0x100>;
- 			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk3188.dtsi b/arch/arm/boot/dts/rk3188.dtsi
-index 2c606494b..3e5786e07 100644
---- a/arch/arm/boot/dts/rk3188.dtsi
-+++ b/arch/arm/boot/dts/rk3188.dtsi
-@@ -223,7 +223,7 @@
- 		#size-cells = <1>;
- 		ranges;
+-source "drivers/firmware/Kconfig"
+-
+ source "arch/mips/kvm/Kconfig"
  
--		gpio0: gpio0@2000a000 {
-+		gpio0: gpio@2000a000 {
- 			compatible = "rockchip,rk3188-gpio-bank0";
- 			reg = <0x2000a000 0x100>;
- 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-@@ -236,7 +236,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ source "arch/mips/vdso/Kconfig"
+diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
+index 4742b6f169b7..27a8b49af11f 100644
+--- a/arch/parisc/Kconfig
++++ b/arch/parisc/Kconfig
+@@ -384,6 +384,4 @@ config KEXEC_FILE
  
--		gpio1: gpio1@2003c000 {
-+		gpio1: gpio@2003c000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003c000 0x100>;
- 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-@@ -249,7 +249,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ endmenu
  
--		gpio2: gpio2@2003e000 {
-+		gpio2: gpio@2003e000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x2003e000 0x100>;
- 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-@@ -262,7 +262,7 @@
- 			#interrupt-cells = <2>;
- 		};
+-source "drivers/firmware/Kconfig"
+-
+ source "drivers/parisc/Kconfig"
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index c3f3fd583e04..8bc71ab143e3 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -561,5 +561,3 @@ menu "Power management options"
+ source "kernel/power/Kconfig"
  
--		gpio3: gpio3@20080000 {
-+		gpio3: gpio@20080000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20080000 0x100>;
- 			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index 75af99c76..3e36cec36 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -946,7 +946,7 @@
- 		#size-cells = <1>;
- 		ranges;
+ endmenu
+-
+-source "drivers/firmware/Kconfig"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 4e001bbbb425..4dca39744ee9 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2828,8 +2828,6 @@ config HAVE_ATOMIC_IOMAP
+ 	def_bool y
+ 	depends on X86_32
  
--		gpio0: gpio0@11110000 {
-+		gpio0: gpio@11110000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11110000 0x100>;
- 			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-@@ -959,7 +959,7 @@
- 			#interrupt-cells = <2>;
- 		};
+-source "drivers/firmware/Kconfig"
+-
+ source "arch/x86/kvm/Kconfig"
  
--		gpio1: gpio1@11120000 {
-+		gpio1: gpio@11120000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11120000 0x100>;
- 			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-@@ -972,7 +972,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ source "arch/x86/Kconfig.assembler"
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 30d2db37cc87..0d399ddaa185 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -17,6 +17,8 @@ source "drivers/bus/Kconfig"
  
--		gpio2: gpio2@11130000 {
-+		gpio2: gpio@11130000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11130000 0x100>;
- 			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-@@ -985,7 +985,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ source "drivers/connector/Kconfig"
  
--		gpio3: gpio3@11140000 {
-+		gpio3: gpio@11140000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x11140000 0x100>;
- 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 4dcdcf17c..096f5bb22 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -1422,7 +1422,7 @@
- 		#size-cells = <2>;
- 		ranges;
++source "drivers/firmware/Kconfig"
++
+ source "drivers/gnss/Kconfig"
  
--		gpio0: gpio0@ff750000 {
-+		gpio0: gpio@ff750000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff750000 0x0 0x100>;
- 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1435,7 +1435,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@ff780000 {
-+		gpio1: gpio@ff780000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff780000 0x0 0x100>;
- 			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1448,7 +1448,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@ff790000 {
-+		gpio2: gpio@ff790000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff790000 0x0 0x100>;
- 			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1461,7 +1461,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio3: gpio3@ff7a0000 {
-+		gpio3: gpio@ff7a0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7a0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1474,7 +1474,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio4: gpio4@ff7b0000 {
-+		gpio4: gpio@ff7b0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7b0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1487,7 +1487,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio5: gpio5@ff7c0000 {
-+		gpio5: gpio@ff7c0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7c0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1500,7 +1500,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio6: gpio6@ff7d0000 {
-+		gpio6: gpio@ff7d0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7d0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1513,7 +1513,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio7: gpio7@ff7e0000 {
-+		gpio7: gpio@ff7e0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7e0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1526,7 +1526,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio8: gpio8@ff7f0000 {
-+		gpio8: gpio@ff7f0000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x0 0xff7f0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index 24d56849a..db7166ed8 100644
---- a/arch/arm/boot/dts/rv1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -600,7 +600,7 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		gpio0: gpio0@20030000 {
-+		gpio0: gpio@20030000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20030000 0x100>;
- 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-@@ -613,7 +613,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio1: gpio1@10310000 {
-+		gpio1: gpio@10310000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10310000 0x100>;
- 			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-@@ -626,7 +626,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio2: gpio2@10320000 {
-+		gpio2: gpio@10320000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10320000 0x100>;
- 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-@@ -639,7 +639,7 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		gpio3: gpio3@10330000 {
-+		gpio3: gpio@10330000 {
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10330000 0x100>;
- 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+ source "drivers/mtd/Kconfig"
 -- 
-2.20.1
+2.29.2
 
