@@ -2,92 +2,139 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21184C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 12:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A0FC433F5
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 01:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED09460FC2
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 12:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F78261278
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 01:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbhJHMuW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Oct 2021 08:50:22 -0400
-Received: from mail-vk1-f179.google.com ([209.85.221.179]:33391 "EHLO
-        mail-vk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbhJHMuS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Oct 2021 08:50:18 -0400
-Received: by mail-vk1-f179.google.com with SMTP id t200so4177257vkt.0;
-        Fri, 08 Oct 2021 05:48:23 -0700 (PDT)
+        id S234364AbhJHB1Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Oct 2021 21:27:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233854AbhJHB1Y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Oct 2021 21:27:24 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E0EC061714
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Oct 2021 18:25:29 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id x27so32284218lfa.9
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Oct 2021 18:25:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tslhCmU5HkrqNcODnf9yBvexV8zyi6aRcSvkyUK+Lxo=;
+        b=tdWoxHQ9qTDGe2B8XEe8CfwnR2uhyJ4HUouX9vc5O51Yf0CU3BKPwrFuDI/D9+/gBf
+         XworeWC2T+VzDWcYSF/r2DE2/7EQYCY/q+csOzHMxAn4M+QQlZpXODpoKx3M0IwoNxL+
+         YC+LR3RulR6yPuNEgqiBqkHEi+xkZg2+vFQ4zl8Oxdpnnqzm6AJ63c0b6PXUh3WkTnf2
+         tImnjuAZZcO5wf/yk+vpIAicW9ZPtJGg4HSTnn+H2AS7lCbngxPS2AxgV2aEdF5XtNel
+         ZJvlTK5SxUi60q4hg5ZjFBTP3RmbaZ0GsvMS2rsmoNFkYTyX1npSbR3I0flAwVfFmjvm
+         DfSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2CZA5owzP75Fk3OUthJZqkUZwf9bToqDOhS3PDP9ylg=;
-        b=0xiwhAHaIYXS6I4PlmgO0CR3a2nNgtpZwOrMdtqjf0sZG9eTCxFqE3zdFBNmLrFxGu
-         +4GPGtR73+W31UAmqS+a7DqiYU1uMbcSRVpqFasXse6ethYaPQYoZrYE2EfpM7Fh17CB
-         Wm+OG2ENJvX7hCiqlcaQXO1MhakXdLLTWwNqTonbjJMKyZ7/du3wrjyVQ5nPMPPMgJg7
-         L5t3JcGdvbI301W5/ZgumlgTyYzaw1ewm2C+Xd6NkmnRAeFpYfxY1DncQpI0M9co6PQ9
-         3LvRulKVS5JOBzS58qfVhMNfxfxzcNx09XklkQFEOUZX7M/YWeg4CtEoIlvvF1IXcAFb
-         8Hgw==
-X-Gm-Message-State: AOAM531mFOV3pNaJTs4LadrO+vRtBsvX0sarDTtlZswYZhOlBW/hZXYe
-        FW1j6VGijRDVxrH1+LsLAsm7N9767mRQcWrKbkE=
-X-Google-Smtp-Source: ABdhPJzhaludNGFd2M+jSs3csgSWFGRxQKaQ5CFdeS+FIxZB4w/RVLybb15Btky/2gRCvdqiCLIczqmpmRi0rz61IR4=
-X-Received: by 2002:a1f:5e84:: with SMTP id s126mr9100625vkb.7.1633697303106;
- Fri, 08 Oct 2021 05:48:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tslhCmU5HkrqNcODnf9yBvexV8zyi6aRcSvkyUK+Lxo=;
+        b=SII2M3agewe/83pdttcELDyFcMAlhUkZwpgSOh0ngM+oSkpoL+l2/nOl7rasFxH8bj
+         O/vA2WMx1UwdCNDnhuT+ar5TBxjdZ7tDKTkOgcRxGQDTrTEqfsIFVkGTEuqXFvx9ddDK
+         y7fEf5NYiG6CbshtHKtiU+32phf1d/L52e5VgOin7QxvOc184TctSn4h4Y91WjpYOWK9
+         Rz50Q5D/CX83FwPqbphE+rjqVmp5SEgGL5WSFldmMGSGYQF5+vyHLXq8LVDwPLaoThG0
+         tAwvmVo5b1AmI60WcieFy+LogTfmDWoAxvDilQS2tf4QUh8KuZlqN87XikajYM226im8
+         w7qQ==
+X-Gm-Message-State: AOAM533pWrZGUKVW5Zg7u6osnNjwArIeeS3nsfUDf55bt38xgdUY7YDI
+        voF8qqOkhVpOcXrvacEH3p1T1Q==
+X-Google-Smtp-Source: ABdhPJypGsnIPcHP6hOej12p4onJM9bS3V4jWUI5ruP3IKui3Ic1uvDEzTG5YfmPZR/YEmNKlPJeOg==
+X-Received: by 2002:a05:6512:3b08:: with SMTP id f8mr7556094lfv.88.1633656328244;
+        Thu, 07 Oct 2021 18:25:28 -0700 (PDT)
+Received: from umbar.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id s4sm112875ljp.115.2021.10.07.18.25.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Oct 2021 18:25:27 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: 
+Date:   Fri,  8 Oct 2021 04:24:59 +0300
+Message-Id: <20211008012524.481877-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <CAMuHMdUvNM8Tu-+Ed0vjB2-_JUQe7ojUPbzJM=Vy1m_j31sNSg@mail.gmail.com>
- <20211007200250.20661-1-nikita.yoush@cogentembedded.com>
-In-Reply-To: <20211007200250.20661-1-nikita.yoush@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Oct 2021 14:48:11 +0200
-Message-ID: <CAMuHMdU2Nr1V035Ntz-XNrc10t7femUFt_WV+Q3EHiWZD5HmkQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: renesas: r8a779[56]x: add MediaLB pins
-To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        LUU HOAI <hoai.luu.ub@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Nikita,
+In 2019 (in kernel 5.4) spmi-gpio and ssbi-gpio drivers were converted
+to hierarchical IRQ helpers, however MPP drivers were not converted at
+that moment. Complete this by converting MPP drivers.
 
-On Thu, Oct 7, 2021 at 10:03 PM Nikita Yushchenko
-<nikita.yoush@cogentembedded.com> wrote:
-> From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
->
-> This adds pins, groups, and functions for MediaLB device on Renesas
-> H3 and M3.
->
-> Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> ---
-> Changes from v1:
-> - move mlb_3pin from common[] to automotive[] arrays
-> - fix missed array size update in pfc-r8a7796.c
+Changes since v2:
+ - Add patches fixing/updating mpps nodes in the existing device trees
 
-Thanks for the update!
+Changes since v1:
+ - Drop the interrupt-controller from initial schema conversion
+ - Add gpio-line-names to the qcom,pmic-mpp schema and to the example
 
-Obviously not only the mlb_3pin groups, but also the functions have to
-be moved to the automotive[] arrays ;-)
+The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
 
-I'll fix these up while applying, so no need to resend.
+  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl-for-v5.16.
+are available in the Git repository at:
 
-Gr{oetje,eeting}s,
+  https://git.linaro.org/people/dmitry.baryshkov/kernel.git spmi-mpp
 
-                        Geert
+for you to fetch changes up to 9bccc31fc5cec98f26ca639a2ee21a9831efe1de:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  arm64: dts: qcom: pm8994: add interrupt controller properties (2021-10-08 04:19:33 +0300)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+----------------------------------------------------------------
+Dmitry Baryshkov (25):
+      dt-bindings: pinctrl: qcom,pmic-mpp: Convert qcom pmic mpp bindings to YAML
+      dt-bindings: mfd: qcom-pm8xxx: add missing child nodes
+      ARM: dts: qcom-apq8064: add gpio-ranges to mpps nodes
+      ARM: dts: qcom-msm8660: add gpio-ranges to mpps nodes
+      ARM: dts: qcom-pm8841: add gpio-ranges to mpps nodes
+      ARM: dts: qcom-pm8941: add gpio-ranges to mpps nodes
+      ARM: dts: qcom-pma8084: add gpio-ranges to mpps nodes
+      ARM: dts: qcom-mdm9615: add gpio-ranges to mpps node, fix its name
+      ARM: dts: qcom-apq8060-dragonboard: fix mpps state names
+      arm64: dts: qcom: pm8916: fix mpps device tree node
+      arm64: dts: qcom: pm8994: fix mpps device tree node
+      arm64: dts: qcom: apq8016-sbc: fix mpps state names
+      pinctrl: qcom: ssbi-mpp: hardcode IRQ counts
+      pinctrl: qcom: ssbi-mpp: add support for hierarchical IRQ chip
+      pinctrl: qcom: spmi-mpp: hardcode IRQ counts
+      pinctrl: qcom: spmi-mpp: add support for hierarchical IRQ chip
+      dt-bindings: pinctrl: qcom,pmic-mpp: switch to #interrupt-cells
+      ARM: dts: qcom-apq8064: add interrupt controller properties
+      ARM: dts: qcom-mdm9615: add interrupt controller properties
+      ARM: dts: qcom-msm8660: add interrupt controller properties
+      ARM: dts: qcom-pm8841: add interrupt controller properties
+      ARM: dts: qcom-pm8941: add interrupt controller properties
+      ARM: dts: qcom-pma8084: add interrupt controller properties
+      arm64: dts: qcom: pm8916: add interrupt controller properties
+      arm64: dts: qcom: pm8994: add interrupt controller properties
+
+ .../devicetree/bindings/mfd/qcom-pm8xxx.yaml       |  12 ++
+ .../devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  | 187 --------------------
+ .../devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml | 188 +++++++++++++++++++++
+ arch/arm/boot/dts/qcom-apq8060-dragonboard.dts     |   4 +-
+ arch/arm/boot/dts/qcom-apq8064.dtsi                |  23 +--
+ arch/arm/boot/dts/qcom-mdm9615.dtsi                |  12 +-
+ arch/arm/boot/dts/qcom-msm8660.dtsi                |  17 +-
+ arch/arm/boot/dts/qcom-pm8841.dtsi                 |   7 +-
+ arch/arm/boot/dts/qcom-pm8941.dtsi                 |  11 +-
+ arch/arm/boot/dts/qcom-pma8084.dtsi                |  11 +-
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi          |   4 +-
+ arch/arm64/boot/dts/qcom/pm8916.dtsi               |   9 +-
+ arch/arm64/boot/dts/qcom/pm8994.dtsi               |  13 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            | 111 ++++++++----
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c            | 133 +++++++++++----
+ 15 files changed, 414 insertions(+), 328 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml
+
+
