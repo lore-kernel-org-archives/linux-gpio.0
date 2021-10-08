@@ -2,54 +2,54 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3754BC433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 01:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F156C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 01:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22683614C8
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 01:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A030614C8
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 01:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238786AbhJHB1n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Oct 2021 21:27:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38936 "EHLO
+        id S237097AbhJHB1p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Oct 2021 21:27:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241321AbhJHB1e (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Oct 2021 21:27:34 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81780C061769
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Oct 2021 18:25:39 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id b20so32911475lfv.3
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Oct 2021 18:25:39 -0700 (PDT)
+        with ESMTP id S234268AbhJHB1m (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Oct 2021 21:27:42 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6615BC0613E7
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Oct 2021 18:25:41 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id j21so14484848lfe.0
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Oct 2021 18:25:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fSoTwIybzpP2ja1UE0gJTnY+M6QRSJ7ijJBeYL79794=;
-        b=oDA2++ocrLRqzpjQmU/xREOSMUf+3SK/Uz4PJIawPvLPy+KzpchgT6en08Uu7Mprh5
-         DGB1FPYYs1XiI8nmVRQJw7rIvS4rLymDnBQpEVl5FG2c3w4aWRer8j60QTHQxZfwoA0M
-         MuC5M/pGdo0LYwV7SZzp9SmX+P1mc0+IcrhTuYAM+wPV2eeMiQHdM7IKBUiNa4kiW0Ii
-         gqkw3YKeq1w+S2s2ucL4ELl+3iZFZYK24AoBTMUpUmgr+YBzktzRPEVnaLFKaTIuogFX
-         CYM46PrI/FRXguKrfClvXqOOuVItxUbgWggDrhxvH4tZTz4xlm8UUk1TOEdpRwz9BDbO
-         Ab/Q==
+        bh=qQKiFrIlu4aY0PWyyaI2rChbhDxGEcd2OHWvmY22ZAo=;
+        b=VdvRqe+u6Yol+YioW6CZJicr70CDuUrGovPClHwleRc85YBA/N4i1jWSvugRV8FgF9
+         cVsJ9q3YpOspPP4X6vqPU0ox7pnYbduXrW2GtMXdFaBnDdf3gQMwDYLMya88QAHue7Xr
+         5XdvfheaytUhZ2af/y1vQ3TkwAikTmUjdTWpW1AP7wyj1eVmfWHDx5DMCFPDeGfhmc2V
+         sRwfZ6lgs+3HmCllSNXiUUAXWnEU0KOhUgKjF489DZxJobbOKM9CC8ejMlsb6e8u0Kur
+         A2l2/PS7Rj8EPPsqnl4dZ1B0PyJyjOijELe/Ug4+MzylD8RwFW3WezfbFbWRLWQ2QKOR
+         IUDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fSoTwIybzpP2ja1UE0gJTnY+M6QRSJ7ijJBeYL79794=;
-        b=0TQjyWi91ZrQkToAQRaCsoDphvivGCXyxAlwGwt9h78rUo2Z9HrWMYIPSqCapp//si
-         TRlh6Qtom7fwLHkN7AIN8byQYAEF9VkqmR7PwyUwAcLmqbbpRTkiF7XUzo3eik1ZLy8j
-         zQ3bkkERuolZlP3PR2QveapLDN3/HMtAb1iiC0NIFtNj9mXjCutoY5jg2zw++apaezpM
-         hscHOHhHUUQVwK4xGvQw9z5BbAjHGit1mX+P7MkfsChA8TZZ/pWTwcBTO4GDaAK1hdOm
-         IlnNo1bbmitEYYg3wTiMljvqglNPkFOSMbaO1Yc+k7W+fOcgRHZ/W1IhuXhtpXvDqJfu
-         fg5Q==
-X-Gm-Message-State: AOAM530/XtIM6Uvsps02b6HMF8xcRerF3p3zKem0yPuqv35iHGhSGmTM
-        NW4mBILeV8a6AoIT4nODi4gv8Q==
-X-Google-Smtp-Source: ABdhPJzZrJsjQpfqJ/ECRzhkphQuMbdvpP1IR9HEfpXHjuOvHZl3KTkB5QCWG/731l7h7z5uFsFhkw==
-X-Received: by 2002:ac2:51cb:: with SMTP id u11mr7291691lfm.139.1633656337950;
-        Thu, 07 Oct 2021 18:25:37 -0700 (PDT)
+        bh=qQKiFrIlu4aY0PWyyaI2rChbhDxGEcd2OHWvmY22ZAo=;
+        b=KRQtL9kQAajvJb5imd11K4iK5fq+RgVnPANsBruvIbU6DNyEP9s4vMdFf0cCXSKq0l
+         6UlGuYgUSgQjSseugVSXz1RBiBHpCDxmwBC9eg5fiYId0GSJBoXUSVOfuJ2KJSLPrF/h
+         Au6b62k/0QdttrQ+1jmevadZM8EpZKiefh1e5rMcWoNoFTFyrxyORnGwewlMnKYiQHQ5
+         LiertjtzNkCXD3UOohAndgTE4qrm6iw1+0lIaQQPLwScbTJG2emiJYcQeWDdR6FHmjh/
+         nKCOUFk5FryY5+c2def1beO5tFYgdd0UhTmEE41jmkHkPPF0aUgKz81e0ryMFJXK/JLy
+         2L4w==
+X-Gm-Message-State: AOAM533licOM3patNShWO/0o5aJB54TsoxX12QzY1/QcjAQ22+wbp7tj
+        OHMUTOg/jc4xeoBjhXouBhm36w==
+X-Google-Smtp-Source: ABdhPJz/yPBXt97ilRGNphY8eRn9Wa01/2mCI/Ojy/r5UqbQdnZSfb21/Umrj86ttO00zKEC1BBR7A==
+X-Received: by 2002:a19:674c:: with SMTP id e12mr7862935lfj.679.1633656339824;
+        Thu, 07 Oct 2021 18:25:39 -0700 (PDT)
 Received: from umbar.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id s4sm112875ljp.115.2021.10.07.18.25.37
+        by smtp.gmail.com with ESMTPSA id s4sm112875ljp.115.2021.10.07.18.25.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 18:25:37 -0700 (PDT)
+        Thu, 07 Oct 2021 18:25:39 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org
-Subject: [PATCH v3 15/25] pinctrl: qcom: spmi-mpp: hardcode IRQ counts
-Date:   Fri,  8 Oct 2021 04:25:14 +0300
-Message-Id: <20211008012524.481877-16-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 18/25] ARM: dts: qcom-apq8064: add interrupt controller properties
+Date:   Fri,  8 Oct 2021 04:25:17 +0300
+Message-Id: <20211008012524.481877-19-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211008012524.481877-1-dmitry.baryshkov@linaro.org>
 References: <20211008012524.481877-1-dmitry.baryshkov@linaro.org>
@@ -69,68 +69,54 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The probing of this driver calls platform_irq_count, which will
-setup all of the IRQs that are configured in device tree. In
-preparation for converting this driver to be a hierarchical IRQ
-chip, hardcode the IRQ count based on the hardware type so that all
-the IRQs are not configured immediately and are configured on an
-as-needed basis later in the boot process.
-
-This change will also allow for the removal of the interrupts property
-later in this patch series once the hierarchical IRQ chip support is in.
-
-This patch also removes the generic qcom,spmi-mpp OF match since we
-don't know the number of pins. All of the existing upstream bindings
-already include the more-specific binding.
+Now that the pmic-mpp is a proper hierarchical IRQ chip, add interrupt
+controller properties ('interrupt-controller' and '#interrupt-cells').
+The interrupts property is no longer needed so remove it.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ arch/arm/boot/dts/qcom-apq8064.dtsi | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 2da9b5f68f3f..a9f994863126 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -812,11 +812,7 @@ static int pmic_mpp_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index cbc9be8a69cd..5aebbeb5eb07 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -683,10 +683,8 @@ pm8821: pmic@1 {
+ 				pm8821_mpps: mpps@50 {
+ 					compatible = "qcom,pm8821-mpp", "qcom,ssbi-mpp";
+ 					reg = <0x50>;
+-					interrupts = <24 IRQ_TYPE_NONE>,
+-						     <25 IRQ_TYPE_NONE>,
+-						     <26 IRQ_TYPE_NONE>,
+-						     <27 IRQ_TYPE_NONE>;
++					interrupt-controller;
++					#interrupt-cells = <2>;
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					gpio-ranges = <&pm8821_mpps 0 0 4>;
+@@ -728,19 +726,8 @@ pm8921_mpps: mpps@50 {
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 					gpio-ranges = <&pm8921_mpps 0 0 12>;
+-					interrupts =
+-					<128 IRQ_TYPE_NONE>,
+-					<129 IRQ_TYPE_NONE>,
+-					<130 IRQ_TYPE_NONE>,
+-					<131 IRQ_TYPE_NONE>,
+-					<132 IRQ_TYPE_NONE>,
+-					<133 IRQ_TYPE_NONE>,
+-					<134 IRQ_TYPE_NONE>,
+-					<135 IRQ_TYPE_NONE>,
+-					<136 IRQ_TYPE_NONE>,
+-					<137 IRQ_TYPE_NONE>,
+-					<138 IRQ_TYPE_NONE>,
+-					<139 IRQ_TYPE_NONE>;
++					interrupt-controller;
++					#interrupt-cells = <2>;
+ 				};
  
--	npins = platform_irq_count(pdev);
--	if (!npins)
--		return -EINVAL;
--	if (npins < 0)
--		return npins;
-+	npins = (uintptr_t) device_get_match_data(&pdev->dev);
- 
- 	BUG_ON(npins > ARRAY_SIZE(pmic_mpp_groups));
- 
-@@ -912,16 +908,15 @@ static int pmic_mpp_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id pmic_mpp_of_match[] = {
--	{ .compatible = "qcom,pm8019-mpp" },	/* 6 MPP's */
--	{ .compatible = "qcom,pm8841-mpp" },	/* 4 MPP's */
--	{ .compatible = "qcom,pm8916-mpp" },	/* 4 MPP's */
--	{ .compatible = "qcom,pm8941-mpp" },	/* 8 MPP's */
--	{ .compatible = "qcom,pm8950-mpp" },	/* 4 MPP's */
--	{ .compatible = "qcom,pmi8950-mpp" },	/* 4 MPP's */
--	{ .compatible = "qcom,pm8994-mpp" },	/* 8 MPP's */
--	{ .compatible = "qcom,pma8084-mpp" },	/* 8 MPP's */
--	{ .compatible = "qcom,pmi8994-mpp" },	/* 4 MPP's */
--	{ .compatible = "qcom,spmi-mpp" },	/* Generic */
-+	{ .compatible = "qcom,pm8019-mpp", .data = (void *) 6 },
-+	{ .compatible = "qcom,pm8841-mpp", .data = (void *) 4 },
-+	{ .compatible = "qcom,pm8916-mpp", .data = (void *) 4 },
-+	{ .compatible = "qcom,pm8941-mpp", .data = (void *) 8 },
-+	{ .compatible = "qcom,pm8950-mpp", .data = (void *) 4 },
-+	{ .compatible = "qcom,pmi8950-mpp", .data = (void *) 4 },
-+	{ .compatible = "qcom,pm8994-mpp", .data = (void *) 8 },
-+	{ .compatible = "qcom,pma8084-mpp", .data = (void *) 8 },
-+	{ .compatible = "qcom,pmi8994-mpp", .data = (void *) 4 },
- 	{ },
- };
- 
+ 				rtc@11d {
 -- 
 2.30.2
 
