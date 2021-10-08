@@ -2,263 +2,194 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4F4C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 14:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D993C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 15:39:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2035861039
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 14:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC20560F6F
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 15:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242925AbhJHOwP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Oct 2021 10:52:15 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:47450 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S242892AbhJHOvq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Oct 2021 10:51:46 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from asmaa@mellanox.com)
-        with SMTP; 8 Oct 2021 17:49:27 +0300
-Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
-        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id 198EnRuN017356;
-        Fri, 8 Oct 2021 10:49:27 -0400
-Received: (from asmaa@localhost)
-        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id 198EnRYt011024;
-        Fri, 8 Oct 2021 10:49:27 -0400
-From:   Asmaa Mnebhi <asmaa@nvidia.com>
-To:     andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Cc:     Asmaa Mnebhi <asmaa@nvidia.com>, andrew@lunn.ch, kuba@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        davem@davemloft.net, rjw@rjwysocki.net, davthompson@nvidia.com
-Subject: [PATCH v4 1/2] gpio: mlxbf2: Introduce IRQ support
-Date:   Fri,  8 Oct 2021 10:49:19 -0400
-Message-Id: <20211008144920.10975-2-asmaa@nvidia.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20211008144920.10975-1-asmaa@nvidia.com>
-References: <20211008144920.10975-1-asmaa@nvidia.com>
+        id S243024AbhJHPlv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Oct 2021 11:41:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34940 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242780AbhJHPlv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Oct 2021 11:41:51 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 574A7C061570;
+        Fri,  8 Oct 2021 08:39:55 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id r19so38919356lfe.10;
+        Fri, 08 Oct 2021 08:39:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YG9Ar+cG6qU5gjsx0O70Gv7O+SgzCIkgLxuZkibpVvY=;
+        b=Rp3jX2X5Q2u65KiRr3g/piNYKnrDJC2jZOLAUfByXB2AGTC07WXW5XePdlrQw99Aar
+         zbsia3AwKyGZ8ftEu53n3kN8egySix/0sd7EcBUq075kUTS3DPWxrR9E5LEUt9fjyZNB
+         CBHBDUVQiWAScCqipee54dOmmF9xcgpWVuNa++10gTRt0TlPf454p5li5/iL6EgM7vgN
+         UTPpemXcwz4e4ANAqlyIwD7NPWfo8DC4MLDTWH/AlubcC4IBYS6ek9n+gnnwr13/Ut3z
+         iE5uYJFqIbeV2TZ8ASTgJtSMTIYJMePoRzsuEXjAeVtdltTmy74aUCzPJ5cLbYaZArvC
+         r6Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YG9Ar+cG6qU5gjsx0O70Gv7O+SgzCIkgLxuZkibpVvY=;
+        b=YdXwR7eD9Pogc+iBA93hDl/6M5RHGzNbaRqjF91C2cwubkL/2XhY+tiezxwYLdQsuI
+         KrUrUw/MomPgCXTL9780jHTZwB2upI5IBjgsOS99mPkTObeNit/TzVY2brXcLmA1p1RS
+         QFXPPd694AVHFqHKh0kOA/xDb9pDfPUf3CozpchFg4To7Ibzty8UBCVIiHuCXQf9daG1
+         dp1AzJ1R8P6vk4C6f7bc9mxcKPtyZ9SLZgl4hgKG6sFO4QxEKSQVO9iHMhuiSJJ4y0K8
+         Kmp3b8BQl/LCATqvp2mhbaagdS95pS0U/XluMw+NaJn+ghZuv0ehj8WppA1DvpXAUQaq
+         luNA==
+X-Gm-Message-State: AOAM533oQgi/eFK07qhy6r8o2eK2iuBt+zhrHbwWLYQEONQURo1V7eMw
+        hCX1hTTPN+XMJqqYZ/JFoEI=
+X-Google-Smtp-Source: ABdhPJyqXmlhUIDibjr4Kkw0USEAAWrWl3xzaH/JKr6l6aGts+0NJDKTXoAj9KESuBfR0MGeczeH0Q==
+X-Received: by 2002:a2e:5359:: with SMTP id t25mr4286576ljd.18.1633707588461;
+        Fri, 08 Oct 2021 08:39:48 -0700 (PDT)
+Received: from localhost.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
+        by smtp.gmail.com with ESMTPSA id u27sm156851lfm.275.2021.10.08.08.39.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Oct 2021 08:39:47 -0700 (PDT)
+From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: [PATCH V2 linux-pinctrl 1/2] Revert "dt-bindings: pinctrl: bcm4708-pinmux: rework binding to use syscon"
+Date:   Fri,  8 Oct 2021 17:39:38 +0200
+Message-Id: <20211008153939.19685-1-zajec5@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce standard IRQ handling in the gpio-mlxbf2.c
-driver.
+From: Rafał Miłecki <rafal@milecki.pl>
 
-Signed-off-by: Asmaa Mnebhi <asmaa@nvidia.com>
+This reverts commit 2ae80900f239484069569380e1fc4340fd6e0089.
+
+My rework was unneeded & wrong. It replaced a clear & correct "reg"
+property usage with a custom "offset" one.
+
+Back then I didn't understand how to properly handle CRU block binding.
+I heard / read about syscon and tried to use it in a totally invalid
+way. That change also missed Rob's review (obviously).
+
+Northstar's pin controller is a simple consistent hardware block that
+can be cleanly mapped using a 0x24 long reg space.
+
+Since the rework commit there wasn't any follow up modifying in-kernel
+DTS files to use the new binding. Broadcom also isn't known to use that
+bugged binding. There is close to zero chance this revert may actually
+cause problems / regressions.
+
+This commit is a simple revert. Example binding may (should) be updated
+/ cleaned up but that can be handled separately.
+
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 ---
- drivers/gpio/gpio-mlxbf2.c | 147 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 145 insertions(+), 2 deletions(-)
+V2: Update brcm,cru.yaml to avoid new yamllint warnings/errors
+---
+ .../devicetree/bindings/mfd/brcm,cru.yaml     | 11 +++++----
+ .../bindings/pinctrl/brcm,ns-pinmux.yaml      | 23 +++++++++++--------
+ 2 files changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
-index 177d03ef4529..3d89912a05b8 100644
---- a/drivers/gpio/gpio-mlxbf2.c
-+++ b/drivers/gpio/gpio-mlxbf2.c
-@@ -1,9 +1,14 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/Documentation/devicetree/bindings/mfd/brcm,cru.yaml b/Documentation/devicetree/bindings/mfd/brcm,cru.yaml
+index fc1317ab3226..28ac60acf4ac 100644
+--- a/Documentation/devicetree/bindings/mfd/brcm,cru.yaml
++++ b/Documentation/devicetree/bindings/mfd/brcm,cru.yaml
+@@ -32,13 +32,13 @@ properties:
+   "#size-cells":
+     const: 1
  
-+/*
-+ * Copyright (C) 2020-2021 NVIDIA CORPORATION & AFFILIATES
-+ */
-+
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/gpio/driver.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/kernel.h>
-@@ -43,9 +48,14 @@
- #define YU_GPIO_MODE0			0x0c
- #define YU_GPIO_DATASET			0x14
- #define YU_GPIO_DATACLEAR		0x18
-+#define YU_GPIO_CAUSE_RISE_EN		0x44
-+#define YU_GPIO_CAUSE_FALL_EN		0x48
- #define YU_GPIO_MODE1_CLEAR		0x50
- #define YU_GPIO_MODE0_SET		0x54
- #define YU_GPIO_MODE0_CLEAR		0x58
-+#define YU_GPIO_CAUSE_OR_CAUSE_EVTEN0	0x80
-+#define YU_GPIO_CAUSE_OR_EVTEN0		0x94
-+#define YU_GPIO_CAUSE_OR_CLRCAUSE	0x98
+-  pinctrl:
+-    $ref: ../pinctrl/brcm,ns-pinmux.yaml
+-
+ patternProperties:
+   '^clock-controller@[a-f0-9]+$':
+     $ref: ../clock/brcm,iproc-clocks.yaml
  
- struct mlxbf2_gpio_context_save_regs {
- 	u32 gpio_mode0;
-@@ -55,6 +65,7 @@ struct mlxbf2_gpio_context_save_regs {
- /* BlueField-2 gpio block context structure. */
- struct mlxbf2_gpio_context {
- 	struct gpio_chip gc;
-+	struct irq_chip irq_chip;
++  '^pin-controller@[a-f0-9]+$':
++    $ref: ../pinctrl/brcm,ns-pinmux.yaml
++
+   '^thermal@[a-f0-9]+$':
+     $ref: ../thermal/brcm,ns-thermal.yaml
  
- 	/* YU GPIO blocks address */
- 	void __iomem *gpio_io;
-@@ -218,15 +229,114 @@ static int mlxbf2_gpio_direction_output(struct gpio_chip *chip,
- 	return ret;
- }
+@@ -73,9 +73,10 @@ examples:
+                                  "iprocfast", "sata1", "sata2";
+         };
  
-+static void mlxbf2_gpio_irq_enable(struct irq_data *irqd)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-+	struct mlxbf2_gpio_context *gs = gpiochip_get_data(gc);
-+	int offset = irqd_to_hwirq(irqd);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&gs->gc.bgpio_lock, flags);
-+	val = readl(gs->gpio_io + YU_GPIO_CAUSE_OR_CLRCAUSE);
-+	val |= BIT(offset);
-+	writel(val, gs->gpio_io + YU_GPIO_CAUSE_OR_CLRCAUSE);
-+
-+	val = readl(gs->gpio_io + YU_GPIO_CAUSE_OR_EVTEN0);
-+	val |= BIT(offset);
-+	writel(val, gs->gpio_io + YU_GPIO_CAUSE_OR_EVTEN0);
-+	spin_unlock_irqrestore(&gs->gc.bgpio_lock, flags);
-+}
-+
-+static void mlxbf2_gpio_irq_disable(struct irq_data *irqd)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-+	struct mlxbf2_gpio_context *gs = gpiochip_get_data(gc);
-+	int offset = irqd_to_hwirq(irqd);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&gs->gc.bgpio_lock, flags);
-+	val = readl(gs->gpio_io + YU_GPIO_CAUSE_OR_EVTEN0);
-+	val &= ~BIT(offset);
-+	writel(val, gs->gpio_io + YU_GPIO_CAUSE_OR_EVTEN0);
-+	spin_unlock_irqrestore(&gs->gc.bgpio_lock, flags);
-+}
-+
-+static irqreturn_t mlxbf2_gpio_irq_handler(int irq, void *ptr)
-+{
-+	struct mlxbf2_gpio_context *gs = ptr;
-+	struct gpio_chip *gc = &gs->gc;
-+	unsigned long pending;
-+	u32 level;
-+
-+	pending = readl(gs->gpio_io + YU_GPIO_CAUSE_OR_CAUSE_EVTEN0);
-+	writel(pending, gs->gpio_io + YU_GPIO_CAUSE_OR_CLRCAUSE);
-+
-+	for_each_set_bit(level, &pending, gc->ngpio) {
-+		int gpio_irq = irq_find_mapping(gc->irq.domain, level);
-+		generic_handle_irq(gpio_irq);
-+	}
-+
-+	return IRQ_RETVAL(pending);
-+}
-+
-+static int
-+mlxbf2_gpio_irq_set_type(struct irq_data *irqd, unsigned int type)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-+	struct mlxbf2_gpio_context *gs = gpiochip_get_data(gc);
-+	int offset = irqd_to_hwirq(irqd);
-+	unsigned long flags;
-+	bool fall = false;
-+	bool rise = false;
-+	u32 val;
-+
-+	switch (type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_BOTH:
-+		fall = true;
-+		rise = true;
-+		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+		rise = true;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		fall = true;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	spin_lock_irqsave(&gs->gc.bgpio_lock, flags);
-+	if (fall) {
-+		val = readl(gs->gpio_io + YU_GPIO_CAUSE_FALL_EN);
-+		val |= BIT(offset);
-+		writel(val, gs->gpio_io + YU_GPIO_CAUSE_FALL_EN);
-+	}
-+
-+	if (rise) {
-+		val = readl(gs->gpio_io + YU_GPIO_CAUSE_RISE_EN);
-+		val |= BIT(offset);
-+		writel(val, gs->gpio_io + YU_GPIO_CAUSE_RISE_EN);
-+	}
-+	spin_unlock_irqrestore(&gs->gc.bgpio_lock, flags);
-+
-+	return 0;
-+}
-+
- /* BlueField-2 GPIO driver initialization routine. */
- static int
- mlxbf2_gpio_probe(struct platform_device *pdev)
- {
- 	struct mlxbf2_gpio_context *gs;
- 	struct device *dev = &pdev->dev;
-+	struct gpio_irq_chip *girq;
- 	struct gpio_chip *gc;
- 	unsigned int npins;
--	int ret;
-+	const char *name;
-+	int ret, irq;
-+
-+	name = dev_name(dev);
+-        pinctrl {
++        pin-controller@1c0 {
+             compatible = "brcm,bcm4708-pinmux";
+-            offset = <0x1c0>;
++            reg = <0x1c0 0x24>;
++            reg-names = "cru_gpio_control";
+         };
  
- 	gs = devm_kzalloc(dev, sizeof(*gs), GFP_KERNEL);
- 	if (!gs)
-@@ -256,11 +366,44 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
- 			NULL,
- 			0);
+         thermal@2c0 {
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,ns-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,ns-pinmux.yaml
+index 470aff599c27..78600a8fe403 100644
+--- a/Documentation/devicetree/bindings/pinctrl/brcm,ns-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,ns-pinmux.yaml
+@@ -17,9 +17,6 @@ description:
  
-+	if (ret) {
-+		dev_err(dev, "bgpio_init failed\n");
-+		return ret;
-+	}
-+
- 	gc->direction_input = mlxbf2_gpio_direction_input;
- 	gc->direction_output = mlxbf2_gpio_direction_output;
- 	gc->ngpio = npins;
- 	gc->owner = THIS_MODULE;
+   A list of pins varies across chipsets so few bindings are available.
  
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq >= 0) {
-+		gs->irq_chip.name = name;
-+		gs->irq_chip.irq_set_type = mlxbf2_gpio_irq_set_type;
-+		gs->irq_chip.irq_enable = mlxbf2_gpio_irq_enable;
-+		gs->irq_chip.irq_disable = mlxbf2_gpio_irq_disable;
-+
-+		girq = &gs->gc.irq;
-+		girq->chip = &gs->irq_chip;
-+		girq->handler = handle_simple_irq;
-+		girq->default_type = IRQ_TYPE_NONE;
-+		/* This will let us handle the parent IRQ in the driver */
-+		girq->num_parents = 0;
-+		girq->parents = NULL;
-+		girq->parent_handler = NULL;
-+
-+		/*
-+		 * Directly request the irq here instead of passing
-+		 * a flow-handler because the irq is shared.
-+		 */
-+		ret = devm_request_irq(dev, irq, mlxbf2_gpio_irq_handler,
-+				       IRQF_SHARED, name, gs);
-+		if (ret) {
-+			dev_err(dev, "failed to request IRQ");
-+			return ret;
-+		}
-+	}
-+
- 	platform_set_drvdata(pdev, gs);
+-  Node of the pinmux must be nested in the CRU (Central Resource Unit) "syscon"
+-  node.
+-
+ properties:
+   compatible:
+     enum:
+@@ -27,10 +24,11 @@ properties:
+       - brcm,bcm4709-pinmux
+       - brcm,bcm53012-pinmux
  
- 	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
-@@ -315,5 +458,5 @@ static struct platform_driver mlxbf2_gpio_driver = {
- module_platform_driver(mlxbf2_gpio_driver);
+-  offset:
+-    description: offset of pin registers in the CRU block
++  reg:
+     maxItems: 1
+-    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++  reg-names:
++    const: cru_gpio_control
  
- MODULE_DESCRIPTION("Mellanox BlueField-2 GPIO Driver");
--MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_AUTHOR("Asmaa Mnebhi <asmaa@nvidia.com>");
- MODULE_LICENSE("GPL v2");
+ patternProperties:
+   '-pins$':
+@@ -72,19 +70,24 @@ allOf:
+                         uart1_grp ]
+ 
+ required:
+-  - offset
++  - reg
++  - reg-names
+ 
+ additionalProperties: false
+ 
+ examples:
+   - |
+     cru@1800c100 {
+-        compatible = "syscon", "simple-mfd";
++        compatible = "simple-bus";
+         reg = <0x1800c100 0x1a4>;
++        ranges;
++        #address-cells = <1>;
++        #size-cells = <1>;
+ 
+-        pinctrl {
++        pin-controller@1c0 {
+             compatible = "brcm,bcm4708-pinmux";
+-            offset = <0xc0>;
++            reg = <0x1c0 0x24>;
++            reg-names = "cru_gpio_control";
+ 
+             spi-pins {
+                 function = "spi";
 -- 
-2.30.1
+2.26.2
 
