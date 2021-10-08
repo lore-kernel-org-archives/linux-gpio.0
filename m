@@ -2,67 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2F1C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 02:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98D6C43219
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 02:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7914B61075
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 02:46:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA3461075
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Oct 2021 02:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236805AbhJHCs2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Oct 2021 22:48:28 -0400
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:40593 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236770AbhJHCsT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Oct 2021 22:48:19 -0400
-Received: by mail-oi1-f169.google.com with SMTP id n63so11819985oif.7;
-        Thu, 07 Oct 2021 19:46:24 -0700 (PDT)
+        id S242366AbhJHCsb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Oct 2021 22:48:31 -0400
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:40837 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238786AbhJHCsW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Oct 2021 22:48:22 -0400
+Received: by mail-ot1-f53.google.com with SMTP id l16-20020a9d6a90000000b0053b71f7dc83so9967423otq.7;
+        Thu, 07 Oct 2021 19:46:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=LRETJHRX83AKgRotBaztyrFSwoTZSe9ca+wzDZq8Q+I=;
-        b=0DF4RR8T1/AZoxFB1EFtm6p0tLYvzUITtLotxLdkqGlOQFWvZdY7wYfGjdHAU5m4XT
-         uu/HRTFp1MxFiHWWyfQN98XBzTsAH7sgVUY02RajA0MvsqsP6NmJZ3ObuFT4YXpaEpjM
-         WOTszewARTS2KLoRe/pOZOMR0vPtdB53Z7+e0lra4pcTvzjtwuK8lrKoj5crKnE5WbNM
-         BmjCHoiIS69TEC7+AazSBk9SmT7X3gZPa8Owpd6KRofRfKAXRiGMXvherT+mbLyhUp9W
-         GMoJ8AL8ZgYrMWQKV/nXBJ6XoValXTeIpmyla7hzsmVAtvyO4oziDMBrkKRB/Q1orSSh
-         qcdA==
-X-Gm-Message-State: AOAM533e7NBXD7NltuVq5J0/GdWLASlbvQTHxU5aSDW9xIkTmkYHrbQf
-        88t+2Cad5RWOR2D1Uzw09w==
-X-Google-Smtp-Source: ABdhPJw64uObtve5O9be/2/2jI5qaZkR5FC2kDBQtqAm/A7+fSj9EMcOuZQ0kANYnSt7PAGLqENTsg==
-X-Received: by 2002:aca:f0d:: with SMTP id 13mr15268892oip.110.1633661184242;
-        Thu, 07 Oct 2021 19:46:24 -0700 (PDT)
+        bh=1fsdcw0Uf2Bf5Gbc+boXtc/UJXaHXY4TE9dopsOWLPk=;
+        b=r1KwlI4qZv3eggHJ6eqzXYWvT9lUfUFWykVwBYSTHwtMAHcQHyjXhFd3gL5md6rTBV
+         NPuu4Fr3jiMc8EhZkstVn4kiFpkadAp+/dnPZzr2MI4CvrWcE5rpu0nYZIbl6UxYcAIM
+         UIK2Tb8PDawOItX+GvZJ3m0NlmFEBHs3eNnkFztn62d0ReeYc3RxwECVHiLLSBQTgVvg
+         fAoP+Th4+vzD/U5voHmjW18Y+HADgp+4GsUADnPzDO8UPsbv0CLIAvIbwHSeu6s8weQK
+         qf4uamVmFeAO9rHu68NRqwJAtrBR5JZpRFlUQ1w5WiMqZsRMUs2DF8D9qgzKWdYJHPgR
+         s32A==
+X-Gm-Message-State: AOAM532Lii7rZwqArNOxvgSDLxWB7q3VItJg5eLbMApGYegc9VavOK5R
+        eZsnizct6XLaTqQSgJzmra3nN+xrfg==
+X-Google-Smtp-Source: ABdhPJypncZGWzOgZa5B53d0Gh2RTElDVyWKE+Q98gVGcQzFUW+QCgDy6Z/YhOPTG+BqYI9dk01O4w==
+X-Received: by 2002:a05:6830:1d4d:: with SMTP id p13mr6673779oth.134.1633661187827;
+        Thu, 07 Oct 2021 19:46:27 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id 98sm264132oth.29.2021.10.07.19.46.23
+        by smtp.gmail.com with ESMTPSA id 33sm267601otm.28.2021.10.07.19.46.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 19:46:23 -0700 (PDT)
-Received: (nullmailer pid 1409610 invoked by uid 1000);
+        Thu, 07 Oct 2021 19:46:27 -0700 (PDT)
+Received: (nullmailer pid 1409608 invoked by uid 1000);
         Fri, 08 Oct 2021 02:46:12 -0000
 From:   Rob Herring <robh@kernel.org>
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         devicetree@vger.kernel.org
-In-Reply-To: <20211008012524.481877-18-dmitry.baryshkov@linaro.org>
-References: <20211008012524.481877-1-dmitry.baryshkov@linaro.org> <20211008012524.481877-18-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v3 17/25] dt-bindings: pinctrl: qcom,pmic-mpp: switch to #interrupt-cells
+In-Reply-To: <20211008012524.481877-3-dmitry.baryshkov@linaro.org>
+References: <20211008012524.481877-1-dmitry.baryshkov@linaro.org> <20211008012524.481877-3-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v3 02/25] dt-bindings: mfd: qcom-pm8xxx: add missing child nodes
 Date:   Thu, 07 Oct 2021 21:46:12 -0500
-Message-Id: <1633661172.696418.1409609.nullmailer@robh.at.kernel.org>
+Message-Id: <1633661172.685600.1409607.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 08 Oct 2021 04:25:16 +0300, Dmitry Baryshkov wrote:
-> Stop specifying individual interrupts properties. Use #interrupt-cells
-> instead as we are switching qcom,spmi-mpp and qcom,ssbi-mpp to
-> hierarchical IRQ setup.
+On Fri, 08 Oct 2021 04:25:01 +0300, Dmitry Baryshkov wrote:
+> Add gpio@[0-9a-f]+, mpps@[0-9a-f]+ and xoadc@[0-9a-f]+ as possible child
+> nodes of qcom,pm8xxx, referencing existint schema files. Schema for
+> other possible nodes does not exist yet.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  .../devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  .../devicetree/bindings/mfd/qcom-pm8xxx.yaml         | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
 
 Running 'make dtbs_check' with the schema in this patch gives the
@@ -72,222 +73,77 @@ incorrect. These may not be new warnings.
 Note that it is not yet a requirement to have 0 warnings for dtbs_check.
 This will change in the future.
 
-Full log is available here: https://patchwork.ozlabs.org/patch/1538175
+Full log is available here: https://patchwork.ozlabs.org/patch/1538158
 
 
-mpp@50: 'gpio-ranges' is a required property
+pmic@0: compatible:0: 'qcom,pm8018' is not one of ['qcom,pm8058', 'qcom,pm8821', 'qcom,pm8921']
 	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
 
-mpp@50: 'interrupt-controller' is a required property
+pmic@0: compatible: Additional items are not allowed ('qcom,pm8921' was unexpected)
 	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
 
-mpp@50: 'interrupts' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+pmic@0: compatible: ['qcom,pm8018', 'qcom,pm8921'] is too long
 	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
 
-mpps@50: 'cm3605-mpps', 'interrupts' do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+pmic@0: gpio@150: 'ak8975-gpios', 'bmp085-gpios', 'cm3605-gpios', 'ethernet-gpios', 'mpu3050-gpios', 'sdcc3-gpios', 'sdcc5-gpios', 'veth-gpios' do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
 	arch/arm/boot/dts/qcom-apq8060-dragonboard.dt.yaml
 
-mpps@50: 'gpio-ranges' is a required property
-	arch/arm/boot/dts/qcom-apq8060-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
+pmic@0: gpio@150: 'gpio-keys-pin-active' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
 	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dt.yaml
+
+pmic@0: gpio@150: 'nled', 'wlan-gpios' do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
+
+pmic@0: gpio@150: 'reg' is a required property
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
+
+pmic@0: gpio@150: 'usb_vbus_5v_pins' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
+
+pmic@0: gpio@150: 'wlan-gpios' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
+
+pmic@0: 'keypad@148', 'led@131', 'led@132', 'led@133', 'led@48', 'pwrkey@1c', 'vibrator@4a' do not match any of the regexes: 'gpio@[0-9a-f]+$', 'mpps@[0-9a-f]+$', 'pinctrl-[0-9]+', 'rtc@[0-9a-f]+$', 'xoadc@[0-9a-f]+$'
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dt.yaml
+
+pmic@0: 'keypad@148', 'pwrkey@1c' do not match any of the regexes: 'gpio@[0-9a-f]+$', 'mpps@[0-9a-f]+$', 'pinctrl-[0-9]+', 'rtc@[0-9a-f]+$', 'xoadc@[0-9a-f]+$'
+	arch/arm/boot/dts/qcom-msm8960-cdp.dt.yaml
+
+pmic@0: 'keypad@148', 'pwrkey@1c', 'vibrator@4a' do not match any of the regexes: 'gpio@[0-9a-f]+$', 'mpps@[0-9a-f]+$', 'pinctrl-[0-9]+', 'rtc@[0-9a-f]+$', 'xoadc@[0-9a-f]+$'
+	arch/arm/boot/dts/qcom-msm8660-surf.dt.yaml
+
+pmic@0: 'mpp@50', 'pwrkey@1c' do not match any of the regexes: 'gpio@[0-9a-f]+$', 'mpps@[0-9a-f]+$', 'pinctrl-[0-9]+', 'rtc@[0-9a-f]+$', 'xoadc@[0-9a-f]+$'
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
+
+pmic@0: mpps@50: 'cm3605-mpps' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dt.yaml
+
+pmic@0: mpps@50: 'gpio-ranges' is a required property
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dt.yaml
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
 	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dt.yaml
 	arch/arm/boot/dts/qcom-msm8660-surf.dt.yaml
 
-mpps@50: 'interrupt-controller' is a required property
+pmic@0: 'pwrkey@1c' does not match any of the regexes: 'gpio@[0-9a-f]+$', 'mpps@[0-9a-f]+$', 'pinctrl-[0-9]+', 'rtc@[0-9a-f]+$', 'xoadc@[0-9a-f]+$'
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dt.yaml
+
+pmic@0: rtc@11d:compatible: Additional items are not allowed ('qcom,pm8921-rtc' was unexpected)
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
+
+pmic@0: rtc@11d:compatible: ['qcom,pm8018-rtc', 'qcom,pm8921-rtc'] is too long
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dt.yaml
+
+pmic@0: xoadc@197: 'mpp5@5', 'mpp6@6', 'mpp7@7', 'mpp8@8', 'mpp9@9' do not match any of the regexes: '^(adc-channel@)[0-9a-f]$', 'pinctrl-[0-9]+'
 	arch/arm/boot/dts/qcom-apq8060-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dt.yaml
-	arch/arm/boot/dts/qcom-msm8660-surf.dt.yaml
 
-mpps@50: 'interrupts' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
+pmic@1: mpps@50: 'gpio-ranges' is a required property
 	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dt.yaml
 	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
 	arch/arm/boot/dts/qcom-apq8064-ifc6410.dt.yaml
 	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dt.yaml
-	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dt.yaml
-	arch/arm/boot/dts/qcom-msm8660-surf.dt.yaml
-
-mpps@a000: compatible: ['qcom,pm8916-mpp'] is too short
-	arch/arm64/boot/dts/qcom/apq8016-sbc.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-mtp.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a3u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a5u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dt.yaml
-
-mpps@a000: compatible: ['qcom,pm8994-mpp'] is too short
-	arch/arm64/boot/dts/qcom/apq8094-sony-xperia-kitakami-karin_windy.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-ifc6640.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-msft-lumia-octagon-talkman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon-cityman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-ivy.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-karin.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-satsuki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-sumire.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-suzuran.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-keyaki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-keyaki.dt.yaml
-
-mpps@a000: 'gpio-ranges' is a required property
-	arch/arm64/boot/dts/qcom/apq8016-sbc.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8094-sony-xperia-kitakami-karin_windy.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-ifc6640.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-mtp.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a3u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a5u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-msft-lumia-octagon-talkman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon-cityman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-ivy.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-karin.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-satsuki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-sumire.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-suzuran.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-keyaki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-keyaki.dt.yaml
-	arch/arm/boot/dts/qcom-apq8074-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8074-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8084-ifc6540.dt.yaml
-	arch/arm/boot/dts/qcom-apq8084-mtp.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-fairphone-fp2.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-fairphone-fp2.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-samsung-klte.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-amami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-amami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-castor.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-castor.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dt.yaml
-
-mpps@a000: 'interrupt-controller' is a required property
-	arch/arm64/boot/dts/qcom/apq8016-sbc.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8094-sony-xperia-kitakami-karin_windy.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-ifc6640.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-mtp.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a3u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a5u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-msft-lumia-octagon-talkman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon-cityman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-ivy.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-karin.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-satsuki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-sumire.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-suzuran.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-keyaki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-keyaki.dt.yaml
-	arch/arm/boot/dts/qcom-apq8074-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8074-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8084-ifc6540.dt.yaml
-	arch/arm/boot/dts/qcom-apq8084-mtp.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-fairphone-fp2.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-fairphone-fp2.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-samsung-klte.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-amami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-amami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-castor.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-castor.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dt.yaml
-
-mpps@a000: 'interrupts' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
-	arch/arm64/boot/dts/qcom/apq8094-sony-xperia-kitakami-karin_windy.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml
-	arch/arm64/boot/dts/qcom/apq8096-ifc6640.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-mtp.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a3u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-samsung-a5u-eur.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-msft-lumia-octagon-talkman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon-cityman.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-ivy.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-karin.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-satsuki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-sumire.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-suzuran.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-pmi8996-sony-xperia-tone-keyaki.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-kagura.dt.yaml
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-keyaki.dt.yaml
-	arch/arm/boot/dts/qcom-apq8074-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8074-dragonboard.dt.yaml
-	arch/arm/boot/dts/qcom-apq8084-ifc6540.dt.yaml
-	arch/arm/boot/dts/qcom-apq8084-mtp.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-fairphone-fp2.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-fairphone-fp2.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-samsung-klte.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-amami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-amami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-castor.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-castor.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dt.yaml
-	arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dt.yaml
-
-mpps@a000: 'interrupts', 'pm8916-mpp4', 'pm8916-mpps-leds' do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
-	arch/arm64/boot/dts/qcom/apq8016-sbc.dt.yaml
 
