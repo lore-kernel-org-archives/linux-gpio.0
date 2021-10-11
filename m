@@ -2,398 +2,158 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA468C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Oct 2021 11:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8539C433F5
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Oct 2021 21:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5E7F60EE2
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Oct 2021 11:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA94D60EBB
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Oct 2021 21:14:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234343AbhJKLlF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Oct 2021 07:41:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233878AbhJKLlE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Oct 2021 07:41:04 -0400
-X-Greylist: delayed 66 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 11 Oct 2021 04:39:03 PDT
-Received: from lb2-smtp-cloud9.xs4all.net (lb2-smtp-cloud9.xs4all.net [IPv6:2001:888:0:108::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D0C6C061570;
-        Mon, 11 Oct 2021 04:39:03 -0700 (PDT)
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id ZtcrmeTHF8cVwZtcum6mB7; Mon, 11 Oct 2021 13:37:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
-        t=1633952274; bh=EJ468NMYmDML0AsBV+rtlsJvCbh1Ozlsqt14xY8DshU=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=uewlgQFmKMF1tLoPklw8UyISWs4X+SzrBkgZk9a4yocsOCZl9USgHVN8k1m1Ovf3P
-         ZghQAFKZTYKNfc+WJx9ZxvzVCcIWPInpuqmOiIbKblHBPGmJiKt6wQkgMdp2E2AsbJ
-         fKOQ+rdzQ90EtLElLP9nTW1IYLFryKItG7rXdOcEN9jv0ECaVynxanulCyNldxIxCR
-         Yn7uKUFdO8rBWPEHWi93OtbPLWmyyjs7pJMGqQr8YdUveZviQS10T/Cgj+oqb+o+gv
-         SqHLZV383tgzP9e/rw29caG8P3hEobf0z9HA1sRw133bLAVGoKVDolpPtstQid/Ai8
-         Uhwoh2d0gNAsg==
-Subject: Re: [PATCH v2 2/2] qcom_scm: hide Kconfig symbol
-To:     Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Alex Elder <elder@linaro.org>
-References: <20211007151010.333516-1-arnd@kernel.org>
- <20211007151010.333516-2-arnd@kernel.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <007b8902-312a-cbfd-5504-761687b7fdf8@xs4all.nl>
-Date:   Mon, 11 Oct 2021 13:37:49 +0200
+        id S235209AbhJKVQH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Oct 2021 17:16:07 -0400
+Received: from mail-bn8nam12on2041.outbound.protection.outlook.com ([40.107.237.41]:28512
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231994AbhJKVQG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 11 Oct 2021 17:16:06 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bcjcGjs47Ov++9m1tWtmuTCzICHdqdyQ516E0yaXWWX0O8LWUa249Tr3BdqnXNdhpEXCIwRQVH6kWnW67CYccAnikIjimWl/WFpP7x/AqxBuOyRtqw27v/wEr/38xmsiFy2pySYpzdMQ5kXa/sI3qKvIIpq/0uyAOBdutSX2iOqkUP8XMn4Bdf196wPD1kilnR4G3jeTw+xWVNTD4+Oq8MhlSkAJZ+WELX/73mdp6AZSgDBkEk93KLzF4daqA8DmjxSEH5bv525d4SRrtoKRs4uM76NpyOJsTlhOWXQ0KetE0WpjSA4Xdt4J0qLIycH8dhs7NdS8GjkSHYBJFn2JQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1sX5ZNpazDg+CYt7/hc1vcoxwrYj2TnDJfSpll5Y5rA=;
+ b=giHYGj7i+f1HZuQqVAJyfFoSVgVtePkbtJ8CFO9sxn6RLtkg6HaGS/ICB1iV5LAzab7TFom9nLPyV7/FgeIQbq7+Ki64pAakrCjsuXDCubSKraix6UTBlBfHcN0GG57OFq8MwJ915+rfMC6bN50qGmu9Gqn7NEFj9h2oCJ0SiazGS0RxT2KsgbNijcn2SRu7OEhsWBQbNzFcf7LCZHY8Ac1hFxwydyndtZD3aKym/aCiDV7vo/tUwIVABrZ1pMTMzeb/obwT9HDCqUKk8wjjBQLx6bTq5Y9zke7HMX9cU7nWmqoaNA+JAFYTfn7pVboZK+gyYytpyxuqybSS9Bo/2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1sX5ZNpazDg+CYt7/hc1vcoxwrYj2TnDJfSpll5Y5rA=;
+ b=qxfimY30DfFRnoJkexpezwKQ74IJrC7L1FCxSHJmphxnD6bDeevN6IL2clCYbb5hefXpxzN4k5TQaWv4h18c4AOY8LgKwfC7zz252JUsfx3ujVQXAM4C8Gxv2qBAMBLeaZfZSIhG9rBVms12mJnQwpKi+Lzce4bF6kESFn4DfDBErqeqhiEOA9w9g27h9itO6LGMsSH2HfO1rx+PGZsr8IWo3S2vdl/BWv3B160grJLrIA7iWvc1DZGP+DbR3TVp0hhL4Hhsn1+D5+nYMSNKpxe6jYx3oxXU/WHvRejZmdfixtR/CBoMoo0hcZ6bXczwhmpqeJ2zIUlgE466Cl49PQ==
+Received: from BN9P221CA0008.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::30)
+ by DM5PR12MB2488.namprd12.prod.outlook.com (2603:10b6:4:b5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.20; Mon, 11 Oct
+ 2021 21:14:04 +0000
+Received: from BN8NAM11FT022.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:10a:cafe::ac) by BN9P221CA0008.outlook.office365.com
+ (2603:10b6:408:10a::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.18 via Frontend
+ Transport; Mon, 11 Oct 2021 21:14:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT022.mail.protection.outlook.com (10.13.176.112) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4587.18 via Frontend Transport; Mon, 11 Oct 2021 21:14:03 +0000
+Received: from [172.17.173.69] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 11 Oct
+ 2021 21:14:02 +0000
+Subject: Re: [RFC PATCH v1 00/20] Review Request: Add support for Intel PMC
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
+CC:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Saha, Tamal" <tamal.saha@intel.com>, <bala.senthil@intel.com>
+References: <20210824164801.28896-1-lakshmi.sowjanya.d@intel.com>
+ <CACRpkdZEp0FZOefBPP_sR4g6rKzeKQhpdL-XHYO+CRt5MfTrYg@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   Dipen Patel <dipenp@nvidia.com>
+Message-ID: <f5f97c30-2b4e-2490-2197-1d5a108992d1@nvidia.com>
+Date:   Mon, 11 Oct 2021 14:14:12 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.14.0
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20211007151010.333516-2-arnd@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CACRpkdZEp0FZOefBPP_sR4g6rKzeKQhpdL-XHYO+CRt5MfTrYg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfJuuxVzHxX/HmRjTyBbu47R9dyBNkr37HCMQ1Xbi17ioHXz/+hb+Aj8C3tlEtmlSao8NmcH59bXPGXlwwWTUYI7+sNIQF+aiRYEQeezpnbcfpOtkrwq8
- Q3CRj9K7XRQ8VBtz/bAyVP+BqkL3tf6mu4cwRnHr2V30MWOzgJs6sJI/WKL1zfSQ6Edn4Xs/GXz5wO7d4/f6yf8mY8R0Qtdc6tOLXwfiZg44jNDCwvY4jwxD
- 58z29k40YCgWdFKgdHtxq0jIbAzixXJVygYwSTkSnX/Yg4+Oo9H5jZRTH5n+0FICC62LzOG8uIgEhjzea5lne6zyDC/7eqTmxgH0IUuK0pbjgjXVflG5jqdv
- kUp1gU5FeukXumMNNFa1NZWuWZhAq5idlljOJXUrGZRKed307o29pbbLWA472cBxhDF9BQdGKmTCsF75pnxvPMD8yyBvGgd448ENjtqQS9o4QQ0v5XlP5uvm
- tXAqXCAG3FWAv+Q/hFu7ncuj5feQDHbXVK0/bDTC7MGnecml/Zc6v1OllO2CiqPxZeMu7irEWqsnKLdamV3ps+fgcoAz/Dzvfc61OdZkyoNQnYv8zfoWziuz
- nx7wOzWY+5NGM3kDxeU9Jmc/srCjIC8NuqTpV50wlcWCZ5VOsnHP16UywKJMIYomgWsyVfMVSD+Quk0+F6fbaUvUOgL3+iOjbE2pRzuuUDeTPGPPOeh6chfd
- QU4iWqSBFqIkhYUSylrmHj81ryYQwC5SPxaLsIvJt2mikIWprBBDGP6bzJrJKQIbdjg2K6eeVXkTjEqxHhvDLm4Fod8MWYHJPR4TlzFbfZg2pze0xlfPRMeo
- 8XC+rDnxfCeLsjJgT6/a1NSgTtabgCDl7v0mU7ojS+tChDV7a2T20gooopVuFizGq9+GZ1gzqYYVuzZeC9LXh0UQnxrm4AjVNE3OxerZ9pIHYtsW/8q7LWVl
- Ul19nQ==
+Content-Language: en-US
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 618fba30-ef3b-43f4-c81b-08d98cfc0dc1
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2488:
+X-Microsoft-Antispam-PRVS: <DM5PR12MB2488D123D9124418CFAFBE08AEB59@DM5PR12MB2488.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: l6mlhXK+B3rqq9pkgNpgmopOaT/5Kwy1zfZAhb3LIPDyvf43jqQDxeD9YtVz/6Ki3EQ1fiHzpnO6xcKannQ0E65X3wD6YQnoJLYhbOwU497ZJQOslpChI0zIUs+DVTDcQs5p7J9n1/etd14SqCuwXtU5HkF0UHm3W/QQNG2bQb7X0J4+ruBQyJ2e+wldtGEAobUWPUj8zkhcC7ZdrSUahG3NSl6BQaPuHrPqXH9BzEn4pMe1j+HSFZhACFpodSq9FDquKCEkmRIcR0ZrdaSmo3ChFcjJ5T8ZdIK91sEBqNVvr6KJT3Zey2/lo7rMl8WbpkKjn3uUzZSCfhB0loKosuTH0RO9qyk2u9KaV4RHAdlGxYm1UfekDBx4n7f8xyMvgbmD0usiKU1N8/TTKxliR2nQQSz5bAKepJCw5ZSE6ltZ4uww452DbHjL+zM4gnrYczPJR2MvJPqYIrYQr803FbAUu0/BB+yiGW686rD98edVwGaU95Ht8T8RWiVuK7HpXnPoGc0HwwNVZtgDfrXwcr+POrXFukkubUCZpceEpUbxq5m3tuMoyTVA0EzNQSvHmQoq13QjWOvd2mlZ36bbGEVSKuvg1yZOgFSYrUANCJV2dhD8goyN8U1aE36ZopUGtRWm+hLXxrEsZ445KOh8PeuYmd4ASTeyHXHJI+cMf97uB0As/omXHyeWdW7uUjGIYhp2ch0XKKP+hRe37suSvexgCBniOSZK+ttJzmGVAFPRv2PVX9sCJIkY5ncRVVYSLSK5eJ9SeMVyQKLDLh5Ywt/Z06cWN3dFPcGf/J1kBXreHM6Gy/w1HX8LtGyzsi/yS+EW65nSvmC+2KAMU4hWl0k7KbQDLSUTLXNAgL2yQFk=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(82310400003)(83380400001)(336012)(8676002)(16576012)(31686004)(7636003)(6666004)(966005)(5660300002)(36860700001)(186003)(16526019)(316002)(86362001)(508600001)(426003)(110136005)(70206006)(36756003)(31696002)(2906002)(70586007)(356005)(2616005)(26005)(47076005)(54906003)(8936002)(53546011)(4326008)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2021 21:14:03.8467
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 618fba30-ef3b-43f4-c81b-08d98cfc0dc1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT022.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2488
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 07/10/2021 17:10, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Now that SCM can be a loadable module, we have to add another
-> dependency to avoid link failures when ipa or adreno-gpu are
-> built-in:
-> 
-> aarch64-linux-ld: drivers/net/ipa/ipa_main.o: in function `ipa_probe':
-> ipa_main.c:(.text+0xfc4): undefined reference to `qcom_scm_is_available'
-> 
-> ld.lld: error: undefined symbol: qcom_scm_is_available
->>>> referenced by adreno_gpu.c
->>>>               gpu/drm/msm/adreno/adreno_gpu.o:(adreno_zap_shader_load) in archive drivers/built-in.a
-> 
-> This can happen when CONFIG_ARCH_QCOM is disabled and we don't select
-> QCOM_MDT_LOADER, but some other module selects QCOM_SCM. Ideally we'd
-> use a similar dependency here to what we have for QCOM_RPROC_COMMON,
-> but that causes dependency loops from other things selecting QCOM_SCM.
-> 
-> This appears to be an endless problem, so try something different this
-> time:
-> 
->  - CONFIG_QCOM_SCM becomes a hidden symbol that nothing 'depends on'
->    but that is simply selected by all of its users
-> 
->  - All the stubs in include/linux/qcom_scm.h can go away
-> 
->  - arm-smccc.h needs to provide a stub for __arm_smccc_smc() to
->    allow compile-testing QCOM_SCM on all architectures.
-> 
->  - To avoid a circular dependency chain involving RESET_CONTROLLER
->    and PINCTRL_SUNXI, drop the 'select RESET_CONTROLLER' statement.
->    According to my testing this still builds fine, and the QCOM
->    platform selects this symbol already.
+Thanks Linus for referring. I will take a look.
 
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+@Sowjanya: I have recently sent out the RFC v2 of the HTE (https://patchwork.ozlabs.org/project/linux-tegra/list/?series=264896).
 
-Thanks,
+Please have a look and see if you can add TIO as one of the provider. That patch has necessary GPIOLIB and GPIO-CDEV changes
 
-	Hans
+which can help userspace and in kernel driver retrieve GPIO realtime timestamps.
 
-> 
-> Acked-by: Kalle Valo <kvalo@codeaurora.org>
-> Acked-by: Alex Elder <elder@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Changes in v2:
-> - fix the iommu dependencies
-> 
-> I've queued this version as a bugfix along with patch 1/2
-> in my asm-generic tree.
-> 
->  drivers/firmware/Kconfig                   |  5 +-
->  drivers/gpu/drm/msm/Kconfig                |  4 +-
->  drivers/iommu/Kconfig                      |  3 +-
->  drivers/iommu/arm/arm-smmu/Makefile        |  3 +-
->  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c |  3 +-
->  drivers/media/platform/Kconfig             |  2 +-
->  drivers/mmc/host/Kconfig                   |  2 +-
->  drivers/net/ipa/Kconfig                    |  1 +
->  drivers/net/wireless/ath/ath10k/Kconfig    |  2 +-
->  drivers/pinctrl/qcom/Kconfig               |  3 +-
->  include/linux/arm-smccc.h                  | 10 +++
->  include/linux/qcom_scm.h                   | 71 ----------------------
->  12 files changed, 24 insertions(+), 85 deletions(-)
-> 
-> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-> index 220a58cf0a44..cda7d7162cbb 100644
-> --- a/drivers/firmware/Kconfig
-> +++ b/drivers/firmware/Kconfig
-> @@ -203,10 +203,7 @@ config INTEL_STRATIX10_RSU
->  	  Say Y here if you want Intel RSU support.
->  
->  config QCOM_SCM
-> -	tristate "Qcom SCM driver"
-> -	depends on ARM || ARM64
-> -	depends on HAVE_ARM_SMCCC
-> -	select RESET_CONTROLLER
-> +	tristate
->  
->  config QCOM_SCM_DOWNLOAD_MODE_DEFAULT
->  	bool "Qualcomm download mode enabled by default"
-> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-> index e9c6af78b1d7..3ddf739a6f9b 100644
-> --- a/drivers/gpu/drm/msm/Kconfig
-> +++ b/drivers/gpu/drm/msm/Kconfig
-> @@ -17,7 +17,7 @@ config DRM_MSM
->  	select DRM_SCHED
->  	select SHMEM
->  	select TMPFS
-> -	select QCOM_SCM if ARCH_QCOM
-> +	select QCOM_SCM
->  	select WANT_DEV_COREDUMP
->  	select SND_SOC_HDMI_CODEC if SND_SOC
->  	select SYNC_FILE
-> @@ -55,7 +55,7 @@ config DRM_MSM_GPU_SUDO
->  
->  config DRM_MSM_HDMI_HDCP
->  	bool "Enable HDMI HDCP support in MSM DRM driver"
-> -	depends on DRM_MSM && QCOM_SCM
-> +	depends on DRM_MSM
->  	default y
->  	help
->  	  Choose this option to enable HDCP state machine
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 124c41adeca1..c5c71b7ab7e8 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -308,7 +308,6 @@ config APPLE_DART
->  config ARM_SMMU
->  	tristate "ARM Ltd. System MMU (SMMU) Support"
->  	depends on ARM64 || ARM || (COMPILE_TEST && !GENERIC_ATOMIC64)
-> -	depends on QCOM_SCM || !QCOM_SCM #if QCOM_SCM=m this can't be =y
->  	select IOMMU_API
->  	select IOMMU_IO_PGTABLE_LPAE
->  	select ARM_DMA_USE_IOMMU if ARM
-> @@ -438,7 +437,7 @@ config QCOM_IOMMU
->  	# Note: iommu drivers cannot (yet?) be built as modules
->  	bool "Qualcomm IOMMU Support"
->  	depends on ARCH_QCOM || (COMPILE_TEST && !GENERIC_ATOMIC64)
-> -	depends on QCOM_SCM=y
-> +	select QCOM_SCM
->  	select IOMMU_API
->  	select IOMMU_IO_PGTABLE_LPAE
->  	select ARM_DMA_USE_IOMMU
-> diff --git a/drivers/iommu/arm/arm-smmu/Makefile b/drivers/iommu/arm/arm-smmu/Makefile
-> index e240a7bcf310..b0cc01aa20c9 100644
-> --- a/drivers/iommu/arm/arm-smmu/Makefile
-> +++ b/drivers/iommu/arm/arm-smmu/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_QCOM_IOMMU) += qcom_iommu.o
->  obj-$(CONFIG_ARM_SMMU) += arm_smmu.o
-> -arm_smmu-objs += arm-smmu.o arm-smmu-impl.o arm-smmu-nvidia.o arm-smmu-qcom.o
-> +arm_smmu-objs += arm-smmu.o arm-smmu-impl.o arm-smmu-nvidia.o
-> +arm_smmu-$(CONFIG_ARM_SMMU_QCOM) += arm-smmu-qcom.o
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c b/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
-> index 9f465e146799..2c25cce38060 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
-> @@ -215,7 +215,8 @@ struct arm_smmu_device *arm_smmu_impl_init(struct arm_smmu_device *smmu)
->  	    of_device_is_compatible(np, "nvidia,tegra186-smmu"))
->  		return nvidia_smmu_impl_init(smmu);
->  
-> -	smmu = qcom_smmu_impl_init(smmu);
-> +	if (IS_ENABLED(CONFIG_ARM_SMMU_QCOM))
-> +		smmu = qcom_smmu_impl_init(smmu);
->  
->  	if (of_device_is_compatible(np, "marvell,ap806-smmu-500"))
->  		smmu->impl = &mrvl_mmu500_impl;
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 157c924686e4..80321e03809a 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -565,7 +565,7 @@ config VIDEO_QCOM_VENUS
->  	depends on VIDEO_DEV && VIDEO_V4L2 && QCOM_SMEM
->  	depends on (ARCH_QCOM && IOMMU_DMA) || COMPILE_TEST
->  	select QCOM_MDT_LOADER if ARCH_QCOM
-> -	select QCOM_SCM if ARCH_QCOM
-> +	select QCOM_SCM
->  	select VIDEOBUF2_DMA_CONTIG
->  	select V4L2_MEM2MEM_DEV
->  	help
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 71313961cc54..95b3511b0560 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -547,7 +547,7 @@ config MMC_SDHCI_MSM
->  	depends on MMC_SDHCI_PLTFM
->  	select MMC_SDHCI_IO_ACCESSORS
->  	select MMC_CQHCI
-> -	select QCOM_SCM if MMC_CRYPTO && ARCH_QCOM
-> +	select QCOM_SCM if MMC_CRYPTO
->  	help
->  	  This selects the Secure Digital Host Controller Interface (SDHCI)
->  	  support present in Qualcomm SOCs. The controller supports
-> diff --git a/drivers/net/ipa/Kconfig b/drivers/net/ipa/Kconfig
-> index 8f99cfa14680..d037682fb7ad 100644
-> --- a/drivers/net/ipa/Kconfig
-> +++ b/drivers/net/ipa/Kconfig
-> @@ -4,6 +4,7 @@ config QCOM_IPA
->  	depends on ARCH_QCOM || COMPILE_TEST
->  	depends on QCOM_RPROC_COMMON || (QCOM_RPROC_COMMON=n && COMPILE_TEST)
->  	select QCOM_MDT_LOADER if ARCH_QCOM
-> +	select QCOM_SCM
->  	select QCOM_QMI_HELPERS
->  	help
->  	  Choose Y or M here to include support for the Qualcomm
-> diff --git a/drivers/net/wireless/ath/ath10k/Kconfig b/drivers/net/wireless/ath/ath10k/Kconfig
-> index 741289e385d5..ca007b800f75 100644
-> --- a/drivers/net/wireless/ath/ath10k/Kconfig
-> +++ b/drivers/net/wireless/ath/ath10k/Kconfig
-> @@ -44,7 +44,7 @@ config ATH10K_SNOC
->  	tristate "Qualcomm ath10k SNOC support"
->  	depends on ATH10K
->  	depends on ARCH_QCOM || COMPILE_TEST
-> -	depends on QCOM_SCM || !QCOM_SCM #if QCOM_SCM=m this can't be =y
-> +	select QCOM_SCM
->  	select QCOM_QMI_HELPERS
->  	help
->  	  This module adds support for integrated WCN3990 chip connected
-> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-> index 32ea2a8ec02b..5ff4207df66e 100644
-> --- a/drivers/pinctrl/qcom/Kconfig
-> +++ b/drivers/pinctrl/qcom/Kconfig
-> @@ -3,7 +3,8 @@ if (ARCH_QCOM || COMPILE_TEST)
->  
->  config PINCTRL_MSM
->  	tristate "Qualcomm core pin controller driver"
-> -	depends on GPIOLIB && (QCOM_SCM || !QCOM_SCM) #if QCOM_SCM=m this can't be =y
-> +	depends on GPIOLIB
-> +	select QCOM_SCM
->  	select PINMUX
->  	select PINCONF
->  	select GENERIC_PINCONF
-> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-> index 7d1cabe15262..63ccb5252190 100644
-> --- a/include/linux/arm-smccc.h
-> +++ b/include/linux/arm-smccc.h
-> @@ -321,10 +321,20 @@ asmlinkage unsigned long __arm_smccc_sve_check(unsigned long x0);
->   * from register 0 to 3 on return from the SMC instruction.  An optional
->   * quirk structure provides vendor specific behavior.
->   */
-> +#ifdef CONFIG_HAVE_ARM_SMCCC
->  asmlinkage void __arm_smccc_smc(unsigned long a0, unsigned long a1,
->  			unsigned long a2, unsigned long a3, unsigned long a4,
->  			unsigned long a5, unsigned long a6, unsigned long a7,
->  			struct arm_smccc_res *res, struct arm_smccc_quirk *quirk);
-> +#else
-> +static inline void __arm_smccc_smc(unsigned long a0, unsigned long a1,
-> +			unsigned long a2, unsigned long a3, unsigned long a4,
-> +			unsigned long a5, unsigned long a6, unsigned long a7,
-> +			struct arm_smccc_res *res, struct arm_smccc_quirk *quirk)
-> +{
-> +	*res = (struct arm_smccc_res){};
-> +}
-> +#endif
->  
->  /**
->   * __arm_smccc_hvc() - make HVC calls
-> diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
-> index c0475d1c9885..81cad9e1e412 100644
-> --- a/include/linux/qcom_scm.h
-> +++ b/include/linux/qcom_scm.h
-> @@ -61,7 +61,6 @@ enum qcom_scm_ice_cipher {
->  #define QCOM_SCM_PERM_RW (QCOM_SCM_PERM_READ | QCOM_SCM_PERM_WRITE)
->  #define QCOM_SCM_PERM_RWX (QCOM_SCM_PERM_RW | QCOM_SCM_PERM_EXEC)
->  
-> -#if IS_ENABLED(CONFIG_QCOM_SCM)
->  extern bool qcom_scm_is_available(void);
->  
->  extern int qcom_scm_set_cold_boot_addr(void *entry, const cpumask_t *cpus);
-> @@ -115,74 +114,4 @@ extern int qcom_scm_lmh_dcvsh(u32 payload_fn, u32 payload_reg, u32 payload_val,
->  extern int qcom_scm_lmh_profile_change(u32 profile_id);
->  extern bool qcom_scm_lmh_dcvsh_available(void);
->  
-> -#else
-> -
-> -#include <linux/errno.h>
-> -
-> -static inline bool qcom_scm_is_available(void) { return false; }
-> -
-> -static inline int qcom_scm_set_cold_boot_addr(void *entry,
-> -		const cpumask_t *cpus) { return -ENODEV; }
-> -static inline int qcom_scm_set_warm_boot_addr(void *entry,
-> -		const cpumask_t *cpus) { return -ENODEV; }
-> -static inline void qcom_scm_cpu_power_down(u32 flags) {}
-> -static inline u32 qcom_scm_set_remote_state(u32 state,u32 id)
-> -		{ return -ENODEV; }
-> -
-> -static inline int qcom_scm_pas_init_image(u32 peripheral, const void *metadata,
-> -		size_t size) { return -ENODEV; }
-> -static inline int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,
-> -		phys_addr_t size) { return -ENODEV; }
-> -static inline int qcom_scm_pas_auth_and_reset(u32 peripheral)
-> -		{ return -ENODEV; }
-> -static inline int qcom_scm_pas_shutdown(u32 peripheral) { return -ENODEV; }
-> -static inline bool qcom_scm_pas_supported(u32 peripheral) { return false; }
-> -
-> -static inline int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val)
-> -		{ return -ENODEV; }
-> -static inline int qcom_scm_io_writel(phys_addr_t addr, unsigned int val)
-> -		{ return -ENODEV; }
-> -
-> -static inline bool qcom_scm_restore_sec_cfg_available(void) { return false; }
-> -static inline int qcom_scm_restore_sec_cfg(u32 device_id, u32 spare)
-> -		{ return -ENODEV; }
-> -static inline int qcom_scm_iommu_secure_ptbl_size(u32 spare, size_t *size)
-> -		{ return -ENODEV; }
-> -static inline int qcom_scm_iommu_secure_ptbl_init(u64 addr, u32 size, u32 spare)
-> -		{ return -ENODEV; }
-> -extern inline int qcom_scm_mem_protect_video_var(u32 cp_start, u32 cp_size,
-> -						 u32 cp_nonpixel_start,
-> -						 u32 cp_nonpixel_size)
-> -		{ return -ENODEV; }
-> -static inline int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
-> -		unsigned int *src, const struct qcom_scm_vmperm *newvm,
-> -		unsigned int dest_cnt) { return -ENODEV; }
-> -
-> -static inline bool qcom_scm_ocmem_lock_available(void) { return false; }
-> -static inline int qcom_scm_ocmem_lock(enum qcom_scm_ocmem_client id, u32 offset,
-> -		u32 size, u32 mode) { return -ENODEV; }
-> -static inline int qcom_scm_ocmem_unlock(enum qcom_scm_ocmem_client id,
-> -		u32 offset, u32 size) { return -ENODEV; }
-> -
-> -static inline bool qcom_scm_ice_available(void) { return false; }
-> -static inline int qcom_scm_ice_invalidate_key(u32 index) { return -ENODEV; }
-> -static inline int qcom_scm_ice_set_key(u32 index, const u8 *key, u32 key_size,
-> -				       enum qcom_scm_ice_cipher cipher,
-> -				       u32 data_unit_size) { return -ENODEV; }
-> -
-> -static inline bool qcom_scm_hdcp_available(void) { return false; }
-> -static inline int qcom_scm_hdcp_req(struct qcom_scm_hdcp_req *req, u32 req_cnt,
-> -		u32 *resp) { return -ENODEV; }
-> -
-> -static inline int qcom_scm_qsmmu500_wait_safe_toggle(bool en)
-> -		{ return -ENODEV; }
-> -
-> -static inline int qcom_scm_lmh_dcvsh(u32 payload_fn, u32 payload_reg, u32 payload_val,
-> -				     u64 limit_node, u32 node_id, u64 version)
-> -		{ return -ENODEV; }
-> -
-> -static inline int qcom_scm_lmh_profile_change(u32 profile_id) { return -ENODEV; }
-> -
-> -static inline bool qcom_scm_lmh_dcvsh_available(void) { return -ENODEV; }
-> -#endif
->  #endif
-> 
 
+Best,
+
+Dipen Patel
+
+On 9/16/21 2:21 PM, Linus Walleij wrote:
+> Hi Sowjanya,
+>
+> thanks for your patches!
+>
+> On Tue, Aug 24, 2021 at 6:48 PM <lakshmi.sowjanya.d@intel.com> wrote:
+>
+>> From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+>>
+>> Starting with Intel(R) Tiger Lake and Elkhart Lake platforms the PMC
+>> hardware adds the Timed I/O hardware interface.
+>>
+>> The Timed I/O hardware implements some functionality similar to GPIO
+>> with added timing logic that is driven by the Always Running Timer
+>> (ART).
+>>
+>> The Timed I/O Hardware implement 3 basic functions:
+>>   * Input Timestamping
+>>   * Single Shot Timed Output
+>>   * Periodic Timed Output
+>>
+>>  Please help to review the changes.
+> This looks very similar to the usecase proposed for the HTE
+> Hardware Timestamping Engine, proposed by Dipen Patel
+> for the nVidia 194 and which is currently in RFC:
+> https://lore.kernel.org/linux-gpio/20210625235532.19575-1-dipenp@nvidia.com/
+>
+> Please review this new subsystem and see if you can just
+> make a slot-in driver using Dipen's patches instead.
+>
+> Dipen: please have a look at Sowjanya's patches to see
+> if this hardware is similar to yours.
+>
+> Sometimes several vendors come up with similar hardware
+> around the same time, because of industry trends, so I would
+> not be surprised if these two hardwares address the very
+> same usecase.
+>
+> Yours,
+> Linus Walleij
