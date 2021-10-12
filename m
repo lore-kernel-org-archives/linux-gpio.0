@@ -2,97 +2,178 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31464C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 13:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E379FC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 13:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F32F61040
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 13:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D26DD6101D
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 13:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236686AbhJLNmv convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Oct 2021 09:42:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48354 "EHLO
+        id S236995AbhJLNnm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Oct 2021 09:43:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236394AbhJLNmv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Oct 2021 09:42:51 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4565C061570
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Oct 2021 06:40:49 -0700 (PDT)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1maI1L-0002rR-92; Tue, 12 Oct 2021 15:40:43 +0200
-Received: from pza by lupine with local (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1maI1K-0001pd-Qa; Tue, 12 Oct 2021 15:40:42 +0200
-Message-ID: <ea3b5be735f51dd7c9ac7e77a19596b0e4ced740.camel@pengutronix.de>
-Subject: Re: [PATCH] pinctrl: microchip sgpio: use reset driver
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
-        UNGLinuxDriver@microchip.com, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        with ESMTP id S236854AbhJLNnl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Oct 2021 09:43:41 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F63C061570;
+        Tue, 12 Oct 2021 06:41:39 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id y26so88692959lfa.11;
+        Tue, 12 Oct 2021 06:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jer+D64NwFqg3lswgRPWI11ACDNtMRc57uH44gzLJtg=;
+        b=euUG5Cl85wO2leafnMYDPaOFYjrD5EJsXk6bBLz4KQTDmfddtviBrNxH6ZE/W//Ogq
+         bcFZJskPNi1rzKGw0+ICAivGHQS4GqD5qORdoTYcrbWJ1Meh5W1FSrzMNyqEb4JaefuE
+         0O2kmSv8GcjU+xADdDhGzt4ug+d7lsJWG6F19UAIiTj2h4B5E0rwz1MWNQNdf4cBcXA6
+         ZhZu2gA+DTXk4gm4XGzzwFuG+ztx5swp5eKX86ooAOnfWrNaw76kvYitVF9PBxy+a+Hh
+         DWkk/WoFu129gwJ09TYqRingohCcFKqf+wrcMOvfaNavQgebwIRVJfHLNrbOxXy4SLAJ
+         tISA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=jer+D64NwFqg3lswgRPWI11ACDNtMRc57uH44gzLJtg=;
+        b=3YrajwTFhM1UQlHrix2Hs94jTCoWgnhQWiuwO9Spps/HGnSsHeWnUnQ1os2E0fRDmf
+         lY1cmC+XU1CXRCnbzGMKZh+X6W0dwwPhqM6HWczAn0PhKIfUbkLXLid9VtKJrvxZv5sn
+         JHUPjL8yrRXPgFvJqgHAvGyPHLzhS98czn7bqIHi8YT+qymyIxNbOGWxvxDsF/cX9KBC
+         WXnl8WhB2T8OIaVJqwBhHc8d6NufScoDChtRK8IQzZ++lLQ8nxolLk9BofyyKwZq36X0
+         vo39+MZkA0ptnb57nlVkviISu6lgosG5QewTL74GhNg7CaDozrc+phaKM1mu1KOZqhhr
+         dMgQ==
+X-Gm-Message-State: AOAM5339tVYrEqjndgv7NHFqrjeCi64S0+vzEZYB9ZviNHZq1olBPZXk
+        +xX/v7ZDpOChIhNcktak1Ak=
+X-Google-Smtp-Source: ABdhPJw09X/T52DBQcqbij/xht30zGMRPqEKz9t98hER+srgMXNSFRn7x43yGUM7vmVB443vsV2dkg==
+X-Received: by 2002:a05:6512:3c88:: with SMTP id h8mr8189918lfv.128.1634046097813;
+        Tue, 12 Oct 2021 06:41:37 -0700 (PDT)
+Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
+        by smtp.gmail.com with ESMTPSA id k16sm1033761lfo.219.2021.10.12.06.41.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Oct 2021 06:41:37 -0700 (PDT)
+Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
         linux-kernel@vger.kernel.org
-Date:   Tue, 12 Oct 2021 15:40:42 +0200
-In-Reply-To: <20211012122435.2081930-1-horatiu.vultur@microchip.com>
-References: <20211012122435.2081930-1-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.5-1.1 
+Subject: [PATCH v1 00/16] Basic StarFive JH7100 RISC-V SoC support
+Date:   Tue, 12 Oct 2021 15:40:11 +0200
+Message-Id: <20211012134027.684712-1-kernel@esmil.dk>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 2021-10-12 at 14:24 +0200, Horatiu Vultur wrote:
-> On lan966x platform when the switch gets reseted then also the sgpio
-> gets reseted. The fix for this is to extend also the sgpio driver to
-> call the reset driver which will be reseted only once by the first
-> driver that is probed.
-> 
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> ---
->  drivers/pinctrl/pinctrl-microchip-sgpio.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-> index 072bccdea2a5..e8a91d0824cb 100644
-> --- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
-> +++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-> @@ -17,6 +17,7 @@
->  #include <linux/pinctrl/pinmux.h>
->  #include <linux/platform_device.h>
->  #include <linux/property.h>
-> +#include <linux/reset.h>
->  
->  #include "core.h"
->  #include "pinconf.h"
-> @@ -803,6 +804,7 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
->  	int div_clock = 0, ret, port, i, nbanks;
->  	struct device *dev = &pdev->dev;
->  	struct fwnode_handle *fwnode;
-> +	struct reset_control *reset;
->  	struct sgpio_priv *priv;
->  	struct clk *clk;
->  	u32 val;
-> @@ -813,6 +815,10 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
->  
->  	priv->dev = dev;
->  
-> +	reset = devm_reset_control_get_shared(&pdev->dev, "switch");
+This series adds support for the StarFive JH7100 RISC-V SoC. The SoC has
+many devices that needs non-coherent dma operations to work which isn't
+upstream yet[1], so this just adds basic support to boot up, get a
+serial console, blink an LED and reboot itself. Unlike the Allwinner D1
+this chip doesn't use any extra pagetable bits, but instead the DDR RAM
+appears twice in the memory map, with and without the cache.
 
-This seems to be missing an update to the devicetree binding.
+The JH7100 is a test chip for the upcoming JH7110 and about 300 BeagleV
+Starlight Beta boards were sent out with them as part of a now cancelled
+BeagleBoard.org project. However StarFive has produced more of the
+JH7100s and more boards will be available[2] to buy. Hopefully before
+the end of the year.
 
-Just to make sure we aren't introducing a circular dependency here, are
-the PHY reset GPIOs that are toggled by the "switch" reset controller in
-[1] provided by one of the sgpio controllers?
+This series is also available at
+https://github.com/esmil/linux/commits/starlight-minimal
+..but a more complete kernel including non-coherent dma operations can
+be found at
+https://github.com/starfive-tech/linux/tree/starlight
 
-[1] https://lore.kernel.org/all/20211012114238.2060101-3-horatiu.vultur@microchip.com/
+/Emil
 
-regards
-Philipp
+[1]: https://lore.kernel.org/linux-riscv/20210723214031.3251801-2-atish.patra@wdc.com/
+[2]: https://www.linkedin.com/pulse/starfive-release-open-source-single-board-platform-q3-2021-starfive/
+
+Emil Renner Berthing (12):
+  RISC-V: Add StarFive SoC Kconfig option
+  dt-bindings: timer: Add StarFive JH7100 clint
+  dt-bindings: interrupt-controller: Add StarFive JH7100 plic
+  dt-bindings: reset: Add Starfive JH7100 reset bindings
+  reset: starfive-jh7100: Add StarFive JH7100 reset driver
+  dt-bindings: pinctrl: Add StarFive pinctrl definitions
+  dt-bindings: pinctrl: Add StarFive JH7100 bindings
+  pinctrl: starfive: Add pinctrl driver for StarFive SoCs
+  dt-bindings: serial: snps-dw-apb-uart: Add JH7100 uarts
+  serial: 8250_dw: Add skip_clk_set_rate quirk
+  RISC-V: Add initial StarFive JH7100 device tree
+  RISC-V: Add BeagleV Starlight Beta device tree
+
+Geert Uytterhoeven (4):
+  dt-bindings: clock: starfive: Add JH7100 clock definitions
+  dt-bindings: clock: starfive: Add JH7100 bindings
+  clk: starfive: Add JH7100 clock generator driver
+  dt-bindings: reset: Add StarFive JH7100 reset definitions
+
+ .../clock/starfive,jh7100-clkgen.yaml         |   56 +
+ .../sifive,plic-1.0.0.yaml                    |    1 +
+ .../pinctrl/starfive,jh7100-pinctrl.yaml      |  274 ++++
+ .../bindings/reset/starfive,jh7100-reset.yaml |   38 +
+ .../bindings/serial/snps-dw-apb-uart.yaml     |    5 +
+ .../bindings/timer/sifive,clint.yaml          |    1 +
+ MAINTAINERS                                   |   22 +
+ arch/riscv/Kconfig.socs                       |    8 +
+ arch/riscv/boot/dts/Makefile                  |    1 +
+ arch/riscv/boot/dts/starfive/Makefile         |    2 +
+ .../dts/starfive/jh7100-beaglev-starlight.dts |  162 ++
+ arch/riscv/boot/dts/starfive/jh7100.dtsi      |  228 +++
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/starfive/Kconfig                  |   10 +
+ drivers/clk/starfive/Makefile                 |    3 +
+ drivers/clk/starfive/clk-starfive-jh7100.c    |  769 +++++++++
+ drivers/pinctrl/Kconfig                       |   17 +
+ drivers/pinctrl/Makefile                      |    1 +
+ drivers/pinctrl/pinctrl-starfive.c            | 1439 +++++++++++++++++
+ drivers/reset/Kconfig                         |    8 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-starfive-jh7100.c         |  164 ++
+ drivers/tty/serial/8250/8250_dw.c             |   32 +-
+ include/dt-bindings/clock/starfive-jh7100.h   |  202 +++
+ .../dt-bindings/pinctrl/pinctrl-starfive.h    |  274 ++++
+ include/dt-bindings/reset/starfive-jh7100.h   |  126 ++
+ 27 files changed, 3833 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7100-clkgen.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+ create mode 100644 arch/riscv/boot/dts/starfive/Makefile
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7100.dtsi
+ create mode 100644 drivers/clk/starfive/Kconfig
+ create mode 100644 drivers/clk/starfive/Makefile
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7100.c
+ create mode 100644 drivers/pinctrl/pinctrl-starfive.c
+ create mode 100644 drivers/reset/reset-starfive-jh7100.c
+ create mode 100644 include/dt-bindings/clock/starfive-jh7100.h
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-starfive.h
+ create mode 100644 include/dt-bindings/reset/starfive-jh7100.h
+
+-- 
+2.33.0
+
