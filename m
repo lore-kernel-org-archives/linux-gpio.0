@@ -2,199 +2,683 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1620BC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 16:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF76C4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 17:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8CC160E05
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 16:31:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC9260ED4
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 17:03:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231186AbhJLQdx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Oct 2021 12:33:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59482 "EHLO
+        id S231826AbhJLRFi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Oct 2021 13:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbhJLQdx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Oct 2021 12:33:53 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8311CC061749
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Oct 2021 09:31:51 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id s3so7677213ild.0
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Oct 2021 09:31:51 -0700 (PDT)
+        with ESMTP id S229495AbhJLRFi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Oct 2021 13:05:38 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34249C061570;
+        Tue, 12 Oct 2021 10:03:36 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id y12so2160062eda.4;
+        Tue, 12 Oct 2021 10:03:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura-hr.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Iw9QJo/84T3WomDFU6RT6oMiaO5fSEG3pR5RMhjSIyM=;
-        b=SBo5E22X2dPYignx1or33Qf4VsdxKhNkuV0vn01sOdy967YW4bdSIoG2JI9ewPgLV2
-         36E5nUym/dMouMF9CUaWgsmCTdl3Qoju+ly8n3K+QthjQSWoa8LrbSiyhemBMakSRGfF
-         CP1jo4hOD6HEnNcd4sIhwyRnEmLIz9BnBQzOyYQhVPvROFLCg2jD2yTrWtf8ESDuyqI5
-         ArEZJpIYWrIFuS0H+PYf1R6Fq1d9IJRM0ZvhK0dN0Ig/4XCu7RiKL889h+xxEBCetfSF
-         Yq7drg4T+dqaLWOFZromuSBRaVXpMVZFhb4qAozf6nICcBm+obMbH8GU8As/imnsQsoD
-         MPgw==
+        bh=WlwZrcSv/6qlil8LeTTqWGyZXWB3Ik9RpiBlpWwbVTo=;
+        b=QC7JNyM/eDZROl4H1LtrhVyyTqtOV6o/tJiEWIFPdgv6ADlcB1lihC6y8xk5whSFTc
+         Kqxb6yLx9yP1jLiOt0txGD/QSeOeq6cXsbBQIkhZ8IcEfdTZOBmiNYcRGNF+dCx452lW
+         jLk13H+72hlzON5Ry77b+wbt6FwNalAtPvlChrM1aMX2SfsGnpNrVsz1ieOmFy3GTvbS
+         u9lyDfjsGEriNgchM1jBspc58zWL/KPWh3Y9kC0i5WMbgPkPr2ODociwDZhcEQ8zUBaK
+         PzSo9WwuPC3AOAFKqxSsdCQQnYOurgqQVJPYWHYqwzX1INCZeqKtxTtmcl4F15hKKzrl
+         agQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Iw9QJo/84T3WomDFU6RT6oMiaO5fSEG3pR5RMhjSIyM=;
-        b=E5JPDHH5LGNI6wYNi4NiDfOTXIASMjNISrXA00vkQcRdfSCmxgWyGaDLiTJy9Pa38k
-         0NqLYyhDwU8nYD95IajhIywNsOxcPjoEFm+1GNghG2Pl4EJywBqcLR/t9m5dGznPNsa6
-         5+PZyPkW7nlaSM1OKdUK0+wwTzKCDpYEXXfHAgho7LlZR43SdgWv5mMHiWAARIZvvwWD
-         1yKwAeRIGMlWAn4++lTGLPRT4AvMwm3IbQMnJqHPeAtvxNisZd3BtHvgJsSx0Ezz2grt
-         /OgS3/TGOcVcZoZIb9EJL2OTfwXMF4mhXxMNpW3LYxmH9O6prFGFIaJbPQG0EV52LERL
-         09gg==
-X-Gm-Message-State: AOAM5313z0IoO5scfUUTq69ryKZQdIMLbQKzc/zg4PhLbtS2tscThKGN
-        Fir1a0uXCfQSuSbiLzLSW8x2Q9exd9w7FFBgR9CV6Q==
-X-Google-Smtp-Source: ABdhPJzmEqZj9D+83Txyx5v6milizTobe+5yMaZ1tg/3dO2lUnIGl+NfkDWxuiJc9gHumk1D5JciNVUJAqwtHj818WM=
-X-Received: by 2002:a05:6e02:6d2:: with SMTP id p18mr22118845ils.159.1634056310899;
- Tue, 12 Oct 2021 09:31:50 -0700 (PDT)
+        bh=WlwZrcSv/6qlil8LeTTqWGyZXWB3Ik9RpiBlpWwbVTo=;
+        b=5nGxH+Sqro/wq4+fS6EJDcoiIvbUI3dvJehi+f9YD/oP6c88/iKlrun7y2pDGgPDWy
+         5y8lz7ykoUnRC0mC0BfG6VrjEO+akwgKewLG+bBvsEREiBvQ1OLkas8WE3i+N08QkqsR
+         RlXr3BKTs5YXccQG1tmgFkMG1hOm2HjZmuzH54D4V4C6XQ+31lmMxTPhGQg+BUtiGqUm
+         SXJ5DFnciLyb/o4d3xZMSYISnc1sUbFf2WQXCaqWgMdh3j7v9ITw05/kw8C2kO69ZsSd
+         MjRy0UDnRtXxyU1s4qYXtx4UDydJadIyVwcBo0XuGJJ4dNFxKGd0vvfFLXccrPkbxlL+
+         9o+w==
+X-Gm-Message-State: AOAM531MywU5LdIVOnZpBnkZFK52WiklIMcy2uzTVaxCPaDCNmsAqGkX
+        ZWyiffMJBW26H58653XkyfEUFu8snT1+DHvIjoo=
+X-Google-Smtp-Source: ABdhPJyIJOxuvdWyF3/VdZCTHAEks5EPArers2jrX2ff8Pwb10Qgdvea2DqvU+u5TpKPviqLj0lxEPWa43DVB4meExA=
+X-Received: by 2002:a05:6402:10da:: with SMTP id p26mr1248588edu.283.1634058214489;
+ Tue, 12 Oct 2021 10:03:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210607123317.3242031-1-robert.marko@sartura.hr>
- <20210607123317.3242031-5-robert.marko@sartura.hr> <CA+HBbNH7wcpfQOX2=vZmW78GoWy_WL3Pz-dMKe0N0ebZDp+oUw@mail.gmail.com>
- <20210713222528.GA952399@robh.at.kernel.org> <CA+HBbNFj5+6sLKxmL8XtsZQ48ch8OjTbJ1bwkDC8dfRiOyWY1Q@mail.gmail.com>
- <20210719225906.GA2769608@robh.at.kernel.org> <CACRpkdbq6Jow6AT9OpsR7Q0JVCWVMcmamh9KHPXMtUnkoe7ZFw@mail.gmail.com>
- <CA+HBbNFEs-=5XTK7PUL+LsgBCcPfwHsCPe4v6byK0x=O_7TRPA@mail.gmail.com>
- <CACRpkdZfZLQMgpMAF2FwSVt1YAzhQJ9ZWkVUjVc2xpmWL7yEvQ@mail.gmail.com>
- <CA+HBbNHZyYnnyz9=4Hgav96ZH8-R-nYoi300j2x3fgei8aa4zQ@mail.gmail.com> <CACRpkdaBUrgnyFnO0Tdae56PKR4pLN1boLpK0FMCk7eYshZ5LA@mail.gmail.com>
-In-Reply-To: <CACRpkdaBUrgnyFnO0Tdae56PKR4pLN1boLpK0FMCk7eYshZ5LA@mail.gmail.com>
-From:   Robert Marko <robert.marko@sartura.hr>
-Date:   Tue, 12 Oct 2021 18:31:40 +0200
-Message-ID: <CA+HBbNFeTN45cz8G75V94tF9cBcOGNzeenTMjdJ-4oKFCvHYLA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] dt-bindings: mfd: Add Delta TN48M CPLD drivers bindings
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+References: <20211012134027.684712-1-kernel@esmil.dk> <20211012134027.684712-13-kernel@esmil.dk>
+In-Reply-To: <20211012134027.684712-13-kernel@esmil.dk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 12 Oct 2021 23:02:46 +0300
+Message-ID: <CAHp75Vep+i+iyJi0LAOKuer-cUZoUoB_ZrWKcmT=EB_4hOgFGw@mail.gmail.com>
+Subject: Re: [PATCH v1 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
         devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        "Jonathan M. Polom" <jmp@epiphyte.org>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Donald Buczek <buczek@molgen.mpg.de>,
-        Andrew Lunn <andrew@lunn.ch>
+        Huan Feng <huan.feng@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 4, 2021 at 12:48 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Tue, Oct 12, 2021 at 4:43 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
 >
-> Hi Robert,
+> Add a combined pinctrl and gpio driver for the StarFive JH7100 SoC.
 >
-> sorry for slow reply, I am a bit busy.
+> For each "GPIO" there are two registers for configuring the output and
+> output enable signals which may come from other peripherals. Among these
+> are two special signals that are constant 0 and constant 1 respectively.
+> Controlling the GPIOs from software is done by choosing one of these
+> signals. In other words the same registers are used for both pinmuxing
+> and controlling the GPIOs, which makes it easier to combine the pinctrl
+> and gpio driver in one.
 >
-> On Tue, Aug 24, 2021 at 10:03 AM Robert Marko <robert.marko@sartura.hr> wrote:
-> > On Wed, Aug 11, 2021 at 2:17 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > >
-> > > On Tue, Aug 3, 2021 at 9:23 PM Robert Marko <robert.marko@sartura.hr> wrote:
-> > >
-> > > > The pins that this driver wants to expose are used for SFP-s only,
-> > > > they are provided by the Lattice CPLD which also does other things.
-> > > >
-> > > > Linux has a generic SFP driver which is used to manage these SFP
-> > > > ports, but it only supports GPIO-s, it has no concept of anything else.
-> > > > Since the driver is fully generic, I have no idea how could one extend it
-> > > > to effectively handle these pins internally, especially since I have more
-> > > > switches that use the CPLD for SFP-s as well, even for 48 ports and 192
-> > > > pins for them.
-> > >
-> > > Which file is this driver in so I can look?
-> >
-> > Hi Linus,
-> > Sorry for the late reply.
-> >
-> > Sure, here is the generic Linux driver that is used for SFP handling:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/sfp.c?h=v5.14-rc7
->
-> So this has this:
->
-> enum {
->         GPIO_MODDEF0,
->         GPIO_LOS,
->         GPIO_TX_FAULT,
->         GPIO_TX_DISABLE,
->         GPIO_RATE_SELECT,
->         GPIO_MAX,
->
->         SFP_F_PRESENT = BIT(GPIO_MODDEF0),
->         SFP_F_LOS = BIT(GPIO_LOS),
->         SFP_F_TX_FAULT = BIT(GPIO_TX_FAULT),
->         SFP_F_TX_DISABLE = BIT(GPIO_TX_DISABLE),
->         SFP_F_RATE_SELECT = BIT(GPIO_RATE_SELECT),
->
->         SFP_E_INSERT = 0,
->         SFP_E_REMOVE,
->
-> This does not look general purpose to me at all?
-> It's just some hardware engineer that thougt "GPIO"
-> was a nice thing to call this.
+> I wrote the pinconf and pinmux parts, but the gpio part of the code is
+> based on the gpio driver in the vendor tree written by Huan Feng with
+> cleanups and fixes by Drew and me.
 
-Hi Linus.
-These were historically always just regular GPIO-s, usually connected
-directly to the SoC
-GPIO controller or some kind of a GPIO expander and thus it uses gpiod.
+s/gpio/GPIO/g
 
->
-> > > Maybe it is not a good idea to look for generic code just because
-> > > it is convenient? I have had this problem before with GPIO, along
-> > > the lines "lemme just do this dirty thing this one time because it
-> > > is so convenient for me" (more or less) and the answer is still
-> > > "no".
-> > >
-> > > Can you either augment the driver to handle a regmap with bit indices
-> > > instead or write a new similar driver for that or refactor it some other
-> > > way?
-> > >
-> > > It is not a simple solution to your problem, but it might be the right
-> > > solution even if it means some more work.
-> >
-> > I understand your position, believe me, I spend some time looking at
-> > what would be the logical way for these switches.
-> > But I see no way how could the SFP driver be extended in a generic way
-> > that would allow supporting different register layouts when it comes to pins.
->
-> Why do you think you have to use the GPIO abstraction and bindings?
-> Just invent something that satisfy your needs, the bindings are just
-> strings. Why does the consumer have to use the GPIO binding?
-> They can just use phandle named anything. Some "sfp-foo-resource = <&...>
-> or so.
->
-> For example I created this:
-> Documentation/devicetree/bindings/firmware/intel,ixp4xx-network-processing-engine.yaml
-> It's handling out a resource using a phandle. Nothing different than
-> GPIO, regulator, clock etc. Just invent something for SFP?
+...
 
-The SFP driver requires GPIO-s, it only knows how to use GPIO-s, and
-its a generic driver,
-it covers any device that has an SFP port that is implemented per spec.
-So, I cannot just extend it to suit my devices needs and I don't see
-how can I extend it in
-a generic manner so that it controls the pins directly via a regmap
-for example, especially since
-each switch has a different number of SFP ports and thus pins and a
-different register layout.
+> +config PINCTRL_STARFIVE
 
-I have added Andrew Lunn as he is one of the maintainers of PHYLIB
-under which the SFP driver
-is, he may have some input on how to proceed with this.
+> +       bool "Pinctrl and GPIO driver for the StarFive JH7100 SoC"
 
-I honestly think that we have some kind of misunderstanding here and
-look forward to resolving it.
+Why not module?
 
-Regards,
-Robert
+> +       depends on SOC_STARFIVE || COMPILE_TEST
 
->
-> Yours,
-> Linus Walleij
+> +       depends on OF
+
+Do you really need this taking into account...
+
+> +       default SOC_STARFIVE
+> +       select GENERIC_PINCTRL_GROUPS
+> +       select GENERIC_PINMUX_FUNCTIONS
+> +       select GENERIC_PINCONF
+> +       select GPIOLIB
+> +       select GPIOLIB_IRQCHIP
+
+> +       select OF_GPIO
+
+...this one?
+
+...
+
+bits.h ?
+
+> +#include <linux/clk.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
 
 
+mod_devicetable.h ?
+
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+
+Can you move these as a group after generic linux/* ones?
+
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +#include <linux/spinlock.h>
+
+...
+
+> +/*
+> + * refer to Section 12. GPIO Registers in JH7100 datasheet:
+
+Be consistent in your style, here for example missed capitalization.
+
+> + * https://github.com/starfive-tech/StarLight_Docs
+
+Is it possible to have the datasheet to be provided as Datasheet: tag
+in the commit message?
+
+> + */
+
+...
+
+> +/*
+> + * Global enable for GPIO interrupts, offset: 0x0, field: GPIOEN
+> + * set to 1 if GPIO interrupts are enabled, set to 0 to disable
+> + */
+> +#define IRQ_GLOBAL_EN          0x0
+
+s/0x0/0x00/g
+
+...
+
+> +/*
+> + * Interrupt Type for GPIO[31:0], offset: 0x10, field: GPIOS_0
+> + * set to 1 if edge-triggered, set to 0 for level-triggered
+> + */
+> +#define IRQ_TYPE_LOW           0x10
+> +
+> +/*
+> + * Interrupt Type for GPIO[63:32], offset: 0x14, field: GPIOS_1
+> + */
+> +#define IRQ_TYPE_HIGH          0x14
+
+As I reviewed below, the IRQ is represented by a few registers in a
+row, no need to define low and high separately. Ditto for the rest
+register pairs.
+
+...
+
+> +/*
+> + * Interrupt Status after Masking GPIO[31:0], offset: 0x40, field: GPIOMIS_0
+> + * status of edge-triggered or level-triggered after masking
+> + * value of 1 means edge or level was detected, value of 0 menas not detected
+
+menas?!
+
+> + */
+
+...
+
+> +/*
+> + * Data Value of GPIO for GPIO[31:0], offest: 0x48, field: GPIODIN_0
+
+offest?!
+
+> + * dynamically reflects value on the GPIO pin
+> + */
+
+Please, run a spellchecker.
+
+...
+
+> +#define IO_PADSHARE_SEL                0x1a0
+
+Okay, make all registers to be fixed width, i.e. 0x000 for IRQ global
+enabling and so on.
+
+...
+
+> +#define PAD_SLEW_RATE_MASK             0xe00U
+
+GENMASK()
+
+> +#define PAD_BIAS_STRONG_PULL_UP                0x100U
+> +#define PAD_INPUT_ENABLE               0x080U
+> +#define PAD_INPUT_SCHMITT_ENABLE       0x040U
+> +#define PAD_BIAS_DISABLE               0x020U
+> +#define PAD_BIAS_PULL_DOWN             0x010U
+
+All above seems like BIT(_something_).
+
+> +#define PAD_BIAS_MASK                  0x130U
+> +#define PAD_DRIVE_STRENGTH_MASK                0x007U
+
+GENMASK()
+
+...
+
+> +#ifdef CONFIG_DEBUG_FS
+
+__maybe_unused ?
+
+> +#else
+> +#define starfive_pin_dbg_show NULL
+> +#endif
+
+...
+
+> +       dout = readl_relaxed(reg);
+
+readl_relaxed(reg + 0x00)
+
+> +       reg += 4;
+
+> +       doen = readl_relaxed(reg);
+
+readl_relaxed(reg + 0x04);
+
+...
+
+> +       seq_printf(s, "dout=%u%s doen=%u%s",
+> +                  dout & 0xffU, (dout & 0x80000000U) ? "r" : "",
+> +                  doen & 0xffU, (doen & 0x80000000U) ? "r" : "");
+
+GENMASK()
+BIT()
+
+...
+
+> +       for_each_child_of_node(np, child) {
+> +               const __be32 *pinmux_list;
+> +               const __be32 *pins_list;
+> +               int pinmux_size;
+> +               int pins_size;
+> +
+> +               pinmux_list = of_get_property(child, "pinmux", &pinmux_size);
+> +               pins_list   = of_get_property(child, "pins",   &pins_size);
+> +               if (pinmux_list && pins_list) {
+> +                       dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: %s\n",
+> +                               np, child, "both pinmux and pins set");
+> +                       of_node_put(child);
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if (pinmux_list && pinmux_size > 0) {
+> +                       nmaps += 2;
+> +               } else if (pins_list && pins_size > 0) {
+> +                       nmaps += 1;
+> +               } else {
+> +                       dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: %s\n",
+> +                               np, child, "neither pinmux nor pins set");
+> +                       of_node_put(child);
+> +                       return -EINVAL;
+> +               }
+> +               ngroups += 1;
+> +       }
+
+This entire loop seems like
+1) it should be based on something from pin control core;
+2) it's using some low level APIs instead of better ones like
+of_property_read_uXX();
+3) smells like unoptimized NIH.
+
+...
+
+> +               if ((list = of_get_property(child, "pinmux", &npins))) {
+
+Why not of_property_read_...() ?
+
+...
+
+> +                               u32 v = be32_to_cpu(*list++);
+
+My gosh!
+
+...
+
+> +                       for (i = 0; i < npins; i++)
+> +                               pins[i] = be32_to_cpu(*list++);
+
+Ditto.
+Even for this we have something in byteorder headers.
+
+Summary, make sure you use much better _existing_ APIs instead of the
+above crap.
+
+...
+
+> +free_pinmux:
+> +       devm_kfree(dev, pinmux);
+> +free_pins:
+> +       devm_kfree(dev, pins);
+> +free_grpname:
+> +       devm_kfree(dev, grpname);
+
+What the heck?!
+
+> +free_pgnames:
+> +       devm_kfree(dev, pgnames);
+
+Ditto.
+
+...
+
+> +out:
+
+Useless label.
+
+> +       return ret;
+
+...
+
+> +       for (i = 0; i < group->num_pins; i++) {
+> +               unsigned int gpio = starfive_pin_to_gpio(sfp, group->pins[i]);
+> +               void __iomem *reg_dout;
+> +               void __iomem *reg_doen;
+> +               void __iomem *reg_din;
+> +               u32 v, dout, doen, din;
+> +               unsigned long flags;
+
+> +               if (dev_WARN_ONCE(dev, gpio >= MAX_GPIO,
+
+What?!
+
+> +                                 "%s: invalid gpiomux pin", group->name))
+> +                       continue;
+> +
+> +               v = pinmux[i];
+> +               dout = ((v & BIT(7)) << (31 - 7)) | ((v >> 24) & 0xffU);
+> +               doen = ((v & BIT(6)) << (31 - 6)) | ((v >> 16) & 0xffU);
+> +               din  = (v >> 8) & 0xffU;
+
+What is this voodoo for?
+
+> +               if (din != 0xff)
+> +                       reg_din = sfp->base + GPIO_IN_OFFSET + 4 * din;
+> +               else
+> +                       reg_din = NULL;
+
+This looks like you maybe use gpio-regmap instead?
+
+...
+
+> +       void __iomem *reg = sfp->padctl + 4 * (pin / 2);
+> +       u32 value = readl_relaxed(reg);
+> +
+> +       if (pin & 1U)
+> +               value >>= 16;
+> +       return value;
+
+u8 shift = 16 * (pin % 2);
+
+return readl_relaxed() >> shift;
+
+?
+
+Something similar for below code.
+
+...
+
+> +#ifdef CONFIG_DEBUG_FS
+> +static const struct pin_config_item
+> +starfive_pinconf_custom_conf_items[ARRAY_SIZE(starfive_pinconf_custom_params)] = {
+
+Instead of using ARAY_SIZE() here, use static_assert().
+
+__maybe_unused?
+
+> +       PCONFDUMP(PIN_CONFIG_STARFIVE_STRONG_PULL_UP, "input bias strong pull-up", NULL, false),
+> +};
+> +#else
+> +#define starfive_pinconf_custom_conf_items NULL
+> +#endif
+
+...
+
+> +static const unsigned char starfive_drive_strength[] = {
+> +       14, 21, 28, 35, 42, 49, 56, 63,
+
+Why table? Can you simply use the formula?!
+
+> +};
+
+...
+
+> +       if (unlikely(!group))
+
+Why unlikely() Must be justified here and everywhere where you are using it.
+
+> +               return -EINVAL;
+> +
+> +       return starfive_pinconf_get(pctldev, group->pins[0], config);
+> +}
+
+...
+
+> +               case PIN_CONFIG_BIAS_DISABLE:
+
+> +                       mask |= PAD_BIAS_MASK;
+
+Use it...
+
+> +                       value = (value & ~PAD_BIAS_MASK) | PAD_BIAS_DISABLE;
+
+...here. Ditto for the similar cases in this function and elsewhere.
+
+After done this, you will see how you can simplify and deduplicate the
+switch-cases.
+
+...
+
+> +#ifdef CONFIG_DEBUG_FS
+
+__maybe_unused ?
+
+> +#else
+> +#define starfive_pinconf_dbg_show NULL
+> +#endif
+
+...
+
+> +       if (gpio < 32) {
+> +               value = readl_relaxed(sfp->base + GPIO_DIN_LOW);
+
+> +               value = (value >> gpio) & 1U;
+
+Drop
+
+> +       } else {
+> +               value = readl_relaxed(sfp->base + GPIO_DIN_HIGH);
+
+> +               value = (value >> (gpio - 32)) & 1U;
+
+Drop
+
+> +       }
+
+> +       return value;
+
+return !!(value & BIT(gpio % 32));
+
+...
+
+> +               if (arg == 0)
+
+> +                       return -ENOTSUPP;
+
+Shouldn't we return something else and pin control core will change it
+to something else if needed?
+
+> +               if (arg == 0)
+> +                       return -ENOTSUPP;
+
+Ditto.
+
+> +       default:
+> +               return -ENOTSUPP;
+
+...
+
+> +       if (gpio < 0 || gpio >= MAX_GPIO)
+> +               return;
+> +
+> +       if (gpio < 32) {
+> +               ie = sfp->base + IRQ_ENABLE_LOW;
+> +               mask = BIT(gpio);
+> +       } else {
+> +               ie = sfp->base + IRQ_ENABLE_HIGH;
+> +               mask = BIT(gpio - 32);
+> +       }
+
+See below. And update all occurrences of these lines accordingly and
+everywhere. Also for IRQ may use helper functions if needed (but I
+don't believe the high and low register have stride more than 4).
+
+...
+
+> +       if (gpio < 0 || gpio >= MAX_GPIO)
+> +               return -EINVAL;
+
+How is it possible to be ever triggered?
+
+...
+
+> +       if (gpio < 32) {
+> +               base = sfp->base;
+> +               mask = BIT(gpio);
+> +       } else {
+> +               base = sfp->base + 4;
+> +               mask = BIT(gpio - 32);
+> +       }
+
+base = sfp_base + 4 * (gpio / 32);
+mask = BIT(gpio % 32);
+
+...
+
+> +               irq_set_handler_locked(d, handle_edge_irq);
+
+> +               irq_set_handler_locked(d, handle_edge_irq);
+
+Dup.
+
+...
+
+> +               irq_set_handler_locked(d, handle_edge_irq);
+
+> +               irq_set_handler_locked(d, handle_level_irq);
+
+> +               irq_set_handler_locked(d, handle_level_irq);
+
+Ditto.
+
+...
+
+> +               irq_set_handler_locked(d, handle_bad_irq);
+
+Why is this here? Move it to ->probe().
+
+...
+
+> +       clk = devm_clk_get(dev, NULL);
+> +       if (IS_ERR(clk)) {
+> +               ret = PTR_ERR(clk);
+
+> +               dev_err(dev, "could not get clock: %d\n", ret);
+
+Thank you for spamming logs with this noise.
+
+> +               return ret;
+
+Hint: return dev_err_probe(). Ditto for the rest in this function.
+
+> +       }
+
+...
+
+> +       ret = clk_prepare_enable(clk);
+> +       if (ret) {
+
+> +               reset_control_deassert(rst);
+
+Use devm_add_action_or_reset().
+
+> +               dev_err(dev, "could not enable clock: %d\n", ret);
+> +               return ret;
+> +       }
+
+...
+
+> +       if (!of_property_read_u32(dev->of_node, "starfive,signal-group", &value)) {
+
+Can be refactored without conditional. Also, why not to use
+device_property_read_u32()?
+
+> +               if (value <= 6)
+> +                       writel(value, sfp->padctl + IO_PADSHARE_SEL);
+> +               else
+
+> +                       dev_err(dev, "invalid signal group %u\n", value);
+
+Why _err if you not bail out here?
+
+> +       }
+
+...
+
+> +       value = readl(sfp->padctl + IO_PADSHARE_SEL);
+> +       switch (value) {
+> +       case 0:
+> +               sfp->gpios.pin_base = 0x10000;
+
+Magic number!
+
+> +               goto done;
+> +       case 1:
+> +               sfp->gpios.pin_base = PAD_GPIO(0);
+> +               break;
+> +       case 2:
+> +               sfp->gpios.pin_base = PAD_FUNC_SHARE(72);
+> +               break;
+> +       case 3:
+> +               sfp->gpios.pin_base = PAD_FUNC_SHARE(70);
+> +               break;
+> +       case 4: case 5: case 6:
+> +               sfp->gpios.pin_base = PAD_FUNC_SHARE(0);
+> +               break;
+> +       default:
+> +               dev_err(dev, "invalid signal group %u\n", value);
+> +               return -EINVAL;
+> +       }
+
+...
+
+> +       sfp->gc.of_node = dev->of_node;
+
+Isn't GPIO library do this for you?
+
+...
+
+> +       starfive_irq_chip.parent_device = dev;
+
+Ditto?
+
+...
+
+> +       sfp->gc.irq.parents =
+> +               devm_kcalloc(dev, 1, sizeof(*sfp->gc.irq.parents), GFP_KERNEL);
+
+1 -> sfp->gc.irq.num_parents
+And hence move below line up.
+
+> +       if (!sfp->gc.irq.parents)
+> +               return -ENOMEM;
+
+> +       sfp->gc.irq.num_parents = 1;
+
+...
+
+> +       dev_info(dev, "StarFive GPIO chip registered %d GPIOs\n", sfp->gc.ngpio);
+
+Redundant noise.
+
+...
+
+> +static const struct of_device_id starfive_of_match[] = {
+> +       { .compatible = "starfive,jh7100-pinctrl" },
+
+> +       { /* sentinel */ },
+
+No comma needed for terminator entry.
+
+> +};
 
 -- 
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura Ltd.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+With Best Regards,
+Andy Shevchenko
