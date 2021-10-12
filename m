@@ -2,229 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BFFC4321E
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C30C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4EB610A2
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:41:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E86861076
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237521AbhJLPm7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Oct 2021 11:42:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237529AbhJLPm4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Oct 2021 11:42:56 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519A2C06174E;
-        Tue, 12 Oct 2021 08:40:54 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id r18so1070519edv.12;
-        Tue, 12 Oct 2021 08:40:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5vws6sMTfuIUpw/tvRD3yV733Vt/oKMHzkN1nuZ1vds=;
-        b=W3xuWRdAGjqLW7kMpsg6EzCDJGX+u7T8LbQwJnFITwMyQKXIV+thrIH5pReBwQgCq7
-         ZH3X6jKa7UFFPcWtOPWMdXDrEIQfxZbduQGtKW/O1ZeJXRM+F0wPKEXurRE8B+iQzPhu
-         yG9dxc1aY8Y2KeK8Okq0cbZ1o81PJjEN7HDbJRnKeDcsH196twyl9vgszt3TrTvBMllb
-         6sfbgEGN5xJG5zuEGjWoUvBhLhPLnXRI/u/l+xQb4n4my06ipQuykRARukvF814i8gjs
-         0xfxNnpUv/thnQA1nh0ufzM6D/6UMWw46n3n/Zl2y6XXLnqA5DE958HXKXJgKufKp87P
-         am8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5vws6sMTfuIUpw/tvRD3yV733Vt/oKMHzkN1nuZ1vds=;
-        b=b79y5g2IUsI7Oen662XjeD+d/wIjkYtngOFpWEGufZLO9kONwe2V4MuY5URbiPtFFf
-         fffV04QOpcWzYLOhdOEjiZH7Ghm3JgDM2FpXTJ5Cw/V451n1wx49vTPo5/jMJX++n5Hj
-         db0bt2hWdeyBhX3RnReGQNhc/FG2qY8VWxuX8F3+uRZke04n2T9b3nIWViPEePZiYCfE
-         ma0MzZvqwCEPgvex9lAj7jFQwmN7X793Nu1rSB3phZqfvItIxi2qYA0hI2Oc+Ckvm1j2
-         5K3DaDioXK0BXId6AEIzYuM2d6LGqkniLflOw4xGqJjkSQhT+VB08ht94zME4AgHKx+/
-         Atxg==
-X-Gm-Message-State: AOAM531B/eY/53zKnPPIKtBwHeAwp1DBiYJJ771slyQA+9VBcvllQq5V
-        LkHmjUJ94LribG/b9bi2gGqCKtntzlMUefsoswM=
-X-Google-Smtp-Source: ABdhPJw6b5/cDVnUDUOYGlubY3IK7TXocmkqeO4rQjOPiQyeiygR8kyVW5V7QbJJvYNkBUvVfw6qvUxO0QlwIkcVXcQ=
-X-Received: by 2002:a50:e00b:: with SMTP id e11mr651595edl.359.1634053252589;
- Tue, 12 Oct 2021 08:40:52 -0700 (PDT)
+        id S237386AbhJLPpm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Oct 2021 11:45:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237382AbhJLPpm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 12 Oct 2021 11:45:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 613B8610EA;
+        Tue, 12 Oct 2021 15:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634053420;
+        bh=+NcxmneZwUx/KAF+cqk+pHvqjws8+6x2l8OhgWrHevU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qwcmib2Pj7qScOVbfak9KfICE8srqHBjI+ZRC7Q+wI5uoFA8pyr6q3lMorRbHJ+nJ
+         L520NvZxgYUUdORHO5YJaZPXYDQC/+DDJ7qhJfd142GhlsR05uS1++O/2i4jgCDmpt
+         kMno/HuZy0ustZbOyjN/cRO+gxX570sDObyPBXj8NG2xBgeB8nWb0/W6vtVSN+lLss
+         KTgmldBNXNlMVmSBFeG6yaCzfwFjRK4EyAGwcKTtz1OHc3qQTitHqg9SIDs61brcWa
+         Z+uwJtxRbWk14cJOLu7Y/v0nShkMhh1z4pzRpzxwom/VBezFyf5D3uHYMEq2FpuqRc
+         druf5zbu/5q+A==
+Received: by mail-ed1-f49.google.com with SMTP id r18so1101077edv.12;
+        Tue, 12 Oct 2021 08:43:40 -0700 (PDT)
+X-Gm-Message-State: AOAM533QBy3oN+Doqm6OA4U/ABcee0xJENRGTdQKFfBiX+lAoAPST39Y
+        4rsqOOaHP+uANPi6Wze9N15O0R52h4lk5FyA9A==
+X-Google-Smtp-Source: ABdhPJzDPMAET5T6iDEfX4w4s6nnhrxBrU1iVlj20mqSc1ZcQR/zAgPvd4gaR+L1QD+PX3Or/0NH570WwlZYOionBMw=
+X-Received: by 2002:aa7:c357:: with SMTP id j23mr725044edr.145.1634053418356;
+ Tue, 12 Oct 2021 08:43:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211012134027.684712-1-kernel@esmil.dk> <20211012134027.684712-7-kernel@esmil.dk>
-In-Reply-To: <20211012134027.684712-7-kernel@esmil.dk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Oct 2021 21:40:05 +0300
-Message-ID: <CAHp75Vetqi=FMoRxfXHL+d1DhAXgLr+5e7ss1M_Rkhqa07H5Jg@mail.gmail.com>
-Subject: Re: [PATCH v1 06/16] clk: starfive: Add JH7100 clock generator driver
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+References: <20210924071614.868307-1-maxime@cerno.tech> <CAL_JsqL3BUX8jO4X12Au_VAytboisQAoxDYz03rQfDMJjL4EDA@mail.gmail.com>
+ <YWWg0PjnuBCKO3Tq@google.com>
+In-Reply-To: <YWWg0PjnuBCKO3Tq@google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 12 Oct 2021 10:43:26 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKK_ZC95QfDYsKWdFM3bF+DD7wD=R=--6d74DwqHkgexA@mail.gmail.com>
+Message-ID: <CAL_JsqKK_ZC95QfDYsKWdFM3bF+DD7wD=R=--6d74DwqHkgexA@mail.gmail.com>
+Subject: Re: [RESEND v2 1/3] dt-bindings: gpio: Convert X-Powers AXP209 GPIO
+ binding to a schema
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>, Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
         Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 4:42 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+On Tue, Oct 12, 2021 at 9:51 AM Lee Jones <lee.jones@linaro.org> wrote:
 >
-> From: Geert Uytterhoeven <geert@linux-m68k.org>
+> On Tue, 12 Oct 2021, Rob Herring wrote:
 >
-> Add a driver for the StarFive JH7100 clock generator.
+> > On Fri, Sep 24, 2021 at 2:16 AM Maxime Ripard <maxime@cerno.tech> wrote:
+> > >
+> > > The X-Powers AXP PMICs feature a GPIO Controller supported by Linux
+> > > thanks to its device tree binding.
+> > >
+> > > Now that we have the DT validation in place, let's convert the device
+> > > tree bindings for that driver over to a YAML schema.
+> > >
+> > > Cc: Chen-Yu Tsai <wens@csie.org>
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: linux-gpio@vger.kernel.org
+> > > Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > >
+> > > ---
+> > >
+> > > Changes from v1:
+> > >   - Removed the example and moved it in the mfd schema
+> > > ---
+> > >  .../devicetree/bindings/gpio/gpio-axp209.txt  | 75 -------------------
+> > >  .../bindings/gpio/x-powers,axp209-gpio.yaml   | 55 ++++++++++++++
+> > >  2 files changed, 55 insertions(+), 75 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/gpio/x-powers,axp209-gpio.yaml
+> >
+> > This one not being applied with the rest of the series is also
+> > breaking linux-next.
+> >
+> > b4 am -P_ -sl -o - 20210924071614.868307-1-maxime@cerno.tech | git am
+>
+> Thanks for the link.
+>
+> Seeing as there are no *real* dependencies, it would be better for
+> Linus to take the patch (if he's okay with it of course).
 
-...
+Only that 'make dt_binding_check' is broken for anyone using your
+branch (and linux-next ATM). It's as real as a broken build due to a
+missing header. If you don't think this is a problem, then don't apply
+MFD binding patches.
 
-> +config CLK_STARFIVE_JH7100
-> +       bool "StarFive JH7100 clock support"
-> +       depends on SOC_STARFIVE || COMPILE_TEST
-
-> +       depends on OF
-
-Why? I haven't found a compile dependency, so you reduce the test
-scope (when COMPILE_TEST=y).
-
-...
-
-You are using
-bits.h
-mod_devicetable.h
-which are not here
-
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/device.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/overflow.h>
-> +#include <linux/platform_device.h>
-
-...
-
-> +       value |= readl_relaxed(reg) & ~mask;
-
-value is not masked, is it okay?
-
-Usual pattern for this kind of operations is
-
-value = (current & ~mask) | (value & mask);
-
-> +       writel_relaxed(value, reg);
-
-...
-
-> +       if (div > max)
-> +               div = max;
-> +
-> +       return div;
-
-return min(div, max); ?
-
-...
-
-> +       rate = parent / div;
-> +       if (rate < req->min_rate && div > 1) {
-> +               div -= 1;
-> +               rate = parent / div;
-> +       }
-
-Seems like homegrown DIV_ROUND_UP() or so. Who will guarantee that
-decreasing div by 1 will satisfy the conditional again?
-
-...
-
-> +#ifdef CONFIG_DEBUG_FS
-
-Perhaps __maybe_unused?
-
-> +#else
-> +#define jh7100_clk_debug_init NULL
-> +#endif
-
-...
-
-> +       if (idx >= JH7100_CLK_END) {
-
-> +               dev_err(priv->dev, "%s: invalid index %u\n", __func__, idx);
-
-__func__ means that the message has no value on its own. Make it
-unique without using __func__, or drop completely.
-
-> +               return ERR_PTR(-EINVAL);
-> +       }
-
-...
-
-> +       for (idx = 0; idx < JH7100_CLK_PLL0_OUT; idx++) {
-> +               struct clk_init_data init = {
-> +                       .name = jh7100_clk_data[idx].name,
-> +                       .ops = jh7100_clk_data[idx].ops,
-
-> +                       .num_parents = ((jh7100_clk_data[idx].max & JH7100_CLK_MUX_MASK)
-> +                                       >> JH7100_CLK_MUX_SHIFT) + 1,
-
-With temporary variable this can be better written, or consider
-something like this
-
-                       .num_parents =
-                               ((jh7100_clk_data[idx].max &
-JH7100_CLK_MUX_MASK) >> JH7100_CLK_MUX_SHIFT) + 1,
-
-> +                       .flags = jh7100_clk_data[idx].flags,
-> +               };
-> +               struct jh7100_clk *clk = &priv->reg[idx];
-
-...
-
-> +       while (idx > 0)
-> +               clk_hw_unregister(&priv->reg[--idx].hw);
-
-The
-
-       while (idx--)
-               clk_hw_unregister(&priv->reg[idx].hw);
-
-is slightly better to read.
-
-> +       return ret;
-> +}
-
-...
-
-> +static int __init clk_starfive_jh7100_init(void)
-> +{
-> +       return platform_driver_probe(&clk_starfive_jh7100_driver,
-> +                                    clk_starfive_jh7100_probe);
-> +}
-
-> +
-
-No need to have this blank line.
-> +subsys_initcall(clk_starfive_jh7100_init);
-
-Any  explanation why subsys_initcall() is in use?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Rob
