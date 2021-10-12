@@ -2,100 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1DDC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80642C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 466E660E0B
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6882B610CE
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Oct 2021 15:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237237AbhJLPX3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Oct 2021 11:23:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
+        id S237480AbhJLPl4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Oct 2021 11:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234023AbhJLPX2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Oct 2021 11:23:28 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0F9FC061570;
-        Tue, 12 Oct 2021 08:21:26 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id ec8so983514edb.6;
-        Tue, 12 Oct 2021 08:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fgwbge5K1EzbR8VI8a8H+Le1NZKMMr2m8pTON2xUTN8=;
-        b=QzV9YbjGsg5t2ZQdqkJweilCwjmv4f72WtizTfjRD1Z69nHKwlfIiVk9MKiRlbEJ3M
-         TIHpw/FxnC/HP+5SA6hgP4KYPicWuytgbi9wK8eIt5nmUVSYpScMPgY+o8EiY28/GHw6
-         N0FLqSe4XHbska7BuYvfFGFuLxwQ5ehC37hDLaiWT7iLXWenpcMsDHXEpDwkNw1UoluY
-         bChBoNeZU/DB1fJvp9iHrNPflFh88J+rkZLx20pNvxo6J434CKGA8xip4fm0zZb645PF
-         duqJZMT7VmJha6C2jowMLglzgpTLnF6hzYtGuX12RQEr/03u8EZDNEWZlzQ1sAhaIRMH
-         /WBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fgwbge5K1EzbR8VI8a8H+Le1NZKMMr2m8pTON2xUTN8=;
-        b=ql1gq/UdrhrACr1IUteuY3VLxmplPBKQ6W7wz143v3hFtUUgBWkbuSema1UN+kB2z8
-         9cMdMtVaY+51VAKEwezmdPOUJNj4NOfNFMf8uZbkGNQCfExrOT4ixrcGJ+dTvTHhcJQM
-         9BkN350mNRCoxEUb/djSlFesBebCPTC6G3U4+fc6mZyiKh2SsJoZkmAiTIbhxs0dikvM
-         beEOWlSnQbF1yuy1yxuzVufAQokh5w0T74y3CJd7gDkdJNk0JMfsvYCBAU6EU8/eA+85
-         1F90qZXadAFWvqcu8fmo8u9j63G+jzyqjuTuEBVoRrTpoxotqfRkQpqeZsWuh9Tzflvg
-         LTJg==
-X-Gm-Message-State: AOAM531n9Uv/bkapCZM1Qbs63HCg+3bBi0KS461YQ4gFar2YNvVB9Ngw
-        bYF+dIkplp0xmVwu3Xh+vj/m37h9QTcOkZWXwroB+vtnfwMhSQ==
-X-Google-Smtp-Source: ABdhPJyH2Cr0E/CmRn2fpGIMT6foljvhODeW0WmDCNiwPWy1V5M7oQBd/zsMp/jE5RFRB/+ZUOCr7c7fggDU4sXQp/0=
-X-Received: by 2002:a05:6402:143b:: with SMTP id c27mr606000edx.224.1634052084925;
- Tue, 12 Oct 2021 08:21:24 -0700 (PDT)
+        with ESMTP id S237246AbhJLPl4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Oct 2021 11:41:56 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41DCAC061570
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Oct 2021 08:39:54 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1maJsd-0008NQ-Up; Tue, 12 Oct 2021 17:39:52 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1maJsb-0004ib-Ab; Tue, 12 Oct 2021 17:39:49 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1maJsb-0004Xk-9i; Tue, 12 Oct 2021 17:39:49 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [PATCH v2 03/20] gpio: mc33880: Drop if with an always false condition
+Date:   Tue, 12 Oct 2021 17:39:28 +0200
+Message-Id: <20211012153945.2651412-4-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211012153945.2651412-1-u.kleine-koenig@pengutronix.de>
+References: <20211012153945.2651412-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-References: <20211012134027.684712-1-kernel@esmil.dk> <20211012134027.684712-2-kernel@esmil.dk>
-In-Reply-To: <20211012134027.684712-2-kernel@esmil.dk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Oct 2021 21:20:37 +0300
-Message-ID: <CAHp75VcCCxPmnzoE5PSxtODdguoKa7VA1r2yrJRLQ=gOAevu2Q@mail.gmail.com>
-Subject: Re: [PATCH v1 01/16] RISC-V: Add StarFive SoC Kconfig option
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+X-Patch-Hashes: v=1; h=sha256; i=U928Zsjke4PePvMRBLGBdH7AFPIzISeqQDiRVuernkA=; m=KxvpK5Ffg66PylsxXar0DvY3vkY/yY2nG7ASvrBO71A=; p=CeVmNWRKcwk9K6MjZI6ZUG5Bs+V4ag4EumMETP3nWgo=; g=d918bff0a84daefa24b904c36ae4cfaf68e06a4f
+X-Patch-Sig: m=pgp; i=u.kleine-koenig@pengutronix.de; s=0x0D2511F322BFAB1C1580266BE2DCDD9132669BD6; b=iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmFlrAEACgkQwfwUeK3K7AnyWAf/cY7 yIK3QC8W2j0EfS6xGFjlrb+SfAplc0oqDaUPqZQC2ZAoLPzzEQ/ToYVRaa7pvxDaQGDzA1zCJW6Zm GgQlxiRoDQjrYRswm323xiICx5ecoy5l/sdVEJ1kXl5gIsVaDC70yYV/b6BiCIQiAoo8WofQcThJV Rx2SY2ABGCtwiPvugTbVuMDdA87UfYSaKseBBa4QzoJhaU9A2zMFitBmrI9V+NjkTLgdlxJtq+i// fnOjLcdeu6Z/LRjIf3QW2PQhf+3pagEBk0SV/IEejaVOtKkU9w9BX98YREH3zAZc30CApRlv1wF9h pF8risKiCCfCChA2ivow4xtXn/989Ew==
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 4:42 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
->
-> Add StarFive Kconfig option to select SoC specific and common drivers
-> required for these SoCs.
+An spi remove callback is only called for devices that probed
+successfully. In this case this implies that mc33880_probe() set a
+non-NULL driver data. So the check for mc being NULL is never true and
+the check can be dropped.
 
-...
+Also the return value ofspi remove callbacks is ignored anyway.
 
-> +       select SERIAL_8250_DW
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/gpio/gpio-mc33880.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Is it critical for boot? Why?
-
+diff --git a/drivers/gpio/gpio-mc33880.c b/drivers/gpio/gpio-mc33880.c
+index f8194f7c6186..31d2be1bebc8 100644
+--- a/drivers/gpio/gpio-mc33880.c
++++ b/drivers/gpio/gpio-mc33880.c
+@@ -139,8 +139,6 @@ static int mc33880_remove(struct spi_device *spi)
+ 	struct mc33880 *mc;
+ 
+ 	mc = spi_get_drvdata(spi);
+-	if (!mc)
+-		return -ENODEV;
+ 
+ 	gpiochip_remove(&mc->chip);
+ 	mutex_destroy(&mc->lock);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.30.2
+
