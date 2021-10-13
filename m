@@ -2,102 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68890C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Oct 2021 17:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A213C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Oct 2021 18:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1FC6113E
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Oct 2021 17:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CBD0610E8
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Oct 2021 18:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbhJMRzn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Oct 2021 13:55:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238159AbhJMRzm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Oct 2021 13:55:42 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC36C061570
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Oct 2021 10:53:38 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id i20so13114344edj.10
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Oct 2021 10:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vL4wHlXoObWaIJMSvBAH6mZwwplVWNyO56sQB7dapM0=;
-        b=2dnJLUKCx3K8k6fe4zGbY7WUtBRVBbtEbodzjAjTbKDCvn4VI68gWEPjuCOqpkPp/V
-         c5PpJSWrPVO5JGQimGHojdmLzaCGu0ouUAtd93GLWlifhwz0jkbhHT94YMv/29NeHJMX
-         mR0iHW9EW83TvnmB1ke9D7RylbWDYCCeATLYA8xlWlIEcsZeUL040Mzl3a1mgn827Nxh
-         t1p7HoSoVI5pILkj5Y0gM7XXv/LhHrfKi9OzAnNT74zI5CFttqyjODSRpwrGrJ787zKm
-         CcI3ISJpaA84IdgI+j8EcX6HYRFpi8FzmmsRlRPYGDr481IUESWaJu0hn1ii0MsdqU2p
-         ubBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vL4wHlXoObWaIJMSvBAH6mZwwplVWNyO56sQB7dapM0=;
-        b=lvv6rGx3bgV60ccWDXtHFtGSUFuxjg1JzIzXxJqN8453P16rUtzXs74cJpBZoOcndO
-         4hFeZDFsJE1YUfLRk9t6dfHaQJEeKfRYw1d7Gq2HMe/bGH5Mf9PVcG4XkjQMSQjkBYiC
-         JyIE+684H+ZhNxgXzEMYIXrw2fxLwowMxAbHSVMYZwn5IW0xRY34KZf+n00AQt6EkEDO
-         EvheLUI+Tk5O2+EjELJzFuq4iPNXnacanHN2cVV/9icQFt5vao2TqbramyZZWY+RNAFq
-         7OtnqA7HEQN137MnE9I4Dm/ADuANsPn4JZmDkcFjMOBX1BGDjQl0Wg69aP9WSb3WApQp
-         sJDQ==
-X-Gm-Message-State: AOAM533c7SFpYN7cnn9ZMCvVVyCm4fPkOrtJBUxQfwNroP2wJ3o8fQyl
-        Yifv+s7NTO6DzhttdgHFz6ubzJerlb8Wqw//wjS10g==
-X-Google-Smtp-Source: ABdhPJwGLvGKJU0T4kkxzDIrIomjfXEHdeUC+7jxo1/eKA4gya0frJUJrIpmu+tpnhWl1oJJTZAy3XPSevWXUtNtx5U=
-X-Received: by 2002:a17:907:2bc2:: with SMTP id gv2mr733986ejc.433.1634147617387;
- Wed, 13 Oct 2021 10:53:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211012153945.2651412-1-u.kleine-koenig@pengutronix.de> <20211012153945.2651412-4-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20211012153945.2651412-4-u.kleine-koenig@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 13 Oct 2021 19:53:26 +0200
-Message-ID: <CAMRc=Mcx1+dXwUQNnpKGtq7_nCMQo7xxDLUs5mJ=bVRT8-CuHw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/20] gpio: mc33880: Drop if with an always false condition
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
+        id S238475AbhJMS0s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Oct 2021 14:26:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:59191 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229814AbhJMS0r (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 13 Oct 2021 14:26:47 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10136"; a="208300343"
+X-IronPort-AV: E=Sophos;i="5.85,371,1624345200"; 
+   d="scan'208";a="208300343"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2021 11:24:44 -0700
+X-IronPort-AV: E=Sophos;i="5.85,371,1624345200"; 
+   d="scan'208";a="441751910"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.159])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2021 11:24:41 -0700
+Received: from andy by smile with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1malje-0002nh-H5;
+        Thu, 14 Oct 2021 00:24:26 +0300
+Date:   Thu, 14 Oct 2021 00:24:26 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: Re: [PATCH v3 1/3] driver core: Provide device_match_acpi_handle()
+ helper
+Message-ID: <YWdOilxGqREXPBAm@smile.fi.intel.com>
+References: <20211007171815.28336-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0h2=LZ8YX9MP6_dcyyybRQC6rii-r1Lc_Ss1XFFBUiSGQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0h2=LZ8YX9MP6_dcyyybRQC6rii-r1Lc_Ss1XFFBUiSGQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 5:39 PM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> An spi remove callback is only called for devices that probed
-> successfully. In this case this implies that mc33880_probe() set a
-> non-NULL driver data. So the check for mc being NULL is never true and
-> the check can be dropped.
->
-> Also the return value ofspi remove callbacks is ignored anyway.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
->  drivers/gpio/gpio-mc33880.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mc33880.c b/drivers/gpio/gpio-mc33880.c
-> index f8194f7c6186..31d2be1bebc8 100644
-> --- a/drivers/gpio/gpio-mc33880.c
-> +++ b/drivers/gpio/gpio-mc33880.c
-> @@ -139,8 +139,6 @@ static int mc33880_remove(struct spi_device *spi)
->         struct mc33880 *mc;
->
->         mc =3D spi_get_drvdata(spi);
-> -       if (!mc)
-> -               return -ENODEV;
->
->         gpiochip_remove(&mc->chip);
->         mutex_destroy(&mc->lock);
-> --
-> 2.30.2
->
+On Wed, Oct 13, 2021 at 07:47:37PM +0200, Rafael J. Wysocki wrote:
+> On Thu, Oct 7, 2021 at 7:18 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > We have couple of users of this helper, make it available for them.
+> 
+> "a couple"?
 
-Applied, thanks!
+Yep.
 
-Bart
+> >  EXPORT_SYMBOL(device_match_acpi_dev);
+> >
+> > +int device_match_acpi_handle(struct device *dev, const void *handle)
+> 
+> Hmmm.  Should the second arg be of type acpi_handle?
+
+acpi_handle is not defined as struct and it means the header, where the
+prototype is declared, will require acpi.h to be included. Besides that the
+whole set of device_match_*() is done by the same prototype, so it can be used
+in bus_find_device() calls.
+
+> And doesn't this function belong to the ACPI core?  It is related to
+> acpi_bus_get_device() and such which are located there.
+
+Same as above. I don't think so.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
