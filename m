@@ -2,80 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C25C43217
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 13:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A39FC433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 14:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5CE61029
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 13:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 430CB6109E
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 14:31:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbhJNNuQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Oct 2021 09:50:16 -0400
-Received: from mga12.intel.com ([192.55.52.136]:10895 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231388AbhJNNuP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 Oct 2021 09:50:15 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10136"; a="207792678"
-X-IronPort-AV: E=Sophos;i="5.85,372,1624345200"; 
-   d="scan'208";a="207792678"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2021 06:48:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,372,1624345200"; 
-   d="scan'208";a="481265455"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 14 Oct 2021 06:47:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 73C3D36E; Thu, 14 Oct 2021 16:48:04 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        id S231893AbhJNOdO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Oct 2021 10:33:14 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:43656 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231953AbhJNOdM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Oct 2021 10:33:12 -0400
+Received: by mail-ot1-f44.google.com with SMTP id x33-20020a9d37a4000000b0054733a85462so8448921otb.10;
+        Thu, 14 Oct 2021 07:31:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=JabzPd6t6kiXfNS0QYCpjwDF/E/73IVEaQ8WDMarIkg=;
+        b=U/ZxhQV7AjQy6/jUHkbBjyOW2ksN5gwVLm4KnL/R/FukNlUtz5cv4kq5cvglz89HqY
+         RZmrQsXPEkMx7iN01sHZ8/lhoWjhqY5NEAa6vYa8KIhHofAO9Lsm03iyZJYvILeK2RmZ
+         f/Zmj6bU8PWXKNNLbpi32IcyoruLdGI7hgtN+o9Fk7Iu8UHu8nFgkkh04qwQzE5f1RUv
+         tz6oEL6oAqAqF/i5wdy931oUXMXAlKqh6xaVlyf1UQ5Ih5wG4MBsQpq31MQovSyk/jg0
+         JyzIr3a+xcAHFcvK0fx6PQeDdoZdZ1eYYuqN79r0FLT6rNne3UrNahrWVNBCq0OtiVtm
+         O2Eg==
+X-Gm-Message-State: AOAM533Bs6qGv6FD2H1GGulQNYRDwQPwtxomP7RibVcvlR+ePzGseLZl
+        DmKOK9sPJjUndpLqRPg9kCxC1wvWVA==
+X-Google-Smtp-Source: ABdhPJypLKHSBFnjx8VIYSyTZnzAgk5HudrAyzN092U6WAhsRHGoKcjoUIe6YeTN3COcJ3sBkiy3UA==
+X-Received: by 2002:a05:6830:349d:: with SMTP id c29mr622633otu.263.1634221867483;
+        Thu, 14 Oct 2021 07:31:07 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id j65sm604298oif.5.2021.10.14.07.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Oct 2021 07:31:06 -0700 (PDT)
+Received: (nullmailer pid 3295885 invoked by uid 1000);
+        Thu, 14 Oct 2021 14:31:04 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        monstr@monstr.eu, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH v4 3/3] gpiolib: acpi: Replace custom code with device_match_acpi_handle()
-Date:   Thu, 14 Oct 2021 16:47:56 +0300
-Message-Id: <20211014134756.39092-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211014134756.39092-1-andriy.shevchenko@linux.intel.com>
-References: <20211014134756.39092-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
+        linux-arm-kernel@lists.infradead.org, git@xilinx.com
+In-Reply-To: <72c973da5670b5ae81d050c582948894ee4174f8.1634206453.git.michal.simek@xilinx.com>
+References: <72c973da5670b5ae81d050c582948894ee4174f8.1634206453.git.michal.simek@xilinx.com>
+Subject: Re: [PATCH] dt-bindings: gpio: zynq: Add missing compatible strings
+Date:   Thu, 14 Oct 2021 09:31:04 -0500
+Message-Id: <1634221864.213975.3295884.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since driver core provides a generic device_match_acpi_handle()
-we may replace the custom code with it.
+On Thu, 14 Oct 2021 12:14:18 +0200, Michal Simek wrote:
+> "xlnx,zynqmp-gpio-1.0", "xlnx,versal-gpio-1.0" and "xlnx,pmc-gpio-1.0"
+> compatible strings were not moved to yaml format. But they were in origin
+> text file.
+> 
+> Fixes: 45ca16072b70 ("dt-bindings: gpio: zynq: convert bindings to YAML")
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+> 
+>  Documentation/devicetree/bindings/gpio/gpio-zynq.yaml | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v4: no changes
- drivers/gpio/gpiolib-acpi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 47712b6903b5..985e8589c58b 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -95,10 +95,7 @@ static bool acpi_gpio_deferred_req_irqs_done;
- 
- static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
- {
--	if (!gc->parent)
--		return false;
--
--	return ACPI_HANDLE(gc->parent) == data;
-+	return gc->parent && device_match_acpi_handle(gc->parent, data);
- }
- 
- /**
--- 
-2.33.0
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
+
+Full log is available here: https://patchwork.ozlabs.org/patch/1540859
+
+
+gpio@ff0a0000: '#address-cells', 'gpio-line-names', 'power-domains' do not match any of the regexes: 'pinctrl-[0-9]+'
+	arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dt.yaml
+
+gpio@ff0a0000: '#address-cells', 'power-domains' do not match any of the regexes: 'pinctrl-[0-9]+'
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1232-revA.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1254-revA.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1275-revA.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1751-xm015-dc1.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1751-xm016-dc2.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1751-xm017-dc3.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1751-xm018-dc4.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zc1751-xm019-dc5.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revB.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revC.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dt.yaml
+	arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dt.yaml
 
