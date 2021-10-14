@@ -2,88 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B13C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 12:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED103C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 13:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0C6260C49
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 12:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6489610CC
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 13:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbhJNMsc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Oct 2021 08:48:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53924 "EHLO mail.kernel.org"
+        id S231452AbhJNNuF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Oct 2021 09:50:05 -0400
+Received: from mga04.intel.com ([192.55.52.120]:33255 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229912AbhJNMsb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 Oct 2021 08:48:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9A6D260C49;
-        Thu, 14 Oct 2021 12:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634215586;
-        bh=XbSRCH8PSEwEGv16RGZ3qTyIO0oHwkvF7BoEkM58F4U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GdSq9XsvyTQmqXKd3Ssaim1lnll2uBFlNEqF1D3/OsbsYOojgFlx/TRfSfeUDepM3
-         4Myzw9aNL2srK2wBlQ/dRl15BeH8ehSmf64yBxWWgXFNtDl1yv+trAQHY3Tg1fRk8v
-         1CzqZs6IvzU/Sm8UQjGBw8SHHxfrNtyfr8lmx/QK/JXiXAZQq/BWuc9pUE3B8HF3Fa
-         xqXD1aiPn6MImF8P7tKmX4QP2P7xoLiAcviL5iAvXXPZ4qSsUnDIDJ/JrUB9vGXZHg
-         53j2xu98vlkoq8U9UrSVJN5JZOtv0eKUzHFI6BSuI98evflCPN3Q4wi/Q1oYyq3B2D
-         OO2jKt+9Hj8vg==
-Received: by mail-ed1-f46.google.com with SMTP id ec8so23805486edb.6;
-        Thu, 14 Oct 2021 05:46:26 -0700 (PDT)
-X-Gm-Message-State: AOAM530q2sYS3oTs8lY7t1Bg8aHc5yZwekYGmOHWwvbpXJKFV4DE306z
-        xP1chESRF8BoxEvBd/7feqZbXI9s+2BQtPYYVA==
-X-Google-Smtp-Source: ABdhPJxckYEhRUOh622IWcX2ltVSYroafWoIFCPByyFwbACExBb1A1o94FlwmqlA+hE13l9617JKTwNkRyh6l34NmWQ=
-X-Received: by 2002:a05:6402:27d3:: with SMTP id c19mr8295232ede.70.1634215584892;
- Thu, 14 Oct 2021 05:46:24 -0700 (PDT)
+        id S231388AbhJNNuF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 14 Oct 2021 09:50:05 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10136"; a="226447913"
+X-IronPort-AV: E=Sophos;i="5.85,372,1624345200"; 
+   d="scan'208";a="226447913"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2021 06:48:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,372,1624345200"; 
+   d="scan'208";a="659972121"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga005.jf.intel.com with ESMTP; 14 Oct 2021 06:47:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 6791B2E4; Thu, 14 Oct 2021 16:48:04 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: [PATCH v4 2/3] i2c: acpi: Replace custom function with device_match_acpi_handle()
+Date:   Thu, 14 Oct 2021 16:47:55 +0300
+Message-Id: <20211014134756.39092-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211014134756.39092-1-andriy.shevchenko@linux.intel.com>
+References: <20211014134756.39092-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20211007144019.7461-1-jbx6244@gmail.com> <1633661172.660863.1409603.nullmailer@robh.at.kernel.org>
- <CACRpkdYArdPwEVf_5pwsROKPjbnVAtU3mf9v1z6WXGPoBb=SZg@mail.gmail.com>
-In-Reply-To: <CACRpkdYArdPwEVf_5pwsROKPjbnVAtU3mf9v1z6WXGPoBb=SZg@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 14 Oct 2021 07:46:13 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLKizR0tPrmxzM0cGFjj8dzARuU45gkvYn-giZ0SNXCaw@mail.gmail.com>
-Message-ID: <CAL_JsqLKizR0tPrmxzM0cGFjj8dzARuU45gkvYn-giZ0SNXCaw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: convert rockchip,pinctrl.txt
- to YAML
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Johan Jonker <jbx6244@gmail.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 5:32 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Fri, Oct 8, 2021 at 4:46 AM Rob Herring <robh@kernel.org> wrote:
->
-> > On Thu, 07 Oct 2021 16:40:17 +0200, Johan Jonker wrote:
-> > > Convert rockchip,pinctrl.txt to YAML
-> > >
-> > > Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> > > ---
-> > >
-> > > Changed V3:
-> (...)
-> > Running 'make dtbs_check' with the schema in this patch gives the
-> > following warnings. Consider if they are expected or the schema is
-> > incorrect. These may not be new warnings.
->
-> Rob can you tell me how you like me to handle this?
-> Do we merge the nice new bindings and deal with the
-> aftermath or do we need to fix the DTS files in the same
-> patch series?
+Since driver core provides a generic device_match_acpi_handle()
+we may replace the custom one with it. This unifies code to find
+an adapter with the similar one which finds a client.
 
-Did the next paragraph not answer that? Added back:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Wolfram Sang <wsa@kernel.org>
+---
+v4: added tag (Wolfram)
+ drivers/i2c/i2c-core-acpi.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-> > Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-> > This will change in the future.
+diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+index 7ea2ac712a57..0aea776cd4c9 100644
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -398,24 +398,20 @@ u32 i2c_acpi_find_bus_speed(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(i2c_acpi_find_bus_speed);
+ 
+-static int i2c_acpi_find_match_adapter(struct device *dev, const void *data)
+-{
+-	struct i2c_adapter *adapter = i2c_verify_adapter(dev);
+-
+-	if (!adapter)
+-		return 0;
+-
+-	return ACPI_HANDLE(dev) == (acpi_handle)data;
+-}
+-
+ struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
+ {
++	struct i2c_adapter *adapter;
+ 	struct device *dev;
+ 
+-	dev = bus_find_device(&i2c_bus_type, NULL, handle,
+-			      i2c_acpi_find_match_adapter);
++	dev = bus_find_device(&i2c_bus_type, NULL, handle, device_match_acpi_handle);
++	if (!dev)
++		return NULL;
++
++	adapter = i2c_verify_adapter(dev);
++	if (!adapter)
++		put_device(dev);
+ 
+-	return dev ? i2c_verify_adapter(dev) : NULL;
++	return adapter;
+ }
+ EXPORT_SYMBOL_GPL(i2c_acpi_find_adapter_by_handle);
+ 
+-- 
+2.33.0
 
-So no requirement to fix the dtb warnings immediately nor create any
-merge dependency.
-
-Rob
