@@ -2,110 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E106CC4167B
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 14:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E578C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 14:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB6086109E
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 14:31:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A6C061156
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Oct 2021 14:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232009AbhJNOdY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Oct 2021 10:33:24 -0400
-Received: from mail-oo1-f47.google.com ([209.85.161.47]:33316 "EHLO
-        mail-oo1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231956AbhJNOdT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Oct 2021 10:33:19 -0400
-Received: by mail-oo1-f47.google.com with SMTP id u5-20020a4ab5c5000000b002b6a2a05065so1960170ooo.0;
-        Thu, 14 Oct 2021 07:31:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=4cNofa+G4dhjMSIDHBWRSxnSxUlK6Lt3DNvniT5Wl2Q=;
-        b=qU8uxv/pzYAvvLkeOWQ/fb6s7P1vG9QfCmAr91ifJVKhddBhU9Bac7jEqI5uuGPGj7
-         yYKDHVZz17qw/PK4yHtVjGyvCkBUUz1gQreg6QhoS03PBlBQanlI33KBFFO2sx625Xzt
-         oNVYF+UC8k06AbmU52ggR9KJJA7Sq2AglwfJy0CN/0kXdNPfv+I8iq7BQcTMSb5bZuok
-         OLEo9ofWxrcsNUa2GA5NdCNCOOvGwaBUJkN0BMfAlF1hfhkKZESdrsx0Luk75lmrI2z1
-         VeGUwqu6uj+wnFljuqfo7xs1Gh9AaHVl84DoRm32ualC2KKGAU15IbBSpWNmD0miG5Gp
-         I/bA==
-X-Gm-Message-State: AOAM532JzHiTCHh7hjSe72pb1IhOFeFb9ILZIQh+YMuhALtlUncU/SkX
-        IUH7ttj5qbNQXtpOIqA41Q==
-X-Google-Smtp-Source: ABdhPJy9Rh4sKWGiPLtzJei6nJmXJAXjFDgOaH5xk78UYN7aJpCxe7aso4p9zzX06/Ktp2RSAaWvIA==
-X-Received: by 2002:a4a:a38d:: with SMTP id s13mr4345196ool.60.1634221874182;
-        Thu, 14 Oct 2021 07:31:14 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id e1sm664619oiw.16.2021.10.14.07.31.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Oct 2021 07:31:13 -0700 (PDT)
-Received: (nullmailer pid 3295877 invoked by uid 1000);
-        Thu, 14 Oct 2021 14:31:04 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
-        John Crispin <john@phrozen.org>,
-        linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20211014075836.17681-2-sam.shih@mediatek.com>
-References: <20211014075836.17681-1-sam.shih@mediatek.com> <20211014075836.17681-2-sam.shih@mediatek.com>
-Subject: Re: [PATCH v7 1/4] dt-bindings: pinctrl: update bindings for MT7986 SoC
-Date:   Thu, 14 Oct 2021 09:31:04 -0500
-Message-Id: <1634221864.165084.3295876.nullmailer@robh.at.kernel.org>
+        id S231318AbhJNOiG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Oct 2021 10:38:06 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:3259 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230190AbhJNOiF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Oct 2021 10:38:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1634222161; x=1665758161;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UKR5vWCNAno42pYINcB56F+Pp43CdX14ETbyIT5ZJIE=;
+  b=nTMRZCxtF/9FlO3KQ+OJ8eP+zipDJoNUiJXFesovnC6jGcIP5oyGnPwx
+   f0eUCI02P6WNbUrdBWXpB8C+5Ci3t0nZ3MU7hsHHku5nB9A/e5hk+NjLD
+   4HAwMYZWFLktrVKvOzvN8pdkSZsDzYm8WcRtMaml35NZ8jr6INXIuN48X
+   nqtiBhi8XQ00rxWNPTzOcbafgPKNHNCNYSD+9JvZx9PjnySmdf+Vj0iL/
+   91d/ZM3dUxu5I1UtbEuGx+vkJ+grVqyMPzXjuY5cSrzKul0fUF58lGpW3
+   3zhDtPH9fLcQBVJ/BgOyfdhDINWKH3UEoZaqAlLgUARLKO0f5mMHuGyKC
+   g==;
+IronPort-SDR: d+BId0l/vwLu4oBH7WCcy4CC1hRX5GfLxzG3TEWawvTRBPtcFMbCtQXmqjo8hNdV+IgHLQyvuR
+ g96YwPTZVfzII8Z51wwTCgp+297MaRniVrh2iuBLuqJN4VIZ9PdVCau9RMycnZMxcPqyeZYAPF
+ bz3Mk/s2FyLHUrNNg+NmSAU4Q2oHrAGxVGYo4ZDXxt4+ZrhdCI0O8L8Ju0nhNjE6w+i7khBxc6
+ XlvJ1sbu5NIpsDT9eV06C4LcwA3DL/Kf4BSlV/LPt0h3vMrWTA8yvbZAeSqg0OOlBjrxcXuTPh
+ IkFY3b7qthC/QuYMdgxw3JYz
+X-IronPort-AV: E=Sophos;i="5.85,372,1624345200"; 
+   d="scan'208";a="140290254"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Oct 2021 07:36:00 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 14 Oct 2021 07:36:00 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Thu, 14 Oct 2021 07:35:59 -0700
+Date:   Thu, 14 Oct 2021 16:37:33 +0200
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+CC:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <lars.povlsen@microchip.com>, <Steen.Hegelund@microchip.com>,
+        <UNGLinuxDriver@microchip.com>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] pinctrl: microchip sgpio: use reset driver
+Message-ID: <20211014143733.t2dov6ajjebxlht6@soft-dev3-1.localhost>
+References: <20211014085929.2579695-1-horatiu.vultur@microchip.com>
+ <20211014085929.2579695-3-horatiu.vultur@microchip.com>
+ <2874212d2f9462880d1b0aae35296162e1277e62.camel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <2874212d2f9462880d1b0aae35296162e1277e62.camel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 14 Oct 2021 15:58:33 +0800, Sam Shih wrote:
-> This updates bindings for MT7986 pinctrl driver. The
-> difference of pinctrl between mt7986a and mt7986b is that pin-41 to
-> pin-65 do not exist on mt7986b
+The 10/14/2021 13:47, Philipp Zabel wrote:
 > 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Hi Horatiu,
+
+Hi Philipp
 > 
-> ---
-> v7 : updated pinctcl node binding description, and separate pinctrl
->      part into a single patch series
+> > +     reset = devm_reset_control_get_shared(&pdev->dev, "switch");
 > 
-> Original thread:
-> https://lore.kernel.org/all/8348ed3e-c561-ad7e-fe9e-a31ed346d8d0@gmail.com/
+> Please use devm_reset_control_get_optional_shared() for optional resets
+> and handle errors. That will return NULL in case the optional reset is
+> not specified in the device tree.
+
+I will do that.
+
 > 
-> v6 : fixed yamllint warnings/errors v2
-> v5 : fixed yamllint warnings/errors v1
-> v4 : used yaml format instead of txt format document
-> v3 : make mt7986 pinctrl bindings as a separate file
-> v2 : deleted the redundant description of mt7986a/mt7986b
-> ---
->  .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 364 ++++++++++++++++++
->  1 file changed, 364 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+> It seems weird to me that the reset input to the GPIO controller is
+> called "switch" reset. You can request a single unnamed reset with
 > 
+>         reset = devm_reset_control_get_shared(&pdev->dev, NULL);
+> 
+> although that would limit future extendability in case this driver will
+> ever require to handle multiple separate resets. If you decide to
+> request the reset control by name, the yaml binding should specify the
+> same name.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+I think this requires a little bit more explanation from my side. On
+lan966x we are facing the following issue. When we try to reset just the
+switch core then also the sgpio device was reset and there was no way
+from HW perspective to prevent this.
 
-yamllint warnings/errors:
+So our solutions was to create a reset driver[1] that will be triggered
+only one time, by the sgpio driver or by the switch driver. That is the
+reason why it was called "switch" reset. And that is the purpose of this
+patch to allow the sgpio driver to reset the switch in case is probed
+before the switch driver so it would not get reset after that.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dts:52.36-57.15: ERROR (duplicate_node_names): /example-0/soc/pinctrl@1001f000/uart1-pins: Duplicate node name
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1441: dt_binding_check] Error 2
+> 
+> > +     if (!IS_ERR(reset))
+> > +             reset_control_reset(reset);
+> 
+> With optional resets, this can be just:
+> 
+>         reset_control_reset(reset);
 
-doc reference errors (make refcheckdocs):
+Great I will do that.
 
-See https://patchwork.ozlabs.org/patch/1540821
+> 
+> regards
+> Philipp
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+[1] https://lore.kernel.org/lkml/20211013073807.2282230-1-horatiu.vultur@microchip.com/
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+-- 
+/Horatiu
