@@ -2,196 +2,195 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5DFC433F5
-	for <linux-gpio@archiver.kernel.org>; Sun, 17 Oct 2021 11:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828ECC4321E
+	for <linux-gpio@archiver.kernel.org>; Sun, 17 Oct 2021 14:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE6C360F46
-	for <linux-gpio@archiver.kernel.org>; Sun, 17 Oct 2021 11:37:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B7DA610A3
+	for <linux-gpio@archiver.kernel.org>; Sun, 17 Oct 2021 14:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245540AbhJQLkA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 17 Oct 2021 07:40:00 -0400
-Received: from mga01.intel.com ([192.55.52.88]:40167 "EHLO mga01.intel.com"
+        id S1343823AbhJQOOj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 17 Oct 2021 10:14:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245539AbhJQLj7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 17 Oct 2021 07:39:59 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10139"; a="251559666"
-X-IronPort-AV: E=Sophos;i="5.85,380,1624345200"; 
-   d="scan'208";a="251559666"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2021 04:37:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,380,1624345200"; 
-   d="scan'208";a="482357541"
-Received: from lkp-server02.sh.intel.com (HELO 08b2c502c3de) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2021 04:37:48 -0700
-Received: from kbuild by 08b2c502c3de with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mc4U6-000AHA-Oz; Sun, 17 Oct 2021 11:37:46 +0000
-Date:   Sun, 17 Oct 2021 19:37:04 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- c3a23d0ef189e607c18cd94dccc5e8d818adcdf6
-Message-ID: <616c0ae0.yw/OGpyxEshzwvEu%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S238183AbhJQOOi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 17 Oct 2021 10:14:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C7F0604DB;
+        Sun, 17 Oct 2021 14:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634479948;
+        bh=RmSMKTg5TcL3qjURkxbM+BvVnDKiX6oL/7vB+Xbd55c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p9N+SfeMaoSGCiyxtDBec1UPv6WMgXjFcy/M3JLFPbVafXBNaxdjpG9B30dDW+YCM
+         1w7o17spKr/RDQdS/NDnncfMCzYUuyBikegmGijUFJIAFKXC6JxKBQkOyxWpOPSkMG
+         Xcf3Ny84a19kDTXcxLIlTN6rmnIPZn1mjgXZZ9+Dc8WFgbhY12z4AcuEe7HWqRja5M
+         sJePhxIZkZFRjmpYsRgp1Xe1IXRkzbSJzbuO1E9W0NfEhJS5mWuBnyV95F9ShTR0m/
+         N7QNQaMRxo2QFps6aw3PgKihE2TivErXbQejJdKE4pf9mljG1KyIeEc1cS3pdn6VoR
+         5yxzQIavynIbg==
+Date:   Sun, 17 Oct 2021 16:12:19 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
+Message-ID: <YWwvQ+YMAKzX1aO3@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <20211013105226.20225-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="byZ/nyBYz0KyHzOz"
+Content-Disposition: inline
+In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: c3a23d0ef189e607c18cd94dccc5e8d818adcdf6  Merge branch 'devel' into for-next
 
-elapsed time: 721m
+--byZ/nyBYz0KyHzOz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-configs tested: 135
-configs skipped: 4
+On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
+> This will enable cleanups down the road.
+> The idea is to disable cbs, then add "flush_queued_cbs" callback
+> as a parameter, this way drivers can flush any work
+> queued after callbacks have been disabled.
+>=20
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C changes
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-h8300                       h8s-sim_defconfig
-arc                     haps_hs_smp_defconfig
-powerpc                     tqm5200_defconfig
-sh                             sh03_defconfig
-sh                  sh7785lcr_32bit_defconfig
-arm                         axm55xx_defconfig
-sh                          landisk_defconfig
-arm                           tegra_defconfig
-arm                        oxnas_v6_defconfig
-arm                         orion5x_defconfig
-riscv                    nommu_k210_defconfig
-nios2                         10m50_defconfig
-sh                   sh7770_generic_defconfig
-mips                          rb532_defconfig
-arc                          axs103_defconfig
-powerpc                       ebony_defconfig
-s390                             alldefconfig
-sh                        dreamcast_defconfig
-openrisc                 simple_smp_defconfig
-sh                          sdk7786_defconfig
-m68k                       bvme6000_defconfig
-arm                     am200epdkit_defconfig
-powerpc                      chrp32_defconfig
-mips                     loongson1b_defconfig
-mips                           xway_defconfig
-ia64                        generic_defconfig
-arm                           h5000_defconfig
-arc                         haps_hs_defconfig
-arm                        keystone_defconfig
-arm                  colibri_pxa270_defconfig
-sh                        edosk7705_defconfig
-sh                         ap325rxa_defconfig
-sh                           se7751_defconfig
-m68k                        m5272c3_defconfig
-arm                           viper_defconfig
-powerpc                    adder875_defconfig
-arm                             mxs_defconfig
-m68k                          hp300_defconfig
-powerpc                     ep8248e_defconfig
-powerpc                     sequoia_defconfig
-sh                     magicpanelr2_defconfig
-powerpc                 xes_mpc85xx_defconfig
-riscv                               defconfig
-microblaze                      mmu_defconfig
-mips                     cu1000-neo_defconfig
-arm                          pcm027_defconfig
-arc                           tb10x_defconfig
-h8300                            allyesconfig
-mips                           gcw0_defconfig
-powerpc                  iss476-smp_defconfig
-powerpc                  mpc866_ads_defconfig
-sh                 kfr2r09-romimage_defconfig
-arc                 nsimosci_hs_smp_defconfig
-ia64                          tiger_defconfig
-powerpc                 mpc837x_rdb_defconfig
-arm                  randconfig-c002-20211017
-i386                 randconfig-c001-20211017
-x86_64               randconfig-c001-20211017
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                                defconfig
-m68k                             allmodconfig
-m68k                             allyesconfig
-nds32                               defconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-nios2                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-xtensa                           allyesconfig
-parisc                              defconfig
-s390                                defconfig
-parisc                           allyesconfig
-s390                             allyesconfig
-s390                             allmodconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-i386                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a012-20211017
-x86_64               randconfig-a015-20211017
-x86_64               randconfig-a016-20211017
-x86_64               randconfig-a014-20211017
-x86_64               randconfig-a011-20211017
-x86_64               randconfig-a013-20211017
-i386                 randconfig-a016-20211017
-i386                 randconfig-a014-20211017
-i386                 randconfig-a011-20211017
-i386                 randconfig-a015-20211017
-i386                 randconfig-a012-20211017
-i386                 randconfig-a013-20211017
-arc                  randconfig-r043-20211017
-s390                 randconfig-r044-20211017
-riscv                randconfig-r042-20211017
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                          rv32_defconfig
-riscv                            allyesconfig
-riscv                            allmodconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-x86_64                           allyesconfig
 
-clang tested configs:
-x86_64               randconfig-a006-20211017
-x86_64               randconfig-a004-20211017
-x86_64               randconfig-a001-20211017
-x86_64               randconfig-a005-20211017
-x86_64               randconfig-a002-20211017
-x86_64               randconfig-a003-20211017
-i386                 randconfig-a003-20211017
-i386                 randconfig-a001-20211017
-i386                 randconfig-a005-20211017
-i386                 randconfig-a004-20211017
-i386                 randconfig-a002-20211017
-i386                 randconfig-a006-20211017
-hexagon              randconfig-r041-20211017
-hexagon              randconfig-r045-20211017
+--byZ/nyBYz0KyHzOz
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFsLz8ACgkQFA3kzBSg
+KbbhcRAAqrAP/5XyaQEyoVcqsJ6xfTgBJXC8/fUFVary0yMagmjEQLKzCbVBRQiF
+UyKdQuoAJkemPBp13oZuYHgojk26k9r+hRKLoXigmy0tMboLZisXMh7/pcFDyz2e
+1C+0lbx3IQ5Q9LV590CAlOS1i7wPOXFDW0LkIu1mb8TX2Z2NU4G7Tz9TQlGBXO39
+MhIC6ggPDf141nztlFknKIlcLzpBXatCQrhN7cdcr3LxTjoKa20bHHVIGokKmFma
+sJK0vVc5vuqlye+Ea8AZ1jzol4xFQRcSHoNCC5MfHUfxVaJ3mvYQ6jXl9cAfYkLN
+0V5IehblsGFyBZ/Kpw/9SnPGTBV2Chs/o4JURyiKp3wVIpkAMagVz9OI4cOC+TTt
+8007Fqv9jQtFpu+w9FC3//i0C+JiUH12eYjCt8Me4FZC4EHIosqfm8i7yRB+MZIv
+WtaR04OJSlPS/DVFNb1AhUrvITU7uOw2fvVRyyC33iPXIJpvDoyoS9voJTGWYxRn
+u7CYO2yy9EfLoB6bPLn4wbfk1TUlbBpSuuycqOpSfjJ0CSEK0d/t4fKkwsDZ+gxb
+bS6NiNuzBiaxzsm8EUVR1q+gqY46ywMDIOYmbBykiXipERJofhxjro8Czauj9+b6
+FgdQ6J1aFiV8/k36NqD1M5WdM3VecyPECGa7Ba2Nce+uc/k8jCw=
+=Y+5l
+-----END PGP SIGNATURE-----
+
+--byZ/nyBYz0KyHzOz--
