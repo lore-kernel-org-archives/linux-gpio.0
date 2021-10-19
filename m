@@ -2,83 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB2CC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 07:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCDFC43217
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 08:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9CC4611EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 07:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7AFE613DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 08:04:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234357AbhJSHHw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Oct 2021 03:07:52 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:11251 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234304AbhJSHHv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Oct 2021 03:07:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1634627140; x=1666163140;
-  h=message-id:subject:from:to:date:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=E2JqTr0sfmprfmXR10/j2F7yLEYic33j/+AfHhLsyuE=;
-  b=B8bX74/r9dszTsuvnpLN48OpwaDNnEingRSLlpReCMP6PYlDeGoIcn88
-   qok6TC5foFwRKfPtDdA4qQNstg7EBhG8/EQfDMOJqtNbiyEfBRUQJ4oWa
-   Jh2qzvIxnVOOsZ7e5B0wKSu+D+WOnc3oV+u8BKUacPjjIPA3R1/Jc/egH
-   hFmGX/ZVoL1FTj56iin94FvfrhTglswQ8mFdVnfJF41FEmTL/bn9V8Tu2
-   hk2sRkhmC+AZRwb0SWhnbRYnGJEpPIG24b0yZsDC6B5UMsKzl47qu9XY7
-   uAajkRPjYWQm1DyfVfHNKIF3DDJ+/zgN6wz6i/N60dnPS9ikRFHjTtWHv
-   g==;
-IronPort-SDR: 7v21Wd4/rlBRGNh7rD58ibn7fWw4MTPSgSOGKVteCfxXYSsVmdrDzXvBPPMe3ImzKRqckS6Z17
- amBlp9rb/jUdH4+mIEgJaKF1Wp3ggGucjkfZ1VPEOE+lx4PctanDwj/1LLVQ0FWXKBwtgbMlwz
- mW26h3H805khUIRAfEhEGwQ0rM5UcruAqDemwCcvj2DaWKBVc1NcJOQLJv/vfQj5zLzZzlwPzv
- UQ8C+W6T5nmqJk44MyHNg4eDVgpfbCWcysopbS0Tr36QtnRdV1bKiQn/a7og/1dyJA21pZa1xM
- sXHde+fSuhfoeFme+5BQZYPG
-X-IronPort-AV: E=Sophos;i="5.85,383,1624345200"; 
-   d="scan'208";a="140250818"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Oct 2021 00:05:39 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 19 Oct 2021 00:05:38 -0700
-Received: from [10.205.21.35] (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Tue, 19 Oct 2021 00:05:36 -0700
-Message-ID: <93cd70be182298ea0a782ceee83526997fd8734b.camel@microchip.com>
-Subject: Re: [PATCH v6 2/2] pinctrl: microchip sgpio: use reset driver
-From:   Steen Hegelund <steen.hegelund@microchip.com>
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-        <UNGLinuxDriver@microchip.com>, <p.zabel@pengutronix.de>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Tue, 19 Oct 2021 09:05:35 +0200
-In-Reply-To: <20211018085754.1066056-3-horatiu.vultur@microchip.com>
-References: <20211018085754.1066056-1-horatiu.vultur@microchip.com>
-         <20211018085754.1066056-3-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.40.4 
+        id S234778AbhJSIGp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Oct 2021 04:06:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234711AbhJSIGk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 19 Oct 2021 04:06:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B6A76138F;
+        Tue, 19 Oct 2021 08:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634630667;
+        bh=1KoIdQOJKC+q8eSROHr3duOzqfc7i0BTRJOLtAaUpjA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=X5AXMhDYKI5rwQEKGv0/MhrxK3IsFJe3JbUJ87IC+iW+r6fCIBgRpQZNVN2GD4xYc
+         P4kcALrzgy5W5FsFG5baL2bIxGQCcVJtgsAcqQwiOObGHqRBvq6oDCjP9p90/me+gt
+         Nm+syWhy/WP5Ephay1hWIe2j5APgcZ5dxj6m4tnXM827TELV/DbGaEKlYc+nmAQXw9
+         OxNHnLOdZPZ5ee2uxlKHlLD+oyu2RaC5kBr2qDDYBG0aV/+1Np3pEeggX/OqEt1sYJ
+         8XJta33BObU2i6WU7S59NmZ+pamaR/zzIb+tM+IAEmfNFYYA9pd3YUXYqoDsKGad2H
+         /5NgcyDgxXIJw==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1mck6j-001oJm-9w; Tue, 19 Oct 2021 09:04:25 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 20/23] dt-bindings: mfd: update x-powers,axp152.yaml reference
+Date:   Tue, 19 Oct 2021 09:04:19 +0100
+Message-Id: <aedef820f4dc9af5d3a3fcce2ad733d75e1ad4f0.1634630486.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1634630485.git.mchehab+huawei@kernel.org>
+References: <cover.1634630485.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 2021-10-18 at 10:57 +0200, Horatiu Vultur wrote:
-> On lan966x platform when the switch gets reseted then also the sgpio
-> gets reseted. The fix for this is to extend also the sgpio driver to
-> call the reset driver which will be reseted only once by the first
-> driver that is probed.
-> 
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Changeset f38d3e404326 ("dt-bindings: mfd: Convert X-Powers AXP binding to a schema")
+renamed: Documentation/devicetree/bindings/mfd/axp20x.txt
+to: Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml.
 
-Reviewed-by: Steen Hegelund <steen.hegelund@microchip.com> 
+Update its cross-reference accordingly.
 
+Fixes: f38d3e404326 ("dt-bindings: mfd: Convert X-Powers AXP binding to a schema")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+
+To mailbombing on a large number of people, only mailing lists were C/C on the cover.
+See [PATCH v3 00/23] at: https://lore.kernel.org/all/cover.1634630485.git.mchehab+huawei@kernel.org/
+
+ Documentation/devicetree/bindings/gpio/gpio-axp209.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+index fc42b2caa06d..538f04e60ff9 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+@@ -17,7 +17,7 @@ Required properties:
+ - gpio-controller: Marks the device node as a GPIO controller.
+ 
+ This node must be a subnode of the axp20x PMIC, documented in
+-Documentation/devicetree/bindings/mfd/axp20x.txt
++Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
+ 
+ Example:
+ 
 -- 
-BR
-Steen
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=
-steen.hegelund@microchip.com
-
+2.31.1
 
