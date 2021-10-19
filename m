@@ -2,351 +2,215 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E40C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 14:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FAAC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 16:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D4AA6137D
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 14:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4A0661175
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 16:04:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233839AbhJSOwV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Oct 2021 10:52:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41076 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233928AbhJSOwF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Oct 2021 10:52:05 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0316C06177C
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Oct 2021 07:49:28 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id s198-20020a1ca9cf000000b0030d6986ea9fso3301408wme.1
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Oct 2021 07:49:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jMwKeDx1xIluS3Y035lgALsVGvJn3c2xJ25VMV8QOGs=;
-        b=d5OV6axjaaW3HY62xWBS/mJAitWnIu7hNZhBo0xLnYj0sPR8SECroaHaKL0iST38x1
-         V9wDpUc18lSmsoaryOwS93wvpKYb/QeCN1DrvIb8WtC23/7rzmgEGZA8RIfbGgY/AfUw
-         WFvwcgY8oS0uBxCdYMF17QOlc4O2o1m/P6FV4Te6QrIlKp0RYHrsaVDyrPavmu/Zlc6i
-         cJyF18ZNjunogRUfJVRzWt6o111aPhDiwVequdpePRky3IXck0hw0HgUfyzLG7qaWQD+
-         dnFeDmqKhYJoFoOXGEyxHPWHMaIPuVDeOl32eGm6TflD4vaMurAuEnnqTIdiTF2ahaAx
-         iiMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jMwKeDx1xIluS3Y035lgALsVGvJn3c2xJ25VMV8QOGs=;
-        b=VrSqhVLrq8MVXQifn2styN0l4/SbqZ/ogkSaMOX2ZeJJB85KeyR9V/VQ7luZGr25Rd
-         8zWMh7iRTgoqz+d7GGaEMWmtkbVJOBeiymqMhAKpwho53mshLzOtHTxtBQDzefwxT3fm
-         qxSolfB1qryUt9ISuDn0WcYCWUnYYiG47ct4BvZRRMpoNsZTC+5ylf7MFeOHKlZsU2UK
-         Ev0YofCV/F4f2eDvZD/WNR0bILrHZ/MR/QRA+XXYqA1iQE+EAtnw3RusDJ4KOk4Qbfg1
-         9tFmXGoZwiUSRXR9thkjF62fzp/UqQgEorWxsFRo9PEm2RxoZD0XCaODRwCYVeoRtoah
-         FrWA==
-X-Gm-Message-State: AOAM531kNzwSzKH4so7MX78KYMnKZkgxs/FbOVVuEOV3EyGBM4fRYgtY
-        25pYhOJ+wexsms7hH+On8PPuNA==
-X-Google-Smtp-Source: ABdhPJw68Xm7j5jX3xpVx1k96ImK4Fftt66JIDJngLbjqppjKdUbYxogns/Gi9++m0tBdlD9OA76Lw==
-X-Received: by 2002:adf:ead0:: with SMTP id o16mr13067340wrn.106.1634654967258;
-        Tue, 19 Oct 2021 07:49:27 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
-        by smtp.gmail.com with ESMTPSA id j1sm16212752wrd.28.2021.10.19.07.49.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 07:49:27 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
-        Shuah Khan <shuah@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jack Winch <sunt.un.morcov@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v8 8/8] selftests: gpio: add test cases for gpio-sim
-Date:   Tue, 19 Oct 2021 16:49:09 +0200
-Message-Id: <20211019144909.21959-9-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20211019144909.21959-1-brgl@bgdev.pl>
-References: <20211019144909.21959-1-brgl@bgdev.pl>
+        id S230168AbhJSQGh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Oct 2021 12:06:37 -0400
+Received: from mail-bn8nam11on2071.outbound.protection.outlook.com ([40.107.236.71]:25697
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232144AbhJSQGg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 19 Oct 2021 12:06:36 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nEVYqR5RdAoto9rATDzkW5YPy5TIvoXBjlD8iiEcO2g3CLwNgT4t361QaNN9qPzMtiRk77mn8AkoJ2I6xy8Wxu2e9okQ0I5j/mqN5MbjAs0VHJ/6OTTfoOdCedXrdGfEpOjyDQVLBIxMz7T43AC3P+Bi8xilCMIoHaavksBb0041CyPW857NQkNHqA6dzmXoj2V85RaB2lzjkJ0qWSOjsgwKluOv0nsWcdkbEPvgGCLkhLtjp7rKH6ye6bL1sy/PsGl5ghrLa/m11e91P6BmiVPchPVLH1NBb5idAwYC7X4OHp7OZvRJG3Qj2KMp84PLN7Bm4ajg18TcTGZdpHYY6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8Vdyt6RZ3ESmgarHk2T8Z7XDrLbsnx4n0voM5VkJOlo=;
+ b=oDMXrcT9B9vEzVxFpucVnwcRtBUml53Lh3UWvTFH+e//8RbfREkvYEZnKWOa7WfU8OnqsaR38Qvm6bilZzUgI9hyJ5SlOEsJGq4Q5yx9Jn3HOPRHRlZYJNw6FcrkYNhVpVm/fWf8GpuuEkEFmNP/q6TkDoTwTvEYQ7BHI/yC8Wduz6RVtskBboKDxnTTerY5W5Kgj6yPwKWE7zmAJHA5zqxzywqqGMFDqOY5V/2BtKFcqK7AO+d4uEf3cla5qOKeKWdC9YLq4IrmcdUm9P67VCDI15q7G8MXX1iBpHJEvn7bgk+4JrgbvDWfBQ0HfYzYNG9MdmQR9J/QmHEU90rqaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8Vdyt6RZ3ESmgarHk2T8Z7XDrLbsnx4n0voM5VkJOlo=;
+ b=u9xhcielQsauwuNhzJRfwSArZES7sHuHqLbahlGpslWzLMcAgoEWXwm8Qdr4REqzbomVda6Th/iLC/mCJIHI0lvIBCqJ4Ou07WgYgkbB3IU/4PDtZG92CZBj18A5vrIZp3R1r+kcNzakZKUEVfS2IpIVHlHiS1izg81pcXkqREM=
+Received: from MW4PR04CA0048.namprd04.prod.outlook.com (2603:10b6:303:6a::23)
+ by MWHPR12MB1710.namprd12.prod.outlook.com (2603:10b6:300:114::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.16; Tue, 19 Oct
+ 2021 16:04:20 +0000
+Received: from CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:6a:cafe::5c) by MW4PR04CA0048.outlook.office365.com
+ (2603:10b6:303:6a::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.18 via Frontend
+ Transport; Tue, 19 Oct 2021 16:04:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com;
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1NAM11FT007.mail.protection.outlook.com (10.13.174.131) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4608.15 via Frontend Transport; Tue, 19 Oct 2021 16:04:19 +0000
+Received: from AUS-LX-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.15; Tue, 19 Oct
+ 2021 11:04:14 -0500
+From:   Mario Limonciello <mario.limonciello@amd.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+CC:     "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Joerie de Gram <j.de.gram@gmail.com>
+Subject: [PATCH v3 2/2] pinctrl: amd: Fix wakeups when IRQ is shared with SCI
+Date:   Tue, 19 Oct 2021 11:04:01 -0500
+Message-ID: <20211019160401.8296-2-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20211019160401.8296-1-mario.limonciello@amd.com>
+References: <20211019160401.8296-1-mario.limonciello@amd.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4eccdfb3-22b7-42ac-16a6-08d9931a1c07
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1710:
+X-Microsoft-Antispam-PRVS: <MWHPR12MB17107E2AB6E1F7D0AE4D4BA0E2BD9@MWHPR12MB1710.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ay9XKx541qV7dnjIlo/Rs88b0kXyRrq+lKwLaTVAYb9KPdR8OPoXywRBCWP0v30s6MFOJBlgAJ71OsJIugkj+EVlncWFnjFXdRj8QB0bTKA3OWCJc//3vT2wLX/Ddz64Mj9JESHwOQFzlZB1r6QgFhHkwldutt3lwhcueS9ebkqYckt7FkpiE1bHTIdFptJWw0YZQW68mot5hBMszXjOkKg2oppVcOMPgQcqEbU21CcktA04ZO9Q0T6fGJQc3qql0l+VGkxTRdl2jnBx94d6kFOzMB0UeVV+5vrIlyuQ0aV+MYjnDap7KH8+OEVwS9QzRBV3BPcV6bKlcthWmofTntZ72eQcVwqU+NgdMvkUdHW4XLMl7kGv/GaF/sl+OUDfhrT+mMErOxT+GzwIGGSAGYnC7MbBpgmDKHxkKobQ4PCQvb5mz9wOH+/2seEjoJ2L60MCpwUUcs2p8M5XrOaeUDJarvqqQhlKXuQe78JbYrmb3mKzZenWtHoD/gnbeAgm/wKeEbp48gNl88bmPXQSzagFP3g6nxw3nAKQ/eLMzidQy3+VtgRVeYOi7GDf65aMBk2GBsxOgVJqLNdbUBhqDL6vPYeqi970gNMDwNxpYZ5lR8EEagO0jK19k0jpPDcStL+r3x7G8bmGOAx8S+JhQl0ov5fVGNdGu0lkBbAupNFAvLVHfPzWdmeDVXoUkMtjqg65l8nkPI+SRZ6feN1v077Oh0b4Z9hI29f/N3gLk6o=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(70586007)(336012)(2616005)(508600001)(426003)(1076003)(186003)(86362001)(81166007)(8936002)(8676002)(47076005)(6636002)(36756003)(36860700001)(110136005)(26005)(16526019)(356005)(7696005)(2906002)(5660300002)(44832011)(70206006)(83380400001)(4326008)(54906003)(6666004)(966005)(316002)(82310400003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2021 16:04:19.6876
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4eccdfb3-22b7-42ac-16a6-08d9931a1c07
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1710
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a set of tests for the new gpio-sim module. This is a pure shell
-test-suite and uses the helper programs available in the gpio selftests
-directory. These test-cases only test the functionalities exposed by the
-gpio-sim driver, not those handled by core gpiolib code.
+On some Lenovo AMD Gen2 platforms the IRQ for the SCI and pinctrl drivers
+are shared.  Due to how the s2idle loop handling works, this case needs
+an extra explicit check whether the interrupt was caused by SCI or by
+the GPIO controller.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+To fix this rework the existing IRQ handler function to function as a
+checker and an IRQ handler depending on the calling arguments.
+
+BugLink: https://gitlab.freedesktop.org/drm/amd/-/issues/1738
+Reported-by: Joerie de Gram <j.de.gram@gmail.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 ---
- tools/testing/selftests/gpio/Makefile    |   2 +-
- tools/testing/selftests/gpio/config      |   1 +
- tools/testing/selftests/gpio/gpio-sim.sh | 229 +++++++++++++++++++++++
- 3 files changed, 231 insertions(+), 1 deletion(-)
- create mode 100755 tools/testing/selftests/gpio/gpio-sim.sh
+Note:
+ This is *possibly* a fix from fdde0ff8590b, 56b991849009 or other
+ changes in the acpi_s2idle_wake handling, but AMD didn't support
+ s2idle across the kernel widely until 5.14 or later. This is the
+ reason for lack of a fixes tag.
+Changes from v2->v3:
+ * Add new precursor patch for fixing missing ACPI function stubs
+ * Add __maybe_unused for unused function when set with COMPILE_TEST
+Changes from v1->v2:
+ * drop Kconfig changes to drop COMPILE_TEST, instead #ifdef CONFIG_ACPI
+ * fix a logic error during wakeup
+ * Use IRQ_RETVAL()
+ drivers/pinctrl/pinctrl-amd.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index d7d8f1985d99..4c6df61c76a8 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index d19974aceb2e..1272ecd8791f 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -598,16 +598,16 @@ static struct irq_chip amd_gpio_irqchip = {
  
--TEST_PROGS := gpio-mockup.sh
-+TEST_PROGS := gpio-mockup.sh gpio-sim.sh
- TEST_FILES := gpio-mockup-sysfs.sh
- TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
+ #define PIN_IRQ_PENDING	(BIT(INTERRUPT_STS_OFF) | BIT(WAKE_STS_OFF))
  
-diff --git a/tools/testing/selftests/gpio/config b/tools/testing/selftests/gpio/config
-index ce100342c20b..409a8532facc 100644
---- a/tools/testing/selftests/gpio/config
-+++ b/tools/testing/selftests/gpio/config
-@@ -1,3 +1,4 @@
- CONFIG_GPIOLIB=y
- CONFIG_GPIO_CDEV=y
- CONFIG_GPIO_MOCKUP=m
-+CONFIG_GPIO_SIM=m
-diff --git a/tools/testing/selftests/gpio/gpio-sim.sh b/tools/testing/selftests/gpio/gpio-sim.sh
-new file mode 100755
-index 000000000000..fcca6ec611f8
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-sim.sh
-@@ -0,0 +1,229 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2021 Bartosz Golaszewski <bgolaszewski@baylibre.com>
+-static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
++static bool _amd_gpio_irq_handler(int irq, void *dev_id)
+ {
+ 	struct amd_gpio *gpio_dev = dev_id;
+ 	struct gpio_chip *gc = &gpio_dev->gc;
+-	irqreturn_t ret = IRQ_NONE;
+ 	unsigned int i, irqnr;
+ 	unsigned long flags;
+ 	u32 __iomem *regs;
+ 	u32  regval;
+ 	u64 status, mask;
++	bool ret = false;
+ 
+ 	/* Read the wake status */
+ 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+@@ -627,6 +627,12 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+ 		/* Each status bit covers four pins */
+ 		for (i = 0; i < 4; i++) {
+ 			regval = readl(regs + i);
++			/* called from resume context on a shared IRQ, just
++			 * checking wake source.
++			 */
++			if (irq < 0 && (regval & BIT(WAKE_STS_OFF)))
++				return true;
 +
-+BASE_DIR=`dirname $0`
-+CONFIGFS_DIR="/sys/kernel/config/gpio-sim"
-+PENDING_DIR=$CONFIGFS_DIR/pending
-+LIVE_DIR=$CONFIGFS_DIR/live
-+MODULE="gpio-sim"
-+
-+fail() {
-+	echo "$*" >&2
-+	echo "GPIO $MODULE test FAIL"
-+	exit 1
+ 			if (!(regval & PIN_IRQ_PENDING) ||
+ 			    !(regval & BIT(INTERRUPT_MASK_OFF)))
+ 				continue;
+@@ -652,9 +658,12 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+ 			}
+ 			writel(regval, regs + i);
+ 			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+-			ret = IRQ_HANDLED;
++			ret = true;
+ 		}
+ 	}
++	/* called from resume context on shared IRQ but didn't cause wake */
++	if (irq < 0)
++		return false;
+ 
+ 	/* Signal EOI to the GPIO unit */
+ 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+@@ -666,6 +675,16 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+ 	return ret;
+ }
+ 
++static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
++{
++	return IRQ_RETVAL(_amd_gpio_irq_handler(irq, dev_id));
 +}
 +
-+skip() {
-+	echo "$*" >&2
-+	echo "GPIO $MODULE test SKIP"
-+	exit 4
++static bool __maybe_unused amd_gpio_check_wake(void *dev_id)
++{
++	return _amd_gpio_irq_handler(-1, dev_id);
 +}
 +
-+configfs_cleanup() {
-+	for DIR in `ls $LIVE_DIR`; do
-+		mv $LIVE_DIR/$DIR $PENDING_DIR
-+	done
-+
-+	for DIR in `ls $PENDING_DIR`; do
-+		rmdir $PENDING_DIR/$DIR
-+	done
-+}
-+
-+create_pending_chip() {
-+	local NAME="$1"
-+	local LABEL="$2"
-+	local NUM_LINES="$3"
-+	local LINE_NAMES="$4"
-+	local CHIP_DIR="$PENDING_DIR/$NAME"
-+
-+	mkdir $CHIP_DIR
-+	test -n "$LABEL" && echo $LABEL > $CHIP_DIR/label
-+	test -n "$NUM_LINES" && echo $NUM_LINES > $CHIP_DIR/num_lines
-+	if [ -n "$LINE_NAMES" ]; then
-+		echo $LINE_NAMES 2> /dev/null > $CHIP_DIR/line_names
-+		# This one can fail
-+		if [ "$?" -ne "0" ]; then
-+			return 1
-+		fi
-+	fi
-+}
-+
-+create_live_chip() {
-+	local CHIP_DIR="$PENDING_DIR/$1"
-+
-+	create_pending_chip "$@" || fail "unable to create the chip configfs item"
-+	mv $CHIP_DIR $LIVE_DIR || fail "unable to commit the chip configfs item"
-+}
-+
-+remove_pending_chip() {
-+	local NAME="$1"
-+
-+	rmdir $PENDING_DIR/$NAME || fail "unable to remove the chip configfs item"
-+}
-+
-+remove_live_chip() {
-+	local NAME="$1"
-+
-+	mv $LIVE_DIR/$NAME $PENDING_DIR || fail "unable to uncommit the chip configfs item"
-+	remove_pending_chip "$@"
-+}
-+
-+configfs_chip_name() {
-+	local CHIP="$1"
-+
-+	cat $LIVE_DIR/$CHIP/chip_name 2> /dev/null || return 1
-+}
-+
-+configfs_dev_name() {
-+	local CHIP="$1"
-+
-+	cat $LIVE_DIR/$CHIP/dev_name 2> /dev/null || return 1
-+}
-+
-+get_chip_num_lines() {
-+	local CHIP="$1"
-+
-+	$BASE_DIR/gpio-chip-info /dev/`configfs_chip_name $CHIP` num-lines
-+}
-+
-+get_chip_label() {
-+	local CHIP="$1"
-+
-+	$BASE_DIR/gpio-chip-info /dev/`configfs_chip_name $CHIP` label
-+}
-+
-+get_line_name() {
-+	local CHIP="$1"
-+	local OFFSET="$2"
-+
-+	$BASE_DIR/gpio-line-name /dev/`configfs_chip_name $CHIP` $OFFSET
-+}
-+
-+sysfs_set_pull() {
-+	local CHIP="$1"
-+	local OFFSET="$2"
-+	local PULL="$3"
-+	local SYSFSPATH="/sys/devices/platform/`configfs_dev_name $CHIP`/line-ctrl/gpio$OFFSET"
-+
-+	echo $PULL > $SYSFSPATH
-+}
-+
-+# Load the gpio-sim module. This will pull in configfs if needed too.
-+modprobe gpio-sim || skip "unable to load the gpio-sim module"
-+# Make sure configfs is mounted at /sys/kernel/config. Wait a bit if needed.
-+for IDX in `seq 5`; do
-+	if [ "$IDX" -eq "5" ]; then
-+		skip "configfs not mounted at /sys/kernel/config"
-+	fi
-+
-+	mountpoint -q /sys/kernel/config && break
-+	sleep 0.1
-+done
-+# If the module was already loaded: remove all previous chips
-+configfs_cleanup
-+
-+trap "exit 1" SIGTERM SIGINT
-+trap configfs_cleanup EXIT
-+
-+echo "1. chip_name and dev_name attributes"
-+
-+echo "1.1. Chip name is communicated to user"
-+create_live_chip chip
-+test -n `cat $LIVE_DIR/chip/chip_name` || fail "chip_name doesn't work"
-+remove_live_chip chip
-+
-+echo "1.2. chip_name returns 'none' if the chip is still pending"
-+create_pending_chip chip
-+test "`cat $PENDING_DIR/chip/chip_name`" = "none" || fail "chip_name doesn't return 'none' for a pending chip"
-+remove_pending_chip chip
-+
-+echo "1.3. Device name is communicated to user"
-+create_live_chip chip
-+test -n `cat $LIVE_DIR/chip/dev_name` || fail "dev_name doesn't work"
-+remove_live_chip chip
-+
-+echo "1.4. dev_name returns 'none' if chip is still pending"
-+create_pending_chip chip
-+test "`cat $PENDING_DIR/chip/dev_name`" = "none" || fail "dev_name doesn't return 'none' for a pending chip"
-+remove_pending_chip chip
-+
-+echo "2. Creating simulated chips"
-+
-+echo "2.1. Default number of lines is 1"
-+create_live_chip chip
-+test "`get_chip_num_lines chip`" = "1" || fail "default number of lines is not 1"
-+remove_live_chip chip
-+
-+echo "2.2. Number of lines can be specified"
-+create_live_chip chip test-label 16
-+test "`get_chip_num_lines chip`" = "16" || fail "number of lines is not 16"
-+remove_live_chip chip
-+
-+echo "2.3. Label can be set"
-+create_live_chip chip foobar
-+test "`get_chip_label chip`" = "foobar" || fail "label is incorrect"
-+remove_live_chip chip
-+
-+echo "2.4. Label can be left empty"
-+create_live_chip chip
-+test -z "`cat $LIVE_DIR/chip/label`" || fail "label is not empty"
-+remove_live_chip chip
-+
-+echo "2.5. Line names can be configured"
-+create_live_chip chip test-label 16 '"foo", "", "bar"'
-+test "`get_line_name chip 0`" = "foo" || fail "line name is incorrect"
-+test "`get_line_name chip 2`" = "bar" || fail "line name is incorrect"
-+remove_live_chip chip
-+
-+echo "2.6. Errors in line names are detected"
-+create_pending_chip chip test-label 8 '"foo", bar' && fail "incorrect line name accepted"
-+remove_pending_chip chip
-+create_pending_chip chip test-label 8 '"foo" "bar"' && fail "incorrect line name accepted"
-+remove_pending_chip chip
-+
-+echo "2.7. Multiple chips can be created"
-+create_live_chip chip0
-+create_live_chip chip1
-+create_live_chip chip2
-+remove_live_chip chip0
-+remove_live_chip chip1
-+remove_live_chip chip2
-+
-+echo "3. Controlling simulated chips"
-+
-+echo "3.3. Pull can be set over sysfs"
-+create_live_chip chip test-label 8
-+sysfs_set_pull chip 0 1
-+$BASE_DIR/gpio-mockup-cdev /dev/`configfs_chip_name chip` 0
-+test "$?" = "1" || fail "pull set incorrectly"
-+sysfs_set_pull chip 0 0
-+$BASE_DIR/gpio-mockup-cdev /dev/`configfs_chip_name chip` 1
-+test "$?" = "0" || fail "pull set incorrectly"
-+remove_live_chip chip
-+
-+echo "3.4. Incorrect input in sysfs is rejected"
-+create_live_chip chip test-label 8
-+SYSFS_PATH="/sys/devices/platform/`configfs_dev_name chip`/line-ctrl/gpio0"
-+echo 2 > $SYSFS_PATH 2> /dev/null && fail "invalid input not detectec"
-+remove_live_chip chip
-+
-+echo "4. Simulated GPIO chips are functional"
-+
-+echo "4.1. Values can be read from sysfs"
-+create_live_chip chip test-label 8
-+SYSFS_PATH="/sys/devices/platform/`configfs_dev_name chip`/line-ctrl/gpio0"
-+test `cat $SYSFS_PATH` = "0" || fail "incorrect value read from sysfs"
-+$BASE_DIR/gpio-mockup-cdev -s 1 /dev/`configfs_chip_name chip` 0 &
-+sleep 0.1 # FIXME Any better way?
-+test `cat $SYSFS_PATH` = "1" || fail "incorrect value read from sysfs"
-+kill $!
-+remove_live_chip chip
-+
-+echo "4.2. Bias settings work correctly"
-+create_live_chip chip test-label 8
-+$BASE_DIR/gpio-mockup-cdev -b pull-up /dev/`configfs_chip_name chip` 0
-+test `cat $SYSFS_PATH` = "1" || fail "bias setting does not work"
-+remove_live_chip chip
-+
-+echo "GPIO $MODULE test PASS"
+ static int amd_get_groups_count(struct pinctrl_dev *pctldev)
+ {
+ 	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
+@@ -1004,6 +1023,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 		goto out2;
+ 
+ 	platform_set_drvdata(pdev, gpio_dev);
++	acpi_register_wakeup_handler(gpio_dev->irq, amd_gpio_check_wake, gpio_dev);
+ 
+ 	dev_dbg(&pdev->dev, "amd gpio driver loaded\n");
+ 	return ret;
+@@ -1021,6 +1041,7 @@ static int amd_gpio_remove(struct platform_device *pdev)
+ 	gpio_dev = platform_get_drvdata(pdev);
+ 
+ 	gpiochip_remove(&gpio_dev->gc);
++	acpi_unregister_wakeup_handler(amd_gpio_check_wake, gpio_dev);
+ 
+ 	return 0;
+ }
 -- 
-2.30.1
+2.25.1
 
