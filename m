@@ -2,135 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD98C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 10:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4558EC433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 11:16:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2799561154
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 10:55:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2395C61057
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Oct 2021 11:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235283AbhJSK5O (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Oct 2021 06:57:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43314 "EHLO
+        id S235383AbhJSLSm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Oct 2021 07:18:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235276AbhJSK5O (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Oct 2021 06:57:14 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99349C061745
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Oct 2021 03:55:01 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id s3so18029131ild.0
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Oct 2021 03:55:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura-hr.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2NDB8D8TfZqCGnqAYnU/I/JJMv1zpQuUUkf40rgGSoU=;
-        b=F1F8n9mmM/9jOrEH9G1XgISAoWRIwy5LUlITNwD9wlj0KsB2LHgLIw9u3IM+YXbvNQ
-         DAeTBy3TjycsDJmKmC3pwY5+CdpI4WNmZzEs21ps4xC5n4VhRsd9XAaLmhs0LpE05VJu
-         LIWVd+b0DAKqJcGCycoJtpskDh39lP+IpIc/zUS6aM715DWz/gXZ0o9x/V6pvTcVuHS5
-         9dUWGNgk751wP66zPuaLN2+QFdqM/p25JMcmj1aHwro/ZFYTJxvNp3HnMy1chtqvpv9M
-         j3wJT7d4slPzJmoV7oJIGCPTL67RotrCGsjcpkCsPIANej3ATKEhVNEUIqoEOQEOhyQF
-         q+gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2NDB8D8TfZqCGnqAYnU/I/JJMv1zpQuUUkf40rgGSoU=;
-        b=zQqKgzIYLtzL/tOJGpg1SqToE3qBgmbW5BaeIAQLVHAJ3FGSh+HBQuG5bAu2weVE4H
-         hTYzLH6HnywIxCeFcFHUfssy2wNSahhshBXpw3oMlve6wRgHMWlPRc2yo4nWyXUYksjY
-         Tn/V/YteM6fQxnTYmtI3dVCar8L/x0mZUdaW3bII4q84dHUfwuQkwxm0k4eRSuh93kXQ
-         waiLztRw9eVn4n97L3qkEkDlt206pcBJGxlxBDxljIursR+rtc5QhYUk5cn6h6uxdCHe
-         +d+Xg4WAhigsrl+jKPK9+oGT7k21hDbimDrnRZHqzcQOrauhuj8hChGLQ0QJgA5Kz8YW
-         h5rg==
-X-Gm-Message-State: AOAM5334VIhM39y3WeRkidE/UJ9IKSAgqIZC+FNPlEYXk1WJWRdkRWml
-        M5Wl+/GHLthfAqWV+SUdNBlLMGbXT19QPbN3UFSpGQ==
-X-Google-Smtp-Source: ABdhPJxIq6mlwrLoaIjqjqH/xMYSi81uzKoeL2stWejW1qsIN7OfNoqGcVTAxWskrY1fYHTeQaLnEkaAh7tYKxq4jHw=
-X-Received: by 2002:a05:6e02:5c4:: with SMTP id l4mr1584439ils.56.1634640901047;
- Tue, 19 Oct 2021 03:55:01 -0700 (PDT)
+        with ESMTP id S235239AbhJSLSl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Oct 2021 07:18:41 -0400
+X-Greylist: delayed 1334 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 19 Oct 2021 04:16:28 PDT
+Received: from chandra.tablix.org (chandra.tablix.org [IPv6:2a00:ee2:100:3a01::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E65D2C06161C
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Oct 2021 04:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tablix.org;
+         s=alpha; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc
+        :To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=i4oGjo+Ih1xjZ8ZY30E1MdBgsqy640tSdXfj5PM0dVw=; b=JEJeHea0YJokQkuEiEjDuZfyhG
+        IXow+s9O7kPdKRoR27+fKQ2xknDBM0hIeTrS8Gto5RZzop4UAGR+GHrZ5cGU6vs8r6rPqNfaciXQQ
+        N6dRLUldE2npEGCM4iAKyWLLEH9RgPyZ8fHrN6x9baxSzj7Q3Owti2kgpLf8e2Vm6tSnpMCnVTAz9
+        0zvraU6u6NgBRUQyXxabU0zEJG65XJJC4HP+X/6XYZRNAZL+bgCv+V8qNlZPZ+L76kj/Jkdun/17Y
+        CbcOnnu1z6CC9Ve2DeAyG4zc7m2qqs+5HfhXAbOkl7aMcqDLodxhGIhem0t/NXsgvFmPYXetrnKNR
+        EHto/OfA==;
+Received: from [2a01:261:355:1d00:9067:d686:f385:2acf] (helo=muffin.lan)
+        by chandra.tablix.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <tomaz.solc@tablix.org>)
+        id 1mcml1-0004jq-D2; Tue, 19 Oct 2021 12:54:11 +0200
+From:   Tomaz Solc <tomaz.solc@tablix.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Tomaz Solc <tomaz.solc@tablix.org>
+Subject: [PATCH 0/2] mcp23s08: add get_direction and PIN_CONFIG_OUTPUT support.
+Date:   Tue, 19 Oct 2021 12:52:48 +0200
+Message-Id: <20211019105250.9405-1-tomaz.solc@tablix.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20210607123317.3242031-1-robert.marko@sartura.hr>
- <20210607123317.3242031-5-robert.marko@sartura.hr> <CA+HBbNH7wcpfQOX2=vZmW78GoWy_WL3Pz-dMKe0N0ebZDp+oUw@mail.gmail.com>
- <20210713222528.GA952399@robh.at.kernel.org> <CA+HBbNFj5+6sLKxmL8XtsZQ48ch8OjTbJ1bwkDC8dfRiOyWY1Q@mail.gmail.com>
- <YW4n7hUIEB320dFv@lunn.ch>
-In-Reply-To: <YW4n7hUIEB320dFv@lunn.ch>
-From:   Robert Marko <robert.marko@sartura.hr>
-Date:   Tue, 19 Oct 2021 12:54:50 +0200
-Message-ID: <CA+HBbNGQ9OCn9T-XW7MUL-H8LkL6Dcot1NExO+xv9gsuPxjLRw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] dt-bindings: mfd: Add Delta TN48M CPLD drivers bindings
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        "Jonathan M. Polom" <jmp@epiphyte.org>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Donald Buczek <buczek@molgen.mpg.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 4:05 AM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > > > > +  GPIO controller module provides GPIO-s for the SFP slots.
-> > > > > +  It is split into 3 controllers, one output only for the SFP TX disable
-> > > > > +  pins, one input only for the SFP present pins and one input only for
-> > > > > +  the SFP LOS pins.
->
-> Late to the conversation, so i might be asking questions already
-> asked...
->
-> So the PLD has restrictions? You have a collection of GPOs and a
-> collection of GPIs? You don't have an GPIOs?
+Motivation for these two patches is setting mcp23s08 outputs on boot from the
+device tree.
 
-Yes, the CPLD is hardwired per board with the specific FW for it.
-There are no true GPIO-s, only input or output pins depending on their
-purpose in the SFP cage.
->
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    enum:
-> > > > > +      - delta,tn48m-gpio-sfp-tx-disable
-> > > > > +      - delta,tn48m-gpio-sfp-present
-> > > > > +      - delta,tn48m-gpio-sfp-los
->
-> Do these names have any real significant? Are you really forced to
-> connect the SFP cage in this dedicated manor? Is there any reason why
-> i cannot use a GPO to control an LED? A GPI for a button?
+gpio-hog was already functional with mcp23s08, however libgpio incorrectly
+showed pins with output-high or output-low hogs as inputs since the driver did
+not implement gpio_chip->get_direction().
 
-Yes, there are connected like this on the TN48M switch, names directly
-match their
-purpose. The CPLD is customized per each switch model, so TN4810M which is the
-48 x 10G SFP+ uses the same CPLD model but is wired differently and
-with a different FW.
-Since it's a CPLD you technically use whatever pin to connect stuff,
-but it completely depends
-on the FW implementation as there is no traditional GPIO block with
-XYZ number of pins.
-I have multiple vendors and models using the same CPLD but its wired
-completely different
-and the register layout is different.
+Many other drivers also support setting pins to output-high or output-low via
+pinmux. In contrast to gpio-hog, using pinmux to set the pin state on boot
+allows the state to be changed later from user space. mcp23s08 did not support
+this since PIN_CONFIG_OUTPUT was not implemented in
+pinconf_ops->pin_config_set().
 
-So you cant force any of the input pins to output mode or change their
-value at all, its all hardwired.
+One issue with the second patch is that pins set to output-high or output-low
+via pinmux still show up as inputs in libgpio after boot. This is because the
+pin direction gets cached in gpio_desc.flags in devm_gpiochip_add_data().
+However output-high/-low in pimux only gets applied after that. I am not sure
+what would be the best approach to fix this.
 
-Regards,
-Robert
->
->         Andrew
+Tomaz Solc (2):
+  pinctrl: mcp23s08: implement get_direction()
+  pinctrl: mcp23s08: support for PIN_CONFIG_OUTPUT.
 
-
+ .../bindings/pinctrl/pinctrl-mcp23s08.txt     | 12 ++--
+ drivers/pinctrl/pinctrl-mcp23s08.c            | 72 ++++++++++++++++---
+ 2 files changed, 68 insertions(+), 16 deletions(-)
 
 -- 
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura Ltd.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+2.20.1
+
