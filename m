@@ -2,54 +2,54 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D63C18E17
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Oct 2021 17:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1659C4707A
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Oct 2021 17:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86CEB608FB
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Oct 2021 17:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3EFE6152B
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Oct 2021 17:42:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232261AbhJURo5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Oct 2021 13:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57040 "EHLO
+        id S231640AbhJURpC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Oct 2021 13:45:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231873AbhJURox (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Oct 2021 13:44:53 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 567EEC0613B9;
-        Thu, 21 Oct 2021 10:42:37 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id a25so343582edx.8;
-        Thu, 21 Oct 2021 10:42:37 -0700 (PDT)
+        with ESMTP id S232339AbhJURpA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Oct 2021 13:45:00 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B4E2C061225;
+        Thu, 21 Oct 2021 10:42:43 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id y12so1795936eda.4;
+        Thu, 21 Oct 2021 10:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MCca8WmqiZmvjsKFOBNufzAInvNjctDyKcXO2F2kBQQ=;
-        b=TQjF/z4gJgAJiNH32UrxrXDgHZj7FpBafMT7G/89Q2si+DDxOMrC9ZRsg0NI2AH3t+
-         tXL/1EYmV8KJazCpVz/3fhhUHNsfKssBIikEmM17eQ8UTMaL5avj3AU/vpILUmZplkMe
-         HwpIoKu1D9SdUWusZndSGEvNvsnJC9yD4RHm/an/ibdRUoJa/HtdH78l9VYlhNuSTczC
-         cCJecHazUnDqsbZY93LGpauBnBob6eVGtErw6BbkIHsVYNq1qL8ARBUVYl2DjUjHl73K
-         FvoWmUFtnPs9x0KS/j0TgJ/AbgpBqJhy4czZ0eWV07dP+b1pIyrFdC22Aas8tgyCnrnb
-         PTVA==
+        bh=x5LltJm0AHQyj+WPNUjS5e7tQDzNwCAlJ2whlsgxBts=;
+        b=qzuVBqgmXZSmarIfC9EXtckDjvas0GCObPlRUyYZinOo74LNnvmxj/S5YfibPG0mVk
+         Cdfy1+cu5nnasZCjg4hZhO6QDZMnwWfeTW2DCeFw5V6I8i6DCQYMsWmXYFaXxSuwQ9Jk
+         56ZHDTkBjHsmsRfxf3mxMslrMRPekBB3oRHOd197hYrZ/aVDK/v7kE7lwGO2xD/8OWn9
+         4Uc74ZlhYVOvgsXSQWx3q493CQefECPgPJUPvG9j+0jHtbM7DrVWkMUQJ7al25Q/E6rf
+         MMuTWNIm/bUgrmDVJRboqjq/yJZPIFHnJ74Lk0Kk6Thja4cEWHKSCL9i38xmgupg6CTD
+         VDZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=MCca8WmqiZmvjsKFOBNufzAInvNjctDyKcXO2F2kBQQ=;
-        b=rXHrSgYxaUQMf1zmiDdvmV7HGZkX4e87TUVekDNcQWsDiccEE4s+Kpi9+Kv0628gMn
-         rm7AbzOQwu7h3u56weZscrNIqf5ZMOpiPGBendiN4U6vayv+rOyAC9bqVxPetUQuTWpy
-         Ar42YUk1ykB7A0H+5+RarvdMg7gcELchoGj1KlBHvkMnb7wVQyunPPYMwgR3puWEQyG1
-         +3pYAvccKVnhHtcra65Jz2FhFqm3Dm0VQmQy1yj+QhGQUX5yvTzyWmry4El2jrC0N8W3
-         5uKLeCrjO5uULkpnnOjrdktLfncOp19LFSZjLQz9jV0hpRsJJMy6/OOoRm6OmaEy1Ycx
-         xm/w==
-X-Gm-Message-State: AOAM531D2MEHcEm5+lenU8p+c61oiaYoC8Wnu87LKoYKIH9YPTrIrc2T
-        obKO5hSC5sK/IGXGU5FTnE29XCrSVcpqzg==
-X-Google-Smtp-Source: ABdhPJzJYngSIkBuImIS3HQujkU2qyzg7pzE2cfapYrdsUmfEGCaOcEXh1aq6FzaCLH/YGvTArPTCg==
-X-Received: by 2002:a05:6402:3554:: with SMTP id f20mr9652573edd.210.1634838156013;
-        Thu, 21 Oct 2021 10:42:36 -0700 (PDT)
+        bh=x5LltJm0AHQyj+WPNUjS5e7tQDzNwCAlJ2whlsgxBts=;
+        b=1Vf3DWSs4NQ6vWLdFmKuc9LTmnUEPmmx6Z4949S2xc7MhAyJX/PY+ZZR6x4u1NFxfi
+         62LToHeI5jaOwAeWmAYSdlroVv2EaZv5sJZVu4JodYThmv9RrNFahiHXj44tsK+9u1pR
+         bxXYdRSO97R0fb1AFQQNIobfl/TBu3ala7H6AQNcNNY47ACDF7tBx4lX4fHM4KrY9MD9
+         9S2AEUXWown+zoH5vC62/5CSr4Dq9kIA9NXMe1tG28VIdBX5x2/RI6KfHdoPcK/GJa0O
+         4fGToZ8IlDRCSWPO++l9RHXovdn/0qHQp912F+FC+hXXiGh/I306ScXXDJNdRwwNQI/2
+         ms0Q==
+X-Gm-Message-State: AOAM531aEyPEbwU2Oo7F0PdArJDYXkZm9VBtA7PJDtBH+CMlxokPPPAR
+        vgxhrVBvo6B7KR6/jUkaKPPoOJ5xQTp68w==
+X-Google-Smtp-Source: ABdhPJysKYORNZ7zZCL2ud5ZvrT3iD96H3agntQ4dKJKrS7uqqXSGW81BnZASTrSohmnX+3HRgs+HQ==
+X-Received: by 2002:a17:907:16aa:: with SMTP id hc42mr8757697ejc.39.1634838162614;
+        Thu, 21 Oct 2021 10:42:42 -0700 (PDT)
 Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
-        by smtp.gmail.com with ESMTPSA id h7sm3144847edt.37.2021.10.21.10.42.34
+        by smtp.gmail.com with ESMTPSA id h7sm3144847edt.37.2021.10.21.10.42.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 10:42:35 -0700 (PDT)
+        Thu, 21 Oct 2021 10:42:42 -0700 (PDT)
 Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
 From:   Emil Renner Berthing <kernel@esmil.dk>
 To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
@@ -79,9 +79,9 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         Atish Patra <atish.patra@wdc.com>,
         Matteo Croce <mcroce@microsoft.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/16] dt-bindings: interrupt-controller: Add StarFive JH7100 plic
-Date:   Thu, 21 Oct 2021 19:42:10 +0200
-Message-Id: <20211021174223.43310-4-kernel@esmil.dk>
+Subject: [PATCH v2 08/16] dt-bindings: reset: Add Starfive JH7100 reset bindings
+Date:   Thu, 21 Oct 2021 19:42:15 +0200
+Message-Id: <20211021174223.43310-9-kernel@esmil.dk>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211021174223.43310-1-kernel@esmil.dk>
 References: <20211021174223.43310-1-kernel@esmil.dk>
@@ -91,26 +91,58 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add compatible string for StarFive JH7100 plic.
+Add device tree bindings for the StarFive JH7100 reset controller.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/reset/starfive,jh7100-reset.yaml | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-index 08d5a57ce00f..28b6b17fe4b2 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-@@ -45,6 +45,7 @@ properties:
-     items:
-       - enum:
-           - sifive,fu540-c000-plic
-+          - starfive,jh7100-plic
-           - canaan,k210-plic
-       - const: sifive,plic-1.0.0
- 
+diff --git a/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml b/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+new file mode 100644
+index 000000000000..c6ad5d7ad100
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/starfive,jh7100-reset.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: StarFive JH7100 SoC Reset Controller Device Tree Bindings
++
++maintainers:
++  - Emil Renner Berthing <kernel@esmil.dk>
++
++properties:
++  compatible:
++    enum:
++      - starfive,jh7100-reset
++
++  reg:
++    maxItems: 1
++
++  "#reset-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    rstgen: reset-controller@11840000 {
++        compatible = "starfive,jh7100-reset";
++        reg = <0x11840000 0x10000>;
++        #reset-cells = <1>;
++    };
++
++...
 -- 
 2.33.1
 
