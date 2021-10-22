@@ -2,135 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9F6C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Oct 2021 12:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7EDC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Oct 2021 12:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9766108B
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Oct 2021 12:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16F006120D
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Oct 2021 12:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231574AbhJVMhH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Oct 2021 08:37:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230342AbhJVMhG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Oct 2021 08:37:06 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAF4DC061764;
-        Fri, 22 Oct 2021 05:34:48 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id w19so1046771edd.2;
-        Fri, 22 Oct 2021 05:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sJaedp+WwFniAnsPOoxdNlKqeKWuyKqfMjHYa+KV7DM=;
-        b=psg2ERjBTmguvun4iRACGpDey3AvgvUOnPmxWUCYXNVPU2Lja48yf8k+qfNAZHOwvE
-         mdx3NZ0QRraYobiycacjFN6GrT7SLBMgp8n8Kqr/AvOabhepU1KW/RVlwhMr3BwMhdG+
-         p/zqmQMKhWN3xPImJkgHjc/eH9wQ5b7oURXn4dazCZpAlvpXKQAc2n4p8pJCc++RwtFl
-         k+1IlequuJarwJ4yBYhG+DbtcgFq8+azfLBvpEO0/5QbHqJ1Jv/O6hG34TPMH1wzYs6M
-         oEfjywrYcb0XcWD2TlkYM83WX4je/xXED6cfzrUGgUk4MS6heQk4AGP3/k/LW6FFf8sD
-         5cXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sJaedp+WwFniAnsPOoxdNlKqeKWuyKqfMjHYa+KV7DM=;
-        b=sz2CxHbXKfshMVHzxBWLN/bmmTFzt/P58FHBVNo6vdbkF6A91ifTyYyqcp2hQ2C3Hx
-         z+VDU8K8E6yCjaJL4YTNuvEj28WRurD4lLWeFHYbjIwkaVGFZBm+X+aYNCt1ws4vKuuN
-         Hn91bFUezWLzbV1f0yAVdCsyROn1eVrL4W91HDXukVN7e5u4vWSrquen3DetwrzY7nAD
-         HMbk/8Md2CHyMmLfMUDU33RAeLaa4Z1YWrmpGPRMph5wLYHDpXYJh9zSiGSgzs3jUBXx
-         y4Y84awf2jF6xBw07EM/K9vUoysDMLGz+P8IvD7SqglInxeTciC6iLxjmigwMy0UCkZ9
-         swqQ==
-X-Gm-Message-State: AOAM530094OoWgu4RhEmFXW5O2uKXY9jph3MfqZh2LmuLriWGAwV3tm9
-        4OGOAcWEioy+PsfeSnwq0YVhctwV8XHDbIdKXWw=
-X-Google-Smtp-Source: ABdhPJzELMMCdF3V0ssE/+Finv7LByJ4VhsgFR1Ko44YZnSsrQh8x6Ri7/3ky81qJckrRAZEb9X0ta8R9EPXbJ4mi0w=
-X-Received: by 2002:aa7:c0d2:: with SMTP id j18mr17043167edp.107.1634906087448;
- Fri, 22 Oct 2021 05:34:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211021174223.43310-1-kernel@esmil.dk> <20211021174223.43310-7-kernel@esmil.dk>
-In-Reply-To: <20211021174223.43310-7-kernel@esmil.dk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 22 Oct 2021 15:33:50 +0300
-Message-ID: <CAHp75VcS7ZZCciAgBH2QU7u8CiHzveAOsvSdv2DQBvpBn_6opQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/16] clk: starfive: Add JH7100 clock generator driver
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        id S230342AbhJVMnE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Oct 2021 08:43:04 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33228 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229925AbhJVMnE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Oct 2021 08:43:04 -0400
+X-UUID: b582df1e48d3476c9167dbc0111c0307-20211022
+X-UUID: b582df1e48d3476c9167dbc0111c0307-20211022
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 651447688; Fri, 22 Oct 2021 20:40:44 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Fri, 22 Oct 2021 20:40:42 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 22 Oct 2021 20:40:42 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     John Crispin <john@phrozen.org>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        "Sam Shih" <sam.shih@mediatek.com>
+Subject: [PATCH v9 0/4] Mediatek MT7986 pinctrl support
+Date:   Fri, 22 Oct 2021 20:40:32 +0800
+Message-ID: <20211022124036.5291-1-sam.shih@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 8:43 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+This patch series add pinctrl support for mediatek mt7986 SoC series.
+It is based on patch series "Add basic SoC support for mediatek mt7986"
+https://lore.kernel.org/all/20211018114009.13350-1-sam.shih@mediatek.com/
+---
+v9: added Acked-by and Reviewed-by tag
+v8: fixed uart node in yaml dts example
+v7: separate pinctrl part into a single patch series
 
-...
+According to the maintainer’s suggestion, this patch splits the previous
+thread into independent patch series.
+This patch include clock driver and device tree update
 
-> +static struct clk_hw *clk_starfive_jh7100_get(struct of_phandle_args *clkspec, void *data)
-> +{
-> +       struct clk_starfive_jh7100_priv *priv = data;
-> +       unsigned int idx = clkspec->args[0];
-> +
-> +       if (idx >= JH7100_CLK_END) {
-> +               dev_err(priv->dev, "invalid clock index %u\n", idx);
-> +               return ERR_PTR(-EINVAL);
+Original thread:
+https://lore.kernel.org/all/20210914085137.31761-1-sam.shih@mediatek.com/
+---
 
-After this
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-next&id=7065f92255bb2468dbb9aa0537ff186ef64d5a02
-It's okay to use
 
-> +       }
+Sam Shih (4):
+  dt-bindings: pinctrl: update bindings for MT7986 SoC
+  pinctrl: mediatek: add support for MT7986 SoC
+  arm64: dts: mediatek: add pinctrl support for mt7986a
+  arm64: dts: mediatek: add pinctrl support for mt7986b
 
-       if (idx >= JH7100_CLK_END)
-               return dev_err_probe(priv->dev, -EINVAL, "invalid clock
-index %u\n", idx);
+ .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 363 +++++++
+ arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts  |  20 +
+ arch/arm64/boot/dts/mediatek/mt7986a.dtsi     |  21 +
+ arch/arm64/boot/dts/mediatek/mt7986b.dtsi     |  21 +
+ drivers/pinctrl/mediatek/Kconfig              |   7 +
+ drivers/pinctrl/mediatek/Makefile             |   1 +
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c     | 927 ++++++++++++++++++
+ 7 files changed, 1360 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7986.c
 
-Ditto for other similar cases.
+--
+2.29.2
 
-> +       if (idx >= JH7100_CLK_PLL0_OUT)
-> +               return priv->pll[idx - JH7100_CLK_PLL0_OUT];
-> +
-> +       return &priv->reg[idx].hw;
-> +}
-
-...
-
-> +       while (idx)
-> +               clk_hw_unregister(&priv->reg[--idx].hw);
-
-I still consider that usual pattern, i.e.
-
-       while (idx--)
-               clk_hw_unregister(&priv->reg[idx].hw);
-
-but since you are pushing hard for your variant I'll leave it to the
-maintainers and author.
-
--- 
-With Best Regards,
-Andy Shevchenko
