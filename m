@@ -2,104 +2,62 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A73C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Oct 2021 12:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C67A2C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Oct 2021 17:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD9F960F92
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Oct 2021 12:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB9ED60F6F
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Oct 2021 17:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233434AbhJYM4o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 Oct 2021 08:56:44 -0400
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:39677 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233414AbhJYM4n (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Oct 2021 08:56:43 -0400
-Received: by mail-ot1-f54.google.com with SMTP id e59-20020a9d01c1000000b00552c91a99f7so14791170ote.6;
-        Mon, 25 Oct 2021 05:54:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=xfPmPgNFQgIKrWKVU27Szuu0QsSCtm+5R24aa/F4BSg=;
-        b=lefDfrVSvWR8U4WnOGkF76AwFCk8T7kwi4iXWysxEQOHCWhxgytedxzDmpLotohspU
-         4yIHd1goYVMJ62GPiS7B0X1CWbsgkgb5Ahqzrywtp7mk3EcFto3F+iaMnAuSSvGd4SZA
-         z2mSapmsWoNGGnGXMs+2LjUd39+PrxCAB/gXm7/q8cXzs3EI8sx/T6EasX+de84STXna
-         c9/UfbPjWGJWOjO2RajtyLPcLrkp3ds8n+bTR4Rq52mY9fWbDQMLOZD8Noou3ntkp0w6
-         NHR2piQo0ZUn5zoocHV9C1z2Vbr9FEwc0gIdDzqHFqVRZ7VyFZ+qmIVG0xR4OcabjR8r
-         zXWg==
-X-Gm-Message-State: AOAM532ryVk5dLiBR4k316724wgmMcaTKOhvxgMEi0iRdQGPRETIJRTT
-        EIAXQki6lhWh5Tn/vglSPA==
-X-Google-Smtp-Source: ABdhPJxSzDa6Aw86E7HU9PcZR3V6hQx/apZrKRCDa2ilOHhh7Q1/dkrii+HwuqomKgo/nUzIa6Dt1Q==
-X-Received: by 2002:a05:6830:1e08:: with SMTP id s8mr13970909otr.305.1635166460875;
-        Mon, 25 Oct 2021 05:54:20 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id bf3sm3946646oib.34.2021.10.25.05.54.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Oct 2021 05:54:20 -0700 (PDT)
-Received: (nullmailer pid 190976 invoked by uid 1000);
-        Mon, 25 Oct 2021 12:54:14 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     arnd@arndb.de, mturquette@baylibre.com, olof@lixom.net,
-        aisheng.dong@nxp.com, sboyd@kernel.org, Mr.Bossman075@gmail.com,
-        fugang.duan@nxp.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-        adrian.hunter@intel.com, linux-arm-kernel@lists.infradead.org,
-        b20788@freescale.com, linux-serial@vger.kernel.org,
-        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
-        ulf.hansson@linaro.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, s.hauer@pengutronix.de,
-        abel.vesa@nxp.com, leonard.crestez@nxp.com, linux@armlinux.org.uk,
-        shawnguo@kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, jirislaby@kernel.org,
-        linux-imx@nxp.com, linux-mmc@vger.kernel.org, festevam@gmail.com,
-        stefan@agner.ch, giulio.benetti@benettiengineering.com,
-        soc@kernel.org
-In-Reply-To: <20211024154027.1479261-6-Mr.Bossman075@gmail.com>
-References: <20211024154027.1479261-1-Mr.Bossman075@gmail.com> <20211024154027.1479261-6-Mr.Bossman075@gmail.com>
-Subject: Re: [PATCH 05/13] dt-bindings: clock: imx: Add documentation for i.MXRT clock
-Date:   Mon, 25 Oct 2021 07:54:14 -0500
-Message-Id: <1635166454.818167.190975.nullmailer@robh.at.kernel.org>
+        id S231171AbhJYRi7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 Oct 2021 13:38:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233395AbhJYRiw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 25 Oct 2021 13:38:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id E0AC960F6F;
+        Mon, 25 Oct 2021 17:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635183389;
+        bh=qEVqHR9hUkrdY7q3niszJAwWxfAHLPU3FjHV4O6JW/U=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=aKd/xyBjm1XK/yx15sWnP/I7pRLaxWae1b0QuRSAOWULy6rcYnzpBrSPpa3shQD2q
+         d7CPU/tHfg4ytsdiq15+Q5TFGZM+VoWrbTlrxIgtP1Z2I9a7Qh8IYmcR3OUawpcGHN
+         CjlTUw0af7OcR9VdT2y5LEXWWryhUcm0DE0f3HnYqnwYk+ENJD1+zbfjK6Hcm0qh8l
+         ztQYBa8sUk5CrzDoxPWmpIOQHJ7KQ8VbPSgtb5WIWtOl4AAhlCphALjWoZNMTA52ed
+         M6gvcrvYQs0xHvNPIz8Uxpis1YIDGHHIdvFB3S5AqxnUwiFYueIe7I326wxcxzOkSH
+         TU9tdC7AEWZUA==
+Subject: Re: [GIT PULL] pin control fixes for v5.15
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdYY43-Dj=ZQ3brn41-3OZm0_vT+qHmcG9=EsMFy6J_Q_g@mail.gmail.com>
+References: <CACRpkdYY43-Dj=ZQ3brn41-3OZm0_vT+qHmcG9=EsMFy6J_Q_g@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdYY43-Dj=ZQ3brn41-3OZm0_vT+qHmcG9=EsMFy6J_Q_g@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.15-3
+X-PR-Tracked-Commit-Id: 4e5a04be88fe335ad5331f4f8c17f4ebd357e065
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a51aec4109300d843bf144579109d5288856f72a
+Message-Id: <163518338979.28134.16136876932332663263.pr-tracker-bot@kernel.org>
+Date:   Mon, 25 Oct 2021 17:36:29 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Sachi King <nakato@nakato.io>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, 24 Oct 2021 11:40:19 -0400, Jesse Taube wrote:
-> Add DT binding documentation for i.MXRT clock driver.
-> 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
->  .../bindings/clock/imxrt-clock.yaml           | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imxrt-clock.yaml
-> 
+The pull request you sent on Sun, 24 Oct 2021 22:16:56 +0200:
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.15-3
 
-yamllint warnings/errors:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a51aec4109300d843bf144579109d5288856f72a
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/clock/imxrt-clock.example.dts:32.27-28 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/clock/imxrt-clock.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1441: dt_binding_check] Error 2
+Thank you!
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1545398
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
