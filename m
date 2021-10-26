@@ -2,34 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC5CC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Oct 2021 17:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3768DC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Oct 2021 17:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82BC5610A4
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Oct 2021 17:58:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19B4460295
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Oct 2021 17:58:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232503AbhJZSBA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Oct 2021 14:01:00 -0400
-Received: from mail-vi1eur05on2075.outbound.protection.outlook.com ([40.107.21.75]:36449
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        id S236512AbhJZSBJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Oct 2021 14:01:09 -0400
+Received: from mail-eopbgr40072.outbound.protection.outlook.com ([40.107.4.72]:23360
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233064AbhJZSA7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 26 Oct 2021 14:00:59 -0400
+        id S233064AbhJZSBI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 26 Oct 2021 14:01:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4XX+eNwVNoeNqgUVFfpGVI2Xxbxx1np2VkWlXA1zOmE=;
- b=Y53OrI42zGBvM0ReR5qvA3+XI0Wo0IfMMFlSs27Fuw0+fhKNqSG9cj6BKP8ClPRL0EubxqmRKn571V2lkB3rdEkF8g8+x4gOGUjhDH8wRDSEUr3vFyBg4hOv5P4NB2iSLrAYd/ZTG0dTjelyFSG0GoMWK54iQZtVdo4OAJcnfP4=
-Received: from AM4PR07CA0011.eurprd07.prod.outlook.com (2603:10a6:205:1::24)
- by AM6PR08MB3016.eurprd08.prod.outlook.com (2603:10a6:209:44::33) with
+ bh=ylaTf0ZyLkZn+wH7mGglUMw0g/12SLtQ5pxcH1Zeocc=;
+ b=BTCYURup5EFBbHbJiHthQWx3yx4+AICiP6UWMn3Zlr3mZecw7vE6uA1GssgqHBfefgah3UOzRODZJNXleTvBfsdGKbyNsSncRBrMr6AQLF1i+LodVfrl4NiKPWB9To7PMR+KdKguQ3pNDBHu9XdHDQfIOTlck9z+D1ZgpiNRryQ=
+Received: from AM6PR08CA0010.eurprd08.prod.outlook.com (2603:10a6:20b:b2::22)
+ by PA4PR08MB5983.eurprd08.prod.outlook.com (2603:10a6:102:e7::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18; Tue, 26 Oct
- 2021 17:58:33 +0000
-Received: from VE1EUR03FT064.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:205:1:cafe::27) by AM4PR07CA0011.outlook.office365.com
- (2603:10a6:205:1::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.11 via Frontend
- Transport; Tue, 26 Oct 2021 17:58:33 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.16; Tue, 26 Oct
+ 2021 17:58:41 +0000
+Received: from AM5EUR03FT039.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:20b:b2:cafe::f9) by AM6PR08CA0010.outlook.office365.com
+ (2603:10a6:20b:b2::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18 via Frontend
+ Transport; Tue, 26 Oct 2021 17:58:41 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; dkim=pass (signature was verified)
  header.d=armh.onmicrosoft.com;dmarc=pass action=none header.from=arm.com;
@@ -37,27 +37,27 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  63.35.35.123 as permitted sender) receiver=protection.outlook.com;
  client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- VE1EUR03FT064.mail.protection.outlook.com (10.152.19.210) with Microsoft SMTP
+ AM5EUR03FT039.mail.protection.outlook.com (10.152.17.185) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4628.18 via Frontend Transport; Tue, 26 Oct 2021 17:58:33 +0000
-Received: ("Tessian outbound 8e26f7114b75:v103"); Tue, 26 Oct 2021 17:58:33 +0000
+ 15.20.4628.18 via Frontend Transport; Tue, 26 Oct 2021 17:58:41 +0000
+Received: ("Tessian outbound 2e7020cc8961:v103"); Tue, 26 Oct 2021 17:58:40 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: fd9709543406de84
+X-CR-MTA-CID: d75f0f229240eb05
 X-CR-MTA-TID: 64aa7808
-Received: from b90697f003ac.1
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 0784287F-0839-4DE0-ADA1-47A7DA243384.1;
-        Tue, 26 Oct 2021 17:58:26 +0000
+Received: from 55488774c6b6.1
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 24249B87-A19C-414D-B7CC-F759E1800F64.1;
+        Tue, 26 Oct 2021 17:58:33 +0000
 Received: from EUR04-HE1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id b90697f003ac.1
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 55488774c6b6.1
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Tue, 26 Oct 2021 17:58:26 +0000
+    Tue, 26 Oct 2021 17:58:33 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LN4Io5YXhypUIfKxmeXlrmNtm6O16edz2pTaOfdT4/xUVro2EKOvz0avGUNauj6SeCOVlu/PdOHxwany4tps2uWQ2lIr1S1VhRo4kliqkhaayDNOGHG4ktjtjBywcJ6pire1lqhHgWPOxZwNSz/c0kgFty2NVmpjfms6q7amOgH2dURWzYQ1ocjmKZI0s/DAq/X7VC13C3rfO1lA2oGs+KL4I4/fBIC43n5hxMRAU0lFQHrG7ggzMgA3wG5z9Ajr1ab2vaS//XitJzdZYt/t/GehRdo06wvqeJGsb06o7MSOIJIjerJdgvCB2wvPvf4ZbsCkMTZcMLHu4Znir2Gj5g==
+ b=gXpqK/ptgBxkKTDpxeMnW+UV8JZLphgecEQd8wlDXnTQecxruAKbLGo0QCsBfPM5Tam6umQNwuXEWZvDppdrsBsAL4Nzk9+Rie7PssAKhWRmInP/0gJE5+lXptLY9DoFXuufsfOwqOmTjS8N6lu/OmCMd1HL1Xq2sfoE1jZelWBRD+GwO/oXCq88ahiOsD/CsCOaxnYAEkwZn+BzDXM+q/neL6uyJji2tSroasTdIi//gOgd2GIs3LN9/Xx7QoZDgS0PL96dfNkKrKYUwQKM78knlC7qRc/y6yuW6KBu54FGi4NDmB156DzVfhx5ptKFcyq7UDmKLXWS/loCTcF8bg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4XX+eNwVNoeNqgUVFfpGVI2Xxbxx1np2VkWlXA1zOmE=;
- b=GL+HmSdaBeLniWYe5GJnissLEDHC12Io44daDpwIGChzs7PxB6edqhnSIYPWxttw6p7taqxgQP0q0P8V2NhM7v3r1ddNe2YoPgl/NbLOrtASJAscIwS205HeI60iZGOL7BgzpzJHYpWUYqLJFHRTTI5+R46ZD2Quf5byoWl/cNl1olLWwF/KmzsqRfmK6e0GuphW4bQSXYlPTFmKvX83q2ExQrY1Rh+1A6Y4Zkwlibu+UBOfqnZBMa8S6xkH/WpkwCswu2OyCyF9oBHlsD5Upp+syYBb0VLElNgVhR4tZqb9oVlkLaksGvVi0zCzXXCege/ILmw7ht+3+64THvc3HQ==
+ bh=ylaTf0ZyLkZn+wH7mGglUMw0g/12SLtQ5pxcH1Zeocc=;
+ b=Oj7PU3YcVCW9TUlCezmmo36JfKHXaGbffJC5SRB7WVMDhVGi5OnrTd+/czr8tEDs4aKwvlLgz432yfxgYK6wt9IQ16jZBQMx38eTYW+jNn4xX1giEV4FJLCBm09x1NRt5bfluArAG/rMxa+1i4fuwTQ1XTk7o2Ux9Y3lJv6qNprBfmVjPfHAHIZWL93kDPul4IR4pIRsdMyLX35t5bG00qM7CahwcKsC9n1FBdpIdqPUHvk4bw5wnXsiHKSajNABwpkJdUewWoErbG1LzFL5VtE0+NdayjJqITKLbgtPL8mAFNz8Z3w8/SwjW8dqIo1ga02BKcScc+ypN9LtJhPRlw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  40.67.248.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
@@ -65,18 +65,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4XX+eNwVNoeNqgUVFfpGVI2Xxbxx1np2VkWlXA1zOmE=;
- b=Y53OrI42zGBvM0ReR5qvA3+XI0Wo0IfMMFlSs27Fuw0+fhKNqSG9cj6BKP8ClPRL0EubxqmRKn571V2lkB3rdEkF8g8+x4gOGUjhDH8wRDSEUr3vFyBg4hOv5P4NB2iSLrAYd/ZTG0dTjelyFSG0GoMWK54iQZtVdo4OAJcnfP4=
-Received: from AM5PR0602CA0013.eurprd06.prod.outlook.com
- (2603:10a6:203:a3::23) by PR2PR08MB4714.eurprd08.prod.outlook.com
- (2603:10a6:101:1c::18) with Microsoft SMTP Server (version=TLS1_2,
+ bh=ylaTf0ZyLkZn+wH7mGglUMw0g/12SLtQ5pxcH1Zeocc=;
+ b=BTCYURup5EFBbHbJiHthQWx3yx4+AICiP6UWMn3Zlr3mZecw7vE6uA1GssgqHBfefgah3UOzRODZJNXleTvBfsdGKbyNsSncRBrMr6AQLF1i+LodVfrl4NiKPWB9To7PMR+KdKguQ3pNDBHu9XdHDQfIOTlck9z+D1ZgpiNRryQ=
+Received: from AS8P251CA0030.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:2f2::19)
+ by AS8PR08MB6679.eurprd08.prod.outlook.com (2603:10a6:20b:393::10) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18; Tue, 26 Oct
- 2021 17:58:21 +0000
-Received: from VE1EUR03FT051.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:203:a3:cafe::54) by AM5PR0602CA0013.outlook.office365.com
- (2603:10a6:203:a3::23) with Microsoft SMTP Server (version=TLS1_2,
+ 2021 17:58:23 +0000
+Received: from VE1EUR03FT058.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:20b:2f2:cafe::5e) by AS8P251CA0030.outlook.office365.com
+ (2603:10a6:20b:2f2::19) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18 via Frontend
- Transport; Tue, 26 Oct 2021 17:58:21 +0000
+ Transport; Tue, 26 Oct 2021 17:58:23 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 40.67.248.234)
  smtp.mailfrom=arm.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=arm.com;
@@ -84,17 +84,17 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  40.67.248.234 as permitted sender) receiver=protection.outlook.com;
  client-ip=40.67.248.234; helo=nebula.arm.com;
 Received: from nebula.arm.com (40.67.248.234) by
- VE1EUR03FT051.mail.protection.outlook.com (10.152.19.75) with Microsoft SMTP
+ VE1EUR03FT058.mail.protection.outlook.com (10.152.19.86) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4628.16 via Frontend Transport; Tue, 26 Oct 2021 17:58:21 +0000
-Received: from AZ-NEU-EX01.Emea.Arm.com (10.251.26.4) by AZ-NEU-EX04.Arm.com
- (10.251.24.32) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.4628.16 via Frontend Transport; Tue, 26 Oct 2021 17:58:23 +0000
+Received: from AZ-NEU-EX01.Emea.Arm.com (10.251.26.4) by AZ-NEU-EX03.Arm.com
+ (10.251.24.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.14; Tue, 26 Oct
- 2021 17:58:23 +0000
+ 2021 17:58:22 +0000
 Received: from AZ-NEU-EX03.Arm.com (10.251.24.31) by AZ-NEU-EX01.Emea.Arm.com
  (10.251.26.4) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Tue, 26
- Oct 2021 17:58:20 +0000
+ Oct 2021 17:58:19 +0000
 Received: from e124191.cambridge.arm.com (10.1.197.45) by mail.arm.com
  (10.251.24.31) with Microsoft SMTP Server id 15.1.2308.14 via Frontend
  Transport; Tue, 26 Oct 2021 17:58:22 +0000
@@ -108,9 +108,9 @@ CC:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Kettenis <kettenis@openbsd.org>, <nd@arm.com>,
         Joey Gouly <joey.gouly@arm.com>
-Subject: [PATCH v5 5/5] MAINTAINERS: add pinctrl-apple-gpio to ARM/APPLE MACHINE
-Date:   Tue, 26 Oct 2021 18:58:15 +0100
-Message-ID: <20211026175815.52703-6-joey.gouly@arm.com>
+Subject: [PATCH v5 3/5] dt-bindings: pinctrl: Add apple,npins property to apple,pinctrl
+Date:   Tue, 26 Oct 2021 18:58:13 +0100
+Message-ID: <20211026175815.52703-4-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211026175815.52703-1-joey.gouly@arm.com>
 References: <20211026175815.52703-1-joey.gouly@arm.com>
@@ -118,58 +118,78 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 1
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6e764a1e-1a4b-4592-42e2-08d998aa3a14
-X-MS-TrafficTypeDiagnostic: PR2PR08MB4714:|AM6PR08MB3016:
-X-Microsoft-Antispam-PRVS: <AM6PR08MB30161372E3B7759EA3FE631094849@AM6PR08MB3016.eurprd08.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: cc8129ef-bbed-491b-29d9-08d998aa3eb3
+X-MS-TrafficTypeDiagnostic: AS8PR08MB6679:|PA4PR08MB5983:
+X-Microsoft-Antispam-PRVS: <PA4PR08MB5983555923B8C317AC8AF2B294849@PA4PR08MB5983.eurprd08.prod.outlook.com>
 x-checkrecipientrouted: true
 NoDisclaimer: true
-X-MS-Oob-TLC-OOBClassifiers: OLM:3826;OLM:3826;
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;OLM:5236;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: WcriaNeVfxQT08+qbf/Gqpx5SFN93wb/GzZy0xgh/LyKVancMlOahddMZUnGuIsYLiDku7+ovZGobEtFmiF3h1kuwv0YzM1PPzQt8jJRvtDkgB0YgCU91eDNMHYJ1/HjJxND+lOzSMJT5GKtj0MZwC0+E1ohpy3F/p3oI4PlTjgyhBCNQo3ZhMNXKOdDnNhy0JoQpBN4pzuk4IMm60zTzIgl0jNCRbRGOlpq1A69EpVA8ez4u/bfugb7cazBuYGr2BE6ger/RDnOReoaobnuMUQjzTxJoq+2/nSVMrKC2HwH5zebSBs9nci7XJGr6ojWqZ4ReXnsIuZCAlijSglcmRojERCnmx2Fq6cHgema6MhLWR42BMcw7lK//AHgI6kWCqlPMX/nAuq9V/fRaudWw4x6h+4f3GMTYbQ6Ag/Z+YGp/G+Nj2YrhrcYYkvAddmj+ziD2pm/j20uNtodWaaYNsbUryTkSl0tXx7ljlBN4TeB5t/DyS8GrwT+LZ9pxM/gKvjMRXYA5d7xykJcTPcbATly6PvQCoOr6zzC5AiRfaRHQh/np8ttOYx20NUkPIeTJ5BZGvSRid7+u125O/XY/q+zC8hbRQCJ+4i4utprwkey9HLe/KOcdfndBWUqEU6QYiU2s2/hWzMTRaevMayxCxflLV/4cJOHB/Yon0I4W9FPH0d4RKoYNIbLi7DkIsFryXSDpTJABRfdjr+QqKF5ibjK6S1d5JZNIgNvobyQAJ68geJNST6zUrcTy5mR1md3uXT6DWTG5Wq1iaUrN+oakw==
-X-Forefront-Antispam-Report-Untrusted: CIP:40.67.248.234;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:nebula.arm.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(47660400002)(46966006)(36840700001)(6666004)(4744005)(86362001)(8936002)(2906002)(6916009)(336012)(426003)(44832011)(508600001)(2616005)(7696005)(82310400003)(5660300002)(36756003)(36860700001)(4326008)(70206006)(186003)(1076003)(356005)(54906003)(26005)(8676002)(70586007)(316002)(81166007)(47076005)(46800400005)(36900700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR2PR08MB4714
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT064.eop-EUR03.prod.protection.outlook.com
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 4c6c5d0f-e999-4928-f688-08d998aa330c
+X-Microsoft-Antispam-Message-Info-Original: YNcVjAbaKT1RNbmBaR0Lm/LliHPHXyRDcGoBFB1+NqEN/Q/8gR90oKTxzZbjwf+JHKQp4FmxxcaE/jalmSr9dHiZd5LFL5Ayf5exi4iNHOUH9aJelEKFjjLVSfKX7Jhp/t0pAzjn5ipPIgvdHzjyTcNIXvLGlTXpyWDF4oIKJqpqIcVonPO3KEMWUnXQXS+tC+LQPHk8SoAZOXQZ05rPVe1WxBrP5Gbw2wOUJpQ8rYXo6sa4b+pI8mNArg+a+w1lHV7EZp6d8A/j0R3EQITSU3lavL/sF23AZ8TATzyJUVbuQwRLU8M2lo2ufK5E1iY7Z+YydORWNZK5n4RGCJpciPOizrRkCxfOf9drEgqGc3mCCtuD4J3c8eSK89BcXndZjWA680MBtV1LdOS53d/7UQeiWVNOfwQddffgV3X9mDu7gsEb3QHTjzUZ8S2d/xUIT6HbMEnOEpHwBF+cZoiFjss7XBvwucKxvd8xN0aaxsOhl/rwZveZBrDYp5KBIE0mMlm9h8xzEq8/kKosb2PC1a5h9JAi51TyKrZ45KRsfWebmx2nKn2UbkRdamjlXil1t4PNc3YcgLQHPkBlOtNpFuiW5dCdJ2TB6u4bhUUAGh11QyQiD00EcPogoWRAJVo18Fb5PbOiFhCYEKLoQR+y8/f0DMwGa7tB2ezsqgazlnoKMfFN1bq7MNOZz1HUzJM/F1UlGIgPBQxa7CdxQOe/8THFy0iI0PqGNaxRU8Po0KH1H7DdaUS0m3I8Gu3fsr2MjBvidbNKvwW4D56quZG22A==
+X-Forefront-Antispam-Report-Untrusted: CIP:40.67.248.234;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:nebula.arm.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(47660400002)(36840700001)(46966006)(70206006)(508600001)(336012)(7696005)(70586007)(186003)(356005)(6916009)(26005)(6666004)(36860700001)(44832011)(426003)(82310400003)(5660300002)(2906002)(2616005)(83380400001)(316002)(1076003)(54906003)(86362001)(8936002)(81166007)(4326008)(47076005)(36756003)(8676002)(46800400005)(36900700001);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6679
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT039.eop-EUR03.prod.protection.outlook.com
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 7813d464-b1b6-4ae5-789e-08d998aa342c
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: A72bi708gRMY0rZG3mOJ8BaiypyJImb5fdIQzLS8dHYhx+i/wvZSCJeeFSJaQ+FzDPGvSFNhP9/VWklsXmQ3IYEs95z53XKuiu2PLZ7biJhXp3wj9h9VcLoiUHF+ZroKiXVncEkUKHMQneG98xVDD6ju4pGk07jY8YCHES4WCoBignpe8ejNUvo+XgrGTS6748nQP9VuS5BokxOZQELTEioT8sVcxYXsx7yX6FgTeBRAOsOqbYRaPxchCaCyYZt4ZBBkSTP4Z1XRi3YB/KCsiWpID6GwRUt54zjGYx+WmOOfp5BJU2MM5YeLsFlIi/+J1z4UL8nLYjGAln67DIgsf0MocSCnkju0kMxI0EQ/6B9voIW7BHfgrXzJe6jOyFhEpRUv622LMOAMkPXixQuyxeZVgCNC7FZD1NSMvLZgBj9PvBsV2tgY94T1SNlpbwmyYj0hIhQxsWFktnEIIo+bXK/RKTDh79S9lR3+L3Z+t/fiiFxM2VoRItiUE4ztuDsKjVF3kRgDFSEPLWGaSIQHkXJkX8OBMY+u4z1t47CUeqp4o8omlhRZJoBgBTlagY5Cmylk20LAxj5D0lzI6fPxVBkw8GG6G0oXNdY2UnmFNydMyyn3sc8rhirQytxQEXu/n0WmwdjGG87jaUvT99LrqoRSTUsZQHRCi4tFrSa9vgocLW1frTROXJ6H9BdCi++Rn1O9mJWuSvArSqfJWf0MRapDQqd3GvX8OfZkbTeQIb8=
-X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(47660400002)(46966006)(36840700001)(1076003)(70206006)(36860700001)(86362001)(7696005)(82310400003)(8936002)(54906003)(2906002)(4326008)(81166007)(316002)(44832011)(6916009)(508600001)(5660300002)(186003)(6666004)(426003)(336012)(2616005)(70586007)(8676002)(36756003)(4744005)(26005)(47076005)(450100002)(46800400005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: s6h57qcMkSOnjDskXtuLu3RrikuynMB3BfjlJOzOOt6oiwP1L0BBkKALNeNYwYa2oJvlq4kA5tSLJwr/5LAl/T1Y2zgF1syLnyPhoFV8YSq+MzTo3BLR84Z1v54yZKg5iqykUy5Ncn7+jrzI6PWKlWcA1BxY5DBiZMEaBPRqvFThxE7/Vky/LxSGI2buTODvZ3/FXPF0F9kK9+I2GBAG3QGIJRnHeJUhcrvR/p2DZRhvCFh9stnDYNf6uUXLF8fiIpChB3dmEJaxlXV0ss64u5sUfV+rdFOduwJrXP7Mw7SHTLO+52TX74pcYRb4kaAuDW9cf+pz9+6yMUvihXbSsSLtq0LO1bCbaWYeapx7MF1aihgI6TKqK7ei4CAIyVhmal4iPBrtpcoe4KuYXj8QyCeO8nwfMJfvfLFS0GIuGX8FuXq3TRBqXThd8+/s6cuazfJdFryokRw90JiVPn8mR5SB1347ukM5mPW23CyoCcpehwb0I5x1vAtILPoIWG6bTvd+Lu2X/qO37Z+Zoaf33GY6V+pMPX9ab5Ag7EzAzhuOLO8bj/Jr+mq1Jk6Z0QjSBiUg5zsz1w6R9vqYNbZk0ZM3Nc3+tRiqzfSTBi0+8v3GP/xlEpu7XCCLCuCyjXpYUJEZh5C8RVV7SFOH7cHlYYwFwDeKcJVINM+sZGkTWObYR0N5LT5OfKk6Yp+TZAFLf4Bka9KnaNCVU6ZZwyFqbunUA/jvrepeGnBLxJlDxJU=
+X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(47660400002)(46966006)(36840700001)(450100002)(4326008)(7696005)(82310400003)(6666004)(8676002)(426003)(508600001)(6916009)(336012)(1076003)(81166007)(2616005)(26005)(83380400001)(44832011)(47076005)(70586007)(70206006)(36756003)(316002)(2906002)(86362001)(54906003)(36860700001)(186003)(8936002)(5660300002)(46800400005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2021 17:58:33.4505
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2021 17:58:41.2617
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e764a1e-1a4b-4592-42e2-08d998aa3a14
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc8129ef-bbed-491b-29d9-08d998aa3eb3
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource: VE1EUR03FT064.eop-EUR03.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: AM5EUR03FT039.eop-EUR03.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3016
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR08MB5983
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the Apple SoC pinctrl driver to the ARM/APPLE MACHINE entry
-in MAINTAINERS.
+This property is used to describe the total number of pins on this
+particular pinctrl hardware block.
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-Acked-by: Hector Martin <marcan@marcan.st>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/pinctrl/apple,pinctrl.yaml          | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ca6d6fde85cf..e83e992b8ada 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1722,6 +1722,7 @@ F:	Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
- F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	arch/arm64/boot/dts/apple/
- F:	drivers/irqchip/irq-apple-aic.c
-+F:	drivers/pinctrl/pinctrl-apple-gpio.c
- F:	include/dt-bindings/interrupt-controller/apple-aic.h
- F:	include/dt-bindings/pinctrl/apple.h
+diff --git a/Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
+index 0b3eb068fb12..07b00de79755 100644
+--- a/Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
+@@ -34,6 +34,10 @@ properties:
+   gpio-ranges:
+     maxItems: 1
  
++  apple,npins:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: The number of pins in this GPIO controller.
++
+   interrupts:
+     description: One interrupt for each of the (up to 7) interrupt
+       groups supported by the controller sorted by interrupt group
+@@ -69,6 +73,7 @@ required:
+   - gpio-controller
+   - '#gpio-cells'
+   - gpio-ranges
++  - apple,npins
+ 
+ additionalProperties: false
+ 
+@@ -89,6 +94,7 @@ examples:
+         gpio-controller;
+         #gpio-cells = <2>;
+         gpio-ranges = <&pinctrl 0 0 212>;
++        apple,npins = <212>;
+ 
+         interrupt-controller;
+         #interrupt-cells = <2>;
 -- 
 2.17.1
 
