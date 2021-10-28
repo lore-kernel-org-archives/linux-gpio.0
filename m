@@ -2,79 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B431C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 09:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A43C4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 09:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F2FC61056
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 09:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A2261106
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 09:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbhJ1JDd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Oct 2021 05:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbhJ1JDc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Oct 2021 05:03:32 -0400
-X-Greylist: delayed 495 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 28 Oct 2021 02:01:06 PDT
-Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFB4C061570
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Oct 2021 02:01:06 -0700 (PDT)
-Received: from terra.local.svanheule.net (unknown [IPv6:2a02:a03f:eafe:c901:6c18:8b05:4bd4:d9c2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 78306268674;
-        Thu, 28 Oct 2021 10:52:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1635411168;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=hiwxHg5HZkfTrQPDIrsSS8SkMUR1Gsq+D6s2Da6jeec=;
-        b=qcSFipv3DUToMW9k49ZvIuwKjaIvBrk1lVke4mlMKsHRC+wZY897MkauHgdu5bJaTBBhe8
-        9RKrpLOnC6T+UkW+PA4EtHCJ5caCuVzKGuLYuDCc6DtpW+oCKeArtl/BVqHQAoIBSjicYN
-        L04YzYEYLcURwqW5SBflgtCscxpzeifzFOATk9p3rXHMFvC4pB77ZAIugHtMJmqxonx6aM
-        7ebi/BWuYuSTlHhKHgSShLByewXBUaMd5Gv+xB2/m1wQ9LzdUo6xScz8eKdC6W1K2lcJCw
-        3fhcVeQSsFNDrwhp6+BZqTE5zGUvhTUPKaF35hQPZrzv4U4K0pF5wGC6cjxj6Q==
-From:   Sander Vanheule <sander@svanheule.net>
-To:     linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sander Vanheule <sander@svanheule.net>
-Subject: [PATCH] gpio: realtek-otto: fix GPIO line IRQ offset
-Date:   Thu, 28 Oct 2021 10:52:43 +0200
-Message-Id: <20211028085243.34360-1-sander@svanheule.net>
-X-Mailer: git-send-email 2.31.1
+        id S229868AbhJ1JM7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Oct 2021 05:12:59 -0400
+Received: from mail-ua1-f50.google.com ([209.85.222.50]:45645 "EHLO
+        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229626AbhJ1JM6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Oct 2021 05:12:58 -0400
+Received: by mail-ua1-f50.google.com with SMTP id z22so7850080uaq.12;
+        Thu, 28 Oct 2021 02:10:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jIdjJwfIBGv1KS5xhlxqTwJnLJVOANH70wfvTGUMbeI=;
+        b=MTI/PviUH7WLYyisUCS7UlJRSoWQ9uIMpq+iviYVQ/WbT4D4x3BeNKAOhuzsF6AjVL
+         vIalfZZSA+OHJd54S1iP9HvIk7W+b8iVfWsghrD/iZ4tab5i/BDJ6Kgd284WWCmc1jTM
+         m1pZr52DY2ppOoEluNd4qH7xWwof52+0Ls/YGvpQx7aZCX/lMXMDShy2ZftxnSbdZ6cw
+         STgjM4RkMog7xsa4uC8tPx75lfhZ209iq9RzBAdonB6zkVdHwYZLCnPlx9/QnPrD6VYu
+         uQHlg+kFQdiSzkj3pEKU/H8QmZFJ/WQX65GEXE59hdacFSAg1B5EbE3dfT8AbXdddpaX
+         NZsA==
+X-Gm-Message-State: AOAM532Y3pKr81xDPKJhIVe9LPurCt0KInN+5UCg68ZC0rqPCcpn3yEI
+        5mNWDH/YrbgVocIvwyulbdyKlhYHhj3hIg==
+X-Google-Smtp-Source: ABdhPJzIhfq0NCdhh0fNLeuuIsaoD0K1CJogFbOa1BJfOl03xCJIC7UmovGr6pCInWISsiXrUZ95dw==
+X-Received: by 2002:a67:ca81:: with SMTP id a1mr2656042vsl.56.1635412231255;
+        Thu, 28 Oct 2021 02:10:31 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id n17sm380262vkp.36.2021.10.28.02.10.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Oct 2021 02:10:30 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id e2so10195882uax.7;
+        Thu, 28 Oct 2021 02:10:30 -0700 (PDT)
+X-Received: by 2002:ab0:3818:: with SMTP id x24mr2932390uav.122.1635412230510;
+ Thu, 28 Oct 2021 02:10:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211027134509.5036-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20211027134509.5036-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdX81X+1AHp4Dsp70kG1TaYj=x3T8j3xidfLuskjd1Vc6g@mail.gmail.com> <CA+V-a8tRRaF=-1_94g54mYREujLed4G-=DtCXP=QJ6YeRwgfWg@mail.gmail.com>
+In-Reply-To: <CA+V-a8tRRaF=-1_94g54mYREujLed4G-=DtCXP=QJ6YeRwgfWg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Oct 2021 11:10:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXK0dVpNsCUAv6eqPi0Zqek1hymvW6HrcDfJPtDVJ4hog@mail.gmail.com>
+Message-ID: <CAMuHMdXK0dVpNsCUAv6eqPi0Zqek1hymvW6HrcDfJPtDVJ4hog@mail.gmail.com>
+Subject: Re: [PATCH 4/4] pinctrl: renesas: pinctrl-rzg2l: Add support to
+ get/set drive-strength and output-impedance-ohms
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The irqchip uses one domain for all GPIO lines, so the line offset
-should be determined w.r.t. the first line of the first port, not the
-first line of the triggered port.
+Hi Prabhakar,
 
-Fixes: 0d82fb1127fb ("gpio: Add Realtek Otto GPIO support")
-Signed-off-by: Sander Vanheule <sander@svanheule.net>
----
- drivers/gpio/gpio-realtek-otto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Oct 28, 2021 at 10:59 AM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Thu, Oct 28, 2021 at 8:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Wed, Oct 27, 2021 at 3:45 PM Lad Prabhakar
+> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > > Add support to get/set drive-strength and output-impedance-ohms
+> > > for the supported pins.
+> > >
+> > > While at it also renamed the below macros to match the HW manual,
+> > > PIN_CFG_IOLH_SD0 -> PIN_CFG_IO_VMC_SD0
+> > > PIN_CFG_IOLH_SD1 -> PIN_CFG_IO_VMC_SD1
+> > > PIN_CFG_IOLH_QSPI -> PIN_CFG_IO_VMC_QSPI
+> > > PIN_CFG_IOLH_ETH0 -> PIN_CFG_IO_VMC_ETH0
+> > > PIN_CFG_IOLH_ETH1 -> PIN_CFG_IO_VMC_ETH1
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
-index eeeb39bc171d..bd75401b549d 100644
---- a/drivers/gpio/gpio-realtek-otto.c
-+++ b/drivers/gpio/gpio-realtek-otto.c
-@@ -205,7 +205,7 @@ static void realtek_gpio_irq_handler(struct irq_desc *desc)
- 		status = realtek_gpio_read_isr(ctrl, lines_done / 8);
- 		port_pin_count = min(gc->ngpio - lines_done, 8U);
- 		for_each_set_bit(offset, &status, port_pin_count)
--			generic_handle_domain_irq(gc->irq.domain, offset);
-+			generic_handle_domain_irq(gc->irq.domain, offset + lines_done);
- 	}
- 
- 	chained_irq_exit(irq_chip, desc);
--- 
-2.31.1
+> > The rest looks good to me!
+> >
+> Thanks, I'll post a v2 just with patches 3 and 4 only. Hope that is OK with you.
 
+That's fine for me.  I can take 1/4 and 2/4 of this series, if LinusW
+and Rob give their Acked-by.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
