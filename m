@@ -2,222 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29659C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 10:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E480C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 11:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B9C3604DC
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 10:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13876610F8
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Oct 2021 11:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbhJ1KkA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Oct 2021 06:40:00 -0400
-Received: from mga14.intel.com ([192.55.52.115]:35742 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230077AbhJ1Kj7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 Oct 2021 06:39:59 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10150"; a="230638316"
-X-IronPort-AV: E=Sophos;i="5.87,189,1631602800"; 
-   d="scan'208";a="230638316"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 03:13:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,189,1631602800"; 
-   d="scan'208";a="447629086"
-Received: from lkp-server01.sh.intel.com (HELO 3b851179dbd8) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 28 Oct 2021 03:13:32 -0700
-Received: from kbuild by 3b851179dbd8 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mg2Pb-0001ym-Pg; Thu, 28 Oct 2021 10:13:31 +0000
-Date:   Thu, 28 Oct 2021 18:13:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:ib-gpio-ppid] BUILD SUCCESS
- cfe6807d82e97e81c3209dca9448f091e1448a57
-Message-ID: <617a77b7.QI0ReNPidAtsJ3iN%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S230135AbhJ1Lz1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Oct 2021 07:55:27 -0400
+Received: from polaris.svanheule.net ([84.16.241.116]:52460 "EHLO
+        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230188AbhJ1Lz1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Oct 2021 07:55:27 -0400
+X-Greylist: delayed 10811 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Oct 2021 07:55:26 EDT
+Received: from [IPv6:2a02:a03f:eafe:c901:6c18:8b05:4bd4:d9c2] (unknown [IPv6:2a02:a03f:eafe:c901:6c18:8b05:4bd4:d9c2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sander@svanheule.net)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 98A5926878E;
+        Thu, 28 Oct 2021 13:52:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+        s=mail1707; t=1635421978;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1gbyaB4CnoIk3BZehsPmxOskoWAiekdQXyVFvPOrOfQ=;
+        b=cvN61TsVQUecCBmHfY7oZ8VWVts2M81nJlsYkBVuLs1VV7hGySYhfBwhYaJ0YobVMJ4vts
+        Xbm0bTMJ1wQB2ii+rKQlzyGFgWJ8kow92LRp8TtnDyOwOHqp8A7PA83tM2JZQXpX8jLuRC
+        yB3NdYAqN/qbzsK5/erCimmlA+oDE3zKmW6FQYuBSDT9vmlNVCiyr9f0P34X27ym+XiZLc
+        AT685BcDvGl0LMe+17BdRzY9oi3khOSmKXKHcVpJFZzobS+DuPKfTHP0vSGA3sOVhA+R4N
+        FVNOVcv4rTtFH2daXjc0cXca3q5L2dLWBCxMbCUjnRostEbRRVOLQblit5rn5g==
+Message-ID: <943e9850fba584ea93262f37165819bb18d2e1c3.camel@svanheule.net>
+Subject: Re: [PATCH] gpio: realtek-otto: fix GPIO line IRQ offset
+From:   Sander Vanheule <sander@svanheule.net>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 28 Oct 2021 13:52:55 +0200
+In-Reply-To: <CAHp75VdafMtemORf3FvV-M4x7iJMxhCQrGSa17vJHrHuzQCqyg@mail.gmail.com>
+References: <20211028085243.34360-1-sander@svanheule.net>
+         <CAHp75VdafMtemORf3FvV-M4x7iJMxhCQrGSa17vJHrHuzQCqyg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git ib-gpio-ppid
-branch HEAD: cfe6807d82e97e81c3209dca9448f091e1448a57  gpio: Allow per-parent interrupt data
+On Thu, 2021-10-28 at 13:23 +0300, Andy Shevchenko wrote:
+> On Thu, Oct 28, 2021 at 11:52 AM Sander Vanheule <sander@svanheule.net> wrote:
+> > 
+> > The irqchip uses one domain for all GPIO lines, so the line offset
+> > should be determined w.r.t. the first line of the first port, not the
+> > first line of the triggered port.
+> > 
+> > Fixes: 0d82fb1127fb ("gpio: Add Realtek Otto GPIO support")
+> 
+> Not sure it fixes anything (it wasn't working from day 1), but in any
+> case the patch is good.
 
-elapsed time: 2130m
+The original patch was tested using a GPIO line on port A, so the missing offset was
+irrelevant there (as it was zero). After recently acquiring a new device, I was trying to
+use a line on port C, which resulted in unhandled interrupts.
 
-configs tested: 158
-configs skipped: 3
+> 
+> > Signed-off-by: Sander Vanheule <sander@svanheule.net>
+> > ---
+> >  drivers/gpio/gpio-realtek-otto.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
+> > index eeeb39bc171d..bd75401b549d 100644
+> > --- a/drivers/gpio/gpio-realtek-otto.c
+> > +++ b/drivers/gpio/gpio-realtek-otto.c
+> > @@ -205,7 +205,7 @@ static void realtek_gpio_irq_handler(struct irq_desc *desc)
+> >                 status = realtek_gpio_read_isr(ctrl, lines_done / 8);
+> >                 port_pin_count = min(gc->ngpio - lines_done, 8U);
+> >                 for_each_set_bit(offset, &status, port_pin_count)
+> > -                       generic_handle_domain_irq(gc->irq.domain, offset);
+> > +                       generic_handle_domain_irq(gc->irq.domain, offset +
+> > lines_done);
+> 
+> Looking into these '/ 8', '8U' sounds to me that it may be a good idea
+> to switch to for_each_set_clump8(). But it's out of scope here.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+For the current code, I could indeed have used for_each_set_clump8, instead of the u8
+read_isr() accessor.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allmodconfig
-arm                              allyesconfig
-mips                 randconfig-c004-20211027
-i386                 randconfig-c001-20211027
-sh                      rts7751r2d1_defconfig
-xtensa                    smp_lx200_defconfig
-mips                          malta_defconfig
-powerpc                     skiroot_defconfig
-mips                         tb0287_defconfig
-nios2                            alldefconfig
-powerpc                     ep8248e_defconfig
-sh                           se7721_defconfig
-powerpc                        fsp2_defconfig
-sh                          r7785rp_defconfig
-arm                           stm32_defconfig
-arm                          pxa168_defconfig
-mips                         cobalt_defconfig
-mips                     loongson2k_defconfig
-arc                 nsimosci_hs_smp_defconfig
-sparc                       sparc64_defconfig
-arm                        cerfcube_defconfig
-powerpc                   currituck_defconfig
-arm                         nhk8815_defconfig
-arm                         shannon_defconfig
-sh                                  defconfig
-arc                              alldefconfig
-mips                           ip32_defconfig
-mips                      loongson3_defconfig
-powerpc                       ebony_defconfig
-mips                malta_qemu_32r6_defconfig
-arm                          pcm027_defconfig
-arm                         lpc32xx_defconfig
-arm                          badge4_defconfig
-arc                        vdk_hs38_defconfig
-sh                            shmin_defconfig
-arm                           viper_defconfig
-arm                        spear3xx_defconfig
-arm                    vt8500_v6_v7_defconfig
-arm                     davinci_all_defconfig
-arc                         haps_hs_defconfig
-arc                            hsdk_defconfig
-arm                          lpd270_defconfig
-sparc                               defconfig
-powerpc                  storcenter_defconfig
-arm                      integrator_defconfig
-arm                         s3c6400_defconfig
-powerpc                      ppc40x_defconfig
-arm                         at91_dt_defconfig
-mips                  maltasmvp_eva_defconfig
-m68k                          amiga_defconfig
-mips                      bmips_stb_defconfig
-powerpc                 mpc8315_rdb_defconfig
-m68k                          multi_defconfig
-i386                             alldefconfig
-powerpc                 mpc832x_rdb_defconfig
-arm                       aspeed_g5_defconfig
-mips                         tb0226_defconfig
-openrisc                    or1ksim_defconfig
-arm                        clps711x_defconfig
-powerpc                      ppc44x_defconfig
-xtensa                    xip_kc705_defconfig
-mips                     decstation_defconfig
-powerpc                      bamboo_defconfig
-mips                          ath25_defconfig
-powerpc                     akebono_defconfig
-powerpc                      tqm8xx_defconfig
-openrisc                            defconfig
-mips                       lemote2f_defconfig
-powerpc                 mpc834x_itx_defconfig
-m68k                        mvme16x_defconfig
-microblaze                      mmu_defconfig
-mips                  cavium_octeon_defconfig
-arm                         vf610m4_defconfig
-powerpc                 canyonlands_defconfig
-arm                        multi_v7_defconfig
-mips                     cu1830-neo_defconfig
-mips                          rm200_defconfig
-riscv             nommu_k210_sdcard_defconfig
-arm                  randconfig-c002-20211027
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                                defconfig
-m68k                             allmodconfig
-m68k                             allyesconfig
-nios2                               defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-nios2                            allyesconfig
-arc                              allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-xtensa                           allyesconfig
-parisc                              defconfig
-s390                                defconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-i386                                defconfig
-i386                              debian-10.3
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a013-20211027
-x86_64               randconfig-a015-20211027
-x86_64               randconfig-a011-20211027
-x86_64               randconfig-a014-20211027
-x86_64               randconfig-a016-20211027
-x86_64               randconfig-a012-20211027
-i386                 randconfig-a012-20211027
-i386                 randconfig-a013-20211027
-i386                 randconfig-a011-20211027
-i386                 randconfig-a016-20211027
-i386                 randconfig-a015-20211027
-i386                 randconfig-a014-20211027
-riscv                    nommu_k210_defconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allyesconfig
-riscv                            allmodconfig
-x86_64                    rhel-8.3-kselftests
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-x86_64                           allyesconfig
+However, I'm also preparing support for the RTL9302 device I have recently acquired. On
+RTL930x and RTL931x the port order is reversed, requiring different port order handling.
+My plan is to provide different port_read_isr() functions for the different port orders,
+that return the requested u8. I'll try to get that patch set out today as well.
 
-clang tested configs:
-riscv                randconfig-c006-20211027
-powerpc              randconfig-c003-20211027
-arm                  randconfig-c002-20211027
-mips                 randconfig-c004-20211027
-x86_64               randconfig-c007-20211027
-i386                 randconfig-c001-20211027
-s390                 randconfig-c005-20211027
-x86_64               randconfig-a002-20211027
-x86_64               randconfig-a004-20211027
-x86_64               randconfig-a005-20211027
-x86_64               randconfig-a006-20211027
-x86_64               randconfig-a001-20211027
-x86_64               randconfig-a003-20211027
-i386                 randconfig-a003-20211027
-i386                 randconfig-a004-20211027
-i386                 randconfig-a002-20211027
-i386                 randconfig-a005-20211027
-i386                 randconfig-a001-20211027
-i386                 randconfig-a006-20211027
-hexagon              randconfig-r045-20211027
-hexagon              randconfig-r041-20211027
+Best,
+Sander
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
