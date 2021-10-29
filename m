@@ -2,26 +2,26 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC1AC433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Oct 2021 12:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF997C4321E
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Oct 2021 12:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2277861167
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Oct 2021 12:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9597B61177
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Oct 2021 12:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231696AbhJ2MrT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Oct 2021 08:47:19 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:3649 "EHLO
+        id S231723AbhJ2MrV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Oct 2021 08:47:21 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:14605 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231684AbhJ2MrR (ORCPT
+        by vger.kernel.org with ESMTP id S231695AbhJ2MrU (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 29 Oct 2021 08:47:17 -0400
+        Fri, 29 Oct 2021 08:47:20 -0400
 X-IronPort-AV: E=Sophos;i="5.87,192,1631545200"; 
-   d="scan'208";a="98894432"
+   d="scan'208";a="98894441"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 29 Oct 2021 21:44:46 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 29 Oct 2021 21:44:51 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 89B8E438EE79;
-        Fri, 29 Oct 2021 21:44:44 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5FC39438EE72;
+        Fri, 29 Oct 2021 21:44:49 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -31,9 +31,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/5] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Add output-impedance-ohms property
-Date:   Fri, 29 Oct 2021 13:44:33 +0100
-Message-Id: <20211029124437.20721-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 3/5] pinctrl: renesas: pinctrl-rzg2l: Add support to get/set pin config for GPIO port pins
+Date:   Fri, 29 Oct 2021 13:44:35 +0100
+Message-Id: <20211029124437.20721-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211029124437.20721-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211029124437.20721-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -41,29 +41,72 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-RZ/G2L SoC has two groups of pins, Group-A and Group-B. RZ/G2L SoC supports
-configuring Output Impedance for Group-B pins (valid values 33/50/66/100).
+Add support to get/set pin config for GPIO port pins.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml      | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 33 +++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-index ef68dabcf4dc..3a66fd214c17 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-@@ -73,6 +73,8 @@ additionalProperties:
-         pins: true
-         drive-strength:
-           enum: [ 2, 4, 8, 12 ]
-+        output-impedance-ohms:
-+          enum: [ 33, 50, 66, 100 ]
-         power-source:
-           enum: [ 1800, 2500, 3300 ]
-         slew-rate: true
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index f294ae7b8b5a..bc34c63bbb36 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -426,6 +426,23 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	return ret;
+ }
+ 
++static int rzg2l_validate_gpio_pin(struct rzg2l_pinctrl *pctrl,
++				   u32 cfg, u32 port, u8 bit)
++{
++	u8 pincount = RZG2L_GPIO_PORT_GET_PINCNT(cfg);
++	u32 port_index = RZG2L_GPIO_PORT_GET_INDEX(cfg);
++	u32 data;
++
++	if (bit >= pincount || port >= pctrl->data->n_port_pins)
++		return -EINVAL;
++
++	data = pctrl->data->port_pin_configs[port];
++	if (port_index != RZG2L_GPIO_PORT_GET_INDEX(data))
++		return -EINVAL;
++
++	return 0;
++}
++
+ static u32 rzg2l_read_pin_config(struct rzg2l_pinctrl *pctrl, bool port_pin,
+ 				 u32 offset, u8 bit, u32 mask)
+ {
+@@ -495,6 +512,14 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+ 		port = RZG2L_SINGLE_PIN_GET_PORT(*pin_data);
+ 		cfg = RZG2L_SINGLE_PIN_GET_CFGS(*pin_data);
+ 		bit = RZG2L_SINGLE_PIN_GET_BIT(*pin_data);
++	} else {
++		cfg = RZG2L_GPIO_PORT_GET_CFGS(*pin_data);
++		port = RZG2L_PIN_ID_TO_PORT(_pin);
++		bit = RZG2L_PIN_ID_TO_PIN(_pin);
++		port_pin = true;
++
++		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit))
++			return -EINVAL;
+ 	}
+ 
+ 	switch (param) {
+@@ -557,6 +582,14 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 		port = RZG2L_SINGLE_PIN_GET_PORT(*pin_data);
+ 		cfg = RZG2L_SINGLE_PIN_GET_CFGS(*pin_data);
+ 		bit = RZG2L_SINGLE_PIN_GET_BIT(*pin_data);
++	} else {
++		cfg = RZG2L_GPIO_PORT_GET_CFGS(*pin_data);
++		port = RZG2L_PIN_ID_TO_PORT(_pin);
++		bit = RZG2L_PIN_ID_TO_PIN(_pin);
++		port_pin = true;
++
++		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit))
++			return -EINVAL;
+ 	}
+ 
+ 	for (i = 0; i < num_configs; i++) {
 -- 
 2.17.1
 
