@@ -2,79 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5535DC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 13:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328E3C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 16:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29FE560F5A
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 13:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ACDC61101
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 16:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbhKBNlZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Nov 2021 09:41:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58286 "EHLO
+        id S234841AbhKBQjl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Nov 2021 12:39:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbhKBNlY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Nov 2021 09:41:24 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DCC4C0613F5
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Nov 2021 06:38:50 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id y73so305001iof.4
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Nov 2021 06:38:50 -0700 (PDT)
+        with ESMTP id S234756AbhKBQjA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Nov 2021 12:39:00 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC151C0432F1
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Nov 2021 09:35:56 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id w29-20020a056830411d00b0055abaca9349so2365819ott.13
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Nov 2021 09:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NPmlFnsZtjOhlgu33qBtxP1UZOWSahyMoeO4vIQ/8Z0=;
-        b=OVSrn46sf3M7ODJBsJzugoe0wCPuQeHMutpWsElQHERc7suWX1ETX3idIWCLex1Tlt
-         UTq1fIJzkXsD1zhbzmcRcYq1D9k7lXVYOfUWaunuw6gA1J77xqRRhY/hC12Kg4OTsGp4
-         wyZTjNHJDa2TubIWyoB5lBvoPN4gh+8fHdr2Y=
+        d=kali.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=n/RntJXNAkrW0uv0IpMzSuir/PcBl5SVKIKgV75XIB8=;
+        b=isBEGC41Hvc8wUmUEuyLHkbMd1h6iLODoNVxaIvZIk01gTWS0aXT2Kzl+JbOAagdxd
+         G9H7NtcyejQEScT2h8UhijezCAkUeGSIn3I9vddL9vYfDuI+BKXk7VFbnEJiSrCnrsow
+         0oxazuFTD4knb37vMucpKXj75uXjX6x425BdhuMS0YvIqXhP3dBURljIZNIRzWZVeLgH
+         GoTVkudz3uWc+lLnkX/c9IaBzorcZCWCucXgnatepOCBGnfSnJvBRRbof/XGa0CNK4mO
+         dpyHiGSzTn3BD/DTsp8RgSLaOAv4bIMtn6ecIHCxPP8qbaXsncRUcVCNYQmLttqPnSG3
+         eAoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NPmlFnsZtjOhlgu33qBtxP1UZOWSahyMoeO4vIQ/8Z0=;
-        b=C+n/Q3Yy8c/tcOvlyXeXj9RJl2mgtqrw2vjra2T6IkcTKt4FEwLcqilcGO+VxyHN1C
-         1/RuSFLIEzIg8MhHeklJ3JPW4N/gfYNPpMQYSBwBK7P8t06P4/SJKNk5CNsXVO1PLFfC
-         nwOO7jj/LqmTk0mLCdMiiJu1S3tCdFQjMWDWtvcZ6fREg0/j5om7Z5WpJDnGHuqexu3i
-         7Fpo+EbQEBeFbQ6I+xkzXG/JaTWbl9UvIxb5CuLtwEVGl2FBfi8C+vWOHCeeTX7UD8Lm
-         y7c3Cyt+EIuJljj0Yr9pTiYVCgeKwsuD0pgH//y6wFXLW7/lXrq790hTizYAV1/6lfrc
-         cwZA==
-X-Gm-Message-State: AOAM5332XReZ+onmws2O+phgE4tA4vv/MxALBrqt7XQE8uPTZWSqBxPt
-        tmmYKcCkEHCv0C/agAkEnmjzTz/0jVETsg==
-X-Google-Smtp-Source: ABdhPJydBirM01kBEdLVkmLJ74CR3szQ+BG8Dkgg9gukUDe1o8TOHZbo9oz6ncalUwpHmutG7XHDfA==
-X-Received: by 2002:a05:6638:2727:: with SMTP id m39mr27934226jav.125.1635860329206;
-        Tue, 02 Nov 2021 06:38:49 -0700 (PDT)
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com. [209.85.166.179])
-        by smtp.gmail.com with ESMTPSA id u4sm9909073ilv.39.2021.11.02.06.38.48
-        for <linux-gpio@vger.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=n/RntJXNAkrW0uv0IpMzSuir/PcBl5SVKIKgV75XIB8=;
+        b=HiyqXflCISBuqTwJRJlBgnsUkF3pbGaGGF/qtPYrEQoyShKbXdZHYr7vrYCgAxaPsP
+         RPSoWLTOETe0wafbi1d7kuBYw0Xvk/PFnfIQmVlyikvIH7mnjXwNCZBrnwmdEgn3wdd2
+         ijAz3xenEQEEAeR2OLcnT3UNFPRXOfRt63J5gOquh4DCCy24tfJNqdWOekTCX8jb/MLA
+         JuPfTDJ8LKWJ2vDVihpGHD6/cyMqJTdeHrQhgTyObZmo2f6MzjuG/HbYDvktigAfD8Hp
+         njAMioeY0RbqDU+bm5PpwVOyBJiiByK6Wk/gdgj3+FHweV93G57iN3UyEwEeYCXDPzXX
+         SJoA==
+X-Gm-Message-State: AOAM5329k1B8NGFWwshMS15YFWf9FAex+G/ScXR/pqLhx+nfUkeQeRUj
+        kPSF3ThsV2dyMxBKcvmpbiSk0w==
+X-Google-Smtp-Source: ABdhPJw+6Xw8t85A50e6lXfI/V58EwMHlfsy2yrC6cuYlesP4xDvDfU30ACuyCZ0j1dGgO6YdJzlug==
+X-Received: by 2002:a9d:6315:: with SMTP id q21mr23370259otk.169.1635870956247;
+        Tue, 02 Nov 2021 09:35:56 -0700 (PDT)
+Received: from [192.168.11.48] (cpe-173-173-107-246.satx.res.rr.com. [173.173.107.246])
+        by smtp.gmail.com with ESMTPSA id q5sm5209853otg.1.2021.11.02.09.35.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Nov 2021 06:38:48 -0700 (PDT)
-Received: by mail-il1-f179.google.com with SMTP id i9so410598ilu.8
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Nov 2021 06:38:48 -0700 (PDT)
-X-Received: by 2002:a05:6e02:18ce:: with SMTP id s14mr13331028ilu.142.1635860328172;
- Tue, 02 Nov 2021 06:38:48 -0700 (PDT)
+        Tue, 02 Nov 2021 09:35:55 -0700 (PDT)
+Message-ID: <2197a192-446b-e5cd-afd5-28bba65d89f0@kali.org>
+Date:   Tue, 2 Nov 2021 11:35:52 -0500
 MIME-Version: 1.0
-References: <20211102034115.1946036-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20211102034115.1946036-1-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 2 Nov 2021 06:38:36 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VWN36A=O1V+2jfWM5jLShvZfVOCGnt_MSSGct=kFtoOw@mail.gmail.com>
-Message-ID: <CAD=FV=VWN36A=O1V+2jfWM5jLShvZfVOCGnt_MSSGct=kFtoOw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.2.1
 Subject: Re: [PATCH] pinctrl: qcom: sdm845: Enable dual edge errata
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Steev Klimaszewski <steev@kali.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org
+References: <20211102034115.1946036-1-bjorn.andersson@linaro.org>
+From:   Steev Klimaszewski <steev@kali.org>
+In-Reply-To: <20211102034115.1946036-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
 
-On Mon, Nov 1, 2021 at 8:41 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
+On 11/1/21 10:41 PM, Bjorn Andersson wrote:
 > It has been observed that dual edge triggered wakeirq GPIOs on SDM845
 > doesn't trigger interrupts on the falling edge.
 >
@@ -90,7 +90,24 @@ On Mon, Nov 1, 2021 at 8:41 PM Bjorn Andersson
 > Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/pinctrl/qcom/pinctrl-sdm845.c | 1 +
->  1 file changed, 1 insertion(+)
+>   drivers/pinctrl/qcom/pinctrl-sdm845.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> index c51793f6546f..fdfd7b8f3a76 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> @@ -1310,6 +1310,7 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+>   	.ngpios = 151,
+>   	.wakeirq_map = sdm845_pdc_map,
+>   	.nwakeirq_map = ARRAY_SIZE(sdm845_pdc_map),
+> +	.wakeirq_dual_edge_errata = true,
+>   };
+>   
+>   static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Tested here with a number of suspend cycles, works as expected now.  
+Thank you so much!
+
+Tested-By: Steev Klimaszewski <steev@kali.org>
+
