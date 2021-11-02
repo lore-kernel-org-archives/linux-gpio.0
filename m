@@ -2,112 +2,123 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328E3C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 16:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2999C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 16:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACDC61101
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 16:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B539960524
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Nov 2021 16:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234841AbhKBQjl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Nov 2021 12:39:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42110 "EHLO
+        id S234809AbhKBQqt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Nov 2021 12:46:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234756AbhKBQjA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Nov 2021 12:39:00 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC151C0432F1
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Nov 2021 09:35:56 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id w29-20020a056830411d00b0055abaca9349so2365819ott.13
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Nov 2021 09:35:56 -0700 (PDT)
+        with ESMTP id S231725AbhKBQqs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Nov 2021 12:46:48 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6D4C06120E;
+        Tue,  2 Nov 2021 09:11:50 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id w15so77757457edc.9;
+        Tue, 02 Nov 2021 09:11:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=n/RntJXNAkrW0uv0IpMzSuir/PcBl5SVKIKgV75XIB8=;
-        b=isBEGC41Hvc8wUmUEuyLHkbMd1h6iLODoNVxaIvZIk01gTWS0aXT2Kzl+JbOAagdxd
-         G9H7NtcyejQEScT2h8UhijezCAkUeGSIn3I9vddL9vYfDuI+BKXk7VFbnEJiSrCnrsow
-         0oxazuFTD4knb37vMucpKXj75uXjX6x425BdhuMS0YvIqXhP3dBURljIZNIRzWZVeLgH
-         GoTVkudz3uWc+lLnkX/c9IaBzorcZCWCucXgnatepOCBGnfSnJvBRRbof/XGa0CNK4mO
-         dpyHiGSzTn3BD/DTsp8RgSLaOAv4bIMtn6ecIHCxPP8qbaXsncRUcVCNYQmLttqPnSG3
-         eAoA==
+        d=gmail.com; s=20210112;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=z3xrx/IjdMfQoBfwXaJgW39HMolJDiqcY4GCUL8qxe8=;
+        b=LXfIj2Z4WMpkea3nWTzGuHn0zasNZNcX6P8os0+i7/c8qIqUf70qkE7Sr9Q71TFqH0
+         9ALKQHimQY1zh4nvtz9/cS4r8YVjSqpSXxs7QgJLp62R4y3sOtwktYJcWvv6rf7cEJy+
+         cfd5nNe3YVCDpex4j3yvh+cn5FAU6Z7s+sZnUcBV8uuNRqeShzTEXw4o3dT4f0RJjJa3
+         IDrVpFek1tD7RqJljLFWlavIQO0YrcSKAdqumdtbq6bBLRR//0v1pypI9dgCP+RSt0CH
+         RSyeOuGxrnfyZFLAuzEO6lOyaKxLMIuKrQ+NLAK5YRddACJC/DfauhpxIRchJqU/Ma4B
+         D/9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=n/RntJXNAkrW0uv0IpMzSuir/PcBl5SVKIKgV75XIB8=;
-        b=HiyqXflCISBuqTwJRJlBgnsUkF3pbGaGGF/qtPYrEQoyShKbXdZHYr7vrYCgAxaPsP
-         RPSoWLTOETe0wafbi1d7kuBYw0Xvk/PFnfIQmVlyikvIH7mnjXwNCZBrnwmdEgn3wdd2
-         ijAz3xenEQEEAeR2OLcnT3UNFPRXOfRt63J5gOquh4DCCy24tfJNqdWOekTCX8jb/MLA
-         JuPfTDJ8LKWJ2vDVihpGHD6/cyMqJTdeHrQhgTyObZmo2f6MzjuG/HbYDvktigAfD8Hp
-         njAMioeY0RbqDU+bm5PpwVOyBJiiByK6Wk/gdgj3+FHweV93G57iN3UyEwEeYCXDPzXX
-         SJoA==
-X-Gm-Message-State: AOAM5329k1B8NGFWwshMS15YFWf9FAex+G/ScXR/pqLhx+nfUkeQeRUj
-        kPSF3ThsV2dyMxBKcvmpbiSk0w==
-X-Google-Smtp-Source: ABdhPJw+6Xw8t85A50e6lXfI/V58EwMHlfsy2yrC6cuYlesP4xDvDfU30ACuyCZ0j1dGgO6YdJzlug==
-X-Received: by 2002:a9d:6315:: with SMTP id q21mr23370259otk.169.1635870956247;
-        Tue, 02 Nov 2021 09:35:56 -0700 (PDT)
-Received: from [192.168.11.48] (cpe-173-173-107-246.satx.res.rr.com. [173.173.107.246])
-        by smtp.gmail.com with ESMTPSA id q5sm5209853otg.1.2021.11.02.09.35.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Nov 2021 09:35:55 -0700 (PDT)
-Message-ID: <2197a192-446b-e5cd-afd5-28bba65d89f0@kali.org>
-Date:   Tue, 2 Nov 2021 11:35:52 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.2.1
-Subject: Re: [PATCH] pinctrl: qcom: sdm845: Enable dual edge errata
-Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=z3xrx/IjdMfQoBfwXaJgW39HMolJDiqcY4GCUL8qxe8=;
+        b=MJYz2Oz2igjCSdxfjTp+DuHCSZC/ELOcPu68rwa9oe8g9uYH49CeoI0KKMVYwbCEeK
+         76ykioMVxqcv1hwMg8OzZ8Nv2Hhp/VNiFL6vlUSvceJXuj0u92Wh0oD2YmjsrLkTdSoJ
+         3jSWASc8r0FoPT3UiKgsBl8pbS9qM24lDPmCqZnDGuBjalfFW9Q/Bu9pgVo1MyObbZ0P
+         Cn5oejreqVDK2EVDjBg5wBENW1qMaGQ0n+s0WvkKDGxTf99kb17HadCWBGiE5vN4AFoY
+         nwfcpQP0KuhlZOh9/UIs8reI8biBuE+Y5mWHqDQ+uHgCAEFcOXfMIUsiW0CEwGs0uQ6g
+         ecOQ==
+X-Gm-Message-State: AOAM532RxXTkrRchkgsY3mAgzzqhimjZMEpUVpDRqtQZPYbSBzIe2H0q
+        4vaaSSvE8rRGxkcjmly+sMU=
+X-Google-Smtp-Source: ABdhPJyovKza913KPMbj0Md2JTDAPXlRSDUZ9UAcHWnMSQ/TZMe5pgyFBG1YPDmyjHNj+AmITMpPPQ==
+X-Received: by 2002:a05:6402:da:: with SMTP id i26mr52392928edu.207.1635869507694;
+        Tue, 02 Nov 2021 09:11:47 -0700 (PDT)
+Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
+        by smtp.gmail.com with ESMTPSA id c7sm8451374ejd.91.2021.11.02.09.11.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Nov 2021 09:11:47 -0700 (PDT)
+Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
         linux-kernel@vger.kernel.org
-References: <20211102034115.1946036-1-bjorn.andersson@linaro.org>
-From:   Steev Klimaszewski <steev@kali.org>
-In-Reply-To: <20211102034115.1946036-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: [PATCH v3 01/16] RISC-V: Add StarFive SoC Kconfig option
+Date:   Tue,  2 Nov 2021 17:11:10 +0100
+Message-Id: <20211102161125.1144023-2-kernel@esmil.dk>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211102161125.1144023-1-kernel@esmil.dk>
+References: <20211102161125.1144023-1-kernel@esmil.dk>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Add StarFive Kconfig option to select SoC specific and common drivers
+required for these SoCs. Select subsystems required to boot so the
+required drivers gets enabled by default.
 
-On 11/1/21 10:41 PM, Bjorn Andersson wrote:
-> It has been observed that dual edge triggered wakeirq GPIOs on SDM845
-> doesn't trigger interrupts on the falling edge.
->
-> Enabling wakeirq_dual_edge_errata for SDM845 indicates that the PDC in
-> SDM845 suffers from the same problem described, and worked around, by
-> Doug in 'c3c0c2e18d94 ("pinctrl: qcom: Handle broken/missing PDC dual
-> edge IRQs on sc7180")', so enable the workaround for SDM845 as well.
->
-> The specific problem seen without this is that gpio-keys does not detect
-> the falling edge of the LID gpio on the Lenovo Yoga C630 and as such
-> consistently reports the LID as closed.
->
-> Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->   drivers/pinctrl/qcom/pinctrl-sdm845.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> index c51793f6546f..fdfd7b8f3a76 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> @@ -1310,6 +1310,7 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
->   	.ngpios = 151,
->   	.wakeirq_map = sdm845_pdc_map,
->   	.nwakeirq_map = ARRAY_SIZE(sdm845_pdc_map),
-> +	.wakeirq_dual_edge_errata = true,
->   };
->   
->   static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+---
+ arch/riscv/Kconfig.socs | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Tested here with a number of suspend cycles, works as expected now.  
-Thank you so much!
-
-Tested-By: Steev Klimaszewski <steev@kali.org>
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 30676ebb16eb..6ec44a22278a 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -19,6 +19,14 @@ config SOC_SIFIVE
+ 	help
+ 	  This enables support for SiFive SoC platform hardware.
+ 
++config SOC_STARFIVE
++	bool "StarFive SoCs"
++	select PINCTRL
++	select RESET_CONTROLLER
++	select SIFIVE_PLIC
++	help
++	  This enables support for StarFive SoC platform hardware.
++
+ config SOC_VIRT
+ 	bool "QEMU Virt Machine"
+ 	select CLINT_TIMER if RISCV_M_MODE
+-- 
+2.33.1
 
