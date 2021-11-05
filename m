@@ -2,30 +2,30 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE69C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B790C433EF
 	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 256AB6128E
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4189611EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233119AbhKEMqB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Nov 2021 08:46:01 -0400
-Received: from mga07.intel.com ([134.134.136.100]:41489 "EHLO mga07.intel.com"
+        id S233058AbhKEMp7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 5 Nov 2021 08:45:59 -0400
+Received: from mga09.intel.com ([134.134.136.24]:28683 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232649AbhKEMpv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S232628AbhKEMpv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 5 Nov 2021 08:45:51 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10158"; a="295333850"
+X-IronPort-AV: E=McAfee;i="6200,9189,10158"; a="231734429"
 X-IronPort-AV: E=Sophos;i="5.87,211,1631602800"; 
-   d="scan'208";a="295333850"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2021 05:43:09 -0700
+   d="scan'208";a="231734429"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2021 05:43:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,211,1631602800"; 
-   d="scan'208";a="501921085"
+   d="scan'208";a="579644106"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 05 Nov 2021 05:43:05 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Nov 2021 05:42:59 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C9C8D904; Fri,  5 Nov 2021 14:43:01 +0200 (EET)
+        id 1BE5C11E; Fri,  5 Nov 2021 14:43:01 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -44,9 +44,9 @@ Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
         Patrice Chotard <patrice.chotard@foss.st.com>,
         Michal Simek <michal.simek@xilinx.com>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 15/19] pinctrl: st: Make use of the devm_platform_ioremap_resource_byname()
-Date:   Fri,  5 Nov 2021 14:42:38 +0200
-Message-Id: <20211105124242.27288-15-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 02/19] lib/string_helpers: Introduce managed variant of kasprintf_strarray()
+Date:   Fri,  5 Nov 2021 14:42:25 +0200
+Message-Id: <20211105124242.27288-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
 References: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
@@ -56,45 +56,85 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use the devm_platform_ioremap_resource_byname() helper instead of
-calling platform_get_resource_byname() and devm_ioremap_resource()
-separately.
+Some of the users want to have easy way to allocate array of strings
+that will be automatically cleaned when associated device is gone.
+
+Introduce managed variant of kasprintf_strarray() for such use cases.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-st.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ include/linux/string_helpers.h |  3 +++
+ lib/string_helpers.c           | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index f592e9ad93fc..bccde0b8f012 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -1583,7 +1583,6 @@ static int st_pctl_probe_dt(struct platform_device *pdev,
- 	struct device_node *child;
- 	int grp_index = 0;
- 	int irq = 0;
--	struct resource *res;
+diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
+index f67a94013c87..7a22921c9db7 100644
+--- a/include/linux/string_helpers.h
++++ b/include/linux/string_helpers.h
+@@ -7,6 +7,7 @@
+ #include <linux/string.h>
+ #include <linux/types.h>
  
- 	st_pctl_dt_child_count(info, np);
- 	if (!info->nbanks) {
-@@ -1614,16 +1613,12 @@ static int st_pctl_probe_dt(struct platform_device *pdev,
- 	irq = platform_get_irq(pdev, 0);
++struct device;
+ struct file;
+ struct task_struct;
  
- 	if (irq > 0) {
--		res = platform_get_resource_byname(pdev,
--					IORESOURCE_MEM, "irqmux");
--		info->irqmux_base = devm_ioremap_resource(dev, res);
--
-+		info->irqmux_base = devm_platform_ioremap_resource_byname(pdev, "irqmux");
- 		if (IS_ERR(info->irqmux_base))
- 			return PTR_ERR(info->irqmux_base);
+@@ -103,4 +104,6 @@ char *kstrdup_quotable_file(struct file *file, gfp_t gfp);
+ char **kasprintf_strarray(gfp_t gfp, const char *prefix, size_t n);
+ void kfree_strarray(char **array, size_t n);
  
- 		irq_set_chained_handler_and_data(irq, st_gpio_irqmux_handler,
- 						 info);
--
- 	}
++char **devm_kasprintf_strarray(struct device *dev, const char *prefix, size_t n);
++
+ #endif
+diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+index 9758997c465e..90f9f1b7afec 100644
+--- a/lib/string_helpers.c
++++ b/lib/string_helpers.c
+@@ -10,6 +10,7 @@
+ #include <linux/math64.h>
+ #include <linux/export.h>
+ #include <linux/ctype.h>
++#include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/fs.h>
+ #include <linux/limits.h>
+@@ -730,6 +731,36 @@ void kfree_strarray(char **array, size_t n)
+ }
+ EXPORT_SYMBOL_GPL(kfree_strarray);
  
- 	pctl_desc->npins = info->nbanks * ST_GPIO_PINS_PER_BANK;
++struct strarray {
++	char **array;
++	size_t n;
++};
++
++static void devm_kfree_strarray(struct device *dev, void *res)
++{
++	struct strarray *array = res;
++
++	kfree_strarray(array->array, array->n);
++}
++
++char **devm_kasprintf_strarray(struct device *dev, const char *prefix, size_t n)
++{
++	struct strarray *ptr;
++
++	ptr = devres_alloc(devm_kfree_strarray, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	ptr->array = kasprintf_strarray(GFP_KERNEL, prefix, n);
++	if (!ptr->array) {
++		devres_free(ptr);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	return ptr->array;
++}
++EXPORT_SYMBOL_GPL(devm_kasprintf_strarray);
++
+ /**
+  * strscpy_pad() - Copy a C-string into a sized buffer
+  * @dest: Where to copy the string to
 -- 
 2.33.0
 
