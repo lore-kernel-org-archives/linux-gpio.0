@@ -2,30 +2,30 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81228C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA87C43219
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6888D6125F
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06E9461212
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233170AbhKEMqI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Nov 2021 08:46:08 -0400
-Received: from mga06.intel.com ([134.134.136.31]:53541 "EHLO mga06.intel.com"
+        id S233070AbhKEMqJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 5 Nov 2021 08:46:09 -0400
+Received: from mga18.intel.com ([134.134.136.126]:7144 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232959AbhKEMpx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S232965AbhKEMpx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 5 Nov 2021 08:45:53 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10158"; a="292724130"
+X-IronPort-AV: E=McAfee;i="6200,9189,10158"; a="218789436"
 X-IronPort-AV: E=Sophos;i="5.87,211,1631602800"; 
-   d="scan'208";a="292724130"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2021 05:43:11 -0700
+   d="scan'208";a="218789436"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2021 05:43:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,211,1631602800"; 
-   d="scan'208";a="542718188"
+   d="scan'208";a="498356092"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Nov 2021 05:43:04 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 05 Nov 2021 05:43:09 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 7D7D262B; Fri,  5 Nov 2021 14:43:01 +0200 (EET)
+        id D409E931; Fri,  5 Nov 2021 14:43:01 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -44,9 +44,9 @@ Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
         Patrice Chotard <patrice.chotard@foss.st.com>,
         Michal Simek <michal.simek@xilinx.com>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 09/19] pinctrl: armada-37xx: Use temporary variable for struct device
-Date:   Fri,  5 Nov 2021 14:42:32 +0200
-Message-Id: <20211105124242.27288-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 16/19] pinctrl: st: Convert to use dev_err_probe()
+Date:   Fri,  5 Nov 2021 14:42:39 +0200
+Message-Id: <20211105124242.27288-16-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
 References: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
@@ -56,222 +56,83 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use temporary variable for struct device to make code neater.
+It's fine to call dev_err_probe() in ->probe() when error code is known.
+Convert the driver to use dev_err_probe().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 56 +++++++++------------
- 1 file changed, 23 insertions(+), 33 deletions(-)
+ drivers/pinctrl/pinctrl-st.c | 30 ++++++++++--------------------
+ 1 file changed, 10 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 5615cb7a1209..37f92dc54d7a 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -341,12 +341,12 @@ static int armada_37xx_pmx_set_by_name(struct pinctrl_dev *pctldev,
- 				       struct armada_37xx_pin_group *grp)
- {
- 	struct armada_37xx_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
-+	struct device *dev = info->dev;
- 	unsigned int reg = SELECTION;
- 	unsigned int mask = grp->reg_mask;
- 	int func, val;
- 
--	dev_dbg(info->dev, "enable function %s group %s\n",
--		name, grp->name);
-+	dev_dbg(dev, "enable function %s group %s\n", name, grp->name);
- 
- 	func = match_string(grp->funcs, NB_FUNCS, name);
- 	if (func < 0)
-@@ -722,16 +722,16 @@ static unsigned int armada_37xx_irq_startup(struct irq_data *d)
- static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 					struct armada_37xx_pinctrl *info)
- {
--	struct device_node *np = info->dev->of_node;
- 	struct gpio_chip *gc = &info->gpio_chip;
- 	struct irq_chip *irqchip = &info->irq_chip;
- 	struct gpio_irq_chip *girq = &gc->irq;
- 	struct device *dev = &pdev->dev;
-+	struct device_node *np;
- 	struct resource res;
- 	int ret = -ENODEV, i, nr_irq_parent;
- 
- 	/* Check if we have at least one gpio-controller child node */
--	for_each_child_of_node(info->dev->of_node, np) {
-+	for_each_child_of_node(dev->of_node, np) {
- 		if (of_property_read_bool(np, "gpio-controller")) {
- 			ret = 0;
- 			break;
-@@ -750,12 +750,12 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 		return 0;
- 	}
- 
--	if (of_address_to_resource(info->dev->of_node, 1, &res)) {
-+	if (of_address_to_resource(dev->of_node, 1, &res)) {
- 		dev_err(dev, "cannot find IO resource\n");
- 		return -ENOENT;
- 	}
- 
--	info->base = devm_ioremap_resource(info->dev, &res);
-+	info->base = devm_ioremap_resource(dev, &res);
- 	if (IS_ERR(info->base))
- 		return PTR_ERR(info->base);
- 
-@@ -774,8 +774,7 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 	 * the chained irq with all of them.
- 	 */
- 	girq->num_parents = nr_irq_parent;
--	girq->parents = devm_kcalloc(&pdev->dev, nr_irq_parent,
--				     sizeof(*girq->parents), GFP_KERNEL);
-+	girq->parents = devm_kcalloc(dev, nr_irq_parent, sizeof(*girq->parents), GFP_KERNEL);
- 	if (!girq->parents)
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index bccde0b8f012..9cb0da88b098 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -1255,10 +1255,8 @@ static int st_pctl_parse_functions(struct device_node *np,
+ 	func = &info->functions[index];
+ 	func->name = np->name;
+ 	func->ngroups = of_get_child_count(np);
+-	if (func->ngroups == 0) {
+-		dev_err(dev, "No groups defined\n");
+-		return -EINVAL;
+-	}
++	if (func->ngroups == 0)
++		return dev_err_probe(dev, -EINVAL, "No groups defined\n");
+ 	func->groups = devm_kcalloc(dev, func->ngroups, sizeof(*func->groups), GFP_KERNEL);
+ 	if (!func->groups)
  		return -ENOMEM;
- 	for (i = 0; i < nr_irq_parent; i++) {
-@@ -794,11 +793,12 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- static int armada_37xx_gpiochip_register(struct platform_device *pdev,
- 					struct armada_37xx_pinctrl *info)
- {
-+	struct device *dev = &pdev->dev;
- 	struct device_node *np;
- 	struct gpio_chip *gc;
- 	int ret = -ENODEV;
+@@ -1555,10 +1553,8 @@ static int st_gpiolib_register_bank(struct st_pinctrl *info,
  
--	for_each_child_of_node(info->dev->of_node, np) {
-+	for_each_child_of_node(dev->of_node, np) {
- 		if (of_find_property(np, "gpio-controller", NULL)) {
- 			ret = 0;
- 			break;
-@@ -811,19 +811,16 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+ skip_irq:
+ 	err  = gpiochip_add_data(&bank->gpio_chip, bank);
+-	if (err) {
+-		dev_err(dev, "Failed to add gpiochip(%d)!\n", bank_num);
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(dev, err, "Failed to add gpiochip(%d)!\n", bank_num);
+ 	dev_info(dev, "%s bank added.\n", range->name);
  
- 	gc = &info->gpio_chip;
- 	gc->ngpio = info->data->nr_pins;
--	gc->parent = &pdev->dev;
-+	gc->parent = dev;
- 	gc->base = -1;
- 	gc->of_node = np;
- 	gc->label = info->data->name;
+ 	return 0;
+@@ -1585,10 +1581,8 @@ static int st_pctl_probe_dt(struct platform_device *pdev,
+ 	int irq = 0;
  
- 	ret = armada_37xx_irqchip_register(pdev, info);
--	if (ret)
--		return ret;
--	ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
- 	if (ret)
- 		return ret;
+ 	st_pctl_dt_child_count(info, np);
+-	if (!info->nbanks) {
+-		dev_err(dev, "you need at least one gpio bank\n");
+-		return -EINVAL;
+-	}
++	if (!info->nbanks)
++		return dev_err_probe(dev, -EINVAL, "you need at least one gpio bank\n");
  
--	return 0;
-+	return devm_gpiochip_add_data(dev, gc, info);
- }
- 
- /**
-@@ -874,13 +871,13 @@ static int armada_37xx_add_function(struct armada_37xx_pmx_func *funcs,
- static int armada_37xx_fill_group(struct armada_37xx_pinctrl *info)
- {
- 	int n, num = 0, funcsize = info->data->nr_pins;
-+	struct device *dev = info->dev;
- 
- 	for (n = 0; n < info->ngroups; n++) {
- 		struct armada_37xx_pin_group *grp = &info->groups[n];
- 		int i, j, f;
- 
--		grp->pins = devm_kcalloc(info->dev,
--					 grp->npins + grp->extra_npins,
-+		grp->pins = devm_kcalloc(dev, grp->npins + grp->extra_npins,
- 					 sizeof(*grp->pins),
- 					 GFP_KERNEL);
- 		if (!grp->pins)
-@@ -898,8 +895,7 @@ static int armada_37xx_fill_group(struct armada_37xx_pinctrl *info)
- 			ret = armada_37xx_add_function(info->funcs, &funcsize,
- 					    grp->funcs[f]);
- 			if (ret == -EOVERFLOW)
--				dev_err(info->dev,
--					"More functions than pins(%d)\n",
-+				dev_err(dev, "More functions than pins(%d)\n",
- 					info->data->nr_pins);
- 			if (ret < 0)
- 				continue;
-@@ -925,6 +921,7 @@ static int armada_37xx_fill_group(struct armada_37xx_pinctrl *info)
- static int armada_37xx_fill_func(struct armada_37xx_pinctrl *info)
- {
- 	struct armada_37xx_pmx_func *funcs = info->funcs;
-+	struct device *dev = info->dev;
- 	int n;
- 
- 	for (n = 0; n < info->nfuncs; n++) {
-@@ -932,8 +929,7 @@ static int armada_37xx_fill_func(struct armada_37xx_pinctrl *info)
- 		const char **groups;
- 		int g;
- 
--		funcs[n].groups = devm_kcalloc(info->dev,
--					       funcs[n].ngroups,
-+		funcs[n].groups = devm_kcalloc(dev, funcs[n].ngroups,
- 					       sizeof(*(funcs[n].groups)),
- 					       GFP_KERNEL);
- 		if (!funcs[n].groups)
-@@ -962,6 +958,7 @@ static int armada_37xx_pinctrl_register(struct platform_device *pdev,
- 	const struct armada_37xx_pin_data *pin_data = info->data;
- 	struct pinctrl_desc *ctrldesc = &info->pctl;
- 	struct pinctrl_pin_desc *pindesc, *pdesc;
-+	struct device *dev = &pdev->dev;
- 	int pin, ret;
- 
- 	info->groups = pin_data->groups;
-@@ -973,9 +970,7 @@ static int armada_37xx_pinctrl_register(struct platform_device *pdev,
- 	ctrldesc->pmxops = &armada_37xx_pmx_ops;
- 	ctrldesc->confops = &armada_37xx_pinconf_ops;
- 
--	pindesc = devm_kcalloc(&pdev->dev,
--			       pin_data->nr_pins, sizeof(*pindesc),
--			       GFP_KERNEL);
-+	pindesc = devm_kcalloc(dev, pin_data->nr_pins, sizeof(*pindesc), GFP_KERNEL);
- 	if (!pindesc)
+ 	dev_info(dev, "nbanks = %d\n", info->nbanks);
+ 	dev_info(dev, "nfunctions = %d\n", info->nfunctions);
+@@ -1604,10 +1598,8 @@ static int st_pctl_probe_dt(struct platform_device *pdev,
  		return -ENOMEM;
  
-@@ -994,14 +989,10 @@ static int armada_37xx_pinctrl_register(struct platform_device *pdev,
- 	 * we allocate functions for number of pins and hope there are
- 	 * fewer unique functions than pins available
- 	 */
--	info->funcs = devm_kcalloc(&pdev->dev,
--				   pin_data->nr_pins,
--				   sizeof(struct armada_37xx_pmx_func),
--				   GFP_KERNEL);
-+	info->funcs = devm_kcalloc(dev, pin_data->nr_pins, sizeof(*info->funcs), GFP_KERNEL);
- 	if (!info->funcs)
- 		return -ENOMEM;
+ 	info->regmap = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
+-	if (IS_ERR(info->regmap)) {
+-		dev_err(dev, "No syscfg phandle specified\n");
+-		return PTR_ERR(info->regmap);
+-	}
++	if (IS_ERR(info->regmap))
++		return dev_err_probe(dev, PTR_ERR(info->regmap), "No syscfg phandle specified\n");
+ 	info->data = of_match_node(st_pctl_of_match, np)->data;
  
--
- 	ret = armada_37xx_fill_group(info);
- 	if (ret)
- 		return ret;
-@@ -1010,9 +1001,9 @@ static int armada_37xx_pinctrl_register(struct platform_device *pdev,
- 	if (ret)
- 		return ret;
+ 	irq = platform_get_irq(pdev, 0);
+@@ -1695,10 +1687,8 @@ static int st_pctl_probe(struct platform_device *pdev)
+ 	pctl_desc->name		= dev_name(dev);
  
--	info->pctl_dev = devm_pinctrl_register(&pdev->dev, ctrldesc, info);
-+	info->pctl_dev = devm_pinctrl_register(dev, ctrldesc, info);
- 	if (IS_ERR(info->pctl_dev)) {
--		dev_err(&pdev->dev, "could not register pinctrl driver\n");
-+		dev_err(dev, "could not register pinctrl driver\n");
- 		return PTR_ERR(info->pctl_dev);
- 	}
+ 	info->pctl = devm_pinctrl_register(dev, pctl_desc, info);
+-	if (IS_ERR(info->pctl)) {
+-		dev_err(dev, "Failed pinctrl registration\n");
+-		return PTR_ERR(info->pctl);
+-	}
++	if (IS_ERR(info->pctl))
++		return dev_err_probe(dev, PTR_ERR(info->pctl), "Failed pinctrl registration\n");
  
-@@ -1143,8 +1134,7 @@ static int __init armada_37xx_pinctrl_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	int ret;
- 
--	info = devm_kzalloc(dev, sizeof(struct armada_37xx_pinctrl),
--			    GFP_KERNEL);
-+	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
- 		return -ENOMEM;
- 
-@@ -1152,7 +1142,7 @@ static int __init armada_37xx_pinctrl_probe(struct platform_device *pdev)
- 
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap)) {
--		dev_err(&pdev->dev, "cannot get regmap\n");
-+		dev_err(dev, "cannot get regmap\n");
- 		return PTR_ERR(regmap);
- 	}
- 	info->regmap = regmap;
+ 	for (i = 0; i < info->nbanks; i++)
+ 		pinctrl_add_gpio_range(info->pctl, &info->banks[i].range);
 -- 
 2.33.0
 
