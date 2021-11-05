@@ -2,30 +2,30 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F404C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25E9C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F380E6126A
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 973E4611EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Nov 2021 12:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232622AbhKEMpp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Nov 2021 08:45:45 -0400
-Received: from mga06.intel.com ([134.134.136.31]:53529 "EHLO mga06.intel.com"
+        id S232105AbhKEMpw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 5 Nov 2021 08:45:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:61253 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231184AbhKEMpn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 5 Nov 2021 08:45:43 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10158"; a="292724111"
+        id S232647AbhKEMpv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 5 Nov 2021 08:45:51 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10158"; a="230614543"
 X-IronPort-AV: E=Sophos;i="5.87,211,1631602800"; 
-   d="scan'208";a="292724111"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2021 05:43:04 -0700
+   d="scan'208";a="230614543"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2021 05:43:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,211,1631602800"; 
-   d="scan'208";a="490310777"
+   d="scan'208";a="730520446"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 05 Nov 2021 05:42:59 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 05 Nov 2021 05:43:04 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 315D6436; Fri,  5 Nov 2021 14:43:01 +0200 (EET)
+        id 64BAB512; Fri,  5 Nov 2021 14:43:01 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -44,9 +44,9 @@ Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
         Patrice Chotard <patrice.chotard@foss.st.com>,
         Michal Simek <michal.simek@xilinx.com>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 03/19] pinctrl/rockchip: Drop wrong kernel doc annotation
-Date:   Fri,  5 Nov 2021 14:42:26 +0200
-Message-Id: <20211105124242.27288-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 07/19] pinctrl/rockchip: Switch to use devm_kasprintf_strarray()
+Date:   Fri,  5 Nov 2021 14:42:30 +0200
+Message-Id: <20211105124242.27288-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
 References: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
@@ -56,30 +56,54 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Kernel doc validator is not happy:
+Since we have a generic helper, switch the module to use it.
 
-  .../pinctrl-rockchip.c:45: warning: This comment starts with '/**', but isn't a kernel-doc comment.
-
-Drop it as it's indeed not a kernel doc comment.
+As a side effect, add check for the memory allocation failures and
+cleanup it either in error case or when driver is unloading.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 5ce260f152ce..6031d98d9849 100644
+index 929c96ea621a..438808a867cf 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -39,7 +39,7 @@
- #include "pinconf.h"
- #include "pinctrl-rockchip.h"
+@@ -33,6 +33,8 @@
+ #include <linux/clk.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/string_helpers.h>
++
+ #include <dt-bindings/pinctrl/rockchip.h>
  
--/**
-+/*
-  * Generate a bitmask for setting a value (v) with a write mask bit in hiword
-  * register 31:16 area.
-  */
+ #include "core.h"
+@@ -2452,6 +2454,7 @@ static int rockchip_pinctrl_register(struct platform_device *pdev,
+ 	struct pinctrl_pin_desc *pindesc, *pdesc;
+ 	struct rockchip_pin_bank *pin_bank;
+ 	struct device *dev = &pdev->dev;
++	char **pin_names;
+ 	int pin, bank, ret;
+ 	int k;
+ 
+@@ -2471,10 +2474,14 @@ static int rockchip_pinctrl_register(struct platform_device *pdev,
+ 	pdesc = pindesc;
+ 	for (bank = 0, k = 0; bank < info->ctrl->nr_banks; bank++) {
+ 		pin_bank = &info->ctrl->pin_banks[bank];
++
++		pin_names = devm_kasprintf_strarray(dev, pin_bank->name, pin_bank->nr_pins);
++		if (IS_ERR(pin_names))
++			return PTR_ERR(pin_names);
++
+ 		for (pin = 0; pin < pin_bank->nr_pins; pin++, k++) {
+ 			pdesc->number = k;
+-			pdesc->name = kasprintf(GFP_KERNEL, "%s-%d",
+-						pin_bank->name, pin);
++			pdesc->name = pin_names[pin];
+ 			pdesc++;
+ 		}
+ 
 -- 
 2.33.0
 
