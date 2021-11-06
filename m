@@ -2,101 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08758C433F5
-	for <linux-gpio@archiver.kernel.org>; Sat,  6 Nov 2021 00:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA66C4332F
+	for <linux-gpio@archiver.kernel.org>; Sat,  6 Nov 2021 07:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D38C06113B
-	for <linux-gpio@archiver.kernel.org>; Sat,  6 Nov 2021 00:24:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8C176120D
+	for <linux-gpio@archiver.kernel.org>; Sat,  6 Nov 2021 07:35:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230516AbhKFA1L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Nov 2021 20:27:11 -0400
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:43802 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230282AbhKFA1L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Nov 2021 20:27:11 -0400
-Received: by mail-ot1-f46.google.com with SMTP id i16-20020a9d68d0000000b0055c630be045so4792940oto.10;
-        Fri, 05 Nov 2021 17:24:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=PHkUHNRSgGKJJ5x9Czw+f8F7S8eqegCyS+KNmMqDioo=;
-        b=uVjHedOK5PqfV0i/5qKSVyxyHXSydvmGz1RfIQgpI5Alj5om76mC63mkPE2RI1Q+N4
-         ZIPVgjIEzmp8OnupG4UVsDk8khGEotjXZ5Vz+b/bqX3qn+Bi8P6ulCesljxjrBBCNLfb
-         y13hPfsXAKB6J5L0Y3nW8EyvgbotV3DO6LOWKtPHRk+VtY8HWkrWi/2dtuql8oUkboVk
-         /hQVYmtrAAAq2KuZcVhQkpRCudJxr65LJyHL71JiHvqAOXZdu7NEeuiIqkuBAbWorool
-         Z1sam3+UatuMVPYHDzb5zA2vXpy0hA1lqTitSGyNF6lWRNVOyJNeM5HGAU18BgUgLTzB
-         xC4Q==
-X-Gm-Message-State: AOAM533GgGJ2jnEQcscBs5uJzUMnDe+237X7yDtJEl40gqEkFmnd/13u
-        h6j9YcHcmPuEX3IWKckl6Q==
-X-Google-Smtp-Source: ABdhPJzEpM2oE758JPy/Vs1YwXoKf/P2GJ3dymT26SjQaUm9cxMcWji+fZiLc4GiOkNPvVWdzbIRag==
-X-Received: by 2002:a9d:850:: with SMTP id 74mr17617558oty.349.1636158270293;
-        Fri, 05 Nov 2021 17:24:30 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id p12sm1491083otp.79.2021.11.05.17.24.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Nov 2021 17:24:29 -0700 (PDT)
-Received: (nullmailer pid 2112791 invoked by uid 1000);
-        Sat, 06 Nov 2021 00:24:28 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Cosmin Tanislav <demonsingur@gmail.com>
-Cc:     devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        id S233634AbhKFHhk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 6 Nov 2021 03:37:40 -0400
+Received: from smtprelay0121.hostedemail.com ([216.40.44.121]:33614 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232099AbhKFHhi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Nov 2021 03:37:38 -0400
+Received: from omf20.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id CD4F7181D2090;
+        Sat,  6 Nov 2021 07:34:56 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf20.hostedemail.com (Postfix) with ESMTPA id EE66118A5F8;
+        Sat,  6 Nov 2021 07:34:52 +0000 (UTC)
+Message-ID: <6f27043dc7c50a7447b8fdcb6126f4c67a5936a5.camel@perches.com>
+Subject: Re: [PATCH v1 01/19] lib/string_helpers: Introduce
+ kasprintf_strarray()
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        cosmin.tanislav@analog.com,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-In-Reply-To: <20211105143550.1783528-3-demonsingur@gmail.com>
-References: <20211105143550.1783528-1-demonsingur@gmail.com> <20211105143550.1783528-3-demonsingur@gmail.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: iio: add AD74413R
-Date:   Fri, 05 Nov 2021 19:24:28 -0500
-Message-Id: <1636158268.701301.2112790.nullmailer@robh.at.kernel.org>
+        Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Andy Shevchenko <andy@kernel.org>
+Date:   Sat, 06 Nov 2021 00:34:51 -0700
+In-Reply-To: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
+References: <20211105124242.27288-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 1ifh16fok5zodoyg17ub7y551gue9gq8
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: EE66118A5F8
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/zHRdlX+53TMDzXto5pNOnstJ0U8Gbcpk=
+X-HE-Tag: 1636184092-287531
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 05 Nov 2021 16:35:49 +0200, Cosmin Tanislav wrote:
-> Add device tree bindings for AD74413R.
+On Fri, 2021-11-05 at 14:42 +0200, Andy Shevchenko wrote:
+> We have a few users already that basically want to have array of
+> sequential strings to be allocated and filled.
 > 
-> Signed-off-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
-> ---
->  .../bindings/iio/addac/adi,ad74413r.yaml      | 153 ++++++++++++++++++
->  include/dt-bindings/iio/addac/adi,ad74413r.h  |  21 +++
->  2 files changed, 174 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
->  create mode 100644 include/dt-bindings/iio/addac/adi,ad74413r.h
-> 
+> Provide a helper for them (basically adjusted version from gpio-mockup.c).
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+I think this is overkill and unnecessary bloat for the number of
+actual or possible in-tree uses.  The devm_ variant too.
 
-yamllint warnings/errors:
+And it'd be useful to have an 0/n patch cover letter describing
+why the patchset is useful so I could reply to that instead of the
+1/n.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml: properties:adi,rsense-resistance-ohms: '$ref' should not be valid under {'const': '$ref'}
-	hint: Standard unit suffix properties don't need a type $ref
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml: ignoring, error in schema: properties: adi,rsense-resistance-ohms
-warning: no schema found in file: ./Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
-Error: Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dts:23.32-33 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1441: dt_binding_check] Error 2
+> diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
+[]
+> @@ -100,6 +100,7 @@ char *kstrdup_quotable(const char *src, gfp_t gfp);
+>  char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp);
+>  char *kstrdup_quotable_file(struct file *file, gfp_t gfp);
+>  
+> +char **kasprintf_strarray(gfp_t gfp, const char *prefix, size_t n);
+>  void kfree_strarray(char **array, size_t n);
+>  
+>  #endif
+> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+[]
+> @@ -674,6 +674,39 @@ char *kstrdup_quotable_file(struct file *file, gfp_t gfp)
+>  }
+>  EXPORT_SYMBOL_GPL(kstrdup_quotable_file);
+>  
+> +/**
+> + * kasprintf_strarray - allocate and fill array of sequential strings
+> + * @gfp: flags for the slab allocator
+> + * @prefix: prefix to be used
+> + * @n: amount of lines to be allocated and filled
+> + *
+> + * Allocates and fills @n strings using pattern "%s-%zu", where prefix
+> + * is provided by caller. The caller is responsible to free them with
+> + * kfree_strarray() after use.
+> + *
+> + * Returns array of strings or NULL when memory can't be allocated.
+> + */
+> +char **kasprintf_strarray(gfp_t gfp, const char *prefix, size_t n)
+> +{
+> +	char **names;
+> +	size_t i;
+> +
+> +	names = kcalloc(n + 1, sizeof(char *), gfp);
+> +	if (!names)
+> +		return NULL;
+> +
+> +	for (i = 0; i < n; i++) {
+> +		names[i] = kasprintf(gfp, "%s-%zu", prefix, i);
+> +		if (!names[i]) {
+> +			kfree_strarray(names, i);
+> +			return NULL;
+> +		}
+> +	}
+> +
+> +	return names;
+> +}
+> +EXPORT_SYMBOL_GPL(kasprintf_strarray);
+> +
+>  /**
+>   * kfree_strarray - free a number of dynamically allocated strings contained
+>   *                  in an array and the array itself
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1551417
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
 
