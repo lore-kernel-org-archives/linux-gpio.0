@@ -2,112 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00FFC433EF
-	for <linux-gpio@archiver.kernel.org>; Sat,  6 Nov 2021 17:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01087C433F5
+	for <linux-gpio@archiver.kernel.org>; Sun,  7 Nov 2021 12:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB8766108D
-	for <linux-gpio@archiver.kernel.org>; Sat,  6 Nov 2021 17:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D02EE61356
+	for <linux-gpio@archiver.kernel.org>; Sun,  7 Nov 2021 12:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233080AbhKFRLT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 6 Nov 2021 13:11:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
+        id S231284AbhKGMTx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 7 Nov 2021 07:19:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234650AbhKFRLS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Nov 2021 13:11:18 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A618C06120C
-        for <linux-gpio@vger.kernel.org>; Sat,  6 Nov 2021 10:08:36 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id g3so20540589ljm.8
-        for <linux-gpio@vger.kernel.org>; Sat, 06 Nov 2021 10:08:36 -0700 (PDT)
+        with ESMTP id S230286AbhKGMTx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Nov 2021 07:19:53 -0500
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A158CC061570
+        for <linux-gpio@vger.kernel.org>; Sun,  7 Nov 2021 04:17:10 -0800 (PST)
+Received: by mail-oi1-x232.google.com with SMTP id o83so22992068oif.4
+        for <linux-gpio@vger.kernel.org>; Sun, 07 Nov 2021 04:17:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ra1BXH1mMvzlfwLf58YXxvKpl4xCKYL2+7bQMH4f4Ic=;
-        b=hWfhd4WqhxVia6qAP5I/BmZbVOUE4pK+zqJjZHKsaLaUfg5wRZf7VAOYoW/DeaPqAA
-         gc68u2rfPx+J1au61skDN471TEkBm39v0Sp01b1mrfY7jDE2u3eDqoc37e02iaf3qrVN
-         BIZjwVIDunb9dZnZ8y+JhLR+fGnd7J0o13cd7FT14GsIIwXWB38mzTaWSKtKJnc2Wjff
-         AqHvCsPwNEDWma0kf6/quSSzd5pCCVvBCBOzQsQZ3jE2r+H25jsXmbgPXeCArRwwh9RL
-         QcG2HfR0NqNDcCq7gz1iNCUqdiB1yoiiRAvYaihkFnPEU0W9g34okj6Znl+VtRoJ7r0t
-         fmLQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qwEmrvgjr3BpBfj02IBFbEAwkHhmYpc8H0xeadfaW/8=;
+        b=SERr7CikvTZ6o7H4yCkuAK6p0w1lFBY63/W3t3kiTrOe8/jBAJqhRtuaR7tWOgvevh
+         lGSpmrP3pjmZL9btCSPs6X/poBJ70EvK0fW+3xDavlxd9aSAIWLbfA4ztLGpxpK1RJZA
+         t8JrL26wdtbp0XDjiDoITU9ZZzqTPXQvknwd/SWTdSyP+uQGpcjiswleAj7dl2ENbyww
+         5I4v8j/tL96bxB77IzAfSqukcWBTYc7LGZ5B9m2PO7f/SVzPwrGViuC5zBzCuYGp64Cc
+         JtN+GGBpu7t/L9SljzhutYSX/10sE8EldTAgMcABDWDwv2qunb1Qd8ngqMBtKRrlaIfB
+         VzSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ra1BXH1mMvzlfwLf58YXxvKpl4xCKYL2+7bQMH4f4Ic=;
-        b=TRMRwKu5WUa9aZHDVcN1as2G0GrpB9dwzfxm2Wf/mfQeoYkoXBrtRuAUgmxjsNiJjd
-         J36P7UcXANkWbO+4/VJmI3Uyz/ed22bQwB9Mch1WbeeaE10mllbuYZ1S2sIn553mTwUW
-         omxIlKNI4TwrCRwylHe6Fq3dqwUASdxt0AwJu/7sMDLyWpEVeUxmeLVIha1isdfO1T6U
-         hP7FeKWEL2NnfZLDLMqGLj/IDDiVRIo4HsMguxKLTz4vsh/d0nFS0bf66pFAPSANbPTx
-         TkV3wpDeU5nW3D/giLW2kL6Ia4bM1dp84PXOmVMsSEdWvlSFQuN/F0t2J4Se/xf4dMmi
-         P61A==
-X-Gm-Message-State: AOAM533XWbvnmADxJIH/6UM03BavKfcIOX6pWodyU5ltWqTMR1Wfz/ue
-        5YS9IxI2MYmo+lPjzN8cfkOoJA==
-X-Google-Smtp-Source: ABdhPJxFRw4c4lV8pU6p+Q3c3cW6wkyhE3Zgn4ouE51tUvxu3ICTcvN9+7ZPfxD0MjrJoWTxBpwxmg==
-X-Received: by 2002:a2e:91d4:: with SMTP id u20mr3210304ljg.92.1636218514622;
-        Sat, 06 Nov 2021 10:08:34 -0700 (PDT)
-Received: from [192.168.1.102] (62-248-207-242.elisa-laajakaista.fi. [62.248.207.242])
-        by smtp.gmail.com with ESMTPSA id u9sm1212394lfo.87.2021.11.06.10.08.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Nov 2021 10:08:34 -0700 (PDT)
-Subject: Re: [PATCH] pinctrl: qcom: sm8350: Correct UFS and SDC offsets
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211104170835.1993686-1-bjorn.andersson@linaro.org>
-From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Message-ID: <51217da2-958d-124e-c84d-27b1432e0f37@linaro.org>
-Date:   Sat, 6 Nov 2021 19:08:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qwEmrvgjr3BpBfj02IBFbEAwkHhmYpc8H0xeadfaW/8=;
+        b=wIW2KmKN1+m/Y5Q7PgW8DkpGlPD5RBVltTSlme1SmtHU81G7ZOlvXw4SOrdbphIbsf
+         fcv4UOLo6Fm8UldCNnCw9LVaxCkn61SjY8AjE+yIdO9Ex5y9X6SL1uu/9FTnSR0ULInA
+         OzXoJ7kK2VSi0IN0LntjK0hUxAvjf8kab7VdSYBai/EeaRcr0jdk5tlmslXaAtWo/OMv
+         nOK3DLfYumY77cF5QzeZcUBBByB64D6elNVSs9cyQspuHIZ5KbKK7M9bN/k5qZXkupBr
+         t0E2/nN3sE4sacG8mIYjNm5PMYaDNIOQ1F4Iz/41zp9Me3yfIxEMBivrtF5mYCfK//ib
+         fhFg==
+X-Gm-Message-State: AOAM533h1xkE6T7pYJagR/SiA3JTlER54yLxmMjOmE/umosOE9sXqEwq
+        ePMwuheky84GqzYVzWn/Kw2vbQw0MmKf0G9q1q+YuQ==
+X-Google-Smtp-Source: ABdhPJz89tuCao9ba4CKBLi+ty9PyP8AGd+5kqn4zJdJIfhJI9J1mmK4wY4R7VMJb52bBeufGMhaE+BZHPcA1Ck5JPU=
+X-Received: by 2002:a05:6808:144f:: with SMTP id x15mr31149867oiv.132.1636287430009;
+ Sun, 07 Nov 2021 04:17:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20211104170835.1993686-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211104190030.20660-1-brgl@bgdev.pl>
+In-Reply-To: <20211104190030.20660-1-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 7 Nov 2021 13:16:58 +0100
+Message-ID: <CACRpkdZchV1M+BYhMYoXNj_+uUHZeydW5-nHGTjD2bZedAqKKw@mail.gmail.com>
+Subject: Re: [GIT PULL] configfs-based GPIO simulator for v5.16
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Kent Gibson <warthog618@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 11/4/21 7:08 PM, Bjorn Andersson wrote:
-> The downstream TLMM binding covers a group of TLMM-related hardware
-> blocks, but the upstream binding only captures the particular block
-> related to controlling the TLMM pins from an OS. In the translation of
-> the driver from downstream, the offset of 0x100000 was lost for the UFS
-> and SDC pingroups.
-> 
-> Fixes: d5d348a3271f ("pinctrl: qcom: Add SM8350 pinctrl driver")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->   drivers/pinctrl/qcom/pinctrl-sm8350.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sm8350.c b/drivers/pinctrl/qcom/pinctrl-sm8350.c
-> index 4d8f8636c2b3..1c042d39380c 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sm8350.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sm8350.c
-> @@ -1597,10 +1597,10 @@ static const struct msm_pingroup sm8350_groups[] = {
->   	[200] = PINGROUP(200, qdss_gpio, _, _, _, _, _, _, _, _),
->   	[201] = PINGROUP(201, _, _, _, _, _, _, _, _, _),
->   	[202] = PINGROUP(202, _, _, _, _, _, _, _, _, _),
-> -	[203] = UFS_RESET(ufs_reset, 0x1d8000),
-> -	[204] = SDC_PINGROUP(sdc2_clk, 0x1cf000, 14, 6),
-> -	[205] = SDC_PINGROUP(sdc2_cmd, 0x1cf000, 11, 3),
-> -	[206] = SDC_PINGROUP(sdc2_data, 0x1cf000, 9, 0),
-> +	[203] = UFS_RESET(ufs_reset, 0xd8000),
-> +	[204] = SDC_PINGROUP(sdc2_clk, 0xcf000, 14, 6),
-> +	[205] = SDC_PINGROUP(sdc2_cmd, 0xcf000, 11, 3),
-> +	[206] = SDC_PINGROUP(sdc2_data, 0xcf000, 9, 0),
->   };
->   
->   static const struct msm_gpio_wakeirq_map sm8350_pdc_map[] = {
-> 
+On Thu, Nov 4, 2021 at 8:01 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> A couple months have passed with a few more iterations and I still can't get
+> any meaningful reviews from the configfs maintainers (nor NAKs for that
+> matter). I decided to give it another try and send it to you directly again.
 
---
-Best wishes,
-Vladimir
+I think this indicates that configfs is partly orphaned. If not formally
+then practically. Let's poke Greg and see what he says, configfs
+is important for USB.
+
+I do understand the lack of maintainership hours and that people have
+more important things to do, we all suffer from this.
+
+If you are the only one who really care maybe we should consider listing
+you as configfs (co-)maintainer as well?
+
+This pull request FWIW:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
