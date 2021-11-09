@@ -2,96 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5C5C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 08:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B79C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 08:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8935610E9
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 08:24:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB2A6115A
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 08:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244029AbhKII0s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Nov 2021 03:26:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57716 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239099AbhKII0s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Nov 2021 03:26:48 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DB3FC061764;
-        Tue,  9 Nov 2021 00:24:02 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id r5so19608019pls.1;
-        Tue, 09 Nov 2021 00:24:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/ObBvvdfK0rOPDXHfLBPPfh89zKu+hFmOacks0ZOP8Y=;
-        b=IPerIFMJ7EW74Om8qHG2xT4JFQYWF+rpZSAWuBGSY6dYLl+WH2ZdhsTQB+8tjzk0gV
-         4lMJQ4P+L6FiysAygAF+s7ByLvp91lAaM6Rg+HPT0Z0n7LyzL7RSZk6Uk4tkGZ3T3MsJ
-         2vlipZiVoH2/Zr5fjkDAFnhasZcJaJ4vQApDnSl8iWhwsYPHBBYkwuOSmlcJLFSe+giw
-         VGoo+iG/HoWkKrLsoMNxZJoMYbtbwAS4Kw6AQQDUGweBVhaggIwrw3gwbGnbRKTwhWPd
-         /itfRKSud1HUyySLZJDVkE1xBKBq0IyylWXocdgZuICSrARfnQqq3jCBiMTrXJOClD5f
-         V61w==
+        id S238370AbhKIIh7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Nov 2021 03:37:59 -0500
+Received: from mail-ua1-f47.google.com ([209.85.222.47]:34468 "EHLO
+        mail-ua1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244280AbhKIIhg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Nov 2021 03:37:36 -0500
+Received: by mail-ua1-f47.google.com with SMTP id b3so37086347uam.1;
+        Tue, 09 Nov 2021 00:34:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/ObBvvdfK0rOPDXHfLBPPfh89zKu+hFmOacks0ZOP8Y=;
-        b=4uyDXkI2a3KnFovMUDPQ8QcYH75Qg45pW5k2TU+NNrtheuw5OxjH2Y5OT6aAyhZQxk
-         ceaq9XLfWrgIGVhlZ9ygCipHhvfJ6xOpdadgCSHoy+uCKE+70GNIQra/NlCTX+QRC3vV
-         fD7pO/lMH7ru57PpbXUsWua0szeR0kk3DDW/3Acfj261lDHQe6Uos7CLBDD0UdCg/SRR
-         kdrD6qsltvcN7Ja7Te89PIloi+BO5iunvutThQSFmHWwgCRNuF2olnq/wOaxsVk0n/KF
-         WiuVpqzl6UiLHA0KOefmPxyxa0cjYtjoCgEASa5YfRij9zCZeBttGp5ir2HcB5iT91dG
-         DJVw==
-X-Gm-Message-State: AOAM532Ur2zPqNMpUPccH6k4GNfkXLyscBdSAEMZuaNP7DVx1D8IY4Z9
-        5fBw7/8Ur/AuBPqQLKEBRgw=
-X-Google-Smtp-Source: ABdhPJyKSDwtCCwSUW8AR8d9qzOSeuyM5hs9Wk8F7LxJO0LRG6ld3ZCFjPM61qsMhC6w71bG0zMlqQ==
-X-Received: by 2002:a17:903:246:b0:13f:2ff9:8b93 with SMTP id j6-20020a170903024600b0013f2ff98b93mr5628103plh.54.1636446242111;
-        Tue, 09 Nov 2021 00:24:02 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id kx3sm1730566pjb.5.2021.11.09.00.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Nov 2021 00:24:01 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     info@metux.net
-Cc:     vireshk@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, chiminghao <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] drivers:gpio: Remove unneeded semicolon
-Date:   Tue,  9 Nov 2021 08:23:57 +0000
-Message-Id: <20211109082357.131251-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AeQsRqY/GskMz/vOm4ldxuS7JHiWlKXTjA+Am1FlP0g=;
+        b=5r7uvOhw7ynCk9Af+p6Mek1PwSJ53TQ2RWapaDY4UfTPNdB/UuxNSVRvZ+QrLxnHzE
+         kArpQlzv1vM9eX3gFCT683DrheD2AU3GtdIy2f71BA59DA5FxaQu7VvVcPOmnD3ch4+d
+         dmrhIJDJwA1F0fi3dPULvCHo8HK7FHtUGxwbSmrQMwnWBtDs8NpkWBzWcmKwfTk2ocpX
+         Y8iFF5fWSFtJ8PF1K81VmxkP7IARFB9a7sf5ClUE4WpXgNNafowPbLTUphsjVpf2ALsG
+         pDpDC6OvhbLuoLz1VTSFu0jtNyXzFKfyQvSu/atdMFvLYdKvtREXTb417r8Bg2Po96Ur
+         lDDg==
+X-Gm-Message-State: AOAM533YHVNpX3xKC2R3FC38oYiEFNevOQvMRUpyvgETqWfjG7S3349n
+        FknGjDx7Ty2EqWjWv4jXZ9j9F6hm4PNNghw9
+X-Google-Smtp-Source: ABdhPJwa1j6nX5jloLYtG9RuU90/Sh9fPVM9brTspVa1+XS29skV/GXmtqcLaiUDjzoIxZ5qEBA8dQ==
+X-Received: by 2002:ab0:6942:: with SMTP id c2mr7733560uas.92.1636446889902;
+        Tue, 09 Nov 2021 00:34:49 -0800 (PST)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id f7sm2310878vkm.31.2021.11.09.00.34.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Nov 2021 00:34:49 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id b17so37082452uas.0;
+        Tue, 09 Nov 2021 00:34:49 -0800 (PST)
+X-Received: by 2002:a9f:2584:: with SMTP id 4mr7741221uaf.114.1636446888895;
+ Tue, 09 Nov 2021 00:34:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211108150554.4457-1-conor.dooley@microchip.com> <20211108150554.4457-5-conor.dooley@microchip.com>
+In-Reply-To: <20211108150554.4457-5-conor.dooley@microchip.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 9 Nov 2021 09:34:37 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX1Xm9CP2hSpkD4ApVJ8gC_ZAE1L5CT0zjF+b5An4kmqw@mail.gmail.com>
+Message-ID: <CAMuHMdX1Xm9CP2hSpkD4ApVJ8gC_ZAE1L5CT0zjF+b5An4kmqw@mail.gmail.com>
+Subject: Re: [PATCH 04/13] dt-bindings: riscv: update microchip polarfire binds
+To:     Conor Dooley <conor.dooley@microchip.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Lewis Hanly <lewis.hanly@microchip.com>,
+        daire.mcnamara@microchip.com, Atish Patra <atish.patra@wdc.com>,
+        ivan.griffin@microchip.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Bin Meng <bin.meng@windriver.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: chiminghao <chi.minghao@zte.com.cn>
+Hi Conor,
 
-Fix the following coccicheck REVIEW:
-./drivers/gpio/gpio-virtio.c:437:2-3 REVIEW Unneeded semicolon
+On Mon, Nov 8, 2021 at 4:06 PM <conor.dooley@microchip.com> wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+>
+> Add mpfs-soc to clear undocumented binding warning
+>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/microchip.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/riscv/microchip.yaml b/Documentation/devicetree/bindings/riscv/microchip.yaml
+> index 3f981e897126..1ff7a5224bbc 100644
+> --- a/Documentation/devicetree/bindings/riscv/microchip.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/microchip.yaml
+> @@ -21,6 +21,7 @@ properties:
+>        - enum:
+>            - microchip,mpfs-icicle-kit
+>        - const: microchip,mpfs
+> +      - const: microchip,mpfs-soc
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: chiminghao <chi.minghao@zte.com.cn>
----
- drivers/gpio/gpio-virtio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Doesn't the "s" in "mpfs" already stand for "soc"?
 
-diff --git a/drivers/gpio/gpio-virtio.c b/drivers/gpio/gpio-virtio.c
-index aeec4bf0b625..84f96b78f32a 100644
---- a/drivers/gpio/gpio-virtio.c
-+++ b/drivers/gpio/gpio-virtio.c
-@@ -434,7 +434,7 @@ static void virtio_gpio_event_vq(struct virtqueue *vq)
- 		ret = generic_handle_domain_irq(vgpio->gc.irq.domain, gpio);
- 		if (ret)
- 			dev_err(dev, "failed to handle interrupt: %d\n", ret);
--	};
-+	}
- }
- 
- static void virtio_gpio_request_vq(struct virtqueue *vq)
--- 
-2.25.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
