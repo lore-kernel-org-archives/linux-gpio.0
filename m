@@ -2,54 +2,54 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123FBC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 11:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AAFC4321E
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 11:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F025661208
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 11:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52E05611BD
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Nov 2021 11:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343508AbhKILfe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Nov 2021 06:35:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45072 "EHLO
+        id S1343509AbhKILfg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Nov 2021 06:35:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343500AbhKILfc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Nov 2021 06:35:32 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C0ADC061766
-        for <linux-gpio@vger.kernel.org>; Tue,  9 Nov 2021 03:32:46 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id r12so75160986edt.6
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Nov 2021 03:32:46 -0800 (PST)
+        with ESMTP id S1343510AbhKILfg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Nov 2021 06:35:36 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F678C061766
+        for <linux-gpio@vger.kernel.org>; Tue,  9 Nov 2021 03:32:50 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id f8so75503273edy.4
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Nov 2021 03:32:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sartura-hr.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I2HXZ8+wDuZAmky1+IX48MpvrAcOVGAjLZECYWXvvFM=;
-        b=ViSy+Fuf4TSMwakL6ULaDuiyzgLb/xlPh6CWrWS4Yg46sX30ZKasxKUHL/S7PTP8ZF
-         EIKx6pVrgbMGCFg15lP4tINltaXLunFXPXFHEcoQlJhTdNM5fV77MlkRrgivaINQtXNG
-         yyaaCtzJvMPJpSNoih5S5cxJrDjr64G37yuY1/nAO0ZoYhgqmWhLDlVIYBzQHI3mmjzr
-         cUYN5Fcd2usBURCMFjJhd8k8jLL54jNRc/3qADmgxM9vcSI3QLyeR0cszm9NznLQMo9E
-         mNETJ4rKcTimbnuVkrRqU2Ghq383oixQU7n9f6j2JypL849JjXHDFYeDl1OGZF3Avp6J
-         mPgg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ck6CnoOUEpGTUA7mAEjajeF6BgfIwURf2ogwlOV0P5c=;
+        b=FeXLH1pPPI0+MypZV7+bL3BfS0wxqYMXB4avJXACzAMfoacmwFOflQGxEV0+fq9JiJ
+         npmpznbhCTz3yiXPZ9Qnlx462rIWvMnULYoDANnxUuZ2IA/SbQ1Ljqj83YCxfW6Mddsc
+         DduIV7tnATrUwdgj3qz56tD4ENHTvMHdJeaN/GPq+ArMWZwBl4jhqsytkEPtMCthvp0W
+         xkcouQkW+JKhrN8zpVRfU+wX86ge2O1+fsjf/P/zNW4lBFRbYCzxTGMRxcVaio+RKuwy
+         jAAxoWLtNcrWo5t2Jl4b/u5PNrpNFu7lQ81ASc8QCVd1baxEnIVO4Hl8tGvn5MctOCsU
+         CFzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I2HXZ8+wDuZAmky1+IX48MpvrAcOVGAjLZECYWXvvFM=;
-        b=FGbPOm+LBljMItjcs5FjJE/D8FkI8LoP2OvZx3zw70hgTzTWTCxYEr1cvy1tmtb68F
-         lvyWy/lFdIv9X6iDqNYZqJYj+O9eJgT9KHJVAIhE/jwM7CqyTlKHqwETsI1oF+zIc2TI
-         XyskHtWQnaaROyWfR1L+dDvWZ1RFHCkWVFtvrd04zQmFtc0Bv90DIGyRddRRB8CQptRp
-         GZg3IKGlWS/RkTcS3G7/jFmcNmPFYG5Lt2LnieIuTUGiwD96w4x/0Yj2sAQcAbrLKKHw
-         u4iiDa8F6FyAtEKPQro6dD3uEHTPTYhMy1jPsg2AtmSKnbYXiFMDRIqD07RXvB5j7pWD
-         /ntA==
-X-Gm-Message-State: AOAM5314rbbSXqjo3zR9zH3o12zXa4mKKfmOoRs7/lvxWrYfRyIqIGbb
-        nH1FNKV7PIon2SG0wjjQB068Kg==
-X-Google-Smtp-Source: ABdhPJyXJsWxDdMlK8qVyawOOIGf8bugo+Tq3xhAkRb1RCQJ5v7PvXtFDeNS2rNN/QwT9gpxLHacxQ==
-X-Received: by 2002:a17:906:11ce:: with SMTP id o14mr8988544eja.457.1636457565031;
-        Tue, 09 Nov 2021 03:32:45 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ck6CnoOUEpGTUA7mAEjajeF6BgfIwURf2ogwlOV0P5c=;
+        b=KuAtAuL9uqGBkuHDQxd5W8MIgCrTi1Fu7Ro9Nz9p14x4rwbrRqQgcn0Q+wa8kPv6tH
+         HDeeGPsRrADO6xbMgTxQZ6wIYQl+D63p5Ep1cPfNxUhqD6h29eHeaSylK5NAMuFkd7Yy
+         QEekLzHEfudexF2paOPfbs4JuIzhQOjpUeqUZc+vA/qGao7jTONbrd+3vOmJk5214YKu
+         YzorgzCdetb+Y82kgfNoW0JntZfYmBRAq+OaRpAU04af+YT5YWWdNfdpjkUc2FJz5IEl
+         90bI/mbYBKYjrc2MfB1BpCby7yHV7krUyhLmeoq7L6ksdq9rxB54Z0BSw6BIfHdxSoNq
+         s/ng==
+X-Gm-Message-State: AOAM532YW9NDnX8R2Cn3zznDMHb3nKtfbJv4FIxzwRFQPezvxLovOxx3
+        Aq9i0NMjWfgOPBYU2uW+lPNQtg==
+X-Google-Smtp-Source: ABdhPJzXVuJcNh8rEvDEevrI72uQf4B4ngUk1j2LeISLKIgqbjLsc4mF9QDs0Jb1vCXWI4hKPCrckg==
+X-Received: by 2002:a05:6402:40c6:: with SMTP id z6mr9097720edb.304.1636457568686;
+        Tue, 09 Nov 2021 03:32:48 -0800 (PST)
 Received: from fedora.. (cpezg-94-253-144-18-cbl.xnet.hr. [94.253.144.18])
-        by smtp.googlemail.com with ESMTPSA id s4sm6771167ejn.25.2021.11.09.03.32.43
+        by smtp.googlemail.com with ESMTPSA id s4sm6771167ejn.25.2021.11.09.03.32.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Nov 2021 03:32:44 -0800 (PST)
+        Tue, 09 Nov 2021 03:32:48 -0800 (PST)
 From:   Robert Marko <robert.marko@sartura.hr>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         robh+dt@kernel.org, lee.jones@linaro.org, p.zabel@pengutronix.de,
@@ -57,72 +57,53 @@ To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         andy.shevchenko@gmail.com, michael@walle.cc, andrew@lunn.ch
 Cc:     luka.perkov@sartura.hr, bruno.banelli@sartura.hr,
         Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v9 1/6] mfd: simple-mfd-i2c: Add Delta TN48M CPLD support
-Date:   Tue,  9 Nov 2021 12:32:34 +0100
-Message-Id: <20211109113239.93493-1-robert.marko@sartura.hr>
+Subject: [PATCH v9 3/6] dt-bindings: reset: Add Delta TN48M
+Date:   Tue,  9 Nov 2021 12:32:36 +0100
+Message-Id: <20211109113239.93493-3-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211109113239.93493-1-robert.marko@sartura.hr>
+References: <20211109113239.93493-1-robert.marko@sartura.hr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Delta TN48M switches have a Lattice CPLD that serves
-multiple purposes including being a GPIO expander.
-
-So, lets use the simple I2C MFD driver to provide the MFD core.
-
-Also add a virtual symbol which pulls in the simple-mfd-i2c driver and
-provide a common symbol on which the subdevice drivers can depend on.
+Add header for the Delta TN48M CPLD provided
+resets.
 
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
-Changes in v9:
-* Depend on ARCH_MVEBU or COMPILE_TEST
+ include/dt-bindings/reset/delta,tn48m-reset.h | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 include/dt-bindings/reset/delta,tn48m-reset.h
 
-Changes in v2:
-* Drop the custom MFD driver and header
-* Use simple I2C MFD driver
----
- drivers/mfd/Kconfig          | 11 +++++++++++
- drivers/mfd/simple-mfd-i2c.c |  1 +
- 2 files changed, 12 insertions(+)
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index ad15be6b86bc..35b917e583b0 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -297,6 +297,17 @@ config MFD_ASIC3
- 	  This driver supports the ASIC3 multifunction chip found on many
- 	  PDAs (mainly iPAQ and HTC based ones)
- 
-+config MFD_TN48M_CPLD
-+	tristate "Delta Networks TN48M switch CPLD driver"
-+	depends on I2C
-+	depends on ARCH_MVEBU || COMPILE_TEST
-+	select MFD_SIMPLE_MFD_I2C
-+	help
-+	  Select this option to enable support for Delta Networks TN48M switch
-+	  CPLD. It consists of reset and GPIO drivers. CPLD provides GPIOS-s
-+	  for the SFP slots as well as power supply related information.
-+	  SFP support depends on the GPIO driver being selected.
+diff --git a/include/dt-bindings/reset/delta,tn48m-reset.h b/include/dt-bindings/reset/delta,tn48m-reset.h
+new file mode 100644
+index 000000000000..d4e9ed12de3e
+--- /dev/null
++++ b/include/dt-bindings/reset/delta,tn48m-reset.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Delta TN48M CPLD GPIO driver
++ *
++ * Copyright (C) 2021 Sartura Ltd.
++ *
++ * Author: Robert Marko <robert.marko@sartura.hr>
++ */
 +
- config PMIC_DA903X
- 	bool "Dialog Semiconductor DA9030/DA9034 PMIC Support"
- 	depends on I2C=y
-diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-index 87f684cff9a1..af8e91781417 100644
---- a/drivers/mfd/simple-mfd-i2c.c
-+++ b/drivers/mfd/simple-mfd-i2c.c
-@@ -39,6 +39,7 @@ static int simple_mfd_i2c_probe(struct i2c_client *i2c)
- 
- static const struct of_device_id simple_mfd_i2c_of_match[] = {
- 	{ .compatible = "kontron,sl28cpld" },
-+	{ .compatible = "delta,tn48m-cpld" },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
++#ifndef _DT_BINDINGS_RESET_TN48M_H
++#define _DT_BINDINGS_RESET_TN48M_H
++
++#define CPU_88F7040_RESET	0
++#define CPU_88F6820_RESET	1
++#define MAC_98DX3265_RESET	2
++#define PHY_88E1680_RESET	3
++#define PHY_88E1512_RESET	4
++#define POE_RESET		5
++
++#endif /* _DT_BINDINGS_RESET_TN48M_H */
 -- 
 2.33.1
 
