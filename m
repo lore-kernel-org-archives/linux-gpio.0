@@ -2,96 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA79DC433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 11 Nov 2021 20:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43188C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 11 Nov 2021 20:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 947F461002
-	for <linux-gpio@archiver.kernel.org>; Thu, 11 Nov 2021 20:25:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F81610F7
+	for <linux-gpio@archiver.kernel.org>; Thu, 11 Nov 2021 20:28:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233575AbhKKU2C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 11 Nov 2021 15:28:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52488 "EHLO
+        id S233445AbhKKUbP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 11 Nov 2021 15:31:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233460AbhKKU2A (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Nov 2021 15:28:00 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4067C061205
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Nov 2021 12:25:09 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id p3-20020a05600c1d8300b003334fab53afso5321522wms.3
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Nov 2021 12:25:09 -0800 (PST)
+        with ESMTP id S229785AbhKKUbP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Nov 2021 15:31:15 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0744C061767
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Nov 2021 12:28:25 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id bk14so13717040oib.7
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Nov 2021 12:28:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2q89+eCO5OTJBjwQcEdcm4YwakpritICTXy5rLsjKJE=;
-        b=2oXYDeSr587m7GQrYT+XAjjuuTChhTvQ9PkoHiuoQCtg2VuX78ne04J8560Z3jbD+M
-         udAuur671Glx3gcYiOL2bibHzk8F8dkSmFxDBJIv+85u+5M6//9UhdmjRxiCbEZasRW9
-         QMXT/EmAKlgwHmS2rs+ewSWbxPcYZ9/D34kgx5wav1N+nkImRzZiB3ZD3xd4AmcVrW+v
-         j4v8l1azCbiw/BdofTXfS/YumkJ8qvIqhgEklPZhnXiHuJsssvh5coTcxlXu9Weqx7DT
-         Jmrw17cFVqG90p3F07h3RmUvfMUE2mYYYeHxzfqzf6faDmYf+Jk7jrMv8MaGFnTMTNBH
-         1jgQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gBiwdPPgqDE+FpLiui3l4oL6zGJDjA4BEp171adZNFs=;
+        b=B8NeVe5nPMz0rQZrp8+YjBhrDYXgs9ZklicjiIFaaDb90Y8E8SawcNdECdGOLY72/k
+         ba3Z+4/8l7CKpSFeET7DVi39dVzpPoU5w8ZdslaOVU4b7NdZoVKQEThssjddoBa+ayt1
+         5i3XTg9UukhSSRxUsDv8+ks04MuzyKAkA27uAsvdQxHEreu7mn9xRvkwsQHBR/JE/VlQ
+         6NAA+SCh48PlpKFfhS4WAwU83oahtGYVOqbBK1t7NiezlRXg+1U51MbCxlMqzSZ4O/Yi
+         pehdGv72QC2rr4Ya6MKZNihO/8U9pTUdS46YH3T8gJXrWhDCIuYYbHlx737huac2cpvX
+         nYEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2q89+eCO5OTJBjwQcEdcm4YwakpritICTXy5rLsjKJE=;
-        b=pFCsN/pwUUbZVpdvSM2LdRwcxasvoSVxxQgioNcH+47HAcCCkj2JYWJiCBZMRGC1r7
-         K2/V3WaLZ0+uKcdFoUh3iXxKZ+06WakNLTWhvrzykd7STb4nKo+9G2bfgQhmiJFN33Te
-         fsdDebtF1ZptPuIBEwmm1kn7D6twYLij/QWx6vjZPfd0q2I/57DLCd3G1nznI4LkZCvE
-         a/h1MmoC780wcBG4wW6OcBhWRGyzdGDGy5WC4WWuAhpU2VXw+yArZsLzBWHEmUw2AeqR
-         EGSCCIkewJtGJEgTgGUfzGffy/71u0MjW8KZhd44qE1NO/n8qeFKF413C0YBSXsg4X5a
-         gkxA==
-X-Gm-Message-State: AOAM533ddNO4tt9ateioRLExNZovZDznabSzv/A4QWUZ9ThdaLdTlsvx
-        cemhAK45suvbNPYlQ5HAmoLGPg==
-X-Google-Smtp-Source: ABdhPJzJoTfVwDKyV4maNq6sdZjvFVbZzxugbHzTzHcLtFZO5Ri+wb6Y0XwVI95W3zDhdY0z4Z2Vng==
-X-Received: by 2002:a7b:c14f:: with SMTP id z15mr11091547wmi.56.1636662308581;
-        Thu, 11 Nov 2021 12:25:08 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
-        by smtp.gmail.com with ESMTPSA id t11sm3819907wrz.97.2021.11.11.12.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Nov 2021 12:25:08 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 1/2] gpiolib: improve coding style for local variables
-Date:   Thu, 11 Nov 2021 21:25:05 +0100
-Message-Id: <20211111202506.19459-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.30.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gBiwdPPgqDE+FpLiui3l4oL6zGJDjA4BEp171adZNFs=;
+        b=AZyXK0q2SipklmKjwNh7hULesDlU18pg5ihOtGMxhN10VrCjs31mgHVEuOckADSGkU
+         LvvGCUa1qggtEsiJ+If/4Ntycn7AUf9FvCjiaosldjMVEpIIg0WmiVs7SAjY615DxHGC
+         e0UH7LWikch0r/joytZg4b4jOn5lYd07tK2gTEm0WuvdZ16qy/OUNrF3c3kUeh+xlzIZ
+         JiUxT8GDqUARxED32qU9OyJz2o8AlBf0W1kXFlTI6HviJ+4jVelSQz69wGPz2WOC2pRj
+         vrtBS+VKy86/+sgrcBnru670s28mA0P1JwP4eZWXcuNDLYoCYjsGlm1LMeIICvMGSvy0
+         z8IA==
+X-Gm-Message-State: AOAM532PWeGyQbvY8H80/7As5U6h7nb7dhktRduuj0qW1cWqDR98cyn1
+        bLkiZifM948yPqrJ9DQTQlVdJ7WP+WVeKvok8uSOWg==
+X-Google-Smtp-Source: ABdhPJz1t8ilCe+azR4nxyMELuFZ202q6/P+OrgSG758hZXZJ0cRdCRts8XbAIgXPHpBGut6c4m3RRCMxRay292CWw0=
+X-Received: by 2002:a05:6808:60e:: with SMTP id y14mr8514570oih.162.1636662505339;
+ Thu, 11 Nov 2021 12:28:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211109161253.2202108-1-robh@kernel.org> <CACRpkda1+86GgvCJEehg9CGS78Q10FJ3ZHzdmHpYHrY7tAwkwA@mail.gmail.com>
+ <CAL_Jsq+gjP=3=wMYJ83KAn7Jf6xgaqoW9yn-bfoqD3Ung+CcKg@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+gjP=3=wMYJ83KAn7Jf6xgaqoW9yn-bfoqD3Ung+CcKg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 11 Nov 2021 21:28:14 +0100
+Message-ID: <CACRpkdbZvyQL3H31=00W-XeELR_g8xfRDyt-htLfh9DNSSDYxQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: xlp: Remove Netlogic XLP variants
+To:     Rob Herring <robh@kernel.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Drop unneeded whitespaces and put the variables of the same type
-together for consistency with the rest of the code.
+On Thu, Nov 11, 2021 at 9:13 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Nov 11, 2021 at 4:43 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/gpio/gpiolib.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+> > > @@ -373,7 +263,7 @@ static int xlp_gpio_probe(struct platform_device *pdev)
+> > >         gc->label = dev_name(&pdev->dev);
+> > >         gc->base = 0;
+> >
+> > Can we also set this to -1 and use dynamic GPIO base allocation?
+> > (Can be a separate patch.)
+>
+> No clue. What's normal for GPIO ACPI systems?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d1b9b721218f..4c34c96ef136 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -594,11 +594,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 			       struct lock_class_key *request_key)
- {
- 	struct fwnode_handle *fwnode = gc->parent ? dev_fwnode(gc->parent) : NULL;
--	unsigned long	flags;
--	int		ret = 0;
--	unsigned	i;
--	int		base = gc->base;
-+	int ret = 0, base = gc->base;
- 	struct gpio_device *gdev;
-+	unsigned long flags;
-+	unsigned int i;
- 
- 	/*
- 	 * First: allocate and populate the internal stat container, and
--- 
-2.30.1
+Dynamic allocation (-1) c.f.
+drivers/pinctrl/intel/pinctrl-intel.c
 
+> Does that mean more than
+> 1 instance is broken currently?
+
+Yes.
+
+Yours,
+Linus Walleij
