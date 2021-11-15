@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA0AC433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Nov 2021 22:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FC9C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Nov 2021 23:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A83C26321B
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Nov 2021 22:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CE6A6113D
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Nov 2021 23:22:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348432AbhKOW5e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Nov 2021 17:57:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54056 "EHLO
+        id S1347145AbhKOXZJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Nov 2021 18:25:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348851AbhKOWyf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Nov 2021 17:54:35 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82610C03AA3C
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Nov 2021 14:06:07 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id z10so51846303edc.11
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Nov 2021 14:06:07 -0800 (PST)
+        with ESMTP id S1353572AbhKOXWe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Nov 2021 18:22:34 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305B1C048C9C
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Nov 2021 14:24:52 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id x15so78546139edv.1
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Nov 2021 14:24:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=pensando.io; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DydRu7SpBSGXsY1o+1JsxVZaNRTPESv1WbRFhErfJMM=;
-        b=NsZfxABNmHEDn3cAEnxfzvehuxWUKowwXgKM2/RzHN1gLJBC2Xbn4Kmf7YkcAbdSQY
-         Wvjred1hNAkJMPqPI74nlx9auc5zLsTgpHtzZA9DgkYndFOWzEF/M6Xo9y7ScSKQAiRT
-         4x6aB4KBn0QPgpWdz6ZmI+xN6jJ9m0Sg72N+L1tk6h2fqM/BY5nX10HGkE9zYHLaZvIb
-         QjwndfZqoBl8hupCCgNgE8JcrZ9WWx4h1sIEjiCXAu9KivroAGA8boMT9Q+mTdiBYQmC
-         wX+OZ8qBocm1oEPw2/9/Vzz719VkQEz5/GWml2T3umjZ7AgD1MtLVw+rZeRTgQSIQXSP
-         Nfcw==
+        bh=IA3uzL8dfIEQ00f28ulGEts22lGGQNmtQewySBj0XO4=;
+        b=Bnv0ttRfNHVHdyq5LKLvyQjxpdMyK7zrZW+zF5YjwYhHNMqsmwWAV+1/zv3GBfmNDp
+         dXZU4ZfENKWeRflnaGRWMV7/FLXl9mG+IQLudrxrRoFHQiAC8EGsSesyMOVUo5McbFRf
+         +ppanSSlMs9Y4KjlkRjfUIf5VlAb1iLIWkx5y64VCMv7JDe6NmtMgXnhUpdfxxE3ybIg
+         /Hohp9KrrQy5z8x2OBjx4agALcsIkg5fPX6iWzTB/WpMsVL7RmSwgi1CCzJrKrV7dXtC
+         ig4npH2Y26QS10+qVyUxNe6jMz0mps8dMY3nnEb87rYqgDXq7Iw2K8aoFA58OHiqXBfm
+         +gKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DydRu7SpBSGXsY1o+1JsxVZaNRTPESv1WbRFhErfJMM=;
-        b=LggwEIOCLaJibbnlN9M6gTcsV1uCEWSUo8dwi9Fb1MsbXJ9fG9MYk5oL0sTepi16VG
-         lY59Ds4+lmEsfqwA51U4QEzR9XLuoDXpJTFC0edrugCLomdoUtZQE66SPZzxX6m3UfW1
-         Ev0kTPKPDLEn1veHfT0TylZrAzr0S7Ja0gCgb0gDDoOwBnDHXioWbayPpDzTW8fAl26R
-         FVmcwpHNp//QL3sygZwq2vRoUUI9Z87h3AZcuq4uusvbFXv0pWfFUO3M4nX9o08VyWXi
-         Kgdxpdovuyc9kHSfio8gCealuU5//bRTDwv/vxLVM6/+qny1t8LLFrLWLj7qKFo+jisS
-         Ls9w==
-X-Gm-Message-State: AOAM530DABt84JtVwvHZ+9ADqQri+2e3H65Yj7QfWXqt/nU6B3Otgv2P
-        BP/R4w3F05sMcB9XWx7elF3oD+8wqwuZs2pFAMJhZg==
-X-Google-Smtp-Source: ABdhPJwSi1BR2b9pVA2sLcVwhXu9OEXIKNaFyg+koHsL/tNEQcgfiypLJF0L+hXMaCL8HnPm+3CzHQPwuJd+6mtEA64=
-X-Received: by 2002:a17:907:1dd5:: with SMTP id og21mr3099771ejc.233.1637013965985;
- Mon, 15 Nov 2021 14:06:05 -0800 (PST)
+        bh=IA3uzL8dfIEQ00f28ulGEts22lGGQNmtQewySBj0XO4=;
+        b=bUFfzUcH7WBpV7MA5A3AKOYAcrN6gDRdkfXGWtbDMNxW2L0bpkC3ToGsI4WhrPoD2t
+         Ral+FoKDvrPvDyh6pGUnuFXdxGfCcsTKcbN9yVLFNXXyWCgGRBUyF9jtl3AYktO4Ik4b
+         sV6w/HBJsKxB8HpYPheu3V7SFoXpG/U8+wMP2Ut1eBa5BeiMO1RcFiLtQU8+HwoXlNIU
+         E6F374WThNvRG5pqX3xz0wQV75OUAV2TrFSTfYkf9MfZwAcbgVXlwP6hFtWUA/HRbBVL
+         YXPrtwUftjYD887byZ9HZYz/YX6GUUUZHXIpOTe3vbYAnJQDjYHcxZOloJLKqmtp3otF
+         H28w==
+X-Gm-Message-State: AOAM530LCEsq0eqwXG2uIrreqbVLz1dVTDjqHD2hDWhaUoycp51YcbJI
+        TMQ3XsitRM03KoJQ4V+AV1a2bNi16RwN0OzuQ6eKVQ==
+X-Google-Smtp-Source: ABdhPJzxxVv/7atCKO4fqs47SY7HQRIQQsohvPdp3HNDWi3IhAIZG7PhKinKRwqO+bPgkrlboDKA7GrYcJYLOWPB3fY=
+X-Received: by 2002:a17:907:6da9:: with SMTP id sb41mr3361170ejc.88.1637015090784;
+ Mon, 15 Nov 2021 14:24:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20211025015156.33133-1-brad@pensando.io> <20211025015156.33133-5-brad@pensando.io>
- <20211028072616.p3mazud3vi5jgynk@mobilestation>
-In-Reply-To: <20211028072616.p3mazud3vi5jgynk@mobilestation>
+References: <20211025015156.33133-1-brad@pensando.io> <20211025015156.33133-6-brad@pensando.io>
+ <20211028074945.rv2j5kgzk7yc2srr@mobilestation>
+In-Reply-To: <20211028074945.rv2j5kgzk7yc2srr@mobilestation>
 From:   Brad Larson <brad@pensando.io>
-Date:   Mon, 15 Nov 2021 14:05:55 -0800
-Message-ID: <CAK9rFnwjDrGO5u83vc19QenFoCmYs07Nzo1N76SsKC8BLXHbvw@mail.gmail.com>
-Subject: Re: [PATCH v3 04/11] dt-bindings: spi: Add compatible for Pensando
- Elba SoC
+Date:   Mon, 15 Nov 2021 14:24:40 -0800
+Message-ID: <CAK9rFnw396xK+u3qUpgbnGNw7WDJPJm0L3o4nPAcFeqQjBDbXg@mail.gmail.com>
+Subject: Re: [PATCH v3 05/11] spi: dw: Add Pensando Elba SoC SPI Controller bindings
 To:     Serge Semin <fancer.lancer@gmail.com>
 Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -78,19 +78,70 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Hi Sergey,
 
-On Thu, Oct 28, 2021 at 12:26 AM Serge Semin <fancer.lancer@gmail.com> wrote:
+On Thu, Oct 28, 2021 at 12:49 AM Serge Semin <fancer.lancer@gmail.com> wrote:
 >
-> Hello Brad
+> On Sun, Oct 24, 2021 at 06:51:50PM -0700, Brad Larson wrote:
+> > The Pensando Elba SoC has integrated the DW APB SPI Controller
 >
-> The patch name "dt-bindings: spi: Add compatible for Pensando Elba
-> SoC" doesn't mention to what bindings it is referring to. For the sake
-> of having a more representative git log I'd suggest at least to add
-> "cdns" vendor name in the title, like: "dt-bindings: spi: cdns: Add ..."
-> Otherwise it's impossible to understand to what bindings you're adding
-> a new compatibility especially seeing you are doing the similar thing
-> for the DW SPI in the next patch.
+> Please add the "dt-bindings: " prefix to the patch name and discard
+> the word "bindings" from the title as the submitting DT-patches
+> requires:
+> Documentation/devicetree/bindings/submitting-patches.rst
 
-I'll add "cdns" to the git log for the re-spin.
+I'll add that.  I recall looking at the recent git log for similar
+changes to the file as the current recommended approach.
+
+> >
+> > Signed-off-by: Brad Larson <brad@pensando.io>
+> > ---
+> >  Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> > index d7e08b03e204..0b5ebb2ae6e7 100644
+> > --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> > +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> > @@ -73,6 +73,8 @@ properties:
+> >                - renesas,r9a06g032-spi # RZ/N1D
+> >                - renesas,r9a06g033-spi # RZ/N1S
+> >            - const: renesas,rzn1-spi   # RZ/N1
+>
+> > +      - description: Pensando Elba SoC SPI Controller
+> > +        const: pensando,elba-spi
+>
+> AFAICS from the driver-part of the patchset it's not enough. You've
+> also got the syscon phandle, which needs to be reflected in the
+> bindings. That also makes me thinking that you didn't perform the
+> "dtbs_check" on the dts-files you were going to submit, but for some
+> reason discarded from this series (btw why?). If you did you would
+> have got an error of an unevaluated property detection.
+
+I ran the checks below and didn't get errors.  Rob provided some info
+and I found the server did not have yamllint installed (not flagged by
+tool).  Also dt-schema was not the latest.  I'm re-doing this and
+including "DT_CHECKER_FLAGS=-m" as that is new with v5.13.
+
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/vendor-prefixes.yaml
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/pensando,elba.yaml
+
+make dt_binding_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+make dt_binding_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+make dt_binding_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+make dt_binding_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/vendor-prefixes.yaml
+make dt_binding_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/pensando,elba.yaml
 
 Thanks
 Brad
