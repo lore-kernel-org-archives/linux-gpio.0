@@ -2,144 +2,193 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE1BC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 05:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97691C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 05:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCC163214
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 05:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714AE61A4E
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 05:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234270AbhKPFes (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Nov 2021 00:34:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57946 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234445AbhKPFec (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Nov 2021 00:34:32 -0500
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DFDC2D8F3E;
-        Mon, 15 Nov 2021 18:44:14 -0800 (PST)
-Received: by mail-qk1-x731.google.com with SMTP id 193so19062208qkh.10;
-        Mon, 15 Nov 2021 18:44:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+IsQBHoFAXBIkB1Kw8WNji5f2haXZUreOBVyURuDYXY=;
-        b=l72T4yHHjmckvxjl/bthixU/FwFfghPSs3EadNJjMWX37Etlj/vn2pNjYgjl+dEV+4
-         YQKDwq6Hl/65E3gKuGjHyRmWm6bE9SYztKS+bGWD5trEp4yVqmVWGia7jT1x2rSCG9Va
-         bAsV/ONCMORPfMlrW4T9/C4ya+OhPhV3+JRxQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+IsQBHoFAXBIkB1Kw8WNji5f2haXZUreOBVyURuDYXY=;
-        b=PcKjITc5DykR3RtiYctr+5CHbuTg8Pck2/VmBlJFnQbT9ZBf82cEi1XqlH4OLIPfog
-         dRI3nldwUrAHToh//wDfOcnXPgSB4IlIa2RtSQCUstmphkMPka8SbN65KIzuOWen1iBA
-         VZlm2Eh3MvSDO3Sg0MjeKwoec0hnJju3MyZprl/OiS/U2kbV3vY9KgEE0OVDKCpD/Kk7
-         sHcYar9EJayUGsHZ++PsdUJW+1YckvYw2IUENnO97KWD9cscgOfpHbxx+1VYo+80/jgz
-         ZjsQKb1Ujs8WZDwqinep1fa0dz2LJhdNSiXzTNym3cPku4hYCrf3mtUifwSQ0Dm5/S9A
-         hITw==
-X-Gm-Message-State: AOAM532kc7bN7fa/MkeUesvmWdCUIiT6g21qjVtkwrfbLZOPZ/OlYqV2
-        Obfsmjr9po0ayT+qunrUvXTDsb9Ba1PZ+QJbgRQ=
-X-Google-Smtp-Source: ABdhPJwFg2x8AJ1R5syQ8XsYLcOycKjHQkw7M4LD3hkby3taUtS6CF+5GtXIucrImQ59MMWh5GgdKa+ymtIJF4dYXg8=
-X-Received: by 2002:a05:620a:38f:: with SMTP id q15mr3429838qkm.291.1637030653516;
- Mon, 15 Nov 2021 18:44:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20210921043936.468001-1-andrew@aj.id.au> <20210921043936.468001-2-andrew@aj.id.au>
- <CACRpkdZRWzq_j_UsU+eZurv1wT7muB1V4ktui1-Q0mHV3xw58A@mail.gmail.com>
-In-Reply-To: <CACRpkdZRWzq_j_UsU+eZurv1wT7muB1V4ktui1-Q0mHV3xw58A@mail.gmail.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 16 Nov 2021 02:44:00 +0000
-Message-ID: <CACPK8Xef1hVFFAJS-tHa+fjR0SgNZ7d5W04KwOYi-CvQdpnJww@mail.gmail.com>
-Subject: Re: [PATCH 1/2] leds: pca955x: Make the gpiochip always expose all pins
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>
-Cc:     Andrew Jeffery <andrew@aj.id.au>, linux-leds@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S235394AbhKPFlk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Nov 2021 00:41:40 -0500
+Received: from m43-7.mailgun.net ([69.72.43.7]:40424 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235401AbhKPFlX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 16 Nov 2021 00:41:23 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1637041106; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=SaTYdbUbC53cmoeEtQ4HCeyZDMEWJ9SkQ4sPD6/YcOs=; b=cYKx+ODP3cmKyPECyyvrH7VSZw4SuE2tU5w9teoOGjC2UgmsG4XbDhY6bvrpT+9oZOjMaXiU
+ 5tvJgjlNjVWOZM7mm9evrCjstXCEEMJ7JBHtgm2AqgoddeMCip5STnF4al+2EM7ERGpcZj3x
+ 6j8GxpNjHuxX2/9iksRAP+zG4dE=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 619343d14db4233966d67ca6 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 16 Nov 2021 05:38:25
+ GMT
+Sender: rnayak=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0E023C43460; Tue, 16 Nov 2021 05:38:25 +0000 (UTC)
+Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 80CDDC43616;
+        Tue, 16 Nov 2021 05:38:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 80CDDC43616
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+To:     bjorn.andersson@linaro.org, agross@kernel.org,
+        linus.walleij@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
+        dianders@chromium.org, swboyd@chromium.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v3 2/2] pinctrl: qcom: sc7280: Add egpio support
+Date:   Tue, 16 Nov 2021 11:08:04 +0530
+Message-Id: <1637041084-3299-2-git-send-email-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1637041084-3299-1-git-send-email-rnayak@codeaurora.org>
+References: <1637041084-3299-1-git-send-email-rnayak@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Pavel and Arnd,
+sc7280 supports the egpio feature, GPIOs ranging from 144 to 174
+(31 GPIOs) support it, we define gpio_func to 9, which
+is an unused function for all these pins on sc7280.
 
-This one has slipped through the cracks. Andrew asked for a follow up
-and Linus sent a review, but we haven't heard from Pavel at all.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/pinctrl/qcom/pinctrl-sc7280.c | 75 ++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 31 deletions(-)
 
-We've merged device tree changes through the soc tree in v5.16 that
-depend on this patch. Ideally I would like to see it applied to fix
-those device trees, instead of sending reverts for the device trees.
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc7280.c b/drivers/pinctrl/qcom/pinctrl-sc7280.c
+index 9017ede..31df55c 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc7280.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc7280.c
+@@ -43,6 +43,8 @@
+ 		.mux_bit = 2,			\
+ 		.pull_bit = 0,			\
+ 		.drv_bit = 6,			\
++		.egpio_enable = 12,		\
++		.egpio_present = 11,		\
+ 		.oe_bit = 9,			\
+ 		.in_bit = 0,			\
+ 		.out_bit = 1,			\
+@@ -520,6 +522,7 @@ enum sc7280_functions {
+ 	msm_mux_dp_lcd,
+ 	msm_mux_edp_hot,
+ 	msm_mux_edp_lcd,
++	msm_mux_egpio,
+ 	msm_mux_gcc_gp1,
+ 	msm_mux_gcc_gp2,
+ 	msm_mux_gcc_gp3,
+@@ -658,6 +661,14 @@ static const char * const gpio_groups[] = {
+ 	"gpio165", "gpio166", "gpio167", "gpio168", "gpio169", "gpio170",
+ 	"gpio171", "gpio172", "gpio173", "gpio174",
+ };
++static const char * const egpio_groups[] = {
++	"gpio144", "gpio145", "gpio146", "gpio147", "gpio148", "gpio149",
++	"gpio150", "gpio151", "gpio152", "gpio153", "gpio154", "gpio155",
++	"gpio156", "gpio157", "gpio158", "gpio159", "gpio160", "gpio161",
++	"gpio162", "gpio163", "gpio164", "gpio165", "gpio166", "gpio167",
++	"gpio168", "gpio169", "gpio170", "gpio171", "gpio172", "gpio173",
++	"gpio174",
++};
+ static const char * const atest_char_groups[] = {
+ 	"gpio81",
+ };
+@@ -1150,6 +1161,7 @@ static const struct msm_function sc7280_functions[] = {
+ 	FUNCTION(dp_lcd),
+ 	FUNCTION(edp_hot),
+ 	FUNCTION(edp_lcd),
++	FUNCTION(egpio),
+ 	FUNCTION(gcc_gp1),
+ 	FUNCTION(gcc_gp2),
+ 	FUNCTION(gcc_gp3),
+@@ -1408,37 +1420,37 @@ static const struct msm_pingroup sc7280_groups[] = {
+ 	[141] = PINGROUP(141, _, _, _, _, _, _, _, _, _),
+ 	[142] = PINGROUP(142, _, _, _, _, _, _, _, _, _),
+ 	[143] = PINGROUP(143, _, _, _, _, _, _, _, _, _),
+-	[144] = PINGROUP(144, _, _, _, _, _, _, _, _, _),
+-	[145] = PINGROUP(145, _, _, _, _, _, _, _, _, _),
+-	[146] = PINGROUP(146, _, _, _, _, _, _, _, _, _),
+-	[147] = PINGROUP(147, _, _, _, _, _, _, _, _, _),
+-	[148] = PINGROUP(148, _, _, _, _, _, _, _, _, _),
+-	[149] = PINGROUP(149, _, _, _, _, _, _, _, _, _),
+-	[150] = PINGROUP(150, qdss, _, _, _, _, _, _, _, _),
+-	[151] = PINGROUP(151, qdss, _, _, _, _, _, _, _, _),
+-	[152] = PINGROUP(152, qdss, _, _, _, _, _, _, _, _),
+-	[153] = PINGROUP(153, qdss, _, _, _, _, _, _, _, _),
+-	[154] = PINGROUP(154, _, _, _, _, _, _, _, _, _),
+-	[155] = PINGROUP(155, _, _, _, _, _, _, _, _, _),
+-	[156] = PINGROUP(156, qdss_cti, _, _, _, _, _, _, _, _),
+-	[157] = PINGROUP(157, qdss_cti, _, _, _, _, _, _, _, _),
+-	[158] = PINGROUP(158, _, _, _, _, _, _, _, _, _),
+-	[159] = PINGROUP(159, _, _, _, _, _, _, _, _, _),
+-	[160] = PINGROUP(160, _, _, _, _, _, _, _, _, _),
+-	[161] = PINGROUP(161, _, _, _, _, _, _, _, _, _),
+-	[162] = PINGROUP(162, _, _, _, _, _, _, _, _, _),
+-	[163] = PINGROUP(163, _, _, _, _, _, _, _, _, _),
+-	[164] = PINGROUP(164, _, _, _, _, _, _, _, _, _),
+-	[165] = PINGROUP(165, qdss_cti, _, _, _, _, _, _, _, _),
+-	[166] = PINGROUP(166, qdss_cti, _, _, _, _, _, _, _, _),
+-	[167] = PINGROUP(167, _, _, _, _, _, _, _, _, _),
+-	[168] = PINGROUP(168, _, _, _, _, _, _, _, _, _),
+-	[169] = PINGROUP(169, _, _, _, _, _, _, _, _, _),
+-	[170] = PINGROUP(170, _, _, _, _, _, _, _, _, _),
+-	[171] = PINGROUP(171, qdss, _, _, _, _, _, _, _, _),
+-	[172] = PINGROUP(172, qdss, _, _, _, _, _, _, _, _),
+-	[173] = PINGROUP(173, qdss, _, _, _, _, _, _, _, _),
+-	[174] = PINGROUP(174, qdss, _, _, _, _, _, _, _, _),
++	[144] = PINGROUP(144, _, _, _, _, _, _, _, _, egpio),
++	[145] = PINGROUP(145, _, _, _, _, _, _, _, _, egpio),
++	[146] = PINGROUP(146, _, _, _, _, _, _, _, _, egpio),
++	[147] = PINGROUP(147, _, _, _, _, _, _, _, _, egpio),
++	[148] = PINGROUP(148, _, _, _, _, _, _, _, _, egpio),
++	[149] = PINGROUP(149, _, _, _, _, _, _, _, _, egpio),
++	[150] = PINGROUP(150, qdss, _, _, _, _, _, _, _, egpio),
++	[151] = PINGROUP(151, qdss, _, _, _, _, _, _, _, egpio),
++	[152] = PINGROUP(152, qdss, _, _, _, _, _, _, _, egpio),
++	[153] = PINGROUP(153, qdss, _, _, _, _, _, _, _, egpio),
++	[154] = PINGROUP(154, _, _, _, _, _, _, _, _, egpio),
++	[155] = PINGROUP(155, _, _, _, _, _, _, _, _, egpio),
++	[156] = PINGROUP(156, qdss_cti, _, _, _, _, _, _, _, egpio),
++	[157] = PINGROUP(157, qdss_cti, _, _, _, _, _, _, _, egpio),
++	[158] = PINGROUP(158, _, _, _, _, _, _, _, _, egpio),
++	[159] = PINGROUP(159, _, _, _, _, _, _, _, _, egpio),
++	[160] = PINGROUP(160, _, _, _, _, _, _, _, _, egpio),
++	[161] = PINGROUP(161, _, _, _, _, _, _, _, _, egpio),
++	[162] = PINGROUP(162, _, _, _, _, _, _, _, _, egpio),
++	[163] = PINGROUP(163, _, _, _, _, _, _, _, _, egpio),
++	[164] = PINGROUP(164, _, _, _, _, _, _, _, _, egpio),
++	[165] = PINGROUP(165, qdss_cti, _, _, _, _, _, _, _, egpio),
++	[166] = PINGROUP(166, qdss_cti, _, _, _, _, _, _, _, egpio),
++	[167] = PINGROUP(167, _, _, _, _, _, _, _, _, egpio),
++	[168] = PINGROUP(168, _, _, _, _, _, _, _, _, egpio),
++	[169] = PINGROUP(169, _, _, _, _, _, _, _, _, egpio),
++	[170] = PINGROUP(170, _, _, _, _, _, _, _, _, egpio),
++	[171] = PINGROUP(171, qdss, _, _, _, _, _, _, _, egpio),
++	[172] = PINGROUP(172, qdss, _, _, _, _, _, _, _, egpio),
++	[173] = PINGROUP(173, qdss, _, _, _, _, _, _, _, egpio),
++	[174] = PINGROUP(174, qdss, _, _, _, _, _, _, _, egpio),
+ 	[175] = UFS_RESET(ufs_reset, 0xbe000),
+ 	[176] = SDC_QDSD_PINGROUP(sdc1_rclk, 0xb3004, 0, 6),
+ 	[177] = SDC_QDSD_PINGROUP(sdc1_clk, 0xb3000, 13, 6),
+@@ -1481,6 +1493,7 @@ static const struct msm_pinctrl_soc_data sc7280_pinctrl = {
+ 	.ngpios = 176,
+ 	.wakeirq_map = sc7280_pdc_map,
+ 	.nwakeirq_map = ARRAY_SIZE(sc7280_pdc_map),
++	.egpio_func = 9,
+ };
+ 
+ static int sc7280_pinctrl_probe(struct platform_device *pdev)
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
-Additionally, I'm now reviewing changes for v5.17 and want to decide
-which direction we should take.
-
-Pavel, are you happy with the change?
-
-If so, would you consider merging it as a fix for v5.16?
-
-Cheers,
-
-Joel
-
-On Tue, 9 Nov 2021 at 11:03, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Tue, Sep 21, 2021 at 6:40 AM Andrew Jeffery <andrew@aj.id.au> wrote:
->
-> > The devicetree binding allows specifying which pins are GPIO vs LED.
-> > Limiting the instantiated gpiochip to just these pins as the driver
-> > currently does requires an arbitrary mapping between pins and GPIOs, but
-> > such a mapping is not implemented by the driver. As a result,
-> > specifying GPIOs in such a way that they don't map 1-to-1 to pin indexes
-> > does not function as expected.
-> >
-> > Establishing such a mapping is more complex than not and even if we did,
-> > doing so leads to a slightly hairy userspace experience as the behaviour
-> > of the PCA955x gpiochip would depend on how the pins are assigned in the
-> > devicetree. Instead, always expose all pins via the gpiochip to provide
-> > a stable interface and track which pins are in use.
-> >
-> > Specifying a pin as `type = <PCA955X_TYPE_GPIO>;` in the devicetree
-> > becomes a no-op.
-> >
-> > I've assessed the impact of this change by looking through all of the
-> > affected devicetrees as of the tag leds-5.15-rc1:
-> >
-> > ```
-> > $ git grep -l 'pca955[0123]' $(find . -name dts -type d)
-> > arch/arm/boot/dts/aspeed-bmc-ibm-everest.dts
-> > arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
-> > arch/arm/boot/dts/aspeed-bmc-opp-mihawk.dts
-> > arch/arm/boot/dts/aspeed-bmc-opp-mowgli.dts
-> > arch/arm/boot/dts/aspeed-bmc-opp-swift.dts
-> > arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-> > arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
-> > ```
-> >
-> > These are all IBM-associated platforms. I've analysed both the
-> > devicetrees and schematics where necessary to determine whether any
-> > systems hit the hazard of the current broken behaviour. For the most
-> > part, the systems specify the pins as either all LEDs or all GPIOs, or
-> > at least do so in a way such that the broken behaviour isn't exposed.
-> >
-> > The main counter-point to this observation is the Everest system whose
-> > devicetree describes a large number of PCA955x devices and in some cases
-> > has pin assignments that hit the hazard. However, there does not seem to
-> > be any use of the affected GPIOs in the userspace associated with
-> > Everest.
-> >
-> > Regardless, any use of the hazardous GPIOs in Everest is already broken,
-> > so let's fix the interface and then fix any already broken userspace
-> > with it.
-> >
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Yours,
-> Linus Walleij
