@@ -2,319 +2,166 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4163C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1286CC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D197E61AF0
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F399F63219
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237971AbhKPPHs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Nov 2021 10:07:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233847AbhKPPGv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Nov 2021 10:06:51 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA2E2C06121D;
-        Tue, 16 Nov 2021 07:01:52 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id z5so29276307edd.3;
-        Tue, 16 Nov 2021 07:01:52 -0800 (PST)
+        id S237989AbhKPPHx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Nov 2021 10:07:53 -0500
+Received: from mail-bn8nam12on2135.outbound.protection.outlook.com ([40.107.237.135]:40171
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237804AbhKPPHE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 16 Nov 2021 10:07:04 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FWC/J7tfaN+Lsh3Wu7ghsjOgsGV4+R+cUNtAaWS0cOvtbNZeFqHhfiJjPWWiGxXk2DIrD8itUjrMLICQfB4tx6TLuFzZeYx8YL14IjKdpcel1tBc8fJZnKixlKhMBJvKcYh4IHbS81T1LZ8lh8Uuo61JyJ95g095fl5AaCsUUbDmhW4jkbsv0KhfMeGnbIoTqbZGePN/F2+gKvQta/rTQh1AIebYZXxZzzO4ak5ZIUcADuUeOsgnkAJOB5fJBXrR+zrZComYulpB+xrBN2W5DPwF8GC148CzS6EasqMzWf1LNDyxzBe7DkqLLJeWe/iGQdibVbRfxg3z9fxGQZVkpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lSuPQ3d0tOED9bkhjCyHEX1WBQd3xts64ziWqYOr5zA=;
+ b=j5WpjJUI/SB0gpfk8z9wTPdasF6vxnUCY+HyRltuYtUYkTMLa40fjPzejzdD2l9m4QilSuykgdB8j9MJJFW0QmF/H83r/4FtvEl6L/qDFQbnkB3iKHKs/N4PgRwcfVlYK7Gk5HCVZmvXSuNxUGRZTJinQDPJJj2pKMGWGZBHWwVzsWyaQFxGFSjsJfBE1/TfO1YiwfZSajY2pT/PAxHo0ze/9eaMRxTOp6iYOwyY+J5mTZjr8AYJfg9iqV64M2zmLvRuIqzS72DNquc4EPkh8HIR8/HQtomCAW+/u6zlaCrrcTL0VuqPqfFAXUl/G6oj1gZiAXVtjliE2hgdLS9fkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=l4A0QwuDXkWlHocxWGY/LKp7oE6NH5fpBzhs7/voy7Q=;
-        b=ovBZ9RMncX3kit8IgWo6jmq7h/8kEh5f/XaA/Rb/491JNCUsTMwRpE+9mimbzllP+7
-         aXsY1fkxeO0rRnGI4jfPQa5ETzZQMeLMq1Avs3Ecp1TGiDMIMkvacLsG9uW3AptbDkJq
-         kU6sozB4wprjttjs9O12re0d8oCFHqtlDj7UUpdLKkesLGNUyC6mFYnjKuXUjzZTV4Vk
-         J75K6TyyS6suz9JcatNXAOU62sP5eCSbb38L8viwMkuWH6CevBjkR8ahsYT9sTejh0NZ
-         bshV9A0Ck3pjOCkPjNmOzISw+BC5V0Ig8ON4s5z4++6+ImsURYmfl+KXXq0zVx1wC2w8
-         Rvbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=l4A0QwuDXkWlHocxWGY/LKp7oE6NH5fpBzhs7/voy7Q=;
-        b=2Nle+hGFuGcNW2il9WL8qg6dJcvIZe8gLaE9A268NKV5HsjFFF1Vu1GE9Y9lyLGSS+
-         TraZNhnhuWuW79XsNvMCHsDG+U+mbchqqT8Q4uRMjH/FFXSxL/E+I/gJImL+EtgHt0nC
-         bqpmTNebbtq6HYzf9WwynEnpRhHI39fWQYBW8jEC8IlEY0oEdNXDIF77MrudCAsouUmF
-         Qb/SjyFcrH8myonq6Uxz9GKhYnOvwpkOTizok5CzbuPXJW+/omoE8CgQIqXm/1VokXnu
-         njneWhRB7no+BLzXyvEIrcEVJ+k9hNN5aZqjiFSoU4OKSi5L+UYemzkATKNRx9qDmKJa
-         l9jQ==
-X-Gm-Message-State: AOAM532BVyb1UqdtJr+nFgcqvfl+LVCyxGruj3Z8HwUpLBRVwDdTlke1
-        KzYbwCoJBsJIe8wmWgdFnSg=
-X-Google-Smtp-Source: ABdhPJwuwARuXZlx24qiZ4QjT5Gt3QsbqyYmRh+LA17OOaxyWz/avf4FqZH/kpjzEYPRDqdVGgUT8g==
-X-Received: by 2002:a17:906:9b88:: with SMTP id dd8mr11011493ejc.467.1637074909058;
-        Tue, 16 Nov 2021 07:01:49 -0800 (PST)
-Received: from stitch.. ([2a02:aa7:4600:b4ae:a375:e7a0:9eaf:8d7b])
-        by smtp.gmail.com with ESMTPSA id u16sm9414311edr.43.2021.11.16.07.01.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Nov 2021 07:01:48 -0800 (PST)
-Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
-From:   Emil Renner Berthing <kernel@esmil.dk>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lSuPQ3d0tOED9bkhjCyHEX1WBQd3xts64ziWqYOr5zA=;
+ b=FukRBPwFkHPtng3v0YyPwy+sy+7CLEX/t63gMBp09hPn2J3ny0bPwzIFwvsouUJ1KkRew/m8AtKIIIzl8MgI4W5LLGqIKz0nqsCcvAWfV5cfP1cGnh0HqCeVMwybcV3bAKQ4gf7C1xBtnsXdnCjPwYQyxdCiHlvTpaOpRYsJXoo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37) by MW4PR10MB5881.namprd10.prod.outlook.com
+ (2603:10b6:303:18e::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.26; Tue, 16 Nov
+ 2021 15:04:03 +0000
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::6430:b20:8805:cd9f]) by MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::6430:b20:8805:cd9f%5]) with mapi id 15.20.4713.019; Tue, 16 Nov 2021
+ 15:04:03 +0000
+Date:   Tue, 16 Nov 2021 07:04:04 -0800
+From:   Colin Foster <colin.foster@in-advantage.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Daniel Scally <djrscally@gmail.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 04/16] dt-bindings: clock: starfive: Add JH7100 clock definitions
-Date:   Tue, 16 Nov 2021 16:01:07 +0100
-Message-Id: <20211116150119.2171-5-kernel@esmil.dk>
-X-Mailer: git-send-email 2.34.0
-In-Reply-To: <20211116150119.2171-1-kernel@esmil.dk>
-References: <20211116150119.2171-1-kernel@esmil.dk>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [RFC PATCH v4 net-next 00/23] add support for VSC75XX control
+ over SPI
+Message-ID: <20211116150404.GA8651@DESKTOP-LAINLKC.localdomain>
+References: <20211116062328.1949151-1-colin.foster@in-advantage.com>
+ <YZOJKZZSVQ9wvUTS@smile.fi.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YZOJKZZSVQ9wvUTS@smile.fi.intel.com>
+X-ClientProxiedBy: MWHPR22CA0064.namprd22.prod.outlook.com
+ (2603:10b6:300:12a::26) To MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from DESKTOP-LAINLKC.localdomain (96.93.101.165) by MWHPR22CA0064.namprd22.prod.outlook.com (2603:10b6:300:12a::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.19 via Frontend Transport; Tue, 16 Nov 2021 15:04:02 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9622e6af-407a-443f-a8af-08d9a91253eb
+X-MS-TrafficTypeDiagnostic: MW4PR10MB5881:
+X-Microsoft-Antispam-PRVS: <MW4PR10MB58810860B2917518592B83E7A4999@MW4PR10MB5881.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: owseUeNYJii/ahoFWOk5RpdvL3KKDftjgwfgsQFLW5jn8tn2FvXGbmofzgavVsRaFqprV9z65yu5mYH9h0+Byco5cO8xk0Z6SwK4AErtTHD+lJhJKeaFIwsMeZm0Aj+UFfXeqUD2amcy6lRVbHHb/VSt/llGUbUUzpsJb6zEGiqAGfWlEVQQlqyksxiPBcY0jSmxjRWzi3bxY6T3aO3nOf+i0IqhwUR1Kr3vdGiTeKD1MRxKG0Obs0eaMFPm09hVsHWy+MkoZtwVDnXX0pYDoOqCdPY1J0k363YFzd9zlUCm7Djug/5Tfbo106oucPuKC3tTeGNjZTv72877p4HcjMG9OfZGZJYEyYiTDPl+nuTm1Is4YBUqNLoYvsl5ME+wBdYvpKQrXppjh/VQgb5ofWiQIvM/o3YWskimqO3CfvdcnE3K8N8BEM9gZ2+ovrnNyfa+J0kHPhGNDPVmIa4gEgXQVm+A+hBXO+xonTCP4I7djKBnLpyD3AiGYIBfZ9ozlr0eUlgKMOP/TIWVXP4izLHu6Hp3odLAUUpmGJHZ8ZRZZtsddaq1vbAPBcp2LEahGTf8FmL8FzpA1UeS05G30Wc2Rs91Ecu3PPZWTSXFbvjiUaK0qiXUX8JexOCFLnTPBB0CbbEythVi4zsJ3xZbTi/o4DVc6UeFGdPrR6ZB7JGhRD/TejHwmgAbPsIqd6ODHrAztnVriePotglyB0H5X+2yit3yI0i98s1O2d7wmMf13O3riscQqzCqjP8frQONKVdfGcgmfd2jG2/BuOn0otLu8XVdQgnEH3sEZUw8AIs=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(346002)(366004)(136003)(376002)(39840400004)(8676002)(26005)(186003)(44832011)(966005)(6916009)(2906002)(66556008)(508600001)(33656002)(956004)(9686003)(66476007)(1076003)(52116002)(316002)(86362001)(8936002)(66946007)(55016002)(4326008)(7696005)(54906003)(5660300002)(38350700002)(6506007)(7416002)(38100700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uMqtuto1VCi5LSGkfBjT9UtZfShD2d84DWnu0Pc93qteAxgAgd9HYUpMAKXY?=
+ =?us-ascii?Q?3iNui7AbAq0/RYIEzRdTMSAsTG+fKy94BhKpiZtIHrX+P+B0TpjhOwukNhEW?=
+ =?us-ascii?Q?2KRdwQxuIbtOBkZlt+o83fY6zjBo2Nv59cr4j7miOwovs6bBLkxmYuQ/7fFf?=
+ =?us-ascii?Q?75vRGKIFye8Zwr1aQjB7Uor52HBY8kvyyuZs2gEsuOESZ2kTuFyXaBIUWkly?=
+ =?us-ascii?Q?RE2Z+PLnJi515M94UvvLTXVqb3DI4lzHkn9R6Bh6Q3PYylz0qKx+RFG0aEGT?=
+ =?us-ascii?Q?0yCRlzCNXkPh6zGKJiZRyxmlWghMAaQcAt45kVxSvYx4xKGP/b5oPzgG/qUO?=
+ =?us-ascii?Q?GUAMarANcg7IlEt8Z1z3ucmGEfZkFeYIHSeBfZ4uw0egD/B7sT10lbl+oVjz?=
+ =?us-ascii?Q?4LwT++7P4JXL+9QVejjXo7Sr5sWWsI4oLhf427Hzj6Ih/CVYKHHtGycLwBDK?=
+ =?us-ascii?Q?v/GmcgUH1cAWOxkz5L5d6q42u38YBtRVwv+/ahv1vb/Q0t4Uxk9yYmo+gw7b?=
+ =?us-ascii?Q?CqqFcqosSfPyOcQP1Bh72ttSooioJVCV8t4XVdz3poSF4DHx2nEz6CJZaBAe?=
+ =?us-ascii?Q?9XWZjkCEzP1TMM4pkmB5T7iRkXnGqTkN5IhgbYRBwiBLtetkxcrAFzwDakTM?=
+ =?us-ascii?Q?q2Pww8Fed7nfiP5iXslvL/ZIlfjBg28YLozh+4iEqaipfEZYkFGHCQ2WC/Ec?=
+ =?us-ascii?Q?AlXmVb/Sovf+mYYsgXNW4lwbcYbt8/7QcUOqqG2K6P78Z8y7bbjxV/tZQXXg?=
+ =?us-ascii?Q?Yem9HjDKB/sz5A31zV9MSPEuZhbwf84e03gUPw1Rn3bHzJ9nnrnGjBw4U/bj?=
+ =?us-ascii?Q?6VST+vR8fjfdAkzccLfEqhtd2Vvueobp/7+QsEOxLDpViDjVHcvA6lcNK066?=
+ =?us-ascii?Q?nw4tHsVsH2WBQHD235+SvVBUVKLNQoYHk3BSDtASpeqQGsG27kBeO6f9wlkM?=
+ =?us-ascii?Q?lMlFWMQeqb6/RnsDKme6Ez29G365L8rgJ6L4IeHzCEiKjoOiOfBxZXhANif1?=
+ =?us-ascii?Q?5zecfXNTuIu/m+aY8Hf/bhF+e+jKJkQrcLPsg4PWIWMuYHtLgj7/YHkraS9y?=
+ =?us-ascii?Q?xMFKGjFAxtd+4zaKk+HYpJMFBD6RMkw2jykVKW1U5vi38ZKd/kuYy7ZCak0m?=
+ =?us-ascii?Q?pL+uRA4WofGKF7z2LtMYSXnuyjCwDTt0HcVVQEE89o4OriqYZPSArRbIoUAe?=
+ =?us-ascii?Q?FO46MkHi0uOf4otmhoRTEUYKS8BJLWfK3PEvC8fGuO80LJz9oRAg9Pi9ROtb?=
+ =?us-ascii?Q?4+nADYtZRyKOuMEsLUOwrnCBA20Crn/X/qXnUIGH6Na2LMbD/e2uV4Mv812W?=
+ =?us-ascii?Q?p9FZtg3HgzXIYCn/Qri2YkzJ1aDEO4/BdCASwE8PDBad5ZYsGAQD7c1FWZtF?=
+ =?us-ascii?Q?Mpor7PUwPt/ufmFSoBozV4crn6cYPJgU/Jo9Dki2v+Qzc8UPbl1H6llAWimf?=
+ =?us-ascii?Q?TyKYY8eKjB/PYwymBeCWD6z8vv8EgZ6k8OKkWcMNFx5pzfShmnaB1aqIgrhX?=
+ =?us-ascii?Q?Rv5CD37GVwJ9cG0xD34yNU55YkN7CN6U7UT97UX7+xVrzwf86+oDyi15mn2v?=
+ =?us-ascii?Q?e2/jcEfVmN543rX1k0kcv7S4Po70Fq8p8LfGJLuhL7m0zDDa3cR3SZspd6hm?=
+ =?us-ascii?Q?zevPN+ZMITRmaRY8ACnkJtDzvNsnbKbLt5JJVBQnKmcvIBfNZhREo7JiuI7u?=
+ =?us-ascii?Q?PjxHGxxGHhH3kz9Vkhvh4BTuTO0=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9622e6af-407a-443f-a8af-08d9a91253eb
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 15:04:03.5382
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tp4StAHUaXQEi9iMiV4jiJmguJI+5SIhvCOCev4ajWxpxZ399X5dXDGAcm1BkmekkuDmAp0qacxiFXvYrEaIMyg2TpB8RlX/nXX06uYJM4I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5881
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+On Tue, Nov 16, 2021 at 12:34:17PM +0200, Andy Shevchenko wrote:
+> On Mon, Nov 15, 2021 at 10:23:05PM -0800, Colin Foster wrote:
+> > My apologies for this next RFC taking so long. Life got in the way.
+> > 
+> > 
+> > The patch set in general is to add support for the VSC7511, VSC7512,
+> > VSC7513 and VSC7514 devices controlled over SPI. The driver is
+> > relatively functional for the internal phy ports (0-3) on the VSC7512.
+> > As I'll discuss, it is not yet functional for other ports yet.
+> 
+> 
+> Since series touches fwnode, please Cc next time to Daniel Scally.
 
-Add all clock outputs for the StarFive JH7100 clock generator.
+Thank you. I will do this next time.
 
-Based on work by Ahmad Fatoum for Barebox, with "JH7100_" prefixes added
-to all definitions.
+For my future reference, is there a way that I could have known this? Or
+is this just knowledge that comes with experience? The email list I got
+was from running the patch set through get_maintainers.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Acked-by: Rob Herring <robh@kernel.org>
----
- include/dt-bindings/clock/starfive-jh7100.h | 202 ++++++++++++++++++++
- 1 file changed, 202 insertions(+)
- create mode 100644 include/dt-bindings/clock/starfive-jh7100.h
+> It also appears [1] that somewhere in PHY code a bug is hidden
+> (at least I think so).
 
-diff --git a/include/dt-bindings/clock/starfive-jh7100.h b/include/dt-bindings/clock/starfive-jh7100.h
-new file mode 100644
-index 000000000000..aa0863b9728d
---- /dev/null
-+++ b/include/dt-bindings/clock/starfive-jh7100.h
-@@ -0,0 +1,202 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-+/*
-+ * Copyright (C) 2021 Ahmad Fatoum, Pengutronix
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7100_H__
-+#define __DT_BINDINGS_CLOCK_STARFIVE_JH7100_H__
-+
-+#define JH7100_CLK_CPUNDBUS_ROOT	0
-+#define JH7100_CLK_DLA_ROOT		1
-+#define JH7100_CLK_DSP_ROOT		2
-+#define JH7100_CLK_GMACUSB_ROOT		3
-+#define JH7100_CLK_PERH0_ROOT		4
-+#define JH7100_CLK_PERH1_ROOT		5
-+#define JH7100_CLK_VIN_ROOT		6
-+#define JH7100_CLK_VOUT_ROOT		7
-+#define JH7100_CLK_AUDIO_ROOT		8
-+#define JH7100_CLK_CDECHIFI4_ROOT	9
-+#define JH7100_CLK_CDEC_ROOT		10
-+#define JH7100_CLK_VOUTBUS_ROOT		11
-+#define JH7100_CLK_CPUNBUS_ROOT_DIV	12
-+#define JH7100_CLK_DSP_ROOT_DIV		13
-+#define JH7100_CLK_PERH0_SRC		14
-+#define JH7100_CLK_PERH1_SRC		15
-+#define JH7100_CLK_PLL0_TESTOUT		16
-+#define JH7100_CLK_PLL1_TESTOUT		17
-+#define JH7100_CLK_PLL2_TESTOUT		18
-+#define JH7100_CLK_PLL2_REF		19
-+#define JH7100_CLK_CPU_CORE		20
-+#define JH7100_CLK_CPU_AXI		21
-+#define JH7100_CLK_AHB_BUS		22
-+#define JH7100_CLK_APB1_BUS		23
-+#define JH7100_CLK_APB2_BUS		24
-+#define JH7100_CLK_DOM3AHB_BUS		25
-+#define JH7100_CLK_DOM7AHB_BUS		26
-+#define JH7100_CLK_U74_CORE0		27
-+#define JH7100_CLK_U74_CORE1		28
-+#define JH7100_CLK_U74_AXI		29
-+#define JH7100_CLK_U74RTC_TOGGLE	30
-+#define JH7100_CLK_SGDMA2P_AXI		31
-+#define JH7100_CLK_DMA2PNOC_AXI		32
-+#define JH7100_CLK_SGDMA2P_AHB		33
-+#define JH7100_CLK_DLA_BUS		34
-+#define JH7100_CLK_DLA_AXI		35
-+#define JH7100_CLK_DLANOC_AXI		36
-+#define JH7100_CLK_DLA_APB		37
-+#define JH7100_CLK_VP6_CORE		38
-+#define JH7100_CLK_VP6BUS_SRC		39
-+#define JH7100_CLK_VP6_AXI		40
-+#define JH7100_CLK_VCDECBUS_SRC		41
-+#define JH7100_CLK_VDEC_BUS		42
-+#define JH7100_CLK_VDEC_AXI		43
-+#define JH7100_CLK_VDECBRG_MAIN		44
-+#define JH7100_CLK_VDEC_BCLK		45
-+#define JH7100_CLK_VDEC_CCLK		46
-+#define JH7100_CLK_VDEC_APB		47
-+#define JH7100_CLK_JPEG_AXI		48
-+#define JH7100_CLK_JPEG_CCLK		49
-+#define JH7100_CLK_JPEG_APB		50
-+#define JH7100_CLK_GC300_2X		51
-+#define JH7100_CLK_GC300_AHB		52
-+#define JH7100_CLK_JPCGC300_AXIBUS	53
-+#define JH7100_CLK_GC300_AXI		54
-+#define JH7100_CLK_JPCGC300_MAIN	55
-+#define JH7100_CLK_VENC_BUS		56
-+#define JH7100_CLK_VENC_AXI		57
-+#define JH7100_CLK_VENCBRG_MAIN		58
-+#define JH7100_CLK_VENC_BCLK		59
-+#define JH7100_CLK_VENC_CCLK		60
-+#define JH7100_CLK_VENC_APB		61
-+#define JH7100_CLK_DDRPLL_DIV2		62
-+#define JH7100_CLK_DDRPLL_DIV4		63
-+#define JH7100_CLK_DDRPLL_DIV8		64
-+#define JH7100_CLK_DDROSC_DIV2		65
-+#define JH7100_CLK_DDRC0		66
-+#define JH7100_CLK_DDRC1		67
-+#define JH7100_CLK_DDRPHY_APB		68
-+#define JH7100_CLK_NOC_ROB		69
-+#define JH7100_CLK_NOC_COG		70
-+#define JH7100_CLK_NNE_AHB		71
-+#define JH7100_CLK_NNEBUS_SRC1		72
-+#define JH7100_CLK_NNE_BUS		73
-+#define JH7100_CLK_NNE_AXI		74
-+#define JH7100_CLK_NNENOC_AXI		75
-+#define JH7100_CLK_DLASLV_AXI		76
-+#define JH7100_CLK_DSPX2C_AXI		77
-+#define JH7100_CLK_HIFI4_SRC		78
-+#define JH7100_CLK_HIFI4_COREFREE	79
-+#define JH7100_CLK_HIFI4_CORE		80
-+#define JH7100_CLK_HIFI4_BUS		81
-+#define JH7100_CLK_HIFI4_AXI		82
-+#define JH7100_CLK_HIFI4NOC_AXI		83
-+#define JH7100_CLK_SGDMA1P_BUS		84
-+#define JH7100_CLK_SGDMA1P_AXI		85
-+#define JH7100_CLK_DMA1P_AXI		86
-+#define JH7100_CLK_X2C_AXI		87
-+#define JH7100_CLK_USB_BUS		88
-+#define JH7100_CLK_USB_AXI		89
-+#define JH7100_CLK_USBNOC_AXI		90
-+#define JH7100_CLK_USBPHY_ROOTDIV	91
-+#define JH7100_CLK_USBPHY_125M		92
-+#define JH7100_CLK_USBPHY_PLLDIV25M	93
-+#define JH7100_CLK_USBPHY_25M		94
-+#define JH7100_CLK_AUDIO_DIV		95
-+#define JH7100_CLK_AUDIO_SRC		96
-+#define JH7100_CLK_AUDIO_12288		97
-+#define JH7100_CLK_VIN_SRC		98
-+#define JH7100_CLK_ISP0_BUS		99
-+#define JH7100_CLK_ISP0_AXI		100
-+#define JH7100_CLK_ISP0NOC_AXI		101
-+#define JH7100_CLK_ISPSLV_AXI		102
-+#define JH7100_CLK_ISP1_BUS		103
-+#define JH7100_CLK_ISP1_AXI		104
-+#define JH7100_CLK_ISP1NOC_AXI		105
-+#define JH7100_CLK_VIN_BUS		106
-+#define JH7100_CLK_VIN_AXI		107
-+#define JH7100_CLK_VINNOC_AXI		108
-+#define JH7100_CLK_VOUT_SRC		109
-+#define JH7100_CLK_DISPBUS_SRC		110
-+#define JH7100_CLK_DISP_BUS		111
-+#define JH7100_CLK_DISP_AXI		112
-+#define JH7100_CLK_DISPNOC_AXI		113
-+#define JH7100_CLK_SDIO0_AHB		114
-+#define JH7100_CLK_SDIO0_CCLKINT	115
-+#define JH7100_CLK_SDIO0_CCLKINT_INV	116
-+#define JH7100_CLK_SDIO1_AHB		117
-+#define JH7100_CLK_SDIO1_CCLKINT	118
-+#define JH7100_CLK_SDIO1_CCLKINT_INV	119
-+#define JH7100_CLK_GMAC_AHB		120
-+#define JH7100_CLK_GMAC_ROOT_DIV	121
-+#define JH7100_CLK_GMAC_PTP_REF		122
-+#define JH7100_CLK_GMAC_GTX		123
-+#define JH7100_CLK_GMAC_RMII_TX		124
-+#define JH7100_CLK_GMAC_RMII_RX		125
-+#define JH7100_CLK_GMAC_TX		126
-+#define JH7100_CLK_GMAC_TX_INV		127
-+#define JH7100_CLK_GMAC_RX_PRE		128
-+#define JH7100_CLK_GMAC_RX_INV		129
-+#define JH7100_CLK_GMAC_RMII		130
-+#define JH7100_CLK_GMAC_TOPHYREF	131
-+#define JH7100_CLK_SPI2AHB_AHB		132
-+#define JH7100_CLK_SPI2AHB_CORE		133
-+#define JH7100_CLK_EZMASTER_AHB		134
-+#define JH7100_CLK_E24_AHB		135
-+#define JH7100_CLK_E24RTC_TOGGLE	136
-+#define JH7100_CLK_QSPI_AHB		137
-+#define JH7100_CLK_QSPI_APB		138
-+#define JH7100_CLK_QSPI_REF		139
-+#define JH7100_CLK_SEC_AHB		140
-+#define JH7100_CLK_AES			141
-+#define JH7100_CLK_SHA			142
-+#define JH7100_CLK_PKA			143
-+#define JH7100_CLK_TRNG_APB		144
-+#define JH7100_CLK_OTP_APB		145
-+#define JH7100_CLK_UART0_APB		146
-+#define JH7100_CLK_UART0_CORE		147
-+#define JH7100_CLK_UART1_APB		148
-+#define JH7100_CLK_UART1_CORE		149
-+#define JH7100_CLK_SPI0_APB		150
-+#define JH7100_CLK_SPI0_CORE		151
-+#define JH7100_CLK_SPI1_APB		152
-+#define JH7100_CLK_SPI1_CORE		153
-+#define JH7100_CLK_I2C0_APB		154
-+#define JH7100_CLK_I2C0_CORE		155
-+#define JH7100_CLK_I2C1_APB		156
-+#define JH7100_CLK_I2C1_CORE		157
-+#define JH7100_CLK_GPIO_APB		158
-+#define JH7100_CLK_UART2_APB		159
-+#define JH7100_CLK_UART2_CORE		160
-+#define JH7100_CLK_UART3_APB		161
-+#define JH7100_CLK_UART3_CORE		162
-+#define JH7100_CLK_SPI2_APB		163
-+#define JH7100_CLK_SPI2_CORE		164
-+#define JH7100_CLK_SPI3_APB		165
-+#define JH7100_CLK_SPI3_CORE		166
-+#define JH7100_CLK_I2C2_APB		167
-+#define JH7100_CLK_I2C2_CORE		168
-+#define JH7100_CLK_I2C3_APB		169
-+#define JH7100_CLK_I2C3_CORE		170
-+#define JH7100_CLK_WDTIMER_APB		171
-+#define JH7100_CLK_WDT_CORE		172
-+#define JH7100_CLK_TIMER0_CORE		173
-+#define JH7100_CLK_TIMER1_CORE		174
-+#define JH7100_CLK_TIMER2_CORE		175
-+#define JH7100_CLK_TIMER3_CORE		176
-+#define JH7100_CLK_TIMER4_CORE		177
-+#define JH7100_CLK_TIMER5_CORE		178
-+#define JH7100_CLK_TIMER6_CORE		179
-+#define JH7100_CLK_VP6INTC_APB		180
-+#define JH7100_CLK_PWM_APB		181
-+#define JH7100_CLK_MSI_APB		182
-+#define JH7100_CLK_TEMP_APB		183
-+#define JH7100_CLK_TEMP_SENSE		184
-+#define JH7100_CLK_SYSERR_APB		185
-+
-+#define JH7100_CLK_PLL0_OUT		186
-+#define JH7100_CLK_PLL1_OUT		187
-+#define JH7100_CLK_PLL2_OUT		188
-+
-+#define JH7100_CLK_END			189
-+
-+#endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7100_H__ */
--- 
-2.33.1
+Thank you for this information. I'll keep an eye out!
 
+> 
+> [1]: https://lore.kernel.org/lkml/20211113204141.520924-1-djrscally@gmail.com/T/#u
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
