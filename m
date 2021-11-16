@@ -2,614 +2,1563 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D021C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:32:21 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3845B63212
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52889C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:53:39 +0000 (UTC)
+Received: from vger.kernel.org (unknown [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 0F0D761BFE
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 15:53:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 0F0D761BFE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238309AbhKPPfQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Nov 2021 10:35:16 -0500
-Received: from mail-mw2nam12on2123.outbound.protection.outlook.com ([40.107.244.123]:24673
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238306AbhKPPfF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 16 Nov 2021 10:35:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ij+F+KE0/Gtp+j2gOxK0gmiQBRp6U8u8q6UTcomuQUbE/mrlF5ZM0F9knrItcUlM8kUrSeLN9QL1fRoqhoH4xKoXL10TUql/hFxj98XdOhcyLpWKhDNJaYzUpaWdMs9/MNC2AHITLdbJ90icxLjI41yAA5AuCuksFQu3w9+pweMqEXDowiLw5a8e7gW9tf6+PaTkkpRLr32z71pYP5QdFBr/nn6j1q/oql97eIfxSsIEKECMzIJ1OhNbkFNVIhkZN2Sw6UJDDJSCCbC/c1UVodbrulTnEYhmRdJPeybSHrRxX1yFeZcD7URCIAemZvZT9YkRqgqkVaV1Y0GyJPiybA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tq7ffUK1RMN78mX8DR++EdgVzEdJD0Ps0WakrR/O9zE=;
- b=Iyk6HghalrprA2CflwKJmKHo79nqKR5S8tWEwWBUhy25PmpdxIrYhOf5b0o9eMkNjpiwDYQlVWW1JQpn+v/Y4eEa6DEM8t9XF1SYI3PFyvZ5ZbCMSP2S1D/zLoI5E7nSK28m7VtCHHqAUqF6xljzTN04pnGAU7BDQhWypAjMp73yg56ghNvmKnM1vWWsx4V0/0LraxOQeBuHhrokAHc6eyv2yrKuPebEa3HzvFEk9uHg6Ba+2om96bfeO86VfespEwf30LVymyh6gQ97YQcuvMqhg/jAMnqnmHWPIyMaOzjrGS5mGQuFl5SXElj5KcrKQ/jM+ovQ3/cnfzRS7kqnBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=in-advantage.com; dmarc=pass action=none
- header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
+        id S238443AbhKPP4S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Nov 2021 10:56:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59434 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238545AbhKPP4N (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Nov 2021 10:56:13 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D15DC061570;
+        Tue, 16 Nov 2021 07:53:16 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id b15so89610030edd.7;
+        Tue, 16 Nov 2021 07:53:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tq7ffUK1RMN78mX8DR++EdgVzEdJD0Ps0WakrR/O9zE=;
- b=Dx8puCoMGjnIFNe9xxZ7gOCQR9cTLw7oVlJIRw0G6cgQjs+0Xe3dw7L4j1r1bGtTJMNFSlMflA5wA3Ne1PDB/pEagp7jUy5npsgqJ6JYQcY97zzInIczgj3diLQw4BLs3oCfP9bXu0tUBk1LiBifuNuG7PgnZbUq+v0amSh5wpM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=in-advantage.com;
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37) by CO1PR10MB4403.namprd10.prod.outlook.com
- (2603:10b6:303:9a::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.26; Tue, 16 Nov
- 2021 15:32:05 +0000
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::6430:b20:8805:cd9f]) by MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::6430:b20:8805:cd9f%5]) with mapi id 15.20.4713.019; Tue, 16 Nov 2021
- 15:32:05 +0000
-Date:   Tue, 16 Nov 2021 07:32:08 -0800
-From:   Colin Foster <colin.foster@in-advantage.com>
-To:     Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC PATCH v4 net-next 00/23] add support for VSC75XX control
- over SPI
-Message-ID: <20211116153208.GB8651@DESKTOP-LAINLKC.localdomain>
-References: <20211116062328.1949151-1-colin.foster@in-advantage.com>
- <20211116111059.sqthwmkiq2ng3t2l@skbuf>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211116111059.sqthwmkiq2ng3t2l@skbuf>
-X-ClientProxiedBy: MWHPR22CA0032.namprd22.prod.outlook.com
- (2603:10b6:300:69::18) To MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37)
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H37hAbOAhxbOsAnpbPlrifUXpXGb7Q7VU4T64xZjAgc=;
+        b=bz1kd9OsR4j1gDUlCgf12/vJZdCcMoFRM+7c78wDDkSKNVMB0blqKDt7MC+5LpTMpv
+         J1vkOBNwiZZ08QM0Pr6vN1/11fBM5oCWiuhCzr5mDdF9DmIAyksIeS+Oly7eZcgNEO/Z
+         xXiPj7qeLCg9Zu1sccmD0yiVyxzHjW56HP8WO7zRyKX4d131w9TtFjzBqMWMPKwRWbK5
+         8gwHFsu2a5ngx70sZnbB+p46ihbeUdMPQEuf8OFg/zEoLBvYh2E9lfG9Lrdjh4XKAKg4
+         MNNEH0uzZ+6lp91nKJSlqa+RbxXXp91uH+IbV+n7xk74G2c1EQw5DqPR1jKoPTNYBtK9
+         jjXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H37hAbOAhxbOsAnpbPlrifUXpXGb7Q7VU4T64xZjAgc=;
+        b=XaEFx6gvfq62LWP5MqF+qhgHnv1boOYFvigOJkpffYWeEqBkwtjZOD8/5rhIQR2HfU
+         1lq5vKUjt26dN3/OStdjgf6iLISbNKwoSxKVq7j9u4oX8tGruuFnEATVmAtJiWh5ChGE
+         +7BatMQUIFRYI4or+LslLZP1ZfZOrlhmnk4ZlRnFtdvDzOvvus65HITxfXwNADgx0ubN
+         mBSsIBbvQrKPG6QhWRguwOdW+cp/EBgzvv3fh3eR4q3DY8FoXtsPNt4G+TLJtBZfPZ+t
+         FPExkCLAZqdW87ZAcyASqXmqz8hwBk6WztKPP3abfVVJqju0druYVhDDI+s7ByOsAFBQ
+         hAAw==
+X-Gm-Message-State: AOAM532+FRis5v2tyU8+Mmo0zQk6X7Yo4tg6maL0FP/YHM/Ok9/IMvyx
+        6hvmqT1omInoxsaEsE/6TEUMfgo5jvETDzfzAkU=
+X-Google-Smtp-Source: ABdhPJzKtkR5d4CnBJOpEki0imQ0t2mXk/fIFyFd7kWxG4yidTrGIxGhceq0QCoeNMCzATTjWj9GqnAWme/lzNqarwM=
+X-Received: by 2002:a17:906:bccc:: with SMTP id lw12mr10948179ejb.128.1637077994399;
+ Tue, 16 Nov 2021 07:53:14 -0800 (PST)
 MIME-Version: 1.0
-Received: from DESKTOP-LAINLKC.localdomain (96.93.101.165) by MWHPR22CA0032.namprd22.prod.outlook.com (2603:10b6:300:69::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19 via Frontend Transport; Tue, 16 Nov 2021 15:32:04 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 05b7caf7-1321-4470-9c33-08d9a9163e62
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4403:
-X-Microsoft-Antispam-PRVS: <CO1PR10MB4403B6036C98449AC7C40F45A4999@CO1PR10MB4403.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9vxwguypewf4oTKYh0b6ALx0ENKuUKMRqG/s7HcZP1rvQufs+oxjM6kGYz+tgsPmgm9igOjs7zz2n8CAYkCXqxY7Ribj0NXTMaPhisUqarsqVgWNIR9rV+DOCLlNiekFa0inSDFpqUr9zuzz43q5z45FM1cyKPWNPFbZLVgmDP2AAiU1Ug6lv/7XnRs/Wj4sfWP8n6G2/3gXySiB+W4lueYoZPBINr0r339rOY8nZbU8oMfSAR5OELaM2EoLpO/toMEiKhJCtqMbEXVClVoWp8EfHKqPEE3Pu/yckSstGK1hsg2SSj1bVsD3SzQxoO83boiZRl59no1snhClI5b0DFdEurBlzHXMoUqTcmozSugZpaf4zC6Aw4MjntMSQaZv0uvk7nU4XmmiBHF5CoYTo42G6oAoPc4Np6w09whjKUV2p2BtV5B1SC7hiwWX2lBvz6QI6rWaDusX/EElFifNpfBA4wbT0H/r2ZkyVS5osV+wgI2Sjtdl6BqFpllXvjvziyO+97vEWWDJpe3vbf4AnNOoGUAwQ/Di43pMxFM/ejM6Bm14QGIbQltL1COb/VdYI7Bp6qf6Uya9h28nz/hFJXRkZurAP2l0atrKyawXYhGpzxjd7S5Ut/YZsw7NdGKL9uDfsyAQM9zip58EiTQlkakwbL7aWLuYb3ik16Da4JOm0RoR2O6lNI5J1Kr15I9N7uZLWRErUxwcGdmemPlSyA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(39830400003)(396003)(346002)(376002)(136003)(30864003)(186003)(1076003)(4326008)(66946007)(2906002)(26005)(54906003)(316002)(66476007)(83380400001)(7416002)(508600001)(33656002)(38350700002)(7696005)(6506007)(52116002)(86362001)(5660300002)(44832011)(956004)(9686003)(6916009)(55016002)(66556008)(8676002)(8936002)(38100700002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eDBFZHNWV3VGOGtqZHhIbjFQQVZrV25tOU5aRmdQZitJdmJQTFE5Tjk4MjZ5?=
- =?utf-8?B?TDBVOVdyQ2ZSd1RybEg1L0x3R0VzTTZZcG1RWTlEWHlCME03SUx0MVZwTzdn?=
- =?utf-8?B?TDR6ZmU5TThVMVNvaDB4YndvcWxXMkpaa3ptM0VJa0hiZm9LNmRkZGRnblRJ?=
- =?utf-8?B?UmF1dUllcyttWHF3MytNamlTcklaWGtaVG4xTmpVT0pIWnU2OHpiTDBOekNs?=
- =?utf-8?B?alFlVCtKWTNZWVJWNGVaM0FrOEhvUUFlMHU5TWR1eDlDQ3FFcUtWdDZlZXVO?=
- =?utf-8?B?S0M3dHpVU0w4dWJ3NDRFVThIR0NUS0cvQzhEdnJrc0d5cVlzTC9LUy85UlNj?=
- =?utf-8?B?Ti9WRzgydHZHVmRrcUZEM0F1TnZFUFlsNEtldThoTmlxZUhESVBlU21mMGRh?=
- =?utf-8?B?NG5xS0V0Qlk4S1dkTEgzdWNlNWM0YzJVMVRvTEsyc21JU1dWSmNjbnkzQm4z?=
- =?utf-8?B?NEhEejFSS2Y4dHBxd0dGUlZXc2dnU2NyYzd5c3RUNE50amU4U2x5WVBxY3FK?=
- =?utf-8?B?Y3JQSWZ6cmpWeTA1SmF1ZlB4b2VtWFgzcVV6ZzVUUDY5dHQvR3JoaHQ5NnZX?=
- =?utf-8?B?R3ZYYTEvWlRTMjl4M3QrZkVHTG1sVGZ5d3g3MTZoWElKNFJmMStranpLVk1C?=
- =?utf-8?B?TU9OQlQ5cEJzWUEyeG15ZFpucDY4dHU2WnVjWE1IWGI0aTdGNHFNajdQQXhT?=
- =?utf-8?B?Z2pwWDk4cndRZUtOL1V1VURDR3BuYTZ6bmM2anM1Q204V2xxR0Yvb3lPQTZ5?=
- =?utf-8?B?ZnJOeWdaU0xaQzIxTjZLNmcreXZZbmZsYURxQlZHcUtQd3ZHcWhKK2ZabGFG?=
- =?utf-8?B?L21mY0RJMnpyMStEZDhmWDRxZEN4RE5NZjg0amFMQ2sxcTVRWGFCdEk1R0pT?=
- =?utf-8?B?WURJM0lVVGtkTFJKOWlOdG5ob3hnakFNZzNxdk1Hd0JkTmF4RGdFbVd4WU1S?=
- =?utf-8?B?SXlLQUp4SzdhSXAweC9oUW5qNHU0a2MvUE9CQ3J0V3AwdUtxcER1S0REWUw1?=
- =?utf-8?B?dWFUd2ZSUkNFWkhoc0xrQ2hoclhUQU9KZW5BeG1ucit5S3lJeEszeVBVVTF3?=
- =?utf-8?B?VXEwT1VSVlBDeEJZUnllM1pnNnRGNTdKbHk1WldLYmRKUUVVWkxEaWZKY0pK?=
- =?utf-8?B?c00vaDJwVWQ4RVNiMkdYbDBOejBoYVoxb1lES2xuQXcwZUd5Mlp6TzFHNjh5?=
- =?utf-8?B?OURwV0U5cHBLdFp6N25PS2JXVkRXUTNwWjZSZnUrSnpiaFhrR1RIS04xZVFZ?=
- =?utf-8?B?V3VCWCtlMUIvcURSZE5QQ1RkakI1dG90Y3gycGRlSVhYN08wcjQ5S0YvQTBS?=
- =?utf-8?B?OXJlMDVNUnJGalVEMTVhaFhGbWZmOXhVbEFhY1pOZk5iZlBRbWdLTnFxYjlp?=
- =?utf-8?B?SUpCb0RpQ01DUTB3a2gxZmp5N2lJS1hIL21BYmZhNHBnZUVlYTdlVndBZmxY?=
- =?utf-8?B?MGF5TkYrZGJBU2JaSXZOOW0vbFkzZFdGVXZLUFQ1S1V5VnUyV2FFemhXdEMz?=
- =?utf-8?B?NmVRbkMwNm9WT25SaEF5cDF1RDRqZ3hUZEs5SkEyUjdNQmtkOThLeU9IN1No?=
- =?utf-8?B?c01pMzdpamphZW9mSTZHOFNmZlJ0bUhNdzE0UnFwdmZKWlQrU1R2QmZZcnJN?=
- =?utf-8?B?WE5JWW1pMTBaZ2RwcjI3R2dMVlVZTWNkZHFlMU1peGRPWUxUdlUwdFlUbzhY?=
- =?utf-8?B?SmRXTUw2SGxiOVY3aENzZ3NnakpTVkRTRG9qT3V2Y0xpQzBMMDB1Y0dkM0x3?=
- =?utf-8?B?MUdKczJENXlBNHRwb1BhdDBkbGhGMFROSE1aTU5JK0ZxazVndUF4UzhiSkpr?=
- =?utf-8?B?R1FlTFo3cU5XdTM0RDFLK2pySUhYVFhGWUFFRjN1VVFLbDJzOEFHNVRuL1U4?=
- =?utf-8?B?US9qODZXVld2L3VwZyt6SmorcTRNTGs1ZFQ3K09WUG1Dd2s5bE4vdHRIRDJl?=
- =?utf-8?B?aHljd2VVczRPL0JyVmJKdThKeEFQVVVYaGQzR0ZsSXdzYk5jb2Z0QXV4elBG?=
- =?utf-8?B?bFE2TmovNm1TemNaWmRxbk5QTXdlM1EwNFNIVTN0TFJKZDN5ZStqR2VCQllk?=
- =?utf-8?B?aU9YL3UrKzQzaS9IdTd1aWdsVFVEay9FZld6bzN4YnBhTjR0UFAvM0d2VC9q?=
- =?utf-8?B?Uk1uanpOV20yeXBlRWtyOVJrdVRucjlMOEpRcFpWSkFKQWR2WFZ0S01iaCtB?=
- =?utf-8?B?TEVjd05TdlBjYVdmWGJjbnA3S0ZINkNEdjRhZUl3MGFQVkt3TXRqUjQwcFRm?=
- =?utf-8?Q?21CQJ5u/JXzGDzdKLQBHIRI03OXMurKDwhmdrwiAgA=3D?=
-X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05b7caf7-1321-4470-9c33-08d9a9163e62
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 15:32:05.5327
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: e/GAwBpVzMoN1OOf5NeB8flq9Md7J1XqvH+bp+p5YO+B3C26Tjvkmt0U8HFJtgCSvpyxFJbz4xgR0sBBYrzHNvIIwwz2syTRsfadUMWWLP4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4403
+References: <20211116150119.2171-1-kernel@esmil.dk> <20211116150119.2171-13-kernel@esmil.dk>
+In-Reply-To: <20211116150119.2171-13-kernel@esmil.dk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 16 Nov 2021 17:52:33 +0200
+Message-ID: <CAHp75VfNNAnGGKnmHfAG9gmb5bgREDmkNP_zAN1VbLit6Q2Tdg@mail.gmail.com>
+Subject: Re: [PATCH v4 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 11:10:59AM +0000, Vladimir Oltean wrote:
-> On Mon, Nov 15, 2021 at 10:23:05PM -0800, Colin Foster wrote:
-> > My apologies for this next RFC taking so long. Life got in the way.
-> > 
-> > 
-> > The patch set in general is to add support for the VSC7511, VSC7512,
-> > VSC7513 and VSC7514 devices controlled over SPI. The driver is
-> > relatively functional for the internal phy ports (0-3) on the VSC7512.
-> > As I'll discuss, it is not yet functional for other ports yet.
-> > 
-> > I still think there are enough updates to bounce by the community
-> > in case I'm terribly off base or doomed to chase my tail.
-> > 
-> 
-> I would try to get rid of some of the patches now, instead of gathering
-> a larger and larger pile. Here is a list of patches that I think could
-> be submitted right away (possibly as part of independent series;
-> parallelize as much as you can):
-> 
-> [01/23] net: dsa: ocelot: remove unnecessary pci_bar variables
-> [02/23] net: mdio: mscc-miim: convert to a regmap implementation
-> [03/23] net: dsa: ocelot: seville: utilize of_mdiobus_register
-> [04/23] net: dsa: ocelot: felix: switch to mdio-mscc-miim driver for indirect mdio …
-> [05/23] net: dsa: ocelot: felix: Remove requirement for PCS in felix devices
-> [06/23] net: dsa: ocelot: felix: add interface for custom regmaps
-> [07/23] net: dsa: ocelot: felix: add per-device-per-port quirks
-> [08/23] net: mscc: ocelot: split register definitions to a separate file
-> [09/23] net: mscc: ocelot: expose ocelot wm functions
-> [18/23] net: phy: lynx: refactor Lynx PCS module to use generic phylink_pcs
-> [19/23] net: dsa: felix: name change for clarity from pcs to mdio_device
-> [20/23] net: dsa: seville: name change for clarity from pcs to mdio_device
-> [21/23] net: ethernet: enetc: name change for clarity from pcs to mdio_device
-> [22/23] net: pcs: lynx: use a common naming scheme for all lynx_pcs variables
-> 
-> Now that you've submitted them all already, let's wait for some feedback
-> before resending smaller chunks.
+On Tue, Nov 16, 2021 at 5:06 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+>
+> Add a combined pinctrl and GPIO driver for the JH7100 RISC-V SoC by
+> StarFive Ltd. This is a test chip for their upcoming JH7110 SoC, which
+> is said to feature only minor changes to these pinctrl/GPIO parts.
+>
+> For each "GPIO" there are two registers for configuring the output and
+> output enable signals which may come from other peripherals. Among these
+> are two special signals that are constant 0 and constant 1 respectively.
+> Controlling the GPIOs from software is done by choosing one of these
+> signals. In other words the same registers are used for both pin muxing
+> and controlling the GPIOs, which makes it easier to combine the pinctrl
+> and GPIO driver in one.
+>
+> I wrote the pinconf and pinmux parts, but the GPIO part of the code is
+> based on the GPIO driver in the vendor tree written by Huan Feng with
+> cleanups and fixes by Drew and me.
 
-Thank you for your response as always!
+I could bikeshed more, but currently it's in a good enough shape, no need.
+Only one thing that I would like to point out is the uncertainty on
+what the driver
+actually should do on a series of pin configurations (currently it
+skips all of the same kind but last). So, this is just heads up and I
+don't won't to block the submission, hence
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-This will make v5 a lot easier for me to keep straight. I think this one
-might also be a good one to submit earlier, since it actually does
-change behavior:
+(Note, that in theory the series of pin configurations may come outside of DT)
 
-pinctrl: ocelot: update pinctrl to automatic base address
+> Datasheet: https://github.com/starfive-tech/JH7100_Docs/blob/main/JH7100%20Data%20Sheet%20V01.01.04-EN%20(4-21-2021).pdf
+> Co-developed-by: Huan Feng <huan.feng@starfivetech.com>
+> Signed-off-by: Huan Feng <huan.feng@starfivetech.com>
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Co-developed-by: Drew Fustini <drew@beagleboard.org>
+> Signed-off-by: Drew Fustini <drew@beagleboard.org>
+> ---
+>  MAINTAINERS                        |    8 +
+>  drivers/pinctrl/Kconfig            |   17 +
+>  drivers/pinctrl/Makefile           |    1 +
+>  drivers/pinctrl/pinctrl-starfive.c | 1354 ++++++++++++++++++++++++++++
+>  4 files changed, 1380 insertions(+)
+>  create mode 100644 drivers/pinctrl/pinctrl-starfive.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1152f5d94690..30d6842969e7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18137,6 +18137,14 @@ F:     Documentation/devicetree/bindings/clock/starfive,jh7100-clkgen.yaml
+>  F:     drivers/clk/starfive/clk-starfive-jh7100.c
+>  F:     include/dt-bindings/clock/starfive-jh7100.h
+>
+> +STARFIVE JH7100 PINCTRL DRIVER
+> +M:     Emil Renner Berthing <kernel@esmil.dk>
+> +L:     linux-gpio@vger.kernel.org
+> +S:     Maintained
+> +F:     Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+> +F:     drivers/pinctrl/pinctrl-starfive.c
+> +F:     include/dt-bindings/pinctrl/pinctrl-starfive.h
+> +
+>  STARFIVE JH7100 RESET CONTROLLER DRIVER
+>  M:     Emil Renner Berthing <kernel@esmil.dk>
+>  S:     Maintained
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index 6a961d5f8726..0d5b61e4c21e 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -281,6 +281,23 @@ config PINCTRL_ST
+>         select PINCONF
+>         select GPIOLIB_IRQCHIP
+>
+> +config PINCTRL_STARFIVE
+> +       tristate "Pinctrl and GPIO driver for the StarFive JH7100 SoC"
+> +       depends on SOC_STARFIVE || COMPILE_TEST
+> +       depends on OF
+> +       default SOC_STARFIVE
+> +       select GENERIC_PINCTRL_GROUPS
+> +       select GENERIC_PINMUX_FUNCTIONS
+> +       select GENERIC_PINCONF
+> +       select GPIOLIB
+> +       select GPIOLIB_IRQCHIP
+> +       select OF_GPIO
+> +       help
+> +         Say yes here to support pin control on the StarFive JH7100 SoC.
+> +         This also provides an interface to the GPIO pins not used by other
+> +         peripherals supporting inputs, outputs, configuring pull-up/pull-down
+> +         and interrupts on input changes.
+> +
+>  config PINCTRL_STMFX
+>         tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
+>         depends on I2C
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index 5e63de2ffcf4..f5bdd6b209a6 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -39,6 +39,7 @@ obj-$(CONFIG_PINCTRL_LANTIQ)  += pinctrl-lantiq.o
+>  obj-$(CONFIG_PINCTRL_LPC18XX)  += pinctrl-lpc18xx.o
+>  obj-$(CONFIG_PINCTRL_TB10X)    += pinctrl-tb10x.o
+>  obj-$(CONFIG_PINCTRL_ST)       += pinctrl-st.o
+> +obj-$(CONFIG_PINCTRL_STARFIVE) += pinctrl-starfive.o
+>  obj-$(CONFIG_PINCTRL_STMFX)    += pinctrl-stmfx.o
+>  obj-$(CONFIG_PINCTRL_ZYNQ)     += pinctrl-zynq.o
+>  obj-$(CONFIG_PINCTRL_ZYNQMP)   += pinctrl-zynqmp.o
+> diff --git a/drivers/pinctrl/pinctrl-starfive.c b/drivers/pinctrl/pinctrl-starfive.c
+> new file mode 100644
+> index 000000000000..0b912152a405
+> --- /dev/null
+> +++ b/drivers/pinctrl/pinctrl-starfive.c
+> @@ -0,0 +1,1354 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Pinctrl / GPIO driver for StarFive JH7100 SoC
+> + *
+> + * Copyright (C) 2020 Shanghai StarFive Technology Co., Ltd.
+> + * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/io.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +#include <linux/spinlock.h>
+> +
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+> +
+> +#include <dt-bindings/pinctrl/pinctrl-starfive.h>
+> +
+> +#include "core.h"
+> +#include "pinctrl-utils.h"
+> +#include "pinmux.h"
+> +#include "pinconf.h"
+> +
+> +#define DRIVER_NAME "pinctrl-starfive"
+> +
+> +/*
+> + * Refer to Section 12. GPIO Registers in the JH7100 data sheet:
+> + * https://github.com/starfive-tech/JH7100_Docs
+> + */
+> +#define NR_GPIOS       64
+> +
+> +/*
+> + * Global enable for GPIO interrupts. If bit 0 is set to 1 the GPIO interrupts
+> + * are enabled. If set to 0 the GPIO interrupts are disabled.
+> + */
+> +#define GPIOEN         0x000
+> +
+> +/*
+> + * The following 32-bit registers come in pairs, but only the offset of the
+> + * first register is defined. The first controls (interrupts for) GPIO 0-31 and
+> + * the second GPIO 32-63.
+> + */
+> +
+> +/*
+> + * Interrupt Type. If set to 1 the interrupt is edge-triggered. If set to 0 the
+> + * interrupt is level-triggered.
+> + */
+> +#define GPIOIS         0x010
+> +
+> +/*
+> + * Edge-Trigger Interrupt Type.  If set to 1 the interrupt gets triggered on
+> + * both positive and negative edges. If set to 0 the interrupt is triggered by a
+> + * single edge.
+> + */
+> +#define GPIOIBE                0x018
+> +
+> +/*
+> + * Interrupt Trigger Polarity. If set to 1 the interrupt is triggered on a
+> + * rising edge (edge-triggered) or high level (level-triggered). If set to 0 the
+> + * interrupt is triggered on a falling edge (edge-triggered) or low level
+> + * (level-triggered).
+> + */
+> +#define GPIOIEV                0x020
+> +
+> +/*
+> + * Interrupt Mask. If set to 1 the interrupt is enabled (unmasked). If set to 0
+> + * the interrupt is disabled (masked). Note that the current documentation is
+> + * wrong and says the exct opposite of this.
+> + */
+> +#define GPIOIE         0x028
+> +
+> +/*
+> + * Clear Edge-Triggered Interrupts. Write a 1 to clear the edge-triggered
+> + * interrupt.
+> + */
+> +#define GPIOIC         0x030
+> +
+> +/*
+> + * Edge-Triggered Interrupt Status. A 1 means the configured edge was detected.
+> + */
+> +#define GPIORIS                0x038
+> +
+> +/*
+> + * Interrupt Status after Masking. A 1 means the configured edge or level was
+> + * detected and not masked.
+> + */
+> +#define GPIOMIS                0x040
+> +
+> +/*
+> + * Data Value. Dynamically reflects the value of the GPIO pin. If 1 the pin is
+> + * a digital 1 and if 0 the pin is a digital 0.
+> + */
+> +#define GPIODIN                0x048
+> +
+> +/*
+> + * From the data sheet section 12.2, there are 64 32-bit output data registers
+> + * and 64 output enable registers. Output data and output enable registers for
+> + * a given GPIO are contiguous. Eg. GPO0_DOUT_CFG is 0x50 and GPO0_DOEN_CFG is
+> + * 0x54 while GPO1_DOUT_CFG is 0x58 and GPO1_DOEN_CFG is 0x5c.  The stride
+> + * between GPIO registers is effectively 8, thus: GPOn_DOUT_CFG is 0x50 + 8n
+> + * and GPOn_DOEN_CFG is 0x54 + 8n.
+> + */
+> +#define GPON_DOUT_CFG  0x050
+> +#define GPON_DOEN_CFG  0x054
+> +
+> +/*
+> + * From Section 12.3, there are 75 input signal configuration registers which
+> + * are 4 bytes wide starting with GPI_CPU_JTAG_TCK_CFG at 0x250 and ending with
+> + * GPI_USB_OVER_CURRENT_CFG 0x378
+> + */
+> +#define GPI_CFG_OFFSET 0x250
+> +
+> +/*
+> + * Pad Control Bits. There are 16 pad control bits for each pin located in 103
+> + * 32-bit registers controlling PAD_GPIO[0] to PAD_GPIO[63] followed by
+> + * PAD_FUNC_SHARE[0] to PAD_FUNC_SHARE[141]. Odd numbered pins use the upper 16
+> + * bit of each register.
+> + */
+> +#define PAD_SLEW_RATE_MASK             GENMASK(11, 9)
+> +#define PAD_SLEW_RATE_POS              9
+> +#define PAD_BIAS_STRONG_PULL_UP                BIT(8)
+> +#define PAD_INPUT_ENABLE               BIT(7)
+> +#define PAD_INPUT_SCHMITT_ENABLE       BIT(6)
+> +#define PAD_BIAS_DISABLE               BIT(5)
+> +#define PAD_BIAS_PULL_DOWN             BIT(4)
+> +#define PAD_BIAS_MASK \
+> +       (PAD_BIAS_STRONG_PULL_UP | \
+> +        PAD_BIAS_DISABLE | \
+> +        PAD_BIAS_PULL_DOWN)
+> +#define PAD_DRIVE_STRENGTH_MASK                GENMASK(3, 0)
+> +#define PAD_DRIVE_STRENGTH_POS         0
+> +
+> +/*
+> + * From Section 11, the IO_PADSHARE_SEL register can be programmed to select
+> + * one of seven pre-defined multiplexed signal groups on PAD_FUNC_SHARE and
+> + * PAD_GPIO pads. This is a global setting.
+> + */
+> +#define IO_PADSHARE_SEL                        0x1a0
+> +
+> +/*
+> + * This just needs to be some number such that when
+> + * sfp->gpio.pin_base = PAD_INVALID_GPIO then
+> + * starfive_pin_to_gpio(sfp, validpin) is never a valid GPIO number.
+> + * That is it should underflow and return something >= NR_GPIOS.
+> + */
+> +#define PAD_INVALID_GPIO               0x10000
+> +
+> +/*
+> + * The packed pinmux values from the device tree look like this:
+> + *
+> + *  | 31 - 24 | 23 - 16 | 15 - 8 |     7    |     6    |  5 - 0  |
+> + *  |  dout   |  doen   |  din   | dout rev | doen rev | gpio nr |
+> + *
+> + * ..but the GPOn_DOUT_CFG and GPOn_DOEN_CFG registers look like this:
+> + *
+> + *  |      31       | 30 - 8 |   7 - 0   |
+> + *  | dout/doen rev | unused | dout/doen |
+> + */
+> +static unsigned int starfive_pinmux_to_gpio(u32 v)
+> +{
+> +       return v & (NR_GPIOS - 1);
+> +}
+> +
+> +static u32 starfive_pinmux_to_dout(u32 v)
+> +{
+> +       return ((v & BIT(7)) << (31 - 7)) | ((v >> 24) & GENMASK(7, 0));
+> +}
+> +
+> +static u32 starfive_pinmux_to_doen(u32 v)
+> +{
+> +       return ((v & BIT(6)) << (31 - 6)) | ((v >> 16) & GENMASK(7, 0));
+> +}
+> +
+> +static u32 starfive_pinmux_to_din(u32 v)
+> +{
+> +       return (v >> 8) & GENMASK(7, 0);
+> +}
+> +
+> +/*
+> + * The maximum GPIO output current depends on the chosen drive strength:
+> + *
+> + *  DS:   0     1     2     3     4     5     6     7
+> + *  mA:  14.2  21.2  28.2  35.2  42.2  49.1  56.0  62.8
+> + *
+> + * After rounding that is 7*DS + 14 mA
+> + */
+> +static u32 starfive_drive_strength_to_max_mA(u16 ds)
+> +{
+> +       return 7 * ds + 14;
+> +}
+> +
+> +static u16 starfive_drive_strength_from_max_mA(u32 i)
+> +{
+> +       return (clamp(i, 14U, 63U) - 14) / 7;
+> +}
+> +
+> +struct starfive_pinctrl {
+> +       struct gpio_chip gc;
+> +       struct pinctrl_gpio_range gpios;
+> +       raw_spinlock_t lock;
+> +       void __iomem *base;
+> +       void __iomem *padctl;
+> +       struct pinctrl_dev *pctl;
+> +};
+> +
+> +static inline unsigned int starfive_pin_to_gpio(const struct starfive_pinctrl *sfp,
+> +                                               unsigned int pin)
+> +{
+> +       return pin - sfp->gpios.pin_base;
+> +}
+> +
+> +static inline unsigned int starfive_gpio_to_pin(const struct starfive_pinctrl *sfp,
+> +                                               unsigned int gpio)
+> +{
+> +       return sfp->gpios.pin_base + gpio;
+> +}
+> +
+> +static struct starfive_pinctrl *starfive_from_irq_data(struct irq_data *d)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +
+> +       return container_of(gc, struct starfive_pinctrl, gc);
+> +}
+> +
+> +static struct starfive_pinctrl *starfive_from_irq_desc(struct irq_desc *desc)
+> +{
+> +       struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+> +
+> +       return container_of(gc, struct starfive_pinctrl, gc);
+> +}
+> +
+> +static const struct pinctrl_pin_desc starfive_pins[] = {
+> +       PINCTRL_PIN(PAD_GPIO(0), "GPIO[0]"),
+> +       PINCTRL_PIN(PAD_GPIO(1), "GPIO[1]"),
+> +       PINCTRL_PIN(PAD_GPIO(2), "GPIO[2]"),
+> +       PINCTRL_PIN(PAD_GPIO(3), "GPIO[3]"),
+> +       PINCTRL_PIN(PAD_GPIO(4), "GPIO[4]"),
+> +       PINCTRL_PIN(PAD_GPIO(5), "GPIO[5]"),
+> +       PINCTRL_PIN(PAD_GPIO(6), "GPIO[6]"),
+> +       PINCTRL_PIN(PAD_GPIO(7), "GPIO[7]"),
+> +       PINCTRL_PIN(PAD_GPIO(8), "GPIO[8]"),
+> +       PINCTRL_PIN(PAD_GPIO(9), "GPIO[9]"),
+> +       PINCTRL_PIN(PAD_GPIO(10), "GPIO[10]"),
+> +       PINCTRL_PIN(PAD_GPIO(11), "GPIO[11]"),
+> +       PINCTRL_PIN(PAD_GPIO(12), "GPIO[12]"),
+> +       PINCTRL_PIN(PAD_GPIO(13), "GPIO[13]"),
+> +       PINCTRL_PIN(PAD_GPIO(14), "GPIO[14]"),
+> +       PINCTRL_PIN(PAD_GPIO(15), "GPIO[15]"),
+> +       PINCTRL_PIN(PAD_GPIO(16), "GPIO[16]"),
+> +       PINCTRL_PIN(PAD_GPIO(17), "GPIO[17]"),
+> +       PINCTRL_PIN(PAD_GPIO(18), "GPIO[18]"),
+> +       PINCTRL_PIN(PAD_GPIO(19), "GPIO[19]"),
+> +       PINCTRL_PIN(PAD_GPIO(20), "GPIO[20]"),
+> +       PINCTRL_PIN(PAD_GPIO(21), "GPIO[21]"),
+> +       PINCTRL_PIN(PAD_GPIO(22), "GPIO[22]"),
+> +       PINCTRL_PIN(PAD_GPIO(23), "GPIO[23]"),
+> +       PINCTRL_PIN(PAD_GPIO(24), "GPIO[24]"),
+> +       PINCTRL_PIN(PAD_GPIO(25), "GPIO[25]"),
+> +       PINCTRL_PIN(PAD_GPIO(26), "GPIO[26]"),
+> +       PINCTRL_PIN(PAD_GPIO(27), "GPIO[27]"),
+> +       PINCTRL_PIN(PAD_GPIO(28), "GPIO[28]"),
+> +       PINCTRL_PIN(PAD_GPIO(29), "GPIO[29]"),
+> +       PINCTRL_PIN(PAD_GPIO(30), "GPIO[30]"),
+> +       PINCTRL_PIN(PAD_GPIO(31), "GPIO[31]"),
+> +       PINCTRL_PIN(PAD_GPIO(32), "GPIO[32]"),
+> +       PINCTRL_PIN(PAD_GPIO(33), "GPIO[33]"),
+> +       PINCTRL_PIN(PAD_GPIO(34), "GPIO[34]"),
+> +       PINCTRL_PIN(PAD_GPIO(35), "GPIO[35]"),
+> +       PINCTRL_PIN(PAD_GPIO(36), "GPIO[36]"),
+> +       PINCTRL_PIN(PAD_GPIO(37), "GPIO[37]"),
+> +       PINCTRL_PIN(PAD_GPIO(38), "GPIO[38]"),
+> +       PINCTRL_PIN(PAD_GPIO(39), "GPIO[39]"),
+> +       PINCTRL_PIN(PAD_GPIO(40), "GPIO[40]"),
+> +       PINCTRL_PIN(PAD_GPIO(41), "GPIO[41]"),
+> +       PINCTRL_PIN(PAD_GPIO(42), "GPIO[42]"),
+> +       PINCTRL_PIN(PAD_GPIO(43), "GPIO[43]"),
+> +       PINCTRL_PIN(PAD_GPIO(44), "GPIO[44]"),
+> +       PINCTRL_PIN(PAD_GPIO(45), "GPIO[45]"),
+> +       PINCTRL_PIN(PAD_GPIO(46), "GPIO[46]"),
+> +       PINCTRL_PIN(PAD_GPIO(47), "GPIO[47]"),
+> +       PINCTRL_PIN(PAD_GPIO(48), "GPIO[48]"),
+> +       PINCTRL_PIN(PAD_GPIO(49), "GPIO[49]"),
+> +       PINCTRL_PIN(PAD_GPIO(50), "GPIO[50]"),
+> +       PINCTRL_PIN(PAD_GPIO(51), "GPIO[51]"),
+> +       PINCTRL_PIN(PAD_GPIO(52), "GPIO[52]"),
+> +       PINCTRL_PIN(PAD_GPIO(53), "GPIO[53]"),
+> +       PINCTRL_PIN(PAD_GPIO(54), "GPIO[54]"),
+> +       PINCTRL_PIN(PAD_GPIO(55), "GPIO[55]"),
+> +       PINCTRL_PIN(PAD_GPIO(56), "GPIO[56]"),
+> +       PINCTRL_PIN(PAD_GPIO(57), "GPIO[57]"),
+> +       PINCTRL_PIN(PAD_GPIO(58), "GPIO[58]"),
+> +       PINCTRL_PIN(PAD_GPIO(59), "GPIO[59]"),
+> +       PINCTRL_PIN(PAD_GPIO(60), "GPIO[60]"),
+> +       PINCTRL_PIN(PAD_GPIO(61), "GPIO[61]"),
+> +       PINCTRL_PIN(PAD_GPIO(62), "GPIO[62]"),
+> +       PINCTRL_PIN(PAD_GPIO(63), "GPIO[63]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(0), "FUNC_SHARE[0]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(1), "FUNC_SHARE[1]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(2), "FUNC_SHARE[2]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(3), "FUNC_SHARE[3]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(4), "FUNC_SHARE[4]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(5), "FUNC_SHARE[5]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(6), "FUNC_SHARE[6]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(7), "FUNC_SHARE[7]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(8), "FUNC_SHARE[8]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(9), "FUNC_SHARE[9]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(10), "FUNC_SHARE[10]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(11), "FUNC_SHARE[11]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(12), "FUNC_SHARE[12]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(13), "FUNC_SHARE[13]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(14), "FUNC_SHARE[14]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(15), "FUNC_SHARE[15]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(16), "FUNC_SHARE[16]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(17), "FUNC_SHARE[17]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(18), "FUNC_SHARE[18]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(19), "FUNC_SHARE[19]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(20), "FUNC_SHARE[20]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(21), "FUNC_SHARE[21]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(22), "FUNC_SHARE[22]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(23), "FUNC_SHARE[23]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(24), "FUNC_SHARE[24]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(25), "FUNC_SHARE[25]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(26), "FUNC_SHARE[26]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(27), "FUNC_SHARE[27]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(28), "FUNC_SHARE[28]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(29), "FUNC_SHARE[29]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(30), "FUNC_SHARE[30]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(31), "FUNC_SHARE[31]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(32), "FUNC_SHARE[32]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(33), "FUNC_SHARE[33]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(34), "FUNC_SHARE[34]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(35), "FUNC_SHARE[35]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(36), "FUNC_SHARE[36]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(37), "FUNC_SHARE[37]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(38), "FUNC_SHARE[38]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(39), "FUNC_SHARE[39]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(40), "FUNC_SHARE[40]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(41), "FUNC_SHARE[41]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(42), "FUNC_SHARE[42]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(43), "FUNC_SHARE[43]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(44), "FUNC_SHARE[44]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(45), "FUNC_SHARE[45]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(46), "FUNC_SHARE[46]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(47), "FUNC_SHARE[47]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(48), "FUNC_SHARE[48]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(49), "FUNC_SHARE[49]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(50), "FUNC_SHARE[50]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(51), "FUNC_SHARE[51]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(52), "FUNC_SHARE[52]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(53), "FUNC_SHARE[53]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(54), "FUNC_SHARE[54]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(55), "FUNC_SHARE[55]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(56), "FUNC_SHARE[56]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(57), "FUNC_SHARE[57]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(58), "FUNC_SHARE[58]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(59), "FUNC_SHARE[59]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(60), "FUNC_SHARE[60]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(61), "FUNC_SHARE[61]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(62), "FUNC_SHARE[62]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(63), "FUNC_SHARE[63]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(64), "FUNC_SHARE[64]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(65), "FUNC_SHARE[65]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(66), "FUNC_SHARE[66]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(67), "FUNC_SHARE[67]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(68), "FUNC_SHARE[68]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(69), "FUNC_SHARE[69]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(70), "FUNC_SHARE[70]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(71), "FUNC_SHARE[71]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(72), "FUNC_SHARE[72]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(73), "FUNC_SHARE[73]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(74), "FUNC_SHARE[74]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(75), "FUNC_SHARE[75]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(76), "FUNC_SHARE[76]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(77), "FUNC_SHARE[77]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(78), "FUNC_SHARE[78]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(79), "FUNC_SHARE[79]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(80), "FUNC_SHARE[80]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(81), "FUNC_SHARE[81]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(82), "FUNC_SHARE[82]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(83), "FUNC_SHARE[83]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(84), "FUNC_SHARE[84]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(85), "FUNC_SHARE[85]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(86), "FUNC_SHARE[86]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(87), "FUNC_SHARE[87]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(88), "FUNC_SHARE[88]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(89), "FUNC_SHARE[89]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(90), "FUNC_SHARE[90]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(91), "FUNC_SHARE[91]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(92), "FUNC_SHARE[92]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(93), "FUNC_SHARE[93]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(94), "FUNC_SHARE[94]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(95), "FUNC_SHARE[95]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(96), "FUNC_SHARE[96]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(97), "FUNC_SHARE[97]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(98), "FUNC_SHARE[98]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(99), "FUNC_SHARE[99]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(100), "FUNC_SHARE[100]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(101), "FUNC_SHARE[101]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(102), "FUNC_SHARE[102]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(103), "FUNC_SHARE[103]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(104), "FUNC_SHARE[104]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(105), "FUNC_SHARE[105]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(106), "FUNC_SHARE[106]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(107), "FUNC_SHARE[107]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(108), "FUNC_SHARE[108]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(109), "FUNC_SHARE[109]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(110), "FUNC_SHARE[110]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(111), "FUNC_SHARE[111]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(112), "FUNC_SHARE[112]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(113), "FUNC_SHARE[113]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(114), "FUNC_SHARE[114]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(115), "FUNC_SHARE[115]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(116), "FUNC_SHARE[116]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(117), "FUNC_SHARE[117]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(118), "FUNC_SHARE[118]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(119), "FUNC_SHARE[119]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(120), "FUNC_SHARE[120]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(121), "FUNC_SHARE[121]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(122), "FUNC_SHARE[122]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(123), "FUNC_SHARE[123]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(124), "FUNC_SHARE[124]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(125), "FUNC_SHARE[125]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(126), "FUNC_SHARE[126]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(127), "FUNC_SHARE[127]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(128), "FUNC_SHARE[128]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(129), "FUNC_SHARE[129]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(130), "FUNC_SHARE[130]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(131), "FUNC_SHARE[131]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(132), "FUNC_SHARE[132]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(133), "FUNC_SHARE[133]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(134), "FUNC_SHARE[134]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(135), "FUNC_SHARE[135]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(136), "FUNC_SHARE[136]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(137), "FUNC_SHARE[137]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(138), "FUNC_SHARE[138]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(139), "FUNC_SHARE[139]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(140), "FUNC_SHARE[140]"),
+> +       PINCTRL_PIN(PAD_FUNC_SHARE(141), "FUNC_SHARE[141]"),
+> +};
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +static void starfive_pin_dbg_show(struct pinctrl_dev *pctldev,
+> +                                 struct seq_file *s,
+> +                                 unsigned int pin)
+> +{
+> +       struct starfive_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
+> +       unsigned int gpio = starfive_pin_to_gpio(sfp, pin);
+> +       void __iomem *reg;
+> +       u32 dout, doen;
+> +
+> +       if (gpio >= NR_GPIOS)
+> +               return;
+> +
+> +       reg = sfp->base + GPON_DOUT_CFG + 8 * gpio;
+> +       dout = readl_relaxed(reg + 0x000);
+> +       doen = readl_relaxed(reg + 0x004);
+> +
+> +       seq_printf(s, "dout=%lu%s doen=%lu%s",
+> +                  dout & GENMASK(7, 0), (dout & BIT(31)) ? "r" : "",
+> +                  doen & GENMASK(7, 0), (doen & BIT(31)) ? "r" : "");
+> +}
+> +#else
+> +#define starfive_pin_dbg_show NULL
+> +#endif
+> +
+> +static int starfive_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +                                  struct device_node *np,
+> +                                  struct pinctrl_map **maps,
+> +                                  unsigned int *num_maps)
+> +{
+> +       struct starfive_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
+> +       struct device *dev = sfp->gc.parent;
+> +       struct device_node *child;
+> +       struct pinctrl_map *map;
+> +       const char **pgnames;
+> +       const char *grpname;
+> +       u32 *pinmux;
+> +       int ngroups;
+> +       int *pins;
+> +       int nmaps;
+> +       int ret;
+> +
+> +       nmaps = 0;
+> +       ngroups = 0;
+> +       for_each_child_of_node(np, child) {
+> +               int npinmux = of_property_count_u32_elems(child, "pinmux");
+> +               int npins   = of_property_count_u32_elems(child, "pins");
+> +
+> +               if (npinmux > 0 && npins > 0) {
+> +                       dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: both pinmux and pins set\n",
+> +                               np, child);
+> +                       of_node_put(child);
+> +                       return -EINVAL;
+> +               }
+> +               if (npinmux == 0 && npins == 0) {
+> +                       dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: neither pinmux nor pins set\n",
+> +                               np, child);
+> +                       of_node_put(child);
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if (npinmux > 0)
+> +                       nmaps += 2;
+> +               else
+> +                       nmaps += 1;
+> +               ngroups += 1;
+> +       }
+> +
+> +       pgnames = devm_kcalloc(dev, ngroups, sizeof(*pgnames), GFP_KERNEL);
+> +       if (!pgnames)
+> +               return -ENOMEM;
+> +
+> +       map = kcalloc(nmaps, sizeof(*map), GFP_KERNEL);
+> +       if (!map)
+> +               return -ENOMEM;
+> +
+> +       nmaps = 0;
+> +       ngroups = 0;
+> +       for_each_child_of_node(np, child) {
+> +               int npins;
+> +               int i;
+> +
+> +               grpname = devm_kasprintf(dev, GFP_KERNEL, "%pOFn.%pOFn", np, child);
+> +               if (!grpname) {
+> +                       ret = -ENOMEM;
+> +                       goto put_child;
+> +               }
+> +
+> +               pgnames[ngroups++] = grpname;
+> +
+> +               if ((npins = of_property_count_u32_elems(child, "pinmux")) > 0) {
+> +                       pins = devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
+> +                       if (!pins) {
+> +                               ret = -ENOMEM;
+> +                               goto put_child;
+> +                       }
+> +
+> +                       pinmux = devm_kcalloc(dev, npins, sizeof(*pinmux), GFP_KERNEL);
+> +                       if (!pinmux) {
+> +                               ret = -ENOMEM;
+> +                               goto put_child;
+> +                       }
+> +
+> +                       ret = of_property_read_u32_array(child, "pinmux", pinmux, npins);
+> +                       if (ret)
+> +                               goto put_child;
+> +
+> +                       for (i = 0; i < npins; i++) {
+> +                               unsigned int gpio = starfive_pinmux_to_gpio(pinmux[i]);
+> +
+> +                               pins[i] = starfive_gpio_to_pin(sfp, gpio);
+> +                       }
+> +
+> +                       map[nmaps].type = PIN_MAP_TYPE_MUX_GROUP;
+> +                       map[nmaps].data.mux.function = np->name;
+> +                       map[nmaps].data.mux.group = grpname;
+> +                       nmaps += 1;
+> +               } else if ((npins = of_property_count_u32_elems(child, "pins")) > 0) {
+> +                       pins = devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
+> +                       if (!pins) {
+> +                               ret = -ENOMEM;
+> +                               goto put_child;
+> +                       }
+> +
+> +                       pinmux = NULL;
+> +
+> +                       for (i = 0; i < npins; i++) {
+> +                               u32 v;
+> +
+> +                               ret = of_property_read_u32_index(child, "pins", i, &v);
+> +                               if (ret)
+> +                                       goto put_child;
+> +                               pins[i] = v;
+> +                       }
+> +               } else {
+> +                       ret = -EINVAL;
+> +                       goto put_child;
+> +               }
+> +
+> +               ret = pinctrl_generic_add_group(pctldev, grpname, pins, npins, pinmux);
+> +               if (ret < 0) {
+> +                       dev_err(dev, "error adding group %s: %d\n", grpname, ret);
+> +                       goto put_child;
+> +               }
+> +
+> +               ret = pinconf_generic_parse_dt_config(child, pctldev,
+> +                                                     &map[nmaps].data.configs.configs,
+> +                                                     &map[nmaps].data.configs.num_configs);
+> +               if (ret) {
+> +                       dev_err(dev, "error parsing pin config of group %s: %d\n",
+> +                               grpname, ret);
+> +                       goto put_child;
+> +               }
+> +
+> +               /* don't create a map if there are no pinconf settings */
+> +               if (map[nmaps].data.configs.num_configs == 0)
+> +                       continue;
+> +
+> +               map[nmaps].type = PIN_MAP_TYPE_CONFIGS_GROUP;
+> +               map[nmaps].data.configs.group_or_pin = grpname;
+> +               nmaps += 1;
+> +       }
+> +
+> +       ret = pinmux_generic_add_function(pctldev, np->name, pgnames, ngroups, NULL);
+> +       if (ret < 0) {
+> +               dev_err(dev, "error adding function %s: %d\n", np->name, ret);
+> +               goto free_map;
+> +       }
+> +
+> +       *maps = map;
+> +       *num_maps = nmaps;
+> +       return 0;
+> +
+> +put_child:
+> +       of_node_put(child);
+> +free_map:
+> +       pinctrl_utils_free_map(pctldev, map, nmaps);
+> +       return ret;
+> +}
+> +
+> +static const struct pinctrl_ops starfive_pinctrl_ops = {
+> +       .get_groups_count = pinctrl_generic_get_group_count,
+> +       .get_group_name = pinctrl_generic_get_group_name,
+> +       .get_group_pins = pinctrl_generic_get_group_pins,
+> +       .pin_dbg_show = starfive_pin_dbg_show,
+> +       .dt_node_to_map = starfive_dt_node_to_map,
+> +       .dt_free_map = pinctrl_utils_free_map,
+> +};
+> +
+> +static int starfive_set_mux(struct pinctrl_dev *pctldev,
+> +                           unsigned int fsel, unsigned int gsel)
+> +{
+> +       struct starfive_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
+> +       struct device *dev = sfp->gc.parent;
+> +       const struct group_desc *group;
+> +       const u32 *pinmux;
+> +       unsigned int i;
+> +
+> +       group = pinctrl_generic_get_group(pctldev, gsel);
+> +       if (!group)
+> +               return -EINVAL;
+> +
+> +       pinmux = group->data;
+> +       for (i = 0; i < group->num_pins; i++) {
+> +               u32 v = pinmux[i];
+> +               unsigned int gpio = starfive_pinmux_to_gpio(v);
+> +               u32 dout = starfive_pinmux_to_dout(v);
+> +               u32 doen = starfive_pinmux_to_doen(v);
+> +               u32 din = starfive_pinmux_to_din(v);
+> +               void __iomem *reg_dout;
+> +               void __iomem *reg_doen;
+> +               void __iomem *reg_din;
+> +               unsigned long flags;
+> +
+> +               dev_dbg(dev, "GPIO%u: dout=0x%x doen=0x%x din=0x%x\n",
+> +                       gpio, dout, doen, din);
+> +
+> +               reg_dout = sfp->base + GPON_DOUT_CFG + 8 * gpio;
+> +               reg_doen = sfp->base + GPON_DOEN_CFG + 8 * gpio;
+> +               if (din != GPI_NONE)
+> +                       reg_din = sfp->base + GPI_CFG_OFFSET + 4 * din;
+> +               else
+> +                       reg_din = NULL;
+> +
+> +               raw_spin_lock_irqsave(&sfp->lock, flags);
+> +               writel_relaxed(dout, reg_dout);
+> +               writel_relaxed(doen, reg_doen);
+> +               if (reg_din)
+> +                       writel_relaxed(gpio + 2, reg_din);
+> +               raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct pinmux_ops starfive_pinmux_ops = {
+> +       .get_functions_count = pinmux_generic_get_function_count,
+> +       .get_function_name = pinmux_generic_get_function_name,
+> +       .get_function_groups = pinmux_generic_get_function_groups,
+> +       .set_mux = starfive_set_mux,
+> +       .strict = true,
+> +};
+> +
+> +static u16 starfive_padctl_get(struct starfive_pinctrl *sfp,
+> +                              unsigned int pin)
+> +{
+> +       void __iomem *reg = sfp->padctl + 4 * (pin / 2);
+> +       int shift = 16 * (pin % 2);
+> +
+> +       return readl_relaxed(reg) >> shift;
+> +}
+> +
+> +static void starfive_padctl_rmw(struct starfive_pinctrl *sfp,
+> +                               unsigned int pin,
+> +                               u16 _mask, u16 _value)
+> +{
+> +       void __iomem *reg = sfp->padctl + 4 * (pin / 2);
+> +       int shift = 16 * (pin % 2);
+> +       u32 mask = (u32)_mask << shift;
+> +       u32 value = (u32)_value << shift;
+> +       unsigned long flags;
+> +
+> +       dev_dbg(sfp->gc.parent, "padctl_rmw(%u, 0x%03x, 0x%03x)\n", pin, _mask, _value);
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       value |= readl_relaxed(reg) & ~mask;
+> +       writel_relaxed(value, reg);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+> +
+> +#define PIN_CONFIG_STARFIVE_STRONG_PULL_UP     (PIN_CONFIG_END + 1)
+> +
+> +static const struct pinconf_generic_params starfive_pinconf_custom_params[] = {
+> +       { "starfive,strong-pull-up", PIN_CONFIG_STARFIVE_STRONG_PULL_UP, 1 },
+> +};
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +static const struct pin_config_item starfive_pinconf_custom_conf_items[] = {
+> +       PCONFDUMP(PIN_CONFIG_STARFIVE_STRONG_PULL_UP, "input bias strong pull-up", NULL, false),
+> +};
+> +
+> +static_assert(ARRAY_SIZE(starfive_pinconf_custom_conf_items) ==
+> +             ARRAY_SIZE(starfive_pinconf_custom_params));
+> +#else
+> +#define starfive_pinconf_custom_conf_items NULL
+> +#endif
+> +
+> +static int starfive_pinconf_get(struct pinctrl_dev *pctldev,
+> +                               unsigned int pin, unsigned long *config)
+> +{
+> +       struct starfive_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
+> +       int param = pinconf_to_config_param(*config);
+> +       u16 value = starfive_padctl_get(sfp, pin);
+> +       bool enabled;
+> +       u32 arg;
+> +
+> +       switch (param) {
+> +       case PIN_CONFIG_BIAS_DISABLE:
+> +               enabled = value & PAD_BIAS_DISABLE;
+> +               arg = 0;
+> +               break;
+> +       case PIN_CONFIG_BIAS_PULL_DOWN:
+> +               enabled = value & PAD_BIAS_PULL_DOWN;
+> +               arg = 1;
+> +               break;
+> +       case PIN_CONFIG_BIAS_PULL_UP:
+> +               enabled = !(value & PAD_BIAS_MASK);
+> +               arg = 1;
+> +               break;
+> +       case PIN_CONFIG_DRIVE_STRENGTH:
+> +               enabled = value & PAD_DRIVE_STRENGTH_MASK;
+> +               arg = starfive_drive_strength_to_max_mA(value & PAD_DRIVE_STRENGTH_MASK);
+> +               break;
+> +       case PIN_CONFIG_INPUT_ENABLE:
+> +               enabled = value & PAD_INPUT_ENABLE;
+> +               arg = enabled;
+> +               break;
+> +       case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> +               enabled = value & PAD_INPUT_SCHMITT_ENABLE;
+> +               arg = enabled;
+> +               break;
+> +       case PIN_CONFIG_SLEW_RATE:
+> +               enabled = value & PAD_SLEW_RATE_MASK;
+> +               arg = (value & PAD_SLEW_RATE_MASK) >> PAD_SLEW_RATE_POS;
+> +               break;
+> +       case PIN_CONFIG_STARFIVE_STRONG_PULL_UP:
+> +               enabled = value & PAD_BIAS_STRONG_PULL_UP;
+> +               arg = enabled;
+> +               break;
+> +       default:
+> +               return -ENOTSUPP;
+> +       }
+> +
+> +       *config = pinconf_to_config_packed(param, arg);
+> +       return enabled ? 0 : -EINVAL;
+> +}
+> +
+> +static int starfive_pinconf_group_get(struct pinctrl_dev *pctldev,
+> +                                     unsigned int gsel, unsigned long *config)
+> +{
+> +       const struct group_desc *group;
+> +
+> +       group = pinctrl_generic_get_group(pctldev, gsel);
+> +       if (!group)
+> +               return -EINVAL;
+> +
+> +       return starfive_pinconf_get(pctldev, group->pins[0], config);
+> +}
+> +
+> +static int starfive_pinconf_group_set(struct pinctrl_dev *pctldev,
+> +                                     unsigned int gsel,
+> +                                     unsigned long *configs,
+> +                                     unsigned int num_configs)
+> +{
+> +       struct starfive_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
+> +       const struct group_desc *group;
+> +       u16 mask, value;
+> +       int i;
+> +
+> +       group = pinctrl_generic_get_group(pctldev, gsel);
+> +       if (!group)
+> +               return -EINVAL;
+> +
+> +       mask = 0;
+> +       value = 0;
+> +       for (i = 0; i < num_configs; i++) {
+> +               int param = pinconf_to_config_param(configs[i]);
+> +               u32 arg = pinconf_to_config_argument(configs[i]);
+> +
+> +               switch (param) {
+> +               case PIN_CONFIG_BIAS_DISABLE:
+> +                       mask |= PAD_BIAS_MASK;
+> +                       value = (value & ~PAD_BIAS_MASK) | PAD_BIAS_DISABLE;
+> +                       break;
+> +               case PIN_CONFIG_BIAS_PULL_DOWN:
+> +                       if (arg == 0)
+> +                               return -ENOTSUPP;
+> +                       mask |= PAD_BIAS_MASK;
+> +                       value = (value & ~PAD_BIAS_MASK) | PAD_BIAS_PULL_DOWN;
+> +                       break;
+> +               case PIN_CONFIG_BIAS_PULL_UP:
+> +                       if (arg == 0)
+> +                               return -ENOTSUPP;
+> +                       mask |= PAD_BIAS_MASK;
+> +                       value = value & ~PAD_BIAS_MASK;
+> +                       break;
+> +               case PIN_CONFIG_DRIVE_STRENGTH:
+> +                       mask |= PAD_DRIVE_STRENGTH_MASK;
+> +                       value = (value & ~PAD_DRIVE_STRENGTH_MASK) |
+> +                               starfive_drive_strength_from_max_mA(arg);
+> +                       break;
+> +               case PIN_CONFIG_INPUT_ENABLE:
+> +                       mask |= PAD_INPUT_ENABLE;
+> +                       if (arg)
+> +                               value |= PAD_INPUT_ENABLE;
+> +                       else
+> +                               value &= ~PAD_INPUT_ENABLE;
+> +                       break;
+> +               case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> +                       mask |= PAD_INPUT_SCHMITT_ENABLE;
+> +                       if (arg)
+> +                               value |= PAD_INPUT_SCHMITT_ENABLE;
+> +                       else
+> +                               value &= ~PAD_INPUT_SCHMITT_ENABLE;
+> +                       break;
+> +               case PIN_CONFIG_SLEW_RATE:
+> +                       mask |= PAD_SLEW_RATE_MASK;
+> +                       value = (value & ~PAD_SLEW_RATE_MASK) |
+> +                               ((arg << PAD_SLEW_RATE_POS) & PAD_SLEW_RATE_MASK);
+> +                       break;
+> +               case PIN_CONFIG_STARFIVE_STRONG_PULL_UP:
+> +                       if (arg) {
+> +                               mask |= PAD_BIAS_MASK;
+> +                               value = (value & ~PAD_BIAS_MASK) |
+> +                                       PAD_BIAS_STRONG_PULL_UP;
+> +                       } else {
+> +                               mask |= PAD_BIAS_STRONG_PULL_UP;
+> +                               value = value & ~PAD_BIAS_STRONG_PULL_UP;
+> +                       }
+> +                       break;
+> +               default:
+> +                       return -ENOTSUPP;
+> +               }
+> +       }
+> +
+> +       for (i = 0; i < group->num_pins; i++)
+> +               starfive_padctl_rmw(sfp, group->pins[i], mask, value);
+> +
+> +       return 0;
+> +}
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +static void starfive_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+> +                                     struct seq_file *s, unsigned int pin)
+> +{
+> +       struct starfive_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
+> +       u16 value = starfive_padctl_get(sfp, pin);
+> +
+> +       seq_printf(s, " (0x%03x)", value);
+> +}
+> +#else
+> +#define starfive_pinconf_dbg_show NULL
+> +#endif
+> +
+> +static const struct pinconf_ops starfive_pinconf_ops = {
+> +       .pin_config_get = starfive_pinconf_get,
+> +       .pin_config_group_get = starfive_pinconf_group_get,
+> +       .pin_config_group_set = starfive_pinconf_group_set,
+> +       .pin_config_dbg_show = starfive_pinconf_dbg_show,
+> +       .is_generic = true,
+> +};
+> +
+> +static struct pinctrl_desc starfive_desc = {
+> +       .name = DRIVER_NAME,
+> +       .pins = starfive_pins,
+> +       .npins = ARRAY_SIZE(starfive_pins),
+> +       .pctlops = &starfive_pinctrl_ops,
+> +       .pmxops = &starfive_pinmux_ops,
+> +       .confops = &starfive_pinconf_ops,
+> +       .owner = THIS_MODULE,
+> +       .num_custom_params = ARRAY_SIZE(starfive_pinconf_custom_params),
+> +       .custom_params = starfive_pinconf_custom_params,
+> +       .custom_conf_items = starfive_pinconf_custom_conf_items,
+> +};
+> +
+> +static int starfive_gpio_request(struct gpio_chip *gc, unsigned int gpio)
+> +{
+> +       return pinctrl_gpio_request(gc->base + gpio);
+> +}
+> +
+> +static void starfive_gpio_free(struct gpio_chip *gc, unsigned int gpio)
+> +{
+> +       pinctrl_gpio_free(gc->base + gpio);
+> +}
+> +
+> +static int starfive_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +       void __iomem *doen = sfp->base + GPON_DOEN_CFG + 8 * gpio;
+> +
+> +       if (readl_relaxed(doen) == GPO_ENABLE)
+> +               return GPIO_LINE_DIRECTION_OUT;
+> +
+> +       return GPIO_LINE_DIRECTION_IN;
+> +}
+> +
+> +static int starfive_gpio_direction_input(struct gpio_chip *gc,
+> +                                        unsigned int gpio)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +       void __iomem *doen = sfp->base + GPON_DOEN_CFG + 8 * gpio;
+> +       unsigned long flags;
+> +
+> +       /* enable input and schmitt trigger */
+> +       starfive_padctl_rmw(sfp, starfive_gpio_to_pin(sfp, gpio),
+> +                           PAD_INPUT_ENABLE | PAD_INPUT_SCHMITT_ENABLE,
+> +                           PAD_INPUT_ENABLE | PAD_INPUT_SCHMITT_ENABLE);
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       writel_relaxed(GPO_DISABLE, doen);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +       return 0;
+> +}
+> +
+> +static int starfive_gpio_direction_output(struct gpio_chip *gc,
+> +                                         unsigned int gpio, int value)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +       void __iomem *dout = sfp->base + GPON_DOUT_CFG + 8 * gpio;
+> +       void __iomem *doen = sfp->base + GPON_DOEN_CFG + 8 * gpio;
+> +       unsigned long flags;
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       writel_relaxed(value, dout);
+> +       writel_relaxed(GPO_ENABLE, doen);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +
+> +       /* disable input, schmitt trigger and bias */
+> +       starfive_padctl_rmw(sfp, starfive_gpio_to_pin(sfp, gpio),
+> +                           PAD_BIAS_MASK | PAD_INPUT_ENABLE | PAD_INPUT_SCHMITT_ENABLE,
+> +                           PAD_BIAS_DISABLE);
+> +
+> +       return 0;
+> +}
+> +
+> +static int starfive_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +       void __iomem *din = sfp->base + GPIODIN + 4 * (gpio / 32);
+> +
+> +       return !!(readl_relaxed(din) & BIT(gpio % 32));
+> +}
+> +
+> +static void starfive_gpio_set(struct gpio_chip *gc, unsigned int gpio,
+> +                             int value)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +       void __iomem *dout = sfp->base + GPON_DOUT_CFG + 8 * gpio;
+> +       unsigned long flags;
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       writel_relaxed(value, dout);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+> +
+> +static int starfive_gpio_set_config(struct gpio_chip *gc, unsigned int gpio,
+> +                                   unsigned long config)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +       u32 arg = pinconf_to_config_argument(config);
+> +       u16 value;
+> +       u16 mask;
+> +
+> +       switch (pinconf_to_config_param(config)) {
+> +       case PIN_CONFIG_BIAS_DISABLE:
+> +               mask  = PAD_BIAS_MASK;
+> +               value = PAD_BIAS_DISABLE;
+> +               break;
+> +       case PIN_CONFIG_BIAS_PULL_DOWN:
+> +               if (arg == 0)
+> +                       return -ENOTSUPP;
+> +               mask  = PAD_BIAS_MASK;
+> +               value = PAD_BIAS_PULL_DOWN;
+> +               break;
+> +       case PIN_CONFIG_BIAS_PULL_UP:
+> +               if (arg == 0)
+> +                       return -ENOTSUPP;
+> +               mask  = PAD_BIAS_MASK;
+> +               value = 0;
+> +               break;
+> +       case PIN_CONFIG_DRIVE_PUSH_PULL:
+> +               return 0;
+> +       case PIN_CONFIG_INPUT_ENABLE:
+> +               mask  = PAD_INPUT_ENABLE;
+> +               value = arg ? PAD_INPUT_ENABLE : 0;
+> +               break;
+> +       case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> +               mask  = PAD_INPUT_SCHMITT_ENABLE;
+> +               value = arg ? PAD_INPUT_SCHMITT_ENABLE : 0;
+> +               break;
+> +       default:
+> +               return -ENOTSUPP;
+> +       };
+> +
+> +       starfive_padctl_rmw(sfp, starfive_gpio_to_pin(sfp, gpio), mask, value);
+> +       return 0;
+> +}
+> +
+> +static int starfive_gpio_add_pin_ranges(struct gpio_chip *gc)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +
+> +       sfp->gpios.name = sfp->gc.label;
+> +       sfp->gpios.base = sfp->gc.base;
+> +       /*
+> +        * sfp->gpios.pin_base depends on the chosen signal group
+> +        * and is set in starfive_probe()
+> +        */
+> +       sfp->gpios.npins = NR_GPIOS;
+> +       sfp->gpios.gc = &sfp->gc;
+> +       pinctrl_add_gpio_range(sfp->pctl, &sfp->gpios);
+> +       return 0;
+> +}
+> +
+> +static void starfive_irq_ack(struct irq_data *d)
+> +{
+> +       struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> +       irq_hw_number_t gpio = irqd_to_hwirq(d);
+> +       void __iomem *ic = sfp->base + GPIOIC + 4 * (gpio / 32);
+> +       u32 mask = BIT(gpio % 32);
+> +       unsigned long flags;
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       writel_relaxed(mask, ic);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+> +
+> +static void starfive_irq_mask(struct irq_data *d)
+> +{
+> +       struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> +       irq_hw_number_t gpio = irqd_to_hwirq(d);
+> +       void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
+> +       u32 mask = BIT(gpio % 32);
+> +       unsigned long flags;
+> +       u32 value;
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       value = readl_relaxed(ie) & ~mask;
+> +       writel_relaxed(value, ie);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+> +
+> +static void starfive_irq_mask_ack(struct irq_data *d)
+> +{
+> +       struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> +       irq_hw_number_t gpio = irqd_to_hwirq(d);
+> +       void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
+> +       void __iomem *ic = sfp->base + GPIOIC + 4 * (gpio / 32);
+> +       u32 mask = BIT(gpio % 32);
+> +       unsigned long flags;
+> +       u32 value;
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       value = readl_relaxed(ie) & ~mask;
+> +       writel_relaxed(value, ie);
+> +       writel_relaxed(mask, ic);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+> +
+> +static void starfive_irq_unmask(struct irq_data *d)
+> +{
+> +       struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> +       irq_hw_number_t gpio = irqd_to_hwirq(d);
+> +       void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
+> +       u32 mask = BIT(gpio % 32);
+> +       unsigned long flags;
+> +       u32 value;
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       value = readl_relaxed(ie) | mask;
+> +       writel_relaxed(value, ie);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+> +
+> +static int starfive_irq_set_type(struct irq_data *d, unsigned int trigger)
+> +{
+> +       struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> +       irq_hw_number_t gpio = irqd_to_hwirq(d);
+> +       void __iomem *base = sfp->base + 4 * (gpio / 32);
+> +       u32 mask = BIT(gpio % 32);
+> +       u32 irq_type, edge_both, polarity;
+> +       unsigned long flags;
+> +
+> +       switch (trigger) {
+> +       case IRQ_TYPE_EDGE_RISING:
+> +               irq_type  = mask; /* 1: edge triggered */
+> +               edge_both = 0;    /* 0: single edge */
+> +               polarity  = mask; /* 1: rising edge */
+> +               break;
+> +       case IRQ_TYPE_EDGE_FALLING:
+> +               irq_type  = mask; /* 1: edge triggered */
+> +               edge_both = 0;    /* 0: single edge */
+> +               polarity  = 0;    /* 0: falling edge */
+> +               break;
+> +       case IRQ_TYPE_EDGE_BOTH:
+> +               irq_type  = mask; /* 1: edge triggered */
+> +               edge_both = mask; /* 1: both edges */
+> +               polarity  = 0;    /* 0: ignored */
+> +               break;
+> +       case IRQ_TYPE_LEVEL_HIGH:
+> +               irq_type  = 0;    /* 0: level triggered */
+> +               edge_both = 0;    /* 0: ignored */
+> +               polarity  = mask; /* 1: high level */
+> +               break;
+> +       case IRQ_TYPE_LEVEL_LOW:
+> +               irq_type  = 0;    /* 0: level triggered */
+> +               edge_both = 0;    /* 0: ignored */
+> +               polarity  = 0;    /* 0: low level */
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (trigger & IRQ_TYPE_EDGE_BOTH)
+> +               irq_set_handler_locked(d, handle_edge_irq);
+> +       else
+> +               irq_set_handler_locked(d, handle_level_irq);
+> +
+> +       raw_spin_lock_irqsave(&sfp->lock, flags);
+> +       irq_type |= readl_relaxed(base + GPIOIS) & ~mask;
+> +       writel_relaxed(irq_type, base + GPIOIS);
+> +       edge_both |= readl_relaxed(base + GPIOIBE) & ~mask;
+> +       writel_relaxed(edge_both, base + GPIOIBE);
+> +       polarity |= readl_relaxed(base + GPIOIEV) & ~mask;
+> +       writel_relaxed(polarity, base + GPIOIEV);
+> +       raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +       return 0;
+> +}
+> +
+> +static struct irq_chip starfive_irq_chip = {
+> +       .irq_ack = starfive_irq_ack,
+> +       .irq_mask = starfive_irq_mask,
+> +       .irq_mask_ack = starfive_irq_mask_ack,
+> +       .irq_unmask = starfive_irq_unmask,
+> +       .irq_set_type = starfive_irq_set_type,
+> +       .flags = IRQCHIP_SET_TYPE_MASKED,
+> +};
+> +
+> +static void starfive_gpio_irq_handler(struct irq_desc *desc)
+> +{
+> +       struct starfive_pinctrl *sfp = starfive_from_irq_desc(desc);
+> +       struct irq_chip *chip = irq_desc_get_chip(desc);
+> +       unsigned long mis;
+> +       unsigned int pin;
+> +
+> +       chained_irq_enter(chip, desc);
+> +
+> +       mis = readl_relaxed(sfp->base + GPIOMIS + 0);
+> +       for_each_set_bit(pin, &mis, 32)
+> +               generic_handle_domain_irq(sfp->gc.irq.domain, pin);
+> +
+> +       mis = readl_relaxed(sfp->base + GPIOMIS + 4);
+> +       for_each_set_bit(pin, &mis, 32)
+> +               generic_handle_domain_irq(sfp->gc.irq.domain, pin + 32);
+> +
+> +       chained_irq_exit(chip, desc);
+> +}
+> +
+> +static int starfive_gpio_init_hw(struct gpio_chip *gc)
+> +{
+> +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> +
+> +       /* mask all GPIO interrupts */
+> +       writel(0, sfp->base + GPIOIE + 0);
+> +       writel(0, sfp->base + GPIOIE + 4);
+> +       /* clear edge interrupt flags */
+> +       writel(~0U, sfp->base + GPIOIC + 0);
+> +       writel(~0U, sfp->base + GPIOIC + 4);
+> +       /* enable GPIO interrupts */
+> +       writel(1, sfp->base + GPIOEN);
+> +       return 0;
+> +}
+> +
+> +static void starfive_disable_clock(void *data)
+> +{
+> +       clk_disable_unprepare(data);
+> +}
+> +
+> +static int starfive_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct starfive_pinctrl *sfp;
+> +       struct reset_control *rst;
+> +       struct clk *clk;
+> +       u32 value;
+> +       int ret;
+> +
+> +       sfp = devm_kzalloc(dev, sizeof(*sfp), GFP_KERNEL);
+> +       if (!sfp)
+> +               return -ENOMEM;
+> +
+> +       sfp->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
+> +       if (IS_ERR(sfp->base))
+> +               return PTR_ERR(sfp->base);
+> +
+> +       sfp->padctl = devm_platform_ioremap_resource_byname(pdev, "padctl");
+> +       if (IS_ERR(sfp->padctl))
+> +               return PTR_ERR(sfp->padctl);
+> +
+> +       clk = devm_clk_get(dev, NULL);
+> +       if (IS_ERR(clk))
+> +               return dev_err_probe(dev, PTR_ERR(clk), "could not get clock\n");
+> +
+> +       rst = devm_reset_control_get_exclusive(dev, NULL);
+> +       if (IS_ERR(rst))
+> +               return dev_err_probe(dev, PTR_ERR(rst), "could not get reset\n");
+> +
+> +       ret = clk_prepare_enable(clk);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "could not enable clock\n");
+> +
+> +       ret = devm_add_action_or_reset(dev, starfive_disable_clock, clk);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * We don't want to assert reset and risk undoing pin muxing for the
+> +        * early boot serial console, but let's make sure the reset line is
+> +        * deasserted in case someone runs a really minimal bootloader.
+> +        */
+> +       ret = reset_control_deassert(rst);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "could not deassert reset\n");
+> +
+> +       platform_set_drvdata(pdev, sfp);
+> +       sfp->gc.parent = dev;
+> +       raw_spin_lock_init(&sfp->lock);
+> +
+> +       ret = devm_pinctrl_register_and_init(dev, &starfive_desc, sfp, &sfp->pctl);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "could not register pinctrl driver\n");
+> +
+> +       if (!of_property_read_u32(dev->of_node, "starfive,signal-group", &value)) {
+> +               if (value > 6)
+> +                       return dev_err_probe(dev, -EINVAL, "invalid signal group %u\n", value);
+> +               writel(value, sfp->padctl + IO_PADSHARE_SEL);
+> +       }
+> +
+> +       value = readl(sfp->padctl + IO_PADSHARE_SEL);
+> +       switch (value) {
+> +       case 0:
+> +               sfp->gpios.pin_base = PAD_INVALID_GPIO;
+> +               goto out_pinctrl_enable;
+> +       case 1:
+> +               sfp->gpios.pin_base = PAD_GPIO(0);
+> +               break;
+> +       case 2:
+> +               sfp->gpios.pin_base = PAD_FUNC_SHARE(72);
+> +               break;
+> +       case 3:
+> +               sfp->gpios.pin_base = PAD_FUNC_SHARE(70);
+> +               break;
+> +       case 4: case 5: case 6:
+> +               sfp->gpios.pin_base = PAD_FUNC_SHARE(0);
+> +               break;
+> +       default:
+> +               return dev_err_probe(dev, -EINVAL, "invalid signal group %u\n", value);
+> +       }
+> +
+> +       sfp->gc.label = dev_name(dev);
+> +       sfp->gc.owner = THIS_MODULE;
+> +       sfp->gc.request = starfive_gpio_request;
+> +       sfp->gc.free = starfive_gpio_free;
+> +       sfp->gc.get_direction = starfive_gpio_get_direction;
+> +       sfp->gc.direction_input = starfive_gpio_direction_input;
+> +       sfp->gc.direction_output = starfive_gpio_direction_output;
+> +       sfp->gc.get = starfive_gpio_get;
+> +       sfp->gc.set = starfive_gpio_set;
+> +       sfp->gc.set_config = starfive_gpio_set_config;
+> +       sfp->gc.add_pin_ranges = starfive_gpio_add_pin_ranges;
+> +       sfp->gc.base = -1;
+> +       sfp->gc.ngpio = NR_GPIOS;
+> +
+> +       starfive_irq_chip.parent_device = dev;
+> +       starfive_irq_chip.name = sfp->gc.label;
+> +
+> +       sfp->gc.irq.chip = &starfive_irq_chip;
+> +       sfp->gc.irq.parent_handler = starfive_gpio_irq_handler;
+> +       sfp->gc.irq.num_parents = 1;
+> +       sfp->gc.irq.parents = devm_kcalloc(dev, sfp->gc.irq.num_parents,
+> +                                          sizeof(*sfp->gc.irq.parents), GFP_KERNEL);
+> +       if (!sfp->gc.irq.parents)
+> +               return -ENOMEM;
+> +       sfp->gc.irq.default_type = IRQ_TYPE_NONE;
+> +       sfp->gc.irq.handler = handle_bad_irq;
+> +       sfp->gc.irq.init_hw = starfive_gpio_init_hw;
+> +
+> +       ret = platform_get_irq(pdev, 0);
+> +       if (ret < 0)
+> +               return ret;
+> +       sfp->gc.irq.parents[0] = ret;
+> +
+> +       ret = devm_gpiochip_add_data(dev, &sfp->gc, sfp);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "could not register gpiochip\n");
+> +
+> +out_pinctrl_enable:
+> +       return pinctrl_enable(sfp->pctl);
+> +}
+> +
+> +static const struct of_device_id starfive_of_match[] = {
+> +       { .compatible = "starfive,jh7100-pinctrl" },
+> +       { /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, starfive_of_match);
+> +
+> +static struct platform_driver starfive_pinctrl_driver = {
+> +       .probe = starfive_probe,
+> +       .driver = {
+> +               .name = DRIVER_NAME,
+> +               .of_match_table = starfive_of_match,
+> +       },
+> +};
+> +module_platform_driver(starfive_pinctrl_driver);
+> +
+> +MODULE_DESCRIPTION("Pinctrl driver for StarFive SoCs");
+> +MODULE_AUTHOR("Emil Renner Berthing <kernel@esmil.dk>");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.33.1
+>
 
-I'd probably want to drag this trivial one along as well:
 
-pinctrl: ocelot: combine get resource and ioremap into single call
-
-> 
-> > 
-> > The main changes for V4 are trying to get pinctrl-ocelot and
-> > pinctrl-microchip-sgpio functional. Without pinctrl-ocelot,
-> > communication to external phys won't work. Without communication to
-> > external phys, PCS ports 4-7 on the dev board won't work. Nor will any
-> > fiber ports. 
-> > 
-> > 
-> > The hardware setup I'm using for development is a beaglebone black, with
-> > jumpers from SPI0 to the microchip VSC7512 dev board. The microchip dev 
-> > board has been modified to not boot from flash, but wait for SPI. An
-> > ethernet cable is connected from the beaglebone ethernet to port 0 of
-> > the dev board.
-> > 
-> > 
-> > The device tree I'm using for the VSC7512 is below. Note that ports 4-7
-> > are still not expected to work, but left in as placeholders for when
-> > they do.
-> > 
-> > 
-> > &spi0 {
-> > 	#address-cells = <1>;
-> > 	#size-cells = <0>;
-> > 	status = "okay";
-> > 
-> > 	ethernet-switch@0{
-> > 		 compatible = "mscc,vsc7512";
-> > 		 spi-max-frequency = <250000>;
-> 
-> Can't go faster than 250 KHz? That's sad.
-
-Haven't tried faster speeds. During the early days there was an error on
-my setup due to too long of wires. Crosstalk / capacitance... I slowed
-the SPI bus to a crawl while debugging that and never turned it back up. 
-
-If it'll help anyone: transitions on the MOSI I believe were causing
-glitches on the CS line. This made the VSC7512 sad.
-
-> 
-> > 		 reg = <0>;
-> > 
-> > 		 ports {
-> 
-> there's an extra preceding space here, for all 4 lines from "compatible" to "ports".
-
-I'll fix it. Thanks.
-
-> 
-> > 			#address-cells = <1>;
-> > 			#size-cells = <0>;
-> > 
-> > 			port@0 {
-> > 				reg = <0>;
-> > 				label = "cpu";
-> > 				status = "okay";
-> > 				ethernet = <&mac_sw>;
-> > 				phy-handle = <&sw_phy0>;
-> > 				phy-mode = "internal";
-> > 			};
-> > 
-> > 			port@1 {
-> > 				reg = <1>;
-> > 				label = "swp1";
-> > 				status = "okay";
-> > 				phy-handle = <&sw_phy1>;
-> > 				phy-mode = "internal";
-> > 			};
-> > 
-> > 			port@4 {
-> > 				reg = <4>;
-> > 				label = "swp4";
-> > 				status = "okay";
-> > 				phy-handle = <&sw_phy4>;
-> > 				phy-mode = "sgmii";
-> > 			};
-> > 		};
-> > 
-> > 		mdio {
-> > 			#address-cells = <1>;
-> > 			#size-cells = <0>;
-> > 
-> > 			sw_phy0: ethernet-phy@0 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> 
-> PHY nodes don't need #address-cells and #size-cells.
-
-Thank you. I'll remove these and the ones below.
-
-> 
-> > 				reg = <0x0>;
-> > 			};
-> > 
-> > 			sw_phy1: ethernet-phy@1 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 				reg = <0x1>;
-> > 			};
-> > 
-> > 			sw_phy2: ethernet-phy@2 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 				reg = <0x2>;
-> > 			};
-> > 
-> > 			sw_phy3: ethernet-phy@3 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 				reg = <0x3>;
-> > 			};
-> > 
-> > 			sw_phy4: ethernet-phy@4 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 				reg = <0x4>;
-> > 			};
-> > 
-> > 			sw_phy5: ethernet-phy@5 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 				reg = <0x5>;
-> > 			};
-> > 
-> > 			sw_phy6: ethernet-phy@6 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 				reg = <0x6>;
-> > 			};
-> > 
-> > 			sw_phy7: ethernet-phy@7 {
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 				reg = <0x7>;
-> > 			};
-> > 		};
-> > 
-> > 		gpio: pinctrl {
-> > 			compatible = "mscc,ocelot-pinctrl";
-> > 			#address-cells = <1>;
-> > 			#size-cells = <0>;
-> 
-> I don't think that #address-cells and #size-cells are needed here, since
-> "led-shift-reg-pins" does not have any address unit.
-> 
-> > 			#gpio_cells = <2>;
-> > 			gpio-ranges = <&gpio 0 0 22>;
-> > 
-> > 			led_shift_reg_pins: led-shift-reg-pins {
-> > 				pins = "GPIO_0", "GPIO_1", "GPIO_2", "GPIO_3";
-> > 				function = "sg0";
-> > 			};
-> > 		};
-> > 
-> > 		sgpio: sgpio {
-> > 			compatible = "mscc,ocelot-sgpio";
-> > 			#address-cells = <1>;
-> > 			#size-cells = <0>;
-> > 			bus-frequency=<12500000>;
-> > 			clocks = <&ocelot_clock>;
-> > 			microchip,sgpio-port-ranges = <0 31>;
-> > 
-> > 			sgpio_in0: sgpio@0 {
-> > 				compatible = "microchip,sparx5-sgpio-bank";
-> > 				reg = <0>;
-> > 				gpio-controller;
-> > 				#gpio-cells = <3>;
-> > 				ngpios = <32>;
-> > 			};
-> > 
-> > 			sgpio_out1: sgpio@1 {
-> > 				compatible = "microchip,sparx5-sgpio-bank";
-> > 				reg = <1>;
-> > 				gpio-controller;
-> > 				gpio-cells = <3>;
-> > 				ngpios = <32>;
-> > 			};
-> > 		};
-> > 	};
-> > };
-> > 
-> > 
-> > My main focus is getting the ocelot-pinctrl driver fully functional. My
-> > current hope is that it would correctly set GPIO pins 0-3 into the "sg0"
-> > state. That is not the case right now, and I'll be looking into why. The
-> > behavior I'm hoping for is to be able to configure the sgpio LEDs for
-> > activity at the very least. Link status would be a bonus.
-> > 
-> > 
-> > I do have pinctrl by way of debugfs and sysfs. There aren't any debug
-> > LEDs that are attached to unused pins, unfortunately. That would've been
-> > really helpful. So there's a key takeaway for dev-board manufacturers.
-> > 
-> > 
-> > As you'll see, the main changes to the three drivers I'm utilizing
-> > (mscc_miim, pinctrl-ocelot, and pinctrl-microchip-sgpio) follow a
-> > similar path. First, convert everything to regmap. Second, expose
-> > whatever functions are necessary to fully utilize an external regmap.
-> > 
-> > 
-> > One thing to note: I've been following a pattern of adding "offset"
-> > variables to these drivers. I'm looking for feedback here, because I
-> > don't like it - however I feel like it is the "least bad" interface I
-> > could come up with. 
-> > 
-> > 
-> > Specifically, ocelot has a regmap for GCB. ocelot-pinctrl would create a
-> > smaller regmap at an address of "GCB + 0x34".
-> > 
-> > 
-> > There are three options I saw here:
-> > 1. Have vsc7512_spi create a new regmap at GCB + 0x34 and pass that to
-> > ocelot-pinctrl
-> > 2. Give ocelot-pinctrl the concept of a "parent bus" by which it could
-> > request a regmap. 
-> > 3. Keep the same GCB regmap, but pass in 0x34 as an offset.
-> > 
-> > 
-> > I will admit that option 2 sounds very enticing, but I don't know if
-> > that type of interaction exists. If not, implementing it is probably
-> > outside the scope of a first patch set. As such, I opted for option 3.
-> 
-> I think that type of interaction is called "mfd", potentially even "syscon".
-
-Before diving in, I'd come across mfd and thought that might be the
-answer. I'll reconsider it now that I have several months of staring at
-kernel code under my belt. Maybe an mfd that does SPI setup and chip
-resetting. Then I could remove all SPI code from ocelot_vsc7512_spi.
-
-> 
-> > 
-> > 
-> > Version 4 also fixes some logic for MDIO probing. It wasn't using the
-> > device tree by way of of_mdiobus_register. Now it is.
-> > 
-> > 
-> > The relevant boot log for the switch / MDIO bus is here. As expected,
-> > devices 4-7 are missing. If nothing else, that is telling me that the
-> > device tree is working.
-> > 
-> > [    4.005195] mdio_bus spi0.0-mii:03: using lookup tables for GPIO lookup
-> > [    4.005205] mdio_bus spi0.0-mii:03: No GPIO consumer reset found
-> > [    4.006586] mdio_bus spi0.0-mii: MDIO device at address 4 is missing.
-> > [    4.014333] mdio_bus spi0.0-mii: MDIO device at address 5 is missing.
-> > [    4.022009] mdio_bus spi0.0-mii: MDIO device at address 6 is missing.
-> > [    4.029573] mdio_bus spi0.0-mii: MDIO device at address 7 is missing.
-> > [    8.386624] vsc7512 spi0.0: PHY [spi0.0-mii:00] driver [Generic PHY] (irq=POLL)
-> > [    8.397222] vsc7512 spi0.0: configuring for phy/internal link mode
-> > [    8.419484] vsc7512 spi0.0 swp1 (uninitialized): PHY [spi0.0-mii:01] driver [Generic PHY] (irq=POLL)
-> > [    8.437278] vsc7512 spi0.0 swp2 (uninitialized): PHY [spi0.0-mii:02] driver [Generic PHY] (irq=POLL)
-> > [    8.452867] vsc7512 spi0.0 swp3 (uninitialized): PHY [spi0.0-mii:03] driver [Generic PHY] (irq=POLL)
-> > [    8.465007] vsc7512 spi0.0 swp4 (uninitialized): no phy at 4
-> > [    8.470721] vsc7512 spi0.0 swp4 (uninitialized): failed to connect to PHY: -ENODEV
-> > [    8.478388] vsc7512 spi0.0 swp4 (uninitialized): error -19 setting up PHY for tree 0, switch 0, port 4
-> > [    8.489636] vsc7512 spi0.0 swp5 (uninitialized): no phy at 5
-> > [    8.495371] vsc7512 spi0.0 swp5 (uninitialized): failed to connect to PHY: -ENODEV
-> > [    8.502996] vsc7512 spi0.0 swp5 (uninitialized): error -19 setting up PHY for tree 0, switch 0, port 5
-> > [    8.514186] vsc7512 spi0.0 swp6 (uninitialized): no phy at 6
-> > [    8.519882] vsc7512 spi0.0 swp6 (uninitialized): failed to connect to PHY: -ENODEV
-> > [    8.527539] vsc7512 spi0.0 swp6 (uninitialized): error -19 setting up PHY for tree 0, switch 0, port 6
-> > [    8.538716] vsc7512 spi0.0 swp7 (uninitialized): no phy at 7
-> > [    8.544451] vsc7512 spi0.0 swp7 (uninitialized): failed to connect to PHY: -ENODEV
-> > [    8.552079] vsc7512 spi0.0 swp7 (uninitialized): error -19 setting up PHY for tree 0, switch 0, port 7
-> > [    8.571962] device eth0 entered promiscuous mode
-> > [    8.576684] DSA: tree 0 setup
-> > [   10.490093] vsc7512 spi0.0: Link is Up - 100Mbps/Full - flow control off
-> > 
-> > 
-> > Much later on, I created a bridge with STP (and two ports jumped
-> > together) as a test. Everything seems to be working as expected. 
-> > 
-> > 
-> > [59839.920340] cpsw-switch 4a100000.switch: starting ndev. mode: dual_mac
-> > [59840.013636] SMSC LAN8710/LAN8720 4a101000.mdio:00: attached PHY driver (mii_bus:phy_addr=4a101000.mdio:00, irq=POLL)
-> > [59840.031444] 8021q: adding VLAN 0 to HW filter on device eth0
-> > [59840.057406] vsc7512 spi0.0 swp1: configuring for phy/internal link mode
-> > [59840.089302] vsc7512 spi0.0 swp2: configuring for phy/internal link mode
-> > [59840.121514] vsc7512 spi0.0 swp3: configuring for phy/internal link mode
-> > [59840.167589] br0: port 1(swp1) entered blocking state
-> > [59840.172818] br0: port 1(swp1) entered disabled state
-> > [59840.191078] device swp1 entered promiscuous mode
-> > [59840.224855] br0: port 2(swp2) entered blocking state
-> > [59840.229893] br0: port 2(swp2) entered disabled state
-> > [59840.245844] device swp2 entered promiscuous mode
-> > [59840.270839] br0: port 3(swp3) entered blocking state
-> > [59840.276003] br0: port 3(swp3) entered disabled state
-> > [59840.291674] device swp3 entered promiscuous mode
-> > [59840.663239] vsc7512 spi0.0: Link is Down
-> > [59841.691641] vsc7512 spi0.0: Link is Up - 100Mbps/Full - flow control off
-> > [59842.167897] cpsw-switch 4a100000.switch eth0: Link is Up - 100Mbps/Full - flow control off
-> > [59842.176481] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
-> > [59843.216121] vsc7512 spi0.0 swp1: Link is Up - 1Gbps/Full - flow control rx/tx
-> > [59843.231076] IPv6: ADDRCONF(NETDEV_CHANGE): swp1: link becomes ready
-> > [59843.237593] br0: port 1(swp1) entered blocking state
-> > [59843.242629] br0: port 1(swp1) entered listening state
-> > [59843.301447] vsc7512 spi0.0 swp3: Link is Up - 1Gbps/Full - flow control rx/tx
-> > [59843.309027] IPv6: ADDRCONF(NETDEV_CHANGE): swp3: link becomes ready
-> > [59843.315544] br0: port 3(swp3) entered blocking state
-> > [59843.320545] br0: port 3(swp3) entered listening state
-> > [59845.042058] br0: port 3(swp3) entered blocking state
-> > [59858.401566] br0: port 1(swp1) entered learning state
-> > [59871.841910] br0: received packet on swp1 with own address as source address (addr:24:76:25:76:35:37, vlan:0)
-> > [59873.761495] br0: port 1(swp1) entered forwarding state
-> > [59873.766703] br0: topology change detected, propagating
-> > [59873.776278] IPv6: ADDRCONF(NETDEV_CHANGE): br0: link becomes ready
-> > [59902.561908] br0: received packet on swp1 with own address as source address (addr:24:76:25:76:35:37, vlan:0)
-> > [59926.494446] vsc7512 spi0.0 swp2: Link is Up - 1Gbps/Full - flow control rx/tx
-> > [59926.501959] IPv6: ADDRCONF(NETDEV_CHANGE): swp2: link becomes ready
-> > [59926.508702] br0: port 2(swp2) entered blocking state
-> > [59926.513868] br0: port 2(swp2) entered listening state
-> > [59941.601540] br0: port 2(swp2) entered learning state
-> > [59956.961493] br0: port 2(swp2) entered forwarding state
-> > [59956.966711] br0: topology change detected, propagating
-> > [59968.481839] br0: received packet on swp1 with own address as source address (addr:24:76:25:76:35:37, vlan:0)
-> > 
-> > 
-> > In order to make this work, I have modified the cpsw driver, and now the
-> > cpsw_new driver, to allow for frames over 1500 bytes. Otherwise the
-> > tagging protocol will not work between the beaglebone and the VSC7512. I
-> > plan to eventually try to get those changes in mainline, but I don't
-> > want to get distracted from my initial goal.
-> > 
-> > 
-> > RFC history:
-> > v1 (accidentally named vN)
-> > 	* Initial architecture. Not functional
-> > 	* General concepts laid out
-> > 
-> > v2
-> > 	* Near functional. No CPU port communication, but control over all
-> > 	external ports
-> > 	* Cleaned up regmap implementation from v1
-> > 
-> > v3
-> > 	* Functional
-> > 	* Shared MDIO transactions routed through mdio-mscc-miim
-> > 	* CPU / NPI port enabled by way of vsc7512_enable_npi_port /
-> > 	felix->info->enable_npi_port
-> > 	* NPI port tagging functional - Requires a CPU port driver that supports
-> > 	frames of 1520 bytes. Verified with a patch to the cpsw driver
-> > 
-> > v4
-> >     * Functional
-> >     * Device tree fixes
-> >     * Add hooks for pinctrl-ocelot - some functionality by way of sysfs
-> >     * Add hooks for pinctrl-microsemi-sgpio - not yet fully functional
-> >     * Remove lynx_pcs interface for a generic phylink_pcs. The goal here
-> >     is to have an ocelot_pcs that will work for each configuration of
-> >     every port. 
-> > 
-> > 
-> > 
-> > Colin Foster (23):
-> >   net: dsa: ocelot: remove unnecessary pci_bar variables
-> >   net: mdio: mscc-miim: convert to a regmap implementation
-> >   net: dsa: ocelot: seville: utilize of_mdiobus_register
-> >   net: dsa: ocelot: felix: switch to mdio-mscc-miim driver for indirect
-> >     mdio access
-> >   net: dsa: ocelot: felix: Remove requirement for PCS in felix devices
-> >   net: dsa: ocelot: felix: add interface for custom regmaps
-> >   net: dsa: ocelot: felix: add per-device-per-port quirks
-> >   net: mscc: ocelot: split register definitions to a separate file
-> >   net: mscc: ocelot: expose ocelot wm functions
-> >   pinctrl: ocelot: combine get resource and ioremap into single call
-> >   pinctrl: ocelot: update pinctrl to automatic base address
-> >   pinctrl: ocelot: convert pinctrl to regmap
-> >   pinctrl: ocelot: expose ocelot_pinctrl_core_probe interface
-> >   pinctrl: microchip-sgpio: update to support regmap
-> >   device property: add helper function fwnode_get_child_node_count
-> >   pinctrl: microchip-sgpio: change device tree matches to use nodes
-> >     instead of device
-> >   pinctrl: microchip-sgpio: expose microchip_sgpio_core_probe interface
-> >   net: phy: lynx: refactor Lynx PCS module to use generic phylink_pcs
-> >   net: dsa: felix: name change for clarity from pcs to mdio_device
-> >   net: dsa: seville: name change for clarity from pcs to mdio_device
-> >   net: ethernet: enetc: name change for clarity from pcs to mdio_device
-> >   net: pcs: lynx: use a common naming scheme for all lynx_pcs variables
-> >   net: dsa: ocelot: felix: add support for VSC75XX control over SPI
-> > 
-> >  drivers/base/property.c                       |  20 +-
-> >  drivers/net/dsa/ocelot/Kconfig                |  16 +
-> >  drivers/net/dsa/ocelot/Makefile               |   7 +
-> >  drivers/net/dsa/ocelot/felix.c                |  29 +-
-> >  drivers/net/dsa/ocelot/felix.h                |  10 +-
-> >  drivers/net/dsa/ocelot/felix_mdio.c           |  54 +
-> >  drivers/net/dsa/ocelot/felix_mdio.h           |  13 +
-> >  drivers/net/dsa/ocelot/felix_vsc9959.c        |  38 +-
-> >  drivers/net/dsa/ocelot/ocelot_vsc7512_spi.c   | 946 ++++++++++++++++++
-> >  drivers/net/dsa/ocelot/seville_vsc9953.c      | 136 +--
-> >  .../net/ethernet/freescale/dpaa2/dpaa2-mac.c  |  12 +-
-> >  .../net/ethernet/freescale/dpaa2/dpaa2-mac.h  |   3 +-
-> >  .../net/ethernet/freescale/enetc/enetc_pf.c   |  27 +-
-> >  .../net/ethernet/freescale/enetc/enetc_pf.h   |   4 +-
-> >  drivers/net/ethernet/mscc/Makefile            |   3 +-
-> >  drivers/net/ethernet/mscc/ocelot.c            |   8 +
-> >  drivers/net/ethernet/mscc/ocelot_devlink.c    |  31 +
-> >  drivers/net/ethernet/mscc/ocelot_vsc7514.c    | 548 +---------
-> >  drivers/net/ethernet/mscc/vsc7514_regs.c      | 522 ++++++++++
-> >  drivers/net/mdio/mdio-mscc-miim.c             | 167 +++-
-> >  drivers/net/pcs/pcs-lynx.c                    |  36 +-
-> >  drivers/pinctrl/pinctrl-microchip-sgpio.c     | 127 ++-
-> >  drivers/pinctrl/pinctrl-ocelot.c              | 207 ++--
-> >  include/linux/mdio/mdio-mscc-miim.h           |  19 +
-> >  include/linux/pcs-lynx.h                      |   9 +-
-> >  include/linux/property.h                      |   1 +
-> >  include/soc/mscc/ocelot.h                     |  60 ++
-> >  include/soc/mscc/vsc7514_regs.h               |  27 +
-> >  28 files changed, 2219 insertions(+), 861 deletions(-)
-> >  create mode 100644 drivers/net/dsa/ocelot/felix_mdio.c
-> >  create mode 100644 drivers/net/dsa/ocelot/felix_mdio.h
-> >  create mode 100644 drivers/net/dsa/ocelot/ocelot_vsc7512_spi.c
-> >  create mode 100644 drivers/net/ethernet/mscc/vsc7514_regs.c
-> >  create mode 100644 include/linux/mdio/mdio-mscc-miim.h
-> >  create mode 100644 include/soc/mscc/vsc7514_regs.h
-> > 
-> > -- 
-> > 2.25.1
-> >
+-- 
+With Best Regards,
+Andy Shevchenko
