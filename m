@@ -2,45 +2,45 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD6BC4167B
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 06:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743F8C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 06:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71DDA61101
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 06:27:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B05261101
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Nov 2021 06:27:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232365AbhKPGaY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Nov 2021 01:30:24 -0500
-Received: from mail-dm6nam10on2120.outbound.protection.outlook.com ([40.107.93.120]:37728
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S232384AbhKPGa0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Nov 2021 01:30:26 -0500
+Received: from mail-bn8nam12on2121.outbound.protection.outlook.com ([40.107.237.121]:4257
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231403AbhKPG22 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S231383AbhKPG22 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 16 Nov 2021 01:28:28 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oWbK3iaDuhz6YnmtQtg2tXy4h3V02lhdNTU8Rpa/CEw+NsFUypyItCB2LvcrF/6ZnUVU8N4pT5rTqGSL1uTspomSm/q/JouxLXzQVHG8pZCl41W1FNqkm/5IfgQV7xeuS6DEXWdfEfrM5VlvCWZh6rp/NOoFO6Zh1NPt0zrAVkfjUOZV0XEQPRICa5xY8eZyXx0czM9HFEBj2RCOP2JH0qNewqAV4VcvyzFH+9wXU72wTXv/0sRduRTo6JLfH4430ALDwNVK3NayR7j36EVUFekBqPJJH/TmDzouueAEKSIaiP+sXPmwKxn0QU7vCIovFboohodqsPxdYZsGM98uJw==
+ b=MNbyu2gLoBdk8r9HBjfUZcKXnZMHAeboRypF7feZiJE+IH8O+cg1WYTgMw5C2BU/ckk/lHAEXppatF3/Pj4MVo87AC1sbRuInMInVh9M5yjvbUeQm2hhw4k0a+cEPtmxsZnuuTf/tZHL7+jKO/pKgUfHGa+rRab2NGrRvoNkg6LRZZ58Y21uZTDiuF/i3cBuK/e37F5T1FjgoXGqTZzwW1PxjPxlbs1CWR8A/vERtAtFpERJ192OuMWCTyyXHDHZwi17UizW+atwkixKPRfxwfSckafSKgHYPD2dUM3Ja556kjzozIdPgL8k9UTvrTuAkHS0qbemAiOcTPL1CzwvWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mv49pXxI9NYSX9UZOP4SbUoZ3wox9TZ+Ko6Yzl+0c/g=;
- b=fnARpsXtxWTlv575MWl9HcmDvj/AaCUtjh/frwFpBdMhGQfyIWoqSw2wZJ3vrRbXZC0SBD6Y1jk76TTHbmSobchv97uCjZTOwPkhJOELHeZ+ISpUBzdARKePqdavbcDe5pJnwYcrAGEgS911Myf3zT52vRrnuObh+A53KJvfCGBydc7VZGbaAjk4iYedEt77d8Li+zOCYwHtXINtSikQ29W7L7BWC3uuSH6l2xnbtQsGuHOCJgVDn7SJEGyakfs1LipwEIV5lRP+oNpv0l4nx0spCgQpiFxtLfCzfQ8bnSvRTnnoTsojhNQpeBF618bMijmG00bsnH224M/XNsH1gQ==
+ bh=nJsIVdGdQxc4duae8jEw39R/NAVBSIQKEwRd0yqzlss=;
+ b=W0MYX6wkkX+iWgieaJq4VoQECBFd6E6j4m1f3cLiXazFN5JCIUH8oQOa1gx86maan6KpU4b02UN//znERfTh31mXjMqaj4T9ARSi/4/BDNkcljT60Bm+KngY3NUpyb2NicpitlLONVg3FT72232GZVUTd04U9Mu47R1VPqwjhR2FGBk+x0rYws9O13mu+WuHWlzKx/faB+BOnHFUPJ3Lw4luMO1DFeie9rI/Gj/GcjHTaX/Ag/TJDdX8fhBWGbWwvjshngOhUMz/ESDba9tm4MVW/WX5anYTQXudDJJfIyU+sd66h8BxB5RHpyeFnzwRNe40SEE0KBTOS/E4PBZ3QQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=in-advantage.com; dmarc=pass action=none
  header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mv49pXxI9NYSX9UZOP4SbUoZ3wox9TZ+Ko6Yzl+0c/g=;
- b=QBsjw54bvqkwh2a5p+U3xXmyAQe/2MFTh8GwGpcjCjykePok+voTIv0Q6M6i/2aIIzD88ELdL1wTzQ8DdWBv7k9OE4TCfSJYQVyYx8hmE/6JJFZ5rMQhXcScRvtvyZ3PWjEQIbiqY8k/Wso8lYhmtWtLu+yMWf/rwjIwzofm8WA=
+ bh=nJsIVdGdQxc4duae8jEw39R/NAVBSIQKEwRd0yqzlss=;
+ b=grZs6ezRTvsSmBtvfnUqQhI0w/0THhNcbQ37HJp2rrrSQcaBLwDxi2h8piySqo9rYStG97kUFwY0qrh9aQM+u1Nh2arn4EVz+ltQgceeL0E60LJ9FPi993mQ6AvlmJN5B0yy2qtczHHeE2nk1ojVPKOyccMg50CGbo2XnOCb9hE=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=in-advantage.com;
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37) by CO1PR10MB4722.namprd10.prod.outlook.com
- (2603:10b6:303:9e::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.27; Tue, 16 Nov
- 2021 06:23:52 +0000
+ (2603:10b6:301:35::37) by MWHPR1001MB2383.namprd10.prod.outlook.com
+ (2603:10b6:301:31::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.16; Tue, 16 Nov
+ 2021 06:23:47 +0000
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::6430:b20:8805:cd9f]) by MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::6430:b20:8805:cd9f%5]) with mapi id 15.20.4690.026; Tue, 16 Nov 2021
- 06:23:52 +0000
+ 06:23:47 +0000
 From:   Colin Foster <colin.foster@in-advantage.com>
 To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
@@ -63,9 +63,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [RFC PATCH v4 net-next 13/23] pinctrl: ocelot: expose ocelot_pinctrl_core_probe interface
-Date:   Mon, 15 Nov 2021 22:23:18 -0800
-Message-Id: <20211116062328.1949151-14-colin.foster@in-advantage.com>
+Subject: [RFC PATCH v4 net-next 06/23] net: dsa: ocelot: felix: add interface for custom regmaps
+Date:   Mon, 15 Nov 2021 22:23:11 -0800
+Message-Id: <20211116062328.1949151-7-colin.foster@in-advantage.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211116062328.1949151-1-colin.foster@in-advantage.com>
 References: <20211116062328.1949151-1-colin.foster@in-advantage.com>
@@ -75,427 +75,150 @@ X-ClientProxiedBy: MWHPR11CA0028.namprd11.prod.outlook.com
  (2603:10b6:300:115::14) To MWHPR1001MB2351.namprd10.prod.outlook.com
  (2603:10b6:301:35::37)
 MIME-Version: 1.0
-Received: from localhost.localdomain (67.185.175.147) by MWHPR11CA0028.namprd11.prod.outlook.com (2603:10b6:300:115::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.26 via Frontend Transport; Tue, 16 Nov 2021 06:23:51 +0000
+Received: from localhost.localdomain (67.185.175.147) by MWHPR11CA0028.namprd11.prod.outlook.com (2603:10b6:300:115::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.26 via Frontend Transport; Tue, 16 Nov 2021 06:23:46 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3cd11db6-2f3f-4747-ece2-08d9a8c9a8cb
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4722:
-X-Microsoft-Antispam-PRVS: <CO1PR10MB47229C35888EE7B52BB3F7ADA4999@CO1PR10MB4722.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
+X-MS-Office365-Filtering-Correlation-Id: d0a075d7-b781-4e90-bc8a-08d9a8c9a570
+X-MS-TrafficTypeDiagnostic: MWHPR1001MB2383:
+X-Microsoft-Antispam-PRVS: <MWHPR1001MB2383ABE1741946FA04513DDAA4999@MWHPR1001MB2383.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2150;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tmXTa3wLgruJE+TTwwcjKvj9/LjVS+Abla1Jg7WCycJgXb2h9SJIOjxRZA3jIHDzlQFa//Rc47JLGEwXo8M3hSIzcvxuQu0zGDMHPf+jwZidoJMPbyImcV0R6xbzZ7T64/ReL1V+VUyHx4fu6ZvJNBfO3RGaBiikkw55krDwHgg7sHfkgIsm9oiAA4pojV+lvc9fxY9cn4UXs4vTdOttlRCWDz1bRREKrDqIMgl1Q4kOULJAQhAMlgpccAOwkhnX6S5N3IvEhaaLq5DmsvxMbf2PF7g3INcpmGoDYovx/tAbsglBtZpXRbl3fzrLhsyhO2z+nxmTIc65FF60pDjOyP9euozMDnuDty9WWyjGcu5uHIb56pdDO1hjs4lvyBEaxVuw0WSp8X87f37FI07VZSo3anjeK2qevnpC6uMCBkcLAGqg9kqpcPKKG1ud7+VtVGVqHOhjlBxixoBjQgm3ZoQs48N8XrtzIbZQosIU8Yv7dDbSsvn4+kIH4uA+iPihUvJR1MzjD8w1fcxeyXXMkvmfsmEByF/WCAsbKlqrIEVKJBLT2fv1oAVUxRyAaw+MNf8lTrVAv3L6lM8+ehVWoxqHTBcQEjI167K5FN12Pmv35gsPPkfAm1I8icU5/wOkhOwk/jUAN/HZJwoVPTz6ApGJfwaTIfr5uuWLqsV01Y2eevNMI53bUCXHIRfKBeRMEPS+mQ9wCC2EIqRXVrWnxw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(366004)(396003)(39840400004)(346002)(83380400001)(6666004)(54906003)(5660300002)(2906002)(7416002)(6486002)(44832011)(956004)(86362001)(2616005)(4326008)(316002)(508600001)(8676002)(186003)(6512007)(38100700002)(38350700002)(1076003)(8936002)(52116002)(26005)(6506007)(36756003)(30864003)(66556008)(66476007)(66946007);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: 8RM+8eksEDxDTu39a07Uu1Uoo1vr/NU/5qm51b9aR6tDnsr73l2P3gYIZlj2JJiElVhrcExtNlFj3TdIZQzYwq03r004EbJnoF4hWDf0OM4oaLz///NYkK9DXRi4EFZyzSpi8NkTTzL3IRVlLhw0srUL4urfrP3ARUErnLZxY4ok8bENaTMLBGW0XOcu042GZA2Hnd9idTt8M9fGELPVux7DGHLlaLlQP0hqM8zv8HPYCCEf9/CtSIYrNv9T0rC/L2WSxM+s1u0FqWlyknLtMwcwXUqwZ1/8SuTwF6/oSEqz2GzHuGUxHZTes6xWtysXBiFUZBorkfdoiNjCy+x0Ctbo6ZCgR1+am0AriZvIQK7rC11N7SpDlfh92LtQpvL4fL3pgZGgqwbCUjQ4Lj+VnV+ja3ACLV5Tl4YECnApNSgT5fvbbFSsfg0rIEXBJRgG/00Tldc3K2ta21bgtUZo0NDSHWzr+R6AxyQFvF6Wm7usULJODhakZX9UC31Ri7OdMkCtJJW2+KH0nKW7a5IB5p9hx3jcQ3gyItq11FrLq1e5OaBm771le3OGi9jUIhHvHzukCZwccxz9+FuE5lAKg74bxNtQpJslJUCdhoys1tyun3kClYZe23Z/wHgEG0tTkPHSGxQNn0wsdAGdYg3BwlCguhltEVxVMFycrixXEkIALq7suKAtX7tq3kM3bIZudhiXhIhPyyKBzNhhLaik5Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(39840400004)(136003)(366004)(346002)(396003)(6512007)(54906003)(316002)(4326008)(83380400001)(8676002)(86362001)(44832011)(1076003)(2906002)(66946007)(38100700002)(38350700002)(508600001)(956004)(26005)(66476007)(66556008)(6666004)(6486002)(6506007)(52116002)(5660300002)(36756003)(7416002)(8936002)(186003)(2616005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hsPpEXCj59Q/CZpnB3J7DtiSbHnLlVYE+pKNR4TSdfr+f4gzYar9IeRjfQUL?=
- =?us-ascii?Q?HtQc5Rh31iJsrNetRtOZRK7TR/iZWwnn+RE3IWkeSStAlP+37XZcaEH4hCpu?=
- =?us-ascii?Q?TixCMCk6iI3H6AXoT1OorNll2g1fd1AU5V2b/mL7cZcqVqrvnVmpP7SJ6UTx?=
- =?us-ascii?Q?kEjSFWYtNKZFxQqPv941kmY9mfjAIkEiyQ2SveIxfWpohF7tK1ehSCQCpe2K?=
- =?us-ascii?Q?eTNwyyXN65b1OGVjAcAldvnYAvMCI68rW9S4/x3hVEmqf8HBEyduicDM6Sg/?=
- =?us-ascii?Q?IVgaYb+D94INqmYeeiLO+1hyqPzMjxckKB9UR0XbEwtTgd5regjKxStbyaDv?=
- =?us-ascii?Q?mJUpYhc0tkyNvAf79aEhvVEGH/Ym1o0XSFVasbbl0mSef7RD1FKG+VINXCEW?=
- =?us-ascii?Q?Syl7Gk1+38VnPF1UhTNL5xsiZybzKDGq8pPzRDxvqQTQh80szJ0gHDrMqkOH?=
- =?us-ascii?Q?C1Mkmvz24dsCzkQGbFwsBIRJvcMwxiJJqr8aC7xuFYhPRgdhk8HWWbdY/dio?=
- =?us-ascii?Q?RIqpEgrQczJ73+8RrtG/nsEdPECw9UT3y2ovEDM7Con12Xxg4fEHfb9JxHiR?=
- =?us-ascii?Q?9dAklB8L47sWKUG1muO+ssWuH3CHWemh8EsDTTcPix4eP4FLDmvH0VnraiGH?=
- =?us-ascii?Q?V6NBpvxdVc/inavbp4nvB2CsYcS5ubvVdeRwZiEN1ylqxLlE//iBzxXqgbjQ?=
- =?us-ascii?Q?BB7+drOg7ednlPC7zoVXIHALgwMzE7+194mlpeOn+CPYCYvTnX3skj6pOIjg?=
- =?us-ascii?Q?cmpw8FnC1eA3rCovAS5ZXSg6cHoCOeh323yNsYGw6yv68zKOlHHEaT+l6/ha?=
- =?us-ascii?Q?Rp+Q5DcWRe2muRuD8k2N9EWuKuM2UzSnxdm3yIhplR8Vnmn/7PjkLo51+1Ef?=
- =?us-ascii?Q?7OVJBd/d97Sox3KQqySoqp8N1g3uLjk/Sc2ly0hIIxpEKTtJ0gXJPJ+o/ZB0?=
- =?us-ascii?Q?0J/bts62DiZsz2fz2Yc1aqaksYFkjWDAEz2wa6BarxhClDQ+FB7VTnSzcvoX?=
- =?us-ascii?Q?54MMtTJWEa0Uu3H5wDBbk3oftRp9U2oKzSodhEF1ehUfMiTr1D8nCqas24IO?=
- =?us-ascii?Q?Ni1vVAXXl/Ggbf4vnFYmfIp66NX5susAIpDyEot6gvnRf5kbyJNmPO4zaPlq?=
- =?us-ascii?Q?SLeNOvU7RfyFMnQK/TCloOL22cgpk7wJOm3Of5PCfKpEjOi1nWNIVGQT/qom?=
- =?us-ascii?Q?MDSX4JOSWwsdNf5sqiBJjdLQdemTqM05mGZbQTg7Gi2e3Q7amtALVnSFIz6b?=
- =?us-ascii?Q?iLdW9DotX2/QrfuUpcqaxqqRuFjvMmQHNxwFC0DTRy1XN/WAt652gbh+GQaa?=
- =?us-ascii?Q?Pe+583ayX5fCpdg9HarqzyVLDdESvWkjDCasoNilvS0agKiYNi26y7D/ThCi?=
- =?us-ascii?Q?YF4KvxSX4U4uiBm3/wjTTLhA3393XlZXWfU0w5AWFfHnMyn8V2TUdHhmiyic?=
- =?us-ascii?Q?o3SO+PpAVkuv3SQWP/LslsVSf8gkiok5DCqKuji9Vj+vz4wUDvyqraTgoAw7?=
- =?us-ascii?Q?7v/gmWYtVbsZUGkzklAE6wvJfsv2FZz2I29XqIWIfen2E9e+hrjzhsLFsREd?=
- =?us-ascii?Q?u7tu34gjMxOqtFZV32VRttN6cuQYq7Yzrw5ZToTBlMXzFjSRG92VNDSp+nH+?=
- =?us-ascii?Q?JWsd046T6Wu7ywEQdv+YEb+M0yOoBiZiISJDGz0Qm9jmjLPwelX3q6uO5BxG?=
- =?us-ascii?Q?rKXdCRTLbNjp1aM+91vGIFLRN1A=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WNJ1bl2BAbdI6izA02Umi1wlk+C78/0uM11hcANopgfCQjlcBLpLKCvZzfyi?=
+ =?us-ascii?Q?cvIfy8yJNpskI6m88lma4HvbmVo6ld8qUxlF6ESRS/bhB8ooV3AtIeEDiPoS?=
+ =?us-ascii?Q?CIDyF9OMN3Lpa1fwAsU4jCoTE1C+QetbNj71Yx3DT9AJ6VzA7Fz56JTeVM/I?=
+ =?us-ascii?Q?Q1P0qXEQepb/0AvMbJBVZn9CYJ3vIiHyrV9Rg7IcJGHGCnRT8bTNKszpxkx6?=
+ =?us-ascii?Q?g4z2jkNqcIu9NZ+7ippJJjo+KMHPvVaRq1DduO8w7MPAs3WcKrLSH1FB4Mg7?=
+ =?us-ascii?Q?8w5lz3TM/vBpFFBcSh7GkCKmGlTXpgDRh8vY39uOUq1aZ03b+FSZuU4iIAeU?=
+ =?us-ascii?Q?8RYQaIsN6+sArfI5mTx84cgLoXGO7ud12+Sr254L+hkUY1Gj60Gryyr0ijQ/?=
+ =?us-ascii?Q?ffP0YTysCLm2YU8fzXQCGNASFDYmYfN3TSwW9fmlmWWlID+OXrAlUailX+Qo?=
+ =?us-ascii?Q?HniCJv08tA+KbfuKcR+eci5yj3Gmny9o2eARt6Jedlb9T7raB6bFID+dgBqe?=
+ =?us-ascii?Q?OPgoMdTiMyVUFvKOZcPTlZmYMIgBQ/wpyvT9FPoRjpizPQ1gGfj4ZoYkP90E?=
+ =?us-ascii?Q?tgwPOvuAl3Oi1Xf2+yshRcTFKhj6e7eHi3Hbg+Q70j2E20aZYPRjfm+ubGnH?=
+ =?us-ascii?Q?KxObx/tbA1x+HBUtlRDLaeurvp95VMr7l3ZqF9vVu+5Usg6rRM02qx9f/Zi/?=
+ =?us-ascii?Q?dr4+iwT9wrwDsMTCgeO68x7YR45b+vg37RBprDmfcPzrI3Wd4l1o7RodWjPQ?=
+ =?us-ascii?Q?0lcvsYRAv9DtGXo7qythcbUmM6iMDrYGHaPbjeZjd9YV1Mx0nLfO908/4TYT?=
+ =?us-ascii?Q?l0+ph2GT3hvLhdYUYRssqLnqL+LBZEJlSJaatdHVTg79hnsqbqoZxi1RzuT1?=
+ =?us-ascii?Q?Yo9nYjQ2CY0IZal/5mxJFaL51m4DFoQ/Jh0xTvFaMkKWJvvO9SGzYLwDm/Ej?=
+ =?us-ascii?Q?PK0Zut6Yk7qxMpoTlj49iFAon9xKk516Zk5ICC6ksrNJmBld3xEyEJXVjV5W?=
+ =?us-ascii?Q?hQrGZF4CiWQTkAAwvUbbbfoWkyEu3pc/YGwRfg3RR4lLQ5SV3dBeHes068FX?=
+ =?us-ascii?Q?Y9+1ZjwXWlcEqlXq2iqiUKwdiG1lLWoxJr4hO8g9bY10ZzJU8rGNKkXSlr5F?=
+ =?us-ascii?Q?BqLaQ/GMdQgqYk4rTsAAIIErtF37DUO9IN3+bTUqPAb1kxWtOCrDfv+23U0m?=
+ =?us-ascii?Q?fn4+0RM15qOPs2XQN1R+dogAmM+H1Lf9aAHOBflO2Xjkyrd+nw9KNI7ljJb6?=
+ =?us-ascii?Q?Tl6iGRj1PeRNM6dbzOWQADmPG4xSxJw4R82y5j7V81qHmaZqeNp5MDNn/SWK?=
+ =?us-ascii?Q?QrlROLHImw692rpOHpWQhcyseeC3fF4dCtthqD8415evIPEn6gft1QNCvmfk?=
+ =?us-ascii?Q?5BrHuYhsubZX8fNCKT83ujb5BOPDDZ4q8P69cT/5uMfNPz67oeSRTQM150Tw?=
+ =?us-ascii?Q?3hVSqrzfyxf/jOtonQxEm84M27yUipYwjkpj22APS/wpVGZMyVVKlOpIwMsE?=
+ =?us-ascii?Q?U/Orr+yj0zvjWm+UpqSHq4Odz8jG16yNDDPt7RJpn0uHtPprPRUo3RmVS+Fl?=
+ =?us-ascii?Q?hfK4GkUOQVLmQdWMs1zBJt4PhkcI2RfPbqtYWdmu76yNjR4W/s7spNeqXC0v?=
+ =?us-ascii?Q?TdXupolFwEsYNTJknFXbbSP5oGB0nIfWLsrb+TeEdLHVgWTT+A8D19SJXyrk?=
+ =?us-ascii?Q?MATE1qc0u85yzXlahlz4JGo81PI=3D?=
 X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cd11db6-2f3f-4747-ece2-08d9a8c9a8cb
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0a075d7-b781-4e90-bc8a-08d9a8c9a570
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 06:23:52.5654
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 06:23:46.8786
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mhoJzDpCV46rj5nqpIC/mTpzvThj/1iA9YTu0n9QJSut6HdrBk0WTvw88ghqZfLlQFkYWjaZacVqjsCibwENkdB4MnkoI4Oat3u+vjFBdb8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4722
+X-MS-Exchange-CrossTenant-UserPrincipalName: RD/QYTNp+CgMq+ia3kXluQbTmp/5vHX4KQGj2i+KOyumQ6On81X2ot9eyKVNCnbUGGaCJLBcJhaE12/MWStZRJy9XCNdnEyRUEOdBMVcIHs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1001MB2383
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is step 2 to allow a custom regmap interface into the driver. This
-will allow regmaps that use other interfaces to fully utilize the pinctrl
-features.
+Add an interface so that non-mmio regmaps can be used
 
 Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
 ---
- drivers/pinctrl/pinctrl-ocelot.c | 150 ++++++++++++++++++++-----------
- include/soc/mscc/ocelot.h        |  18 ++++
- 2 files changed, 118 insertions(+), 50 deletions(-)
+ drivers/net/dsa/ocelot/felix.c           | 4 ++--
+ drivers/net/dsa/ocelot/felix.h           | 2 ++
+ drivers/net/dsa/ocelot/felix_vsc9959.c   | 6 +++---
+ drivers/net/dsa/ocelot/seville_vsc9953.c | 1 +
+ 4 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index b9acb80d6b3f..f8d2494b335c 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -25,9 +25,6 @@
- #include "pinconf.h"
- #include "pinmux.h"
+diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
+index 94702042246c..615f6b84c688 100644
+--- a/drivers/net/dsa/ocelot/felix.c
++++ b/drivers/net/dsa/ocelot/felix.c
+@@ -1016,7 +1016,7 @@ static int felix_init_structs(struct felix *felix, int num_phys_ports)
+ 		res.start += felix->switch_base;
+ 		res.end += felix->switch_base;
  
--#define ocelot_clrsetbits(addr, clear, set) \
--	writel((readl(addr) & ~(clear)) | (set), (addr))
--
- /* PINCONFIG bits (sparx5 only) */
- enum {
- 	PINCONF_BIAS,
-@@ -35,6 +32,9 @@ enum {
- 	PINCONF_DRIVE_STRENGTH,
+-		target = ocelot_regmap_init(ocelot, &res);
++		target = felix->info->init_regmap(ocelot, &res);
+ 		if (IS_ERR(target)) {
+ 			dev_err(ocelot->dev,
+ 				"Failed to map device memory space\n");
+@@ -1053,7 +1053,7 @@ static int felix_init_structs(struct felix *felix, int num_phys_ports)
+ 		res.start += felix->switch_base;
+ 		res.end += felix->switch_base;
+ 
+-		target = ocelot_regmap_init(ocelot, &res);
++		target = felix->info->init_regmap(ocelot, &res);
+ 		if (IS_ERR(target)) {
+ 			dev_err(ocelot->dev,
+ 				"Failed to map memory space for port %d\n",
+diff --git a/drivers/net/dsa/ocelot/felix.h b/drivers/net/dsa/ocelot/felix.h
+index d7da307fc071..81a86bd60f03 100644
+--- a/drivers/net/dsa/ocelot/felix.h
++++ b/drivers/net/dsa/ocelot/felix.h
+@@ -46,6 +46,8 @@ struct felix_info {
+ 				 enum tc_setup_type type, void *type_data);
+ 	void	(*port_sched_speed_set)(struct ocelot *ocelot, int port,
+ 					u32 speed);
++	struct regmap *(*init_regmap)(struct ocelot *ocelot,
++				      struct resource *res);
  };
  
-+#define ocelot_pinctrl_determine_stride(desc) \
-+	(1 + (desc->npins - 1) / 32)
-+
- #define BIAS_PD_BIT BIT(4)
- #define BIAS_PU_BIT BIT(3)
- #define BIAS_BITS   (BIAS_PD_BIT|BIAS_PU_BIT)
-@@ -149,10 +149,13 @@ struct ocelot_pin_caps {
+ extern const struct dsa_switch_ops felix_switch_ops;
+diff --git a/drivers/net/dsa/ocelot/felix_vsc9959.c b/drivers/net/dsa/ocelot/felix_vsc9959.c
+index 0b3ccfd54603..789e1ff0d13b 100644
+--- a/drivers/net/dsa/ocelot/felix_vsc9959.c
++++ b/drivers/net/dsa/ocelot/felix_vsc9959.c
+@@ -17,6 +17,8 @@
+ #include "felix.h"
  
- struct ocelot_pinctrl {
- 	struct device *dev;
-+	struct device_node *node;
- 	struct pinctrl_dev *pctl;
- 	struct gpio_chip gpio_chip;
- 	struct regmap *map;
-+	u32 regmap_offset;
- 	struct regmap *pincfg;
-+	u32 pincfg_offset;
- 	struct pinctrl_desc *desc;
- 	struct ocelot_pmx_func func[FUNC_MAX];
- 	u8 stride;
-@@ -714,7 +717,8 @@ static int ocelot_pin_function_idx(struct ocelot_pinctrl *info,
- 	return -1;
+ #define VSC9959_TAS_GCL_ENTRY_MAX	63
++#define VSC9959_SWITCH_PCI_BAR		4
++#define VSC9959_IMDIO_PCI_BAR		0
+ 
+ static const u32 vsc9959_ana_regmap[] = {
+ 	REG(ANA_ADVLEARN,			0x0089a0),
+@@ -1365,6 +1367,7 @@ static const struct felix_info felix_info_vsc9959 = {
+ 	.prevalidate_phy_mode	= vsc9959_prevalidate_phy_mode,
+ 	.port_setup_tc		= vsc9959_port_setup_tc,
+ 	.port_sched_speed_set	= vsc9959_sched_speed_set,
++	.init_regmap		= ocelot_regmap_init,
+ };
+ 
+ static irqreturn_t felix_irq_handler(int irq, void *data)
+@@ -1384,9 +1387,6 @@ static irqreturn_t felix_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
  }
  
--#define REG_ALT(msb, info, p) (OCELOT_GPIO_ALT0 * (info)->stride + 4 * ((msb) + ((info)->stride * ((p) / 32))))
-+#define REG_ALT(msb, info, p) (OCELOT_GPIO_ALT0 * (info)->stride + 4 * ((msb) + \
-+			((info)->stride * ((p) / 32))) + (info)->regmap_offset)
- 
- static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 				 unsigned int selector, unsigned int group)
-@@ -744,7 +748,8 @@ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
-+#define REG(r, info, p) (((r) * (info)->stride + (4 * ((p) / 32))) + \
-+		(info)->regmap_offset)
- 
- static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
- 				     struct pinctrl_gpio_range *range,
-@@ -766,10 +771,8 @@ static int ocelot_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned int p = offset % 32;
- 
--	regmap_update_bits(info->map, REG_ALT(0, info, offset),
--			   BIT(p), 0);
--	regmap_update_bits(info->map, REG_ALT(1, info, offset),
--			   BIT(p), 0);
-+	regmap_update_bits(info->map, REG_ALT(0, info, offset), BIT(p), 0);
-+	regmap_update_bits(info->map, REG_ALT(1, info, offset), BIT(p), 0);
- 
- 	return 0;
- }
-@@ -821,11 +824,11 @@ static int ocelot_hw_get_value(struct ocelot_pinctrl *info,
- 	if (info->pincfg) {
- 		u32 regcfg;
- 
--		ret = regmap_read(info->pincfg, pin, &regcfg);
-+		ret = regmap_read(info->pincfg, pin + info->pincfg_offset,
-+				  &regcfg);
- 		if (ret)
- 			return ret;
- 
--		ret = 0;
- 		switch (reg) {
- 		case PINCONF_BIAS:
- 			*val = regcfg & BIAS_BITS;
-@@ -853,14 +856,14 @@ static int ocelot_pincfg_clrsetbits(struct ocelot_pinctrl *info, u32 regaddr,
- 	u32 val;
- 	int ret;
- 
--	ret = regmap_read(info->pincfg, regaddr, &val);
-+	ret = regmap_read(info->pincfg, regaddr + info->pincfg_offset, &val);
- 	if (ret)
- 		return ret;
- 
- 	val &= ~clrbits;
- 	val |= setbits;
- 
--	ret = regmap_write(info->pincfg, regaddr, val);
-+	ret = regmap_write(info->pincfg, regaddr + info->pincfg_offset, val);
- 
- 	return ret;
- }
-@@ -873,7 +876,6 @@ static int ocelot_hw_set_value(struct ocelot_pinctrl *info,
- 	int ret = -EOPNOTSUPP;
- 
- 	if (info->pincfg) {
+-#define VSC9959_SWITCH_PCI_BAR 4
+-#define VSC9959_IMDIO_PCI_BAR 0
 -
- 		ret = 0;
- 		switch (reg) {
- 		case PINCONF_BIAS:
-@@ -1019,15 +1021,16 @@ static int ocelot_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			if (arg)
- 				regmap_write(info->map,
- 					     REG(OCELOT_GPIO_OUT_SET, info,
--						 pin),
-+						 pin) + info->regmap_offset,
- 					     BIT(p));
- 			else
- 				regmap_write(info->map,
- 					     REG(OCELOT_GPIO_OUT_CLR, info,
--						 pin),
-+						 pin) + info->regmap_offset,
- 					     BIT(p));
- 			regmap_update_bits(info->map,
--					   REG(OCELOT_GPIO_OE, info, pin),
-+					   REG(OCELOT_GPIO_OE, info, pin) +
-+					       info->regmap_offset,
- 					   BIT(p),
- 					   param == PIN_CONFIG_INPUT_ENABLE ?
- 					   0 : BIT(p));
-@@ -1138,20 +1141,20 @@ static int ocelot_create_group_func_map(struct device *dev,
- 	return 0;
- }
- 
--static int ocelot_pinctrl_register(struct platform_device *pdev,
-+static int ocelot_pinctrl_register(struct device *dev,
- 				   struct ocelot_pinctrl *info)
+ static int felix_pci_probe(struct pci_dev *pdev,
+ 			   const struct pci_device_id *id)
  {
- 	int ret;
+diff --git a/drivers/net/dsa/ocelot/seville_vsc9953.c b/drivers/net/dsa/ocelot/seville_vsc9953.c
+index 610bdfd31903..47da279a8ff7 100644
+--- a/drivers/net/dsa/ocelot/seville_vsc9953.c
++++ b/drivers/net/dsa/ocelot/seville_vsc9953.c
+@@ -1087,6 +1087,7 @@ static const struct felix_info seville_info_vsc9953 = {
+ 	.mdio_bus_free		= vsc9953_mdio_bus_free,
+ 	.phylink_validate	= vsc9953_phylink_validate,
+ 	.prevalidate_phy_mode	= vsc9953_prevalidate_phy_mode,
++	.init_regmap		= ocelot_regmap_init,
+ };
  
--	ret = ocelot_create_group_func_map(&pdev->dev, info);
-+	ret = ocelot_create_group_func_map(dev, info);
- 	if (ret) {
--		dev_err(&pdev->dev, "Unable to create group func map.\n");
-+		dev_err(dev, "Unable to create group func map.\n");
- 		return ret;
- 	}
- 
--	info->pctl = devm_pinctrl_register(&pdev->dev, info->desc, info);
-+	info->pctl = devm_pinctrl_register(dev, info->desc, info);
- 	if (IS_ERR(info->pctl)) {
--		dev_err(&pdev->dev, "Failed to register pinctrl\n");
-+		dev_err(dev, "Failed to register pinctrl\n");
- 		return PTR_ERR(info->pctl);
- 	}
- 
-@@ -1320,7 +1323,7 @@ static void ocelot_irq_handler(struct irq_desc *desc)
- 	}
- }
- 
--static int ocelot_gpiochip_register(struct platform_device *pdev,
-+static int ocelot_gpiochip_register(struct device *dev,
- 				    struct ocelot_pinctrl *info)
- {
- 	struct gpio_chip *gc;
-@@ -1331,7 +1334,7 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
- 
- 	gc = &info->gpio_chip;
- 	gc->ngpio = info->desc->npins;
--	gc->parent = &pdev->dev;
-+	gc->parent = dev;
- 	gc->base = -1;
- 	gc->of_node = info->dev->of_node;
- 	gc->label = "ocelot-gpio";
-@@ -1342,8 +1345,7 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
- 		girq->chip = &ocelot_irqchip;
- 		girq->parent_handler = ocelot_irq_handler;
- 		girq->num_parents = 1;
--		girq->parents = devm_kcalloc(&pdev->dev, 1,
--					     sizeof(*girq->parents),
-+		girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
- 					     GFP_KERNEL);
- 		if (!girq->parents)
- 			return -ENOMEM;
-@@ -1352,7 +1354,7 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
- 		girq->handler = handle_edge_irq;
- 	}
- 
--	return devm_gpiochip_add_data(&pdev->dev, gc, info);
-+	return devm_gpiochip_add_data(dev, gc, info);
- }
- 
- static const struct of_device_id ocelot_pinctrl_of_match[] = {
-@@ -1384,56 +1386,104 @@ static struct regmap *ocelot_pinctrl_create_pincfg(struct platform_device *pdev)
- 	return devm_regmap_init_mmio(&pdev->dev, base, &regmap_config);
- }
- 
-+static struct pinctrl_desc
-+*ocelot_pinctrl_match_from_node(struct device_node *device_node)
-+{
-+	const struct of_device_id *match;
-+
-+	match = of_match_node(of_match_ptr(ocelot_pinctrl_of_match),
-+			      device_node);
-+
-+	if (match)
-+		return (struct pinctrl_desc *)match->data;
-+
-+	return NULL;
-+}
-+
-+int ocelot_pinctrl_core_probe(struct device *dev,
-+			      struct pinctrl_desc *pinctrl_desc,
-+			      struct regmap *regmap_base, u32 regmap_offset,
-+			      struct regmap *pincfg_base, u32 pincfg_offset,
-+			      struct device_node *device_node)
-+{
-+	struct ocelot_pinctrl *info;
-+	int ret;
-+
-+	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	if (!pinctrl_desc)
-+		pinctrl_desc = ocelot_pinctrl_match_from_node(device_node);
-+	if (!pinctrl_desc) {
-+		dev_err(dev, "Failed to find device match\n");
-+		return -ENODEV;
-+	}
-+
-+	info->desc = pinctrl_desc;
-+	info->stride = ocelot_pinctrl_determine_stride(info->desc);
-+	info->dev = dev;
-+	info->node = device_node;
-+	info->map = regmap_base;
-+	info->pincfg = pincfg_base;
-+	info->regmap_offset = regmap_offset;
-+	info->pincfg_offset = pincfg_offset;
-+
-+	ret = ocelot_pinctrl_register(dev, info);
-+	if (ret)
-+		return ret;
-+
-+	ret = ocelot_gpiochip_register(dev, info);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(ocelot_pinctrl_core_probe);
-+
- static int ocelot_pinctrl_probe(struct platform_device *pdev)
- {
-+	struct pinctrl_desc *pinctrl_desc;
- 	struct device *dev = &pdev->dev;
--	struct ocelot_pinctrl *info;
-+	struct regmap *regmap;
- 	struct regmap *pincfg;
- 	void __iomem *base;
--	int ret;
-+	int ret, stride;
- 	struct regmap_config regmap_config = {
- 		.reg_bits = 32,
- 		.val_bits = 32,
- 		.reg_stride = 4,
- 	};
- 
--	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
--	if (!info)
--		return -ENOMEM;
--
--	info->desc = (struct pinctrl_desc *)device_get_match_data(dev);
-+	pinctrl_desc = (struct pinctrl_desc *)device_get_match_data(dev);
- 
- 	base = devm_ioremap_resource(dev,
- 			platform_get_resource(pdev, IORESOURCE_MEM, 0));
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--	info->stride = 1 + (info->desc->npins - 1) / 32;
-+	stride = ocelot_pinctrl_determine_stride(pinctrl_desc);
- 
--	regmap_config.max_register = OCELOT_GPIO_SD_MAP * info->stride + 15 * 4;
-+	regmap_config.max_register = OCELOT_GPIO_SD_MAP * stride + 15 * 4;
- 
--	info->map = devm_regmap_init_mmio(dev, base, &regmap_config);
--	if (IS_ERR(info->map)) {
-+	regmap = devm_regmap_init_mmio(dev, base, &regmap_config);
-+	if (IS_ERR(regmap)) {
- 		dev_err(dev, "Failed to create regmap\n");
--		return PTR_ERR(info->map);
-+		return PTR_ERR(regmap);
- 	}
--	dev_set_drvdata(dev, info->map);
--	info->dev = dev;
-+	dev_set_drvdata(dev, regmap);
- 
- 	/* Pinconf registers */
--	if (info->desc->confops) {
-+	if (pinctrl_desc->confops) {
- 		pincfg = ocelot_pinctrl_create_pincfg(pdev);
--		if (IS_ERR(pincfg))
-+		if (IS_ERR(pincfg)) {
- 			dev_dbg(dev, "Failed to create pincfg regmap\n");
--		else
--			info->pincfg = pincfg;
-+			pincfg = NULL;
-+		}
- 	}
- 
--	ret = ocelot_pinctrl_register(pdev, info);
--	if (ret)
--		return ret;
--
--	ret = ocelot_gpiochip_register(pdev, info);
-+	ret = ocelot_pinctrl_core_probe(dev, pinctrl_desc, regmap, 0, pincfg, 0,
-+					dev->of_node);
- 	if (ret)
- 		return ret;
- 
-diff --git a/include/soc/mscc/ocelot.h b/include/soc/mscc/ocelot.h
-index 9a4ded4bff04..14acfe82d0a4 100644
---- a/include/soc/mscc/ocelot.h
-+++ b/include/soc/mscc/ocelot.h
-@@ -6,6 +6,7 @@
- #define _SOC_MSCC_OCELOT_H
- 
- #include <linux/ptp_clock_kernel.h>
-+#include <linux/pinctrl/pinctrl.h>
- #include <linux/net_tstamp.h>
- #include <linux/if_vlan.h>
- #include <linux/regmap.h>
-@@ -912,4 +913,21 @@ ocelot_mrp_del_ring_role(struct ocelot *ocelot, int port,
- }
- #endif
- 
-+#if IS_ENABLED(CONFIG_PINCTRL_OCELOT)
-+int ocelot_pinctrl_core_probe(struct device *dev,
-+			      struct pinctrl_desc *pinctrl_desc,
-+			      struct regmap *regmap_base, u32 regmap_offset,
-+			      struct regmap *pincfg_base, u32 pincfg_offset,
-+			      struct device_node *device_node);
-+#else
-+int ocelot_pinctrl_core_probe(struct device *dev,
-+			      struct pinctrl_desc *pinctrl_desc,
-+			      struct regmap *regmap_base, u32 regmap_offset,
-+			      struct regmap *pincfg_base, u32 pincfg_offset,
-+			      struct device_node *device_node)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+
- #endif
+ static int seville_probe(struct platform_device *pdev)
 -- 
 2.25.1
 
