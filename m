@@ -2,69 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DD8C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Nov 2021 11:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C5AC433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Nov 2021 11:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD18E60D42
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Nov 2021 11:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0198761B7D
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Nov 2021 11:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343980AbhKRLbn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 18 Nov 2021 06:31:43 -0500
-Received: from mga07.intel.com ([134.134.136.100]:31488 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1343982AbhKRL3k (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 18 Nov 2021 06:29:40 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10171"; a="297585194"
+        id S1344138AbhKRLcs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 18 Nov 2021 06:32:48 -0500
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:14563 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344059AbhKRLas (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Nov 2021 06:30:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1637234869; x=1668770869;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=72iw7hIyLO++igxJdp9HPgiBSp9KSlDA7icpAXKwqcI=;
+  b=gP+faEh9jyuVTP98708VbnOupX3oWlsekmShxVx4YNOiukul+sWrwn//
+   oVnWL/+Zzf4mZiHM8xi7lLWyhMbsh4FhNFnTDGLMeiyVaIpTMn5W/zmg5
+   r21IGi6thBRfRJVOf9Gv5hHWRRQf695K2C2+k7FitbGYvCx4vW9licOsI
+   IvwyUUuCTuiVqQFwJrX8YUO2xa2NUZt8tajHEHRqb1Br8JMd986F+dt87
+   t6YnCYeVHK10t7KSOBuQDLYWK/bvdqapOf/ItygAwLWVxrAX6US2vsRGh
+   UeHHlM2cYOjGvIcpHgnpnaKLn5QH8UvTW+9WUsC0DcKNRLwWh5dFQsEji
+   g==;
+IronPort-SDR: huzUMBsMGdmDUYm3ruEdDHD4w24aJWdi1aBmj3hUKILuj063Tmsfp3dP4M5SdGx6kg+4Q7zsKE
+ ctVue0slDgtRxkYO13SQA4O49F/W0wDQQ1fYKRsn/OsYZZ52dho6iwh/phv/E3nhO6gkqVDmw1
+ E4RjvWQY0GpEcSyRstpk7VQpGEqAWvCOEmYLmRdigJBDUhh8XnvSrTN7FUsLZor6O6pphsKArU
+ AG4apk3lhDt8wGSFb+TOBO/2jL/S1npcXQB+nJBhYU17SaGy4cdMW28kYCgk9eo/vshkFsgQwx
+ f2lkZj+I800hvoBlrxhNaazc
 X-IronPort-AV: E=Sophos;i="5.87,244,1631602800"; 
-   d="scan'208";a="297585194"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2021 03:26:38 -0800
-X-IronPort-AV: E=Sophos;i="5.87,244,1631602800"; 
-   d="scan'208";a="672776659"
-Received: from smile.fi.intel.com ([10.237.72.184])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2021 03:26:36 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1mnfYj-0088Nh-8I;
-        Thu, 18 Nov 2021 13:26:29 +0200
-Date:   Thu, 18 Nov 2021 13:26:28 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Yauhen Kharuzhy <jekhor@gmail.com>
-Subject: Re: [PATCH v2 1/3] pinctrl: cherryview: Don't use pin/offset 0 to
- mark an interrupt line as unused
-Message-ID: <YZY4ZA80QpJQFqOj@smile.fi.intel.com>
-References: <20211118105650.207638-1-hdegoede@redhat.com>
+   d="scan'208";a="143794407"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Nov 2021 04:27:47 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 18 Nov 2021 04:27:46 -0700
+Received: from kavya-HP-Compaq-6000-Pro-SFF-PC.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Thu, 18 Nov 2021 04:27:43 -0700
+From:   Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
+To:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <quentin.schulz@bootlin.com>, <linus.walleij@linaro.org>,
+        <robh+dt@kernel.org>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
+        <Kavyasree.Kotagiri@microchip.com>, <Manohar.Puri@microchip.com>
+Subject: [PATCH v4 0/2] Extend pinctrl-ocelot driver for lan966x
+Date:   Thu, 18 Nov 2021 16:55:46 +0530
+Message-ID: <20211118112548.14582-1-kavyasree.kotagiri@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211118105650.207638-1-hdegoede@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 18, 2021 at 11:56:48AM +0100, Hans de Goede wrote:
-> Offset/pin 0 is a perfectly valid offset, so stop using it to have
-> the special meaning of interrupt line not used in the intr_lines.
-> 
-> Instead introduce a new special INTR_LINE_UNUSED value which is never
-> a valid offset and use that to indicate unused interrupt lines.
+This patch series extends pinctrl-ocelot driver to support lan966x.
 
-...
+v3 -> v4:
+- Minor description fix in lan966x_pinmux_set_mux().
 
-> +#define INTR_LINE_UNUSED		U32_MAX
+v2 -> v3:
+- Removed extra new lines in pinctrl-ocelot.
+- Reverted sparx5_desc changes which are done by mistake.
 
-Funny, I have had something similar in my local branch for a few years ;-)
+v1 -> v2:
+- Use consistent name lan966x everywhere.
 
-+#define CHV_INVALID_HWIRQ      ((unsigned int)INVALID_HWIRQ)
+Kavyasree Kotagiri (2):
+  dt-bindings: pinctrl: ocelot: add lan966x SoC support
+  pinctrl: ocelot: Extend support for lan966x
+
+ .../bindings/pinctrl/mscc,ocelot-pinctrl.txt  |   3 +-
+ drivers/pinctrl/pinctrl-ocelot.c              | 416 ++++++++++++++++++
+ 2 files changed, 418 insertions(+), 1 deletion(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
