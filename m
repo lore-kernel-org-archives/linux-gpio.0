@@ -2,73 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D8DC433F5
-	for <linux-gpio@archiver.kernel.org>; Sat, 20 Nov 2021 02:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13757C433EF
+	for <linux-gpio@archiver.kernel.org>; Sat, 20 Nov 2021 19:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236589AbhKTCs1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Nov 2021 21:48:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55688 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236587AbhKTCsY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Nov 2021 21:48:24 -0500
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65403C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Nov 2021 18:45:22 -0800 (PST)
-Received: by mail-oi1-x235.google.com with SMTP id r26so25361243oiw.5
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Nov 2021 18:45:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h+gjmalkbLsMWtzHg+sW2Q2ZeVI+or8AQawNVW8phag=;
-        b=NscSNuq/2c2gKnQYyPrBrFXLZhu16MIprOA7QciX/pMXmBhRXcXDGZsE4CSVFYk2Ke
-         5xlemeYQOqhi89sfMLtOAlTV7zNjHqIrUlCVMOQrgo4NvQmwMh/SZdtraoAa9bDCH21X
-         L5BSkAHs5OgumaXGD+S0zZTDH2MuUcbKuxeG74RxN1yPX/LgTxxBwkkEW+cjfbaynd6m
-         lUNs2MbAc/fGSWINPGIXXncST5fgRvdRLQOkW8Z2sLr5g7yKRBvv3FODeu3vvpchjY/0
-         0gyt9F/3Ze5OBfSqNw81ppNYuS467lclp04eI1TD71IWaxuC7d7+Gl9JUSdS3U/hVWRr
-         01bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h+gjmalkbLsMWtzHg+sW2Q2ZeVI+or8AQawNVW8phag=;
-        b=KiU7DefUrwVxoQp3TS6q4V94X8NT/j1Q41VXG2UNUl6MIJP3qgd1aE/lcPgCCH5D/m
-         oov+K6dCyJxHQx6QXjhTo9OUweS6EGFfPRj3i3lpw9NUgw1E2JYRjSEKy1dg270pndez
-         GiFdJUDpb60cQGhShnPzcxTaHYTeHdAupkRCf4xq2icCbqBenJYUupEjyEW6kbdtO/DO
-         EwrXTg/1nPF0+pGVgqfeFt4v+2UPJDXVJ8ADhalIaNu/pEQdTf5bhkC8bzlknW9bCfWV
-         BJcpKarKTWkefBEACY+p+spRKY4IJyu9jPrFVju58ZG2Y2ZYRH5At23X4RUI5bt8NRQV
-         qz1g==
-X-Gm-Message-State: AOAM532Al52zHE/1oiQTJhkLNQjsFioLbfkSXOddRtFDySGBKVel/tpz
-        FomXpdekutdzCXM68aFIzV042jieY8JTgauxcsfEpRZMhRs=
-X-Google-Smtp-Source: ABdhPJxq8NkyRND0CwX+iDSiKufCZ6vWQPitbKvTmREkzVajip0dF7zu1/pTqFrHN+m6+CN/C0ZRuslLWlG7Jw74LJo=
-X-Received: by 2002:a54:4791:: with SMTP id o17mr4637885oic.114.1637376321772;
- Fri, 19 Nov 2021 18:45:21 -0800 (PST)
-MIME-Version: 1.0
-References: <YZdkKaU2LAa/BQy1@black.fi.intel.com>
-In-Reply-To: <YZdkKaU2LAa/BQy1@black.fi.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 20 Nov 2021 03:45:09 +0100
-Message-ID: <CACRpkdaqCWw0Y13AXWqHpyhYDhYJO2nYWFp1CQG2fKGyhqmg5w@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-pinctrl for 5.17-2
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linux pin control <linux-gpio@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S230042AbhKTTXP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 20 Nov 2021 14:23:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229823AbhKTTXP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 20 Nov 2021 14:23:15 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id D563D60D42;
+        Sat, 20 Nov 2021 19:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637436011;
+        bh=rigkjFKZ2iPVtV4j7r6jq8VtAmhvkL9eYggcnkprcKQ=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Kv3iXwrbg3fBRFYxmidFQAvszD3VWrx3bfP57k+0ZilWiyLLWwQRyFL4R/X8P8niN
+         aeZxohXlajDycZSOrua9ZES6doRdWY74Y18QjFqNQ0mE5H0JAuBQl/QA1+c9qs8rFr
+         4NrJjqodCiFw9LoAfakrzjCpeKSZohHE41YOQ+gcz7BdUm1joqSVuM/6qekThPXDrT
+         gpRSO8jc+02ISt9LG9Wy4d16uDLfQZ2Jr60bClogULN4WdL7qZON+dNIeSNQn9XYH8
+         n+dyDvTg3oWsYpsF/3GtfOiBuThemVmfOf3Y9GrIh+hzY+/vPrzVbOJ3slUF3cX9ib
+         k9sDKzug3MZ2Q==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id C16EE609B4;
+        Sat, 20 Nov 2021 19:20:11 +0000 (UTC)
+Subject: Re: [GIT PULL] pin control fixes for v5.16
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdb0H0NH4t5iRW6_ba=Mym1vH=yG+decH6O5uo9k2opcXw@mail.gmail.com>
+References: <CACRpkdb0H0NH4t5iRW6_ba=Mym1vH=yG+decH6O5uo9k2opcXw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdb0H0NH4t5iRW6_ba=Mym1vH=yG+decH6O5uo9k2opcXw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.16-2
+X-PR-Tracked-Commit-Id: 62209e805b5c68577602a5803a71d8e2e11ee0d3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b100274c70546decba3ec12cd614e1ab895515a5
+Message-Id: <163743601172.29153.12715935085157307199.pr-tracker-bot@kernel.org>
+Date:   Sat, 20 Nov 2021 19:20:11 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 9:45 AM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+The pull request you sent on Sat, 20 Nov 2021 03:26:42 +0100:
 
-> The kasprintf_strarray() series as PR for both Pin Control and GPIO subsystems.
-> All tags have been applied.
->
-> In this version the typo in zynqmp has been fixed, thanks to kbuild bot.
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.16-2
 
-Excellent, thanks for your hard work on improving libraries!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b100274c70546decba3ec12cd614e1ab895515a5
 
-Pulled into the pinctrl tree for v5.17.
+Thank you!
 
-Yours,
-Linus Walleij
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
