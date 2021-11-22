@@ -2,119 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245D0C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Nov 2021 22:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF3EC433FE
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Nov 2021 23:46:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230082AbhKVWu1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Nov 2021 17:50:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47136 "EHLO
+        id S231890AbhKVXtQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Nov 2021 18:49:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbhKVWu1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Nov 2021 17:50:27 -0500
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18728C061574
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 14:47:20 -0800 (PST)
-Received: by mail-yb1-xb34.google.com with SMTP id v203so17760509ybe.6
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 14:47:20 -0800 (PST)
+        with ESMTP id S230366AbhKVXtP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Nov 2021 18:49:15 -0500
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 500FDC061714
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 15:46:01 -0800 (PST)
+Received: by mail-ot1-x334.google.com with SMTP id h16-20020a9d7990000000b0055c7ae44dd2so31136127otm.10
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 15:46:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9LaFzLK0hYh0Uvvm43v8pM+uoWt5O0sDRI1MK9UEFgM=;
-        b=nivRTfNIjXolb0x6gFIq12iNdLTv8tr7fm9s+nMZBF3km/12v4p/Q4m3vYt0gMS+SQ
-         p2LZRGjvqR4Sb3TBSN47DkCLLXO2qndg1sSTcfY+K7JBmIGyrvhW5shq2qqg8tmAdubu
-         yiGgUWAMxXaXb1D4dj0dhHIlbjKj1iO6MDVDJjXr6oN0eL/07WbOQDQMwxx/CyLnBhk6
-         Catpf/PcvuDKci0YvhySkep+1llqZUbJqADNVgF4TDCMPLiYzO2Qs7vplP645ksAe8GN
-         ynwcWOZG/wRlW3S4nhzCs7UJNabqhIxTpc0zQDM9wpeUUQHgQEDA7aJDBAwwlZLbBSo/
-         WCVA==
+         :cc:content-transfer-encoding;
+        bh=HIB1oiHZ0iiGMICUTKXSMj/pebpoygCKH0iu3f2KlXo=;
+        b=j8oaVLNLXUURGEz6MidWqEUBxbHKtCc7+5kr8NpBqGN8Fql3A3SSQ7oL16VTULcvKR
+         O1NBWt/nOpsVbaEz0DJhinp3WPzht9FZwyWVJQV9tCluWbytuZbacLLTO+FU0PGY7/vl
+         7VkIYvFjHc519CIVZ1Dc67u6XAk5F0WUjNV4UwDvW65B1/qTb2ZT8hz1PT1wkbo+fHAw
+         9j+syovs/uXDNjw6484D9jVU43BL1WozFcFO+KEg/+C9UESrSlORsLxtP1HyD12BthmY
+         9/9v1xKho+rb1z5qc/P1ce+zcLtGTCfz66ce/ywer17yZ8ni9UltMC5xfk3dfNKpPWhR
+         iFXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9LaFzLK0hYh0Uvvm43v8pM+uoWt5O0sDRI1MK9UEFgM=;
-        b=QRBt2dRD9hXe+wOowOJ/Em6giSq6buy2fdU7PmS/0qnHeAW0k0j1E+RTRWjz5uCWBu
-         r9g+oLksTKLh0JuatmL8uHoGdKGa8MqgIe/uHBr0rZ3ZuZLRPhQGAWlduMevL0JO2Pf1
-         qD2B8I38szSPITyDrG1onsR4g5dWx9S6HcbRAe2lMO61DTLtqpW+0fl9z7OQfRiNnKmm
-         p+l0vqFhPSw5Kmq4s+kuR4TT3Ax6B6QtFZ3KiOoRtm9tI7H31G9CXJi8YIzjceQwHBRQ
-         eL2N9mXXHko5ZuS1iXHmXiL8vE66i9nT9ZRtkySjw8dI3iJN/smUxcxuzsUnRNeGDJHQ
-         8zPg==
-X-Gm-Message-State: AOAM531Gcb2f/9taB7zKv3+kwqdt7nyywB6B8Sjw3LS0oq12TuheAOmU
-        S5qZ4fhaW8xs7TpEa7XAjku8jjWht0zRrqh8KDsWHX8Mng==
-X-Google-Smtp-Source: ABdhPJysTM2OEJqANaPzJ33gx12IGiwGrWA6pDMRtCIufrf9sZBK952MxVkXVyhyQrxcDQPlBv/vHKEeDyLd41OmKbQ=
-X-Received: by 2002:a25:b7c2:: with SMTP id u2mr762870ybj.17.1637621239287;
- Mon, 22 Nov 2021 14:47:19 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HIB1oiHZ0iiGMICUTKXSMj/pebpoygCKH0iu3f2KlXo=;
+        b=434d1ph7+Je2BJ6+yu4ke7T4ei5piXiXrrFM6NxRWfqL2iciMoDtYHDkd2DIOdHwWn
+         ivbbiWPrGdkpR0KBiYcu8RUA4knDIsgIZ0OlFuT9nyU2Mt8Jg+R6U/iMGtPjyPC3cA8o
+         +ck1ygYyyw1pDlAdZd5afImDKwDfP8mnqrtW7L2Ju2hQP+gkggFpPkgcTFANfJ2aUWEA
+         B3Gdoh6jRpQeSJUw6OoY06jOtrQPESFSJ7FM3cocaafd2nFwC90UNQrLWsR4hykd74XS
+         gUtHFIfcYfhEJ0MkGiXQWX3kekvNTp7qKmt+L1LASwQm5X1euwf4uHGcG4/49WMRqFDX
+         wo5Q==
+X-Gm-Message-State: AOAM533FcLV15z6E1HPTHJ6svzPvZEIaPYUt1HUe20q88JsyzBG6dkNS
+        BIO6KeBteN5GBJkYxu8sFOtMgBgULC4gj8W2BRxhYg==
+X-Google-Smtp-Source: ABdhPJxpWRmJuQc45Mu2zDtBT8Yxx3zT/6RR/yC2BBhjIHeod2k0wQ/3KgvX7nHp9bI3uNpu/Wi17209pUXDUIvOQB0=
+X-Received: by 2002:a9d:ed6:: with SMTP id 80mr209544otj.35.1637624760387;
+ Mon, 22 Nov 2021 15:46:00 -0800 (PST)
 MIME-Version: 1.0
-References: <CAEdwc-Qm8hqvJhVLWeqLDYGL2mtH7S=TH=pwhzb5T-nMGD_ugw@mail.gmail.com>
- <CAMRc=McOuJkAFg02+HWDtTxOYm+5io994G8AafnxY32eJJi4+g@mail.gmail.com>
-In-Reply-To: <CAMRc=McOuJkAFg02+HWDtTxOYm+5io994G8AafnxY32eJJi4+g@mail.gmail.com>
-From:   Thomas Williams <thomas.hugo.williams@gmail.com>
-Date:   Mon, 22 Nov 2021 22:47:08 +0000
-Message-ID: <CAEdwc-TS-yTdgg+sLag10jCT+O4H_m4sMANX6mg5oxsTRir8EA@mail.gmail.com>
-Subject: Re: Confused as to what is going on with libgpiod v2
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20211018112201.25424-1-noralf@tronnes.org> <CACRpkdZQSB+McOGK9HZUNAr2p+FX=6ddbY=5-sQ8difh1pEqGg@mail.gmail.com>
+ <56881c23-8659-04e2-e7c1-264f7ef1b752@tronnes.org>
+In-Reply-To: <56881c23-8659-04e2-e7c1-264f7ef1b752@tronnes.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 23 Nov 2021 00:45:48 +0100
+Message-ID: <CACRpkdaGyiNubyxsTQtQ=VPj5-GiHwDS61L9kMVHEyNAN-yoBw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: dln2: Fix interrupts when replugging the device
+To:     =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable <stable@vger.kernel.org>,
+        Daniel Baluta <daniel.baluta@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Bart,
+On Mon, Nov 22, 2021 at 9:28 PM Noralf Tr=C3=B8nnes <noralf@tronnes.org> wr=
+ote:
 
-Thank you for responding.
+> Has this been applied, I can't see it in -next?
 
-> > Sorry, horribly newbie questions and if I should be asking it
-> > somewhere else then please tell me.
->
-> Hi Thomas! No, that's perfectly fine.
+Bartosz is applying patches for the recent kernels, I bet he will
+get to it.
 
-That's good because I've been watching the traffic and it mostly seems
-to be reviews for code that is almost, but not quite, entirely unlike
-what I'm interested in. I'm guessing I'm either not looking hard
-enough or that it is for the kernel level implementations below the
-libgpiod API? - note that I've never had to deal with kernel level
-Linux development before, I'm an applications developer IRL.
-
-> > 1. Have there been any releases of libgpiod v2 ? I can't see any tags
-> > in the git repo later than v1.6.
->
-> Nope, libgpiod v2 is under development and will probably still be so
-> for a while.
-
-OK.
-
-Could you explain what gives with something like this then:
-https://packages.debian.org/buster/libgpiod2 which advertises itself
-as "libgpiod2", but on closer inspection says version 1.2-3, which I
-assume is the corresponding version number here:
-https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
-
-Are libgpiod2 and libgpiod v2 referring to different meanings of "2" ?
-
-> > 4. Should I even be trying to use libgpiod v2 yet ?
->
-> Probably not, unless you have a good reason to (writing bindings or
-> whatever). It's not yet stable and is about to change again soon.
-
-LOL.
-
-Not sure what you mean by "bindings". A friend and I are porting
-MMBasic, a *very* niche BASIC interpreter that is usually at home on
-microcontrollers, to Linux. The language has an array of inbuilt
-commands for controlling digital and analogue pins, SPI, I2C, etc. and
-libgpiod seems like the natural match for implementing the former.
-
-A previous (Raspberry Pi specific) attempt by another developer
-floundered because (apocryphally) he was trying to treat the Pi as a
-microcontroller and programming to too low a level (directly to the
-Broadcom API) and finding that it was breaking on every O/S update. We
-were hoping to avoid a repeat of this by relying on a higher level
-API.
-
-I imagine you are busy, but would you care to offer an opinion as to
-whether we should persevere with API v2 (where my friend has had some
-success) or roll-back to looking at v1.6.x, assuming that it even
-provides everything we need ?
-
-Best wishes,
-
-Tom
+Yours,
+Linus Walleij
