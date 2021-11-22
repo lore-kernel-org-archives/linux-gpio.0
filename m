@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10312C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68206C433FE
 	for <linux-gpio@archiver.kernel.org>; Mon, 22 Nov 2021 12:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234018AbhKVMd5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S233240AbhKVMd5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 22 Nov 2021 07:33:57 -0500
 Received: from mga02.intel.com ([134.134.136.20]:39579 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233240AbhKVMd5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S234228AbhKVMd5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Mon, 22 Nov 2021 07:33:57 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10175"; a="221997300"
+X-IronPort-AV: E=McAfee;i="6200,9189,10175"; a="221997301"
 X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
-   d="scan'208";a="221997300"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
+   d="scan'208";a="221997301"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 04:30:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
-   d="scan'208";a="456622817"
+   d="scan'208";a="674048912"
 Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 22 Nov 2021 04:30:49 -0800
+  by orsmga005.jf.intel.com with ESMTP; 22 Nov 2021 04:30:49 -0800
 Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mp8TA-0000AB-Dx; Mon, 22 Nov 2021 12:30:48 +0000
-Date:   Mon, 22 Nov 2021 20:30:27 +0800
+        id 1mp8TA-0000AE-EW; Mon, 22 Nov 2021 12:30:48 +0000
+Date:   Mon, 22 Nov 2021 20:30:24 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- a9b5140c77d22b227ebd562e037ef10306767c8f
-Message-ID: <619b8d63.5Tdnc46hSVqkoVOr%lkp@intel.com>
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ dc8df6523eceb189e7205873aa6307f16515fac8
+Message-ID: <619b8d60.G2va4ORpAhNlUuBM%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,12 +39,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: a9b5140c77d22b227ebd562e037ef10306767c8f  Merge branch 'devel' into for-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: dc8df6523eceb189e7205873aa6307f16515fac8  pinctrl: mediatek: fix global-out-of-bounds issue
 
-elapsed time: 726m
+elapsed time: 727m
 
-configs tested: 198
+configs tested: 192
 configs skipped: 4
 
 The following configs have been built successfully.
@@ -62,9 +62,6 @@ parisc                           alldefconfig
 m68k                       m5208evb_defconfig
 arm                            pleb_defconfig
 xtensa                  nommu_kc705_defconfig
-i386                             alldefconfig
-sh                ecovec24-romimage_defconfig
-powerpc                      arches_defconfig
 powerpc                  mpc885_ads_defconfig
 sh                           se7705_defconfig
 mips                         tb0219_defconfig
@@ -74,10 +71,6 @@ sh                             shx3_defconfig
 sh                           se7722_defconfig
 arm                          iop32x_defconfig
 powerpc                      ppc40x_defconfig
-arm                  colibri_pxa300_defconfig
-arm                       mainstone_defconfig
-powerpc                     sequoia_defconfig
-powerpc                 mpc85xx_cds_defconfig
 mips                  cavium_octeon_defconfig
 sh                           se7750_defconfig
 mips                malta_qemu_32r6_defconfig
@@ -89,6 +82,7 @@ arm                         at91_dt_defconfig
 arm                           stm32_defconfig
 parisc                generic-32bit_defconfig
 arm                         axm55xx_defconfig
+i386                             alldefconfig
 arm                            mmp2_defconfig
 arm                           u8500_defconfig
 um                             i386_defconfig
@@ -103,6 +97,7 @@ m68k                         amcore_defconfig
 alpha                               defconfig
 arm                        neponset_defconfig
 sh                            hp6xx_defconfig
+powerpc                      arches_defconfig
 arm                           tegra_defconfig
 sh                     sh7710voipgw_defconfig
 sh                        sh7785lcr_defconfig
@@ -157,8 +152,6 @@ arm                         bcm2835_defconfig
 sh                               j2_defconfig
 riscv                            alldefconfig
 mips                 decstation_r4k_defconfig
-h8300                     edosk2674_defconfig
-mips                           rs90_defconfig
 sh                          rsk7264_defconfig
 mips                           xway_defconfig
 arm                         nhk8815_defconfig
@@ -185,8 +178,8 @@ m68k                             allyesconfig
 arc                              allyesconfig
 nds32                             allnoconfig
 nds32                               defconfig
-csky                                defconfig
 nios2                            allyesconfig
+csky                                defconfig
 alpha                            allyesconfig
 xtensa                           allyesconfig
 h8300                            allyesconfig
@@ -254,6 +247,7 @@ i386                 randconfig-a006-20211122
 i386                 randconfig-a004-20211122
 i386                 randconfig-a003-20211122
 hexagon              randconfig-r041-20211122
+hexagon              randconfig-r045-20211122
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
