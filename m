@@ -2,74 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BDFC433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Nov 2021 18:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 227FCC433F5
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Nov 2021 19:23:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239142AbhKVS4S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Nov 2021 13:56:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50332 "EHLO
+        id S239051AbhKVT01 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Nov 2021 14:26:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237700AbhKVS4G (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Nov 2021 13:56:06 -0500
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D649C061714
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 10:53:00 -0800 (PST)
-Received: by mail-ot1-x32c.google.com with SMTP id x19-20020a9d7053000000b0055c8b39420bso30203187otj.1
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 10:53:00 -0800 (PST)
+        with ESMTP id S235437AbhKVT01 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Nov 2021 14:26:27 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0F3C061574
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 11:23:20 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id y13so81444185edd.13
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Nov 2021 11:23:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=xSiQLbNK/sYaG2E1AGcq44IV1a0yKBL3nMRosKDHAUc=;
-        b=dn/oahMBiUNCvTx2KjRX6+muuHtSv7bO1VIkUf+AmwoffWfFX5vWKMwExRs360y2/C
-         waDr3JoPg6DDKLggnRyADSVBxL5vAGOaM55ZcAG0Acx16ZZAt7B6xu4R1W7EREYcDZYq
-         4uQAf9xeShvZ4ahBCOEpI4T5PbTt7Ku9o3c5jjTetEWliFxBZ7wUX/lfJfc/C7ZUB2y/
-         gWRaPmfSQdCbjtY9NfWGplKoCrJrLngoaksYzEY9kYqFq0sKhrqA62PxCuxmsd8D5Lys
-         mmu6vNtCzsmMeZlxlz6FGafto+l3VLLMDQPPrZprjQ6L8xk/oMcTwCvul8uZe5XDVJEE
-         S+aw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=br2/0+aMiYK29mXTYI6KgiUCYb9p215pr7NguUMDV8w=;
+        b=nLyRj2xXu4wIt2sNbhEaNmAaw4JYrz4A4ri52QaPckwZZMe5EunAgheCrtDsseWHmo
+         +BhzqWkLD1g+A+uFiPih2c0nBTDPKTBM/j6zsveXI/9EfbJWNsKyUdetkFva5Rl5H8zU
+         J6SO3Svj9z05lEX5/gf8VsvOYgskziYRh9K+eH0/iFdicNjGUTveP8UKXGc19FkZlUf+
+         yieQrnq+uqCEKe3Sg8KnPZHrOMMyrDEeRcuUig6CyRGl4uYNISDdYnymHVOWmLD0sQC4
+         0hkap7Fs43Mquy6Ay4Tjpkjb6u0bVW2K9JvLEDbq/jJbjazcRJG9vzATGw1IBc9IT4fQ
+         Qa+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=xSiQLbNK/sYaG2E1AGcq44IV1a0yKBL3nMRosKDHAUc=;
-        b=QztcZuFracwtv5iqKHzPzh5V+QiibvEVICL4/DZ/YvbroqBT2VCga7U6OfOp+f3Mhp
-         N2PJUUfkuxHoiuiB4go0TKGcje2AvkK6ibgZSOlIsP7IqbtGg1BCRvTeja3SsX5d6yWS
-         YlFFHL5pzTsPezHbQ07qNvwP/eAA2QCHgLtX3Ut3DK73JSnmarFJFEdiJi0kaawTEhJ+
-         Mz2QgmryTpbTp66h/0u4Tl+ylsQ3PJkcRatq4OF4rad5G9PhIbJibUYVMQuV0gcZGji8
-         hNHKSw80g0KgOUVPBhNj4QNm22DPK0Y1iyqSrZH1V+RcPdjIFfJRPz0N7F2jynhZHb9q
-         VvAQ==
-X-Gm-Message-State: AOAM530UVgYVf5oInyGs3Uepe2I/2Pld1jUJMtaFTDYK/OekoCqNhwPK
-        jBGqnUu2xmgN2Uqufa+EtSJA2ZmkY6eJjv+bg6Clc3YQ4T0=
-X-Google-Smtp-Source: ABdhPJy5swlD8WwsStK3wHtQZW2p3TtCmuYSCzHoXJhb6Kmsrne4peReqaY7TFqC0IcI/pHQpjAu53KhCd2sKVE/qaY=
-X-Received: by 2002:a9d:3cc:: with SMTP id f70mr27544446otf.253.1637607179354;
- Mon, 22 Nov 2021 10:52:59 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=br2/0+aMiYK29mXTYI6KgiUCYb9p215pr7NguUMDV8w=;
+        b=o/X1tiOTlSyW2OYS7DVf+vMTEL/rl/i/1a0Plvumd/T0pRa4ctilsbinUS2kGS551U
+         WVOw71vtCjN6QylU7EfbiSnYWTNU7lyYsJwBw1S3upNYaUGBym5I/9/wA9rhfRWpDXPJ
+         Abxhu8FuOWaogcej6geBoIT52BWYWZ9EtyVMjWsOnitF3ESv+vSPnBlif6VB2tS0it3c
+         nKgpIlRTT01uzJXjMWfr3dCriB7p3/If0YIvPKwljuugjA6Md5PUL8e6sPsx2io8yvzu
+         MRep6AzAslacKMnVq+f7+VyJ1IIuNhfKx2XG5ODv1FuOOygjjfUnajyKYgiRvprEQnEO
+         s8hg==
+X-Gm-Message-State: AOAM531KYlukg//ceJQDoUxENn+ZS2H/SiDk06cxB216eZz0XlHGxl33
+        lure1DphgWl6tqkPZ/kCWLdyvtqtfzL5JOnEC27ZnQaJpZY=
+X-Google-Smtp-Source: ABdhPJykNdLG+8uiI2uhbtUY2JCXR4HPVcS6AncPBTU2WeBc85OGmr17vP75FAGYXOxoo3hZwhSjLVq4nQhckaPsZQg=
+X-Received: by 2002:a05:6402:51c7:: with SMTP id r7mr40974227edd.359.1637608999164;
+ Mon, 22 Nov 2021 11:23:19 -0800 (PST)
 MIME-Version: 1.0
-From:   James Nugen <jnugen@gmail.com>
-Date:   Mon, 22 Nov 2021 10:52:48 -0800
-Message-ID: <CANqO7_ZUzfmhj9dt1bDW2YmVtr=fRyCErsuoMS+PqSgGkZsjXA@mail.gmail.com>
-Subject: [libgpiod] Strange error
-To:     linux-gpio@vger.kernel.org
+References: <CANqO7_ZUzfmhj9dt1bDW2YmVtr=fRyCErsuoMS+PqSgGkZsjXA@mail.gmail.com>
+In-Reply-To: <CANqO7_ZUzfmhj9dt1bDW2YmVtr=fRyCErsuoMS+PqSgGkZsjXA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 22 Nov 2021 21:22:41 +0200
+Message-ID: <CAHp75Ve7YD3Bq2QgU3-WunB5gHA7pXcSfpoGBt1GASn1WA8C4w@mail.gmail.com>
+Subject: Re: [libgpiod] Strange error
+To:     jnugen@gmail.com, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+On Mon, Nov 22, 2021 at 9:00 PM James Nugen <jnugen@gmail.com> wrote:
+>
+> Hello,
+>
+> I'm getting a weird error when trying to access GPIOs from my machine.
+> The "gpioinfo" command is returning this error message:
+> "gpioinfo: error creating line iterator: Invalid argument"
+> This happens as a regular user and as root (via sudo).
+> "gpioget" returns a similar error.
+> "gpiodetect" works and finds two devices.
 
-I'm getting a weird error when trying to access GPIOs from my machine.
-The "gpioinfo" command is returning this error message:
-"gpioinfo: error creating line iterator: Invalid argument"
-This happens as a regular user and as root (via sudo).
-"gpioget" returns a similar error.
-"gpiodetect" works and finds two devices.
+What's the output of `gpiodetect`?
 
-The machine is an Intel NUC running Ubuntu 20.04.
-Here is the "uname" output:
-Linux nuc 5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07
-UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+> The machine is an Intel NUC running Ubuntu 20.04.
+> Here is the "uname" output:
+> Linux nuc 5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07
+> UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+>
+> The installed version of "libgpiod" is v1.4,1.
+> I tried the latest version (v1.6.3) and got the same errors.
 
-The installed version of "libgpiod" is v1.4,1.
-I tried the latest version (v1.6.3) and got the same errors.
+Is it possible to try the v5.15 kernel on your side?
 
-I tried searching Google for this error and didn't find anything.
-
-Thanks for any help,
-James Nugen
+-- 
+With Best Regards,
+Andy Shevchenko
