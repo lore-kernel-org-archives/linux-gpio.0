@@ -2,104 +2,228 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE285C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Nov 2021 14:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 913E1C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Nov 2021 15:35:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbhKWOIA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Nov 2021 09:08:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57078 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230356AbhKWOH7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Nov 2021 09:07:59 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BBC3C061574
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Nov 2021 06:04:51 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id s13so39226567wrb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Nov 2021 06:04:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Bzy/Y3ck3dj84M7rIZti4gcaUHLywhndwcZgIIfzR2o=;
-        b=QtNP+WAloQrMTo9h9CF7ZtU94onNrQyLlqJrrWQkny8yx4++amevXbQEJXNEQZ/rzW
-         Rqlom7xb6RnOpF24A7ZE+PIpTVpSABKFwTeqXmcyuZLuhFyExtghJO0jZ7feKKyabvVb
-         z3iGThDzbgNWEBndPheetNy8Uw4rnpkKEcn+soMzSJdqgGlSzDZ8zyWc/6OgLHWdHunH
-         LG30dVQTcAm/dgOGuXb3kUVMM9gtvwiKV/tLIIIc0RkAIKxCq42tBYrwsasZTWSgq4tT
-         p+rLNLtUYFOsy2YVMDtaWJQ0RuWyi9RpqesWhnHftFzBcWC7BC77+ddLsP0CHVYgwN0C
-         OcQQ==
+        id S235563AbhKWPis convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Nov 2021 10:38:48 -0500
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:37568 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231209AbhKWPis (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Nov 2021 10:38:48 -0500
+Received: by mail-ua1-f51.google.com with SMTP id o1so44588503uap.4;
+        Tue, 23 Nov 2021 07:35:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Bzy/Y3ck3dj84M7rIZti4gcaUHLywhndwcZgIIfzR2o=;
-        b=SPBKPiaMW4J3HKgU15YCjwk7GHFINcV7fTv5NW2qlefhvGbajlp/sswiFykoS8cGiJ
-         TD1RkR27GrDNv+Rk5atLZq3wpQeGwkstjaOhywRxdGvj8mO4a9k8YM2XIt1zaBI19/YE
-         aNG41TKuat0BPmeAzBMMx91sGPq+xQq0YOj9moewiFHzQ+I9wJXqt+/crdL22ZAz66y2
-         TCjMUiFr+vkaysoB9nNwP1nHxvCIyaeS/5eYKnE6EKQPEEO6Z9ojjuWChiqQFq2o43Ql
-         ChQt0+W9885IsYgClABAAPvRHfyHiLO7gz7SMhKLEKoG4DFxaqfQoj19lHNfVlpW4ydW
-         u6Og==
-X-Gm-Message-State: AOAM530j9OjiMicqbG9sRQuvrlrRFiWpBE2uZTkgIszHS5FDfz618Aif
-        1bpZjRAQPjggtSM44kHgRvws3w==
-X-Google-Smtp-Source: ABdhPJyoFSV6HE0hB44FhLebkdA+nNWgEFjAI4FEbr+S6S1zXjvMPNw6v7SEtSdIcua2bSrjgHm2dQ==
-X-Received: by 2002:adf:fb86:: with SMTP id a6mr7474660wrr.35.1637676288788;
-        Tue, 23 Nov 2021 06:04:48 -0800 (PST)
-Received: from google.com ([95.148.6.231])
-        by smtp.gmail.com with ESMTPSA id d6sm12034669wrx.60.2021.11.23.06.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Nov 2021 06:04:48 -0800 (PST)
-Date:   Tue, 23 Nov 2021 14:04:41 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Ed Schaller <schallee@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Ed Schaller <schallee@darkmist.net>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] mfd: intel-lpss: Add Intel Lakefield PCH PCI IDs
-Message-ID: <YZz0+VCROEa0E4br@google.com>
-References: <20211122223606.GA20997@darkmist.net>
- <YZvYhBB23ITS+Pw0@smile.fi.intel.com>
- <YZywikZuMSnbqpI1@google.com>
- <YZy2jh0hexxgiPcw@smile.fi.intel.com>
- <YZy+mf9E4YVsv9Ru@google.com>
- <YZzAyZgqVwPsjsSh@smile.fi.intel.com>
- <CAJo6XL_DfWcVbT92X8fsd=mvs9AkzNQ2A1hPJpeGxrqC3BuL=g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RtLazKKZz4l59NH7QBwPp4VOuBCQpbno5co0ySkVMok=;
+        b=WRodkepU2YiHPSTXCKfbIqn4QhalYo+K9LrDn+6DsX2f6bTbHgxiHju4aIbXeOfXDa
+         NbH+hv/S6FKzUkzPG72wgxtBVbYNzgf87ffiCf6d3C36orFAZTJvAwYcVpn4emmnw0XG
+         o0/9eFe38BdHCkv2+lxWKQ7bUv6/xCpGhQi57kjOs14SNw0CkmsrgJQzp24KGyy67qJc
+         4MqTosSJrAYQpooR7PBem0fjvTkYf68jPRgeIgCCX7qBLXIT7GeBM2kyfS2w9CbW5aPX
+         7YkizVBR2F/SZJKHTGTE/xa2/mYs7p5ntVoQVG4vDisTlcg63p4hytgJSNFgJnLoygab
+         grNQ==
+X-Gm-Message-State: AOAM532znF1KYIWXMGSMPy9gFqhnOXd50e3BMmXzs3AYcD/uMVcMiqfW
+        nYqCcXEblfCDp1Uu4F4+e1151UPeHvqjDg==
+X-Google-Smtp-Source: ABdhPJzkgaxBsL5cJoj1qN4MdZV/IvVh7Mxg8+AamM9OCrgKxomWTMShyQtWNZnHzua14lI9zY63Zw==
+X-Received: by 2002:a67:2fd0:: with SMTP id v199mr10674029vsv.35.1637681737864;
+        Tue, 23 Nov 2021 07:35:37 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id z188sm6480877vsz.12.2021.11.23.07.35.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Nov 2021 07:35:37 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id n6so44625108uak.1;
+        Tue, 23 Nov 2021 07:35:36 -0800 (PST)
+X-Received: by 2002:a67:af0a:: with SMTP id v10mr9646514vsl.35.1637681736563;
+ Tue, 23 Nov 2021 07:35:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJo6XL_DfWcVbT92X8fsd=mvs9AkzNQ2A1hPJpeGxrqC3BuL=g@mail.gmail.com>
+References: <20211118145558.32359-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20211118145558.32359-1-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 23 Nov 2021 16:35:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVFg5p5DF04KxVnHuZyrKW8dKsDS3HjaYHuKK8nnTKoPA@mail.gmail.com>
+Message-ID: <CAMuHMdVFg5p5DF04KxVnHuZyrKW8dKsDS3HjaYHuKK8nnTKoPA@mail.gmail.com>
+Subject: Re: [RFC] pinctrl: renesas: rzg2l: Add support to select MII/RGMII mode
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 23 Nov 2021, Ed Schaller wrote:
-> On Tue, Nov 23, 2021 at 3:22 AM Andy Shevchenko <andriy.shevchenko@intel.com>
-> wrote:
-> 
-> > On Tue, Nov 23, 2021 at 10:12:41AM +0000, Lee Jones wrote:
-> > > On Tue, 23 Nov 2021, Andy Shevchenko wrote:
-> > > > On Tue, Nov 23, 2021 at 09:12:42AM +0000, Lee Jones wrote:
-> > > > > On Mon, 22 Nov 2021, Andy Shevchenko wrote:
-> >
-> > ...
-> >
-> > > > > Odd.  This didn't make it into my inbox.
-> > > >
-> > > > Hmm... Maybe it's sorted out due to linux-gpio@ vs. linux-kernel@ ML?
-> > >
-> > > No, I mean it doesn't appear anywhere in my mail.
-> > >
-> > > Including LKML et al. sub-folders.
-> >
-> > I see, this is indeed odd.
-> 
-> I submitted again with Andy's RB.
-> 
-> I'd suspect spam filters given the issues I've had with that domain before.
+Hi Biju,
 
-Ah yes, that would make sense.  Thanks for resubmitting.
+CC Sergey
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+On Thu, Nov 18, 2021 at 3:56 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> RZ/G2L supports Ether MII/RGMII mode control which select
+> the direction of the pins based on PHY mode.
+>
+> This patch adds support to select MII/RGMII mode based on
+> the phy-mode property present in the ether node, as the
+> register for configuring the same is located in pinctrl block
+> rather than GbEthernet block.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+Thanks for your patch!
+
+I can't really say I'm very enthusiastic about this. Looking up
+Ethernet nodes like this is fragile, and doesn't work with dynamic
+DT overlays (which are not supported upstream anyway, doh).
+I think it would be better to configure this explicitly in DT,
+especially since in RGMII mode, the user is supposed to configure
+the TX_COL, TX_CRS, and RX_ERR in some specific way, too.
+
+Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml does
+not define anything like this, but perhaps we can do something
+direction-based?
+The documentation for the related bits in the ETHER_MODE register says:
+
+    B'0 = RGMII: The Direction of the IO buffer is Output.
+    B’1 = MII(Initial value): The Direction of the IO buffer is Input.
+
+Below a few general coding comments (which hopefully become
+irrelevant soon...).
+
+> ---
+> Current names on HW manual is based on pins which is going to
+> change in next version like below.
+>
+> P20_0->ETH0_mode
+> P29_0->ETH1_mode
+> ---
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 70 +++++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> index ccee9c9e2e22..bc86119be01e 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -92,6 +92,7 @@
+>  #define PWPR                   (0x3014)
+>  #define SD_CH(n)               (0x3000 + (n) * 4)
+>  #define QSPI                   (0x3008)
+> +#define ETHER_MODE             (0x3018)
+>
+>  #define PVDD_1800              1       /* I/O domain voltage <= 1.8V */
+>  #define PVDD_3300              0       /* I/O domain voltage >= 3.3V */
+> @@ -104,6 +105,10 @@
+>  #define PFC_MASK               0x07
+>  #define IEN_MASK               0x01
+>  #define IOLH_MASK              0x03
+> +#define ETHER_MODE_ETH0_MASK   BIT(0)
+> +#define ETHER_MODE_ETH1_MASK   BIT(1)
+> +#define ETHER_MODE_ETH0_ADDR   0x11c20000
+> +#define ETHER_MODE_ETH1_ADDR   0x11c30000
+>
+>  #define PM_INPUT               0x1
+>  #define PM_OUTPUT              0x2
+> @@ -1197,6 +1202,69 @@ static void rzg2l_pinctrl_clk_disable(void *data)
+>         clk_disable_unprepare(data);
+>  }
+>
+> +static bool rzg2l_pinctrl_is_rgmii_mode(struct rzg2l_pinctrl *pctrl,
+> +                                       struct device_node *node)
+> +{
+> +       const char *mode = of_get_property(node, "phy-mode", NULL);
+> +       bool ret = false;
+> +
+> +       if (!mode) {
+> +               dev_err(pctrl->dev, "phy-mode missing, setting to mii mode");
+> +               return ret;
+> +       }
+> +
+> +       if ((!strcmp("rgmii", mode)) || (!strcmp("rgmii-id", mode)) ||
+> +           (!strcmp("rgmii-rxid", mode)) || (!strcmp("rgmii-txid", mode)))
+
+return !strncmp(mode, "rgmii", strlen("rgmii"));?
+
+> +               ret = true;
+> +
+> +       return ret;
+> +}
+> +
+> +static void rzg2l_pinctrl_set_eth_mode(struct rzg2l_pinctrl *pctrl,
+> +                                      struct device_node *np)
+> +{
+> +       u8 reg = readb(pctrl->base + ETHER_MODE);
+> +       u8 mask = ETHER_MODE_ETH0_MASK;
+> +       const __be32 *prop;
+> +       u64 addr;
+> +
+> +       prop = of_get_property(np, "reg", NULL);
+> +       if (!prop)
+> +               return;
+> +
+> +       addr = of_read_number(prop, of_n_addr_cells(np));
+
+of_address_to_resource()
+
+> +       if (addr == ETHER_MODE_ETH1_ADDR)
+> +               mask = ETHER_MODE_ETH1_MASK;
+> +
+> +       if (rzg2l_pinctrl_is_rgmii_mode(pctrl, np))
+> +               reg &= ~mask;
+> +       else
+> +               reg |= mask;
+> +
+> +       writeb(reg, pctrl->base + ETHER_MODE);
+> +}
+> +
+> +static void rzg2l_pinctrl_set_ether_modes(struct rzg2l_pinctrl *pctrl)
+> +{
+> +       struct device_node *np, *np1 = NULL;
+> +
+> +       np = of_find_compatible_node(NULL, NULL, "renesas,rzg2l-gbeth");
+> +       if (np) {
+> +               np1 = of_find_compatible_node(np, NULL, "renesas,rzg2l-gbeth");
+> +               if (of_device_is_available(np))
+> +                       rzg2l_pinctrl_set_eth_mode(pctrl, np);
+> +
+> +               of_node_put(np);
+> +       }
+> +
+> +       if (np1) {
+> +               if (of_device_is_available(np1))
+> +                       rzg2l_pinctrl_set_eth_mode(pctrl, np1);
+> +
+> +               of_node_put(np1);
+> +       }
+
+for_each_compatible_node(...) { ... }
+
+> +}
+> +
+>  static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+>  {
+>         struct rzg2l_pinctrl *pctrl;
+> @@ -1246,6 +1314,8 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+>         if (ret)
+>                 return ret;
+>
+> +       rzg2l_pinctrl_set_ether_modes(pctrl);
+> +
+>         dev_info(pctrl->dev, "%s support registered\n", DRV_NAME);
+>         return 0;
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
