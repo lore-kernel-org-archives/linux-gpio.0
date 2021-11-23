@@ -2,23 +2,23 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 421D7C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510EBC433F5
 	for <linux-gpio@archiver.kernel.org>; Tue, 23 Nov 2021 19:29:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240200AbhKWTcz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Nov 2021 14:32:55 -0500
-Received: from mail-bn8nam11on2056.outbound.protection.outlook.com ([40.107.236.56]:61695
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        id S240163AbhKWTcx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Nov 2021 14:32:53 -0500
+Received: from mail-dm6nam08on2069.outbound.protection.outlook.com ([40.107.102.69]:60128
+        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238633AbhKWTcd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 Nov 2021 14:32:33 -0500
+        id S238543AbhKWTcc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 Nov 2021 14:32:32 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ePHYXmdBP3edYUDgczUFCFntjDfXBnQvXMcMK6wVn+cYkMgIRo3tDTCIdQhtNtwK4qblP3xQxdli3EE/iXG4/hkl9g+c3kLfec+kK2RE4Z6zM2vzNgNz9V09b8VOU/djHBW8vs3ImP4BxUk9nc8Sh1nHXQLFBWTN5EPYj6bJLN+B81U4QpoxiicSimeASr/CeVgmm/ALin7iI1I82G6wOWzZRChxKhh/LNJMxrdz5tM7ZErDyZWxOqgrYCOvYrzOhPs5X4Rkrd54KrtHUe0iW6c2cr5nMToyaA2dVBIyonImYLZe0sRBIgf1U8FuBPMw+sMFQiZ90vXS0Oeq1vs8yA==
+ b=mfQkLRVqsN63yq7QT/23Z7untckfQTes8zhoz6HkUSCMSke4Oe7XLX197LGnytR4S0PnfeXqGFVd94Fr+6Sa7xgMFShBg77kM6ufQpe0zA6vSNLY+Shr5XAB2/aTDEq/i5ZUMfZuHhQnVjLUtzBAh0LU53jp5lAAE/PEX8yJIxv2nd3woDrxWNu8uSIW0ZW/7yWDZNY7KREAfJT83Q/vMwbxe58THeps/S+9mufh09Fzer24iywWTyBoBw3L52cDKZXW+66AWlTXrL6Katj1BermR2vVUXLcrakftC9OP5CcUEQQYUj5jHw1GSKuuY61GzRu9f0voxbLvNFExLC8kQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fZYZ/d1lwasIQRRumt4UsRbQ8dG6351qJ6/PhTVio00=;
- b=Dd9nNUJdM2qe+vHDKT2emSEj0vh/37/OiV4PzjCN1jNQNT5BHqycjCJ17QxUGY297RpR2oBd5cqUxKOw+Aloy20No0ooUi5PlcHsbxjwixsm1QbzM3DSOb/J4sPG1n0UOqGkE964wcXWD8F93WMsAufa6EzoZiwxdJMcis52Bo7+YhOqGAA5OM6c/VdRKUbn/kSbWRxlWv8wzTZrhVdMf0mlU0ovFxQP7OMkDW21WbexBlQcAwLLvGLd+qzRFj4Jn/ScKmp3UitLCNeeroonOvl/zlNLQUejdHgso8Qp9CmdQEygbPCEtjwbV8DmZNZpcDDlwaqAwJYtwTVg/WNa8w==
+ bh=YmZeW63iQ/Ri69p78OVoK4YgkT3m/Z2gnrECgQYB1E8=;
+ b=T9U+ZPwqGvF9e8WwvMqU1gnlCSUEPj6ZGJFL8o8LHFRrYPHFa/3Yp85Kch1y3buBzMlXsN1z6/f2QDAY/aFXwDw01mE7WP4ky9TOkzRxk+Rh7XiP5dn71jq6rae7P7NKZXD/eK29qyPbuqjM5NkPXnRgSB3ZQHlkcwSkky/V3qtRFHDYdIZJQD8JbfWd6yT3M5NRZs410gOlTUwsEc6y1VcpcxIZDeZKAAedlH3ap9eW9lPtJ5Yqht8HLSycGMCCwIDZfSSsCUyfhM3zoLNzQ48yTp9rJGU7NF9lj02jm/6PTwL+hQo9lpzrE9ecNjm+cqXSHnaIYq8UhnMStRkwCQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.112.32) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
@@ -26,18 +26,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fZYZ/d1lwasIQRRumt4UsRbQ8dG6351qJ6/PhTVio00=;
- b=EPS5oGf898pVluCvLLCiALy6apH5p+pF9Ff806C6EI6worzDDTi2qcpZT6PUlZORaEwH13L8bQmRz5ZLOzr/z6Lq2XVi639JI/ynHm16J2hmmrVl1izhE4rG9wxSdvzsBfuJyRMfwCT9L8zEjQFbj13bBWU8MrV+f47ORkysjhXwW2tx0+UeJKVAhUbM1CceTEUTpP8drylNZIvOamA2tqq/+O7ldlkBpoSa3a4HSzGzNbWuxXn8MHzQ4fM8OL4phafpG8ES6UywThWO7TCH6aasOZEf3i7t9CQvpa4OMpdq/KkCOyv1ihYSJtO+A6wx+T3bxvvK64NVaopDisOB9A==
-Received: from MW4PR04CA0189.namprd04.prod.outlook.com (2603:10b6:303:86::14)
- by DM6PR12MB2905.namprd12.prod.outlook.com (2603:10b6:5:181::14) with
+ bh=YmZeW63iQ/Ri69p78OVoK4YgkT3m/Z2gnrECgQYB1E8=;
+ b=jrg4iUqzfrsKQNnqnhhAootZ5tGNOINOoU744/yw9fqGgK+po38Yg1XiUnf3CJoI9lWFwUeBRFFGnYKnRwojxAhLaM6MDPEqnixflcpZY5OdPLPKNMcODP0G7zDcIOeM1efrywkUnQDdbomK4Flxe0SnhDE/AKLW7kTF+4EaW/Xp8m9d596ku3sVOobPM+txVDNM4sSAkQJpubebpS82W4MOGqaA65pAJ3Hg2Z/SP43+9Q71mCvpxZ/LCXpH7Wg31iSomNYDhf4rqzus6Uc+fOT3zETN0JUVknVqPyW9YmMFwLxCBwa8WCasFoNA0nFCvD7XK23L8+ct9X/QhqCe1A==
+Received: from MW4PR04CA0181.namprd04.prod.outlook.com (2603:10b6:303:86::6)
+ by BN8PR12MB2980.namprd12.prod.outlook.com (2603:10b6:408:62::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.22; Tue, 23 Nov
- 2021 19:29:22 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20; Tue, 23 Nov
+ 2021 19:29:19 +0000
 Received: from CO1NAM11FT003.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:86:cafe::76) by MW4PR04CA0189.outlook.office365.com
- (2603:10b6:303:86::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20 via Frontend
- Transport; Tue, 23 Nov 2021 19:29:22 +0000
+ (2603:10b6:303:86:cafe::1b) by MW4PR04CA0181.outlook.office365.com
+ (2603:10b6:303:86::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.21 via Frontend
+ Transport; Tue, 23 Nov 2021 19:29:19 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -47,13 +47,13 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.112.32) by
  CO1NAM11FT003.mail.protection.outlook.com (10.13.175.93) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4713.20 via Frontend Transport; Tue, 23 Nov 2021 19:29:21 +0000
+ 15.20.4713.20 via Frontend Transport; Tue, 23 Nov 2021 19:29:19 +0000
 Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 23 Nov
- 2021 11:29:20 -0800
+ 2021 11:29:17 -0800
 Received: from dipenp.nvidia.com (172.20.187.6) by mail.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Tue, 23 Nov 2021 19:29:20 +0000
+ Transport; Tue, 23 Nov 2021 19:29:17 +0000
 From:   Dipen Patel <dipenp@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
@@ -62,9 +62,9 @@ To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <robh+dt@kernel.org>
 CC:     Dipen Patel <dipenp@nvidia.com>
-Subject: [RFC v3 09/12] gpiolib: cdev: Add hardware timestamp clock type
-Date:   Tue, 23 Nov 2021 11:30:36 -0800
-Message-ID: <20211123193039.25154-10-dipenp@nvidia.com>
+Subject: [RFC v3 06/12] gpiolib: Add HTE support
+Date:   Tue, 23 Nov 2021 11:30:33 -0800
+Message-ID: <20211123193039.25154-7-dipenp@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211123193039.25154-1-dipenp@nvidia.com>
 References: <20211123193039.25154-1-dipenp@nvidia.com>
@@ -73,318 +73,263 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f3384b10-536e-4ffd-f6c1-08d9aeb78d1d
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2905:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB2905C2BF39F886CB4FA8D5DCAE609@DM6PR12MB2905.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Office365-Filtering-Correlation-Id: c9c05aa4-d41a-4936-7549-08d9aeb78b6f
+X-MS-TrafficTypeDiagnostic: BN8PR12MB2980:
+X-Microsoft-Antispam-PRVS: <BN8PR12MB29806C873479FCCF9B10D807AE609@BN8PR12MB2980.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:178;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /s4i2XLkzPZhupDXYAQeBbR6N7eHJ/t4ArsINr+0lGjs6BzOJSSf70WE0XmKQc1AfLFRpoGuckF/M3aPPvtbf/D4yiwPkbEFqXu/dlGfsQUKhvQloUwUq7F1spDgfKv+SsTSCEbp8aAX/fluGxCuChD/58BlJlzzJPpuZJBUO2klB8WWG843mYI8HfWkq/nDDTI8TIK7Bb3fEP+gRBpaeIfGHXBzgkD0cibaoyJkS+g47JVFP++nTUO72XSwavcIAHrK2QxJ1bDLmmLKHeSblOLRInIuKOPwWCjPzZ8MpHxLHSIt5HRW3/kQ1yl84jEvsSsK7RlVEzxQ7sPAZ5fwH7jBqJyxRmvVGng+lPL8JWyEAsSIEQafvLovBoEB7B8Z3Lb0B9gRTpEDVQJfR10DIbEZR3FUImK5+1YnMrl2cVX9yvqpoP7MxrXCpZ4g+jugSeP0SqMT5BfHPX9Ln/6a+CdOg2KeZ2QS4/V4R08woTceS75G6CX8gLwMGKHSU3PBklZo1RQTdG907DPdRxms8FICjrm2NZOvx9A0ub/ZkwhKCgIGXN0hbfUKftxT6qz9RYFSHrJ9NYO8PhKRJlQgTlfm7kvh7wrdpidT8yXIuFphPSCaUjBZ+ekIK6zu0exoaXne657QWlBi0lATzFntKO2VPJr2oQr+gHN8L0MLoXrWe0lTYG3i0/CKBqa6W93hQQWx/y6jWC4ToPyCZME2yaAAc9HtTtQCadCPWzSagYdALh1iV3TVqyd9v62gjKz4Jx6CNYYYY77woQnVxN+NSg==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(107886003)(82310400004)(70586007)(356005)(83380400001)(1076003)(26005)(7696005)(8676002)(2906002)(7416002)(70206006)(8936002)(36756003)(7636003)(186003)(6666004)(110136005)(316002)(5660300002)(2616005)(86362001)(4326008)(336012)(36860700001)(47076005)(921005)(426003)(508600001)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: mgje7mZh85owY2yn1DsuCZjRMsi+go3uuFHa1McNUgxEqEtiHzwmn3RJeY/MX+zQ3fWKe6cxmbFbbrBCbWDcOz5okhg5E1X5oC4M9utOOgNan8dds3qB7vSq+kZ4p06s1eT0rQ1rtipDfDCOJi3pot6QWIlMt0io5UeNo1dnmvSN3Hf5zr+h/27vtaqYuEr5ZFuYWC3tcN9pu+/yoirp7QvoajK7bNnmWDa4CMlqQ3N+CdV/dwlRwN9PdzRXjIvzuipoygTt4QwSYMmi6uQ3KhOjIG1BraNPBjYmE09vQWs955LYSqdTXUyv85moXxpq3AywEHbdXSo7znG5luVI1UisDA24sRFzSo95LBftGwjM6oGygPQDmKGl+868lUI/zkVcSDdORogZzNJTxfNlcnvJC43jRbicwDCV8R5dkTQc+c2niRatF0QyUdVF+epghZQoJDmershnhVGhSpGYmRnJRb+/mix1jhA2rhZEg4qleBLS/Qls75c44Q8jAF2cxYN7X71EsHTuEXWROeTaB+dhESCwOoJL4Vn2IgrsAlSw+9pozfOwPuJql4OuMsOstLDzOSoHyq1pK+v9VLNdT88OA4pOrN8qibjZQCZZZAjc233jEB7+7QohIFhYJqIRrsU2wStqAeuJOY5L88y6Lm1nVguuXlxMmdq4IBTLrF9wQinJ1GufYa3dm/j5ve3mEem1eNR8BHV7ZFXxywxg4BL/R73EcHM/YLuLh2TRO1aZZjaAkh09X6mWzutuX7/jC01owrZmeezohaxLiXsjVQ==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(82310400004)(36756003)(921005)(83380400001)(86362001)(8936002)(4326008)(2616005)(70586007)(356005)(26005)(186003)(47076005)(7696005)(36860700001)(70206006)(7636003)(7416002)(2906002)(426003)(316002)(8676002)(110136005)(107886003)(336012)(6666004)(5660300002)(508600001)(1076003)(83996005)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2021 19:29:21.8295
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2021 19:29:19.0052
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3384b10-536e-4ffd-f6c1-08d9aeb78d1d
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9c05aa4-d41a-4936-7549-08d9aeb78b6f
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT003.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2905
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB2980
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds new clock type for the GPIO controller which can
-timestamp gpio lines in realtime using hardware means. To expose such
-functionalities to the userspace, code has been added in this patch
-where during line create call, it checks for new clock type and if
-requested, calls hardware timestamp related API from gpiolib.c.
-During line change event, the HTE subsystem pushes timestamp data
-through callbacks.
+Some GPIO chip can provide hardware timestamp support on its GPIO lines
+, in order to support that additional API needs to be added which
+can talk to both GPIO chip and HTE (hardware timestamping engine)
+subsystem. This patch introduces APIs which gpio consumer can use
+to request hardware assisted timestamping. Below is the list of the APIs
+that are added in gpiolib subsystem.
+
+- gpiod_req_hw_timestamp_ns - Request HTE on specified GPIO line.
+- gpiod_rel_hw_timestamp_ns - Release HTE functionality on GPIO line.
 
 Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: kernel test robot <lkp@intel.com>
 ---
 Changes in v2:
-- Added hte_dir and static structure hte_ts_desc.
-- Added callbacks which get invoked by HTE when new data is available.
-- Better use of hte_dir and seq from hte_ts_desc.
-- Modified sw debounce function to accommodate hardware timestamping.
+- removed get timestamp and is timestamp enabled APIs
 
- drivers/gpio/gpiolib-cdev.c | 161 ++++++++++++++++++++++++++++++++++--
- include/uapi/linux/gpio.h   |   1 +
- 2 files changed, 153 insertions(+), 9 deletions(-)
+ drivers/gpio/gpiolib.c        | 73 +++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.h        | 12 ++++++
+ include/linux/gpio/consumer.h | 19 ++++++++-
+ include/linux/gpio/driver.h   | 14 +++++++
+ 4 files changed, 116 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index c7b5446d01fd..1736ad54e3ec 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -464,6 +464,12 @@ struct line {
- 	 * stale value.
- 	 */
- 	unsigned int level;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index abfbf546d159..46cba75c80e8 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1976,6 +1976,10 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 			gc->free(gc, gpio_chip_hwgpio(desc));
+ 			spin_lock_irqsave(&gpio_lock, flags);
+ 		}
++		spin_unlock_irqrestore(&gpio_lock, flags);
++		gpiod_rel_hw_timestamp_ns(desc);
++		spin_lock_irqsave(&gpio_lock, flags);
++
+ 		kfree_const(desc->label);
+ 		desc_set_label(desc, NULL);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+@@ -2388,6 +2392,75 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ }
+ EXPORT_SYMBOL_GPL(gpiod_direction_output);
+ 
++/**
++ * gpiod_req_hw_timestamp_ns - Enable the hardware assisted timestamp in
++ * nano second.
++ *
++ * @desc: GPIO to enable
++ * @cb:	Callback, will be called when HTE pushes timestamp data.
++ * @tcb: Threaeded callback, it gets called from kernel thread context and when
++ * cb returns with HTE_RUN_THREADED_CB return value.
++ * @data: Client data, will be sent back with tcb and cb.
++ *
++ * Certain GPIO chip can rely on hardware assisted timestamp engines which can
++ * record timestamp at the occurance of the configured events
++ * i.e. rising/falling on specified GPIO lines. This is helper API to enable hw
++ * assisted timestamp in nano second.
++ *
++ * Return 0 in case of success, else an error code.
++ */
++int gpiod_req_hw_timestamp_ns(struct gpio_desc *desc, hte_ts_cb_t cb,
++			      hte_ts_threaded_cb_t tcb, void *data)
++{
++	struct gpio_chip *gc;
++	int ret = 0;
++
++	VALIDATE_DESC(desc);
++	gc = desc->gdev->chip;
++
++	if (!gc->req_hw_timestamp) {
++		gpiod_warn(desc, "%s: hw ts not supported\n", __func__);
++		return -ENOTSUPP;
++	}
++
++	ret = gc->req_hw_timestamp(gc, gpio_chip_hwgpio(desc), cb, tcb,
++				   &desc->hdesc, data);
++	if (ret)
++		gpiod_warn(desc, "%s: hw ts request failed\n", __func__);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(gpiod_req_hw_timestamp_ns);
++
++/**
++ * gpiod_rel_hw_timestamp_ns - Release and disable the hardware assisted
++ * timestamp.
++ *
++ * @desc: GPIO to disable
++ *
++ * Return 0 in case of success, else an error code.
++ */
++int gpiod_rel_hw_timestamp_ns(struct gpio_desc *desc)
++{
++	struct gpio_chip *gc;
++	int ret = 0;
++
++	VALIDATE_DESC(desc);
++	gc = desc->gdev->chip;
++
++	if (!gc->rel_hw_timestamp) {
++		gpiod_warn(desc, "%s: hw ts not supported\n", __func__);
++		return -ENOTSUPP;
++	}
++
++	ret = gc->rel_hw_timestamp(gc, gpio_chip_hwgpio(desc), &desc->hdesc);
++	if (ret)
++		gpiod_warn(desc, "%s: hw ts release failed\n", __func__);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(gpiod_rel_hw_timestamp_ns);
++
+ /**
+  * gpiod_set_config - sets @config for a GPIO
+  * @desc: descriptor of the GPIO for which to set the configuration
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 30bc3f80f83e..f634b9de3756 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -15,6 +15,7 @@
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/cdev.h>
++#include <linux/hte.h>
+ 
+ #define GPIOCHIP_NAME	"gpiochip"
+ 
+@@ -117,6 +118,7 @@ struct gpio_desc {
+ #define FLAG_EDGE_RISING     16	/* GPIO CDEV detects rising edge events */
+ #define FLAG_EDGE_FALLING    17	/* GPIO CDEV detects falling edge events */
+ #define FLAG_EVENT_CLOCK_REALTIME	18 /* GPIO CDEV reports REALTIME timestamps in events */
++#define FLAG_EVENT_CLOCK_HARDWARE	19 /* GPIO CDEV reports hardware timestamps in events */
+ 
+ 	/* Connection label */
+ 	const char		*label;
+@@ -129,6 +131,16 @@ struct gpio_desc {
+ 	/* debounce period in microseconds */
+ 	unsigned int		debounce_period_us;
+ #endif
 +	/*
-+	 * dir will be touched in HTE callbacks hte_ts_cb_t and
-+	 * hte_ts_threaded_cb_t and they are mutually exclusive. This will be
-+	 * unused when HTE is not supported/disabled.
++	 * Hardware timestamp engine related internal data structure.
++	 * This gets filled out when the consumer calls
++	 * gpiod_req_hw_timestamp_ns to enable hardware timestamping on the
++	 * specified GPIO line. The API calls into HTE subsystem which
++	 * initializes appropriate field of the hdesc. The hdesc will be later
++	 * used with gpiod_rel_hw_timestamp to release hw timestamp
++	 * functionality.
 +	 */
-+	enum hte_dir dir;
++	struct hte_ts_desc hdesc;
  };
  
- /**
-@@ -518,6 +524,7 @@ struct linereq {
- 	 GPIO_V2_LINE_DRIVE_FLAGS | \
- 	 GPIO_V2_LINE_EDGE_FLAGS | \
- 	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME | \
-+	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE | \
- 	 GPIO_V2_LINE_BIAS_FLAGS)
+ #define gpiod_not_found(desc)		(IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 3ad67b4a72be..680867e66fb6 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -6,6 +6,7 @@
+ #include <linux/bug.h>
+ #include <linux/compiler_types.h>
+ #include <linux/err.h>
++#include <linux/hte.h>
  
- static void linereq_put_event(struct linereq *lr,
-@@ -546,6 +553,94 @@ static u64 line_event_timestamp(struct line *line)
- 	return ktime_get_ns();
+ struct device;
+ 
+@@ -112,6 +113,9 @@ int gpiod_get_direction(struct gpio_desc *desc);
+ int gpiod_direction_input(struct gpio_desc *desc);
+ int gpiod_direction_output(struct gpio_desc *desc, int value);
+ int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
++int gpiod_req_hw_timestamp_ns(struct gpio_desc *desc, hte_ts_cb_t cb,
++			      hte_ts_threaded_cb_t tcb, void *data);
++int gpiod_rel_hw_timestamp_ns(struct gpio_desc *desc);
+ 
+ /* Value get/set from non-sleeping context */
+ int gpiod_get_value(const struct gpio_desc *desc);
+@@ -353,8 +357,19 @@ static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ 	WARN_ON(desc);
+ 	return -ENOSYS;
  }
- 
-+static hte_return_t process_hw_ts_thread(void *p)
+-
+-
++static inline int gpiod_req_hw_timestamp_ns(struct gpio_desc *desc,
++					    hte_ts_cb_t cb,
++					    hte_ts_threaded_cb_t tcb,
++					    void *data)
 +{
-+	struct line *line = p;
-+	struct linereq *lr = line->req;
-+	struct gpio_v2_line_event le;
-+	u64 eflags;
-+
-+	memset(&le, 0, sizeof(le));
-+
-+	le.timestamp_ns = line->timestamp_ns;
-+	line->timestamp_ns = 0;
-+
-+	if (line->dir >= HTE_DIR_NOSUPP) {
-+		eflags = READ_ONCE(line->eflags);
-+		if (eflags == GPIO_V2_LINE_FLAG_EDGE_BOTH) {
-+			int level = gpiod_get_value_cansleep(line->desc);
-+
-+			if (level)
-+				/* Emit low-to-high event */
-+				le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-+			else
-+				/* Emit high-to-low event */
-+				le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+		} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_RISING) {
-+			/* Emit low-to-high event */
-+			le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-+		} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_FALLING) {
-+			/* Emit high-to-low event */
-+			le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+		} else {
-+			return HTE_CB_ERROR;
-+		}
-+	} else {
-+		if (line->dir == HTE_RISING_EDGE_TS)
-+			le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-+		else
-+			le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+	}
-+
-+	le.line_seqno = line->line_seqno;
-+	le.seqno = (lr->num_lines == 1) ? le.line_seqno : line->req_seqno;
-+	le.offset = gpio_chip_hwgpio(line->desc);
-+
-+	linereq_put_event(lr, &le);
-+
-+	return HTE_CB_HANDLED;
++	WARN_ON(desc);
++	return -ENOSYS;
 +}
-+
-+static hte_return_t process_hw_ts(struct hte_ts_data *ts, void *p)
++static inline int gpiod_rel_hw_timestamp_ns(struct gpio_desc *desc)
 +{
-+	struct line *line = p;
-+	struct linereq *lr = line->req;
-+
-+	if (!ts)
-+		return HTE_CB_ERROR;
-+
-+	line->timestamp_ns = ts->tsc;
-+	line->dir = ts->dir;
-+
-+	/*
-+	 * It is possible that HTE engine detects spurious edges for the
-+	 * lines where software debounce is enabled. This primary callback
-+	 * will be called multiple times in that case. It will be better to
-+	 * let debounce_work_func handle instead of process_hw_ts_thread.
-+	 * The timestamp_ns will be overwritten here which is fine as we are
-+	 * interested in the last value anyway. The debounce_work_func will
-+	 * then just read whatever last line->timestamp_ns is stored. Because
-+	 * this callback can be called multiple times, we are not really
-+	 * interested in ts->seq.
-+	 */
-+	if (!READ_ONCE(line->sw_debounced)) {
-+		line->line_seqno = ts->seq;
-+
-+		/*
-+		 * Increment in this callback incase all the lines in linereq
-+		 * are enabled for hw timestamping. This will work even if
-+		 * subset of lines are enabled for hw timestamping as
-+		 * edge_irq_* callbacks will proceed as usual for them.
-+		 */
-+		if (lr->num_lines != 1)
-+			line->req_seqno = atomic_inc_return(&lr->seqno);
-+
-+		return HTE_RUN_THREADED_CB;
-+	}
-+
-+	return HTE_CB_HANDLED;
++	WARN_ON(desc);
++	return -ENOSYS;
 +}
-+
- static irqreturn_t edge_irq_thread(int irq, void *p)
+ static inline int gpiod_get_value(const struct gpio_desc *desc)
  {
- 	struct line *line = p;
-@@ -553,6 +648,10 @@ static irqreturn_t edge_irq_thread(int irq, void *p)
- 	struct gpio_v2_line_event le;
- 	u64 eflags;
+ 	/* GPIO can never have been requested */
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index a673a359e20b..fda5500ea60a 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -10,6 +10,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinconf-generic.h>
++#include <linux/hte.h> /* For hardware timestamping */
  
-+	/* Let process_hw_ts_thread handle */
-+	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags))
-+		return IRQ_HANDLED;
-+
- 	/* Do not leak kernel stack to userspace */
- 	memset(&le, 0, sizeof(le));
+ struct gpio_desc;
+ struct of_phandle_args;
+@@ -319,6 +320,10 @@ struct gpio_irq_chip {
+  * @add_pin_ranges: optional routine to initialize pin ranges, to be used when
+  *	requires special mapping of the pins that provides GPIO functionality.
+  *	It is called after adding GPIO chip and before adding IRQ chip.
++ * @req_hw_timestamp: Dependent on GPIO chip, an optional routine to
++ *	enable hardware assisted timestamp.
++ * @rel_hw_timestamp: Dependent on GPIO chip, an optional routine to
++ *	disable/release hardware assisted timestamp.
+  * @base: identifies the first GPIO number handled by this chip;
+  *	or, if negative during registration, requests dynamic ID allocation.
+  *	DEPRECATION: providing anything non-negative and nailing the base
+@@ -414,6 +419,15 @@ struct gpio_chip {
  
-@@ -604,6 +703,10 @@ static irqreturn_t edge_irq_handler(int irq, void *p)
- 	struct line *line = p;
- 	struct linereq *lr = line->req;
+ 	int			(*add_pin_ranges)(struct gpio_chip *gc);
  
-+	/* Let HTE supplied callbacks handle */
-+	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags))
-+		return IRQ_HANDLED;
-+
- 	/*
- 	 * Just store the timestamp in hardirq context so we get it as
- 	 * close in time as possible to the actual event.
-@@ -682,14 +785,6 @@ static void debounce_work_func(struct work_struct *work)
- 	/* Do not leak kernel stack to userspace */
- 	memset(&le, 0, sizeof(le));
- 
--	lr = line->req;
--	le.timestamp_ns = line_event_timestamp(line);
--	le.offset = gpio_chip_hwgpio(line->desc);
--	line->line_seqno++;
--	le.line_seqno = line->line_seqno;
--	le.seqno = (lr->num_lines == 1) ?
--		le.line_seqno : atomic_inc_return(&lr->seqno);
--
- 	if (level)
- 		/* Emit low-to-high event */
- 		le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-@@ -697,6 +792,23 @@ static void debounce_work_func(struct work_struct *work)
- 		/* Emit high-to-low event */
- 		le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
- 
-+	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags)) {
-+		le.timestamp_ns = line->timestamp_ns;
-+		if (line->dir < HTE_DIR_NOSUPP)
-+			le.id = (line->dir == HTE_RISING_EDGE_TS) ?
-+				 GPIO_V2_LINE_EVENT_RISING_EDGE :
-+				 GPIO_V2_LINE_EVENT_FALLING_EDGE;
-+	} else {
-+		le.timestamp_ns = line_event_timestamp(line);
-+	}
-+
-+	lr = line->req;
-+	le.offset = gpio_chip_hwgpio(line->desc);
-+	line->line_seqno++;
-+	le.line_seqno = line->line_seqno;
-+	le.seqno = (lr->num_lines == 1) ?
-+		le.line_seqno : atomic_inc_return(&lr->seqno);
-+
- 	linereq_put_event(lr, &le);
- }
- 
-@@ -891,7 +1003,6 @@ static int gpio_v2_line_flags_validate(u64 flags)
- 	/* Return an error if an unknown flag is set */
- 	if (flags & ~GPIO_V2_LINE_VALID_FLAGS)
- 		return -EINVAL;
--
- 	/*
- 	 * Do not allow both INPUT and OUTPUT flags to be set as they are
- 	 * contradictory.
-@@ -900,6 +1011,11 @@ static int gpio_v2_line_flags_validate(u64 flags)
- 	    (flags & GPIO_V2_LINE_FLAG_OUTPUT))
- 		return -EINVAL;
- 
-+	/* Only allow one event clock source */
-+	if ((flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME) &&
-+	    (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE))
-+		return -EINVAL;
-+
- 	/* Edge detection requires explicit input. */
- 	if ((flags & GPIO_V2_LINE_EDGE_FLAGS) &&
- 	    !(flags & GPIO_V2_LINE_FLAG_INPUT))
-@@ -992,6 +1108,8 @@ static void gpio_v2_line_config_flags_to_desc_flags(u64 flags,
- 
- 	assign_bit(FLAG_EVENT_CLOCK_REALTIME, flagsp,
- 		   flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME);
-+	assign_bit(FLAG_EVENT_CLOCK_HARDWARE, flagsp,
-+		   flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE);
- }
- 
- static long linereq_get_values(struct linereq *lr, void __user *ip)
-@@ -1154,6 +1272,21 @@ static long linereq_set_config_unlocked(struct linereq *lr,
- 				return ret;
- 		}
- 
-+		/* Check if new config sets hardware assisted clock */
-+		if (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE) {
-+			ret = gpiod_req_hw_timestamp_ns(desc, process_hw_ts,
-+							process_hw_ts_thread,
-+							&lr->lines[i]);
-+			if (ret)
-+				return ret;
-+		} else {
-+			/*
-+			 * HTE subsys will do nothing if there is nothing to
-+			 * release.
-+			 */
-+			gpiod_rel_hw_timestamp_ns(desc);
-+		}
-+
- 		blocking_notifier_call_chain(&desc->gdev->notifier,
- 					     GPIO_V2_LINE_CHANGED_CONFIG,
- 					     desc);
-@@ -1409,6 +1542,14 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
- 					flags & GPIO_V2_LINE_EDGE_FLAGS);
- 			if (ret)
- 				goto out_free_linereq;
-+
-+			if (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE) {
-+				ret = gpiod_req_hw_timestamp_ns(desc, process_hw_ts,
-+							process_hw_ts_thread,
-+							&lr->lines[i]);
-+				if (ret)
-+					goto out_free_linereq;
-+			}
- 		}
- 
- 		blocking_notifier_call_chain(&desc->gdev->notifier,
-@@ -1959,6 +2100,8 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
- 
- 	if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &desc->flags))
- 		info->flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME;
-+	else if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &desc->flags))
-+		info->flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE;
- 
- 	debounce_period_us = READ_ONCE(desc->debounce_period_us);
- 	if (debounce_period_us) {
-diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
-index eaaea3d8e6b4..d360545b4c21 100644
---- a/include/uapi/linux/gpio.h
-+++ b/include/uapi/linux/gpio.h
-@@ -80,6 +80,7 @@ enum gpio_v2_line_flag {
- 	GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN	= _BITULL(9),
- 	GPIO_V2_LINE_FLAG_BIAS_DISABLED		= _BITULL(10),
- 	GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME	= _BITULL(11),
-+	GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE	= _BITULL(12),
- };
- 
- /**
++	int			(*req_hw_timestamp)(struct gpio_chip *gc,
++						    unsigned int offset,
++						    hte_ts_cb_t cb,
++						    hte_ts_threaded_cb_t tcb,
++						    struct hte_ts_desc *hdesc,
++						    void *data);
++	int			(*rel_hw_timestamp)(struct gpio_chip *chip,
++						    unsigned int offset,
++						    struct hte_ts_desc *hdesc);
+ 	int			base;
+ 	u16			ngpio;
+ 	u16			offset;
 -- 
 2.17.1
 
