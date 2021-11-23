@@ -2,140 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 985CAC4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Nov 2021 08:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50604C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Nov 2021 09:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234343AbhKWImY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Nov 2021 03:42:24 -0500
-Received: from mail-qv1-f54.google.com ([209.85.219.54]:36844 "EHLO
-        mail-qv1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233911AbhKWImX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Nov 2021 03:42:23 -0500
-Received: by mail-qv1-f54.google.com with SMTP id kl8so14459173qvb.3;
-        Tue, 23 Nov 2021 00:39:14 -0800 (PST)
+        id S231654AbhKWJP7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Nov 2021 04:15:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46072 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229899AbhKWJP7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Nov 2021 04:15:59 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416D3C061574
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Nov 2021 01:12:51 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id p18so18018663wmq.5
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Nov 2021 01:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=bHsRez/7qJG/hZ0hBnW4cvgsbzRL+gC4XG9zJtrqVAI=;
+        b=UhWABmVwCv53M22kM5vT+PNQt22eEUsf4v5dMreHxPwxfUjx75u/j4ECrsfuAqD5+T
+         Znhv/3ouqmVkip8/4+CR5mm2EpZ1ktX9DuP56sVleSnucQt33+LbGz/Hhxh1OvLHCw8k
+         PdELLE4FaRurBDN+OUXNJRgpjOsekshSwlasmGLDoGdpnPWRQZPI2OOF3MYYefdf9kJT
+         /cKN+JX1YH/Kf17jBNiKdFJuN44aZ7516y7mKPhBqEAIysjpDnAfxYuyHA0sw6/rHLfg
+         dpabDnxAbQPjtejPkL/YsQmX3QesSYG5CeW0H4FYPYF8Yq/3gBc549fD4p8s13mLv5S+
+         WfQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YD9+CLUS5Xv902/pEfqOtiLcZyXas3B/t1a2ZRr+mI0=;
-        b=LXrwxGGnxkX/NVnYsoGww5CRIG6ielkxAfwhqDd0GSTVJi7ckk7pa3rKM7PsENPkVA
-         k4+iq7HYlG9sdCCaR04ghEfkWPlmkN5H9HySFaYFsxBEW4eL38N/cfMD6kwc55ItO4ko
-         9XCw3J5iQjw21mqVrRUaNFeGg9IP+YJFSfSUbldlFnWO8t+34o1ALrrmMKhAOrEqQLst
-         2dut2eYLwS72gN2yTeH/YjkCEeue0s2VC/rJL3DURZnAXItZvvbzAG4bTm1jUgC5leaG
-         xUpUpRyTSX9gbyutV9lYuvEhF1XWI++odrR6CIr3ZIm+J7YxbwtMuZ06L5WB+HK/B76Z
-         dISQ==
-X-Gm-Message-State: AOAM530rTVPAKtpxl0Biidy8BxnFVsxfY/0kqiHOm8RFWV9cOaY9Z+m0
-        pREjiWhsxGSNRSA19w3q7qlJeiNsOjNP6w==
-X-Google-Smtp-Source: ABdhPJwl7IFfqBvyxvzsIGDvXIqCpOyDF+gdOezzZQWSahoV7nupzS7YLtInPshC/NmOzg9BnWp5fA==
-X-Received: by 2002:a05:6214:cac:: with SMTP id s12mr4269630qvs.60.1637656754206;
-        Tue, 23 Nov 2021 00:39:14 -0800 (PST)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id w10sm5807946qtj.37.2021.11.23.00.39.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Nov 2021 00:39:14 -0800 (PST)
-Received: by mail-yb1-f172.google.com with SMTP id f9so23788959ybq.10;
-        Tue, 23 Nov 2021 00:39:13 -0800 (PST)
-X-Received: by 2002:a9f:2431:: with SMTP id 46mr6012282uaq.114.1637656742896;
- Tue, 23 Nov 2021 00:39:02 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=bHsRez/7qJG/hZ0hBnW4cvgsbzRL+gC4XG9zJtrqVAI=;
+        b=yr8yCye5iKK9VsPPM+wyNneiRqFFvMq5afsaOils02t6Qe+6chSVzkA+w1wiyW3qGx
+         GYqhHZQywC1riO2y+LV6YYluOJrFJq1mVj1VHX70OsIp1AtTdkE521XtrpILdUAnImP6
+         vvInPiI19V2YcjOUD8Wtfs1Q5ZMT2ccytaGKMCdoUHYs5zWvW83kOyfjQ/rRZlWSS9YK
+         O91TLxSz5VH9/Ym4Rw8bYPSUJBjUHxqqWL1iPlRvU92bixs8Xa1PZFGQyr4fZOHWQoNc
+         UlE10JKJnvTx2SSK3JeZUKOkoMGUP5xorqKEp9QImh0VgImtIiU3tQpzzyqjXPmNkD3j
+         CBVw==
+X-Gm-Message-State: AOAM531LAC+I4pj8iwq7zx7CWzxRZPtIubWUWVIZBb87MOFEMYB/aEY2
+        WFHfzNbZFYXQSohGsuHjZcFUdvitIFuBag==
+X-Google-Smtp-Source: ABdhPJwgwbIJdDwrAhqFW+zhm9xEH/yRhyBc1MCTzhzFK7GXyH+sGoQPpzIm7fdQ7o2MSCYEvEmI1g==
+X-Received: by 2002:a1c:43c1:: with SMTP id q184mr1093463wma.153.1637658769850;
+        Tue, 23 Nov 2021 01:12:49 -0800 (PST)
+Received: from google.com ([95.148.6.231])
+        by smtp.gmail.com with ESMTPSA id k37sm506176wms.21.2021.11.23.01.12.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Nov 2021 01:12:49 -0800 (PST)
+Date:   Tue, 23 Nov 2021 09:12:42 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     Ed Schaller <schallee@darkmist.net>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] mfd: intel-lpss: Add Intel Lakefield PCH PCI IDs
+Message-ID: <YZywikZuMSnbqpI1@google.com>
+References: <20211122223606.GA20997@darkmist.net>
+ <YZvYhBB23ITS+Pw0@smile.fi.intel.com>
 MIME-Version: 1.0
-References: <cover.1637592133.git.geert+renesas@glider.be> <3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be>
- <01b44b38c087c151171f8d45a2090474c2559306.camel@sipsolutions.net> <5936f811-fa48-33e9-2a1a-66c68f74aa5e@ieee.org>
-In-Reply-To: <5936f811-fa48-33e9-2a1a-66c68f74aa5e@ieee.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 23 Nov 2021 09:38:51 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX4C0EgkGXR=MwSuBOFoj7O9xx8xwH5dP8rWzN1ckejQA@mail.gmail.com>
-Message-ID: <CAMuHMdX4C0EgkGXR=MwSuBOFoj7O9xx8xwH5dP8rWzN1ckejQA@mail.gmail.com>
-Subject: Re: [PATCH 01/17] bitfield: Add non-constant field_{prep,get}() helpers
-To:     Alex Elder <elder@ieee.org>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Paul Walmsley <paul@pwsan.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YZvYhBB23ITS+Pw0@smile.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Alex,
+On Mon, 22 Nov 2021, Andy Shevchenko wrote:
 
-On Tue, Nov 23, 2021 at 2:52 AM Alex Elder <elder@ieee.org> wrote:
-> On 11/22/21 10:32 AM, Johannes Berg wrote:
-> > On Mon, 2021-11-22 at 16:53 +0100, Geert Uytterhoeven wrote:
-> >> The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> >> constants.  However, it is very common to prepare or extract bitfield
-> >> elements where the bitfield mask is not a compile-time constant.
-> >
-> > I'm not sure it's really a good idea to add a third API here?
-> >
-> > We have the upper-case (constant) versions, and already
-> > {u32,...}_get_bits()/etc.
->
-> I've used these a lot (and personally prefer the lower-case ones).
->
-> Your new macros don't do anything to ensure the field mask is
-> of the right form, which is basically:  (2 ^ width - 1) << shift
+> On Mon, Nov 22, 2021 at 04:36:06PM -0600, Ed Schaller wrote:
+> > Add new IDs of the Intel Lakefield chip to the list of supported
+> > devices.
+> 
+> Thank you for the patch, it LGTM,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> 
+> > Signed-off-by: Ed Schaller <schallee@darkmist.net>
+> > ---
+> >  drivers/mfd/intel-lpss-pci.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+> > index a872b4485eac..9700e5acd0cd 100644
+> > --- a/drivers/mfd/intel-lpss-pci.c
+> > +++ b/drivers/mfd/intel-lpss-pci.c
+> > @@ -359,7 +359,14 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
+> >  	/* LKF */
+> >  	{ PCI_VDEVICE(INTEL, 0x98a8), (kernel_ulong_t)&bxt_uart_info },
+> >  	{ PCI_VDEVICE(INTEL, 0x98a9), (kernel_ulong_t)&bxt_uart_info },
+> > +	{ PCI_VDEVICE(INTEL, 0x98aa), (kernel_ulong_t)&bxt_info },
+> > +	{ PCI_VDEVICE(INTEL, 0x98c5), (kernel_ulong_t)&bxt_i2c_info },
+> > +	{ PCI_VDEVICE(INTEL, 0x98c6), (kernel_ulong_t)&bxt_i2c_info },
+> >  	{ PCI_VDEVICE(INTEL, 0x98c7), (kernel_ulong_t)&bxt_uart_info },
+> > +	{ PCI_VDEVICE(INTEL, 0x98e8), (kernel_ulong_t)&bxt_i2c_info },
+> > +	{ PCI_VDEVICE(INTEL, 0x98e9), (kernel_ulong_t)&bxt_i2c_info },
+> > +	{ PCI_VDEVICE(INTEL, 0x98ea), (kernel_ulong_t)&bxt_i2c_info },
+> > +	{ PCI_VDEVICE(INTEL, 0x98eb), (kernel_ulong_t)&bxt_i2c_info },
+> >  	/* SPT-LP */
+> >  	{ PCI_VDEVICE(INTEL, 0x9d27), (kernel_ulong_t)&spt_uart_info },
+> >  	{ PCI_VDEVICE(INTEL, 0x9d28), (kernel_ulong_t)&spt_uart_info },
 
-> I really like the property that the field mask must be constant.
+Odd.  This didn't make it into my inbox.
 
-That's correct. How to enforce that in the non-const case?
-BUG()/WARN() is not an option ;-)
+Would you mind gathering Andy's R-b and re-sending please Ed?
 
-> That being said, I've had to use some strange coding patterns
-> in order to adhere to the "const only" rule in a few cases.
-> So if you can come up with a satisfactory naming scheme I'm
-> all for it.
-
-There are plenty of drivers that handle masks stored in a data
-structure, so it would be good if they can use a suitable helper,
-as open-coding is prone to errors.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
