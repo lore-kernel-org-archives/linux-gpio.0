@@ -2,57 +2,72 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF98C433FE
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Nov 2021 13:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ED4C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Nov 2021 13:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236620AbhKWNFQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Nov 2021 08:05:16 -0500
-Received: from li918-116.members.linode.com ([45.56.68.116]:47298 "EHLO
-        weed.darkmist.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232746AbhKWNFP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Nov 2021 08:05:15 -0500
-Received: by weed.darkmist.net (Postfix, from userid 1000)
-        id 238AC35146; Tue, 23 Nov 2021 12:01:14 -0600 (CST)
-Date:   Tue, 23 Nov 2021 12:01:14 -0600
-From:   Ed Schaller <schallee@darkmist.net>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [PATCH] mfd: intel-lpss: Add Intel Lakefield PCH PCI IDs
-Message-ID: <20211123180114.GA4747@darkmist.net>
+        id S236989AbhKWNmw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Nov 2021 08:42:52 -0500
+Received: from mga06.intel.com ([134.134.136.31]:56846 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236743AbhKWNmw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 Nov 2021 08:42:52 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10176"; a="295829029"
+X-IronPort-AV: E=Sophos;i="5.87,257,1631602800"; 
+   d="scan'208";a="295829029"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 05:39:42 -0800
+X-IronPort-AV: E=Sophos;i="5.87,257,1631602800"; 
+   d="scan'208";a="457055772"
+Received: from smile.fi.intel.com ([10.237.72.184])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 05:39:41 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1mpW1J-009n6t-4z;
+        Tue, 23 Nov 2021 15:39:37 +0200
+Date:   Tue, 23 Nov 2021 15:39:36 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: baytrail: Set IRQCHIP_SET_TYPE_MASKED flag on
+ the irqchip
+Message-ID: <YZzvGCnMYTUh++SC@smile.fi.intel.com>
+References: <20211122220423.11256-1-hdegoede@redhat.com>
+ <YZzLrsS/zNlH3Zk4@lahna>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <YZzLrsS/zNlH3Zk4@lahna>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add new IDs of the Intel Lakefield chip to the list of supported
-devices.
+On Tue, Nov 23, 2021 at 01:08:30PM +0200, Mika Westerberg wrote:
+> On Mon, Nov 22, 2021 at 11:04:23PM +0100, Hans de Goede wrote:
+> > The byt_irq_type function ends with the IRQ masked, this means that calls
+> > to irq_set_irq_type() while the IRQ is enabled end up masking it, which
+> > is wrong. Add the IRQCHIP_SET_TYPE_MASKED flag to fix this.
+> > 
+> > This will make the IRQ core call mask() + unmask() on the IRQ around
+> > a set_type() call when the IRQ is enabled at the type of the call.
+> > 
+> > Note in practice irq_set_irq_type() getting called while the IRQ is enabled
+> > almost never happens. I hit this with a buggy DSDT where a wrongly active
+> > (_STA returns 0xf) I2C ACPI devices point to an IRQ already in use by an
+> > _AEI handler, leading to the irq_set_irq_type() call in
+> > acpi_dev_gpio_irq_get_by() getting called while the IRQ is enabled.
+> > 
+> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Signed-off-by: Ed Schaller <schallee@darkmist.net>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
----
- drivers/mfd/intel-lpss-pci.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Pushed to my review and testing queue, thanks!
 
-diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
-index a872b4485eac..9700e5acd0cd 100644
---- a/drivers/mfd/intel-lpss-pci.c
-+++ b/drivers/mfd/intel-lpss-pci.c
-@@ -359,7 +359,14 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* LKF */
- 	{ PCI_VDEVICE(INTEL, 0x98a8), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x98a9), (kernel_ulong_t)&bxt_uart_info },
-+	{ PCI_VDEVICE(INTEL, 0x98aa), (kernel_ulong_t)&bxt_info },
-+	{ PCI_VDEVICE(INTEL, 0x98c5), (kernel_ulong_t)&bxt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x98c6), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x98c7), (kernel_ulong_t)&bxt_uart_info },
-+	{ PCI_VDEVICE(INTEL, 0x98e8), (kernel_ulong_t)&bxt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x98e9), (kernel_ulong_t)&bxt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x98ea), (kernel_ulong_t)&bxt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x98eb), (kernel_ulong_t)&bxt_i2c_info },
- 	/* SPT-LP */
- 	{ PCI_VDEVICE(INTEL, 0x9d27), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x9d28), (kernel_ulong_t)&spt_uart_info },
 -- 
-2.30.2
+With Best Regards,
+Andy Shevchenko
+
+
