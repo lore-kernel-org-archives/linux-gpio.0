@@ -2,76 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE6AC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Nov 2021 14:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79128C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Nov 2021 14:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356093AbhKXOXk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 24 Nov 2021 09:23:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45852 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356192AbhKXOXP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Nov 2021 09:23:15 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760C5C125621
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Nov 2021 04:49:07 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id v1so9945803edx.2
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Nov 2021 04:49:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y20/1fNI0KyXaXs0cDKjMiW+8AcpeeOZCZyIy4HTxew=;
-        b=QWr1PwEG/EADEtJyNuAGgukP9TFolNnrcuwsHJZNQMYqnBXZx7f2XagUqNdKr0mIoQ
-         A+ouXtJ9i7ZT+9fYsDUcII/DKdRARKmtvcOG1kmQvXw4/P6Yo4aCxxn5Ih7tRr96C2sf
-         CsW3RQoGcK9SHFi26pns6ytEKoORprMUm3N4KzwbGx9MceFZMR5kZMZdw1RKHT8M+a31
-         9KnM15yguo0Kuz0FuCL+yKn+/rIutqNJjjnzcseEtp2SoqgjAVva9DpDBDrTrtwpu0/S
-         UTSlChU1HJY8OeKRjx9glKGWxJepO636z76PQQE7kCvr+Uxrmf8Y0mtWeA1mklLF8MMo
-         0wcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y20/1fNI0KyXaXs0cDKjMiW+8AcpeeOZCZyIy4HTxew=;
-        b=nG0kzL8UMRMguupweZRfbvbJwQk7KrxiY8HdMRdY/WtZYcli2MvYRV24EozPrbtOEj
-         Lt9R66tSmH3wKc3OgHIE72vfw66KCAmLuxmC/6To6YvROm1ZUiWJZXTnSH/8rP9w0YGx
-         iZa4F4dXlxzCsU5qPFoLbcG/rbdkP3fI8f5uJdFKXkMd8gdz6MKtccQxQAJXMHbb8dUq
-         7umlMuod0AdY1PMPhoOgVo4+maHBztDG5IpJNYHfd0SRTzB6sbmuqGjcNpjIHviROeS4
-         2nDAmfThyKFpU9zRifu6uXGXXGAM7Hhc4FqcsoOn/7f23C7W2kwVuYHc4a2mHS6V044X
-         /ZJA==
-X-Gm-Message-State: AOAM532UFURxzKBi30Jal+en+YokOYwmI3kvpw63u/zkhzd4/tuolXqU
-        xVJAX3c800w4hvHMavjsiWCzhReT7xnVx5kUQ6tlFg==
-X-Google-Smtp-Source: ABdhPJzTYyVftaV4BFYMlLiX1+O0OX4hovqL5nPKZA/1gazZYJqzC88C0uialiBMArI7+/Fj+g4nyCh9wLoMCoB2LrI=
-X-Received: by 2002:a17:907:9847:: with SMTP id jj7mr19421387ejc.508.1637758146037;
- Wed, 24 Nov 2021 04:49:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20211112130152.3682556-1-thierry.reding@gmail.com> <20211112130152.3682556-2-thierry.reding@gmail.com>
-In-Reply-To: <20211112130152.3682556-2-thierry.reding@gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 24 Nov 2021 13:48:55 +0100
-Message-ID: <CAMRc=McFDS=_Dwkc1V6tq5xsOLyT+u_4uCVGFFeMFbdYNn46bA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: gpio: tegra186: Convert to json-schema
-To:     Thierry Reding <thierry.reding@gmail.com>
+        id S1350198AbhKXOjD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 24 Nov 2021 09:39:03 -0500
+Received: from mga09.intel.com ([134.134.136.24]:23471 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1356120AbhKXOi6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 Nov 2021 09:38:58 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10177"; a="235106389"
+X-IronPort-AV: E=Sophos;i="5.87,260,1631602800"; 
+   d="scan'208";a="235106389"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 06:35:48 -0800
+X-IronPort-AV: E=Sophos;i="5.87,260,1631602800"; 
+   d="scan'208";a="607204837"
+Received: from smile.fi.intel.com ([10.237.72.184])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 06:35:46 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1mptN8-00A8FC-LU;
+        Wed, 24 Nov 2021 16:35:42 +0200
+Date:   Wed, 24 Nov 2021 16:35:42 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        linux-tegra@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] gpiolib: improve coding style for local variables
+Message-ID: <YZ5NvolYXei2qsBU@smile.fi.intel.com>
+References: <20211124122850.7095-1-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211124122850.7095-1-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 12, 2021 at 2:02 PM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> From: Thierry Reding <treding@nvidia.com>
->
-> Convert the Tegra186 GPIO controller device tree bindings from free-form
-> text format to json-schema.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+On Wed, Nov 24, 2021 at 01:28:49PM +0100, Bartosz Golaszewski wrote:
+> Drop unneeded whitespaces and put the variables of the same type
+> together for consistency with the rest of the code.
+
+I thought I gave my tag, nevermind, here we are
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
+> v1 -> v2:
+> - keep initializations on separate lines
+> 
+>  drivers/gpio/gpiolib.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index abfbf546d159..ede8b8a7aa18 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -594,11 +594,11 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>  			       struct lock_class_key *request_key)
+>  {
+>  	struct fwnode_handle *fwnode = gc->parent ? dev_fwnode(gc->parent) : NULL;
+> -	unsigned long	flags;
+> -	int		ret = 0;
+> -	unsigned	i;
+> -	int		base = gc->base;
+>  	struct gpio_device *gdev;
+> +	unsigned long flags;
+> +	int base = gc->base;
+> +	unsigned int i;
+> +	int ret = 0;
+>  
+>  	/*
+>  	 * First: allocate and populate the internal stat container, and
+> -- 
+> 2.25.1
+> 
 
-As it's an entire conversion into yaml - would you mind Cc'in Rob
-Herring for his review?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Bart
+
