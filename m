@@ -2,129 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D77CC433F5
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Nov 2021 14:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2784EC433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Nov 2021 14:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354640AbhKXOKe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 24 Nov 2021 09:10:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356052AbhKXOIj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 24 Nov 2021 09:08:39 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B124C6135F;
-        Wed, 24 Nov 2021 13:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637762378;
-        bh=qRP+clj8R/VdWhftZ8Y8X7gwjyLiR1Ndt0XMFQ1d99I=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qwjskdleu3wFs5Bp+wvn7/HQgcncwjzNLbZJvm05oYaNrcYQTwWP5OPt4NA+r19ce
-         xvpj4Ygu81mu+0T0HClP6KV/QWjpcF9snHTHoGaG5tUeLxnTTWkLES0g3C2OG9fyHP
-         3gdMDDzRgjs1FxHFxipNVT3bu4+1WLgAMlUBkLt05N30IajW10WzN8g5y+5eK5i725
-         UrYk6tfyltIEGHPLMkyi6LuRszHy8ZTAL81DcgYxpSc8FxYZIzgFUL244Ub8IMFPQK
-         iyz4glX1RQI/lDwdXU9D49kB+bXi/+6kFMsXGuBY9Lzmn68zgSqocZJHLF6A/zwCj2
-         E8n91Zb/v+PWQ==
-Date:   Wed, 24 Nov 2021 05:59:35 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Paul Walmsley <paul@pwsan.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 01/17] bitfield: Add non-constant field_{prep,get}()
- helpers
-Message-ID: <20211124055935.416dc472@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <05d4673a0343bfd83824d307e9cf8bf92e3814a6.camel@sipsolutions.net>
-References: <cover.1637592133.git.geert+renesas@glider.be>
-        <3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be>
-        <01b44b38c087c151171f8d45a2090474c2559306.camel@sipsolutions.net>
-        <20211122171739.03848154@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <CAMuHMdWAAGrQUZN18cnDTDUUhuPNTZTFkRMe2Sbf+s7CedPSxA@mail.gmail.com>
-        <637a4183861a1f2cdab52b7652bfa7ed33fbcdd2.camel@sipsolutions.net>
-        <20211123154922.600fd3b5@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <05d4673a0343bfd83824d307e9cf8bf92e3814a6.camel@sipsolutions.net>
+        id S1351431AbhKXORs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 24 Nov 2021 09:17:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352900AbhKXORR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Nov 2021 09:17:17 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F00C0818F0
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Nov 2021 04:28:56 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id l16so3873764wrp.11
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Nov 2021 04:28:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=itVP4aNbik/dROJTIOMt1U3nLqJ1tEkeMNd95tsUZfI=;
+        b=MDUIPdijTyP4/fpQuv6ZuVlM7tyrXL9fEM9D1engdJP3v/7I6HXcc4tq3W05xa282v
+         7MfuuDChpc2dk2IRy9XzTmqZZUZluuJu0ybfxkEN0VPtlboCLZ9Pe/NYIlieWYqYRXa2
+         zQlZcgiu9HQw8pQYEwWLpqvKAljYvRUkNuZNWA3QxluesS3L5jcmU1RSGMf8gLUfR4RP
+         XEKjcO0Sxi5XsOHlZPKE8l696doVzC4K0qFZ+SmW4GA6XCt5uzXH+FG8C7NiCcQimAnO
+         dFQhZwxQ1vdoxp28sQxtbV0ROhqtvzmJTxUQWik3oKpeLmH9xCtN4OOOwQfnrX6Hluqj
+         loPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=itVP4aNbik/dROJTIOMt1U3nLqJ1tEkeMNd95tsUZfI=;
+        b=fOOCV76/FRVSleSCAO7asKFaDbcgwaaWlZ728W96tiEc+40RxIfUWsGR/UZls9XaZv
+         KfuyX6w5uSUvAZgEek6eNowF2QO8jL4UvVY32ti8uZ/2P2gY9eHNRL+IMvhGduxFpE3W
+         ihqFmffU6bj5AQQ04WsDXsT66XYbN4gBxd5InbEdOLq99/DOcBPiXKZV/NoerJnbn/Tx
+         9AhgPkxx5OKURks/5y8jDnkQEwzswSz5SXJnOjSDMCssrR4wYL7PTOyGgA+x9TZNgBJC
+         xCRf2ex1Xhuc/LECWRN6LtuQraiTZsvnBGhWr72faQSwuLQVzrqbNIMaGpxReqJTxDPZ
+         t5Uw==
+X-Gm-Message-State: AOAM5319EGvNMcRoxfAklsH8GXtEsw8w+3N/3PjJP8nfK+gEElEmxCCZ
+        kM0QKgM8t2winWCEA9Pw16WrQQ==
+X-Google-Smtp-Source: ABdhPJxI1/vhZ1KM2jJH6ksA70uIiYHjkzcyEe/prqKG2CyKBGHpDy10UuCc8LzOuo7Pl0GG8bMXbQ==
+X-Received: by 2002:a5d:45c4:: with SMTP id b4mr18470805wrs.222.1637756935206;
+        Wed, 24 Nov 2021 04:28:55 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
+        by smtp.gmail.com with ESMTPSA id p62sm4417694wmp.10.2021.11.24.04.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Nov 2021 04:28:54 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Johan Hovold <johan@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 1/2] gpiolib: improve coding style for local variables
+Date:   Wed, 24 Nov 2021 13:28:49 +0100
+Message-Id: <20211124122850.7095-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 24 Nov 2021 09:03:24 +0100 Johannes Berg wrote:
-> On Tue, 2021-11-23 at 15:49 -0800, Jakub Kicinski wrote:
-> > > Indeed.
-> > > 
-> > > Also as I said in my other mail, the le32/be32/... variants are
-> > > tremendously useful, and they fundamentally cannot be expressed with the
-> > > FIELD_GET() or field_get() macros. IMHO this is a clear advantage to the  
-> > 
-> > Can you elaborate?  
-> 
-> Well, the way I see it, the only advantage of FIELD_GET() is that it
-> will auto-determine the type (based on the mask type.) This cannot work
-> if you need be/le conversions, because the be/le type annotations are
-> invisible to the compiler.
-> 
-> So obviously you could write a BE32_FIELD_GET(), but then really that's
-> equivalent to be32_get_bits() - note you you have to actually specify
-> the type in the macro name. I guess in theory you could make macros
-> where the type is an argument (like FIELD_GET_TYPE(be32, ...)), but I
-> don't see how that gains anything.
+Drop unneeded whitespaces and put the variables of the same type
+together for consistency with the rest of the code.
 
-Ah, that's what you meant! Thanks for spelling it out.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+v1 -> v2:
+- keep initializations on separate lines
 
-FWIW I never found the be/le versions useful. Most of the time the data
-comes from bus accessors which swap or is unaligned so you have to do
-be/le_get_unaligned, which swaps. Plus if you access/set multiple
-fields you'd swap them one by one which seems wasteful.
+ drivers/gpio/gpiolib.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> > > typed versions, and if you ask me we should get rid of the FIELD_GETand
-> > > FIELD_PREP entirely - difficult now, but at least let's not propagate
-> > > that?  
-> > 
-> > I don't see why.  
-> 
-> Just for being more regular, in the spirit of "there's exactly one
-> correct way of doing it" :)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index abfbf546d159..ede8b8a7aa18 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -594,11 +594,11 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 			       struct lock_class_key *request_key)
+ {
+ 	struct fwnode_handle *fwnode = gc->parent ? dev_fwnode(gc->parent) : NULL;
+-	unsigned long	flags;
+-	int		ret = 0;
+-	unsigned	i;
+-	int		base = gc->base;
+ 	struct gpio_device *gdev;
++	unsigned long flags;
++	int base = gc->base;
++	unsigned int i;
++	int ret = 0;
+ 
+ 	/*
+ 	 * First: allocate and populate the internal stat container, and
+-- 
+2.25.1
 
-Right now it seems the uppercase macros are more prevalent.
-
-Could just be because of the way the "swapping ones" are defined.
