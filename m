@@ -2,100 +2,113 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6FEC433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 25 Nov 2021 21:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D173C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 25 Nov 2021 21:41:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350672AbhKYVbg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 25 Nov 2021 16:31:36 -0500
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:41819 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235734AbhKYV3f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Nov 2021 16:29:35 -0500
-Received: by mail-oi1-f169.google.com with SMTP id u74so14939887oie.8;
-        Thu, 25 Nov 2021 13:26:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=B6wyCDAmUSCibSY1414flm92lyIj8FXeL6fX67zL5Jw=;
-        b=F0cWaLGT3UOVMMl0DxupnHSTOlb3Q2TJvcsukldsEwOzzLhH+7+s2L0QBXacsjQzB+
-         bpnHPIU48dKbmaseG04tMbJxcOOI1SvV8O8GRInknjNfH9jqkxNQ6w+lHC324LsZx6GR
-         hauZJEPQ32KRIPFiGOVeLFTy3q8aEmdObFOmVCW0mLT977m0hV2JkMTKqf94RcEUWxNJ
-         LAq2s4Q0qg5HTowVbK6ssOJvW2+LwkVErUC4azsI3f4QTR945Czxil4SPcBkOFwAOOka
-         T75kpmht6yLzmIanl1rgkP9h5UcjCutRgbP4WYtYi5HISUObiyK2lL+Wmbaaq3emTAlr
-         gGIA==
-X-Gm-Message-State: AOAM531edzLSNZWXwfIRuIj5wiy9DokmZNyN9MAQ+rtnXUVmcOQz/Sdn
-        eMalx8w8z4qc2s+Q4XgRKI/c6iNcuQ==
-X-Google-Smtp-Source: ABdhPJy2R9t+40EAgpr2S6XGtSWSnhEPJsptRSXK8jQhEK8v2yhDQATbssIRHRP9tz+jMibWZPuxew==
-X-Received: by 2002:aca:b843:: with SMTP id i64mr18863323oif.109.1637875583352;
-        Thu, 25 Nov 2021 13:26:23 -0800 (PST)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id be12sm938107oib.50.2021.11.25.13.26.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Nov 2021 13:26:22 -0800 (PST)
-Received: (nullmailer pid 2858317 invoked by uid 1000);
-        Thu, 25 Nov 2021 21:26:02 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Cosmin Tanislav <demonsingur@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org, cosmin.tanislav@analog.com,
-        linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <20211125131422.50657-3-demonsingur@gmail.com>
-References: <20211125131422.50657-1-demonsingur@gmail.com> <20211125131422.50657-3-demonsingur@gmail.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: iio: add AD74413R
-Date:   Thu, 25 Nov 2021 14:26:02 -0700
-Message-Id: <1637875562.336876.2858316.nullmailer@robh.at.kernel.org>
+        id S233984AbhKYVpC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 25 Nov 2021 16:45:02 -0500
+Received: from mga07.intel.com ([134.134.136.100]:64459 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234325AbhKYVnB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 25 Nov 2021 16:43:01 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10179"; a="298976516"
+X-IronPort-AV: E=Sophos;i="5.87,263,1631602800"; 
+   d="scan'208";a="298976516"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2021 13:39:49 -0800
+X-IronPort-AV: E=Sophos;i="5.87,263,1631602800"; 
+   d="scan'208";a="457973408"
+Received: from smile.fi.intel.com ([10.237.72.184])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2021 13:39:47 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1mqMT3-00AbEy-9V;
+        Thu, 25 Nov 2021 23:39:45 +0200
+Date:   Thu, 25 Nov 2021 23:39:45 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: acpi: Do not set the IRQ type if the IRQ is
+ already in use
+Message-ID: <YaACofzJO2/bckS3@smile.fi.intel.com>
+References: <20211125203010.825442-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211125203010.825442-1-hdegoede@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 25 Nov 2021 15:14:21 +0200, Cosmin Tanislav wrote:
-> The AD74412R and AD74413R are quad-channel software configurable input/output
-> solutions for building and process control applications. They contain
-> functionality for analog output, analog input, digital input, resistance
-> temperature detector, and thermocouple measurements integrated
-> into a single chip solution with an SPI interface.
-> The devices feature a 16-bit ADC and four configurable 13-bit DACs to provide
-> four configurable input/output channels and a suite of diagnostic functions.
-> The AD74413R differentiates itself from the AD74412R by being HART-compatible.
+On Thu, Nov 25, 2021 at 09:30:10PM +0100, Hans de Goede wrote:
+> If the IRQ is already in use, then acpi_dev_gpio_irq_get_by() really
+> should not change the type underneath the current owner.
 > 
-> Signed-off-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
+> I specifically hit an issue with this an a Chuwi Hi8 Super (CWI509) Bay
+> Trail tablet, when the Boot OS selection in the BIOS is set to Android.
+> In this case _STA for a MAX17047 ACPI I2C device wrongly returns 0xf and
+> the _CRS resources for this device include a GpioInt pointing to a GPIO
+> already in use by an _AEI handler, with a different type then specified
+> in the _CRS for the MAX17047 device. Leading to the acpi_dev_gpio_irq_get()
+> call done by the i2c-core-acpi.c code changing the type breaking the
+> _AEI handler.
+> 
+> Now this clearly is a bug in the DSDT of this tablet (in Android mode),
+> but in general calling irq_set_irq_type() on an IRQ which already is
+> in use seems like a bad idea.
+
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
->  .../bindings/iio/addac/adi,ad74413r.yaml      | 153 ++++++++++++++++++
->  include/dt-bindings/iio/addac/adi,ad74413r.h  |  21 +++
->  2 files changed, 174 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
->  create mode 100644 include/dt-bindings/iio/addac/adi,ad74413r.h
+> Changes in v2:
+> - Emit a dev_dbg when the IRQ is already in use. Note while making this
+>   change I realized that i2c-multi-instantiate.c actually uses
+>   acpi_dev_gpio_irq_get_by() with shared interrupts, so I decided to
+>   go with a dev_dbg instead of a dev_warn after all
+
+Okay, this explains drop of FW_BUG macro, I suppose.
+
+Pushed to my review and testing queue, thanks!
+
+> ---
+>  drivers/gpio/gpiolib-acpi.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> index 985e8589c58b..feb8157d2d67 100644
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@ -1056,10 +1056,17 @@ int acpi_dev_gpio_irq_get_by(struct acpi_device *adev, const char *name, int ind
+>  			irq_flags = acpi_dev_get_irq_type(info.triggering,
+>  							  info.polarity);
+>  
+> -			/* Set type if specified and different than the current one */
+> -			if (irq_flags != IRQ_TYPE_NONE &&
+> -			    irq_flags != irq_get_trigger_type(irq))
+> -				irq_set_irq_type(irq, irq_flags);
+> +			/*
+> +			 * If the IRQ is not already in use then set type
+> +			 * if specified and different than the current one.
+> +			 */
+> +			if (can_request_irq(irq, irq_flags)) {
+> +				if (irq_flags != IRQ_TYPE_NONE &&
+> +				    irq_flags != irq_get_trigger_type(irq))
+> +					irq_set_irq_type(irq, irq_flags);
+> +			} else {
+> +				dev_dbg(&adev->dev, "IRQ %d already in use\n", irq);
+> +			}
+>  
+>  			return irq;
+>  		}
+> -- 
+> 2.33.1
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+-- 
+With Best Regards,
+Andy Shevchenko
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dts:23.32-33 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:373: Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1413: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1559714
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
 
