@@ -2,80 +2,78 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9504C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 18:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF472C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 22:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241856AbhKZS0e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Nov 2021 13:26:34 -0500
-Received: from mga14.intel.com ([192.55.52.115]:9803 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236624AbhKZSYe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 26 Nov 2021 13:24:34 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10180"; a="235940782"
-X-IronPort-AV: E=Sophos;i="5.87,266,1631602800"; 
-   d="scan'208";a="235940782"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 10:13:03 -0800
-X-IronPort-AV: E=Sophos;i="5.87,266,1631602800"; 
-   d="scan'208";a="458268263"
-Received: from smile.fi.intel.com ([10.237.72.184])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 10:13:01 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1mqfiV-00As4E-AB;
-        Fri, 26 Nov 2021 20:12:59 +0200
-Date:   Fri, 26 Nov 2021 20:12:59 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Yauhen Kharuzhy <jekhor@gmail.com>
-Subject: Re: [PATCH v2 3/3] pinctrl: cherryview: Ignore INT33FF UID 5 ACPI
- device
-Message-ID: <YaEjqxg8rX0njW6z@smile.fi.intel.com>
-References: <20211118105650.207638-1-hdegoede@redhat.com>
- <20211118105650.207638-3-hdegoede@redhat.com>
- <YZY4wj5AHhzFSwdD@smile.fi.intel.com>
+        id S242605AbhKZWHL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Nov 2021 17:07:11 -0500
+Received: from mail-il1-f180.google.com ([209.85.166.180]:35819 "EHLO
+        mail-il1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242791AbhKZWFK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 17:05:10 -0500
+Received: by mail-il1-f180.google.com with SMTP id 15so1301935ilq.2;
+        Fri, 26 Nov 2021 14:01:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=U7pqWisj6jJ5TjISWm7FuFwz6JZmQrfbLJ0Krc3qwoQ=;
+        b=6TkcbgVqeEwZV9rb2ffPFtfQSyQB2gvQRNEyR/pHceN3TVwFgClT+NXv05rDyHV+PM
+         SQ45Ikig4Xfo1zr5SiLChcA0c5c/0WWToCPKXNubqy9v/CAUNOqwIlp6R8sbNr2q7LHl
+         uDUVkGedF4DBRYsNzb/pAz5sjZNJWulCPkW2sVsq8TpR5crGh6qWxKKMIjvE6lQS72nb
+         NO99IYGIE4iJRsufXg13RLCkbC5VEoRx7xUIyj17bb274FPqXZDkugr7MO8rEm55UEve
+         uszr/cQW44zD2f8nVswlEHHwkg9Y3xjrCBeL0WbsyU2iXUpUUBLpIWkXPgYM/2SBCWVl
+         jxhg==
+X-Gm-Message-State: AOAM530gYn7JJNKxjjZrQqQfTIzlacX6okkmYbBSQnBvlv+GY99i6moP
+        BFls8RhRQjAnc/8D4g+yRA==
+X-Google-Smtp-Source: ABdhPJybx68U174Eaha9BUWMvTEppJV0mtTc/A29ZFmkJSy95RayV1OjBHFQ4cZ9gxqQF4ChAq/L9A==
+X-Received: by 2002:a05:6e02:484:: with SMTP id b4mr34984883ils.173.1637964116491;
+        Fri, 26 Nov 2021 14:01:56 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id y4sm4469705ilv.21.2021.11.26.14.01.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Nov 2021 14:01:55 -0800 (PST)
+Received: (nullmailer pid 3352231 invoked by uid 1000);
+        Fri, 26 Nov 2021 22:01:51 -0000
+Date:   Fri, 26 Nov 2021 15:01:51 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     quic_vamslank@quicinc.com
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        manivannan.sadhasivam@linaro.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: pinctrl: qcom: Add SDX65 pinctrl
+ bindings
+Message-ID: <YaFZTxDcTMqeA/42@robh.at.kernel.org>
+References: <cover.1637048107.git.quic_vamslank@quicinc.com>
+ <06234768890dc7572226f23d432e5a69a4d5b305.1637048107.git.quic_vamslank@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YZY4wj5AHhzFSwdD@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <06234768890dc7572226f23d432e5a69a4d5b305.1637048107.git.quic_vamslank@quicinc.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 18, 2021 at 01:28:02PM +0200, Andy Shevchenko wrote:
-> On Thu, Nov 18, 2021 at 11:56:50AM +0100, Hans de Goede wrote:
-> > Many Cherry Trail DSDTs have an extra INT33FF device with UID 5,
-> > the intel_pinctrl_get_soc_data() call will fail for this extra
-> > unknown UID, leading to the following error in dmesg:
-> > 
-> >  cherryview-pinctrl: probe of INT33FF:04 failed with error -61
-> > 
-> > Add a check for this extra UID and return -ENODEV for it to
-> > silence this false-positive error message.
+On Mon, Nov 15, 2021 at 11:39:45PM -0800, quic_vamslank@quicinc.com wrote:
+> From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
 > 
-> Hmm... Interesting. Why do they have it?
-> Give me some time to check this...
+> Add device tree binding Documentation details for Qualcomm SDX65
+> pinctrl driver.
+> 
+> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  .../bindings/pinctrl/qcom,sdx65-pinctrl.yaml  | 195 ++++++++++++++++++
+>  1 file changed, 195 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml
 
-_DDN in ACPI describes this as Virtual GPIO. The only documentation at hand
-right now tells me that this is a "solution" to represent the "virtual GPIO"
-as fifth community (no connection to any pads, minimum configuration, etc).
+This fails dt_binding_check:
 
-The goal as far as I can see is "to convert a PME event generated by PCI device
-to a GPIO interrupt".
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.example.dt.yaml: pinctrl@f100000: 'serial-pins', 'uart-w-subnodes-state' do not match any of the regexes: '$-state', 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml
 
-Seems like we better have a driver for it, but the only purpose of it is to
-generate interrupts based on PME.
+The DT list was not Cc'ed so checks never ran nor was this reviewed.
 
-I'll try to dig more may be next week, but for now I would like to postpone the
-patch. Do you agree?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Rob
 
