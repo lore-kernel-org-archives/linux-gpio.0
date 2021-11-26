@@ -2,55 +2,70 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 944B9C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 17:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A92C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 17:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbhKZRox (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Nov 2021 12:44:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231638AbhKZRmx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 12:42:53 -0500
-Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D3F5C0619D3;
-        Fri, 26 Nov 2021 09:19:23 -0800 (PST)
-Received: from [2a04:4540:1400:cf00:853a:6162:5f49:5bef]
-        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <john@phrozen.org>)
-        id 1mqesV-0007LY-4v; Fri, 26 Nov 2021 18:19:15 +0100
-Message-ID: <fe218610-660c-929b-39f3-5146b2fe9aad@phrozen.org>
-Date:   Fri, 26 Nov 2021 18:19:14 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.2.1
-Subject: Re: [PATCH v4 12/12] gpio: Add support for Airoha EN7523 GPIO
- controller
-Content-Language: en-GB
-To:     Felix Fietkau <nbd@nbd.name>, linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
+        id S232470AbhKZRtj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Nov 2021 12:49:39 -0500
+Received: from mga07.intel.com ([134.134.136.100]:63632 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229555AbhKZRrj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 26 Nov 2021 12:47:39 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10180"; a="299101131"
+X-IronPort-AV: E=Sophos;i="5.87,266,1631602800"; 
+   d="scan'208";a="299101131"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 09:43:11 -0800
+X-IronPort-AV: E=Sophos;i="5.87,266,1631602800"; 
+   d="scan'208";a="539306483"
+Received: from smile.fi.intel.com ([10.237.72.184])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 09:43:09 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1mqfFb-00ArOt-Cu;
+        Fri, 26 Nov 2021 19:43:07 +0200
+Date:   Fri, 26 Nov 2021 19:43:07 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <20211125110738.41028-1-nbd@nbd.name>
- <20211125110738.41028-13-nbd@nbd.name>
-From:   John Crispin <john@phrozen.org>
-In-Reply-To: <20211125110738.41028-13-nbd@nbd.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Yauhen Kharuzhy <jekhor@gmail.com>
+Subject: Re: [PATCH v2 1/3] pinctrl: cherryview: Don't use pin/offset 0 to
+ mark an interrupt line as unused
+Message-ID: <YaEcq2N92rwbUsXx@smile.fi.intel.com>
+References: <20211118105650.207638-1-hdegoede@redhat.com>
+ <YZY4ZA80QpJQFqOj@smile.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YZY4ZA80QpJQFqOj@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Thu, Nov 18, 2021 at 01:26:28PM +0200, Andy Shevchenko wrote:
+> On Thu, Nov 18, 2021 at 11:56:48AM +0100, Hans de Goede wrote:
+> > Offset/pin 0 is a perfectly valid offset, so stop using it to have
+> > the special meaning of interrupt line not used in the intr_lines.
+> > 
+> > Instead introduce a new special INTR_LINE_UNUSED value which is never
+> > a valid offset and use that to indicate unused interrupt lines.
+> 
+> ...
+> 
+> > +#define INTR_LINE_UNUSED		U32_MAX
+> 
+> Funny, I have had something similar in my local branch for a few years ;-)
+> 
+> +#define CHV_INVALID_HWIRQ      ((unsigned int)INVALID_HWIRQ)
 
+I will rename this when applying. I assume there is no objection on doing it.
 
-On 25.11.21 12:07, Felix Fietkau wrote:
-> + * @dir1: The direction register for the lower 16 pins.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-s/lower/higher/
-
-just spotted that one aswell
-
-	John
 
