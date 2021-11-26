@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CF8C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 10:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942EFC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 10:36:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232626AbhKZKjU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Nov 2021 05:39:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40340 "EHLO
+        id S1343646AbhKZKjW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Nov 2021 05:39:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377247AbhKZKhT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 05:37:19 -0500
+        with ESMTP id S1377250AbhKZKhU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 05:37:20 -0500
 Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47CFFC0619DE;
-        Fri, 26 Nov 2021 02:23:06 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id z5so36940630edd.3;
-        Fri, 26 Nov 2021 02:23:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A436AC061A15;
+        Fri, 26 Nov 2021 02:23:09 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id x6so36694219edr.5;
+        Fri, 26 Nov 2021 02:23:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jre/oDqDL38Az7gfYZIbvMV38bQ5mA5ntNTe8RxlVbo=;
-        b=d39t2u+737mjAU7Z/Ugq+pMgIUWuLf2gTDfncwmtUC/CMmwViJQy4u/dF/vPD8TZIT
-         MtVWic5heJY+w6IvKYzlAN8tUIM0ScnndbGujkH6wGRAco7epOYCQkEzhk7mLZSALASP
-         R6uTd3Okw914zp5fnxOcIMtyy6Uiw96MXEDNRtytJcmIJqknZoizzI5AziHTmd65kpmL
-         cOo+MvReZ8pG1dTs1x9Y/rTuQse6likbZONyXDmbFSVJivGP1TVmPUjgT3ujKlNKUAPX
-         pe4Ygtwt4Ho6CKfI12Wy7JM8xu8IP2CYBYsYdLHIBYznCFqC/WVyivYKU3la/PEDZ7jg
-         5pQA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dHzdgLlDcS+YP8TdhEA+UJi4RDESh0ZO338QAL0QIKE=;
+        b=NxVhdgd0LrCBq7+LIRy2i9UQXzfeirrP0b6rgtZhXPseiJ8MVNS/rqfOBB3EEC0B5Z
+         uQfLFENv7kUJxQP61B+uWyIDcj7IQREdGnCWdEBkAGNScHxKha90SyZiOB71zBqQjmnz
+         9kbmPzFnI4mwZwL336Zpy+A5IlBlrxS+KRA31gkiEfk2v7D0tgnz/6mhHQ17F2lAivh4
+         s980tdDXJTGc5pvtgCM63BC3JuyHTTfzSpQf4YVc5bTwUrMDyigvy9VfAPC7/EKH5QQp
+         JbBMGBFpHPT2YP1dZUeS/viCWzHciLiULHy4Ndr4sYlWZ+/AvBhw+G8UqXOnymx5kisg
+         pZkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jre/oDqDL38Az7gfYZIbvMV38bQ5mA5ntNTe8RxlVbo=;
-        b=5TzmhKVsjX7AFSZVM7vOP+KgtmdPUEKk5ybIiI1kscsqgh2+KH2yJrXjfD+2jMlfxp
-         2QGgeBzIGKQWLNcCdJRZUFLxtccJTIhiQGGX11GuQoxvEgkogT0ShvLZVQ1ihw9zKf8k
-         lh/wtpltoMVmJhdJDNmv6hWFuLxyLd3ABMZnyjRQtm47Beo2Li+B7NWj+iWgTqhf7J34
-         RfM05swR8iNKUz6pbbr3fD0BUqTkF0feZSZQGvdgM4iRYk3g6nbFl2Q/xQoAWqWO8J8x
-         cPtN7wVo/WL6HgUYPcv0ZzSCKpKpRfyXY4PQZ3YvhxPHuW+OsjXrq0sP0/Jj85k4xMON
-         fKQA==
-X-Gm-Message-State: AOAM532RTHS/XqvEYtaXMazjk/p6UlbhGHX2ID11OCP8hNvnqzydE4vc
-        ZTGJNdDqJr8fYuzBPSJ5XrY=
-X-Google-Smtp-Source: ABdhPJxknotDcTg5n3aVu21j35W55dieaPwLxEsUxuRc6I5GhswBhgmlb3OEyCFhgYHrvGpNsgW81A==
-X-Received: by 2002:a17:907:a42c:: with SMTP id sg44mr37388974ejc.335.1637922184876;
-        Fri, 26 Nov 2021 02:23:04 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dHzdgLlDcS+YP8TdhEA+UJi4RDESh0ZO338QAL0QIKE=;
+        b=mOeD4L+5n1ZRdiA0LRGDVVWAVcOPe/JLrcoSZIUiMxz1rOpYFGSCwfTdMYDdz4ivYr
+         psaWgp6fudnX+KFHJ3DVq6OS54XgSG8w3KZUIWZTjrGoAvIrtUeT2WeJtn/TOSt4rPHP
+         ydA6SPKXvy79XHgWPEio2Q3qkM046ct5NQsBv4bi3QpSen2Lso6vR7dvFVNYv9jjqHRN
+         ro+asP+YIkx+mwEnZ9sce8AjMyz/vVZP1oIGfyeJeZmF8KLnPBgookJwQL/QWgKbIP54
+         P+wx1uDiJ6LkFKcEjWr5awWyLFtjF7/skTD0jksZQLkBh0rwHOHn4I2tFsx/SCxa4Ptk
+         ARlw==
+X-Gm-Message-State: AOAM532cZW8bnAXqX2pYykS20lYS0xUuTVg4m2skOvnzK4qVp2XwMwse
+        c6sF/a7ZbsVvAcBiEJ6uEuk=
+X-Google-Smtp-Source: ABdhPJwusvBELCcovCNxZw/z1wZQx1bXU3wWSSNFTS4DY2vN3CPrYP+EpP6+iZVp2m9mzD3BRY+Lyg==
+X-Received: by 2002:aa7:c78f:: with SMTP id n15mr47154541eds.344.1637922188257;
+        Fri, 26 Nov 2021 02:23:08 -0800 (PST)
 Received: from demon-pc.localdomain ([188.24.96.74])
-        by smtp.gmail.com with ESMTPSA id w24sm2866019ejk.0.2021.11.26.02.23.04
+        by smtp.gmail.com with ESMTPSA id w24sm2866019ejk.0.2021.11.26.02.23.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 02:23:04 -0800 (PST)
+        Fri, 26 Nov 2021 02:23:07 -0800 (PST)
 From:   Cosmin Tanislav <demonsingur@gmail.com>
 Cc:     demonsingur@gmail.com, cosmin.tanislav@analog.com,
         Lars-Peter Clausen <lars@metafoo.de>,
@@ -55,12 +55,13 @@ Cc:     demonsingur@gmail.com, cosmin.tanislav@analog.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: [PATCH v5 0/3] Add AD74413R driver
-Date:   Fri, 26 Nov 2021 12:22:43 +0200
-Message-Id: <20211126102246.289491-1-demonsingur@gmail.com>
+Subject: [PATCH v5 2/3] dt-bindings: iio: add AD74413R
+Date:   Fri, 26 Nov 2021 12:22:45 +0200
+Message-Id: <20211126102246.289491-3-demonsingur@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211126102246.289491-1-demonsingur@gmail.com>
+References: <20211126102246.289491-1-demonsingur@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
@@ -76,107 +77,204 @@ The devices feature a 16-bit ADC and four configurable 13-bit DACs to provide
 four configurable input/output channels and a suite of diagnostic functions.
 The AD74413R differentiates itself from the AD74412R by being HART-compatible.
 
-V1 -> V2
- * sign off using company email
-
-V2 -> V3
- * replace gpo config firmware flag with one flag specifying whether gpo is in
-   comparator mode
- * create two separate gpiochips, one output-only for GPO pins not in
-   comparator mode and one input-only for the value of digital input channels
- * wire up all gpo functionalities using pinconf
- * keep number of characters per line under 80
- * rework locking
- * do not invalidate other chip revisions
- * do not set indio device parent
- * print probe error for refin regulator
- * move conversion from range register value to range / offset / raw offset
-   into separate function
- * module.h -> mod_devicetable.h
- * use generic firmware interface functions
- * add comment regarding cache alignment
- * add comment regarding ADC channels buffered read setup
- * un-inline comment regarding 100us delay for conversion start
- * inline return statements
- * remove assignments to val2 where not necessary
- * local_channels -> chans
- * index -> i
- * channel_config -> config
- * IIO_ALTVOLTAGE -> IIO_VOLTAGE
- * .info_mask_shared_by_type_available -> .info_mask_separate_available
- * remove unlikely probe error messages
- * use an array indexed by channel function for retrieving iio channels
- * count iio channels while parsing
- * move HART rate rejection outside of setter
- * move channel function validation outside of setter
- * use SPI messages for read and write
- * validate DAC code earlier
- * simplify switches to only handle existing iio channels
- * pass indio_dev into functions needing access to it
- * pass spi into devm_regmap_init
- * dt-bindings: sort compatibles
- * dt-bindings: remove driver word from description
- * dt-bindings: remove refin supply description
- * dt-bindings: specify channel function default value
- * dt-bindings: remove maxItems from scalar value
-
-V3 -> v4
- * remove double gpo from macro name
- * reset at probe
- * config -> chip_info and store chip name inside chip info
- * cacheline align every DMA buffer
- * simplify generation of adc samples message by caching xfer, tx_buf and rx_buf
- * use mask itself for writing the value of channel enable and gpo data
- * move reg read and write transfers to the same buffers and use local
-   variables for transfers
- * merge the two for loops handling gpio configuration
- * let firmware decide irq edge
- * remove INDIO_BUFFER_SOFTWARE already set by iio framwork
- * do not set trigger device parent
- * return dev_err_probe for regulator error case
- * do not set cs_change to 0 when not needed
- * do not set spi device drvdata as it is not needed
- * fix bug regarding wrong channels being created for resistance input,
-   digital input, and current input with hart
- * use voltage input channels spec for high impedance mode
- * put () around macro parameters
- * merge AD74413R_CHANNEL macro into its uses
- * remove unused switch case scope
- * inline return IIO_VAL_INT
- * use {get,put}_unaligned_be16
- * use proper types for reg and val
- * move default case handling into switch statements
- * pass driver state into regmap functions
- * use genmask for generating a 16bit max value
- * alphanumeric order for part numbers
- * dt-bindings: remove $ref from ohms value
-
-V4 -> V5
- * dt-bindings: include headers necessary
- * dt-bindings: add IRQ_TYPE_EDGE_FALLING to interrupt flags
- * dt-bindings: ohm -> ohms
- * dt-bindings: spi0 -> spi
-
-Cosmin Tanislav (3):
-  iio: add adddac subdirectory
-  dt-bindings: iio: add AD74413R
-  iio: addac: add AD74413R driver
-
- .../bindings/iio/addac/adi,ad74413r.yaml      |  157 ++
- MAINTAINERS                                   |    9 +
- drivers/iio/Kconfig                           |    1 +
- drivers/iio/Makefile                          |    1 +
- drivers/iio/addac/Kconfig                     |   20 +
- drivers/iio/addac/Makefile                    |    7 +
- drivers/iio/addac/ad74413r.c                  | 1473 +++++++++++++++++
- include/dt-bindings/iio/addac/adi,ad74413r.h  |   21 +
- 8 files changed, 1689 insertions(+)
+Signed-off-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
+---
+ .../bindings/iio/addac/adi,ad74413r.yaml      | 157 ++++++++++++++++++
+ include/dt-bindings/iio/addac/adi,ad74413r.h  |  21 +++
+ 2 files changed, 178 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
- create mode 100644 drivers/iio/addac/Kconfig
- create mode 100644 drivers/iio/addac/Makefile
- create mode 100644 drivers/iio/addac/ad74413r.c
  create mode 100644 include/dt-bindings/iio/addac/adi,ad74413r.h
 
+diff --git a/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml b/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
+new file mode 100644
+index 000000000000..a6d6b5ef13b3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
+@@ -0,0 +1,157 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/addac/adi,ad74413r.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices AD74412R/AD74413R device
++
++maintainers:
++  - Cosmin Tanislav <cosmin.tanislav@analog.com>
++
++description: |
++  The AD74412R and AD74413R are quad-channel software configurable input/output
++  solutions for building and process control applications. They contain
++  functionality for analog output, analog input, digital input, resistance
++  temperature detector, and thermocouple measurements integrated
++  into a single chip solution with an SPI interface.
++  The devices feature a 16-bit ADC and four configurable 13-bit DACs to provide
++  four configurable input/output channels and a suite of diagnostic functions.
++  The AD74413R differentiates itself from the AD74412R by being HART-compatible.
++
++properties:
++  compatible:
++    enum:
++      - adi,ad74412r
++      - adi,ad74413r
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  spi-max-frequency:
++    maximum: 1000000
++
++  spi-cpol: true
++
++  interrupts:
++    maxItems: 1
++
++  refin-supply: true
++
++  adi,rsense-resistance-ohms:
++    description:
++      RSense resistance values in Ohms.
++
++required:
++  - compatible
++  - reg
++  - spi-max-frequency
++  - spi-cpol
++  - refin-supply
++  - adi,rsense-resistance-ohms
++
++additionalProperties: false
++
++patternProperties:
++  "^channel@[0-3]$":
++    type: object
++    description: Represents the external channels which are connected to the device.
++
++    properties:
++      reg:
++        description: |
++          The channel number. It can have up to 4 channels numbered from 0 to 3.
++        minimum: 0
++        maximum: 3
++
++      adi,ch-func:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: |
++          Channel function.
++          HART functions are not supported on AD74412R.
++          0 - CH_FUNC_HIGH_IMPEDANCE
++          1 - CH_FUNC_VOLTAGE_OUTPUT
++          2 - CH_FUNC_CURRENT_OUTPUT
++          3 - CH_FUNC_VOLTAGE_INPUT
++          4 - CH_FUNC_CURRENT_INPUT_EXT_POWER
++          5 - CH_FUNC_CURRENT_INPUT_LOOP_POWER
++          6 - CH_FUNC_RESISTANCE_INPUT
++          7 - CH_FUNC_DIGITAL_INPUT_LOGIC
++          8 - CH_FUNC_DIGITAL_INPUT_LOOP_POWER
++          9 - CH_FUNC_CURRENT_INPUT_EXT_POWER_HART
++          10 - CH_FUNC_CURRENT_INPUT_LOOP_POWER_HART
++        minimum: 0
++        maximum: 10
++        default: 0
++
++      adi,gpo-comparator:
++        type: boolean
++        description: |
++          Whether to configure GPO as a comparator or not.
++          When not configured as a comparator, the GPO will be treated as an
++          output-only GPIO.
++
++    required:
++      - reg
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/iio/addac/adi,ad74413r.h>
++
++    spi {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      cs-gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
++      status = "okay";
++
++      ad74413r@0 {
++        compatible = "adi,ad74413r";
++        reg = <0>;
++        spi-max-frequency = <1000000>;
++        spi-cpol;
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        interrupt-parent = <&gpio>;
++        interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
++
++        refin-supply = <&ad74413r_refin>;
++        adi,rsense-resistance-ohms = <100>;
++
++        channel@0 {
++          reg = <0>;
++
++          adi,ch-func = <CH_FUNC_VOLTAGE_OUTPUT>;
++        };
++
++        channel@1 {
++          reg = <1>;
++
++          adi,ch-func = <CH_FUNC_CURRENT_OUTPUT>;
++        };
++
++        channel@2 {
++          reg = <2>;
++
++          adi,ch-func = <CH_FUNC_DIGITAL_INPUT_LOGIC>;
++          adi,gpo-comparator;
++        };
++
++        channel@3 {
++          reg = <3>;
++
++          adi,ch-func = <CH_FUNC_CURRENT_INPUT_EXT_POWER>;
++        };
++      };
++    };
++...
+diff --git a/include/dt-bindings/iio/addac/adi,ad74413r.h b/include/dt-bindings/iio/addac/adi,ad74413r.h
+new file mode 100644
+index 000000000000..a43b010f974f
+--- /dev/null
++++ b/include/dt-bindings/iio/addac/adi,ad74413r.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _DT_BINDINGS_ADI_AD74413R_H
++#define _DT_BINDINGS_ADI_AD74413R_H
++
++#define CH_FUNC_HIGH_IMPEDANCE					0x0
++#define CH_FUNC_VOLTAGE_OUTPUT					0x1
++#define CH_FUNC_CURRENT_OUTPUT					0x2
++#define CH_FUNC_VOLTAGE_INPUT					0x3
++#define CH_FUNC_CURRENT_INPUT_EXT_POWER			0x4
++#define CH_FUNC_CURRENT_INPUT_LOOP_POWER		0x5
++#define CH_FUNC_RESISTANCE_INPUT				0x6
++#define CH_FUNC_DIGITAL_INPUT_LOGIC				0x7
++#define CH_FUNC_DIGITAL_INPUT_LOOP_POWER		0x8
++#define CH_FUNC_CURRENT_INPUT_EXT_POWER_HART	0x9
++#define CH_FUNC_CURRENT_INPUT_LOOP_POWER_HART	0xA
++
++#define CH_FUNC_MIN		CH_FUNC_HIGH_IMPEDANCE
++#define CH_FUNC_MAX		CH_FUNC_CURRENT_INPUT_LOOP_POWER_HART
++
++#endif /* _DT_BINDINGS_ADI_AD74413R_H */
 -- 
 2.34.1
 
