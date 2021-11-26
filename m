@@ -2,279 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DED0C4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 16:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 823B5C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Nov 2021 17:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378565AbhKZQRp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Nov 2021 11:17:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58520 "EHLO
+        id S235558AbhKZRGe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Nov 2021 12:06:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346110AbhKZQPn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 11:15:43 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75AA0C0613B5;
-        Fri, 26 Nov 2021 08:03:02 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id v1so40812077edx.2;
-        Fri, 26 Nov 2021 08:03:02 -0800 (PST)
+        with ESMTP id S229555AbhKZREd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 12:04:33 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCA4C07E5F6;
+        Fri, 26 Nov 2021 08:37:34 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id b1so25489502lfs.13;
+        Fri, 26 Nov 2021 08:37:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dHzdgLlDcS+YP8TdhEA+UJi4RDESh0ZO338QAL0QIKE=;
-        b=IUp3J1V9yU2wor8Rae9E9xj45qtM+pnlgVXDcB219Y2axedYDRgjh7gX5EuCa4l6Oy
-         PK0O6FV8XeNOL0NbQmFE6Ej1bZPLX5hrNf6+Tg1TPXfCkE7COMaKajTkMsOSTEjoRtHr
-         9qLu8UK5PngukIUozpFXnVzIPLT6sfwcsaITBRgwlm+UdobMcDk+/2XXhnuhTrO/1fDS
-         NDM5HOjYRATmDmguK4+t/yxD6/NrIDjdYagISwSWWkI2gc6lytX5XuQ7xv3J/1ZTZ0GH
-         XufkE6GeQrCRGxUnPhWa4QOPbWsTcMkuHdTWKb3DS0aof/lTMXDZYAIDlchqk4d34KMt
-         LUXQ==
+        bh=5Kh+r+enE/aDMEcIg5E7aidz6CHPbgPNpbPDxwc6DgE=;
+        b=nuOBw0N7ESsRZ8Kle97wVZLlQu5aQBukVf/f3QaReGPkqwkHgtMY7p4eOcM5+i8XSn
+         1zq5QczRWSGt8aK4RwWE5pEcgdnliAyGZ5N6R2p1aBnOLWpvKVxyumHzclidwN6LdML2
+         ZJ3sq4ftv/ypq0M2epY2umP6kFY2drnTmDeiUsitz7BJt4o3AbPVpp9FAlgvrJViG7n8
+         4Ne14u0MQ7M6fRkRA8f5s6F4cPD1B6BNPf6PCKYodipNwgpO3dMbij/5dXhqtzVPQji3
+         ksL6/0rHO+Kgdyig82NsV7TMB9Qwg7u2qFMoHGkqHRuKtCKxizqOXiPO9rk5pjMLrCni
+         uoSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dHzdgLlDcS+YP8TdhEA+UJi4RDESh0ZO338QAL0QIKE=;
-        b=d+YLpwk6O3y7b3Fn1hugFZkEgt+919+c2/Tavr7USdcRFyWIESqtxgJKddafCB+qeG
-         WwEgxVHyaFWEx9ly3Y5PDLTzbXjEodAfyZCmrkaohXawd40M9CXfT2PbsO67D/fC3LA3
-         38v1cPHCtOZ/ULxlMa66h8kc3Usk3cl95eEO5Ycgo+O7bAP1AQiVKhku/g/Vj8HfLpgz
-         9L/FSVytlPknoeuxYpenprCWXPD0jDzmJLZEJ+cbMES+WxbUnkuJiWc9lO7kFQR17V6h
-         SGwDaBUGLvQUrjaGmr/hbYjI4gSPgcz93yOTH/ESYlJjRnXgK4rKcOPmMKCXxNa0EqAm
-         wACA==
-X-Gm-Message-State: AOAM531WAZG5Dj3W4QSbq+yos9uP4FtiCRVIy3WbNIt2flAvmTM7QBdl
-        LPUS0EbSX4PUm6vXppRFjC8=
-X-Google-Smtp-Source: ABdhPJy0hI0zgqo7gtjB6iv622YFnerBCMAw9gOTNs9lg9PO9WJB58UGZxiNGAlx49uM2V39y1RO+w==
-X-Received: by 2002:a17:907:a40c:: with SMTP id sg12mr39014118ejc.408.1637942580946;
-        Fri, 26 Nov 2021 08:03:00 -0800 (PST)
-Received: from demon-pc.localdomain ([188.24.96.74])
-        by smtp.gmail.com with ESMTPSA id y15sm4188324edr.35.2021.11.26.08.03.00
+        bh=5Kh+r+enE/aDMEcIg5E7aidz6CHPbgPNpbPDxwc6DgE=;
+        b=2sknrVBYxNrTtQwrbfDro4Zk9pxJsF6PleePbx+kVq37RFH5Fi4uCX+UC+G/8KCmAM
+         xcVFlyPSQCU7mIby9miEx7/e1rV5RbsmE1+MFij2Y0OBffF/y2QbHA4TxeHwWlv03l23
+         paQSCWE2ebFhzXgBqHG1iwydRo46y7TCqp5nkkruyN6/iEcXJTbg5uVPXDj1oI0h84hf
+         S5Zj9DALDftSriBrof8iMC6BgGWIHqon30ESefXPT5QYmQR8vZ0XAveH0g8eDANoxGOs
+         sexYfLylh7jEDaYr9l4ERJF0/40zWewH43bpzt1K5//fVLccSuEyL9SOWMMYT7HJt6B8
+         iiTg==
+X-Gm-Message-State: AOAM531ujeLThwPOzqrAs+opTkXbCgIUFQecr8AxRpPNDLftund5DimL
+        6tHECPZzcmhtcSGdE7AAWX8=
+X-Google-Smtp-Source: ABdhPJyUXNOan4K2/n26Y8rT6nUMdDqi7PPMlqzjw3ahkpFZkcIvq40b55PsRAVMeykP6zfjqvU4FA==
+X-Received: by 2002:a05:6512:b14:: with SMTP id w20mr30228832lfu.164.1637944653083;
+        Fri, 26 Nov 2021 08:37:33 -0800 (PST)
+Received: from localhost.localdomain (public-gprs174427.centertel.pl. [46.134.20.156])
+        by smtp.googlemail.com with ESMTPSA id p5sm540608lfa.251.2021.11.26.08.37.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 08:03:00 -0800 (PST)
-From:   Cosmin Tanislav <demonsingur@gmail.com>
-Cc:     demonsingur@gmail.com, cosmin.tanislav@analog.com,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: [PATCH v6 2/3] dt-bindings: iio: add AD74413R
-Date:   Fri, 26 Nov 2021 18:02:18 +0200
-Message-Id: <20211126160219.674665-3-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211126160219.674665-1-demonsingur@gmail.com>
-References: <20211126160219.674665-1-demonsingur@gmail.com>
+        Fri, 26 Nov 2021 08:37:32 -0800 (PST)
+From:   Dominik Kobinski <dominikkobinski314@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        dominikkobinski314@gmail.com, ivo.ivanov.ivanov1@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dominik Kobinski <dkobinski314@gmail.com>
+Subject: Re: [PATCH v2,1/5] pinctrl: qcom: spmi-gpio: Add pm8226 compatibility 
+Date:   Fri, 26 Nov 2021 17:36:57 +0100
+Message-Id: <20211126163657.65471-1-dominikkobinski314@gmail.com>
+X-Mailer: git-send-email 2.34.0
+In-Reply-To: <CACRpkdau+wHpoWa1JrLt35dnCHJejs8HZkkzZCrrcnRCx3SinQ@mail.gmail.com>
+References: <CACRpkdau+wHpoWa1JrLt35dnCHJejs8HZkkzZCrrcnRCx3SinQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The AD74412R and AD74413R are quad-channel software configurable input/output
-solutions for building and process control applications. They contain
-functionality for analog output, analog input, digital input, resistance
-temperature detector, and thermocouple measurements integrated
-into a single chip solution with an SPI interface.
-The devices feature a 16-bit ADC and four configurable 13-bit DACs to provide
-four configurable input/output channels and a suite of diagnostic functions.
-The AD74413R differentiates itself from the AD74412R by being HART-compatible.
+From: Dominik Kobinski <dkobinski314@gmail.com>
 
-Signed-off-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
----
- .../bindings/iio/addac/adi,ad74413r.yaml      | 157 ++++++++++++++++++
- include/dt-bindings/iio/addac/adi,ad74413r.h  |  21 +++
- 2 files changed, 178 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
- create mode 100644 include/dt-bindings/iio/addac/adi,ad74413r.h
+Thank you for applying the patch. I believe the second one in this series (https://patchwork.kernel.org/project/linux-arm-msm/patch/20211125215626.62447-1-dominikkobinski314@gmail.com/) should be also applied to the pinctrl tree.
 
-diff --git a/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml b/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
-new file mode 100644
-index 000000000000..a6d6b5ef13b3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
-@@ -0,0 +1,157 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/addac/adi,ad74413r.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices AD74412R/AD74413R device
-+
-+maintainers:
-+  - Cosmin Tanislav <cosmin.tanislav@analog.com>
-+
-+description: |
-+  The AD74412R and AD74413R are quad-channel software configurable input/output
-+  solutions for building and process control applications. They contain
-+  functionality for analog output, analog input, digital input, resistance
-+  temperature detector, and thermocouple measurements integrated
-+  into a single chip solution with an SPI interface.
-+  The devices feature a 16-bit ADC and four configurable 13-bit DACs to provide
-+  four configurable input/output channels and a suite of diagnostic functions.
-+  The AD74413R differentiates itself from the AD74412R by being HART-compatible.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad74412r
-+      - adi,ad74413r
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  spi-max-frequency:
-+    maximum: 1000000
-+
-+  spi-cpol: true
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  refin-supply: true
-+
-+  adi,rsense-resistance-ohms:
-+    description:
-+      RSense resistance values in Ohms.
-+
-+required:
-+  - compatible
-+  - reg
-+  - spi-max-frequency
-+  - spi-cpol
-+  - refin-supply
-+  - adi,rsense-resistance-ohms
-+
-+additionalProperties: false
-+
-+patternProperties:
-+  "^channel@[0-3]$":
-+    type: object
-+    description: Represents the external channels which are connected to the device.
-+
-+    properties:
-+      reg:
-+        description: |
-+          The channel number. It can have up to 4 channels numbered from 0 to 3.
-+        minimum: 0
-+        maximum: 3
-+
-+      adi,ch-func:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: |
-+          Channel function.
-+          HART functions are not supported on AD74412R.
-+          0 - CH_FUNC_HIGH_IMPEDANCE
-+          1 - CH_FUNC_VOLTAGE_OUTPUT
-+          2 - CH_FUNC_CURRENT_OUTPUT
-+          3 - CH_FUNC_VOLTAGE_INPUT
-+          4 - CH_FUNC_CURRENT_INPUT_EXT_POWER
-+          5 - CH_FUNC_CURRENT_INPUT_LOOP_POWER
-+          6 - CH_FUNC_RESISTANCE_INPUT
-+          7 - CH_FUNC_DIGITAL_INPUT_LOGIC
-+          8 - CH_FUNC_DIGITAL_INPUT_LOOP_POWER
-+          9 - CH_FUNC_CURRENT_INPUT_EXT_POWER_HART
-+          10 - CH_FUNC_CURRENT_INPUT_LOOP_POWER_HART
-+        minimum: 0
-+        maximum: 10
-+        default: 0
-+
-+      adi,gpo-comparator:
-+        type: boolean
-+        description: |
-+          Whether to configure GPO as a comparator or not.
-+          When not configured as a comparator, the GPO will be treated as an
-+          output-only GPIO.
-+
-+    required:
-+      - reg
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/iio/addac/adi,ad74413r.h>
-+
-+    spi {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      cs-gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
-+      status = "okay";
-+
-+      ad74413r@0 {
-+        compatible = "adi,ad74413r";
-+        reg = <0>;
-+        spi-max-frequency = <1000000>;
-+        spi-cpol;
-+
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        interrupt-parent = <&gpio>;
-+        interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
-+
-+        refin-supply = <&ad74413r_refin>;
-+        adi,rsense-resistance-ohms = <100>;
-+
-+        channel@0 {
-+          reg = <0>;
-+
-+          adi,ch-func = <CH_FUNC_VOLTAGE_OUTPUT>;
-+        };
-+
-+        channel@1 {
-+          reg = <1>;
-+
-+          adi,ch-func = <CH_FUNC_CURRENT_OUTPUT>;
-+        };
-+
-+        channel@2 {
-+          reg = <2>;
-+
-+          adi,ch-func = <CH_FUNC_DIGITAL_INPUT_LOGIC>;
-+          adi,gpo-comparator;
-+        };
-+
-+        channel@3 {
-+          reg = <3>;
-+
-+          adi,ch-func = <CH_FUNC_CURRENT_INPUT_EXT_POWER>;
-+        };
-+      };
-+    };
-+...
-diff --git a/include/dt-bindings/iio/addac/adi,ad74413r.h b/include/dt-bindings/iio/addac/adi,ad74413r.h
-new file mode 100644
-index 000000000000..a43b010f974f
---- /dev/null
-+++ b/include/dt-bindings/iio/addac/adi,ad74413r.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _DT_BINDINGS_ADI_AD74413R_H
-+#define _DT_BINDINGS_ADI_AD74413R_H
-+
-+#define CH_FUNC_HIGH_IMPEDANCE					0x0
-+#define CH_FUNC_VOLTAGE_OUTPUT					0x1
-+#define CH_FUNC_CURRENT_OUTPUT					0x2
-+#define CH_FUNC_VOLTAGE_INPUT					0x3
-+#define CH_FUNC_CURRENT_INPUT_EXT_POWER			0x4
-+#define CH_FUNC_CURRENT_INPUT_LOOP_POWER		0x5
-+#define CH_FUNC_RESISTANCE_INPUT				0x6
-+#define CH_FUNC_DIGITAL_INPUT_LOGIC				0x7
-+#define CH_FUNC_DIGITAL_INPUT_LOOP_POWER		0x8
-+#define CH_FUNC_CURRENT_INPUT_EXT_POWER_HART	0x9
-+#define CH_FUNC_CURRENT_INPUT_LOOP_POWER_HART	0xA
-+
-+#define CH_FUNC_MIN		CH_FUNC_HIGH_IMPEDANCE
-+#define CH_FUNC_MAX		CH_FUNC_CURRENT_INPUT_LOOP_POWER_HART
-+
-+#endif /* _DT_BINDINGS_ADI_AD74413R_H */
--- 
-2.34.1
-
+Regards,
+Dominik Kobinski
