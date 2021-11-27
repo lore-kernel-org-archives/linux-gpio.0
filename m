@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BCCC433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Nov 2021 12:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E09C433EF
+	for <linux-gpio@archiver.kernel.org>; Sat, 27 Nov 2021 12:56:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239530AbhK0M7H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 27 Nov 2021 07:59:07 -0500
-Received: from mga07.intel.com ([134.134.136.100]:14307 "EHLO mga07.intel.com"
+        id S237071AbhK0NAH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 27 Nov 2021 08:00:07 -0500
+Received: from mga14.intel.com ([192.55.52.115]:54451 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244874AbhK0M5H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 27 Nov 2021 07:57:07 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10180"; a="299160646"
+        id S230513AbhK0M6H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 27 Nov 2021 07:58:07 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10180"; a="235997059"
 X-IronPort-AV: E=Sophos;i="5.87,269,1631602800"; 
-   d="scan'208";a="299160646"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2021 04:53:52 -0800
+   d="scan'208";a="235997059"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2021 04:54:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,269,1631602800"; 
-   d="scan'208";a="675791152"
+   d="scan'208";a="498732046"
 Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 27 Nov 2021 04:53:51 -0800
+  by orsmga007.jf.intel.com with ESMTP; 27 Nov 2021 04:54:51 -0800
 Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mqxDC-0009Wc-H4; Sat, 27 Nov 2021 12:53:50 +0000
-Date:   Sat, 27 Nov 2021 20:53:38 +0800
+        id 1mqxEA-0009Wo-I1; Sat, 27 Nov 2021 12:54:50 +0000
+Date:   Sat, 27 Nov 2021 20:53:51 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
- 2d5446da5acecf9c67db1c9d55ae2c3e5de01f8d
-Message-ID: <61a22a52.2A6T7XTJ4iZqfMSh%lkp@intel.com>
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 72f902d8b1870dd0c7824f0e7ce2915d564ca802
+Message-ID: <61a22a5f.8LqcIbZ8ZU9koSKW%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,12 +39,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
-branch HEAD: 2d5446da5acecf9c67db1c9d55ae2c3e5de01f8d  pinctrl: mediatek: fix global-out-of-bounds issue
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 72f902d8b1870dd0c7824f0e7ce2915d564ca802  Revert "dt-bindings: pinctrl: qcom: Add SDX65 pinctrl bindings"
 
-elapsed time: 724m
+elapsed time: 725m
 
-configs tested: 111
+configs tested: 130
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -57,6 +57,24 @@ arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
 i386                 randconfig-c001-20211126
+powerpc              randconfig-c003-20211126
+mips                 randconfig-c004-20211126
+arm                            zeus_defconfig
+arm                  colibri_pxa300_defconfig
+arm                         lpc32xx_defconfig
+ia64                             allyesconfig
+s390                       zfcpdump_defconfig
+arm                       omap2plus_defconfig
+powerpc                    adder875_defconfig
+arm                            dove_defconfig
+m68k                        m5272c3_defconfig
+arm                        spear3xx_defconfig
+sh                        edosk7760_defconfig
+powerpc                 mpc8560_ads_defconfig
+m68k                          sun3x_defconfig
+parisc                generic-32bit_defconfig
+arm                          ep93xx_defconfig
+arm                          simpad_defconfig
 sh                           se7705_defconfig
 powerpc               mpc834x_itxgp_defconfig
 powerpc                          g5_defconfig
@@ -84,7 +102,6 @@ sh                           sh2007_defconfig
 arm                  randconfig-c002-20211126
 ia64                             allmodconfig
 ia64                                defconfig
-ia64                             allyesconfig
 m68k                             allmodconfig
 m68k                                defconfig
 m68k                             allyesconfig
@@ -105,9 +122,9 @@ s390                             allmodconfig
 parisc                           allyesconfig
 s390                                defconfig
 i386                             allyesconfig
-sparc                            allyesconfig
 sparc                               defconfig
 i386                                defconfig
+sparc                            allyesconfig
 i386                   debian-10.3-kselftests
 i386                              debian-10.3
 mips                             allmodconfig
@@ -166,6 +183,10 @@ i386                 randconfig-a005-20211126
 i386                 randconfig-a006-20211126
 i386                 randconfig-a004-20211126
 i386                 randconfig-a003-20211126
+hexagon              randconfig-r045-20211127
+s390                 randconfig-r044-20211127
+hexagon              randconfig-r041-20211127
+riscv                randconfig-r042-20211127
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
