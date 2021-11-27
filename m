@@ -2,92 +2,82 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46B6C433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Nov 2021 00:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B82C433F5
+	for <linux-gpio@archiver.kernel.org>; Sat, 27 Nov 2021 01:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229919AbhK0ANz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Nov 2021 19:13:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233708AbhK0ALz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 19:11:55 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF5BC061758
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Nov 2021 16:07:29 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id w6-20020a9d77c6000000b0055e804fa524so16071228otl.3
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Nov 2021 16:07:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N2HF76KcOCpHV3kuvi2/xR1KNm8Hz25hSAVb7rqNIgM=;
-        b=PNsJQ/hzI80GS8ChdxrJ8rDSii7NuxrFjHBEyi4D8wfM7x1y62op6LIlJOYn6CKyRg
-         R6HBK9B9H6EVnE05LEs/tp6P5pPeBP1RnHEM6Hiveib2IaYrv/6BWCV3WmwtqofKlR6V
-         mgAw9MeZccGAkFa0yvk2eheL4uYQ1/6So/ubrcMjZol2HZjUN/OKgU+id2YTBGlmco3O
-         Ue5BVOlddld4fLoAYVcOjx4AIHzKMIDZyJlY9AjF4Mw8Odcvb0Tf4cF6YuS0lbxZxtc0
-         Jk/kEQdRZUQ4HbiHDvD4xYywrsH83AT7ARPN7UHoXYT5ReCM83TDvJG4sy1sOi+6gur7
-         JY8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N2HF76KcOCpHV3kuvi2/xR1KNm8Hz25hSAVb7rqNIgM=;
-        b=JDt70FeSkojHst6GcGwXOSZl2MVz+J58kbhE3cptj2ut1lP/Mxewdsd9UPb4znzcqU
-         X4xZWk64KD+fXsLDhgR5ks9aH4oD1lChqwQSibdexviQIE6r0s1WELQv9Zc88qN2vRom
-         TVHC1XS0Sxo+BgfTTJpVMmuzAahTFtsGBs9fLLt96VGDHuYbsBpV/poneoqyx4d02ckG
-         fror25p3sO21Sd9q/WqyrMPD4Mz22eGx62Fm0eAQqU+qsaImCBw69P1Q/lWDPTkH21bt
-         DSikg2hoGVAlhKNfBBdhCq66SNvS5jqajR2i+XI4FcUvpyGAOpUl5ExJoBZazN+YgqkH
-         GJbQ==
-X-Gm-Message-State: AOAM532rdxcUbXml94mOc24jPF23zgZmIqOGayVgvHy4oADr3A4RFM6/
-        te+jXEBfm2ZxQ/a7pAukYnAYbzVlKs+wVd6UdtDPHw==
-X-Google-Smtp-Source: ABdhPJwBhJSWOOSQy9TlF9sCXXA+cQsoSR4z9HhTWvjYkAmQ8zkutOBwqNSsdNKrRe5EYR6jLXQTtTJuVDqiPChO4bk=
-X-Received: by 2002:a9d:74d0:: with SMTP id a16mr30047235otl.237.1637971648785;
- Fri, 26 Nov 2021 16:07:28 -0800 (PST)
+        id S1351260AbhK0BfT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Nov 2021 20:35:19 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:36876 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351492AbhK0BdS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Nov 2021 20:33:18 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A784160A70;
+        Sat, 27 Nov 2021 01:30:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F795C004E1;
+        Sat, 27 Nov 2021 01:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637976604;
+        bh=mAlOarq0Dk/Cnzg2qMm+ZAQk5qZ2N0epByo7obErI3Q=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=Fcg42vtVZeZF5y1aURx+juD4v5oZgIonvPdKmX+Zu/VqzCrWO0+jfA937y+R5X64X
+         dXS8d/40IlhSffQQecFZ322OXRZbiKXTRNYZH3grxyimFMp7J4spN2lm5wl6o1Nl7u
+         TKH7dld0xezmDVUEYPWuvqPF3ZU/t44KFu98dpwqgU1xvW6Fzl8AE4tgoKTOZixR/9
+         l8AmMQ+MA9Ud4B4RegAdCh3aABEX7ZTjxW9vqoac7uvtIbDJvEPvPgCmpWhafnV5x8
+         ozu2qA+jej/STjTwjjhnQ4yB2LiOc2Y1xaTy2I3ZULTe6+JiGVocKBhVlU8aN29yY0
+         jpj4cChOJQIPg==
+From:   Mark Brown <broonie@kernel.org>
+To:     agross@kernel.org, Dominik Kobinski <dominikkobinski314@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linus.walleij@linaro.org,
+        bjorn.andersson@linaro.org
+In-Reply-To: <20211123174127.2261-1-dominikkobinski314@gmail.com>
+References: <20211123174127.2261-1-dominikkobinski314@gmail.com>
+Subject: Re: (subset) [PATCH 1/4] pinctrl: qcom: spmi-gpio: Add pm8226 compatibility
+Message-Id: <163797660213.2988101.12499295081195849746.b4-ty@kernel.org>
+Date:   Sat, 27 Nov 2021 01:30:02 +0000
 MIME-Version: 1.0
-References: <cover.1637048107.git.quic_vamslank@quicinc.com>
- <06234768890dc7572226f23d432e5a69a4d5b305.1637048107.git.quic_vamslank@quicinc.com>
- <YaFZTxDcTMqeA/42@robh.at.kernel.org>
-In-Reply-To: <YaFZTxDcTMqeA/42@robh.at.kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 27 Nov 2021 01:07:16 +0100
-Message-ID: <CACRpkdYpCmhXhJV1x42hu6QoncXX7eWcGPk22de19sSEC7B=oQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: pinctrl: qcom: Add SDX65 pinctrl bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     quic_vamslank@quicinc.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        manivannan.sadhasivam@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 26, 2021 at 11:01 PM Rob Herring <robh@kernel.org> wrote:
-> On Mon, Nov 15, 2021 at 11:39:45PM -0800, quic_vamslank@quicinc.com wrote:
-> > From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> >
-> > Add device tree binding Documentation details for Qualcomm SDX65
-> > pinctrl driver.
-> >
-> > Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  .../bindings/pinctrl/qcom,sdx65-pinctrl.yaml  | 195 ++++++++++++++++++
-> >  1 file changed, 195 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml
->
-> This fails dt_binding_check:
->
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.example.dt.yaml: pinctrl@f100000: 'serial-pins', 'uart-w-subnodes-state' do not match any of the regexes: '$-state', 'pinctrl-[0-9]+'
->         From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml
->
-> The DT list was not Cc'ed so checks never ran nor was this reviewed.
+On Tue, 23 Nov 2021 18:41:27 +0100, Dominik Kobinski wrote:
+> Add support for pm8226 SPMI GPIOs. The PMIC features
+> 8 GPIOs, with no holes inbetween.
+> 
+> 
 
-OK that's annoying, I didn't notice it wasn't posted to the DT list.
-I reverted the patch, Vamsi can you please reiterate the patch
-and include devicetree@vger.kernel.org on subsequent postings.
-I have kept the kernel code in place, optimistically assuming the
-bindings will be fixed soon-ish.
+Applied to
 
-Yours,
-Linus Walleij
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[3/4] dt-bindings: regulator: qcom: spmi-regulator: Document pm8226 compatible
+      commit: 76e95f331be09bac8764e971613439d294422d6e
+[4/4] regulator: qcom_spmi: Add pm8226 regulators
+      commit: f8843e5e2dc85dc6a546ec130d76be66e62abed6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
