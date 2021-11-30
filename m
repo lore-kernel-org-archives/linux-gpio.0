@@ -2,127 +2,136 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EF2C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Nov 2021 20:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 067A8C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Nov 2021 01:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbhK2UyY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Nov 2021 15:54:24 -0500
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:33339 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbhK2UwY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Nov 2021 15:52:24 -0500
-Received: by mail-oi1-f172.google.com with SMTP id q25so37050431oiw.0;
-        Mon, 29 Nov 2021 12:49:06 -0800 (PST)
+        id S235793AbhK3BWW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Nov 2021 20:22:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44184 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230411AbhK3BWV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Nov 2021 20:22:21 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62421C061746
+        for <linux-gpio@vger.kernel.org>; Mon, 29 Nov 2021 17:18:59 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id bf8so38113810oib.6
+        for <linux-gpio@vger.kernel.org>; Mon, 29 Nov 2021 17:18:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=h7dfI3SuNLbI8eu2t4U0v+H2ni+TuABrtKx5R3CfOHM=;
+        b=yJc94fLQTljmDterLRcug2eR/c+vDp0LTI+vRv2nR+c/ddCjsYXmPTE02Vayv09E3R
+         Kv8LNcOXnMkrzyWweCyKQNq91Omh0l7IFZLiSEs3jXCZXnBJ67lffzr40aZWtneQarqb
+         bKVmqXvIjRi8CEqJPV+fdwbCsmIYY0oya15SfMc4WnqZwgpCckZ2362UkaNMbQ3rnE6Q
+         L2ZqySG/zeIswlIiFzrpwKLl+Vdekd1MbW0XqN5PD7lMKjSU87ArTZPmkYsxYkiO7meU
+         q/F+WzMnW2TPdv54KXLgDmIsF6YCCQZ+rb+ylC+w3Hz/3rP1sQ2Mx1L73iPSSK5zyfls
+         mjsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ZNph4+nLG3s0XlUMVuAzCDU9rcaGJDmDcxOJITe0GjY=;
-        b=0U9UDU8jN+MVm+Bz9SB0JmVuUewoWTnEhunO0u5JHodvK5/v6tbzcsMjGpY+GqfUmG
-         E8LoTwMGPC2fa05vzJuwHdcRjmKLafK3DtA7s/ZAHkF0MbfymKhTwSu5B9AUMrzCJSWX
-         ZwLR4jkN2BlPOA+BFO6ktuQEO2Nsi6UoECVFjNzirnJKxVdSSjs7O4bBbRiMW1NBzuPN
-         NT4tgU8jK8dBlH6h6b4vwnYI4emfV2kld8K2Goy3gVTKmfRuqUINixpA/reDXsMlcARY
-         w48/+TmCtFxbZB+gkJyZdu7INFZlmCPpFdb4gnB1t3bv37PwRwfGod5iHU6YBPhxh1uJ
-         US4w==
-X-Gm-Message-State: AOAM530W0gKVYDFnyLexdl+WOPFgw9Vrttdkld0vI1r9qOvTpjMgFozQ
-        O/Kn2glH82+R6YJgsroOAA==
-X-Google-Smtp-Source: ABdhPJwT3B6TI/5a0xH9vrNH72Lyd7Bc/Y7eD6XKuCz7+HRGjZ5aeoQs14hPa+69gExI92L6SFpsTg==
-X-Received: by 2002:a05:6808:20a6:: with SMTP id s38mr409343oiw.152.1638218945629;
-        Mon, 29 Nov 2021 12:49:05 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id w9sm2408322oov.46.2021.11.29.12.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Nov 2021 12:49:04 -0800 (PST)
-Received: (nullmailer pid 584170 invoked by uid 1000);
-        Mon, 29 Nov 2021 20:49:03 -0000
-Date:   Mon, 29 Nov 2021 14:49:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: use pinctrl.yaml
-Message-ID: <YaU8v9WwVzDKbFa2@robh.at.kernel.org>
-References: <20211110165720.30242-1-zajec5@gmail.com>
- <20211110165720.30242-2-zajec5@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=h7dfI3SuNLbI8eu2t4U0v+H2ni+TuABrtKx5R3CfOHM=;
+        b=E8MzKA+UF1xujLQ1DrSNVaoP3uKD7rr7l/aDQ9wYogCrq+hpkZF+zU49KXzfKzBRRd
+         AzgAYZS7r9ueMZP6AvXs7EJVTPBAhB+0aAlAU4vvdKUbcLxxj9AsRBv/HDqzQuBAh0iS
+         6Yjw4zlbwFOt6Y6io4E/N34a9GVOSrERqoYFj3abxgjN21W20vGjmelXpA+v2/taMq01
+         WmpzdJ47gGfLVkYhlCyv8p/Bxli/d/YesHFocA+ObKHKP9ZRr5YMlsvWpj3ChYHJ4vJ3
+         gwNUZ15N/171Oux2xJXsG5Z/Q6dYivwbBQVmtLjDsdNrsvfmdVCfLAF37qhyH+gnADij
+         lZvA==
+X-Gm-Message-State: AOAM531xudM5RM7mIb/odJe54p/K8jokx4J7h5+1Ycy5Kw0vlk6D+McR
+        fOtdzfRNCQCizKFa1tIOYvmAfDuC/EmA6QhpG9SjDw==
+X-Google-Smtp-Source: ABdhPJzmLyeQbxd78GNxBdXwDedwzxM3MZT96tDdvy8hzbjtS6grHN+iBJetLmTlLj/SPYPMXXf9itVMOmqvKPpjHwU=
+X-Received: by 2002:a54:4791:: with SMTP id o17mr1541501oic.114.1638235138666;
+ Mon, 29 Nov 2021 17:18:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211110165720.30242-2-zajec5@gmail.com>
+References: <20211127192510.35723-1-demonsingur@gmail.com> <20211127192510.35723-4-demonsingur@gmail.com>
+In-Reply-To: <20211127192510.35723-4-demonsingur@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 30 Nov 2021 02:18:46 +0100
+Message-ID: <CACRpkda7-5YDQ6Gc+Ad0eHYO8pW3nLuUh1rKn9dEZ0PS-xHyJg@mail.gmail.com>
+Subject: Re: [PATCH v7 3/3] iio: addac: add AD74413R driver
+To:     Cosmin Tanislav <demonsingur@gmail.com>
+Cc:     cosmin.tanislav@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 10 Nov 2021 17:57:20 +0100, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
-> 
-> Also fix some examples to avoid warnings like:
-> brcm,ns-pinmux.example.dt.yaml: pin-controller@1800c1c0: $nodename:0: 'pin-controller@1800c1c0' does not match '^pinctrl|pinmux@[0-9a-f]+$'
-> 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> ---
->  .../devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml | 3 +++
->  .../bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml     | 1 +
->  .../devicetree/bindings/pinctrl/apple,pinctrl.yaml        | 3 +++
->  .../bindings/pinctrl/aspeed,ast2400-pinctrl.yaml          | 3 +++
->  .../bindings/pinctrl/aspeed,ast2500-pinctrl.yaml          | 3 +++
->  .../bindings/pinctrl/aspeed,ast2600-pinctrl.yaml          | 3 +++
->  .../devicetree/bindings/pinctrl/brcm,bcm6318-pinctrl.yaml | 3 +++
->  .../bindings/pinctrl/brcm,bcm63268-pinctrl.yaml           | 3 +++
->  .../devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/brcm,bcm6362-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/brcm,bcm6368-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/brcm,ns-pinmux.yaml       | 3 ++-
->  .../devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml    | 7 +++++--
->  .../devicetree/bindings/pinctrl/cirrus,lochnagar.yaml     | 3 +++
->  .../devicetree/bindings/pinctrl/cirrus,madera.yaml        | 3 +++
->  .../devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.yaml   | 3 +++
->  .../devicetree/bindings/pinctrl/fsl,imx8mn-pinctrl.yaml   | 3 +++
->  .../devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml   | 3 +++
->  .../devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml   | 3 +++
->  .../devicetree/bindings/pinctrl/fsl,imx8ulp-pinctrl.yaml  | 3 +++
->  .../devicetree/bindings/pinctrl/ingenic,pinctrl.yaml      | 8 ++++----
->  .../devicetree/bindings/pinctrl/intel,lgm-io.yaml         | 3 +++
->  .../bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml         | 3 +++
->  .../bindings/pinctrl/mediatek,mt6779-pinctrl.yaml         | 3 +++
->  .../bindings/pinctrl/mediatek,mt6797-pinctrl.yaml         | 3 +++
->  .../bindings/pinctrl/mediatek,mt7622-pinctrl.yaml         | 3 +++
->  .../bindings/pinctrl/mediatek,mt7986-pinctrl.yaml         | 3 +++
->  .../bindings/pinctrl/mediatek,mt8183-pinctrl.yaml         | 3 +++
->  .../devicetree/bindings/pinctrl/pinctrl-mt8192.yaml       | 3 +++
->  .../devicetree/bindings/pinctrl/pinctrl-mt8195.yaml       | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml | 3 +++
->  .../bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml          | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,mdm9607-pinctrl.yaml | 1 +
->  .../devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,qcm2290-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml  | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml | 1 +
->  .../devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml   | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,sm6115-pinctrl.yaml  | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,sm6125-pinctrl.yaml  | 1 +
->  .../devicetree/bindings/pinctrl/qcom,sm6350-pinctrl.yaml  | 1 +
->  .../devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml  | 3 +++
->  .../devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml  | 1 +
->  .../devicetree/bindings/pinctrl/qcom,tlmm-common.yaml     | 3 +++
->  .../devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/renesas,pfc.yaml          | 3 +++
->  .../devicetree/bindings/pinctrl/renesas,rza1-ports.yaml   | 3 +++
->  .../devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml | 3 +++
->  .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml           | 3 +++
->  .../devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml | 3 +++
->  .../devicetree/bindings/pinctrl/rockchip,pinctrl.yaml     | 3 +++
->  .../bindings/pinctrl/socionext,uniphier-pinctrl.yaml      | 6 +++---
->  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml     | 3 +++
->  .../bindings/pinctrl/toshiba,visconti-pinctrl.yaml        | 5 ++++-
->  .../devicetree/bindings/pinctrl/xlnx,zynq-pinctrl.yaml    | 3 +++
->  .../devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml  | 3 +++
->  58 files changed, 165 insertions(+), 11 deletions(-)
-> 
+On Sat, Nov 27, 2021 at 8:25 PM Cosmin Tanislav <demonsingur@gmail.com> wro=
+te:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> The AD74412R and AD74413R are quad-channel software configurable input/ou=
+tput
+> solutions for building and process control applications. They contain
+> functionality for analog output, analog input, digital input, resistance
+> temperature detector, and thermocouple measurements integrated
+> into a single chip solution with an SPI interface.
+> The devices feature a 16-bit ADC and four configurable 13-bit DACs to pro=
+vide
+> four configurable input/output channels and a suite of diagnostic functio=
+ns.
+> The AD74413R differentiates itself from the AD74412R by being HART-compat=
+ible.
+>
+> When configured with channel 0 as voltage output, channel 1 as current
+> output, channel 2 as voltage input and channel 3 as current input, the
+> following structure is created under the corresponding IIO device.
+>
+> .
+> =E2=94=9C=E2=94=80=E2=94=80 in_current0_offset
+> =E2=94=9C=E2=94=80=E2=94=80 in_current0_raw
+> =E2=94=9C=E2=94=80=E2=94=80 in_current0_sampling_frequency
+> =E2=94=9C=E2=94=80=E2=94=80 in_current0_sampling_frequency_available
+> =E2=94=9C=E2=94=80=E2=94=80 in_current0_scale
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_offset
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_raw
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_sampling_frequency
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_sampling_frequency_available
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_scale
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_offset
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_raw
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_sampling_frequency
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_sampling_frequency_available
+> =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_scale
+> =E2=94=9C=E2=94=80=E2=94=80 in_current3_offset
+> =E2=94=9C=E2=94=80=E2=94=80 in_current3_raw
+> =E2=94=9C=E2=94=80=E2=94=80 in_current3_sampling_frequency
+> =E2=94=9C=E2=94=80=E2=94=80 in_current3_sampling_frequency_available
+> =E2=94=9C=E2=94=80=E2=94=80 in_current3_scale
+> =E2=94=9C=E2=94=80=E2=94=80 out_voltage0_raw
+> =E2=94=9C=E2=94=80=E2=94=80 out_voltage0_scale
+> =E2=94=9C=E2=94=80=E2=94=80 out_current1_raw
+> =E2=94=9C=E2=94=80=E2=94=80 out_current1_scale
+> =E2=94=9C=E2=94=80=E2=94=80 name
+> =E2=94=9C=E2=94=80=E2=94=80 buffer
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 data_available
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 enable
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 length
+> =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 watermark
+> =E2=94=94=E2=94=80=E2=94=80 scan_elements
+>     =E2=94=9C=E2=94=80=E2=94=80 in_current0_en
+>     =E2=94=9C=E2=94=80=E2=94=80 in_current0_index
+>     =E2=94=9C=E2=94=80=E2=94=80 in_current0_type
+>     =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_en
+>     =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_index
+>     =E2=94=9C=E2=94=80=E2=94=80 in_voltage1_type
+>     =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_en
+>     =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_index
+>     =E2=94=9C=E2=94=80=E2=94=80 in_voltage2_type
+>     =E2=94=9C=E2=94=80=E2=94=80 in_current3_en
+>     =E2=94=9C=E2=94=80=E2=94=80 in_current3_index
+>     =E2=94=94=E2=94=80=E2=94=80 in_current3_type
+>
+> Signed-off-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
+
+From a GPIO point of view there is nothing to complain about here
+so:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
