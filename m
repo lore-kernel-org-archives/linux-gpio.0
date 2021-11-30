@@ -2,166 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA23C433FE
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Nov 2021 15:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FA5C433FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Nov 2021 15:42:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239270AbhK3Ppo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Nov 2021 10:45:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44880 "EHLO
+        id S242306AbhK3PqJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Nov 2021 10:46:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239413AbhK3Po4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Nov 2021 10:44:56 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC74C061759
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:41:37 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id s13so45423065wrb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:41:37 -0800 (PST)
+        with ESMTP id S239413AbhK3PqA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Nov 2021 10:46:00 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 160A4C06175A
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:42:28 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id u3so54904892lfl.2
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:42:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sdC8L7KcajeuYgRxRzq/BDd9/Try3NuMaNKMjlQg9Bs=;
-        b=Yf4mQKJblrXfM3raJEqcE4hPfyer0wn3iuXn68BPZ15SAnYis+DGRlWy2iLRGY0lwI
-         WWvOtt1DyAIjAFWEt3Qi1kpn3LW7yIaoujYS9czLLYqT5G/MRinWBxcq3hauu90xwcIv
-         q7/WHviChlHskgD7+oTEJI5W4ocuITqUk8iFjWLviFVaTOAax2Hy96gy2Z58f7DZqElp
-         B7VZp58LY5IBXVz9OZPu9XkyGhV9cKs5chlci6nc/XO7jQhkpS95fA8hrMN09x3lX0jR
-         DPu+ymrAn09w/brAZJ3BTpIGypvK2ZjhkthtJI48r4GJ9t98MB2TT1KHPdfY5DJPWZHR
-         n2QQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rbWKM9Xn2xFZwaHfEK9OEQJFZXBlU8alMZMLf++BEkY=;
+        b=hNo72FJguIUw3J4//SCG1WE05GM6kn91yQQeLaGkFBRyHnRInP5JIaBXX7Jg7auqq0
+         E0Fp4993Kl+eV8htXH+Vn830560XGTxmPMdXeWicmRSImFt7QHIhplsO4zdKCN4b8106
+         gIAMgoE5S3IeJrlX1rqiJD4NZDbDtX6CWj7OzJHIIHtoed75dOjR5AS42OjJI1c1cGA5
+         GdFIp6gVb8+ErETwzVIx67blxGjJEIcqgag+8aYwmxPIa6xs3tOHM/0CMOwvrXTpHiaO
+         gSJRCsR6eaXF52pWr4AgfTVpzASpuYt890glq2JEYebV96xb+F7mJGhBEzw+Nm+jMFvg
+         0vtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sdC8L7KcajeuYgRxRzq/BDd9/Try3NuMaNKMjlQg9Bs=;
-        b=YY8R8Scuc6bAxXAYGOmEDm6RD6H4AgEtudXsc3GYaj60ZHG6+72CMk5wJ28x58jg8n
-         AVpoOLkDJxSV6MuQWO6lWjKC3HNMB5s4qMbbefHdVga9TjPX90gvXUnauQqA2A9lyG0R
-         ojYtjPf9bQ8MzcL8W3wIVpM9RmajMcd3P8HcOblTLSJaDLT2bDeayNDvIDw9WZL8AlXn
-         C6nMM/kbm7JQBrMxnR7StHvhWCFdgd8m17kPXGjjgA9f65OCXBdX7H4xPfYGNdTPKU1k
-         ZoJPeemWZxtGVampqpicCKQMHOny1yi6Zabdes1Gth75OShDL8yx1O8jMpYXB5P+5TVw
-         InyQ==
-X-Gm-Message-State: AOAM531bxu3gKgo64qKHfI1n0aj3YCqTF+bS5OYr5JxshymKJw/H53kV
-        6db8MHWseccXXn1OAKGJT1Dpb9twNcVsxOD2
-X-Google-Smtp-Source: ABdhPJzm8IvnQQYw9VS4Q99U891uia38OB50QT7S89pka8U/LJBr9flPXUv6TQkHNrkv/PsEpDAQng==
-X-Received: by 2002:a5d:5850:: with SMTP id i16mr42149708wrf.197.1638286895675;
-        Tue, 30 Nov 2021 07:41:35 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
-        by smtp.gmail.com with ESMTPSA id l2sm2962792wmq.42.2021.11.30.07.41.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 07:41:35 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v11 5/6] selftests: gpio: add a helper for reading GPIO line names
-Date:   Tue, 30 Nov 2021 16:41:26 +0100
-Message-Id: <20211130154127.12272-6-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20211130154127.12272-1-brgl@bgdev.pl>
-References: <20211130154127.12272-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rbWKM9Xn2xFZwaHfEK9OEQJFZXBlU8alMZMLf++BEkY=;
+        b=5M8QaPFrtBlgXvBGqxBD6w3q4dMdMNT8ehPjnqpVDSjyGkiYf3ufjI0wroBPDVaoUt
+         agQh/1NcAnRqnsndzD3h51BPf9kApFc3QV8KnoIsJPLo+by4XOpplS4NI+K3DIJ6IjL1
+         9LiVStiIvoGLZkzIeQCrpVLod6IjvGD8F84BVVjIId0PhDblHrXvQuKV1xwFJqKenrbu
+         X44EWdO54JtBUP+zeFBKxpLAwRW02W80D+dtVq5ztyYzfWnJBst8H+87AURR5YV5T1N3
+         JwnYbZ+E111SZ4Y4S2VrKcaIyAxHdyy83af+f42n+oiSFe5teycBVBUeIDH3fe5v/YOU
+         3elQ==
+X-Gm-Message-State: AOAM532NRzUYnJaqzgyWwd9Ho5CyJlHD/t+Iv1rz+06TrGL/lVL/cSuI
+        0nfYdyfK92Hfzrb2X7wm0plk129ovj1o0ZOQS9s3Rw==
+X-Google-Smtp-Source: ABdhPJxkVm8zHo+0JrioJtZwtgAfyQdYXd1nGp/UrLj5Wi3K+MS7vNAPj00qeL3DDQrtGJ7m/zhMDNmerhnM7oZ2vtg=
+X-Received: by 2002:ac2:5a46:: with SMTP id r6mr4420lfn.358.1638286946279;
+ Tue, 30 Nov 2021 07:42:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211125211443.1150135-1-Mr.Bossman075@gmail.com> <20211125211443.1150135-11-Mr.Bossman075@gmail.com>
+In-Reply-To: <20211125211443.1150135-11-Mr.Bossman075@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 30 Nov 2021 16:41:49 +0100
+Message-ID: <CAPDyKFqxso-_ed4KsFO9c1M_ss65KKAPf9wYiKKOU_oLCUvzcQ@mail.gmail.com>
+Subject: Re: [PATCH v3 10/13] dt-bindings: mmc: fsl-imx-esdhc: add i.MXRT
+ compatible string
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-imx@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        Kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
+        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
+        adrian.hunter@intel.com, jirislaby@kernel.org,
+        giulio.benetti@benettiengineering.com,
+        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a simple program that allows to read GPIO line names from the
-character device. This will be used in gpio-sim selftests.
+On Thu, 25 Nov 2021 at 22:15, Jesse Taube <mr.bossman075@gmail.com> wrote:
+>
+> From: Jesse Taube <mr.bossman075@gmail.com>
+>
+> Add i.MXRT documentation for compatible string.
+>
+> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- tools/testing/selftests/gpio/.gitignore       |  1 +
- tools/testing/selftests/gpio/Makefile         |  2 +-
- tools/testing/selftests/gpio/gpio-line-name.c | 55 +++++++++++++++++++
- 3 files changed, 57 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/gpio/gpio-line-name.c
+Applied for next, thanks!
 
-diff --git a/tools/testing/selftests/gpio/.gitignore b/tools/testing/selftests/gpio/.gitignore
-index 4ea4f58dab1a..ededb077a3a6 100644
---- a/tools/testing/selftests/gpio/.gitignore
-+++ b/tools/testing/selftests/gpio/.gitignore
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- gpio-mockup-cdev
- gpio-chip-info
-+gpio-line-name
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index a40b818c394e..293aa9749408 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -2,7 +2,7 @@
- 
- TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh
--TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info
-+TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
- CFLAGS += -O2 -g -Wall -I../../../../usr/include/
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/gpio/gpio-line-name.c b/tools/testing/selftests/gpio/gpio-line-name.c
-new file mode 100644
-index 000000000000..e635cfadbded
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-line-name.c
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * GPIO character device helper for reading line names.
-+ *
-+ * Copyright (C) 2021 Bartosz Golaszewski <brgl@bgdev.pl>
-+ */
-+
-+#include <fcntl.h>
-+#include <linux/gpio.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/types.h>
-+
-+static void print_usage(void)
-+{
-+	printf("usage:\n");
-+	printf("  gpio-line-name <chip path> <line offset>\n");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct gpio_v2_line_info info;
-+	int fd, ret;
-+	char *endp;
-+
-+	if (argc != 3) {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	fd = open(argv[1], O_RDWR);
-+	if (fd < 0) {
-+		perror("unable to open the GPIO chip");
-+		return EXIT_FAILURE;
-+	}
-+
-+	memset(&info, 0, sizeof(info));
-+	info.offset = strtoul(argv[2], &endp, 10);
-+	if (*endp != '\0') {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	ret = ioctl(fd, GPIO_V2_GET_LINEINFO_IOCTL, &info);
-+	if (ret) {
-+		perror("line info ioctl failed");
-+		return EXIT_FAILURE;
-+	}
-+
-+	printf("%s\n", info.name);
-+
-+	return EXIT_SUCCESS;
-+}
--- 
-2.25.1
+Kind regards
+Uffe
 
+
+> ---
+> V1->V2:
+> * Nothing done
+> V2->V3:
+> * Rename imxrt to imxrt1050
+> ---
+>  Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> index d5be9863009c..3fd6deff07f2 100644
+> --- a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> @@ -34,6 +34,7 @@ properties:
+>            - fsl,imx6ull-usdhc
+>            - fsl,imx7d-usdhc
+>            - fsl,imx7ulp-usdhc
+> +          - fsl,imxrt1050-usdhc
+>            - nxp,s32g2-usdhc
+>        - items:
+>            - enum:
+> --
+> 2.34.0
+>
