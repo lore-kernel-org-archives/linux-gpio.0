@@ -2,120 +2,508 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368DCC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Nov 2021 15:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5C3C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Nov 2021 15:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243254AbhK3PqV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Nov 2021 10:46:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45150 "EHLO
+        id S230500AbhK3Pq7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Nov 2021 10:46:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242762AbhK3PqG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Nov 2021 10:46:06 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51126C061763
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:42:31 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id bu18so54965379lfb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:42:31 -0800 (PST)
+        with ESMTP id S239573AbhK3Po7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Nov 2021 10:44:59 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE89EC061763
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:41:37 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id d24so45443428wra.0
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Nov 2021 07:41:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3BR7hOfrZU5BLrILn7SjH/zgKfBPjj6UDPHMgMpgom8=;
-        b=DUc0FOzRm7dRuC+cBWtQBMgfNccTuyOlgJIqfMMbxXXplx1F7UCPr9b3UsEK+HAlQ/
-         JkLZRCjIqOWfztTcXX7hzZ3G25gsx2Kvptl7oKXvrfywJzlURRqLg7a3Rw1wPnjB52lu
-         x69YeunIj95F13hsHjMlJoB6LE5H/46MrWRcukUMwn9Zq3HhrDG32SKQ55KK9GJ1cIaf
-         X88TKNsTSwCPqohes+XxWyCgFGfC5SWzd4BPDIVxMMWhSnVWD4JYCI6M+eTOx+q2NeDJ
-         BtEpxIOksIK79Ls6ThbOWsQ7LGGv13XjcxlI6JNzyo/fKPm6Cdz9g/mmjPX6owYkyBPq
-         +ivQ==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=E72nks27R+FTfv7Xo66RHLQTl4ZrJaRM3vx6caSIRwg=;
+        b=OASPjfZdmMXJIb1AmEIiq1JcA+Q+kHnNjdaNyqrnEg0HDGx45BsLZG99mN8AMPFzPi
+         c4se8LbTQhmwoWs7Kbb4mPI+S2WT4NhOhHx0/M4dWvWdmSRyKZY0x+0kFYVCjJs8jzwm
+         9mWj+BiA8/yjLxT6yQ7zMNnzueXii5ByKh/Febpvx6WnEH6grve+LW7j+A6ZwE+/43mD
+         CAwIGslT4GkYFwDqZ+ZuOyeTlqzfvzZW8KPeAWkz1pyr2BmyhWDwiIlwOO/sduPMGXUu
+         9zxY0UFr+YDlXbjCICPj+T80H/QW3Ue0LSATGZJUVjeQC0zghoxkSg1Dw6dDA+2cwi/l
+         80ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3BR7hOfrZU5BLrILn7SjH/zgKfBPjj6UDPHMgMpgom8=;
-        b=w87bLikREtXEsfq7t5asBw6XUT49YCA4TmOz46qvJa95unqTQSWO35a7u1V741u5GM
-         4GE7juEv/LOCHNZrT5G/TxCIQU6csKs8Rx6qDPWdQgFsoQd9a+6JhVY2NLNjQstsDxv3
-         DpZjZ1UzwPtRfWiL/HK23xENC04DKLlJE8eEo+gfNRz7WeFNImfsTlQgtlZor5Z2NwPs
-         DYviqEP7RBJ777SqEDmIMCypDA5GFEfxC0qS7XzDSdCisupqbnZff/OUBabo2Y476vrs
-         y+pNMZ6wWi1Bm2CXI5le2ohc1qpwUOHfhPv92SCM1pT0zwHZdLzmsW/YmIFs2MtpHt+u
-         fbcA==
-X-Gm-Message-State: AOAM531+pzB9eG9za1spQQ8b4uddR2psLDujPelBA/lz3Livl1FrLVy6
-        lpXoPbBxzBT+v4XOtlKH4z5HypngxY2+wzcawM6C+g==
-X-Google-Smtp-Source: ABdhPJxC4zWXmedOcmpEm0bfpRKItjopzS1RjY1QxCV3VEacaM6KDFcN4qGG64b0icX1eQf5MVEa6XMx1dC4FSgRIL0=
-X-Received: by 2002:a05:6512:10c4:: with SMTP id k4mr55168022lfg.373.1638286949602;
- Tue, 30 Nov 2021 07:42:29 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=E72nks27R+FTfv7Xo66RHLQTl4ZrJaRM3vx6caSIRwg=;
+        b=0gPIJtCDT/kcs0BuBukR5n+lzD+CcionaMm18pgdUNsfSVDQYyOAQ3KIFASXXdzWpO
+         rC54ALUHTcGA7kLP+bSfcKYQbxCXGYudA0AK/mmCN/nfGG0bDRMrryGwklyIwsoDdDAn
+         +GNBGdDsLCXC+PUb+xvJYf96Q1WhchrsDJfpd7sIyi7aYPSdzwdzODgSa8HpoFggNu3+
+         YEg/OtF3H7aLucQybV09ZU6QHm97qRjbSMCYZa8ce1tyPuGQrmrF9sguQxdEXZcFxlVt
+         D0TZXXaHyAuCtig31EeovWaHuOf4BAYWgadgDkgMyK14sDPjOIP3QYM0qA1PaXtJfiz5
+         UE4g==
+X-Gm-Message-State: AOAM531sOQbI98Pz7FFagf3Ro0UHIrFtPrHARn0HZ83OHtZzQryHeDXJ
+        lj2WRNOu2WFJIa1Lp3mA2RZumg==
+X-Google-Smtp-Source: ABdhPJzfUKvryZiraXDSZhlfK/pbKAilXAHeMIp9kYpjT2gyYR0RK8ZsamsvfTymoPNuJcFKHol2/A==
+X-Received: by 2002:a5d:43d0:: with SMTP id v16mr42223128wrr.58.1638286896412;
+        Tue, 30 Nov 2021 07:41:36 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
+        by smtp.gmail.com with ESMTPSA id l2sm2962792wmq.42.2021.11.30.07.41.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Nov 2021 07:41:36 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v11 6/6] selftests: gpio: add test cases for gpio-sim
+Date:   Tue, 30 Nov 2021 16:41:27 +0100
+Message-Id: <20211130154127.12272-7-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20211130154127.12272-1-brgl@bgdev.pl>
+References: <20211130154127.12272-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-References: <20211125211443.1150135-1-Mr.Bossman075@gmail.com> <20211125211443.1150135-12-Mr.Bossman075@gmail.com>
-In-Reply-To: <20211125211443.1150135-12-Mr.Bossman075@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 30 Nov 2021 16:41:53 +0100
-Message-ID: <CAPDyKFqNghVZYdtR8dACGvqAyy9xC8LWnbg6Sq+EGRmv2g5P+A@mail.gmail.com>
-Subject: Re: [PATCH v3 11/13] mmc: sdhci-esdhc-imx: Add sdhc support for
- i.MXRT series
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        Kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
-        adrian.hunter@intel.com, jirislaby@kernel.org,
-        giulio.benetti@benettiengineering.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 25 Nov 2021 at 22:15, Jesse Taube <mr.bossman075@gmail.com> wrote:
->
-> From: Jesse Taube <mr.bossman075@gmail.com>
->
-> Add support for i.MXRT1050's sdhc.
->
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+Add a set of tests for the new gpio-sim module. This is a pure shell
+test-suite and uses the helper programs available in the gpio selftests
+directory. These test-cases only test the functionalities exposed by the
+gpio-sim driver, not those handled by core gpiolib code.
 
-Applied for next, thanks!
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ tools/testing/selftests/gpio/Makefile    |   2 +-
+ tools/testing/selftests/gpio/config      |   1 +
+ tools/testing/selftests/gpio/gpio-sim.sh | 396 +++++++++++++++++++++++
+ 3 files changed, 398 insertions(+), 1 deletion(-)
+ create mode 100755 tools/testing/selftests/gpio/gpio-sim.sh
 
-Kind regards
-Uffe
+diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+index 293aa9749408..71b306602368 100644
+--- a/tools/testing/selftests/gpio/Makefile
++++ b/tools/testing/selftests/gpio/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-TEST_PROGS := gpio-mockup.sh
++TEST_PROGS := gpio-mockup.sh gpio-sim.sh
+ TEST_FILES := gpio-mockup-sysfs.sh
+ TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
+ CFLAGS += -O2 -g -Wall -I../../../../usr/include/
+diff --git a/tools/testing/selftests/gpio/config b/tools/testing/selftests/gpio/config
+index ce100342c20b..409a8532facc 100644
+--- a/tools/testing/selftests/gpio/config
++++ b/tools/testing/selftests/gpio/config
+@@ -1,3 +1,4 @@
+ CONFIG_GPIOLIB=y
+ CONFIG_GPIO_CDEV=y
+ CONFIG_GPIO_MOCKUP=m
++CONFIG_GPIO_SIM=m
+diff --git a/tools/testing/selftests/gpio/gpio-sim.sh b/tools/testing/selftests/gpio/gpio-sim.sh
+new file mode 100755
+index 000000000000..d335a975890c
+--- /dev/null
++++ b/tools/testing/selftests/gpio/gpio-sim.sh
+@@ -0,0 +1,396 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2021 Bartosz Golaszewski <brgl@bgdev.pl>
++
++BASE_DIR=`dirname $0`
++CONFIGFS_DIR="/sys/kernel/config/gpio-sim"
++MODULE="gpio-sim"
++
++fail() {
++	echo "$*" >&2
++	echo "GPIO $MODULE test FAIL"
++	exit 1
++}
++
++skip() {
++	echo "$*" >&2
++	echo "GPIO $MODULE test SKIP"
++	exit 4
++}
++
++remove_chip() {
++	local CHIP=$1
++
++	for FILE in $CONFIGFS_DIR/$CHIP/*; do
++		BANK=`basename $FILE`
++		if [ "$BANK" == "live" ] || [ "$BANK" == "dev_name" ]; then
++			continue
++		fi
++
++		LINES=`ls $CONFIGFS_DIR/$CHIP/$BANK/ | egrep ^line`
++		if [ "$?" == 0 ]; then
++			for LINE in $LINES; do
++				if [ -e $CONFIGFS_DIR/$CHIP/$BANK/$LINE/hog ]; then
++					rmdir $CONFIGFS_DIR/$CHIP/$BANK/$LINE/hog || \
++						fail "Unable to remove the hog"
++				fi
++
++				rmdir $CONFIGFS_DIR/$CHIP/$BANK/$LINE || \
++					fail "Unable to remove the line"
++			done
++		fi
++
++		rmdir $CONFIGFS_DIR/$CHIP/$BANK
++	done
++
++	rmdir $CONFIGFS_DIR/$CHIP || fail "Unable to remove the chip"
++}
++
++configfs_cleanup() {
++	for CHIP in `ls $CONFIGFS_DIR/`; do
++		remove_chip $CHIP
++	done
++}
++
++create_chip() {
++	local CHIP=$1
++
++	mkdir $CONFIGFS_DIR/$CHIP
++}
++
++create_bank() {
++	local CHIP=$1
++	local BANK=$2
++
++	mkdir $CONFIGFS_DIR/$CHIP/$BANK
++}
++
++set_label() {
++	local CHIP=$1
++	local BANK=$2
++	local LABEL=$3
++
++	echo $LABEL > $CONFIGFS_DIR/$CHIP/$BANK/label || fail "Unable to set the chip label"
++}
++
++set_num_lines() {
++	local CHIP=$1
++	local BANK=$2
++	local NUM_LINES=$3
++
++	echo $NUM_LINES > $CONFIGFS_DIR/$CHIP/$BANK/num_lines || \
++		fail "Unable to set the number of lines"
++}
++
++set_line_name() {
++	local CHIP=$1
++	local BANK=$2
++	local OFFSET=$3
++	local NAME=$4
++	local LINE_DIR=$CONFIGFS_DIR/$CHIP/$BANK/line$OFFSET
++
++	test -d $LINE_DIR || mkdir $LINE_DIR
++	echo $NAME > $LINE_DIR/name || fail "Unable to set the line name"
++}
++
++enable_chip() {
++	local CHIP=$1
++
++	echo 1 > $CONFIGFS_DIR/$CHIP/live || fail "Unable to enable the chip"
++}
++
++disable_chip() {
++	local CHIP=$1
++
++	echo 0 > $CONFIGFS_DIR/$CHIP/live || fail "Unable to disable the chip"
++}
++
++configfs_chip_name() {
++	local CHIP=$1
++	local BANK=$2
++
++	cat $CONFIGFS_DIR/$CHIP/$BANK/chip_name 2> /dev/null || \
++		fail "unable to read the chip name from configfs"
++}
++
++configfs_dev_name() {
++	local CHIP=$1
++
++	cat $CONFIGFS_DIR/$CHIP/dev_name 2> /dev/null || \
++		fail "unable to read the device name from configfs"
++}
++
++get_chip_num_lines() {
++	local CHIP=$1
++	local BANK=$2
++
++	$BASE_DIR/gpio-chip-info /dev/`configfs_chip_name $CHIP $BANK` num-lines || \
++		fail "unable to read the number of lines from the character device"
++}
++
++get_chip_label() {
++	local CHIP=$1
++	local BANK=$2
++
++	$BASE_DIR/gpio-chip-info /dev/`configfs_chip_name $CHIP $BANK` label || \
++		fail "unable to read the chip label from the character device"
++}
++
++get_line_name() {
++	local CHIP=$1
++	local BANK=$2
++	local OFFSET=$3
++
++	$BASE_DIR/gpio-line-name /dev/`configfs_chip_name $CHIP $BANK` $OFFSET || \
++		fail "unable to read the line name from the character device"
++}
++
++sysfs_set_pull() {
++	local DEV=$1
++	local BANK=$2
++	local OFFSET=$3
++	local PULL=$4
++	local DEVNAME=`configfs_dev_name $DEV`
++	local CHIPNAME=`configfs_chip_name $DEV $BANK`
++	local SYSFSPATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio$OFFSET/pull"
++
++	echo $PULL > $SYSFSPATH || fail "Unable to set line pull in sysfs"
++}
++
++# Load the gpio-sim module. This will pull in configfs if needed too.
++modprobe gpio-sim || skip "unable to load the gpio-sim module"
++# Make sure configfs is mounted at /sys/kernel/config. Wait a bit if needed.
++for IDX in `seq 5`; do
++	if [ "$IDX" -eq "5" ]; then
++		skip "configfs not mounted at /sys/kernel/config"
++	fi
++
++	mountpoint -q /sys/kernel/config && break
++	sleep 0.1
++done
++# If the module was already loaded: remove all previous chips
++configfs_cleanup
++
++trap "exit 1" SIGTERM SIGINT
++trap configfs_cleanup EXIT
++
++echo "1. chip_name and dev_name attributes"
++
++echo "1.1. Chip name is communicated to user"
++create_chip chip
++create_bank chip bank
++enable_chip chip
++test -n `cat $CONFIGFS_DIR/chip/bank/chip_name` || fail "chip_name doesn't work"
++remove_chip chip
++
++echo "1.2. chip_name returns 'none' if the chip is still pending"
++create_chip chip
++create_bank chip bank
++test "`cat $CONFIGFS_DIR/chip/bank/chip_name`" = "none" || \
++	fail "chip_name doesn't return 'none' for a pending chip"
++remove_chip chip
++
++echo "1.3. Device name is communicated to user"
++create_chip chip
++create_bank chip bank
++enable_chip chip
++test -n `cat $CONFIGFS_DIR/chip/dev_name` || fail "dev_name doesn't work"
++remove_chip chip
++
++echo "2. Creating and configuring simulated chips"
++
++echo "2.1. Default number of lines is 1"
++create_chip chip
++create_bank chip bank
++enable_chip chip
++test "`get_chip_num_lines chip bank`" = "1" || fail "default number of lines is not 1"
++remove_chip chip
++
++echo "2.2. Number of lines can be specified"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 16
++enable_chip chip
++test "`get_chip_num_lines chip bank`" = "16" || fail "number of lines is not 16"
++remove_chip chip
++
++echo "2.3. Label can be set"
++create_chip chip
++create_bank chip bank
++set_label chip bank foobar
++enable_chip chip
++test "`get_chip_label chip bank`" = "foobar" || fail "label is incorrect"
++remove_chip chip
++
++echo "2.4. Label can be left empty"
++create_chip chip
++create_bank chip bank
++enable_chip chip
++test -z "`cat $CONFIGFS_DIR/chip/bank/label`" || fail "label is not empty"
++remove_chip chip
++
++echo "2.5. Line names can be configured"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 16
++set_line_name chip bank 0 foo
++set_line_name chip bank 2 bar
++enable_chip chip
++test "`get_line_name chip bank 0`" = "foo" || fail "line name is incorrect"
++test "`get_line_name chip bank 2`" = "bar" || fail "line name is incorrect"
++remove_chip chip
++
++echo "2.6. Line config can remain unused if offset is greater than number of lines"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 2
++set_line_name chip bank 5 foobar
++enable_chip chip
++test "`get_line_name chip bank 0`" = "" || fail "line name is incorrect"
++test "`get_line_name chip bank 1`" = "" || fail "line name is incorrect"
++remove_chip chip
++
++echo "2.7. Line configfs directory names are sanitized"
++create_chip chip
++create_bank chip bank
++mkdir $CONFIGFS_DIR/chip/bank/line12foobar 2> /dev/null && \
++	fail "invalid configfs line name accepted"
++mkdir $CONFIGFS_DIR/chip/bank/line_no_offset 2> /dev/null && \
++	fail "invalid configfs line name accepted"
++remove_chip chip
++
++echo "2.8. Multiple chips can be created"
++CHIPS="chip0 chip1 chip2"
++for CHIP in $CHIPS; do
++	create_chip $CHIP
++	create_bank $CHIP bank
++	enable_chip $CHIP
++done
++for CHIP in $CHIPS; do
++	remove_chip $CHIP
++done
++
++echo "2.9. Can't modify settings when chip is live"
++create_chip chip
++create_bank chip bank
++enable_chip chip
++echo foobar > $CONFIGFS_DIR/chip/bank/label 2> /dev/null && \
++	fail "Setting label of a live chip should fail"
++echo 8 > $CONFIGFS_DIR/chip/bank/num_lines 2> /dev/null && \
++	fail "Setting number of lines of a live chip should fail"
++remove_chip chip
++
++echo "2.10. Can't create line items when chip is live"
++create_chip chip
++create_bank chip bank
++enable_chip chip
++mkdir $CONFIGFS_DIR/chip/bank/line0 2> /dev/null && fail "Creating line item should fail"
++remove_chip chip
++
++echo "2.11. Probe errors are propagated to user-space"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 99999
++echo 1 > $CONFIGFS_DIR/chip/live 2> /dev/null && fail "Probe error was not propagated"
++remove_chip chip
++
++echo "2.12. Cannot enable a chip without any GPIO banks"
++create_chip chip
++echo 1 > $CONFIGFS_DIR/chip/live 2> /dev/null && fail "Chip enabled without any GPIO banks"
++remove_chip chip
++
++echo "2.13. Duplicate chip labels are not allowed"
++create_chip chip
++create_bank chip bank0
++set_label chip bank0 foobar
++create_bank chip bank1
++set_label chip bank1 foobar
++echo 1 > $CONFIGFS_DIR/chip/live 2> /dev/null && fail "Duplicate chip labels were not rejected"
++remove_chip chip
++
++echo "2.14. Lines can be hogged"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 8
++mkdir -p $CONFIGFS_DIR/chip/bank/line4/hog
++enable_chip chip
++$BASE_DIR/gpio-mockup-cdev -s 1 /dev/`configfs_chip_name chip bank` 4 2> /dev/null && \
++	fail "Setting the value of a hogged line shouldn't succeed"
++remove_chip chip
++
++echo "3. Controlling simulated chips"
++
++echo "3.1. Pull can be set over sysfs"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 8
++enable_chip chip
++sysfs_set_pull chip bank 0 pull-up
++$BASE_DIR/gpio-mockup-cdev /dev/`configfs_chip_name chip bank` 0
++test "$?" = "1" || fail "pull set incorrectly"
++sysfs_set_pull chip bank 0 pull-down
++$BASE_DIR/gpio-mockup-cdev /dev/`configfs_chip_name chip bank` 1
++test "$?" = "0" || fail "pull set incorrectly"
++remove_chip chip
++
++echo "3.2. Pull can be read from sysfs"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 8
++enable_chip chip
++DEVNAME=`configfs_dev_name chip`
++CHIPNAME=`configfs_chip_name chip bank`
++SYSFS_PATH=/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio0/pull
++test `cat $SYSFS_PATH` = "pull-down" || fail "reading the pull failed"
++sysfs_set_pull chip bank 0 pull-up
++test `cat $SYSFS_PATH` = "pull-up" || fail "reading the pull failed"
++remove_chip chip
++
++echo "3.3. Incorrect input in sysfs is rejected"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 8
++enable_chip chip
++DEVNAME=`configfs_dev_name chip`
++CHIPNAME=`configfs_chip_name chip bank`
++SYSFS_PATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio0/pull"
++echo foobar > $SYSFS_PATH 2> /dev/null && fail "invalid input not detected"
++remove_chip chip
++
++echo "3.4. Can't write to value"
++create_chip chip
++create_bank chip bank
++enable_chip chip
++DEVNAME=`configfs_dev_name chip`
++CHIPNAME=`configfs_chip_name chip bank`
++SYSFS_PATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio0/value"
++echo 1 > $SYSFS_PATH 2> /dev/null && fail "writing to 'value' succeeded unexpectedly"
++remove_chip chip
++
++echo "4. Simulated GPIO chips are functional"
++
++echo "4.1. Values can be read from sysfs"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 8
++enable_chip chip
++DEVNAME=`configfs_dev_name chip`
++CHIPNAME=`configfs_chip_name chip bank`
++SYSFS_PATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio0/value"
++test `cat $SYSFS_PATH` = "0" || fail "incorrect value read from sysfs"
++$BASE_DIR/gpio-mockup-cdev -s 1 /dev/`configfs_chip_name chip bank` 0 &
++sleep 0.1 # FIXME Any better way?
++test `cat $SYSFS_PATH` = "1" || fail "incorrect value read from sysfs"
++kill $!
++remove_chip chip
++
++echo "4.2. Bias settings work correctly"
++create_chip chip
++create_bank chip bank
++set_num_lines chip bank 8
++enable_chip chip
++$BASE_DIR/gpio-mockup-cdev -b pull-up /dev/`configfs_chip_name chip bank` 0
++test `cat $SYSFS_PATH` = "1" || fail "bias setting does not work"
++remove_chip chip
++
++echo "GPIO $MODULE test PASS"
+-- 
+2.25.1
 
-
-> ---
-> V1->V2:
-> * Nothing done
-> V2->V3:
-> * Rename imxrt to imxrt1050
-> * Remove BROKEN_AUTO_CMD23 and MAN_TUNING flags
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 764ee1b761d9..55981b0f0b10 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -305,6 +305,9 @@ static struct esdhc_soc_data usdhc_imx7ulp_data = {
->                         | ESDHC_FLAG_PMQOS | ESDHC_FLAG_HS400
->                         | ESDHC_FLAG_STATE_LOST_IN_LPMODE,
->  };
-> +static struct esdhc_soc_data usdhc_imxrt1050_data = {
-> +       .flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_HS200 | ESDHC_FLAG_ERR004536,
-> +};
->
->  static struct esdhc_soc_data usdhc_imx8qxp_data = {
->         .flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_STD_TUNING
-> @@ -355,6 +358,7 @@ static const struct of_device_id imx_esdhc_dt_ids[] = {
->         { .compatible = "fsl,imx7ulp-usdhc", .data = &usdhc_imx7ulp_data, },
->         { .compatible = "fsl,imx8qxp-usdhc", .data = &usdhc_imx8qxp_data, },
->         { .compatible = "fsl,imx8mm-usdhc", .data = &usdhc_imx8mm_data, },
-> +       { .compatible = "fsl,imxrt1050-usdhc", .data = &usdhc_imxrt1050_data, },
->         { .compatible = "nxp,s32g2-usdhc", .data = &usdhc_s32g2_data, },
->         { /* sentinel */ }
->  };
-> --
-> 2.34.0
->
