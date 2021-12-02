@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E75F5C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Dec 2021 11:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5928C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Dec 2021 11:23:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357298AbhLBL0T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Dec 2021 06:26:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50034 "EHLO
+        id S1346343AbhLBL02 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Dec 2021 06:26:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346343AbhLBL0T (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Dec 2021 06:26:19 -0500
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66FCAC06174A
-        for <linux-gpio@vger.kernel.org>; Thu,  2 Dec 2021 03:22:57 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id 8so27590100pfo.4
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Dec 2021 03:22:57 -0800 (PST)
+        with ESMTP id S1357303AbhLBL01 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Dec 2021 06:26:27 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C699C06174A
+        for <linux-gpio@vger.kernel.org>; Thu,  2 Dec 2021 03:23:05 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id gt5so20313286pjb.1
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Dec 2021 03:23:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lZAwfohp4NeqX1ovsApVwslIPxiLYbl3IAEWh8cLg8I=;
-        b=bRB9qc12sjKmLuq9TUHuZIBzGs5hJ4MqNdtb6Ht8wAsdJK0hMEWRJMOvBJYVDaNU81
-         XKmolbaLxaOuMOc9lUBYSGNFJctd4WW/c2TcMO0ZlCFDfNSUs4QhXi9vwCTalxN+QhvL
-         icPoN7kF7c93yFh+L+cWxl+/mC7my6klliN+1RkGeNAmz6XKNE6R4hRpyc2lg5D1/BkI
-         05QwpG7vP0pI7OHP3DfzKURflhZA69X8L9EFLduXVX7lYQ/fpS8V+8x470eDyvo/B3mP
-         1LbNypRaMwYnjlgChX6H5arcW3hE7sQFYbgRJSbu3YmZjqKDBqB21tYFi+N4f5/9L4Td
-         HZFA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=P9nKlLhYWLEIB1/JxpBIVXBkCWjifIiqw+wFPrkKlRU=;
+        b=PopNok2fpXKBjoRL2WRhU3PtXya4eG/hWwQanQv46TliU0c6PELtgFmD5HjXhiEOac
+         7xTBVEtkPnlDDJeBMtoATaVkMgVnOYrGbwIikiafjLXd+uId6+jv4cdekaz7Aidd6afe
+         q4/UWl30uyX8csW0ruOiC6HbaxkFMh7wYGGFzordIOrr1gfNOSRW8lAbXnzbdM905k15
+         w4vwOIr+mO9uEWaSV/YbnapzNAiqbUb09QGxGwVBHK0cyO5KfEX4+1emKI6NLDh5XvQi
+         hYRANrqMF0L1vC0ljUs/N3rl7v82uBYFFdaHbOi+Gd6P0eXkQoJdUJqiY5lcfYmJgmxq
+         QJzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lZAwfohp4NeqX1ovsApVwslIPxiLYbl3IAEWh8cLg8I=;
-        b=yiPC5ouvHrjgEppE9BFn3jjtTLoF7hftDcLIWzHlzWWFdQLlWaOy8r0loIfcImVgp5
-         /dNw/vxx+4ldSLamDr5RyhVcuP/m2vJw3VXNA/K7M7j98veb21xjKd5v1i/GOb/MHOFf
-         mm5MBdDSO+5pOAa1FxI7wq7QX43NTSj1c935IBjJ4KsnOVMJ23ceIw4kMlncMolvAryA
-         sCg61eAXy2FEC6jY1kOcc5/AeyAkt6VW0YK7+Xa400DUSQfxuXWt+9Kbauk3F1QMUV2d
-         Srt8cvYxI/nJYTsjWkQhc4jgOiFsI89Twt3D0qThsezLXytXVQdHfbxFCoRQ6lmxpzvE
-         ICIQ==
-X-Gm-Message-State: AOAM530NdY/KPpjByKgHtpiCuNh+ZlOr5XvlL582v1MkoqyCj8ho5k0d
-        dWcn7WWa4jEaGylOE/qhhWNRADQZrJ/6Fg==
-X-Google-Smtp-Source: ABdhPJxks90rrQGBbnRlQk3RmT2RpmFZcII4RzJzSzIPQ8Q2o2jzMbn77Lvq9df0roP3j7BuNB0ncA==
-X-Received: by 2002:a05:6a00:1744:b0:4a4:f4e6:1cc0 with SMTP id j4-20020a056a00174400b004a4f4e61cc0mr11691746pfc.15.1638444176899;
-        Thu, 02 Dec 2021 03:22:56 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=P9nKlLhYWLEIB1/JxpBIVXBkCWjifIiqw+wFPrkKlRU=;
+        b=ekDsQEYhCOJWJD5B5KuidjbkNfUx3OEu03oVA4hqkz42OgNiEGnS8WcmsHNSRchrw1
+         BW5poFM7BlAQrHqkatwQ8vYaid5yYKvueSD515UWcnWomGufnYEQfP9awV+0fLtYo4Jy
+         kOhlvgOtrADYDoyxTsforpEU6xXr5Uk1YAmfvqbxqDqSgmY7hnfZFVook5hWImGFD/4+
+         nMsR1SSJ52xrJgmeYrGo16gJbHG39vQ/frwO0O6hR6qWom5liMGaogV4rp2mA5IEGMrb
+         QxYrGacd4sXGmLMgJoF40LKcd9QiYs9uEvwUimi4x9K17Q6SP5iv6girzrlSvr5sHwZx
+         eGmQ==
+X-Gm-Message-State: AOAM533A6+K+lX9gcaroAkOM1W+uaxyUemJGLD3qDiaFbOIlRl5VZeij
+        m3X8F/lPxMoHOSDNktPVolKdHw==
+X-Google-Smtp-Source: ABdhPJx9areooxI/Uaq5TRVTTWAMF+Knp2XhJ9SO3tDqDGUhYbtlhPi0LhjNxv1V6Vu+ZwRM91ensQ==
+X-Received: by 2002:a17:902:654d:b0:141:7df3:b94 with SMTP id d13-20020a170902654d00b001417df30b94mr14337366pln.60.1638444184706;
+        Thu, 02 Dec 2021 03:23:04 -0800 (PST)
 Received: from localhost ([106.201.42.111])
-        by smtp.gmail.com with ESMTPSA id p33sm2326312pgm.85.2021.12.02.03.22.55
+        by smtp.gmail.com with ESMTPSA id nn15sm2477886pjb.11.2021.12.02.03.23.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 03:22:55 -0800 (PST)
+        Thu, 02 Dec 2021 03:23:04 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
@@ -57,90 +57,417 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Wedson Almeida Filho <wedsonaf@google.com>,
         =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
         stratos-dev@op-lists.linaro.org
-Subject: [PATCH V2 0/4] libgpiod: Add Rust bindings
-Date:   Thu,  2 Dec 2021 16:52:45 +0530
-Message-Id: <cover.1638443930.git.viresh.kumar@linaro.org>
+Subject: [PATCH V2 3/4] rust: Add examples
+Date:   Thu,  2 Dec 2021 16:52:48 +0530
+Message-Id: <394d3d478bf844766155b4ffdf2cbf8daa1d4551.1638443930.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1638443930.git.viresh.kumar@linaro.org>
+References: <cover.1638443930.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Bartosz,
+Add examples for the usage of the rust bindings, quite similar to the
+ones in cxx bindings.
 
-This patch adds rust bindings for libgpiod v2.0, this is already partially
-tested with the virtio rust backend I am developing, which uses these to talk to
-the host kernel.
-
-This is based of the next/post-libgpiod-2.0 branch.
-
-I will be adding testing infrastructure later on, once other bindings are
-converted to use gpiosim.
-
-V1->V2:
-- Added examples (I tested everything except gpiomon.rs, didn't have right
-  hardware/mock device to test).
-- Build rust bindings as part of Make, update documentation.
-
-Thanks.
-
---
-Viresh
-
-Viresh Kumar (4):
-  libgpiod: Generate rust FFI bindings
-  libgpiod: Add rust wrappers
-  rust: Add examples
-  rust: Integrate building of rust bindings with make
-
- .gitignore                           |   5 +
- README                               |   8 +-
- TODO                                 |   8 -
- bindings/Makefile.am                 |   6 +
- bindings/rust/Cargo.toml             |  14 +
- bindings/rust/Makefile.am            |  29 ++
- bindings/rust/build.rs               |  60 ++++
- bindings/rust/examples/gpiodetect.rs |  38 +++
- bindings/rust/examples/gpiofind.rs   |  43 +++
- bindings/rust/examples/gpioget.rs    |  45 +++
- bindings/rust/examples/gpioinfo.rs   |  90 ++++++
- bindings/rust/examples/gpiomon.rs    |  73 +++++
- bindings/rust/examples/gpioset.rs    |  55 ++++
- bindings/rust/src/bindings.rs        |  16 +
- bindings/rust/src/chip.rs            | 197 ++++++++++++
- bindings/rust/src/edge_event.rs      |  78 +++++
- bindings/rust/src/event_buffer.rs    |  59 ++++
- bindings/rust/src/info_event.rs      |  70 +++++
- bindings/rust/src/lib.rs             | 268 +++++++++++++++++
- bindings/rust/src/line_config.rs     | 431 +++++++++++++++++++++++++++
- bindings/rust/src/line_info.rs       | 186 ++++++++++++
- bindings/rust/src/line_request.rs    | 217 ++++++++++++++
- bindings/rust/src/request_config.rs  | 118 ++++++++
- bindings/rust/wrapper.h              |   2 +
- configure.ac                         |  16 +
- 25 files changed, 2121 insertions(+), 11 deletions(-)
- create mode 100644 bindings/rust/Cargo.toml
- create mode 100644 bindings/rust/Makefile.am
- create mode 100644 bindings/rust/build.rs
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ bindings/rust/examples/gpiodetect.rs | 38 ++++++++++++
+ bindings/rust/examples/gpiofind.rs   | 43 +++++++++++++
+ bindings/rust/examples/gpioget.rs    | 45 ++++++++++++++
+ bindings/rust/examples/gpioinfo.rs   | 90 ++++++++++++++++++++++++++++
+ bindings/rust/examples/gpiomon.rs    | 73 ++++++++++++++++++++++
+ bindings/rust/examples/gpioset.rs    | 55 +++++++++++++++++
+ 6 files changed, 344 insertions(+)
  create mode 100644 bindings/rust/examples/gpiodetect.rs
  create mode 100644 bindings/rust/examples/gpiofind.rs
  create mode 100644 bindings/rust/examples/gpioget.rs
  create mode 100644 bindings/rust/examples/gpioinfo.rs
  create mode 100644 bindings/rust/examples/gpiomon.rs
  create mode 100644 bindings/rust/examples/gpioset.rs
- create mode 100644 bindings/rust/src/bindings.rs
- create mode 100644 bindings/rust/src/chip.rs
- create mode 100644 bindings/rust/src/edge_event.rs
- create mode 100644 bindings/rust/src/event_buffer.rs
- create mode 100644 bindings/rust/src/info_event.rs
- create mode 100644 bindings/rust/src/lib.rs
- create mode 100644 bindings/rust/src/line_config.rs
- create mode 100644 bindings/rust/src/line_info.rs
- create mode 100644 bindings/rust/src/line_request.rs
- create mode 100644 bindings/rust/src/request_config.rs
- create mode 100644 bindings/rust/wrapper.h
 
+diff --git a/bindings/rust/examples/gpiodetect.rs b/bindings/rust/examples/gpiodetect.rs
+new file mode 100644
+index 000000000000..c4b2ef31469d
+--- /dev/null
++++ b/bindings/rust/examples/gpiodetect.rs
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2021 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpiodetect tool.
++
++use std::env;
++use std::fs;
++use std::path::Path;
++
++use libgpiod::chip::GpiodChip;
++use libgpiod::gpiod_is_gpiochip_device;
++
++fn main() {
++    let args: Vec<String> = env::args().collect();
++    if args.len() > 1 {
++        println!("Usage: {}", args[0]);
++        return;
++    }
++
++    for entry in fs::read_dir(Path::new("/dev")).unwrap() {
++        let pathbuf = entry.unwrap().path();
++        let path = pathbuf.to_str().unwrap();
++
++        if gpiod_is_gpiochip_device(path) {
++            let chip = GpiodChip::open(path).unwrap();
++            let ngpio = chip.get_num_lines();
++
++            println!(
++                "{} [{}] ({})",
++                chip.get_name().unwrap(),
++                chip.get_label().unwrap(),
++                ngpio
++            );
++        }
++    }
++}
+diff --git a/bindings/rust/examples/gpiofind.rs b/bindings/rust/examples/gpiofind.rs
+new file mode 100644
+index 000000000000..5050f4a39b6b
+--- /dev/null
++++ b/bindings/rust/examples/gpiofind.rs
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2021 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpiofind tool.
++
++use std::env;
++use std::fs;
++use std::path::Path;
++
++use libgpiod::chip::GpiodChip;
++use libgpiod::gpiod_is_gpiochip_device;
++
++fn main() {
++    let args: Vec<String> = env::args().collect();
++    if args.len() != 2 {
++        println!("Usage: {} <line-name>", args[0]);
++        return;
++    }
++
++    for entry in fs::read_dir(Path::new("/dev")).unwrap() {
++        let pathbuf = entry.unwrap().path();
++        let path = pathbuf.to_str().unwrap();
++
++        if gpiod_is_gpiochip_device(path) {
++            let chip = GpiodChip::open(path).unwrap();
++
++            let offset = chip.find_line(&args[1]);
++            if offset.is_ok() {
++                println!(
++                    "Line {} found: Chip: {}, offset: {}",
++                    args[1],
++                    chip.get_name().unwrap(),
++                    offset.unwrap()
++                );
++                return;
++            }
++        }
++    }
++
++    println!("Failed to find line: {}", args[1]);
++}
+diff --git a/bindings/rust/examples/gpioget.rs b/bindings/rust/examples/gpioget.rs
+new file mode 100644
+index 000000000000..47a51b7c56b9
+--- /dev/null
++++ b/bindings/rust/examples/gpioget.rs
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2021 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpioget tool.
++
++use std::env;
++
++use libgpiod::chip::GpiodChip;
++use libgpiod::line_config::GpiodLineConfig;
++use libgpiod::request_config::GpiodRequestConfig;
++use libgpiod::Direction;
++
++fn main() {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        println!("Usage: {} <chip> <line_offset0> ...", args[0]);
++        return;
++    }
++
++    let mut config = GpiodLineConfig::new().unwrap();
++    let mut offsets = Vec::<u32>::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<u32>().unwrap();
++
++        offsets.push(offset);
++        config.set_direction_offset(Direction::Input, offset);
++    }
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = GpiodChip::open(&path).unwrap();
++
++    let rconfig = GpiodRequestConfig::new().unwrap();
++    rconfig.set_consumer(&args[0]);
++    rconfig.set_offsets(&offsets);
++
++    let request = chip.request_lines(&rconfig, &config).unwrap();
++
++    let mut values: Vec<i32> = vec![0; offsets.len()];
++    request.get_values(&mut values).unwrap();
++
++    println!("{:?}", values);
++}
+diff --git a/bindings/rust/examples/gpioinfo.rs b/bindings/rust/examples/gpioinfo.rs
+new file mode 100644
+index 000000000000..1b84df70e811
+--- /dev/null
++++ b/bindings/rust/examples/gpioinfo.rs
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2021 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpioinfo tool.
++
++use std::env;
++use std::fs;
++use std::path::Path;
++
++use libgpiod::chip::GpiodChip;
++use libgpiod::{gpiod_is_gpiochip_device, Direction};
++
++fn line_info(chip: &GpiodChip, offset: u32) {
++    let info = chip.line_info(offset).unwrap();
++    let off = info.get_offset();
++
++    let name = match info.get_name() {
++        Ok(name) => name,
++        _ => "unused",
++    };
++
++    let consumer = match info.get_consumer() {
++        Ok(name) => name,
++        _ => "unnamed",
++    };
++
++    let low = if info.is_active_low() {
++        "active-low"
++    } else {
++        "active-high"
++    };
++
++    let dir = match info.get_direction().unwrap() {
++        Direction::AsIs => "None",
++        Direction::Input => "Input",
++        Direction::Output => "Output",
++    };
++
++    println!(
++        "\tline {:>3}\
++              \t{:>10}\
++              \t{:>10}\
++              \t{:>6}\
++              \t{:>14}",
++        off, name, consumer, dir, low
++    );
++}
++
++fn chip_info(path: &str) {
++    if gpiod_is_gpiochip_device(path) {
++        let chip = GpiodChip::open(path).unwrap();
++        let ngpio = chip.get_num_lines();
++
++        println!("GPIO Chip name: {}", chip.get_name().unwrap());
++        println!("\tlabel: {}", chip.get_label().unwrap());
++        println!("\tpath: {}", chip.get_path().unwrap());
++        println!("\tngpio: {}\n", ngpio);
++
++        println!("\tLine information:");
++
++        for offset in 0..ngpio {
++            line_info(&chip, offset);
++        }
++        println!("\n");
++    }
++}
++
++fn main() {
++    let args: Vec<String> = env::args().collect();
++    if args.len() > 2 {
++        println!("Usage: {}", args[0]);
++        return;
++    }
++
++    if args.len() == 1 {
++        for entry in fs::read_dir(Path::new("/dev")).unwrap() {
++            let pathbuf = entry.unwrap().path();
++            let path = pathbuf.to_str().unwrap();
++
++            chip_info(path);
++        }
++    } else {
++        let index = args[1].parse::<u32>().unwrap();
++        let path = format!("/dev/gpiochip{}", index);
++
++        chip_info(&path);
++    }
++}
+diff --git a/bindings/rust/examples/gpiomon.rs b/bindings/rust/examples/gpiomon.rs
+new file mode 100644
+index 000000000000..7e44ec0da357
+--- /dev/null
++++ b/bindings/rust/examples/gpiomon.rs
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2021 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpiomon tool.
++
++use std::env;
++use std::time::Duration;
++
++use libgpiod::chip::GpiodChip;
++use libgpiod::event_buffer::GpiodEdgeEventBuffer;
++use libgpiod::line_config::GpiodLineConfig;
++use libgpiod::request_config::GpiodRequestConfig;
++use libgpiod::{Edge, EdgeEvent, Error};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset0> ...", name);
++}
++
++fn main() {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return;
++    }
++
++    let mut config = GpiodLineConfig::new().unwrap();
++    let mut offsets = Vec::<u32>::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<u32>().unwrap();
++
++        offsets.push(offset);
++    }
++
++    config.set_edge_detection(Edge::Both);
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = GpiodChip::open(&path).unwrap();
++
++    let rconfig = GpiodRequestConfig::new().unwrap();
++    rconfig.set_consumer(&args[0]);
++    rconfig.set_offsets(&offsets);
++
++    let buffer = GpiodEdgeEventBuffer::new(64).unwrap();
++    let request = chip.request_lines(&rconfig, &config).unwrap();
++
++    loop {
++        match request.edge_event_wait(Duration::new(1, 0)) {
++            Err(Error::OperationTimedOut) => continue,
++            Err(x) => {
++                println!("{:?}", x);
++                return;
++            }
++            Ok(()) => (),
++        }
++
++        let count = request.edge_event_read(&buffer, 64).unwrap();
++        for i in 0..count {
++            let event = buffer.get_event(i as u64).unwrap();
++            println!(
++                "line: {} type: {}, time: {:?}",
++                event.get_line_offset(),
++                match event.get_event_type().unwrap() {
++                    EdgeEvent::Rising => "Rising",
++                    EdgeEvent::Falling => "Falling",
++                },
++                event.get_timestamp()
++            );
++        }
++    }
++}
+diff --git a/bindings/rust/examples/gpioset.rs b/bindings/rust/examples/gpioset.rs
+new file mode 100644
+index 000000000000..956f2d754717
+--- /dev/null
++++ b/bindings/rust/examples/gpioset.rs
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2021 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpioset tool.
++
++use std::env;
++
++use libgpiod::chip::GpiodChip;
++use libgpiod::line_config::GpiodLineConfig;
++use libgpiod::request_config::GpiodRequestConfig;
++use libgpiod::Direction;
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <line_offset0>=<value0> ...", name);
++}
++
++fn main() {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return;
++    }
++
++    let mut config = GpiodLineConfig::new().unwrap();
++    let mut offsets = Vec::<u32>::new();
++    let mut values = Vec::<i32>::new();
++
++    for arg in &args[2..] {
++        let pair: Vec<&str> = arg.split('=').collect();
++        if pair.len() != 2 {
++            usage(&args[0]);
++            return;
++        }
++
++        let offset = pair[0].parse::<u32>().unwrap();
++        let value = pair[1].parse::<u32>().unwrap();
++
++        offsets.push(offset);
++        values.push(value as i32);
++    }
++
++    config.set_direction(Direction::Output);
++    config.set_output_values(&offsets, &values);
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = GpiodChip::open(&path).unwrap();
++
++    let rconfig = GpiodRequestConfig::new().unwrap();
++    rconfig.set_consumer(&args[0]);
++    rconfig.set_offsets(&offsets);
++
++    chip.request_lines(&rconfig, &config).unwrap();
++}
 -- 
 2.31.1.272.g89b43f80a514
 
