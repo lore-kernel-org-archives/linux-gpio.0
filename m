@@ -2,92 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AA5C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  3 Dec 2021 08:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF5AC433F5
+	for <linux-gpio@archiver.kernel.org>; Fri,  3 Dec 2021 08:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351121AbhLCIIc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 3 Dec 2021 03:08:32 -0500
-Received: from mleia.com ([178.79.152.223]:60400 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351105AbhLCIIb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 3 Dec 2021 03:08:31 -0500
-X-Greylist: delayed 475 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Dec 2021 03:08:31 EST
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id 0E5EB3809A0;
-        Fri,  3 Dec 2021 07:56:42 +0000 (UTC)
-Received: from [192.168.1.102] (88-113-46-102.elisa-laajakaista.fi [88.113.46.102])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.mleia.com (Postfix) with ESMTPSA id A95D23808DE;
-        Fri,  3 Dec 2021 07:56:41 +0000 (UTC)
-Subject: Re: [PATCH RESEND] gpio: lpc32xx: Handle devm_gpiochip_add_data error
- codes
-To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20211203074934.1559805-1-jiasheng@iscas.ac.cn>
-From:   Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <0b6c05ec-638a-10d5-a3e7-e6bf69adb678@mleia.com>
-Date:   Fri, 3 Dec 2021 09:56:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S1379239AbhLCIob (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 3 Dec 2021 03:44:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57728 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245058AbhLCIob (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Dec 2021 03:44:31 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB093C06173E
+        for <linux-gpio@vger.kernel.org>; Fri,  3 Dec 2021 00:41:07 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id v1so8625994edx.2
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Dec 2021 00:41:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uLBHn9jsbKV7jZYY7Dm+t8lPDQRTZnoOfAaLgWh49GU=;
+        b=LsIAHi4O7+rAKszJKyJ/QwZwolqgX7Xp85HCfWi/OAlf7oOjExVQVB3A1uF6oJMxXi
+         gPosTZ3PyRq9IbJKMX4ESqDGYZZYcom4XQ8JtyMRl5tOE7xlwAkd4FpJbONadp6pWo7I
+         oUoB99whrPg0HGUqiRetXBExiz97qDkf5NdxXb1GpetgxbWitUxWw81WWVuMwB7DeHg4
+         F4fsE0Im8ySC6EvPdTGuYxXIdnTwT10W+OMVEHRanF7YSviRe6CvO4rDs/Sfax7qLy0G
+         GQ8KIQPRWvs0w82uwlN5lRnk2skx92g4UPLasKF6asjvNdNubK/yYeFyTDsn7OcD+219
+         BK3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uLBHn9jsbKV7jZYY7Dm+t8lPDQRTZnoOfAaLgWh49GU=;
+        b=b9Mg1VjCj/MnF/hEOSCBHh5CG5Kw+Wc1AytOXv78usd8wpjrPYC1X0UqlPpeJmageY
+         GRuWK+dy/s00ligURGAWr31BCSlKpugv55NL2uTqypad0UGu5ftDHU8ZtULwcmsOVHNl
+         UuCNan+25iLuCOUcxL27k5ul82jFHGoBuxK0HRGUbemUwd/mZVGL/OKkNgpV7IcHlY3R
+         50NroxfNXhIxdGaovIRGwtqOQDblMUojS+OOFBtOrW9gv30dzm8df4n5fZk9RkMbWw/8
+         N+KJnRvCoD/XTpfa4n0cPOpBe8OzI5J1mvXQGVCTseAxCiVAJRHbmidk/dofpMEEuqur
+         CBxA==
+X-Gm-Message-State: AOAM530EJWoS2h7+GdEnN8/IjCj889F1ipzu/ukGCsN7RgdbrjhNtq0G
+        hPl/dfxAKpv4arwSCz9naEjAlhfh8fEbVr6dk7zNOSprwL54cg==
+X-Google-Smtp-Source: ABdhPJzNHiauf+pMC5f/US+c9OIXcWbcKMNg90ABw6xCvQOgNu83JV2BIOiQy03TdGH6uVMTEr4y57dSuqO0jiYbpps=
+X-Received: by 2002:a17:907:75f0:: with SMTP id jz16mr22268827ejc.77.1638520866276;
+ Fri, 03 Dec 2021 00:41:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20211203074934.1559805-1-jiasheng@iscas.ac.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20211203_075642_081474_F9ADD3D4 
-X-CRM114-Status: GOOD (  18.07  )
+References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 3 Dec 2021 09:40:55 +0100
+Message-ID: <CAMRc=Md-TKUETLzf41D2KeQODac153_AumMTW4928XfJ70GRxQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
+ the drivers
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-power <linux-power@fi.rohmeurope.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC..." 
+        <linux-mediatek@lists.infradead.org>, linux-pwm@vger.kernel.org,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-unisoc@lists.infradead.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 12/3/21 9:49 AM, Jiasheng Jiang wrote:
-> The return value of devm_gpiochip_add_data() is not always 0.
-> To catch the exception in case of the failure.
-> 
-> Fixes: 69c0a0a52cde ("gpio: lpc32xx: Use devm_gpiochip_add_data() for gpio registration")
-> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
+On Thu, Dec 2, 2021 at 10:17 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> GPIO library does copy the of_node from the parent device of
+> the GPIO chip, there is no need to repeat this in the individual
+> drivers. Remove these assignment all at once.
+>
+> For the details one may look into the of_gpio_dev_init() implementation.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->   drivers/gpio/gpio-lpc32xx.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
-> index 4e626c4235c2..e3b734302b76 100644
-> --- a/drivers/gpio/gpio-lpc32xx.c
-> +++ b/drivers/gpio/gpio-lpc32xx.c
-> @@ -505,6 +505,7 @@ static int lpc32xx_of_xlate(struct gpio_chip *gc,
->   static int lpc32xx_gpio_probe(struct platform_device *pdev)
->   {
->   	int i;
-> +	int err;
 
-This was missed in v1, so formally it is not a resend, but a v2 change.
+I have a bad feeling about this but I've gone through the drivers in
+this patch and it seems like you don't update any of the drivers that
+use multiple child OF nodes so I can't really point out any obvious
+bug.
 
->   	void __iomem *reg_base;
->   
->   	reg_base = devm_platform_ioremap_resource(pdev, 0);
-> @@ -518,8 +519,10 @@ static int lpc32xx_gpio_probe(struct platform_device *pdev)
->   			lpc32xx_gpiochip[i].chip.of_node = pdev->dev.of_node;
->   			lpc32xx_gpiochip[i].reg_base = reg_base;
->   		}
-> -		devm_gpiochip_add_data(&pdev->dev, &lpc32xx_gpiochip[i].chip,
-> +		err = devm_gpiochip_add_data(&pdev->dev, &lpc32xx_gpiochip[i].chip,
->   				  &lpc32xx_gpiochip[i]);
-> +		if (err)
-> +			return err;
->   	}
->   
->   	return 0;
-> 
+I have another change I'm working on that's related, let me send it shortly.
 
-Thank you for the fix.
-
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-
---
-Best wishes,
-Vladimir
+Bart
