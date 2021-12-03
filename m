@@ -2,116 +2,253 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EE6C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  3 Dec 2021 15:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0A6C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  3 Dec 2021 18:25:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234124AbhLCPEo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 3 Dec 2021 10:04:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232199AbhLCPEo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Dec 2021 10:04:44 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56017C061751
-        for <linux-gpio@vger.kernel.org>; Fri,  3 Dec 2021 07:01:20 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id y13so12540054edd.13
-        for <linux-gpio@vger.kernel.org>; Fri, 03 Dec 2021 07:01:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=21uBl/sv63xveuZI5bBgWtKNSIXTCPilEYmni9/xwP4=;
-        b=8WPzyjlvMDGqS2eu+kmWIpa9KmHzUwgzZk8kk55VVqL6OUdl6Z0LI9SkGKxp2C8DB/
-         KsKxngQL3Za+JPzbxHjaq5bs7hEEVDPLcMQKGG1vvTM0tshXflmuD8I4ujWqEcPZVxk3
-         BcjVh6qX0C752e4EQcAiu1ounZnf5aeXg1V392iWxnwYxqchxGEqNCzE4Vvei9vr3yeL
-         JyRwwm6vzLp6l4e0APQYp0UxXmSe9tS6Dp9QMeUrXSLZQHBfCE/Rb5NJXw931Gz+TWdt
-         34EyK/gdWe+inf1ByX6fOUw3xvxdI8P9ab/t0Gagi814uGDzdAFKHU+9/jljmVtxQgRo
-         DXpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=21uBl/sv63xveuZI5bBgWtKNSIXTCPilEYmni9/xwP4=;
-        b=edSx76z6VuX/SUZ/ia3rNKngyesJRSWaJJUlXeHUOahLshcn5NZ7o+u6BavSrz5mho
-         NdgtGgGSD5415meEKkBbQp95nTrcfYNmh2VBGpPX2hqY9UiCAdOTrUKn4AZAL2yeF8Ly
-         KBitKlW3bFCe7h5SMzvAF4SVnAXexrNgkCheepXOPg7DFJb9rokcXnPVjNRHWdoSniVl
-         pVQ4CmbkD3ZQ/D8PXwuJbxWbysJjAziaqk6DtwEufF+zQ12JbWwzhKpSGDy8jOVIMWFQ
-         nhOaTrXG+ggazKzPVuAhmPb/WV3nNVMH4ktMDScbG5f/PVkHzUCTVDEBBdWuVGA4qpVp
-         NAaw==
-X-Gm-Message-State: AOAM532bftG2iqPu48VdJAvg91K5pkd49D0E1ptwFr8D4noZgQtk4rWn
-        DlOriwfweT0vMOZWR9WZxNcTNrji69AbM4ClSMOPvSH3RsFp6g==
-X-Google-Smtp-Source: ABdhPJzUtz+Fmlc0XLD//MekyqoNW0qMaiKONPhku6jODQx87mcrhEmQ+liWOyuxOJVGzYfAXXN9WRTMUSLct/c/ARQ=
-X-Received: by 2002:a50:e611:: with SMTP id y17mr27557284edm.270.1638543675563;
- Fri, 03 Dec 2021 07:01:15 -0800 (PST)
+        id S1382691AbhLCS3K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 3 Dec 2021 13:29:10 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:41616 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233740AbhLCS3K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Dec 2021 13:29:10 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CCBB562C76;
+        Fri,  3 Dec 2021 18:25:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8857C53FCD;
+        Fri,  3 Dec 2021 18:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638555945;
+        bh=WA0ZVVfQNTglvNP8ymTxkNfa/jq89vMugL/9ZZdaots=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=saQsg9jXMa85GoHKy8Xc/QdPiFE75zKPPEBx20op4x6Bi2XYlmGZIz3J/hqujpd/K
+         jIRp3ncFf8aN2AdVr4aRHYeJUq0aWhFF9i/894fUGsTescMD0CUStuE9CHaJptgXse
+         sSmMl1G/6Tf2RE1P8CBV2zxhgN8yB+cfZw/R50rM/453Wfxlgi7WR6xiYSy2Qat5Eg
+         h2r2js01Ukzc45223S4qZgQzcGPlUZ5SoGiQBqLY5jcEfViPi5JPO9x0sXUdGEhFof
+         TZpw2V3vxYF9g6LOKh6xM/uUITiTXUvN8W5bkHlL4rx1Ood9EGuQeH4L3zqea2rwoL
+         5fFUXOVLnc1KA==
+Date:   Fri, 3 Dec 2021 13:25:43 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     "Limonciello, Mario" <Mario.Limonciello@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Joerie de Gram <j.de.gram@gmail.com>,
+        "Natikar, Basavaraj" <Basavaraj.Natikar@amd.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 5.10 10/28] pinctrl: amd: Fix wakeups when IRQ is
+ shared with SCI
+Message-ID: <YaphJ+SGgR3t2ags@sashalap>
+References: <20211126023343.442045-1-sashal@kernel.org>
+ <20211126023343.442045-10-sashal@kernel.org>
+ <SA0PR12MB4510E32F459655B6387A8660E2669@SA0PR12MB4510.namprd12.prod.outlook.com>
+ <SA0PR12MB4510FEE100D5555F655C7EA0E2669@SA0PR12MB4510.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-References: <20211201214305.2725271-1-robh@kernel.org>
-In-Reply-To: <20211201214305.2725271-1-robh@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 3 Dec 2021 16:01:04 +0100
-Message-ID: <CAMRc=MdqzxOQ+pDz821PJ9pBr=TLviND3HPd_=P1Pk_CUXkf4Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: xlp: Fix build errors from Netlogic XLP removal
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kernel test robot <lkp@intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <SA0PR12MB4510FEE100D5555F655C7EA0E2669@SA0PR12MB4510.namprd12.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Dec 1, 2021 at 10:43 PM Rob Herring <robh@kernel.org> wrote:
+On Mon, Nov 29, 2021 at 06:53:01PM +0000, Limonciello, Mario wrote:
 >
-> Commit ea708ac5bf41 ("gpio: xlp: Remove Netlogic XLP variants") has
-> build errors with CONFIG_ACPI:
 >
-> drivers/gpio/gpio-xlp.c:300:23: error: 'GPIO_VARIANT_VULCAN' undeclared here (not in a function)
->
-> and !CONFIG_OF:
->
-> drivers/gpio/gpio-xlp.c:267:11: error: 'struct gpio_chip' has no member named 'of_node'
->
-> Fix these errors.
->
-> Fixes: ea708ac5bf41 ("gpio: xlp: Remove Netlogic XLP variants")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/gpio/gpio-xlp.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
-> index 814cc34aef97..0199f545335f 100644
-> --- a/drivers/gpio/gpio-xlp.c
-> +++ b/drivers/gpio/gpio-xlp.c
-> @@ -264,7 +264,6 @@ static int xlp_gpio_probe(struct platform_device *pdev)
->         gc->base = 0;
->         gc->parent = &pdev->dev;
->         gc->ngpio = 70;
-> -       gc->of_node = pdev->dev.of_node;
->         gc->direction_output = xlp_gpio_dir_output;
->         gc->direction_input = xlp_gpio_dir_input;
->         gc->set = xlp_gpio_set;
-> @@ -297,8 +296,8 @@ static int xlp_gpio_probe(struct platform_device *pdev)
->
->  #ifdef CONFIG_ACPI
->  static const struct acpi_device_id xlp_gpio_acpi_match[] = {
-> -       { "BRCM9006", GPIO_VARIANT_VULCAN },
-> -       { "CAV9006",  GPIO_VARIANT_VULCAN },
-> +       { "BRCM9006" },
-> +       { "CAV9006" },
->         {},
->  };
->  MODULE_DEVICE_TABLE(acpi, xlp_gpio_acpi_match);
-> --
-> 2.32.0
->
+>> -----Original Message-----
+>> From: Limonciello, Mario
+>> Sent: Monday, November 29, 2021 08:48
+>> To: Sasha Levin <sashal@kernel.org>; linux-kernel@vger.kernel.org;
+>> stable@vger.kernel.org
+>> Cc: Joerie de Gram <j.de.gram@gmail.com>; Natikar, Basavaraj
+>> <Basavaraj.Natikar@amd.com>; Linus Walleij <linus.walleij@linaro.org>; S-k,
+>> Shyam-sundar <Shyam-sundar.S-k@amd.com>; linux-gpio@vger.kernel.org
+>> Subject: RE: [PATCH AUTOSEL 5.10 10/28] pinctrl: amd: Fix wakeups when IRQ
+>> is shared with SCI
+>>
+>>
+>>
+>> > -----Original Message-----
+>> > From: Sasha Levin <sashal@kernel.org>
+>> > Sent: Thursday, November 25, 2021 20:33
+>> > To: linux-kernel@vger.kernel.org; stable@vger.kernel.org
+>> > Cc: Limonciello, Mario <Mario.Limonciello@amd.com>; Joerie de Gram
+>> > <j.de.gram@gmail.com>; Natikar, Basavaraj
+>> <Basavaraj.Natikar@amd.com>;
+>> > Linus Walleij <linus.walleij@linaro.org>; Sasha Levin <sashal@kernel.org>;
+>> S-
+>> > k, Shyam-sundar <Shyam-sundar.S-k@amd.com>; linux-
+>> > gpio@vger.kernel.org
+>> > Subject: [PATCH AUTOSEL 5.10 10/28] pinctrl: amd: Fix wakeups when IRQ
+>> is
+>> > shared with SCI
+>> >
+>> > From: Mario Limonciello <mario.limonciello@amd.com>
+>> >
+>> > [ Upstream commit 2d54067fcd23aae61e23508425ae5b29e973573d ]
+>> >
+>> > On some Lenovo AMD Gen2 platforms the IRQ for the SCI and pinctrl
+>> drivers
+>> > are shared.  Due to how the s2idle loop handling works, this case needs
+>> > an extra explicit check whether the interrupt was caused by SCI or by
+>> > the GPIO controller.
+>> >
+>> > To fix this rework the existing IRQ handler function to function as a
+>> > checker and an IRQ handler depending on the calling arguments.
+>> >
+>> > BugLink:
+>> >
+>> https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgitla
+>> > b.freedesktop.org%2Fdrm%2Famd%2F-
+>> >
+>> %2Fissues%2F1738&amp;data=04%7C01%7Cmario.limonciello%40amd.com%
+>> >
+>> 7Ce14b7ddf8d1143b6649208d9b0853519%7C3dd8961fe4884e608e11a82d994
+>> >
+>> e183d%7C0%7C0%7C637734908448086367%7CUnknown%7CTWFpbGZsb3d8
+>> >
+>> eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3
+>> >
+>> D%7C3000&amp;sdata=BHHY3gLu2pQIJ1nvSE0VNQOaioTC0QdBM44ze3HXrtk
+>> > %3D&amp;reserved=0
+>> > Reported-by: Joerie de Gram <j.de.gram@gmail.com>
+>> > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> > Acked-by: Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+>> > Link:
+>> >
+>> https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.
+>> > kernel.org%2Fr%2F20211101014853.6177-2-
+>> >
+>> mario.limonciello%40amd.com&amp;data=04%7C01%7Cmario.limonciello%4
+>> >
+>> 0amd.com%7Ce14b7ddf8d1143b6649208d9b0853519%7C3dd8961fe4884e608
+>> >
+>> e11a82d994e183d%7C0%7C0%7C637734908448086367%7CUnknown%7CTWF
+>> >
+>> pbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXV
+>> >
+>> CI6Mn0%3D%7C3000&amp;sdata=zUkTF851CdUmrY1z3YZbYrnVrjHQaVfb1%
+>> > 2Bg2dx28ZNA%3D&amp;reserved=0
+>> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> > ---
+>> >  drivers/pinctrl/pinctrl-amd.c | 29 ++++++++++++++++++++++++++---
+>> >  1 file changed, 26 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+>> > index e20bcc835d6a8..54dfa0244422c 100644
+>> > --- a/drivers/pinctrl/pinctrl-amd.c
+>> > +++ b/drivers/pinctrl/pinctrl-amd.c
+>> > @@ -520,14 +520,14 @@ static struct irq_chip amd_gpio_irqchip = {
+>> >
+>> >  #define PIN_IRQ_PENDING	(BIT(INTERRUPT_STS_OFF) |
+>> > BIT(WAKE_STS_OFF))
+>> >
+>> > -static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+>> > +static bool do_amd_gpio_irq_handler(int irq, void *dev_id)
+>> >  {
+>> >  	struct amd_gpio *gpio_dev = dev_id;
+>> >  	struct gpio_chip *gc = &gpio_dev->gc;
+>> > -	irqreturn_t ret = IRQ_NONE;
+>> >  	unsigned int i, irqnr;
+>> >  	unsigned long flags;
+>> >  	u32 __iomem *regs;
+>> > +	bool ret = false;
+>> >  	u32  regval;
+>> >  	u64 status, mask;
+>> >
+>> > @@ -549,6 +549,14 @@ static irqreturn_t amd_gpio_irq_handler(int irq,
+>> void
+>> > *dev_id)
+>> >  		/* Each status bit covers four pins */
+>> >  		for (i = 0; i < 4; i++) {
+>> >  			regval = readl(regs + i);
+>> > +			/* caused wake on resume context for shared IRQ */
+>> > +			if (irq < 0 && (regval & BIT(WAKE_STS_OFF))) {
+>> > +				dev_dbg(&gpio_dev->pdev->dev,
+>> > +					"Waking due to GPIO %d: 0x%x",
+>> > +					irqnr + i, regval);
+>> > +				return true;
+>> > +			}
+>> > +
+>> >  			if (!(regval & PIN_IRQ_PENDING) ||
+>> >  			    !(regval & BIT(INTERRUPT_MASK_OFF)))
+>> >  				continue;
+>> > @@ -574,9 +582,12 @@ static irqreturn_t amd_gpio_irq_handler(int irq,
+>> void
+>> > *dev_id)
+>> >  			}
+>> >  			writel(regval, regs + i);
+>> >  			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+>> > -			ret = IRQ_HANDLED;
+>> > +			ret = true;
+>> >  		}
+>> >  	}
+>> > +	/* did not cause wake on resume context for shared IRQ */
+>> > +	if (irq < 0)
+>> > +		return false;
+>> >
+>> >  	/* Signal EOI to the GPIO unit */
+>> >  	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+>> > @@ -588,6 +599,16 @@ static irqreturn_t amd_gpio_irq_handler(int irq,
+>> void
+>> > *dev_id)
+>> >  	return ret;
+>> >  }
+>> >
+>> > +static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+>> > +{
+>> > +	return IRQ_RETVAL(do_amd_gpio_irq_handler(irq, dev_id));
+>> > +}
+>> > +
+>> > +static bool __maybe_unused amd_gpio_check_wake(void *dev_id)
+>> > +{
+>> > +	return do_amd_gpio_irq_handler(-1, dev_id);
+>> > +}
+>> > +
+>> >  static int amd_get_groups_count(struct pinctrl_dev *pctldev)
+>> >  {
+>> >  	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
+>> > @@ -958,6 +979,7 @@ static int amd_gpio_probe(struct platform_device
+>> > *pdev)
+>> >  		goto out2;
+>> >
+>> >  	platform_set_drvdata(pdev, gpio_dev);
+>> > +	acpi_register_wakeup_handler(gpio_dev->irq,
+>> > amd_gpio_check_wake, gpio_dev);
+>> >
+>> >  	dev_dbg(&pdev->dev, "amd gpio driver loaded\n");
+>> >  	return ret;
+>> > @@ -975,6 +997,7 @@ static int amd_gpio_remove(struct platform_device
+>> > *pdev)
+>> >  	gpio_dev = platform_get_drvdata(pdev);
+>> >
+>> >  	gpiochip_remove(&gpio_dev->gc);
+>> > +	acpi_unregister_wakeup_handler(amd_gpio_check_wake,
+>> > gpio_dev);
+>> >
+>> >  	return 0;
+>> >  }
+>> > --
+>> > 2.33.0
+>>
+>> Sasha,
+>>
+>> No concerns for me to 5.10, but would you mind also sending this to 5.14.y
+>> and 5.15.y too?  I didn't see it sent up for either.
 
-Applied, thanks!
+5.14 was EOL at that time.
 
-Bart
+>One more thought on this - please also take this (which wasn't part of autosel)
+>when this comes back:
+>
+>e9380df85187 ACPI: Add stubs for wakeup handler functions
+>
+>That prevents some compile errors in certain configurations.
+
+I'll grab it, thanks!
+
+-- 
+Thanks,
+Sasha
