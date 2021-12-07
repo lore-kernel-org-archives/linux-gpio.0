@@ -2,167 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B32EC433FE
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Dec 2021 09:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF886C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Dec 2021 09:43:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234064AbhLGJiW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Dec 2021 04:38:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59608 "EHLO
+        id S234270AbhLGJrJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Dec 2021 04:47:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233954AbhLGJhx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Dec 2021 04:37:53 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2568C061D60
-        for <linux-gpio@vger.kernel.org>; Tue,  7 Dec 2021 01:34:22 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id t18so4236343wrg.11
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Dec 2021 01:34:22 -0800 (PST)
+        with ESMTP id S234249AbhLGJrI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Dec 2021 04:47:08 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A502FC061574;
+        Tue,  7 Dec 2021 01:43:38 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id v19so9029052plo.7;
+        Tue, 07 Dec 2021 01:43:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sdC8L7KcajeuYgRxRzq/BDd9/Try3NuMaNKMjlQg9Bs=;
-        b=ywb/DmW9k6t7O2nSfBss1kAD/tJ2j9LcPL3LXT5/Ycmw3gSdTmnwizCmIq0pFx1Puw
-         TRNtvD6lB/dgAsNSyxOoYTfNK/WYMBbZZh4phWFmCDiRdfquO2Yij4B2M7Bnsh3lIcuU
-         +rVdt52t+mh/EVjJ7KsDTUbdn4ITAFvWkirLg/VQ2Qo27FceSNxsMIBw1yVw1RMRRgbv
-         wg1+GjLy8JT8L5ug2VqX9XbVasorxa6carY6e08QRVrWneCr1XDCbkVl/asxha/lkQlg
-         URsmFGZencZN48okTTt7dNI8pTZdogdZ+F/rM80IJz7tRq4Ntd/8llvhoPiB7wXSsT8s
-         p8NQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bh0sgY0CynSVOBQygTqUBy2hQ/ibiJ6Lgv4CouwRzDU=;
+        b=M9sgqrigFWPe+Yv6lI915lNQohM2FqNmsca8uGu7fmqqjqHTasDpOXMcu/mNV0wDTu
+         +oIZOr1y5zzhruKUJJ+6RDolg8sfuheh7yCTD4kxlycwd+kwSXxevD1htyI2gp+vPxI0
+         qwByNW/wqG2evb2d87yZv+ILl2spg7bsUmiYHdsaGeFwWFumll/zM9o6KxtRNBMnxsMu
+         t4UYpZM8EvELVpsPDWLJsjuFCmnIcWVv2G0/BetRYlSUG5T0Psrq8uZpnWcEccgBHPLU
+         o2osE3VuXrl3vnboQJtQ21Nw9gq4VEj4lRcCMPA5Tals/0FIiyCzGbUYMWEFj8jFd0yH
+         gVpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sdC8L7KcajeuYgRxRzq/BDd9/Try3NuMaNKMjlQg9Bs=;
-        b=qXkvIcO61Pwgo6icBo3+5ExD64CNLq86Dwbf4YlHGHjDQyGp14fBI3wZtmX8vmVmTl
-         KnK93N75OH/9wWlLPzL2Lv9YnP6/tJvwX4sERX8FZ80GjJGdTUzRaHtK/R5DhIyjzYy9
-         y5W8+TsnLwz4xuQ86w808jdneF8uPKwebTfJK+mirOMAEVB0OcYTQEomw8Ii4dyq0VJe
-         n4OXdNuJI8fTxnW86D0sPZbM+ApSprtLiVaFGY3NI8idMSI15yOttoAvda3PUPPL4FKI
-         VS80fkMfdKBFfD/pQ+U656SIa9hQAHoeWaDvlv/eAoSgbmWKV5NEfCqV0yV0q2vUmZGs
-         KBNQ==
-X-Gm-Message-State: AOAM533/m7Taj/xM+yJInNsHMxzCvJ8rUJXWk74+qtJ28QUIp1vvLKWK
-        NA2lKRULZo6TZtHa+y751jpiSw==
-X-Google-Smtp-Source: ABdhPJwH8GOKljrwzOPGSQTb4LlbveMpYEF876ncfAs3wgLia74zk2iGOPhFf/x0ELT9pvQPTmp3zw==
-X-Received: by 2002:a5d:4a85:: with SMTP id o5mr49389284wrq.109.1638869661378;
-        Tue, 07 Dec 2021 01:34:21 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
-        by smtp.gmail.com with ESMTPSA id k13sm13783291wri.6.2021.12.07.01.34.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bh0sgY0CynSVOBQygTqUBy2hQ/ibiJ6Lgv4CouwRzDU=;
+        b=xM1HHgthcQE4wbKYOkMmHzTcEPv5oDAMawvJnX9sKDIaMA19f1UIKGL2JdsVM/qgb8
+         VOchi43vIEG7AchIXDKs5S20qaiL9E1swP6oo23K1MDgA+vMVN1Ut3vEx0XuTBjzmXwy
+         DSosGgO39oB1i+xP4/GBXNwQgfPnPgNLU5M6ie+rfrCiW57TQJauH+1ShSy/gckizoOS
+         AvBtNcd5/Sf65JOF3gUWjW72qp9K8UWIIWcw237NaS3FG0SbsVQHtkBRInyRzxZGc/Cr
+         CnhGo3IzeGKFZOdeW6PFNXMEMXMBnrh+OJyQgA4g/TZsSFL08h6FlbPXp02HwoXUrehG
+         0IeA==
+X-Gm-Message-State: AOAM533rJbMcZCyEDAlKPQAHa/XziunTgirJMo7gIESRz2ELCHlWdy0/
+        DGFtoc6X3Z71LLsWpGQa4Ik=
+X-Google-Smtp-Source: ABdhPJx5dEKL7At1NDgZFuVNXph9MXWC4bBSWp/cWcLB63SBMOHIdxAHnG/gg7Pi+2M2mx5LMzgBLw==
+X-Received: by 2002:a17:902:7c8a:b0:143:bb4a:7bb3 with SMTP id y10-20020a1709027c8a00b00143bb4a7bb3mr50544959pll.46.1638870218148;
+        Tue, 07 Dec 2021 01:43:38 -0800 (PST)
+Received: from richard-System-Product-Name.. ([101.10.104.26])
+        by smtp.gmail.com with ESMTPSA id y190sm15281494pfg.153.2021.12.07.01.43.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Dec 2021 01:34:21 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
+        Tue, 07 Dec 2021 01:43:37 -0800 (PST)
+From:   Richard Hsu <saraon640529@gmail.com>
+X-Google-Original-From: Richard Hsu <Richard_Hsu@asmedia.com.tw>
+To:     linus.walleij@linaro.org, brgl@bgdev.pl,
+        Richard_Hsu@asmedia.com.tw, andriy.shevchenko@linux.intel.com
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v13 6/7] selftests: gpio: add a helper for reading GPIO line names
-Date:   Tue,  7 Dec 2021 10:34:11 +0100
-Message-Id: <20211207093412.27833-7-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20211207093412.27833-1-brgl@bgdev.pl>
-References: <20211207093412.27833-1-brgl@bgdev.pl>
+        Yd_Tseng@asmedia.com.tw, Cindy1_Hsu@asmedia.com.tw,
+        Andrew_Su@asmedia.com.tw
+Subject: [PATCH] gpio:gpio-amdpt:add new device and that 24-pin support
+Date:   Tue,  7 Dec 2021 17:42:39 +0800
+Message-Id: <20211207094239.5059-1-Richard_Hsu@asmedia.com.tw>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a simple program that allows to read GPIO line names from the
-character device. This will be used in gpio-sim selftests.
+From: RichardHsu <Richard_Hsu@asmedia.com.tw>
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+New ACPI gpio device(AMDIF031) support 24 gpio pins. We add new device id and pin number to .driver_data of acpi_device_id structure
+and then retrieve it by device_get_match_data() that Andy suggest it.
+
+Signed-off-by: RichardHsu <Richard_Hsu@asmedia.com.tw>
 ---
- tools/testing/selftests/gpio/.gitignore       |  1 +
- tools/testing/selftests/gpio/Makefile         |  2 +-
- tools/testing/selftests/gpio/gpio-line-name.c | 55 +++++++++++++++++++
- 3 files changed, 57 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/gpio/gpio-line-name.c
+ drivers/gpio/gpio-amdpt.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/.gitignore b/tools/testing/selftests/gpio/.gitignore
-index 4ea4f58dab1a..ededb077a3a6 100644
---- a/tools/testing/selftests/gpio/.gitignore
-+++ b/tools/testing/selftests/gpio/.gitignore
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- gpio-mockup-cdev
- gpio-chip-info
-+gpio-line-name
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index a40b818c394e..293aa9749408 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -2,7 +2,7 @@
- 
- TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh
--TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info
-+TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
- CFLAGS += -O2 -g -Wall -I../../../../usr/include/
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/gpio/gpio-line-name.c b/tools/testing/selftests/gpio/gpio-line-name.c
-new file mode 100644
-index 000000000000..e635cfadbded
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-line-name.c
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * GPIO character device helper for reading line names.
-+ *
-+ * Copyright (C) 2021 Bartosz Golaszewski <brgl@bgdev.pl>
-+ */
-+
-+#include <fcntl.h>
-+#include <linux/gpio.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/types.h>
-+
-+static void print_usage(void)
-+{
-+	printf("usage:\n");
-+	printf("  gpio-line-name <chip path> <line offset>\n");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct gpio_v2_line_info info;
-+	int fd, ret;
-+	char *endp;
-+
-+	if (argc != 3) {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	fd = open(argv[1], O_RDWR);
-+	if (fd < 0) {
-+		perror("unable to open the GPIO chip");
-+		return EXIT_FAILURE;
-+	}
-+
-+	memset(&info, 0, sizeof(info));
-+	info.offset = strtoul(argv[2], &endp, 10);
-+	if (*endp != '\0') {
-+		print_usage();
-+		return EXIT_FAILURE;
-+	}
-+
-+	ret = ioctl(fd, GPIO_V2_GET_LINEINFO_IOCTL, &info);
-+	if (ret) {
-+		perror("line info ioctl failed");
-+		return EXIT_FAILURE;
-+	}
-+
-+	printf("%s\n", info.name);
-+
-+	return EXIT_SUCCESS;
-+}
--- 
-2.25.1
+diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
+index bbf53e289141..a45693423a07 100644
+--- a/drivers/gpio/gpio-amdpt.c
++++ b/drivers/gpio/gpio-amdpt.c
+@@ -14,6 +14,7 @@
+ #include <linux/platform_device.h>
+
+ #define PT_TOTAL_GPIO 8
++#define PT_TOTAL_GPIO_EX 24
+
+ /* PCI-E MMIO register offsets */
+ #define PT_DIRECTION_REG   0x00
+@@ -103,7 +104,8 @@ static int pt_gpio_probe(struct platform_device *pdev)
+ 	pt_gpio->gc.owner            = THIS_MODULE;
+ 	pt_gpio->gc.request          = pt_gpio_request;
+ 	pt_gpio->gc.free             = pt_gpio_free;
+-	pt_gpio->gc.ngpio            = PT_TOTAL_GPIO;
++	/* retrieve pin number from .driver_data of acpi_device_id structure */
++	pt_gpio->gc.ngpio            = (uintptr_t)device_get_match_data(dev);
+ #if defined(CONFIG_OF_GPIO)
+ 	pt_gpio->gc.of_node          = dev->of_node;
+ #endif
+@@ -133,8 +135,9 @@ static int pt_gpio_remove(struct platform_device *pdev)
+ }
+
+ static const struct acpi_device_id pt_gpio_acpi_match[] = {
+-	{ "AMDF030", 0 },
+-	{ "AMDIF030", 0 },
++	{ "AMDF030", PT_TOTAL_GPIO },
++	{ "AMDIF030", PT_TOTAL_GPIO },
++	{ "AMDIF031", PT_TOTAL_GPIO_EX },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, pt_gpio_acpi_match);
+--
+2.30.2
 
