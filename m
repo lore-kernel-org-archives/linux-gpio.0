@@ -2,139 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4FDC433FE
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Dec 2021 14:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC6EC433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Dec 2021 15:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233413AbhLGPCM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Dec 2021 10:02:12 -0500
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:42771 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238379AbhLGPBx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Dec 2021 10:01:53 -0500
-Received: by mail-oi1-f177.google.com with SMTP id n66so28109787oia.9;
-        Tue, 07 Dec 2021 06:58:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=+5Z+s+qZr/dqYuPrhwxEsfm4VoIv7raKxg2fSVPXZ1s=;
-        b=xHQOICTa9TFDdai7dyn7nNyifSpUKGxOiCiW3C2SPZoYHQ+RXcnFJ9syWxKMqNP3dc
-         nvj6KKiAphfkzpfoiy4y2YlBQ0P5a+03m4PnZ3xxho5SDcmoNTX1BU80dpRc0CwfvE1g
-         Zl7f0yUp4174Or9MbhiaGVDyO6ehhjIKGoj2Q02m1SC33vwbDfDdwCoNAbgxlyjpUEWn
-         6HJSkQptPRJY7vS9LnStrr8ph1AJNl/feYoHqnY+tEcd4uoCr277e3BoCyD0aD8We4Ok
-         LfE479Ik4GyC7ZZcG4MtUTFgXyZhoLkvcUO8NvIx26+6Jtal82au5ONlY8S/swruJ1bD
-         kCKw==
-X-Gm-Message-State: AOAM5324MyjTZfuHjYcnkULfJZv3SzXU+xoBzPIEx1iVsJO8JQPsCvPZ
-        jDMTFAdwkfIJxOxt3bnjoQ==
-X-Google-Smtp-Source: ABdhPJyPQz8MGdEnpy+dfjpiUez2RQSbPKGqr/ncBa0qgl3Qa9MdN4Hom3+TzcbiAkTw6HJamzmPOA==
-X-Received: by 2002:a54:4104:: with SMTP id l4mr5476582oic.17.1638889102302;
-        Tue, 07 Dec 2021 06:58:22 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id be12sm3524103oib.50.2021.12.07.06.58.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Dec 2021 06:58:21 -0800 (PST)
-Received: (nullmailer pid 5804 invoked by uid 1000);
-        Tue, 07 Dec 2021 14:58:10 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-pwm@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
-        linux-rtc@vger.kernel.org,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Marc Zyngier <maz@kernel.org>,
-        Doug Berger <opendmb@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Al Cooper <alcooperx@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-usb@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Ray Jui <rjui@broadcom.com>, linux-pm@vger.kernel.org,
-        Markus Mayer <mmayer@broadcom.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Zhang Rui <rui.zhang@intel.com>, linux-ide@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        linux-crypto@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Scott Branden <sbranden@broadcom.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>
-In-Reply-To: <20211206182616.2089677-13-f.fainelli@gmail.com>
-References: <20211206182616.2089677-1-f.fainelli@gmail.com> <20211206182616.2089677-13-f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 12/14] dt-bindings: ata: Convert Broadcom SATA to YAML
-Date:   Tue, 07 Dec 2021 08:58:10 -0600
-Message-Id: <1638889090.722845.5803.nullmailer@robh.at.kernel.org>
+        id S234394AbhLGPT6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Dec 2021 10:19:58 -0500
+Received: from so254-9.mailgun.net ([198.61.254.9]:25763 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234438AbhLGPT5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Dec 2021 10:19:57 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1638890187; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=lhmLEurJtruYbgU84VYlYJYpIAj8F3QlaKT0LNANdlo=; b=xULvUiBI/JSmZk23O4Jk/koD3+UXPvrl8MITC95nSWWiOP88ZzTE0J3E45WiqYaxBzMt4wYn
+ crboqepW7aOjEXg4UqADnP1CDYeAi+/d2oSTy7iuudZTGLU3OrYCntguaTzH6yjEe8dIRxL5
+ 05HlYjEuSUrhLLrp5dfFPwxKEsE=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 61af7aca4fca5da46dfa76ab (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 07 Dec 2021 15:16:26
+ GMT
+Sender: srivasam=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A47D0C43635; Tue,  7 Dec 2021 15:16:26 +0000 (UTC)
+Received: from [10.242.143.72] (unknown [202.46.23.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: srivasam)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BD688C4338F;
+        Tue,  7 Dec 2021 15:16:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org BD688C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Subject: Re: [PATCH v4 4/5] pinctrl: qcom: Update clock voting as optional
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivasa Rao Mandadapu <srivasam@codeaurora.com>
+Cc:     agross@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org,
+        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
+        rohitkr@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Venkata Prasad Potturu <potturu@codeaurora.org>
+References: <1638531140-25899-1-git-send-email-srivasam@codeaurora.com>
+ <1638531140-25899-5-git-send-email-srivasam@codeaurora.com>
+ <Ya13Bl66oS1hgHFd@ripper>
+From:   Srinivasa Rao Mandadapu <srivasam@codeaurora.org>
+Organization: Qualcomm India Private Limited.
+Message-ID: <bf2b48fc-d97d-d5a5-e934-6c0a8cae72fe@codeaurora.org>
+Date:   Tue, 7 Dec 2021 20:46:16 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <Ya13Bl66oS1hgHFd@ripper>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 06 Dec 2021 10:26:14 -0800, Florian Fainelli wrote:
-> Convert the Broadcom SATA3 AHCI controller Device Tree binding to YAML
-> to help with validation.
-> 
-> Acked-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  .../bindings/ata/brcm,sata-brcm.txt           | 45 ---------
->  .../bindings/ata/brcm,sata-brcm.yaml          | 91 +++++++++++++++++++
->  2 files changed, 91 insertions(+), 45 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/ata/brcm,sata-brcm.txt
->  create mode 100644 Documentation/devicetree/bindings/ata/brcm,sata-brcm.yaml
-> 
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
-
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
-
-Full log is available here: https://patchwork.ozlabs.org/patch/1564108
-
-
-ahci@41000: $nodename:0: 'ahci@41000' does not match '^sata(@.*)?$'
-	arch/arm/boot/dts/bcm958522er.dt.yaml
-	arch/arm/boot/dts/bcm958525er.dt.yaml
-	arch/arm/boot/dts/bcm958525xmc.dt.yaml
-	arch/arm/boot/dts/bcm958622hr.dt.yaml
-	arch/arm/boot/dts/bcm958623hr.dt.yaml
-	arch/arm/boot/dts/bcm958625hr.dt.yaml
-	arch/arm/boot/dts/bcm958625k.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx64-a0.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx64.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx64w-a0.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx64w.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx65.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx65w.dt.yaml
-	arch/arm/boot/dts/bcm988312hr.dt.yaml
-
-ahci@41000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'dma-coherent', 'sata-port@0', 'sata-port@1' were unexpected)
-	arch/arm/boot/dts/bcm958522er.dt.yaml
-	arch/arm/boot/dts/bcm958525er.dt.yaml
-	arch/arm/boot/dts/bcm958525xmc.dt.yaml
-	arch/arm/boot/dts/bcm958622hr.dt.yaml
-	arch/arm/boot/dts/bcm958623hr.dt.yaml
-	arch/arm/boot/dts/bcm958625hr.dt.yaml
-	arch/arm/boot/dts/bcm958625k.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx64.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx64w.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx65.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx65w.dt.yaml
-	arch/arm/boot/dts/bcm988312hr.dt.yaml
-
-ahci@41000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'sata-port@0', 'sata-port@1' were unexpected)
-	arch/arm/boot/dts/bcm958625-meraki-mx64-a0.dt.yaml
-	arch/arm/boot/dts/bcm958625-meraki-mx64w-a0.dt.yaml
-
-sata@a000: compatible: 'oneOf' conditional failed, one must be fixed:
-	arch/arm/boot/dts/bcm963138dvt.dt.yaml
+On 12/6/2021 8:05 AM, Bjorn Andersson wrote:
+Thanks for Your Time Bjorn!!!
+> On Fri 03 Dec 03:32 PST 2021, Srinivasa Rao Mandadapu wrote:
+>
+>> From: Srinivasa Rao Mandadapu <srivasam@codeaurora.org>
+>>
+>> Update bulk clock voting to optional voting as ADSP bypass platform doesn't
+>> need macro and decodec clocks, these are maintained as power domains and
+>> operated from lpass audio core cc.
+>>
+>> Signed-off-by: Srinivasa Rao Mandadapu <srivasam@codeaurora.org>
+>> Co-developed-by: Venkata Prasad Potturu <potturu@codeaurora.org>
+>> Signed-off-by: Venkata Prasad Potturu <potturu@codeaurora.org>
+>> ---
+>>   drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+>> index bcc12f6..c2a1110 100644
+>> --- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+>> +++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+>> @@ -394,7 +394,7 @@ int lpi_pinctrl_probe(struct platform_device *pdev)
+>>   		return dev_err_probe(dev, PTR_ERR(pctrl->slew_base),
+>>   				     "Slew resource not provided\n");
+>>   
+>> -	ret = devm_clk_bulk_get(dev, MAX_LPI_NUM_CLKS, pctrl->clks);
+>> +	ret = devm_clk_bulk_get_optional(dev, MAX_LPI_NUM_CLKS, pctrl->clks);
+> If some platforms requires this clock and others doesn't have one, then
+> please make this statement conditional on the compatible, rather than
+> making it optional on both.
+>
+> Thanks,
+> Bjorn
+Okay. will add one flag in lpi_pinctrl_variant_data structure and handle 
+it accordingly.
+>>   	if (ret)
+>>   		return dev_err_probe(dev, ret, "Can't get clocks\n");
+>>   
+>> -- 
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+>> is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+>>
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
