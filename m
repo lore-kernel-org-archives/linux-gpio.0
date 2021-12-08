@@ -2,110 +2,133 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825D0C433F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Dec 2021 02:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4157C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Dec 2021 06:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239461AbhLHCiB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Dec 2021 21:38:01 -0500
-Received: from mga05.intel.com ([192.55.52.43]:10832 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233825AbhLHCiA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 7 Dec 2021 21:38:00 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="323997486"
-X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="323997486"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 18:34:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="563914899"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Dec 2021 18:34:27 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mummj-000NHB-CB; Wed, 08 Dec 2021 02:34:21 +0000
-Date:   Wed, 8 Dec 2021 10:34:14 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, openbmc@lists.ozlabs.org,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org,
-        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH v2 5/8] pinctrl: nuvoton: Add driver for WPCM450
-Message-ID: <202112081056.4i0VFldF-lkp@intel.com>
-References: <20211207210823.1975632-6-j.neuschaefer@gmx.net>
+        id S239994AbhLHGcd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Dec 2021 01:32:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43304 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239648AbhLHGcc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Dec 2021 01:32:32 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDAFC061574;
+        Tue,  7 Dec 2021 22:29:01 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id v1so4876377edx.2;
+        Tue, 07 Dec 2021 22:29:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ge8duN4sNFU8LlP54a+ac/TMCJbGoRstlWztgA2oT2k=;
+        b=p7Tlb9qJ5H1ZRRcrMS0mlr42Jn6hA8VP2orglLASnbMQBgx1S1WeBr/AMrOSeesXnQ
+         FRluYxOh0U5Ov4HWvBNuv3hTTSzYgFlsq7AC/NSoeEDrdP722tiB+4a45G8ysaCsuumR
+         N25uK9AtBpGiUL2MR7tvUHfXrY4R+C7lwVL22UrSyvojE1/GcpIkz0ZhSJhVcQc3EXuo
+         t1K8/XnGJZowgX+uPrPPkDOfUFvdLzuLndBaVJDj8uHnw9dAq+q/5vmn6PfqnXlaHXkV
+         GC9QBRXfkEqG4YTtx0xMcskL1XccmQ2vBPQsdaCDfBrNPvXnr2YcsX+X7j2hq+9RRlQs
+         VBPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ge8duN4sNFU8LlP54a+ac/TMCJbGoRstlWztgA2oT2k=;
+        b=VdYQ0oU03AZwKpXahwajRVV4LroqulA2PGSpUZqmqlIuSY4KaXAinPX2Uji7J7nYp+
+         +mp5LpkVDPLhH025ik/i8kIsL0I9wzPdPPsFmIesJuOgLkU8/fEF4XMNdtAUpX5Pl24n
+         nnseltVNIybMF8CFQzn949OGV3wRwCZojijzWD+bif7wIevvIY/Cth3ownKEPO/hP6Oh
+         V7IxvZcN+xl5W8p+0Oyd47N9YwTfqcOIgCyct/JfYLci1EYyGZYuewyAyUk4SqWYC2n1
+         9JpMex3ew6zh8dVXDOniuznghPIKf4OMkH+RoUby6NMbYnRBIAL5RbWatzGPB/rpxQJR
+         p8wQ==
+X-Gm-Message-State: AOAM533efU7HrkYJZ/UBBJePJPJChS91EyW3bT2Wj7hlPG/BWTW8CZBe
+        vXy/QyHkrExGNCYMD5szQk/4rtQbQVPNRXHzIgE=
+X-Google-Smtp-Source: ABdhPJzGz+VCI7qEgxFax+wzk8JXXv7V0YRLbnxVV2888/gXpKyM/ex1MlxEgxzSYFGBmpSEppU47Zmhh0wuCDsftjc=
+X-Received: by 2002:a17:906:489b:: with SMTP id v27mr4989169ejq.567.1638944939879;
+ Tue, 07 Dec 2021 22:28:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211207210823.1975632-6-j.neuschaefer@gmx.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1638891339-21806-1-git-send-email-quic_srivasam@quicinc.com> <1638891339-21806-4-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1638891339-21806-4-git-send-email-quic_srivasam@quicinc.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 8 Dec 2021 08:28:23 +0200
+Message-ID: <CAHp75Vd=47Tv9Sf+styPhxS2=O1H2KUDeKQXTULUYU5fDgGwwA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] pinctrl: qcom: Extract chip specific LPASS LPI code
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, plai@codeaurora.org,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        rohitkr@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>, judyhsiao@chromium.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Venkata Prasad Potturu <quic_potturu@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi "Jonathan,
+On Wed, Dec 8, 2021 at 2:39 AM Srinivasa Rao Mandadapu
+<quic_srivasam@quicinc.com> wrote:
+>
+> Extract the chip specific SM8250 data from the LPASS LPI pinctrl driver
+> to allow reusing the common code in the addition of subsequent
+> platforms.
 
-I love your patch! Perhaps something to improve:
+...
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on robh/for-next linus/master v5.16-rc4 next-20211207]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+> @@ -661,8 +454,10 @@ static int lpi_pinctrl_probe(struct platform_device *pdev)
+>
+>         return ret;
+>  }
+> +EXPORT_SYMBOL(lpi_pinctrl_probe);
 
-url:    https://github.com/0day-ci/linux/commits/Jonathan-Neusch-fer/Nuvoton-WPCM450-pinctrl-and-GPIO-driver/20211208-051101
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-config: arm64-randconfig-r014-20211207 (https://download.01.org/0day-ci/archive/20211208/202112081056.4i0VFldF-lkp@intel.com/config)
-compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 097a1cb1d5ebb3a0ec4bcaed8ba3ff6a8e33c00a)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/0day-ci/linux/commit/c08fb0aafb60234854aa86433da809fe5112f55e
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Jonathan-Neusch-fer/Nuvoton-WPCM450-pinctrl-and-GPIO-driver/20211208-051101
-        git checkout c08fb0aafb60234854aa86433da809fe5112f55e
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/pinctrl/nuvoton/
+> +
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Stray change.
 
-All warnings (new ones prefixed by >>):
+...
 
->> drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:1564:41: warning: format specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
-           dev_dbg(npcm->dev, "group size: %d\n", ARRAY_SIZE(npcm7xx_groups));
-                                           ~~     ^~~~~~~~~~~~~~~~~~~~~~~~~~
-                                           %lu
-   include/linux/dev_printk.h:163:47: note: expanded from macro 'dev_dbg'
-                   dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__); \
-                                                       ~~~     ^~~~~~~~~~~
-   include/linux/dev_printk.h:129:34: note: expanded from macro 'dev_printk'
-                   _dev_printk(level, dev, fmt, ##__VA_ARGS__);            \
-                                           ~~~    ^~~~~~~~~~~
-   include/linux/kernel.h:46:25: note: expanded from macro 'ARRAY_SIZE'
-   #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
+> +#ifndef __PINCTRL_LPASS_LPI_H__
+> +#define __PINCTRL_LPASS_LPI_H__
 
+Missed headers.
+At least bits.h.
 
-vim +1564 drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
+...
 
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1559  
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1560  static int npcm7xx_get_groups_count(struct pinctrl_dev *pctldev)
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1561  {
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1562  	struct npcm7xx_pinctrl *npcm = pinctrl_dev_get_drvdata(pctldev);
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1563  
-3b588e43ee5c7ad Tomer Maimon 2018-08-08 @1564  	dev_dbg(npcm->dev, "group size: %d\n", ARRAY_SIZE(npcm7xx_groups));
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1565  	return ARRAY_SIZE(npcm7xx_groups);
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1566  }
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  1567  
+> +#define NO_SLEW                                -1
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Naming sucks for the header.
+
+LPI_NO_SLEW ?
+
+...
+
+> +struct lpi_pingroup {
+> +       const char *name;
+> +       const unsigned int *pins;
+> +       unsigned int npins;
+> +       unsigned int pin;
+> +       /* Bit offset in slew register for SoundWire pins only */
+> +       int slew_offset;
+> +       unsigned int *funcs;
+> +       unsigned int nfuncs;
+> +};
+
+Are you going to convert this to use struct group_desc?
+
+...
+
+> +       LPI_MUX__,
+
+Strange naming. Besides, if it is the terminator, drop the comma.
+
+-- 
+With Best Regards,
+Andy Shevchenko
