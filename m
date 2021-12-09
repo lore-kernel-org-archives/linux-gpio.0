@@ -2,83 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FF4C4167D
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Dec 2021 16:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99961C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Dec 2021 16:59:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241250AbhLIQsl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Dec 2021 11:48:41 -0500
-Received: from box.trvn.ru ([194.87.146.52]:59783 "EHLO box.trvn.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237930AbhLIQsj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 9 Dec 2021 11:48:39 -0500
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 0E7E641F11;
-        Thu,  9 Dec 2021 21:37:32 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1639067853; bh=R94w1FLumb+TBnOujhfbT4mF8MJQyo9KAMn2JGNsyvk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tGlY3TItarPP7YzRj3umBlYniqehPgj05qATx12yKmD+z7CmqyHhgctXYQGXhDl09
-         ppFc3nuWV5Hq1YD/UnradrDcrUbzEQESnNHsJEgCIDeOnRgOp8FPRlr6dOkf7C08FA
-         fUMacTUCJunJs6xUeVMap4ZmQc8w8nR/TppyFSbFs33kM0qF5AIFdNpUX9Wvb5Oc29
-         gACk0DGjgR7RSTLTU6KePaNhPq4cyY91fcCODiyfgESNpfoOz/zojEnywcFYzMnZYQ
-         WuNribOaxk/ABYDXqsy7JvoGRzusvqV74iIb3jraHoSzootLqzSPoju1jM4+H7f5Cd
-         97LVCUtAQJOtw==
-From:   Nikita Travkin <nikita@trvn.ru>
-To:     mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
-        joonwoop@codeaurora.org, svarbanov@mm-sol.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Nikita Travkin <nikita@trvn.ru>
-Subject: [PATCH 1/4] clk: qcom: clk-rcg2: Fail Duty-Cycle configuration if MND divider is not enabled.
-Date:   Thu,  9 Dec 2021 21:37:17 +0500
-Message-Id: <20211209163720.106185-2-nikita@trvn.ru>
-In-Reply-To: <20211209163720.106185-1-nikita@trvn.ru>
-References: <20211209163720.106185-1-nikita@trvn.ru>
+        id S241906AbhLIRDX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:03:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42242 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241916AbhLIRDA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Dec 2021 12:03:00 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6755C0698C4;
+        Thu,  9 Dec 2021 08:59:26 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id z6so5952868pfe.7;
+        Thu, 09 Dec 2021 08:59:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xEge/hk2eN3BabVptokevaVEr4JlxJ5oV5yaJ6wABCk=;
+        b=OjV7MlbtFtPC7WEbokYp3V6lqzlmPZcOyXEDAFi0MMl2wz0HgGDtJsLDuDEGFwOkXx
+         fUEUeuJQfUCIhQMbjt+vHIKz8HoP5robjIPg4ADxh9AAOzW1qCIEPF9Oct8HhR0Slyxa
+         YSEvjhHPiXiWqZdHDxKucgHSe/8abnM2B6JlmbdjgZnNNakIxA/Q3zNjTO7gYxLqb4YR
+         nscqae3Ex6cJ4Y3Urf/ErwqXQZF71S3WmI5t9AF27sm1l9XYF4lKygICp0BzO56+R2iV
+         2PAgG8OOJaG3fYjcXOgGbgQYXsCjogZG/OdRnrrvs9RB1dmIm/D+P6r/jLc5D0aSWG0s
+         PE0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xEge/hk2eN3BabVptokevaVEr4JlxJ5oV5yaJ6wABCk=;
+        b=oSKBhLOYJUgWaFlwzSo/KqM3+cLnhp6Ply0Ha4ywvwAW7MpPqts8S8/k7IXRL9mAd4
+         XsQse2t8KuGHD5R78M3jaEEQel+RGWb2ZXAdbyfVx89jjYRtpemV1ihAftPUKALSbzTq
+         Zekj5LpuKprWmz9J0u4RhLM+cM4g3HomVrndtG5QPGDuviYEzJJWrvWuqbt9xYYRfNTa
+         vcIdY6vn0c6C+68dGbZi1MJSwNYXr36K3cSmPVYA4JB4CYoVqdYdOOjGBSx+shEKuFmM
+         WPFC0TwP7DSD0E6OWWeto++fLwvxcvKagVGowsBmLR7OJ0Dt9qXNZqLbDtNesCkiAASl
+         Bt3A==
+X-Gm-Message-State: AOAM533bqXentm1wRt8TkT/+SX3CvgqFs9qr9gVHKx84CRygLGenhlfT
+        JsO9ls7TFqtN/sNTzCa+WrhY+uAcP40=
+X-Google-Smtp-Source: ABdhPJzBV4CLqpERUJ/MGt9P6/fPZdAQbxWpCC+O9Az+thHkMNAH9y2gmdqMGad65Mqtox5yHWwytA==
+X-Received: by 2002:a05:6a00:148c:b0:49f:e048:25dc with SMTP id v12-20020a056a00148c00b0049fe04825dcmr12891120pfu.12.1639069165839;
+        Thu, 09 Dec 2021 08:59:25 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id hk18sm10208235pjb.20.2021.12.09.08.59.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Dec 2021 08:59:25 -0800 (PST)
+Subject: Re: [PATCH] gpio: bcm-kona:add const to of_device_id
+To:     Xiang wangx <wangxiang@cdjrlc.com>, linus.walleij@linaro.org
+Cc:     rjui@broadcom.com, brgl@bgdev.pl, f.fainelli@gmail.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211209131245.23172-1-wangxiang@cdjrlc.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <a3057939-25a2-5d4e-1b38-54436db6560c@gmail.com>
+Date:   Thu, 9 Dec 2021 08:59:23 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211209131245.23172-1-wangxiang@cdjrlc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In cases when MND is not enabled (e.g. when only Half Integer Divider is
-used), setting D registers makes no effect. Fail instead of making
-ineffective write.
+On 12/9/21 5:12 AM, Xiang wangx wrote:
+> struct of_device_id should normally be const.
+> 
+> Signed-off-by: Xiang wangx <wangxiang@cdjrlc.com>
 
-Fixes: 7f891faf596e ("clk: qcom: clk-rcg2: Add support for duty-cycle for RCG")
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
- drivers/clk/qcom/clk-rcg2.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index e1b1b426fae4..6964cf914b60 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -396,7 +396,7 @@ static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
- static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--	u32 notn_m, n, m, d, not2d, mask, duty_per;
-+	u32 notn_m, n, m, d, not2d, mask, duty_per, cfg;
- 	int ret;
- 
- 	/* Duty-cycle cannot be modified for non-MND RCGs */
-@@ -407,6 +407,11 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
- 
- 	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m);
- 	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m);
-+	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
-+
-+	/* Duty-cycle cannot be modified if MND divider is in bypass mode. */
-+	if (!(cfg & CFG_MODE_MASK))
-+		return -EINVAL;
- 
- 	n = (~(notn_m) + m) & mask;
- 
+Would be nice to add a space in the subject and do:
+
+gpio: bcm-kona: add const to of_device_id
+
+While applying if not asking too much from maintainers ;)
 -- 
-2.30.2
-
+Florian
