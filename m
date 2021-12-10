@@ -2,160 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A811C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Dec 2021 14:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3656CC433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Dec 2021 15:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239120AbhLJO6L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 10 Dec 2021 09:58:11 -0500
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:38403 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231277AbhLJO6K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Dec 2021 09:58:10 -0500
-Received: by mail-ot1-f47.google.com with SMTP id n104-20020a9d2071000000b005799790cf0bso9866313ota.5;
-        Fri, 10 Dec 2021 06:54:35 -0800 (PST)
+        id S242584AbhLJPTl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 10 Dec 2021 10:19:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38642 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235353AbhLJPTl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Dec 2021 10:19:41 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 015F1C061746
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Dec 2021 07:16:05 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id o20so31377218eds.10
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Dec 2021 07:16:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5OH9qBbqvt4WBvP8D0eDsTshfx6d4drjBogVvdSBDcE=;
+        b=GI2pyajyICRQT9VHZY7NCbccijp4sX7SAS0Z5qayxR4B2b/jcMeYn0PHhTO8a/UaZL
+         xObP2o0SBGpkNCQXMBGyYZpHpyhlAliFuwtcWXISq81fih2mqy86vEtqlP13DfWzDNNt
+         fhfbchHZHFKtc8iWSw/F6TfL6eXiC/1CkDyk69VaSkD6NKyMv1B9FjyOvUyucLxh0H/o
+         1X+85NSUs/zt19eXsGdTzZoGm6Au3DM+FvDqGBpeUa3TLyz3fUEP6syAp3YMXp7nDVzK
+         QWbNGPtwXTymSkxRQUIPLHL0Cq41CDTc34ztYY5aOF5yvlQ446PG95+5O0JXRNHbsC7Q
+         VgEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Zdc9H3YW1oDCCZbDFkL7On4+7T8yfSZEeO3EBNfcdBg=;
-        b=xsiGoXSr2BYBb/FXfU62VAOaGv4HCaTd3tlKh/Cs3mOVywiTPo0XF+yMMZWH298Z/6
-         kiykZOK5gw/bRrAFpDjiVKOCCUVTdEKEhvOULgiRePKvZ9FYa5roc5zceN91hP1/Ajuq
-         Y5y9lMB4dKwS+DtdHc7nv0oKUw7+cWWLewMc0s4lG+r//69oiv8fBYR+RJ3C2X3P/u7g
-         pQM/DpSUYXQ9POII1tctpQfBeTxrjgFHP0Yvul3giJzZk0TbgE7M0F52JGUN6B0nw0cL
-         nK724Z7x9LXDzd2HuoE025YAsGC3YcZMgDXxyer92E58LW+Bbr+6krY86LD6Uy2cVU3M
-         jlWA==
-X-Gm-Message-State: AOAM531O6JFXAeVuI82KIRUyjpw8hH1bHNxywHcjaAEcEADQ2/U2nuzc
-        1W18YNN9xUgC93YzZg6gMw==
-X-Google-Smtp-Source: ABdhPJxXAJ4hmhe+SH4o7q5tMWlEJ/ynPJzoWoPjxoYwskrBvavXsrur1xInHiNIsTpZzFWEhKFJUg==
-X-Received: by 2002:a05:6830:1688:: with SMTP id k8mr11262889otr.238.1639148075315;
-        Fri, 10 Dec 2021 06:54:35 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id n22sm565324oop.29.2021.12.10.06.54.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 06:54:34 -0800 (PST)
-Received: (nullmailer pid 1333370 invoked by uid 1000);
-        Fri, 10 Dec 2021 14:54:33 -0000
-Date:   Fri, 10 Dec 2021 08:54:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>,
-        Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: arm/npcm: Add binding for global
- control registers (GCR)
-Message-ID: <YbNqKfwYes0rH07B@robh.at.kernel.org>
-References: <20211207210823.1975632-1-j.neuschaefer@gmx.net>
- <20211207210823.1975632-2-j.neuschaefer@gmx.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5OH9qBbqvt4WBvP8D0eDsTshfx6d4drjBogVvdSBDcE=;
+        b=yF1ekD+byHSoWsBR+eRIlU1wUPtcJ87dTnYnoOjvDwzYghK0RlhriN02v7dLh913nJ
+         8lIDTvwD89JpQVFm74u+gxGNveaj4ws28+/HPmhiVIHkPVaCtLm+0CDMYkIBpzEsSQQl
+         7iKJw/i5ZG/ELoLdrqWj33Q3BIgRAeBwBR0/QoJ9MYpq3P5RsAYAVTBA6arkETs4INd6
+         /OWSU/VhjvV99hNHvQTBwbSKmaF7T5A3+VpgIeBlXCahIw3NMYDvjE5xwbczaLbqPbp8
+         9XFqEYRvX5pSYcVzRQUP9YaCRDZCd2sZcRqNO3f1lEwy6K01aLrE7XkjhT2EJr1hjSy7
+         Xllg==
+X-Gm-Message-State: AOAM530W0fhZblsRYm4xga0SfdbqLSjtRjPfNjb5SdLHB32wyIhIRjxK
+        3AlCUcFjMuDEf7FX/RXcg4OEzpI8bX5Ne6K4DWQRpPMTPT4=
+X-Google-Smtp-Source: ABdhPJwaKMUGD0FGA66KUbxvK8xcaa++SfvuFpQu6VS59cWGuJmpxlG88gtXPqegmq1EHGV5YbZVuCHkJ8+BSvnRHJ4=
+X-Received: by 2002:a50:cdd9:: with SMTP id h25mr38332780edj.0.1639149336711;
+ Fri, 10 Dec 2021 07:15:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211207210823.1975632-2-j.neuschaefer@gmx.net>
+References: <20211204171027.451220-1-iwona.winiarska@intel.com>
+In-Reply-To: <20211204171027.451220-1-iwona.winiarska@intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 10 Dec 2021 16:15:26 +0100
+Message-ID: <CAMRc=MdBp6HOKtV2QDrGYrqneXMbJZs6zbXCGnq_B9a4JA2i8g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: aspeed: Convert aspeed_gpio.lock to raw_spinlock
+To:     Iwona Winiarska <iwona.winiarska@intel.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Dec 07, 2021 at 10:08:16PM +0100, Jonathan Neuschäfer wrote:
-> A nuvoton,*-gcr node is present in nuvoton-common-npcm7xx.dtsi and will
-> be added to nuvoton-wpcm450.dtsi. It is necessary for the NPCM7xx and
-> WPCM450 pinctrl drivers, and may later be used to retrieve SoC model and
-> version information.
-> 
-> This patch adds a binding to describe this node.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> 
+On Sat, Dec 4, 2021 at 6:11 PM Iwona Winiarska
+<iwona.winiarska@intel.com> wrote:
+>
+> The gpio-aspeed driver implements an irq_chip which need to be invoked
+> from hardirq context. Since spin_lock() can sleep with PREEMPT_RT, it is
+> no longer legal to invoke it while interrupts are disabled.
+> This also causes lockdep to complain about:
+> [    0.649797] [ BUG: Invalid wait context ]
+> because aspeed_gpio.lock (spin_lock_t) is taken under irq_desc.lock
+> (raw_spinlock_t).
+> Let's use of raw_spinlock_t instead of spinlock_t.
+>
+> Signed-off-by: Iwona Winiarska <iwona.winiarska@intel.com>
 > ---
-> v2:
-> - Rename node in example to syscon@800000
-> - Add subnode to example
-> 
-> v1:
-> - https://lore.kernel.org/lkml/20210602120329.2444672-2-j.neuschaefer@gmx.net/
-> ---
->  .../bindings/arm/npcm/nuvoton,gcr.yaml        | 45 +++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml b/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
-> new file mode 100644
-> index 0000000000000..62020d7ac305b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/npcm/nuvoton,gcr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Global Control Registers block in Nuvoton SoCs
-> +
-> +maintainers:
-> +  - Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> +
-> +description: |
 
-Don't need '|' if no formatting.
+Applied, thanks!
 
-> +  The Global Control Registers (GCR) are a block of registers in Nuvoton SoCs
-> +  that expose misc functionality such as chip model and version information or
-> +  pinmux settings.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - nuvoton,wpcm450-gcr
-> +          - nuvoton,npcm750-gcr
-> +      - const: syscon
-> +      - const: simple-mfd
-
-blank line
-
-> +  reg: true
-
-Need to define how many entries:
-
-maxItems: 1
-
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-
-Ideally, you should define the child node names, but you can do this:
-
-additionalProperties:
-  type: object
-
-which means anything undefined must be a node.
-
-> +
-> +examples:
-> +  - |
-> +    gcr: syscon@800000 {
-> +      compatible = "nuvoton,npcm750-gcr", "syscon", "simple-mfd";
-> +      reg = <0x800000 0x1000>;
-> +
-> +      uart-mux-controller {
-> +        compatible = "mmio-mux";
-> +        #mux-control-cells = <1>;
-> +        mux-reg-masks = <0x38 0x07>;
-> +        idle-states = <2>;
-> +      };
-> +    };
-> --
-> 2.30.2
-> 
-> 
+Bart
