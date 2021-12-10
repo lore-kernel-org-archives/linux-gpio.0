@@ -2,100 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FDDC433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Dec 2021 15:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F377EC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Dec 2021 15:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242744AbhLJPVr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 10 Dec 2021 10:21:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
+        id S242839AbhLJP1D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 10 Dec 2021 10:27:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239316AbhLJPVq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Dec 2021 10:21:46 -0500
+        with ESMTP id S242832AbhLJP0z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Dec 2021 10:26:55 -0500
 Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98702C0617A1
-        for <linux-gpio@vger.kernel.org>; Fri, 10 Dec 2021 07:18:11 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id t5so30658654edd.0
-        for <linux-gpio@vger.kernel.org>; Fri, 10 Dec 2021 07:18:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C551DC061746
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Dec 2021 07:23:19 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id r25so30591951edq.7
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Dec 2021 07:23:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XVfBZF4b7PCVXGGMXQB4an91HWPl0H694xX8OXVaV7E=;
-        b=Ts5ywsiHxF2TIg5i2hVbjlLk9dy3fGgcAaUE6HahQhIRszjes9xv50m3bid5KWBuFA
-         AocSKzQpm1irjtIDMUd+M2xlD+dCrurPG0yenzIy8UAhDi8E9b+TqOoFrQACAsJrC3Ic
-         Vzpu8C9lGQpGUmctUGAqkfunlDq9i8lFwSDGyhPnRnV/tdUWPI0oMlRwjVVaA5496AqC
-         hlaCi2np5KCvXLpgR19/gLS4StkFxTi009Nu2hnPS58XpyANt4G/PlBnKEGR7QZkr1yR
-         lCkkXRKeWKGOdJkQfcawPz6lNO/n0pOnxV7TouSqmf8naoXUA7PgRrDwa61B0Hd0F6d6
-         XUrg==
+        bh=CaWHeGP0DuwfkbKXUdYIJmX8F+biVrGWME72+JdzhqU=;
+        b=MgLv3YrA9NlwpapqjGWsPaT057Lv4NTkMge5x9aYIzLu/EWTNZl9PQJ3i9HcLMOx6B
+         B9IguP3K+gzGh6KfKbYSO8oxGj7MjYa00frl0BCd7lnk7OkZoOhbnGk36UU3KzWuB3In
+         ZXMjkVs8K5nE10yvrBZiB/8HDzocgX7Too6WWjeeDpdcoaRlxj/sgAghwl/0IvTuGbeh
+         fAFYqtmGZZZiSOSvOT+oAtgE4HrF1eec+d4mRi7xCG+BmEL2kk0ZRTS2b7waN3H1I0k/
+         3ly7VwemPgrnfSjfL1C507DwBcuWSj3OL9qXJWKAX4/7OLRZbrfLo/DTY1QGnfnvK/nI
+         rVzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XVfBZF4b7PCVXGGMXQB4an91HWPl0H694xX8OXVaV7E=;
-        b=BsOoUm7gSz5j9VSbYCjVUO5cUHqm20ho1MAqG495KzmEh7YZpjQW8sPyLVuKqy1qpN
-         uGcbSHo64G2PGV3byWogejfuk6U4jpGEXbbvDp/0YLvzd34ijB24w+0JGgKEc2qcDkvO
-         QBHu82mL0EtR8zjqOVcQgjNzTNzKJJcP/ZQAz2ao9GZSC1NfqHvKjMPfn1KfhQ2Poh+Q
-         /AHWdPrhZTPzydM1WBGVb0ZkEFf5BTt4lYYecgHnyS4NuVVWc7LdfxORjA18hc+z8qJB
-         q9dmsIl66UUwoedbPrVrKxxulWLFYyAnAQGsM5f8beiVDK6zLPEo3HqMlS6DL5s3FMGU
-         Vi4Q==
-X-Gm-Message-State: AOAM531YBpgDPsNssJhY9WcEZxS5TLsCjdADUNm15bpYVCENSjbDO7zP
-        AiExslV/wesN9QfCbpqDeHW/Uyx93DaYX5TSmY3ryg==
-X-Google-Smtp-Source: ABdhPJzTeRrBSoNTNmm2l3wySatjt5c3tDJAW1i3UEGpMsuLDID2SOY6ttzqfD6TlyxBzi9dYTmyMbvlSDkHwfNKv9s=
-X-Received: by 2002:a50:cdd9:: with SMTP id h25mr38348547edj.0.1639149457727;
- Fri, 10 Dec 2021 07:17:37 -0800 (PST)
+        bh=CaWHeGP0DuwfkbKXUdYIJmX8F+biVrGWME72+JdzhqU=;
+        b=CfjLPBvtL3jXzLV/gBqXR2wQUq2e+ARdLu3jkg7pn3jy2Jp4+CQ9GO2dhbZCMAoGGi
+         kgR2casJ56+URfddITPuuQeL7admjrOFqLMVlT2LTMpBZZKuE244Oga+NXJe0bKj5u3+
+         TNkGUWPxpXmuouEvw7EYtBpKqK13RUmXjtj35pT7jlT3khiMycZMBj+ay/oB39D0PVaw
+         eD5GQJagLeDBZZKfHH3L9PuafkNX1BvEiJW0netLeQQB/EPSDoer23SWmBeWKFLQkdeZ
+         3uVmPF3zdaFPqgin3iPzR53se7gqdYNqX/npfBzoTDc0NGZ51TjBZD/M2TSEy2MMo0vw
+         pF/w==
+X-Gm-Message-State: AOAM533ty27Edj9xHoJMiOLHDARUw7gMmxQIZa+3g/AWgUvsQSpjzAUm
+        52mv09wPn49AAciivoYXz6p1OeodeDs9gaqxjNJgBw==
+X-Google-Smtp-Source: ABdhPJzwyJoQo5zS+XCmbkGk9eGVm61YMp0R/nIUhpMaAI0dyZLbksovDhkrc3SVhNC+OXjC0RSzQ3wiLRH8X7JDAvI=
+X-Received: by 2002:a05:6402:2805:: with SMTP id h5mr38690255ede.267.1639149780836;
+ Fri, 10 Dec 2021 07:23:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20211210135527.28194-1-wangxiang@cdjrlc.com>
-In-Reply-To: <20211210135527.28194-1-wangxiang@cdjrlc.com>
+References: <20211208003727.3596577-1-f.fainelli@gmail.com> <20211208003727.3596577-6-f.fainelli@gmail.com>
+In-Reply-To: <20211208003727.3596577-6-f.fainelli@gmail.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 10 Dec 2021 16:17:27 +0100
-Message-ID: <CAMRc=MdXxh58zB10jXKO30JmLjXS+yna8kKDPGtip9BfQ9Pg7A@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: bcm-kona: add const to of_device_id
-To:     Xiang wangx <wangxiang@cdjrlc.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+Date:   Fri, 10 Dec 2021 16:22:50 +0100
+Message-ID: <CAMRc=MdmP5UCi2SJq9Ybhe9evUmM_PhpSUfzRF24yYUiRG+MNg@mail.gmail.com>
+Subject: Re: [PATCH v3 05/15] dt-bindings: gpio: Convert Broadcom STB GPIO to YAML
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Ray Jui <rjui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
         Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Cooper <alcooperx@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Dec 10, 2021 at 2:57 PM Xiang wangx <wangxiang@cdjrlc.com> wrote:
+On Wed, Dec 8, 2021 at 1:37 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
 >
-> struct of_device_id should normally be const.
+> Convert the Broadcom STB GPIO Device Tree binding to YAML to help with
+> validation.
 >
-> Signed-off-by: Xiang wangx <wangxiang@cdjrlc.com>
+> Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
->
-> Changes since v1
-> * Change subject log
->
->  drivers/gpio/gpio-bcm-kona.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-> index d329a143f5ec..9cb3587d1441 100644
-> --- a/drivers/gpio/gpio-bcm-kona.c
-> +++ b/drivers/gpio/gpio-bcm-kona.c
-> @@ -505,7 +505,7 @@ static struct irq_chip bcm_gpio_irq_chip = {
->         .irq_release_resources = bcm_kona_gpio_irq_relres,
->  };
->
-> -static struct of_device_id const bcm_kona_gpio_of_match[] = {
-> +static const struct of_device_id const bcm_kona_gpio_of_match[] = {
->         { .compatible = "brcm,kona-gpio" },
->         {}
->  };
-> --
-> 2.20.1
->
 
-Applied, thanks!
-
-Bart
-
-PS: next time please include any ack/review tags already left under
-the previous version
+Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
