@@ -2,48 +2,48 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 472DDC433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Dec 2021 06:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 971F9C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Dec 2021 06:50:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233180AbhLJGxd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S229853AbhLJGxd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 10 Dec 2021 01:53:33 -0500
-Received: from mga02.intel.com ([134.134.136.20]:7972 "EHLO mga02.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:23254 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229853AbhLJGxc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 10 Dec 2021 01:53:32 -0500
+        id S232985AbhLJGxd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 10 Dec 2021 01:53:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1639118998; x=1670654998;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=57a+ZxEpF+eixFLveE/FDp2IPxxQzn4NOPop9WRAF9E=;
-  b=L6k20qezQqxPp+7fEXP7TRaZ/T+wwekuwicMGR4Vx1V1dt3OzTKrqY2o
-   8cCi0gr/Gb0CNtiN7Drj8xffYs1YDj2wqU0MEsuHlFT/+XkQkLxTCPFVZ
-   axDj+EqiWEJ++pYlCAgPBwBGZLdERzpqpb4Ypjscsh3AQAmH+79GXe4UX
-   N1TrgLfnc6Tfhdu7ef+3CrYgxb2CgYRWfg64M4P2y++A/CazU7M0RPbVC
-   TwBQ1uM4SWLhm9xtZmJAlvUbjXAEA2nl89sM/OJR9Gr7yGRGRl3jA2eEx
-   /qNIVm3PUSd938TMtSKHWyyJGzD4lb8aiPOpU1TNC2hSZSER+8gI3kk1k
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10193"; a="225561872"
+  bh=F8mDmyS06gtqXQpzDQDJ+fQp2l6XDpqHMOwb/ZIUfWA=;
+  b=PNMngxkH/agaXbKlDwgwfdQSoXXi0orZxmMDVk3S6Hi6LpY2rdrRlQpr
+   F0rm2jukflZ8YBdnBLH5qRaiwYyttOzj7tCg22iE8VZJxa0Vr9GqvEuJB
+   +hX1wBJmFvsZOs7E4jTflc5hwClcb//NGaU0WijnW06sk6qD4+3A+NE1a
+   /Ful02DzTDRS2XZ6Ct/mihOJm0WPEAkg6QHLGIUZStLH6vA2jB0bgTDN6
+   nez/Pqga99whDsn18tz2RHfBBay7bjZlXjQ9kkP7x3+Js0YPdguxMWzsj
+   kqxQm5ST/vbz3qFMVGGBlzd+F9+sCzMuQ4HcCHMC2E693WdfBMD9xnA41
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10193"; a="218977214"
 X-IronPort-AV: E=Sophos;i="5.88,194,1635231600"; 
-   d="scan'208";a="225561872"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2021 22:49:58 -0800
+   d="scan'208";a="218977214"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2021 22:49:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,194,1635231600"; 
-   d="scan'208";a="612832726"
+   d="scan'208";a="680645526"
 Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 09 Dec 2021 22:49:57 -0800
+  by orsmga005.jf.intel.com with ESMTP; 09 Dec 2021 22:49:56 -0800
 Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mvZjA-0002st-9k; Fri, 10 Dec 2021 06:49:56 +0000
-Date:   Fri, 10 Dec 2021 14:49:36 +0800
+        id 1mvZjA-0002sw-Ac; Fri, 10 Dec 2021 06:49:56 +0000
+Date:   Fri, 10 Dec 2021 14:49:33 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- b124c8bd50c7550ed966c09f69ffdbaaedc0aa15
-Message-ID: <61b2f880.3MDRBiQO6jTcXj3j%lkp@intel.com>
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ 6ca94c5aa34cd74d09b6f6f90a6c4e211195e170
+Message-ID: <61b2f87d.KprtqqnGwywuiMHz%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,12 +52,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: b124c8bd50c7550ed966c09f69ffdbaaedc0aa15  pinctrl: Sort Kconfig and Makefile entries alphabetically
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: 6ca94c5aa34cd74d09b6f6f90a6c4e211195e170  Merge branch 'devel' into for-next
 
-elapsed time: 723m
+elapsed time: 722m
 
-configs tested: 182
+configs tested: 176
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -181,10 +181,6 @@ mips                             allyesconfig
 mips                             allmodconfig
 powerpc                          allyesconfig
 powerpc                          allmodconfig
-x86_64               randconfig-a001-20211209
-x86_64               randconfig-a002-20211209
-x86_64               randconfig-a003-20211209
-x86_64               randconfig-a004-20211209
 i386                 randconfig-a001-20211210
 i386                 randconfig-a002-20211210
 i386                 randconfig-a005-20211210
@@ -199,6 +195,10 @@ i386                 randconfig-a006-20211209
 i386                 randconfig-a004-20211209
 x86_64               randconfig-a006-20211209
 x86_64               randconfig-a005-20211209
+x86_64               randconfig-a001-20211209
+x86_64               randconfig-a002-20211209
+x86_64               randconfig-a004-20211209
+x86_64               randconfig-a003-20211209
 x86_64               randconfig-a006-20211210
 x86_64               randconfig-a005-20211210
 x86_64               randconfig-a001-20211210
@@ -222,12 +222,6 @@ x86_64                          rhel-8.3-func
 x86_64                                  kexec
 
 clang tested configs:
-x86_64               randconfig-a011-20211209
-x86_64               randconfig-a013-20211209
-x86_64               randconfig-a015-20211209
-x86_64               randconfig-a012-20211209
-x86_64               randconfig-a014-20211209
-x86_64               randconfig-a016-20211209
 x86_64               randconfig-a011-20211210
 x86_64               randconfig-a012-20211210
 x86_64               randconfig-a014-20211210
@@ -240,14 +234,14 @@ i386                 randconfig-a016-20211210
 i386                 randconfig-a014-20211210
 i386                 randconfig-a015-20211210
 i386                 randconfig-a012-20211210
-hexagon              randconfig-r041-20211209
-s390                 randconfig-r044-20211209
-hexagon              randconfig-r045-20211209
-riscv                randconfig-r042-20211209
 hexagon              randconfig-r045-20211210
 riscv                randconfig-r042-20211210
 s390                 randconfig-r044-20211210
 hexagon              randconfig-r041-20211210
+s390                 randconfig-r044-20211209
+hexagon              randconfig-r041-20211209
+hexagon              randconfig-r045-20211209
+riscv                randconfig-r042-20211209
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
