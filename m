@@ -2,101 +2,66 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282BAC43217
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Dec 2021 09:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACF1C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Dec 2021 11:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235518AbhLMJtO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Dec 2021 04:49:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57126 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235969AbhLMJpj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Dec 2021 04:45:39 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA7DC08EB20
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Dec 2021 01:40:57 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id z6so14413230pfe.7
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Dec 2021 01:40:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+PLgOGUr24N3pCfDF0pm4vBw2jPEHVpOf1ojIAGQtAc=;
-        b=TCXK6mvqNJC7RUZVwMT8njl9FfId+1tDmDUOhMpo9QmLfg9Idm63tAxC/8kUYCtSpa
-         6w0N7qb/e01yjEnKfRFzcAS4fvSEIn8npxTL++nHc2ThpwxVe4DDU2IdLkRZMi5yYWdX
-         7As7ZhM0Bd4P1WpM/rYtYMumJSeCAvzJnIsIY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+PLgOGUr24N3pCfDF0pm4vBw2jPEHVpOf1ojIAGQtAc=;
-        b=U4ucPQAYY44OQ6YTww1pIyx4zMljcBNyPFCO8l0/cgiT26GO4/G/teK6vXt5REO+2+
-         LjHT7nw7aOJpghAuFzS97HsUKSUtup87OsiHsYj35SF3Ug0LsZUCJXcRQMBG6G8c5Vcd
-         /lwyZcvULVNp0+OUzUyi3XwBeLhwTtRV+mAUcKFoVLh8Sb3zu5skhCzFzBBsFSg1bV4l
-         RCuxDL4dAtAc4s85ZLNx9RPWIJoRVRapA+N7SfKbJGPZWW2ARuN2GoVpfNi3xxTtvgL4
-         aqts/sqP0UAkbbsqeTw9HU8NdBRdpJFARbfCRxr4GyTMUNCyDR5Qgxsy8ZFbyjo2GcZW
-         DgYA==
-X-Gm-Message-State: AOAM532DBGuPY+HNhR8s9w2J++RmqI6o/T0bjHZ+CgpJ5/Py9i8w3bhx
-        cnBcG6S1hdpd9e/eWCcoBGLTrQ==
-X-Google-Smtp-Source: ABdhPJwnIC/1GG8HGXvC3beYsltFQ8bMno1f7ktTReaDdiWgvDzepwh8gUYFEaTxeqRdekJDmu2ciQ==
-X-Received: by 2002:a62:7803:0:b0:494:64ef:7bd7 with SMTP id t3-20020a627803000000b0049464ef7bd7mr32508766pfc.85.1639388456397;
-        Mon, 13 Dec 2021 01:40:56 -0800 (PST)
-Received: from shiro.work (p864106-ipngn200510sizuokaden.shizuoka.ocn.ne.jp. [180.9.58.106])
-        by smtp.googlemail.com with ESMTPSA id d195sm10237609pga.41.2021.12.13.01.40.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Dec 2021 01:40:55 -0800 (PST)
-From:   Daniel Palmer <daniel@0x0f.com>
-To:     linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH v3 3/5] gpio: msc313: Code clean ups
-Date:   Mon, 13 Dec 2021 18:40:34 +0900
-Message-Id: <20211213094036.1787950-4-daniel@0x0f.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211213094036.1787950-1-daniel@0x0f.com>
-References: <20211213094036.1787950-1-daniel@0x0f.com>
+        id S232784AbhLML3a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Dec 2021 06:29:30 -0500
+Received: from mga06.intel.com ([134.134.136.31]:64590 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232750AbhLML3a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 13 Dec 2021 06:29:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639394970; x=1670930970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9RDE9X/9sDqBsn/mVYWwljvDotWbEy2DyOUJa2z0M0I=;
+  b=At8/2+Xfbr+TJSWZVQmwGdL3Gh+vTW2RVGlH6T1I/uRYUnYdPa1WLxOl
+   AaPapY6dalJhFtT/XNQjCqslwxvXhGDhFVTQxn62hN86A88ZWmjBfGsRG
+   Zd2Y0McswYzjPYH4TXfuQa84gZfBZLxKc1C4zD3DfVbI5vN4tLHg27EMW
+   Nk1Eh/AbE0N3MfYmeV4iZ79nfTUKEHjw6w537RCjL8a+w2pcab1fiRSJQ
+   DVWm2YKAM6OpUBRqBrUHEgm6xBlDcd2mv15IluiQklPABIpg2C1H7E9Rc
+   XVHtXkkeqvSzRytlnTGjEq4HV9Dse5IuP+apKsHMd2UdAo0E8t2ia7hiG
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10196"; a="299496735"
+X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
+   d="scan'208";a="299496735"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 03:29:30 -0800
+X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
+   d="scan'208";a="544746742"
+Received: from smile.fi.intel.com ([10.237.72.184])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 03:29:28 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1mwjVP-005b2F-3w;
+        Mon, 13 Dec 2021 13:28:31 +0200
+Date:   Mon, 13 Dec 2021 13:28:30 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Jason Wang <wangborong@cdjrlc.com>
+Cc:     linus.walleij@linaro.org, andy@kernel.org, brgl@bgdev.pl,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: sch: fix typo in a comment
+Message-ID: <YbcuXo0GUGgC3jBU@smile.fi.intel.com>
+References: <20211212031108.32212-1-wangborong@cdjrlc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211212031108.32212-1-wangborong@cdjrlc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-- Remove the unneeded assignment of ret before returning it.
-- Remove an unneeded blank line
+On Sun, Dec 12, 2021 at 11:11:08AM +0800, Jason Wang wrote:
+> The double `the' in the comment in line 142 is repeated. Remove one
+> of them from the comment.
 
-Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-msc313.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Pushed to my review and testing queue, thanks!
 
-diff --git a/drivers/gpio/gpio-msc313.c b/drivers/gpio/gpio-msc313.c
-index da31a5ff7a2b..a894bafbd4c3 100644
---- a/drivers/gpio/gpio-msc313.c
-+++ b/drivers/gpio/gpio-msc313.c
-@@ -344,7 +344,6 @@ static int msc313_gpio_probe(struct platform_device *pdev)
- 	struct irq_domain *parent_domain;
- 	struct device_node *parent_node;
- 	struct device *dev = &pdev->dev;
--	int ret;
- 
- 	match_data = of_device_get_match_data(dev);
- 	if (!match_data)
-@@ -399,8 +398,7 @@ static int msc313_gpio_probe(struct platform_device *pdev)
- 	gpioirqchip->handler = handle_bad_irq;
- 	gpioirqchip->default_type = IRQ_TYPE_NONE;
- 
--	ret = devm_gpiochip_add_data(dev, gpiochip, gpio);
--	return ret;
-+	return devm_gpiochip_add_data(dev, gpiochip, gpio);
- }
- 
- static int msc313_gpio_remove(struct platform_device *pdev)
-@@ -456,5 +454,4 @@ static struct platform_driver msc313_gpio_driver = {
- 	.probe = msc313_gpio_probe,
- 	.remove = msc313_gpio_remove,
- };
--
- builtin_platform_driver(msc313_gpio_driver);
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
