@@ -2,159 +2,152 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78D1C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Dec 2021 09:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64F7C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Dec 2021 09:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235102AbhLPJNy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Dec 2021 04:13:54 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:59039 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235085AbhLPJNy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Dec 2021 04:13:54 -0500
-Received: from mail-ed1-f42.google.com ([209.85.208.42]) by
- mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1N8GdE-1mTFMO1l9E-014CRe; Thu, 16 Dec 2021 10:13:52 +0100
-Received: by mail-ed1-f42.google.com with SMTP id x15so85404649edv.1;
-        Thu, 16 Dec 2021 01:13:52 -0800 (PST)
-X-Gm-Message-State: AOAM533Hn0yGgxJKC7vQNhn3WMbEGJb/Ztc5xNGqOhohsMr+uojVUJuX
-        fH5OnEWhVsUB25EY6rlaBQt/ii547xKMntQb3v4=
-X-Google-Smtp-Source: ABdhPJyiLKlnSiH9vlPQZqdh0l7qGixC2KbAXZ0E4zRdJ5+BDdSdAxMn6Pdgjctlm5ImC6il7N2keNj/IR12pl1ESbs=
-X-Received: by 2002:a05:6000:1aca:: with SMTP id i10mr8136773wry.407.1639643196246;
- Thu, 16 Dec 2021 00:26:36 -0800 (PST)
+        id S230125AbhLPJOS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Dec 2021 04:14:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53780 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235072AbhLPJOR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Dec 2021 04:14:17 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 377D6C061574
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Dec 2021 01:14:17 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id z29so4439281edl.7
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Dec 2021 01:14:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gppvYM317OwAix8DpL9bZ+crnvBvouB6BXN4CIKYMWc=;
+        b=CTW6k1Zyy8+Je8LrG2pyuRY3/J2c9KUSExHXwprwbIw98Q3hsBmdjbpr9+iipBUOBm
+         uw/izSxzXMzcssklFUfNRDqIMXhmd7xxYoaCfpplO8gxlqvXOqvbQEIWjdvrKBRatF7j
+         9DkxYKhJbuAAcTKXFGGLALH5ifQaoUQJiuT1rceY0MLfM2zeGuJUrtuZ8s0mUnO8uBT/
+         yjvCv/gGEbZ3AckBrFCV/izT+2+attmrWfYLKfccdAbcFsoPYQOYTS+zSx7WzuCE7bM8
+         wAshUpE7KpTpCjebIMtB9MypFWjnsJDR6Y+3/yY1ETrdDyXCmdCvUInldPLa44qSU3UW
+         N0YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gppvYM317OwAix8DpL9bZ+crnvBvouB6BXN4CIKYMWc=;
+        b=uAgVWLz3lArX/fP40PsNpGq1RC1xcX/FcfFDeO3Otfha9nGVvGgYgc0KXEhOTPjmXB
+         WKnuh0qpLWpn/bc8PbRqm3lwyk8mEPXehGI5Su2/wzARgCC+QgIya6cTN7fkmZZky8IF
+         CzVE42dWV8hSCPUa/nk3zlqUYp1o3Zyv423RI+s5wba6B56N82gKUCU+HI7TaGk9GkMZ
+         RBwxd7YJmy8HA5GC1Snj9fvB4GvNoyK4QesGEWJMrbx26gu9FL4E+Pwf+yIV5NNSQIUj
+         5aToypTah22ppPvA+4uv3cYnizHINr602GHGqS1TfkXDeuMAHgBmJ2UELIT5KMSSYV6C
+         45Aw==
+X-Gm-Message-State: AOAM533k6dkgqlgar6nOI/QMtHrPmAHjMtxKnGnq6CSGEPE9DBolkHvw
+        zWKGjwspzy2gTFHxY5MJKNXwZNJiynh7W0PxKpn1NQ==
+X-Google-Smtp-Source: ABdhPJzLD8VkW5oSQAMqdoLrWUnd5IiNI9G3Wl7+Hf1RveQF+saJTDUHuSItKbQBzYRYNoFJRM4RySboBCA8z1Tyyhs=
+X-Received: by 2002:a17:906:249a:: with SMTP id e26mr5214625ejb.492.1639646055642;
+ Thu, 16 Dec 2021 01:14:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
-In-Reply-To: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 16 Dec 2021 09:26:20 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
-Message-ID: <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] Add initial support for the i.MXRTxxxx SoC family
- starting from i.IMXRT1050 SoC.
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        SoC Team <soc@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        giulio.benetti@benettiengineering.com,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+References: <Ybn8pxv5xPgc5nGz@black.fi.intel.com>
+In-Reply-To: <Ybn8pxv5xPgc5nGz@black.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 16 Dec 2021 10:14:05 +0100
+Message-ID: <CAMRc=MceOZWt5Qb6kFSALOOwyYb_MikFusxZqt9KgqqQPfnwgQ@mail.gmail.com>
+Subject: Re: [GIT PULL] intel-gpio for 5.17-1
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linux GPIO <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:boYRwNGGtvS6Ogv172avdBzLiox4MOw/C3OExYzNV0pJAzxljbt
- dWDHK2Jwxh4rulkjr4Ru4L4jEub8P8YvZ5AqmccoITdbtavkOosRTO9XLAsq4lOZ3EgxghG
- 6jiwbnYPi6pGnOzYs3Bofch1CFBb7SsFoEm+ZaJS61dFK+hay1i4YX0Schwy+m9mJHAu+MA
- 26KTclVsPUNtvwXI6UJjw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/LHzhLCMwi4=:nxX2ISmR3ZcS545kCXvj/v
- pRhgYgH3wHetMOc9NekfHh/X6enGLE8oa1iILMv/ZZftppdM9YQam1p3TtxVOcuYoqKwvXGbn
- CLeqzI8WjF4giBf0CiYsOS559YNo9GwvGPZxDPv0Tkppo+24vIIlkUJX3GOq8uU1t4Yy0ThSx
- VKPmzMvoVVQyDa88KWXgIe1dPxS02W/KOgZM/9Ze99Dqn6V8HiJHhMYt0qHW+mh1yylGRg/04
- 4wlWHqT4kCa/uKSjVWvSK+Wuw36Uxi5Ex0ywtqYPBZRrqJ8PEuJSOVi0NwnQq4+EYMqQNpnc/
- EGvWojcFGPi9h0+Y8ZynH6JcXQHAYouLCfBfvOwUFmPOKLXkegadqfmY3ff/7GlL5EZhgE+A5
- snjCSLicUvlO8M9m0yhlSiD/x0Obj6FZaRgMbZUlTOpYycNxtRkK28An9BXzCe9J6dwYl18P3
- wT9LPTXykPuCJcxpc+zFquULGhjCLpcQPuciLOdsb1Kdip4UCjwMyncNTHYk8JtadksozBPGh
- RM+PpyLvyJfHRJDwMNcA48ZyOt4AA/QsJYBVe4zAxLxjLi66tLnhnVqFJWcovnQtzTs5gY9/z
- z2Wn7+QWUrIn8cjsoSJTEm9P72O4RHcz+AhQ7xk15/fc/vFSANV2X4YbVZ0T+wHF184Rggcq7
- W5nOZTVWE0Dlr23qygrIBEA27rwrwfDGrnlnfEkJTZtr+gGhz6a7a2te6V6mQnGjsctskKykW
- x1GGSqAmlGQzhKH9HPp1peDHwpecV96Q1vjf4CH+AKThkSi8/ry3Fj8B+I9tmRVCEwDVf5Wsa
- +xqXomH5lH3lsYUYVFADFUSZ9QwmlKhFnjIHeGe9TGvrqS5YFo=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 11:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+On Wed, Dec 15, 2021 at 3:33 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> This patchset contains:
-> - i.MXRT10xx family infrastructure
-> - i.MXRT1050 pinctrl driver adaption
-> - i.MXRT1050 clock driver adaption
-> - i.MXRT1050 sd-card driver adaption
-> - i.MXRT1050 uart driver adaption
-> - i.MXRT1050-evk basic support
+> Hi Linux GPIO  maintainers,
 >
-> The i.MXRTxxxx family that could have support by Linux actually spreads
-> from i.MXRT1020 to i.MXRT1170 with the first one supporting 1 USB OTG &
-> 100M ethernet with a cortex-M7@500Mhz up to the latter with i.MXRT1170
-> with cortex-M7@1Ghz and cortex-M4@400Mhz, 2MB of internal SRAM, 2D GPU,
-> 2x 1Gb and 1x 100Mb ENET. The i.MXRT family is NXP's answer to
-> STM32F7XX, as it uses only simple SDRAM, it gives the chance of a 4 or
-> less layer PCBs. Seeing that these chips are comparable to the
-> STM32F7XXs which have linux ported to them it seems reasonable to add
-> support for them.
+> Approximately a dozen of changes for v5.17 against Intel GPIO drivers and
+> GPIO ACPI library. It has ben a while in Linux Next without any error reported.
 >
-> Giving Linux support to this family should ease the development process,
-> instead of using a RTOS they could use Embedded Linux allowing for more
-> portability, ease of design and will broaden the scope of people using
-> embedded linux.
+> Thanks,
 >
-> The EVK has very little SDRAM, generally 32MB starting from
-> i.MXRT1020(the lowest P/N), although the i.MXRT1160/70 provide instead
-> 64MB of SDRAM for more functionality.
+> With Best Regards,
+> Andy Shevchenko
 >
-> At the moment we do not support XIP for either u-boot or Linux but it
-> should be done in the future. XIP will also save SDRAM.
+> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 >
-> Another interesting fact is the amount of internal SRAM, as the P/N
-> increases the SRAM will reach up to 2MB(some could be for cache and
-> some would be for video).
+>   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
 >
-> Also, some parts have embed flash of 4MB that can be used for
-> u-boot/Linux, if both correctly sized it will leave the SDRAM free.
+> are available in the Git repository at:
 >
-> External flash can be Quad SPI and HyperFlash, so throughput would be
-> decent.
+>   git@gitolite.kernel.org:pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v5.17-1
 >
-> The i.MXRT11xx series supports MIPI interface too.
+> for you to fetch changes up to 9d5f0f6644b1404f40266a2682add712dc9931f5:
 >
-> The family in general provide CAN bus, audio I/O, 1 or more
-> USB(otg/host), 1 or more 100Mb/1Gb ethernet, camera interface, sd-card.
+>   gpio: sch: fix typo in a comment (2021-12-13 13:29:09 +0200)
 >
-> All this can be used for simple GUIs, web-servers, point-of-sale
-> stations, etc.
+> ----------------------------------------------------------------
+> intel-gpio for v5.17-1
+>
+> * Don't set type for IRQ already in use in case of ACPI
+> * Drop unused call from GPIO ACPI library
+> * Clean up ML IOH and PCH GPIO drivers to make it closer to each other
+> * Clarify use of register file version in DesignWare driver
+>
+> The following is an automated git shortlog grouped by driver:
+>
+> dwapb:
+>  -  clarify usage of the register file version
+>
+> gpiolib:
+>  -  acpi: Unify debug and other messages format
+>  -  acpi: Do not set the IRQ type if the IRQ is already in use
+>  -  acpi: shrink devm_acpi_dev_add_driver_gpios()
+>  -  acpi: Remove never used devm_acpi_dev_remove_driver_gpios()
+>
+> ml-ioh:
+>  -  Change whitespace to match gpio-pch.c
+>  -  Use BIT() to match gpio-pch.c
+>  -  Cache &pdev->dev to reduce repetition
+>
+> pch:
+>  -  Cache &pdev->dev to reduce repetition
+>  -  Use .driver_data instead of checking Device IDs again
+>
+> sch:
+>  -  fix typo in a comment
+>
+> ----------------------------------------------------------------
+> Andy Shevchenko (4):
+>       gpiolib: acpi: Remove never used devm_acpi_dev_remove_driver_gpios()
+>       gpiolib: acpi: shrink devm_acpi_dev_add_driver_gpios()
+>       gpiolib: acpi: Unify debug and other messages format
+>       gpio: dwapb: clarify usage of the register file version
+>
+> Bjorn Helgaas (5):
+>       gpio: pch: Use .driver_data instead of checking Device IDs again
+>       gpio: pch: Cache &pdev->dev to reduce repetition
+>       gpio: ml-ioh: Cache &pdev->dev to reduce repetition
+>       gpio: ml-ioh: Use BIT() to match gpio-pch.c
+>       gpio: ml-ioh: Change whitespace to match gpio-pch.c
+>
+> Hans de Goede (1):
+>       gpiolib: acpi: Do not set the IRQ type if the IRQ is already in use
+>
+> Jason Wang (1):
+>       gpio: sch: fix typo in a comment
+>
+>  drivers/gpio/gpio-dwapb.c     | 10 +++++----
+>  drivers/gpio/gpio-ml-ioh.c    | 52 +++++++++++++++++++++----------------------
+>  drivers/gpio/gpio-pch.c       | 42 +++++++++++++++++-----------------
+>  drivers/gpio/gpio-sch.c       |  2 +-
+>  drivers/gpio/gpiolib-acpi.c   | 51 ++++++++++++++++++------------------------
+>  include/linux/gpio/consumer.h |  2 --
+>  6 files changed, 75 insertions(+), 84 deletions(-)
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-This looks all good to me now, but the drivers need to be reviewed by the
-respective subsystem maintainers before we can merge it into the soc
-tree. As with other new SoCs, I'm happy to merge the support as a combined
-pull request that includes the drivers provided that the driver subsystem
-maintainers have reviewed them.
+Pulled, thanks!
 
-Ideally the i.MX maintainers would pick up your series into a separate
-branch and send that to soc@kernel.org the same way as the other topic
-branches that are usually split out between DT, drivers, soc code etc.
-
-With the Christmas break coming up, the timing may not be sufficient
-before I'm off next week, so it may end up too late for 5.17 but should
-be fine for 5.18.
-
-As a more general comment, it's always nice to see newly added SoC
-platforms, especially when they are this well implemented and done
-by hobbyists. However, I do think you are being overly optimistic
-as to how useful this is going to be to other people: interest in NOMMU
-ARM platforms has dropped a lot over the past 5 years, and as far as I
-can tell, it is only being kept alive for existing stm32 customers
-as the economics do not favor Linux on Cortex-M for new products
-compare to Linux on Cortex-A or some RTOS on Cortex-M.
-
-The existing users will inevitably stop updating their kernels at some
-point, and then it's most likely just you and Vladimir Murzin that care.
-
-       Arnd
+Bart
