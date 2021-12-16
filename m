@@ -2,86 +2,159 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A983C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Dec 2021 09:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78D1C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Dec 2021 09:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232950AbhLPJLd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Dec 2021 04:11:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232932AbhLPJLa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Dec 2021 04:11:30 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7913C06173E
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Dec 2021 01:11:30 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id y7so19001007plp.0
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Dec 2021 01:11:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0bBmUzm0as3OLbndyFlyofK8xxLs8ALB2oAWJJxPOhE=;
-        b=yxWWeISm2rHo+YBcukBXjB9i+caN6YYc7f82ST6CNu8zjkrFF8tUXqvCHuE0WBRKMh
-         9ZWs6zpfseC00xWKtLdavV3oa+H43U/Ja+qJfmeOC+oxTld+vYkTR12+DFAeB0PGMqPC
-         8G8h5suN70st5WnXpyWqKt2hhHonwMityF5pLQYDUCAtS1oofWx6l53JHscwvb20k26B
-         WlHLxtVgv9na+6UEHcOeMCxRZznWoIb6X/gs/wGSK1d16paPf48nehJZ1qmQ6qJCVLfB
-         w0hooocuHcPfBonViAxE9OtRw6qQv3wLcQOFIP89stBEtMqy4zzEJlzmN4LM1viS/prw
-         7/jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0bBmUzm0as3OLbndyFlyofK8xxLs8ALB2oAWJJxPOhE=;
-        b=FbjqsJM0BZrIU3/qbrf1hcE+EhRLzfjpj8s7Bvoj0JIBnrBsbsRFNN8BGotnxs9fyA
-         lrkS+q2f2mxVYH3XJO3ouyauoi2TDH9G+EvS9WjSd86fGcQ4WExK0S7Af70PIgxs9QNj
-         FVeamwfHHgDkecLyjnbMuhSfgjhZ7rgOqMIpwXCcWPvFI8gdx1f3Ud49cl0orisir3k7
-         gOENTWKBQ/avVBpe4eKA9+e0byDRNqaMojVdEJGnQu132pR3Kiyf+DW7pKzv//Pb/Clu
-         CDQpCpK+nyCDxCqzfC9E2BVSki2sUc6N9g1YI8S0fhEKb4hfd6BqeIg6ovUV/9TOedIH
-         p7Aw==
-X-Gm-Message-State: AOAM533Yj8JNMlnZ1iSoYI3jdqT1EcB+bz6GxVzWCHxjA4fU8cCYpIC0
-        j2E6JGC99CnPefVd3tdY/j1UQQ==
-X-Google-Smtp-Source: ABdhPJzWhW2mHVViWXQ4Bb/vYvLOGowYzSqqm8m7PVmSAL3Z2ap/hIBsiBQ8y7oR4K2x398UIMxDPQ==
-X-Received: by 2002:a17:902:6b05:b0:148:a2e8:27a6 with SMTP id o5-20020a1709026b0500b00148a2e827a6mr8460721plk.173.1639645890165;
-        Thu, 16 Dec 2021 01:11:30 -0800 (PST)
-Received: from localhost ([106.201.42.111])
-        by smtp.gmail.com with ESMTPSA id y126sm4986250pfy.40.2021.12.16.01.11.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 01:11:29 -0800 (PST)
-Date:   Thu, 16 Dec 2021 14:41:27 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Gerard Ryan <g.m0n3y.2503@gmail.com>
-Cc:     linux-gpio@vger.kernel.org
-Subject: Re: [libgpiod] Generated Rust lang bindings
-Message-ID: <20211216091127.qg6qqqq4angmiryw@vireshk-i7>
-References: <CAKycSdDMxfto6oTqt06TbJxXY=S7p_gtEXWDQv8mz0d9zt3Gvw@mail.gmail.com>
+        id S235102AbhLPJNy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Dec 2021 04:13:54 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:59039 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235085AbhLPJNy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Dec 2021 04:13:54 -0500
+Received: from mail-ed1-f42.google.com ([209.85.208.42]) by
+ mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1N8GdE-1mTFMO1l9E-014CRe; Thu, 16 Dec 2021 10:13:52 +0100
+Received: by mail-ed1-f42.google.com with SMTP id x15so85404649edv.1;
+        Thu, 16 Dec 2021 01:13:52 -0800 (PST)
+X-Gm-Message-State: AOAM533Hn0yGgxJKC7vQNhn3WMbEGJb/Ztc5xNGqOhohsMr+uojVUJuX
+        fH5OnEWhVsUB25EY6rlaBQt/ii547xKMntQb3v4=
+X-Google-Smtp-Source: ABdhPJyiLKlnSiH9vlPQZqdh0l7qGixC2KbAXZ0E4zRdJ5+BDdSdAxMn6Pdgjctlm5ImC6il7N2keNj/IR12pl1ESbs=
+X-Received: by 2002:a05:6000:1aca:: with SMTP id i10mr8136773wry.407.1639643196246;
+ Thu, 16 Dec 2021 00:26:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKycSdDMxfto6oTqt06TbJxXY=S7p_gtEXWDQv8mz0d9zt3Gvw@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+In-Reply-To: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 16 Dec 2021 09:26:20 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
+Message-ID: <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/9] Add initial support for the i.MXRTxxxx SoC family
+ starting from i.IMXRT1050 SoC.
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        SoC Team <soc@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        giulio.benetti@benettiengineering.com,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:boYRwNGGtvS6Ogv172avdBzLiox4MOw/C3OExYzNV0pJAzxljbt
+ dWDHK2Jwxh4rulkjr4Ru4L4jEub8P8YvZ5AqmccoITdbtavkOosRTO9XLAsq4lOZ3EgxghG
+ 6jiwbnYPi6pGnOzYs3Bofch1CFBb7SsFoEm+ZaJS61dFK+hay1i4YX0Schwy+m9mJHAu+MA
+ 26KTclVsPUNtvwXI6UJjw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/LHzhLCMwi4=:nxX2ISmR3ZcS545kCXvj/v
+ pRhgYgH3wHetMOc9NekfHh/X6enGLE8oa1iILMv/ZZftppdM9YQam1p3TtxVOcuYoqKwvXGbn
+ CLeqzI8WjF4giBf0CiYsOS559YNo9GwvGPZxDPv0Tkppo+24vIIlkUJX3GOq8uU1t4Yy0ThSx
+ VKPmzMvoVVQyDa88KWXgIe1dPxS02W/KOgZM/9Ze99Dqn6V8HiJHhMYt0qHW+mh1yylGRg/04
+ 4wlWHqT4kCa/uKSjVWvSK+Wuw36Uxi5Ex0ywtqYPBZRrqJ8PEuJSOVi0NwnQq4+EYMqQNpnc/
+ EGvWojcFGPi9h0+Y8ZynH6JcXQHAYouLCfBfvOwUFmPOKLXkegadqfmY3ff/7GlL5EZhgE+A5
+ snjCSLicUvlO8M9m0yhlSiD/x0Obj6FZaRgMbZUlTOpYycNxtRkK28An9BXzCe9J6dwYl18P3
+ wT9LPTXykPuCJcxpc+zFquULGhjCLpcQPuciLOdsb1Kdip4UCjwMyncNTHYk8JtadksozBPGh
+ RM+PpyLvyJfHRJDwMNcA48ZyOt4AA/QsJYBVe4zAxLxjLi66tLnhnVqFJWcovnQtzTs5gY9/z
+ z2Wn7+QWUrIn8cjsoSJTEm9P72O4RHcz+AhQ7xk15/fc/vFSANV2X4YbVZ0T+wHF184Rggcq7
+ W5nOZTVWE0Dlr23qygrIBEA27rwrwfDGrnlnfEkJTZtr+gGhz6a7a2te6V6mQnGjsctskKykW
+ x1GGSqAmlGQzhKH9HPp1peDHwpecV96Q1vjf4CH+AKThkSi8/ry3Fj8B+I9tmRVCEwDVf5Wsa
+ +xqXomH5lH3lsYUYVFADFUSZ9QwmlKhFnjIHeGe9TGvrqS5YFo=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 16-12-21, 18:56, Gerard Ryan wrote:
-> Hello,
-> I created a build script to generate rust sys/unsafe bindings to build
-> safe bindings upon.
-> I have not reserved the `libgpiod-sys` or `libgpiod` crate names on
-> crates.io as I figured it'd be easier for someone here to manage the
-> credentials for that.
-> Also, I'm not sure when I'll get time to work on the safe bindings
-> (`libgpiod`) but figured this would be a good starting point.
-> As for licensing, I couldn't find any agreements or preferred
-> licensing for submissions so I submit this under a tentative MIT
-> license.
+On Wed, Dec 15, 2021 at 11:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+>
+> This patchset contains:
+> - i.MXRT10xx family infrastructure
+> - i.MXRT1050 pinctrl driver adaption
+> - i.MXRT1050 clock driver adaption
+> - i.MXRT1050 sd-card driver adaption
+> - i.MXRT1050 uart driver adaption
+> - i.MXRT1050-evk basic support
+>
+> The i.MXRTxxxx family that could have support by Linux actually spreads
+> from i.MXRT1020 to i.MXRT1170 with the first one supporting 1 USB OTG &
+> 100M ethernet with a cortex-M7@500Mhz up to the latter with i.MXRT1170
+> with cortex-M7@1Ghz and cortex-M4@400Mhz, 2MB of internal SRAM, 2D GPU,
+> 2x 1Gb and 1x 100Mb ENET. The i.MXRT family is NXP's answer to
+> STM32F7XX, as it uses only simple SDRAM, it gives the chance of a 4 or
+> less layer PCBs. Seeing that these chips are comparable to the
+> STM32F7XXs which have linux ported to them it seems reasonable to add
+> support for them.
+>
+> Giving Linux support to this family should ease the development process,
+> instead of using a RTOS they could use Embedded Linux allowing for more
+> portability, ease of design and will broaden the scope of people using
+> embedded linux.
+>
+> The EVK has very little SDRAM, generally 32MB starting from
+> i.MXRT1020(the lowest P/N), although the i.MXRT1160/70 provide instead
+> 64MB of SDRAM for more functionality.
+>
+> At the moment we do not support XIP for either u-boot or Linux but it
+> should be done in the future. XIP will also save SDRAM.
+>
+> Another interesting fact is the amount of internal SRAM, as the P/N
+> increases the SRAM will reach up to 2MB(some could be for cache and
+> some would be for video).
+>
+> Also, some parts have embed flash of 4MB that can be used for
+> u-boot/Linux, if both correctly sized it will leave the SDRAM free.
+>
+> External flash can be Quad SPI and HyperFlash, so throughput would be
+> decent.
+>
+> The i.MXRT11xx series supports MIPI interface too.
+>
+> The family in general provide CAN bus, audio I/O, 1 or more
+> USB(otg/host), 1 or more 100Mb/1Gb ethernet, camera interface, sd-card.
+>
+> All this can be used for simple GUIs, web-servers, point-of-sale
+> stations, etc.
 
-Hey,
+This looks all good to me now, but the drivers need to be reviewed by the
+respective subsystem maintainers before we can merge it into the soc
+tree. As with other new SoCs, I'm happy to merge the support as a combined
+pull request that includes the drivers provided that the driver subsystem
+maintainers have reviewed them.
 
-Nice to see someone else looking forward to these as well, please have a look at
-this.
+Ideally the i.MX maintainers would pick up your series into a separate
+branch and send that to soc@kernel.org the same way as the other topic
+branches that are usually split out between DT, drivers, soc code etc.
 
-https://lore.kernel.org/all/cover.1638443930.git.viresh.kumar@linaro.org/
+With the Christmas break coming up, the timing may not be sufficient
+before I'm off next week, so it may end up too late for 5.17 but should
+be fine for 5.18.
 
--- 
-viresh
+As a more general comment, it's always nice to see newly added SoC
+platforms, especially when they are this well implemented and done
+by hobbyists. However, I do think you are being overly optimistic
+as to how useful this is going to be to other people: interest in NOMMU
+ARM platforms has dropped a lot over the past 5 years, and as far as I
+can tell, it is only being kept alive for existing stm32 customers
+as the economics do not favor Linux on Cortex-M for new products
+compare to Linux on Cortex-A or some RTOS on Cortex-M.
+
+The existing users will inevitably stop updating their kernels at some
+point, and then it's most likely just you and Vladimir Murzin that care.
+
+       Arnd
