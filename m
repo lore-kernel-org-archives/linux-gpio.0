@@ -2,48 +2,48 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728C3C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Dec 2021 15:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B72C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Dec 2021 15:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238659AbhLPPrL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S231948AbhLPPrL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 16 Dec 2021 10:47:11 -0500
-Received: from mga01.intel.com ([192.55.52.88]:30671 "EHLO mga01.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:42881 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231948AbhLPPrK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Dec 2021 10:47:10 -0500
+        id S238658AbhLPPrL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Dec 2021 10:47:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1639669630; x=1671205630;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=PFX1t+eaNeaXk/Y4FntkqtZGDGWwD6Z92KBbhmnNAqs=;
-  b=Q7v+LAo3g+oQ5Rd/XfGC6lGKvwAvXSW3qdYatMli6GNozzl0U9frFXks
-   yzHgKyt2BLvXx76kAtbfzlLkRB/GGItXO7FD1vr/yJi7F4rp8IRRfeqng
-   IdD8Y0QAycF6I6R7JzAAhLfKHvcrIMhj8wZgAuCbnCx673UXWi5oMUW0d
-   zOxhPj6Zb6+sZm4cmine94NBTWGxq9rVOk5H5rIerYlCJrPq6V2I78/hI
-   f6BjpnG0ibTaHZfmvSBdXcKU9F7J/LVAj09CQM1c+nM2eWHdJgUp0Glzq
-   840wT3yiTwOx8t8j7u9w+dEsS+CE/fUi3mFqBnm3evkv+Hg3FiBI9RXdV
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10199"; a="263687464"
+  bh=YK9xlYFFv27EIDqVmb+rsg3WQK4vuCsyGJqEz5/1qAs=;
+  b=hZWWL44r/Mrt+Dcl1k5MCJ9PdsoS/vOnxY5iujYT3bxeisytRUUSqtKW
+   CbPEt8zfdGnwq5yqbRdqYA4emPYYh6TpGmN9540c3gFnq31rwHvh+Feag
+   tJuAG+FFon34ke1m8rgRWwsGdT+v2CrexLjVA6q4V7ENDFhL146/5dCya
+   ZZVAzuKJ5mlFjFpiNEYZMXaGJutpf101bTRGPciIsFkxnWry2H7UFGNBv
+   +FSSFDBwGzex4eLagOFtNLAENqdnS45dJlEvS+015tAqdFqNZLPT6zs18
+   WXLyLjkbgxo1sEHp/hlY2L6EgkF5bTlBIKOCreM3bUnU19TPf9e4YBqT8
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10199"; a="300299588"
 X-IronPort-AV: E=Sophos;i="5.88,211,1635231600"; 
-   d="scan'208";a="263687464"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2021 07:47:10 -0800
+   d="scan'208";a="300299588"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2021 07:47:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,211,1635231600"; 
-   d="scan'208";a="546025625"
+   d="scan'208";a="568569953"
 Received: from lkp-server02.sh.intel.com (HELO 9f38c0981d9f) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 16 Dec 2021 07:47:08 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 16 Dec 2021 07:47:09 -0800
 Received: from kbuild by 9f38c0981d9f with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mxsyK-0003Ok-Ac; Thu, 16 Dec 2021 15:47:08 +0000
-Date:   Thu, 16 Dec 2021 23:46:58 +0800
+        id 1mxsyK-0003On-Bi; Thu, 16 Dec 2021 15:47:08 +0000
+Date:   Thu, 16 Dec 2021 23:46:47 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- e8f24c58d1b69ecf410a673c22f546dc732bb879
-Message-ID: <61bb5f72.W/8rF5L0J6AUnOVB%lkp@intel.com>
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ b67210cc217f9ca1c576909454d846970c13dfd4
+Message-ID: <61bb5f67.TQjDODy/mnM4Tnjm%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,12 +52,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: e8f24c58d1b69ecf410a673c22f546dc732bb879  ARM: dts: gpio-ranges property is now required
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: b67210cc217f9ca1c576909454d846970c13dfd4  pinctrl: stm32: consider the GPIO offset to expose all the GPIO lines
 
 elapsed time: 724m
 
-configs tested: 141
+configs tested: 144
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -70,16 +70,11 @@ arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
 i386                 randconfig-c001-20211216
-mips                             allyesconfig
-um                             i386_defconfig
-mips                             allmodconfig
-riscv                            allmodconfig
-um                           x86_64_defconfig
-riscv                            allyesconfig
 m68k                          hp300_defconfig
 arm                        clps711x_defconfig
 arc                    vdk_hs38_smp_defconfig
 powerpc                     tqm8540_defconfig
+um                             i386_defconfig
 mips                        workpad_defconfig
 arm                        keystone_defconfig
 arm                         lpc32xx_defconfig
@@ -98,6 +93,11 @@ powerpc                 mpc8315_rdb_defconfig
 powerpc                        cell_defconfig
 m68k                        stmark2_defconfig
 sh                          lboxre2_defconfig
+nds32                             allnoconfig
+sh                         microdev_defconfig
+sh                           se7712_defconfig
+i386                                defconfig
+arm                         nhk8815_defconfig
 arm                       omap2plus_defconfig
 sh                          rsk7203_defconfig
 arc                            hsdk_defconfig
@@ -149,7 +149,6 @@ m68k                             allmodconfig
 m68k                                defconfig
 m68k                             allyesconfig
 arc                              allyesconfig
-nds32                             allnoconfig
 nds32                               defconfig
 nios2                            allyesconfig
 csky                                defconfig
@@ -166,9 +165,10 @@ parisc                           allyesconfig
 s390                                defconfig
 i386                             allyesconfig
 sparc                            allyesconfig
-i386                                defconfig
 i386                   debian-10.3-kselftests
 i386                              debian-10.3
+mips                             allyesconfig
+mips                             allmodconfig
 powerpc                          allyesconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
@@ -185,11 +185,14 @@ i386                 randconfig-a003-20211216
 i386                 randconfig-a006-20211216
 i386                 randconfig-a004-20211216
 riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
 riscv                             allnoconfig
 riscv                               defconfig
 riscv                          rv32_defconfig
+riscv                            allmodconfig
 x86_64                    rhel-8.3-kselftests
+um                           x86_64_defconfig
 x86_64                           allyesconfig
 x86_64                              defconfig
 x86_64                               rhel-8.3
