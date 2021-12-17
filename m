@@ -2,148 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A208C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Dec 2021 12:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1955FC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Dec 2021 13:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231676AbhLQMCU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Dec 2021 07:02:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbhLQMCT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Dec 2021 07:02:19 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D5B1C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Dec 2021 04:02:19 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id z7so6828813edc.11
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Dec 2021 04:02:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8wosAwyrR6VljhsOchzxVh5KWh7HJDzHnE4J5mt7FHg=;
-        b=tmTj3awKHY9kcPxpujnh8QbOSwUOY+Jy9mnHn2OQxKDofrzsonypHL1gKYaQY/ier/
-         JxCsS2PlcludPEnJq49qlOFvIhAGg+6rus3QMewxstmn/Dzpv08YYkPNQpbOToZxnwdu
-         MS4tPmVBbMiy08jw1e3Pl251w2rW5+pDgLzvRiFZKiRSWqkAu6qK357otiVDqMwHTf/5
-         O5Bouw/jznxFlDGXGyVeMLbwL8OQ352l5qU/VkSOHIqHhwE2UMjeQ4E5TVVP4RdOS76+
-         g7MrWfsPZofwkj1PMlPkhqkfiGiLE6MAZIJV8SXUmm+QZeluy0HNJ+96MjZWVdhxin0a
-         Z5Ow==
+        id S236698AbhLQNYX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Dec 2021 08:24:23 -0500
+Received: from mail-ua1-f46.google.com ([209.85.222.46]:42996 "EHLO
+        mail-ua1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236677AbhLQNYU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Dec 2021 08:24:20 -0500
+Received: by mail-ua1-f46.google.com with SMTP id t13so4242479uad.9;
+        Fri, 17 Dec 2021 05:24:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8wosAwyrR6VljhsOchzxVh5KWh7HJDzHnE4J5mt7FHg=;
-        b=uTpG6tloaqFK+4amB32G0OUz5qMR/1p5ZCRXTj4UzAtxzctymVqKy4nYidnpOxTYNp
-         s/FpVzRsvttJ5yOdLygZQdpGHYPGtiSJ4F8WW9jBdLWdSaG3BU62sDoutcJAxWZ3s9c/
-         bL0tFUQCQjd9Qg/Fn3hAPh+UA9R6XNAaqm0wa1BEi6jG/bTQceugc2SPRpwVL3MJT4rJ
-         JZfhDAre4fGTFnF8+gHrMHW1Drr/qd2o3sHWnC30BzckzE7EepFZq2S7pUi5GbfHqhcC
-         xUCQ6XGPMjKncASriMSuqfRCyB622WaNdV1ZfNhMLDlbjQ2JA4FPkWKyGwH5bmdtbze2
-         OD3Q==
-X-Gm-Message-State: AOAM530GU6C0mfBDKxz7K58ioy2aaMJutP1RS1YILYiqyBwlT7h9HUnO
-        Z6vefT7hs6pMfu5+tOl84tPWyOe2zVC3wTYKXdLM9g==
-X-Google-Smtp-Source: ABdhPJwFvVPgA/7AyXMJsVCU8BCQiz8GLsFtRImYMU7p58YFBEMo0V9sXLerXYFhfSN4UDeghqWKMKfKciMXFR1Vjlk=
-X-Received: by 2002:a17:906:249a:: with SMTP id e26mr2296463ejb.492.1639742537689;
- Fri, 17 Dec 2021 04:02:17 -0800 (PST)
+        bh=UfQoARdnbkZAiC3vtgUpOeQLmZLNRjjpwLc9s5ZyHps=;
+        b=xYfAY7J7J9QffAykFLTch2fOSSEGskXuntYtMKlCX8maAZfgRC7qaeYbEYXEhHxAm9
+         hCprSbG7+WrIa9+7lPKf2Gnwb9ioX+R+RgibIbKM6PTk7hk7TRdYnQxFfz3Uvh2fnE43
+         5ilri1hg6O+NGD3LZ8i57+iYD9+vuULAmaDkvG/pbtchDhnnqYk1RCbUErtJ4g02beJy
+         sp8C7y21ZrvyE8OZIEfB7so4is2cjz7xSFk+9nrrb4lz0DmcaKUxl2uHmi4PuAI7Pxr/
+         NBCURrxkQyH90X6VZOJjiVOG8PMzyIp3PlqIt1SOL30ZCNF2eS0j3xxbqki04ANOps2S
+         773Q==
+X-Gm-Message-State: AOAM53375W3GmNivNzBMFfaktc7PL/pTXxza/phvxW5ZI9KeTC9Zl384
+        tUf4+AIs3aie7begwtfvMGNlEkC2jYYyOg==
+X-Google-Smtp-Source: ABdhPJwf9tK4F5rXipclTN8u7WMGEQYWyCzr93mNHr/EESAQDeztbJetl2fXnXAfihpEYTm5+KvDBw==
+X-Received: by 2002:ab0:449:: with SMTP id 67mr998976uav.46.1639747459373;
+        Fri, 17 Dec 2021 05:24:19 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id q9sm1804818vkn.44.2021.12.17.05.24.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Dec 2021 05:24:19 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id p37so4282078uae.8;
+        Fri, 17 Dec 2021 05:24:18 -0800 (PST)
+X-Received: by 2002:a67:c106:: with SMTP id d6mr960485vsj.77.1639747458226;
+ Fri, 17 Dec 2021 05:24:18 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1638443930.git.viresh.kumar@linaro.org> <7ace171379783b73a8f560737fd47900ac28924c.1638443930.git.viresh.kumar@linaro.org>
- <CAMRc=MeoTiUOjM_D36ZEU=echpM9jVhr1HY7fuxTDs0t0jf2Jg@mail.gmail.com>
- <20211217050135.l7p3sudbdvzewi6y@vireshk-i7> <CAMRc=MeP7xPsaiEoJ4ML8SNMo7BH9pb34eUkG6+3SLf+A=biMA@mail.gmail.com>
- <20211217093239.to4u5b5zorr2hpee@vireshk-i7> <CAMRc=Md33nLhMMOSQgQXW5hzXFbkPE3P9Drkj6DK543-cSjCaA@mail.gmail.com>
- <20211217095415.axgq7t6pni5sb7rp@vireshk-i7>
-In-Reply-To: <20211217095415.axgq7t6pni5sb7rp@vireshk-i7>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 17 Dec 2021 13:02:06 +0100
-Message-ID: <CAMRc=Meh7Q=01PpM6vuwMf2S5at2OsSyNT5jXqnUE_f+n0vzXg@mail.gmail.com>
-Subject: Re: [PATCH V2 2/4] libgpiod: Add rust wrappers
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
+References: <20211217093325.30612-1-conor.dooley@microchip.com> <20211217093325.30612-3-conor.dooley@microchip.com>
+In-Reply-To: <20211217093325.30612-3-conor.dooley@microchip.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 17 Dec 2021 14:24:07 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXBm6PMnBTQDZY=3XkGBXsr4wXy8m+WbgHjA8SpctbVCA@mail.gmail.com>
+Message-ID: <CAMuHMdXBm6PMnBTQDZY=3XkGBXsr4wXy8m+WbgHjA8SpctbVCA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/17] dt-bindings: soc/microchip: update syscontroller compatibles
+To:     Conor Dooley <conor.dooley@microchip.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Bin Meng <bin.meng@windriver.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Lewis Hanly <lewis.hanly@microchip.com>,
+        daire.mcnamara@microchip.com, ivan.griffin@microchip.com,
+        Atish Patra <atish.patra@wdc.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 10:54 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Fri, Dec 17, 2021 at 10:32 AM <conor.dooley@microchip.com> wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 >
-> On 17-12-21, 10:43, Bartosz Golaszewski wrote:
-> > On Fri, Dec 17, 2021 at 10:32 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > On 17-12-21, 10:12, Bartosz Golaszewski wrote:
-> > > > No, it's a different story altogether. In C the buffer allocates
-> > > > memory for events and when you "get" an event, you only have a pointer
-> > > > to the memory space in the buffer that you must not free. But you can
-> > > > "copy" an event with gpiod_edge_event_copy() which returns you a deep
-> > > > copy of the event that will survive the parent and that must be freed
-> > > > with gpiod_edge_event_free(). This is done so that by default we try
-> > > > to limit the number of allocations (as there can be a lot of events)
-> > > > unless the user decides to manually copy the event.
-> > > >
-> > > > In C++ I used that mechanism together with the buffer's const
-> > > > event_get() and event's copy assignment operator. "Getting" an event
-> > > > returns a const reference to the event (still in buffer's memory) but
-> > > > copying it triggers a deep copy. The memory management is of course
-> > > > handled by the destructor.
-> > > >
-> > > > This is not used in Python as speed is no longer a concern and we'd be
-> > > > creating new python objects anyway. But in Rust, I think it makes
-> > > > sense to reuse this mechanism.
-> > >
-> > > Ahh, what about this then, it just caches all the values when the event is
-> > > requested ?
-> > >
-> > > pub struct EdgeEvent {
-> > >     event_type: LineEdgeEvent,
-> > >     timestamp: Duration,
-> > >     line_offset: u32,
-> > >     global_seqno: u64,
-> > >     line_seqno: u64,
-> > > }
-> > >
-> >
-> > Then does it make sense to make it a binding to libgpiod? :)
+> The Polarfire SoC is currently using two different compatible string
+> prefixes. Fix this by changing "polarfire-soc-*" strings to "mpfs-*" in
+> its system controller in order to match the compatible string used in
+> the soc binding and device tree.
 >
-> Yes, because EdgeEvent::new() gets all these values from the internal C libgpiod
-> library itself. We are going to make the same copy of data, either at the C
-> library level, or here.
->
-> > I don't know Rust that well to be able to come up with an idea off the
-> > top of my head but I assume inheritance in one way or another exists
-> > in rust? Can you have an EdgeEvent interface implemented by two
-> > specialized structs, one that's stored in the buffer (stores a pointer
-> > to the internal event)
->
-> This is what my initial patch had, right? It isn't safe. There is no way for
-> libgpiod-rust to guarantee that the users don't access the EdgeEvent after the
-> buffer is freed and this needs to be made safer at libgpiod itself.
->
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
-I'm not sure it had the same thing. In libgpiod it's simple a matter
-of definition. The docs state that a pointer retrieved using
-gpiod_edge_event_buffer_get_event() must not be freed while one
-obtained with gpiod_edge_event_copy() does have to be disposed of. In
-C++ it's safe because either you hold a const reference to the object
-stored in the event buffer or you have copied it and now it will
-survive the parent meaning the user can access the event even after
-the buffer was deleted.
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> > and one that stores the copy (and frees it when
-> > it goes out of scope)?
->
-> I don't understand what we will get out of such a scheme? Is there any benefit
-> of getting these values via the pointer to the internal C event ?
->
+Gr{oetje,eeting}s,
 
-You avoid allocating memory for those objects. The memory exists in
-the C buffer. In order to keep a similar level of performance you'd
-need to replicate the behavior of the buffer in rust as well.
+                        Geert
 
-Bart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> Any user that wants to use the edge-event data, needs to call the edge-event
-> APIs at least once and this is what the new version does, just calls them from
-> new() itself.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
