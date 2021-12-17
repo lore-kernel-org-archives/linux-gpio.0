@@ -2,100 +2,166 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B35C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Dec 2021 09:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CA9C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Dec 2021 09:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231679AbhLQJc2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Dec 2021 04:32:28 -0500
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:9407 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231913AbhLQJc1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Dec 2021 04:32:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1639733547; x=1671269547;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+DGboTmD/BHBbd77YYjxDdqurN/h3bROxrQV18YmPqc=;
-  b=VPJz1QSEaxj3UU4ozLgSS0DJ9gu8E8S/OZyzA9+GEQPan5bfxma2kSAz
-   dGReRm/U59w7rdj5DorskrnjSOwJoKSHMS7Qf2iLQb7m9fqWTiO143dqh
-   cqHTKw87V6dqbvW/pglroCGZwY/U8145DLSz0bOFF74XcPwel4CXoY8UX
-   M9BMp+GjqWTarZcHWLcBoYHjBCwlCSnN5yjLIKILhFf4u0RMoHX7wS6RZ
-   zZyT8ibBgVRRXsZ0QcWQI5GyzyQCN9RJvd00nA+JTax3yymyQzcnnz55o
-   wkkamKmAq+nkP4+bt/uNpo3+2Ki8tl8DYa098fd+xgna7IDLlltwIuxd0
-   Q==;
-IronPort-SDR: qG6ew+CdqBkxok7fk/Kr//smGeP1WZUnP6rv9n4Y5jw42Y+F4pSHgscnGnnZ0hRqymcl2isCCB
- 3tV2Xk4MQcwJxUBV8LUrKlce05Un47t3riNzlMVOVTle8J1P4IAvkHyBT8xKpe6vgMwgAOyl7v
- UPXED8XNyNOPl7Jei7CeUcMMP2m2ELiAcDh40TowS8H3JkuMLdtD6tDctSHzMbgB5TCGtAKK+A
- LqzffjlfIfQ+37nm/O2WNmEpnLhacVXjM1fnPe8ikFwqjriQZJWbNrIx7dy9o5BRb9fDFLSA4J
- JyT0HevO0UE5snL6+wpL8ieJ
-X-IronPort-AV: E=Sophos;i="5.88,213,1635231600"; 
-   d="scan'208";a="142745568"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Dec 2021 02:32:25 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 17 Dec 2021 02:32:25 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Fri, 17 Dec 2021 02:32:19 -0700
-From:   <conor.dooley@microchip.com>
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <robh+dt@kernel.org>, <jassisinghbrar@gmail.com>,
-        <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-        <aou@eecs.berkeley.edu>, <a.zummo@towertech.it>,
-        <alexandre.belloni@bootlin.com>, <broonie@kernel.org>,
-        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <u.kleine-koenig@pengutronix.de>, <lee.jones@linaro.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-crypto@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-usb@vger.kernel.org>
-CC:     <krzysztof.kozlowski@canonical.com>, <geert@linux-m68k.org>,
-        <bin.meng@windriver.com>, <heiko@sntech.de>,
-        <lewis.hanly@microchip.com>, <conor.dooley@microchip.com>,
-        <daire.mcnamara@microchip.com>, <ivan.griffin@microchip.com>,
-        <atish.patra@wdc.com>
-Subject: [PATCH v2 04/17] mailbox: change mailbox-mpfs compatible string
-Date:   Fri, 17 Dec 2021 09:33:12 +0000
-Message-ID: <20211217093325.30612-5-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211217093325.30612-1-conor.dooley@microchip.com>
-References: <20211217093325.30612-1-conor.dooley@microchip.com>
+        id S232690AbhLQJcn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Dec 2021 04:32:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57888 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234227AbhLQJcm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Dec 2021 04:32:42 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEF3C061574
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Dec 2021 01:32:42 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id f18-20020a17090aa79200b001ad9cb23022so2161618pjq.4
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Dec 2021 01:32:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VVPndw7FY2ifBUpQcMIgM86G31cUfhTXnwMHyOFwjb4=;
+        b=tvNF/2cEwICH8/dLuBLCJFLBEXF1YmtC9prnrQE7X7mhT98du3wckqRKaLC4PTmAoH
+         3EXno2dhxSBs2NuIavByYBaTXwe8IND4C0x4w3050l2gabPvhGHW7R5idhFp5wcWOS/X
+         4oWxR0NHkCbSW5C74QOKwMqD7wuhWKxK9JNqgXhDafzcDVzASgMQTNaJhpinSjrhGZGC
+         BXKzPXYO+2PwQqEIbI5B1DzZdbuXfZXVuFt9+ghtcYR7vCeBsqRz5+z99Ms92sFbFWcO
+         o5B7tGcsz97d+65qUdAI0VqecxDYzyjIZLeZeBldoUU2jb99wSJ2gZmcoK2GAsbCAjme
+         hM+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VVPndw7FY2ifBUpQcMIgM86G31cUfhTXnwMHyOFwjb4=;
+        b=vK967EQvH2+IZCtKHeFdsW1I4agL9JHj1fsphItukzf1Ng9dF6rAjg6GlAe/6UFZqk
+         WW631vVArUMAbcMFOZqI7IxfbfVflBjwvCuDE+LVOUrimn+u6rnKiGeLxWfUjijhlVAF
+         H6dTpTrUiRYs9cTMLYfQ7xBB8uCC8zXBqS8CwJFlfSvhXW2qbbo1zXrTzPTbmtKCVwD9
+         HxqjLJ5iraNvpHdmPZNXO99uRnP0kUVx0Y3UNVjEla2T7mhnwClsP/cfSBGdgw8jAHrC
+         pJnpQ/BzhrMrdpwaIFGJL+xA5YsG7T5ZoJlk3pqsnBtIYx8KUQFC5On0dA2uaa7X63aW
+         /YkQ==
+X-Gm-Message-State: AOAM5332gDYIMAJ7efjO1ezeT+HKia+WXu6rGw/VG8on7wA8zyXOw2rD
+        0myvB7jVxFUcmHTCjrNBABhMBw==
+X-Google-Smtp-Source: ABdhPJw5sLKPO0m595rZrxZ7zP3acxqqKrWVQmNtIJDOARe67Zv2N/3A8sfCW07+3HfrHiV5HiDHrg==
+X-Received: by 2002:a17:90b:1a92:: with SMTP id ng18mr11054672pjb.19.1639733561859;
+        Fri, 17 Dec 2021 01:32:41 -0800 (PST)
+Received: from localhost ([106.201.42.111])
+        by smtp.gmail.com with ESMTPSA id gf4sm7620763pjb.56.2021.12.17.01.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Dec 2021 01:32:41 -0800 (PST)
+Date:   Fri, 17 Dec 2021 15:02:39 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        stratos-dev@op-lists.linaro.org
+Subject: Re: [PATCH V2 2/4] libgpiod: Add rust wrappers
+Message-ID: <20211217093239.to4u5b5zorr2hpee@vireshk-i7>
+References: <cover.1638443930.git.viresh.kumar@linaro.org>
+ <7ace171379783b73a8f560737fd47900ac28924c.1638443930.git.viresh.kumar@linaro.org>
+ <CAMRc=MeoTiUOjM_D36ZEU=echpM9jVhr1HY7fuxTDs0t0jf2Jg@mail.gmail.com>
+ <20211217050135.l7p3sudbdvzewi6y@vireshk-i7>
+ <CAMRc=MeP7xPsaiEoJ4ML8SNMo7BH9pb34eUkG6+3SLf+A=biMA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeP7xPsaiEoJ4ML8SNMo7BH9pb34eUkG6+3SLf+A=biMA@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On 17-12-21, 10:12, Bartosz Golaszewski wrote:
+> No, it's a different story altogether. In C the buffer allocates
+> memory for events and when you "get" an event, you only have a pointer
+> to the memory space in the buffer that you must not free. But you can
+> "copy" an event with gpiod_edge_event_copy() which returns you a deep
+> copy of the event that will survive the parent and that must be freed
+> with gpiod_edge_event_free(). This is done so that by default we try
+> to limit the number of allocations (as there can be a lot of events)
+> unless the user decides to manually copy the event.
+> 
+> In C++ I used that mechanism together with the buffer's const
+> event_get() and event's copy assignment operator. "Getting" an event
+> returns a const reference to the event (still in buffer's memory) but
+> copying it triggers a deep copy. The memory management is of course
+> handled by the destructor.
+> 
+> This is not used in Python as speed is no longer a concern and we'd be
+> creating new python objects anyway. But in Rust, I think it makes
+> sense to reuse this mechanism.
 
-The Polarfire SoC is currently using two different compatible string
-prefixes. Fix this by changing "polarfire-soc-*" strings to "mpfs-*" in
-its system controller in order to match the compatible string used in
-the soc binding and device tree.
+Ahh, what about this then, it just caches all the values when the event is
+requested ?
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/mailbox/mailbox-mpfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+pub struct EdgeEvent {
+    event_type: LineEdgeEvent,
+    timestamp: Duration,
+    line_offset: u32,
+    global_seqno: u64,
+    line_seqno: u64,
+}
 
-diff --git a/drivers/mailbox/mailbox-mpfs.c b/drivers/mailbox/mailbox-mpfs.c
-index 0d6e2231a2c7..4e34854d1238 100644
---- a/drivers/mailbox/mailbox-mpfs.c
-+++ b/drivers/mailbox/mailbox-mpfs.c
-@@ -232,7 +232,7 @@ static int mpfs_mbox_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id mpfs_mbox_of_match[] = {
--	{.compatible = "microchip,polarfire-soc-mailbox", },
-+	{.compatible = "microchip,mpfs-mailbox", },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mpfs_mbox_of_match);
+impl EdgeEvent {
+    /// Get an event stored in the buffer.
+    pub fn new(buffer: &EdgeEventBuffer, index: u64) -> Result<Self> {
+        let event = unsafe { bindings::gpiod_edge_event_buffer_get_event(buffer.buffer(), index) };
+        if event.is_null() {
+            return Err(Error::OperationFailed(
+                "Gpio EdgeEvent buffer-get-event",
+                IoError::last(),
+            ));
+        }
+
+        Ok(Self {
+            event_type: LineEdgeEvent::new(unsafe {
+                bindings::gpiod_edge_event_get_event_type(event)
+            } as u32)?,
+
+            timestamp: Duration::from_nanos(unsafe {
+                bindings::gpiod_edge_event_get_timestamp(event)
+            }),
+
+            line_offset: unsafe { bindings::gpiod_edge_event_get_line_offset(event) },
+            global_seqno: unsafe { bindings::gpiod_edge_event_get_global_seqno(event) },
+            line_seqno: unsafe { bindings::gpiod_edge_event_get_line_seqno(event) },
+        })
+    }
+
+    /// Get the event type.
+    pub fn get_event_type(&self) -> LineEdgeEvent {
+        self.event_type
+    }
+
+    /// Get the timestamp of the event.
+    pub fn get_timestamp(&self) -> Duration {
+        self.timestamp
+    }
+
+    /// Get the offset of the line on which the event was triggered.
+    pub fn get_line_offset(&self) -> u32 {
+        self.line_offset
+    }
+
+    /// Get the global sequence number of this event.
+    ///
+    /// Returns sequence number of the event relative to all lines in the
+    /// associated line request.
+    pub fn get_global_seqno(&self) -> u64 {
+        self.global_seqno
+    }
+
+    /// Get the event sequence number specific to concerned line.
+    ///
+    /// Returns sequence number of the event relative to this line within the
+    /// lifetime of the associated line request.
+    pub fn get_line_seqno(&self) -> u64 {
+        self.line_seqno
+    }
+}
+
 -- 
-2.33.1
-
+viresh
