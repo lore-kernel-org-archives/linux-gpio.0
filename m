@@ -2,166 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CA9C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Dec 2021 09:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A5CC433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Dec 2021 09:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232690AbhLQJcn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Dec 2021 04:32:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234227AbhLQJcm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Dec 2021 04:32:42 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEF3C061574
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Dec 2021 01:32:42 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id f18-20020a17090aa79200b001ad9cb23022so2161618pjq.4
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Dec 2021 01:32:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VVPndw7FY2ifBUpQcMIgM86G31cUfhTXnwMHyOFwjb4=;
-        b=tvNF/2cEwICH8/dLuBLCJFLBEXF1YmtC9prnrQE7X7mhT98du3wckqRKaLC4PTmAoH
-         3EXno2dhxSBs2NuIavByYBaTXwe8IND4C0x4w3050l2gabPvhGHW7R5idhFp5wcWOS/X
-         4oWxR0NHkCbSW5C74QOKwMqD7wuhWKxK9JNqgXhDafzcDVzASgMQTNaJhpinSjrhGZGC
-         BXKzPXYO+2PwQqEIbI5B1DzZdbuXfZXVuFt9+ghtcYR7vCeBsqRz5+z99Ms92sFbFWcO
-         o5B7tGcsz97d+65qUdAI0VqecxDYzyjIZLeZeBldoUU2jb99wSJ2gZmcoK2GAsbCAjme
-         hM+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VVPndw7FY2ifBUpQcMIgM86G31cUfhTXnwMHyOFwjb4=;
-        b=vK967EQvH2+IZCtKHeFdsW1I4agL9JHj1fsphItukzf1Ng9dF6rAjg6GlAe/6UFZqk
-         WW631vVArUMAbcMFOZqI7IxfbfVflBjwvCuDE+LVOUrimn+u6rnKiGeLxWfUjijhlVAF
-         H6dTpTrUiRYs9cTMLYfQ7xBB8uCC8zXBqS8CwJFlfSvhXW2qbbo1zXrTzPTbmtKCVwD9
-         HxqjLJ5iraNvpHdmPZNXO99uRnP0kUVx0Y3UNVjEla2T7mhnwClsP/cfSBGdgw8jAHrC
-         pJnpQ/BzhrMrdpwaIFGJL+xA5YsG7T5ZoJlk3pqsnBtIYx8KUQFC5On0dA2uaa7X63aW
-         /YkQ==
-X-Gm-Message-State: AOAM5332gDYIMAJ7efjO1ezeT+HKia+WXu6rGw/VG8on7wA8zyXOw2rD
-        0myvB7jVxFUcmHTCjrNBABhMBw==
-X-Google-Smtp-Source: ABdhPJw5sLKPO0m595rZrxZ7zP3acxqqKrWVQmNtIJDOARe67Zv2N/3A8sfCW07+3HfrHiV5HiDHrg==
-X-Received: by 2002:a17:90b:1a92:: with SMTP id ng18mr11054672pjb.19.1639733561859;
-        Fri, 17 Dec 2021 01:32:41 -0800 (PST)
-Received: from localhost ([106.201.42.111])
-        by smtp.gmail.com with ESMTPSA id gf4sm7620763pjb.56.2021.12.17.01.32.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 01:32:41 -0800 (PST)
-Date:   Fri, 17 Dec 2021 15:02:39 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org
-Subject: Re: [PATCH V2 2/4] libgpiod: Add rust wrappers
-Message-ID: <20211217093239.to4u5b5zorr2hpee@vireshk-i7>
-References: <cover.1638443930.git.viresh.kumar@linaro.org>
- <7ace171379783b73a8f560737fd47900ac28924c.1638443930.git.viresh.kumar@linaro.org>
- <CAMRc=MeoTiUOjM_D36ZEU=echpM9jVhr1HY7fuxTDs0t0jf2Jg@mail.gmail.com>
- <20211217050135.l7p3sudbdvzewi6y@vireshk-i7>
- <CAMRc=MeP7xPsaiEoJ4ML8SNMo7BH9pb34eUkG6+3SLf+A=biMA@mail.gmail.com>
+        id S229511AbhLQJcu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Dec 2021 04:32:50 -0500
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:16916 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232790AbhLQJct (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Dec 2021 04:32:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1639733568; x=1671269568;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=fRK83uB7UBmgy7OppXNXdK4ZxB+gBwJv/ZT1t+O9sS0=;
+  b=F10+gqB5y2cCuZX0ukj/BHMGxzvpO2dcBz45DpmrwAC1WCBVVOWE5ojr
+   1apoIAgVSajvXV5jshL8PE4yNHgHuNWgmZ+f08SFfAL88n/EBmPfdrwcr
+   JjC4T/kETrSUIKEaggV2GwjXnML2v+bozhs64Y7+57twZN8uyCaTLIvuU
+   /vad6ix4VKUEP2pJkO5sv8wOSo/YodtaZCsjjxyqdGc6gWCfW1W0hLYAO
+   EoMcDnnCP/Lgy+JcTqPenuDuEQtBHh4xd640RbggAAYSTFu9z2kJfPuev
+   gEIQkRHwe+/9ah0XQDIwJ8dGX2gLLJu1sLvD1f+aC0a1PGXX28pz/uJUl
+   Q==;
+IronPort-SDR: CrKd4tOB+b68mUuQA2Zc6ZHToi/KHgvehYmiy4PX3pIT90VbOVR9DHCKvNXqJwwTSbeeBF8d9b
+ qT/hxcMZ8ru69NqKG4oYHAcbnxezkEusLPGkbJjzooonvMjQXrGRX3OBaACKbERSZt6tjFmqGT
+ CjVEPj/2sqNN0oQfkZ5tc21Z5cP8bBfVUA6+2AU70yfSMx1cbniCpQJVdr7lUxUOYa3W7OWSJU
+ ms4r0BOxTvuXf6ZAkbpL9sjKttMVqmBmBPnbJYKHwM8Hvi6WDoDyiIobtpHrLDYAvxPKHrvcbe
+ LM0m7AafWCeLwB16ghkWz/qX
+X-IronPort-AV: E=Sophos;i="5.88,213,1635231600"; 
+   d="scan'208";a="140110734"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Dec 2021 02:32:46 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Fri, 17 Dec 2021 02:32:47 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Fri, 17 Dec 2021 02:32:41 -0700
+From:   <conor.dooley@microchip.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <robh+dt@kernel.org>, <jassisinghbrar@gmail.com>,
+        <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+        <aou@eecs.berkeley.edu>, <a.zummo@towertech.it>,
+        <alexandre.belloni@bootlin.com>, <broonie@kernel.org>,
+        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+        <u.kleine-koenig@pengutronix.de>, <lee.jones@linaro.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <linux-usb@vger.kernel.org>
+CC:     <krzysztof.kozlowski@canonical.com>, <geert@linux-m68k.org>,
+        <bin.meng@windriver.com>, <heiko@sntech.de>,
+        <lewis.hanly@microchip.com>, <conor.dooley@microchip.com>,
+        <daire.mcnamara@microchip.com>, <ivan.griffin@microchip.com>,
+        <atish.patra@wdc.com>
+Subject: [PATCH v2 06/17] dt-bindings: rng: add bindings for microchip mpfs rng
+Date:   Fri, 17 Dec 2021 09:33:14 +0000
+Message-ID: <20211217093325.30612-7-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211217093325.30612-1-conor.dooley@microchip.com>
+References: <20211217093325.30612-1-conor.dooley@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MeP7xPsaiEoJ4ML8SNMo7BH9pb34eUkG6+3SLf+A=biMA@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 17-12-21, 10:12, Bartosz Golaszewski wrote:
-> No, it's a different story altogether. In C the buffer allocates
-> memory for events and when you "get" an event, you only have a pointer
-> to the memory space in the buffer that you must not free. But you can
-> "copy" an event with gpiod_edge_event_copy() which returns you a deep
-> copy of the event that will survive the parent and that must be freed
-> with gpiod_edge_event_free(). This is done so that by default we try
-> to limit the number of allocations (as there can be a lot of events)
-> unless the user decides to manually copy the event.
-> 
-> In C++ I used that mechanism together with the buffer's const
-> event_get() and event's copy assignment operator. "Getting" an event
-> returns a const reference to the event (still in buffer's memory) but
-> copying it triggers a deep copy. The memory management is of course
-> handled by the destructor.
-> 
-> This is not used in Python as speed is no longer a concern and we'd be
-> creating new python objects anyway. But in Rust, I think it makes
-> sense to reuse this mechanism.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Ahh, what about this then, it just caches all the values when the event is
-requested ?
+Add device tree bindings for the hardware rng device accessed via
+the system services on the Microchip PolarFire SoC.
 
-pub struct EdgeEvent {
-    event_type: LineEdgeEvent,
-    timestamp: Duration,
-    line_offset: u32,
-    global_seqno: u64,
-    line_seqno: u64,
-}
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../bindings/rng/microchip,mpfs-rng.yaml      | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/microchip,mpfs-rng.yaml
 
-impl EdgeEvent {
-    /// Get an event stored in the buffer.
-    pub fn new(buffer: &EdgeEventBuffer, index: u64) -> Result<Self> {
-        let event = unsafe { bindings::gpiod_edge_event_buffer_get_event(buffer.buffer(), index) };
-        if event.is_null() {
-            return Err(Error::OperationFailed(
-                "Gpio EdgeEvent buffer-get-event",
-                IoError::last(),
-            ));
-        }
-
-        Ok(Self {
-            event_type: LineEdgeEvent::new(unsafe {
-                bindings::gpiod_edge_event_get_event_type(event)
-            } as u32)?,
-
-            timestamp: Duration::from_nanos(unsafe {
-                bindings::gpiod_edge_event_get_timestamp(event)
-            }),
-
-            line_offset: unsafe { bindings::gpiod_edge_event_get_line_offset(event) },
-            global_seqno: unsafe { bindings::gpiod_edge_event_get_global_seqno(event) },
-            line_seqno: unsafe { bindings::gpiod_edge_event_get_line_seqno(event) },
-        })
-    }
-
-    /// Get the event type.
-    pub fn get_event_type(&self) -> LineEdgeEvent {
-        self.event_type
-    }
-
-    /// Get the timestamp of the event.
-    pub fn get_timestamp(&self) -> Duration {
-        self.timestamp
-    }
-
-    /// Get the offset of the line on which the event was triggered.
-    pub fn get_line_offset(&self) -> u32 {
-        self.line_offset
-    }
-
-    /// Get the global sequence number of this event.
-    ///
-    /// Returns sequence number of the event relative to all lines in the
-    /// associated line request.
-    pub fn get_global_seqno(&self) -> u64 {
-        self.global_seqno
-    }
-
-    /// Get the event sequence number specific to concerned line.
-    ///
-    /// Returns sequence number of the event relative to this line within the
-    /// lifetime of the associated line request.
-    pub fn get_line_seqno(&self) -> u64 {
-        self.line_seqno
-    }
-}
-
+diff --git a/Documentation/devicetree/bindings/rng/microchip,mpfs-rng.yaml b/Documentation/devicetree/bindings/rng/microchip,mpfs-rng.yaml
+new file mode 100644
+index 000000000000..32cbc37c9292
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rng/microchip,mpfs-rng.yaml
+@@ -0,0 +1,29 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/rng/microchip,mpfs-rng.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Microchip MPFS random number generator
++
++maintainers:
++  - Conor Dooley <conor.dooley@microchip.com>
++
++description: |
++  The hardware random number generator on the Polarfire SoC is
++  accessed via the mailbox interface provided by the system controller
++
++properties:
++  compatible:
++    const: microchip,mpfs-rng
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    hwrandom: hwrandom {
++        compatible = "microchip,mpfs-rng";
++    };
 -- 
-viresh
+2.33.1
+
