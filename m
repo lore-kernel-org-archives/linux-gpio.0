@@ -2,36 +2,36 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D05C35263
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72339C3525C
 	for <linux-gpio@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239971AbhLWO4g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S232601AbhLWO4g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 23 Dec 2021 09:56:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243977AbhLWO4c (ORCPT
+        with ESMTP id S243944AbhLWO4c (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Dec 2021 09:56:32 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B003C0617A0
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A25C061785
         for <linux-gpio@vger.kernel.org>; Thu, 23 Dec 2021 06:56:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id ZqwV2600b4C55Sk01qwV2p; Thu, 23 Dec 2021 15:56:29 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id ZqwV2600b4C55Sk01qwVZL; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW9-006aMF-BW; Thu, 23 Dec 2021 15:56:29 +0100
+        id 1n0PW9-006aMC-7r; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW8-003rwy-1q; Thu, 23 Dec 2021 15:56:28 +0100
+        id 1n0PW7-003rwc-Vs; Thu, 23 Dec 2021 15:56:27 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/10] pinctrl: renesas: checker: Add pin group sharing checks
-Date:   Thu, 23 Dec 2021 15:56:21 +0100
-Message-Id: <e16fdf729156e13b591d2f082f2cc934da580074.1640270559.git.geert+renesas@glider.be>
+Subject: [PATCH 02/10] pinctrl: renesas: Factor out .pin_to_portcr() address handling
+Date:   Thu, 23 Dec 2021 15:56:18 +0100
+Message-Id: <a485d4986a17259256988eb14e3a4c2b8d61c303.1640270559.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
 References: <cover.1640270559.git.geert+renesas@glider.be>
@@ -41,69 +41,118 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add checks for discovering pin groups that could share pin data, as
-sharing reduces kernel size.
+All implementations of the .pin_to_portcr() method implement the same
+conversion from Port Control Register offset to virtual address.  Factor
+it out into the two callers.
+Remove the pfc parameter, as it is no longer used.
+
+Note that the failure handling in r8a7740_pin_to_portcr() is pro forma,
+as the function is never called with an invalid pin number.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/core.c | 37 +++++++++++++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 5 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a73a4.c | 4 ++--
+ drivers/pinctrl/renesas/pfc-r8a7740.c | 6 +++---
+ drivers/pinctrl/renesas/pfc-sh73a0.c  | 4 ++--
+ drivers/pinctrl/renesas/pinctrl.c     | 6 ++++--
+ drivers/pinctrl/renesas/sh_pfc.h      | 2 +-
+ 5 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 5c0a6212706270e7..57a06b5ea17444e2 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -924,6 +924,35 @@ static void __init sh_pfc_check_bias_reg(const struct sh_pfc_soc_info *info,
- 		sh_pfc_check_pin(info, bias->puen, bias->pins[i]);
+diff --git a/drivers/pinctrl/renesas/pfc-r8a73a4.c b/drivers/pinctrl/renesas/pfc-r8a73a4.c
+index 1e569f6a03bf13e0..ba3a1857f80a08c4 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a73a4.c
++++ b/drivers/pinctrl/renesas/pfc-r8a73a4.c
+@@ -2606,9 +2606,9 @@ static const unsigned int r8a73a4_portcr_offsets[] = {
+ 	0x00002000, 0x00003000, 0x00003000,
+ };
+ 
+-static void __iomem *r8a73a4_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
++static int r8a73a4_pin_to_portcr(unsigned int pin)
+ {
+-	return pfc->windows->virt + r8a73a4_portcr_offsets[pin >> 5] + pin;
++	return r8a73a4_portcr_offsets[pin >> 5] + pin;
  }
  
-+static void __init sh_pfc_compare_groups(const char *drvname,
-+					 const struct sh_pfc_pin_group *a,
-+					 const struct sh_pfc_pin_group *b)
-+{
-+	unsigned int i;
-+	size_t len;
-+
-+	if (same_name(a->name, b->name))
-+		sh_pfc_err("group %s: name conflict\n", a->name);
-+
-+	if (a->nr_pins > b->nr_pins)
-+		swap(a, b);
-+
-+	len = a->nr_pins * sizeof(a->pins[0]);
-+	for (i = 0; i <= b->nr_pins - a->nr_pins; i++) {
-+		if (a->pins == b->pins + i || a->mux == b->mux + i ||
-+		    memcmp(a->pins, b->pins + i, len) ||
-+		    memcmp(a->mux, b->mux + i, len))
-+			continue;
-+
-+		if (a->nr_pins == b->nr_pins)
-+			sh_pfc_warn("group %s can be an alias for %s\n",
-+				    a->name, b->name);
-+		else
-+			sh_pfc_warn("group %s is a subset of %s\n", a->name,
-+				    b->name);
-+	}
-+}
-+
- static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ static const struct sh_pfc_soc_operations r8a73a4_pfc_ops = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7740.c b/drivers/pinctrl/renesas/pfc-r8a7740.c
+index 3214331ba4e243cb..e8b9fb74a802ac03 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7740.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7740.c
+@@ -3495,7 +3495,7 @@ static const struct r8a7740_portcr_group r8a7740_portcr_offsets[] = {
+ 	{ 83, 0x0000 }, { 114, 0x1000 }, { 209, 0x2000 }, { 211, 0x3000 },
+ };
+ 
+-static void __iomem *r8a7740_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
++static int r8a7740_pin_to_portcr(unsigned int pin)
  {
- 	const struct pinmux_bias_reg *bias_regs = info->bias_regs;
-@@ -1000,11 +1029,9 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 			sh_pfc_err("empty group %u\n", i);
- 			continue;
- 		}
--		for (j = 0; j < i; j++) {
--			if (same_name(group->name, info->groups[j].name))
--				sh_pfc_err("group %s: name conflict\n",
--					   group->name);
--		}
-+		for (j = 0; j < i; j++)
-+			sh_pfc_compare_groups(drvname, group, &info->groups[j]);
-+
- 		if (!refcnts[i])
- 			sh_pfc_err("orphan group %s\n", group->name);
- 		else if (refcnts[i] > 1)
+ 	unsigned int i;
+ 
+@@ -3504,10 +3504,10 @@ static void __iomem *r8a7740_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
+ 			&r8a7740_portcr_offsets[i];
+ 
+ 		if (pin <= group->end_pin)
+-			return pfc->windows->virt + group->offset + pin;
++			return group->offset + pin;
+ 	}
+ 
+-	return NULL;
++	return -1;
+ }
+ 
+ static const struct sh_pfc_soc_operations r8a7740_pfc_ops = {
+diff --git a/drivers/pinctrl/renesas/pfc-sh73a0.c b/drivers/pinctrl/renesas/pfc-sh73a0.c
+index 44cf1adaff13b02c..5d8a0179fd60fee4 100644
+--- a/drivers/pinctrl/renesas/pfc-sh73a0.c
++++ b/drivers/pinctrl/renesas/pfc-sh73a0.c
+@@ -4137,9 +4137,9 @@ static const unsigned int sh73a0_portcr_offsets[] = {
+ 	0x00002000, 0x00002000, 0x00003000, 0x00003000, 0x00002000,
+ };
+ 
+-static void __iomem *sh73a0_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
++static int sh73a0_pin_to_portcr(unsigned int pin)
+ {
+-	return pfc->windows->virt + sh73a0_portcr_offsets[pin >> 5] + pin;
++	return sh73a0_portcr_offsets[pin >> 5] + pin;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
+index a5862c67a6ecc22e..f0c42c053f8e2460 100644
+--- a/drivers/pinctrl/renesas/pinctrl.c
++++ b/drivers/pinctrl/renesas/pinctrl.c
+@@ -919,7 +919,8 @@ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 
+ unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
+ {
+-	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
++	void __iomem *reg = pfc->windows->virt +
++			    pfc->info->ops->pin_to_portcr(pin);
+ 	u32 value = ioread8(reg) & PORTnCR_PULMD_MASK;
+ 
+ 	switch (value) {
+@@ -936,7 +937,8 @@ unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
+ void rmobile_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 			     unsigned int bias)
+ {
+-	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
++	void __iomem *reg = pfc->windows->virt +
++			    pfc->info->ops->pin_to_portcr(pin);
+ 	u32 value = ioread8(reg) & ~PORTnCR_PULMD_MASK;
+ 
+ 	switch (bias) {
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index d8a6bd0412e496d3..7191c1c9ca959954 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -255,7 +255,7 @@ struct sh_pfc_soc_operations {
+ 	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
+ 			 unsigned int bias);
+ 	int (*pin_to_pocctrl)(unsigned int pin, u32 *pocctrl);
+-	void __iomem * (*pin_to_portcr)(struct sh_pfc *pfc, unsigned int pin);
++	int (*pin_to_portcr)(unsigned int pin);
+ };
+ 
+ struct sh_pfc_soc_info {
 -- 
 2.25.1
 
