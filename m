@@ -2,36 +2,36 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAAAC4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F8AC4321E
 	for <linux-gpio@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348867AbhLWOmP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:42:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48962 "EHLO
+        id S1348874AbhLWOmQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Dec 2021 09:42:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231823AbhLWOmP (ORCPT
+        with ESMTP id S1348858AbhLWOmP (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Dec 2021 09:42:15 -0500
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6697BC061759
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63CCC06175A
         for <linux-gpio@vger.kernel.org>; Thu, 23 Dec 2021 06:42:14 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
         by albert.telenet-ops.be with bizsmtp
-        id ZqiC2600R1rdBcm06qiCq2; Thu, 23 Dec 2021 15:42:12 +0100
+        id ZqiD260091rdBcm06qiDqE; Thu, 23 Dec 2021 15:42:13 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-006a8w-Bs; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIK-006a8v-QR; Thu, 23 Dec 2021 15:42:12 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIJ-003rYY-Qa; Thu, 23 Dec 2021 15:42:11 +0100
+        id 1n0PIK-003rbA-Gz; Thu, 23 Dec 2021 15:42:12 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/60] pinctrl: renesas: Reformat macros defining struct initializers
-Date:   Thu, 23 Dec 2021 15:41:13 +0100
-Message-Id: <03a1eed3c4f57d7b14ef53ab49e04de10d0e383c.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 25/60] pinctrl: renesas: sh73a0: Share MMC pin group data
+Date:   Thu, 23 Dec 2021 15:41:35 +0100
+Message-Id: <ee424be388e8b5780630eb06532d20a4cf5132b1.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -41,193 +41,95 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Reformat all macros that define structure initializers, to visually
-resemble structure definitions:
-  - Move the opening curly brace to the previous line,
-  - Move the closing curly brace to the first position,
-  - Reduce indentation of the block to a single TAB, decreasing the need
-    for line breaks,
-  - Align backslashes for line continuation to the last TAB block where
-    possible,
+Pin groups mmc0_data[14]_[01] are subsets of mmc0_data8_[01].
+
+This reduces kernel size by 80 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/sh_pfc.h | 115 +++++++++++++++----------------
- 1 file changed, 54 insertions(+), 61 deletions(-)
+ drivers/pinctrl/renesas/pfc-sh73a0.c | 48 ++++++----------------------
+ 1 file changed, 10 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
-index 2479b4fb9cf957ff..d355e60244c6e5a8 100644
---- a/drivers/pinctrl/renesas/sh_pfc.h
-+++ b/drivers/pinctrl/renesas/sh_pfc.h
-@@ -49,14 +49,13 @@ struct sh_pfc_pin {
- 	u16 enum_id;
+diff --git a/drivers/pinctrl/renesas/pfc-sh73a0.c b/drivers/pinctrl/renesas/pfc-sh73a0.c
+index 3d17d775247f18de..42710a8758192cf4 100644
+--- a/drivers/pinctrl/renesas/pfc-sh73a0.c
++++ b/drivers/pinctrl/renesas/pfc-sh73a0.c
+@@ -2002,25 +2002,11 @@ static const unsigned int lcd2_sys_1_mux[] = {
+ 	LCD2RD__MARK, PORT217_LCD2RS_MARK,
+ };
+ /* - MMCIF ------------------------------------------------------------------ */
+-static const unsigned int mmc0_data1_0_pins[] = {
+-	/* D[0] */
+-	271,
+-};
+-static const unsigned int mmc0_data1_0_mux[] = {
+-	MMCD0_0_MARK,
+-};
+-static const unsigned int mmc0_data4_0_pins[] = {
+-	/* D[0:3] */
+-	271, 272, 273, 274,
+-};
+-static const unsigned int mmc0_data4_0_mux[] = {
+-	MMCD0_0_MARK, MMCD0_1_MARK, MMCD0_2_MARK, MMCD0_3_MARK,
+-};
+-static const unsigned int mmc0_data8_0_pins[] = {
++static const unsigned int mmc0_data_0_pins[] = {
+ 	/* D[0:7] */
+ 	271, 272, 273, 274, 275, 276, 277, 278,
+ };
+-static const unsigned int mmc0_data8_0_mux[] = {
++static const unsigned int mmc0_data_0_mux[] = {
+ 	MMCD0_0_MARK, MMCD0_1_MARK, MMCD0_2_MARK, MMCD0_3_MARK,
+ 	MMCD0_4_MARK, MMCD0_5_MARK, MMCD0_6_MARK, MMCD0_7_MARK,
+ };
+@@ -2032,25 +2018,11 @@ static const unsigned int mmc0_ctrl_0_mux[] = {
+ 	MMCCMD0_MARK, MMCCLK0_MARK,
  };
  
--#define SH_PFC_PIN_GROUP_ALIAS(alias, n)		\
--	{						\
--		.name = #alias,				\
--		.pins = n##_pins,			\
--		.mux = n##_mux,				\
--		.nr_pins = ARRAY_SIZE(n##_pins) +	\
--		BUILD_BUG_ON_ZERO(sizeof(n##_pins) != sizeof(n##_mux)), \
--	}
-+#define SH_PFC_PIN_GROUP_ALIAS(alias, n) {				\
-+	.name = #alias,							\
-+	.pins = n##_pins,						\
-+	.mux = n##_mux,							\
-+	.nr_pins = ARRAY_SIZE(n##_pins) +				\
-+	BUILD_BUG_ON_ZERO(sizeof(n##_pins) != sizeof(n##_mux)),		\
-+}
- #define SH_PFC_PIN_GROUP(n)	SH_PFC_PIN_GROUP_ALIAS(n, n)
- 
- struct sh_pfc_pin_group {
-@@ -72,13 +71,12 @@ struct sh_pfc_pin_group {
-  * in this case. It accepts an optional 'version' argument used when the
-  * same group can appear on a different set of pins.
-  */
--#define VIN_DATA_PIN_GROUP(n, s, ...)					\
--	{								\
--		.name = #n#s#__VA_ARGS__,				\
--		.pins = n##__VA_ARGS__##_pins.data##s,			\
--		.mux = n##__VA_ARGS__##_mux.data##s,			\
--		.nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),	\
--	}
-+#define VIN_DATA_PIN_GROUP(n, s, ...) {					\
-+	.name = #n#s#__VA_ARGS__,					\
-+	.pins = n##__VA_ARGS__##_pins.data##s,				\
-+	.mux = n##__VA_ARGS__##_mux.data##s,				\
-+	.nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),		\
-+}
- 
- union vin_data12 {
- 	unsigned int data12[12];
-@@ -103,12 +101,11 @@ union vin_data {
- 	unsigned int data4[4];
+-static const unsigned int mmc0_data1_1_pins[] = {
+-	/* D[0] */
+-	305,
+-};
+-static const unsigned int mmc0_data1_1_mux[] = {
+-	MMCD1_0_MARK,
+-};
+-static const unsigned int mmc0_data4_1_pins[] = {
+-	/* D[0:3] */
+-	305, 304, 303, 302,
+-};
+-static const unsigned int mmc0_data4_1_mux[] = {
+-	MMCD1_0_MARK, MMCD1_1_MARK, MMCD1_2_MARK, MMCD1_3_MARK,
+-};
+-static const unsigned int mmc0_data8_1_pins[] = {
++static const unsigned int mmc0_data_1_pins[] = {
+ 	/* D[0:7] */
+ 	305, 304, 303, 302, 301, 300, 299, 298,
  };
- 
--#define SH_PFC_FUNCTION(n)				\
--	{						\
--		.name = #n,				\
--		.groups = n##_groups,			\
--		.nr_groups = ARRAY_SIZE(n##_groups),	\
--	}
-+#define SH_PFC_FUNCTION(n) {						\
-+	.name = #n,							\
-+	.groups = n##_groups,						\
-+	.nr_groups = ARRAY_SIZE(n##_groups),				\
-+}
- 
- struct sh_pfc_function {
- 	const char *name;
-@@ -231,8 +228,9 @@ struct pinmux_irq {
-  * Describe the mapping from GPIOs to a single IRQ
-  *   - ids...: List of GPIOs that are mapped to the same IRQ
-  */
--#define PINMUX_IRQ(ids...)			   \
--	{ .gpios = (const short []) { ids, -1 } }
-+#define PINMUX_IRQ(ids...) {						\
-+	.gpios = (const short []) { ids, -1 }				\
-+}
- 
- struct pinmux_range {
- 	u16 begin;
-@@ -624,13 +622,12 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- #define GP_ALL(str)			CPU_ALL_GP(_GP_ALL, str)
- 
- /* PINMUX_GPIO_GP_ALL - Expand to a list of sh_pfc_pin entries */
--#define _GP_GPIO(bank, _pin, _name, sfx, cfg)				\
--	{								\
--		.pin = (bank * 32) + _pin,				\
--		.name = __stringify(_name),				\
--		.enum_id = _name##_DATA,				\
--		.configs = cfg,						\
--	}
-+#define _GP_GPIO(bank, _pin, _name, sfx, cfg) {				\
-+	.pin = (bank * 32) + _pin,					\
-+	.name = __stringify(_name),					\
-+	.enum_id = _name##_DATA,					\
-+	.configs = cfg,							\
-+}
- #define PINMUX_GPIO_GP_ALL()		CPU_ALL_GP(_GP_GPIO, unused)
- 
- /* PINMUX_DATA_GP_ALL -  Expand to a list of name_DATA, name_FN marks */
-@@ -688,13 +685,12 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 	}
- 
- /* SH_PFC_PIN_CFG - Expand to a sh_pfc_pin entry (named PORT#) with config */
--#define SH_PFC_PIN_CFG(_pin, cfgs)					\
--	{								\
--		.pin = _pin,						\
--		.name = __stringify(PORT##_pin),			\
--		.enum_id = PORT##_pin##_DATA,				\
--		.configs = cfgs,					\
--	}
-+#define SH_PFC_PIN_CFG(_pin, cfgs) {					\
-+	.pin = _pin,							\
-+	.name = __stringify(PORT##_pin),				\
-+	.enum_id = PORT##_pin##_DATA,					\
-+	.configs = cfgs,						\
-+}
- 
- /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_FN0,
-  *		     PORT_name_OUT, PORT_name_IN marks
-@@ -743,35 +739,32 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- #define NOGP_ALL()				CPU_ALL_NOGP(_NOGP_ALL)
- 
- /* PINMUX_NOGP_ALL - Expand to a list of sh_pfc_pin entries */
--#define _NOGP_PINMUX(_pin, _name, cfg)					\
--	{								\
--		.pin = PIN_##_pin,					\
--		.name = "PIN_" _name,					\
--		.configs = SH_PFC_PIN_CFG_NO_GPIO | cfg,		\
--	}
-+#define _NOGP_PINMUX(_pin, _name, cfg) {				\
-+	.pin = PIN_##_pin,						\
-+	.name = "PIN_" _name,						\
-+	.configs = SH_PFC_PIN_CFG_NO_GPIO | cfg,			\
-+}
- #define PINMUX_NOGP_ALL()		CPU_ALL_NOGP(_NOGP_PINMUX)
- 
- /*
-  * PORTnCR helper macro for SH-Mobile/R-Mobile
-  */
--#define PORTCR(nr, reg)							\
--	{								\
--		PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8,		\
--				   GROUP(2, 2, 1, 3),			\
--				   GROUP(				\
--			/* PULMD[1:0], handled by .set_bias() */	\
--			0, 0, 0, 0,					\
--			/* IE and OE */					\
--			0, PORT##nr##_OUT, PORT##nr##_IN, 0,		\
--			/* SEC, not supported */			\
--			0, 0,						\
--			/* PTMD[2:0] */					\
--			PORT##nr##_FN0, PORT##nr##_FN1,			\
--			PORT##nr##_FN2, PORT##nr##_FN3,			\
--			PORT##nr##_FN4, PORT##nr##_FN5,			\
--			PORT##nr##_FN6, PORT##nr##_FN7			\
--		))							\
--	}
-+#define PORTCR(nr, reg) {						\
-+	PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8, GROUP(2, 2, 1, 3),	\
-+			   GROUP(					\
-+		/* PULMD[1:0], handled by .set_bias() */		\
-+		0, 0, 0, 0,						\
-+		/* IE and OE */						\
-+		0, PORT##nr##_OUT, PORT##nr##_IN, 0,			\
-+		/* SEC, not supported */				\
-+		0, 0,							\
-+		/* PTMD[2:0] */						\
-+		PORT##nr##_FN0, PORT##nr##_FN1,				\
-+		PORT##nr##_FN2, PORT##nr##_FN3,				\
-+		PORT##nr##_FN4, PORT##nr##_FN5,				\
-+		PORT##nr##_FN6, PORT##nr##_FN7				\
-+	))								\
-+}
- 
- /*
-  * GPIO number helper macro for R-Car
+-static const unsigned int mmc0_data8_1_mux[] = {
++static const unsigned int mmc0_data_1_mux[] = {
+ 	MMCD1_0_MARK, MMCD1_1_MARK, MMCD1_2_MARK, MMCD1_3_MARK,
+ 	MMCD1_4_MARK, MMCD1_5_MARK, MMCD1_6_MARK, MMCD1_7_MARK,
+ };
+@@ -3052,13 +3024,13 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(lcd2_sync_1),
+ 	SH_PFC_PIN_GROUP(lcd2_sys_0),
+ 	SH_PFC_PIN_GROUP(lcd2_sys_1),
+-	SH_PFC_PIN_GROUP(mmc0_data1_0),
+-	SH_PFC_PIN_GROUP(mmc0_data4_0),
+-	SH_PFC_PIN_GROUP(mmc0_data8_0),
++	BUS_DATA_PIN_GROUP(mmc0_data, 1, _0),
++	BUS_DATA_PIN_GROUP(mmc0_data, 4, _0),
++	BUS_DATA_PIN_GROUP(mmc0_data, 8, _0),
+ 	SH_PFC_PIN_GROUP(mmc0_ctrl_0),
+-	SH_PFC_PIN_GROUP(mmc0_data1_1),
+-	SH_PFC_PIN_GROUP(mmc0_data4_1),
+-	SH_PFC_PIN_GROUP(mmc0_data8_1),
++	BUS_DATA_PIN_GROUP(mmc0_data, 1, _1),
++	BUS_DATA_PIN_GROUP(mmc0_data, 4, _1),
++	BUS_DATA_PIN_GROUP(mmc0_data, 8, _1),
+ 	SH_PFC_PIN_GROUP(mmc0_ctrl_1),
+ 	SH_PFC_PIN_GROUP(msiof0_rsck),
+ 	SH_PFC_PIN_GROUP(msiof0_tsck),
 -- 
 2.25.1
 
