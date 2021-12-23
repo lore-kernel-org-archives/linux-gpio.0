@@ -2,36 +2,36 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A05CC4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F9AC433EF
 	for <linux-gpio@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348907AbhLWOm1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:42:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48970 "EHLO
+        id S1348904AbhLWOm2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Dec 2021 09:42:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348918AbhLWOmR (ORCPT
+        with ESMTP id S1348920AbhLWOmR (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Dec 2021 09:42:17 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9180C06179E
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F254EC0617A1
         for <linux-gpio@vger.kernel.org>; Thu, 23 Dec 2021 06:42:16 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
-        by baptiste.telenet-ops.be with bizsmtp
-        id ZqiE2600i1rdBcm01qiEMt; Thu, 23 Dec 2021 15:42:15 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id ZqiE2600P1rdBcm01qiEPr; Thu, 23 Dec 2021 15:42:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIL-006a8x-Jq; Thu, 23 Dec 2021 15:42:13 +0100
+        id 1n0PIL-006a9Q-IG; Thu, 23 Dec 2021 15:42:13 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIJ-003rYf-RG; Thu, 23 Dec 2021 15:42:11 +0100
+        id 1n0PIL-003rgu-DD; Thu, 23 Dec 2021 15:42:13 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/60] pinctrl: renesas: Rename SH_PFC_PIN_GROUP{,_ALIAS} args
-Date:   Thu, 23 Dec 2021 15:41:14 +0100
-Message-Id: <495fd5cd910d59489f4c1336e4a02da3679b5ffb.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 51/60] pinctrl: renesas: r8a7796: Share SDHI pin group data
+Date:   Thu, 23 Dec 2021 15:42:01 +0100
+Message-Id: <b638b7ad4a874e64a35057fa1ce6ab23db3406cf.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -41,39 +41,169 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Rename the arguments of the SH_PFC_PIN_GROUP_ALIAS() and
-SH_PFC_PIN_GROUP() macros, to better reflect their purposes.
+Pin groups sdhi[01]_data1 are subsets of sdhi[01]_data4.
+Pin groups sdhi[23]_data[14] are subsets of sdhi[23]_data8.
+
+This reduces kernel size by 96 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/sh_pfc.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a7796.c | 82 ++++++---------------------
+ 1 file changed, 18 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
-index d355e60244c6e5a8..d6292a79282f198e 100644
---- a/drivers/pinctrl/renesas/sh_pfc.h
-+++ b/drivers/pinctrl/renesas/sh_pfc.h
-@@ -49,14 +49,14 @@ struct sh_pfc_pin {
- 	u16 enum_id;
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7796.c b/drivers/pinctrl/renesas/pfc-r8a7796.c
+index bedd14ceccdaf0e7..f74b424fa8e4230f 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7796.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7796.c
+@@ -3518,19 +3518,12 @@ static const unsigned int scif_clk_b_mux[] = {
  };
  
--#define SH_PFC_PIN_GROUP_ALIAS(alias, n) {				\
-+#define SH_PFC_PIN_GROUP_ALIAS(alias, _name) {				\
- 	.name = #alias,							\
--	.pins = n##_pins,						\
--	.mux = n##_mux,							\
--	.nr_pins = ARRAY_SIZE(n##_pins) +				\
--	BUILD_BUG_ON_ZERO(sizeof(n##_pins) != sizeof(n##_mux)),		\
-+	.pins = _name##_pins,						\
-+	.mux = _name##_mux,						\
-+	.nr_pins = ARRAY_SIZE(_name##_pins) +				\
-+	BUILD_BUG_ON_ZERO(sizeof(_name##_pins) != sizeof(_name##_mux)),	\
- }
--#define SH_PFC_PIN_GROUP(n)	SH_PFC_PIN_GROUP_ALIAS(n, n)
-+#define SH_PFC_PIN_GROUP(name)	SH_PFC_PIN_GROUP_ALIAS(name, name)
- 
- struct sh_pfc_pin_group {
- 	const char *name;
+ /* - SDHI0 ------------------------------------------------------------------ */
+-static const unsigned int sdhi0_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 2),
+-};
+-static const unsigned int sdhi0_data1_mux[] = {
+-	SD0_DAT0_MARK,
+-};
+-static const unsigned int sdhi0_data4_pins[] = {
++static const unsigned int sdhi0_data_pins[] = {
+ 	/* D[0:3] */
+ 	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
+ 	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
+ };
+-static const unsigned int sdhi0_data4_mux[] = {
++static const unsigned int sdhi0_data_mux[] = {
+ 	SD0_DAT0_MARK, SD0_DAT1_MARK,
+ 	SD0_DAT2_MARK, SD0_DAT3_MARK,
+ };
+@@ -3556,19 +3549,12 @@ static const unsigned int sdhi0_wp_mux[] = {
+ 	SD0_WP_MARK,
+ };
+ /* - SDHI1 ------------------------------------------------------------------ */
+-static const unsigned int sdhi1_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 8),
+-};
+-static const unsigned int sdhi1_data1_mux[] = {
+-	SD1_DAT0_MARK,
+-};
+-static const unsigned int sdhi1_data4_pins[] = {
++static const unsigned int sdhi1_data_pins[] = {
+ 	/* D[0:3] */
+ 	RCAR_GP_PIN(3, 8),  RCAR_GP_PIN(3, 9),
+ 	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 11),
+ };
+-static const unsigned int sdhi1_data4_mux[] = {
++static const unsigned int sdhi1_data_mux[] = {
+ 	SD1_DAT0_MARK, SD1_DAT1_MARK,
+ 	SD1_DAT2_MARK, SD1_DAT3_MARK,
+ };
+@@ -3594,30 +3580,14 @@ static const unsigned int sdhi1_wp_mux[] = {
+ 	SD1_WP_MARK,
+ };
+ /* - SDHI2 ------------------------------------------------------------------ */
+-static const unsigned int sdhi2_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(4, 2),
+-};
+-static const unsigned int sdhi2_data1_mux[] = {
+-	SD2_DAT0_MARK,
+-};
+-static const unsigned int sdhi2_data4_pins[] = {
+-	/* D[0:3] */
+-	RCAR_GP_PIN(4, 2), RCAR_GP_PIN(4, 3),
+-	RCAR_GP_PIN(4, 4), RCAR_GP_PIN(4, 5),
+-};
+-static const unsigned int sdhi2_data4_mux[] = {
+-	SD2_DAT0_MARK, SD2_DAT1_MARK,
+-	SD2_DAT2_MARK, SD2_DAT3_MARK,
+-};
+-static const unsigned int sdhi2_data8_pins[] = {
++static const unsigned int sdhi2_data_pins[] = {
+ 	/* D[0:7] */
+ 	RCAR_GP_PIN(4, 2),  RCAR_GP_PIN(4, 3),
+ 	RCAR_GP_PIN(4, 4),  RCAR_GP_PIN(4, 5),
+ 	RCAR_GP_PIN(3, 8),  RCAR_GP_PIN(3, 9),
+ 	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 11),
+ };
+-static const unsigned int sdhi2_data8_mux[] = {
++static const unsigned int sdhi2_data_mux[] = {
+ 	SD2_DAT0_MARK, SD2_DAT1_MARK,
+ 	SD2_DAT2_MARK, SD2_DAT3_MARK,
+ 	SD2_DAT4_MARK, SD2_DAT5_MARK,
+@@ -3666,30 +3636,14 @@ static const unsigned int sdhi2_ds_mux[] = {
+ 	SD2_DS_MARK,
+ };
+ /* - SDHI3 ------------------------------------------------------------------ */
+-static const unsigned int sdhi3_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(4, 9),
+-};
+-static const unsigned int sdhi3_data1_mux[] = {
+-	SD3_DAT0_MARK,
+-};
+-static const unsigned int sdhi3_data4_pins[] = {
+-	/* D[0:3] */
+-	RCAR_GP_PIN(4, 9),  RCAR_GP_PIN(4, 10),
+-	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 12),
+-};
+-static const unsigned int sdhi3_data4_mux[] = {
+-	SD3_DAT0_MARK, SD3_DAT1_MARK,
+-	SD3_DAT2_MARK, SD3_DAT3_MARK,
+-};
+-static const unsigned int sdhi3_data8_pins[] = {
++static const unsigned int sdhi3_data_pins[] = {
+ 	/* D[0:7] */
+ 	RCAR_GP_PIN(4, 9),  RCAR_GP_PIN(4, 10),
+ 	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 12),
+ 	RCAR_GP_PIN(4, 13), RCAR_GP_PIN(4, 14),
+ 	RCAR_GP_PIN(4, 15), RCAR_GP_PIN(4, 16),
+ };
+-static const unsigned int sdhi3_data8_mux[] = {
++static const unsigned int sdhi3_data_mux[] = {
+ 	SD3_DAT0_MARK, SD3_DAT1_MARK,
+ 	SD3_DAT2_MARK, SD3_DAT3_MARK,
+ 	SD3_DAT4_MARK, SD3_DAT5_MARK,
+@@ -4432,28 +4386,28 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(scif5_clk_b),
+ 		SH_PFC_PIN_GROUP(scif_clk_a),
+ 		SH_PFC_PIN_GROUP(scif_clk_b),
+-		SH_PFC_PIN_GROUP(sdhi0_data1),
+-		SH_PFC_PIN_GROUP(sdhi0_data4),
++		BUS_DATA_PIN_GROUP(sdhi0_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi0_data, 4),
+ 		SH_PFC_PIN_GROUP(sdhi0_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi0_cd),
+ 		SH_PFC_PIN_GROUP(sdhi0_wp),
+-		SH_PFC_PIN_GROUP(sdhi1_data1),
+-		SH_PFC_PIN_GROUP(sdhi1_data4),
++		BUS_DATA_PIN_GROUP(sdhi1_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi1_data, 4),
+ 		SH_PFC_PIN_GROUP(sdhi1_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi1_cd),
+ 		SH_PFC_PIN_GROUP(sdhi1_wp),
+-		SH_PFC_PIN_GROUP(sdhi2_data1),
+-		SH_PFC_PIN_GROUP(sdhi2_data4),
+-		SH_PFC_PIN_GROUP(sdhi2_data8),
++		BUS_DATA_PIN_GROUP(sdhi2_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi2_data, 4),
++		BUS_DATA_PIN_GROUP(sdhi2_data, 8),
+ 		SH_PFC_PIN_GROUP(sdhi2_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi2_cd_a),
+ 		SH_PFC_PIN_GROUP(sdhi2_wp_a),
+ 		SH_PFC_PIN_GROUP(sdhi2_cd_b),
+ 		SH_PFC_PIN_GROUP(sdhi2_wp_b),
+ 		SH_PFC_PIN_GROUP(sdhi2_ds),
+-		SH_PFC_PIN_GROUP(sdhi3_data1),
+-		SH_PFC_PIN_GROUP(sdhi3_data4),
+-		SH_PFC_PIN_GROUP(sdhi3_data8),
++		BUS_DATA_PIN_GROUP(sdhi3_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi3_data, 4),
++		BUS_DATA_PIN_GROUP(sdhi3_data, 8),
+ 		SH_PFC_PIN_GROUP(sdhi3_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi3_cd),
+ 		SH_PFC_PIN_GROUP(sdhi3_wp),
 -- 
 2.25.1
 
