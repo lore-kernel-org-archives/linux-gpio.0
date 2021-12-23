@@ -2,110 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F00AC433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D05C35263
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243929AbhLWO4f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:56:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52292 "EHLO
+        id S239971AbhLWO4g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Dec 2021 09:56:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239907AbhLWO4c (ORCPT
+        with ESMTP id S243977AbhLWO4c (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Dec 2021 09:56:32 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58514C06179B
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B003C0617A0
         for <linux-gpio@vger.kernel.org>; Thu, 23 Dec 2021 06:56:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id ZqwV2600c4C55Sk01qwVZM; Thu, 23 Dec 2021 15:56:29 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id ZqwV2600b4C55Sk01qwV2p; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW9-006aMA-8X; Thu, 23 Dec 2021 15:56:29 +0100
+        id 1n0PW9-006aMF-BW; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW7-003rwS-Tl; Thu, 23 Dec 2021 15:56:27 +0100
+        id 1n0PW8-003rwy-1q; Thu, 23 Dec 2021 15:56:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/10] pinctrl: renesas: checker: Miscellaneous improvements
-Date:   Thu, 23 Dec 2021 15:56:16 +0100
-Message-Id: <cover.1640270559.git.geert+renesas@glider.be>
+Subject: [PATCH 05/10] pinctrl: renesas: checker: Add pin group sharing checks
+Date:   Thu, 23 Dec 2021 15:56:21 +0100
+Message-Id: <e16fdf729156e13b591d2f082f2cc934da580074.1640270559.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
+References: <cover.1640270559.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-	Hi Linus,
+Add checks for discovering pin groups that could share pin data, as
+sharing reduces kernel size.
 
-This patch series improves the Renesas pin control table validator
-(enabled when DEBUG is defined, e.g. with CONFIG_DEBUG_PINCTRL=y), by:
-  1. Suggesting which pin groups can share pins,
-  2. Adding more checks to catch common errors.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/renesas/core.c | 37 +++++++++++++++++++++++++++++-----
+ 1 file changed, 32 insertions(+), 5 deletions(-)
 
-If you enable the checker, you may be disappointed by the (lack of)
-output.  Indeed, it is much easier to fix detected issues, than to get
-the checker code in a state that is suitable for upstream submission
-;-)
-Hence most issues detected have been fixed already for quite some time,
-or never arrived upstream in the first place. Recent fixes are [1] and
-[2].
-
-If accepted, I intend to queue this in renesas-pinctrl for v5.18.
-Thanks for your comments!
-
-[1] "[PATCH 00/60] pinctrl: renesas: Share more pin group data"
-    https://lore.kernel.org/r/cover.1640269757.git.geert+renesas@glider.be/
-[2] "[PATCH] pinctrl: renesas: r8a7794: Add range checking to
-     .pin_to_pocctrl()"
-    https://lore.kernel.org/r/d23767ad7152327654192d7191f4b8ae19493966.1640269510.git.geert+renesas@glider.be/
-
-Geert Uytterhoeven (10):
-  pinctrl: renesas: Remove unused pfc parameter from .pin_to_pocctrl()
-  pinctrl: renesas: Factor out .pin_to_portcr() address handling
-  pinctrl: renesas: Pass sh_pfc_soc_info to rcar_pin_to_bias_reg()
-  pinctrl: renesas: checker: Simplify same_name()
-  pinctrl: renesas: checker: Add pin group sharing checks
-  pinctrl: renesas: checker: Validate bias configs consistency
-  pinctrl: renesas: checker: Validate drive strength configs consistency
-  pinctrl: renesas: checker: Validate I/O voltage configs consistency
-  pinctrl: renesas: checker: Check bias pin conflicts
-  pinctrl: renesas: checker: Check drive pin conflicts
-
- drivers/pinctrl/renesas/core.c         | 208 ++++++++++++++++++++++---
- drivers/pinctrl/renesas/pfc-r8a73a4.c  |   4 +-
- drivers/pinctrl/renesas/pfc-r8a7740.c  |   6 +-
- drivers/pinctrl/renesas/pfc-r8a77470.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a7790.c  |   2 +-
- drivers/pinctrl/renesas/pfc-r8a7791.c  |   2 +-
- drivers/pinctrl/renesas/pfc-r8a7794.c  |   2 +-
- drivers/pinctrl/renesas/pfc-r8a77950.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77951.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a7796.c  |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77965.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77970.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77980.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77990.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77995.c |   4 +-
- drivers/pinctrl/renesas/pfc-r8a779a0.c |   3 +-
- drivers/pinctrl/renesas/pfc-sh73a0.c   |   4 +-
- drivers/pinctrl/renesas/pinctrl.c      |  24 +--
- drivers/pinctrl/renesas/sh_pfc.h       |   6 +-
- 19 files changed, 227 insertions(+), 62 deletions(-)
-
+diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
+index 5c0a6212706270e7..57a06b5ea17444e2 100644
+--- a/drivers/pinctrl/renesas/core.c
++++ b/drivers/pinctrl/renesas/core.c
+@@ -924,6 +924,35 @@ static void __init sh_pfc_check_bias_reg(const struct sh_pfc_soc_info *info,
+ 		sh_pfc_check_pin(info, bias->puen, bias->pins[i]);
+ }
+ 
++static void __init sh_pfc_compare_groups(const char *drvname,
++					 const struct sh_pfc_pin_group *a,
++					 const struct sh_pfc_pin_group *b)
++{
++	unsigned int i;
++	size_t len;
++
++	if (same_name(a->name, b->name))
++		sh_pfc_err("group %s: name conflict\n", a->name);
++
++	if (a->nr_pins > b->nr_pins)
++		swap(a, b);
++
++	len = a->nr_pins * sizeof(a->pins[0]);
++	for (i = 0; i <= b->nr_pins - a->nr_pins; i++) {
++		if (a->pins == b->pins + i || a->mux == b->mux + i ||
++		    memcmp(a->pins, b->pins + i, len) ||
++		    memcmp(a->mux, b->mux + i, len))
++			continue;
++
++		if (a->nr_pins == b->nr_pins)
++			sh_pfc_warn("group %s can be an alias for %s\n",
++				    a->name, b->name);
++		else
++			sh_pfc_warn("group %s is a subset of %s\n", a->name,
++				    b->name);
++	}
++}
++
+ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ {
+ 	const struct pinmux_bias_reg *bias_regs = info->bias_regs;
+@@ -1000,11 +1029,9 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 			sh_pfc_err("empty group %u\n", i);
+ 			continue;
+ 		}
+-		for (j = 0; j < i; j++) {
+-			if (same_name(group->name, info->groups[j].name))
+-				sh_pfc_err("group %s: name conflict\n",
+-					   group->name);
+-		}
++		for (j = 0; j < i; j++)
++			sh_pfc_compare_groups(drvname, group, &info->groups[j]);
++
+ 		if (!refcnts[i])
+ 			sh_pfc_err("orphan group %s\n", group->name);
+ 		else if (refcnts[i] > 1)
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
