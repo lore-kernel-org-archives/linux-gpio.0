@@ -2,36 +2,36 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A04EC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D81C3526F
 	for <linux-gpio@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348872AbhLWOmZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:42:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
+        id S1348894AbhLWOm0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Dec 2021 09:42:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348904AbhLWOmQ (ORCPT
+        with ESMTP id S1348908AbhLWOmQ (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Dec 2021 09:42:16 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7BCC0613A5
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A48C06175C
         for <linux-gpio@vger.kernel.org>; Thu, 23 Dec 2021 06:42:16 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
-        by andre.telenet-ops.be with bizsmtp
-        id ZqiE260041rdBcm01qiEPf; Thu, 23 Dec 2021 15:42:14 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id ZqiE2600h1rdBcm01qiEMs; Thu, 23 Dec 2021 15:42:14 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIL-006a99-5K; Thu, 23 Dec 2021 15:42:13 +0100
+        id 1n0PIL-006a9K-DK; Thu, 23 Dec 2021 15:42:13 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-003rZg-4i; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIK-003raM-A9; Thu, 23 Dec 2021 15:42:12 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 13/60] pinctrl: renesas: r8a73a4: Share MMC pin group data
-Date:   Thu, 23 Dec 2021 15:41:23 +0100
-Message-Id: <ad30961d71631577c2bdbf8dfa4874c9585caba9.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 19/60] pinctrl: renesas: r8a7791: Share MMC pin group data
+Date:   Thu, 23 Dec 2021 15:41:29 +0100
+Message-Id: <be1f11c87e51224e043291f4d8e28b620811ac76.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -41,95 +41,83 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Pin groups mmc[01]_data[14] are subsets of mmc[01]_data8.
+Pin groups mmc_data[14] are subsets of mmc_data8.
 
-This reduces kernel size by 80 bytes.
+Treat mmc_data8_b the same for consistency.  Note that there is no need
+to define 1-bit and 4-bit wide subsets for the b-variant, as they're
+identical to the normal variants.
+
+This reduces kernel size by 40 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a73a4.c | 48 ++++++---------------------
- 1 file changed, 10 insertions(+), 38 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a7791.c | 31 +++++++--------------------
+ 1 file changed, 8 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a73a4.c b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-index b26ff9d6ead4bb6c..87442a1e17791917 100644
---- a/drivers/pinctrl/renesas/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-@@ -1449,25 +1449,11 @@ IRQC_PINS_MUX(327, 55);
- IRQC_PINS_MUX(328, 56);
- IRQC_PINS_MUX(329, 57);
- /* - MMCIF0 ----------------------------------------------------------------- */
--static const unsigned int mmc0_data1_pins[] = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7791.c b/drivers/pinctrl/renesas/pfc-r8a7791.c
+index c3aa794a09e51b80..38900f07738a878f 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7791.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7791.c
+@@ -2592,40 +2592,25 @@ static const unsigned int mlb_3pin_mux[] = {
+ #endif /* CONFIG_PINCTRL_PFC_R8A7791 || CONFIG_PINCTRL_PFC_R8A7793 */
+ 
+ /* - MMCIF ------------------------------------------------------------------ */
+-static const unsigned int mmc_data1_pins[] = {
 -	/* D[0] */
--	164,
+-	RCAR_GP_PIN(6, 18),
 -};
--static const unsigned int mmc0_data1_mux[] = {
--	MMCD0_0_MARK,
+-static const unsigned int mmc_data1_mux[] = {
+-	MMC_D0_MARK,
 -};
--static const unsigned int mmc0_data4_pins[] = {
+-static const unsigned int mmc_data4_pins[] = {
 -	/* D[0:3] */
--	164, 165, 166, 167,
+-	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
+-	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
 -};
--static const unsigned int mmc0_data4_mux[] = {
--	MMCD0_0_MARK, MMCD0_1_MARK, MMCD0_2_MARK, MMCD0_3_MARK,
+-static const unsigned int mmc_data4_mux[] = {
+-	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
 -};
--static const unsigned int mmc0_data8_pins[] = {
-+static const unsigned int mmc0_data_pins[] = {
+-static const unsigned int mmc_data8_pins[] = {
++static const unsigned int mmc_data_pins[] = {
  	/* D[0:7] */
- 	164, 165, 166, 167, 168, 169, 170, 171,
+ 	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
+ 	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
+ 	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
+ 	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
  };
--static const unsigned int mmc0_data8_mux[] = {
-+static const unsigned int mmc0_data_mux[] = {
- 	MMCD0_0_MARK, MMCD0_1_MARK, MMCD0_2_MARK, MMCD0_3_MARK,
- 	MMCD0_4_MARK, MMCD0_5_MARK, MMCD0_6_MARK, MMCD0_7_MARK,
+-static const unsigned int mmc_data8_mux[] = {
++static const unsigned int mmc_data_mux[] = {
+ 	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
+ 	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
  };
-@@ -1479,25 +1465,11 @@ static const unsigned int mmc0_ctrl_mux[] = {
- 	MMCCMD0_MARK, MMCCLK0_MARK,
- };
- /* - MMCIF1 ----------------------------------------------------------------- */
--static const unsigned int mmc1_data1_pins[] = {
--	/* D[0] */
--	199,
--};
--static const unsigned int mmc1_data1_mux[] = {
--	MMCD1_0_MARK,
--};
--static const unsigned int mmc1_data4_pins[] = {
--	/* D[0:3] */
--	199, 198, 197, 196,
--};
--static const unsigned int mmc1_data4_mux[] = {
--	MMCD1_0_MARK, MMCD1_1_MARK, MMCD1_2_MARK, MMCD1_3_MARK,
--};
--static const unsigned int mmc1_data8_pins[] = {
-+static const unsigned int mmc1_data_pins[] = {
+-static const unsigned int mmc_data8_b_pins[] = {
++static const unsigned int mmc_data_b_pins[] = {
  	/* D[0:7] */
- 	199, 198, 197, 196, 195, 194, 193, 192,
+ 	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
+ 	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
+ 	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
+ 	RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
  };
--static const unsigned int mmc1_data8_mux[] = {
-+static const unsigned int mmc1_data_mux[] = {
- 	MMCD1_0_MARK, MMCD1_1_MARK, MMCD1_2_MARK, MMCD1_3_MARK,
- 	MMCD1_4_MARK, MMCD1_5_MARK, MMCD1_6_MARK, MMCD1_7_MARK,
+-static const unsigned int mmc_data8_b_mux[] = {
++static const unsigned int mmc_data_b_mux[] = {
+ 	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
+ 	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_B_MARK, MMC_D7_B_MARK,
  };
-@@ -1843,13 +1815,13 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(irqc_irq55),
- 	SH_PFC_PIN_GROUP(irqc_irq56),
- 	SH_PFC_PIN_GROUP(irqc_irq57),
--	SH_PFC_PIN_GROUP(mmc0_data1),
--	SH_PFC_PIN_GROUP(mmc0_data4),
--	SH_PFC_PIN_GROUP(mmc0_data8),
-+	BUS_DATA_PIN_GROUP(mmc0_data, 1),
-+	BUS_DATA_PIN_GROUP(mmc0_data, 4),
-+	BUS_DATA_PIN_GROUP(mmc0_data, 8),
- 	SH_PFC_PIN_GROUP(mmc0_ctrl),
--	SH_PFC_PIN_GROUP(mmc1_data1),
--	SH_PFC_PIN_GROUP(mmc1_data4),
--	SH_PFC_PIN_GROUP(mmc1_data8),
-+	BUS_DATA_PIN_GROUP(mmc1_data, 1),
-+	BUS_DATA_PIN_GROUP(mmc1_data, 4),
-+	BUS_DATA_PIN_GROUP(mmc1_data, 8),
- 	SH_PFC_PIN_GROUP(mmc1_ctrl),
- 	SH_PFC_PIN_GROUP(scifa0_data),
- 	SH_PFC_PIN_GROUP(scifa0_clk),
+@@ -4576,10 +4561,10 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(intc_irq1),
+ 		SH_PFC_PIN_GROUP(intc_irq2),
+ 		SH_PFC_PIN_GROUP(intc_irq3),
+-		SH_PFC_PIN_GROUP(mmc_data1),
+-		SH_PFC_PIN_GROUP(mmc_data4),
+-		SH_PFC_PIN_GROUP(mmc_data8),
+-		SH_PFC_PIN_GROUP(mmc_data8_b),
++		BUS_DATA_PIN_GROUP(mmc_data, 1),
++		BUS_DATA_PIN_GROUP(mmc_data, 4),
++		BUS_DATA_PIN_GROUP(mmc_data, 8),
++		BUS_DATA_PIN_GROUP(mmc_data, 8, _b),
+ 		SH_PFC_PIN_GROUP(mmc_ctrl),
+ 		SH_PFC_PIN_GROUP(msiof0_clk),
+ 		SH_PFC_PIN_GROUP(msiof0_sync),
 -- 
 2.25.1
 
