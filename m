@@ -2,70 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8094AC433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Dec 2021 18:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F84AC433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Dec 2021 02:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349758AbhLWSNQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Dec 2021 13:13:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349756AbhLWSNQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Dec 2021 13:13:16 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6297C061756;
-        Thu, 23 Dec 2021 10:13:15 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 635AAB818A0;
-        Thu, 23 Dec 2021 18:13:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 32B97C36AEB;
-        Thu, 23 Dec 2021 18:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640283193;
-        bh=XGFOxNKl6UzVkCrzAi0UNTUcSKaRFSjfM3FEMD196CE=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=KMlXsMfWTaSX76K9YV5kFT/2Htm4IqdAhFi/Tq02x2qcT3bVSr6jErL/fKkxuxx+R
-         2Knjpjzv5TrknlXbbfh10NGGcunMkVzD25mJhb7txvs3/9itlVd3FAefelTnMeRxAi
-         wK0WU/PlH3AkjUhVpfwOtmbZuSrO6YUFGwOqcrnh43nK4JrhG0vLCaPWsDzZX3J9Fh
-         9ShgWWuQ936PBON/XGUpojnsPP7sN7SVcRaGsRZtDVBC58vLJBqZtBn1sk3eW28BJ1
-         E5PfQad1ekTDa+zZwayrm7hLxVM1kLdSAIFHB8cUpE+ojyfleknXjDXPcaBciq7A+T
-         uxBGUhwDxbpkg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 22AC8EAC065;
-        Thu, 23 Dec 2021 18:13:13 +0000 (UTC)
-Subject: Re: [GIT PULL] gpio: fixes for v5.16-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20211223162209.26870-1-brgl@bgdev.pl>
-References: <20211223162209.26870-1-brgl@bgdev.pl>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20211223162209.26870-1-brgl@bgdev.pl>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v5.16-rc7
-X-PR-Tracked-Commit-Id: 3e4d9a485029aa9e172dab5420abe775fd86f8e8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3bf6f013980a9cf255c52135b74339a8fc332dfc
-Message-Id: <164028319313.29771.7185709258971409438.pr-tracker-bot@kernel.org>
-Date:   Thu, 23 Dec 2021 18:13:13 +0000
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+        id S1350949AbhLXCoC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Dec 2021 21:44:02 -0500
+Received: from smtp25.cstnet.cn ([159.226.251.25]:47272 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1350885AbhLXCoB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 23 Dec 2021 21:44:01 -0500
+Received: from localhost.localdomain (unknown [124.16.138.126])
+        by APP-05 (Coremail) with SMTP id zQCowADHzQHZM8VhJwPHBA--.5875S2;
+        Fri, 24 Dec 2021 10:43:38 +0800 (CST)
+From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
+To:     albeu@free.fr, linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiasheng Jiang <jiasheng@iscas.ac.cn>
+Subject: [PATCH] gpio: ath79: Check for error irq
+Date:   Fri, 24 Dec 2021 10:43:36 +0800
+Message-Id: <20211224024336.1517858-1-jiasheng@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowADHzQHZM8VhJwPHBA--.5875S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JF48ur15ur43CryfCF47CFg_yoWkKrg_Cw
+        4kZr17Gr4kCFnIqF17Aw1ayrZayrs7urn3AFn2gayaqryUAwnrurnruwn5uF17WrWUKFyD
+        Ga4DWrWSvrs3CjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbcAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+        Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
+        W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_Gr1l
+        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAK
+        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+        42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUojg4DUUUU
+X-Originating-IP: [124.16.138.126]
+X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Thu, 23 Dec 2021 17:22:09 +0100:
+For the possible failure of the platform_get_irq(), the returned irq
+could be error number and will finally cause the failure of the
+request_irq().
+Consider that platform_get_irq() can now in certain cases return
+-EPROBE_DEFER, and the consequences of letting request_irq() effectively
+convert that into -EINVAL, even at probe time rather than later on.
+So it might be better to check just now.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v5.16-rc7
+Fixes: 1d473c2cb9fe ("MIPS: ath79: Move the GPIO driver to drivers/gpio")
+Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
+---
+ drivers/gpio/gpio-ath79.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3bf6f013980a9cf255c52135b74339a8fc332dfc
-
-Thank you!
-
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index 678ddd375891..11f49998e56a 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -285,7 +285,13 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+ 					     GFP_KERNEL);
+ 		if (!girq->parents)
+ 			return -ENOMEM;
+-		girq->parents[0] = platform_get_irq(pdev, 0);
++
++		err = platform_get_irq(pdev, 0);
++		if (err < 0)
++			return err;
++
++		girq->parents[0] = err;
++
+ 		girq->default_type = IRQ_TYPE_NONE;
+ 		girq->handler = handle_simple_irq;
+ 	}
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.25.1
+
