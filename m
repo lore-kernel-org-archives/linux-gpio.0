@@ -2,26 +2,26 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92FAC433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Dec 2021 20:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD55C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Dec 2021 20:10:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353633AbhLXUKK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 24 Dec 2021 15:10:10 -0500
-Received: from mout.gmx.net ([212.227.15.18]:46385 "EHLO mout.gmx.net"
+        id S1353654AbhLXUKN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 24 Dec 2021 15:10:13 -0500
+Received: from mout.gmx.net ([212.227.17.22]:59029 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353566AbhLXUKC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 24 Dec 2021 15:10:02 -0500
+        id S1353606AbhLXUKJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 24 Dec 2021 15:10:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1640376594;
-        bh=xgXOvOiI5djkt9bgMVQwlcwa+uldX2qpAJfM9bdL9Dk=;
+        s=badeba3b8450; t=1640376601;
+        bh=uCU4WScJHVUxlsEOqBn3UTIKUZe4k1mrK8GC9hWSR/4=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=eW8U6CGS/A39+2N3r17jp1rd8k/Soa3C42l4bgi8ddg/dSIwUGK2sXBhNW0/I+iox
-         K34UB8lhSiq3hjiBoWRx9a4l2CouE8TzH4xY3hhn6SI8WDzQU/flKSLs4Tw+zyAKbS
-         baPu33Km2YzR0g/b+vi12LjSKvlsxUBpwbCtZMUI=
+        b=JYNhAuDVTYYslQQ0FcWkfibQ/J4NHCBDv0bgyFS7hYueTUxkgXYAMFYSnx/ay0tLr
+         0JQCdokTIKFQK5edsPKUMlud6sh0MXeCQD9sYTxjgJPHRtE2aNxYEJz9SdIkd6LyCp
+         QVgR5B0UiQoLdnIpL2af6c/FXjlp4LpNHQRcM54g=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M7sDg-1n4ilU1PZy-0053e0; Fri, 24
- Dec 2021 21:09:54 +0100
+Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ma24y-1mvPOX1DYC-00VxCv; Fri, 24
+ Dec 2021 21:10:01 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -35,263 +35,156 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Nancy Yuen <yuenn@google.com>,
         Benjamin Fair <benjaminfair@google.com>,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH v3 4/9] dt-bindings: pinctrl: Add Nuvoton WPCM450
-Date:   Fri, 24 Dec 2021 21:09:30 +0100
-Message-Id: <20211224200935.93817-5-j.neuschaefer@gmx.net>
+Subject: [PATCH v3 6/9] ARM: dts: wpcm450: Add pinctrl and GPIO nodes
+Date:   Fri, 24 Dec 2021 21:09:32 +0100
+Message-Id: <20211224200935.93817-7-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211224200935.93817-1-j.neuschaefer@gmx.net>
 References: <20211224200935.93817-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jNQWeymtJVy6MUZXGKffNUHgUkUWkDV45wh7rG8QpjZRI7gRyz5
- +QM4XZwnMPW9VKkAwgnOZKQsc7tFCvlJ+GBiY9bCEx/3bJd3lyXe4+RvNNaBWSn3c3qc3uj
- YOinzF0LXh4EiTo52UiW+mFbexNxUUeQDSrdL1yw6Vij+oRYFugZoxMOSchn+vnQOj80W8N
- lp0a0hYpetET5r9EvGpnw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WVy6bPb/yBA=:hUikcXEA4vZWNW/yTiufbz
- MhpQYNJSpPoujuc9taQMDvjOzscgrPptHHUHppr+1jXV5ZPSuTra2e23TjDaRT9h20dV6geba
- 54lkitkGfxJswUN1lwUKWXhnFgn8yUzVe8Nsg6LIweqGpkO7Uv+CwWVHToHUqK5oLjaTYPuZ4
- AmaWHxyZkl0v1KMyxHHcunj65GoH1Ut/4dHywyOTQ872s6AQRRudoK+aeSx0Mj+nnNr5ylNRt
- T6TPUpSVkZLqKePQEFjU9uFbQeTcpogSro+DiTQ1dUE+2p+p6XUVzz6wI6CF5D7nu4sL8pVw8
- UWwSAKAmtfGKREmG5i1JAdpcxpcsvxaNdnOGhFAiPhVfYFMOw3KbUShIID0d2mjBdV4u9qWDM
- H7zIKrt78jak8BaeDF3c02aglABn86TWHpblDla86C3/2uCeXmM1TrAvws61hH1Sg/Q0SWfrg
- hDoCUZ3eHoNCzE2+9Pm2LbvpyV9So4kPXM+TNNhJWoQ2GyHxo81m9DErCTCH1858iiQjEj5ow
- Nkcz75UcniscotpGXbaa1nuBXtnOF0xpQWTqd6xufM2zxkbz5m+uqhoNSfyQ4fuwDuUpAOcJ4
- ZbWXdphB7VuZ41UXxNa8Cr1+GMDlWJkkqhWka8p+xDi4/3oybYZVPOeyBR9D6lJxCkQK9XcdH
- z0v+ajbEJ+z+avVd55ErGa23r+KEQM3QWDTsiy0EBFFYKcyh66ysP0MYnkaoFWIuBcl9c3p10
- vFyZVcdpMH4m3wZd0aAJuby1Erb0vC9tjd8QDbj2AG9B9kZESsuTCQV9okcFIfl/PiN3Qaslq
- FANvad285E3mFsPyy1BCltb+jlJYhLUN9hoozcklRHNmlts4K99OLAnH8oLzzL9fpkpigtYUq
- xpN5Dqe2nptf4PLNOdvm5816nUIBVU/vPQjHLKVCBYRE6S2xvx79XMcyUTKdo7Y4ULazCcEGl
- g3yUJE9x7GkW9yYNnr/EkK54rVSMHP5qbkTAuKTF7N5WvZCGhg/e5VegGc1LnRBZZFN7SzIMe
- mJ5FdRkcR0tu9EYmz5U0V/x/qTOZp2YtoUQ8p1M+TYOBKfvPn2kMQaKlhtFIfz9zW7XNzzBWP
- BIgTHpPcOyg41s=
+X-Provags-ID: V03:K1:QwwPzIh6AfwnFWJ3JODbacJDi9/Y8M9tp0rFd84RF82EP/+RFgQ
+ 80FvxQ+8nqjHZTYX4BNpcAFq3vl8GRZhc+wfDVWvL9sZjHFNh60GU1Ml/BBr+zjAKU8xAn2
+ plZIzrh1xM5yN3hxUI3S3gcbhkV41WOBJFmBuD4koXa4Y/dNClduK2Xk3s4WZzrDP/+5Y/Y
+ TVJQkKLldzLZspBLWSziw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iGrDbB7wE74=:/kjfEZKTi56F2zQ+PrhGeJ
+ Q15rqlmFM0uyLn9JsV17zK92tWDXNwh3NdtAOpPeKGQc1eQ92FBZT0DVGy8auHYJvRbpqETZU
+ 8w6W0MzmMQUG7DD+v4EOdTz7G4T0eHMjSHEBf+DYpQcEs5nwsi2fNk0RxFxuBcOx2XErcIfoc
+ Frs07VqL6UdHbGb6ZcNXMw/bPCwUfcyS9kylswgi/KQ6JN7hlIRFFXkEJR0CJXG3XSJl8VNzd
+ vZlIwgn7wsmAlUNc1xX+X/zDB271k9aGDEfJfTG1zRe6bheDY4Qv5U3i+jMVD8ETpl0XrGXbJ
+ lHHnOCdw7lC+K/8TdUBoCrWy/XmW3mKsXiOmnJLJA96+T4+555dC8INsdF6XWlAbo0ee2k0Vc
+ Cp0UU/nJf7wyZ93LCkGQlYuek7h1qe5VJQ/LW637BMPaM+8AHrRKoe6xtZK63Xxie0cWbdePC
+ EWbS82T7Z1jkGGoBNRGcmPPuVfnA4SQGxmRq7NLnKJvrLhPXL/zoc9hRWs+vBCQr+evSeua1V
+ IGvWvuieWapnekYxx8dAtdACenVDjs0hl8jtBJZsxqDqJAzT9J72qYr3nljgUZ9hfU5ulBnTw
+ 1K32yPiqqyi0L45iHqWZXgbbPPzBeCPwmAUpb6L7j3CXXy4s2C6hg7k+AMHHslAgpVWrPfFFa
+ ddp6hpZgDPyGYlJWz806DBcmtcSk+jMR5iysRgWjNdchnPkJE6dy+lMB8MC2eOmxWMx8cDUwv
+ TFaGD/tk25pVaRarn+AhEI2b6k84VyNqGS5tdpE8jNj8kski/B94glhadmx3POPSTgznc3heg
+ FL/jfRfwP+6FHNnj5oE887BUotBjIcPiHpgLh5RHM/l9FnS0CpNO/bBIyaXEmfiapcp+Yrn33
+ 6D+wJkayOK0PG9UMLd5OgxLvzXi+FSWIMTwdl50fp+RoqWAoZYOLrb0u8LXna0Vz66zzIW8dp
+ WoCIswLAaMfrp+XZ9Jd/+9pk69soHomrZgJ478oikiIhRfXWYRmPwhFGhfEfIRubjIL1duE1k
+ BuRBAB8hspO8N6FsR+Vur6ss9CZCkHWog0osrxpntdX1VPTZnbMMLBd1aeIqWLZxBP4ZIANPO
+ RWUN1gVL00FLcE=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This binding is heavily based on the one for NPCM7xx, because the
-hardware is similar. There are some notable differences, however:
-
-- The addresses of GPIO banks are not physical addresses but simple
-  indices (0 to 7), because the GPIO registers are not laid out in
-  convenient blocks.
-- Pinmux settings can explicitly specify that the GPIO mode is used.
-
-Certain pins support blink patterns in hardware. This is currently not
-modelled in the DT binding.
+This patch adds the pin controller and GPIO banks to the devicetree for th=
+e
+WPCM450 SoC.
 
 Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 =2D--
 v3:
-- Make changes suggested by Rob Herring
-- Fix lint errors
-- Simplify child node patterns
-- Remove if/type=3Dobject/then trick
-- Reduce interrupts.maxItems to 3: 4 aren't necessary
-- Replace list of gpio0/1/2/etc. with pattern
+- Add Linus' R-b tag
 - Remove nuvoton,interrupt-map again, to simplify the binding
 - Make tuples clearer
 
 v2:
-- https://lore.kernel.org/lkml/20211207210823.1975632-5-j.neuschaefer@gmx.=
+- https://lore.kernel.org/lkml/20211207210823.1975632-7-j.neuschaefer@gmx.=
 net/
-- Move GPIO into subnodes
-- Improve use of quotes
-- Remove unnecessary minItems/maxItems lines
-- Remove "phandle: true"
-- Use separate prefixes for pinmux and pincfg nodes
-- Add nuvoton,interrupt-map property
-- Make it possible to set pinmux to GPIO explicitly
+- Move GPIO banks into subnodes
+- Add /alias/gpio*
 
 v1:
-- https://lore.kernel.org/lkml/20210602120329.2444672-5-j.neuschaefer@gmx.=
+- https://lore.kernel.org/lkml/20210602120329.2444672-7-j.neuschaefer@gmx.=
 net/
 =2D--
- .../pinctrl/nuvoton,wpcm450-pinctrl.yaml      | 159 ++++++++++++++++++
- 1 file changed, 159 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm=
-450-pinctrl.yaml
+ arch/arm/boot/dts/nuvoton-wpcm450.dtsi | 72 ++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pin=
-ctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinc=
-trl.yaml
-new file mode 100644
-index 0000000000000..2d15737b5815e
-=2D-- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.ya=
-ml
-@@ -0,0 +1,159 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/nuvoton,wpcm450-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi b/arch/arm/boot/dts/nu=
+voton-wpcm450.dtsi
+index a17ee70085dd0..66c35626c80a6 100644
+=2D-- a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
++++ b/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
+@@ -8,6 +8,17 @@ / {
+ 	#address-cells =3D <1>;
+ 	#size-cells =3D <1>;
+
++	aliases {
++		gpio0 =3D &gpio0;
++		gpio1 =3D &gpio1;
++		gpio2 =3D &gpio2;
++		gpio3 =3D &gpio3;
++		gpio4 =3D &gpio4;
++		gpio5 =3D &gpio5;
++		gpio6 =3D &gpio6;
++		gpio7 =3D &gpio7;
++	};
 +
-+title: Nuvoton WPCM450 pin control and GPIO
+ 	cpus {
+ 		#address-cells =3D <1>;
+ 		#size-cells =3D <0>;
+@@ -77,5 +88,66 @@ aic: interrupt-controller@b8002000 {
+ 			interrupt-controller;
+ 			#interrupt-cells =3D <2>;
+ 		};
 +
-+maintainers:
-+  - Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
++		pinctrl: pinctrl@b8003000 {
++			compatible =3D "nuvoton,wpcm450-pinctrl";
++			reg =3D <0xb8003000 0x1000>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
 +
-+properties:
-+  compatible:
-+    const: nuvoton,wpcm450-pinctrl
++			gpio0: gpio@0 {
++				reg =3D <0>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++				interrupts =3D <2 IRQ_TYPE_LEVEL_HIGH>,
++					     <3 IRQ_TYPE_LEVEL_HIGH>,
++					     <4 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++			};
 +
-+  reg:
-+    maxItems: 1
++			gpio1: gpio@1 {
++				reg =3D <1>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++				interrupts =3D <5 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++			};
 +
-+  '#address-cells':
-+    const: 1
++			gpio2: gpio@2 {
++				reg =3D <2>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
 +
-+  '#size-cells':
-+    const: 0
++			gpio3: gpio@3 {
++				reg =3D <3>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
 +
-+patternProperties:
-+  # There are three kinds of subnodes:
-+  # 1. a GPIO controller node for each GPIO bank
-+  # 2. a pinmux node configures pin muxing for a group of pins (e.g. rmii=
-2)
-+  # 3. a pinconf node configures properties of a single pin
++			gpio4: gpio@4 {
++				reg =3D <4>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
 +
-+  "^gpio":
-+    type: object
++			gpio5: gpio@5 {
++				reg =3D <5>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
 +
-+    description:
-+      Eight GPIO banks (gpio@0 to gpio@7), that each contain between 14 a=
-nd 18
-+      GPIOs. Some GPIOs support interrupts.
++			gpio6: gpio@6 {
++				reg =3D <6>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
 +
-+    properties:
-+      reg:
-+        description: GPIO bank number (0-7)
-+
-+      gpio-controller: true
-+
-+      "#gpio-cells":
-+        const: 2
-+
-+      interrupt-controller: true
-+
-+      "#interrupt-cells":
-+        const: 2
-+
-+      interrupts:
-+        maxItems: 3
-+        description:
-+          The interrupts associated with this GPIO bank
-+
-+    required:
-+      - reg
-+      - gpio-controller
-+      - '#gpio-cells'
-+
-+  "^mux-":
-+    $ref: pinmux-node.yaml#
-+
-+    properties:
-+      groups:
-+        description:
-+          One or more groups of pins to mux to a certain function
-+        items:
-+          enum: [ smb3, smb4, smb5, scs1, scs2, scs3, smb0, smb1, smb2, b=
-sp,
-+                  hsp1, hsp2, r1err, r1md, rmii2, r2err, r2md, kbcc, dvo,
-+                  clko, smi, uinc, gspi, mben, xcs2, xcs1, sdio, sspi, fi=
-0,
-+                  fi1, fi2, fi3, fi4, fi5, fi6, fi7, fi8, fi9, fi10, fi11=
-,
-+                  fi12, fi13, fi14, fi15, pwm0, pwm1, pwm2, pwm3, pwm4, p=
-wm5,
-+                  pwm6, pwm7, hg0, hg1, hg2, hg3, hg4, hg5, hg6, hg7 ]
-+      function:
-+        description:
-+          The function that a group of pins is muxed to
-+        enum: [ smb3, smb4, smb5, scs1, scs2, scs3, smb0, smb1, smb2, bsp=
-,
-+                hsp1, hsp2, r1err, r1md, rmii2, r2err, r2md, kbcc, dvo0,
-+                dvo1, dvo2, dvo3, dvo4, dvo5, dvo6, dvo7, clko, smi, uinc=
-,
-+                gspi, mben, xcs2, xcs1, sdio, sspi, fi0, fi1, fi2, fi3, f=
-i4,
-+                fi5, fi6, fi7, fi8, fi9, fi10, fi11, fi12, fi13, fi14, fi=
-15,
-+                pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, pwm6, pwm7, hg0, hg1,
-+                hg2, hg3, hg4, hg5, hg6, hg7, gpio ]
-+
-+    dependencies:
-+      groups: [ function ]
-+      function: [ groups ]
-+
-+    additionalProperties: false
-+
-+  "^cfg-":
-+    $ref: pincfg-node.yaml#
-+
-+    properties:
-+      pins:
-+        description:
-+          A list of pins to configure in certain ways, such as enabling
-+          debouncing
-+        items:
-+          pattern: "^gpio1?[0-9]{1,2}$"
-+
-+      input-debounce: true
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    pinctrl: pinctrl@b8003000 {
-+      compatible =3D "nuvoton,wpcm450-pinctrl";
-+      reg =3D <0xb8003000 0x1000>;
-+      #address-cells =3D <1>;
-+      #size-cells =3D <0>;
-+
-+      gpio0: gpio@0 {
-+        reg =3D <0>;
-+        gpio-controller;
-+        #gpio-cells =3D <2>;
-+        interrupts =3D <2 IRQ_TYPE_LEVEL_HIGH>,
-+                     <3 IRQ_TYPE_LEVEL_HIGH>,
-+                     <4 IRQ_TYPE_LEVEL_HIGH>;
-+      };
-+
-+      mux-rmii2 {
-+        groups =3D "rmii2";
-+        function =3D "rmii2";
-+      };
-+
-+      pinmux_uid: mux-uid {
-+        groups =3D "gspi", "sspi";
-+        function =3D "gpio";
-+      };
-+
-+      pinctrl_uid: cfg-uid {
-+        pins =3D "gpio14";
-+        input-debounce =3D <1>;
-+      };
-+    };
-+
-+    gpio-keys {
-+      compatible =3D "gpio-keys";
-+      pinctrl-names =3D "default";
-+      pinctrl-0 =3D <&pinctrl_uid>, <&pinmux_uid>;
-+
-+      uid {
-+        label =3D "UID";
-+        linux,code =3D <102>;
-+        gpios =3D <&gpio0 14 GPIO_ACTIVE_HIGH>;
-+      };
-+    };
++			gpio7: gpio@7 {
++				reg =3D <7>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
++		};
+ 	};
+ };
 =2D-
 2.30.2
 
