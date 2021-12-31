@@ -2,96 +2,185 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EFCC433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 30 Dec 2021 22:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAECC4321E
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Dec 2021 16:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242210AbhL3WJP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 30 Dec 2021 17:09:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230094AbhL3WJO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Dec 2021 17:09:14 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B881C061574;
-        Thu, 30 Dec 2021 14:09:14 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id q14so95013852edi.3;
-        Thu, 30 Dec 2021 14:09:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9fO4xO7NNKZaCmkJK0S4qOaQjqknEjPN6Tb/y58iIAE=;
-        b=jB4HxVZtVS4EyhNwvAkbMTGe/LdlFRTxmCOzQDI89mCYySIaxJuR/SJdKvJ3ufUl/y
-         nfz/N855jhI9UT7uzId0A7jJm7t80Tnjwb0vvzLnXtBYk11IdSlImbct7l1dXvJnri8D
-         Upn+axPHiZZFsUWMIHBv5kX9INAwm8dbnHeCLRJL4BnbZZQKKPK+nMBzo1B6CEhfevdU
-         4At2gSbhQM+iTHI8vTgkJA7rzgb9sVtQjmeEXXQRVihULHitylBLuEV9urMbdGNYp3En
-         nineYS7rCe9amOt2rpGy0W45giP5ZPojrMleRQT5UsB6jYBBgjFmAbT9Q1G/aRawVLRd
-         M1NQ==
+        id S231255AbhLaQUQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Dec 2021 11:20:16 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:54824
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229687AbhLaQUQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 31 Dec 2021 11:20:16 -0500
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E3131406EA
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Dec 2021 16:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1640967614;
+        bh=RokD/DGJrMlgd2E3s2EkgL7/9tvyF0Jd9JNsHnvOz7M=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=ZY1yHrwBbNmmWOuGIN4KcdSQ3FBtJSHZFkW4Y8FEUDiqICqE6b3viH/gBOsyd5Kx7
+         6XXa+7rb4R1plb0rJbf2XUq2QUhtNFQaUfwnFxZPza+c+y0OkL+zCOhJa7YFrrlVpn
+         ZzZhQ5sz/bbV3vA0JzCSSQNXDBY399YLSZJUwEQiYq20EBc0m/G5AmbBiDUP8WNnU0
+         d+izqebQ01fPN4/0jkAdEv4xSct+IvF62HRMyUEX5HB8lLOaaInqZ+2ewF8HEE0vOt
+         n8Ku+7/yZfWW/Meue77XsScwZSj18DPyu7QECWpZBBktGki0BoqLRtSQdBfMbGp7AA
+         +hWczIqlTegDQ==
+Received: by mail-lj1-f198.google.com with SMTP id r20-20020a2eb894000000b0021a4e932846so9493854ljp.6
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Dec 2021 08:20:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9fO4xO7NNKZaCmkJK0S4qOaQjqknEjPN6Tb/y58iIAE=;
-        b=Ewievfgnhj2aSE/KjfDPucwsNgLNhjcxFjJXl7GWXbrtlXR7Z++wkTKo4YypQS540M
-         /des0DMdOlSgJjWkIvCXlHMZBATIQcfO1Q6dThhKQ2tHYOMNNer2JTPGeJgVs14BXCtT
-         j1m/IGyUnKlRhypLmARgeGyQYlEPOUK5CPy8Zy8+hDL0ILFIIQ/VB2LuLHWTygci7E8j
-         djBh2HAyvXVF3WlOCQzskjiINlEJR3UsteLntkokUISonGuJzOIxCIRuH8OhUzDFTVAs
-         7tkVFN1zWuC7NdL9SZl48ACoR218agn1XshZ+kA3QqTt0JuLQNE5yMtpNyeXeeT4lZTb
-         x3OA==
-X-Gm-Message-State: AOAM533DVm+TP31ZZbm0tEjbP05XcK3U7zKghr4BBrfOfsoHIa2P8qnL
-        jnm8yT0dReN75HUV4qq4kurY8xW80OVsbV+VLdI=
-X-Google-Smtp-Source: ABdhPJwm1oRq60d2pmgoT5DTcTtrHQ23EXvLPaQWHXG3LWn+TVf6ggb3MjU0IpAfSWv+tjOdzX5jfHxJVZeCmnrjRvY=
-X-Received: by 2002:a17:906:685:: with SMTP id u5mr25866667ejb.543.1640902153070;
- Thu, 30 Dec 2021 14:09:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20211229121605.10513-1-qianggui.song@amlogic.com> <20211229121605.10513-4-qianggui.song@amlogic.com>
-In-Reply-To: <20211229121605.10513-4-qianggui.song@amlogic.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 30 Dec 2021 23:09:02 +0100
-Message-ID: <CAFBinCDPtiPHZ7BkTLoqpd1HiNQa1n45MeByzGHtHmK=-oOxzQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] pinctrl: meson: add pinctrl driver support for
- Meson-S4 Soc
-To:     Qianggui Song <qianggui.song@amlogic.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RokD/DGJrMlgd2E3s2EkgL7/9tvyF0Jd9JNsHnvOz7M=;
+        b=ZQDyaSNGT14gVxF9iRjwqM/mtRusx0ZxZLUEaIod3qdDAee9k5vMVPZq1mNr9ihDYU
+         9+TuSJIqYEF0hGcCGJ7j4ufcmJX9AVwYTWqolnwwHVyKHx4OIWqMFunZ9xG9ZhFJ0f1a
+         x3DIfzQMtNyo1tevq9aFFEA+CcAGVKyuZ6EXjPYayQWztljYo0mGS0rJmKx4B1j05F1Q
+         MuohuddbrLXFm7wyGyabwFPgtoTUAFFJ5ZfBmsjS5Gne0xXaOfiKI5IfIUu9gqkaxuFU
+         uJs9W1s2kR2S6vvBcKT8bzlH+SbBxGJJMgoBzfHX9RX/iDWKsp9Wf4H0IS2W+AbyntGy
+         z2Vw==
+X-Gm-Message-State: AOAM533xSYEdVKxo2nRUOFRU5OvIPK4aJggzQu2/cW97pAwSh2qz9Exs
+        1WfJ8u11JN02YyD9bi8k7yvnyG+tMIAuzLs/+FkH9LVlvg3w93Qm2TthBYwguC/nwmGaI5vdgGv
+        HwNfkaxz4lB/IGKvhdD680Rd8E9OKZ6LQHfBnpTo=
+X-Received: by 2002:ac2:4e11:: with SMTP id e17mr32393588lfr.317.1640967613851;
+        Fri, 31 Dec 2021 08:20:13 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwquDx4H3zk3uO8+LuXX9iCZ840MCSzCuuUfqQ90VmDyuUyAI+f89vfxZ/mSt/2j2z4jKlOqA==
+X-Received: by 2002:ac2:4e11:: with SMTP id e17mr32393571lfr.317.1640967613658;
+        Fri, 31 Dec 2021 08:20:13 -0800 (PST)
+Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id bx10sm2817607ljb.3.2021.12.31.08.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Dec 2021 08:20:13 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCH 00/24] pinctrl: dt-bindings: samsung: convert to dtschema
+Date:   Fri, 31 Dec 2021 17:19:06 +0100
+Message-Id: <20211231161930.256733-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Dec 29, 2021 at 1:16 PM Qianggui Song <qianggui.song@amlogic.com> wrote:
->
-> Add new pinctrl driver for Amlogic's Meson-S4 SoC which share the
-> same register layout as the previous Meson-A1.
->
-> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
-Due to lack of a datasheet to compare this with I cannot properly review this.
-Instead I confirm that this generally looks good apart from two very
-small nit-picks:
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hi,
 
-I suggest waiting for Jerome's review before re-sending this series.
+Dependencies
+============
+1. Patch 2 ("pinctrl: samsung: accept GPIO bank nodes with a suffix") is
+   necessary for DTS patches, so would be nice to apply it before this merge
+   window.
 
-[...]
-> +static const char * const mclk_1_groups[] = {
-> +       "mclk_1_c", "mclk_1_d", "mclk_1_h", "mclk_2",
-> +
-There's an extraneous empty line here.
-
-[...[
-> +static const char * const pwm_b_groups[] = {
-> +       "pwm_b_d", "pwm_b_x",
-> +
-There's an extraneous empty line here.
-
+2. Everything else is independent.
 
 Best regards,
-Martin
+Krzysztof
+
+Krzysztof Kozlowski (24):
+  pinctrl: samsung: drop pin banks references on error paths
+  pinctrl: samsung: accept GPIO bank nodes with a suffix
+  ARM: dts: exynos: drop unused pinctrl defines in Exynos3250
+  ARM: dts: exynos: simplify PMIC DVS pin configuration in Odroid XU
+  ARM: dts: exynos: override pins by label in Peach Pit
+  ARM: dts: exynos: simplify PMIC DVS pin configuration in Peach Pit
+  ARM: dts: exynos: override pins by label in Peach Pi
+  ARM: dts: exynos: simplify PMIC DVS pin configuration in Peach Pi
+  ARM: dts: s3c64xx: drop unneeded pinctrl wake-up interrupt mapping
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos3250
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos4210
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos4412
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos5250
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos5260
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos5410
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos542x/5800
+  arm64: dts: exynos: align pinctrl with dtschema in Exynos5433
+  arm64: dts: exynos: align pinctrl with dtschema in Exynos7
+  arm64: dts: exynos: align pinctrl with dtschema in Exynos850
+  arm64: dts: exynos: align pinctrl with dtschema in ExynosAutov9
+  ARM: dts: s3c24xx: align pinctrl with dtschema
+  ARM: dts: s3c64xx: align pinctrl with dtschema
+  ARM: dts: s5pv210: align pinctrl with dtschema
+  dt-bindings: pinctrl: samsung: convert to dtschema
+
+ .../pinctrl/samsung,pinctrl-gpio-bank.yaml    |  52 +++
+ .../pinctrl/samsung,pinctrl-pins-cfg.yaml     |  81 ++++
+ .../samsung,pinctrl-wakeup-interrupt.yaml     |  76 ++++
+ .../bindings/pinctrl/samsung,pinctrl.yaml     | 381 +++++++++++++++++
+ .../bindings/pinctrl/samsung-pinctrl.txt      | 383 ------------------
+ MAINTAINERS                                   |   2 +-
+ arch/arm/boot/dts/exynos3250-artik5.dtsi      |  10 +-
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi     | 165 ++++----
+ arch/arm/boot/dts/exynos4210-i9100.dts        |  30 +-
+ arch/arm/boot/dts/exynos4210-origen.dts       |   2 +-
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi     | 226 +++++------
+ arch/arm/boot/dts/exynos4210-smdkv310.dts     |   4 +-
+ arch/arm/boot/dts/exynos4210-trats.dts        |   6 +-
+ .../boot/dts/exynos4210-universal_c210.dts    |  12 +-
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi   |   4 +-
+ arch/arm/boot/dts/exynos4412-itop-elite.dts   |   2 +-
+ .../boot/dts/exynos4412-itop-scp-core.dtsi    |   2 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi       |  30 +-
+ .../boot/dts/exynos4412-odroid-common.dtsi    |   8 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts      |   2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts       |   4 +-
+ arch/arm/boot/dts/exynos4412-p4note.dtsi      |  44 +-
+ arch/arm/boot/dts/exynos4412-pinctrl.dtsi     | 252 ++++++------
+ arch/arm/boot/dts/exynos4412-smdk4412.dts     |   4 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts      |   2 +-
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi     | 220 +++++-----
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |   2 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi |  22 +-
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts    |   2 +-
+ arch/arm/boot/dts/exynos5250-snow.dts         |   2 +-
+ arch/arm/boot/dts/exynos5250-spring.dts       |  20 +-
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi     | 148 +++----
+ arch/arm/boot/dts/exynos5260-xyref5260.dts    |   2 +-
+ arch/arm/boot/dts/exynos5410-odroidxu.dts     |  22 +-
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi     | 170 ++++----
+ arch/arm/boot/dts/exynos5410-smdk5410.dts     |   4 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |   2 +-
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |  89 ++--
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi     | 194 ++++-----
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |   6 +-
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |   2 +-
+ .../boot/dts/exynos5422-odroidxu3-common.dtsi |   6 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |  89 ++--
+ arch/arm/boot/dts/s3c2416-pinctrl.dtsi        |  60 +--
+ arch/arm/boot/dts/s3c6410-mini6410.dts        |   4 +-
+ arch/arm/boot/dts/s3c64xx-pinctrl.dtsi        | 210 +++++-----
+ arch/arm/boot/dts/s3c64xx.dtsi                |  16 +-
+ arch/arm/boot/dts/s5pv210-aquila.dts          |   2 +-
+ arch/arm/boot/dts/s5pv210-aries.dtsi          |  40 +-
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts     |  12 +-
+ arch/arm/boot/dts/s5pv210-galaxys.dts         |  16 +-
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi        | 226 +++++------
+ .../boot/dts/exynos/exynos5433-pinctrl.dtsi   | 211 +++++-----
+ .../dts/exynos/exynos5433-tm2-common.dtsi     | 259 ++++++------
+ .../boot/dts/exynos/exynos7-espresso.dts      |   6 +-
+ .../boot/dts/exynos/exynos7-pinctrl.dtsi      | 176 ++++----
+ .../boot/dts/exynos/exynos850-pinctrl.dtsi    |  52 +--
+ .../boot/dts/exynos/exynosautov9-pinctrl.dtsi |  50 +--
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |  86 +++-
+ 59 files changed, 2212 insertions(+), 2000 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+
+-- 
+2.32.0
+
