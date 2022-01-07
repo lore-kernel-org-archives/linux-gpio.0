@@ -2,138 +2,80 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09677C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Jan 2022 18:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EEAC4332F
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Jan 2022 19:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240695AbiAGSKl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Jan 2022 13:10:41 -0500
-Received: from mout.perfora.net ([74.208.4.197]:56811 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240523AbiAGSKk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 7 Jan 2022 13:10:40 -0500
-Received: from localhost.localdomain ([194.191.235.54]) by mrelay.perfora.net
- (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1MY6bJ-1ms0S53enN-00YRgs;
- Fri, 07 Jan 2022 19:03:45 +0100
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Alex Marginean <alexandru.marginean@nxp.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Niedermaier <cniedermaier@dh-electronics.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lucas Stach <dev@lynxeye.de>, Martin KaFai Lau <kafai@fb.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        =?UTF-8?q?Oliver=20St=C3=A4bler?= <oliver.staebler@bytesatwork.ch>,
-        Olof Johansson <olof@lixom.net>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Will Deacon <will@kernel.org>, Yonghong Song <yhs@fb.com>,
-        bpf@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH v1 00/14] arm64: prepare and add verdin imx8m mini support
-Date:   Fri,  7 Jan 2022 19:03:00 +0100
-Message-Id: <20220107180314.1816515-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.33.1
+        id S229843AbiAGTEx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Jan 2022 14:04:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50866 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229532AbiAGTEx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Jan 2022 14:04:53 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3700C061574;
+        Fri,  7 Jan 2022 11:04:52 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B476AB826D7;
+        Fri,  7 Jan 2022 19:04:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B472C36AF7;
+        Fri,  7 Jan 2022 19:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641582290;
+        bh=nNx8Ez8RuJzMEX0m/nrXYhE49DyWxePNuMQ+s2d9OD0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=m5gR7RqmffLGvhknYYWgFF3VAibsPeF8pQrWF6J3+O0Kwz6qm6XXlJkcskjX1N4Q5
+         /jKuE1HIfpPOcj538lEcF7XofVhmgV9bZnspFkZYIqt25o+CBtAuYTuwK07E4O4Eao
+         IgV8kJKtof1HzpHJ448rDdWmv4pdIolVmAbycc8M+57w03HK8IHG//VGh/BuFQeuW1
+         UYeWn8ZQhIBB0Nowg+kYaTHNYL/q61abrwLil2XugJ5CHdaYnlk0M5sBTabv0yV3fb
+         wihs/R7/mPeK7wvKs32NSOyaxq+xdF+lXIsK6Ny4Tee9ezGd6ggzhvCI8qQQxa20qw
+         Innkz7FsgnU5g==
+Received: by mail-ed1-f48.google.com with SMTP id u25so25766680edf.1;
+        Fri, 07 Jan 2022 11:04:50 -0800 (PST)
+X-Gm-Message-State: AOAM530KrgBE2f92QdT2Ea7Yzt3zwGlt6mj6RrKP18ficABe++9EAWJh
+        LidLXd1Brzm5BJ+bFXgB/0k1oCFgh2+7OWOaMQ==
+X-Google-Smtp-Source: ABdhPJw+wXf/3puw/6oK452xH+IpOasvCo6eBekERmd/axjyL/WBlDh/+JCf89iqY3bdCvCGkFWJtxidbbj8CqZW4bY=
+X-Received: by 2002:aa7:ce88:: with SMTP id y8mr5876517edv.303.1641582288710;
+ Fri, 07 Jan 2022 11:04:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:lQAYnaUngUYQ76uILRN84VPgMhmWpzCUfkc68N9mfHP4fOWz9oG
- srl/W09VoexdO/nFLY0mzed7FqBOJPadFZqt/OIN3041PKAPxqnCQJNEY1DKDFtHBKL2YwP
- kp+6wSJMkeNyKxfobFhY3qke5JUzQ16a2+qm2po2aK/ANj/EBn5SwC4WCCXIrCAj/8BFK10
- 5fNu6Iv0Vj8xvzCnz0Kyg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0IwuyNRbEsc=:Jy2tkBEW4PLk6bjhWL7qhS
- 9wUDXKFgD5OpK5Imkis0alQcUy5nOdvowQiQSnPUtnxHZYF1uo2ZquuDUZ2XIaVXxX2AxpiTc
- 0Qb+Jw/TXqGEeCMbKH+pLnq+YdwZAWn9EzeO9SzuNjSaPeg8KvJX2UjyUmy0oURVm6eVrb3rq
- UH32x9+M7FlI8/EnWk3uDYhd6Ks/xwluh2OCu287JTF79/eyTucKwc9tDZHabWnO5OKliC+/+
- QZP8TkxFYoIOvW7jBHXdHqDybsFoVYjz9RKt+qj++FoJLsQ6LDK6eAgUFzA4CDbwqw44NzwiP
- HWbmtyLBmOca0s/GAWGpLVi6KUxh26A3cNhpgw7rPdkdYvTaP/hj3rjHhCvhX3YJqwT/BYFlj
- ECyqiEpq8CZuBTW99AVBpc/i4xfChyoxWCECBwhRqL+LaiAZ2a9/PJ+AIqv5372JtfIH703za
- dj5QsgSVQnbmMcV3X3wXIMbyE5ZPBHlVfWM+JjAiau0qYFsCsU+DgNGeX2wAd5yIAEtSWwfrB
- uYT5ut4kcg0GBEhfLdPy1yyDJK1/yUSWzUt20nPVWVwlYFtc+hYlXSrrANCpsk+hGnbGX2Ma9
- iTsiNkqis9Ixm3orId5eQSDMDpCmxv1c9tpy0ks7qf+OYR4uPtHO7rPB5Y0lQmu81ga6p4Ayf
- uEVuh2ovTteBvQONK/CBzpp9CQTD/ajZS9m6emAXOEK3BqEJsVpsHftu4Mf71T4aBQoE=
+References: <20220107115345.9075-1-tinghan.shen@mediatek.com> <20220107115345.9075-3-tinghan.shen@mediatek.com>
+In-Reply-To: <20220107115345.9075-3-tinghan.shen@mediatek.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 7 Jan 2022 13:04:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKctALMWbNytCP7TGKEcCaoOVpm4eHQ3PUHDy2AKrwfmg@mail.gmail.com>
+Message-ID: <CAL_JsqKctALMWbNytCP7TGKEcCaoOVpm4eHQ3PUHDy2AKrwfmg@mail.gmail.com>
+Subject: Re: [PATCH v8 2/4] dt-bindings: arm: cpus: Add cortex-a78 compatible
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Ryder Lee <ryder.lee@kernel.org>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Fri, Jan 7, 2022 at 5:54 AM Tinghan Shen <tinghan.shen@mediatek.com> wrote:
+>
+> Add ARM cpu type cortex-a78.
+>
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/arm/cpus.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
+I already have a patch for this pending for 5.17.
 
-Fix strange hex notation and gpio-hog example, rebuild default
-configuration, enable various relevant configuration options mainly to
-be built as modules, add toradex,verdin-imx8mm et al. to dt-bindings and
-finally add initial support for verdin imx8m mini.
-
-
-Marcel Ziswiler (14):
-  arm64: dts: imx8mm: fix strange hex notation
-  dt-bindings: gpio: fix gpio-hog example
-  arm64: defconfig: rebuild default configuration
-  arm64: defconfig: enable bpf/cgroup firewalling
-  arm64: defconfig: build imx-sdma as a module
-  arm64: defconfig: build r8169 as a module
-  arm64: defconfig: build ads1015 adc driver as a module
-  arm64: defconfig: build lm75 temperature sensor driver as a module
-  arm64: defconfig: build mcp251xfd can as a module
-  arm64: defconfig: build sdio mwifiex as a module
-  arm64: defconfig: build nxp bluetooth as modules
-  arm64: defconfig: build nuvoton nau8822 as module
-  dt-bindings: arm: fsl: add toradex,verdin-imx8mm et al.
-  arm64: dts: freescale: add initial support for verdin imx8m mini
-
- .../devicetree/bindings/arm/fsl.yaml          |   21 +
- .../devicetree/bindings/gpio/gpio.txt         |    2 +-
- arch/arm64/boot/dts/freescale/Makefile        |    4 +
- .../arm64/boot/dts/freescale/imx8mm-pinfunc.h |    6 +-
- .../dts/freescale/imx8mm-verdin-dahlia.dtsi   |  143 ++
- .../boot/dts/freescale/imx8mm-verdin-dev.dtsi |   67 +
- .../imx8mm-verdin-nonwifi-dahlia.dts          |   18 +
- .../freescale/imx8mm-verdin-nonwifi-dev.dts   |   18 +
- .../dts/freescale/imx8mm-verdin-nonwifi.dtsi  |   75 +
- .../freescale/imx8mm-verdin-wifi-dahlia.dts   |   18 +
- .../dts/freescale/imx8mm-verdin-wifi-dev.dts  |   18 +
- .../dts/freescale/imx8mm-verdin-wifi.dtsi     |   95 ++
- .../boot/dts/freescale/imx8mm-verdin.dtsi     | 1277 +++++++++++++++++
- arch/arm64/configs/defconfig                  |  148 +-
- 14 files changed, 1820 insertions(+), 90 deletions(-)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-dahlia.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-dev.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-nonwifi-dahlia.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-nonwifi-dev.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-nonwifi.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-wifi-dahlia.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-wifi-dev.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin-wifi.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-
--- 
-2.33.1
-
+Rob
