@@ -2,134 +2,80 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DBCC43217
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Jan 2022 17:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 715F3C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Jan 2022 18:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348514AbiAGRQq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Jan 2022 12:16:46 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4373 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348501AbiAGRQp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Jan 2022 12:16:45 -0500
-Received: from fraeml740-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JVqWg6H9Pz67ZhV;
-        Sat,  8 Jan 2022 01:11:43 +0800 (CST)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- fraeml740-chm.china.huawei.com (10.206.15.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Fri, 7 Jan 2022 18:16:40 +0100
-Received: from [10.47.89.210] (10.47.89.210) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.20; Fri, 7 Jan
- 2022 17:16:37 +0000
-Subject: Re: [RFC 01/32] Kconfig: introduce and depend on LEGACY_PCI
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     Niklas Schnelle <schnelle@linux.ibm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Nick Hu <nickhu@andestech.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "Paul Walmsley" <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-        "Damien Le Moal" <damien.lemoal@opensource.wdc.com>,
-        Ian Abbott <abbotti@mev.co.uk>,
-        "H Hartley Sweeten" <hsweeten@visionengravers.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        id S240666AbiAGSJW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Jan 2022 13:09:22 -0500
+Received: from mout.perfora.net ([74.208.4.194]:45167 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240468AbiAGSJW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 7 Jan 2022 13:09:22 -0500
+X-Greylist: delayed 311 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jan 2022 13:09:22 EST
+Received: from localhost.localdomain ([194.191.235.54]) by mrelay.perfora.net
+ (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1N4QTi-1mPWJn3EeM-011U6n;
+ Fri, 07 Jan 2022 19:03:50 +0100
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        "Sathya Prakash" <sathya.prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Jakub Kicinski" <kuba@kernel.org>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        Kalle Valo <kvalo@kernel.org>, Jouni Malinen <j@w1.fi>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        Nilesh Javali <njavali@marvell.com>,
-        <GR-QLogic-Storage-Upstream@marvell.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        "Teddy Wang" <teddy.wang@siliconmotion.com>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arch@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <linux-csky@vger.kernel.org>,
-        <linux-ide@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-hwmon@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <MPT-FusionLinux.pdl@broadcom.com>,
-        <linux-scsi@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
-        <linux-wireless@vger.kernel.org>, <megaraidlinux.pdl@broadcom.com>,
-        <linux-spi@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-watchdog@vger.kernel.org>
-References: <20220106181409.GA297735@bhelgaas>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <b0e772ed-4c21-3d5a-d890-aba05c41904c@huawei.com>
-Date:   Fri, 7 Jan 2022 17:16:23 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Frank Rowand <frowand.list@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 02/14] dt-bindings: gpio: fix gpio-hog example
+Date:   Fri,  7 Jan 2022 19:03:02 +0100
+Message-Id: <20220107180314.1816515-3-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20220107180314.1816515-1-marcel@ziswiler.com>
+References: <20220107180314.1816515-1-marcel@ziswiler.com>
 MIME-Version: 1.0
-In-Reply-To: <20220106181409.GA297735@bhelgaas>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.89.210]
-X-ClientProxiedBy: lhreml745-chm.china.huawei.com (10.201.108.195) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:ytzex8uojCkbk04+1zET92x9o8utwdOsZlxdHCWAqyylkF7JRec
+ 5en/28PTW12sX2ELW105nbTInJ0ckaVkDg5gFrDzrUX/ky5wwkRPASV09P+gOFWbRhH5XJI
+ iBRXFX0HIRES2+ke9DCfPC7QjX87TBQ4wPAkg2B4yZftkpvlcnxRJsLswUarAWiP7IFtUZ2
+ DkAMICIUlhc7XmpbS/4vg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dPQPHq2+jdU=:HdJpFX2AVtj/lTOcF895Tt
+ zEtlZeYfK9NQ0YJ4xMhze8cJdu3HS2UnOek9ZjrW1ohSpVlSwcj+nxsxAsc7aUaF7a6g054GF
+ VtgPqtvMXt6/DN4i5NSM9AGAwitr4hJGePX4Ih0HqzYdewsRX6f+E9J8R8TMPLekhfHQYfxGz
+ gTHlOWv/WNoYBCEIisrZRzspqpJqru8t97Isbe2ND1C36+Y4AUhqKpaRDlu+4+tMTgPNAw4Xz
+ d6ZzMBvGmbIFwOq8JQBH1hrsV+JKOiCGTMKUgG178KwW1F8lPYJ87zfrcPxjrAc3O/h9FIzqX
+ ikBoEHbHTaNcYxzVP7pArp65ws/ifIJljrlTQH6VY+AH5ghMlHKA0Q+SF6AgEMXN4YN8IsPGi
+ sK18L4ct43CTrX5DDWDjRXtO2YEsNcbWDlrSR/JhHUoSfZG1YE/BwfUbiUd3Of9iFMh7YyQjn
+ QSeraX/AI4imGrM6nQOAjW4cTPaYiU7PY52aIs3HuhB8tDVGns3Y03MJWbzqJereCn5LRw76Z
+ jN4+PXNkULOsUEwVbXb0K9r556E1EG2oKqcQfjGB6xFa2r6J3BKpIQfp21BxfR8uIds+qOmnE
+ 2zltW7VkLeFT7bC2+cHqOnF0duJQ0zteShyKO3Pg1ra8UJmFxBC1wANb1JU93IoHWZz345k3p
+ 0Tj0bNDAMD7js16yj9WSuy5BsVSffJrk1k/jNiwp346rBllz0I96Tx0rZ0tDtcvVHjQ4=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 06/01/2022 18:14, Bjorn Helgaas wrote:
->> That driver would prob not be used on systems which does not support PIO,
->> and so could have a HAS_IOPORT dependency. But it is not strictly necessary.
-> I don't want the path of "this driver isn't needed because the device
-> is unlikely to be used on this arch."
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Sure, that was just a one off example. As I mentioned before, I think 
-that Arnd already did most of the ifdeffery work, but it was not 
-included in this series.
+Even if this is no yaml yet at least fix the example to be compliant to
+later schema as e.g. found in gpio-pca95xx.yaml, fairchild,74hc595.yaml
+and gpio/fsl-imx-gpio.yaml.
 
-> 
-> Maybe it's not_always_  possible, but if the device can be plugged
-> into the platform, I think we should be able to build the driver for
-> it.
-> 
-> If the device requires I/O port space and the platform doesn't support
-> it, the PCI core or the driver should detect that and give a useful
-> diagnostic.
-> 
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
 
-I'm not sure what the driver can say apart from -ENODEV. Or IO port 
-management in resource.c could warn for requesting IO port region when 
-it's unsupported.
+ Documentation/devicetree/bindings/gpio/gpio.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Anyway, this same conversion was had with Linus before I got involved. 
-If you think it is worth discussing again then I suppose the authors 
-here need to gain consensus.
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index a8895d339bfe..5663e71b751f 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -213,7 +213,7 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+-		line_b {
++		line_b-hog {
+ 			gpio-hog;
+ 			gpios = <6 0>;
+ 			output-low;
+-- 
+2.33.1
 
-Thanks,
-John
