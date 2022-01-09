@@ -2,26 +2,26 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE160C433FE
-	for <linux-gpio@archiver.kernel.org>; Sun,  9 Jan 2022 17:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AA1C433F5
+	for <linux-gpio@archiver.kernel.org>; Sun,  9 Jan 2022 17:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236253AbiAIReW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 9 Jan 2022 12:34:22 -0500
-Received: from mout.gmx.net ([212.227.15.19]:37761 "EHLO mout.gmx.net"
+        id S236272AbiAIReY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 9 Jan 2022 12:34:24 -0500
+Received: from mout.gmx.net ([212.227.17.22]:55791 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234436AbiAIReU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 9 Jan 2022 12:34:20 -0500
+        id S234495AbiAIReW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 9 Jan 2022 12:34:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1641749650;
-        bh=zAkaWJtIEiaF5BfrxXNSoNcVTm5LuijzYenPGRzKFfY=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=EtLMy0lNnp534bvX0eXuPogRMdMSytQIZ67ZliFa8+COM9XLaGU7mgHMzIHbgWaZR
-         DGgwfB7M5lJLN2bJVGB4bafLqwlau2Nu1i7HH3PMz7dcLf0eeVr9S4xyEzl2wjSP6w
-         /a+e5X1hAvousPQRGrj2/jsNr/fPzRropOssd8pU=
+        s=badeba3b8450; t=1641749655;
+        bh=iPSBD2awiftOLogxsCMiyQPe19EVPJ9UGcWv/u2KUGk=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=ATJsY33T9YmuKdN+uMLJvhbXsPtAxZtIC38JHDnj04sP4X9R4hGGa14virZ3nRrBI
+         aTc3/c/TSb9J0vkv/PHg8pJXCQ4iNkBZmah/YR1zwxZgCGjoDxEnU0xu1mhXZKNNeF
+         q+PhqNfWAUqKIO8d3earntctczFsQsWN2OPn8vQw=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([89.0.222.244]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N17Ye-1mM6HI1RAQ-012ZBi; Sun, 09
- Jan 2022 18:34:10 +0100
+Received: from longitude ([89.0.222.244]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N4hzj-1mP89B43rb-011i7j; Sun, 09
+ Jan 2022 18:34:15 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -35,119 +35,70 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Nancy Yuen <yuenn@google.com>,
         Benjamin Fair <benjaminfair@google.com>,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH v4 0/9] Nuvoton WPCM450 pinctrl and GPIO driver
-Date:   Sun,  9 Jan 2022 18:29:51 +0100
-Message-Id: <20220109173000.1242703-1-j.neuschaefer@gmx.net>
+Subject: [PATCH v4 2/9] MAINTAINERS: Match all of bindings/arm/npcm/ as part of NPCM architecture
+Date:   Sun,  9 Jan 2022 18:29:53 +0100
+Message-Id: <20220109173000.1242703-3-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220109173000.1242703-1-j.neuschaefer@gmx.net>
+References: <20220109173000.1242703-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lJDLqNjp7ysf9WlEHyM8eGXsDJj7j+Frzh8G7J7w5jv5TCQhCD7
- Rogey9YoPUoD8Ni40TfPiwrALwDCmZVhp+LHdGogPZ5R0sx9jhiVQ3ZdPgdHiLhjFo/AGtZ
- GRR9A7idEXcKkZjoq2+OwePQmQSYg8Lqt0fqEpCduCM41Q4bdyO8pSG5seaq7OnBivvofwk
- DVW2IzqhG7op/Utd7F9Vw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:M7KWjGScLuE=:dcmuNyJu0CCqHDSq9p9xpZ
- gXM5rmscCC/kQ+HxOGNqr63s2xPlthIsbuOs0ahwvWKllKEQuVdwQNYwkxzC6xH7yIjvP0CxS
- v/wUqpr+iMEnbiOWCXnlWdpzqOSxt1eTvsPx2rwVHB8CH4Y5OkEE0rlrel6diSwaA3XJu2E3s
- Vvp5zVrj1gyA1ZH4StKvsK1Fcy82PJiyoRoV5SsibzrvZx2rl/IgEE1Pj+KS9h9A+GEBlaRoM
- BhAc5nxPMzq+thOkESyBqXVD3bBr1cNxHFs6odVb95PbxQB1eqhyu2DZhdfOzD32TPQEEeIYW
- XX7v3Y+1O3Ms32OzqBtPjcbrt7+Hd0D6HJj/a1+TSe4rrAEMYUy6QkHc4cdYci0aD9/A+YUdp
- NgB1+MFXWhiRpi4cG/E3VHBbDWlf0CWNbXHmPVAjTUImRhqu/A1V0aL6bohD/JCg5UJNj4h3A
- nj4Rx3gDEmGk25hEUXsw1JSMC1qNcoufGg3n7VdYzyNSawnJ8S69lLXnRijqg+IgqGQsN2+bG
- SpEwAVGSmKhw+OHS+2bphX8RhdbwE4KC1YCKb2TMZ+vhZBByIAwyOodrFnNzvTznYv41/wz43
- 1gZSLBXRhhYGAucds4HhLHMnzjFDBFrY4wnF8AZq+YYrwIHniXHUnPz1Cfo/nZVRrcYL0ggQN
- C49+631wYqE+39vWE7PqgIiFR0oABljsYXjqbsu65zw3v3ZxcVd9GynVvbCE0wJ+zFWDHI33o
- Z8+e6YSg9NLCV+YAwyb06jQetGVAT1UV3fZVgquArXrdLwlcamyIW4RymCMrAqr7uniQaQePR
- ayZGGJyBEP+Rxeg/hIw9DAHKzmIldRpFZQilDSXxhIDFYmXiu6PGRweWPxTNGxiv7asH49LnJ
- mTFaw5RhRRwveDEOcZMV91ozO5Xbjg4o6r8wcSfWzgJ5EHVUaL2+D0kPK8QjLzAYvYAt76UPc
- sqADX3SNsgduU7xYhOhjCbjuiS1Yek5cU2IvIxl10tT1CwyN3bdu3baHT4xIgqNBSg7x6tu1J
- AN0L3KKcTEaAo0znoGSN6sJlID79T3KhWym0qk3Yl2+KSMnieKTwhNGvFUaXNWgFndc3hR1Xf
- f5AuZxGvtbUdus=
+X-Provags-ID: V03:K1:COUIWzWI3NV8k793KkNeU7tCZhSj5gGen+76B2rEC21V4/TOUhM
+ rFExiA4PoIeY4vfvFVZxtWB6P++xcu/O6mxpK0LsbOp2zxWmddopaqcNqB56rTJmeCHR2b/
+ jqVYrGSNgGRuxYGtGkOsoBDjyFQVaY9CgbKbubr7u8MZPoQvFQOiM+8opA4K0XZTAyuef1q
+ 2r12ZDwiBoWTDYGO1q0qg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:JsIHhT4hU4g=:u+Qx8ueXfXPIxFGDu9zfO+
+ +TLRmpjHI82Ur694DkG9nrhG/DVtKfcVnoWw8jU3ogq/eTQBbcZUA2a3zd56WnTixyL6PXiwg
+ LBPv6pJo0TG8agfJUkh1792X+i+VrAbcpPGN3W9ZHQsyqufSlROgnFsvzMNXwfjaTv4OGEDY5
+ lD1XM58N+eSEvR4lfnkBtEv/iNlksZCVfIxDcsEZCsmvTa+16FHGhtwS9Ucicu9t91unEwSeE
+ 4RO2yV+52tliahtEnfHinmsGRcrw2Rx7UPdkIdGNhegw4I1nV4oHhP0PJHcycOmfXAmfjJqoX
+ 0pFmETpvKfiCcYGrIrRd7eZoz9aUIUvypxX5NYxcdxmOOISfjkmPfyHsaM+GekVNsxbY2F39J
+ LY3clNkEEINnFfHNadlp2ouGBQE6YVyAYDc4WyBluMzQulMw9Tp8yphkdDOj/jGtzME3BESFL
+ egV3+HauBSCV6kcmNFDQ6uz2eC7U+d/Sw+TdsnKwHdOofPg9lNKTyi6r3Jyr+fTw6/wtKPLIB
+ roaxzqoqrXl4kz9nxj58mDJcR3u1ECy70KZ3m/vfT/uEdDFv6IpzwQq3mQnoi4ALu5+nfRIE9
+ qmWeQ2liR5Tj/85UsEaxUTwk6QV+UCPbImSZFQJrJTLgrB9WFKltV89jqws8dYCPavaL3bwH1
+ g/q7UTodHnqPTW+J72ucWNL0SqH+gFmE9RKV/IDS7rdmfXskoTBoRW71yK2rW55Zmkhr4ejC/
+ gYDhvjNd70g+ArTEgEOP4cylwrYzxyViwV2JVm0EY5E2aUeLoyn/bmOt7S/R4PvUfqwTWS4yO
+ JFBx6mNs4a469y9DyW6cHa1Su8av64I/EehnXZWfxXvHaBEmFmdbjyIm/l7BxWMsxw6wfz7eM
+ 3fwNZZgo1alZxnGq2eqRLvRvNda8LJSCdTY+xXhwG3q5/YViVGTzeQnkCULSe0O9E9e22dVwl
+ hVxaYxCVuj3VOFAtQnpi2fqu46jgPODL0Eetd3OlrBxQpt4ko0npnvdD+twRB3I/lMgdrNoWb
+ h46jVVpjGdxzA8XsmbnfLzBOgAH2dPAzb+ks7Kp8XsT37hiZDJ8Qpbob/zwiAfdBNFPuYN+/c
+ 9P0cB6m7JHeluw=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is version 4 of the WPCM450 pinctrl/GPIO driver patchset,
-with some small, (hopefully) final improvements and cleanups
-(see patches 4 and 5).
+All files in Documentation/devicetree/bindings/arm/npcm/ belong to the
+Nuvoton NPCM architecture, even when their names might not spell it out
+explicitly.
 
-I'm targetting 5.18, it's now too close to the 5.17 merge window anyway.
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
 
-Best regards,
-Jonathan Neusch=C3=A4fer
-
-v3:
-- https://lore.kernel.org/lkml/20211224200935.93817-1-j.neuschaefer@gmx.ne=
-t/
-
-v2:
-- https://lore.kernel.org/lkml/20211207210823.1975632-1-j.neuschaefer@gmx.=
-net/
+v2-v4:
+- no changes
 
 v1:
-- https://lore.kernel.org/lkml/20210602120329.2444672-1-j.neuschaefer@gmx.=
+- https://lore.kernel.org/lkml/20210602120329.2444672-3-j.neuschaefer@gmx.=
 net/
+=2D--
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-> This series adds support for pinctrl and GPIO in the Nuvoton WPCM450 SoC=
-.
-> Both my DT bindings and my driver are based on the work done by others f=
-or
-> the newer Nuvoton NPCM7xx SoC, and I've tried to keep both similar.
->
-> Instead of extending the pinctrl-npcm7xx driver to add WPCM450 support,
-> I copied/forked it. The pinmux mechanism is very similar (using MFSEL1 a=
-nd
-> MFSEL2 registers), but the GPIO register interface has been redesigned f=
-or
-> NPCM7xx; adding support for the older GPIO controller would make the dri=
-ver
-> harder to understand, while only enabling a small amount of code sharing=
-.
->
-> The DT binding in YAML format might make a good template for also conver=
-ting
-> the nuvoton,npcm7xx-pinctrl binding to YAML.
->
-> Both in the DT binding and in the driver I kept the name "pinctrl". For =
-the
-> driver, I find it accurate enough because it handles pinctrl and GPIO. F=
-or
-> the DT node, it's a bit less accurate because the register block at 0xb8=
-003000
-> is about GPIOs, and pin control happens in the global control registers =
-(GCR)
-> block, except for input debouncing. So, "GPIO" might be the more appropr=
-iate
-> name component there.
-
-Jonathan Neusch=C3=A4fer (9):
-  dt-bindings: arm/npcm: Add binding for global control registers (GCR)
-  MAINTAINERS: Match all of bindings/arm/npcm/ as part of NPCM
-    architecture
-  ARM: dts: wpcm450: Add global control registers (GCR) node
-  dt-bindings: pinctrl: Add Nuvoton WPCM450
-  pinctrl: nuvoton: Add driver for WPCM450
-  ARM: dts: wpcm450: Add pinctrl and GPIO nodes
-  ARM: dts: wpcm450: Add pin functions
-  ARM: dts: wpcm450-supermicro-x9sci-ln4f: Add GPIO LEDs and buttons
-  ARM: dts: wpcm450: Add pinmux information to UART0
-
- .../bindings/arm/npcm/nuvoton,gcr.yaml        |   48 +
- .../pinctrl/nuvoton,wpcm450-pinctrl.yaml      |  160 +++
- MAINTAINERS                                   |    2 +
- .../nuvoton-wpcm450-supermicro-x9sci-ln4f.dts |   43 +
- arch/arm/boot/dts/nuvoton-wpcm450.dtsi        |  384 ++++++
- drivers/pinctrl/Makefile                      |    2 +-
- drivers/pinctrl/nuvoton/Kconfig               |   18 +
- drivers/pinctrl/nuvoton/Makefile              |    1 +
- drivers/pinctrl/nuvoton/pinctrl-wpcm450.c     | 1130 +++++++++++++++++
- 9 files changed, 1787 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr=
-.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm=
-450-pinctrl.yaml
- create mode 100644 drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8912b2c1260ca..123c967936785 100644
+=2D-- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2338,6 +2338,7 @@ L:	openbmc@lists.ozlabs.org (moderated for non-subsc=
+ribers)
+ S:	Supported
+ F:	Documentation/devicetree/bindings/*/*/*npcm*
+ F:	Documentation/devicetree/bindings/*/*npcm*
++F:	Documentation/devicetree/bindings/arm/npcm/*
+ F:	arch/arm/boot/dts/nuvoton-npcm*
+ F:	arch/arm/mach-npcm/
+ F:	drivers/*/*npcm*
 =2D-
 2.30.2
 
