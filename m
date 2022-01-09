@@ -2,82 +2,164 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AFEC433EF
-	for <linux-gpio@archiver.kernel.org>; Sun,  9 Jan 2022 12:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FE4C433F5
+	for <linux-gpio@archiver.kernel.org>; Sun,  9 Jan 2022 17:34:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235464AbiAIMOp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 9 Jan 2022 07:14:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50614 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235456AbiAIMOp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 9 Jan 2022 07:14:45 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57F8C06173F;
-        Sun,  9 Jan 2022 04:14:44 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id q25so33616238edb.2;
-        Sun, 09 Jan 2022 04:14:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+ODzzEtdzx+BLKoHw0Ew8QLVtY3SVHT6OOV7UeJFfcg=;
-        b=P3MeS9UhL7JO3PCCFgx4ITcvl5JyUGA7PO0YbQ7bmjxlrRfTJ64yj6LpoC2/Essyqr
-         QU7+K/cEWBEAn/5SGL5Zr6usiHGrFDpg6nBM02SvjHVeYsNf9tV3skpg8puOlNXcGtC0
-         nA6JluQjJjyQhWC7Hd1P/J1UDGeyVvzy87cIuf1rfF72wV5oEvvTOGJSrB76P0uwbtEM
-         U8/2vi8/nfv1nn9xXwJFK2pU2l0YtYLELAT0gXb+cUoI+4RJ3cwVAhcMIq8WWmnY4xNu
-         UuPwgkCNzwZhGpx89yvBKAiFBXgHAcf1N+5y0SvoUmeT+5BfiWOx+B09waJ5HJC6B3e3
-         8viQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+ODzzEtdzx+BLKoHw0Ew8QLVtY3SVHT6OOV7UeJFfcg=;
-        b=X+TCKLNpzPJhPPTs5/6EkYE86IR9yovvmfbhC3NvFMhD7qGWtpyvHwCZNFAjMVJ7Re
-         /fcq6SMjuljh6v9RdNW/DXhZzT6g9KkZHPVEDplDB5xmicNL9m4YtAZmDCM+uAQctuEp
-         86XCWZ8DL49EJUji5HnwsoBe9vpgfA+w2BL6Wm1t93FtWu6imejLkiF7WQqlmaEYklMW
-         riO/SLIHtkUEM5RFUZsjUI+DLXcJIn7ZIZv2XzE2Ft8T3WkE9qRWzXIwnUxhVKGwVYe8
-         w6oRFmqQjBGxIGlP+wUwDeFoClsWY6+gwQiyf7SS3kUeWtYBsVD5xtT4S48hGzRXQ8Hg
-         +pkA==
-X-Gm-Message-State: AOAM530L+mwqsJejvxoF6rUlal607PdB/UHuTB53oWfx+n2mu1B4uCxu
-        OHkFHUwhVKlwRrxtwUa5+a8BzuvXa1RNc/MTt8A=
-X-Google-Smtp-Source: ABdhPJy+9tXir56/D7W5HXQcPbozaD3w093HKKc4pk0Hk+kyzQ50keWucatAcFNy1hsqx6nrEnhOCUZK5kGzq5VcZzA=
-X-Received: by 2002:a17:907:6d8d:: with SMTP id sb13mr56501013ejc.132.1641730482630;
- Sun, 09 Jan 2022 04:14:42 -0800 (PST)
+        id S235280AbiAIReW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 9 Jan 2022 12:34:22 -0500
+Received: from mout.gmx.net ([212.227.15.19]:57781 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234494AbiAIReU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 9 Jan 2022 12:34:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1641749652;
+        bh=MOFjIoYuYz3a6U9sFm3D7hME9fb4DnPcgdo1gj/6qb0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=UgEsTqhvRH8KvmhcckXGkPp+rDYVJhD9QGrA+7g/pdq+9/RbWuvrfMudOHe7YoOuw
+         Bb+4MDCqfPXX+XIBwpENi1GuQQKjRRYQPwTmiFAuxhFgEn+knXd/UGwo0LVZogXznr
+         C0PpxxvOdSbvFwtTXRw6ht3UMv1vs3WYnJHSWG5Y=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([89.0.222.244]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MN5iZ-1mpuAz17LR-00J23M; Sun, 09
+ Jan 2022 18:34:12 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 1/9] dt-bindings: arm/npcm: Add binding for global control registers (GCR)
+Date:   Sun,  9 Jan 2022 18:29:52 +0100
+Message-Id: <20220109173000.1242703-2-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220109173000.1242703-1-j.neuschaefer@gmx.net>
+References: <20220109173000.1242703-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-References: <20220106062255.3208817-1-cosmin.tanislav@analog.com>
- <20220106062255.3208817-3-cosmin.tanislav@analog.com> <CAHp75Vcq76iaHHp2oXFsaE4d_+EGH87DxQRYu7Ys-adN_4mmUw@mail.gmail.com>
-In-Reply-To: <CAHp75Vcq76iaHHp2oXFsaE4d_+EGH87DxQRYu7Ys-adN_4mmUw@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 9 Jan 2022 14:14:06 +0200
-Message-ID: <CAHp75VeTNaMBZy-ZS68iKNq+GJNJgFSGxmcohr9-bGiN9KswSw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] iio: addac: ad74413r: correct comparator gpio getters
- mask usage
-To:     Cosmin Tanislav <demonsingur@gmail.com>
-Cc:     cosmin.tanislav@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ztSF5v5bx0P0Xz5y9nkAdqjiP/XUgvvz2+IaEIneM08rrCGzSmE
+ qEHgmW7GXgERLlOWZgW4M1KUjg0li5txo9Sw2Uc3RmxTAa9WCyX7prTDY0FvPFBJgQHhz1G
+ BgyXVoYP57YQGB3lvXtjL4Gjo8m5X6bf4NIJ2imK/J+glygqtYITW0ja+QqywukTdgFwk2+
+ y/6FVv3p90ajkeG8dJCBA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WJv/i/bnJqQ=:fOkmB1Ab5nLabHDOrcF4kM
+ h4VIpJqxa0sA1HAcefZlM9AphF8ODY4SbmOINH4dOQFmjv0ikv52gbPllg8J7P+Vbr3hcGgqm
+ QPe5xd/6pQlNPrRBGSEYMxGLvOHmUWIzadcmRM2TN/AIuDhe5Jm9+KLdjuOIKgjP5bz2jDSXu
+ YtHZCay5R1lubfNJQZx6bpVdcFmZeV9N6/6Nx9+2cONYuniaTH2093bwA7ORSzGr2w1WjK+DY
+ dOxciFRhkqMy2VyF6h0NgSlwY/bEGjBPZ3dGJJT0uQ3ZHmEC0Z7ik15NaGcp9MsERnMBwnrYk
+ K+vddVEPz5/cNy3GrZFjqsbHRZ/XrBha7suD3XgDDyTthIljxJ9hm0+dQB0mSh0I5u/720ED1
+ qCi5NMiImddW7tEMMwZHfOHizJ7QEFbuISF4z1q3PVaSGqc0NgAX7tqDqWI3doQiFX4Kbee8Y
+ kqBO8jiLuUVX486F6Z8Z/uBmz5UNxs8kzC657aeblFuWVkKyuCAzH3nZ5PIEiQo9gFXgVKRQy
+ DkowIzsVODrvLx+KzPPOWZqWIrpDMjnfwfN360HNXNFZPqN5GYK4nkDXoxcTMSV9FNSMZ9La0
+ x/zTjPUkhg8vweYlqypMYS4QBInFMY7RTFR/HwZ3evZUublet8UDUM717Z66FyYIo3wHA8GmS
+ hUbFu2O4rACk/GrNUFLps9XcVrkNsxJ5PS2ZBqGxBwfCh8fX6SqkwgZMwxRK8UUp3PuTAVMUb
+ iLVGQmyA3IgNL0lDpa1HZADpXl8pkyqAmfCiTGEMvBO6Bjysa9h5j9Wj87U2PQaN1vzt1bi3Y
+ iB+0ww4D/3DjvBVcy92PqgBo0SqYr5PRMR4dYRAw8X8+BD0c18uAZlt/3rC0v8NorvF8llokc
+ Lj3wczI6UQGhbqcEQ53VWo/Kb145OZtD4jo/OiJDuP6RF2zfFHsrIQfZ/pl67oMC0IhOLTTGy
+ ACiu+uEiWt2ZwtEUtwWfYgR4E9MGgv1zTqjJNp/7fHZx2p0JwjISzoHoBr0LC17syp3ZIOkpX
+ May/4719MhIJ5tFjyLOWnMjDgOJCoQCz1cqgsmO2Bna5KPVKKGrLHBcSpSCAXTjEweywXsjyN
+ 9IYJug3vro0iYc=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Jan 9, 2022 at 2:13 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Fri, Jan 7, 2022 at 7:34 AM Cosmin Tanislav <demonsingur@gmail.com> wrote:
+A nuvoton,*-gcr node is present in nuvoton-common-npcm7xx.dtsi and will
+be added to nuvoton-wpcm450.dtsi. It is necessary for the NPCM7xx and
+WPCM450 pinctrl drivers, and may later be used to retrieve SoC model and
+version information.
 
-> > +       bitmap_zero(bits, chip->ngpio);
+This patch adds a binding to describe this node.
 
-> (At least this conditional can be replaced with __asign_bit() call,
-> but I think refactoring the entire loop may reveal a better approach)
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Switching to it makes bitmap_zero() redundant.
+=2D--
+v4:
+- Add Rob's R-b
 
--- 
-With Best Regards,
-Andy Shevchenko
+v3:
+- Make a few changes suggested by Rob Herring
+- Change name of mux-controller node to appease the linter
+
+v2:
+- https://lore.kernel.org/lkml/20211207210823.1975632-2-j.neuschaefer@gmx.=
+net/
+- Rename node in example to syscon@800000
+- Add subnode to example
+
+v1:
+- https://lore.kernel.org/lkml/20210602120329.2444672-2-j.neuschaefer@gmx.=
+net/
+=2D--
+ .../bindings/arm/npcm/nuvoton,gcr.yaml        | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr=
+.yaml
+
+diff --git a/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml b=
+/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
+new file mode 100644
+index 0000000000000..fcb211add7d37
+=2D-- /dev/null
++++ b/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/npcm/nuvoton,gcr.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Global Control Registers block in Nuvoton SoCs
++
++maintainers:
++  - Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
++
++description:
++  The Global Control Registers (GCR) are a block of registers in Nuvoton =
+SoCs
++  that expose misc functionality such as chip model and version informati=
+on or
++  pinmux settings.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - nuvoton,wpcm450-gcr
++          - nuvoton,npcm750-gcr
++      - const: syscon
++      - const: simple-mfd
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties:
++  type: object
++
++examples:
++  - |
++    gcr: syscon@800000 {
++      compatible =3D "nuvoton,npcm750-gcr", "syscon", "simple-mfd";
++      reg =3D <0x800000 0x1000>;
++
++      mux-controller {
++        compatible =3D "mmio-mux";
++        #mux-control-cells =3D <1>;
++        mux-reg-masks =3D <0x38 0x07>;
++        idle-states =3D <2>;
++      };
++    };
+=2D-
+2.30.2
+
