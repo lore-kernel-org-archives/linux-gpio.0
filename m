@@ -2,26 +2,26 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37EDC43217
-	for <linux-gpio@archiver.kernel.org>; Sun,  9 Jan 2022 17:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29646C433F5
+	for <linux-gpio@archiver.kernel.org>; Sun,  9 Jan 2022 17:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236305AbiAIRfF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 9 Jan 2022 12:35:05 -0500
-Received: from mout.gmx.net ([212.227.17.22]:55337 "EHLO mout.gmx.net"
+        id S234374AbiAIRfH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 9 Jan 2022 12:35:07 -0500
+Received: from mout.gmx.net ([212.227.17.21]:44859 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236330AbiAIRec (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 9 Jan 2022 12:34:32 -0500
+        id S236352AbiAIRee (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 9 Jan 2022 12:34:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1641749664;
-        bh=OpCM3vZ70EiANIdlG1jlqbtkhqwAbU91v+KSwrK4vJE=;
+        s=badeba3b8450; t=1641749667;
+        bh=ETxQ+T/X/+6s3tPz9+APQpnz3DH8sFghpJZtkB4Iu9c=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=crJSj1H5B77UWngtLFAxPVnVVyOjhoJ2kZL0Gl8/+bWfJtjC/AUuwk9EbrES1mBUa
-         pkHLpSE1Mc8JGiYFE6DG+6vcE6UTKczTZ3Sn56T+UUUm61GbYyrYSmsqcNXZf+VRJ8
-         LNGQZule/v0O3R9jb1y6GT/U1hbyJ+Qc1UMu4xwA=
+        b=XFlZt9ZQj9dssMb/CLRHxUFXq+uzA+XQhspAHTcxvLa+3OpbAXnyZzozViCLxboxj
+         LiLVEAgsp/Gf6yFL3c3TQ6ZAGHTEFhRzUtV2ZGUryFH+7/+c4fP3DXdhD8tboVJ+3v
+         Ey7aHzbZBJA2NdI4jsoYhR88wKC+TxMqdYsx5ojM=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from longitude ([89.0.222.244]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MRCKC-1mllJs1oIu-00N6vg; Sun, 09
- Jan 2022 18:34:24 +0100
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mzyuc-1mC9aP0ENC-00wzfJ; Sun, 09
+ Jan 2022 18:34:27 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -35,159 +35,129 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Nancy Yuen <yuenn@google.com>,
         Benjamin Fair <benjaminfair@google.com>,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH v4 6/9] ARM: dts: wpcm450: Add pinctrl and GPIO nodes
-Date:   Sun,  9 Jan 2022 18:29:57 +0100
-Message-Id: <20220109173000.1242703-7-j.neuschaefer@gmx.net>
+Subject: [PATCH v4 8/9] ARM: dts: wpcm450-supermicro-x9sci-ln4f: Add GPIO LEDs and buttons
+Date:   Sun,  9 Jan 2022 18:29:59 +0100
+Message-Id: <20220109173000.1242703-9-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220109173000.1242703-1-j.neuschaefer@gmx.net>
 References: <20220109173000.1242703-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cVf+Eg1icknpyn503zLpSH4nbx7uuCiucRyGheDjBmLOnQwLVTy
- O4iSM7mSiWhxhG88ej7GEPsr+fdUv2rUXlR3ovM8LsqTkZ2Htj9sG8/Xl/6BLrU3QgksN4u
- M8FFEkSAtIapFUlhwh6iJoXq//EsrN9EyQR0wcycbat2cla8QpwMx2Meymd2iYEOM4xJ6BZ
- AmSjyNk+actVvLb4p5ODQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:35ivKYmuKqI=:aMXxvoealo5TqFtOKUXiNg
- lmLgmb6N49HuqRBy0/8tLJzWVMHnVZj6ZeQ3QxfdnYEtTm6xmQnTIQsNjVEw+dMK/OLAW7AqW
- ReBpc9HbU9hXna8gzOPeR9WjvWp65ixkc/Oj1Ho4jhAFnxkeloQJq5soJy5xeG4g+e5XXv9q0
- 9aoWALqKjCWasDXZP805zggUNhryNUoF98lzi+p4v7JZtzrHW9aQOl7Z8rzO6vdUOMynhZ+vV
- xEo7GKYwVmcu4SCG/QwKLTFWnXmuqYWA+zuF9uPRJ6J2BziiIPAhKbeFYcd/YxLRRPwc9E9k9
- xnU5n3k2cc4yOOF812kgb0KcQIivzoV1iS1o8UmBbpXy9ZZKJLhVODjoXfqGPuPHJhLO3yHN5
- ChiRIuvB+GFoEmjBo2EpI0jv18becGsrCPkQwsghvPtxzTsVHmAy5OeiZtw/hv/LyRfmotw9L
- pKZGEPIRoW6tajzdg4JhMHNz1c5Af5dbI06Lh7PF4QjGZPOxzVLWSS5pc1Nix6t8VsdBamKfW
- gAeP8rQeRbvZlgx8eDQCqSIJzgotoumeRkjAryHTwLNXi1y0h8iAMfeK0fNGUujqWKhoKNQac
- QXaV87y3SaO0C7tlm7QxKt0vjMh3cF3sTjudINTwaGQKs55zuXN1Sti0UfbgDQJ/HE4sO81RI
- iXicMAkQ1gnfWHhNmVSbF8LWyrVFa+hTziulr6y9PXbjwGNENorYNRL+zMYPeiDTVGUW980fX
- +mICz5WnTHD96xX/zvBQNuURDkumqS9WNHHoiiGGJR11rIHDGLC6zO3+XW44/KRzJ3CVsfDYl
- sLVxc66mbyVL9R13aVhGVLZs8rqoWs53UUkFNMIuGk3QWqO0k1JYnKQ3YgAkEvXi3NvjvyUoe
- bsyJVd/OaPVHAR2XrgHeuILucBsMoNSz+PZ1GcZ9z9+CnRj+Orto32My2tu4mzp6sgJfcxaq9
- Si3gTV35UOrR1z5QVegZrJbgU5o2n4xq+fjvO+tEIM5qqDCVy6cuv7RoSnoPhAxkaZsE8P4N0
- 8VT/xh+2t/vm4HicI5daeOr7M7LQmfiGJH9fBkryQ9yMCMMQ2nV/pQezyMx4bSHectdxS+z5a
- B2e0iIsdln+9JI=
+X-Provags-ID: V03:K1:lkSwl2UrCD7/dlt1TWC5XCxvrHKCbWfQJIE5ySD7ONxUaHyrcB3
+ wQsdRRjXXm6IdjNWh4qYGsiWaLc+jqoKQVukZidoN9wB3cx4DtSJV9/dzqRfm4VR1TMARBD
+ 4cHMemMUkt/+aLXqudtQOvt+WmAX1MFzsLCJt8qmly4B8z6W+sxePdvSYuw+DluKR97IYzv
+ dAr1fa1aI70qdQV7ND9gg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ynMmLROqad4=:LjDKKVAaC8UVbzqpjgz16f
+ VJ0Jy/fPalAGPn2OjAstco4Y8yGiesSogrTqntoB3zRlIIOZaxkCFtKmrpbcicWWJmrpxUaCf
+ Blo302wyEIThOBR3Vx7M++tYekq9b65xdeiFC9ovgX8c0YM3KIkW7b7x8AKKWq0nchyC75aLx
+ mDUoQf/8P4RMoHETukwnq6UX+k8jGoXUgQtDcYWnSGHCa3xlk7rUwf02Kc5U4mGwjyeJBNxx+
+ 5rTY1zmCRysGEqLMyQFNX7p5NchGPts7nyUwhI9skur7YS1XW0TK4F4OGgbibdDqL96BZNABq
+ rmglCBhGTV2J5yI/icvayKOOddMAKPEF7Vu6KtDeSFZSnmH6YwyuTFcra0t+prB8iFj/fPZeX
+ NhG+10Yi6ZVdIuvpHZlKXpOjRgxEBDP2BeWzIMMdwmydIAEHQvMHyVBySx7YeVURkF3pT2jfm
+ +ReqwdY/KzqdYKoTgljCWERhSF5TwXmC8OM4+FLTScDsd47/H7MqvT6GJ2VkoHijCDJlAIleU
+ ohVHlDFm0AOb7itZa15XaTserYe8CWDPgAJIeQAQMTS4H1uy0zukCDcZ4h9KqCwvooKQjl+T0
+ 8YFIRXdMgJLvYqPDhK3DDH5OPQQ2ZhVnzujqYkVLEiDuWJAD0XrEzScgtzlSWSAU4ACGg6dJQ
+ KHVW1saouykGKq36j3OTdMLEa0S2Fkq7YJVFMVL8z43s4JsEA1UV8eFvLiM/9Q03sOtbSmGa1
+ 9allqybtPW8tQforXDJo5msOBGJHNbU7BO5oeQu/njlpp4Zas/AQBLJCR5cvOZ3/q1ildxKac
+ sYXiMpKgkjlYNGk4eVYgcSK9sdZkJ3rvm6NxHAcSBEK6SmUizjbQBioX7SgbdCyBW+cBEypp4
+ pWOvAPxEhtzYv0BP60P5h2rhopnky0dtDKTMgK8UaOzu5ihh3V97IR5SLg6Dm42278Ci1Y5at
+ aqGliLFOW1InG2kg6VTMl7qlk+7deo0i/biapmciv0w7lz1DvjziSBQHP111NYEru0LEMsJ5V
+ 5YXHTUpBRN2MCrk+fibg2eq7fauk5KYRiFdgB6yBv/qeVnP2wT7ff5pZtzXNeckzksyOuDzdz
+ 8CCrPkNnHBPQ50=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds the pin controller and GPIO banks to the devicetree for th=
-e
-WPCM450 SoC.
+The Supermicro X9SCi-LN4F server mainboard has a two LEDs and a button
+under the control of the BMC. This patch makes them accessible under
+Linux running on the BMC.
 
 Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
 
 =2D--
 v4:
 - no changes
 
 v3:
-- Add Linus' R-b tag
-- Remove nuvoton,interrupt-map again, to simplify the binding
-- Make tuples clearer
+- Adjust to schema changes
 
 v2:
-- https://lore.kernel.org/lkml/20211207210823.1975632-7-j.neuschaefer@gmx.=
+- https://lore.kernel.org/lkml/20211207210823.1975632-9-j.neuschaefer@gmx.=
 net/
-- Move GPIO banks into subnodes
-- Add /alias/gpio*
+- Adjust to new GPIO controller names
+- Explicitly set pinmux to GPIO for GPIO keys and LEDs
 
 v1:
-- https://lore.kernel.org/lkml/20210602120329.2444672-7-j.neuschaefer@gmx.=
+- https://lore.kernel.org/lkml/20210602120329.2444672-9-j.neuschaefer@gmx.=
 net/
 =2D--
- arch/arm/boot/dts/nuvoton-wpcm450.dtsi | 72 ++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ .../nuvoton-wpcm450-supermicro-x9sci-ln4f.dts | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi b/arch/arm/boot/dts/nu=
-voton-wpcm450.dtsi
-index a17ee70085dd0..66c35626c80a6 100644
-=2D-- a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
-+++ b/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
-@@ -8,6 +8,17 @@ / {
- 	#address-cells =3D <1>;
- 	#size-cells =3D <1>;
+diff --git a/arch/arm/boot/dts/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts b=
+/arch/arm/boot/dts/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts
+index 83f27fbf4e939..3ee61251a16d0 100644
+=2D-- a/arch/arm/boot/dts/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts
++++ b/arch/arm/boot/dts/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts
+@@ -8,6 +8,9 @@
 
-+	aliases {
-+		gpio0 =3D &gpio0;
-+		gpio1 =3D &gpio1;
-+		gpio2 =3D &gpio2;
-+		gpio3 =3D &gpio3;
-+		gpio4 =3D &gpio4;
-+		gpio5 =3D &gpio5;
-+		gpio6 =3D &gpio6;
-+		gpio7 =3D &gpio7;
+ #include "nuvoton-wpcm450.dtsi"
+
++#include <dt-bindings/input/linux-event-codes.h>
++#include <dt-bindings/gpio/gpio.h>
++
+ / {
+ 	model =3D "Supermicro X9SCi-LN4F BMC";
+ 	compatible =3D "supermicro,x9sci-ln4f-bmc", "nuvoton,wpcm450";
+@@ -20,6 +23,46 @@ memory@0 {
+ 		device_type =3D "memory";
+ 		reg =3D <0 0x08000000>; /* 128 MiB */
+ 	};
++
++	gpio-keys {
++		compatible =3D "gpio-keys";
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&key_pins>;
++
++		uid {
++			label =3D "UID button";
++			linux,code =3D <KEY_HOME>;
++			gpios =3D <&gpio0 14 GPIO_ACTIVE_HIGH>;
++		};
 +	};
 +
- 	cpus {
- 		#address-cells =3D <1>;
- 		#size-cells =3D <0>;
-@@ -77,5 +88,66 @@ aic: interrupt-controller@b8002000 {
- 			interrupt-controller;
- 			#interrupt-cells =3D <2>;
- 		};
++	gpio-leds {
++		compatible =3D "gpio-leds";
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&led_pins>;
 +
-+		pinctrl: pinctrl@b8003000 {
-+			compatible =3D "nuvoton,wpcm450-pinctrl";
-+			reg =3D <0xb8003000 0x1000>;
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+
-+			gpio0: gpio@0 {
-+				reg =3D <0>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+				interrupts =3D <2 IRQ_TYPE_LEVEL_HIGH>,
-+					     <3 IRQ_TYPE_LEVEL_HIGH>,
-+					     <4 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+			};
-+
-+			gpio1: gpio@1 {
-+				reg =3D <1>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+				interrupts =3D <5 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+			};
-+
-+			gpio2: gpio@2 {
-+				reg =3D <2>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+			};
-+
-+			gpio3: gpio@3 {
-+				reg =3D <3>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+			};
-+
-+			gpio4: gpio@4 {
-+				reg =3D <4>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+			};
-+
-+			gpio5: gpio@5 {
-+				reg =3D <5>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+			};
-+
-+			gpio6: gpio@6 {
-+				reg =3D <6>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+			};
-+
-+			gpio7: gpio@7 {
-+				reg =3D <7>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+			};
++		uid {
++			label =3D "UID";
++			gpios =3D <&gpio1 7 GPIO_ACTIVE_HIGH>;
 +		};
- 	};
++
++		heartbeat {
++			label =3D "heartbeat";
++			gpios =3D <&gpio1 4 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&pinctrl {
++	key_pins: mux-keys {
++		groups =3D "gspi", "sspi";
++		function =3D "gpio";
++	};
++
++	led_pins: mux-leds {
++		groups =3D "hg3", "hg0", "pwm4";
++		function =3D "gpio";
++	};
  };
+
+ &serial0 {
 =2D-
 2.30.2
 
