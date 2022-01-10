@@ -2,190 +2,98 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFC7C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Jan 2022 12:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F89AC433F5
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Jan 2022 13:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245391AbiAJMXV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Jan 2022 07:23:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33072 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245376AbiAJMXO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Jan 2022 07:23:14 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C36C061756
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Jan 2022 04:23:13 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id q8so26332716wra.12
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Jan 2022 04:23:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=d5pQe12aMTp9K2Ar029wPLMoAM2l+tag/tJuNAihSfA=;
-        b=oJPzZWiJGiiJbT4/DpmWXxwLQYl6V3un3f2VMq9gR7xu1Vg0i7bZ927q0i6k6AQopH
-         EMyuitOKXW8UrzPrA8eOw7VIwHiup4VsiSBK70Fwh3ZHQOw8z80zEoQuv/4CO+GM9ivz
-         F5QUJ+ddCeY/O2IGHQoaAHfFjZBPVjvkv+z5R1r8GVyPWIRO/0eMm5lWFMJ9u0SODO/G
-         MdBs5h8FelfgOYX3f78MFfDQiSxzbfqga00uHApimjp9PagVhvMXJoFmnNYqNKov7brQ
-         vTMyqbYIDiV5KSYQLZHE20N7CHzkl+83RKoT9KdBiD7amP2upvF6OjdjXJB6L3Rolsqe
-         gmUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=d5pQe12aMTp9K2Ar029wPLMoAM2l+tag/tJuNAihSfA=;
-        b=dVgkjhCc893RUB5mE/Fpc1PZOtGuggJOWyiDIYdntbXphSbp1YuCEewtsGlgiJFYsG
-         1e3eBzxNu+oSRs1jtIQwGuS0tg1Q3WOKq86xVBVUQb8dpIHYTaShM6lqvq+E91j81aHM
-         LS+mdMdISAiw9zP2lb7KH7CcDrHhOpbi/2GIWA5OtCsij5JZ+v6JODdgiysNsbkq3Nmg
-         AJNmfgRcPqCGXqdvaLjl49WzGw2TcrJ7VYY/l0TFKlUPMbF8qPN/ME2ZloIGqvaAvM4o
-         BVtEgCcab0o1pmxa+fiQvSvzCfxGNItgqPocZX5I4+MAYG5jEyvbNqrYmi69nv6YTdW7
-         oOEg==
-X-Gm-Message-State: AOAM532YF0yDvPRIx+6lK7vhHZ2GN0p6uU1EXWUvm99oXqOoFAGyDLvy
-        7JzGayjkvDDA9Lyela5RZ7UdmQ==
-X-Google-Smtp-Source: ABdhPJxJTGBqADrh2dO8M5zq/V0efObTWO7ybtVGTQGANdUuw72l8ka3sOvJLzv6aUoWNXVdmQ1BEQ==
-X-Received: by 2002:adf:e2cc:: with SMTP id d12mr17686855wrj.107.1641817392300;
-        Mon, 10 Jan 2022 04:23:12 -0800 (PST)
-Received: from google.com ([31.124.24.179])
-        by smtp.gmail.com with ESMTPSA id l4sm6533168wrm.62.2022.01.10.04.23.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jan 2022 04:23:11 -0800 (PST)
-Date:   Mon, 10 Jan 2022 12:23:09 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Colin Foster <colin.foster@in-advantage.com>
-Cc:     linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        id S234420AbiAJNrg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Jan 2022 08:47:36 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:26568 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S234173AbiAJNr1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 10 Jan 2022 08:47:27 -0500
+X-IronPort-AV: E=Sophos;i="5.88,277,1635174000"; 
+   d="scan'208";a="106014821"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Jan 2022 22:47:26 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2289242E3549;
+        Mon, 10 Jan 2022 22:47:23 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [RFC v5 net-next 08/13] mfd: add interface to check whether a
- device is mfd
-Message-ID: <YdwlLYFPU16roS8E@google.com>
-References: <20211218214954.109755-1-colin.foster@in-advantage.com>
- <20211218214954.109755-9-colin.foster@in-advantage.com>
- <Ycx+A4KNKiVmH2PJ@google.com>
- <20211230020443.GB1347882@euler>
- <Yc23mTo6g1tBiMjT@google.com>
- <20211230201253.GA1484230@euler>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211230201253.GA1484230@euler>
+        Rob Herring <robh+dt@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 06/12] dt-bindings: pinctrl: renesas: Document RZ/V2L pinctrl
+Date:   Mon, 10 Jan 2022 13:46:53 +0000
+Message-Id: <20220110134659.30424-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220110134659.30424-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220110134659.30424-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 30 Dec 2021, Colin Foster wrote:
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-> On Thu, Dec 30, 2021 at 01:43:53PM +0000, Lee Jones wrote:
-> > On Wed, 29 Dec 2021, Colin Foster wrote:
-> > 
-> > > On Wed, Dec 29, 2021 at 03:25:55PM +0000, Lee Jones wrote:
-> > > > On Sat, 18 Dec 2021, Colin Foster wrote:
-> > > > 
-> > > > > Some drivers will need to create regmaps differently based on whether they
-> > > > > are a child of an MFD or a standalone device. An example of this would be
-> > > > > if a regmap were directly memory-mapped or an external bus. In the
-> > > > > memory-mapped case a call to devm_regmap_init_mmio would return the correct
-> > > > > regmap. In the case of an MFD, the regmap would need to be requested from
-> > > > > the parent device.
-> > > > > 
-> > > > > This addition allows the driver to correctly reason about these scenarios.
-> > > > > 
-> > > > > Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
-> > > > > ---
-> > > > >  drivers/mfd/mfd-core.c   |  5 +++++
-> > > > >  include/linux/mfd/core.h | 10 ++++++++++
-> > > > >  2 files changed, 15 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> > > > > index 684a011a6396..905f508a31b4 100644
-> > > > > --- a/drivers/mfd/mfd-core.c
-> > > > > +++ b/drivers/mfd/mfd-core.c
-> > > > > @@ -33,6 +33,11 @@ static struct device_type mfd_dev_type = {
-> > > > >  	.name	= "mfd_device",
-> > > > >  };
-> > > > >  
-> > > > > +int device_is_mfd(struct platform_device *pdev)
-> > > > > +{
-> > > > > +	return (!strcmp(pdev->dev.type->name, mfd_dev_type.name));
-> > > > > +}
-> > > > > +
-> > > > 
-> > > > Why is this device different to any other that has ever been
-> > > > mainlined?
-> > > 
-> > > Hi Lee,
-> > > 
-> > > First, let me apologize for not responding to your response from the
-> > > related RFC from earlier this month. It had been blocked by my spam
-> > > filter and I had not seen it until just now. I'll have to check that
-> > > more diligently now.
-> > > 
-> > > Moving on...
-> > > 
-> > > That's a question I keep asking myself. Either there's something I'm
-> > > missing, or there's something new I'm doing.
-> > > 
-> > > This is taking existing drivers that work via MMIO regmaps and making
-> > > them interface-independent. As Vladimir pointed out here:
-> > > https://lore.kernel.org/all/20211204022037.dkipkk42qet4u7go@skbuf/T/
-> > > device_is_mfd could be dropped in lieu of an mfd-specific probe
-> > > function.
-> > > 
-> > > If there's something I'm missing, please let me know. But it feels like
-> > > devm_get_regmap_from_resource at the end of the day would be the best
-> > > solution to the design, and that doesn't exist. And implementing
-> > > something like that is a task that I feel I'm not capable of tackling at
-> > > this time.
-> > 
-> > I'm really not a fan of leaking any MFD API outside of drivers/mfd.
-> > MFD isn't a tangible thing.  It's a Linuxiusm, something we made up, a
-> > figment of your imagination.
-> > 
-> > What happens if you were to all dev_get_regmap() in the non-MFD case
-> > or when you call devm_regmap_init_mmio() when the driver was
-> > registered via the MFD framework?
-> 
-> I'd imagine dev_get_regmap in a non-MFD case would be the same as
-> dev_get_and_ioremap_resource() followed by devm_regmap_init_mmio().
-> 
-> In the MFD case it would possibly request the regmap from the parent,
-> which could reason about how to create the regmap. As you understand,
-> this is exactly the behavior I created in this patch set. I did it by
-> way of ocelot_get_regmap_from_resource, and admit it isn't the best way.
-> But it certainly seems there isn't an existing method that I'm missing.
-> 
-> I'm coming from a pretty narrow field of view, but believe my use-case
-> is a valid one. If that is true, and there isn't another design I should
-> use... this is the opportunity to create it. Implementing
-> ocelot_get_regmap_from_resource is a way to achieve my needs without
-> affecting anyone else. 
-> 
-> Going one step further and implementing mfd_get_regmap_from_parent (or
-> similar) would creep into the design of MFD. I don't know enough about
-> MFD and the users to suggest this. I wouldn't want to start venturing
-> down that path without blessing from the community. And this would
-> indirectly affect every MFD driver.
-> 
-> Going all in and implementing device_get_regmap_from_resource... I don't
-> know that I'd be comfortable even starting down that path knowing that
-> it would affect every device. Perhaps it would have to utilize something
-> like IORESOURCE_REG that seems to only get utilized in a handful of 
-> files:
-> https://elixir.bootlin.com/linux/v5.16-rc7/C/ident/IORESOURCE_REG
+Document Renesas RZ/V2L pinctrl bindings. The RZ/V2L is package- and
+pin-compatible with the RZ/G2L. No driver changes are required as RZ/G2L
+compatible string "renesas,r9a07g044-pinctrl" will be used as a fallback.
 
-Let's speak to Mark and see if he can provide any insight.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+v1->v2
+* Included ACK from ROB
+---
+ .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml   | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+index ef68dabcf4dc..189a0800cd1d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+@@ -4,14 +4,14 @@
+ $id: http://devicetree.org/schemas/pinctrl/renesas,rzg2l-pinctrl.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Renesas RZ/G2L combined Pin and GPIO controller
++title: Renesas RZ/{G2L,V2L} combined Pin and GPIO controller
+ 
+ maintainers:
+   - Geert Uytterhoeven <geert+renesas@glider.be>
+   - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+ 
+ description:
+-  The Renesas SoCs of the RZ/G2L series feature a combined Pin and GPIO
++  The Renesas SoCs of the RZ/{G2L,V2L} series feature a combined Pin and GPIO
+   controller.
+   Pin multiplexing and GPIO configuration is performed on a per-pin basis.
+   Each port features up to 8 pins, each of them configurable for GPIO function
+@@ -20,8 +20,15 @@ description:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - renesas,r9a07g044-pinctrl # RZ/G2{L,LC}
++    oneOf:
++      - items:
++          - enum:
++              - renesas,r9a07g044-pinctrl # RZ/G2{L,LC}
++
++      - items:
++          - enum:
++              - renesas,r9a07g054-pinctrl     # RZ/V2L
++          - const: renesas,r9a07g044-pinctrl  # RZ/G2{L,LC} fallback for RZ/V2L
+ 
+   reg:
+     maxItems: 1
 -- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
