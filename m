@@ -2,107 +2,329 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F60C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Jan 2022 10:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552C7C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Jan 2022 12:17:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244031AbiAJKdy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Jan 2022 05:33:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35916 "EHLO
+        id S245287AbiAJMRH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Jan 2022 07:17:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244019AbiAJKdW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Jan 2022 05:33:22 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F72C06175A
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Jan 2022 02:33:21 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id x4so648163wru.7
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Jan 2022 02:33:21 -0800 (PST)
+        with ESMTP id S245286AbiAJMRD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Jan 2022 07:17:03 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EF73C06173F
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Jan 2022 04:17:03 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id o7-20020a05600c510700b00347e10f66d1so1418359wms.0
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Jan 2022 04:17:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Ux09BdvBfy5otBeH83si9wqeKjp8gHNJ9Zt3Er9zFxE=;
-        b=uXYTgRqNTmPW/huo6KEYGPOM4ISUhPLQBff/OQu1mryKVB8bfEA9SMGpAzs8WENMSr
-         fuyNQuevmAkNaM1DIBs9B5ePOxvg6kIQUNCfH4GFaXO0BAGjC6GgZqB5Fa+1alU087Z8
-         P+Vm7f+/pCXvExKs6et7iTpYsEWdwEv98+Oj1Ut/3CLURBSYQn8BBRcI2i4huO0Nyhig
-         jAh0PzBKkTaun4SPlD9rbsylUIDBnG5CqjHmWput0432gybnuR4m4QvkFs0RSDDvlb27
-         XDCH8P8FAS/PXCOIbQZcLNaqtzSULbKkPi6r/pLPsz//6OCjXG/9tpB7zbwtR5B9wtSf
-         7hog==
+        bh=q/bYLC883mDqr/XPF4STq6rklrV+RHbvazODC3wWiTU=;
+        b=sS6LSs4Fy2xO3mwZZD3kUSyG46X4wnClviLQwBWkUNiNuFv95Q8snbKMFzo4nJMcVd
+         yO3Ti9xsdsNejdniYxOPuR6wBaxsH3uGP2z8hjBzAv9uDMJDN+8vu3Pq/6yan9lQoFjQ
+         daVyXN42FMySYyNnX5VHN6GFc8qC0LLzceXZrksttANP79aPIoinYXTA91kIy0l0g+BF
+         rPrY8VrPnBcoAsW6InYOqrk40rIQNWXu7CxB3YCxynNZQLveAlseWlr6gBd8iZOrLYlK
+         POdr+YhoNhOstXgNcsl7PBmZicc2gPPkN3sbKgQoYK2F1YKRE05L/05CahIHSPVVuxLl
+         VXKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=Ux09BdvBfy5otBeH83si9wqeKjp8gHNJ9Zt3Er9zFxE=;
-        b=an4nG+mLuJlMLtBhi+x0E6e2b4S1AHM+rPuKGNLut/HDvOGrG53FtYZ3AsQmxnr3Bs
-         AOXuq/xOR0PH0NuXl4AT3EkVq6AeFGQeho94reNXpMAfM8c1K79sPzfHsgwQpTIkUvmB
-         1uuOfi50d9w5HjwZLU33L2Wiu7SkeWMYUEf8AbB1tfSSaIRvI3zMSVw/DiqUjNKwNqCe
-         l9volyCPfkghIU0vefS5aKkLIbW1hFeKC7pdIN+fRn9FOy9NPMni3QqROXapJYLvpyrV
-         diAzWJKDucOdCliCWqGlMYAcbujarIQe++j5vXGkBLLx7HadZQsMOUTJLtGFyv+g/G6x
-         r13A==
-X-Gm-Message-State: AOAM531yTvYmX6jZ3CzAOBWdjI/hXskbrmQYOg6cYiOPtN8iTPrGY9Pm
-        /ppxxKAuKwkrzxhTnDDSqwngmw==
-X-Google-Smtp-Source: ABdhPJzMfF4X4m8rqBSMupPmJ6wMSv1HcNXmy8LWfHPif6guaPAHOVr+QYANksWrPaZREcLyZVwvuQ==
-X-Received: by 2002:a5d:6d06:: with SMTP id e6mr63672846wrq.273.1641810799760;
-        Mon, 10 Jan 2022 02:33:19 -0800 (PST)
+        bh=q/bYLC883mDqr/XPF4STq6rklrV+RHbvazODC3wWiTU=;
+        b=p0fwcpFIyMs8Bhvd304zR3J0vQ1Ncwaf49k2FN+3gMtbcJtR/3Fjw29TeCzwgvr5QE
+         RLO5iNRVKREzeG4Y2p49DG16bLUUy3h2UN1mnbpoGbzUNuLOu6LRfrS6CjgFcW1vtgjF
+         uW7AUE4PezbBvfQDQuf+dZV04kxrCjsr3aRXtauQ2g4GQiqd/WVDgu1J5ShvGCsdLjpk
+         UraPBX3OUNdiUEJ3bbSsaF/m7rCmhVc58FPlJVEL8gc1rTNM0SovvYEU0t+sDdjrh18C
+         uWbLhovQvlWTMNR94tc048r3lEDw/E+z97FCzU9YXLEn3ZYI4rnWQne9+Nn6tognS1Ct
+         laPg==
+X-Gm-Message-State: AOAM53364DSrp0aH5pUIGjZUL+qXa5h0MObEcBXmFwlfw3hKqB2F2Pmh
+        V3yhLUa5Ixueufuj3rxBFwjEYg==
+X-Google-Smtp-Source: ABdhPJwjQ9AjVv0AC7vdz7XwDI5XaI9x9iucscvpq597gf1GQK06f4RKKqHkpsdoL6RQnFMrlhQBuQ==
+X-Received: by 2002:a1c:770b:: with SMTP id t11mr5546852wmi.61.1641817021850;
+        Mon, 10 Jan 2022 04:17:01 -0800 (PST)
 Received: from google.com ([31.124.24.179])
-        by smtp.gmail.com with ESMTPSA id ba18sm6324269wrb.40.2022.01.10.02.33.18
+        by smtp.gmail.com with ESMTPSA id j13sm7007166wmq.11.2022.01.10.04.17.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jan 2022 02:33:19 -0800 (PST)
-Date:   Mon, 10 Jan 2022 10:33:23 +0000
+        Mon, 10 Jan 2022 04:17:01 -0800 (PST)
+Date:   Mon, 10 Jan 2022 12:16:59 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        "David S. Miller" <davem@davemloft.net>,
+To:     Colin Foster <colin.foster@in-advantage.com>
+Cc:     broonie@kernel.org, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Suman Anna <s-anna@ti.com>, - <patches@opensource.cirrus.com>,
-        John Crispin <john@phrozen.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, netdev@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: Drop required 'interrupt-parent'
-Message-ID: <YdwLc2ZTERBoXgxR@google.com>
-References: <20220107031905.2406176-1-robh@kernel.org>
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [RFC v5 net-next 01/13] mfd: ocelot: add support for external
+ mfd control over SPI for the VSC7512
+Message-ID: <Ydwju35sN9QJqJ/P@google.com>
+References: <20211218214954.109755-1-colin.foster@in-advantage.com>
+ <20211218214954.109755-2-colin.foster@in-advantage.com>
+ <Ycx9MMc+2ZhgXzvb@google.com>
+ <20211230014300.GA1347882@euler>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220107031905.2406176-1-robh@kernel.org>
+In-Reply-To: <20211230014300.GA1347882@euler>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 06 Jan 2022, Rob Herring wrote:
+On Wed, 29 Dec 2021, Colin Foster wrote:
+> On Wed, Dec 29, 2021 at 03:22:24PM +0000, Lee Jones wrote:
 
-> 'interrupt-parent' is never required as it can be in a parent node or a
-> parent node itself can be an interrupt provider. Where exactly it lives is
-> outside the scope of a binding schema.
+[...]
+
+> > > +	tristate "Microsemi Ocelot External Control Support"
+> > > +	select MFD_CORE
+> > > +	help
+> > > +	  Say yes here to add support for Ocelot chips (VSC7511, VSC7512,
+> > > +	  VSC7513, VSC7514) controlled externally.
+> > 
+> > Please describe the device in more detail here.
+> > 
+> > I'm not sure what an "External Control Support" is.
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/gpio/toshiba,gpio-visconti.yaml  | 1 -
->  .../devicetree/bindings/mailbox/ti,omap-mailbox.yaml     | 9 ---------
->  Documentation/devicetree/bindings/mfd/cirrus,madera.yaml | 1 -
+> A second paragraph "All four of these chips can be controlled internally
+> (MMIO) or externally via SPI, I2C, PCIe. This enables control of these
+> chips over one or more of these buses"
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Where?  Or do you mean that you'll add one?
 
->  .../devicetree/bindings/net/lantiq,etop-xway.yaml        | 1 -
->  .../devicetree/bindings/net/lantiq,xrx200-net.yaml       | 1 -
->  .../devicetree/bindings/pci/sifive,fu740-pcie.yaml       | 1 -
->  .../devicetree/bindings/pci/xilinx-versal-cpm.yaml       | 1 -
->  7 files changed, 15 deletions(-)
+> > Please remove the term 'mfd\|MFD' from everywhere.
+> 
+> "ocelot_init" conflicts with a symbol in
+> drivers/net/ethernet/mscc/ocelot.o, otherwise I belive I got them all
+> now.
+
+Then rename the other one.  Or call this one 'core', or something.
+
+> > > +struct ocelot_mfd_core {
+> > > +	struct ocelot_mfd_config *config;
+> > > +	struct regmap *gcb_regmap;
+> > > +	struct regmap_field *gcb_regfields[GCB_REGFIELD_MAX];
+> > > +};
+> > 
+> > Not sure about this at all.
+> > 
+> > Which driver did you take your inspiration from?
+> 
+> Mainly drivers/net/dsa/ocelot/* and drivers/net/ethernet/mscc/*.
+
+I doubt you need it.  Please try to remove it.
+
+> > > +static const struct resource vsc7512_gcb_resource = {
+> > > +	.start	= 0x71070000,
+> > > +	.end	= 0x7107022b,
+> > 
+> > No magic numbers please.
+> 
+> I've gotten conflicting feedback on this. Several of the ocelot drivers
+> (drivers/net/dsa/ocelot/felix_vsc9959.c) have these ranges hard-coded.
+> Others (Documentation/devicetree/bindings/net/mscc-ocelot.txt) have them
+> all passed in through the device tree. 
+> 
+> https://lore.kernel.org/netdev/20211126213225.okrskqm26lgprxrk@skbuf/
+
+Ref or quote?
+
+I'm not brain grepping it searching for what you might be referring to.
+
+I'm not sure what you're trying to say here.  I'm asking you to define
+this numbers please.
+
+> > > +	.name	= "devcpu_gcb",
+> > 
+> > What is a 'devcpu_gcb'?
+> 
+> It matches the datasheet of the CPU's general configuation block.
+
+Please could you quote that part for me?
+
+> > > +	ret = regmap_field_write(core->gcb_regfields[GCB_SOFT_RST_CHIP_RST], 1);
+> > 
+> > No magic numbers please.  I have no idea what this is doing.
+> 
+> I'm not sure how much more verbose it can be... I suppose a define for
+> "RESET" and "CLEAR" instead of "1" and "0" on that bit. Maybe I'm just
+> blinded by having stared at this code for the last several months.
+
+Yes please.  '1' could mean anything.
+
+'CLEAR' is just as opaque.
+
+What actually happens when you clear that register bit?
+
+> > 
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	/*
+> > > +	 * Note: This is adapted from the PCIe reset strategy. The manual doesn't
+> > > +	 * suggest how to do a reset over SPI, and the register strategy isn't
+> > > +	 * possible.
+> > > +	 */
+> > > +	msleep(100);
+> > > +
+> > > +	ret = core->config->init_bus(core->config);
+> > 
+> > You're not writing a bus.  I doubt you need ops call-backs.
+> 
+> In the case of SPI, the chip needs to be configured both before and
+> after reset. It sets up the bus for endianness, padding bytes, etc. This
+> is currently achieved by running "ocelot_spi_init_bus" once during SPI
+> probe, and once immediately after chip reset.
+> 
+> For other control mediums I doubt this is necessary. Perhaps "init_bus"
+> is a misnomer in this scenario...
+
+Please find a clearer way to do this without function pointers.
+
+> > > +void ocelot_mfd_get_resource_name(char *name, const struct resource *res,
+> > > +				  int size)
+> > > +{
+> > > +	if (res->name)
+> > > +		snprintf(name, size - 1, "ocelot_mfd-%s", res->name);
+> > > +	else
+> > > +		snprintf(name, size - 1, "ocelot_mfd@0x%08x", res->start);
+> > > +}
+> > > +EXPORT_SYMBOL(ocelot_mfd_get_resource_name);
+> > 
+> > What is this used for?
+> > 
+> > You should not be hand rolling device resource names like this.
+> > 
+> > This sort of code belongs in the bus/class API.
+> > 
+> > Please use those instead.
+> 
+> The idea here was to allow shared regmaps across different devices. The
+> "devcpu_gcb" might be used in two ways - either everyone shares the same
+> regmap across the "GCB" range, or everyone creates their own. 
+> 
+> This was more useful when the ocelot-core.c had a copy of the 
+> "devcpu_org" regmap that was shared with ocelot-spi.c. I was able to
+> remove that, but also feel like the full switch driver (patch 6 of this
+> set) ocelot-ext should use the same "devcpu_gcb" regmap instance as
+> ocelot-core does.
+> 
+> Admittedly, there are complications. There should probably be more
+> checks added to "ocelot_regmap_init" / "get_regmap" to ensure that the
+> regmap for ocelot_ext exactly matches the existing regmap for
+> ocelot_core.
+> 
+> There's yet another complexity with these, and I'm not sure what the
+> answer is. Currently all regmaps are tied to the ocelot_spi device...
+> ocelot_spi calls devm_regmap_init. So those regmaps hang around if
+> they're created by a module that has been removed. At least until the
+> entire MFD module is removed. Maybe there's something I haven't seen yet
+> where the devres or similar has a reference count. I don't know the best
+> path forward on this one.
+
+Why are you worrying about creating them 2 different ways?
+
+If it's possible for them to all create and use their own regmaps,
+what's preventing you from just do that all the time?
+
+> > > +	/* Create and loop over all child devices here */
+> > 
+> > These need to all go in now please.
+> 
+> I'll squash them, as I saw you suggested in your other responses. I
+> tried to keep them separate, especially since adding ocelot_ext to this
+> commit (which has no functionality until this one) makes it quite a
+> large single commit. That's why I went the path I did, which was to roll
+> them in one at a time.
+
+This is not an MFD until they are present.
+
+> > > +int ocelot_mfd_remove(struct ocelot_mfd_config *config)
+> > > +{
+> > > +	/* Loop over all children and remove them */
+> > 
+> > Use devm_* then you won't have to.
+> 
+> Yeah, I was more worried than I needed to be when I wrote that comment.
+> The only thing called to clean everything up is mfd_remove_devices();
+
+Use devm_mfd_add_devices(), then you don't have to.
+
+[...]
+
+> > > +#include <linux/regmap.h>
+> > > +
+> > > +struct ocelot_mfd_config {
+> > > +	struct device *dev;
+> > > +	struct regmap *(*get_regmap)(struct ocelot_mfd_config *config,
+> > > +				     const struct resource *res,
+> > > +				     const char *name);
+> > > +	int (*init_bus)(struct ocelot_mfd_config *config);
+> > 
+> > Please re-work and delete this 'config' concept.
+> > 
+> > See other drivers in this sub-directory for reference.
+> 
+> Do you have a specific example? I had focused on madera for no specific
+> reason. But I really dislike the idea of throwing all of the structure
+> definition for the MFD inside of something like
+> "include/linux/mfd/ocelot/core.h", especially since all the child
+> drivers (madera-pinctrl, madera-gpio, etc) heavily rely on this struct. 
+> 
+> It seemed to me that without the concept of
+> "mfd_get_regmap_from_resource" this sort of back-and-forth was actually
+> necessary.
+
+Things like regmaps are usually passed in via driver_data or
+platform_data.  Almost anything is better than call-backs.
+
+[...]
+
+> > > +	if (!ocelot_spi)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	if (spi->max_speed_hz <= 500000) {
+> > > +		ocelot_spi->spi_padding_bytes = 0;
+> > > +	} else {
+> > > +		/*
+> > > +		 * Calculation taken from the manual for IF_CFGSTAT:IF_CFG. Err
+> > > +		 * on the side of more padding bytes, as having too few can be
+> > > +		 * difficult to detect at runtime.
+> > > +		 */
+> > > +		ocelot_spi->spi_padding_bytes = 1 +
+> > > +			(spi->max_speed_hz / 1000000 + 2) / 8;
+> > 
+> > Please explain what this means or define the values (or both).
+> 
+> I can certainly elaborate the comment. Searching the manual for the term
+> "if_cfgstat" will take you right to the equation, and a description of
+> what padding bytes are, etc. 
+
+You shouldn't insist for your readers to RTFM.
+
+If the code doesn't read well or is overly complicated, change it.
+
+If the complexity is required, document it in comments.
+
+> > > +	ocelot_spi->spi = spi;
+> > 
+> > Why are you saving this?
+> 
+> This file keeps the regmap_{read,write} implementations, so is needed
+> for spi_sync() for any regmap. There might be a better way to infer
+> this... but it seemed pretty nice to have each regmap only carry along
+> an instance of "ocelot_spi_regmap_context."
+
+I still need Mark to look at your Regmap implementation.
 
 -- 
 Lee Jones [李琼斯]
