@@ -2,58 +2,58 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C904C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Jan 2022 20:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B73C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Jan 2022 20:19:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350817AbiAKUTR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Jan 2022 15:19:17 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:38576
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346609AbiAKUSf (ORCPT
+        id S243417AbiAKUTV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Jan 2022 15:19:21 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:60214
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1346353AbiAKUS1 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 11 Jan 2022 15:18:35 -0500
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        Tue, 11 Jan 2022 15:18:27 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id ACBBE4005A
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Jan 2022 20:18:34 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6C31F4076E
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Jan 2022 20:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641932314;
-        bh=kQHLxaxxJLFmOGqzWUxDRLkwO6oKafieScmNTdNr7i4=;
+        s=20210705; t=1641932300;
+        bh=Qlnwbd6fk1GAVHv44UFEkb4MIEQM8+1pdzBh/ez3KZQ=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=BU1KhsIk5nEo9RDu85jhtRKVIOUZcVwAfYcZikRHouzX3zNAI/mePRVn4N37jbOm2
-         rXdlhwhgMkKTTErl6AC136I5l0xWwXmCfRlnFqYlGfKfYinxzNouh1koeseUWLk9Wn
-         0oIZd1rn0JCMutTg6ooQ0ElauVZg11pvDWynvoc9oCVADU1fqeodJAPYeEIOKXUiik
-         P7OlHR04IpiTAkuvpscpqT8ov2xNhOIj1hSBFbx7rCTRaobmu+7Py/cGNWA6m5PLKO
-         fp7ejRioH7Pkl6d+hxKGmzg1cGWxxmHD1DO5J3v+YOMtYjyL7zfhCcO38ZvaATeMnl
-         VW11YM+ja5W9Q==
-Received: by mail-ed1-f69.google.com with SMTP id l14-20020aa7cace000000b003f7f8e1cbbdso156073edt.20
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Jan 2022 12:18:34 -0800 (PST)
+        b=QkZOlQa5xYHr34nh1BjmgEroYXEU3QeBlFnUH8yt5pdneD4IkRXtrN4N8S5LZ4k+o
+         NOE6XR6nXZQTE2LHkAt0u1mF7mwK93fF7qIxpdfhn/jpF3jsHa5EKZ3ItfBs52J43o
+         KGna0GCptV7YoN75C1Mo1KPcFQtFsPAuAMfurocNtQeEY1u4BeqAuBhA6FGCNWnYPA
+         vzAVfFlNypIS9ivtBKv9/KHfpLSuAO6bUmtzHv2jU+sDy9b9W1Iuv2x5b4fEgEQCEc
+         c2yU8IBOAKDhu/EUhYzvdKHo2fW3O3s6JY57SgiaxnK8oPScqPclY3IFWChkPbHYu9
+         cAo0cHTpXAMvA==
+Received: by mail-ed1-f71.google.com with SMTP id t1-20020a056402524100b003f8500f6e35so199615edd.8
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Jan 2022 12:18:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kQHLxaxxJLFmOGqzWUxDRLkwO6oKafieScmNTdNr7i4=;
-        b=gCoewRt2UehCblSX3/9fFEjN/V5vvTHZjwwxGVrs3WTZbFTyemFY/uQ8k9IJQSC43+
-         uWqkAVucnY/3JNo6hAp0pDyOllXWZkHZx3F01jveru/f9OcwisUp5QYwZHH/VU08tBkR
-         Mb7sUmKYHXY+86ntLzbu2XcsJ+9cASXoTCZlxRfHx+Ft//vZueTjdaq2FMHRXpVdP24f
-         YraJa3dfTpsBRJi6MfEBn52lnk/qM3rWRun0QzvnKkcENl4mDhruTjReAhPBT8rVld2X
-         u1euP+dReK1yAAcbIsUVd9itw+seodMUlGUns4cfklr+nvcOWiHQBuohFxcrjXy9VopI
-         DNsg==
-X-Gm-Message-State: AOAM5339kF97yHMNPxiwcswIU4Y/Xe84RCn2kSVqVyn6EQZczrsOujWM
-        QPeKEQ0A9n/vYb+1iNjuug6jO26Rt7LkB0kRQlTZqEJRsV5v59WRLBA/dYxMYO9NSBf64OqdsTC
-        AXK0cBF1aNfVt2yXTk/aWvTCIHD0wh8zwjVcHj30=
-X-Received: by 2002:a50:f086:: with SMTP id v6mr737738edl.94.1641932312220;
-        Tue, 11 Jan 2022 12:18:32 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxJA2UIH8S5lzI4JycUQ9WDc6T41H+sPiiwxmzpWvqHdoH7V+UxlOdlH0f0srHDP5vkj+BfXg==
-X-Received: by 2002:a50:f086:: with SMTP id v6mr737711edl.94.1641932312024;
-        Tue, 11 Jan 2022 12:18:32 -0800 (PST)
+        bh=Qlnwbd6fk1GAVHv44UFEkb4MIEQM8+1pdzBh/ez3KZQ=;
+        b=EtCxLhvvU3epZ5OIB5nEsOJBUE9Kx1BwOwABi3ePp3L/5Z2dm0CaYFZDuyODOuxABV
+         hrigfPfb59NtTQPrMBuvJknJS6lKsNbFRbqzaTtH0Xfpcc4C540RL4qhi8sL13EBE44x
+         fImv3d5omdXTLG+eljdV2LnVFhdchHzfyLH852kzTrzy4v34fkvCeHF5VzrroA5guylU
+         deDuH6n2g/nIj3BlhhL0mxIrUBOStkAURzlR9h+02dP0orodhB5HlgXALtRV6+rmnwAc
+         pvrMyxnM43BPZI91IaK47UeXOaePGLRRLUixr9BEskRaojaQHrdP5tIzWt5KuNDF+xy9
+         c6BA==
+X-Gm-Message-State: AOAM532fP8Z6SItYEpus0zTAH/5U9a8Ysr6UUTbg9IdsCpGB1+EqHh0V
+        g08dRKkC+XCCQxaZIAzHcA+SvopDZn/PZTKlFuylzQ2Al7MTnDUqF2dt296rWdqMutUywiPSKtq
+        ZYeBHJH4pvDEV2pB7h4BgHTVDVS8pSK/X6Hb6MUs=
+X-Received: by 2002:a17:906:f1c1:: with SMTP id gx1mr5115801ejb.554.1641932300101;
+        Tue, 11 Jan 2022 12:18:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyjg8XXXEtJLzZGyVnTOplVIASttt5k3NI3JcN11jWvuGHGfSah9kGC+WsunAadBmsLBsMRZQ==
+X-Received: by 2002:a17:906:f1c1:: with SMTP id gx1mr5115789ejb.554.1641932299934;
+        Tue, 11 Jan 2022 12:18:19 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id e4sm4030881ejs.13.2022.01.11.12.18.30
+        by smtp.gmail.com with ESMTPSA id e4sm4030881ejs.13.2022.01.11.12.18.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jan 2022 12:18:31 -0800 (PST)
+        Tue, 11 Jan 2022 12:18:19 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -67,9 +67,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sam Protsenko <semen.protsenko@linaro.org>,
         Chanho Park <chanho61.park@samsung.com>,
         Alim Akhtar <alim.akhtar@gmail.com>
-Subject: [PATCH v2 28/28] arm64: dts: exynos: use dedicated wake-up pinctrl compatible in ExynosAutov9
-Date:   Tue, 11 Jan 2022 21:17:22 +0100
-Message-Id: <20220111201722.327219-22-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 20/28] arm64: dts: exynos: align pinctrl with dtschema in ExynosAutov9
+Date:   Tue, 11 Jan 2022 21:17:14 +0100
+Message-Id: <20220111201722.327219-14-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
 References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
@@ -79,37 +79,242 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Older Samsung Exynos SoC pin controller nodes (Exynos3250, Exynos4,
-Exynos5, Exynos5433) with external wake-up interrupts, expected to have
-one interrupt for multiplexing these wake-up interrupts.  Also they
-expected to have exactly one pin controller capable of external wake-up
-interrupts.
-
-It seems however that newer ARMv8 Exynos SoC like Exynos850 and
-ExynosAutov9 have differences:
-1. No multiplexed external wake-up interrupt, only direct,
-2. More than one pin controller capable of external wake-up interrupts.
-
-Use dedicated ExynosAutov9 compatible for its external wake-up interrupts
-controller to indicate the differences.
+Align the pin controller related nodes with dtschema.  No functional
+change expected.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../boot/dts/exynos/exynosautov9-pinctrl.dtsi | 50 +++++++++----------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-index de8fcb82eaec..807d500d6022 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-@@ -208,7 +208,7 @@ pinctrl_alive: pinctrl@10450000 {
- 			reg = <0x10450000 0x1000>;
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi
+index 2407b03b5404..ef0349d1c3d0 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi
+@@ -11,7 +11,7 @@
+ #include <dt-bindings/pinctrl/samsung.h>
  
- 			wakeup-interrupt-controller {
--				compatible = "samsung,exynos7-wakeup-eint";
-+				compatible = "samsung,exynosautov9-wakeup-eint";
- 			};
- 		};
+ &pinctrl_alive {
+-	gpa0: gpa0 {
++	gpa0: gpa0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 		interrupt-controller;
+@@ -27,7 +27,7 @@ gpa0: gpa0 {
+ 			     <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 	};
+ 
+-	gpa1: gpa1 {
++	gpa1: gpa1-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 		interrupt-controller;
+@@ -47,7 +47,7 @@ dp1_hpd: dp1-hpd-pins {
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+ 	};
+ 
+-	gpq0: gpq0 {
++	gpq0: gpq0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -69,7 +69,7 @@ speedy1_bus: speedy1-bus-pins {
+ };
+ 
+ &pinctrl_aud {
+-	gpb0: gpb0 {
++	gpb0: gpb0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -77,7 +77,7 @@ gpb0: gpb0 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpb1: gpb1 {
++	gpb1: gpb1-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -85,7 +85,7 @@ gpb1: gpb1 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpb2: gpb2 {
++	gpb2: gpb2-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -93,7 +93,7 @@ gpb2: gpb2 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpb3: gpb3 {
++	gpb3: gpb3-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -199,7 +199,7 @@ aud_i2s6_idle: aaud-i2s6-idle-pins {
+ };
+ 
+ &pinctrl_fsys0 {
+-	gpf0: gpf0 {
++	gpf0: gpf0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -207,7 +207,7 @@ gpf0: gpf0 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpf1: gpf1 {
++	gpf1: gpf1-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -355,7 +355,7 @@ pcie_perst5_in: pcie-perst5-in-pins {
+ };
+ 
+ &pinctrl_fsys1 {
+-	gpf8: gpf8 {
++	gpf8: gpf8-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -393,7 +393,7 @@ sd2_bus4: sd2-bus-width4-pins {
+ };
+ 
+ &pinctrl_fsys2 {
+-	gpf2: gpf2 {
++	gpf2: gpf2-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -401,7 +401,7 @@ gpf2: gpf2 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpf3: gpf3 {
++	gpf3: gpf3-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -409,7 +409,7 @@ gpf3: gpf3 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpf4: gpf4 {
++	gpf4: gpf4-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -417,7 +417,7 @@ gpf4: gpf4 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpf5: gpf5 {
++	gpf5: gpf5-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -425,7 +425,7 @@ gpf5: gpf5 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpf6: gpf6 {
++	gpf6: gpf6-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -499,7 +499,7 @@ eth1_pps_out: eth1-pps-out-pins {
+ };
+ 
+ &pinctrl_peric0 {
+-	gpp0: gpp0 {
++	gpp0: gpp0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -507,7 +507,7 @@ gpp0: gpp0 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpp1: gpp1 {
++	gpp1: gpp1-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -515,7 +515,7 @@ gpp1: gpp1 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpp2: gpp2 {
++	gpp2: gpp2-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -523,7 +523,7 @@ gpp2: gpp2 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpg0: gpg0 {
++	gpg0: gpg0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -833,7 +833,7 @@ uart5_bus_dual: uart5-bus-dual-pins {
+ };
+ 
+ &pinctrl_peric1 {
+-	gpp3: gpp3 {
++	gpp3: gpp3-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -841,7 +841,7 @@ gpp3: gpp3 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpp4: gpp4 {
++	gpp4: gpp4-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -849,7 +849,7 @@ gpp4: gpp4 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpp5: gpp5 {
++	gpp5: gpp5-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -857,7 +857,7 @@ gpp5: gpp5 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpg1: gpg1 {
++	gpg1: gpg1-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -865,7 +865,7 @@ gpg1: gpg1 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpg2: gpg2 {
++	gpg2: gpg2-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -873,7 +873,7 @@ gpg2: gpg2 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	gpg3: gpg3 {
++	gpg3: gpg3-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
  
 -- 
 2.32.0
