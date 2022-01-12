@@ -2,72 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FB0C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 19:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95753C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 19:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344538AbiALTPc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Jan 2022 14:15:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357040AbiALTOm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jan 2022 14:14:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2F8C061759;
-        Wed, 12 Jan 2022 11:12:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 454DEB820D1;
-        Wed, 12 Jan 2022 19:12:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F0EC6C36AE5;
-        Wed, 12 Jan 2022 19:12:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642014729;
-        bh=RV/9ipPrmOLJGXvAqnWVtBhf1H0uV2Um/EuccX/yqHY=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Iplz2Bpbb07qTdbTTwDHa7MnawjUTcwKOqo/bflgt+/OZ8pSNthMLD6Tc9KraPgLj
-         +/rheoBgftyegqtWOqe1Xu012RtIjfJ/sIA9DYY6XW+9RtVRUzr+7T1ZpFyX4GAbrq
-         PX7U/zE0NPkRDFl2tFjSnuxsautSp6Gjo1ottb+rSPKssK4SnGTVNF+taZOx7asRN6
-         M6j1I277u2j80XuuHGOcjKcVyKxXq8C3ndzdoBRFNvoOkl9oWLcjzFuzeI0v8fkZXm
-         girDxteDzvyBu5KIRyjRUTSyWnlBx10gO3cm4TtJ+VJQnCQMfIR50K/Pl/JZVIbqb0
-         fxg1CxRFa2mtA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DFDB4F6078C;
-        Wed, 12 Jan 2022 19:12:08 +0000 (UTC)
-Subject: Re: [GIT PULL] pin control changes for v5.17
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdaVGwu=Bo5bxVQYZXD-k+x++SuOTApGoK2a_S-1M4Q+nQ@mail.gmail.com>
-References: <CACRpkdaVGwu=Bo5bxVQYZXD-k+x++SuOTApGoK2a_S-1M4Q+nQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdaVGwu=Bo5bxVQYZXD-k+x++SuOTApGoK2a_S-1M4Q+nQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.17-1
-X-PR-Tracked-Commit-Id: 7442936633bd1906a2571116ae334b68c56c8a72
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e3084ed48fd6b661fe434da0cb36d7d6706cf27f
-Message-Id: <164201472890.2601.800762283673218441.pr-tracker-bot@kernel.org>
-Date:   Wed, 12 Jan 2022 19:12:08 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
+        id S1357337AbiALTwS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Jan 2022 14:52:18 -0500
+Received: from mail.z3ntu.xyz ([128.199.32.197]:33208 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1350127AbiALTvj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 12 Jan 2022 14:51:39 -0500
+X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Jan 2022 14:51:16 EST
+Received: from localhost.localdomain (ip-213-127-106-2.ip.prioritytelecom.net [213.127.106.2])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id BCFC2CDFE2;
+        Wed, 12 Jan 2022 19:42:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1642016551; bh=uHZ8FRuZVwHxIA1x9cXwgwRQGE+bY7VbBrE0ut+WwBA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=gYSLf3FDfifqrL08W6o3GhwP6rzZSTWaGWmogO3iofldiRr2Zkshti029glhRFhnb
+         B249aiGmPVASN1HLYNkDWNxv9QsaCwLJMgILDapO7RXS1yIJgyIK8CYlDwBTlHLWKp
+         3jIWI4H5gdezmLM7ZDa8hstB9XawHS706+owrM+s=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 08/15] dt-bindings: pinctrl: qcom: msm8953: allow gpio-reserved-ranges
+Date:   Wed, 12 Jan 2022 20:40:57 +0100
+Message-Id: <20220112194118.178026-9-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220112194118.178026-1-luca@z3ntu.xyz>
+References: <20220112194118.178026-1-luca@z3ntu.xyz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Wed, 12 Jan 2022 12:23:03 +0100:
+Allow the gpio-reserved-ranges property to be used in dts.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.17-1
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+Acked-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+ .../devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml       | 2 ++
+ 1 file changed, 2 insertions(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e3084ed48fd6b661fe434da0cb36d7d6706cf27f
-
-Thank you!
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+index abe9f4c9b1e3..11a215bba64b 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+@@ -34,6 +34,8 @@ properties:
+ 
+   gpio-controller: true
+ 
++  gpio-reserved-ranges: true
++
+   '#gpio-cells':
+     description: Specifying the pin number and flags, as defined in
+       include/dt-bindings/gpio/gpio.h
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.34.1
+
