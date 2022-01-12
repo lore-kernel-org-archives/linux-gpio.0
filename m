@@ -2,25 +2,24 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B5EC433F5
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 11:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6390C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 11:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352968AbiALLrq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Jan 2022 06:47:46 -0500
-Received: from mailgw01.mediatek.com ([60.244.123.138]:42674 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1352963AbiALLrq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jan 2022 06:47:46 -0500
-X-UUID: 73277f2e8cdb40d899a5877e00f19d4b-20220112
-X-UUID: 73277f2e8cdb40d899a5877e00f19d4b-20220112
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        id S1352976AbiALLrs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Jan 2022 06:47:48 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:52944 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1352975AbiALLrr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jan 2022 06:47:47 -0500
+X-UUID: 09028ebe28374decbc7cf3bb47a35082-20220112
+X-UUID: 09028ebe28374decbc7cf3bb47a35082-20220112
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 2056100384; Wed, 12 Jan 2022 19:47:43 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1252243168; Wed, 12 Jan 2022 19:47:43 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Wed, 12 Jan 2022 19:47:42 +0800
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 12 Jan 2022 19:47:42 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
  Transport; Wed, 12 Jan 2022 19:47:42 +0800
@@ -46,12 +45,10 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         <ryder.lee@kernel.org>, <wenst@chromium.org>,
         <chunfeng.yun@mediatek.com>
-Subject: [PATCH v9 2/3] dt-bindings: pinctrl: mt8195: Add mediatek,drive-strength-adv property
-Date:   Wed, 12 Jan 2022 19:47:23 +0800
-Message-ID: <20220112114724.1953-3-tinghan.shen@mediatek.com>
+Subject: [PATCH v9 0/3] Add basic SoC support for mediatek mt8195
+Date:   Wed, 12 Jan 2022 19:47:21 +0800
+Message-ID: <20220112114724.1953-1-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.15.GIT
-In-Reply-To: <20220112114724.1953-1-tinghan.shen@mediatek.com>
-References: <20220112114724.1953-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -59,66 +56,81 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Extend driving support for I2C pins on SoC mt8195.
-This property is already documented in mediatek,mt8183-pinctrl.yaml.
+This series adds basic SoC support for Mediatek's SoC MT8195.
 
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/pinctrl/pinctrl-mt8195.yaml      | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Changes in v9:
+  - remove duplicated cpus dt-bindings patch in v8
+Changes in v8:
+  - v7 mediatek,spi-mtk-nor.yaml patch is applied in branch for-5.17 at 
+    kernel/git/broonie/spi.git
+  - v7 pinctrl-mt8195.yaml patch is applied in branch for-next at 
+    kernel/git/linusw/linux-pinctrl.git
+  - add cortex-a78 compatible to cpus dt-bindings
+  - add mediatek,drive-strength-adv property to pinctrl dt-bindings
+  - fix evb dts
+    - remove i2c nodes with disabled status from dts
+    - fix pin properties not match pinctrl dt-bindings
+    - remove unnecessary u3port*
+  - fix dtsi
+    - fix node format
+    - reorder oscillator* nodes 
+    - fix node name of cpu idle nodes
+    - remove clock-frequency property in the timer node
+    - reorder clock and clock names in usb nodes
+Changes in v7:
+  - refine title of spi-nor dt-bindings patch
+  - refine commit message of pinctrl dt-bindings patch
+  - update pinctrl-mt8195.yaml
+    - change property pattern from 'pins' to '^pins'
+    - update examples with new property in descriptions
+    - add new example
+  - drop '_' from node names of pinctrl subnodes in mt8195-evb.dts
+Changes in v6:
+  - rebase on 5.16-rc1
+  - add new clock name to spi-nor dt-bindings
+  - add "pins" property in pinctrl dt-bindings
+  - fix fails of dtbs_checks
+    - remove "arm,armv8" not matched in yaml from cpu compatile
+    - fix node name of xhci
+    - remvoe xhci upstreaming wakeup properties
+    - remove xhci unused properties address-cells and size-cells
+    - fix node name of ufs-phy 
+    - fix node name of spi-nor
+    - fix node name and sub-nodes of pinctrl
+    - fix mmc compatible
+Changes in v5:
+  - enable basic nodes in mt8195-evb.dts
+  - remove dedicated clock nodes
+  - add mmc2 node
+  - fix interrupt number of pinctrl node
+  - update clock nodes to apply internal fixes
+  - add dt-bindings for perficfg node
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
-index 328ea59c5466..4db4899af6b1 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
-@@ -98,6 +98,32 @@ patternProperties:
-           drive-strength:
-             enum: [2, 4, 6, 8, 10, 12, 14, 16]
- 
-+          mediatek,drive-strength-adv:
-+            description: |
-+              Describe the specific driving setup property.
-+              For I2C pins, the existing generic driving setup can only support
-+              2/4/6/8/10/12/14/16mA driving. But in specific driving setup, they
-+              can support 0.125/0.25/0.5/1mA adjustment. If we enable specific
-+              driving setup, the existing generic setup will be disabled.
-+              The specific driving setup is controlled by E1E0EN.
-+              When E1=0/E0=0, the strength is 0.125mA.
-+              When E1=0/E0=1, the strength is 0.25mA.
-+              When E1=1/E0=0, the strength is 0.5mA.
-+              When E1=1/E0=1, the strength is 1mA.
-+              EN is used to enable or disable the specific driving setup.
-+              Valid arguments are described as below:
-+              0: (E1, E0, EN) = (0, 0, 0)
-+              1: (E1, E0, EN) = (0, 0, 1)
-+              2: (E1, E0, EN) = (0, 1, 0)
-+              3: (E1, E0, EN) = (0, 1, 1)
-+              4: (E1, E0, EN) = (1, 0, 0)
-+              5: (E1, E0, EN) = (1, 0, 1)
-+              6: (E1, E0, EN) = (1, 1, 0)
-+              7: (E1, E0, EN) = (1, 1, 1)
-+              So the valid arguments are from 0 to 7.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+
-           bias-pull-down:
-             description: |
-               For pull down type is normal, it don't need add RSEL & R1R0 define
-@@ -268,4 +294,13 @@ examples:
-           bias-pull-down;
-         };
-       };
-+
-+      i2c0-pins {
-+        pins {
-+          pinmux = <PINMUX_GPIO8__FUNC_SDA0>,
-+                   <PINMUX_GPIO9__FUNC_SCL0>;
-+          bias-disable;
-+          mediatek,drive-strength-adv = <7>;
-+        };
-+      };
-     };
+v4 thread:
+https://lore.kernel.org/all/20210922093303.23720-2-seiya.wang@mediatek.com/
+v3 thread:
+https://lore.kernel.org/all/20210601075350.31515-2-seiya.wang@mediatek.com/
+v2 thread:
+https://lore.kernel.org/all/20210319023427.16711-10-seiya.wang@mediatek.com/
+v1 thread:
+https://lore.kernel.org/all/20210316111443.3332-11-seiya.wang@mediatek.com/
+---
+
+Tinghan Shen (3):
+  dt-bindings: arm: mediatek: Add mt8195 pericfg compatible
+  dt-bindings: pinctrl: mt8195: Add mediatek,drive-strength-adv property
+  arm64: dts: Add mediatek SoC mt8195 and evaluation board
+
+ .../arm/mediatek/mediatek,pericfg.yaml        |    1 +
+ .../bindings/pinctrl/pinctrl-mt8195.yaml      |   35 +
+ arch/arm64/boot/dts/mediatek/Makefile         |    1 +
+ arch/arm64/boot/dts/mediatek/mt8195-evb.dts   |  161 +++
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      | 1049 +++++++++++++++++
+ 5 files changed, 1247 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8195-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8195.dtsi
+
 -- 
 2.18.0
 
