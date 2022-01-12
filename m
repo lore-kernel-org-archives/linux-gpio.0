@@ -2,89 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB63FC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 21:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1494C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 21:03:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbiALVCy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Jan 2022 16:02:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230010AbiALVCx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jan 2022 16:02:53 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C242C06173F
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jan 2022 13:02:53 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id o6so15020782edc.4
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jan 2022 13:02:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z0y8/DCgq5hZnDJBZZ+unJQ7Ag/9BizfTiSabuR5qJc=;
-        b=D5yTq1A/5pRzAQkh38F/fitw9MKfBwSLUBnuqP3TMABFR5E2bfYBaKTkxkuHFZxh+W
-         qCPbEdgCAb8npafSnXmf3ElOSiav1Yzph4Iu0/aMQ3ax1lWitYkW3rDQi+N3GDhiurVX
-         LDvbHpQwtxo3gE8ztI9ImhSEThcoEL24ZbsCs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z0y8/DCgq5hZnDJBZZ+unJQ7Ag/9BizfTiSabuR5qJc=;
-        b=lCEpHlzjfajeiFWGk4tD6vYdRYjfYAss0fY7iDgtFDHbjYXUx3mmG1LziRGyTKt1rZ
-         lQYVNgfUbdR2sADfFzCm+QiiOyeq66XMrgnXBfpRffMoTvDoM57BY5E4K8Bjl/QXVP90
-         5tmEDXbov5WHsxVtbgX1UIOeU7gAtUO08cyEatEAODtE1IfWdvSvCRyD8QNsT2Bl3fmL
-         6jlW6bX77agLtmDVDevy+Wv53L82wWaQL9L/pFUDMdismguX7XZld5Y70JEZWUN7B6Vv
-         pKmfUO2b4Aq1+o/Zc+hN6a/kTdon1E4CHbL9VmoXcOQ4YNV6kJeBWiGSTTCXEvNlHxm3
-         b/jA==
-X-Gm-Message-State: AOAM5303yM95Hb2mDMHXt8J0ttRwpjXu4QJRbq8kvzu8qMcnhnYmPBT2
-        GVEpQr3Kemtimw1xu6aMLy2yDsLXOxyWjPhz
-X-Google-Smtp-Source: ABdhPJxVpTsRTjCIBil3Yt2fBPE3VLRa1UJHa43d+DRti5xrizVeWJeoExopamEE2RhtnFfnNbahmQ==
-X-Received: by 2002:a17:906:c301:: with SMTP id s1mr1158295ejz.505.1642021371792;
-        Wed, 12 Jan 2022 13:02:51 -0800 (PST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id h13sm328302edl.96.2022.01.12.13.02.50
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jan 2022 13:02:51 -0800 (PST)
-Received: by mail-wr1-f41.google.com with SMTP id k30so6453874wrd.9
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jan 2022 13:02:50 -0800 (PST)
-X-Received: by 2002:a05:6000:14e:: with SMTP id r14mr1261616wrx.442.1642021370787;
- Wed, 12 Jan 2022 13:02:50 -0800 (PST)
+        id S230516AbiALVDJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Jan 2022 16:03:09 -0500
+Received: from mga05.intel.com ([192.55.52.43]:50713 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230364AbiALVDD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 12 Jan 2022 16:03:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1642021383; x=1673557383;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pjqS3uuWhWt0A1PNtjU+y7sXNGqRZX0oSt6X+hFs+JY=;
+  b=U1jRxQB8ccBZNTTCUyX5mtJEFu5gXwwJte38PXFcL2Yz1VL9fRtOmEo5
+   g38kGYxS/pORWfxPOHbdvR3FMyjcnBo6KsiPZnChLby6fC/gIkBAFv0xQ
+   sX6dFI9+ZT2NGqYu3STsPotAnrISnjpqWJvB6qPVHdSkxX655fheLiWvJ
+   67UDI570oMmkuLPDslb4yKhLdV0iwWOiqscRbe8OcCMhNI7yyWUhbgDFY
+   cMSa2/XDbv3lvV5ubHeZs4NIzfmiyDuB3l0XTjD0pGfer3k4f63KfQ5jK
+   NWcXcnQdjsyklVarw+2GcfiOZ5WqdJybBGUTJgCnP7nQ4jFIHl+wYON8l
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10225"; a="330200930"
+X-IronPort-AV: E=Sophos;i="5.88,284,1635231600"; 
+   d="scan'208";a="330200930"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2022 13:03:01 -0800
+X-IronPort-AV: E=Sophos;i="5.88,284,1635231600"; 
+   d="scan'208";a="472977444"
+Received: from smile.fi.intel.com ([10.237.72.61])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2022 13:02:59 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1n7kkb-009vXt-GL;
+        Wed, 12 Jan 2022 23:01:45 +0200
+Date:   Wed, 12 Jan 2022 23:01:45 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     kernel test robot <lkp@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>, llvm@lists.linux.dev,
+        kbuild-all@lists.01.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3] pinctrl: baytrail: Clear direct_irq_en flag on broken
+ configs
+Message-ID: <Yd9BuYQw8nhx+Dal@smile.fi.intel.com>
+References: <20220107234456.148389-1-hdegoede@redhat.com>
+ <202201090203.kgCw6bSd-lkp@intel.com>
+ <eb4ef470-cfaf-13be-cb66-ca38c1a85a23@redhat.com>
+ <Yd89sQz8L/KJ4BXA@smile.fi.intel.com>
+ <1fb6eb89-7c87-b30e-0ebe-911ce7dcf881@redhat.com>
 MIME-Version: 1.0
-References: <CACRpkdaVGwu=Bo5bxVQYZXD-k+x++SuOTApGoK2a_S-1M4Q+nQ@mail.gmail.com>
- <CAHk-=whcTsfaQWjNKP+DUSqfo+3rf1o8-N9CpjpogMhAxiJZ=Q@mail.gmail.com>
- <Yd88UBp9uaDSc2qW@smile.fi.intel.com> <Yd9AbO+Id7y1+IY+@smile.fi.intel.com>
-In-Reply-To: <Yd9AbO+Id7y1+IY+@smile.fi.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 12 Jan 2022 13:02:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgJe8Z7-C23Cn6CWE=zYEO0AazfTohSkpVLJo1SffPgzQ@mail.gmail.com>
-Message-ID: <CAHk-=wgJe8Z7-C23Cn6CWE=zYEO0AazfTohSkpVLJo1SffPgzQ@mail.gmail.com>
-Subject: Re: [GIT PULL] pin control changes for v5.17
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1fb6eb89-7c87-b30e-0ebe-911ce7dcf881@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jan 12, 2022 at 12:57 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Now you may easily see what happened.
+On Wed, Jan 12, 2022 at 09:50:47PM +0100, Hans de Goede wrote:
+> On 1/12/22 21:44, Andy Shevchenko wrote:
 
-I still have no idea how any sort wouldn't sort that CONFIG_PINCTRL_ST
-line first, since even if it's about the following characters, both
-')' and '.' would normally sort before any letters at least in ASCII.
+...
 
-So I can only assume it's something that takes  the locale into
-account in odd ways, or just has some special rules for non-alpha
-sorting.
+> I think you will find v4 interesting because I've done a detailed
+> analysis of how the pinctrl conf0 pad register trigger bits and the IO-APIC
+> trigger bits work together, which is quite enlightening to how this all
+> works (and AFAICT not documented).
 
-But I don't find it in myself to care apart from noting the
-strangeness of it all.
+With excitement looking forward to it!
 
-            Linus
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
