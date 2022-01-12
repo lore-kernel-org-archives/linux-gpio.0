@@ -2,203 +2,122 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEECC433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 12:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A52FBC433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jan 2022 13:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353129AbiALM3g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Jan 2022 07:29:36 -0500
-Received: from mga14.intel.com ([192.55.52.115]:52070 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240498AbiALM3e (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 12 Jan 2022 07:29:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641990574; x=1673526574;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=7u2c/+u/7900R51hbSn1pNSHHzU5y3Q///2YVkNposY=;
-  b=j3c7xL3T2Cx1Zsd+ppfFG6/CLjSSvIJEAw4QTVLA6tB2AraYJYhd2MhQ
-   ZzwteHKVxIL0j09G0CGrLjs+Yro29FNWzMSWriqRlEDzj0tuAV+6MAFce
-   FxTZzPfLKL4DYBDV/MG/fFU2d3uqphYsKxOsBZpYCZm676LIkOEOk1zA9
-   GHKd9J8xpYg0QAEoK5ZNSMQlG6vUCblq0FvaR7feDvp7FDMvq+JraGwJw
-   W9CyF2x/uvu0S31lIiDY42CwPpi3G+glyavjQR2Zi03QCWHNKWIQ/lEsp
-   eSrSqKHqfOgdBq6Q9asQ14gg6ZzaY/nwB0wugaZ2F5mzvSs3JUVVIJWL4
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10224"; a="243922983"
-X-IronPort-AV: E=Sophos;i="5.88,282,1635231600"; 
-   d="scan'208";a="243922983"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2022 04:29:32 -0800
-X-IronPort-AV: E=Sophos;i="5.88,282,1635231600"; 
-   d="scan'208";a="691367097"
-Received: from smile.fi.intel.com ([10.237.72.61])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2022 04:29:15 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1n7cjO-009gDi-VM;
-        Wed, 12 Jan 2022 14:27:58 +0200
-Date:   Wed, 12 Jan 2022 14:27:58 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, linux-iio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-phy@lists.infradead.org, Jiri Slaby <jirislaby@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        platform-driver-x86@vger.kernel.org,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Robert Richter <rric@kernel.org>,
-        Saravanan Sekar <sravanhome@gmail.com>,
-        Corey Minyard <minyard@acm.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        John Garry <john.garry@huawei.com>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Mark Gross <markgross@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mark Brown <broonie@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Eric Auger <eric.auger@redhat.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        openipmi-developer@lists.sourceforge.net,
-        Benson Leung <bleung@chromium.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org, Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Richard Weinberger <richard@nod.at>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>,
-        linux-mediatek@lists.infradead.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] platform: make platform_get_irq_optional() optional
-Message-ID: <Yd7JTvfblG0Ge4AN@smile.fi.intel.com>
-References: <20220110195449.12448-1-s.shtylyov@omp.ru>
- <20220110195449.12448-2-s.shtylyov@omp.ru>
- <20220110201014.mtajyrfcfznfhyqm@pengutronix.de>
- <YdyilpjC6rtz6toJ@lunn.ch>
- <CAMuHMdWK3RKVXRzMASN4HaYfLckdS7rBvSopafq+iPADtGEUzA@mail.gmail.com>
- <20220112085009.dbasceh3obfok5dc@pengutronix.de>
- <CAMuHMdWsMGPiQaPS0-PJ_+Mc5VQ37YdLfbHr_aS40kB+SfW-aw@mail.gmail.com>
+        id S1353379AbiALNLy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Jan 2022 08:11:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240733AbiALNLw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jan 2022 08:11:52 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4873DC06173F;
+        Wed, 12 Jan 2022 05:11:51 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id d19so4267995wrb.0;
+        Wed, 12 Jan 2022 05:11:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7f+ic8TxlFUKFnOCkZFKPq8TQyP8w+H9m7F2OJNGJIU=;
+        b=RVMUTjFa2UESa2BHtCcnl158JFKhuK2xO1kpBSTZ0X0bo61yvjOQY44KawcWNL8w0M
+         nNZwpYIaDYS0HoTBxoLPTjfZcHOKfsSuuUbbaD0bGx9VpnpuQT+a1g+GgHuFPhnLtaO5
+         D/Tk0P1D3ZnOUFToCEqm4X0zOXu0fjbFJ7bb1GJuib0N6GPonyLT8pJxmkvaOz/GMhq8
+         YmY4y5+ozBBzlcxFLeRqOZjEHRpUFokRSzOIwrNDMGBfg8q7m6/2y5Sj+HgQ6EC5Y92q
+         RED3KO1imjeMSnf4WEiwDT9l/rIxcDYz0/9kJOG9DEb2yDhv9XWCIu4Gn3Eh9DM9vKSb
+         hr8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7f+ic8TxlFUKFnOCkZFKPq8TQyP8w+H9m7F2OJNGJIU=;
+        b=XplpaBffydWeHB/BXJTticVxX/nO9ldkz1EUrKKYuUCfE2n3+i8Yy00wJPvsaRmgm6
+         mSwBJ9N14d9HpoKWK9yL2jKK2n8I5EiJ4LwA1dSbFlb9Bsl1m+vRFe/WNmQU4Bz8P1JA
+         rX9oTaikwbMV9pAWD6IO9oM/Brln4MWY1KOuAcgQGcz1FkP2EIyPpwNvaiC0cjNqNNlt
+         5RwY9xCJttsZvf+gooEduDXKYFKx/ivOW9OvYuxi33SQgRZeJA2n6mOEdiT4IuVONZ/4
+         m/d7tvwP6WOHRofVa2P1sA6f88C6LQm5oC13K9DCNRGqbdPXncWloXJyk031QJ3pgH3C
+         w5Mw==
+X-Gm-Message-State: AOAM533bT+4JJOS+q89J9AAwVw76//0sCnYGcESULQl9p+RrAigEoOC6
+        K7fGJhoArQGsj9bbSeuwH7A=
+X-Google-Smtp-Source: ABdhPJyAmRIUsejPaQWvBKGx7Z/IESGUrX9XZF+BHeFnFeTxc+qlqbVlguYwFdSdKkBuTyGtqoDwHA==
+X-Received: by 2002:a5d:6881:: with SMTP id h1mr7871866wru.250.1641993109742;
+        Wed, 12 Jan 2022 05:11:49 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id z7sm10125751wrm.117.2022.01.12.05.11.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jan 2022 05:11:48 -0800 (PST)
+Date:   Wed, 12 Jan 2022 14:11:45 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 1/1] gpio: tegra: Get rid of duplicate of_node
+ assignment
+Message-ID: <Yd7TkUKo2g2Asbna@orome>
+References: <20211223122639.86923-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eS9Bqgo09E4YMHL2"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWsMGPiQaPS0-PJ_+Mc5VQ37YdLfbHr_aS40kB+SfW-aw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20211223122639.86923-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jan 12, 2022 at 11:27:02AM +0100, Geert Uytterhoeven wrote:
-> On Wed, Jan 12, 2022 at 9:51 AM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Wed, Jan 12, 2022 at 09:33:48AM +0100, Geert Uytterhoeven wrote:
-> > > On Mon, Jan 10, 2022 at 10:20 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > > On Mon, Jan 10, 2022 at 09:10:14PM +0100, Uwe Kleine-König wrote:
-> > > > > On Mon, Jan 10, 2022 at 10:54:48PM +0300, Sergey Shtylyov wrote:
-> > > > > > This patch is based on the former Andy Shevchenko's patch:
-> > > > > >
-> > > > > > https://lore.kernel.org/lkml/20210331144526.19439-1-andriy.shevchenko@linux.intel.com/
-> > > > > >
-> > > > > > Currently platform_get_irq_optional() returns an error code even if IRQ
-> > > > > > resource simply has not been found. It prevents the callers from being
-> > > > > > error code agnostic in their error handling:
-> > > > > >
-> > > > > >     ret = platform_get_irq_optional(...);
-> > > > > >     if (ret < 0 && ret != -ENXIO)
-> > > > > >             return ret; // respect deferred probe
-> > > > > >     if (ret > 0)
-> > > > > >             ...we get an IRQ...
-> > > > > >
-> > > > > > All other *_optional() APIs seem to return 0 or NULL in case an optional
-> > > > > > resource is not available. Let's follow this good example, so that the
-> > > > > > callers would look like:
-> > > > > >
-> > > > > >     ret = platform_get_irq_optional(...);
-> > > > > >     if (ret < 0)
-> > > > > >             return ret;
-> > > > > >     if (ret > 0)
-> > > > > >             ...we get an IRQ...
-> > > > >
-> > > > > The difference to gpiod_get_optional (and most other *_optional) is that
-> > > > > you can use the NULL value as if it were a valid GPIO.
-> > > > >
-> > > > > As this isn't given with for irqs, I don't think changing the return
-> > > > > value has much sense.
-> > > >
-> > > > We actually want platform_get_irq_optional() to look different to all
-> > > > the other _optional() methods because it is not equivalent. If it
-> > > > looks the same, developers will assume it is the same, and get
-> > > > themselves into trouble.
-> > >
-> > > Developers already assume it is the same, and thus forget they have
-> > > to check against -ENXIO instead of zero.
-> >
-> > Is this an ack for renaming platform_get_irq_optional() to
-> > platform_get_irq_silent()?
-> 
-> No it isn't ;-)
-> 
-> If an optional IRQ is not present, drivers either just ignore it (e.g.
-> for devices that can have multiple interrupts or a single muxed IRQ),
-> or they have to resort to polling. For the latter, fall-back handling
-> is needed elsewhere in the driver.
-> To me it sounds much more logical for the driver to check if an
-> optional irq is non-zero (available) or zero (not available), than to
-> sprinkle around checks for -ENXIO. In addition, you have to remember
-> that this one returns -ENXIO, while other APIs use -ENOENT or -ENOSYS
-> (or some other error code) to indicate absence. I thought not having
-> to care about the actual error code was the main reason behind the
-> introduction of the *_optional() APIs.
 
-For the record, I'm on the same page with Geert.
+--eS9Bqgo09E4YMHL2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Thu, Dec 23, 2021 at 02:26:39PM +0200, Andy Shevchenko wrote:
+> GPIO library does copy the of_node from the parent device of
+> the GPIO chip, there is no need to repeat this in the individual
+> drivers. Remove these assignment all at once.
+>=20
+> For the details one may look into the of_gpio_dev_init() implementation.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/gpio/gpio-tegra.c | 1 -
+>  1 file changed, 1 deletion(-)
 
+Yep, this is indeed not necessary (anymore), so:
 
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+I've also given this a quick spin on a Tegra124 device (Venice 2) and
+everything seems to be working fine, so also:
+
+Tested-by: Thierry Reding <treding@nvidia.com>
+
+Thanks,
+Thierry
+
+--eS9Bqgo09E4YMHL2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmHe05EACgkQ3SOs138+
+s6FIEBAAjnCefZf/TmXMbRK8YKO2zooLOhkybC1j9ERVbbd/smfeyQoyKxCqIm5M
+hejWChgrfuYDoiWv+Mi1BnTZOz0vTRNo9Dbnsi7izpin+IQAufYosObqf/AMn8E0
+dKrEOZLgyIT9fBla17Y8mXTgt9RPoVFst4aKI3oPibWBc1TJQa02967JSbVzm4FZ
+13U02UIg7JYeb5MKjAl2bz0INiU+t3Solc4t3NZelsbOwMgOCA7Kntg9LZAYXkfJ
+hg4TNLxOQZuK6wIoDXxsW60p+RRsrbwjJuuYwF13Dj/JOX8SDH0JGThEM7RwDpyk
+SWvm2UMB1UVlSi6Rxk8RRoZ1BW0WYDdQdKKHZJWtXZP2xsVXQopL0rLx74U97hwW
+d/zm5prIcM4fDU03g8Z0KCFUbjKmrc3Hk7mG9Yc0KF4uL/bYcNCt/9DxGVxV9PWY
+MJasmjFaGrt9Xox6ZPOQxgFez6uaEIN1b9rYEiKa2yK50od5JKsqAqtSVynZPmwY
+22apy+LvILhB4vchrOwWTMkgQNXDwqqC3DEFswl2uLMLfH9h5iNa6yX6nW157aGp
+tpg1viE44QXtHz/+mby3JY6VAJO46ged+gG92kj1WTJqOZxiCwQG8t4OY687fkkJ
+wNQvAbiRMPZPn5SMpNxT4l/O7hNEzBDRxtUwmVHjz1lLZSOUlQ8=
+=v1tj
+-----END PGP SIGNATURE-----
+
+--eS9Bqgo09E4YMHL2--
