@@ -2,105 +2,208 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02016C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Jan 2022 22:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BC9C4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Jan 2022 22:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237704AbiAMWfr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Jan 2022 17:35:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33606 "EHLO
+        id S235318AbiAMWoX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Jan 2022 17:44:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235281AbiAMWfq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Jan 2022 17:35:46 -0500
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62DE7C061574;
-        Thu, 13 Jan 2022 14:35:46 -0800 (PST)
-Received: by mail-qv1-xf2f.google.com with SMTP id p12so8414610qvj.6;
-        Thu, 13 Jan 2022 14:35:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PP1423VmXCNEpr6x85pDcRINUY1BVKseyYhoEt1br1Y=;
-        b=RMGbk/JLSU6kUhB4j9bf0zcTVb7Wv+IRlRPvm3PqqF+O3xNmPXRYKyavDmR+dg43k4
-         LzmhqFkSO0vtg6oDKp8PgtPaPVSgxH1LrSvTkMxRu45MNCPDT4EFztdAmPDsEXag03qH
-         1Jz6vo0usc22mEUhUqC1T165qYgckKeSkV3TI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PP1423VmXCNEpr6x85pDcRINUY1BVKseyYhoEt1br1Y=;
-        b=hWtmuTF1f5umtGM5kBfX3odfxK/ZFrR0Ci6jfrSqLsP3wOMy0FgywEp0f30/O/U9OC
-         DaKPBnuJoniz0cx8Cr+aOG1+sQxxuf1yqh/Nm+6nJRak3DisbAo/el5fGqLyKbfZQMEl
-         gyHkvPorCgjLnUEAnsjL6yjgEetGLlSX1+3XgSKaH5VxuZHW+So2mW4FWnxM3Je4Ul8R
-         isHdxlVmMFe4/H/TpwdXjS7OTFR3lWwI7GQ19PWei18bWbJAP1M1oQHphDzaun568NNG
-         xk00Se742cfVxzt0t3dwhtEa0XBJ9O43zZJm+n4QP+NmXcV4F5vpNxuMOo6RUx8+oRy4
-         Lfxw==
-X-Gm-Message-State: AOAM5300synW4JV7RlBv1gytwFZwrp1Yaau+D/sHamYA/b4LVl8IHzFx
-        AJrJ7BkINb5nt8eN6i+UW2P0yaILivx011Jks9OpPGExyso=
-X-Google-Smtp-Source: ABdhPJwvS5RkVPDYOyFBURNlUniibOApJPDqsNHMVoAteSeZU6gCk2guyywcY3fghdn9aoaUbS7/UAVUrq8+IrhskWw=
-X-Received: by 2002:a05:6214:4101:: with SMTP id kc1mr5991043qvb.49.1642113345011;
- Thu, 13 Jan 2022 14:35:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20220113211735.37861-1-geissonator@yahoo.com>
-In-Reply-To: <20220113211735.37861-1-geissonator@yahoo.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 13 Jan 2022 22:35:32 +0000
-Message-ID: <CACPK8XfY58odFjf0KNdYXa5MbCg=A07OEfuyjsbnmMtUmxG6ww@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: aspeed: rainier: add reset-cause-pinhole
-To:     Andrew Geissler <geissonator@gmail.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Geissler <geissonator@yahoo.com>,
+        with ESMTP id S238035AbiAMWoV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Jan 2022 17:44:21 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97FE5C06161C
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Jan 2022 14:44:20 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1n88oe-0007pY-PW; Thu, 13 Jan 2022 23:43:32 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1n88oS-00A973-DR; Thu, 13 Jan 2022 23:43:19 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1n88oR-0000VL-8T; Thu, 13 Jan 2022 23:43:19 +0100
+Date:   Thu, 13 Jan 2022 23:43:19 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>
+Cc:     Mark Brown <broonie@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-iio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Guenter Roeck <groeck@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-phy@lists.infradead.org, netdev@vger.kernel.org,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        platform-driver-x86@vger.kernel.org,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Robert Richter <rric@kernel.org>,
+        Saravanan Sekar <sravanhome@gmail.com>,
+        Corey Minyard <minyard@acm.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        John Garry <john.garry@huawei.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Mark Gross <markgross@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        openipmi-developer@lists.sourceforge.net,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benson Leung <bleung@chromium.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-edac@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Richard Weinberger <richard@nod.at>,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-mediatek@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] driver core: platform: Rename
+ platform_get_irq_optional() to platform_get_irq_silent()
+Message-ID: <20220113224319.akljsjtu7ps75vun@pengutronix.de>
+References: <CAMuHMdWK3RKVXRzMASN4HaYfLckdS7rBvSopafq+iPADtGEUzA@mail.gmail.com>
+ <20220112085009.dbasceh3obfok5dc@pengutronix.de>
+ <CAMuHMdWsMGPiQaPS0-PJ_+Mc5VQ37YdLfbHr_aS40kB+SfW-aw@mail.gmail.com>
+ <20220112213121.5ruae5mxwj6t3qiy@pengutronix.de>
+ <Yd9L9SZ+g13iyKab@sirena.org.uk>
+ <20220113110831.wvwbm75hbfysbn2d@pengutronix.de>
+ <YeA7CjOyJFkpuhz/@sirena.org.uk>
+ <20220113194358.xnnbhsoyetihterb@pengutronix.de>
+ <YeCI47ltlWzjzjYy@sirena.org.uk>
+ <1df04d74-8aa2-11f1-54e9-34d0e8f4e58b@omp.ru>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7tuoe52njhyotvsc"
+Content-Disposition: inline
+In-Reply-To: <1df04d74-8aa2-11f1-54e9-34d0e8f4e58b@omp.ru>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andrew,
 
-On Thu, 13 Jan 2022 at 21:18, Andrew Geissler <geissonator@gmail.com> wrote:
->
-> This GPIO is used on the rainier system to indicate the BMC was reset
-> due to a physical pinhole reset.
->
-> See the following doc for more information:
-> https://github.com/openbmc/docs/blob/master/designs/device-tree-gpio-naming.md
->
-> Signed-off-by: Andrew Geissler <geissonator@yahoo.com>
+--7tuoe52njhyotvsc
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I couldn't apply these cleanly to any tree I had. I think you had a
-patch to add battery-voltage-read-enable, but that's not in the tree
-yet.
+On Thu, Jan 13, 2022 at 11:57:43PM +0300, Sergey Shtylyov wrote:
+> On 1/13/22 11:17 PM, Mark Brown wrote:
+>=20
+> >> The subsystems regulator, clk and gpio have the concept of a dummy
+> >> resource. For regulator, clk and gpio there is a semantic difference
+> >> between the regular _get() function and the _get_optional() variant.
+> >> (One might return the dummy resource, the other won't. Unfortunately
+> >> which one implements which isn't the same for these three.) The
+> >> difference between platform_get_irq() and platform_get_irq_optional() =
+is
+> >> only that the former might emit an error message and the later won't.
+>=20
+>    This is only a current difference but I'm still going to return 0 ISO
+> -ENXIO from latform_get_irq_optional(), no way I'd leave that -ENXIO there
+> alone... :-)
 
-I fixed them up to apply.
+This would address a bit of the critic in my commit log. But as 0 isn't
+a dummy value like the dummy values that exist for clk, gpiod and
+regulator I still think that the naming is a bad idea because it's not
+in the spirit of the other *_get_optional functions.
 
-Cheers,
+Seeing you say that -ENXIO is a bad return value for
+platform_get_irq_optional() and 0 should be used instead, I wonder why
+not changing platform_get_irq() to return 0 instead of -ENXIO, too.
+This question is for now only about a sensible semantic. That actually
+changing platform_get_irq() is probably harder than changing
+platform_get_irq_optional() is a different story.
 
-Joel
+If only platform_get_irq_optional() is changed and given that the
+callers have to do something like:
 
-> ---
->  arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts b/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
-> index cfaa606666e2..7ea70c7d698f 100644
-> --- a/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
-> +++ b/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
-> @@ -247,7 +247,8 @@ &gpio0 {
->         /*C0-C7*/       "","","","","","","","",
->         /*D0-D7*/       "","","","","","","","",
->         /*E0-E7*/       "","","","","","","","",
-> -       /*F0-F7*/       "","","battery-voltage-read-enable","","","","factory-reset-toggle","",
-> +       /*F0-F7*/       "","","battery-voltage-read-enable","reset-cause-pinhole","","",
-> +                               "factory-reset-toggle","",
->         /*G0-G7*/       "","","","","","","","",
->         /*H0-H7*/       "","bmc-ingraham0","rear-enc-id0","rear-enc-fault0","","","","",
->         /*I0-I7*/       "","","","","","","bmc-secure-boot","",
-> --
-> 2.25.1
->
+	if (this_irq_exists()):
+		... (e.g. request_irq)
+	else:
+		... (e.g. setup polling)
+
+I really think it's a bad idea that this_irq_exists() has to be
+different for platform_get_irq() vs. platform_get_irq_optional().
+
+> > Reviewed-by: Mark Brown <broonie@kernel.org>
+>=20
+>    Hm... I'm seeing a tag bit not seeing the patch itself...
+
+See https://lore.kernel.org/all/20220113194358.xnnbhsoyetihterb@pengutronix=
+=2Ede/
+
+This is just a tree-wide
+s/platform_get_irq_optional/platform_get_irq_silent/ + a macro to not
+break callers of platform_get_irq_optional().
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--7tuoe52njhyotvsc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmHgqwMACgkQwfwUeK3K
+7AlyrggAnnNuI35GvxF5VtWAxjQVEMBwQAZzFN2zmbCN56PVqEEi+hrB3o4qCrg5
+RVngj3mJZBBvnB/EPzv0cg7FWq2/jPiopb8JGnPMf2HyN6pE6vQRw/vgdCAw1tSa
+Z1uE/p+FA63qrrD0UrCjr+6bQaobnf20ljmXq6EmZ6oPXvcQLnTureudQD0YJdII
+xZcTKIPC5wH7+yFedZzk1AovNre37jVzG74IzyB6Bbk4Jl22v8GJ8Nq3VUP7x2jE
+Ps6AsNLRubU3vuJ1T43P8/yY0B7PRiyRHvXS+N/qCCf44UuRmpvKziXUP2vnspWR
+9RIT5bkqqtknA+dRrLt/xWijFiViOQ==
+=EM1y
+-----END PGP SIGNATURE-----
+
+--7tuoe52njhyotvsc--
