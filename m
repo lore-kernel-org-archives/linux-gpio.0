@@ -2,234 +2,175 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9B6C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Jan 2022 11:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C7AC433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Jan 2022 14:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbiAML4a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Jan 2022 06:56:30 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57987 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232122AbiAML43 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Jan 2022 06:56:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642074988;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OC1HACjftdg/evWjfJNQ5Yq6rtql5aC8h4UsIQ6Lq1Y=;
-        b=i1HO1sfAAGABKuruK1DJggNTmVarb03BNoyt8Zll67z9khkXd+LXbP1HwSq4hKNhIK9Fi6
-        qw9/R6FULBsIiTS4Fm3v0J3AE3+4F4YHxkD9gMpNHOrTj3wcjq5YWgOrc2cfO+hzEG5xA7
-        pcSN01wNWTdxv1im6h7MZqYPxYME0lw=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-224-uFzvd5taONujPXIjEk6-Hw-1; Thu, 13 Jan 2022 06:56:27 -0500
-X-MC-Unique: uFzvd5taONujPXIjEk6-Hw-1
-Received: by mail-ed1-f72.google.com with SMTP id h1-20020aa7cdc1000000b0040042dd2fe4so3860584edw.17
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Jan 2022 03:56:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=OC1HACjftdg/evWjfJNQ5Yq6rtql5aC8h4UsIQ6Lq1Y=;
-        b=EUKETcARudmrbBW9n/Ej9Xjn3/Jf2ywMzQyjQi3Yz66y4lrKi/TCv4y5Og9XBKQIbD
-         3XK/8D2E4OKD2fM+OxUUxTR13RJUkIzzWWrYbrRA20dEbbVcAfwfVAsn96dVm9S6RFne
-         5hklBL5+iwOru4mG/OxoFlw4ND9HTbjqyuGfywwn4L3mozMk7OOwfYkPAGDCkXwLvIdV
-         zoqaX0dXpguEFFELbN1/7e9wEuKDev+dhoCjwurjXYmXCzNOK8dDQz0sSt9dfJGdWAss
-         wj7jEscc/3A4BYtYVqXCSpwRh7IQf/N2qbaj17yykmePlh8JfrEljN/0olqrG1GveTxf
-         /05Q==
-X-Gm-Message-State: AOAM531+LW9Yvm3NlwyxKzc3iEurHHDZqZL2Bp1LJzJqkqgEZdMmiNu8
-        LoIBHIktB3r+eRU9a1LIUiH3+28UGnHvnH6F3MqFbXNhe3lrggb+1tea13PBD36SCNh69jwoVCz
-        tmmAtBHCqTeo6HbxWm+XUvQ==
-X-Received: by 2002:a05:6402:440a:: with SMTP id y10mr3745974eda.371.1642074986311;
-        Thu, 13 Jan 2022 03:56:26 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxuHqafx+A9t0Dg6yI9cXl9iO/x9c6yLuwaLVnBrFRd1AyLNTFmPS42jyl3eHkLGPON6qMwGQ==
-X-Received: by 2002:a05:6402:440a:: with SMTP id y10mr3745959eda.371.1642074986079;
-        Thu, 13 Jan 2022 03:56:26 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
-        by smtp.gmail.com with ESMTPSA id v16sm1085088edc.4.2022.01.13.03.56.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jan 2022 03:56:25 -0800 (PST)
-Message-ID: <82f6ccb3-7b15-8a5f-d142-8b4087fe4582@redhat.com>
-Date:   Thu, 13 Jan 2022 12:56:25 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] pinctrl: baytrail: Pick first supported debounce value
- larger then the requested value
-Content-Language: en-US
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
+        id S235725AbiAMOpu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Jan 2022 09:45:50 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:59708 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233723AbiAMOpu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Jan 2022 09:45:50 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 534FB61CFC;
+        Thu, 13 Jan 2022 14:45:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA3CC36AEB;
+        Thu, 13 Jan 2022 14:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642085148;
+        bh=qGUpScSrM6PHOQ9896+ovOSrylwTkuQlIpt7KlyEp5s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rIF3lS/tm9sqFT+BginWJM2+mt1t0i+1rbRTwFGO/b5RO54FFqysidEmT2WSnXujo
+         cGDZLPUBbnFnBovZVRCzJE12OIxe0UaqPbmDiXkUfgTiIFTn2YGRAzH3LqjFaP+tZD
+         stowk5nOSDH2HzMR+0nMTCmGiZrfOpEXlbtFzEEyyHKSnxaKn6wp5i+0CBOwWaYud8
+         h6IHjIqf66cMB/zCEPF7AQwqZAp9MkoApoumfwu6VFfqqNiQcfv/H1IDJvKTA9xbou
+         r4uQpom3hKk5szByYDLACU4vgN5e9UWDsM5Igx38QRWaZyToUoz1pHBLnnGGGgQZOi
+         t54X3kfj11igw==
+Date:   Thu, 13 Jan 2022 14:45:30 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-iio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-References: <20210819203952.785132-1-hdegoede@redhat.com>
- <YR+qHHVgALcpQ6k+@smile.fi.intel.com>
- <ee7274c0-15f1-3ca0-cca3-bcdc37350334@redhat.com>
- <YeANkfsFivOpulog@smile.fi.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <YeANkfsFivOpulog@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Amit Kucheria <amitk@kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Guenter Roeck <groeck@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-phy@lists.infradead.org, Jiri Slaby <jirislaby@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        platform-driver-x86@vger.kernel.org,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Robert Richter <rric@kernel.org>,
+        Saravanan Sekar <sravanhome@gmail.com>,
+        Corey Minyard <minyard@acm.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        John Garry <john.garry@huawei.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Mark Gross <markgross@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Borislav Petkov <bp@alien8.de>,
+        Eric Auger <eric.auger@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        openipmi-developer@lists.sourceforge.net,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benson Leung <bleung@chromium.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-edac@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Richard Weinberger <richard@nod.at>,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        netdev@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
+        linux-mediatek@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 1/2] platform: make platform_get_irq_optional() optional
+Message-ID: <YeA7CjOyJFkpuhz/@sirena.org.uk>
+References: <20220110195449.12448-1-s.shtylyov@omp.ru>
+ <20220110195449.12448-2-s.shtylyov@omp.ru>
+ <20220110201014.mtajyrfcfznfhyqm@pengutronix.de>
+ <YdyilpjC6rtz6toJ@lunn.ch>
+ <CAMuHMdWK3RKVXRzMASN4HaYfLckdS7rBvSopafq+iPADtGEUzA@mail.gmail.com>
+ <20220112085009.dbasceh3obfok5dc@pengutronix.de>
+ <CAMuHMdWsMGPiQaPS0-PJ_+Mc5VQ37YdLfbHr_aS40kB+SfW-aw@mail.gmail.com>
+ <20220112213121.5ruae5mxwj6t3qiy@pengutronix.de>
+ <Yd9L9SZ+g13iyKab@sirena.org.uk>
+ <20220113110831.wvwbm75hbfysbn2d@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="W6TsDGUCC61npB/4"
+Content-Disposition: inline
+In-Reply-To: <20220113110831.wvwbm75hbfysbn2d@pengutronix.de>
+X-Cookie: Slow day.  Practice crawling.
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
 
-On 1/13/22 12:31, Andy Shevchenko wrote:
-> On Mon, Aug 23, 2021 at 12:32:18PM +0200, Hans de Goede wrote:
->> On 8/20/21 3:11 PM, Andy Shevchenko wrote:
->>> On Thu, Aug 19, 2021 at 10:39:52PM +0200, Hans de Goede wrote:
->>>> Bay Trail pin control only supports a couple of discrete debounce timeout
->>>> values. Instead of returning -EINVAL for other values, pick the first
->>>> supported debounce timeout value larger then the requested timeout.
->>>>
->>>> E.g. on a HP ElitePad 1000 G2, where the ACPI tables specify a timeout of
->>>> 20 ms for various _AIE ACPI event sources, this will result in a timeout
->>>> of 24 ms instead of returning -EINVAL to the caller.
-> 
-> Old thread which I forgot to answer to...
+--W6TsDGUCC61npB/4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No problem I did happen to accidentally do some work on this over
-the Christmas Holidays and made some notes.
+On Thu, Jan 13, 2022 at 12:08:31PM +0100, Uwe Kleine-K=F6nig wrote:
 
-Spoiler: I believe the best thing we can do here is to just
-never touch the debounce settings at all, see below.
+> This is all very unfortunate. In my eyes b) is the most sensible
+> sense, but the past showed that we don't agree here. (The most annoying
+> part of regulator_get is the warning that is emitted that regularily
+> makes customers ask what happens here and if this is fixable.)
 
->>> I would prefer to see case 1...375: case 376...750: It makes it more explicit
->>> what we choose. Also it will be in align with debounce getter switch-case.
->>
->> Ok, that works for me.
->>
->>> Nevertheless, there is the bigger problem here, which is that the debounce
->>> setting is global per community and neither current nor new code addresses.
->>>
->>> What we need is to have a bitmap of size 3-bit * N_pins (per community) to save
->>> settings and each time we try to adjust them, we have to go through that bitmap
->>> and check actual users and see if we have conflicting requests.
->>>
->>> You may ask why we have to keep the actual debounce value and not the biggest
->>> one. The reason why is simple, if the following flow of requests comes we will
->>> have better setting at the end:
->>>
->>> 1) A asks for debounce of 1ms (we set to 1.5ms)
->>> 2) B asks for 10ms (we set likely to 12ms *)
->>> 3) B gone (we should return to 1.5ms)
->>> 4) C asks for 400us (*)
->>>
->>> *) TBH I have no idea what to do with these cases, i.e. when better to satisfy
->>>    the bigger, when issue warning, when just print a debug message. I admit
->>>    that debounce on BYT has been not thought through on HW level.
->>
->> I believe that most DSDTs only use 1 value, so the whole bitmap thing seems
->> over-complicated.
-> 
-> Since you are in possession of plenty of them, can you confirm?
+Fortunately it can be fixed, and it's safer to clearly specify things.
+The prints are there because when the description is wrong enough to
+cause things to blow up we can fail to boot or run messily and
+forgetting to describe some supplies (or typoing so they haven't done
+that) and people were having a hard time figuring out what might've
+happened.
 
-I could go look at this, yes, but I would need to make some time
-for that. And since last time I'm not so sure this is the case
-anymore, from the top of my head most DSDTs don't use this at all
-and those that do use nice round numbers, not the very specific
-supported values which suggests that the DSDT authors are not
-aware that all the pins in a single community need to have the
-same debounce setting.
+> I think at least c) is easy to resolve because
+> platform_get_irq_optional() isn't that old yet and mechanically
+> replacing it by platform_get_irq_silent() should be easy and safe.
+> And this is orthogonal to the discussion if -ENOXIO is a sensible return
+> value and if it's as easy as it could be to work with errors on irq
+> lookups.
 
->> I did noticed the dev_dbg which I added triggering by a requested value of 50 ms.
->> I've tracked that down to  drivers/input/misc/soc_button_array.c setting
->> debounce_interval to 50, which then gets passed to gpiod_set_debounce() by
->> drivers/input/keyboard/gpio_keys.c. gpio_keys.c will fallback to sw debouncing using
->> mod_delayed_work() if gpiod_set_debounce() fails, so I think we should deny
->> big debounce values to keep that fallback working.
-> 
-> I'm not sure I got this. If DSDT asks for big debounce timeout how can we be
-> sure it's incorrect request?
+It'd certainly be good to name anything that doesn't correspond to one
+of the existing semantics for the API (!) something different rather
+than adding yet another potentially overloaded meaning.
 
-This is not coming from the DSDT, the DSDT is merely listing GPIOs to
-use for the volume and power-buttons. The 50 ms debounce value is hardcoded in
-drivers/input/misc/soc_button_array.c
+--W6TsDGUCC61npB/4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That code creates platform-devs + pdata for drivers/input/keyboard/gpio_keys.c
-and that latter code tries to use hw debouncing before falling back to sw
-debouncing. I still had the patch from this thread in my personal WIP tree
-and the version in my tree simply picked 24 ms for this as yuo suggest
-below (continued below).
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> At least I see the way out (yes, over complicated) in keeping bitmap and / or
-> (not sure about bitmap) the mean / average debounce timeout. In such case if
-> 5x users wants 10ms and one wants 50ms, we will set something like 12ms.
-> 
->> I suggest we do the following:
->>
->> 1. Reject value < 0 || value > 24 ms values (avoiding the gpio_keys case)
-> 
-> Why not to set 24ms? Perhaps we need some heuristics here. If there ask for
-> 30ms, 24ms sounds good enough, no?
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmHgOwoACgkQJNaLcl1U
+h9DB2wf+MsmuWAbFkx7w6dSqBFg+5BMfRX917lHiCsn2CYARHwyaPL5M5EVrbehK
+70/euCaJWItviAfkx+6AAOYCmbHs8mt+zpvgLriDTnZOumRiZfiGXMZHt85uxFOg
++CON0NcPugM2d7SZyRdxLTQBcBJt3wzMoV71nZv43fG+BMfssZy/ADYB75p648wU
+r7n86P+i3Kh+8hkINY1UdrfNXf7GkWehj0fZhkQ6PO+sH6jH8JFft+mMsKvTkCfp
+th2g66aUCkHb8ML7wNc5DEOQZlW9A7QyBKZpFWcduJs7uD92dqsoRJ7ch05zM3z/
+HtLt6l6YJ3XD702pvFQA2C4cb/OGkA==
+=d1L9
+-----END PGP SIGNATURE-----
 
-True, there is a bigger problem though as said my the code in my WIP tree
-was selecting 24ms for the 50ms debounce of the volume buttons and
-I noticed that the volume buttons where not properly debounced resulting
-in multiple evdev keypress events and those were grouped much closer together
-in time then 24ms, it was more like 1ms or less even in between the bounces.
-
-So it seems that the 24ms debounce setting does not work. IIRC (not sure)
-I did check that there was not another later call changing the shared
-debounce time to a lower value.
-
-Looking back at my notes my intermediate conclusion was that (24ms)
-debouncing seems to just not work; and that this needs more investigation.
-
->> 2. Determine rounded-up value using modified switch-case as you suggest 
-> 
-> Ack.
-> 
->> 3. Check vs last set rounded-debounce value (if set) and warn + fail
->>    the set_debounce if it is different
-> 
-> Ack.
-> 
->> 4. Remember the last set debounce value
-> 
-> Ack with the above comment that perhaps better to keep mean / average.
-> 
->> If the warnings turn out to trigger, we can then look at the DSDT of
->> that specific device and figure out a way forward from there, with the
->> knowledge of how a troublesome device actually uses this (I know a sample
->> of 1 troublesome device is not necessarily representative, but it is
->> better then no samples and I expect / hope there to simply be no samples).
-> 
-> Ack.
-> 
->> (we can then also skip the debounce-time programming when it is unchanged)
-> 
-> Or close enough, sounds like we need margin in percentage of the asked value,
-> like ±20% is okay.
-
-I'm fine with adding a margin, but:
-
-1. Given what a mess this is with the shared debounce register
-2. That the current code expects the exact values from the datasheet,
-   and otherwise returns -EINVAL.
-3. AFAICT no DSDTs actually use the exact datasheet values.
-4. 2 + 3 mean that in essence setting the debounce time currently is
-   a no-op since it always returns -EINVAL.
-
-I wonder if it is not better to preserve the current behavior of
-setting the debounce-time being a no-op by just ripping out support
-for setting it all together?
-
-This seems like a nice KISS solution to all potential problems here,
-just rely on whatever the BIOS has setup, which is in essence what
-we have been doing so far.
-
-Note I suggest to just keep the "get" path, it is is fine and I guess
-it might be useful for some cases, or at least for debugging?
-
-Regards,
-
-Hans
-
+--W6TsDGUCC61npB/4--
