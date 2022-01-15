@@ -2,128 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C77BC433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 15 Jan 2022 16:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064F9C433F5
+	for <linux-gpio@archiver.kernel.org>; Sat, 15 Jan 2022 17:22:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233174AbiAOQpI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 15 Jan 2022 11:45:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50663 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229784AbiAOQpI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 15 Jan 2022 11:45:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642265107;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=QVDHDswXxan44+yxDMcyGpbr6VGvajl3PBQlDkytgqQ=;
-        b=Jh8CogSFKztvFeFDd0TA7zM9EYe9qnnoccCG87SJRbe5TqkKGNnn617ecUsXJYm5DXFNCW
-        fsVEt3IEgD2MpXjo2MkKt/BoZbM98uoWIj1dgw/I452jbAUeGZU9Gbi6r/jB2MmVr12G9d
-        d0cuFhNwgJ4O5MscNM0r+h6W/S2JJt0=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-198-U1GVJ0ikOfe3RRPQF0Wv_A-1; Sat, 15 Jan 2022 11:45:06 -0500
-X-MC-Unique: U1GVJ0ikOfe3RRPQF0Wv_A-1
-Received: by mail-ed1-f72.google.com with SMTP id x11-20020aa7d38b000000b004004e4fc8fdso8131869edq.6
-        for <linux-gpio@vger.kernel.org>; Sat, 15 Jan 2022 08:45:05 -0800 (PST)
+        id S232408AbiAORWe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 15 Jan 2022 12:22:34 -0500
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:38465 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232342AbiAORWe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 15 Jan 2022 12:22:34 -0500
+Received: by mail-ot1-f47.google.com with SMTP id g1-20020a9d6481000000b00592d01f2b6eso10081139otl.5;
+        Sat, 15 Jan 2022 09:22:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:to
-         :content-language:cc:from:subject:content-transfer-encoding;
-        bh=QVDHDswXxan44+yxDMcyGpbr6VGvajl3PBQlDkytgqQ=;
-        b=6WalHuWG/EDHGiMF+Loy+RmAVLgfLz2IymyPf9bjmPMmSnXOferLnvXwO2b4LrfDZt
-         s/A9AVGrsBvOyKfo06NY/Fndx5e2wlpvYlekVt6JRdyDSHdyPhw4gp1ADmQHjTHsQqdM
-         uJUlF4VEi56c5dv7TUIqcu32kNHoPOJwLkYDnVN8m4sv1JBoEFKiEywZUtkqkFY+XLmA
-         ngj0EhTnzsU++1vzds7x605yvAhml0EiJtbke9oC2Ht+52FOJMhRZVYPspWwRNZO4s6H
-         dH22m4KTXKt1hcCCaIokMIOJszN8SR+rHSvZlmSj6LHsPvjdw4bpCqydlfT36l386Zf5
-         UQ1A==
-X-Gm-Message-State: AOAM5314bNgnpTRVZaU09G9EcctT0l1NB78lwyfb46PK5kiHI2igty6E
-        IX980oBI3lCJ4wsoWfLN6afkgJf99uN8GKA8ZKVc7/u207h+eMkk/bDetcdG6KAc6clrGL060+T
-        trsznKvsL6BtCw5T9fXV4ew==
-X-Received: by 2002:aa7:c9ca:: with SMTP id i10mr14154589edt.66.1642265104765;
-        Sat, 15 Jan 2022 08:45:04 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxQCmC+GxGFjAyX245b8Q6TBUgrwWjpgjwQ1G6sgttOLoueibnPlflpAd14Kd5XP3s8LtxR6Q==
-X-Received: by 2002:aa7:c9ca:: with SMTP id i10mr14154583edt.66.1642265104611;
-        Sat, 15 Jan 2022 08:45:04 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
-        by smtp.gmail.com with ESMTPSA id g21sm3493800edt.12.2022.01.15.08.45.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Jan 2022 08:45:04 -0800 (PST)
-Message-ID: <e865361a-b75b-5a35-18e1-7136f3094d54@redhat.com>
-Date:   Sat, 15 Jan 2022 17:45:03 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-To:     Andy Shevchenko <andy@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Language: en-US
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Subject: RFC: pinctrl: baytrail: Need to fixup mux setting due to broken
- BIOS/DSDT
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=QdKoM92XcOD+ied4LW2xvMvWizSFp19kwNEISaRgwYc=;
+        b=kItlONYdbLTzpuA2I46I8QjVckeB2oUGfGUJglsXnNBlLCep63qbOPQnwu+nSRHIvF
+         jxEv0UCpWg9k+mvQyz1TygPlnjy7+Z2oLkNUyXYkuWEQmdUOcZ96DySlP9t/hUKT2Ide
+         xqB6glfLUl3CNxTKGk8ATPWu617eBaZmvrv5q0kXodwr1+2E1yvQDmlGiVQfuguWt7z3
+         Yp8NpzE9WZkKGCyyT95D8HgI1l94v4SfZmbPOqtzyeb3BMd9Cchr3jOX1FNVEILWbIfj
+         kZ+vVgY6xbHnDozJOQkpAwulCQXCr+YBPyZkieN9meljk3UD2d4YuRXfF6TgGm90K8H8
+         CzUw==
+X-Gm-Message-State: AOAM531FRpD2FSIVYMhPE+ufMgE6vuMcMBbGhYIEsFo2Kss0iVsVO6sO
+        Tm+xUBf3+gShB6qxBkgEKA==
+X-Google-Smtp-Source: ABdhPJxckVmhHzYLxvrbRLfL2JZUy0scMzSr8ccJ+pUoumgkQ08Xp/dABKP9617iJawKNBRs9pQ3hg==
+X-Received: by 2002:a05:6830:2a0a:: with SMTP id y10mr10609256otu.248.1642267353083;
+        Sat, 15 Jan 2022 09:22:33 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id v18sm2766862otp.42.2022.01.15.09.22.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jan 2022 09:22:32 -0800 (PST)
+Received: (nullmailer pid 119879 invoked by uid 1000);
+        Sat, 15 Jan 2022 17:22:30 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     conor.dooley@microchip.com
+Cc:     robh+dt@kernel.org, bgolaszewski@baylibre.com,
+        jassisinghbrar@gmail.com, linus.walleij@linaro.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        paul.walmsley@sifive.com, linux-usb@vger.kernel.org,
+        lewis.hanly@microchip.com, lee.jones@linaro.org,
+        aou@eecs.berkeley.edu, daire.mcnamara@microchip.com,
+        thierry.reding@gmail.com, linux-riscv@lists.infradead.org,
+        broonie@kernel.org, linux-pwm@vger.kernel.org,
+        a.zummo@towertech.it, heiko@sntech.de,
+        u.kleine-koenig@pengutronix.de, atishp@rivosinc.com,
+        linux-spi@vger.kernel.org, alexandre.belloni@bootlin.com,
+        bin.meng@windriver.com, devicetree@vger.kernel.org,
+        geert@linux-m68k.org, palmer@dabbelt.com,
+        linux-kernel@vger.kernel.org, krzysztof.kozlowski@canonical.com,
+        gregkh@linuxfoundation.org, linux-rtc@vger.kernel.org,
+        ivan.griffin@microchip.com, linux-crypto@vger.kernel.org
+In-Reply-To: <20220114151727.2319915-2-conor.dooley@microchip.com>
+References: <20220114151727.2319915-1-conor.dooley@microchip.com> <20220114151727.2319915-2-conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 01/15] dt-bindings: soc/microchip: update syscontroller compatibles
+Date:   Sat, 15 Jan 2022 11:22:30 -0600
+Message-Id: <1642267350.889231.119878.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy, Mika,
+On Fri, 14 Jan 2022 15:17:13 +0000, conor.dooley@microchip.com wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> The Polarfire SoC is currently using two different compatible string
+> prefixes. Fix this by changing "polarfire-soc-*" strings to "mpfs-*" in
+> its system controller in order to match the compatible string used in
+> the soc binding and device tree
+> 
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  ...larfire-soc-mailbox.yaml => microchip,mpfs-mailbox.yaml} | 6 +++---
+>  ...s-controller.yaml => microchip,mpfs-sys-controller.yaml} | 6 +++---
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>  rename Documentation/devicetree/bindings/mailbox/{microchip,polarfire-soc-mailbox.yaml => microchip,mpfs-mailbox.yaml} (82%)
+>  rename Documentation/devicetree/bindings/soc/microchip/{microchip,polarfire-soc-sys-controller.yaml => microchip,mpfs-sys-controller.yaml} (75%)
+> 
 
-For one of the x86 Android tablets with broken DSDTs which I'm working on
-I need to change the mux value of pin 6 of SUS aka INT33FC:02 from 0 to 1,
-this changes it from a normal GPIO to outputting the PMC's 32KHz clk.
-This is needed for the jack-detection in the audio codec which needs an
-external 32KHz clock to work and that is connected to pin 6 of SUS.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-On the Windows version of the same tablet (which uses slightly different
-hardware, e.g. there is an embedded controller on the board which the
-Android version lacks) there is an ACPI call to toggle the mux, since
-the firmware does not set it for us.
+yamllint warnings/errors:
 
-So the x86-android-tablets.c code for working around all the firmware
-challenges on these devices will need a way to toggle the mux and
-directly poking it itself is a bad idea because of the need
-to serialize all accesses to the GPIO islands on byt, see:
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/mailbox/microchip,mpfs-mailbox.example.dt.yaml:0:0: /example-0/soc/mailbox@37020000: failed to match any schema with compatible: ['mpfs-mailbox']
 
-39ce8150a079 ("pinctrl: baytrail: Serialize all register access")
+doc reference errors (make refcheckdocs):
 
-So I see 2 possible options:
+See https://patchwork.ozlabs.org/patch/1580091
 
-1. Add a pingroup for this pin in drivers/pinctrl/intel/pinctrl-baytrail.c
-and then mimick the pwm0 pinconf setting code from
-drivers/gpu/drm/i915/display/intel_dsi_vbt.c in x86-android-tablets.c
-This seems the cleanest, but I'm leaning a bit towards:
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-2. Do EXPORT_SYMBOL_GPL(byt_lock); in pinctrl-baytrail.c and then just
-do a ioremap + raw poke of the pad_conf0 register in x86-android-tablets.c.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-This avoids adding an extra pingroup just to workaround around the
-buggy firmware on these tablets; and more importantly this gives the
-x86-android-tablets.c code a flexible way to fixup various possible
-GPIO/pinctrl misconfigurations with needing to push workarounds into
-pinctrl-baytrail.c.
+pip3 install dtschema --upgrade
 
-To make sure others are not tempted to also take the byt_lock (which
-needs a rename before exporting) I plan to not add byt_lock to any header
-files. Instead the x86-android-tablets.c code can just do an extern
-declaration of it inside the .c file.
-
-###
-
-Typing this out I think that 1 is cleaner and so far on a number of buggy
-DSDT Android tablets this is the only case I've found where poking the
-GPIO/pinctrl registers "directly" is necessary.
-
-So I guess I should go with solution 1 and if it turns out more workarounds
-are necessary then we can reconsider the (somewhat ugly) option 2. 
-
-Before moving forward with either approach I would like to hear your
-thoughts on this, so please let me know what you think ?
-
-Regards,
-
-Hans
-
+Please check and re-submit.
 
