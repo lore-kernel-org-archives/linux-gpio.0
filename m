@@ -2,79 +2,77 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E566EC433EF
-	for <linux-gpio@archiver.kernel.org>; Sun, 16 Jan 2022 01:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA793C433F5
+	for <linux-gpio@archiver.kernel.org>; Sun, 16 Jan 2022 08:33:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbiAPBFk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 15 Jan 2022 20:05:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230430AbiAPBFi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 15 Jan 2022 20:05:38 -0500
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51620C061574
-        for <linux-gpio@vger.kernel.org>; Sat, 15 Jan 2022 17:05:38 -0800 (PST)
-Received: by mail-oi1-x22f.google.com with SMTP id r138so18116907oie.3
-        for <linux-gpio@vger.kernel.org>; Sat, 15 Jan 2022 17:05:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XZu/hPMQAR6JerGfyaKVu4NwDn/+L++TXjPb4qGe5LA=;
-        b=xlYARUpK95WH+obZMuApEx27EFq2DTEmuY1EX1dOlNfwSX4ub5aUwaoVdly/t9HR1+
-         TSY9EHLXKep2AnA7YMHm2hIRDh7Dzc5Xc5JFAY1mdNkuLxAeJvcRyINKZvbrT3J6opwA
-         vqRvFHkDNRN3w48/884LL235NWIvDq9lRSY6P/wnH0SRZANcVph1cQoToqjC4otHs26S
-         LibgbBYdz4j9P+2XgQ75maFZb9Fa30lmDZE9ZrYMaJLV7OZfOi7Cgk+BkMptzV4FCIhe
-         Nx/rQXDg+rZyRiHxpQb2UPfolwD0oXSFnF20Cas5f5bTNs1aCTeRABxQIucp8KFj4XpY
-         GEPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XZu/hPMQAR6JerGfyaKVu4NwDn/+L++TXjPb4qGe5LA=;
-        b=vtJENAvySYUvyQxPkgk1hsvSSR/5A9hL+a6FBkCb0Hfwg6J9fhc00k9oebmDDTPdHl
-         MONxyq44HvcYmCQKbW22n10OVyvVCuwRox6eNbrRo2/nA7qMlA2bdqf2xqVU5ZPk4ijY
-         7iPCsSQ8hI23KNpr4B0OoYB+xkK79Y3hA6pZo9OPfeVw3uc7U7LD67axISKGFfErWmx4
-         J4SSY9zNN7hTQFYce2O7Ueny5aCb9hCU6nZYX9FgEn2j8wcX4yAvE/26sWRk9EfJsiGJ
-         nPzPs2vB/dtDXwyvCikVRhdfd97rNw7M71Z+pU9QxU2l8yJe6wVSHmGyO7Xf7Lq0KaBS
-         BQTQ==
-X-Gm-Message-State: AOAM532qemc3tblUrsO85k0XGKGjMkgwyUru+HrHwU3X26Ot50UgJfaH
-        QsTXbzZYvH4Xf60/ym0nrGp1xrO+EjMiCdNpTrfHdA==
-X-Google-Smtp-Source: ABdhPJwDK4/ffYyTCt/T0hFCZfC/epnKIPbY3tO20B3nOviEnXENCjxIeq6FW49NrdbhZ59gZWdBbiMdt9mv01MUZro=
-X-Received: by 2002:a54:4613:: with SMTP id p19mr12265631oip.162.1642295137712;
- Sat, 15 Jan 2022 17:05:37 -0800 (PST)
+        id S234780AbiAPIdN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 16 Jan 2022 03:33:13 -0500
+Received: from out162-62-57-49.mail.qq.com ([162.62.57.49]:56211 "EHLO
+        out162-62-57-49.mail.qq.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234779AbiAPIdN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 16 Jan 2022 03:33:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1642321989;
+        bh=So3WZ5FvjllBHQzS197yDZc/bzSJMtX1iMxl4muakzA=;
+        h=From:To:Cc:Subject:Date;
+        b=vSo6fiS5OQSe2eTBNXUtVQhIM7S64f7fQ0+IVarUXhF0R2HzaPJ/dnE8pxchT70+7
+         7QIR9oPKI5B/BKyq+Tk9cIvGvNAEXXapOSduy98ZkOMulzCKQGaix0w2NLQW+4NDeI
+         4tH70MfY/ioAiHqdENTgtx8yrxKjrtWUzkB+rFWI=
+Received: from localhost.localdomain ([43.227.136.188])
+        by newxmesmtplogicsvrsza9.qq.com (NewEsmtp) with SMTP
+        id 45A8D61B; Sun, 16 Jan 2022 16:17:26 +0800
+X-QQ-mid: xmsmtpt1642321046t4sl5l64s
+Message-ID: <tencent_949564FE01410898F3734D38FA284CC2E909@qq.com>
+X-QQ-XMAILINFO: Ng3M1C/wDpyJYXCUJikaVHNA7js7JxKDFsyQSgSOzIFX1Ou7rzeXI/GvQqqQG2
+         jeJQdwGI8g4hPFHuvhLr4iAEvrq7gGKc1rEdTy5Ye9Xb/2WxTM/vqc8bPzM+Ebf8AYC10i9VMlQM
+         6lZxecf2x3PWVCv9WduYeRyyaR9iJwbBwBQFB5q2mCW+VmwW3aXpqpViE9bJod7Mrkg3FZX6kuyW
+         gHP281X463p0T5zvGu0y+hcaKN3wYjMszZIsL6xwJeiUXe/PowhmvVOKaM6QeWmiTE8x7oP3A5B9
+         YfxUCCFXB8BUJ4AMCPrdCpzVxJPn+Y6iP75RcpP8RwmTNvrvPjrk0ZjcccGM2Z4anFjADjMnLuQu
+         BTvVHj5KUVImi+SQr+Pq8WHSBNiG8JR5mk4PPxWhD9W00wIxLrDIhCTmVvOJBS7hO/7rzSN4Bv9z
+         U4MH4YojMHErVf051AmVBh1UbZARbnO1xjUF3Wcj0yzGbOdqLImHmc+9LdxR1X1FqZ0v2dpqSaxV
+         ypjkS+2YPviSBYPUywARWCic5PJAtIMaUi22nEacpN7s0X7/Aif7ol4/hCqfU/B9jvMrI3cpCmul
+         +s2E06/ifQbcSVvQfS8l/qPjvp2yWMmgoZWfFdDOdU2lFCpyr1qETiOSOoAR7uyDBjmbLbv5hKiF
+         NHSsb+deT2Z6gZ0ltamsfijqjQA5T52nkyu5PCoUwpVNoUh70z/6rktpkDol8lEs1+bLT9Z65/VU
+         HcXDbnrjq8ztQPGfRXUMyDsT5XU94EjcSDBIZeer9HJa2E6Tj/ZBWzLm+lOB5IwVS+LBLqQHpkbC
+         fi8kB1SY0N56f+HrWw5BAwsyD9KUBIowKti223okH2y/cdQi6HtdN1XDWjU9oYl+aGLjNOqLk6f+
+         KnbYNkBzYqbzLKaRwXMebH3REqSQXv6ubalMRA8Isqnr1bdmuLPkfmB+kkJOWtDcdyrZiWyx9p
+From:   xkernel.wang@foxmail.com
+To:     andy@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiaoke Wang <xkernel.wang@foxmail.com>
+Subject: [PATCH] gpio: merrifield: check the return value of devm_kstrdup()
+Date:   Sun, 16 Jan 2022 16:16:38 +0800
+X-OQ-MSGID: <20220116081638.2676-1-xkernel.wang@foxmail.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 MIME-Version: 1.0
-References: <20220105172952.23347-1-andre.przywara@arm.com>
-In-Reply-To: <20220105172952.23347-1-andre.przywara@arm.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 16 Jan 2022 02:05:26 +0100
-Message-ID: <CACRpkdZ528B4b9XzBpfGAwPbDaDH12LQ8rTce9AsDuKF+v5A=A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sunxi: Fix H616 I2S3 pin data
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        SASANO Takayoshi <uaa@mx5.nisiq.net>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jan 5, 2022 at 6:30 PM Andre Przywara <andre.przywara@arm.com> wrote:
+From: Xiaoke Wang <xkernel.wang@foxmail.com>
 
-> Two bugs have sneaked in the H616 pinctrl data:
-> - PH9 uses the mux value of 0x3 twice (one should be 0x5 instead)
-> - PH8 and PH9 use the "i2s3" function name twice in each pin
->
-> For the double pin name we use the same trick we pulled for i2s0: append
-> the pin function to the group name to designate the special function.
->
-> Fixes: 25adc29407fb ("pinctrl: sunxi: Add support for the Allwinner H616 pin controller")
-> Reported-by: SASANO Takayoshi <uaa@mx5.nisiq.net>
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+devm_kstrdup() returns pointer to allocated string on success,
+NULL on failure. So it is better to check the return value of it.
 
-Patch applied for fixes.
+Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+---
+ drivers/gpio/gpio-merrifield.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+index 42c4d9d..f3d1bae 100644
+--- a/drivers/gpio/gpio-merrifield.c
++++ b/drivers/gpio/gpio-merrifield.c
+@@ -409,6 +409,9 @@ static int mrfld_gpio_add_pin_ranges(struct gpio_chip *chip)
+ 	int retval;
+ 
+ 	pinctrl_dev_name = mrfld_gpio_get_pinctrl_dev_name(priv);
++	if (!pinctrl_dev_name)
++		return -ENOMEM;
++
+ 	for (i = 0; i < ARRAY_SIZE(mrfld_gpio_ranges); i++) {
+ 		range = &mrfld_gpio_ranges[i];
+ 		retval = gpiochip_add_pin_range(&priv->chip, pinctrl_dev_name,
+-- 
