@@ -2,35 +2,32 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4C5C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 02:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF3FC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 02:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344083AbiARCe0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jan 2022 21:34:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343824AbiARC1S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:27:18 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A79BAC0617AB;
-        Mon, 17 Jan 2022 18:25:28 -0800 (PST)
+        id S1345037AbiARCsa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jan 2022 21:48:30 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:46388 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344437AbiARCgd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:36:33 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 67676B81244;
-        Tue, 18 Jan 2022 02:25:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F190C36AE3;
-        Tue, 18 Jan 2022 02:25:24 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 08B3FB81255;
+        Tue, 18 Jan 2022 02:36:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1A43C36AF2;
+        Tue, 18 Jan 2022 02:36:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642472726;
+        s=k20201202; t=1642473389;
         bh=JRwEwaQ2ghXjEgsdO+LW6h97cIMvCsKA8iS5G29TpR4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PLc0DTi7QQyqExaAx/h+6cP4053GdtVLRSigT843GESdWSl9v2W7CJWb2Pr6/ohST
-         9FJFCNOWQPLpZbKUZjzV75X5o024vRU8qaOnjJGyO3vwRITiNPmAPw5hCmjHTmxN5Y
-         cqjloGbEiWvFnlOZkxgcBK5RnsDQ6srzGNXtZ8h+h+caQs565ofZ+J2sIq3UmBaYtJ
-         VmO2hdrkx92tbWoH2W6WFlFuoJPpHwxXRbC4IBzgtGZlkukvH91a2IqLaG9hPZmIe+
-         qzDlWufAWiRkMVEfK1YJ/mTRQKGzsOu/WVVETwSu94sw70175A8POsr2gWQwOiu1KQ
-         duhiND18fsLsw==
+        b=TMe8UcyOLfPSXTqPTfxBcP5VsDhVe3rqqHelgM6DOXlXjyQOz3/zgraIY6wACIxwO
+         zvlPnO0gLK0C/ayNCfbcaRaT94DEWyNMXwPipYJ9J14Z2D8Pa8MsN5dVrUG/hVCy/3
+         ZmtGICZva0EtnQoMPlUhpj961kqP3M2fNluJo+itrESVUi+u1VkLW1U6dEiZobhTfU
+         l6eWS2K4wd7jaREc6/EY6wOgdTahPowQea6u6EI0Tl6rmnB7gTSbUZEEip7C9QVanY
+         zj2DJBgfmtPHpOET3N6iKEIUQEKn4xs4uLKiRu2NxGWHCial6hAqDMxW0OayKS/Hxr
+         Qfsnh11oR1J6g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Iwona Winiarska <iwona.winiarska@intel.com>,
@@ -38,12 +35,12 @@ Cc:     Iwona Winiarska <iwona.winiarska@intel.com>,
         Sasha Levin <sashal@kernel.org>, linus.walleij@linaro.org,
         joel@jms.id.au, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.16 115/217] gpio: aspeed: Convert aspeed_gpio.lock to raw_spinlock
-Date:   Mon, 17 Jan 2022 21:17:58 -0500
-Message-Id: <20220118021940.1942199-115-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 098/188] gpio: aspeed: Convert aspeed_gpio.lock to raw_spinlock
+Date:   Mon, 17 Jan 2022 21:30:22 -0500
+Message-Id: <20220118023152.1948105-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220118021940.1942199-1-sashal@kernel.org>
-References: <20220118021940.1942199-1-sashal@kernel.org>
+In-Reply-To: <20220118023152.1948105-1-sashal@kernel.org>
+References: <20220118023152.1948105-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
