@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76F6C43217
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 03:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 807D4C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 03:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349653AbiARDHF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jan 2022 22:07:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35910 "EHLO
+        id S1349061AbiARDHH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jan 2022 22:07:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350465AbiARCvo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:51:44 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B54C09426A;
-        Mon, 17 Jan 2022 18:42:40 -0800 (PST)
+        with ESMTP id S1347836AbiARC5d (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:57:33 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8381C06135F;
+        Mon, 17 Jan 2022 18:45:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E765612E9;
-        Tue, 18 Jan 2022 02:42:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AB8C36AE3;
-        Tue, 18 Jan 2022 02:42:38 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 73A44B81132;
+        Tue, 18 Jan 2022 02:45:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4285AC36AF3;
+        Tue, 18 Jan 2022 02:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642473759;
-        bh=9LNPEI3vU+GgQ06ospyNK/ywpFLeKxPrJ2gMNjRDkLg=;
+        s=k20201202; t=1642473942;
+        bh=0o1dRmrL+Pinxi7ZJCmm3u6/6Gkhhzo8HdcqSLllwjw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iLdMyBmf5vREW8xbg5fEpbLjp8rY/md7n1vrEt2I0yhD+bMNQFPfZp/ny/JeitVZw
-         e2/7EMsJVxbrDVlFG2AWkUfXD7EBlU1HaA03TK/917DFrH1acrletU6/SYGu0vq1O3
-         L2J5AN5mO1vmu0Za6Jxa2SFDJKNkPROTJ9wU0LoBFD4cMYfu6kOkYn0gC5tPNCIBxE
-         M+sWXuDTyRW3jXFD8+0bVgcFlIr26qvPftIKu9yfCqgrGiLEVT9XRRKh0NtSAMO/UL
-         FRmXZs9KNR5i90KwrqcSXydILoWUXD6sFENYQEatKk2ZEvxo/iM9XcvXYFVE1Tvxfs
-         Ib/g9s2Ok6cyA==
+        b=VAydej9Kdpa7oFp6P4p5I9kXTO69d+U2TiXMJT1QDQ3YkGxfyS7/3b73vrERD+HUp
+         kNiQhledljC8IFFyDllUVsXwyUNc7jMduNHqSvvxwQOA5fvUwcnCDkGtoSUFYqJji7
+         WkQ2ltEqpqNvD02Rz+WwnCH+qBOPyJOhZ7gvRW8bQmnBP8IN1ssnS+zFMffw6wEvJH
+         rgxoaopa1SMzg7nR0YuZ8+4EdiXs1EuFOWuEBGIreqduWAOeB60gz/eoNynLO+FNTZ
+         oxCHKC0uw/5hK9Rja2HAtUxAcsDzMxcpnBCl072J4Uz0AgGxVTsI/UfgsKUSD/Dixv
+         foToQ9+7O3oOg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Iwona Winiarska <iwona.winiarska@intel.com>,
@@ -38,12 +38,12 @@ Cc:     Iwona Winiarska <iwona.winiarska@intel.com>,
         Sasha Levin <sashal@kernel.org>, linus.walleij@linaro.org,
         joel@jms.id.au, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.10 057/116] gpio: aspeed: Convert aspeed_gpio.lock to raw_spinlock
-Date:   Mon, 17 Jan 2022 21:39:08 -0500
-Message-Id: <20220118024007.1950576-57-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 32/73] gpio: aspeed: Convert aspeed_gpio.lock to raw_spinlock
+Date:   Mon, 17 Jan 2022 21:43:51 -0500
+Message-Id: <20220118024432.1952028-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220118024007.1950576-1-sashal@kernel.org>
-References: <20220118024007.1950576-1-sashal@kernel.org>
+In-Reply-To: <20220118024432.1952028-1-sashal@kernel.org>
+References: <20220118024432.1952028-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,7 +73,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 26 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index b966f5e28ebff..e0d5d80ec8e0f 100644
+index 2820c59b5f071..22e0d6fcab1c4 100644
 --- a/drivers/gpio/gpio-aspeed.c
 +++ b/drivers/gpio/gpio-aspeed.c
 @@ -53,7 +53,7 @@ struct aspeed_gpio_config {
@@ -140,7 +140,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  }
 @@ -492,11 +492,11 @@ static int aspeed_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
  	if (!have_output(gpio, offset))
- 		return GPIO_LINE_DIRECTION_IN;
+ 		return 1;
  
 -	spin_lock_irqsave(&gpio->lock, flags);
 +	raw_spin_lock_irqsave(&gpio->lock, flags);
@@ -150,9 +150,9 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
 -	spin_unlock_irqrestore(&gpio->lock, flags);
 +	raw_spin_unlock_irqrestore(&gpio->lock, flags);
  
- 	return val ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
- }
-@@ -539,14 +539,14 @@ static void aspeed_gpio_irq_ack(struct irq_data *d)
+ 	return !val;
+ 
+@@ -540,14 +540,14 @@ static void aspeed_gpio_irq_ack(struct irq_data *d)
  
  	status_addr = bank_reg(gpio, bank, reg_irq_status);
  
@@ -169,7 +169,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  }
  
  static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
-@@ -565,7 +565,7 @@ static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
+@@ -566,7 +566,7 @@ static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
  
  	addr = bank_reg(gpio, bank, reg_irq_enable);
  
@@ -178,7 +178,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  	copro = aspeed_gpio_copro_request(gpio, offset);
  
  	reg = ioread32(addr);
-@@ -577,7 +577,7 @@ static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
+@@ -578,7 +578,7 @@ static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
  
  	if (copro)
  		aspeed_gpio_copro_release(gpio, offset);
@@ -187,7 +187,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  }
  
  static void aspeed_gpio_irq_mask(struct irq_data *d)
-@@ -629,7 +629,7 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
+@@ -630,7 +630,7 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
  		return -EINVAL;
  	}
  
@@ -196,7 +196,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  	copro = aspeed_gpio_copro_request(gpio, offset);
  
  	addr = bank_reg(gpio, bank, reg_irq_type0);
-@@ -649,7 +649,7 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
+@@ -650,7 +650,7 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
  
  	if (copro)
  		aspeed_gpio_copro_release(gpio, offset);
@@ -205,7 +205,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  
  	irq_set_handler_locked(d, handler);
  
-@@ -719,7 +719,7 @@ static int aspeed_gpio_reset_tolerance(struct gpio_chip *chip,
+@@ -720,7 +720,7 @@ static int aspeed_gpio_reset_tolerance(struct gpio_chip *chip,
  
  	treg = bank_reg(gpio, to_bank(offset), reg_tolerance);
  
@@ -214,7 +214,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  	copro = aspeed_gpio_copro_request(gpio, offset);
  
  	val = readl(treg);
-@@ -733,7 +733,7 @@ static int aspeed_gpio_reset_tolerance(struct gpio_chip *chip,
+@@ -734,7 +734,7 @@ static int aspeed_gpio_reset_tolerance(struct gpio_chip *chip,
  
  	if (copro)
  		aspeed_gpio_copro_release(gpio, offset);
@@ -223,7 +223,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  
  	return 0;
  }
-@@ -859,7 +859,7 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
+@@ -860,7 +860,7 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
  		return rc;
  	}
  
@@ -232,7 +232,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  
  	if (timer_allocation_registered(gpio, offset)) {
  		rc = unregister_allocated_timer(gpio, offset);
-@@ -919,7 +919,7 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
+@@ -920,7 +920,7 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
  	configure_timer(gpio, offset, i);
  
  out:
@@ -241,7 +241,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  
  	return rc;
  }
-@@ -930,13 +930,13 @@ static int disable_debounce(struct gpio_chip *chip, unsigned int offset)
+@@ -931,13 +931,13 @@ static int disable_debounce(struct gpio_chip *chip, unsigned int offset)
  	unsigned long flags;
  	int rc;
  
@@ -257,7 +257,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  
  	return rc;
  }
-@@ -1018,7 +1018,7 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
+@@ -1019,7 +1019,7 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
  		return -EINVAL;
  	bindex = offset >> 3;
  
@@ -266,7 +266,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  
  	/* Sanity check, this shouldn't happen */
  	if (gpio->cf_copro_bankmap[bindex] == 0xff) {
-@@ -1039,7 +1039,7 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
+@@ -1040,7 +1040,7 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
  	if (bit)
  		*bit = GPIO_OFFSET(offset);
   bail:
@@ -275,7 +275,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  	return rc;
  }
  EXPORT_SYMBOL_GPL(aspeed_gpio_copro_grab_gpio);
-@@ -1063,7 +1063,7 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc *desc)
+@@ -1064,7 +1064,7 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc *desc)
  		return -EINVAL;
  	bindex = offset >> 3;
  
@@ -284,7 +284,7 @@ index b966f5e28ebff..e0d5d80ec8e0f 100644
  
  	/* Sanity check, this shouldn't happen */
  	if (gpio->cf_copro_bankmap[bindex] == 0) {
-@@ -1077,7 +1077,7 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc *desc)
+@@ -1078,7 +1078,7 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc *desc)
  		aspeed_gpio_change_cmd_source(gpio, bank, bindex,
  					      GPIO_CMDSRC_ARM);
   bail:
