@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37DEC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 02:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2751C4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 03:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345366AbiARCsf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jan 2022 21:48:35 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:59528 "EHLO
+        id S1354591AbiARDHE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jan 2022 22:07:04 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:37544 "EHLO
         dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347600AbiARCli (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:41:38 -0500
+        with ESMTP id S1348305AbiARCpK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:45:10 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A50EC612D2;
-        Tue, 18 Jan 2022 02:41:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B72C36AE3;
-        Tue, 18 Jan 2022 02:41:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DB0B6130D;
+        Tue, 18 Jan 2022 02:45:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83291C36AF2;
+        Tue, 18 Jan 2022 02:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642473697;
-        bh=fpJUuwgTvCrd7e1pIEnOTkVUhstiH0I4N60wi49/f9s=;
+        s=k20201202; t=1642473909;
+        bh=m9BuTBZpIugcPF288rm1rumd82hWsPg0dVWh+nu1Mow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MSxbYBB8bHsk2+BVum+xfffaqfqmlxiOdth2eBueh2Hedirxp2EMjJKVwRadulu8a
-         fVNkbEH2Mcr8pF52wnGJpTztk5INVYMDfOC4Lsztb6JOJe6cZfbs48UU47wDacnf+U
-         GaPgKBpPJWOYYeGbzHXMUW1AFl8jSg2DjRntr5gGwArlI8ZtQ02aUYQemZBDrqX9AB
-         vufMP4q6gAx1r4GrLEoUyWAK5LNs9Dk2QurD4zpiKTwXFFW4OIpo9ah+Z4Z0ojtuXR
-         7xSi8YxWrqDhV6Pmv2GaV8au3JHh0TJ1eHKeSB0aB6AtAVZ5vtZLQFFT78jl07KCR/
-         WY6GJ1574Hixg==
+        b=g7fdj7IGZ4OLxJ/ZSHwvO2beFW15LHSEuIoFty3tRoRzvgKAgfFsY2MBDmYXL62dw
+         FzvoIaiNb8793SCgyvtlJe5NshNX6b2Ntj0O+cheCFc8D+aZv+DlCco1Apn0QttVVj
+         31WK01xupzLoK++RWGNoQ6oC8dJx8cjZ8GhlUy0GzYAqlomtMDGaIbq9afHi+SvV6D
+         YHsRPo2J0gFH+3QMTFXuRUcvD4GH106oaLSPwXo1WYIcmIGGGN/IK1YqyZh+ATOVD5
+         HNxjQTFQvcS4jSBt3eMsE+96qHA7ldgTUCALseBVwKZ3Q3R348XaACiPcjq47IV4Tg
+         NWv1b6dfQ08Aw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Hans de Goede <hdegoede@redhat.com>,
@@ -36,12 +36,12 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
         brgl@bgdev.pl, linux-gpio@vger.kernel.org,
         linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 028/116] gpiolib: acpi: Do not set the IRQ type if the IRQ is already in use
-Date:   Mon, 17 Jan 2022 21:38:39 -0500
-Message-Id: <20220118024007.1950576-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 17/73] gpiolib: acpi: Do not set the IRQ type if the IRQ is already in use
+Date:   Mon, 17 Jan 2022 21:43:36 -0500
+Message-Id: <20220118024432.1952028-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220118024007.1950576-1-sashal@kernel.org>
-References: <20220118024007.1950576-1-sashal@kernel.org>
+In-Reply-To: <20220118024432.1952028-1-sashal@kernel.org>
+References: <20220118024432.1952028-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 6f11714ce0239..55e4f402ec8b6 100644
+index e3ddc99c105d4..13c6eee481da7 100644
 --- a/drivers/gpio/gpiolib-acpi.c
 +++ b/drivers/gpio/gpiolib-acpi.c
-@@ -969,10 +969,17 @@ int acpi_dev_gpio_irq_get_by(struct acpi_device *adev, const char *name, int ind
+@@ -953,10 +953,17 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
  			irq_flags = acpi_dev_get_irq_type(info.triggering,
  							  info.polarity);
  
