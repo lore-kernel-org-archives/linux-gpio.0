@@ -2,122 +2,211 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C97DC433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jan 2022 20:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0394C4321E
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 00:18:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242741AbiAQU0R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jan 2022 15:26:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35414 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241644AbiAQU0R (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 15:26:17 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15ECDC06161C
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Jan 2022 12:26:17 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id f13so12126391plg.0
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Jan 2022 12:26:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dX5BDdPmD+NPI6WaR8s/OfKSkKWqboFHvMNVeJ4mtho=;
-        b=BJHo0ew6lxRnbn+aN6pFlwQsdGTqnRA9NKFS6jblkxWxLayQuvtV333n7ZthAwgJnT
-         AXrDQvKS4+fj/sL/B1JrAkbxVoYUSWv+dNmoQiZ9CkAKJHZZE6iUXL3wElW5o66iMzyX
-         SDBnTISDGMd/utWP1KY0CK/G50WGQsCA/fUB6O5pCq9wE7v/zIMcsS0ldOfTGmslCNb/
-         gy0EWqOKlY/5t5UaXqYbhiqefybF7MLzq2GBsWuOb9+nYnudDoiw1o9Qo8Zw5q9OrmtP
-         lG2fGZEc6quxHMcBFNv5LsB1MZLspOb7joO3eS/Ta/sl/aQKXuffCQUAxFRFicczlZBU
-         /B7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dX5BDdPmD+NPI6WaR8s/OfKSkKWqboFHvMNVeJ4mtho=;
-        b=eYfaId9Dy9Lu5YTPem4rfhel8aDaKWKWYk0hAQssbrLOp7kIJuWzP3sGLQaNd+FLmd
-         xr343+7NfdGIEEJ1Ci8XTRmdpV7SLtDpGUQCGLzjfPNV1x4HjAeCGBAcJLMBbI3nzVtp
-         IBEtnZe6rHeEqKJJ7s4xVymCItZYVzzV2XE7HfFN0COZnRaCL8ROfoZC828mvei56X3D
-         Fxs1GMGyWSUgdZ0CQvu4zKxW6+yWqmFkJNCpD00mNKZZJHfF9we9KmcsXPCKEfzXWNOh
-         ypkBCu8Y436kZoK9/xBBo718aZeU4eydLy+K1AxFe5N88zar+PFRV7zv1tvRhidrX3ZZ
-         Hk0g==
-X-Gm-Message-State: AOAM533FbLc7xaLfeNRUGdAmxGmenNWP/wIDALq0AMjhhL5AmyFnr6U/
-        IPrZUdjNWgKk2Vyyk/LaM/3aJBOpqETiDIKFFC//8g==
-X-Google-Smtp-Source: ABdhPJzs4NFch1IbJoePzGpRGSPF5a/BDJH4NeuYNKzRO9JLl6Xyd9LRCb0ktA169IQmhMKLm8A1K6VtC3RjJ2m+I+8=
-X-Received: by 2002:a17:902:b947:b0:14a:a6aa:4fa6 with SMTP id
- h7-20020a170902b94700b0014aa6aa4fa6mr10975861pls.149.1642451176378; Mon, 17
- Jan 2022 12:26:16 -0800 (PST)
+        id S243857AbiARASp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jan 2022 19:18:45 -0500
+Received: from mail-bn7nam10on2086.outbound.protection.outlook.com ([40.107.92.86]:14752
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238466AbiARASm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 17 Jan 2022 19:18:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ToTUmVm5QQkL3MJ6P+f7NFrJjnqShjfP+Kjk5arpwc0MoO2BBSMNGrS3cV2GApuLxavtiCS7J9tl56VbOSYFnzDrPMmqvaeFMllyK5CgOLQxctCwvh6ApPacMnz4zKJ/vows6mmNMnmi+rBv6+F0UZ/RULnaV4tBHIKzvvHvrAAQ+D8cmlhVuV+QfQIK9fUOu1Z0VzI4/+o1pEwCXst44rcmzCs79qwU70uxRZG/qF9ZD6Z6P+Dh0OquUnWGx4Vq2yUS1Xzy+o9zOHdKGXRSKe0MUu7ApxEkx6hoXOO07UBbLhBSR22YUMmC8lV5GE4KdAWBGrcpiSeAhKQ8yX/d0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DOUjm4cGKB7ebQSCwjMFXei8vUTXVa4NXxhueZB+HuQ=;
+ b=SWqdFrl/MiIy3OZQP6DENBNyzXPfOIW1nsI6dV8EDYnUcG4zhErMSYbOeXzwA/WpN/MtymSQVQXr3d9jMRaZTAc9BFp0KSHCZIoaPQ1MXLKE9HR7xpFCYmhA25Ax6kCxi6OfvySZrJNVw/47QDfDeO3jhS9WmKD6z6OuU9Cc6aZ0btrVeiR7gmaAoNJ2ti6jcGn6SzyLaIKeu3wpMMfHdhMWo0grcNaBxNR8bDr5lDDM3zq2ydMeJzmuD/6AUeEkafJcZo3prkJ27TLF/qLMmbV/LkfHny+6zck4HaYXYY/vBAfkVJ8X7ew/CtkYSNHMVEHYMzv4FXs6uvveDvPCyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DOUjm4cGKB7ebQSCwjMFXei8vUTXVa4NXxhueZB+HuQ=;
+ b=HzLHTIIjAsAaY4TqEyVwD4yFGYecVbgN+lnvw3OqBC/fqr0+SwmNAbTGR55pMHr8SOMaBI4ruWnw/p++jjL9uBSvaGeuJKjs6Ognsi32tA0QQVkLNJ/0WmkiPU6WRvA9n3EhnfGFIt0w9SB8FeCQ80/RHxU1VcHhyzdGSNmwCGd+SK7/vf7yxW+caJZO72Kb6iHYtkoOE9PbTNu0bgFRpEn8DhuWToFBmL+Bhe+WCjxMurEC4F1NKvZ0XZQOspG30DBbUdVXkjXs+PF/LHb1pvWiJqxufoaojyoZxcmHJg7iE4TE2NZq0B6SPWWYeVW+IXwR/SIeLQKRd6feqmtIAg==
+Received: from CO2PR04CA0087.namprd04.prod.outlook.com (2603:10b6:104:6::13)
+ by DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.12; Tue, 18 Jan
+ 2022 00:18:40 +0000
+Received: from CO1NAM11FT058.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:104:6:cafe::f3) by CO2PR04CA0087.outlook.office365.com
+ (2603:10b6:104:6::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.9 via Frontend
+ Transport; Tue, 18 Jan 2022 00:18:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.236) by
+ CO1NAM11FT058.mail.protection.outlook.com (10.13.174.164) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4888.9 via Frontend Transport; Tue, 18 Jan 2022 00:18:39 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 18 Jan
+ 2022 00:18:39 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 17 Jan
+ 2022 16:18:38 -0800
+Received: from dipenp.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Tue, 18 Jan 2022 00:18:38 +0000
+From:   Dipen Patel <dipenp@nvidia.com>
+To:     <smangipudi@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <warthog618@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>
+CC:     Dipen Patel <dipenp@nvidia.com>
+Subject: [RFC v4 01/11] Documentation: Add HTE subsystem guide
+Date:   Mon, 17 Jan 2022 16:22:04 -0800
+Message-ID: <20220118002214.18271-2-dipenp@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220118002214.18271-1-dipenp@nvidia.com>
+References: <20220118002214.18271-1-dipenp@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
- <20220111201722.327219-18-krzysztof.kozlowski@canonical.com>
- <CACRpkdYTXSOW+sOX3wVtF4jj6xm0jr-F3HKQPGHOdAVjbasP3A@mail.gmail.com>
- <5047da7c-d3a6-5472-b0ca-7ed3dbe8a5fe@canonical.com> <CACRpkdbhmJ91EW395C5F2WYjWJQdJ-SBHaDm7XnQsxMuyoMmLg@mail.gmail.com>
- <77bd8fa4-2b35-352c-da07-ef91fcbed454@canonical.com>
-In-Reply-To: <77bd8fa4-2b35-352c-da07-ef91fcbed454@canonical.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Mon, 17 Jan 2022 12:26:04 -0800
-Message-ID: <CAOesGMg2eH1B94h+etPBDW3B1LMeHBytz0v2e0GfVRDv8gU0YA@mail.gmail.com>
-Subject: Re: [PATCH v2 24/28] dt-bindings: pinctrl: samsung: convert to dtschema
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b6572184-5682-4d73-2d6f-08d9da1813f0
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_
+X-Microsoft-Antispam-PRVS: <DM6PR12MB266702AB9FA212F7C3002A03AE589@DM6PR12MB2667.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Tin2VCfADakOxXBQKPzYtMNJjS1vWbDzhW1Lvpwvd25AlI3D7V31c/MlCf2eBow5LgBv+kJkw1FxVsCzYjoH/F0hHMGuvGi7r3tipohW7Yqy0MHOe8uuSfZ+wVTfIzxOCY9E5vlfnW4TogmVuCM8I1+xL2hezGKl+YkXMP8HNPPioqiWQZpdQKEJ2zsZCApwISxhNsByZVrbKsiU8v4zvA/ZBjxkVW0wN4ywLa3UcI9XNM8ce2MirT7XOPlWw26kb11GaS8ju+yXwFk1kPIMxYv7Ve5WVXzlUJQtaML3V4DR8r0BIaBXo9LgPSqzU2hoY/gPDX9JPCcBnZy13aY1oVmw1f1TWTGavJlo+tbPiqLi6RsNUZIXX4JLOtkvp3yH0QG+4d6p4UnniVaC8mBZIpSXOrCBZswzdT1ZP815qEpNyDBIHfTLlcKQPGlMtxa1mmKfUPwXaJvvNngS1tcw0LugjhHAGiUkdaBJURpXBtxNGgtqSCRwE++VpMNcJHuzcWT1voTGseWnHW+bWTpa1zkAAxj4uaqA9F1hjvGEbZfLjbyi5J8lkKwKMWpFt+D3dZrkBgTsOGroBgbTijBhmpabTYfke7BsHvoqD2OA0VT5ZjmQknTSWadKqTqXCT6f0UXwhfQ4X3BlcePWLBp7qsIs51nHJGBJwuTxuXYK0KW2OsQKgt+/iVNRbCEBR+vqwaply+2fjucmmPkuMfG1I0U0xeyhcalI97FHtNO3dgCxzOOqPYs2jmOCqiQsAiNxzfqGYILEF9avwFU/o3QAs07yTarB/Cy/fo3U9Op/T/vs1y3Tjpkjno2qYeywMD+QPEYunXeGvXGnIwdqWK2FWMIMCkLLWZKuMPne1J3X/mg=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700002)(107886003)(83380400001)(110136005)(47076005)(36756003)(921005)(4326008)(356005)(2906002)(6666004)(82310400004)(40460700001)(70586007)(7696005)(336012)(316002)(26005)(426003)(186003)(70206006)(5660300002)(7416002)(81166007)(8936002)(508600001)(8676002)(1076003)(36860700001)(86362001)(2616005)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jan 2022 00:18:39.7119
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6572184-5682-4d73-2d6f-08d9da1813f0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT058.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2667
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Jan 16, 2022 at 11:45 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 16/01/2022 22:38, Linus Walleij wrote:
-> > On Sun, Jan 16, 2022 at 6:10 PM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >
-> >> Anyway DTS and dtschema will have to wait for one release, because they
-> >> depend on samsung pinctrl driver change (patch #2).
-> >
-> > What about I put that (and maybe this schema) on an immutable
-> > branch so you can pull the commit into your for-arm-soc branch and
-> > put the DTS changes on top?
->
-> That would be a solution if not a policy for arm-soc of keeping DTS
-> separate. Arnd and Olof since some time are not happy when DTS branch
-> receives any driver updates.
->
-> Arnd, Olof,
-> This is a set of dtschema conversion + DTS alignment with new schema:
-> 1. Driver change necessary to accept new DTS (driver depends on node
-> names and this has to change because of dtschema),
-> 2. DTS commits depending on above, which convert node name to new format,
-> 3. Finally dtschema requiring new naming of the GPIO nodes.
->
-> If I got correctly, the policy of not mixing drivers and DTS requires
-> that #2 above (DTS changes) will wait for one more release. During the
-> time, if dtschema (#3 above) is applied, there will be new warnings
-> about non-compliant DTS.
->
-> Do you see any chance of merging driver + DTS + dtschema via same tree
-> in same release?
+Adding hte document which can help understand various APIs implemented
+in HTE framework for the HTE producers and the consumers.
 
-Our general guidance to separate DTS and driver changes is to avoid
-large entangled changes between the two, and to discourage a developer
-mentality of "the implementation is the binding".
+Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+---
+Changes in v2:
+- Removed explanation, instead added kernel-doc references.
 
-I think this is a good example of when it makes sense to bring in what
-is a fairly small and clean driver change to deal with this. So the
-right answer here is to stage such a stable branch and merge into both
-arm-soc and the pinctrl subsystem trees as proposed.
+Changes in v3:
+- Addressed grammatical errors.
 
+Changes in v4:
+- Added new API hte_req_ts_by_linedata_ns description.
+- Removed hte_req_ts_by_hte_name.
 
--Olof
+ Documentation/hte/hte.rst | 83 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 Documentation/hte/hte.rst
+
+diff --git a/Documentation/hte/hte.rst b/Documentation/hte/hte.rst
+new file mode 100644
+index 000000000000..f82113e540b8
+--- /dev/null
++++ b/Documentation/hte/hte.rst
+@@ -0,0 +1,83 @@
++============================================
++The Linux Hardware Timestamping Engine (HTE)
++============================================
++
++:Author: Dipen Patel
++
++Introduction
++------------
++
++Certain devices have built in hardware timestamping engines which can
++monitor sets of system signals, lines, buses etc... in realtime for state
++change; upon detecting the change they can automatically store the timestamp at
++the moment of occurrence. Such functionality may help achieve better accuracy
++in obtaining timestamps than using software counterparts i.e. ktime and
++friends.
++
++This document describes the API that can be used by hardware timestamping
++engine provider and consumer drivers that want to use the hardware timestamping
++engine (HTE) framework. Both consumers and providers must include
++#include <linux/hte.h>.
++
++The HTE framework APIs for the providers
++----------------------------------------
++
++.. kernel-doc:: drivers/hte/hte.c
++   :functions: devm_hte_register_chip hte_push_ts_ns
++
++The HTE framework APIs for the consumers
++----------------------------------------
++
++.. kernel-doc:: drivers/hte/hte.c
++   :functions: devm_of_hte_request_ts_ns hte_req_ts_by_linedata_ns hte_release_ts hte_enable_ts hte_disable_ts hte_get_clk_src_info
++
++The HTE framework public structures
++-----------------------------------
++.. kernel-doc:: include/linux/hte.h
++
++More on the HTE timestamp data
++------------------------------
++The struct hte_ts_data is used to pass timestamp details between the consumers
++and the providers. It expresses timestamp data in nanoseconds in u64 data
++type. For now all the HTE APIs using struct hte_ts_data require tsc to be in
++nanoseconds. An example of the typical hte_ts_data data life cycle, for the
++GPIO line is as follows::
++
++ - Monitors GPIO line change.
++ - Detects the state change on GPIO line.
++ - Converts timestamps in nanoseconds and stores it in tsc.
++ - Stores GPIO raw level in raw_level variable if the provider has that
++ hardware capability.
++ - Pushes this hte_ts_data object to HTE subsystem.
++ - HTE subsystem increments seq counter and invokes consumer provided callback.
++ Based on callback return value, the HTE starts a kernel thread and invokes
++ secondary callback in the thread context.
++
++HTE subsystem debugfs attributes
++--------------------------------
++HTE subsystem creates debugfs attributes at ``/sys/kernel/debug/hte/``.
++It also creates line/signal-related debugfs attributes at
++``/sys/kernel/debug/hte/<provider>/<label or line id>/``.
++
++`ts_requested`
++		The total number of entities requested from the given provider,
++		where entity is specified by the provider and could represent
++		lines, GPIO, chip signals, buses etc...
++                The attribute will be available at
++		``/sys/kernel/debug/hte/<provider>/``.
++
++		Read-only value
++
++`total_ts`
++		The total number of entities supported by the provider.
++                The attribute will be available at
++		``/sys/kernel/debug/hte/<provider>/``.
++
++		Read-only value
++
++`dropped_timestamps`
++		The dropped timestamps for a given line.
++                The attribute will be available at
++		``/sys/kernel/debug/hte/<provider>/<label or line id>/``.
++
++		Read-only value
+-- 
+2.17.1
+
