@@ -2,35 +2,32 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA8FC433FE
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 02:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37DEC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jan 2022 02:48:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344547AbiARCse (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jan 2022 21:48:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60916 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345043AbiARCiQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:38:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD2F3C061759;
-        Mon, 17 Jan 2022 18:35:05 -0800 (PST)
+        id S1345366AbiARCsf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jan 2022 21:48:35 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:59528 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347600AbiARCli (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jan 2022 21:41:38 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D179611F0;
-        Tue, 18 Jan 2022 02:35:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B53C36AF3;
-        Tue, 18 Jan 2022 02:35:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A50EC612D2;
+        Tue, 18 Jan 2022 02:41:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B72C36AE3;
+        Tue, 18 Jan 2022 02:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642473304;
-        bh=p9CdwRWne9+kvQaj67kRPnickld1KZcHC6w7Wj/SdVg=;
+        s=k20201202; t=1642473697;
+        bh=fpJUuwgTvCrd7e1pIEnOTkVUhstiH0I4N60wi49/f9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NPJfkiWAW2oxo6zMhe0RTzu5iGA8TLGOd0EYvwqjGIBqLlSGWMbLOPBFaEA11g+aT
-         IqDIeh4lUpsi9V11gUYZhgsAm/ynp/zgQ+3H7yF5sHoWj8UmIBjjipRXdubRmC5JoG
-         QG23k/vW5gc6iVEJe2RoHRVwvXkBPGkLcpyWuBT637Q69gJuD6TAZcGI2UhY67IYsT
-         kFQlygxuE5MG4wFHclXEhIM3Urel4wSlc7R4J5L1nMl1EFJlGm7FRsIDSY7Nm/m945
-         P/MeclO0PCWZ9m5GktAvE1Cx+ySpAUpTIFKvGxUJubGh34r2E8daXRs4YrLf8RBTy9
-         FLGoxkUf2Oipw==
+        b=MSxbYBB8bHsk2+BVum+xfffaqfqmlxiOdth2eBueh2Hedirxp2EMjJKVwRadulu8a
+         fVNkbEH2Mcr8pF52wnGJpTztk5INVYMDfOC4Lsztb6JOJe6cZfbs48UU47wDacnf+U
+         GaPgKBpPJWOYYeGbzHXMUW1AFl8jSg2DjRntr5gGwArlI8ZtQ02aUYQemZBDrqX9AB
+         vufMP4q6gAx1r4GrLEoUyWAK5LNs9Dk2QurD4zpiKTwXFFW4OIpo9ah+Z4Z0ojtuXR
+         7xSi8YxWrqDhV6Pmv2GaV8au3JHh0TJ1eHKeSB0aB6AtAVZ5vtZLQFFT78jl07KCR/
+         WY6GJ1574Hixg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Hans de Goede <hdegoede@redhat.com>,
@@ -39,12 +36,12 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
         brgl@bgdev.pl, linux-gpio@vger.kernel.org,
         linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 060/188] gpiolib: acpi: Do not set the IRQ type if the IRQ is already in use
-Date:   Mon, 17 Jan 2022 21:29:44 -0500
-Message-Id: <20220118023152.1948105-60-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 028/116] gpiolib: acpi: Do not set the IRQ type if the IRQ is already in use
+Date:   Mon, 17 Jan 2022 21:38:39 -0500
+Message-Id: <20220118024007.1950576-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220118023152.1948105-1-sashal@kernel.org>
-References: <20220118023152.1948105-1-sashal@kernel.org>
+In-Reply-To: <20220118024007.1950576-1-sashal@kernel.org>
+References: <20220118024007.1950576-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -81,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 47712b6903b51..d040c72fea582 100644
+index 6f11714ce0239..55e4f402ec8b6 100644
 --- a/drivers/gpio/gpiolib-acpi.c
 +++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1059,10 +1059,17 @@ int acpi_dev_gpio_irq_get_by(struct acpi_device *adev, const char *name, int ind
+@@ -969,10 +969,17 @@ int acpi_dev_gpio_irq_get_by(struct acpi_device *adev, const char *name, int ind
  			irq_flags = acpi_dev_get_irq_type(info.triggering,
  							  info.polarity);
  
