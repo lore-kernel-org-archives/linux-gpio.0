@@ -2,18 +2,18 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEF0C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jan 2022 15:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DD6C4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jan 2022 15:01:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376274AbiATPA5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Jan 2022 10:00:57 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:33199 "EHLO
+        id S1376328AbiATPBA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Jan 2022 10:01:00 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:33175 "EHLO
         relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358259AbiATPAx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jan 2022 10:00:53 -0500
+        with ESMTP id S1359550AbiATPAy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jan 2022 10:00:54 -0500
 Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 55849200019;
-        Thu, 20 Jan 2022 15:00:48 +0000 (UTC)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id C02DB200005;
+        Thu, 20 Jan 2022 15:00:51 +0000 (UTC)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -27,9 +27,9 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v10 1/6] dt-bindings: mfd: logicvc: Add a compatible with the major version only
-Date:   Thu, 20 Jan 2022 16:00:19 +0100
-Message-Id: <20220120150024.646714-2-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v10 4/6] dt-bindings: display: Add compatibles with major versions only
+Date:   Thu, 20 Jan 2022 16:00:22 +0100
+Message-Id: <20220120150024.646714-5-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220120150024.646714-1-paul.kocialkowski@bootlin.com>
 References: <20220120150024.646714-1-paul.kocialkowski@bootlin.com>
@@ -43,25 +43,28 @@ There are lots of different versions of the logicvc block and it
 makes little sense to list them all in compatibles since all versions
 with the same major are found to be register-compatible.
 
-Introduce a new compatible with the major version only.
+Add common compatibles that only list the major version instead.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/display/xylon,logicvc-display.yaml     | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml b/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml
-index 9efd49c39bd2..e6fa7707e457 100644
---- a/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml
-+++ b/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml
-@@ -20,6 +20,7 @@ properties:
-     items:
-       - enum:
-           - xylon,logicvc-3.02.a
-+          - xylon,logicvc-3
-       - const: syscon
-       - const: simple-mfd
+diff --git a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+index fc02c5d50ce4..3b8184d3ef9c 100644
+--- a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
++++ b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+@@ -30,7 +30,10 @@ properties:
+   compatible:
+     enum:
+       - xylon,logicvc-3.02.a-display
++      - xylon,logicvc-3-display
+       - xylon,logicvc-4.01.a-display
++      - xylon,logicvc-4-display
++      - xylon,logicvc-5-display
  
+   reg:
+     maxItems: 1
 -- 
 2.34.1
 
