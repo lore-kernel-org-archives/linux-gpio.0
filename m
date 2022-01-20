@@ -2,310 +2,119 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FCFC433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jan 2022 15:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBD7C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jan 2022 15:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376394AbiATPBG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Jan 2022 10:01:06 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:33979 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376285AbiATPA7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jan 2022 10:00:59 -0500
-Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 3499D20001D;
-        Thu, 20 Jan 2022 15:00:54 +0000 (UTC)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        id S1346563AbiATPmJ convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Jan 2022 10:42:09 -0500
+Received: from mail-4022.proton.ch ([185.70.40.22]:13832 "EHLO
+        mail-4022.proton.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231282AbiATPmJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jan 2022 10:42:09 -0500
+Date:   Thu, 20 Jan 2022 15:42:06 +0000
+Authentication-Results: mail-4018.proton.ch; dkim=none
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+From:   conor dooley <mail@conchuod.ie>
+Cc:     Conor Dooley <Conor.Dooley@microchip.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v10 6/6] NOTFORMERGE: drm/logicvc: Add plane colorkey support
-Date:   Thu, 20 Jan 2022 16:00:24 +0100
-Message-Id: <20220120150024.646714-7-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220120150024.646714-1-paul.kocialkowski@bootlin.com>
-References: <20220120150024.646714-1-paul.kocialkowski@bootlin.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Bin Meng <bin.meng@windriver.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Lewis Hanly <Lewis.Hanly@microchip.com>,
+        Daire.McNamara@microchip.com, Ivan.Griffin@microchip.com,
+        Atish Patra <atishp@rivosinc.com>
+Reply-To: conor dooley <mail@conchuod.ie>
+Subject: Re: [PATCH v4 03/14] dt-bindings: i2c: add bindings for microchip mpfs i2c
+Message-ID: <Op5n9imM72IZnLCmMZ8lEZ7GxZD-r4cYZDB6zF0DcNNRu5dwpGEgi7PyjsAfQFnTMEtB8DTS76wLNWcnTtfDMUa1KDZYO3_geq-oOVXOr50=@conchuod.ie>
+In-Reply-To: <CAMuHMdXU_M89W7w064YsjuFfqE2m_PeM9HVps0nmaC1+aUHAQw@mail.gmail.com>
+References: <20220117110755.3433142-1-conor.dooley@microchip.com> <20220117110755.3433142-4-conor.dooley@microchip.com> <CAMuHMdXwe3_F8NeePnoFrLwyzKUwnHtmETC=ambgsC2N3w_h8A@mail.gmail.com> <889dab52-95eb-f36d-0af9-beea958a97e7@microchip.com> <CAMuHMdXU_M89W7w064YsjuFfqE2m_PeM9HVps0nmaC1+aUHAQw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/gpu/drm/logicvc/logicvc_drm.h   |   3 +
- drivers/gpu/drm/logicvc/logicvc_layer.c | 151 +++++++++++++++++++++++-
- drivers/gpu/drm/logicvc/logicvc_layer.h |   7 ++
- 3 files changed, 155 insertions(+), 6 deletions(-)
+>Hi Conor,
+>
+>On Thu, Jan 20, 2022 at 2:42 PM <Conor.Dooley@microchip.com> wrote:
+>> On 20/01/2022 08:30, Geert Uytterhoeven wrote:
+>> > On Mon, Jan 17, 2022 at 12:06 PM <conor.dooley@microchip.com> wrote:
+>> > Wouldn't it be more logical to have:
+>> >
+>> >      items:
+>> >        - const: microchip,mpfs-i2c # Microchip PolarFire SoC compatible SoCs
+>> >        - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP core
+>> >
+>> > ?
+>> This would be fine for mpfs-i2c since corei2c is a "superset" - but how
+>> would that look for the fabric core? I don't think falling back from the
+>> fabric core onto the "hard" one makes sense. This would mean the
+>> following two entries:
+>>
+>> i2c2: i2c@44000000 { //fabric
+>>         compatible = "microchip,corei2c-rtl-v7";
+>> };
+>> i2c1: i2c@2010b000 { //"hard" mpfs peripheral
+>>         compatible = "microchip,mpfs-i2c", "microchip,corei2c-rtl-v7";
+>> };
+>
+>Oops, I missed that you have both forms.
+>But in se, they're the same IP core, just hard vs. soft? Then the
+>below makes sense.
+A lot (but not all) of the peripherals on Polarfire SoC are "subsets"
+of the IP cores: I think corei2c is almost identical but for others
+the hard version has some of the optional features disabled or slight
+changes made.
 
-diff --git a/drivers/gpu/drm/logicvc/logicvc_drm.h b/drivers/gpu/drm/logicvc/logicvc_drm.h
-index 68bbac6c4ab9..d69a686ab0f1 100644
---- a/drivers/gpu/drm/logicvc/logicvc_drm.h
-+++ b/drivers/gpu/drm/logicvc/logicvc_drm.h
-@@ -59,6 +59,9 @@ struct logicvc_drm {
- 	struct list_head layers_list;
- 	struct logicvc_crtc *crtc;
- 	struct logicvc_interface *interface;
-+
-+	struct drm_property *colorkey_enabled_property;
-+	struct drm_property *colorkey_value_property;
- };
- 
- #endif
-diff --git a/drivers/gpu/drm/logicvc/logicvc_layer.c b/drivers/gpu/drm/logicvc/logicvc_layer.c
-index 4345d29c61a7..4f180d445480 100644
---- a/drivers/gpu/drm/logicvc/logicvc_layer.c
-+++ b/drivers/gpu/drm/logicvc/logicvc_layer.c
-@@ -23,6 +23,8 @@
- 
- #define logicvc_layer(p) \
- 	container_of(p, struct logicvc_layer, drm_plane)
-+#define logicvc_layer_state(p) \
-+	container_of(p, struct logicvc_layer_state, drm_plane_state)
- 
- static uint32_t logicvc_layer_formats_rgb16[] = {
- 	DRM_FORMAT_RGB565,
-@@ -141,6 +143,8 @@ static void logicvc_plane_atomic_update(struct drm_plane *drm_plane,
- 	struct drm_device *drm_dev = &logicvc->drm_dev;
- 	struct drm_plane_state *new_state =
- 		drm_atomic_get_new_plane_state(state, drm_plane);
-+	struct logicvc_layer_state *layer_state =
-+		logicvc_layer_state(new_state);
- 	struct drm_crtc *drm_crtc = &logicvc->crtc->drm_crtc;
- 	struct drm_display_mode *mode = &drm_crtc->state->adjusted_mode;
- 	struct drm_framebuffer *fb = new_state->fb;
-@@ -218,6 +222,15 @@ static void logicvc_plane_atomic_update(struct drm_plane *drm_plane,
- 			     alpha);
- 	}
- 
-+	/* Layer colorkey */
-+
-+	if (layer_state->colorkey_enabled) {
-+		reg = layer_state->colorkey_value;
-+
-+		regmap_write(logicvc->regmap,
-+			     LOGICVC_LAYER_COLOR_KEY_REG(index), reg);
-+	}
-+
- 	/* Layer control */
- 
- 	reg = LOGICVC_LAYER_CTRL_ENABLE;
-@@ -225,7 +238,8 @@ static void logicvc_plane_atomic_update(struct drm_plane *drm_plane,
- 	if (logicvc_layer_format_inverted(fb->format->format))
- 		reg |= LOGICVC_LAYER_CTRL_PIXEL_FORMAT_INVERT;
- 
--	reg |= LOGICVC_LAYER_CTRL_COLOR_KEY_DISABLE;
-+	if (!layer_state->colorkey_enabled)
-+		reg |= LOGICVC_LAYER_CTRL_COLOR_KEY_DISABLE;
- 
- 	regmap_write(logicvc->regmap, LOGICVC_LAYER_CTRL_REG(index), reg);
- }
-@@ -246,13 +260,109 @@ static struct drm_plane_helper_funcs logicvc_plane_helper_funcs = {
- 	.atomic_disable		= logicvc_plane_atomic_disable,
- };
- 
-+static void logicvc_plane_reset(struct drm_plane *drm_plane)
-+{
-+	struct logicvc_drm *logicvc = logicvc_drm(drm_plane->dev);
-+	struct device *dev = logicvc->drm_dev.dev;
-+	struct logicvc_layer_state *layer_state;
-+
-+	if (drm_plane->state) {
-+		layer_state = logicvc_layer_state(drm_plane->state);
-+		__drm_atomic_helper_plane_destroy_state(drm_plane->state);
-+		devm_kfree(dev, layer_state);
-+		drm_plane->state = NULL;
-+	}
-+
-+	layer_state = devm_kzalloc(dev, sizeof(*layer_state), GFP_KERNEL);
-+	if (!layer_state)
-+		return;
-+
-+	__drm_atomic_helper_plane_reset(drm_plane,
-+					&layer_state->drm_plane_state);
-+}
-+
-+static struct drm_plane_state *
-+logicvc_plane_atomic_duplicate_state(struct drm_plane *drm_plane)
-+{
-+	struct logicvc_drm *logicvc = logicvc_drm(drm_plane->dev);
-+	struct device *dev = logicvc->drm_dev.dev;
-+	struct logicvc_layer_state *layer_state_current;
-+	struct logicvc_layer_state *layer_state;
-+
-+	if (WARN_ON(!drm_plane->state))
-+		return NULL;
-+
-+	layer_state_current = logicvc_layer_state(drm_plane->state);
-+	layer_state = devm_kzalloc(dev, sizeof(*layer_state), GFP_KERNEL);
-+	if (!layer_state)
-+		return NULL;
-+
-+	layer_state->colorkey_enabled = layer_state_current->colorkey_enabled;
-+	layer_state->colorkey_value = layer_state_current->colorkey_value;
-+
-+	__drm_atomic_helper_plane_duplicate_state(drm_plane,
-+						  &layer_state->drm_plane_state);
-+
-+	return &layer_state->drm_plane_state;
-+}
-+
-+static void logicvc_plane_destroy_state(struct drm_plane *drm_plane,
-+					struct drm_plane_state *state)
-+{
-+	struct logicvc_drm *logicvc = logicvc_drm(drm_plane->dev);
-+	struct device *dev = logicvc->drm_dev.dev;
-+	struct logicvc_layer_state *layer_state = logicvc_layer_state(state);
-+
-+	__drm_atomic_helper_plane_destroy_state(&layer_state->drm_plane_state);
-+
-+	devm_kfree(dev, layer_state);
-+}
-+
-+static int logicvc_plane_atomic_set_property(struct drm_plane *drm_plane,
-+					     struct drm_plane_state *state,
-+					     struct drm_property *property,
-+					     uint64_t value)
-+{
-+	struct logicvc_drm *logicvc = logicvc_drm(drm_plane->dev);
-+	struct logicvc_layer_state *layer_state = logicvc_layer_state(state);
-+
-+	if (property == logicvc->colorkey_enabled_property)
-+		layer_state->colorkey_enabled = !!value;
-+	else if (property == logicvc->colorkey_value_property)
-+		layer_state->colorkey_value = (uint32_t)value;
-+	else
-+		return -ENOENT;
-+
-+	return 0;
-+}
-+
-+static int logicvc_plane_atomic_get_property(struct drm_plane *drm_plane,
-+					     const struct drm_plane_state *state,
-+					     struct drm_property *property,
-+					     uint64_t *value)
-+{
-+	struct logicvc_drm *logicvc = logicvc_drm(drm_plane->dev);
-+	struct logicvc_layer_state *layer_state = logicvc_layer_state(state);
-+
-+	if (property == logicvc->colorkey_enabled_property)
-+		*value = layer_state->colorkey_enabled;
-+	else if (property == logicvc->colorkey_value_property)
-+		*value = layer_state->colorkey_value;
-+	else
-+		return -ENOENT;
-+
-+	return 0;
-+}
-+
- static const struct drm_plane_funcs logicvc_plane_funcs = {
- 	.update_plane		= drm_atomic_helper_update_plane,
- 	.disable_plane		= drm_atomic_helper_disable_plane,
- 	.destroy		= drm_plane_cleanup,
--	.reset			= drm_atomic_helper_plane_reset,
--	.atomic_duplicate_state	= drm_atomic_helper_plane_duplicate_state,
--	.atomic_destroy_state	= drm_atomic_helper_plane_destroy_state,
-+	.reset			= logicvc_plane_reset,
-+	.atomic_duplicate_state	= logicvc_plane_atomic_duplicate_state,
-+	.atomic_destroy_state	= logicvc_plane_destroy_state,
-+	.atomic_set_property	= logicvc_plane_atomic_set_property,
-+	.atomic_get_property	= logicvc_plane_atomic_get_property,
- };
- 
- int logicvc_layer_buffer_find_setup(struct logicvc_drm *logicvc,
-@@ -349,7 +459,8 @@ int logicvc_layer_buffer_find_setup(struct logicvc_drm *logicvc,
- 	return 0;
- }
- 
--static struct logicvc_layer_formats *logicvc_layer_formats_lookup(struct logicvc_layer *layer)
-+static struct logicvc_layer_formats *
-+logicvc_layer_formats_lookup(struct logicvc_layer *layer)
- {
- 	bool alpha;
- 	unsigned int i = 0;
-@@ -368,7 +479,8 @@ static struct logicvc_layer_formats *logicvc_layer_formats_lookup(struct logicvc
- 	return NULL;
- }
- 
--static unsigned int logicvc_layer_formats_count(struct logicvc_layer_formats *formats)
-+static unsigned int
-+logicvc_layer_formats_count(struct logicvc_layer_formats *formats)
- {
- 	unsigned int count = 0;
- 
-@@ -537,6 +649,11 @@ static int logicvc_layer_init(struct logicvc_drm *logicvc,
- 
- 	drm_plane_create_zpos_immutable_property(&layer->drm_plane, zpos);
- 
-+	drm_object_attach_property(&layer->drm_plane.base,
-+				   logicvc->colorkey_enabled_property, 0);
-+	drm_object_attach_property(&layer->drm_plane.base,
-+				   logicvc->colorkey_value_property, 0);
-+
- 	drm_dbg_kms(drm_dev, "Registering layer #%d\n", index);
- 
- 	layer->formats = formats;
-@@ -585,6 +702,17 @@ int logicvc_layers_init(struct logicvc_drm *logicvc)
- 	struct logicvc_layer *next;
- 	int ret = 0;
- 
-+	logicvc->colorkey_enabled_property =
-+		drm_property_create_bool(drm_dev, 0, "colorkey_enabled");
-+	if (!logicvc->colorkey_enabled_property)
-+		goto error;
-+
-+	logicvc->colorkey_value_property =
-+		drm_property_create_range(drm_dev, 0, "colorkey_value",
-+					  0, 0xffffffff);
-+	if (!logicvc->colorkey_value_property)
-+		goto error;
-+
- 	layers_node = of_get_child_by_name(of_node, "layers");
- 	if (!layers_node) {
- 		drm_err(drm_dev, "No layers node found in the description\n");
-@@ -624,5 +752,16 @@ int logicvc_layers_init(struct logicvc_drm *logicvc)
- 	list_for_each_entry_safe(layer, next, &logicvc->layers_list, list)
- 		logicvc_layer_fini(logicvc, layer);
- 
-+	if (logicvc->colorkey_value_property) {
-+		drm_property_destroy(drm_dev, logicvc->colorkey_value_property);
-+		logicvc->colorkey_value_property = NULL;
-+	}
-+
-+	if (logicvc->colorkey_enabled_property) {
-+		drm_property_destroy(drm_dev,
-+				     logicvc->colorkey_enabled_property);
-+		logicvc->colorkey_enabled_property = NULL;
-+	}
-+
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/logicvc/logicvc_layer.h b/drivers/gpu/drm/logicvc/logicvc_layer.h
-index c5767c81f446..69bb208ad79c 100644
---- a/drivers/gpu/drm/logicvc/logicvc_layer.h
-+++ b/drivers/gpu/drm/logicvc/logicvc_layer.h
-@@ -39,6 +39,13 @@ struct logicvc_layer_formats {
- 	uint32_t *formats;
- };
- 
-+struct logicvc_layer_state {
-+	struct drm_plane_state drm_plane_state;
-+
-+	bool colorkey_enabled;
-+	uint32_t colorkey_value;
-+};
-+
- struct logicvc_layer {
- 	struct logicvc_layer_config config;
- 	struct logicvc_layer_formats *formats;
--- 
-2.34.1
-
+If the IP is already written why not use it ;)
+>
+>> But this generates errors in dt_binding_check w/ your suggestion - so
+>> how about the following (similar to ti,omap4-i2c.yaml):
+>>
+>>    compatible:
+>>      oneOf:
+>>        - items:
+>>          - const: microchip,mpfs-i2c #  Microchip PolarFire...
+>>          - const: microchip,corei2c-rtl-v7 # Microchip Fabric...
+>>        - const: microchip,corei2c-rtl-v7 # Microchip Fabric...
+>>
+>> Is there a prettier way than this duplication?
+>
+>I'm afraid not, and the above scheme is used a lot.
+Fair enough!
+>
+>> > If the IP core is reused, it can become:
+>> >
+>> >      items:
+>> >        - enum:
+>> >            - microchip,mpfs-i2c # Microchip PolarFire SoC compatible SoCs
+>> >            - microchip,<foo>-i2c # ...
+>> >        - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP core
+>> >
+>> > That way the driver can just match on the second (fallback) value,
+>> > and no further driver changes will be needed (until v8 or later).
