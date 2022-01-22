@@ -2,114 +2,95 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C55C433FE
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Jan 2022 02:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D720C433EF
+	for <linux-gpio@archiver.kernel.org>; Sun, 23 Jan 2022 00:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231558AbiAVCWU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Jan 2022 21:22:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35176 "EHLO
+        id S235006AbiAWAAG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 22 Jan 2022 19:00:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiAVCWT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jan 2022 21:22:19 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB19C06173B;
-        Fri, 21 Jan 2022 18:22:19 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id c6so32739153ybk.3;
-        Fri, 21 Jan 2022 18:22:19 -0800 (PST)
+        with ESMTP id S231288AbiAWAAF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Jan 2022 19:00:05 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90BAEC06173B
+        for <linux-gpio@vger.kernel.org>; Sat, 22 Jan 2022 16:00:05 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id g11-20020a17090a7d0b00b001b2c12c7273so7374027pjl.0
+        for <linux-gpio@vger.kernel.org>; Sat, 22 Jan 2022 16:00:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0WFsl464O1plaAdb1DqUc2FVm3sL9ZIJC+WKaUWfUbY=;
-        b=GDj/J3wvMb7a7yQnhMjuXVC+fNwBgi7tTQcyVGHVuY6nxhGeKrskBjuEelpg1nrpGp
-         +TkzOpNNWRPqKMrFwiX71+kqmI/TTNo7MN6Q5u0YI8fgvJalTUKkRnsNqREEujjszKOd
-         iXTWa66eagtiGSbe1V+MTtLEJpg8uU5oBHP5kq2OvwuQsAzrBVJAuFiEnx+hG/wLKu8R
-         egaMLbWAVq8POsKHE/bR8PEqI/0ryKBjztSeoeOOwNS9SOtyIzfxlsbSGAODzCaH+Skj
-         USYPyfOtRAgBBeqRPa9Px1TlqpkPLGEFJQ5LMzFg0gpaIPEahSOBPoqN+NP91yWwJLEv
-         PU4g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9hLMrF7aEoBX6HrPYQP+0d/8ODr64hxSVxwGWXOrtks=;
+        b=gX9HqYi1SJq6ZdYc65asfuM9mUqEOr0LukgytGhAooTALUTRYadr9W18sdmL3HEBLs
+         e4p9mug0TLMmGln2N6/kFI67z+1hz8/h01d1lIl/lSD7YdMBiUwXuBgFJalpIoDMA5We
+         Se01HNyQnVkumFxUtw5NdK8YavwEJ7jdvp8+auiHsdOegk6EnXm0jPbn/7fSArHLnLnN
+         fIIuMgytoJZ6LyNpY/yr4mmx3KKge/DFrjmOSyilgW6g4O7ym/IWF+Z7aX49x1H6+9QT
+         LbUOtoyAMld7YuMjK0N6vq6T2p6JN4eD+aXmKuvISwJmCzHg3ilfTTVFaRrAEzpQXcKz
+         qldg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0WFsl464O1plaAdb1DqUc2FVm3sL9ZIJC+WKaUWfUbY=;
-        b=QlIrb1rYog1DvKwXOwMygYmZhWvD+gc9wJ/ol/NqL19BK8zvvqsDk+48JoHQkgs2Jq
-         rapzU6n+A3YONNYyZkK5o40DEg4VQtdRS0iFxKCTYtoAcRfHVESo8rj06sEKSsjuiEWw
-         oCtEsAtB+HhPYuCGfS+gWKemIHMdU0lsHFXvyPqwvqFHdndnfvKW3Hd5NTrv10m+hNG1
-         MufokmiJgQ9s8B+8IulI4/JY9gQBw2y8kOmkg8DlbLpasD0UFonln5lLae1IXJ8opnP+
-         z7Q2hOv5Wk/hW9HdFUhCsCa8P5G6kFcULifb37ezKqHzU+fv7U+2p/keEpHVqGo1YsZ7
-         /Jbw==
-X-Gm-Message-State: AOAM530nA8ZS8COTecacOuP8IIDeutHwrM5SFi4VOL5RkqUaoGND/l7w
-        dfDs5Yf1CBvNzpreAxnnbRwiIDlYQ7mYxypR3XzTorsSidU=
-X-Google-Smtp-Source: ABdhPJwYwPQ+DUeWkFo38oGf0XBHqn1JkHM8zwXVbMjt7Yr8cw+7ws6W+uTuj1bLmgjPZIJZgKAiPk6GzvFVpJIPc+U=
-X-Received: by 2002:a25:6f0a:: with SMTP id k10mr10232548ybc.536.1642818138850;
- Fri, 21 Jan 2022 18:22:18 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9hLMrF7aEoBX6HrPYQP+0d/8ODr64hxSVxwGWXOrtks=;
+        b=3bnJTCnRISqcSX83tof3pvB2qSf4YVBM5htrSMaB1y4+4pc1aQ9u8MjJv/3el2bt07
+         0eQVtlD6cZvesw0pUSYPsXfoyrSSgJi4MSyabjar9yE9E4926YCdAHNu2Bt6SmE6V7qE
+         AYr4pv1ahh0TTCsKMP/c8EtRKSqYj1kuSwee/nKgF4eX+JWv7bOb40cdocIVtZS50VoC
+         3rd8PIPiQMu5XWJ++SylEVmrO6Ki58PzDE1qAHvxNDr78XK6CteRoDeFu3Aouscl8DBa
+         WB9v4UqO6b0hsED4bIu1k9ANEX/sKr2vsKvLTrV6MXk/9XCz9a55HB5kOO7g56/N6+H3
+         yaKQ==
+X-Gm-Message-State: AOAM530FOencOLgT1K5HfAXckTpr0fOkiJMwzKkysyDUJ/8bTh03xFoe
+        yVv22hjhI0kMGVH/fsFZPDCTPIcJJdWOQQ==
+X-Google-Smtp-Source: ABdhPJzwFzalae3ZBMaarzt4M+3xdpLlUgDuZA08rNsVUVgQjBK70ULkFTbkJVAOL6Dao0kzIjV6gw==
+X-Received: by 2002:a17:902:8f94:b0:14a:cd21:ba6e with SMTP id z20-20020a1709028f9400b0014acd21ba6emr9137589plo.43.1642896004719;
+        Sat, 22 Jan 2022 16:00:04 -0800 (PST)
+Received: from sol (110-174-161-167.tpgi.com.au. [110.174.161.167])
+        by smtp.gmail.com with ESMTPSA id b21sm7620902pgi.51.2022.01.22.16.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jan 2022 16:00:04 -0800 (PST)
+Date:   Sun, 23 Jan 2022 07:59:59 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Markus Mirevik <markus.mirevik@dpsolutions.se>
+Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: GPIO level IRQ fires twice each time.
+Message-ID: <20220122235959.GA10737@sol>
+References: <HE1PR04MB3100579720F6EBBD634C99EEE65B9@HE1PR04MB3100.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20220118002214.18271-1-dipenp@nvidia.com> <20220118002214.18271-2-dipenp@nvidia.com>
- <CAMU9jJoFAG4taoN0SSbVGPFMKyUnkT9VkrtatGuRpU-ek+hJ2g@mail.gmail.com> <7c8a32fd-8233-cc69-d4d3-668a3a14aa14@nvidia.com>
-In-Reply-To: <7c8a32fd-8233-cc69-d4d3-668a3a14aa14@nvidia.com>
-From:   teng sterling <sterlingteng@gmail.com>
-Date:   Sat, 22 Jan 2022 10:22:07 +0800
-Message-ID: <CAMU9jJrBOdV79Ho34bgT808gTPoTrGHA_mZLQbbzNigmg0myGw@mail.gmail.com>
-Subject: Re: [RFC v4 01/11] Documentation: Add HTE subsystem guide
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     smangipudi@nvidia.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        bgolaszewski@baylibre.com, warthog618@gmail.com,
-        devicetree@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        robh+dt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HE1PR04MB3100579720F6EBBD634C99EEE65B9@HE1PR04MB3100.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dipen Patel <dipenp@nvidia.com> =E4=BA=8E2022=E5=B9=B41=E6=9C=8820=E6=97=A5=
-=E5=91=A8=E5=9B=9B 12:21=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi Teng,
->
->  I believe I added in patch 0003. Before sending this patch series, I did=
- make htmldocs and did compile successfully. Let me know in case I am missi=
-ng something.
-Sorry I didn't read through your patch carefully.
+On Fri, Jan 21, 2022 at 09:03:43AM +0000, Markus Mirevik wrote:
+> I have a problem with a custom bord based on SoC am335x and a driver utilizing a GPIO line for interrupts. 
+> 
+> I have two mcp2518fd chip connected on one SPI line and everything works, but it's hogs a lot of CPU.
+> In the current setup only one chip is connected and it only receives packets.
+> 
+> The mcp2518fd is connected with 2 interrupt lines one "main" and one for rx frames. 
+> 
+> The problem is that for every frame received the interrupt handler is run twice, which is kind of expensive since it's a SPI call to the chip to check interrupt registers. 
+> 
+> To me it looks like the interrupt is fired again as soon as it's unmasked. Either because it's queued? or maybe not cleared internally?
+> I have scoped the interrupt signal and its real good without any glitches. 
+> 
+> I'm currently running a yocto build:
+> Linux botekcc 5.10.79-yocto-tiny #1 SMP Tue Nov 16 03:57:43 UTC 2021 armv7l armv7l armv7l GNU/Linux 
+> 
+> But the mcp251xfd driver is from net-next/master
+> 
+> mcp251xfd_irq is the irqhandler for the mcp2518fd and is added like this:
+> err = request_threaded_irq(spi->irq, NULL, mcp251xfd_irq,
+>                                    IRQF_SHARED | IRQF_ONESHOT,
+>                                    dev_name(&spi->dev), priv);
+> 
 
- I'll be happy to translate fresh documentation into Chinese, please
-let me know if these are applied, Thank you!   >_<
+You haven't set a IRQF_TRIGGER flag, so you are getting the
+"as-already-configured" behaviour, which on your setup is both edges?
+Try adding IRQF_TRIGGER_RISING, IRQF_TRIGGER_FALLING, IRQF_TRIGGER_HIGH or
+IRQF_TRIGGER_LOW, as appropriate to your use case, to your flags.
 
-Thanks,
-Yanteng
->
-> On 1/19/22 6:03 PM, teng sterling wrote:
-> > Dipen Patel <dipenp@nvidia.com> =E4=BA=8E2022=E5=B9=B41=E6=9C=8818=E6=
-=97=A5=E5=91=A8=E4=BA=8C 11:06=E5=86=99=E9=81=93=EF=BC=9A
-> >> Adding hte document which can help understand various APIs implemented
-> >> in HTE framework for the HTE producers and the consumers.
-> >>
-> >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> >> ---
-> >> Changes in v2:
-> >> - Removed explanation, instead added kernel-doc references.
-> >>
-> >> Changes in v3:
-> >> - Addressed grammatical errors.
-> >>
-> >> Changes in v4:
-> >> - Added new API hte_req_ts_by_linedata_ns description.
-> >> - Removed hte_req_ts_by_hte_name.
-> >>
-> >>  Documentation/hte/hte.rst | 83 ++++++++++++++++++++++++++++++++++++++=
-+
-> > Hi Dipen
-> >
-> > A document build warning will be introduced=EF=BC=8CNeed to add it to t=
-he index:
-> >
-> > 1) Create Documentation/hte/index.rst
-> > 2) Add hte/index.rst into Documentation/index.rst
-> > 3) Add hte.rst into Documentation/hte/index.rst
-> >
-> > Thanks,
-> > Yanteng
+Cheers,
+Kent.
+
