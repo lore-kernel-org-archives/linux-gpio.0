@@ -2,75 +2,190 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F83C43219
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jan 2022 17:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A416C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jan 2022 21:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244553AbiAXR0v (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Jan 2022 12:26:51 -0500
-Received: from fwd1.porkbun.com ([52.10.174.57]:36316 "EHLO fwd1.porkbun.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244541AbiAXR0u (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 Jan 2022 12:26:50 -0500
-Received: by fwd1.porkbun.com (Postfix, from userid 497)
-        id 898CB41690; Mon, 24 Jan 2022 17:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ansari.sh;
-        s=default; t=1643044689;
-        bh=gxvgpUI7CywQc3XL9HhVRlq8qejwxf/AG4pnQ/62QdA=;
-        h=From:To:Cc:Subject:Date;
-        b=Y0LKzux3Euveb6p+BeFD4kp4Qk/S09Le9YmB90sPioiIhTKx5cY0oUO3oTimdVuZd
-         gXEK1M+wDXy7OVJMukDI4Selk0yF+YAT8mMagXxGYmT54TvD4U2HnN2GJaDXH3dzXC
-         xUxfOhRCpcrYbcxqpk7nZ5M/LTEeVxvqJIjeVE/c=
-Received: from rayyan-pc.broadband (unknown [90.242.138.108])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: rayyan@ansari.sh)
-        by fwd1.porkbun.com (Postfix) with ESMTPSA id 90D0140A88;
-        Mon, 24 Jan 2022 17:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ansari.sh;
-        s=default; t=1643044562;
-        bh=gxvgpUI7CywQc3XL9HhVRlq8qejwxf/AG4pnQ/62QdA=;
-        h=From:To:Cc:Subject:Date;
-        b=BiSVUl/wwpkQgTnAVh4a0DMXUOb21tKHJOHXnL3S7PmogxWbXpP/3m3SpCajX2hnd
-         oSfRFmzbHzn47yahXhSoWs9deqpYPjA4DpjcItvVTno/nEFG7U/EKlwCPmEbpCg/OD
-         CLNoNMGKQC63WCgnaQG4tAc6QB+6waj5ligx0CPA=
-From:   Rayyan Ansari <rayyan@ansari.sh>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Rayyan Ansari <rayyan@ansari.sh>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: pinctrl: qcom,pmic-mpp: Document PM8226 compatible
-Date:   Mon, 24 Jan 2022 17:15:36 +0000
-Message-Id: <20220124171538.18088-1-rayyan@ansari.sh>
-X-Mailer: git-send-email 2.34.1
+        id S1448964AbiAXVO2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Jan 2022 16:14:28 -0500
+Received: from mxout02.lancloud.ru ([45.84.86.82]:57190 "EHLO
+        mxout02.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1445138AbiAXVCV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jan 2022 16:02:21 -0500
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout02.lancloud.ru 817A9209B103
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+Subject: Re: [PATCH] driver core: platform: Rename platform_get_irq_optional()
+ to platform_get_irq_silent()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+CC:     Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-iio@vger.kernel.org>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        "ALSA Development Mailing List" <alsa-devel@alsa-project.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Guenter Roeck <groeck@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        <linux-phy@lists.infradead.org>, Jiri Slaby <jirislaby@kernel.org>,
+        <openipmi-developer@lists.sourceforge.net>,
+        "Khuong Dinh" <khuong@os.amperecomputing.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Bartosz Golaszewski" <brgl@bgdev.pl>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Robert Richter <rric@kernel.org>,
+        Saravanan Sekar <sravanhome@gmail.com>,
+        Corey Minyard <minyard@acm.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        John Garry <john.garry@huawei.com>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Mark Gross <markgross@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Mark Brown <broonie@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Sebastian Reichel" <sre@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        <platform-driver-x86@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-edac@vger.kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        <netdev@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "Linux MMC List" <linux-mmc@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        "James Morse" <james.morse@arm.com>,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        <linux-mediatek@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <CAMuHMdWsMGPiQaPS0-PJ_+Mc5VQ37YdLfbHr_aS40kB+SfW-aw@mail.gmail.com>
+ <20220112213121.5ruae5mxwj6t3qiy@pengutronix.de>
+ <Yd9L9SZ+g13iyKab@sirena.org.uk>
+ <20220113110831.wvwbm75hbfysbn2d@pengutronix.de>
+ <YeA7CjOyJFkpuhz/@sirena.org.uk>
+ <20220113194358.xnnbhsoyetihterb@pengutronix.de>
+ <YeF05vBOzkN+xYCq@smile.fi.intel.com>
+ <20220115154539.j3tsz5ioqexq2yuu@pengutronix.de>
+ <YehdsUPiOTwgZywq@smile.fi.intel.com>
+ <20220120075718.5qtrpc543kkykaow@pengutronix.de>
+ <Ye6/NgfxsZnpXE09@smile.fi.intel.com>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <15796e57-f7d4-9c66-3b53-0b026eaf31d8@omp.ru>
+Date:   Tue, 25 Jan 2022 00:02:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <Ye6/NgfxsZnpXE09@smile.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.11.198]
+X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
+ LFEX1907.lancloud.ru (fd00:f066::207)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Document the Device Tree binding for PM8226 MPPs.
+Hello!
 
-Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
----
- Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On 1/24/22 6:01 PM, Andy Shevchenko wrote:
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml
-index 35c846f59979..df79274d0ec3 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml
-@@ -21,6 +21,7 @@ properties:
-           - qcom,pm8019-mpp
-           - qcom,pm8038-mpp
-           - qcom,pm8058-mpp
-+          - qcom,pm8226-mpp
-           - qcom,pm8821-mpp
-           - qcom,pm8841-mpp
-           - qcom,pm8916-mpp
--- 
-2.34.1
+>>>>>>> It'd certainly be good to name anything that doesn't correspond to one
+>>>>>>> of the existing semantics for the API (!) something different rather
+>>>>>>> than adding yet another potentially overloaded meaning.
+>>>>>>
+>>>>>> It seems we're (at least) three who agree about this. Here is a patch
+>>>>>> fixing the name.
+>>>>>
+>>>>> And similar number of people are on the other side.
+>>>>
+>>>> If someone already opposed to the renaming (and not only the name) I
+>>>> must have missed that.
+>>>>
+>>>> So you think it's a good idea to keep the name
+>>>> platform_get_irq_optional() despite the "not found" value returned by it
+>>>> isn't usable as if it were a normal irq number?
+>>>
+>>> I meant that on the other side people who are in favour of Sergey's patch.
+>>> Since that I commented already that I opposed the renaming being a standalone
+>>> change.
+>>>
+>>> Do you agree that we have several issues with platform_get_irq*() APIs?
+[...]
+>>> 2. The vIRQ0 handling: a) WARN() followed by b) returned value 0
+>>
+>> I'm happy with the vIRQ0 handling. Today platform_get_irq() and it's
+>> silent variant returns either a valid and usuable irq number or a
+>> negative error value. That's totally fine.
+> 
+> It might return 0.
+> Actually it seems that the WARN() can only be issued in two cases:
+> - SPARC with vIRQ0 in one of the array member
+> - fallback to ACPI for GPIO IRQ resource with index 0
 
+   You have probably missed the recent discovery that arch/sh/boards/board-aps4*.c
+causes IRQ0 to be passed as a direct IRQ resource?
+
+> But the latter is bogus, because it would mean a bug in the ACPI code.
+
+   Worth changing >= 0 to > 0 there, maybe?
+
+> The bottom line here is the SPARC case. Anybody familiar with the platform
+> can shed a light on this. If there is no such case, we may remove warning
+> along with ret = 0 case from platfrom_get_irq().
+
+   I'm afraid you're too fast here... :-)
+   We'll have a really hard time if we continue to allow IRQ0 to be returned by
+platform_get_irq() -- we'll have oto fileter it out in the callers then...
+
+>>> 3. The specific cookie for "IRQ not found, while no error happened" case
+>>
+>> Not sure what you mean here. I have no problem that a situation I can
+>> cope with is called an error for the query function. I just do error
+>> handling and continue happily. So the part "while no error happened" is
+>> irrelevant to me.
+> 
+> I meant that instead of using special error code, 0 is very much good for
+> the cases when IRQ is not found. It allows to distinguish -ENXIO from the
+> low layer from -ENXIO with this magic meaning.
+
+   I don't see how -ENXIO can trickle from the lower layers, frankly...
+
+[...]
+
+MBR, Sergey
