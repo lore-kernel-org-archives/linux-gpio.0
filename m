@@ -2,190 +2,206 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A416C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jan 2022 21:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33956C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jan 2022 03:56:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1448964AbiAXVO2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Jan 2022 16:14:28 -0500
-Received: from mxout02.lancloud.ru ([45.84.86.82]:57190 "EHLO
-        mxout02.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1445138AbiAXVCV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jan 2022 16:02:21 -0500
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout02.lancloud.ru 817A9209B103
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-Subject: Re: [PATCH] driver core: platform: Rename platform_get_irq_optional()
- to platform_get_irq_silent()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-CC:     Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-iio@vger.kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        "ALSA Development Mailing List" <alsa-devel@alsa-project.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Guenter Roeck <groeck@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        <linux-phy@lists.infradead.org>, Jiri Slaby <jirislaby@kernel.org>,
-        <openipmi-developer@lists.sourceforge.net>,
-        "Khuong Dinh" <khuong@os.amperecomputing.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Robert Richter <rric@kernel.org>,
-        Saravanan Sekar <sravanhome@gmail.com>,
-        Corey Minyard <minyard@acm.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        John Garry <john.garry@huawei.com>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Mark Gross <markgross@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mark Brown <broonie@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "Sebastian Reichel" <sre@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        <platform-driver-x86@vger.kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <linux-edac@vger.kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        <netdev@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "Linux MMC List" <linux-mmc@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        "James Morse" <james.morse@arm.com>,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        <linux-mediatek@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-References: <CAMuHMdWsMGPiQaPS0-PJ_+Mc5VQ37YdLfbHr_aS40kB+SfW-aw@mail.gmail.com>
- <20220112213121.5ruae5mxwj6t3qiy@pengutronix.de>
- <Yd9L9SZ+g13iyKab@sirena.org.uk>
- <20220113110831.wvwbm75hbfysbn2d@pengutronix.de>
- <YeA7CjOyJFkpuhz/@sirena.org.uk>
- <20220113194358.xnnbhsoyetihterb@pengutronix.de>
- <YeF05vBOzkN+xYCq@smile.fi.intel.com>
- <20220115154539.j3tsz5ioqexq2yuu@pengutronix.de>
- <YehdsUPiOTwgZywq@smile.fi.intel.com>
- <20220120075718.5qtrpc543kkykaow@pengutronix.de>
- <Ye6/NgfxsZnpXE09@smile.fi.intel.com>
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <15796e57-f7d4-9c66-3b53-0b026eaf31d8@omp.ru>
-Date:   Tue, 25 Jan 2022 00:02:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S1347168AbiAYD4Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Jan 2022 22:56:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58756 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354884AbiAYCAS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jan 2022 21:00:18 -0500
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A62C045903
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Jan 2022 16:27:55 -0800 (PST)
+Received: by mail-yb1-xb2e.google.com with SMTP id m6so56651696ybc.9
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Jan 2022 16:27:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U2rFvwJKwGTdhtCDsPbP5t7DQVmpuMrmgVS+l6w2SlQ=;
+        b=dm1S2uiPxbJT/3BSBWFT3g+1JcCOILvolWWLrDXgdFXCg2kpbk3UTbqxUOjEma4feQ
+         gJC7rT37qXuUCCIcNLpFsJycZljQurxPAP74ZTBqBwYTI2v1s9hvaFYFEIHN+tqmjCHB
+         JXhQ89ONtIhfRmR6VZm63SQI2XEO5k3buiiQGXHFuswA0RxhV7VpPiCWpoMA7AQcrGHX
+         hZBCu0Dao9moUDqaY/1jNLkl4dTkFQGwgqy4p5dDqB8hycRIlviqJwGCTSpsTK/04ijW
+         0s20DUyNy/q5h+XguzaPeoBIlL6RFSvOVZitp/MYzLxbnxfOL2YS72jNrDMHsWvs0zff
+         M4dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U2rFvwJKwGTdhtCDsPbP5t7DQVmpuMrmgVS+l6w2SlQ=;
+        b=hcJ/pwGILRTKvZXdO+d41EMgt3q1cE8aIoLm5DzpLhKR4Sg5HUVvDKTnxB0xnow7+H
+         OR28vYin/WB+2TYshmX27jqbcF55NcF3K4Hm+UKaex+snNKHhINP7MR6pPnC/azWQzEl
+         VxgVOlRzSHfDl05wp7iH14ZHGAUlTCO9WjaZuVHTO1nE1RcZXRMDhfOI+ij9LAgZvLtH
+         Y6wbF6uAO2kwc+hulO2QDnqSo33OGaVleaNwIIfGxfowjXdYGmyGRh3Rjeqtg1xX3Rks
+         KyaTOANd/fMHPsMvFkjy7Oz/hufXwIqE/8+FVPFwNUo6t7HXN2SUA1r7LHJNbtCKE3ya
+         woyg==
+X-Gm-Message-State: AOAM533eAYQ764Z/37gg5IKcojo1+FDdOtSkj/SEGNO2X8CMPZWevlUl
+        NEVqPJGVoLKJraSwMHCNykjil72w5q5HGzxrxSfLyg==
+X-Google-Smtp-Source: ABdhPJyIo7z2RbbHNWijnOWvau213u/Ey5jNSWbVIYnOaN2nSYx2U1Fsu8iK4UYwe9iZhXe3spuepmu8KBRIcoZFqoE=
+X-Received: by 2002:a25:c3c4:: with SMTP id t187mr24502063ybf.634.1643070474167;
+ Mon, 24 Jan 2022 16:27:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <Ye6/NgfxsZnpXE09@smile.fi.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+References: <20210715151625.394960-1-linus.walleij@linaro.org> <YPE6d4WWYAWgnsCH@google.com>
+In-Reply-To: <YPE6d4WWYAWgnsCH@google.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jan 2022 01:27:43 +0100
+Message-ID: <CACRpkda3oaEguO5VgvMdVuLGpSU9rZbwCyT_cFj066NOCO4hcA@mail.gmail.com>
+Subject: Re: [PATCH] ARM/pxa/mfd/power/sound: Switch Tosa to GPIO descriptors
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+        Dirk Opfer <dirk@opfer-online.de>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello!
+Hi Lee,
 
-On 1/24/22 6:01 PM, Andy Shevchenko wrote:
+On Fri, Jul 16, 2021 at 9:51 AM Lee Jones <lee.jones@linaro.org> wrote:
 
->>>>>>> It'd certainly be good to name anything that doesn't correspond to one
->>>>>>> of the existing semantics for the API (!) something different rather
->>>>>>> than adding yet another potentially overloaded meaning.
->>>>>>
->>>>>> It seems we're (at least) three who agree about this. Here is a patch
->>>>>> fixing the name.
->>>>>
->>>>> And similar number of people are on the other side.
->>>>
->>>> If someone already opposed to the renaming (and not only the name) I
->>>> must have missed that.
->>>>
->>>> So you think it's a good idea to keep the name
->>>> platform_get_irq_optional() despite the "not found" value returned by it
->>>> isn't usable as if it were a normal irq number?
->>>
->>> I meant that on the other side people who are in favour of Sergey's patch.
->>> Since that I commented already that I opposed the renaming being a standalone
->>> change.
->>>
->>> Do you agree that we have several issues with platform_get_irq*() APIs?
-[...]
->>> 2. The vIRQ0 handling: a) WARN() followed by b) returned value 0
->>
->> I'm happy with the vIRQ0 handling. Today platform_get_irq() and it's
->> silent variant returns either a valid and usuable irq number or a
->> negative error value. That's totally fine.
-> 
-> It might return 0.
-> Actually it seems that the WARN() can only be issued in two cases:
-> - SPARC with vIRQ0 in one of the array member
-> - fallback to ACPI for GPIO IRQ resource with index 0
+Sorry for taking halfyears to get back to patches... cleanup tends
+to get low prio. :/
 
-   You have probably missed the recent discovery that arch/sh/boards/board-aps4*.c
-causes IRQ0 to be passed as a direct IRQ resource?
+Fixed most review comments.
 
-> But the latter is bogus, because it would mean a bug in the ACPI code.
+> > +#define TOSA_GPIO_TG_ON                      0
+> > +#define TOSA_GPIO_L_MUTE             1
+> > +#define TOSA_GPIO_BL_C20MA           3
+> > +#define TOSA_GPIO_CARD_VCC_ON                4
+> > +#define TOSA_GPIO_CHARGE_OFF         6
+> > +#define TOSA_GPIO_CHARGE_OFF_JC              7
+> > +#define TOSA_GPIO_BAT0_V_ON          9
+> > +#define TOSA_GPIO_BAT1_V_ON          10
+> > +#define TOSA_GPIO_BU_CHRG_ON         11
+> > +#define TOSA_GPIO_BAT_SW_ON          12
+> > +#define TOSA_GPIO_BAT0_TH_ON         14
+> > +#define TOSA_GPIO_BAT1_TH_ON         15
+>
+> Okay, I have to ask - what are 5, 8 and 13?
 
-   Worth changing >= 0 to > 0 there, maybe?
+Apparently unused, just picked from:
+arch/arm/mach-pxa/include/mach/tosa.h
 
-> The bottom line here is the SPARC case. Anybody familiar with the platform
-> can shed a light on this. If there is no such case, we may remove warning
-> along with ret = 0 case from platfrom_get_irq().
+Put there in commit 8459c159f7de832eaf888398d2abf466c388dfa6
+"[ARM] 3088/1: PXA: Add machine support for the Sharp SL-6000x series of PDAs"
+Dirk who authored the commit is on CC so maybe he can say.
+I suppose he has access to the board documentation.
+(I couldn't find any.)
 
-   I'm afraid you're too fast here... :-)
-   We'll have a really hard time if we continue to allow IRQ0 to be returned by
-platform_get_irq() -- we'll have oto fileter it out in the callers then...
+> > +static struct gpiod_lookup_table tosa_audio_gpio_lookup = {
+> > +     .dev_id = "tosa-audio",
+> > +     .table = {
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_L_MUTE, NULL, GPIO_ACTIVE_HIGH),
+> > +             { },
+> > +     },
+> > +};
+>
+> Are these structures going to be peppered all over the kernel now?
 
->>> 3. The specific cookie for "IRQ not found, while no error happened" case
->>
->> Not sure what you mean here. I have no problem that a situation I can
->> cope with is called an error for the query function. I just do error
->> handling and continue happily. So the part "while no error happened" is
->> irrelevant to me.
-> 
-> I meant that instead of using special error code, 0 is very much good for
-> the cases when IRQ is not found. It allows to distinguish -ENXIO from the
-> low layer from -ENXIO with this magic meaning.
+Yeah well for legacy systems, for the reasons given in
+drivers/gpio/TODO
 
-   I don't see how -ENXIO can trickle from the lower layers, frankly...
+It's not millions of occurences, just hundreds.
+$ git grep GPIO_LOOKUP|wc -l
+507
 
-[...]
+> Maybe a helper can be added to make these single line entries one line
+> each?
 
-MBR, Sergey
+Hmmm I will try to sketch something out for v2!
+
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_CHARGE_OFF,
+> > +                         "main charge off", GPIO_ACTIVE_HIGH),
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_CHARGE_OFF_JC,
+> > +                         "jacket charge off", GPIO_ACTIVE_HIGH),
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_BAT0_V_ON,
+> > +                         "main battery", GPIO_ACTIVE_HIGH),
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_BAT1_V_ON,
+> > +                         "jacket battery", GPIO_ACTIVE_HIGH),
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_BU_CHRG_ON,
+> > +                         "backup battery", GPIO_ACTIVE_HIGH),
+> > +             /* BAT1 and BAT0 thermistors appear to be swapped */
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_BAT1_TH_ON,
+> > +                         "main battery temp", GPIO_ACTIVE_HIGH),
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_BAT0_TH_ON,
+> > +                         "jacket battery temp", GPIO_ACTIVE_HIGH),
+> > +             GPIO_LOOKUP(TOSA_GC_NAME, TOSA_GPIO_BAT_SW_ON,
+> > +                         "battery switch", GPIO_ACTIVE_HIGH),
+>
+> These are soooo close to being <100 chars.
+>
+> What does Checkpatch currently warn on?  Is it 100 or 120?
+
+100...
+
+WARNING: line length of 104 exceeds 100 columns
+#283: FILE: drivers/mfd/tc6393xb.c:532:
++        GPIO_LOOKUP("tc6393xb", TOSA_GPIO_CHARGE_OFF_JC, "jacket
+charge off", GPIO_ACTIVE_HIGH),
+
+WARNING: line length of 101 exceeds 100 columns
+#288: FILE: drivers/mfd/tc6393xb.c:537:
++        GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT1_TH_ON, "main battery
+temp", GPIO_ACTIVE_HIGH),
+
+(...)
+
+If you want to, we can ignore it of course. Just tell me what to do.
+
+> > +     gc->ngpio = 16;
+> > +     gc->set = tc6393xb_gpio_set;
+> > +     gc->get = tc6393xb_gpio_get;
+> > +     gc->direction_input = tc6393xb_gpio_direction_input;
+> > +     gc->direction_output = tc6393xb_gpio_direction_output;
+> > +
+> > +     ret = devm_gpiochip_add_data(dev, gc, tc6393xb);
+> > +     if (ret)
+> > +             return dev_err_probe(dev, ret, "failed to add GPIO chip\n");
+> > +
+> > +     /* Register descriptor look-ups for consumers */
+> > +     gpiod_add_lookup_tables(tc6393xb_gpio_lookups, ARRAY_SIZE(tc6393xb_gpio_lookups));
+> > +
+> > +     /* Request some of our own GPIOs */
+> > +     tc6393xb->vcc_on = gpiochip_request_own_desc(gc, TOSA_GPIO_CARD_VCC_ON, "VCC ON",
+> > +                                                  GPIO_ACTIVE_HIGH, GPIOD_OUT_HIGH);
+> > +     if (IS_ERR(tc6393xb->vcc_on))
+> > +             return dev_err_probe(dev, PTR_ERR(tc6393xb->vcc_on),
+> > +                                  "failed to request VCC ON GPIO\n");
+> > +
+>
+> So much more code to do the same thing?
+
+Not quite the same thing.
+
+The old code does not report any errors from gpiochip_add_data()
+(hence all the dev_err_probe()).
+
+The added gpiochip_request_own_desc() call moves the similar code out
+of arch/arm
+to here where the gpiochip is and is actually using fewer lines now.
+(See higher up the patch.)
+
+> > +     tc6393xb->dev = &dev->dev;
+>
+> That confused me at first.
+>
+> Please consider changing the platform_device to pdev (separately).
+
+OK I can follow up with that once this looks like we want it,
+this problem is a bit all over the kernel actually, especially
+in legacy code from the early 2000s.
+
+Have a look at v2 and see what you think!
+
+Yours,
+Linus Walleij
