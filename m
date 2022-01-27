@@ -2,131 +2,138 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E468C2BA4C
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jan 2022 16:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF032C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 Jan 2022 10:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243175AbiAZQiY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Jan 2022 11:38:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243194AbiAZQiX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jan 2022 11:38:23 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36AD2C06161C;
-        Wed, 26 Jan 2022 08:38:23 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id f17so83020wrx.1;
-        Wed, 26 Jan 2022 08:38:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8j/hotkBfcfAC9fYYJI4N9sX0l/gsHzV5UvDB38KzlI=;
-        b=VXMrJJW+pQ42RG4deEVvp+yFWc6bkaLR9wDqTO5gHUjOT5VmjxbyheIeIVbFf7MR6f
-         EvmVfpHadJ47gNlfj803NNiGTltsWtQA6UR7rO6DFAWUxEb5kb56jURIWjaGXWAydXDA
-         uYfAn9Qvx7SJ4PHN54n3ddikbnyaCy6kOzDITttyZ5oKBSCp2llFa3pJnLOy1JCgFfuY
-         kTXDxwpJBvAmJIOT9hRIBTOSiFtc+kPCbJ+KkJSL3g8fRq2iG1SofcwkPB8KKss56Cgc
-         MMcvz+CT5jX0gV+ZCzSHVlSk6aKzUeSukaBh2Pqy5P0HZt58HDDLB/qZkYcIXn7u5bzC
-         Xxcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8j/hotkBfcfAC9fYYJI4N9sX0l/gsHzV5UvDB38KzlI=;
-        b=YcKrRLjlRncuSkOAyCk6CbqDboxhcgj+A7f4eg1acb0xOEjRk5WVcgOcyjvHd9kZDV
-         YfFQSrrwGbhvnCCB0nZZB1/DaPrTGIPG9+sJfqTOmhgQr2EDx/ZiKNYQiC2RsjL/VVBg
-         7ooXJ8s0E7zvXUD74Tf29mZ9cSr1YWVU0tqYZQp0ZuKeVAt9/KIZZSUfjFbLSC9VSzxm
-         h6LxIVm7si4oUBOuhKlXwcGQdAd695m+Kar5tfMESwqCvE2IDRAH7gK3+7UhtcbJ4plt
-         uz7xzvN/OcefX3g4or5KMuKiSRo+MH9wmLLpmYFvKyaNzDdecbb8cfooUOdJnIYxl37O
-         hLQg==
-X-Gm-Message-State: AOAM530XrKy87r4zNYIs7hMXMUWAw189ksdzEeOloK5fc3RTdAd1/7sd
-        DmpDu7n3Mx1NaLxeqrnGV1rrLY8ve/0=
-X-Google-Smtp-Source: ABdhPJwXkZ0z4nkzvw+UKERVJcFgweC/xWst69C+dJ+2zbylWTo/Pk2Fe7DTYafmMFwKaerx9Z4sSw==
-X-Received: by 2002:a5d:64c8:: with SMTP id f8mr10223002wri.498.1643215101681;
-        Wed, 26 Jan 2022 08:38:21 -0800 (PST)
-Received: from kista.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
-        by smtp.gmail.com with ESMTPSA id o15sm4415607wms.9.2022.01.26.08.38.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jan 2022 08:38:21 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     linux-media@vger.kernel.org,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>,
-        Florian Fainelli <f.fainelli@gmail.com>, 5kft <5kft@5kft.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: Re: [PATCH for 5.17] pinctrl-sunxi: sunxi_pinctrl_gpio_direction_in/output: use correct offset
-Date:   Wed, 26 Jan 2022 17:38:20 +0100
-Message-ID: <2613560.mvXUDI8C0e@kista>
-In-Reply-To: <0f536cd8-01db-5d16-2cec-ec6d19409a49@xs4all.nl>
-References: <20211206131648.1521868-1-hverkuil-cisco@xs4all.nl> <0f536cd8-01db-5d16-2cec-ec6d19409a49@xs4all.nl>
+        id S231278AbiA0Kh6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Jan 2022 05:37:58 -0500
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:33930 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235281AbiA0Kh5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jan 2022 05:37:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1643279877; x=1674815877;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jQQW6o4yavoDToUKue4f/G6mHjTCqpN91pJTYtcfuhw=;
+  b=h0kI/w6U839UWRpOC2TzDuyPzn+PZaCKTp60LSaOaFJjJ1qIGqPS7T/h
+   +YF5GgKZYthJS2hEeN8TP06wkfCjEBIzen2PhPMItMBgtHn2hLB4VIGcZ
+   rP3RpTYvCTiqTZrc0q5TixaaB75JwZOqHx4s2irE0lBsWyvUiF6sJ1lnZ
+   +GICeBI+L0nXzqRiv1dexUaBzWKqQUiAhtwpjVLFV5ClzPnMNjPUUMjsF
+   /x68zLthg+d3oOCnf0SD+8px37dYhulzk4ughc8YHq5xV5BG8CyNR+wTF
+   ZfIlapZUqQ6l1lPAW/+NkNOjble06R27zMbxlrj6+Cvs8TJpmKAHf4jiS
+   A==;
+IronPort-SDR: vfO46qe7nWI4oxy+PtqppYt4Njs8migAVIj+1pcs3WPbmpsOkyJRegg7tOMcrh0arJctFKSi3x
+ 3KgMDhXbmMzbElmp1vxTRE9QK20TEKIZsv+wO314oGlsZQvWoWIQXNtAVub/6eHkENZW0ckcVz
+ 7xhFhmsIQ+72t7tc76/6WdsJCcAAqxUmA1R3kUqsPZEd2yvLQo0q/9VwNOM5yBqctEfT50R+86
+ bC279OuYGF3DxZfN8TpBBjlYgSl29HjrqeH1vWWgKBrSaQEfFLPDk5pmqcjSgdT0pBZwbvULtZ
+ Tjaxt+FIk5FIvBmnjBowBFF6
+X-IronPort-AV: E=Sophos;i="5.88,320,1635231600"; 
+   d="scan'208";a="83851515"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jan 2022 03:37:57 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Thu, 27 Jan 2022 03:37:56 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Thu, 27 Jan 2022 03:37:56 -0700
+Date:   Thu, 27 Jan 2022 11:40:23 +0100
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     Colin Foster <colin.foster@in-advantage.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lars.povlsen@microchip.com>, <Steen.Hegelund@microchip.com>,
+        <UNGLinuxDriver@microchip.com>, <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: microchip-sgpio: Fix support for regmap
+Message-ID: <20220127104023.5dwcrod7toi4hpb7@soft-dev3-1.localhost>
+References: <20220125161245.418882-1-horatiu.vultur@microchip.com>
+ <20220125164659.GA31440@COLIN-DESKTOP1.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20220125164659.GA31440@COLIN-DESKTOP1.localdomain>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Hans!
+The 01/25/2022 08:46, Colin Foster wrote:
+> 
+> Hi Horatiu,
 
-Dne sreda, 26. januar 2022 ob 12:02:04 CET je Hans Verkuil napisal(a):
-> The commit that sets the direction directly without calling
-> pinctrl_gpio_direction(), forgot to add chip->base to the offset when
-> calling sunxi_pmx_gpio_set_direction().
-> 
-> This caused failures for various Allwinner boards which have two
-> GPIO blocks.
-> 
-> Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> Reported-by: 5kft <5kft@5kft.org>
-> Suggested-by: 5kft <5kft@5kft.org>
-> Reported-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> Fixes: 8df89a7cbc63 (pinctrl-sunxi: don't call pinctrl_gpio_direction())
-> Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Hi Colin,
 
-Next time please send to all sunxi maintainers/reviewers and mailing list.
+> 
+> On Tue, Jan 25, 2022 at 05:12:45PM +0100, Horatiu Vultur wrote:
+> > Initially the driver accessed the registers using u32 __iomem but then
+> > in the blamed commit it changed it to use regmap. The problem is that now
+> > the offset of the registers is not calculated anymore at word offset but
+> > at byte offset. Therefore make sure to multiply the offset with word size.
+> >
+> 
+> Sorry about this one. I see it must have slipped through the cracks
+> because I had made the same change in my tree. The only difference is I
+> had copied reg_stride into sgpio_priv instead of making regmap_config
+> file-scope. For what its worth, with apologies:
 
-Tested-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+No worries, sorry that I missed your patch initially. And thanks for
+reviewing this patch.
 
-Best regards,
-Jernej
-
-> ---
-> Corentin, can you please test this patch to verify that this fixes your
-> issue on the orangepiPC?
-> ---
 > 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/
-pinctrl-sunxi.c
-> index 80d6750c74a6..061323eab8b1 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -837,7 +837,8 @@ static int sunxi_pinctrl_gpio_direction_input(struct 
-gpio_chip *chip,
->  {
->  	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
-> 
-> -	return sunxi_pmx_gpio_set_direction(pctl->pctl_dev, NULL, offset, 
-true);
-> +	return sunxi_pmx_gpio_set_direction(pctl->pctl_dev, NULL,
-> +					    chip->base + offset, 
-true);
->  }
-> 
->  static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
-> @@ -890,7 +891,8 @@ static int sunxi_pinctrl_gpio_direction_output(struct 
-gpio_chip *chip,
->  	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
-> 
->  	sunxi_pinctrl_gpio_set(chip, offset, value);
-> -	return sunxi_pmx_gpio_set_direction(pctl->pctl_dev, NULL, offset, 
-false);
-> +	return sunxi_pmx_gpio_set_direction(pctl->pctl_dev, NULL,
-> +					    chip->base + offset, 
-false);
->  }
-> 
->  static int sunxi_pinctrl_gpio_of_xlate(struct gpio_chip *gc,
-> 
+> Reviewed-by: Colin Foster <colin.foster@in-advantage.com>
 
 
+
+> 
+> > Fixes: 2afbbab45c261a ("pinctrl: microchip-sgpio: update to support regmap")
+> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> > ---
+> >  drivers/pinctrl/pinctrl-microchip-sgpio.c | 13 +++++++------
+> >  1 file changed, 7 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
+> > index 8e081c90bdb2..2999c98bbdee 100644
+> > --- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
+> > +++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
+> > @@ -98,6 +98,12 @@ static const struct sgpio_properties properties_sparx5 = {
+> >       .regoff = { 0x00, 0x06, 0x26, 0x04, 0x05, 0x2a, 0x32, 0x3a, 0x3e, 0x42 },
+> >  };
+> >
+> > +static const struct regmap_config regmap_config = {
+> > +             .reg_bits = 32,
+> > +             .val_bits = 32,
+> > +             .reg_stride = 4,
+> > +};
+> > +
+> >  static const char * const functions[] = { "gpio" };
+> >
+> >  struct sgpio_bank {
+> > @@ -137,7 +143,7 @@ static inline int sgpio_addr_to_pin(struct sgpio_priv *priv, int port, int bit)
+> >
+> >  static inline u32 sgpio_get_addr(struct sgpio_priv *priv, u32 rno, u32 off)
+> >  {
+> > -     return priv->properties->regoff[rno] + off;
+> > +     return (priv->properties->regoff[rno] + off) * regmap_config.reg_stride;
+> >  }
+> >
+> >  static u32 sgpio_readl(struct sgpio_priv *priv, u32 rno, u32 off)
+> > @@ -821,11 +827,6 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
+> >       struct clk *clk;
+> >       u32 __iomem *regs;
+> >       u32 val;
+> > -     struct regmap_config regmap_config = {
+> > -             .reg_bits = 32,
+> > -             .val_bits = 32,
+> > -             .reg_stride = 4,
+> > -     };
+> >
+> >       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> >       if (!priv)
+> > --
+> > 2.33.0
+> >
+
+-- 
+/Horatiu
