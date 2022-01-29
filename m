@@ -2,158 +2,168 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E095EC433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jan 2022 14:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D581C433F5
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jan 2022 22:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235206AbiA2OKR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Jan 2022 09:10:17 -0500
-Received: from mga04.intel.com ([192.55.52.120]:31763 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234194AbiA2OKQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 29 Jan 2022 09:10:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643465416; x=1675001416;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VFcCHcnZzHGge7LC66GRjpuVC7vd/ne1/nu/vMIi1JY=;
-  b=As8+9ej2p0Djm06Md9YqE+JE8Sbm7/usq3lcaKeSGgZhBH8uBjoxLmdF
-   8jPJQt0Vcu890r5cXNmHP/+lKmjPOH4As0+rtNQRCt/fQ0teYLUHsDU7T
-   30asKFjVYSEg5NKFsv4orz32N01cLRprP375dUDTGqs0E4/5OCM0H/K5r
-   9AoWR7d+c1mFsRO1vRkoO0NbJre2cliOkFxdNEeGWUQ2WDLTPVOH+rmAC
-   aP79ySq4D3c+a9BhqHuqMpDrqnPVeTBiJKn3AwMfz9JNjMewX2yVtGa8n
-   FGhJo8VZiZjFUwT0EU+cmx3kievQgo3C1JnIlAYQynaGLGfj3imjCxMZ6
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10241"; a="246111818"
-X-IronPort-AV: E=Sophos;i="5.88,326,1635231600"; 
-   d="scan'208";a="246111818"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2022 06:10:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,326,1635231600"; 
-   d="scan'208";a="675344441"
-Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 29 Jan 2022 06:10:13 -0800
-Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nDoQe-000PHv-Tv; Sat, 29 Jan 2022 14:10:12 +0000
-Date:   Sat, 29 Jan 2022 22:09:17 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, openbmc@lists.ozlabs.org,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>
-Subject: Re: [PATCH v5 5/9] pinctrl: nuvoton: Add driver for WPCM450
-Message-ID: <202201292234.NpSNe4TD-lkp@intel.com>
-References: <20220129115228.2257310-6-j.neuschaefer@gmx.net>
+        id S1353282AbiA2WCn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 29 Jan 2022 17:02:43 -0500
+Received: from mail-dm3nam07on2115.outbound.protection.outlook.com ([40.107.95.115]:64192
+        "EHLO NAM02-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229737AbiA2WCn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 29 Jan 2022 17:02:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZxN5onQgHIk+Rkk7OZSpK3xRn4UWcqcOXt9YAIIPKGdAcaFWgjDckaJJyAlgekiEjuUN68J5IFjr4LJEBbTiG9EisskEV4qRxu06XrUfLtOC+YY+Q/5LKVpgsefEmWv8LjXXKmQALL6L74+nvgKZ6BLZi5Zx9m5Wm64YnY551sMOk262P45bpOkyjz87oIdlYAO3UqdZ638nLB/PvgmTkb41+4h8yLacjueXQL6BLE3lv3TKG2iadp2wlWia/jQHtBrJZ+wgEDovfErRfT8iGLhVkOIkpSZcu+Ck7plIIy86eMNV2ijpPWzfVUsbVfCl+00TbKd9nG2m2Gh0WAKqXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e3v4FS47HcZev4Y6YYfHm4/rqAxgU9EHSxcAEMO0q40=;
+ b=ThBrpSjzDMjRxAqmk1z4e3HQkjg2wFPRkhOcKyorQRhkIM+2Intvn0HHr26I34TId4nPed3HYp1vP7jyL7pSoOZuEvtcQ5KUdp/epnRW7eD6V0lEQoDplJCrSldXacaXlJOEOAUJ85VmeKVmdwHZc58ieFTsTIdk/iy3AVTMm9NZyPCrWI+Sl/qWN3aDEwWjZSxE8cnmUPprFRj5kCCzeseouO5rU1VMktpwqKsGHYCGjG/dg3Pr8+jTFXLwewR2MvrmtGEQ6g213XtlRtMULxx8t6CxZm+SgunN+LHBpf9wRKqyKS6KXbmmElvdQwQzpDq9+Iz+DGuzNnsNlKyKzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e3v4FS47HcZev4Y6YYfHm4/rqAxgU9EHSxcAEMO0q40=;
+ b=ky8/8YYOftA2He303YL/Swjnv8AkiI4qP7BVKDf6ad70p7M1Gj81Lu69fl2SOKJE6mAUzA5lTWPOhlaS4M436h1hZ76GhKpuuDW8wpfemDoAWWXb5VlWalUkZx6NqS9iy1BHBcCtf61P3J/UBeN/UiVqF9Qa6qVNfupqafaze6w=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37) by BYAPR10MB2968.namprd10.prod.outlook.com
+ (2603:10b6:a03:85::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.18; Sat, 29 Jan
+ 2022 22:02:40 +0000
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::2d52:2a96:7e6c:460f]) by MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::2d52:2a96:7e6c:460f%4]) with mapi id 15.20.4930.020; Sat, 29 Jan 2022
+ 22:02:40 +0000
+From:   Colin Foster <colin.foster@in-advantage.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>, katie.morris@in-advantage.com
+Subject: [RFC v6 net-next 1/9] pinctrl: ocelot: allow pinctrl-ocelot to be loaded as a module
+Date:   Sat, 29 Jan 2022 14:02:13 -0800
+Message-Id: <20220129220221.2823127-2-colin.foster@in-advantage.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220129220221.2823127-1-colin.foster@in-advantage.com>
+References: <20220129220221.2823127-1-colin.foster@in-advantage.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CO1PR15CA0113.namprd15.prod.outlook.com
+ (2603:10b6:101:21::33) To MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220129115228.2257310-6-j.neuschaefer@gmx.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 370ede25-dde9-401d-6efe-08d9e3731143
+X-MS-TrafficTypeDiagnostic: BYAPR10MB2968:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR10MB2968853DDDC0A1B8910B4C9AA4239@BYAPR10MB2968.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pu6WBvYENCWU0KK/udd+R7dkJCBTtWBn1HSF56NCM/Gf3s5bA88lxhfgjGqmUcZjkMe3ALXn4CU8XO+TWoJyYPeNLzrrB0vCR5fI3rs2WUaOd70MkmMwCc2dqrY3x4Uprm8xvj0t6lfccT72P7EVQe30inGWGZYu2Xp9YTdvGy1gR0U8bUV4Kk561ltZfDhzRiaIan2XL0QabN3BiNoXDGLBz0r6OFHQzrsykQjh5wnmwLChU/rH8J4p23nJEq1440zn+5JYMxLd5veo2CJG6rvB/Uffw1J60GCkkIpxxZ/q2br80jjtiv6BCewz29weHT9JtX9IzTNAwGwZkQ/yTzdfHoq2Yc9wzYf44e21c0shVlu4V6oih9BS43hS3SKU9A593u2ZITMQ8VVvPEKDu0/7yeO1txmeKmF8hNeUYx73PufW8m15DSpKjCyDzLod2lMY819Y7SY5Sxys8YPSELWV3GPLSw+50h190IX+Oax8frMdlAp6GCJV+588ZuS+wVrEUBQ8ryi3pphOdW9649whTeiK7v39d1NuMtOywTLuGapyacCZwRbDdjMzPR0pvLYytRln731ZtElLuefpZSQ44mA43pQWKI+eDAAsZ5lq8OIbNyJ2ez1sPMGPg9TDorZkZ6siNyTYAzuvPcZAQLXcz8ppOwCg9TFlAb2XxL1UrjtPIxNjdfLPHOeaayBOpnUWUqsM/cc+LPGqy0NMxA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(136003)(376002)(346002)(42606007)(396003)(39830400003)(366004)(186003)(508600001)(5660300002)(6486002)(1076003)(86362001)(66946007)(8676002)(66476007)(26005)(4326008)(66556008)(8936002)(7416002)(107886003)(6506007)(38350700002)(6512007)(2906002)(44832011)(6666004)(2616005)(52116002)(38100700002)(83380400001)(316002)(36756003)(54906003)(20210929001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0NY9U/yZwx87PXhfbfQLQZOdvXhDIPveF9yB9BOuIcDL+TkbrHMGR+elznOy?=
+ =?us-ascii?Q?PvrFtin6/li802jQORRHxos/SYGsdXzqsrCe15xBBcwPhM4zBEMfHFFwASdT?=
+ =?us-ascii?Q?Cenxw5Zbyrt9deg/UqBPgbcwPezUcCQGWtmcIPvfZl3TT1FcKPkcAjg4hKSU?=
+ =?us-ascii?Q?dfvQvKtl1XmCvzZBZUDYSR79l6MPP+EqQurf+JQ2IqV3b6wRqUTmrYCB2xLK?=
+ =?us-ascii?Q?AKgE2LAYWRQsSV5PXxzB987QXkSPJGCGgv9WmIYhMDLbyq0u17f9Op9S42AB?=
+ =?us-ascii?Q?kqWfhhRdkakk88eco7I94Uy0JobVMnHAgViScsOy3zWEkZqONdGRAyNzeQl0?=
+ =?us-ascii?Q?iZNnDmIemiU4CJYtDgZ5xVSqPTXYIlPl8bzv3/YSCB4NOQur1AIOrpmVCmGO?=
+ =?us-ascii?Q?n7X5rrPYRZF49GzqFoDaTEtzONdM2XAxrMKY6ICrQEjZ+rOVpC/z3PslivY3?=
+ =?us-ascii?Q?lOjkzo5KFYLiDY74Egof3cjPaQBCk189KDzAWtRA8fzthk1rE823JB9WYHJj?=
+ =?us-ascii?Q?+bYXYr7llgLO5vQUTVA8BWNgSTGMlyaTeikKpp8nY0S9RwhsIxAyeM5Wjl19?=
+ =?us-ascii?Q?YMN3dvh40BKCjtqHCAwgXQXdjzeg0cFCZ4yivls3mdh0LXYaUqadZ+heiXrm?=
+ =?us-ascii?Q?wSYhz3/ZixPrlbxgEBwBsb8eCOc5Hh/L4t14z0DGFkPGi0Ovpd8NGj9iDSS9?=
+ =?us-ascii?Q?zX1OSv4W/ZAeJAwLjfCzkNiHUs9bsa8MD5B6JnAlaoV24G/V2W0Ydr9SpoFq?=
+ =?us-ascii?Q?QH6KjFv1uu59fY7XnfStsFf5PT3CEvw0xWzrAXHgVSSQCI79n1htzlEGVc4P?=
+ =?us-ascii?Q?WJrW9ZOGropznKZU3bazTCalYaX4/+FwCAQ0MKArsAGpogAemDEfsKquvWmM?=
+ =?us-ascii?Q?APNalPL1wI+e1Ng4e3QQAC0OMndKGltbL4r1nDiZHVDWQt78n3o/EWVsokBa?=
+ =?us-ascii?Q?btSya+Hx1InJsaJiANSHv31fupjBN8ScE77agzJ/XBKzA7N47hWivTWdJslQ?=
+ =?us-ascii?Q?taRS23PTzE32pB52OjpDSjp5sCxvtCLVaJemt1T1iq4XmAu3BYgmHbs4dZho?=
+ =?us-ascii?Q?HO6YM3e+W+rqci5A2uA8/B0RxAAXCrSV4B9/ipnGAj+oeTEPnt8wjB8DjX5b?=
+ =?us-ascii?Q?8q3sDyC+9Z9o6J06dvqWDb5NWfFTcRXwcGnswPCcBWFvh90avtquFrzQF52F?=
+ =?us-ascii?Q?Kj2cxfziwblQIcjTeos37SQp8ymt8thmUFzjptZHykMQ/6Xw0NMDH50Mgq7V?=
+ =?us-ascii?Q?3gcvLz4lq4LNRXxW5vZvxkvRGFsjaAxNAWMTSc9P7lSAXdUM3462PtkH1U2A?=
+ =?us-ascii?Q?uJ5ENKUszLFH4iC8KVXswQNoC+PKq2Zxtk4DNM/kbvU9B+5fJfDzqDx5qbZt?=
+ =?us-ascii?Q?ZoJPq1zTnHv/UDCnH5ofgByTNSLovaeONozUtHJqWBK1r1wsj1wMAhJql6jp?=
+ =?us-ascii?Q?S4WKLsghbrwT5Ro26opccECK/LDdAZDA412DW9Q/USTMHMeXzpbnJ/O70S0R?=
+ =?us-ascii?Q?ykQ3+NmA0/kAuynx4FCKwQ6CCJFq3wxsLdcP8ETGAnyn9gbFZdDDK4NWO2ih?=
+ =?us-ascii?Q?YHl0uLtacgL7AIo8chpr4GKd/fk1xF2pSjCyQq8n2bSRAhZq6tBM6VsIth4I?=
+ =?us-ascii?Q?/Tq7fS/U/mQ5YsamajokvOegysyYaLK/++c+AUzgrIIbnOnfD0rVvzb64dg1?=
+ =?us-ascii?Q?WyKCiQ=3D=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 370ede25-dde9-401d-6efe-08d9e3731143
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2022 22:02:40.2511
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Y5umALmqAN7fCOOnbUECdEx9W41GtjChETwP4hoqBdTk0KFoQNwOL9yC5Q+frqbhZoO7SCbb7QxB0I72W4DpuukpEWEjr/LKd4eddKKSrY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2968
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi "Jonathan,
+Work is being done to allow external control of Ocelot chips. When pinctrl
+drivers are used internally, it wouldn't make much sense to allow them to
+be loaded as modules. In the case where the Ocelot chip is controlled
+externally, this scenario becomes practical.
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on robh/for-next linus/master v5.17-rc1 next-20220128]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/0day-ci/linux/commits/Jonathan-Neusch-fer/Nuvoton-WPCM450-pinctrl-and-GPIO-driver/20220129-195955
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-config: um-allmodconfig (https://download.01.org/0day-ci/archive/20220129/202201292234.NpSNe4TD-lkp@intel.com/config)
-compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/0day-ci/linux/commit/3fd91ea1bad905592e89c8f987f6bd3740329b80
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Jonathan-Neusch-fer/Nuvoton-WPCM450-pinctrl-and-GPIO-driver/20220129-195955
-        git checkout 3fd91ea1bad905592e89c8f987f6bd3740329b80
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 O=build_dir ARCH=um SHELL=/bin/bash drivers/pinctrl/nuvoton/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:908: warning: "DS" redefined
-     908 | #define DS(lo, hi) (((lo) << DRIVE_STRENGTH_LO_SHIFT) | \
-         | 
-   In file included from arch/x86/um/shared/sysdep/ptrace.h:44,
-                    from arch/um/include/asm/ptrace-generic.h:11,
-                    from arch/x86/um/asm/ptrace.h:9,
-                    from arch/um/include/asm/processor-generic.h:13,
-                    from arch/x86/um/asm/processor.h:41,
-                    from include/linux/rcupdate.h:30,
-                    from include/linux/rculist.h:11,
-                    from include/linux/pid.h:5,
-                    from include/linux/sched.h:14,
-                    from include/linux/ratelimit.h:6,
-                    from include/linux/dev_printk.h:16,
-                    from include/linux/device.h:15,
-                    from drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:5:
-   arch/x86/um/shared/sysdep/ptrace_64.h:38: note: this is the location of the previous definition
-      38 | #define DS (HOST_DS * sizeof(long))
-         | 
-   In file included from include/linux/printk.h:555,
-                    from include/asm-generic/bug.h:22,
-                    from ./arch/um/include/generated/asm/bug.h:1,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from include/asm-generic/current.h:5,
-                    from ./arch/um/include/generated/asm/current.h:1,
-                    from include/linux/sched.h:12,
-                    from include/linux/ratelimit.h:6,
-                    from include/linux/dev_printk.h:16,
-                    from include/linux/device.h:15,
-                    from drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:5:
-   drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c: In function 'npcm7xx_get_groups_count':
-   drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:1564:21: warning: format '%d' expects argument of type 'int', but argument 4 has type 'long unsigned int' [-Wformat=]
-    1564 |  dev_dbg(npcm->dev, "group size: %d\n", ARRAY_SIZE(npcm7xx_groups));
-         |                     ^~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:134:15: note: in definition of macro '__dynamic_func_call'
-     134 |   func(&id, ##__VA_ARGS__);  \
-         |               ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:166:2: note: in expansion of macro '_dynamic_func_call'
-     166 |  _dynamic_func_call(fmt,__dynamic_dev_dbg,   \
-         |  ^~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:155:2: note: in expansion of macro 'dynamic_dev_dbg'
-     155 |  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |  ^~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:155:23: note: in expansion of macro 'dev_fmt'
-     155 |  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                       ^~~~~~~
-   drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:1564:2: note: in expansion of macro 'dev_dbg'
-    1564 |  dev_dbg(npcm->dev, "group size: %d\n", ARRAY_SIZE(npcm7xx_groups));
-         |  ^~~~~~~
-   drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:1564:35: note: format string is defined here
-    1564 |  dev_dbg(npcm->dev, "group size: %d\n", ARRAY_SIZE(npcm7xx_groups));
-         |                                  ~^
-         |                                   |
-         |                                   int
-         |                                  %ld
-
-
-vim +/DS +908 drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  907  
-3b588e43ee5c7ad Tomer Maimon 2018-08-08 @908  #define DS(lo, hi)	(((lo) << DRIVE_STRENGTH_LO_SHIFT) | \
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  909  			 ((hi) << DRIVE_STRENGTH_HI_SHIFT))
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  910  #define DSLO(x)		(((x) >> DRIVE_STRENGTH_LO_SHIFT) & 0xF)
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  911  #define DSHI(x)		(((x) >> DRIVE_STRENGTH_HI_SHIFT) & 0xF)
-3b588e43ee5c7ad Tomer Maimon 2018-08-08  912  
-
+Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/pinctrl/Kconfig          | 2 +-
+ drivers/pinctrl/pinctrl-ocelot.c | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 6fc56d6598e2..1b367f423ceb 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -311,7 +311,7 @@ config PINCTRL_MICROCHIP_SGPIO
+ 	  LED controller.
+ 
+ config PINCTRL_OCELOT
+-	bool "Pinctrl driver for the Microsemi Ocelot and Jaguar2 SoCs"
++	tristate "Pinctrl driver for the Microsemi Ocelot and Jaguar2 SoCs"
+ 	depends on OF
+ 	depends on HAS_IOMEM
+ 	select GPIOLIB
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index fc969208d904..b6ad3ffb4596 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -1778,6 +1778,7 @@ static const struct of_device_id ocelot_pinctrl_of_match[] = {
+ 	{ .compatible = "microchip,lan966x-pinctrl", .data = &lan966x_desc },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, ocelot_pinctrl_of_match);
+ 
+ static struct regmap *ocelot_pinctrl_create_pincfg(struct platform_device *pdev)
+ {
+@@ -1866,3 +1867,6 @@ static struct platform_driver ocelot_pinctrl_driver = {
+ 	.probe = ocelot_pinctrl_probe,
+ };
+ builtin_platform_driver(ocelot_pinctrl_driver);
++
++MODULE_DESCRIPTION("Ocelot Chip Pinctrl Driver");
++MODULE_LICENSE("Dual MIT/GPL");
+-- 
+2.25.1
+
