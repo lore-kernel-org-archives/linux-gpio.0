@@ -2,305 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAB2C433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jan 2022 11:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BE3C433EF
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jan 2022 13:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236735AbiA2L7h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Jan 2022 06:59:37 -0500
-Received: from mout.gmx.net ([212.227.17.20]:40903 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242175AbiA2L5m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 29 Jan 2022 06:57:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1643457452;
-        bh=cntpS7zEiYV12x5rJXS1Tqn/MpedloZ0hFjM6XbqZjc=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=dTZjRS9jGMzUqQkt6fCEuz13y/GR8MDy5Y5RXzrE+1QKpqXv8H0QG/kvI1Zr+NNg2
-         lSbezfTHlLPJpN0CWfY7GS1eMSlSZSM2g7eNuF9kqZOcKj6PFF/VMS/S/82Qm2G5qt
-         a9HmWf2U5PfPb7jA0CLJpKuo8udO+rDJaSf/c9Bs=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MK3Rm-1mxtOk1Ije-00LV8A; Sat, 29
- Jan 2022 12:57:32 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, openbmc@lists.ozlabs.org,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 4/9] dt-bindings: pinctrl: Add Nuvoton WPCM450
-Date:   Sat, 29 Jan 2022 12:52:23 +0100
-Message-Id: <20220129115228.2257310-5-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220129115228.2257310-1-j.neuschaefer@gmx.net>
-References: <20220129115228.2257310-1-j.neuschaefer@gmx.net>
+        id S1350313AbiA2NSN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 29 Jan 2022 08:18:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345290AbiA2NSM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Jan 2022 08:18:12 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE01C061714
+        for <linux-gpio@vger.kernel.org>; Sat, 29 Jan 2022 05:18:12 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id f202-20020a1c1fd3000000b0034dd403f4fbso5992075wmf.1
+        for <linux-gpio@vger.kernel.org>; Sat, 29 Jan 2022 05:18:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vaxlZkb1Yc7DkWFR6LF/5+yc/tcLWU+qyPW6KDARZUg=;
+        b=xlw7yHr6+G5+cDQ+fRwgSju3d9Me8SNQMr0mgkIor9xByMgZvvAgYXlhMBVolhhaa+
+         amAb+cS3/C3IB5EVmROdmHQyxW5gJKwAGR98gzAz8NzsT1Wj3gXGUh8BngtGESIcWnjC
+         /TIZNPkVl6tPD0CwRRT4mlCu7xrrE9DHpuucVuvRFybJxpi+QqtDe1PUKhjqkxf1kzil
+         TdGOpY+MXimPIF76qnB4jOhrHadYPwBaOPepj8EgqChHP8/LmuPqRVcqtPPITnxoqDnY
+         uQCjh46P4ckvJ5JybHY+ObuIJDXCnlPl3zawJlSWg6chgCJB83ZswTY2bMzEYnqjbEkb
+         SRhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vaxlZkb1Yc7DkWFR6LF/5+yc/tcLWU+qyPW6KDARZUg=;
+        b=cqVvvrRpuOaTm/CRsEdsQmE1q1cx8IB+Sn/A47V8xE4zGIoF+PV0WgPAsuB8YtRurB
+         cDrvqsr7ED3Ib8iO3sDA1JEndqsZLQSNkCIDq6AaxrDGVc1Kc/fvqEozFAny31FWFLsz
+         L1sD6no6r4/hAaGMQeN8MejEDTHWxC28IS9DdMA0uHjPZZtKmcjqNgNkiwjwvFh+IjM8
+         /sNhg2d+Rcw02GGaJ9p1l7ZJNQkTsLDccvBVRP7p13layEt3RyxamQk39njlthCmFb/S
+         dUChIVKr9Rreq7MFoG+72qasmFlhZO4Q8lCgPKVqYmg1VB+1EjDDwEiTjSLJ//mDppvy
+         vVWw==
+X-Gm-Message-State: AOAM5320L66hoH/mH144CbKXHh02QjJApKugVkUmHd/14dL08RoecX8C
+        rcN0EyQMLJLcsA9oAB104hgBGXLlI9YxRQ==
+X-Google-Smtp-Source: ABdhPJx4pMm8q6FvsgJwaIaIrBocez7da/xdRAUTjcE6qK7RS+s3K18OOSzAp3S+PjWBAJUUkwVnWA==
+X-Received: by 2002:a7b:c04d:: with SMTP id u13mr11062844wmc.156.1643462290536;
+        Sat, 29 Jan 2022 05:18:10 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
+        by smtp.gmail.com with ESMTPSA id t4sm4249503wmj.10.2022.01.29.05.18.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Jan 2022 05:18:10 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [GIT PULL] gpio: fixes for v5.17-rc2
+Date:   Sat, 29 Jan 2022 14:18:08 +0100
+Message-Id: <20220129131808.46682-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:p75bAfhHHO/ZoMkprc2CaL9y/Zr4Y6hs++9rbb9iO3vcLQS9GmP
- rP3Hb3xmhBO21+vI3kGKij+1YgHzGOObU73JUGXILdUr6JdNXTzU8ws2s91ZReJ84xNbehw
- /WhPvlzRDoxLLle5W6cSiml1K/4W+TKdfukaC+Aqp8XKyg8a49A5hleH/Lqv5mpR4qmjyZw
- eKK/YzrGNxuJttXCXu4DQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Aot7sBbBbq0=:JpsX5ikzTK0uhVb74xfrU7
- +IbBA8sp1nfD8j+dTnBg0Xg5y5sLlw/N06baPTxxWm4HnLSRiMYSgNraps5DQm68nsJpCMvlp
- +coQNxOva3AncmYubXs/XXoyygymR6p8FZ+FmIkSB/E2OADcp/p+VWU1TwUiPydbAOwxWbRKX
- pYQweyww+Dy1O7Q3j4L9FUM72qL5/Y4Wv59Y96KFzatSav1wBGQxQIsBOF5gH4ENakJhRfirx
- qfcR3O/oP9adIrwNUuMchYqdYXA28nlDqKMHay57epWi+XhMUXgtMHqEcg+2hgfAn4YeT29M9
- Z7zDXYoeN+lOL9H+9+rifDKYs4kUkaX8tBhfoqpEAv4RD9mI0vgrF6h+ter1S8asKulAWBw6B
- biDXfYXpfOzQrK0Dp36Y0Q8WAt0yjuULVf7agxQOail0Pr1Gp5MDuLAI38zKK8zu/vTZ2ZmSo
- 6mvLhIs4mQA1kVn4A+FGJ7wfNs3+zg3560PB3BelItWg3VkbXXd6vuxGpxaC8lvAiM7tRle23
- 9RHmyWbc5/OwzIFlVQg5E2ze2uLnNQGdwaRguL6z/PGGkpdOMBMil+a9Soa2jlki3CP/gJuVr
- O986NmVNwzryH8F+jG5NmsJQxWDuuM4LQo9Ki2nrACW/9h38pgr7a8iW9rerMdx1JGlokXtEj
- 1h7w/mHWrhOSbhPJb5mtKbSCF8VBRdcn0+nST797837GFicsxbu8WhKNwIq5rltGal78cyYSZ
- yRfuzkz0eBcD791lfQrJPOkhaUxvTKQR2DcqCjI9DGq4nY95gSR9ZSdopyrJ17z6iVLHWB3vE
- 8FoV+UVkdeEfy8xgZRgYOLdJ1pM3ZbfZSPVtekSNItF+IfkmwKB+ZjO+Cdb3iFYRbDNNToe4l
- wVleF1SFMwKXOxjDAf9V7oMQZzMhJInTN4JlI61UdTSGh8pO01R6MslTf38vSa3TVhHz8Na45
- XoUxArQ7uktpn7QZycCdkr1r+YoWMF48JpTrb4XupTruQ5V+hnxTE/ZWRxMj9UhPs3iHxK7oH
- gPew8r2KsfpeF+QHHbDUM6xjrnY4FgVpf/cqK4gnqAegflnT19m9RebJJ08WWzpQlUHxaoSI5
- GBUVNZCiVhW3Lc=
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This binding is heavily based on the one for NPCM7xx, because the
-hardware is similar. There are some notable differences, however:
+Linus,
 
-- The addresses of GPIO banks are not physical addresses but simple
-  indices (0 to 7), because the GPIO registers are not laid out in
-  convenient blocks.
-- Pinmux settings can explicitly specify that the GPIO mode is used.
+Please pull the following two fixes for the gpio-simulator.
 
-Certain pins support blink patterns in hardware. This is currently not
-modelled in the DT binding.
+Best Regards,
+Bartosz Golaszewski
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
-=2D--
-v5:
-- Add Rob's R-b
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
 
-v4:
-- Small improvements around gpio node addresses, suggested by Rob Herring
+  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
 
-v3:
-- https://lore.kernel.org/lkml/20211224200935.93817-5-j.neuschaefer@gmx.ne=
-t/
-- Make changes suggested by Rob Herring
-- Fix lint errors
-- Simplify child node patterns
-- Remove if/type=3Dobject/then trick
-- Reduce interrupts.maxItems to 3: 4 aren't necessary
-- Replace list of gpio0/1/2/etc. with pattern
-- Remove nuvoton,interrupt-map again, to simplify the binding
-- Make tuples clearer
+are available in the Git repository at:
 
-v2:
-- https://lore.kernel.org/lkml/20211207210823.1975632-5-j.neuschaefer@gmx.=
-net/
-- Move GPIO into subnodes
-- Improve use of quotes
-- Remove unnecessary minItems/maxItems lines
-- Remove "phandle: true"
-- Use separate prefixes for pinmux and pincfg nodes
-- Add nuvoton,interrupt-map property
-- Make it possible to set pinmux to GPIO explicitly
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio-fixes-for-v5.17-rc2
 
-v1:
-- https://lore.kernel.org/lkml/20210602120329.2444672-5-j.neuschaefer@gmx.=
-net/
-=2D--
- .../pinctrl/nuvoton,wpcm450-pinctrl.yaml      | 160 ++++++++++++++++++
- 1 file changed, 160 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm=
-450-pinctrl.yaml
+for you to fetch changes up to 8aa0f94b0a8d5304ea1bd63bf1ed06f9e395e328:
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pin=
-ctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinc=
-trl.yaml
-new file mode 100644
-index 0000000000000..47a56b83a610d
-=2D-- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.ya=
-ml
-@@ -0,0 +1,160 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/nuvoton,wpcm450-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Nuvoton WPCM450 pin control and GPIO
-+
-+maintainers:
-+  - Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-+
-+properties:
-+  compatible:
-+    const: nuvoton,wpcm450-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+patternProperties:
-+  # There are three kinds of subnodes:
-+  # 1. a GPIO controller node for each GPIO bank
-+  # 2. a pinmux node configures pin muxing for a group of pins (e.g. rmii=
-2)
-+  # 3. a pinconf node configures properties of a single pin
-+
-+  "^gpio@[0-7]$":
-+    type: object
-+
-+    description:
-+      Eight GPIO banks (gpio@0 to gpio@7), that each contain between 14 a=
-nd 18
-+      GPIOs. Some GPIOs support interrupts.
-+
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 7
-+
-+      gpio-controller: true
-+
-+      "#gpio-cells":
-+        const: 2
-+
-+      interrupt-controller: true
-+
-+      "#interrupt-cells":
-+        const: 2
-+
-+      interrupts:
-+        maxItems: 3
-+        description:
-+          The interrupts associated with this GPIO bank
-+
-+    required:
-+      - reg
-+      - gpio-controller
-+      - '#gpio-cells'
-+
-+  "^mux-":
-+    $ref: pinmux-node.yaml#
-+
-+    properties:
-+      groups:
-+        description:
-+          One or more groups of pins to mux to a certain function
-+        items:
-+          enum: [ smb3, smb4, smb5, scs1, scs2, scs3, smb0, smb1, smb2, b=
-sp,
-+                  hsp1, hsp2, r1err, r1md, rmii2, r2err, r2md, kbcc, dvo,
-+                  clko, smi, uinc, gspi, mben, xcs2, xcs1, sdio, sspi, fi=
-0,
-+                  fi1, fi2, fi3, fi4, fi5, fi6, fi7, fi8, fi9, fi10, fi11=
-,
-+                  fi12, fi13, fi14, fi15, pwm0, pwm1, pwm2, pwm3, pwm4, p=
-wm5,
-+                  pwm6, pwm7, hg0, hg1, hg2, hg3, hg4, hg5, hg6, hg7 ]
-+      function:
-+        description:
-+          The function that a group of pins is muxed to
-+        enum: [ smb3, smb4, smb5, scs1, scs2, scs3, smb0, smb1, smb2, bsp=
-,
-+                hsp1, hsp2, r1err, r1md, rmii2, r2err, r2md, kbcc, dvo0,
-+                dvo1, dvo2, dvo3, dvo4, dvo5, dvo6, dvo7, clko, smi, uinc=
-,
-+                gspi, mben, xcs2, xcs1, sdio, sspi, fi0, fi1, fi2, fi3, f=
-i4,
-+                fi5, fi6, fi7, fi8, fi9, fi10, fi11, fi12, fi13, fi14, fi=
-15,
-+                pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, pwm6, pwm7, hg0, hg1,
-+                hg2, hg3, hg4, hg5, hg6, hg7, gpio ]
-+
-+    dependencies:
-+      groups: [ function ]
-+      function: [ groups ]
-+
-+    additionalProperties: false
-+
-+  "^cfg-":
-+    $ref: pincfg-node.yaml#
-+
-+    properties:
-+      pins:
-+        description:
-+          A list of pins to configure in certain ways, such as enabling
-+          debouncing
-+        items:
-+          pattern: "^gpio1?[0-9]{1,2}$"
-+
-+      input-debounce: true
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    pinctrl: pinctrl@b8003000 {
-+      compatible =3D "nuvoton,wpcm450-pinctrl";
-+      reg =3D <0xb8003000 0x1000>;
-+      #address-cells =3D <1>;
-+      #size-cells =3D <0>;
-+
-+      gpio0: gpio@0 {
-+        reg =3D <0>;
-+        gpio-controller;
-+        #gpio-cells =3D <2>;
-+        interrupts =3D <2 IRQ_TYPE_LEVEL_HIGH>,
-+                     <3 IRQ_TYPE_LEVEL_HIGH>,
-+                     <4 IRQ_TYPE_LEVEL_HIGH>;
-+      };
-+
-+      mux-rmii2 {
-+        groups =3D "rmii2";
-+        function =3D "rmii2";
-+      };
-+
-+      pinmux_uid: mux-uid {
-+        groups =3D "gspi", "sspi";
-+        function =3D "gpio";
-+      };
-+
-+      pinctrl_uid: cfg-uid {
-+        pins =3D "gpio14";
-+        input-debounce =3D <1>;
-+      };
-+    };
-+
-+    gpio-keys {
-+      compatible =3D "gpio-keys";
-+      pinctrl-names =3D "default";
-+      pinctrl-0 =3D <&pinctrl_uid>, <&pinmux_uid>;
-+
-+      uid {
-+        label =3D "UID";
-+        linux,code =3D <102>;
-+        gpios =3D <&gpio0 14 GPIO_ACTIVE_HIGH>;
-+      };
-+    };
-=2D-
-2.34.1
+  gpio: sim: add doc file to index file (2022-01-24 09:21:28 +0100)
 
+----------------------------------------------------------------
+gpio fixes for v5.17-rc2
+
+- fix a bug with hogs not being set-up in gpio-sim when user-space sets the
+  chip label to an empty string
+- include the gpio-sim documentation in the index
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      gpio: sim: check the label length when setting up device properties
+
+Randy Dunlap (1):
+      gpio: sim: add doc file to index file
+
+ Documentation/admin-guide/gpio/index.rst | 1 +
+ drivers/gpio/gpio-sim.c                  | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
