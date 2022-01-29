@@ -2,26 +2,26 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99623C433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jan 2022 11:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2ED7C433EF
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jan 2022 11:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242058AbiA2L5i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Jan 2022 06:57:38 -0500
-Received: from mout.gmx.net ([212.227.15.15]:60891 "EHLO mout.gmx.net"
+        id S242090AbiA2L5x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 29 Jan 2022 06:57:53 -0500
+Received: from mout.gmx.net ([212.227.17.20]:49025 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241967AbiA2L5h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 29 Jan 2022 06:57:37 -0500
+        id S243275AbiA2L5q (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 29 Jan 2022 06:57:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1643457449;
-        bh=1LZ/ihPho0RzAstq3Ynbig+sC/tEJmMzkoV4+SG+aP8=;
+        s=badeba3b8450; t=1643457459;
+        bh=5zpIRyxX/X4OnfxZHDwl8CdG/XrYX94rU1ODRUhYvYQ=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=iYc/K1x3oNXbtTHcRG+wc7ydL8hNtjkUi2ek1VPwzpL9A7KWppG80xNJyB0SaXu1D
-         IOGj3q0JuUbf3YN6ejvEHyDvp+AY2EXY/gRqlUZX3b5f5p1NlmWqnEaH1M6qngZbsq
-         Xuhyc56jfZafKLQhJAaTlvqWYNjMxwgu+vMj4XVs=
+        b=bA4rch5jU9FTaZFXZpLzqtPbUmosXUVARTv6c71AxxfvIxk5aipFRzFEMPURudQ6P
+         hZm9c14XnPS1Yc1ncNaqzlJgWdolnn2y44n/y2Ep8qfE9YA0T3uFeqKDOWdPuybj/z
+         34++QTi4uQaOxNU2NncMRx10ufSra9IBnzmwiZks=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MiaY9-1mZVnS0KkZ-00ficj; Sat, 29
- Jan 2022 12:57:29 +0100
+Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MN5if-1musSt3SvV-00J2Ez; Sat, 29
+ Jan 2022 12:57:38 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -35,80 +35,159 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Nancy Yuen <yuenn@google.com>,
         Benjamin Fair <benjaminfair@google.com>,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH v5 3/9] ARM: dts: wpcm450: Add global control registers (GCR) node
-Date:   Sat, 29 Jan 2022 12:52:22 +0100
-Message-Id: <20220129115228.2257310-4-j.neuschaefer@gmx.net>
+Subject: [PATCH v5 6/9] ARM: dts: wpcm450: Add pinctrl and GPIO nodes
+Date:   Sat, 29 Jan 2022 12:52:25 +0100
+Message-Id: <20220129115228.2257310-7-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220129115228.2257310-1-j.neuschaefer@gmx.net>
 References: <20220129115228.2257310-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uWHGPkJRvWxnECnfwrXV0TWggaOPv9+SSO437jFQR+JeoAS6qpD
- ASp4a549lRszU24uKv9b37j5c4114und2RPLKr29Cvru77vCIwM55+qUbhU+bUaDpxTOatv
- 4ATR7t9/SoUK6eik4UOakbuJNvjUMEv+zQrxhni1LYmTRpm9GmXOvRtqR9bmZIxGlbwMjjb
- zvmjVgCeSn7D3ZMsk579A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FXr/dM8FKtM=:omSr0Jn0ejAiTskmScNVYP
- PGYq+oXKiwPz3A4lTF3zhb7K+AnGuNR3T6UamSzcx/b1fFf0tBP7Ee0u4u1dmQBWRYFB9cGxt
- K7Cvxm05hrrVQ/2IJRJblfC7GmWLEBP/2YHbNkF+6BrX9rieg1fCl0TZXK36Cy6MHZCtT76MD
- ArJ1U11cZNY7ckqtPnx3wnRlzzdDqjhITYu56NMrqygzuHcKNWYxz/y1ACzxYRyMWqBocO2KS
- kAIfPPDtcRKrgdzzvGgwpCl/cG5aquAmlfzUiHHPXhoQtDThKfRoaQTFVwpfv0U1S7ebobaQw
- lq2KAi3Uzgdm3WR375kRq6aLSA/e6S6WLTmk1HpGuWFjkl/5eodRJRK8os5hy1LbMYICRWrn4
- q45QAs5bIYbq0Tn6hsaReRlAsnK4zLasHUeEY5HplvkoTY6BpjMj2s9Ioi1QGZ1+BcSSazhbJ
- nL3xgX37aY/cuZ6SBwOt/FeM1Ps0DwRHUVu7mk35nZ6CAS/sqDRyCiLz1FeNyrlYS1bLAoDh8
- feAQ1UR38qZKB72z6OOfQootmnfw1r4x4/2rQe5Um0JohLgypS3uqMEiLlBF1MbhgH5PezOd3
- NFTHPXuIEVFnlz+FVxzYlqXiz7nqexs/bZ4UzrAPTlD92kWHR7bAMIMVuLmpgzWDHztOJ0LxD
- 1IROpvHPtIfaz5CJMZh5PqEfsWxIsnWRroUOPzuq50gqKLqGd1ooQl5VNKQeHV3t7pb1EN69d
- OJbeds2OE9pME2AX7DXuzZ/e5B9I8RGZWyVePbC1SCoQc43uJIMopfU5dMOfzvHeUN8wlGl0Y
- WwALj39VCM4VGTikivcfJzXJ6DOxrT9MxWZ6rjA1UU2Uqt6shT/TiRTpgsGHJovzri4CWVyZ+
- YjiDdlYu49lpkJEiQGmiVtA4Eqq81Wx066qz1pm3gY4knAkByH2BNke6LSi1l5kPxI3x/04Ig
- mdjRFIBJKwaQywDK1ZNhTr5b0VFCMVu1oGwDyTlgbl/PRhl8A9zLaG+r0/qGa+qIwd9XBNlg2
- jhYGuFykUkvdzVKq6W6oo7y0oTVF6+Hf7za4FlZw7zRATcQDgWoENhcuG/NSt2i/gEnm+tDhC
- KWN8PtPiCxPvGk=
+X-Provags-ID: V03:K1:Hdq0ewIGxSCLS3ghJS+jy1k/VAVyI9rqDa7LnKCj6xQ+9ciPvEe
+ KUIezE4IHGC8l6NbmOurd20GQ6Wjp3TOBgsO9a0VFbkzvVv6W9tWMBOZJeau+2XiRYCsBs+
+ epRrsK+HrFsP9bpS0coh5Jo32BWbJx8/EsNaakbZw3mkGeGx9JIRQUEUHrQGxaI96oTr/cV
+ YGqe5+lpFo5DWJFjfXkaA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xE78CPYNCgQ=:RqFo+uzzsvkepnPcCNCxo/
+ 5jJN0XffJ4EBiur5vI2dD2UwbEMxa+lUV/A5aKDAwGpQ0fC1bf96WQs+QOL8/g7LMYiLWOuAj
+ +XQWbdjZTMCDxnaIjoFSE8ID8Rn4Fa4cvr8IC1CjGJhlY0TjseDr2pZbfKSJHpQig/0mp4U5e
+ QSj2EHl7ugAyBKKvc/WAv71PgNH3xHHxjkQ7rvNoVQhoUc0tI4T28bhMHaAB2EcsF8iwoUa1Y
+ YS3IWmvFYGzcrvH3JviGnogXMjrJhgW7yD6vJtMnpOcP8m0buymHDm1qaxffsgAkf4jIhXN2P
+ OBKalsGJvWmhw46cFORxNp5Mw+sUK/TzFlQo0D85eJMaDvQwOgo8ZVMxA/omQjw9kK4YtAeWG
+ Cb8Fkqt2ROx2Iz75oRgxHlBvESh1Q91VyIouGWtClWQ9u0u6bKmK4doA7tbPWTTBHbxnpFn3W
+ Wf4SHzMAWirLsMmlbd8dVGpBg3UsKRNQTRRRwrjiL6xuwxPC8jjj/eyoMLHpo9cF0t46D4tPH
+ lUMd+MUSJgJlWYn9zt8eb5OJ4QwGop/8zZNWhaQ7JiRkOqtQcqVc1CHhFyOHTRIpAj2e8Q01L
+ k80/HwyuwtV/6Ac29uOLJ6YUSMD+pjWJlvhhJLzvCnOZ3urznPhHH40jGXlyd2UzHQqhsAas6
+ w8pDZqQgQLHE4yDYMoDrbvmP4b1+4epKQmUcUkySaCFnZwEjK9/3EO2t7mztUjoaZVxUbWUfc
+ 5npkP5XrcLjQGVfSIHlTHP0DiXmNlEvMYDQHVYgsq6eTHZfq4nEVg0i63qwJqAqsyUZ+NZ7O/
+ pKACL4wWfyYXH0VpsWIWel9NPgAbPvW5FtKJzcwT9neoC+WZgrCkQNO+uLV9XBe7cC0ztNSlR
+ 1h83IBb6uOk50VJNcdVNwPbLHdZvSMWRGlmRsM27yx0s33DvL8zfmwx13cYT4M90hPeN/xCpe
+ c/fv6FCqBRWhnLaMwAN8OObJ2FDQHN5FYJKBFqAfdnjqi1qJxbS5IgrbfPfG8UMuxE7c6ihPz
+ Ku9CNEdR7SjMnj3SXUYLNRK4/MupUnjuV5MW/odRrRuwlwp80Zoh1g7w16umyzOF4S7Z4BmUN
+ uEtohwlOUkESdo=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Global Control Registers (GCR) are a block of registers in Nuvoton
-SoCs that expose misc functionality such as chip model and version
-information or pinmux settings.
-
-This patch adds a GCR node to nuvoton-wpcm450.dtsi in preparation for
-enabling pinctrl on this SoC.
+This patch adds the pin controller and GPIO banks to the devicetree for th=
+e
+WPCM450 SoC.
 
 Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 =2D--
-v3-v5:
+v4-v5:
 - no changes
 
+v3:
+- Add Linus' R-b tag
+- Remove nuvoton,interrupt-map again, to simplify the binding
+- Make tuples clearer
+
 v2:
-- Rename node to syscon@b0000000
+- https://lore.kernel.org/lkml/20211207210823.1975632-7-j.neuschaefer@gmx.=
+net/
+- Move GPIO banks into subnodes
+- Add /alias/gpio*
 
 v1:
-- https://lore.kernel.org/lkml/20210602120329.2444672-4-j.neuschaefer@gmx.=
+- https://lore.kernel.org/lkml/20210602120329.2444672-7-j.neuschaefer@gmx.=
 net/
 =2D--
- arch/arm/boot/dts/nuvoton-wpcm450.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/nuvoton-wpcm450.dtsi | 72 ++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
 diff --git a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi b/arch/arm/boot/dts/nu=
 voton-wpcm450.dtsi
-index d7cbeb1874840..a17ee70085dd0 100644
+index a17ee70085dd0..66c35626c80a6 100644
 =2D-- a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
 +++ b/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
-@@ -33,6 +33,11 @@ soc {
- 		interrupt-parent =3D <&aic>;
- 		ranges;
+@@ -8,6 +8,17 @@ / {
+ 	#address-cells =3D <1>;
+ 	#size-cells =3D <1>;
 
-+		gcr: syscon@b0000000 {
-+			compatible =3D "nuvoton,wpcm450-gcr", "syscon", "simple-mfd";
-+			reg =3D <0xb0000000 0x200>;
-+		};
++	aliases {
++		gpio0 =3D &gpio0;
++		gpio1 =3D &gpio1;
++		gpio2 =3D &gpio2;
++		gpio3 =3D &gpio3;
++		gpio4 =3D &gpio4;
++		gpio5 =3D &gpio5;
++		gpio6 =3D &gpio6;
++		gpio7 =3D &gpio7;
++	};
 +
- 		serial0: serial@b8000000 {
- 			compatible =3D "nuvoton,wpcm450-uart";
- 			reg =3D <0xb8000000 0x20>;
+ 	cpus {
+ 		#address-cells =3D <1>;
+ 		#size-cells =3D <0>;
+@@ -77,5 +88,66 @@ aic: interrupt-controller@b8002000 {
+ 			interrupt-controller;
+ 			#interrupt-cells =3D <2>;
+ 		};
++
++		pinctrl: pinctrl@b8003000 {
++			compatible =3D "nuvoton,wpcm450-pinctrl";
++			reg =3D <0xb8003000 0x1000>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++
++			gpio0: gpio@0 {
++				reg =3D <0>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++				interrupts =3D <2 IRQ_TYPE_LEVEL_HIGH>,
++					     <3 IRQ_TYPE_LEVEL_HIGH>,
++					     <4 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++			};
++
++			gpio1: gpio@1 {
++				reg =3D <1>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++				interrupts =3D <5 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++			};
++
++			gpio2: gpio@2 {
++				reg =3D <2>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
++
++			gpio3: gpio@3 {
++				reg =3D <3>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
++
++			gpio4: gpio@4 {
++				reg =3D <4>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
++
++			gpio5: gpio@5 {
++				reg =3D <5>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
++
++			gpio6: gpio@6 {
++				reg =3D <6>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
++
++			gpio7: gpio@7 {
++				reg =3D <7>;
++				gpio-controller;
++				#gpio-cells =3D <2>;
++			};
++		};
+ 	};
+ };
 =2D-
 2.34.1
 
