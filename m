@@ -2,118 +2,107 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF08C43217
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Jan 2022 11:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E5CC433F5
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Jan 2022 11:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349511AbiAaLcL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 31 Jan 2022 06:32:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49802 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379393AbiAaLaP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jan 2022 06:30:15 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6198C0617AB
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Jan 2022 03:20:07 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:58b3:216b:d287:833])
-        by baptiste.telenet-ops.be with bizsmtp
-        id pPL3260072lsq0X01PL3R0; Mon, 31 Jan 2022 12:20:03 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nEUj4-00CZlM-Sc; Mon, 31 Jan 2022 12:20:02 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nEU2M-00GXJ8-EI; Mon, 31 Jan 2022 11:35:54 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?UTF-8?q?Mikko=20Salom=C3=A4ki?= <ms@datarespons.se>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: aggregator: Fix calling into sleeping GPIO controllers
-Date:   Mon, 31 Jan 2022 11:35:53 +0100
-Message-Id: <6a62a531227cd4f20d77d50cdde60c7a18b9f052.1643625325.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S1350538AbiAaLk1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 31 Jan 2022 06:40:27 -0500
+Received: from mga01.intel.com ([192.55.52.88]:18732 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1376581AbiAaLgY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 31 Jan 2022 06:36:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643628982; x=1675164982;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kgiOcoUuVtSg2vjAUJcju/uWAMd/0r0SZQcVag3h490=;
+  b=PZNTEgud2LfwYL82xBr84SFZzR2QPBDi8u6+iT4IwbgD3+40cLdVlPuw
+   yiTvS30wFq5EEXmOFhrAzMD0vgFAm23FAlgGyl31dP3g9UwFoR35udV4v
+   akg51JC2dYHNrVzSIBS7A9+YJeVPEM/f2ho2KOcY8YW4qrSTEfXlg7xQZ
+   ZtOtOh/cvCXUj82GmiHGDohw53PK+kpJnJSrkECQrTS95eGbex18sVqh6
+   hpa2jGH1pFaZnvpC97qNWBIfh/x4LxNH7Iz0fIsRBwJ1fn/J66/9N+6Pz
+   0stenb2PbXL86ra4PiT+ltWHlnDurGAqH4us8R4+86EJ/7rjU7J309dge
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10243"; a="271911047"
+X-IronPort-AV: E=Sophos;i="5.88,330,1635231600"; 
+   d="scan'208";a="271911047"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2022 03:27:41 -0800
+X-IronPort-AV: E=Sophos;i="5.88,330,1635231600"; 
+   d="scan'208";a="522615854"
+Received: from smile.fi.intel.com ([10.237.72.61])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2022 03:27:39 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nEUpR-00Gqbt-1R;
+        Mon, 31 Jan 2022 13:26:37 +0200
+Date:   Mon, 31 Jan 2022 13:26:36 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Gasai Maple <gasaimaple@gmail.com>, linux-gpio@vger.kernel.org,
+        brgl@bgdev.pl
+Subject: Re: A problem with gpios on my sunxi board.
+Message-ID: <YffHbHRJLlF/kJ8F@smile.fi.intel.com>
+References: <CAA=7Zrk43M3Q_cRnRwoJyyBk-C-3ACqvLg6toMou6eobsua7Uw@mail.gmail.com>
+ <20220131005924.GA11753@sol>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220131005924.GA11753@sol>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-If the parent GPIO controller is a sleeping controller (e.g. a GPIO
-controller connected to I2C), getting or setting a GPIO triggers a
-might_sleep() warning.  This happens because the GPIO Aggregator takes
-the can_sleep flag into account only for its internal locking, not for
-calling into the parent GPIO controller.
+On Mon, Jan 31, 2022 at 08:59:24AM +0800, Kent Gibson wrote:
+> On Fri, Jan 28, 2022 at 10:12:13PM +0800, Gasai Maple wrote:
+> > I posted a question on stackoverflow, it's basically about me having
+> > problems operating gpio with libgpiod, and a user advised me to drop a
+> > message, the link is here
+> > https://stackoverflow.com/questions/70863283/libgpiod-tests-fails-on-pcduino3-nano
+> 
+> It would be helpful to restate your question rather than providing the
+> link.  But anyway...
+> 
+> My best guess is that your kernel is built with only v2 of the GPIO CDEV ABI.
+> libgpiod support for v2 is a WIP, and 1.6.3 only supports ABI v1.
+> The CHIP_INFO ioctl is common to both, so will still work.
+> But all the line request ioctls changed so they wont.
+> So libgpiod is probably making ioctl calls that your kernel doesn't
+> support.
 
-Fix this by using the gpiod_[gs]et*_cansleep() APIs when calling into a
-sleeping GPIO controller.
+If this the case, can we add some warning to libgpiod tools to tell user that
+the results may be way wrong because of that?
 
-Reported-by: Mikko Salomäki <ms@datarespons.se>
-Fixes: 828546e24280f721 ("gpio: Add GPIO Aggregator")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-I considered splitting the .[gs]et{_multiple}() callbacks for the
-sleeping vs. nonsleeping cases, but the code size increase (measured on
-ARM) would be substantial:
-  +64 bytes for gpio_fwd_[gs]et_cansleep(),
-  +296 bytes for gpio_fwd_[gs]et_multiple_cansleep().
----
- drivers/gpio/gpio-aggregator.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+> For compatibility with libgpiod v1.6.3, ensure your kernel is built with
+> these options:
+> 
+> CONFIG_GPIO_CDEV=y
+> CONFIG_GPIO_CDEV_V1=y
+> 
+> And the libgpiod tests require that gpio-mockup is available as a loadable
+> module, so
+> 
+> CONFIG_GPIO_MOCKUP=m
+> 
+> If building a new kernel isn't an option for you then you might want to
+> try the development branch of libgpiod[1].
+> Or you could try my Go[2] or Rust[3] libraries that both support both
+> versions of the ABI and provide tools equivalent to libgpiod.
+> 
+> If you still have issues, try using strace to display the ioctl calls and
+> we can debug that.
+> 
+> Cheers,
+> Kent.
+> 
+> [1] https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/log/?h=next/libgpiod-2.0
+> [2] https://github.com/warthog618/gpiod
+> [3] https://github.com/warthog618/gpiod-rs
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 869dc952cf45218b..0cb2664085cf8314 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -278,7 +278,8 @@ static int gpio_fwd_get(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
- 
--	return gpiod_get_value(fwd->descs[offset]);
-+	return chip->can_sleep ? gpiod_get_value_cansleep(fwd->descs[offset])
-+			       : gpiod_get_value(fwd->descs[offset]);
- }
- 
- static int gpio_fwd_get_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
-@@ -293,7 +294,10 @@ static int gpio_fwd_get_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
- 	for_each_set_bit(i, mask, fwd->chip.ngpio)
- 		descs[j++] = fwd->descs[i];
- 
--	error = gpiod_get_array_value(j, descs, NULL, values);
-+	if (fwd->chip.can_sleep)
-+		error = gpiod_get_array_value_cansleep(j, descs, NULL, values);
-+	else
-+		error = gpiod_get_array_value(j, descs, NULL, values);
- 	if (error)
- 		return error;
- 
-@@ -328,7 +332,10 @@ static void gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)
- {
- 	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
- 
--	gpiod_set_value(fwd->descs[offset], value);
-+	if (chip->can_sleep)
-+		gpiod_set_value_cansleep(fwd->descs[offset], value);
-+	else
-+		gpiod_set_value(fwd->descs[offset], value);
- }
- 
- static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
-@@ -343,7 +350,10 @@ static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
- 		descs[j++] = fwd->descs[i];
- 	}
- 
--	gpiod_set_array_value(j, descs, NULL, values);
-+	if (fwd->chip.can_sleep)
-+		gpiod_set_array_value_cansleep(j, descs, NULL, values);
-+	else
-+		gpiod_set_array_value(j, descs, NULL, values);
- }
- 
- static void gpio_fwd_set_multiple_locked(struct gpio_chip *chip,
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
