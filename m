@@ -2,140 +2,176 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B68C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue,  1 Feb 2022 11:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA8CC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  1 Feb 2022 12:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237268AbiBALdg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 1 Feb 2022 06:33:36 -0500
-Received: from mga05.intel.com ([192.55.52.43]:31738 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233560AbiBALdf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 1 Feb 2022 06:33:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643715215; x=1675251215;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=viM1+BDjn4Amnu5+hJIn+lG+9Vz4PcvEr5S1DF3VcXI=;
-  b=ZYz3iOxxLp5aHYwvFJY37SEEp03g0c8jT2+IvVC+UXkllodtcNhvB0jz
-   9IYmiWvtoFR7uPcT8uw3QDEL2bnUuQAF0gRqmx0ibQEqFKLCg5nYeVkqM
-   tPoHOADoLrW+QTmHZyp/rmrpnnD7b08EE/5ej1qGeB+LBLfN4W9FL+fEA
-   Q7RbhOIcWOE21fyZnwBZ4BAS8MDRJR0aLaVzydkZg1inLWXtQpa2F5PIY
-   PKRS/hGniptZDeh/P/0EfYuZLigg8t4ACVyIuShYbVlr2b2wFtleQT82M
-   IarscDNzFhDf59lBFBB9kL8MtHIETFK9sYWjzeclE12tHRlTtLk4Xz2So
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10244"; a="334027348"
-X-IronPort-AV: E=Sophos;i="5.88,333,1635231600"; 
-   d="scan'208";a="334027348"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2022 03:33:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,333,1635231600"; 
-   d="scan'208";a="479661414"
-Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 01 Feb 2022 03:33:33 -0800
-Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nErPg-000TCL-Pe; Tue, 01 Feb 2022 11:33:32 +0000
-Date:   Tue, 1 Feb 2022 19:33:23 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     kbuild-all@lists.01.org, linux-gpio@vger.kernel.org
-Subject: [linusw-gpio:gpio-descriptors-spi 5/11]
- drivers/spi/spi-mpc512x-psc.c:130:15: error: 'struct mpc512x_psc_spi_cs' has
- no member named 'gpiod'
-Message-ID: <202202011916.m45rxna9-lkp@intel.com>
+        id S237554AbiBAMDg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 1 Feb 2022 07:03:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47878 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237485AbiBAMDe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Feb 2022 07:03:34 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63610C061714;
+        Tue,  1 Feb 2022 04:03:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DD113B82D90;
+        Tue,  1 Feb 2022 12:03:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DBFC340EE;
+        Tue,  1 Feb 2022 12:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643717010;
+        bh=G+5KjErBUoA0VuKd1uOcKIKve23dzp6jS3teZfj++fA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DMy53Qwmrcncf5BHGzL250502XwXPLmtxMRd1aahJ0T8SqL5+NxKeHlffqkIkDWMQ
+         1FiqZopp55JVNFSJ2uE5eTmPn0gmnsZC6cHLet/wWitIVNuvJf93Eg+r3Epu7X9LqO
+         M9jDPqCMrLXKCyIDkFC9DTJAsAvF3yRAjMXkddgX2nyaHeQV3mwAXWvIGu/Pl9JuRs
+         QbeD18EcYsFfuFotJEbw+YLhmlhpVGAJB7C4bBlAuOL/4psKBufAW6hEbKrd739Hoz
+         BFrCczw+rT+OP4QJfT0s0pQX94JOuJ2LZ1qkMihp0LPCIW7wGK/MbVYjhvqxUGxaHg
+         sdqxp/NQeK1rw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nErse-004d46-UF; Tue, 01 Feb 2022 12:03:28 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>
+Subject: [PATCH 01/12] genirq: Allow the PM device to originate from irq domain
+Date:   Tue,  1 Feb 2022 12:02:59 +0000
+Message-Id: <20220201120310.878267-2-maz@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220201120310.878267-1-maz@kernel.org>
+References: <20220201120310.878267-1-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, matthias.bgg@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, tglx@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, kernel@esmil.dk
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git gpio-descriptors-spi
-head:   a4efb11e4ae35a2251b5894b8f84fe7e92af4ab8
-commit: bd855ae589a7966dbedbcee6c35292fea901d3cc [5/11] spi: mpc512x-psc: Convert to use GPIO descriptors
-config: powerpc-randconfig-r011-20220130 (https://download.01.org/0day-ci/archive/20220201/202202011916.m45rxna9-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?id=bd855ae589a7966dbedbcee6c35292fea901d3cc
-        git remote add linusw-gpio https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-        git fetch --no-tags linusw-gpio gpio-descriptors-spi
-        git checkout bd855ae589a7966dbedbcee6c35292fea901d3cc
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=powerpc SHELL=/bin/bash drivers/spi/
+As a preparation to moving the reference to the device used for
+runtime power management, add a new 'dev' field to the irqdomain
+structure for that exact purpose.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+The irq_chip_pm_{get,put}() helpers are made aware of the dual
+location via a new private helper.
 
-All errors (new ones prefixed by >>):
+No functional change intended.
 
-   drivers/spi/spi-mpc512x-psc.c: In function 'mpc512x_psc_spi_activate_cs':
->> drivers/spi/spi-mpc512x-psc.c:130:15: error: 'struct mpc512x_psc_spi_cs' has no member named 'gpiod'
-     130 |         if (cs->gpiod) {
-         |               ^~
-   drivers/spi/spi-mpc512x-psc.c: In function 'mpc512x_psc_spi_setup':
-   drivers/spi/spi-mpc512x-psc.c:376:13: warning: unused variable 'ret' [-Wunused-variable]
-     376 |         int ret;
-         |             ^~~
-
-
-vim +130 drivers/spi/spi-mpc512x-psc.c
-
-    90	
-    91	static void mpc512x_psc_spi_activate_cs(struct spi_device *spi)
-    92	{
-    93		struct mpc512x_psc_spi_cs *cs = spi->controller_state;
-    94		struct mpc512x_psc_spi *mps = spi_master_get_devdata(spi->master);
-    95		u32 sicr;
-    96		u32 ccr;
-    97		int speed;
-    98		u16 bclkdiv;
-    99	
-   100		sicr = in_be32(psc_addr(mps, sicr));
-   101	
-   102		/* Set clock phase and polarity */
-   103		if (spi->mode & SPI_CPHA)
-   104			sicr |= 0x00001000;
-   105		else
-   106			sicr &= ~0x00001000;
-   107	
-   108		if (spi->mode & SPI_CPOL)
-   109			sicr |= 0x00002000;
-   110		else
-   111			sicr &= ~0x00002000;
-   112	
-   113		if (spi->mode & SPI_LSB_FIRST)
-   114			sicr |= 0x10000000;
-   115		else
-   116			sicr &= ~0x10000000;
-   117		out_be32(psc_addr(mps, sicr), sicr);
-   118	
-   119		ccr = in_be32(psc_addr(mps, ccr));
-   120		ccr &= 0xFF000000;
-   121		speed = cs->speed_hz;
-   122		if (!speed)
-   123			speed = 1000000;	/* default 1MHz */
-   124		bclkdiv = (mps->mclk_rate / speed) - 1;
-   125	
-   126		ccr |= (((bclkdiv & 0xff) << 16) | (((bclkdiv >> 8) & 0xff) << 8));
-   127		out_be32(psc_addr(mps, ccr), ccr);
-   128		mps->bits_per_word = cs->bits_per_word;
-   129	
- > 130		if (cs->gpiod) {
-   131			if (mps->cs_control)
-   132				/* boardfile override */
-   133				mps->cs_control(spi, (spi->mode & SPI_CS_HIGH) ? 1 : 0);
-   134			else
-   135				/* gpiolib will deal with the inversion */
-   136				gpiod_set_value(spi->cs_gpiod, 1);
-   137		}
-   138	}
-   139	
-
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ include/linux/irqdomain.h | 10 ++++++++++
+ kernel/irq/chip.c         | 23 ++++++++++++++++++-----
+ 2 files changed, 28 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index d476405802e9..be25a33293e5 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -151,6 +151,8 @@ struct irq_domain_chip_generic;
+  * @gc: Pointer to a list of generic chips. There is a helper function for
+  *      setting up one or more generic chips for interrupt controllers
+  *      drivers using the generic chip library which uses this pointer.
++ * @dev: Pointer to a device that the domain represent, and that will be
++ *       used for power management purposes.
+  * @parent: Pointer to parent irq_domain to support hierarchy irq_domains
+  *
+  * Revmap data, used internally by irq_domain
+@@ -171,6 +173,7 @@ struct irq_domain {
+ 	struct fwnode_handle *fwnode;
+ 	enum irq_domain_bus_token bus_token;
+ 	struct irq_domain_chip_generic *gc;
++	struct device *dev;
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+ 	struct irq_domain *parent;
+ #endif
+@@ -226,6 +229,13 @@ static inline struct device_node *irq_domain_get_of_node(struct irq_domain *d)
+ 	return to_of_node(d->fwnode);
+ }
+ 
++static inline void irq_domain_set_pm_device(struct irq_domain *d,
++					    struct device *dev)
++{
++	if (d)
++		d->dev = dev;
++}
++
+ #ifdef CONFIG_IRQ_DOMAIN
+ struct fwnode_handle *__irq_domain_alloc_fwnode(unsigned int type, int id,
+ 						const char *name, phys_addr_t *pa);
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index c09324663088..a2a12cdbe872 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1558,6 +1558,17 @@ int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+ 	return 0;
+ }
+ 
++static struct device *irq_get_parent_device(struct irq_data *data)
++{
++	if (data->chip->parent_device)
++		return data->chip->parent_device;
++
++	if (data->domain)
++		return data->domain->dev;
++
++	return NULL;
++}
++
+ /**
+  * irq_chip_pm_get - Enable power for an IRQ chip
+  * @data:	Pointer to interrupt specific data
+@@ -1567,12 +1578,13 @@ int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+  */
+ int irq_chip_pm_get(struct irq_data *data)
+ {
++	struct device *dev = irq_get_parent_device(data);
+ 	int retval;
+ 
+-	if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device) {
+-		retval = pm_runtime_get_sync(data->chip->parent_device);
++	if (IS_ENABLED(CONFIG_PM) && dev) {
++		retval = pm_runtime_get_sync(dev);
+ 		if (retval < 0) {
+-			pm_runtime_put_noidle(data->chip->parent_device);
++			pm_runtime_put_noidle(dev);
+ 			return retval;
+ 		}
+ 	}
+@@ -1590,10 +1602,11 @@ int irq_chip_pm_get(struct irq_data *data)
+  */
+ int irq_chip_pm_put(struct irq_data *data)
+ {
++	struct device *dev = irq_get_parent_device(data);
+ 	int retval = 0;
+ 
+-	if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device)
+-		retval = pm_runtime_put(data->chip->parent_device);
++	if (IS_ENABLED(CONFIG_PM) && dev)
++		retval = pm_runtime_put(dev);
+ 
+ 	return (retval < 0) ? retval : 0;
+ }
+-- 
+2.30.2
+
