@@ -2,102 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F36C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu,  3 Feb 2022 09:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60B0C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Feb 2022 13:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349653AbiBCJKK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 3 Feb 2022 04:10:10 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58241 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237164AbiBCJKK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Feb 2022 04:10:10 -0500
-Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 2ADA51C0016;
-        Thu,  3 Feb 2022 09:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1643879405;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=N5lFeotoLzTN5kCN0UM+WEZDckbMzPiWVfyj9sOa7LI=;
-        b=ZOIluF2DX5KOz3bnJVXHYCmozea5vI/W4iBTqlpnHvyTR3mIuocbVB3d27hmOysdZ4AbcP
-        4eXM6CEqPyPHn2nyvaHGlzEw5nZXLdsv/1Sx2EbhM0ecF1y38Mxm59FlAOfk4JH+iEjz7g
-        MUJoF+wIiCn3wYzlAgkNEy7xLRish8FnMyPSuCOG2UI+4r/cGjFQzzBn4PD1r2DExf7bEm
-        eyGPnXiiWiAeMALQ0naaIJiwIpgPusky8PZUJnJY9qfJMtUc98lvUJkbBprkha10g8lxTr
-        aI9F7eJ1lWb7xneGSUT7kdgwaf/JJN7x1BjxG0qAwEzlai+1555sGnQjdw3/dA==
-Date:   Thu, 3 Feb 2022 10:10:01 +0100
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v10 3/6] gpio: logicvc: Support compatible with major
- version only
-Message-ID: <Yfub6cdC3eSzKtX+@aptenodytes>
-References: <20220120150024.646714-1-paul.kocialkowski@bootlin.com>
- <20220120150024.646714-4-paul.kocialkowski@bootlin.com>
- <CACRpkdZnw-Tf2eQwO+LZRW4UacR09qWRWct00=XLb4pfa-N3=g@mail.gmail.com>
+        id S235110AbiBCNZL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 3 Feb 2022 08:25:11 -0500
+Received: from mout.gmx.net ([212.227.15.19]:56873 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233666AbiBCNZK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 3 Feb 2022 08:25:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1643894707;
+        bh=LjG7jU7LeCId0a06uLjWHVAGBesuo4KI9BTRCxVfE6U=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=KMfLbh+ulvcsbxsRLK+EEB3J9rwT+ZLGLCqdcoVhn2pwaTaTJ3cZdAbYnCNax5R6n
+         dk4zfZwe5R1ozZncRLNs95zJFwqVJfTF7Sa1h1MauStK1apuXhmlzrVgLpYK1/BW4J
+         wK8IP/kesm29x4aBF+Q6W/lXGXnPjv+TBqJDIVPE=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([185.66.193.41]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1McH5a-1mfBMd0lWG-00cfXP; Thu, 03
+ Feb 2022 14:25:07 +0100
+Date:   Thu, 3 Feb 2022 14:25:05 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Stanley <joel@jms.id.au>
+Subject: Re: [PATCH 0/2] Fixing the compile-test warnings in pinctrl-npcm7xx
+Message-ID: <YfvXsZYYA7+0U9P0@latitude>
+References: <20220202125438.19345-1-j.neuschaefer@gmx.net>
+ <CAHp75VdtTzkXVY21WZje1EkqixOOxxA3M09NfqQanV0XSRiNjQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="H7ecIFcTJbb7eHUD"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vVxDn9wXo9OMNmFd"
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZnw-Tf2eQwO+LZRW4UacR09qWRWct00=XLb4pfa-N3=g@mail.gmail.com>
+In-Reply-To: <CAHp75VdtTzkXVY21WZje1EkqixOOxxA3M09NfqQanV0XSRiNjQ@mail.gmail.com>
+X-Provags-ID: V03:K1:zy6YfY08eWiqEpgvhZoQm2Ze8GMAUThz2WINg4DhcjOc5nJkVSc
+ XPYh7T9MwkBMaHQ+baW/A3cjsS1/jT2jQziMW7XLhlVNbSk+Wsprxz1I4DOdKVU/XU0yvjK
+ TpAWRtoiTk6bP3YRWIrW3f5xmaL6QYzPbCc57/5MMbPm9oblPk+KxCrGIj5jwpQb8969j3t
+ fyWCh1f9A7slSOaJEBBuQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DjLqU1a2xqI=:+9M9LhJ2dQPKXgPYvPnnYU
+ i8zS3MJPD+ym7uk0O0L+7tAcYTTKVMU1v2jHeF8x7kx0EnX226y0BYgy2Sz54O6TBCAaZS9xN
+ HWxH9zUGtjqnUYZW+WuefI97/iKJSK4RK7L72a7OeZ5z/MTflSae6/apZ1JqoaKd7iuDmM+xk
+ gf1f4XKcf5zs8JljSrOHyyWMFCylGDMtmNxG1F9KdDs5YQBfUkD7q0PRkzVrGtpuMsLibDJfF
+ IQ1F+K6Ri623DqIYvlWwrjpCnuB8wrB5pXEAJlP+djCPU/aBi1L+XO1peWT5InhPJyB5EP8mY
+ VMqBKB8rYGDJY8YcKxRuNzSVu/2Zof1RGK3URntpO/q5mCo5XBqIjpftkig95cGc4ceGn0Cc2
+ QvpN3VyfPWMgsoOwg1N2OufI+2okuEs/OaXiMWv/du+Epf8kCAVFHlDMUv5ItXjVFBghdyjUM
+ H0r8FwetT474E0bMSiSLb4nfZyrywVyRjk8cdbrKz6E8JwyGaqTtaCAHmsZyRH6u1Hxe+yuas
+ TWcMPhnUvV/sKrGp2CdX+IhKP7MDgdq9PQHY4s8TFGXjE0id3uHvyN8i8XP3/QcZ49lmjNCqj
+ /AUuzqRKDl6sLNbv8Zwi+kQKbVJD/9HZhjLgbAFf3v4PBCzP+BrRhDOuwgfotmwTRwcYKG9LU
+ QN4UxYtZpDsdZHNUpjPA+3/36yMX2KZj4+spyw81Qkx2hY5K+GARCeHaW3UdFSSZ1h5nEnDmH
+ nPMFUovZSIHX99jXB+xJPlpvzRpSLpyANHHOmRdlQ2Fxwglm1NJECsOjuxiILm/WmlHXT4ww/
+ 822ysV5AUp++pDut0gxBOL7q6uBfsk6XTFBoDJKvK/vnnfa1u8FoaWo0WjzVSMieHeApl9uU4
+ Sdoq4hybjrjtIFuZgZ1ViRpn/mLmASYzEzFzqTm/kKqXHVHUGKNE9NyIlozmFTH0TH3TCnGRm
+ PPnHKWxtYeqjeFbM139HF8WNiz80krCT0Jqiwrs0398yKYyuvUSKie23qETpigEfcyRRDtxWh
+ pDMUsp1y1MMsxPhsdGqFKttVtGmBXkY9/hrWFYWhPpJXo4MsXQaD8a1z2DFPVgn2dY/I6HRCO
+ 5pboFfBiPZ6iOg=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
---H7ecIFcTJbb7eHUD
+--vVxDn9wXo9OMNmFd
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Sun 30 Jan 22, 01:43, Linus Walleij wrote:
-> On Thu, Jan 20, 2022 at 4:00 PM Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
->=20
-> > Support the newly-introduced common compatible for version 3.
+On Wed, Feb 02, 2022 at 04:20:11PM +0200, Andy Shevchenko wrote:
+> On Wed, Feb 2, 2022 at 2:54 PM Jonathan Neusch=C3=A4fer
+> <j.neuschaefer@gmx.net> wrote:
 > >
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > My "Nuvoton WPCM450 pinctrl and GPIO driver" patchset brought two
+> > warnings[1] in the pinctrl-npcm7xx to light. Here's an attempt at fixing
+> > them.
 >=20
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->=20
-> Are there dependencies between the GPIO patches and the rest?
-> Doesn't look like that.
-> Can Bartosz just merge the GPIO stuff to the GPIO tree?
+> With added the respective Fixes tag to each of them
 
-Yeah I think it's independent, no dependencies.
+Good idea.
 
-Paul
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
---=20
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Thanks!
 
---H7ecIFcTJbb7eHUD
+Jonathan
+
+--vVxDn9wXo9OMNmFd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmH7m+kACgkQ3cLmz3+f
-v9FX2Af+MEyBnFYeHifMWfbhY7+pW3K+hTxA0/C2hO9QSoxWVliuCnniIMbx4Zjv
-7IvyG1LHidWJk0jROw3BX3L872C0pdHTxmea38KZHIG1ustZAQMe47i5EpRdFM1S
-QqBqhZuHtW67qijINPtXBx0vbPDTpiHVFa5F70cBNsaEW2/erdP1TT1LjoHIEx58
-B9uLpQHtoI/lDiv5toafFaGv+ut3YeC6ZVw8xT/54mm/tUSM3P2qcTu+jEyZbYl6
-EFW93rTK+q+aONuM80bXZyS1FeMDX535w9tCg7aDQmiUUf7My5Bamt6A0Rr+cQve
-ZY+YSwuQ87Mgv8HrwLj648dmkHPNnQ==
-=1K2m
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmH7138ACgkQCDBEmo7z
+X9vH/Q//f2fVT/6Iiwn6RLsc45O7VUiNAl5MSYq/YqDxhijUR6iiBPMS9gzAp5MO
+ffZmfZ4lHje9815TXVc+k+IUN96DwJFM6oVg0xFbXpIMcspFNKor/Lz85Af+LtC+
+093x3zBZMj+k1vqCwJL7scwsO4hBmLHf3u8yKyJ/Xk58OhZ21DLEq6JCv+iB1WdF
+VJqYG7UChkucF1l5T7muw+mh7eEPQLhuvYvHxkXJgvb+otvItLNl6DMXkg+Cs/j0
+s6gu2LKSlUqGTD5VdOpMvXQQm/czpY35D3lX/Rj4/3b8j1zexmkawlfme0BKMMgQ
++yLhTwbyZE88zBtbLIEhyTuBiWWy9+Z+ugJw2bTYpw21FsJB0KS5sfiZwApNKw8R
+WDbEF39OKQG7eLUQ1cEOekv8cTVX9JEO7LBNIChCPqbZfyFwMVbBmKq845a844RG
+OMIrP3oT9xe3h9zF4YdRsuFgGpZh80DgbYxeEyCrcWyyDlmXVAb+OrzgJ5L8E/Xg
+UHeTD+GSXh5KA3jn4PPtm052YfKtp/LyXyKU0+AqpDJW8MGwhgTDjzgsp9swWtkK
+x5niOb0kN97LRYzHfvWOjnCopbtl4Ya3U/XK5uCZMsBBsSPDUAVo9u/UAXqvwdSX
+Ga37TZoB0XHjs9sMWSyFCC3kzNUgndlEC1+zhJDtGhr/QfsNZr8=
+=fheY
 -----END PGP SIGNATURE-----
 
---H7ecIFcTJbb7eHUD--
+--vVxDn9wXo9OMNmFd--
