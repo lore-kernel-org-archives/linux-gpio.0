@@ -2,86 +2,197 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAD7C433F5
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Feb 2022 16:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457FEC433F5
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Feb 2022 21:59:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234880AbiBEQjs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Feb 2022 11:39:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbiBEQjs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Feb 2022 11:39:48 -0500
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F623C061348
-        for <linux-gpio@vger.kernel.org>; Sat,  5 Feb 2022 08:39:47 -0800 (PST)
-Received: by mail-yb1-xb2c.google.com with SMTP id 192so1821103ybd.10
-        for <linux-gpio@vger.kernel.org>; Sat, 05 Feb 2022 08:39:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7F+8USHFDE8IayAm+TB2xQEiUJldw7h6gDGNLYqTghg=;
-        b=INqO7QDQEdOAV5NoH9Y7AUOI2g2l/U2lGjIMvznW3n27VeK55yayt20t7PlVMrFhyK
-         bklzh35WXNqbTyrLEmtI7XFQSMiCLL7nqoJDedC5VCZLPtwe/KVdn8RbF70HkfRkB5c0
-         IDvJ0Q4NHYnqmC/6eip3l9Qb/odjZp3i5lOB5OxrnkEUZnp2x3zGbOw3Dobv1GAYqB9G
-         9fCpc6SAKByvug8bkSA3jBVLyHZDG79nwC7vTEFGNNIHYs+RW+X5NyUq5d39swBfdo2h
-         gG4TqD6rwEo53qmi0e7vo5GhZ3r3zm4w0gEwYLhgtrXpLyuPdsnegkNH5q+G0TpzIbpS
-         7imQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7F+8USHFDE8IayAm+TB2xQEiUJldw7h6gDGNLYqTghg=;
-        b=Gmptwg9dVlYerTznAXpDtbsocdpFMWRqHAlArQL6M5Zr8mfZtCAWeFTC4H863oIiY6
-         YwgyNWGdxY/a3i1NiWv2NiYl9dFtoflNNyBJz0jktA7QyQ6+QmutUqSJHzCkZLnlKAUL
-         0GHqmFEy+tnjTNLag0zUp5zxyCGoX6/KeAN83qnusbPai8AvhxLvPbKMMcD3EhjtV1Zo
-         mv6dvJQPHvBEpCHifVEi7Mwr5v4/87y6QwHX35VFqzJoVgWmabMPjv8FA1nOivBf+UBI
-         urvTwHmjmFoEVARhvmwfz9MMub4uvZIpzlo3oW8BZ0KEP0rCN4k2PX4ngQGcqoy7CNKw
-         WneQ==
-X-Gm-Message-State: AOAM531w+ug/Pppu+4GsZkzNMhyjGDN7TyoxxXKXKyKBqEtZ7bn3wc9J
-        p8qtguCX+9XB5Oz2w3N6LP4uehW8Aj5VDy+BNWLN2Q==
-X-Google-Smtp-Source: ABdhPJxatjV1lGXgcy/ZJt/lFciDDNKH16UbIV+scTjMNBRxuQkcfRgr07sLhM2ygYwNysEVT+WIb3RNxJMTLUUlyAA=
-X-Received: by 2002:a25:a2c6:: with SMTP id c6mr3855899ybn.322.1644079186562;
- Sat, 05 Feb 2022 08:39:46 -0800 (PST)
+        id S1378863AbiBEV7t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Feb 2022 16:59:49 -0500
+Received: from mailserv1.kapsi.fi ([91.232.154.157]:52990 "EHLO
+        mailserv1.kapsi.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351002AbiBEV7t (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Feb 2022 16:59:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=ext.kapsi.fi; s=20161220; h=Subject:Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6Z08zw8GPYqaS2TD7Ieq2MqRlSnLB18cTeBXjvmX1cE=; b=DbGUbspCHFW47QvBKZEmj/Zaeq
+        UjgDxbo6xF3Ii6w00HSM47B/QBiI4132+3Dlg2bagsqY9OGdfZAa7u8z7GIJSMoJC+sM0h8VBe8n3
+        PvSlm5H6r76UQMzXfNFQS8B+H9f2RLFii6KyRARNUpLEZ+1NsS5m96ZEJGjsehsnQEUvL9rvLAYQL
+        UWqDhCQOrcglw1mF2CTb8iB2DOwQzDRU5th66OdRE2yCUenFEge4g7dY55uJxtx8zV6AT4T89XmBX
+        DtZkRaGzkB4ld2Hu9oaX5vNT43dadKFDPuIzOy9dGRRKq3ZuSXtn6uDnIZBHNB/WMvAbjynEeBuGk
+        0YatFeeg==;
+Received: from 246-30-196-88.dyn.estpak.ee ([88.196.30.246]:49929 helo=localhost)
+        by mailserv1.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <maukka@ext.kapsi.fi>)
+        id 1nGT5p-0006cQ-9m; Sat, 05 Feb 2022 23:59:42 +0200
+Received: by localhost (sSMTP sendmail emulation); Sat, 05 Feb 2022 23:59:40 +0200
+From:   Mauri Sandberg <maukka@ext.kapsi.fi>
+To:     bgolaszewski@baylibre.com, brgl@bgdev.pl
+Cc:     andy.shevchenko@gmail.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drew@beagleboard.org,
+        Mauri Sandberg <maukka@ext.kapsi.fi>,
+        Rob Herring <robh@kernel.org>
+Date:   Sat,  5 Feb 2022 23:59:17 +0200
+Message-Id: <20220205215918.8924-2-maukka@ext.kapsi.fi>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220205215918.8924-1-maukka@ext.kapsi.fi>
+References: <20210325122832.119147-1-sandberg@mailfence.com>
+ <20220205215918.8924-1-maukka@ext.kapsi.fi>
 MIME-Version: 1.0
-References: <20220204130142.21727-1-Niklas.Cassel@wdc.com>
-In-Reply-To: <20220204130142.21727-1-Niklas.Cassel@wdc.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 5 Feb 2022 17:39:35 +0100
-Message-ID: <CACRpkdZX5Sd-bp1n5zmYv7biPuBoNMGW2+OQ9qUi3PKNeG-R=A@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sifive: use the correct register to read output values
-To:     Niklas Cassel <niklas.cassel@wdc.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 88.196.30.246
+X-SA-Exim-Mail-From: maukka@ext.kapsi.fi
+Subject: [RESEND v8 1/2] dt-bindings: gpio-cascade: add documentation
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on mailserv1.kapsi.fi)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Feb 4, 2022 at 2:02 PM Niklas Cassel <Niklas.Cassel@wdc.com> wrote:
+Add documentation for a general GPIO cascade. It allows building
+one-to-many cascades of GPIO lines using multiplexer to choose
+the cascaded line.
 
-> From: Niklas Cassel <niklas.cassel@wdc.com>
-
-Hi Niklas, long time no C!
-
-> Setting the output of a GPIO to 1 using gpiod_set_value(), followed by
-> reading the same GPIO using gpiod_get_value(), will currently yield an
-> incorrect result.
->
-> This is because the SiFive GPIO device stores the output values in reg_set,
-> not reg_dat.
->
-> Supply the flag BGPIOF_READ_OUTPUT_REG_SET to bgpio_init() so that the
-> generic driver reads the correct register.
->
-> Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
-
-Looks like a straight-forward fix so:
+Signed-off-by: Mauri Sandberg <maukka@ext.kapsi.fi>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+v7 -> v8:
+ - added Reviewed-by tag by Linus
+v6 -> v7:
+ - no changes
+v5 -> v6:
+ - added Reviewed-by tag by Rob
+v4 -> v5:
+ - renamed gpio-mux-input -> gpio-cascade
+ - changed vague term 'pin' to 'upstream line'
+ - added more verbose description for the module
+ - added missing 'mux-controls' entry
+ - dropped Tested-by and Reviewed-by due to changes in bindings
+v3 -> v4:
+ - Changed author email
+ - Included Tested-by and Reviewed-by from Drew
+v2 -> v3: added a complete example on dual 4-way multiplexer
+v1 -> v2: added a little bit more text in the binding documenation
+---
+ .../bindings/gpio/gpio-cascade.yaml           | 103 ++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cascade.yaml
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-cascade.yaml b/Documentation/devicetree/bindings/gpio/gpio-cascade.yaml
+new file mode 100644
+index 000000000000..46248f8e2ba5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-cascade.yaml
+@@ -0,0 +1,103 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/gpio-cascade.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Generic GPIO cascade
++
++maintainers:
++  - Mauri Sandberg <maukka@ext.kapsi.fi>
++
++description: |
++  A generic GPIO cascade
++
++  This hardware construction cascades (multiplexes) several GPIO lines from
++  one-to-many using a software controlled multiplexer. The most common use
++  case is probably reading several inputs by switching the multiplexer over
++  several input lines, which in practice works well since input lines has
++  high impedance.
++
++  Constructions with multiplexed outputs are also possible using open drain
++  electronics.
++
++  The number of cascaded GPIO lines is limited by the technology used to
++  switch over the cascaded lines. There are readily available dual/triple
++  4-to-1 multiplexers, for example, and others.
++
++  Illustration (pins used to drive the multiplexer are omitted for clarity)
++
++                 /|---- Cascaded GPIO line 0
++  Upstream      | |---- Cascaded GPIO line 1
++  GPIO line ----+ | .
++                | | .
++                 \|---- Cascaded GPIO line n
++
++properties:
++  compatible:
++    enum:
++      - gpio-cascade
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  mux-controls:
++    minItems: 1
++    maxItems: 1
++    description: |
++      The mux controller that will be driving the GPIO cascade.
++
++  upstream-gpios:
++    description: |
++      The GPIO line used as the upstream line will convey the status to/from
++      cascaded GPIO lines. In an input mode, by using this line, it is
++      possible to read the status from selected cascaded GPIO line.
++
++      In an output mode the status of the upstream GPIO will be conveyed to
++      the selected cascaded GPIO line.
++
++required:
++  - compatible
++  - gpio-controller
++  - "#gpio-cells"
++  - mux-controls
++  - upstream-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    mux: mux-controller {
++        compatible = "gpio-mux";
++        #mux-control-cells = <0>;
++
++        mux-gpios = <&gpio 9 GPIO_ACTIVE_HIGH>,
++                    <&gpio 11 GPIO_ACTIVE_HIGH>;
++    };
++
++    gpio2: key-mux1 {
++        compatible = "gpio-cascade";
++        mux-controls = <&mux>;
++
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        // GPIOs used by this node, upstream pin
++        upstream-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
++    };
++
++    gpio3: key-mux2 {
++        compatible = "gpio-cascade";
++        mux-controls = <&mux>;
++
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        // GPIOs used by this node, upstream pin
++        upstream-gpios = <&gpio 14 GPIO_ACTIVE_HIGH>;
++    };
++
++...
+-- 
+2.25.1
+
