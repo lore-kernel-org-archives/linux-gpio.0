@@ -2,47 +2,47 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081FEC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A43C43219
 	for <linux-gpio@archiver.kernel.org>; Mon,  7 Feb 2022 16:41:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352719AbiBGQiZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Feb 2022 11:38:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60368 "EHLO
+        id S1353999AbiBGQi1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Feb 2022 11:38:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344497AbiBGQY5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Feb 2022 11:24:57 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E9EFC0401CF;
-        Mon,  7 Feb 2022 08:24:56 -0800 (PST)
+        with ESMTP id S1382016AbiBGQZi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Feb 2022 11:25:38 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC85C0401CF;
+        Mon,  7 Feb 2022 08:25:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1644251097; x=1675787097;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ad3vvcjmo72FEXpL/WUH4Bm8CDxa6BTmpj9AaGDiqa0=;
-  b=J3iSpKVW7DzxiDw+IQz2aqqgPsfcuW4VYFzgWYfIOrdR7FyrLzl2RC23
-   YMIF1gsZ1+V996NUgaOO4Y2YAgO4mOVRFl9kqH3pi30yFoz9nvQPNp/9C
-   PqkMLSbitwBqQWLk0outJR/TOqB9IQB5pcvg1ySTqjaM8nIV7Y3X4SZdJ
-   wvNBy48/9ikVgwnXxtoyediYg/7CuWW54yNxL+XQb9t6WYDoXTsAEJykt
-   CDIAMEs3StiyfnVPfLx4dv6LAJBz66iU4taiLqjeqHYQNVRtze+EDNIYS
-   dg+v2WmGKPyE0i5W6Y5/Vp6Cyz3Pl3ZDkfKGvAtPdgc6YWyIr4aubW+rt
-   g==;
-IronPort-SDR: DLrFGEXvXjnqXj5ikuFvRRPbczwUI/BBckPswC9ZTFj2GxNwih7v1QF7aqa3RLY5RSvRhs7u/s
- WLEY2PihOpmyPslvWW5+Z1dnlVz5w38I8WQ7AKxQGkm3gG9XKYTzbPsaCQ607t6+QbOmk4MEpR
- N76iwFYhc5Z1U4gUeboc/ODDfnqhUyy6JYPBY2cDuec4/9dZNC0Z5UCAT+mkWcVl3izsaapdyb
- v6obvMg9sAujHMR8WDc3x4Im4on/gFq93kRjeZOjQ9PCjf6OrdLBOhPRRJBJbK93Gb4qG3/3B9
- 2Crg6uEJ2MJ2AvfHLFwtFsCg
+  t=1644251137; x=1675787137;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=CuM7K8ToBJ7RKoIFBCQywAvEKq4J6OlP+754BZRgkAU=;
+  b=oItA286EQe7Jkk9QHqdsZfMVlBsFKEjA4CVSHFbFJSk938EKWirt/nUM
+   D4aZ/37drx6CA3xVLCdEMLmc5Sa7UM7Z8cunYuu5qnLtjC1Qok5J83tEu
+   9Nm8hrHbqGJoo0Y+Mucn5htfnvCCmHd6cfQ/omdY1VwOMmwr83OSDEz9+
+   E/Z6SD27XlyrbLMivplLnmOFZyPN8+0/vwEL3+lIVo3HQnATYwl1WnsJ9
+   Xlt9vOBAq0yyY+/HrYS3xpKtjpHfcbmWgDJBz5g01nsAVg4IYUD3iQ8bp
+   VLLbgFxMEfMMcBqk5EINch1QrLH7Q7JJPHda9JNOc4zMRjBW2oiiHYZH1
+   A==;
+IronPort-SDR: FarXgVfzZUWJWMuIpZC4lhp+B4sX0634GZiuR7Nh1iyvdXMCMfoH2k/hhIdCFf/PKwAIqJCmKE
+ Fzfk3ZfTKAh5AaryfTKCT+JEQRohJj5Hn71XlkDzQO3VKsHSBnX+zrBiobNW6UEvRgXDE3b27b
+ UtbbyT84FGGREdorJBTyI44rkEp0loGk0Ha4SJYd7zJNMgmzsda5jtIDPr2OBSm3gQZvAJCcg9
+ t0OTqfMrg67LPo5qDhFufz6d7852DGGYYcTcrnECorkV/AlAjC/iwmV6fQL/qRuBigngFtZbMB
+ MzwsqhKvLjWRyAFq6jEidBIo
 X-IronPort-AV: E=Sophos;i="5.88,350,1635231600"; 
-   d="scan'208";a="152200109"
+   d="scan'208";a="84917904"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Feb 2022 09:23:52 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Feb 2022 09:24:32 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Mon, 7 Feb 2022 09:23:50 -0700
+ 15.1.2375.17; Mon, 7 Feb 2022 09:24:32 -0700
 Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
  (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Mon, 7 Feb 2022 09:23:46 -0700
+ Transport; Mon, 7 Feb 2022 09:24:27 -0700
 From:   <conor.dooley@microchip.com>
 To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh+dt@kernel.org>,
         <jassisinghbrar@gmail.com>, <thierry.reding@gmail.com>,
@@ -57,11 +57,13 @@ To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh+dt@kernel.org>,
 CC:     <bin.meng@windriver.com>, <heiko@sntech.de>,
         <lewis.hanly@microchip.com>, <conor.dooley@microchip.com>,
         <daire.mcnamara@microchip.com>, <ivan.griffin@microchip.com>,
-        <atishp@rivosinc.com>
-Subject: [PATCH v6 00/12] Update the Icicle Kit device tree
-Date:   Mon, 7 Feb 2022 16:26:26 +0000
-Message-ID: <20220207162637.1658677-1-conor.dooley@microchip.com>
+        <atishp@rivosinc.com>, Palmer Dabbelt <palmer@rivosinc.com>
+Subject: [PATCH v6 08/12] riscv: dts: microchip: add fpga fabric section to icicle kit
+Date:   Mon, 7 Feb 2022 16:26:34 +0000
+Message-ID: <20220207162637.1658677-9-conor.dooley@microchip.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220207162637.1658677-1-conor.dooley@microchip.com>
+References: <20220207162637.1658677-1-conor.dooley@microchip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -71,99 +73,85 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-This series updates the Microchip Icicle Kit device tree by adding a
-host of peripherals, and some updates to the memory map. In addition,
-the device tree has been split into a third part, which contains "soft"
-peripherals that are in the fpga fabric.
+Split the device tree for the Microchip MPFS into two sections by adding
+microchip-mpfs-fabric.dtsi, which contains peripherals contained in the
+FPGA fabric.
 
-Several of the entries are for peripherals that have not get had their
-drivers upstreamed, so in those cases the dt bindings are included where
-appropriate in order to avoid the many "DT compatible string <x> appears
-un-documented" errors.
-
-Depends on mpfs clock driver binding (on clk/next) to provide 
-dt-bindings/clock/microchip,mpfs-clock.h for the device tree
-and on the other changes to the icicle/mpfs device tree from geert
-that are already in linux/riscv/for-next.
-
-Additionally, the interrupt-extended warnings on the plic/clint are 
-cleared by [1] & [2].
-
-[1] https://lore.kernel.org/linux-riscv/cover.1639744468.git.geert@linux-m68k.org/
-[2] https://lore.kernel.org/linux-riscv/cover.1639744106.git.geert@linux-m68k.org/
-
-Changes from v5:
-- reworded the descriptions in the pwm binding to (hopefully) add
-  clarity
-- added -mask to the custom properties and made them 32 bit
-- renamed the i2c binding to corei2c, since it is not mpfs specific
-- removed the child nodes of the system controller in example/dts &
-  will create them in the driver.
-  @Rob, I assume keeping them documented is the correct thing to do?
-- removed the dependancy on the clock binding from the examples
-- reformatted rtc interrupts as per Rob's suggestion
-
-Changes from v4:
-- dont include icicle_kit_defconfig, accidentally added in v3
-- drop prescaler from mpfs-rtc & calculate the value instead
-- use corei2c as a fallback device for mpfs-i2c
-- drop spi dt-binding (on spi-next)
-  commit 2da187304e556ac59cf2dacb323cc78ded988169
-- drop usb dt-binding (on usb-next)
-
-Changes from v3:
-- drop "mailbox: change mailbox-mpfs compatible string", already upstream:
-  commit f10b1fc0161cd99e ("mailbox: change mailbox-mpfs compatible string")
-- fix copy paste error in microchip,mpfs-mailbox dt-binding
-- remove whitespace in syscontroller dt entry
-
-Changes from v2:
-- dropped plic int header & corresponding defines in dts{,i}
-- use $ref to drmode in mpfs-musb binding
-- split changes to dts{,i} again: functional changes to existing
-  elements now are in a new patch
-- drop num-cs property in mpfs-spi binding
-- dont make the system controller a simple-mfd
-- move the separate bindings for rng/generic system services into the 
-  system controller binding
-- added an instance corei2c as i2c2 in the fabric dtsi
-- add version numbering to corepwm and corei2c compat string (-rtl-vN)
-
-Conor Dooley (12):
-  dt-bindings: soc/microchip: update syscontroller compatibles
-  dt-bindings: soc/microchip: add services as sub devs of sys ctrlr
-  dt-bindings: i2c: add bindings for microchip mpfs i2c
-  dt-bindings: rtc: add bindings for microchip mpfs rtc
-  dt-bindings: gpio: add bindings for microchip mpfs gpio
-  dt-bindings: pwm: add microchip corepwm binding
-  riscv: dts: microchip: use clk defines for icicle kit
-  riscv: dts: microchip: add fpga fabric section to icicle kit
-  riscv: dts: microchip: refactor icicle kit device tree
-  riscv: dts: microchip: update peripherals in icicle kit device tree
-  riscv: dts: microchip: add new peripherals to icicle kit device tree
-  MAINTAINERS: update riscv/microchip entry
-
- .../bindings/gpio/microchip,mpfs-gpio.yaml    |  79 ++++++
- .../bindings/i2c/microchip,corei2c.yaml       |  56 ++++
- ...ilbox.yaml => microchip,mpfs-mailbox.yaml} |   6 +-
- .../bindings/pwm/microchip,corepwm.yaml       |  79 ++++++
- .../bindings/rtc/microchip,mfps-rtc.yaml      |  58 ++++
- .../microchip,mpfs-sys-controller.yaml        |  66 +++++
- ...icrochip,polarfire-soc-sys-controller.yaml |  35 ---
- MAINTAINERS                                   |   2 +
- .../dts/microchip/microchip-mpfs-fabric.dtsi  |  25 ++
- .../microchip/microchip-mpfs-icicle-kit.dts   | 115 ++++++--
- .../boot/dts/microchip/microchip-mpfs.dtsi    | 254 ++++++++++++++----
- 11 files changed, 671 insertions(+), 104 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
- create mode 100644 Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
- rename Documentation/devicetree/bindings/mailbox/{microchip,polarfire-soc-mailbox.yaml => microchip,mpfs-mailbox.yaml} (82%)
- create mode 100644 Documentation/devicetree/bindings/pwm/microchip,corepwm.yaml
- create mode 100644 Documentation/devicetree/bindings/rtc/microchip,mfps-rtc.yaml
- create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
- delete mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,polarfire-soc-sys-controller.yaml
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ .../dts/microchip/microchip-mpfs-fabric.dtsi  | 25 +++++++++++++++++++
+ .../microchip/microchip-mpfs-icicle-kit.dts   |  8 ++++++
+ .../boot/dts/microchip/microchip-mpfs.dtsi    |  1 +
+ 3 files changed, 34 insertions(+)
  create mode 100644 arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
 
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
+new file mode 100644
+index 000000000000..854320e17b28
+--- /dev/null
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/* Copyright (c) 2020-2021 Microchip Technology Inc */
++
++/ {
++	core_pwm0: pwm@41000000 {
++		compatible = "microchip,corepwm-rtl-v4";
++		reg = <0x0 0x41000000 0x0 0xF0>;
++		microchip,sync-update-mask = /bits/ 32 <0>;
++		#pwm-cells = <2>;
++		clocks = <&clkcfg CLK_FIC3>;
++		status = "disabled";
++	};
++
++	i2c2: i2c@44000000 {
++		compatible = "microchip,corei2c-rtl-v7";
++		reg = <0x0 0x44000000 0x0 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&clkcfg CLK_FIC3>;
++		interrupt-parent = <&plic>;
++		interrupts = <122>;
++		clock-frequency = <100000>;
++		status = "disabled";
++	};
++};
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+index 6d19ba196f12..ab803f71626a 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+@@ -68,6 +68,10 @@ &mmc {
+ 	sd-uhs-sdr104;
+ };
+ 
++&i2c2 {
++	status = "okay";
++};
++
+ &emac0 {
+ 	phy-mode = "sgmii";
+ 	phy-handle = <&phy0>;
+@@ -86,3 +90,7 @@ phy1: ethernet-phy@9 {
+ 		ti,fifo-depth = <0x01>;
+ 	};
+ };
++
++&core_pwm0 {
++	status = "okay";
++};
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+index 717e39b30a15..c7d73756c9b8 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+@@ -3,6 +3,7 @@
+ 
+ /dts-v1/;
+ #include "dt-bindings/clock/microchip,mpfs-clock.h"
++#include "microchip-mpfs-fabric.dtsi"
+ 
+ / {
+ 	#address-cells = <2>;
 -- 
 2.35.1
 
