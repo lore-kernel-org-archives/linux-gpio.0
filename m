@@ -2,186 +2,410 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8696C43219
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Feb 2022 20:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2218EC433EF
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Feb 2022 22:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233687AbiBGUr5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Feb 2022 15:47:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53424 "EHLO
+        id S242109AbiBGWzm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Feb 2022 17:55:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241734AbiBGUcw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Feb 2022 15:32:52 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A23DAC0401E2
-        for <linux-gpio@vger.kernel.org>; Mon,  7 Feb 2022 12:32:48 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id e3so12977745wra.0
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Feb 2022 12:32:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=conchuod-ie.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=lInl3v4291y96qRj5SmrtyZWxmX1JQwpyT8w4NZCIwE=;
-        b=pZIbLbD2z5lCj7TnELtOL5EzoxwY+lBVxsw2GZfWwQfoK6YNhj3asWV4g24WsrMUDE
-         Pc+FJHzk1Vwb1BcSpFfE0vnjX6h1xVtFhGSNFLyr3y/cTOKmdEePr+06n3Mz+WC3/mou
-         J0mx4mjkkjxyu+eFle3FufFVo+vGPTRZhg5T5jQJ48QVvrT3A0n7LcYlyg2H/OCEMVaY
-         BHT2Ifq4ujfMhMkTM0aqvNDcquf+yoJ9VFmdwFRw2RZHH8edWFGZNs69BbhMWPjcKkVn
-         c9XLjQf3kynVd22B2/eWeltNLSu9E35+DnSu7D8cQx+vXVd+jI/IW0YoL7wlOaXz//Kt
-         lNYg==
+        with ESMTP id S245408AbiBGWzl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Feb 2022 17:55:41 -0500
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F2DBC061355;
+        Mon,  7 Feb 2022 14:55:40 -0800 (PST)
+Received: by mail-oi1-f172.google.com with SMTP id r27so18722716oiw.4;
+        Mon, 07 Feb 2022 14:55:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=lInl3v4291y96qRj5SmrtyZWxmX1JQwpyT8w4NZCIwE=;
-        b=syCZb1bkEw3AkzfFYxZe19jecgTCxe0PEeMxfdtbJjnYCDd5TMesnFuQtYFI7kwPJL
-         quiIigvr1rnOhF4lEDRrz18Spoo2co+jCw/ztpQtT8CcG1RUsxzA8ONlBqAgABPVvB/G
-         8ylK837PfwqJgpwc7TVxNwfqtAZJ4T2Mrfu6YDfcvNqCIftMkkjIHC700NgfWZ5BNK4e
-         yTiZvWU1rclyV+ZujE27BZRQWdqEd1w+KpfynR+ANycX5VvLpnlY8OH1tAL87pw+gxi0
-         JPPNensCVZddm4GBLGUExg/ZScpnaXmNLEp/SmB9Rfeliz3WBIHLNpIWUTd70MShzzK4
-         AVaQ==
-X-Gm-Message-State: AOAM533V0FF7El6OEvm+bYO7bY9Z/r8h/PAd8jZSiCpl4OyaGxTcQ5gL
-        Mtm7OcYtcFoRRWA8NpY1VdRVBQ==
-X-Google-Smtp-Source: ABdhPJxli8C56VbUUZpTG/k9gYuJnfVphrd7Cnfcv2luFPINoxa1eE5dK6Blkudp0C9VSCUYzi1P8w==
-X-Received: by 2002:a5d:518f:: with SMTP id k15mr898486wrv.249.1644265966959;
-        Mon, 07 Feb 2022 12:32:46 -0800 (PST)
-Received: from [192.168.2.116] ([109.78.72.167])
-        by smtp.gmail.com with ESMTPSA id t4sm10594105wro.71.2022.02.07.12.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 12:32:46 -0800 (PST)
-Message-ID: <1cce8adf-1f49-b908-ee6e-f7c2ff6b5218@conchuod.ie>
-Date:   Mon, 7 Feb 2022 20:32:44 +0000
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=h8XulnB1OZQoBz1QBOpPQ9Fy/2LVbeDLrqrsglq3xS0=;
+        b=ZrYxO1yh0rmOf57/4WVpvghSk6mXv05iJKKNzdspdg3/lJi4YrfKq1+1VEcZJLY5L5
+         iC/rjjUNG6jmlceW5+LvOmoGhsuHtx8bIMhjms6zbXu953F9y3jLVMicTDiBsA5zduoD
+         eGvAH1iyRSqWHR/2PGvDl25tzwY/if7wYMbdSG7/aGZQWIhvDojrz6zvtMdARAZfnzbl
+         j48eUHghaHlSQ/zbVRdt/10Z3igtrcM6s12+Onq6OeSOIxeMgOaC8+lxrVMUsgPL085n
+         1lUE38RvPh+UVI8azwQBWSfgUIlg1gcEnV7Ilaiq/8LdnyFM5VdqRCOPFnBKWqaC7I71
+         Su+g==
+X-Gm-Message-State: AOAM530H9iYUcbX5LJZ+OvvdIcVsdqa+WtzX6neh5nEVRbAFs6tRA6fz
+        InP8ifYW6Ajz1DcJqRrz/g==
+X-Google-Smtp-Source: ABdhPJyUMW+tLM4XaFH3Dnx3i/GUYS4NETkbKHzBgNbeWkhn3BoplPCFmwT/ZnsYvOC+GVLeqZVVjw==
+X-Received: by 2002:a54:4490:: with SMTP id v16mr539935oiv.157.1644274539190;
+        Mon, 07 Feb 2022 14:55:39 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id v10sm4460165oto.53.2022.02.07.14.55.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Feb 2022 14:55:38 -0800 (PST)
+Received: (nullmailer pid 1081159 invoked by uid 1000);
+        Mon, 07 Feb 2022 22:55:37 -0000
+Date:   Mon, 7 Feb 2022 16:55:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Guodong Liu <guodong.liu@mediatek.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: mt8186: add pinctrl file
+ and binding document
+Message-ID: <YgGjaa0lXBCTu7Hm@robh.at.kernel.org>
+References: <20220121060120.10683-1-guodong.liu@mediatek.com>
+ <20220121060120.10683-2-guodong.liu@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH v6 02/12] dt-bindings: soc/microchip: add services as sub
- devs of sys ctrlr
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>, conor.dooley@microchip.com
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, jassisinghbrar@gmail.com,
-        thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de,
-        lee.jones@linaro.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, geert@linux-m68k.org,
-        krzysztof.kozlowski@canonical.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        bin.meng@windriver.com, heiko@sntech.de, lewis.hanly@microchip.com,
-        daire.mcnamara@microchip.com, ivan.griffin@microchip.com,
-        atishp@rivosinc.com, Palmer Dabbelt <palmer@rivosinc.com>
-References: <20220207162637.1658677-1-conor.dooley@microchip.com>
- <20220207162637.1658677-3-conor.dooley@microchip.com>
- <YgF8G/Eed03xn9iI@robh.at.kernel.org>
-From:   Conor Dooley <mail@conchuod.ie>
-In-Reply-To: <YgF8G/Eed03xn9iI@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220121060120.10683-2-guodong.liu@mediatek.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 07/02/2022 20:07, Rob Herring wrote:
-> On Mon, Feb 07, 2022 at 04:26:28PM +0000, conor.dooley@microchip.com wrote:
->> From: Conor Dooley <conor.dooley@microchip.com>
->>
->> Document mpfs-rng and mpfs-generic-service as subdevices of the system
->> controller.
->>
->> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
->> ---
->>   .../microchip,mpfs-sys-controller.yaml        | 35 +++++++++++++++++--
->>   1 file changed, 33 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
->> index f699772fedf3..b02c8bd72605 100644
->> --- a/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
->> +++ b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
->> @@ -13,7 +13,6 @@ description: |
->>     The PolarFire SoC system controller is communicated with via a mailbox.
->>     This document describes the bindings for the client portion of that mailbox.
->>   
->> -
->>   properties:
->>     mboxes:
->>       maxItems: 1
->> @@ -21,6 +20,38 @@ properties:
->>     compatible:
->>       const: microchip,mpfs-sys-controller
->>   
->> +  rng:
->> +    type: object
->> +
->> +    description: |
->> +      The hardware random number generator on the Polarfire SoC is
->> +      accessed via the mailbox interface provided by the system controller
->> +
->> +    properties:
->> +      compatible:
->> +        const: microchip,mpfs-rng
->> +
->> +    required:
->> +      - compatible
->> +
->> +  sysserv:
->> +    type: object
->> +
->> +    description: |
->> +      The PolarFire SoC system controller is communicated with via a mailbox.
->> +      This binding represents several of the functions provided by the system
->> +      controller which do not belong in a specific subsystem, such as reading
->> +      the fpga device certificate, all of which follow the same format:
->> +        - a command + optional payload sent to the sys controller
->> +        - a status + a payload returned to Linux
->> +
->> +    properties:
->> +      compatible:
->> +        const: microchip,mpfs-generic-service
->> +
->> +    required:
->> +      - compatible
->> +
->>   required:
->>     - compatible
->>     - mboxes
->> @@ -29,7 +60,7 @@ additionalProperties: false
->>   
->>   examples:
->>     - |
->> -    syscontroller: syscontroller {
->> +    syscontroller {
->>         compatible = "microchip,mpfs-sys-controller";
->>         mboxes = <&mbox 0>;
+On Fri, Jan 21, 2022 at 02:01:19PM +0800, Guodong Liu wrote:
+> 1. This patch adds pinctrl file for mt8186.
+> 2. This patch adds mt8186 compatible node in binding document.
 > 
-> Removing the child nodes in the example doesn't address my comment. You
-> still have them in the schema. IOW, this patch should be dropped unless
-> you have reasons for child nodes other than I want to partition the OS
-> drivers a certain way and creating DT nodes instantiates them for me.
+> Signed-off-by: Guodong Liu <guodong.liu@mediatek.com>
+> ---
+>  .../bindings/pinctrl/pinctrl-mt8186.yaml      |  303 +++++
+>  include/dt-bindings/pinctrl/mt8186-pinfunc.h  | 1174 +++++++++++++++++
+>  2 files changed, 1477 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8186.yaml
+>  create mode 100644 include/dt-bindings/pinctrl/mt8186-pinfunc.h
 > 
-Obviously dropping this patch doesn't prevent me from instantiating the 
-sub devices since it's not going to be done via DT anymore. Would you 
-rather I replaced this patch with one adding a link to the online 
-documentation [0] for them in the main description? I had left them in 
-as I wasn't sure if you wanted the descriptions dropped entirely or not.
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8186.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8186.yaml
+> new file mode 100644
+> index 000000000000..0a1154faca29
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8186.yaml
+> @@ -0,0 +1,303 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/pinctrl-mt8186.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mediatek MT8186 Pin Controller
+> +
+> +maintainers:
+> +  - Sean Wang <sean.wang@mediatek.com>
+> +
+> +description: |
+> +  The Mediatek's Pin controller is used to control SoC pins.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8186-pinctrl
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    description: |
+> +      Number of cells in GPIO specifier. Since the generic GPIO binding is used,
+> +      the amount of cells must be specified as 2. See the below
+> +      mentioned gpio binding representation for description of particular cells.
+> +    const: 2
+> +
+> +  gpio-ranges:
+> +    description: gpio valid number range.
+> +    maxItems: 1
+> +
+> +  reg:
+> +    description: |
+> +      Physical address base for gpio base registers. There are 8 GPIO
+> +      physical address base in mt8186.
+> +    maxItems: 8
 
-And yes, partition of the services is why I had originally gone for 
-different drivers for the different aspects. Some of the services, like 
-the RNG or reprogramming the FPGA from Linux have obvious subsystems to 
-put them under, if it was just the eclectic mix of Microchip FPGA 
-specific items I'd have not bothered with the partitioning.
+These are banks which are all the same?
 
-Cheers,
-Conor.
+> +
+> +  reg-names:
+> +    description: |
+> +      Gpio base register names.
+> +    maxItems: 8
 
-[0] 
-https://onlinedocs.microchip.com/pr/GUID-1409CF11-8EF9-4C24-A94E-70979A688632-en-US-1/index.html
->>       };
->> -- 
->> 2.35.1
->>
->>
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Need to define the names.
+
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +  interrupts:
+> +    description: The interrupt outputs to sysirq.
+> +    maxItems: 1
+> +
+> +  mediatek,rsel_resistance_in_si_unit:
+
+s/_/-/
+
+> +    type: boolean
+> +    description: |
+> +      Identifying i2c pins pull up/down type which is RSEL. It can support
+> +      RSEL define or si unit value(ohm) to set different resistance.
+
+Can't you tell this with values being >1000 or not?
+
+> +
+> +# PIN CONFIGURATION NODES
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+> +    patternProperties:
+> +      '^pins':
+> +        type: object
+> +        additionalProperties: false
+> +        description: |
+> +          A pinctrl node should contain at least one subnodes representing the
+> +          pinctrl groups available on the machine. Each subnode will list the
+> +          pins it needs, and how they should be configured, with regard to muxer
+> +          configuration, pullups, drive strength, input enable/disable and
+> +          input schmitt.
+> +          An example of using macro:
+> +          pincontroller {
+> +            /* GPIO0 set as multifunction GPIO0 */
+> +            gpio-pins {
+> +              pins {
+> +                pinmux = <PINMUX_GPIO0__FUNC_GPIO0>;
+> +              }
+> +            };
+> +            /* GPIO128 set as multifunction SDA0 */
+> +            i2c0-pins {
+> +              pins {
+> +                pinmux = <PINMUX_GPIO128__FUNC_SDA0>;
+> +              }
+> +            };
+> +          };
+> +        $ref: "pinmux-node.yaml"
+> +
+> +        properties:
+> +          pinmux:
+> +            description: |
+> +              Integer array, represents gpio pin number and mux setting.
+> +              Supported pin number and mux varies for different SoCs, and are
+> +              defined as macros in dt-bindings/pinctrl/<soc>-pinfunc.h
+> +              directly.
+> +
+> +          drive-strength:
+> +            enum: [2, 4, 6, 8, 10, 12, 14, 16]
+> +
+> +          mediatek,drive-strength-adv:
+> +            description: |
+> +              Describe the specific driving setup property.
+> +              For I2C pins, the existing generic driving setup can only support
+> +              2/4/6/8/10/12/14/16mA driving. But in specific driving setup, they
+> +              can support 0.125/0.25/0.5/1mA adjustment. If we enable specific
+> +              driving setup, the existing generic setup will be disabled.
+> +              The specific driving setup is controlled by E1E0EN.
+> +              When E1=0/E0=0, the strength is 0.125mA.
+> +              When E1=0/E0=1, the strength is 0.25mA.
+> +              When E1=1/E0=0, the strength is 0.5mA.
+> +              When E1=1/E0=1, the strength is 1mA.
+> +              EN is used to enable or disable the specific driving setup.
+> +              Valid arguments are described as below:
+> +              0: (E1, E0, EN) = (0, 0, 0)
+> +              1: (E1, E0, EN) = (0, 0, 1)
+> +              2: (E1, E0, EN) = (0, 1, 0)
+> +              3: (E1, E0, EN) = (0, 1, 1)
+> +              4: (E1, E0, EN) = (1, 0, 0)
+> +              5: (E1, E0, EN) = (1, 0, 1)
+> +              6: (E1, E0, EN) = (1, 1, 0)
+> +              7: (E1, E0, EN) = (1, 1, 1)
+> +              So the valid arguments are from 0 to 7.
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1, 2, 3, 4, 5, 6, 7]
+> +
+> +          bias-pull-down:
+> +            description: |
+> +              For pull down type is normal, it don't need add RSEL & R1R0 define
+> +              and resistance value.
+> +              For pull down type is PUPD/R0/R1 type, it can add R1R0 define to
+> +              set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
+> +              "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" &
+> +              "MTK_PUPD_SET_R1R0_11" define in mt8186.
+> +              For pull down type is RSEL, it can add RSEL define & resistance
+> +              value(ohm) to set different resistance by identifying property
+> +              "mediatek,rsel_resistance_in_si_unit".
+> +              It can support "MTK_PULL_SET_RSEL_000" & "MTK_PULL_SET_RSEL_001"
+> +              & "MTK_PULL_SET_RSEL_010" & "MTK_PULL_SET_RSEL_011"
+> +              & "MTK_PULL_SET_RSEL_100" & "MTK_PULL_SET_RSEL_101"
+> +              & "MTK_PULL_SET_RSEL_110" & "MTK_PULL_SET_RSEL_111"
+> +              define in mt8186. It can also support resistance value(ohm)
+> +              "75000" & "5000" in mt8186.
+> +              oneOf:
+> +                - enum: [100, 101, 102, 103]
+> +                - description: mt8186 pull down PUPD/R0/R1 type define value.
+> +                - enum: [200, 201, 202, 203, 204, 205, 206, 207]
+> +                - description: mt8186 pull down RSEL type define value.
+> +                - enum: [75000, 5000]
+> +                - description: mt8186 pull down RSEL type si unit value(ohm).
+
+Is this supposed to be valid json-schema? It is, but not with it under 
+'description'. And it will always fail because the 'description' lines 
+are always true and multiple true cases makes oneOf false.
+
+
+> +
+> +              An example of using RSEL define:
+> +              pincontroller {
+> +                i2c0_pin {
+> +                  pins {
+> +                    pinmux = <PINMUX_GPIO128__FUNC_SDA0>;
+> +                    bias-pull-down = <MTK_PULL_SET_RSEL_001>;
+> +                  }
+> +                };
+> +              };
+> +              An example of using si unit resistance value(ohm):
+> +              &pio {
+> +                mediatek,rsel_resistance_in_si_unit;
+> +              }
+> +              pincontroller {
+> +                i2c0_pin {
+> +                  pins {
+> +                    pinmux = <PINMUX_GPIO128__FUNC_SDA0>;
+> +                    bias-pull-down = <75000>;
+> +                  }
+> +                };
+> +              };
+> +
+> +          bias-pull-up:
+> +            description: |
+> +              For pull up type is normal, it don't need add RSEL & R1R0 define
+> +              and resistance value.
+> +              For pull up type is PUPD/R0/R1 type, it can add R1R0 define to
+> +              set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
+> +              "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" &
+> +              "MTK_PUPD_SET_R1R0_11" define in mt8186.
+> +              For pull up type is RSEL, it can add RSEL define & resistance
+> +              value(ohm) to set different resistance by identifying property
+> +              "mediatek,rsel_resistance_in_si_unit".
+> +              It can support "MTK_PULL_SET_RSEL_000" & "MTK_PULL_SET_RSEL_001"
+> +              & "MTK_PULL_SET_RSEL_010" & "MTK_PULL_SET_RSEL_011"
+> +              & "MTK_PULL_SET_RSEL_100" & "MTK_PULL_SET_RSEL_101"
+> +              & "MTK_PULL_SET_RSEL_110" & "MTK_PULL_SET_RSEL_111"
+> +              define in mt8186. It can also support resistance value(ohm)
+> +              "1000" & "1500" & "2000" & "3000" & "4000" & "5000" & "10000" &
+> +              "75000" in mt8186.
+> +              oneOf:
+> +                - enum: [100, 101, 102, 103]
+> +                - description: mt8186 pull up PUPD/R0/R1 type define value.
+> +                - enum: [200, 201, 202, 203, 204, 205, 206, 207]
+> +                - description: mt8186 pull up RSEL type define value.
+> +                - enum: [1000, 1500, 2000, 3000, 4000, 5000, 10000, 75000]
+> +                - description: mt8186 pull up RSEL type si unit value(ohm).
+> +              An example of using RSEL define:
+> +              pincontroller {
+> +                i2c0-pins {
+> +                  pins {
+> +                    pinmux = <PINMUX_GPIO128__FUNC_SDA0>;
+> +                    bias-pull-up = <MTK_PULL_SET_RSEL_001>;
+> +                  }
+> +                };
+> +              };
+> +              An example of using si unit resistance value(ohm):
+> +              &pio {
+> +                mediatek,rsel_resistance_in_si_unit;
+> +              }
+> +              pincontroller {
+> +                i2c0-pins {
+> +                  pins {
+> +                    pinmux = <PINMUX_GPIO128__FUNC_SDA0>;
+> +                    bias-pull-up = <1000>;
+> +                  }
+> +                };
+> +              };
+> +
+> +          bias-disable: true
+> +
+> +          output-high: true
+> +
+> +          output-low: true
+> +
+> +          input-enable: true
+> +
+> +          input-disable: true
+> +
+> +          input-schmitt-enable: true
+> +
+> +          input-schmitt-disable: true
+> +
+> +        required:
+> +          - pinmux
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - gpio-ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/pinctrl/mt8186-pinfunc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    pio: pinctrl@10005000 {
+> +      compatible = "mediatek,mt8186-pinctrl";
+> +      reg = <0x10005000 0x1000>,
+> +            <0x10002000 0x0200>,
+> +            <0x10002200 0x0200>,
+> +            <0x10002400 0x0200>,
+> +            <0x10002600 0x0200>,
+> +            <0x10002A00 0x0200>,
+> +            <0x10002c00 0x0200>,
+> +            <0x1000b000 0x1000>;
+> +      reg-names = "iocfg0", "iocfg_bm", "iocfg_bl",
+> +                  "iocfg_br", "iocfg_lm", "iocfg_rb",
+> +                  "iocfg_tl", "eint";
+> +      gpio-controller;
+> +      #gpio-cells = <2>;
+> +      gpio-ranges = <&pio 0 0 185>;
+> +      interrupt-controller;
+> +      interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH 0>;
+> +      #interrupt-cells = <2>;
+> +
+> +      pio-pins {
+> +        pins {
+> +          pinmux = <PINMUX_GPIO0__FUNC_GPIO0>;
+> +          output-low;
+> +        };
+> +      };
+> +
+> +      spi0-pins {
+> +        pins-spi {
+> +          pinmux = <PINMUX_GPIO0__FUNC_SPI0_CLK_B>,
+> +                   <PINMUX_GPIO1__FUNC_SPI0_CSB_B>,
+> +                   <PINMUX_GPIO2__FUNC_SPI0_MO_B>;
+> +          bias-disable;
+> +        };
+> +        pins-spi-mi {
+> +          pinmux = <PINMUX_GPIO3__FUNC_SPI0_MI_B>;
+> +          bias-pull-down;
+> +        };
+> +      };
+> +
+> +      i2c0-pins {
+> +        pins {
+> +          pinmux = <PINMUX_GPIO127__FUNC_SCL0>,
+> +                   <PINMUX_GPIO128__FUNC_SDA0>;
+> +          bias-disable;
+> +          mediatek,drive-strength-adv = <7>;
+> +        };
+> +      };
+> +    };
+> diff --git a/include/dt-bindings/pinctrl/mt8186-pinfunc.h b/include/dt-bindings/pinctrl/mt8186-pinfunc.h
+> new file mode 100644
+> index 000000000000..f58983d11bca
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/mt8186-pinfunc.h
+> @@ -0,0 +1,1174 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+
+Dual license please.
