@@ -2,47 +2,47 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F074C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Feb 2022 16:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9470AC35275
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Feb 2022 16:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237234AbiBGQhr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Feb 2022 11:37:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60494 "EHLO
+        id S1350285AbiBGQiX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Feb 2022 11:38:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377039AbiBGQZK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Feb 2022 11:25:10 -0500
+        with ESMTP id S1349765AbiBGQZG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Feb 2022 11:25:06 -0500
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 757CFC0401CF;
-        Mon,  7 Feb 2022 08:25:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D43C0401D1;
+        Mon,  7 Feb 2022 08:25:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1644251109; x=1675787109;
+  t=1644251105; x=1675787105;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=y9H0vm0uB6r2xnaMXtBb2QcKJondv9+jMqua1OTgIMc=;
-  b=kbBWeUZk2MTVavKRAX5xcqs++U+cPenLfGBRwTnawiG5TK49bugkl8xf
-   WtImQqIOOkqVeAlXriixOQ5gYrGobqtOSX7ld3xhKdM0+vkfwYWJJCoBq
-   sQebUeSV39k51JxkSlHpUQjHL+KRWlpc3x9cty9+WMxaP5R/X7uBRZ0Fv
-   bTXIoFOhKZgbtQqxrQF3w9SzO+3zk4TGOBXVsoofbJzlSCRpY9tsBxBL5
-   +cBPZif1gAz5PLffs4rT0zSLBi/k0C5sH73PJXWPFA49b9Q0HBMmX7aX3
-   U5Iq1QC3QHudiZiOIBkzwmdw9mVN/CnX9r4RxuOm9LZ2CML09htJ1zbjw
-   A==;
-IronPort-SDR: 0P9xUk3U37cIxnXZPYqVfBjCJJBnnCcC9sCjfJ9EYGuImDXvIo5QsG+jsjfj15o3benLoO+ySm
- dRrH+tS8PIY6UcLqksz0qJlHYioSrFTu3Mxh9tcQbxQwvjbpPOTn6EOQQEbydwuBMG6P9mDhpL
- 9XFTJhfO0yn8O9fZbDdeQ3s8pfhVM4cP/fA/7qISDsAgytegXikVG8dtj5JmWzK9dUVwbAPJUM
- V4xAG63ElgBWU+70kbphe/cmgo4S2UuHq3ZIIf1GJWH3lgD0M9ohEH1hpsTe82XlbD9TkYfryi
- IRDm5EPH/LuPY41lk/KuqqGL
+  bh=MUwu9Fdq/MRDAHV6UL3afCTA6/6dxR2I/gfuI0/01w0=;
+  b=mNQ29TsglNt9hxiYSj8meMPCEPfzJjutzrXT8HQw5SX3QS3ED463FbXC
+   TLg/UodQduSjI9lhcW26sMroWJcr7GeG72nTiCKRzh/FyZUWs60TTYUrE
+   q16AJo5Ux4+Bn/gAfzhhZh4wrCM32ydmgxDYFKaLp0l3tDgPF9RGW9CI4
+   S+04TcLOEr+GoE/4SsR+VxNk52Su0fW9UUWSyjGna8dhoP+Og3CobZLLG
+   9sgFkZl4iiPRCvLAn1XzaWiaE1Ebf8VHCJSmUA/cmy2daSS5OuNo8FVvn
+   awlDQPlMCvB7UgD0rQeigpeIn1B6fn458TMRkRtLD4miw6i48XdxqBorQ
+   Q==;
+IronPort-SDR: OC17uJvBq1q0iATmtAibBLSPdHfRsh1dMhzNL47iUvksAHeoT2Jd9/Di1DXlDeXIz3sY6e+I0q
+ o9twXutBj7DKdr2PBkvVlqNZd7gNc6/P5krNdCFSDzobFqCJit3iSNLnRXRVKuLGGJDlbPqUaT
+ dO2VzO6j7NMAvtyL20mMbEtMFI0lNjAVmVBp3obCvHH4007w6MNu90vQ1HfxnG3TfDkf70D4P/
+ rNRAYWKxX4ak/E7p6q74kMdRxOPRs5lBfYXt/Q5UAIILW27R0hTAcjn8mxpRUolkgyctVApjZQ
+ e5PmQ7IPniSDNfoUMSRNxx4s
 X-IronPort-AV: E=Sophos;i="5.88,350,1635231600"; 
-   d="scan'208";a="152730203"
+   d="scan'208";a="152200246"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Feb 2022 09:24:06 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Feb 2022 09:25:03 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Mon, 7 Feb 2022 09:24:06 -0700
+ 15.1.2375.17; Mon, 7 Feb 2022 09:24:53 -0700
 Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
  (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Mon, 7 Feb 2022 09:24:01 -0700
+ Transport; Mon, 7 Feb 2022 09:24:48 -0700
 From:   <conor.dooley@microchip.com>
 To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh+dt@kernel.org>,
         <jassisinghbrar@gmail.com>, <thierry.reding@gmail.com>,
@@ -57,11 +57,10 @@ To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh+dt@kernel.org>,
 CC:     <bin.meng@windriver.com>, <heiko@sntech.de>,
         <lewis.hanly@microchip.com>, <conor.dooley@microchip.com>,
         <daire.mcnamara@microchip.com>, <ivan.griffin@microchip.com>,
-        <atishp@rivosinc.com>, Rob Herring <robh@kernel.org>,
-        Palmer Dabbelt <palmer@rivosinc.com>
-Subject: [PATCH v6 03/12] dt-bindings: i2c: add bindings for microchip mpfs i2c
-Date:   Mon, 7 Feb 2022 16:26:29 +0000
-Message-ID: <20220207162637.1658677-4-conor.dooley@microchip.com>
+        <atishp@rivosinc.com>, Palmer Dabbelt <palmer@rivosinc.com>
+Subject: [PATCH v6 12/12] MAINTAINERS: update riscv/microchip entry
+Date:   Mon, 7 Feb 2022 16:26:38 +0000
+Message-ID: <20220207162637.1658677-13-conor.dooley@microchip.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220207162637.1658677-1-conor.dooley@microchip.com>
 References: <20220207162637.1658677-1-conor.dooley@microchip.com>
@@ -74,80 +73,31 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-Add device tree bindings for the i2c controller on
-the Microchip PolarFire SoC.
+Update the RISC-V/Microchip entry by adding the microchip dts
+directory and myself as maintainer
 
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Lewis Hanly <lewis.hanly@microchip.com>
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 ---
- .../bindings/i2c/microchip,corei2c.yaml       | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml b/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
-new file mode 100644
-index 000000000000..c8e605fbb8a6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/i2c/microchip,corei2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip MPFS I2C Controller Device Tree Bindings
-+
-+maintainers:
-+  - Daire McNamara <daire.mcnamara@microchip.com>
-+
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+        - const: microchip,mpfs-i2c # Microchip PolarFire SoC compatible SoCs
-+        - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP core
-+      - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP core
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-frequency:
-+    description: |
-+      Desired I2C bus clock frequency in Hz. As only Standard and Fast
-+      modes are supported, possible values are 100000 and 400000.
-+    enum: [100000, 400000]
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c@2010a000 {
-+      compatible = "microchip,mpfs-i2c", "microchip,corei2c-rtl-v7";
-+      reg = <0x2010a000 0x1000>;
-+      clocks = <&clkcfg 15>;
-+      interrupt-parent = <&plic>;
-+      interrupts = <58>;
-+      clock-frequency = <100000>;
-+    };
-+...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ea3e6c914384..779a550dc95b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16575,8 +16575,10 @@ K:	riscv
+ 
+ RISC-V/MICROCHIP POLARFIRE SOC SUPPORT
+ M:	Lewis Hanly <lewis.hanly@microchip.com>
++M:	Conor Dooley <conor.dooley@microchip.com>
+ L:	linux-riscv@lists.infradead.org
+ S:	Supported
++F:	arch/riscv/boot/dts/microchip/
+ F:	drivers/mailbox/mailbox-mpfs.c
+ F:	drivers/soc/microchip/
+ F:	include/soc/microchip/mpfs.h
 -- 
 2.35.1
 
