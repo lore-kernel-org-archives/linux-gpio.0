@@ -2,229 +2,149 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 830B5C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F6CC4167B
 	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 11:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348355AbiBHLXz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Feb 2022 06:23:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59932 "EHLO
+        id S1356131AbiBHLX5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Feb 2022 06:23:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356438AbiBHKqt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 05:46:49 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65149C03FEC0
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 02:46:48 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id s7so9914641edd.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 02:46:48 -0800 (PST)
+        with ESMTP id S1356938AbiBHLNb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 06:13:31 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 423EEC03FEC0
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 03:13:31 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id da4so14694026edb.4
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 03:13:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=svMcsljcPvXZuq090tCyPbwiQT93klPS1p7hFo1NwxU=;
-        b=jaJiR87YLSg2r8NPKRNACrNKcr7iEQiUcgkw6d+7Y0ody3WwHgD37jFEgdgvciprNA
-         ++0newFTrvaOE/zj9otYJiTv3cJjLwBSxXpCVp7W0KN0K4UIliBPyu1KdOHdKLv7BaUY
-         oSn9zVz6KHDHZ1RHgTtA2upAG0VC4dYLBD954ZjrmwK81VkPuSOjP+Btd3uFnL8GI1wP
-         cxZKaqUjKPFtRYVioGe4Z1SvokmOxsxny20MsX9V7cVYP+XAqoY0oTcyODWVC3pmkb8L
-         y9sCpbMReoxCsg3/IhB6qpB2hKb9EowFMMXV9jjxb0I8qXYCyBJB3ngK5ZV2QEZz64Zw
-         qH8A==
+        bh=3G2225l3e7AAW7cvW9DSbSKu70gKYyiFP+/P2AbU0GE=;
+        b=Xyf7gEeeFQZpkKXO8gzF2AgluqdrifnT/FgKVNNk/lOKTNzDZiaZpxWZkJBQ3wk8ue
+         hYn6eA9FXNG9IBGN9B+GjYUHQ8714SRdBNzbQJ82JTECIlg3js0Ids8PtzlFJlwQ8/No
+         KjSJpWys4J2GcMk8T8YisSEgyfTJXbUXne3m/y0TCeoQoimlXHHwP1M4P31cZ7kOgtbc
+         +zWBrbmshVSmfUyRDLeErcgLx7SVrFU5Zk0tjgRWRfH+3NXn/PL8N0Wfp1ujODljr+4m
+         cAdFJR6/y3QWMGHdJ/QVE6BBFoYdz9z3MzSn6nX0V+TefwaKjnvOZqYCVvi9JflBbb1S
+         qJ5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=svMcsljcPvXZuq090tCyPbwiQT93klPS1p7hFo1NwxU=;
-        b=AAL6cSPhUuDJ9RA+7/Ko5uc9vWiTwOMm0yVOg61Qc0+bcak8qqayZr/1sOfrYG3K3S
-         U+gS3F2+umK9u9N4YtG91dyEX4iuknq7Bxv9eaJuTiXCzP3A3V+pj9qiEN0Jb9l/mwBd
-         8TGmnI4stsiYNCONZtokirgBlTjSk5p8dXCF9dg3HIrmA/wHnZTDCv895/O9H7+atiEc
-         +p/eqSre0UWvCoKngwaRhoGlleooQBaqXjgsmujSrlvgobIUpBYgLw4lEMbhIvqZn6w3
-         GmwF8K6p0QmH+6ImvwCZP2z6S0e3JPkMEhL4HSH9TaYxHoA/LglecI4yIGCsLJ4Z+sXG
-         bblw==
-X-Gm-Message-State: AOAM532Z+7tXSPMwI8OpquoCwpMpEiPxgQGrQ8C5zaoDCHvGPpi/aZta
-        LWYnlWJADgZCdAxf1oiS8G4/dPwZfZQQlikE47J+Dg==
-X-Google-Smtp-Source: ABdhPJyIh/CJWfyaIsCsHmqNruVAUcd+/I2Wu5ksso+EiWAmuFVB62j0tun9U6GaPg5Bl1HrXqlKACuF47LskGkzfVc=
-X-Received: by 2002:a05:6402:143:: with SMTP id s3mr3741176edu.7.1644317206913;
- Tue, 08 Feb 2022 02:46:46 -0800 (PST)
+        bh=3G2225l3e7AAW7cvW9DSbSKu70gKYyiFP+/P2AbU0GE=;
+        b=51S95mS1OsZUwBHDNbhIOP8LfdZBqAo2Oor9I67DxZsnCoanV7rtgrxYLWmJfzFx+Y
+         wPKdziFtUhbIab6T2JVbeg2kgCnh0hfL2Fb1qi9o49hR+GAbcgLxrulkZvO5oCJP1t1C
+         B4K27fQ1iBCoZiKSU6Mlzr1P27pp6yTKQniWDhWijaQHIrFphP0YC3oGL7bs6ETb3ai9
+         ixxtun/bFuhnlVSqWiZk03SbINvsxJtbPcrSKKxh/EQWIXO3jd9CKZyOMmdeltdMZ4Uz
+         8OSq9NU1OSjQymRoejXY0kFzFtNFvJ5juFK2eBNoB6jnOWpDU14MrrDw0ELJYlQ60NtA
+         WF3Q==
+X-Gm-Message-State: AOAM530XjuAokyZmBJ55Dmt1N97xm8BXWT/UwFKKksus0tdkEFClrwTP
+        /ScKVMNSYHWglOhWeUkEmap7hfEPURX0SSsEZLx+cQ==
+X-Google-Smtp-Source: ABdhPJywJZL0jTPvvCbkGnYtFW82KoshEzkqB1HixUSDNK3JM1+qqwgc2BPOGxgMTLyu8AS04o5CLxS9fyGFvEJzrWk=
+X-Received: by 2002:aa7:db49:: with SMTP id n9mr3902542edt.100.1644318809786;
+ Tue, 08 Feb 2022 03:13:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20220202104937.146827-1-brgl@bgdev.pl> <YfpomMEgiTh8kjGJ@smile.fi.intel.com>
-In-Reply-To: <YfpomMEgiTh8kjGJ@smile.fi.intel.com>
+References: <20220201120310.878267-1-maz@kernel.org>
+In-Reply-To: <20220201120310.878267-1-maz@kernel.org>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 8 Feb 2022 11:46:36 +0100
-Message-ID: <CAMRc=MfjkeEkdzyPUN8h6h+0iA+wFi1tVAWLOHLEY2VvKXoi8g@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: make struct comments into real kernel docs
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
+Date:   Tue, 8 Feb 2022 12:13:19 +0100
+Message-ID: <CAMRc=Me=VTqTfa4=p3HOa4_NmE3W6h+YyPLZGKXZo6dqUoxWmg@mail.gmail.com>
+Subject: Re: [PATCH 00/12] genirq: Move irqchip runtime PM over to irq domain
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC..." 
+        <linux-mediatek@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Feb 2, 2022 at 12:19 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Tue, Feb 1, 2022 at 1:03 PM Marc Zyngier <maz@kernel.org> wrote:
 >
-> On Wed, Feb 02, 2022 at 11:49:37AM +0100, Bartosz Golaszewski wrote:
-> > We have several comments that start with '/**' but don't conform to the
-> > kernel doc standard. Add proper detailed descriptions for the affected
-> > definitions and move the docs from the forward declarations to the
-> > struct definitions where applicable.
+> Our irq_chip data structure currently suffers from two problems:
 >
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> (1) the 'name' field is often dynamically populated with a reference
+>     to the underlying HW (DT node dame, for example)
 >
-> A few comments below.
+> (2) the 'parent_device' which is used to implement runtime PM is also
+>     dynamically populated
 >
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> > ---
-> >  drivers/gpio/gpiolib.h        | 31 +++++++++++++++++++++++++++++++
-> >  include/linux/gpio/consumer.h | 35 ++++++++++++++++-------------------
-> >  2 files changed, 47 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> > index 30bc3f80f83e..0025701b7641 100644
-> > --- a/drivers/gpio/gpiolib.h
-> > +++ b/drivers/gpio/gpiolib.h
-> > @@ -72,6 +72,20 @@ struct gpio_device {
-> >  /* gpio suffixes used for ACPI and device tree lookup */
-> >  static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
-> >
-> > +/**
-> > + * struct gpio_array - Opaque descriptor for a structure of GPIO array attributes
+> (3) there is at least one instance of a subsystem messing with the
+>     internals of irq_chip structures (gpiochip_set_irq_hooks is
+>     what I know about)
 >
-> > + *
+> These things mean that although the primary use of irq_chip is to only
+> contain function pointers and other *static* information, the above
+> two fields result in these structures being copied in a number of
+> drivers. Eventually, it would be much better if the various drivers
+> would use irq_chip as an 'ops' data structure (potentially made
+> read-only), and keep the dynamic information somewhere more suitable.
 >
-> I dunno we need these blank lines.
-
-I think it looks better. Some docs use it some don't, there's no standard.
-
+> For (2) we already have the irqdomain structure that is designed to
+> deal with the context in which interrupts are used, and it makes sense
+> to move the 'parent_device' field over to this structure. This is what
+> this small series is doing, with some minor cleanup on the way.
 >
-> > + * @desc:            Array of pointers to the GPIO descriptors
-> > + * @size:            Number of elements in desc
+> (1) and (3) will be dealt in separate series (and I don't have a good
+> solution for (3) yet).
 >
->   in @desc
+> Thanks,
 >
-> or
+>         M.
 >
->   in the array of the descriptor pointers
+> Marc Zyngier (12):
+>   genirq: Allow the PM device to originate from irq domain
+>   irqchip/gic: Move PM device over to irq domain
+>   irqchip/renesas-intc-gpio: Move PM device over to irq domain
+>   irqchip/renesas-irqc: Move PM device over to irq domain
+>   irqchip/imx-intmux: Move PM device over to irq domain
+>   gpio: mt7621: Kill parent_device usage
+>   gpio: omap: Move PM device over to irq domain
+>   gpio: rcar: Move PM device over to irq domain
+>   gpio: tpmx86: Move PM device over to irq domain
+>   pinctrl: npcm: Fix broken references to chip->parent_device
+>   pinctrl: starfive: Move PM device over to irq domain
+>   genirq: Kill irq_chip::parent_device
 >
-> > + * @chip:            Parent GPIO chip
-> > + * @get_mask:                Get mask used in fastpath.
-> > + * @set_mask:                Set mask used in fastpath.
-> > + * @invert_mask:     Invert mask used in fastpath.
->
-> Why some of the descriptions are with grammar period and some w/o?
->
-> > + *
-> > + * This structure is attached to struct gpiod_descs obtained from
-> > + * gpiod_get_array() and can be passed back to get/set array functions in order
-> > + * to activate fast processing path if applicable.
-> > + */
-> >  struct gpio_array {
-> >       struct gpio_desc        **desc;
-> >       unsigned int            size;
-> > @@ -96,6 +110,23 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
-> >  extern spinlock_t gpio_lock;
-> >  extern struct list_head gpio_devices;
-> >
-> > +
-> > +/**
-> > + * struct gpio_desc - Opaque descriptor for a GPIO
-> > + *
-> > + * @gdev:            Pointer to the parent GPIO device
-> > + * @flags:           Binary descriptor flags
-> > + * @label:           Name of the consumer
-> > + * @name:            Line name
-> > + * @hog:             Pointer to the device node that hogs this line (if any)
-> > + * @debounce_period_us:      Debounce period in microseconds
-> > + *
-> > + * These are obtained using gpiod_get() and are preferable to the old
-> > + * integer-based handles.
-> > + *
-> > + * Contrary to integers, a pointer to a gpio_desc is guaranteed to be valid
->
-> &struct gpio_desc
->
-> > + * until the GPIO is released.
-> > + */
-> >  struct gpio_desc {
-> >       struct gpio_device      *gdev;
-> >       unsigned long           flags;
-> > diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> > index 3ad67b4a72be..3ffb054fafbd 100644
-> > --- a/include/linux/gpio/consumer.h
-> > +++ b/include/linux/gpio/consumer.h
-> > @@ -8,27 +8,16 @@
-> >  #include <linux/err.h>
-> >
-> >  struct device;
-> > -
-> > -/**
-> > - * Opaque descriptor for a GPIO. These are obtained using gpiod_get() and are
-> > - * preferable to the old integer-based handles.
-> > - *
-> > - * Contrary to integers, a pointer to a gpio_desc is guaranteed to be valid
-> > - * until the GPIO is released.
-> > - */
-> >  struct gpio_desc;
-> > -
-> > -/**
-> > - * Opaque descriptor for a structure of GPIO array attributes.  This structure
-> > - * is attached to struct gpiod_descs obtained from gpiod_get_array() and can be
-> > - * passed back to get/set array functions in order to activate fast processing
-> > - * path if applicable.
-> > - */
-> >  struct gpio_array;
-> >
-> >  /**
-> > - * Struct containing an array of descriptors that can be obtained using
-> > - * gpiod_get_array().
-> > + * struct gpio_descs - Struct containing an array of descriptors that can be
-> > + *                     obtained using gpiod_get_array()
-> > + *
-> > + * @info:    Pointer to the opaque gpio_array structure
-> > + * @ndescs:  Number of held descriptors
-> > + * desc:     Array of pointers to GPIO descriptors
->
-> Missed @?
->
-> >   */
-> >  struct gpio_descs {
-> >       struct gpio_array *info;
-> > @@ -43,8 +32,16 @@ struct gpio_descs {
-> >  #define GPIOD_FLAGS_BIT_NONEXCLUSIVE BIT(4)
-> >
-> >  /**
-> > - * Optional flags that can be passed to one of gpiod_* to configure direction
-> > - * and output value. These values cannot be OR'd.
-> > + * enum gpiod_flags - Optional flags that can be passed to one of gpiod_* to
-> > + *                    configure direction and output value. These values
-> > + *                    cannot be OR'd.
-> > + *
-> > + * @GPIOD_ASIS:                      Don't change the direction
->
-> Don't change anything
->
-> (Not only direction, also the output value. Some hardware allows to change
-> output buffer value even if the line is configured as input).
->
-> > + * @GPIOD_IN:                        Set lines to input mode
-> > + * @GPIOD_OUT_LOW:           Set lines to output and drive them low
-> > + * @GPIOD_OUT_HIGH:          Set lines to output and drive them high
-> > + * @GPIOD_OUT_LOW_OPEN_DRAIN:        Set lines to open-drain output and drive them low
-> > + * @GPIOD_OUT_HIGH_OPEN_DRAIN:       Set lines to open-drain output and drive them high
-> >   */
-> >  enum gpiod_flags {
-> >       GPIOD_ASIS      = 0,
-> > --
-> > 2.30.1
-> >
+>  drivers/gpio/gpio-mt7621.c                |  1 -
+>  drivers/gpio/gpio-omap.c                  |  7 ++++---
+>  drivers/gpio/gpio-rcar.c                  |  2 +-
+>  drivers/gpio/gpio-tqmx86.c                |  3 ++-
+>  drivers/irqchip/irq-gic.c                 | 12 +++++------
+>  drivers/irqchip/irq-imx-intmux.c          |  8 +++-----
+>  drivers/irqchip/irq-renesas-intc-irqpin.c |  3 ++-
+>  drivers/irqchip/irq-renesas-irqc.c        |  3 ++-
+>  drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 25 +++++++++++------------
+>  drivers/pinctrl/pinctrl-starfive.c        |  3 ++-
+>  include/linux/irq.h                       |  2 --
+>  include/linux/irqdomain.h                 | 10 +++++++++
+>  kernel/irq/chip.c                         | 20 +++++++++++++-----
+>  13 files changed, 59 insertions(+), 40 deletions(-)
 >
 > --
-> With Best Regards,
-> Andy Shevchenko
->
+> 2.30.2
 >
 
-Fixed the rest. Thanks!
+The changes for GPIO are small so:
+
+Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
+
+You can take it through your tree and if there are any conflicts, I'll
+just ask for an immutable branch.
 
 Bart
