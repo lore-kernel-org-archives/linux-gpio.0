@@ -2,116 +2,97 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2191C433FE
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 11:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 027D9C43219
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 11:25:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356747AbiBHLYH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Feb 2022 06:24:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45430 "EHLO
+        id S1357789AbiBHLYK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Feb 2022 06:24:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346778AbiBHJoy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 04:44:54 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65978C03FEC0
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 01:44:53 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id b13so36211847edn.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 01:44:53 -0800 (PST)
+        with ESMTP id S1356854AbiBHLJh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 06:09:37 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23EF7C03FECA
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 03:09:36 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id w14so36718891edd.10
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 03:09:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BeRypQwass6YxPMaRwyaWgbo3dxTZ96rzrwO6lKw8tw=;
-        b=CPoGHoY5UFuK2gjDWY/wRSj3B48TF9rqTc8i4NRpSvzlBKCebVlPHHd0lxgw8vTMcH
-         J84BDRao2THS0Gd9E2mFD9x9Xun5oY96NoX8Ztjte5gPjLa6ooHuTx7FfmtVpETBrZYz
-         aF8z/nbBkZ/gA7d8PKXnbK/Ge1xjFdRGrTYlomy/jCZLgdtF5uvnLPEDoI8SMypVfcBn
-         VLJDm6P75D4KPdgbofdtIDDn2qkcH9A1wtOzimWkrbwzvHCvZVPIOChbKlc7NGjeOkzp
-         8RJLjhYX8KF3kddGFyf7N+57HmqKjV+wHYL2x5CtA6kDWmHCYemaLMqzki4WKR1/Ojt8
-         VcWg==
+        bh=KQBVfVDlvCSrk6Sswzhkfx8sEJDxZvcBw31v7IjCtFQ=;
+        b=Zcfv+t1DGD3EB3HP5kz6zWh1pByYKpIDp3Q8enYRVXu63AQLAzCQugZ4SoXjF7MtVL
+         wPoRzOO0w7TcQorumE2LF1RehZcto52dZVQic+Oml3gV3bdUn5exQP5qlieY7VK772IB
+         899VBZDJodq3ijB1E4fvyfVsqH5Yv4Wvfw9r+FwTxvKuN0Gv9NsxgyWrCWSqhTgUcvlA
+         SsUtmMsqfSbJdRCSSPqUcEhsTh85nK2hsyj/xSZL1PKB+kbu1sc+t0jMHQvCn4lcflc5
+         LXdfZb+JZrjoX0m2iXKT7sAVVRTIwqpSlqCbqvYB+7glzzi2eSDHj+aHnj1g5e8Z9v1g
+         LvJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BeRypQwass6YxPMaRwyaWgbo3dxTZ96rzrwO6lKw8tw=;
-        b=4+MihnYasK8EbcQDwPDIhG20MRxIKEvtor0DjZGZaivMNyng7vlu+qNjfz/Yx7UVK+
-         a8Zc5BTLT8SAvmNJGKho0MjpQgamrP/X77emFeL6f0AM+9wVsZMXM4VsmpC1rCv2mAGQ
-         G+0TlgWDghuMuGT9r7zXOxGr7YJq+bG0ow2+WNIomHmBqnSGf2b7eTBaMBwsbfJbzwRJ
-         tF1UN7B0YeVwdXM0iLzOtjpxLZLnoX7Ke0ctWD0iPngnE3A7k25LafUJQ1WGxgvDovCA
-         W8dHhJIhCblLhsbigb0e9aPw4CUYNbIMZXeAxNcIxq7F13PTRJajAgZgDX9t4Y1yVESk
-         KwJg==
-X-Gm-Message-State: AOAM532IeMJdzSVoRkaQqr2bFE9pNKpa4Q/srrXNDMVbdxIJ/QuNgnUG
-        b/xDXqmCsR1bmJm+MRGW+581S7g0mbkyPivt3npcaA==
-X-Google-Smtp-Source: ABdhPJyyUn+ESX1mrzcWKTtrYf0cJlehIsu5d5CCiBT1F/1vuRES3dsTpb3cJmLCLsUb8HULJ++KAkho1FM39XJS0P8=
-X-Received: by 2002:a50:eb46:: with SMTP id z6mr3567435edp.229.1644313491953;
- Tue, 08 Feb 2022 01:44:51 -0800 (PST)
+        bh=KQBVfVDlvCSrk6Sswzhkfx8sEJDxZvcBw31v7IjCtFQ=;
+        b=tp/w1xGFkBW2krUX5vlxV/7o8kdEmr83IG9+sXZ9FWT0eTVeaaYOaWLQG5kRyb7IZm
+         Hfee2qtrCwAZv5TJKfUyHkV7VV0rwrTpMo41V2X+ihMsaU5LB3ufZfk73beZyQSFLOLv
+         3nIjCzkWWY5Rfc1ydc6/hZJKo7dqTUNKdQoSuAv/nQmRpJSkTqIm2wMuPI2mAQbfOu7R
+         d9kexxHIKWpcvW9XCeaN5NXPGlmzXDkY7OKFoHCUjUr/+e6+nuedGe7p7uI970vQaxGE
+         A4Z9UnaSAuZDildukHAim6WY59MYgwDLVfNyCNMAZ5NwcrqZakaODDhkJOwOl4SIb0kX
+         o65g==
+X-Gm-Message-State: AOAM530V1SL42XF6AooEc4Malag753G/4d428/AMdR6Y86FGxTu7OPTG
+        O8Oxi5iCpzZdsLJhgcIwh/oh6WtoRnemR7GCpiwpvQ==
+X-Google-Smtp-Source: ABdhPJzNCw/cioLcKrAYx5rbKSd05oiNHfv+p2Mg5ic+HSw2d1l/HVOQ3hTWmd+vsyuosiASrLQGqbIOMPkET3fjF+c=
+X-Received: by 2002:a05:6402:5189:: with SMTP id q9mr3959045edd.314.1644318575241;
+ Tue, 08 Feb 2022 03:09:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20220204130142.21727-1-Niklas.Cassel@wdc.com> <aa6f85f3-1146-e857-148c-7a314b21e647@opensource.wdc.com>
-In-Reply-To: <aa6f85f3-1146-e857-148c-7a314b21e647@opensource.wdc.com>
+References: <20220207162637.1658677-1-conor.dooley@microchip.com> <20220207162637.1658677-6-conor.dooley@microchip.com>
+In-Reply-To: <20220207162637.1658677-6-conor.dooley@microchip.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 8 Feb 2022 10:44:41 +0100
-Message-ID: <CAMRc=MfrQYSOu+6ZPgLqxek2RfvmCVzS64rKRp_rsq+Hk1QYxg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sifive: use the correct register to read output values
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     Niklas Cassel <Niklas.Cassel@wdc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
+Date:   Tue, 8 Feb 2022 12:09:24 +0100
+Message-ID: <CAMRc=Mc0CYCgiGqQgmCQArv=1P0M5dxCw53H+KQ92d=yX=BY4Q@mail.gmail.com>
+Subject: Re: [PATCH v6 05/12] dt-bindings: gpio: add bindings for microchip
+ mpfs gpio
+To:     conor.dooley@microchip.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+        Palmer Dabbelt <palmer@dabbelt.com>, aou@eecs.berkeley.edu,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>, linux-riscv@lists.infradead.org,
+        bin.meng@windriver.com, Heiko Stuebner <heiko@sntech.de>,
+        lewis.hanly@microchip.com, daire.mcnamara@microchip.com,
+        ivan.griffin@microchip.com, atishp@rivosinc.com,
+        Rob Herring <robh@kernel.org>,
+        Palmer Dabbelt <palmer@rivosinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Feb 5, 2022 at 12:33 AM Damien Le Moal
-<damien.lemoal@opensource.wdc.com> wrote:
+On Mon, Feb 7, 2022 at 5:24 PM <conor.dooley@microchip.com> wrote:
 >
-> On 2/4/22 22:02, Niklas Cassel wrote:
-> > From: Niklas Cassel <niklas.cassel@wdc.com>
-> >
-> > Setting the output of a GPIO to 1 using gpiod_set_value(), followed by
-> > reading the same GPIO using gpiod_get_value(), will currently yield an
-> > incorrect result.
-> >
-> > This is because the SiFive GPIO device stores the output values in reg_set,
-> > not reg_dat.
-> >
-> > Supply the flag BGPIOF_READ_OUTPUT_REG_SET to bgpio_init() so that the
-> > generic driver reads the correct register.
-> >
-> > Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
+> From: Conor Dooley <conor.dooley@microchip.com>
 >
-> This probably needs a Fixes tag. I have not checked which patch though.
+> Add device tree bindings for the gpio controller on
+> the Microchip PolarFire SoC.
 >
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> ---
 
-I added the tag and queued this for fixes, thanks!
+Looks good.
 
-Bart
-
-> > ---
-> > The patch was tested on a canaan,k210 board (canaan,k210-gpiohs compatible
-> > string). It would be nice with a Tested-by from someone with a SiFive board.
-> >
-> > However, the u-boot driver for this device already behaves exactly the same
-> > as this driver does after my patch, for all platforms using the driver.
-> >
-> >  drivers/gpio/gpio-sifive.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpio/gpio-sifive.c b/drivers/gpio/gpio-sifive.c
-> > index 403f9e833d6a..7d82388b4ab7 100644
-> > --- a/drivers/gpio/gpio-sifive.c
-> > +++ b/drivers/gpio/gpio-sifive.c
-> > @@ -223,7 +223,7 @@ static int sifive_gpio_probe(struct platform_device *pdev)
-> >                        NULL,
-> >                        chip->base + SIFIVE_GPIO_OUTPUT_EN,
-> >                        chip->base + SIFIVE_GPIO_INPUT_EN,
-> > -                      0);
-> > +                      BGPIOF_READ_OUTPUT_REG_SET);
-> >       if (ret) {
-> >               dev_err(dev, "unable to init generic GPIO\n");
-> >               return ret;
->
->
-> --
-> Damien Le Moal
-> Western Digital Research
+Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
