@@ -2,202 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E74DFC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 11:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6E4C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 13:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357620AbiBHLYJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Feb 2022 06:24:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60346 "EHLO
+        id S236415AbiBHNPa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Feb 2022 08:15:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356455AbiBHKsf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 05:48:35 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF79EC03FEC0
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 02:48:34 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id s18so29924655wrv.7
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 02:48:34 -0800 (PST)
+        with ESMTP id S1357146AbiBHMce (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 07:32:34 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FDDDC03FECA
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 04:32:32 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id f17so30494505wrx.1
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 04:32:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/2RBuPF7+jk2MYvMHxs5hnonCSVzKHGmgHGdw6RmjUw=;
-        b=sQFJBX4baIYK2pjY/ZO+xZa+qQkxXw9powlty3Jf1N0CfZeTZtd7HC8IhDGC7O5T/M
-         WmTxEq/8TUuucTHTbPwYT+90OuklOByN+vKWA5Sd6w4Z/m0lcocl8Z3pYDEMWteddmsp
-         9LIUSr8WUP+A+BTTOB/gbAdBTEcyWiXiAN0HG623DBAa7lKkwqDIzJ0RpvII1pkWB2id
-         qIe3+FPEfI5pH0Q2m+p3U64s7BPLvD3L0FljVq5q7BVcvlNUJv7VnbdDVvQU9/wwPon/
-         il3YnafTLqmoz1Y/Td7w6mK5akWQnjkpDhN4F62WY5+PEl1BOHXNTuZy7NannOhtxcck
-         1VJA==
+        d=conchuod-ie.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:cc:from:in-reply-to:content-transfer-encoding;
+        bh=SBicExt4GJTldUNDteIIq7T7+TNr7gj099np1oZzyZ0=;
+        b=5H3MsgPIhqt39HG1qoEatzD0Vc2QJlQKfqrcrh67yioOodrsd6sq49SPYaA/6sd5Zt
+         TOy+pHA35I7ps67O93O29P57x0fxd2LOGb3w32L1+tKcxd39UzblOtVEy/igA0IFquTp
+         B9L6yj862CsH3lBhGxDWuzOSXwIkMdBXICIC6RRwev2VRYGuTbAjd9Hipev7lizyO92A
+         5G2pXnT9Tca5zRzi3NoFLZma5Vt0wOIExMGFk4ObG3UnLr4zedy+xPDsmOkOg+PupyAj
+         gPIOlUvzqYiDccI3Z66cS8rnCdQCTECCDNPGctqOAQXe6KLs4N5xzEta+q+pQjHN329W
+         34PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:cc:from:in-reply-to
          :content-transfer-encoding;
-        bh=/2RBuPF7+jk2MYvMHxs5hnonCSVzKHGmgHGdw6RmjUw=;
-        b=vCWiy6WKEvJVmeIBxdFlWvwXszpC5+NvKO9GgKcXkdiPfCj4QG6jS/IIE/QTiJ+bi3
-         GEeOpzn4Ri1la4xEqfAM5JpYdUc8b6ZOF2DMqNX9hhPy3dQbFBD2Hny+M9G6hcE3a9ep
-         gJTi+BiuoOs88bB3pjudgpuza9AIU1tqdfYiAtUZz/yZvGueQpAol92YKvYeCEesN3dA
-         CeUjlm6IKWmoD8p7tinuIQMnXYWX06/2mzN484Bc/iJTXbtnsi+MZ47Ceh6V+KzKaitr
-         NKJxlJZQiC48Rhcz35Sqn3oItJvGHfXNMWMo80P8t2yyubJnlqTRFObK2nGeuV1FNPwV
-         JBdg==
-X-Gm-Message-State: AOAM5319lC7v8CAuBUt1FCZP2eHb5wjwmX4MCsg691+Mbk1ZA7kn1Okd
-        eeW3r4LdEjv6oW/EZtT4C18GXA==
-X-Google-Smtp-Source: ABdhPJxDCxikA1SstIBbpMtLo5nW/gSC8VSlKDkxUudzUI8SMijILsbLQCeWnNnIFRCt/IY99rQ/NA==
-X-Received: by 2002:a5d:6c64:: with SMTP id r4mr3068321wrz.659.1644317313206;
-        Tue, 08 Feb 2022 02:48:33 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:334:ac00:7d50:ff5:f5c1:e225])
-        by smtp.gmail.com with ESMTPSA id a13sm3971wmq.28.2022.02.08.02.48.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 02:48:32 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2] gpiolib: make struct comments into real kernel docs
-Date:   Tue,  8 Feb 2022 11:48:31 +0100
-Message-Id: <20220208104831.308722-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.30.1
+        bh=SBicExt4GJTldUNDteIIq7T7+TNr7gj099np1oZzyZ0=;
+        b=ZjUsLcdrEWHdHw3f8L+w43How6f2NRVGdoP5NjP0iOCHamCpjjAcCpaPLphVRfNOc0
+         8j/Er2MeHcZLCbiuUf8ZXF4bZqaf6BS28khyOZ/vWWlJiB2Ghc6ln4HeTh3DRzqSXi7+
+         IVCDAIOiG33SwbYvJ7SX5dQhTohA8azWRFYP182X8HMS1bAUmIWUH0pY7xCNuoPeMabK
+         +RKjSqKLxYS7A4gfuceYYFBrS1X3uFAgbFI/Cigm8TXEpi3SblWcAQCr4kDGBcVxLUeh
+         t8BqRXc8IMGHUk0q/8mOnItThlCel67I6wcIAJEfaHMQQ97kqIGgLWk0DJGe8O3a0HKR
+         YQKQ==
+X-Gm-Message-State: AOAM5321HRbG0Skq44d/hI9jf1NQOhJMdbdfTy8TCE6bhWbA7JhRQD9j
+        DH6IRzbRNZvJcRlg/hY+jCuZ35d6h6WLYtESo7E=
+X-Google-Smtp-Source: ABdhPJy3fWhX+fR9E4HyMnwmqx7EtColZdvMB80eL5FvssCvOs3KJLS4r509AHx9ak5lZBQdqv+rhQ==
+X-Received: by 2002:a05:6000:2c5:: with SMTP id o5mr3345728wry.130.1644323551043;
+        Tue, 08 Feb 2022 04:32:31 -0800 (PST)
+Received: from [192.168.2.116] ([109.78.72.167])
+        by smtp.gmail.com with ESMTPSA id v9sm1831062wrw.84.2022.02.08.04.32.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Feb 2022 04:32:29 -0800 (PST)
+Message-ID: <afb346dc-5119-fcf0-d95e-d7e4bd91f92f@conchuod.ie>
+Date:   Tue, 8 Feb 2022 12:32:27 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH v6 03/12] dt-bindings: i2c: add bindings for microchip
+ mpfs i2c
+Content-Language: en-US
+To:     Wolfram Sang <wsa@kernel.org>, conor.dooley@microchip.com
+References: <20220207162637.1658677-1-conor.dooley@microchip.com>
+ <20220207162637.1658677-4-conor.dooley@microchip.com>
+ <YgJfl5CmepRMb5He@ninjato>
+Cc:     paul.walmsley@sifive.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
+        aou@eecs.berkeley.edu, palmer@dabbelt.com,
+        linux-riscv@lists.infradead.org, lee.jones@linaro.org,
+        heiko@sntech.de, Palmer Dabbelt <palmer@rivosinc.com>,
+        Rob Herring <robh@kernel.org>, atishp@rivosinc.com,
+        ivan.griffin@microchip.com, daire.mcnamara@microchip.com,
+        linux-pwm@vger.kernel.org, bin.meng@windriver.com,
+        jassisinghbrar@gmail.com, u.kleine-koenig@pengutronix.de,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        geert@linux-m68k.org, thierry.reding@gmail.com,
+        linux-rtc@vger.kernel.org, lewis.hanly@microchip.com
+From:   Conor Dooley <mail@conchuod.ie>
+In-Reply-To: <YgJfl5CmepRMb5He@ninjato>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We have several comments that start with '/**' but don't conform to the
-kernel doc standard. Add proper detailed descriptions for the affected
-definitions and move the docs from the forward declarations to the
-struct definitions where applicable.
+On 08/02/2022 12:18, Wolfram Sang wrote:
+> On Mon, Feb 07, 2022 at 04:26:29PM +0000, conor.dooley@microchip.com wrote:
+>> From: Conor Dooley <conor.dooley@microchip.com>
+>>
+>> Add device tree bindings for the i2c controller on
+>> the Microchip PolarFire SoC.
+>>
+>> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> 
+> Shall this go via DT (Rob) or I2C (me) or some riscv tree?
+If you could take it, that'd be great. Rob had said via subsystems was 
+his preference for the bindings in this series.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v1 -> v2:
-- described fields not yet documented
-- added missing '@'
-- made using periods consistent
-- fixed struct references
-
- drivers/gpio/gpiolib.h        | 34 ++++++++++++++++++++++++++++++++++
- include/linux/gpio/consumer.h | 35 ++++++++++++++++-------------------
- 2 files changed, 50 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 30bc3f80f83e..40723a179902 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -37,6 +37,9 @@
-  * or name of the IP component in a System on Chip.
-  * @data: per-instance data assigned by the driver
-  * @list: links gpio_device:s together for traversal
-+ * @notifier: used to notify subscribers about lines being requested, released
-+ *            or reconfigured
-+ * @pin_ranges: range of pins served by the GPIO driver
-  *
-  * This state container holds most of the runtime variable data
-  * for a GPIO device and can hold references and live on after the
-@@ -72,6 +75,20 @@ struct gpio_device {
- /* gpio suffixes used for ACPI and device tree lookup */
- static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
- 
-+/**
-+ * struct gpio_array - Opaque descriptor for a structure of GPIO array attributes
-+ *
-+ * @desc:		Array of pointers to the GPIO descriptors
-+ * @size:		Number of elements in desc
-+ * @chip:		Parent GPIO chip
-+ * @get_mask:		Get mask used in fastpath
-+ * @set_mask:		Set mask used in fastpath
-+ * @invert_mask:	Invert mask used in fastpath
-+ *
-+ * This structure is attached to struct gpiod_descs obtained from
-+ * gpiod_get_array() and can be passed back to get/set array functions in order
-+ * to activate fast processing path if applicable.
-+ */
- struct gpio_array {
- 	struct gpio_desc	**desc;
- 	unsigned int		size;
-@@ -96,6 +113,23 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- extern spinlock_t gpio_lock;
- extern struct list_head gpio_devices;
- 
-+
-+/**
-+ * struct gpio_desc - Opaque descriptor for a GPIO
-+ *
-+ * @gdev:		Pointer to the parent GPIO device
-+ * @flags:		Binary descriptor flags
-+ * @label:		Name of the consumer
-+ * @name:		Line name
-+ * @hog:		Pointer to the device node that hogs this line (if any)
-+ * @debounce_period_us:	Debounce period in microseconds
-+ *
-+ * These are obtained using gpiod_get() and are preferable to the old
-+ * integer-based handles.
-+ *
-+ * Contrary to integers, a pointer to a &struct gpio_desc is guaranteed to be
-+ * valid until the GPIO is released.
-+ */
- struct gpio_desc {
- 	struct gpio_device	*gdev;
- 	unsigned long		flags;
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 3ad67b4a72be..c3aa8b330e1c 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -8,27 +8,16 @@
- #include <linux/err.h>
- 
- struct device;
--
--/**
-- * Opaque descriptor for a GPIO. These are obtained using gpiod_get() and are
-- * preferable to the old integer-based handles.
-- *
-- * Contrary to integers, a pointer to a gpio_desc is guaranteed to be valid
-- * until the GPIO is released.
-- */
- struct gpio_desc;
--
--/**
-- * Opaque descriptor for a structure of GPIO array attributes.  This structure
-- * is attached to struct gpiod_descs obtained from gpiod_get_array() and can be
-- * passed back to get/set array functions in order to activate fast processing
-- * path if applicable.
-- */
- struct gpio_array;
- 
- /**
-- * Struct containing an array of descriptors that can be obtained using
-- * gpiod_get_array().
-+ * struct gpio_descs - Struct containing an array of descriptors that can be
-+ *                     obtained using gpiod_get_array()
-+ *
-+ * @info:	Pointer to the opaque gpio_array structure
-+ * @ndescs:	Number of held descriptors
-+ * @desc:	Array of pointers to GPIO descriptors
-  */
- struct gpio_descs {
- 	struct gpio_array *info;
-@@ -43,8 +32,16 @@ struct gpio_descs {
- #define GPIOD_FLAGS_BIT_NONEXCLUSIVE	BIT(4)
- 
- /**
-- * Optional flags that can be passed to one of gpiod_* to configure direction
-- * and output value. These values cannot be OR'd.
-+ * enum gpiod_flags - Optional flags that can be passed to one of gpiod_* to
-+ *                    configure direction and output value. These values
-+ *                    cannot be OR'd.
-+ *
-+ * @GPIOD_ASIS:			Don't change anything
-+ * @GPIOD_IN:			Set lines to input mode
-+ * @GPIOD_OUT_LOW:		Set lines to output and drive them low
-+ * @GPIOD_OUT_HIGH:		Set lines to output and drive them high
-+ * @GPIOD_OUT_LOW_OPEN_DRAIN:	Set lines to open-drain output and drive them low
-+ * @GPIOD_OUT_HIGH_OPEN_DRAIN:	Set lines to open-drain output and drive them high
-  */
- enum gpiod_flags {
- 	GPIOD_ASIS	= 0,
--- 
-2.30.1
-
+Thanks,
+Conor.
