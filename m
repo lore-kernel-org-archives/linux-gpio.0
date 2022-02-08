@@ -2,162 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAEACC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 09:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39107C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 11:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355401AbiBHJfK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Feb 2022 04:35:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42842 "EHLO
+        id S234824AbiBHLXk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Feb 2022 06:23:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351566AbiBHJfK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 04:35:10 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7E88C03FEC1
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 01:35:08 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id k25so50032141ejp.5
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 01:35:08 -0800 (PST)
+        with ESMTP id S1355792AbiBHJzJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 04:55:09 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26074C03FEC3
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 01:55:07 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id w14so36315073edd.10
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 01:55:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=quDJ3umqwDRDYxNgvq9o71O19aurlvjSn5/hOL8u+aM=;
-        b=KZLySUyhVy6hJ9xrGZnS6glvmfJzugTF1acMvl1ToV1KzBtJA4t8e73qh1eWPpBEM6
-         Br8KuNUzDGmPcO4Ez07UAqzu8LDkdYDE51VITMA/l+1Bgr/VlfW8JtwxbUlrfYieukBh
-         kgySwu+jazZBlB92UdJl8VDjoQNeskkRs5zlvpYYh+3oKTj/vIVonC7K9kK+paBNTj5x
-         EFmZp0DUzdzK0lZjUfpkJ5S1znFHxWhBzWQsTDu49Ze8pyAEv2MVpYEFouSa11A54cxm
-         4hSXOUoOabE9q3Vio5o5jWH/6yIeuRqew46wOvV9n92YYcYO4hJq4ajr1O1wz5fyyJME
-         jrQA==
+        bh=AqLy4wbT30gKNHEEk8JX8phB5jik7Edkg+UhlJoA5rs=;
+        b=GmStCOfR1LjR64d3+n6xiUfvnpjdXMYf6CGOzrW6RIz8xDIP0n8/jYPfRmgeH4wvSA
+         OHrBANagwetRO1ctOhpjjqD7hq3IRov+o5g/6r0ohsUWmjxkkAJDMOq5G7RuPuznKZbW
+         Lzs8UqpznjHrlZnMzaYxyFRSPYAnFnvEXsiKUDiZvjkpTJFrJJ7Ls7UIM2rbS4+dOVrw
+         ZTl80lTnm3SQW3C0NMVVs1AuA2J1zOFaOQeqPQydNl0ZsDO068k9z5YB2blovsV4bGfr
+         gty2VNbQEfzPRpAvMj9ngw21yaINuwxLkGx4nbkMcjKNYVKDht8HkTJcUAvqS8XqsgVi
+         dwyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=quDJ3umqwDRDYxNgvq9o71O19aurlvjSn5/hOL8u+aM=;
-        b=KtU68AWH3wSVA0WujtwYOLtdsKthtWM+90u5gjokYRmM6aSEG2c44V5eOiQ3D9csHY
-         zGhlHEJJGPvk9vhuIeEmFbF0XdGMWAHIGAE4C5QhnqHr5Aw7TGVlOYgkLsHR2ukOZY4U
-         qb1IP1ScSFkgnjHlkUtUdV2qwn8zxTOB2q+krkbB0BugZLv23RUGu5ZZWakk5hQJUh9u
-         xqU3puoY1VRSjy91CXntsnNfFwTVcTPHILtJhZk8deNH2Hxt9/dt5aYL7O+eys2tHcO9
-         Gxlq2JpuJ6QzN3FOvn5+m5ugGnGgJkfwYacJ+h6fot6/G69ZGnYkJYkZ153ZUyBATXFn
-         CWFA==
-X-Gm-Message-State: AOAM531P8JBGoXBENdq86WN/hEVg605BnfLGnfsHBEQ4m/FpswJC5u6c
-        iC3I2VTGyBbtMOLUDw7vhGgzUd7kePsRT7qMrNScYw==
-X-Google-Smtp-Source: ABdhPJxnKUfXXtUegbcd0ki3qTfhWc7r+/QECoEfxKEa/1iaYSaYu+SO5betcJ1/kE4YNh5MAStsKhYCZWtsqMYwS2o=
-X-Received: by 2002:a17:907:728c:: with SMTP id dt12mr2871733ejc.697.1644312907429;
- Tue, 08 Feb 2022 01:35:07 -0800 (PST)
+        bh=AqLy4wbT30gKNHEEk8JX8phB5jik7Edkg+UhlJoA5rs=;
+        b=u/0ZIHHiFLLiB2fI0ZH2qUiPccw15iTKabb7szCrIF26wu7LIrF7Jcs0x4BNDpYzaW
+         iwd4cwvMc1RX81Sgb7eRQafVxDOD33rNIE1NwMDWv3HgEGhDv/iz+h+VqLOKatvNsyHJ
+         uGeEvEL2cxUGeL/C5d92z+GpQM4lEcVxyXtq07rmR2iNLdn0GKf5ZFKvr/TF9jTjlTPC
+         6L880Sjai80s0glxjL2/rsvJYC6NjhcC4rmqgZXoPH1ypvHYK3FfNb0v8qJ72cbfEt8y
+         /fh5K4TCz4agHYEiVWRNwB5OANM9e+zuBHT5Bi8pn0Wp/0FOwTjzbgb6VMdyfjfAwseV
+         bexQ==
+X-Gm-Message-State: AOAM531qUOIyJ8RJ9KxcYv5tv6BoVPfgnBqtLquhlVFDlEebTu1Yn1A4
+        gqHGtNNm4zzl2rGt1xe0eSz0c4SP/PyGZbL7dw/Mqg==
+X-Google-Smtp-Source: ABdhPJyuckf4+FV8dJpo2WtDgSZtUTZx/r7KCc+6Q0sBzWGx76zj30iQdTOjUHRAsDoMGMpJF9mslMLO5Se5xA+4mcg=
+X-Received: by 2002:aa7:de91:: with SMTP id j17mr3715196edv.396.1644314105618;
+ Tue, 08 Feb 2022 01:55:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20220201152758.40391-1-andriy.shevchenko@linux.intel.com> <20220201152758.40391-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20220201152758.40391-2-andriy.shevchenko@linux.intel.com>
+References: <20220120150024.646714-1-paul.kocialkowski@bootlin.com>
+ <20220120150024.646714-4-paul.kocialkowski@bootlin.com> <CACRpkdZnw-Tf2eQwO+LZRW4UacR09qWRWct00=XLb4pfa-N3=g@mail.gmail.com>
+In-Reply-To: <CACRpkdZnw-Tf2eQwO+LZRW4UacR09qWRWct00=XLb4pfa-N3=g@mail.gmail.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 8 Feb 2022 10:34:56 +0100
-Message-ID: <CAMRc=Md-5tumCZOazoP+3O_Kc0wDDMixh-oxzwXkG5xmCuFL5A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] gpiolib: Never return internal error codes to user space
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+Date:   Tue, 8 Feb 2022 10:54:55 +0100
+Message-ID: <CAMRc=MewxfQqM+QvzqjP05Qe5TeiEx+iiOFZLmieqCCVOL9UGQ@mail.gmail.com>
+Subject: Re: [PATCH v10 3/6] gpio: logicvc: Support compatible with major
+ version only
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Suresh Balakrishnan <suresh.balakrishnan@intel.com>
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Feb 1, 2022 at 4:28 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Sun, Jan 30, 2022 at 1:43 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> Currently it's possible that character device interface may return
-> the error codes which are not supposed to be seen by user space.
-> In this case it's EPROBE_DEFER.
+> On Thu, Jan 20, 2022 at 4:00 PM Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
 >
-> Wrap it to return -ENODEV instead as sysfs does.
+> > Support the newly-introduced common compatible for version 3.
+> >
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 >
-> Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
-> Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
-> Fixes: 3c0d9c635ae2 ("gpiolib: cdev: support GPIO_V2_GET_LINE_IOCTL and GPIO_V2_LINE_GET_VALUES_IOCTL")
-> Reported-by: Suresh Balakrishnan <suresh.balakrishnan@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/gpio/gpiolib-cdev.c  |  6 +++---
->  drivers/gpio/gpiolib-sysfs.c |  7 ++-----
->  drivers/gpio/gpiolib.h       | 12 ++++++++++++
->  3 files changed, 17 insertions(+), 8 deletions(-)
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index c7b5446d01fd..ffa0256cad5a 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -330,7 +330,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
->                         goto out_free_lh;
->                 }
+> Are there dependencies between the GPIO patches and the rest?
+> Doesn't look like that.
+> Can Bartosz just merge the GPIO stuff to the GPIO tree?
 >
-> -               ret = gpiod_request(desc, lh->label);
-> +               ret = gpiod_request_user(desc, lh->label);
->                 if (ret)
->                         goto out_free_lh;
->                 lh->descs[i] = desc;
-> @@ -1378,7 +1378,7 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
->                         goto out_free_linereq;
->                 }
->
-> -               ret = gpiod_request(desc, lr->label);
-> +               ret = gpiod_request_user(desc, lr->label);
->                 if (ret)
->                         goto out_free_linereq;
->
-> @@ -1764,7 +1764,7 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
->                 }
->         }
->
-> -       ret = gpiod_request(desc, le->label);
-> +       ret = gpiod_request_user(desc, le->label);
->         if (ret)
->                 goto out_free_le;
->         le->desc = desc;
-> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-> index 4098bc7f88b7..44c1ad51b3fe 100644
-> --- a/drivers/gpio/gpiolib-sysfs.c
-> +++ b/drivers/gpio/gpiolib-sysfs.c
-> @@ -475,12 +475,9 @@ static ssize_t export_store(struct class *class,
->          * they may be undone on its behalf too.
->          */
->
-> -       status = gpiod_request(desc, "sysfs");
-> -       if (status) {
-> -               if (status == -EPROBE_DEFER)
-> -                       status = -ENODEV;
-> +       status = gpiod_request_user(desc, "sysfs");
-> +       if (status)
->                 goto done;
-> -       }
->
->         status = gpiod_set_transitory(desc, false);
->         if (!status) {
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index 30bc3f80f83e..c31f4626915d 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -135,6 +135,18 @@ struct gpio_desc {
->
->  int gpiod_request(struct gpio_desc *desc, const char *label);
->  void gpiod_free(struct gpio_desc *desc);
-> +
-> +static inline int gpiod_request_user(struct gpio_desc *desc, const char *label)
-> +{
-> +       int ret;
-> +
-> +       ret = gpiod_request(desc, label);
-> +       if (ret == -EPROBE_DEFER)
-> +               ret = -ENODEV;
-> +
-> +       return ret;
-> +}
-> +
->  int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
->                 unsigned long lflags, enum gpiod_flags dflags);
->  int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce);
-> --
-> 2.34.1
->
+> Yours,
+> Linus Walleij
 
-Queued for fixes, thanks!
+Except I'm seeing there's no agreement on the actual compatible yet in
+the previous patch.
 
 Bart
