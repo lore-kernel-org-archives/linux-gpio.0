@@ -2,94 +2,107 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39107C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A16C1C43219
 	for <linux-gpio@archiver.kernel.org>; Tue,  8 Feb 2022 11:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234824AbiBHLXk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Feb 2022 06:23:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47852 "EHLO
+        id S230101AbiBHLXw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Feb 2022 06:23:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355792AbiBHJzJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 04:55:09 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26074C03FEC3
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 01:55:07 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id w14so36315073edd.10
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 01:55:07 -0800 (PST)
+        with ESMTP id S244961AbiBHLV4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Feb 2022 06:21:56 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E81C03FEC0
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Feb 2022 03:21:55 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id a8so51231296ejc.8
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Feb 2022 03:21:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AqLy4wbT30gKNHEEk8JX8phB5jik7Edkg+UhlJoA5rs=;
-        b=GmStCOfR1LjR64d3+n6xiUfvnpjdXMYf6CGOzrW6RIz8xDIP0n8/jYPfRmgeH4wvSA
-         OHrBANagwetRO1ctOhpjjqD7hq3IRov+o5g/6r0ohsUWmjxkkAJDMOq5G7RuPuznKZbW
-         Lzs8UqpznjHrlZnMzaYxyFRSPYAnFnvEXsiKUDiZvjkpTJFrJJ7Ls7UIM2rbS4+dOVrw
-         ZTl80lTnm3SQW3C0NMVVs1AuA2J1zOFaOQeqPQydNl0ZsDO068k9z5YB2blovsV4bGfr
-         gty2VNbQEfzPRpAvMj9ngw21yaINuwxLkGx4nbkMcjKNYVKDht8HkTJcUAvqS8XqsgVi
-         dwyQ==
+        bh=h0bqkP/6kD2dEkTgCubdbv5SGEcZhSAS2Kpi6oik4hU=;
+        b=5i2mLyCkBUfIRWek2qWcm/zBcM11Y03MOtIhtz12kWjcGuMWlRSu8EfTFzGlcPaytg
+         NNaP8hu1d5WvRHwkqHi7zAOt444rdPN5JI7ZGDgygYNXcgv+mST7i/BgBYsEzk1eUbQN
+         0Ze2FF+aCITVaZKXfG0XGhZY8K4GF9L1sswh/Xux5GmLXI0xgji8M+rCJkW/NlPGN4SL
+         wHd308PhxidAO8oeEOZWkq+OCYjIOeIHp+f5eazLoAu55A+lBfCzYlG+Py8C2wSjw0/k
+         Lbuz6O93L3AqwHg2hRlx//zVK4FiKU0mRVyOKNXjBwZaWCcL501sCik1deDVh9weKU83
+         7AcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AqLy4wbT30gKNHEEk8JX8phB5jik7Edkg+UhlJoA5rs=;
-        b=u/0ZIHHiFLLiB2fI0ZH2qUiPccw15iTKabb7szCrIF26wu7LIrF7Jcs0x4BNDpYzaW
-         iwd4cwvMc1RX81Sgb7eRQafVxDOD33rNIE1NwMDWv3HgEGhDv/iz+h+VqLOKatvNsyHJ
-         uGeEvEL2cxUGeL/C5d92z+GpQM4lEcVxyXtq07rmR2iNLdn0GKf5ZFKvr/TF9jTjlTPC
-         6L880Sjai80s0glxjL2/rsvJYC6NjhcC4rmqgZXoPH1ypvHYK3FfNb0v8qJ72cbfEt8y
-         /fh5K4TCz4agHYEiVWRNwB5OANM9e+zuBHT5Bi8pn0Wp/0FOwTjzbgb6VMdyfjfAwseV
-         bexQ==
-X-Gm-Message-State: AOAM531qUOIyJ8RJ9KxcYv5tv6BoVPfgnBqtLquhlVFDlEebTu1Yn1A4
-        gqHGtNNm4zzl2rGt1xe0eSz0c4SP/PyGZbL7dw/Mqg==
-X-Google-Smtp-Source: ABdhPJyuckf4+FV8dJpo2WtDgSZtUTZx/r7KCc+6Q0sBzWGx76zj30iQdTOjUHRAsDoMGMpJF9mslMLO5Se5xA+4mcg=
-X-Received: by 2002:aa7:de91:: with SMTP id j17mr3715196edv.396.1644314105618;
- Tue, 08 Feb 2022 01:55:05 -0800 (PST)
+        bh=h0bqkP/6kD2dEkTgCubdbv5SGEcZhSAS2Kpi6oik4hU=;
+        b=UkrzMfjk+8/ux1PuqSI4dzJlRAM5RQeIYbFSdEMHV4sQ6e28farrx1cCcbfF6vB+ER
+         62L+Z3qO/5B9tAyZ0MNEStIwoiAc9bPUjlJeILEA36IZeUL7tB4/qghGxANld6gTn60Q
+         i6GZFrfra8lHCPIhb1vVAdr9LhtQkVAn/FnVbB0vTgjiSpMIZsOYDBg00L5tYTygVSrX
+         BvsCSDZFpGBvz4qZo2fISiNCYEGiP5iemHWlwig9U+khV5dys1/niP4XlpEqhJsvZ2gT
+         f9EoneCiZLT9pNvhvtCXXYzs5W5oNqRm0XfMpn/z8aLMQ1YaWvr0vfRfMSYbjQ+NiwIV
+         YFNg==
+X-Gm-Message-State: AOAM531ujk0XKFH+bd9qAfK8MarGP+wV131GGrnUmFaNVpyG0tSA6CKA
+        zxifUcK1Z55UD/Ruskxg8fvpiCAVnlzV1RbpiQJUkA==
+X-Google-Smtp-Source: ABdhPJy72mKz942t5mnsstnJzgdSQgFirWBs0odiUef50w6iscT45TayiO/M7HTYnn3ITd3xgxGBzHLtIU2lxZzJUQk=
+X-Received: by 2002:a17:906:ad8e:: with SMTP id la14mr3290346ejb.492.1644319313799;
+ Tue, 08 Feb 2022 03:21:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20220120150024.646714-1-paul.kocialkowski@bootlin.com>
- <20220120150024.646714-4-paul.kocialkowski@bootlin.com> <CACRpkdZnw-Tf2eQwO+LZRW4UacR09qWRWct00=XLb4pfa-N3=g@mail.gmail.com>
-In-Reply-To: <CACRpkdZnw-Tf2eQwO+LZRW4UacR09qWRWct00=XLb4pfa-N3=g@mail.gmail.com>
+References: <20220203042134.68425-1-joel@jms.id.au> <20220203042134.68425-2-joel@jms.id.au>
+In-Reply-To: <20220203042134.68425-2-joel@jms.id.au>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 8 Feb 2022 10:54:55 +0100
-Message-ID: <CAMRc=MewxfQqM+QvzqjP05Qe5TeiEx+iiOFZLmieqCCVOL9UGQ@mail.gmail.com>
-Subject: Re: [PATCH v10 3/6] gpio: logicvc: Support compatible with major
- version only
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Tue, 8 Feb 2022 12:21:43 +0100
+Message-ID: <CAMRc=MfYH=YuFaV-pX0weM5o+i7u7gkQ7d7qg2j-XK2EoN1BkA@mail.gmail.com>
+Subject: Re: [libgpiod PATCH 1/7] tools: Clean up scandir memory allocations
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Zev Weiss <zweiss@equinix.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Jan 30, 2022 at 1:43 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Thu, Feb 3, 2022 at 5:22 AM Joel Stanley <joel@jms.id.au> wrote:
 >
-> On Thu, Jan 20, 2022 at 4:00 PM Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
+> The code copied from gpiofind didn't free the memory from scandir.
 >
-> > Support the newly-introduced common compatible for version 3.
-> >
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  tools/tools-common.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 >
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> diff --git a/tools/tools-common.c b/tools/tools-common.c
+> index 0dc3d52668d7..c83e68a2c1e4 100644
+> --- a/tools/tools-common.c
+> +++ b/tools/tools-common.c
+> @@ -190,12 +190,17 @@ struct gpiod_chip *chip_by_line_name(const char *name)
 >
-> Are there dependencies between the GPIO patches and the rest?
-> Doesn't look like that.
-> Can Bartosz just merge the GPIO stuff to the GPIO tree?
+>                         die_perror("unable to open %s", entries[i]->d_name);
+>                 }
+> +               free(entries[i]);
 >
-> Yours,
-> Linus Walleij
+>                 offset = gpiod_chip_find_line(chip, name);
+> -               if (offset >= 0)
+> +               if (offset >= 0) {
+> +                       free(entries);
+>                         return chip;
+> +               }
+> +               gpiod_chip_unref(chip);
+>         }
+>
+> +       free(entries);
+>         return NULL;
+>  }
+>
+> --
+> 2.34.1
+>
 
-Except I'm seeing there's no agreement on the actual compatible yet in
-the previous patch.
+Good catch! It doesn't come up with gpiodetect which is what I tested
+with valgrind but does show up for gpiofind and gpioinfo. This patch
+however doesn't apply on the current master. Also: I don't really want
+new features for the v1.6.x series and we're heavily reworking the
+interface. Current version is in the next/libgpiod-2.0 branch but I
+should be posting a new version with reworked test suite later this
+week. How about working on this feature for the new API right away and
+make it part of libgpiod starting with v2.0?
 
 Bart
