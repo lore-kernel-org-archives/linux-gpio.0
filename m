@@ -2,99 +2,137 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1602C433F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Feb 2022 13:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7432C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Feb 2022 16:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234281AbiBINkO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Feb 2022 08:40:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59370 "EHLO
+        id S236838AbiBIQ0Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Feb 2022 11:26:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234313AbiBINkN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Feb 2022 08:40:13 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D80C0613CA;
-        Wed,  9 Feb 2022 05:40:16 -0800 (PST)
+        with ESMTP id S236856AbiBIQ0P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Feb 2022 11:26:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16109C061355;
+        Wed,  9 Feb 2022 08:26:19 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7E46B619FF;
-        Wed,  9 Feb 2022 13:40:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1144C340E7;
-        Wed,  9 Feb 2022 13:40:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A6AE661646;
+        Wed,  9 Feb 2022 16:26:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13562C340E7;
+        Wed,  9 Feb 2022 16:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644414015;
-        bh=+8aJBPSULxP5Zax04rq5roBRVH/mUwGTvhQVeya08Aw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Zyx1Un9dpCjcJBBA9WTpIjqyj+P3afDSBYWrucqMYJdMpL+Op9P6lDfxs/IjQ2OXq
-         g2bkeD1/F4Ajy7Sdb5KDvRx9A0/dIA0lZiIjI1uy+umxSZyCEfCvBqYoRaCid69Bnx
-         8sPjqvn83M5qO9esVwBrate6RVoJBvKqpyYR1Oq7NaHwceS4MpfXK9flTllVh+OZ98
-         DOcrXvV9iFowho2pd4JLqN64zb5vGakCxZNVSZkfSPplWGU7n+poOFQHN6b0jFR5F5
-         QwqYpoHPWzpcD3CTFwR79T0g0sBg1XYbjmu0xh5Fd/LCqKRLVFWNIr9O9LVgw1Zmx7
-         uItQCnP8CHBAg==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        s=k20201202; t=1644423978;
+        bh=IbKlzzfUm0Hi1oeEGCrh1Ryrimz2DXihVgaBj1ARG2M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OKOVWKm3XCa/ZYd6CjHUW55DG6Iad1FX96t254zS/Daa93KF2/5SI+LGu1ljuT5zn
+         HDKc1Fw9W8QkAk3Wn14AUZlhn1JmowHNa4mTtFLJwSdwMXCpC7R0nyPZae89dOkkgy
+         R1jZCs6yMKIV2DQiLZE4/Ru+ud29WsiQJ/d3ATXGAt1MOFJjG+XpARPY+8CXfibUc7
+         WmdJdvFEB/ZpL/q1qMlstVWWnrEokQ6waAEFFJRXPblt5fE7FjyNzMFvvabB1R4LJI
+         SA4SQD4+Cuuy84SHlKzV5VPEbnatoJARLEaGXNemqbMzRpyNR+YxjPcgScVJJyGogj
+         6x07cJT/I0lrg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <maz@kernel.org>)
-        id 1nHnCf-006dDe-M2; Wed, 09 Feb 2022 13:40:13 +0000
-MIME-Version: 1.0
-Date:   Wed, 09 Feb 2022 13:40:13 +0000
+        id 1nHpnM-006fgT-79; Wed, 09 Feb 2022 16:26:16 +0000
 From:   Marc Zyngier <maz@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>
-Subject: Re: [PATCH 03/12] irqchip/renesas-intc-gpio: Move PM device over to
- irq domain
-In-Reply-To: <CAMuHMdXbM8kvmv0XKP8=rYj-8k5cFt50VP69LeDNX5oHx2e9dw@mail.gmail.com>
-References: <20220201120310.878267-1-maz@kernel.org>
- <20220201120310.878267-4-maz@kernel.org>
- <CAMuHMdXbM8kvmv0XKP8=rYj-8k5cFt50VP69LeDNX5oHx2e9dw@mail.gmail.com>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <83f67bec65e4f3cf661e0b6a6bbe9641@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: geert@linux-m68k.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, matthias.bgg@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, tglx@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, kernel@esmil.dk
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        kernel-team@android.com
+Subject: [PATCH 01/10] irqdomain: Let irq_domain_set_{info,hwirq_and_chip} take a const irq_chip
+Date:   Wed,  9 Feb 2022 16:25:58 +0000
+Message-Id: <20220209162607.1118325-2-maz@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220209162607.1118325-1-maz@kernel.org>
+References: <20220209162607.1118325-1-maz@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, matthias.bgg@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, tony@atomide.com, tglx@linutronix.de, vz@mleia.com, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, kernel@esmil.dk, kernel-team@android.com
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2022-02-02 14:27, Geert Uytterhoeven wrote:
-> Hi Marc,
-> 
-> On Tue, Feb 1, 2022 at 1:12 PM Marc Zyngier <maz@kernel.org> wrote:
->> Move the reference to the device over to the irq domain.
->> 
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> 
-> Thanks for your patch!
-> 
-> s/gpio/irqpin/ in the one-line summary?
+In order to let a const irqchip be fed to the irqchip layer, adjust
+the various prototypes. An extra cast in irq_domain_set_hwirq_and_chip()
+is required to avoid a warning.
 
-Indeed, now fixed.
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ include/linux/irqdomain.h | 5 +++--
+ kernel/irq/irqdomain.c    | 7 ++++---
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-Thanks,
-
-         M.
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index be25a33293e5..00d577f90883 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -479,7 +479,8 @@ int irq_destroy_ipi(unsigned int irq, const struct cpumask *dest);
+ extern struct irq_data *irq_domain_get_irq_data(struct irq_domain *domain,
+ 						unsigned int virq);
+ extern void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
+-				irq_hw_number_t hwirq, struct irq_chip *chip,
++				irq_hw_number_t hwirq,
++				const struct irq_chip *chip,
+ 				void *chip_data, irq_flow_handler_t handler,
+ 				void *handler_data, const char *handler_name);
+ extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
+@@ -522,7 +523,7 @@ extern int irq_domain_alloc_irqs_hierarchy(struct irq_domain *domain,
+ extern int irq_domain_set_hwirq_and_chip(struct irq_domain *domain,
+ 					 unsigned int virq,
+ 					 irq_hw_number_t hwirq,
+-					 struct irq_chip *chip,
++					 const struct irq_chip *chip,
+ 					 void *chip_data);
+ extern void irq_domain_free_irqs_common(struct irq_domain *domain,
+ 					unsigned int virq,
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index bf38c546aa25..14cf52708890 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1319,7 +1319,8 @@ EXPORT_SYMBOL_GPL(irq_domain_get_irq_data);
+  * @chip_data:	The associated chip data
+  */
+ int irq_domain_set_hwirq_and_chip(struct irq_domain *domain, unsigned int virq,
+-				  irq_hw_number_t hwirq, struct irq_chip *chip,
++				  irq_hw_number_t hwirq,
++				  const struct irq_chip *chip,
+ 				  void *chip_data)
+ {
+ 	struct irq_data *irq_data = irq_domain_get_irq_data(domain, virq);
+@@ -1328,7 +1329,7 @@ int irq_domain_set_hwirq_and_chip(struct irq_domain *domain, unsigned int virq,
+ 		return -ENOENT;
+ 
+ 	irq_data->hwirq = hwirq;
+-	irq_data->chip = chip ? chip : &no_irq_chip;
++	irq_data->chip = (struct irq_chip *)(chip ? chip : &no_irq_chip);
+ 	irq_data->chip_data = chip_data;
+ 
+ 	return 0;
+@@ -1347,7 +1348,7 @@ EXPORT_SYMBOL_GPL(irq_domain_set_hwirq_and_chip);
+  * @handler_name:	The interrupt handler name
+  */
+ void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
+-			 irq_hw_number_t hwirq, struct irq_chip *chip,
++			 irq_hw_number_t hwirq, const struct irq_chip *chip,
+ 			 void *chip_data, irq_flow_handler_t handler,
+ 			 void *handler_data, const char *handler_name)
+ {
 -- 
-Jazz is not dead. It just smells funny...
+2.30.2
+
