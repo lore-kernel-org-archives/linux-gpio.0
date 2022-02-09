@@ -2,40 +2,40 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78096C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Feb 2022 16:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB1BC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Feb 2022 16:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236965AbiBIQ0b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Feb 2022 11:26:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56672 "EHLO
+        id S236911AbiBIQ01 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Feb 2022 11:26:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236863AbiBIQ0R (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Feb 2022 11:26:17 -0500
+        with ESMTP id S236853AbiBIQ0Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Feb 2022 11:26:16 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E212C0612BE;
-        Wed,  9 Feb 2022 08:26:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4033C061355;
+        Wed,  9 Feb 2022 08:26:19 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C53E6173F;
-        Wed,  9 Feb 2022 16:26:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CBDCC36AE2;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 76EDF6184A;
         Wed,  9 Feb 2022 16:26:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA65DC340EF;
+        Wed,  9 Feb 2022 16:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644423979;
-        bh=oB6h9NrunoVA0c76SiilyTbLi8O8MnX8iolIrbh8ArY=;
+        s=k20201202; t=1644423978;
+        bh=cs00MVgpXDQgdlwEEoboPGvlbWWnFiL2BYOY+lnD89Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a5BXrAditPtDAq6w5VqTfYuvjwZ/QZiBACa/81ymD0zsKifvyWiYV+cHeNSgqTLO/
-         zLTVzYS2PCJ/45hTrwWB9+gEKwTFfssn0qHkdUeoZmeoEBvuaogMHXbN0GBa2PeVUh
-         JtKNdJIwovJLuK3prCud6vFKd/ZOMJ1YCZ1xvfQxYEty34WUgqMIOR2UUCc4dw/aKa
-         j6eZ1Falv+h5laHrHmAumcxw/IoB3p/CYW8uTgogXqACarLrZ0Ek4UUnxJol0GbusG
-         BBUBcrejRIm5fPv0Fp2Hc7hIP2h55QihsSLntQ7pF6D65o+eERhb5bSJpbrWXAj/sO
-         oCfCSprnTYa5A==
+        b=G0IrH+7AYPbkmnL7ei33L1Wk1Kv/4QwD6z0Vk+wIetaIo96RqYxz97A8X56+dXdoI
+         t4vx6Z96LAd3XMFi8PcZsKAAELhVnByjTSDjoH3yx5Y/s5una8Pb5yFLXIwaD1J2Ew
+         LE6jVKyoR+EDZak4I1Tr/5LFBNCOUxuYRrnAnQmCWIdWFjKF5y0btyA+CtFmcEVI55
+         ejd0yp1KCse0OZNeMWCXznG8Te5ODWiPlv7xTHl/XzuvKKjfPhYlE5AjUpo77guc+V
+         gguCJFV/DUqW9MfH2GTpmhRIy+NwKBzhs/TVcc4SOwSZIUKb4WYbKejv/c+CEm3Aes
+         BxgtuxhwPH0PQ==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <maz@kernel.org>)
-        id 1nHpnN-006fgT-Jd; Wed, 09 Feb 2022 16:26:17 +0000
+        id 1nHpnN-006fgT-1b; Wed, 09 Feb 2022 16:26:17 +0000
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -52,9 +52,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Emil Renner Berthing <kernel@esmil.dk>,
         kernel-team@android.com
-Subject: [PATCH 06/10] irqchip/ts4800: Switch to dynamic chip name output
-Date:   Wed,  9 Feb 2022 16:26:03 +0000
-Message-Id: <20220209162607.1118325-7-maz@kernel.org>
+Subject: [PATCH 04/10] irqchip/lpc32xx: Switch to dynamic chip name output
+Date:   Wed,  9 Feb 2022 16:26:01 +0000
+Message-Id: <20220209162607.1118325-5-maz@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220209162607.1118325-1-maz@kernel.org>
 References: <20220209162607.1118325-1-maz@kernel.org>
@@ -68,86 +68,101 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Instead of overriding the name field with the device name, use
+the relevant callback. This allows us to make the irq_chip structure
+const.
+
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-ts4800.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ drivers/irqchip/irq-lpc32xx.c | 34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
-index f032db23b30f..b2d61d4f6fe6 100644
---- a/drivers/irqchip/irq-ts4800.c
-+++ b/drivers/irqchip/irq-ts4800.c
-@@ -19,14 +19,15 @@
+diff --git a/drivers/irqchip/irq-lpc32xx.c b/drivers/irqchip/irq-lpc32xx.c
+index a29357f39450..4d70a857133f 100644
+--- a/drivers/irqchip/irq-lpc32xx.c
++++ b/drivers/irqchip/irq-lpc32xx.c
+@@ -11,6 +11,7 @@
  #include <linux/of_address.h>
  #include <linux/of_irq.h>
- #include <linux/platform_device.h>
+ #include <linux/of_platform.h>
 +#include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <asm/exception.h>
  
- #define IRQ_MASK        0x4
- #define IRQ_STATUS      0x8
+@@ -25,8 +26,8 @@
  
- struct ts4800_irq_data {
- 	void __iomem            *base;
-+	struct platform_device	*pdev;
- 	struct irq_domain       *domain;
--	struct irq_chip         irq_chip;
+ struct lpc32xx_irq_chip {
+ 	void __iomem *base;
++	phys_addr_t addr;
+ 	struct irq_domain *domain;
+-	struct irq_chip chip;
  };
  
- static void ts4800_irq_mask(struct irq_data *d)
-@@ -47,12 +48,25 @@ static void ts4800_irq_unmask(struct irq_data *d)
- 	writew(reg & ~mask, data->base + IRQ_MASK);
+ static struct lpc32xx_irq_chip *lpc32xx_mic_irqc;
+@@ -118,6 +119,24 @@ static int lpc32xx_irq_set_type(struct irq_data *d, unsigned int type)
+ 	return 0;
  }
  
-+static void ts4800_irq_print_chip(struct irq_data *d, struct seq_file *p)
++static void lpc32xx_irq_print_chip(struct irq_data *d, struct seq_file *p)
 +{
-+	struct ts4800_irq_data *data = irq_data_get_irq_chip_data(d);
++	struct lpc32xx_irq_chip *ic = irq_data_get_irq_chip_data(d);
 +
-+	seq_printf(p, "%s", dev_name(&data->pdev->dev));
++	if (ic == lpc32xx_mic_irqc)
++		seq_printf(p, "%08x.mic", ic->addr);
++	else
++		seq_printf(p, "%08x.sic", ic->addr);
 +}
 +
-+static const struct irq_chip ts4800_chip = {
-+	.irq_mask	= ts4800_irq_mask,
-+	.irq_unmask	= ts4800_irq_unmask,
-+	.irq_print_chip	= ts4800_irq_print_chip,
++static const struct irq_chip lpc32xx_chip = {
++	.irq_ack	= lpc32xx_irq_ack,
++	.irq_mask	= lpc32xx_irq_mask,
++	.irq_unmask	= lpc32xx_irq_unmask,
++	.irq_set_type	= lpc32xx_irq_set_type,
++	.irq_print_chip	= lpc32xx_irq_print_chip,
 +};
 +
- static int ts4800_irqdomain_map(struct irq_domain *d, unsigned int irq,
- 				irq_hw_number_t hwirq)
+ static void __exception_irq_entry lpc32xx_handle_irq(struct pt_regs *regs)
  {
- 	struct ts4800_irq_data *data = d->host_data;
+ 	struct lpc32xx_irq_chip *ic = lpc32xx_mic_irqc;
+@@ -153,7 +172,7 @@ static int lpc32xx_irq_domain_map(struct irq_domain *id, unsigned int virq,
+ 	struct lpc32xx_irq_chip *ic = id->host_data;
  
--	irq_set_chip_and_handler(irq, &data->irq_chip, handle_simple_irq);
-+	irq_set_chip_and_handler(irq, &ts4800_chip, handle_simple_irq);
- 	irq_set_chip_data(irq, data);
- 	irq_set_noprobe(irq);
+ 	irq_set_chip_data(virq, ic);
+-	irq_set_chip_and_handler(virq, &ic->chip, handle_level_irq);
++	irq_set_chip_and_handler(virq, &lpc32xx_chip, handle_level_irq);
+ 	irq_set_status_flags(virq, IRQ_LEVEL);
+ 	irq_set_noprobe(virq);
  
-@@ -92,13 +106,13 @@ static int ts4800_ic_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
- 	struct ts4800_irq_data *data;
--	struct irq_chip *irq_chip;
- 	int parent_irq;
- 
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
+@@ -183,6 +202,7 @@ static int __init lpc32xx_of_ic_init(struct device_node *node,
+ 	if (!irqc)
  		return -ENOMEM;
  
-+	data->pdev = pdev;
- 	data->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->base))
- 		return PTR_ERR(data->base);
-@@ -111,11 +125,6 @@ static int ts4800_ic_probe(struct platform_device *pdev)
++	irqc->addr = addr;
+ 	irqc->base = of_iomap(node, 0);
+ 	if (!irqc->base) {
+ 		pr_err("%pOF: unable to map registers\n", node);
+@@ -190,21 +210,11 @@ static int __init lpc32xx_of_ic_init(struct device_node *node,
  		return -EINVAL;
  	}
  
--	irq_chip = &data->irq_chip;
--	irq_chip->name = dev_name(&pdev->dev);
--	irq_chip->irq_mask = ts4800_irq_mask;
--	irq_chip->irq_unmask = ts4800_irq_unmask;
+-	irqc->chip.irq_ack = lpc32xx_irq_ack;
+-	irqc->chip.irq_mask = lpc32xx_irq_mask;
+-	irqc->chip.irq_unmask = lpc32xx_irq_unmask;
+-	irqc->chip.irq_set_type = lpc32xx_irq_set_type;
+-	if (is_mic)
+-		irqc->chip.name = kasprintf(GFP_KERNEL, "%08x.mic", addr);
+-	else
+-		irqc->chip.name = kasprintf(GFP_KERNEL, "%08x.sic", addr);
 -
- 	data->domain = irq_domain_add_linear(node, 8, &ts4800_ic_ops, data);
- 	if (!data->domain) {
- 		dev_err(&pdev->dev, "cannot add IRQ domain\n");
+ 	irqc->domain = irq_domain_add_linear(node, NR_LPC32XX_IC_IRQS,
+ 					     &lpc32xx_irq_domain_ops, irqc);
+ 	if (!irqc->domain) {
+ 		pr_err("unable to add irq domain\n");
+ 		iounmap(irqc->base);
+-		kfree(irqc->chip.name);
+ 		kfree(irqc);
+ 		return -ENODEV;
+ 	}
 -- 
 2.30.2
 
