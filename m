@@ -2,32 +2,31 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA8BC433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Feb 2022 14:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 617C1C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Feb 2022 14:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242718AbiBJOTg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Feb 2022 09:19:36 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36798 "EHLO
+        id S242743AbiBJOTh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Feb 2022 09:19:37 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242717AbiBJOTg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Feb 2022 09:19:36 -0500
-X-Greylist: delayed 19727 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Feb 2022 06:19:37 PST
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E34F5;
-        Thu, 10 Feb 2022 06:19:37 -0800 (PST)
+        with ESMTP id S242737AbiBJOTh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Feb 2022 09:19:37 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8407BF5;
+        Thu, 10 Feb 2022 06:19:38 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id 700821F46563
+        with ESMTPSA id CCACB1F4656A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1644502776;
-        bh=g15F7ALHJ8lVbIQkW5krJ5yH/z+6t06WcZS8hyKBtcM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TF4Doc9RYiO/wLbmcAi5heLv6I2KrzpbKWeVKnuS7FkNecx+cnjtOM5g5uPySLEjB
-         Sug5IkO8agBqprdlpKAOV17ChHrN8BQ7BstGG1PKPm+zpXRYffdc0z1cUTExJlnJDM
-         oLP5jkxco1y+r41HcfCmxRxDm9Gi7KjIqb5v55o8ElvbXJZr6cHYhcl3T4/NyS86Ci
-         0sUDb3EgPXbTGQUFHzUy98rSc87HF8/uWqgDC3Kiz9ipKFerHMoSgprQN+a8hsPxIk
-         +ziQaF1vyONJzdb26HS/ZEI8Lao892VZ2F4rdiAvSwa2juIgmNeXS07Ct+VyLPG+p6
-         h2/vXoZrEeBJQ==
+        s=mail; t=1644502777;
+        bh=sQ+FKkicNUDc/dNX696E1r1KBxy8rCFNJOXpjtexupY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZM0WFhkt1W5EvBOeUJpFadV9V97cO6GR6en/cvtgJtW2zYjFEGTgI6cCNtDul8Zgm
+         SqHciHMaFJrknyO9tr8lImjDW6ArvKNQjc2YOfmjFJ8Qzf7l1o3uAHRO1gL44HF/Az
+         5ejkGtb+uRTdytPAs2oWQz72Rp7sxrPgtJFVOJjHDJGjp3ovUyZdaxmp9jx3PU4GZV
+         LdY6/iovw4q2SGd3CjG3qRlC/WpltpHLBbevtQ1BtCeJTY6+YyNUbz7r7BJVjv7bJY
+         oIK82HNjxoGZhKB8dvpoMgtePTXQlqRtPZ916fdPLGY2knsUgf7CqZCdR/Z8T2lPJy
+         msHrq6V9Am/rg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     sean.wang@kernel.org
@@ -37,51 +36,60 @@ Cc:     linus.walleij@linaro.org, matthias.bgg@gmail.com,
         kernel@collabora.com,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH 0/5] MediaTek pinctrl drivers cleanups
-Date:   Thu, 10 Feb 2022 15:19:26 +0100
-Message-Id: <20220210141931.291712-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH 2/5] pinctrl: mediatek: common-v1: Add common probe function
+Date:   Thu, 10 Feb 2022 15:19:28 +0100
+Message-Id: <20220210141931.291712-3-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20220210141931.291712-1-angelogioacchino.delregno@collabora.com>
+References: <20220210141931.291712-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello!
-This series performs some cleanups to the MediaTek pinctrl drivers
-by commonizing some functions (reducing code duplication) hence also
-simplifying the probe mechanism by removing unnecessary per-driver
-probe functions.
+As a preparation to cleanup the probe mechanism of mediatek pinctrl
+drivers that are using the v1 controller, add a common probe function
+to this driver.
 
-This code was tested against multiple platforms.
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 11 +++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  2 ++
+ 2 files changed, 13 insertions(+)
 
-AngeloGioacchino Del Regno (5):
-  pinctrl: mediatek: paris: Unify probe function by using OF match data
-  pinctrl: mediatek: common-v1: Add common probe function
-  pinctrl: mediatek: common-v1: Use common probe function
-  pinctrl: mediatek: common-v1: Commonize spec_pupd callback
-  pinctrl: mediatek: common-v1: Commonize spec_ies_smt_set callback
-
- drivers/pinctrl/mediatek/pinctrl-mt2701.c     | 40 ++++--------
- drivers/pinctrl/mediatek/pinctrl-mt2712.c     | 44 +++----------
- drivers/pinctrl/mediatek/pinctrl-mt6765.c     |  9 +--
- drivers/pinctrl/mediatek/pinctrl-mt6779.c     |  9 +--
- drivers/pinctrl/mediatek/pinctrl-mt6797.c     |  9 +--
- drivers/pinctrl/mediatek/pinctrl-mt8127.c     | 39 +++---------
- drivers/pinctrl/mediatek/pinctrl-mt8135.c     | 17 ++---
- drivers/pinctrl/mediatek/pinctrl-mt8167.c     | 40 +++---------
- drivers/pinctrl/mediatek/pinctrl-mt8173.c     | 29 +++------
- drivers/pinctrl/mediatek/pinctrl-mt8183.c     |  9 +--
- drivers/pinctrl/mediatek/pinctrl-mt8192.c     |  9 +--
- drivers/pinctrl/mediatek/pinctrl-mt8195.c     |  9 +--
- drivers/pinctrl/mediatek/pinctrl-mt8365.c     | 40 +++---------
- drivers/pinctrl/mediatek/pinctrl-mt8516.c     | 40 +++---------
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 63 ++++++++++++++-----
- drivers/pinctrl/mediatek/pinctrl-mtk-common.h | 33 +++++++---
- drivers/pinctrl/mediatek/pinctrl-paris.c      |  9 ++-
- drivers/pinctrl/mediatek/pinctrl-paris.h      |  3 +-
- 18 files changed, 165 insertions(+), 286 deletions(-)
-
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 6f8dfa6ae5a0..007da39b68c9 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1115,3 +1115,14 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 	gpiochip_remove(pctl->chip);
+ 	return ret;
+ }
++
++int mtk_pctrl_common_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct mtk_pinctrl_devdata *data = device_get_match_data(dev);
++
++	if (!data)
++		return -ENOENT;
++
++	return mtk_pctrl_init(pdev, data, NULL);
++}
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+index 98f27cdc609a..cd264cc3547b 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+@@ -277,6 +277,8 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 		const struct mtk_pinctrl_devdata *data,
+ 		struct regmap *regmap);
+ 
++int mtk_pctrl_common_probe(struct platform_device *pdev);
++
+ int mtk_pctrl_spec_pull_set_samereg(struct regmap *regmap,
+ 		const struct mtk_pin_spec_pupd_set_samereg *pupd_infos,
+ 		unsigned int info_num, unsigned int pin,
 -- 
 2.33.1
 
