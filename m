@@ -2,40 +2,41 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C19C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Feb 2022 15:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 292FFC4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Feb 2022 15:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355749AbiBNPU0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Feb 2022 10:20:26 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46666 "EHLO
+        id S1355795AbiBNPVN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Feb 2022 10:21:13 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232806AbiBNPUZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Feb 2022 10:20:25 -0500
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC3219C25;
-        Mon, 14 Feb 2022 07:20:17 -0800 (PST)
+        with ESMTP id S1355797AbiBNPVM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Feb 2022 10:21:12 -0500
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEBCF606FD;
+        Mon, 14 Feb 2022 07:21:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1644852017; x=1676388017;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=zcRPXIrxXAZZZpEcrj3ktA2xCMYxeY+0zvFuMdjbo+o=;
-  b=UOcOy16tYKUvPJgKc2LUSis+/7G/7buIJQDwC6i9CZt0qXSlsX6e0lE4
-   Bp64+8KzRZGxKPTWl9YSDUsOCjn7C1aqDEThdcfhhuhLP3NdmwFMW4AA5
-   48Jh3/K+GrWF75L3ahXSNkLavt/UdvZoyIW6nOkX/kWgqMF4Y/TZJ0dtt
-   Y=;
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 14 Feb 2022 07:20:17 -0800
+  t=1644852063; x=1676388063;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=uHYs5i5tsOn7AC9eTjApEogxg8S/6QrNxF6kUCTkTSE=;
+  b=wUCTtgoxLRz7NIeb88IBA+2O0Fc0LDzBbOYXq8HhNjV/+R0PwKJHyZ39
+   hPmbhWSDew3ibDxdMu0u5uDo/tnU6oaNyl7xWwgEhRgTixjF1cARnvDKI
+   o8HoRxkS5W6uoYgYfUDSnqty0RQd+TQSL030HrTVfOhlPd279tIFWwt3K
+   k=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 14 Feb 2022 07:21:03 -0800
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg03-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 07:20:16 -0800
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 07:21:02 -0800
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Mon, 14 Feb 2022 07:20:16 -0800
+ 15.2.986.15; Mon, 14 Feb 2022 07:20:42 -0800
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Mon, 14 Feb 2022 07:20:10 -0800
+ 15.2.922.19; Mon, 14 Feb 2022 07:20:35 -0800
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
         <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
@@ -47,11 +48,14 @@ To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
         <swboyd@chromium.org>, <judyhsiao@chromium.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         <linux-gpio@vger.kernel.org>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v6 0/7] Add pin control support for lpass sc7280
-Date:   Mon, 14 Feb 2022 20:49:47 +0530
-Message-ID: <1644851994-22732-1-git-send-email-quic_srivasam@quicinc.com>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        "Venkata Prasad Potturu" <quic_potturu@quicinc.com>
+Subject: [PATCH v6 4/7] pinctrl: qcom: Update lpi pin group structure
+Date:   Mon, 14 Feb 2022 20:49:51 +0530
+Message-ID: <1644851994-22732-5-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1644851994-22732-1-git-send-email-quic_srivasam@quicinc.com>
+References: <1644851994-22732-1-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -61,64 +65,101 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch series is to split lpass variant common pin control
-functions and SoC specific functions and to add lpass sc7280 pincontrol support.
-It also Adds dt-bindings for lpass sc7280 lpass lpi pincontrol.
+Update lpi group structure with core group_desc structure
+to avoid redundant struct params.
 
-Changes Since V5:
-    -- Create new patch by updating macro name to lpi specific.
-    -- Create new patch by updating lpi pin group structure with core group_desc structure.
-    -- Fix typo errors.
-    -- Sort macros in the make file and configuration file.
-Changes Since V4:
-    -- Update commit message and description of the chip specific extraction patch.
-    -- Sort macros in kconfig and makefile.
-    -- Update optional clock voting to conditional clock voting.
-    -- Fix typo errors.
-    -- Move to quicinc domain email id's.
-Changes Since V3:
-    -- Update separate Kconfig fields for sm8250 and sc7280.
-    -- Update module license and description.
-    -- Move static variables to corresponding .c files from header file.
+Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Co-developed-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
+Signed-off-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
+---
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 44 +++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
 
-Changes Since V2:
-    -- Add new dt-bindings for sc7280 lpi driver.
-    -- Make clock voting change as separate patch.
-    -- Split existing pincontrol driver and make common functions 
-       as part of separate file.
-    -- Rename lpass pincontrol lpi dt-bindings to sm8250 specific dt-bindings
-		
-Changes Since V1:
-    -- Make lpi pinctrl variant data structure as constant
-    -- Add appropriate commit message
-    -- Change signedoff by sequence.
-
-Srinivasa Rao Mandadapu (7):
-  dt-bindings: pinctrl: qcom: Update lpass lpi file name to SoC specific
-  dt-bindings: pinctrl: qcom: Add sc7280 lpass lpi pinctrl bindings
-  pinctrl: qcom: Update macro name to LPI specific
-  pinctrl: qcom: Update lpi pin group structure
-  pinctrl: qcom: Extract chip specific LPASS LPI code
-  pinctrl: qcom: Add SC7280 lpass pin configuration
-  pinctrl: qcom: Update clock voting as optional
-
- .../bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml   | 133 -----------
- .../pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml     | 115 +++++++++
- .../pinctrl/qcom,sm8250-lpass-lpi-pinctrl.yaml     | 133 +++++++++++
- drivers/pinctrl/qcom/Kconfig                       |  16 ++
- drivers/pinctrl/qcom/Makefile                      |   2 +
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.c           | 257 ++-------------------
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.h           |  87 +++++++
- drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c    | 170 ++++++++++++++
- drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c    | 166 +++++++++++++
- 9 files changed, 706 insertions(+), 373 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,lpass-lpi-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8250-lpass-lpi-pinctrl.yaml
- create mode 100644 drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
- create mode 100644 drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+index 3c15f80..54750ba 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+@@ -51,11 +51,11 @@
+ 
+ #define LPI_PINGROUP(id, soff, f1, f2, f3, f4)		\
+ 	{						\
+-		.name = "gpio" #id,			\
+-		.pins = gpio##id##_pins,		\
++		.group.name = "gpio" #id,			\
++		.group.pins = gpio##id##_pins,		\
+ 		.pin = id,				\
+ 		.slew_offset = soff,			\
+-		.npins = ARRAY_SIZE(gpio##id##_pins),	\
++		.group.num_pins = ARRAY_SIZE(gpio##id##_pins),	\
+ 		.funcs = (int[]){			\
+ 			LPI_MUX_gpio,			\
+ 			LPI_MUX_##f1,			\
+@@ -67,9 +67,7 @@
+ 	}
+ 
+ struct lpi_pingroup {
+-	const char *name;
+-	const unsigned int *pins;
+-	unsigned int npins;
++	struct group_desc group;
+ 	unsigned int pin;
+ 	/* Bit offset in slew register for SoundWire pins only */
+ 	int slew_offset;
+@@ -150,20 +148,20 @@ enum sm8250_lpi_functions {
+ 	LPI_MUX__,
+ };
+ 
+-static const unsigned int gpio0_pins[] = { 0 };
+-static const unsigned int gpio1_pins[] = { 1 };
+-static const unsigned int gpio2_pins[] = { 2 };
+-static const unsigned int gpio3_pins[] = { 3 };
+-static const unsigned int gpio4_pins[] = { 4 };
+-static const unsigned int gpio5_pins[] = { 5 };
+-static const unsigned int gpio6_pins[] = { 6 };
+-static const unsigned int gpio7_pins[] = { 7 };
+-static const unsigned int gpio8_pins[] = { 8 };
+-static const unsigned int gpio9_pins[] = { 9 };
+-static const unsigned int gpio10_pins[] = { 10 };
+-static const unsigned int gpio11_pins[] = { 11 };
+-static const unsigned int gpio12_pins[] = { 12 };
+-static const unsigned int gpio13_pins[] = { 13 };
++static int gpio0_pins[] = { 0 };
++static int gpio1_pins[] = { 1 };
++static int gpio2_pins[] = { 2 };
++static int gpio3_pins[] = { 3 };
++static int gpio4_pins[] = { 4 };
++static int gpio5_pins[] = { 5 };
++static int gpio6_pins[] = { 6 };
++static int gpio7_pins[] = { 7 };
++static int gpio8_pins[] = { 8 };
++static int gpio9_pins[] = { 9 };
++static int gpio10_pins[] = { 10 };
++static int gpio11_pins[] = { 11 };
++static int gpio12_pins[] = { 12 };
++static int gpio13_pins[] = { 13 };
+ static const char * const swr_tx_clk_groups[] = { "gpio0" };
+ static const char * const swr_tx_data_groups[] = { "gpio1", "gpio2", "gpio5" };
+ static const char * const swr_rx_clk_groups[] = { "gpio3" };
+@@ -262,7 +260,7 @@ static const char *lpi_gpio_get_group_name(struct pinctrl_dev *pctldev,
+ {
+ 	struct lpi_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 
+-	return pctrl->data->groups[group].name;
++	return pctrl->data->groups[group].group.name;
+ }
+ 
+ static int lpi_gpio_get_group_pins(struct pinctrl_dev *pctldev,
+@@ -272,8 +270,8 @@ static int lpi_gpio_get_group_pins(struct pinctrl_dev *pctldev,
+ {
+ 	struct lpi_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 
+-	*pins = pctrl->data->groups[group].pins;
+-	*num_pins = pctrl->data->groups[group].npins;
++	*pins = pctrl->data->groups[group].group.pins;
++	*num_pins = pctrl->data->groups[group].group.num_pins;
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
 
