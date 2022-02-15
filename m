@@ -2,83 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F986C433FE
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Feb 2022 15:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5938C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Feb 2022 15:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238148AbiBOPaM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Feb 2022 10:30:12 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47758 "EHLO
+        id S240933AbiBOPoh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Feb 2022 10:44:37 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240102AbiBOP3u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Feb 2022 10:29:50 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7429BF52B;
-        Tue, 15 Feb 2022 07:28:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644938914; x=1676474914;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9CDhZJWW1q2vhq2fCgbv/Rf44s8ghp54BeJ5kvboSuc=;
-  b=Xkf9bTo/aMazx/d2L/BB9rn/04Yefef4Rk8V9wgDLh73Fh9+KjTQCmla
-   4AUqUB7GPhn3Ri9NmDePAb9Lbb0l8Q262mFpvVsfQ+FSuO2n22LXQXMct
-   yQxwhCvVoVedExdyGwNIVDW0m/sq2YVYltnFTT7ol2ZDjoFVEguoNaMcm
-   OmkuNw4C9agmDTjDbYYRPuvm4Q2A5n4uoveitBPi9zgtrcOZPtptDvCGC
-   tdnM80n+JeOhJD0w9UcFzeCW0pA8M5F+hs0wyzXYsNMPe6WhOktyi2Lnz
-   swD5LeNJgmUPwhuiET0TM+5zLHgKc6PRbwjNHNCcRg27DadzSZCGN9dvR
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="250115603"
-X-IronPort-AV: E=Sophos;i="5.88,371,1635231600"; 
-   d="scan'208";a="250115603"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2022 07:27:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,371,1635231600"; 
-   d="scan'208";a="587743696"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 15 Feb 2022 07:27:53 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9754C107; Tue, 15 Feb 2022 17:28:09 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/4] pinctrl: tigerlake: Revert "Add Alder Lake-M ACPI ID"
-Date:   Tue, 15 Feb 2022 17:27:57 +0200
-Message-Id: <20220215152800.21104-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S240315AbiBOPoS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Feb 2022 10:44:18 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6AC6EA363;
+        Tue, 15 Feb 2022 07:38:31 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id p9so22202235ejd.6;
+        Tue, 15 Feb 2022 07:38:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4c4uLg+6xK62uK/uIKxvl/o7vQn8X9pm3rRoIxcYStc=;
+        b=hVRSoNqL5G26KGJupiMcqpIIJ6KdnEX2br5Ah4u+93CBcx13OUAYoHcTpp+gHXlTtZ
+         Pwp+IBPNf5Asgg2RQmCkRE7/lkz9CKKIaLCfpfYqMWpxk+zR7r6YGKl1jaQg8OpEj7ro
+         Hc9uS0htjha3XdJfKpvdXvF4M4P54Z+y1ymAPxsTq68GdiD/1R9Gf8IU2fc37Hm5fs0W
+         QUK7wqnbwk6FMrL/Slbkr85sGi0OIrcPgmxui55rTRdDso9F9WrOGZvrUeOZWw5d5OrF
+         NvA0iYYv4uRWI9SxzRheHl6iNMzJ2Dl2G3KVOvBA+ltg9yN7vbN1az2T7ZDOtglfYidf
+         6Y0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4c4uLg+6xK62uK/uIKxvl/o7vQn8X9pm3rRoIxcYStc=;
+        b=E7cQR337+T/dwSlios1cXy/HrOEu6K8t4vw2qKRnGY4rnrRt+7avOyfnFSxPLVJ2fN
+         NqJ/PLopN/Ag9Ai6CHYoPVK/ZpTByytLsCFoUf2XpjngEgpbOCurD+IuhNptnnRWNCJu
+         u/wJdCzK4D84dlgmRtxobmtbOuf5pRDcLu+L9x7qM0BTpnbp+quz/Np3b+3zfbHnTC9Z
+         uEeTLE9WP0CncfWfvIj0DjGNbUf3eGuNyErA1E70+KgKuJ3STB49yhHf9Dp/TAjBnEMf
+         a0M15DoXqlJIXjaGCLLbB12UH5f/3gY/j3pisTo1izpw1k7EM50IT1CGrwQq8FfBrQHz
+         K/1A==
+X-Gm-Message-State: AOAM5302nncZOJ+DicpCfQ6VEB5iAmjaKDS3FxdVZrI3MGrkak842EIz
+        Twk/vPhoI8PDAG/MR+4zVASmFqNpi4lQUW0VU1o=
+X-Google-Smtp-Source: ABdhPJxQGBopSj3C6s+jqyN0nrwN12siEVw8h8G+/ijRyT5ogzTJ7KsTO9W46tWw5cDOyfkQckGvDJf4RDiA7ZGISGM=
+X-Received: by 2002:a17:906:99c5:: with SMTP id s5mr3466341ejn.497.1644939510133;
+ Tue, 15 Feb 2022 07:38:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220209162607.1118325-1-maz@kernel.org> <CACRpkdYfrAexUhFV6e86QW+GSc3hM=38VNucKLhPppJ2ZdQ7fA@mail.gmail.com>
+In-Reply-To: <CACRpkdYfrAexUhFV6e86QW+GSc3hM=38VNucKLhPppJ2ZdQ7fA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 15 Feb 2022 17:37:01 +0200
+Message-ID: <CAHp75VdmKqViM5393w=frbX77te6X-VnMe5+VZwxY4PBw12Pdw@mail.gmail.com>
+Subject: Re: [PATCH 00/10] irqchip: Prevent drivers abusing irq_chip::name
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It appears that last minute change moved ACPI ID of Alder Lake-M
-to the INTC1055, which is already in the driver.
+On Fri, Feb 11, 2022 at 8:31 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Feb 9, 2022 at 5:26 PM Marc Zyngier <maz@kernel.org> wrote:
 
-This ID on the other hand will be used elsewhere.
+...
 
-This reverts commit 258435a1c8187f559549e515d2f77fa0b57bcd27.
+> Since ... I am mostly
+> playing with a baby during the daytime
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-tigerlake.c | 1 -
- 1 file changed, 1 deletion(-)
+A bit of a side topic, since I need to send a PR for fixes before my
+vacation starts tomorrow, should I Cc my PR to that Linus as well, so
+he can accept it?
+It will contain two one-liner ID patches to pin control Intel drivers
+and won't conflict with anything (as far as I am aware and know).
 
-diff --git a/drivers/pinctrl/intel/pinctrl-tigerlake.c b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-index 0bcd19597e4a..3ddaeffc0415 100644
---- a/drivers/pinctrl/intel/pinctrl-tigerlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-@@ -749,7 +749,6 @@ static const struct acpi_device_id tgl_pinctrl_acpi_match[] = {
- 	{ "INT34C5", (kernel_ulong_t)&tgllp_soc_data },
- 	{ "INT34C6", (kernel_ulong_t)&tglh_soc_data },
- 	{ "INTC1055", (kernel_ulong_t)&tgllp_soc_data },
--	{ "INTC1057", (kernel_ulong_t)&tgllp_soc_data },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, tgl_pinctrl_acpi_match);
 -- 
-2.34.1
-
+With Best Regards,
+Andy Shevchenko
