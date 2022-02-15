@@ -2,148 +2,135 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1E4C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Feb 2022 17:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CDAC433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Feb 2022 21:56:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242618AbiBORmj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Feb 2022 12:42:39 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58204 "EHLO
+        id S236404AbiBOV40 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Feb 2022 16:56:26 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237032AbiBORmj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Feb 2022 12:42:39 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A7E8A31C
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Feb 2022 09:42:29 -0800 (PST)
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D7CC6405D9
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Feb 2022 17:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644946947;
-        bh=SiDXwW19FJN8pW9aFNLOMTMKt2M32hD/m+v/+010wfI=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=aYs796KZF7Ua0SK9A8NX41zcogbAsg1G5VefBgGWu4c6D6/V1FkYxInjaDQBP4IhM
-         EoNtpyMsbrSncOTa4ElC6583iZvYDSZ43w9bM+7VuWrfIB6ZTIAzX5wBFONHum/aL1
-         kUKgnYy2m3eoIUfUdERdYLOcGzSB+PN4dobQJwuXrJLuXKITzTRTWxltqav0lHStnD
-         +seUe0gTvbJBFEKQaAj2g7+6V/zSoHN3wseIW0xpn4jsNvtB5zbbzF2iJ6+lab4Pcm
-         TEjErpghZpt8HWySOpkI2XP/cFWzb4hF7ccdjg4rXReX0h2ihYOGRFhYsh+lILrmw2
-         ++np5aBCpku6g==
-Received: by mail-ej1-f70.google.com with SMTP id hc39-20020a17090716a700b006ce88cf89dfso2748260ejc.10
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Feb 2022 09:42:27 -0800 (PST)
+        with ESMTP id S235187AbiBOV4Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Feb 2022 16:56:25 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB64EB65D5
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Feb 2022 13:56:14 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id j2so415771ybu.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Feb 2022 13:56:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EZ5q++YgykAGpmunP4misegIALHkWjqPtYqC2VXU0d0=;
+        b=EJtxPtg7dBta1ocWaVmXeFyVO/Fb3XKx+YPBWIpfdoG8+4qvhGacxIFYFnoRVa9ihX
+         48TG7nxBsmcmuQE75OzQjZInI0jpBDR78nEmbdu6u/Sxj4qmDpL9hbigkZrjgCCHEo2t
+         Dw6pFYQn/jWQu3DqqkFE8L9+/5vJQmAmY/K4SJZE0CbMp1xHthRZ8srcDLxnBELwWvYp
+         6HzczCqa3wRWxfxW/dMldH4MBzMGWaW23FWBO/HqUCJO2HFh1KMEG3sJ/iuSdjc5FScg
+         zL7Yd65Rj13CIDMQ0F/CESvlPi5/+XFBpvq3HV1ZBAHmiS5bnFTzUKu+Wu+a7HY1TzgA
+         PrmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SiDXwW19FJN8pW9aFNLOMTMKt2M32hD/m+v/+010wfI=;
-        b=tHy4llajNxtR6hD+WXb3m/7DLEnrFafGwCHpt21sSXOJjIStNy21TI0iG+yx6X+UYz
-         afWt+LnwMf3auKY4Lxb2qFiYFmy69IwcSoyavm7TNGAEZ/1Lu3vzzxXdbuZoKyy4+T8Y
-         B3xjMatFUV2QIU08l+o3MvrgYH+flvT/QaEPAO5dRsRxgyB50Wdzfa9WkRvVt0KETz0P
-         bWCagyeR4XvSfTsy7IDMcOW++H0/nCOWLlM9R5/0l/mNJHkJkf6J0pZrx3gPjTHFs0yl
-         tIC+DgIB3S/s9bboivuLJFlCTAZfyUJ3YEwnYqQR9DHwCLNezrbFUC6byqIqwqmXvu0h
-         3o0w==
-X-Gm-Message-State: AOAM5334XCzbSlBWVWrjFkcGVRRDvcvFdee7UnpCV2YpAun+I5yPdTi/
-        1MFwYQYmrTjWet8tlm1FImLTma0Plx+Sxi0+c3MqW+iqeZf8VQKst/fDyMUY+Ugamca18Dru/x1
-        +S6tqyf0F9FvfaAIbtEXxQseV2AJ0wLhteemdyTE=
-X-Received: by 2002:a17:906:9750:: with SMTP id o16mr153936ejy.766.1644946947402;
-        Tue, 15 Feb 2022 09:42:27 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzLI/tC+CkdcaVGl9luIU4vkop2V0YQT2cTA8hb6YgaHTY7Nk9gE95CNESjuz9heDNDC0+BVg==
-X-Received: by 2002:a17:906:9750:: with SMTP id o16mr153918ejy.766.1644946947238;
-        Tue, 15 Feb 2022 09:42:27 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id q8sm240797edd.10.2022.02.15.09.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Feb 2022 09:42:26 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [GIT PULL] pinctrl: samsung: pull for v5.18
-Date:   Tue, 15 Feb 2022 18:42:20 +0100
-Message-Id: <20220215174220.11054-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EZ5q++YgykAGpmunP4misegIALHkWjqPtYqC2VXU0d0=;
+        b=2Tm/PTJkRzJDfKhuaG5cdcA4auupHkpdM3dJkopbK1rldyk3dE+b6aQJdZ4tCbAeHc
+         kGVpBiZby1Qxh3UhYjAkhBMu3Bi63Eh98YP1SW5oSJ1B/PuKGa1sB0Ic7IJx5vxJUxWU
+         I85QTbs1zl5q8ZC1U9bHYQmvQ/wdJNjKrVfGmsJMLMHIsrC36ykbDF0KIjw+LlZOF5bM
+         iMFfqZ1L1ZWUzEUoPey9i3qdgiboDuBjOvFzS519LaKd0lwW20/qqyX3i4KFq8crNbYl
+         WY6kswVhLEh7R3c5uwwxNuD+qLRh4PfpecoLkZ/2+jWvCuGnV7xp3DqwoaEOwgqPUYEn
+         RUvQ==
+X-Gm-Message-State: AOAM531JLDIEjpS2uqTNcI7l6NIAAMSbosNgdAXCCaZaopKI827Z5Kza
+        yTe34ee3SD9rpeQay7dCuT5cZjbI5fEKuUwri0DZUg==
+X-Google-Smtp-Source: ABdhPJzG0B+DhMonvyx1eAizm9Pr/8IzyJW1KRh1R1rK2yw6uE2Ix/pSISU0TKx7BOD9f6MfvQqvqmB2Bqzfyfuor6U=
+X-Received: by 2002:a5b:f4b:: with SMTP id y11mr866089ybr.634.1644962173974;
+ Tue, 15 Feb 2022 13:56:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20211217153555.9413-1-marcelo.jimenez@gmail.com>
+ <CACRpkdbzk55pmK9XMwc470O8vJFUBQ6zs35shOYCFKr+YaOezw@mail.gmail.com>
+ <CACjc_5q247Yb8t8PfJcudVAPFYQcioREAE3zj8OtPR-Ug_x=tA@mail.gmail.com>
+ <CACRpkda=0=Hcyyote+AfwoLKPGak7RV6VFt6b0fMVWBe8veTwA@mail.gmail.com> <CACjc_5r7i3HJ466MtwR0iZD6jdVXEqq4km0Tn7XwRijGnsDz=Q@mail.gmail.com>
+In-Reply-To: <CACjc_5r7i3HJ466MtwR0iZD6jdVXEqq4km0Tn7XwRijGnsDz=Q@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 15 Feb 2022 22:56:01 +0100
+Message-ID: <CACRpkdZGVq19GZuOP1BwLB2-qxj1_=O9tHMVRvphvy3m6KbNig@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Revert regression in sysfs-gpio (gpiolib.c)
+To:     Marcelo Roberto Jimenez <marcelo.jimenez@gmail.com>
+Cc:     stable <stable@vger.kernel.org>, regressions@lists.linux.dev,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Edmond Chung <edmondchung@google.com>,
+        Andrew Chant <achant@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Sergio Tanzilli <tanzilli@acmesystems.it>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, Feb 14, 2022 at 12:24 AM Marcelo Roberto Jimenez
+<marcelo.jimenez@gmail.com> wrote:
+> On Sat, Feb 12, 2022 at 1:55 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Parts of this pull was shared with ARM SoC guys (tags/samsung-dt-pinctrl-5.18):
-https://lore.kernel.org/lkml/20220129115352.13274-1-krzysztof.kozlowski@canonical.com/
+> > I am curious about the usecases and how deeply you have built
+> > yourselves into this.
+>
+> I don't know if I understand what you mean, sorry.
 
-This pull request is on top of it, in a fast-forward way, no rebases.
+Why does the user need the sysfs ABI? What is it used for?
 
-You can pull this one alone, or tags/samsung-dt-pinctrl-5.18 +
-tags/samsung-pinctrl-5.18-2 together.
+I.e what is the actual use case?
 
-Best regards,
-Krzysztof
+> > > In any case, the upstream file should be enough to test the issue reported here.
+> >
+> > The thing is that upstream isn't super happy that you have been
+> > making yourselves dependent on features that we are actively
+> > discouraging and then demanding that we support these features.
+>
+> Hum, demanding seems to be a strong word for what I am doing here.
+>
+> Deprecated should not mean broken. My point is: the API seems to be
+> currently broken. User space apps got broken, that's a fact. I even
+> took the time to bisect the kernel and show you which commit broke it.
+> So, no, I am not demanding. More like reporting and providing a
+> temporary solution to those with a similar problem.
+>
+> Maybe it is time to remove the API, but this is up to "upstream".
+> Leaving the API broken seems pointless and unproductive.
+>
+> Sorry for the "not super happiness of upstream", but maybe upstream
+> got me wrong.
+>
+> We are not "making ourselves dependent on features ...". The API was
+> there. We used it. Now it is deprecated, ok, we should move on. I got
+> the message.
 
+Ouch I deserved some slamming for this.
 
-The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
+I'm sorry if I came across as harsh :(
 
-  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
+I just don't know how to properly push for this.
 
-are available in the Git repository at:
+I have even pushed the option of the deprecated sysfs ABI
+behind the CONFIG_EXPERT option, which should mean that
+the kernel config has been made by someone who has checked
+the option "yes I am an expert I know what I am doing"
+yet failed to observe that this ABI is obsoleted since 5 years
+and hence failed to be an expert.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-5.18-2
+Of course the ABI (not API really) needs to be fixed if we can find the
+problem. It's frustrating that fixing it seems to fix broken other
+features which are not deprecated, hence the annoyance on my
+part.
 
-for you to fetch changes up to 3652dc070bad335d6feb31402bb4ab1ad58d5cb6:
+> And I will also tell the dev team that they must use the GPIO char dev
+> and libgpiod from now on and must port everything to it. And we will
+> likely have another group of people who are not super happy, but
+> that's life... :)
 
-  pinctrl: samsung: improve wake irq info on console (2022-02-01 09:13:30 +0100)
+I'm happy to hear this!
 
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v5.18
-
-1. Fix OF reference leak in pinctrl driver probe error path.
-2. Correct list of handlers for Exynos850 ALIVE and CMGP pin banks.
-3. Accept devicetrees with GPIO pin bank definitions named with a
-   "-gpio-bank" suffix.  This is necessary for later Samsung pinctrl
-   bindings dtschema.
-4. Convert Samsung pinctrl bindings to dtschema.
-5. Add support for Exynos850 and ExynosAutov9 wake-up interrupts.
-6. Add support for Tesla FSD SoC.
-
-----------------------------------------------------------------
-Alim Akhtar (2):
-      dt-bindings: pinctrl: samsung: Add compatible for Tesla FSD SoC
-      pinctrl: samsung: add FSD SoC specific data
-
-Krzysztof Kozlowski (5):
-      pinctrl: samsung: drop pin banks references on error paths
-      pinctrl: samsung: accept GPIO bank nodes with a suffix
-      dt-bindings: pinctrl: samsung: convert to dtschema
-      dt-bindings: pinctrl: samsung: describe Exynos850 and ExynosAutov9 wake-ups
-      pinctrl: samsung: add support for Exynos850 and ExynosAutov9 wake-ups
-
-Martin Jücker (1):
-      pinctrl: samsung: improve wake irq info on console
-
-Sam Protsenko (1):
-      pinctrl: samsung: Remove EINT handler for Exynos850 ALIVE and CMGP gpios
-
- .../pinctrl/samsung,pinctrl-gpio-bank.yaml         |  52 +++
- .../bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml |  81 +++++
- .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  | 106 ++++++
- .../bindings/pinctrl/samsung,pinctrl.yaml          | 393 +++++++++++++++++++++
- .../bindings/pinctrl/samsung-pinctrl.txt           | 383 --------------------
- MAINTAINERS                                        |   2 +-
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     |  73 +++-
- drivers/pinctrl/samsung/pinctrl-exynos.c           |   7 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c          |  89 ++++-
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
- 10 files changed, 781 insertions(+), 406 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+Yours,
+Linus Walleij
