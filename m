@@ -2,128 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3712EC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Feb 2022 04:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C80C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Feb 2022 05:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbiBOELk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Feb 2022 23:11:40 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42920 "EHLO
+        id S234263AbiBOF4l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Feb 2022 00:56:41 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230299AbiBOELj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Feb 2022 23:11:39 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89832B152C
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Feb 2022 20:11:30 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id v5-20020a17090a4ec500b001b8b702df57so1428531pjl.2
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Feb 2022 20:11:30 -0800 (PST)
+        with ESMTP id S230182AbiBOF4j (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Feb 2022 00:56:39 -0500
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2064132C;
+        Mon, 14 Feb 2022 21:56:30 -0800 (PST)
+Received: by mail-qt1-x832.google.com with SMTP id l14so17611692qtp.7;
+        Mon, 14 Feb 2022 21:56:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3krFpT4PyPtyGc8aRBW6AzK9084YG4fmlvn0MKOFnTg=;
-        b=QbrICrl2NESyaU9pLInGu9CQ9VEi7VBlJ5HkcB+xawaXT7ra+yuZ66zjAUb5hhzTFn
-         mqoNOWOXe+aVHY/p35ceS4eRAbrAqhtK4H+tC1mq4wX6YI17iKuh7wQ8EcmO4z7aqNes
-         K+7racGcMaThKo+bWThILPrQoTZdnpKPxHOQsBqpRRutEdMLlwTYAdT4l0I39NmYbqAx
-         jv+rbf1Rq1viGKGEbVJA6hyMv7XEte6Fgj7WXgXFS0Uhfn1cqLFhxnFhNYEuI7cvzfdo
-         erxD+NK8M/Oqd0E199khIAjjjhWc6qU5uKNTkKRbKby18zRlZA+NgQ/5uNiODFmGErO7
-         qs0Q==
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uPUj/2D0fnRRHEGsxfFw4uPYjIMmB8m7B7g+xVLuCTs=;
+        b=e7EkjOF9JnmPm2zvwdTKMlYivOB6v4VFpWSOnTeskfEh9TmfPrj9ow39Zv8UTTKTDD
+         GCALVJO2THsTZ9IRY73lRRhUJettrYNXO6G+v6eI7xNrz6nwh2hfeArS1DWLdU54W3r1
+         XqSl0wO9nM2J38wWwIORRLsAWma/NjrwNvmXU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3krFpT4PyPtyGc8aRBW6AzK9084YG4fmlvn0MKOFnTg=;
-        b=HEH0mpDEaRgG0eQ/A4MxBQ4hzGP8EuVFKkKNo6koHUEaecy1UcjqJ8pyYkPhVV+RLJ
-         pNHexZvHg1XPLheeZxxBlyD6HRvJAgCgJn5R+v95Y1CW1dklJ9chqPkpsbRusFJbwaIR
-         J3v5l9NS0nkWyI4HXfj4y2UWZGyFrND4o/JvSMWPuhMdNSgA+PGuQaxqTij1zvm9SiJc
-         1bdxqOHPM6bma7CTNalBV0MpOzGg73RtXURcEuWgSaF/hRhkyLHVun28oCB9/i64S9Ze
-         HLCZGAsAJWEIn4DbTl+dNP+vwPJTJbXGHhl51SERiUCcb4P38QrSB3RjGfzB7lvzVKZo
-         2pLA==
-X-Gm-Message-State: AOAM533Ibvemc3/ixnAYC1L6EhyE1pDDtE74wvgBoOp+A64t3kAtiPUI
-        n4aIKcXNMI1ELALnrcFnYRflbLpq/EjAMA==
-X-Google-Smtp-Source: ABdhPJw2OfZiQZPGvsR1G1wiBHHz1ar3c+sOMKfHFDfMSz12ZO+wyWqWKaH/rZ6pdupg4UeOegjqvw==
-X-Received: by 2002:a17:90b:4f4b:b0:1ba:81fa:c6e3 with SMTP id pj11-20020a17090b4f4b00b001ba81fac6e3mr647424pjb.121.1644898289910;
-        Mon, 14 Feb 2022 20:11:29 -0800 (PST)
-Received: from sol (60-242-155-106.static.tpgi.com.au. [60.242.155.106])
-        by smtp.gmail.com with ESMTPSA id h25sm35300559pfn.208.2022.02.14.20.11.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Feb 2022 20:11:29 -0800 (PST)
-Date:   Tue, 15 Feb 2022 12:11:24 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     "Hummrich, Tobias" <T.Hummrich@eckelmann.de>
-Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [libgpiod 1.6.3] Do different lines have to be in the same scope?
-Message-ID: <20220215041124.GA15474@sol>
-References: <17c74834c56e4345ac2611b92c301e2f@eckelmann.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uPUj/2D0fnRRHEGsxfFw4uPYjIMmB8m7B7g+xVLuCTs=;
+        b=HcjgLb8AY/Ac1hwF5vbb+bjj0+y03s3EcStNpkJLJUwaoEEAyR29JhNv110l5/5KWe
+         7iZ7sqhoNAl4DyBuyLh3ekaEpTmh8ZUN9AmaJfsJxcgiMm74iwjN/LF63c/ciWC1kOEq
+         wbIGe9Z9GKImqGO9rMsUKBVfAhMD0oluYahZzoN4AF6pLW7gP7ikqD1UH684BfkLNB6n
+         GwkDam8jbXW07w9dhB/r+iQlDLKJmYRfcv7zCUHQZN+LOxJP/tx5Z17w7dPz2Fk8Vfcr
+         KlUmPZdgBoG7CjUWf2RmomnsfrLHKJGKpPILynY08JjZmgZYc20QfykPsmDcaymyuV4w
+         Tq0g==
+X-Gm-Message-State: AOAM5318075vXVHvyjESPXrxDpu+jZSxKD17z/JErlATvuC3epeeDUQ/
+        xzixCsMkIj75YfYebtduXoBXQHRBYR6GzJcTmfw=
+X-Google-Smtp-Source: ABdhPJxDiNItJktz4LNO+XrPyLIgW4R0iAfyKu+KkaTWOe+XGOJYyD101ljPiR6VxTVgla4El5GLg42q9jEpkrRZCeQ=
+X-Received: by 2002:ac8:7e91:: with SMTP id w17mr1635736qtj.678.1644904589150;
+ Mon, 14 Feb 2022 21:56:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17c74834c56e4345ac2611b92c301e2f@eckelmann.de>
+References: <20220129115228.2257310-1-j.neuschaefer@gmx.net>
+ <CACRpkdYEigGHkoGfBg15tFXadgpXUAjDOnw7ePXhmvHJqPEJXw@mail.gmail.com>
+ <YfZkis8M81Ejpagq@latitude> <CACPK8XdFXRQf3MpPh3z=EMAKtnQSHL+iwwMCVYc5dP9DfQEN+Q@mail.gmail.com>
+ <YfpyjDBH83FE7r4o@latitude> <CAHp75Vdg8zFSHaTP_8jQua5QfRYbvZ4_rLdCtt3ks8YEibseTg@mail.gmail.com>
+ <YgdyjUbb4lnrVHmJ@latitude>
+In-Reply-To: <YgdyjUbb4lnrVHmJ@latitude>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Tue, 15 Feb 2022 05:56:17 +0000
+Message-ID: <CACPK8Xe-t8Qso_AX+q08OxrgmUPbEayhnHXH5xiLr7M6rDxjuw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/9] Nuvoton WPCM450 pinctrl and GPIO driver
+To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Feb 14, 2022 at 02:01:29PM +0000, Hummrich, Tobias wrote:
-> Hi,
-> 
-> last week I ported part of our gpio related code from sysfs to libgpiod. I use the C++ bindings. I had some problems polling two different lines on different gpio chips and finally realized that all was OK if both lines were defined in the same scope. Out of curiosity I'm asking: Is that really the case in version 1.6.3 and was this intended?
-> 
+On Mon, 14 Feb 2022 at 12:05, Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.n=
+et> wrote:
+>
+> On Wed, Feb 02, 2022 at 02:10:44PM +0200, Andy Shevchenko wrote:
+> > On Wed, Feb 2, 2022 at 2:01 PM Jonathan Neusch=C3=A4fer
+> > <j.neuschaefer@gmx.net> wrote:
+> > > On Tue, Feb 01, 2022 at 11:42:11PM +0000, Joel Stanley wrote:
+> > > > On Tue, 1 Feb 2022 at 13:05, Jonathan Neusch=C3=A4fer <j.neuschaefe=
+r@gmx.net> wrote:
+> >
+> > ...
+> >
+> > > > I assume you're sending a v6 to fix some of the warnings?
+> > >
+> > > No, the warnings are fairly independent of this patchset, it's just t=
+hat
+> > > the adjacent pinctrl-npcm7xx driver started to be built by the bot, d=
+ue
+> > > to my Kconfig change. I'll fix them in a separate patchset.
+> >
+> > I guess you need to fix that first.
+> >
+> > Because now and then all CIs will complain to your patch and confuse pe=
+ople.
+>
+> FWIW, Linus has applied the npcm7xx fixes to for-next in the pinctrl tree=
+,
+> which means that they are not blocking this patchset anymore, AFAICS.
 
-No.  I'm guessing you are doing something wrong, but I'd have to see
-real code to be sure.  Code > 1000 words.
+I've applied the device tree changes, and I will send a pull request
+for v5.18 with those.
 
-As the lines are on different chips they need to be requested
-separately, they can't be combinied into a bulk request, but that is the
-only restriction.
-
-> The problem was this: When I declared lines locally in a method and called this method to get the file descriptor, the file descriptor was the same for both lines. Like:
-> 
-> int MyClass::getFiledescriptor(const std::string &linename)
-> {
->     auto currentLine = gpiod::find_line(linename);
->     return currentLine.event_get_fd();
-> }
-> 
-> ... returned 23 for both parameters "in1" and "in2" while gpioinfo told me that these names where unique.
-
-I'm very surprised this works for you.  Note that find_line() and
-get_line() methods return an unrequested line object.  You need to
-request the line from the kernel using request() before calling
-event_get_fd() - and that should throw if you haven't, which makes
-me think your actual code is different or something very weird is
-going on here.
-
-Have a look at the gpiogetcxx and gpiomoncxx examples to see how a
-line is requested.
-
-What does gpioinfo show for those lines?
-Why do you need the fd, anyway?  Are you confusing it with the offset?
-And why poll when you can get edge events?
-
-Bart - the need to request lines is frequently misunderstood - Gasai Maple
-had a similar problem, thinking get_line() and set_direction_output()
-would be sufficient to set the line output value.
-Consider updating the documentation to highlight which methods require
-that the line is requested before they are usable - even if they do
-return an error or throw in that case.
-This also applies to v2.
-
-> 
-> It is OK for me now, the two lines I'm polling are members of one class now, it works as intended, and I'm fine with that. But still I wonder if I misunderstood something or just did it wrong.
-> 
-> Is a new version of libgpiod published soon? Then this whole text may be obsolete.
-> 
-
-Indeed, if I were you I would be looking at the libgpiod v2 branch[1]
-that will soon obsolete v1 and has a slightly different API.  e.g.
-gpiod::find_line() is gone as it is problematic - instead you need to
-call find_line() on the appropriate chip and it now returns the line
-offset.
-That is assuming you are on a reasonably recent kernel - libgpiod v2
-requires kernel v5.10 or later.
+I assume you want Linus to merge the pinctrl bindings and driver
+through his tree.
 
 Cheers,
-Kent.
 
-[1] https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/tree/?h=next/libgpiod-2.0
-
+Joel
