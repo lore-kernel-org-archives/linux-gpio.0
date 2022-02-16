@@ -2,81 +2,123 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3033C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Feb 2022 10:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E803C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Feb 2022 11:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232706AbiBPKOn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Feb 2022 05:14:43 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:52544 "EHLO
+        id S231566AbiBPLb4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Feb 2022 06:31:56 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232464AbiBPKOm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Feb 2022 05:14:42 -0500
-X-Greylist: delayed 509 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Feb 2022 02:14:30 PST
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [IPv6:2a01:37:1000::53df:5f64:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5EB2ABD2C
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Feb 2022 02:14:30 -0800 (PST)
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 48FF030001184;
-        Wed, 16 Feb 2022 11:05:53 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 374FB2ECFF4; Wed, 16 Feb 2022 11:05:53 +0100 (CET)
-Date:   Wed, 16 Feb 2022 11:05:53 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        with ESMTP id S229487AbiBPLb4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Feb 2022 06:31:56 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96BE28E11;
+        Wed, 16 Feb 2022 03:31:39 -0800 (PST)
+X-UUID: a1e90d1a0b7c4014861eebb2a3d0ec71-20220216
+X-UUID: a1e90d1a0b7c4014861eebb2a3d0ec71-20220216
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 836862507; Wed, 16 Feb 2022 19:31:37 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 16 Feb 2022 19:31:36 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 16 Feb
+ 2022 19:31:36 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 16 Feb 2022 19:31:36 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH] pinctrl: bcm2835: Use bcm2835 gpio_chip label for bcm2711
-Message-ID: <20220216100553.GA4315@wunner.de>
-References: <c399da9deab3ede9b0c4d4680d8ac508707aa8c3.1644903104.git.lukas@wunner.de>
- <c1e31ad4-3a65-9370-3a5c-ffde723a04aa@i2se.com>
- <20220215144409.GA12830@wunner.de>
- <09a5a501-40d7-4dae-56c9-a3796fc95c4b@i2se.com>
- <2a5aad11-0ac6-943f-158a-585648b396be@gmail.com>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        "Tinghan Shen" <tinghan.shen@mediatek.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sean Wang <sean.wang@mediatek.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <ryder.lee@kernel.org>, <wenst@chromium.org>,
+        <chunfeng.yun@mediatek.com>
+Subject: [PATCH v11 2/3] dt-bindings: pinctrl: mt8195: Add mediatek,drive-strength-adv property
+Date:   Wed, 16 Feb 2022 19:31:30 +0800
+Message-ID: <20220216113131.13145-3-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.15.GIT
+In-Reply-To: <20220216113131.13145-1-tinghan.shen@mediatek.com>
+References: <20220216113131.13145-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a5aad11-0ac6-943f-158a-585648b396be@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Feb 15, 2022 at 09:17:49AM -0800, Florian Fainelli wrote:
-> >>> Am 15.02.22 um 06:52 schrieb Lukas Wunner:
-> >>>> Commit b1d84a3d0a26 ("pinctrl: bcm2835: Add support for all GPIOs on
-> >>>> BCM2711") used a different label for the bcm2711 gpio_chip vis-à-vis
-> >>>> the bcm2835.
-[...]
-> I agree with Stefan here, besides changing the driver name now would
-> mean potentially breaking user-space since the driver name is visible in
-> a variety of places. Seems to me like this is too late, we should have
-> caught this during the introduction of 2711.
+Extend driving support for I2C pins on SoC mt8195.
+This property is already documented in mediatek,mt8183-pinctrl.yaml.
 
-This isn't about the driver name but the gpio_chip label.
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/pinctrl/pinctrl-mt8195.yaml      | 35 +++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-The .name attribute of bcm2711_pinctrl_desc and bcm2711_pinctrl_gpio_range
-is only visible in debugfs, which doesn't count as user-space ABI.
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
+index 8299662c2c09..c5b755514c46 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
+@@ -98,6 +98,32 @@ patternProperties:
+           drive-strength:
+             enum: [2, 4, 6, 8, 10, 12, 14, 16]
+ 
++          mediatek,drive-strength-adv:
++            description: |
++              Describe the specific driving setup property.
++              For I2C pins, the existing generic driving setup can only support
++              2/4/6/8/10/12/14/16mA driving. But in specific driving setup, they
++              can support 0.125/0.25/0.5/1mA adjustment. If we enable specific
++              driving setup, the existing generic setup will be disabled.
++              The specific driving setup is controlled by E1E0EN.
++              When E1=0/E0=0, the strength is 0.125mA.
++              When E1=0/E0=1, the strength is 0.25mA.
++              When E1=1/E0=0, the strength is 0.5mA.
++              When E1=1/E0=1, the strength is 1mA.
++              EN is used to enable or disable the specific driving setup.
++              Valid arguments are described as below:
++              0: (E1, E0, EN) = (0, 0, 0)
++              1: (E1, E0, EN) = (0, 0, 1)
++              2: (E1, E0, EN) = (0, 1, 0)
++              3: (E1, E0, EN) = (0, 1, 1)
++              4: (E1, E0, EN) = (1, 0, 0)
++              5: (E1, E0, EN) = (1, 0, 1)
++              6: (E1, E0, EN) = (1, 1, 0)
++              7: (E1, E0, EN) = (1, 1, 1)
++              So the valid arguments are from 0 to 7.
++            $ref: /schemas/types.yaml#/definitions/uint32
++            enum: [0, 1, 2, 3, 4, 5, 6, 7]
++
+           bias-pull-down:
+             oneOf:
+               - type: boolean
+@@ -270,4 +296,13 @@ examples:
+           bias-pull-down;
+         };
+       };
++
++      i2c0-pins {
++        pins {
++          pinmux = <PINMUX_GPIO8__FUNC_SDA0>,
++                   <PINMUX_GPIO9__FUNC_SCL0>;
++          bias-disable;
++          mediatek,drive-strength-adv = <7>;
++        };
++      };
+     };
+-- 
+2.18.0
 
-The .label attribute of bcm2711_gpio_chip is indeed visible in sysfs
-and could in theory be used by udev rules, though I doubt it.
-
-It definitely was a mistake not to use the same label as pinctrl-bcm2835.
-Using a different label hinges on the notion that it's a different chip,
-and while that may apply for the 4B+ and CM4, the assumption falls apart
-with the CM4S which seeks to be a drop-in replacement for CM1/CM3,
-but really is not because of mistakes like this one.  We're likely
-not the only ones bitten by this, just the first to report.
-
-Thanks,
-
-Lukas
