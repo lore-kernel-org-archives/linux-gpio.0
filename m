@@ -2,29 +2,29 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFCBC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26572C433EF
 	for <linux-gpio@archiver.kernel.org>; Mon, 21 Feb 2022 15:45:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379470AbiBUPpn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:45:43 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37220 "EHLO
+        id S1379417AbiBUPpm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 21 Feb 2022 10:45:42 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379465AbiBUPo4 (ORCPT
+        with ESMTP id S1379480AbiBUPo4 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Feb 2022 10:44:56 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A63237FF
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Feb 2022 07:43:53 -0800 (PST)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C06C23BD5
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Feb 2022 07:43:54 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
-        by michel.telenet-ops.be with bizsmtp
-        id xrjr260063YJRAw06rjrUG; Mon, 21 Feb 2022 16:43:52 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id xrjr2600U3YJRAw06rjrdL; Mon, 21 Feb 2022 16:43:52 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-001TTm-PZ; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMAqt-001TTq-8F; Mon, 21 Feb 2022 16:43:51 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-006EhS-Av; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMAqs-006Ehn-Db; Mon, 21 Feb 2022 16:43:50 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -32,11 +32,10 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 01/12] dt-bindings: pinctrl: renesas,pfc: Document r8a779f0 support
-Date:   Mon, 21 Feb 2022 16:43:36 +0100
-Message-Id: <d51828853396773be2d6837f3301ac9da8b6f29e.1645457792.git.geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 04/12] pinctrl: renesas: r8a779f0: Add SCIF pins, groups, and functions
+Date:   Mon, 21 Feb 2022 16:43:39 +0100
+Message-Id: <6369359a53483291ee536787c8a232462ff1b3a9.1645457792.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1645457792.git.geert+renesas@glider.be>
 References: <cover.1645457792.git.geert+renesas@glider.be>
@@ -46,33 +45,181 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: LUU HOAI <hoai.luu.ub@renesas.com>
+Add pins, groups, and functions for the Serial Communication Interfaces
+with FIFO (SCIF) on the Renesas R-Car S4-8 (R8A779F0) SoC.
 
-Document Pin Function Controller (PFC) support for the Renesas R-Car
-S4-8 (R8A779F0) SoC.
+Extracted from a larger patch in the BSP by LUU HOAI.
 
-Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
 v2:
-  - Add Reviewed-by.
+  - No changes.
 ---
- Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/renesas/pfc-r8a779f0.c | 147 +++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-index 8548e3639b7549da..2a57df75d832f14b 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-@@ -44,6 +44,7 @@ properties:
-       - renesas,pfc-r8a77990    # R-Car E3
-       - renesas,pfc-r8a77995    # R-Car D3
-       - renesas,pfc-r8a779a0    # R-Car V3U
-+      - renesas,pfc-r8a779f0    # R-Car S4-8
-       - renesas,pfc-sh73a0      # SH-Mobile AG5
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+index 2f3fbb794eb635c1..26f6eec3da4ef067 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+@@ -488,10 +488,157 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
  
-   reg:
++/* - SCIF0 ------------------------------------------------------------------ */
++static const unsigned int scif0_data_pins[] = {
++	/* RX0, TX0 */
++	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
++};
++static const unsigned int scif0_data_mux[] = {
++	RX0_MARK, TX0_MARK,
++};
++static const unsigned int scif0_clk_pins[] = {
++	/* SCK0 */
++	RCAR_GP_PIN(0, 8),
++};
++static const unsigned int scif0_clk_mux[] = {
++	SCK0_MARK,
++};
++static const unsigned int scif0_ctrl_pins[] = {
++	/* RTS0#, CTS0# */
++	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
++};
++static const unsigned int scif0_ctrl_mux[] = {
++	RTS0_N_MARK, CTS0_N_MARK,
++};
++
++/* - SCIF1 ------------------------------------------------------------------ */
++static const unsigned int scif1_data_pins[] = {
++	/* RX1, TX1 */
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
++};
++static const unsigned int scif1_data_mux[] = {
++	RX1_MARK, TX1_MARK,
++};
++static const unsigned int scif1_clk_pins[] = {
++	/* SCK1 */
++	RCAR_GP_PIN(0, 14),
++};
++static const unsigned int scif1_clk_mux[] = {
++	SCK1_MARK,
++};
++static const unsigned int scif1_ctrl_pins[] = {
++	/* RTS1#, CTS1# */
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 11),
++};
++static const unsigned int scif1_ctrl_mux[] = {
++	RTS1_N_MARK, CTS1_N_MARK,
++};
++
++/* - SCIF3 ------------------------------------------------------------------ */
++static const unsigned int scif3_data_pins[] = {
++	/* RX3, TX3 */
++	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
++};
++static const unsigned int scif3_data_mux[] = {
++	RX3_MARK, TX3_MARK,
++};
++static const unsigned int scif3_clk_pins[] = {
++	/* SCK3 */
++	RCAR_GP_PIN(0, 1),
++};
++static const unsigned int scif3_clk_mux[] = {
++	SCK3_MARK,
++};
++static const unsigned int scif3_ctrl_pins[] = {
++	/* RTS3#, CTS3# */
++	RCAR_GP_PIN(0, 5), RCAR_GP_PIN(0, 4),
++};
++static const unsigned int scif3_ctrl_mux[] = {
++	RTS3_N_MARK, CTS3_N_MARK,
++};
++
++/* - SCIF4 ------------------------------------------------------------------ */
++static const unsigned int scif4_data_pins[] = {
++	/* RX4, TX4 */
++	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
++};
++static const unsigned int scif4_data_mux[] = {
++	RX4_MARK, TX4_MARK,
++};
++static const unsigned int scif4_clk_pins[] = {
++	/* SCK4 */
++	RCAR_GP_PIN(1, 5),
++};
++static const unsigned int scif4_clk_mux[] = {
++	SCK4_MARK,
++};
++static const unsigned int scif4_ctrl_pins[] = {
++	/* RTS4#, CTS4# */
++	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 3),
++};
++static const unsigned int scif4_ctrl_mux[] = {
++	RTS4_N_MARK, CTS4_N_MARK,
++};
++
++/* - SCIF Clock ------------------------------------------------------------- */
++static const unsigned int scif_clk_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(0, 0),
++};
++static const unsigned int scif_clk_mux[] = {
++	SCIF_CLK_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(scif0_data),
++	SH_PFC_PIN_GROUP(scif0_clk),
++	SH_PFC_PIN_GROUP(scif0_ctrl),
++	SH_PFC_PIN_GROUP(scif1_data),
++	SH_PFC_PIN_GROUP(scif1_clk),
++	SH_PFC_PIN_GROUP(scif1_ctrl),
++	SH_PFC_PIN_GROUP(scif3_data),
++	SH_PFC_PIN_GROUP(scif3_clk),
++	SH_PFC_PIN_GROUP(scif3_ctrl),
++	SH_PFC_PIN_GROUP(scif4_data),
++	SH_PFC_PIN_GROUP(scif4_clk),
++	SH_PFC_PIN_GROUP(scif4_ctrl),
++	SH_PFC_PIN_GROUP(scif_clk),
++};
++
++static const char * const scif0_groups[] = {
++	"scif0_data",
++	"scif0_clk",
++	"scif0_ctrl",
++};
++
++static const char * const scif1_groups[] = {
++	"scif1_data",
++	"scif1_clk",
++	"scif1_ctrl",
++};
++
++static const char * const scif3_groups[] = {
++	"scif3_data",
++	"scif3_clk",
++	"scif3_ctrl",
++};
++
++static const char * const scif4_groups[] = {
++	"scif4_data",
++	"scif4_clk",
++	"scif4_ctrl",
++};
++
++static const char * const scif_clk_groups[] = {
++	"scif_clk",
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(scif0),
++	SH_PFC_FUNCTION(scif1),
++	SH_PFC_FUNCTION(scif3),
++	SH_PFC_FUNCTION(scif4),
++	SH_PFC_FUNCTION(scif_clk),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
 2.25.1
 
