@@ -2,29 +2,29 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E53AC4167E
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Feb 2022 15:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB12BC433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Feb 2022 15:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379520AbiBUPpM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:45:12 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37224 "EHLO
+        id S1379509AbiBUPpP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 21 Feb 2022 10:45:15 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379511AbiBUPo6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Feb 2022 10:44:58 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B8D23BFF
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Feb 2022 07:43:56 -0800 (PST)
+        with ESMTP id S1379488AbiBUPo4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Feb 2022 10:44:56 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8072323BDD
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Feb 2022 07:43:54 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
-        by baptiste.telenet-ops.be with bizsmtp
-        id xrjs2600E3YJRAw01rjsET; Mon, 21 Feb 2022 16:43:54 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id xrjr2600V3YJRAw06rjrdM; Mon, 21 Feb 2022 16:43:52 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqt-001TU1-Gr; Mon, 21 Feb 2022 16:43:51 +0100
+        id 1nMAqt-001TTv-8p; Mon, 21 Feb 2022 16:43:51 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-006Eij-KR; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMAqs-006EiN-Gw; Mon, 21 Feb 2022 16:43:50 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 12/12] pinctrl: renesas: r8a779f0: Add Ethernet pins, groups, and functions
-Date:   Mon, 21 Feb 2022 16:43:47 +0100
-Message-Id: <e0a1dc7d2435d28811e3acb361dae050eb3aabc9.1645457792.git.geert+renesas@glider.be>
+Subject: [PATCH v2 09/12] pinctrl: renesas: r8a779f0: Add MSIOF pins, groups, and functions
+Date:   Mon, 21 Feb 2022 16:43:44 +0100
+Message-Id: <c625769714b1027a756dd2ed4a017eb24708a041.1645457792.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1645457792.git.geert+renesas@glider.be>
 References: <cover.1645457792.git.geert+renesas@glider.be>
@@ -45,8 +45,8 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add pins, groups, and functions for the Ethernet Time-Sensitive
-Networking (TSN) interfaces on the Renesas R-Car S4-8 (R8A779F0) SoC.
+Add pins, groups, and function for the Clock-Synchronized Serial
+Interfaces with FIFO (MSIOF) on the Renesas R-Car S4-8 (R8A779F0) SoC.
 
 Based on a larger patch in the BSP by LUU HOAI.
 
@@ -56,332 +56,283 @@ v2:
   - No changes.
 
 Changes compared to the BSP:
-  - Add B-suffixes to groups that can appear on multiple sets of pins,
-  - Add missing A groups.
+  - Add MSIOF[123] pin groups and functions.
 ---
- drivers/pinctrl/renesas/pfc-r8a779f0.c | 288 +++++++++++++++++++++++++
- 1 file changed, 288 insertions(+)
+ drivers/pinctrl/renesas/pfc-r8a779f0.c | 240 +++++++++++++++++++++++++
+ 1 file changed, 240 insertions(+)
 
 diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-index 79377ce951359c1e..7c689be979545eb8 100644
+index c323e1937482bb04..88c5ef3431fc19bb 100644
 --- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
 +++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-@@ -1054,6 +1054,222 @@ static const unsigned int scif_clk_mux[] = {
- 	SCIF_CLK_MARK,
+@@ -722,6 +722,182 @@ static const unsigned int mmc_ds_mux[] = {
+ 	MMC_DS_MARK,
  };
  
-+/* - TSN0 ------------------------------------------------ */
-+static const unsigned int tsn0_link_a_pins[] = {
-+	/* TSN0_LINK_A */
++/* - MSIOF0 ----------------------------------------------------------------- */
++static const unsigned int msiof0_clk_pins[] = {
++	/* MSIOF0_SCK */
++	RCAR_GP_PIN(0, 14),
++};
++static const unsigned int msiof0_clk_mux[] = {
++	MSIOF0_SCK_MARK,
++};
++static const unsigned int msiof0_sync_pins[] = {
++	/* MSIOF0_SYNC */
 +	RCAR_GP_PIN(0, 11),
 +};
-+static const unsigned int tsn0_link_a_mux[] = {
-+	TSN0_LINK_A_MARK,
++static const unsigned int msiof0_sync_mux[] = {
++	MSIOF0_SYNC_MARK,
 +};
-+static const unsigned int tsn0_magic_a_pins[] = {
-+	/* TSN0_MAGIC_A */
-+	RCAR_GP_PIN(0, 17),
-+};
-+static const unsigned int tsn0_magic_a_mux[] = {
-+	TSN0_MAGIC_A_MARK,
-+};
-+static const unsigned int tsn0_phy_int_a_pins[] = {
-+	/* TSN0_PHY_INT_A */
-+	RCAR_GP_PIN(0, 18),
-+};
-+static const unsigned int tsn0_phy_int_a_mux[] = {
-+	TSN0_PHY_INT_A_MARK,
-+};
-+static const unsigned int tsn0_mdio_a_pins[] = {
-+	/* TSN0_MDC_A, TSN0_MDIO_A */
-+	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+};
-+static const unsigned int tsn0_mdio_a_mux[] = {
-+	TSN0_MDC_A_MARK, TSN0_MDIO_A_MARK,
-+};
-+static const unsigned int tsn0_link_b_pins[] = {
-+	/* TSN0_LINK_B */
-+	RCAR_GP_PIN(3, 8),
-+};
-+static const unsigned int tsn0_link_b_mux[] = {
-+	TSN0_LINK_B_MARK,
-+};
-+static const unsigned int tsn0_magic_b_pins[] = {
-+	/* TSN0_MAGIC_B */
-+	RCAR_GP_PIN(3, 12),
-+};
-+static const unsigned int tsn0_magic_b_mux[] = {
-+	TSN0_MAGIC_B_MARK,
-+};
-+static const unsigned int tsn0_phy_int_b_pins[] = {
-+	/* TSN0_PHY_INT_B */
-+	RCAR_GP_PIN(3, 10),
-+};
-+static const unsigned int tsn0_phy_int_b_mux[] = {
-+	TSN0_PHY_INT_B_MARK,
-+};
-+static const unsigned int tsn0_mdio_b_pins[] = {
-+	/* TSN0_MDC_B, TSN0_MDIO_B */
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 2),
-+};
-+static const unsigned int tsn0_mdio_b_mux[] = {
-+	TSN0_MDC_B_MARK, TSN0_MDIO_B_MARK,
-+};
-+static const unsigned int tsn0_avtp_pps_pins[] = {
-+	/* TSN0_AVTP_PPS */
-+	RCAR_GP_PIN(3, 16),
-+};
-+static const unsigned int tsn0_avtp_pps_mux[] = {
-+	TSN0_AVTP_PPS_MARK,
-+};
-+static const unsigned int tsn0_avtp_capture_a_pins[] = {
-+	/* TSN0_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(0, 1),
-+};
-+static const unsigned int tsn0_avtp_capture_a_mux[] = {
-+	TSN0_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int tsn0_avtp_match_a_pins[] = {
-+	/* TSN0_AVTP_MATCH_A */
-+	RCAR_GP_PIN(0, 2),
-+};
-+static const unsigned int tsn0_avtp_match_a_mux[] = {
-+	TSN0_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int tsn0_avtp_capture_b_pins[] = {
-+	/* TSN0_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(3, 18),
-+};
-+static const unsigned int tsn0_avtp_capture_b_mux[] = {
-+	TSN0_AVTP_CAPTURE_B_MARK,
-+};
-+static const unsigned int tsn0_avtp_match_b_pins[] = {
-+	/* TSN0_AVTP_MATCH_B */
-+	RCAR_GP_PIN(3, 17),
-+};
-+static const unsigned int tsn0_avtp_match_b_mux[] = {
-+	TSN0_AVTP_MATCH_B_MARK,
-+};
-+
-+/* - TSN1 ------------------------------------------------ */
-+static const unsigned int tsn1_link_a_pins[] = {
-+	/* TSN1_LINK_A */
++static const unsigned int msiof0_ss1_pins[] = {
++	/* MSIOF0_SS1 */
 +	RCAR_GP_PIN(0, 15),
 +};
-+static const unsigned int tsn1_link_a_mux[] = {
-+	TSN1_LINK_A_MARK,
++static const unsigned int msiof0_ss1_mux[] = {
++	MSIOF0_SS1_MARK,
 +};
-+static const unsigned int tsn1_phy_int_a_pins[] = {
-+	/* TSN1_PHY_INT_A */
-+	RCAR_GP_PIN(0, 19),
-+};
-+static const unsigned int tsn1_phy_int_a_mux[] = {
-+	TSN1_PHY_INT_A_MARK,
-+};
-+static const unsigned int tsn1_mdio_a_pins[] = {
-+	/* TSN1_MDC_A, TSN1_MDIO_A */
-+	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 9),
-+};
-+static const unsigned int tsn1_mdio_a_mux[] = {
-+	TSN1_MDC_A_MARK, TSN1_MDIO_A_MARK,
-+};
-+static const unsigned int tsn1_link_b_pins[] = {
-+	/* TSN1_LINK_B */
-+	RCAR_GP_PIN(3, 6),
-+};
-+static const unsigned int tsn1_link_b_mux[] = {
-+	TSN1_LINK_B_MARK,
-+};
-+static const unsigned int tsn1_phy_int_b_pins[] = {
-+	/* TSN1_PHY_INT_B */
-+	RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int tsn1_phy_int_b_mux[] = {
-+	TSN1_PHY_INT_B_MARK,
-+};
-+static const unsigned int tsn1_mdio_b_pins[] = {
-+	/* TSN1_MDC_B, TSN1_MDIO_B */
-+	RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 0),
-+};
-+static const unsigned int tsn1_mdio_b_mux[] = {
-+	TSN1_MDC_B_MARK, TSN1_MDIO_B_MARK,
-+};
-+static const unsigned int tsn1_avtp_pps_pins[] = {
-+	/* TSN1_AVTP_PPS */
-+	RCAR_GP_PIN(3, 13),
-+};
-+static const unsigned int tsn1_avtp_pps_mux[] = {
-+	TSN0_AVTP_PPS_MARK,
-+};
-+static const unsigned int tsn1_avtp_capture_a_pins[] = {
-+	/* TSN1_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(0, 7),
-+};
-+static const unsigned int tsn1_avtp_capture_a_mux[] = {
-+	TSN1_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int tsn1_avtp_match_a_pins[] = {
-+	/* TSN1_AVTP_MATCH_A */
-+	RCAR_GP_PIN(0, 6),
-+};
-+static const unsigned int tsn1_avtp_match_a_mux[] = {
-+	TSN1_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int tsn1_avtp_capture_b_pins[] = {
-+	/* TSN1_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(3, 15),
-+};
-+static const unsigned int tsn1_avtp_capture_b_mux[] = {
-+	TSN1_AVTP_CAPTURE_B_MARK,
-+};
-+static const unsigned int tsn1_avtp_match_b_pins[] = {
-+	/* TSN1_AVTP_MATCH_B */
-+	RCAR_GP_PIN(3, 14),
-+};
-+static const unsigned int tsn1_avtp_match_b_mux[] = {
-+	TSN1_AVTP_MATCH_B_MARK,
-+};
-+
-+/* - TSN2 ------------------------------------------------ */
-+static const unsigned int tsn2_link_a_pins[] = {
-+	/* TSN2_LINK_A */
++static const unsigned int msiof0_ss2_pins[] = {
++	/* MSIOF0_SS2 */
 +	RCAR_GP_PIN(0, 16),
 +};
-+static const unsigned int tsn2_link_a_mux[] = {
-+	TSN2_LINK_A_MARK,
++static const unsigned int msiof0_ss2_mux[] = {
++	MSIOF0_SS2_MARK,
 +};
-+static const unsigned int tsn2_phy_int_a_pins[] = {
-+	/* TSN2_PHY_INT_A */
-+	RCAR_GP_PIN(0, 20),
++static const unsigned int msiof0_txd_pins[] = {
++	/* MSIOF0_TXD */
++	RCAR_GP_PIN(0, 13),
 +};
-+static const unsigned int tsn2_phy_int_a_mux[] = {
-+	TSN2_PHY_INT_A_MARK,
++static const unsigned int msiof0_txd_mux[] = {
++	MSIOF0_TXD_MARK,
 +};
-+static const unsigned int tsn2_mdio_a_pins[] = {
-+	/* TSN2_MDC_A, TSN2_MDIO_A */
-+	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
++static const unsigned int msiof0_rxd_pins[] = {
++	/* MSIOF0_RXD */
++	RCAR_GP_PIN(0, 12),
 +};
-+static const unsigned int tsn2_mdio_a_mux[] = {
-+	TSN2_MDC_A_MARK, TSN2_MDIO_A_MARK,
-+};
-+static const unsigned int tsn2_link_b_pins[] = {
-+	/* TSN2_LINK_B */
-+	RCAR_GP_PIN(3, 7),
-+};
-+static const unsigned int tsn2_link_b_mux[] = {
-+	TSN2_LINK_B_MARK,
-+};
-+static const unsigned int tsn2_phy_int_b_pins[] = {
-+	/* TSN2_PHY_INT_B */
-+	RCAR_GP_PIN(3, 9),
-+};
-+static const unsigned int tsn2_phy_int_b_mux[] = {
-+	TSN2_PHY_INT_B_MARK,
-+};
-+static const unsigned int tsn2_mdio_b_pins[] = {
-+	/* TSN2_MDC_B, TSN2_MDIO_B */
-+	RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 1),
-+};
-+static const unsigned int tsn2_mdio_b_mux[] = {
-+	TSN2_MDC_B_MARK, TSN2_MDIO_B_MARK,
++static const unsigned int msiof0_rxd_mux[] = {
++	MSIOF0_RXD_MARK,
 +};
 +
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(hscif0_data),
- 	SH_PFC_PIN_GROUP(hscif0_clk),
-@@ -1131,6 +1347,36 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif4_clk),
- 	SH_PFC_PIN_GROUP(scif4_ctrl),
- 	SH_PFC_PIN_GROUP(scif_clk),
-+	SH_PFC_PIN_GROUP(tsn0_link_a),
-+	SH_PFC_PIN_GROUP(tsn0_magic_a),
-+	SH_PFC_PIN_GROUP(tsn0_phy_int_a),
-+	SH_PFC_PIN_GROUP(tsn0_mdio_a),
-+	SH_PFC_PIN_GROUP(tsn0_link_b),
-+	SH_PFC_PIN_GROUP(tsn0_magic_b),
-+	SH_PFC_PIN_GROUP(tsn0_phy_int_b),
-+	SH_PFC_PIN_GROUP(tsn0_mdio_b),
-+	SH_PFC_PIN_GROUP(tsn0_avtp_pps),
-+	SH_PFC_PIN_GROUP(tsn0_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(tsn0_avtp_match_a),
-+	SH_PFC_PIN_GROUP(tsn0_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(tsn0_avtp_match_b),
-+	SH_PFC_PIN_GROUP(tsn1_link_a),
-+	SH_PFC_PIN_GROUP(tsn1_phy_int_a),
-+	SH_PFC_PIN_GROUP(tsn1_mdio_a),
-+	SH_PFC_PIN_GROUP(tsn1_link_b),
-+	SH_PFC_PIN_GROUP(tsn1_phy_int_b),
-+	SH_PFC_PIN_GROUP(tsn1_mdio_b),
-+	SH_PFC_PIN_GROUP(tsn1_avtp_pps),
-+	SH_PFC_PIN_GROUP(tsn1_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(tsn1_avtp_match_a),
-+	SH_PFC_PIN_GROUP(tsn1_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(tsn1_avtp_match_b),
-+	SH_PFC_PIN_GROUP(tsn2_link_a),
-+	SH_PFC_PIN_GROUP(tsn2_phy_int_a),
-+	SH_PFC_PIN_GROUP(tsn2_mdio_a),
-+	SH_PFC_PIN_GROUP(tsn2_link_b),
-+	SH_PFC_PIN_GROUP(tsn2_phy_int_b),
-+	SH_PFC_PIN_GROUP(tsn2_mdio_b),
++/* - MSIOF1 ----------------------------------------------------------------- */
++static const unsigned int msiof1_clk_pins[] = {
++	/* MSIOF1_SCK */
++	RCAR_GP_PIN(0, 8),
++};
++static const unsigned int msiof1_clk_mux[] = {
++	MSIOF1_SCK_MARK,
++};
++static const unsigned int msiof1_sync_pins[] = {
++	/* MSIOF1_SYNC */
++	RCAR_GP_PIN(0, 10),
++};
++static const unsigned int msiof1_sync_mux[] = {
++	MSIOF1_SYNC_MARK,
++};
++static const unsigned int msiof1_ss1_pins[] = {
++	/* MSIOF1_SS1 */
++	RCAR_GP_PIN(0, 17),
++};
++static const unsigned int msiof1_ss1_mux[] = {
++	MSIOF1_SS1_MARK,
++};
++static const unsigned int msiof1_ss2_pins[] = {
++	/* MSIOF1_SS2 */
++	RCAR_GP_PIN(0, 18),
++};
++static const unsigned int msiof1_ss2_mux[] = {
++	MSIOF1_SS2_MARK,
++};
++static const unsigned int msiof1_txd_pins[] = {
++	/* MSIOF1_TXD */
++	RCAR_GP_PIN(0, 7),
++};
++static const unsigned int msiof1_txd_mux[] = {
++	MSIOF1_TXD_MARK,
++};
++static const unsigned int msiof1_rxd_pins[] = {
++	/* MSIOF1_RXD */
++	RCAR_GP_PIN(0, 6),
++};
++static const unsigned int msiof1_rxd_mux[] = {
++	MSIOF1_RXD_MARK,
++};
++
++/* - MSIOF2 ----------------------------------------------------------------- */
++static const unsigned int msiof2_clk_pins[] = {
++	/* MSIOF2_SCK */
++	RCAR_GP_PIN(1, 5),
++};
++static const unsigned int msiof2_clk_mux[] = {
++	MSIOF2_SCK_MARK,
++};
++static const unsigned int msiof2_sync_pins[] = {
++	/* MSIOF2_SYNC */
++	RCAR_GP_PIN(1, 4),
++};
++static const unsigned int msiof2_sync_mux[] = {
++	MSIOF2_SYNC_MARK,
++};
++static const unsigned int msiof2_ss1_pins[] = {
++	/* MSIOF2_SS1 */
++	RCAR_GP_PIN(1, 2),
++};
++static const unsigned int msiof2_ss1_mux[] = {
++	MSIOF2_SS1_MARK,
++};
++static const unsigned int msiof2_ss2_pins[] = {
++	/* MSIOF2_SS2 */
++	RCAR_GP_PIN(1, 3),
++};
++static const unsigned int msiof2_ss2_mux[] = {
++	MSIOF2_SS2_MARK,
++};
++static const unsigned int msiof2_txd_pins[] = {
++	/* MSIOF2_TXD */
++	RCAR_GP_PIN(1, 7),
++};
++static const unsigned int msiof2_txd_mux[] = {
++	MSIOF2_TXD_MARK,
++};
++static const unsigned int msiof2_rxd_pins[] = {
++	/* MSIOF2_RXD */
++	RCAR_GP_PIN(1, 6),
++};
++static const unsigned int msiof2_rxd_mux[] = {
++	MSIOF2_RXD_MARK,
++};
++
++/* - MSIOF3 ----------------------------------------------------------------- */
++static const unsigned int msiof3_clk_pins[] = {
++	/* MSIOF3_SCK */
++	RCAR_GP_PIN(0, 1),
++};
++static const unsigned int msiof3_clk_mux[] = {
++	MSIOF3_SCK_MARK,
++};
++static const unsigned int msiof3_sync_pins[] = {
++	/* MSIOF3_SYNC */
++	RCAR_GP_PIN(0, 9),
++};
++static const unsigned int msiof3_sync_mux[] = {
++	MSIOF3_SYNC_MARK,
++};
++static const unsigned int msiof3_ss1_pins[] = {
++	/* MSIOF3_SS1 */
++	RCAR_GP_PIN(0, 4),
++};
++static const unsigned int msiof3_ss1_mux[] = {
++	MSIOF3_SS1_MARK,
++};
++static const unsigned int msiof3_ss2_pins[] = {
++	/* MSIOF3_SS2 */
++	RCAR_GP_PIN(0, 5),
++};
++static const unsigned int msiof3_ss2_mux[] = {
++	MSIOF3_SS2_MARK,
++};
++static const unsigned int msiof3_txd_pins[] = {
++	/* MSIOF3_TXD */
++	RCAR_GP_PIN(0, 3),
++};
++static const unsigned int msiof3_txd_mux[] = {
++	MSIOF3_TXD_MARK,
++};
++static const unsigned int msiof3_rxd_pins[] = {
++	/* MSIOF3_RXD */
++	RCAR_GP_PIN(0, 2),
++};
++static const unsigned int msiof3_rxd_mux[] = {
++	MSIOF3_RXD_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX0, TX0 */
+@@ -855,6 +1031,30 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(mmc_cd),
+ 	SH_PFC_PIN_GROUP(mmc_wp),
+ 	SH_PFC_PIN_GROUP(mmc_ds),
++	SH_PFC_PIN_GROUP(msiof0_clk),
++	SH_PFC_PIN_GROUP(msiof0_sync),
++	SH_PFC_PIN_GROUP(msiof0_ss1),
++	SH_PFC_PIN_GROUP(msiof0_ss2),
++	SH_PFC_PIN_GROUP(msiof0_txd),
++	SH_PFC_PIN_GROUP(msiof0_rxd),
++	SH_PFC_PIN_GROUP(msiof1_clk),
++	SH_PFC_PIN_GROUP(msiof1_sync),
++	SH_PFC_PIN_GROUP(msiof1_ss1),
++	SH_PFC_PIN_GROUP(msiof1_ss2),
++	SH_PFC_PIN_GROUP(msiof1_txd),
++	SH_PFC_PIN_GROUP(msiof1_rxd),
++	SH_PFC_PIN_GROUP(msiof2_clk),
++	SH_PFC_PIN_GROUP(msiof2_sync),
++	SH_PFC_PIN_GROUP(msiof2_ss1),
++	SH_PFC_PIN_GROUP(msiof2_ss2),
++	SH_PFC_PIN_GROUP(msiof2_txd),
++	SH_PFC_PIN_GROUP(msiof2_rxd),
++	SH_PFC_PIN_GROUP(msiof3_clk),
++	SH_PFC_PIN_GROUP(msiof3_sync),
++	SH_PFC_PIN_GROUP(msiof3_ss1),
++	SH_PFC_PIN_GROUP(msiof3_ss2),
++	SH_PFC_PIN_GROUP(msiof3_txd),
++	SH_PFC_PIN_GROUP(msiof3_rxd),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -937,6 +1137,42 @@ static const char * const mmc_groups[] = {
+ 	"mmc_ds",
  };
  
- static const char * const hscif0_groups[] = {
-@@ -1281,6 +1527,45 @@ static const char * const scif_clk_groups[] = {
- 	"scif_clk",
- };
- 
-+static const char * const tsn0_groups[] = {
-+	"tsn0_link_a",
-+	"tsn0_magic_a",
-+	"tsn0_phy_int_a",
-+	"tsn0_mdio_a",
-+	"tsn0_link_b",
-+	"tsn0_magic_b",
-+	"tsn0_phy_int_b",
-+	"tsn0_mdio_b",
-+	"tsn0_avtp_pps",
-+	"tsn0_avtp_capture_a",
-+	"tsn0_avtp_match_a",
-+	"tsn0_avtp_capture_b",
-+	"tsn0_avtp_match_b",
++static const char * const msiof0_groups[] = {
++	"msiof0_clk",
++	"msiof0_sync",
++	"msiof0_ss1",
++	"msiof0_ss2",
++	"msiof0_txd",
++	"msiof0_rxd",
 +};
 +
-+static const char * const tsn1_groups[] = {
-+	"tsn1_link_a",
-+	"tsn1_phy_int_a",
-+	"tsn1_mdio_a",
-+	"tsn1_link_b",
-+	"tsn1_phy_int_b",
-+	"tsn1_mdio_b",
-+	"tsn1_avtp_pps",
-+	"tsn1_avtp_capture_a",
-+	"tsn1_avtp_match_a",
-+	"tsn1_avtp_capture_b",
-+	"tsn1_avtp_match_b",
++static const char * const msiof1_groups[] = {
++	"msiof1_clk",
++	"msiof1_sync",
++	"msiof1_ss1",
++	"msiof1_ss2",
++	"msiof1_txd",
++	"msiof1_rxd",
 +};
 +
-+static const char * const tsn2_groups[] = {
-+	"tsn2_link_a",
-+	"tsn2_phy_int_a",
-+	"tsn2_mdio_a",
-+	"tsn2_link_b",
-+	"tsn2_phy_int_b",
-+	"tsn2_mdio_b",
++static const char * const msiof2_groups[] = {
++	"msiof2_clk",
++	"msiof2_sync",
++	"msiof2_ss1",
++	"msiof2_ss2",
++	"msiof2_txd",
++	"msiof2_rxd",
 +};
 +
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
-@@ -1306,6 +1591,9 @@ static const struct sh_pfc_function pinmux_functions[] = {
++static const char * const msiof3_groups[] = {
++	"msiof3_clk",
++	"msiof3_sync",
++	"msiof3_ss1",
++	"msiof3_ss2",
++	"msiof3_txd",
++	"msiof3_rxd",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -978,6 +1214,10 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(i2c5),
+ 	SH_PFC_FUNCTION(intc_ex),
+ 	SH_PFC_FUNCTION(mmc),
++	SH_PFC_FUNCTION(msiof0),
++	SH_PFC_FUNCTION(msiof1),
++	SH_PFC_FUNCTION(msiof2),
++	SH_PFC_FUNCTION(msiof3),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
  	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(tsn0),
-+	SH_PFC_FUNCTION(tsn1),
-+	SH_PFC_FUNCTION(tsn2),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
 2.25.1
 
