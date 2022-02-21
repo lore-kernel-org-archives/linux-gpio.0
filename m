@@ -2,224 +2,82 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26572C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Feb 2022 15:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1E9C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Feb 2022 16:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379417AbiBUPpm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:45:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37928 "EHLO
+        id S1380173AbiBUQWZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 21 Feb 2022 11:22:25 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379480AbiBUPo4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Feb 2022 10:44:56 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C06C23BD5
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Feb 2022 07:43:54 -0800 (PST)
+        with ESMTP id S1380102AbiBUQWZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Feb 2022 11:22:25 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D0EC1AF10
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Feb 2022 08:22:01 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
-        by albert.telenet-ops.be with bizsmtp
-        id xrjr2600U3YJRAw06rjrdL; Mon, 21 Feb 2022 16:43:52 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id xsMz2600T3YJRAw01sMzr2; Mon, 21 Feb 2022 17:22:00 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqt-001TTq-8F; Mon, 21 Feb 2022 16:43:51 +0100
+        id 1nMBRn-001Tgz-Fl; Mon, 21 Feb 2022 17:21:59 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-006Ehn-Db; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMBRn-006Fs6-04; Mon, 21 Feb 2022 17:21:59 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 04/12] pinctrl: renesas: r8a779f0: Add SCIF pins, groups, and functions
-Date:   Mon, 21 Feb 2022 16:43:39 +0100
-Message-Id: <6369359a53483291ee536787c8a232462ff1b3a9.1645457792.git.geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: checker: Fix miscalculation of number of states
+Date:   Mon, 21 Feb 2022 17:21:58 +0100
+Message-Id: <6d8a6a05564f38f9d20464c1c17f96e52740cf6a.1645460429.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1645457792.git.geert+renesas@glider.be>
-References: <cover.1645457792.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add pins, groups, and functions for the Serial Communication Interfaces
-with FIFO (SCIF) on the Renesas R-Car S4-8 (R8A779F0) SoC.
+The checker failed to validate all enum IDs in the description of a
+register with fixed-width register fields, due to a miscalculation of
+the number of described states: each register field of n bits can have
+"1 << n" possible states, not "1".
 
-Extracted from a larger patch in the BSP by LUU HOAI.
+Increase SH_PFC_MAX_ENUMS accordingly, now more enum IDs are checked
+(SH-Mobile AG5 has more than 4000 enum IDs defined).
 
+Fixes: 12d057bad683b1c6 ("pinctrl: sh-pfc: checker: Add check for enum ID conflicts")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - No changes.
----
- drivers/pinctrl/renesas/pfc-r8a779f0.c | 147 +++++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
+To be queued in renesas-pinctrl-for-v5.18.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-index 2f3fbb794eb635c1..26f6eec3da4ef067 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-@@ -488,10 +488,157 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
+ drivers/pinctrl/renesas/core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
+index 62b4c3145ba7c052..d0d4714731c14cf5 100644
+--- a/drivers/pinctrl/renesas/core.c
++++ b/drivers/pinctrl/renesas/core.c
+@@ -747,7 +747,7 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
  
-+/* - SCIF0 ------------------------------------------------------------------ */
-+static const unsigned int scif0_data_pins[] = {
-+	/* RX0, TX0 */
-+	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+};
-+static const unsigned int scif0_data_mux[] = {
-+	RX0_MARK, TX0_MARK,
-+};
-+static const unsigned int scif0_clk_pins[] = {
-+	/* SCK0 */
-+	RCAR_GP_PIN(0, 8),
-+};
-+static const unsigned int scif0_clk_mux[] = {
-+	SCK0_MARK,
-+};
-+static const unsigned int scif0_ctrl_pins[] = {
-+	/* RTS0#, CTS0# */
-+	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
-+};
-+static const unsigned int scif0_ctrl_mux[] = {
-+	RTS0_N_MARK, CTS0_N_MARK,
-+};
-+
-+/* - SCIF1 ------------------------------------------------------------------ */
-+static const unsigned int scif1_data_pins[] = {
-+	/* RX1, TX1 */
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+};
-+static const unsigned int scif1_data_mux[] = {
-+	RX1_MARK, TX1_MARK,
-+};
-+static const unsigned int scif1_clk_pins[] = {
-+	/* SCK1 */
-+	RCAR_GP_PIN(0, 14),
-+};
-+static const unsigned int scif1_clk_mux[] = {
-+	SCK1_MARK,
-+};
-+static const unsigned int scif1_ctrl_pins[] = {
-+	/* RTS1#, CTS1# */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 11),
-+};
-+static const unsigned int scif1_ctrl_mux[] = {
-+	RTS1_N_MARK, CTS1_N_MARK,
-+};
-+
-+/* - SCIF3 ------------------------------------------------------------------ */
-+static const unsigned int scif3_data_pins[] = {
-+	/* RX3, TX3 */
-+	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+};
-+static const unsigned int scif3_data_mux[] = {
-+	RX3_MARK, TX3_MARK,
-+};
-+static const unsigned int scif3_clk_pins[] = {
-+	/* SCK3 */
-+	RCAR_GP_PIN(0, 1),
-+};
-+static const unsigned int scif3_clk_mux[] = {
-+	SCK3_MARK,
-+};
-+static const unsigned int scif3_ctrl_pins[] = {
-+	/* RTS3#, CTS3# */
-+	RCAR_GP_PIN(0, 5), RCAR_GP_PIN(0, 4),
-+};
-+static const unsigned int scif3_ctrl_mux[] = {
-+	RTS3_N_MARK, CTS3_N_MARK,
-+};
-+
-+/* - SCIF4 ------------------------------------------------------------------ */
-+static const unsigned int scif4_data_pins[] = {
-+	/* RX4, TX4 */
-+	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+};
-+static const unsigned int scif4_data_mux[] = {
-+	RX4_MARK, TX4_MARK,
-+};
-+static const unsigned int scif4_clk_pins[] = {
-+	/* SCK4 */
-+	RCAR_GP_PIN(1, 5),
-+};
-+static const unsigned int scif4_clk_mux[] = {
-+	SCK4_MARK,
-+};
-+static const unsigned int scif4_ctrl_pins[] = {
-+	/* RTS4#, CTS4# */
-+	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 3),
-+};
-+static const unsigned int scif4_ctrl_mux[] = {
-+	RTS4_N_MARK, CTS4_N_MARK,
-+};
-+
-+/* - SCIF Clock ------------------------------------------------------------- */
-+static const unsigned int scif_clk_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(0, 0),
-+};
-+static const unsigned int scif_clk_mux[] = {
-+	SCIF_CLK_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(scif0_data),
-+	SH_PFC_PIN_GROUP(scif0_clk),
-+	SH_PFC_PIN_GROUP(scif0_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data),
-+	SH_PFC_PIN_GROUP(scif1_clk),
-+	SH_PFC_PIN_GROUP(scif1_ctrl),
-+	SH_PFC_PIN_GROUP(scif3_data),
-+	SH_PFC_PIN_GROUP(scif3_clk),
-+	SH_PFC_PIN_GROUP(scif3_ctrl),
-+	SH_PFC_PIN_GROUP(scif4_data),
-+	SH_PFC_PIN_GROUP(scif4_clk),
-+	SH_PFC_PIN_GROUP(scif4_ctrl),
-+	SH_PFC_PIN_GROUP(scif_clk),
-+};
-+
-+static const char * const scif0_groups[] = {
-+	"scif0_data",
-+	"scif0_clk",
-+	"scif0_ctrl",
-+};
-+
-+static const char * const scif1_groups[] = {
-+	"scif1_data",
-+	"scif1_clk",
-+	"scif1_ctrl",
-+};
-+
-+static const char * const scif3_groups[] = {
-+	"scif3_data",
-+	"scif3_clk",
-+	"scif3_ctrl",
-+};
-+
-+static const char * const scif4_groups[] = {
-+	"scif4_data",
-+	"scif4_clk",
-+	"scif4_ctrl",
-+};
-+
-+static const char * const scif_clk_groups[] = {
-+	"scif_clk",
- };
+ #ifdef DEBUG
+ #define SH_PFC_MAX_REGS		300
+-#define SH_PFC_MAX_ENUMS	3000
++#define SH_PFC_MAX_ENUMS	5000
  
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(scif0),
-+	SH_PFC_FUNCTION(scif1),
-+	SH_PFC_FUNCTION(scif3),
-+	SH_PFC_FUNCTION(scif4),
-+	SH_PFC_FUNCTION(scif_clk),
- };
+ static unsigned int sh_pfc_errors __initdata;
+ static unsigned int sh_pfc_warnings __initdata;
+@@ -881,7 +881,8 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
+ 			 GENMASK(cfg_reg->reg_width - 1, 0));
  
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	if (cfg_reg->field_width) {
+-		n = cfg_reg->reg_width / cfg_reg->field_width;
++		fw = cfg_reg->field_width;
++		n = (cfg_reg->reg_width / fw) << fw;
+ 		/* Skip field checks (done at build time) */
+ 		goto check_enum_ids;
+ 	}
 -- 
 2.25.1
 
