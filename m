@@ -2,154 +2,155 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DC0C4167D
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Feb 2022 15:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07548C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Feb 2022 15:46:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242358AbiBWPpJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Feb 2022 10:45:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56854 "EHLO
+        id S232440AbiBWPq7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Feb 2022 10:46:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242326AbiBWPoz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Feb 2022 10:44:55 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B24EBF95A;
-        Wed, 23 Feb 2022 07:44:27 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 03B5BB820C8;
-        Wed, 23 Feb 2022 15:44:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D386C340FB;
-        Wed, 23 Feb 2022 15:44:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645631064;
-        bh=SUMHRwHLSBCKt6500XeBFRSfc+yTeQJg5D0JuhgT3GU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k8wnDyj1uHxERgKeK02phgsLUftdGXrbd5qFabvyCkSnnyt34BAjJbRuIqdEvkgdX
-         K/tcguWOd03meJ9EVPq7c0NWNEtMs97wkE6OLGdf97uHBBtM0SMjooXe6i3fWsth/G
-         eKe3a5ijx6qXxfUYEXiv0cX9ftXYW1BNQlSzlzEvqm4yMgv4Gz4MneOSA3fu618kWV
-         wjdvl07/4wrX0dLue6f0Y5FM0MjLApM8yFGDZ7PLMEd+IHuxzTbhy7is4K6hVuvX+s
-         c8q3rRbGRJzd43uU9ETelUvJ0dMA7cF3bGMaxfHMJSGfofqJcY1OMQAVe+PioGduK0
-         r7I2kx0psP9uA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nMtoU-009wgt-Kn; Wed, 23 Feb 2022 15:44:22 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH 5/5] gpio: tegra186: Make the irqchip immutable
-Date:   Wed, 23 Feb 2022 15:44:05 +0000
-Message-Id: <20220223154405.54912-6-maz@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220223154405.54912-1-maz@kernel.org>
-References: <20220223154405.54912-1-maz@kernel.org>
+        with ESMTP id S233481AbiBWPq6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Feb 2022 10:46:58 -0500
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE806C087B;
+        Wed, 23 Feb 2022 07:46:28 -0800 (PST)
+Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 64A0CC5DDA;
+        Wed, 23 Feb 2022 15:18:42 +0000 (UTC)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id E89AAC000A;
+        Wed, 23 Feb 2022 15:18:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1645629516;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=L8WJ1C1Tx3aKKa3O4w4oElLz8XE2ctzr9MgK1/YUoCU=;
+        b=oc+Jes6pQdZo1kzhSYkAkXsvE4s+RVTUPbPWDmF1a35hrX82st5TluCAV2C15w0eMkA6I5
+        nP4Q+Q12KrmS/7Sss8FFkJroL31r78SoKt2sw/bLzZGFDhtudEOtKMfhmDS+/0qjJ+B7yL
+        J2/IS+Z4W/TYryGG1X8Dz/Y49ypWY9CsE22lqqkz4jV2WVnpyPb9JDrEiHzzf2yyFa3jOd
+        R0ubzG96gMcXnRbrpvcpOyppNxeAFUVC0LPXkmZwmq0wqfUPITlJbx8HtOmcK+ntjSCVm5
+        lVxdfAzaWpUBonEOa73WxiVLJABsIPWjte8zqb/7KK1JEox5Lbi/c0jsv1EyAw==
+Date:   Wed, 23 Feb 2022 16:18:30 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Conor.Dooley@microchip.com
+Cc:     a.zummo@towertech.it, Lewis.Hanly@microchip.com,
+        Daire.McNamara@microchip.com, Ivan.Griffin@microchip.com,
+        atishp@rivosinc.com, palmer@rivosinc.com, robh@kernel.org,
+        linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
+        jassisinghbrar@gmail.com, thierry.reding@gmail.com,
+        u.kleine-koenig@pengutronix.de, lee.jones@linaro.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, geert@linux-m68k.org,
+        krzysztof.kozlowski@canonical.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 03/11] dt-bindings: rtc: add bindings for microchip
+ mpfs rtc
+Message-ID: <YhZQRqHib2+GR7Ma@piout.net>
+References: <20220214135840.168236-1-conor.dooley@microchip.com>
+ <20220214135840.168236-4-conor.dooley@microchip.com>
+ <5b0681a0-ff46-7eb4-3644-0d1173c1f0d4@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, tglx@linutronix.de, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b0681a0-ff46-7eb4-3644-0d1173c1f0d4@microchip.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Prevent gpiolib from messing with the irqchip by advertising
-the irq_chip structure as immutable, making it const, and adding
-the various calls that gpiolib relies upon.
+On 23/02/2022 07:41:27+0000, Conor.Dooley@microchip.com wrote:
+> Hi Alessandro, Alexandre,
+> If one of you could take a look at this, that'd be great.
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/gpio/gpio-tegra186.c | 33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+I actually expected someone else to apply this, what is your plan?
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 8d298beffd86..2455e1a2c451 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -80,7 +80,6 @@ struct tegra_gpio_soc {
- 
- struct tegra_gpio {
- 	struct gpio_chip gpio;
--	struct irq_chip intc;
- 	unsigned int num_irq;
- 	unsigned int *irq;
- 
-@@ -372,6 +371,8 @@ static void tegra186_irq_mask(struct irq_data *data)
- 	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
- 	value &= ~TEGRA186_GPIO_ENABLE_CONFIG_INTERRUPT;
- 	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-+
-+	gpiochip_disable_irq(&gpio->gpio, data->hwirq);
- }
- 
- static void tegra186_irq_unmask(struct irq_data *data)
-@@ -385,6 +386,8 @@ static void tegra186_irq_unmask(struct irq_data *data)
- 	if (WARN_ON(base == NULL))
- 		return;
- 
-+	gpiochip_enable_irq(&gpio->gpio, data->hwirq);
-+
- 	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
- 	value |= TEGRA186_GPIO_ENABLE_CONFIG_INTERRUPT;
- 	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-@@ -456,6 +459,25 @@ static int tegra186_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
- }
- 
-+static void tegra186_irq_print_chip(struct irq_data *data, struct seq_file *p)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+
-+	seq_printf(p, dev_name(gc->parent));
-+}
-+
-+static const struct irq_chip tegra186_gpio_irq_chip = {
-+	.irq_request_resources	= gpiochip_irq_reqres,
-+	.irq_release_resources	= gpiochip_irq_relres,
-+	.irq_ack		= tegra186_irq_ack,
-+	.irq_mask		= tegra186_irq_mask,
-+	.irq_unmask		= tegra186_irq_unmask,
-+	.irq_set_type		= tegra186_irq_set_type,
-+	.irq_set_wake		= tegra186_irq_set_wake,
-+	.irq_print_chip		= tegra186_irq_print_chip,
-+	.flags			= IRQCHIP_IMMUTABLE,
-+};
-+
- static void tegra186_gpio_irq(struct irq_desc *desc)
- {
- 	struct tegra_gpio *gpio = irq_desc_get_handler_data(desc);
-@@ -760,15 +782,8 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 	gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
- #endif /* CONFIG_OF_GPIO */
- 
--	gpio->intc.name = dev_name(&pdev->dev);
--	gpio->intc.irq_ack = tegra186_irq_ack;
--	gpio->intc.irq_mask = tegra186_irq_mask;
--	gpio->intc.irq_unmask = tegra186_irq_unmask;
--	gpio->intc.irq_set_type = tegra186_irq_set_type;
--	gpio->intc.irq_set_wake = tegra186_irq_set_wake;
--
- 	irq = &gpio->gpio.irq;
--	irq->chip = &gpio->intc;
-+	irq->chip = (struct irq_chip *)&tegra186_gpio_irq_chip;
- 	irq->fwnode = of_node_to_fwnode(pdev->dev.of_node);
- 	irq->child_to_parent_hwirq = tegra186_gpio_child_to_parent_hwirq;
- 	irq->populate_parent_alloc_arg = tegra186_gpio_populate_parent_fwspec;
+> Thanks,
+> Conor.
+> 
+> On 14/02/2022 13:58, conor.dooley@microchip.com wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> > 
+> > Add device tree bindings for the real time clock on
+> > the Microchip PolarFire SoC.
+> > 
+> > Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >   .../bindings/rtc/microchip,mfps-rtc.yaml      | 58 +++++++++++++++++++
+> >   1 file changed, 58 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/rtc/microchip,mfps-rtc.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/rtc/microchip,mfps-rtc.yaml b/Documentation/devicetree/bindings/rtc/microchip,mfps-rtc.yaml
+> > new file mode 100644
+> > index 000000000000..a2e984ea3553
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/rtc/microchip,mfps-rtc.yaml
+> > @@ -0,0 +1,58 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/rtc/microchip,mfps-rtc.yaml#
+> > +
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Microchip PolarFire Soc (MPFS) RTC Device Tree Bindings
+> > +
+> > +allOf:
+> > +  - $ref: rtc.yaml#
+> > +
+> > +maintainers:
+> > +  - Daire McNamara <daire.mcnamara@microchip.com>
+> > +  - Lewis Hanly <lewis.hanly@microchip.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - microchip,mpfs-rtc
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    items:
+> > +      - description: |
+> > +          RTC_WAKEUP interrupt
+> > +      - description: |
+> > +          RTC_MATCH, asserted when the content of the Alarm register is equal
+> > +          to that of the RTC's count register.
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: rtc
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +  - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    rtc@20124000 {
+> > +        compatible = "microchip,mpfs-rtc";
+> > +        reg = <0x20124000 0x1000>;
+> > +        clocks = <&clkcfg 21>;
+> > +        clock-names = "rtc";
+> > +        interrupts = <80>, <81>;
+> > +    };
+> > +...
+> 
+
 -- 
-2.30.2
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
