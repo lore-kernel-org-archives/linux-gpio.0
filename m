@@ -2,85 +2,106 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D94DC433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Feb 2022 16:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFC4C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Feb 2022 16:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229658AbiBXQe3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:34:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
+        id S230042AbiBXQjg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230029AbiBXQe2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Feb 2022 11:34:28 -0500
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F111C024D;
-        Thu, 24 Feb 2022 08:33:57 -0800 (PST)
-Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 4753F223ED;
-        Thu, 24 Feb 2022 17:10:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1645719038;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QfIDQa6FJTFwfCIXNvNQ6T+ZpBTS7tbFcvelBvUPgsA=;
-        b=YVLvsrlFhhYpizdRGZmET0UpkAklb9xkIMvO2paxqpe2GjSdlE887eVqs/Q6HCIKvNf3Ms
-        LgGr3gZICJWIZJ6/6UQ1yKa44oNQf3jcgHb12oAbcj6ZxS3XhvEFwUVDYZYSC12xM6mp+X
-        Vh4MeZlvNbbGJixj6wszqCU/oki0yF8=
-From:   Michael Walle <michael@walle.cc>
-To:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Colin Foster <colin.foster@in-advantage.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v1 2/5] pinctrl: microchip-sgpio: don't do RMW for interrupt ack register
-Date:   Thu, 24 Feb 2022 17:10:18 +0100
-Message-Id: <20220224161021.2197263-3-michael@walle.cc>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220224161021.2197263-1-michael@walle.cc>
-References: <20220224161021.2197263-1-michael@walle.cc>
+        with ESMTP id S229654AbiBXQjf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Feb 2022 11:39:35 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C8F14CCA3;
+        Thu, 24 Feb 2022 08:39:05 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id q17so3684553edd.4;
+        Thu, 24 Feb 2022 08:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8ww14R/0doMbb1GnnkQOuIVoZujutPBK0hfKVk+ApXY=;
+        b=BT7WEMy0rlnh82V+S8R5fT/DjCHh1QvgOhGph5OTDiiTsVhFskdqRaungLGpCGw5vk
+         iS0gSSf81Y8cCkqzcWFYC/lFfyQi0YS/Ude/pkXSYOrp7TqrtfcEQG7EOBYczW5WSe/I
+         JdV4ljZWsJZj+RquInApUvlaOl3RGG47yhK3XIkwO9b/d+IcvcyCqO+uxmRr2e4ep2ML
+         5PG4ZZdZFZO9ZbndOnm6DHwUbTJwNGodKfYteXQ6lJ/qSfiJMfXuMm2PCMt/2XSHc3q9
+         3Pw+L8cDv5VXqbHJCvcxq8ehEgx3mm0qudnH4Qj7LqJrvORB3xGAoq848aAivyf3xWGd
+         6ZZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8ww14R/0doMbb1GnnkQOuIVoZujutPBK0hfKVk+ApXY=;
+        b=Q+o7HgbUerLvuYF1w20Rw/CPOlLn4lNV9PiHNq5ZZWLLCFYr7ZkcOCvU0o9h6DrgCk
+         kOS60f7u5Ve5rAL3tLdZO6/qha8GcSvVgnwxp+pzBqDjvv6LrqJWvMPh4PQpPRlGr2+5
+         kMloSzOqx4KV8xipVQTwSkJhf0z27UDIS+kWtwak4vRcjHbPu9823ZEJ6Y1G0eQsPbLD
+         P36PQ8whfbwDKZPYovBnGlFQgONDvU+j3ijm+B+vKyhfMRfNUwKsJH8hL2u7BT6eUzt5
+         MhEA27jRWPqPF0HehRoWcsqfeCD8H7FT+A204h2at5h8eNFW9gyD7oq4i0+Wf3TeW9fW
+         J6aw==
+X-Gm-Message-State: AOAM532gErARLF7PTqLVGgr6B0SRl0N+z1ux6L2HjvnteRo73mDqSCm9
+        /BlRM2xkgwmC3KzO9y5XK0U=
+X-Google-Smtp-Source: ABdhPJwJoHH32eVYGJKm8Bcye+DcONzdjP7VEdHc1ObU8Z95hbpmJAqjIx539QkZIjEd/tLs2VJtKA==
+X-Received: by 2002:a05:6402:1435:b0:410:d2e1:e6dc with SMTP id c21-20020a056402143500b00410d2e1e6dcmr3160043edx.138.1645720743929;
+        Thu, 24 Feb 2022 08:39:03 -0800 (PST)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id g15sm1775861edb.11.2022.02.24.08.39.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 08:39:02 -0800 (PST)
+Date:   Thu, 24 Feb 2022 17:39:00 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
+Subject: Re: [PATCH] gpio: tegra186: add Tegra234 PMC compatible in GPIO
+ driver
+Message-ID: <Yhe0pCpfeCpyfPWg@orome>
+References: <20220224082409.12559-1-pshete@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lsEbeFBk5FrbFEHX"
+Content-Disposition: inline
+In-Reply-To: <20220224082409.12559-1-pshete@nvidia.com>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The interrupt ack register has the usual "write one to clear" semantics.
-No read-modify-write is required here.
 
-This is also a preparation patch to change the sgpio_clrsetbits() to use
-regmap_update_bits() which don't write the value if it is not changed.
+--lsEbeFBk5FrbFEHX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/pinctrl/pinctrl-microchip-sgpio.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+On Thu, Feb 24, 2022 at 01:54:09PM +0530, Prathamesh Shete wrote:
+> From: Manish Bhardwaj <mbhardwaj@nvidia.com>
+>=20
+> Using this patch we are adding PMC compatible string for
+> Tegra234 in GPIO driver so the irq hierarchy can be set.
 
-diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-index b43302cc188a..31c4401f725e 100644
---- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
-+++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-@@ -640,7 +640,14 @@ static void microchip_sgpio_irq_unmask(struct irq_data *data)
- 
- static void microchip_sgpio_irq_ack(struct irq_data *data)
- {
--	microchip_sgpio_irq_setreg(data, REG_INT_ACK, false);
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sgpio_bank *bank = gpiochip_get_data(chip);
-+	unsigned int gpio = irqd_to_hwirq(data);
-+	struct sgpio_port_addr addr;
-+
-+	sgpio_pin_to_addr(bank->priv, gpio, &addr);
-+
-+	sgpio_writel(bank->priv, BIT(addr.port), REG_INT_ACK, addr.bit);
- }
- 
- static int microchip_sgpio_irq_set_type(struct irq_data *data, unsigned int type)
--- 
-2.30.2
+s/irq/IRQ/, but otherwise looks good:
 
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--lsEbeFBk5FrbFEHX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXtKQACgkQ3SOs138+
+s6F4Bg//bdcp/cCBhMmhRROLgl8W/gI7aGWofrewPJUM28kDVshWPUyxxzCm99Ly
++ebwJ2ILgqPSloqFOwPM7cQzzhEGupRzTWGp2/e9PWlQmBW2t7J0Ft8bmI25cyyB
+YBnK6OlkFij7lHnVsVj2ECbcyBtOL6oc8se/Q55twiPfQihY2hOZF3NoVmiPNcBt
+q7XJMUTqfvMDHPqduey9FDVSexlPm5GPGVw8WcojxCAuasYL2brNhkCUFO1714Dg
+UeUff2CSR/0Dr1SX37YbqcfhOZpMJS6xQMnrsStdC96LDn7DRvvRC1ljO3v/2w7x
+435QsTn2s84ynQQr7ACVFfkALwm3UNSvSIx4oubv0vsjx6bQ30FG4cTKqtvrMbzw
+hnWtEb8zsHtvQ9HdPzMSA/2LlZ9F+aFsaaoOF2ni0EOreSKX3rPVx5Q2mf7iyHnH
+KJdRAZFNisiHvf9PcFFN5omlbDx6AuTuzMFJAxYf43TsMeaoowkS4+LNFwiRrmN/
+08wq0xy8Gw6ig0n5sKNEhDcOPAnqBH6Mh8abWJKWP8dvXCEirVCpFxSACS+5sKEJ
+pU9JSQgvSUovlCw/AfuezB/35+VQ9yBASf0e+YWje9Pk4Qb2BGmlyjR60zkDUcYn
+KxewUtg5lqh1hajjfTFAncrIK9omiTkxW57Z7fFBbI/0QbAMaE4=
+=e1QQ
+-----END PGP SIGNATURE-----
+
+--lsEbeFBk5FrbFEHX--
