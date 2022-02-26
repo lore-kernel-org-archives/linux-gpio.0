@@ -2,34 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658A0C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD76C4332F
 	for <linux-gpio@archiver.kernel.org>; Sat, 26 Feb 2022 20:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbiBZUqA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 26 Feb 2022 15:46:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37086 "EHLO
+        id S229636AbiBZUqC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Feb 2022 15:46:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiBZUp7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 15:45:59 -0500
+        with ESMTP id S229625AbiBZUp6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 15:45:58 -0500
 Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9FA1B65EA
-        for <linux-gpio@vger.kernel.org>; Sat, 26 Feb 2022 12:45:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD6F01B65DD
+        for <linux-gpio@vger.kernel.org>; Sat, 26 Feb 2022 12:45:23 -0800 (PST)
 Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 838FC223F0;
-        Sat, 26 Feb 2022 21:45:20 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id A5709223EA;
+        Sat, 26 Feb 2022 21:45:18 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1645908320;
+        t=1645908318;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FO9tnLPXy3OKAO7Kf43/8UniHuCxvTuhO0273hpylbI=;
-        b=Frf8zC/nO0fUNphEpeAYPBmiy3RAcfjw8z/YcLlXsLoFILW7fF+8KGlWq0hAjskp6c2YzU
-        4dy68oCaP86z3NPd9/6y7ToMcG7JR1u/7rEfLjvQRTGpWIz2tjAF+y3UjGBk3PPsPkUVZF
-        z8Uh622KoK1/j53nBeJgleSxVh6aUZs=
+        bh=hiJ+ceES+sRAo6TZ3l5S6C3Xjkc3TLwelYHbvCw5TWY=;
+        b=ZuQfQdO//zF3/LCevoc1KwpN/cDlJuUJZ7fCFfBSURflv1Lqn70FwR2/rkbMNoQZ099+Aw
+        BbmxEc8hyqh5Wc8Q3TTeg5S6BuZzxfI6C+Qn/1pcIgKi3TqMgXhDiIw/AgxjxJ01d2XPVO
+        0dNSVimMpUUtkiIDoQ72Eq7h28OK8QI=
 From:   Michael Walle <michael@walle.cc>
 To:     Lars Povlsen <lars.povlsen@microchip.com>,
         Steen Hegelund <Steen.Hegelund@microchip.com>,
@@ -38,9 +38,9 @@ Cc:     UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Colin Foster <colin.foster@in-advantage.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 4/5] pinctrl: microchip-sgpio: return error in spgio_output_set()
-Date:   Sat, 26 Feb 2022 21:45:06 +0100
-Message-Id: <20220226204507.2511633-5-michael@walle.cc>
+Subject: [PATCH v2 1/5] pinctrl: microchip-sgpio: lock RMW access
+Date:   Sat, 26 Feb 2022 21:45:03 +0100
+Message-Id: <20220226204507.2511633-2-michael@walle.cc>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220226204507.2511633-1-michael@walle.cc>
 References: <20220226204507.2511633-1-michael@walle.cc>
@@ -50,67 +50,101 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Make sgpio_output_set() return an error value. Don't just ignore the
-return value of any regmap access but propagate it to our callers. Even
-if the accesses never fail, this is a preparation patch to add single
-shot mode where we need to poll a bit and thus we might get -ETIMEDOUT.
+Protect any RMW access to the registers by a spinlock.
 
+Fixes: 7e5ea974e61c ("pinctrl: pinctrl-microchip-sgpio: Add pinctrl driver for Microsemi Serial GPIO")
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- drivers/pinctrl/pinctrl-microchip-sgpio.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-microchip-sgpio.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-index a6ad61aa845e..a5085a215b8b 100644
+index 639f1130e989..666f1e3889e0 100644
 --- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
 +++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-@@ -225,9 +225,9 @@ static inline void sgpio_configure_clock(struct sgpio_priv *priv, u32 clkfrq)
- 	sgpio_clrsetbits(priv, REG_SIO_CLOCK, 0, clr, set);
- }
+@@ -19,6 +19,7 @@
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
++#include <linux/spinlock.h>
  
--static void sgpio_output_set(struct sgpio_priv *priv,
--			     struct sgpio_port_addr *addr,
--			     int value)
-+static int sgpio_output_set(struct sgpio_priv *priv,
-+			    struct sgpio_port_addr *addr,
-+			    int value)
+ #include "core.h"
+ #include "pinconf.h"
+@@ -116,6 +117,7 @@ struct sgpio_priv {
+ 	u32 clock;
+ 	struct regmap *regs;
+ 	const struct sgpio_properties *properties;
++	spinlock_t lock;
+ };
+ 
+ struct sgpio_port_addr {
+@@ -229,6 +231,7 @@ static void sgpio_output_set(struct sgpio_priv *priv,
+ 			     int value)
  {
  	unsigned int bit = SGPIO_SRC_BITS * addr->bit;
++	unsigned long flags;
  	u32 clr, set;
-@@ -246,10 +246,12 @@ static void sgpio_output_set(struct sgpio_priv *priv,
- 		set = FIELD_PREP(SGPIO_SPARX5_BIT_SOURCE, value << bit);
- 		break;
- 	default:
--		return;
-+		return -EINVAL;
- 	}
  
- 	sgpio_clrsetbits(priv, REG_PORT_CONFIG, addr->port, clr, set);
+ 	switch (priv->properties->arch) {
+@@ -247,7 +250,10 @@ static void sgpio_output_set(struct sgpio_priv *priv,
+ 	default:
+ 		return;
+ 	}
 +
-+	return 0;
++	spin_lock_irqsave(&priv->lock, flags);
+ 	sgpio_clrsetbits(priv, REG_PORT_CONFIG, addr->port, clr, set);
++	spin_unlock_irqrestore(&priv->lock, flags);
  }
  
  static int sgpio_output_get(struct sgpio_priv *priv,
-@@ -335,7 +337,7 @@ static int sgpio_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		case PIN_CONFIG_OUTPUT:
- 			if (bank->is_input)
- 				return -EINVAL;
--			sgpio_output_set(priv, &addr, arg);
-+			err = sgpio_output_set(priv, &addr, arg);
- 			break;
+@@ -575,10 +581,13 @@ static void microchip_sgpio_irq_settype(struct irq_data *data,
+ 	struct sgpio_bank *bank = gpiochip_get_data(chip);
+ 	unsigned int gpio = irqd_to_hwirq(data);
+ 	struct sgpio_port_addr addr;
++	unsigned long flags;
+ 	u32 ena;
  
- 		default:
-@@ -475,9 +477,7 @@ static int microchip_sgpio_direction_output(struct gpio_chip *gc,
+ 	sgpio_pin_to_addr(bank->priv, gpio, &addr);
  
- 	sgpio_pin_to_addr(priv, gpio, &addr);
++	spin_lock_irqsave(&bank->priv->lock, flags);
++
+ 	/* Disable interrupt while changing type */
+ 	ena = sgpio_readl(bank->priv, REG_INT_ENABLE, addr.bit);
+ 	sgpio_writel(bank->priv, ena & ~BIT(addr.port), REG_INT_ENABLE, addr.bit);
+@@ -595,6 +604,8 @@ static void microchip_sgpio_irq_settype(struct irq_data *data,
  
--	sgpio_output_set(priv, &addr, value);
--
--	return 0;
-+	return sgpio_output_set(priv, &addr, value);
+ 	/* Possibly re-enable interrupts */
+ 	sgpio_writel(bank->priv, ena, REG_INT_ENABLE, addr.bit);
++
++	spin_unlock_irqrestore(&bank->priv->lock, flags);
  }
  
- static int microchip_sgpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
+ static void microchip_sgpio_irq_setreg(struct irq_data *data,
+@@ -605,13 +616,16 @@ static void microchip_sgpio_irq_setreg(struct irq_data *data,
+ 	struct sgpio_bank *bank = gpiochip_get_data(chip);
+ 	unsigned int gpio = irqd_to_hwirq(data);
+ 	struct sgpio_port_addr addr;
++	unsigned long flags;
+ 
+ 	sgpio_pin_to_addr(bank->priv, gpio, &addr);
+ 
++	spin_lock_irqsave(&bank->priv->lock, flags);
+ 	if (clear)
+ 		sgpio_clrsetbits(bank->priv, reg, addr.bit, BIT(addr.port), 0);
+ 	else
+ 		sgpio_clrsetbits(bank->priv, reg, addr.bit, 0, BIT(addr.port));
++	spin_unlock_irqrestore(&bank->priv->lock, flags);
+ }
+ 
+ static void microchip_sgpio_irq_mask(struct irq_data *data)
+@@ -833,6 +847,7 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	priv->dev = dev;
++	spin_lock_init(&priv->lock);
+ 
+ 	reset = devm_reset_control_get_optional_shared(&pdev->dev, "switch");
+ 	if (IS_ERR(reset))
 -- 
 2.30.2
 
