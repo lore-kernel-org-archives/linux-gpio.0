@@ -2,34 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD76C4332F
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Feb 2022 20:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17B7C433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Feb 2022 20:45:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbiBZUqC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 26 Feb 2022 15:46:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37040 "EHLO
+        id S229648AbiBZUqE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Feb 2022 15:46:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbiBZUp6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 15:45:58 -0500
+        with ESMTP id S229635AbiBZUqC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 15:46:02 -0500
 Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD6F01B65DD
-        for <linux-gpio@vger.kernel.org>; Sat, 26 Feb 2022 12:45:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CF11B65F3
+        for <linux-gpio@vger.kernel.org>; Sat, 26 Feb 2022 12:45:26 -0800 (PST)
 Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id A5709223EA;
-        Sat, 26 Feb 2022 21:45:18 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id E3C15223F6;
+        Sat, 26 Feb 2022 21:45:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1645908318;
+        t=1645908321;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hiJ+ceES+sRAo6TZ3l5S6C3Xjkc3TLwelYHbvCw5TWY=;
-        b=ZuQfQdO//zF3/LCevoc1KwpN/cDlJuUJZ7fCFfBSURflv1Lqn70FwR2/rkbMNoQZ099+Aw
-        BbmxEc8hyqh5Wc8Q3TTeg5S6BuZzxfI6C+Qn/1pcIgKi3TqMgXhDiIw/AgxjxJ01d2XPVO
-        0dNSVimMpUUtkiIDoQ72Eq7h28OK8QI=
+        bh=Cq8gHgquh0jgbMncNWZSaTkUOjPHETNZUCUaSag6Og8=;
+        b=UEAAxUCCtqMrS7Px9f2djd6B0VvtRcHKx5czQ2fD0uwJrjV6L1+KAPsAf6BVyYQtSKsCmo
+        /+f9Xquw8+iWUT5HIS8QErUCy9gj2vCbyEFmQLDDLRhzsBQVCwjwhsVF/M2fGPKU5AuQEg
+        T70+eOqN3USoG+oKrMZGhcprXMZIKXM=
 From:   Michael Walle <michael@walle.cc>
 To:     Lars Povlsen <lars.povlsen@microchip.com>,
         Steen Hegelund <Steen.Hegelund@microchip.com>,
@@ -38,9 +38,9 @@ Cc:     UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Colin Foster <colin.foster@in-advantage.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 1/5] pinctrl: microchip-sgpio: lock RMW access
-Date:   Sat, 26 Feb 2022 21:45:03 +0100
-Message-Id: <20220226204507.2511633-2-michael@walle.cc>
+Subject: [PATCH v2 5/5] pinctrl: microchip-sgpio: wait until output is actually set
+Date:   Sat, 26 Feb 2022 21:45:07 +0100
+Message-Id: <20220226204507.2511633-6-michael@walle.cc>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220226204507.2511633-1-michael@walle.cc>
 References: <20220226204507.2511633-1-michael@walle.cc>
@@ -50,98 +50,149 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Protect any RMW access to the registers by a spinlock.
+Right now, when a gpio value is set, the actual hardware pin gets set
+asynchronously. When linux write the output register, it takes some time
+until it is actually propagated to the output shift registers. If that
+output port is connected to an I2C mux for example, the linux driver
+assumes the I2C bus is already switched although it is not.
 
-Fixes: 7e5ea974e61c ("pinctrl: pinctrl-microchip-sgpio: Add pinctrl driver for Microsemi Serial GPIO")
+Fortunately, there is a single shot mode with a feedback: you can
+trigger the single shot and the hardware will clear that bit once it has
+finished the clocking and strobed the load signal of the shift
+registers. This can take a considerable amount of time though.
+Measuremens have shown that it takes up to a whole burst cycle gap which
+is about 50ms on the largest setting. Therefore, we have to mark the
+output bank as sleepable. To avoid unnecessary waiting, just trigger the
+single shot if the value was actually changed.
+
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- drivers/pinctrl/pinctrl-microchip-sgpio.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/pinctrl/pinctrl-microchip-sgpio.c | 69 ++++++++++++++++++++++-
+ 1 file changed, 68 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-index 639f1130e989..666f1e3889e0 100644
+index a5085a215b8b..80a8939ad0c0 100644
 --- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
 +++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-@@ -19,6 +19,7 @@
- #include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-+#include <linux/spinlock.h>
+@@ -64,11 +64,13 @@ struct sgpio_properties {
+ #define SGPIO_LUTON_BIT_SOURCE   GENMASK(11, 0)
  
- #include "core.h"
- #include "pinconf.h"
-@@ -116,6 +117,7 @@ struct sgpio_priv {
- 	u32 clock;
+ #define SGPIO_OCELOT_AUTO_REPEAT BIT(10)
++#define SGPIO_OCELOT_SINGLE_SHOT BIT(11)
+ #define SGPIO_OCELOT_PORT_WIDTH  GENMASK(8, 7)
+ #define SGPIO_OCELOT_CLK_FREQ    GENMASK(19, 8)
+ #define SGPIO_OCELOT_BIT_SOURCE  GENMASK(23, 12)
+ 
+ #define SGPIO_SPARX5_AUTO_REPEAT BIT(6)
++#define SGPIO_SPARX5_SINGLE_SHOT BIT(7)
+ #define SGPIO_SPARX5_PORT_WIDTH  GENMASK(4, 3)
+ #define SGPIO_SPARX5_CLK_FREQ    GENMASK(19, 8)
+ #define SGPIO_SPARX5_BIT_SOURCE  GENMASK(23, 12)
+@@ -118,6 +120,8 @@ struct sgpio_priv {
  	struct regmap *regs;
  	const struct sgpio_properties *properties;
-+	spinlock_t lock;
+ 	spinlock_t lock;
++	/* protects the config register and single shot mode */
++	struct mutex poll_lock;
  };
  
  struct sgpio_port_addr {
-@@ -229,6 +231,7 @@ static void sgpio_output_set(struct sgpio_priv *priv,
- 			     int value)
+@@ -225,12 +229,64 @@ static inline void sgpio_configure_clock(struct sgpio_priv *priv, u32 clkfrq)
+ 	sgpio_clrsetbits(priv, REG_SIO_CLOCK, 0, clr, set);
+ }
+ 
++static int sgpio_single_shot(struct sgpio_priv *priv)
++{
++	u32 addr = sgpio_get_addr(priv, REG_SIO_CONFIG, 0);
++	int ret, ret2;
++	u32 ctrl;
++	unsigned int single_shot;
++	unsigned int auto_repeat;
++
++	switch (priv->properties->arch) {
++	case SGPIO_ARCH_LUTON:
++		/* not supported for now */
++		return 0;
++	case SGPIO_ARCH_OCELOT:
++		single_shot = SGPIO_OCELOT_SINGLE_SHOT;
++		auto_repeat = SGPIO_OCELOT_AUTO_REPEAT;
++		break;
++	case SGPIO_ARCH_SPARX5:
++		single_shot = SGPIO_SPARX5_SINGLE_SHOT;
++		auto_repeat = SGPIO_SPARX5_AUTO_REPEAT;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	/*
++	 * Trigger immediate burst. This only works when auto repeat is turned
++	 * off. Otherwise, the single shot bit will never be cleared by the
++	 * hardware. Measurements showed that an update might take as long as
++	 * the burst gap. On a LAN9668 this is about 50ms for the largest
++	 * setting.
++	 * After the manual burst, reenable the auto repeat mode again.
++	 */
++	mutex_lock(&priv->poll_lock);
++	ret = regmap_update_bits(priv->regs, addr, single_shot | auto_repeat,
++				 single_shot);
++	if (ret)
++		goto out;
++
++	ret = regmap_read_poll_timeout(priv->regs, addr, ctrl,
++				       !(ctrl & single_shot), 100, 60000);
++
++	/* reenable auto repeat mode even if there was an error */
++	ret2 = regmap_update_bits(priv->regs, addr, auto_repeat, auto_repeat);
++out:
++	mutex_unlock(&priv->poll_lock);
++
++	return ret ?: ret2;
++}
++
+ static int sgpio_output_set(struct sgpio_priv *priv,
+ 			    struct sgpio_port_addr *addr,
+ 			    int value)
  {
  	unsigned int bit = SGPIO_SRC_BITS * addr->bit;
-+	unsigned long flags;
++	u32 reg = sgpio_get_addr(priv, REG_PORT_CONFIG, addr->port);
++	bool changed;
  	u32 clr, set;
++	int ret;
  
  	switch (priv->properties->arch) {
-@@ -247,7 +250,10 @@ static void sgpio_output_set(struct sgpio_priv *priv,
- 	default:
- 		return;
+ 	case SGPIO_ARCH_LUTON:
+@@ -249,7 +305,16 @@ static int sgpio_output_set(struct sgpio_priv *priv,
+ 		return -EINVAL;
  	}
+ 
+-	sgpio_clrsetbits(priv, REG_PORT_CONFIG, addr->port, clr, set);
++	ret = regmap_update_bits_check(priv->regs, reg, clr | set, set,
++				       &changed);
++	if (ret)
++		return ret;
 +
-+	spin_lock_irqsave(&priv->lock, flags);
- 	sgpio_clrsetbits(priv, REG_PORT_CONFIG, addr->port, clr, set);
-+	spin_unlock_irqrestore(&priv->lock, flags);
++	if (changed) {
++		ret = sgpio_single_shot(priv);
++		if (ret)
++			return ret;
++	}
+ 
+ 	return 0;
  }
+@@ -788,6 +853,7 @@ static int microchip_sgpio_register_bank(struct device *dev,
+ 	gc->of_gpio_n_cells     = 3;
+ 	gc->base		= -1;
+ 	gc->ngpio		= ngpios;
++	gc->can_sleep		= !bank->is_input;
  
- static int sgpio_output_get(struct sgpio_priv *priv,
-@@ -575,10 +581,13 @@ static void microchip_sgpio_irq_settype(struct irq_data *data,
- 	struct sgpio_bank *bank = gpiochip_get_data(chip);
- 	unsigned int gpio = irqd_to_hwirq(data);
- 	struct sgpio_port_addr addr;
-+	unsigned long flags;
- 	u32 ena;
- 
- 	sgpio_pin_to_addr(bank->priv, gpio, &addr);
- 
-+	spin_lock_irqsave(&bank->priv->lock, flags);
-+
- 	/* Disable interrupt while changing type */
- 	ena = sgpio_readl(bank->priv, REG_INT_ENABLE, addr.bit);
- 	sgpio_writel(bank->priv, ena & ~BIT(addr.port), REG_INT_ENABLE, addr.bit);
-@@ -595,6 +604,8 @@ static void microchip_sgpio_irq_settype(struct irq_data *data,
- 
- 	/* Possibly re-enable interrupts */
- 	sgpio_writel(bank->priv, ena, REG_INT_ENABLE, addr.bit);
-+
-+	spin_unlock_irqrestore(&bank->priv->lock, flags);
- }
- 
- static void microchip_sgpio_irq_setreg(struct irq_data *data,
-@@ -605,13 +616,16 @@ static void microchip_sgpio_irq_setreg(struct irq_data *data,
- 	struct sgpio_bank *bank = gpiochip_get_data(chip);
- 	unsigned int gpio = irqd_to_hwirq(data);
- 	struct sgpio_port_addr addr;
-+	unsigned long flags;
- 
- 	sgpio_pin_to_addr(bank->priv, gpio, &addr);
- 
-+	spin_lock_irqsave(&bank->priv->lock, flags);
- 	if (clear)
- 		sgpio_clrsetbits(bank->priv, reg, addr.bit, BIT(addr.port), 0);
- 	else
- 		sgpio_clrsetbits(bank->priv, reg, addr.bit, 0, BIT(addr.port));
-+	spin_unlock_irqrestore(&bank->priv->lock, flags);
- }
- 
- static void microchip_sgpio_irq_mask(struct irq_data *data)
-@@ -833,6 +847,7 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+ 	if (bank->is_input && priv->properties->flags & SGPIO_FLAGS_HAS_IRQ) {
+ 		int irq = fwnode_irq_get(fwnode, 0);
+@@ -848,6 +914,7 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
  
  	priv->dev = dev;
-+	spin_lock_init(&priv->lock);
+ 	spin_lock_init(&priv->lock);
++	mutex_init(&priv->poll_lock);
  
  	reset = devm_reset_control_get_optional_shared(&pdev->dev, "switch");
  	if (IS_ERR(reset))
