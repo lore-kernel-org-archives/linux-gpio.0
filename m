@@ -2,33 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4336AC433F5
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Feb 2022 20:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D028C433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Feb 2022 20:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229609AbiBZUp5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 26 Feb 2022 15:45:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36746 "EHLO
+        id S229603AbiBZUqA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Feb 2022 15:46:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229575AbiBZUp4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 15:45:56 -0500
+        with ESMTP id S229620AbiBZUp6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 15:45:58 -0500
 Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2ED1B4035;
-        Sat, 26 Feb 2022 12:45:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D927D1B65D4
+        for <linux-gpio@vger.kernel.org>; Sat, 26 Feb 2022 12:45:23 -0800 (PST)
 Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id B06D32223E;
-        Sat, 26 Feb 2022 21:45:14 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 57772223ED;
+        Sat, 26 Feb 2022 21:45:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1645908318;
+        t=1645908319;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=zfmHvO4bszehQ082Y/9bfCsKjhj2g/yezRDipNTYzxM=;
-        b=oPFkyD/cXbecBViD08SNc2TScbiUMLeJJq7NBT9IWis/4jib06hEhSh9mjASAWVyuKmDBl
-        u4lsngYZzGg2G9hkZGCaFwx0ATXM5xWJzLkYDOxvJagp4ZGUUtBgkvjNSu21BU/OKct4Yf
-        oop6LQ57nKlu+7zaoR/fDT9KAMB/dE4=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8xvvhK271QRdegqFwLAfRIGQqEXyXtaSS8xqkOohR88=;
+        b=Z0aX5cig+qMwLpktysIL8/WycgNZsrMy9FNNavBzROAhPNyXBLSbHxkxJXCSUbrNDNbROe
+        1Q34g+7dVRUfrUj9zQ9/bmmxh43gnqnjmBtwvqBzlha9U05LvSs39HtUTY0SQtDa7k8JOu
+        PP1sUnR7EqYzt5lJAgmIhgerhTACppI=
 From:   Michael Walle <michael@walle.cc>
 To:     Lars Povlsen <lars.povlsen@microchip.com>,
         Steen Hegelund <Steen.Hegelund@microchip.com>,
@@ -37,44 +38,49 @@ Cc:     UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Colin Foster <colin.foster@in-advantage.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 0/5] pinctrl: microchip-sgpio: locking and synchronous output
-Date:   Sat, 26 Feb 2022 21:45:02 +0100
-Message-Id: <20220226204507.2511633-1-michael@walle.cc>
+Subject: [PATCH v2 2/5] pinctrl: microchip-sgpio: don't do RMW for interrupt ack register
+Date:   Sat, 26 Feb 2022 21:45:04 +0100
+Message-Id: <20220226204507.2511633-3-michael@walle.cc>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220226204507.2511633-1-michael@walle.cc>
+References: <20220226204507.2511633-1-michael@walle.cc>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are boards which use the output of the SGPIO to drive I2C muxers.
-SGPIO right now is broken in a way that when the software sets this bit
-there is a rather large delay until that value ends up on the hardware
-pin.
+The interrupt ack register has the usual "write one to clear" semantics.
+No read-modify-write is required here.
 
-While digging into this, I've noticed that there is no locking at all
-in this driver. Add locking for all RWM accesses.
+This is also a preparation patch to change the sgpio_clrsetbits() to use
+regmap_update_bits() which don't write the value if it is not changed.
 
-Please note, that parts of the modification of the first patch are
-removed again in a later patch. This is because the first patch is
-intended to be backported to the stable trees.
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/pinctrl/pinctrl-microchip-sgpio.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-This was also just tested on a LAN9668 SoC. If you have additional
-hardware, please test.
-
-Changes since v1:
- - add Ocelot support
-
-Michael Walle (5):
-  pinctrl: microchip-sgpio: lock RMW access
-  pinctrl: microchip-sgpio: don't do RMW for interrupt ack register
-  pinctrl: microchip-sgpio: use regmap_update_bits()
-  pinctrl: microchip-sgpio: return error in spgio_output_set()
-  pinctrl: microchip-sgpio: wait until output is actually set
-
- drivers/pinctrl/pinctrl-microchip-sgpio.c | 112 +++++++++++++++++++---
- 1 file changed, 97 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
+index 666f1e3889e0..29cce0609fd9 100644
+--- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
++++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
+@@ -640,7 +640,14 @@ static void microchip_sgpio_irq_unmask(struct irq_data *data)
+ 
+ static void microchip_sgpio_irq_ack(struct irq_data *data)
+ {
+-	microchip_sgpio_irq_setreg(data, REG_INT_ACK, false);
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct sgpio_bank *bank = gpiochip_get_data(chip);
++	unsigned int gpio = irqd_to_hwirq(data);
++	struct sgpio_port_addr addr;
++
++	sgpio_pin_to_addr(bank->priv, gpio, &addr);
++
++	sgpio_writel(bank->priv, BIT(addr.port), REG_INT_ACK, addr.bit);
+ }
+ 
+ static int microchip_sgpio_irq_set_type(struct irq_data *data, unsigned int type)
 -- 
 2.30.2
 
