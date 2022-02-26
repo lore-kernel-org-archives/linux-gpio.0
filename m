@@ -2,98 +2,118 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D4DC433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Feb 2022 18:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6300CC433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Feb 2022 20:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232725AbiBZSlp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 26 Feb 2022 13:41:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34166 "EHLO
+        id S229613AbiBZUp6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Feb 2022 15:45:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232735AbiBZSlo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 13:41:44 -0500
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22A227EC2C
-        for <linux-gpio@vger.kernel.org>; Sat, 26 Feb 2022 10:41:08 -0800 (PST)
-Received: by mail-pg1-x529.google.com with SMTP id 75so7811717pgb.4
-        for <linux-gpio@vger.kernel.org>; Sat, 26 Feb 2022 10:41:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yWkjgQc5GaTMGsYymmiKClwt0+YbyyBGXguYRPAW+yA=;
-        b=Eu0uapRjn2wC4kS5EHa8fE5lKLqZkoR+LaAkeaidWEfjT+vS+GS247YSJUBjs/4Ew5
-         MHF/+6rGDStMlvvSZ1PCbd/j5jTPFr3zp3SLIOG0CSfDpNZSXfksYNsCil0U0QSg8GRX
-         rGwornii8S8E4vBBcPUXngd2t0laT0neWey8QlSgjdjVGQ5KBza6gInmfRzi+iI5anRq
-         Zpvdylv24EL9KqqB1xKgZ53dRw/fToCz5ybQX2iwQvaIy5PQ4rSMTF3ie3NvoON4orkU
-         R6f6oTgY1/N2CxxdoNX3gon7+HLEa68pthIBt/UH++rNfH1WlR5bxHbWQCJA2OWL/jyb
-         uknQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yWkjgQc5GaTMGsYymmiKClwt0+YbyyBGXguYRPAW+yA=;
-        b=hGTuKQ4LGZFkLDYfbVXGSaEtZtMljgMeB7Q/RY4iu2d52B4UO46zj9BXxz6gQWlpQ4
-         W3LGzYtLOYRfAQlZNKnxR3Gy+aExC+Q4zKAJhVVmJS+/kjH07w4OmYuwIjcfNntMOfzH
-         ItMG4zMtqLjo2zfkGOEGmbtbBUftxEGmoiOBJzpKexLdw8MqiC7xGPaE4bU9s4Pu1d2P
-         E6Ff1XYBwQCk7G0JN1Cb0WDslNzVdbgTlAz+n2xL+EQLZtXbS6652kUxhe2knqaRLet6
-         KBibPtd+pe1bQSLLHH8Ldwhy4XmcxJjw7XKdbHFfB0AGPTrCWnA27F+bOQo6CsEm/Jm/
-         uTeQ==
-X-Gm-Message-State: AOAM531qWEGHrDbxh9VWtReUlgdjoBFvLkJQ4APshDrSk9vZdqFeWLQz
-        /6cBCDAtw12EypMyg8OsSwZKYw==
-X-Google-Smtp-Source: ABdhPJz8U7fmifOHyEShGlwoTHzRdUeqY64mXKnpivuz4+VjwvLzJXYZX0n5/MvUS8+z8s4i5TMRcA==
-X-Received: by 2002:a05:6a00:2313:b0:4e0:ffa7:bbe0 with SMTP id h19-20020a056a00231300b004e0ffa7bbe0mr13698980pfh.53.1645900867596;
-        Sat, 26 Feb 2022 10:41:07 -0800 (PST)
-Received: from localhost.localdomain ([223.179.136.225])
-        by smtp.gmail.com with ESMTPSA id b187-20020a621bc4000000b004f3c8f3b560sm7049319pfb.129.2022.02.26.10.41.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Feb 2022 10:41:07 -0800 (PST)
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     bhupesh.sharma@linaro.org, bhupesh.linux@gmail.com,
-        agross@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, maz@kernel.org,
-        quic_mkshah@quicinc.com, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 4/4] arm64: dts: qcom: sm8150: Add PDC as the interrupt parent for tlmm
-Date:   Sun, 27 Feb 2022 00:10:28 +0530
-Message-Id: <20220226184028.111566-5-bhupesh.sharma@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220226184028.111566-1-bhupesh.sharma@linaro.org>
-References: <20220226184028.111566-1-bhupesh.sharma@linaro.org>
+        with ESMTP id S229604AbiBZUp4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Feb 2022 15:45:56 -0500
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C981B50FB;
+        Sat, 26 Feb 2022 12:45:22 -0800 (PST)
+Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id B1DF4223EF;
+        Sat, 26 Feb 2022 21:45:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1645908319;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GWGF7NrGVxjO5jW0w1amb53DK4UG5EZnIa6+4DtXoS4=;
+        b=FudmvsJUsAaa7LCiUTz6+iHSu8zncpAJR+cqBaYa10XytHOPU5xD9ofg2vYfBlvfQ69zXk
+        e5HcILfGoTLJLl+OX02CdCr/LrNCmbazrN51q/I2pM7aAzpgTo5q1yI3bjIdUGTs80g1fs
+        eJPH/u3cTS2q+uFbiFZP0QDHy/AVmpg=
+From:   Michael Walle <michael@walle.cc>
+To:     Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Colin Foster <colin.foster@in-advantage.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v2 3/5] pinctrl: microchip-sgpio: use regmap_update_bits()
+Date:   Sat, 26 Feb 2022 21:45:05 +0100
+Message-Id: <20220226204507.2511633-4-michael@walle.cc>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220226204507.2511633-1-michael@walle.cc>
+References: <20220226204507.2511633-1-michael@walle.cc>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Several wakeup gpios supported by the Top Level Mode Multiplexer (TLMM)
-block on sm8150 can be used as interrupt sources and these interrupts
-are routed to the PDC interrupt controller.
+Convert sgpio_clrsetbits() to use regmap_update_bits() and drop the
+spinlocks because regmap already takes care of the locking.
 
-So, specify PDC as the interrupt parent for the TLMM block.
-
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- arch/arm64/boot/dts/qcom/sm8150.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/pinctrl-microchip-sgpio.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index aaeacd379460..6e6fa7811c7a 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -1937,6 +1937,7 @@ tlmm: pinctrl@3100000 {
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
-+			wakeup-parent = <&pdc>;
+diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
+index 29cce0609fd9..a6ad61aa845e 100644
+--- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
++++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
+@@ -168,12 +168,11 @@ static void sgpio_writel(struct sgpio_priv *priv,
+ static inline void sgpio_clrsetbits(struct sgpio_priv *priv,
+ 				    u32 rno, u32 off, u32 clear, u32 set)
+ {
+-	u32 val = sgpio_readl(priv, rno, off);
+-
+-	val &= ~clear;
+-	val |= set;
++	u32 addr = sgpio_get_addr(priv, rno, off);
++	int ret;
  
- 			qup_i2c0_default: qup-i2c0-default {
- 				mux {
+-	sgpio_writel(priv, val, rno, off);
++	ret = regmap_update_bits(priv->regs, addr, clear | set, set);
++	WARN_ONCE(ret, "error updating sgpio reg %d\n", ret);
+ }
+ 
+ static inline void sgpio_configure_bitstream(struct sgpio_priv *priv)
+@@ -231,7 +230,6 @@ static void sgpio_output_set(struct sgpio_priv *priv,
+ 			     int value)
+ {
+ 	unsigned int bit = SGPIO_SRC_BITS * addr->bit;
+-	unsigned long flags;
+ 	u32 clr, set;
+ 
+ 	switch (priv->properties->arch) {
+@@ -251,9 +249,7 @@ static void sgpio_output_set(struct sgpio_priv *priv,
+ 		return;
+ 	}
+ 
+-	spin_lock_irqsave(&priv->lock, flags);
+ 	sgpio_clrsetbits(priv, REG_PORT_CONFIG, addr->port, clr, set);
+-	spin_unlock_irqrestore(&priv->lock, flags);
+ }
+ 
+ static int sgpio_output_get(struct sgpio_priv *priv,
+@@ -616,16 +612,13 @@ static void microchip_sgpio_irq_setreg(struct irq_data *data,
+ 	struct sgpio_bank *bank = gpiochip_get_data(chip);
+ 	unsigned int gpio = irqd_to_hwirq(data);
+ 	struct sgpio_port_addr addr;
+-	unsigned long flags;
+ 
+ 	sgpio_pin_to_addr(bank->priv, gpio, &addr);
+ 
+-	spin_lock_irqsave(&bank->priv->lock, flags);
+ 	if (clear)
+ 		sgpio_clrsetbits(bank->priv, reg, addr.bit, BIT(addr.port), 0);
+ 	else
+ 		sgpio_clrsetbits(bank->priv, reg, addr.bit, 0, BIT(addr.port));
+-	spin_unlock_irqrestore(&bank->priv->lock, flags);
+ }
+ 
+ static void microchip_sgpio_irq_mask(struct irq_data *data)
 -- 
-2.35.1
+2.30.2
 
