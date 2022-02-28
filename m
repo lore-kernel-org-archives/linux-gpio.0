@@ -2,127 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 307A0C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Feb 2022 12:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0C9C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Feb 2022 14:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233679AbiB1Mlm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Feb 2022 07:41:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51498 "EHLO
+        id S237292AbiB1Oov (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Feb 2022 09:44:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232542AbiB1Mlm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Feb 2022 07:41:42 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7A3C4C7A1
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Feb 2022 04:41:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646052063; x=1677588063;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=RJn9xSnEMf1l71WmeK4be6KeFBBYdNI9H9Kl9Qt0yzE=;
-  b=fVCp1odMbIf7oybjz8/x55EcEd0d5gwCLDJHIVJTvYJYkBScKhkEsenA
-   9Ck77Imxbhx9Udw5hmB5VPXKBLlhILSLp4VPuVdiNFu9JLSt/1+5/c4ZT
-   4IQOXFC5kPmA6C4cPdb6Grn1BtoC3BF1BxICegZiRFdY6f3sTzLBJPR98
-   IsN2fd7SS3xXbQ8JVUin0LmgNH81SUiu84r1+pwHA9XuCm6j84m2eUa+Z
-   YFHtdHZ8JObuh8Zb+kZ0RkoH9o6Lhs5knZm1+4KUeRiF+ybX5/y25RQSm
-   VvFgQl40i90m5ufqEMHFIMG2EKYRby9DX0im0gEfuyQl+3CiDdBbBb7aC
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10271"; a="277529340"
-X-IronPort-AV: E=Sophos;i="5.90,142,1643702400"; 
-   d="scan'208";a="277529340"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2022 04:41:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,142,1643702400"; 
-   d="scan'208";a="507406908"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 28 Feb 2022 04:41:01 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 10360142; Mon, 28 Feb 2022 14:41:18 +0200 (EET)
-Date:   Mon, 28 Feb 2022 14:41:18 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linux pin control <linux-gpio@vger.kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [GIT PULL] intel-pinctrl for 5.18-1
-Message-ID: <YhzC7nLsupHmXOo5@black.fi.intel.com>
+        with ESMTP id S237286AbiB1Oos (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Feb 2022 09:44:48 -0500
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3DAC7F6C8
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Feb 2022 06:44:09 -0800 (PST)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-2d68d519a33so110587377b3.7
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Feb 2022 06:44:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GEEohAUQ9L+nWT6PUoP5Gt6jqOoXyZ9f0V/2D8nbNfY=;
+        b=lk90BX4xnbyZWTu8zKlGX9ObtfkCXh2iyNpncHLflv+pEd7Ed/N6/XNrlOkqDnavas
+         mOxXeHnBtBTZDRVXjK8BbElirtAUj+WBYd9db7v/4MPtaToBwF9QGUmQedz5XEozAUwc
+         IsSpH+rzUnIp4bQg8Whi6HtQ8oznn7theZSbE+fa/9ojRJkQrwvtRIiHsWj86Q+9oRMg
+         Iev+4f+RRmcqYEZuAgzwT0/+2XLjjX0qNPVGmMLVNqs4X7RbdLcaA33Cw7XDTtnRKRs7
+         qb7YxNBD3L52cTP0CL+iQFs269WBcLkyK579QnekCL9mcgtS/qvYOpBi4mkMzyc0sRjx
+         nKFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GEEohAUQ9L+nWT6PUoP5Gt6jqOoXyZ9f0V/2D8nbNfY=;
+        b=y1fNZvka8OVMoMW9CX3fu76w3wCpf4AqsfQewmvpiDhIeKNMRYyGe3ha+idKqgUXqY
+         X33sy57ECgsMyLxb2CI0XkgiPhQSySSftjAsVxwjVcVsge5JTT9Aob1kFXBNIb5mV3m3
+         oloNN+mkiRBtgY4fFPxqpI9uRbTwJu15t/+lErynl5jB5MyOthMkWzCcDgm9JAB8cUgf
+         qFgWHlApuE/f6pAYoHQQVqbGWW/B6qgNNrpdUVWGUd1jarpyNBbGy1Prv9zt57A4SBpB
+         542i5OCbCsvZN98pDq4+p1EWgTywy6Y3X4GZ0h00cWAvFGm0TlYubR6ylEOBs6nP4eQl
+         8u7g==
+X-Gm-Message-State: AOAM531c3tzH/2vbvQayoRiU++NIi+9ZJ88Lb7MnDNR4CHZsowLhA0Bj
+        O50ZED0yKVL3SvMhJxCq/tpCchO5DXkp0E4RomX5XQ==
+X-Google-Smtp-Source: ABdhPJy1x0juehoA04AlsoXuSMPFkbbSoXihjtFXip89aqsyhMnEZIVdSORIdkv5ZMhA+uqdl74pF921MjipQEF/Q2Y=
+X-Received: by 2002:a81:f92:0:b0:2d0:5383:7ca with SMTP id 140-20020a810f92000000b002d0538307camr20110804ywp.268.1646059448999;
+ Mon, 28 Feb 2022 06:44:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CACRpkdYM21hcH5d9rXyvjMPHQp429OZ1Zcy7uLU2tndoJcOmUQ@mail.gmail.com>
+ <CAHk-=whg3eRY1nOJjHam+jORmVymU539CxhBUjp4=tGoFitotw@mail.gmail.com>
+In-Reply-To: <CAHk-=whg3eRY1nOJjHam+jORmVymU539CxhBUjp4=tGoFitotw@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 28 Feb 2022 15:43:58 +0100
+Message-ID: <CACRpkdbWkm1WDY30qoGLEQba+G2cDEhT+M8nCdJbcD=ZQiu6uw@mail.gmail.com>
+Subject: Re: [GIT PULL] pin control fixes for the v5.17 series
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linux pin control  maintainers,
+On Sun, Feb 27, 2022 at 9:38 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sat, Feb 26, 2022 at 5:11 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > some more pin control fixes that trickled in the last week or
+> > two.
+>
+> Hmm. Am I confused because I thought I'd see a fix for the orangepi
+> problem that Guenter has been reporting?
+>
+> That problem has been pending for quite a while now.
 
-New Intel pin control drivers for v5.18-rc1. Cooked a few weeks in Linux Next,
-no merge conflicts observed.
+OK let's poke Hans, he usually fix things quickly so it must have been missed.
 
-Thanks,
+Hans did you see Guenthers remark here:
+https://lore.kernel.org/linux-gpio/20220128172003.GA2666058@roeck-us.net/
 
-With Best Regards,
-Andy Shevchenko
+Do you want to attempt patching it or shall I just revert the patch for now?
 
-The following changes since commit e12963c453263d5321a2c610e98cbc731233b685:
-
-  pinctrl: intel: Fix a glitch when updating IRQ flags on a preconfigured line (2022-01-24 16:30:13 +0200)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v5.18-1
-
-for you to fetch changes up to d25478e1d8f9bf9344cf61a9c02fae88d9930f55:
-
-  pinctrl: icelake: Add Ice Lake-N PCH pin controller support (2022-02-23 17:15:11 +0200)
-
-----------------------------------------------------------------
-intel-pinctrl for v5.18-1
-
-* Introduce support for Alder Lake-N (required to revert misplaced ID)
-* Add support for Raptor Lake-S
-* Add support for Ice Lake-N (MacBookPro16,2)
-* Miscellaneous fixes
-
-The following is an automated git shortlog grouped by driver:
-
-alderlake:
- -  Add Intel Alder Lake-N pin controller support
- -  Add Raptor Lake-S ACPI ID
-
-baytrail:
- -  Clear direct_irq_en flag on broken configs
-
-icelake:
- -  Add Ice Lake-N PCH pin controller support
-
-intel:
- -  Fix a glitch when updating IRQ flags on a preconfigured line
- -  fix unexpected interrupt
-
-Place correctly CONFIG_PINCTRL_ST in the Makefile:
- - Place correctly CONFIG_PINCTRL_ST in the Makefile
-
-tigerlake:
- -  Revert "Add Alder Lake-M ACPI ID"
-
-----------------------------------------------------------------
-Andy Shevchenko (4):
-      pinctrl: tigerlake: Revert "Add Alder Lake-M ACPI ID"
-      pinctrl: alderlake: Add Raptor Lake-S ACPI ID
-      pinctrl: alderlake: Add Intel Alder Lake-N pin controller support
-      pinctrl: icelake: Add Ice Lake-N PCH pin controller support
-
-Hans de Goede (1):
-      pinctrl: baytrail: Clear direct_irq_en flag on broken configs
-
- drivers/pinctrl/intel/pinctrl-alderlake.c | 317 +++++++++++++++++++++++++++++-
- drivers/pinctrl/intel/pinctrl-baytrail.c  |  55 +++++-
- drivers/pinctrl/intel/pinctrl-icelake.c   | 291 ++++++++++++++++++++++++++-
- drivers/pinctrl/intel/pinctrl-tigerlake.c |   1 -
- 4 files changed, 652 insertions(+), 12 deletions(-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
