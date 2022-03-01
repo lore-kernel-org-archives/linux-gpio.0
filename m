@@ -2,47 +2,49 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5418C43219
-	for <linux-gpio@archiver.kernel.org>; Tue,  1 Mar 2022 20:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B28C4332F
+	for <linux-gpio@archiver.kernel.org>; Tue,  1 Mar 2022 20:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237936AbiCAUTv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 1 Mar 2022 15:19:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
+        id S234625AbiCAUWO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 1 Mar 2022 15:22:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238040AbiCAUR4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2022 15:17:56 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4910793A3;
-        Tue,  1 Mar 2022 12:16:52 -0800 (PST)
+        with ESMTP id S238122AbiCAUWE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2022 15:22:04 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292329026F;
+        Tue,  1 Mar 2022 12:19:19 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0769E6170E;
-        Tue,  1 Mar 2022 20:16:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1549C340F5;
-        Tue,  1 Mar 2022 20:16:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CC8761660;
+        Tue,  1 Mar 2022 20:19:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E25C340EF;
+        Tue,  1 Mar 2022 20:19:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646165811;
-        bh=2Uzh0/OS4z7vTKLHAOXfStTxevEP7fmgDp2vpjSmQos=;
+        s=k20201202; t=1646165953;
+        bh=fpxJqnzXuJM9hoBnMQVW4fqyY5LIih+CYJE1x20mNMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uZYiQ4w4acxXcx47fB62HHUv36Jon92WabrMKMElOGD5cWrjPO9cxK5RCv+CWORIs
-         tVPEPvZdIoiiOeM+PBWE3zB0qliDSeeM509w3ZJPEKnODbv0jE+RAtw7MKo9hfrG4+
-         /epVunLhwQnUtEwT6ZzopujYswkvN8QwfyY85mJD9RS1g1vct1i+v3UeUuvmK0kmpA
-         WkVT0Xaq9vh8o/74zXZ51yQdTeMdVXu/15/pDTWJJNAc8HMGIGSuLFrNkqf3qH25XQ
-         4J4idoOj8sXG5Ej/61hDpnSlok2wVOaViT1CZ0qbM2PoonthX2Z0nS55kF9fb1DzCk
-         CXRQIhynv/Rrw==
+        b=tMtdhqTNPQFwF4IQqddGMFHV9m6EFOzfHAgbKQxTMW4+x4VHUFGhsUyRA4TBGrn4U
+         2l3rSfGRe+uzTc26Tm8fNKV7xLMRaqZgBprMAd7Shb4iijN1t6EkvT9J5dWfmDgjxL
+         M8fAaXt9wpzmz15u8L4ZiWoKUmWONEHuRZxkdxvQwJgzmHi4nbByaicfgGNoWqSB+v
+         X/NsZIKZG+UPfZ8K7LQWRNuErUh/M7Ps0rWe/xo8WR9hYSAcj6W+JRQL+4Hg/73HIX
+         htTmwgQdrfQH6Y1hKSp2xNleic/TwBUEEyAwPQkakZxuaNtl9SRUKi4NVPFDYOeCW/
+         d8SSu6xeEnPGg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        mika.westerberg@linux.intel.com, andy@kernel.org,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 04/23] pinctrl: tigerlake: Revert "Add Alder Lake-M ACPI ID"
-Date:   Tue,  1 Mar 2022 15:16:03 -0500
-Message-Id: <20220301201629.18547-4-sashal@kernel.org>
+Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        kernel test robot <lkp@intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 08/14] gpio: Return EPROBE_DEFER if gc->to_irq is NULL
+Date:   Tue,  1 Mar 2022 15:18:20 -0500
+Message-Id: <20220301201833.18841-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220301201629.18547-1-sashal@kernel.org>
-References: <20220301201629.18547-1-sashal@kernel.org>
+In-Reply-To: <20220301201833.18841-1-sashal@kernel.org>
+References: <20220301201833.18841-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -51,35 +53,70 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Shreeya Patel <shreeya.patel@collabora.com>
 
-[ Upstream commit 6f66db29e2415cbe8759c48584f9cae19b3c2651 ]
+[ Upstream commit ae42f9288846353982e2eab181fb41e7fd8bf60f ]
 
-It appears that last minute change moved ACPI ID of Alder Lake-M
-to the INTC1055, which is already in the driver.
+We are racing the registering of .to_irq when probing the
+i2c driver. This results in random failure of touchscreen
+devices.
 
-This ID on the other hand will be used elsewhere.
+Following explains the race condition better.
 
-This reverts commit 258435a1c8187f559549e515d2f77fa0b57bcd27.
+[gpio driver] gpio driver registers gpio chip
+[gpio consumer] gpio is acquired
+[gpio consumer] gpiod_to_irq() fails with -ENXIO
+[gpio driver] gpio driver registers irqchip
+gpiod_to_irq works at this point, but -ENXIO is fatal
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+We could see the following errors in dmesg logs when gc->to_irq is NULL
+
+[2.101857] i2c_hid i2c-FTS3528:00: HID over i2c has not been provided an Int IRQ
+[2.101953] i2c_hid: probe of i2c-FTS3528:00 failed with error -22
+
+To avoid this situation, defer probing until to_irq is registered.
+Returning -EPROBE_DEFER would be the first step towards avoiding
+the failure of devices due to the race in registration of .to_irq.
+Final solution to this issue would be to avoid using gc irq members
+until they are fully initialized.
+
+This issue has been reported many times in past and people have been
+using workarounds like changing the pinctrl_amd to built-in instead
+of loading it as a module or by adding a softdep for pinctrl_amd into
+the config file.
+
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=209413
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/intel/pinctrl-tigerlake.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpio/gpiolib.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-tigerlake.c b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-index 0bcd19597e4ad..3ddaeffc04150 100644
---- a/drivers/pinctrl/intel/pinctrl-tigerlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-@@ -749,7 +749,6 @@ static const struct acpi_device_id tgl_pinctrl_acpi_match[] = {
- 	{ "INT34C5", (kernel_ulong_t)&tgllp_soc_data },
- 	{ "INT34C6", (kernel_ulong_t)&tglh_soc_data },
- 	{ "INTC1055", (kernel_ulong_t)&tgllp_soc_data },
--	{ "INTC1057", (kernel_ulong_t)&tgllp_soc_data },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, tgl_pinctrl_acpi_match);
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index af5bb8fedfea7..00526fdd7691f 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3215,6 +3215,16 @@ int gpiod_to_irq(const struct gpio_desc *desc)
+ 
+ 		return retirq;
+ 	}
++#ifdef CONFIG_GPIOLIB_IRQCHIP
++	if (gc->irq.chip) {
++		/*
++		 * Avoid race condition with other code, which tries to lookup
++		 * an IRQ before the irqchip has been properly registered,
++		 * i.e. while gpiochip is still being brought up.
++		 */
++		return -EPROBE_DEFER;
++	}
++#endif
+ 	return -ENXIO;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_to_irq);
 -- 
 2.34.1
 
