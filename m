@@ -2,308 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6FCC4332F
-	for <linux-gpio@archiver.kernel.org>; Thu,  3 Mar 2022 15:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4647C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Mar 2022 15:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234320AbiCCPH5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 3 Mar 2022 10:07:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
+        id S234488AbiCCPiI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 3 Mar 2022 10:38:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234417AbiCCPHy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Mar 2022 10:07:54 -0500
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3AA1190B57;
-        Thu,  3 Mar 2022 07:07:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1646320025; x=1677856025;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8mezKlIkUGiAo2UAZ5QH3YPWGPZyCzM5md4mxTO2kBI=;
-  b=dp98RD9gl5QEb9h9BrQ1iaHmBCn+2FjW6Rbwvt8UnJn3e+xz4jvMO/Mi
-   T8ftMqbFA7mvoowU2cLCKlOcSdQ/AxtnCU07cMj+f5bLXBxw0IlWvdgzA
-   AZxAx6/d1JYQjAL43b13uqezWYokXICX8PAgp4HFL4/yAfpcMfshtWpHz
-   94JZsbXmbBogcF6NftrTnwjgVQXEY0e9fhvj/2FQBisMzxzoTuy5ZVW4/
-   VR4gdn0vU9A2reIoYnMIeqgPYwBBKlXkq+FapN5WZUuhEagT+BTpmPZdk
-   yFSpjl5S8xgmiJH7GEeuSdRSnQv2yevdLhkeK+NepdyzBG7RkY+K2zo9a
-   w==;
-X-IronPort-AV: E=Sophos;i="5.90,151,1643670000"; 
-   d="scan'208";a="22439561"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 03 Mar 2022 16:07:03 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Thu, 03 Mar 2022 16:07:03 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Thu, 03 Mar 2022 16:07:03 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1646320023; x=1677856023;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8mezKlIkUGiAo2UAZ5QH3YPWGPZyCzM5md4mxTO2kBI=;
-  b=CyyN5eiKDyqJlroUPNr89uxA1RP2wwfiHCBnqDqBPyVb9NHjl+uXbEMK
-   2kbm9g7RCkgAD3l3kNSZ1b+LV06WmcFLMrvmezmMkdBDAU/paD3TGIIp3
-   JfNh4dXPDReQtRxwzqXEabe9RTvnMvX181ja3r4X3bCB+ak00PV9LEpcQ
-   0JNIxzGaCMi8vP1G6FQj9DqjPC7cR/rcRnocDOLv8zHBg/GxI1MwBigzK
-   rfjmgOAtPhSK5A0b/rFwH4swm4ls1bs9d3jmuPj0owwNuzL7XU51t61P1
-   PPa8SHFHfgOMuru8tEUctyiqavrnq0pZGQzRW9UlsrgJLmhWXdiiyHmCG
-   w==;
-X-IronPort-AV: E=Sophos;i="5.90,151,1643670000"; 
-   d="scan'208";a="22439560"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 03 Mar 2022 16:07:03 +0100
-Received: from steina-w.tq-net.de (unknown [10.123.49.12])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        with ESMTP id S234566AbiCCPh7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Mar 2022 10:37:59 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F193192E3E
+        for <linux-gpio@vger.kernel.org>; Thu,  3 Mar 2022 07:37:12 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id F0241280074;
-        Thu,  3 Mar 2022 16:07:02 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Dong Aisheng <aisheng.dong@nxp.com>,
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id F36B53F043
+        for <linux-gpio@vger.kernel.org>; Thu,  3 Mar 2022 15:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646321831;
+        bh=8DezQocHOANVzIXQp7GBe2DNdvF/29uXU4JAHaGAUrE=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=mKu5q2hkeuDMb8ll8yCUTTZM2EHGprUJ4Ph5lqOMmJL80i8dMZRAqhBplz1H0T5wz
+         XLl+c99Z9BYN+Hlod87DaLUeK5AB4Q3B35YRIpnYJmu3VWHhv7eKg63bTrO0hxwG6V
+         aXdLEdGagT5pwNUGvN9K2LVm8kjGd0du0eJQJjbkzmKVmcqvSN08WDwRFFewLoyh+d
+         gk9uo/Tx0M+Yz09BCy21PLHN4k4vjHrfyTq05erealPeMh10tVajN3rUUvchUzT/jz
+         61Pau2j/mvozZ6U1wm8SjMcRYnUcTCU+oIwgMxOW1LlASABBYCbqcQqDWgxzDqELG/
+         rwJSRIamyIZUA==
+Received: by mail-ej1-f70.google.com with SMTP id sa7-20020a170906eda700b006d1b130d65bso2908904ejb.13
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Mar 2022 07:37:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=8DezQocHOANVzIXQp7GBe2DNdvF/29uXU4JAHaGAUrE=;
+        b=ubXdIBqWYlOncJrh5IBiL3qcL2vjp4lDvlUSmO5ySxkKBTsCcFTmx9SjlzQO1YBT2F
+         5lKbI/OQSocwkQCyGJK6eqcwThzLWiA/oZuAUCkhm/ikRX2HfOxMMi4Rrg4RojhtHQXG
+         2+gusDN/x/0LKFqYl6cWSP6vHD7vU6GQKjrUZTo41r8SFX+zKfO6m0XQQXE66yGgLCIA
+         XlY/byBRfNJ04+FGUwT/NEeJtMd70yYE4JBuBX+8bbv7jTsm0IeUeAtSzdUETIUIh7fA
+         KECHwNTquzW1xBrujqq6+fwFFxysTvaai15l+LXvz8jTpM8jIpvzLiBsTAaDiHWlwc3p
+         BzNQ==
+X-Gm-Message-State: AOAM5313+UYJCrJKPtFsm2a8ppyxteSmngY4orQ2QYsrBwJIuVLOt2VR
+        u9CiNUo+WYX/J6lsJYpORgKQzw7M5NJWMWhQ7/3RlU2mwmsYBvWFk9waUMgwo4xT5/jPQscvxKr
+        vN2STfNRbBDR++PEY5pDLHr0zo8uXflTb16RDafs=
+X-Received: by 2002:a05:6402:5150:b0:415:de72:5384 with SMTP id n16-20020a056402515000b00415de725384mr3251289edd.273.1646321830722;
+        Thu, 03 Mar 2022 07:37:10 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzuGas3Tunwgz5F3zcC5Firl26y2pjjUMIjqfXRcAT+U15otBYle/YgV3gbGaIkBzdsY2NVUA==
+X-Received: by 2002:a05:6402:5150:b0:415:de72:5384 with SMTP id n16-20020a056402515000b00415de725384mr3251268edd.273.1646321830509;
+        Thu, 03 Mar 2022 07:37:10 -0800 (PST)
+Received: from [192.168.0.137] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id q10-20020aa7cc0a000000b0040f826f09fdsm958428edt.81.2022.03.03.07.37.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Mar 2022 07:37:09 -0800 (PST)
+Message-ID: <58e10c95-902a-bdf3-15e6-616e4d2cda7f@canonical.com>
+Date:   Thu, 3 Mar 2022 16:37:09 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: Convert i.MX7D to json-schema
+Content-Language: en-US
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
         Fabio Estevam <festevam@gmail.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Stefan Agner <stefan@agner.ch>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] dt-bindings: pinctrl: Convert i.MX7D to json-schema
-Date:   Thu,  3 Mar 2022 16:06:52 +0100
-Message-Id: <20220303150653.1903910-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220303150653.1903910-1-alexander.stein@ew.tq-group.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220303150653.1903910-1-alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert the i.MX7D pinctrl binding to DT schema format using json-schema
+On 03/03/2022 16:06, Alexander Stein wrote:
+> Convert the i.MX7D pinctrl binding to DT schema format using json-schema
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  .../bindings/pinctrl/fsl,imx7d-pinctrl.txt    |  87 --------------
+>  .../bindings/pinctrl/fsl,imx7d-pinctrl.yaml   | 113 ++++++++++++++++++
+>  2 files changed, 113 insertions(+), 87 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
+> 
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- .../bindings/pinctrl/fsl,imx7d-pinctrl.txt    |  87 --------------
- .../bindings/pinctrl/fsl,imx7d-pinctrl.yaml   | 113 ++++++++++++++++++
- 2 files changed, 113 insertions(+), 87 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-deleted file mode 100644
-index bfab5ca49fd1..000000000000
---- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-+++ /dev/null
-@@ -1,87 +0,0 @@
--* Freescale i.MX7 Dual IOMUX Controller
--
--iMX7D supports two iomuxc controllers, fsl,imx7d-iomuxc controller is similar
--as previous iMX SoC generation and fsl,imx7d-iomuxc-lpsr which provides low
--power state retention capabilities on gpios that are part of iomuxc-lpsr
--(GPIO1_IO7..GPIO1_IO0). While iomuxc-lpsr provides its own set of registers for
--mux and pad control settings, it shares the input select register from main
--iomuxc controller for daisy chain settings, the fsl,input-sel property extends
--fsl,imx-pinctrl driver to support iomuxc-lpsr controller.
--
--iomuxc_lpsr: iomuxc-lpsr@302c0000 {
--	compatible = "fsl,imx7d-iomuxc-lpsr";
--	reg = <0x302c0000 0x10000>;
--	fsl,input-sel = <&iomuxc>;
--};
--
--iomuxc: iomuxc@30330000 {
--	compatible = "fsl,imx7d-iomuxc";
--	reg = <0x30330000 0x10000>;
--};
--
--Peripherals using pads from iomuxc-lpsr support low state retention power
--state, under LPSR mode GPIO's state of pads are retain.
--
--Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
--and usage.
--
--Required properties:
--- compatible: "fsl,imx7d-iomuxc" for main IOMUXC controller, or
--  "fsl,imx7d-iomuxc-lpsr" for Low Power State Retention IOMUXC controller.
--- fsl,pins: each entry consists of 6 integers and represents the mux and config
--  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
--  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
--  imx7d-pinfunc.h under device tree source folder.  The last integer CONFIG is
--  the pad setting value like pull-up on this pin.  Please refer to i.MX7 Dual
--  Reference Manual for detailed CONFIG settings.
--- fsl,input-sel: required property for iomuxc-lpsr controller, this property is
--  a phandle for main iomuxc controller which shares the input select register for
--  daisy chain settings.
--
--CONFIG bits definition:
--PAD_CTL_PUS_100K_DOWN           (0 << 5)
--PAD_CTL_PUS_5K_UP               (1 << 5)
--PAD_CTL_PUS_47K_UP              (2 << 5)
--PAD_CTL_PUS_100K_UP             (3 << 5)
--PAD_CTL_PUE                     (1 << 4)
--PAD_CTL_HYS                     (1 << 3)
--PAD_CTL_SRE_SLOW                (1 << 2)
--PAD_CTL_SRE_FAST                (0 << 2)
--PAD_CTL_DSE_X1                  (0 << 0)
--PAD_CTL_DSE_X4                  (1 << 0)
--PAD_CTL_DSE_X2                  (2 << 0)
--PAD_CTL_DSE_X6                  (3 << 0)
--
--Examples:
--While iomuxc-lpsr is intended to be used by dedicated peripherals to take
--advantages of LPSR power mode, is also possible that an IP to use pads from
--any of the iomux controllers. For example the I2C1 IP can use SCL pad from
--iomuxc-lpsr controller and SDA pad from iomuxc controller as:
--
--i2c1: i2c@30a20000 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_i2c1_1>, <&pinctrl_i2c1_2>;
--};
--
--iomuxc-lpsr@302c0000 {
--	compatible = "fsl,imx7d-iomuxc-lpsr";
--	reg = <0x302c0000 0x10000>;
--	fsl,input-sel = <&iomuxc>;
--
--	pinctrl_i2c1_1: i2c1grp-1 {
--		fsl,pins = <
--			MX7D_PAD_GPIO1_IO04__I2C1_SCL 0x4000007f
--		>;
--	};
--};
--
--iomuxc@30330000 {
--	compatible = "fsl,imx7d-iomuxc";
--	reg = <0x30330000 0x10000>;
--
--	pinctrl_i2c1_2: i2c1grp-2 {
--		fsl,pins = <
--			MX7D_PAD_I2C1_SDA__I2C1_SDA 0x4000007f
--		>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
-new file mode 100644
-index 000000000000..621038662188
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
-@@ -0,0 +1,113 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/fsl,imx7d-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale IMX7D IOMUX Controller
-+
-+maintainers:
-+  - Dong Aisheng <aisheng.dong@nxp.com>
-+
-+description:
-+  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-+  for common binding part and usage.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - fsl,imx7d-iomuxc
-+          - fsl,imx7d-iomuxc-lpsr
-+
-+  reg:
-+    maxItems: 1
-+
-+  fsl,input-sel:
-+    description:
-+      phandle for main iomuxc controller which shares the input select
-+      register for daisy chain settings.
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+# Client device subnode's properties
-+patternProperties:
-+  'grp$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+
-+    properties:
-+      fsl,pins:
-+        description:
-+          each entry consists of 6 integers and represents the mux and config
-+          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
-+          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
-+          be found in <arch/arm/boot/dts/imx7d-pinfunc.h>. The last integer
-+          CONFIG is the pad setting value like pull-up on this pin. Please
-+          refer to i.MX7D Reference Manual for detailed CONFIG settings.
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        items:
-+          items:
-+            - description: |
-+                "mux_reg" indicates the offset of mux register.
-+            - description: |
-+                "conf_reg" indicates the offset of pad configuration register.
-+            - description: |
-+                "input_reg" indicates the offset of select input register.
-+            - description: |
-+                "mux_val" indicates the mux value to be applied.
-+            - description: |
-+                "input_val" indicates the select input value to be applied.
-+            - description: |
-+                "pad_setting" indicates the pad configuration value to be applied.
-+
-+    required:
-+      - fsl,pins
-+
-+    additionalProperties: false
-+
-+allOf:
-+  - $ref: "pinctrl.yaml#"
-+
-+required:
-+  - compatible
-+  - reg
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - fsl,imx7d-iomuxc-lpsr
-+
-+then:
-+  required:
-+    - fsl,input-sel
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    iomuxc: pinctrl@30330000 {
-+      compatible = "fsl,imx7d-iomuxc";
-+      reg = <0x30330000 0x10000>;
-+
-+      pinctrl_uart5: uart5grp {
-+        fsl,pins =
-+          <0x0160 0x03D0 0x0714 0x1 0x0	0x7e>,
-+          <0x0164 0x03D4 0x0000 0x1 0x0	0x76>;
-+      };
-+    };
-+  - |
-+    iomuxc_lpsr: pinctrl@302c0000 {
-+      compatible = "fsl,imx7d-iomuxc-lpsr";
-+      reg = <0x302c0000 0x10000>;
-+      fsl,input-sel = <&iomuxc>;
-+
-+      pinctrl_gpio_lpsr: gpio1-grp {
-+          fsl,pins =
-+            <0x0008 0x0038 0x0000 0x0 0x0	0x59>,
-+            <0x000C 0x003C 0x0000 0x0 0x0	0x59>;
-+        };
-+    };
--- 
-2.25.1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
+Best regards,
+Krzysztof
