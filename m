@@ -2,182 +2,141 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F69C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Mar 2022 02:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11417C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Mar 2022 09:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234800AbiCGCOA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 6 Mar 2022 21:14:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54900 "EHLO
+        id S236260AbiCGJOT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Mar 2022 04:14:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234714AbiCGCNm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Mar 2022 21:13:42 -0500
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2099.outbound.protection.outlook.com [40.107.93.99])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 015B4193D1;
-        Sun,  6 Mar 2022 18:12:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g8I8AeNF6AS92DXMLvT9G56z5zrgz6RS6Cpk1Pivaa5DY1QTYCosA3z5dqs7/axKsS8pATt8bJAHJ1XEuSzMJexXdfOB4pc+TKSYq4WyPCIz0WsCGkZqa3T8+fwOlw5rHPn4fFpudBQaGkUworQMVPjNyInwFEvyQ8cHOnqHXIks6JlOaBvbabnzEDPORoEkXdvK+3m206Ak+R4KhFXBAQykVy/UwfcK+4tSezBbjocERXpo5AhplpqM4eSuP++dK+1bfjA4ILPVxaHyfQd8IgCqFUEVhEXGk0iqs2oHuHBrl5ogl4Q++191pXmhKGikiRKFSlb0cy/KDBWdQaoYFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XVQn+Rw6D1mIjHJMVvzs7nbOpOfnbt6zrqS/OU2FBPM=;
- b=Gr2ZBd26XUskL13Mi6ofA5QF3S5A4a1o0LSvLg1APSk2GqoaAKZgBC8oB2QUr8NRNHRyniYPHF6jmjnroZE9fpteulI4Ulrt1WzQIVA/Nh5+e42HqXVxSycOc9OJ71PVGx2++R0Ui4bByLWNxSVpvfK+2PlKkpmfvgqQrbopToTPOhzfmsDmnAi6hf1xXL3Qp34CKXA50C/NqEdbT5aWljwsWEnogwG9u8t4G8lI1pPMgz7vhswajpgEImzES1/mhOhHT20+1M+b7jfngCc0lRvjfqnweFc/xdTkC3d7YEULNi1LiHpN6GQw8T7wQfHBKSfWPSqfoNkxKt+iuIlLbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=in-advantage.com; dmarc=pass action=none
- header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
+        with ESMTP id S236270AbiCGJOT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Mar 2022 04:14:19 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707FF4553F
+        for <linux-gpio@vger.kernel.org>; Mon,  7 Mar 2022 01:13:23 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id y2so14262833edc.2
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Mar 2022 01:13:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XVQn+Rw6D1mIjHJMVvzs7nbOpOfnbt6zrqS/OU2FBPM=;
- b=zZJpCGmVjw072GKjQ+HV7RxoCj/9hF6TJ6Av+NEs05rrXh/8DcD2IDFcPFhKeMEcyeRpaifSdaU4FDrueD0uY+qmU7pP4n7I3TEtyccoArsIpV/lBVfGv8XyrTvGaMAEslBrpnG87Zlf8fMqpwjDiezHY9qUitFavBLmkfOloJ0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=in-advantage.com;
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37) by SA2PR10MB4553.namprd10.prod.outlook.com
- (2603:10b6:806:11a::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Mon, 7 Mar
- 2022 02:12:31 +0000
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::7c:dc80:7f24:67c5]) by MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::7c:dc80:7f24:67c5%6]) with mapi id 15.20.5038.026; Mon, 7 Mar 2022
- 02:12:31 +0000
-From:   Colin Foster <colin.foster@in-advantage.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-phy@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Hector Martin <marcan@marcan.st>,
-        Angela Czubak <acz@semihalf.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Lee Jones <lee.jones@linaro.org>, katie.morris@in-advantage.com
-Subject: [RFC v7 net-next 08/13] phy: ocelot-serdes: add ability to be used in mfd configuration
-Date:   Sun,  6 Mar 2022 18:12:03 -0800
-Message-Id: <20220307021208.2406741-9-colin.foster@in-advantage.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220307021208.2406741-1-colin.foster@in-advantage.com>
-References: <20220307021208.2406741-1-colin.foster@in-advantage.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0174.namprd04.prod.outlook.com
- (2603:10b6:303:85::29) To MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37)
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w6o3CiUuUnMz0HnogpVCxbmqNwkYaC8XOsfIDIjyN14=;
+        b=TxOZWmSdsLVRK5BjTbMRMvYcpIjhv4FDpcBHiEQLOTjQwqCYWTSjVnMOIWiqth3r97
+         RedCbmJEbeGHq5VgJ3VmvWY6F4zhb+dq9mNhyc7+XfgZ3C+EzT44T656o1zTa1sAg5Gh
+         RAp051bsZo+yg69F+8INouYW5QF0yrv2i3qROAa3faIc07DaCtuy2vtxE6+jxf70iK39
+         /Z5wDs6s7xDpl1Ba8tEd2rI3R1OmPR0RpRpvY4lgZk55uhZH5psKVXavi5JgCLaX8VYG
+         0sv6XkH9701y0H58fvfEsHFc1Ot0NNgtbPpXgFbR5wKZj3KCjeZ91WhHF1kQfi9SEicE
+         LJUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w6o3CiUuUnMz0HnogpVCxbmqNwkYaC8XOsfIDIjyN14=;
+        b=roA+K9wtIC9pNNAFbDWQeT84wUfBSdL5bPY9FTKL9vJSxbHxiH8YJEvbEzb7PBwR4I
+         QvteTCvSEiDZ45YTSOPMBOcj+ggL9lkyyzKvuA2gv7m9o5I91JVmwaYhxTchMnXVyZ/h
+         +PSvFKZxIFbTDTz2tEP1IuwEunPY3nUUsQAp/+XHc/iV481tOhxLK8ZnFe9CBqMM38oH
+         MlmFyPub2BZwA00nqBR1YclttC4qSLDxmRF77vKpGdDEUJB1cGc+Ur986yHeWmXFpzhd
+         9WsG8BKSyBN+ixlNCGYw0b2pJlbRjb7iUpbVv/TiV4xhzBJR1mHYY65PQJlyUTzUgq3t
+         ORoA==
+X-Gm-Message-State: AOAM533raNou/UgBULK3UuSJBW85+DGfBqUTgFaU1abnGiPsqB9XsUlQ
+        0SAyfiTQ+RXDVDHkGkQjwXZkvXNysmTmbhGAnvBkXgmgPQg=
+X-Google-Smtp-Source: ABdhPJyMQTolfgBB3byDQUjuRxUwV3m5DtZO69+ewybZEOA0pse92b6VD/6dlSgoKgkLW6TptKyus3Z0HiHyQUkH+9I=
+X-Received: by 2002:a05:6402:d0d:b0:416:1d69:f23b with SMTP id
+ eb13-20020a0564020d0d00b004161d69f23bmr10064731edb.141.1646644401992; Mon, 07
+ Mar 2022 01:13:21 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a33735d7-3fb4-4091-1462-08d9ffdfef6d
-X-MS-TrafficTypeDiagnostic: SA2PR10MB4553:EE_
-X-Microsoft-Antispam-PRVS: <SA2PR10MB455394C27CDFA65F742985B3A4089@SA2PR10MB4553.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gnX+tkiKXRP6mh6WIY15dqjvA8pXVp1t9cwDzJHRAYyzWGXWziDvxnvvs/Q2dmPYAI5P14zURW+ICMhkWABXH4r/xbdOJt+qun6cPEUy7xBcfy5tZgrAKErQu9dl9XZKTj0BKkTHmEvkPc/yewJBXwD/dS1Vf3enPUlB3J8u2yjTMpvMCtVNXR5NNnBK88c088WGFIXeitvEGfJ+hR6WiX4Zha1+20I1FlDk9SFI8+6DR6KhKBFB4sfzVMh0/RT8DvPirUqHVsUo+g4gh2mbngHyy2d54hq0kBGbypl0AMO1LpbeBx+7RQnOiZGk6MHhvNAcpXlwj8qMwUwNP4pP3popwlYZlkGOjQt8q+7T3NYBnuZ2yLxmp3AYA/Z8w0Z0IREPxsb+Nefjur7mZLmG0FShRyt6rmwUtIMlqMn/74KNJ+DO/akoF6GATnCns0A7DuusI4xdUkcI232r5HlfBpNZztIUgUAqmITd67EkUKTfkN6oflR4hV9vRJXa9wr+hSizFoPsRJPrL9DRUnrmqcIvLfa4quaQIk0IHhAuNWn/P5ClgKlOnHcRjHaYY+6qRgeJRzKmg8LX+XO1kGol3Mz8LlwTP2wNH5ogG+UVuBoWc6wbuoWwahrOcAvI6jFETQftDJG2t9aR8XUrporYOSV9fV/8bxX940YfKUHW5hbcEuBOp5OHcFXoh9TP9xPw
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(376002)(42606007)(396003)(136003)(39840400004)(346002)(38350700002)(86362001)(508600001)(107886003)(38100700002)(6486002)(54906003)(36756003)(44832011)(6666004)(6506007)(66556008)(66946007)(4326008)(316002)(66476007)(8676002)(6512007)(26005)(186003)(8936002)(52116002)(1076003)(5660300002)(7416002)(2616005)(2906002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?w3cX7L/KFh8QqTQ+6V6JR4ehmVI+u+Pvhjb5PISYye+BE11NrjyejurOnj60?=
- =?us-ascii?Q?JEV8/yyu4Gik4BeTNjpEYRaQjpGeWfTNfJ5ZRufPKxm/eIIk2Rs7n6thtJSJ?=
- =?us-ascii?Q?eOF/S2tRBTHo790g7kd6G/JSfpgKftGePjlsX+g8ygFI0IDz8OPjuANtH9mj?=
- =?us-ascii?Q?IXWEmqkVAL03/ySameNQbEC9HGFUQzBMZ4z96mHMWKK+C4Y5ltSsjjYeC2+x?=
- =?us-ascii?Q?aWDhWKqkXMsdOW+vJCxPLpriypFssdqxmVnzmr48LyGC2G63ouPGmzUsqG1M?=
- =?us-ascii?Q?FkaCG/+caH3VTJuV/R22L6yCyplGDXoyslz4nRsn7Lmbdwy+E3MAu12Ez+nO?=
- =?us-ascii?Q?G7cxRV601xWW903F/ZLX4mBoDnfBeYF5/LbnCGb2nDmjUVFA3aIl5SZ/ZaE/?=
- =?us-ascii?Q?TMrRJNf0xnVg965CaBRhdlKJOWJ2kANUJehR8mqAePWys0Bf7i/9hEI1idH8?=
- =?us-ascii?Q?3DxW1VIarmhOo7zOjQCH5Clvat2gEnQ7ra7x6l8MyChgTDtniENcsKbVc0Eu?=
- =?us-ascii?Q?cwHL0f/teCHkFh+0U3glocfTSkHC4N1QdbTkIAzxTEVpiuOjbmUcm5ryAvde?=
- =?us-ascii?Q?+mSila6gOljooV0eXySy7b/SNA/rSO87oOzDmnfB704MZSrl7FbFz04SxPi3?=
- =?us-ascii?Q?pj0g21z/JOMHU0ZFjgfGybhrLHlLPus68rdsa//5fUYb2o6zDuCLMYz2R5IV?=
- =?us-ascii?Q?SArZT7cFW2K1HOgBOartFmJNYQFlNHwxRmWPhvHzPoaVYLaoCqEOY2s/h9p6?=
- =?us-ascii?Q?pxo6DQGUVHxPNRhZtjWnXWzCE6xh+FIsX+eFUlWn1uGOCsMQOHAx/xykL1HT?=
- =?us-ascii?Q?mF52JX7jdsKDXSF0pieGbtowO1tGWT/CkoHo355HCg8oZXnLydY/JdsS4kvs?=
- =?us-ascii?Q?WHrDmtgr+zZevQz/ZmONngYpfp/72SW0aWesyPRYM6++Cf2MbeVM1GeNsXbS?=
- =?us-ascii?Q?40Fs9xNOHt0LXv57PLSWqYZPS2cPXB9kttNdP9DsgMfckuXZUoJu8bBLMMdL?=
- =?us-ascii?Q?ZULZS9ijjiSNNNNzl+GfZxBDM0dN2FJEKFytCQGFrdrxmks76f0XVjKc4Zp3?=
- =?us-ascii?Q?g24ks9Ie/1lXul43Qs6mhL1sv5z5vl4sc6jbLVKOChYflqoX9UA12csb5BtZ?=
- =?us-ascii?Q?OrMOzVgkgpo9c131/MCcAZ3YBEz2GkmDgMAduYlXcftbbFv7+HcVlCPLpyIL?=
- =?us-ascii?Q?T2qxZNQF8rxkRMya9dBBwJD82xMKaAaCzB/Uk/JzRBHK7XGZfOMsZ2nJavgQ?=
- =?us-ascii?Q?7942DEZ9DDIw/7svBFh0ZBIpSeBrR01Qp3B3ygwoVnT3feHFT8oD1SZ9UnfQ?=
- =?us-ascii?Q?Mof5E3Ai5nEy1/60JAPtA5qmNPxSLlVoHjDuQN1muOQpkMw6oQdLjisep+VL?=
- =?us-ascii?Q?KnVUnOaK7Wqb26gMFbs0QjWzJStIfIla5dyqEZDu9LH/Uogs1jwceASYf6iO?=
- =?us-ascii?Q?pU7HxdOIQdklBeIgsTL6EFHjiSfBBoqXkW5Y57WTNlFp6oH+jGXaQYFLroV5?=
- =?us-ascii?Q?k2JNDTKgi6P3WZ3OHl+HbbV4jH4QezEHFA3rMQu3kIZmz8DqgwaUe8PsH9iG?=
- =?us-ascii?Q?PrJfMOEfC/N0OJsoTMN/cJEgcdJq0DGJc4ZpdcNnp9OY+j5I1P5h3Bafn+nb?=
- =?us-ascii?Q?2QK328ReV5RgD4Bc5HjToNGqonJj0wQKAGfYiqpXfk2Tv/wvcKMkZDfi1ZUB?=
- =?us-ascii?Q?jknxWg=3D=3D?=
-X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a33735d7-3fb4-4091-1462-08d9ffdfef6d
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2022 02:12:31.2141
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3tUgfQZmXF/07pqy9cC7888Hnmo5fODBOn3cCB0v4xCW5odIlHtpvfBSgfPxu8oxFsebabUsM1VvmAmu2PYDwRfTMxWaCZx/EVRPZrekFLU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4553
+References: <20220304221517.30213-1-kris@embeddedTS.com>
+In-Reply-To: <20220304221517.30213-1-kris@embeddedTS.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 7 Mar 2022 10:13:11 +0100
+Message-ID: <CAMRc=MeHT4pX1ZRbOz0owDDec5rv+FE84rp464ugffbH5PuS5w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: ts4900: Do not set DAT and OE together
+To:     Kris Bahnsen <kris@embeddedts.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Featherston <mark@embeddedts.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When ocelot-serdes is used in an MFD configuration, it might need to get
-regmaps from an mfd instead of syscon. Add this ability to be used in
-either configuration.
+On Fri, Mar 4, 2022 at 11:15 PM Kris Bahnsen <kris@embeddedts.com> wrote:
+>
+> From: Mark Featherston <mark@embeddedTS.com>
+>
+> This works around an issue with the hardware where both OE and
+> DAT are exposed in the same register. If both are updated
+> simultaneously, the harware makes no guarantees that OE or DAT
+> will actually change in any given order and may result in a
+> glitch of a few ns on a GPIO pin when changing direction and value
+> in a single write.
+>
+> Setting direction to input now only affects OE bit. Setting
+> direction to output updates DAT first, then OE.
+>
+> Signed-off-by: Mark Featherston <mark@embeddedTS.com>
+> Signed-off-by: Kris Bahnsen <kris@embeddedTS.com>
+> ---
+>  drivers/gpio/gpio-ts4900.c | 25 ++++++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
+> index d885032cf814..fbabfca030c0 100644
+> --- a/drivers/gpio/gpio-ts4900.c
+> +++ b/drivers/gpio/gpio-ts4900.c
+> @@ -1,7 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Digital I/O driver for Technologic Systems I2C FPGA Core
+>   *
+> - * Copyright (C) 2015 Technologic Systems
+> + * Copyright (C) 2015-2018 Technologic Systems
+>   * Copyright (C) 2016 Savoir-Faire Linux
+>   *
+>   * This program is free software; you can redistribute it and/or
+> @@ -55,19 +56,33 @@ static int ts4900_gpio_direction_input(struct gpio_chip *chip,
+>  {
+>         struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
+>
+> -       /*
+> -        * This will clear the output enable bit, the other bits are
+> -        * dontcare when this is cleared
+> +       /* Only clear the OE bit here, requires a RMW. Prevents potential issue
+> +        * with OE and data getting to the physical pin at different times.
+>          */
+> -       return regmap_write(priv->regmap, offset, 0);
+> +       return regmap_update_bits(priv->regmap, offset, TS4900_GPIO_OE, 0);
+>  }
+>
+>  static int ts4900_gpio_direction_output(struct gpio_chip *chip,
+>                                         unsigned int offset, int value)
+>  {
+>         struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
+> +       unsigned int reg;
+>         int ret;
+>
+> +       /* If changing from an input to an output, we need to first set the
+> +        * proper data bit to what is requested and then set OE bit. This
+> +        * prevents a glitch that can occur on the IO line
+> +        */
+> +       regmap_read(priv->regmap, offset, &reg);
+> +       if (!(reg & TS4900_GPIO_OE)) {
+> +               if (value)
+> +                       reg = TS4900_GPIO_OUT;
+> +               else
+> +                       reg &= ~TS4900_GPIO_OUT;
+> +
+> +               regmap_write(priv->regmap, offset, reg);
+> +       }
+> +
+>         if (value)
+>                 ret = regmap_write(priv->regmap, offset, TS4900_GPIO_OE |
+>                                                          TS4900_GPIO_OUT);
+> --
+> 2.11.0
+>
 
-Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
----
- drivers/phy/mscc/phy-ocelot-serdes.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+This looks like a fix, can you add a Fixes tag?
 
-diff --git a/drivers/phy/mscc/phy-ocelot-serdes.c b/drivers/phy/mscc/phy-ocelot-serdes.c
-index 76f596365176..ae1284e356e7 100644
---- a/drivers/phy/mscc/phy-ocelot-serdes.c
-+++ b/drivers/phy/mscc/phy-ocelot-serdes.c
-@@ -15,6 +15,7 @@
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <soc/mscc/ocelot.h>
- #include <soc/mscc/ocelot_hsio.h>
- #include <dt-bindings/phy/phy-ocelot-serdes.h>
- 
-@@ -492,8 +493,10 @@ static int serdes_phy_create(struct serdes_ctrl *ctrl, u8 idx, struct phy **phy)
- 
- static int serdes_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct phy_provider *provider;
- 	struct serdes_ctrl *ctrl;
-+	struct resource *res;
- 	unsigned int i;
- 	int ret;
- 
-@@ -502,7 +505,15 @@ static int serdes_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	ctrl->dev = &pdev->dev;
-+
- 	ctrl->regs = syscon_node_to_regmap(pdev->dev.parent->of_node);
-+	if (IS_ERR(ctrl->regs)) {
-+		/* Fall back to using IORESOURCE_REG, if possible */
-+		res = platform_get_resource(pdev, IORESOURCE_REG, 0);
-+		if (!res)
-+			ctrl->regs = ocelot_get_regmap_from_resource(dev, res);
-+	}
-+
- 	if (IS_ERR(ctrl->regs))
- 		return PTR_ERR(ctrl->regs);
- 
--- 
-2.25.1
-
+Bart
