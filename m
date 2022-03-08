@@ -2,48 +2,48 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8B4C4332F
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Mar 2022 10:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7053FC433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Mar 2022 10:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345700AbiCHKL1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Mar 2022 05:11:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41374 "EHLO
+        id S1345710AbiCHKL2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Mar 2022 05:11:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345717AbiCHKLZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2022 05:11:25 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58826427E6
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Mar 2022 02:10:27 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id m11-20020a17090a7f8b00b001beef6143a8so1937358pjl.4
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2022 02:10:27 -0800 (PST)
+        with ESMTP id S1345693AbiCHKLW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2022 05:11:22 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC043B3D4
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Mar 2022 02:10:23 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id v4so16704891pjh.2
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2022 02:10:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zXk7G6JY4X+JwjWY48i+9FfgXzOs0xnKY40nTgz7InE=;
-        b=Iih/7wB0+IpP36es4iTqigsioyu2iHjzDuVZnq/qs9MyOXwxGmVBx7sOTDb5AhnyO+
-         2sZwP/aYAtauLIJACxh4+PVzOkF3OJzIatEGocvS1oRGisfVTo3n/ESZu+QrMRY72nDH
-         We3fU8biGRDQ2jLWN1UagC6QXVPE59SclSHNs=
+        bh=2QEmSIEQFxB2Wc84ArL948mjUQ6bp5HIyQKnBGn7bWA=;
+        b=e5hlsZ8M6FrXSm5O1f+PV6XxTqqhgfqU73P/IYJh4E0hSqqWGYVO0tRmckACGlOYw7
+         /UOEQpi/SLYAuvbg6741+WVuaxEb1MV6seNKX4C0R7k/xBIHIXhx+GyyjIUl/PxX9nq+
+         Gio7RkFHIVNjGn7Ma5LMRTdCDaTpZuUesPNVY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zXk7G6JY4X+JwjWY48i+9FfgXzOs0xnKY40nTgz7InE=;
-        b=uFHI1n3FZnnkHmQQYaDkOBWp/29iENbd9tjP6kIGewP6z0pAN4qfgfSOtLXxG4m65F
-         uHnfVS16EN1azzkh3yRoQq1n9IhFp4u4fB+uGMYWfroExSl+BmKrbX4wQG/oyOLFeaU4
-         vGrrDzWlH/y3WDpDt50BV85bsF6kg5AvRcCapANioDzmVxctxnEdsVHqYi39BCiw7D2h
-         j0SkWWBQuQzDSzN8Q7L/Sa8WPkznQA51vn1ZNHgv+Ukfqq8uRqs6qaze2hrOUZR98IWr
-         i6jTYr5qt2GkV378wz6/at12PybXKcHGbqGXHJsXmuqz9pox2WxRF/iRi8Gxr1bnF66Q
-         8+Mg==
-X-Gm-Message-State: AOAM531kSDeD7hk1spv6SwS6/yV5KuT6bPeLDNBh8VcsgelbUoF5l5Y2
-        csXzngx176MrR47PfqrJ980szw==
-X-Google-Smtp-Source: ABdhPJw/CHBw7tkeZMpzpsFv+JZ9TCc08ybAM2WlWG6+8xZ5vVVTWpE3LRP4Tr6krv+ObbHBQi9ZPA==
-X-Received: by 2002:a17:903:291:b0:14d:522c:fe3d with SMTP id j17-20020a170903029100b0014d522cfe3dmr16734037plr.100.1646734226709;
-        Tue, 08 Mar 2022 02:10:26 -0800 (PST)
+        bh=2QEmSIEQFxB2Wc84ArL948mjUQ6bp5HIyQKnBGn7bWA=;
+        b=ZfwWcVjHzK/KkCqJQddV2qkdcy1ZuV9pHg39eH1WQtFy3rEZfhM71d2D9SnWQGseRc
+         OJaJNA2u/5+N4iAO74LuG3elHanwriAzk642F2NZ2wCzsORDPyBpy/mPPULmVxxXxpz8
+         LStv/umSK0sh42OO+kkquv9WCpqDQOP62SMU/yRl2KuO/HvNOHIzhFd922oNXiyE/2lH
+         nFyH/HjPgskudl2sCVdlutg/nCugE6lozM1NYxsHVjnntdQ8EdRl/ly0NbPSxULKoI18
+         4TVcxrt1q7s+QSkXhAKJZjVy9PCdTAnvFoA6JJUKYfS9aL/lkGmihpJtRdURa74DYzRD
+         2Fwg==
+X-Gm-Message-State: AOAM532ftNt70tPrdASiouro0mt1eVUrOwQ4y9iv7PQqKpU9Ehl02U9x
+        pBnZpPeccNOjkXNLprBjfeU1xA==
+X-Google-Smtp-Source: ABdhPJzUIGM7/aLnoqVgZbi6x5gKdbjCUJrwbdnqiMSuTVYjMyywx1haZYeF+oYRHLRbmkLV6lNEOg==
+X-Received: by 2002:a17:902:f785:b0:14d:d2b6:b7c with SMTP id q5-20020a170902f78500b0014dd2b60b7cmr16603240pln.68.1646734222911;
+        Tue, 08 Mar 2022 02:10:22 -0800 (PST)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:73f8:5e3f:6894:8f44])
-        by smtp.gmail.com with ESMTPSA id k19-20020a056a00135300b004f734327960sm1707553pfu.106.2022.03.08.02.10.25
+        by smtp.gmail.com with ESMTPSA id k19-20020a056a00135300b004f734327960sm1707553pfu.106.2022.03.08.02.10.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 02:10:26 -0800 (PST)
+        Tue, 08 Mar 2022 02:10:22 -0800 (PST)
 From:   Chen-Yu Tsai <wenst@chromium.org>
 To:     Sean Wang <sean.wang@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -53,9 +53,9 @@ Cc:     AngeloGioacchino Del Regno
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Chen-Yu Tsai <wenst@chromium.org>
-Subject: [PATCH v2 11/11] pinctrl: mediatek: pinctrl-mtk-common: Simplify with dev_err_probe()
-Date:   Tue,  8 Mar 2022 18:09:56 +0800
-Message-Id: <20220308100956.2750295-12-wenst@chromium.org>
+Subject: [PATCH v2 09/11] pinctrl: mediatek: pinctrl-moore: Simplify with dev_err_probe()
+Date:   Tue,  8 Mar 2022 18:09:54 +0800
+Message-Id: <20220308100956.2750295-10-wenst@chromium.org>
 X-Mailer: git-send-email 2.35.1.616.g0bdcbb4464-goog
 In-Reply-To: <20220308100956.2750295-1-wenst@chromium.org>
 References: <20220308100956.2750295-1-wenst@chromium.org>
@@ -73,77 +73,70 @@ Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.c
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 25 ++++++++-----------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-moore.c | 25 +++++++++---------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 5f7c421ab6e7..6f8dfa6ae5a0 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -1013,10 +1013,12 @@ static int mtk_eint_init(struct mtk_pinctrl *pctl, struct platform_device *pdev)
- 	return mtk_eint_do_init(pctl->eint);
- }
- 
-+/* This is used as a common probe function */
- int mtk_pctrl_init(struct platform_device *pdev,
- 		const struct mtk_pinctrl_devdata *data,
- 		struct regmap *regmap)
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+index 5bfaa84839c7..526faaebaf77 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+@@ -605,6 +605,7 @@ static int mtk_build_functions(struct mtk_pinctrl *hw)
+ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+ 			    const struct mtk_pin_soc *soc)
  {
 +	struct device *dev = &pdev->dev;
  	struct pinctrl_pin_desc *pins;
- 	struct mtk_pinctrl *pctl;
- 	struct device_node *np = pdev->dev.of_node, *node;
-@@ -1030,10 +1032,9 @@ int mtk_pctrl_init(struct platform_device *pdev,
- 	platform_set_drvdata(pdev, pctl);
+ 	struct mtk_pinctrl *hw;
+ 	int err, i;
+@@ -616,11 +617,9 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+ 	hw->soc = soc;
+ 	hw->dev = &pdev->dev;
  
- 	prop = of_find_property(np, "pins-are-numbered", NULL);
--	if (!prop) {
--		dev_err(&pdev->dev, "only support pins-are-numbered format\n");
--		return -EINVAL;
--	}
-+	if (!prop)
+-	if (!hw->soc->nbase_names) {
+-		dev_err(&pdev->dev,
++	if (!hw->soc->nbase_names)
 +		return dev_err_probe(dev, -EINVAL,
-+				     "only support pins-are-numbered format\n");
- 
- 	node = of_parse_phandle(np, "mediatek,pctl-regmap", 0);
- 	if (node) {
-@@ -1043,8 +1044,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
- 	} else if (regmap) {
- 		pctl->regmap1  = regmap;
- 	} else {
--		dev_err(&pdev->dev, "Pinctrl node has not register regmap.\n");
--		return -EINVAL;
-+		return dev_err_probe(dev, -EINVAL, "Cannot find pinctrl regmap.\n");
- 	}
- 
- 	/* Only 8135 has two base addr, other SoCs have only one. */
-@@ -1057,10 +1057,8 @@ int mtk_pctrl_init(struct platform_device *pdev,
- 
- 	pctl->devdata = data;
- 	ret = mtk_pctrl_build_state(pdev);
--	if (ret) {
--		dev_err(&pdev->dev, "build state failed: %d\n", ret);
+ 			"SoC should be assigned at least one register base\n");
 -		return -EINVAL;
 -	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "build state failed\n");
  
- 	pins = devm_kcalloc(&pdev->dev, pctl->devdata->npins, sizeof(*pins),
- 			    GFP_KERNEL);
-@@ -1081,10 +1079,9 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
+ 				      sizeof(*hw->base), GFP_KERNEL);
+@@ -665,17 +664,13 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
  
- 	pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, &pctl->pctl_desc,
- 					       pctl);
--	if (IS_ERR(pctl->pctl_dev)) {
--		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
--		return PTR_ERR(pctl->pctl_dev);
+ 	/* Setup groups descriptions per SoC types */
+ 	err = mtk_build_groups(hw);
+-	if (err) {
+-		dev_err(&pdev->dev, "Failed to build groups\n");
+-		return err;
 -	}
-+	if (IS_ERR(pctl->pctl_dev))
-+		return dev_err_probe(dev, PTR_ERR(pctl->pctl_dev),
-+				     "Couldn't register pinctrl driver\n");
++	if (err)
++		return dev_err_probe(dev, err, "Failed to build groups\n");
  
- 	pctl->chip = devm_kzalloc(&pdev->dev, sizeof(*pctl->chip), GFP_KERNEL);
- 	if (!pctl->chip)
+ 	/* Setup functions descriptions per SoC types */
+ 	err = mtk_build_functions(hw);
+-	if (err) {
+-		dev_err(&pdev->dev, "Failed to build functions\n");
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(dev, err, "Failed to build functions\n");
+ 
+ 	/* For able to make pinctrl_claim_hogs, we must not enable pinctrl
+ 	 * until all groups and functions are being added one.
+@@ -691,10 +686,8 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	/* Build gpiochip should be after pinctrl_enable is done */
+ 	err = mtk_build_gpiochip(hw);
+-	if (err) {
+-		dev_err(&pdev->dev, "Failed to add gpio_chip\n");
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(dev, err, "Failed to add gpio_chip\n");
+ 
+ 	platform_set_drvdata(pdev, hw);
+ 
 -- 
 2.35.1.616.g0bdcbb4464-goog
 
