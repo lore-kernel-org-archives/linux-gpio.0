@@ -2,48 +2,48 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCF4C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Mar 2022 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44949C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Mar 2022 10:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345646AbiCHKLG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Mar 2022 05:11:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40712 "EHLO
+        id S1345670AbiCHKLP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Mar 2022 05:11:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345665AbiCHKLF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2022 05:11:05 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8114D3298E
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Mar 2022 02:10:09 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id m2so10635569pll.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2022 02:10:09 -0800 (PST)
+        with ESMTP id S1345686AbiCHKLO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2022 05:11:14 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F1939815
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Mar 2022 02:10:13 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id v4so16704437pjh.2
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2022 02:10:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=noEqkBf5xzBolmnhdQPfwHD82qaYeiB8/RXOxn1DB2I=;
-        b=PsIwM301p+zkfVPLNMuBY2fgeZYi4j+IGcIxp8lP2wQofQwsTA/SANTTxjG0S8RTAK
-         Zz2rcqgxCgmmwveXGiLhoaqoV9LC4rAO+jCp0lqq4wCXA5PSkdUzbpTufzwn7Ap3iPbQ
-         jmIKa5JsZRMgNuNQeXZh1sXnjbhE/kmJF87vk=
+        bh=loBNgvfdq/vh+q5b0xP2M4wY6ZA7RodjlaGOVqoQIgQ=;
+        b=FT0q3vmjV4Ofixirx3vGOE4K1bSUTlVNj1zkmWaEB3EX6y7v5tGukfnLjgf/JM4mYu
+         6HuQCZsYE/huFip+v5Ygfg+JBp7K5XS+cyFGhVfOCY4WJ09FItpUmUbz29q/U6oyX/LU
+         VF3wg4h072C1MLIQjKushAzg7cYYjWfEhnqIw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=noEqkBf5xzBolmnhdQPfwHD82qaYeiB8/RXOxn1DB2I=;
-        b=Ffg3gbugG+fhT6/GwSNWbelFgT+tpiySlq65ATfwUaO6+4zdoINaI7VettKSerepMW
-         cFmBiFUvtEhs+1qhhsbKf83vLc0SfaGV15yWbtofw9XBnqyX+WnVY2hstbBrji2fe9SR
-         gCUKDK+EITdmbbOpVsUYSQzyiMc71Yz1F9SW1ZC5J14pjDd+coMnuNp77NyY/Pjv6IsM
-         U8XbYeXE4yd8N8eOnrca4XKaoBEP5i4QQVOaL7mE976f1Y4ZdVC92rSVE0uh6sNPDDaN
-         ak2uPjWsu+lUFSX75Rrcy079lIhVGfLPQEJrjmBcNbbfkgLm1MykzAbt2DEPMO0KUshP
-         3plQ==
-X-Gm-Message-State: AOAM530ObqFAUZs9z6TuxbowzOEXBAK7eg0R2wUPrtcq/jnk23+TLQeU
-        W8mXyHOKSaV95fzGgHrEZHU10A==
-X-Google-Smtp-Source: ABdhPJwMnsLSH0Ugh0kYJjqmbKgwtim8f6qXQsngF85UoO3kJmueeC/GVPnsmGoroD8ZfCxe30PFag==
-X-Received: by 2002:a17:903:2350:b0:151:e633:7479 with SMTP id c16-20020a170903235000b00151e6337479mr10346038plh.74.1646734208964;
-        Tue, 08 Mar 2022 02:10:08 -0800 (PST)
+        bh=loBNgvfdq/vh+q5b0xP2M4wY6ZA7RodjlaGOVqoQIgQ=;
+        b=N0nyiXDfNa0lsv5IoTQN1SDzWLgSM9vgZ5dnj7CyFnNecajt3re2I0CVT49BhEJPbx
+         5hGMiE78eWtOXJrBhhcDjuejgp/GSgUVuHZliIcxQgv9xj0qDE+OHcTsmqa48qnTM5Jc
+         NMtTy5bHCb59lDj+Cf5e+qNgD2g5aijIXYPOPS8BtRGZcn+HtevWOYSfTVtgqaDSGvU2
+         P0lL+NfkCP5YqsK7pXfbtYytEue3NesQrqk8v9mE0WXmtIvbGwsguv3G4cYjcJBJ4SqV
+         zFjfpjY06hXYf5ylM5b8E/IBbWsBX++TNx0ZqAplLcSOSZ8fGO5PCUoWqYmqWLnIk30h
+         fUeg==
+X-Gm-Message-State: AOAM533ZPNo0pm4TBfqZbvUYJ3yqmxgpHGB/Ivg09Oqm8AiNekIR1waT
+        qGK0oe2zUoTFukbDf4VWGk7BoA==
+X-Google-Smtp-Source: ABdhPJwF0uYyAvVJHLAKSPzAGWaO6LHCugVgwokBaJgUvBSb8BHs7+KBcJM96IyJnQmOWL8xCiZEuQ==
+X-Received: by 2002:a17:902:bcc6:b0:151:f36d:2658 with SMTP id o6-20020a170902bcc600b00151f36d2658mr6808467pls.125.1646734212808;
+        Tue, 08 Mar 2022 02:10:12 -0800 (PST)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:73f8:5e3f:6894:8f44])
-        by smtp.gmail.com with ESMTPSA id k19-20020a056a00135300b004f734327960sm1707553pfu.106.2022.03.08.02.10.07
+        by smtp.gmail.com with ESMTPSA id k19-20020a056a00135300b004f734327960sm1707553pfu.106.2022.03.08.02.10.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 02:10:08 -0800 (PST)
+        Tue, 08 Mar 2022 02:10:12 -0800 (PST)
 From:   Chen-Yu Tsai <wenst@chromium.org>
 To:     Sean Wang <sean.wang@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -53,9 +53,9 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH v2 02/11] pinctrl: mediatek: paris: Fix PIN_CONFIG_BIAS_* readback
-Date:   Tue,  8 Mar 2022 18:09:47 +0800
-Message-Id: <20220308100956.2750295-3-wenst@chromium.org>
+Subject: [PATCH v2 04/11] pinctrl: mediatek: paris: Fix pingroup pin config state readback
+Date:   Tue,  8 Mar 2022 18:09:49 +0800
+Message-Id: <20220308100956.2750295-5-wenst@chromium.org>
 X-Mailer: git-send-email 2.35.1.616.g0bdcbb4464-goog
 In-Reply-To: <20220308100956.2750295-1-wenst@chromium.org>
 References: <20220308100956.2750295-1-wenst@chromium.org>
@@ -65,50 +65,52 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When reading back pin bias settings, if the pin is not in the
-corresponding bias state, the function should return -EINVAL.
+mtk_pconf_group_get(), used to read back pingroup pin config state,
+simply returns a set of configs saved from a previous invocation of
+mtk_pconf_group_set(). This is an unfiltered, unvalidated set passed
+in from the pinconf core, which does not match the current hardware
+state.
 
-Fix this in the mediatek-paris pinctrl library so that the read back
-state is not littered with bogus a "input bias disabled" combined with
-"pull up" or "pull down" states.
+Since the driver library is designed to have one pin per group, pass
+through mtk_pconf_group_get() to mtk_pinconf_get(), to read back the
+current pin config state of the only pin in the group.
+
+Also drop the assignment of pin config state to the group.
 
 Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-paris.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-paris.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index f9f9110f2107..7037560ecda9 100644
+index c668191933a0..3bda1aac650b 100644
 --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
 +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -96,20 +96,16 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
- 			err = hw->soc->bias_get_combo(hw, desc, &pullup, &ret);
- 			if (err)
- 				goto out;
-+			if (ret == MTK_PUPD_SET_R1R0_00)
-+				ret = MTK_DISABLE;
- 			if (param == PIN_CONFIG_BIAS_DISABLE) {
--				if (ret == MTK_PUPD_SET_R1R0_00)
--					ret = MTK_DISABLE;
-+				if (ret != MTK_DISABLE)
-+					err = -EINVAL;
- 			} else if (param == PIN_CONFIG_BIAS_PULL_UP) {
--				/* When desire to get pull-up value, return
--				 *  error if current setting is pull-down
--				 */
--				if (!pullup)
-+				if (!pullup || ret == MTK_DISABLE)
- 					err = -EINVAL;
- 			} else if (param == PIN_CONFIG_BIAS_PULL_DOWN) {
--				/* When desire to get pull-down value, return
--				 *  error if current setting is pull-up
--				 */
--				if (pullup)
-+				if (pullup || ret == MTK_DISABLE)
- 					err = -EINVAL;
- 			}
- 		} else {
+@@ -732,10 +732,10 @@ static int mtk_pconf_group_get(struct pinctrl_dev *pctldev, unsigned group,
+ 			       unsigned long *config)
+ {
+ 	struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
++	struct mtk_pinctrl_group *grp = &hw->groups[group];
+ 
+-	*config = hw->groups[group].config;
+-
+-	return 0;
++	 /* One pin per group only */
++	return mtk_pinconf_get(pctldev, grp->pin, config);
+ }
+ 
+ static int mtk_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
+@@ -751,8 +751,6 @@ static int mtk_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
+ 				      pinconf_to_config_argument(configs[i]));
+ 		if (ret < 0)
+ 			return ret;
+-
+-		grp->config = configs[i];
+ 	}
+ 
+ 	return 0;
 -- 
 2.35.1.616.g0bdcbb4464-goog
 
