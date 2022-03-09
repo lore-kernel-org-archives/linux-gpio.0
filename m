@@ -2,21 +2,21 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC14EC433F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Mar 2022 19:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EC1C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Mar 2022 19:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233517AbiCITqB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Mar 2022 14:46:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45752 "EHLO
+        id S236219AbiCITvL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Mar 2022 14:51:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238001AbiCITqB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2022 14:46:01 -0500
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B2ECB74
-        for <linux-gpio@vger.kernel.org>; Wed,  9 Mar 2022 11:45:00 -0800 (PST)
+        with ESMTP id S234660AbiCITvK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2022 14:51:10 -0500
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C59B55BF
+        for <linux-gpio@vger.kernel.org>; Wed,  9 Mar 2022 11:50:10 -0800 (PST)
 Received: from localhost.localdomain ([37.4.249.169]) by
  mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MwQKp-1oJrkE37qf-00sNtT; Wed, 09 Mar 2022 20:44:43 +0100
+ id 1MuDPf-1oHfsn2FEz-00uaod; Wed, 09 Mar 2022 20:44:44 +0100
 From:   Stefan Wahren <stefan.wahren@i2se.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -28,53 +28,89 @@ Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
         Phil Elwell <phil@raspberrypi.com>,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RFC 0/2] gpiolib: of: Introduce hook for missing gpio-ranges
-Date:   Wed,  9 Mar 2022 20:43:44 +0100
-Message-Id: <1646855026-9132-1-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH RFC 2/2] pinctrl: bcm2835: implement hook for missing gpio-ranges
+Date:   Wed,  9 Mar 2022 20:43:46 +0100
+Message-Id: <1646855026-9132-3-git-send-email-stefan.wahren@i2se.com>
 X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K1:8Z2LArKHTLFerCSWr2QMCIYnjownib6pqhn0/2gF7LU3ZqtZ1zd
- LVyg2rShFXcBXaG4E1ZmtJRktbEWchbUzuzgYWDt5gmKI4Yo5fIYmmkT2kGLddLvqut6P59
- vVqrinGzdZNhBOqiTwvkoKUukM2Oi5w/wpP90QyeYPikAgZvRoT5xMzSt+VSMrp4Pm9lCwp
- JgpL4qPTd3twp59TsLziQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rWvp9cFklYk=:TCGlv5CHqsesb4S+W0QGwv
- qHX1SEXZ0B6odHVJmd/s0cM+Obo5tPjWjRX4OUbYn1wFO0Y4ApouHPLYIoMgJTfKQGepaad7I
- nKqmV5wgpsld19qIXIxAaq6njP5W343YditEuY1S85h2Dglb6jxlbxvYV6HEiyGAhYjhaOfwP
- ZJSqQ6AKFwKwrPQYOlYpHA8oA6OczC7gitBSmXJVYhXL1CGfRBCN0jonSyK8SoCpwuvGdrkiB
- qWTVfD7wh2yjAk2Y2p3PhAOCrtV9Lw4yTJA+n7qwD9eFDw9F0Bx4s/xe847Q5GuSyUuvWmI4/
- sEMtpgGhh3ygIAelljYrnKGSGu9G842MTcTgiN98bbbO3UNHvgovw/Af4CzdYMpEtb2qWNKbX
- 4xG7NJgmPBySmCAPrJwBX53nil14a7LMummoNlDVu8cE338mGY1KlA1+diJggobz7wkjfvYIc
- YH3XfxkNiTyNjPqQmtuaKZ4wqOfgry8cIx+I3jffLMzWpB0WVGLc/a+Xcufkleqoh+7vfr3mD
- ln0p+j/iIFJ7bj4WIvre7XDZebqtn5HjqnOSvTLEaeOyah6m/B2eNQ5Ay7YxChcxJtReIItfZ
- tbxGCCaBH+LMI/yJ0exBnLhAnwoFKLiIzCIrjg8cfHOpLLniEEAIOD9ALOgMoWuTs2B0Wl69V
- pfPA5T3oKXENzPnic5mT0jc7TammekgEUlKksRRwBKWZbsgLQB+eGwstRx2Pg93b93u0GjLfz
- Z8StFCY59lYh8TSi
+In-Reply-To: <1646855026-9132-1-git-send-email-stefan.wahren@i2se.com>
+References: <1646855026-9132-1-git-send-email-stefan.wahren@i2se.com>
+X-Provags-ID: V03:K1:gD25VDJriO0WlPO9G1KIEXwcB2q62js2g/T5+gpDWM+vpuAtgJX
+ 8gc4fsnQow22MKJ411B8VqfZ8qfx/epjNPdU2EhjeNnKoBL04UFvhM1+XEVN1qTkXrHHIlX
+ SXGxqfKTny0zh4vETTwQJEYJwKsJ2bQne4Rkc8yZyXFPIHSDIW5hO7/Lpkzk0DGMyYdp/Dx
+ gc+LdAHL0qBbFqJqoolKQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VnTOY1DYj4E=:7hOSv9L7KCyduhHbDjKQXD
+ p//UKeWlplBXepTZLFggFEKZJPA/srfZa7MYcRG5BxGyiC3mm4CCCrgff4kYIhFDVmUw3vN8/
+ uqcGHnxdfVhLHqoQ5IldwGIQDvxl1ty9A+B13nesoRofyJRm/l4yy1ADizUGNTyE5VfQ7tVpY
+ 46qFxs+dStrFZ52Mzm1mcyvKU1p6jyQ+fmlhLkEREiCPSA/3mT42pJAs3LWGCukfsdhNE2SVJ
+ DdtTQ/LhNdLyenSQIumpv/1xvNbjL1+tBv2mkAm6wl6OruWmD0mKaQPiEWw4y5OBjxLREMxhA
+ QLSfrGow7qBqdz+zcpy7N2NvZmzYlYjTIsYZaT+8PBLQUrvwvEYSUuR9yCh8wmdf/ayj3JcZa
+ RY8VSToOqwfJumuKCgMxfGCVudp9/BNNah9smgJee9lU9STiHbwKpxLsDr0b6MuALDt7Otj1c
+ CCqbdwv4NsCq4fqs8OIghsnBmlVHISmtvyaIY5G7z179124JSfYUDkOHbDx5h4v2VSEiCdJA1
+ 7QEbbk7KRQgototq9ueqGEu5EIhOtif0mvbhUzGfZgBmTPEe9iFkck6x0JBtkUHrbowS4pMj1
+ J0SOK1QEULfvnsS67i06NS7WCzQ0KBQUYi3Pz4R/qBNeEx47gSrNlCsyyVNAAPPxjYz9RabxR
+ lG0HukaZ7Sdlese4kctKbiCPNfWG02Z217VDF+6Rxvg3xkC64b4GAu9PoiD6/JYmeLmtxV/kk
+ 0j9Ne4oLO68KNXWG
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch series tries to provide backward compatibility for DTB which
-lacks the gpio-ranges property.
+The commit c8013355ead6 ("ARM: dts: gpio-ranges property is now required")
+fixed the GPIO probing issues caused by "pinctrl: bcm2835: Change init
+order for gpio hogs". This changed only the DTS files provided by the kernel
+tree. Unfortunately it isn't guaranteed that these files are shipped to
+all users.
 
-The commit ("pinctrl: msm: fix gpio-hog related boot issues") by Christian
-Lamparter already contains a fallback in case the gpio-ranges property
-is missing. But this approach doesn't work on BCM2835 with a gpio-hog
-defined for the SoC GPIOs.
+So implement the necessary backward compatibility for BCM2835 and
+BCM2711 platform.
 
-Based Christian's on explanation i conclude that the fallback must happen
-during the gpiochip_add() call and not afterwards. So the approach is to
-call an optional hook, which can be implemented in the platform driver.
-
-This series has been tested on Raspberry Pi 3 B Plus.
-
-Stefan Wahren (2):
-  gpiolib: of: Introduce hook for missing gpio-ranges
-  pinctrl: bcm2835: implement hook for missing gpio-ranges
-
- drivers/gpio/gpiolib-of.c             |  5 +++++
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 18 ++++++++++++++++++
- include/linux/gpio/driver.h           | 12 ++++++++++++
- 3 files changed, 35 insertions(+)
+ 1 file changed, 18 insertions(+)
 
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 47e433e..dad4530 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -358,6 +358,22 @@ static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
++static int bcm2835_of_gpio_ranges_fallback(struct gpio_chip *gc,
++					   struct device_node *np)
++{
++	struct pinctrl_dev *pctldev = of_pinctrl_get(np);
++
++	of_node_put(np);
++
++	if (!pctldev)
++		return 0;
++
++	gpiochip_add_pin_range(gc, pinctrl_dev_get_devname(pctldev), 0, 0,
++			       gc->ngpio);
++
++	return 0;
++}
++
+ static const struct gpio_chip bcm2835_gpio_chip = {
+ 	.label = MODULE_NAME,
+ 	.owner = THIS_MODULE,
+@@ -372,6 +388,7 @@ static const struct gpio_chip bcm2835_gpio_chip = {
+ 	.base = -1,
+ 	.ngpio = BCM2835_NUM_GPIOS,
+ 	.can_sleep = false,
++	.of_gpio_ranges_fallback = bcm2835_of_gpio_ranges_fallback,
+ };
+ 
+ static const struct gpio_chip bcm2711_gpio_chip = {
+@@ -388,6 +405,7 @@ static const struct gpio_chip bcm2711_gpio_chip = {
+ 	.base = -1,
+ 	.ngpio = BCM2711_NUM_GPIOS,
+ 	.can_sleep = false,
++	.of_gpio_ranges_fallback = bcm2835_of_gpio_ranges_fallback,
+ };
+ 
+ static void bcm2835_gpio_irq_handle_bank(struct bcm2835_pinctrl *pc,
 -- 
 2.7.4
 
