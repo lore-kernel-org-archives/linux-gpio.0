@@ -2,89 +2,94 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D86C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Mar 2022 20:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C33C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Mar 2022 01:16:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233485AbiCIUKQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Mar 2022 15:10:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44116 "EHLO
+        id S239104AbiCJBRn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Mar 2022 20:17:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233461AbiCIUKQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2022 15:10:16 -0500
-X-Greylist: delayed 452 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Mar 2022 12:09:16 PST
-Received: from relay5.hostedemail.com (relay5.hostedemail.com [64.99.140.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A279EB88
-        for <linux-gpio@vger.kernel.org>; Wed,  9 Mar 2022 12:09:16 -0800 (PST)
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay10.hostedemail.com (Postfix) with ESMTP id B1D4221B6;
-        Wed,  9 Mar 2022 20:01:42 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf14.hostedemail.com (Postfix) with ESMTPA id 5B61D32;
-        Wed,  9 Mar 2022 20:01:17 +0000 (UTC)
-Message-ID: <400cf2fc8cbc3887a90f50709f40adc0662ec0f4.camel@perches.com>
-Subject: Re: [PATCH v2 05/11] pinctrl: mediatek: paris: Drop extra newline
- in mtk_pctrl_show_one_pin()
-From:   Joe Perches <joe@perches.com>
-To:     Chen-Yu Tsai <wenst@chromium.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Date:   Wed, 09 Mar 2022 12:01:39 -0800
-In-Reply-To: <20220308100956.2750295-6-wenst@chromium.org>
-References: <20220308100956.2750295-1-wenst@chromium.org>
-         <20220308100956.2750295-6-wenst@chromium.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: itpi6u5eyed33jaieo59phaog6r153x8
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 5B61D32
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+v5TW9d+3Dr2lvFismD/IYOx5icBwv8Xg=
-X-HE-Tag: 1646856077-760257
+        with ESMTP id S238683AbiCJBRn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2022 20:17:43 -0500
+Received: from smtp-out3.electric.net (smtp-out3.electric.net [208.70.128.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D180F12222F;
+        Wed,  9 Mar 2022 17:16:43 -0800 (PST)
+Received: from 1nS7Pz-0006Tu-VQ by out3d.electric.net with emc1-ok (Exim 4.94.2)
+        (envelope-from <kris@embeddedTS.com>)
+        id 1nS7Q0-0006WB-VR; Wed, 09 Mar 2022 17:16:40 -0800
+Received: by emcmailer; Wed, 09 Mar 2022 17:16:40 -0800
+Received: from [66.210.251.27] (helo=mail.embeddedts.com)
+        by out3d.electric.net with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <kris@embeddedTS.com>)
+        id 1nS7Pz-0006Tu-VQ; Wed, 09 Mar 2022 17:16:39 -0800
+Received: from tsdebian.Massive (unknown [75.164.75.221])
+        by mail.embeddedts.com (Postfix) with ESMTPSA id F01CF1AB0;
+        Wed,  9 Mar 2022 18:16:38 -0700 (MST)
+From:   Kris Bahnsen <kris@embeddedTS.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Mark Featherston <mark@embeddedTS.com>,
+        Kris Bahnsen <kris@embeddedTS.com>
+Subject: [PATCH v3 2/2] gpio: ts4900: Use SPDX header
+Date:   Wed,  9 Mar 2022 17:16:17 -0800
+Message-Id: <20220310011617.29660-3-kris@embeddedTS.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20220310011617.29660-1-kris@embeddedTS.com>
+References: <20220310011617.29660-1-kris@embeddedTS.com>
+X-Outbound-IP: 66.210.251.27
+X-Env-From: kris@embeddedTS.com
+X-Proto: esmtps
+X-Revdns: wsip-66-210-251-27.ph.ph.cox.net
+X-HELO: mail.embeddedts.com
+X-TLS:  TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256
+X-Authenticated_ID: 
+X-Virus-Status: Scanned by VirusSMART (c)
+X-Virus-Status: Scanned by VirusSMART (b)
+X-FM-Delivery-Delay: 15749372,23518412
+X-PolicySMART: 13164782, 15749372, 26810492
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=embeddedTS.com; s=mailanyone20220121;h=References:In-Reply-To:Message-Id:Date:To:From; bh=cwEQ9Gjrxcgi44g6+bljgIEY7KxoaRU7Il3yzgGCDr4=;b=do+ABU/mk6GhupMnR2sA29Jdtivs2YpMbyNjIqWEw4sF9TCDYDjACsTbRgoVuEuGFfJIKdeX1z+rk9q3iRfNFVnm3s1meBXRvLVj/70dfRuE4KacwDh1hflLMXPC0M6ulZB7Q/IPlPC4iJyx/qH3qU3YF1/wF9EQvC7ZQ7LvM7xl4II/F43NdBh6acYIepBzl/03ijoiNZN/9b2LmdnKqrJJJiSHXvN2nm2UBfA+SCU5RusmFz7HBrRGjIgyvJn8fvUo6kUx1j9M82Z5l6HloJNfUQyQAiJ1jFzBPo+/sLKTbx7kKAkPMKTqsAl+/DX3lnXQ3MFI8RP4N4PQv8+1xw==;
+X-FM-Delivery-Delay: 15749372,23518412
+X-PolicySMART: 13164782, 15749372, 26810492
+X-FM-Delivery-Delay: 15749372,23518412
+X-PolicySMART: 13164782, 15749372, 26810492
+X-FM-Delivery-Delay: 15749372,23518412
+X-PolicySMART: 13164782, 15749372, 26810492
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 2022-03-08 at 18:09 +0800, Chen-Yu Tsai wrote:
-> The caller of mtk_pctrl_show_one_pin() is responsible for printing the
-> full line. mtk_pctrl_show_one_pin(), called through mtk_pctrl_dbg_show(),
-> should only produce a string containing the extra information the driver
-> wants included.
+Remove boilerplate, use the SPDX license identifier.
 
-Does this function have another caller?
+Signed-off-by: Kris Bahnsen <kris@embeddedTS.com>
+---
+ drivers/gpio/gpio-ts4900.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-It looks as if this function doesn't need to be EXPORT_SYMBOL_GPL
-and could just be declared static in the file instead.
-
-btw: using %1d is mostly senseless as a control, but has some
-     documentary use as a value < 0 or >= 10 will be always be
-     fully emitted anyway.
-
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-[]
-> @@ -634,14 +634,10 @@ ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
->  			pullen,
->  			pullup);
->  
-> -	if (r1 != -1) {
-> -		len += scnprintf(buf + len, buf_len - len, " (%1d %1d)\n",
-> -			r1, r0);
-> -	} else if (rsel != -1) {
-> -		len += scnprintf(buf + len, buf_len - len, " (%1d)\n", rsel);
-> -	} else {
-> -		len += scnprintf(buf + len, buf_len - len, "\n");
-> -	}
-> +	if (r1 != -1)
-> +		len += scnprintf(buf + len, buf_len - len, " (%1d %1d)", r1, r0);
-> +	else if (rsel != -1)
-> +		len += scnprintf(buf + len, buf_len - len, " (%1d)", rsel);
->  
->  	return len;
->  }
-
+diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
+index d918d2df4de2..69854fd2382a 100644
+--- a/drivers/gpio/gpio-ts4900.c
++++ b/drivers/gpio/gpio-ts4900.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Digital I/O driver for Technologic Systems I2C FPGA Core
+  *
+  * Copyright (C) 2015, 2018 Technologic Systems
+  * Copyright (C) 2016 Savoir-Faire Linux
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+- * kind, whether expressed or implied; without even the implied warranty
+- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License version 2 for more details.
+  */
+ 
+ #include <linux/gpio/driver.h>
+-- 
+2.11.0
 
