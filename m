@@ -2,135 +2,90 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB00C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Mar 2022 01:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C13C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Mar 2022 03:00:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239118AbiCJBRw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Mar 2022 20:17:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53590 "EHLO
+        id S237533AbiCJDBt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Mar 2022 22:01:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239108AbiCJBRn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2022 20:17:43 -0500
-Received: from smtp-out3.electric.net (smtp-out3.electric.net [208.70.128.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D971C125535;
-        Wed,  9 Mar 2022 17:16:43 -0800 (PST)
-Received: from 1nS7Pz-0008LN-Tz by out3a.electric.net with emc1-ok (Exim 4.94.2)
-        (envelope-from <kris@embeddedTS.com>)
-        id 1nS7Q1-0008PP-Vx; Wed, 09 Mar 2022 17:16:41 -0800
-Received: by emcmailer; Wed, 09 Mar 2022 17:16:41 -0800
-Received: from [66.210.251.27] (helo=mail.embeddedts.com)
-        by out3a.electric.net with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <kris@embeddedTS.com>)
-        id 1nS7Pz-0008LN-Tz; Wed, 09 Mar 2022 17:16:39 -0800
-Received: from tsdebian.Massive (unknown [75.164.75.221])
-        by mail.embeddedts.com (Postfix) with ESMTPSA id 85AD91AAE;
-        Wed,  9 Mar 2022 18:16:38 -0700 (MST)
-From:   Kris Bahnsen <kris@embeddedTS.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mark Featherston <mark@embeddedTS.com>,
-        Kris Bahnsen <kris@embeddedTS.com>
-Subject: [PATCH v3 1/2] gpio: ts4900: Do not set DAT and OE together
-Date:   Wed,  9 Mar 2022 17:16:16 -0800
-Message-Id: <20220310011617.29660-2-kris@embeddedTS.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20220310011617.29660-1-kris@embeddedTS.com>
-References: <20220310011617.29660-1-kris@embeddedTS.com>
-X-Outbound-IP: 66.210.251.27
-X-Env-From: kris@embeddedTS.com
-X-Proto: esmtps
-X-Revdns: wsip-66-210-251-27.ph.ph.cox.net
-X-HELO: mail.embeddedts.com
-X-TLS:  TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256
-X-Authenticated_ID: 
-X-Virus-Status: Scanned by VirusSMART (c)
-X-Virus-Status: Scanned by VirusSMART (b)
-X-FM-Delivery-Delay: 15749372,23518412
-X-PolicySMART: 13164782, 15749372, 26810492
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=embeddedTS.com; s=mailanyone20220121;h=References:In-Reply-To:Message-Id:Date:To:From; bh=8wyGVFJPNB2jCzDjKR0LThAefQWN+7Tnxe9+aJ7ZSmo=;b=WEq3V4kSpT68o8LuPVu+207SbGCgplAgG08S5ZPi1Kt9mSJP0jf75Ekp9iSt34YSw0EUUOOhceOsex6QT9844xU+rOpmdC148YhcDvasdY71De6ZcHxYDAEjWKFr+HLo5mX99z7XQvkz6vGmo3BdaRhlsHQQ4cQLfBZKrhpkfG/SoC3tUfBBgbIXRyJ8S6Te/8znnnK6/lfnBK9OeLBBZ1aqsjG2QedtL70MhqfPxEt2Wv1CS3RJXghzesNbNibZNGZztW7TCKTVIUscUm6lFhp3RU/XVAT5dMieGa36ehi6BZ0ozevTYQ1xWiwxZe1lQuZtwlE+byONkmVaCb7Now==;
-X-FM-Delivery-Delay: 15749372,23518412
-X-PolicySMART: 13164782, 15749372, 26810492
-X-FM-Delivery-Delay: 15749372,23518412
-X-PolicySMART: 13164782, 15749372, 26810492
-X-FM-Delivery-Delay: 15749372,23518412
-X-PolicySMART: 13164782, 15749372, 26810492
+        with ESMTP id S237021AbiCJDBs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2022 22:01:48 -0500
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [IPv6:2001:df5:b000:5::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1771C124C3F
+        for <linux-gpio@vger.kernel.org>; Wed,  9 Mar 2022 19:00:46 -0800 (PST)
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 376552C0C61;
+        Thu, 10 Mar 2022 03:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1646881244;
+        bh=bhyF/NCDXANrCw6v9FLOgZoyTG+XDLRL020LrUJIdEo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nqdCnlxNG74lIoOiQsoGhAnF2YXVFhcPabOttpOFU0cyA2I7uzLfmIwLPoU+J8iWk
+         nFAbVhw6wfr954swdBfDqCF7pym3uWlS9Q9Lw5g2jkqF0lzmqzx4yh1V6iQ9lz1O6A
+         3UUvy8ifLBcB4a7qEFjI8Skq165QGVtsSl3zVsgVGenVSKpytQNkjnibhqJNxBQqoI
+         YnmhIe+jjhiCmJHvbh1Oev2h7A5MyjOD4jy1wfKm8JGyYPLHNv1lKN3ilzn1VZceOJ
+         u4opikFZBYhXtmHDEUu3700binh2Qk8iDexMJmVvxtuUmbnAjiib6vI8Ql9NJk9e/y
+         +ZrmAjjFepSqg==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+        id <B622969db0004>; Thu, 10 Mar 2022 16:00:43 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by pat.atlnz.lc (Postfix) with ESMTP id 9C82913EE9C;
+        Thu, 10 Mar 2022 16:00:43 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id ACBCF2A00D4; Thu, 10 Mar 2022 16:00:41 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, robh+dt@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, andrew@lunn.ch,
+        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
+        kostap@marvell.com, robert.marko@sartura.hr
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v1 4/4] arm64: marvell: enable the 98DX2530 pinctrl driver
+Date:   Thu, 10 Mar 2022 16:00:39 +1300
+Message-Id: <20220310030039.2833808-5-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220310030039.2833808-1-chris.packham@alliedtelesis.co.nz>
+References: <20220310030039.2833808-1-chris.packham@alliedtelesis.co.nz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.3 cv=Cfh2G4jl c=1 sm=1 tr=0 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=o8Y5sQTvuykA:10 a=XQcNo-tEeLJW46c85tUA:9
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Mark Featherston <mark@embeddedTS.com>
+This commit makes sure the drivers for the 98DX2530 pin controller is
+enabled.
 
-This works around an issue with the hardware where both OE and
-DAT are exposed in the same register. If both are updated
-simultaneously, the harware makes no guarantees that OE or DAT
-will actually change in any given order and may result in a
-glitch of a few ns on a GPIO pin when changing direction and value
-in a single write.
-
-Setting direction to input now only affects OE bit. Setting
-direction to output updates DAT first, then OE.
-
-Fixes: 9c6686322d74 ("gpio: add Technologic I2C-FPGA gpio support")
-
-Signed-off-by: Mark Featherston <mark@embeddedTS.com>
-Signed-off-by: Kris Bahnsen <kris@embeddedTS.com>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- drivers/gpio/gpio-ts4900.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ arch/arm64/Kconfig.platforms | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-index d885032cf814..d918d2df4de2 100644
---- a/drivers/gpio/gpio-ts4900.c
-+++ b/drivers/gpio/gpio-ts4900.c
-@@ -1,7 +1,7 @@
- /*
-  * Digital I/O driver for Technologic Systems I2C FPGA Core
-  *
-- * Copyright (C) 2015 Technologic Systems
-+ * Copyright (C) 2015, 2018 Technologic Systems
-  * Copyright (C) 2016 Savoir-Faire Linux
-  *
-  * This program is free software; you can redistribute it and/or
-@@ -55,19 +55,33 @@ static int ts4900_gpio_direction_input(struct gpio_chip *chip,
- {
- 	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
- 
--	/*
--	 * This will clear the output enable bit, the other bits are
--	 * dontcare when this is cleared
-+	/* Only clear the OE bit here, requires a RMW. Prevents potential issue
-+	 * with OE and data getting to the physical pin at different times.
- 	 */
--	return regmap_write(priv->regmap, offset, 0);
-+	return regmap_update_bits(priv->regmap, offset, TS4900_GPIO_OE, 0);
- }
- 
- static int ts4900_gpio_direction_output(struct gpio_chip *chip,
- 					unsigned int offset, int value)
- {
- 	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+	unsigned int reg;
- 	int ret;
- 
-+	/* If changing from an input to an output, we need to first set the
-+	 * proper data bit to what is requested and then set OE bit. This
-+	 * prevents a glitch that can occur on the IO line
-+	 */
-+	regmap_read(priv->regmap, offset, &reg);
-+	if (!(reg & TS4900_GPIO_OE)) {
-+		if (value)
-+			reg = TS4900_GPIO_OUT;
-+		else
-+			reg &= ~TS4900_GPIO_OUT;
-+
-+		regmap_write(priv->regmap, offset, reg);
-+	}
-+
- 	if (value)
- 		ret = regmap_write(priv->regmap, offset, TS4900_GPIO_OE |
- 							 TS4900_GPIO_OUT);
--- 
-2.11.0
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 21697449d762..6bbb56901794 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -183,11 +183,13 @@ config ARCH_MVEBU
+ 	select PINCTRL_ARMADA_37XX
+ 	select PINCTRL_ARMADA_AP806
+ 	select PINCTRL_ARMADA_CP110
++	select PINCTRL_AC5
+ 	help
+ 	  This enables support for Marvell EBU familly, including:
+ 	   - Armada 3700 SoC Family
+ 	   - Armada 7K SoC Family
+ 	   - Armada 8K SoC Family
++	   - 98DX2530 SoC Family
+=20
+ config ARCH_MXC
+ 	bool "ARMv8 based NXP i.MX SoC family"
+--=20
+2.35.1
 
