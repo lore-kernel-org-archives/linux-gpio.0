@@ -2,193 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CE4C49ED8
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Mar 2022 14:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AE3C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Mar 2022 14:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235516AbiCJOei (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Mar 2022 09:34:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
+        id S243235AbiCJOzm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Mar 2022 09:55:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245759AbiCJOax (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Mar 2022 09:30:53 -0500
-Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A20A186BB6;
-        Thu, 10 Mar 2022 06:26:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=X+z54Gq/Kh0PoKxHLLeQbmlP658ai3SMxXoXeIbzp88=; b=UF7VNzrBw+MgOPrTTrt86DqHf9
-        yfuXVm0+wA5PHjD/wcSGjxcR/eLBRatyK9mipxXSRFmEikACiHeyoj6ZnfJRbSDZm8yhvnVE5eNWt
-        ocCLxQgk9LabkFtUDr+X4Ltk/Xz7aduFICybsHliO23Sgp6lwI6WXjwzka9HowCWcieA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1nSJk2-00A8zy-Kx; Thu, 10 Mar 2022 15:26:10 +0100
-Date:   Thu, 10 Mar 2022 15:26:10 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org,
-        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
-        kostap@marvell.com, robert.marko@sartura.hr,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 3/4] arm64: dts: marvell: Add Armada 98DX2530 SoC and
- RD-AC5X board
-Message-ID: <YioKgjhEnqylB24M@lunn.ch>
-References: <20220310030039.2833808-1-chris.packham@alliedtelesis.co.nz>
- <20220310030039.2833808-4-chris.packham@alliedtelesis.co.nz>
+        with ESMTP id S1347930AbiCJOvc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Mar 2022 09:51:32 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B8B193;
+        Thu, 10 Mar 2022 06:49:39 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id gb39so12584076ejc.1;
+        Thu, 10 Mar 2022 06:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eNVjl9qTHjv9OQ7hbwu1GBKuQO2O5pzbolI+xiOegY8=;
+        b=Txj7jN686DsD59G5Y+3M7504nOagG4PHsHO0Cf2XKJjpZvcCR/bM8ND4Y63//Gikr6
+         +JWKW3947FN1SzpZIipH9CmaM9BYShZHnbxbTS71KQUlLFggltHn4JhyY1xcKcTCOgAQ
+         pdSIFWIFs7nkHkaio4ti8ERhv/RDOETYJ5uK+WO0miVAUK4ry16es6SOYRwFIj1h3RlK
+         StUfVNDNge0cgtxyax/JYkKjKuicB1FEtaaQldnfIKxNQkOh3G381fXnM/TiXB39qH0T
+         xaa6kkJnoxk0okcWmIsvZN1SUTWIyVU4BOYWfaEHnTScEOTXSsYkEo6jJLOp5tYNnFhk
+         IKag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eNVjl9qTHjv9OQ7hbwu1GBKuQO2O5pzbolI+xiOegY8=;
+        b=WSvN4MPF0lRFMH3YHIPVgZzHcWD33YkTH7LXuYz92zcMarUwmUTG/QcJS/ZXhWi79F
+         6g2uf90eFDOOsr1k5Q4+Do3ZqHtKGMhPw2iKkWtR2dWtael4uIwsYrSHKJ9FN42/Kgpn
+         qCukBiKA7dVeEI6GaqCQVY73KHcgkjciU/+SI+ZtEA0iYdhFjdcGTs3FjF0HWS/cbiAF
+         lDXMGxKDAL6wWdgOjk/k3DX/yITwnuChfk81P3SQ6ytlb5UN0VCQ6V48A0jbg0+UYVIh
+         1WvMF59e0oPPdGhBciFdR82/DWbLHX3eIby8xVE93b8CiAm/0DGTdkO2r8fkGP0g3ydC
+         +QIg==
+X-Gm-Message-State: AOAM5318qezp16CQN6NLxVWAYJTBaxHmhgAt9B6PjBFzrSojb4/CSjsl
+        9zfKxzvRkFCZ3WEwlBQV6JtPIT7t1lQxyI8ChYncdpPDuzY=
+X-Google-Smtp-Source: ABdhPJzoyHI+zS/vaRnHv+51EqVDRvenxlXuJ6/WLn8emPWQLYy8fZ0gYt6TEeXGA3BmERWuOOwbiZUuBMcqeTsRGlM=
+X-Received: by 2002:a17:907:7243:b0:6db:7521:afc7 with SMTP id
+ ds3-20020a170907724300b006db7521afc7mr4752051ejc.44.1646923778317; Thu, 10
+ Mar 2022 06:49:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220310030039.2833808-4-chris.packham@alliedtelesis.co.nz>
+References: <20220310011617.29660-1-kris@embeddedTS.com> <20220310011617.29660-2-kris@embeddedTS.com>
+In-Reply-To: <20220310011617.29660-2-kris@embeddedTS.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 10 Mar 2022 16:48:22 +0200
+Message-ID: <CAHp75Vdu1r0S2ZCjH2mjToYZiwQTOiUAvY5v-T7f=u28tVuxcQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] gpio: ts4900: Do not set DAT and OE together
+To:     Kris Bahnsen <kris@embeddedts.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Featherston <mark@embeddedts.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 04:00:38PM +1300, Chris Packham wrote:
-> The 98DX2530 SoC is the Control and Management CPU integrated into
-> the Marvell 98DX25xx and 98DX35xx series of switch chip (internally
-> referred to as AlleyCat5 and AlleyCat5X).
-> 
-> These files have been taken from the Marvell SDK and lightly cleaned
-> up with the License and copyright retained.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> 
-> Notes:
->     This has a number of undocumented compatible strings. I've got the SDK
->     source so I'll either bring through whatever drivers are needed or look
->     at for an in-tree alternative (e.g. there is SDK code for a ac5-gpio but
->     the existing marvell,orion-gpio seems to cover what is needed if you use
->     an appropriate binding).
+On Thu, Mar 10, 2022 at 2:22 PM Kris Bahnsen <kris@embeddedts.com> wrote:
+>
+> From: Mark Featherston <mark@embeddedTS.com>
 
-Hi Chris
+Same comments as per v2.
 
-My understand is, you don't add nodes for which there is no
-driver. The driver and its binding needs to be reviewed and accepted
-before users of it are added.
 
-> +	mvDma {
-> +		compatible = "marvell,mv_dma";
-> +		memory-region = <&prestera_rsvd>;
-> +		status = "okay";
-> +	};
-
-Is this different to the existing Marvell XOR engine?
-
-> +			mdio: mdio@20000 {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				compatible = "marvell,orion-mdio";
-> +				reg = <0x22004 0x4>;
-> +				clocks = <&core_clock>;
-> +				phy0: ethernet-phy@0 {
-> +					reg = < 0 0 >;
-> +				};
-
-This embedded PHY looks wrong. reg should be a single value.
-
-Is the PHY internal? Generally, the PHY is put in the .dts file, but
-if it is internal, that the .dtsi would be correct.
-
-> +				sdhci0: sdhci@805c0000 {
-> +					compatible = "marvell,ac5-sdhci", "marvell,armada-ap806-sdhci";
-
-This additional compatible should be added to the existing binding
-document.
-
-> +			eth0: ethernet@20000 {
-> +				compatible = "marvell,armada-ac5-neta";
-
-So it is not compatible with plain nata?
-
-> +				reg = <0x0 0x20000 0x0 0x4000>;
-> +				interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&core_clock>;
-> +				status = "disabled";
-> +				phy-mode = "sgmii";
-> +			};
-> +
-> +			eth1: ethernet@24000 {
-> +				compatible = "marvell,armada-ac5-neta";
-> +				reg = <0x0 0x24000 0x0 0x4000>;
-> +				interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&core_clock>;
-> +				status = "disabled";
-> +				phy-mode = "sgmii";
-> +				fixed-link {
-> +					speed = <100>;
-> +					full-duplex;
-> +				};
-
-Fast Ethernet? Yet SGMII?
-
-> +			/* USB0 is a host USB */
-> +			usb0: usb@80000 {
-> +				compatible = "marvell,ac5-ehci", "marvell,orion-ehci";
-
-Please add this compatible to the binding.
-
-> +		pcie0: pcie@800a0000 {
-> +			compatible = "marvell,ac5-pcie", "snps,dw-pcie";
-
-Please add this ...
-
-> +			spiflash0: spi-flash@0 {
-> +				compatible = "spi-nor";
-> +				spi-max-frequency = <50000000>;
-> +				spi-tx-bus-width = <1>; /* 1-single, 2-dual, 4-quad */
-> +				spi-rx-bus-width = <1>; /* 1-single, 2-dual, 4-quad */
-> +				reg = <0>;
-> +
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +
-> +				partition@0 {
-> +					label = "spi_flash_part0";
-> +					reg = <0x0 0x800000>;
-> +				};
-> +
-> +				parition@1 {
-> +					label = "spi_flash_part1";
-> +					reg = <0x800000 0x700000>;
-> +				};
-> +
-> +				parition@2 {
-> +					label = "spi_flash_part2";
-> +					reg = <0xF00000 0x100000>;
-> +				};
-
-The partitioning of the flash i would expect to be board specific, so
-belongs on the .dts file.
-
-> +		nand: nand@805b0000 {
-> +			compatible = "marvell,ac5-nand-controller";
-
-The current NAND driver does not work?
-
-> +		prestera {
-> +			compatible = "marvell,armada-ac5-switch";
-> +			interrupts = <GIC_SPI 0x23 IRQ_TYPE_LEVEL_HIGH>;
-> +			status = "okay";
-> +		};
-
-Here we have to be careful with naming. I assume Marvell in kernel
-Pretera driver does not actually work on the prestera hardware? That
-driver assumes you are running Marvell firmware on this SoC, and have
-a host running that driver which talks to the SoC firmware?
-
-The name perstera seems O.K, and the compatible
-marvell,armada-ac5-switch makes it clear the prestera driver cannot be
-used. However, until we do actually have a driver, i don't think this
-node should be added.
-
-> +		watchdog@80216000 {
-> +			compatible = "marvell,ac5-wd";
-
-Not compatible with the existing watchdog driver?
-
-    Andrew
+-- 
+With Best Regards,
+Andy Shevchenko
