@@ -2,29 +2,29 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C33C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Mar 2022 01:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA64C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Mar 2022 01:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239104AbiCJBRn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Mar 2022 20:17:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
+        id S239111AbiCJBRo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Mar 2022 20:17:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238683AbiCJBRn (ORCPT
+        with ESMTP id S239085AbiCJBRn (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2022 20:17:43 -0500
-Received: from smtp-out3.electric.net (smtp-out3.electric.net [208.70.128.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D180F12222F;
+Received: from smtp-out3.electric.net (smtp-out3.electric.net [208.70.128.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF91B125591;
         Wed,  9 Mar 2022 17:16:43 -0800 (PST)
-Received: from 1nS7Pz-0006Tu-VQ by out3d.electric.net with emc1-ok (Exim 4.94.2)
+Received: from 1nS7Py-0008LB-Vq by out3a.electric.net with emc1-ok (Exim 4.94.2)
         (envelope-from <kris@embeddedTS.com>)
-        id 1nS7Q0-0006WB-VR; Wed, 09 Mar 2022 17:16:40 -0800
-Received: by emcmailer; Wed, 09 Mar 2022 17:16:40 -0800
+        id 1nS7Q1-0008O6-Te; Wed, 09 Mar 2022 17:16:41 -0800
+Received: by emcmailer; Wed, 09 Mar 2022 17:16:41 -0800
 Received: from [66.210.251.27] (helo=mail.embeddedts.com)
-        by out3d.electric.net with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        by out3a.electric.net with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <kris@embeddedTS.com>)
-        id 1nS7Pz-0006Tu-VQ; Wed, 09 Mar 2022 17:16:39 -0800
+        id 1nS7Py-0008LB-Vq; Wed, 09 Mar 2022 17:16:38 -0800
 Received: from tsdebian.Massive (unknown [75.164.75.221])
-        by mail.embeddedts.com (Postfix) with ESMTPSA id F01CF1AB0;
+        by mail.embeddedts.com (Postfix) with ESMTPSA id 1A9591AAC;
         Wed,  9 Mar 2022 18:16:38 -0700 (MST)
 From:   Kris Bahnsen <kris@embeddedTS.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -32,12 +32,10 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Mark Featherston <mark@embeddedTS.com>,
         Kris Bahnsen <kris@embeddedTS.com>
-Subject: [PATCH v3 2/2] gpio: ts4900: Use SPDX header
-Date:   Wed,  9 Mar 2022 17:16:17 -0800
-Message-Id: <20220310011617.29660-3-kris@embeddedTS.com>
+Subject: [PATCH v3 0/2] gpio: ts4900: Do not set DAT and OE together 
+Date:   Wed,  9 Mar 2022 17:16:15 -0800
+Message-Id: <20220310011617.29660-1-kris@embeddedTS.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20220310011617.29660-1-kris@embeddedTS.com>
-References: <20220310011617.29660-1-kris@embeddedTS.com>
 X-Outbound-IP: 66.210.251.27
 X-Env-From: kris@embeddedTS.com
 X-Proto: esmtps
@@ -49,7 +47,7 @@ X-Virus-Status: Scanned by VirusSMART (c)
 X-Virus-Status: Scanned by VirusSMART (b)
 X-FM-Delivery-Delay: 15749372,23518412
 X-PolicySMART: 13164782, 15749372, 26810492
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=embeddedTS.com; s=mailanyone20220121;h=References:In-Reply-To:Message-Id:Date:To:From; bh=cwEQ9Gjrxcgi44g6+bljgIEY7KxoaRU7Il3yzgGCDr4=;b=do+ABU/mk6GhupMnR2sA29Jdtivs2YpMbyNjIqWEw4sF9TCDYDjACsTbRgoVuEuGFfJIKdeX1z+rk9q3iRfNFVnm3s1meBXRvLVj/70dfRuE4KacwDh1hflLMXPC0M6ulZB7Q/IPlPC4iJyx/qH3qU3YF1/wF9EQvC7ZQ7LvM7xl4II/F43NdBh6acYIepBzl/03ijoiNZN/9b2LmdnKqrJJJiSHXvN2nm2UBfA+SCU5RusmFz7HBrRGjIgyvJn8fvUo6kUx1j9M82Z5l6HloJNfUQyQAiJ1jFzBPo+/sLKTbx7kKAkPMKTqsAl+/DX3lnXQ3MFI8RP4N4PQv8+1xw==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=embeddedTS.com; s=mailanyone20220121;h=Message-Id:Date:To:From; bh=jKCdU384I5hqfWrPI4Nn57HKMO5xV5vRsz52SSYuEro=;b=CpE4fMQXaTu7lWEox7S5x8F85VW+P5uqijVib1MElgI2LFEC9FlHYgd6WgHMhfNtWnksDH6/xEXm2E1JaQVrhukvqxkYWDC0+HIslRC+19eIDZENaiFPA2ue+6jF/dQVNlYVXsJKCoop8bFRKoVgt66L9pL/rpI3O9r8sVxkl88GI44+uJuAa9/Y3JXfLEJauBHuoqIyOt36gE9l5WikFeSgqzbY2qzVNps0KNs56hpQ35soMwQLn1ssYLpK4MNzUtq1FS19qkZR+BI0FTB6hohfe3nW3DUOmiWTI23v4mC4YH5YOvp9T2j7RsnCGUTly5TRxL8NKYwcpdltdUaPGQ==;
 X-FM-Delivery-Delay: 15749372,23518412
 X-PolicySMART: 13164782, 15749372, 26810492
 X-FM-Delivery-Delay: 15749372,23518412
@@ -60,36 +58,30 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove boilerplate, use the SPDX license identifier.
+Work around hardware race condition when setting DAT and OE in same
+transaction. Also clean up license boilerplate and use SPDX.
 
-Signed-off-by: Kris Bahnsen <kris@embeddedTS.com>
----
- drivers/gpio/gpio-ts4900.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+I was not sure if it was preferred to make it a series or individual
+patches. I went with series because "gpio: ts4900: Use SPDX header"
+cannot cleanly apply by itself due to copyright year changes in the fix
+commit. If this is not preferred, please let me know.
 
-diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-index d918d2df4de2..69854fd2382a 100644
---- a/drivers/gpio/gpio-ts4900.c
-+++ b/drivers/gpio/gpio-ts4900.c
-@@ -1,17 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Digital I/O driver for Technologic Systems I2C FPGA Core
-  *
-  * Copyright (C) 2015, 2018 Technologic Systems
-  * Copyright (C) 2016 Savoir-Faire Linux
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether expressed or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License version 2 for more details.
-  */
- 
- #include <linux/gpio/driver.h>
+V3:
+- Move addition of SPDX identifier to separate commit
+- Remove license boilerplate in file
+
+V2:
+- Add Fixes tag
+
+Kris Bahnsen (1):
+  gpio: ts4900: Use SPDX header
+
+Mark Featherston (1):
+  gpio: ts4900: Do not set DAT and OE together
+
+ drivers/gpio/gpio-ts4900.c | 34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
+
 -- 
 2.11.0
 
