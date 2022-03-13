@@ -2,114 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DD2C433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Mar 2022 13:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1587C433F5
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Mar 2022 15:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbiCLNIG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 12 Mar 2022 08:08:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47196 "EHLO
+        id S233635AbiCMPbA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Mar 2022 11:31:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbiCLNIF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Mar 2022 08:08:05 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8D9E235849;
-        Sat, 12 Mar 2022 05:06:58 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id yy13so24607879ejb.2;
-        Sat, 12 Mar 2022 05:06:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XbcW2OOJ7LSE1WOue0Ifdm+n2BhfLZSK5oy0hShBNp8=;
-        b=i0Df7eXgu5ECZdRFO999p7sSOXO9g2T7uxD/dwZdpbmYIyEDGH0YiC8IazXIqTJWBn
-         wMQ369rGT7wUPS7vgp7RvYlEiI7g3oYrwJmlqXqWnast52NdFbmpeoWQ+tvYbFR4YZMb
-         fFSfFrfRXO/TiiqYle1hG1QBtuSNcwWXwK9wLN/qqORlgHeb+j9U+4EqUhEIxX/GD2lj
-         TOs2cr231JZiKkUUbfFGWGDDNNUHqT3NfJ22jQvHAsyJ2D7uBVNfpln+iryVbSU3/40g
-         XkhOTtUvFUT0ZzwbevUSELlVswoACPIfMUFvMhzu1H7r15CEtPwkuCnZhZNPimN929ns
-         OvNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XbcW2OOJ7LSE1WOue0Ifdm+n2BhfLZSK5oy0hShBNp8=;
-        b=2lfCr2x/u3nWi4pRay99xGDIFRlEpqTKKoBVqsebn2TQs8bdvVFfT3873rmoNf6NZM
-         AKVuagpFDSN2YVZgX9mjtij8rGKh1E+O9cVTX58PA7sXmmMu5zrMRJowststJXT+eaiA
-         qbtI0vNl6Fur68WlzT10yzoir6l6wX2LAQey4LLXMPVL9jitL5/fHPF3csWMdaGY1R1r
-         OIcwedaWVXGI+p2EUpBvYdMMZ9eE1UOSRpHrlfSwYJ9tDZTvJQYvoa+w6cNmptPfv9e2
-         fAFWOROIFXgw1T70ePcc23Dm/0D93OlvKLkY9k1hZVSdDTzYsXb+3yuRKtPA3IDTeXus
-         QN2g==
-X-Gm-Message-State: AOAM531YWNNG/uffIqjFkkaERmx6+TmY3Yr4nY/8bBrn//A0i70d02RX
-        Apj4sqP1OcdXHMv/N5iEs6Q0jXo0y0upHVtRidA=
-X-Google-Smtp-Source: ABdhPJwqtxEcJgQom5xQ63KkbG6+LO8HbumW/l63Ii9C88UxG/hHoFSg0W5PUCIoip6Fm0apWFcRrcRlu+kaAlOLc70=
-X-Received: by 2002:a17:907:6e01:b0:6d0:562c:e389 with SMTP id
- sd1-20020a1709076e0100b006d0562ce389mr12346915ejc.497.1647090416933; Sat, 12
- Mar 2022 05:06:56 -0800 (PST)
+        with ESMTP id S233131AbiCMPbA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Mar 2022 11:31:00 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [176.9.125.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E59838DA9;
+        Sun, 13 Mar 2022 08:29:51 -0700 (PDT)
+Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 3B59622438;
+        Sun, 13 Mar 2022 16:29:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1647185389;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3/jJPQNTYcscMExGs+f7OHojmn6MFY4V2UBkBJ0zayk=;
+        b=KUBxIRbgQqOpPnYnojPVvo44Vma2rf8pFgAO5tLGcaptKcF3NtgMu/MDqdyU9F6oShT5CZ
+        MIBmB85uIGWJiWLDhTsYN/6pQEtiteFZl1XDXzv4bT1PN5tR53B10hGVUttD94K2in9H3r
+        NvhnFcZb8Ewkr7IYoA5TEBS6SeDy93I=
+From:   Michael Walle <michael@walle.cc>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Paul Burton <paulburton@kernel.org>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        UNGLinuxDriver@microchip.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v1 4/8] MIPS: mscc: ocelot: fix load/save GPIO pinctrl name
+Date:   Sun, 13 Mar 2022 16:29:20 +0100
+Message-Id: <20220313152924.61931-5-michael@walle.cc>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220313152924.61931-1-michael@walle.cc>
+References: <20220313152924.61931-1-michael@walle.cc>
 MIME-Version: 1.0
-References: <20220311181958.4487-1-kris@embeddedTS.com>
-In-Reply-To: <20220311181958.4487-1-kris@embeddedTS.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 12 Mar 2022 15:06:20 +0200
-Message-ID: <CAHp75VfVhCa-Td+X0cg-eYPtarFyKrsF92oPB2HdraCXW2CRTg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: ts4900: Fix comment formatting and grammar
-To:     Kris Bahnsen <kris@embeddedts.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 8:20 PM Kris Bahnsen <kris@embeddedts.com> wrote:
->
-> The issues were pointed out after the prior commit was applied
+The pinctrl device tree binding will be converted to YAML format. All
+the pin nodes should end with "-pins". Fix them.
 
-Missed period in the above sentence.
+Fixes: 15324652f612 ("MIPS: dts: ocelot: describe the load/save GPIO")
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ arch/mips/boot/dts/mscc/ocelot_pcb120.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Otherwise LGTM,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-> Signed-off-by: Kris Bahnsen <kris@embeddedTS.com>
-> ---
->  drivers/gpio/gpio-ts4900.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-> index d918d2df4de2..ede605b8e098 100644
-> --- a/drivers/gpio/gpio-ts4900.c
-> +++ b/drivers/gpio/gpio-ts4900.c
-> @@ -55,8 +55,9 @@ static int ts4900_gpio_direction_input(struct gpio_chip *chip,
->  {
->         struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
->
-> -       /* Only clear the OE bit here, requires a RMW. Prevents potential issue
-> -        * with OE and data getting to the physical pin at different times.
-> +       /*
-> +        * Only clear the OE bit here, requires a RMW. Prevents a potential issue
-> +        * with OE and DAT getting to the physical pin at different times.
->          */
->         return regmap_update_bits(priv->regmap, offset, TS4900_GPIO_OE, 0);
->  }
-> @@ -68,9 +69,10 @@ static int ts4900_gpio_direction_output(struct gpio_chip *chip,
->         unsigned int reg;
->         int ret;
->
-> -       /* If changing from an input to an output, we need to first set the
-> -        * proper data bit to what is requested and then set OE bit. This
-> -        * prevents a glitch that can occur on the IO line
-> +       /*
-> +        * If changing from an input to an output, we need to first set the
-> +        * GPIO's DAT bit to what is requested and then set the OE bit. This
-> +        * prevents a glitch that can occur on the IO line.
->          */
->         regmap_read(priv->regmap, offset, &reg);
->         if (!(reg & TS4900_GPIO_OE)) {
-> --
-> 2.11.0
->
-
-
+diff --git a/arch/mips/boot/dts/mscc/ocelot_pcb120.dts b/arch/mips/boot/dts/mscc/ocelot_pcb120.dts
+index cda6c5ff58ad..d348742c233d 100644
+--- a/arch/mips/boot/dts/mscc/ocelot_pcb120.dts
++++ b/arch/mips/boot/dts/mscc/ocelot_pcb120.dts
+@@ -27,7 +27,7 @@ phy_int_pins: phy-int-pins {
+ 		function = "gpio";
+ 	};
+ 
+-	phy_load_save_pins: phy_load_save_pins {
++	phy_load_save_pins: phy-load-save-pins {
+ 		pins = "GPIO_10";
+ 		function = "ptp2";
+ 	};
 -- 
-With Best Regards,
-Andy Shevchenko
+2.30.2
+
