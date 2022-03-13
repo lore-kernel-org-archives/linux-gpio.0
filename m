@@ -2,33 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D275C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA7DC433FE
 	for <linux-gpio@archiver.kernel.org>; Sun, 13 Mar 2022 15:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232284AbiCMPr6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 13 Mar 2022 11:47:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56174 "EHLO
+        id S234494AbiCMPr7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Mar 2022 11:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231284AbiCMPr5 (ORCPT
+        with ESMTP id S231959AbiCMPr5 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Mar 2022 11:47:57 -0400
 Received: from ssl.serverraum.org (ssl.serverraum.org [176.9.125.105])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D16E27DA8C;
-        Sun, 13 Mar 2022 08:46:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94EE27DAA0;
+        Sun, 13 Mar 2022 08:46:49 -0700 (PDT)
 Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id CAF7922238;
-        Sun, 13 Mar 2022 16:46:46 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id E856C223EF;
+        Sun, 13 Mar 2022 16:46:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1647186407;
+        t=1647186408;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Qr92Pc8f/RQIdb/jQELsOvKeAwDBP677Kf4wYZGCxVo=;
-        b=QCgjEFenp5SXsc1n3zjS+T7Np6AzPSFSZHn5rrOU7ccyPW5lJPcPI2z10pmJvKeWzWukFb
-        +NVsUZFVP0HTBCQ0Q8kiYGH2Loc8ja13OnD17bnZSW2XFjjWeJrWH/IBh0jVtKfXAJ/P2q
-        ysQ0fmzj5F/npfnHK3AOZwoqb+xyioI=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=r2oDBm7XwTIj1wUIwXGRbsRxYr/b/6msPs1FZKQZKzM=;
+        b=NLytNOe5zPssCpFGvLJFzkNfrDEfqfZhKATbQ3JFt/HU08irDB5TJkSE22YO+Bwsf0nAFG
+        6mitJHM+XFJKS9kOvtPiDwDxCRTe00tzGviospKIkafyP66UejntLY74u2UQHuiRkXltN1
+        79SueGK4P9qWiF1LiWTE++W4KsLGrGg=
 From:   Michael Walle <michael@walle.cc>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -40,31 +41,60 @@ Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Horatiu Vultur <horatiu.vultur@microchip.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH RFC v1 0/2] pinctrl: ocelot: add shared reset
-Date:   Sun, 13 Mar 2022 16:46:38 +0100
-Message-Id: <20220313154640.63813-1-michael@walle.cc>
+Subject: [PATCH RFC v1 2/2] pinctrl: ocelot: add optional shared reset
+Date:   Sun, 13 Mar 2022 16:46:40 +0100
+Message-Id: <20220313154640.63813-3-michael@walle.cc>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220313154640.63813-1-michael@walle.cc>
+References: <20220313154640.63813-1-michael@walle.cc>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On LAN966x SoCs, there is an internal reset which is used to reset the
-switch core. But this will also reset the GPIO and the SGPIO. Thus add
-support for this shared reset line.
+On the LAN9668 there is a shared reset line which affects GPIO, SGPIO
+and the switch core. Add support for this shared reset line.
 
-Marked as RFC because it depends on
-https://lore.kernel.org/linux-devicetree/20220313152924.61931-1-michael@walle.cc/
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Michael Walle (2):
-  dt-bindings: pinctrl: ocelot: add reset property
-  pinctrl: ocelot: add optional shared reset
-
- .../devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml | 8 ++++++++
- drivers/pinctrl/pinctrl-ocelot.c                         | 9 +++++++++
- 2 files changed, 17 insertions(+)
-
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 35b213de1af8..d78716533393 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -19,6 +19,7 @@
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ 
+ #include "core.h"
+@@ -1906,6 +1907,7 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ocelot_pinctrl *info;
++	struct reset_control *reset;
+ 	struct regmap *pincfg;
+ 	void __iomem *base;
+ 	int ret;
+@@ -1921,6 +1923,13 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	info->desc = (struct pinctrl_desc *)device_get_match_data(dev);
+ 
++	reset = devm_reset_control_get_optional_shared(dev, "switch");
++	if (IS_ERR(reset)) {
++		dev_err(dev, "Failed to get reset\n");
++		return PTR_ERR(reset);
++	}
++	reset_control_reset(reset);
++
+ 	base = devm_ioremap_resource(dev,
+ 			platform_get_resource(pdev, IORESOURCE_MEM, 0));
+ 	if (IS_ERR(base))
 -- 
 2.30.2
 
