@@ -2,38 +2,37 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8B6C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 06:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F871C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 06:07:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353751AbiCPGI5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Mar 2022 02:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55844 "EHLO
+        id S1353722AbiCPGJG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Mar 2022 02:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353722AbiCPGI4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 02:08:56 -0400
+        with ESMTP id S1353777AbiCPGI6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 02:08:58 -0400
 Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8030F60A9C;
-        Tue, 15 Mar 2022 23:07:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F177160AAB;
+        Tue, 15 Mar 2022 23:07:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1647410864; x=1678946864;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=P8IfAWTDGVPmQKmJvYEfh7oWc7C4SlN2zWmkSg/4iVk=;
-  b=v/3WFfD1WfjelI8ObG0tefGTn19Grh/7MadTv3zfsq6/GGBzFLNSENWH
-   KGhTsbC7vZCNg08SwuBXXgtXdJghHH4cL4+sPv4/XPeRpMlzs3otD7xVA
-   I5/ZKK5wwHpo6TdCPWaC1UaJ0S7tjvwwYOMcCCZNhTY4RCTyTjQAqxk7p
-   U=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 15 Mar 2022 23:07:43 -0700
+  t=1647410865; x=1678946865;
+  h=from:to:cc:subject:date:message-id;
+  bh=Vjl2X9ApUon1cijHUX4swxDHJkO1zzzPSR7XugavMIc=;
+  b=MIdTBl30FNNyUecMKaAAoweGkneYEC/uLNnlVzBZsSDyIbtu7cAB57qb
+   w73/07hK6/YsbgEYpl75fBmUcIhJWfyVBAWTzSheUQM1/uMkYeWIf3m4o
+   N9DkKdXVyynXsVTKMV1tFXNmbpzCfZIHMopdHVbwCrnG5t1tcMH6Hy/1E
+   Y=;
+Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
+  by alexa-out.qualcomm.com with ESMTP; 15 Mar 2022 23:07:45 -0700
 X-QCInternal: smtphost
 Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/AES256-SHA; 15 Mar 2022 23:07:41 -0700
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 15 Mar 2022 23:07:43 -0700
 X-QCInternal: smtphost
 Received: from hu-rohiagar-hyd.qualcomm.com (HELO hu-sgudaval-hyd.qualcomm.com) ([10.213.106.138])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 16 Mar 2022 11:37:24 +0530
+  by ironmsg01-blr.qualcomm.com with ESMTP; 16 Mar 2022 11:37:21 +0530
 Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
-        id 702F04495; Wed, 16 Mar 2022 11:37:23 +0530 (+0530)
+        id 373144495; Wed, 16 Mar 2022 11:37:20 +0530 (+0530)
 From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         linus.walleij@linaro.org, robh+dt@kernel.org, lgirdwood@gmail.com,
@@ -41,35 +40,39 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
 Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rohit Agarwal <quic_rohiagar@quicinc.com>
-Subject: [PATCH 6/6] pinctrl: qcom-pmic-gpio: Add support for pmx65
-Date:   Wed, 16 Mar 2022 11:37:17 +0530
-Message-Id: <1647410837-22537-7-git-send-email-quic_rohiagar@quicinc.com>
+Subject: [PATCH 0/6] Add Power Domains and Regulators in SDX65
+Date:   Wed, 16 Mar 2022 11:37:11 +0530
+Message-Id: <1647410837-22537-1-git-send-email-quic_rohiagar@quicinc.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1647410837-22537-1-git-send-email-quic_rohiagar@quicinc.com>
-References: <1647410837-22537-1-git-send-email-quic_rohiagar@quicinc.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-PMX65 pmic support gpio controller so add compatible.
+Hello,
 
-Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
- 1 file changed, 1 insertion(+)
+This series adds driver and dt-bindings related changes
+in SDX65 to add power domains and regulators.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index f2eac3b..5f19506 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1182,6 +1182,7 @@ static const struct of_device_id pmic_gpio_of_match[] = {
- 	{ .compatible = "qcom,pms405-gpio", .data = (void *) 12 },
- 	/* pmx55 has 11 GPIOs with holes on 3, 7, 10, 11 */
- 	{ .compatible = "qcom,pmx55-gpio", .data = (void *) 11 },
-+	{ .compatible = "qcom,pmx65-gpio", .data = (void *) 16 },
- 	{ },
- };
- 
+Thanks,
+Rohit.
+
+Rohit Agarwal (6):
+  regulator: dt-bindings: Add PMX65 compatibles
+  regulator: qcom-rpmh: Add support for SDX65
+  dt-bindings: power: Add rpm power domain bindings for SDX65
+  soc: qcom: rpmhpd: Add SDX65 power domains
+  dt-bindings: pinctrl: qcom-pmic-gpio: Add pmx65 support
+  pinctrl: qcom-pmic-gpio: Add support for pmx65
+
+ .../bindings/pinctrl/qcom,pmic-gpio.yaml           |  2 ++
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |  1 +
+ .../bindings/regulator/qcom,rpmh-regulator.yaml    |  2 ++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |  1 +
+ drivers/regulator/qcom-rpmh-regulator.c            | 37 ++++++++++++++++++++++
+ drivers/soc/qcom/rpmhpd.c                          | 16 ++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h             |  8 +++++
+ 7 files changed, 67 insertions(+)
+
 -- 
 2.7.4
 
