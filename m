@@ -2,55 +2,55 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C95C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 16:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76389C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 16:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351184AbiCPQIO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Mar 2022 12:08:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36028 "EHLO
+        id S1346912AbiCPQJr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Mar 2022 12:09:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354749AbiCPQIN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 12:08:13 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D3B66C95
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 09:06:58 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id j2so5369374ybu.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 09:06:58 -0700 (PDT)
+        with ESMTP id S1350070AbiCPQHx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 12:07:53 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABD225FF2F
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 09:06:38 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id h126so5313186ybc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 09:06:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=a/fku2jY7FrEwf8BvIHJEVI6TmZJW1EoFquRvwAEEBI=;
-        b=kQniIhahzChESr2Lkq/u/YeQvDTcb3hjU5hkJFuigYB+5zfYmJX5M9Tw4PtLrkfbXH
-         7+GCgpNn3+ixSdB3ecVi3zgZRseJisvsaFJ3iuRqbRkXROeyDT51XAexq6wnj/EPVBu/
-         0mdDQ5crj5nu/soRPXkA54VijpRt8F3QDC/AfnNU9Y1cyCJpA2oBp96Cu0xgJ9mO00B/
-         GB1sEzeRPSBteVmHmUsxF0/CPar3Ftjiyh4Rln/Am2SPBSWA7tTnAd1xDTDQvwqkEQmF
-         7Hd6Zs8FpAQQ8xwcVwnZAJ5oInckAu0b6FPLTZOb4Ij/5uH0D4ncJF762lBIl6g0z/lw
-         94pg==
+        bh=jvZpoB6cFnERxO+/0O9vNqVvN/e5HvQCpLV+GN+m+EM=;
+        b=ZuKHunVlvCPr8n2rnJnCcZRXc06pbvoWlzf/76uaTkBUikRhgluNU2Rk6KE9kLEYD3
+         wOyIlHRF4cb7imwQ4n8Vxt/ySZ3od+Xiyd2GwhCFZ/BXYgEJ7twn+HRCha6VoFy2d+8R
+         fL3zdftRyIt6bLxAlZ/35cDjfHD2q4LBTERaZEEXYCIqVpQjkSj3ceoR/e7K/3/DWyjT
+         lcOvq2yRFqw79F4vPgHDnOZv4yiaeoZFglzouFQUQxuBCLVBvoRS+JoQ4Z7FjT6SoHaO
+         yZ5Wp1wuAR8FkBaCF/x2xGA4BcxjY7QqUORHLh4XA2+NGdtPJz8zi3qImMdleZFIGGyn
+         +EyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a/fku2jY7FrEwf8BvIHJEVI6TmZJW1EoFquRvwAEEBI=;
-        b=3NdmOM8oWknX+y6Xsw/aKGt5JdTBvrBtPgimWW+XezGH8ZtqMpIstJBDXodLI4pXXi
-         sJJLAMB7qqWqhhX/lDUawrfT0gFnX/xNhMoO9NYVdlzUEUUqukAvLv4kgu0CzpJz9TjB
-         x/p6G8Xgp41hmPC3YfzYX222+mhNEyIGOHLLodIydcNhxAmnMHw+oyCVqvoSVkHzkAF2
-         OfYYKrLwsOn3V09GI0bdarg889u6RXl2PEIlls75G/eedY59SKVlneRpQjagGOoSP2cQ
-         b78YcPrPPz9gwa5jD6jGHbmXz13pRykoQluaEzDQ0W7Zsx23387xAc4TN/Kj+EOTjDbu
-         o96w==
-X-Gm-Message-State: AOAM5310S25WocTef8CEh0gY/nmJeEPOeQr8F5iUI9jPCsR5ucKm1tII
-        sDioH+V1r4S6fz2IzgJFr7rKP9c8SRdfPeXQAv63HQ==
-X-Google-Smtp-Source: ABdhPJzpNehbsRHEj6Slc+4ZIcLJRi1k3XLsbjdKqHuiXH7nJyB8JuisPsnUq/kUqSlZbPJMHAytZV8AePC3mbRa4tM=
-X-Received: by 2002:a5b:dc5:0:b0:624:f16d:7069 with SMTP id
- t5-20020a5b0dc5000000b00624f16d7069mr553635ybr.295.1647446817892; Wed, 16 Mar
- 2022 09:06:57 -0700 (PDT)
+        bh=jvZpoB6cFnERxO+/0O9vNqVvN/e5HvQCpLV+GN+m+EM=;
+        b=crna1WwlMv1ZCO4ungESF6ye8DwLQi5ciUq1s6ikvJrY9U9nmhumTMbfND8i82+/Xe
+         EfLYoLg+qoa3D7L3xK6Z3XSb/3AK+VkTaBWiLsvFQqA90onZShnUubjQI/qIhFZE0XEf
+         6/Lk+9r1EfRDb/PjgaD4jhX9BvGUttcVQw/uu2s9WkHTZdOb9p6l6vM0mWVKU6dm/8J4
+         gBDeg8sj6CDCK5rPZt/xH3KyDuHpuuifA0D94Xm5e1x9fMhPlPkJFzgOabCLLYpb328X
+         uufGYThCpibuSulyBJ2PoTSEwl5s+PQXn2dBP9yayxZ6RFnlvUg+iM49XeYT4kpCBk55
+         k9tw==
+X-Gm-Message-State: AOAM530/Lh743p1eJAwHerCWKzkh2o+P2N2GBSc9szZnCfgY54HEHZKG
+        IQxs0+JYboMX+Im4aR+edmQ8tZFQCgaoptetoOQ5aQ==
+X-Google-Smtp-Source: ABdhPJzGDIZoeZOns79O6LnbEyJRCLUOZhKQ3e2pXeAnDxeDpIDNA4ynQo9sjR4TbIXAa981O39StZryshfMjFwRLFA=
+X-Received: by 2002:a25:f406:0:b0:628:c29b:5c39 with SMTP id
+ q6-20020a25f406000000b00628c29b5c39mr591420ybd.369.1647446797921; Wed, 16 Mar
+ 2022 09:06:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220316141636.248324-1-sashal@kernel.org> <20220316141636.248324-10-sashal@kernel.org>
-In-Reply-To: <20220316141636.248324-10-sashal@kernel.org>
+References: <20220316141513.247965-1-sashal@kernel.org> <20220316141513.247965-11-sashal@kernel.org>
+In-Reply-To: <20220316141513.247965-11-sashal@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 16 Mar 2022 17:06:47 +0100
-Message-ID: <CACRpkdZU_wv74MeRiO_bMV03Gwp=8LamsPOGMEpY8Rm-X2Aq8w@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.10 10/12] gpio: Revert regression in sysfs-gpio (gpiolib.c)
+Date:   Wed, 16 Mar 2022 17:06:27 +0100
+Message-ID: <CACRpkdYnDDX2Q-ucyPm2N+yh+Fx-X36HbZ49JvS6QNqw0=9cag@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.15 11/13] gpio: Revert regression in sysfs-gpio (gpiolib.c)
 To:     Sasha Levin <sashal@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         Marcelo Roberto Jimenez <marcelo.jimenez@gmail.com>,
@@ -60,7 +60,7 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 3:17 PM Sasha Levin <sashal@kernel.org> wrote:
+On Wed, Mar 16, 2022 at 3:16 PM Sasha Levin <sashal@kernel.org> wrote:
 
 > From: Marcelo Roberto Jimenez <marcelo.jimenez@gmail.com>
 >
