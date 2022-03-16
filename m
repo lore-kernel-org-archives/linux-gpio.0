@@ -2,107 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0878C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 14:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01768C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 14:48:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356601AbiCPOT0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Mar 2022 10:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
+        id S231273AbiCPOty (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Mar 2022 10:49:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356698AbiCPOTV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 10:19:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79DAA69CD4;
-        Wed, 16 Mar 2022 07:17:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2E554B81B7C;
-        Wed, 16 Mar 2022 14:17:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE81C340E9;
-        Wed, 16 Mar 2022 14:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647440247;
-        bh=92c5oGKIW9mRLJNxR3M1moq+pdxQQ9rEzZE5veFZPLc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NxDvU5yutwV6gA3tr7XAb5htuB71k6wS3W4JldB2ugH5FZB9/pVU/DUv0Kh+os3K9
-         tmidzCHkhN7PyK0HoNCoWjtUbLKljrG9WEF+7t5fje/FoTUBSC/rCkzzR9yc4iYb4c
-         I3iDFozi1hovZKq5kuO97urU6bzCRaEjeiePBUwg7qoOAdOqXYnKqcIe1pkUWwNRU7
-         za1pHMvL8ewrISo5AY+yGxSpkVDsZYshwj0Pk4E49+WOfa6euuAiVVrV1aEGVLPynZ
-         kxoqidb8VE7zcKKZSDz1czFIw5mBW9HSp3vY4EM8nBI2QotIatdM+1115tqQtuXKMy
-         k9GYPBkwwAJ7g==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marcelo Roberto Jimenez <marcelo.jimenez@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Sasha Levin <sashal@kernel.org>, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 10/12] gpio: Revert regression in sysfs-gpio (gpiolib.c)
-Date:   Wed, 16 Mar 2022 10:16:34 -0400
-Message-Id: <20220316141636.248324-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220316141636.248324-1-sashal@kernel.org>
-References: <20220316141636.248324-1-sashal@kernel.org>
+        with ESMTP id S1349582AbiCPOtx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 10:49:53 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8332422BFD;
+        Wed, 16 Mar 2022 07:48:39 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id bg10so4719049ejb.4;
+        Wed, 16 Mar 2022 07:48:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MU28qsctK5PVccJ1WrLZfX9pzKHKxkT7Hh1LuKa2sg8=;
+        b=oYGLiy/hunXG2D75J7dgg6ccgKAlxDTBHJWc2w9thvePgZOCpSFQ02J/Z1DDvze70U
+         M07qtMz9jgPckpvV4kCgxu1Pgr2Kr/pKLQX/dI9OxNjCHQmJjEEz8BId3TdNe9i1TtvJ
+         9vdt0fo77rejZd5la9VGlaGen7BKHyICYk7UbfRUtNySFXp6a+JHq6vpLVrt1wu4svIr
+         xVFwCuXCQrn/Kl2CRVAIPpZwa3MouPH1SnRl4Mzshrlk6BiHaGsjWnucQEy9Qixhtsm9
+         LDWrJjLvbZ6+OVIi+pU1xIvnO7zi+oAppY1jdkKBRx6Ytt06OM/1O0EF1534lZuc1Le2
+         XHuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MU28qsctK5PVccJ1WrLZfX9pzKHKxkT7Hh1LuKa2sg8=;
+        b=iA+7kS2ysN8+Z128SEVT8UP8sQO682AOIIHHGoC6xTvoRL7x6njIZwc6jOMWG6+zIZ
+         24Y8QUBIULuitgQ1wlvWIbhArCbarc+Q1mgl0grJy9lniZi/SyVMIkiWzVaGM+4uptN9
+         RkcZZvOUFseS33YTEg7HSQHpCP9yo0NstfXgeIVi0h1LY1kli0Ro6ng5gGNx+w2hhQkv
+         XkNixgm+Wmr0inG0J8CkfIbx1z7FqBC4SbkDP5zMlDYPvJ3vHLkyqVO8nMa4mdNstSY0
+         s269gE3BzF/SJKhOUB0zudoUALe7YUCDxskEowR8sEWFAI+t6IYcaUlUC2lhLslmxxRV
+         yoJQ==
+X-Gm-Message-State: AOAM5322pDj1aF/bWo4rMXNDHGxXWQ5iIQQAqUIf0J/16WSagoSE/VKP
+        UhBtkqMvl7UgqgpiqWwFy+mgYAt4RWfFkiXUFoc=
+X-Google-Smtp-Source: ABdhPJy/Ny8UY3V3+yIJkaQJt94C4ScuZfBq3+cneD49OBa3A7yawWEZCrCxtlo7/0BYgVPT/lQC8V9e77lniQQqEw4=
+X-Received: by 2002:a17:907:9703:b0:6da:6412:508a with SMTP id
+ jg3-20020a170907970300b006da6412508amr275705ejc.77.1647442117741; Wed, 16 Mar
+ 2022 07:48:37 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20220315173922.153389-1-paul@crapouillou.net>
+In-Reply-To: <20220315173922.153389-1-paul@crapouillou.net>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 16 Mar 2022 16:47:24 +0200
+Message-ID: <CAHp75Vfas=H7Vb+mJor-LWckUpE8QUdD8Yauq4mdG4OY+7dfMg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: ingenic: Garbage-collect code paths for SoCs
+ disabled by config
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Linus Walleij <linus.walleij@linaro.org>, od@opendingux.net,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Marcelo Roberto Jimenez <marcelo.jimenez@gmail.com>
+On Wed, Mar 16, 2022 at 4:11 AM Paul Cercueil <paul@crapouillou.net> wrote:
+>
+> By being a bit smarter about how the SoC version checks are performed,
+> it is possible to have all the code paths that correspond to SoCs
+> disabled in the kernel config automatically marked as dead code by the
+> compiler, and therefore garbage-collected.
+>
+> With this patch, when compiling a kernel that only targets the JZ4760
+> for instance, the driver is now about 4.5 KiB smaller.
 
-[ Upstream commit fc328a7d1fcce263db0b046917a66f3aa6e68719 ]
+...
 
-Some GPIO lines have stopped working after the patch
-commit 2ab73c6d8323f ("gpio: Support GPIO controllers without pin-ranges")
+> +static const u32 enabled_socs =
 
-And this has supposedly been fixed in the following patches
-commit 89ad556b7f96a ("gpio: Avoid using pin ranges with !PINCTRL")
-commit 6dbbf84603961 ("gpiolib: Don't free if pin ranges are not defined")
+If you make it unsigned long, it would be easier to switch to bitmap
+APIs if needed in the future.
 
-But an erratic behavior where some GPIO lines work while others do not work
-has been introduced.
+> +       IS_ENABLED(CONFIG_MACH_JZ4730) << ID_JZ4730 |
+> +       IS_ENABLED(CONFIG_MACH_JZ4740) << ID_JZ4740 |
+> +       IS_ENABLED(CONFIG_MACH_JZ4725B) << ID_JZ4725B |
+> +       IS_ENABLED(CONFIG_MACH_JZ4750) << ID_JZ4750 |
+> +       IS_ENABLED(CONFIG_MACH_JZ4755) << ID_JZ4755 |
+> +       IS_ENABLED(CONFIG_MACH_JZ4760) << ID_JZ4760 |
+> +       IS_ENABLED(CONFIG_MACH_JZ4770) << ID_JZ4770 |
+> +       IS_ENABLED(CONFIG_MACH_JZ4775) << ID_JZ4775 |
+> +       IS_ENABLED(CONFIG_MACH_JZ4780) << ID_JZ4780 |
+> +       IS_ENABLED(CONFIG_MACH_X1000) << ID_X1000 |
+> +       IS_ENABLED(CONFIG_MACH_X1500) << ID_X1500 |
+> +       IS_ENABLED(CONFIG_MACH_X1830) << ID_X1830 |
+> +       IS_ENABLED(CONFIG_MACH_X2000) << ID_X2000 |
+> +       IS_ENABLED(CONFIG_MACH_X2100) << ID_X2100;
 
-This patch reverts those changes so that the sysfs-gpio interface works
-properly again.
+...
 
-Signed-off-by: Marcelo Roberto Jimenez <marcelo.jimenez@gmail.com>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpiolib.c | 10 ----------
- 1 file changed, 10 deletions(-)
+> +is_soc_or_above(const struct ingenic_pinctrl *jzpc, enum jz_version version)
+> +{
+> +       return (enabled_socs >> version) &&
+> +               (!(enabled_socs & GENMASK((unsigned int)version - 1, 0))
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index af5bb8fedfea..ac69ec8fb37a 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1804,11 +1804,6 @@ static inline void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gc)
-  */
- int gpiochip_generic_request(struct gpio_chip *gc, unsigned offset)
- {
--#ifdef CONFIG_PINCTRL
--	if (list_empty(&gc->gpiodev->pin_ranges))
--		return 0;
--#endif
--
- 	return pinctrl_gpio_request(gc->gpiodev->base + offset);
- }
- EXPORT_SYMBOL_GPL(gpiochip_generic_request);
-@@ -1820,11 +1815,6 @@ EXPORT_SYMBOL_GPL(gpiochip_generic_request);
-  */
- void gpiochip_generic_free(struct gpio_chip *gc, unsigned offset)
- {
--#ifdef CONFIG_PINCTRL
--	if (list_empty(&gc->gpiodev->pin_ranges))
--		return;
--#endif
--
- 	pinctrl_gpio_free(gc->gpiodev->base + offset);
- }
- EXPORT_SYMBOL_GPL(gpiochip_generic_free);
+Why casting? Why not use BIT()?
+
+But these two lines seem like a very interesting way to reinvent the test_bit().
+
+If I'm mistaken, this all version code needs a good comment.
+
+> +                || jzpc->info->version >= version);
+> +}
+
 -- 
-2.34.1
-
+With Best Regards,
+Andy Shevchenko
