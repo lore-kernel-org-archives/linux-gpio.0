@@ -2,117 +2,113 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6A8C4167B
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 06:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB54C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Mar 2022 06:52:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353820AbiCPGJI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Mar 2022 02:09:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55920 "EHLO
+        id S244200AbiCPGxq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Mar 2022 02:53:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353781AbiCPGI6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 02:08:58 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D4AC60AAC;
-        Tue, 15 Mar 2022 23:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1647410866; x=1678946866;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=cZrDloP/7lXSlRe8nV2apCerDfz4MdbPHsS6uRLzOPo=;
-  b=eDFdGPR1fJfC+ZVDvA1T3PCiIBMRcBJdf7+S6fntVslqbd/3OlXblbws
-   sw2e4wLPr1G1L5HLpuueMPsDjkuJHhWH9/amA22iLuWjHbgOk8kUTDPQP
-   uc9uCq4WLbS8ofHvDkE7C+LgwTj2JpO159kIXE5PuoDobl4pMZyze7Uq6
-   0=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 15 Mar 2022 23:07:45 -0700
-X-QCInternal: smtphost
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/AES256-SHA; 15 Mar 2022 23:07:43 -0700
-X-QCInternal: smtphost
-Received: from hu-rohiagar-hyd.qualcomm.com (HELO hu-sgudaval-hyd.qualcomm.com) ([10.213.106.138])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 16 Mar 2022 11:37:22 +0530
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
-        id 12D654794; Wed, 16 Mar 2022 11:37:21 +0530 (+0530)
-From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, rnayak@codeaurora.org, collinsd@codeaurora.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        with ESMTP id S229757AbiCPGxp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 02:53:45 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D625AED7
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Mar 2022 23:52:30 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nUNVs-0006dA-FP; Wed, 16 Mar 2022 07:52:04 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nUNVo-000zbf-Sq; Wed, 16 Mar 2022 07:51:59 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nUNVm-009UG4-Qs; Wed, 16 Mar 2022 07:51:58 +0100
+Date:   Wed, 16 Mar 2022 07:51:55 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     mail@conchuod.ie, sboyd@kernel.org, lewis.hanly@microchip.com,
+        daire.mcnamara@microchip.com, ivan.griffin@microchip.com,
+        Atish Patra <atishp@rivosinc.com>, conor.dooley@microchip.com,
+        linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
+        jassisinghbrar@gmail.com, thierry.reding@gmail.com,
+        lee.jones@linaro.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, geert@linux-m68k.org,
+        krzysztof.kozlowski@canonical.com, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rohit Agarwal <quic_rohiagar@quicinc.com>
-Subject: [PATCH 2/6] regulator: qcom-rpmh: Add support for SDX65
-Date:   Wed, 16 Mar 2022 11:37:13 +0530
-Message-Id: <1647410837-22537-3-git-send-email-quic_rohiagar@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1647410837-22537-1-git-send-email-quic_rohiagar@quicinc.com>
-References: <1647410837-22537-1-git-send-email-quic_rohiagar@quicinc.com>
+        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 00/11] Update the Icicle Kit device tree
+Message-ID: <20220316065155.tuuq2k4d5dczwtq2@pengutronix.de>
+References: <c94f9c0a-6dbe-c1f4-daff-e4d29f3ace02@conchuod.ie>
+ <mhng-bb42ad9f-5772-4749-97e1-9f6c511654f6@palmer-mbp2014>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bkpwvtdvshkxkizn"
+Content-Disposition: inline
+In-Reply-To: <mhng-bb42ad9f-5772-4749-97e1-9f6c511654f6@palmer-mbp2014>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support from RPMH regulators found in SDX65 platform.
 
-Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
----
- drivers/regulator/qcom-rpmh-regulator.c | 37 +++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+--bkpwvtdvshkxkizn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-index a3bc0eb..561de6b 100644
---- a/drivers/regulator/qcom-rpmh-regulator.c
-+++ b/drivers/regulator/qcom-rpmh-regulator.c
-@@ -1121,6 +1121,39 @@ static const struct rpmh_vreg_init_data pmx55_vreg_data[] = {
- 	{}
- };
- 
-+static const struct rpmh_vreg_init_data pmx65_vreg_data[] = {
-+	RPMH_VREG("smps1",   "smp%s1",    &pmic5_ftsmps510, "vdd-s1"),
-+	RPMH_VREG("smps2",   "smp%s2",    &pmic5_hfsmps510, "vdd-s2"),
-+	RPMH_VREG("smps3",   "smp%s3",    &pmic5_hfsmps510, "vdd-s3"),
-+	RPMH_VREG("smps4",   "smp%s4",    &pmic5_hfsmps510, "vdd-s4"),
-+	RPMH_VREG("smps5",   "smp%s5",    &pmic5_hfsmps510, "vdd-s5"),
-+	RPMH_VREG("smps6",   "smp%s6",    &pmic5_ftsmps510, "vdd-s6"),
-+	RPMH_VREG("smps7",   "smp%s7",    &pmic5_hfsmps510, "vdd-s7"),
-+	RPMH_VREG("smps8",   "smp%s8",    &pmic5_hfsmps510, "vdd-s8"),
-+	RPMH_VREG("ldo1",    "ldo%s1",    &pmic5_nldo,      "vdd-l1"),
-+	RPMH_VREG("ldo2",    "ldo%s2",    &pmic5_nldo,      "vdd-l2-l18"),
-+	RPMH_VREG("ldo3",    "ldo%s3",    &pmic5_nldo,      "vdd-l3"),
-+	RPMH_VREG("ldo4",    "ldo%s4",    &pmic5_nldo,      "vdd-l4"),
-+	RPMH_VREG("ldo5",    "ldo%s5",    &pmic5_pldo,      "vdd-l5-l6-l16"),
-+	RPMH_VREG("ldo6",    "ldo%s6",    &pmic5_pldo,      "vdd-l5-l6-l16"),
-+	RPMH_VREG("ldo7",    "ldo%s7",    &pmic5_nldo,      "vdd-l7"),
-+	RPMH_VREG("ldo8",    "ldo%s8",    &pmic5_nldo,      "vdd-l8-l9"),
-+	RPMH_VREG("ldo9",    "ldo%s9",    &pmic5_nldo,      "vdd-l8-l9"),
-+	RPMH_VREG("ldo10",   "ldo%s10",   &pmic5_pldo,      "vdd-l10"),
-+	RPMH_VREG("ldo11",   "ldo%s11",   &pmic5_pldo,      "vdd-l11-l13"),
-+	RPMH_VREG("ldo12",   "ldo%s12",   &pmic5_nldo,      "vdd-l12"),
-+	RPMH_VREG("ldo13",   "ldo%s13",   &pmic5_pldo,      "vdd-l11-l13"),
-+	RPMH_VREG("ldo14",   "ldo%s14",   &pmic5_nldo,      "vdd-l14"),
-+	RPMH_VREG("ldo15",   "ldo%s15",   &pmic5_nldo,      "vdd-l15"),
-+	RPMH_VREG("ldo16",   "ldo%s16",   &pmic5_pldo,      "vdd-l5-l6-l16"),
-+	RPMH_VREG("ldo17",   "ldo%s17",   &pmic5_nldo,      "vdd-l17"),
-+	/* ldo18 not configured */
-+	RPMH_VREG("ldo19",   "ldo%s19",   &pmic5_nldo,      "vdd-l19"),
-+	RPMH_VREG("ldo20",   "ldo%s20",   &pmic5_nldo,      "vdd-l20"),
-+	RPMH_VREG("ldo21",   "ldo%s21",   &pmic5_nldo,      "vdd-l21"),
-+	{}
-+};
-+
- static const struct rpmh_vreg_init_data pm7325_vreg_data[] = {
- 	RPMH_VREG("smps1",  "smp%s1",  &pmic5_hfsmps510, "vdd-s1"),
- 	RPMH_VREG("smps2",  "smp%s2",  &pmic5_ftsmps520, "vdd-s2"),
-@@ -1277,6 +1310,10 @@ static const struct of_device_id __maybe_unused rpmh_regulator_match_table[] = {
- 		.data = pmx55_vreg_data,
- 	},
- 	{
-+		.compatible = "qcom,pmx65-rpmh-regulators",
-+		.data = pmx65_vreg_data,
-+	},
-+	{
- 		.compatible = "qcom,pm7325-rpmh-regulators",
- 		.data = pm7325_vreg_data,
- 	},
--- 
-2.7.4
+On Wed, Mar 09, 2022 at 11:07:03PM -0800, Palmer Dabbelt wrote:
+> On Wed, 23 Feb 2022 12:48:16 PST (-0800), mail@conchuod.ie wrote:
+> > dt-bindings should be set now, so if you're still happy to take the
+> > series via riscv, that'd be great. i2c, spi & usb patches ended going
+> > via the sub-system trees (and have been dropped from the series), in
+> > case those generate warnings for you.
+>=20
+> Something went off the rails in email land and #0 and #2 didn't end up in=
+ my
+> patch queue but the rest did.  Luckily enough made it through that it did=
+n't
+> get lost, and lore's pretty great so this sort of thing isn't that big of=
+ a
+> deal these days.  That said, email is a bit of a black box so figured I'd
+> give you a heads up.
 
+One of the patches in next now is
+df77f7735786ece2fcd8875b036a511ffcadfab6. It would be great if you could
+fix your patch application setup to not mangle names. Here it's
+
+	Acked-by: Uwe Kleine-K=3DF6nig <u.kleine-koenig@pengutronix.de>
+
+where my =F6 was recorded as =3DF6. :-\
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--bkpwvtdvshkxkizn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmIxiQgACgkQwfwUeK3K
+7AnaOAf+KYzjoQhzMwQBCvuk5Nuy19InDXSbXr3hGJaP1HavbuLPFGVesC/ny0hy
+pYoeu3A8RpcK8VCbPnl3E8baLLrWlzzPEjbPzb0hrbGvu79Bkiire4nM9GmnCBKa
+uYWdxrbt8s4NRrvHmeqf3IAaXe3N2T98KWSjklHsqD10/S/QEBNphY6G9mcXi0Aj
+28imRZDsWhU2uTpe4UpbEXAq+GP3MzII3K3+gEtJmsRADPmkVcZlHVPzeABY9PWh
+TIEcWRwydEsaMDxUpl4tEv+lWTt3DpRp65cMC6ElJk7lWVIpIAQYLUYjhoQSIYsP
+XP549wvifCmIMBHY/C7IBeHUgwjl6w==
+=t8CP
+-----END PGP SIGNATURE-----
+
+--bkpwvtdvshkxkizn--
