@@ -2,116 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26676C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Mar 2022 02:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC5CC433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Mar 2022 06:13:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbiCQCET (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Mar 2022 22:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60258 "EHLO
+        id S229623AbiCQGO0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Mar 2022 02:14:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344180AbiCQCER (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2022 22:04:17 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9803E034
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 19:03:02 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id z16so5659830pfh.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 19:03:02 -0700 (PDT)
+        with ESMTP id S229587AbiCQGOU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2022 02:14:20 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C07429A565
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 22:51:58 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 17-20020a9d0611000000b005b251571643so2891553otn.2
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2022 22:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Yn17ArgJ45+q/zN05im3qM5HHITBQzbTOtWfatGsFgQ=;
-        b=Pfmrcfx7Z2QcclhynqzZBeA1v5cttdeZ65uHsVVBnBVOSDu0nJxikncKoGBjLWMDFL
-         AzRQ/pGttsipE6sgRfUskzUJfJq855l61yjmf77MB4yBXYWCvoGCJ8Ak9RneaanjVfon
-         DsrNpeWiisM7eDRLX4dqoV1slwLGIK+DI8sVjW4I+CI2c7kKVIq2xbX3xsV8AFjBzRHo
-         ZUnANkkps5KBFZREhhqKDw5WyBhdzhyMUVO82SX0LmQIWYmIaNBtOSzWYZzr8Dyccs1s
-         +u9M9AwGvy4MQUyZFRAGZPfAgcP/bkSD8bg29plJ28w5HSddBUY2emqoCN+tl4h1hKHs
-         5hBQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mVK6yG1N+cUUmYWJ6VDT2FBBH+Bt39KheCAm4I/IFoU=;
+        b=HqgLE2UhXsyEjjV27aBFaUHc/bInHEQ6a2qWWJ2gFJ4YWeT6x70E62GT9/SNxpS9BC
+         hVboR/wsog/4J2eHJHvsx6BRtcvbNmhebS3IuNwj/56vdBlmhF9alw6tf/MW9O+b3RRO
+         IFeD9fcfrdcx8tKUrqMqW8F9nbw1jVhMIR2GXW0YqLiSDZZNQzGL5xV++DV0tj1Fy7nu
+         wOvwU0fH4eEcHPdKmN5/7ogJF3I69DNPFknjwwN0xH64UxRDlC/uxEqOg3MfK6L/m7r9
+         95LgtI00CYke9yaqaZfRxFn12B/rP7IRU4Te25vjCvez+/gxB1OvbcZ5aq8Ew/0yzmTQ
+         rQXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Yn17ArgJ45+q/zN05im3qM5HHITBQzbTOtWfatGsFgQ=;
-        b=BdPOiWYtUCOs4a0oBCKcbyq/zayKb+FQpKvyB54m0H2AwWUKyhbzgd22a4Pcnuxsz0
-         XNi0YOMCE/4ZexYEPRjuBtOMQC4pP6QDLLSTM1pVkORFvQMctNSLiUV1t7fD25u4as6a
-         12j2ei+S/O+MsH8WXN+s2iZ3WearyuxKEO2Zc9uAhLUv2LtmZVcfMBptorY3mHPd4INT
-         vX+WOVaOZDRvlMlxiuhlQWKUezk3eQiP4HqahhxedZuNcNDIikGlcxhKSgBSsO6Xg9F+
-         kWEldIz2TgtYmp1C2RH/Aggeb7zaWAli1yNLYxyBfhxL2fI3av3nqL/sF2y3ilTjb8uq
-         jnaQ==
-X-Gm-Message-State: AOAM530G6jRO6qKSiLeLLPNH64Nir6A3bXsfuz7bYWDgy8Kh/LgRnzF1
-        7Y+PYp/ga2DJZaQ6Qjhn0Mo=
-X-Google-Smtp-Source: ABdhPJwvbwY4NQjwBTAAoo0U5aLNpS7MwRcJ527sddRBDL23IrJFHQdDwV9+xjTwhLt0Oh8cDSdzsQ==
-X-Received: by 2002:a63:384e:0:b0:374:ae28:71fc with SMTP id h14-20020a63384e000000b00374ae2871fcmr1857720pgn.159.1647482582073;
-        Wed, 16 Mar 2022 19:03:02 -0700 (PDT)
-Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
-        by smtp.gmail.com with ESMTPSA id j11-20020a63230b000000b00372a08b584asm3650905pgj.47.2022.03.16.19.03.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Mar 2022 19:03:01 -0700 (PDT)
-Message-ID: <15171d7e-f065-88b8-b3b3-dbeed75c5e6e@gmail.com>
-Date:   Wed, 16 Mar 2022 19:02:59 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mVK6yG1N+cUUmYWJ6VDT2FBBH+Bt39KheCAm4I/IFoU=;
+        b=gTvN/JRAlpTmOCOoepuSTRLOt4ekJ9O0ajdpWJbUwGsxw6c3ORiFmRb+2e4GMu5Zlg
+         8jtE5l+FyZ+h9TbVe5hJbu8GLODOd7SMUSTsRx70gSXHiSH9NVGnnyCwvAvzpYUlo2y7
+         7OyfyOAu3OUGkMtNNBhRsY0+RfP0QlbfHbcd6fb4MRr5nHITtjnlIfbh5OZdPGilRrHk
+         bJ43QjJXCrGsHIMVM0uOV6XINtC23qPbxIqRl7xx3+pqdrE3g7E1hJdr5YpIJaxzJPhk
+         kLE6sf7cg9TlUT3JFYzLseaS7cCM0u8gTc7v3t0KxlReNByphEQ/4iNByOVvrPDsWRTk
+         QM9A==
+X-Gm-Message-State: AOAM533sItacG2tyd+WUjYW50IM0epaj8mKrL634TnIIoHv18E9IyJM0
+        3PivK7Msm9ljlrXh/GbPdsrAUWXrEUfVeHD50+Sysw==
+X-Google-Smtp-Source: ABdhPJy76ekb2NCVSFjRseDkxr8YndloWbyFI2Kene2D11LYpSoDDR+0DsqVEoxwIJtDNmrqYXTmeWkJlfA18gm9Vd0=
+X-Received: by 2002:a05:6830:c7:b0:5c9:6536:5b96 with SMTP id
+ x7-20020a05683000c700b005c965365b96mr1086862oto.28.1647496317475; Wed, 16 Mar
+ 2022 22:51:57 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH RFC 0/2] gpiolib: of: Introduce hook for missing
- gpio-ranges
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Phil Elwell <phil@raspberrypi.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <1646855026-9132-1-git-send-email-stefan.wahren@i2se.com>
- <CACRpkdYuxsYw99CZZK_GXp3V-mPiuL50CxgsE-=oRMApZf_bxA@mail.gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <CACRpkdYuxsYw99CZZK_GXp3V-mPiuL50CxgsE-=oRMApZf_bxA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220226184028.111566-1-bhupesh.sharma@linaro.org>
+ <20220226184028.111566-4-bhupesh.sharma@linaro.org> <YjC8bfY2U1WyV8FY@builder.lan>
+In-Reply-To: <YjC8bfY2U1WyV8FY@builder.lan>
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Date:   Thu, 17 Mar 2022 11:21:46 +0530
+Message-ID: <CAH=2NtzHfqiFi8NKqQ=m24buzVsMT392ObOQ6ahT5BXB=fv6Hw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: sm8150: Add pdc interrupt
+ controller node
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
+        agross@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, maz@kernel.org,
+        quic_mkshah@quicinc.com, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Bjorn,
 
+Thanks for your review.
 
-On 3/16/2022 6:15 PM, Linus Walleij wrote:
-> On Wed, Mar 9, 2022 at 8:44 PM Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> 
->> This patch series tries to provide backward compatibility for DTB which
->> lacks the gpio-ranges property.
->>
->> The commit ("pinctrl: msm: fix gpio-hog related boot issues") by Christian
->> Lamparter already contains a fallback in case the gpio-ranges property
->> is missing. But this approach doesn't work on BCM2835 with a gpio-hog
->> defined for the SoC GPIOs.
->>
->> Based Christian's on explanation i conclude that the fallback must happen
->> during the gpiochip_add() call and not afterwards. So the approach is to
->> call an optional hook, which can be implemented in the platform driver.
->>
->> This series has been tested on Raspberry Pi 3 B Plus.
->>
->> Stefan Wahren (2):
->>    gpiolib: of: Introduce hook for missing gpio-ranges
->>    pinctrl: bcm2835: implement hook for missing gpio-ranges
-> 
-> Looks good to me, is this something I should apply to the pinctrl
-> tree or should I wait for a non-RFC version?
+On Tue, 15 Mar 2022 at 21:48, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Sat 26 Feb 12:40 CST 2022, Bhupesh Sharma wrote:
+>
+> > Add pdc interrupt controller for sm8150.
+> >
+> > Cc: Maulik Shah <quic_mkshah@quicinc.com>
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Vinod Koul <vkoul@kernel.org>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/sm8150.dtsi | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> > index 6012322a5984..aaeacd379460 100644
+> > --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> > @@ -1626,6 +1626,16 @@ system-cache-controller@9200000 {
+> >                       interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
+> >               };
+> >
+> > +             pdc: interrupt-controller@b220000 {
+> > +                     compatible = "qcom,sm8150-pdc", "qcom,pdc";
+> > +                     reg = <0 0x0b220000 0 0x400>;
+> > +                     qcom,pdc-ranges = <0 480 94>, <94 609 31>,
+> > +                                       <125 63 1>;
+>
+> When I look at the platform documentation I get the impression that this
+> should be: <0 480 94>, <94 609 32>;
+>
+> Can you confirm that the last signal is correctly described?
 
-I would be inclined to slap a couple of different Fixes tag to each 
-commit because breaking older DTBs should IMHO be considered a 
-regression. So for the first patch I would add:
+Yes, I confirmed by double checking the entries in downstream 'pdc-sm8150.c'.
+The pdc pins in the 2nd range start from 94 and end at 124, so a total
+of 31 entries, but both 94 and 124 pins included.
 
-Fixes: 2ab73c6d8323 ("gpio: Support GPIO controllers without pin-ranges")
+Or, am I missing something?
 
-and for the second patch:
+Thanks,
+Bhupesh
 
-Fixes: 266423e60ea1 ("pinctrl: bcm2835: Change init order for gpio hogs")
-
-WDYT?
--- 
-Florian
+> > +                     #interrupt-cells = <2>;
+> > +                     interrupt-parent = <&intc>;
+> > +                     interrupt-controller;
+> > +             };
+> > +
+> >               ufs_mem_hc: ufshc@1d84000 {
+> >                       compatible = "qcom,sm8150-ufshc", "qcom,ufshc",
+> >                                    "jedec,ufs-2.0";
+> > --
+> > 2.35.1
+> >
