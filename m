@@ -2,96 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE54AC433F5
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Mar 2022 18:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B734FC433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Mar 2022 18:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240215AbiCRSle (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Mar 2022 14:41:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46648 "EHLO
+        id S240144AbiCRSmb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Mar 2022 14:42:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235594AbiCRSld (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2022 14:41:33 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 244121C945F
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2022 11:40:14 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id u16so11834622wru.4
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2022 11:40:14 -0700 (PDT)
+        with ESMTP id S240249AbiCRSm3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2022 14:42:29 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4675B2EF0C5
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2022 11:41:09 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 17so12424227lji.1
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2022 11:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zVqxXsnsA1LY8cZh5HtidQZ6OjQlcer9+l/ndoFCZzY=;
-        b=0GPHb7LYcRvV0cYr619kgGkNXh29aZ1bBS0X1XqBJg22GVMGqMop/Fmcw2gghkOpLI
-         TH/jF2MknNS+B7o+jM3fb31Yo/4amEjdUwNBwk6EwZxK4vP7a85oGidUknXa3fJrTk/N
-         oSOlY4bYnplz7A11froxUMvRPhprEFwnN3F86raLG/Weq+cgRvZfTyCQprFm+rBApJCz
-         SlbdZjwh7/y2bn2qlGW8+B4BdIvsZpj9qMtGugd4vQ1RIxIU7pbFhElFAe7r2OwNadgc
-         VN+gIgADqpI2L5zSE+49UxIRfq50gAMqTWWITfBLv0MnFZjfMgFAcnn4mgbqSeSVgY2+
-         Heug==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T68So5s+Mvf8Yxsi6hpGLQhvBaydZiJJcf2u3DNH8AQ=;
+        b=ZmBvasPMchpBJ8mkRKb7R3RhkkeHi7XstG7ccVRfInSia4wxmHPc+1XSCMLTTbtwoD
+         iBBZhG8pLYhyN+/NcRaXQ6YvBWpZBO0b6qFsSWL8b/QpLIBN/MEi/ZFczp9fnO89TfiE
+         WjskrGL3deHU2C25PjWZUp+gAg6DG/SMTBWTU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zVqxXsnsA1LY8cZh5HtidQZ6OjQlcer9+l/ndoFCZzY=;
-        b=egJX1oMXR55UztCuDEzMLowz1ey8w0O6/8vVSw7oSTqQAOJLtoLRJmVHx3YUI+2RDs
-         7+0UIhvx8yfgpyqnetzrdRY0hNylbR1OgNsufkV3e1+YrgJ+GhEJuFtqAjAbE1A06Kwe
-         c7BEHeV+TraapMsifJqoVklOzvm0DjNOk9xUQjIV9wSBFw5virgKhXfrK6yjDEz1N/vD
-         BBCj5LJ9iwdp7kB+jq3k7+gLUfoYo4HtS1mRCYjU7yFoVskzexcLJsb1Q781q6YrDL0z
-         tyFxukocTWgpnsX7XG2jca/DfRrLADP+5AVTOHuNoPumT0YaKj4AslC1328DDYuwTGTK
-         LaDw==
-X-Gm-Message-State: AOAM530v6IVspxE8aw27Bedw0OA3AEr9zp3uk5LrWqLR2LuX2kzGulxJ
-        6fNxt9mDdXXipuc5LgCWpMJNgkvZbywTkg==
-X-Google-Smtp-Source: ABdhPJywc4UWZRd2+eQ+ys6dqt33WizzTPKOjPNdHSD5dskGiUT2AQqDpKCVX60LsFEPTMhbHNqHyg==
-X-Received: by 2002:a05:6402:5173:b0:415:f1e2:8d53 with SMTP id d19-20020a056402517300b00415f1e28d53mr10822200ede.95.1647628225727;
-        Fri, 18 Mar 2022 11:30:25 -0700 (PDT)
-Received: from otso.arnhem.chello.nl (a246182.upc-a.chello.nl. [62.163.246.182])
-        by smtp.gmail.com with ESMTPSA id y8-20020a50eb08000000b00418b114469csm4567551edp.52.2022.03.18.11.30.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Mar 2022 11:30:25 -0700 (PDT)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andy Gross <agross@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 0/6] UFS support on SM6350 & FP4
-Date:   Fri, 18 Mar 2022 19:29:58 +0100
-Message-Id: <20220318183004.858707-1-luca.weiss@fairphone.com>
-X-Mailer: git-send-email 2.35.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T68So5s+Mvf8Yxsi6hpGLQhvBaydZiJJcf2u3DNH8AQ=;
+        b=3Z2xp8SyJdpR/+QnW44cZtbU1QuJer5o+dvHX/iqP8w3Qu8ydl761Tl1Ub36Hplnpo
+         oxK1Q5dkKLHJqDTS7/30Y00hzzuLTXNoRS7i3lTSPBC2yBGPG0wbPdaCdKxbafx2F8Ui
+         SnqEVvall7K0YI6zMp9w7kiAu7bSX8mCNMvD+pCLmtkpbArOI2Slcx3BemCf6riUYXR1
+         LxNlLJ6sR5lSZK/TmHL6yx00g/4593A4kpkfprhdbf0thRkkio8AS7iv7ulnDbMrLYe2
+         +4GWksIX9wr6E0Z7JJlt1BxT/o5izG1QH+To2hr7wSWOseJ6Cd7fSNmD/WHS9Lg2E1S0
+         GpxQ==
+X-Gm-Message-State: AOAM532Tu6rF4XIfOHMU1ZdTnJZh1ERX0ETiagbVxGZYw8Ajump3qG1l
+        M52lSIqg6EbgGo96GY/G6GgC/j75gLD60X5L0us=
+X-Google-Smtp-Source: ABdhPJzZq0J7/uXZctyqYBLQP11Rfm7h494KOU3jgfAE9r8kUfuHJK02pLw+OLQijGVe/wIwaBgbkg==
+X-Received: by 2002:a2e:b52f:0:b0:249:3831:6329 with SMTP id z15-20020a2eb52f000000b0024938316329mr6959613ljm.326.1647628867056;
+        Fri, 18 Mar 2022 11:41:07 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id e13-20020ac2546d000000b0044827065453sm958191lfn.169.2022.03.18.11.41.03
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Mar 2022 11:41:04 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 17so12424034lji.1
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2022 11:41:03 -0700 (PDT)
+X-Received: by 2002:a2e:804b:0:b0:247:e81f:87e9 with SMTP id
+ p11-20020a2e804b000000b00247e81f87e9mr7192968ljg.176.1647628863338; Fri, 18
+ Mar 2022 11:41:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220316213055.2351342-1-morbo@google.com> <YjL6K49CkH+YC4FQ@smile.fi.intel.com>
+ <CAKwvOdkjb3uR+kqjfdKL5gqA8R+00c5=3E7uGGW+mGZ3QRsjqg@mail.gmail.com>
+ <YjSROmYwwGhpsXMl@smile.fi.intel.com> <CAKwvOdkEjrPUL4HuO3UKaUZAzVw=XV1bEOSj6HR5R1WTUSSZ4w@mail.gmail.com>
+ <CAGG=3QVCkF7RdbQ85MtKgUjm8qP79BESAUiGU3wSQc0+ExO0gA@mail.gmail.com> <CAKwvOd=1+JF6mxpM_K3xCYAr-R8nrj0s7tA9GwUybyiFdLpA2w@mail.gmail.com>
+In-Reply-To: <CAKwvOd=1+JF6mxpM_K3xCYAr-R8nrj0s7tA9GwUybyiFdLpA2w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 18 Mar 2022 11:40:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wis4P8-=-0jmcDzGGuttZ3ESnq0LA5PMOVmKkPRwK1kEA@mail.gmail.com>
+Message-ID: <CAHk-=wis4P8-=-0jmcDzGGuttZ3ESnq0LA5PMOVmKkPRwK1kEA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: acpi: use correct format characters
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Bill Wendling <morbo@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Nathan Chancellor <nathan@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series adds support for UFS on SM6350 which is used for internal
-storage.
+On Fri, Mar 18, 2022 at 11:29 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> Should we add a note diagnostic to clang suggesting the explicit cast
+> as one method of silencing the warning?
 
-Luca Weiss (6):
-  scsi: ufs: dt-bindings: Add SM6350 compatible string
-  dt-bindings: phy: qcom,qmp: Add SM6350 UFS PHY bindings
-  phy: qcom-qmp: Add SM6350 UFS PHY support
-  pinctrl: qcom: sm6350: fix order of UFS & SDC pins
-  arm64: dts: qcom: sm6350: Add UFS nodes
-  arm64: dts: qcom: sm7225-fairphone-fp4: Enable UFS
+On the compiler side, I would love to see warnings about the ambiguity
+of the sign of 'char' in the general case.
 
- .../devicetree/bindings/phy/qcom,qmp-phy.yaml |  1 +
- .../devicetree/bindings/ufs/qcom,ufs.yaml     |  1 +
- arch/arm64/boot/dts/qcom/sm6350.dtsi          | 79 +++++++++++++++++++
- .../boot/dts/qcom/sm7225-fairphone-fp4.dts    | 18 +++++
- drivers/phy/qualcomm/phy-qcom-qmp.c           |  3 +
- drivers/pinctrl/qcom/pinctrl-sm6350.c         | 16 ++--
- 6 files changed, 110 insertions(+), 8 deletions(-)
+That said, I tried to add that to 'sparse' long long ago, and couldn't
+make it work sanely. All the approaches I tried all get _way_ too many
+false positives.
 
--- 
-2.35.1
+I tried to come up with some way of figuring out "this code acts
+differently depending on whether 'char' is signed or not" and warning
+about it, and never could.
 
+And I suspect the same is true even for the much moire limited case of
+only format warnings.
+
+Because it's a *bad* idea to use '%d' (or almost any other format
+specifier) together with a 'char' argument, but only if you don't know
+the range of the char argument.
+
+But the other side of the argument is that quite often, people *do*
+know the range of the 'char' argument. If your 'char' type thing comes
+from some array or string that you control, and you used 'char' simply
+because you know you have small values (typical example: use it for an
+array of booleans etc), then it would be very annoying if the compiler
+warned you about using '%d'.
+
+There is no reason to use '%hhd' when you know your data range is [0,1].
+
+So honestly, I don't think you can come up with a sane warning that
+doesn't cause *way* too many false positives and just annoys people.
+
+I'd love to be proven wrong. In fact, I'd _really_ love to be proven
+wrong for that generic case. The "sometimes 'char' is signed,
+sometimes it is unsigned, and it depends on the architecture and the
+compiler flags" can be a real problem.
+
+                Linus
