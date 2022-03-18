@@ -2,34 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B0CC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4DDEC4707A
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Mar 2022 20:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240639AbiCRU1T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Mar 2022 16:27:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57448 "EHLO
+        id S240648AbiCRU1U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Mar 2022 16:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240610AbiCRU1R (ORCPT
+        with ESMTP id S240613AbiCRU1R (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2022 16:27:17 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [176.9.125.105])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5168F292D85;
-        Fri, 18 Mar 2022 13:25:57 -0700 (PDT)
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5482928CA96;
+        Fri, 18 Mar 2022 13:25:58 -0700 (PDT)
 Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id F02DB2244E;
-        Fri, 18 Mar 2022 21:25:54 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id DD33E22453;
+        Fri, 18 Mar 2022 21:25:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1647635155;
+        t=1647635156;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Sf4D+lq8p2304IqZfXohb7B3lm+eDnMGkVWOmv4VwzU=;
-        b=UbrVyxmqTc0GEjuVOwatzQjPI85cmOegG8tv0+XhhLh73Gykiyf3kTugkAiRy0QzRHML68
-        19WIYzg5/FC5yVT5Bfui/1fHOSIhs7KyqK4byFlyhnpqHnOpMfi5CxAVR7kt9tofU84nVO
-        KSiZTvKWLqvZkeENW3a1D4lMegGLSlI=
+        bh=uTFXTB5IlLqwK5tVbKZgXtbSGKwGibEeLOKh/AOcFsg=;
+        b=JkC6oJDjeAoE+GAc0AOejl5Z0XSiQ7V7+LE6T2jnjeb3nKm0VD3fCGzjjRXRpw7hrEoKf7
+        /0rEtvI/5F9aRXnJY1cPlGZGodJWHF10mir07zc+Hvfeqo3v2+ry3ngCL71JjoOycisKQd
+        vjdC9pM7op3F+ok8hhqT+cwBduznID4=
 From:   Michael Walle <michael@walle.cc>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     "David S . Miller" <davem@davemloft.net>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 5/8] MIPS: mscc: serval: fix pinctrl node names
-Date:   Fri, 18 Mar 2022 21:25:44 +0100
-Message-Id: <20220318202547.1650687-6-michael@walle.cc>
+Subject: [PATCH v2 7/8] ARM: dts: lan9662-pcb8291: fix pinctrl node name
+Date:   Fri, 18 Mar 2022 21:25:46 +0100
+Message-Id: <20220318202547.1650687-8-michael@walle.cc>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220318202547.1650687-1-michael@walle.cc>
 References: <20220318202547.1650687-1-michael@walle.cc>
@@ -63,62 +63,25 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 The pinctrl device tree binding will be converted to YAML format. All
 the pin nodes should end with "-pins". Fix them.
 
-Fixes: fe0052018a84 ("MIPS: mscc: Add serval support")
+Fixes: 290deaa10c50 ("ARM: dts: add DT for lan966 SoC and 2-port board pcb8291")
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- arch/mips/boot/dts/mscc/serval_common.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/lan966x-pcb8291.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/boot/dts/mscc/serval_common.dtsi b/arch/mips/boot/dts/mscc/serval_common.dtsi
-index 5b404836db5e..0893de420e27 100644
---- a/arch/mips/boot/dts/mscc/serval_common.dtsi
-+++ b/arch/mips/boot/dts/mscc/serval_common.dtsi
-@@ -82,38 +82,38 @@ i2c_pins: i2c-pins {
- 		pins = "GPIO_7"; /* No "default" scl for i2c0 */
- 		function = "twi";
+diff --git a/arch/arm/boot/dts/lan966x-pcb8291.dts b/arch/arm/boot/dts/lan966x-pcb8291.dts
+index 3281af90ac6d..3c7e3a7d6f14 100644
+--- a/arch/arm/boot/dts/lan966x-pcb8291.dts
++++ b/arch/arm/boot/dts/lan966x-pcb8291.dts
+@@ -35,7 +35,7 @@ fc3_b_pins: fcb3-spi-pins {
+ 		function = "fc3_b";
  	};
--	i2cmux_pins_i: i2cmux-pins-i {
-+	i2cmux_pins_i: i2cmux-pins {
- 		pins = "GPIO_11", "GPIO_12", "GPIO_18", "GPIO_19",
- 			"GPIO_20", "GPIO_21";
- 		function = "twi_scl_m";
- 		output-low;
- 	};
--	i2cmux_0: i2cmux-0 {
-+	i2cmux_0: i2cmux-0-pins {
- 		pins = "GPIO_11";
- 		function = "twi_scl_m";
- 		output-high;
- 	};
--	i2cmux_1: i2cmux-1 {
-+	i2cmux_1: i2cmux-1-pins {
- 		pins = "GPIO_12";
- 		function = "twi_scl_m";
- 		output-high;
- 	};
--	i2cmux_2: i2cmux-2 {
-+	i2cmux_2: i2cmux-2-pins {
- 		pins = "GPIO_18";
- 		function = "twi_scl_m";
- 		output-high;
- 	};
--	i2cmux_3: i2cmux-3 {
-+	i2cmux_3: i2cmux-3-pins {
- 		pins = "GPIO_19";
- 		function = "twi_scl_m";
- 		output-high;
- 	};
--	i2cmux_4: i2cmux-4 {
-+	i2cmux_4: i2cmux-4-pins {
- 		pins = "GPIO_20";
- 		function = "twi_scl_m";
- 		output-high;
- 	};
--	i2cmux_5: i2cmux-5 {
-+	i2cmux_5: i2cmux-5-pins {
- 		pins = "GPIO_21";
- 		function = "twi_scl_m";
- 		output-high;
+ 
+-	can0_b_pins:  can0_b_pins {
++	can0_b_pins:  can0-b-pins {
+ 		/* RX, TX */
+ 		pins = "GPIO_35", "GPIO_36";
+ 		function = "can0_b";
 -- 
 2.30.2
 
