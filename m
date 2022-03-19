@@ -2,43 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBA4C433FE
-	for <linux-gpio@archiver.kernel.org>; Sat, 19 Mar 2022 11:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1019EC433EF
+	for <linux-gpio@archiver.kernel.org>; Sat, 19 Mar 2022 14:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236081AbiCSLjk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 19 Mar 2022 07:39:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47190 "EHLO
+        id S239363AbiCSObq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 19 Mar 2022 10:31:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231818AbiCSLjj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Mar 2022 07:39:39 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71AE586E16;
-        Sat, 19 Mar 2022 04:38:17 -0700 (PDT)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 094082223B;
-        Sat, 19 Mar 2022 12:38:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1647689895;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zmfB9xFrYldmqq1FLPQ4/Iztnp51kdC7eGjZLGK9R9I=;
-        b=nK72s+a+CriFy2uCBz7cVC/oV2dJ7STsg5K6+FvOMXhbU9OHAvyFezhKJEonlNukjIE/At
-        iOXENIVw/Ky8/ukxJLQk4qnF9236PXkZDjyKrMEr+u4yWjrEg/Q+8XVa+s9iLb4n4DtONH
-        11Plc7zM79jDmEgGlak5dmfX2BOKI3A=
+        with ESMTP id S231131AbiCSObp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Mar 2022 10:31:45 -0400
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2F942A13;
+        Sat, 19 Mar 2022 07:30:24 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id bg10so21999923ejb.4;
+        Sat, 19 Mar 2022 07:30:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=pMCksSCfBCH6lRrr4YOJuMdM6Zq0+qy0cl8Db9Zyz40=;
+        b=rTmdonx5AVV0oUi1g+YjztMRLYLQucfw0DVybjiKEmH+rrP7GljFwyd15jYAdceqwF
+         lPrsVloxFb/GVZcGHnkjUjvyvBmNtrvaaKdzt4Koi4lveVQ65jUx6yUfSCMXySThmq1r
+         RDUygGvffNKUyq4J70ZQkCrBPAcG1fUKnDS4pdXKBsWzYf6A8UvnfXyQzutB0h6Yy9d1
+         S/cCn7nR4Iq3pLIukrxY27jJ12x7Duf4ZzJSEGRC/jaFry0oh6wR49xRzLt/bGq0YCSm
+         WGQTO1U5S4ocz8CEXb1AfCedVJ/fJyx5SnO9cfmh7ZAVd1GSptimniGJekHugEDFBbCG
+         w7BQ==
+X-Gm-Message-State: AOAM5331u97Uowx4spgqkFw4TPkcVD1FPrxlkApFs8qxjsDnd2vMa6+c
+        hC8xbqzz0s5GEdMhl/ADQdk=
+X-Google-Smtp-Source: ABdhPJwfp6apknD6pSBLJZ8KXHAIi455ozkgX7IUny2JLz9DfmRFaZj7Lgh3EL3qwrp2vuVCEwUj2g==
+X-Received: by 2002:a17:907:6e93:b0:6df:8c1a:d08b with SMTP id sh19-20020a1709076e9300b006df8c1ad08bmr12438875ejc.557.1647700222339;
+        Sat, 19 Mar 2022 07:30:22 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id q5-20020aa7cc05000000b004129baa5a94sm5618401edt.64.2022.03.19.07.30.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Mar 2022 07:30:21 -0700 (PDT)
+Message-ID: <de57d12e-bb05-fdcb-0072-82d7e33141eb@kernel.org>
+Date:   Sat, 19 Mar 2022 15:30:20 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 19 Mar 2022 12:38:14 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 8/8] dt-bindings: pinctrl: convert ocelot-pinctrl to
+ YAML format
+Content-Language: en-US
+To:     Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Lars Povlsen <lars.povlsen@microchip.com>,
         Steen Hegelund <Steen.Hegelund@microchip.com>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
@@ -47,58 +56,131 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Quentin Schulz <quentin.schulz@bootlin.com>,
         Antoine Tenart <atenart@kernel.org>,
         Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S . Miller" <davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
         UNGLinuxDriver@microchip.com, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v2 7/8] ARM: dts: lan9662-pcb8291: fix pinctrl node name
-In-Reply-To: <cf2a6d1a-bf98-e382-2623-e44e5979ca29@gmail.com>
 References: <20220318202547.1650687-1-michael@walle.cc>
- <20220318202547.1650687-8-michael@walle.cc>
- <cf2a6d1a-bf98-e382-2623-e44e5979ca29@gmail.com>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <e7467fe3a8dae5f5af84d595a0c4ab16@walle.cc>
-X-Sender: michael@walle.cc
+ <20220318202547.1650687-9-michael@walle.cc>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220318202547.1650687-9-michael@walle.cc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
-
-Am 2022-03-19 09:24, schrieb Sergei Shtylyov:
-> Hello!
+On 18/03/2022 21:25, Michael Walle wrote:
+> Convert the ocelot-pinctrl device tree binding to the new YAML format.
 > 
-> On 3/18/22 11:25 PM, Michael Walle wrote:
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> ---
+>  .../bindings/pinctrl/mscc,ocelot-pinctrl.txt  |  42 -------
+>  .../bindings/pinctrl/mscc,ocelot-pinctrl.yaml | 108 ++++++++++++++++++
+>  2 files changed, 108 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml
 > 
->> The pinctrl device tree binding will be converted to YAML format. All
->> the pin nodes should end with "-pins". Fix them.
-> 
->    It does end with "pins" already, right?
+> diff --git a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
+> deleted file mode 100644
+> index 5d84fd299ccf..000000000000
+> --- a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
+> +++ /dev/null
+> @@ -1,42 +0,0 @@
+> -Microsemi Ocelot pin controller Device Tree Bindings
+> -----------------------------------------------------
+> -
+> -Required properties:
+> - - compatible		: Should be "mscc,ocelot-pinctrl",
+> -			  "mscc,jaguar2-pinctrl", "microchip,sparx5-pinctrl",
+> -			  "mscc,luton-pinctrl", "mscc,serval-pinctrl",
+> -			  "microchip,lan966x-pinctrl" or "mscc,servalt-pinctrl"
+> - - reg			: Address and length of the register set for the device
+> - - gpio-controller	: Indicates this device is a GPIO controller
+> - - #gpio-cells		: Must be 2.
+> -			  The first cell is the pin number and the
+> -			  second cell specifies GPIO flags, as defined in
+> -			  <dt-bindings/gpio/gpio.h>.
+> - - gpio-ranges		: Range of pins managed by the GPIO controller.
+> -
+> -
+> -The ocelot-pinctrl driver uses the generic pin multiplexing and generic pin
+> -configuration documented in pinctrl-bindings.txt.
+> -
+> -The following generic properties are supported:
+> - - function
+> - - pins
+> -
+> -Example:
+> -	gpio: pinctrl@71070034 {
+> -		compatible = "mscc,ocelot-pinctrl";
+> -		reg = <0x71070034 0x28>;
+> -		gpio-controller;
+> -		#gpio-cells = <2>;
+> -		gpio-ranges = <&gpio 0 0 22>;
+> -
+> -		uart_pins: uart-pins {
+> -				pins = "GPIO_6", "GPIO_7";
+> -				function = "uart";
+> -		};
+> -
+> -		uart2_pins: uart2-pins {
+> -				pins = "GPIO_12", "GPIO_13";
+> -				function = "uart2";
+> -		};
+> -	};
+> diff --git a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..7149a6655623
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml
+> @@ -0,0 +1,108 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/mscc,ocelot-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microsemi Ocelot pin controller
+> +
+> +maintainers:
+> +  - Alexandre Belloni <alexandre.belloni@bootlin.com>
+> +  - Lars Povlsen <lars.povlsen@microchip.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - microchip,lan966x-pinctrl
+> +      - microchip,sparx5-pinctrl
+> +      - mscc,jaguar2-pinctrl
+> +      - mscc,luton-pinctrl
+> +      - mscc,ocelot-pinctrl
+> +      - mscc,serval-pinctrl
+> +      - mscc,servalt-pinctrl
+> +
+> +  reg:
+> +    items:
+> +      - description: Base address
+> +      - description: Extended pin configuration registers
+> +    minItems: 1
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +  gpio-ranges: true
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
 
-It ends with "_pins". Please note the underscore.
+These three interrupt related properties were not in original bindings.
+Is this something new or was actually before, just not documented? In
+any case mention it in commit msg.
 
->> Fixes: 290deaa10c50 ("ARM: dts: add DT for lan966 SoC and 2-port board 
->> pcb8291")
->> Signed-off-by: Michael Walle <michael@walle.cc>
->> ---
->>  arch/arm/boot/dts/lan966x-pcb8291.dts | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/arch/arm/boot/dts/lan966x-pcb8291.dts 
->> b/arch/arm/boot/dts/lan966x-pcb8291.dts
->> index 3281af90ac6d..3c7e3a7d6f14 100644
->> --- a/arch/arm/boot/dts/lan966x-pcb8291.dts
->> +++ b/arch/arm/boot/dts/lan966x-pcb8291.dts
->> @@ -35,7 +35,7 @@ fc3_b_pins: fcb3-spi-pins {
->>  		function = "fc3_b";
->>  	};
->> 
->> -	can0_b_pins:  can0_b_pins {
->> +	can0_b_pins:  can0-b-pins {
-> 
->    Mhm, I can't even see what is changed here... :-/
 
-The name of the node, s/_/-/
-
--michael
+Best regards,
+Krzysztof
