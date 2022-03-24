@@ -2,131 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803B1C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Mar 2022 13:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB480C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Mar 2022 14:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350475AbiCXNjm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Mar 2022 09:39:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60840 "EHLO
+        id S1349192AbiCXO4K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Mar 2022 10:56:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350468AbiCXNjl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Mar 2022 09:39:41 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1922CE31
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Mar 2022 06:38:08 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id m22so4775814pja.0
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Mar 2022 06:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sudomaker-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=/sQV5rp+cw1wax1iRP0Va+YLBH7FLeLa8L9B5UtJM84=;
-        b=5C0v6M5Hca9omePnMbOPDpTfrC6UCYwPeyi8waSFJfu9um0WM6EYF/qIWVeK5AbbLF
-         wkZzp6EmIYdKs5gMZh1XNk47iQlsQ6zX5fntXSaFGB8DcHmIx28bwOtiRIuo5dC4+pqQ
-         l1W9DFCo7FFvwRLZi7jKhXI4YAfO3K/rFp6K+jWPQeuU5KTwWssrdLJ+V3kdXBJZAoim
-         cc/p4GjzFLFfwizcm5LzYkDpkcYWYpJkWiOJ4WhVkuC5hAN8JFYhzW4GeAXvSoH/BcU3
-         QJoDIXAw/8cfSVpOhVPSCP7VrjWofUsuatyWBjvKceUeGgf2sg/0iCbAnXGJ1Dj+KCU7
-         oNzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/sQV5rp+cw1wax1iRP0Va+YLBH7FLeLa8L9B5UtJM84=;
-        b=BjvmSISioRv0KBk7sTaMx2BDak1itjI5qXaMGRDUgzRqXHcXFOowauDLphuPmQUofL
-         uoTVVQdtWWI560eDGQtzAdVd+BJ0jyK4L7FBvYn2KVMvBM0qXxNfBFRlmEoQue2lrBU8
-         gjUWPyr2Z3m4tzy0iF78uXeiclEbJCUv5nZQJ9kuJD3mSL9w8baHkkEkcoS6XLkpwHPc
-         ZQmgunnH6oFaaVLfkOy2jCgN/hhEGEdrD07Y124Q/Hh7cEaMdu+8lKG5CzyIhbC0gngI
-         yRHodRiFyvo2EB2wUviHeOZzK0BYm02BpyvMdkg9l6OCjH7nbniG28AIr+bW42eI7PDy
-         7WaQ==
-X-Gm-Message-State: AOAM530l4MGzgR1JRO9g0ZaGBq/jyMls2f1cg25qjUtiiHfEsM2TTQO7
-        PpaN/SZ7HRk0HSajB2lO9aaAFw==
-X-Google-Smtp-Source: ABdhPJz1XaJS5LG/TJcD0dYQ+F6zCb5Vf3z0cQhZ4l5Rv2149Mor9j9sUR8PwJik08KZjzFrZAQAWQ==
-X-Received: by 2002:a17:902:7888:b0:148:adf2:9725 with SMTP id q8-20020a170902788800b00148adf29725mr5824851pll.136.1648129088094;
-        Thu, 24 Mar 2022 06:38:08 -0700 (PDT)
-Received: from [172.16.24.11] ([91.219.212.226])
-        by smtp.gmail.com with ESMTPSA id x2-20020a63aa42000000b0038265eb2495sm2765064pgo.88.2022.03.24.06.38.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 06:38:07 -0700 (PDT)
-Message-ID: <5c1f03d1-f72a-bc6b-92b4-927898aa3b2d@sudomaker.com>
-Date:   Thu, 24 Mar 2022 21:39:03 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] pinctrl: Ingenic: Add missing UART2 group C for X1000/E
-Content-Language: en-US
-To:     Paul Cercueil <paul@crapouillou.net>
+        with ESMTP id S242275AbiCXO4J (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Mar 2022 10:56:09 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7BFF7486C;
+        Thu, 24 Mar 2022 07:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1648133676; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=k4RqB7TRAYJBu7Wm3B9VZjS3Tw7CidJf6vGxQitVk5U=;
+        b=JZkuKyp52NeLVnkK54mHEffdaxGZogn6w7EExst0FnYnOjuPeY02hv0eN/B3k7788lYv8O
+        TD1U7aFUKGOnTvCF+8COJRlHOzZDJ25L0JD0yHEfjl3W8KRbReteN5anggoyJQwNAQvYIO
+        a/oYoJyMwMp16R4dCiGVwY/2qGnoACk=
+Date:   Thu, 24 Mar 2022 14:54:17 +0000
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2] pinctrl: Ingenic: Add missing UART2 group C for
+ X1000/E
+To:     Yunian Yang <reimu@sudomaker.com>
 Cc:     linux-mips@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ea710c27-00e9-065c-77a3-78e3c5f73ed3@sudomaker.com>
- <3H099R.GNKMFWXCJG5U1@crapouillou.net>
-From:   Yunian Yang <reimu@sudomaker.com>
-In-Reply-To: <3H099R.GNKMFWXCJG5U1@crapouillou.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-Id: <H2899R.18AGJJTC83P61@crapouillou.net>
+In-Reply-To: <fd813c7d-888a-ce53-b1e5-d9b41003b58b@sudomaker.com>
+References: <fd813c7d-888a-ce53-b1e5-d9b41003b58b@sudomaker.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Paul,
 
-Thank you for pointing this out. I sent the refined patch.
 
-On 3/24/22 20:10, Paul Cercueil wrote:
-> Hi Yunian,
-> 
-> Le jeu., mars 24 2022 at 20:04:41 +0800, Yunian Yang <reimu@sudomaker.com> a écrit :
->> X1000/E has a third UART2 pin group selection, which uses the TDI(G2) as RX
->> and TDO(G1) as TX. This configuration is becoming increasingly popular in
->> newer core boards, such as the Halley2 v4.1. This is done by enabling
->> function 1 of a "virtual pin" PC31. See section 19.3.3 of the X1000
->> Programming Manual for details.
->>
->> Signed-off-by: Yunian Yang <reimu@sudomaker.com>
->> ---
->>  drivers/pinctrl/pinctrl-ingenic.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
->> index 2712f51eb238..29709059d62b 100644
->> --- a/drivers/pinctrl/pinctrl-ingenic.c
->> +++ b/drivers/pinctrl/pinctrl-ingenic.c
->> @@ -1982,6 +1982,7 @@ static int x1000_uart1_data_a_pins[] = { 0x04, 0x05, };
->>  static int x1000_uart1_data_d_pins[] = { 0x62, 0x63, };
->>  static int x1000_uart1_hwflow_pins[] = { 0x64, 0x65, };
->>  static int x1000_uart2_data_a_pins[] = { 0x02, 0x03, };
->> +static int x1000_uart2_data_c_pins[] = { 0x5f, 0x5f, };
-> 
-> One should be enough.
-> 
-> Looks fine otherwise.
-> 
-> Cheers,
-> -Paul
-> 
->>  static int x1000_uart2_data_d_pins[] = { 0x65, 0x64, };
->>  static int x1000_sfc_data_pins[] = { 0x1d, 0x1c, 0x1e, 0x1f, };
->>  static int x1000_sfc_clk_pins[] = { 0x1a, };
->> @@ -2058,6 +2059,7 @@ static const struct group_desc x1000_groups[] = {
->>         INGENIC_PIN_GROUP("uart1-data-d", x1000_uart1_data_d, 1),
->>         INGENIC_PIN_GROUP("uart1-hwflow", x1000_uart1_hwflow, 1),
->>         INGENIC_PIN_GROUP("uart2-data-a", x1000_uart2_data_a, 2),
->> +       INGENIC_PIN_GROUP("uart2-data-c", x1000_uart2_data_c, 1),
->>         INGENIC_PIN_GROUP("uart2-data-d", x1000_uart2_data_d, 0),
->>         INGENIC_PIN_GROUP("sfc-data", x1000_sfc_data, 1),
->>         INGENIC_PIN_GROUP("sfc-clk", x1000_sfc_clk, 1),
->> @@ -2115,7 +2117,7 @@ static const char *x1000_uart0_groups[] = { "uart0-data", "uart0-hwflow", };
->>  static const char *x1000_uart1_groups[] = {
->>         "uart1-data-a", "uart1-data-d", "uart1-hwflow",
->>  };
->> -static const char *x1000_uart2_groups[] = { "uart2-data-a", "uart2-data-d", };
->> +static const char *x1000_uart2_groups[] = { "uart2-data-a", "uart2-data-c", "uart2-data-d", };
->>  static const char *x1000_sfc_groups[] = { "sfc-data", "sfc-clk", "sfc-ce", };
->>  static const char *x1000_ssi_groups[] = {
->>         "ssi-dt-a-22", "ssi-dt-a-29", "ssi-dt-d",
->> -- 
->> 2.30.2
-> 
-> 
+Le jeu., mars 24 2022 at 21:33:56 +0800, Yunian Yang=20
+<reimu@sudomaker.com> a =E9crit :
+> v2: Define PC31 pin only once, noted by Paul Cercueil=20
+> <paul@crapouillou.net>
+>     Confirmed to work on hardware. Although the Ingenic folks did=20
+> this twice
+>     in their 4.4 kernel fork; not sure why.
+>=20
+> X1000/E has a third UART2 pin group selection, which uses the TDI(G2)=20
+> as RX
+> and TDO(G1) as TX. This configuration is becoming increasingly=20
+> popular in
+> newer core boards, such as the Halley2 v4.1. This is done by enabling
+> function 1 of a "virtual pin" PC31. See section 19.3.3 of the X1000
+> Programming Manual for details.
+>=20
+> Signed-off-by: Yunian Yang <reimu@sudomaker.com>
+
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+
+Cheers,
+-Paul
+
+> ---
+>  drivers/pinctrl/pinctrl-ingenic.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c=20
+> b/drivers/pinctrl/pinctrl-ingenic.c
+> index 2712f51eb238..29709059d62b 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -1982,6 +1982,7 @@ static int x1000_uart1_data_a_pins[] =3D { 0x04,=20
+> 0x05, };
+>  static int x1000_uart1_data_d_pins[] =3D { 0x62, 0x63, };
+>  static int x1000_uart1_hwflow_pins[] =3D { 0x64, 0x65, };
+>  static int x1000_uart2_data_a_pins[] =3D { 0x02, 0x03, };
+> +static int x1000_uart2_data_c_pins[] =3D { 0x5f, };
+>  static int x1000_uart2_data_d_pins[] =3D { 0x65, 0x64, };
+>  static int x1000_sfc_data_pins[] =3D { 0x1d, 0x1c, 0x1e, 0x1f, };
+>  static int x1000_sfc_clk_pins[] =3D { 0x1a, };
+> @@ -2058,6 +2059,7 @@ static const struct group_desc x1000_groups[] =3D=20
+> {
+>         INGENIC_PIN_GROUP("uart1-data-d", x1000_uart1_data_d, 1),
+>         INGENIC_PIN_GROUP("uart1-hwflow", x1000_uart1_hwflow, 1),
+>         INGENIC_PIN_GROUP("uart2-data-a", x1000_uart2_data_a, 2),
+> +       INGENIC_PIN_GROUP("uart2-data-c", x1000_uart2_data_c, 1),
+>         INGENIC_PIN_GROUP("uart2-data-d", x1000_uart2_data_d, 0),
+>         INGENIC_PIN_GROUP("sfc-data", x1000_sfc_data, 1),
+>         INGENIC_PIN_GROUP("sfc-clk", x1000_sfc_clk, 1),
+> @@ -2115,7 +2117,7 @@ static const char *x1000_uart0_groups[] =3D {=20
+> "uart0-data", "uart0-hwflow", };
+>  static const char *x1000_uart1_groups[] =3D {
+>         "uart1-data-a", "uart1-data-d", "uart1-hwflow",
+>  };
+> -static const char *x1000_uart2_groups[] =3D { "uart2-data-a",=20
+> "uart2-data-d", };
+> +static const char *x1000_uart2_groups[] =3D { "uart2-data-a",=20
+> "uart2-data-c", "uart2-data-d", };
+>  static const char *x1000_sfc_groups[] =3D { "sfc-data", "sfc-clk",=20
+> "sfc-ce", };
+>  static const char *x1000_ssi_groups[] =3D {
+>         "ssi-dt-a-22", "ssi-dt-a-29", "ssi-dt-d",
+> --
+> 2.30.2
+
 
