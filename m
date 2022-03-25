@@ -2,145 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEE5C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Mar 2022 16:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA41C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Mar 2022 20:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230134AbiCYQDi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Mar 2022 12:03:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57406 "EHLO
+        id S231709AbiCYUIb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Mar 2022 16:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376674AbiCYQDb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Mar 2022 12:03:31 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1442A9F38E
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Mar 2022 09:01:54 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id y6so5951433plg.2
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Mar 2022 09:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=WVe7vUBHguusdempKlMD4/7egQrK1x0/9v7ZHHVmrak=;
-        b=Lf/po27eItEtnnueu+rsj5iZzfhG3emVH+f78rfLLYt/aZ0ISYC/q75edjlGdaotpe
-         yI1BW03PPh8Bflz5d0OMvcvGqjJtNc9QpMD6O2zeZjrXy8MQTE5zFphpnANZdTJRfZi8
-         PyghdJN4vtxXh1xW6nmbSfjru59R1bqV5Optde56YI+DDqxjNBtp3y/gT4e5EK2QHYJG
-         BJf6pXQDJ8/P9092bwVMRSYEki72vR1bb40AX6s/gGs9RGQx7ykMJtbgbRsAG2qiXWBG
-         dO6Q8fTjt4PYr3lW+oVeRZQNup+Vr9RkaAj4hbYNInMtLz70fMdr138c2yJ4CqosNxoL
-         /OKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=WVe7vUBHguusdempKlMD4/7egQrK1x0/9v7ZHHVmrak=;
-        b=GHmAW2cif0aQVZKCoyKkOPKwa35Fldbcsl2acEUwrg3dWXG9Zbt0pxKURF/7KeGDTn
-         fmAvEZXKOK0S6j98NJUCvYsyT+ABmobVXHETqoqzuZZyMbaVO0ldrSbc3hW2QEc87DFP
-         7paMXRFOTsShZQlHVIOhqMycp7ER/3C4hx7BkekRQ3EpY4RNL2yuvpXLuE7OGKkTi/q9
-         DicLfRpsup5HhlvbkXEGx1okdqdpAdG4+qxKm7aWaybe9s0xV2cG6HIScArqmT2SVEXk
-         j7crtrcl0u4wmFG+tJZLUQOa7FUCsRqYHHnhUC3ECZIzmDUXnpXBuN/WQBzbx5nyYm9O
-         cLkg==
-X-Gm-Message-State: AOAM53268xMMDJS67UKHkWdt4/T4M1GWulOlJ8M4M+/jdN3K2c64r0t6
-        +9blC3ODIy9de44Ot3n2Zo5MCmi7fKT9sQ==
-X-Google-Smtp-Source: ABdhPJwflI9/HmrzxxgrsDPYrImSTUXg+s/nKcO6pbpQ4IUxCuAaFxsGfrGQFm7JOmeXF8URVmoxqw==
-X-Received: by 2002:a17:90a:ba10:b0:1bf:6900:2c5d with SMTP id s16-20020a17090aba1000b001bf69002c5dmr25904940pjr.36.1648224113534;
-        Fri, 25 Mar 2022 09:01:53 -0700 (PDT)
-Received: from sol ([118.209.204.33])
-        by smtp.gmail.com with ESMTPSA id s3-20020a056a00194300b004f6da3a1a3bsm7621097pfk.8.2022.03.25.09.01.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Mar 2022 09:01:51 -0700 (PDT)
-Date:   Sat, 26 Mar 2022 00:01:46 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     =?utf-8?B?SmnFmcOt?= Prchal <jiri.prchal@aksignal.cz>
-Cc:     linux-gpio@vger.kernel.org, brgl@bgdev.pl,
-        andy.shevchenko@gmail.com
-Subject: Re: [libgpiod] bug: pull-up does not work
-Message-ID: <20220325160146.GA49114@sol>
-References: <62b30818-92fa-e44c-c9dd-fd8cc49a6e6a@aksignal.cz>
- <20220325145742.GA46960@sol>
- <48129be0-f29d-96ae-cec3-2b4a2ee10aa8@aksignal.cz>
+        with ESMTP id S232341AbiCYUH5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Mar 2022 16:07:57 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2F42B18C;
+        Fri, 25 Mar 2022 13:04:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648238654; x=1679774654;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KugfsYLZVZCrCzDcruBf/OOyAOySyQSAT5HxYxx99mU=;
+  b=U7XyWDFQwnE7PBjzw5HFxoj7PZhgdUNwMu/x3mWe3ran6G5TJ4rYQzfc
+   7TxoCgZJO0fKCZBA8uXL0ul+U5m28s2b8Nk0pRveXKNsk3+6UkzCttwzh
+   HeXBjTK/1YZ5kK1AUG+XRQBrO6L6NO8pYU5rZQINOu39oqlEfj/5ENqVB
+   Fg+Orp2Y0Z78PZfYlAvOZHDVp7AdcWJm6hVOo0SbcA4Fm3bb2hS3hsrBu
+   f6NOJibfi2nNrKMDfEufPBkfRHOMsmLi9fn/+fSnz0OE0aRYL0GeawT6L
+   B5QDoJT8tJ5N2wu/3YCNltnMxyC7SKvz8g3MKjD5k5gxXQsYgeESNwrlj
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10297"; a="256283599"
+X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
+   d="scan'208";a="256283599"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2022 13:04:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
+   d="scan'208";a="584576733"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 25 Mar 2022 13:04:09 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 80AEB73; Fri, 25 Mar 2022 22:04:30 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 2/5] pinctrl: stm32: Replace custom code by gpiochip_count() call
+Date:   Fri, 25 Mar 2022 22:03:35 +0200
+Message-Id: <20220325200338.54270-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220325200338.54270-1-andriy.shevchenko@linux.intel.com>
+References: <20220325200338.54270-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <48129be0-f29d-96ae-cec3-2b4a2ee10aa8@aksignal.cz>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Mar 25, 2022 at 04:13:11PM +0100, Jiří Prchal wrote:
-> 
-> 
-> On 25. 03. 22 15:57, Kent Gibson wrote:
-> > On Fri, Mar 25, 2022 at 11:02:07AM +0100, Jiří Prchal wrote:
-> > > Hi,
-> > > since in debian is 1.6.2 and pull-up doesn't work so I cloned git, branch
-> > > next/libgpiod-2.0 and compiled libgpiod and tools, but no luck, same result.
-> > > 
-> > 
-> > You mean it doesn't work for you on your platform.
-> > 
-> > The libgpiod-2.0 branch is a work in progress and should not be considered
-> > the place to go to find solutions to problems with v1.6.
-> > Not that I'm saying that the v2 branch doesn't work, I'm actually pretty
-> > sure it does, but its purpose is to switch to the latest kernel uAPI, not
-> > to provide fixes, should they be needed, for v1.6.
-> Just thought api v1 doesn't support pull-ups so tried v2.
+Since we have generic function to count GPIO controller nodes
+under given device, there is no need to open code it. Replace
+custom code by gpiochip_count() call.
 
-v1 does support bias since Linux v5.5, and libgpiod added support in v1.5.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-> > 
-> > > ~# uname -r
-> > > 5.17.0-rc7_cpm9g25
-> > > 
-> > > floating pins should go with pull-up/down
-> > > ~# gpioget -B pull-up 3 6 8 10 12 14 16 18 20
-> > > 0 0 0 0 0 0 0 0
-> > > ~# gpioget -B pull-up 3 6 8 10 12 14 16 18 20
-> > > 1 1 0 0 0 0 0 0
-> > > ~# gpioget -B pull-up 3 6 8 10 12 14 16 18 20
-> > > 0 1 0 1 0 0 0 0
-> > > 
-> > > ~# gpioget -v
-> > > gpioget (libgpiod) v2.0-devel
-> > > 
-> > > Whats wrong with it?
-> > 
-> > You forgot to mention which of those pins are floating.
-> All of them.
-> > Or what gpiochip3 is and whether it supports biasing.
-> AT91SAM9G25, hw supports pull-ups.
-> > 
-> > So does your chip support pull-up/down?
-> > The kernel can only enable it if the hardware and pinctrl driver supports it.
-> Is there possibility that pinctrl doesn't support it? I think other gpios
-> used in kernel are with pull-up.
-> Example:
-> pinctrl@fffff400 {
-> 	1wire {
-> 		pinctrl_1wire: 1wire-0 {
-> 			atmel,pins = <AT91_PIOC 0 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>; /* PC0
-> PIO, pull-up */
-> 		};
-> 	};
-> };
-> 
-
-Pinctrl and device tree are outside my area, but my understanding is
-that setting via DT is a separate interface, so while it may be
-supported by DT it may not be via the gpiolib interface.
-But I will defer to anyone else on that.
-(CCing in Andy since I'm pretty sure he would know)
-
-Not sure which pinctrl is relevant for your case.
-pinctrl-at91 doesn't appear to support setting the pull-up via the gpiolib
-interface, but pinctrl-at91-pio4 does, so my guess would be you are using
-the pinctrl-at91.
-
-But again, this is outside my area so you would need to confirm that
-yourself or get feedback from someone else.
-If you determine that you are using a pinctrl that supports setting
-bias via gpiolib then we'll have to do some more digging.
-
-Cheers,
-Kent.
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 9ed764731570..d4bbeec82c1f 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1423,7 +1423,8 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_pinctrl *pctl;
+ 	struct pinctrl_pin_desc *pins;
+-	int i, ret, hwlock_id, banks = 0;
++	int i, ret, hwlock_id;
++	unsigned int banks;
+ 
+ 	if (!np)
+ 		return -EINVAL;
+@@ -1513,10 +1514,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pctl->pctl_dev);
+ 	}
+ 
+-	for_each_available_child_of_node(np, child)
+-		if (of_property_read_bool(child, "gpio-controller"))
+-			banks++;
+-
++	banks = gpiochip_count(dev);
+ 	if (!banks) {
+ 		dev_err(dev, "at least one GPIO bank is required\n");
+ 		return -EINVAL;
+-- 
+2.35.1
 
