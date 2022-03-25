@@ -2,43 +2,43 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA41C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B496C433FE
 	for <linux-gpio@archiver.kernel.org>; Fri, 25 Mar 2022 20:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231709AbiCYUIb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Mar 2022 16:08:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55036 "EHLO
+        id S231922AbiCYUIc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Mar 2022 16:08:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232341AbiCYUH5 (ORCPT
+        with ESMTP id S232339AbiCYUH5 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Mar 2022 16:07:57 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2F42B18C;
-        Fri, 25 Mar 2022 13:04:14 -0700 (PDT)
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CE02BB19;
+        Fri, 25 Mar 2022 13:04:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648238654; x=1679774654;
+  t=1648238655; x=1679774655;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=KugfsYLZVZCrCzDcruBf/OOyAOySyQSAT5HxYxx99mU=;
-  b=U7XyWDFQwnE7PBjzw5HFxoj7PZhgdUNwMu/x3mWe3ran6G5TJ4rYQzfc
-   7TxoCgZJO0fKCZBA8uXL0ul+U5m28s2b8Nk0pRveXKNsk3+6UkzCttwzh
-   HeXBjTK/1YZ5kK1AUG+XRQBrO6L6NO8pYU5rZQINOu39oqlEfj/5ENqVB
-   Fg+Orp2Y0Z78PZfYlAvOZHDVp7AdcWJm6hVOo0SbcA4Fm3bb2hS3hsrBu
-   f6NOJibfi2nNrKMDfEufPBkfRHOMsmLi9fn/+fSnz0OE0aRYL0GeawT6L
-   B5QDoJT8tJ5N2wu/3YCNltnMxyC7SKvz8g3MKjD5k5gxXQsYgeESNwrlj
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10297"; a="256283599"
+  bh=+3cMN1f1lEcXuRBrNDyNybfnJAqjD8jUdUQVryZwyuU=;
+  b=VGbWWgqKbqXccXQql6hhvf8UAJkQJ6ZRaxfzgmH2DkLmuc1H//obZUyN
+   Ev4MPix2rKWPgIqduFRM5sAoC4/6XGJ2ORuIFWU2C2XmNTl19WkzH9dgE
+   GcExgFY7xAwFwf8Qsy/W6tvD8xXwY0bEqBSBLIGse1JkapXVlm/eRjP3L
+   fOaYRBr3i65Sg/Mdy/gsrIFBo1alTeWdzlal6E5JCX29dM8Veao4sxs1n
+   JPkts368v6zLr1YmsOteitgqyf7QkmmQKwrL7hjKzyKx1VABcxI/8m/Bw
+   U7F0r+JPdsdnWdRK8eYn88BEplqn++SzIT60y8mwVH9CgAPORtXl7uzMp
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10297"; a="258427150"
 X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="256283599"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2022 13:04:14 -0700
+   d="scan'208";a="258427150"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2022 13:04:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="584576733"
+   d="scan'208";a="561956350"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 25 Mar 2022 13:04:09 -0700
+  by orsmga008.jf.intel.com with ESMTP; 25 Mar 2022 13:04:10 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 80AEB73; Fri, 25 Mar 2022 22:04:30 +0200 (EET)
+        id A508B314; Fri, 25 Mar 2022 22:04:30 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Gregory CLEMENT <gregory.clement@bootlin.com>,
@@ -58,9 +58,9 @@ Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 2/5] pinctrl: stm32: Replace custom code by gpiochip_count() call
-Date:   Fri, 25 Mar 2022 22:03:35 +0200
-Message-Id: <20220325200338.54270-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 5/5] pinctrl: armada-37xx: Replace custom code by gpiochip_count() call
+Date:   Fri, 25 Mar 2022 22:03:38 +0200
+Message-Id: <20220325200338.54270-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220325200338.54270-1-andriy.shevchenko@linux.intel.com>
 References: <20220325200338.54270-1-andriy.shevchenko@linux.intel.com>
@@ -76,35 +76,58 @@ custom code by gpiochip_count() call.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/stm32/pinctrl-stm32.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 24 +++++++++------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 9ed764731570..d4bbeec82c1f 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -1423,7 +1423,8 @@ int stm32_pctl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 08cad14042e2..ba94125f6566 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -728,22 +728,18 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+ 	struct gpio_irq_chip *girq = &gc->irq;
  	struct device *dev = &pdev->dev;
- 	struct stm32_pinctrl *pctl;
- 	struct pinctrl_pin_desc *pins;
--	int i, ret, hwlock_id, banks = 0;
-+	int i, ret, hwlock_id;
-+	unsigned int banks;
+ 	struct device_node *np;
+-	int ret = -ENODEV, i, nr_irq_parent;
++	unsigned int nr_child_nodes, i;
++	int ret;
  
- 	if (!np)
- 		return -EINVAL;
-@@ -1513,10 +1514,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 		return PTR_ERR(pctl->pctl_dev);
+ 	/* Check if we have at least one gpio-controller child node */
+-	for_each_child_of_node(dev->of_node, np) {
+-		if (of_property_read_bool(np, "gpio-controller")) {
+-			ret = 0;
+-			break;
+-		}
+-	}
+-	if (ret)
+-		return dev_err_probe(dev, ret, "no gpio-controller child node\n");
++	nr_child_nodes = gpiochip_count(dev);
++	if (!nr_child_nodes)
++		return dev_err_probe(dev, -ENODEV, "no gpio-controller child node\n");
+ 
+-	nr_irq_parent = of_irq_count(np);
+ 	spin_lock_init(&info->irq_lock);
+ 
+-	if (!nr_irq_parent) {
++	nr_child_nodes = of_irq_count(np);
++	if (!nr_child_nodes) {
+ 		dev_err(dev, "invalid or no IRQ\n");
+ 		return 0;
  	}
+@@ -766,11 +762,11 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+ 	 * controller. But we do not take advantage of this and use
+ 	 * the chained irq with all of them.
+ 	 */
+-	girq->num_parents = nr_irq_parent;
+-	girq->parents = devm_kcalloc(dev, nr_irq_parent, sizeof(*girq->parents), GFP_KERNEL);
++	girq->num_parents = nr_child_nodes;
++	girq->parents = devm_kcalloc(dev, nr_child_nodes, sizeof(*girq->parents), GFP_KERNEL);
+ 	if (!girq->parents)
+ 		return -ENOMEM;
+-	for (i = 0; i < nr_irq_parent; i++) {
++	for (i = 0; i < nr_child_nodes; i++) {
+ 		int irq = irq_of_parse_and_map(np, i);
  
--	for_each_available_child_of_node(np, child)
--		if (of_property_read_bool(child, "gpio-controller"))
--			banks++;
--
-+	banks = gpiochip_count(dev);
- 	if (!banks) {
- 		dev_err(dev, "at least one GPIO bank is required\n");
- 		return -EINVAL;
+ 		if (irq < 0)
 -- 
 2.35.1
 
