@@ -2,114 +2,70 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CF9C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Mar 2022 20:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE427C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Mar 2022 21:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232323AbiCYUmc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Mar 2022 16:42:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56864 "EHLO
+        id S233243AbiCYVIf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Mar 2022 17:08:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232328AbiCYUmb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Mar 2022 16:42:31 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AAD17F3F5;
-        Fri, 25 Mar 2022 13:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648240856; x=1679776856;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=y0LAZAqsK93XWpNG5nw/oj1tHbeQR9usbzd6pJvOx4I=;
-  b=KUiglmnAl9c7XS+0MpOoemSwrM2rg2dZS8V7XrqWcubgM/WZ/9UtCUXS
-   YqH1kuh0/2V7XEMHM7Bum6zay3154BcHJyM6K2kYLBb+1T2IxCMqWjbJm
-   c7OtLc3pLeLeBFmdSAy1R2Ow69b6X6g/WW9HGlvLLaaFSXFNS8qX1WzN/
-   ApJPcdcMiy+k4sV3HKHMV0lVpuQiChOQEZ1yQVk2ZfFCq715hVZcOiyzk
-   oYDWUE5NRxr9AOEb5A2dyXQ6LqIgmsTJAGsHsJktIT5cBmy4pvpDtsZjP
-   3o4GBN9VEjKsrGU1uFbibZDuM/JoLGskBl6/SJ6JL0IwP44uVfLFSfoyx
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10297"; a="239311414"
-X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="239311414"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2022 13:14:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="617232702"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 25 Mar 2022 13:14:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A7E8F11E; Fri, 25 Mar 2022 22:14:27 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/1] pinctrl: armada-37xx: Switch to use fwnode instead of of_node
-Date:   Fri, 25 Mar 2022 22:14:25 +0200
-Message-Id: <20220325201425.54847-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S233237AbiCYVIe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Mar 2022 17:08:34 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2887A1EC60E;
+        Fri, 25 Mar 2022 14:07:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CDB7BB829E7;
+        Fri, 25 Mar 2022 21:06:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 850E2C004DD;
+        Fri, 25 Mar 2022 21:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648242417;
+        bh=/gzkPSO1hMYGhjETfIaRh7tvmL2QyHGKMO2BKZfT+Nk=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=H1sjVNvnQPpxzvM3AesxNvMOk3/qB3JBd/Gqzwai6ZHuYJRw4chH6Jhv4b8bf+QBx
+         aHMBZJnxV3eVuSjn0QkFtVrkE3divIZ/v3VE6HaqX9ZDF7H6b5zTODheQ/BbNGe6ln
+         fYZgp2/aSFYxicajGb2kYBSNBWdtzR4s0VtoAc9yPFCC/uXf1HyUoDvNpEBHP2GNRF
+         Y8kxUrAJ437MAK5qU1OFqkB9xK/LF/dahI7WGlL3foxLpvukD742UTRgQMxnz06yej
+         e9CyMoaNUa8KPrvMpqvtf93zZypKuxQ2kt/+Zx3z+4hoWMf+QyEwr8nn1qqqmuhS8d
+         kbFzER1oyge+w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 718EEE6BBCA;
+        Fri, 25 Mar 2022 21:06:57 +0000 (UTC)
+Subject: Re: [GIT PULL] gpio: updates for v5.18
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220323163230.691802-1-brgl@bgdev.pl>
+References: <20220323163230.691802-1-brgl@bgdev.pl>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220323163230.691802-1-brgl@bgdev.pl>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v5.18
+X-PR-Tracked-Commit-Id: 87ba5badc541a79bab2fa3243ee0008c0880c64a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ebcb577aee1448fd60904fc4126cbf7ec012bd0b
+Message-Id: <164824241746.8431.10429637770703695319.pr-tracker-bot@kernel.org>
+Date:   Fri, 25 Mar 2022 21:06:57 +0000
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-GPIO library now accepts fwnode as a firmware node,
-so switch the driver to use it.
+The pull request you sent on Wed, 23 Mar 2022 17:32:30 +0100:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v5.18
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index ba94125f6566..6c2b25418754 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -21,6 +21,7 @@
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/string_helpers.h>
-@@ -783,18 +784,13 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
- 					struct armada_37xx_pinctrl *info)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *np;
-+	struct fwnode_handle *fwnode;
- 	struct gpio_chip *gc;
--	int ret = -ENODEV;
-+	int ret;
- 
--	for_each_child_of_node(dev->of_node, np) {
--		if (of_find_property(np, "gpio-controller", NULL)) {
--			ret = 0;
--			break;
--		}
--	}
--	if (ret)
--		return ret;
-+	fwnode = device_get_named_child_node(dev, "gpio-controller");
-+	if (!fwnode)
-+		return -ENODEV;
- 
- 	info->gpio_chip = armada_37xx_gpiolib_chip;
- 
-@@ -802,7 +798,7 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
- 	gc->ngpio = info->data->nr_pins;
- 	gc->parent = dev;
- 	gc->base = -1;
--	gc->of_node = np;
-+	gc->fwnode = fwnode;
- 	gc->label = info->data->name;
- 
- 	ret = armada_37xx_irqchip_register(pdev, info);
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ebcb577aee1448fd60904fc4126cbf7ec012bd0b
+
+Thank you!
+
 -- 
-2.35.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
