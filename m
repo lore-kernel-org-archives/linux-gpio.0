@@ -2,41 +2,41 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 436C2C433EF
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Mar 2022 17:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4C2C433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Mar 2022 17:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234553AbiCZRLI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 26 Mar 2022 13:11:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50226 "EHLO
+        id S234328AbiCZRLg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Mar 2022 13:11:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234045AbiCZRKj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Mar 2022 13:10:39 -0400
-Received: from stuerz.xyz (unknown [45.77.206.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F2D635865;
+        with ESMTP id S233979AbiCZRKi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Mar 2022 13:10:38 -0400
+Received: from stuerz.xyz (stuerz.xyz [IPv6:2001:19f0:5:15da:5400:3ff:fecc:7379])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10C9F35844;
         Sat, 26 Mar 2022 10:08:58 -0700 (PDT)
 Received: by stuerz.xyz (Postfix, from userid 114)
-        id 321B8FBBA1; Sat, 26 Mar 2022 17:00:15 +0000 (UTC)
+        id 85B86FBAD8; Sat, 26 Mar 2022 16:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stuerz.xyz; s=mail;
-        t=1648314016; bh=HOFmAYiVvnT7rSVfobZmsnPlgQ5nBBe17TNp3HtbNU0=;
+        t=1648313990; bh=hqrYFkjwHXr5MkCmTzW0zUtSYcfIlAH4M2viTmK+ce0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OE6w7EbGz4UZqMrSmnQO9S4DWG3C+A+XGWmHj1gGNyXwzuCg2tgyFaWJe3ge1xrGo
-         ZklfkmLdhXZh1w7uCDZZYSk9u3CuqbZNayJumKTNAXg/GONO7RxnGJHUR037ruIdBS
-         Fp2smpwss0tQxWIm5ODbwoyQx3wuUvnfU2SPBSOKVx496KvRNHoYqttGuF2H1XAiNF
-         QgJ3pcxWWxo4xcwTRijChip3hD3SvUJ9xLQzFvcn1z9+nVDGjwLoeTSUfSgEOjjdMw
-         I7qtII+gHEQFTrCQkdsK2RDYSiDDNbqp3GyqVLl6XkR0RjliCTrClhr7sk0bdeE9G+
-         pKtdwiXsaftmw==
+        b=NzOHGekHcRWuZ4H68rapfZbBmrqB6nsbrdOPjNSxt7h8WkRUT3D2lLjIJFRTIjfB3
+         UgMiATq5eTVCXaOy2UZ2vJ94sDqSpZePYoniDGtML1oJyKaOnSog2nTRNdmus4huu1
+         dNKNTHK/s44qXlrlWpPs4xe6WlRq0YWiRCCsHRsQRt+Dztdk6urqW44lP7OYdLe1nd
+         iApLmLF5sd4XynYeSD7WhPsr05da2DKHrbLaeFnaE6APUcbkLSfnhSQ4vENwGp/qDb
+         WIwfu6P9XdEyQtoiou9yk/fZ3gXOw5RrBCJBTphGCihX/Wg4bVDJOMPD5bWY31k1dT
+         anoDgWlgp+dAg==
 Received: from benni-fedora.. (unknown [IPv6:2a02:8109:a100:1a48:ff0:ef2f:d4da:17d8])
-        by stuerz.xyz (Postfix) with ESMTPSA id 20D94FB7EA;
-        Sat, 26 Mar 2022 17:00:07 +0000 (UTC)
+        by stuerz.xyz (Postfix) with ESMTPSA id B4FD6FB7D4;
+        Sat, 26 Mar 2022 16:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stuerz.xyz; s=mail;
-        t=1648314013; bh=HOFmAYiVvnT7rSVfobZmsnPlgQ5nBBe17TNp3HtbNU0=;
+        t=1648313987; bh=hqrYFkjwHXr5MkCmTzW0zUtSYcfIlAH4M2viTmK+ce0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hf7mJJcWBmIj3C+XCxyzFO7S9C0oUaIl8hxKEGBu6X8vw2n1pWSpj6iB15/DP+6Lp
-         3QX2TjmaymPMgIhJcqwVkwY6dEsEyphIorKi1wt0xa4x6MJ6oAZB59LvQ3nuveeFu0
-         348YW/tdR5UvOfRwGWcPa9XVwbxu+xibpp/4thWzzXOlH3zZnJHzTtHyLYycZzhdQ3
-         Slg6rVaVkmUpHlV6SbMwW2oDlerJ1InqL387Q5Q/hQQJH1awaV4a52wpm8TuxMZYnL
-         WGg8OJF9bO4XtyqoNzz5xIgxnsqwooQQF0Nsc2pHaLUBhYt9zf8O+zC8ZiS2I6nTZh
-         bsWtkEHhv2HFw==
+        b=yJm8jOOpo7o5bJ/jnyWMMwZCEz0cp1ONDyucFrcaUR3MF3mVAicBbi+RDh7CMUk6b
+         AyDPTwmRpd0XtTVVibZYv+GFO17TD/etO65ImQn1AFDB5Rst93WnLmQ26aVc+7IYzp
+         +7kCFMqaTfUdoa765GsRs1bJ96ZWZETiepQrT7wGEtCCoxWejua9HAQCyk7dJKJh5O
+         wuVo1XTIDTYs6bomi740IDuPOKzsYRmpgM59T/cdggq6jN4J+vjL83NtQNKgUJ1zre
+         LWEzOV5Of6i4tJhdHMgudanVzcnBxhgC4dyUDk7gJTZs+N6Hn6Ykq5e3pYup83HrRK
+         SBOFExwpFzDQA==
 From:   =?UTF-8?q?Benjamin=20St=C3=BCrz?= <benni@stuerz.xyz>
 To:     andrew@lunn.ch
 Cc:     sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
@@ -65,9 +65,9 @@ Cc:     sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
         wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
         linux-pci@vger.kernel.org,
         =?UTF-8?q?Benjamin=20St=C3=BCrz?= <benni@stuerz.xyz>
-Subject: [PATCH 08/22] i5100: Replace comments with C99 initializers
-Date:   Sat, 26 Mar 2022 17:58:55 +0100
-Message-Id: <20220326165909.506926-8-benni@stuerz.xyz>
+Subject: [PATCH 04/22] x86: Replace comments with C99 initializers
+Date:   Sat, 26 Mar 2022 17:58:51 +0100
+Message-Id: <20220326165909.506926-4-benni@stuerz.xyz>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220326165909.506926-1-benni@stuerz.xyz>
 References: <20220326165909.506926-1-benni@stuerz.xyz>
@@ -83,64 +83,132 @@ initializers because the kernel supports them now.
 
 Signed-off-by: Benjamin Stürz <benni@stuerz.xyz>
 ---
- drivers/edac/i5100_edac.c | 44 +++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ arch/x86/include/asm/kgdb.h   | 80 +++++++++++++++++------------------
+ arch/x86/kernel/cpu/mtrr/if.c | 14 +++---
+ 2 files changed, 47 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/edac/i5100_edac.c b/drivers/edac/i5100_edac.c
-index 324a46b8479b..5992f0ee5f28 100644
---- a/drivers/edac/i5100_edac.c
-+++ b/drivers/edac/i5100_edac.c
-@@ -379,28 +379,28 @@ static int i5100_rank_to_slot(const struct mem_ctl_info *mci,
- static const char *i5100_err_msg(unsigned err)
- {
- 	static const char *merrs[] = {
--		"unknown", /* 0 */
--		"uncorrectable data ECC on replay", /* 1 */
--		"unknown", /* 2 */
--		"unknown", /* 3 */
--		"aliased uncorrectable demand data ECC", /* 4 */
--		"aliased uncorrectable spare-copy data ECC", /* 5 */
--		"aliased uncorrectable patrol data ECC", /* 6 */
--		"unknown", /* 7 */
--		"unknown", /* 8 */
--		"unknown", /* 9 */
--		"non-aliased uncorrectable demand data ECC", /* 10 */
--		"non-aliased uncorrectable spare-copy data ECC", /* 11 */
--		"non-aliased uncorrectable patrol data ECC", /* 12 */
--		"unknown", /* 13 */
--		"correctable demand data ECC", /* 14 */
--		"correctable spare-copy data ECC", /* 15 */
--		"correctable patrol data ECC", /* 16 */
--		"unknown", /* 17 */
--		"SPD protocol error", /* 18 */
--		"unknown", /* 19 */
--		"spare copy initiated", /* 20 */
--		"spare copy completed", /* 21 */
-+		[0]  = "unknown",
-+		[1]  = "uncorrectable data ECC on replay",
-+		[2]  = "unknown",
-+		[3]  = "unknown",
-+		[4]  = "aliased uncorrectable demand data ECC",
-+		[5]  = "aliased uncorrectable spare-copy data ECC",
-+		[6]  = "aliased uncorrectable patrol data ECC",
-+		[7]  = "unknown",
-+		[8]  = "unknown",
-+		[9]  = "unknown",
-+		[10] = "non-aliased uncorrectable demand data ECC",
-+		[11] = "non-aliased uncorrectable spare-copy data ECC",
-+		[12] = "non-aliased uncorrectable patrol data ECC",
-+		[13] = "unknown",
-+		[14] = "correctable demand data ECC",
-+		[15] = "correctable spare-copy data ECC",
-+		[16] = "correctable patrol data ECC",
-+		[17] = "unknown",
-+		[18] = "SPD protocol error",
-+		[19] = "unknown",
-+		[20] = "spare copy initiated",
-+		[21] = "spare copy completed",
- 	};
- 	unsigned i;
+diff --git a/arch/x86/include/asm/kgdb.h b/arch/x86/include/asm/kgdb.h
+index aacaf2502bd2..a9161e2f8b63 100644
+--- a/arch/x86/include/asm/kgdb.h
++++ b/arch/x86/include/asm/kgdb.h
+@@ -25,52 +25,52 @@
+  */
+ #ifdef CONFIG_X86_32
+ enum regnames {
+-	GDB_AX,			/* 0 */
+-	GDB_CX,			/* 1 */
+-	GDB_DX,			/* 2 */
+-	GDB_BX,			/* 3 */
+-	GDB_SP,			/* 4 */
+-	GDB_BP,			/* 5 */
+-	GDB_SI,			/* 6 */
+-	GDB_DI,			/* 7 */
+-	GDB_PC,			/* 8 also known as eip */
+-	GDB_PS,			/* 9 also known as eflags */
+-	GDB_CS,			/* 10 */
+-	GDB_SS,			/* 11 */
+-	GDB_DS,			/* 12 */
+-	GDB_ES,			/* 13 */
+-	GDB_FS,			/* 14 */
+-	GDB_GS,			/* 15 */
++	GDB_AX = 0,
++	GDB_CX = 1,
++	GDB_DX = 2,
++	GDB_BX = 3,
++	GDB_SP = 4,
++	GDB_BP = 5,
++	GDB_SI = 6,
++	GDB_DI = 7,
++	GDB_PC = 8,			/* also known as eip */
++	GDB_PS = 9,			/* also known as eflags */
++	GDB_CS = 10,
++	GDB_SS = 11,
++	GDB_DS = 12,
++	GDB_ES = 13,
++	GDB_FS = 14,
++	GDB_GS = 15,
+ };
+ #define GDB_ORIG_AX		41
+ #define DBG_MAX_REG_NUM		16
+ #define NUMREGBYTES		((GDB_GS+1)*4)
+ #else /* ! CONFIG_X86_32 */
+ enum regnames {
+-	GDB_AX,			/* 0 */
+-	GDB_BX,			/* 1 */
+-	GDB_CX,			/* 2 */
+-	GDB_DX,			/* 3 */
+-	GDB_SI,			/* 4 */
+-	GDB_DI,			/* 5 */
+-	GDB_BP,			/* 6 */
+-	GDB_SP,			/* 7 */
+-	GDB_R8,			/* 8 */
+-	GDB_R9,			/* 9 */
+-	GDB_R10,		/* 10 */
+-	GDB_R11,		/* 11 */
+-	GDB_R12,		/* 12 */
+-	GDB_R13,		/* 13 */
+-	GDB_R14,		/* 14 */
+-	GDB_R15,		/* 15 */
+-	GDB_PC,			/* 16 */
+-	GDB_PS,			/* 17 */
+-	GDB_CS,			/* 18 */
+-	GDB_SS,			/* 19 */
+-	GDB_DS,			/* 20 */
+-	GDB_ES,			/* 21 */
+-	GDB_FS,			/* 22 */
+-	GDB_GS,			/* 23 */
++	GDB_AX   =  0,
++	GDB_BX   =  1,
++	GDB_CX   =  2,
++	GDB_DX   =  3,
++	GDB_SI   =  4,
++	GDB_DI   =  5,
++	GDB_BP   =  6,
++	GDB_SP   =  7,
++	GDB_R8   =  8,
++	GDB_R9   =  9,
++	GDB_R10  = 10,
++	GDB_R11  = 11,
++	GDB_R12  = 12,
++	GDB_R13  = 13,
++	GDB_R14  = 14,
++	GDB_R15  = 15,
++	GDB_PC   = 16,			/* also known as eip */
++	GDB_PS   = 17,			/* also known as eflags */
++	GDB_CS   = 18,
++	GDB_SS   = 19,
++	GDB_DS   = 20,
++	GDB_ES   = 21,
++	GDB_FS   = 22,
++	GDB_GS   = 23,
+ };
+ #define GDB_ORIG_AX		57
+ #define DBG_MAX_REG_NUM		24
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index a5c506f6da7f..7664a672f414 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -18,13 +18,13 @@
  
+ static const char *const mtrr_strings[MTRR_NUM_TYPES] =
+ {
+-	"uncachable",		/* 0 */
+-	"write-combining",	/* 1 */
+-	"?",			/* 2 */
+-	"?",			/* 3 */
+-	"write-through",	/* 4 */
+-	"write-protect",	/* 5 */
+-	"write-back",		/* 6 */
++	[0] = "uncachable",
++	[1] = "write-combining",
++	[2] = "?",
++	[3] = "?",
++	[4] = "write-through",
++	[5] = "write-protect",
++	[6] = "write-back",
+ };
+ 
+ const char *mtrr_attrib_to_str(int x)
 -- 
 2.35.1
 
