@@ -2,83 +2,80 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C01C433EF
-	for <linux-gpio@archiver.kernel.org>; Sun, 27 Mar 2022 23:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA2EC433F5
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Mar 2022 01:00:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232519AbiC0XJS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 27 Mar 2022 19:09:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33062 "EHLO
+        id S237197AbiC1BCc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 27 Mar 2022 21:02:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230483AbiC0XJS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2022 19:09:18 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C675DFCC
-        for <linux-gpio@vger.kernel.org>; Sun, 27 Mar 2022 16:07:39 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id x20so23036201ybi.5
-        for <linux-gpio@vger.kernel.org>; Sun, 27 Mar 2022 16:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ve5+XZdwip+wfJ4zW83es5FP+je84qvCmA8uoY+nFLs=;
-        b=U7PQrj7BlEBIpfqmMR8TfU+MOKxh3kIGvThZ45dmPpytK+1bkRmD/iuObLyklhxlT2
-         FG5vAILis0+hh0PeEyFI27qkcE33C1ysq5W6UlMUEv8bwsgBADY406aM4jCRhHuzQwvZ
-         rfLG4jC3Xl4ugO3PSn18wKQ2FuvSOTyeZb7h0TiKqf7DYA48Ow08vF0xmTzlnVh4ix/w
-         0+4pm+GDQOg34sGRkCe1C30T9wJzePDXxF00iRWQ/4DLf18QAH57XcB21/uqJyiY/aw/
-         m1vOccxyiGQEGFJEcKITiqBDHq1H/G9cYgC21pks78eGltS3VcrCHDI78JDh7Mk3UZ2J
-         8W9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ve5+XZdwip+wfJ4zW83es5FP+je84qvCmA8uoY+nFLs=;
-        b=YIJrbTZthubh1GTnkKVZ3AWOHtjW0CkOi7bQ+d0OMru3UtxTZEJ6e5qW1siBpgHMFQ
-         MV2kY6/d6e22dgokpDB0SABXdwwzb/iYKM2phAqP4koPdkwkrq/Qyoe6Qu3ldlRhXm2P
-         VUVq/CcX1wzsJM692+eV68pAZ8CSJG7KBNa6Q8fhnwTIlXZ/YzVtgXPI0s9Wf2+udZgb
-         +sCmZ+7ExakANlpHRongWdfASlQJ7iRGuetu5uzlWnE27SNH08Jb70mP/2HEzxlds16k
-         7jqFSK9Jb8qHYeFwI6hMMc+ct78IXj8O3MXNk00WxOYtXBtGIBKO0cWOTxglsz1OjvJ7
-         Lxgw==
-X-Gm-Message-State: AOAM530f8V+CipL09EZBMWKnVs+xoHpxvVbShlYbdCP+rq9J8RV/UfPv
-        LIrwkQMZKtdk5hfl30jLBBwRw3yhmxOS0yUlDAPcUw==
-X-Google-Smtp-Source: ABdhPJyYdGF7SbqGEL+ETG0K/sHAhVQ0ncmoxpfN+n6jIOZ/nEU4xm6uwZxHYNtHVmCEdtNxAygQYxsyW2X45AkixBU=
-X-Received: by 2002:a25:d088:0:b0:633:b902:2d29 with SMTP id
- h130-20020a25d088000000b00633b9022d29mr19969569ybg.626.1648422458225; Sun, 27
- Mar 2022 16:07:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <1647927649-9907-1-git-send-email-haibo.chen@nxp.com>
- <CAHp75VdZ9RVuMrgWXOWqCrmvHBtkz+S=dxXhR44Ri3p6Pj5LMA@mail.gmail.com> <AM0PR04MB4001E8E8DA1DF5355EB96A2B90179@AM0PR04MB4001.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4001E8E8DA1DF5355EB96A2B90179@AM0PR04MB4001.eurprd04.prod.outlook.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 28 Mar 2022 01:07:27 +0200
-Message-ID: <CACRpkda5szS32JkMFaTjw+zm+Oye+8QCv1A0B2UL6keuYPKS4w@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: Allow setting gpio device id via device tree alias
-To:     Bough Chen <haibo.chen@nxp.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        with ESMTP id S235028AbiC1BCb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2022 21:02:31 -0400
+Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [213.239.216.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC3084ECDD;
+        Sun, 27 Mar 2022 18:00:50 -0700 (PDT)
+Received: from localhost.localdomain (cpc78119-cwma10-2-0-cust590.7-3.cable.virginm.net [81.96.50.79])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id CCA3E140195;
+        Mon, 28 Mar 2022 00:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+        s=donut; t=1648428630;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FJPO+cvB8mQMll3NzzvYxlnd9zKt1uj4D1+8hbf+ebs=;
+        b=QCUmOohgp7Hn9lmS+r5wAkX438yPTC/mINkGBozlm1i//Cp1NiRAtUM3e23zyrgp2VJvQN
+        DE+ArD6XUE8FhBU+jPxyGQt2L0qsKA0/nPOTZtLCbc3Fi3aokGFvGdP/S1FV8J1smBuvit
+        jFZPfxAXuWy8dGFa+TQ9V7nD04Dswew=
+From:   Caleb Connolly <kc@postmarketos.org>
+To:     Caleb Connolly <kc@postmarketos.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, martijn@brixit.nl,
+        Arnaud Ferraris <arnaud.ferraris@collabora.com>
+Subject: [PATCH 3/4] gpio/rockchip: handle deferring input-enable pinconfs
+Date:   Mon, 28 Mar 2022 01:50:04 +0100
+Message-Id: <20220328005005.72492-4-kc@postmarketos.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220328005005.72492-1-kc@postmarketos.org>
+References: <20220328005005.72492-1-kc@postmarketos.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 22, 2022 at 11:16 AM Bough Chen <haibo.chen@nxp.com> wrote:
+Add support for deferred PIN_CONFIG_INPUT_ENABLE handling.
 
-> For users, usually, they will open /dev/gpiochipx to handle gpio related option.
+Signed-off-by: Caleb Connolly <kc@postmarketos.org>
+---
+ drivers/gpio/gpio-rockchip.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-That makes sense, it is intuitive in a way.
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index bcf5214e3586..e342a6dc4c6c 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -760,6 +760,11 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
+ 				dev_warn(dev, "setting output pin %u to %u failed\n", cfg->pin,
+ 					 cfg->arg);
+ 			break;
++		case PIN_CONFIG_INPUT_ENABLE:
++			ret = rockchip_gpio_direction_input(&bank->gpio_chip, cfg->pin);
++			if (ret)
++				dev_warn(dev, "setting input pin %u failed\n", cfg->pin);
++			break;
+ 		default:
+ 			dev_warn(dev, "unknown deferred config param %d\n", cfg->param);
+ 			break;
+-- 
+2.35.1
 
-> By the way, how can user get the labels and device names of GPIO chips?
-
-The way to get metadata for any /dev/* device such as topology on
-buses is through sysfs.
-
-It is also possible to get labels for all gpiochips by iterating over them.
-
-The most user-friendly thing to do is however to make use of libgpiod
-and associated example tools such as gpiodetect:
-https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/about/
-
-Yours,
-Linus Walleij
