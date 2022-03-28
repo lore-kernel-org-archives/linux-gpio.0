@@ -2,114 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3AB1C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Mar 2022 19:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E17B8C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Mar 2022 19:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242057AbiC1TGe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Mar 2022 15:06:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37468 "EHLO
+        id S245504AbiC1TNq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Mar 2022 15:13:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239931AbiC1TGe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Mar 2022 15:06:34 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C26026566
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Mar 2022 12:04:52 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 125-20020a1c0283000000b0038d043aac51so129737wmc.0
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Mar 2022 12:04:52 -0700 (PDT)
+        with ESMTP id S245492AbiC1TNm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Mar 2022 15:13:42 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F0866C83
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Mar 2022 12:12:00 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id dr20so30660721ejc.6
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Mar 2022 12:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ZWOM0ViJyiVUZfrXv5W9VV5JgeOyviOZAZVjLWPXwZw=;
-        b=nAI7p2HJfjHpqntcTQReQgjnoKjDA+zCAAzqZMEJ9LPBhGkBOiW5kXBW86fkHdopjc
-         iZuSo+sC5BK1W5NpVq3mkEOykmq5R5bvInuo1SBT92TipqVku/EG6Xc0HMmJ26gugbZY
-         YLtoQWhxrK/mYffFLtgrP+KePTrFHNYpSm/ZA18icWGzOCuj3gTjf8zDl8pO2JFWGC6L
-         Cpqg5K6XrLwiNa/RbNBabfrqrySwz6gzaXrIYmGWWYaaifG6/p0OloPl6d93hWyI0BMs
-         2PXxKamXx8tDBzX/X7giQs6bcHY/2YStHO+vN96BSuBkzfFFmozZV6R+UQG3DTvZKh5A
-         5KlA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jG3Rt4P3Raf9WSo1WvvLrHkpUajHf7ot05DbpWV2Eb0=;
+        b=PZXl6pFWIqhq+IGkvc2dvo1z28ViM0/IcQ4ra0LmbQRG+i3q7bJIKzhEv80XtXXLUZ
+         waKmqllEWW4P/SrOXG8yhqE5IICerx62efk1JSCHfpiKs9M0/QM9dNIClCclyNZJanlN
+         TZxflkCPUVClCsVlNjmTsqPXnB2f4kUt2KCVXGToBybPB04HISvbSsq+UPvv+XpZkzbO
+         whfwwhTEOqTOQebiJmWZWGOeOHWu734U2dHqQHsqubey4vfizUddn+ynpeCpeEn24N5b
+         B27SV1lynfnOmxFHMiqlmSB0bG9iX3Xx3lZ0RiEhINPXLJ8cfTZsoWfnosBwhV0fNVit
+         VWQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZWOM0ViJyiVUZfrXv5W9VV5JgeOyviOZAZVjLWPXwZw=;
-        b=U866HoP0pyhP8CalysRpZP87laDxYePcSGxLSv694WH5q3LTwCVMRE6/y6I8BJ421Y
-         1s8zErmAXQsyvXWCSedPneCwnRgYaDGM7BgZBHdBz+qBGfcjlVU+GbtLRAvoGgw4hMtx
-         xQkDZNw/DaqoWW2L1B2oQLZikmpgeCizgmYmbp43RS2DXZOSz9rzZAafZSeO/8ULLNFI
-         hu6Q9AYgC+2ca6/zgdW27aZTi52ftHY3gxW+5/t/aiP36KY3531yU2vGrkaMeTeJKmdh
-         ezlgfQfSLraxzGMYpXMmiZ7sg4tDWbYc4TzpZhU5cqbEm1B4ltPHRNtmcezKZEVcobMN
-         lRbQ==
-X-Gm-Message-State: AOAM530CWf47esrOnv6BCXg8ewUQW1uP8Wt3lZZFY+QcfAYlpRQHBoKF
-        vtJZGM5Ek9pOnIp1Qg6Sa/DyQQ==
-X-Google-Smtp-Source: ABdhPJyI8bbkl32W0f/Fs3gwfDAYhpU9jfBTsBbXSGzduC32W7r6dq+GpfB1T0yZpFALl2pYjBkf3A==
-X-Received: by 2002:a05:600c:a0b:b0:389:dd65:66f1 with SMTP id z11-20020a05600c0a0b00b00389dd6566f1mr843831wmp.95.1648494290725;
-        Mon, 28 Mar 2022 12:04:50 -0700 (PDT)
-Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id t9-20020a05600c198900b0038cb8b38f9fsm273855wmq.21.2022.03.28.12.04.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Mar 2022 12:04:49 -0700 (PDT)
-Message-ID: <9f7355de-8154-7ff2-ce29-c89ccfb89cab@linaro.org>
-Date:   Mon, 28 Mar 2022 21:04:48 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] dt-bindings: gpio: uniphier: Add hogs parsing
-Content-Language: en-US
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        bh=jG3Rt4P3Raf9WSo1WvvLrHkpUajHf7ot05DbpWV2Eb0=;
+        b=2m/zbOXnoyncTWmZRRUmDLQvv5DzE3ACG68ryk1Rr6uT0S2JyQ0WJwjvmkk/MGy/GW
+         Mxw/D0QG3pjAEfu11coYvjTMJq7JerlEXnbIpGmOvvrXtLZK7ctv9NNhS91rj3vss822
+         9oepP/piGvRvU5o0Of8bj4Qj9MY362c1U3fhEAPfhPejmZwJygdMs0UTVm0sQDQ3OsgM
+         T2It60Dj1/xaCCPbRhytPARISmJFsFuZXEOPQmDwkdPjyQ8cvdKX+07YZlgXecmhYVXI
+         Phph08AfjUyca2E1DN8mxS4mRQ9usK7sqENUGvyeqSJlu+CboVlYd7CbQdc3aVX4WeYT
+         t7Hw==
+X-Gm-Message-State: AOAM533h9l8kAn/SzyNZbLB5KCGheJB4FvnHUPrkApUYfmiItDVFmY7V
+        jZPbuFkXJ2PnSf3pTHOhu6kL0g==
+X-Google-Smtp-Source: ABdhPJwFwLiR9+MtMZeMy5VDtsZaqzeSjHEJIe4h1TwW5hRcMHYc4oopQ5oF00JoT/EEnuMkQdrKVg==
+X-Received: by 2002:a17:907:60d6:b0:6df:a099:e26e with SMTP id hv22-20020a17090760d600b006dfa099e26emr29699586ejc.34.1648494718902;
+        Mon, 28 Mar 2022 12:11:58 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id gn3-20020a1709070d0300b006e1036666bfsm2166989ejc.223.2022.03.28.12.11.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Mar 2022 12:11:58 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Keerthy <j-keerthy@ti.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1648430916-21988-1-git-send-email-hayashi.kunihiko@socionext.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1648430916-21988-1-git-send-email-hayashi.kunihiko@socionext.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: gpio: davinci: list contents of GPIO hogs
+Date:   Mon, 28 Mar 2022 21:11:53 +0200
+Message-Id: <20220328191153.171241-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 28/03/2022 03:28, Kunihiko Hayashi wrote:
-> Allow parsing GPIO controller children nodes with GPIO hogs to fix the
-> following warning:
-> 
->   uniphier-ld11-ref.dtb: gpio@55000000: 'xirq0-hog' does not match any of the regexes: 'pinctrl-[0-9]+'
->       From schema: Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
-> 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
->  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml  | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml b/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
-> index bcafa494ed7a..b6f5963a2ae6 100644
-> --- a/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
-> @@ -52,6 +52,13 @@ properties:
->        <child-interrupt-base parent-interrupt-base length> triplets.
->      $ref: /schemas/types.yaml#/definitions/uint32-matrix
->  
-> +patternProperties:
-> +  "^(.+-hog(-[0-9]+)?)$":
+The hogs children should list allowed properties, otherwise any property
+would be accepted.  Simplify also GPIO hog node name pattern.
 
-The outer () are not needed.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/gpio/gpio-davinci.yaml        | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-> +    type: object
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.yaml b/Documentation/devicetree/bindings/gpio/gpio-davinci.yaml
+index f32e09ef937c..e5b91c65dcb0 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-davinci.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.yaml
+@@ -76,12 +76,21 @@ properties:
+     const: 2
+ 
+ patternProperties:
+-  "^(.+-hog(-[0-9]+)?)$":
++  "^.+-hog(-[0-9]+)?$":
+     type: object
++    properties:
++      gpio-hog: true
++      gpios: true
++      input: true
++      output-high: true
++      output-low: true
++      line-name: true
+ 
+     required:
+       - gpio-hog
+ 
++    additionalProperties: false
++
+ required:
+   - compatible
+   - reg
+-- 
+2.32.0
 
-You need also properties. See for example:
-Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-
-> +
-> +    required:
-> +      - gpio-hog
-> +
->  required:
->    - compatible
->    - reg
-
-
-Best regards,
-Krzysztof
