@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0093CC4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Mar 2022 11:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C078C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Mar 2022 11:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240858AbiC1LZv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Mar 2022 07:25:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57848 "EHLO
+        id S241323AbiC1Lag (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Mar 2022 07:30:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241704AbiC1LYH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Mar 2022 07:24:07 -0400
+        with ESMTP id S241298AbiC1L3o (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Mar 2022 07:29:44 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4603555BF5;
-        Mon, 28 Mar 2022 04:21:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E49DF68;
+        Mon, 28 Mar 2022 04:23:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2F2E611D6;
-        Mon, 28 Mar 2022 11:21:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07ADC340ED;
-        Mon, 28 Mar 2022 11:21:40 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 30111611D7;
+        Mon, 28 Mar 2022 11:23:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F339C340ED;
+        Mon, 28 Mar 2022 11:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648466502;
-        bh=GtXm7TP4FiF7Hh17CXHOhSXHFwXsRaUDFmn/WhLxqg0=;
+        s=k20201202; t=1648466632;
+        bh=HsY3DRjCKJW8f2PgxoHQHpP1seqO9d0yvMdx77Gtv/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DrmtbnbMb5Xgms2FaDfWdFLka+hv8VOJoGsDbiVQ3oIjyPz8kA+eP65vS3rWle9tU
-         378FNHMjR+yoHEDtzFrxeD8D8f9XTvpmNxwO1F31Ti5uUysh1T7moMcGnHASElIFyV
-         jexNZWeXx/j2aPch4tOU7ivl3eKbNjgzg9YOsulrEFwoiLcjb22JMlgpNFa/tDHXHx
-         J/5MTU3jk4BW+7G7VmeM2lTgtMydEehdaEyHvGiyXHyou1LCr2pENQOphrLyKZUqB8
-         NQu2uiOiOdlTQJRihuTnzp1oNbtqVuwocDzyBMT/QO15j/B8oHJ5eNSJiRrxjI6H86
-         tz2XoNls6LuBw==
+        b=OU6x7WnsQphFlY4lZ3nbB0ZsiwAxavCA+hItLXp5zQxkxlE+TJq5WTD4mPnkZVu1S
+         kniqSiV6a1DzA37e10pLqcVmeSe70pLeG6QgydDeHMWnhpdP8p3AhjyuoNlgZUoxeU
+         YNEC0ummmC794UY5N1GOGT6U5VynzuZDvhD+rWTsSp29VDvzqELpQieHkpBuk4lSqZ
+         NwIb5xdPfvFb+7SzPZcppKUIFPdvVzfS+v4997fMu+d9JVjJXMidI4v3HM75OQdPPz
+         HeqdANqzpnPRrddW1kIm1au1IutiyB98gbZ1u6/Ea9NCW0xptXpyeWse7GaDibaRmq
+         cO3q+Lh+DBdfA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -38,12 +38,12 @@ Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
         tmaimon77@gmail.com, tali.perry1@gmail.com,
         linus.walleij@linaro.org, openbmc@lists.ozlabs.org,
         linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 05/29] pinctrl: npcm: Fix broken references to chip->parent_device
-Date:   Mon, 28 Mar 2022 07:21:07 -0400
-Message-Id: <20220328112132.1555683-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 03/16] pinctrl: npcm: Fix broken references to chip->parent_device
+Date:   Mon, 28 Mar 2022 07:23:32 -0400
+Message-Id: <20220328112345.1556601-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220328112132.1555683-1-sashal@kernel.org>
-References: <20220328112132.1555683-1-sashal@kernel.org>
+In-Reply-To: <20220328112345.1556601-1-sashal@kernel.org>
+References: <20220328112345.1556601-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -72,7 +72,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 12 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index 4d81908d6725..ba536fd4d674 100644
+index 17f909d8b63a..e7dc97e099f2 100644
 --- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
 +++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
 @@ -78,7 +78,6 @@ struct npcm7xx_gpio {
