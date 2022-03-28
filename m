@@ -2,34 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37ED8C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAACC4167B
 	for <linux-gpio@archiver.kernel.org>; Mon, 28 Mar 2022 01:00:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237205AbiC1BCd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S237227AbiC1BCd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sun, 27 Mar 2022 21:02:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51008 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232506AbiC1BCb (ORCPT
+        with ESMTP id S237196AbiC1BCb (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2022 21:02:31 -0400
-X-Greylist: delayed 621 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 27 Mar 2022 18:00:50 PDT
-Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [213.239.216.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 942314ECD8;
+Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [IPv6:2a01:4f8:a0:821d::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC5CE4ECE0;
         Sun, 27 Mar 2022 18:00:50 -0700 (PDT)
 Received: from localhost.localdomain (cpc78119-cwma10-2-0-cust590.7-3.cable.virginm.net [81.96.50.79])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id 67F9414018D;
-        Mon, 28 Mar 2022 00:50:27 +0000 (UTC)
+        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id E46AA140193;
+        Mon, 28 Mar 2022 00:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-        s=donut; t=1648428627;
+        s=donut; t=1648428629;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=wNgL5NPptNvEaMXzsU/FjvYBFmKOMWEOsdS7qq2jWGk=;
-        b=FAOecvtPyboM4fMdmhr95ZEeSV0+7HkSmZn5oR+qW0cauHZQf3mT76e8qHK1u7zQ8qanKg
-        doZvndA+MwMp9c28o2Bx0gZ1TpsxLO3jgbR2Wfd0MUoeWYVO/aY7uIdNTBMSwHGsLo7QdW
-        ouNihD05pkGNXGp8GSt2gMQNnyb4E90=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CuEcPDB+AlpLfXTqAeWfzXqofQSTcIxpMeVQrjaG4Nk=;
+        b=CeL2JT/7rrhCyZeiu6hxNT/c/FpFJCMWOh7V/0uP6zoUQRmcQ2p4+tjczMM49dpdvaRnjW
+        2jrWHgYS/bhHVE09b/DHO6AYRO2+C0WYxvhFvAJBsqGhENrvThvD6TouD+oGLqadGDvG4A
+        RjursQ4ABdzsZ/liMBNriWXQwHG6Aws=
 From:   Caleb Connolly <kc@postmarketos.org>
 To:     Caleb Connolly <kc@postmarketos.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -41,43 +41,55 @@ To:     Caleb Connolly <kc@postmarketos.org>,
         linux-gpio@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, martijn@brixit.nl,
         Arnaud Ferraris <arnaud.ferraris@collabora.com>
-Subject: [PATCH 0/4] rockchip: support configuring pins as input
-Date:   Mon, 28 Mar 2022 01:50:01 +0100
-Message-Id: <20220328005005.72492-1-kc@postmarketos.org>
+Subject: [PATCH 2/4] pinctrl/rockchip: support setting input-enable param
+Date:   Mon, 28 Mar 2022 01:50:03 +0100
+Message-Id: <20220328005005.72492-3-kc@postmarketos.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220328005005.72492-1-kc@postmarketos.org>
+References: <20220328005005.72492-1-kc@postmarketos.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for configuring pins as input to the rockchip pinctrl
-driver. This is required for example for devices which use non-standard
-configurations for gpio interrupts, specifically for the light/proximity
-sensor on the RK3399 powered PinePhone Pro (which will be coming
-upstream in a future patch series).
+Handle the PIN_CONFIG_INPUT_ENABLE param for configuring GPIOs as input.
 
-Due to the complicated layout of the RK pinctrl/gpio drivers, some extra
-work is required to handle deferring the GPIO configuration. On RK3399
-the pinctrl driver always probes before the GPIO controller driver, so
-the PIN_CONFIG_OUTPUT and PIN_CONFIG_INPUT_ENABLE params both have to be
-deferred, this series also reworks the deferred pin handling to be
-generic and support any param rather than only the PIN_CONFIG_OUTPUT
-param.
-
+Signed-off-by: Caleb Connolly <kc@postmarketos.org>
 ---
-Caleb Connolly (4):
-  pinctrl/rockchip: support deferring other gpio params
-  pinctrl/rockchip: support setting input-enable param
-  gpio/rockchip: handle deferring input-enable pinconfs
-  arm64: dts: rockchip: rk3399: add an input enable pinconf
+ drivers/pinctrl/pinctrl-rockchip.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 16 ++++++
- drivers/gpio/gpio-rockchip.c             | 29 ++++++++---
- drivers/pinctrl/pinctrl-rockchip.c       | 64 +++++++++++++++---------
- drivers/pinctrl/pinctrl-rockchip.h       |  7 ++-
- 4 files changed, 81 insertions(+), 35 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index d54fc1cdf609..9d50d9756bb9 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2129,7 +2129,7 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 		param = pinconf_to_config_param(configs[i]);
+ 		arg = pinconf_to_config_argument(configs[i]);
+ 
+-		if (param == (PIN_CONFIG_OUTPUT | PIN_CONFIG_INPUT_ENABLE)) {
++		if (param == PIN_CONFIG_OUTPUT || param == PIN_CONFIG_INPUT_ENABLE) {
+ 			/*
+ 			 * Check for gpio driver not being probed yet.
+ 			 * The lock makes sure that either gpio-probe has completed
+@@ -2181,6 +2181,16 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			if (rc)
+ 				return rc;
+ 			break;
++		case PIN_CONFIG_INPUT_ENABLE:
++			rc = rockchip_set_mux(bank, pin - bank->pin_base,
++					      RK_FUNC_GPIO);
++			if (rc != RK_FUNC_GPIO)
++				return -EINVAL;
++
++			rc = gpio->direction_input(gpio, pin - bank->pin_base);
++			if (rc)
++				return rc;
++			break;
+ 		case PIN_CONFIG_DRIVE_STRENGTH:
+ 			/* rk3288 is the first with per-pin drive-strength */
+ 			if (!info->ctrl->drv_calc_reg)
 -- 
 2.35.1
 
