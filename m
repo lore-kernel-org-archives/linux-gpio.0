@@ -2,73 +2,113 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38944C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Mar 2022 08:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB46C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Mar 2022 08:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232285AbiC2IMp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Mar 2022 04:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54674 "EHLO
+        id S233900AbiC2I0I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Mar 2022 04:26:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233757AbiC2IMo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Mar 2022 04:12:44 -0400
-X-Greylist: delayed 1082 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Mar 2022 01:11:01 PDT
-Received: from m12-14.163.com (m12-14.163.com [220.181.12.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2074B21C;
-        Tue, 29 Mar 2022 01:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=a81h0Gq2WHNyBZSI3c
-        IfKvhqk2zSuEwED0Bi/9DLrxg=; b=CUGzoTEMIBWRoHybOR5JeOiUDSpQ/KvHl5
-        eWbU94CCub4qr2zNjmLlkgZO8gcVI0b+FRvFgakbX6jxd71pE/0+eZuigY8jbHrl
-        cbQ2z4zVLLYVehP82bjhUBdEnSqCUj5TQ/TJmKuQiAEQNyylxRZ3NQZvL8VIojEU
-        1NdO11CEI=
-Received: from localhost (unknown [159.226.95.33])
-        by smtp10 (Coremail) with SMTP id DsCowAAHVV01ukJi5UkzDA--.40878S2;
-        Tue, 29 Mar 2022 15:50:14 +0800 (CST)
-From:   QintaoShen <unSimple1993@163.com>
-To:     linus.walleij@linaro.org
-Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org,
-        yanaijie@huawei.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, QintaoShen <unSimple1993@163.com>
-Subject: [PATCH v1] pinctrl: ralink: rt2880: Check for return value of devm_kcalloc()
-Date:   Tue, 29 Mar 2022 15:50:12 +0800
-Message-Id: <1648540212-9790-1-git-send-email-unSimple1993@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DsCowAAHVV01ukJi5UkzDA--.40878S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF15XFW7try8Cw1xZr1UJrb_yoWfJrXEkF
-        yxt3s3JryUG3W3uw1qya1UZryFkFs7uFyvvFnIqa43CF9Fvan3ur1kWF4UKw1kWr47tFyD
-        Cw1YqFn5Zw47CjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_5Ef5UUUUU==
-X-Originating-IP: [159.226.95.33]
-X-CM-SenderInfo: 5xqvxz5sohimizt6il2tof0z/1tbiXxbSH11534uUsQAAsR
+        with ESMTP id S233867AbiC2IZ7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Mar 2022 04:25:59 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B05511F89C2
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Mar 2022 01:24:14 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id j18so23617635wrd.6
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Mar 2022 01:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=references:user-agent:from:to:cc:subject:date:in-reply-to
+         :message-id:mime-version;
+        bh=4q7utA2N5uBdT/Hk7/7TmYG0IOBace6qzAeWlAkbf9o=;
+        b=1CpE15dMw2nEkW4YYCMic9aIKN2w3BNoDfSIkhBuAqCEEzczO2Y6fdOfXW+XelLTAQ
+         A7SdjqBc4nxPzuMKdFd6vSMl88516biNL7AhFjZIpwaFRyBqAegNsblBNLlF/Rjmh4+k
+         TjeLLdIUxio9O2iohXtFhvi2sTzYoZTU6HfRyUHmk+sYvImqH+oMggNAoVV0R7FsUE44
+         npiH/sfKMS/F5I7QcO6RvJiM538xhyb6SEVfA2GHJVOyK/cb293haK2W8D5xbuOtBYiD
+         gCOn3lZgrE2no/rDri5oQCiz8jZuyRFRL+lRphFsdaAp1WczDBU4ecRlplWu+7Eh+wiE
+         lFlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
+         :in-reply-to:message-id:mime-version;
+        bh=4q7utA2N5uBdT/Hk7/7TmYG0IOBace6qzAeWlAkbf9o=;
+        b=uoinNgskaKB25M9p+lCBHedqwq3jLD5Io5DH8iGTmpXCS+X34PNakggcNP8GFLLQWd
+         QG2jH/jlZwfqVuyN2n90N5+Cxn5WPsTF9ys2f/VN59UYExDlyIByJu5Qa32RWzYj+fZP
+         43J8j/ute4Ip97M/Jh0pYYEdybAMERk7QZdFFBRPKuFoykD+Xl4SC1O/PpHLgCLrcZml
+         qZ1Ws2k1gpzwWoQc+SB8PU+G62mH5TKZDEcy+v94lnIARX2YeDxPbbGHdWeo+TvQvKd+
+         irN9lt1/FqqmpchDF59j9CZB8w+oIxDgefRxKHA8WI0vFKHNq2e9BJQFPpd42fS7xww9
+         0ymg==
+X-Gm-Message-State: AOAM531xFBt6BC5qGiWj7Xef5Yad0+0UZZm4UOxTUDG1SFCEi7M/1FhX
+        qDFzioBIssdtYFOylLlcYMW2/A==
+X-Google-Smtp-Source: ABdhPJzKxD/KLU6iWPF6ZxbUV+9xxFwOzMdCAGFHX4ig6YXgf4XhA3i6zqnXEY8LtnifQ8Zuyx/LWQ==
+X-Received: by 2002:a05:6000:1568:b0:1f0:250a:d3ef with SMTP id 8-20020a056000156800b001f0250ad3efmr7916035wrz.402.1648542253218;
+        Tue, 29 Mar 2022 01:24:13 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id l20-20020a05600c1d1400b0038cba2f88c0sm2000306wms.26.2022.03.29.01.24.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Mar 2022 01:24:12 -0700 (PDT)
+References: <20220329060821.15251-1-qianggui.song@amlogic.com>
+User-agent: mu4e 1.6.10; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Qianggui Song <qianggui.song@amlogic.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Cc:     kernel test robot <lkp@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: meson: fix unused variable warning
+Date:   Tue, 29 Mar 2022 10:21:42 +0200
+In-reply-to: <20220329060821.15251-1-qianggui.song@amlogic.com>
+Message-ID: <1j8rstjhec.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The memory allocation function devm_kcalloc() may return NULL pointer,
-so it is better to add a check for 'p->func[i]->pins' to avoid possible
-NULL pointer dereference.
 
-Signed-off-by: QintaoShen <unSimple1993@163.com>
----
- drivers/pinctrl/ralink/pinctrl-rt2880.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On Tue 29 Mar 2022 at 14:08, Qianggui Song <qianggui.song@amlogic.com> wrote:
 
-diff --git a/drivers/pinctrl/ralink/pinctrl-rt2880.c b/drivers/pinctrl/ralink/pinctrl-rt2880.c
-index 96fc06d..308610e 100644
---- a/drivers/pinctrl/ralink/pinctrl-rt2880.c
-+++ b/drivers/pinctrl/ralink/pinctrl-rt2880.c
-@@ -266,6 +266,10 @@ static int rt2880_pinmux_pins(struct rt2880_priv *p)
- 						p->func[i]->pin_count,
- 						sizeof(int),
- 						GFP_KERNEL);
-+        
-+        if (!p->func[i]->pins)
-+            continue;
-+
- 		for (j = 0; j < p->func[i]->pin_count; j++)
- 			p->func[i]->pins[j] = p->func[i]->pin_first + j;
- 
--- 
-2.7.4
+> The kernel test robot reported a warning as below:
+>>> drivers/pinctrl/meson/pinctrl-meson-s4.c:178:27: warning: unused variable 'tdm_sclk1_c_pins' [-Wunused-const-variable]
+>    static const unsigned int tdm_sclk1_c_pins[]            = { GPIOC_3 };
+>
+> Fix it by adding missing description about this pins
+>
+> Fixes: 775214d389c2 ("pinctrl: meson: add pinctrl driver support for Meson-S4 Soc")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+> ---
+>  drivers/pinctrl/meson/pinctrl-meson-s4.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-s4.c b/drivers/pinctrl/meson/pinctrl-meson-s4.c
+> index 3c7358f53302..067c6749c849 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-s4.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-s4.c
+> @@ -575,6 +575,7 @@ static struct meson_pmx_group meson_s4_periphs_groups[] = {
+>  	GROUP(tdm_d2_c,			4),
+>  	GROUP(tdm_d3_c,			4),
+>  	GROUP(tdm_fs1_c,		4),
+> +	GROUP(tdm_sclk1_c,		4),
+>  	GROUP(mclk_1_c,			4),
+>  	GROUP(tdm_d4_c,			4),
+>  	GROUP(tdm_d5_c,			4),
+> @@ -937,6 +938,7 @@ static const char * const iso7816_groups[] = {
+>  
+>  static const char * const tdm_groups[] = {
+>  	"tdm_d2_c", "tdm_d3_c", "tdm_fs1_c", "tdm_d4_c", "tdm_d5_c",
+> +	"tdm_sclk1_c",
+
+Thanks for fixing this.
+Could you please try to keep this list somehow ordered a bit ?
+Here you are adding a new line in the middle with single entry ... it
+looks weird. 
+
+>  	"tdm_fs1_d", "tdm_d4_d", "tdm_d3_d", "tdm_d2_d", "tdm_sclk1_d",
+>  	"tdm_sclk1_h", "tdm_fs1_h", "tdm_d2_h", "tdm_d3_h", "tdm_d4_h",
+>  	"tdm_d1", "tdm_d0", "tdm_fs0", "tdm_sclk0", "tdm_fs2", "tdm_sclk2",
 
