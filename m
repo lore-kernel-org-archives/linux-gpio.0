@@ -2,110 +2,77 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B23D0C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Mar 2022 14:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50DBC433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Mar 2022 15:01:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344238AbiC3PBL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Mar 2022 11:01:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
+        id S1347815AbiC3PDf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Mar 2022 11:03:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347703AbiC3PBH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2022 11:01:07 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BFAF6143;
-        Wed, 30 Mar 2022 07:59:18 -0700 (PDT)
+        with ESMTP id S1347826AbiC3PDE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2022 11:03:04 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A74A61FCE3;
+        Wed, 30 Mar 2022 08:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648652360; x=1680188360;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=AiSqgbY3F6e8CsDBfyfXq406U2Lox0vVd6FYIM9rs5Q=;
-  b=hVShMPkcVDG/CpDtOqHJT+uzBsogUa4FgW1Pce/AmU3Npi4iKU0DuZ6c
-   ++oHj/pT8qTw7c+FpgdyFbbOIebhnJiXVm7RCIr54lAsr0ppyo83Ozv4G
-   RdzXsxg6JywV5+pSEvM3fhP34W5lZi0phFHE6H1RSxdBW1he0dRHl4sB4
-   skJu14tHO4ye8XbpJ3vyelluXD0e7xmL0Y5tD6RE1l8uV/6WQ4EKDq9zQ
-   m+lNHZBAowTUZ9axamkBpJh0ffdCtZtjfedicCBpXDLhrDzSmF0GtJefS
-   YEGEGMeJI/foxO00LbdrwArd1kvh2yxqfIlJjxkhoRsO0r70V8/pkb65c
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="259535483"
+  t=1648652479; x=1680188479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YXbpZaJqhuCQp74NS4nN+yF5HwzcDtttnsG/ebBknnQ=;
+  b=PMErXi7sCfBQ3KvFJyeoNJCQ4S1206fU1ZGH6NdOFUG9LBW3uChIkJjl
+   6C/kppKKeXepFS0vZmNaIe1K+c/ci8ID/jH4bSBew0ZASztfjgiy4qsry
+   8Tb5dWKF8R6DFjgEKbBHKXjlOFmtL1sZuAl3Ghv4nJWDEPzilw/Njclnq
+   ImlzmtpQ5JivnuV+Q9Pl2DUE6iuuwbC4jRLilBQBOzMBqWvhg0LYsGhiJ
+   +2ZqBHz/elHBKgYH7LmbdEAFfWixPi8Lm1qvkSY3da/yREzwxKM41VUB0
+   Bvzjn53QBCAK6KaJzcctCojBJAViv5F01KhWT+++EjEV7ca8EcbNz2yCA
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="239493572"
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="259535483"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:58:58 -0700
-X-ExtLoop1: 1
+   d="scan'208";a="239493572"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 08:01:19 -0700
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="605462521"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Mar 2022 07:58:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id AA775144; Wed, 30 Mar 2022 17:59:15 +0300 (EEST)
+   d="scan'208";a="586029475"
+Received: from smile.fi.intel.com ([10.237.72.59])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 08:01:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nZZoS-009StT-OO;
+        Wed, 30 Mar 2022 18:00:44 +0300
+Date:   Wed, 30 Mar 2022 18:00:44 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/3] gpiolib: Split out for_each_gpio_desc() macro
-Date:   Wed, 30 Mar 2022 17:59:08 +0300
-Message-Id: <20220330145910.1946-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 1/1] gpiolib: Get rid of redundant 'else' (part 2)
+Message-ID: <YkRwnJE511c6aK0y@smile.fi.intel.com>
+References: <20220328112856.404-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220328112856.404-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In some cases we want to traverse all GPIO descriptors for given
-chip, let's split out for_each_gpio_desc() macro for such cases.
+On Mon, Mar 28, 2022 at 02:28:56PM +0300, Andy Shevchenko wrote:
+> In the snippets like the following
+> 
+> 	if (...)
+> 		return / goto / break / continue ...;
+> 	else
+> 		...
+> 
+> the 'else' is redundant. Get rid of it by using switch-case pattern.
+> Note that the pattern seems more usual for IOCTL handlers.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib.c | 10 +++-------
- drivers/gpio/gpiolib.h |  7 +++++--
- 2 files changed, 8 insertions(+), 9 deletions(-)
+It appears that part 1 (as per subject) was never submitted before.
+So, I unify them in v2 of this patch.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e59884cc12a7..723411c13f1c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -310,15 +310,11 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	list_for_each_entry(gdev, &gpio_devices, list) {
-+		struct gpio_desc *desc;
- 		int i;
- 
--		for (i = 0; i != gdev->ngpio; ++i) {
--			struct gpio_desc *desc = &gdev->descs[i];
--
--			if (!desc->name)
--				continue;
--
--			if (!strcmp(desc->name, name)) {
-+		for_each_gpio_desc(i, gdev->chip, desc) {
-+			if (desc->name && !strcmp(desc->name, name)) {
- 				spin_unlock_irqrestore(&gpio_lock, flags);
- 				return desc;
- 			}
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 06f3faa9fbef..450fb2fabe43 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -100,10 +100,13 @@ struct gpio_array {
- 
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
- 
--#define for_each_gpio_desc_with_flag(i, gc, desc, flag)		\
-+#define for_each_gpio_desc(i, gc, desc)				\
- 	for (i = 0, desc = gpiochip_get_desc(gc, i);		\
- 	     i < gc->ngpio;					\
--	     i++, desc = gpiochip_get_desc(gc, i))		\
-+	     i++, desc = gpiochip_get_desc(gc, i))
-+
-+#define for_each_gpio_desc_with_flag(i, gc, desc, flag)		\
-+	for_each_gpio_desc(i, gc, desc)				\
- 		if (!test_bit(flag, &desc->flags)) {} else
- 
- int gpiod_get_array_value_complex(bool raw, bool can_sleep,
 -- 
-2.35.1
+With Best Regards,
+Andy Shevchenko
+
 
