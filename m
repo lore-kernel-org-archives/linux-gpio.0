@@ -2,190 +2,118 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1758FC43217
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Mar 2022 14:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21201C43217
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Mar 2022 14:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347181AbiC3Oue (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Mar 2022 10:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44738 "EHLO
+        id S1347316AbiC3OwK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Mar 2022 10:52:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347179AbiC3Oud (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2022 10:50:33 -0400
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFEA28789F;
-        Wed, 30 Mar 2022 07:48:46 -0700 (PDT)
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-dee0378ce7so11912453fac.4;
-        Wed, 30 Mar 2022 07:48:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=skMSCIAgLPl78nzvZXYE2JT7zIrztjobvz7dNziQYsE=;
-        b=YOLKtBaxxUSDjvtn8tEoN4QvogVSwfN4xVEiBqCaxzmZNE+eBzWJpPkgZVliBB79XY
-         xAvqy+3UJx0kvJlVUh5wjTVVHWuNjJmkEZfufEq+Lgen6UE1Yta1o/JVozzA278Pb4Ha
-         ZpWwX5boiLEiZM11qF70OJXN/vFiM/sFigtI29BAjyfOhdwUHdMiT4uLq7oRQ/SU8n9z
-         hLg/PUA2eIgx0p9zkhjUc71q1bRH418A49HBES0c4MVVq0u7EkAlzyPlW2Vnl7YCvb9S
-         fxigA5WRlKIm42AFOa3Zy0iVwUO2whKg0ifZ6CijM3MB7PQITIxphqAtrddKcedftlSi
-         xENw==
-X-Gm-Message-State: AOAM532FqYma72fGHAnA4X6VGf0YzNLnFqY0vc4jwGhULIZgAFLEvacb
-        s2cy5wWANFonS6BPV2FtYg==
-X-Google-Smtp-Source: ABdhPJxHdqfLBB2pgsxMf+I94z/WzW9slneVMU6+szkaMjJonYmkhtJIm3/o7LP/h/LoYE1YrqgzLw==
-X-Received: by 2002:a05:6870:ec92:b0:dd:b5b5:75d5 with SMTP id eo18-20020a056870ec9200b000ddb5b575d5mr2330636oab.61.1648651725568;
-        Wed, 30 Mar 2022 07:48:45 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id t11-20020a4ae40b000000b0031cc933b418sm10019954oov.40.2022.03.30.07.48.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 07:48:45 -0700 (PDT)
-Received: (nullmailer pid 3029818 invoked by uid 1000);
-        Wed, 30 Mar 2022 14:48:44 -0000
-Date:   Wed, 30 Mar 2022 09:48:44 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        warthog618@gmail.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 04/11] dt-bindings: Add HTE bindings
-Message-ID: <YkRtzJjHQvmYNlK8@robh.at.kernel.org>
-References: <20220329054521.14420-1-dipenp@nvidia.com>
- <20220329054521.14420-5-dipenp@nvidia.com>
- <YkOVgRBtXX0k9zr1@robh.at.kernel.org>
- <3b0f3430-bc1c-26df-c93f-517ba395d9e3@nvidia.com>
+        with ESMTP id S1347326AbiC3OwG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2022 10:52:06 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6741F4925E;
+        Wed, 30 Mar 2022 07:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648651820; x=1680187820;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=DFJ8vSWxdkQP5rCMWcqpqf0iMOqCrH1H7hLKYmjSIpU=;
+  b=KT9uA43Quj97EQsS/34LBJUiti+KKxG2KtmHKYDBQQTFBKMuoufIYN5v
+   HtX6K5xbKXegXJRtw4sooRh+8smFbfi1OYejjkcjgYbnK2smTVObdzCfS
+   eKBYlhmNR6hRTg9OPs+HZWNyPWon3zuvKWr+Tv1z8laLZxQwjTTz1jKig
+   /D+8uzVX5hwSNmehuWdaW3mwpunjWkQr2xaExA5XJDc9IV9Mh9CBNGKXe
+   C2VqlsoA2cUN2nVWOgtFY4++TsKQUOBbi+q1Sd793ATzdgDS2QCqiK0/V
+   kZ3cGJRoAFSzSNH67yIOE3LTU/jr0gjCPXqsj2b3PvtZPMGj3/5k8wEZf
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="257139573"
+X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
+   d="scan'208";a="257139573"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:50:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
+   d="scan'208";a="618556021"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Mar 2022 07:50:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 3232C1C3; Wed, 30 Mar 2022 17:50:33 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Qianggui Song <qianggui.song@amlogic.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v3 02/13] gpiolib: Introduce gpiochip_node_count() helper
+Date:   Wed, 30 Mar 2022 17:50:19 +0300
+Message-Id: <20220330145030.1562-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220330145030.1562-1-andriy.shevchenko@linux.intel.com>
+References: <20220330145030.1562-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b0f3430-bc1c-26df-c93f-517ba395d9e3@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 05:19:10PM -0700, Dipen Patel wrote:
-> Hi,
-> 
-> On 3/29/22 4:25 PM, Rob Herring wrote:
-> > On Mon, Mar 28, 2022 at 10:45:14PM -0700, Dipen Patel wrote:
-> >> Introduces HTE devicetree binding details for the HTE subsystem. It
-> >> includes examples for the consumers, binding details for the providers
-> >> and specific binding details for the Tegra194 based HTE providers.
-> >>
-> >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> >> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >> ---
-> >> Changes in v2:
-> >> - Replace hte with hardware-timestamp for property names
-> >> - Renamed file
-> >> - Removed example from the common dt binding file.
-> >>
-> >> Changes in v3:
-> >> - Addressed grammatical errors.
-> >> - Removed double plural from the respective properties.
-> >> - Added dual license.
-> >> - Prefixed "nvidia" in nvidia specific properties.
-> >>
-> >> Changes in v4:
-> >> - Corrected make dt_binding_check error.
-> >>
-> >> Changes in v5:
-> >> - Addressed review comments.
-> >>
-> >>  .../hte/hardware-timestamps-common.yaml       | 29 +++++++
-> >>  .../devicetree/bindings/hte/hte-consumer.yaml | 43 ++++++++++
-> >>  .../bindings/hte/nvidia,tegra194-hte.yaml     | 82 +++++++++++++++++++
-> >>  3 files changed, 154 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
-> >>  create mode 100644 Documentation/devicetree/bindings/hte/hte-consumer.yaml
-> >>  create mode 100644 Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
-> >> new file mode 100644
-> >> index 000000000000..e8a69ceccd56
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
-> >> @@ -0,0 +1,29 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fhte%2Fhardware-timestamps-common.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589163420%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=oyeG06oNMukYew%2Bkji%2FlXsDyGwIIrIvwxLHKxaiFBto%3D&amp;reserved=0
-> >> +$schema: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589163420%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=JOY3MmZlMo6Mopr5dwjUky%2BaQX4b0QSiDt8zo3mSu1k%3D&amp;reserved=0
-> >> +
-> >> +title: Hardware timestamp providers
-> >> +
-> >> +maintainers:
-> >> +  - Dipen Patel <dipenp@nvidia.com>
-> >> +
-> >> +description:
-> >> +  Some devices/SoCs have hardware time stamping engines which can use hardware
-> >> +  means to timestamp entity in realtime. The entity could be anything from
-> >> +  GPIOs, IRQs, Bus and so on. The hardware timestamp engine (HTE) present
-> >> +  itself as a provider with the bindings described in this document.
-> >> +
-> >> +properties:
-> >> +  $nodename:
-> >> +    pattern: "^hardware-timestamp(@.*|-[0-9a-f])?$"
-> >> +
-> >> +  "#hardware-timestamp-cells":
-> >> +    description:
-> >> +      Number of cells in a HTE specifier.
-> >> +
-> >> +required:
-> >> +  - "#hardware-timestamp-cells"
-> >> +
-> >> +additionalProperties: true
-> >> diff --git a/Documentation/devicetree/bindings/hte/hte-consumer.yaml b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
-> >> new file mode 100644
-> >> index 000000000000..be69f63aa8c3
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
-> >> @@ -0,0 +1,43 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fhte%2Fhte-consumer.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=0f1FFB1IotZESaxDlXX5mo9YyMN25BlFAyq%2FOQJtVoE%3D&amp;reserved=0
-> >> +$schema: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=B%2FvVGGwp9JghUpT33cGk0EZHDRlaOAzCbtv93Z%2Fa9YY%3D&amp;reserved=0
-> >> +
-> >> +title: HTE Consumer Device Tree Bindings
-> >> +
-> >> +maintainers:
-> >> +  - Dipen Patel <dipenp@nvidia.com>
-> >> +
-> >> +select: true
-> >> +
-> >> +description:
-> >> +  HTE properties should be named "hardware-timestamps". The exact meaning of
-> >> +  each hardware-timestamps property must be documented in the device tree
-> > The meaning of the cells needs to be documented. You are documenting the 
-> > meaning of 'hardware-timestamps' here.
-> 
-> This is for the consumer side, meaning of the cells will be documented in the provider
-> 
-> binding document.
+The gpiochip_node_count() helper iterates over the device child nodes that
+have the "gpio-controller" property set. It returns the number of such nodes
+under a given device.
 
-Right cells are opaque to the consumer. What bothered me is 
-hardware-timestamps already has an 'exact meaning'. You need to me more 
-exact as to what should be documented. We don't want what 
-'hardware-timestamps' is described again. What needs to be documented is 
-how many entries, what each entry is (for the consumer), and the order.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/gpio/driver.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 2142ffc7338c..e38565a5056c 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -752,4 +752,15 @@ static inline void gpiochip_unlock_as_irq(struct gpio_chip *gc,
+ 	device_for_each_child_node(dev, child)					\
+ 		if (!fwnode_property_present(child, "gpio-controller")) {} else
+ 
++static inline unsigned int gpiochip_node_count(struct device *dev)
++{
++	struct fwnode_handle *child;
++	unsigned int count = 0;
++
++	for_each_gpiochip_node(dev, child)
++		count++;
++
++	return count;
++}
++
+ #endif /* __LINUX_GPIO_DRIVER_H */
+-- 
+2.35.1
 
-> >> +  binding for each device. An optional property "hardware-timestamp-names" may
-> >> +  contain a list of strings to label each of the HTE devices listed in the
-> >> +  "hardware-timestamps" property.
-> >> +
-> >> +properties:
-> >> +  hardware-timestamps:
-> > I'm wondering if we should just drop 'hardware'. What other kind of 
-> > timestamps are we going to have in DT? software-timestamps? No.
-> 
-> I believe this makes it explicit and leaves no room for second guess. If
-> 
-> only timestamps, ambiguity then will be which timestamp it is i.e. through hardware
-> 
-> engine, pps, ptp and so on...
-
-Those aren't hardware timestamps, too? If those needed a similar 
-binding, couldn't they use this binding? PTP at least is sometimes an 
-separate, external chip IIRC.
-
-Rob
