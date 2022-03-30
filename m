@@ -2,88 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C21C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Mar 2022 14:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B23D0C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Mar 2022 14:59:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347720AbiC3PAs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Mar 2022 11:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57388 "EHLO
+        id S1344238AbiC3PBL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Mar 2022 11:01:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347697AbiC3PAm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2022 11:00:42 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0EA260F0;
-        Wed, 30 Mar 2022 07:58:57 -0700 (PDT)
+        with ESMTP id S1347703AbiC3PBH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2022 11:01:07 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BFAF6143;
+        Wed, 30 Mar 2022 07:59:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648652337; x=1680188337;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SpYrts1YeZWLv9clP3yHemnD63N6o2d9vX+0nOBBfO0=;
-  b=QtQKeH4w8EnxHtH98TLgra/oWk1enc0PG7QJEdsppPAWSXh33IRzBWv3
-   7eO9DpxrjB90N70ZpZ3xofdfXGkndoNrpnUHPjzHUZGAYeuth2Xj/r2sh
-   dpBf6vmWwZrlR9qCOl9JetvmimKo9ft6Hdhv/LPMoG1P8FDjTI6RT3KvT
-   x9QQ+0aKkQGjT8ktSKcLak9gmtgwp43xcCldsjZrcwifnNDq1SKq5cWMJ
-   4gubo/kzOFshOzt2DNg00+MZI9Sg16kiII92Xme2WrYl2gdNMEhgv+P+1
-   1uV8Bou70Cu7KojNZiIZF9Ik2c84qd+Nz9J2LVqmuAbNpQUmirAp71bcx
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="247064042"
+  t=1648652360; x=1680188360;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AiSqgbY3F6e8CsDBfyfXq406U2Lox0vVd6FYIM9rs5Q=;
+  b=hVShMPkcVDG/CpDtOqHJT+uzBsogUa4FgW1Pce/AmU3Npi4iKU0DuZ6c
+   ++oHj/pT8qTw7c+FpgdyFbbOIebhnJiXVm7RCIr54lAsr0ppyo83Ozv4G
+   RdzXsxg6JywV5+pSEvM3fhP34W5lZi0phFHE6H1RSxdBW1he0dRHl4sB4
+   skJu14tHO4ye8XbpJ3vyelluXD0e7xmL0Y5tD6RE1l8uV/6WQ4EKDq9zQ
+   m+lNHZBAowTUZ9axamkBpJh0ffdCtZtjfedicCBpXDLhrDzSmF0GtJefS
+   YEGEGMeJI/foxO00LbdrwArd1kvh2yxqfIlJjxkhoRsO0r70V8/pkb65c
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="259535483"
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="247064042"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:58:56 -0700
+   d="scan'208";a="259535483"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:58:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="519707735"
+   d="scan'208";a="605462521"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 30 Mar 2022 07:58:54 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 30 Mar 2022 07:58:54 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C017B1C3; Wed, 30 Mar 2022 17:59:15 +0300 (EEST)
+        id AA775144; Wed, 30 Mar 2022 17:59:15 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 3/3] gpiolib: Move error message out of a spinlock
-Date:   Wed, 30 Mar 2022 17:59:10 +0300
-Message-Id: <20220330145910.1946-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/3] gpiolib: Split out for_each_gpio_desc() macro
+Date:   Wed, 30 Mar 2022 17:59:08 +0300
+Message-Id: <20220330145910.1946-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220330145910.1946-1-andriy.shevchenko@linux.intel.com>
-References: <20220330145910.1946-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-An error path is a slow path, no need to block other CPUs
-when printing error messages.
+In some cases we want to traverse all GPIO descriptors for given
+chip, let's split out for_each_gpio_desc() macro for such cases.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 10 +++-------
+ drivers/gpio/gpiolib.h |  7 +++++--
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f956c533f218..062d127d9a0d 100644
+index e59884cc12a7..723411c13f1c 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -289,7 +289,6 @@ static int gpiodev_add_to_list(struct gpio_device *gdev)
- 		}
- 	}
+@@ -310,15 +310,11 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
+ 	spin_lock_irqsave(&gpio_lock, flags);
  
--	dev_err(&gdev->dev, "GPIO integer space overlap, cannot add chip\n");
- 	return -EBUSY;
- }
+ 	list_for_each_entry(gdev, &gpio_devices, list) {
++		struct gpio_desc *desc;
+ 		int i;
  
-@@ -724,6 +723,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 	ret = gpiodev_add_to_list(gdev);
- 	if (ret) {
- 		spin_unlock_irqrestore(&gpio_lock, flags);
-+		chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
- 		goto err_free_label;
- 	}
+-		for (i = 0; i != gdev->ngpio; ++i) {
+-			struct gpio_desc *desc = &gdev->descs[i];
+-
+-			if (!desc->name)
+-				continue;
+-
+-			if (!strcmp(desc->name, name)) {
++		for_each_gpio_desc(i, gdev->chip, desc) {
++			if (desc->name && !strcmp(desc->name, name)) {
+ 				spin_unlock_irqrestore(&gpio_lock, flags);
+ 				return desc;
+ 			}
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 06f3faa9fbef..450fb2fabe43 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -100,10 +100,13 @@ struct gpio_array {
  
+ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
+ 
+-#define for_each_gpio_desc_with_flag(i, gc, desc, flag)		\
++#define for_each_gpio_desc(i, gc, desc)				\
+ 	for (i = 0, desc = gpiochip_get_desc(gc, i);		\
+ 	     i < gc->ngpio;					\
+-	     i++, desc = gpiochip_get_desc(gc, i))		\
++	     i++, desc = gpiochip_get_desc(gc, i))
++
++#define for_each_gpio_desc_with_flag(i, gc, desc, flag)		\
++	for_each_gpio_desc(i, gc, desc)				\
+ 		if (!test_bit(flag, &desc->flags)) {} else
+ 
+ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
 -- 
 2.35.1
 
