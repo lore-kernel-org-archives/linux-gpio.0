@@ -2,116 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34510C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Apr 2022 09:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 994D2C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Apr 2022 10:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344399AbiDAJQZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Apr 2022 05:16:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50682 "EHLO
+        id S1344140AbiDAKhl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Apr 2022 06:37:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243987AbiDAJQY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2022 05:16:24 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBF362106;
-        Fri,  1 Apr 2022 02:14:34 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id p15so4510019ejc.7;
-        Fri, 01 Apr 2022 02:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OsrH6lo/DuV4Px4EXvnPoTR1hR5ZaTVHAh03QaHrq6A=;
-        b=JmWHvJBisgImhvOyUD8tzZMza46HKn1xukfz2TVuVZcwQiW9r9bWuZyTHbZLLjJ7YL
-         X7BQgSpD2BU67vo8E0YuDzJiVY3X8CerJ7uQqa8FIEfl8GMq1q7RgFDVX4ai82UeSHBA
-         4tut4Lm5wrlvMi5icLLJpU/0bXRjZFaesEVK9O6S5oseWYrhc2zW4yH8AzF5AJz7xHfP
-         vei6msMEn0JTcdKwSKeEs/fDy2Pho8f/JBbBurn86M97KSq3LGE6wFvoXcsMqqgTIHvi
-         p36K9x3StE7pLaRVB4BA3VHheIcxA8UUmz0nn9FoszQvo4dpAWHyEt85XpscOyqKY1ol
-         OVrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OsrH6lo/DuV4Px4EXvnPoTR1hR5ZaTVHAh03QaHrq6A=;
-        b=VIr47Pm78nEj5/WRcB91tco+w25ByDcQOaDc+71IV/4MwlBWC2friBCmB5guvpcH8v
-         /TeuiSkn+WYgk+Nr1JExW03n+zzo9f3XNaTNt6d3qXeogj4pbNsQc2+MK8fo4J1/DuPy
-         7s2ojNceBnHXuSEsE6M1BevdBO+RU0E9cmjFFJaSBix9cUFAHdvz54eWwb1aTxeZcGaF
-         PHJuHIKj3dismTaw6q1RzKiIqAARtRkpUesayTPZYbpsbWLtb5YjWbHxLq2aEdhr/Fqy
-         P1xDpDMXU2qbcgOWbahXo/N8MTZI5Nrl0LDyIwtH7nGReWBsvCm4alpuPrmglInfsSCD
-         stew==
-X-Gm-Message-State: AOAM530pfk8KgzUmG/BUm0OEpWXpK/wxLd6A6KQr/lnB6BC85xAhycYq
-        Jlv/AXBRHgKKVugMv33JG4OMZehnI/ezvcSUc+I=
-X-Google-Smtp-Source: ABdhPJyTnf43naj3nJDmc6O7XIWY7gMqZWU+WWhlCaIeW80QNYOMdTnt+kvt5LZoJvx6LXwsuS005Jw0OlQBDMx+QOo=
-X-Received: by 2002:a17:907:160b:b0:6e1:116e:7a59 with SMTP id
- hb11-20020a170907160b00b006e1116e7a59mr8365081ejc.579.1648804472914; Fri, 01
- Apr 2022 02:14:32 -0700 (PDT)
+        with ESMTP id S1343860AbiDAKhl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2022 06:37:41 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A0A266B65;
+        Fri,  1 Apr 2022 03:35:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648809352; x=1680345352;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=i+XLNp2iVCE62baGP2Gp0lU65sQmnL0penjqJcUdxuU=;
+  b=anDGpF0vGE2DDhr35PRETPt7MzUcA88a/qmb4MQq8U0Uj6w/+NfOug3+
+   KsV++fdQLIq1mgPme3G3xaNil8fqrDKKBqiAPKB67wBGLCxAPrHMNpDj8
+   rnbspdjsTODrlKLkNkW9ghgldJnU8FH0XPWDktdZelhDWMg0AMvEcmpYT
+   Nf919w0jnN2V/CRYStLGc+xAOlLCldceoR3oGjG2ThEua0yNHU18ewtts
+   eGbx6unJ5wgHjZG9TP6USA8MXzq7JcKw+qKGHOBQZjSDC1UX4vLeU1gqe
+   NgKdLACa/yAccmmC7Io9BYcpNjR6miZmOhv2lyhMWTn8uv1zlJW0Z+Omq
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10303"; a="240692251"
+X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
+   d="scan'208";a="240692251"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 03:35:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
+   d="scan'208";a="695847010"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 01 Apr 2022 03:35:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id B7C6A1F5; Fri,  1 Apr 2022 13:36:05 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Qianggui Song <qianggui.song@amlogic.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v4 03/13] pinctrl: stm32: Replace custom code by gpiochip_node_count() call
+Date:   Fri,  1 Apr 2022 13:35:54 +0300
+Message-Id: <20220401103604.8705-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
+References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <1648540212-9790-1-git-send-email-unSimple1993@163.com>
- <CAHp75VdwLPkzE9AHkXg=+vsagh4SGam40vz8uRdSRUpr6Cyv7A@mail.gmail.com> <2e3426e0.2d71.17fe315bdb6.Coremail.unsimple1993@163.com>
-In-Reply-To: <2e3426e0.2d71.17fe315bdb6.Coremail.unsimple1993@163.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 1 Apr 2022 12:13:27 +0300
-Message-ID: <CAHp75Vcs+HG-e=BHhgWP6Ndh5nZWXXnqhZ2jfN33Fs0qu5U_Bw@mail.gmail.com>
-Subject: Re: Re: [PATCH v1] pinctrl: ralink: rt2880: Check for return value of devm_kcalloc()
-To:     unSimple <unsimple1993@163.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jason Yan <yanaijie@huawei.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Apr 1, 2022 at 6:06 AM unSimple <unsimple1993@163.com> wrote:
+Since we have generic function to count GPIO controller nodes
+under a given device, there is no need to open code it. Replace
+custom code by gpiochip_node_count() call.
 
->
-> The main consideration of the 'continue' in the patch is that those statements are inner a loop.
->
-> The next allocation may be successful so I think it is better to use 'continue' here.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Please, do not top-post!
-
-What you explained is logical from APIs point of view, what I was
-asking is about functional point of view.
-Why do you think the skipping iteration is fine?
-
-You need to explain this in the code/commit message.
-
-> At 2022-03-29 19:45:50, "Andy Shevchenko" <andy.shevchenko@gmail.com> wrote:
-> >On Tue, Mar 29, 2022 at 11:36 AM QintaoShen <unSimple1993@163.com> wrote:
-> >>
-> >> The memory allocation function devm_kcalloc() may return NULL pointer,
-> >
-> >may --> might
-> >
-> >> so it is better to add a check for 'p->func[i]->pins' to avoid possible
-> >> NULL pointer dereference.
-
-...
-
-> >> @@ -266,6 +266,10 @@ static int rt2880_pinmux_pins(struct rt2880_priv *p)
-> >>                                                 p->func[i]->pin_count,
-> >>                                                 sizeof(int),
-> >>                                                 GFP_KERNEL);
-> >
-> >> +
-> >
-> >Stray change. Also it seems it has trailing space character(s).
-> >
-> >> +        if (!p->func[i]->pins)
-> >
-> >> +            continue;
-> >
-> >Why is 'continue' the proper choice here? No clarification is given in
-> >the commit message.
-> >
-> >>                 for (j = 0; j < p->func[i]->pin_count; j++)
-> >>                         p->func[i]->pins[j] = p->func[i]->pin_first + j;
-
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 9ed764731570..91b9a64b649e 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1423,7 +1423,8 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_pinctrl *pctl;
+ 	struct pinctrl_pin_desc *pins;
+-	int i, ret, hwlock_id, banks = 0;
++	int i, ret, hwlock_id;
++	unsigned int banks;
+ 
+ 	if (!np)
+ 		return -EINVAL;
+@@ -1513,10 +1514,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pctl->pctl_dev);
+ 	}
+ 
+-	for_each_available_child_of_node(np, child)
+-		if (of_property_read_bool(child, "gpio-controller"))
+-			banks++;
+-
++	banks = gpiochip_node_count(dev);
+ 	if (!banks) {
+ 		dev_err(dev, "at least one GPIO bank is required\n");
+ 		return -EINVAL;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.35.1
+
