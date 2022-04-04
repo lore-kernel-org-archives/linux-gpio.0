@@ -2,87 +2,70 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54915C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Apr 2022 16:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB4CC433F5
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376885AbiDDQER (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Apr 2022 12:04:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38306 "EHLO
+        id S1379518AbiDDV2k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:28:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352990AbiDDQER (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Apr 2022 12:04:17 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 541D942487;
-        Mon,  4 Apr 2022 09:02:21 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: nfraprado)
-        with ESMTPSA id E45601F44731
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649088140;
-        bh=gXcTJN1wEbSuuha2o6PaxF2kCOHsWvsU4lW7wKZ/EhY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mIc5+GBU1VqyZ/IpAbIWiWDuHKZXEFZoZH2h/calTdrlh563WgQ6khtwNaWt4HrJ5
-         noocOP+D1uVlFkkZ/D2ku2pgiYZEyJSO17BBcdEeSQ+7bzH3bP9zGCsWxQTqM/qufj
-         BB1mNE37AKrgLb6lpHhrp75cl2xgQKAeO1cD9/1gamlzIMiMiJj818OwgMLCP1MnWp
-         A+xfDaqUhaL+B5fwWXjYL7x2RAiOB4zNIWMi8kzvayptQzVj3MfH6YHdCpXwFkgUMh
-         KmfUCMLMLzzr7aFN3qFlsFVSgdRP61LmmLplFSIN8Yghg33HV6eR/XSGDwADdMgU5O
-         jIA1eAZdKHhxw==
-Date:   Mon, 4 Apr 2022 12:02:14 -0400
-From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
-        <nfraprado@collabora.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v1 0/4] dt-bindings: pinctrl: mt8192: Add missing
- wrapping node and properties
-Message-ID: <20220404160214.w6wypnq3b6hfriub@notapiano>
-References: <20220315211936.442708-1-nfraprado@collabora.com>
+        with ESMTP id S1380265AbiDDTZG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Apr 2022 15:25:06 -0400
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76FA73B037;
+        Mon,  4 Apr 2022 12:23:09 -0700 (PDT)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-d39f741ba0so11854884fac.13;
+        Mon, 04 Apr 2022 12:23:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wIFxnat34WFgpybFJIb4ucsy9v2GfYyVlHzTRVzu9II=;
+        b=p7sgaV1KkwcHjxp/vlyfRnDI4Vp19yAtiHdnadEPBuaLtMRE0cozlz9SGmnysgPT/p
+         p1r6sAlZedh1OdlgUkuGQhncDpb+2s/gaQu2TKC4Q7/ZqX/rzWHeB6Laj4zeDTlwHtlW
+         MiS4cEWCMq7AOXFTjw5AQ6SCQ0J5/+Mu03tii6+MCqz0kXad9K5eUAFj3iScKKnePHCU
+         fWKqRFR7wM8SNHzzuTDFxdaI/GYxZ+agePVBisig0GPKibeZSgjuxJ5JmpM1LAeFemMY
+         yKEZ0a8Fxp3XgV2IaI0n6gqZxlfFH5N3vqJIsxVEpC6O1C7YJklX8ZkGsvDJ14XfaEUm
+         5/Nw==
+X-Gm-Message-State: AOAM530Lgnw5HiMQ5q4hLjsjpoU6G4l/YND++tyR2gvg5FEYNj+L0Wll
+        WTSSzrPhx0zHbNf3zH3Kwg==
+X-Google-Smtp-Source: ABdhPJxGvYRMISdRC5MROfVxG4x2VQDddPAJcrf4fiX749Isc/0j1TL+GUY/U5TzrMlxzPaIiijgSg==
+X-Received: by 2002:a05:6870:46a4:b0:e1:f307:c1a2 with SMTP id a36-20020a05687046a400b000e1f307c1a2mr412329oap.238.1649100188792;
+        Mon, 04 Apr 2022 12:23:08 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id k8-20020a544688000000b002f90678740esm4638093oic.37.2022.04.04.12.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Apr 2022 12:23:08 -0700 (PDT)
+Received: (nullmailer pid 1802528 invoked by uid 1000);
+        Mon, 04 Apr 2022 19:23:07 -0000
+Date:   Mon, 4 Apr 2022 14:23:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, heiko@sntech.de,
+        linux-gpio@vger.kernel.org, krzk+dt@kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: pinctrl: add rockchip,rk3036-pinctrl
+ compatible string
+Message-ID: <YktFmxYK76/W1N2A@robh.at.kernel.org>
+References: <20220330133952.1949-1-jbx6244@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220315211936.442708-1-nfraprado@collabora.com>
+In-Reply-To: <20220330133952.1949-1-jbx6244@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Matthias,
+On Wed, 30 Mar 2022 15:39:51 +0200, Johan Jonker wrote:
+> Add the compatible string "rockchip,rk3036-pinctrl" in already
+> in use in rk3036.dtsi to rockchip,pinctrl.yaml.
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-If you could please also pick this series through your tree that would be great
-:).
-
-This would preemptively fix warnings for my mt8192-asurada.dtsi series [1].
-
-[1] https://lore.kernel.org/all/20220316151327.564214-1-nfraprado@collabora.com/
-
-Thanks,
-Nícolas
-
-On Tue, Mar 15, 2022 at 05:19:32PM -0400, Nícolas F. R. A. Prado wrote:
-> 
-> This series adds the wrapping node for pinmux nodes that was missing in
-> the mt8192-pinctrl dt-binding as well as a couple other missing
-> properties.
-> 
-> 
-> Nícolas F. R. A. Prado (4):
->   dt-bindings: pinctrl: mt8192: Add wrapping node for pin configurations
->   dt-bindings: pinctrl: mt8192: Add mediatek,drive-strength-adv property
->   dt-bindings: pinctrl: mt8192: Add mediatek,pull-up-adv property
->   dt-bindings: pinctrl: mt8192: Add gpio-line-names property
-> 
->  .../bindings/pinctrl/pinctrl-mt8192.yaml      | 155 +++++++++++-------
->  1 file changed, 98 insertions(+), 57 deletions(-)
-> 
-> -- 
-> 2.35.1
-> 
-> 
-> -- 
-> To unsubscribe, send mail to kernel-unsubscribe@lists.collabora.co.uk.
+Acked-by: Rob Herring <robh@kernel.org>
