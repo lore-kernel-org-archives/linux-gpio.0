@@ -2,166 +2,162 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EAAC43217
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 20:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BE0C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 20:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234522AbiDEURE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Apr 2022 16:17:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60338 "EHLO
+        id S231977AbiDEUSX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Apr 2022 16:18:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391995AbiDEPfe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 11:35:34 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22187644DA
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 06:44:32 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id fu5so6227483pjb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2022 06:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Z/Qd7keKI8YlwHEX7iDWimNuVR+4ISjsuTlC48VavJQ=;
-        b=WBiGf3Il9wK5mABqI8Vuo6ER4ssaQXR3DjOaf8X+qeCeAmNU/1Ega+7kATaDiVVYL1
-         EpK+ZaqtQuIWOtIyZSslkJO2oQpB5ZJnumGnwupT/z4NcYnRijZ8cuXSqkBsLbpXuqsl
-         ySVqnWtfCPN4rBNJeSoOQsEDxrU4Salk74HJu29dt//1+sh/uUH9k2zeA7pwmZaffptM
-         ItuscdLLls8XPvzHGrG//ghZg1twtY4pCEwXGo9TQdWvwh5IJG4O/as7u71CKR3b16G2
-         xMPoUR52lNGupiZxa5fWTds2sX8CR0PUJkq1Q05K6Q+ct2e+PQhonLw4NJl0jD2q7czy
-         QMXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Z/Qd7keKI8YlwHEX7iDWimNuVR+4ISjsuTlC48VavJQ=;
-        b=wSN5gLJePx7o7I2zW2195t9TKm/zVVlgswpsTTXVuTS0GbdzoOw8LepLF/2Lz0I/mG
-         xxwOTAcIJwm6d3eOFNG7NVf9/Q+S4d0PoaWOZAR/aGPVrQwF02Izwr0SODS2Tq7IoTkz
-         690oPRFJt8FqnrqkGNbPD954qgBggmgjrMCYCdJ0JQoSInbG4d1necLtEha9dzVpBefO
-         Fi3OA3lz9EJbbYp+uxEMLH/y2SHM1Gesv2sPZkAX+eVsryU2qWp0BVck+jqOXriVS9kR
-         P0nAM22k+zBntYZOyR6KhiCyhYOSI4d1CUmkiBt1uMexdH46eAFCH78mjphYdAdMW7gU
-         mJog==
-X-Gm-Message-State: AOAM531gK4zm+5rgcKM+n0RFhhOb5GO1h6XElkMNQGs11K4lxMmXTgWV
-        JHusaYenJQpCq0/fopiNgvGO0OV8SoaVUw==
-X-Google-Smtp-Source: ABdhPJxN5V9ns7lQoF6jUseKzuEpndXOvQSkip30E2JTAEiZ95mZBBqwNQs0oRQe+KM4Ae8tqyysuQ==
-X-Received: by 2002:a17:90b:4a06:b0:1c7:2020:b5b9 with SMTP id kk6-20020a17090b4a0600b001c72020b5b9mr4184097pjb.58.1649166271413;
-        Tue, 05 Apr 2022 06:44:31 -0700 (PDT)
-Received: from sol ([118.209.204.33])
-        by smtp.gmail.com with ESMTPSA id y12-20020a17090a784c00b001c6bdafc995sm2100840pjl.3.2022.04.05.06.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Apr 2022 06:44:30 -0700 (PDT)
-Date:   Tue, 5 Apr 2022 21:44:24 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
+        with ESMTP id S1443205AbiDEPjK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 11:39:10 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E300C147AE1;
+        Tue,  5 Apr 2022 06:55:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 32088B81D5C;
+        Tue,  5 Apr 2022 13:55:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA3DC385A7;
+        Tue,  5 Apr 2022 13:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649166902;
+        bh=5PC7cNcGGV9G0+eiFziaHyPdpTmXLBiQSjJ1/TC4vHU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OHp+DpQ8tq3YWaIyyPnnCclgtnrI8TWTrlnE3G7ufpDrr/06gugrT6pNUXCTLOFc9
+         vfUMs4bRFwz7HO4xxWTiCuTr1l+7H8CmdXgiYJ+ToyPwD+7tDWx+0VTwH5BvpmUgqJ
+         8834A5mq04rRZVqQiG+UJ0xRcn+0aoFQNP/paht14/Xv1kiQOpXqjbfQl1NPoDN3Kv
+         2Tbmgd4+W9QbuEcY9y9UcDR8a0Z4eg8dmSXb5lZxM+NHYWy33sCxyH6sX0Prm9JDmd
+         WwrR5bCzR9TNEI0hPfotVkbMy3Q+BQ+Q1kcmsaRxhvBYOQckQJTaRwm2eXuB6E5s6L
+         tccY8CC37Nkrw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nbje8-001q4g-S7; Tue, 05 Apr 2022 14:55:00 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] API: rename gpiod_chip_find_line()
-Message-ID: <20220405134424.GA29756@sol>
-References: <20220405132158.33433-1-brgl@bgdev.pl>
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, kernel-team@android.com
+Subject: [PATCH v2 05/10] gpio: pl061: Make the irqchip immutable
+Date:   Tue,  5 Apr 2022 14:54:39 +0100
+Message-Id: <20220405135444.199295-6-maz@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220405135444.199295-1-maz@kernel.org>
+References: <20220405135444.199295-1-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220405132158.33433-1-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, jeffrey.l.hugo@gmail.com, tglx@linutronix.de, Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Apr 05, 2022 at 03:21:58PM +0200, Bartosz Golaszewski wrote:
-> The name "find_line" is quite ambigous. We should indicate that the
-> purpose of this routine is to map the line name to its HW offset.
-> Kent suggested get_line_get_offset_from_name() which is hard to beat
-> when it comes to being explicit.
-> 
+Prevent gpiolib from messing with the irqchip by advertising
+the irq_chip structure as immutable, making it const, and adding
+the various calls that gpiolib relies upon.
 
-My suggestion was actually gpiod_chip_line_offset_from_name().
-But gpiod_chip_get_line_offset_from_name() is even more explicit.
-And both make more sense than your misquote above ;-).
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/gpio/gpio-pl061.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-So that works for me - assuming you fix the quote.
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 4ecab700f23f..6464056cb6ae 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -52,7 +52,6 @@ struct pl061 {
+ 
+ 	void __iomem		*base;
+ 	struct gpio_chip	gc;
+-	struct irq_chip		irq_chip;
+ 	int			parent_irq;
+ 
+ #ifdef CONFIG_PM
+@@ -241,6 +240,8 @@ static void pl061_irq_mask(struct irq_data *d)
+ 	gpioie = readb(pl061->base + GPIOIE) & ~mask;
+ 	writeb(gpioie, pl061->base + GPIOIE);
+ 	raw_spin_unlock(&pl061->lock);
++
++	gpiochip_disable_irq(gc, d->hwirq);
+ }
+ 
+ static void pl061_irq_unmask(struct irq_data *d)
+@@ -250,6 +251,8 @@ static void pl061_irq_unmask(struct irq_data *d)
+ 	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
+ 	u8 gpioie;
+ 
++	gpiochip_enable_irq(gc, d->hwirq);
++
+ 	raw_spin_lock(&pl061->lock);
+ 	gpioie = readb(pl061->base + GPIOIE) | mask;
+ 	writeb(gpioie, pl061->base + GPIOIE);
+@@ -283,6 +286,24 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+ 	return irq_set_irq_wake(pl061->parent_irq, state);
+ }
+ 
++static void pl061_irq_print_chip(struct irq_data *data, struct seq_file *p)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
++
++	seq_printf(p, dev_name(gc->parent));
++}
++
++static const struct irq_chip pl061_irq_chip = {
++	.irq_ack		= pl061_irq_ack,
++	.irq_mask		= pl061_irq_mask,
++	.irq_unmask		= pl061_irq_unmask,
++	.irq_set_type		= pl061_irq_type,
++	.irq_set_wake		= pl061_irq_set_wake,
++	.irq_print_chip		= pl061_irq_print_chip,
++	.flags			= IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct device *dev = &adev->dev;
+@@ -315,13 +336,6 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/*
+ 	 * irq_chip support
+ 	 */
+-	pl061->irq_chip.name = dev_name(dev);
+-	pl061->irq_chip.irq_ack	= pl061_irq_ack;
+-	pl061->irq_chip.irq_mask = pl061_irq_mask;
+-	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
+-	pl061->irq_chip.irq_set_type = pl061_irq_type;
+-	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
+-
+ 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+ 	if (!irq)
+@@ -329,7 +343,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pl061->parent_irq = irq;
+ 
+ 	girq = &pl061->gc.irq;
+-	girq->chip = &pl061->irq_chip;
++	gpio_irq_chip_set_chip(girq, &pl061_irq_chip);
+ 	girq->parent_handler = pl061_irq_handler;
+ 	girq->num_parents = 1;
+ 	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
+-- 
+2.34.1
 
-Cheers,
-Kent.
-
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
->  include/gpiod.h    |  3 ++-
->  lib/chip.c         |  3 ++-
->  tests/tests-chip.c | 10 +++++++---
->  tools/gpiofind.c   |  2 +-
->  4 files changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/gpiod.h b/include/gpiod.h
-> index c605da8..344a8fc 100644
-> --- a/include/gpiod.h
-> +++ b/include/gpiod.h
-> @@ -158,7 +158,8 @@ struct gpiod_info_event *gpiod_chip_read_info_event(struct gpiod_chip *chip);
->   * @note If a line with given name is not exposed by the chip, the function
->   *       sets errno to ENOENT.
->   */
-> -int gpiod_chip_find_line(struct gpiod_chip *chip, const char *name);
-> +int gpiod_chip_get_line_offset_from_name(struct gpiod_chip *chip,
-> +					 const char *name);
->  
->  /**
->   * @brief Request a set of lines for exclusive usage.
-> diff --git a/lib/chip.c b/lib/chip.c
-> index edb2dfd..eef3be2 100644
-> --- a/lib/chip.c
-> +++ b/lib/chip.c
-> @@ -156,7 +156,8 @@ gpiod_chip_read_info_event(struct gpiod_chip *chip)
->  	return gpiod_info_event_read_fd(chip->fd);
->  }
->  
-> -GPIOD_API int gpiod_chip_find_line(struct gpiod_chip *chip, const char *name)
-> +GPIOD_API int gpiod_chip_get_line_offset_from_name(struct gpiod_chip *chip,
-> +						   const char *name)
->  {
->  	struct gpio_v2_line_info linfo;
->  	struct gpiochip_info chinfo;
-> diff --git a/tests/tests-chip.c b/tests/tests-chip.c
-> index 3fad16d..efb4f74 100644
-> --- a/tests/tests-chip.c
-> +++ b/tests/tests-chip.c
-> @@ -88,7 +88,9 @@ GPIOD_TEST_CASE(find_line_bad)
->  
->  	chip = gpiod_test_open_chip_or_fail(g_gpiosim_chip_get_dev_path(sim));
->  
-> -	g_assert_cmpint(gpiod_chip_find_line(chip, "nonexistent"), ==, -1);
-> +	g_assert_cmpint(
-> +		gpiod_chip_get_line_offset_from_name(chip,
-> +						     "nonexistent"), ==, -1);
->  	gpiod_test_expect_errno(ENOENT);
->  }
->  
-> @@ -112,7 +114,8 @@ GPIOD_TEST_CASE(find_line_good)
->  
->  	chip = gpiod_test_open_chip_or_fail(g_gpiosim_chip_get_dev_path(sim));
->  
-> -	g_assert_cmpint(gpiod_chip_find_line(chip, "baz"), ==, 4);
-> +	g_assert_cmpint(gpiod_chip_get_line_offset_from_name(chip, "baz"),
-> +			==, 4);
->  }
->  
->  /* Verify that for duplicated line names, the first one is returned. */
-> @@ -136,5 +139,6 @@ GPIOD_TEST_CASE(find_line_duplicate)
->  
->  	chip = gpiod_test_open_chip_or_fail(g_gpiosim_chip_get_dev_path(sim));
->  
-> -	g_assert_cmpint(gpiod_chip_find_line(chip, "baz"), ==, 2);
-> +	g_assert_cmpint(gpiod_chip_get_line_offset_from_name(chip, "baz"),
-> +			==, 2);
->  }
-> diff --git a/tools/gpiofind.c b/tools/gpiofind.c
-> index 36eba86..03b15c9 100644
-> --- a/tools/gpiofind.c
-> +++ b/tools/gpiofind.c
-> @@ -75,7 +75,7 @@ int main(int argc, char **argv)
->  			die_perror("unable to open %s", entries[i]->d_name);
->  		}
->  
-> -		offset = gpiod_chip_find_line(chip, argv[0]);
-> +		offset = gpiod_chip_get_line_offset_from_name(chip, argv[0]);
->  		if (offset >= 0) {
->  			info = gpiod_chip_get_info(chip);
->  			if (!info)
-> -- 
-> 2.32.0
-> 
