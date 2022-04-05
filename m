@@ -2,138 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A748C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 14:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3895AC433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 14:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238743AbiDEOex (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Apr 2022 10:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53022 "EHLO
+        id S240051AbiDEOfA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Apr 2022 10:35:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377189AbiDENMq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 09:12:46 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177E1121504
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 05:13:02 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id w18so8389505edi.13
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2022 05:13:02 -0700 (PDT)
+        with ESMTP id S1349572AbiDENRa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 09:17:30 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B748912FFAD
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 05:21:54 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id bq8so26269075ejb.10
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2022 05:21:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MPvaywVSzLQsDypuAZWtv58R2kwucV8I6O2XfMn8CQ0=;
-        b=K14qIg6mMRkLPr4OiAE9Cpu4U+tbA3P91G4RHNesqQyi39uh/EQnwZQg47N4I1HFGa
-         VaAqAu3jWh3kOpu/vkFSBsrj1wlQcT4uTVYmxgreiwzNn3G4cU5MD051hiN68+YGuGmY
-         cWQCyd0GCycNunk8Wgl1kQf10tQCes43bS272nOze5ZBtFeq/ovHUODYcVLcH0YQyWiB
-         gjAhy8svdiXMCYEiMuuZdKtDH70VTPDrXTpKYTpEPlY5O8uUWZtdPs0P7eBHzY2zgCU7
-         sPECd23ZpDiAOHiDWi0xlIBEdLwSexx11IbYL6ItqaYg5rExP1x8AxgVNc8xIyvnJDdV
-         uHvQ==
+        bh=Hyd/pfrY+6hwqlhuml6mv0gqkwBch+EmlReq/Qln8z4=;
+        b=nL1mp9dhQOkmWmGbkOINfE0v3Wjfwsd/cZQ1vukSvyZWGEYB3IJR1Zb2YedevBKc8n
+         pW6/1SSl2f9mVKLfvYm/J77tRixq2g3dQv7jgo3rj92Ky1RoG2jlFV6DKEqFk+cj5tSb
+         0BETCsQpGAYerpyypnP2McxFuR25X7pfYKq8gxVrsWLcCi2fORW9XszwnJqIvYYdYANl
+         g9TD2pJknTz/L4eN3lBqHBO+o41pjRKgYWkeju8w/XA7ABmuzZjEacboST6KSPF8vTkW
+         0FxkmiT+Me5Y2duYrDX07cH5cYm8zCLm8PPwg1/QyDnQFkCcJsvYGfrzL7n+Iymrqff1
+         HvJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MPvaywVSzLQsDypuAZWtv58R2kwucV8I6O2XfMn8CQ0=;
-        b=ZT7/TyuwsL9GRzJh/Cb288SqDrs3QM/AnhNUsVjYeEyGJ89Vrjm8xgbmNbctcfY7kd
-         fqc/3y87/d4iJxKcTE5S2uhjB+1Nt+xtsHi5h8gWI75/oRc1sUhpk711TsQWD7JyrVIp
-         cSsr31gWhEy8iPKbNKhj4MK9XTTw5GGW7H5TjGcbj9++PP60AaUEhSB5sNIxj7JdJ3H7
-         cVR3zFoGcZBCxQ2MBLA42gIPHnRVCTRUhHXy0/fnRW32n/CaxBHQjOEwVHCZ2eliGZt1
-         ED/McTozLn4PVhwFUPGZnv4KPBnz6LVNh7NhakxNuFoGzo2vEMs18jmvkqXkgVsMij59
-         EeiQ==
-X-Gm-Message-State: AOAM530XnQaRo58LbB+8Va5/kkO5EhNmmENu9Em0q7HzH9kWzko3uC9V
-        TVEAR/Riw1+u/XO8nQiQI7D8eEiwgFxUIhhAbJYO/w==
-X-Google-Smtp-Source: ABdhPJyK6ciXtk4jJTmoikX0fzgqwOpbxHs/TrQKtZElemmsFiXP5Rij+6j+c5XTQ4r1vrmfsngJLLE7wspd4bNThOM=
-X-Received: by 2002:a05:6402:d4c:b0:410:a415:fd95 with SMTP id
- ec12-20020a0564020d4c00b00410a415fd95mr3310237edb.288.1649160780633; Tue, 05
- Apr 2022 05:13:00 -0700 (PDT)
+        bh=Hyd/pfrY+6hwqlhuml6mv0gqkwBch+EmlReq/Qln8z4=;
+        b=niPICC/FWrLh3ejhQQWIcnRSMRlwttBQFcvQjMwsIdslTtBUS7H0uZCS2DJt6hd3+B
+         tBpe3ITeT/dZy2EYl4k3irObGsDnyq/dMmgS/Gs6N8BezwXjIIulccOGPTOVoySahNHl
+         yDgVZo1qTqaOE3Eyh2eRP++Q9XjTztOec7aXNAu0feqx4h5+kefm4/D7zkFEfXqdE5JG
+         kFsgCT9OpJxXton0+Au4embaiKWIUXYnIxK741dJK8mFizGBYpGBfiJI0kAJD9K2yAh3
+         x+ezkgrD/ly0Qtw/1rFKJ3k6OId3vG90wcYegbM2lF+yYauqSlHV+x9yagX72w9B0WhW
+         BsoQ==
+X-Gm-Message-State: AOAM5327GJLWbN6q10IwdVK0mYzWNI6PlL2K9dcsYveSIZ4lxe6xx00y
+        uVJiVH+xzTHPmMGM5uHlMvyuWZ8Eqy0Ba972f+tA8w==
+X-Google-Smtp-Source: ABdhPJwHngR0iRaezdjPROigde8WDKR2Bt7Fj5Iw+EvDdD2I+vTb5RSGu7YkbPC6mcuF25QXqCav+lbZ+p6ixycK02M=
+X-Received: by 2002:a17:907:97cf:b0:6df:846f:ad0a with SMTP id
+ js15-20020a17090797cf00b006df846fad0amr3443415ejc.286.1649161312925; Tue, 05
+ Apr 2022 05:21:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com> <20220401103604.8705-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20220401103604.8705-2-andriy.shevchenko@linux.intel.com>
+References: <20220330145910.1946-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20220330145910.1946-1-andriy.shevchenko@linux.intel.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 5 Apr 2022 14:12:50 +0200
-Message-ID: <CAMRc=McWk1piiJu60Zgzkiw5zJPmH=1Pizdn06H7YKn0HzVTHA@mail.gmail.com>
-Subject: Re: [PATCH v4 01/13] gpiolib: Introduce for_each_gpiochip_node() loop helper
+Date:   Tue, 5 Apr 2022 14:21:42 +0200
+Message-ID: <CAMRc=McZihs+aKOGE3M5_BW__CTiyX2u2bdS6xc+uHU9RCAZdw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] gpiolib: Split out for_each_gpio_desc() macro
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Qianggui Song <qianggui.song@amlogic.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+        Linus Walleij <linus.walleij@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Apr 1, 2022 at 12:36 PM Andy Shevchenko
+On Wed, Mar 30, 2022 at 4:59 PM Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 >
-> Introduce for_each_gpiochip_node() loop helper which iterates over
-> the GPIO controller child nodes of a given device.
+> In some cases we want to traverse all GPIO descriptors for given
+> chip, let's split out for_each_gpio_desc() macro for such cases.
 >
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  include/linux/gpio/driver.h | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  drivers/gpio/gpiolib.c | 10 +++-------
+>  drivers/gpio/gpiolib.h |  7 +++++--
+>  2 files changed, 8 insertions(+), 9 deletions(-)
 >
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index 98c93510640e..bfc91f122d5f 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -3,13 +3,14 @@
->  #define __LINUX_GPIO_DRIVER_H
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e59884cc12a7..723411c13f1c 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -310,15 +310,11 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
+>         spin_lock_irqsave(&gpio_lock, flags);
 >
->  #include <linux/device.h>
-> -#include <linux/types.h>
->  #include <linux/irq.h>
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/irqdomain.h>
->  #include <linux/lockdep.h>
->  #include <linux/pinctrl/pinctrl.h>
->  #include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/property.h>
-> +#include <linux/types.h>
+>         list_for_each_entry(gdev, &gpio_devices, list) {
+> +               struct gpio_desc *desc;
+>                 int i;
 >
->  struct gpio_desc;
->  struct of_phandle_args;
-> @@ -750,4 +751,8 @@ static inline void gpiochip_unlock_as_irq(struct gpio_chip *gc,
->  }
->  #endif /* CONFIG_GPIOLIB */
+> -               for (i = 0; i != gdev->ngpio; ++i) {
+> -                       struct gpio_desc *desc = &gdev->descs[i];
+> -
+> -                       if (!desc->name)
+> -                               continue;
+> -
+> -                       if (!strcmp(desc->name, name)) {
+> +               for_each_gpio_desc(i, gdev->chip, desc) {
+> +                       if (desc->name && !strcmp(desc->name, name)) {
+>                                 spin_unlock_irqrestore(&gpio_lock, flags);
+>                                 return desc;
+>                         }
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index 06f3faa9fbef..450fb2fabe43 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -100,10 +100,13 @@ struct gpio_array {
 >
-> +#define for_each_gpiochip_node(dev, child)                                     \
-> +       device_for_each_child_node(dev, child)                                  \
-> +               if (!fwnode_property_present(child, "gpio-controller")) {} else
+>  struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
+>
+> -#define for_each_gpio_desc_with_flag(i, gc, desc, flag)                \
+> +#define for_each_gpio_desc(i, gc, desc)                                \
+
+While at it: how about declaring the i variable in the loop definition?
+
+Bart
+
+>         for (i = 0, desc = gpiochip_get_desc(gc, i);            \
+>              i < gc->ngpio;                                     \
+> -            i++, desc = gpiochip_get_desc(gc, i))              \
+> +            i++, desc = gpiochip_get_desc(gc, i))
 > +
->  #endif /* __LINUX_GPIO_DRIVER_H */
+> +#define for_each_gpio_desc_with_flag(i, gc, desc, flag)                \
+> +       for_each_gpio_desc(i, gc, desc)                         \
+>                 if (!test_bit(flag, &desc->flags)) {} else
+>
+>  int gpiod_get_array_value_complex(bool raw, bool can_sleep,
 > --
 > 2.35.1
 >
-
-Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
