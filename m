@@ -2,40 +2,40 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BE0C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FF4C433FE
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 20:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231977AbiDEUSX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Apr 2022 16:18:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52630 "EHLO
+        id S231173AbiDEUSj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Apr 2022 16:18:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443205AbiDEPjK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 11:39:10 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E300C147AE1;
-        Tue,  5 Apr 2022 06:55:05 -0700 (PDT)
+        with ESMTP id S1443195AbiDEPjI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 11:39:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C582E147AC8;
+        Tue,  5 Apr 2022 06:55:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 32088B81D5C;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 213AC61944;
         Tue,  5 Apr 2022 13:55:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA3DC385A7;
-        Tue,  5 Apr 2022 13:55:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7369C385A4;
+        Tue,  5 Apr 2022 13:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649166902;
-        bh=5PC7cNcGGV9G0+eiFziaHyPdpTmXLBiQSjJ1/TC4vHU=;
+        s=k20201202; t=1649166903;
+        bh=K+uacYcRnrL7HPJFjNCi+sJ/H54EyMHrWY0d9kLsLks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OHp+DpQ8tq3YWaIyyPnnCclgtnrI8TWTrlnE3G7ufpDrr/06gugrT6pNUXCTLOFc9
-         vfUMs4bRFwz7HO4xxWTiCuTr1l+7H8CmdXgiYJ+ToyPwD+7tDWx+0VTwH5BvpmUgqJ
-         8834A5mq04rRZVqQiG+UJ0xRcn+0aoFQNP/paht14/Xv1kiQOpXqjbfQl1NPoDN3Kv
-         2Tbmgd4+W9QbuEcY9y9UcDR8a0Z4eg8dmSXb5lZxM+NHYWy33sCxyH6sX0Prm9JDmd
-         WwrR5bCzR9TNEI0hPfotVkbMy3Q+BQ+Q1kcmsaRxhvBYOQckQJTaRwm2eXuB6E5s6L
-         tccY8CC37Nkrw==
+        b=kj55MBHO78oT2tA3RQmc362wFfV7zxDRyJHTu/s4kOktimn7ps4PXJBMkhwurREwD
+         zCtI6fKBrMn882wy2KrU49jagjTkQXoV6FKGIYlCaqKXZT9SJZpRGl9S7bMHUBv/t9
+         X4nBZCzjgswHJ0SQs3pjEDac3TZ1B1MWbgs7/pqM3FufbHQyaPCNwCV9za8R8uWVG1
+         /bm6wmItsd4mSR5EDEEfaDM3h2YHThXflRE3BhkD0LvWBUH4mY1Jsdu5c4l2a4pWsv
+         tjb2su7J79XYlyhrcNy9ZRB309QWDkAnMLPHg/vH3SgjOpq21ubwzJV56RgV2bC+ik
+         av/6somdipLtQ==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <maz@kernel.org>)
-        id 1nbje8-001q4g-S7; Tue, 05 Apr 2022 14:55:00 +0100
+        id 1nbje9-001q4g-Np; Tue, 05 Apr 2022 14:55:01 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -55,9 +55,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v2 05/10] gpio: pl061: Make the irqchip immutable
-Date:   Tue,  5 Apr 2022 14:54:39 +0100
-Message-Id: <20220405135444.199295-6-maz@kernel.org>
+Subject: [PATCH v2 08/10] pinctrl: amd: Make the irqchip immutable
+Date:   Tue,  5 Apr 2022 14:54:42 +0100
+Message-Id: <20220405135444.199295-9-maz@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220405135444.199295-1-maz@kernel.org>
 References: <20220405135444.199295-1-maz@kernel.org>
@@ -77,87 +77,59 @@ the various calls that gpiolib relies upon.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/gpio/gpio-pl061.c | 32 +++++++++++++++++++++++---------
- 1 file changed, 23 insertions(+), 9 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 4ecab700f23f..6464056cb6ae 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -52,7 +52,6 @@ struct pl061 {
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 1a7d686494ff..0645c2c24f50 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -387,6 +387,8 @@ static void amd_gpio_irq_enable(struct irq_data *d)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
  
- 	void __iomem		*base;
- 	struct gpio_chip	gc;
--	struct irq_chip		irq_chip;
- 	int			parent_irq;
- 
- #ifdef CONFIG_PM
-@@ -241,6 +240,8 @@ static void pl061_irq_mask(struct irq_data *d)
- 	gpioie = readb(pl061->base + GPIOIE) & ~mask;
- 	writeb(gpioie, pl061->base + GPIOIE);
- 	raw_spin_unlock(&pl061->lock);
++	gpiochip_enable_irq(gc, d->hwirq);
++
+ 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+ 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
+ 	pin_reg |= BIT(INTERRUPT_ENABLE_OFF);
+@@ -408,6 +410,8 @@ static void amd_gpio_irq_disable(struct irq_data *d)
+ 	pin_reg &= ~BIT(INTERRUPT_MASK_OFF);
+ 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
+ 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
 +
 +	gpiochip_disable_irq(gc, d->hwirq);
  }
  
- static void pl061_irq_unmask(struct irq_data *d)
-@@ -250,6 +251,8 @@ static void pl061_irq_unmask(struct irq_data *d)
- 	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
- 	u8 gpioie;
- 
-+	gpiochip_enable_irq(gc, d->hwirq);
-+
- 	raw_spin_lock(&pl061->lock);
- 	gpioie = readb(pl061->base + GPIOIE) | mask;
- 	writeb(gpioie, pl061->base + GPIOIE);
-@@ -283,6 +286,24 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
- 	return irq_set_irq_wake(pl061->parent_irq, state);
+ static void amd_gpio_irq_mask(struct irq_data *d)
+@@ -577,7 +581,7 @@ static void amd_irq_ack(struct irq_data *d)
+ 	*/
  }
  
-+static void pl061_irq_print_chip(struct irq_data *data, struct seq_file *p)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+
-+	seq_printf(p, dev_name(gc->parent));
-+}
-+
-+static const struct irq_chip pl061_irq_chip = {
-+	.irq_ack		= pl061_irq_ack,
-+	.irq_mask		= pl061_irq_mask,
-+	.irq_unmask		= pl061_irq_unmask,
-+	.irq_set_type		= pl061_irq_type,
-+	.irq_set_wake		= pl061_irq_set_wake,
-+	.irq_print_chip		= pl061_irq_print_chip,
-+	.flags			= IRQCHIP_IMMUTABLE,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+};
-+
- static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- {
- 	struct device *dev = &adev->dev;
-@@ -315,13 +336,6 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	/*
- 	 * irq_chip support
+-static struct irq_chip amd_gpio_irqchip = {
++static const struct irq_chip amd_gpio_irqchip = {
+ 	.name         = "amd_gpio",
+ 	.irq_ack      = amd_irq_ack,
+ 	.irq_enable   = amd_gpio_irq_enable,
+@@ -593,7 +597,8 @@ static struct irq_chip amd_gpio_irqchip = {
+ 	 * the wake event. Otherwise the wake event will never clear and
+ 	 * prevent the system from suspending.
  	 */
--	pl061->irq_chip.name = dev_name(dev);
--	pl061->irq_chip.irq_ack	= pl061_irq_ack;
--	pl061->irq_chip.irq_mask = pl061_irq_mask;
--	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
--	pl061->irq_chip.irq_set_type = pl061_irq_type;
--	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
--
- 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
- 	irq = adev->irq[0];
- 	if (!irq)
-@@ -329,7 +343,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	pl061->parent_irq = irq;
+-	.flags        = IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND,
++	.flags        = IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND | IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+ };
  
- 	girq = &pl061->gc.irq;
--	girq->chip = &pl061->irq_chip;
-+	gpio_irq_chip_set_chip(girq, &pl061_irq_chip);
- 	girq->parent_handler = pl061_irq_handler;
- 	girq->num_parents = 1;
- 	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
+ #define PIN_IRQ_PENDING	(BIT(INTERRUPT_STS_OFF) | BIT(WAKE_STS_OFF))
+@@ -1026,7 +1031,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 	amd_gpio_irq_init(gpio_dev);
+ 
+ 	girq = &gpio_dev->gc.irq;
+-	girq->chip = &amd_gpio_irqchip;
++	gpio_irq_chip_set_chip(girq, &amd_gpio_irqchip);
+ 	/* This will let us handle the parent IRQ in the driver */
+ 	girq->parent_handler = NULL;
+ 	girq->num_parents = 0;
 -- 
 2.34.1
 
