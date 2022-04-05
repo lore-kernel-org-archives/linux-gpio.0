@@ -2,91 +2,62 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7D1C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00182C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 08:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237908AbiDDV2h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:28:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59578 "EHLO
+        id S233168AbiDEIFX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Apr 2022 04:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379347AbiDDRBi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Apr 2022 13:01:38 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D9BC3ED32
-        for <linux-gpio@vger.kernel.org>; Mon,  4 Apr 2022 09:59:41 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id b24so11844646edu.10
-        for <linux-gpio@vger.kernel.org>; Mon, 04 Apr 2022 09:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=K9yJQc0wkhnwMDhgXpgCEfPM9bu3vOLPPiNhGs87tdw=;
-        b=cgzwMQNJrkEkuA/TSpVw6ciE+AieAtsIUBAX0inodIP9kosF+epgt0L0EnhY8Z9Dq9
-         kXrcX81qBx3Q7UBgZbAOjmYZrAOZGfpwoQF1NvDKCCGvlkvhvcuHO4WrBHhz2U74SaEY
-         yGz9bYq2L1EQDNZ8orhmVvYivWFaRt8lrvnUF+f0K4ElLK6f4wUydgxDANLzF3m5Ygcx
-         0nO5acxv0nuE1jwJcjwhow5VDytwsOkLCOobrY5Yl+b1js/TQF1HfysRSxsxIc6Oics8
-         j1ITZLN/ltYeBvypuH7UAWz5bTKtDIVObpgrMNbtPPy1wtf/uHmOzEGEB886B+n8kAh5
-         Vctw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=K9yJQc0wkhnwMDhgXpgCEfPM9bu3vOLPPiNhGs87tdw=;
-        b=vGylJBnwEwW6pmRsxJVX3fVlxq8mtkNLuxPLeKDeUZNisuR+cdOnNItr+nZUgXUGtu
-         zQQ3K0pcfyxJT+sF/+Bf55dDBJ1vbPv+TeKMvabvKMRZbeXuvQ9qZKrrb0YL0jwV2xgG
-         2Hnqt2pAEKSpwjhzHJzLzOgb8cYmcdtwQYjAhfq4VCks1duYrE1XXAPZnz6RycTi9XQC
-         D1f1kbIqly7ZzXqqmF96oa3xr/EU5Qrs4xJCcEPzMR3lIN5aW0332ASzXaC+YwzQM4dl
-         CGX3WUpayvA67IJ3u6CIrxXyC3N8p9SmFUy0FJQJ+jndxVCnkHj8uSkxHlJqM9CGz1Tb
-         Enmw==
-X-Gm-Message-State: AOAM530hoH79WuhLSpri6euPwG6SsxcFr6WW6+hnFmTIP2HlLzzF0uoX
-        Xg7slFp1NTXHGLwGaZBd1ldATSt1nRUBTMYy
-X-Google-Smtp-Source: ABdhPJzBhdE3FgiK+1M2zu1kC8mpq7C8emkC1dljmr9hgg9ou7CPhZBlTrACZ/AtTHyx2qnVlgtpJg==
-X-Received: by 2002:aa7:c1cd:0:b0:419:fdb:e17e with SMTP id d13-20020aa7c1cd000000b004190fdbe17emr1156256edp.364.1649091579797;
-        Mon, 04 Apr 2022 09:59:39 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id bp11-20020a170907918b00b006e6d451dc36sm2938072ejb.49.2022.04.04.09.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 09:59:39 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] pinctrl: samsung: staticize fsd_pin_ctrl
-Date:   Mon,  4 Apr 2022 18:59:33 +0200
-Message-Id: <164909156896.1676419.11230425886960608496.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220331194526.52444-1-krzysztof.kozlowski@linaro.org>
-References: <20220331194526.52444-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S234152AbiDEH6C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 03:58:02 -0400
+X-Greylist: delayed 563 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Apr 2022 00:51:58 PDT
+Received: from mail.bizcall.pl (mail.bizcall.pl [192.71.213.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD1F298F58
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 00:51:56 -0700 (PDT)
+Received: by mail.bizcall.pl (Postfix, from userid 1001)
+        id 2D3E241197; Tue,  5 Apr 2022 09:40:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizcall.pl; s=mail;
+        t=1649144554; bh=L7rZPDqncV/PGNK3vBL4eFyhOA8rMHMu3jCfxnl4mEc=;
+        h=Date:From:To:Subject:From;
+        b=YE81I7sbH//cHkzi34nWQ4/gHoTdPI3UoWKSq6CGuP+qx/9DNvYmN4sBptr6VbIt5
+         AYaT2t8CU7ytrfnvDcf69bNH2qzS/kjtpLTG6nmhun0E7rrAAtDUksJIi3WXEm/j4q
+         2TvpJSNZ9JsFGZH3Now1ceD34H1AXJ+j3jS5jKJG2dp0mWXMDQH6yYRGzHfTKyr7WU
+         7pMgTk9LTdsyGjVgUQ+fbMZytn5iza2n7PLzhKiApXmigMPg16ZEce2wIBN1dca6BV
+         GgWca47i1RPgEZiNgvALZ35U0xJd8FxX0NRFECA6AZMBlnEwPj0BiWU80jFHyoCfvN
+         4iic04t7h8UXg==
+Received: by mail.bizcall.pl for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 07:38:54 GMT
+Message-ID: <20220405084501-0.1.1v.5h2w.0.3jjpacu3ja@bizcall.pl>
+Date:   Tue,  5 Apr 2022 07:38:54 GMT
+From:   "Marek Onufrowicz" <marek.onufrowicz@bizcall.pl>
+To:     <linux-gpio@vger.kernel.org>
+Subject: Prezentacja
+X-Mailer: mail.bizcall.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 31 Mar 2022 21:45:26 +0200, Krzysztof Kozlowski wrote:
-> struct fsd_pin_ctrl is not used outside of the file, so it can be made
-> static.  This fixes sparse warning:
-> 
->   drivers/pinctrl/samsung/pinctrl-exynos-arm64.c:773:31: sparse:
->     symbol 'fsd_pin_ctrl' was not declared. Should it be static?
-> 
-> 
-> [...]
+Dzie=C5=84 dobry!
 
-Applied, thanks!
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
+=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
+zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
 
-[1/1] pinctrl: samsung: staticize fsd_pin_ctrl
-      commit: abb860ac7e3f022a233f34b12d035d49abfc114d
+Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
+=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
+dostaw.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
+nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
+ co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+
+Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
+=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
+zania w Pa=C5=84stwa firmie.
+
+
+Pozdrawiam,
+Marek Onufrowicz
