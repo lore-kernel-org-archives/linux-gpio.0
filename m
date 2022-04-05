@@ -2,131 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3EDC4167D
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 20:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 451F9C4707E
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 20:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241484AbiDEUT3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Apr 2022 16:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51086 "EHLO
+        id S242986AbiDEUTy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Apr 2022 16:19:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443188AbiDEPjI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 11:39:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B1AA14753D;
-        Tue,  5 Apr 2022 06:55:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E6E05B81BA8;
-        Tue,  5 Apr 2022 13:55:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD12C385A4;
-        Tue,  5 Apr 2022 13:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649166901;
-        bh=iB8V/cO3JDHg3B4uaq4JA6GvE9hxQZX/fsJc7mMx4Fw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JhEBLwku9Xc18r0NykUeJRpimrF/ZQ7Vy2v5FtpfNKp9TFQV8SCLWd3YfLSCkoZWj
-         nQ5A2lhhzkC2vDDOLS2fLFyRvZxjVweUFNChghZAlbqcrbC8/h9EjHgSTIqsg7fPsj
-         PeJo5uheX/Wkb0siHrvHYvvGdA2KuMrQejv1bwSTdgHD5zpl2zGCmBLKzt55eA8J0v
-         pkg0PsKScqzB51rkSgMMs2UrQqyX27Y4khUssjIy6AAutuC1LSJ9v1DeM7Mr7EI5w6
-         KSPtZ0NMJGh0sv1+hb63xtf6/ucXGTc65OLTwLgfmFundA1Z7xEP9yqvyzIkQbzuRi
-         QUk3HlObdvTfw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nbje7-001q4g-37; Tue, 05 Apr 2022 14:54:59 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v2 00/10] gpiolib: Handle immutable irq_chip structures
-Date:   Tue,  5 Apr 2022 14:54:34 +0100
-Message-Id: <20220405135444.199295-1-maz@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S1355285AbiDEOmM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 10:42:12 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 460F52250A
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 06:19:55 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id r13so26646253ejd.5
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2022 06:19:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DX7l2sM9QqiFOKXhsLfPsQIRCmsC3YYcfigAqtbzngw=;
+        b=MIIuNLWwZ8KZnliB5S7EokleWD/rLB9gDpC+rSIhM934CcyyANhIJZVpIts8INYuek
+         43DojUsQl8/+1hmzew/jJYwNv8GRFitnp9+IE0TFrNQi4fHz3+SNNGBYRZFbuhM38tT4
+         +sEeCg+J4oLLfaLMQkcSiF4bGHcFq//+pDz+lx1omRM4p0/lP+xCgOyzBqUvMguk2Al7
+         SB2Savh02L/DSVDCdV1o5z0vgKttGVjH5G6g7bJQgZNH9xfrdeNU8914hipmWyEvqoDN
+         87GaAGwit9a/glHMnbyJTwSw+pY+vsu8JlHJqcZKU+T97MidDgCvsfn2RRFbTXobbBDt
+         OgtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DX7l2sM9QqiFOKXhsLfPsQIRCmsC3YYcfigAqtbzngw=;
+        b=0QA+yLzdkzdvSMZdtngmMkKgbsCX3NTvXY/gS8DwlFgSBFDAn6cKup2N/2ymrhptae
+         pPCPc+HYknRRLPU2pmTJzJXj1aChbKxSyrfXSLkCa4+bxBbI7/LMeidtnErEkdex4h+O
+         YjbOsbj1PmiAji0BEylx93iUIpRN/6vGONsQygj7Lqk3A5lXq2uYfNudL8D2A1Zi5dLe
+         qWHLEBsH2PzkPO0/htc1UWLsLClGizEygl8a1/vGZpU/2PZXbNSHaFJmrC6UlkbrIwfn
+         nfQoelsoMpdtY8CsON9LFD5ZOKIGOI+lwE69Y2Awu+0Aem1Z7qwUaEX6JKUkykmfDp6F
+         UYdA==
+X-Gm-Message-State: AOAM531iBfX+2seXn+dLXO34WKJ94gMgXt0dW/HJDRm33vCoEWCjbMrY
+        Z4F33x4K5BTXbGHnDt/691cyHPMPTbhTRSBjp8cysw==
+X-Google-Smtp-Source: ABdhPJxdkpcqywi0Dnnv3TZA7cMfATjjPrQEcps7eS+U2c2eZK6FJLlYj9QgffOiSwol2BYhsCWYsZ1FW7SXEGnJj+g=
+X-Received: by 2002:a17:907:968e:b0:6db:aed5:43c8 with SMTP id
+ hd14-20020a170907968e00b006dbaed543c8mr3580349ejc.636.1649164793827; Tue, 05
+ Apr 2022 06:19:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, jeffrey.l.hugo@gmail.com, tglx@linutronix.de, Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <cover.1649085875.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1649085875.git.geert+renesas@glider.be>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 5 Apr 2022 15:19:43 +0200
+Message-ID: <CAMRc=MdapT5rWfijUDQYj-GDvJ8ZrrpnZ6dwScev0WirCsuAyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gpio: rcar: Add-R-Car S4-8 GPIO support
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is a followup from [1].
+On Mon, Apr 4, 2022 at 5:29 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+>         Hi Linus, Bartosz,
+>
+> This patch series adds support for the Renesas R-Car S4-8 Soc to the
+> R-Car GPIO DT bindings and driver.  It has been tested with i2c-gpio,
+> by reading the contents from the I2C EEPROMs on the Spider development
+> board.
+>
+> Changes compared to v1:
+>   - Drop RFC,
+>   - Split series in DT bindings+driver and DTS series.
+>
+> Thanks!
+>
+> Geert Uytterhoeven (2):
+>   dt-bindings: gpio: renesas,rcar-gpio: Add r8a779f0 support
+>   gpio: rcar: Add R-Car Gen4 support
+>
+>  .../devicetree/bindings/gpio/renesas,rcar-gpio.yaml        | 5 +++++
+>  drivers/gpio/gpio-rcar.c                                   | 7 +++++--
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+>
+> --
+> 2.25.1
+>
+> Gr{oetje,eeting}s,
+>
+>                                                 Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                                             -- Linus Torvalds
 
-I recently realised that the gpiolib play ugly tricks on the
-unsuspecting irq_chip structures by patching the callbacks.
+Applied, thanks!
 
-Not only this breaks when an irq_chip structure is made const (which
-really should be the default case), but it also forces this structure
-to be copied at nauseam for each instance of the GPIO block, which is
-a waste of memory.
-
-My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
-which does what it says on the tin: don't you dare writing to them.
-Gpiolib is further updated not to install its own callbacks, and it
-becomes the responsibility of the driver to call into the gpiolib when
-required. This is similar to what we do for other subsystems such as
-PCI-MSI.
-
-5 drivers are updated to this new model: M1, QC, Tegra, pl061 and AMD
-(as I actively use them) keeping a single irq_chip structure, marking
-it const, and exposing the new flag.
-
-Nothing breaks, the volume of change is small, the memory usage goes
-down and we have fewer callbacks that can be used as attack vectors.
-What's not to love?
-
-* From v1 [1]:
-  - pl061 and AMD drivers converted
-  - New helpers to keep the changes small
-  - New warning for non-converted drivers
-  - Documentation and TODO updates
-
-[1] https://lore.kernel.org/r/20220223154405.54912-1-maz@kernel.org
-
-Marc Zyngier (10):
-  gpio: Don't fiddle with irqchips marked as immutable
-  gpio: Expose the gpiochip_irq_re[ql]res helpers
-  gpio: Add helpers to ease the transition towards immutable irq_chip
-  gpio: tegra186: Make the irqchip immutable
-  gpio: pl061: Make the irqchip immutable
-  pinctrl: apple-gpio: Make the irqchip immutable
-  pinctrl: msmgpio: Make the irqchip immutable
-  pinctrl: amd: Make the irqchip immutable
-  gpio: Update TODO to mention immutable irq_chip structures
-  Documentation: Update the recommended pattern for GPIO irqchips
-
- Documentation/driver-api/gpio/driver.rst | 175 ++++++++++++++++++-----
- drivers/gpio/TODO                        |  19 +++
- drivers/gpio/gpio-pl061.c                |  32 +++--
- drivers/gpio/gpio-tegra186.c             |  32 +++--
- drivers/gpio/gpiolib.c                   |  13 +-
- drivers/pinctrl/pinctrl-amd.c            |  11 +-
- drivers/pinctrl/pinctrl-apple-gpio.c     |  29 ++--
- drivers/pinctrl/qcom/pinctrl-msm.c       |  53 ++++---
- include/linux/gpio/driver.h              |  16 +++
- include/linux/irq.h                      |   2 +
- kernel/irq/debugfs.c                     |   1 +
- 11 files changed, 293 insertions(+), 90 deletions(-)
-
--- 
-2.34.1
-
+Bart
