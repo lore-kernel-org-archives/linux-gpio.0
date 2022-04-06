@@ -2,50 +2,50 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFB8C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 23:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F198C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 23:37:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238066AbiDFXjX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Apr 2022 19:39:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59536 "EHLO
+        id S237987AbiDFXj0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Apr 2022 19:39:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237965AbiDFXjS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 19:39:18 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AEBB1FE57E
-        for <linux-gpio@vger.kernel.org>; Wed,  6 Apr 2022 16:37:14 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id ku13-20020a17090b218d00b001ca8fcd3adeso7302026pjb.2
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2022 16:37:14 -0700 (PDT)
+        with ESMTP id S237873AbiDFXjU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 19:39:20 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724D01FF42A
+        for <linux-gpio@vger.kernel.org>; Wed,  6 Apr 2022 16:37:17 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id o10so3352134ple.7
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2022 16:37:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=pensando.io; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gIzwccQNstjbI8Jl7SR9taQgWIVFJXtb5BS39OaAyj4=;
-        b=tJSle1eBYuyRF/RzNLAbOHjceFghTYZ48wwtBV/h/pv2SngLWpQ/HePZR8bo4tZjkA
-         ed7bgmE43wrskvYyLBX3FUuGPM8Ubn4nhrtimazbTf+wPJsEzkhp6NVByy2KHNNYWuE5
-         NnBUffUZnblWHOe7wV3LPB9pI4rL22+Fon+K13e2nf9tFYv4lWzH4/kwGw9++j54TYTE
-         2E34E0EFg//jGbw/L4pc4O+1MlumBxoPQcHWyD2fdoJbG1Ciez1+5DQIyeHJmyiSO0GW
-         72P8Wca/hV4kX/JWqY8AJJ/4jRSMeImIVvD0H5UpApwWtPLEiFGENCn0nTTtvLlwisDJ
-         1PKw==
+        bh=MgwUzux9l9MfjkfiPyLThjf7TEJ7a+1kv720LXWdL0c=;
+        b=h3rzaO/ehbfZ3kl2FGqKxW6CKni734T3jpG3x+dhqbWIx0ekxvMJytn06tsYtavlKS
+         p7odvwy7v3WOQFdQ+vTa6dwdAxbRBySInSfsw4+BBw6Xok7WEWgHy7uuYd4mkVKhJI3A
+         QYge0VgdY5Ua0NStPSbitgP35D1VdCR1LWosIfyACxiSrcYRr/4TBTjBGpFXZNF7PHAN
+         ZgDm6vBGthjIXGD7vnJZhMg1USt7k6pniK5j4hENo9d8uyBLlAVJiXOlkyUrAH4dVzGw
+         qST0RXzc1ZnJqNsu9iRuwPVHItUL0EN323XjyJzmygDPKZZuVOZjk7ULU1eLwL71oShJ
+         iOrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gIzwccQNstjbI8Jl7SR9taQgWIVFJXtb5BS39OaAyj4=;
-        b=Hlifa7S5O7+Tyqo2imGkLeBYD6yRnCeQYpKWr+KSDkkwDGOCCwnuWZX3mqkcY0fwvB
-         d0gO/sHy+359cfgwvNEi2BtBDty/3zfA4TKhJFltzFM3h/KPDQJ8e2RB4+No45X2/JrN
-         h1mc1TL708f+dR+5naaCCes+iTO1dxdxcFX5Bu/CsqikXcEgtJvn71WA2YSot2tY2JjX
-         9qK56q2savM9PxWdqwPbeEa7OgdVGz5hWghH67rpXcr7pzoLl21L7Q3XCLp3pB/pWN6F
-         NpoGPmXA11g4+IwkN+9r7G45SNDXdx+2VYB6Lz22wNapW8igNUsbdKgbJAjKCkMuJENp
-         baKA==
-X-Gm-Message-State: AOAM531VvxGJBc85wlO6J3343XNyhPiGBan+erYYp4odVXZifI/s9/FS
-        fvCJ2w2aj9vIFdhK9/iilfjREA==
-X-Google-Smtp-Source: ABdhPJx5p2ryl+phBOsVWDdOQDKQvRDAZg+iuAsPG+ozWuTx1ku7n25dB4S8JPxvOXVotqcTQykyXg==
-X-Received: by 2002:a17:90b:3b50:b0:1c7:5d55:3cb8 with SMTP id ot16-20020a17090b3b5000b001c75d553cb8mr12740813pjb.78.1649288233781;
-        Wed, 06 Apr 2022 16:37:13 -0700 (PDT)
+        bh=MgwUzux9l9MfjkfiPyLThjf7TEJ7a+1kv720LXWdL0c=;
+        b=wVmL4J1o6htCzLQekSw5WMXGtF0r88Ymimm1RvQP7/iBKHjUNEALkwth/wkHm1K/nB
+         R6RNeRsytb5CrMn8S3FAf0zdzl3cx9bUN4mAYck8MkUCoaI8m/IwMNTj0b93Gy7qKw7I
+         WRpux+YRgTQ5MG5y2ZSP0S/CalLaCljUuK4vSEGukkePPXF0Op0qN8f3U+aIsThvfbSq
+         kjWoO/HPwtPvZVmbFA80X1+7pVZ9sPJNvy1qSmymHQdpDlOnDwY48AwjaST/Z9ixFsar
+         +hVjtg4vk/iDKgcscCL+o1rA7t3tcX2D7CJ8HrJS3JinxkRXqBr5gZ1NB9HKMHWPkgpA
+         axgA==
+X-Gm-Message-State: AOAM5306k3BpcefB1PMYaet+YLuq8njSTuRNfhwRZCZ6XF3Rbjp8tBDB
+        OJHV374Ar4eKGExWcjkxCNZ5xg==
+X-Google-Smtp-Source: ABdhPJzBI/AgQUtI42LRmJQIG6o/7UZtBtE27V6Ss9Y15BjgUkXheWJ0cSmnrjtHxtCg+5UlMXWc5Q==
+X-Received: by 2002:a17:90b:1642:b0:1c6:c6d0:fbfa with SMTP id il2-20020a17090b164200b001c6c6d0fbfamr12403634pjb.218.1649288237042;
+        Wed, 06 Apr 2022 16:37:17 -0700 (PDT)
 Received: from platform-dev1.pensando.io ([12.226.153.42])
-        by smtp.gmail.com with ESMTPSA id m21-20020a17090a7f9500b001c97c6bcaf4sm6903667pjl.39.2022.04.06.16.37.12
+        by smtp.gmail.com with ESMTPSA id m21-20020a17090a7f9500b001c97c6bcaf4sm6903667pjl.39.2022.04.06.16.37.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 16:37:13 -0700 (PDT)
+        Wed, 06 Apr 2022 16:37:16 -0700 (PDT)
 From:   Brad Larson <brad@pensando.io>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     arnd@arndb.de, linus.walleij@linaro.org, bgolaszewski@baylibre.com,
@@ -54,9 +54,9 @@ Cc:     arnd@arndb.de, linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         brad@pensando.io, dac2@pensando.io, linux-gpio@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/11] dt-bindings: spi: dw: Add Pensando Elba SoC SPI Controller bindings
-Date:   Wed,  6 Apr 2022 16:36:42 -0700
-Message-Id: <20220406233648.21644-6-brad@pensando.io>
+Subject: [PATCH 07/11] arm64: Add config for Pensando SoC platforms
+Date:   Wed,  6 Apr 2022 16:36:44 -0700
+Message-Id: <20220406233648.21644-8-brad@pensando.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220406233648.21644-1-brad@pensando.io>
 References: <20220406233648.21644-1-brad@pensando.io>
@@ -64,54 +64,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Pensando Elba SoC has integrated the DW APB SPI Controller
-and requires the property pensando,syscon-spics for access
-to the spics control register.
+Add ARCH_PENSANDO configuration option for Pensando SoC
+based platforms.
 
 Signed-off-by: Brad Larson <brad@pensando.io>
 ---
 Change from V3:
-- Add required property pensando,syscon-spics to go with
-  pensando,elba-spi
+- Fix a typo on interface max speed
 
- .../bindings/spi/snps,dw-apb-ssi.yaml           | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm64/Kconfig.platforms | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-index d7e08b03e204..41c3bbf5a55c 100644
---- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-+++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-@@ -37,6 +37,21 @@ allOf:
-     else:
-       required:
-         - interrupts
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - pensando,elba-spi
-+    then:
-+      properties:
-+        pensando,syscon-spics:
-+          $ref: /schemas/types.yaml#/definitions/phandle
-+          description:
-+            Phandle to the system control device node which provides access to
-+            the spics control register
-+      required:
-+        - pensando,syscon-spics
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 30b123cde02c..e3b5557e1049 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -203,6 +203,18 @@ config ARCH_MXC
+ 	  This enables support for the ARMv8 based SoCs in the
+ 	  NXP i.MX family.
  
- properties:
-   compatible:
-@@ -73,6 +88,8 @@ properties:
-               - renesas,r9a06g032-spi # RZ/N1D
-               - renesas,r9a06g033-spi # RZ/N1S
-           - const: renesas,rzn1-spi   # RZ/N1
-+      - description: Pensando SoC SPI Controller
-+        const: pensando,elba-spi
- 
-   reg:
-     minItems: 1
++config ARCH_PENSANDO
++	bool "Pensando Platforms"
++	help
++	  This enables support for the ARMv8 based Pensando SoC
++	  family to include the Elba SoC.
++
++	  Pensando SoCs support a range of Distributed Services
++	  Cards in PCIe format installed into servers.  The Elba
++	  SoC includes 16 A-72 CPU cores, 144 programmable P4
++	  cores for a minimal latency/jitter datapath, and network
++	  interfaces up to 200 Gb/s.
++
+ config ARCH_QCOM
+ 	bool "Qualcomm Platforms"
+ 	select GPIOLIB
 -- 
 2.17.1
 
