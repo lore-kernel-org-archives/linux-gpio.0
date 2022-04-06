@@ -2,41 +2,41 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 528B2C433F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 14:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5170C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 14:35:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234759AbiDFOYN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Apr 2022 10:24:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52008 "EHLO
+        id S235129AbiDFOhF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Apr 2022 10:37:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234788AbiDFOYE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 10:24:04 -0400
+        with ESMTP id S235051AbiDFOg5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 10:36:57 -0400
 Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [IPv6:2001:df5:b000:5::4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F29F3A4B
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CB0F957F
         for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 20:22:36 -0700 (PDT)
 Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9259C2C00BE;
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CC70E2C0BAC;
         Wed,  6 Apr 2022 03:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
         s=mail181024; t=1649215353;
-        bh=Gcm4gfaIDoNoCvjIWTDW+fwjFBi+drpk9T10KIGpts0=;
+        bh=mXnQPTdwXZABT724bcpv2tV11X8gLgKFjGXaRni4dNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LXIFDcdNV33zcEm5iVUnMgPvS1x3a9wZNTFvZHEtUpjHSG/+W2O/Cuu6TAwlSlWGa
-         +NimBPD6RFD/zn48MvUflgdKh9foirZ4wt4GHDIAFIvUltU7ARcag03tDdf/8N5q/Z
-         2Fw3tcvFW6SnZdAVWyuS31geApZgggXFrqQH3oO21uioWn7CJ2I/STMnKd23TnllRP
-         I41H6R/j5gVr9t09fuz/suvL8HrDVx3B6sU0XDYBdVEpq5W/Ikfx5Y1jgFW9R9aMEP
-         T7uH3SlDcRy+7Ej4Pt7jKzdI89QKyzaJuGqeNP4pByOz5cfyA0cqbftW8Zw0GNRLgo
-         OL7OQUC1I2pHg==
+        b=S5a9CIy0vPGAbMklG2y6tFSilemtmmIy08SiSMMiuUS5HVA0z28leirY3KHl910sI
+         U+KdZU3eT/fYFw+wOGu16PiPgpJvZGY0GBcF0VNJx+W8TKkxRcAaOScQgAXvMCsHZq
+         eKufN7jtH4iY1Ez5C71wYAWh1j+S7Nu0NJN/MecNw1n0yF/k5RN24gCyAEvxZT/di9
+         mqrDJd0TACWSC/7n7bA+Uh7VbuNwba6bOqb54K2Pul7MNg9M6jo+kmxzpQktGYG3IH
+         1YRongIl0BcQU5/g7SKJ/Obxqda8pVyectDIQrsKI6vY4QSB2twyPuUN+uSNotJOg+
+         M5x++NQUGmdDw==
 Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-        id <B624d07790001>; Wed, 06 Apr 2022 15:22:33 +1200
+        id <B624d07790004>; Wed, 06 Apr 2022 15:22:33 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by pat.atlnz.lc (Postfix) with ESMTP id 3EEC213EE8E;
+        by pat.atlnz.lc (Postfix) with ESMTP id 47B3113EEAD;
         Wed,  6 Apr 2022 15:22:33 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id AB5262A003C; Wed,  6 Apr 2022 15:22:28 +1200 (NZST)
+        id B62C32A2679; Wed,  6 Apr 2022 15:22:28 +1200 (NZST)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     linus.walleij@linaro.org, robh+dt@kernel.org,
         catalin.marinas@arm.com, will@kernel.org, andrew@lunn.ch,
@@ -45,125 +45,55 @@ To:     linus.walleij@linaro.org, robh+dt@kernel.org,
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v3 1/4] dt-bindings: pinctrl: mvebu: Document bindings for AC5
-Date:   Wed,  6 Apr 2022 15:21:55 +1200
-Message-Id: <20220406032158.1449049-2-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v3 4/4] arm64: marvell: enable the 98DX2530 pinctrl driver
+Date:   Wed,  6 Apr 2022 15:21:58 +1200
+Message-Id: <20220406032158.1449049-5-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220406032158.1449049-1-chris.packham@alliedtelesis.co.nz>
 References: <20220406032158.1449049-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.3 cv=JcrCUnCV c=1 sm=1 tr=0 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=z0gMJWrwH1QA:10 a=gEfo2CItAAAA:8 a=exeuR5bTIPqabhZkPHwA:9 a=sptkURWiP4Gy88Gu7hUp:22
+X-SEG-SpamProfiler-Analysis: v=2.3 cv=JcrCUnCV c=1 sm=1 tr=0 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=z0gMJWrwH1QA:10 a=XQcNo-tEeLJW46c85tUA:9
 X-SEG-SpamProfiler-Score: 0
 x-atlnz-ls: pat
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add JSON schema for marvell,ac5-pinctrl present on the Marvell 98DX2530
-SoC.
+This commit makes sure the drivers for the 98DX2530 pin controller is
+enabled.
 
 Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
 
 Notes:
     Changes in v3:
-    - Restore syscon and simple-mfd compatibles. These are needed by the
-      pinctrl driver.
+    - Add review from Andrew
     Changes in v2:
-    - Remove syscon and simple-mfd compatibles
+    - None
 
- .../bindings/pinctrl/marvell,ac5-pinctrl.yaml | 72 +++++++++++++++++++
- 1 file changed, 72 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,ac5=
--pinctrl.yaml
+ arch/arm64/Kconfig.platforms | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctr=
-l.yaml b/Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctrl.ya=
-ml
-new file mode 100644
-index 000000000000..a651b2744caf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctrl.yaml
-@@ -0,0 +1,72 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/marvell,ac5-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell AC5 pin controller
-+
-+maintainers:
-+  - Chris Packham <chris.packham@alliedtelesis.co.nz>
-+
-+description:
-+  Bindings for Marvell's AC5 memory-mapped pin controller.
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: marvell,ac5-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    $ref: pinmux-node.yaml#
-+
-+    properties:
-+      marvell,function:
-+        $ref: "/schemas/types.yaml#/definitions/string"
-+        description:
-+          Indicates the function to select.
-+        enum: [ dev_init_done, ge, gpio, i2c0, i2c1, int_out, led, nand,=
- pcie, ptp, sdio,
-+                spi0, spi1, synce, tsen_int, uart0, uart1, uart2, uart3,=
- uartsd, wd_int, xg ]
-+
-+      marvell,pins:
-+        $ref: /schemas/types.yaml#/definitions/string-array
-+        description:
-+          Array of MPP pins to be used for the given function.
-+        minItems: 1
-+        items:
-+          enum: [ mpp0, mpp1, mpp2, mpp3, mpp4, mpp5, mpp6, mpp7, mpp8, =
-mpp9,
-+                  mpp10, mpp11, mpp12, mpp13, mpp14, mpp15, mpp16, mpp17=
-, mpp18, mpp19,
-+                  mpp20, mpp21, mpp22, mpp23, mpp24, mpp25, mpp26, mpp27=
-, mpp28, mpp29,
-+                  mpp30, mpp31, mpp32, mpp33, mpp34, mpp35, mpp36, mpp37=
-, mpp38, mpp39,
-+                  mpp40, mpp41, mpp42, mpp43, mpp44, mpp45 ]
-+
-+allOf:
-+  - $ref: "pinctrl.yaml#"
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinctrl@80020100 {
-+      compatible =3D "marvell,ac5-pinctrl";
-+      reg =3D <0x80020100 0x20>;
-+
-+      i2c0_pins: i2c0-pins {
-+        marvell,pins =3D "mpp26", "mpp27";
-+        marvell,function =3D "i2c0";
-+      };
-+
-+      i2c0_gpio: i2c0-gpio-pins {
-+        marvell,pins =3D "mpp26", "mpp27";
-+        marvell,function =3D "gpio";
-+      };
-+    };
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 21697449d762..6bbb56901794 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -183,11 +183,13 @@ config ARCH_MVEBU
+ 	select PINCTRL_ARMADA_37XX
+ 	select PINCTRL_ARMADA_AP806
+ 	select PINCTRL_ARMADA_CP110
++	select PINCTRL_AC5
+ 	help
+ 	  This enables support for Marvell EBU familly, including:
+ 	   - Armada 3700 SoC Family
+ 	   - Armada 7K SoC Family
+ 	   - Armada 8K SoC Family
++	   - 98DX2530 SoC Family
+=20
+ config ARCH_MXC
+ 	bool "ARMv8 based NXP i.MX SoC family"
 --=20
 2.35.1
 
