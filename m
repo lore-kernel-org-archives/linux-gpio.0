@@ -2,50 +2,50 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E1CC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 23:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24139C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 23:37:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237993AbiDFXjn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Apr 2022 19:39:43 -0400
+        id S237907AbiDFXjt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Apr 2022 19:39:49 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237974AbiDFXjT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 19:39:19 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC5501FF226
-        for <linux-gpio@vger.kernel.org>; Wed,  6 Apr 2022 16:37:15 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id s2so3910512pfh.6
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2022 16:37:15 -0700 (PDT)
+        with ESMTP id S237908AbiDFXjR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 19:39:17 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFEF71FD56C
+        for <linux-gpio@vger.kernel.org>; Wed,  6 Apr 2022 16:37:09 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id s2so3910334pfh.6
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2022 16:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=pensando.io; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vwEJdK6mP4HLwzlF0NPpDB80vAiIJPOce5ra0JhLa38=;
-        b=GlwNdB8zBVCXaFx26HpKx7WELFJMmt4kNuhMN8vvHeN5vX0zCQdLS3NJDz8Fn5CnHW
-         3xeqY1ZBMDisFyF4etaO1RPGXFVSlD8jEj2q1YJ3qTyZ1S2gizpIv5zBXI+afVoYmVUP
-         Ko4jbM0TFMXDMw8zydt1oduC4mvUu9q7FExp1ZVzvm4wdcFWJJ0LV46x0JzoFEJ1zcgW
-         MV8/FqqM20hcX0EwicLISB+WCDT8k4wl6u8qEPs+7VZEAhCyVqBEy58v2s+igTNztzXd
-         z7Da+eVH7UfNXRSFD574IS0YzwbxtFXX3YBUIDv/vN5fRZSmMxrvWla9q2U5jvwa90yi
-         RyCA==
+        bh=0OrPaJyrNtxdYQN2eUUc53MSYLY563Wz1I/VuReoN00=;
+        b=Dbg6SprLBcZ/b+fA0iU9Xy+06BmvDC2M6BrIIsneZxH5B4//nq+XUL431w4efQ5rL3
+         8N8kA5Yg7I/wIxbqnKh5WgI/hwl9bQfrxlYHE29WJoeTMhuZZVsPinrLf+g52Nd0qnLh
+         sBjOnKCa/sTDmuScW4GN/5Eht4Wji1OlUf4OPloSwCqyx18qR8D4D62NLMEU5psH2hS1
+         uLkteB1vO06tjmYLlmkLnx3okSIcrjLPJpOi+nLMpKvDLaJAcNi4MRdtVBdDHJMmPjHI
+         k+U/78EiYPCHWXZSQKLRkpraXX1zNwG4p0Fw8OzjiGrbabHFv+UyA8a6bviZTodNkW7e
+         vO8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=vwEJdK6mP4HLwzlF0NPpDB80vAiIJPOce5ra0JhLa38=;
-        b=5ZRVqli03XGVUKRd0+yBxdKzKj5Ze+BCQwBm5NBbdHb3UNhvpXbf02XfHtO6/gqKLN
-         XMSnbsEHHgQuiQMRhaPwTpOh8cEQHQCMkCgCwd7Y9Mo9mC3MnVc7rCBEgQOgjqUBbCTF
-         d0/Tvh3ZrJs/Hk8ILbL19g5rOIErr85A2q/hc1D9WWYPcD1VtrU4JMYoD5gmu8ym9h7/
-         Lnw6e6JDpEbWcWo6fnTBI1zyKvu/UFYnvNo6KTEnnIQHxBXEYGpVDbZWNMVKhC4r6tLx
-         58oGHVtos0LkCLYidBBvj4aBnoxwcdlcJF/L8IBkz6zxOhixyu/scqNQOSjo14EU8EYl
-         Uwag==
-X-Gm-Message-State: AOAM530++8KnInhkA+ACJKUl82Ta8kCnO2lQ+OxUfSJaSqAGR+/oU1Jy
-        d/mFvKeeMNvIlNYkQ0JThj7drA==
-X-Google-Smtp-Source: ABdhPJyxcbTU9ZBcO9y89jqsqr4/jfNurjGIi6t4DNl6SvL7WcLDdfJNS9GAdP8Mq6nLARE8qXq19A==
-X-Received: by 2002:a65:57cc:0:b0:384:3370:e161 with SMTP id q12-20020a6557cc000000b003843370e161mr8998868pgr.364.1649288235387;
-        Wed, 06 Apr 2022 16:37:15 -0700 (PDT)
+        bh=0OrPaJyrNtxdYQN2eUUc53MSYLY563Wz1I/VuReoN00=;
+        b=xvAH77mPbb+tahmrNliinwNa4xbB5Qr9Ou/wTP2F2BZw7YAEHhRHgtLhSJAXKo5hQI
+         j8Juv/WQDo2d43gVueEdqNKxxv2A6/zupV6L+y2uE+ogqFuBC3uZL3pdZ3anlC5StoKn
+         FGBk6qIbEZVWKop8QKB6ZfV7SGziv/Ym8Oe6ohHwefrPdBtPxCKoy0rzS6y5spM6Zvpl
+         EByujARW7Voxfq5/mU7PU1+ogErkyhM4JTcHmh1hl8KRO/e5LO6rNXOwXkm1hfUurOl0
+         zLq1iXteHlpde7e07xP8bQWUuv7b30UOYR6CpijkPR79PqUTLUHWhqY++MaaTjQMIRcA
+         FrCw==
+X-Gm-Message-State: AOAM531OYjhDBjXj73PqioQOQQOpfPFju6+UxodTWu/TAWrBiubSnOVU
+        MoF7FyEUvH7JTW5h35LGS90l/w==
+X-Google-Smtp-Source: ABdhPJy16RLl1fbmdH/DVh4KgzoGeIdWjm0Exvh4PryssRnqUrTSm9dnSx3oYd3qoOZxW5jIO5aCWQ==
+X-Received: by 2002:a63:b24b:0:b0:398:9894:b8be with SMTP id t11-20020a63b24b000000b003989894b8bemr9237480pgo.108.1649288229198;
+        Wed, 06 Apr 2022 16:37:09 -0700 (PDT)
 Received: from platform-dev1.pensando.io ([12.226.153.42])
-        by smtp.gmail.com with ESMTPSA id m21-20020a17090a7f9500b001c97c6bcaf4sm6903667pjl.39.2022.04.06.16.37.13
+        by smtp.gmail.com with ESMTPSA id m21-20020a17090a7f9500b001c97c6bcaf4sm6903667pjl.39.2022.04.06.16.37.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 16:37:14 -0700 (PDT)
+        Wed, 06 Apr 2022 16:37:08 -0700 (PDT)
 From:   Brad Larson <brad@pensando.io>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     arnd@arndb.de, linus.walleij@linaro.org, bgolaszewski@baylibre.com,
@@ -54,9 +54,9 @@ Cc:     arnd@arndb.de, linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         brad@pensando.io, dac2@pensando.io, linux-gpio@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/11] MAINTAINERS: Add entry for PENSANDO
-Date:   Wed,  6 Apr 2022 16:36:43 -0700
-Message-Id: <20220406233648.21644-7-brad@pensando.io>
+Subject: [PATCH 03/11] dt-bindings: mmc: Add Pensando Elba SoC binding
+Date:   Wed,  6 Apr 2022 16:36:40 -0700
+Message-Id: <20220406233648.21644-4-brad@pensando.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220406233648.21644-1-brad@pensando.io>
 References: <20220406233648.21644-1-brad@pensando.io>
@@ -64,34 +64,37 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add entry for PENSANDO maintainer and files
+Pensando Elba ARM 64-bit SoC is integrated with this IP and
+explicitly controls byte-lane enables resulting in an additional
+reg property resource.
 
 Signed-off-by: Brad Larson <brad@pensando.io>
 ---
 Change from V3:
-- Change Maintained to Supported
+- Change from elba-emmc to elba-sd4hc to match file convention
+- Use minItems: 1 and maxItems: 2 to pass schema check
 
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4cb7fd127e68..456d50921b3a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2509,6 +2509,13 @@ S:	Maintained
- W:	http://hackndev.com
- F:	arch/arm/mach-pxa/palmz72.*
+diff --git a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+index 4207fed62dfe..278a71b27488 100644
+--- a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
++++ b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+@@ -19,10 +19,12 @@ properties:
+       - enum:
+           - microchip,mpfs-sd4hc
+           - socionext,uniphier-sd4hc
++          - pensando,elba-sd4hc
+       - const: cdns,sd4hc
  
-+ARM/PENSANDO ARM64 ARCHITECTURE
-+M:	Brad Larson <brad@pensando.io>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Supported
-+F:	Documentation/devicetree/bindings/*/pensando*
-+F:	arch/arm64/boot/dts/pensando/
-+
- ARM/PLEB SUPPORT
- M:	Peter Chubb <pleb@gelato.unsw.edu.au>
- S:	Maintained
+   reg:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 2
+ 
+   interrupts:
+     maxItems: 1
 -- 
 2.17.1
 
