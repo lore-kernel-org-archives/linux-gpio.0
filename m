@@ -2,50 +2,50 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F198C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 23:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD268C43217
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 23:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237987AbiDFXj0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Apr 2022 19:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        id S238045AbiDFXjf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Apr 2022 19:39:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237873AbiDFXjU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 19:39:20 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724D01FF42A
-        for <linux-gpio@vger.kernel.org>; Wed,  6 Apr 2022 16:37:17 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id o10so3352134ple.7
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2022 16:37:17 -0700 (PDT)
+        with ESMTP id S238057AbiDFXjW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 19:39:22 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CB81FD54B
+        for <linux-gpio@vger.kernel.org>; Wed,  6 Apr 2022 16:37:22 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id r66so3506105pgr.3
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2022 16:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=pensando.io; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MgwUzux9l9MfjkfiPyLThjf7TEJ7a+1kv720LXWdL0c=;
-        b=h3rzaO/ehbfZ3kl2FGqKxW6CKni734T3jpG3x+dhqbWIx0ekxvMJytn06tsYtavlKS
-         p7odvwy7v3WOQFdQ+vTa6dwdAxbRBySInSfsw4+BBw6Xok7WEWgHy7uuYd4mkVKhJI3A
-         QYge0VgdY5Ua0NStPSbitgP35D1VdCR1LWosIfyACxiSrcYRr/4TBTjBGpFXZNF7PHAN
-         ZgDm6vBGthjIXGD7vnJZhMg1USt7k6pniK5j4hENo9d8uyBLlAVJiXOlkyUrAH4dVzGw
-         qST0RXzc1ZnJqNsu9iRuwPVHItUL0EN323XjyJzmygDPKZZuVOZjk7ULU1eLwL71oShJ
-         iOrA==
+        bh=cuQ6cH3FdjOcaRdutCDBUNNLdP9J4Yf1fCyH25zHJ5U=;
+        b=Pw4R6CmXeAQbDYwcKkLrvbhWq2wGyV/2j7AMDLKCoHmRgmyVLk20QRkc8+1nRqHS9O
+         Kgj1xtsHL9nWlp2aoJ5V4b8LDpPyYx7kMOQ9SmV0b3dUry7aFCYiStUctv7NON0w7wsR
+         +e+fLg5VL2Toi1O5U3ckFc0oqaSZIr7MiOEHTMk1ZPlwAD+b9fBRRjfWiMA+383XCPNr
+         WJCQihkbMNG+d5R88kzkWqIzpiFIeEWcHz/BaUocsfQubgOXItG76F3/puXiIR+MR8hZ
+         x7MUSkt9i++cKTxtefYDFedKJ6qntwXpcXFMPsz/lGOkKXDN1u7gfNJ42F8ZQ9Li6T5w
+         4vhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MgwUzux9l9MfjkfiPyLThjf7TEJ7a+1kv720LXWdL0c=;
-        b=wVmL4J1o6htCzLQekSw5WMXGtF0r88Ymimm1RvQP7/iBKHjUNEALkwth/wkHm1K/nB
-         R6RNeRsytb5CrMn8S3FAf0zdzl3cx9bUN4mAYck8MkUCoaI8m/IwMNTj0b93Gy7qKw7I
-         WRpux+YRgTQ5MG5y2ZSP0S/CalLaCljUuK4vSEGukkePPXF0Op0qN8f3U+aIsThvfbSq
-         kjWoO/HPwtPvZVmbFA80X1+7pVZ9sPJNvy1qSmymHQdpDlOnDwY48AwjaST/Z9ixFsar
-         +hVjtg4vk/iDKgcscCL+o1rA7t3tcX2D7CJ8HrJS3JinxkRXqBr5gZ1NB9HKMHWPkgpA
-         axgA==
-X-Gm-Message-State: AOAM5306k3BpcefB1PMYaet+YLuq8njSTuRNfhwRZCZ6XF3Rbjp8tBDB
-        OJHV374Ar4eKGExWcjkxCNZ5xg==
-X-Google-Smtp-Source: ABdhPJzBI/AgQUtI42LRmJQIG6o/7UZtBtE27V6Ss9Y15BjgUkXheWJ0cSmnrjtHxtCg+5UlMXWc5Q==
-X-Received: by 2002:a17:90b:1642:b0:1c6:c6d0:fbfa with SMTP id il2-20020a17090b164200b001c6c6d0fbfamr12403634pjb.218.1649288237042;
-        Wed, 06 Apr 2022 16:37:17 -0700 (PDT)
+        bh=cuQ6cH3FdjOcaRdutCDBUNNLdP9J4Yf1fCyH25zHJ5U=;
+        b=K/8h66V1Fer3nHxXsVwZWcn/cxnpK9ci3kQEGURxcyhHkR7/jKebZ14HvwsHdC+3PP
+         Efqta/F0tMkDdj/dIJnf8y4xm2JTAtJ8shzsVod1VXJWnzXf+NP650ABDpwUTLLQqlgK
+         lUa+sEZpsk3p0q0KjJ14PXe/5xBSP0BMp/FbmPaiB5AVDZ0WBGt8vYMWjtdCrNQV6ccc
+         qrF2RGYWWFK20qdgr6MDKeVqNpfmbkNvUnKCGoXJJz+RfIVgQWQ+X9gpMqzD2mjFYdhT
+         PPKInhS1AkD0XMrQq3nxgB6x8mWQ4LHcSrQAU2TNm4Je3bGreOufJS9t7Ef/ZE4J9UHD
+         yLAg==
+X-Gm-Message-State: AOAM532xHZiVtAfrC9aSojyxT1OPxcXEbCKExGib2x0K/UVaVuMOVh+V
+        natktJu2HARUD0vzOU8eyqxsZg==
+X-Google-Smtp-Source: ABdhPJy+4usAsbPkyt2T8ZHoj3676HFJTS97qdVKEELrRKQTTFRorrj/mWwzzm15tkPPFCTuPSUmbA==
+X-Received: by 2002:a05:6a00:b4a:b0:4fa:ecee:6eb2 with SMTP id p10-20020a056a000b4a00b004faecee6eb2mr11334618pfo.22.1649288242082;
+        Wed, 06 Apr 2022 16:37:22 -0700 (PDT)
 Received: from platform-dev1.pensando.io ([12.226.153.42])
-        by smtp.gmail.com with ESMTPSA id m21-20020a17090a7f9500b001c97c6bcaf4sm6903667pjl.39.2022.04.06.16.37.15
+        by smtp.gmail.com with ESMTPSA id m21-20020a17090a7f9500b001c97c6bcaf4sm6903667pjl.39.2022.04.06.16.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 16:37:16 -0700 (PDT)
+        Wed, 06 Apr 2022 16:37:21 -0700 (PDT)
 From:   Brad Larson <brad@pensando.io>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     arnd@arndb.de, linus.walleij@linaro.org, bgolaszewski@baylibre.com,
@@ -54,9 +54,9 @@ Cc:     arnd@arndb.de, linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         brad@pensando.io, dac2@pensando.io, linux-gpio@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/11] arm64: Add config for Pensando SoC platforms
-Date:   Wed,  6 Apr 2022 16:36:44 -0700
-Message-Id: <20220406233648.21644-8-brad@pensando.io>
+Subject: [PATCH 10/11] spi: dw: Add support for Pensando Elba SoC
+Date:   Wed,  6 Apr 2022 16:36:47 -0700
+Message-Id: <20220406233648.21644-11-brad@pensando.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220406233648.21644-1-brad@pensando.io>
 References: <20220406233648.21644-1-brad@pensando.io>
@@ -64,40 +64,131 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add ARCH_PENSANDO configuration option for Pensando SoC
-based platforms.
+The Pensando Elba SoC includes a DW apb_ssi v4 controller
+with device specific chip-select control.  The Elba SoC
+provides four chip-selects where the native DW IP supports
+two chip-selects.  The Elba DW_SPI instance has two native
+CS signals that are always overridden.
 
 Signed-off-by: Brad Larson <brad@pensando.io>
 ---
 Change from V3:
-- Fix a typo on interface max speed
+- Use more descriptive dt property pensando,syscon-spics
+- Minor changes from review input
 
- arch/arm64/Kconfig.platforms | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/spi/spi-dw-mmio.c | 85 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 30b123cde02c..e3b5557e1049 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -203,6 +203,18 @@ config ARCH_MXC
- 	  This enables support for the ARMv8 based SoCs in the
- 	  NXP i.MX family.
+diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
+index 5101c4c6017b..f4636b271818 100644
+--- a/drivers/spi/spi-dw-mmio.c
++++ b/drivers/spi/spi-dw-mmio.c
+@@ -53,6 +53,24 @@ struct dw_spi_mscc {
+ 	void __iomem        *spi_mst; /* Not sparx5 */
+ };
  
-+config ARCH_PENSANDO
-+	bool "Pensando Platforms"
-+	help
-+	  This enables support for the ARMv8 based Pensando SoC
-+	  family to include the Elba SoC.
++struct dw_spi_elba {
++	struct regmap *regmap;
++	unsigned int reg;
++};
 +
-+	  Pensando SoCs support a range of Distributed Services
-+	  Cards in PCIe format installed into servers.  The Elba
-+	  SoC includes 16 A-72 CPU cores, 144 programmable P4
-+	  cores for a minimal latency/jitter datapath, and network
-+	  interfaces up to 200 Gb/s.
++/*
++ * Elba SoC does not use ssi, pin override is used for cs 0,1 and
++ * gpios for cs 2,3 as defined in the device tree.
++ *
++ * cs:  |       1               0
++ * bit: |---3-------2-------1-------0
++ *      |  cs1   cs1_ovr   cs0   cs0_ovr
++ */
++#define ELBA_SPICS_SHIFT(cs)		(2 * (cs))
++#define ELBA_SPICS_MASK(cs)		(0x3 << ELBA_SPICS_SHIFT(cs))
++#define ELBA_SPICS_SET(cs, val)	\
++			((((val) << 1) | 0x1) << ELBA_SPICS_SHIFT(cs))
 +
- config ARCH_QCOM
- 	bool "Qualcomm Platforms"
- 	select GPIOLIB
+ /*
+  * The Designware SPI controller (referred to as master in the documentation)
+  * automatically deasserts chip select when the tx fifo is empty. The chip
+@@ -238,6 +256,72 @@ static int dw_spi_canaan_k210_init(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static void elba_spics_set_cs(struct dw_spi_elba *dwselba, int cs, int enable)
++{
++	regmap_update_bits(dwselba->regmap, dwselba->reg, ELBA_SPICS_MASK(cs),
++			   ELBA_SPICS_SET(cs, enable));
++}
++
++static void dw_spi_elba_set_cs(struct spi_device *spi, bool enable)
++{
++	struct dw_spi *dws = spi_master_get_devdata(spi->master);
++	struct dw_spi_mmio *dwsmmio = container_of(dws, struct dw_spi_mmio, dws);
++	struct dw_spi_elba *dwselba = dwsmmio->priv;
++	u8 cs;
++
++	cs = spi->chip_select;
++	if (cs < 2) {
++		/* overridden native chip-select */
++		elba_spics_set_cs(dwselba, spi->chip_select, enable);
++	}
++
++	/*
++	 * The DW SPI controller needs a native CS bit selected to start
++	 * the serial engine and the platform may have fewer native CSs
++	 * than needed, so use CS0 always.
++	 */
++	spi->chip_select = 0;
++	dw_spi_set_cs(spi, enable);
++	spi->chip_select = cs;
++}
++
++static int dw_spi_elba_init(struct platform_device *pdev,
++			    struct dw_spi_mmio *dwsmmio)
++{
++	struct of_phandle_args args;
++	struct dw_spi_elba *dwselba;
++	struct regmap *regmap;
++	int rc;
++
++	rc = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
++			"pensando,syscon-spics", 1, 0, &args);
++	if (rc) {
++		dev_err(&pdev->dev, "could not find spics\n");
++		return rc;
++	}
++
++	regmap = syscon_node_to_regmap(args.np);
++	if (IS_ERR(regmap))
++		return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
++				     "could not map spics");
++
++	dwselba = devm_kzalloc(&pdev->dev, sizeof(*dwselba), GFP_KERNEL);
++	if (!dwselba)
++		return -ENOMEM;
++
++	dwselba->regmap = regmap;
++	dwselba->reg = args.args[0];
++
++	/* deassert cs */
++	elba_spics_set_cs(dwselba, 0, 1);
++	elba_spics_set_cs(dwselba, 1, 1);
++
++	dwsmmio->priv = dwselba;
++	dwsmmio->dws.set_cs = dw_spi_elba_set_cs;
++
++	return 0;
++}
++
+ static int dw_spi_mmio_probe(struct platform_device *pdev)
+ {
+ 	int (*init_func)(struct platform_device *pdev,
+@@ -352,6 +436,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
+ 	{ .compatible = "intel,keembay-ssi", .data = dw_spi_keembay_init},
+ 	{ .compatible = "microchip,sparx5-spi", dw_spi_mscc_sparx5_init},
+ 	{ .compatible = "canaan,k210-spi", dw_spi_canaan_k210_init},
++	{ .compatible = "pensando,elba-spi", .data = dw_spi_elba_init},
+ 	{ /* end of table */}
+ };
+ MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
 -- 
 2.17.1
 
