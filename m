@@ -2,74 +2,66 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B93C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Apr 2022 20:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 825E0C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Apr 2022 06:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243091AbiDEUUB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Apr 2022 16:20:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
+        id S229883AbiDFG4Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Apr 2022 02:56:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351239AbiDEOz7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2022 10:55:59 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD1436174
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Apr 2022 06:22:47 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id p15so26647029ejc.7
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2022 06:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ArxUbiuZW45zmoWln4XidCmaX5lVZ1fz/MoyRJCJrzc=;
-        b=WyjTjD250UOOOcaMHf+btUSOzVb6K4fm/+8z1PkXSK/d1lS8FXzz+mXdo9kmu5OIcx
-         MKkyTYyofz3b5Vdeg5aI689W4jqD2GlfZvq+x6mvB65xOMXIIMj/skrvI7JkKWu0OMPO
-         r4c1wLet+uix2eAIDBsv6a59HTkbAq1KSxQaxAb2t8YeCels8LsV7MDVmxGSPTIhplEE
-         9BnUP5JGLpftcJk0AJsqEew593rFq/693m+lsxAytlXFZidN8vVIBMkb72OKWo5DihUi
-         A/AQgGmjIL1tsTsaRc4042z0kbqax/Q1uiCSAcN8NvGxFe5cWAJRa0vYg0y5zHNjRIEo
-         7eAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ArxUbiuZW45zmoWln4XidCmaX5lVZ1fz/MoyRJCJrzc=;
-        b=Sfzhvjh1E+7PxT9GA9u23CsZlkpm856HX1i3KhJeGWbg1JiDKb6S0kb8mc5fnwcrMS
-         jOUO6e/Jc+huoCq3oG/yEKZhqgACXUuFVoaiQ2PWtXtDUrUPIPD0z5Dm7gTwGR5rBYgi
-         8pFHutu+8LewPxh10PEXvs/psfszXEWGYF00urqAondwDY46LceSdzX4YTT6v5l5kxBo
-         xQqcbMW9DaGJJtrpf6DeD2lPudLciCcTGtMWqOFbBXQMywwep1LhK96o70SECjLfEKKk
-         7KlTXSkX6ClyDB1OvWFjHj51aBt62oJwGsSsfSzmqgf9ZYvh9sBYO7JCWmJgxHxQXRvH
-         d40Q==
-X-Gm-Message-State: AOAM530/tfDwpmIRy9q+n05W8bl6EPR2vM2WbfLYIrLVhL6h5CEmQPgE
-        ryK6yXwJq8uHfKQenOS6K+tVCUD+/rCjMhpyWYYK0LRBnq+uzw==
-X-Google-Smtp-Source: ABdhPJztxYX98yWbJiTDM/Z50zf4RY1c+niI0HpF/9BQcL7jg5QWmkDrDQxafYmWHSKH9gMMc5a8x+UTj0MNid8/b7I=
-X-Received: by 2002:a17:907:97cf:b0:6df:846f:ad0a with SMTP id
- js15-20020a17090797cf00b006df846fad0amr3714997ejc.286.1649164965670; Tue, 05
- Apr 2022 06:22:45 -0700 (PDT)
+        with ESMTP id S1377408AbiDFFwB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2022 01:52:01 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F73D344FE1;
+        Tue,  5 Apr 2022 22:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649221793; x=1680757793;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7akzH623VSv4BBE9/ra9/iPv62pdaCdpBK5z80L2VRs=;
+  b=jqov6GriHomjrrVGxh5CFqpZd0AhtAO/LykuWK0WIkYSjH4fsJBMkA8D
+   Jozos8DVbyjpxf9jeGWbFuwc74mf587+BvjUW3qBqK5cz3ABkEqF3wXr5
+   70tGoMeYyu+EkyZlL5MLSMH9ZnU02J8+m8gsdXvGIQlmbgKsNbucfbo1v
+   3a7ZaKPCkzAqlF3j1UppBnvKxILsdsSjvQ3XfKrBKcc8A0bgTLrC/I1Qp
+   l3Oi7JbCD2p2PskPoA/+4GJt84E7JYvdb+e1Lu+e8I6PcnCpDlapVKHJf
+   62NljGxTDeKd3UMRyeRTVVVSEWLgsTcgufIlmf1Dx17ED7cwrkluoSLHx
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10308"; a="259785423"
+X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
+   d="scan'208";a="259785423"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 22:09:53 -0700
+X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
+   d="scan'208";a="523776195"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.162])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 22:09:50 -0700
+Received: by lahna (sSMTP sendmail emulation); Wed, 06 Apr 2022 08:09:48 +0300
+Date:   Wed, 6 Apr 2022 08:09:48 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] pinctrl: alderlake: Fix register offsets for
+ ADL-N variant
+Message-ID: <Yk0gnG+oqpARzC+m@lahna>
+References: <20220405170251.72154-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20220405132158.33433-1-brgl@bgdev.pl>
-In-Reply-To: <20220405132158.33433-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 5 Apr 2022 15:22:35 +0200
-Message-ID: <CAMRc=MdcVdJwB0zcJX0gVRWw-EhtTCs-eYtFc76p12PzZcLfeQ@mail.gmail.com>
-Subject: Re: [PATCH] API: rename gpiod_chip_find_line()
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220405170251.72154-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 3:22 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> The name "find_line" is quite ambigous. We should indicate that the
-> purpose of this routine is to map the line name to its HW offset.
-> Kent suggested get_line_get_offset_from_name() which is hard to beat
-> when it comes to being explicit.
->
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
+On Tue, Apr 05, 2022 at 08:02:51PM +0300, Andy Shevchenko wrote:
+> It appears that almost traditionally the N variants have deviations
+> in the register offsets in comparison to S one. This is the case
+> for Intel Alder Lake as well. Fix register offsets for ADL-N variant.
+> 
+> Fixes: 114b610b9048 ("pinctrl: alderlake: Add Intel Alder Lake-N pin controller support")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Ugh, this was of course supposed to be [libgpiod v2]. Sorry.
-
-Bart
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
