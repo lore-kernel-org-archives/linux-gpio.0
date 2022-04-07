@@ -2,126 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD46C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Apr 2022 07:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9961C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Apr 2022 17:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242421AbiDGH7t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:59:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59830 "EHLO
+        id S243272AbiDGRJI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Apr 2022 13:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242408AbiDGH7r (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2022 03:59:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9B7510DA50;
-        Thu,  7 Apr 2022 00:57:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7323D61E59;
-        Thu,  7 Apr 2022 07:57:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA8EC385A5;
-        Thu,  7 Apr 2022 07:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649318267;
-        bh=Ww1dxa+3bAwj5Iok8ViSt3VRfDANMYAW8WjVDv/Vg50=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=R3wXsf7IdmT3qfxmc9PfyS342yh65B4d9KWZXK0OgfCmRmwJPdbVRlJGzKR3lajqW
-         YpPiAyabUo62zVXM5bX7v1ZIOs2p9CGmGlitEdtB2d2Dv5Z/yjViG3843CAra/1IBv
-         iBL8mjSv+nUIENJRpS5tOxstcriye5A61a2ZFE9+dvFDIoHYnb2Bv01PKi8Oum1COF
-         D9pNNoWkTJBchHc1MD6OhMO17OeBTPk01Z7J8YM6dMf8DG+8uh5L7fRSy6me+pKVy7
-         iuCTTAbQhun4i8EVPTHE38lLmdhR4jajZN7P+VNMDPSld+4ue3ZkaqCeA+YE5a7Fz/
-         arG+St2Lk/weQ==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1ncN1U-002Ou6-VB; Thu, 07 Apr 2022 08:57:45 +0100
+        with ESMTP id S237807AbiDGRJH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2022 13:09:07 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E45D12B5D8
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Apr 2022 10:07:06 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id p15so12194081ejc.7
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Apr 2022 10:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pensando.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xs34HmB3mQxNQ3MLumY+2KQcgDnFTGSI4kG5G0wYBkE=;
+        b=ww8yK1BrSCPVvq7ixEbabV33ZCd1Z1LaPKRg8Y9l2GljGEWdrrYaE0IAolAPWLNSYw
+         P4+1yvv+UgVofEqgfmJPEcKQVCsAk3cFZ6FJzhqn/kIoheUME8P3uujDLRTfAlbCGi8U
+         uB58U1uqH9WnrU8adscton7OROJADVndd3wQTshdIDgKvImF+v+elde6rHo8ACcJHqzU
+         sqVb/Gz0LrcRDCsPqoMyqr43J578NpzZjNpJuzYR3jaZFDC0f0VK9fT8yw2LO9goEewV
+         oPy1VILSQGCwc11r6vmvxPPBQgvoWaHcfSzucncGfZCa9OYQLYbN/x32hsVO5mLtNzhk
+         Tnuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xs34HmB3mQxNQ3MLumY+2KQcgDnFTGSI4kG5G0wYBkE=;
+        b=q2qTRnEKiy4y563HeYLK5xKqjZVkk8zcAnC4HtApbOfuDCH9BWjARnM6SCLxptZnaO
+         3OwqlJ/sBskgBkDeNQYWW8rBcuxT1SzYSFyREUmGCwF9W2pAwx8HDNip/z7oBZAE3dVk
+         i8wApoVYhyHqmfS+9Aesr54VBoAGvrIKRwlFZBMb5XaNJN0D7zBKgAaQb7UXqUoHgs08
+         HGwCMruc279E073N/gBlaiI4db2SuRa+fhXksku0inOeWkd2yTqKHPn1INMFLRJqUYGB
+         8O7YfiLmtQ7nDfksCsycFNFkKC4fP0W0CbBYNc+5JNHuh/39qOvhbaS5NZAuyHVev+Ot
+         vZLg==
+X-Gm-Message-State: AOAM530xdRRy/CGd/xCOKcncoxPZFFfppNDoPmQuouubc0e2STHY/0BT
+        J+76/STL0u/UbOIh81EkQllFJI30HxEOKrNR6AlGDg==
+X-Google-Smtp-Source: ABdhPJwjeWPbD/dZXbSPnBJKZaQvd4USo4WUCxzx+qC69rVqMrvdlR4MAcWXbshhJpd9JhWv2OjJdw/mZvqpOBsdsiA=
+X-Received: by 2002:a17:906:300f:b0:6e0:b38d:777d with SMTP id
+ 15-20020a170906300f00b006e0b38d777dmr14495463ejz.189.1649351201083; Thu, 07
+ Apr 2022 10:06:41 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Thu, 07 Apr 2022 08:57:44 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Brad Larson <brad@pensando.io>
-Cc:     linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        broonie@kernel.org, fancer.lancer@gmail.com,
-        adrian.hunter@intel.com, ulf.hansson@linaro.org, olof@lixom.net,
-        dac2@pensando.io, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] arm64: dts: Add Pensando Elba SoC support
-In-Reply-To: <20220406233648.21644-12-brad@pensando.io>
-References: <20220406233648.21644-1-brad@pensando.io>
- <20220406233648.21644-12-brad@pensando.io>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <9c08f621be28dba65e811bc9cdedc882@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: brad@pensando.io, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, linus.walleij@linaro.org, bgolaszewski@baylibre.com, broonie@kernel.org, fancer.lancer@gmail.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, olof@lixom.net, dac2@pensando.io, linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <20220406233648.21644-1-brad@pensando.io> <20220406233648.21644-10-brad@pensando.io>
+ <CAK8P3a1RdHTngDVqg4KnVA3N8EjDfbpQ=cEcz_CK8NmG2EgYLQ@mail.gmail.com> <3c8e94e1-fb8e-0d8f-4e79-b8313a1da5cb@intel.com>
+In-Reply-To: <3c8e94e1-fb8e-0d8f-4e79-b8313a1da5cb@intel.com>
+From:   Brad Larson <brad@pensando.io>
+Date:   Thu, 7 Apr 2022 10:06:30 -0700
+Message-ID: <CAK9rFnwsMd1+oQ8cg8Biw7HM=R6aOudfK7Ja+E+iGVgfrvC9Gg@mail.gmail.com>
+Subject: Re: [PATCH 09/11] mmc: sdhci-cadence: Add Pensando Elba SoC support
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Olof Johansson <olof@lixom.net>,
+        David Clear <dac2@pensando.io>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2022-04-07 00:36, Brad Larson wrote:
-> Add Pensando common and Elba SoC specific device nodes
-> 
-> Signed-off-by: Brad Larson <brad@pensando.io>
-> ---
-> Change from V3:
-> - Changed to dual copyright (GPL-2.0+ OR MIT)
-> - Minor changes from review input
-> 
->  arch/arm64/boot/dts/Makefile                  |   1 +
->  arch/arm64/boot/dts/pensando/Makefile         |   3 +
->  arch/arm64/boot/dts/pensando/elba-16core.dtsi | 189 ++++++++++++++++++
->  .../boot/dts/pensando/elba-asic-common.dtsi   |  98 +++++++++
->  arch/arm64/boot/dts/pensando/elba-asic.dts    |  28 +++
->  .../boot/dts/pensando/elba-flash-parts.dtsi   | 106 ++++++++++
->  arch/arm64/boot/dts/pensando/elba.dtsi        | 189 ++++++++++++++++++
->  7 files changed, 614 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/pensando/Makefile
->  create mode 100644 arch/arm64/boot/dts/pensando/elba-16core.dtsi
->  create mode 100644 arch/arm64/boot/dts/pensando/elba-asic-common.dtsi
->  create mode 100644 arch/arm64/boot/dts/pensando/elba-asic.dts
->  create mode 100644 arch/arm64/boot/dts/pensando/elba-flash-parts.dtsi
->  create mode 100644 arch/arm64/boot/dts/pensando/elba.dtsi
-> 
+On Thu, Apr 7, 2022 at 12:13 AM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> What is the relationship between cadence and pensando elba?
 
-[...]
+Pensando licensed the cadence controller, its 100% cadence IP.  The
+integration issue we ran into was with the accessors where we have the
+workaround.  The initial patch added a separate Elba driver file but
+the feedback was the Elba support didn't justify doing that and to add
+to sdhci-cacence.c.
 
-> diff --git a/arch/arm64/boot/dts/pensando/elba.dtsi
-> b/arch/arm64/boot/dts/pensando/elba.dtsi
-> new file mode 100644
-> index 000000000000..10e06eb8cda6
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/pensando/elba.dtsi
-
-[...]
-
-> +		gic: interrupt-controller@800000 {
-> +			compatible = "arm,gic-v3";
-> +			#interrupt-cells = <3>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
-> +			interrupt-controller;
-> +			reg = <0x0 0x800000 0x0 0x200000>,	/* GICD */
-> +			      <0x0 0xa00000 0x0 0x200000>;	/* GICR */
-
-You are still missing the GICV and GICH regions that are
-provided by the CPU. I already pointed that out in [1].
-
-The Cortex-A72 TRM will tell you where to find them (at
-an offset from PERIPHBASE).
-
-Please fix this.
-
-         M.
-
-[1] 
-https://lore.kernel.org/all/a20805de16e1196c2ed46dd949473c9a@kernel.org
--- 
-Jazz is not dead. It just smells funny...
+Regards,
+Brad
