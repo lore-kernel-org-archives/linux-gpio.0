@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108CFC433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Apr 2022 18:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B37C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Apr 2022 18:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbiDHSWN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Apr 2022 14:22:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60238 "EHLO
+        id S238525AbiDHSWP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Apr 2022 14:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232342AbiDHSWN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2022 14:22:13 -0400
+        with ESMTP id S238516AbiDHSWO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2022 14:22:14 -0400
 Received: from mga06.intel.com (mga06.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18ADF210446;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC4A72102B2;
         Fri,  8 Apr 2022 11:20:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649442009; x=1680978009;
+  t=1649442010; x=1680978010;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=yKUjsNblrBgidDnwVRh1KChbR0yIH3x6mp920Ncsy3I=;
-  b=CnWYHYKpTVuwLP74ukfttN5HLBdUyeO6EwGl8d8/uNo9fpkV75laAwia
-   8jUdyc1d8oBkuzYmiaOOFieJugBxxyJTXk7KcCFYrVOV+SN3Ovb4R1DgN
-   0bf5rfOs8BWVL8MTYdS6LiA3GQ17zKrvG4ulG7iIugYtIuaY7iMVVN39a
-   XAixaHKZSlVi+NBcvKfWhWBgx/+Xb0cp0Vh3UO7u4PKNnmOYQB7wCzqIi
-   wejuNdBuNQpYLcrN4PWPxs0GIbaESjlmLaYPC1RXQZDNvL+yj87GJhKLz
-   m7biIBa1BfjOZNZ4B0cixIJL9rnivpXB3KhLeGwjfW+BysHKvHO65J4b1
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10311"; a="322350058"
+  bh=oJ9p5GHDWzM6iy52ee+bzgw7OnlJv9U22b2PdWRRIVk=;
+  b=UFgGC2h7IF0XQGlUnUbWXihMjx2rU/sHOJr+PM/z1UZC+0a68kyjrBE9
+   ox3nkTlXsxeFzav86N48Lv8UPwC6VkuTkYw+giz1gb7xmO5TMyUPku2gs
+   dAhRw6fnVxKaCz+exB0Ckx3G/MA9mCbOwW/EFUG/duKeyuZXO8J1bUJ/y
+   d3fZAMonPmTIYPLu0KYxuoJMLCSLnG5jQRSRIZNVHGetty67nsx+TZzv3
+   lmGob156jpvF7PdNTdNVsHkvxqMXMsRI5ZRlojmhvTU6WtinNANueqAvH
+   +aAN2Ygl5XwJKdEk47GvgOQAHbP9emvduIDgPlUf2gEzX6iBZ1Ccwb3NM
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10311"; a="322350061"
 X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="322350058"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+   d="scan'208";a="322350061"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
   by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2022 11:19:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="642993515"
+   d="scan'208";a="795772791"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Apr 2022 11:19:43 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 08 Apr 2022 11:19:43 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 19BFB120; Fri,  8 Apr 2022 21:18:56 +0300 (EEST)
+        id 3478E3D5; Fri,  8 Apr 2022 21:18:56 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 2/5] gpiolib: Split out for_each_gpio_desc() macro
-Date:   Fri,  8 Apr 2022 21:18:51 +0300
-Message-Id: <20220408181854.73528-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 4/5] gpiolib: Extract gpio_chip_get_value() wrapper
+Date:   Fri,  8 Apr 2022 21:18:53 +0300
+Message-Id: <20220408181854.73528-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220408181854.73528-1-andriy.shevchenko@linux.intel.com>
 References: <20220408181854.73528-1-andriy.shevchenko@linux.intel.com>
@@ -56,58 +56,54 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In some cases we want to traverse all GPIO descriptors for given
-chip, let's split out for_each_gpio_desc() macro for such cases.
+In couple of cases we are using the same code to wrap ->get() callback.
+Extract that code into a helper for the sake of better maintenance.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-v2: rebased on patch 1
- drivers/gpio/gpiolib.c | 11 +++--------
- drivers/gpio/gpiolib.h |  5 ++++-
- 2 files changed, 7 insertions(+), 9 deletions(-)
+v2: new patch
+ drivers/gpio/gpiolib.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 96b5da6a8c3b..58a57540b834 100644
+index 43b0cae69bcd..f537597838bb 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -309,15 +309,10 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
- 	spin_lock_irqsave(&gpio_lock, flags);
+@@ -2532,6 +2532,11 @@ void gpiod_toggle_active_low(struct gpio_desc *desc)
+ }
+ EXPORT_SYMBOL_GPL(gpiod_toggle_active_low);
  
- 	list_for_each_entry(gdev, &gpio_devices, list) {
--		int i;
--
--		for (i = 0; i != gdev->ngpio; ++i) {
--			struct gpio_desc *desc = &gdev->descs[i];
--
--			if (!desc->name)
--				continue;
-+		struct gpio_desc *desc;
- 
--			if (!strcmp(desc->name, name)) {
-+		for_each_gpio_desc(gdev->chip, desc) {
-+			if (desc->name && !strcmp(desc->name, name)) {
- 				spin_unlock_irqrestore(&gpio_lock, flags);
- 				return desc;
- 			}
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 7bac62d36f0c..eef3ec073d9e 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -100,10 +100,13 @@ struct gpio_array {
- 
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
- 
--#define for_each_gpio_desc_with_flag(gc, desc, flag)			\
-+#define for_each_gpio_desc(gc, desc)					\
- 	for (unsigned int __i = 0;					\
- 	     __i < gc->ngpio && (desc = gpiochip_get_desc(gc, __i));	\
- 	     __i++)							\
++static int gpio_chip_get_value(struct gpio_chip *gc, const struct gpio_desc *desc)
++{
++	return gc->get ? gc->get(gc, gpio_chip_hwgpio(desc)) : -EIO;
++}
 +
-+#define for_each_gpio_desc_with_flag(gc, desc, flag)			\
-+	for_each_gpio_desc(gc, desc)					\
- 		if (!test_bit(flag, &desc->flags)) {} else
+ /* I/O calls are only valid after configuration completed; the relevant
+  * "is this a valid GPIO" error checks should already have been done.
+  *
+@@ -2557,12 +2562,10 @@ EXPORT_SYMBOL_GPL(gpiod_toggle_active_low);
+ static int gpiod_get_raw_value_commit(const struct gpio_desc *desc)
+ {
+ 	struct gpio_chip	*gc;
+-	int offset;
+ 	int value;
  
- int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 	gc = desc->gdev->chip;
+-	offset = gpio_chip_hwgpio(desc);
+-	value = gc->get ? gc->get(gc, offset) : -EIO;
++	value = gpio_chip_get_value(gc, desc);
+ 	value = value < 0 ? value : !!value;
+ 	trace_gpio_value(desc_to_gpio(desc), 1, value);
+ 	return value;
+@@ -4406,7 +4409,7 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
+ 		if (test_bit(FLAG_REQUESTED, &desc->flags)) {
+ 			gpiod_get_direction(desc);
+ 			is_out = test_bit(FLAG_IS_OUT, &desc->flags);
+-			value = gc->get ? gc->get(gc, gpio_chip_hwgpio(desc)) : -EIO;
++			value = gpio_chip_get_value(gc, desc);
+ 			is_irq = test_bit(FLAG_USED_AS_IRQ, &desc->flags);
+ 			active_low = test_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 			seq_printf(s, " gpio-%-3d (%-20.20s|%-20.20s) %s %s %s%s\n",
 -- 
 2.35.1
 
