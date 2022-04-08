@@ -2,142 +2,130 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD9E7C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Apr 2022 18:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D852C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Apr 2022 18:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238496AbiDHSV4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S238501AbiDHSV4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 8 Apr 2022 14:21:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58966 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233475AbiDHSVz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2022 14:21:55 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A45F11A545;
-        Fri,  8 Apr 2022 11:19:49 -0700 (PDT)
+        with ESMTP id S238494AbiDHSV4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2022 14:21:56 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A7181EB803;
+        Fri,  8 Apr 2022 11:19:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649441991; x=1680977991;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=EphYyiMevZDlJs+2824J9QD6Peqsq22Jz9uC9UNYWl0=;
-  b=fT6ifnCRh5tUethjQaRABMDlhA2QNDB3wGST7CY+yupuFAkHjcM6GNos
-   AIDoqGt0csOAUIKOk9HTmU/o45c/NtwIX7KgSK7J3i4KlOvFEznwBsQ8z
-   /D2LE2HM9pnhquWrTdvf+SkhKCw8M43VI8nE2UmQKP5EKggxWTUurJIni
-   qkkeMZfPqdtNKOh+8m+LLmR+Oh1BkkfZ0yWKrWZdnX7fCDu1C2JJMMF1E
-   obw9tpub5zaawS2QLzwcQ8bD9y9ALE1+EDM6eBW9GgoGKvsKR3PGNMQsM
-   bLdWiKvBgEzIyPLVav2TFUEneW63Y+zMd5Gu8YW3c0nPuYZonipzAu38w
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10311"; a="242253245"
+  t=1649441992; x=1680977992;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9Y6argfSVq6eehwxL941eIKk6C77s5ZnPYw+jOygf3I=;
+  b=m/90X6q8s6g/pLStUDqmJjvzVPr5nUNOeZYdOHHUiQtmgMXEAPKLtvro
+   ipl5J2DJ3hamvwumYfKJ3PegRfXM0+L7Sapu5yTXTItKEkoCdgjOLxdAh
+   P/DS+e3QQlBD1oUbSFRVd+ec7CkgE2zeIkFcruosC7qsAPCs57VWImvMr
+   mmmyZVIv8y6HKXBP1ph+2w9sQ7tA3/aKNCMcU9Y3ONRAImKc58uaSMpw8
+   H1XiH7yyV7GeI3ky0WjjytkUPCKFzvS8SqLFjc2Z4On4oYCHHSZfjhmML
+   9ceefm0WBGpILHz+3+TCV0mIgsZYlhYmZuWAwwIuWWrVNDeZOr5vhuI+w
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10311"; a="249185684"
 X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="242253245"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2022 11:19:45 -0700
+   d="scan'208";a="249185684"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2022 11:19:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="557874351"
+   d="scan'208";a="589317447"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Apr 2022 11:19:43 -0700
+  by orsmga001.jf.intel.com with ESMTP; 08 Apr 2022 11:19:43 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0D5FE144; Fri,  8 Apr 2022 21:18:55 +0300 (EEST)
+        id 29620328; Fri,  8 Apr 2022 21:18:56 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 1/5] gpiolib: Embed iterator variable into for_each_gpio_desc_with_flag()
-Date:   Fri,  8 Apr 2022 21:18:50 +0300
-Message-Id: <20220408181854.73528-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 3/5] gpiolib: Refactor gpiolib_dbg_show() with help of for_each_gpio_desc()
+Date:   Fri,  8 Apr 2022 21:18:52 +0300
+Message-Id: <20220408181854.73528-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220408181854.73528-1-andriy.shevchenko@linux.intel.com>
+References: <20220408181854.73528-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The iterator loop is used exclusively to get a descriptor, which in its
-turn is what is being used by the caller. Embed the iterator variable
-into the loop in the for_each_gpio_desc_with_flag() macro helper.
+Use for_each_gpio_desc() and since we would need to touch the entire
+conditionals, do the following:
+- rename last occurrence of gdesc to desc
+- use short ternary operator ?:
+- join two seq_printf() calls into single one
+- fix indentation of the seq_printf() parameters
 
-Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-v2: new patch
- drivers/gpio/gpiolib-of.c    | 3 +--
- drivers/gpio/gpiolib-sysfs.c | 3 +--
- drivers/gpio/gpiolib.c       | 3 +--
- drivers/gpio/gpiolib.h       | 8 ++++----
- 4 files changed, 7 insertions(+), 10 deletions(-)
+v2: rebased on patch 1
+ drivers/gpio/gpiolib.c | 38 ++++++++++++++++++--------------------
+ 1 file changed, 18 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index ae1ce319cd78..47c0e07802d6 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -712,9 +712,8 @@ static void of_gpiochip_remove_hog(struct gpio_chip *chip,
- 				   struct device_node *hog)
- {
- 	struct gpio_desc *desc;
--	unsigned int i;
- 
--	for_each_gpio_desc_with_flag(i, chip, desc, FLAG_IS_HOGGED)
-+	for_each_gpio_desc_with_flag(chip, desc, FLAG_IS_HOGGED)
- 		if (desc->hog == hog)
- 			gpiochip_free_own_desc(desc);
- }
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index d44ffea038f5..cd27bf173dec 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -760,7 +760,6 @@ void gpiochip_sysfs_unregister(struct gpio_device *gdev)
- {
- 	struct gpio_desc *desc;
- 	struct gpio_chip *chip = gdev->chip;
--	unsigned int i;
- 
- 	if (!gdev->mockdev)
- 		return;
-@@ -773,7 +772,7 @@ void gpiochip_sysfs_unregister(struct gpio_device *gdev)
- 	mutex_unlock(&sysfs_lock);
- 
- 	/* unregister gpiod class devices owned by sysfs */
--	for_each_gpio_desc_with_flag(i, chip, desc, FLAG_SYSFS)
-+	for_each_gpio_desc_with_flag(chip, desc, FLAG_SYSFS)
- 		gpiod_free(desc);
- }
- 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a199d2ff7689..96b5da6a8c3b 100644
+index 58a57540b834..43b0cae69bcd 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -4138,9 +4138,8 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
- static void gpiochip_free_hogs(struct gpio_chip *gc)
- {
- 	struct gpio_desc *desc;
--	int id;
+@@ -4394,34 +4394,32 @@ core_initcall(gpiolib_dev_init);
  
--	for_each_gpio_desc_with_flag(id, gc, desc, FLAG_IS_HOGGED)
-+	for_each_gpio_desc_with_flag(gc, desc, FLAG_IS_HOGGED)
- 		gpiochip_free_own_desc(desc);
+ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
+ {
+-	unsigned		i;
+ 	struct gpio_chip	*gc = gdev->chip;
++	struct gpio_desc	*desc;
+ 	unsigned		gpio = gdev->base;
+-	struct gpio_desc	*gdesc = &gdev->descs[0];
++	int			value;
+ 	bool			is_out;
+ 	bool			is_irq;
+ 	bool			active_low;
+ 
+-	for (i = 0; i < gdev->ngpio; i++, gpio++, gdesc++) {
+-		if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
+-			if (gdesc->name) {
+-				seq_printf(s, " gpio-%-3d (%-20.20s)\n",
+-					   gpio, gdesc->name);
+-			}
+-			continue;
++	for_each_gpio_desc(gc, desc) {
++		if (test_bit(FLAG_REQUESTED, &desc->flags)) {
++			gpiod_get_direction(desc);
++			is_out = test_bit(FLAG_IS_OUT, &desc->flags);
++			value = gc->get ? gc->get(gc, gpio_chip_hwgpio(desc)) : -EIO;
++			is_irq = test_bit(FLAG_USED_AS_IRQ, &desc->flags);
++			active_low = test_bit(FLAG_ACTIVE_LOW, &desc->flags);
++			seq_printf(s, " gpio-%-3d (%-20.20s|%-20.20s) %s %s %s%s\n",
++				   gpio, desc->name ?: "", desc->label,
++				   is_out ? "out" : "in ",
++				   value >= 0 ? (value ? "hi" : "lo") : "?  ",
++				   is_irq ? "IRQ " : "",
++				   active_low ? "ACTIVE LOW" : "");
++		} else if (desc->name) {
++			seq_printf(s, " gpio-%-3d (%-20.20s)\n", gpio, desc->name);
+ 		}
+ 
+-		gpiod_get_direction(gdesc);
+-		is_out = test_bit(FLAG_IS_OUT, &gdesc->flags);
+-		is_irq = test_bit(FLAG_USED_AS_IRQ, &gdesc->flags);
+-		active_low = test_bit(FLAG_ACTIVE_LOW, &gdesc->flags);
+-		seq_printf(s, " gpio-%-3d (%-20.20s|%-20.20s) %s %s %s%s",
+-			gpio, gdesc->name ? gdesc->name : "", gdesc->label,
+-			is_out ? "out" : "in ",
+-			gc->get ? (gc->get(gc, i) ? "hi" : "lo") : "?  ",
+-			is_irq ? "IRQ " : "",
+-			active_low ? "ACTIVE LOW" : "");
+-		seq_printf(s, "\n");
++		gpio++;
+ 	}
  }
  
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 06f3faa9fbef..7bac62d36f0c 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -100,10 +100,10 @@ struct gpio_array {
- 
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
- 
--#define for_each_gpio_desc_with_flag(i, gc, desc, flag)		\
--	for (i = 0, desc = gpiochip_get_desc(gc, i);		\
--	     i < gc->ngpio;					\
--	     i++, desc = gpiochip_get_desc(gc, i))		\
-+#define for_each_gpio_desc_with_flag(gc, desc, flag)			\
-+	for (unsigned int __i = 0;					\
-+	     __i < gc->ngpio && (desc = gpiochip_get_desc(gc, __i));	\
-+	     __i++)							\
- 		if (!test_bit(flag, &desc->flags)) {} else
- 
- int gpiod_get_array_value_complex(bool raw, bool can_sleep,
 -- 
 2.35.1
 
