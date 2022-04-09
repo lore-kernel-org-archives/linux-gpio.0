@@ -2,37 +2,37 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01957C433EF
-	for <linux-gpio@archiver.kernel.org>; Sat,  9 Apr 2022 20:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FC5C433F5
+	for <linux-gpio@archiver.kernel.org>; Sat,  9 Apr 2022 20:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbiDIUHL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 9 Apr 2022 16:07:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
+        id S230007AbiDIUHN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 9 Apr 2022 16:07:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230102AbiDIUHI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2022 16:07:08 -0400
+        with ESMTP id S229812AbiDIUHJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2022 16:07:09 -0400
 Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2A047AD7
-        for <linux-gpio@vger.kernel.org>; Sat,  9 Apr 2022 13:05:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CCD2DD6D
+        for <linux-gpio@vger.kernel.org>; Sat,  9 Apr 2022 13:05:01 -0700 (PDT)
 Received: from terra.local.svanheule.net (unknown [IPv6:2a02:a03f:eaf9:8401:9d41:ea18:e395:a08d])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 39A072C4653;
-        Sat,  9 Apr 2022 21:55:59 +0200 (CEST)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 319742C4657;
+        Sat,  9 Apr 2022 21:56:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1649534159;
+        s=mail1707; t=1649534162;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XPHDw3Kn6paq26RqJYO+850bOj9HsiGkdLK+KjbbhMQ=;
-        b=MFqYIlk3KrXbM6hnuqutSH4942YHk2W3DEQ8Dj9KoEfpLF2DbX6s1oJbRycxwli7zNd6la
-        gCCrGNg5hPKbEgSbYhpLYbvaiVAKuPlUeRmr1cp+a2A05QdkZA2RD0NTpU+o6bwq0vWuQf
-        ZHJNtAopa1hxcCPifwYhJeRQSkjToXkyCAGSNJyxD1Ge0PvgkeDWwMbONmFunkE1xxuXJr
-        8v2jaOY7id61jKtwh+BLPxM0diVL2BA7WRQGkDWRAtWTPj3L+bQzO0oqiN900tBkNeUJlb
-        +B/xbWU/b3hYSfnBGVn+/qmfAUdiYAZmYOwMbJWaQVahFzZDx6DykvwFB3Y6oQ==
+        bh=xkfs1gHO5sgAn4raphVRPtE947SinFm+RwKVlazXeBM=;
+        b=yulkC0mLCL9H8dfj88+37waAQabf2/mlTI1o3iV8bw8MjkyLQqkTJbglX+qN+cnmzffJV6
+        Fhabzw0N27syJwzbsfrv+eA6InEoAyWjpJ727JYIFz859Hu9sZQMrioB/JMbl5xT/FSpdN
+        pI6of76Ovu+4KVUKdc7jxXcyCVCgGm9L4c4Nt3yf5UFhixETO9l3RXqF0hCW6jzTpZzgtV
+        YKkYGOJXqDU8VFyn73lxLkMDsaUYrfNDYLapw3P0Rbw6pXekNt77Pw/BIw/lIvC4MF8oK7
+        e6CDrFTbliCIxBbsvpmB58SWrZqIpU0f34f0uULWg4qlrk5j64G8KFYX+lnfGQ==
 From:   Sander Vanheule <sander@svanheule.net>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -41,9 +41,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Sander Vanheule <sander@svanheule.net>,
         Bert Vermeulen <bert@biot.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/6] dt-bindings: gpio: realtek-otto: Add rtl9300 compatible
-Date:   Sat,  9 Apr 2022 21:55:46 +0200
-Message-Id: <7dfad6c63cea64ccd84907f1cf9f7c9c6d1ce3e9.1649533972.git.sander@svanheule.net>
+Subject: [PATCH v1 5/6] dt-bindings: gpio: realtek-otto: Add rtl9310 compatible
+Date:   Sat,  9 Apr 2022 21:55:50 +0200
+Message-Id: <380b17f04e127351b83d7f4d7db22d4f58aebcbd.1649533972.git.sander@svanheule.net>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <cover.1649533972.git.sander@svanheule.net>
 References: <cover.1649533972.git.sander@svanheule.net>
@@ -53,74 +53,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the "realtek,rlt9300-gpio", "realtek,otto-gpio" compatible for GPIO
-nodes on the RTL930x SoC series. This SoC requires an extra register
-range, defining the interrupt CPU mapping registers.
+Add the "realtek,rlt9310-gpio", "realtek,otto-gpio" compatible for GPIO
+nodes on the RTL931x SoC series.
 
 Signed-off-by: Sander Vanheule <sander@svanheule.net>
 ---
- .../bindings/gpio/realtek,otto-gpio.yaml      | 33 +++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-index 100f20cebd76..3c511e9af377 100644
+index 3c511e9af377..39fd959c45d2 100644
 --- a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
 +++ b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-@@ -28,10 +28,10 @@ properties:
-       - enum:
+@@ -29,6 +29,7 @@ properties:
            - realtek,rtl8380-gpio
            - realtek,rtl8390-gpio
-+          - realtek,rtl9300-gpio
+           - realtek,rtl9300-gpio
++          - realtek,rtl9310-gpio
        - const: realtek,otto-gpio
  
--  reg:
--    maxItems: 1
-+  reg: true
- 
-   "#gpio-cells":
-     const: 2
-@@ -50,6 +50,23 @@ properties:
-   interrupts:
-     maxItems: 1
- 
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: realtek,rtl9300-gpio
-+then:
-+  properties:
-+    reg:
-+      items:
-+        - description: GPIO and interrupt control
-+        - description: interrupt CPU map
-+else:
-+  properties:
-+    reg:
-+      items:
-+        - description: GPIO and interrupt control
-+
- required:
-   - compatible
-   - reg
-@@ -74,5 +91,17 @@ examples:
-         interrupt-parent = <&rtlintc>;
-         interrupts = <23>;
-       };
-+  - |
-+      gpio@3300 {
-+        compatible = "realtek,rtl9300-gpio", "realtek,otto-gpio";
-+        reg = <0x3300 0x1c>, <0x3338 0x8>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        ngpios = <24>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        interrupt-parent = <&rtlintc>;
-+        interrupts = <13>;
-+      };
- 
- ...
+   reg: true
 -- 
 2.35.1
 
