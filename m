@@ -2,77 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FC5C433F5
-	for <linux-gpio@archiver.kernel.org>; Sat,  9 Apr 2022 20:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7DEC433F5
+	for <linux-gpio@archiver.kernel.org>; Sat,  9 Apr 2022 20:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbiDIUHN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 9 Apr 2022 16:07:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43038 "EHLO
+        id S231628AbiDIUio (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 9 Apr 2022 16:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbiDIUHJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2022 16:07:09 -0400
-Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CCD2DD6D
-        for <linux-gpio@vger.kernel.org>; Sat,  9 Apr 2022 13:05:01 -0700 (PDT)
-Received: from terra.local.svanheule.net (unknown [IPv6:2a02:a03f:eaf9:8401:9d41:ea18:e395:a08d])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 319742C4657;
-        Sat,  9 Apr 2022 21:56:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1649534162;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xkfs1gHO5sgAn4raphVRPtE947SinFm+RwKVlazXeBM=;
-        b=yulkC0mLCL9H8dfj88+37waAQabf2/mlTI1o3iV8bw8MjkyLQqkTJbglX+qN+cnmzffJV6
-        Fhabzw0N27syJwzbsfrv+eA6InEoAyWjpJ727JYIFz859Hu9sZQMrioB/JMbl5xT/FSpdN
-        pI6of76Ovu+4KVUKdc7jxXcyCVCgGm9L4c4Nt3yf5UFhixETO9l3RXqF0hCW6jzTpZzgtV
-        YKkYGOJXqDU8VFyn73lxLkMDsaUYrfNDYLapw3P0Rbw6pXekNt77Pw/BIw/lIvC4MF8oK7
-        e6CDrFTbliCIxBbsvpmB58SWrZqIpU0f34f0uULWg4qlrk5j64G8KFYX+lnfGQ==
-From:   Sander Vanheule <sander@svanheule.net>
-To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Sander Vanheule <sander@svanheule.net>,
-        Bert Vermeulen <bert@biot.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 5/6] dt-bindings: gpio: realtek-otto: Add rtl9310 compatible
-Date:   Sat,  9 Apr 2022 21:55:50 +0200
-Message-Id: <380b17f04e127351b83d7f4d7db22d4f58aebcbd.1649533972.git.sander@svanheule.net>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <cover.1649533972.git.sander@svanheule.net>
-References: <cover.1649533972.git.sander@svanheule.net>
+        with ESMTP id S230294AbiDIUim (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2022 16:38:42 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D63B3BBE8
+        for <linux-gpio@vger.kernel.org>; Sat,  9 Apr 2022 13:36:31 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id bv19so566935ejb.6
+        for <linux-gpio@vger.kernel.org>; Sat, 09 Apr 2022 13:36:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7D4Aaibw1apIEE8gsX+ApdqU6ylj2WHbi6A+8seUpYQ=;
+        b=ncWRxj97LJMXygmt/AKz+7Rs8ZQT38CCLIRace5PaU9qYsLHuiGJ5UKRtsr+HiUAiF
+         4j5upESyYy+4Q/Pr2ODQQu6BIUgnS0WFtb8Oiv0ah54DUrDT3QVL2mbuqx+af7ZE0EOo
+         CFVabsCZi+1Sg91a5k57mUJwX+CBbBevyFj2I0h7EBC8YwUv1b1PqsOBp9oDqVUbrYVa
+         lpf003729MbI6WLkU8f6mjIIAnDkx3t/BJdlMl9DLMlzRxWbE97jFtJ0Fc46gVHlixps
+         JieZevCNOeklDAVcY+SQuoqN1zTSHUI8tQKWZxibSlPTuk+Et4XeDP8HH0t/R6Xzj63c
+         8IPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7D4Aaibw1apIEE8gsX+ApdqU6ylj2WHbi6A+8seUpYQ=;
+        b=1fZJOyPPbbNjIRZwaumG/WULbFxIxxkJoHlatJE78pacjvEvx2WJALBuEScXrgL7xi
+         Ega7IKSRAtTzfttdX06rAp5dtVa11s1BcwHjYagZMD0vhZU8XrpwLAi2aCwaBmaf9PWy
+         N9+YRr4UfJvUyYti/qfjwMvCUVKUK63nRehRNWcvmVmYLoBz8cW4CA8zdt7qPynglKfl
+         lbmmFuRPBmLcZTaPxzrwHRzkZz4imQM5Qa9r9z+MKi3Qon3bnGbq0jcIRnx61jcncawc
+         FRnRmtDZ2t1O1tuGUxzOOS4eMGsS2WMUR5mTWO4KIHxg63ZkHTriPd+aeQIpkRTYEXMp
+         8fBg==
+X-Gm-Message-State: AOAM530TfAuEAycAesNa/efLmIAwJ+MOd3DONkgIUXE4dL4c0Mq9X8JX
+        I/sQagfEsYlw2wEnCtqDEBJM3oqvGx9rLPO15ds59g==
+X-Google-Smtp-Source: ABdhPJzUVnJ9fCRFvnF1CecBOE2+6+3iCPQEfg90TNS1Di7u0BolMX/Mt0lRsUv0edygOyQBQyuXmNnSarbD0i5a1pg=
+X-Received: by 2002:a17:907:10ce:b0:6e7:116:10d0 with SMTP id
+ rv14-20020a17090710ce00b006e7011610d0mr23523072ejb.101.1649536590019; Sat, 09
+ Apr 2022 13:36:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220330145910.1946-1-andriy.shevchenko@linux.intel.com> <20220330145910.1946-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20220330145910.1946-3-andriy.shevchenko@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Sat, 9 Apr 2022 22:36:19 +0200
+Message-ID: <CAMRc=MfhHrtoKRfSAKGk14_a3L945HC3zJWhqtewruDPM6-DVg@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] gpiolib: Move error message out of a spinlock
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the "realtek,rlt9310-gpio", "realtek,otto-gpio" compatible for GPIO
-nodes on the RTL931x SoC series.
+On Wed, Mar 30, 2022 at 4:59 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> An error path is a slow path, no need to block other CPUs
+> when printing error messages.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/gpio/gpiolib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index f956c533f218..062d127d9a0d 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -289,7 +289,6 @@ static int gpiodev_add_to_list(struct gpio_device *gdev)
+>                 }
+>         }
+>
+> -       dev_err(&gdev->dev, "GPIO integer space overlap, cannot add chip\n");
+>         return -EBUSY;
+>  }
+>
+> @@ -724,6 +723,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>         ret = gpiodev_add_to_list(gdev);
+>         if (ret) {
+>                 spin_unlock_irqrestore(&gpio_lock, flags);
+> +               chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
+>                 goto err_free_label;
+>         }
+>
+> --
+> 2.35.1
+>
 
-Signed-off-by: Sander Vanheule <sander@svanheule.net>
----
- Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Applied, thanks!
 
-diff --git a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-index 3c511e9af377..39fd959c45d2 100644
---- a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-@@ -29,6 +29,7 @@ properties:
-           - realtek,rtl8380-gpio
-           - realtek,rtl8390-gpio
-           - realtek,rtl9300-gpio
-+          - realtek,rtl9310-gpio
-       - const: realtek,otto-gpio
- 
-   reg: true
--- 
-2.35.1
-
+Bart
