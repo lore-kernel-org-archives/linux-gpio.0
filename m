@@ -2,112 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF89C433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Apr 2022 21:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17D5C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Apr 2022 09:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233660AbiDKV0k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Apr 2022 17:26:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36688 "EHLO
+        id S241976AbiDLJ4x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Apr 2022 05:56:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233286AbiDKV0j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Apr 2022 17:26:39 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A7611C1B;
-        Mon, 11 Apr 2022 14:24:22 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id y32so28905409lfa.6;
-        Mon, 11 Apr 2022 14:24:22 -0700 (PDT)
+        with ESMTP id S1388442AbiDLJWM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Apr 2022 05:22:12 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DBC046B0A
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Apr 2022 01:28:40 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id k23so35787552ejd.3
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Apr 2022 01:28:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=W07LTDRQTymKjPFZm77aBEtSzK9heBCBPkTFYPnHBGQ=;
-        b=D8N5US+NdVQZMy2EJ5v7Xz6ZD9q6Hd5yAEmkIT4EjBlI0MaZvgipuDjOLIecaMhXEY
-         EPVbV7avstzga0x2QyLBumJ/04DfAUQSdyj3v5SXyvrkb0s8Gcq4t3qDiKy1AVAwny81
-         A993XTEO/cta909Ukxl4q/I11MBtdqzEmTc5DIG/lG1CikSYsOoo33+h5yfriq2u18Ss
-         Cor/q+sD/AOxpslaUcgNiimjWsOtmflglBAD7ztg2QG/HCml5nmZ1/DmXDzvZr6/eB3B
-         hPSpxGSZ6Az6UwlvRlUuN3Nr4jzHfUmmTlwgrd/TNsCDZysrXgwMHElqz+nV23MAxEmC
-         xLHg==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9pLWiODOOZL178tpEqwofl1D5ualPXQ/vBRW34AkTuA=;
+        b=NLdpRY6W7VSJdqN39swR+EnBSwHzc9yMPP1ohdf7r0qw+XUE7KvlliFNmr3MeKW3kt
+         dvSzsH6RjuFfwZdsXywZafFmY615056s45UlxPo/DLsKb5GaLPPZQEVhKS67laqmN5dc
+         zRoMg6letP7zOsScx2XLGC7wQDLnxbTQ79cm2PXG0qGPW0cPqHMUqnWBkrRzm6xHdNPQ
+         IiPiUPT8luzGcJtxkW3d7Qr0D7Z/VPvvg+zkMl5hO/TDGjU7eeAHYipDJz3TxtiGRU9o
+         MqQO5b9mHqr9UPU7do3V8AI5C/eHpwhSBraqDS7m3soKgWke88QHaSrEZHEpKn3WsWfi
+         sfpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=W07LTDRQTymKjPFZm77aBEtSzK9heBCBPkTFYPnHBGQ=;
-        b=ti+8Mc6L+Je3nmpqqCt3byVNLb/6tggF6eMp4LG/533PzPkBgfmqZBXY8q2dkI4OC+
-         RDEq/n4EaoMOPVI6tbzItxMkT6rFkxPFeCj0y2Gi/mqzr/3rFMlHMVMIA8vdh+XTb7EI
-         Ml8Y3kgsNsOAw91ibBlpkuehVyIp2QSLXmNeIAE+z0UQObT8nvOvusYRtCL6JPJJRG3C
-         SwCwbZ039AHk+asXWIp6/g19V1xe4LAAsfAJUnjbBDXqlNNrEJdVEmdtKQfjgfONgSJR
-         2IQsORtFV53LgmdwNVtVfN5GkfZNsTmVpYZha5DDje9SBLmkGCk8wEKR+8t05eNCsbb4
-         o+Sw==
-X-Gm-Message-State: AOAM532zr4jwkBByQQqj+TQFqdeLJlVQvDFzpvg+yvcLzn1n9IRVJQjf
-        7CadpWt2eU+7l07D1tuvGFI=
-X-Google-Smtp-Source: ABdhPJw1EDfVylJkSFMhb+KePBf/A0pmLkpS8KaCP2Pczay4AqN39f+VBLDlVnKx/RkXKgLfQXkupw==
-X-Received: by 2002:a05:6512:2292:b0:46b:a65c:91b9 with SMTP id f18-20020a056512229200b0046ba65c91b9mr4597915lfu.663.1649712261053;
-        Mon, 11 Apr 2022 14:24:21 -0700 (PDT)
-Received: from mobilestation ([95.79.134.149])
-        by smtp.gmail.com with ESMTPSA id w10-20020a2e9bca000000b0024b598ff427sm830391ljj.73.2022.04.11.14.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Apr 2022 14:24:20 -0700 (PDT)
-Date:   Tue, 12 Apr 2022 00:24:18 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Brad Larson <brad@pensando.io>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Olof Johansson <olof@lixom.net>,
-        David Clear <dac2@pensando.io>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/11] dt-bindings: arm: add Pensando boards
-Message-ID: <20220411212418.44p3dvqiez4romqz@mobilestation>
-References: <20220406233648.21644-1-brad@pensando.io>
- <20220406233648.21644-2-brad@pensando.io>
- <05febd3f-bfdb-13c2-8cce-b9dc422c5eae@linaro.org>
- <CAK9rFnyRrS_LvoZ_j66cKDHgecqcqzJN5krSxdCquBanViKyHg@mail.gmail.com>
- <49c1d200-8c07-b306-a400-86ee6a637bb4@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9pLWiODOOZL178tpEqwofl1D5ualPXQ/vBRW34AkTuA=;
+        b=nOrFQ+67xg2X1Qs0fmNR9bROp9QK5DtiZ2L72ERILskE9+DCcg2mOqexAXgOOT20+Y
+         a8b++0JrUq/MjY4IzjWt1kBGXTTLGiIAMnw1I2IqtO9B/d0PY2LMpSt7PlmJIqlmv3mS
+         wD0sUJR0unTh5rW2eOUjfo17Fr/wowECJo6UQxKDVEESHRgQ+0qURGwblEsxPzW7t5X5
+         xxp7Sf4tk/82og4tYbzvDtbNVc5SYi04Fj0RjGAQurmEgAa8a1VUytpuscPWIBAXeFaY
+         n1dFBzRUkYySbMrPRIH3TeNi0bHGmpAxwkcNbev67da25w2L4DnPiJDZkYvr1Kj7Tq8e
+         s0qg==
+X-Gm-Message-State: AOAM533NVr6s+2yRnQdAOH+RziLY6GZOKoBM8wX1SWcW/sez9Q4lSwiA
+        4NB+hr4r2JkL5idhZVaTPbPykbxExmTJQP+dbmOnfQ==
+X-Google-Smtp-Source: ABdhPJxg+bgJzY8ifzgACdhMELmjNhIE8OEjtXI7cTUfeZE1bYvbbpw+kl1uin2SHTd4z5vkUunyd3PCDRmh10FCRgk=
+X-Received: by 2002:a17:907:97cf:b0:6df:846f:ad0a with SMTP id
+ js15-20020a17090797cf00b006df846fad0amr34382832ejc.286.1649752118772; Tue, 12
+ Apr 2022 01:28:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49c1d200-8c07-b306-a400-86ee6a637bb4@linaro.org>
+References: <20220411063324.98542-1-andrei.lalaev@emlid.com> <CAHp75VfyxspOScEt1qffshdrDYuQp50O5HFbr2cUV7MYsg=JdQ@mail.gmail.com>
+In-Reply-To: <CAHp75VfyxspOScEt1qffshdrDYuQp50O5HFbr2cUV7MYsg=JdQ@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 12 Apr 2022 10:28:27 +0200
+Message-ID: <CAMRc=MfakYvQUW4NLWCrm5yVA185X4t__aB3r4-9xTh8YJaq8g@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: of: fix bounds check for valid mask
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andrei Lalaev <andrei.lalaev@emlid.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Apr 09, 2022 at 12:39:59PM +0200, Krzysztof Kozlowski wrote:
-> On 09/04/2022 04:19, Brad Larson wrote:
-> > On Thu, Apr 7, 2022 at 11:45 AM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
-> >>> Change from V3:
-> >>> - Add description and board compatible
-> >>
-> >> That's a bit confusing... the subject is for v1.
-> > 
-> > Goal was to identify in the cover letter patch the key changes from
-> > the V3 patchset to this V4 patchset.  Then in each patch that had a
-> > material change highlight that in the patch itself.  Will try and make
-> > it more clear.
-> 
+On Mon, Apr 11, 2022 at 2:17 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, Apr 11, 2022 at 12:57 PM Andrei Lalaev <andrei.lalaev@emlid.com> wrote:
+> >
+> > Use "greater" instead of "greater or equal" when performs bounds check
+> > to make sure that GPIOS are in available range. Previous implementation
+>
+> the available
+>
+> > skipped ranges which include last GPIO in range.
+>
+> the last
+>
+> Should it have a Fixes tag?
+>
+> OTOH, the current implementation suggests that we have start,end
+> rather than start,count. What does documentation tell about it? Does
+> it need to be fixed?
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
-> This is fine, I am talking about the subject - it is marked as a v1, so
-> it's confusing to see a changelog.
-> 
-> One way to achieve this is: "git format-patch -v4 -11 ..."
+Thanks Andy, I rushed this one. Backing it out.
 
-v2 was submitted by Brad one year ago:
-https://patches.linaro.org/project/linux-spi/cover/20210329015938.20316-1-brad@pensando.io/
-most likely he has just forgotten to add the proper suffix.
-
--Sergey
-
-> 
-> Best regards,
-> Krzysztof
+Bart
