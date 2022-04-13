@@ -2,165 +2,82 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EA7C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EBEC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 18:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234155AbiDMRhJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Apr 2022 13:37:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44466 "EHLO
+        id S237698AbiDMScN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Apr 2022 14:32:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234946AbiDMRhJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:37:09 -0400
-X-Greylist: delayed 611 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Apr 2022 10:34:47 PDT
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85427BC89
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:34:47 -0700 (PDT)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by cantor.telenet-ops.be (Postfix) with ESMTPS id 4KdqFs0QMxz4x4pH
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 19:24:17 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by xavier.telenet-ops.be with bizsmtp
-        id JHQG2701g2t8Arn01HQGuC; Wed, 13 Apr 2022 19:24:16 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1negj2-000TtF-Dn; Wed, 13 Apr 2022 19:24:16 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1negj1-00DfbH-Oh; Wed, 13 Apr 2022 19:24:15 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 48/50] pinctrl: renesas: sh7785: Optimize fixed-width reserved fields
-Date:   Wed, 13 Apr 2022 19:24:10 +0200
-Message-Id: <07a238f13f80674d86719a5e869c65a2e0b8c1c1.1649865241.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
-References: <cover.1649865241.git.geert+renesas@glider.be>
+        with ESMTP id S232538AbiDMScL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 14:32:11 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9131DA4F;
+        Wed, 13 Apr 2022 11:29:50 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id q189so2954498oia.9;
+        Wed, 13 Apr 2022 11:29:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GHDZJGdlID6AtWEELApFyX5XRyr/rxJuuRGXdTraOus=;
+        b=WjCI+83Stf7KG3t/mG5uSwctEQph1vM/4D35o+hKuYDiZ2vYH3lrQ+1YRiYgsikok+
+         U/go+ArXmnDuN8Mjeiq+pSSLqvoHDY/A4Ij79b40KcGNkVV9Cow/ivFoMf/Xrykq0Yc7
+         FtGHPIDkY0Fx/lIZm0bQYh62wEcO6cANg9+eKgqH8rkdHc4kjGdD3SWKijehVnj9pl1R
+         iTK0alc1Z2Q70jhEmxrEvkgCf7Hk13ol1vBwRYHvQ7wRunB/1gezywQaByfCnl441P+B
+         8/0PKZFhjfyUE96rV9mmSmQKJz6AI88RHNwkfrnRoTDKdtFMc8hKZfOw1FWRBIuzQFjP
+         AdYQ==
+X-Gm-Message-State: AOAM531Lc9Zuxegd7dul9jKgkat8cgFDb1xP8ZT+YlzGZh90IIf8aMJl
+        UXEsBp6Ks4NODhPE6nSAoA==
+X-Google-Smtp-Source: ABdhPJx5swjtX0jDXRp1fN9wJcpuQyarkQAujy8AgxdM5qVYe6Yfq/nt39vdFenxx2uyJzcCst7mUA==
+X-Received: by 2002:a05:6808:159e:b0:2fa:6e29:9141 with SMTP id t30-20020a056808159e00b002fa6e299141mr72144oiw.142.1649874589850;
+        Wed, 13 Apr 2022 11:29:49 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id o185-20020acabec2000000b002ecf1218c53sm13893844oif.15.2022.04.13.11.29.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Apr 2022 11:29:49 -0700 (PDT)
+Received: (nullmailer pid 3603766 invoked by uid 1000);
+        Wed, 13 Apr 2022 18:29:48 -0000
+Date:   Wed, 13 Apr 2022 13:29:48 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     devicetree@vger.kernel.org, gregory.clement@bootlin.com,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        sebastian.hesselbarth@gmail.com, robert.marko@sartura.hr,
+        andrew@lunn.ch, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, kostap@marvell.com,
+        robh+dt@kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: mvebu: Document bindings
+ for AC5
+Message-ID: <YlcWnPVywM19VPi5@robh.at.kernel.org>
+References: <20220406032158.1449049-1-chris.packham@alliedtelesis.co.nz>
+ <20220406032158.1449049-2-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406032158.1449049-2-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Describe registers with fixed-width register fields and many reserved
-fields using the PINMUX_CFG_REG_VAR() macro, as the latter supports a
-shorthand not requiring dummy values.
+On Wed, 06 Apr 2022 15:21:55 +1200, Chris Packham wrote:
+> Add JSON schema for marvell,ac5-pinctrl present on the Marvell 98DX2530
+> SoC.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> 
+> Notes:
+>     Changes in v3:
+>     - Restore syscon and simple-mfd compatibles. These are needed by the
+>       pinctrl driver.
+>     Changes in v2:
+>     - Remove syscon and simple-mfd compatibles
+> 
+>  .../bindings/pinctrl/marvell,ac5-pinctrl.yaml | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctrl.yaml
+> 
 
-This reduces kernel size by 150 bytes.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/renesas/pfc-sh7785.c | 60 +++++++++++-----------------
- 1 file changed, 24 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/pinctrl/renesas/pfc-sh7785.c b/drivers/pinctrl/renesas/pfc-sh7785.c
-index 62389f7a1de14aec..126b663bb6eb3abe 100644
---- a/drivers/pinctrl/renesas/pfc-sh7785.c
-+++ b/drivers/pinctrl/renesas/pfc-sh7785.c
-@@ -1024,9 +1024,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		PD1_FN, PD1_OUT, PD1_IN, 0,
- 		PD0_FN, PD0_OUT, PD0_IN, 0 ))
- 	},
--	{ PINMUX_CFG_REG("PECR", 0xffe70008, 16, 2, GROUP(
--		0, 0, 0, 0,
--		0, 0, 0, 0,
-+	{ PINMUX_CFG_REG_VAR("PECR", 0xffe70008, 16,
-+			     GROUP(-4, 2, 2, 2, 2, 2, 2),
-+			     GROUP(
-+		/* RESERVED [4] */
- 		PE5_FN, PE5_OUT, PE5_IN, 0,
- 		PE4_FN, PE4_OUT, PE4_IN, 0,
- 		PE3_FN, PE3_OUT, PE3_IN, 0,
-@@ -1094,13 +1095,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		PL1_FN, PL1_OUT, PL1_IN, 0,
- 		PL0_FN, PL0_OUT, PL0_IN, 0 ))
- 	},
--	{ PINMUX_CFG_REG("PMCR", 0xffe70016, 16, 2, GROUP(
--		0, 0, 0, 0,
--		0, 0, 0, 0,
--		0, 0, 0, 0,
--		0, 0, 0, 0,
--		0, 0, 0, 0,
--		0, 0, 0, 0,
-+	{ PINMUX_CFG_REG_VAR("PMCR", 0xffe70016, 16,
-+			     GROUP(-12, 2, 2),
-+			     GROUP(
-+		/* RESERVED [12] */
- 		PM1_FN, PM1_OUT, PM1_IN, 0,
- 		PM0_FN, PM0_OUT, PM0_IN, 0 ))
- 	},
-@@ -1114,9 +1112,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		PN1_FN, PN1_OUT, PN1_IN, 0,
- 		PN0_FN, PN0_OUT, PN0_IN, 0 ))
- 	},
--	{ PINMUX_CFG_REG("PPCR", 0xffe7001a, 16, 2, GROUP(
--		0, 0, 0, 0,
--		0, 0, 0, 0,
-+	{ PINMUX_CFG_REG_VAR("PPCR", 0xffe7001a, 16,
-+			     GROUP(-4, 2, 2, 2, 2, 2, 2),
-+			     GROUP(
-+		/* RESERVED [4] */
- 		PP5_FN, PP5_OUT, PP5_IN, 0,
- 		PP4_FN, PP4_OUT, PP4_IN, 0,
- 		PP3_FN, PP3_OUT, PP3_IN, 0,
-@@ -1124,21 +1123,20 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		PP1_FN, PP1_OUT, PP1_IN, 0,
- 		PP0_FN, PP0_OUT, PP0_IN, 0 ))
- 	},
--	{ PINMUX_CFG_REG("PQCR", 0xffe7001c, 16, 2, GROUP(
--		0, 0, 0, 0,
--		0, 0, 0, 0,
--		0, 0, 0, 0,
-+	{ PINMUX_CFG_REG_VAR("PQCR", 0xffe7001c, 16,
-+			     GROUP(-6, 2, 2, 2, 2, 2),
-+			     GROUP(
-+		/* RESERVED [6] */
- 		PQ4_FN, PQ4_OUT, PQ4_IN, 0,
- 		PQ3_FN, PQ3_OUT, PQ3_IN, 0,
- 		PQ2_FN, PQ2_OUT, PQ2_IN, 0,
- 		PQ1_FN, PQ1_OUT, PQ1_IN, 0,
- 		PQ0_FN, PQ0_OUT, PQ0_IN, 0 ))
- 	},
--	{ PINMUX_CFG_REG("PRCR", 0xffe7001e, 16, 2, GROUP(
--		0, 0, 0, 0,
--		0, 0, 0, 0,
--		0, 0, 0, 0,
--		0, 0, 0, 0,
-+	{ PINMUX_CFG_REG_VAR("PRCR", 0xffe7001e, 16,
-+			     GROUP(-8, 2, 2, 2, 2),
-+			     GROUP(
-+		/* RESERVED [8] */
- 		PR3_FN, PR3_OUT, PR3_IN, 0,
- 		PR2_FN, PR2_OUT, PR2_IN, 0,
- 		PR1_FN, PR1_OUT, PR1_IN, 0,
-@@ -1162,20 +1160,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		P1MSEL1_0, P1MSEL1_1,
- 		P1MSEL0_0, P1MSEL0_1 ))
- 	},
--	{ PINMUX_CFG_REG("P2MSELR", 0xffe70082, 16, 1, GROUP(
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
-+	{ PINMUX_CFG_REG_VAR("P2MSELR", 0xffe70082, 16,
-+			     GROUP(-13, 1, 1, 1),
-+			     GROUP(
-+		/* RESERVED [13] */
- 		P2MSEL2_0, P2MSEL2_1,
- 		P2MSEL1_0, P2MSEL1_1,
- 		P2MSEL0_0, P2MSEL0_1 ))
--- 
-2.25.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
