@@ -2,39 +2,39 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BDEC4167B
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3452CC4167E
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237360AbiDMRdQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S237359AbiDMRdQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 13 Apr 2022 13:33:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39744 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237379AbiDMRcj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:32:39 -0400
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [IPv6:2a02:1800:120:4::f00:10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B9853A40
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:30:17 -0700 (PDT)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by cantor.telenet-ops.be (Postfix) with ESMTPS id 4KdqFr5msCz4x4fK
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 19:24:16 +0200 (CEST)
+        with ESMTP id S237446AbiDMRc6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:32:58 -0400
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [IPv6:2a02:1800:120:4::f00:11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229AA40E5D
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:30:37 -0700 (PDT)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by gauss.telenet-ops.be (Postfix) with ESMTPS id 4KdqFs5k9Hz4x4VY
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 19:24:17 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by baptiste.telenet-ops.be with bizsmtp
-        id JHQG2700x2t8Arn01HQGY2; Wed, 13 Apr 2022 19:24:16 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id JHQG2701b2t8Arn01HQGu6; Wed, 13 Apr 2022 19:24:17 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj2-000TqZ-6Q; Wed, 13 Apr 2022 19:24:16 +0200
+        id 1negj2-000TqO-1H; Wed, 13 Apr 2022 19:24:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj0-00DfTn-KF; Wed, 13 Apr 2022 19:24:14 +0200
+        id 1negj0-00DfTL-Ey; Wed, 13 Apr 2022 19:24:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 19/50] pinctrl: renesas: r8a77995: Use shorthands for reserved fields
-Date:   Wed, 13 Apr 2022 19:23:41 +0200
-Message-Id: <7098704f89bb702c28036c567d3222521ff60f86.1649865241.git.geert+renesas@glider.be>
+Subject: [PATCH 15/50] pinctrl: renesas: r8a77965: Use shorthands for reserved fields
+Date:   Wed, 13 Apr 2022 19:23:37 +0200
+Message-Id: <1cf52b1f93e8af593a60f65d8a848d1ebb24cac6.1649865241.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
 References: <cover.1649865241.git.geert+renesas@glider.be>
@@ -47,78 +47,91 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 Replace the full descriptions of reserved register fields by shorthands
 with a negative field width, and merge adjacent reserved fields.
 
-This reduces kernel size by 246 bytes.
+This reduces kernel size by 148 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a77995.c | 24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a77965.c | 29 +++++++-------------------
+ 1 file changed, 8 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77995.c b/drivers/pinctrl/renesas/pfc-r8a77995.c
-index 0cdf70dd9dea3c9c..71f6a4a79e3db95f 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77995.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77995.c
-@@ -2875,11 +2875,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77965.c b/drivers/pinctrl/renesas/pfc-r8a77965.c
+index 6bb7f7543c37ca8d..b9cf1919f42e7f76 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77965.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77965.c
+@@ -5808,8 +5808,8 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
  #define F_(x, y)	x,
  #define FM(x)		FN_##x,
  	{ PINMUX_CFG_REG_VAR("MOD_SEL0", 0xe6060500, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1,
--				   1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1),
-+			     GROUP(-1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, -1,
-+				   1, 1, 1, 1, 1, 1, -4, 1, 1, 1, 1, 1, 1),
+-			     GROUP(3, 2, 3, 1, 1, 1, 1, 1, 2, 1, 1, 2,
+-				   1, 1, 1, 2, 2, 1, 2, 3),
++			     GROUP(3, 2, 3, 1, 1, 1, 1, 1, 2, 1, -1, 2,
++				   1, 1, 1, 2, 2, 1, 2, -3),
  			     GROUP(
- 		/* RESERVED 31 */
--		0, 0,
- 		MOD_SEL0_30
- 		MOD_SEL0_29
- 		MOD_SEL0_28
-@@ -2891,7 +2890,6 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		MOD_SEL0_20_19
+ 		MOD_SEL0_31_30_29
+ 		MOD_SEL0_28_27
+@@ -5821,7 +5821,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL0_19
  		MOD_SEL0_18_17
- 		/* RESERVED 16 */
--		0, 0,
- 		MOD_SEL0_15
- 		MOD_SEL0_14
- 		MOD_SEL0_13
-@@ -2899,7 +2897,6 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL0_16
+-		0, 0, /* RESERVED 15 */
++		/* RESERVED 15 */
+ 		MOD_SEL0_14_13
+ 		MOD_SEL0_12
  		MOD_SEL0_11
- 		MOD_SEL0_10
- 		/* RESERVED 9, 8, 7, 6 */
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -5830,12 +5830,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL0_7_6
  		MOD_SEL0_5
- 		MOD_SEL0_4
- 		MOD_SEL0_3
-@@ -2908,7 +2905,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		MOD_SEL0_0 ))
+ 		MOD_SEL0_4_3
+-		/* RESERVED 2, 1, 0 */
+-		0, 0, 0, 0, 0, 0, 0, 0 ))
++		/* RESERVED 2, 1, 0 */ ))
  	},
  	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 2, 4, 4, 4, 4, 4, 4),
-+			     GROUP(1, 1, 1, 1, 1, 1, -26),
+ 			     GROUP(2, 3, 1, 2, 3, 1, 1, 2, 1, 2, 1, 1,
+-				   1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1),
++				   1, 1, 1, -2, 1, 1, 1, 1, 1, 1, 1),
  			     GROUP(
- 		MOD_SEL1_31
- 		MOD_SEL1_30
-@@ -2916,20 +2913,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		MOD_SEL1_28
- 		MOD_SEL1_27
- 		MOD_SEL1_26
--		/* RESERVED 25, 24 */
--		0, 0, 0, 0,
--		/* RESERVED 23, 22, 21, 20 */
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* RESERVED 19, 18, 17, 16 */
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 		MOD_SEL1_31_30
+ 		MOD_SEL1_29_28_27
+@@ -5852,7 +5851,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL1_11
+ 		MOD_SEL1_10
+ 		MOD_SEL1_9
+-		0, 0, 0, 0, /* RESERVED 8, 7 */
++		/* RESERVED 8, 7 */
+ 		MOD_SEL1_6
+ 		MOD_SEL1_5
+ 		MOD_SEL1_4
+@@ -5863,7 +5862,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL2", 0xe6060508, 32,
+ 			     GROUP(1, 1, 1, 2, 1, 3, 1, 1, 1, 1, 1, 1,
+-				   1, 4, 4, 4, 3, 1),
++				   -16, 1),
+ 			     GROUP(
+ 		MOD_SEL2_31
+ 		MOD_SEL2_30
+@@ -5877,19 +5876,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL2_19
+ 		MOD_SEL2_18
+ 		MOD_SEL2_17
+-		/* RESERVED 16 */
+-		0, 0,
 -		/* RESERVED 15, 14, 13, 12 */
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* RESERVED 11, 10, 9, 8  */
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* RESERVED 7, 6, 5, 4  */
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* RESERVED 3, 2, 1, 0  */
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ))
-+		/* RESERVED 25-0 */ ))
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 11, 10, 9, 8 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 7, 6, 5, 4 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 3, 2, 1 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
++		/* RESERVED 16-1 */
+ 		MOD_SEL2_0 ))
  	},
  	{ },
- };
 -- 
 2.25.1
 
