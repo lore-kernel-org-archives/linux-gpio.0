@@ -2,36 +2,36 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47730C35280
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2F6C43217
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237332AbiDMR1J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Apr 2022 13:27:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33376 "EHLO
+        id S237348AbiDMR1K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Apr 2022 13:27:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237337AbiDMR05 (ORCPT
+        with ESMTP id S237336AbiDMR05 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:26:57 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7780E9F
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:24:20 -0700 (PDT)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94FB22B29
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:24:19 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by albert.telenet-ops.be with bizsmtp
-        id JHQH270092t8Arn06HQHfd; Wed, 13 Apr 2022 19:24:17 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id JHQH2700U2t8Arn06HQHE3; Wed, 13 Apr 2022 19:24:17 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj3-000TtT-3O; Wed, 13 Apr 2022 19:24:17 +0200
+        id 1negj3-000TqR-3H; Wed, 13 Apr 2022 19:24:17 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj1-00DfbZ-Rm; Wed, 13 Apr 2022 19:24:15 +0200
+        id 1negj0-00DfTS-Fw; Wed, 13 Apr 2022 19:24:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 50/50] pinctrl: renesas: checker: Add reserved field checks
-Date:   Wed, 13 Apr 2022 19:24:12 +0200
-Message-Id: <f5a5159ba7b396e6f09dd3f23c864a74ed8e342d.1649865241.git.geert+renesas@glider.be>
+Subject: [PATCH 16/50] pinctrl: renesas: r8a77970: Use shorthands for reserved fields
+Date:   Wed, 13 Apr 2022 19:23:38 +0200
+Message-Id: <f2dda82454bb1b0c97f842de2c9fa68da05ef3e6.1649865241.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
 References: <cover.1649865241.git.geert+renesas@glider.be>
@@ -41,44 +41,42 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add checks for discovering registers with reserved fields that could
-benefit from being described using variable-width reserved field
-shorthands, reducing kernel size.
+Replace the full descriptions of reserved register fields by shorthands
+with a negative field width, and merge adjacent reserved fields.
+
+This reduces kernel size by 164 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/core.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/pinctrl/renesas/pfc-r8a77970.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 356325df9c18f2ea..340835551466235f 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -878,7 +878,7 @@ static const struct sh_pfc_pin __init *sh_pfc_find_pin(
- static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 					const struct pinmux_cfg_reg *cfg_reg)
- {
--	unsigned int i, n, rw;
-+	unsigned int i, n, rw, r;
- 	int fw;
- 
- 	sh_pfc_check_reg(drvname, cfg_reg->reg,
-@@ -887,6 +887,15 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 	if (cfg_reg->field_width) {
- 		fw = cfg_reg->field_width;
- 		n = (cfg_reg->reg_width / fw) << fw;
-+		for (i = 0, r = 0; i < n; i += 1 << fw) {
-+			if (is0s(&cfg_reg->enum_ids[i], 1 << fw))
-+				r++;
-+		}
-+
-+		if ((r << fw) * sizeof(u16) > cfg_reg->reg_width / fw)
-+			sh_pfc_warn("reg 0x%x can be described with variable-width reserved fields\n",
-+				    cfg_reg->reg);
-+
- 		/* Skip field checks (done at build time) */
- 		goto check_enum_ids;
- 	}
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77970.c b/drivers/pinctrl/renesas/pfc-r8a77970.c
+index 94f90c13989eceb9..6c8b1e797b0822cb 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77970.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77970.c
+@@ -2390,19 +2390,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ #define F_(x, y)	x,
+ #define FM(x)		FN_##x,
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL0", 0xe6060500, 32,
+-			     GROUP(4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1,
+-				   1, 1, 1, 1, 1),
++			     GROUP(-20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+ 			     GROUP(
+-		/* RESERVED 31, 30, 29, 28 */
+-		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 27, 26, 25, 24 */
+-		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 23, 22, 21, 20 */
+-		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 19, 18, 17, 16 */
+-		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 15, 14, 13, 12 */
+-		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
++		/* RESERVED 31-12 */
+ 		MOD_SEL0_11
+ 		MOD_SEL0_10
+ 		MOD_SEL0_9
 -- 
 2.25.1
 
