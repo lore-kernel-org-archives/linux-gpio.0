@@ -2,88 +2,180 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E434C41535
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45511C35278
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237347AbiDMR1G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Apr 2022 13:27:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32946 "EHLO
+        id S237287AbiDMR1E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Apr 2022 13:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237284AbiDMR0v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:26:51 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A0C17E00
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:24:19 -0700 (PDT)
+        with ESMTP id S237282AbiDMR0n (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:26:43 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31B3E04
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:24:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by albert.telenet-ops.be with bizsmtp
-        id JHQG2700J2t8Arn06HQGez; Wed, 13 Apr 2022 19:24:16 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id JHQE2700Q2t8Arn01HQEWt; Wed, 13 Apr 2022 19:24:15 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj1-000Tqc-FN; Wed, 13 Apr 2022 19:24:15 +0200
+        id 1negj0-000Tq4-B3; Wed, 13 Apr 2022 19:24:14 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj0-00DfTu-Lc; Wed, 13 Apr 2022 19:24:14 +0200
+        id 1negiz-00DfRd-UL; Wed, 13 Apr 2022 19:24:13 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 20/50] pinctrl: renesas: r8a779a0: Use shorthands for reserved fields
-Date:   Wed, 13 Apr 2022 19:23:42 +0200
-Message-Id: <807b2a7e02be2fac50c280961a4841813ab13cd8.1649865241.git.geert+renesas@glider.be>
+Subject: [PATCH 00/50] pinctrl: renesas: Reserved field optimizations
+Date:   Wed, 13 Apr 2022 19:23:22 +0200
+Message-Id: <cover.1649865241.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
-References: <cover.1649865241.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Replace the full descriptions of reserved register fields by shorthands
-with a negative field width, and merge adjacent reserved fields.
+	Hi Linus,
 
-This reduces kernel size by 140 bytes.
+Lots of register in pin control subdrivers for Renesas SoCs contain
+reserved or unused fields.  As the macros for describing these registers
+(PINMUX_CFG_REG() and PINMUX_CFG_REG_VAR() for registers with
+fixed-width resp. variable-width fields) require describing all fields,
+the resulting data structures contain lots of dummy (zero) values: 2^N
+values for a field of N-bits wide.  To reduce data size, reserved bit
+fields wider than 3 bits were typically split in multiple 2-bit fields.
+This patch series aims to improve this by introducing a shorthand for
+describing reserved variable-width register fields without dummy values.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/renesas/pfc-r8a779a0.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+  - Patch 1 converts a few register definitions for registers with
+    fixed-width fields that accidentally used the equivalent but larger
+    description format intended for registers with variable-width
+    fields,
+  - Patch 2 introduces a shorthand for describing reserved register
+    fields,
+  - Patches 3-22 convert reserved field descriptions in the various
+    SoC-specific pin control subdrivers to the new shorthands,
+  - Patches 23-49 convert register definitions for registers with
+    reserved fixed-width fields to the equivalent definitions with
+    variable-width fields where it makes sense,
+  - Patch 50 updates the checker to flag possible conversions to
+    variable-width reserved fields.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-index 4a668a04b7ca6820..081a14fbe5a4af87 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-@@ -3656,16 +3656,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- #define F_(x, y)	x,
- #define FM(x)		FN_##x,
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL2", 0xe6050900, 32,
--			     GROUP(4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2, 1, 1),
-+			     GROUP(-16, 2, 2, 2, 2, 2, 2, 2, -2),
- 			     GROUP(
--		/* RESERVED 31, 30, 29, 28 */
--		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
--		/* RESERVED 27, 26, 25, 24 */
--		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
--		/* RESERVED 23, 22, 21, 20 */
--		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
--		/* RESERVED 19, 18, 17, 16 */
--		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,
-+		/* RESERVED 31-16 */
- 		MOD_SEL2_15_14
- 		MOD_SEL2_13_12
- 		MOD_SEL2_11_10
-@@ -3673,8 +3666,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		MOD_SEL2_7_6
- 		MOD_SEL2_5_4
- 		MOD_SEL2_3_2
--		0, 0,
--		0, 0, ))
-+		/* RESERVED 1-0 */ ))
- 	},
- 	{ },
- };
+The total kernel size reduction due to patches 3-49 is:
+  - 12685 bytes on ARM32 SoCs (multi-platform),
+  - 5416 bytes on ARM64 SoCs (multi-platform),
+  - 2575 bytes on SH SoCs (sum of mutually-exclusive single platforms).
+
+I've been running with these changes on R-Mobile APE6 and A1, R-Car
+M2-W, H3 ES1.x, H3 ES2.0, M3-W, M3-N, V3M, E3, D3, V3U, and S4, and
+SH-Mobile AG5 during the past six weeks, without any issues.
+
+I plan to queue these in renesas-pinctrl-for-v5.19.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (50):
+  pinctrl: renesas: r8a77470: Use fixed-width description for IPSR regs
+  pinctrl: renesas: Add shorthand for reserved register fields
+  pinctrl: renesas: rmobile: Mark unused PORTCR bits reserved
+  pinctrl: renesas: emev2: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77470: Use shorthands for reserved fields
+  pinctrl: renesas: r8a7778: Use shorthands for reserved fields
+  pinctrl: renesas: r8a7779: Use shorthands for reserved fields
+  pinctrl: renesas: r8a7790: Use shorthands for reserved fields
+  pinctrl: renesas: r8a7791: Use shorthands for reserved fields
+  pinctrl: renesas: r8a7792: Use shorthands for reserved fields
+  pinctrl: renesas: r8a7794: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77950: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77951: Use shorthands for reserved fields
+  pinctrl: renesas: r8a7796: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77965: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77970: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77980: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77990: Use shorthands for reserved fields
+  pinctrl: renesas: r8a77995: Use shorthands for reserved fields
+  pinctrl: renesas: r8a779a0: Use shorthands for reserved fields
+  pinctrl: renesas: r8a779f0: Use shorthands for reserved fields
+  pinctrl: renesas: sh7734: Use shorthands for reserved fields
+  pinctrl: renesas: r8a73a4: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a7740: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77470: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a7779: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a7792: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77950: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77951: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77965: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a7796: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77970: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77980: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77990: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a77995: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a779a0: Optimize fixed-width reserved fields
+  pinctrl: renesas: r8a779f0: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7203: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7264: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7269: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh73a0: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7720: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7722: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7723: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7724: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7734: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7757: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7785: Optimize fixed-width reserved fields
+  pinctrl: renesas: sh7786: Optimize fixed-width reserved fields
+  pinctrl: renesas: checker: Add reserved field checks
+
+ drivers/pinctrl/renesas/core.c         |  43 +++--
+ drivers/pinctrl/renesas/pfc-emev2.c    |  59 ++-----
+ drivers/pinctrl/renesas/pfc-r8a73a4.c  |  58 ++-----
+ drivers/pinctrl/renesas/pfc-r8a7740.c  |  74 ++++----
+ drivers/pinctrl/renesas/pfc-r8a77470.c | 176 +++++--------------
+ drivers/pinctrl/renesas/pfc-r8a7778.c  |  98 +++--------
+ drivers/pinctrl/renesas/pfc-r8a7779.c  |  82 +++------
+ drivers/pinctrl/renesas/pfc-r8a7790.c  | 110 ++++--------
+ drivers/pinctrl/renesas/pfc-r8a7791.c  | 111 ++++--------
+ drivers/pinctrl/renesas/pfc-r8a7792.c  | 231 ++++++-------------------
+ drivers/pinctrl/renesas/pfc-r8a7794.c  |  97 +++--------
+ drivers/pinctrl/renesas/pfc-r8a77950.c | 170 ++++--------------
+ drivers/pinctrl/renesas/pfc-r8a77951.c | 169 +++++-------------
+ drivers/pinctrl/renesas/pfc-r8a7796.c  | 166 +++++-------------
+ drivers/pinctrl/renesas/pfc-r8a77965.c | 166 +++++-------------
+ drivers/pinctrl/renesas/pfc-r8a77970.c | 136 ++++-----------
+ drivers/pinctrl/renesas/pfc-r8a77980.c | 107 ++++--------
+ drivers/pinctrl/renesas/pfc-r8a77990.c | 132 ++++----------
+ drivers/pinctrl/renesas/pfc-r8a77995.c | 131 +++-----------
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 217 ++++++++---------------
+ drivers/pinctrl/renesas/pfc-r8a779f0.c | 100 ++++-------
+ drivers/pinctrl/renesas/pfc-sh7203.c   |  53 +++---
+ drivers/pinctrl/renesas/pfc-sh7264.c   | 104 +++++------
+ drivers/pinctrl/renesas/pfc-sh7269.c   |  82 ++++-----
+ drivers/pinctrl/renesas/pfc-sh73a0.c   |  87 ++++------
+ drivers/pinctrl/renesas/pfc-sh7720.c   |  57 +++---
+ drivers/pinctrl/renesas/pfc-sh7722.c   | 202 +++++++++------------
+ drivers/pinctrl/renesas/pfc-sh7723.c   |  70 ++++----
+ drivers/pinctrl/renesas/pfc-sh7724.c   |   7 +-
+ drivers/pinctrl/renesas/pfc-sh7734.c   | 115 ++++--------
+ drivers/pinctrl/renesas/pfc-sh7757.c   |  95 ++++------
+ drivers/pinctrl/renesas/pfc-sh7785.c   |  60 +++----
+ drivers/pinctrl/renesas/pfc-sh7786.c   |  21 +--
+ drivers/pinctrl/renesas/sh_pfc.h       |  17 +-
+ 34 files changed, 1116 insertions(+), 2487 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
