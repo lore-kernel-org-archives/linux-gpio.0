@@ -2,39 +2,40 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC03BC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0840DC433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 17:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237041AbiDMRdv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Apr 2022 13:33:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40530 "EHLO
+        id S237366AbiDMRdw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Apr 2022 13:33:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235818AbiDMRdq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:33:46 -0400
+        with ESMTP id S237361AbiDMRdr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 13:33:47 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Apr 2022 10:31:23 PDT
 Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641A06C484
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642C76C4A3
         for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 10:31:23 -0700 (PDT)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4KdqFr2ccQz4xlW4
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4KdqFr5Cclz4xlW9
         for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2022 19:24:16 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by baptiste.telenet-ops.be with bizsmtp
-        id JHQG2700T2t8Arn01HQGXg; Wed, 13 Apr 2022 19:24:16 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id JHQG2701c2t8Arn01HQGu8; Wed, 13 Apr 2022 19:24:16 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj1-000Tqc-IO; Wed, 13 Apr 2022 19:24:15 +0200
+        id 1negj2-000TqW-3p; Wed, 13 Apr 2022 19:24:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj1-00DfWQ-6v; Wed, 13 Apr 2022 19:24:15 +0200
+        id 1negj0-00DfTg-IX; Wed, 13 Apr 2022 19:24:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 35/50] pinctrl: renesas: r8a77995: Optimize fixed-width reserved fields
-Date:   Wed, 13 Apr 2022 19:23:57 +0200
-Message-Id: <d74af80fdb7b6d78b10634238a88e55a139e5c22.1649865241.git.geert+renesas@glider.be>
+Subject: [PATCH 18/50] pinctrl: renesas: r8a77990: Use shorthands for reserved fields
+Date:   Wed, 13 Apr 2022 19:23:40 +0200
+Message-Id: <c032fce3fff6a6a63dc90f9ab8dfe1f4f3cf6ad6.1649865241.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
 References: <cover.1649865241.git.geert+renesas@glider.be>
@@ -44,163 +45,61 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Describe registers with fixed-width register fields and many reserved
-fields using the PINMUX_CFG_REG_VAR() macro, as the latter supports a
-shorthand not requiring dummy values.
+Replace the full descriptions of reserved register fields by shorthands
+with a negative field width, and merge adjacent reserved fields.
 
-This reduces kernel size by 422 bytes.
+This reduces kernel size by 40 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a77995.c | 107 +++++--------------------
- 1 file changed, 22 insertions(+), 85 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a77990.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77995.c b/drivers/pinctrl/renesas/pfc-r8a77995.c
-index 71f6a4a79e3db95f..d949ae59c757924d 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77995.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77995.c
-@@ -2486,30 +2486,10 @@ static const struct sh_pfc_function pinmux_functions[] = {
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- #define F_(x, y)	FN_##y
- #define FM(x)		FN_##x
--	{ PINMUX_CFG_REG("GPSR0", 0xe6060100, 32, 1, GROUP(
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77990.c b/drivers/pinctrl/renesas/pfc-r8a77990.c
+index c273bb743d3bc098..d31b7c1d6606bd21 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77990.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77990.c
+@@ -5012,11 +5012,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ #define F_(x, y)	x,
+ #define FM(x)		FN_##x,
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL0", 0xe6060500, 32,
+-			     GROUP(1, 2, 1, 2, 1, 1, 1, 1, 2, 3, 1, 1,
++			     GROUP(-1, 2, 1, 2, 1, 1, 1, 1, 2, 3, 1, 1,
+ 				   1, 2, 2, 1, 1, 1, 2, 1, 1, 1, 2),
+ 			     GROUP(
+ 		/* RESERVED 31 */
 -		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
-+	{ PINMUX_CFG_REG_VAR("GPSR0", 0xe6060100, 32,
-+			     GROUP(-23, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-+			     GROUP(
-+		/* GP0_31_9 RESERVED */
- 		GP_0_8_FN,	GPSR0_8,
- 		GP_0_7_FN,	GPSR0_7,
- 		GP_0_6_FN,	GPSR0_6,
-@@ -2588,29 +2568,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_2_1_FN,	GPSR2_1,
- 		GP_2_0_FN,	GPSR2_0, ))
+ 		MOD_SEL0_30_29
+ 		MOD_SEL0_28
+ 		MOD_SEL0_27_26
+@@ -5041,15 +5040,14 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL0_1_0 ))
  	},
--	{ PINMUX_CFG_REG("GPSR3", 0xe606010c, 32, 1, GROUP(
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
+-			     GROUP(1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1,
+-				   1, 2, 2, 2, 1, 1, 2, 1, 4),
++			     GROUP(1, 1, 1, 1, -1, 1, 1, 3, 3, 1, 1, 1,
++				   1, 2, 2, 2, 1, 1, 2, 1, -4),
+ 			     GROUP(
+ 		MOD_SEL1_31
+ 		MOD_SEL1_30
+ 		MOD_SEL1_29
+ 		MOD_SEL1_28
+ 		/* RESERVED 27 */
 -		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
-+	{ PINMUX_CFG_REG_VAR("GPSR3", 0xe606010c, 32,
-+			     GROUP(-22, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-+			     GROUP(
-+		/* GP3_31_10 RESERVED */
- 		GP_3_9_FN,	GPSR3_9,
- 		GP_3_8_FN,	GPSR3_8,
- 		GP_3_7_FN,	GPSR3_7,
-@@ -2656,18 +2617,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_4_1_FN,	GPSR4_1,
- 		GP_4_0_FN,	GPSR4_0, ))
+ 		MOD_SEL1_26
+ 		MOD_SEL1_25
+ 		MOD_SEL1_24_23_22
+@@ -5065,8 +5063,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL1_7
+ 		MOD_SEL1_6_5
+ 		MOD_SEL1_4
+-		/* RESERVED 3, 2, 1, 0  */
+-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ))
++		/* RESERVED 3, 2, 1, 0  */ ))
  	},
--	{ PINMUX_CFG_REG("GPSR5", 0xe6060114, 32, 1, GROUP(
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
-+	{ PINMUX_CFG_REG_VAR("GPSR5", 0xe6060114, 32,
-+			     GROUP(-11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-+				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-+			     GROUP(
-+		/* GP5_31_21 RESERVED */
- 		GP_5_20_FN,	GPSR5_20,
- 		GP_5_19_FN,	GPSR5_19,
- 		GP_5_18_FN,	GPSR5_18,
-@@ -2690,25 +2644,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_5_1_FN,	GPSR5_1,
- 		GP_5_0_FN,	GPSR5_0, ))
- 	},
--	{ PINMUX_CFG_REG("GPSR6", 0xe6060118, 32, 1, GROUP(
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
--		0, 0,
-+	{ PINMUX_CFG_REG_VAR("GPSR6", 0xe6060118, 32,
-+			     GROUP(-18, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-+				   1, 1, 1),
-+			     GROUP(
-+		/* GP6_31_14 RESERVED */
- 		GP_6_13_FN,	GPSR6_13,
- 		GP_6_12_FN,	GPSR6_12,
- 		GP_6_11_FN,	GPSR6_11,
-@@ -2859,13 +2799,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		IP12_7_4
- 		IP12_3_0 ))
- 	},
--	{ PINMUX_CFG_REG("IPSR13", 0xe6060234, 32, 4, GROUP(
--		/* IP13_31_28 */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* IP13_27_24 */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* IP13_23_20 */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* IP13_19_16 */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* IP13_15_12 */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--		/* IP13_11_8  */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-+	{ PINMUX_CFG_REG_VAR("IPSR13", 0xe6060234, 32,
-+			     GROUP(-24, 4, 4),
-+			     GROUP(
-+		/* IP13_31_8 RESERVED */
- 		IP13_7_4
- 		IP13_3_0 ))
- 	},
+ 	{ },
+ };
 -- 
 2.25.1
 
