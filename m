@@ -2,38 +2,38 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F922C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 06:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F456C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Apr 2022 06:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232999AbiDMGLK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Apr 2022 02:11:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49770 "EHLO
+        id S232995AbiDMGLP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Apr 2022 02:11:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232986AbiDMGLI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 02:11:08 -0400
+        with ESMTP id S233002AbiDMGLL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2022 02:11:11 -0400
 Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE8535DC4;
-        Tue, 12 Apr 2022 23:08:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1649830109; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 865BA35DCC;
+        Tue, 12 Apr 2022 23:08:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1649830117; cv=none; 
         d=zohomail.com; s=zohoarc; 
-        b=GZgJzAj84MkQLWH09OwLISskLWuQeAVaNJijhuQHMFsS/xzv6LFRcPiCqpMkhD1pt2qLQN0/GuCFvW5T+5Li/R6jRjY/2U4wokTMvq0aXoP6N3Gg7xKhfvLSr7of9kf7VYnmUd2ozaNtEXR1FXpDfkuEVEvtLxARKWKx+7kMwJc=
+        b=BiUbEUIHXIRrZXDGJfUo+W4AjUSABlHdBC7OBng3VUCiSKZKDU6D3TBYmK8fqDSvJrvfnps5ofUkU9TaeGrksgD7v/eO4s+fz7FpK2v8w4OKJc1vl+HXL3qDajtZ7DhmNf5xI+OgVun7wYbhHjfIBB9XQA0sy55nNqmXgIjiDwE=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1649830109; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=YE6b1mo8I5azClKQbd0b86QgxZKJjLu5JgfZBC1QyRE=; 
-        b=WZ8W4EbwI3lgFD4RJZUKzagDncGXgy66CS7ZnuaCBMUil9uahq1w2Ev1ifEcSYJsepqcwSg+nkEaYjJ5iE50+JEDdCvX3t9n9EUY32SRkb1OlzIt41KJrGslycAYlHxkX4FSkWHQtKVyAqIQgF3v9zsGFwVYxGD+/7mogv53lew=
+        t=1649830117; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=Z9OI2iyoJdnz5EmsHXut+vIwbquSFmvba6kvk2HobWI=; 
+        b=XTAzbS+8EZ8Bu6v0dMvLdTZquGM/yeCJD8xPa1T13ihP2I5MjcU0D9IWlc8mjroyOfkL3TKEFwrx04FtVEGLsWGCyHOpXsRSD83gIukhLzyGnF21+OzYgDmuvVeOz9Mc+abZ3aogZI2PZteuDgIXFHQBJM+Khe+KZBdNw2yhscI=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
         dkim=pass  header.i=arinc9.com;
         spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
         dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1649830109;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1649830117;
         s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
         h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
-        bh=YE6b1mo8I5azClKQbd0b86QgxZKJjLu5JgfZBC1QyRE=;
-        b=Lg8Kg6NuECM6lv2h2GGM73CLqjmGRkRaW88+6CmB3D8G9sjF/prZ/q8NvZEUBjJe
-        WJqgB/3yCJL5Lqf7q6B8iBloe7gVd7QKG6CNiKiPjUqcGKS9qpVk/5SOcb+w1RUPXAN
-        GDKgrWPzpsvAgYhjSM5axeIEwx79T1AbVPEFSxyY=
+        bh=Z9OI2iyoJdnz5EmsHXut+vIwbquSFmvba6kvk2HobWI=;
+        b=W+1HVaE9dKQqi+fuU/u3fF9/R9Php3FUcYw1ol2/wyrno4+bIZuccws0yocO+Avr
+        w/2b8LTjVgDim9Zfa3KWx9IboSBD2zXDmpqcFptQ56ebepqpAl47173EUjomnjsEsoV
+        ZxiLT78Vkv1zvawFFrMCkcHkutUVAFMnWJ5nQAQA=
 Received: from arinc9-PC.localdomain (85.117.236.245 [85.117.236.245]) by mx.zohomail.com
-        with SMTPS id 1649830108091536.530591428714; Tue, 12 Apr 2022 23:08:28 -0700 (PDT)
+        with SMTPS id 1649830115843597.8661474284708; Tue, 12 Apr 2022 23:08:35 -0700 (PDT)
 From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
 To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
         Luiz Angelo Daros de Luca <luizluca@gmail.com>,
@@ -48,9 +48,9 @@ Cc:     erkin.bozoglu@xeront.com,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mips@vger.kernel.org
-Subject: [PATCH 08/14] MAINTAINERS: add Ralink pinctrl driver
-Date:   Wed, 13 Apr 2022 09:07:23 +0300
-Message-Id: <20220413060729.27639-9-arinc.unal@arinc9.com>
+Subject: [PATCH 10/14] dt-bindings: pinctrl: rt2880: fix binding name, pin groups and functions
+Date:   Wed, 13 Apr 2022 09:07:25 +0300
+Message-Id: <20220413060729.27639-11-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220413060729.27639-1-arinc.unal@arinc9.com>
 References: <20220413060729.27639-1-arinc.unal@arinc9.com>
@@ -62,32 +62,82 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a new section for the Ralink pinctrl driver and add me and Sergio as
-the maintainers.
+Change binding name from ralink,rt2880-pinmux to ralink,rt2880-pinctrl.
+This is the binding for the Ralink RT2880 pinctrl subdriver.
+
+Current pin group and function bindings are for MT7621. Put bindings for
+RT2880 instead.
 
 Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ ...pinmux.yaml => ralink,rt2880-pinctrl.yaml} | 24 +++++++++----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+ rename Documentation/devicetree/bindings/pinctrl/{ralink,rt2880-pinmux.yaml => ralink,rt2880-pinctrl.yaml} (56%)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fd768d43e048..cbd0c3e180bf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16502,6 +16502,13 @@ L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	arch/mips/boot/dts/ralink/mt7621*
+diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinctrl.yaml
+similarity index 56%
+rename from Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml
+rename to Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinctrl.yaml
+index 9de8b0c075e2..c657bbf9fdda 100644
+--- a/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinctrl.yaml
+@@ -1,21 +1,23 @@
+ # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/pinctrl/ralink,rt2880-pinmux.yaml#
++$id: http://devicetree.org/schemas/pinctrl/ralink,rt2880-pinctrl.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
-+RALINK PINCTRL DRIVER
-+M:	Arınç ÜNAL <arinc.unal@arinc9.com>
-+M:	Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+L:	linux-mips@vger.kernel.org
-+S:	Maintained
-+F:	drivers/pinctrl/ralink/*
+-title: Ralink rt2880 pinmux controller
++title: Ralink RT2880 Pin Controller
+ 
+ maintainers:
++  - Arınç ÜNAL <arinc.unal@arinc9.com>
+   - Sergio Paracuellos <sergio.paracuellos@gmail.com>
+ 
+ description:
+-  The rt2880 pinmux can only set the muxing of pin groups. Muxing indiviual pins
++  Ralink RT2880 pin controller for RT2880 SoC.
++  The pin controller can only set the muxing of pin groups. Muxing indiviual pins
+   is not supported. There is no pinconf support.
+ 
+ properties:
+   compatible:
+-    const: ralink,rt2880-pinmux
++    const: ralink,rt2880-pinctrl
+ 
+ patternProperties:
+   '-pins$':
+@@ -28,14 +30,12 @@ patternProperties:
+ 
+         properties:
+           groups:
+-            description: Name of the pin group to use for the functions.
+-            enum: [i2c, jtag, mdio, pcie, rgmii1, rgmii2, sdhci, spi,
+-                   uart1, uart2, uart3, wdt]
++            description: The pin group to select.
++            enum: [i2c, spi, uartlite, jtag, mdio, sdram, pci]
 +
- RALINK RT2X00 WIRELESS LAN DRIVER
- M:	Stanislaw Gruszka <stf_xl@wp.pl>
- M:	Helmut Schaa <helmut.schaa@googlemail.com>
+           function:
+-            description: The mux function to select
+-            enum: [gpio, i2c, i2s, jtag, mdio, nand1, nand2, pcie refclk,
+-                   pcie rst, pcm, rgmii1, rgmii2, sdhci, spdif2, spdif3,
+-                   spi, uart1, uart2, uart3, wdt refclk, wdt rst]
++            description: The mux function to select.
++            enum: [gpio, i2c, spi, uartlite, jtag, mdio, sdram, pci]
+ 
+         required:
+           - groups
+@@ -57,7 +57,7 @@ examples:
+   # Pinmux controller node
+   - |
+     pinctrl {
+-      compatible = "ralink,rt2880-pinmux";
++      compatible = "ralink,rt2880-pinctrl";
+ 
+       i2c_pins: i2c0-pins {
+         pinmux {
 -- 
 2.25.1
 
