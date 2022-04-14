@@ -2,240 +2,132 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19640C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 15:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98BDC4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 15:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245366AbiDNPwR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Apr 2022 11:52:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35600 "EHLO
+        id S239548AbiDNP6s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Apr 2022 11:58:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343815AbiDNPM6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 11:12:58 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4395BB2458;
-        Thu, 14 Apr 2022 07:53:12 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id r13so10549201ejd.5;
-        Thu, 14 Apr 2022 07:53:12 -0700 (PDT)
+        with ESMTP id S1359712AbiDNPrM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 11:47:12 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A379EF47FF;
+        Thu, 14 Apr 2022 08:32:26 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id r13so10780075ejd.5;
+        Thu, 14 Apr 2022 08:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=/vd0ABk9Uv8CXGT1XhdmltOBRajCrHaBdNTPR8s2GVs=;
-        b=M/nwcxed74Z1zu5KFnuL9OThA4kgtL9BN+Nd2OJ6JOv9UEmmNp97n2cI2JPnSThPWz
-         pjLc3vWl8+7VHuhc5zC09DNeEZBsGm5SeVUJLN/KeFbC05WJrJA9HVE5chu4rU+P9NPK
-         fz4Q6mO60wLys08v4twAIpoZqgKAEH4fUrsMVoOnBx3kwZgh0SAsnirvP0zV52pEdGVX
-         bId/2PlR1d0ZNAtV5hrrHw7c/geSq760P7B1CpN5ffZkCX+8J2Vhs/x06E5/2M9wK1dF
-         StjGH4qg2ZiKCIAEwwktQqcqu9sJi0kqFFEkq3oQOWZ3K6KF0nUhKb3UpAOQST/XZFdk
-         KiiA==
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zNo0g28tlK9vSNHNGKqqjmBjPaYSOEtIiawAODAYH3c=;
+        b=cW++jIHdTWB0e/u7vyX0744QVnVIpLHeGh5WEu4BOxVM9uRZh7gq6XNbmyhxdiX0XR
+         DnNObAKYV/atK29rtd9VDxytlGyydSI3GK7gv8UXn2s61BkOk7SirtAUukWezAkshDlq
+         S/vxhU3aqvdD4Zqx1321bK8UkTZ5MlXIcTcawWigG3NoYBFnJf5STvdVx3TUpJBfsLar
+         EQAclsSro41RYhUaHhwMeeWqdSJWbXVcjR24H6KwhSZsIWtZvTUOcbxQYsJQYQDPhirF
+         VFdLgQ3N+EYyMsyuH2QM2c0kXC8IiDC08CHcYMnXhx4rxUrl3t3+RKGADf5TY3AHrxf3
+         qKKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/vd0ABk9Uv8CXGT1XhdmltOBRajCrHaBdNTPR8s2GVs=;
-        b=FQgSKkJfi9UuPwGZrOP0dymU6wt/Bnh64zgj1Gd6N0NrSxpdO6fb4ZV6ytQWyvTlTm
-         BN28fzrwfJXvumXRtlj5DEVpurDd/zEbXUj4Vr5DDMvr6fiD4Zz7T837ZofOUvBtiDGP
-         LHW1pZwe5C1Whj8Oz+6AlIgX7RD2jppsCmjiiMt2dkt5BxvsG5N7L0rZms7nAZ8OjClV
-         2bg3CVaP6VSZAjfEKCWMSxpgUnsBC+n4iCRVoGZtCdaDJHsfWG73WmAel1sQDRUF9hHb
-         S9kQusWEbsbWHi78Vm9HHV+7FfHkzmwvATKFmafpWkc16WDtRSZFZm7qUX+EGJdPTGOQ
-         bzRQ==
-X-Gm-Message-State: AOAM531NIVuckt7jQeVcVqA77LYx08n3eG00F4nnrR3Jnd7pobzDjUlA
-        3NasFnW1J260FKLh603zguvHssejrJo=
-X-Google-Smtp-Source: ABdhPJzgdkmpc3tsESRQhUW79TqGI55xbBqkctA/XrPrQuFxglGd93qrbFGXtzkvlk0ncMjIpSVSIw==
-X-Received: by 2002:a17:907:94c1:b0:6e6:f038:9993 with SMTP id dn1-20020a17090794c100b006e6f0389993mr2685986ejc.238.1649947990464;
-        Thu, 14 Apr 2022 07:53:10 -0700 (PDT)
-Received: from [192.168.0.182] ([188.24.22.234])
-        by smtp.gmail.com with ESMTPSA id ee17-20020a056402291100b0041fe1e4e342sm1077630edb.27.2022.04.14.07.53.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Apr 2022 07:53:10 -0700 (PDT)
-Message-ID: <0823cf19-60b5-3050-0e26-04b87a7ce5c0@gmail.com>
-Date:   Thu, 14 Apr 2022 17:53:09 +0300
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zNo0g28tlK9vSNHNGKqqjmBjPaYSOEtIiawAODAYH3c=;
+        b=x3K3tLr7937Mz1u38hefxbTOFldKb5QKIaBNWKWBEnIfHqisPljWqb/sEsmO6numWJ
+         10T7FNHVAYjremfYQy4BvvegUJ9BOhWb/ncyy1YVx+q4dDwUL1HgGLLwBE/Sj6SCFXaM
+         +bAQfxD/2jTWgyoi1tql/mRZWr5e1TB/Zu7y3kXrKHGEBMO1xWbgMw7ORiOnfQqyBlc2
+         eh/ZMGo7k8yUIcmR+y0Rn6QuPmtPi4udDJ3ZFlQL1JEoqDkIK03oPbB+xUFUSLyipkEw
+         EPqukydwfQMFoiPS5asCJEzeiVBJHj8bYRMMcW/NNp5Ans9Sy5j44JdLvZtjo91I1/HM
+         mxdw==
+X-Gm-Message-State: AOAM532RGhJwSbEiUlg97cvkMK7KQitETUNg3c+UCRA63WzGDCNL/Ghg
+        +pNSEKMtYaPO4XunducDbc3JbhBbdSMtvaVcic0VecYsbm8=
+X-Google-Smtp-Source: ABdhPJzbycImSsBidIp4JSSW5b5SF1qL/I1dfcfErig8MjQOErRGdzGC2WsE7sy1HibLlRHnfGkpr6ZwwcMbQbIMAXs=
+X-Received: by 2002:a17:907:3f03:b0:6df:b04b:8712 with SMTP id
+ hq3-20020a1709073f0300b006dfb04b8712mr2856347ejc.290.1649950345064; Thu, 14
+ Apr 2022 08:32:25 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v1 3/3] iio: adc: ad4130: add AD4130 driver
-Content-Language: en-US
+References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
+ <CGME20220414063849eucas1p126e41b53ff0d342f5c48408994b704e9@eucas1p1.samsung.com>
+ <20220401103604.8705-12-andriy.shevchenko@linux.intel.com>
+ <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com> <CAHp75VfMPpfeMpawRyLo_GtLR8+gVGgm8zW-fatp6=9a9wK18A@mail.gmail.com>
+In-Reply-To: <CAHp75VfMPpfeMpawRyLo_GtLR8+gVGgm8zW-fatp6=9a9wK18A@mail.gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 14 Apr 2022 17:32:14 +0200
+Message-ID: <CAFBinCCCtZvdp+01DdEE=-f7rZ8V46O125wKDqE1muA645sdUg@mail.gmail.com>
+Subject: Re: [PATCH v4 11/13] pinctrl: meson: Replace custom code by
+ gpiochip_node_count() call
 To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Cosmin Tanislav <cosmin.tanislav@analog.com>
-References: <20220413094011.185269-1-cosmin.tanislav@analog.com>
- <20220413094011.185269-3-cosmin.tanislav@analog.com>
- <CAHp75VfzX8u45J3634yN5p-QTeT7w0Bos27OxeWOsb3MQ2VRVw@mail.gmail.com>
- <80196942-4c33-7625-3945-86ce5b7b347f@gmail.com>
- <CAHp75VfAjvJz2KHYfDM+-8D+hSBtdKJm521EBY3VgCfUsAgt8Q@mail.gmail.com>
-From:   Cosmin Tanislav <demonsingur@gmail.com>
-In-Reply-To: <CAHp75VfAjvJz2KHYfDM+-8D+hSBtdKJm521EBY3VgCfUsAgt8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Andy,
+
+On Thu, Apr 14, 2022 at 3:51 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+[...]
+> > This patch landed in linux next-20220413 as commit 88834c75cae5
+> > ("pinctrl: meson: Replace custom code by gpiochip_node_count() call").
+> > Unfortunately it breaks booting of all my Amlogic-based test boards
+> > (Odroid C4, N2, Khadas VIM3, VIM3l). MMC driver is no longer probed and
+> > boards are unable to mount rootfs. Reverting this patch on top of
+> > linux-next fixes the issue.
+>
+> Thank you for letting me know, I'll withdraw it and investigate.
+If needed I can investigate further later today/tomorrow. I think the
+problem is that our node name doesn't follow the .dts recommendation.
+
+For GXL (arch/arm64/boot/dts/amlogic/meson-gxl.dtsi) the GPIO
+controller nodes are for example:
+  gpio: bank@4b0 {
+      ...
+  }
+and
+  gpio_ao: bank@14 {
+      ...
+  }
+
+See also:
+$ git grep -C6 gpio-controller arch/arm64/boot/dts/amlogic/*.dtsi
+
+Marek did not state which error he's getting but I suspect it fails
+with "no gpio node found".
 
 
-On 4/14/22 16:45, Andy Shevchenko wrote:
-> On Thu, Apr 14, 2022 at 2:06 PM Cosmin Tanislav <demonsingur@gmail.com> wrote:
->> On 4/13/22 18:41, Andy Shevchenko wrote:
->>> On Wed, Apr 13, 2022 at 1:41 PM Cosmin Tanislav <demonsingur@gmail.com> wrote:
->>>> +#define AD4130_RESET_CLK_COUNT         64
->>>> +#define AD4130_RESET_BUF_SIZE          (AD4130_RESET_CLK_COUNT / 8)
->>>
->>> To be more precise shouldn't the above need to have DIV_ROUND_UP() ?
->>
->> Does it look like 64 / 8 needs any rounding?
-> 
-> Currently no, but if someone puts 63 there or 65, what would be the outcome?
-> OTOH, you may add a static assert to guarantee that CLK_COUNT is multiple of 8.
-> 
-
-No one will. 64 is defined in the datasheet and will never change. I'm
-not gonna do anything about it. Actually, I can do something about it.
-Remove AD4130_RESET_CLK_COUNT and only define AD4130_RESET_BUF_SIZE as
-8.
-
->>>> +       int                             samp_freq_avail_len;
->>>> +       int                             samp_freq_avail[3][2];
-> 
->>>> +       int                             db3_freq_avail_len;
->>>> +       int                             db3_freq_avail[3][2];
->>>
->>> These 3:s can be defined?
->>>
->> I could define IIO_AVAIL_RANGE_LEN and IIO_AVAIL_SINGLE_LEN and then
->> define another IIO_AVAIL_LEN that is the max between the two.
->> But that's just over-complicating it, really.
-> 
-> I was talking only about 3:s (out array). IIRC I saw 3 hard coded in
-> the driver, but not sure if its meaning is the same. Might be still
-> good to define
-Actually I just checked, and it's not even needed. The framework
-always expects 3 elements for IIO_AVAIL_RANGE. I'll keep those two
-3s as they are.
-
->>>> +       if (reg >= ARRAY_SIZE(ad4130_reg_size))
->>>> +               return -EINVAL;
->>>
->>> When this condition is true?
->>
->> When the user tries reading a register from direct_reg_access
->> that hasn't had its size defined.
-> 
-> But how is it possible? Is the reg parameter taken directly from the user?
-> 
-
-Users can write whatever they want to direct_reg_access. Unless I add
-max_register to the regmap_config, the register that the user selects
-will just be passed to our reg_read and reg_write callbacks.
-
-Then it will be checked against the register size table.
-
->>>> +       regmap_update_bits(st->regmap, AD4130_REG_IO_CONTROL, mask,
->>>> +                          value ? mask : 0);
->>>
->>> One line?
->>>
->>> No error check?
->>
->> I actually can't think of a scenario where this would fail. It doesn't
->> if the chip is not even connected.
-> 
-> Why to check errors in many other cases then? Be consistent one way or
-> the other.
-> 
-
-Yeah, right. I didn't add any error checking because the callback can't
-handle errors, so all I can do is print a message to dmesg.
-
->>>> + out:
->>>
->>> out_unlock: ?
->>> Ditto for similar cases.
->>
->> There's a single label in the function, and there's a mutex being
->> taken, and, logically, the mutex must be released on the exit path.
->> It's clear what the label is for to me.
-> 
-> Wasn't clear to me until I went to the end of each of them (who
-> guarantees that's the case for all of them?).
-> 
-
-Let's hope other people looking at that code will be able to figure out
-what that label does then.
-
->>>> +               *val = st->bipolar ? -(1 << (chan->scan_type.realbits - 1)) : 0;
->>>
->>> Hmm... It seems like specific way to have a sign_extended, or actually
->>> reduced) mask.
->>> Can you rewrite it with the (potential)UB-free approach?
->>>
->>> (Note, that if realbits == 32, this will have a lot of fun in
->>> accordance with C standard.)
->>
->> Can you elaborate on this? The purpose of this statement is to shift the
->> results so that, when bipolar configuration is enabled, the raw value is
->> offset with 1 << (realbits - 1) towards negative.
->>
->> For the 24bit chips, 0x800000 becomes 0x000000.
->>
->> Maybe you misread it as left shift on a negative number? The number
->> is turned negative only after the shift...
-> 
-> 1 << 31 is UB in accordance with the C standard.
-> 
-> And the magic above seems to me the opposite to what sign_extend()
-> does. Maybe even providing a general function for sign_comact() or so
-> (you name it) would be also nice to have.
-> 
-
-I'm not trying to comact (I guess you meant compact) the sign of any
-value. Please try to understand what is written in there. It's not
-magic. If the chip is 24bit, and it's set up as bipolar, the raw value
-must be offset by -0x800000, to account for 0x800000 being the
-zero-scale value. For 16 bits, it's 0x8000.
-
->>>> +       ret = regmap_update_bits(st->regmap, AD4130_REG_FIFO_CONTROL,
->>>> +                                AD4130_WATERMARK_MASK,
->>>> +                                FIELD_PREP(AD4130_WATERMARK_MASK,
->>>> +                                           ad4130_watermark_reg_val(eff)));
->>>
->>> Temporary variable for mask?
->>
->> You mean for value?
-> 
->        mask = AD4130_WATERMARK_MASK;
-> 
->        ret = regmap_update_bits(st->regmap, AD4130_REG_FIFO_CONTROL,
->                                 mask, FIELD_PREP(mask,
-> ad4130_watermark_reg_val(eff)));
-> 
-
-Please bother reading the macro definition next-time. The mask argument
-to FIELD_PREP must be a compile-time constant.
-
->>>> +       if (ret <= 0)
->>>
->>> = 0 ?! Can you elaborate, please, this case taking into account below?
->>>
->>
->> I guess I just did it because voltage = 0 doesn't make sense and would
->> make scale be 0.0.
-> 
-> Again, what's the meaning of having it in the conjunction with
-> dev_err_probe() call?
-> 
->>>> +               return dev_err_probe(dev, ret, "Cannot use reference %u\n",
->>>> +                                    ref_sel);
-> 
-> It's confusing. I believe you need two different messages if you want
-> to handle the 0 case.
-> 
-
-Why would I? The chip can't possibly use regulators with a voltage of 0,
-right? Or dummy regulators, since these return negative. I think it's
-fine as it is.
+Best regards,
+Martin
