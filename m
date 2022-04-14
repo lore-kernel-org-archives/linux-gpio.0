@@ -2,117 +2,176 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A84C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75708C4167E
 	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 14:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233363AbiDNOgb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Apr 2022 10:36:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46324 "EHLO
+        id S234861AbiDNOgd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Apr 2022 10:36:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347709AbiDNN7a (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 09:59:30 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4259BB0A8;
-        Thu, 14 Apr 2022 06:51:56 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id l7so10218372ejn.2;
-        Thu, 14 Apr 2022 06:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VkVkOAS9A0MIQPbsfpNua8Mc2ZR7CENLAnkVniIdPoc=;
-        b=CXFcqAASxG+Z7VaPl8afDddAJZU3KVfQsH4a1JGZ1EjQwUWtZOh58dCXqu1CRt0nRH
-         GbroBEhSONj1yEyS1nlMjO2dTZs5iIHj3amuNDroTKV8vuWjGlUxmp6N8l0rJzVuL9iS
-         SK1pfqweFFp8qNmsy1ouvojo1qwb0OkgYbmw5cI1wWa07tZDoFoyAqHiu63K1oCpvGXv
-         JCFOxbvoB1FH365GTO/MeElQ0rQQ182PE1dbIz0Nw0J7NGFvquCeeFsdv6sqLOE6QIn0
-         C7C+hEmjvWZeIfvuZm9FyH27VeOaKjraYed4fP9gI2wtI0kf1Yw8FEPqUkn+IykqKHnl
-         lMFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VkVkOAS9A0MIQPbsfpNua8Mc2ZR7CENLAnkVniIdPoc=;
-        b=mvf5AbjI6CIGozSsows67t6PVUnH9LUF6Nvvzx4ISOXuYWk01KyRSSLcNt0grvSB9h
-         PYDjR314Oor82yrhW2EJGLVGn3hUZVcLOPDJA/q4L3LE+q5xcv99NrUT9oj6KJfLZSZA
-         0tnkqcrUKPOBvIpwdvYb57vBtxowwtV7G82I+hJSzF9JsxC+D3PSXy6W13eKw7S8Oups
-         EhGuOkrAUpKwbc4On0+xJL9NUKgSuFoINI0ifp0bucTpFANArCZn6xJsZmzw7FMMjXcI
-         LQHDqCpzGUPXZcTRpCllo1rZ0np/lUbQd8D0aQP/Mjc6eF3NV2uRGlm/AZuWvM/t5lY8
-         2KCA==
-X-Gm-Message-State: AOAM530WlAdB4kBkghUgnW2cZ2eaReGhhVfc6HLYf3E06ENVULtSbzhi
-        rZRr7nMdAeq1nx6mkJcG9VKqDWLr/ApmEZ+HFdc=
-X-Google-Smtp-Source: ABdhPJxL5jFoyaZVlB5dK/sqGFzMiTnpEAX7i3HpaSvcMs3Sr81F+WGQbyWSGSsYbk2dWKrwQ76KhtaYazmSqwcH7pQ=
-X-Received: by 2002:a17:907:628e:b0:6d9:c6fa:6168 with SMTP id
- nd14-20020a170907628e00b006d9c6fa6168mr2412944ejc.132.1649944315429; Thu, 14
- Apr 2022 06:51:55 -0700 (PDT)
+        with ESMTP id S1348024AbiDNOCD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 10:02:03 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF07E3E5C9
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Apr 2022 06:57:41 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7915:bbfe:555b:5456])
+        by xavier.telenet-ops.be with bizsmtp
+        id Jdxe2700X4TB7ht01dxe0g; Thu, 14 Apr 2022 15:57:39 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nezyc-000bwo-Ed; Thu, 14 Apr 2022 15:57:38 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nezyb-00E8Aa-PX; Thu, 14 Apr 2022 15:57:37 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] pinctrl: renesas: checker: Rework drive and bias pin iteration
+Date:   Thu, 14 Apr 2022 15:57:36 +0200
+Message-Id: <1848e56e6496b8d5ed50fd6adc8ef2078b454ce4.1649944305.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
- <CGME20220414063849eucas1p126e41b53ff0d342f5c48408994b704e9@eucas1p1.samsung.com>
- <20220401103604.8705-12-andriy.shevchenko@linux.intel.com> <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com>
-In-Reply-To: <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 14 Apr 2022 16:51:19 +0300
-Message-ID: <CAHp75VfMPpfeMpawRyLo_GtLR8+gVGgm8zW-fatp6=9a9wK18A@mail.gmail.com>
-Subject: Re: [PATCH v4 11/13] pinctrl: meson: Replace custom code by
- gpiochip_node_count() call
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 12:44 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> On 01.04.2022 12:36, Andy Shevchenko wrote:
-> > Since we have generic function to count GPIO controller nodes
-> > under a given device, there is no need to open code it. Replace
-> > custom code by gpiochip_node_count() call.
+The checker code to iterate over all drive strength and bias register
+description items is cumbersome, due to the repeated calculation of
+indices, and the use of hardcoded array sizes.  The latter was done
+under the assumption they would never need to be changed, which turned
+out to be false.
 
-...
+Increase readability by introducing helper macros to access drive
+strength and bias register description items.
+Increase maintainability by replacing hardcoded numbers by array sizes
+calculated at compile-time.
 
-> This patch landed in linux next-20220413 as commit 88834c75cae5
-> ("pinctrl: meson: Replace custom code by gpiochip_node_count() call").
-> Unfortunately it breaks booting of all my Amlogic-based test boards
-> (Odroid C4, N2, Khadas VIM3, VIM3l). MMC driver is no longer probed and
-> boards are unable to mount rootfs. Reverting this patch on top of
-> linux-next fixes the issue.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is v2 of "pinctrl: renesas: checker: Fix for drive reg field
+increase".
 
-Thank you for letting me know, I'll withdraw it and investigate.
+To be inserted into renesas-pinctrl-for-v5.19 before commit
+d5c9688095d29a6c ("pinctrl: renesas: Allow up to 10 fields for
+drive_regs").
+---
+ drivers/pinctrl/renesas/core.c | 59 ++++++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 28 deletions(-)
 
+diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
+index d0d4714731c14cf5..afab836c102c3826 100644
+--- a/drivers/pinctrl/renesas/core.c
++++ b/drivers/pinctrl/renesas/core.c
+@@ -1007,7 +1007,16 @@ static void __init sh_pfc_compare_groups(const char *drvname,
+ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ {
+ 	const struct pinmux_drive_reg *drive_regs = info->drive_regs;
++#define drive_nfields	ARRAY_SIZE(drive_regs->fields)
++#define drive_reg(i)	drive_regs[(i) / drive_nfields].reg
++#define drive_bit(i)	((i) % drive_nfields)
++#define drive_field(i)	drive_regs[(i) / drive_nfields].fields[drive_bit(i)]
+ 	const struct pinmux_bias_reg *bias_regs = info->bias_regs;
++#define bias_npins	ARRAY_SIZE(bias_regs->pins)
++#define bias_puen(i)	bias_regs[(i) / bias_npins].puen
++#define bias_pud(i)	bias_regs[(i) / bias_npins].pud
++#define bias_bit(i)	((i) % bias_npins)
++#define bias_pin(i)	bias_regs[(i) / bias_npins].pins[bias_bit(i)]
+ 	const char *drvname = info->name;
+ 	unsigned int *refcnts;
+ 	unsigned int i, j, k;
+@@ -1076,17 +1085,17 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 			if (!drive_regs) {
+ 				sh_pfc_err_once(drive, "SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but drive_regs missing\n");
+ 			} else {
+-				for (j = 0; drive_regs[j / 8].reg; j++) {
+-					if (!drive_regs[j / 8].fields[j % 8].pin &&
+-					    !drive_regs[j / 8].fields[j % 8].offset &&
+-					    !drive_regs[j / 8].fields[j % 8].size)
++				for (j = 0; drive_reg(j); j++) {
++					if (!drive_field(j).pin &&
++					    !drive_field(j).offset &&
++					    !drive_field(j).size)
+ 						continue;
+ 
+-					if (drive_regs[j / 8].fields[j % 8].pin == pin->pin)
++					if (drive_field(j).pin == pin->pin)
+ 						break;
+ 				}
+ 
+-				if (!drive_regs[j / 8].reg)
++				if (!drive_reg(j))
+ 					sh_pfc_err("pin %s: SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but not in drive_regs\n",
+ 						   pin->name);
+ 			}
+@@ -1164,20 +1173,17 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	for (i = 0; drive_regs && drive_regs[i].reg; i++)
+ 		sh_pfc_check_drive_reg(info, &drive_regs[i]);
+ 
+-	for (i = 0; drive_regs && drive_regs[i / 8].reg; i++) {
+-		if (!drive_regs[i / 8].fields[i % 8].pin &&
+-		    !drive_regs[i / 8].fields[i % 8].offset &&
+-		    !drive_regs[i / 8].fields[i % 8].size)
++	for (i = 0; drive_regs && drive_reg(i); i++) {
++		if (!drive_field(i).pin && !drive_field(i).offset &&
++		    !drive_field(i).size)
+ 			continue;
+ 
+ 		for (j = 0; j < i; j++) {
+-			if (drive_regs[i / 8].fields[i % 8].pin ==
+-			    drive_regs[j / 8].fields[j % 8].pin &&
+-			    drive_regs[j / 8].fields[j % 8].offset &&
+-			    drive_regs[j / 8].fields[j % 8].size) {
++			if (drive_field(i).pin == drive_field(j).pin &&
++			    drive_field(j).offset && drive_field(j).size) {
+ 				sh_pfc_err("drive_reg 0x%x:%u/0x%x:%u: pin conflict\n",
+-					   drive_regs[i / 8].reg, i % 8,
+-					   drive_regs[j / 8].reg, j % 8);
++					   drive_reg(i), drive_bit(i),
++					   drive_reg(j), drive_bit(j));
+ 			}
+ 		}
+ 	}
+@@ -1186,26 +1192,23 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	for (i = 0; bias_regs && (bias_regs[i].puen || bias_regs[i].pud); i++)
+ 		sh_pfc_check_bias_reg(info, &bias_regs[i]);
+ 
+-	for (i = 0; bias_regs &&
+-		    (bias_regs[i / 32].puen || bias_regs[i / 32].pud); i++) {
+-		if (bias_regs[i / 32].pins[i % 32] == SH_PFC_PIN_NONE)
++	for (i = 0; bias_regs && (bias_puen(i) || bias_pud(i)); i++) {
++		if (bias_pin(i) == SH_PFC_PIN_NONE)
+ 			continue;
+ 
+ 		for (j = 0; j < i; j++) {
+-			if (bias_regs[i / 32].pins[i % 32] !=
+-			    bias_regs[j / 32].pins[j % 32])
++			if (bias_pin(i) != bias_pin(j))
+ 				continue;
+ 
+-			if (bias_regs[i / 32].puen && bias_regs[j / 32].puen)
++			if (bias_puen(i) && bias_puen(j))
+ 				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
+-					   bias_regs[i / 32].puen, i % 32,
+-					   bias_regs[j / 32].puen, j % 32);
+-			if (bias_regs[i / 32].pud && bias_regs[j / 32].pud)
++					   bias_puen(i), bias_bit(i),
++					   bias_puen(j), bias_bit(j));
++			if (bias_pud(i) && bias_pud(j))
+ 				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
+-					   bias_regs[i / 32].pud, i % 32,
+-					   bias_regs[j / 32].pud, j % 32);
++					   bias_pud(i), bias_bit(i),
++					   bias_pud(j), bias_bit(j));
+ 		}
+-
+ 	}
+ 
+ 	/* Check ioctrl registers */
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1
+
