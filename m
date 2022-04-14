@@ -2,43 +2,43 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E02C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 19:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8B5C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 19:02:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343860AbiDNTFO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Apr 2022 15:05:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38806 "EHLO
+        id S1344909AbiDNTFP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Apr 2022 15:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243648AbiDNTFM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 15:05:12 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64DB8E9CBD;
+        with ESMTP id S244486AbiDNTFN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 15:05:13 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9129FE9CBF;
         Thu, 14 Apr 2022 12:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1649962967; x=1681498967;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ESMOhfAIzHVEWWSaUAwTLXvAmE92GhwSV4ExM0OTanc=;
-  b=nLthzPKnSweKCj0AcuOEskETcauynR1AsatWIsMUo8mVZ3pQ3DHsZncp
-   yBjYrbu0yJP+x5EcOEoCvQCzL9JWm5FhrgKFLahHwYeq9If4zW5RDh6n6
-   6+Ck2YcxTBF+iaNXCLzbZuQzcIo5PazdvSksTSsN94veEVmUu81qYofZ3
-   ECcKBdW3TGLru0++oy8ltg9Oe2kd84W3t9tSHdB2kxAGBCfT3x+enN5OE
-   r9Ns+CZQSvGPnagUXjUF9ZU5xVXbF3+rokRlzmuDCHAvWhgWKGUmTdt2d
-   MAsLBuctbCYizd5wnTPEdyICsBKeh+Wg3eQSR8V2t5dz99ku17hdpm8M2
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=4kQAdZbM0d9HyF5OdGeeBfcWXECLhEkSZzq2j0XSYdc=;
+  b=YcOgVwUXi66bn1vJDV9+Y6M0VM8wkvgjXQAwNPqqgLG1h7X3zqp5MGzc
+   0J1O+qTi/7vlYoGGtMPCRJxevtPZgseI/Y5OWhyQyceGPFDX0T8QuXeCe
+   dAoVCX5Wx0vxXyZlb6nhj+N10GRGWwZH+PSV9QFlO0dbAHd0It2cFzrWZ
+   L5fyZx/CtgVG591odQ7oty+mZ+IVAzDxO7IDiXx8JCcZMDApQP3uUcPkK
+   JcmZkLCk7wQ/2mgoPAOlxibqd561wxBdhY2Q5EUHH5y/zX8j+wHo2Keq4
+   f8XP5VK8hP/xLO0AfKJ5I4rIp5KhrhretwRKD0nXEcNqDATMu1Yr3ZbEd
    g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10317"; a="349445609"
+X-IronPort-AV: E=McAfee;i="6400,9594,10317"; a="262763836"
 X-IronPort-AV: E=Sophos;i="5.90,260,1643702400"; 
-   d="scan'208";a="349445609"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2022 12:02:47 -0700
+   d="scan'208";a="262763836"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2022 12:02:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,260,1643702400"; 
-   d="scan'208";a="527515393"
+   d="scan'208";a="661484765"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 14 Apr 2022 12:02:43 -0700
+  by orsmga004.jf.intel.com with ESMTP; 14 Apr 2022 12:02:43 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 579E7D1; Thu, 14 Apr 2022 22:02:43 +0300 (EEST)
+        id 8350B1A1; Thu, 14 Apr 2022 22:02:43 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -53,76 +53,57 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 0/6] gpiolib: more helpers and fwnode conversion
-Date:   Thu, 14 Apr 2022 22:02:36 +0300
-Message-Id: <20220414190242.22178-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v5 3/6] pinctrl: armada-37xx: Reuse GPIO fwnode in armada_37xx_irqchip_register()
+Date:   Thu, 14 Apr 2022 22:02:39 +0300
+Message-Id: <20220414190242.22178-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220414190242.22178-1-andriy.shevchenko@linux.intel.com>
+References: <20220414190242.22178-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is a spin-off (*) of the previous work of switching GPIO library
-to use fwnode instead of of_node. Here we introduce a couple of
-a new macro helpers, which allows to switch some of the drivers
-to use fwnode and partially fwnode APIs. As a result of this cleanup
-a few drivers switched to use GPIO fwnode instead of of_node.
+Since we have fwnode of the first found GPIO controller assigned to the
+struct gpio_chip, we may reuse it in the armada_37xx_irqchip_register().
 
-*) it's subset of it with a new (patch 1) helper.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-Marek, Martin, can you give this a try?
-This requires at least two patches for GPIO library to be applied.
-
-Bart, Linus, I can take it thru my tree with an immutable branch if
-it's the way you prefer, otherwise please suggest on how to proceed.
-
-Changelog v5:
-- dropped tested patches (this series based on them, though)
-- introduced a new helper (thanks Marek and Martin for reporting an issue)
-- redone Armada and Meson code using newly introduced helper
-
-Changelog v4:
-- fixed compilation of the Samsung pin control drivers (LKP)
-- explained in the commit message why namespacing is good for meson defs
-- added tag to one of meson patches (Neil)
-
-Changelog v3:
-- moved count initialization to the definition in patch 2 (Geert)
-- replaced of_args by args, used %pfwP in patch 7 (Geert)
-- fixed kernel doc warning in patch 7
-- added tags to patches 1, 2, 6, and 7 (Geert)
-- added tag to patch 4 (Fabien)
-- renamed MREG to MESON_REG in patch 9 (Neil)
-- added tag to patch 10 (Neil)
-- used --base for cover-letter
-
-Changelog v2:
-- properly based, so kbuild bot may test it (LKP)
-- fixed typo in the macro (Geert)
-- split to two macro helpers and rename the gpiochip_count()
-- tagged one of stm32 and one of meson patches (Fabien, Neil)
-- unified previously standalone armada patch
-- due to above rewrote the armada patch from v1 completely (Sergey)
-- added a lot of a new patches
-- compile tested all of them on x86
-
-Andy Shevchenko (6):
-  gpiolib: Introduce a helper to get first GPIO controller node
-  pinctrl: armada-37xx: Switch to use fwnode instead of of_node
-  pinctrl: armada-37xx: Reuse GPIO fwnode in
-    armada_37xx_irqchip_register()
-  pinctrl: meson: Rename REG_* to MESON_REG_*
-  pinctrl: meson: Enable COMPILE_TEST
-  pinctrl: meson: Replace custom code by gpiochip_node_count() call
-
- drivers/pinctrl/meson/Kconfig               |  2 +-
- drivers/pinctrl/meson/pinctrl-meson.c       | 52 ++++++++++-----------
- drivers/pinctrl/meson/pinctrl-meson.h       | 28 +++++------
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 34 ++++----------
- include/linux/gpio/driver.h                 | 10 ++++
- 5 files changed, 59 insertions(+), 67 deletions(-)
-
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 110f70bce3fe..ef4118e49f16 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -727,23 +727,13 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+ 	struct gpio_chip *gc = &info->gpio_chip;
+ 	struct irq_chip *irqchip = &info->irq_chip;
+ 	struct gpio_irq_chip *girq = &gc->irq;
++	struct device_node *np = to_of_node(gc->fwnode);
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *np;
+-	int ret = -ENODEV, i, nr_irq_parent;
+-
+-	/* Check if we have at least one gpio-controller child node */
+-	for_each_child_of_node(dev->of_node, np) {
+-		if (of_property_read_bool(np, "gpio-controller")) {
+-			ret = 0;
+-			break;
+-		}
+-	}
+-	if (ret)
+-		return dev_err_probe(dev, ret, "no gpio-controller child node\n");
++	unsigned int i, nr_irq_parent;
+ 
+-	nr_irq_parent = of_irq_count(np);
+ 	spin_lock_init(&info->irq_lock);
+ 
++	nr_irq_parent = of_irq_count(np);
+ 	if (!nr_irq_parent) {
+ 		dev_err(dev, "invalid or no IRQ\n");
+ 		return 0;
 -- 
 2.35.1
 
