@@ -2,176 +2,293 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75708C4167E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C71DC35274
 	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 14:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234861AbiDNOgd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Apr 2022 10:36:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43414 "EHLO
+        id S238798AbiDNOgm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Apr 2022 10:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348024AbiDNOCD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 10:02:03 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF07E3E5C9
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Apr 2022 06:57:41 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7915:bbfe:555b:5456])
-        by xavier.telenet-ops.be with bizsmtp
-        id Jdxe2700X4TB7ht01dxe0g; Thu, 14 Apr 2022 15:57:39 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nezyc-000bwo-Ed; Thu, 14 Apr 2022 15:57:38 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nezyb-00E8Aa-PX; Thu, 14 Apr 2022 15:57:37 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] pinctrl: renesas: checker: Rework drive and bias pin iteration
-Date:   Thu, 14 Apr 2022 15:57:36 +0200
-Message-Id: <1848e56e6496b8d5ed50fd6adc8ef2078b454ce4.1649944305.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S1346237AbiDNN4G (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 09:56:06 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115E0B0A70;
+        Thu, 14 Apr 2022 06:46:13 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 21so6471091edv.1;
+        Thu, 14 Apr 2022 06:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8971MOMZxe8ny/GbZyrl9W3T/ga8R+8j2kZQrMH59YY=;
+        b=VYSEPCPdidBLauO5Wo9kny4AC5GPOq1kV3qgrR05UiNdJNZFy+Ly+Fs/4ODbYQUYo9
+         ZzGWKaahTO52NP+gta5HFse3u7r3MW4BHh/BhVbu7i6S8G00b1aNXFQ6L7v709h4yREW
+         Rzff2SHB0AxSg3thExjDZ6dd5V84600P/3wwxUGi4voiqd1/ndHuCQ9DNWZHRxm9g3r4
+         +bLjBb18OS3VGGZ1U6fBqH9e/EEyNdMt9n3iwCV865VJbLm6qmFWMG1sx/FcFG5JpJkY
+         UzFmTYV4DLMSVsBu4iLkvAADMQlS6tFm0kogL67zc36zWwlfBU+8+KbvD5M86vL1nR4+
+         xVfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8971MOMZxe8ny/GbZyrl9W3T/ga8R+8j2kZQrMH59YY=;
+        b=Wx6k4njRos4DGfy4qn+knjborJKyLsn0PlvzTaImO6Nt/3zUMFLq6sJoTKmkXF/ijG
+         Lbk9cYHocBsHQbP6BY+nQYFtVPrDZpO+Lhcb7guDKwO3gvbBa3kQoqv6WuVB9m/wTP9H
+         xclWsMozelBvm9Vu4zZTqBRyHVm/QFu73SJo8FlP89K3anCKia6/iSRkoHRhyGwXTwMX
+         yEqgnpIdx6lOEPPYsxaYLGih5+gMgOnWQWUrSO3SfPFMt/tRzBaZw3eNT7L19aCC7otu
+         K6k5YzsR3Z1ZyNKEHdJAUaYBsEBK6su6YThR1KJigmRJZJtMeklE/wh5yov89LtcQv7q
+         J6rw==
+X-Gm-Message-State: AOAM5315iPnjwtbfzgIKXpTg4wfDxfveGEPZwhYG+H9/ll7dV6YwH+fF
+        2ZNLiRNoL+6S9XRLzDN1sWsVvzNlI4uTx3bOGXw=
+X-Google-Smtp-Source: ABdhPJylfPV678F4xdZmfc1hw6sU/WM4TROFlt3eNeAuggaOYOkrMV1UHEQRqSaCKp+O/eP8yn/eeOKXd7ddj+14m3U=
+X-Received: by 2002:a05:6402:27d1:b0:419:1b02:4a04 with SMTP id
+ c17-20020a05640227d100b004191b024a04mr3037825ede.218.1649943971848; Thu, 14
+ Apr 2022 06:46:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220413094011.185269-1-cosmin.tanislav@analog.com>
+ <20220413094011.185269-3-cosmin.tanislav@analog.com> <CAHp75VfzX8u45J3634yN5p-QTeT7w0Bos27OxeWOsb3MQ2VRVw@mail.gmail.com>
+ <80196942-4c33-7625-3945-86ce5b7b347f@gmail.com>
+In-Reply-To: <80196942-4c33-7625-3945-86ce5b7b347f@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 14 Apr 2022 16:45:35 +0300
+Message-ID: <CAHp75VfAjvJz2KHYfDM+-8D+hSBtdKJm521EBY3VgCfUsAgt8Q@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] iio: adc: ad4130: add AD4130 driver
+To:     Cosmin Tanislav <demonsingur@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The checker code to iterate over all drive strength and bias register
-description items is cumbersome, due to the repeated calculation of
-indices, and the use of hardcoded array sizes.  The latter was done
-under the assumption they would never need to be changed, which turned
-out to be false.
+On Thu, Apr 14, 2022 at 2:06 PM Cosmin Tanislav <demonsingur@gmail.com> wrote:
+> On 4/13/22 18:41, Andy Shevchenko wrote:
+> > On Wed, Apr 13, 2022 at 1:41 PM Cosmin Tanislav <demonsingur@gmail.com> wrote:
 
-Increase readability by introducing helper macros to access drive
-strength and bias register description items.
-Increase maintainability by replacing hardcoded numbers by array sizes
-calculated at compile-time.
+...
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is v2 of "pinctrl: renesas: checker: Fix for drive reg field
-increase".
+> >> +#define AD4130_8_NAME                  "ad4130-8"
+> >
+> > What the meaning of -8 ? Is it number of channels? Or is it part of
+> > the official model (part number)? Can we see, btw, Datasheet: tag with
+> > a corresponding link in the commit message?
+>
+> That's just the name specified in the datasheet. I honestly don't have
+> much of an idea about why it is like that. Also, I already put the
+> datasheet in the .yaml documentation.
 
-To be inserted into renesas-pinctrl-for-v5.19 before commit
-d5c9688095d29a6c ("pinctrl: renesas: Allow up to 10 fields for
-drive_regs").
----
- drivers/pinctrl/renesas/core.c | 59 ++++++++++++++++++----------------
- 1 file changed, 31 insertions(+), 28 deletions(-)
+That's cool!
 
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index d0d4714731c14cf5..afab836c102c3826 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -1007,7 +1007,16 @@ static void __init sh_pfc_compare_groups(const char *drvname,
- static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- {
- 	const struct pinmux_drive_reg *drive_regs = info->drive_regs;
-+#define drive_nfields	ARRAY_SIZE(drive_regs->fields)
-+#define drive_reg(i)	drive_regs[(i) / drive_nfields].reg
-+#define drive_bit(i)	((i) % drive_nfields)
-+#define drive_field(i)	drive_regs[(i) / drive_nfields].fields[drive_bit(i)]
- 	const struct pinmux_bias_reg *bias_regs = info->bias_regs;
-+#define bias_npins	ARRAY_SIZE(bias_regs->pins)
-+#define bias_puen(i)	bias_regs[(i) / bias_npins].puen
-+#define bias_pud(i)	bias_regs[(i) / bias_npins].pud
-+#define bias_bit(i)	((i) % bias_npins)
-+#define bias_pin(i)	bias_regs[(i) / bias_npins].pins[bias_bit(i)]
- 	const char *drvname = info->name;
- 	unsigned int *refcnts;
- 	unsigned int i, j, k;
-@@ -1076,17 +1085,17 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 			if (!drive_regs) {
- 				sh_pfc_err_once(drive, "SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but drive_regs missing\n");
- 			} else {
--				for (j = 0; drive_regs[j / 8].reg; j++) {
--					if (!drive_regs[j / 8].fields[j % 8].pin &&
--					    !drive_regs[j / 8].fields[j % 8].offset &&
--					    !drive_regs[j / 8].fields[j % 8].size)
-+				for (j = 0; drive_reg(j); j++) {
-+					if (!drive_field(j).pin &&
-+					    !drive_field(j).offset &&
-+					    !drive_field(j).size)
- 						continue;
- 
--					if (drive_regs[j / 8].fields[j % 8].pin == pin->pin)
-+					if (drive_field(j).pin == pin->pin)
- 						break;
- 				}
- 
--				if (!drive_regs[j / 8].reg)
-+				if (!drive_reg(j))
- 					sh_pfc_err("pin %s: SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but not in drive_regs\n",
- 						   pin->name);
- 			}
-@@ -1164,20 +1173,17 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	for (i = 0; drive_regs && drive_regs[i].reg; i++)
- 		sh_pfc_check_drive_reg(info, &drive_regs[i]);
- 
--	for (i = 0; drive_regs && drive_regs[i / 8].reg; i++) {
--		if (!drive_regs[i / 8].fields[i % 8].pin &&
--		    !drive_regs[i / 8].fields[i % 8].offset &&
--		    !drive_regs[i / 8].fields[i % 8].size)
-+	for (i = 0; drive_regs && drive_reg(i); i++) {
-+		if (!drive_field(i).pin && !drive_field(i).offset &&
-+		    !drive_field(i).size)
- 			continue;
- 
- 		for (j = 0; j < i; j++) {
--			if (drive_regs[i / 8].fields[i % 8].pin ==
--			    drive_regs[j / 8].fields[j % 8].pin &&
--			    drive_regs[j / 8].fields[j % 8].offset &&
--			    drive_regs[j / 8].fields[j % 8].size) {
-+			if (drive_field(i).pin == drive_field(j).pin &&
-+			    drive_field(j).offset && drive_field(j).size) {
- 				sh_pfc_err("drive_reg 0x%x:%u/0x%x:%u: pin conflict\n",
--					   drive_regs[i / 8].reg, i % 8,
--					   drive_regs[j / 8].reg, j % 8);
-+					   drive_reg(i), drive_bit(i),
-+					   drive_reg(j), drive_bit(j));
- 			}
- 		}
- 	}
-@@ -1186,26 +1192,23 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	for (i = 0; bias_regs && (bias_regs[i].puen || bias_regs[i].pud); i++)
- 		sh_pfc_check_bias_reg(info, &bias_regs[i]);
- 
--	for (i = 0; bias_regs &&
--		    (bias_regs[i / 32].puen || bias_regs[i / 32].pud); i++) {
--		if (bias_regs[i / 32].pins[i % 32] == SH_PFC_PIN_NONE)
-+	for (i = 0; bias_regs && (bias_puen(i) || bias_pud(i)); i++) {
-+		if (bias_pin(i) == SH_PFC_PIN_NONE)
- 			continue;
- 
- 		for (j = 0; j < i; j++) {
--			if (bias_regs[i / 32].pins[i % 32] !=
--			    bias_regs[j / 32].pins[j % 32])
-+			if (bias_pin(i) != bias_pin(j))
- 				continue;
- 
--			if (bias_regs[i / 32].puen && bias_regs[j / 32].puen)
-+			if (bias_puen(i) && bias_puen(j))
- 				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
--					   bias_regs[i / 32].puen, i % 32,
--					   bias_regs[j / 32].puen, j % 32);
--			if (bias_regs[i / 32].pud && bias_regs[j / 32].pud)
-+					   bias_puen(i), bias_bit(i),
-+					   bias_puen(j), bias_bit(j));
-+			if (bias_pud(i) && bias_pud(j))
- 				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
--					   bias_regs[i / 32].pud, i % 32,
--					   bias_regs[j / 32].pud, j % 32);
-+					   bias_pud(i), bias_bit(i),
-+					   bias_pud(j), bias_bit(j));
- 		}
--
- 	}
- 
- 	/* Check ioctrl registers */
+> Do you really also want it
+> in each commit message too?
+
+No, just in this one.
+
+...
+
+> >> +#define AD4130_RESET_CLK_COUNT         64
+> >> +#define AD4130_RESET_BUF_SIZE          (AD4130_RESET_CLK_COUNT / 8)
+> >
+> > To be more precise shouldn't the above need to have DIV_ROUND_UP() ?
+>
+> Does it look like 64 / 8 needs any rounding?
+
+Currently no, but if someone puts 63 there or 65, what would be the outcome?
+OTOH, you may add a static assert to guarantee that CLK_COUNT is multiple of 8.
+
+...
+
+> >> +#define AD4130_FREQ_FACTOR             1000000000ull
+> >> +#define AD4130_DB3_FACTOR              1000
+> >
+> > Ditto.
+>
+> AD4130_DB3_FACTOR is unit-less. In the datasheet, the relation between
+> sampling frequency and 3db frequency is represented as a 0.xyz value,
+> hence why the db3_div values and 1000 factor.
+
+But does the above mean MILLI or KILO? Similar for the FREQ factor.
+
+...
+
+> >> +       int                             samp_freq_avail_len;
+> >> +       int                             samp_freq_avail[3][2];
+
+> >> +       int                             db3_freq_avail_len;
+> >> +       int                             db3_freq_avail[3][2];
+> >
+> > These 3:s can be defined?
+> >
+> I could define IIO_AVAIL_RANGE_LEN and IIO_AVAIL_SINGLE_LEN and then
+> define another IIO_AVAIL_LEN that is the max between the two.
+> But that's just over-complicating it, really.
+
+I was talking only about 3:s (out array). IIRC I saw 3 hard coded in
+the driver, but not sure if its meaning is the same. Might be still
+good to define.
+
+...
+
+> >> +       if (reg >= ARRAY_SIZE(ad4130_reg_size))
+> >> +               return -EINVAL;
+> >
+> > When this condition is true?
+>
+> When the user tries reading a register from direct_reg_access
+> that hasn't had its size defined.
+
+But how is it possible? Is the reg parameter taken directly from the user?
+
+...
+
+> >> +       regmap_update_bits(st->regmap, AD4130_REG_IO_CONTROL, mask,
+> >> +                          value ? mask : 0);
+> >
+> > One line?
+> >
+> > No error check?
+>
+> I actually can't think of a scenario where this would fail. It doesn't
+> if the chip is not even connected.
+
+Why to check errors in many other cases then? Be consistent one way or
+the other.
+
+...
+
+> >> +       if (setup_info->enabled_channels)
+> >> +               return -EINVAL;
+> >
+> > -EBUSY?
+> >
+>
+> Eh, I don't think so. It would be pretty impossible for the code to hit
+> this if statement, taking into account the ad4130_find_slot() logic.
+> I could as well not have it at all.
+
+If it's a dead code, we do not want it.
+
+...
+
+> >> + out:
+> >
+> > out_unlock: ?
+> > Ditto for similar cases.
+>
+> There's a single label in the function, and there's a mutex being
+> taken, and, logically, the mutex must be released on the exit path.
+> It's clear what the label is for to me.
+
+Wasn't clear to me until I went to the end of each of them (who
+guarantees that's the case for all of them?).
+
+...
+
+> >> +               *val = st->bipolar ? -(1 << (chan->scan_type.realbits - 1)) : 0;
+> >
+> > Hmm... It seems like specific way to have a sign_extended, or actually
+> > reduced) mask.
+> > Can you rewrite it with the (potential)UB-free approach?
+> >
+> > (Note, that if realbits == 32, this will have a lot of fun in
+> > accordance with C standard.)
+>
+> Can you elaborate on this? The purpose of this statement is to shift the
+> results so that, when bipolar configuration is enabled, the raw value is
+> offset with 1 << (realbits - 1) towards negative.
+>
+> For the 24bit chips, 0x800000 becomes 0x000000.
+>
+> Maybe you misread it as left shift on a negative number? The number
+> is turned negative only after the shift...
+
+1 << 31 is UB in accordance with the C standard.
+
+And the magic above seems to me the opposite to what sign_extend()
+does. Maybe even providing a general function for sign_comact() or so
+(you name it) would be also nice to have.
+
+...
+
+> >> +       ret = regmap_update_bits(st->regmap, AD4130_REG_FIFO_CONTROL,
+> >> +                                AD4130_WATERMARK_MASK,
+> >> +                                FIELD_PREP(AD4130_WATERMARK_MASK,
+> >> +                                           ad4130_watermark_reg_val(eff)));
+> >
+> > Temporary variable for mask?
+>
+> You mean for value?
+
+      mask = AD4130_WATERMARK_MASK;
+
+      ret = regmap_update_bits(st->regmap, AD4130_REG_FIFO_CONTROL,
+                               mask, FIELD_PREP(mask,
+ad4130_watermark_reg_val(eff)));
+
+...
+
+> >> +       if (ret <= 0)
+> >
+> > = 0 ?! Can you elaborate, please, this case taking into account below?
+> >
+>
+> I guess I just did it because voltage = 0 doesn't make sense and would
+> make scale be 0.0.
+
+Again, what's the meaning of having it in the conjunction with
+dev_err_probe() call?
+
+> >> +               return dev_err_probe(dev, ret, "Cannot use reference %u\n",
+> >> +                                    ref_sel);
+
+It's confusing. I believe you need two different messages if you want
+to handle the 0 case.
+
+...
+
+> >> +static int ad4130_parse_fw_children(struct iio_dev *indio_dev)
+> >> +{
+> >> +       struct ad4130_state *st = iio_priv(indio_dev);
+> >> +       struct device *dev = &st->spi->dev;
+> >> +       struct fwnode_handle *child;
+> >> +       int ret;
+> >> +
+> >> +       indio_dev->channels = st->chans;
+> >> +
+> >> +       device_for_each_child_node(dev, child) {
+> >> +               ret = ad4130_parse_fw_channel(indio_dev, child);
+> >> +               if (ret)
+> >> +                       break;
+> >> +       }
+> >
+> >> +       fwnode_handle_put(child);
+> >
+> > There is no need to put fwnode if child is NULL. Moreover, the above
+> > pattern might be percepted wrongly, i.e. one may think that
+> > fwnode_handle_put() is a must after a loop.
+> >
+>
+> fwnode_handle_put already checks if the child is NULL. Why do the same
+> check twice?
+
+Exactly my point. Why do you check it twice?
+
+...
+
+> > Can you explain why regmap locking is needed?
+
+> Am I supposed to set .disable_locking = true since SPI has its own
+> locking?
+
+You tell me. I have no idea of what the locking schema is being used
+in your code.
+
 -- 
-2.25.1
-
+With Best Regards,
+Andy Shevchenko
