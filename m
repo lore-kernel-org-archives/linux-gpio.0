@@ -2,153 +2,377 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F87C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 17:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A474C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Apr 2022 17:40:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242839AbiDNRDQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Apr 2022 13:03:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51440 "EHLO
+        id S245286AbiDNRmt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Apr 2022 13:42:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244405AbiDNRCg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 13:02:36 -0400
+        with ESMTP id S1343611AbiDNRmp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2022 13:42:45 -0400
 Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BA4646D;
-        Thu, 14 Apr 2022 09:38:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1649954254; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8AB7C6829;
+        Thu, 14 Apr 2022 10:40:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1649957993; cv=none; 
         d=zohomail.com; s=zohoarc; 
-        b=Efq3hAgZ3JW72GIjcSqmPNhOXvfV0qLZnaUMdx5YXtI6lHY9j8oOWB71TPPFwpF05yK0MoXU18FA3hyw0Qeikt9BTCBKfOhYtY9EhkawPzO2Le9P5ebktcpAd1vdiX0LLhrTG9olKbj2bHm56lrrLTHNHq3tZNOvZF7y1VTXvZE=
+        b=SnHs9kqn+cC05uft/R9ElsEx7TdlePwsczIgteeT4q0fDdiUyfP5ZDpUTYD/pyu5fjM5FozIO3U4q+0EigbEfnY+z4xX5xcTOQNgKmvKHTNl8JHwVNw4tcyLm60Oky3HSqR89MPCDbXzHbk8LQAS/ufLOlESmXeJTGyaRQgOisY=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1649954254; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=M6x4pm1vbOy3um3QdMOsMA8jgAP9SJyU0JGvXSzrgKQ=; 
-        b=kZoXga6nOdc/2RaQbkfLKPCXZnNpumUj8B6d9pGc2EU3sA+UFU64Lar9dQW2sUkvAKzk5KnkBp8PJzL5ONxgQ6ngpK/INUMhAHl3rI2CRVmGB0a6uGc44Whj8b8YH1wa7+QLf1Aqk+8DnIWTW41FMEhT2VyBvLw3qAiLi59ZK44=
+        t=1649957993; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=cs1Rj7B0YCCL7XyUOed90CMuONsGpR5YbMUHqZpLxEo=; 
+        b=RKXTbzJIxhZdVR+337z4VS7f1yE0pLYUFl4yKKoQ04Kfy8Ku9Ua3N4ejfqQh787vE34qWMyXhFjQ0IlMIFA1JWvoFQlo0efxmWq1GtM+R3Ykt6/mk6eMALh4L7FhazoH33tf6faahADUczQdLmqIAGGDRKBjkR0v2OU9Dpplcuc=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
         dkim=pass  header.i=arinc9.com;
         spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
         dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1649954254;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1649957993;
         s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=M6x4pm1vbOy3um3QdMOsMA8jgAP9SJyU0JGvXSzrgKQ=;
-        b=SkCb1ICmhSpTm8ptaGnPJ2s4AbmDHUPiDTmCtBRWilsQZHMDL0wMv2RjWabWCO6H
-        QPyJ+f8aOObEv84FgwlyK3oFzu6myK1zrK7RY47vf8yyQlx4yEAYIytsTo+6mJzdhy+
-        KIbGxLC1o1pf0CFHsBAwJZPzLFSltPjep3Rltn3Y=
-Received: from [10.10.10.3] (85.117.236.245 [85.117.236.245]) by mx.zohomail.com
-        with SMTPS id 1649954252283729.6912314444173; Thu, 14 Apr 2022 09:37:32 -0700 (PDT)
-Message-ID: <87c9bf7e-f290-7d38-0844-7a7243688f5a@arinc9.com>
-Date:   Thu, 14 Apr 2022 19:37:25 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 10/14] dt-bindings: pinctrl: rt2880: fix binding name, pin
- groups and functions
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
+        bh=cs1Rj7B0YCCL7XyUOed90CMuONsGpR5YbMUHqZpLxEo=;
+        b=UAvffek+M6eGU0tE0RGDyzICLk4eHOOKG1WJ5eUQ6mj4i3v5I+O6lFNdKL4EiPxf
+        gXOlzgzCn85PcBHtu7T9eTSzfHGNgvUy/mBiKMCX/26w1ZMTN2YXy9MnFnX4M0XASNS
+        BoCDyzzg6b+plyS5qy8/jWIPonJgTSyEx/0AmrtA=
+Received: from arinc9-PC.localdomain (85.117.236.245 [85.117.236.245]) by mx.zohomail.com
+        with SMTPS id 1649957991371587.6404861710015; Thu, 14 Apr 2022 10:39:51 -0700 (PDT)
+From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
         Luiz Angelo Daros de Luca <luizluca@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        erkin.bozoglu@xeront.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Joe Perches <joe@perches.com>
+Cc:     erkin.bozoglu@xeront.com,
+        =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mips@vger.kernel.org
-References: <20220413060729.27639-1-arinc.unal@arinc9.com>
- <20220413060729.27639-11-arinc.unal@arinc9.com>
- <ba7cd13f-d216-0ac6-97e1-6c13f1e15f38@linaro.org>
- <550b20f2-098e-0f25-ad9f-3ff523879cb7@arinc9.com>
- <YlhJGerakzbsXwnv@robh.at.kernel.org>
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <YlhJGerakzbsXwnv@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: [PATCH v2 03/14] pinctrl: ralink: rename pinmux functions to pinctrl
+Date:   Thu, 14 Apr 2022 20:39:05 +0300
+Message-Id: <20220414173916.5552-4-arinc.unal@arinc9.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220414173916.5552-1-arinc.unal@arinc9.com>
+References: <20220414173916.5552-1-arinc.unal@arinc9.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 14/04/2022 19:17, Rob Herring wrote:
-> On Thu, Apr 14, 2022 at 11:34:31AM +0300, Arınç ÜNAL wrote:
->> On 13/04/2022 18:25, Krzysztof Kozlowski wrote:
->>> On 13/04/2022 08:07, Arınç ÜNAL wrote:
->>>> Change binding name from ralink,rt2880-pinmux to ralink,rt2880-pinctrl.
->>>> This is the binding for the Ralink RT2880 pinctrl subdriver.
->>>
->>> What I don't see here is why you are doing this. pinmux/pinctrl have the
->>> same meaning, I guess?
->>
->> What I understand is pinmux is rather a specific term for the muxing of pins
->> or pin groups. Pinctrl is what we prefer here since the term is more
->> inclusive of what the subdriver does: controlling pins. Any mediatek
->> driver/subdriver is called pinctrl so I'm not doing something uncommon.
-> 
-> The correct name is really whatever the h/w block is called, not
-> whatever we've come up with for some class of devices.
-> 
->>
->>>
->>>>
->>>> Current pin group and function bindings are for MT7621. Put bindings for
->>>> RT2880 instead.
->>>>
->>>> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
->>>> ---
->>>>    ...pinmux.yaml => ralink,rt2880-pinctrl.yaml} | 24 +++++++++----------
->>>>    1 file changed, 12 insertions(+), 12 deletions(-)
->>>>    rename Documentation/devicetree/bindings/pinctrl/{ralink,rt2880-pinmux.yaml => ralink,rt2880-pinctrl.yaml} (56%)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinctrl.yaml
->>>> similarity index 56%
->>>> rename from Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml
->>>> rename to Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinctrl.yaml
->>>> index 9de8b0c075e2..c657bbf9fdda 100644
->>>> --- a/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinmux.yaml
->>>> +++ b/Documentation/devicetree/bindings/pinctrl/ralink,rt2880-pinctrl.yaml
->>>> @@ -1,21 +1,23 @@
->>>>    # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>>>    %YAML 1.2
->>>>    ---
->>>> -$id: http://devicetree.org/schemas/pinctrl/ralink,rt2880-pinmux.yaml#
->>>> +$id: http://devicetree.org/schemas/pinctrl/ralink,rt2880-pinctrl.yaml#
->>>>    $schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> -title: Ralink rt2880 pinmux controller
->>>> +title: Ralink RT2880 Pin Controller
->>>>    maintainers:
->>>> +  - Arınç ÜNAL <arinc.unal@arinc9.com>
->>>
->>> Mention this in commit msg.
->>
->> Will do.
->>
->>>
->>>>      - Sergio Paracuellos <sergio.paracuellos@gmail.com>
->>>>    description:
->>>> -  The rt2880 pinmux can only set the muxing of pin groups. Muxing indiviual pins
->>>> +  Ralink RT2880 pin controller for RT2880 SoC.
->>>> +  The pin controller can only set the muxing of pin groups. Muxing indiviual pins
->>>>      is not supported. There is no pinconf support.
->>>>    properties:
->>>>      compatible:
->>>> -    const: ralink,rt2880-pinmux
->>>> +    const: ralink,rt2880-pinctrl
->>>
->>> you need to deprecate old property and add a new one.
->>
->> Do we really have to? That property name was inaccurate from the start. I
->> don't see a reason to keep it being referred to on the binding.
-> 
-> It's an ABI. There are exceptions, but you've got to spell out the
-> reasoning in the commit message.
+Rename pinctrl related functions from "pinmux" to "pinctrl". Change driver
+name from "ralink-pinmux" to "ralink-pinctrl".
 
-Oh, I thought by deprecating, I was supposed to keep the old one on the 
-YAML binding. I'll properly explain the reason in the commit message.
+Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ drivers/pinctrl/ralink/pinctrl-mt7620.c | 22 +++++++++++-----------
+ drivers/pinctrl/ralink/pinctrl-mt7621.c | 20 ++++++++++----------
+ drivers/pinctrl/ralink/pinctrl-ralink.c | 14 +++++++-------
+ drivers/pinctrl/ralink/pinctrl-ralink.h |  4 ++--
+ drivers/pinctrl/ralink/pinctrl-rt288x.c | 20 ++++++++++----------
+ drivers/pinctrl/ralink/pinctrl-rt305x.c | 24 ++++++++++++------------
+ drivers/pinctrl/ralink/pinctrl-rt3883.c | 20 ++++++++++----------
+ 7 files changed, 62 insertions(+), 62 deletions(-)
 
-> 
-> Really, who cares. It's just a unique identifier. Unless you also had a
-> h/w block called 'pinmux' in addition to a 'pinctrl' block it doesn't
-> matter. We could use just GUIDs instead.
+diff --git a/drivers/pinctrl/ralink/pinctrl-mt7620.c b/drivers/pinctrl/ralink/pinctrl-mt7620.c
+index 51b863d85c51..a790f3944314 100644
+--- a/drivers/pinctrl/ralink/pinctrl-mt7620.c
++++ b/drivers/pinctrl/ralink/pinctrl-mt7620.c
+@@ -362,30 +362,30 @@ static struct ralink_pmx_group mt76x8_pinmux_data[] = {
+ 	{ 0 }
+ };
+ 
+-static int mt7620_pinmux_probe(struct platform_device *pdev)
++static int mt7620_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	if (is_mt76x8())
+-		return ralink_pinmux_init(pdev, mt76x8_pinmux_data);
++		return ralink_pinctrl_init(pdev, mt76x8_pinmux_data);
+ 	else
+-		return ralink_pinmux_init(pdev, mt7620a_pinmux_data);
++		return ralink_pinctrl_init(pdev, mt7620a_pinmux_data);
+ }
+ 
+-static const struct of_device_id mt7620_pinmux_match[] = {
++static const struct of_device_id mt7620_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, mt7620_pinmux_match);
++MODULE_DEVICE_TABLE(of, mt7620_pinctrl_match);
+ 
+-static struct platform_driver mt7620_pinmux_driver = {
+-	.probe = mt7620_pinmux_probe,
++static struct platform_driver mt7620_pinctrl_driver = {
++	.probe = mt7620_pinctrl_probe,
+ 	.driver = {
+ 		.name = "rt2880-pinmux",
+-		.of_match_table = mt7620_pinmux_match,
++		.of_match_table = mt7620_pinctrl_match,
+ 	},
+ };
+ 
+-static int __init mt7620_pinmux_init(void)
++static int __init mt7620_pinctrl_init(void)
+ {
+-	return platform_driver_register(&mt7620_pinmux_driver);
++	return platform_driver_register(&mt7620_pinctrl_driver);
+ }
+-core_initcall_sync(mt7620_pinmux_init);
++core_initcall_sync(mt7620_pinctrl_init);
+diff --git a/drivers/pinctrl/ralink/pinctrl-mt7621.c b/drivers/pinctrl/ralink/pinctrl-mt7621.c
+index 14b89cb43d4c..bad4f1a8cf3f 100644
+--- a/drivers/pinctrl/ralink/pinctrl-mt7621.c
++++ b/drivers/pinctrl/ralink/pinctrl-mt7621.c
+@@ -90,27 +90,27 @@ static struct ralink_pmx_group mt7621_pinmux_data[] = {
+ 	{ 0 }
+ };
+ 
+-static int mt7621_pinmux_probe(struct platform_device *pdev)
++static int mt7621_pinctrl_probe(struct platform_device *pdev)
+ {
+-	return ralink_pinmux_init(pdev, mt7621_pinmux_data);
++	return ralink_pinctrl_init(pdev, mt7621_pinmux_data);
+ }
+ 
+-static const struct of_device_id mt7621_pinmux_match[] = {
++static const struct of_device_id mt7621_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, mt7621_pinmux_match);
++MODULE_DEVICE_TABLE(of, mt7621_pinctrl_match);
+ 
+-static struct platform_driver mt7621_pinmux_driver = {
+-	.probe = mt7621_pinmux_probe,
++static struct platform_driver mt7621_pinctrl_driver = {
++	.probe = mt7621_pinctrl_probe,
+ 	.driver = {
+ 		.name = "rt2880-pinmux",
+-		.of_match_table = mt7621_pinmux_match,
++		.of_match_table = mt7621_pinctrl_match,
+ 	},
+ };
+ 
+-static int __init mt7621_pinmux_init(void)
++static int __init mt7621_pinctrl_init(void)
+ {
+-	return platform_driver_register(&mt7621_pinmux_driver);
++	return platform_driver_register(&mt7621_pinctrl_driver);
+ }
+-core_initcall_sync(mt7621_pinmux_init);
++core_initcall_sync(mt7621_pinctrl_init);
+diff --git a/drivers/pinctrl/ralink/pinctrl-ralink.c b/drivers/pinctrl/ralink/pinctrl-ralink.c
+index 841f23f55c95..63429a287434 100644
+--- a/drivers/pinctrl/ralink/pinctrl-ralink.c
++++ b/drivers/pinctrl/ralink/pinctrl-ralink.c
+@@ -182,7 +182,7 @@ static const struct pinmux_ops ralink_pmx_group_ops = {
+ 
+ static struct pinctrl_desc ralink_pctrl_desc = {
+ 	.owner		= THIS_MODULE,
+-	.name		= "ralink-pinmux",
++	.name		= "ralink-pinctrl",
+ 	.pctlops	= &ralink_pctrl_ops,
+ 	.pmxops		= &ralink_pmx_group_ops,
+ };
+@@ -191,7 +191,7 @@ static struct ralink_pmx_func gpio_func = {
+ 	.name = "gpio",
+ };
+ 
+-static int ralink_pinmux_index(struct ralink_priv *p)
++static int ralink_pinctrl_index(struct ralink_priv *p)
+ {
+ 	struct ralink_pmx_group *mux = p->groups;
+ 	int i, j, c = 0;
+@@ -248,7 +248,7 @@ static int ralink_pinmux_index(struct ralink_priv *p)
+ 	return 0;
+ }
+ 
+-static int ralink_pinmux_pins(struct ralink_priv *p)
++static int ralink_pinctrl_pins(struct ralink_priv *p)
+ {
+ 	int i, j;
+ 
+@@ -311,8 +311,8 @@ static int ralink_pinmux_pins(struct ralink_priv *p)
+ 	return 0;
+ }
+ 
+-int ralink_pinmux_init(struct platform_device *pdev,
+-		       struct ralink_pmx_group *data)
++int ralink_pinctrl_init(struct platform_device *pdev,
++			struct ralink_pmx_group *data)
+ {
+ 	struct ralink_priv *p;
+ 	struct pinctrl_dev *dev;
+@@ -332,13 +332,13 @@ int ralink_pinmux_init(struct platform_device *pdev,
+ 	platform_set_drvdata(pdev, p);
+ 
+ 	/* init the device */
+-	err = ralink_pinmux_index(p);
++	err = ralink_pinctrl_index(p);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to load index\n");
+ 		return err;
+ 	}
+ 
+-	err = ralink_pinmux_pins(p);
++	err = ralink_pinctrl_pins(p);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to load pins\n");
+ 		return err;
+diff --git a/drivers/pinctrl/ralink/pinctrl-ralink.h b/drivers/pinctrl/ralink/pinctrl-ralink.h
+index 134969409585..e6037be1e153 100644
+--- a/drivers/pinctrl/ralink/pinctrl-ralink.h
++++ b/drivers/pinctrl/ralink/pinctrl-ralink.h
+@@ -47,7 +47,7 @@ struct ralink_pmx_group {
+ 	int func_count;
+ };
+ 
+-int ralink_pinmux_init(struct platform_device *pdev,
+-		       struct ralink_pmx_group *data);
++int ralink_pinctrl_init(struct platform_device *pdev,
++			struct ralink_pmx_group *data);
+ 
+ #endif
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt288x.c b/drivers/pinctrl/ralink/pinctrl-rt288x.c
+index 40c45140ff8a..db5c09ed5601 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt288x.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt288x.c
+@@ -34,27 +34,27 @@ static struct ralink_pmx_group rt2880_pinmux_data_act[] = {
+ 	{ 0 }
+ };
+ 
+-static int rt288x_pinmux_probe(struct platform_device *pdev)
++static int rt288x_pinctrl_probe(struct platform_device *pdev)
+ {
+-	return ralink_pinmux_init(pdev, rt2880_pinmux_data_act);
++	return ralink_pinctrl_init(pdev, rt2880_pinmux_data_act);
+ }
+ 
+-static const struct of_device_id rt288x_pinmux_match[] = {
++static const struct of_device_id rt288x_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, rt288x_pinmux_match);
++MODULE_DEVICE_TABLE(of, rt288x_pinctrl_match);
+ 
+-static struct platform_driver rt288x_pinmux_driver = {
+-	.probe = rt288x_pinmux_probe,
++static struct platform_driver rt288x_pinctrl_driver = {
++	.probe = rt288x_pinctrl_probe,
+ 	.driver = {
+ 		.name = "rt2880-pinmux",
+-		.of_match_table = rt288x_pinmux_match,
++		.of_match_table = rt288x_pinctrl_match,
+ 	},
+ };
+ 
+-static int __init rt288x_pinmux_init(void)
++static int __init rt288x_pinctrl_init(void)
+ {
+-	return platform_driver_register(&rt288x_pinmux_driver);
++	return platform_driver_register(&rt288x_pinctrl_driver);
+ }
+-core_initcall_sync(rt288x_pinmux_init);
++core_initcall_sync(rt288x_pinctrl_init);
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt305x.c b/drivers/pinctrl/ralink/pinctrl-rt305x.c
+index 25527ca1ccaa..b4765ca27cac 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt305x.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt305x.c
+@@ -104,34 +104,34 @@ static struct ralink_pmx_group rt5350_pinmux_data[] = {
+ 	{ 0 }
+ };
+ 
+-static int rt305x_pinmux_probe(struct platform_device *pdev)
++static int rt305x_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	if (soc_is_rt5350())
+-		return ralink_pinmux_init(pdev, rt5350_pinmux_data);
++		return ralink_pinctrl_init(pdev, rt5350_pinmux_data);
+ 	else if (soc_is_rt305x() || soc_is_rt3350())
+-		return ralink_pinmux_init(pdev, rt3050_pinmux_data);
++		return ralink_pinctrl_init(pdev, rt3050_pinmux_data);
+ 	else if (soc_is_rt3352())
+-		return ralink_pinmux_init(pdev, rt3352_pinmux_data);
++		return ralink_pinctrl_init(pdev, rt3352_pinmux_data);
+ 	else
+ 		return -EINVAL;
+ }
+ 
+-static const struct of_device_id rt305x_pinmux_match[] = {
++static const struct of_device_id rt305x_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, rt305x_pinmux_match);
++MODULE_DEVICE_TABLE(of, rt305x_pinctrl_match);
+ 
+-static struct platform_driver rt305x_pinmux_driver = {
+-	.probe = rt305x_pinmux_probe,
++static struct platform_driver rt305x_pinctrl_driver = {
++	.probe = rt305x_pinctrl_probe,
+ 	.driver = {
+ 		.name = "rt2880-pinmux",
+-		.of_match_table = rt305x_pinmux_match,
++		.of_match_table = rt305x_pinctrl_match,
+ 	},
+ };
+ 
+-static int __init rt305x_pinmux_init(void)
++static int __init rt305x_pinctrl_init(void)
+ {
+-	return platform_driver_register(&rt305x_pinmux_driver);
++	return platform_driver_register(&rt305x_pinctrl_driver);
+ }
+-core_initcall_sync(rt305x_pinmux_init);
++core_initcall_sync(rt305x_pinctrl_init);
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt3883.c b/drivers/pinctrl/ralink/pinctrl-rt3883.c
+index 0b8674dbe188..b2e8151de226 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt3883.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt3883.c
+@@ -81,27 +81,27 @@ static struct ralink_pmx_group rt3883_pinmux_data[] = {
+ 	{ 0 }
+ };
+ 
+-static int rt3883_pinmux_probe(struct platform_device *pdev)
++static int rt3883_pinctrl_probe(struct platform_device *pdev)
+ {
+-	return ralink_pinmux_init(pdev, rt3883_pinmux_data);
++	return ralink_pinctrl_init(pdev, rt3883_pinmux_data);
+ }
+ 
+-static const struct of_device_id rt3883_pinmux_match[] = {
++static const struct of_device_id rt3883_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, rt3883_pinmux_match);
++MODULE_DEVICE_TABLE(of, rt3883_pinctrl_match);
+ 
+-static struct platform_driver rt3883_pinmux_driver = {
+-	.probe = rt3883_pinmux_probe,
++static struct platform_driver rt3883_pinctrl_driver = {
++	.probe = rt3883_pinctrl_probe,
+ 	.driver = {
+ 		.name = "rt2880-pinmux",
+-		.of_match_table = rt3883_pinmux_match,
++		.of_match_table = rt3883_pinctrl_match,
+ 	},
+ };
+ 
+-static int __init rt3883_pinmux_init(void)
++static int __init rt3883_pinctrl_init(void)
+ {
+-	return platform_driver_register(&rt3883_pinmux_driver);
++	return platform_driver_register(&rt3883_pinctrl_driver);
+ }
+-core_initcall_sync(rt3883_pinmux_init);
++core_initcall_sync(rt3883_pinctrl_init);
+-- 
+2.25.1
 
-Understood, thanks Rob!
-
-Arınç
