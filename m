@@ -2,80 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B470C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Apr 2022 23:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D323BC433EF
+	for <linux-gpio@archiver.kernel.org>; Sat, 16 Apr 2022 08:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356658AbiDOXqi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 15 Apr 2022 19:46:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57696 "EHLO
+        id S230160AbiDPI3C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 16 Apr 2022 04:29:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356653AbiDOXqg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2022 19:46:36 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF4FFB6D3A
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Apr 2022 16:44:06 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id y6so8176830plg.2
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Apr 2022 16:44:06 -0700 (PDT)
+        with ESMTP id S229671AbiDPI3B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 16 Apr 2022 04:29:01 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4FC33A08;
+        Sat, 16 Apr 2022 01:26:30 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id u18so12283489eda.3;
+        Sat, 16 Apr 2022 01:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=w2QrILTyqQ+Pt7TX+dc/u5nUBhPOOUFyhDJl0/uG8KA=;
-        b=WQYEUw+TfPdba4M0qoV3YoYNx0EokWXTwcm94AT/cqahCQWwwjBWEbOZD4bvmT0NFb
-         Xcx5ODn0k7YRALA13OhixgkDU8uYYogteOunDDY5goCtmJyK/qUBiMez/8Ex2AWPKxfs
-         zWYTFOtjGivIKkh9dDxV5C6NheZrsC87+NjXM=
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ixYukh5lcPmdBMweBnkornJe58aw5tIVg5x4oR/k4ic=;
+        b=ANDTUvdhwV/3lpttLPtcVsHcQWoIW8nCVC5TRHMRKdXkkgco2TZ/R7Yg5INFF7GGAQ
+         EmnmPhwi0d9VGCsB9njNzDiX5ybwd2P7j91Vm8w7kBksYh+pKKboA2njsKUS/2xA1fix
+         AebYfNvyIC3t5EfMrOAKAYmKrwN3ji0jcpH81Dj5JA2QdUyWFAFXrwoAaa4LgdUzTNmX
+         XCk0/9EtWGkRrLGK9Ly3dUwpmH4GQEjvrnzDkrNExHZMw5bNb8qR6k4WbDbUade4SyeY
+         9oIgHR7vIfx6s2b/kc23s+gl/Sw+cTZ1+oyn3OxpBQ4rx5SRItRcZwEOnO5+3/uIHSlN
+         G5/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=w2QrILTyqQ+Pt7TX+dc/u5nUBhPOOUFyhDJl0/uG8KA=;
-        b=ho67sCQbXwdtFTNBSpM+J0E7kZH1GSEvhsC1Cx2rGDXY/Kfz7ssrUS3nZGTzlm3hsi
-         /iWe3or3N8HYmEdtILITpWz4pGeGSem5KaxxoWIXe5T/P0m9II808u7apnNtX3MVGPiO
-         4XdM0EjA4pDI1o2k5sVEvsDb2LC3zQEDwLNjJUCLdgJvtFnFLBmT0yB+jZ8IeKJKyxyH
-         xRzwwcXQg6NTQHzQtNfABHjJGGBoEuhJH6EtN1gsKEgPo6CRzvnIeS1+R7x/xG0wwdKQ
-         7rghDgY719c29jnpYDulEmeugx6BEtMwkvbxgl6CSWpAPmtWJ0p+L/me0EVsSN/1UO+D
-         qKvQ==
-X-Gm-Message-State: AOAM530HJreHKwPneu4hPrtg27ERjWQ4amQK5md6N3syN74+bHP8fMd4
-        Us6PFe0C/5UjYi55HqtOKiyPYQ==
-X-Google-Smtp-Source: ABdhPJx5DUqDtUFoTZutT3tV3A+5mldSPzpeVrsrxCdXDbVcaqBeXAPd4TrSNpEqM3FQkJq1z1ovDg==
-X-Received: by 2002:a17:90b:1b44:b0:1cd:49b8:42b8 with SMTP id nv4-20020a17090b1b4400b001cd49b842b8mr1313605pjb.102.1650066246324;
-        Fri, 15 Apr 2022 16:44:06 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:b27a:b3e7:2e3e:e4be])
-        by smtp.gmail.com with UTF8SMTPSA id k10-20020a056a00168a00b004f7e2a550ccsm3938967pfc.78.2022.04.15.16.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Apr 2022 16:44:05 -0700 (PDT)
-Date:   Fri, 15 Apr 2022 16:44:03 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, quic_plai@quicinc.com,
-        bgoswami@codeaurora.org, perex@perex.cz, tiwai@suse.com,
-        srinivas.kandagatla@linaro.org, rohitkr@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, judyhsiao@chromium.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Venkata Prasad Potturu <quic_potturu@quicinc.com>
-Subject: Re: [PATCH v12 7/7] pinctrl: qcom: Update clock voting as optional
-Message-ID: <YloDQ7V7JTNYkjWu@google.com>
-References: <1647447426-23425-1-git-send-email-quic_srivasam@quicinc.com>
- <1647447426-23425-8-git-send-email-quic_srivasam@quicinc.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ixYukh5lcPmdBMweBnkornJe58aw5tIVg5x4oR/k4ic=;
+        b=W5KvYBDH8/kbT58mCxdf4gMdOKJHPDI4ZO3HbOSJQ2nb7fOGsyaNvJif6OvK3ZDCcC
+         pFTYjtBj9TO6cdgjf9YYCuyk7WAfqQR9M9M5o/39JM2K12jHmXHKsYLabQd2JoB4MsQ0
+         75Atfsp6Jo8Yl9Ej59/CgmrIaXKoKQa2jm+ryVOpjVkjDpjjlaWQz3kxqcR9Rqd0rYLq
+         J2o8jOJjIIZfjEszZTwx+LGPZ+wbYGUqEZkWTaUMYWFJuBfhvvnpejDoTuNgLSV60zxX
+         PvheQwSleKwvK/zHm88PzzivOcJ2v3uGn9Es2cmfq+CZhI0YrrKetNBY6GbakDzLhSMz
+         ot4Q==
+X-Gm-Message-State: AOAM531bQ8tEH7RP4mr4ha3s4PCuLMlwfDKIOnOYiNKtQJTNt/Lcz6K1
+        /E8YCaRN5IIIDo34sxVeOsEKIDBI1WWU8NvhrsQ=
+X-Google-Smtp-Source: ABdhPJwdg54Fb4NlQ50SlhCchCw49y9IEn5kqQsD5RZVVgFK2JAIE+SusdeKLGFWtmQchPfhPs2WikuitqYfQEwfeq4=
+X-Received: by 2002:a05:6402:d7:b0:413:673:ba2f with SMTP id
+ i23-20020a05640200d700b004130673ba2fmr2820550edu.29.1650097588767; Sat, 16
+ Apr 2022 01:26:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1647447426-23425-8-git-send-email-quic_srivasam@quicinc.com>
+References: <20220415070710.220785-1-andrei.lalaev@emlid.com>
+In-Reply-To: <20220415070710.220785-1-andrei.lalaev@emlid.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 16 Apr 2022 11:25:52 +0300
+Message-ID: <CAHp75VdzVj12K=iGY78tdyULyZAL4=fKAX9rBuCyfNXdUeg3MQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpiolib: of: fix bounds check for 'gpio-reserved-ranges'
+To:     Andrei Lalaev <andrei.lalaev@emlid.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 09:47:06PM +0530, Srinivasa Rao Mandadapu wrote:
-> Update bulk clock voting to optional voting as ADSP bypass platform doesn't
-> need macro and decodec clocks, as these macro and dcodec GDSC switches are
-> maintained as power domains and operated from lpass clock drivers.
-> 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> Co-developed-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
-> Signed-off-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
+On Fri, Apr 15, 2022 at 10:09 AM Andrei Lalaev <andrei.lalaev@emlid.com> wrote:
+>
+> Gpiolib interprets the elements of "gpio-reserved-ranges" as "start,size"
+> because it clears "size" bits starting from the "start" bit in the according
+> bitmap. So it has to use "greater" instead of "greater or equal" when performs
+> bounds check to make sure that GPIOs are in the available range.
+> Previous implementation skipped ranges that include the last GPIO in
+> the range.
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+> Fixes: 726cb3ba4969 ("gpiolib: Support 'gpio-reserved-ranges' property")
+> Signed-off-by: Andrei Lalaev <andrei.lalaev@emlid.com>
+> ---
+> I wrote the mail to the maintainers
+> (https://lore.kernel.org/linux-gpio/20220412115554.159435-1-andrei.lalaev@emlid.com/T/#u)
+> of the questioned DTSes (because I couldn't understand how the maintainers
+> interpreted this property), but I haven't received a response.
+> Since the questioned DTSes use "gpio-reserved-ranges = <0 4>"
+> (i.e., the beginning of the range), this patch doesn't affect these DTSes at all.
+> TBH this patch doesn't break any existing DTSes because none of them
+> reserve gpios at the end of range.
+> ---
+>  drivers/gpio/gpiolib-of.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index ae1ce319cd78..7e5e51d49d09 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -910,7 +910,7 @@ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
+>                                            i, &start);
+>                 of_property_read_u32_index(np, "gpio-reserved-ranges",
+>                                            i + 1, &count);
+> -               if (start >= chip->ngpio || start + count >= chip->ngpio)
+> +               if (start >= chip->ngpio || start + count > chip->ngpio)
+>                         continue;
+>
+>                 bitmap_clear(chip->valid_mask, start, count);
+> --
+> 2.25.1
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
