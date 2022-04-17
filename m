@@ -2,77 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED119C433EF
-	for <linux-gpio@archiver.kernel.org>; Sun, 17 Apr 2022 23:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2043EC433F5
+	for <linux-gpio@archiver.kernel.org>; Sun, 17 Apr 2022 23:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235340AbiDQXTU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 17 Apr 2022 19:19:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
+        id S235378AbiDQXfl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 17 Apr 2022 19:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235284AbiDQXTT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Apr 2022 19:19:19 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB79DBF78
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Apr 2022 16:16:42 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-2ec04a2ebadso125931047b3.12
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Apr 2022 16:16:42 -0700 (PDT)
+        with ESMTP id S235372AbiDQXfk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Apr 2022 19:35:40 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E72D12AA6
+        for <linux-gpio@vger.kernel.org>; Sun, 17 Apr 2022 16:33:03 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-2eba37104a2so127054537b3.0
+        for <linux-gpio@vger.kernel.org>; Sun, 17 Apr 2022 16:33:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8cpbgmXpsT8kTA2tDzzLPPwjwJw+UvbBaXP36BctY+8=;
-        b=UTx76Gjs7MAE4h+GdRm63owJ9jaWQUGfs5qpjs3twfTcv2Xjmmf8+R0gkA5t78hAbm
-         2dvH/uTHf+3RtEM2A5XfsIi4bZDFlpsSgaFv/B/jTjXhPDN4nt08aSi3NDO6Ow8v+iPJ
-         b+xh6F2vGhlG9t9g84ZX8pN+I1owPrXlMB1dP08nTvjAZMqjcHh1OgSXxl8gyxOi6U+j
-         5H5kXNiWx3qeeEd6cPGtsTXDQtHguB+w+SWXBT02+y7cs73LLPJ6gw8K1ESrN56hIA5u
-         nBJ6QlaO3/BpHbsjBtOba/4xiwURq3SjVxgFB/Eb4MH6IutMzLNgyUWOC9cdSKigTGUl
-         /XJg==
+        bh=qq311Ej4nKaNHmuSEh9g0stR0rP4XIT/BhL1cGtlS7w=;
+        b=r9jqXinwzkdIC5VyPdggPBtZPjeAHyq1eSsjmecFUKYa55IuKybWRojKRp4ChNnyEf
+         2hdV8pvp2zVL/G+i3bFwoGEXUF7LdMQzcbu/dcaa7Bu0KLi6mT5/vTvTJLCITdUjQecQ
+         t1n4Jw78Jn5mFYMNl/2IRdB9WNuIF3xaaXjsuyQufBiqMKOPdJ5ZVkvjWUUys4tlsPxP
+         Jf/59SscRxietyIJSswa3HWwkAZYXMtmGCs3SDLK4GME080mTndVG/5dG7nnLybV2/sz
+         ieZReQIZUKpVfOhUogy5KDIoy6gmiHeKlVcR91obmX99jkzwWsPdUVG05pzwq/27JtIH
+         nFoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8cpbgmXpsT8kTA2tDzzLPPwjwJw+UvbBaXP36BctY+8=;
-        b=C8X4wiPlnez0C97Bm3ZAwA8KycpKqJs4x+2+Qsj4kjB0nH3qHZGgEspanOg1NznjcY
-         vrxvdp8B4T6IWGogh9BzVCqnN4lRaer0jYEOHWUnfw4ajh+5N+c8lLziHiMzGpqJB6KE
-         WbhceTtaO1sgeXPjcWLqhG3ugp41LpbS/aG3K5n9CX/y19ulymmS3x199cagkVoExl3d
-         fTHJbXZVZ5rN+/WwZLrljKACafvUGWqfJ5doeCOQGJInqc2wGO/XdA9fNQZEgG75Y4j7
-         +ohNhnaMY3hHhTKsUkha9lxRTyLMiWYnnLCRIONrtDg6U8iQjBLnRdWTOu6XJwoZ+GB8
-         YUUA==
-X-Gm-Message-State: AOAM533t537mZwYd7XJLh5Ac4QNy2fko/GAy25S93BfReysJCeTGU4nz
-        ZpVI4ru+6TcFF5N3SxQoJMrCAS1jM8WQn8KbwUYoVQ==
-X-Google-Smtp-Source: ABdhPJyCDEjE1qkM6RTotTjlFgV7qxm5FY2m2Ti+oTwe0WtqY5b20AIEjGh8+Q6j3WKkcsDGZ/yDwyn3DRo1JlC8uM4=
-X-Received: by 2002:a0d:c4c2:0:b0:2f1:6c00:9eb4 with SMTP id
- g185-20020a0dc4c2000000b002f16c009eb4mr5752276ywd.448.1650237401823; Sun, 17
- Apr 2022 16:16:41 -0700 (PDT)
+        bh=qq311Ej4nKaNHmuSEh9g0stR0rP4XIT/BhL1cGtlS7w=;
+        b=LA3ODZ5dy8BHa5blJQlZZoZYlZUn5SxQHgoyCzkV3Ntx3zaQ4Lr/5aqzlPepou1/3q
+         JXx7S5eFxhJb1dCLb5Du0axaJ0YCDDikiiISxz3K+lDz2I2deO5jTPSMB3J/M7M8shBg
+         l8E82SZNN/lpEFcLaRDU5r73KIBzL9Dx3nDYg8X9rWB0cAVkOAvjVf2NvDp5HCggmZW3
+         q+Wrm8LkSadyFCwNbN8l6zPSz3euFJM1XKtyV4mWLIisrQPlx27kSsQ3aG5aI++vS5hN
+         B0omyByCNthitVQyCWx8Vhbu5anf2pJxIBT+xM50R8VSJTJ45XLbQWTpJpPAhDJ/JBuu
+         2h/w==
+X-Gm-Message-State: AOAM5300hXJ8FnnwYoUI2ZRqGWLlKParArAAuLs5YR+z1ItW+911veVB
+        JNjBkoizYmprdXtcHKfl9B3XqJ84gq3JUSsCs6a6cg==
+X-Google-Smtp-Source: ABdhPJy971JsV2M6G/kykCqVBXCve1UTM/9vpeUp4hd3G329HLHl0O/fftTQQ2T3LleMXPNCddp/kEi6imjIGc1o0Ig=
+X-Received: by 2002:a0d:e813:0:b0:2ec:1e83:e5f0 with SMTP id
+ r19-20020a0de813000000b002ec1e83e5f0mr8377849ywe.151.1650238382771; Sun, 17
+ Apr 2022 16:33:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220414233055.586962-1-chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20220414233055.586962-1-chris.packham@alliedtelesis.co.nz>
+References: <1647447426-23425-1-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1647447426-23425-1-git-send-email-quic_srivasam@quicinc.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 18 Apr 2022 01:16:30 +0200
-Message-ID: <CACRpkdaeg6d+33+eqnqMbqg6Qv9GzbvXr=rvqZKKuEwaGMe2=g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] arm64: mvebu: Support for Marvell 98DX2530 (and variants)
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     robh+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        andrew@lunn.ch, gregory.clement@bootlin.com,
-        sebastian.hesselbarth@gmail.com, kostap@marvell.com,
-        robert.marko@sartura.hr, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 18 Apr 2022 01:32:51 +0200
+Message-ID: <CACRpkdZKQRnxFjOD9z7iNvRQeM6kGBBopjW7VzFSuj91GYeJOw@mail.gmail.com>
+Subject: Re: [PATCH v12 0/7] Add pin control support for lpass sc7280
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, quic_plai@quicinc.com, bgoswami@codeaurora.org,
+        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
+        rohitkr@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Apr 15, 2022 at 1:31 AM Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
+On Wed, Mar 16, 2022 at 5:17 PM Srinivasa Rao Mandadapu
+<quic_srivasam@quicinc.com> wrote:
 
-> Chris Packham (4):
->   dt-bindings: pinctrl: mvebu: Document bindings for AC5
->   pinctrl: mvebu: pinctrl driver for 98DX2530 SoC
+> This patch series is to split lpass variant common pin control
+> functions and SoC specific functions and to add lpass sc7280 pincontrol support.
+> It also Adds dt-bindings for lpass sc7280 lpass lpi pincontrol.
+>
+> Changes Since V11:
 
-These two applied to the pinctrl tree for v5.19!
-
-Funnel the rest through the SoC tree, thanks!
+Bjorn what do you say about v12?
 
 Yours,
 Linus Walleij
