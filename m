@@ -2,41 +2,41 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73127C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Apr 2022 12:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A64C4321E
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Apr 2022 12:57:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238388AbiDRM5R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Apr 2022 08:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55704 "EHLO
+        id S240565AbiDRNAf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Apr 2022 09:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240352AbiDRM42 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2022 08:56:28 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F0FE1261E;
-        Mon, 18 Apr 2022 05:37:49 -0700 (PDT)
+        with ESMTP id S240919AbiDRM6E (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2022 08:58:04 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C70423BC8;
+        Mon, 18 Apr 2022 05:38:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1650285469; x=1681821469;
+  t=1650285501; x=1681821501;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=As1X0P/G4QwXKGqgTUAbh2m46WDe6bYCw7umSlOuyHc=;
-  b=UnBtntKPoj52vl1LYGGPEYPXiOU7+EwGO9C7IAkddUWKrI4MDdC875P+
-   sg7pWonNELMIOD4yuBIFBrup3hJCseHm9E9Aeoo3POPyDHwcHXacg8jlm
-   r8bHyB/009V4cBT/sXIRZXVVhAy5FEjBC8WZrU1VkNV+JqQxtmEWtgiIU
-   M=;
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 18 Apr 2022 05:37:48 -0700
+  bh=A0LmYC/gEqsIU27Z6oRulOsy/d8igGAqb2T/BGD0plE=;
+  b=OsVc0p4GbndBJ4+fp5yQ06BmjWyX1RDGURFpu1VhH1fOkgIgLgHtq1az
+   8E7zdiKXmgg0f9H6no6RYw65wC16yVRAi9BLX0zokytgHYgvNX8aXPxyy
+   6Z7O2I7NxyIskM9uT9dpU474I4WsI5dfpb0wLCUltA0SCJ49oVpVQeSnH
+   c=;
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 18 Apr 2022 05:38:20 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg03-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2022 05:37:47 -0700
+  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2022 05:38:20 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Mon, 18 Apr 2022 05:37:47 -0700
+ 15.2.986.22; Mon, 18 Apr 2022 05:38:19 -0700
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Mon, 18 Apr 2022 05:37:40 -0700
+ 15.2.986.22; Mon, 18 Apr 2022 05:38:12 -0700
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
         <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
@@ -49,9 +49,9 @@ To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
         <linux-gpio@vger.kernel.org>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         "Venkata Prasad Potturu" <quic_potturu@quicinc.com>
-Subject: [PATCH v13 2/7] dt-bindings: pinctrl: qcom: Add sc7280 lpass lpi pinctrl bindings
-Date:   Mon, 18 Apr 2022 18:07:02 +0530
-Message-ID: <1650285427-19752-3-git-send-email-quic_srivasam@quicinc.com>
+Subject: [PATCH v13 7/7] pinctrl: qcom: Update clock voting as optional
+Date:   Mon, 18 Apr 2022 18:07:07 +0530
+Message-ID: <1650285427-19752-8-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1650285427-19752-1-git-send-email-quic_srivasam@quicinc.com>
 References: <1650285427-19752-1-git-send-email-quic_srivasam@quicinc.com>
@@ -64,140 +64,64 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add device tree binding Documentation details for Qualcomm SC7280
-LPASS LPI pinctrl driver.
+Update bulk clock voting to optional voting as ADSP bypass platform doesn't
+need macro and decodec clocks, as these macro and dcodec GDSC switches are
+maintained as power domains and operated from lpass clock drivers.
 
 Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 Co-developed-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
 Signed-off-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- .../pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml     | 115 +++++++++++++++++++++
- 1 file changed, 115 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c        | 8 ++++++--
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.h        | 1 +
+ drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c | 1 +
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml
-new file mode 100644
-index 0000000..d32ee32
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml
-@@ -0,0 +1,115 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+index 717e937..74810ec 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+@@ -401,9 +401,13 @@ int lpi_pinctrl_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(pctrl->slew_base),
+ 				     "Slew resource not provided\n");
+ 
+-	ret = devm_clk_bulk_get(dev, MAX_LPI_NUM_CLKS, pctrl->clks);
++	if (data->is_clk_optional)
++		ret = devm_clk_bulk_get_optional(dev, MAX_LPI_NUM_CLKS, pctrl->clks);
++	else
++		ret = devm_clk_bulk_get(dev, MAX_LPI_NUM_CLKS, pctrl->clks);
 +
-+title: Qualcomm Technologies, Inc. Low Power Audio SubSystem (LPASS)
-+  Low Power Island (LPI) TLMM block
-+
-+maintainers:
-+  - Srinivasa Rao Mandadapu <srivasam@codeaurora.org>
-+  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-+
-+description: |
-+  This binding describes the Top Level Mode Multiplexer block found in the
-+  LPASS LPI IP on most Qualcomm SoCs
-+
-+properties:
-+  compatible:
-+    const: qcom,sc7280-lpass-lpi-pinctrl
-+
-+  reg:
-+    minItems: 2
-+    maxItems: 2
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    description: Specifying the pin number and flags, as defined in
-+      include/dt-bindings/gpio/gpio.h
-+    const: 2
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+#PIN CONFIGURATION NODES
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+    $ref: "/schemas/pinctrl/pincfg-node.yaml"
-+
-+    properties:
-+      pins:
-+        description:
-+          List of gpio pins affected by the properties specified in this
-+          subnode.
-+        items:
-+          oneOf:
-+            - pattern: "^gpio([0-9]|[1-9][0-9])$"
-+        minItems: 1
-+        maxItems: 15
-+
-+      function:
-+        enum: [ gpio, swr_tx_clk, qua_mi2s_sclk, swr_tx_data, qua_mi2s_ws,
-+                qua_mi2s_data, swr_rx_clk, swr_rx_data, dmic1_clk, i2s1_clk,
-+                dmic1_data, i2s1_ws, dmic2_clk, dmic2_data, i2s1_data,
-+                i2s2_clk, wsa_swr_clk, i2s2_ws, wsa_swr_data, dmic3_clk,
-+                dmic3_data, i2s2_data ]
-+        description:
-+          Specify the alternative function to be configured for the specified
-+          pins.
-+
-+      drive-strength:
-+        enum: [2, 4, 6, 8, 10, 12, 14, 16]
-+        default: 2
-+        description:
-+          Selects the drive strength for the specified pins, in mA.
-+
-+      slew-rate:
-+        enum: [0, 1, 2, 3]
-+        default: 0
-+        description: |
-+            0: No adjustments
-+            1: Higher Slew rate (faster edges)
-+            2: Lower Slew rate (slower edges)
-+            3: Reserved (No adjustments)
-+
-+      bias-pull-down: true
-+
-+      bias-pull-up: true
-+
-+      bias-disable: true
-+
-+      output-high: true
-+
-+      output-low: true
-+
-+    required:
-+      - pins
-+      - function
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    lpass_tlmm: pinctrl@33c0000 {
-+        compatible = "qcom,sc7280-lpass-lpi-pinctrl";
-+        reg = <0x33c0000 0x20000>,
-+              <0x3550000 0x10000>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        gpio-ranges = <&lpass_tlmm 0 0 15>;
-+    };
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Can't get clocks\n");
++		return ret;
+ 
+ 	ret = clk_bulk_prepare_enable(MAX_LPI_NUM_CLKS, pctrl->clks);
+ 	if (ret)
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
+index afbac2a..759d5d8 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
+@@ -77,6 +77,7 @@ struct lpi_pinctrl_variant_data {
+ 	int ngroups;
+ 	const struct lpi_function *functions;
+ 	int nfunctions;
++	bool is_clk_optional;
+ };
+ 
+ int lpi_pinctrl_probe(struct platform_device *pdev);
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
+index d615b6c5..2add9a4 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
+@@ -141,6 +141,7 @@ static const struct lpi_pinctrl_variant_data sc7280_lpi_data = {
+ 	.ngroups = ARRAY_SIZE(sc7280_groups),
+ 	.functions = sc7280_functions,
+ 	.nfunctions = ARRAY_SIZE(sc7280_functions),
++	.is_clk_optional = true,
+ };
+ 
+ static const struct of_device_id lpi_pinctrl_of_match[] = {
 -- 
 2.7.4
 
