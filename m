@@ -2,239 +2,285 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD3DC4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Apr 2022 12:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9341C43217
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Apr 2022 12:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240598AbiDRNAj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Apr 2022 09:00:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59776 "EHLO
+        id S238424AbiDRNAk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Apr 2022 09:00:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241662AbiDRM64 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2022 08:58:56 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 484092E0BB
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2022 05:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650285568; x=1681821568;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=v6/SFjWD/tGIO243AH/OB8SuwOiEmTo39ICigjzlJe4=;
-  b=Y/kkgGF0v0S+uf54huOjC5OSCnGqcIUJh+qgavnEfEM5nUBCjqThmVhp
-   sRhDJiU36d9fqTXJ9acRjP2/qBTZ1XMLTH1MvTvCScDqfHVBH20AfpQr2
-   PCiQLLUL/MQ8znvD53Rr375j7dP4WkNlSpt2LOwwGLsjaWHt+SmZyVNtm
-   i+IeqtFdWChCkg645coSL6ZNHUKlCFPSQyYO/XmRYB8+BjgDUEXrz5Dfd
-   feQORwX6AHfZOoqLZauhInjATdEmgXZN22clc3mPWMu8khOqw64A1ZJ1m
-   /uvKEoiQTYd8pFaKfDlV4wvY8Ys/wdR7cgRKR2HvscFiBwuvbcw+JBr6v
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10320"; a="245399226"
-X-IronPort-AV: E=Sophos;i="5.90,269,1643702400"; 
-   d="scan'208";a="245399226"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2022 05:39:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,269,1643702400"; 
-   d="scan'208";a="509725226"
-Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 18 Apr 2022 05:39:26 -0700
-Received: from kbuild by 3abc53900bec with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1ngQf7-0004dI-Tx;
-        Mon, 18 Apr 2022 12:39:25 +0000
-Date:   Mon, 18 Apr 2022 20:38:48 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- 925fbe1f7eb6fa7077d92b591b7ced1367358563
-Message-ID: <625d5bd8.Yqmb8abhyyUMAA74%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S240792AbiDRM5s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2022 08:57:48 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9884D237FA;
+        Mon, 18 Apr 2022 05:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1650285495; x=1681821495;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=re2JqeDsy+SVLqyejB8U8I8risDmXwC//wBc8p1Lu9k=;
+  b=N7XITdw03oQf8wujnbJhW5e7pQRdv+2A/UfHOkI7rR48voZII4U8GT0F
+   9BjtFkr8QgtwsYplL8f+S2wHlQ0Yilxc/HxJt4tUejBI/0XmvkFImRjYK
+   AJyKgtPLEw4sdnGiobpqGwgQ63ppFedGh6ZIgq3t96aSZiovKu9u1TmfB
+   M=;
+Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
+  by alexa-out.qualcomm.com with ESMTP; 18 Apr 2022 05:38:14 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2022 05:38:13 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Mon, 18 Apr 2022 05:38:12 -0700
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Mon, 18 Apr 2022 05:38:06 -0700
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
+        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <judyhsiao@chromium.org>, Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        "Venkata Prasad Potturu" <quic_potturu@quicinc.com>
+Subject: [PATCH v13 6/7] pinctrl: qcom: Add SC7280 lpass pin configuration
+Date:   Mon, 18 Apr 2022 18:07:06 +0530
+Message-ID: <1650285427-19752-7-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1650285427-19752-1-git-send-email-quic_srivasam@quicinc.com>
+References: <1650285427-19752-1-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 925fbe1f7eb6fa7077d92b591b7ced1367358563  dt-bindings: pinctrl: aspeed-g6: add FWQSPI function/group
+Add pin control support for SC7280 LPASS LPI.
 
-elapsed time: 731m
+Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Co-developed-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
+Signed-off-by: Venkata Prasad Potturu <quic_potturu@quicinc.com>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/pinctrl/qcom/Kconfig                    |   9 ++
+ drivers/pinctrl/qcom/Makefile                   |   1 +
+ drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c | 166 ++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
 
-configs tested: 160
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm64                               defconfig
-arm64                            allyesconfig
-arm                              allmodconfig
-arm                                 defconfig
-arm                              allyesconfig
-i386                 randconfig-c001-20220418
-parisc                           allyesconfig
-sh                               allmodconfig
-h8300                            allyesconfig
-xtensa                           allyesconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-nios2                            allyesconfig
-arm                           stm32_defconfig
-sh                        apsh4ad0a_defconfig
-mips                         db1xxx_defconfig
-sh                ecovec24-romimage_defconfig
-m68k                        m5272c3_defconfig
-riscv                            allmodconfig
-powerpc                           allnoconfig
-sh                          rsk7203_defconfig
-powerpc                     rainier_defconfig
-ia64                          tiger_defconfig
-h8300                            alldefconfig
-m68k                          atari_defconfig
-mips                         cobalt_defconfig
-sh                            shmin_defconfig
-sh                             espt_defconfig
-arm                          simpad_defconfig
-arm                           sunxi_defconfig
-ia64                             alldefconfig
-ia64                        generic_defconfig
-sh                           se7721_defconfig
-m68k                        mvme16x_defconfig
-powerpc                 mpc834x_itx_defconfig
-mips                     loongson1b_defconfig
-powerpc                    sam440ep_defconfig
-sh                                  defconfig
-powerpc                       holly_defconfig
-arm                        realview_defconfig
-powerpc                     mpc83xx_defconfig
-mips                  maltasmvp_eva_defconfig
-arc                        nsim_700_defconfig
-mips                             allyesconfig
-powerpc                 mpc85xx_cds_defconfig
-mips                         mpc30x_defconfig
-arm                           corgi_defconfig
-arm                        keystone_defconfig
-sh                  sh7785lcr_32bit_defconfig
-mips                         rt305x_defconfig
-m68k                       bvme6000_defconfig
-ia64                            zx1_defconfig
-mips                  decstation_64_defconfig
-mips                            ar7_defconfig
-m68k                          amiga_defconfig
-mips                    maltaup_xpa_defconfig
-arm                      integrator_defconfig
-parisc                generic-32bit_defconfig
-powerpc                     pq2fads_defconfig
-sh                            hp6xx_defconfig
-x86_64                           alldefconfig
-m68k                        m5307c3_defconfig
-sh                             sh03_defconfig
-sh                   rts7751r2dplus_defconfig
-arm                  randconfig-c002-20220418
-x86_64               randconfig-c001-20220418
-arm                  randconfig-c002-20220417
-ia64                             allmodconfig
-ia64                             allyesconfig
-ia64                                defconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-nios2                               defconfig
-csky                                defconfig
-alpha                               defconfig
-arc                                 defconfig
-s390                                defconfig
-s390                             allmodconfig
-parisc                              defconfig
-parisc64                            defconfig
-s390                             allyesconfig
-sparc                               defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-i386                                defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-x86_64               randconfig-a003-20220418
-x86_64               randconfig-a004-20220418
-x86_64               randconfig-a006-20220418
-x86_64               randconfig-a001-20220418
-x86_64               randconfig-a002-20220418
-x86_64               randconfig-a005-20220418
-i386                 randconfig-a004-20220418
-i386                 randconfig-a001-20220418
-i386                 randconfig-a003-20220418
-i386                 randconfig-a005-20220418
-i386                 randconfig-a006-20220418
-i386                 randconfig-a002-20220418
-arc                  randconfig-r043-20220418
-arc                  randconfig-r043-20220417
-riscv                randconfig-r042-20220417
-s390                 randconfig-r044-20220417
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_k210_defconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-x86_64                    rhel-8.3-kselftests
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                          rhel-8.3-func
-x86_64                                  kexec
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                         rhel-8.3-kunit
-x86_64                               rhel-8.3
-
-clang tested configs:
-x86_64                        randconfig-c007
-powerpc              randconfig-c003-20220417
-arm                  randconfig-c002-20220417
-i386                          randconfig-c001
-riscv                randconfig-c006-20220417
-mips                 randconfig-c004-20220417
-powerpc              randconfig-c003-20220418
-arm                  randconfig-c002-20220418
-riscv                randconfig-c006-20220418
-x86_64               randconfig-c007-20220418
-mips                 randconfig-c004-20220418
-i386                 randconfig-c001-20220418
-mips                           rs90_defconfig
-powerpc                     akebono_defconfig
-riscv                          rv32_defconfig
-arm                         shannon_defconfig
-powerpc                    mvme5100_defconfig
-arm                       versatile_defconfig
-mips                        omega2p_defconfig
-mips                     cu1830-neo_defconfig
-powerpc                     tqm8540_defconfig
-mips                            e55_defconfig
-mips                           ip28_defconfig
-arm                           spitz_defconfig
-x86_64               randconfig-a016-20220418
-x86_64               randconfig-a012-20220418
-x86_64               randconfig-a013-20220418
-x86_64               randconfig-a014-20220418
-x86_64               randconfig-a015-20220418
-x86_64               randconfig-a011-20220418
-i386                 randconfig-a011-20220418
-i386                 randconfig-a015-20220418
-i386                 randconfig-a016-20220418
-i386                 randconfig-a012-20220418
-i386                 randconfig-a013-20220418
-i386                 randconfig-a014-20220418
-riscv                randconfig-r042-20220418
-hexagon              randconfig-r041-20220417
-hexagon              randconfig-r041-20220418
-hexagon              randconfig-r045-20220417
-hexagon              randconfig-r045-20220418
-s390                 randconfig-r044-20220418
-
+diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+index f6d3616..3daeb97 100644
+--- a/drivers/pinctrl/qcom/Kconfig
++++ b/drivers/pinctrl/qcom/Kconfig
+@@ -239,6 +239,15 @@ config PINCTRL_SC7280
+ 	  Qualcomm Technologies Inc TLMM block found on the Qualcomm
+ 	  Technologies Inc SC7280 platform.
+ 
++config PINCTRL_SC7280_LPASS_LPI
++	tristate "Qualcomm Technologies Inc SC7280 LPASS LPI pin controller driver"
++	depends on GPIOLIB
++	depends on PINCTRL_LPASS_LPI
++	help
++	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
++	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
++	  (Low Power Island) found on the Qualcomm Technologies Inc SC7280 platform.
++
+ config PINCTRL_SC8180X
+ 	tristate "Qualcomm Technologies Inc SC8180x pin controller driver"
+ 	depends on (OF || ACPI)
+diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
+index 04e8c6c..4f0ee75 100644
+--- a/drivers/pinctrl/qcom/Makefile
++++ b/drivers/pinctrl/qcom/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_PINCTRL_QCOM_SSBI_PMIC) += pinctrl-ssbi-gpio.o
+ obj-$(CONFIG_PINCTRL_QCOM_SSBI_PMIC) += pinctrl-ssbi-mpp.o
+ obj-$(CONFIG_PINCTRL_SC7180)	+= pinctrl-sc7180.o
+ obj-$(CONFIG_PINCTRL_SC7280)	+= pinctrl-sc7280.o
++obj-$(CONFIG_PINCTRL_SC7280_LPASS_LPI) += pinctrl-sc7280-lpass-lpi.o
+ obj-$(CONFIG_PINCTRL_SC8180X)	+= pinctrl-sc8180x.o
+ obj-$(CONFIG_PINCTRL_SC8280XP)	+= pinctrl-sc8280xp.o
+ obj-$(CONFIG_PINCTRL_SDM660)   += pinctrl-sdm660.o
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
+new file mode 100644
+index 0000000..d615b6c5
+--- /dev/null
++++ b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
+@@ -0,0 +1,166 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
++ * ALSA SoC platform-machine driver for QTi LPASS
++ */
++
++#include <linux/gpio/driver.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "pinctrl-lpass-lpi.h"
++
++enum lpass_lpi_functions {
++	LPI_MUX_dmic1_clk,
++	LPI_MUX_dmic1_data,
++	LPI_MUX_dmic2_clk,
++	LPI_MUX_dmic2_data,
++	LPI_MUX_dmic3_clk,
++	LPI_MUX_dmic3_data,
++	LPI_MUX_i2s1_clk,
++	LPI_MUX_i2s1_data,
++	LPI_MUX_i2s1_ws,
++	LPI_MUX_i2s2_clk,
++	LPI_MUX_i2s2_data,
++	LPI_MUX_i2s2_ws,
++	LPI_MUX_qua_mi2s_data,
++	LPI_MUX_qua_mi2s_sclk,
++	LPI_MUX_qua_mi2s_ws,
++	LPI_MUX_swr_rx_clk,
++	LPI_MUX_swr_rx_data,
++	LPI_MUX_swr_tx_clk,
++	LPI_MUX_swr_tx_data,
++	LPI_MUX_wsa_swr_clk,
++	LPI_MUX_wsa_swr_data,
++	LPI_MUX_gpio,
++	LPI_MUX__,
++};
++
++static int gpio0_pins[] = { 0 };
++static int gpio1_pins[] = { 1 };
++static int gpio2_pins[] = { 2 };
++static int gpio3_pins[] = { 3 };
++static int gpio4_pins[] = { 4 };
++static int gpio5_pins[] = { 5 };
++static int gpio6_pins[] = { 6 };
++static int gpio7_pins[] = { 7 };
++static int gpio8_pins[] = { 8 };
++static int gpio9_pins[] = { 9 };
++static int gpio10_pins[] = { 10 };
++static int gpio11_pins[] = { 11 };
++static int gpio12_pins[] = { 12 };
++static int gpio13_pins[] = { 13 };
++static int gpio14_pins[] = { 14 };
++
++static const struct pinctrl_pin_desc sc7280_lpi_pins[] = {
++	PINCTRL_PIN(0, "gpio0"),
++	PINCTRL_PIN(1, "gpio1"),
++	PINCTRL_PIN(2, "gpio2"),
++	PINCTRL_PIN(3, "gpio3"),
++	PINCTRL_PIN(4, "gpio4"),
++	PINCTRL_PIN(5, "gpio5"),
++	PINCTRL_PIN(6, "gpio6"),
++	PINCTRL_PIN(7, "gpio7"),
++	PINCTRL_PIN(8, "gpio8"),
++	PINCTRL_PIN(9, "gpio9"),
++	PINCTRL_PIN(10, "gpio10"),
++	PINCTRL_PIN(11, "gpio11"),
++	PINCTRL_PIN(12, "gpio12"),
++	PINCTRL_PIN(13, "gpio13"),
++	PINCTRL_PIN(14, "gpio14"),
++};
++
++static const char * const swr_tx_clk_groups[] = { "gpio0" };
++static const char * const swr_tx_data_groups[] = { "gpio1", "gpio2", "gpio14" };
++static const char * const swr_rx_clk_groups[] = { "gpio3" };
++static const char * const swr_rx_data_groups[] = { "gpio4", "gpio5" };
++static const char * const dmic1_clk_groups[] = { "gpio6" };
++static const char * const dmic1_data_groups[] = { "gpio7" };
++static const char * const dmic2_clk_groups[] = { "gpio8" };
++static const char * const dmic2_data_groups[] = { "gpio9" };
++static const char * const i2s2_clk_groups[] = { "gpio10" };
++static const char * const i2s2_ws_groups[] = { "gpio11" };
++static const char * const dmic3_clk_groups[] = { "gpio12" };
++static const char * const dmic3_data_groups[] = { "gpio13" };
++static const char * const qua_mi2s_sclk_groups[] = { "gpio0" };
++static const char * const qua_mi2s_ws_groups[] = { "gpio1" };
++static const char * const qua_mi2s_data_groups[] = { "gpio2", "gpio3", "gpio4" };
++static const char * const i2s1_clk_groups[] = { "gpio6" };
++static const char * const i2s1_ws_groups[] = { "gpio7" };
++static const char * const i2s1_data_groups[] = { "gpio8", "gpio9" };
++static const char * const wsa_swr_clk_groups[] = { "gpio10" };
++static const char * const wsa_swr_data_groups[] = { "gpio11" };
++static const char * const i2s2_data_groups[] = { "gpio12", "gpio13" };
++
++static const struct lpi_pingroup sc7280_groups[] = {
++	LPI_PINGROUP(0, 0, swr_tx_clk, qua_mi2s_sclk, _, _),
++	LPI_PINGROUP(1, 2, swr_tx_data, qua_mi2s_ws, _, _),
++	LPI_PINGROUP(2, 4, swr_tx_data, qua_mi2s_data, _, _),
++	LPI_PINGROUP(3, 8, swr_rx_clk, qua_mi2s_data, _, _),
++	LPI_PINGROUP(4, 10, swr_rx_data, qua_mi2s_data, _, _),
++	LPI_PINGROUP(5, 12, swr_rx_data, _, _, _),
++	LPI_PINGROUP(6, LPI_NO_SLEW, dmic1_clk, i2s1_clk, _,  _),
++	LPI_PINGROUP(7, LPI_NO_SLEW, dmic1_data, i2s1_ws, _, _),
++	LPI_PINGROUP(8, LPI_NO_SLEW, dmic2_clk, i2s1_data, _, _),
++	LPI_PINGROUP(9, LPI_NO_SLEW, dmic2_data, i2s1_data, _, _),
++	LPI_PINGROUP(10, 16, i2s2_clk, wsa_swr_clk, _, _),
++	LPI_PINGROUP(11, 18, i2s2_ws, wsa_swr_data, _, _),
++	LPI_PINGROUP(12, LPI_NO_SLEW, dmic3_clk, i2s2_data, _, _),
++	LPI_PINGROUP(13, LPI_NO_SLEW, dmic3_data, i2s2_data, _, _),
++	LPI_PINGROUP(14, 6, swr_tx_data, _, _, _),
++};
++
++static const struct lpi_function sc7280_functions[] = {
++	LPI_FUNCTION(dmic1_clk),
++	LPI_FUNCTION(dmic1_data),
++	LPI_FUNCTION(dmic2_clk),
++	LPI_FUNCTION(dmic2_data),
++	LPI_FUNCTION(dmic3_clk),
++	LPI_FUNCTION(dmic3_data),
++	LPI_FUNCTION(i2s1_clk),
++	LPI_FUNCTION(i2s1_data),
++	LPI_FUNCTION(i2s1_ws),
++	LPI_FUNCTION(i2s2_clk),
++	LPI_FUNCTION(i2s2_data),
++	LPI_FUNCTION(i2s2_ws),
++	LPI_FUNCTION(qua_mi2s_data),
++	LPI_FUNCTION(qua_mi2s_sclk),
++	LPI_FUNCTION(qua_mi2s_ws),
++	LPI_FUNCTION(swr_rx_clk),
++	LPI_FUNCTION(swr_rx_data),
++	LPI_FUNCTION(swr_tx_clk),
++	LPI_FUNCTION(swr_tx_data),
++	LPI_FUNCTION(wsa_swr_clk),
++	LPI_FUNCTION(wsa_swr_data),
++};
++
++static const struct lpi_pinctrl_variant_data sc7280_lpi_data = {
++	.pins = sc7280_lpi_pins,
++	.npins = ARRAY_SIZE(sc7280_lpi_pins),
++	.groups = sc7280_groups,
++	.ngroups = ARRAY_SIZE(sc7280_groups),
++	.functions = sc7280_functions,
++	.nfunctions = ARRAY_SIZE(sc7280_functions),
++};
++
++static const struct of_device_id lpi_pinctrl_of_match[] = {
++	{
++	       .compatible = "qcom,sc7280-lpass-lpi-pinctrl",
++	       .data = &sc7280_lpi_data,
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
++
++static struct platform_driver lpi_pinctrl_driver = {
++	.driver = {
++		   .name = "qcom-sc7280-lpass-lpi-pinctrl",
++		   .of_match_table = lpi_pinctrl_of_match,
++	},
++	.probe = lpi_pinctrl_probe,
++	.remove = lpi_pinctrl_remove,
++};
++
++module_platform_driver(lpi_pinctrl_driver);
++MODULE_DESCRIPTION("QTI SC7280 LPI GPIO pin control driver");
++MODULE_LICENSE("GPL");
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.7.4
+
