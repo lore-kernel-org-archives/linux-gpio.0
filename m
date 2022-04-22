@@ -2,105 +2,74 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFC3C4167B
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 22:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69709C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 22:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232475AbiDVWYE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:24:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48748 "EHLO
+        id S232883AbiDVW2n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:28:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233207AbiDVWWs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:22:48 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0184289365
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:14:27 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-2f7c424c66cso6475527b3.1
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:14:27 -0700 (PDT)
+        with ESMTP id S233365AbiDVW1n (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:27:43 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E50353420C4
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:58:19 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-2eba37104a2so99414647b3.0
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:58:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=uSeyVHSkF+E4oa0XSY6kFg4lNiCUpurOq85kO8Thfs0=;
-        b=INjYxvAOSldxB3GnA5v+XowteYLzvKJl7xcoA5X45DW7NszU+ue5Iwuh82ikmKF7iZ
-         aZqKiahCfnFgJCTxeIo7Ur+C9fmU/6R0kHKGNfogw8R4psa2PB73Gmi6jrfAleEWU3Fu
-         TpniWkwmWdEIb2A4WwVWBbp6qzUTDyR9/3WeGO4B6Qr/bxVAl+v84Yj2BBPiR+nuXLvu
-         1kszPQojltbMILFgPDnEn/IRbmR1E1ShQsQrYlYs4HhI7OFsDMc/aEAmfglIenEd5oRG
-         gw0k5fbk5IKqtvD8vMwA/19gmGagwNF//wqWfUqOFaGb0Zb3dEd2eipQq6lXOmQWX/GY
-         RHeA==
+        bh=NNQJP7ntF8soE81iHLRX4D3rG4OVRx16kjDK5B0hv+E=;
+        b=pWfQKYNkMMZJG9PgkJeJ10O0wcxeCiz9fbN53VOitR3Jgn6iD6bHOE0TaZa6BoDjMG
+         /0y4+UcKW3gaHILLuTRNBUEikivRNDHV6EhM+wkH4JsIAcxZpEUeS+jqi4yRhcqbgBGH
+         LJa2Zlj22o8pt1vbAV/M0CA9z3p3+0UwqWaSgfQ6lwaeoiOE2YsAfmYV6oR668MMsCjd
+         WPQwsweyVem8CCU/2FazMcS46azD5MomO3E2Ome+pa2BqkhgiFtRdq49gyKcagra7/T5
+         tuShQiWL1DnAq7DyRYnVQn89PtwxxHp2DRoMLHDp8QbMp40VTeFoAHWr4lT5zDeyA5Iz
+         PrKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uSeyVHSkF+E4oa0XSY6kFg4lNiCUpurOq85kO8Thfs0=;
-        b=MTmt/CwuFPZDGXvKJaRdjQnIa7CQS+xY5h73qzULCmq2Z+T8wJ5wN+SggK92OVBymw
-         paRUijIkPO+mRx1fubZatsD1A+QVFvaArHhjehA3N4BVOr++fyncqgSVMUBIp8e/weXv
-         8AZvyVHZfv6V1gr5X/FUuKfdB5VBB5KTfvLa5Xgr3pD2SDgrrNwqXwE2BhNPJ/Rs9Lyx
-         RxzW6iQT/zo0Y4Y+3dGhks0PxUujnKRHSG2/Mk5DJLLzyuSJ3bqbOS/JYP/9ESUCXF5O
-         1MDUkomV7NaBiIFs7cHRNlQZibXmndPLUI0/plHgzBkcbhFNO5VtJEoxKiFlIG/zAoxT
-         blxQ==
-X-Gm-Message-State: AOAM533afKgif0bDOeTJeJAncU/To9UC84gdmvYMMYatKj9oeJQJi35R
-        kSIQPGnv/HCqMdCuBR7FTjCUHT9pq26TjogARKDGqQ==
-X-Google-Smtp-Source: ABdhPJwq2aWVketHqepmniz2ODIzva2uUpTd0stgwqCpyhaz3cmfj0U/26pdY8xQiv+Js98HKRpSr6v3Iu4l/7S4vD8=
-X-Received: by 2002:a81:2108:0:b0:2f5:6938:b2b8 with SMTP id
- h8-20020a812108000000b002f56938b2b8mr5144986ywh.151.1650662066988; Fri, 22
- Apr 2022 14:14:26 -0700 (PDT)
+        bh=NNQJP7ntF8soE81iHLRX4D3rG4OVRx16kjDK5B0hv+E=;
+        b=ys67n3gAj6b0fUQTI4W5pvGkQjHlFnYSuHbOZHMiBqeRaz1MT6DGiV5xqQHDH7LkiT
+         4WD/cCYqOX4xLexYBS0MhIiZJDsJhRuSn6Nb2Rl0lF929+DdXoZFwIDAp/irhkcoKN9X
+         H2jc2HTno4mQ5HO1EnRtcPTpC7hq+SGVcVIym7Xu+2aN8xwvnoeqTUEknzLgvML6uUF6
+         QUb26JzcE7rJTxR4WJnJLx2TV5sA3KXuyLQRsBBxtkXk9yr566zCINsdNoEu4gv6lTFw
+         0MjEdAlIAvchX3RdVh2U1JecLSQEngaPHlQ4FbbYqWDW4yTEJ+EjujH/4f6/vToEQwZ4
+         7MTA==
+X-Gm-Message-State: AOAM533SIZHd+rQuSbzGUT2ozPTT1e4E7efRPqHIw/khj13kNqrLVnem
+        BJ6Fk1islIkJpfA9VyLqcI68XQf/3wRyZKeqMGRLDCAEfk4=
+X-Google-Smtp-Source: ABdhPJwiYz27q9al29EVKwaUieTIJ7vxG56fmMN5dBUaNlUXP7voSN0iSDPygWM4Z2MQ1vTu71BmS8xz8YZ3T+3KZMo=
+X-Received: by 2002:a81:2154:0:b0:2f4:d79e:35dc with SMTP id
+ h81-20020a812154000000b002f4d79e35dcmr7091549ywh.126.1650664699156; Fri, 22
+ Apr 2022 14:58:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1649533972.git.sander@svanheule.net> <7105ae382d7b328102f66b39ffd7c94998e85265.1649533972.git.sander@svanheule.net>
- <CACRpkdYmKbHOZChSHjB-ykQCyCziwYTO_+Ai2vheo0y-vD_akA@mail.gmail.com> <0a48cd99805736d6a01573effa28f771fdbe9485.camel@svanheule.net>
-In-Reply-To: <0a48cd99805736d6a01573effa28f771fdbe9485.camel@svanheule.net>
+References: <20220421094228.2141569-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+In-Reply-To: <20220421094228.2141569-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Apr 2022 23:14:15 +0200
-Message-ID: <CACRpkda=SNKAeBpfdA2seRgZwmb0-SMxq-_c0je6gdR-8m+p_A@mail.gmail.com>
-Subject: Re: [PATCH v1 2/6] gpio: realtek-otto: Support reversed port layouts
-To:     Sander Vanheule <sander@svanheule.net>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Bert Vermeulen <bert@biot.com>, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com
+Date:   Fri, 22 Apr 2022 23:58:08 +0200
+Message-ID: <CACRpkdZizkeBsRhk7-VqcJ5u3+6ksRv++znnpYhnX9-7UN=x9A@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: visconti: Fix fwnode of GPIO IRQ
+To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 9:55 AM Sander Vanheule <sander@svanheule.net> wrote:
+On Thu, Apr 21, 2022 at 11:42 AM Nobuhiro Iwamatsu
+<nobuhiro1.iwamatsu@toshiba.co.jp> wrote:
 
-> The kernel for RTL930x SoC is built with CONFIG_CPU_BIG_ENDIAN=y, just like the
-> older SoCs that were previously supported. The SoC's IRQ controller is also the
-> same across RTL930x/RTL839x/RTL838x, even though 32-bit registers are used
-> there.
+> The fwnode of GPIO IRQ must be set to its own fwnode, not the fwnode of the
+> parent IRQ. Therefore, this sets own fwnode instead of the parent IRQ fwnode to
+> GPIO IRQ's.
 >
-> On RTL838x/RTL839x the GPIO IRQ control registers have byte layout:
->         [H1] [L1] [H2] [L2]
->         [H3] [L3] [H4] [L4]
->
-> On RTL930x, the GPIO IRQ control registers are:
->         [H2] [L2] [H1] [L1]
->         [H4] [L4] [H3] [L3]
-> which is the reverse of:
->         [L1] [H1] [L2] [H2]
->         [L3] [H3] [L4] [H4]
->
->
-> Same for the GPIO registers:
->         On RTL83xx: [P1] [P2] [P3] [P4] (four 8b ports)
->         On RTL930x: [P4] [P3] [P2] [P1] (one BE32 port)
->
-> It looks like the RTL930x could use a little-endian interpretation of the 32b
-> registers, followed by a little-endian interpretation of the contained port
-> values. That would mean two reorderings for every 16b read or write operation,
-> and manual manipulation of the register values. Although I have to say that the
-> current offset calculation is not too pretty either.
+> Fixes: 2ad74f40dacc ("gpio: visconti: Add Toshiba Visconti GPIO support")
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
-I'm happy.
-
-It's not very invasive and the bulk of the problem is addressed by
-simply using the GPIO MMIO library, so:
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-If someone knows a more elegant way, they can send a patch,
-this works so we should merge it.
 
 Yours,
 Linus Walleij
