@@ -2,55 +2,55 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9777C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 21:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF3DC433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 21:58:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231278AbiDVWBa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49982 "EHLO
+        id S231311AbiDVWBn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:01:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbiDVWBX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:01:23 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CB641150D
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 13:44:23 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-2edbd522c21so97172147b3.13
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 13:44:23 -0700 (PDT)
+        with ESMTP id S231367AbiDVWBl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:01:41 -0400
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78FE31DB5C0
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 13:44:29 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id c11-20020a9d684b000000b00603307cef05so6298207oto.3
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 13:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3nksj5w518uht/ItCyi8i36nhvCePscNQgV5FEz9z6Q=;
-        b=g8SpyRq0EokUtq2/Ruex3k4GJpsldwiFN7s5Td1NqBB/1sz4PB8PW77PoDjmVO+nIV
-         MNQj5/DSO2n1/Wz0+1wehuJuhtgZZtPgCi02BTQ+DzLRVOuxdJXKsrFnimec3440YOCx
-         aMWk2YcE0ez7iqYmhzyvdHPEEGnBPTAyOx5MtBGNjLo5yFXy1qBo3Np8+V9Lcmr90Vqu
-         3Go3gRPSj/N4C2WNTnoup9V1vLlPLvsNLjgzulBImOdHMHyw4upus4kqIm+keotH/wCa
-         fthPpMr4yok3sBlZ0N6p+9P6PlUZYF234f+2TwubO7vilza5bWaaNFNrZePSxKwoP06H
-         5Tmg==
+        bh=0JRCh/BqOi4YkLGUiJfecYURU86aNbte4r9osUN03Ek=;
+        b=CBGTb4d3eS7HJsTVlLbQoizdcgj00FRfmsbMjOINCCIgO/lh/nw8HFb5PtXjHizyAi
+         BYZ+XVlLA6yn5KwojjjMps9Uw9kqcWQDjdEkeaNPwRettOULYGjgSkpIY7XNeOVgjp4A
+         FIE3gEgnj+PkohreuAOunK9gW7Al2WCCKjSjTUSlVHG/1U5fxBJSxNvMJGAczW6PjXoh
+         y4AV9yCqVYPPG6eAHwjn1K7OVRJaWNnRZmQ5k+B+yQJzKfxtyAomy7dOiJ4j6TfHe3jQ
+         knLd0SPuH892Kmh/jfFnbYPiifqBIPHRECqY5lA5x4ux6cXe213gkYziWEoSlo2BOORF
+         LlXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3nksj5w518uht/ItCyi8i36nhvCePscNQgV5FEz9z6Q=;
-        b=BhPL+cnxK+N6lHoqkR3m9Xu0zhEAxoPN9E5zC4Mg8swNwRqeNP16RCJLmw0AxuCvTP
-         /Wn377j8AkCiyGp0JkRbW9N3VyupzxAtvrAzw6UtzBTNtNrVTrkq1IeGLPrmFOnJBs9+
-         27J5oyJ4DADc3QeP+jD+Mh+11DJTiyMOZbeDp7a/FYWOFCZoS8VC6yRM4v4iypA6CY/i
-         6PIOzCxFNE9hhH24mLwjaSo271FuE/8REqviaBuL/MusauO1IQ8N5GLUeUkqCLwOFb65
-         6me++pf/6wmh4e+Wo0gey+UkvJ/7yYSUH9eGoslJK7LEEaXSL3zEwSw3AQ844o3mOkw6
-         3GGg==
-X-Gm-Message-State: AOAM5318/eUiuE68vNv5UzY219QNlTcoXfAB6/+fBdFnUc2FEL59HuiT
-        4zdpvgoXXe3OovINcr4s316/CdypGV9tDy41dmpRLw==
-X-Google-Smtp-Source: ABdhPJxrjqv5Iz21jqbGZ2f13VLgcMjHToddZ0hzGtc4gakrrg1G6y+n2H78NeXCdSnLQdm+z3HHZa/1M+m0MoBLEAs=
-X-Received: by 2002:a81:2108:0:b0:2f5:6938:b2b8 with SMTP id
- h8-20020a812108000000b002f56938b2b8mr5029519ywh.151.1650660262703; Fri, 22
- Apr 2022 13:44:22 -0700 (PDT)
+        bh=0JRCh/BqOi4YkLGUiJfecYURU86aNbte4r9osUN03Ek=;
+        b=Ky5dbBOth2JW87i5+NhwsrPKc2IYFybsOXjzn1eabuG52H5YNrUiw7kmZAuHn+yUcc
+         DZurDlamZoG4uAdc18yG4dgwJdJFR/d7dE1WBTWqFVuk8no6vLaCKf2S2HcGlMhYQQE8
+         0cAxvPX75GN+hjPIsRy6eOPWrjtXmoCyZoNUfhcNEaHusDLJ2gKninzHPFkoQ9KnUgUd
+         PvROpeu+DsmEjsNjddYBUWFfac0ABYxfH0uydcifonzvcXSATp96erm9/edlBM16yLx3
+         5tQ5zgUUvlOGc3IV1StF8uMacC8WwJ9TbBTEs7hLFi1oh2lLCCFsjzJxZ0RFmAvVQBxJ
+         PJ5g==
+X-Gm-Message-State: AOAM532i/BGcvjnSdXTobEDUW6U8UYnTeBPNPmCwlTD1yYHdFsMIpTzB
+        9jjg1JQOn5kE21Xc/eRfISJLfBsZTTyes/Zvh0sBPdKeIoc=
+X-Google-Smtp-Source: ABdhPJw9gNNFIjL44oXwYR0XZt26gSCXKZ91nXCIwqis42lHTyFg4ODQiziVUiiGspHnYemb6VnQASFqhnYF8zKxMxw=
+X-Received: by 2002:a0d:f0c3:0:b0:2f4:d291:9dde with SMTP id
+ z186-20020a0df0c3000000b002f4d2919ddemr6790754ywe.437.1650659758236; Fri, 22
+ Apr 2022 13:35:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220422170920.401914-1-sebastian.reichel@collabora.com>
-In-Reply-To: <20220422170920.401914-1-sebastian.reichel@collabora.com>
+References: <20220422170920.401914-1-sebastian.reichel@collabora.com> <20220422170920.401914-15-sebastian.reichel@collabora.com>
+In-Reply-To: <20220422170920.401914-15-sebastian.reichel@collabora.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Apr 2022 22:44:11 +0200
-Message-ID: <CACRpkdZbRbRcFz-SQ0yNf4aAmuwrQKTKjS1QceTCvKE=W0kyqA@mail.gmail.com>
-Subject: Re: [PATCHv1 00/19] Basic RK3588 Support
+Date:   Fri, 22 Apr 2022 22:35:47 +0200
+Message-ID: <CACRpkda-yLgH7mC6GkMgh5e3+c+4cBrRc9Ryist+zYJh2z9_Sw@mail.gmail.com>
+Subject: Re: [PATCHv1 14/19] gpio: rockchip: add support for rk3588
 To:     Sebastian Reichel <sebastian.reichel@collabora.com>
 Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -64,30 +64,27 @@ Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
-        kernel@collabora.com
+        Jianqun Xu <jay.xu@rock-chips.com>, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Sebastian,
-
-thanks for the patches,
-
 On Fri, Apr 22, 2022 at 7:09 PM Sebastian Reichel
 <sebastian.reichel@collabora.com> wrote:
 
->   pinctrl/rockchip: add rk3588 support
->   pinctrl/rockchip: add error handling for pull/drive register getters
+> From: Jianqun Xu <jay.xu@rock-chips.com>
+>
+> Add V2.1 rockchip gpio controller type, which is part of the
+> RK3588 SoC.
+>
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-I expect I can just apply these two to the pinctrl tree after giving
-Heiko some time to look at it? (And he is happy with them)
-No dependencies I think?
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> Sebastian Reichel (6):
->   dt-bindings: pinctrl: rockchip: add rk3588
-
-I just applied this patch since it is trivial and evidently correct.
+This looks like something that can just be merged to Bartosz
+tree as there are no dependencies on the other patches.
 
 Yours,
 Linus Walleij
