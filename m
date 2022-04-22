@@ -2,33 +2,33 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E6CC433F5
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 17:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D948C4321E
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 17:11:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239752AbiDVRO0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Apr 2022 13:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53428 "EHLO
+        id S1353844AbiDVRO3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Apr 2022 13:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242615AbiDVRMe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 13:12:34 -0400
+        with ESMTP id S241817AbiDVRMd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 13:12:33 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4CBB92304;
-        Fri, 22 Apr 2022 10:09:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3365D91579;
+        Fri, 22 Apr 2022 10:09:36 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id 1764D1F468DD
+        with ESMTPSA id 01FF41F4682E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
         s=mail; t=1650647375;
-        bh=JyODDbAkozctO2YF4+4+8QrF0xaiP+MYadCgEeOgwr0=;
+        bh=tTOCToDJjcLzI14JLadsZVSZ4cSn/2Or8RPivrlFg50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PiwXSCIeNFXJDbDuRsS0Znqr5Lz7z/o749sD4Fkr/ZuG3r3SBBZRwyTW6Ln/Ysw3h
-         Jl26DLa6JJGIe7bzvRQkAozr9btvB5YUh6w3LYgjp3defiGILiMxU6ahTzrtmaqoDN
-         u0HlzBCi25TFJckd/Kc5Pt0WoLuSThdD5i1W5PSyfKe1q+dXheyE/fpkmX9cqMVTRM
-         cbZWyZcz/dG5JK9AhpC6bLChAF4GRFmhmLeAZWKEgzJ/BQ6cQrceUhjDCEqNIKc+o4
-         4aP8LY1JNbUWGeUeewL30L0ziciOsHuL4eQ8CWbzZDIKJuU6leDuB6cD68ryibhyUX
-         l1dEYWDgfrtbA==
+        b=nRp37PUl9g3sm7SH8QHjqumjOWGGKySd3yzOHLHBV+nA3BANrQOEtF1yocoezTbtb
+         BdFmZ3mfNyleoMjixrmdThLcDlzewu0sZ1sHllb9zi9rC5kXI6DpCh5Cua/ea+CxOJ
+         0g5F3zi4GA8xGPKEj0nrGI//atb9/XyPMupHBlfKMS4odQEWqCaPR8/XVnOEn6610O
+         +1u23HS5ZQPUOddDLl2XnpTgpFbkYtb/3iItd7Q43dLC68I7DY73y78fIOA9x1AVhA
+         9lZKK81IHvxhO/Z7HyTd65ZrbjkOKu2yR/8GiEJrP2ezdJIPpA0Xu0CiPa1PeLx5Ke
+         K859EnBRcajJw==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id C902F4807F0; Fri, 22 Apr 2022 19:09:32 +0200 (CEST)
+        id C42014807E1; Fri, 22 Apr 2022 19:09:32 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -46,14 +46,13 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
         Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv1 04/19] clk: rockchip: clk-cpu: add mux setting for cpu change frequency
-Date:   Fri, 22 Apr 2022 19:09:05 +0200
-Message-Id: <20220422170920.401914-5-sebastian.reichel@collabora.com>
+Subject: [PATCHv1 02/19] clk: rockchip: add register offset of the cores select parent
+Date:   Fri, 22 Apr 2022 19:09:03 +0200
+Message-Id: <20220422170920.401914-3-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220422170920.401914-1-sebastian.reichel@collabora.com>
 References: <20220422170920.401914-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -61,121 +60,82 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Elaine Zhang <zhangqing@rock-chips.com>
 
-In order to improve the main frequency of CPU, the clock path of CPU is
-simplified as follows:
-                         |--\
-                         |   \            |--\
- --apll--|\              |    \           |   \
-         | |--apll_core--|     \          |    \
- --24M---|/              |mux1 |--[gate]--|mux2|---clk_core
-                         |     /          |    /
- --gpll--|\              |    /    |------|   /
-         | |--gpll_core--|   /     |      |--/
- --24M---|/              |--/      |
-                                   |
- -------apll_directly--------------|
-
-When the CPU requests high frequency, we want to use MUX2 select the
-"apll_directly".
-At low frequencies use MUX1 to select “apll_core" and then MUX2 to
-select "apll_core_gate".
-
-However, in this way, the CPU frequency conversion needs to be
-in the following order:
-1. MUX2 select to "apll_core_gate", MUX1 select "gpll_core"
-2. Apll sets slow_mode, sets APLL parameters, locks APLL, and then APLL
-sets normal_mode
-3. MUX1 select "apll_core", MUX2 select "apll_directly"
-
-So add pre_muxs and post_muxs to cover this special requirements.
+The cores select parent register is special on RK3588.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-[rebase]
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/clk/rockchip/clk-cpu.c | 41 ++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h     |  2 ++
- 2 files changed, 43 insertions(+)
+ drivers/clk/rockchip/clk-cpu.c | 28 ++++++++++++++++++++--------
+ drivers/clk/rockchip/clk.h     |  3 +++
+ 2 files changed, 23 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 11aa2259b532..6ea7fba9f9e5 100644
+index 47288197c9d7..11aa2259b532 100644
 --- a/drivers/clk/rockchip/clk-cpu.c
 +++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -113,6 +113,42 @@ static void rockchip_cpuclk_set_dividers(struct rockchip_cpuclk *cpuclk,
- 	}
- }
- 
-+static void rockchip_cpuclk_set_pre_muxs(struct rockchip_cpuclk *cpuclk,
-+					 const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
-+
-+	/* alternate parent is active now. set the pre_muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->pre_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->pre_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
-+static void rockchip_cpuclk_set_post_muxs(struct rockchip_cpuclk *cpuclk,
-+					  const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
-+
-+	/* alternate parent is active now. set the muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->post_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->post_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
- static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 					   struct clk_notifier_data *ndata)
- {
-@@ -165,6 +201,9 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 			       cpuclk->reg_base + reg_data->core_reg[i]);
+@@ -166,10 +166,16 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
  		}
  	}
-+
-+	rockchip_cpuclk_set_pre_muxs(cpuclk, rate);
-+
  	/* select alternate parent */
- 	if (reg_data->mux_core_reg)
- 		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
-@@ -219,6 +258,8 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
- 				     reg_data->mux_core_shift),
- 		       cpuclk->reg_base + reg_data->core_reg[0]);
+-	writel(HIWORD_UPDATE(reg_data->mux_core_alt,
+-			     reg_data->mux_core_mask,
+-			     reg_data->mux_core_shift),
+-	       cpuclk->reg_base + reg_data->core_reg[0]);
++	if (reg_data->mux_core_reg)
++		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
++				     reg_data->mux_core_mask,
++				     reg_data->mux_core_shift),
++		       cpuclk->reg_base + reg_data->mux_core_reg);
++	else
++		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
++				     reg_data->mux_core_mask,
++				     reg_data->mux_core_shift),
++		       cpuclk->reg_base + reg_data->core_reg[0]);
  
-+	rockchip_cpuclk_set_post_muxs(cpuclk, rate);
-+
+ 	spin_unlock_irqrestore(cpuclk->lock, flags);
+ 	return 0;
+@@ -202,10 +208,16 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
+ 	 * primary parent by the extra dividers that were needed for the alt.
+ 	 */
+ 
+-	writel(HIWORD_UPDATE(reg_data->mux_core_main,
+-			     reg_data->mux_core_mask,
+-			     reg_data->mux_core_shift),
+-	       cpuclk->reg_base + reg_data->core_reg[0]);
++	if (reg_data->mux_core_reg)
++		writel(HIWORD_UPDATE(reg_data->mux_core_main,
++				     reg_data->mux_core_mask,
++				     reg_data->mux_core_shift),
++		       cpuclk->reg_base + reg_data->mux_core_reg);
++	else
++		writel(HIWORD_UPDATE(reg_data->mux_core_main,
++				     reg_data->mux_core_mask,
++				     reg_data->mux_core_shift),
++		       cpuclk->reg_base + reg_data->core_reg[0]);
+ 
  	/* remove dividers */
  	for (i = 0; i < reg_data->num_cores; i++) {
- 		writel(HIWORD_UPDATE(0, reg_data->div_core_mask[i],
 diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index bf7c8d082fde..2bd1863a7418 100644
+index 7aa45cc70287..6aece7f07a7d 100644
 --- a/drivers/clk/rockchip/clk.h
 +++ b/drivers/clk/rockchip/clk.h
-@@ -380,6 +380,8 @@ struct rockchip_cpuclk_clksel {
- struct rockchip_cpuclk_rate_table {
- 	unsigned long prate;
- 	struct rockchip_cpuclk_clksel divs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel pre_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel post_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
- };
- 
- /**
+@@ -370,6 +370,8 @@ struct rockchip_cpuclk_rate_table {
+  * @div_core_shift[]:	cores divider offset used to divide the pll value
+  * @div_core_mask[]:	cores divider mask
+  * @num_cores:	number of cpu cores
++ * @mux_core_reg:       register offset of the cores select parent
++ * @mux_core_alt:       mux value to select alternate parent
+  * @mux_core_main:	mux value to select main parent of core
+  * @mux_core_shift:	offset of the core multiplexer
+  * @mux_core_mask:	core multiplexer mask
+@@ -379,6 +381,7 @@ struct rockchip_cpuclk_reg_data {
+ 	u8	div_core_shift[ROCKCHIP_CPUCLK_MAX_CORES];
+ 	u32	div_core_mask[ROCKCHIP_CPUCLK_MAX_CORES];
+ 	int	num_cores;
++	int	mux_core_reg;
+ 	u8	mux_core_alt;
+ 	u8	mux_core_main;
+ 	u8	mux_core_shift;
 -- 
 2.35.1
 
