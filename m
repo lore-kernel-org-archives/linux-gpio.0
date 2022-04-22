@@ -2,77 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9085DC433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 22:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1308C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 22:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232869AbiDVWfs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:35:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56318 "EHLO
+        id S233748AbiDVWqu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:46:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233258AbiDVWfK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:35:10 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33FB921A671
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:54:15 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-2edbd522c21so98512897b3.13
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:54:15 -0700 (PDT)
+        with ESMTP id S233549AbiDVWqm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:46:42 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9972D2D71C9
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:37:06 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-2eba37104a2so99047007b3.0
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 14:37:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GEehHjj72r2AOna47w3cx3znoSMliQkRZ/PaHh9O82g=;
-        b=gukUpoOhhikm5GMzOucyyxIm9XjrkIFjSP2B8aE7813a4jST6ayvxFg3RqP3hZhnab
-         /PuzYOeph4LuVHzKAzQ50dRlFhK5moaMHUnnoQY7m22WYY4gFMV4uKRayxLcqtC9yb5Q
-         t3L1M+jLmvjJiSf1rts7yKRowoc8+MvEBxudWRTKNy0pUSJr4WDHCIxtJewAtvxfq5DO
-         CAXIeZs0SY34cjPbiht/RPYQPz0IggyN/hR3MtojWO0i2kD5T8vJGG5zRrcD0xkYgBHL
-         0j+8hQh7imj1KLdIfnE9BwiuwlD+G1JDEMmzuWap30UjVfNU0t9L5HfVA4Igc9sShDpp
-         pLZA==
+        bh=O1brtd49tFwU6VlKDj5lc7i4Jw60+UgK83W4qk+h+e0=;
+        b=XmIyifA+YpSofgABXPeSSRBcyBPBXndpAol7TNCDT554ScXbKEZAGvD8TXYYTomqT9
+         b1YgxnQtXAnla4d+aH4p7J7sUz8LS4gj00UO/+UgEyJkk4wt3eWA2/f9Q/Mman2yKB5g
+         2+qB1nwco1Og0RxqJK+kfROBBCxGPhj6XC7UUwURBmzFCN7l3rpY2NLq8FnHtN+CetHK
+         3FEliT9GwLRCfAMRKaPlKBFh01G1mYUZla2ux4cNWIfhWPogxM3DxBF4nDtHQDgCk13d
+         JQ5ekbGxRAFBNNzbit2lZnRMqQVTGY94IfQnW5SbBCm5qqSOlwRzABfF5Uv9l9bs2VN3
+         CLSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GEehHjj72r2AOna47w3cx3znoSMliQkRZ/PaHh9O82g=;
-        b=RSHYx0PuXv7edYkRhLc+2NxIletSmcGpirJcdnuOa7RhL5e/k11hkMVF7ccNDFdx+V
-         JHZDdZcJm531NW1VViPiq6tXyg/wdfneGIUjv5ihmVZOuW0mypoF+R9IRGQ0tZyD/JAG
-         aZCdHDaJgtDUXssfeGmuJuLKoVC+0bgw6hvt0HSi+5zTxcymOm6QZNxLdr9y7TWRyq08
-         TXvgYA/0e62w/kgHuTJLXygja+itHxUh+LAqpqfdFvDscN8Vwaw91ewhntqkV4ymXcML
-         iKNRSG75ThXgQXLmlnwYmxOsef63vWV/0dL9WzES5FVuYW/98gad0YlcuFd4uPIc3XsZ
-         rR4w==
-X-Gm-Message-State: AOAM531tLLoTbIzFkIimxXF4CaGtPEj+vTjybPaM5rIpL1LIOraiGcte
-        u6CyHu9VcdcssZwtuhR25P0f13oqE2An3bewdbtKTJ42feo=
-X-Google-Smtp-Source: ABdhPJzQleg4D/3UjQYbj9410Yq4Xhp5O4MlHotUi6VOtw7DYRI3VosAFiqqLTc8UjtHvBv5bLqge2jOjtPM5fZh61E=
-X-Received: by 2002:a81:1d48:0:b0:2f1:8ebf:25f3 with SMTP id
- d69-20020a811d48000000b002f18ebf25f3mr6863528ywd.118.1650664454432; Fri, 22
- Apr 2022 14:54:14 -0700 (PDT)
+        bh=O1brtd49tFwU6VlKDj5lc7i4Jw60+UgK83W4qk+h+e0=;
+        b=jI/7ureg9YNw02Ds2n5mk4LM2DwnJ4LN67lckNtRuvxjC4wIdWS/zuo0yLbPIzBt/F
+         GJn3HfEmrwATZTM9XODQ60bjqvIt0RUx+joE7CPDUhOe48W4CiC5yAcub2Wz5UfoF7eX
+         tlviEBvGxV7lvz0GixU2VLX8bQjDOBAr9htqWpFLRpwy2wkrryco+2h+fhDEs9xS7sDv
+         h/AoGO5lACLbTAlf0h6KQPnqPOsM77hWufpdPCZNlmcvuvCq1vU9pQ0dm2abh4sfIxVK
+         /ENEoloKx0l/jBVnY94t+bXLcaBmkr/mfRcQvj+G3lr3S3EqfZ+Ba9DGoODR+TH7nS4Y
+         ZSvA==
+X-Gm-Message-State: AOAM533Z1zk6AFINLpnp6eGgnQty21xrnE5TDtd1vb2RxcaAAM+7E+iX
+        C9n0+UVdXRuetfkHDmaU4mcwy3Mk436rFTPh/+V56A==
+X-Google-Smtp-Source: ABdhPJzpJm8aFbRgP7AYh9JTSDrohue4rzeBHmDncZK7KYHl1Wq9GHZoH62A7GncOVa0KRpQG0mu6FKnr2J3pJbFF1w=
+X-Received: by 2002:a81:2154:0:b0:2f4:d79e:35dc with SMTP id
+ h81-20020a812154000000b002f4d79e35dcmr7027734ywh.126.1650663425930; Fri, 22
+ Apr 2022 14:37:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220420065102.44083-1-eagle.alexander923@gmail.com>
-In-Reply-To: <20220420065102.44083-1-eagle.alexander923@gmail.com>
+References: <20220420142432.248565-1-luca.ceresoli@bootlin.com>
+In-Reply-To: <20220420142432.248565-1-luca.ceresoli@bootlin.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Apr 2022 23:54:03 +0200
-Message-ID: <CACRpkdZuqGFeJ9BN+uAFw50W9zyNLmOzWZGvvr4D5tqUODae9g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: syscon: Remove usage of syscon_regmap_lookup_by_compatible
-To:     Alexander Shiyan <eagle.alexander923@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 22 Apr 2022 23:36:54 +0200
+Message-ID: <CACRpkdb51a=kuudD=g8ozzmsHdgHzou2gA8_zT2Ex4bds923cQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: rockchip: fix RK3308 pinmux bits
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     linux-gpio@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Apr 20, 2022 at 8:51 AM Alexander Shiyan
-<eagle.alexander923@gmail.com> wrote:
+On Wed, Apr 20, 2022 at 4:24 PM Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-> Since version 5.13, the standard syscon bindings have been added
-> to all clps711x DT nodes, so we can now use the more general
-> syscon_regmap_lookup_by_phandle function to get the syscon pointer.
+> Some of the pinmuxing bits described in rk3308_mux_recalced_data are wrong,
+> pointing to non-existing registers.
 >
-> This patch removes the usage of the syscon_regmap_lookup_by_compatible
-> function as it is no longer used in the driver.
->
-> Signed-off-by: Alexander Shiyan <eagle.alexander923@gmail.com>
+> Fix the entire table.
 
-Nice!
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patches 1 + 2 applied for fixes!
 
 Yours,
 Linus Walleij
