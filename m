@@ -2,64 +2,64 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FEEC4167B
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 22:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7AFC35294
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 22:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231769AbiDVWJL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:09:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35340 "EHLO
+        id S231779AbiDVWJM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231720AbiDVWHH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:07:07 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5912E4488;
-        Fri, 22 Apr 2022 13:52:27 -0700 (PDT)
+        with ESMTP id S231916AbiDVWHl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 18:07:41 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam08on20621.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8d::621])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72DFA223C62;
+        Fri, 22 Apr 2022 13:53:09 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kgLUcGeaEkrk1tVloHhZ56jqSx8xUDfRwhUbHDHnXWy9W+fL/BD3GcOH8kYqbpiqiXxwcAzghrMmbSGmjhD3ekICynM8DtHtyCAvxP2BpYcRouJuB6XMyYWU9+nnS0qAHeuivzIAylcGX46ajeZvinfLZWPgJrwGg/YnBbT8OC8wOAxkfuAgoCn9AZzgkj0nZLHACqisBrAYqUw/E4Rv9oSQSFFgxVpnVFFowmNuaxDfpFHQmlSZ95YqRPVzlc4/yROqtI/BaMzrQHiuNtOukvUlrmu36rdvvygs2bNe+QL68aLhd2j7b6zSEM0mmTbe/fNCXgrWqTgZdwyJssLemQ==
+ b=QtNV8P/fOChhoVPhE/a1zTgj3PgWgkTsdjJtuiMQoLQPd8aS/vH0+wEP2kqV7huufZhybY7Px8a02TwjKD+sxcrT1vY+jwR4ICIx9p7UtWTZPx5L/5yDXDdNwUvULmq0Mg1oRRbBF8rDzhxCaGEd2Xf+ONbHS94lh+ediWdXarawRuZTS3LeMhegDTTo2sqJWtbfAeDsRmUuSxd8XXA+6luZzmiq02mJN/MHRFPFg0zEH49BNIOxbIPN/V/zGGTomCjlqGIGiemPai8HnHP0VPBN3QapIlIXFL6X8esEHKyznhXJRrlVmf3nYO11hPRkXicabjUy6ld7VDsxxddhUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ITyEFyeFH6hC6eufSq73GhBubBuc5AKwYI6jRdPc+8k=;
- b=LwcndrHLScnTNF9plpiJSPyfWe2RggfUc1Xdlxwu6VYRuiqtrZ0dmkwQLz4iuWEpxMliIHHX6fjtopfBxB2r55UyF5PS96Xl883xv7ZcVwNhUDiUZ5/38x4BQ5uhtofe9OvhwDJKQQER0Moz+MK7B9cUOeRVmnaKzCbPaUgwIH27l4Jn6F9UWGYbpyMWRFSqxB29+q0rM3nw4gshSzBXLSPX9HonifIP+6ex5BnFdZwYq8a9WmIyAkMJMItq9o5fajIVeyr9BdVLoj8hK1IoSNk8eoqLffMElLCfRq4UEVUy0RJ50ZYzievibwBs/W0oO8kvRQrDI+wgihKawqV5og==
+ bh=40X+RSsRAcPXLU7KW0N+BBXEZG6j662+2UxcqZ47xOQ=;
+ b=m9pkI9Z0t752smSN8RzM6YUZFd/a/s0s4go1ukfyZ6w2cLq9p1GAaQPk99XrpXuUteysRp7gqSmk5sIrhh9USyPPe9RNWUg6u/WZawI5kz78KEqDMy2NsOht41/e8KyVw0k3EgSeTtzJSbnYqO4VvNAEW+08gIDIYM0FGwEONITFfTJh/aUNKtljyufdnG74l8qzMhJe08JLssXyulLXRdbzXHekMJHsBiZcGfFIOkhBeaFVn27Ehnz6NyxCytmygPONWgHuIC2JhVBHioE0f3ALiPZzxrBi8c4BTGLOF8Wps92APG4j5zvgV1KAjUmcAxOIx2AWyALdlOfBUEQ5eQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ 12.22.5.234) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ITyEFyeFH6hC6eufSq73GhBubBuc5AKwYI6jRdPc+8k=;
- b=M5Gmxp1hr0xpPzKJd+m/0fywcAsVGeiWS5+E2wXSqIcEFdooo36sp7lUyuhhb72APCNibCkQtgoCvE7yc3wtoMtIW4n7iNbJLnv3oWEYmUoBHzr2HSB0QQ+GVUQUmNhlkT7y+xfI1jmuPfhZ7Kozp/5wJ9E0vc/OJBRbkMJcx9Xgi5cQXYO/JQSGSAgHUbgHRJzXzDTRRTZPlOu2nMOTpMbzAxtgWWbzvu2aF7z1wUTlXspDSXQ5aQ3l/R0S/ZKTsktLRDBZURrLzcxLBQX5YI4zZvXJ4CS66blrLomp5mb++Dxc+Jr3P5lYDovtFCYgqKtL1cXRIxfQltnaxFsGDg==
-Received: from MW4PR03CA0036.namprd03.prod.outlook.com (2603:10b6:303:8e::11)
- by BYAPR12MB3431.namprd12.prod.outlook.com (2603:10b6:a03:da::26) with
+ bh=40X+RSsRAcPXLU7KW0N+BBXEZG6j662+2UxcqZ47xOQ=;
+ b=NtmVht2kpfedh1meN085Jf2R/ds+h0nARVCdT4mTHkAxdPxIw95fN7BYSmaliMJu2HbVvWdoSSJsVR+h1Q08yaP5eap6VSjfgL9floKbowG1MkxRTobAtyn29OAw9h1ue4hySmBmePdv3k4+3IwRoihNyzrcNp/mujxpKcfGzjvb+DsOUZmCLMf13F649xPzcXkMaWj5gp8XyZoOuvofG6FdelggEjy6o9/KEjFajtES8OGOSIj4+7NJ4ZqfS84eB2DhtxbHKsWdG7RCttrJ/ezrx+vnAA5oPnSArwH5kBW3MRdj1F7/ucmW5zvw04lt8sN1rQlpoh+1wjkLGt+IrA==
+Received: from BN9PR03CA0205.namprd03.prod.outlook.com (2603:10b6:408:f9::30)
+ by DM5PR12MB2486.namprd12.prod.outlook.com (2603:10b6:4:b2::32) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.13; Fri, 22 Apr
- 2022 20:52:25 +0000
-Received: from CO1NAM11FT012.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8e:cafe::d4) by MW4PR03CA0036.outlook.office365.com
- (2603:10b6:303:8e::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.13 via Frontend
- Transport; Fri, 22 Apr 2022 20:52:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Fri, 22 Apr
+ 2022 20:53:06 +0000
+Received: from BN8NAM11FT057.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f9:cafe::e1) by BN9PR03CA0205.outlook.office365.com
+ (2603:10b6:408:f9::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15 via Frontend
+ Transport; Fri, 22 Apr 2022 20:53:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- CO1NAM11FT012.mail.protection.outlook.com (10.13.175.192) with Microsoft SMTP
+ 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.234; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.234) by
+ BN8NAM11FT057.mail.protection.outlook.com (10.13.177.49) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5186.14 via Frontend Transport; Fri, 22 Apr 2022 20:52:24 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 22 Apr
- 2022 20:52:24 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5186.14 via Frontend Transport; Fri, 22 Apr 2022 20:53:06 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
+ (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 22 Apr
+ 2022 20:52:19 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 22 Apr
- 2022 13:52:23 -0700
+ 2022 13:52:18 -0700
 Received: from dipenp.nvidia.com (10.127.8.10) by mail.nvidia.com
  (10.129.68.10) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Fri, 22 Apr 2022 13:52:23 -0700
+ Transport; Fri, 22 Apr 2022 13:52:18 -0700
 From:   Dipen Patel <dipenp@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <smangipudi@nvidia.com>, <linux-kernel@vger.kernel.org>,
@@ -68,9 +68,9 @@ To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <warthog618@gmail.com>, <devicetree@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>
 CC:     Dipen Patel <dipenp@nvidia.com>
-Subject: [PATCH v6 05/10] gpiolib: Add HTE support
-Date:   Fri, 22 Apr 2022 13:52:16 -0700
-Message-ID: <20220422205221.952-6-dipenp@nvidia.com>
+Subject: [PATCH v6 01/10] Documentation: Add HTE subsystem guide
+Date:   Fri, 22 Apr 2022 13:52:12 -0700
+Message-ID: <20220422205221.952-2-dipenp@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220422205221.952-1-dipenp@nvidia.com>
 References: <20220422205221.952-1-dipenp@nvidia.com>
@@ -79,197 +79,136 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c5ad5410-4acb-4ba4-5fb9-08da24a2012c
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3431:EE_
-X-Microsoft-Antispam-PRVS: <BYAPR12MB343173AAF45E4DABE28604DDAEF79@BYAPR12MB3431.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 91ddd315-9f53-439f-7872-08da24a219d3
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2486:EE_
+X-Microsoft-Antispam-PRVS: <DM5PR12MB2486714CE2A1D2C2648A9D52AEF79@DM5PR12MB2486.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: W1arXFGO11icaEQtWStDfYfBrXoM0/YS1kjPB+MYt2RtHklHCsaPp5RZbJGVUjCsnCuwnxE+Pm+VB933HA9y0h/EdtM2HSFAbvtHVGpGjfxDKeRrZSkmXd+HjxeTYRVfQ0CIROXBgRkFxT8W5H/06lYnJXI5mOdTmAxySd2apyQQhY0Zqg6pQRbqBpuFDU3qb5Nov/HXpujgxahl0DVYsdoZoJHRsWHR2czjVHK4P/A7OrYCjfuUmdLwc+ycOLKo9gZipqeF+RqMXa7aRlevd/4ZZzvfelMvDy4Aj2hF2MsLvGV0ImS30yUEWM41XVLK3h8JOsdsOQ4sEBd6uDY16OZZ7zdGSgSCndWMRf7JPwyLdxdAtqVzL3hbCkPqCR5njYXU05JYA7uufbhfhSPTBZDOE4Ud61VgupNrac8SNSOivf4Rr9b89AMWBsjPauw3mpu/wFii3JofRYtRZ8zumzgN5/Vsq8KdCqL+10+ifjbxNtIIcEiXaZWapU3uoctLnj/aJ60q8SqOBn3x4BJczwJXWiDcVJlzgy3JMQd3F4hZG9ChsNpgG6uGvXyArgCjiXdSJXWttHeOLWbFOFGdwbetUrkaNoihyljgR47cWRzwkNmvK778MXzkeipkfTYvA0ynooLXffn2NbXYkkyUjRb1jj6wUcG1YJwUzXybY928lZ8S+eMEelmGvyxwPY7QbsJf7QyMVQN0/K6TxWWFDfENSLVDeEAd5xRplVGLZM4VedwGqXLuYrsCcMCaE61JOEGolDRjFdw+ykvD5iTeug==
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(107886003)(4326008)(47076005)(8936002)(81166007)(7416002)(316002)(83380400001)(82310400005)(5660300002)(2616005)(8676002)(1076003)(86362001)(426003)(336012)(186003)(7696005)(508600001)(2906002)(40460700003)(921005)(6666004)(36860700001)(70586007)(70206006)(26005)(356005)(110136005)(36756003)(2101003)(36900700001)(83996005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: ENKPmpGPE6ffAXDMl3DR8HNeFXmgFbtcMx5GSYDXMP2q85enORtsCpDZrjQl4tpYODyvqEK2fw/q00E0Rwsctm+xWBsSkEgTzWFIbUr3ybS7RlDM/5aFLcQsUaudfsFOK+tTn8LQoZKfSeDkgPew3K/GNxkq9Rpl/hEWOWUU0e3YJ22jfFEpPuWGhTSORZgdWwP2BZY+ZqnWMJu995Et5wm/xXVG+r1fsq+wko6IM1HfczOr9RZR7hvbo9gAauMh56nqXSrnezOWS/t7IJLAnoaXpAuJJ+/4sCMVqfczJj2GUSEAnooLpJejrrrX2hZVZSi6vFQqHtpYxNQKcNMdqQ/IRdKx4uu5f7N39hbe4GWx90TCDx2KJzZhM+qEFEOnypewP/kctEtMLuJzHbx9SwmxfBvpckvfK2NQnveydG9dvjk2rWnTqSyg5MQ5o6ejgh0sO2eb3/mBT2lN7/wpM70VeGMK16wm4WdNqqI0MVWVhP/AFi0/z7bLUI2cjMG2NwcLoJKrgyxyZla7JMzTYTkfbCqmIHPjrmxgx87ZOKK5ZOBn+xvwHn0hhZUCmhJOfJtudPo984Q0oeDIQZKHt17c4IWsuulaGBFQdabQH3BslOyZS0wYImAIxMPTrZSZoCtKUv//WThxqOSxzSyiZtwxRxak6u/0WK/mT5HrSoJ/dD0ElfggGkF6600987gr0IGFbjh9OFIXpr18U1IJ4p/UuIC9Y51wmTxoCmlzWf6fLiZ4xLng0QndguK6lu7uMpwilx6FFby6ujJ3I8240g==
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(86362001)(26005)(107886003)(40460700003)(316002)(36756003)(81166007)(47076005)(1076003)(110136005)(2616005)(82310400005)(426003)(336012)(70586007)(70206006)(186003)(7416002)(2906002)(8676002)(4326008)(8936002)(5660300002)(7696005)(36860700001)(83380400001)(508600001)(921005)(356005)(6666004)(36900700001)(2101003)(83996005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2022 20:52:24.8240
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2022 20:53:06.1219
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5ad5410-4acb-4ba4-5fb9-08da24a2012c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91ddd315-9f53-439f-7872-08da24a219d3
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT012.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT057.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3431
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2486
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Some GPIO chip can provide hardware timestamp support on its GPIO lines
-, in order to support that, additional API needs to be added which
-can talk to both GPIO chip and HTE (hardware timestamping engine)
-providers if there is any dependencies. This patch introduces optional
-hooks to enable and disable hardware timestamping related features
-in the GPIO controller chip.
+Adding hte document which can help understand various APIs implemented
+in HTE framework for the HTE producers and the consumers.
 
 Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reported-by: kernel test robot <lkp@intel.com>
 ---
 Changes in v2:
-- removed get timestamp and is timestamp enabled APIs
+- Removed explanation, instead added kernel-doc references.
+
+Changes in v3:
+- Addressed grammatical errors.
 
 Changes in v4:
-- Removed gpiod_req_hw_timestamp_ns and gpiod_rel_hw_timestamp_ns APIs.
-- Added callbacks for the GPIO driver to enable hardware timestamping
-functionality if supported which takes gpio desc and flags as arguments.
-- Added APIs are called from GPIO provider rather than gpiolib-cdev framework.
+- Added new API hte_req_ts_by_linedata_ns description.
+- Removed hte_req_ts_by_hte_name.
 
- drivers/gpio/gpiolib.c        | 58 +++++++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.h        |  1 +
- include/linux/gpio/consumer.h | 16 ++++++++--
- include/linux/gpio/driver.h   | 10 ++++++
- 4 files changed, 83 insertions(+), 2 deletions(-)
+Changes in v6:
+- Added hte_init_line_attr, hte_ts_get, of_hte_req_count.
+- Removed devm_of_hte_request_ts_ns, hte_req_ts_by_linedata_ns, hte_release_ts.
+- Replaced above with devm_hte_request_ts_ns, hte_request_ts_ns, hte_ts_put.
+- Addressed review comments.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e59884cc12a7..60cd7cc33647 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2434,6 +2434,64 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- }
- EXPORT_SYMBOL_GPL(gpiod_direction_output);
- 
-+/**
-+ * gpiod_enable_hw_timestamp_ns - Enable hardware timestamp in nanoseconds.
-+ *
-+ * @desc: GPIO to enable.
-+ * @flags: Flags related to GPIO edge.
-+ *
-+ * Return 0 in case of success, else negative error code.
-+ */
-+int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
-+{
-+	int ret = 0;
-+	struct gpio_chip *gc;
+ Documentation/hte/hte.rst | 77 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/hte/hte.rst
+
+diff --git a/Documentation/hte/hte.rst b/Documentation/hte/hte.rst
+new file mode 100644
+index 000000000000..75100a9bc35f
+--- /dev/null
++++ b/Documentation/hte/hte.rst
+@@ -0,0 +1,77 @@
++============================================
++The Linux Hardware Timestamping Engine (HTE)
++============================================
 +
-+	VALIDATE_DESC(desc);
++:Author: Dipen Patel
 +
-+	gc = desc->gdev->chip;
-+	if (!gc->en_hw_timestamp) {
-+		gpiod_warn(desc, "%s: hw ts not supported\n", __func__);
-+		return -ENOTSUPP;
-+	}
++Introduction
++------------
 +
-+	ret = gc->en_hw_timestamp(gc, gpio_chip_hwgpio(desc), flags);
-+	if (ret)
-+		gpiod_warn(desc, "%s: hw ts request failed\n", __func__);
++Certain devices have built in hardware timestamping engines which can
++monitor sets of system signals, lines, buses etc... in realtime for state
++change; upon detecting the change they can automatically store the timestamp at
++the moment of occurrence. Such functionality may help achieve better accuracy
++in obtaining timestamps than using software counterparts i.e. ktime and
++friends.
 +
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_enable_hw_timestamp_ns);
++This document describes the API that can be used by hardware timestamping
++engine provider and consumer drivers that want to use the hardware timestamping
++engine (HTE) framework. Both consumers and providers must include
++``#include <linux/hte.h>``.
 +
-+/**
-+ * gpiod_disable_hw_timestamp_ns - Disable hardware timestamp.
-+ *
-+ * @desc: GPIO to disable.
-+ * @flags: Flags related to GPIO edge, same value as used during enable call.
-+ *
-+ * Return 0 in case of success, else negative error code.
-+ */
-+int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
-+{
-+	int ret = 0;
-+	struct gpio_chip *gc;
++The HTE framework APIs for the providers
++----------------------------------------
 +
-+	VALIDATE_DESC(desc);
++.. kernel-doc:: drivers/hte/hte.c
++   :functions: devm_hte_register_chip hte_push_ts_ns
 +
-+	gc = desc->gdev->chip;
-+	if (!gc->dis_hw_timestamp) {
-+		gpiod_warn(desc, "%s: hw ts not supported\n", __func__);
-+		return -ENOTSUPP;
-+	}
++The HTE framework APIs for the consumers
++----------------------------------------
 +
-+	ret = gc->dis_hw_timestamp(gc, gpio_chip_hwgpio(desc), flags);
-+	if (ret)
-+		gpiod_warn(desc, "%s: hw ts release failed\n", __func__);
++.. kernel-doc:: drivers/hte/hte.c
++   :functions: hte_init_line_attr hte_ts_get hte_ts_put devm_hte_request_ts_ns hte_request_ts_ns hte_enable_ts hte_disable_ts of_hte_req_count hte_get_clk_src_info
 +
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_disable_hw_timestamp_ns);
++The HTE framework public structures
++-----------------------------------
++.. kernel-doc:: include/linux/hte.h
 +
- /**
-  * gpiod_set_config - sets @config for a GPIO
-  * @desc: descriptor of the GPIO for which to set the configuration
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 06f3faa9fbef..29a7d39062b3 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -158,6 +158,7 @@ struct gpio_desc {
- #define FLAG_EDGE_RISING     16	/* GPIO CDEV detects rising edge events */
- #define FLAG_EDGE_FALLING    17	/* GPIO CDEV detects falling edge events */
- #define FLAG_EVENT_CLOCK_REALTIME	18 /* GPIO CDEV reports REALTIME timestamps in events */
-+#define FLAG_EVENT_CLOCK_HTE		19 /* GPIO CDEV reports hardware timestamps in events */
- 
- 	/* Connection label */
- 	const char		*label;
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index c3aa8b330e1c..7eaec081ae6c 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -109,6 +109,8 @@ int gpiod_get_direction(struct gpio_desc *desc);
- int gpiod_direction_input(struct gpio_desc *desc);
- int gpiod_direction_output(struct gpio_desc *desc, int value);
- int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
-+int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
-+int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
- 
- /* Value get/set from non-sleeping context */
- int gpiod_get_value(const struct gpio_desc *desc);
-@@ -350,8 +352,18 @@ static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
- 	WARN_ON(desc);
- 	return -ENOSYS;
- }
--
--
-+static inline int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc,
-+					       unsigned long flags)
-+{
-+	WARN_ON(desc);
-+	return -ENOSYS;
-+}
-+static inline int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc,
-+						unsigned long flags)
-+{
-+	WARN_ON(desc);
-+	return -ENOSYS;
-+}
- static inline int gpiod_get_value(const struct gpio_desc *desc)
- {
- 	/* GPIO can never have been requested */
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index b0728c8ad90c..f28d1e9b61f0 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -320,6 +320,10 @@ struct gpio_irq_chip {
-  * @add_pin_ranges: optional routine to initialize pin ranges, to be used when
-  *	requires special mapping of the pins that provides GPIO functionality.
-  *	It is called after adding GPIO chip and before adding IRQ chip.
-+ * @en_hw_timestamp: Dependent on GPIO chip, an optional routine to
-+ *	enable hardware timestamp.
-+ * @dis_hw_timestamp: Dependent on GPIO chip, an optional routine to
-+ *	disable hardware timestamp.
-  * @base: identifies the first GPIO number handled by this chip;
-  *	or, if negative during registration, requests dynamic ID allocation.
-  *	DEPRECATION: providing anything non-negative and nailing the base
-@@ -416,6 +420,12 @@ struct gpio_chip {
- 
- 	int			(*add_pin_ranges)(struct gpio_chip *gc);
- 
-+	int			(*en_hw_timestamp)(struct gpio_chip *gc,
-+						   u32 offset,
-+						   unsigned long flags);
-+	int			(*dis_hw_timestamp)(struct gpio_chip *gc,
-+						    u32 offset,
-+						    unsigned long flags);
- 	int			base;
- 	u16			ngpio;
- 	u16			offset;
++More on the HTE timestamp data
++------------------------------
++The ``struct hte_ts_data`` is used to pass timestamp details between the
++consumers and the providers. It expresses timestamp data in nanoseconds in
++u64. An example of the typical timestamp data life cycle, for the GPIO line is
++as follows::
++
++ - Monitors GPIO line change.
++ - Detects the state change on GPIO line.
++ - Converts timestamps in nanoseconds.
++ - Stores GPIO raw level in raw_level variable if the provider has that
++ hardware capability.
++ - Pushes this hte_ts_data object to HTE subsystem.
++ - HTE subsystem increments seq counter and invokes consumer provided callback.
++ Based on callback return value, the HTE core invokes secondary callback in
++ the thread context.
++
++HTE subsystem debugfs attributes
++--------------------------------
++HTE subsystem creates debugfs attributes at ``/sys/kernel/debug/hte/``.
++It also creates line/signal-related debugfs attributes at
++``/sys/kernel/debug/hte/<provider>/<label or line id>/``. Note that these
++attributes are read-only.
++
++`ts_requested`
++		The total number of entities requested from the given provider,
++		where entity is specified by the provider and could represent
++		lines, GPIO, chip signals, buses etc...
++                The attribute will be available at
++		``/sys/kernel/debug/hte/<provider>/``.
++
++`total_ts`
++		The total number of entities supported by the provider.
++                The attribute will be available at
++		``/sys/kernel/debug/hte/<provider>/``.
++
++`dropped_timestamps`
++		The dropped timestamps for a given line.
++                The attribute will be available at
++		``/sys/kernel/debug/hte/<provider>/<label or line id>/``.
 -- 
 2.17.1
 
