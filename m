@@ -2,162 +2,152 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9C2C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 20:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50399C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Apr 2022 21:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbiDVUng (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Apr 2022 16:43:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57996 "EHLO
+        id S230428AbiDVV6d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Apr 2022 17:58:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiDVUnf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 16:43:35 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03B72F2B0B;
-        Fri, 22 Apr 2022 12:41:06 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id j2so16339667ybu.0;
-        Fri, 22 Apr 2022 12:41:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IOuZ8W1MJjibB6swPo2RkQCIeQZ1wridYdEDKveCnMw=;
-        b=75QeTDGw2CXuOQiRqR4x9mCo2fipdSQ2FnVmTTDAsV+ycc63HyxQgInkyz1UOUkcFO
-         TJNwp65NQMLbcUjWH9YGwdMzcc1UEvalFVCxlU9cqy4F18erT1Js5XhTM56JeCuwn0S3
-         40Ji+mVAmOQWRkQodiZc4Nf4z1FW9AzIsZ9UTwUV8tv70cHa652xQ1OAkeeGSA4qESsL
-         YqY5TUhEgXRUNLe1A0Z50wildXvhsuLWUinzz+qnDKe+cdRnwE5NdJkn0Jla24PwTgN+
-         y7xbMjDQcY0MhAoi//1J1Co0u5S3Q1UAZR9b6SD8YNnVL88f+bHtE9P7FA3j3bZ7Gb96
-         XaIA==
-X-Gm-Message-State: AOAM533NHaXEw+e1rmg8vLSJ9Q45NoCaXcNFd7lMbeVBS7It79fHpSFQ
-        lpYOZkHyZlme+NvaqQV4LDmLOqXsNA==
-X-Google-Smtp-Source: ABdhPJwYLw7ezcsEnAXRaBNaeuhKHOPAF+WazY3gcKcmVgQTsP9d3MdUusPnK8wJQL/5J1SzRjWOlw==
-X-Received: by 2002:a9d:3624:0:b0:5e9:5778:d0c6 with SMTP id w33-20020a9d3624000000b005e95778d0c6mr2399677otb.367.1650655308747;
-        Fri, 22 Apr 2022 12:21:48 -0700 (PDT)
-Received: from xps15.. (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.googlemail.com with ESMTPSA id x24-20020a056870a79800b000e2e53716fbsm1044094oao.31.2022.04.22.12.21.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 12:21:48 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Joel Stanley <joel@jms.id.au>
-Cc:     linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: pinctrl: aspeed: Drop referenced nodes in examples
-Date:   Fri, 22 Apr 2022 14:21:38 -0500
-Message-Id: <20220422192139.2592632-1-robh@kernel.org>
-X-Mailer: git-send-email 2.32.0
+        with ESMTP id S231174AbiDVV6H (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2022 17:58:07 -0400
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B754E2F2B0F
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2022 13:40:43 -0700 (PDT)
+Received: from [192.168.1.109] (247.72-129-109.adsl-dyn.isp.belgacom.be [109.129.72.247])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        (Authenticated sender: sander@svanheule.net)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id E12922CB5D4;
+        Fri, 22 Apr 2022 22:40:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+        s=mail1707; t=1650660041;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bua5EtbDNu2Of0nRcFOmTXS3IjMFZ5y6IySB6RxScok=;
+        b=2kAEFqboh4xIWVhHxQd1oG9fmbhf/RU5Kpk7E6qT3nj7iiuI8644gjaQj+OdAJre8ZXXl9
+        v8FyD69kG7U5NCxrBCEd/nMVgHzZx/yreqCYIq8VKtIC3GJ9sotcmyGt7LoOhCBR38Kkfc
+        Swiyo5J3anobJyxuQ1OPLTIO3jAaG57iSdWXT0h0Y+moDFqdA3r5epKOniQdxW6jGxs2BQ
+        UHtDrnsVgjhR4txmQvxNnunoP0F2xDqCUO0DPQfy42uu05nQVxBIUrzNvpwRDU0qaUK70N
+        GmUQ3xryPyI8lfZK5oKtmaQSc0zEtileavwVKrSZEA0VIpNcZw5MI8H7YpcY4A==
+Message-ID: <9ceab104f5189664648c219fb9d1e0d70d6bda9f.camel@svanheule.net>
+Subject: Re: [PATCH v1 3/6] gpio: realtek-otto: Support per-cpu interrupts
+From:   Sander Vanheule <sander@svanheule.net>
+To:     Marc Zyngier <maz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Bert Vermeulen <bert@biot.com>, linux-kernel@vger.kernel.org
+Date:   Fri, 22 Apr 2022 22:40:39 +0200
+In-Reply-To: <b8b62753ad5235e065b4cb0856a7a7c33438dfbb.camel@svanheule.net>
+References: <cover.1649533972.git.sander@svanheule.net>
+         <8d4e0848f233c2c1b98aa141741c61d95cd3843f.1649533972.git.sander@svanheule.net>
+         <CACRpkdbSdDAKiFAsHBosdVDpBhWW-Keoq+t8GJ5LsyWjOZwp_g@mail.gmail.com>
+         <87h76mahsl.wl-maz@kernel.org>
+         <b8b62753ad5235e065b4cb0856a7a7c33438dfbb.camel@svanheule.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The additional nodes in the example referenced from the pinctrl node
-'aspeed,external-nodes' properties are either incorrect (aspeed,ast2500-lpc)
-or not documented with a schema (aspeed,ast2500-gfx). There's no need to
-show these nodes as part of the pinctrl example, so just remove them.
+On Fri, 2022-04-22 at 09:04 +0200, Sander Vanheule wrote:
+> Hi Linus, Marc,
+> 
+> On Thu, 2022-04-21 at 10:48 +0100, Marc Zyngier wrote:
+> > On Thu, 21 Apr 2022 00:04:16 +0100,
+> > Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > 
+> > > On Sat, Apr 9, 2022 at 9:56 PM Sander Vanheule <sander@svanheule.net> wrote:
+> > > 
+> > > > On SoCs with multiple cores, it is possible that the GPIO interrupt
+> > > > controller supports assigning specific pins to one or more cores.
+> > > > 
+> > > > IRQ balancing can be performed on a line-by-line basis if the parent
+> > > > interrupt is routed to all available cores, which is the default upon
+> > > > initialisation.
+> > > > 
+> > > > Signed-off-by: Sander Vanheule <sander@svanheule.net>
+> > > 
+> > > That sounds complicated.
+> > > 
+> > > Sounds like something the IRQ maintainer (Marc Z) should
+> > > have a quick look at.
+> > 
+> > This is pretty odd indeed. There seem to be a direct mapping between
+> > the GPIOs and the CPU it interrupts (or at least that's what the code
+> > seem to express). However, I don't see a direct relation between the
+> > CPUs and the chained interrupt. It isn't even clear if this interrupt
+> > itself is per-CPU.
+> > 
+> > So this begs a few questions:
+> > 
+> > - is the affinity actually affecting the target CPU? or is it
+> >   affecting the target mux?
+> > 
+> > - how is the affinity of the mux interrupt actually enforced?
+> 
+> There are three interrupt controllers at play here:
+>    1. MIPS CPU interrupt controller: drivers/irqchip/irq-mips-cpu.c
+>       One interrupt controller per VPE, so in this case there are two. Provides
+>       per-CPU interrupts.
+>    2. SoC interrupt controller: drivers/irqchip/irq-realtek-rtl.c
+>       Also one interrupt controller per VPE. I suppose these will also be per-
+>       CPU, although this isn't implemented in the driver yet, and I don't think
+>       I yet fully understand how should work in the kernel.
+>    3. GPIO interrupt controller: drivers/gpio/gpio-realtek-otto.c
+>       One interrupt controller for the entire GPIO bank, with optional
+>       configurable affinity (this patch) for the different VPEs.
+> 
+> For the RTL839x series of SoCs, this results in the following:
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../pinctrl/aspeed,ast2500-pinctrl.yaml       | 81 ++++---------------
- 1 file changed, 16 insertions(+), 65 deletions(-)
+Sorry for the messed up formattng, let me try that again.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
-index 7c25c8d51116..9db904a528ee 100644
---- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
-@@ -76,73 +76,24 @@ additionalProperties: false
- examples:
-   - |
-     #include <dt-bindings/clock/aspeed-clock.h>
--    apb {
--        compatible = "simple-bus";
--        #address-cells = <1>;
--        #size-cells = <1>;
--        ranges;
--
--        syscon: scu@1e6e2000 {
--            compatible = "aspeed,ast2500-scu", "syscon", "simple-mfd";
--            reg = <0x1e6e2000 0x1a8>;
--            #clock-cells = <1>;
--            #reset-cells = <1>;
--
--            pinctrl: pinctrl {
--                compatible = "aspeed,ast2500-pinctrl";
--                aspeed,external-nodes = <&gfx>, <&lhc>;
--
--                pinctrl_i2c3_default: i2c3_default {
--                    function = "I2C3";
--                    groups = "I2C3";
--                };
--
--                pinctrl_gpioh0_unbiased_default: gpioh0 {
--                    pins = "A18";
--                    bias-disable;
--                };
-+    scu@1e6e2000 {
-+        compatible = "aspeed,ast2500-scu", "syscon", "simple-mfd";
-+        reg = <0x1e6e2000 0x1a8>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+
-+        pinctrl: pinctrl {
-+            compatible = "aspeed,ast2500-pinctrl";
-+            aspeed,external-nodes = <&gfx>, <&lhc>;
-+
-+            pinctrl_i2c3_default: i2c3_default {
-+                function = "I2C3";
-+                groups = "I2C3";
-             };
--        };
--
--        gfx: display@1e6e6000 {
--            compatible = "aspeed,ast2500-gfx", "syscon";
--            reg = <0x1e6e6000 0x1000>;
--            reg-io-width = <4>;
--            clocks = <&syscon ASPEED_CLK_GATE_D1CLK>;
--            resets = <&syscon ASPEED_RESET_CRT1>;
--            interrupts = <0x19>;
--            syscon = <&syscon>;
--            memory-region = <&gfx_memory>;
--        };
--    };
--
--    lpc: lpc@1e789000 {
--        compatible = "aspeed,ast2500-lpc", "simple-mfd";
--        reg = <0x1e789000 0x1000>;
--
--        #address-cells = <1>;
--        #size-cells = <1>;
--        ranges = <0x0 0x1e789000 0x1000>;
--
--        lpc_host: lpc-host@80 {
--            compatible = "aspeed,ast2500-lpc-host", "simple-mfd", "syscon";
--            reg = <0x80 0x1e0>;
--            reg-io-width = <4>;
- 
--            #address-cells = <1>;
--            #size-cells = <1>;
--            ranges = <0x0 0x80 0x1e0>;
--
--            lhc: lhc@20 {
--                   compatible = "aspeed,ast2500-lhc";
--                   reg = <0x20 0x24>, <0x48 0x8>;
-+            pinctrl_gpioh0_unbiased_default: gpioh0 {
-+                pins = "A18";
-+                bias-disable;
-             };
-         };
-     };
--
--    gfx_memory: framebuffer {
--        size = <0x01000000>;
--        alignment = <0x01000000>;
--        compatible = "shared-dma-pool";
--        reusable;
--    };
--- 
-2.32.0
+GPIO LINES        SOC IRQ              MIPS
+    +--------+    LINE +-----------+   HW IRQ +--------+
+--->| GPIO   |         | SOC IRQ   |   LINES  | IRQ    |
+--->| BANK   |-----o-->| VPE0 CTRL |=========>| VPE0   |
+ .  |        |     |   +-----------+          +--------+
+ .  +--------+     | 
+ .                 |
+                   |   +-----------+          +--------+
+                   \-->| SOC IRQ   |          | IRQ    |
+                       | VPE1 CTRL |=========>| VPE1   |
+                       +-----------+          +--------+
+
+
+> For RTL930x, where GPIO IRQ affinity is configurable:
+
+GPIO LINES        SOC IRQ              MIPS
+    +--------+    LINE +-----------+   HW IRQ +--------+
+--->| GPIO   |-------->| SOC IRQ   |   LINES  | IRQ    |
+--->| BANK   |         | VPE0 CTRL |=========>| VPE0   |
+ .  |        |-----\   +-----------+          +--------+
+ .  +--------+     | 
+ .                 |
+                   |   +-----------+          +--------+
+                   \-->| SOC IRQ   |          | IRQ    |
+                       | VPE1 CTRL |=========>| VPE1   |
+                       +-----------+          +--------+
+
+> The interrupt for the GPIO controller can be muxed to any of the MIPS HW
+> interrupts on any (or all) of the VPEs, and these muxes (SoC IRQ controllers)
+> can be configured independently per CPU. The SoC IRQ line index is fixed, and
+> consistent for both VPEs.
+> Only in the second diagram can individual GPIO interrupts be muxed to any of the
+> VPEs, but there is still only one IRQ line per VPE for all selected GPIO lines.
+> 
+> I hopes this helps to clarify the situation. We don't have any real
+> documentation, so this is basically derived from registers descriptions in SDK
+> headers and testing the interrupt behaviour.
+> 
+> Best,
+> Sander
 
