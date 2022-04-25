@@ -2,73 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0681DC433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Apr 2022 20:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078B5C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Apr 2022 22:22:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244043AbiDYUMW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 Apr 2022 16:12:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50202 "EHLO
+        id S237953AbiDYWZL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 Apr 2022 18:25:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241233AbiDYUMV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Apr 2022 16:12:21 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183DF1240C1
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Apr 2022 13:09:16 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-2f7d621d1caso49582587b3.11
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Apr 2022 13:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NfxDulmsqhxXYyN5BV9MHprI6PjKOv1s+ZBzAf57s4s=;
-        b=rAreSYbIYa7d1O6k0eeBoQixeROl7b4GeOBqgh4WDsQEPcfgAgTbGYjLwan/Vhvori
-         3rKztPP7u1/1T57or6r7tIyxMtjNvvdR59iU8ugQjY/VkRBSn5dyyIB84PY2URQnfMHq
-         6Tk4X7ng4dRI0IZnnvGMDJhkmMpozAefRCn3FfU/UQWwwUAyJEQTWXP5yQ5PZF4NX4az
-         SqXjiK6VhHcaxA4kw3r0Ib0+V3IPHMFDT6GyUjPzTnOcLziEK+uv+evIiUv9WoLiLkZ2
-         u1cI+zT6AEgLMrm316QTOYk8KstUMLznGxEXS4M5M1sW++g5oPo5V4MzA5av/I2F6yTr
-         MgwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NfxDulmsqhxXYyN5BV9MHprI6PjKOv1s+ZBzAf57s4s=;
-        b=QKz4ieqEWb7NZvAtYMT1+yC083mPyozaJy6zbvwlsKNjmG3GPO23RE54uGu34e/DZw
-         bCiE89ubcepJ0zUg6ZLE4twftbCuACgO9/CgeAs0SF1HRrQc6P4gqaQGXXxRJrvo67JT
-         A9VgzpFACGxOsr/pTDs3iKl7Jb2XPY3PKQQr9BZiWbKKjWWkfTwEjKATm9YxKA7Sf7G7
-         016YsZ0HkzDFQJYqHgSpOYCkZYtfDWIGFFwQ5tO1EpvBB41FqA/scg1QDTl+UqPHWSgn
-         ByW30ZPYMDnmry7s7m6zWJHcz99DOKnEwAxhNSBBs+cBbxH6cODffJD53GtEwHq0dge4
-         T8tg==
-X-Gm-Message-State: AOAM532BD9sHnHc9r1YF1RG62UMSORkMMt2pw5bSdf96+18nb4bpy3fG
-        U3uqtITu4ps3G0IrCttMVHqJWTo/fejReRtG6Ac6KA==
-X-Google-Smtp-Source: ABdhPJyF695Tiq9KWQzZuGHqu4LK5YmP82HABpDAJ9oWVE5UTcdqsbMaZTDMDolz5sNv29B66+jrLXn+uK5V9V//hCo=
-X-Received: by 2002:a0d:c4c2:0:b0:2f1:6c00:9eb4 with SMTP id
- g185-20020a0dc4c2000000b002f16c009eb4mr19186232ywd.448.1650917355287; Mon, 25
- Apr 2022 13:09:15 -0700 (PDT)
+        with ESMTP id S1343681AbiDYWKZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Apr 2022 18:10:25 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A8181D33F;
+        Mon, 25 Apr 2022 15:07:16 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 6C6E6806B7;
+        Tue, 26 Apr 2022 00:07:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1650924434;
+        bh=3xdUpz0rxOpaFXzw5F0nSyIQaIXNBm7+paVzz99k0qk=;
+        h=Date:Subject:To:References:From:In-Reply-To:From;
+        b=QH0u//pMrhzlghzFLFFQUSLoTUPjS9kwA5AOm14Y6mj84GUj+/pSvTa6HAUNWMH3i
+         E6OyUUUl0+Jx7TdyYh9IKkBf9OUbzYQhewlQ9zikp5CZqQq+JivK4CkZfk4F/THr9b
+         jgLdExXdNzLJvAQM4tGKstaAklhCJdUtZHn2IAkyAjo4qvnM0rFYVCyqkwk0V6qw21
+         dQc6ITPuRK/dWI+cT2jIVWVQNXV8UY6DpNxKartwFKkJnxVLopj/Zl1OvlKcQfhKId
+         hc2pW/tTqN7EmA2FL8zIdUS/2s3+2hsEk6W/HtsQSgumfP2drMM/INNDvp6UiMgNkS
+         aqMqT/0qvR4Hw==
+Message-ID: <580a2c04-67ca-17f3-54ec-5b07ca46c254@denx.de>
+Date:   Tue, 26 Apr 2022 00:07:13 +0200
 MIME-Version: 1.0
-References: <34212129-bb2e-46d4-4536-28f11b1c61ca@living180.net>
-In-Reply-To: <34212129-bb2e-46d4-4536-28f11b1c61ca@living180.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 25 Apr 2022 22:09:01 +0200
-Message-ID: <CACRpkdbw1E3qOc=+PXyO3tQSXpa0yHd5YTbXMe97dPq9vCcTVg@mail.gmail.com>
-Subject: Re: Regression in 5467801f1fcbd
-To:     Daniel Harding <dharding@living180.net>
-Cc:     brgl@bgdev.pl, shreeya.patel@collabora.com,
-        linux-gpio@vger.kernel.org, stable@vger.kernel.org,
-        andy.shevchenko@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] pinctrl: stm32: improve bank clocks management
+Content-Language: en-US
+To:     Fabien DESSENNE <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-gpio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220422143608.226580-1-fabien.dessenne@foss.st.com>
+ <c48500cd-50be-1d70-2f2c-02c2dcede1eb@denx.de>
+ <442677d2-7e9f-14f0-4b5a-1f98a8f40c8a@foss.st.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <442677d2-7e9f-14f0-4b5a-1f98a8f40c8a@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Daniel,
+On 4/25/22 11:27, Fabien DESSENNE wrote:
+> Hi Marek
+> 
+> 
+> On 22/04/2022 18:26, Marek Vasut wrote:
+>> On 4/22/22 16:36, Fabien Dessenne wrote:
+>>> Instead of enabling/disabling the clock at each IO configuration update,
+>>> just keep the clock enabled from the probe.
+>>> This makes things simpler and more efficient (e.g. the time required to
+>>> toggle an output IO is drastically decreased) without significantly
+>>> increasing the power consumption.
+>>
+>> [...]
+>>
+>>>   static struct irq_domain *stm32_pctrl_get_irq_domain(struct 
+>>> device_node *np)
+>>> @@ -1575,6 +1537,10 @@ int stm32_pctl_probe(struct platform_device 
+>>> *pdev)
+>>>               ret = stm32_gpiolib_register_bank(pctl, child);
+>>>               if (ret) {
+>>>                   of_node_put(child);
+>>> +
+>>> +                for (i = 0; i < pctl->nbanks; i++)
+>>> +                    clk_disable_unprepare(pctl->banks[i].clk);
+>>> +
+>>
+>> There are clk_bulk_*() functions, maybe you can use those to get rid 
+>> of these loops ?
+> 
+> This sounds goods, but checking more in details I see that moving to the 
+> 'bulk' implementation would require to move the clk information from the 
+> "struct stm32_gpio_bank *banks" member to its parent "struct 
+> stm32_pinctrl".
+> 
+> This would make the clk device information stored in a different 
+> structure from the other device-related information (base address, reset 
+> control, ...). It's better to keep all those information together in the 
+> same struct.
+> 
+> As another drawback we would loose access to 'clk' from any function 
+> that have 'bank' (or 'struct gpio_chip *chip') as input parameter (e.g. 
+> stm32_gpio_get() called from gpiolib).
+> 
+> So I really prefer to keep the current implementation.
 
-On Mon, Apr 25, 2022 at 9:00 PM Daniel Harding <dharding@living180.net> wrote:
+All right, I agree.
 
-> The commit "Restrict usage of GPIO chip irq members before initialization" breaks suspend on a
->  Dell Inspiron 5515 laptop in a very severe way.
+>> The rest looks good to me.
 
-Does this commit, which is already upstream in Torvald's tree, solve the issue?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/gpio?id=06fb4ecfeac7e00d6704fa5ed19299f2fefb3cc9
-
-Yours,
-Linus Walleij
+Reviewed-by: Marek Vasut <marex@denx.de>
