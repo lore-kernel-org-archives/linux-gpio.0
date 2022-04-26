@@ -2,280 +2,364 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6777CC433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Apr 2022 22:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F28C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Apr 2022 00:37:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237993AbiDYWZM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 Apr 2022 18:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49506 "EHLO
+        id S240068AbiDZAkZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 Apr 2022 20:40:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343638AbiDYV5r (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Apr 2022 17:57:47 -0400
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9448A4738E;
-        Mon, 25 Apr 2022 14:54:42 -0700 (PDT)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-e2fa360f6dso17553895fac.2;
-        Mon, 25 Apr 2022 14:54:42 -0700 (PDT)
+        with ESMTP id S232109AbiDZAkX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Apr 2022 20:40:23 -0400
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50CA54579B;
+        Mon, 25 Apr 2022 17:37:16 -0700 (PDT)
+Received: by mail-ot1-f43.google.com with SMTP id u17-20020a9d4d91000000b00605a73abac1so3996715otk.7;
+        Mon, 25 Apr 2022 17:37:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=A7tE+6zDw7UBglMyaIog0/W20yMhf3kXY1mK8DU9uDc=;
-        b=fM86YvYouOKAIni8+bkcJLxro5/BnN4cSm/N0VI8UBgch3I3JTZenM63BTkXwtBMbf
-         zrbs+Y/qPCrZlo1X22wiLUlCwbhdeQzAnNZ4MSLwiE7hspMX3SV/EQRREqqzjo31PREp
-         L4vqjjEyTrAV0KMKsvzKVQYLY8uJEMGMKYkoGbukTZj99mkLnfgtxRtBmSuei4suEBiR
-         EWRl5TFaSieFgJjzrF1lWJ80yLyKin6Ejo3FU8kkdo/XbRpmh2ZjUL5FBr+CAL+0ScQa
-         U6cBiFz+LEqBpF83uMYnfFoTNM2tao5r7DajyRkLf4Mmn4D+6ThZFJyKadUhNRS5xNiU
-         sZVQ==
-X-Gm-Message-State: AOAM5327KvwUYrdBod2xQClaNs697Q+Dg78ItI91y7p/80b95f8Y7MqJ
-        zENd7Le+P9XWrFxa2aZ2hFd91kqOaA==
-X-Google-Smtp-Source: ABdhPJxaQxuDPuVlJ8cXUfiS3N7M3QjLUu7/aUq3l5G0iHlHGa5j3ys7oioMHqUuF7DaFWc+AU+kiA==
-X-Received: by 2002:a05:6870:b50a:b0:e9:2534:1c0a with SMTP id v10-20020a056870b50a00b000e925341c0amr4125963oap.48.1650923681742;
-        Mon, 25 Apr 2022 14:54:41 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=lK+eIk1pRtY5GikN3iWfniyadAU39HFHNcjIw4NQ/6g=;
+        b=Lw8i5P8orJNxY+qHhpz2i1VkKUeUhowhsMrvB2oZpX9BPRGKMipAmn50A+rCJXaThV
+         Le6Ne6k7u9Cci4r/r4QfYjW502q1GBSdsjjHVk+j2LPg6y1ebNq9HkDDR99cG5MiScLl
+         iAAif9qUwFBmkXJKc8The1wZdh6icBTdYSQ4jn8eohHdINHUK2UN34r+3W4tNnixLaQF
+         0fOsK2RnMiDZH311aSN52Vu7VxhIWw1U699NOIA3z5xSgF0dDGRcDwKbxvsQBW2jgb5Q
+         LJMkByDyRzgWtBv6qcUD8G4yOPOrKNDf22NHcwSYbyxzNpP+Myw17pk0J/fiMyuPu7Px
+         /ZEA==
+X-Gm-Message-State: AOAM533XsLT+GPwCxtcj7CaWGZAsnIAr9w1DzpzBjrhbJpZuhih0+RQ4
+        P361mkuJfvhD1Nm7mMq39A==
+X-Google-Smtp-Source: ABdhPJyBk7ikJpYLxe9p5mtk1adbzHY3MMut8ywboltTmLhn5jcIyQQlHjrhHDsqiz1kscFyhdaaaQ==
+X-Received: by 2002:a05:6830:18cf:b0:605:5075:c26a with SMTP id v15-20020a05683018cf00b006055075c26amr7549485ote.260.1650933435500;
+        Mon, 25 Apr 2022 17:37:15 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id v5-20020a056870954500b000e686d13877sm156130oal.17.2022.04.25.14.54.40
+        by smtp.gmail.com with ESMTPSA id a3-20020a9d5c83000000b006054c7ecfb6sm4385923oti.34.2022.04.25.17.37.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 14:54:41 -0700 (PDT)
-Received: (nullmailer pid 360051 invoked by uid 1000);
-        Mon, 25 Apr 2022 21:54:40 -0000
-Date:   Mon, 25 Apr 2022 16:54:40 -0500
+        Mon, 25 Apr 2022 17:37:15 -0700 (PDT)
+Received: (nullmailer pid 628165 invoked by uid 1000);
+        Tue, 26 Apr 2022 00:37:14 -0000
+Date:   Mon, 25 Apr 2022 19:37:14 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        warthog618@gmail.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 04/10] dt-bindings: Add HTE bindings
-Message-ID: <YmcYoPg1ucPUpgmM@robh.at.kernel.org>
-References: <20220422205221.952-1-dipenp@nvidia.com>
- <20220422205221.952-5-dipenp@nvidia.com>
+To:     Cosmin Tanislav <demonsingur@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-iio@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adc: add AD4130
+Message-ID: <Ymc+urR3N8eLLKxl@robh.at.kernel.org>
+References: <20220419150828.191933-1-cosmin.tanislav@analog.com>
+ <20220419150828.191933-2-cosmin.tanislav@analog.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220422205221.952-5-dipenp@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220419150828.191933-2-cosmin.tanislav@analog.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 01:52:15PM -0700, Dipen Patel wrote:
-> Introduces HTE devicetree binding details for the HTE subsystem. It
-> includes examples for the consumers, binding details for the providers
-> and specific binding details for the Tegra194 based HTE providers.
+On Tue, Apr 19, 2022 at 06:08:27PM +0300, Cosmin Tanislav wrote:
+> AD4130-8 is an ultra-low power, high precision, measurement solution for
+> low bandwidth battery operated applications.
 > 
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> The fully integrated AFE (Analog Front-End) includes a multiplexer for up
+> to 16 single-ended or 8 differential inputs, PGA (Programmable Gain
+> Amplifier), 24-bit Sigma-Delta ADC, on-chip reference and oscillator,
+> selectable filter options, smart sequencer, sensor biasing and excitation
+> options, diagnostics, and a FIFO buffer.
+> 
+> Signed-off-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
 > ---
-> Changes in v2:
-> - Replace hte with hardware-timestamp for property names
-> - Renamed file
-> - Removed example from the common dt binding file.
+>  .../bindings/iio/adc/adi,ad4130.yaml          | 264 ++++++++++++++++++
+>  1 file changed, 264 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml
 > 
-> Changes in v3:
-> - Addressed grammatical errors.
-> - Removed double plural from the respective properties.
-> - Added dual license.
-> - Prefixed "nvidia" in nvidia specific properties.
-> 
-> Changes in v4:
-> - Corrected make dt_binding_check error.
-> 
-> Changes in v5:
-> - Addressed review comments.
-> 
-> Changes in v6:
-> - Removed hardware prefix from the property as per review comments.
-> 
->  .../hte/hardware-timestamps-common.yaml       | 29 ++++++
->  .../devicetree/bindings/hte/hte-consumer.yaml | 39 ++++++++
->  .../bindings/hte/nvidia,tegra194-hte.yaml     | 88 +++++++++++++++++++
->  3 files changed, 156 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
->  create mode 100644 Documentation/devicetree/bindings/hte/hte-consumer.yaml
->  create mode 100644 Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
-
-'hte' is not obvious what it is, so 'timestamp' for the directory name.
-
-> 
-> diff --git a/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml
 > new file mode 100644
-> index 000000000000..3e26de605f08
+> index 000000000000..32996b62cd20
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
-> @@ -0,0 +1,29 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml
+> @@ -0,0 +1,264 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright 2022 Analog Devices Inc.
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/hte/hardware-timestamps-common.yaml#
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4130.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Hardware timestamp providers
+> +title: Analog Devices AD4130 ADC device driver
 > +
 > +maintainers:
-> +  - Dipen Patel <dipenp@nvidia.com>
+> +  - Cosmin Tanislav <cosmin.tanislav@analog.com>
 > +
-> +description:
-> +  Some devices/SoCs have hardware time stamping engines which can use hardware
-> +  means to timestamp entity in realtime. The entity could be anything from
-> +  GPIOs, IRQs, Bus and so on. The hardware timestamp engine (HTE) present
-
-Define HTE at the 1st use, not the 2nd.
-
-> +  itself as a provider with the bindings described in this document.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^timestamp(@.*|-[0-9a-f])?$"
-> +
-> +  "#timestamp-cells":
-> +    description:
-> +      Number of cells in a HTE specifier.
-> +
-> +required:
-> +  - "#timestamp-cells"
-> +
-> +additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/hte/hte-consumer.yaml b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
-> new file mode 100644
-> index 000000000000..68d764ac040a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
-> @@ -0,0 +1,39 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hte/hte-consumer.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: HTE Consumer Device Tree Bindings
-> +
-> +maintainers:
-> +  - Dipen Patel <dipenp@nvidia.com>
-> +
-> +select: true
-> +
-> +properties:
-> +  timestamps:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      The list of HTE provider phandle. The first cell must represent the
-> +      provider phandle followed by the line identifiers. The meaning of the
-> +      line identifier and exact number of arguments must be specified in the
-> +      HTE provider device tree binding document.
-> +
-> +  timestamp-names:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description:
-> +      An optional string property to label each line specifier present in the
-> +      timestamp property.
-> +
-> +dependencies:
-> +  timestamp-names: [ timestamps ]
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    hte_tegra_consumer {
-> +              timestamps = <&tegra_hte_aon 0x9>, <&tegra_hte_lic 0x19>;
-> +              timestamp-names = "hte-gpio", "hte-i2c";
-> +    };
-> diff --git a/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
-> new file mode 100644
-> index 000000000000..69e8402d95e5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
-> @@ -0,0 +1,88 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hte/nvidia,tegra194-hte.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tegra194 on chip generic hardware timestamping engine (HTE)
-> +
-> +maintainers:
-> +  - Dipen Patel <dipenp@nvidia.com>
-> +
-> +description:
-> +  Tegra SoC has two instances of generic hardware timestamping engines (GTE)
-> +  known as GTE GPIO and GTE IRQ, which can monitor subset of GPIO and on chip
-> +  IRQ lines for the state change respectively, upon detection it will record
-> +  timestamp (taken from system counter) in its internal hardware FIFO. It has
-> +  a bitmap array arranged in 32bit slices where each bit represent signal/line
-> +  to enable or disable for the hardware timestamping. The GTE GPIO monitors
-> +  GPIO lines from the AON (always on) GPIO controller.
+> +description: |
+> +  Bindings for the Analog Devices AD4130 ADC. Datasheet can be found here:
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4130-8.pdf
 > +
 > +properties:
 > +  compatible:
 > +    enum:
-> +      - nvidia,tegra194-gte-aon
-> +      - nvidia,tegra194-gte-lic
+> +      - adi,ad4130-8-16-lfcsp
+> +      - adi,ad4130-8-16-wlcsp
+> +      - adi,ad4130-8-24-lfcsp
+> +      - adi,ad4130-8-24-wlcsp
+
+What is lfcsp? wlcsp seems to be the package type which generally 
+shouldn't be part of the compatible.
+
 > +
 > +  reg:
 > +    maxItems: 1
 > +
+> +  clocks:
+> +    maxItems: 1
+> +    description: phandle to the master clock (mclk)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mclk
+> +
 > +  interrupts:
 > +    maxItems: 1
 > +
-> +  nvidia,int-threshold:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      HTE device generates its interrupt based on this u32 FIFO threshold
-> +      value. The recommended value is 1.
-> +    minimum: 1
-> +    maximum: 256
+> +  interrupt-names:
+> +    description: |
+
+Don't need '|' if there is no formatting to preserve.
+
+> +      Specify which interrupt pin should be configured as Data Ready / FIFO
+> +      interrupt.
+> +      Default if not supplied is dout-int.
+
+       default: dout-int
+
+> +    enum:
+> +      - dout-int
+> +      - clk
+> +      - p2
+> +      - dout
 > +
-> +  nvidia,slices:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      HTE lines are arranged in 32 bit slice where each bit represents different
-> +      line/signal that it can enable/configure for the timestamp. It is u32
-> +      property and depends on the HTE instance in the chip. The value 3 is for
-> +      GPIO GTE and 11 for IRQ GTE.
-> +    enum: [3, 11]
-> +
-> +  '#timestamp-cells':
-> +    description:
-> +      This represents number of line id arguments as specified by the
-> +      consumers. For the GTE IRQ, this is IRQ number as mentioned in the
-> +      SoC technical reference manual. For the GTE GPIO, its value is same as
-> +      mentioned in the nvidia GPIO device tree binding document.
+> +  '#address-cells':
 > +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  refin1-supply:
+> +    description: refin1 supply. Can be used as reference for conversion.
+> +
+> +  refin2-supply:
+> +    description: refin2 supply. Can be used as reference for conversion.
+> +
+> +  avdd-supply:
+> +    description: AVDD voltage supply. Can be used as reference for conversion.
+> +
+> +  iovdd-supply:
+> +    description: IOVDD voltage supply. Used for the chip interface.
+> +
+> +  spi-max-frequency:
+> +    maximum: 5000000
+> +
+> +  adi,int-clk-out:
+> +    description: Specify if the internal clock should be exposed on the CLK pin.
+> +    type: boolean
+> +
+> +  adi,ext-clk-freq:
+> +    description: Specify the frequency of the external clock.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [76800, 153600]
+> +    default: 76800
+> +
+> +  adi,bipolar:
+> +    description: Specify if the device should be used in bipolar mode.
+> +    type: boolean
+> +
+> +  adi,vbias-pins:
+> +    description: Analog inputs to apply a voltage bias of (AVDD − AVSS) / 2 to.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    maxItems: 16
+> +    items:
+> +      minimum: 0
+> +      maximum: 15
 > +
 > +required:
 > +  - compatible
 > +  - reg
 > +  - interrupts
-> +  - nvidia,slices
-> +  - "#timestamp-cells"
+> +
+> +patternProperties:
+> +  "^channel@([0-9]|1[0-5])$":
+> +    type: object
+> +    $ref: adc.yaml
+
+       unevaluatedProperties: false
+
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          The channel number.
+> +        items:
+> +          minimum: 0
+> +          maximum: 15
+> +
+> +      diff-channels:
+> +        description: |
+> +          Besides the analog inputs available, internal inputs can be used.
+> +          16: Internal temperature sensor.
+> +          17: AVSS
+> +          18: Internal reference
+> +          19: DGND
+> +          20: (AVDD − AVSS)/6+
+> +          21: (AVDD − AVSS)/6-
+> +          22: (IOVDD − DGND)/6+
+> +          23: (IOVDD − DGND)/6-
+> +          24: (ALDO − AVSS)/6+
+> +          25: (ALDO − AVSS)/6-
+> +          26: (DLDO − DGND)/6+
+> +          27: (DLDO − DGND)/6-
+> +          28: V_MV_P
+> +          29: V_MV_M
+> +        items:
+> +          minimum: 0
+> +          maximum: 29
+> +
+> +      adi,reference-select:
+> +        description: |
+> +          Select the reference source to use when converting on the
+> +          specific channel. Valid values are:
+> +          0: REFIN1(+)/REFIN1(−)
+> +          1: REFIN2(+)/REFIN2(−)
+> +          2: REFOUT/AVSS (Internal reference)
+> +          3: AVDD/AVSS
+> +          If not specified, REFIN1 is used.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 1, 2, 3]
+> +        default: 0
+> +
+> +      adi,excitation-pin-0:
+> +        description: |
+> +          Analog input to apply excitation current to while the channel
+> +          is active.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 15
+> +        default: 0
+> +
+> +      adi,excitation-pin-1:
+> +        description: |
+> +          Analog input to apply excitation current to while this channel
+> +          is active.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 15
+> +        default: 0
+> +
+> +      adi,excitation-current-0-nanoamps:
+> +        description: |
+> +          Excitation current in nanoamps to be applied to pin specified in
+> +          adi,excitation-pin-0 while this channel is active.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 100, 10000, 20000, 50000, 100000, 150000, 200000]
+> +        default: 0
+> +
+> +      adi,excitation-current-1-nanoamps:
+> +        description: |
+> +          Excitation current in nanoamps to be applied to pin specified in
+> +          adi,excitation-pin-1 while this channel is active.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 100, 10000, 20000, 50000, 100000, 150000, 200000]
+> +        default: 0
+> +
+> +      adi,burnout-current-nanoamps:
+> +        description: |
+> +          Burnout current in nanoamps to be applied for this channel.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 500, 2000, 4000]
+> +        default: 0
+> +
+> +      adi,buffered-positive:
+> +        description: Enable buffered mode for positive input.
+> +        type: boolean
+> +
+> +      adi,buffered-negative:
+> +        description: Enable buffered mode for negative input.
+> +        type: boolean
+> +
+> +    required:
+> +      - reg
+> +      - diff-channels
 > +
 > +additionalProperties: false
 > +
 > +examples:
 > +  - |
-> +    tegra_hte_aon: timestamp@c1e0000 {
-> +              compatible = "nvidia,tegra194-gte-aon";
-> +              reg = <0xc1e0000 0x10000>;
-> +              interrupts = <0 13 0x4>;
-> +              nvidia,int-threshold = <1>;
-> +              nvidia,slices = <3>;
-> +              #timestamp-cells = <1>;
-> +    };
+> +    #include <dt-bindings/interrupt-controller/irq.h>
 > +
-> +  - |
-> +    tegra_hte_lic: timestamp@3aa0000 {
-> +              compatible = "nvidia,tegra194-gte-lic";
-> +              reg = <0x3aa0000 0x10000>;
-> +              interrupts = <0 11 0x4>;
-> +              nvidia,int-threshold = <1>;
-> +              nvidia,slices = <11>;
-> +              #timestamp-cells = <1>;
-> +    };
+> +    spi {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
 > +
-> +...
+> +      adc@0 {
+> +        compatible = "adi,ad4130-8-24-wlcsp";
+> +        reg = <0>;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        spi-max-frequency = <5000000>;
+> +        interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
+> +        interrupt-parent = <&gpio>;
+> +
+> +        channel@0 {
+> +          reg = <0>;
+> +
+> +          adi,reference-select = <2>;
+> +
+> +          /* AIN8, AIN9 */
+> +          diff-channels = <8 9>;
+> +        };
+> +
+> +        channel@1 {
+> +          reg = <1>;
+> +
+> +          adi,reference-select = <2>;
+> +
+> +          /* AIN10, AIN11 */
+> +          diff-channels = <10 11>;
+> +        };
+> +
+> +        channel@2 {
+> +          reg = <2>;
+> +
+> +          adi,reference-select = <2>;
+> +
+> +          /* Temperature Sensor, DGND */
+> +          diff-channels = <16 19>;
+> +        };
+> +
+> +        channel@3 {
+> +          reg = <3>;
+> +
+> +          adi,reference-select = <2>;
+> +
+> +          /* Internal reference, DGND */
+> +          diff-channels = <18 19>;
+> +        };
+> +
+> +        channel@4 {
+> +          reg = <4>;
+> +
+> +          adi,reference-select = <2>;
+> +
+> +          /* DGND, DGND */
+> +          diff-channels = <19 19>;
+> +        };
+> +      };
+> +    };
 > -- 
-> 2.17.1
+> 2.35.3
 > 
 > 
