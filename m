@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C80BC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Apr 2022 12:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82353C4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Apr 2022 12:51:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346490AbiDZMyH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Apr 2022 08:54:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44942 "EHLO
+        id S1346874AbiDZMyI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Apr 2022 08:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350246AbiDZMyC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2022 08:54:02 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C18B873043
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2022 05:50:54 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id k2so4895531wrd.5
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2022 05:50:54 -0700 (PDT)
+        with ESMTP id S1350240AbiDZMyB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2022 08:54:01 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 299D03B2A2
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2022 05:50:51 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id bg25so10426019wmb.4
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2022 05:50:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vERryW+Wp0Oht0NmqJibaVsbMcSCNMYECUnGuJcrBFc=;
-        b=17++Uf604yEfLCWiOtdjkf6CnsPTYRbJJ5/BhjUJcBU6/i6IEZqzqdj7zvaIkkxPoe
-         OZUpQFQq/Gu2O5k6uIBvi7LbB6SLcnEnxW4m8x8nr3qMcafGfMFDAU7HFrdyELO/e9Uo
-         MKaYG6U5rWnjjJ/j7C1cOuaXXy1AlUBNfsOuxaruce+J73Db9Vjdbx6znAALABA2Pc+2
-         9zscLjXLFwAwVVCvkn7hcqfb9qaqniArVz5DL4Ig+fd/ukS4dzhFhwDzcJ1EEV6091o2
-         C50XSqv6DrQJOu78wvUIOGbpbeVSPdzoJ4IlXP92wfDXvJdvqQpLzlU0zlQZ3Wmd3sOw
-         h3PA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nnmV+R1l0GIMLieHRY7oVZefAhwEGyEspq0jj8ShUq0=;
+        b=kb2xpVxFGEJAZhAbzhSEgpBRmxB9EpamxCxarrsXE4bow17hiE7yUk2B/MPr3TPOkC
+         0ew93cbiHYAfpo0i/2EYzJkEa/LBvakEIdK7wGQUHwJ7lb60O99+0WEGDxNq9kb+9aHP
+         MZP0Qr223GOrZGv9DzKeDX8vi3FWGgV3cCSPh3lVVuyvxuQYSbWYLHT0Hon7f7J55HSI
+         VZ1J/IQYp1SNEFQ+uAIYXsRLQvLHqwkgpmirpwSQS7rFo76buazHOLmwuEY9lXdXbqxy
+         w1vgwv4zIOzZ4wl4Rb+N9vP0uKgKf4qtft4OABiP4jfDAIkl8xzG+lyIrWvEj8MK40yn
+         cETQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vERryW+Wp0Oht0NmqJibaVsbMcSCNMYECUnGuJcrBFc=;
-        b=6NUPW5YmFlYjV7vuqXRmAe8jqy4lssfiROJYEfcjLa43IzLBqTGxkkhgfsIuzetlz9
-         yCWuIPTLAxcW/x3xe4lTl0WrR71VUGGTET2C76TyAw6k/zm/j/6tH7Z207fQQBLtxyWS
-         IgcYY6pMsMcZxSUc8LYN3rQrsYBt8RZV6CC7jv/URNIjz9HExhdcYQtAr9aQMCZkB0/s
-         iizjPAxShNhzCqtS3JrTe4yFg8YGrxmAqT2VI8EmMkNbBLrhLQVIoCS/jbqUh/N3Z1w4
-         8/CVEz4ahp+HpBEDmPmX7Z2jM7i+ot2tvkf4rICEeqItPet2/Y1JRTZat/nfbh7XwWhK
-         M7QA==
-X-Gm-Message-State: AOAM5339yOkexuQQZoBI2icQEBvx6XDI+4yxgA6KRS9XIc7bdHJunLnU
-        7qt6n+941f4gDYFmdPrP02eH9A==
-X-Google-Smtp-Source: ABdhPJyBYJBy3LCBwlJd2i6UrOIOMa8e0hqokFjpax/C4iQzG/xZh0Vs8CCovaR0PORmL0VoXeNKOw==
-X-Received: by 2002:a5d:604a:0:b0:20a:d81c:39cf with SMTP id j10-20020a5d604a000000b0020ad81c39cfmr9933144wrt.358.1650977453248;
-        Tue, 26 Apr 2022 05:50:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nnmV+R1l0GIMLieHRY7oVZefAhwEGyEspq0jj8ShUq0=;
+        b=ApV5Ths5TiX4nN8gpMxbxvfAcwLjRyKdebLgzgUmKnd84o8HKRu/gB+6KlQ3ru5Nvb
+         KsXOI6TegGcpNC0rWry0PLt2Bv8Gu0N1a+pHavYBhesbSDitaxPIVxm3MHU5DeRtXZ6k
+         hspv6LgzIUJK1QzuflkLuBFSKY9n1m067blbtYDkQ8GO2aTpNtCBCy+Fbo/yCJVbKQOc
+         0dYtbyjtMHgQLAfFQPGUiQHdg6S//VA939o9sWmG5x4EmcVvCsYlEOTJFNyitOfcD8Ls
+         GYGunCe9GLuh70aA7dGt0PygxfHWbQaBeo0kXvtGofwf+KfL0UmHcYNdEHtpC18TfJ78
+         eR0A==
+X-Gm-Message-State: AOAM530CWQBQkUEsbpMUDoSyL4td/8a7Hde9h7sIwigJBbecDPQl0b7W
+        0Zw4HheFMyakoj2rxoiAbkRMgA==
+X-Google-Smtp-Source: ABdhPJy13jLf97kcFFhHm+AmJNnVeIxfoSfJeB312YL6Fl+MO6cNjlRuJt6gIkGjOnIXO35sLtib+A==
+X-Received: by 2002:a7b:c5cd:0:b0:38c:8b1b:d220 with SMTP id n13-20020a7bc5cd000000b0038c8b1bd220mr20912971wmk.118.1650977449674;
+        Tue, 26 Apr 2022 05:50:49 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:faf0:6ae0:9a53:ee37])
-        by smtp.gmail.com with ESMTPSA id n20-20020a05600c3b9400b00393ea849663sm6128600wms.30.2022.04.26.05.50.52
+        by smtp.gmail.com with ESMTPSA id n20-20020a05600c3b9400b00393ea849663sm6128600wms.30.2022.04.26.05.50.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 05:50:52 -0700 (PDT)
+        Tue, 26 Apr 2022 05:50:49 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -58,415 +58,153 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Jack Winch <sunt.un.morcov@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [libgpiod v2][PATCH v6 4/5] bindings: cxx: add examples
-Date:   Tue, 26 Apr 2022 14:50:22 +0200
-Message-Id: <20220426125023.2664623-5-brgl@bgdev.pl>
+Subject: [libgpiod v2][PATCH v6 0/5] bindings: cxx: implement C++ bindings for libgpiod v2.0
+Date:   Tue, 26 Apr 2022 14:50:18 +0200
+Message-Id: <20220426125023.2664623-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220426125023.2664623-1-brgl@bgdev.pl>
-References: <20220426125023.2664623-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds a couple example tools written using the new bindings.
+This rewrites the C++ bindings for libgpiod in order to work with v2.0
+version of the C API. The C++ standard use is C++17 which is well
+supported in GCC. The documentation covers the entire API so for details
+please refer to it, the tests and example programs.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- bindings/cxx/examples/.gitignore        |  9 +++
- bindings/cxx/examples/Makefile.am       | 26 +++++++++
- bindings/cxx/examples/gpiodetectcxx.cpp | 30 ++++++++++
- bindings/cxx/examples/gpiofindcxx.cpp   | 32 +++++++++++
- bindings/cxx/examples/gpiogetcxx.cpp    | 38 +++++++++++++
- bindings/cxx/examples/gpioinfocxx.cpp   | 61 ++++++++++++++++++++
- bindings/cxx/examples/gpiomoncxx.cpp    | 74 +++++++++++++++++++++++++
- bindings/cxx/examples/gpiosetcxx.cpp    | 57 +++++++++++++++++++
- 8 files changed, 327 insertions(+)
- create mode 100644 bindings/cxx/examples/.gitignore
- create mode 100644 bindings/cxx/examples/Makefile.am
- create mode 100644 bindings/cxx/examples/gpiodetectcxx.cpp
- create mode 100644 bindings/cxx/examples/gpiofindcxx.cpp
- create mode 100644 bindings/cxx/examples/gpiogetcxx.cpp
- create mode 100644 bindings/cxx/examples/gpioinfocxx.cpp
- create mode 100644 bindings/cxx/examples/gpiomoncxx.cpp
- create mode 100644 bindings/cxx/examples/gpiosetcxx.cpp
+I suggested by Kent, I've also split the big patch into several subpatches
+which are not bisectable but make the review easier.
 
-diff --git a/bindings/cxx/examples/.gitignore b/bindings/cxx/examples/.gitignore
-new file mode 100644
-index 0000000..54bda46
---- /dev/null
-+++ b/bindings/cxx/examples/.gitignore
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+gpiodetectcxx
-+gpiofindcxx
-+gpiogetcxx
-+gpioinfocxx
-+gpiomoncxx
-+gpiosetcxx
-diff --git a/bindings/cxx/examples/Makefile.am b/bindings/cxx/examples/Makefile.am
-new file mode 100644
-index 0000000..04cd64a
---- /dev/null
-+++ b/bindings/cxx/examples/Makefile.am
-@@ -0,0 +1,26 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+AM_CPPFLAGS = -I$(top_srcdir)/bindings/cxx/ -I$(top_srcdir)/include
-+AM_CPPFLAGS += -Wall -Wextra -g -std=gnu++17
-+AM_LDFLAGS = -lgpiodcxx -L$(top_builddir)/bindings/cxx/
-+
-+noinst_PROGRAMS = \
-+		gpiodetectcxx \
-+		gpiofindcxx \
-+		gpiogetcxx \
-+		gpioinfocxx \
-+		gpiomoncxx \
-+		gpiosetcxx
-+
-+gpiodetectcxx_SOURCES = gpiodetectcxx.cpp
-+
-+gpiofindcxx_SOURCES = gpiofindcxx.cpp
-+
-+gpiogetcxx_SOURCES = gpiogetcxx.cpp
-+
-+gpioinfocxx_SOURCES = gpioinfocxx.cpp
-+
-+gpiomoncxx_SOURCES = gpiomoncxx.cpp
-+
-+gpiosetcxx_SOURCES = gpiosetcxx.cpp
-diff --git a/bindings/cxx/examples/gpiodetectcxx.cpp b/bindings/cxx/examples/gpiodetectcxx.cpp
-new file mode 100644
-index 0000000..7dbb0e0
---- /dev/null
-+++ b/bindings/cxx/examples/gpiodetectcxx.cpp
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+/* C++ reimplementation of the gpiodetect tool. */
-+
-+#include <cstdlib>
-+#include <filesystem>
-+#include <gpiod.hpp>
-+#include <iostream>
-+
-+int main(int argc, char **argv)
-+{
-+	if (argc != 1) {
-+		::std::cerr << "usage: " << argv[0] << ::std::endl;
-+		return EXIT_FAILURE;
-+	}
-+
-+	for (const auto& entry: ::std::filesystem::directory_iterator("/dev/")) {
-+		if (::gpiod::is_gpiochip_device(entry.path())) {
-+			::gpiod::chip chip(entry.path());
-+			auto info = chip.get_info();
-+
-+			::std::cout << info.name() << " [" <<
-+				       info.label() << "] (" <<
-+				       info.num_lines() << " lines)" << ::std::endl;
-+		}
-+	}
-+
-+	return EXIT_SUCCESS;
-+}
-diff --git a/bindings/cxx/examples/gpiofindcxx.cpp b/bindings/cxx/examples/gpiofindcxx.cpp
-new file mode 100644
-index 0000000..cd36be7
---- /dev/null
-+++ b/bindings/cxx/examples/gpiofindcxx.cpp
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+/* C++ reimplementation of the gpiofind tool. */
-+
-+#include <gpiod.hpp>
-+
-+#include <cstdlib>
-+#include <filesystem>
-+#include <iostream>
-+
-+int main(int argc, char **argv)
-+{
-+	if (argc != 2) {
-+		::std::cerr << "usage: " << argv[0] << " <line name>" << ::std::endl;
-+		return EXIT_FAILURE;
-+	}
-+
-+	for (const auto& entry: ::std::filesystem::directory_iterator("/dev/")) {
-+		if (::gpiod::is_gpiochip_device(entry.path())) {
-+			::gpiod::chip chip(entry.path());
-+
-+			auto offset = chip.get_line_offset_from_name(argv[1]);
-+			if (offset >= 0) {
-+				::std::cout << chip.get_info().name() << " " << offset << ::std::endl;
-+				return EXIT_SUCCESS;
-+			}
-+		}
-+	}
-+
-+	return EXIT_FAILURE;
-+}
-diff --git a/bindings/cxx/examples/gpiogetcxx.cpp b/bindings/cxx/examples/gpiogetcxx.cpp
-new file mode 100644
-index 0000000..0136f5f
---- /dev/null
-+++ b/bindings/cxx/examples/gpiogetcxx.cpp
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+/* Simplified C++ reimplementation of the gpioget tool. */
-+
-+#include <gpiod.hpp>
-+
-+#include <cstdlib>
-+#include <iostream>
-+
-+int main(int argc, char **argv)
-+{
-+	if (argc < 3) {
-+		::std::cerr << "usage: " << argv[0] << " <chip> <line_offset0> ..." << ::std::endl;
-+		return EXIT_FAILURE;
-+	}
-+
-+	::gpiod::line::offsets offsets;
-+
-+	for (int i = 2; i < argc; i++)
-+		offsets.push_back(::std::stoul(argv[i]));
-+
-+	::gpiod::chip chip(argv[1]);
-+	auto request = chip.request_lines(
-+			::gpiod::request_config({
-+				{ ::gpiod::request_config::property::OFFSETS, offsets },
-+				{ ::gpiod::request_config::property::CONSUMER, "gpiogetcxx" }
-+			}),
-+			::gpiod::line_config());
-+
-+	auto vals = request.get_values();
-+
-+	for (auto& it: vals)
-+		::std::cout << (it == ::gpiod::line::value::ACTIVE ? "1" : "0") << ' ';
-+	::std::cout << ::std::endl;
-+
-+	return EXIT_SUCCESS;
-+}
-diff --git a/bindings/cxx/examples/gpioinfocxx.cpp b/bindings/cxx/examples/gpioinfocxx.cpp
-new file mode 100644
-index 0000000..3612092
---- /dev/null
-+++ b/bindings/cxx/examples/gpioinfocxx.cpp
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+/* Simplified C++ reimplementation of the gpioinfo tool. */
-+
-+#include <gpiod.hpp>
-+
-+#include <cstdlib>
-+#include <filesystem>
-+#include <iostream>
-+
-+namespace {
-+
-+void show_chip(const ::gpiod::chip& chip)
-+{
-+	auto info = chip.get_info();
-+
-+	::std::cout << info.name() << " - " << info.num_lines() << " lines:" << ::std::endl;
-+
-+	for (unsigned int offset = 0; offset < info.num_lines(); offset++) {
-+		auto info = chip.get_line_info(offset);
-+
-+		::std::cout << "\tline ";
-+		::std::cout.width(3);
-+		::std::cout << info.offset() << ": ";
-+
-+		::std::cout.width(12);
-+		::std::cout << (info.name().empty() ? "unnamed" : info.name());
-+		::std::cout << " ";
-+
-+		::std::cout.width(12);
-+		::std::cout << (info.consumer().empty() ? "unused" : info.consumer());
-+		::std::cout << " ";
-+
-+		::std::cout.width(8);
-+		::std::cout << (info.direction() == ::gpiod::line::direction::INPUT ? "input" : "output");
-+		::std::cout << " ";
-+
-+		::std::cout.width(10);
-+		::std::cout << (info.active_low() ? "active-low" : "active-high");
-+
-+		::std::cout << ::std::endl;
-+	}
-+}
-+
-+} /* namespace */
-+
-+int main(int argc, char **argv)
-+{
-+	if (argc != 1) {
-+		::std::cerr << "usage: " << argv[0] << ::std::endl;
-+		return EXIT_FAILURE;
-+	}
-+
-+	for (const auto& entry: ::std::filesystem::directory_iterator("/dev/")) {
-+		if (::gpiod::is_gpiochip_device(entry.path()))
-+			show_chip(::gpiod::chip(entry.path()));
-+	}
-+
-+	return EXIT_SUCCESS;
-+}
-diff --git a/bindings/cxx/examples/gpiomoncxx.cpp b/bindings/cxx/examples/gpiomoncxx.cpp
-new file mode 100644
-index 0000000..db053dd
---- /dev/null
-+++ b/bindings/cxx/examples/gpiomoncxx.cpp
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+/* Simplified C++ reimplementation of the gpiomon tool. */
-+
-+#include <chrono>
-+#include <cstdlib>
-+#include <gpiod.hpp>
-+#include <iostream>
-+
-+namespace {
-+
-+void print_event(const ::gpiod::edge_event& event)
-+{
-+	if (event.type() == ::gpiod::edge_event::event_type::RISING_EDGE)
-+		::std::cout << " RISING EDGE";
-+	else
-+		::std::cout << "FALLING EDGE";
-+
-+	::std::cout << " ";
-+
-+	::std::cout << event.timestamp_ns() / 1000000000;
-+	::std::cout << ".";
-+	::std::cout << event.timestamp_ns() % 1000000000;
-+
-+	::std::cout << " line: " << event.line_offset();
-+
-+	::std::cout << ::std::endl;
-+}
-+
-+} /* namespace */
-+
-+int main(int argc, char **argv)
-+{
-+	if (argc < 3) {
-+		::std::cout << "usage: " << argv[0] << " <chip> <offset0> ..." << ::std::endl;
-+		return EXIT_FAILURE;
-+	}
-+
-+	::gpiod::line::offsets offsets;
-+	offsets.reserve(argc);
-+	for (int i = 2; i < argc; i++)
-+		offsets.push_back(::std::stoul(argv[i]));
-+
-+	::gpiod::chip chip(argv[1]);
-+	auto request = chip.request_lines(
-+			::gpiod::request_config({
-+				{ ::gpiod::request_config::property::OFFSETS, offsets},
-+				{ ::gpiod::request_config::property::CONSUMER, "gpiomoncxx"},
-+			}),
-+			::gpiod::line_config({
-+				{
-+					::gpiod::line_config::property::DIRECTION,
-+					::gpiod::line::direction::INPUT
-+				},
-+				{
-+					::gpiod::line_config::property::EDGE,
-+					::gpiod::line::edge::BOTH
-+				}
-+			}));
-+
-+	::gpiod::edge_event_buffer buffer;
-+
-+	for (;;) {
-+		if (request.wait_edge_event(::std::chrono::seconds(5))) {
-+			request.read_edge_event(buffer);
-+
-+			for (const auto& event: buffer)
-+				print_event(event);
-+		}
-+	}
-+
-+	return EXIT_SUCCESS;
-+}
-diff --git a/bindings/cxx/examples/gpiosetcxx.cpp b/bindings/cxx/examples/gpiosetcxx.cpp
-new file mode 100644
-index 0000000..838d801
---- /dev/null
-+++ b/bindings/cxx/examples/gpiosetcxx.cpp
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+
-+/* Simplified C++ reimplementation of the gpioset tool. */
-+
-+#include <gpiod.hpp>
-+
-+#include <cstdlib>
-+#include <iostream>
-+
-+int main(int argc, char **argv)
-+{
-+	if (argc < 3) {
-+		::std::cerr << "usage: " << argv[0] <<
-+			       " <chip> <line_offset0>=<value0> ..." << ::std::endl;
-+		return EXIT_FAILURE;
-+	}
-+
-+	::gpiod::line::offsets offsets;
-+	::gpiod::line::values values;
-+
-+	for (int i = 2; i < argc; i++) {
-+		::std::string arg(argv[i]);
-+
-+		size_t pos = arg.find('=');
-+
-+		::std::string offset(arg.substr(0, pos));
-+		::std::string value(arg.substr(pos + 1, ::std::string::npos));
-+
-+		if (offset.empty() || value.empty())
-+			throw ::std::invalid_argument("invalid offset=value mapping: " +
-+						      ::std::string(argv[i]));
-+
-+		offsets.push_back(::std::stoul(offset));
-+		values.push_back(::std::stoul(value) ? ::gpiod::line::value::ACTIVE :
-+						       ::gpiod::line::value::INACTIVE);
-+	}
-+
-+	::gpiod::chip chip(argv[1]);
-+	auto request = chip.request_lines(
-+			::gpiod::request_config({
-+				{ ::gpiod::request_config::property::OFFSETS, offsets },
-+				{ ::gpiod::request_config::property::CONSUMER, "gpiogetcxx" }
-+			}),
-+			::gpiod::line_config({
-+				{
-+					::gpiod::line_config::property::DIRECTION,
-+					::gpiod::line::direction::OUTPUT
-+				}
-+			}));
-+
-+	request.set_values(values);
-+
-+	::std::cin.get();
-+
-+	return EXIT_SUCCESS;
-+}
+I'm Cc'ing people who've worked on the C++ bindings over time too in
+this iteration.
+
+I didn't address all the issues Kent raised in his las review. For the
+gpiomon example it's because I sent a separate patch fixing the non-blocking
+behavior of the request file descriptor first.
+
+For the potential edge_event iterator - I simply don't understand how it
+would work or if it would be needed at all since the code using the buffer
+and iterating over it is already quite brief.
+
+We can sort that out once we have most of the code in master.
+
+Bartosz Golaszewski (5):
+  bindings: cxx: remove old code
+  bindings: cxx: add v2 headers
+  bindings: cxx: add v2 tests
+  bindings: cxx: add examples
+  bindings: cxx: add implementation
+
+ Doxyfile.in                                 |   4 +-
+ bindings/cxx/Makefile.am                    |  23 +-
+ bindings/cxx/chip-info.cpp                  |  74 ++
+ bindings/cxx/chip.cpp                       | 213 +++--
+ bindings/cxx/edge-event-buffer.cpp          | 115 +++
+ bindings/cxx/edge-event.cpp                 | 135 +++
+ bindings/cxx/examples/Makefile.am           |  16 +-
+ bindings/cxx/examples/gpiodetectcxx.cpp     |  10 +-
+ bindings/cxx/examples/gpiofindcxx.cpp       |   4 +-
+ bindings/cxx/examples/gpiogetcxx.cpp        |  19 +-
+ bindings/cxx/examples/gpioinfocxx.cpp       |  64 +-
+ bindings/cxx/examples/gpiomoncxx.cpp        |  53 +-
+ bindings/cxx/examples/gpiosetcxx.cpp        |  33 +-
+ bindings/cxx/exception.cpp                  | 119 +++
+ bindings/cxx/gpiod.hpp                      | 944 +-------------------
+ bindings/cxx/gpiodcxx/Makefile.am           |  18 +
+ bindings/cxx/gpiodcxx/chip-info.hpp         | 105 +++
+ bindings/cxx/gpiodcxx/chip.hpp              | 179 ++++
+ bindings/cxx/gpiodcxx/edge-event-buffer.hpp | 129 +++
+ bindings/cxx/gpiodcxx/edge-event.hpp        | 137 +++
+ bindings/cxx/gpiodcxx/exception.hpp         | 158 ++++
+ bindings/cxx/gpiodcxx/info-event.hpp        | 123 +++
+ bindings/cxx/gpiodcxx/line-config.hpp       | 564 ++++++++++++
+ bindings/cxx/gpiodcxx/line-info.hpp         | 176 ++++
+ bindings/cxx/gpiodcxx/line-request.hpp      | 221 +++++
+ bindings/cxx/gpiodcxx/line.hpp              | 274 ++++++
+ bindings/cxx/gpiodcxx/misc.hpp              |  44 +
+ bindings/cxx/gpiodcxx/request-config.hpp    | 163 ++++
+ bindings/cxx/gpiodcxx/timestamp.hpp         | 122 +++
+ bindings/cxx/info-event.cpp                 | 102 +++
+ bindings/cxx/internal.cpp                   |  28 +
+ bindings/cxx/internal.hpp                   | 208 ++++-
+ bindings/cxx/iter.cpp                       |  60 --
+ bindings/cxx/line-config.cpp                | 685 ++++++++++++++
+ bindings/cxx/line-info.cpp                  | 189 ++++
+ bindings/cxx/line-request.cpp               | 225 +++++
+ bindings/cxx/line.cpp                       | 331 ++-----
+ bindings/cxx/line_bulk.cpp                  | 366 --------
+ bindings/cxx/misc.cpp                       |  20 +
+ bindings/cxx/request-config.cpp             | 174 ++++
+ bindings/cxx/tests/Makefile.am              |  28 +-
+ bindings/cxx/tests/check-kernel.cpp         |  48 +
+ bindings/cxx/tests/gpio-mockup.cpp          | 153 ----
+ bindings/cxx/tests/gpio-mockup.hpp          |  94 --
+ bindings/cxx/tests/gpiod-cxx-test.cpp       |  55 --
+ bindings/cxx/tests/gpiosim.cpp              | 258 ++++++
+ bindings/cxx/tests/gpiosim.hpp              |  69 ++
+ bindings/cxx/tests/helpers.cpp              |  37 +
+ bindings/cxx/tests/helpers.hpp              |  62 ++
+ bindings/cxx/tests/tests-chip-info.cpp      | 109 +++
+ bindings/cxx/tests/tests-chip.cpp           | 218 +++--
+ bindings/cxx/tests/tests-edge-event.cpp     | 417 +++++++++
+ bindings/cxx/tests/tests-event.cpp          | 280 ------
+ bindings/cxx/tests/tests-info-event.cpp     | 198 ++++
+ bindings/cxx/tests/tests-iter.cpp           |  21 -
+ bindings/cxx/tests/tests-line-config.cpp    | 270 ++++++
+ bindings/cxx/tests/tests-line-info.cpp      | 156 ++++
+ bindings/cxx/tests/tests-line-request.cpp   | 490 ++++++++++
+ bindings/cxx/tests/tests-line.cpp           | 494 ++--------
+ bindings/cxx/tests/tests-misc.cpp           |  78 ++
+ bindings/cxx/tests/tests-request-config.cpp | 155 ++++
+ configure.ac                                |   1 +
+ 62 files changed, 7406 insertions(+), 2912 deletions(-)
+ create mode 100644 bindings/cxx/chip-info.cpp
+ create mode 100644 bindings/cxx/edge-event-buffer.cpp
+ create mode 100644 bindings/cxx/edge-event.cpp
+ create mode 100644 bindings/cxx/exception.cpp
+ create mode 100644 bindings/cxx/gpiodcxx/Makefile.am
+ create mode 100644 bindings/cxx/gpiodcxx/chip-info.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/chip.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/edge-event-buffer.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/edge-event.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/exception.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/info-event.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/line-config.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/line-info.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/line-request.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/line.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/misc.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/request-config.hpp
+ create mode 100644 bindings/cxx/gpiodcxx/timestamp.hpp
+ create mode 100644 bindings/cxx/info-event.cpp
+ create mode 100644 bindings/cxx/internal.cpp
+ delete mode 100644 bindings/cxx/iter.cpp
+ create mode 100644 bindings/cxx/line-config.cpp
+ create mode 100644 bindings/cxx/line-info.cpp
+ create mode 100644 bindings/cxx/line-request.cpp
+ delete mode 100644 bindings/cxx/line_bulk.cpp
+ create mode 100644 bindings/cxx/misc.cpp
+ create mode 100644 bindings/cxx/request-config.cpp
+ create mode 100644 bindings/cxx/tests/check-kernel.cpp
+ delete mode 100644 bindings/cxx/tests/gpio-mockup.cpp
+ delete mode 100644 bindings/cxx/tests/gpio-mockup.hpp
+ delete mode 100644 bindings/cxx/tests/gpiod-cxx-test.cpp
+ create mode 100644 bindings/cxx/tests/gpiosim.cpp
+ create mode 100644 bindings/cxx/tests/gpiosim.hpp
+ create mode 100644 bindings/cxx/tests/helpers.cpp
+ create mode 100644 bindings/cxx/tests/helpers.hpp
+ create mode 100644 bindings/cxx/tests/tests-chip-info.cpp
+ create mode 100644 bindings/cxx/tests/tests-edge-event.cpp
+ delete mode 100644 bindings/cxx/tests/tests-event.cpp
+ create mode 100644 bindings/cxx/tests/tests-info-event.cpp
+ delete mode 100644 bindings/cxx/tests/tests-iter.cpp
+ create mode 100644 bindings/cxx/tests/tests-line-config.cpp
+ create mode 100644 bindings/cxx/tests/tests-line-info.cpp
+ create mode 100644 bindings/cxx/tests/tests-line-request.cpp
+ create mode 100644 bindings/cxx/tests/tests-misc.cpp
+ create mode 100644 bindings/cxx/tests/tests-request-config.cpp
+
 -- 
 2.32.0
 
