@@ -2,89 +2,95 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A66CC43217
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Apr 2022 14:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D3BC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Apr 2022 18:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238697AbiD0Ovl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Apr 2022 10:51:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46912 "EHLO
+        id S231513AbiD0S7k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Apr 2022 14:59:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238750AbiD0Ouj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Apr 2022 10:50:39 -0400
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 357A03BA4B;
-        Wed, 27 Apr 2022 07:47:27 -0700 (PDT)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23R8jpdZ029645;
-        Wed, 27 Apr 2022 07:47:25 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=pfpt0220;
- bh=IXW8izC+70e6HnGnlIiBj31HZtDnovvL6iYq2sB8/5A=;
- b=FBx4GZjhRGy/Dq5FDKGVUM/eS4zyXQGcfuHJuVwK8xjTUWFSsuBrfzbZysXQLDB2u3m6
- GMArQqb6hSBSptrFIY8qWRhl70vB/hWEFmaUCUfAtlWoCXcbQJm+xuY6LmCYnLTwt37H
- 8qpNniETqBAvRLZSbOYIAbsF8l57HjSilLWg4Butold3AC+qArIALoH97yQdDpAX2550
- EMAKffIs4Fgfc9kmB7PJC1Gy8IUmr1xvDq6Sbr8qwAnQX3OFLYZz2Wb1EdknvyL85vSC
- tHgSeRB3vwI8CEA9QdO85Po0tA3wt3J87RkjgYSA5hyAWgtJUk558KQuoJ8BtLehHfvT DA== 
-Received: from dc5-exch01.marvell.com ([199.233.59.181])
-        by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3fprsqu7c4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 27 Apr 2022 07:47:24 -0700
-Received: from DC5-EXCH01.marvell.com (10.69.176.38) by DC5-EXCH01.marvell.com
- (10.69.176.38) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 27 Apr
- 2022 07:47:23 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH01.marvell.com
- (10.69.176.38) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 27 Apr 2022 07:47:23 -0700
-Received: from localhost.localdomain (unknown [10.110.150.250])
-        by maili.marvell.com (Postfix) with ESMTP id 2EB883F7063;
-        Wed, 27 Apr 2022 07:47:23 -0700 (PDT)
-From:   Piyush Malgujar <pmalgujar@marvell.com>
-To:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <rric@kernel.org>,
-        <cchavva@marvell.com>, <wsadowski@marvell.com>,
-        Piyush Malgujar <pmalgujar@marvell.com>
-Subject: [PATCH 4/5] gpio: thunderx: extend PIN_SEL_MASK to cover otx2 platform
-Date:   Wed, 27 Apr 2022 07:46:19 -0700
-Message-ID: <20220427144620.9105-5-pmalgujar@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220427144620.9105-1-pmalgujar@marvell.com>
-References: <20220427144620.9105-1-pmalgujar@marvell.com>
+        with ESMTP id S231502AbiD0S7Y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Apr 2022 14:59:24 -0400
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67561611DF;
+        Wed, 27 Apr 2022 11:44:53 -0700 (PDT)
+Received: by mail-oi1-f181.google.com with SMTP id q8so2517951oif.13;
+        Wed, 27 Apr 2022 11:44:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/sIxYWvFlMoHReoMPfX2NBRTuxsiKhz/pal5GhylPqg=;
+        b=PN/WCN/lJCiNMu10xuaOmS9MxjYy07TYnJnbrxcJxLZ1TetHbPoXZQtIfiGNYcxKtD
+         lh3/cwwSi0xfgQxrTnIyDXEaRD/wMRqiN6NcusaHLhw+A9kvsWOfH2Y5uUgPciYzEgWU
+         RtA5WbOPgWpURhbmCrMoZ85lPvmLo+w63G6yJP4A1uUpXWUijK/sYZ8pwb+tN5vTmyb0
+         mClV+PlUfZimMiAfTqOvbIet7GAB+LuJguREm3pu7i6KWwrq5cBdbehwRL9jFj+ut3SZ
+         951R6nbqKUJihdotbl6MQzzXG+aSTSZnsAQgde5y1V5kuGZcZRvFnFIOsoSHYjm2UaKw
+         2Axg==
+X-Gm-Message-State: AOAM532FkCy6BldeuvC7cvcCzGG6kmifJNV4yPSX/SvNxTYXZOT3c1Rl
+        R6SKLatMnpp0kukK0paBXg==
+X-Google-Smtp-Source: ABdhPJz6nKdb0AwwSKP/n1AYikKnnui7VO1eKjkTuDHiUj8S52Lm4O++NP3zOk3jiqIIDRQN/19pQA==
+X-Received: by 2002:aca:1a09:0:b0:325:90ab:a812 with SMTP id a9-20020aca1a09000000b0032590aba812mr1384519oia.131.1651085093218;
+        Wed, 27 Apr 2022 11:44:53 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m4-20020a056870030400b000e686d13890sm963611oaf.42.2022.04.27.11.44.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Apr 2022 11:44:52 -0700 (PDT)
+Received: (nullmailer pid 436853 invoked by uid 1000);
+        Wed, 27 Apr 2022 18:44:52 -0000
+Date:   Wed, 27 Apr 2022 13:44:52 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: aspeed: Drop referenced nodes in
+ examples
+Message-ID: <YmmPJLcI7PnsBtXn@robh.at.kernel.org>
+References: <20220422192139.2592632-1-robh@kernel.org>
+ <CACPK8XcQNJNyzqdjMQuCP+z-L-A9mcMqs-HJJrh9MscasV+D=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: wZSqUzC7mEqMcS_b2O2sMGq8zt872j0H
-X-Proofpoint-GUID: wZSqUzC7mEqMcS_b2O2sMGq8zt872j0H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-27_04,2022-04-27_01,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACPK8XcQNJNyzqdjMQuCP+z-L-A9mcMqs-HJJrh9MscasV+D=A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Extending the PIN_SEL_MASK to support otx2 platform which was
-earlier RAZ.
+On Wed, Apr 27, 2022 at 08:40:31AM +0000, Joel Stanley wrote:
+> On Fri, 22 Apr 2022 at 19:21, Rob Herring <robh@kernel.org> wrote:
+> >
+> > The additional nodes in the example referenced from the pinctrl node
+> > 'aspeed,external-nodes' properties are either incorrect (aspeed,ast2500-lpc)
+> > or not documented with a schema (aspeed,ast2500-gfx). There's no need to
+> > show these nodes as part of the pinctrl example, so just remove them.
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> 
+> Nak.
 
-Signed-off-by: Piyush Malgujar <pmalgujar@marvell.com>
----
- drivers/gpio/gpio-thunderx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I welcome patches that add schemas for the undocumented compatibles 
+instead. Otherwise, I will be turning on this check by default and 
+nagging people to fix them.
 
-diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
-index 451c412512450fea717937376002d2ba35d1c508..87ab1ad7e652347a67b7747ea497b944498a8b41 100644
---- a/drivers/gpio/gpio-thunderx.c
-+++ b/drivers/gpio/gpio-thunderx.c
-@@ -32,7 +32,7 @@
- #define  GPIO_BIT_CFG_FIL_CNT_SHIFT	4
- #define  GPIO_BIT_CFG_FIL_SEL_SHIFT	8
- #define  GPIO_BIT_CFG_TX_OD		BIT(12)
--#define  GPIO_BIT_CFG_PIN_SEL_MASK	GENMASK(25, 16)
-+#define  GPIO_BIT_CFG_PIN_SEL_MASK	GENMASK(26, 16)
- #define GPIO_INTR	0x800
- #define  GPIO_INTR_INTR			BIT(0)
- #define  GPIO_INTR_INTR_W1S		BIT(1)
--- 
-2.17.1
+> This removes the information on how to use the bindings. Surely we
+> prefer to over document rather than under document?
 
+How is what the 'gfx' and 'lpc' nodes contain relevant to how the 
+pinctrl binding works? If a user wants to know, then they should go look 
+at the aspeed,ast2500-lpc/aspeed,ast2500-gfx bindings and their 
+examples. Which brings up my secondary issue which is having the same 
+example multiple times. It is multiple chances for errors (that I end 
+up fixing).
+
+How do we know the example is even correct without any schema checks? 
+The 'framebuffer' node is not in a valid location is the most obvious 
+thing I see.
+
+Rob
