@@ -2,143 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9F7C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 May 2022 11:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86559C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 May 2022 11:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbiEBLFm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 2 May 2022 07:05:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60100 "EHLO
+        id S231397AbiEBLWb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 May 2022 07:22:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384719AbiEBLEY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2022 07:04:24 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4302E657E;
-        Mon,  2 May 2022 04:00:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O+40QvW5kCMlDcCiZnHtf/nHP4/E6zyR36Dl29T2HtO7FdlAsiYOFE17sPBLElUjWImPx5tlqgRxl/7PDs3nmpuu67Cgy0PgikfpCnZ+Au84BLaIe8F3GpUOJGtepwdL/xOvKTetSWLcHDZVjMvNn7jYPwt+Z41iByEEEhFe4wl83fm0VTpxTIZjxIAxhIoWjoxDVqnWUKSITPqkTnKs3jkaY1ND+xKbcUrpmL60Uef0A8XfDKkXy8/jVZ1sj+rzAmttjXjzGwYLENaoJv8OBe9K9VOrjoaro1vlet8V2YirxQ4TyXeXwmneW2Zx5KswVXunbt1KhP7qOJuYnLK0+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0rfP8JgafFVIQuJu0dS/pT8SHV34ZdOe1pDxgYaqIbA=;
- b=A97IilqrNky0hyM9lADq8gVIJJ2tUFX0oYuf0fyeD1valshQbZvcooA7HDWKC5RQY/ryuEuFVCqZo7yK9M8ug0A+q1wfG1N36Q7XXILQHYHd6pw1mNzUps2P05p4b4o8PTWSj6sqaNSl7morEnoN5/K7IoRwSFZ56cEtHmu3uKGAmDT+SxnI87KV4NS2k6P/xmIPhOmhDyeve9JgXmj1GJc6CrI/7uUwS1uBN7q6ogvIFpW47JBMYNPo5l/107JOkc9Fr9RupEJYWqbxxUFI6JaJTkAdlYtYuFY1UWxS/52AUoW4wQN47Dblp8wsM406q1UYdkyO2pHcPD1ZDoW+6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        with ESMTP id S243190AbiEBLWa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2022 07:22:30 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A069DF63
+        for <linux-gpio@vger.kernel.org>; Mon,  2 May 2022 04:19:01 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id p4so16313202edx.0
+        for <linux-gpio@vger.kernel.org>; Mon, 02 May 2022 04:19:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0rfP8JgafFVIQuJu0dS/pT8SHV34ZdOe1pDxgYaqIbA=;
- b=CmZeulmDfp+hTqtFEHW8Y9KDnSt9uCjQxm/NyULO9NP/FwMMRsE8sP2ecNYZfbB/f+EIc0TEFWVU/cbYqXnTEPEpx33ix9PN6kQrrvrMOClLz7eT0Xl83rlYLUG9Ym7BAR3XpZhsL/rYUIFUgE3QuR6fsfX3Oux8Xgwqgu6qrOo=
-Received: from DM6PR14CA0062.namprd14.prod.outlook.com (2603:10b6:5:18f::39)
- by SA1PR02MB8496.namprd02.prod.outlook.com (2603:10b6:806:1fb::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.14; Mon, 2 May
- 2022 11:00:46 +0000
-Received: from DM3NAM02FT062.eop-nam02.prod.protection.outlook.com
- (2603:10b6:5:18f:cafe::10) by DM6PR14CA0062.outlook.office365.com
- (2603:10b6:5:18f::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.14 via Frontend
- Transport; Mon, 2 May 2022 11:00:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT062.mail.protection.outlook.com (10.13.5.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5206.12 via Frontend Transport; Mon, 2 May 2022 11:00:46 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Mon, 2 May 2022 04:00:43 -0700
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Mon, 2 May 2022 04:00:43 -0700
-Envelope-to: git@xilinx.com,
- linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Received: from [10.140.6.59] (port=45250 helo=xhdshubhraj40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1nlTnH-0008EW-2h; Mon, 02 May 2022 04:00:43 -0700
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     <linux-gpio@vger.kernel.org>
-CC:     <michal.simek@xilinx.com>, <srinivas.neeli@xilinx.com>,
-        <linux-kernel@vger.kernel.org>, <git@xilinx.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH v2] gpio: xilinx: add missing blank line after declarations
-Date:   Mon, 2 May 2022 16:30:40 +0530
-Message-ID: <20220502110040.12225-1-shubhrajyoti.datta@xilinx.com>
-X-Mailer: git-send-email 2.17.1
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HkHb9zDzaQCh7icuTIrBW1dLzBtZj3gG9lMpTgSrSE4=;
+        b=yqitAepL/r7UgctBxOUq2kCCbQqEQvIwdOiY8s3pSmTs6ORlW41oYP2FWA7dfxvzb+
+         jL/viL3ecqJ26Fuc6oLYfD8+WhGMwM/ABX2edufGwRlrUfG2cQUWxUrsRwzcvzzVXcDk
+         sIw9Sv9yjknXSHSnPYnAgnzoI6OuKqGCCkb0hzYI7P+VMZH5o0GvJcJ0lPOhJx6Hz3GA
+         Aw+KSSOe917yRmBHbzDjfhYkFueOBCZhqYxLZwvtnUu0V05e2ZxqULfphKrbYjChXjU3
+         W3NOqmCKvb/iGzBOOBfag2KPQ/9p95eMAogvsIJhL5WfaAmou9TRL5ZfaCaZowDMvODr
+         tHXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HkHb9zDzaQCh7icuTIrBW1dLzBtZj3gG9lMpTgSrSE4=;
+        b=qd5uXEdIIWfGMyRp4eCpgYjdm3e1Rtd+IjADGjIwYIHciSHaANigjQQt7GhIcGQuPM
+         TdtoQ3IrolJe1FepPlhXvzRxELbK0yHxZliJESh9CBZ0T6TwL6nH83l2maokjuAz0FLu
+         U8NoW6MpTnrZtRtrat4CAheO+HnEljmdjbM5UqPJ7SS2dqdJ6Ig6Nw7Zv8xmMp6BHmqe
+         4EVPyUMLHTnLCHioFztvC5lO013C+ek+1A7ColBtdzl4qiUu5XG99UwXrd5r2tAQHILY
+         X+jcOjiwS5hbmaSqagbZsBtYSP2NQ/4rSn7l1u+nxfgraWkQH2m6D74GfYMrg/bt6fJv
+         CZcQ==
+X-Gm-Message-State: AOAM533nVR7fI7vVcTDCu1mX1DyMv7+M+P/GenunIM3FDF7+SmO/T4ii
+        e5GjU102R7+2e2O7vw4BtP98R8v/6sou/n8FPJ/jkQ==
+X-Google-Smtp-Source: ABdhPJwBrdywMt5x3Ze2ZxcFXXgrCbDZxAOQm3OTuht5rGWTVnQ9/gIhZUySEPXpta7fcDmFxIYbg84nCTDMxM6xgCk=
+X-Received: by 2002:aa7:c49a:0:b0:425:d526:98ad with SMTP id
+ m26-20020aa7c49a000000b00425d52698admr12673123edq.352.1651490339736; Mon, 02
+ May 2022 04:18:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7ab4700d-0b10-4b9f-325a-08da2c2b02c5
-X-MS-TrafficTypeDiagnostic: SA1PR02MB8496:EE_
-X-Microsoft-Antispam-PRVS: <SA1PR02MB8496F1D6775688E3A7E9BF6DAAC19@SA1PR02MB8496.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8kok4RIbNUsiO7uyY8EldzO+JIlII+3Y5hPqtCsSmuWrlHy417o9EtLH6ZaiNsQKgmRqanXCug2EV5+p7Y4nJvvxq1KmgyWafInRhY+nV2m1T17V8p3YjabQxMFTsRZL8LmbEhh+z179HbHsi6tzf+Z3GeBbvNsHjjKQxM+8kwLX7/Go3dnTKyyR118TFJOq2ITLJ2EcMJlId3hwzzPOWQKSfww5CSfg2FuqxTomEL9RBqbfSaEQtIOlSY3fPAQt/eoc4zkwO7PQttO4SqWCoyRE70cTZvbsY9gD8p+wwhbQvnhU2PYsVsr79s6lAWKNZWJ3vKIGnVOxhEi4f6lsdz//9m5wruhxCsx2hxcfz/t2cUwAh0EUXUXp0BmMugIj4cUspcakTuXtbv83kdQ/XH84ReQbWAZH2iUwfx9wwTE3iWl4obxpY/e77UlcDuTn9aE9DDvjlInNGyfDOtr8/w7k+S6gvamB8BaBnoiulQ9ULu+4n9uNxWdeBTLt3KbqyoYf7LSqpmD1fqHroTTOGqAJl/2RHF28RJzvggUVtzFNG6DGxJN5ziEyBJqBo7obHfZ8KLNt1UqQAzMSbmvEpmr9qGoVS16ol7mzK1aJ1lRUbMUbW5i/Zh9l3n2+GwfT6ROiy0fi9zRPLqC8TMMGYMOpA5HvpHuqqDDHczoB2dEgzc8UISTZUcnDfbzkhuFAw3huilsN48DehlHwFbafww==
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(44832011)(36860700001)(316002)(1076003)(4326008)(26005)(2616005)(6916009)(107886003)(508600001)(8936002)(9786002)(54906003)(7696005)(36756003)(5660300002)(426003)(40460700003)(7636003)(47076005)(336012)(186003)(2906002)(82310400005)(8676002)(83380400001)(70586007)(70206006)(450100002)(356005)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2022 11:00:46.7102
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ab4700d-0b10-4b9f-325a-08da2c2b02c5
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT062.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR02MB8496
+References: <20220427144620.9105-1-pmalgujar@marvell.com> <20220427144620.9105-2-pmalgujar@marvell.com>
+In-Reply-To: <20220427144620.9105-2-pmalgujar@marvell.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 2 May 2022 13:18:49 +0200
+Message-ID: <CAMRc=Mf91eMF7D6CRtA8-HQ7pdtP343WUGhLG4qti_9zJF4ELQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] gpio: thunderx: avoid potential deadlock
+To:     Piyush Malgujar <pmalgujar@marvell.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Robert Richter <rric@kernel.org>, cchavva@marvell.com,
+        wsadowski@marvell.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a missing blank line. No functional changes.
+On Wed, Apr 27, 2022 at 4:46 PM Piyush Malgujar <pmalgujar@marvell.com> wrote:
+>
+> Using irqsave/irqrestore locking variants to avoid any deadlock.
+>
 
-WARNING: Missing a blank line after declarations
-128: FILE: drivers/gpio/gpio-xilinx.c:120:
-+       void __iomem *addr = chip->regs + reg + xgpio_regoffset(chip, bit / 32);
-+       xgpio_set_value32(a, bit, xgpio_readreg(addr));
+I see you'll be resending this anyway so would you mind providing an
+example of a deadlock that is possible with no-irqsave variants?
+Thanks.
 
-WARNING: Missing a blank line after declarations
-136: FILE: drivers/gpio/gpio-xilinx.c:126:
-+       void __iomem *addr = chip->regs + reg + xgpio_regoffset(chip, bit / 32);
-+       xgpio_writereg(addr, xgpio_get_value32(a, bit));
+Bart
 
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
-v2: Update commit message
-
- drivers/gpio/gpio-xilinx.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index b6d3a57e27ed..7f129e7eae78 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -117,12 +117,14 @@ static inline int xgpio_regoffset(struct xgpio_instance *chip, int ch)
- static void xgpio_read_ch(struct xgpio_instance *chip, int reg, int bit, unsigned long *a)
- {
- 	void __iomem *addr = chip->regs + reg + xgpio_regoffset(chip, bit / 32);
-+
- 	xgpio_set_value32(a, bit, xgpio_readreg(addr));
- }
- 
- static void xgpio_write_ch(struct xgpio_instance *chip, int reg, int bit, unsigned long *a)
- {
- 	void __iomem *addr = chip->regs + reg + xgpio_regoffset(chip, bit / 32);
-+
- 	xgpio_writereg(addr, xgpio_get_value32(a, bit));
- }
- 
--- 
-2.17.1
-
+> Signed-off-by: Piyush Malgujar <pmalgujar@marvell.com>
+> ---
