@@ -2,153 +2,93 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0776C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 May 2022 09:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822CDC433F5
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 May 2022 11:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384353AbiEBJvW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 2 May 2022 05:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36456 "EHLO
+        id S1384686AbiEBLEs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 May 2022 07:04:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384432AbiEBJvM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2022 05:51:12 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD07C186EB
-        for <linux-gpio@vger.kernel.org>; Mon,  2 May 2022 02:47:39 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id k23so26786037ejd.3
-        for <linux-gpio@vger.kernel.org>; Mon, 02 May 2022 02:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GYCNul8cm8jd0FZKsO1ogduF16MMw2ed/rY6UMAW45w=;
-        b=xyk9ASH5NDjKUNtzg25Ax6q2zbLei2pGvw+10kPKB7AabRknXwtMJa0UlK0Rrbv3j5
-         CNJm/eW2/WPVJGOPdYspRczZT7Jsq87WpysEnd3bh/kjjKrAaeRL+nXm8Dd4yyvQsF7w
-         9+ZN/iI1KJTfQAwz+RxHrXjUhfgzavfAVU+h/4SE08vzEjdqr/d7E6PlqN/77ulkq/DI
-         g74AEKkdGgKkhOvjpyVLUtKxFHWwVEFIxe6cyS6cwWqw3u9Yyf5vr5QdOQ/ajXffS8Ht
-         HTt/CQnDkqQqLLQ0ezvsHRO07i0iz4sT0YUEubBy5C+9zWua4mIcEhdd7Kml1cDVkdkW
-         V7/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GYCNul8cm8jd0FZKsO1ogduF16MMw2ed/rY6UMAW45w=;
-        b=YpXsPn0PnIE8wSw+1moI72CXHA+orEUH5NY6Lgh2jwb50k4ERHuKyBjSZJaa9YKUYS
-         QBGI5z2goDD+rvJcLdAUmnswfaDPN5oTtZzZHg4uuvOjK3PAzJaZUvr9+/viMh+/6+wO
-         /AJKMpMWoj8aY47xdr5zpzMORT+VveliANrMydMQ1iXNlciRWsk/Qe+ANFEzuCyGbSzu
-         AlBmBVlXXESU3r1J2yROnpGC4a7yJHOb5mZNSH+w1FqZ5xIci0I2fOOfxr6btSbpp9JX
-         9Xe9hl0trx/wEzESFiEF5EJYNpJhpTUmW64U1g9giIqwGPYWE2p/QbRrKaK73IQw4BQr
-         Wfyw==
-X-Gm-Message-State: AOAM532oSo5eJe18JUmPICYkkk4CTBTro/XqcD4aPJ19SsCV/vbKREbB
-        ae4hVe2sDkruxdWwwdon8xUD1Ctc/P9/M/21vgVRjS4UsNfrXw==
-X-Google-Smtp-Source: ABdhPJyyV/fa25tU2u+owFmjOP5PPEnCp6avlC2YWULA5kcGY7K5xqFFovfXkR5KxbuljG72m+RSkG+EKHd0dowC2jw=
-X-Received: by 2002:a17:907:c28:b0:6f4:2a80:f355 with SMTP id
- ga40-20020a1709070c2800b006f42a80f355mr7583490ejc.101.1651484858350; Mon, 02
- May 2022 02:47:38 -0700 (PDT)
+        with ESMTP id S1376723AbiEBLEg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2022 07:04:36 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A51DCD
+        for <linux-gpio@vger.kernel.org>; Mon,  2 May 2022 04:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651489258; x=1683025258;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mzdK7ecc8Zu2bNvo5ux0Jj+SvazieoQXeBrJipks1Ik=;
+  b=F/5ZIkWuxDf+KG3IpM06CzotsNSUNNf4TdD1RBXttwstMXQ59VKyPODR
+   LLVzwV/NXuXsWY7eav4I1kNeP2XxMdIPr6mozRMh9ldaPufUknPBgXqsU
+   a9esILm5G4IJYn4wBpNtw0IYJxE6G0YoGeZFCy0nXDN6tpTisPVFze95u
+   vq9TA/o3t3+k2xN9DhtNzvW/G0G63Tv6Reja+l1qZbnUx9Wyxfa1yIA3V
+   WoExJ+xOSU7FGtDCps9DgsZxzp75Tt5FbC6xJYt/SuUczfoxW3sLxuso4
+   KoUSS6cHmeljuJY0qyrJFmRqSfot0coNJc5/H428nwxLXsryXsUjLeM4Z
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10334"; a="327721136"
+X-IronPort-AV: E=Sophos;i="5.91,190,1647327600"; 
+   d="scan'208";a="327721136"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2022 04:00:57 -0700
+X-IronPort-AV: E=Sophos;i="5.91,190,1647327600"; 
+   d="scan'208";a="690076739"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2022 04:00:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nlTnR-00B1DN-Pv;
+        Mon, 02 May 2022 14:00:53 +0300
+Date:   Mon, 2 May 2022 14:00:53 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH] MAINTAINERS: update the GPIO git tree entry
+Message-ID: <Ym+55dJDxUKBeG5y@smile.fi.intel.com>
+References: <20220502093416.22744-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-References: <YmwuK60FMGR2Kn0R@smile.fi.intel.com>
-In-Reply-To: <YmwuK60FMGR2Kn0R@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 2 May 2022 11:47:27 +0200
-Message-ID: <CAMRc=MdYDjA3PRfQmVtO1fPOgtX9b6WF_4zVoKM2F9kKgntzkg@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-gpio for 5.19-1
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linux GPIO <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220502093416.22744-1-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Apr 29, 2022 at 8:28 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Hi Linux GPIO  maintainers,
->
-> Supposed to be an immutable tag to be included in GPIO and pin control subsystems.
-> Have been in Linux Next for a while w.o. any issues reported. Please, pull.
->
-> Thanks,
->
-> With Best Regards,
-> Andy Shevchenko
->
-> The following changes since commit 0c2cae09a765b1c1d842eb9328982976ec735926:
->
->   gpiolib: acpi: Convert type for pin to be unsigned (2022-04-08 15:13:22 +0300)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v5.19-1
->
-> for you to fetch changes up to edc5601db66411a8c9c6b08b3aacf7e154a34c6d:
->
->   pinctrl: meson: Replace custom code by gpiochip_node_count() call (2022-04-18 16:18:52 +0300)
->
-> ----------------------------------------------------------------
-> intel-gpio for v5.19-1
->
-> * Introduce helpers to iterate over GPIO chip nodes and covert some drivers
->
-> The following is an automated git shortlog grouped by driver:
->
-> gpiolib:
->  -  Introduce a helper to get first GPIO controller node
->  -  Introduce gpiochip_node_count() helper
->  -  Introduce for_each_gpiochip_node() loop helper
->
-> pinctrl:
->  -  meson: Replace custom code by gpiochip_node_count() call
->  -  meson: Enable COMPILE_TEST
->  -  meson: Rename REG_* to MESON_REG_*
->  -  armada-37xx: Reuse GPIO fwnode in armada_37xx_irqchip_register()
->  -  armada-37xx: Switch to use fwnode instead of of_node
->  -  samsung: Switch to use for_each_gpiochip_node() helper
->  -  samsung: Drop redundant node parameter in samsung_banks_of_node_get()
->  -  npcm7xx: Switch to use for_each_gpiochip_node() helper
->  -  renesas: rza1: Switch to use for_each_gpiochip_node() helper
->  -  renesas: rza1: Replace custom code by gpiochip_node_count() call
->  -  stm32: Switch to use for_each_gpiochip_node() helper
->  -  stm32: Replace custom code by gpiochip_node_count() call
->
-> ----------------------------------------------------------------
-> Andy Shevchenko (15):
->       gpiolib: Introduce for_each_gpiochip_node() loop helper
->       gpiolib: Introduce gpiochip_node_count() helper
->       pinctrl: stm32: Replace custom code by gpiochip_node_count() call
->       pinctrl: stm32: Switch to use for_each_gpiochip_node() helper
->       pinctrl: renesas: rza1: Replace custom code by gpiochip_node_count() call
->       pinctrl: renesas: rza1: Switch to use for_each_gpiochip_node() helper
->       pinctrl: npcm7xx: Switch to use for_each_gpiochip_node() helper
->       pinctrl: samsung: Drop redundant node parameter in samsung_banks_of_node_get()
->       pinctrl: samsung: Switch to use for_each_gpiochip_node() helper
->       gpiolib: Introduce a helper to get first GPIO controller node
->       pinctrl: armada-37xx: Switch to use fwnode instead of of_node
->       pinctrl: armada-37xx: Reuse GPIO fwnode in armada_37xx_irqchip_register()
->       pinctrl: meson: Rename REG_* to MESON_REG_*
->       pinctrl: meson: Enable COMPILE_TEST
->       pinctrl: meson: Replace custom code by gpiochip_node_count() call
->
->  drivers/pinctrl/meson/Kconfig               |   2 +-
->  drivers/pinctrl/meson/pinctrl-meson.c       |  52 +++++-----
->  drivers/pinctrl/meson/pinctrl-meson.h       |  28 +++---
->  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |  34 ++-----
->  drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c   | 142 ++++++++++++----------------
->  drivers/pinctrl/renesas/pinctrl-rza1.c      |  47 +++------
->  drivers/pinctrl/samsung/pinctrl-exynos.c    |   8 +-
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c   |   2 +-
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c   |   4 +-
->  drivers/pinctrl/samsung/pinctrl-samsung.c   |  30 +++---
->  drivers/pinctrl/samsung/pinctrl-samsung.h   |   2 +-
->  drivers/pinctrl/stm32/pinctrl-stm32.c       |  80 +++++++---------
->  include/linux/gpio/driver.h                 |  28 +++++-
->  13 files changed, 210 insertions(+), 249 deletions(-)
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+On Mon, May 02, 2022 at 11:34:16AM +0200, Bartosz Golaszewski wrote:
+> My git tree has become the de facto main GPIO tree. Update the
+> MAINTAINERS file to reflect that.
 
-Pulled, thanks!
+Indeed,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Bart
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Reported-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index edc96cdb85e8..9d47c5e7c6ae 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8385,7 +8385,7 @@ M:	Linus Walleij <linus.walleij@linaro.org>
+>  M:	Bartosz Golaszewski <brgl@bgdev.pl>
+>  L:	linux-gpio@vger.kernel.org
+>  S:	Maintained
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
+>  F:	Documentation/ABI/obsolete/sysfs-gpio
+>  F:	Documentation/ABI/testing/gpio-cdev
+>  F:	Documentation/admin-guide/gpio/
+> -- 
+> 2.34.1
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
