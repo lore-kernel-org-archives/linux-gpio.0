@@ -2,84 +2,82 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D347CC46467
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 May 2022 13:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17134C433F5
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 May 2022 13:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236143AbiEBNjj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 2 May 2022 09:39:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43276 "EHLO
+        id S1385432AbiEBNtx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 May 2022 09:49:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385430AbiEBNi5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2022 09:38:57 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC04B1F6
-        for <linux-gpio@vger.kernel.org>; Mon,  2 May 2022 06:35:28 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:194e:5782:c420:7f87])
-        by michel.telenet-ops.be with bizsmtp
-        id Rpb52700728fWK506pb5Uc; Mon, 02 May 2022 15:35:27 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nlWCe-002mrg-FA; Mon, 02 May 2022 15:35:04 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nlWCd-002vAH-W8; Mon, 02 May 2022 15:35:04 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/7] dt-bindings: iommu: renesas,ipmmu-vmsa: R-Car V3U is R-Car Gen4
-Date:   Mon,  2 May 2022 15:34:55 +0200
-Message-Id: <d351ca12724d5b306119bd8dcd9bfac09ba2a925.1651497024.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1651497024.git.geert+renesas@glider.be>
-References: <cover.1651497024.git.geert+renesas@glider.be>
+        with ESMTP id S1352494AbiEBNtp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2022 09:49:45 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97DFC1260F;
+        Mon,  2 May 2022 06:46:16 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id x22so5973403qto.2;
+        Mon, 02 May 2022 06:46:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aTBaCHq+ZPp/83sC9QEFQMvZBDoFtqtvGEyIKWXC9I0=;
+        b=pQ0P7mdf3UfBoup1qMUmHoQwKcTRRGn38eIKFi87irzAHAkTP7Eu5jXNGMJGKDbVti
+         L+x1yV1Cb14Cyy9xBgqmVbuSFK1MweBcOcHFw8xV3KA0QlmD4vI+XF7pECmw8Yv2Ni5V
+         vATM0y6LUAphA3jSfgBQ2ZmsnUa07bDmjwN08335wXwC6bUXAghkZNoRyWnrxGMNUMsS
+         IJTERPbjbIidIRoKRQcW12SL8QAknVBXSMPIRzGUMon9VskWApqBxsTu7Lvu1e2coXg2
+         K+uMquDSk3R4jCJMCwzBukrflB4ogqmJT/HmD9Kk/B3QUq9adH2uZ2MRUhRgNTwCQYZP
+         Xs0g==
+X-Gm-Message-State: AOAM532Ch/q2zwC0ISwdZrGP3M4sr/I8BQ0dXNXUBw9tOSuVV0DR1XXh
+        0ExQdYMwZR2Uw9yEi6kqtSCkn0/wZzs4ow==
+X-Google-Smtp-Source: ABdhPJxTmoL7T7I9Bkm5J8hYQjUv66Agz4bGolXwY6cMH+wJofMkI7y1cP/Da2V20fn5iJ80vXN8AQ==
+X-Received: by 2002:ac8:5896:0:b0:2f3:a7b1:a2cb with SMTP id t22-20020ac85896000000b002f3a7b1a2cbmr2515932qta.476.1651499175408;
+        Mon, 02 May 2022 06:46:15 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id s126-20020a37a984000000b0069fca79fa3asm3538092qke.62.2022.05.02.06.46.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 May 2022 06:46:15 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id g28so26067571ybj.10;
+        Mon, 02 May 2022 06:46:15 -0700 (PDT)
+X-Received: by 2002:a25:4506:0:b0:648:cfc2:301d with SMTP id
+ s6-20020a254506000000b00648cfc2301dmr10228415yba.380.1651499174794; Mon, 02
+ May 2022 06:46:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220429082637.1308182-1-yangyingliang@huawei.com>
+In-Reply-To: <20220429082637.1308182-1-yangyingliang@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 2 May 2022 15:46:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUUiXB3ouxM57Dy+puY-WfV4jpgnRwB8THSQqbhgvkk+g@mail.gmail.com>
+Message-ID: <CAMuHMdUUiXB3ouxM57Dy+puY-WfV4jpgnRwB8THSQqbhgvkk+g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: renesas: fix possible null-ptr-deref in sh_pfc_map_resources()
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Despite the name, R-Car V3U is the first member of the R-Car Gen4
-family.  Hence move its compatible value to the R-Car Gen4 section.
+On Fri, Apr 29, 2022 at 4:30 PM Yang Yingliang <yangyingliang@huawei.com> wrote:
+> It will cause null-ptr-deref when using 'res', if platform_get_resource()
+> returns NULL, so move using 'res' after devm_ioremap_resource() that
+> will check it to avoid null-ptr-deref.
+> And use devm_platform_get_and_ioremap_resource() to simplify code.
+>
+> Fixes: c7977ec4a336 ("pinctrl: sh-pfc: Convert to platform_get_*()")
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml         | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl-for-v5.19.
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-index 8854569ca3a6c949..786f85a97077d79c 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-@@ -43,10 +43,10 @@ properties:
-               - renesas,ipmmu-r8a77980 # R-Car V3H
-               - renesas,ipmmu-r8a77990 # R-Car E3
-               - renesas,ipmmu-r8a77995 # R-Car D3
--              - renesas,ipmmu-r8a779a0 # R-Car V3U
-       - items:
-           - enum:
--              - renesas,ipmmu-r8a779f0 # R-Car S4-8
-+              - renesas,ipmmu-r8a779a0           # R-Car V3U
-+              - renesas,ipmmu-r8a779f0           # R-Car S4-8
-           - const: renesas,rcar-gen4-ipmmu-vmsa  # R-Car Gen4
- 
-   reg:
--- 
-2.25.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
