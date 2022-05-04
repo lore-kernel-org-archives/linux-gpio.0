@@ -2,33 +2,33 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85019C352A1
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F502C3527B
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243568AbiEDVgn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 May 2022 17:36:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48126 "EHLO
+        id S1378692AbiEDVgp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 May 2022 17:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378671AbiEDVgk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:36:40 -0400
+        with ESMTP id S1378638AbiEDVgi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:36:38 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C49B522C7;
-        Wed,  4 May 2022 14:33:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3322151E6C;
+        Wed,  4 May 2022 14:33:00 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id BC97C1F44C7D
+        with ESMTPSA id 5A37E1F44C61
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651699979;
-        bh=/j9DVYUaA4XYVG++PF1IlWk3WAdl2eTmNu8FL5CCrL0=;
+        s=mail; t=1651699978;
+        bh=JyODDbAkozctO2YF4+4+8QrF0xaiP+MYadCgEeOgwr0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IAUmBSeTsN6aldqTM6i8Q4PHRg/RmeOa7RohIKkmton2ckTDqvrccv308EzJQXMzQ
-         0sSVUVigR7r2HVnim2jeFA9fEdAE8qnfRodv6LoboYAvHWMuAzbpM2uiUzk7g9QNO+
-         gZB1BFmfG76QFNjjH/LCrUf0Kg2tze41e3HM0SaK13yVrR90rjjl9RDoOjlkQzc1tW
-         OAyANIGWB/FgpjjrF+oB80+REjNE56TkiepaD4UtdNwvq6fAuL6BMgTvg5gURf0imZ
-         gwjHG+hnFdt0aTRbz7WexyvVqu+JX7rXSxEik1C1629Jl81eSTucPAKElIV+BNqOgD
-         2fhv7tW9+p7tw==
+        b=SZVxLjPp0nk7QVAUdBbqzeVOyWnyf3C96JzVREw2VaHYZO4j6U11qxqzBh/iLh6dD
+         uBjrG6Izun+ZQitJpN8On6x1gMJMzDEJ0jEd3aEi3z7VW+Kk6EgZZPlkknY5zyiXU/
+         XEUIuM8nxFudAcakCvKv1KZkHnG2j3w7L+oRpniJC8mZL1hw41csv0jyeWGwvR3JYt
+         /FvJ4xN/qoPEeOMAQRwefuynRMadQI7+65Wg5BM4sAaQgwvoqBiV0zPiicXtzzbbPw
+         de3FwmkSQd0+6D8eX62EiAmjjtBW/8VGkUPrcHWKC/DRd4UqB6vJX7lHK8VMGzbPhN
+         dMptSfJAqNzmg==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id 504AE4819D3; Wed,  4 May 2022 23:32:53 +0200 (CEST)
+        id 3AA3F4819CB; Wed,  4 May 2022 23:32:53 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -44,53 +44,138 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
-        Jianqun Xu <jay.xu@rock-chips.com>, kernel@collabora.com,
+        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv2 14/21] gpio: rockchip: add support for rk3588
-Date:   Wed,  4 May 2022 23:32:44 +0200
-Message-Id: <20220504213251.264819-15-sebastian.reichel@collabora.com>
+Subject: [PATCHv2 06/21] clk: rockchip: clk-cpu: add mux setting for cpu change frequency
+Date:   Wed,  4 May 2022 23:32:36 +0200
+Message-Id: <20220504213251.264819-7-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220504213251.264819-1-sebastian.reichel@collabora.com>
 References: <20220504213251.264819-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Jianqun Xu <jay.xu@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-Add V2.1 rockchip gpio controller type, which is part of the
-RK3588 SoC.
+In order to improve the main frequency of CPU, the clock path of CPU is
+simplified as follows:
+                         |--\
+                         |   \            |--\
+ --apll--|\              |    \           |   \
+         | |--apll_core--|     \          |    \
+ --24M---|/              |mux1 |--[gate]--|mux2|---clk_core
+                         |     /          |    /
+ --gpll--|\              |    /    |------|   /
+         | |--gpll_core--|   /     |      |--/
+ --24M---|/              |--/      |
+                                   |
+ -------apll_directly--------------|
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+When the CPU requests high frequency, we want to use MUX2 select the
+"apll_directly".
+At low frequencies use MUX1 to select “apll_core" and then MUX2 to
+select "apll_core_gate".
+
+However, in this way, the CPU frequency conversion needs to be
+in the following order:
+1. MUX2 select to "apll_core_gate", MUX1 select "gpll_core"
+2. Apll sets slow_mode, sets APLL parameters, locks APLL, and then APLL
+sets normal_mode
+3. MUX1 select "apll_core", MUX2 select "apll_directly"
+
+So add pre_muxs and post_muxs to cover this special requirements.
+
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+[rebase]
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/gpio/gpio-rockchip.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-cpu.c | 41 ++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h     |  2 ++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 099e358d2491..f0e279665525 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -26,6 +26,7 @@
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 11aa2259b532..6ea7fba9f9e5 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -113,6 +113,42 @@ static void rockchip_cpuclk_set_dividers(struct rockchip_cpuclk *cpuclk,
+ 	}
+ }
  
- #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
- #define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
-+#define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
++static void rockchip_cpuclk_set_pre_muxs(struct rockchip_cpuclk *cpuclk,
++					 const struct rockchip_cpuclk_rate_table *rate)
++{
++	int i;
++
++	/* alternate parent is active now. set the pre_muxs */
++	for (i = 0; i < ARRAY_SIZE(rate->pre_muxs); i++) {
++		const struct rockchip_cpuclk_clksel *clksel = &rate->pre_muxs[i];
++
++		if (!clksel->reg)
++			break;
++
++		pr_debug("%s: setting reg 0x%x to 0x%x\n",
++			 __func__, clksel->reg, clksel->val);
++		writel(clksel->val, cpuclk->reg_base + clksel->reg);
++	}
++}
++
++static void rockchip_cpuclk_set_post_muxs(struct rockchip_cpuclk *cpuclk,
++					  const struct rockchip_cpuclk_rate_table *rate)
++{
++	int i;
++
++	/* alternate parent is active now. set the muxs */
++	for (i = 0; i < ARRAY_SIZE(rate->post_muxs); i++) {
++		const struct rockchip_cpuclk_clksel *clksel = &rate->post_muxs[i];
++
++		if (!clksel->reg)
++			break;
++
++		pr_debug("%s: setting reg 0x%x to 0x%x\n",
++			 __func__, clksel->reg, clksel->val);
++		writel(clksel->val, cpuclk->reg_base + clksel->reg);
++	}
++}
++
+ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
+ 					   struct clk_notifier_data *ndata)
+ {
+@@ -165,6 +201,9 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
+ 			       cpuclk->reg_base + reg_data->core_reg[i]);
+ 		}
+ 	}
++
++	rockchip_cpuclk_set_pre_muxs(cpuclk, rate);
++
+ 	/* select alternate parent */
+ 	if (reg_data->mux_core_reg)
+ 		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
+@@ -219,6 +258,8 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
+ 				     reg_data->mux_core_shift),
+ 		       cpuclk->reg_base + reg_data->core_reg[0]);
  
- static const struct rockchip_gpio_regs gpio_regs_v1 = {
- 	.port_dr = 0x00,
-@@ -663,7 +664,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 	id = readl(bank->reg_base + gpio_regs_v2.version_id);
++	rockchip_cpuclk_set_post_muxs(cpuclk, rate);
++
+ 	/* remove dividers */
+ 	for (i = 0; i < reg_data->num_cores; i++) {
+ 		writel(HIWORD_UPDATE(0, reg_data->div_core_mask[i],
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index bf7c8d082fde..2bd1863a7418 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -380,6 +380,8 @@ struct rockchip_cpuclk_clksel {
+ struct rockchip_cpuclk_rate_table {
+ 	unsigned long prate;
+ 	struct rockchip_cpuclk_clksel divs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
++	struct rockchip_cpuclk_clksel pre_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
++	struct rockchip_cpuclk_clksel post_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
+ };
  
- 	/* If not gpio v2, that is default to v1. */
--	if (id == GPIO_TYPE_V2) {
-+	if (id == GPIO_TYPE_V2 || id == GPIO_TYPE_V2_1) {
- 		bank->gpio_regs = &gpio_regs_v2;
- 		bank->gpio_type = GPIO_TYPE_V2;
- 		bank->db_clk = of_clk_get(bank->of_node, 1);
+ /**
 -- 
 2.35.1
 
