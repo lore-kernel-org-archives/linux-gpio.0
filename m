@@ -2,82 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B460FC4167B
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BC8C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358443AbiEDVmZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 May 2022 17:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58604 "EHLO
+        id S1378777AbiEDVm1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 May 2022 17:42:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242652AbiEDVmY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:42:24 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF382F00B;
-        Wed,  4 May 2022 14:38:47 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 65DE81F44BD4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651700325;
-        bh=OdKlO5+vwaD7DgJFiCMIAHa9XgAnLHYYCe2QdHgE3yc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WH0LMQ9Xrpk+5N5JzxohQqlQuXcUwkIvYgLV26XFHU46Qvv7KOPORH8DGFqVtbiHG
-         w/R1lXM0eBTDxctNAM3PnO1vrFB/V7+pSZld57tejyl50JIereMHZffwtQd3GGJuzI
-         HaY/ALgj91Kx8dw6eXKzZT8Ips3M6JpvNxX+6rGGS/KAXjLDdz5A7FbEg2CZnzt2qj
-         5Soi8jo7PMgc28b73lIfgZP4QDTWv9S9kNRovecW8B/X9e0nF4hlppez06ZUO0tfUE
-         PdTw93e+vhWnul8ti26orJyoTVn7PnDCGH8y37ugriKtJ18Dvs6GIyMAU46LGeZeL/
-         a6Nr/EIT8SQzQ==
-Received: by jupiter.universe (Postfix, from userid 1000)
-        id 557C94819D5; Wed,  4 May 2022 23:32:53 +0200 (CEST)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCHv2 16/21] dt-bindings: soc: rockchip: add initial rk3588 syscon compatibles
-Date:   Wed,  4 May 2022 23:32:46 +0200
-Message-Id: <20220504213251.264819-17-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220504213251.264819-1-sebastian.reichel@collabora.com>
-References: <20220504213251.264819-1-sebastian.reichel@collabora.com>
+        with ESMTP id S1377445AbiEDVmZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:42:25 -0400
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CED448E6F
+        for <linux-gpio@vger.kernel.org>; Wed,  4 May 2022 14:38:48 -0700 (PDT)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-2f7b815ac06so30257147b3.3
+        for <linux-gpio@vger.kernel.org>; Wed, 04 May 2022 14:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VX0Y5lK0oKhUNvSgMz9EtXzVemCwMapBfZK+KjIwWaY=;
+        b=QFpWrEBIrRnFFsbRzuQnDhJe4BaSIkFjtC3A5cZVG9hy/hcMauWrIqr2be5/KwrfGo
+         NCGCurP8cU79+UY+pB9TmqKhq7oXZZ7qPI7uQbAillCKF63H5X/zuGVkc+JsGOKGae5G
+         f+iwI+Dj4ePQuDCx/1Fct2nRPtAuc4Hty7oz//xsfve/iIL9k6svN3NMMvhiwINJ4xTM
+         9sMncJOw7LjeeB//tUJa4IoTpI6DRjLlfyj3NRTd/sq9i3txOLixbGmLfCTI0VPt6z/K
+         HRTwjUNbVnucCOGaOR4QEyXpnInRsolXUV5HOuBia87QkC+0dAuzdKHwcHKfLed2iZ+D
+         Bhzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VX0Y5lK0oKhUNvSgMz9EtXzVemCwMapBfZK+KjIwWaY=;
+        b=5PbnW4NCx+8k4joY0EMz4kJbv+wiSLJysMtT9wcAxHIC4Swo4vav3FvUfoMcFj8JBC
+         GbUIvna5PqBI60Qhtx8cad2k2vr9zoAHjmRIvhC/L4rDl+UvfX9lyHNjO3xAByogIoaT
+         O4rJNTNLmVdP4hGiIZJSSydPdYYw6TpxvUjhFyuaMp8YoF2vDFSRYoSuaVmeHEexuMhl
+         sIbbQH5gBQZ0NCc0pO0W/ZwodWVrVt3l/xI3Uo4yLKt5k982JQMIoBmaAIDluo5dcOav
+         cr2j0ihw6/ukW2+Tukei6c7bPZFyWVYJlTObdBBFX3KfvS/nw7rBY+TFub7SKE1WsZZg
+         h+Dg==
+X-Gm-Message-State: AOAM533vGO6powNEkTET8AA0wbsS2XNR4RcbeRKnELPjfIisKZdEkgpr
+        noeflYAfDdRdwmtoxNhcx9365O6CfmmjaOs3ajykHQ==
+X-Google-Smtp-Source: ABdhPJyWaynNr+CEKkTESmGLzWOB0NJ+k01UPdgmFyQnRX5drt8jZsToCyQBLbeZMlkNdUUCDjlKhWmRzv0FXiKAhqI=
+X-Received: by 2002:a0d:ddc6:0:b0:2f8:a506:a5c0 with SMTP id
+ g189-20020a0dddc6000000b002f8a506a5c0mr22520729ywe.140.1651700327788; Wed, 04
+ May 2022 14:38:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com> <20220428214838.1040278-13-Mr.Bossman075@gmail.com>
+In-Reply-To: <20220428214838.1040278-13-Mr.Bossman075@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 4 May 2022 23:38:36 +0200
+Message-ID: <CACRpkdY2MNkAKhVOQ_Eyq0AwOtEW-seSrxgsJ2D8E78u636A8A@mail.gmail.com>
+Subject: Re: [PATCH v2 12/15] pinctrl: freescale: Add i.MXRT1170 pinctrl
+ driver support
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
+        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add IOC and PHP GRF syscon compatibles for RK3588.
+On Thu, Apr 28, 2022 at 11:49 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+> Add the pinctrl driver support for i.MXRT1170.
+>
+> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> ---
+> V1 -> V2:
+>  - Nothing done
 
-diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-index b2ba7bed89b2..2181c8031b0d 100644
---- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-+++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-@@ -16,6 +16,8 @@ properties:
-           - enum:
-               - rockchip,rk3288-sgrf
-               - rockchip,rk3568-usb2phy-grf
-+              - rockchip,rk3588-ioc
-+              - rockchip,rk3588-php-grf
-               - rockchip,rv1108-usbgrf
-           - const: syscon
-       - items:
--- 
-2.35.1
+If I get a review from a Freescale maintainer on this driver and the bindings
+I can merge it separately, correct?
 
+Yours,
+Linus Walleij
