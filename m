@@ -2,78 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AF3C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B974EC433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:33:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239206AbiEDV3T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 May 2022 17:29:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41308 "EHLO
+        id S1378613AbiEDVgg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 May 2022 17:36:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378561AbiEDV2z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:28:55 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5582712
-        for <linux-gpio@vger.kernel.org>; Wed,  4 May 2022 14:25:17 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id s30so4578167ybi.8
-        for <linux-gpio@vger.kernel.org>; Wed, 04 May 2022 14:25:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T3d2fYGVCQPH3oUWunAB6fdSYnujJZ2I8+XkzxVQ4R8=;
-        b=ZUiMw8FZnaeQCj4tHgZ+yh927ALKIjlzaflimJl0MTREy3wMDwFDlUqyiKh+Q0oQmI
-         SulmOktwG9BAk7EUbjJV74hALMN8j/QFaOpkyOxpr+KkK2hAX0GJ6t0wnfUO2F/ZG58w
-         WaxiEaxuEOvx82Ufe2v9mdjNMxQC78ish/ZyII2Ls5x881GTkMySDBdhxdL6oQy/aWoG
-         unoZII6R+E4YAj9G19q9N8ia7HohjBVASfVrHPO/W0JJQaPBVUCNuuejVmS4TCTXy2vq
-         fILs3pAeMXJYYbJfkUpD5n/b25B5ffXdA8ulNVYS2I+61x0aJNVMoGewhaYqbgLLKfOa
-         G2dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T3d2fYGVCQPH3oUWunAB6fdSYnujJZ2I8+XkzxVQ4R8=;
-        b=fX35Zb85UOzrUh1L9h4hQ6hx+hqbGcMZlUFC+NE06+yCRXhkk+WSwS0i6Tsvlyv1lD
-         mO3LYmFU1LWi4XdBMGLfMmMTHi8LI8PUw7QpH9Dpqx9yMNsNcleEe+VFt9nTCUG85skn
-         5cGs0wRcy33tj3iB7x94/ExrEPHOwq6kmCAaZLqW8FjXPD5y+MI0UML34oMfGYlUnvJM
-         qe27ZxSz4YZNYM4yNPNbsV7GRtvb63je5fajPfUtZzddM5ErmQD2pODOLVWbd9/e1A9m
-         hh9LDEaWvC2qzxKXsDaWjIkNYzIk+rBRNFsvDW/sZ00Gy3jv/6FDHquGSKvtfoTK6RoX
-         hkhA==
-X-Gm-Message-State: AOAM5327TI8UhkSDRJD9hpoHtbugeVKWKV00BqXibarsmPTwETqLegpK
-        pK9A3kfrHtcLNURsIkE4ixuC3J4A1e4xuL0SHMon1Q==
-X-Google-Smtp-Source: ABdhPJzqvODOYmcQ9TZYyXXRfyQPmMMljGJNRG/LrEqbFLH0+9/ixLSThQOOvYy9Zui0cZ7P+TuQBezYxz3hocfbs3M=
-X-Received: by 2002:a25:2905:0:b0:649:7a2b:ca72 with SMTP id
- p5-20020a252905000000b006497a2bca72mr13176917ybp.492.1651699516824; Wed, 04
- May 2022 14:25:16 -0700 (PDT)
+        with ESMTP id S1351167AbiEDVgf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:36:35 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02FA051307;
+        Wed,  4 May 2022 14:32:57 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 089C41F44B1B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1651699976;
+        bh=DdTo/IHVksNFaY0C3OZeNK8F/zY5vBwcncoBBVcwOBM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KBupv5Z7FDKZDfpXGWIfS1Z9tOybmQpS/YNWKg6RazHBWNhpK8kOP4xJWUJBepxGs
+         AErYih7Sa/TN4gcSAINce1mpoTnVrqfa8DEILX5EtzzLPucxJ56VrehltcIc4HY7Ti
+         7CExl6xbP466Y2c78cC6yTgQNTeHpSswhBlN6n317lUWS0ET/DFiO2wzuZzPDcMEnF
+         BcS2nSxXMik4PrkzVh7r67OPLMDK5arDWk73F5yE2zAoO5AHXeZ+HAkAlwslgWZU33
+         mzLd9fYRZSN+u21H8NNQcwbzghaP0xQw3Bqqd0qVhWPrOCVJsxnsKs/f6SeVwg3KpV
+         iiVUeEesb5T8Q==
+Received: by jupiter.universe (Postfix, from userid 1000)
+        id 2FB3948146C; Wed,  4 May 2022 23:32:53 +0200 (CEST)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        kernel@collabora.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCHv2 01/21] dt-bindings: pinctrl: rockchip: add rk3588
+Date:   Wed,  4 May 2022 23:32:31 +0200
+Message-Id: <20220504213251.264819-2-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220504213251.264819-1-sebastian.reichel@collabora.com>
+References: <20220504213251.264819-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
-References: <20220422192139.2592632-1-robh@kernel.org>
-In-Reply-To: <20220422192139.2592632-1-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 4 May 2022 23:25:05 +0200
-Message-ID: <CACRpkdZcVwvBHrDy-wxPURhJ4OWRMA9TQ1e2vmcXnhEG2HaMDA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: aspeed: Drop referenced nodes in examples
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 9:21 PM Rob Herring <robh@kernel.org> wrote:
+Add compatible string for rk3588 pin controller. No other changes
+are required, since the new controller can use the old binding.
 
-> The additional nodes in the example referenced from the pinctrl node
-> 'aspeed,external-nodes' properties are either incorrect (aspeed,ast2500-lpc)
-> or not documented with a schema (aspeed,ast2500-gfx). There's no need to
-> show these nodes as part of the pinctrl example, so just remove them.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch applied. Concerns about lost examples can be solved
-with incremental patches on top adding more schema.
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+index b0eae3a67ab1..e62fb5e9db76 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+@@ -44,6 +44,7 @@ properties:
+       - rockchip,rk3368-pinctrl
+       - rockchip,rk3399-pinctrl
+       - rockchip,rk3568-pinctrl
++      - rockchip,rk3588-pinctrl
+       - rockchip,rv1108-pinctrl
+ 
+   rockchip,grf:
+-- 
+2.35.1
 
-Yours,
-Linus Walleij
