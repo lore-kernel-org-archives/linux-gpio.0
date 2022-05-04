@@ -2,73 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B0DC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 22:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E910C43219
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 22:30:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237478AbiEDWeJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 May 2022 18:34:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49738 "EHLO
+        id S1350306AbiEDWeK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 May 2022 18:34:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238747AbiEDWdw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 18:33:52 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8F0FEA;
-        Wed,  4 May 2022 15:30:14 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id a15-20020a17090ad80f00b001dc2e23ad84so6372384pjv.4;
-        Wed, 04 May 2022 15:30:14 -0700 (PDT)
+        with ESMTP id S1379000AbiEDWeF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 18:34:05 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD1CE25C44;
+        Wed,  4 May 2022 15:30:27 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id cq17-20020a17090af99100b001dc0386cd8fso2457794pjb.5;
+        Wed, 04 May 2022 15:30:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=taWmHmBKBzHrmg7KZh9uiyXIEIV6gHiEkNwKxQ/MES0=;
-        b=hh/olrkV6vVJdNb/Ps0uIV2urNTp/ZSrT8/Qv8bidehOazsqTe79UN7/X1Q1CRB34t
-         WdhQb1A4j8/hi70O/51NpOhFBz7l4veSnO0E1/TZ+xF1x93tgdrsmBVHCsbHsNWMQeqy
-         LkJ3rOabvMYQYUW/OSRVHXJu/i2K1xP1nevUuIJRAmtqBKc4PYTs4djn0dY15eWyuxlv
-         xiqOcTUrOeZH5Gp6ulSiFHsiGO3+RpdTQwUSxwZX3zrlXZ39Bvg3s63pR8tSlVoXzld8
-         z3hDdlwz5qM4Zo5HR/SubFSs8U1NyclFU6wsA30bPxhHMpVMoakZTPpq55u84y3KeEwF
-         LeFw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=94a9pX/GV/eEl+QtDLHnwc8lloWm9uKODw2DiIxPFzg=;
+        b=GV0I9cg8N6KOAkYcoZKr2Gy5fEOZp2sOAgVEexp+9Jf715ipyYq30icc9NgQDWDrlG
+         meR7Y3IzOE2HxeiifnOKvm56q35EILWsUW4yNvt3hTg80m08NT4z3/nsEeVAtbTGGFuI
+         b1DJTRQht4wxbmiuZwTVI2cjqMn+0CUTXlF+jU8ikKKyoGtZOSGoNjCaKxNJC+Qyd9Yj
+         goesqFL/kjlLghbT676ldhQkddlo5btqmnDZIpqb0u3Yn8ycTZAI6kSstgQEVJXHG7Zs
+         epDj6PdIqhUFJ8kI+ERkGKvbg9cGLBzNkXaARnPh5CYbd86BpgkNROciT8wxFP6J6XJ1
+         xpKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=taWmHmBKBzHrmg7KZh9uiyXIEIV6gHiEkNwKxQ/MES0=;
-        b=zK7zckbxtAA20l4eTKnA1ceSn/MA9q9Tp5g3B/lYY+MhavC98FpdUhZP7/yrTqOoS0
-         zey5sgcPyeDWofnYXuamR591z8FYGkxwBNyOh9RlwN5SGOd0JbVBF8l4SxK+nxTR2kIY
-         dCv7LishyKdqi05jcW3mpvbdZMau8xb6Ira/AJCXARN6fmmZPorcgMGOX32wN63iUGcz
-         Suy6+dqb9da8cUgWToPP4h4Ot3RwuX+1bgI86TosxoxPh8Psr13nz1mma+WmawQzGL5L
-         GCNSEDMoWTXHoh8MYlIW6YGYV0wiABQE+W9dqH4ASJ0V1vxFBxxXmlSZXX8mb7K8CKn3
-         h28g==
-X-Gm-Message-State: AOAM531EyeFs/LCLqsywfyV8CeQgHjXlAk9C5kowxrO6LafHh5D4MLYi
-        5k//jMJVmXadSSG6VdU9/ys=
-X-Google-Smtp-Source: ABdhPJzZrrnfwa2OuGVWPvNzObbnOzcy0xJ2YpADq0QZKoMO6Nl7fDxBPcPWzBxxMU6TWVYXV5n6ZA==
-X-Received: by 2002:a17:90b:38c7:b0:1dc:77aa:e3d5 with SMTP id nn7-20020a17090b38c700b001dc77aae3d5mr2090696pjb.51.1651703414335;
-        Wed, 04 May 2022 15:30:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=94a9pX/GV/eEl+QtDLHnwc8lloWm9uKODw2DiIxPFzg=;
+        b=nJOBmIQaWPkE3+/sfdKu43DESxyga95M+jhPH1vi2hR7I6lQzqXke2GACWebAYK4QK
+         HEjOCJXLa/RNr/BJLKhAeKuFpVa4ejKGoc5gl/Nj9N1w6+/TLcROM3vy7cqkdJeeXkmi
+         XuK9yda8zw9kVUgKFyTCEfdeb6NnOldBE9q72fQF7MyXPlK+BtGtHX4gO2VimoN9rJzc
+         IDDi39uFTzemekWnYHlkQGe+0Xmb5uCXWKB8sAoeUv0tL/aWEQz9W5ixoSJHkAC6xK3X
+         wPlQi+KmvWTtinIBzaolxUP41BoOog+V8Mz0cOWGuOoc7MaA2JdY8U5XOdqQ4EO7N6Kk
+         K/DQ==
+X-Gm-Message-State: AOAM531GKe5F6G6T91ftA1M4MupWR9bodrsB+YiZgUDvITVAHDBiPDJ2
+        FFJDJEHO9hGuH+3tSXIpaI8=
+X-Google-Smtp-Source: ABdhPJyAOefCc6L+2qUMnOCdFHcUwXWTa0u7mL4Sqe6/qy44e0e8MDs0PsXzTErnF79Kpa1zlv9PsQ==
+X-Received: by 2002:a17:90b:1d87:b0:1dc:a9c0:3d49 with SMTP id pf7-20020a17090b1d8700b001dca9c03d49mr2176020pjb.12.1651703427150;
+        Wed, 04 May 2022 15:30:27 -0700 (PDT)
 Received: from stbirv-lnx-2.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id p4-20020a1709028a8400b0015e8d4eb257sm8882284plo.161.2022.05.04.15.30.12
+        by smtp.gmail.com with ESMTPSA id p4-20020a1709028a8400b0015e8d4eb257sm8882284plo.161.2022.05.04.15.30.25
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 May 2022 15:30:13 -0700 (PDT)
+        Wed, 04 May 2022 15:30:26 -0700 (PDT)
 From:   Justin Chen <justinpopo6@gmail.com>
 To:     linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, f.fainelli@gmail.com,
         justinpopo6@gmail.com
-Subject: [PATCH v2 0/2] Add support for NXP PCA6408
-Date:   Wed,  4 May 2022 15:29:15 -0700
-Message-Id: <1651703357-25154-1-git-send-email-justinpopo6@gmail.com>
+Subject: [PATCH v2 2/2] dt-bindings: gpio: pca95xx: add entry for pca6408
+Date:   Wed,  4 May 2022 15:29:17 -0700
+Message-Id: <1651703357-25154-3-git-send-email-justinpopo6@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1651703357-25154-1-git-send-email-justinpopo6@gmail.com>
+References: <1651703357-25154-1-git-send-email-justinpopo6@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The NXP PCA6408 is the 8 bit/8 GPIO version of the NXP PCA6416.
+The NXP PCA5608 is the 8-bit version of PCA5616.
 
-Justin Chen (2):
-  gpio: pca953xx: Add support for pca6408
-  dt-bindings: gpio: pca95xx: add entry for pca6408
-
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+---
  Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 1 +
- drivers/gpio/gpio-pca953x.c                              | 2 ++
- 2 files changed, 3 insertions(+)
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+index dc0fc8f..977b14d 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+@@ -30,6 +30,7 @@ properties:
+       - maxim,max7325
+       - maxim,max7326
+       - maxim,max7327
++      - nxp,pca6408
+       - nxp,pca6416
+       - nxp,pca9505
+       - nxp,pca9506
 -- 
 2.7.4
 
