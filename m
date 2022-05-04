@@ -2,33 +2,33 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A135C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 717C3C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 May 2022 21:33:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378715AbiEDVhB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 May 2022 17:37:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48554 "EHLO
+        id S229914AbiEDVhH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 May 2022 17:37:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378724AbiEDVgv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:36:51 -0400
+        with ESMTP id S1378605AbiEDVgl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 May 2022 17:36:41 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CE951E7F;
-        Wed,  4 May 2022 14:33:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42DBC51E6A;
+        Wed,  4 May 2022 14:33:00 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id 874391F44C7B
+        with ESMTPSA id 72C781F44BE1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651699980;
-        bh=QlU4T6vy2JVMguglPjkNApy4f/nAKxVa9z3x8f0X1Yc=;
+        s=mail; t=1651699978;
+        bh=otUBBNCGp6yhc52cEkaSWqb6utBA7rvOpD0uB6qkT4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aaMZkO7Z6RQDZ01LZfmAxOut57WzTtjdJnUiFKNgxsNxZbGM0zQyNHL+vwBVtrqt3
-         sNNMzAzA40/kpoTiqPiuogBn4wR/kSIdmS0XEqjshgfaunnyDuK5dYf0ggYiwBWC26
-         BC6HDYUDRzw3M13mSwJC+fQMS6lSHVF2eN919PhTawyehGcTlAVzy5wW9mIbNMy1ZD
-         i1MBYEgiiFlm1djFhdutMsjbzVhnyLMEt1ie+Ly3RfoAQ3gFlcIixXp7L9EAmTcShm
-         6gatldEh1ERKURNB2z7h9Zlbz9LTVl8L8lNO+y13+ZX92+Ycxoz+50EGVLgLMjuLvN
-         0msnC1u0E58vQ==
+        b=Sp96J/qqEo0xqDKiUj1vxfKLWmj+hLlOVNMj3dSTpQV93Odr6ovtFh8k696GXoriW
+         AT5OuTMWdY7KkCxwO6SeqTrOnNyy7gj5pJ8llzsWXaSm/RXapMSSoekUPdB/d6NmwJ
+         kuhMLblV9QSO/+ydoFLYDNMYNAnDngKP1MfGcHW7Ph+QiWOIwi0sBuO3dS331tdxp8
+         71MtU329/BS6QS4IHzLcDVGrjDtZswuQQY6DUUODt3Lf21hhXbiOovyrX8Sc4HK4El
+         uxo8HNcQ/xwXBgrJcOINNudGUuJ7X2Kzsu40yFjXMlUce/QMmigE3DgFSEJMD78IED
+         mrc5EzcSFZZng==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id 5D9254819D8; Wed,  4 May 2022 23:32:53 +0200 (CEST)
+        id 413BC4819CD; Wed,  4 May 2022 23:32:53 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -44,16 +44,11 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
-        Jianqun Xu <jay.xu@rock-chips.com>, kernel@collabora.com,
-        Shengfei Xu <xsf@rock-chips.com>,
-        Damon Ding <damon.ding@rock-chips.com>,
-        Steven Liu <steven.liu@rock-chips.com>,
-        Jon Lin <jon.lin@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv2 19/21] arm64: dts: rockchip: Add rk3588s pinctrl data
-Date:   Wed,  4 May 2022 23:32:49 +0200
-Message-Id: <20220504213251.264819-20-sebastian.reichel@collabora.com>
+Subject: [PATCHv2 08/21] clk: rockchip: Add clock controller for the RK3588
+Date:   Wed,  4 May 2022 23:32:38 +0200
+Message-Id: <20220504213251.264819-9-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220504213251.264819-1-sebastian.reichel@collabora.com>
 References: <20220504213251.264819-1-sebastian.reichel@collabora.com>
@@ -63,3433 +58,2602 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Jianqun Xu <jay.xu@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-This adds the pin controller data for rk3588.
+Add the clock tree definition for the new RK3588 SoC.
 
-Signed-off-by: Shengfei Xu <xsf@rock-chips.com>
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Signed-off-by: Steven Liu <steven.liu@rock-chips.com>
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
-[port from vendor tree merging all fixes]
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+[rebase, add missing frequencies to PLL lookup table]
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- .../boot/dts/rockchip/rk3588s-pinctrl.dtsi    | 3403 +++++++++++++++++
- 1 file changed, 3403 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-pinctrl.dtsi
+ drivers/clk/rockchip/Kconfig      |    7 +
+ drivers/clk/rockchip/Makefile     |    1 +
+ drivers/clk/rockchip/clk-rk3588.c | 2497 +++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h        |   42 +
+ 4 files changed, 2547 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-rk3588.c
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-pinctrl.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s-pinctrl.dtsi
+diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
+index 3067bdb6e119..3bbcfcf3fffa 100644
+--- a/drivers/clk/rockchip/Kconfig
++++ b/drivers/clk/rockchip/Kconfig
+@@ -92,4 +92,11 @@ config CLK_RK3568
+ 	default y
+ 	help
+ 	  Build the driver for RK3568 Clock Driver.
++
++config CLK_RK3588
++	tristate "Rockchip RK3588 clock controller support"
++	depends on ARM64 || COMPILE_TEST
++	default y
++	help
++	  Build the driver for RK3588 Clock Driver.
+ endif
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 2b78f1247372..3534f85e3702 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -27,3 +27,4 @@ obj-$(CONFIG_CLK_RK3328)        += clk-rk3328.o
+ obj-$(CONFIG_CLK_RK3368)        += clk-rk3368.o
+ obj-$(CONFIG_CLK_RK3399)        += clk-rk3399.o
+ obj-$(CONFIG_CLK_RK3568)	+= clk-rk3568.o
++obj-$(CONFIG_CLK_RK3588)	+= clk-rk3588.o
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
 new file mode 100644
-index 000000000000..48181671eacb
+index 000000000000..2b63fefb3816
 --- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-pinctrl.dtsi
-@@ -0,0 +1,3403 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -0,0 +1,2497 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2021 Rockchip Electronics Co., Ltd.
++ * Copyright (c) 2021 Rockchip Electronics Co. Ltd.
++ * Author: Elaine Zhang <zhangqing@rock-chips.com>
 + */
 +
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include "rockchip-pinconf.dtsi"
-+
-+/*
-+ * This file is auto generated by pin2dts tool, please keep these code
-+ * by adding changes at end of this file.
-+ */
-+&pinctrl {
-+	auddsm {
-+		/omit-if-no-ref/
-+		auddsm_pins: auddsm-pins {
-+			rockchip,pins =
-+				/* auddsm_ln */
-+				<3 RK_PA1 4 &pcfg_pull_none>,
-+				/* auddsm_lp */
-+				<3 RK_PA2 4 &pcfg_pull_none>,
-+				/* auddsm_rn */
-+				<3 RK_PA3 4 &pcfg_pull_none>,
-+				/* auddsm_rp */
-+				<3 RK_PA4 4 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	bt1120 {
-+		/omit-if-no-ref/
-+		bt1120_pins: bt1120-pins {
-+			rockchip,pins =
-+				/* bt1120_clkout */
-+				<4 RK_PB0 2 &pcfg_pull_none>,
-+				/* bt1120_d0 */
-+				<4 RK_PA0 2 &pcfg_pull_none>,
-+				/* bt1120_d1 */
-+				<4 RK_PA1 2 &pcfg_pull_none>,
-+				/* bt1120_d2 */
-+				<4 RK_PA2 2 &pcfg_pull_none>,
-+				/* bt1120_d3 */
-+				<4 RK_PA3 2 &pcfg_pull_none>,
-+				/* bt1120_d4 */
-+				<4 RK_PA4 2 &pcfg_pull_none>,
-+				/* bt1120_d5 */
-+				<4 RK_PA5 2 &pcfg_pull_none>,
-+				/* bt1120_d6 */
-+				<4 RK_PA6 2 &pcfg_pull_none>,
-+				/* bt1120_d7 */
-+				<4 RK_PA7 2 &pcfg_pull_none>,
-+				/* bt1120_d8 */
-+				<4 RK_PB2 2 &pcfg_pull_none>,
-+				/* bt1120_d9 */
-+				<4 RK_PB3 2 &pcfg_pull_none>,
-+				/* bt1120_d10 */
-+				<4 RK_PB4 2 &pcfg_pull_none>,
-+				/* bt1120_d11 */
-+				<4 RK_PB5 2 &pcfg_pull_none>,
-+				/* bt1120_d12 */
-+				<4 RK_PB6 2 &pcfg_pull_none>,
-+				/* bt1120_d13 */
-+				<4 RK_PB7 2 &pcfg_pull_none>,
-+				/* bt1120_d14 */
-+				<4 RK_PC0 2 &pcfg_pull_none>,
-+				/* bt1120_d15 */
-+				<4 RK_PC1 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	can0 {
-+		/omit-if-no-ref/
-+		can0m0_pins: can0m0-pins {
-+			rockchip,pins =
-+				/* can0_rx_m0 */
-+				<0 RK_PC0 11 &pcfg_pull_none>,
-+				/* can0_tx_m0 */
-+				<0 RK_PB7 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		can0m1_pins: can0m1-pins {
-+			rockchip,pins =
-+				/* can0_rx_m1 */
-+				<4 RK_PD5 9 &pcfg_pull_none>,
-+				/* can0_tx_m1 */
-+				<4 RK_PD4 9 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	can1 {
-+		/omit-if-no-ref/
-+		can1m0_pins: can1m0-pins {
-+			rockchip,pins =
-+				/* can1_rx_m0 */
-+				<3 RK_PB5 9 &pcfg_pull_none>,
-+				/* can1_tx_m0 */
-+				<3 RK_PB6 9 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		can1m1_pins: can1m1-pins {
-+			rockchip,pins =
-+				/* can1_rx_m1 */
-+				<4 RK_PB2 12 &pcfg_pull_none>,
-+				/* can1_tx_m1 */
-+				<4 RK_PB3 12 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	can2 {
-+		/omit-if-no-ref/
-+		can2m0_pins: can2m0-pins {
-+			rockchip,pins =
-+				/* can2_rx_m0 */
-+				<3 RK_PC4 9 &pcfg_pull_none>,
-+				/* can2_tx_m0 */
-+				<3 RK_PC5 9 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		can2m1_pins: can2m1-pins {
-+			rockchip,pins =
-+				/* can2_rx_m1 */
-+				<0 RK_PD4 10 &pcfg_pull_none>,
-+				/* can2_tx_m1 */
-+				<0 RK_PD5 10 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	cif {
-+		/omit-if-no-ref/
-+		cif_clk: cif-clk {
-+			rockchip,pins =
-+				/* cif_clkout */
-+				<4 RK_PB4 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		cif_dvp_clk: cif-dvp-clk {
-+			rockchip,pins =
-+				/* cif_clkin */
-+				<4 RK_PB0 1 &pcfg_pull_none>,
-+				/* cif_href */
-+				<4 RK_PB2 1 &pcfg_pull_none>,
-+				/* cif_vsync */
-+				<4 RK_PB3 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		cif_dvp_bus16: cif-dvp-bus16 {
-+			rockchip,pins =
-+				/* cif_d8 */
-+				<3 RK_PC4 1 &pcfg_pull_none>,
-+				/* cif_d9 */
-+				<3 RK_PC5 1 &pcfg_pull_none>,
-+				/* cif_d10 */
-+				<3 RK_PC6 1 &pcfg_pull_none>,
-+				/* cif_d11 */
-+				<3 RK_PC7 1 &pcfg_pull_none>,
-+				/* cif_d12 */
-+				<3 RK_PD0 1 &pcfg_pull_none>,
-+				/* cif_d13 */
-+				<3 RK_PD1 1 &pcfg_pull_none>,
-+				/* cif_d14 */
-+				<3 RK_PD2 1 &pcfg_pull_none>,
-+				/* cif_d15 */
-+				<3 RK_PD3 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		cif_dvp_bus8: cif-dvp-bus8 {
-+			rockchip,pins =
-+				/* cif_d0 */
-+				<4 RK_PA0 1 &pcfg_pull_none>,
-+				/* cif_d1 */
-+				<4 RK_PA1 1 &pcfg_pull_none>,
-+				/* cif_d2 */
-+				<4 RK_PA2 1 &pcfg_pull_none>,
-+				/* cif_d3 */
-+				<4 RK_PA3 1 &pcfg_pull_none>,
-+				/* cif_d4 */
-+				<4 RK_PA4 1 &pcfg_pull_none>,
-+				/* cif_d5 */
-+				<4 RK_PA5 1 &pcfg_pull_none>,
-+				/* cif_d6 */
-+				<4 RK_PA6 1 &pcfg_pull_none>,
-+				/* cif_d7 */
-+				<4 RK_PA7 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	clk32k {
-+		/omit-if-no-ref/
-+		clk32k_in: clk32k-in {
-+			rockchip,pins =
-+				/* clk32k_in */
-+				<0 RK_PB2 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		clk32k_out0: clk32k-out0 {
-+			rockchip,pins =
-+				/* clk32k_out0 */
-+				<0 RK_PB2 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	cpu {
-+		/omit-if-no-ref/
-+		cpu_pins: cpu-pins {
-+			rockchip,pins =
-+				/* cpu_big0_avs */
-+				<0 RK_PD1 2 &pcfg_pull_none>,
-+				/* cpu_big1_avs */
-+				<0 RK_PD5 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	ddrphych0 {
-+		/omit-if-no-ref/
-+		ddrphych0_pins: ddrphych0-pins {
-+			rockchip,pins =
-+				/* ddrphych0_dtb0 */
-+				<4 RK_PA0 7 &pcfg_pull_none>,
-+				/* ddrphych0_dtb1 */
-+				<4 RK_PA1 7 &pcfg_pull_none>,
-+				/* ddrphych0_dtb2 */
-+				<4 RK_PA2 7 &pcfg_pull_none>,
-+				/* ddrphych0_dtb3 */
-+				<4 RK_PA3 7 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	ddrphych1 {
-+		/omit-if-no-ref/
-+		ddrphych1_pins: ddrphych1-pins {
-+			rockchip,pins =
-+				/* ddrphych1_dtb0 */
-+				<4 RK_PA4 7 &pcfg_pull_none>,
-+				/* ddrphych1_dtb1 */
-+				<4 RK_PA5 7 &pcfg_pull_none>,
-+				/* ddrphych1_dtb2 */
-+				<4 RK_PA6 7 &pcfg_pull_none>,
-+				/* ddrphych1_dtb3 */
-+				<4 RK_PA7 7 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	ddrphych2 {
-+		/omit-if-no-ref/
-+		ddrphych2_pins: ddrphych2-pins {
-+			rockchip,pins =
-+				/* ddrphych2_dtb0 */
-+				<4 RK_PB0 7 &pcfg_pull_none>,
-+				/* ddrphych2_dtb1 */
-+				<4 RK_PB1 7 &pcfg_pull_none>,
-+				/* ddrphych2_dtb2 */
-+				<4 RK_PB2 7 &pcfg_pull_none>,
-+				/* ddrphych2_dtb3 */
-+				<4 RK_PB3 7 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	ddrphych3 {
-+		/omit-if-no-ref/
-+		ddrphych3_pins: ddrphych3-pins {
-+			rockchip,pins =
-+				/* ddrphych3_dtb0 */
-+				<4 RK_PB4 7 &pcfg_pull_none>,
-+				/* ddrphych3_dtb1 */
-+				<4 RK_PB5 7 &pcfg_pull_none>,
-+				/* ddrphych3_dtb2 */
-+				<4 RK_PB6 7 &pcfg_pull_none>,
-+				/* ddrphych3_dtb3 */
-+				<4 RK_PB7 7 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	dp0 {
-+		/omit-if-no-ref/
-+		dp0m0_pins: dp0m0-pins {
-+			rockchip,pins =
-+				/* dp0_hpdin_m0 */
-+				<4 RK_PB4 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		dp0m1_pins: dp0m1-pins {
-+			rockchip,pins =
-+				/* dp0_hpdin_m1 */
-+				<0 RK_PC4 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		dp0m2_pins: dp0m2-pins {
-+			rockchip,pins =
-+				/* dp0_hpdin_m2 */
-+				<1 RK_PA0 5 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	dp1 {
-+		/omit-if-no-ref/
-+		dp1m0_pins: dp1m0-pins {
-+			rockchip,pins =
-+				/* dp1_hpdin_m0 */
-+				<3 RK_PD5 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		dp1m1_pins: dp1m1-pins {
-+			rockchip,pins =
-+				/* dp1_hpdin_m1 */
-+				<0 RK_PC5 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		dp1m2_pins: dp1m2-pins {
-+			rockchip,pins =
-+				/* dp1_hpdin_m2 */
-+				<1 RK_PA1 5 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	emmc {
-+		/omit-if-no-ref/
-+		emmc_rstnout: emmc-rstnout {
-+			rockchip,pins =
-+				/* emmc_rstn */
-+				<2 RK_PA3 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		emmc_bus8: emmc-bus8 {
-+			rockchip,pins =
-+				/* emmc_d0 */
-+				<2 RK_PD0 1 &pcfg_pull_up_drv_level_2>,
-+				/* emmc_d1 */
-+				<2 RK_PD1 1 &pcfg_pull_up_drv_level_2>,
-+				/* emmc_d2 */
-+				<2 RK_PD2 1 &pcfg_pull_up_drv_level_2>,
-+				/* emmc_d3 */
-+				<2 RK_PD3 1 &pcfg_pull_up_drv_level_2>,
-+				/* emmc_d4 */
-+				<2 RK_PD4 1 &pcfg_pull_up_drv_level_2>,
-+				/* emmc_d5 */
-+				<2 RK_PD5 1 &pcfg_pull_up_drv_level_2>,
-+				/* emmc_d6 */
-+				<2 RK_PD6 1 &pcfg_pull_up_drv_level_2>,
-+				/* emmc_d7 */
-+				<2 RK_PD7 1 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		emmc_clk: emmc-clk {
-+			rockchip,pins =
-+				/* emmc_clkout */
-+				<2 RK_PA1 1 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		emmc_cmd: emmc-cmd {
-+			rockchip,pins =
-+				/* emmc_cmd */
-+				<2 RK_PA0 1 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		emmc_data_strobe: emmc-data-strobe {
-+			rockchip,pins =
-+				/* emmc_data_strobe */
-+				<2 RK_PA2 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	eth1 {
-+		/omit-if-no-ref/
-+		eth1_pins: eth1-pins {
-+			rockchip,pins =
-+				/* eth1_refclko_25m */
-+				<3 RK_PA6 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	fspi {
-+		/omit-if-no-ref/
-+		fspim0_pins: fspim0-pins {
-+			rockchip,pins =
-+				/* fspi_clk_m0 */
-+				<2 RK_PA0 2 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_cs0n_m0 */
-+				<2 RK_PD6 2 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d0_m0 */
-+				<2 RK_PD0 2 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d1_m0 */
-+				<2 RK_PD1 2 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d2_m0 */
-+				<2 RK_PD2 2 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d3_m0 */
-+				<2 RK_PD3 2 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		fspim0_cs1: fspim0-cs1 {
-+			rockchip,pins =
-+				/* fspi_cs1n_m0 */
-+				<2 RK_PD7 2 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		fspim2_pins: fspim2-pins {
-+			rockchip,pins =
-+				/* fspi_clk_m2 */
-+				<3 RK_PA5 5 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_cs0n_m2 */
-+				<3 RK_PC4 2 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d0_m2 */
-+				<3 RK_PA0 5 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d1_m2 */
-+				<3 RK_PA1 5 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d2_m2 */
-+				<3 RK_PA2 5 &pcfg_pull_up_drv_level_2>,
-+				/* fspi_d3_m2 */
-+				<3 RK_PA3 5 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		fspim2_cs1: fspim2-cs1 {
-+			rockchip,pins =
-+				/* fspi_cs1n_m2 */
-+				<3 RK_PC5 2 &pcfg_pull_up_drv_level_2>;
-+		};
-+	};
-+
-+	gmac1 {
-+		/omit-if-no-ref/
-+		gmac1_miim: gmac1-miim {
-+			rockchip,pins =
-+				/* gmac1_mdc */
-+				<3 RK_PC2 1 &pcfg_pull_none>,
-+				/* gmac1_mdio */
-+				<3 RK_PC3 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_clkinout: gmac1-clkinout {
-+			rockchip,pins =
-+				/* gmac1_mclkinout */
-+				<3 RK_PB6 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_rx_bus2: gmac1-rx-bus2 {
-+			rockchip,pins =
-+				/* gmac1_rxd0 */
-+				<3 RK_PA7 1 &pcfg_pull_none>,
-+				/* gmac1_rxd1 */
-+				<3 RK_PB0 1 &pcfg_pull_none>,
-+				/* gmac1_rxdv_crs */
-+				<3 RK_PB1 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_tx_bus2: gmac1-tx-bus2 {
-+			rockchip,pins =
-+				/* gmac1_txd0 */
-+				<3 RK_PB3 1 &pcfg_pull_none>,
-+				/* gmac1_txd1 */
-+				<3 RK_PB4 1 &pcfg_pull_none>,
-+				/* gmac1_txen */
-+				<3 RK_PB5 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_rgmii_clk: gmac1-rgmii-clk {
-+			rockchip,pins =
-+				/* gmac1_rxclk */
-+				<3 RK_PA5 1 &pcfg_pull_none>,
-+				/* gmac1_txclk */
-+				<3 RK_PA4 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_rgmii_bus: gmac1-rgmii-bus {
-+			rockchip,pins =
-+				/* gmac1_rxd2 */
-+				<3 RK_PA2 1 &pcfg_pull_none>,
-+				/* gmac1_rxd3 */
-+				<3 RK_PA3 1 &pcfg_pull_none>,
-+				/* gmac1_txd2 */
-+				<3 RK_PA0 1 &pcfg_pull_none>,
-+				/* gmac1_txd3 */
-+				<3 RK_PA1 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_ppsclk: gmac1-ppsclk {
-+			rockchip,pins =
-+				/* gmac1_ppsclk */
-+				<3 RK_PC1 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_ppstrig: gmac1-ppstrig {
-+			rockchip,pins =
-+				/* gmac1_ppstrig */
-+				<3 RK_PC0 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_ptp_ref_clk: gmac1-ptp-ref-clk {
-+			rockchip,pins =
-+				/* gmac1_ptp_ref_clk */
-+				<3 RK_PB7 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		gmac1_txer: gmac1-txer {
-+			rockchip,pins =
-+				/* gmac1_txer */
-+				<3 RK_PB2 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	gpu {
-+		/omit-if-no-ref/
-+		gpu_pins: gpu-pins {
-+			rockchip,pins =
-+				/* gpu_avs */
-+				<0 RK_PC5 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	hdmi {
-+		/omit-if-no-ref/
-+		hdmim0_rx_cec: hdmim0-rx-cec {
-+			rockchip,pins =
-+				/* hdmim0_rx_cec */
-+				<4 RK_PB5 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_rx_hpdin: hdmim0-rx-hpdin {
-+			rockchip,pins =
-+				/* hdmim0_rx_hpdin */
-+				<4 RK_PB6 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_rx_scl: hdmim0-rx-scl {
-+			rockchip,pins =
-+				/* hdmim0_rx_scl */
-+				<0 RK_PD2 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_rx_sda: hdmim0-rx-sda {
-+			rockchip,pins =
-+				/* hdmim0_rx_sda */
-+				<0 RK_PD1 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_tx0_cec: hdmim0-tx0-cec {
-+			rockchip,pins =
-+				/* hdmim0_tx0_cec */
-+				<4 RK_PC1 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_tx0_hpd: hdmim0-tx0-hpd {
-+			rockchip,pins =
-+				/* hdmim0_tx0_hpd */
-+				<1 RK_PA5 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_tx0_scl: hdmim0-tx0-scl {
-+			rockchip,pins =
-+				/* hdmim0_tx0_scl */
-+				<4 RK_PB7 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_tx0_sda: hdmim0-tx0-sda {
-+			rockchip,pins =
-+				/* hdmim0_tx0_sda */
-+				<4 RK_PC0 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim0_tx1_hpd: hdmim0-tx1-hpd {
-+			rockchip,pins =
-+				/* hdmim0_tx1_hpd */
-+				<1 RK_PA6 5 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		hdmim1_rx_cec: hdmim1-rx-cec {
-+			rockchip,pins =
-+				/* hdmim1_rx_cec */
-+				<3 RK_PD1 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_rx_hpdin: hdmim1-rx-hpdin {
-+			rockchip,pins =
-+				/* hdmim1_rx_hpdin */
-+				<3 RK_PD4 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_rx_scl: hdmim1-rx-scl {
-+			rockchip,pins =
-+				/* hdmim1_rx_scl */
-+				<3 RK_PD2 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_rx_sda: hdmim1-rx-sda {
-+			rockchip,pins =
-+				/* hdmim1_rx_sda */
-+				<3 RK_PD3 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx0_cec: hdmim1-tx0-cec {
-+			rockchip,pins =
-+				/* hdmim1_tx0_cec */
-+				<0 RK_PD1 13 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx0_hpd: hdmim1-tx0-hpd {
-+			rockchip,pins =
-+				/* hdmim1_tx0_hpd */
-+				<3 RK_PD4 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx0_scl: hdmim1-tx0-scl {
-+			rockchip,pins =
-+				/* hdmim1_tx0_scl */
-+				<0 RK_PD5 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx0_sda: hdmim1-tx0-sda {
-+			rockchip,pins =
-+				/* hdmim1_tx0_sda */
-+				<0 RK_PD4 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx1_cec: hdmim1-tx1-cec {
-+			rockchip,pins =
-+				/* hdmim1_tx1_cec */
-+				<0 RK_PD2 13 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx1_hpd: hdmim1-tx1-hpd {
-+			rockchip,pins =
-+				/* hdmim1_tx1_hpd */
-+				<3 RK_PB7 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx1_scl: hdmim1-tx1-scl {
-+			rockchip,pins =
-+				/* hdmim1_tx1_scl */
-+				<3 RK_PC6 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim1_tx1_sda: hdmim1-tx1-sda {
-+			rockchip,pins =
-+				/* hdmim1_tx1_sda */
-+				<3 RK_PC5 5 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		hdmim2_rx_cec: hdmim2-rx-cec {
-+			rockchip,pins =
-+				/* hdmim2_rx_cec */
-+				<1 RK_PB7 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_rx_hpdin: hdmim2-rx-hpdin {
-+			rockchip,pins =
-+				/* hdmim2_rx_hpdin */
-+				<1 RK_PB6 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_rx_scl: hdmim2-rx-scl {
-+			rockchip,pins =
-+				/* hdmim2_rx_scl */
-+				<1 RK_PD6 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_rx_sda: hdmim2-rx-sda {
-+			rockchip,pins =
-+				/* hdmim2_rx_sda */
-+				<1 RK_PD7 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_tx0_scl: hdmim2-tx0-scl {
-+			rockchip,pins =
-+				/* hdmim2_tx0_scl */
-+				<3 RK_PC7 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_tx0_sda: hdmim2-tx0-sda {
-+			rockchip,pins =
-+				/* hdmim2_tx0_sda */
-+				<3 RK_PD0 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_tx1_cec: hdmim2-tx1-cec {
-+			rockchip,pins =
-+				/* hdmim2_tx1_cec */
-+				<3 RK_PC4 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_tx1_scl: hdmim2-tx1-scl {
-+			rockchip,pins =
-+				/* hdmim2_tx1_scl */
-+				<1 RK_PA4 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmim2_tx1_sda: hdmim2-tx1-sda {
-+			rockchip,pins =
-+				/* hdmim2_tx1_sda */
-+				<1 RK_PA3 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmi_debug0: hdmi-debug0 {
-+			rockchip,pins =
-+				/* hdmi_debug0 */
-+				<1 RK_PA7 7 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmi_debug1: hdmi-debug1 {
-+			rockchip,pins =
-+				/* hdmi_debug1 */
-+				<1 RK_PB0 7 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmi_debug2: hdmi-debug2 {
-+			rockchip,pins =
-+				/* hdmi_debug2 */
-+				<1 RK_PB1 7 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmi_debug3: hdmi-debug3 {
-+			rockchip,pins =
-+				/* hdmi_debug3 */
-+				<1 RK_PB2 7 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmi_debug4: hdmi-debug4 {
-+			rockchip,pins =
-+				/* hdmi_debug4 */
-+				<1 RK_PB3 7 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmi_debug5: hdmi-debug5 {
-+			rockchip,pins =
-+				/* hdmi_debug5 */
-+				<1 RK_PB4 7 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		hdmi_debug6: hdmi-debug6 {
-+			rockchip,pins =
-+				/* hdmi_debug6 */
-+				<1 RK_PA0 7 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	i2c0 {
-+		/omit-if-no-ref/
-+		i2c0m0_xfer: i2c0m0-xfer {
-+			rockchip,pins =
-+				/* i2c0_scl_m0 */
-+				<0 RK_PB3 2 &pcfg_pull_none_smt>,
-+				/* i2c0_sda_m0 */
-+				<0 RK_PA6 2 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c0m2_xfer: i2c0m2-xfer {
-+			rockchip,pins =
-+				/* i2c0_scl_m2 */
-+				<0 RK_PD1 3 &pcfg_pull_none_smt>,
-+				/* i2c0_sda_m2 */
-+				<0 RK_PD2 3 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c1 {
-+		/omit-if-no-ref/
-+		i2c1m0_xfer: i2c1m0-xfer {
-+			rockchip,pins =
-+				/* i2c1_scl_m0 */
-+				<0 RK_PB5 9 &pcfg_pull_none_smt>,
-+				/* i2c1_sda_m0 */
-+				<0 RK_PB6 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c1m1_xfer: i2c1m1-xfer {
-+			rockchip,pins =
-+				/* i2c1_scl_m1 */
-+				<0 RK_PB0 2 &pcfg_pull_none_smt>,
-+				/* i2c1_sda_m1 */
-+				<0 RK_PB1 2 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c1m2_xfer: i2c1m2-xfer {
-+			rockchip,pins =
-+				/* i2c1_scl_m2 */
-+				<0 RK_PD4 9 &pcfg_pull_none_smt>,
-+				/* i2c1_sda_m2 */
-+				<0 RK_PD5 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c1m3_xfer: i2c1m3-xfer {
-+			rockchip,pins =
-+				/* i2c1_scl_m3 */
-+				<2 RK_PD4 9 &pcfg_pull_none_smt>,
-+				/* i2c1_sda_m3 */
-+				<2 RK_PD5 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c1m4_xfer: i2c1m4-xfer {
-+			rockchip,pins =
-+				/* i2c1_scl_m4 */
-+				<1 RK_PD2 9 &pcfg_pull_none_smt>,
-+				/* i2c1_sda_m4 */
-+				<1 RK_PD3 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c2 {
-+		/omit-if-no-ref/
-+		i2c2m0_xfer: i2c2m0-xfer {
-+			rockchip,pins =
-+				/* i2c2_scl_m0 */
-+				<0 RK_PB7 9 &pcfg_pull_none_smt>,
-+				/* i2c2_sda_m0 */
-+				<0 RK_PC0 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c2m2_xfer: i2c2m2-xfer {
-+			rockchip,pins =
-+				/* i2c2_scl_m2 */
-+				<2 RK_PA3 9 &pcfg_pull_none_smt>,
-+				/* i2c2_sda_m2 */
-+				<2 RK_PA2 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c2m3_xfer: i2c2m3-xfer {
-+			rockchip,pins =
-+				/* i2c2_scl_m3 */
-+				<1 RK_PC5 9 &pcfg_pull_none_smt>,
-+				/* i2c2_sda_m3 */
-+				<1 RK_PC4 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c2m4_xfer: i2c2m4-xfer {
-+			rockchip,pins =
-+				/* i2c2_scl_m4 */
-+				<1 RK_PA1 9 &pcfg_pull_none_smt>,
-+				/* i2c2_sda_m4 */
-+				<1 RK_PA0 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c3 {
-+		/omit-if-no-ref/
-+		i2c3m0_xfer: i2c3m0-xfer {
-+			rockchip,pins =
-+				/* i2c3_scl_m0 */
-+				<1 RK_PC1 9 &pcfg_pull_none_smt>,
-+				/* i2c3_sda_m0 */
-+				<1 RK_PC0 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c3m1_xfer: i2c3m1-xfer {
-+			rockchip,pins =
-+				/* i2c3_scl_m1 */
-+				<3 RK_PB7 9 &pcfg_pull_none_smt>,
-+				/* i2c3_sda_m1 */
-+				<3 RK_PC0 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c3m2_xfer: i2c3m2-xfer {
-+			rockchip,pins =
-+				/* i2c3_scl_m2 */
-+				<4 RK_PA4 9 &pcfg_pull_none_smt>,
-+				/* i2c3_sda_m2 */
-+				<4 RK_PA5 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c3m4_xfer: i2c3m4-xfer {
-+			rockchip,pins =
-+				/* i2c3_scl_m4 */
-+				<4 RK_PD0 9 &pcfg_pull_none_smt>,
-+				/* i2c3_sda_m4 */
-+				<4 RK_PD1 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c4 {
-+		/omit-if-no-ref/
-+		i2c4m0_xfer: i2c4m0-xfer {
-+			rockchip,pins =
-+				/* i2c4_scl_m0 */
-+				<3 RK_PA6 9 &pcfg_pull_none_smt>,
-+				/* i2c4_sda_m0 */
-+				<3 RK_PA5 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c4m2_xfer: i2c4m2-xfer {
-+			rockchip,pins =
-+				/* i2c4_scl_m2 */
-+				<0 RK_PC5 9 &pcfg_pull_none_smt>,
-+				/* i2c4_sda_m2 */
-+				<0 RK_PC4 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c4m3_xfer: i2c4m3-xfer {
-+			rockchip,pins =
-+				/* i2c4_scl_m3 */
-+				<1 RK_PA3 9 &pcfg_pull_none_smt>,
-+				/* i2c4_sda_m3 */
-+				<1 RK_PA2 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c4m4_xfer: i2c4m4-xfer {
-+			rockchip,pins =
-+				/* i2c4_scl_m4 */
-+				<1 RK_PC7 9 &pcfg_pull_none_smt>,
-+				/* i2c4_sda_m4 */
-+				<1 RK_PC6 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c5 {
-+		/omit-if-no-ref/
-+		i2c5m0_xfer: i2c5m0-xfer {
-+			rockchip,pins =
-+				/* i2c5_scl_m0 */
-+				<3 RK_PC7 9 &pcfg_pull_none_smt>,
-+				/* i2c5_sda_m0 */
-+				<3 RK_PD0 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c5m1_xfer: i2c5m1-xfer {
-+			rockchip,pins =
-+				/* i2c5_scl_m1 */
-+				<4 RK_PB6 9 &pcfg_pull_none_smt>,
-+				/* i2c5_sda_m1 */
-+				<4 RK_PB7 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c5m2_xfer: i2c5m2-xfer {
-+			rockchip,pins =
-+				/* i2c5_scl_m2 */
-+				<4 RK_PA6 9 &pcfg_pull_none_smt>,
-+				/* i2c5_sda_m2 */
-+				<4 RK_PA7 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c5m3_xfer: i2c5m3-xfer {
-+			rockchip,pins =
-+				/* i2c5_scl_m3 */
-+				<1 RK_PB6 9 &pcfg_pull_none_smt>,
-+				/* i2c5_sda_m3 */
-+				<1 RK_PB7 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c6 {
-+		/omit-if-no-ref/
-+		i2c6m0_xfer: i2c6m0-xfer {
-+			rockchip,pins =
-+				/* i2c6_scl_m0 */
-+				<0 RK_PD0 9 &pcfg_pull_none_smt>,
-+				/* i2c6_sda_m0 */
-+				<0 RK_PC7 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c6m1_xfer: i2c6m1-xfer {
-+			rockchip,pins =
-+				/* i2c6_scl_m1 */
-+				<1 RK_PC3 9 &pcfg_pull_none_smt>,
-+				/* i2c6_sda_m1 */
-+				<1 RK_PC2 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c6m3_xfer: i2c6m3-xfer {
-+			rockchip,pins =
-+				/* i2c6_scl_m3 */
-+				<4 RK_PB1 9 &pcfg_pull_none_smt>,
-+				/* i2c6_sda_m3 */
-+				<4 RK_PB0 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c6m4_xfer: i2c6m4-xfer {
-+			rockchip,pins =
-+				/* i2c6_scl_m4 */
-+				<3 RK_PA1 9 &pcfg_pull_none_smt>,
-+				/* i2c6_sda_m4 */
-+				<3 RK_PA0 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c7 {
-+		/omit-if-no-ref/
-+		i2c7m0_xfer: i2c7m0-xfer {
-+			rockchip,pins =
-+				/* i2c7_scl_m0 */
-+				<1 RK_PD0 9 &pcfg_pull_none_smt>,
-+				/* i2c7_sda_m0 */
-+				<1 RK_PD1 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c7m2_xfer: i2c7m2-xfer {
-+			rockchip,pins =
-+				/* i2c7_scl_m2 */
-+				<3 RK_PD2 9 &pcfg_pull_none_smt>,
-+				/* i2c7_sda_m2 */
-+				<3 RK_PD3 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c7m3_xfer: i2c7m3-xfer {
-+			rockchip,pins =
-+				/* i2c7_scl_m3 */
-+				<4 RK_PB2 9 &pcfg_pull_none_smt>,
-+				/* i2c7_sda_m3 */
-+				<4 RK_PB3 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2c8 {
-+		/omit-if-no-ref/
-+		i2c8m0_xfer: i2c8m0-xfer {
-+			rockchip,pins =
-+				/* i2c8_scl_m0 */
-+				<4 RK_PD2 9 &pcfg_pull_none_smt>,
-+				/* i2c8_sda_m0 */
-+				<4 RK_PD3 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c8m2_xfer: i2c8m2-xfer {
-+			rockchip,pins =
-+				/* i2c8_scl_m2 */
-+				<1 RK_PD6 9 &pcfg_pull_none_smt>,
-+				/* i2c8_sda_m2 */
-+				<1 RK_PD7 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c8m3_xfer: i2c8m3-xfer {
-+			rockchip,pins =
-+				/* i2c8_scl_m3 */
-+				<4 RK_PC0 9 &pcfg_pull_none_smt>,
-+				/* i2c8_sda_m3 */
-+				<4 RK_PC1 9 &pcfg_pull_none_smt>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2c8m4_xfer: i2c8m4-xfer {
-+			rockchip,pins =
-+				/* i2c8_scl_m4 */
-+				<3 RK_PC2 9 &pcfg_pull_none_smt>,
-+				/* i2c8_sda_m4 */
-+				<3 RK_PC3 9 &pcfg_pull_none_smt>;
-+		};
-+	};
-+
-+	i2s0 {
-+		/omit-if-no-ref/
-+		i2s0_lrck: i2s0-lrck {
-+			rockchip,pins =
-+				/* i2s0_lrck */
-+				<1 RK_PC5 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_mclk: i2s0-mclk {
-+			rockchip,pins =
-+				/* i2s0_mclk */
-+				<1 RK_PC2 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sclk: i2s0-sclk {
-+			rockchip,pins =
-+				/* i2s0_sclk */
-+				<1 RK_PC3 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdi0: i2s0-sdi0 {
-+			rockchip,pins =
-+				/* i2s0_sdi0 */
-+				<1 RK_PD4 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdi1: i2s0-sdi1 {
-+			rockchip,pins =
-+				/* i2s0_sdi1 */
-+				<1 RK_PD3 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdi2: i2s0-sdi2 {
-+			rockchip,pins =
-+				/* i2s0_sdi2 */
-+				<1 RK_PD2 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdi3: i2s0-sdi3 {
-+			rockchip,pins =
-+				/* i2s0_sdi3 */
-+				<1 RK_PD1 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdo0: i2s0-sdo0 {
-+			rockchip,pins =
-+				/* i2s0_sdo0 */
-+				<1 RK_PC7 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdo1: i2s0-sdo1 {
-+			rockchip,pins =
-+				/* i2s0_sdo1 */
-+				<1 RK_PD0 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdo2: i2s0-sdo2 {
-+			rockchip,pins =
-+				/* i2s0_sdo2 */
-+				<1 RK_PD1 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s0_sdo3: i2s0-sdo3 {
-+			rockchip,pins =
-+				/* i2s0_sdo3 */
-+				<1 RK_PD2 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	i2s1 {
-+		/omit-if-no-ref/
-+		i2s1m0_lrck: i2s1m0-lrck {
-+			rockchip,pins =
-+				/* i2s1m0_lrck */
-+				<4 RK_PA2 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_mclk: i2s1m0-mclk {
-+			rockchip,pins =
-+				/* i2s1m0_mclk */
-+				<4 RK_PA0 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sclk: i2s1m0-sclk {
-+			rockchip,pins =
-+				/* i2s1m0_sclk */
-+				<4 RK_PA1 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdi0: i2s1m0-sdi0 {
-+			rockchip,pins =
-+				/* i2s1m0_sdi0 */
-+				<4 RK_PA5 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdi1: i2s1m0-sdi1 {
-+			rockchip,pins =
-+				/* i2s1m0_sdi1 */
-+				<4 RK_PA6 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdi2: i2s1m0-sdi2 {
-+			rockchip,pins =
-+				/* i2s1m0_sdi2 */
-+				<4 RK_PA7 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdi3: i2s1m0-sdi3 {
-+			rockchip,pins =
-+				/* i2s1m0_sdi3 */
-+				<4 RK_PB0 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdo0: i2s1m0-sdo0 {
-+			rockchip,pins =
-+				/* i2s1m0_sdo0 */
-+				<4 RK_PB1 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdo1: i2s1m0-sdo1 {
-+			rockchip,pins =
-+				/* i2s1m0_sdo1 */
-+				<4 RK_PB2 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdo2: i2s1m0-sdo2 {
-+			rockchip,pins =
-+				/* i2s1m0_sdo2 */
-+				<4 RK_PB3 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m0_sdo3: i2s1m0-sdo3 {
-+			rockchip,pins =
-+				/* i2s1m0_sdo3 */
-+				<4 RK_PB4 3 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		i2s1m1_lrck: i2s1m1-lrck {
-+			rockchip,pins =
-+				/* i2s1m1_lrck */
-+				<0 RK_PB7 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_mclk: i2s1m1-mclk {
-+			rockchip,pins =
-+				/* i2s1m1_mclk */
-+				<0 RK_PB5 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sclk: i2s1m1-sclk {
-+			rockchip,pins =
-+				/* i2s1m1_sclk */
-+				<0 RK_PB6 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdi0: i2s1m1-sdi0 {
-+			rockchip,pins =
-+				/* i2s1m1_sdi0 */
-+				<0 RK_PC5 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdi1: i2s1m1-sdi1 {
-+			rockchip,pins =
-+				/* i2s1m1_sdi1 */
-+				<0 RK_PC6 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdi2: i2s1m1-sdi2 {
-+			rockchip,pins =
-+				/* i2s1m1_sdi2 */
-+				<0 RK_PC7 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdi3: i2s1m1-sdi3 {
-+			rockchip,pins =
-+				/* i2s1m1_sdi3 */
-+				<0 RK_PD0 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdo0: i2s1m1-sdo0 {
-+			rockchip,pins =
-+				/* i2s1m1_sdo0 */
-+				<0 RK_PD1 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdo1: i2s1m1-sdo1 {
-+			rockchip,pins =
-+				/* i2s1m1_sdo1 */
-+				<0 RK_PD2 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdo2: i2s1m1-sdo2 {
-+			rockchip,pins =
-+				/* i2s1m1_sdo2 */
-+				<0 RK_PD4 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s1m1_sdo3: i2s1m1-sdo3 {
-+			rockchip,pins =
-+				/* i2s1m1_sdo3 */
-+				<0 RK_PD5 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	i2s2 {
-+		/omit-if-no-ref/
-+		i2s2m1_lrck: i2s2m1-lrck {
-+			rockchip,pins =
-+				/* i2s2m1_lrck */
-+				<3 RK_PB6 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s2m1_mclk: i2s2m1-mclk {
-+			rockchip,pins =
-+				/* i2s2m1_mclk */
-+				<3 RK_PB4 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s2m1_sclk: i2s2m1-sclk {
-+			rockchip,pins =
-+				/* i2s2m1_sclk */
-+				<3 RK_PB5 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s2m1_sdi: i2s2m1-sdi {
-+			rockchip,pins =
-+				/* i2s2m1_sdi */
-+				<3 RK_PB2 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s2m1_sdo: i2s2m1-sdo {
-+			rockchip,pins =
-+				/* i2s2m1_sdo */
-+				<3 RK_PB3 3 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	i2s3 {
-+		/omit-if-no-ref/
-+		i2s3_lrck: i2s3-lrck {
-+			rockchip,pins =
-+				/* i2s3_lrck */
-+				<3 RK_PA2 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s3_mclk: i2s3-mclk {
-+			rockchip,pins =
-+				/* i2s3_mclk */
-+				<3 RK_PA0 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s3_sclk: i2s3-sclk {
-+			rockchip,pins =
-+				/* i2s3_sclk */
-+				<3 RK_PA1 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s3_sdi: i2s3-sdi {
-+			rockchip,pins =
-+				/* i2s3_sdi */
-+				<3 RK_PA4 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		i2s3_sdo: i2s3-sdo {
-+			rockchip,pins =
-+				/* i2s3_sdo */
-+				<3 RK_PA3 3 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	jtag {
-+		/omit-if-no-ref/
-+		jtagm0_pins: jtagm0-pins {
-+			rockchip,pins =
-+				/* jtag_tck_m0 */
-+				<4 RK_PD2 5 &pcfg_pull_none>,
-+				/* jtag_tms_m0 */
-+				<4 RK_PD3 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		jtagm1_pins: jtagm1-pins {
-+			rockchip,pins =
-+				/* jtag_tck_m1 */
-+				<4 RK_PD0 5 &pcfg_pull_none>,
-+				/* jtag_tms_m1 */
-+				<4 RK_PD1 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		jtagm2_pins: jtagm2-pins {
-+			rockchip,pins =
-+				/* jtag_tck_m2 */
-+				<0 RK_PB5 2 &pcfg_pull_none>,
-+				/* jtag_tms_m2 */
-+				<0 RK_PB6 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	litcpu {
-+		/omit-if-no-ref/
-+		litcpu_pins: litcpu-pins {
-+			rockchip,pins =
-+				/* litcpu_avs */
-+				<0 RK_PD3 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	mcu {
-+		/omit-if-no-ref/
-+		mcum0_pins: mcum0-pins {
-+			rockchip,pins =
-+				/* mcu_jtag_tck_m0 */
-+				<4 RK_PD4 5 &pcfg_pull_none>,
-+				/* mcu_jtag_tms_m0 */
-+				<4 RK_PD5 5 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mcum1_pins: mcum1-pins {
-+			rockchip,pins =
-+				/* mcu_jtag_tck_m1 */
-+				<3 RK_PD4 6 &pcfg_pull_none>,
-+				/* mcu_jtag_tms_m1 */
-+				<3 RK_PD5 6 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	mipi {
-+		/omit-if-no-ref/
-+		mipim0_camera0_clk: mipim0-camera0-clk {
-+			rockchip,pins =
-+				/* mipim0_camera0_clk */
-+				<4 RK_PB1 1 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim0_camera1_clk: mipim0-camera1-clk {
-+			rockchip,pins =
-+				/* mipim0_camera1_clk */
-+				<1 RK_PB6 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim0_camera2_clk: mipim0-camera2-clk {
-+			rockchip,pins =
-+				/* mipim0_camera2_clk */
-+				<1 RK_PB7 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim0_camera3_clk: mipim0-camera3-clk {
-+			rockchip,pins =
-+				/* mipim0_camera3_clk */
-+				<1 RK_PD6 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim0_camera4_clk: mipim0-camera4-clk {
-+			rockchip,pins =
-+				/* mipim0_camera4_clk */
-+				<1 RK_PD7 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim1_camera0_clk: mipim1-camera0-clk {
-+			rockchip,pins =
-+				/* mipim1_camera0_clk */
-+				<3 RK_PA5 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim1_camera1_clk: mipim1-camera1-clk {
-+			rockchip,pins =
-+				/* mipim1_camera1_clk */
-+				<3 RK_PA6 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim1_camera2_clk: mipim1-camera2-clk {
-+			rockchip,pins =
-+				/* mipim1_camera2_clk */
-+				<3 RK_PA7 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim1_camera3_clk: mipim1-camera3-clk {
-+			rockchip,pins =
-+				/* mipim1_camera3_clk */
-+				<3 RK_PB0 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipim1_camera4_clk: mipim1-camera4-clk {
-+			rockchip,pins =
-+				/* mipim1_camera4_clk */
-+				<3 RK_PB1 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipi_te0: mipi-te0 {
-+			rockchip,pins =
-+				/* mipi_te0 */
-+				<3 RK_PC2 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		mipi_te1: mipi-te1 {
-+			rockchip,pins =
-+				/* mipi_te1 */
-+				<3 RK_PC3 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	npu {
-+		/omit-if-no-ref/
-+		npu_pins: npu-pins {
-+			rockchip,pins =
-+				/* npu_avs */
-+				<0 RK_PC6 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie20x1 {
-+		/omit-if-no-ref/
-+		pcie20x1m0_pins: pcie20x1m0-pins {
-+			rockchip,pins =
-+				/* pcie20x1_2_clkreqn_m0 */
-+				<3 RK_PC7 4 &pcfg_pull_none>,
-+				/* pcie20x1_2_perstn_m0 */
-+				<3 RK_PD1 4 &pcfg_pull_none>,
-+				/* pcie20x1_2_waken_m0 */
-+				<3 RK_PD0 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie20x1m1_pins: pcie20x1m1-pins {
-+			rockchip,pins =
-+				/* pcie20x1_2_clkreqn_m1 */
-+				<4 RK_PB7 4 &pcfg_pull_none>,
-+				/* pcie20x1_2_perstn_m1 */
-+				<4 RK_PC1 4 &pcfg_pull_none>,
-+				/* pcie20x1_2_waken_m1 */
-+				<4 RK_PC0 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie20x1_2_button_rstn: pcie20x1-2-button-rstn {
-+			rockchip,pins =
-+				/* pcie20x1_2_button_rstn */
-+				<4 RK_PB3 4 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie30phy {
-+		/omit-if-no-ref/
-+		pcie30phy_pins: pcie30phy-pins {
-+			rockchip,pins =
-+				/* pcie30phy_dtb0 */
-+				<1 RK_PC4 4 &pcfg_pull_none>,
-+				/* pcie30phy_dtb1 */
-+				<1 RK_PD1 4 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie30x1 {
-+		/omit-if-no-ref/
-+		pcie30x1m0_pins: pcie30x1m0-pins {
-+			rockchip,pins =
-+				/* pcie30x1_0_clkreqn_m0 */
-+				<0 RK_PC0 12 &pcfg_pull_none>,
-+				/* pcie30x1_0_perstn_m0 */
-+				<0 RK_PC5 12 &pcfg_pull_none>,
-+				/* pcie30x1_0_waken_m0 */
-+				<0 RK_PC4 12 &pcfg_pull_none>,
-+				/* pcie30x1_1_clkreqn_m0 */
-+				<0 RK_PB5 12 &pcfg_pull_none>,
-+				/* pcie30x1_1_perstn_m0 */
-+				<0 RK_PB7 12 &pcfg_pull_none>,
-+				/* pcie30x1_1_waken_m0 */
-+				<0 RK_PB6 12 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x1m1_pins: pcie30x1m1-pins {
-+			rockchip,pins =
-+				/* pcie30x1_0_clkreqn_m1 */
-+				<4 RK_PA3 4 &pcfg_pull_none>,
-+				/* pcie30x1_0_perstn_m1 */
-+				<4 RK_PA5 4 &pcfg_pull_none>,
-+				/* pcie30x1_0_waken_m1 */
-+				<4 RK_PA4 4 &pcfg_pull_none>,
-+				/* pcie30x1_1_clkreqn_m1 */
-+				<4 RK_PA0 4 &pcfg_pull_none>,
-+				/* pcie30x1_1_perstn_m1 */
-+				<4 RK_PA2 4 &pcfg_pull_none>,
-+				/* pcie30x1_1_waken_m1 */
-+				<4 RK_PA1 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x1m2_pins: pcie30x1m2-pins {
-+			rockchip,pins =
-+				/* pcie30x1_0_clkreqn_m2 */
-+				<1 RK_PB5 4 &pcfg_pull_none>,
-+				/* pcie30x1_0_perstn_m2 */
-+				<1 RK_PB4 4 &pcfg_pull_none>,
-+				/* pcie30x1_0_waken_m2 */
-+				<1 RK_PB3 4 &pcfg_pull_none>,
-+				/* pcie30x1_1_clkreqn_m2 */
-+				<1 RK_PA0 4 &pcfg_pull_none>,
-+				/* pcie30x1_1_perstn_m2 */
-+				<1 RK_PA7 4 &pcfg_pull_none>,
-+				/* pcie30x1_1_waken_m2 */
-+				<1 RK_PA1 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x1_0_button_rstn: pcie30x1-0-button-rstn {
-+			rockchip,pins =
-+				/* pcie30x1_0_button_rstn */
-+				<4 RK_PB1 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x1_1_button_rstn: pcie30x1-1-button-rstn {
-+			rockchip,pins =
-+				/* pcie30x1_1_button_rstn */
-+				<4 RK_PB2 4 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie30x2 {
-+		/omit-if-no-ref/
-+		pcie30x2m0_pins: pcie30x2m0-pins {
-+			rockchip,pins =
-+				/* pcie30x2_clkreqn_m0 */
-+				<0 RK_PD1 12 &pcfg_pull_none>,
-+				/* pcie30x2_perstn_m0 */
-+				<0 RK_PD4 12 &pcfg_pull_none>,
-+				/* pcie30x2_waken_m0 */
-+				<0 RK_PD2 12 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x2m1_pins: pcie30x2m1-pins {
-+			rockchip,pins =
-+				/* pcie30x2_clkreqn_m1 */
-+				<4 RK_PA6 4 &pcfg_pull_none>,
-+				/* pcie30x2_perstn_m1 */
-+				<4 RK_PB0 4 &pcfg_pull_none>,
-+				/* pcie30x2_waken_m1 */
-+				<4 RK_PA7 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x2m2_pins: pcie30x2m2-pins {
-+			rockchip,pins =
-+				/* pcie30x2_clkreqn_m2 */
-+				<3 RK_PD2 4 &pcfg_pull_none>,
-+				/* pcie30x2_perstn_m2 */
-+				<3 RK_PD4 4 &pcfg_pull_none>,
-+				/* pcie30x2_waken_m2 */
-+				<3 RK_PD3 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x2m3_pins: pcie30x2m3-pins {
-+			rockchip,pins =
-+				/* pcie30x2_clkreqn_m3 */
-+				<1 RK_PD7 4 &pcfg_pull_none>,
-+				/* pcie30x2_perstn_m3 */
-+				<1 RK_PB7 4 &pcfg_pull_none>,
-+				/* pcie30x2_waken_m3 */
-+				<1 RK_PB6 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x2_button_rstn: pcie30x2-button-rstn {
-+			rockchip,pins =
-+				/* pcie30x2_button_rstn */
-+				<3 RK_PC1 4 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie30x4 {
-+		/omit-if-no-ref/
-+		pcie30x4m0_pins: pcie30x4m0-pins {
-+			rockchip,pins =
-+				/* pcie30x4_clkreqn_m0 */
-+				<0 RK_PC6 12 &pcfg_pull_none>,
-+				/* pcie30x4_perstn_m0 */
-+				<0 RK_PD0 12 &pcfg_pull_none>,
-+				/* pcie30x4_waken_m0 */
-+				<0 RK_PC7 12 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x4m1_pins: pcie30x4m1-pins {
-+			rockchip,pins =
-+				/* pcie30x4_clkreqn_m1 */
-+				<4 RK_PB4 4 &pcfg_pull_none>,
-+				/* pcie30x4_perstn_m1 */
-+				<4 RK_PB6 4 &pcfg_pull_none>,
-+				/* pcie30x4_waken_m1 */
-+				<4 RK_PB5 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x4m2_pins: pcie30x4m2-pins {
-+			rockchip,pins =
-+				/* pcie30x4_clkreqn_m2 */
-+				<3 RK_PC4 4 &pcfg_pull_none>,
-+				/* pcie30x4_perstn_m2 */
-+				<3 RK_PC6 4 &pcfg_pull_none>,
-+				/* pcie30x4_waken_m2 */
-+				<3 RK_PC5 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x4m3_pins: pcie30x4m3-pins {
-+			rockchip,pins =
-+				/* pcie30x4_clkreqn_m3 */
-+				<1 RK_PB0 4 &pcfg_pull_none>,
-+				/* pcie30x4_perstn_m3 */
-+				<1 RK_PB2 4 &pcfg_pull_none>,
-+				/* pcie30x4_waken_m3 */
-+				<1 RK_PB1 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pcie30x4_button_rstn: pcie30x4-button-rstn {
-+			rockchip,pins =
-+				/* pcie30x4_button_rstn */
-+				<3 RK_PD5 4 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pdm0 {
-+		/omit-if-no-ref/
-+		pdm0m0_clk: pdm0m0-clk {
-+			rockchip,pins =
-+				/* pdm0_clk0_m0 */
-+				<1 RK_PC6 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m0_clk1: pdm0m0-clk1 {
-+			rockchip,pins =
-+				/* pdm0m0_clk1 */
-+				<1 RK_PC4 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m0_sdi0: pdm0m0-sdi0 {
-+			rockchip,pins =
-+				/* pdm0m0_sdi0 */
-+				<1 RK_PD5 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m0_sdi1: pdm0m0-sdi1 {
-+			rockchip,pins =
-+				/* pdm0m0_sdi1 */
-+				<1 RK_PD1 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m0_sdi2: pdm0m0-sdi2 {
-+			rockchip,pins =
-+				/* pdm0m0_sdi2 */
-+				<1 RK_PD2 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m0_sdi3: pdm0m0-sdi3 {
-+			rockchip,pins =
-+				/* pdm0m0_sdi3 */
-+				<1 RK_PD3 3 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pdm0m1_clk: pdm0m1-clk {
-+			rockchip,pins =
-+				/* pdm0_clk0_m1 */
-+				<0 RK_PC0 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m1_clk1: pdm0m1-clk1 {
-+			rockchip,pins =
-+				/* pdm0m1_clk1 */
-+				<0 RK_PC4 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m1_sdi0: pdm0m1-sdi0 {
-+			rockchip,pins =
-+				/* pdm0m1_sdi0 */
-+				<0 RK_PC7 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m1_sdi1: pdm0m1-sdi1 {
-+			rockchip,pins =
-+				/* pdm0m1_sdi1 */
-+				<0 RK_PD0 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m1_sdi2: pdm0m1-sdi2 {
-+			rockchip,pins =
-+				/* pdm0m1_sdi2 */
-+				<0 RK_PD4 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm0m1_sdi3: pdm0m1-sdi3 {
-+			rockchip,pins =
-+				/* pdm0m1_sdi3 */
-+				<0 RK_PD6 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pdm1 {
-+		/omit-if-no-ref/
-+		pdm1m0_clk: pdm1m0-clk {
-+			rockchip,pins =
-+				/* pdm1_clk0_m0 */
-+				<4 RK_PD5 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m0_clk1: pdm1m0-clk1 {
-+			rockchip,pins =
-+				/* pdm1m0_clk1 */
-+				<4 RK_PD4 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m0_sdi0: pdm1m0-sdi0 {
-+			rockchip,pins =
-+				/* pdm1m0_sdi0 */
-+				<4 RK_PD3 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m0_sdi1: pdm1m0-sdi1 {
-+			rockchip,pins =
-+				/* pdm1m0_sdi1 */
-+				<4 RK_PD2 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m0_sdi2: pdm1m0-sdi2 {
-+			rockchip,pins =
-+				/* pdm1m0_sdi2 */
-+				<4 RK_PD1 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m0_sdi3: pdm1m0-sdi3 {
-+			rockchip,pins =
-+				/* pdm1m0_sdi3 */
-+				<4 RK_PD0 2 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pdm1m1_clk: pdm1m1-clk {
-+			rockchip,pins =
-+				/* pdm1_clk0_m1 */
-+				<1 RK_PB4 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m1_clk1: pdm1m1-clk1 {
-+			rockchip,pins =
-+				/* pdm1m1_clk1 */
-+				<1 RK_PB3 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m1_sdi0: pdm1m1-sdi0 {
-+			rockchip,pins =
-+				/* pdm1m1_sdi0 */
-+				<1 RK_PA7 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m1_sdi1: pdm1m1-sdi1 {
-+			rockchip,pins =
-+				/* pdm1m1_sdi1 */
-+				<1 RK_PB0 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m1_sdi2: pdm1m1-sdi2 {
-+			rockchip,pins =
-+				/* pdm1m1_sdi2 */
-+				<1 RK_PB1 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pdm1m1_sdi3: pdm1m1-sdi3 {
-+			rockchip,pins =
-+				/* pdm1m1_sdi3 */
-+				<1 RK_PB2 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pmic {
-+		/omit-if-no-ref/
-+		pmic_pins: pmic-pins {
-+			rockchip,pins =
-+				/* pmic_int_l */
-+				<0 RK_PA7 0 &pcfg_pull_up>,
-+				/* pmic_sleep1 */
-+				<0 RK_PA2 1 &pcfg_pull_none>,
-+				/* pmic_sleep2 */
-+				<0 RK_PA3 1 &pcfg_pull_none>,
-+				/* pmic_sleep3 */
-+				<0 RK_PC1 1 &pcfg_pull_none>,
-+				/* pmic_sleep4 */
-+				<0 RK_PC2 1 &pcfg_pull_none>,
-+				/* pmic_sleep5 */
-+				<0 RK_PC3 1 &pcfg_pull_none>,
-+				/* pmic_sleep6 */
-+				<0 RK_PD6 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pmu {
-+		/omit-if-no-ref/
-+		pmu_pins: pmu-pins {
-+			rockchip,pins =
-+				/* pmu_debug */
-+				<0 RK_PA5 3 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm0 {
-+		/omit-if-no-ref/
-+		pwm0m0_pins: pwm0m0-pins {
-+			rockchip,pins =
-+				/* pwm0_m0 */
-+				<0 RK_PB7 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm0m1_pins: pwm0m1-pins {
-+			rockchip,pins =
-+				/* pwm0_m1 */
-+				<1 RK_PD2 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm0m2_pins: pwm0m2-pins {
-+			rockchip,pins =
-+				/* pwm0_m2 */
-+				<1 RK_PA2 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm1 {
-+		/omit-if-no-ref/
-+		pwm1m0_pins: pwm1m0-pins {
-+			rockchip,pins =
-+				/* pwm1_m0 */
-+				<0 RK_PC0 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm1m1_pins: pwm1m1-pins {
-+			rockchip,pins =
-+				/* pwm1_m1 */
-+				<1 RK_PD3 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm1m2_pins: pwm1m2-pins {
-+			rockchip,pins =
-+				/* pwm1_m2 */
-+				<1 RK_PA3 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm2 {
-+		/omit-if-no-ref/
-+		pwm2m0_pins: pwm2m0-pins {
-+			rockchip,pins =
-+				/* pwm2_m0 */
-+				<0 RK_PC4 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm2m1_pins: pwm2m1-pins {
-+			rockchip,pins =
-+				/* pwm2_m1 */
-+				<3 RK_PB1 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm3 {
-+		/omit-if-no-ref/
-+		pwm3m0_pins: pwm3m0-pins {
-+			rockchip,pins =
-+				/* pwm3_ir_m0 */
-+				<0 RK_PD4 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm3m1_pins: pwm3m1-pins {
-+			rockchip,pins =
-+				/* pwm3_ir_m1 */
-+				<3 RK_PB2 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm3m2_pins: pwm3m2-pins {
-+			rockchip,pins =
-+				/* pwm3_ir_m2 */
-+				<1 RK_PC2 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm3m3_pins: pwm3m3-pins {
-+			rockchip,pins =
-+				/* pwm3_ir_m3 */
-+				<1 RK_PA7 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm4 {
-+		/omit-if-no-ref/
-+		pwm4m0_pins: pwm4m0-pins {
-+			rockchip,pins =
-+				/* pwm4_m0 */
-+				<0 RK_PC5 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm5 {
-+		/omit-if-no-ref/
-+		pwm5m0_pins: pwm5m0-pins {
-+			rockchip,pins =
-+				/* pwm5_m0 */
-+				<0 RK_PB1 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm5m1_pins: pwm5m1-pins {
-+			rockchip,pins =
-+				/* pwm5_m1 */
-+				<0 RK_PC6 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm6 {
-+		/omit-if-no-ref/
-+		pwm6m0_pins: pwm6m0-pins {
-+			rockchip,pins =
-+				/* pwm6_m0 */
-+				<0 RK_PC7 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm6m1_pins: pwm6m1-pins {
-+			rockchip,pins =
-+				/* pwm6_m1 */
-+				<4 RK_PC1 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm7 {
-+		/omit-if-no-ref/
-+		pwm7m0_pins: pwm7m0-pins {
-+			rockchip,pins =
-+				/* pwm7_ir_m0 */
-+				<0 RK_PD0 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm7m1_pins: pwm7m1-pins {
-+			rockchip,pins =
-+				/* pwm7_ir_m1 */
-+				<4 RK_PD4 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm7m2_pins: pwm7m2-pins {
-+			rockchip,pins =
-+				/* pwm7_ir_m2 */
-+				<1 RK_PC3 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm8 {
-+		/omit-if-no-ref/
-+		pwm8m0_pins: pwm8m0-pins {
-+			rockchip,pins =
-+				/* pwm8_m0 */
-+				<3 RK_PA7 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm8m1_pins: pwm8m1-pins {
-+			rockchip,pins =
-+				/* pwm8_m1 */
-+				<4 RK_PD0 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm8m2_pins: pwm8m2-pins {
-+			rockchip,pins =
-+				/* pwm8_m2 */
-+				<3 RK_PD0 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm9 {
-+		/omit-if-no-ref/
-+		pwm9m0_pins: pwm9m0-pins {
-+			rockchip,pins =
-+				/* pwm9_m0 */
-+				<3 RK_PB0 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm9m1_pins: pwm9m1-pins {
-+			rockchip,pins =
-+				/* pwm9_m1 */
-+				<4 RK_PD1 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm9m2_pins: pwm9m2-pins {
-+			rockchip,pins =
-+				/* pwm9_m2 */
-+				<3 RK_PD1 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm10 {
-+		/omit-if-no-ref/
-+		pwm10m0_pins: pwm10m0-pins {
-+			rockchip,pins =
-+				/* pwm10_m0 */
-+				<3 RK_PA0 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm10m1_pins: pwm10m1-pins {
-+			rockchip,pins =
-+				/* pwm10_m1 */
-+				<4 RK_PD3 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm10m2_pins: pwm10m2-pins {
-+			rockchip,pins =
-+				/* pwm10_m2 */
-+				<3 RK_PD3 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm11 {
-+		/omit-if-no-ref/
-+		pwm11m0_pins: pwm11m0-pins {
-+			rockchip,pins =
-+				/* pwm11_ir_m0 */
-+				<3 RK_PA1 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm11m1_pins: pwm11m1-pins {
-+			rockchip,pins =
-+				/* pwm11_ir_m1 */
-+				<4 RK_PB4 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm11m2_pins: pwm11m2-pins {
-+			rockchip,pins =
-+				/* pwm11_ir_m2 */
-+				<1 RK_PC4 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm11m3_pins: pwm11m3-pins {
-+			rockchip,pins =
-+				/* pwm11_ir_m3 */
-+				<3 RK_PD5 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm12 {
-+		/omit-if-no-ref/
-+		pwm12m0_pins: pwm12m0-pins {
-+			rockchip,pins =
-+				/* pwm12_m0 */
-+				<3 RK_PB5 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm12m1_pins: pwm12m1-pins {
-+			rockchip,pins =
-+				/* pwm12_m1 */
-+				<4 RK_PB5 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm13 {
-+		/omit-if-no-ref/
-+		pwm13m0_pins: pwm13m0-pins {
-+			rockchip,pins =
-+				/* pwm13_m0 */
-+				<3 RK_PB6 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm13m1_pins: pwm13m1-pins {
-+			rockchip,pins =
-+				/* pwm13_m1 */
-+				<4 RK_PB6 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm13m2_pins: pwm13m2-pins {
-+			rockchip,pins =
-+				/* pwm13_m2 */
-+				<1 RK_PB7 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm14 {
-+		/omit-if-no-ref/
-+		pwm14m0_pins: pwm14m0-pins {
-+			rockchip,pins =
-+				/* pwm14_m0 */
-+				<3 RK_PC2 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm14m1_pins: pwm14m1-pins {
-+			rockchip,pins =
-+				/* pwm14_m1 */
-+				<4 RK_PB2 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm14m2_pins: pwm14m2-pins {
-+			rockchip,pins =
-+				/* pwm14_m2 */
-+				<1 RK_PD6 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pwm15 {
-+		/omit-if-no-ref/
-+		pwm15m0_pins: pwm15m0-pins {
-+			rockchip,pins =
-+				/* pwm15_ir_m0 */
-+				<3 RK_PC3 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm15m1_pins: pwm15m1-pins {
-+			rockchip,pins =
-+				/* pwm15_ir_m1 */
-+				<4 RK_PB3 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm15m2_pins: pwm15m2-pins {
-+			rockchip,pins =
-+				/* pwm15_ir_m2 */
-+				<1 RK_PC6 11 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		pwm15m3_pins: pwm15m3-pins {
-+			rockchip,pins =
-+				/* pwm15_ir_m3 */
-+				<1 RK_PD7 11 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	refclk {
-+		/omit-if-no-ref/
-+		refclk_pins: refclk-pins {
-+			rockchip,pins =
-+				/* refclk_out */
-+				<0 RK_PA0 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sata {
-+		/omit-if-no-ref/
-+		sata_pins: sata-pins {
-+			rockchip,pins =
-+				/* sata_cp_pod */
-+				<0 RK_PC6 13 &pcfg_pull_none>,
-+				/* sata_cpdet */
-+				<0 RK_PD4 13 &pcfg_pull_none>,
-+				/* sata_mp_switch */
-+				<0 RK_PD5 13 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sata0 {
-+		/omit-if-no-ref/
-+		sata0m0_pins: sata0m0-pins {
-+			rockchip,pins =
-+				/* sata0_act_led_m0 */
-+				<4 RK_PB6 6 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		sata0m1_pins: sata0m1-pins {
-+			rockchip,pins =
-+				/* sata0_act_led_m1 */
-+				<1 RK_PB3 6 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sata1 {
-+		/omit-if-no-ref/
-+		sata1m0_pins: sata1m0-pins {
-+			rockchip,pins =
-+				/* sata1_act_led_m0 */
-+				<4 RK_PB5 6 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		sata1m1_pins: sata1m1-pins {
-+			rockchip,pins =
-+				/* sata1_act_led_m1 */
-+				<1 RK_PA1 6 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sata2 {
-+		/omit-if-no-ref/
-+		sata2m0_pins: sata2m0-pins {
-+			rockchip,pins =
-+				/* sata2_act_led_m0 */
-+				<4 RK_PB1 6 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		sata2m1_pins: sata2m1-pins {
-+			rockchip,pins =
-+				/* sata2_act_led_m1 */
-+				<1 RK_PB7 6 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sdio {
-+		/omit-if-no-ref/
-+		sdiom1_pins: sdiom1-pins {
-+			rockchip,pins =
-+				/* sdio_clk_m1 */
-+				<3 RK_PA5 2 &pcfg_pull_none>,
-+				/* sdio_cmd_m1 */
-+				<3 RK_PA4 2 &pcfg_pull_none>,
-+				/* sdio_d0_m1 */
-+				<3 RK_PA0 2 &pcfg_pull_none>,
-+				/* sdio_d1_m1 */
-+				<3 RK_PA1 2 &pcfg_pull_none>,
-+				/* sdio_d2_m1 */
-+				<3 RK_PA2 2 &pcfg_pull_none>,
-+				/* sdio_d3_m1 */
-+				<3 RK_PA3 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sdmmc {
-+		/omit-if-no-ref/
-+		sdmmc_bus4: sdmmc-bus4 {
-+			rockchip,pins =
-+				/* sdmmc_d0 */
-+				<4 RK_PD0 1 &pcfg_pull_up_drv_level_2>,
-+				/* sdmmc_d1 */
-+				<4 RK_PD1 1 &pcfg_pull_up_drv_level_2>,
-+				/* sdmmc_d2 */
-+				<4 RK_PD2 1 &pcfg_pull_up_drv_level_2>,
-+				/* sdmmc_d3 */
-+				<4 RK_PD3 1 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		sdmmc_clk: sdmmc-clk {
-+			rockchip,pins =
-+				/* sdmmc_clk */
-+				<4 RK_PD5 1 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		sdmmc_cmd: sdmmc-cmd {
-+			rockchip,pins =
-+				/* sdmmc_cmd */
-+				<4 RK_PD4 1 &pcfg_pull_up_drv_level_2>;
-+		};
-+
-+		/omit-if-no-ref/
-+		sdmmc_det: sdmmc-det {
-+			rockchip,pins =
-+				/* sdmmc_det */
-+				<0 RK_PA4 1 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		sdmmc_pwren: sdmmc-pwren {
-+			rockchip,pins =
-+				/* sdmmc_pwren */
-+				<0 RK_PA5 2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	spdif0 {
-+		/omit-if-no-ref/
-+		spdif0m0_tx: spdif0m0-tx {
-+			rockchip,pins =
-+				/* spdif0m0_tx */
-+				<1 RK_PB6 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spdif0m1_tx: spdif0m1-tx {
-+			rockchip,pins =
-+				/* spdif0m1_tx */
-+				<4 RK_PB4 6 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	spdif1 {
-+		/omit-if-no-ref/
-+		spdif1m0_tx: spdif1m0-tx {
-+			rockchip,pins =
-+				/* spdif1m0_tx */
-+				<1 RK_PB7 3 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spdif1m1_tx: spdif1m1-tx {
-+			rockchip,pins =
-+				/* spdif1m1_tx */
-+				<4 RK_PB1 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spdif1m2_tx: spdif1m2-tx {
-+			rockchip,pins =
-+				/* spdif1m2_tx */
-+				<4 RK_PC1 3 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	spi0 {
-+		/omit-if-no-ref/
-+		spi0m0_pins: spi0m0-pins {
-+			rockchip,pins =
-+				/* spi0_clk_m0 */
-+				<0 RK_PC6 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_miso_m0 */
-+				<0 RK_PC7 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_mosi_m0 */
-+				<0 RK_PC0 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m0_cs0: spi0m0-cs0 {
-+			rockchip,pins =
-+				/* spi0_cs0_m0 */
-+				<0 RK_PD1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m0_cs1: spi0m0-cs1 {
-+			rockchip,pins =
-+				/* spi0_cs1_m0 */
-+				<0 RK_PB7 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+		/omit-if-no-ref/
-+		spi0m1_pins: spi0m1-pins {
-+			rockchip,pins =
-+				/* spi0_clk_m1 */
-+				<4 RK_PA2 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_miso_m1 */
-+				<4 RK_PA0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_mosi_m1 */
-+				<4 RK_PA1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m1_cs0: spi0m1-cs0 {
-+			rockchip,pins =
-+				/* spi0_cs0_m1 */
-+				<4 RK_PB2 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m1_cs1: spi0m1-cs1 {
-+			rockchip,pins =
-+				/* spi0_cs1_m1 */
-+				<4 RK_PB1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+		/omit-if-no-ref/
-+		spi0m2_pins: spi0m2-pins {
-+			rockchip,pins =
-+				/* spi0_clk_m2 */
-+				<1 RK_PB3 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_miso_m2 */
-+				<1 RK_PB1 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_mosi_m2 */
-+				<1 RK_PB2 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m2_cs0: spi0m2-cs0 {
-+			rockchip,pins =
-+				/* spi0_cs0_m2 */
-+				<1 RK_PB4 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m2_cs1: spi0m2-cs1 {
-+			rockchip,pins =
-+				/* spi0_cs1_m2 */
-+				<1 RK_PB5 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+		/omit-if-no-ref/
-+		spi0m3_pins: spi0m3-pins {
-+			rockchip,pins =
-+				/* spi0_clk_m3 */
-+				<3 RK_PD3 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_miso_m3 */
-+				<3 RK_PD1 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi0_mosi_m3 */
-+				<3 RK_PD2 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m3_cs0: spi0m3-cs0 {
-+			rockchip,pins =
-+				/* spi0_cs0_m3 */
-+				<3 RK_PD4 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi0m3_cs1: spi0m3-cs1 {
-+			rockchip,pins =
-+				/* spi0_cs1_m3 */
-+				<3 RK_PD5 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+	};
-+
-+	spi1 {
-+		/omit-if-no-ref/
-+		spi1m1_pins: spi1m1-pins {
-+			rockchip,pins =
-+				/* spi1_clk_m1 */
-+				<3 RK_PC1 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi1_miso_m1 */
-+				<3 RK_PC0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi1_mosi_m1 */
-+				<3 RK_PB7 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi1m1_cs0: spi1m1-cs0 {
-+			rockchip,pins =
-+				/* spi1_cs0_m1 */
-+				<3 RK_PC2 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi1m1_cs1: spi1m1-cs1 {
-+			rockchip,pins =
-+				/* spi1_cs1_m1 */
-+				<3 RK_PC3 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi1m2_pins: spi1m2-pins {
-+			rockchip,pins =
-+				/* spi1_clk_m2 */
-+				<1 RK_PD2 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi1_miso_m2 */
-+				<1 RK_PD0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi1_mosi_m2 */
-+				<1 RK_PD1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi1m2_cs0: spi1m2-cs0 {
-+			rockchip,pins =
-+				/* spi1_cs0_m2 */
-+				<1 RK_PD3 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi1m2_cs1: spi1m2-cs1 {
-+			rockchip,pins =
-+				/* spi1_cs1_m2 */
-+				<1 RK_PD5 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+	};
-+
-+	spi2 {
-+		/omit-if-no-ref/
-+		spi2m0_pins: spi2m0-pins {
-+			rockchip,pins =
-+				/* spi2_clk_m0 */
-+				<1 RK_PA6 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi2_miso_m0 */
-+				<1 RK_PA4 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi2_mosi_m0 */
-+				<1 RK_PA5 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m0_cs0: spi2m0-cs0 {
-+			rockchip,pins =
-+				/* spi2_cs0_m0 */
-+				<1 RK_PA7 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m0_cs1: spi2m0-cs1 {
-+			rockchip,pins =
-+				/* spi2_cs1_m0 */
-+				<1 RK_PB0 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m1_pins: spi2m1-pins {
-+			rockchip,pins =
-+				/* spi2_clk_m1 */
-+				<4 RK_PA6 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi2_miso_m1 */
-+				<4 RK_PA4 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi2_mosi_m1 */
-+				<4 RK_PA5 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m1_cs0: spi2m1-cs0 {
-+			rockchip,pins =
-+				/* spi2_cs0_m1 */
-+				<4 RK_PA7 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m1_cs1: spi2m1-cs1 {
-+			rockchip,pins =
-+				/* spi2_cs1_m1 */
-+				<4 RK_PB0 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m2_pins: spi2m2-pins {
-+			rockchip,pins =
-+				/* spi2_clk_m2 */
-+				<0 RK_PA5 1 &pcfg_pull_up_drv_level_1>,
-+				/* spi2_miso_m2 */
-+				<0 RK_PB3 1 &pcfg_pull_up_drv_level_1>,
-+				/* spi2_mosi_m2 */
-+				<0 RK_PA6 1 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m2_cs0: spi2m2-cs0 {
-+			rockchip,pins =
-+				/* spi2_cs0_m2 */
-+				<0 RK_PB1 1 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi2m2_cs1: spi2m2-cs1 {
-+			rockchip,pins =
-+				/* spi2_cs1_m2 */
-+				<0 RK_PB0 1 &pcfg_pull_up_drv_level_1>;
-+		};
-+	};
-+
-+	spi3 {
-+		/omit-if-no-ref/
-+		spi3m1_pins: spi3m1-pins {
-+			rockchip,pins =
-+				/* spi3_clk_m1 */
-+				<4 RK_PB7 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi3_miso_m1 */
-+				<4 RK_PB5 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi3_mosi_m1 */
-+				<4 RK_PB6 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m1_cs0: spi3m1-cs0 {
-+			rockchip,pins =
-+				/* spi3_cs0_m1 */
-+				<4 RK_PC0 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m1_cs1: spi3m1-cs1 {
-+			rockchip,pins =
-+				/* spi3_cs1_m1 */
-+				<4 RK_PC1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m2_pins: spi3m2-pins {
-+			rockchip,pins =
-+				/* spi3_clk_m2 */
-+				<0 RK_PD3 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi3_miso_m2 */
-+				<0 RK_PD0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi3_mosi_m2 */
-+				<0 RK_PD2 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m2_cs0: spi3m2-cs0 {
-+			rockchip,pins =
-+				/* spi3_cs0_m2 */
-+				<0 RK_PD4 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m2_cs1: spi3m2-cs1 {
-+			rockchip,pins =
-+				/* spi3_cs1_m2 */
-+				<0 RK_PD5 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m3_pins: spi3m3-pins {
-+			rockchip,pins =
-+				/* spi3_clk_m3 */
-+				<3 RK_PD0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi3_miso_m3 */
-+				<3 RK_PC6 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi3_mosi_m3 */
-+				<3 RK_PC7 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m3_cs0: spi3m3-cs0 {
-+			rockchip,pins =
-+				/* spi3_cs0_m3 */
-+				<3 RK_PC4 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi3m3_cs1: spi3m3-cs1 {
-+			rockchip,pins =
-+				/* spi3_cs1_m3 */
-+				<3 RK_PC5 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+	};
-+
-+	spi4 {
-+		/omit-if-no-ref/
-+		spi4m0_pins: spi4m0-pins {
-+			rockchip,pins =
-+				/* spi4_clk_m0 */
-+				<1 RK_PC2 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi4_miso_m0 */
-+				<1 RK_PC0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi4_mosi_m0 */
-+				<1 RK_PC1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi4m0_cs0: spi4m0-cs0 {
-+			rockchip,pins =
-+				/* spi4_cs0_m0 */
-+				<1 RK_PC3 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi4m0_cs1: spi4m0-cs1 {
-+			rockchip,pins =
-+				/* spi4_cs1_m0 */
-+				<1 RK_PC4 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi4m1_pins: spi4m1-pins {
-+			rockchip,pins =
-+				/* spi4_clk_m1 */
-+				<3 RK_PA2 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi4_miso_m1 */
-+				<3 RK_PA0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi4_mosi_m1 */
-+				<3 RK_PA1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi4m1_cs0: spi4m1-cs0 {
-+			rockchip,pins =
-+				/* spi4_cs0_m1 */
-+				<3 RK_PA3 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi4m1_cs1: spi4m1-cs1 {
-+			rockchip,pins =
-+				/* spi4_cs1_m1 */
-+				<3 RK_PA4 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi4m2_pins: spi4m2-pins {
-+			rockchip,pins =
-+				/* spi4_clk_m2 */
-+				<1 RK_PA2 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi4_miso_m2 */
-+				<1 RK_PA0 8 &pcfg_pull_up_drv_level_1>,
-+				/* spi4_mosi_m2 */
-+				<1 RK_PA1 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+
-+		/omit-if-no-ref/
-+		spi4m2_cs0: spi4m2-cs0 {
-+			rockchip,pins =
-+				/* spi4_cs0_m2 */
-+				<1 RK_PA3 8 &pcfg_pull_up_drv_level_1>;
-+		};
-+	};
-+
-+	tsadc {
-+		/omit-if-no-ref/
-+		tsadcm1_shut: tsadcm1-shut {
-+			rockchip,pins =
-+				/* tsadcm1_shut */
-+				<0 RK_PA2 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		tsadc_shut: tsadc-shut {
-+			rockchip,pins =
-+				/* tsadc_shut */
-+				<0 RK_PA1 2 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		tsadc_shut_org: tsadc-shut-org {
-+			rockchip,pins =
-+				/* tsadc_shut_org */
-+				<0 RK_PA1 1 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	uart0 {
-+		/omit-if-no-ref/
-+		uart0m0_xfer: uart0m0-xfer {
-+			rockchip,pins =
-+				/* uart0_rx_m0 */
-+				<0 RK_PC4 4 &pcfg_pull_up>,
-+				/* uart0_tx_m0 */
-+				<0 RK_PC5 4 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart0m1_xfer: uart0m1-xfer {
-+			rockchip,pins =
-+				/* uart0_rx_m1 */
-+				<0 RK_PB0 4 &pcfg_pull_up>,
-+				/* uart0_tx_m1 */
-+				<0 RK_PB1 4 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart0m2_xfer: uart0m2-xfer {
-+			rockchip,pins =
-+				/* uart0_rx_m2 */
-+				<4 RK_PA4 10 &pcfg_pull_up>,
-+				/* uart0_tx_m2 */
-+				<4 RK_PA3 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart0_ctsn: uart0-ctsn {
-+			rockchip,pins =
-+				/* uart0_ctsn */
-+				<0 RK_PD1 4 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart0_rtsn: uart0-rtsn {
-+			rockchip,pins =
-+				/* uart0_rtsn */
-+				<0 RK_PC6 4 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	uart1 {
-+		/omit-if-no-ref/
-+		uart1m1_xfer: uart1m1-xfer {
-+			rockchip,pins =
-+				/* uart1_rx_m1 */
-+				<1 RK_PB7 10 &pcfg_pull_up>,
-+				/* uart1_tx_m1 */
-+				<1 RK_PB6 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart1m1_ctsn: uart1m1-ctsn {
-+			rockchip,pins =
-+				/* uart1m1_ctsn */
-+				<1 RK_PD7 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart1m1_rtsn: uart1m1-rtsn {
-+			rockchip,pins =
-+				/* uart1m1_rtsn */
-+				<1 RK_PD6 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart1m2_xfer: uart1m2-xfer {
-+			rockchip,pins =
-+				/* uart1_rx_m2 */
-+				<0 RK_PD2 10 &pcfg_pull_up>,
-+				/* uart1_tx_m2 */
-+				<0 RK_PD1 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart1m2_ctsn: uart1m2-ctsn {
-+			rockchip,pins =
-+				/* uart1m2_ctsn */
-+				<0 RK_PD0 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart1m2_rtsn: uart1m2-rtsn {
-+			rockchip,pins =
-+				/* uart1m2_rtsn */
-+				<0 RK_PC7 10 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	uart2 {
-+		/omit-if-no-ref/
-+		uart2m0_xfer: uart2m0-xfer {
-+			rockchip,pins =
-+				/* uart2_rx_m0 */
-+				<0 RK_PB6 10 &pcfg_pull_up>,
-+				/* uart2_tx_m0 */
-+				<0 RK_PB5 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart2m1_xfer: uart2m1-xfer {
-+			rockchip,pins =
-+				/* uart2_rx_m1 */
-+				<4 RK_PD1 10 &pcfg_pull_up>,
-+				/* uart2_tx_m1 */
-+				<4 RK_PD0 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart2m2_xfer: uart2m2-xfer {
-+			rockchip,pins =
-+				/* uart2_rx_m2 */
-+				<3 RK_PB2 10 &pcfg_pull_up>,
-+				/* uart2_tx_m2 */
-+				<3 RK_PB1 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart2_ctsn: uart2-ctsn {
-+			rockchip,pins =
-+				/* uart2_ctsn */
-+				<3 RK_PB4 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart2_rtsn: uart2-rtsn {
-+			rockchip,pins =
-+				/* uart2_rtsn */
-+				<3 RK_PB3 10 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	uart3 {
-+		/omit-if-no-ref/
-+		uart3m0_xfer: uart3m0-xfer {
-+			rockchip,pins =
-+				/* uart3_rx_m0 */
-+				<1 RK_PC0 10 &pcfg_pull_up>,
-+				/* uart3_tx_m0 */
-+				<1 RK_PC1 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart3m1_xfer: uart3m1-xfer {
-+			rockchip,pins =
-+				/* uart3_rx_m1 */
-+				<3 RK_PB6 10 &pcfg_pull_up>,
-+				/* uart3_tx_m1 */
-+				<3 RK_PB5 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart3m2_xfer: uart3m2-xfer {
-+			rockchip,pins =
-+				/* uart3_rx_m2 */
-+				<4 RK_PA6 10 &pcfg_pull_up>,
-+				/* uart3_tx_m2 */
-+				<4 RK_PA5 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart3_ctsn: uart3-ctsn {
-+			rockchip,pins =
-+				/* uart3_ctsn */
-+				<1 RK_PC3 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart3_rtsn: uart3-rtsn {
-+			rockchip,pins =
-+				/* uart3_rtsn */
-+				<1 RK_PC2 10 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	uart4 {
-+		/omit-if-no-ref/
-+		uart4m0_xfer: uart4m0-xfer {
-+			rockchip,pins =
-+				/* uart4_rx_m0 */
-+				<1 RK_PD3 10 &pcfg_pull_up>,
-+				/* uart4_tx_m0 */
-+				<1 RK_PD2 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart4m1_xfer: uart4m1-xfer {
-+			rockchip,pins =
-+				/* uart4_rx_m1 */
-+				<3 RK_PD0 10 &pcfg_pull_up>,
-+				/* uart4_tx_m1 */
-+				<3 RK_PD1 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart4m2_xfer: uart4m2-xfer {
-+			rockchip,pins =
-+				/* uart4_rx_m2 */
-+				<1 RK_PB2 10 &pcfg_pull_up>,
-+				/* uart4_tx_m2 */
-+				<1 RK_PB3 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart4_ctsn: uart4-ctsn {
-+			rockchip,pins =
-+				/* uart4_ctsn */
-+				<1 RK_PC7 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart4_rtsn: uart4-rtsn {
-+			rockchip,pins =
-+				/* uart4_rtsn */
-+				<1 RK_PC5 10 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	uart5 {
-+		/omit-if-no-ref/
-+		uart5m0_xfer: uart5m0-xfer {
-+			rockchip,pins =
-+				/* uart5_rx_m0 */
-+				<4 RK_PD4 10 &pcfg_pull_up>,
-+				/* uart5_tx_m0 */
-+				<4 RK_PD5 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart5m0_ctsn: uart5m0-ctsn {
-+			rockchip,pins =
-+				/* uart5m0_ctsn */
-+				<4 RK_PD2 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart5m0_rtsn: uart5m0-rtsn {
-+			rockchip,pins =
-+				/* uart5m0_rtsn */
-+				<4 RK_PD3 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart5m1_xfer: uart5m1-xfer {
-+			rockchip,pins =
-+				/* uart5_rx_m1 */
-+				<3 RK_PC5 10 &pcfg_pull_up>,
-+				/* uart5_tx_m1 */
-+				<3 RK_PC4 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart5m1_ctsn: uart5m1-ctsn {
-+			rockchip,pins =
-+				/* uart5m1_ctsn */
-+				<2 RK_PA2 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart5m1_rtsn: uart5m1-rtsn {
-+			rockchip,pins =
-+				/* uart5m1_rtsn */
-+				<2 RK_PA3 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart5m2_xfer: uart5m2-xfer {
-+			rockchip,pins =
-+				/* uart5_rx_m2 */
-+				<2 RK_PD4 10 &pcfg_pull_up>,
-+				/* uart5_tx_m2 */
-+				<2 RK_PD5 10 &pcfg_pull_up>;
-+		};
-+	};
-+
-+	uart6 {
-+		/omit-if-no-ref/
-+		uart6m1_xfer: uart6m1-xfer {
-+			rockchip,pins =
-+				/* uart6_rx_m1 */
-+				<1 RK_PA0 10 &pcfg_pull_up>,
-+				/* uart6_tx_m1 */
-+				<1 RK_PA1 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart6m1_ctsn: uart6m1-ctsn {
-+			rockchip,pins =
-+				/* uart6m1_ctsn */
-+				<1 RK_PA3 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart6m1_rtsn: uart6m1-rtsn {
-+			rockchip,pins =
-+				/* uart6m1_rtsn */
-+				<1 RK_PA2 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart6m2_xfer: uart6m2-xfer {
-+			rockchip,pins =
-+				/* uart6_rx_m2 */
-+				<1 RK_PD1 10 &pcfg_pull_up>,
-+				/* uart6_tx_m2 */
-+				<1 RK_PD0 10 &pcfg_pull_up>;
-+		};
-+	};
-+
-+	uart7 {
-+		/omit-if-no-ref/
-+		uart7m1_xfer: uart7m1-xfer {
-+			rockchip,pins =
-+				/* uart7_rx_m1 */
-+				<3 RK_PC1 10 &pcfg_pull_up>,
-+				/* uart7_tx_m1 */
-+				<3 RK_PC0 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart7m1_ctsn: uart7m1-ctsn {
-+			rockchip,pins =
-+				/* uart7m1_ctsn */
-+				<3 RK_PC3 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart7m1_rtsn: uart7m1-rtsn {
-+			rockchip,pins =
-+				/* uart7m1_rtsn */
-+				<3 RK_PC2 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart7m2_xfer: uart7m2-xfer {
-+			rockchip,pins =
-+				/* uart7_rx_m2 */
-+				<1 RK_PB4 10 &pcfg_pull_up>,
-+				/* uart7_tx_m2 */
-+				<1 RK_PB5 10 &pcfg_pull_up>;
-+		};
-+	};
-+
-+	uart8 {
-+		/omit-if-no-ref/
-+		uart8m0_xfer: uart8m0-xfer {
-+			rockchip,pins =
-+				/* uart8_rx_m0 */
-+				<4 RK_PB1 10 &pcfg_pull_up>,
-+				/* uart8_tx_m0 */
-+				<4 RK_PB0 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart8m0_ctsn: uart8m0-ctsn {
-+			rockchip,pins =
-+				/* uart8m0_ctsn */
-+				<4 RK_PB3 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart8m0_rtsn: uart8m0-rtsn {
-+			rockchip,pins =
-+				/* uart8m0_rtsn */
-+				<4 RK_PB2 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart8m1_xfer: uart8m1-xfer {
-+			rockchip,pins =
-+				/* uart8_rx_m1 */
-+				<3 RK_PA3 10 &pcfg_pull_up>,
-+				/* uart8_tx_m1 */
-+				<3 RK_PA2 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart8m1_ctsn: uart8m1-ctsn {
-+			rockchip,pins =
-+				/* uart8m1_ctsn */
-+				<3 RK_PA5 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart8m1_rtsn: uart8m1-rtsn {
-+			rockchip,pins =
-+				/* uart8m1_rtsn */
-+				<3 RK_PA4 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart8_xfer: uart8-xfer {
-+			rockchip,pins =
-+				/* uart8_rx_ */
-+				<4 RK_PB1 10 &pcfg_pull_up>;
-+		};
-+	};
-+
-+	uart9 {
-+		/omit-if-no-ref/
-+		uart9m1_xfer: uart9m1-xfer {
-+			rockchip,pins =
-+				/* uart9_rx_m1 */
-+				<4 RK_PB5 10 &pcfg_pull_up>,
-+				/* uart9_tx_m1 */
-+				<4 RK_PB4 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart9m1_ctsn: uart9m1-ctsn {
-+			rockchip,pins =
-+				/* uart9m1_ctsn */
-+				<4 RK_PA1 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart9m1_rtsn: uart9m1-rtsn {
-+			rockchip,pins =
-+				/* uart9m1_rtsn */
-+				<4 RK_PA0 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart9m2_xfer: uart9m2-xfer {
-+			rockchip,pins =
-+				/* uart9_rx_m2 */
-+				<3 RK_PD4 10 &pcfg_pull_up>,
-+				/* uart9_tx_m2 */
-+				<3 RK_PD5 10 &pcfg_pull_up>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart9m2_ctsn: uart9m2-ctsn {
-+			rockchip,pins =
-+				/* uart9m2_ctsn */
-+				<3 RK_PD3 10 &pcfg_pull_none>;
-+		};
-+
-+		/omit-if-no-ref/
-+		uart9m2_rtsn: uart9m2-rtsn {
-+			rockchip,pins =
-+				/* uart9m2_rtsn */
-+				<3 RK_PD2 10 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	vop {
-+		/omit-if-no-ref/
-+		vop_pins: vop-pins {
-+			rockchip,pins =
-+				/* vop_post_empty */
-+				<1 RK_PA2 1 &pcfg_pull_none>;
-+		};
-+	};
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_address.h>
++#include <linux/syscore_ops.h>
++#include <dt-bindings/clock/rk3588-cru.h>
++#include "clk.h"
++
++#define RK3588_GRF_SOC_STATUS0		0x600
++#define RK3588_FRAC_MAX_PRATE		600000000
++#define RK3588_UART_FRAC_MAX_PRATE	600000000
++
++enum rk3588_plls {
++	b0pll, b1pll, lpll, v0pll, aupll, cpll, gpll, npll, ppll,
 +};
 +
-+/*
-+ * This part is edited handly.
-+ */
-+&pinctrl {
-+	bt656 {
-+		/omit-if-no-ref/
-+		bt656_pins: bt656-pins {
-+			rockchip,pins =
-+				/* bt1120_clkout */
-+				<4 RK_PB0 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d0 */
-+				<4 RK_PA0 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d1 */
-+				<4 RK_PA1 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d2 */
-+				<4 RK_PA2 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d3 */
-+				<4 RK_PA3 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d4 */
-+				<4 RK_PA4 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d5 */
-+				<4 RK_PA5 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d6 */
-+				<4 RK_PA6 2 &pcfg_pull_none_drv_level_2>,
-+				/* bt1120_d7 */
-+				<4 RK_PA7 2 &pcfg_pull_none_drv_level_2>;
-+		};
-+	};
-+
-+	gpio-func {
-+		/omit-if-no-ref/
-+		tsadc_gpio_func: tsadc-gpio-func {
-+			rockchip,pins =
-+				<0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
++static struct rockchip_pll_rate_table rk3588_pll_rates[] = {
++	/* _mhz, _p, _m, _s, _k */
++	RK3588_PLL_RATE(2520000000, 2, 210, 0, 0),
++	RK3588_PLL_RATE(2496000000, 2, 208, 0, 0),
++	RK3588_PLL_RATE(2472000000, 2, 206, 0, 0),
++	RK3588_PLL_RATE(2448000000, 2, 204, 0, 0),
++	RK3588_PLL_RATE(2424000000, 2, 202, 0, 0),
++	RK3588_PLL_RATE(2400000000, 2, 200, 0, 0),
++	RK3588_PLL_RATE(2376000000, 2, 198, 0, 0),
++	RK3588_PLL_RATE(2352000000, 2, 196, 0, 0),
++	RK3588_PLL_RATE(2328000000, 2, 194, 0, 0),
++	RK3588_PLL_RATE(2304000000, 2, 192, 0, 0),
++	RK3588_PLL_RATE(2280000000, 2, 190, 0, 0),
++	RK3588_PLL_RATE(2256000000, 2, 376, 1, 0),
++	RK3588_PLL_RATE(2232000000, 2, 372, 1, 0),
++	RK3588_PLL_RATE(2208000000, 2, 368, 1, 0),
++	RK3588_PLL_RATE(2184000000, 2, 364, 1, 0),
++	RK3588_PLL_RATE(2160000000, 2, 360, 1, 0),
++	RK3588_PLL_RATE(2136000000, 2, 356, 1, 0),
++	RK3588_PLL_RATE(2112000000, 2, 352, 1, 0),
++	RK3588_PLL_RATE(2088000000, 2, 348, 1, 0),
++	RK3588_PLL_RATE(2064000000, 2, 344, 1, 0),
++	RK3588_PLL_RATE(2040000000, 2, 340, 1, 0),
++	RK3588_PLL_RATE(2016000000, 2, 336, 1, 0),
++	RK3588_PLL_RATE(1992000000, 2, 332, 1, 0),
++	RK3588_PLL_RATE(1968000000, 2, 328, 1, 0),
++	RK3588_PLL_RATE(1944000000, 2, 324, 1, 0),
++	RK3588_PLL_RATE(1920000000, 2, 320, 1, 0),
++	RK3588_PLL_RATE(1896000000, 2, 316, 1, 0),
++	RK3588_PLL_RATE(1872000000, 2, 312, 1, 0),
++	RK3588_PLL_RATE(1848000000, 2, 308, 1, 0),
++	RK3588_PLL_RATE(1824000000, 2, 304, 1, 0),
++	RK3588_PLL_RATE(1800000000, 2, 300, 1, 0),
++	RK3588_PLL_RATE(1776000000, 2, 296, 1, 0),
++	RK3588_PLL_RATE(1752000000, 2, 292, 1, 0),
++	RK3588_PLL_RATE(1728000000, 2, 288, 1, 0),
++	RK3588_PLL_RATE(1704000000, 2, 284, 1, 0),
++	RK3588_PLL_RATE(1680000000, 2, 280, 1, 0),
++	RK3588_PLL_RATE(1656000000, 2, 276, 1, 0),
++	RK3588_PLL_RATE(1632000000, 2, 272, 1, 0),
++	RK3588_PLL_RATE(1608000000, 2, 268, 1, 0),
++	RK3588_PLL_RATE(1584000000, 2, 264, 1, 0),
++	RK3588_PLL_RATE(1560000000, 2, 260, 1, 0),
++	RK3588_PLL_RATE(1536000000, 2, 256, 1, 0),
++	RK3588_PLL_RATE(1512000000, 2, 252, 1, 0),
++	RK3588_PLL_RATE(1488000000, 2, 248, 1, 0),
++	RK3588_PLL_RATE(1464000000, 2, 244, 1, 0),
++	RK3588_PLL_RATE(1440000000, 2, 240, 1, 0),
++	RK3588_PLL_RATE(1416000000, 2, 236, 1, 0),
++	RK3588_PLL_RATE(1392000000, 2, 232, 1, 0),
++	RK3588_PLL_RATE(1320000000, 2, 220, 1, 0),
++	RK3588_PLL_RATE(1200000000, 2, 200, 1, 0),
++	RK3588_PLL_RATE(1188000000, 2, 198, 1, 0),
++	RK3588_PLL_RATE(1008000000, 2, 336, 2, 0),
++	RK3588_PLL_RATE(1000000000, 3, 500, 2, 0),
++	RK3588_PLL_RATE(900000000, 2, 300, 2, 0),
++	RK3588_PLL_RATE(850000000, 3, 425, 2, 0),
++	RK3588_PLL_RATE(816000000, 2, 272, 2, 0),
++	RK3588_PLL_RATE(786432000, 1, 131, 2, 4718),
++	RK3588_PLL_RATE(600000000, 2, 200, 2, 0),
++	RK3588_PLL_RATE(594000000, 2, 198, 2, 0),
++	RK3588_PLL_RATE(408000000, 2, 272, 3, 0),
++	RK3588_PLL_RATE(312000000, 2, 208, 3, 0),
++	RK3588_PLL_RATE(216000000, 2, 216, 3, 0),
++	RK3588_PLL_RATE(100000000, 3, 400, 5, 0),
++	RK3588_PLL_RATE(96000000, 2, 216, 3, 0),
++	{ /* sentinel */ },
 +};
++
++#define RK3588_CLK_CORE_B0_SEL_CLEAN_MASK	0x3
++#define RK3588_CLK_CORE_B0_SEL_CLEAN_SHIFT	13
++#define RK3588_CLK_CORE_B0_GPLL_DIV_MASK	0x1f
++#define RK3588_CLK_CORE_B0_GPLL_DIV_SHIFT	1
++#define RK3588_CLK_CORE_L_SEL_CLEAN_MASK	0x3
++#define RK3588_CLK_CORE_L_SEL_CLEAN_SHIFT	5
++#define RK3588_CLK_DSU_SEL_DF_MASK		0x1
++#define RK3588_CLK_DSU_SEL_DF_SHIFT		15
++#define RK3588_CLK_DSU_DF_SRC_MASK		0x3
++#define RK3588_CLK_DSU_DF_SRC_SHIFT		5
++#define RK3588_CLK_DSU_DF_DIV_MASK		0x1f
++#define RK3588_CLK_DSU_DF_DIV_SHIFT		0
++#define RK3588_ACLKM_DSU_DIV_MASK		0x1f
++#define RK3588_ACLKM_DSU_DIV_SHIFT		1
++#define RK3588_ACLKS_DSU_DIV_MASK		0x1f
++#define RK3588_ACLKS_DSU_DIV_SHIFT		6
++#define RK3588_ACLKMP_DSU_DIV_MASK		0x1f
++#define RK3588_ACLKMP_DSU_DIV_SHIFT		11
++#define RK3588_PERIPH_DSU_DIV_MASK		0x1f
++#define RK3588_PERIPH_DSU_DIV_SHIFT		0
++#define RK3588_ATCLK_DSU_DIV_MASK		0x1f
++#define RK3588_ATCLK_DSU_DIV_SHIFT		0
++#define RK3588_GICCLK_DSU_DIV_MASK		0x1f
++#define RK3588_GICCLK_DSU_DIV_SHIFT		5
++
++#define RK3588_CORE_B0_SEL(_apllcore)						\
++{										\
++	.reg = RK3588_BIGCORE0_CLKSEL_CON(0),					\
++	.val = HIWORD_UPDATE(_apllcore, RK3588_CLK_CORE_B0_SEL_CLEAN_MASK,	\
++			RK3588_CLK_CORE_B0_SEL_CLEAN_SHIFT) |			\
++		HIWORD_UPDATE(0, RK3588_CLK_CORE_B0_GPLL_DIV_MASK,		\
++			RK3588_CLK_CORE_B0_GPLL_DIV_SHIFT),			\
++}
++
++#define RK3588_CORE_B1_SEL(_apllcore)						\
++{										\
++	.reg = RK3588_BIGCORE0_CLKSEL_CON(1),					\
++	.val = HIWORD_UPDATE(_apllcore, RK3588_CLK_CORE_B0_SEL_CLEAN_MASK,	\
++			RK3588_CLK_CORE_B0_SEL_CLEAN_SHIFT),			\
++}
++
++#define RK3588_CORE_B2_SEL(_apllcore)						\
++{										\
++	.reg = RK3588_BIGCORE1_CLKSEL_CON(0),					\
++	.val = HIWORD_UPDATE(_apllcore, RK3588_CLK_CORE_B0_SEL_CLEAN_MASK,	\
++			RK3588_CLK_CORE_B0_SEL_CLEAN_SHIFT) |			\
++		HIWORD_UPDATE(0, RK3588_CLK_CORE_B0_GPLL_DIV_MASK,		\
++			RK3588_CLK_CORE_B0_GPLL_DIV_SHIFT),			\
++}
++
++#define RK3588_CORE_B3_SEL(_apllcore)						\
++{										\
++	.reg = RK3588_BIGCORE1_CLKSEL_CON(1),					\
++	.val = HIWORD_UPDATE(_apllcore, RK3588_CLK_CORE_B0_SEL_CLEAN_MASK,	\
++			RK3588_CLK_CORE_B0_SEL_CLEAN_SHIFT),			\
++}
++
++#define RK3588_CORE_L_SEL0(_offs, _apllcore)					\
++{										\
++	.reg = RK3588_DSU_CLKSEL_CON(6 + _offs),				\
++	.val = HIWORD_UPDATE(_apllcore, RK3588_CLK_CORE_L_SEL_CLEAN_MASK,	\
++			RK3588_CLK_CORE_L_SEL_CLEAN_SHIFT) |			\
++		HIWORD_UPDATE(_apllcore, RK3588_CLK_CORE_L_SEL_CLEAN_MASK,	\
++			RK3588_CLK_CORE_L_SEL_CLEAN_SHIFT),			\
++}
++
++#define RK3588_CORE_L_SEL1(_seldsu, _divdsu)				\
++{									\
++	.reg = RK3588_DSU_CLKSEL_CON(0),				\
++	.val = HIWORD_UPDATE(_seldsu, RK3588_CLK_DSU_DF_SRC_MASK,	\
++			RK3588_CLK_DSU_DF_SRC_SHIFT) |			\
++		HIWORD_UPDATE(_divdsu - 1, RK3588_CLK_DSU_DF_DIV_MASK,	\
++			RK3588_CLK_DSU_DF_DIV_SHIFT) |			\
++		HIWORD_UPDATE(0, RK3588_CLK_DSU_SEL_DF_MASK,		\
++			RK3588_CLK_DSU_SEL_DF_SHIFT),			\
++}
++
++#define RK3588_CORE_L_SEL2(_aclkm, _aclkmp, _aclks)			\
++{									\
++	.reg = RK3588_DSU_CLKSEL_CON(1),				\
++	.val = HIWORD_UPDATE(_aclkm - 1, RK3588_ACLKM_DSU_DIV_MASK,	\
++			RK3588_ACLKM_DSU_DIV_SHIFT) |			\
++		HIWORD_UPDATE(_aclkmp - 1, RK3588_ACLKMP_DSU_DIV_MASK,	\
++			RK3588_ACLKMP_DSU_DIV_SHIFT) |			\
++		HIWORD_UPDATE(_aclks - 1, RK3588_ACLKS_DSU_DIV_MASK,	\
++			RK3588_ACLKS_DSU_DIV_SHIFT),			\
++}
++
++#define RK3588_CORE_L_SEL3(_periph)					\
++{									\
++	.reg = RK3588_DSU_CLKSEL_CON(2),				\
++	.val = HIWORD_UPDATE(_periph - 1, RK3588_PERIPH_DSU_DIV_MASK,	\
++			RK3588_PERIPH_DSU_DIV_SHIFT),			\
++}
++
++#define RK3588_CORE_L_SEL4(_gicclk, _atclk)				\
++{									\
++	.reg = RK3588_DSU_CLKSEL_CON(3),				\
++	.val = HIWORD_UPDATE(_gicclk - 1, RK3588_GICCLK_DSU_DIV_MASK,	\
++			RK3588_GICCLK_DSU_DIV_SHIFT) |			\
++		HIWORD_UPDATE(_atclk - 1, RK3588_ATCLK_DSU_DIV_MASK,	\
++			RK3588_ATCLK_DSU_DIV_SHIFT),			\
++}
++
++#define RK3588_CPUB01CLK_RATE(_prate, _apllcore)		\
++{								\
++	.prate = _prate##U,					\
++	.divs = {						\
++		RK3588_CORE_B0_SEL(_apllcore),			\
++		RK3588_CORE_B1_SEL(_apllcore),			\
++	},							\
++}
++
++#define RK3588_CPUB23CLK_RATE(_prate, _apllcore)		\
++{								\
++	.prate = _prate##U,					\
++	.divs = {						\
++		RK3588_CORE_B2_SEL(_apllcore),			\
++		RK3588_CORE_B3_SEL(_apllcore),			\
++	},							\
++}
++
++#define RK3588_CPULCLK_RATE(_prate, _apllcore, _seldsu, _divdsu, _atclk, _gicclk, \
++			    _aclkmp, _aclkm, _aclks, _periph) \
++{								\
++	.prate = _prate##U,					\
++	.divs = {						\
++		RK3588_CORE_L_SEL1(_seldsu, _divdsu),		\
++		RK3588_CORE_L_SEL2(_aclkm, _aclkmp, _aclks),	\
++		RK3588_CORE_L_SEL3(_periph),			\
++		RK3588_CORE_L_SEL4(_gicclk, _atclk),		\
++	},							\
++	.pre_muxs = {						\
++		RK3588_CORE_L_SEL0(0, 0),			\
++		RK3588_CORE_L_SEL0(1, 0),			\
++		RK3588_CORE_L_SEL1(3, 2),			\
++	},							\
++	.post_muxs = {						\
++		RK3588_CORE_L_SEL0(0, _apllcore),		\
++		RK3588_CORE_L_SEL0(1, _apllcore),		\
++		RK3588_CORE_L_SEL1(_seldsu, _divdsu),		\
++	},							\
++}
++
++static struct rockchip_cpuclk_rate_table rk3588_cpub0clk_rates[] __initdata = {
++	RK3588_CPUB01CLK_RATE(2496000000, 1),
++	RK3588_CPUB01CLK_RATE(2400000000, 1),
++	RK3588_CPUB01CLK_RATE(2304000000, 1),
++	RK3588_CPUB01CLK_RATE(2208000000, 1),
++	RK3588_CPUB01CLK_RATE(2184000000, 1),
++	RK3588_CPUB01CLK_RATE(2088000000, 1),
++	RK3588_CPUB01CLK_RATE(2040000000, 1),
++	RK3588_CPUB01CLK_RATE(2016000000, 1),
++	RK3588_CPUB01CLK_RATE(1992000000, 1),
++	RK3588_CPUB01CLK_RATE(1896000000, 1),
++	RK3588_CPUB01CLK_RATE(1800000000, 1),
++	RK3588_CPUB01CLK_RATE(1704000000, 0),
++	RK3588_CPUB01CLK_RATE(1608000000, 0),
++	RK3588_CPUB01CLK_RATE(1584000000, 0),
++	RK3588_CPUB01CLK_RATE(1560000000, 0),
++	RK3588_CPUB01CLK_RATE(1536000000, 0),
++	RK3588_CPUB01CLK_RATE(1512000000, 0),
++	RK3588_CPUB01CLK_RATE(1488000000, 0),
++	RK3588_CPUB01CLK_RATE(1464000000, 0),
++	RK3588_CPUB01CLK_RATE(1440000000, 0),
++	RK3588_CPUB01CLK_RATE(1416000000, 0),
++	RK3588_CPUB01CLK_RATE(1392000000, 0),
++	RK3588_CPUB01CLK_RATE(1368000000, 0),
++	RK3588_CPUB01CLK_RATE(1344000000, 0),
++	RK3588_CPUB01CLK_RATE(1320000000, 0),
++	RK3588_CPUB01CLK_RATE(1296000000, 0),
++	RK3588_CPUB01CLK_RATE(1272000000, 0),
++	RK3588_CPUB01CLK_RATE(1248000000, 0),
++	RK3588_CPUB01CLK_RATE(1224000000, 0),
++	RK3588_CPUB01CLK_RATE(1200000000, 0),
++	RK3588_CPUB01CLK_RATE(1104000000, 0),
++	RK3588_CPUB01CLK_RATE(1008000000, 0),
++	RK3588_CPUB01CLK_RATE(912000000, 0),
++	RK3588_CPUB01CLK_RATE(816000000, 0),
++	RK3588_CPUB01CLK_RATE(696000000, 0),
++	RK3588_CPUB01CLK_RATE(600000000, 0),
++	RK3588_CPUB01CLK_RATE(408000000, 0),
++	RK3588_CPUB01CLK_RATE(312000000, 0),
++	RK3588_CPUB01CLK_RATE(216000000, 0),
++	RK3588_CPUB01CLK_RATE(96000000, 0),
++};
++
++static const struct rockchip_cpuclk_reg_data rk3588_cpub0clk_data = {
++	.core_reg[0] = RK3588_BIGCORE0_CLKSEL_CON(0),
++	.div_core_shift[0] = 8,
++	.div_core_mask[0] = 0x1f,
++	.core_reg[1] = RK3588_BIGCORE0_CLKSEL_CON(1),
++	.div_core_shift[1] = 0,
++	.div_core_mask[1] = 0x1f,
++	.num_cores = 2,
++	.mux_core_alt = 1,
++	.mux_core_main = 2,
++	.mux_core_shift = 6,
++	.mux_core_mask = 0x3,
++};
++
++static struct rockchip_cpuclk_rate_table rk3588_cpub1clk_rates[] __initdata = {
++	RK3588_CPUB23CLK_RATE(2496000000, 1),
++	RK3588_CPUB23CLK_RATE(2400000000, 1),
++	RK3588_CPUB23CLK_RATE(2304000000, 1),
++	RK3588_CPUB23CLK_RATE(2208000000, 1),
++	RK3588_CPUB23CLK_RATE(2184000000, 1),
++	RK3588_CPUB23CLK_RATE(2088000000, 1),
++	RK3588_CPUB23CLK_RATE(2040000000, 1),
++	RK3588_CPUB23CLK_RATE(2016000000, 1),
++	RK3588_CPUB23CLK_RATE(1992000000, 1),
++	RK3588_CPUB23CLK_RATE(1896000000, 1),
++	RK3588_CPUB23CLK_RATE(1800000000, 1),
++	RK3588_CPUB23CLK_RATE(1704000000, 0),
++	RK3588_CPUB23CLK_RATE(1608000000, 0),
++	RK3588_CPUB23CLK_RATE(1584000000, 0),
++	RK3588_CPUB23CLK_RATE(1560000000, 0),
++	RK3588_CPUB23CLK_RATE(1536000000, 0),
++	RK3588_CPUB23CLK_RATE(1512000000, 0),
++	RK3588_CPUB23CLK_RATE(1488000000, 0),
++	RK3588_CPUB23CLK_RATE(1464000000, 0),
++	RK3588_CPUB23CLK_RATE(1440000000, 0),
++	RK3588_CPUB23CLK_RATE(1416000000, 0),
++	RK3588_CPUB23CLK_RATE(1392000000, 0),
++	RK3588_CPUB23CLK_RATE(1368000000, 0),
++	RK3588_CPUB23CLK_RATE(1344000000, 0),
++	RK3588_CPUB23CLK_RATE(1320000000, 0),
++	RK3588_CPUB23CLK_RATE(1296000000, 0),
++	RK3588_CPUB23CLK_RATE(1272000000, 0),
++	RK3588_CPUB23CLK_RATE(1248000000, 0),
++	RK3588_CPUB23CLK_RATE(1224000000, 0),
++	RK3588_CPUB23CLK_RATE(1200000000, 0),
++	RK3588_CPUB23CLK_RATE(1104000000, 0),
++	RK3588_CPUB23CLK_RATE(1008000000, 0),
++	RK3588_CPUB23CLK_RATE(912000000, 0),
++	RK3588_CPUB23CLK_RATE(816000000, 0),
++	RK3588_CPUB23CLK_RATE(696000000, 0),
++	RK3588_CPUB23CLK_RATE(600000000, 0),
++	RK3588_CPUB23CLK_RATE(408000000, 0),
++	RK3588_CPUB23CLK_RATE(312000000, 0),
++	RK3588_CPUB23CLK_RATE(216000000, 0),
++	RK3588_CPUB23CLK_RATE(96000000, 0),
++};
++
++static const struct rockchip_cpuclk_reg_data rk3588_cpub1clk_data = {
++	.core_reg[0] = RK3588_BIGCORE1_CLKSEL_CON(0),
++	.div_core_shift[0] = 8,
++	.div_core_mask[0] = 0x1f,
++	.core_reg[1] = RK3588_BIGCORE1_CLKSEL_CON(1),
++	.div_core_shift[1] = 0,
++	.div_core_mask[1] = 0x1f,
++	.num_cores = 2,
++	.mux_core_alt = 1,
++	.mux_core_main = 2,
++	.mux_core_shift = 6,
++	.mux_core_mask = 0x3,
++};
++
++static struct rockchip_cpuclk_rate_table rk3588_cpulclk_rates[] __initdata = {
++	RK3588_CPULCLK_RATE(2208000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(2184000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(2088000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(2040000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(2016000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(1992000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(1896000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(1800000000, 1, 3, 1, 4, 4, 4, 4, 4, 4),
++	RK3588_CPULCLK_RATE(1704000000, 0, 3, 1, 3, 3, 3, 3, 3, 3),
++	RK3588_CPULCLK_RATE(1608000000, 0, 3, 1, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1584000000, 0, 3, 1, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1560000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1536000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1512000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1488000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1464000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1440000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1416000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1392000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1368000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1344000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1320000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1296000000, 0, 2, 2, 3, 3, 3, 2, 3, 3),
++	RK3588_CPULCLK_RATE(1272000000, 0, 2, 2, 2, 2, 2, 2, 2, 2),
++	RK3588_CPULCLK_RATE(1248000000, 0, 2, 2, 2, 2, 2, 2, 2, 2),
++	RK3588_CPULCLK_RATE(1224000000, 0, 2, 2, 2, 2, 2, 2, 2, 2),
++	RK3588_CPULCLK_RATE(1200000000, 0, 2, 2, 2, 2, 2, 2, 2, 2),
++	RK3588_CPULCLK_RATE(1104000000, 0, 2, 2, 2, 2, 2, 2, 2, 2),
++	RK3588_CPULCLK_RATE(1008000000, 0, 2, 2, 2, 2, 2, 2, 2, 2),
++	RK3588_CPULCLK_RATE(912000000, 0, 2, 2, 2, 2, 2, 1, 2, 2),
++	RK3588_CPULCLK_RATE(816000000, 0, 2, 2, 2, 2, 2, 1, 2, 2),
++	RK3588_CPULCLK_RATE(696000000, 0, 2, 2, 2, 2, 2, 1, 2, 2),
++	RK3588_CPULCLK_RATE(600000000, 0, 2, 1, 1, 1, 1, 1, 1, 1),
++	RK3588_CPULCLK_RATE(408000000, 0, 2, 1, 1, 1, 1, 1, 1, 1),
++	RK3588_CPULCLK_RATE(312000000, 0, 2, 1, 1, 1, 1, 1, 1, 1),
++	RK3588_CPULCLK_RATE(216000000, 0, 2, 1, 1, 1, 1, 1, 1, 1),
++	RK3588_CPULCLK_RATE(96000000, 0, 2, 1, 1, 1, 1, 1, 1, 1),
++};
++
++static const struct rockchip_cpuclk_reg_data rk3588_cpulclk_data = {
++	.core_reg[0] = RK3588_DSU_CLKSEL_CON(6),
++	.div_core_shift[0] = 0,
++	.div_core_mask[0] = 0x1f,
++	.core_reg[1] = RK3588_DSU_CLKSEL_CON(6),
++	.div_core_shift[1] = 7,
++	.div_core_mask[1] = 0x1f,
++	.core_reg[2] = RK3588_DSU_CLKSEL_CON(7),
++	.div_core_shift[2] = 0,
++	.div_core_mask[2] = 0x1f,
++	.core_reg[3] = RK3588_DSU_CLKSEL_CON(7),
++	.div_core_shift[3] = 7,
++	.div_core_mask[3] = 0x1f,
++	.num_cores = 4,
++	.mux_core_reg = RK3588_DSU_CLKSEL_CON(5),
++	.mux_core_alt = 1,
++	.mux_core_main = 2,
++	.mux_core_shift = 14,
++	.mux_core_mask = 0x3,
++};
++
++PNAME(mux_pll_p)			= { "xin24m", "xin32k" };
++PNAME(mux_armclkl_p)			= { "xin24m", "gpll", "lpll" };
++PNAME(mux_armclkb01_p)			= { "xin24m", "gpll", "b0pll",};
++PNAME(mux_armclkb23_p)			= { "xin24m", "gpll", "b1pll",};
++PNAME(b0pll_b1pll_lpll_gpll_p)		= { "b0pll", "b1pll", "lpll", "gpll" };
++PNAME(gpll_24m_p)			= { "gpll", "xin24m" };
++PNAME(gpll_aupll_p)			= { "gpll", "aupll" };
++PNAME(gpll_lpll_p)			= { "gpll", "lpll" };
++PNAME(gpll_cpll_p)			= { "gpll", "cpll" };
++PNAME(gpll_spll_p)			= { "gpll", "spll" };
++PNAME(gpll_cpll_24m_p)			= { "gpll", "cpll", "xin24m"};
++PNAME(gpll_cpll_aupll_p)		= { "gpll", "cpll", "aupll"};
++PNAME(gpll_cpll_npll_p)			= { "gpll", "cpll", "npll"};
++PNAME(gpll_cpll_npll_v0pll_p)		= { "gpll", "cpll", "npll", "v0pll"};
++PNAME(gpll_cpll_24m_spll_p)		= { "gpll", "cpll", "xin24m", "spll" };
++PNAME(gpll_cpll_aupll_spll_p)		= { "gpll", "cpll", "aupll", "spll" };
++PNAME(gpll_cpll_aupll_npll_p)		= { "gpll", "cpll", "aupll", "npll" };
++PNAME(gpll_cpll_v0pll_aupll_p)		= { "gpll", "cpll", "v0pll", "aupll" };
++PNAME(gpll_cpll_v0pll_spll_p)		= { "gpll", "cpll", "v0pll", "spll" };
++PNAME(gpll_cpll_aupll_npll_spll_p)	= { "gpll", "cpll", "aupll", "npll", "spll" };
++PNAME(gpll_cpll_npll_aupll_spll_p)	= { "gpll", "cpll", "npll", "aupll", "spll" };
++PNAME(gpll_cpll_npll_1000m_p)		= { "gpll", "cpll", "npll", "clk_1000m_src" };
++PNAME(mux_24m_spll_gpll_cpll_p)		= { "xin24m", "spll", "gpll", "cpll" };
++PNAME(mux_24m_32k_p)			= { "xin24m", "xin32k" };
++PNAME(mux_24m_100m_p)			= { "xin24m", "clk_100m_src" };
++PNAME(mux_200m_100m_p)			= { "clk_200m_src", "clk_100m_src" };
++PNAME(mux_100m_50m_24m_p)		= { "clk_100m_src", "clk_50m_src", "xin24m" };
++PNAME(mux_150m_50m_24m_p)		= { "clk_150m_src", "clk_50m_src", "xin24m" };
++PNAME(mux_150m_100m_24m_p)		= { "clk_150m_src", "clk_100m_src", "xin24m" };
++PNAME(mux_200m_150m_24m_p)		= { "clk_200m_src", "clk_150m_src", "xin24m" };
++PNAME(mux_150m_100m_50m_24m_p)		= { "clk_150m_src", "clk_100m_src", "clk_50m_src", "xin24m" };
++PNAME(mux_200m_100m_50m_24m_p)		= { "clk_200m_src", "clk_100m_src", "clk_50m_src", "xin24m" };
++PNAME(mux_300m_200m_100m_24m_p)		= { "clk_300m_src", "clk_200m_src", "clk_100m_src", "xin24m" };
++PNAME(mux_700m_400m_200m_24m_p)		= { "clk_700m_src", "clk_400m_src", "clk_200m_src", "xin_osc0_func" };
++PNAME(mux_500m_250m_100m_24m_p)		= { "clk_500m_src", "clk_250m_src", "clk_100m_src", "xin_osc0_func" };
++PNAME(mux_500m_300m_100m_24m_p)		= { "clk_500m_src", "clk_300m_src", "clk_100m_src", "xin_osc0_func" };
++PNAME(mux_400m_200m_100m_24m_p)		= { "clk_400m_src", "clk_200m_src", "clk_100m_src", "xin_osc0_func" };
++PNAME(clk_i2s2_2ch_p)			= { "clk_i2s2_2ch_src", "clk_i2s2_2ch_frac", "i2s2_mclkin", "xin12m" };
++PNAME(i2s2_2ch_mclkout_p)		= { "mclk_i2s2_2ch", "xin12m" };
++PNAME(clk_i2s3_2ch_p)			= { "clk_i2s3_2ch_src", "clk_i2s3_2ch_frac", "i2s3_mclkin", "xin12m" };
++PNAME(i2s3_2ch_mclkout_p)		= { "mclk_i2s3_2ch", "xin12m" };
++PNAME(clk_i2s0_8ch_tx_p)		= { "clk_i2s0_8ch_tx_src", "clk_i2s0_8ch_tx_frac", "i2s0_mclkin", "xin12m" };
++PNAME(clk_i2s0_8ch_rx_p)		= { "clk_i2s0_8ch_rx_src", "clk_i2s0_8ch_rx_frac", "i2s0_mclkin", "xin12m" };
++PNAME(i2s0_8ch_mclkout_p)		= { "mclk_i2s0_8ch_tx", "mclk_i2s0_8ch_rx", "xin12m" };
++PNAME(clk_i2s1_8ch_tx_p)		= { "clk_i2s1_8ch_tx_src", "clk_i2s1_8ch_tx_frac", "i2s1_mclkin", "xin12m" };
++PNAME(clk_i2s1_8ch_rx_p)		= { "clk_i2s1_8ch_rx_src", "clk_i2s1_8ch_rx_frac", "i2s1_mclkin", "xin12m" };
++PNAME(i2s1_8ch_mclkout_p)		= { "mclk_i2s1_8ch_tx", "mclk_i2s1_8ch_rx", "xin12m" };
++PNAME(clk_i2s4_8ch_tx_p)		= { "clk_i2s4_8ch_tx_src", "clk_i2s4_8ch_tx_frac", "i2s4_mclkin", "xin12m" };
++PNAME(clk_i2s5_8ch_tx_p)		= { "clk_i2s5_8ch_tx_src", "clk_i2s5_8ch_tx_frac", "i2s5_mclkin", "xin12m" };
++PNAME(clk_i2s6_8ch_tx_p)		= { "clk_i2s6_8ch_tx_src", "clk_i2s6_8ch_tx_frac", "i2s6_mclkin", "xin12m" };
++PNAME(clk_i2s6_8ch_rx_p)		= { "clk_i2s6_8ch_rx_src", "clk_i2s6_8ch_rx_frac", "i2s6_mclkin", "xin12m" };
++PNAME(i2s6_8ch_mclkout_p)		= { "mclk_i2s6_8ch_tx", "mclk_i2s6_8ch_rx", "xin12m" };
++PNAME(clk_i2s7_8ch_rx_p)		= { "clk_i2s7_8ch_rx_src", "clk_i2s7_8ch_rx_frac", "i2s7_mclkin", "xin12m" };
++PNAME(clk_i2s8_8ch_tx_p)		= { "clk_i2s8_8ch_tx_src", "clk_i2s8_8ch_tx_frac", "i2s8_mclkin", "xin12m" };
++PNAME(clk_i2s9_8ch_rx_p)		= { "clk_i2s9_8ch_rx_src", "clk_i2s9_8ch_rx_frac", "i2s9_mclkin", "xin12m" };
++PNAME(clk_i2s10_8ch_rx_p)		= { "clk_i2s10_8ch_rx_src", "clk_i2s10_8ch_rx_frac", "i2s10_mclkin", "xin12m" };
++PNAME(clk_spdif0_p)			= { "clk_spdif0_src", "clk_spdif0_frac", "xin12m" };
++PNAME(clk_spdif1_p)			= { "clk_spdif1_src", "clk_spdif1_frac", "xin12m" };
++PNAME(clk_spdif2_dp0_p)			= { "clk_spdif2_dp0_src", "clk_spdif2_dp0_frac", "xin12m" };
++PNAME(clk_spdif3_p)			= { "clk_spdif3_src", "clk_spdif3_frac", "xin12m" };
++PNAME(clk_spdif4_p)			= { "clk_spdif4_src", "clk_spdif4_frac", "xin12m" };
++PNAME(clk_spdif5_dp1_p)			= { "clk_spdif5_dp1_src", "clk_spdif5_dp1_frac", "xin12m" };
++PNAME(clk_uart0_p)			= { "clk_uart0_src", "clk_uart0_frac", "xin24m" };
++PNAME(clk_uart1_p)			= { "clk_uart1_src", "clk_uart1_frac", "xin24m" };
++PNAME(clk_uart2_p)			= { "clk_uart2_src", "clk_uart2_frac", "xin24m" };
++PNAME(clk_uart3_p)			= { "clk_uart3_src", "clk_uart3_frac", "xin24m" };
++PNAME(clk_uart4_p)			= { "clk_uart4_src", "clk_uart4_frac", "xin24m" };
++PNAME(clk_uart5_p)			= { "clk_uart5_src", "clk_uart5_frac", "xin24m" };
++PNAME(clk_uart6_p)			= { "clk_uart6_src", "clk_uart6_frac", "xin24m" };
++PNAME(clk_uart7_p)			= { "clk_uart7_src", "clk_uart7_frac", "xin24m" };
++PNAME(clk_uart8_p)			= { "clk_uart8_src", "clk_uart8_frac", "xin24m" };
++PNAME(clk_uart9_p)			= { "clk_uart9_src", "clk_uart9_frac", "xin24m" };
++PNAME(clk_gmac0_ptp_ref_p)		= { "cpll", "clk_gmac0_ptpref_io" };
++PNAME(clk_gmac1_ptp_ref_p)		= { "cpll", "clk_gmac1_ptpref_io" };
++PNAME(clk_hdmirx_aud_p)			= { "clk_hdmirx_aud_src", "clk_hdmirx_aud_frac" };
++PNAME(aclk_hdcp1_root_p)		= { "gpll", "cpll", "clk_hdmitrx_refsrc" };
++PNAME(aclk_vop_sub_src_p)		= { "aclk_vop_root", "aclk_vop_div2_src" };
++PNAME(dclk_vop0_p)			= { "dclk_vop0_src", "clk_hdmiphy_pixel0", "clk_hdmiphy_pixel1" };
++PNAME(dclk_vop1_p)			= { "dclk_vop1_src", "clk_hdmiphy_pixel0", "clk_hdmiphy_pixel1" };
++PNAME(dclk_vop2_p)			= { "dclk_vop2_src", "clk_hdmiphy_pixel0", "clk_hdmiphy_pixel1" };
++PNAME(pmu_200m_100m_p)			= { "clk_pmu1_200m_src", "clk_pmu1_100m_src" };
++PNAME(pmu_300m_24m_p)			= { "clk_300m_src", "xin24m" };
++PNAME(pmu_400m_24m_p)			= { "clk_400m_src", "xin24m" };
++PNAME(pmu_100m_50m_24m_src_p)		= { "clk_pmu1_100m_src", "clk_pmu1_50m_src", "xin24m" };
++PNAME(pmu_24m_32k_100m_src_p)		= { "xin24m", "32k", "clk_pmu1_100m_src" };
++PNAME(hclk_pmu1_root_p)			= { "clk_pmu1_200m_src", "clk_pmu1_100m_src", "clk_pmu1_50m_src", "xin24m" };
++PNAME(hclk_pmu_cm0_root_p)		= { "clk_pmu1_400m_src", "clk_pmu1_200m_src", "clk_pmu1_100m_src", "xin24m" };
++PNAME(mclk_pdm0_p)			= { "clk_pmu1_300m_src", "clk_pmu1_200m_src" };
++PNAME(mux_24m_ppll_spll_p)		= { "xin24m", "ppll", "spll" };
++PNAME(mux_24m_ppll_p)			= { "xin24m", "ppll" };
++PNAME(clk_ref_pipe_phy0_p)		= { "clk_ref_pipe_phy0_osc_src", "clk_ref_pipe_phy0_pll_src" };
++PNAME(clk_ref_pipe_phy1_p)		= { "clk_ref_pipe_phy1_osc_src", "clk_ref_pipe_phy1_pll_src" };
++PNAME(clk_ref_pipe_phy2_p)		= { "clk_ref_pipe_phy2_osc_src", "clk_ref_pipe_phy2_pll_src" };
++
++#define MFLAGS CLK_MUX_HIWORD_MASK
++#define DFLAGS CLK_DIVIDER_HIWORD_MASK
++#define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
++
++static struct rockchip_clk_branch rk3588_i2s0_8ch_tx_fracmux __initdata =
++	MUX(CLK_I2S0_8CH_TX, "clk_i2s0_8ch_tx", clk_i2s0_8ch_tx_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(26), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s0_8ch_rx_fracmux __initdata =
++	MUX(CLK_I2S0_8CH_RX, "clk_i2s0_8ch_rx", clk_i2s0_8ch_rx_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(28), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s1_8ch_tx_fracmux __initdata =
++	MUX(CLK_I2S1_8CH_TX, "clk_i2s1_8ch_tx", clk_i2s1_8ch_tx_p, CLK_SET_RATE_PARENT,
++			 RK3588_PMU_CLKSEL_CON(7), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s1_8ch_rx_fracmux __initdata =
++	MUX(CLK_I2S1_8CH_RX, "clk_i2s1_8ch_rx", clk_i2s1_8ch_rx_p, CLK_SET_RATE_PARENT,
++			 RK3588_PMU_CLKSEL_CON(9), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s2_2ch_fracmux __initdata =
++	MUX(CLK_I2S2_2CH, "clk_i2s2_2ch", clk_i2s2_2ch_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(30), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s3_2ch_fracmux __initdata =
++	MUX(CLK_I2S3_2CH, "clk_i2s3_2ch", clk_i2s3_2ch_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(32), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s4_8ch_tx_fracmux __initdata =
++	MUX(CLK_I2S4_8CH_TX, "clk_i2s4_8ch_tx", clk_i2s4_8ch_tx_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(120), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s5_8ch_tx_fracmux __initdata =
++	MUX(CLK_I2S5_8CH_TX, "clk_i2s5_8ch_tx", clk_i2s5_8ch_tx_p, CLK_SET_RATE_PARENT,
++			 RK3588_CLKSEL_CON(142), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s6_8ch_tx_fracmux __initdata =
++	MUX(CLK_I2S6_8CH_TX, "clk_i2s6_8ch_tx", clk_i2s6_8ch_tx_p, CLK_SET_RATE_PARENT,
++			 RK3588_CLKSEL_CON(146), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s6_8ch_rx_fracmux __initdata =
++	MUX(CLK_I2S6_8CH_RX, "clk_i2s6_8ch_rx", clk_i2s6_8ch_rx_p, CLK_SET_RATE_PARENT,
++			 RK3588_CLKSEL_CON(148), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s7_8ch_rx_fracmux __initdata =
++	MUX(CLK_I2S7_8CH_RX, "clk_i2s7_8ch_rx", clk_i2s7_8ch_rx_p, CLK_SET_RATE_PARENT,
++			 RK3588_CLKSEL_CON(131), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s8_8ch_tx_fracmux __initdata =
++	MUX(CLK_I2S8_8CH_TX, "clk_i2s8_8ch_tx", clk_i2s8_8ch_tx_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(122), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s9_8ch_rx_fracmux __initdata =
++	MUX(CLK_I2S9_8CH_RX, "clk_i2s9_8ch_rx", clk_i2s9_8ch_rx_p, CLK_SET_RATE_PARENT,
++			 RK3588_CLKSEL_CON(155), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_i2s10_8ch_rx_fracmux __initdata =
++	MUX(CLK_I2S10_8CH_RX, "clk_i2s10_8ch_rx", clk_i2s10_8ch_rx_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(157), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_spdif0_fracmux __initdata =
++	MUX(CLK_SPDIF0, "clk_spdif0", clk_spdif0_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(34), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_spdif1_fracmux __initdata =
++	MUX(CLK_SPDIF1, "clk_spdif1", clk_spdif1_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(36), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_spdif2_dp0_fracmux __initdata =
++	MUX(CLK_SPDIF2_DP0, "clk_spdif2_dp0", clk_spdif2_dp0_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(124), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_spdif3_fracmux __initdata =
++	MUX(CLK_SPDIF3, "clk_spdif3", clk_spdif3_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(150), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_spdif4_fracmux __initdata =
++	MUX(CLK_SPDIF4, "clk_spdif4", clk_spdif4_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(152), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_spdif5_dp1_fracmux __initdata =
++	MUX(CLK_SPDIF5_DP1, "clk_spdif5_dp1", clk_spdif5_dp1_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(126), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart0_fracmux __initdata =
++	MUX(CLK_UART0, "clk_uart0", clk_uart0_p, CLK_SET_RATE_PARENT,
++			RK3588_PMU_CLKSEL_CON(5), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart1_fracmux __initdata =
++	MUX(CLK_UART1, "clk_uart1", clk_uart1_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(43), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart2_fracmux __initdata =
++	MUX(CLK_UART2, "clk_uart2", clk_uart2_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(45), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart3_fracmux __initdata =
++	MUX(CLK_UART3, "clk_uart3", clk_uart3_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(47), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart4_fracmux __initdata =
++	MUX(CLK_UART4, "clk_uart4", clk_uart4_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(49), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart5_fracmux __initdata =
++	MUX(CLK_UART5, "clk_uart5", clk_uart5_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(51), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart6_fracmux __initdata =
++	MUX(CLK_UART6, "clk_uart6", clk_uart6_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(53), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart7_fracmux __initdata =
++	MUX(CLK_UART7, "clk_uart7", clk_uart7_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(55), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart8_fracmux __initdata =
++	MUX(CLK_UART8, "clk_uart8", clk_uart8_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(57), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_uart9_fracmux __initdata =
++	MUX(CLK_UART9, "clk_uart9", clk_uart9_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(59), 0, 2, MFLAGS);
++
++static struct rockchip_clk_branch rk3588_hdmirx_aud_fracmux __initdata =
++	MUX(CLK_HDMIRX_AUD_P_MUX, "clk_hdmirx_aud_mux", clk_hdmirx_aud_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(140), 0, 1, MFLAGS);
++
++static struct rockchip_pll_clock rk3588_pll_clks[] __initdata = {
++	[b0pll] = PLL(pll_rk3588_core, PLL_B0PLL, "b0pll", mux_pll_p,
++		     CLK_IGNORE_UNUSED, RK3588_B0_PLL_CON(0),
++		     RK3588_BIGCORE0_CLKSEL_CON(0), 6, 15, 0, rk3588_pll_rates),
++	[b1pll] = PLL(pll_rk3588_core, PLL_B1PLL, "b1pll", mux_pll_p,
++		     CLK_IGNORE_UNUSED, RK3588_B1_PLL_CON(8),
++		     RK3588_BIGCORE1_CLKSEL_CON(0), 6, 15, 0, rk3588_pll_rates),
++	[lpll] = PLL(pll_rk3588_core, PLL_LPLL, "lpll", mux_pll_p,
++		     CLK_IGNORE_UNUSED, RK3588_LPLL_CON(16),
++		     RK3588_DSU_CLKSEL_CON(5), 14, 15, 0, rk3588_pll_rates),
++	[v0pll] = PLL(pll_rk3588, PLL_V0PLL, "v0pll", mux_pll_p,
++		     0, RK3588_PLL_CON(88),
++		     RK3588_MODE_CON0, 4, 15, 0, rk3588_pll_rates),
++	[aupll] = PLL(pll_rk3588, PLL_AUPLL, "aupll", mux_pll_p,
++		     0, RK3588_PLL_CON(96),
++		     RK3588_MODE_CON0, 6, 15, 0, rk3588_pll_rates),
++	[cpll] = PLL(pll_rk3588, PLL_CPLL, "cpll", mux_pll_p,
++		     CLK_IGNORE_UNUSED, RK3588_PLL_CON(104),
++		     RK3588_MODE_CON0, 8, 15, 0, rk3588_pll_rates),
++	[gpll] = PLL(pll_rk3588, PLL_GPLL, "gpll", mux_pll_p,
++		     CLK_IGNORE_UNUSED, RK3588_PLL_CON(112),
++		     RK3588_MODE_CON0, 2, 15, 0, rk3588_pll_rates),
++	[npll] = PLL(pll_rk3588, PLL_NPLL, "npll", mux_pll_p,
++		     0, RK3588_PLL_CON(120),
++		     RK3588_MODE_CON0, 0, 15, 0, rk3588_pll_rates),
++	[ppll] = PLL(pll_rk3588_core, PLL_PPLL, "ppll", mux_pll_p,
++		     CLK_IGNORE_UNUSED, RK3588_PMU_PLL_CON(128),
++		     RK3588_MODE_CON0, 10, 15, 0, rk3588_pll_rates),
++};
++
++static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
++	/*
++	 * CRU Clock-Architecture
++	 */
++	/* fixed */
++	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
++
++	/* bigcore0 */
++	COMPOSITE_NODIV(PCLK_BIGCORE0_ROOT, "pclk_bigcore0_root", mux_100m_50m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_BIGCORE0_CLKSEL_CON(2), 0, 2, MFLAGS,
++			RK3588_BIGCORE0_CLKGATE_CON(0), 14, GFLAGS),
++	GATE(PCLK_BIGCORE0_PVTM, "pclk_bigcore0_pvtm", "pclk_bigcore0_root", 0,
++			RK3588_BIGCORE0_CLKGATE_CON(1), 0, GFLAGS),
++	GATE(CLK_BIGCORE0_PVTM, "clk_bigcore0_pvtm", "xin24m", 0,
++			RK3588_BIGCORE0_CLKGATE_CON(0), 12, GFLAGS),
++	GATE(CLK_CORE_BIGCORE0_PVTM, "clk_core_bigcore0_pvtm", "armclk_b01", 0,
++			RK3588_BIGCORE0_CLKGATE_CON(0), 13, GFLAGS),
++
++	/* bigcore1 */
++	COMPOSITE_NODIV(PCLK_BIGCORE1_ROOT, "pclk_bigcore1_root", mux_100m_50m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_BIGCORE1_CLKSEL_CON(2), 0, 2, MFLAGS,
++			RK3588_BIGCORE1_CLKGATE_CON(0), 14, GFLAGS),
++	GATE(PCLK_BIGCORE1_PVTM, "pclk_bigcore1_pvtm", "pclk_bigcore1_root", 0,
++			RK3588_BIGCORE1_CLKGATE_CON(1), 0, GFLAGS),
++	GATE(CLK_BIGCORE1_PVTM, "clk_bigcore1_pvtm", "xin24m", 0,
++			RK3588_BIGCORE1_CLKGATE_CON(0), 12, GFLAGS),
++	GATE(CLK_CORE_BIGCORE1_PVTM, "clk_core_bigcore1_pvtm", "armclk_b23", 0,
++			RK3588_BIGCORE1_CLKGATE_CON(0), 13, GFLAGS),
++
++	/* dsu */
++	COMPOSITE(0, "sclk_dsu", b0pll_b1pll_lpll_gpll_p, CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(0), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_DSU_CLKGATE_CON(0), 4, GFLAGS),
++	COMPOSITE_NOMUX(0, "atclk_dsu", "sclk_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(3), 0, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(1), 0, GFLAGS),
++	COMPOSITE_NOMUX(0, "gicclk_dsu", "sclk_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(3), 5, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(1), 1, GFLAGS),
++	COMPOSITE_NOMUX(0, "aclkmp_dsu", "sclk_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(1), 11, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(0), 12, GFLAGS),
++	COMPOSITE_NOMUX(0, "aclkm_dsu", "sclk_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(1), 1, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(0), 8, GFLAGS),
++	COMPOSITE_NOMUX(0, "aclks_dsu", "sclk_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(1), 6, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(0), 9, GFLAGS),
++	COMPOSITE_NOMUX(0, "periph_dsu", "sclk_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(2), 0, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(0), 13, GFLAGS),
++	COMPOSITE_NOMUX(0, "cntclk_dsu", "periph_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(2), 5, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(0), 14, GFLAGS),
++	COMPOSITE_NOMUX(0, "tsclk_dsu", "periph_dsu", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(2), 10, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			RK3588_DSU_CLKGATE_CON(0), 15, GFLAGS),
++	COMPOSITE_NODIV(PCLK_DSU_S_ROOT, "pclk_dsu_s_root", mux_100m_50m_24m_p, CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(4), 11, 2, MFLAGS,
++			RK3588_DSU_CLKGATE_CON(2), 2, GFLAGS),
++	COMPOSITE(PCLK_DSU_ROOT, "pclk_dsu_root", b0pll_b1pll_lpll_gpll_p, CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(4), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_DSU_CLKGATE_CON(1), 3, GFLAGS),
++	COMPOSITE_NODIV(PCLK_DSU_NS_ROOT, "pclk_dsu_ns_root", mux_100m_50m_24m_p, CLK_IS_CRITICAL,
++			RK3588_DSU_CLKSEL_CON(4), 7, 2, MFLAGS,
++			RK3588_DSU_CLKGATE_CON(1), 4, GFLAGS),
++	GATE(PCLK_LITCORE_PVTM, "pclk_litcore_pvtm", "pclk_dsu_ns_root", 0,
++			RK3588_DSU_CLKGATE_CON(2), 6, GFLAGS),
++	GATE(PCLK_DBG, "pclk_dbg", "pclk_dsu_root", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKGATE_CON(1), 7, GFLAGS),
++	GATE(PCLK_DSU, "pclk_dsu", "pclk_dsu_root", CLK_IS_CRITICAL,
++			RK3588_DSU_CLKGATE_CON(1), 6, GFLAGS),
++	GATE(PCLK_S_DAPLITE, "pclk_s_daplite", "pclk_dsu_ns_root", CLK_IGNORE_UNUSED,
++			RK3588_DSU_CLKGATE_CON(1), 8, GFLAGS),
++	GATE(PCLK_M_DAPLITE, "pclk_m_daplite", "pclk_dsu_root", CLK_IGNORE_UNUSED,
++			RK3588_DSU_CLKGATE_CON(1), 9, GFLAGS),
++	GATE(CLK_LITCORE_PVTM, "clk_litcore_pvtm", "xin24m", 0,
++			RK3588_DSU_CLKGATE_CON(2), 0, GFLAGS),
++	GATE(CLK_CORE_LITCORE_PVTM, "clk_core_litcore_pvtm", "armclk_l", 0,
++			RK3588_DSU_CLKGATE_CON(2), 1, GFLAGS),
++
++	/* audio */
++	GATE(HCLK_I2S2_2CH, "hclk_i2s2_2ch", "hclk_audio_root", 0,
++			RK3588_CLKGATE_CON(7), 12, GFLAGS),
++	GATE(HCLK_I2S3_2CH, "hclk_i2s3_2ch", "hclk_audio_root", 0,
++			RK3588_CLKGATE_CON(7), 13, GFLAGS),
++	COMPOSITE(CLK_I2S2_2CH_SRC, "clk_i2s2_2ch_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(28), 9, 1, MFLAGS, 4, 5, DFLAGS,
++			RK3588_CLKGATE_CON(7), 14, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S2_2CH_FRAC, "clk_i2s2_2ch_frac", "clk_i2s2_2ch_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(29), 0,
++			RK3588_CLKGATE_CON(7), 15, GFLAGS,
++			&rk3588_i2s2_2ch_fracmux),
++	GATE(MCLK_I2S2_2CH, "mclk_i2s2_2ch", "clk_i2s2_2ch", 0,
++			RK3588_CLKGATE_CON(8), 0, GFLAGS),
++	MUX(I2S2_2CH_MCLKOUT, "i2s2_2ch_mclkout", i2s2_2ch_mclkout_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(30), 2, 1, MFLAGS),
++
++	COMPOSITE(CLK_I2S3_2CH_SRC, "clk_i2s3_2ch_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(30), 8, 1, MFLAGS, 3, 5, DFLAGS,
++			RK3588_CLKGATE_CON(8), 1, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S3_2CH_FRAC, "clk_i2s3_2ch_frac", "clk_i2s3_2ch_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(31), 0,
++			RK3588_CLKGATE_CON(8), 2, GFLAGS,
++			&rk3588_i2s3_2ch_fracmux),
++	GATE(MCLK_I2S3_2CH, "mclk_i2s3_2ch", "clk_i2s3_2ch", 0,
++			RK3588_CLKGATE_CON(8), 3, GFLAGS),
++	GATE(CLK_DAC_ACDCDIG, "clk_dac_acdcdig", "mclk_i2s3_2ch", 0,
++			RK3588_CLKGATE_CON(8), 4, GFLAGS),
++	MUX(I2S3_2CH_MCLKOUT, "i2s3_2ch_mclkout", i2s3_2ch_mclkout_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(32), 2, 1, MFLAGS),
++	GATE(PCLK_ACDCDIG, "pclk_acdcdig", "pclk_audio_root", 0,
++			RK3588_CLKGATE_CON(7), 11, GFLAGS),
++	GATE(HCLK_I2S0_8CH, "hclk_i2s0_8ch", "hclk_audio_root", 0,
++			RK3588_CLKGATE_CON(7), 4, GFLAGS),
++
++	COMPOSITE(CLK_I2S0_8CH_TX_SRC, "clk_i2s0_8ch_tx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(24), 9, 1, MFLAGS, 4, 5, DFLAGS,
++			RK3588_CLKGATE_CON(7), 5, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S0_8CH_TX_FRAC, "clk_i2s0_8ch_tx_frac", "clk_i2s0_8ch_tx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(25), 0,
++			RK3588_CLKGATE_CON(7), 6, GFLAGS,
++			&rk3588_i2s0_8ch_tx_fracmux),
++	GATE(MCLK_I2S0_8CH_TX, "mclk_i2s0_8ch_tx", "clk_i2s0_8ch_tx", 0,
++			RK3588_CLKGATE_CON(7), 7, GFLAGS),
++
++	COMPOSITE(CLK_I2S0_8CH_RX_SRC, "clk_i2s0_8ch_rx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(26), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(7), 8, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S0_8CH_RX_FRAC, "clk_i2s0_8ch_rx_frac", "clk_i2s0_8ch_rx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(27), 0,
++			RK3588_CLKGATE_CON(7), 9, GFLAGS,
++			&rk3588_i2s0_8ch_rx_fracmux),
++	GATE(MCLK_I2S0_8CH_RX, "mclk_i2s0_8ch_rx", "clk_i2s0_8ch_rx", 0,
++			RK3588_CLKGATE_CON(7), 10, GFLAGS),
++	MUX(I2S0_8CH_MCLKOUT, "i2s0_8ch_mclkout", i2s0_8ch_mclkout_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(28), 2, 2, MFLAGS),
++
++	GATE(HCLK_PDM1, "hclk_pdm1", "hclk_audio_root", 0,
++			RK3588_CLKGATE_CON(9), 6, GFLAGS),
++	COMPOSITE(MCLK_PDM1, "mclk_pdm1", gpll_cpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(36), 7, 2, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(9), 7, GFLAGS),
++	COMPOSITE_NODIV(HCLK_AUDIO_ROOT, "hclk_audio_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(24), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(7), 0, GFLAGS),
++	COMPOSITE_NODIV(PCLK_AUDIO_ROOT, "pclk_audio_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(24), 2, 2, MFLAGS,
++			RK3588_CLKGATE_CON(7), 1, GFLAGS),
++
++	GATE(HCLK_SPDIF0, "hclk_spdif0", "hclk_audio_root", 0,
++			RK3588_CLKGATE_CON(8), 14, GFLAGS),
++	COMPOSITE(CLK_SPDIF0_SRC, "clk_spdif0_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(32), 8, 1, MFLAGS, 3, 5, DFLAGS,
++			RK3588_CLKGATE_CON(8), 15, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_SPDIF0_FRAC, "clk_spdif0_frac", "clk_spdif0_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(33), 0,
++			RK3588_CLKGATE_CON(9), 0, GFLAGS,
++			&rk3588_spdif0_fracmux),
++	GATE(MCLK_SPDIF0, "mclk_spdif0", "clk_spdif0", 0,
++			RK3588_CLKGATE_CON(9), 1, GFLAGS),
++
++	GATE(HCLK_SPDIF1, "hclk_spdif1", "hclk_audio_root", 0,
++			RK3588_CLKGATE_CON(9), 2, GFLAGS),
++	COMPOSITE(CLK_SPDIF1_SRC, "clk_spdif1_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(34), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(9), 3, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_SPDIF1_FRAC, "clk_spdif1_frac", "clk_spdif1_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(35), 0,
++			RK3588_CLKGATE_CON(9), 4, GFLAGS,
++			&rk3588_spdif1_fracmux),
++	GATE(MCLK_SPDIF1, "mclk_spdif1", "clk_spdif1", 0,
++			RK3588_CLKGATE_CON(9), 5, GFLAGS),
++
++	COMPOSITE(ACLK_AV1_ROOT, "aclk_av1_root", gpll_cpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(163), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(68), 0, GFLAGS),
++	GATE(ACLK_AV1, "aclk_av1", "aclk_av1_root", 0,
++			RK3588_CLKGATE_CON(68), 2, GFLAGS),
++	COMPOSITE_NODIV(PCLK_AV1_ROOT, "pclk_av1_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(163), 7, 2, MFLAGS,
++			RK3588_CLKGATE_CON(68), 3, GFLAGS),
++	GATE(PCLK_AV1, "pclk_av1", "pclk_av1_root", 0,
++			RK3588_CLKGATE_CON(68), 5, GFLAGS),
++
++	/* bus */
++	GATE(PCLK_MAILBOX0, "pclk_mailbox0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(16), 11, GFLAGS),
++	GATE(PCLK_MAILBOX1, "pclk_mailbox1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(16), 12, GFLAGS),
++	GATE(PCLK_MAILBOX2, "pclk_mailbox2", "pclk_top_root", 0,
++		RK3588_CLKGATE_CON(16), 13, GFLAGS),
++	GATE(PCLK_PMU2, "pclk_pmu2", "pclk_top_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(19), 3, GFLAGS),
++	GATE(PCLK_PMUCM0_INTMUX, "pclk_pmucm0_intmux", "pclk_top_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(19), 4, GFLAGS),
++	GATE(PCLK_DDRCM0_INTMUX, "pclk_ddrcm0_intmux", "pclk_top_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(19), 5, GFLAGS),
++
++	GATE(PCLK_PWM1, "pclk_pwm1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(15), 3, GFLAGS),
++	COMPOSITE_NODIV(CLK_PWM1, "clk_pwm1", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(59), 12, 2, MFLAGS,
++			RK3588_CLKGATE_CON(15), 4, GFLAGS),
++	GATE(CLK_PWM1_CAPTURE, "clk_pwm1_capture", "xin24m", 0,
++			RK3588_CLKGATE_CON(15), 5, GFLAGS),
++	GATE(PCLK_PWM2, "pclk_pwm2", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(15), 6, GFLAGS),
++	COMPOSITE_NODIV(CLK_PWM2, "clk_pwm2", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(59), 14, 2, MFLAGS,
++			RK3588_CLKGATE_CON(15), 7, GFLAGS),
++	GATE(CLK_PWM2_CAPTURE, "clk_pwm2_capture", "xin24m", 0,
++			RK3588_CLKGATE_CON(15), 8, GFLAGS),
++	GATE(PCLK_PWM3, "pclk_pwm3", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(15), 9, GFLAGS),
++	COMPOSITE_NODIV(CLK_PWM3, "clk_pwm3", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(60), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(15), 10, GFLAGS),
++	GATE(CLK_PWM3_CAPTURE, "clk_pwm3_capture", "xin24m", 0,
++			RK3588_CLKGATE_CON(15), 11, GFLAGS),
++
++	GATE(PCLK_BUSTIMER0, "pclk_bustimer0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(15), 12, GFLAGS),
++	GATE(PCLK_BUSTIMER1, "pclk_bustimer1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(15), 13, GFLAGS),
++	COMPOSITE_NODIV(CLK_BUS_TIMER_ROOT, "clk_bus_timer_root", mux_24m_100m_p, 0,
++			RK3588_CLKSEL_CON(60), 2, 1, MFLAGS,
++			RK3588_CLKGATE_CON(15), 14, GFLAGS),
++	GATE(CLK_BUSTIMER0, "clk_bustimer0", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(15), 15, GFLAGS),
++	GATE(CLK_BUSTIMER1, "clk_bustimer1", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 0, GFLAGS),
++	GATE(CLK_BUSTIMER2, "clk_bustimer2", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 1, GFLAGS),
++	GATE(CLK_BUSTIMER3, "clk_bustimer3", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 2, GFLAGS),
++	GATE(CLK_BUSTIMER4, "clk_bustimer4", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 3, GFLAGS),
++	GATE(CLK_BUSTIMER5, "clk_bustimer5", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 4, GFLAGS),
++	GATE(CLK_BUSTIMER6, "clk_bustimer6", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 5, GFLAGS),
++	GATE(CLK_BUSTIMER7, "clk_bustimer7", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 6, GFLAGS),
++	GATE(CLK_BUSTIMER8, "clk_bustimer8", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 7, GFLAGS),
++	GATE(CLK_BUSTIMER9, "clk_bustimer9", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 8, GFLAGS),
++	GATE(CLK_BUSTIMER10, "clk_bustimer10", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 9, GFLAGS),
++	GATE(CLK_BUSTIMER11, "clk_bustimer11", "clk_bus_timer_root", 0,
++			RK3588_CLKGATE_CON(16), 10, GFLAGS),
++
++	GATE(PCLK_WDT0, "pclk_wdt0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(15), 0, GFLAGS),
++	GATE(TCLK_WDT0, "tclk_wdt0", "xin24m", 0,
++			RK3588_CLKGATE_CON(15), 1, GFLAGS),
++
++	GATE(PCLK_CAN0, "pclk_can0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(11), 8, GFLAGS),
++	COMPOSITE(CLK_CAN0, "clk_can0", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(39), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(11), 9, GFLAGS),
++	GATE(PCLK_CAN1, "pclk_can1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(11), 10, GFLAGS),
++	COMPOSITE(CLK_CAN1, "clk_can1", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(39), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(11), 11, GFLAGS),
++	GATE(PCLK_CAN2, "pclk_can2", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(11), 12, GFLAGS),
++	COMPOSITE(CLK_CAN2, "clk_can2", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(40), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(11), 13, GFLAGS),
++
++	GATE(ACLK_DECOM, "aclk_decom", "aclk_bus_root", 0,
++			RK3588_CLKGATE_CON(17), 6, GFLAGS),
++	GATE(PCLK_DECOM, "pclk_decom", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(17), 7, GFLAGS),
++	COMPOSITE(DCLK_DECOM, "dclk_decom", gpll_spll_p, 0,
++			RK3588_CLKSEL_CON(62), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(17), 8, GFLAGS),
++	GATE(ACLK_DMAC0, "aclk_dmac0", "aclk_bus_root", 0,
++			RK3588_CLKGATE_CON(10), 5, GFLAGS),
++	GATE(ACLK_DMAC1, "aclk_dmac1", "aclk_bus_root", 0,
++			RK3588_CLKGATE_CON(10), 6, GFLAGS),
++	GATE(ACLK_DMAC2, "aclk_dmac2", "aclk_bus_root", 0,
++			RK3588_CLKGATE_CON(10), 7, GFLAGS),
++
++	COMPOSITE(ACLK_BUS_ROOT, "aclk_bus_root", gpll_cpll_p, CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(38), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(10), 0, GFLAGS),
++	GATE(ACLK_GIC, "aclk_gic", "aclk_bus_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(10), 3, GFLAGS),
++
++	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(16), 14, GFLAGS),
++	COMPOSITE(DBCLK_GPIO1, "dbclk_gpio1", mux_24m_32k_p, 0,
++			RK3588_CLKSEL_CON(60), 8, 1, MFLAGS, 3, 5, DFLAGS,
++			RK3588_CLKGATE_CON(16), 15, GFLAGS),
++	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(17), 0, GFLAGS),
++	COMPOSITE(DBCLK_GPIO2, "dbclk_gpio2", mux_24m_32k_p, 0,
++			RK3588_CLKSEL_CON(60), 14, 1, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(17), 1, GFLAGS),
++	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(17), 2, GFLAGS),
++	COMPOSITE(DBCLK_GPIO3, "dbclk_gpio3", mux_24m_32k_p, 0,
++			RK3588_CLKSEL_CON(61), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(17), 3, GFLAGS),
++	GATE(PCLK_GPIO4, "pclk_gpio4", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(17), 4, GFLAGS),
++	COMPOSITE(DBCLK_GPIO4, "dbclk_gpio4", mux_24m_32k_p, 0,
++			RK3588_CLKSEL_CON(61), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(17), 5, GFLAGS),
++
++	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 8, GFLAGS),
++	GATE(PCLK_I2C2, "pclk_i2c2", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 9, GFLAGS),
++	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 10, GFLAGS),
++	GATE(PCLK_I2C4, "pclk_i2c4", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 11, GFLAGS),
++	GATE(PCLK_I2C5, "pclk_i2c5", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 12, GFLAGS),
++	GATE(PCLK_I2C6, "pclk_i2c6", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 13, GFLAGS),
++	GATE(PCLK_I2C7, "pclk_i2c7", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 14, GFLAGS),
++	GATE(PCLK_I2C8, "pclk_i2c8", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(10), 15, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C1, "clk_i2c1", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 6, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 0, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C2, "clk_i2c2", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 7, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 1, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C3, "clk_i2c3", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 8, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 2, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C4, "clk_i2c4", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 9, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 3, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C5, "clk_i2c5", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 10, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 4, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C6, "clk_i2c6", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 11, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 5, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C7, "clk_i2c7", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 12, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 6, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C8, "clk_i2c8", mux_200m_100m_p, 0,
++			RK3588_CLKSEL_CON(38), 13, 1, MFLAGS,
++			RK3588_CLKGATE_CON(11), 7, GFLAGS),
++
++	GATE(PCLK_OTPC_NS, "pclk_otpc_ns", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(18), 9, GFLAGS),
++	GATE(CLK_OTPC_NS, "clk_otpc_ns", "xin24m", 0,
++			RK3588_CLKGATE_CON(18), 10, GFLAGS),
++	GATE(CLK_OTPC_ARB, "clk_otpc_arb", "xin24m", 0,
++			RK3588_CLKGATE_CON(18), 11, GFLAGS),
++	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", 0,
++			RK3588_CLKGATE_CON(18), 13, GFLAGS),
++	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", 0,
++			RK3588_CLKGATE_CON(18), 12, GFLAGS),
++
++	GATE(PCLK_SARADC, "pclk_saradc", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(11), 14, GFLAGS),
++	COMPOSITE(CLK_SARADC, "clk_saradc", gpll_24m_p, 0,
++			RK3588_CLKSEL_CON(40), 14, 1, MFLAGS, 6, 8, DFLAGS,
++			RK3588_CLKGATE_CON(11), 15, GFLAGS),
++
++	GATE(PCLK_SPI0, "pclk_spi0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(14), 6, GFLAGS),
++	GATE(PCLK_SPI1, "pclk_spi1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(14), 7, GFLAGS),
++	GATE(PCLK_SPI2, "pclk_spi2", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(14), 8, GFLAGS),
++	GATE(PCLK_SPI3, "pclk_spi3", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(14), 9, GFLAGS),
++	GATE(PCLK_SPI4, "pclk_spi4", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(14), 10, GFLAGS),
++	COMPOSITE_NODIV(CLK_SPI0, "clk_spi0", mux_200m_150m_24m_p, 0,
++			RK3588_CLKSEL_CON(59), 2, 2, MFLAGS,
++			RK3588_CLKGATE_CON(14), 11, GFLAGS),
++	COMPOSITE_NODIV(CLK_SPI1, "clk_spi1", mux_200m_150m_24m_p, 0,
++			RK3588_CLKSEL_CON(59), 4, 2, MFLAGS,
++			RK3588_CLKGATE_CON(14), 12, GFLAGS),
++	COMPOSITE_NODIV(CLK_SPI2, "clk_spi2", mux_200m_150m_24m_p, 0,
++			RK3588_CLKSEL_CON(59), 6, 2, MFLAGS,
++			RK3588_CLKGATE_CON(14), 13, GFLAGS),
++	COMPOSITE_NODIV(CLK_SPI3, "clk_spi3", mux_200m_150m_24m_p, 0,
++			RK3588_CLKSEL_CON(59), 8, 2, MFLAGS,
++			RK3588_CLKGATE_CON(14), 14, GFLAGS),
++	COMPOSITE_NODIV(CLK_SPI4, "clk_spi4", mux_200m_150m_24m_p, 0,
++			RK3588_CLKSEL_CON(59), 10, 2, MFLAGS,
++			RK3588_CLKGATE_CON(14), 15, GFLAGS),
++
++	GATE(ACLK_SPINLOCK, "aclk_spinlock", "aclk_bus_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(18), 6, GFLAGS),
++	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 0, GFLAGS),
++	COMPOSITE(CLK_TSADC, "clk_tsadc", gpll_24m_p, 0,
++			RK3588_CLKSEL_CON(41), 8, 1, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(12), 1, GFLAGS),
++
++	GATE(PCLK_UART1, "pclk_uart1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 2, GFLAGS),
++	GATE(PCLK_UART2, "pclk_uart2", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 3, GFLAGS),
++	GATE(PCLK_UART3, "pclk_uart3", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 4, GFLAGS),
++	GATE(PCLK_UART4, "pclk_uart4", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 5, GFLAGS),
++	GATE(PCLK_UART5, "pclk_uart5", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 6, GFLAGS),
++	GATE(PCLK_UART6, "pclk_uart6", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 7, GFLAGS),
++	GATE(PCLK_UART7, "pclk_uart7", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 8, GFLAGS),
++	GATE(PCLK_UART8, "pclk_uart8", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 9, GFLAGS),
++	GATE(PCLK_UART9, "pclk_uart9", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(12), 10, GFLAGS),
++
++	COMPOSITE(CLK_UART1_SRC, "clk_uart1_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(41), 14, 1, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(12), 11, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART1_FRAC, "clk_uart1_frac", "clk_uart1_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(42), 0,
++			RK3588_CLKGATE_CON(12), 12, GFLAGS,
++			&rk3588_uart1_fracmux),
++	GATE(SCLK_UART1, "sclk_uart1", "clk_uart1", 0,
++			RK3588_CLKGATE_CON(12), 13, GFLAGS),
++	COMPOSITE(CLK_UART2_SRC, "clk_uart2_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(43), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(12), 14, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART2_FRAC, "clk_uart2_frac", "clk_uart2_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(44), 0,
++			RK3588_CLKGATE_CON(12), 15, GFLAGS,
++			&rk3588_uart2_fracmux),
++	GATE(SCLK_UART2, "sclk_uart2", "clk_uart2", 0,
++			RK3588_CLKGATE_CON(13), 0, GFLAGS),
++	COMPOSITE(CLK_UART3_SRC, "clk_uart3_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(45), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(13), 1, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART3_FRAC, "clk_uart3_frac", "clk_uart3_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(46), 0,
++			RK3588_CLKGATE_CON(13), 2, GFLAGS,
++			&rk3588_uart3_fracmux),
++	GATE(SCLK_UART3, "sclk_uart3", "clk_uart3", 0,
++			RK3588_CLKGATE_CON(13), 3, GFLAGS),
++	COMPOSITE(CLK_UART4_SRC, "clk_uart4_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(47), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(13), 4, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART4_FRAC, "clk_uart4_frac", "clk_uart4_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(48), 0,
++			RK3588_CLKGATE_CON(13), 5, GFLAGS,
++			&rk3588_uart4_fracmux),
++	GATE(SCLK_UART4, "sclk_uart4", "clk_uart4", 0,
++			RK3588_CLKGATE_CON(13), 6, GFLAGS),
++	COMPOSITE(CLK_UART5_SRC, "clk_uart5_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(49), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(13), 7, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART5_FRAC, "clk_uart5_frac", "clk_uart5_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(50), 0,
++			RK3588_CLKGATE_CON(13), 8, GFLAGS,
++			&rk3588_uart5_fracmux),
++	GATE(SCLK_UART5, "sclk_uart5", "clk_uart5", 0,
++			RK3588_CLKGATE_CON(13), 9, GFLAGS),
++	COMPOSITE(CLK_UART6_SRC, "clk_uart6_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(51), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(13), 10, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART6_FRAC, "clk_uart6_frac", "clk_uart6_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(52), 0,
++			RK3588_CLKGATE_CON(13), 11, GFLAGS,
++			&rk3588_uart6_fracmux),
++	GATE(SCLK_UART6, "sclk_uart6", "clk_uart6", 0,
++			RK3588_CLKGATE_CON(13), 12, GFLAGS),
++	COMPOSITE(CLK_UART7_SRC, "clk_uart7_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(53), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(13), 13, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART7_FRAC, "clk_uart7_frac", "clk_uart7_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(54), 0,
++			RK3588_CLKGATE_CON(13), 14, GFLAGS,
++			&rk3588_uart7_fracmux),
++	GATE(SCLK_UART7, "sclk_uart7", "clk_uart7", 0,
++			RK3588_CLKGATE_CON(13), 15, GFLAGS),
++	COMPOSITE(CLK_UART8_SRC, "clk_uart8_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(55), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(14), 0, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART8_FRAC, "clk_uart8_frac", "clk_uart8_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(56), 0,
++			RK3588_CLKGATE_CON(14), 1, GFLAGS,
++			&rk3588_uart8_fracmux),
++	GATE(SCLK_UART8, "sclk_uart8", "clk_uart8", 0,
++			RK3588_CLKGATE_CON(14), 2, GFLAGS),
++	COMPOSITE(CLK_UART9_SRC, "clk_uart9_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(57), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(14), 3, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART9_FRAC, "clk_uart9_frac", "clk_uart9_src", CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(58), 0,
++			RK3588_CLKGATE_CON(14), 4, GFLAGS,
++			&rk3588_uart9_fracmux),
++	GATE(SCLK_UART9, "sclk_uart9", "clk_uart9", 0,
++			RK3588_CLKGATE_CON(14), 5, GFLAGS),
++
++	/* center */
++	COMPOSITE_NODIV(ACLK_CENTER_ROOT, "aclk_center_root", mux_700m_400m_200m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(165), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(69), 0, GFLAGS),
++	COMPOSITE_NODIV(ACLK_CENTER_LOW_ROOT, "aclk_center_low_root", mux_500m_250m_100m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(165), 2, 2, MFLAGS,
++			RK3588_CLKGATE_CON(69), 1, GFLAGS),
++	COMPOSITE_NODIV(HCLK_CENTER_ROOT, "hclk_center_root", mux_400m_200m_100m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(165), 4, 2, MFLAGS,
++			RK3588_CLKGATE_CON(69), 2, GFLAGS),
++	COMPOSITE_NODIV(PCLK_CENTER_ROOT, "pclk_center_root", mux_200m_100m_50m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(165), 6, 2, MFLAGS,
++			RK3588_CLKGATE_CON(69), 3, GFLAGS),
++	GATE(ACLK_DMA2DDR, "aclk_dma2ddr", "aclk_center_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(69), 5, GFLAGS),
++	GATE(ACLK_DDR_SHAREMEM, "aclk_ddr_sharemem", "aclk_center_low_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(69), 6, GFLAGS),
++	COMPOSITE_NODIV(ACLK_CENTER_S200_ROOT, "aclk_center_s200_root", mux_200m_100m_50m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(165), 8, 2, MFLAGS,
++			RK3588_CLKGATE_CON(69), 8, GFLAGS),
++	COMPOSITE_NODIV(ACLK_CENTER_S400_ROOT, "aclk_center_s400_root", mux_400m_200m_100m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(165), 10, 2, MFLAGS,
++			RK3588_CLKGATE_CON(69), 9, GFLAGS),
++	GATE(FCLK_DDR_CM0_CORE, "fclk_ddr_cm0_core", "hclk_center_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(69), 14, GFLAGS),
++	COMPOSITE_NODIV(CLK_DDR_TIMER_ROOT, "clk_ddr_timer_root", mux_24m_100m_p, CLK_IGNORE_UNUSED,
++			RK3588_CLKSEL_CON(165), 12, 1, MFLAGS,
++			RK3588_CLKGATE_CON(69), 15, GFLAGS),
++	GATE(CLK_DDR_TIMER0, "clk_ddr_timer0", "clk_ddr_timer_root", 0,
++			RK3588_CLKGATE_CON(70), 0, GFLAGS),
++	GATE(CLK_DDR_TIMER1, "clk_ddr_timer1", "clk_ddr_timer_root", 0,
++			RK3588_CLKGATE_CON(70), 1, GFLAGS),
++	GATE(TCLK_WDT_DDR, "tclk_wdt_ddr", "xin24m", 0,
++			RK3588_CLKGATE_CON(70), 2, GFLAGS),
++	COMPOSITE(CLK_DDR_CM0_RTC, "clk_ddr_cm0_rtc", mux_24m_32k_p, CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(166), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(70), 4, GFLAGS),
++	GATE(PCLK_WDT, "pclk_wdt", "pclk_center_root", 0,
++			RK3588_CLKGATE_CON(70), 7, GFLAGS),
++	GATE(PCLK_TIMER, "pclk_timer", "pclk_center_root", 0,
++			RK3588_CLKGATE_CON(70), 8, GFLAGS),
++	GATE(PCLK_DMA2DDR, "pclk_dma2ddr", "pclk_center_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(70), 9, GFLAGS),
++	GATE(PCLK_SHAREMEM, "pclk_sharemem", "pclk_center_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(70), 10, GFLAGS),
++
++	/* top */
++	COMPOSITE(CLK_50M_SRC, "clk_50m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(0), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 0, GFLAGS),
++	COMPOSITE(CLK_100M_SRC, "clk_100m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(0), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 1, GFLAGS),
++	COMPOSITE(CLK_150M_SRC, "clk_150m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(1), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 2, GFLAGS),
++	COMPOSITE(CLK_200M_SRC, "clk_200m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(1), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 3, GFLAGS),
++	COMPOSITE(CLK_250M_SRC, "clk_250m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(2), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 4, GFLAGS),
++	COMPOSITE(CLK_300M_SRC, "clk_300m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(2), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 5, GFLAGS),
++	COMPOSITE(CLK_350M_SRC, "clk_350m_src", gpll_spll_p, 0,
++			RK3588_CLKSEL_CON(3), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 6, GFLAGS),
++	COMPOSITE(CLK_400M_SRC, "clk_400m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(3), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 7, GFLAGS),
++	COMPOSITE_HALFDIV(CLK_450M_SRC, "clk_450m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(4), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 8, GFLAGS),
++	COMPOSITE(CLK_500M_SRC, "clk_500m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(4), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 9, GFLAGS),
++	COMPOSITE(CLK_600M_SRC, "clk_600m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(5), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 10, GFLAGS),
++	COMPOSITE(CLK_650M_SRC, "clk_650m_src", gpll_lpll_p, 0,
++			RK3588_CLKSEL_CON(5), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 11, GFLAGS),
++	COMPOSITE(CLK_700M_SRC, "clk_700m_src", gpll_spll_p, 0,
++			RK3588_CLKSEL_CON(6), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 12, GFLAGS),
++	COMPOSITE(CLK_800M_SRC, "clk_800m_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(6), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 13, GFLAGS),
++	COMPOSITE_HALFDIV(CLK_1000M_SRC, "clk_1000m_src", gpll_cpll_npll_v0pll_p, 0,
++			RK3588_CLKSEL_CON(7), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 14, GFLAGS),
++	COMPOSITE(CLK_1200M_SRC, "clk_1200m_src", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(7), 12, 1, MFLAGS, 7, 5, DFLAGS,
++			RK3588_CLKGATE_CON(0), 15, GFLAGS),
++	COMPOSITE_NODIV(ACLK_TOP_M300_ROOT, "aclk_top_m300_root", mux_300m_200m_100m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(9), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(1), 10, GFLAGS),
++	COMPOSITE_NODIV(ACLK_TOP_M500_ROOT, "aclk_top_m500_root", mux_500m_300m_100m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(9), 2, 2, MFLAGS,
++			RK3588_CLKGATE_CON(1), 11, GFLAGS),
++	COMPOSITE_NODIV(ACLK_TOP_M400_ROOT, "aclk_top_m400_root", mux_400m_200m_100m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(9), 4, 2, MFLAGS,
++			RK3588_CLKGATE_CON(1), 12, GFLAGS),
++	COMPOSITE_NODIV(ACLK_TOP_S200_ROOT, "aclk_top_s200_root", mux_200m_100m_50m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(9), 6, 2, MFLAGS,
++			RK3588_CLKGATE_CON(1), 13, GFLAGS),
++	COMPOSITE_NODIV(ACLK_TOP_S400_ROOT, "aclk_top_s400_root", mux_400m_200m_100m_24m_p,
++			CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(9), 8, 2, MFLAGS,
++			RK3588_CLKGATE_CON(1), 14, GFLAGS),
++	COMPOSITE(CLK_MIPI_CAMARAOUT_M0, "clk_mipi_camaraout_m0", mux_24m_spll_gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(18), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(5), 9, GFLAGS),
++	COMPOSITE(CLK_MIPI_CAMARAOUT_M1, "clk_mipi_camaraout_m1", mux_24m_spll_gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(19), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(5), 10, GFLAGS),
++	COMPOSITE(CLK_MIPI_CAMARAOUT_M2, "clk_mipi_camaraout_m2", mux_24m_spll_gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(20), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(5), 11, GFLAGS),
++	COMPOSITE(CLK_MIPI_CAMARAOUT_M3, "clk_mipi_camaraout_m3", mux_24m_spll_gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(21), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(5), 12, GFLAGS),
++	COMPOSITE(CLK_MIPI_CAMARAOUT_M4, "clk_mipi_camaraout_m4", mux_24m_spll_gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(22), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(5), 13, GFLAGS),
++	COMPOSITE(MCLK_GMAC0_OUT, "mclk_gmac0_out", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(15), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(5), 3, GFLAGS),
++	COMPOSITE(REFCLKO25M_ETH0_OUT, "refclko25m_eth0_out", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(15), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			RK3588_CLKGATE_CON(5), 4, GFLAGS),
++	COMPOSITE(REFCLKO25M_ETH1_OUT, "refclko25m_eth1_out", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(16), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(5), 5, GFLAGS),
++	COMPOSITE(CLK_CIFOUT_OUT, "clk_cifout_out", gpll_cpll_24m_spll_p, 0,
++			RK3588_CLKSEL_CON(17), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(5), 6, GFLAGS),
++	GATE(PCLK_MIPI_DCPHY0, "pclk_mipi_dcphy0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(3), 14, GFLAGS),
++	GATE(PCLK_MIPI_DCPHY1, "pclk_mipi_dcphy1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(4), 3, GFLAGS),
++	GATE(PCLK_CSIPHY0, "pclk_csiphy0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(1), 6, GFLAGS),
++	GATE(PCLK_CSIPHY1, "pclk_csiphy1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(1), 8, GFLAGS),
++	COMPOSITE(ACLK_TOP_ROOT, "aclk_top_root", gpll_cpll_aupll_p, CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(8), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(1), 0, GFLAGS),
++	COMPOSITE_NODIV(PCLK_TOP_ROOT, "pclk_top_root", mux_100m_50m_24m_p, CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(8), 7, 2, MFLAGS,
++			RK3588_CLKGATE_CON(1), 1, GFLAGS),
++	COMPOSITE(ACLK_LOW_TOP_ROOT, "aclk_low_top_root", gpll_cpll_p, CLK_IS_CRITICAL,
++			RK3588_CLKSEL_CON(8), 14, 1, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(1), 2, GFLAGS),
++	GATE(PCLK_CRU, "pclk_cru", "pclk_top_root", CLK_IS_CRITICAL,
++			RK3588_CLKGATE_CON(5), 0, GFLAGS),
++
++	/* gpu */
++	COMPOSITE_NODIV(PCLK_GPU_ROOT, "pclk_gpu_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(161), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(66), 13, GFLAGS),
++	COMPOSITE(CLK_GPU_SRC, "clk_gpu_src", gpll_cpll_aupll_npll_spll_p, 0,
++			RK3588_CLKSEL_CON(158), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(66), 1, GFLAGS),
++	GATE(CLK_GPU, "clk_gpu", "clk_gpu_src", 0,
++			RK3588_CLKGATE_CON(66), 4, GFLAGS),
++	GATE(CLK_GPU_COREGROUP, "clk_gpu_coregroup", "clk_gpu_src", 0,
++			RK3588_CLKGATE_CON(66), 6, GFLAGS),
++	COMPOSITE_NOMUX(CLK_GPU_STACKS, "clk_gpu_stacks", "clk_gpu_src", 0,
++			RK3588_CLKSEL_CON(159), 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(66), 7, GFLAGS),
++	GATE(PCLK_PVTM2, "pclk_pvtm2", "pclk_gpu_root", 0,
++			RK3588_CLKGATE_CON(66), 15, GFLAGS),
++	GATE(CLK_PVTM2, "clk_pvtm2", "xin24m", 0,
++			RK3588_CLKGATE_CON(67), 0, GFLAGS),
++	GATE(CLK_GPU_PVTM, "clk_gpu_pvtm", "clk_gpu_src", 0,
++			RK3588_CLKGATE_CON(67), 1, GFLAGS),
++	GATE(PCLK_GPU_GRF, "pclk_gpu_grf", "pclk_gpu_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(67), 2, GFLAGS),
++
++	/* isp1 */
++	COMPOSITE(ACLK_ISP1_ROOT, "aclk_isp1_root", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(67), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(26), 0, GFLAGS),
++	COMPOSITE_NODIV(HCLK_ISP1_ROOT, "hclk_isp1_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(67), 7, 2, MFLAGS,
++			RK3588_CLKGATE_CON(26), 1, GFLAGS),
++	COMPOSITE(CLK_ISP1_CORE, "clk_isp1_core", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(67), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(26), 2, GFLAGS),
++	GATE(CLK_ISP1_CORE_MARVIN, "clk_isp1_core_marvin", "clk_isp1_core", 0,
++			RK3588_CLKGATE_CON(26), 3, GFLAGS),
++	GATE(CLK_ISP1_CORE_VICAP, "clk_isp1_core_vicap", "clk_isp1_core", 0,
++			RK3588_CLKGATE_CON(26), 4, GFLAGS),
++	GATE(ACLK_ISP1, "aclk_isp1", "aclk_isp1_root", 0,
++			RK3588_CLKGATE_CON(26), 5, GFLAGS),
++	GATE(HCLK_ISP1, "hclk_isp1", "hclk_isp1_root", 0,
++			RK3588_CLKGATE_CON(26), 7, GFLAGS),
++
++	/* npu */
++	GATE(ACLK_NPU1, "aclk_npu1", "clk_npu_dsu0", 0,
++			RK3588_CLKGATE_CON(27), 0, GFLAGS),
++	GATE(HCLK_NPU1, "hclk_npu1", "hclk_npu_root", 0,
++			RK3588_CLKGATE_CON(27), 2, GFLAGS),
++	GATE(ACLK_NPU2, "aclk_npu2", "clk_npu_dsu0", 0,
++			RK3588_CLKGATE_CON(28), 0, GFLAGS),
++	GATE(HCLK_NPU2, "hclk_npu2", "hclk_npu_root", 0,
++			RK3588_CLKGATE_CON(28), 2, GFLAGS),
++	COMPOSITE_NODIV(HCLK_NPU_CM0_ROOT, "hclk_npu_cm0_root", mux_400m_200m_100m_24m_p, 0,
++			RK3588_CLKSEL_CON(74), 5, 2, MFLAGS,
++			RK3588_CLKGATE_CON(30), 1, GFLAGS),
++	GATE(FCLK_NPU_CM0_CORE, "fclk_npu_cm0_core", "hclk_npu_cm0_root", 0,
++			RK3588_CLKGATE_CON(30), 3, GFLAGS),
++	COMPOSITE(CLK_NPU_CM0_RTC, "clk_npu_cm0_rtc", mux_24m_32k_p, 0,
++			RK3588_CLKSEL_CON(74), 12, 1, MFLAGS, 7, 5, DFLAGS,
++			RK3588_CLKGATE_CON(30), 5, GFLAGS),
++	GATE(PCLK_PVTM1, "pclk_pvtm1", "pclk_npu_root", 0,
++			RK3588_CLKGATE_CON(29), 12, GFLAGS),
++	GATE(PCLK_NPU_GRF, "pclk_npu_grf", "pclk_npu_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(29), 13, GFLAGS),
++	GATE(CLK_PVTM1, "clk_pvtm1", "xin24m", 0,
++			RK3588_CLKGATE_CON(29), 14, GFLAGS),
++	GATE(CLK_NPU_PVTM, "clk_npu_pvtm", "clk_npu_dsu0", 0,
++			RK3588_CLKGATE_CON(29), 15, GFLAGS),
++	GATE(ACLK_NPU0, "aclk_npu0", "clk_npu_dsu0", 0,
++			RK3588_CLKGATE_CON(30), 6, GFLAGS),
++	GATE(HCLK_NPU0, "hclk_npu0", "hclk_npu_root", 0,
++			RK3588_CLKGATE_CON(30), 8, GFLAGS),
++	COMPOSITE_NODIV(HCLK_NPU_ROOT, "hclk_npu_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(73), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(29), 0, GFLAGS),
++	COMPOSITE(CLK_NPU_DSU0, "clk_npu_dsu0", gpll_cpll_aupll_npll_spll_p, 0,
++			RK3588_CLKSEL_CON(73), 7, 3, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(29), 1, GFLAGS),
++	COMPOSITE_NODIV(PCLK_NPU_ROOT, "pclk_npu_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(74), 1, 2, MFLAGS,
++			RK3588_CLKGATE_CON(29), 4, GFLAGS),
++	GATE(PCLK_NPU_TIMER, "pclk_npu_timer", "pclk_npu_root", 0,
++			RK3588_CLKGATE_CON(29), 6, GFLAGS),
++	COMPOSITE_NODIV(CLK_NPUTIMER_ROOT, "clk_nputimer_root", mux_24m_100m_p, 0,
++			RK3588_CLKSEL_CON(74), 3, 1, MFLAGS,
++			RK3588_CLKGATE_CON(29), 7, GFLAGS),
++	GATE(CLK_NPUTIMER0, "clk_nputimer0", "clk_nputimer_root", 0,
++			RK3588_CLKGATE_CON(29), 8, GFLAGS),
++	GATE(CLK_NPUTIMER1, "clk_nputimer1", "clk_nputimer_root", 0,
++			RK3588_CLKGATE_CON(29), 9, GFLAGS),
++	GATE(PCLK_NPU_WDT, "pclk_npu_wdt", "pclk_npu_root", 0,
++			RK3588_CLKGATE_CON(29), 10, GFLAGS),
++	GATE(TCLK_NPU_WDT, "tclk_npu_wdt", "xin24m", 0,
++			RK3588_CLKGATE_CON(29), 11, GFLAGS),
++
++	/* nvm */
++	GATE(HCLK_EMMC, "hclk_emmc", "hclk_nvm_root", 0,
++			RK3588_CLKGATE_CON(31), 4, GFLAGS),
++	GATE(ACLK_EMMC, "aclk_emmc", "aclk_nvm_root", 0,
++			RK3588_CLKGATE_CON(31), 5, GFLAGS),
++	COMPOSITE(CCLK_EMMC, "cclk_emmc", gpll_cpll_24m_p, 0,
++			RK3588_CLKSEL_CON(77), 14, 2, MFLAGS, 8, 6, DFLAGS,
++			RK3588_CLKGATE_CON(31), 6, GFLAGS),
++	COMPOSITE(BCLK_EMMC, "bclk_emmc", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(78), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(31), 7, GFLAGS),
++	GATE(TMCLK_EMMC, "tmclk_emmc", "xin24m", 0,
++			RK3588_CLKGATE_CON(31), 8, GFLAGS),
++
++	COMPOSITE(SCLK_SFC, "sclk_sfc", gpll_cpll_24m_p, 0,
++			RK3588_CLKSEL_CON(78), 12, 2, MFLAGS, 6, 6, DFLAGS,
++			RK3588_CLKGATE_CON(31), 9, GFLAGS),
++	GATE(HCLK_SFC, "hclk_sfc", "hclk_nvm_root", 0,
++			RK3588_CLKGATE_CON(31), 10, GFLAGS),
++	GATE(HCLK_SFC_XIP, "hclk_sfc_xip", "hclk_nvm_root", 0,
++			RK3588_CLKGATE_CON(31), 11, GFLAGS),
++	COMPOSITE_NODIV(HCLK_NVM_ROOT,  "hclk_nvm_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(77), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(31), 0, GFLAGS),
++	COMPOSITE(ACLK_NVM_ROOT, "aclk_nvm_root", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(77), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(31), 1, GFLAGS),
++
++	/* php */
++	COMPOSITE(CLK_GMAC0_PTP_REF, "clk_gmac0_ptp_ref", clk_gmac0_ptp_ref_p, 0,
++			RK3588_CLKSEL_CON(81), 6, 1, MFLAGS, 0, 6, DFLAGS,
++			RK3588_CLKGATE_CON(34), 10, GFLAGS),
++	COMPOSITE(CLK_GMAC1_PTP_REF, "clk_gmac1_ptp_ref", clk_gmac1_ptp_ref_p, 0,
++			RK3588_CLKSEL_CON(81), 13, 1, MFLAGS, 7, 6, DFLAGS,
++			RK3588_CLKGATE_CON(34), 11, GFLAGS),
++	COMPOSITE(CLK_GMAC_125M, "clk_gmac_125m", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(83), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			RK3588_CLKGATE_CON(35), 5, GFLAGS),
++	COMPOSITE(CLK_GMAC_50M, "clk_gmac_50m", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(84), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(35), 6, GFLAGS),
++
++	GATE(ACLK_PHP_GIC_ITS, "aclk_php_gic_its", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(34), 6, GFLAGS),
++	GATE(ACLK_MMU_PCIE, "aclk_mmu_pcie", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(34), 7, GFLAGS),
++	GATE(ACLK_MMU_PHP, "aclk_mmu_php", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(34), 8, GFLAGS),
++	GATE(ACLK_PCIE_4L_DBI, "aclk_pcie_4l_dbi", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(32), 13, GFLAGS),
++	GATE(ACLK_PCIE_2L_DBI, "aclk_pcie_2l_dbi", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(32), 14, GFLAGS),
++	GATE(ACLK_PCIE_1L0_DBI, "aclk_pcie_1l0_dbi", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(32), 15, GFLAGS),
++	GATE(ACLK_PCIE_1L1_DBI, "aclk_pcie_1l1_dbi", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 0, GFLAGS),
++	GATE(ACLK_PCIE_1L2_DBI, "aclk_pcie_1l2_dbi", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 1, GFLAGS),
++	GATE(ACLK_PCIE_4L_MSTR, "aclk_pcie_4l_mstr", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(33), 2, GFLAGS),
++	GATE(ACLK_PCIE_2L_MSTR, "aclk_pcie_2l_mstr", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(33), 3, GFLAGS),
++	GATE(ACLK_PCIE_1L0_MSTR, "aclk_pcie_1l0_mstr", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(33), 4, GFLAGS),
++	GATE(ACLK_PCIE_1L1_MSTR, "aclk_pcie_1l1_mstr", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(33), 5, GFLAGS),
++	GATE(ACLK_PCIE_1L2_MSTR, "aclk_pcie_1l2_mstr", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(33), 6, GFLAGS),
++	GATE(ACLK_PCIE_4L_SLV, "aclk_pcie_4l_slv", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 7, GFLAGS),
++	GATE(ACLK_PCIE_2L_SLV, "aclk_pcie_2l_slv", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 8, GFLAGS),
++	GATE(ACLK_PCIE_1L0_SLV, "aclk_pcie_1l0_slv", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 9, GFLAGS),
++	GATE(ACLK_PCIE_1L1_SLV, "aclk_pcie_1l1_slv", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 10, GFLAGS),
++	GATE(ACLK_PCIE_1L2_SLV, "aclk_pcie_1l2_slv", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 11, GFLAGS),
++	GATE(PCLK_PCIE_4L, "pclk_pcie_4l", "pclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 12, GFLAGS),
++	GATE(PCLK_PCIE_2L, "pclk_pcie_2l", "pclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 13, GFLAGS),
++	GATE(PCLK_PCIE_1L0, "pclk_pcie_1l0", "pclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 14, GFLAGS),
++	GATE(PCLK_PCIE_1L1, "pclk_pcie_1l1", "pclk_php_root", 0,
++			RK3588_CLKGATE_CON(33), 15, GFLAGS),
++	GATE(PCLK_PCIE_1L2, "pclk_pcie_1l2", "pclk_php_root", 0,
++			RK3588_CLKGATE_CON(34), 0, GFLAGS),
++	GATE(CLK_PCIE_AUX0, "clk_pcie_aux0", "xin24m", 0,
++			RK3588_CLKGATE_CON(34), 1, GFLAGS),
++	GATE(CLK_PCIE_AUX1, "clk_pcie_aux1", "xin24m", 0,
++			RK3588_CLKGATE_CON(34), 2, GFLAGS),
++	GATE(CLK_PCIE_AUX2, "clk_pcie_aux2", "xin24m", 0,
++			RK3588_CLKGATE_CON(34), 3, GFLAGS),
++	GATE(CLK_PCIE_AUX3, "clk_pcie_aux3", "xin24m", 0,
++			RK3588_CLKGATE_CON(34), 4, GFLAGS),
++	GATE(CLK_PCIE_AUX4, "clk_pcie_aux4", "xin24m", 0,
++			RK3588_CLKGATE_CON(34), 5, GFLAGS),
++	GATE(CLK_PIPEPHY0_REF, "clk_pipephy0_ref", "xin24m", 0,
++			RK3588_CLKGATE_CON(37), 0, GFLAGS),
++	GATE(CLK_PIPEPHY1_REF, "clk_pipephy1_ref", "xin24m", 0,
++			RK3588_CLKGATE_CON(37), 1, GFLAGS),
++	GATE(CLK_PIPEPHY2_REF, "clk_pipephy2_ref", "xin24m", 0,
++			RK3588_CLKGATE_CON(37), 2, GFLAGS),
++	COMPOSITE_NODIV(PCLK_PHP_ROOT, "pclk_php_root", mux_150m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(80), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(32), 0, GFLAGS),
++	GATE(PCLK_GMAC0, "pclk_gmac0", "pclk_php_root", 0,
++			RK3588_CLKGATE_CON(32), 3, GFLAGS),
++	GATE(PCLK_GMAC1, "pclk_gmac1", "pclk_php_root", 0,
++			RK3588_CLKGATE_CON(32), 4, GFLAGS),
++	COMPOSITE(ACLK_PCIE_ROOT, "aclk_pcie_root", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(80), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(32), 6, GFLAGS),
++	COMPOSITE(ACLK_PHP_ROOT, "aclk_php_root", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(80), 13, 1, MFLAGS, 8, 5, DFLAGS,
++			RK3588_CLKGATE_CON(32), 7, GFLAGS),
++	GATE(ACLK_PCIE_BRIDGE, "aclk_pcie_bridge", "aclk_pcie_root", 0,
++			RK3588_CLKGATE_CON(32), 8, GFLAGS),
++	GATE(ACLK_GMAC0, "aclk_gmac0", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(32), 10, GFLAGS),
++	GATE(ACLK_GMAC1, "aclk_gmac1", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(32), 11, GFLAGS),
++	GATE(CLK_PMALIVE0, "clk_pmalive0", "xin24m", 0,
++			RK3588_CLKGATE_CON(37), 4, GFLAGS),
++	GATE(CLK_PMALIVE1, "clk_pmalive1", "xin24m", 0,
++			RK3588_CLKGATE_CON(37), 5, GFLAGS),
++	GATE(CLK_PMALIVE2, "clk_pmalive2", "xin24m", 0,
++			RK3588_CLKGATE_CON(37), 6, GFLAGS),
++	GATE(ACLK_SATA0, "aclk_sata0", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(37), 7, GFLAGS),
++	GATE(ACLK_SATA1, "aclk_sata1", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(37), 8, GFLAGS),
++	GATE(ACLK_SATA2, "aclk_sata2", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(37), 9, GFLAGS),
++	COMPOSITE(CLK_RXOOB0, "clk_rxoob0", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(82), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(37), 10, GFLAGS),
++	COMPOSITE(CLK_RXOOB1, "clk_rxoob1", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(82), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			RK3588_CLKGATE_CON(37), 11, GFLAGS),
++	COMPOSITE(CLK_RXOOB2, "clk_rxoob2", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(83), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(37), 12, GFLAGS),
++	GATE(ACLK_USB3OTG2, "aclk_usb3otg2", "aclk_php_root", 0,
++			RK3588_CLKGATE_CON(35), 7, GFLAGS),
++	GATE(SUSPEND_CLK_USB3OTG2, "suspend_clk_usb3otg2", "xin24m", 0,
++			RK3588_CLKGATE_CON(35), 8, GFLAGS),
++	GATE(REF_CLK_USB3OTG2, "ref_clk_usb3otg2", "xin24m", 0,
++			RK3588_CLKGATE_CON(35), 9, GFLAGS),
++	COMPOSITE(CLK_UTMI_OTG2, "clk_utmi_otg2", mux_150m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(84), 12, 2, MFLAGS, 8, 4, DFLAGS,
++			RK3588_CLKGATE_CON(35), 10, GFLAGS),
++	GATE(CLK_PIPEPHY0_PIPE_G, "clk_pipephy0_pipe_g", "clk_pipephy0_pipe_i", 0,
++			RK3588_CLKGATE_CON(38), 3, GFLAGS),
++	GATE(CLK_PIPEPHY1_PIPE_G, "clk_pipephy1_pipe_g", "clk_pipephy1_pipe_i", 0,
++			RK3588_CLKGATE_CON(38), 4, GFLAGS),
++	GATE(CLK_PIPEPHY2_PIPE_G, "clk_pipephy2_pipe_g", "clk_pipephy2_pipe_i", 0,
++			RK3588_CLKGATE_CON(38), 5, GFLAGS),
++	GATE(CLK_PIPEPHY0_PIPE_ASIC_G, "clk_pipephy0_pipe_asic_g", "clk_pipephy0_pipe_i", 0,
++			RK3588_CLKGATE_CON(38), 6, GFLAGS),
++	GATE(CLK_PIPEPHY1_PIPE_ASIC_G, "clk_pipephy1_pipe_asic_g", "clk_pipephy1_pipe_i", 0,
++			RK3588_CLKGATE_CON(38), 7, GFLAGS),
++	GATE(CLK_PIPEPHY2_PIPE_ASIC_G, "clk_pipephy2_pipe_asic_g", "clk_pipephy2_pipe_i", 0,
++			RK3588_CLKGATE_CON(38), 8, GFLAGS),
++	GATE(CLK_PIPEPHY2_PIPE_U3_G, "clk_pipephy2_pipe_u3_g", "clk_pipephy2_pipe_i", 0,
++			RK3588_CLKGATE_CON(38), 9, GFLAGS),
++	GATE(CLK_PCIE1L2_PIPE, "clk_pcie1l2_pipe", "clk_pipephy0_pipe_g", 0,
++			RK3588_CLKGATE_CON(38), 13, GFLAGS),
++	GATE(CLK_PCIE1L0_PIPE, "clk_pcie1l0_pipe", "clk_pipephy1_pipe_g", 0,
++			RK3588_CLKGATE_CON(38), 14, GFLAGS),
++	GATE(CLK_PCIE1L1_PIPE, "clk_pcie1l1_pipe", "clk_pipephy2_pipe_g", 0,
++			RK3588_CLKGATE_CON(38), 15, GFLAGS),
++	GATE(CLK_PCIE4L_PIPE, "clk_pcie4l_pipe", "clk_pipe30phy_pipe0_i", 0,
++			RK3588_CLKGATE_CON(39), 0, GFLAGS),
++	GATE(CLK_PCIE2L_PIPE, "clk_pcie2l_pipe", "clk_pipe30phy_pipe2_i", 0,
++			RK3588_CLKGATE_CON(39), 1, GFLAGS),
++	GATE(PCLK_PCIE_COMBO_PIPE_PHY0, "pclk_pcie_combo_pipe_phy0", "pclk_top_root", 0,
++			RK3588_PHP_CLKGATE_CON(0), 5, GFLAGS),
++	GATE(PCLK_PCIE_COMBO_PIPE_PHY1, "pclk_pcie_combo_pipe_phy1", "pclk_top_root", 0,
++			RK3588_PHP_CLKGATE_CON(0), 6, GFLAGS),
++	GATE(PCLK_PCIE_COMBO_PIPE_PHY2, "pclk_pcie_combo_pipe_phy2", "pclk_top_root", 0,
++			RK3588_PHP_CLKGATE_CON(0), 7, GFLAGS),
++	GATE(PCLK_PCIE_COMBO_PIPE_PHY, "pclk_pcie_combo_pipe_phy", "pclk_top_root", 0,
++			RK3588_PHP_CLKGATE_CON(0), 8, GFLAGS),
++
++	/* rga */
++	GATE(HCLK_RGA3_1, "hclk_rga3_1", "hclk_rga3_root", 0,
++			RK3588_CLKGATE_CON(76), 4, GFLAGS),
++	GATE(ACLK_RGA3_1, "aclk_rga3_1", "aclk_rga3_root", 0,
++			RK3588_CLKGATE_CON(76), 5, GFLAGS),
++	COMPOSITE(CLK_RGA3_1_CORE, "clk_rga3_1_core", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(174), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(76), 6, GFLAGS),
++	COMPOSITE(ACLK_RGA3_ROOT, "aclk_rga3_root", gpll_cpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(174), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(76), 0, GFLAGS),
++	COMPOSITE_NODIV(HCLK_RGA3_ROOT, "hclk_rga3_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(174), 7, 2, MFLAGS,
++			RK3588_CLKGATE_CON(76), 1, GFLAGS),
++
++	/* vdec */
++	COMPOSITE_NODIV(0, "hclk_rkvdec0_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(89), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(40), 0, GFLAGS),
++	COMPOSITE(0, "aclk_rkvdec0_root", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(89), 7, 2, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(40), 1, GFLAGS),
++	COMPOSITE(ACLK_RKVDEC_CCU, "aclk_rkvdec_ccu", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(89), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(40), 2, GFLAGS),
++	GATE(HCLK_RKVDEC0, "hclk_rkvdec0", "hclk_rkvdec0_root", 0,
++			RK3588_CLKGATE_CON(40), 3, GFLAGS),
++	GATE(ACLK_RKVDEC0, "aclk_rkvdec0", "aclk_rkvdec0_root", 0,
++			RK3588_CLKGATE_CON(40), 4, GFLAGS),
++	COMPOSITE(CLK_RKVDEC0_CA, "clk_rkvdec0_ca", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(90), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(40), 7, GFLAGS),
++	COMPOSITE(CLK_RKVDEC0_HEVC_CA, "clk_rkvdec0_hevc_ca", gpll_cpll_npll_1000m_p, 0,
++			RK3588_CLKSEL_CON(90), 11, 2, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(40), 8, GFLAGS),
++	COMPOSITE(CLK_RKVDEC0_CORE, "clk_rkvdec0_core", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(91), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(40), 9, GFLAGS),
++	COMPOSITE_NODIV(0, "hclk_rkvdec1_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(93), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(41), 0, GFLAGS),
++	COMPOSITE(0, "aclk_rkvdec1_root", gpll_cpll_aupll_npll_p, 0,
++			RK3588_CLKSEL_CON(93), 7, 2, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(41), 1, GFLAGS),
++	GATE(HCLK_RKVDEC1, "hclk_rkvdec1", "hclk_rkvdec1_root", 0,
++			RK3588_CLKGATE_CON(41), 2, GFLAGS),
++	GATE(ACLK_RKVDEC1, "aclk_rkvdec1", "aclk_rkvdec1_root", 0,
++			RK3588_CLKGATE_CON(41), 3, GFLAGS),
++	COMPOSITE(CLK_RKVDEC1_CA, "clk_rkvdec1_ca", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(93), 14, 1, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(41), 6, GFLAGS),
++	COMPOSITE(CLK_RKVDEC1_HEVC_CA, "clk_rkvdec1_hevc_ca", gpll_cpll_npll_1000m_p, 0,
++			RK3588_CLKSEL_CON(94), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(41), 7, GFLAGS),
++	COMPOSITE(CLK_RKVDEC1_CORE, "clk_rkvdec1_core", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(94), 12, 1, MFLAGS, 7, 5, DFLAGS,
++			RK3588_CLKGATE_CON(41), 8, GFLAGS),
++
++	/* sdio */
++	COMPOSITE_NODIV(0, "hclk_sdio_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(172), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(75), 0, GFLAGS),
++	GATE(HCLK_SDIO, "hclk_sdio", "hclk_sdio_root", 0,
++			RK3588_CLKGATE_CON(75), 2, GFLAGS),
++	COMPOSITE(CCLK_SRC_SDIO, "cclk_src_sdio", gpll_cpll_24m_p, 0,
++			RK3588_CLKSEL_CON(172), 8, 2, MFLAGS, 2, 6, DFLAGS,
++			RK3588_CLKGATE_CON(75), 3, GFLAGS),
++	MMC(SCLK_SDIO_DRV, "sdio_drv", "cclk_src_sdio", RK3588_SDIO_CON0, 1),
++	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "cclk_src_sdio", RK3588_SDIO_CON1, 1),
++
++	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "scmi_cclk_sd", RK3588_SDMMC_CON0, 1),
++	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "scmi_cclk_sd", RK3588_SDMMC_CON1, 1),
++
++	/* usb */
++	COMPOSITE(ACLK_USB_ROOT, "aclk_usb_root", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(96), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(42), 0, GFLAGS),
++	COMPOSITE_NODIV(HCLK_USB_ROOT, "hclk_usb_root", mux_150m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(96), 6, 2, MFLAGS,
++			RK3588_CLKGATE_CON(42), 1, GFLAGS),
++	GATE(HCLK_HOST0, "hclk_host0", "hclk_usb_root", 0,
++			RK3588_CLKGATE_CON(42), 10, GFLAGS),
++	GATE(HCLK_HOST_ARB0, "hclk_host_arb0", "hclk_usb_root", 0,
++			RK3588_CLKGATE_CON(42), 11, GFLAGS),
++	GATE(HCLK_HOST1, "hclk_host1", "hclk_usb_root", 0,
++			RK3588_CLKGATE_CON(42), 12, GFLAGS),
++	GATE(HCLK_HOST_ARB1, "hclk_host_arb1", "hclk_usb_root", 0,
++			RK3588_CLKGATE_CON(42), 13, GFLAGS),
++	GATE(ACLK_USB3OTG0, "aclk_usb3otg0", "aclk_usb_root", 0,
++			RK3588_CLKGATE_CON(42), 4, GFLAGS),
++	GATE(SUSPEND_CLK_USB3OTG0, "suspend_clk_usb3otg0", "xin24m", 0,
++			RK3588_CLKGATE_CON(42), 5, GFLAGS),
++	GATE(REF_CLK_USB3OTG0, "ref_clk_usb3otg0", "xin24m", 0,
++			RK3588_CLKGATE_CON(42), 6, GFLAGS),
++	GATE(ACLK_USB3OTG1, "aclk_usb3otg1", "aclk_usb_root", 0,
++			RK3588_CLKGATE_CON(42), 7, GFLAGS),
++	GATE(SUSPEND_CLK_USB3OTG1, "suspend_clk_usb3otg1", "xin24m", 0,
++			RK3588_CLKGATE_CON(42), 8, GFLAGS),
++	GATE(REF_CLK_USB3OTG1, "ref_clk_usb3otg1", "xin24m", 0,
++			RK3588_CLKGATE_CON(42), 9, GFLAGS),
++
++	/* vdpu */
++	GATE(HCLK_IEP2P0, "hclk_iep2p0", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(45), 4, GFLAGS),
++	GATE(ACLK_IEP2P0, "aclk_iep2p0", "aclk_vdpu_low_root", 0,
++			RK3588_CLKGATE_CON(45), 5, GFLAGS),
++	COMPOSITE(CLK_IEP2P0_CORE, "clk_iep2p0_core", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(99), 12, 1, MFLAGS, 7, 5, DFLAGS,
++			RK3588_CLKGATE_CON(45), 6, GFLAGS),
++	GATE(ACLK_JPEG_ENCODER0, "aclk_jpeg_encoder0", "aclk_vdpu_low_root", 0,
++			RK3588_CLKGATE_CON(44), 10, GFLAGS),
++	GATE(HCLK_JPEG_ENCODER0, "hclk_jpeg_encoder0", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(44), 11, GFLAGS),
++	GATE(ACLK_JPEG_ENCODER1, "aclk_jpeg_encoder1", "aclk_vdpu_low_root", 0,
++			RK3588_CLKGATE_CON(44), 12, GFLAGS),
++	GATE(HCLK_JPEG_ENCODER1, "hclk_jpeg_encoder1", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(44), 13, GFLAGS),
++	GATE(ACLK_JPEG_ENCODER2, "aclk_jpeg_encoder2", "aclk_vdpu_low_root", 0,
++			RK3588_CLKGATE_CON(44), 14, GFLAGS),
++	GATE(HCLK_JPEG_ENCODER2, "hclk_jpeg_encoder2", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(44), 15, GFLAGS),
++	GATE(ACLK_JPEG_ENCODER3, "aclk_jpeg_encoder3", "aclk_vdpu_low_root", 0,
++			RK3588_CLKGATE_CON(45), 0, GFLAGS),
++	GATE(HCLK_JPEG_ENCODER3, "hclk_jpeg_encoder3", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(45), 1, GFLAGS),
++	GATE(ACLK_JPEG_DECODER, "aclk_jpeg_decoder", "aclk_jpeg_decoder_root", 0,
++			RK3588_CLKGATE_CON(45), 2, GFLAGS),
++	GATE(HCLK_JPEG_DECODER, "hclk_jpeg_decoder", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(45), 3, GFLAGS),
++	GATE(HCLK_RGA2, "hclk_rga2", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(45), 7, GFLAGS),
++	GATE(ACLK_RGA2, "aclk_rga2", "aclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(45), 8, GFLAGS),
++	COMPOSITE(CLK_RGA2_CORE, "clk_rga2_core", gpll_cpll_npll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(100), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(45), 9, GFLAGS),
++	GATE(HCLK_RGA3_0, "hclk_rga3_0", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(45), 10, GFLAGS),
++	GATE(ACLK_RGA3_0, "aclk_rga3_0", "aclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(45), 11, GFLAGS),
++	COMPOSITE(CLK_RGA3_0_CORE, "clk_rga3_0_core", gpll_cpll_npll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(100), 13, 3, MFLAGS, 8, 5, DFLAGS,
++			RK3588_CLKGATE_CON(45), 12, GFLAGS),
++	COMPOSITE(ACLK_VDPU_ROOT, "aclk_vdpu_root", gpll_cpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(98), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(44), 0, GFLAGS),
++	COMPOSITE_NODIV(ACLK_VDPU_LOW_ROOT, "aclk_vdpu_low_root", mux_400m_200m_100m_24m_p, 0,
++			RK3588_CLKSEL_CON(98), 7, 2, MFLAGS,
++			RK3588_CLKGATE_CON(44), 1, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VDPU_ROOT, "hclk_vdpu_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(98), 9, 2, MFLAGS,
++			RK3588_CLKGATE_CON(44), 2, GFLAGS),
++	COMPOSITE(ACLK_JPEG_DECODER_ROOT, "aclk_jpeg_decoder_root", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(99), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(44), 3, GFLAGS),
++	GATE(ACLK_VPU, "aclk_vpu", "aclk_vdpu_low_root", 0,
++			RK3588_CLKGATE_CON(44), 8, GFLAGS),
++	GATE(HCLK_VPU, "hclk_vpu", "hclk_vdpu_root", 0,
++			RK3588_CLKGATE_CON(44), 9, GFLAGS),
++
++	/* venc */
++	COMPOSITE_NODIV(HCLK_RKVENC0_ROOT, "hclk_rkvenc0_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(102), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(47), 0, GFLAGS),
++	COMPOSITE(ACLK_RKVENC0_ROOT, "aclk_rkvenc0_root", gpll_cpll_npll_p, 0,
++			RK3588_CLKSEL_CON(102), 7, 2, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(47), 1, GFLAGS),
++	GATE(HCLK_RKVENC0, "hclk_rkvenc0", "hclk_rkvenc0_root", 0,
++			RK3588_CLKGATE_CON(47), 4, GFLAGS),
++	GATE(ACLK_RKVENC0, "aclk_rkvenc0", "aclk_rkvenc0_root", 0,
++			RK3588_CLKGATE_CON(47), 5, GFLAGS),
++	COMPOSITE(CLK_RKVENC0_CORE, "clk_rkvenc0_core", gpll_cpll_aupll_npll_p, 0,
++			RK3588_CLKSEL_CON(102), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(47), 6, GFLAGS),
++	COMPOSITE_NODIV(HCLK_RKVENC1_ROOT, "hclk_rkvenc1_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(104), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(48), 0, GFLAGS),
++	COMPOSITE(ACLK_RKVENC1_ROOT, "aclk_rkvenc1_root", gpll_cpll_npll_p, 0,
++			RK3588_CLKSEL_CON(104), 7, 2, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(48), 1, GFLAGS),
++	GATE(HCLK_RKVENC1, "hclk_rkvenc1", "hclk_rkvenc1_root", 0,
++			RK3588_CLKGATE_CON(48), 4, GFLAGS),
++	GATE(ACLK_RKVENC1, "aclk_rkvenc1", "aclk_rkvenc1_root", 0,
++			RK3588_CLKGATE_CON(48), 5, GFLAGS),
++	COMPOSITE(CLK_RKVENC1_CORE, "clk_rkvenc1_core", gpll_cpll_aupll_npll_p, 0,
++			RK3588_CLKSEL_CON(104), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(48), 6, GFLAGS),
++
++	/* vi */
++	COMPOSITE_NODIV(ICLK_CSIHOST01, "iclk_csihost01", mux_400m_200m_100m_24m_p, 0,
++			RK3588_CLKSEL_CON(108), 14, 2, MFLAGS,
++			RK3588_CLKGATE_CON(51), 10, GFLAGS),
++	GATE(ICLK_CSIHOST0, "iclk_csihost0", "iclk_csihost01", 0,
++			RK3588_CLKGATE_CON(51), 11, GFLAGS),
++	GATE(ICLK_CSIHOST1, "iclk_csihost1", "iclk_csihost01", 0,
++			RK3588_CLKGATE_CON(51), 12, GFLAGS),
++	GATE(PCLK_CSI_HOST_0, "pclk_csi_host_0", "pclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 4, GFLAGS),
++	GATE(PCLK_CSI_HOST_1, "pclk_csi_host_1", "pclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 5, GFLAGS),
++	GATE(PCLK_CSI_HOST_2, "pclk_csi_host_2", "pclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 6, GFLAGS),
++	GATE(PCLK_CSI_HOST_3, "pclk_csi_host_3", "pclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 7, GFLAGS),
++	GATE(PCLK_CSI_HOST_4, "pclk_csi_host_4", "pclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 8, GFLAGS),
++	GATE(PCLK_CSI_HOST_5, "pclk_csi_host_5", "pclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 9, GFLAGS),
++	GATE(ACLK_FISHEYE0, "aclk_fisheye0", "aclk_vi_root", 0,
++			RK3588_CLKGATE_CON(49), 14, GFLAGS),
++	GATE(HCLK_FISHEYE0, "hclk_fisheye0", "hclk_vi_root", 0,
++			RK3588_CLKGATE_CON(49), 15, GFLAGS),
++	COMPOSITE(CLK_FISHEYE0_CORE, "clk_fisheye0_core", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(108), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(50), 0, GFLAGS),
++	GATE(ACLK_FISHEYE1, "aclk_fisheye1", "aclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 1, GFLAGS),
++	GATE(HCLK_FISHEYE1, "hclk_fisheye1", "hclk_vi_root", 0,
++			RK3588_CLKGATE_CON(50), 2, GFLAGS),
++	COMPOSITE(CLK_FISHEYE1_CORE, "clk_fisheye1_core", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(108), 12, 2, MFLAGS, 7, 5, DFLAGS,
++			RK3588_CLKGATE_CON(50), 3, GFLAGS),
++	COMPOSITE(CLK_ISP0_CORE, "clk_isp0_core", gpll_cpll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(107), 11, 2, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(49), 9, GFLAGS),
++	GATE(CLK_ISP0_CORE_MARVIN, "clk_isp0_core_marvin", "clk_isp0_core", 0,
++			RK3588_CLKGATE_CON(49), 10, GFLAGS),
++	GATE(CLK_ISP0_CORE_VICAP, "clk_isp0_core_vicap", "clk_isp0_core", 0,
++			RK3588_CLKGATE_CON(49), 11, GFLAGS),
++	GATE(ACLK_ISP0, "aclk_isp0", "aclk_vi_root", 0,
++			RK3588_CLKGATE_CON(49), 12, GFLAGS),
++	GATE(HCLK_ISP0, "hclk_isp0", "hclk_vi_root", 0,
++			RK3588_CLKGATE_CON(49), 13, GFLAGS),
++	COMPOSITE(ACLK_VI_ROOT, "aclk_vi_root", gpll_cpll_npll_aupll_spll_p, 0,
++			RK3588_CLKSEL_CON(106), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(49), 0, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VI_ROOT, "hclk_vi_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(106), 8, 2, MFLAGS,
++			RK3588_CLKGATE_CON(49), 1, GFLAGS),
++	COMPOSITE_NODIV(PCLK_VI_ROOT, "pclk_vi_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(106), 10, 2, MFLAGS,
++			RK3588_CLKGATE_CON(49), 2, GFLAGS),
++	COMPOSITE(DCLK_VICAP, "dclk_vicap", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(107), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(49), 6, GFLAGS),
++	GATE(ACLK_VICAP, "aclk_vicap", "aclk_vi_root", 0,
++			RK3588_CLKGATE_CON(49), 7, GFLAGS),
++	GATE(HCLK_VICAP, "hclk_vicap", "hclk_vi_root", 0,
++			RK3588_CLKGATE_CON(49), 8, GFLAGS),
++
++	/* vo0 */
++	GATE(PCLK_DP0, "pclk_dp0", "pclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 4, GFLAGS),
++	GATE(PCLK_DP1, "pclk_dp1", "pclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 5, GFLAGS),
++	GATE(PCLK_S_DP0, "pclk_s_dp0", "pclk_vo0_s_root", 0,
++			RK3588_CLKGATE_CON(56), 6, GFLAGS),
++	GATE(PCLK_S_DP1, "pclk_s_dp1", "pclk_vo0_s_root", 0,
++			RK3588_CLKGATE_CON(56), 7, GFLAGS),
++	GATE(CLK_DP0, "clk_dp0", "aclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 8, GFLAGS),
++	GATE(CLK_DP1, "clk_dp1", "aclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 9, GFLAGS),
++	GATE(HCLK_HDCP_KEY0, "hclk_hdcp_key0", "hclk_vo0_s_root", 0,
++			RK3588_CLKGATE_CON(55), 11, GFLAGS),
++	GATE(ACLK_HDCP0, "aclk_hdcp0", "aclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(55), 12, GFLAGS),
++	GATE(HCLK_HDCP0, "hclk_hdcp0", "hclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(55), 13, GFLAGS),
++	GATE(PCLK_HDCP0, "pclk_hdcp0", "pclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(55), 14, GFLAGS),
++	GATE(HCLK_I2S4_8CH, "hclk_i2s4_8ch", "hclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 10, GFLAGS),
++	GATE(ACLK_TRNG0, "aclk_trng0", "aclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 0, GFLAGS),
++	GATE(PCLK_TRNG0, "pclk_trng0", "pclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 1, GFLAGS),
++	COMPOSITE(ACLK_VO0_ROOT, "aclk_vo0_root", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(116), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(55), 0, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VO0_ROOT, "hclk_vo0_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(116), 6, 2, MFLAGS,
++			RK3588_CLKGATE_CON(55), 1, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VO0_S_ROOT, "hclk_vo0_s_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(116), 8, 2, MFLAGS,
++			RK3588_CLKGATE_CON(55), 2, GFLAGS),
++	COMPOSITE_NODIV(PCLK_VO0_ROOT, "pclk_vo0_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(116), 10, 2, MFLAGS,
++			RK3588_CLKGATE_CON(55), 3, GFLAGS),
++	COMPOSITE_NODIV(PCLK_VO0_S_ROOT, "pclk_vo0_s_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(116), 12, 2, MFLAGS,
++			RK3588_CLKGATE_CON(55), 4, GFLAGS),
++	GATE(PCLK_VO0GRF, "pclk_vo0grf", "pclk_vo0_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(55), 10, GFLAGS),
++	COMPOSITE(CLK_I2S4_8CH_TX_SRC, "clk_i2s4_8ch_tx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(118), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(56), 11, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S4_8CH_TX_FRAC, "clk_i2s4_8ch_tx_frac", "clk_i2s4_8ch_tx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(119), 0,
++			RK3588_CLKGATE_CON(56), 12, GFLAGS,
++			&rk3588_i2s4_8ch_tx_fracmux),
++	GATE(MCLK_I2S4_8CH_TX, "mclk_i2s4_8ch_tx", "clk_i2s4_8ch_tx", 0,
++			RK3588_CLKGATE_CON(56), 13, GFLAGS),
++	GATE(HCLK_I2S8_8CH, "hclk_i2s8_8ch", "hclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(56), 14, GFLAGS),
++	COMPOSITE(CLK_I2S8_8CH_TX_SRC, "clk_i2s8_8ch_tx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(120), 8, 1, MFLAGS, 3, 5, DFLAGS,
++			RK3588_CLKGATE_CON(56), 15, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S8_8CH_TX_FRAC, "clk_i2s8_8ch_tx_frac", "clk_i2s8_8ch_tx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(121), 0,
++			RK3588_CLKGATE_CON(57), 0, GFLAGS,
++			&rk3588_i2s8_8ch_tx_fracmux),
++	GATE(MCLK_I2S8_8CH_TX, "mclk_i2s8_8ch_tx", "clk_i2s8_8ch_tx", 0,
++			RK3588_CLKGATE_CON(57), 1, GFLAGS),
++	GATE(HCLK_SPDIF2_DP0, "hclk_spdif2_dp0", "hclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(57), 2, GFLAGS),
++	COMPOSITE(CLK_SPDIF2_DP0_SRC, "clk_spdif2_dp0_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(122), 8, 1, MFLAGS, 3, 5, DFLAGS,
++			RK3588_CLKGATE_CON(57), 3, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_SPDIF2_DP0_FRAC, "clk_spdif2_dp0_frac", "clk_spdif2_dp0_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(123), 0,
++			RK3588_CLKGATE_CON(57), 4, GFLAGS,
++			&rk3588_spdif2_dp0_fracmux),
++	GATE(MCLK_SPDIF2_DP0, "mclk_spdif2_dp0", "clk_spdif2_dp0", 0,
++			RK3588_CLKGATE_CON(57), 5, GFLAGS),
++	GATE(MCLK_SPDIF2, "mclk_spdif2", "clk_spdif2_dp0", 0,
++			RK3588_CLKGATE_CON(57), 6, GFLAGS),
++	GATE(HCLK_SPDIF5_DP1, "hclk_spdif5_dp1", "hclk_vo0_root", 0,
++			RK3588_CLKGATE_CON(57), 7, GFLAGS),
++	COMPOSITE(CLK_SPDIF5_DP1_SRC, "clk_spdif5_dp1_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(124), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(57), 8, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_SPDIF5_DP1_FRAC, "clk_spdif5_dp1_frac", "clk_spdif5_dp1_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(125), 0,
++			RK3588_CLKGATE_CON(57), 9, GFLAGS,
++			&rk3588_spdif5_dp1_fracmux),
++	GATE(MCLK_SPDIF5_DP1, "mclk_spdif5_dp1", "clk_spdif5_dp1", 0,
++			RK3588_CLKGATE_CON(57), 10, GFLAGS),
++	GATE(MCLK_SPDIF5, "mclk_spdif5", "clk_spdif5_dp1", 0,
++			RK3588_CLKGATE_CON(57), 11, GFLAGS),
++
++	/* vo1 */
++	GATE(PCLK_EDP0, "pclk_edp0", "pclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(62), 0, GFLAGS),
++	GATE(CLK_EDP0_24M, "clk_edp0_24m", "xin24m", 0,
++			RK3588_CLKGATE_CON(62), 1, GFLAGS),
++	COMPOSITE_NODIV(CLK_EDP0_200M, "clk_edp0_200m", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(140), 1, 2, MFLAGS,
++			RK3588_CLKGATE_CON(62), 2, GFLAGS),
++	GATE(PCLK_EDP1, "pclk_edp1", "pclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(62), 3, GFLAGS),
++	GATE(CLK_EDP1_24M, "clk_edp1_24m", "xin24m", 0,
++			RK3588_CLKGATE_CON(62), 4, GFLAGS),
++	COMPOSITE_NODIV(CLK_EDP1_200M, "clk_edp1_200m", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(140), 3, 2, MFLAGS,
++			RK3588_CLKGATE_CON(62), 5, GFLAGS),
++	GATE(HCLK_HDCP_KEY1, "hclk_hdcp_key1", "hclk_vo1_s_root", 0,
++			RK3588_CLKGATE_CON(60), 4, GFLAGS),
++	GATE(ACLK_HDCP1, "aclk_hdcp1", "aclk_hdcp1_root", 0,
++			RK3588_CLKGATE_CON(60), 5, GFLAGS),
++	GATE(HCLK_HDCP1, "hclk_hdcp1", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(60), 6, GFLAGS),
++	GATE(PCLK_HDCP1, "pclk_hdcp1", "pclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(60), 7, GFLAGS),
++	GATE(ACLK_HDMIRX, "aclk_hdmirx", "aclk_hdmirx_root", 0,
++			RK3588_CLKGATE_CON(61), 9, GFLAGS),
++	GATE(PCLK_HDMIRX, "pclk_hdmirx", "pclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(61), 10, GFLAGS),
++	GATE(CLK_HDMIRX_REF, "clk_hdmirx_ref", "aclk_hdcp1_root", 0,
++			RK3588_CLKGATE_CON(61), 11, GFLAGS),
++	COMPOSITE(CLK_HDMIRX_AUD_SRC, "clk_hdmirx_aud_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(138), 8, 1, MFLAGS, 0, 8, DFLAGS,
++			RK3588_CLKGATE_CON(61), 12, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_HDMIRX_AUD_FRAC, "clk_hdmirx_aud_frac", "clk_hdmirx_aud_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(139), 0,
++			RK3588_CLKGATE_CON(61), 13, GFLAGS,
++			&rk3588_hdmirx_aud_fracmux),
++	GATE(CLK_HDMIRX_AUD, "clk_hdmirx_aud", "clk_hdmirx_aud_mux", 0,
++			RK3588_CLKGATE_CON(61), 14, GFLAGS),
++	GATE(PCLK_HDMITX0, "pclk_hdmitx0", "pclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(60), 11, GFLAGS),
++	COMPOSITE(CLK_HDMITX0_EARC, "clk_hdmitx0_earc", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(133), 6, 1, MFLAGS, 1, 5, DFLAGS,
++			RK3588_CLKGATE_CON(60), 15, GFLAGS),
++	GATE(CLK_HDMITX0_REF, "clk_hdmitx0_ref", "aclk_hdcp1_root", 0,
++			RK3588_CLKGATE_CON(61), 0, GFLAGS),
++	GATE(PCLK_HDMITX1, "pclk_hdmitx1", "pclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(61), 2, GFLAGS),
++	COMPOSITE(CLK_HDMITX1_EARC, "clk_hdmitx1_earc", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(136), 6, 1, MFLAGS, 1, 5, DFLAGS,
++			RK3588_CLKGATE_CON(61), 6, GFLAGS),
++	GATE(CLK_HDMITX1_REF, "clk_hdmitx1_ref", "aclk_hdcp1_root", 0,
++			RK3588_CLKGATE_CON(61), 7, GFLAGS),
++	COMPOSITE_HALFDIV(CLK_HDMITRX_REFSRC, "clk_hdmitrx_refsrc", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(157), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(65), 9, GFLAGS),
++	GATE(ACLK_TRNG1, "aclk_trng1", "aclk_hdcp1_root", 0,
++			RK3588_CLKGATE_CON(60), 9, GFLAGS),
++	GATE(PCLK_TRNG1, "pclk_trng1", "pclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(60), 10, GFLAGS),
++	COMPOSITE(ACLK_HDCP1_ROOT, "aclk_hdcp1_root", aclk_hdcp1_root_p, 0,
++			RK3588_CLKSEL_CON(128), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(59), 0, GFLAGS),
++	COMPOSITE(ACLK_HDMIRX_ROOT, "aclk_hdmirx_root", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(128), 12, 1, MFLAGS, 7, 5, DFLAGS,
++			RK3588_CLKGATE_CON(59), 1, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VO1_ROOT, "hclk_vo1_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(128), 13, 2, MFLAGS,
++			RK3588_CLKGATE_CON(59), 2, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VO1_S_ROOT, "hclk_vo1_s_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(129), 0, 2, MFLAGS,
++			RK3588_CLKGATE_CON(59), 3, GFLAGS),
++	COMPOSITE_NODIV(PCLK_VO1_ROOT, "pclk_vo1_root", mux_150m_100m_24m_p, 0,
++			RK3588_CLKSEL_CON(129), 2, 2, MFLAGS,
++			RK3588_CLKGATE_CON(59), 4, GFLAGS),
++	COMPOSITE_NODIV(PCLK_VO1_S_ROOT, "pclk_vo1_s_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(129), 4, 2, MFLAGS,
++			RK3588_CLKGATE_CON(59), 5, GFLAGS),
++	GATE(0, "pclk_vo1grf", "pclk_vo1_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(59), 12, GFLAGS),
++	GATE(PCLK_S_EDP0, "pclk_s_edp0", "pclk_vo1_s_root", 0,
++			RK3588_CLKGATE_CON(59), 14, GFLAGS),
++	GATE(PCLK_S_EDP1, "pclk_s_edp1", "pclk_vo1_s_root", 0,
++			RK3588_CLKGATE_CON(59), 15, GFLAGS),
++	GATE(PCLK_S_HDMIRX, "pclk_s_hdmirx", "pclk_vo1_s_root", 0,
++			RK3588_CLKGATE_CON(65), 8, GFLAGS),
++	GATE(HCLK_I2S10_8CH, "hclk_i2s10_8ch", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(65), 4, GFLAGS),
++	COMPOSITE(CLK_I2S10_8CH_RX_SRC, "clk_i2s10_8ch_rx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(155), 8, 1, MFLAGS, 3, 5, DFLAGS,
++			RK3588_CLKGATE_CON(65), 5, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S10_8CH_RX_FRAC, "clk_i2s10_8ch_rx_frac", "clk_i2s10_8ch_rx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(156), 0,
++			RK3588_CLKGATE_CON(65), 6, GFLAGS,
++			&rk3588_i2s10_8ch_rx_fracmux),
++	GATE(MCLK_I2S10_8CH_RX, "mclk_i2s10_8ch_rx", "clk_i2s10_8ch_rx", 0,
++			RK3588_CLKGATE_CON(65), 7, GFLAGS),
++	GATE(HCLK_I2S7_8CH, "hclk_i2s7_8ch", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(60), 0, GFLAGS),
++	COMPOSITE(CLK_I2S7_8CH_RX_SRC, "clk_i2s7_8ch_rx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(129), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_CLKGATE_CON(60), 1, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S7_8CH_RX_FRAC, "clk_i2s7_8ch_rx_frac", "clk_i2s7_8ch_rx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(130), 0,
++			RK3588_CLKGATE_CON(60), 2, GFLAGS,
++			&rk3588_i2s7_8ch_rx_fracmux),
++	GATE(MCLK_I2S7_8CH_RX, "mclk_i2s7_8ch_rx", "clk_i2s7_8ch_rx", 0,
++			RK3588_CLKGATE_CON(60), 3, GFLAGS),
++	GATE(HCLK_I2S9_8CH, "hclk_i2s9_8ch", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(65), 0, GFLAGS),
++	COMPOSITE(CLK_I2S9_8CH_RX_SRC, "clk_i2s9_8ch_rx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(153), 12, 1, MFLAGS, 7, 5, DFLAGS,
++			RK3588_CLKGATE_CON(65), 1, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S9_8CH_RX_FRAC, "clk_i2s9_8ch_rx_frac", "clk_i2s9_8ch_rx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(154), 0,
++			RK3588_CLKGATE_CON(65), 2, GFLAGS,
++			&rk3588_i2s9_8ch_rx_fracmux),
++	GATE(MCLK_I2S9_8CH_RX, "mclk_i2s9_8ch_rx", "clk_i2s9_8ch_rx", 0,
++			RK3588_CLKGATE_CON(65), 3, GFLAGS),
++	COMPOSITE(CLK_I2S5_8CH_TX_SRC, "clk_i2s5_8ch_tx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(140), 10, 1, MFLAGS, 5, 5, DFLAGS,
++			RK3588_CLKGATE_CON(62), 6, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S5_8CH_TX_FRAC, "clk_i2s5_8ch_tx_frac", "clk_i2s5_8ch_tx_src", 0,
++			RK3588_CLKSEL_CON(141), 0,
++			RK3588_CLKGATE_CON(62), 7, GFLAGS,
++			&rk3588_i2s5_8ch_tx_fracmux),
++	GATE(MCLK_I2S5_8CH_TX, "mclk_i2s5_8ch_tx", "clk_i2s5_8ch_tx", 0,
++			RK3588_CLKGATE_CON(62), 8, GFLAGS),
++	GATE(HCLK_I2S5_8CH, "hclk_i2s5_8ch", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(62), 12, GFLAGS),
++	COMPOSITE(CLK_I2S6_8CH_TX_SRC, "clk_i2s6_8ch_tx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(144), 8, 1, MFLAGS, 3, 5, DFLAGS,
++			RK3588_CLKGATE_CON(62), 13, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S6_8CH_TX_FRAC, "clk_i2s6_8ch_tx_frac", "clk_i2s6_8ch_tx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(145), 0,
++			RK3588_CLKGATE_CON(62), 14, GFLAGS,
++			&rk3588_i2s6_8ch_tx_fracmux),
++	GATE(MCLK_I2S6_8CH_TX, "mclk_i2s6_8ch_tx", "clk_i2s6_8ch_tx", 0,
++			RK3588_CLKGATE_CON(62), 15, GFLAGS),
++	COMPOSITE(CLK_I2S6_8CH_RX_SRC, "clk_i2s6_8ch_rx_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(146), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(63), 0, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S6_8CH_RX_FRAC, "clk_i2s6_8ch_rx_frac", "clk_i2s6_8ch_rx_src", 0,
++			RK3588_CLKSEL_CON(147), 0,
++			RK3588_CLKGATE_CON(63), 1, GFLAGS,
++			&rk3588_i2s6_8ch_rx_fracmux),
++	GATE(MCLK_I2S6_8CH_RX, "mclk_i2s6_8ch_rx", "clk_i2s6_8ch_rx", 0,
++			RK3588_CLKGATE_CON(63), 2, GFLAGS),
++	MUX(I2S6_8CH_MCLKOUT, "i2s6_8ch_mclkout", i2s6_8ch_mclkout_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(148), 2, 2, MFLAGS),
++	GATE(HCLK_I2S6_8CH, "hclk_i2s6_8ch", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(63), 3, GFLAGS),
++	GATE(HCLK_SPDIF3, "hclk_spdif3", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(63), 4, GFLAGS),
++	COMPOSITE(CLK_SPDIF3_SRC, "clk_spdif3_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(148), 9, 1, MFLAGS, 4, 5, DFLAGS,
++			RK3588_CLKGATE_CON(63), 5, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_SPDIF3_FRAC, "clk_spdif3_frac", "clk_spdif3_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(149), 0,
++			RK3588_CLKGATE_CON(63), 6, GFLAGS,
++			&rk3588_spdif3_fracmux),
++	GATE(MCLK_SPDIF3, "mclk_spdif3", "clk_spdif3", 0,
++			RK3588_CLKGATE_CON(63), 7, GFLAGS),
++	GATE(HCLK_SPDIF4, "hclk_spdif4", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(63), 8, GFLAGS),
++	COMPOSITE(CLK_SPDIF4_SRC, "clk_spdif4_src", gpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(150), 7, 1, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(63), 9, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_SPDIF4_FRAC, "clk_spdif4_frac", "clk_spdif4_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(151), 0,
++			RK3588_CLKGATE_CON(63), 10, GFLAGS,
++			&rk3588_spdif4_fracmux),
++	GATE(MCLK_SPDIF4, "mclk_spdif4", "clk_spdif4", 0,
++			RK3588_CLKGATE_CON(63), 11, GFLAGS),
++	GATE(HCLK_SPDIFRX0, "hclk_spdifrx0", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(63), 12, GFLAGS),
++	COMPOSITE(MCLK_SPDIFRX0, "mclk_spdifrx0", gpll_cpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(152), 7, 2, MFLAGS, 2, 5, DFLAGS,
++			RK3588_CLKGATE_CON(63), 13, GFLAGS),
++	GATE(HCLK_SPDIFRX1, "hclk_spdifrx1", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(63), 14, GFLAGS),
++	COMPOSITE(MCLK_SPDIFRX1, "mclk_spdifrx1", gpll_cpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(152), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(63), 15, GFLAGS),
++	GATE(HCLK_SPDIFRX2, "hclk_spdifrx2", "hclk_vo1_root", 0,
++			RK3588_CLKGATE_CON(64), 0, GFLAGS),
++	COMPOSITE(MCLK_SPDIFRX2, "mclk_spdifrx2", gpll_cpll_aupll_p, 0,
++			RK3588_CLKSEL_CON(153), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(64), 1, GFLAGS),
++	COMPOSITE(ACLK_VO1USB_TOP_ROOT, "aclk_vo1usb_top_root", gpll_cpll_p, 0,
++			RK3588_CLKSEL_CON(170), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(74), 0, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VO1USB_TOP_ROOT, "hclk_vo1usb_top_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(170), 6, 2, MFLAGS,
++			RK3588_CLKGATE_CON(74), 2, GFLAGS),
++	GATE(CLK_HDMIHDP0, "clk_hdmihdp0", "xin24m", 0,
++			RK3588_CLKGATE_CON(73), 12, GFLAGS),
++	GATE(CLK_HDMIHDP1, "clk_hdmihdp1", "xin24m", 0,
++			RK3588_CLKGATE_CON(73), 13, GFLAGS),
++	GATE(PCLK_HDPTX0, "pclk_hdptx0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(72), 5, GFLAGS),
++	GATE(PCLK_HDPTX1, "pclk_hdptx1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(72), 6, GFLAGS),
++	GATE(PCLK_USBDPPHY0, "pclk_usbdpphy0", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(72), 2, GFLAGS),
++	GATE(PCLK_USBDPPHY1, "pclk_usbdpphy1", "pclk_top_root", 0,
++			RK3588_CLKGATE_CON(72), 4, GFLAGS),
++	COMPOSITE(ACLK_VOP_ROOT, "aclk_vop_root", gpll_cpll_aupll_npll_spll_p, 0,
++			RK3588_CLKSEL_CON(110), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(52), 0, GFLAGS),
++	COMPOSITE_NODIV(ACLK_VOP_LOW_ROOT, "aclk_vop_low_root", mux_400m_200m_100m_24m_p, 0,
++			RK3588_CLKSEL_CON(110), 8, 2, MFLAGS,
++			RK3588_CLKGATE_CON(52), 1, GFLAGS),
++	COMPOSITE_NODIV(HCLK_VOP_ROOT, "hclk_vop_root", mux_200m_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(110), 10, 2, MFLAGS,
++			RK3588_CLKGATE_CON(52), 2, GFLAGS),
++	COMPOSITE_NODIV(PCLK_VOP_ROOT, "pclk_vop_root", mux_100m_50m_24m_p, 0,
++			RK3588_CLKSEL_CON(110), 12, 2, MFLAGS,
++			RK3588_CLKGATE_CON(52), 3, GFLAGS),
++	GATE(HCLK_VOP, "hclk_vop", "hclk_vop_root", 0,
++			RK3588_CLKGATE_CON(52), 8, GFLAGS),
++	GATE(ACLK_VOP, "aclk_vop", "aclk_vop_sub_src", 0,
++			RK3588_CLKGATE_CON(52), 9, GFLAGS),
++	COMPOSITE(DCLK_VOP0_SRC, "dclk_vop0_src", gpll_cpll_v0pll_aupll_p, 0,
++			RK3588_CLKSEL_CON(111), 7, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(52), 10, GFLAGS),
++	COMPOSITE(DCLK_VOP1_SRC, "dclk_vop1_src", gpll_cpll_v0pll_aupll_p, 0,
++			RK3588_CLKSEL_CON(111), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RK3588_CLKGATE_CON(52), 11, GFLAGS),
++	COMPOSITE(DCLK_VOP2_SRC, "dclk_vop2_src", gpll_cpll_v0pll_aupll_p, 0,
++			RK3588_CLKSEL_CON(112), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_CLKGATE_CON(52), 12, GFLAGS),
++	COMPOSITE_NODIV(DCLK_VOP0, "dclk_vop0", dclk_vop0_p,
++			CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++			RK3588_CLKSEL_CON(112), 7, 2, MFLAGS,
++			RK3588_CLKGATE_CON(52), 13, GFLAGS),
++	COMPOSITE_NODIV(DCLK_VOP1, "dclk_vop1", dclk_vop1_p,
++			CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++			RK3588_CLKSEL_CON(112), 9, 2, MFLAGS,
++			RK3588_CLKGATE_CON(53), 0, GFLAGS),
++	COMPOSITE_NODIV(DCLK_VOP2, "dclk_vop2", dclk_vop2_p,
++			CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++			RK3588_CLKSEL_CON(112), 11, 2, MFLAGS,
++			RK3588_CLKGATE_CON(53), 1, GFLAGS),
++	COMPOSITE(DCLK_VOP3, "dclk_vop3", gpll_cpll_v0pll_aupll_p, 0,
++			RK3588_CLKSEL_CON(113), 7, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(53), 2, GFLAGS),
++	GATE(PCLK_DSIHOST0, "pclk_dsihost0", "pclk_vop_root", 0,
++			RK3588_CLKGATE_CON(53), 4, GFLAGS),
++	GATE(PCLK_DSIHOST1, "pclk_dsihost1", "pclk_vop_root", 0,
++			RK3588_CLKGATE_CON(53), 5, GFLAGS),
++	COMPOSITE(CLK_DSIHOST0, "clk_dsihost0", gpll_cpll_v0pll_spll_p, 0,
++			RK3588_CLKSEL_CON(114), 7, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(53), 6, GFLAGS),
++	COMPOSITE(CLK_DSIHOST1, "clk_dsihost1", gpll_cpll_v0pll_spll_p, 0,
++			RK3588_CLKSEL_CON(115), 7, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3588_CLKGATE_CON(53), 7, GFLAGS),
++	GATE(CLK_VOP_PMU, "clk_vop_pmu", "xin24m", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(53), 8, GFLAGS),
++	GATE(ACLK_VOP_DOBY, "aclk_vop_doby", "aclk_vop_root", 0,
++			RK3588_CLKGATE_CON(53), 10, GFLAGS),
++	MUX(ACLK_VOP_SUB_SRC, "aclk_vop_sub_src", aclk_vop_sub_src_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(115), 9, 1, MFLAGS),
++	GATE(CLK_USBDP_PHY0_IMMORTAL, "clk_usbdp_phy0_immortal", "xin24m", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(2), 8, GFLAGS),
++	GATE(CLK_USBDP_PHY1_IMMORTAL, "clk_usbdp_phy1_immortal", "xin24m", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(2), 15, GFLAGS),
++
++	GATE(CLK_REF_PIPE_PHY0_OSC_SRC, "clk_ref_pipe_phy0_osc_src", "xin24m", 0,
++			RK3588_CLKGATE_CON(77), 0, GFLAGS),
++	GATE(CLK_REF_PIPE_PHY1_OSC_SRC, "clk_ref_pipe_phy1_osc_src", "xin24m", 0,
++			RK3588_CLKGATE_CON(77), 1, GFLAGS),
++	GATE(CLK_REF_PIPE_PHY2_OSC_SRC, "clk_ref_pipe_phy2_osc_src", "xin24m", 0,
++			RK3588_CLKGATE_CON(77), 2, GFLAGS),
++	COMPOSITE_NOMUX(CLK_REF_PIPE_PHY0_PLL_SRC, "clk_ref_pipe_phy0_pll_src", "ppll", 0,
++			RK3588_CLKSEL_CON(176), 0, 6, DFLAGS,
++			RK3588_CLKGATE_CON(77), 3, GFLAGS),
++	COMPOSITE_NOMUX(CLK_REF_PIPE_PHY1_PLL_SRC, "clk_ref_pipe_phy1_pll_src", "ppll", 0,
++			RK3588_CLKSEL_CON(176), 6, 6, DFLAGS,
++			RK3588_CLKGATE_CON(77), 4, GFLAGS),
++	COMPOSITE_NOMUX(CLK_REF_PIPE_PHY2_PLL_SRC, "clk_ref_pipe_phy2_pll_src", "ppll", 0,
++			RK3588_CLKSEL_CON(177), 0, 6, DFLAGS,
++			RK3588_CLKGATE_CON(77), 5, GFLAGS),
++	MUX(CLK_REF_PIPE_PHY0, "clk_ref_pipe_phy0", clk_ref_pipe_phy0_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(177), 6, 1, MFLAGS),
++	MUX(CLK_REF_PIPE_PHY1, "clk_ref_pipe_phy1", clk_ref_pipe_phy1_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(177), 7, 1, MFLAGS),
++	MUX(CLK_REF_PIPE_PHY2, "clk_ref_pipe_phy2", clk_ref_pipe_phy2_p, CLK_SET_RATE_PARENT,
++			RK3588_CLKSEL_CON(177), 8, 1, MFLAGS),
++
++	/* pmu */
++	GATE(CLK_PMU0, "clk_pmu0", "xin24m", CLK_IS_CRITICAL,
++			RK3588_PMU_CLKGATE_CON(5), 1, GFLAGS),
++	GATE(PCLK_PMU0, "pclk_pmu0", "pclk_pmu0_root", CLK_IS_CRITICAL,
++			RK3588_PMU_CLKGATE_CON(5), 2, GFLAGS),
++	GATE(PCLK_PMU0IOC, "pclk_pmu0ioc", "pclk_pmu0_root", CLK_IS_CRITICAL,
++			RK3588_PMU_CLKGATE_CON(5), 4, GFLAGS),
++	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_pmu0_root", 0,
++			RK3588_PMU_CLKGATE_CON(5), 5, GFLAGS),
++	COMPOSITE_NODIV(DBCLK_GPIO0, "dbclk_gpio0", mux_24m_32k_p, 0,
++			RK3588_PMU_CLKSEL_CON(17), 0, 1, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(5), 6, GFLAGS),
++	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_pmu0_root", 0,
++			RK3588_PMU_CLKGATE_CON(2), 1, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C0, "clk_i2c0", pmu_200m_100m_p, 0,
++			RK3588_PMU_CLKSEL_CON(3), 6, 1, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(2), 2, GFLAGS),
++	GATE(HCLK_I2S1_8CH, "hclk_i2s1_8ch", "hclk_pmu1_root", 0,
++			RK3588_PMU_CLKGATE_CON(2), 7, GFLAGS),
++	COMPOSITE_NOMUX(CLK_I2S1_8CH_TX_SRC, "clk_i2s1_8ch_tx_src", "cpll", 0,
++			RK3588_PMU_CLKSEL_CON(5), 2, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(2), 8, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S1_8CH_TX_FRAC, "clk_i2s1_8ch_tx_frac", "clk_i2s1_8ch_tx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_PMU_CLKSEL_CON(6), 0,
++			RK3588_PMU_CLKGATE_CON(2), 9, GFLAGS,
++			&rk3588_i2s1_8ch_tx_fracmux),
++	GATE(MCLK_I2S1_8CH_TX, "mclk_i2s1_8ch_tx", "clk_i2s1_8ch_tx", 0,
++			RK3588_PMU_CLKGATE_CON(2), 10, GFLAGS),
++	COMPOSITE_NOMUX(CLK_I2S1_8CH_RX_SRC, "clk_i2s1_8ch_rx_src", "cpll", 0,
++			RK3588_PMU_CLKSEL_CON(7), 2, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(2), 11, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_I2S1_8CH_RX_FRAC, "clk_i2s1_8ch_rx_frac", "clk_i2s1_8ch_rx_src",
++			CLK_SET_RATE_PARENT,
++			RK3588_PMU_CLKSEL_CON(8), 0,
++			RK3588_PMU_CLKGATE_CON(2), 12, GFLAGS,
++			&rk3588_i2s1_8ch_rx_fracmux),
++	GATE(MCLK_I2S1_8CH_RX, "mclk_i2s1_8ch_rx", "clk_i2s1_8ch_rx", 0,
++			RK3588_PMU_CLKGATE_CON(2), 13, GFLAGS),
++	MUX(I2S1_8CH_MCLKOUT, "i2s1_8ch_mclkout", i2s1_8ch_mclkout_p, CLK_SET_RATE_PARENT,
++			RK3588_PMU_CLKSEL_CON(9), 2, 2, MFLAGS),
++	COMPOSITE_NOMUX(CLK_PMU1_50M_SRC, "clk_pmu1_50m_src", "clk_pmu1_400m_src", 0,
++			RK3588_PMU_CLKSEL_CON(0), 0, 4, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 0, GFLAGS),
++	COMPOSITE_NOMUX(CLK_PMU1_100M_SRC, "clk_pmu1_100m_src", "clk_pmu1_400m_src", 0,
++			RK3588_PMU_CLKSEL_CON(0), 4, 3, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 1, GFLAGS),
++	COMPOSITE_NOMUX(CLK_PMU1_200M_SRC, "clk_pmu1_200m_src", "clk_pmu1_400m_src", 0,
++			RK3588_PMU_CLKSEL_CON(0), 7, 3, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 2, GFLAGS),
++	COMPOSITE(CLK_PMU1_300M_SRC, "clk_pmu1_300m_src", pmu_300m_24m_p, 0,
++			RK3588_PMU_CLKSEL_CON(0), 15, 1, MFLAGS, 10, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 3, GFLAGS),
++	COMPOSITE(CLK_PMU1_400M_SRC, "clk_pmu1_400m_src", pmu_400m_24m_p, 0,
++			RK3588_PMU_CLKSEL_CON(1), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 4, GFLAGS),
++	COMPOSITE_NODIV(HCLK_PMU1_ROOT, "hclk_pmu1_root", hclk_pmu1_root_p, CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(1), 6, 2, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 5, GFLAGS),
++	COMPOSITE_NODIV(PCLK_PMU1_ROOT, "pclk_pmu1_root", pmu_100m_50m_24m_src_p, CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(1), 8, 2, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 7, GFLAGS),
++	GATE(PCLK_PMU0_ROOT, "pclk_pmu0_root", "pclk_pmu1_root", CLK_IS_CRITICAL,
++			RK3588_PMU_CLKGATE_CON(5), 0, GFLAGS),
++	COMPOSITE_NODIV(HCLK_PMU_CM0_ROOT, "hclk_pmu_cm0_root", hclk_pmu_cm0_root_p,
++			CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(1), 10, 2, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 8, GFLAGS),
++	GATE(PCLK_PMU1, "pclk_pmu1", "pclk_pmu0_root", CLK_IS_CRITICAL,
++			RK3588_PMU_CLKGATE_CON(1), 0, GFLAGS),
++	GATE(CLK_DDR_FAIL_SAFE, "clk_ddr_fail_safe", "clk_pmu0", CLK_IGNORE_UNUSED,
++			RK3588_PMU_CLKGATE_CON(1), 1, GFLAGS),
++	GATE(CLK_PMU1, "clk_pmu1", "clk_pmu0", CLK_IS_CRITICAL,
++			RK3588_PMU_CLKGATE_CON(1), 3, GFLAGS),
++	GATE(HCLK_PDM0, "hclk_pdm0", "hclk_pmu1_root", 0,
++			RK3588_PMU_CLKGATE_CON(2), 14, GFLAGS),
++	COMPOSITE_NODIV(MCLK_PDM0, "mclk_pdm0", mclk_pdm0_p, 0,
++			RK3588_PMU_CLKSEL_CON(9), 4, 1, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(2), 15, GFLAGS),
++	GATE(HCLK_VAD, "hclk_vad", "hclk_pmu1_root", 0,
++			RK3588_PMU_CLKGATE_CON(3), 0, GFLAGS),
++	GATE(FCLK_PMU_CM0_CORE, "fclk_pmu_cm0_core", "hclk_pmu_cm0_root", CLK_IS_CRITICAL,
++			RK3588_PMU_CLKGATE_CON(0), 13, GFLAGS),
++	COMPOSITE(CLK_PMU_CM0_RTC, "clk_pmu_cm0_rtc", mux_24m_32k_p, CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(2), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(0), 15, GFLAGS),
++	GATE(PCLK_PMU1_IOC, "pclk_pmu1_ioc", "pclk_pmu0_root", CLK_IGNORE_UNUSED,
++			RK3588_PMU_CLKGATE_CON(1), 5, GFLAGS),
++	GATE(PCLK_PMU1PWM, "pclk_pmu1pwm", "pclk_pmu0_root", 0,
++			RK3588_PMU_CLKGATE_CON(1), 12, GFLAGS),
++	COMPOSITE_NODIV(CLK_PMU1PWM, "clk_pmu1pwm", pmu_100m_50m_24m_src_p, 0,
++			RK3588_PMU_CLKSEL_CON(2), 9, 2, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(1), 13, GFLAGS),
++	GATE(CLK_PMU1PWM_CAPTURE, "clk_pmu1pwm_capture", "xin24m", 0,
++			RK3588_PMU_CLKGATE_CON(1), 14, GFLAGS),
++	GATE(PCLK_PMU1TIMER, "pclk_pmu1timer", "pclk_pmu0_root", 0,
++			RK3588_PMU_CLKGATE_CON(1), 8, GFLAGS),
++	COMPOSITE_NODIV(CLK_PMU1TIMER_ROOT, "clk_pmu1timer_root", pmu_24m_32k_100m_src_p, 0,
++			RK3588_PMU_CLKSEL_CON(2), 7, 2, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(1), 9, GFLAGS),
++	GATE(CLK_PMU1TIMER0, "clk_pmu1timer0", "clk_pmu1timer_root", 0,
++			RK3588_PMU_CLKGATE_CON(1), 10, GFLAGS),
++	GATE(CLK_PMU1TIMER1, "clk_pmu1timer1", "clk_pmu1timer_root", 0,
++			RK3588_PMU_CLKGATE_CON(1), 11, GFLAGS),
++	COMPOSITE_NOMUX(CLK_UART0_SRC, "clk_uart0_src", "cpll", 0,
++			RK3588_PMU_CLKSEL_CON(3), 7, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(2), 3, GFLAGS),
++	COMPOSITE_FRACMUX(CLK_UART0_FRAC, "clk_uart0_frac", "clk_uart0_src", CLK_SET_RATE_PARENT,
++			RK3588_PMU_CLKSEL_CON(4), 0,
++			RK3588_PMU_CLKGATE_CON(2), 4, GFLAGS,
++			&rk3588_uart0_fracmux),
++	GATE(SCLK_UART0, "sclk_uart0", "clk_uart0", 0,
++			RK3588_PMU_CLKGATE_CON(2), 5, GFLAGS),
++	GATE(PCLK_UART0, "pclk_uart0", "pclk_pmu0_root", 0,
++			RK3588_PMU_CLKGATE_CON(2), 6, GFLAGS),
++	GATE(PCLK_PMU1WDT, "pclk_pmu1wdt", "pclk_pmu0_root", 0,
++			RK3588_PMU_CLKGATE_CON(1), 6, GFLAGS),
++	COMPOSITE_NODIV(TCLK_PMU1WDT, "tclk_pmu1wdt", mux_24m_32k_p, 0,
++			RK3588_PMU_CLKSEL_CON(2), 6, 1, MFLAGS,
++			RK3588_PMU_CLKGATE_CON(1), 7, GFLAGS),
++	COMPOSITE(CLK_CR_PARA, "clk_cr_para", mux_24m_ppll_spll_p, 0,
++			RK3588_PMU_CLKSEL_CON(15), 5, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(4), 11, GFLAGS),
++	COMPOSITE(CLK_HDPTX0_REF_XTAL, "clk_hdptx0_ref_xtal", mux_24m_ppll_p, CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(12), 11, 1, MFLAGS, 6, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(3), 11, GFLAGS),
++	COMPOSITE(CLK_REF_MIPI_DCPHY0, "clk_ref_mipi_dcphy0", mux_24m_ppll_spll_p, CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(14), 7, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(4), 3, GFLAGS),
++	COMPOSITE(CLK_OTGPHY_U3_0, "clk_otgphy_u3_0", mux_24m_ppll_p, CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(14), 14, 1, MFLAGS, 9, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(4), 7, GFLAGS),
++	COMPOSITE(CLK_USBDP_PHY0_REF_XTAL, "clk_usbdp_phy0_ref_xtal", mux_24m_ppll_p,
++			CLK_IS_CRITICAL,
++			RK3588_PMU_CLKSEL_CON(9), 10, 1, MFLAGS, 5, 5, DFLAGS,
++			RK3588_PMU_CLKGATE_CON(3), 5, GFLAGS),
++};
++
++static void __init rk3588_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++	void __iomem *reg_base;
++
++	reg_base = of_iomap(np, 0);
++	if (!reg_base) {
++		pr_err("%s: could not map cru region\n", __func__);
++		return;
++	}
++
++	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	if (IS_ERR(ctx)) {
++		pr_err("%s: rockchip clk init failed\n", __func__);
++		iounmap(reg_base);
++		return;
++	}
++
++	rockchip_clk_register_plls(ctx, rk3588_pll_clks,
++				   ARRAY_SIZE(rk3588_pll_clks),
++				   RK3588_GRF_SOC_STATUS0);
++
++	rockchip_clk_register_armclk(ctx, ARMCLK_L, "armclk_l",
++			mux_armclkl_p, ARRAY_SIZE(mux_armclkl_p),
++			&rk3588_cpulclk_data, rk3588_cpulclk_rates,
++			ARRAY_SIZE(rk3588_cpulclk_rates));
++	rockchip_clk_register_armclk(ctx, ARMCLK_B01, "armclk_b01",
++			mux_armclkb01_p, ARRAY_SIZE(mux_armclkb01_p),
++			&rk3588_cpub0clk_data, rk3588_cpub0clk_rates,
++			ARRAY_SIZE(rk3588_cpub0clk_rates));
++	rockchip_clk_register_armclk(ctx, ARMCLK_B23, "armclk_b23",
++			mux_armclkb23_p, ARRAY_SIZE(mux_armclkb23_p),
++			&rk3588_cpub1clk_data, rk3588_cpub1clk_rates,
++			ARRAY_SIZE(rk3588_cpub1clk_rates));
++
++	rockchip_clk_register_branches(ctx, rk3588_clk_branches,
++				       ARRAY_SIZE(rk3588_clk_branches));
++
++	rockchip_register_softrst(np, 49158, reg_base + RK3588_SOFTRST_CON(0),
++				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++
++	rockchip_register_restart_notifier(ctx, RK3588_GLB_SRST_FST, NULL);
++
++	rockchip_clk_of_add_provider(np, ctx);
++}
++
++CLK_OF_DECLARE(rk3588_cru, "rockchip,rk3588-cru", rk3588_clk_init);
++
++struct clk_rk3588_inits {
++	void (*inits)(struct device_node *np);
++};
++
++static const struct clk_rk3588_inits clk_3588_cru_init = {
++	.inits = rk3588_clk_init,
++};
++
++static const struct of_device_id clk_rk3588_match_table[] = {
++	{
++		.compatible = "rockchip,rk3588-cru",
++		.data = &clk_3588_cru_init,
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, clk_rk3588_match_table);
++
++static int __init clk_rk3588_probe(struct platform_device *pdev)
++{
++	const struct clk_rk3588_inits *init_data;
++	struct device *dev = &pdev->dev;
++
++	init_data = device_get_match_data(dev);
++	if (!init_data)
++		return -EINVAL;
++
++	if (init_data->inits)
++		init_data->inits(dev->of_node);
++
++	return 0;
++}
++
++static struct platform_driver clk_rk3588_driver = {
++	.driver		= {
++		.name	= "clk-rk3588",
++		.of_match_table = clk_rk3588_match_table,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver_probe(clk_rk3588_driver, clk_rk3588_probe);
++
++MODULE_DESCRIPTION("Rockchip RK3588 Clock Driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 2bd1863a7418..15fd9cbfb06f 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -216,6 +216,48 @@ struct clk;
+ #define RK3568_PMU_CLKGATE_CON(x)	((x) * 0x4 + 0x180)
+ #define RK3568_PMU_SOFTRST_CON(x)	((x) * 0x4 + 0x200)
+ 
++#define RK3588_PHP_CRU_BASE		0x8000
++#define RK3588_PMU_CRU_BASE		0x30000
++#define RK3588_BIGCORE0_CRU_BASE	0x50000
++#define RK3588_BIGCORE1_CRU_BASE	0x52000
++#define RK3588_DSU_CRU_BASE		0x58000
++
++#define RK3588_PLL_CON(x)		RK2928_PLL_CON(x)
++#define RK3588_MODE_CON0		0x280
++#define RK3588_CLKSEL_CON(x)		((x) * 0x4 + 0x300)
++#define RK3588_CLKGATE_CON(x)		((x) * 0x4 + 0x800)
++#define RK3588_SOFTRST_CON(x)		((x) * 0x4 + 0xa00)
++#define RK3588_GLB_CNT_TH		0xc00
++#define RK3588_GLB_SRST_FST		0xc08
++#define RK3588_GLB_SRST_SND		0xc0c
++#define RK3588_GLB_RST_CON		0xc10
++#define RK3588_GLB_RST_ST		0xc04
++#define RK3588_SDIO_CON0		0xC24
++#define RK3588_SDIO_CON1		0xC28
++#define RK3588_SDMMC_CON0		0xC30
++#define RK3588_SDMMC_CON1		0xC34
++
++#define RK3588_PHP_CLKGATE_CON(x)	((x) * 0x4 + RK3588_PHP_CRU_BASE + 0x800)
++#define RK3588_PHP_SOFTRST_CON(x)	((x) * 0x4 + RK3588_PHP_CRU_BASE + 0xa00)
++
++#define RK3588_PMU_PLL_CON(x)		((x) * 0x4 + RK3588_PHP_CRU_BASE)
++#define RK3588_PMU_CLKSEL_CON(x)	((x) * 0x4 + RK3588_PMU_CRU_BASE + 0x300)
++#define RK3588_PMU_CLKGATE_CON(x)	((x) * 0x4 + RK3588_PMU_CRU_BASE + 0x800)
++#define RK3588_PMU_SOFTRST_CON(x)	((x) * 0x4 + RK3588_PMU_CRU_BASE + 0xa00)
++
++#define RK3588_B0_PLL_CON(x)		((x) * 0x4 + RK3588_BIGCORE0_CRU_BASE)
++#define RK3588_BIGCORE0_CLKSEL_CON(x)	((x) * 0x4 + RK3588_BIGCORE0_CRU_BASE + 0x300)
++#define RK3588_BIGCORE0_CLKGATE_CON(x)	((x) * 0x4 + RK3588_BIGCORE0_CRU_BASE + 0x800)
++#define RK3588_BIGCORE0_SOFTRST_CON(x)	((x) * 0x4 + RK3588_BIGCORE0_CRU_BASE + 0xa00)
++#define RK3588_B1_PLL_CON(x)		((x) * 0x4 + RK3588_BIGCORE1_CRU_BASE)
++#define RK3588_BIGCORE1_CLKSEL_CON(x)	((x) * 0x4 + RK3588_BIGCORE1_CRU_BASE + 0x300)
++#define RK3588_BIGCORE1_CLKGATE_CON(x)	((x) * 0x4 + RK3588_BIGCORE1_CRU_BASE + 0x800)
++#define RK3588_BIGCORE1_SOFTRST_CON(x)	((x) * 0x4 + RK3588_BIGCORE1_CRU_BASE + 0xa00)
++#define RK3588_LPLL_CON(x)		((x) * 0x4 + RK3588_DSU_CRU_BASE)
++#define RK3588_DSU_CLKSEL_CON(x)	((x) * 0x4 + RK3588_DSU_CRU_BASE + 0x300)
++#define RK3588_DSU_CLKGATE_CON(x)	((x) * 0x4 + RK3588_DSU_CRU_BASE + 0x800)
++#define RK3588_DSU_SOFTRST_CON(x)	((x) * 0x4 + RK3588_DSU_CRU_BASE + 0xa00)
++
+ enum rockchip_pll_type {
+ 	pll_rk3036,
+ 	pll_rk3066,
 -- 
 2.35.1
 
