@@ -2,81 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064F6C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 May 2022 14:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3986BC433F5
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 May 2022 15:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380847AbiEEO67 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 May 2022 10:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47900 "EHLO
+        id S1343693AbiEEPJc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 May 2022 11:09:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380880AbiEEO6x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 May 2022 10:58:53 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D09C97
-        for <linux-gpio@vger.kernel.org>; Thu,  5 May 2022 07:55:13 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-2f7c57ee6feso51407497b3.2
-        for <linux-gpio@vger.kernel.org>; Thu, 05 May 2022 07:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aGHiFO3Q2GyTnfB7Hhe97atxz9YJ8sx20qf9bbbh8jo=;
-        b=VFh+snB9uGYQmmKtSbOCoSL8JSFtaNxu2zjGmnaWE9f+P24swIN4CwpvPFCiTmB628
-         54hkjrMLWS3tFUDpDwJ4ucT4uHnT6B1BkgT38p24AQDA6NKt+F6EUMVzD3R3K2BOavDL
-         xjwfg7WGPF16Q9jWNhiEpU1P0xJOUOzBhsWNtjzQjzbKxchDwjGZBr+jtIZFm3tLAY8J
-         4eQE98LGsT3IC/DEU4oFJk3os0o/RRc7mNal1DrKji7OvhOoKROfHtENqL7cepYScYsm
-         nHRW/F7NiYhTVXGlZWWWRgBnPO+yMZizGlIFUm2nrgsP2gGW/j/Tckcsc08ulup4jrDo
-         V9yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aGHiFO3Q2GyTnfB7Hhe97atxz9YJ8sx20qf9bbbh8jo=;
-        b=Lxh/d88z58jT31duAf4r1Jf6IG5bZyryl4K4oD0vsb80BekU7+UxmekYZiumcdr2Qe
-         45iGKQS9MFdyCBWp4fP8L6daZMQk6EXWEaO4/j2LteXExkj+kwVnZFZZ8P03b69XzF1U
-         5Kt6phUF6yBOOM3pbgivMy8ry0aQIqFRa2H/Imo17x+w/7FNu2fpkfpeG4VGR2fMpCcZ
-         MSAsm+RB39Y5dIg2ZYrj0UK8DwhRfqDlQU9G7Rw1i9mcYOkwhsL4btoQNhHIceGdpd6C
-         yg/4SZsF0JlpO/q6eIFUub1PJrzgbx1Sp4fAswWB/w6Dp9dmIkaoc/pwKfOX1cFuwpBE
-         ewrA==
-X-Gm-Message-State: AOAM53253WNPy0GrpX91B9jd5CDnX4BpGHiuIREDQEty10kW8L4vly5v
-        4+V3nO5XRA9gWrLrr1XVnWE4P7UB49Od5wCoLl6/Ow==
-X-Google-Smtp-Source: ABdhPJwZc6opbBFF0AOuDeLOhjI04yiu7l0ndLHKUYTUT+szpJdEcuwMXuAdroZkyOb5a8tN6a5PD9Kx4r+L4KF5Ti4=
-X-Received: by 2002:a81:2154:0:b0:2f4:d79e:35dc with SMTP id
- h81-20020a812154000000b002f4d79e35dcmr25016995ywh.126.1651762512406; Thu, 05
- May 2022 07:55:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220428111622.1395831-1-michael@walle.cc>
-In-Reply-To: <20220428111622.1395831-1-michael@walle.cc>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 5 May 2022 16:55:01 +0200
-Message-ID: <CACRpkdZjsdkq2KP-k0pwB5KZo25AeTgW_-iAZ4K84A=s1_+gnQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: microchip-sgpio: make irq_chip immutable
-To:     Michael Walle <michael@walle.cc>
-Cc:     Marc Zyngier <maz@kernel.org>,
+        with ESMTP id S1381152AbiEEPJU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 May 2022 11:09:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0AF01CB22;
+        Thu,  5 May 2022 08:05:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5DA7B61BB6;
+        Thu,  5 May 2022 15:05:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2778C385A8;
+        Thu,  5 May 2022 15:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651763138;
+        bh=AV7Ctm48EGltuTuBFDYE7IrEPNSYirdqxElT2gUK6aA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Cuvz24GWC9Qj3KZZ53ITYSvcMm/bfiFx/kZzyWAwYEtWo11Jj37pz4GQQQD22LV77
+         +7Ae6IIZbVryRwEOD1Bxjuurptoy5/xtLQ9MW7c5hdQ45SC4M0eRKB4uses+Z1ak2P
+         b+S+q/8Oa5uGFV1kQKrh6NJPJanNyWuY6Kaf8NddYfZdPTD7Psmy++ZAEEJFcObXmz
+         uSle+r3FeYBqKXxLIP6sK8GofGsuglJUajLGFnXgzLhPKsTtzqDpFNOiOZydwn9ZcM
+         Y58KyBWpG8QlBykTURyXxB+uvR5coBptIV02sndeiljhmMqDZLjP9XKZbAoqvoWRue
+         nCRP4vtwqiK+w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nmd2u-009EuL-7S; Thu, 05 May 2022 16:05:36 +0100
+Date:   Thu, 05 May 2022 16:05:36 +0100
+Message-ID: <87y1zg6mv3.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michael Walle <michael@walle.cc>,
         Lars Povlsen <lars.povlsen@microchip.com>,
         Steen Hegelund <Steen.Hegelund@microchip.com>,
         UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] pinctrl: microchip-sgpio: make irq_chip immutable
+In-Reply-To: <CACRpkdZjsdkq2KP-k0pwB5KZo25AeTgW_-iAZ4K84A=s1_+gnQ@mail.gmail.com>
+References: <20220428111622.1395831-1-michael@walle.cc>
+        <CACRpkdZjsdkq2KP-k0pwB5KZo25AeTgW_-iAZ4K84A=s1_+gnQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linus.walleij@linaro.org, michael@walle.cc, lars.povlsen@microchip.com, Steen.Hegelund@microchip.com, UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 1:16 PM Michael Walle <michael@walle.cc> wrote:
+On Thu, 05 May 2022 15:55:01 +0100,
+Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> On Thu, Apr 28, 2022 at 1:16 PM Michael Walle <michael@walle.cc> wrote:
+> 
+> > Since recently, the kernel is nagging about mutable irq_chips:
+> >
+> > [    4.967050] gpio gpiochip1: (e2004190.gpio-input): not an immutable chip, please consider fixing it!
+> >
+> > Drop the unneeded copy, flag it as IRQCHIP_IMMUTABLE, add the new
+> > helper functions and call the appropriate gpiolib functions.
+> >
+> > Signed-off-by: Michael Walle <michael@walle.cc>
+> 
+> Patch applied after pulling in Marc's immutable branch.
+> 
+> (Hm a bit confusing since it is a immutable branch with code
+> for immutable GPIO chips ... I assume it is both.)
 
-> Since recently, the kernel is nagging about mutable irq_chips:
->
-> [    4.967050] gpio gpiochip1: (e2004190.gpio-input): not an immutable chip, please consider fixing it!
->
-> Drop the unneeded copy, flag it as IRQCHIP_IMMUTABLE, add the new
-> helper functions and call the appropriate gpiolib functions.
->
-> Signed-off-by: Michael Walle <michael@walle.cc>
+Both indeed. Immutable^2, or something like that.
 
-Patch applied after pulling in Marc's immutable branch.
+	M.
 
-(Hm a bit confusing since it is a immutable branch with code
-for immutable GPIO chips ... I assume it is both.)
-
-Yours,
-Linus Walleij
+-- 
+Without deviation from the norm, progress is not possible.
