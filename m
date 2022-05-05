@@ -2,108 +2,181 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F40DC4332F
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 May 2022 14:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE079C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 May 2022 14:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380827AbiEEOyq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 May 2022 10:54:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45748 "EHLO
+        id S1351024AbiEEO6r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 May 2022 10:58:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380808AbiEEOyp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 May 2022 10:54:45 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07461B9A
-        for <linux-gpio@vger.kernel.org>; Thu,  5 May 2022 07:51:05 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id v59so8005169ybi.12
-        for <linux-gpio@vger.kernel.org>; Thu, 05 May 2022 07:51:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NqjwoR4LlPEXRPjbSlmaKFR3JQ3ccpO0IwpzOZEqSNc=;
-        b=B6x3nqirj4jKgqwkXJ65eiR28GcKrtSEJZH9DLcTY7++7qa9LC/aG4yVzZ+rRcylJP
-         v62bGcO2lD2VyMZYvfCW5WeXr+/jXBH0cZT9vavqV9RhuW7wDQlRMoXk6YxXXGWQPUUU
-         baqR18caYVdlkM+npbZkkZCBidc7sXGmS9b8krjkLU0M/xYnShGIOZzvX5t24Iuh4uVI
-         F1s84M0OigPNk03gZmGW7QOzuTCf0x64m3PmmztfwLuc9Y0xlxXQwNk7lhHMNi3qaKqM
-         klihp8hNbJgYsU7dDD2l1IGBmwImn3GpTEzlWQREmo36WU6+k6sAOtzkCc+QyZH557e1
-         DEXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NqjwoR4LlPEXRPjbSlmaKFR3JQ3ccpO0IwpzOZEqSNc=;
-        b=6/uzpQ4f0531Ssnj6Ma5SHtrBtcDQ9RElZpKPLmnz7T8iqKlc6C2Ertqh672c8lzDz
-         E8u+3M3dMdu1inCuGcYtnzLbCiKDviPpUnQvzNDSkGHnmJ8kQZw+SPNPpUN9esDVvMUh
-         j4xdwVOoOWHhyWE7cvLhgWtqhkTmfG9/UKbgajm1x0PmlLhpccmB0HM3HyxJyavVgoo8
-         eA9EFMhsRXKNlY/3bXUP4/u+BYAN69YKZLQbpyZpd3bbU5ADY8hkp8apIwhUPcNkqNmj
-         6BN4ROwEVxNgXpD66lcNFuzue9LleNQN9Uv7oci5DcmhPZm9R1r4mzyU/3aZF0b2t+gF
-         2ZLA==
-X-Gm-Message-State: AOAM533xJYHKepyfLcwFnrSn6vDCW7qfc0jUnCa1c3R4laQZooJK6ySs
-        WD6Fj/vCT1YGoY6dLomr/2xufaDaCwGNr7EVDPziVg==
-X-Google-Smtp-Source: ABdhPJzZtXGIA9v0MMiWZ4u+vtplZESU8b+FGk7W8udNaOea1IQGb1mGALrc3XNrMX6cmsg6QqM6DjwL3LWS1FGLXNM=
-X-Received: by 2002:a25:2905:0:b0:649:7a2b:ca72 with SMTP id
- p5-20020a252905000000b006497a2bca72mr15732697ybp.492.1651762264271; Thu, 05
- May 2022 07:51:04 -0700 (PDT)
+        with ESMTP id S233840AbiEEO6q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 May 2022 10:58:46 -0400
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [IPv6:2a01:37:1000::53df:5f64:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CF25A5B5;
+        Thu,  5 May 2022 07:55:05 -0700 (PDT)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id D70CF3000A3AD;
+        Thu,  5 May 2022 16:55:03 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id CB4F01D8B44; Thu,  5 May 2022 16:55:03 +0200 (CEST)
+Date:   Thu, 5 May 2022 16:55:03 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Wolfram Sang <wsa@kernel.org>, Jean Delvare <jdelvare@suse.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tan Jui Nee <jui.nee.tan@intel.com>,
+        Kate Hsuan <hpa@redhat.com>,
+        Jonathan Yong <jonathan.yong@intel.com>,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Peter Tyser <ptyser@xes-inc.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Mark Gross <markgross@kernel.org>,
+        Henning Schild <henning.schild@siemens.com>
+Subject: Re: [PATCH v4 1/8] platform/x86/intel: Add Primary to Sideband
+ (P2SB) bridge support
+Message-ID: <20220505145503.GA25423@wunner.de>
+References: <20220131151346.45792-1-andriy.shevchenko@linux.intel.com>
+ <20220131151346.45792-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20220419141846.598305-1-maz@kernel.org> <CACRpkda3L_itpqcnPq6xDoJtNHt8NuvE1MZk1bCNR+u2KKUpBA@mail.gmail.com>
- <874k2kccse.wl-maz@kernel.org> <CACRpkdb32NuJ8jdsk6ox7ViVjK=9WWWavS=aYcoWTCbaO3WkTg@mail.gmail.com>
- <CAMRc=MdwbzkpL5Vm2aEXVPKzj78GsFStk+3uZexyrJMB468U4g@mail.gmail.com>
-In-Reply-To: <CAMRc=MdwbzkpL5Vm2aEXVPKzj78GsFStk+3uZexyrJMB468U4g@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 5 May 2022 16:50:52 +0200
-Message-ID: <CACRpkda3jPMj5ZgyXsaq34sW9E9n-t8A_BHUZbVsfxc7E=j3Aw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] gpiolib: Handle immutable irq_chip structures
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220131151346.45792-2-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, May 5, 2022 at 2:58 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> On Wed, May 4, 2022 at 11:22 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > On Sat, Apr 23, 2022 at 12:30 PM Marc Zyngier <maz@kernel.org> wrote:
-> >
-> > > > Bartosz: if you're happy with this can you apply it to an immutable branch
-> > > > from v5.18-rc1 and merge that into the GPIO for-next and then I can also
-> > > > pull that into pinctrl?
-> > >
-> > > For what it is worth, I've pushed this branch into irqchip-next.
-> > >
-> > > You can pick it up from:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/gpio-immutable
-> >
-> > Bartosz are you pulling this? Most of the changes are in GPIO.
-> > Patches have started to arrive that go on top of these changes
-> > so would be nice to have it in both GPIO and pin control as a
-> > baseline.
-> >
-> > Yours,
-> > Linus Walleij
->
-> Yes! Sorry for the delay. Pulling now.
+On Mon, Jan 31, 2022 at 05:13:39PM +0200, Andy Shevchenko wrote:
+> Background information
+> ======================
 
-Excellent, pulled it into pincontrol as well.
+The wealth of information in the commit message obscures what the
+actual problem is, which is actually quite simple:  SoC features
+such as GPIO are accessed via a reserved MMIO area, we don't know
+its address but can obtain it from the BAR of the P2SB device,
+that device is normally hidden so we have to temporarily unhide it.
 
-Yours,
-Linus Walleij
+
+> On top of that in some cases P2SB is represented by function 0 on PCI
+> slot (in terms of B:D.F) and according to the PCI specification any
+> other function can't be seen until function 0 is present and visible.
+
+I find that paragraph confusing:  Do multi-function P2SB devices exist?
+What are the other functions?  Are they visible but merely not enumerated
+because function 0 is not visible?
+
+
+> P2SB unconditional unhiding awareness
+> =====================================
+> Technically it's possible to unhide the P2SB device and devices on
+> the same PCI slot and access them at any time as needed. But there are
+> several potential issues with that:
+> 
+>  - the systems were never tested against such configuration and hence
+>    nobody knows what kind of bugs it may bring, especially when we talk
+>    about SPI NOR case which contains Intel FirmWare Image (IFWI) code
+>    (including BIOS) and already known to be problematic in the past for
+>    end users
+> 
+>  - the PCI by its nature is a hotpluggable bus and in case somebody
+>    attaches a driver to the functions of a P2SB slot device(s) the
+>    end user experience and system behaviour can be unpredictable
+> 
+>  - the kernel code would need some ugly hacks (or code looking as an
+>    ugly hack) under arch/x86/pci in order to enable these devices on
+>    only selected platforms (which may include CPU ID table followed by
+>    a potentially growing number of DMI strings
+
+Honestly I would have taken the step to always expose the device,
+identify breakages and then fix those.
+
+We had a similar issue with HD audio controllers on Nvidia GPUs
+which were only visible when an HDMI cable was plugged in.
+We always expose them since b516ea586d71 and I recall we merely
+had a few cases that an audio device was exposed in cases when
+the card had no HDMI connectors at all.  So there was a useless
+HD audio card visible to the user but no real harm.
+
+
+> +	pci_lock_rescan_remove();
+> +
+> +	/* Unhide the P2SB device, if needed */
+> +	pci_bus_read_config_dword(bus, devfn_p2sb, P2SBC, &value);
+> +	if ((value & P2SBC_HIDE) == P2SBC_HIDE)
+> +		pci_bus_write_config_dword(bus, devfn_p2sb, P2SBC, 0);
+> +
+> +	/* Read the first BAR of the device in question */
+> +	__pci_bus_read_base(bus, devfn, mem, PCI_BASE_ADDRESS_0);
+> +
+> +	/* Hide the P2SB device, if it was hidden */
+> +	if (value & P2SBC_HIDE)
+> +		pci_bus_write_config_dword(bus, devfn_p2sb, P2SBC, P2SBC_HIDE);
+> +
+> +	pci_unlock_rescan_remove();
+
+Please add a code comment why you're calling pci_lock_rescan_remove(),
+such as:
+
+	/*
+	 * Prevent concurrent PCI bus scan from seeing the P2SB device
+	 * while it is temporarily exposed.
+	 */
+
+Otherwise it looks like you're abusing that lock to prevent multiple
+simultaneous RMW operations of the P2SBC_HIDE bit.
+
+
+I think the first if-clause above can be simplified to
+
+	if (value & P2SBC_HIDE)
+
+I don't understand why one of the two if-clauses adds "== P2SBC_HIDE".
+
+
+Do you really need all the complicated logic in __pci_bus_read_base()?
+For comparison, simatic_ipc_get_membase0() in simatic-ipc.c merely does:
+
+	pci_bus_read_config_dword(bus, p2sb, PCI_BASE_ADDRESS_0, &bar0);
+
+If that's sufficient for simatic-ipc.c, why is the more complicated code
+necessary in p2sb.c?
+
+
+I'm wondering, since you're only retrieving the base address (and thus
+temporarily expose the P2SB device) when it's actually needed by a driver,
+would there be any harm in keeping the P2SB device exposed indefinitely
+from the moment a driver first requests the base address?  I.e., unhide it
+but don't hide it again.  That would allow you to call pci_scan_slot() and
+pci_bus_add_devices(), thus instantiating a proper pci_dev which you can
+access without the __pci_bus_read_base() kludge.
+
+
+> +	/*
+> +	 * I don't know how l can have all bits set.  Copied from old code.
+> +	 * Maybe it fixes a bug on some ancient platform.
+> +	 */
+> +	if (PCI_POSSIBLE_ERROR(l))
+> +		l = 0;
+
+l can have all bits set if the device was hot-removed.  That can't happen
+with a built-in device such as P2SB.
+
+Thanks,
+
+Lukas
