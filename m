@@ -2,144 +2,154 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D70DC433EF
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 May 2022 20:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DB9C433EF
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 07:22:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233641AbiEGVCr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 7 May 2022 17:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53076 "EHLO
+        id S231272AbiEHHZL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 8 May 2022 03:25:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231203AbiEGVCq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 May 2022 17:02:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3FCD140CD
-        for <linux-gpio@vger.kernel.org>; Sat,  7 May 2022 13:58:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9478760F1A
-        for <linux-gpio@vger.kernel.org>; Sat,  7 May 2022 20:58:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB83C385B6
-        for <linux-gpio@vger.kernel.org>; Sat,  7 May 2022 20:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651957138;
-        bh=OIAhVsfnQx3H9cO0oMrogbZg8WQKBlD+rk30Tvq6DtU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aceJ+DjU26Z1nY1NjxZOyBnaS+dkt95M0ULfQOn83HAdBq/ZyTiHv2bRCtHZQvCkG
-         Jr/HdvGycMa1R8sT26AvddfGzR7rRLHaPXLeiUhu9vPB9EzbnNs1s02RMEMnE25Izd
-         GlrYaCY+UbEK+3dHqbE1EQTwAZGVW4t+KKCg+oFyDt0+RhbdaUvEn+6kCCwNfJtdzW
-         Kfrdarg0rpyaI80SXktKSndsGhLwkIEgP9sw1HpIi8bcnegnVVzZdjWPIHPSnLdzwz
-         XxdQWIhCHNzJPeQR/iJuJkZ4Y4Qcgh4bnIATMjNGTL3Ytt+I1VwezeoQpiKrt/aEIn
-         34C7R7BQ1srYw==
-Received: by mail-yb1-f179.google.com with SMTP id s30so18508237ybi.8
-        for <linux-gpio@vger.kernel.org>; Sat, 07 May 2022 13:58:57 -0700 (PDT)
-X-Gm-Message-State: AOAM530TQzvDumidJ4mme/3DGbFQBw9CTm7KJG4wcJXcK6prcpD2Iy9Z
-        n/lSqhqo2QYbIXeNgdoD09hHinDEdtZ/S5x8mlQ=
-X-Google-Smtp-Source: ABdhPJxQ7Z25cBx3UupwXCv6CKHu0Z3TeFjS5eBaYSLglxeTHoiHwySaUO7a/+MBQBg4NN5WA8EjF5DbLOCKh2xg0m4=
-X-Received: by 2002:a25:c604:0:b0:645:d969:97a7 with SMTP id
- k4-20020a25c604000000b00645d96997a7mr6932703ybf.134.1651957136873; Sat, 07
- May 2022 13:58:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220507123331.170516-1-linus.walleij@linaro.org>
-In-Reply-To: <20220507123331.170516-1-linus.walleij@linaro.org>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Sat, 7 May 2022 22:58:40 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0yF-QzaYpWOqHVXvkbh06yWKub+7wwF2ENnRCktuVqXw@mail.gmail.com>
-Message-ID: <CAK8P3a0yF-QzaYpWOqHVXvkbh06yWKub+7wwF2ENnRCktuVqXw@mail.gmail.com>
-Subject: Re: [PATCH v3] ARM/pxa/mfd/power/sound: Switch Tosa to GPIO descriptors
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-        Dirk Opfer <dirk@opfer-online.de>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        with ESMTP id S229841AbiEHHYN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 03:24:13 -0400
+X-Greylist: delayed 428 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 08 May 2022 00:20:22 PDT
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [IPv6:2a01:37:3000::53df:4ef0:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AB27BF64;
+        Sun,  8 May 2022 00:20:21 -0700 (PDT)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 05E3F2800BD8D;
+        Sun,  8 May 2022 09:13:09 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id ED86711AF9A; Sun,  8 May 2022 09:13:08 +0200 (CEST)
+Date:   Sun, 8 May 2022 09:13:08 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Wolfram Sang <wsa@kernel.org>, Jean Delvare <jdelvare@suse.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tan Jui Nee <jui.nee.tan@intel.com>,
+        Kate Hsuan <hpa@redhat.com>,
+        Jonathan Yong <jonathan.yong@intel.com>,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Peter Tyser <ptyser@xes-inc.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mark Gross <markgross@kernel.org>,
+        Henning Schild <henning.schild@siemens.com>
+Subject: Re: [PATCH v4 1/8] platform/x86/intel: Add Primary to Sideband
+ (P2SB) bridge support
+Message-ID: <20220508071308.GA27815@wunner.de>
+References: <20220131151346.45792-1-andriy.shevchenko@linux.intel.com>
+ <20220131151346.45792-2-andriy.shevchenko@linux.intel.com>
+ <20220505145503.GA25423@wunner.de>
+ <CAHp75VdQqQj0fS6t5nYj+7rJ1tuSt7+5GT78eN06PShWnrDZgA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdQqQj0fS6t5nYj+7rJ1tuSt7+5GT78eN06PShWnrDZgA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, May 7, 2022 at 2:33 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> The Tosa device (Sharp SL-6000) has a mishmash driver set-up
-> for the Toshiba TC6393xb MFD that includes a battery charger
-> and touchscreen and has some kind of relationship to the SoC
-> sound driver for the AC97 codec. Other devices define a chip
-> like this but seem only half-implemented, not really handling
-> battery charging etc.
->
-> This patch switches the Toshiba MFD device to provide GPIO
-> descriptors to the battery charger and SoC codec. As a result
-> some descriptors need to be moved out of the Tosa boardfile
-> and new one added: all SoC GPIO resources to these drivers
-> now comes from the main boardfile, while the MFD provide
-> GPIOs for its portions.
->
-> As a result we can request one GPIO from our own GPIO chip
-> and drop two hairy callbacks into the board file.
->
-> This platform badly needs to have its drivers split up and
-> converted to device tree probing to handle this quite complex
-> relationship in an orderly manner. I just do my best in solving
-> the GPIO descriptor part of the puzzle. Please don't ask me
-> to fix everything that is wrong with these driver to todays
-> standards, I am just trying to fix one aspect. I do try to
-> use modern devres resource management and handle deferred
-> probe using new functions where appropriate.
->
-> Cc: Arnd Bergmann <arnd@kernel.org>
-> Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-> Cc: Dirk Opfer <dirk@opfer-online.de>
-> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-> Cc: Daniel Mack <daniel@zonque.org>
-> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Reviewed-by: Dmitry Baryshkov <dbaryshkov@gmail.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Thu, May 05, 2022 at 07:54:49PM +0200, Andy Shevchenko wrote:
+> On Thu, May 5, 2022 at 4:55 PM Lukas Wunner <lukas@wunner.de> wrote:
+> > On Mon, Jan 31, 2022 at 05:13:39PM +0200, Andy Shevchenko wrote:
+> > > Background information
+> > > ======================
+> >
+> > The wealth of information in the commit message obscures what the
+> > actual problem is, which is actually quite simple:  SoC features
+> > such as GPIO are accessed via a reserved MMIO area, we don't know
+> > its address but can obtain it from the BAR of the P2SB device,
+> > that device is normally hidden so we have to temporarily unhide it.
+> 
+> Right, but this long commit message was a result of the previous
+> discussions with Bjorn. If we're ever going to handle something like
+> this in the PCI core, perhaps he won't be happy if I remove it. Maybe
+> we can simply state what you wrote as a problem statement and move
+> this chapter at the end?
 
-I've inserted into the right place in my series now, after making sure
-that your patch does everything that mine had. This included
-the simple fixup for an uninitialized variable use you left behind, and
-removing two unneeded headers that would otherwise break later.
+Yes, feel free to copy-paste the synopsis from my e-mail above
+and rephrase as you see fit.
 
-         Arnd
 
-index 272d3ee44769..73d4aca4c386 100644
---- a/drivers/power/supply/tosa_battery.c
-+++ b/drivers/power/supply/tosa_battery.c
-@@ -15,7 +15,6 @@
- #include <linux/gpio/consumer.h>
+> > > On top of that in some cases P2SB is represented by function 0 on PCI
+> > > slot (in terms of B:D.F) and according to the PCI specification any
+> > > other function can't be seen until function 0 is present and visible.
+> >
+> > I find that paragraph confusing:  Do multi-function P2SB devices exist?
+> > What are the other functions?  Are they visible but merely not enumerated
+> > because function 0 is not visible?
+> 
+> The case I see is when we want to read the BAR from another slot of a
+> PCI device, 0 function of which is P2SB. Since P2SB is hidden, the
+> other device is hidden as well. Any idea how to reformulate this? And
+> yes, we have this in the existing SoCs.
 
- #include <asm/mach-types.h>
--#include <mach/tosa.h>
+The spec you linked to in the commit message (for the 100 series chipset)
+says that P2SB is located at Device 31 Function 1.
 
- static DEFINE_MUTEX(bat_lock); /* protects gpio pins */
- static struct work_struct bat_work;
-diff --git a/sound/soc/pxa/tosa.c b/sound/soc/pxa/tosa.c
-index c2b05896e284..098fffd69161 100644
---- a/sound/soc/pxa/tosa.c
-+++ b/sound/soc/pxa/tosa.c
-@@ -23,7 +23,6 @@
- #include <sound/soc.h>
+In those chipsets where P2SB is function 0, what kind of devices are
+at functions 1 and higher?
 
- #include <asm/mach-types.h>
--#include <mach/tosa.h>
- #include <mach/audio.h>
 
- #define TOSA_HP        0
-@@ -228,8 +227,6 @@ static int tosa_probe(struct platform_device *pdev)
-                return dev_err_probe(&pdev->dev, PTR_ERR(tosa_mute),
-                                     "failed to get L_MUTE GPIO\n");
-        gpiod_set_consumer_name(tosa_mute, "Headphone Jack");
--       if (ret)
--               return ret;
+> > Do you really need all the complicated logic in __pci_bus_read_base()?
+> > For comparison, simatic_ipc_get_membase0() in simatic-ipc.c merely does:
+> >
+> >         pci_bus_read_config_dword(bus, p2sb, PCI_BASE_ADDRESS_0, &bar0);
+> >
+> > If that's sufficient for simatic-ipc.c, why is the more complicated code
+> > necessary in p2sb.c?
+> 
+> Since it's a PCI device I want to follow what PCI core does with it.
+> As I explained somewhere that the current code (actually it's a
+> simplified version of what is done in PCI core) follows what spec
+> requires. I would like to be in alignment with the spec, while it
+> still may work with less code. Besides that, it's theoretically
+> possible that the base address may be 64-bit in new SoCs, I won't
+> rewrite code again just because we abused the spec.
 
-        card->dev = &pdev->dev;
+So as an alternative to copy-pasting __pci_bus_read_base(),
+you could just call pci_scan_single_device().  This will create
+a proper pci_dev that you can work with.  Note that no driver will
+be bound to the device because of:
+
+  pci_scan_single_device()
+    pci_device_add()
+      dev->match_driver = false
+
+After you've read the BAR, get rid of the pci_dev with pci_destroy_dev().
+
+
+> > > +     /*
+> > > +      * I don't know how l can have all bits set.  Copied from old code.
+> > > +      * Maybe it fixes a bug on some ancient platform.
+> > > +      */
+> > > +     if (PCI_POSSIBLE_ERROR(l))
+> > > +             l = 0;
+> >
+> > l can have all bits set if the device was hot-removed.  That can't happen
+> > with a built-in device such as P2SB.
+> 
+> Can be dropped, indeed. But that chicken bit emulates that :-) Anyway,
+> we unhide the device before looking into it, so we shouldn't have the
+> surprise "removals".
+
+pci_lock_rescan_remove() prevents concurrent unhiding as well as
+removal via sysfs.
+
+Thanks,
+
+Lukas
