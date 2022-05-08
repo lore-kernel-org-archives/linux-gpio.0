@@ -2,78 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFC7C4167B
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 19:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3FDC433EF
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 21:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230344AbiEHTS7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 8 May 2022 15:18:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42914 "EHLO
+        id S232963AbiEHVSm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 8 May 2022 17:18:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237344AbiEHSKH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 14:10:07 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1987663B4;
-        Sun,  8 May 2022 11:06:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dXIZlnwHK15rrJZENweUDVLbVsO7X3h09BOXkfnZAVs=; b=BeB2FaaWyCXFJfYPOVlGrRxyyh
-        JkDouCOTyf7MkyluZIxxnUmR87Z/DW0C77jKJIqfoUoI4nPE1ilfTi9PvRLwTXhJhdLROFvWDHHMp
-        000VX4SrbogSTZvQ4ISTjHh4zNfXVtbK/k9ItAde5GaNKad/et01ucOFYnGCdxFOMk8ivYtMYUiOa
-        LxiuMlpYfAy3bAi35IgiKblbkjCiRIRjJVG9azAjXg28jNJSRdKKWlpLRQquoU1LzZCBVcNqNjl2k
-        T6r3MF4ww2+rXqRroJFYp5Aw18fci0MKTzKr92fIKjYfvoNR8En2Q9Oq1MQTSBonEX0blOhFfkm3u
-        xJL5hOLA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnlIH-002hid-TS; Sun, 08 May 2022 18:06:09 +0000
-Date:   Sun, 8 May 2022 19:06:09 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        kunit-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH v6 00/23] Rust support
-Message-ID: <YngGkZTy+byxnD5n@casper.infradead.org>
-References: <20220507052451.12890-1-ojeda@kernel.org>
- <202205070056.ACC3C3D@keescook>
+        with ESMTP id S229491AbiEHVSm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 17:18:42 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87CE1765F;
+        Sun,  8 May 2022 14:14:50 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id g23so14195257edy.13;
+        Sun, 08 May 2022 14:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w+wW2j4Qi2ZhKYtEoYitFu0KdkNdZFsS+kowU+VfreY=;
+        b=Wj4XjWI2kf1xIO5YfBwwdg2vdJWpb1sNLQhpYx1yxsTqitNWCVQ5/Kb65yVMFm5coF
+         Mu8rT6p6VeemiMfz28Aw4L+MoYBvc4sU+5ESTP50bzMSQjPe+W5W0J61hV6cA05+0KG4
+         W+LUm4H2iFJ3qf4CHWPu+iTCKRXJKY1jDbCKFtsHBK6pLOaXXterBldefbbTAJJ9syx8
+         ffu5FuTqyUsL6bqL1Hm+bbX/q3vnW4zaLw9nmI8HvNrNWQ0HRP3AFhRuLcjP/jBne3O+
+         CmNFjgj09fq4+lsny6mVR78KIS/FtEdGZ2Yhm07WUkkwNyTtilEQkmW97TQWJ9/u8WkR
+         cCcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w+wW2j4Qi2ZhKYtEoYitFu0KdkNdZFsS+kowU+VfreY=;
+        b=LrJe8Sn6eHlN+z334h+68Gl4vV4KRJ+fbECmX3FXg8R3z6h9crzM990pneL+YCGBL6
+         Yftm8Etl6XLFi9Zm4lb3EM6KL3XRz+1b/rTmZxROdpK2JNtHJRnwCh7Do8ARdS/6FSm9
+         w4TnHhBYfZwf66RRXjizc2DCvTySzqYWbZuduNeKGQ6HH4dw8D2rnWCrHAagR7+z7Adh
+         XHuXQGV/TjzLaxJ06dZbu0u/1Md9kjyHbzSEibzKJo9krP6VWt5ooiKDMbL8toE2sJGI
+         rxSQDgf+S8oH8lH2qws9VbyPAOWT5zA1detYenfKxD5/QpL3Xtges8Zc97Pbb9b1CIA6
+         +W3Q==
+X-Gm-Message-State: AOAM532Rtoou9YURBMCzmmU6OROoFij8lSysyhEeDMi2L72npyuNJh24
+        zwtQfS+/5YK17sOHrggvoShRmmTGxtteCb9Jw7s=
+X-Google-Smtp-Source: ABdhPJyoW50uF0WrtGrEbHbI9iwmrV+S8/zNPOIFMyKSdKez42MdNCM8dpOaAKhXpe/Sf/uREYeC+0buKxPavuthygY=
+X-Received: by 2002:a05:6402:1d4c:b0:427:d1f5:3a41 with SMTP id
+ dz12-20020a0564021d4c00b00427d1f53a41mr14079196edb.218.1652044488894; Sun, 08
+ May 2022 14:14:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202205070056.ACC3C3D@keescook>
+References: <20220508185313.2222956-1-colin.foster@in-advantage.com> <20220508185313.2222956-5-colin.foster@in-advantage.com>
+In-Reply-To: <20220508185313.2222956-5-colin.foster@in-advantage.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 8 May 2022 23:14:12 +0200
+Message-ID: <CAHp75VdAE70EbAyuPXFQPLq+4E_Bj+8VbmY7amEB7TFB=U5HZQ@mail.gmail.com>
+Subject: Re: [RFC v8 net-next 04/16] net: mdio: mscc-miim: add ability to be
+ used in a non-mmio configuration
+To:     Colin Foster <colin.foster@in-advantage.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, Terry Bowman <terry.bowman@amd.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, May 07, 2022 at 01:06:18AM -0700, Kees Cook wrote:
-> On Sat, May 07, 2022 at 07:23:58AM +0200, Miguel Ojeda wrote:
-> > ## Patch series status
-> > 
-> > The Rust support is still to be considered experimental. However,
-> > support is good enough that kernel developers can start working on the
-> > Rust abstractions for subsystems and write drivers and other modules.
-> 
-> I'd really like to see this landed for a few reasons:
-> 
-> - It's under active development, and I'd rather review the changes
->   "normally", incrementally, etc. Right now it can be hard to re-review
->   some of the "mostly the same each version" patches in the series.
-> 
-> - I'd like to break the catch-22 of "ask for a new driver to be
->   written in rust but the rust support isn't landed" vs "the rust
->   support isn't landed because there aren't enough drivers". It
->   really feels like "release early, release often" is needed here;
->   it's hard to develop against -next. :)
-> 
-> Should we give it a try for this coming merge window?
+On Sun, May 8, 2022 at 8:53 PM Colin Foster
+<colin.foster@in-advantage.com> wrote:
+>
+> There are a few Ocelot chips that contain the logic for this bus, but are
+> controlled externally. Specifically the VSC7511, 7512, 7513, and 7514. In
+> the externally controlled configurations these registers are not
+> memory-mapped.
+>
+> Add support for these non-memory-mapped configurations.
 
-I'm broadly in favour of that.  It's just code, we can always drop it
-again or fix it.  There's sufficient development community around it
-that it's hardly going to become abandonware.
+...
 
+> +               res = platform_get_resource(pdev, IORESOURCE_REG, 0);
+> +               if (!res) {
+> +                       dev_err(dev, "Unable to get MIIM resource\n");
+> +                       return -ENODEV;
+
+return dev_err_probe(...); ?
+
+> +               }
+
+...
+
+> +       if (IS_ERR(phy_regmap)) {
+> +               dev_err(dev, "Unable to create phy register regmap\n");
+> +               return PTR_ERR(phy_regmap);
+
+Ditto.
+
+>         }
+
+-- 
+With Best Regards,
+Andy Shevchenko
