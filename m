@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23712C433EF
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 19:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8700C4332F
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 19:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231579AbiEHTSU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 8 May 2022 15:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55830 "EHLO
+        id S229843AbiEHTSX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 8 May 2022 15:18:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382489AbiEHS5f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 14:57:35 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2110.outbound.protection.outlook.com [40.107.223.110])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A6A3A1B1;
-        Sun,  8 May 2022 11:53:42 -0700 (PDT)
+        with ESMTP id S236071AbiEHS5p (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 14:57:45 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2102.outbound.protection.outlook.com [40.107.220.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA29A1B1;
+        Sun,  8 May 2022 11:53:54 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=epFBlAWC0q3uYzWWb8a66+4Ymot1xqQy5CGF/Psu/ESykmr09yBWO59VgVy8NazaQZZcjpnsMIsbepGmBECHPY1pzDmf2wSru86scHpkUkRNGLlDcMgmvwQn/ZuR2PHcTsfAHakiwD57/TrOWL2QIGxT72sE4fsNNwr5DslhArJUzmHYgnBNcKXeaqmXbppv+O4Ntq/bIOpErputlweZ/amyTu6HtMtDYXlyef/Zj3cuaFWtG6btDq1ZmOhU1Rh93tjt/sWMlzXTRoKZsjYefdV2ziaG8M/BJwEAreyoG9nGjrzVSpz8V3ZTifoxdAnDIFV7jcd2SaCEvpjosnST2g==
+ b=aZsxDBy7pTYHpj2s1V7NqmgypGF0DYQ1drXGf1gnp6djfYXNFCQPhCZG3se27cFh5Zp76EOiW8hVt/Vp/oDLbc/jqNWVWj5yEdAuPYber3K3fetawIO8RWic1FNpQH15/S8MwEc7tHTHdhogJMR2O/8KlN18bFpk6/E/N76V9HgXhg86aQLhMYYwu/LrcHab1BnHzG6sdcHInaU53joxhL1RDU9dybWUfRylpzCubVKFTfSLkkQsAEfD8iOfo4702nE7t/unxNSzwRA3i/B/cP8lmZUIY00DJRurko/ilXboNRW2M6dUaR6Lqdp8+MEbNtKa2/OjW71Jdo9G9RlpKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gr3RrEyb/DUf/WdSeJx7VBv1lpuyEPZzjfYuaGTuTz4=;
- b=HfQ0BHm8Sr//68qVPzrOO0jvb+dF0aI/P3mJJ4T1deBK3JnglXFvZnLS6Ahg+cFeZC5i2ltK0SMnMexdY9xIY/2wIdfDeQEb1AkyYJXu6e4e8blOD3BR/WvHFFYUxAjf3up6zR1e0nGg2eZG7LEPCTA6Dkr6C5kOcBfrxHYmcdoSIKv5Miq3JDUeT+2APwR7Ewrm728+NNTvwwNVMIB9FfCvOicWCshrk5rfn91F83V6NZ1hxS1C6/jgOWjz1pw1ZoIQI61XaEFFJZwbpF6/V5yZnWEAkTTt1dVQ0TtLoDhaHTDMPK0TpCv1kCAhvfr1qGOD7ltBl0x8J7SRGKI+pQ==
+ bh=jht0BpWcJRTHFvJRgbv6zaCcBdyebYpgiTuhrzO+5mA=;
+ b=nGYwRAvdR2J5ZHt4LrsqgqhtekAXABk4tjyXUjBfP+oHa0UIvSDDb/stYteNjtfKJgIdjj82HNfanSQ28By/EPbhFLQjT/Z8Olzrq+zsrBU0Iwz35t+XDFcmaQHppV9GFZy/12o6UweZQq/AK7oXy4ToVqo0CuMWCcvpo19/1Jf6UiBMmfcQ2KeTIwEfCEQrC/ij8LxirmwS3LK9GJ5hgGvd9TYZAlSgINTaKerfewwdtFhP3PTeRC5HsKlPwcki/JCT3gjU0RBP5PCMWfmwjWWqmn06EYx+xiKel06FEin7DeNcCo7yAaWwGRAA9stD1gjYep8sBSMDzhTMASPMsg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=in-advantage.com; dmarc=pass action=none
  header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gr3RrEyb/DUf/WdSeJx7VBv1lpuyEPZzjfYuaGTuTz4=;
- b=nExIePods8S6XRxxPkKIvAD2ZTrQCvaUjCGYQeSVb+7/G7M9xcnrP8Pd6upqmfZhjy9s3SxELMcp/5HHxsApPaD7jtMnzY6G3LgkErV6VD+0homoJBzed3z7x3uqy4JIz3JndbeywOG88Jzn6dX/ucgaXE8iHZHRDuC/340FOt0=
+ bh=jht0BpWcJRTHFvJRgbv6zaCcBdyebYpgiTuhrzO+5mA=;
+ b=trY32lhpQt686ztp39oTxVB8u67f+RMdFAWN8i8bjFqYYfWJA+kGWHUP3qQNqUqUV0SG3tbqK7Z2BJLzQUVwogj7YNe+jisyPxOMSDjcmu9RaAr2JUh5mVHPuiYoxwsUCQujJqgXd4+yNb5uSBDXDsKBdYXLa+xxdtRw3mx+RxY=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=in-advantage.com;
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37) by SJ0PR10MB5533.namprd10.prod.outlook.com
- (2603:10b6:a03:3f7::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.21; Sun, 8 May
- 2022 18:53:40 +0000
+ (2603:10b6:301:35::37) by SJ0PR10MB5672.namprd10.prod.outlook.com
+ (2603:10b6:a03:3ef::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.18; Sun, 8 May
+ 2022 18:53:53 +0000
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::4581:787c:1a7a:873e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::4581:787c:1a7a:873e%3]) with mapi id 15.20.5227.020; Sun, 8 May 2022
- 18:53:40 +0000
+ 18:53:53 +0000
 From:   Colin Foster <colin.foster@in-advantage.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         netdev@vger.kernel.org
@@ -61,9 +61,9 @@ Cc:     Terry Bowman <terry.bowman@amd.com>, Wolfram Sang <wsa@kernel.org>,
         Claudiu Manoil <claudiu.manoil@nxp.com>,
         Vladimir Oltean <vladimir.oltean@nxp.com>,
         Lee Jones <lee.jones@linaro.org>
-Subject: [RFC v8 net-next 06/16] pinctrl: microchip-sgpio: add ability to be used in a non-mmio configuration
-Date:   Sun,  8 May 2022 11:53:03 -0700
-Message-Id: <20220508185313.2222956-7-colin.foster@in-advantage.com>
+Subject: [RFC v8 net-next 11/16] net: mscc: ocelot: expose regfield definition to be used by other drivers
+Date:   Sun,  8 May 2022 11:53:08 -0700
+Message-Id: <20220508185313.2222956-12-colin.foster@in-advantage.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220508185313.2222956-1-colin.foster@in-advantage.com>
 References: <20220508185313.2222956-1-colin.foster@in-advantage.com>
@@ -74,120 +74,235 @@ X-ClientProxiedBy: SJ0PR03CA0045.namprd03.prod.outlook.com
  (2603:10b6:301:35::37)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bd86c6ff-6fbe-43e3-719c-08da31241131
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5533:EE_
-X-Microsoft-Antispam-PRVS: <SJ0PR10MB55332D278CF5032C0874BAEFA4C79@SJ0PR10MB5533.namprd10.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 2358fb44-91e6-47a5-f69e-08da312418b2
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5672:EE_
+X-Microsoft-Antispam-PRVS: <SJ0PR10MB5672A70BBEBD461A30613CDAA4C79@SJ0PR10MB5672.namprd10.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uGHGFKiKcF7m5e5Gp+Y8FIsVv4iVu6JBYZv2XgNaRbIR/wg5MmDrZEcIeZfqmr+cxMtgWxxrvk9Yn9IF5vHqtEC/m90DZlc14ye36o3Z29SuY+VCzm5xcHo+OhOiM6Mm8AavI845Bhfuo0jcsHF3QJcqlOfSwBXF3VIYanCxCrNwSUD1U3n80VhUdUfB+nnsX2cJRuDokSIWxSezDCmc0Rm+qGHe9maPT49SOSl4niJo4CCQkouQyaVg1c/2ov8b/i8JNTp45VkVIRd4lExYxt4Fc5U72gnGWkG3AU0l7kvIEimUn9FLuvJskcZ1fMTvqkgn2dI2BeTl3EO70CyJfiqhL8T0t1dPHbgm/crXGNB6WWzpvS/kNF7QIHKnoZBU/53i8hIy2Q17UgKuQ+7AGeoU7z1TVyaCM/Bse1HOt3aZuUtoquTkG/DoFrFaQ/MC3ehNt6jnt9u4IvUyWPUjODj8GEMk3x9wiZLZnsDA6Q7upbt2oANsEKVwyrmWOyt8TUIBBuCTogaKG/uXnUJulM0V5CA1Eml+0rUZHb3BquFUHHX2umPk46Wg9vYdxKe9SRdRm+sNYbYXDiK6REgXPZVOmN1TjffpvmFvgawRiTyUons0JHONMbJPHk+LEFTiwG66hvic/mCTKy1qpFWDS7/4/cLCAhGkZENjMNmj6PQateFhwafZlykdvkgOCKZWuzcfBmatFBzEGEYa/J+0Ug==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(39840400004)(136003)(376002)(366004)(396003)(346002)(316002)(66946007)(6666004)(26005)(66556008)(508600001)(44832011)(6512007)(6486002)(66476007)(52116002)(186003)(86362001)(2906002)(4326008)(54906003)(8676002)(38100700002)(2616005)(38350700002)(6506007)(83380400001)(8936002)(7416002)(1076003)(36756003)(5660300002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: ZYB70u66F2DILRYBHq22yeLm/KjL0Yt+L0ZGSseriRjcPutEp+U8WCgxLpWEmSdUeG6cTkgHnK++kt3iWUnL/GtPnTcLgoL0aPWn6puQioucEK5JWtz2LjRHzDxEnNatotrMSfA4Z964hUyCkWbDoITVuaEaCOvv7+9b/88vwgt+fnZyZRQ+lYVytlYvz4XCcK9HpoMbsV1yaDPFVSFgereHj4ZCApns6CXGEEbi2oTlzLtLIcefE/m+7uc+JijA1caAqzAgzyeqBUzhGM1u8Cms9tj4RnImBrqi+7NVAAjxy5tUoteZGgVBbRTN1cFy2HiGwAa5Xhwe/8Qh9nJIqONlTRz7U+ihadwuTnP5oG5VFusVnnoX1S5up2M5mcWqPWc02l0BoLuQcrWBKSnjM5zNvwX0YUlaz9GRqCFSHW6K475JOE/W+UzB8HzomRbY08nHB9VTFqvuQNCeWFTSLMl3fMbvcMm2hLWHeJW42XdjjKpbO6IUbUrQs7LAwouDDTQ7R/JrK7CbQzHTuNE9br55soDcj7aIy5rfrJUJou47589gXsM5bN06UKj5dLj9M2OGS99MkjS6XIZJBFqpBtNlllvgPOjw+XqGS2CKusKlAsxgmU1ZT550dc2e7kgDMQtPhuF3w9zoHYxJcK/LX5xShHREKIUDE0dldS7lGlxRWWKXjJ6GBphV+40/QhhkMeh8Uu3dZcOoSNLcyc5n/A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(39830400003)(396003)(366004)(346002)(376002)(136003)(6506007)(6666004)(6512007)(2906002)(8676002)(7416002)(52116002)(8936002)(4326008)(36756003)(5660300002)(86362001)(44832011)(66556008)(66476007)(26005)(30864003)(2616005)(66946007)(6486002)(508600001)(38350700002)(1076003)(38100700002)(54906003)(186003)(316002)(83380400001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zNCtRUddtzAw5l+w0NmOiHE/kkXIxbU4TXpRtbceV2z+Ca76Q+bMIVzOvdxa?=
- =?us-ascii?Q?HdHy2gB1guhq2oyEbDEa32zZgud6GWFLrvz6EcoLevmop77xRNXJjTM7NUJO?=
- =?us-ascii?Q?8jp3n6Cd5aFKOHiQUS/UQAKNfYL6Ak8jUPEVevt71bOy+/i0QtmfSgIP2W2l?=
- =?us-ascii?Q?Abvu5+XR3DR9m56lnft9Eh+FZXjEyTo9T5v/7kc/fNPHGVkckTjx5uethdWI?=
- =?us-ascii?Q?2ee9d0go+TN0fVob9Ud9zbgZO7SWItGBZfkzb/12wjzCTobe7pYeQaGm4vPk?=
- =?us-ascii?Q?UPWicW2Bo7KTZl84DKLMExeF1N2dHrL3VZKZrCGaqXU/1N3K4bz6YgzpBy8a?=
- =?us-ascii?Q?EIo3tz/z2UL6scedZPrv9yQ+UaBSl17+Za/ZXNk7qL3Mr/llKOQCxArsyYaQ?=
- =?us-ascii?Q?rHA615ukV5Sy1/U3Baql9Tx/8i6ZfSAScJ7Bmz6o9xdfMpx6/UucNIP/AyiG?=
- =?us-ascii?Q?eDoHxYNAYcmyVqOYGHZgOmNiGZbSD3nyAQRgpCvDs99qK+ZcAzTcfIv3vNPR?=
- =?us-ascii?Q?t7pYngkWpw/Jq1gPj+baxLTEYOJxFDN2Zm56fWlR7FlLBi7C8xOPbbNhRLDM?=
- =?us-ascii?Q?cFucPxv+WefWX2oNfFCrCNqfgI6bU+0wQkVPQ6IxR03tMW7mwtP/wNdNxz6y?=
- =?us-ascii?Q?daCYLUZGhPPU7ZIkx5nZrnywkp2zvMUxLFYP/L2UsGOWBIXWAEt3ZKApppPW?=
- =?us-ascii?Q?cqbSf1MIfd/Xht7iP/UoIIf3II/AiqdAeeoo8FcWoi/SNa4Ws4H6X+NpfkGS?=
- =?us-ascii?Q?52C/NcLwhWOWMH5f6h0IC9eNDzecSuRpVKbF3CAl5Fc7IiRfqVDSsjL1Uk//?=
- =?us-ascii?Q?8RoIhk1zQ/qFVlGTqcAVIiXX4TLVBXAqcHHiNTWD6W+RumWV455v7EQaonki?=
- =?us-ascii?Q?WbgO0GmIIlQHuUhcYSIMfM+Dob18njh/wNyzHRfmIqJNtrtm0yJX3iIgSShQ?=
- =?us-ascii?Q?LgTXF9W/464pIKcEVA4lgz8ua+bTlWEMobfx+4/Dh/aTNYY7khpV2E8GKou3?=
- =?us-ascii?Q?WiLkCWUlU/hk0LFUAYNUNIFVwyt/+4GfEia0w5rMA2glTkw3fLWM/q54W52/?=
- =?us-ascii?Q?2Smwgc8Mi7F6zkavZQGilhM3JOKTBzx8mvieZ2MipZAOHgFHuNCj3Wvcxx+t?=
- =?us-ascii?Q?rWfxrPDOLF8Z7iWkDC3OFV/wmmqa7LK6UWFJNc2mvxY9I2XCrq+Qzfjq6RR/?=
- =?us-ascii?Q?5Qu0sYEsvjr6XbLXG19zozJwLSq+t4Ci1YNiuSF1mHKqVI+m5eNSIYK8F2Cp?=
- =?us-ascii?Q?u+MNRGCLiqGy+HJ+nzntqJCkZf8ayJYu9mBv1dGEqECDv90S8IiUVfxfEmeG?=
- =?us-ascii?Q?WJLeXPt9qFLFt6cy4xSxHMHIRjB0daGmkYo2U+KL8MPEn7tQ5aCgkRKRCmmU?=
- =?us-ascii?Q?Nc9mJWifze39xBfaFw9vEHcIzzWBfvRGMV637VkzkTpoGzeyF0gpsJrrVChs?=
- =?us-ascii?Q?4ty5krxnR94nUWcvx+NzxxInWKHnVr+WJ+rEU1oqitVAA8GZHfmgrVUhhh9E?=
- =?us-ascii?Q?5t5NTQVK+2nB5us3zp46SBtLrRjeG9g/PM4Lhc6lBhBEp7X3cB6tCTgDIQV+?=
- =?us-ascii?Q?10YXqPGa4CrjqlIN+12vzwRlGV5jnBiL6f+775HU9egsHdr04UdaTkV0Dz45?=
- =?us-ascii?Q?14TTHB8Kdb7t55Rq54tOv9akYmd4RfsedK9/cmp+GO9iHA8N5yzjzXbCIUl5?=
- =?us-ascii?Q?O2JQu9Cp96bnA/H5E69lahn55V4fPMN2CD2BwS9NFc2gviXAaii46HKSQ1f/?=
- =?us-ascii?Q?f7T6Ol8AQul6zVX/VXEZbA/WuDmLE+I0pk/9IdVgRYFkHPPYZUtp?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+vBcpq2rWPMStgqdxRhZx7EigdUPuhdXVLsU7GHqjSQBvAIS6a7D+PGTPWVV?=
+ =?us-ascii?Q?VnlcwzIlNChgCTy8SkkChL6zLbbWYPFhAITIyI7MByal/dcoPJlo9idkxITF?=
+ =?us-ascii?Q?KxWTF2fKWPPPDX0CtW6uys5VlUFzlSh7uxn2ZkaOTWB1vhkzMk7L3CCfkA/D?=
+ =?us-ascii?Q?iEZi6odGEFsEvfOh7vK17qjTP4pULhQgYg9f0VP+3QXMoB6X6Lnd2sjuCPqG?=
+ =?us-ascii?Q?O6XgGECnVaEK1VYKkF9R5OyN4kCqAj4sL0JWv3nJ9ECdy+DI/5VlY+AuNYMx?=
+ =?us-ascii?Q?xSOsQLq290Z78CXPk34CMrzlKfj3MSGhyMB2F5QP38+7xzS1usLLqJRrKtjV?=
+ =?us-ascii?Q?8CGILky//kBhIk/VEbLzznEg166d5X/SCuWj4XUQ/c05uJIY4KPJd4FRCxVS?=
+ =?us-ascii?Q?X6/uJJCP7McSoRK5eGl4DWJb5Kmv1L13LhjowuemdB5eUxJjMMlZHs1fd5y8?=
+ =?us-ascii?Q?yKQpKDn7XOaDnNFRi0kOlxxOC0WU0xFVcKSvW6b9vOVyvjng98Qrr2YIGkLb?=
+ =?us-ascii?Q?WgmTPdlO3qLnhRjq2JfFX4EARFgI8YTfUuetP/KpntimzCGSkxOpY1zcTAsi?=
+ =?us-ascii?Q?5+z/LJZCndJG5Bb1DkyjcuNFuS2rN98LGfdCvjN9iTX5Ow3yfOnkcIGJJjaL?=
+ =?us-ascii?Q?hW0YnvuYflWEwdebnRz3AVYrrszrRst4EsFeZylhxBUFSFNPzrrnD/YgLnpo?=
+ =?us-ascii?Q?97peMwiE09YcypaBEvduBZcisVUPdyJumY4DgNzkrxGGyxh2EjGhP6L4hm2a?=
+ =?us-ascii?Q?ZIER+LKr8HAp+oUk7PmZ9vKGQfUSIpNOrP/J6DWaqb8sIqF1uXyC3svzWTdT?=
+ =?us-ascii?Q?+JvZSxJl3/FoOY6vS91h63beGfi3BZkUmW2PmNd58+ldUMnAamEpzX27Fw7l?=
+ =?us-ascii?Q?KDAK6DGtrINaECdyArC+BqKQlbTzmnE3grzigK0RwbVOUZF7uHq7Q1TJN8h3?=
+ =?us-ascii?Q?AbXGINKft6b5RvQ/6cOgHhpuZVLcgsSHt6Meagu27aYj/JDriM8SRzJH462I?=
+ =?us-ascii?Q?kz0Hp3pORiCNdiN4i196Ur05WH1emyVpWYqrHEY29C2ICTnje/QLdbk0h++H?=
+ =?us-ascii?Q?e7LEBKyMSFZ3XSbe9CZMg7m5sdFw1tEEZuWbJL+ffTkDnRTbMOWZxCvg2Fke?=
+ =?us-ascii?Q?+i1lFIrfCYWMtEEyDEU8BQoeCttKMWTW39ipkUGAwvRRnCwXY7ZezninLi4+?=
+ =?us-ascii?Q?EdrL2wOpdnOUMZz3DuDNyA9mcAk5pJH0y8eivkIO01urfj90naaqEwBQlwbk?=
+ =?us-ascii?Q?r056FSWmeKK8/yxX4jWl1VYCKeIVgukOFpwfBulYmwvYSIFD45GlPBtchmJn?=
+ =?us-ascii?Q?Wi58HD6j2n9N22NBvsNcNB0ep6iUjzTC00t1CD5mdB2XTnLj1VBkUCALWTy2?=
+ =?us-ascii?Q?3XaPlbdQ4kZPCNSD2TEETuUJeJ+D3MJ+mY+2ojLVFOqchW9/9j/PqcUeIif2?=
+ =?us-ascii?Q?g7zykMivqHAM2t4Kn3IKvGGCwCofHV+J6P8qlvWoXYcxkVPbUjzyeG6pZygY?=
+ =?us-ascii?Q?MucGXR/RUK6Oy1fRQn63khDpve3GcOEr3YKTlvz65CUFM60owZoce7D1OWJC?=
+ =?us-ascii?Q?At2M+I7Q0ReOM3+iLpGow+CM1csKQRDC2wOA7SwhO6Eaf7qDk5yr9F8CCscV?=
+ =?us-ascii?Q?a0+9kylIWgzvrjYjl2q6jTDgP9/otCBwAWf9KOZwDknT7jYgH2xT1TA3egFD?=
+ =?us-ascii?Q?twHm3jk3LGigWNA66kPrxzuMT65t/JFZfgpMKvRvNipFKBarQ6lJkixTSfq0?=
+ =?us-ascii?Q?Gg9Mlodp5+b9xFRSBsmqMTnqH6+sCSLpIccdBdjofaqIrEeocL9G?=
 X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd86c6ff-6fbe-43e3-719c-08da31241131
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2358fb44-91e6-47a5-f69e-08da312418b2
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 18:53:40.5570
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 18:53:53.1811
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uiDZHoHF+CQsxnSU073MauWii8uWFuDBV/BP5mGUF9oc1SRfj2iP8r2ShoD3orI5MLmUXOBxfnUI/K5ZeHL67jRK1tdcCewFd8mVWL3RSC0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5533
+X-MS-Exchange-CrossTenant-UserPrincipalName: oFpvI+rXI4fAVQqVz5rR/9z8dbuAJO4jKhIOyd+IyVMECAnQArxUGfipmlCCGREn0aBv9p3jpKa/4Wt3GkhqJndIKJTb7PlVNWpiv7HIYfY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5672
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are a few Ocelot chips that can contain SGPIO logic, but can be
-controlled externally. Specifically the VSC7511, 7512, 7513, and 7514. In
-the externally controlled configurations these registers are not
-memory-mapped.
+The ocelot_regfields struct is common between several different chips, some
+of which can only be controlled externally. Export this structure so it
+doesn't have to be duplicated in these other drivers.
 
-Add support for these non-memory-mapped configurations.
+Rename the structure as well, to follow the conventions of other shared
+resources.
 
 Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
 ---
- drivers/pinctrl/pinctrl-microchip-sgpio.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mscc/ocelot_vsc7514.c | 60 +---------------------
+ drivers/net/ethernet/mscc/vsc7514_regs.c   | 59 +++++++++++++++++++++
+ include/soc/mscc/vsc7514_regs.h            |  2 +
+ 3 files changed, 62 insertions(+), 59 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-index 8953175c7e3e..88ab961cc5b9 100644
---- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
-+++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-@@ -20,6 +20,7 @@
- #include <linux/regmap.h>
- #include <linux/reset.h>
- #include <linux/spinlock.h>
-+#include <soc/mscc/ocelot.h>
+diff --git a/drivers/net/ethernet/mscc/ocelot_vsc7514.c b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
+index 68d205088665..a13fec7247d6 100644
+--- a/drivers/net/ethernet/mscc/ocelot_vsc7514.c
++++ b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
+@@ -38,64 +38,6 @@ static const u32 *ocelot_regmap[TARGET_MAX] = {
+ 	[DEV_GMII] = vsc7514_dev_gmii_regmap,
+ };
  
- #include "core.h"
- #include "pinconf.h"
-@@ -899,6 +900,7 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
- 	struct fwnode_handle *fwnode;
- 	struct reset_control *reset;
- 	struct sgpio_priv *priv;
-+	struct resource *res;
- 	struct clk *clk;
- 	u32 __iomem *regs;
- 	u32 val;
-@@ -933,11 +935,23 @@ static int microchip_sgpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+-static const struct reg_field ocelot_regfields[REGFIELD_MAX] = {
+-	[ANA_ADVLEARN_VLAN_CHK] = REG_FIELD(ANA_ADVLEARN, 11, 11),
+-	[ANA_ADVLEARN_LEARN_MIRROR] = REG_FIELD(ANA_ADVLEARN, 0, 10),
+-	[ANA_ANEVENTS_MSTI_DROP] = REG_FIELD(ANA_ANEVENTS, 27, 27),
+-	[ANA_ANEVENTS_ACLKILL] = REG_FIELD(ANA_ANEVENTS, 26, 26),
+-	[ANA_ANEVENTS_ACLUSED] = REG_FIELD(ANA_ANEVENTS, 25, 25),
+-	[ANA_ANEVENTS_AUTOAGE] = REG_FIELD(ANA_ANEVENTS, 24, 24),
+-	[ANA_ANEVENTS_VS2TTL1] = REG_FIELD(ANA_ANEVENTS, 23, 23),
+-	[ANA_ANEVENTS_STORM_DROP] = REG_FIELD(ANA_ANEVENTS, 22, 22),
+-	[ANA_ANEVENTS_LEARN_DROP] = REG_FIELD(ANA_ANEVENTS, 21, 21),
+-	[ANA_ANEVENTS_AGED_ENTRY] = REG_FIELD(ANA_ANEVENTS, 20, 20),
+-	[ANA_ANEVENTS_CPU_LEARN_FAILED] = REG_FIELD(ANA_ANEVENTS, 19, 19),
+-	[ANA_ANEVENTS_AUTO_LEARN_FAILED] = REG_FIELD(ANA_ANEVENTS, 18, 18),
+-	[ANA_ANEVENTS_LEARN_REMOVE] = REG_FIELD(ANA_ANEVENTS, 17, 17),
+-	[ANA_ANEVENTS_AUTO_LEARNED] = REG_FIELD(ANA_ANEVENTS, 16, 16),
+-	[ANA_ANEVENTS_AUTO_MOVED] = REG_FIELD(ANA_ANEVENTS, 15, 15),
+-	[ANA_ANEVENTS_DROPPED] = REG_FIELD(ANA_ANEVENTS, 14, 14),
+-	[ANA_ANEVENTS_CLASSIFIED_DROP] = REG_FIELD(ANA_ANEVENTS, 13, 13),
+-	[ANA_ANEVENTS_CLASSIFIED_COPY] = REG_FIELD(ANA_ANEVENTS, 12, 12),
+-	[ANA_ANEVENTS_VLAN_DISCARD] = REG_FIELD(ANA_ANEVENTS, 11, 11),
+-	[ANA_ANEVENTS_FWD_DISCARD] = REG_FIELD(ANA_ANEVENTS, 10, 10),
+-	[ANA_ANEVENTS_MULTICAST_FLOOD] = REG_FIELD(ANA_ANEVENTS, 9, 9),
+-	[ANA_ANEVENTS_UNICAST_FLOOD] = REG_FIELD(ANA_ANEVENTS, 8, 8),
+-	[ANA_ANEVENTS_DEST_KNOWN] = REG_FIELD(ANA_ANEVENTS, 7, 7),
+-	[ANA_ANEVENTS_BUCKET3_MATCH] = REG_FIELD(ANA_ANEVENTS, 6, 6),
+-	[ANA_ANEVENTS_BUCKET2_MATCH] = REG_FIELD(ANA_ANEVENTS, 5, 5),
+-	[ANA_ANEVENTS_BUCKET1_MATCH] = REG_FIELD(ANA_ANEVENTS, 4, 4),
+-	[ANA_ANEVENTS_BUCKET0_MATCH] = REG_FIELD(ANA_ANEVENTS, 3, 3),
+-	[ANA_ANEVENTS_CPU_OPERATION] = REG_FIELD(ANA_ANEVENTS, 2, 2),
+-	[ANA_ANEVENTS_DMAC_LOOKUP] = REG_FIELD(ANA_ANEVENTS, 1, 1),
+-	[ANA_ANEVENTS_SMAC_LOOKUP] = REG_FIELD(ANA_ANEVENTS, 0, 0),
+-	[ANA_TABLES_MACACCESS_B_DOM] = REG_FIELD(ANA_TABLES_MACACCESS, 18, 18),
+-	[ANA_TABLES_MACTINDX_BUCKET] = REG_FIELD(ANA_TABLES_MACTINDX, 10, 11),
+-	[ANA_TABLES_MACTINDX_M_INDEX] = REG_FIELD(ANA_TABLES_MACTINDX, 0, 9),
+-	[QSYS_TIMED_FRAME_ENTRY_TFRM_VLD] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 20, 20),
+-	[QSYS_TIMED_FRAME_ENTRY_TFRM_FP] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 8, 19),
+-	[QSYS_TIMED_FRAME_ENTRY_TFRM_PORTNO] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 4, 7),
+-	[QSYS_TIMED_FRAME_ENTRY_TFRM_TM_SEL] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 1, 3),
+-	[QSYS_TIMED_FRAME_ENTRY_TFRM_TM_T] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 0, 0),
+-	[SYS_RESET_CFG_CORE_ENA] = REG_FIELD(SYS_RESET_CFG, 2, 2),
+-	[SYS_RESET_CFG_MEM_ENA] = REG_FIELD(SYS_RESET_CFG, 1, 1),
+-	[SYS_RESET_CFG_MEM_INIT] = REG_FIELD(SYS_RESET_CFG, 0, 0),
+-	/* Replicated per number of ports (12), register size 4 per port */
+-	[QSYS_SWITCH_PORT_MODE_PORT_ENA] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 14, 14, 12, 4),
+-	[QSYS_SWITCH_PORT_MODE_SCH_NEXT_CFG] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 11, 13, 12, 4),
+-	[QSYS_SWITCH_PORT_MODE_YEL_RSRVD] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 10, 10, 12, 4),
+-	[QSYS_SWITCH_PORT_MODE_INGRESS_DROP_MODE] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 9, 9, 12, 4),
+-	[QSYS_SWITCH_PORT_MODE_TX_PFC_ENA] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 1, 8, 12, 4),
+-	[QSYS_SWITCH_PORT_MODE_TX_PFC_MODE] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 0, 0, 12, 4),
+-	[SYS_PORT_MODE_DATA_WO_TS] = REG_FIELD_ID(SYS_PORT_MODE, 5, 6, 12, 4),
+-	[SYS_PORT_MODE_INCL_INJ_HDR] = REG_FIELD_ID(SYS_PORT_MODE, 3, 4, 12, 4),
+-	[SYS_PORT_MODE_INCL_XTR_HDR] = REG_FIELD_ID(SYS_PORT_MODE, 1, 2, 12, 4),
+-	[SYS_PORT_MODE_INCL_HDR_ERR] = REG_FIELD_ID(SYS_PORT_MODE, 0, 0, 12, 4),
+-	[SYS_PAUSE_CFG_PAUSE_START] = REG_FIELD_ID(SYS_PAUSE_CFG, 10, 18, 12, 4),
+-	[SYS_PAUSE_CFG_PAUSE_STOP] = REG_FIELD_ID(SYS_PAUSE_CFG, 1, 9, 12, 4),
+-	[SYS_PAUSE_CFG_PAUSE_ENA] = REG_FIELD_ID(SYS_PAUSE_CFG, 0, 1, 12, 4),
+-};
+-
+ static const struct ocelot_stat_layout ocelot_stats_layout[] = {
+ 	{ .name = "rx_octets", .offset = 0x00, },
+ 	{ .name = "rx_unicast", .offset = 0x01, },
+@@ -231,7 +173,7 @@ static int ocelot_chip_init(struct ocelot *ocelot, const struct ocelot_ops *ops)
+ 	ocelot->num_mact_rows = 1024;
+ 	ocelot->ops = ops;
  
--	regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(regs))
--		return PTR_ERR(regs);
-+	regs = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-+	if (IS_ERR(regs)) {
-+		/*
-+		 * Fall back to using IORESOURCE_REG, which is possible in an
-+		 * MFD configuration
-+		 */
-+		res = platform_get_resource(pdev, IORESOURCE_REG, 0);
-+		if (!res) {
-+			dev_err(dev, "Failed to get resource\n");
-+			return -ENODEV;
-+		}
+-	ret = ocelot_regfields_init(ocelot, ocelot_regfields);
++	ret = ocelot_regfields_init(ocelot, vsc7514_regfields);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/ethernet/mscc/vsc7514_regs.c b/drivers/net/ethernet/mscc/vsc7514_regs.c
+index c2af4eb8ca5d..847e64d11075 100644
+--- a/drivers/net/ethernet/mscc/vsc7514_regs.c
++++ b/drivers/net/ethernet/mscc/vsc7514_regs.c
+@@ -9,6 +9,65 @@
+ #include <soc/mscc/vsc7514_regs.h>
+ #include "ocelot.h"
+ 
++const struct reg_field vsc7514_regfields[REGFIELD_MAX] = {
++	[ANA_ADVLEARN_VLAN_CHK] = REG_FIELD(ANA_ADVLEARN, 11, 11),
++	[ANA_ADVLEARN_LEARN_MIRROR] = REG_FIELD(ANA_ADVLEARN, 0, 10),
++	[ANA_ANEVENTS_MSTI_DROP] = REG_FIELD(ANA_ANEVENTS, 27, 27),
++	[ANA_ANEVENTS_ACLKILL] = REG_FIELD(ANA_ANEVENTS, 26, 26),
++	[ANA_ANEVENTS_ACLUSED] = REG_FIELD(ANA_ANEVENTS, 25, 25),
++	[ANA_ANEVENTS_AUTOAGE] = REG_FIELD(ANA_ANEVENTS, 24, 24),
++	[ANA_ANEVENTS_VS2TTL1] = REG_FIELD(ANA_ANEVENTS, 23, 23),
++	[ANA_ANEVENTS_STORM_DROP] = REG_FIELD(ANA_ANEVENTS, 22, 22),
++	[ANA_ANEVENTS_LEARN_DROP] = REG_FIELD(ANA_ANEVENTS, 21, 21),
++	[ANA_ANEVENTS_AGED_ENTRY] = REG_FIELD(ANA_ANEVENTS, 20, 20),
++	[ANA_ANEVENTS_CPU_LEARN_FAILED] = REG_FIELD(ANA_ANEVENTS, 19, 19),
++	[ANA_ANEVENTS_AUTO_LEARN_FAILED] = REG_FIELD(ANA_ANEVENTS, 18, 18),
++	[ANA_ANEVENTS_LEARN_REMOVE] = REG_FIELD(ANA_ANEVENTS, 17, 17),
++	[ANA_ANEVENTS_AUTO_LEARNED] = REG_FIELD(ANA_ANEVENTS, 16, 16),
++	[ANA_ANEVENTS_AUTO_MOVED] = REG_FIELD(ANA_ANEVENTS, 15, 15),
++	[ANA_ANEVENTS_DROPPED] = REG_FIELD(ANA_ANEVENTS, 14, 14),
++	[ANA_ANEVENTS_CLASSIFIED_DROP] = REG_FIELD(ANA_ANEVENTS, 13, 13),
++	[ANA_ANEVENTS_CLASSIFIED_COPY] = REG_FIELD(ANA_ANEVENTS, 12, 12),
++	[ANA_ANEVENTS_VLAN_DISCARD] = REG_FIELD(ANA_ANEVENTS, 11, 11),
++	[ANA_ANEVENTS_FWD_DISCARD] = REG_FIELD(ANA_ANEVENTS, 10, 10),
++	[ANA_ANEVENTS_MULTICAST_FLOOD] = REG_FIELD(ANA_ANEVENTS, 9, 9),
++	[ANA_ANEVENTS_UNICAST_FLOOD] = REG_FIELD(ANA_ANEVENTS, 8, 8),
++	[ANA_ANEVENTS_DEST_KNOWN] = REG_FIELD(ANA_ANEVENTS, 7, 7),
++	[ANA_ANEVENTS_BUCKET3_MATCH] = REG_FIELD(ANA_ANEVENTS, 6, 6),
++	[ANA_ANEVENTS_BUCKET2_MATCH] = REG_FIELD(ANA_ANEVENTS, 5, 5),
++	[ANA_ANEVENTS_BUCKET1_MATCH] = REG_FIELD(ANA_ANEVENTS, 4, 4),
++	[ANA_ANEVENTS_BUCKET0_MATCH] = REG_FIELD(ANA_ANEVENTS, 3, 3),
++	[ANA_ANEVENTS_CPU_OPERATION] = REG_FIELD(ANA_ANEVENTS, 2, 2),
++	[ANA_ANEVENTS_DMAC_LOOKUP] = REG_FIELD(ANA_ANEVENTS, 1, 1),
++	[ANA_ANEVENTS_SMAC_LOOKUP] = REG_FIELD(ANA_ANEVENTS, 0, 0),
++	[ANA_TABLES_MACACCESS_B_DOM] = REG_FIELD(ANA_TABLES_MACACCESS, 18, 18),
++	[ANA_TABLES_MACTINDX_BUCKET] = REG_FIELD(ANA_TABLES_MACTINDX, 10, 11),
++	[ANA_TABLES_MACTINDX_M_INDEX] = REG_FIELD(ANA_TABLES_MACTINDX, 0, 9),
++	[GCB_SOFT_RST_SWC_RST] = REG_FIELD(GCB_SOFT_RST, 1, 1),
++	[QSYS_TIMED_FRAME_ENTRY_TFRM_VLD] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 20, 20),
++	[QSYS_TIMED_FRAME_ENTRY_TFRM_FP] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 8, 19),
++	[QSYS_TIMED_FRAME_ENTRY_TFRM_PORTNO] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 4, 7),
++	[QSYS_TIMED_FRAME_ENTRY_TFRM_TM_SEL] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 1, 3),
++	[QSYS_TIMED_FRAME_ENTRY_TFRM_TM_T] = REG_FIELD(QSYS_TIMED_FRAME_ENTRY, 0, 0),
++	[SYS_RESET_CFG_CORE_ENA] = REG_FIELD(SYS_RESET_CFG, 2, 2),
++	[SYS_RESET_CFG_MEM_ENA] = REG_FIELD(SYS_RESET_CFG, 1, 1),
++	[SYS_RESET_CFG_MEM_INIT] = REG_FIELD(SYS_RESET_CFG, 0, 0),
++	/* Replicated per number of ports (12), register size 4 per port */
++	[QSYS_SWITCH_PORT_MODE_PORT_ENA] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 14, 14, 12, 4),
++	[QSYS_SWITCH_PORT_MODE_SCH_NEXT_CFG] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 11, 13, 12, 4),
++	[QSYS_SWITCH_PORT_MODE_YEL_RSRVD] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 10, 10, 12, 4),
++	[QSYS_SWITCH_PORT_MODE_INGRESS_DROP_MODE] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 9, 9, 12, 4),
++	[QSYS_SWITCH_PORT_MODE_TX_PFC_ENA] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 1, 8, 12, 4),
++	[QSYS_SWITCH_PORT_MODE_TX_PFC_MODE] = REG_FIELD_ID(QSYS_SWITCH_PORT_MODE, 0, 0, 12, 4),
++	[SYS_PORT_MODE_DATA_WO_TS] = REG_FIELD_ID(SYS_PORT_MODE, 5, 6, 12, 4),
++	[SYS_PORT_MODE_INCL_INJ_HDR] = REG_FIELD_ID(SYS_PORT_MODE, 3, 4, 12, 4),
++	[SYS_PORT_MODE_INCL_XTR_HDR] = REG_FIELD_ID(SYS_PORT_MODE, 1, 2, 12, 4),
++	[SYS_PORT_MODE_INCL_HDR_ERR] = REG_FIELD_ID(SYS_PORT_MODE, 0, 0, 12, 4),
++	[SYS_PAUSE_CFG_PAUSE_START] = REG_FIELD_ID(SYS_PAUSE_CFG, 10, 18, 12, 4),
++	[SYS_PAUSE_CFG_PAUSE_STOP] = REG_FIELD_ID(SYS_PAUSE_CFG, 1, 9, 12, 4),
++	[SYS_PAUSE_CFG_PAUSE_ENA] = REG_FIELD_ID(SYS_PAUSE_CFG, 0, 1, 12, 4),
++};
 +
-+		priv->regs = ocelot_init_regmap_from_resource(dev, res);
-+	} else {
-+		priv->regs = devm_regmap_init_mmio(dev, regs, &regmap_config);
-+	}
+ const u32 vsc7514_ana_regmap[] = {
+ 	REG(ANA_ADVLEARN,				0x009000),
+ 	REG(ANA_VLANMASK,				0x009004),
+diff --git a/include/soc/mscc/vsc7514_regs.h b/include/soc/mscc/vsc7514_regs.h
+index ceee26c96959..9b40e7d00ec5 100644
+--- a/include/soc/mscc/vsc7514_regs.h
++++ b/include/soc/mscc/vsc7514_regs.h
+@@ -10,6 +10,8 @@
  
--	priv->regs = devm_regmap_init_mmio(dev, regs, &regmap_config);
- 	if (IS_ERR(priv->regs))
- 		return PTR_ERR(priv->regs);
+ #include <soc/mscc/ocelot_vcap.h>
  
++extern const struct reg_field vsc7514_regfields[REGFIELD_MAX];
++
+ extern const u32 vsc7514_ana_regmap[];
+ extern const u32 vsc7514_qs_regmap[];
+ extern const u32 vsc7514_qsys_regmap[];
 -- 
 2.25.1
 
