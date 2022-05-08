@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D00DFC433EF
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 19:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61E5C4332F
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 19:14:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbiEHTSm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 8 May 2022 15:18:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55764 "EHLO
+        id S229863AbiEHTSn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 8 May 2022 15:18:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382416AbiEHS5W (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 14:57:22 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2115.outbound.protection.outlook.com [40.107.223.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21166BC2A;
-        Sun,  8 May 2022 11:53:32 -0700 (PDT)
+        with ESMTP id S1377188AbiEHS5s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 14:57:48 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2111.outbound.protection.outlook.com [40.107.220.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12048A1B1;
+        Sun,  8 May 2022 11:53:57 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pp81Js4oveiF982QmC2XDgMRWXUC60Jo3ljBJJoa+gpx7yBgE8LCfdKeUzju3PtAveuMbcH3DYfIbQzNlB3SIpVxk143lDAgE8SXXdY4cNGFzwPoPd29H7mmu0uxGXoB2Wl9f8vM1ecOqWAUBvgjGnWy5etjvmKiskwTNDGNbar1vz/4HJA43NP9jGssGPsSQPXehcc56V1QHSZ6l7wCnpTZVKh3uPLjGKJ5z0jbB80p5V9xVtSEDAL6gNoClngFFmSyIMXHDb7XByNbqUbVTG5cju0KNOva2Cm8+SpZKcdWKfyNj9u/gXDLDHyxcQ8HBDbi3Go4P6i+/q44nt3Vvg==
+ b=OTxbK/ZMYUJQknanyiufCI+unS+S0pzG+qj6NZoJLh6YfCrXZh2tq7fcQW1qeJq7I6hYxkmdUiw+7tDD9Tt0pQolB/nkPt4DkY2Fb4WGh7cqpRG8g5bny+YslrHkZExSoXz2eFHUI4APVK4EHn8iVAU9fH0ZO2DWs+/XEGVvJBjkNby31SWUS/lzEf0/i2m937/PvAVIKmiGWJxA6aGsmCfDIisdepZhDWUWI6E/QiGi6F5wEOZIgOJ3hj1+X2FNWtA5irvA5q4VeKA30w+xx/1WWnRUckym8id+VlVWqTOvAJ/samWli/upLbTsKqJ4z3hFXaV9R2u5xKZxUCtJJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iXQwP9b20MbV9INks6JY8ByAOW473YppEkbxqaEpYQ8=;
- b=ClP2HOQRb8klDGJsKsF9bUnHIWiFIKFNko+HJlsQLodXIZcwIYKPQdL+6M2V/jm98sTOWrH6PhIvGizNGWzzg9gurbG+/T0swAqJ6lvIfyYEf26SmzXbV/wtCIGz2t6PqnyMLzLwMDmw5nyIeCh95inXWgG23SgIsPAW6RPfzj5wat8W9c4/O5ueKNSPA3x9HQWTBwK7ZS4m6D0QnD7j4tRLHyIOmXWdCc5M77xS60FhP9qSK4ehcycLSuMVtZMac1sj0QFl47I7BYhQhKnASc0YC/LUYH3YEUKISezQyXwQ+uFfTqGUls2jdzpVkksnxeOK3bfTU6rXjMwHq54Cew==
+ bh=zFkQ0OKEFLYVgq8FFL3lOp7a1XD65RKQBAXNAqoZEYk=;
+ b=LmBjtxC1HGNbs5vBgeKaFwv6GUitxChDVK3HaWcV0+D3Hghdp3bmr7gg00C1lWZcENnQB+rPJP5OZ2xr4ADOhOUAi30d9J4X/JfU62ZGxucQ47Q1dC9fz59/IM3mN8Xrse8i2n0i52p/EPAlbztA9km+sRegLcBf3hBTK/Vz8FbgKBr+qKjGnm93HiBim2LvCs5s1FEapmkxtq7JtS8Gmhywy/v7QUI/CUNRuQcvbRp7dDx2Uk1Z7Bw6SE8zz5vV+PczCm+XoX2ZbKPhqTkMXLYLj78jAoBYY/9+hq4cyeDo+/BABV8CrTvVwRLoBmTxg1WVCopcl0W+BjF/2fcyGg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=in-advantage.com; dmarc=pass action=none
  header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iXQwP9b20MbV9INks6JY8ByAOW473YppEkbxqaEpYQ8=;
- b=zv3F682WnixpIp53ybxMdovXgFEouAaCQLJTsjFsQGHRBfuq6BFt/gtWQm9dLaS5K/hvCXwx0QZRupx9WYx0TSLxKemXCEE1p3QnXDyXOYVqC8teFmVkb+2InlZF3sIGfqnJJin46WnkU1kww7iTCYSFQz/YeLBAT3NorHIPYLU=
+ bh=zFkQ0OKEFLYVgq8FFL3lOp7a1XD65RKQBAXNAqoZEYk=;
+ b=PqbNA4bVcM5M+wqPPRQIkdXXEsc8aCRhh9/q9AZxoza6q1E8/7BkkguaNgIffOU2yJgLfSPUl0PJGAZdFGbFYvdDBOER0yK6gvegFbz/GElyJCvYJDxh75PexZMrdylkUkfq4yyhp/7BsDr6IcY+QdZ1AzrVih+Iyi3Msgao6sw=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=in-advantage.com;
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37) by SJ0PR10MB5533.namprd10.prod.outlook.com
- (2603:10b6:a03:3f7::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.21; Sun, 8 May
- 2022 18:53:30 +0000
+ (2603:10b6:301:35::37) by SJ0PR10MB5672.namprd10.prod.outlook.com
+ (2603:10b6:a03:3ef::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.18; Sun, 8 May
+ 2022 18:53:55 +0000
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::4581:787c:1a7a:873e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::4581:787c:1a7a:873e%3]) with mapi id 15.20.5227.020; Sun, 8 May 2022
- 18:53:30 +0000
+ 18:53:55 +0000
 From:   Colin Foster <colin.foster@in-advantage.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         netdev@vger.kernel.org
@@ -61,9 +61,9 @@ Cc:     Terry Bowman <terry.bowman@amd.com>, Wolfram Sang <wsa@kernel.org>,
         Claudiu Manoil <claudiu.manoil@nxp.com>,
         Vladimir Oltean <vladimir.oltean@nxp.com>,
         Lee Jones <lee.jones@linaro.org>
-Subject: [RFC v8 net-next 02/16] pinctrl: microchip-sgpio: allow sgpio driver to be used as a module
-Date:   Sun,  8 May 2022 11:52:59 -0700
-Message-Id: <20220508185313.2222956-3-colin.foster@in-advantage.com>
+Subject: [RFC v8 net-next 12/16] net: mscc: ocelot: expose stats layout definition to be used by other drivers
+Date:   Sun,  8 May 2022 11:53:09 -0700
+Message-Id: <20220508185313.2222956-13-colin.foster@in-advantage.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220508185313.2222956-1-colin.foster@in-advantage.com>
 References: <20220508185313.2222956-1-colin.foster@in-advantage.com>
@@ -74,105 +74,315 @@ X-ClientProxiedBy: SJ0PR03CA0045.namprd03.prod.outlook.com
  (2603:10b6:301:35::37)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 652e6004-73af-4e3b-6211-08da31240aef
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5533:EE_
-X-Microsoft-Antispam-PRVS: <SJ0PR10MB55333B04E215B852CC768E09A4C79@SJ0PR10MB5533.namprd10.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 16a2075b-a1c1-452f-b5f1-08da31241a3e
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5672:EE_
+X-Microsoft-Antispam-PRVS: <SJ0PR10MB5672E6A8BC9C77925157FF91A4C79@SJ0PR10MB5672.namprd10.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mqDiAsf7jqYTw2x0hJLek69w7Sz/nqkDqYJnvjMSoSKawy5L+Geb4HuY7sp4jE8XIDaxzcZDaIFOIw0JUmbl/y76momEb7XXcRNIfdnFmSq/CpTd9VbNFh2fZDXHOtnWFoD/4JAr/uYPF1GoUaDNO37OZThupmEstOV9Eyz1pir9hJOexZKN6CzDlZ0Pthii2uvZODe91c5fvfDleJ6MZ5OVGNA1fCiBp6gTQ11OwHVvxl4Rlqa58QClNyJIHde8zfGXlNwBulD7Obb0lIcYdxyQB8lN/TfEmKj0mixSrAs4BvbOBAOrSYREWRN2xQoXc9SmuvapxWeeTkDJ3gpvrUiVMWIW4ngUqKLa9XfdOuKJ60P/mLEDdKctdcK5gM/9l4CRBhU7+r9bM837NyoAVVTKsKWzuj71IlUK9EOfxSqoRcvtsK+X5jgVNSGRqJM9iWLYNTUocY7na+5FySQEQ6kaFPLaWylb4U06AWnIdKVaIPnPeYbj1pCyB8eIZMjHjkA7KQW83/jB2wkNhdSE/y+9++4zb5XJE+dD467LYgaWClOI3lhzPfYj+8ehfytkoOK1XK/vx5plfvnJFyL6moEcIExsoqt0obZ/xwA5XhTZJEyTqNS8tKr1j4Pl7tuyLQJeip1Z0p/PX97aiv57vc3Hq2gioHnITTWo/F18Gem+hWWfpRd/CPu40o6MSpsf
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(39830400003)(136003)(376002)(366004)(396003)(346002)(316002)(66946007)(6666004)(26005)(66556008)(508600001)(44832011)(6512007)(6486002)(66476007)(52116002)(186003)(86362001)(2906002)(4326008)(54906003)(8676002)(38100700002)(2616005)(38350700002)(6506007)(83380400001)(8936002)(7416002)(1076003)(36756003)(5660300002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: hj4BlolD3AYhYRGh9T5KDWOfB9tcta9zL3gBXOfFAzKTM+rqabduD8nOWGuiER4X7YYUjqSn67wx5/3HEYhr3cvd7AaUQj3xz9Ch2wCr1ergkC9sRNUUrLptcDfUCXaqpcl/bRtevNiW2rx0357aqebeZ67UeG3O/XQAfg5kxIEw1tGe29xwexlMkFpNAhVcvEGnZPriRfTT9CcHcIxLjzz07DAUPCs3AC+RLC4E4H2uIvNvG8339QE6qSXg1RhaZDLQ2rdF/bQUtOM9C8xR/AZB1kufbTiItsd8+agcyH/tAcpSMR/F5I2eGMEGyABx9+CmzZaVVW16wwtd5Y8KO6pYaq3a2iosLiscTUdh2FUEth8y3nzq/EhASayZMoHx2Pu46XGax8p/46lAml9nH8/p2Ko7peGMcezU9a4aILjJbJRBHnSFqJpjYksJYpTmHJeeySi49SVDZ8B+ZIpwTRiWTuGzXnn9V/4HQr2ktbUyYpuADrnqXzdmHU06IFIXI0seQfbmbzJkmv9PLzxbgaP3SnqeSbjt2r3lxZMR8HRH7BtghxNKJ6XRjg/Rrtqfu75RQOQQkK6rzL5q2qpWy7C/A/40qjKd+bf/FGmXvL53iVaKgb+y6U9xTNcpPLTyeSyNW+IfGG1fDOjoazgXTTEdV9ZA9MVs0s9kzRfsKbUxm5it1PTd3XNuNor9g+CB61mtm9bhpLRsgKBij+XEgA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(39830400003)(396003)(366004)(346002)(376002)(136003)(6506007)(6666004)(6512007)(2906002)(8676002)(7416002)(52116002)(8936002)(4326008)(36756003)(5660300002)(86362001)(44832011)(66556008)(66476007)(26005)(30864003)(2616005)(66946007)(6486002)(508600001)(38350700002)(1076003)(38100700002)(54906003)(186003)(316002)(83380400001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jkqoCMfhFUpI0To0IB9UsTYZsTJOr393L8yXqAg18NgqdReuNzjrs4uHO03q?=
- =?us-ascii?Q?Ro+K0RuW+x2+w9fV4QPv7/sJ8pL/bUzXBe0JGaJKTgBEh69FpX5uIFhEKdzE?=
- =?us-ascii?Q?Js9nd+iRctVKk7OCZ2lSp+pJr/xU5FL6CZznveHbY9j/eeBbny8XDLSpt9Bh?=
- =?us-ascii?Q?HUyC2KWiUcrz3XAUAsGJa5VZ3Datf/rwmqVA6oIU2us0u97TtyneD66QpoJW?=
- =?us-ascii?Q?z3Tskc+jsybtNg++0IvlAK7D245biLzuW2X4hs0Zmz8NKWcOzVEbO6vtMdYU?=
- =?us-ascii?Q?xHLPGf1gUya0O4V/k5bwcJqaj6A8j6RO+zTNJ06tFk0I8UGg4jteKBTJhL3k?=
- =?us-ascii?Q?h6lr7QnW0kQFf2I+jjfQG1KjS/XOkO8RBufga7gUycGIRN675gUgUcyTmk3U?=
- =?us-ascii?Q?l4Z24l1BjiEzb2EU5JRBk4FT8/fqmLAsJJfOtkeoJvm+TwP3Ysj6c13fNRHN?=
- =?us-ascii?Q?C+EnHCIfT/v6vEP9gjLRO5YmWT8DuZ4cgrw6F4+OLsow9ewdW/qvoP4OHUKz?=
- =?us-ascii?Q?jj4OBrc7Cw6U10nTJGSJJcagagjauXqjerQMbq7AyvRhjl/VmnfPX7jAx9yC?=
- =?us-ascii?Q?J0LeeA5A/Vt/av2GyvSv2Eak38ywVZpnUoHVbUz+xbw38FGW59wr3kYIXX/V?=
- =?us-ascii?Q?mDQDKFj3t6vCVnQ69BytHO1ZX6RvoJEIGH5n83BTKT355yLrDAlCT/KASxxs?=
- =?us-ascii?Q?OajV031rEsS/qRk/7S1+yd23chjEWoCfwThQxxL3VyqVnWOxdxladWNNtKSv?=
- =?us-ascii?Q?hsJ2J7GOKNAS0O8rX29W2nJuqeaHRhD2d2gCh/bxQRPl0/ida8wpoQn0Q8NX?=
- =?us-ascii?Q?70vS29fymVPEbOZaoB1ilgqwh/tliwdhxLTocGjYi01w4NaLZEkZB/7AGTzm?=
- =?us-ascii?Q?tyn+VtzQU9nWErSkiEWSCvOXvHmCvX7nR8J5Gnj+iA5Q591QvsXm/F4r25zX?=
- =?us-ascii?Q?rDxOX/oTBxVqML1zHsCVDFZchhWO93+CxkM4tSLGChkOnr8mxyyeDAEcYfNr?=
- =?us-ascii?Q?RJOznXFjbss4vjruHA+7ym3Xqk1xYMzpW0llu0ZsyUhMKAlj0wQHFhDqKitM?=
- =?us-ascii?Q?BIaBWaBMFUOlLqr53SCY8gcL5mS/gpttcXXh/2qod89KPrmDDlyrNkqTiete?=
- =?us-ascii?Q?e19/2Zf10CYFWed4Etu1pJnZNDrGS37Zt4lIbHIN9wrw0661YLycUwv5Z78U?=
- =?us-ascii?Q?JZIdWRwpdgKWbS0WTa/Oa0ll6Zl7/n3+0/MpWDsoTMBWhkVfHVpqKOdQNCNO?=
- =?us-ascii?Q?SMHWoIhTX9ghKDptMe8yofhLgQCsbS3/92NDcnYSpKHqF5/DoQJwdzUnCJ4d?=
- =?us-ascii?Q?Fof8ElcL/xhoMk8b3Dlqd/maGPMHm6+zoWD6Vj3FKRgVbFQOhVKk1jaPTELC?=
- =?us-ascii?Q?HQw0w+chHMDaVbsFFyzqNHIIvB31f5/EwDFe2f5WG3tYk2Uf0q4sBJgEnx/h?=
- =?us-ascii?Q?3nwaE12+NcHJORRYIyXey5fy1B7m4rlGK4hu6W8nbrNeaxZAvUtLq+dfg14P?=
- =?us-ascii?Q?0KW3cBjVTxPVOzxeQySUC9HT9MMGTxaXciyxydMPGS0i8QHQdsJVd68Jz113?=
- =?us-ascii?Q?BHvVjQbH813nXVXGjLXlApQMsPffoBIplbmyw40HDtKk4PDjU70NIZ9Z8P1p?=
- =?us-ascii?Q?HmE3gLqoOuiBkG84Cxssf8Uh9rD9RM2otUUdrvCtCpmlmUQLF82iqe0ZEUoE?=
- =?us-ascii?Q?IZ9EDXYmCTlQk8JExeUJvJJwezukrxbj3TOTzXu/SP0pJ0Lssd+OpORgY2Og?=
- =?us-ascii?Q?sDhhjIXAD9t1fj+wi/W7iS54nYYVwf6t8FT859q8LAFot8zkWDtO?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ijvRkMjzOb2c9zX3t5qw9sybjBMIJJYe00VdI84jJD1+FAIJ9ElQa8LEayDq?=
+ =?us-ascii?Q?bpIOvvargzuhLuLlv9s+rbVRIl/0xJ+JMUfGzTlYtL8BYDuiaPh5N7BUDSb/?=
+ =?us-ascii?Q?n5JwV/AXnNnrgG9+zZq462nghwGr/syqxdRyW1ah0DTCc1668sDyQDfP8Fbu?=
+ =?us-ascii?Q?4lb2Z4P28Pnv24e32tBE6qlORUU1JLimthjZsIyworn1Oi2BsEbYyNJVBJPt?=
+ =?us-ascii?Q?3e3FfXmuvF4iet3uD5IyuUJRIdj8XKgB84xwICVSetHlQXEokndSBhdIrymR?=
+ =?us-ascii?Q?V5luUW9Plhkb3yrpuS5MljKo015IZELM2jvg8dTdEjaAdktj8zDR+zQ8PIb7?=
+ =?us-ascii?Q?RkeGL5rzrThlPmpdnL8RiYs2c2FoivW6jsPT4yPSECBRAlDXOcbjhgO5ktKq?=
+ =?us-ascii?Q?rwHoGi/EQO1QG8CqWcwqDv8HaVftaQrkOr+8AyBEAiV0DmVu49o46iN3ucru?=
+ =?us-ascii?Q?y4hoUkXH93nJwyFxZFlZ6GduK7XgnXhEMVOON5uLYM7qxRFzn3cXYJmDiwr1?=
+ =?us-ascii?Q?10ClGyHtijPnr+/rjhC2snnxmOuOezSx8Ss6+8/3YJEVmZozCyZosmT360k4?=
+ =?us-ascii?Q?foJCYQsJ2YtGVogN9NTBJr4UOBw7+G+arEpUKAcOMEugV3Da/Q71eZxm9GX6?=
+ =?us-ascii?Q?eKQ3o98Jz7C0p/E7E1/ZHrkHHnSdPMnicqdw9Q+G/yS3uV3nwmzhn+ijrT6Z?=
+ =?us-ascii?Q?T3m1iGn5jYqCvuk9zIj/yeAROsUSHqD33qC0mjyEeyP1iFslgq5uqtK74C89?=
+ =?us-ascii?Q?hmJNJokkWX/UV8fH6X1gx3X4zG90rlbcXEonM3OXp2ki8krFcWNkymY7OCOC?=
+ =?us-ascii?Q?ouTjippLWkBdl4U0XNF1oXkAgEd1dBsDuD2CxC8U5apmMP6fRDLSh7sh2R8t?=
+ =?us-ascii?Q?rJLk+wOGF21vo0BDRVfJLfAC7H4x082yH+9CN40IhnTyTDCmIgptAKyngw1K?=
+ =?us-ascii?Q?hZs7jMR1d8uH9JZm4a0QjjnpuffGRqDUmECEkZrZ2FLi7UNHAIwIuUsptzrj?=
+ =?us-ascii?Q?l45DyxmEEuJah9tuPotxXVFWyegFP4m0CYCuMZLZw5NGaipmzccQ5w7GerVR?=
+ =?us-ascii?Q?c5NXehF5ymkeZZIPpSQyng7UNbLDwDMMs3eDH3AU3Cpd+33ARrDJGMycBoZD?=
+ =?us-ascii?Q?+66+vpS5kodZ6LWml116hI5hhCz3RzvuzOfLxvnyW2YLV8v9w6O04fW2cvC0?=
+ =?us-ascii?Q?xtab5gjmC6RmcMegUbf9DvcFbUm+Dg9jqGm52Gxvf3cF8uYl/lJgjNkJSFql?=
+ =?us-ascii?Q?f209os4PYt9DcCdmyxNGEZoTlUicSSQ7ghpJOpunmurCnfdd77sh0zfKPIvC?=
+ =?us-ascii?Q?SHjcyHcxaoi105OSwzqygbP+eBdSg++0drJWar9Cel66wxU0QxG4+3NgGvIb?=
+ =?us-ascii?Q?gs2q6tYQ1BNHmYBOY3NT25t4CrN9ShokZFYP8x1fvhN7z+MSDSauxnfDy9fg?=
+ =?us-ascii?Q?CUHZKBAYfoQIPh1NYA0rsNChon4jSz206np3JlMia0zRGQuX7uYZh3Rn0pUl?=
+ =?us-ascii?Q?I5ytTUuOt0tqA5Ze73L/IrCwFFp+LSQdL66qSVDLAQQzUv7ZlI/JF+35Swa+?=
+ =?us-ascii?Q?CTiUiW5xztbdPadUuNrAWBSietCsF1mxR3WQrcWzubRGLmgv6IzPrmoF/czF?=
+ =?us-ascii?Q?Xco9tfCCGcsOJ2+LJtauiHM48qcj14XBe6l1hacSWb/pgaH7q7pzgGt9N55a?=
+ =?us-ascii?Q?uWSJZZpbfxWyxehr2knyhFokVNmzk3xsQprqoLrrwoUQ11dv87lXQ1LP7lp3?=
+ =?us-ascii?Q?2GyC/VtKu2EFusZryaO42bhRUzMAo25qXnucHKQ1IltUKflIlT8O?=
 X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 652e6004-73af-4e3b-6211-08da31240aef
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16a2075b-a1c1-452f-b5f1-08da31241a3e
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 18:53:30.0734
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 18:53:55.7903
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W6IK4VVDY6oQl8jEKOezzb/N4Tilr1nsT9xaFwqDbMrzu87M+yGxsdsaheuzbxKmORdaquqnM/eoYwzkFqbdifmvr6AO1G+XBTfBE6CBHR8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5533
+X-MS-Exchange-CrossTenant-UserPrincipalName: bjqq1lZI6Kahj3+mkPpZ8lZh2RncqMus9NW2sXyNduJyZ+DwjNV6S2o7PfHdSAlNl8wQ5qjfvG26rEL70QFjsSYtHlfyEawTihP1EhHuPH0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5672
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-As the commit message suggests, this simply adds the ability to select
-SGPIO pinctrl as a module. This becomes more practical when the SGPIO
-hardware exists on an external chip, controlled indirectly by I2C or SPI.
-This commit enables that level of control.
+The ocelot_stats_layout array is common between several different chips,
+some of which can only be controlled externally. Export this structure so
+it doesn't have to be duplicated in these other drivers.
+
+Rename the structure as well, to follow the conventions of other shared
+resources.
 
 Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/pinctrl/Kconfig                   | 2 +-
- drivers/pinctrl/pinctrl-microchip-sgpio.c | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mscc/ocelot_vsc7514.c | 99 +---------------------
+ drivers/net/ethernet/mscc/vsc7514_regs.c   | 97 +++++++++++++++++++++
+ include/soc/mscc/vsc7514_regs.h            |  3 +
+ 3 files changed, 101 insertions(+), 98 deletions(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 257b06752747..40d243bc91f8 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -292,7 +292,7 @@ config PINCTRL_MCP23S08
- 	  corresponding interrupt-controller.
- 
- config PINCTRL_MICROCHIP_SGPIO
--	bool "Pinctrl driver for Microsemi/Microchip Serial GPIO"
-+	tristate "Pinctrl driver for Microsemi/Microchip Serial GPIO"
- 	depends on OF
- 	depends on HAS_IOMEM
- 	select GPIOLIB
-diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-index 80a8939ad0c0..8953175c7e3e 100644
---- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
-+++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-@@ -995,6 +995,7 @@ static const struct of_device_id microchip_sgpio_gpio_of_match[] = {
- 		/* sentinel */
- 	}
+diff --git a/drivers/net/ethernet/mscc/ocelot_vsc7514.c b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
+index a13fec7247d6..7673ed76358b 100644
+--- a/drivers/net/ethernet/mscc/ocelot_vsc7514.c
++++ b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
+@@ -38,103 +38,6 @@ static const u32 *ocelot_regmap[TARGET_MAX] = {
+ 	[DEV_GMII] = vsc7514_dev_gmii_regmap,
  };
-+MODULE_DEVICE_TABLE(of, microchip_sgpio_gpio_of_match);
  
- static struct platform_driver microchip_sgpio_pinctrl_driver = {
- 	.driver = {
-@@ -1005,3 +1006,6 @@ static struct platform_driver microchip_sgpio_pinctrl_driver = {
- 	.probe = microchip_sgpio_probe,
- };
- builtin_platform_driver(microchip_sgpio_pinctrl_driver);
+-static const struct ocelot_stat_layout ocelot_stats_layout[] = {
+-	{ .name = "rx_octets", .offset = 0x00, },
+-	{ .name = "rx_unicast", .offset = 0x01, },
+-	{ .name = "rx_multicast", .offset = 0x02, },
+-	{ .name = "rx_broadcast", .offset = 0x03, },
+-	{ .name = "rx_shorts", .offset = 0x04, },
+-	{ .name = "rx_fragments", .offset = 0x05, },
+-	{ .name = "rx_jabbers", .offset = 0x06, },
+-	{ .name = "rx_crc_align_errs", .offset = 0x07, },
+-	{ .name = "rx_sym_errs", .offset = 0x08, },
+-	{ .name = "rx_frames_below_65_octets", .offset = 0x09, },
+-	{ .name = "rx_frames_65_to_127_octets", .offset = 0x0A, },
+-	{ .name = "rx_frames_128_to_255_octets", .offset = 0x0B, },
+-	{ .name = "rx_frames_256_to_511_octets", .offset = 0x0C, },
+-	{ .name = "rx_frames_512_to_1023_octets", .offset = 0x0D, },
+-	{ .name = "rx_frames_1024_to_1526_octets", .offset = 0x0E, },
+-	{ .name = "rx_frames_over_1526_octets", .offset = 0x0F, },
+-	{ .name = "rx_pause", .offset = 0x10, },
+-	{ .name = "rx_control", .offset = 0x11, },
+-	{ .name = "rx_longs", .offset = 0x12, },
+-	{ .name = "rx_classified_drops", .offset = 0x13, },
+-	{ .name = "rx_red_prio_0", .offset = 0x14, },
+-	{ .name = "rx_red_prio_1", .offset = 0x15, },
+-	{ .name = "rx_red_prio_2", .offset = 0x16, },
+-	{ .name = "rx_red_prio_3", .offset = 0x17, },
+-	{ .name = "rx_red_prio_4", .offset = 0x18, },
+-	{ .name = "rx_red_prio_5", .offset = 0x19, },
+-	{ .name = "rx_red_prio_6", .offset = 0x1A, },
+-	{ .name = "rx_red_prio_7", .offset = 0x1B, },
+-	{ .name = "rx_yellow_prio_0", .offset = 0x1C, },
+-	{ .name = "rx_yellow_prio_1", .offset = 0x1D, },
+-	{ .name = "rx_yellow_prio_2", .offset = 0x1E, },
+-	{ .name = "rx_yellow_prio_3", .offset = 0x1F, },
+-	{ .name = "rx_yellow_prio_4", .offset = 0x20, },
+-	{ .name = "rx_yellow_prio_5", .offset = 0x21, },
+-	{ .name = "rx_yellow_prio_6", .offset = 0x22, },
+-	{ .name = "rx_yellow_prio_7", .offset = 0x23, },
+-	{ .name = "rx_green_prio_0", .offset = 0x24, },
+-	{ .name = "rx_green_prio_1", .offset = 0x25, },
+-	{ .name = "rx_green_prio_2", .offset = 0x26, },
+-	{ .name = "rx_green_prio_3", .offset = 0x27, },
+-	{ .name = "rx_green_prio_4", .offset = 0x28, },
+-	{ .name = "rx_green_prio_5", .offset = 0x29, },
+-	{ .name = "rx_green_prio_6", .offset = 0x2A, },
+-	{ .name = "rx_green_prio_7", .offset = 0x2B, },
+-	{ .name = "tx_octets", .offset = 0x40, },
+-	{ .name = "tx_unicast", .offset = 0x41, },
+-	{ .name = "tx_multicast", .offset = 0x42, },
+-	{ .name = "tx_broadcast", .offset = 0x43, },
+-	{ .name = "tx_collision", .offset = 0x44, },
+-	{ .name = "tx_drops", .offset = 0x45, },
+-	{ .name = "tx_pause", .offset = 0x46, },
+-	{ .name = "tx_frames_below_65_octets", .offset = 0x47, },
+-	{ .name = "tx_frames_65_to_127_octets", .offset = 0x48, },
+-	{ .name = "tx_frames_128_255_octets", .offset = 0x49, },
+-	{ .name = "tx_frames_256_511_octets", .offset = 0x4A, },
+-	{ .name = "tx_frames_512_1023_octets", .offset = 0x4B, },
+-	{ .name = "tx_frames_1024_1526_octets", .offset = 0x4C, },
+-	{ .name = "tx_frames_over_1526_octets", .offset = 0x4D, },
+-	{ .name = "tx_yellow_prio_0", .offset = 0x4E, },
+-	{ .name = "tx_yellow_prio_1", .offset = 0x4F, },
+-	{ .name = "tx_yellow_prio_2", .offset = 0x50, },
+-	{ .name = "tx_yellow_prio_3", .offset = 0x51, },
+-	{ .name = "tx_yellow_prio_4", .offset = 0x52, },
+-	{ .name = "tx_yellow_prio_5", .offset = 0x53, },
+-	{ .name = "tx_yellow_prio_6", .offset = 0x54, },
+-	{ .name = "tx_yellow_prio_7", .offset = 0x55, },
+-	{ .name = "tx_green_prio_0", .offset = 0x56, },
+-	{ .name = "tx_green_prio_1", .offset = 0x57, },
+-	{ .name = "tx_green_prio_2", .offset = 0x58, },
+-	{ .name = "tx_green_prio_3", .offset = 0x59, },
+-	{ .name = "tx_green_prio_4", .offset = 0x5A, },
+-	{ .name = "tx_green_prio_5", .offset = 0x5B, },
+-	{ .name = "tx_green_prio_6", .offset = 0x5C, },
+-	{ .name = "tx_green_prio_7", .offset = 0x5D, },
+-	{ .name = "tx_aged", .offset = 0x5E, },
+-	{ .name = "drop_local", .offset = 0x80, },
+-	{ .name = "drop_tail", .offset = 0x81, },
+-	{ .name = "drop_yellow_prio_0", .offset = 0x82, },
+-	{ .name = "drop_yellow_prio_1", .offset = 0x83, },
+-	{ .name = "drop_yellow_prio_2", .offset = 0x84, },
+-	{ .name = "drop_yellow_prio_3", .offset = 0x85, },
+-	{ .name = "drop_yellow_prio_4", .offset = 0x86, },
+-	{ .name = "drop_yellow_prio_5", .offset = 0x87, },
+-	{ .name = "drop_yellow_prio_6", .offset = 0x88, },
+-	{ .name = "drop_yellow_prio_7", .offset = 0x89, },
+-	{ .name = "drop_green_prio_0", .offset = 0x8A, },
+-	{ .name = "drop_green_prio_1", .offset = 0x8B, },
+-	{ .name = "drop_green_prio_2", .offset = 0x8C, },
+-	{ .name = "drop_green_prio_3", .offset = 0x8D, },
+-	{ .name = "drop_green_prio_4", .offset = 0x8E, },
+-	{ .name = "drop_green_prio_5", .offset = 0x8F, },
+-	{ .name = "drop_green_prio_6", .offset = 0x90, },
+-	{ .name = "drop_green_prio_7", .offset = 0x91, },
+-	OCELOT_STAT_END
+-};
+-
+ static void ocelot_pll5_init(struct ocelot *ocelot)
+ {
+ 	/* Configure PLL5. This will need a proper CCF driver
+@@ -169,7 +72,7 @@ static int ocelot_chip_init(struct ocelot *ocelot, const struct ocelot_ops *ops)
+ 	int ret;
+ 
+ 	ocelot->map = ocelot_regmap;
+-	ocelot->stats_layout = ocelot_stats_layout;
++	ocelot->stats_layout = vsc7514_stats_layout;
+ 	ocelot->num_mact_rows = 1024;
+ 	ocelot->ops = ops;
+ 
+diff --git a/drivers/net/ethernet/mscc/vsc7514_regs.c b/drivers/net/ethernet/mscc/vsc7514_regs.c
+index 847e64d11075..2b75753da4e2 100644
+--- a/drivers/net/ethernet/mscc/vsc7514_regs.c
++++ b/drivers/net/ethernet/mscc/vsc7514_regs.c
+@@ -9,6 +9,103 @@
+ #include <soc/mscc/vsc7514_regs.h>
+ #include "ocelot.h"
+ 
++const struct ocelot_stat_layout vsc7514_stats_layout[] = {
++	{ .name = "rx_octets", .offset = 0x00, },
++	{ .name = "rx_unicast", .offset = 0x01, },
++	{ .name = "rx_multicast", .offset = 0x02, },
++	{ .name = "rx_broadcast", .offset = 0x03, },
++	{ .name = "rx_shorts", .offset = 0x04, },
++	{ .name = "rx_fragments", .offset = 0x05, },
++	{ .name = "rx_jabbers", .offset = 0x06, },
++	{ .name = "rx_crc_align_errs", .offset = 0x07, },
++	{ .name = "rx_sym_errs", .offset = 0x08, },
++	{ .name = "rx_frames_below_65_octets", .offset = 0x09, },
++	{ .name = "rx_frames_65_to_127_octets", .offset = 0x0A, },
++	{ .name = "rx_frames_128_to_255_octets", .offset = 0x0B, },
++	{ .name = "rx_frames_256_to_511_octets", .offset = 0x0C, },
++	{ .name = "rx_frames_512_to_1023_octets", .offset = 0x0D, },
++	{ .name = "rx_frames_1024_to_1526_octets", .offset = 0x0E, },
++	{ .name = "rx_frames_over_1526_octets", .offset = 0x0F, },
++	{ .name = "rx_pause", .offset = 0x10, },
++	{ .name = "rx_control", .offset = 0x11, },
++	{ .name = "rx_longs", .offset = 0x12, },
++	{ .name = "rx_classified_drops", .offset = 0x13, },
++	{ .name = "rx_red_prio_0", .offset = 0x14, },
++	{ .name = "rx_red_prio_1", .offset = 0x15, },
++	{ .name = "rx_red_prio_2", .offset = 0x16, },
++	{ .name = "rx_red_prio_3", .offset = 0x17, },
++	{ .name = "rx_red_prio_4", .offset = 0x18, },
++	{ .name = "rx_red_prio_5", .offset = 0x19, },
++	{ .name = "rx_red_prio_6", .offset = 0x1A, },
++	{ .name = "rx_red_prio_7", .offset = 0x1B, },
++	{ .name = "rx_yellow_prio_0", .offset = 0x1C, },
++	{ .name = "rx_yellow_prio_1", .offset = 0x1D, },
++	{ .name = "rx_yellow_prio_2", .offset = 0x1E, },
++	{ .name = "rx_yellow_prio_3", .offset = 0x1F, },
++	{ .name = "rx_yellow_prio_4", .offset = 0x20, },
++	{ .name = "rx_yellow_prio_5", .offset = 0x21, },
++	{ .name = "rx_yellow_prio_6", .offset = 0x22, },
++	{ .name = "rx_yellow_prio_7", .offset = 0x23, },
++	{ .name = "rx_green_prio_0", .offset = 0x24, },
++	{ .name = "rx_green_prio_1", .offset = 0x25, },
++	{ .name = "rx_green_prio_2", .offset = 0x26, },
++	{ .name = "rx_green_prio_3", .offset = 0x27, },
++	{ .name = "rx_green_prio_4", .offset = 0x28, },
++	{ .name = "rx_green_prio_5", .offset = 0x29, },
++	{ .name = "rx_green_prio_6", .offset = 0x2A, },
++	{ .name = "rx_green_prio_7", .offset = 0x2B, },
++	{ .name = "tx_octets", .offset = 0x40, },
++	{ .name = "tx_unicast", .offset = 0x41, },
++	{ .name = "tx_multicast", .offset = 0x42, },
++	{ .name = "tx_broadcast", .offset = 0x43, },
++	{ .name = "tx_collision", .offset = 0x44, },
++	{ .name = "tx_drops", .offset = 0x45, },
++	{ .name = "tx_pause", .offset = 0x46, },
++	{ .name = "tx_frames_below_65_octets", .offset = 0x47, },
++	{ .name = "tx_frames_65_to_127_octets", .offset = 0x48, },
++	{ .name = "tx_frames_128_255_octets", .offset = 0x49, },
++	{ .name = "tx_frames_256_511_octets", .offset = 0x4A, },
++	{ .name = "tx_frames_512_1023_octets", .offset = 0x4B, },
++	{ .name = "tx_frames_1024_1526_octets", .offset = 0x4C, },
++	{ .name = "tx_frames_over_1526_octets", .offset = 0x4D, },
++	{ .name = "tx_yellow_prio_0", .offset = 0x4E, },
++	{ .name = "tx_yellow_prio_1", .offset = 0x4F, },
++	{ .name = "tx_yellow_prio_2", .offset = 0x50, },
++	{ .name = "tx_yellow_prio_3", .offset = 0x51, },
++	{ .name = "tx_yellow_prio_4", .offset = 0x52, },
++	{ .name = "tx_yellow_prio_5", .offset = 0x53, },
++	{ .name = "tx_yellow_prio_6", .offset = 0x54, },
++	{ .name = "tx_yellow_prio_7", .offset = 0x55, },
++	{ .name = "tx_green_prio_0", .offset = 0x56, },
++	{ .name = "tx_green_prio_1", .offset = 0x57, },
++	{ .name = "tx_green_prio_2", .offset = 0x58, },
++	{ .name = "tx_green_prio_3", .offset = 0x59, },
++	{ .name = "tx_green_prio_4", .offset = 0x5A, },
++	{ .name = "tx_green_prio_5", .offset = 0x5B, },
++	{ .name = "tx_green_prio_6", .offset = 0x5C, },
++	{ .name = "tx_green_prio_7", .offset = 0x5D, },
++	{ .name = "tx_aged", .offset = 0x5E, },
++	{ .name = "drop_local", .offset = 0x80, },
++	{ .name = "drop_tail", .offset = 0x81, },
++	{ .name = "drop_yellow_prio_0", .offset = 0x82, },
++	{ .name = "drop_yellow_prio_1", .offset = 0x83, },
++	{ .name = "drop_yellow_prio_2", .offset = 0x84, },
++	{ .name = "drop_yellow_prio_3", .offset = 0x85, },
++	{ .name = "drop_yellow_prio_4", .offset = 0x86, },
++	{ .name = "drop_yellow_prio_5", .offset = 0x87, },
++	{ .name = "drop_yellow_prio_6", .offset = 0x88, },
++	{ .name = "drop_yellow_prio_7", .offset = 0x89, },
++	{ .name = "drop_green_prio_0", .offset = 0x8A, },
++	{ .name = "drop_green_prio_1", .offset = 0x8B, },
++	{ .name = "drop_green_prio_2", .offset = 0x8C, },
++	{ .name = "drop_green_prio_3", .offset = 0x8D, },
++	{ .name = "drop_green_prio_4", .offset = 0x8E, },
++	{ .name = "drop_green_prio_5", .offset = 0x8F, },
++	{ .name = "drop_green_prio_6", .offset = 0x90, },
++	{ .name = "drop_green_prio_7", .offset = 0x91, },
++	OCELOT_STAT_END
++};
 +
-+MODULE_DESCRIPTION("Microchip SGPIO Pinctrl Driver");
-+MODULE_LICENSE("GPL");
+ const struct reg_field vsc7514_regfields[REGFIELD_MAX] = {
+ 	[ANA_ADVLEARN_VLAN_CHK] = REG_FIELD(ANA_ADVLEARN, 11, 11),
+ 	[ANA_ADVLEARN_LEARN_MIRROR] = REG_FIELD(ANA_ADVLEARN, 0, 10),
+diff --git a/include/soc/mscc/vsc7514_regs.h b/include/soc/mscc/vsc7514_regs.h
+index 9b40e7d00ec5..d2b5b6b86aff 100644
+--- a/include/soc/mscc/vsc7514_regs.h
++++ b/include/soc/mscc/vsc7514_regs.h
+@@ -8,8 +8,11 @@
+ #ifndef VSC7514_REGS_H
+ #define VSC7514_REGS_H
+ 
++#include <soc/mscc/ocelot.h>
+ #include <soc/mscc/ocelot_vcap.h>
+ 
++extern const struct ocelot_stat_layout vsc7514_stats_layout[];
++
+ extern const struct reg_field vsc7514_regfields[REGFIELD_MAX];
+ 
+ extern const u32 vsc7514_ana_regmap[];
 -- 
 2.25.1
 
