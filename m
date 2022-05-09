@@ -2,106 +2,188 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6922C433F5
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 05:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EF5C433F5
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 05:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232966AbiEIFSW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 May 2022 01:18:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37734 "EHLO
+        id S229959AbiEIFx7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 May 2022 01:53:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234425AbiEIFOe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 01:14:34 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DEA826269;
-        Sun,  8 May 2022 22:10:40 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,210,1647270000"; 
-   d="scan'208";a="120333429"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 09 May 2022 14:10:40 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B97D54004199;
-        Mon,  9 May 2022 14:10:35 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
+        with ESMTP id S234608AbiEIFot (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 01:44:49 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E97A92183B
+        for <linux-gpio@vger.kernel.org>; Sun,  8 May 2022 22:40:56 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id j2so23031232ybu.0
+        for <linux-gpio@vger.kernel.org>; Sun, 08 May 2022 22:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=IuWRns9pMIw65xrkUwtqZzcIMvbP9jtItO2aE2vrqao=;
+        b=NyXzAoVtt5sgm+AtKlFW0eUzqe7GNpGc8ZrJqgMJ/JYp5fndo7F4SBWUkn4MIHCxOH
+         3WyWAlprtrjeDXqgc/fmUhUjcMaP8/jvtl1Ewd/Z60hLyjjU+3CXeWYm91v+GfSyeMKS
+         6veo2Bc+lgj6otgNwohuOoeWJqCbjxz0ongngBGJhj+3mYPuLKko8FGRwL7wvKq8CvPQ
+         HCsXTgXxp65XKhvE7r6M71Y9xrTQuKYskKsV9z2F2G1olpLUCMOjrgGOidI9UB0jIgGA
+         icIFcWd8iac+YMqYdKQlKaqD9z9s7Qh7v/c9L8zRFQyf/t1ffyunCsUxtXgxj30d4k8Y
+         +0pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=IuWRns9pMIw65xrkUwtqZzcIMvbP9jtItO2aE2vrqao=;
+        b=8Ih61cTlCRvSgIKvWlQ99vcQGdSnrVzhj1vUujEI0bfS0yYLsw/shqkxrmhtfyW1eM
+         6GD4QurfCqZKH2L2NyGh3B+ONkukjJoaDXEp7bBOm0gttazUoBs66bUZ2St6cmxf0n36
+         8lX4zgzbLg2/ZSH5+P85pEEAosYvH62BSuem5nbLNnZZh0yy7ncEyMuEk1sw+vwZzXbS
+         pUEYLpxXEFLJd3xgJqGRlzuKJHPLMe6BnCr5L+zxnQzTdLUm3o5wZbet1asYShUY1YPV
+         A2yGT2jdOoFNYTrSw/b4uhReUjrndWRbj0RpEzQsHP9BaEPJPl5KkpF/fDrvAPpyu6Uj
+         f/Rw==
+X-Gm-Message-State: AOAM532zA3Cdr0fvlook4GUFDpObVfiBxHXe5E3DWFHuodZHdK5KcErf
+        NdmaPjaLKGKc2Va5j2bAfJjcJnNoS4qdcqR7vJzuLg==
+X-Google-Smtp-Source: ABdhPJxXiV1FtvYaSxQHIhdToDEZ2/LEk/cdnCoyg2GjIeMct6kKJ4BvSWYPmU/MADQWAiQrVcHWnlsRaCi5+OpJOtU=
+X-Received: by 2002:a25:c64b:0:b0:649:11d:9db1 with SMTP id
+ k72-20020a25c64b000000b00649011d9db1mr11660848ybf.128.1652074843828; Sun, 08
+ May 2022 22:40:43 -0700 (PDT)
+MIME-Version: 1.0
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 9 May 2022 11:10:32 +0530
+Message-ID: <CA+G9fYtHMuvr3U4YS78WKxB1SiSDQkiHFPzQLETMe_n2QYwdqg@mail.gmail.com>
+Subject: [next] gpio: gpio-sim.sh: Unable to handle kernel NULL pointer
+ dereference at virtual address 0000000000000008
+To:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        Shuah Khan <shuah@kernel.org>, Mark Brown <broonie@kernel.org>,
+        brgl@bgdev.pl, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        andrei.lalaev@emlid.com, Linus Walleij <linus.walleij@linaro.org>,
+        u.kleine-koenig@pengutronix.de,
+        Raghuram Thammiraju <raghuram.thammiraju@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 4/5] gpio: gpiolib: Add ngirq member to struct gpio_irq_chip
-Date:   Mon,  9 May 2022 06:09:52 +0100
-Message-Id: <20220509050953.11005-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Supported GPIO IRQs by the chip is not always equal to the number of GPIO
-pins. For example on Renesas RZ/G2L SoC where it has GPIO0-122 pins but at
-a give point a maximum of only 32 GPIO pins can be used as IRQ lines in
-the IRQC domain.
+Following kernel crash noticed while running kselftest gpio gpio-sim.sh on
+qemu_arm64 with Linux next-20220506 kernel [1] & [2].
 
-This patch adds ngirq member to struct gpio_irq_chip and passes this as a
-size to irq_domain_create_hierarchy()/irq_domain_create_simple() if it is
-being set in the driver otherwise fallbacks to using ngpio.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/gpio/gpiolib.c      | 4 ++--
- include/linux/gpio/driver.h | 8 ++++++++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+# selftests: gpio: gpio-sim.sh
+# 1. chip_name and dev_name attributes
+# 1.1. Chip name is communicated to user
+# 1.2. chip_name returns 'none' if the chip is still pending
+# 1.3. Device name is communicated to user
+# 2. Creating and configuring simulated chips
+# 2.1. Default number of lines is 1
+# 2.2. Number of lines can be specified
+# 2.3. Label can be set
+# 2.4. Label can be left empty
+# 2.5. Line names can be configured
+# 2.6. Line config can remain unused if offset is greater than number of lines
+# 2.7. Line configfs directory names are sanitized
+# 2.8. Multiple chips can be created
+# 2.9. Can't modify settings when chip is live
+# 2.10. Can't create line items when chip is live
+# 2.11. Probe errors are propagated to user-space
+[  218.163457] gpio gpiochip1: (gpio-sim.0-node0): line cnt 34463 is
+greater than fast path cnt 512
+[  218.163739] gpiochip_find_base: cannot find free range
+[  218.164216] gpiochip_add_data_with_key: GPIOs 0..34462
+(gpio-sim.0-node0) failed to register, -28
+[  218.164503] gpio-sim: probe of gpio-sim.0 failed with error -28
+# 2.12. Cannot enable a chip without any GPIO banks
+# 2.13. Duplicate chip labels are not allowed
+# 2.14. Lines can be hogged
+[  223.754983] gpio-2036 (?): hogged as input
+[  224.231594] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000008
+[  224.233378] Mem abort info:
+[  224.233719]   ESR = 0x0000000096000006
+[  224.234076]   EC = 0x25: DABT (current EL), IL = 32 bits
+[  224.235432]   SET = 0, FnV = 0
+[  224.235790]   EA = 0, S1PTW = 0
+[  224.236146]   FSC = 0x06: level 2 translation fault
+[  224.236592] Data abort info:
+[  224.236926]   ISV = 0, ISS = 0x00000006
+[  224.237300]   CM = 0, WnR = 0
+[  224.237738] user pgtable: 4k pages, 48-bit VAs, pgdp=000000010ab2b000
+[  224.238785] [0000000000000008] pgd=080000010b9c4003,
+p4d=080000010b9c4003, pud=080000010b990003, pmd=0000000000000000
+[  224.240838] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+[  224.241509] Modules linked in: gpio_sim rfkill crct10dif_ce sm3_ce
+sm3 sha3_ce sha512_ce sha512_arm64 fuse [last unloaded: gpio_mockup]
+[  224.242848] CPU: 2 PID: 1105 Comm: gpio-mockup-cde Not tainted
+5.18.0-rc5-next-20220506 #1
+[  224.243548] Hardware name: linux,dummy-virt (DT)
+[  224.244109] pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[  224.244643] pc : linereq_free+0xb0/0x120
+[  224.245515] lr : linereq_create+0x548/0x640
+[  224.245797] sp : ffff8000089eb870
+[  224.246065] x29: ffff8000089eb870 x28: ffffd5cd009d5cd8 x27: ffff0000c32da0c0
+[  224.246795] x26: ffffd5ccfeb521c8 x25: 0000000000000000 x24: ffff0000c60d1d20
+[  224.247318] x23: ffff0000c60d1c00 x22: 0000000000000000 x21: 0000000000000118
+[  224.247843] x20: 0000000000000001 x19: ffff0000c60d1c00 x18: 0000000000000000
+[  224.248352] x17: ffffd5ccfcc2c288 x16: ffffd5ccfd019804 x15: ffffd5ccfd468a48
+[  224.248875] x14: ffffd5ccfd4686c0 x13: ffffd5ccfcc11d48 x12: ffffd5ccfe224eec
+[  224.249307] x11: ffffd5ccfe223b88 x10: ffffd5ccfcc2c4e8 x9 : ffffd5ccfd4688c8
+[  224.249840] x8 : ffff0000c32e6108 x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000001
+[  224.250418] x5 : ffffd5ccff965000 x4 : ffffd5ccff9654f0 x3 : 0000000000000000
+[  224.251050] x2 : ffff0000c33e5080 x1 : 0000000000000000 x0 : 0000000000000000
+[  224.251741] Call trace:
+[  224.251998]  linereq_free+0xb0/0x120
+[  224.252315]  linereq_create+0x548/0x640
+[  224.252571]  gpio_ioctl+0x88/0x754
+[  224.252808]  __arm64_sys_ioctl+0xb4/0x100
+[  224.253103]  invoke_syscall+0x78/0x100
+[  224.253342]  el0_svc_common.constprop.0+0x104/0x124
+[  224.253680]  do_el0_svc+0xb4/0xcc
+[  224.253922]  el0_svc+0x68/0x160
+[  224.254173]  el0t_64_sync_handler+0xbc/0x140
+[  224.254504]  el0t_64_sync+0x18c/0x190
+[  224.254929] Code: cb160273 8b130ef3 f9409261 b9413260 (f9400422)
+[  224.255783] ---[ end trace 0000000000000000 ]---
+# ./gpio-sim.sh: line 318:  1105 Segmentation fault
+$BASE_DIR/gpio-mockup-cdev -s 1 /dev/`configfs_chip_name chip bank` 4
+2> /dev/null
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7be01c70ee4e..4b402141580e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1221,7 +1221,7 @@ static int gpiochip_hierarchy_add_domain(struct gpio_chip *gc)
- 	gc->irq.domain = irq_domain_create_hierarchy(
- 		gc->irq.parent_domain,
- 		0,
--		gc->ngpio,
-+		gc->irq.ngirq ?: gc->ngpio,
- 		gc->irq.fwnode,
- 		&gc->irq.child_irq_domain_ops,
- 		gc);
-@@ -1574,7 +1574,7 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
- 	} else {
- 		/* Some drivers provide custom irqdomain ops */
- 		gc->irq.domain = irq_domain_create_simple(fwnode,
--			gc->ngpio,
-+			gc->irq.ngirq ?: gc->ngpio,
- 			gc->irq.first,
- 			gc->irq.domain_ops ?: &gpiochip_domain_ops,
- 			gc);
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 874aabd270c9..ed6df186907d 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -51,6 +51,14 @@ struct gpio_irq_chip {
- 	 */
- 	const struct irq_domain_ops *domain_ops;
- 
-+	/**
-+	 * @ngirq:
-+	 *
-+	 * The number of GPIO IRQ's handled by this IRQ domain; usually is
-+	 * equal to ngpio.
-+	 */
-+	u16 ngirq;
-+
- #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
- 	/**
- 	 * @fwnode:
--- 
-2.25.1
+Broadcast message from systemd-journald@juno (Fri 2022-05-06 09:51:02 UTC):
 
+kernel[304]: [  224.240838] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+
+
+Broadcast message from systemd-journald@juno (Fri 2022-05-06 09:51:02 UTC):
+
+kernel[304]: [  224.254929] Code: cb160273 8b130ef3 f9409261 b9413260 (f9400422)
+
+# 3. Controlling simulated chips
+# 3.1. Pull can be set over sysfs
+#
+not ok 2 selftests: gpio: gpio-sim.sh # TIMEOUT 45 seconds
+
+metadata:
+  git_ref: master
+  git_repo: ''
+  git_sha: 38a288f5941ef03752887ad86f2d85442358c99a
+  git_describe: next-20220506
+  kernel_version: 5.18.0-rc5
+  kernel-config: https://builds.tuxbuild.com/28mio5DFBEfnEtkiTLdPb9tTWVa/config
+  build-url: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next/-/pipelines/532821646
+  artifact-location: https://builds.tuxbuild.com/28mio5DFBEfnEtkiTLdPb9tTWVa
+  toolchain: gcc-11
+
+Steps to reproduce:
+# cd /opt/kselftests/default-in-kernel/gpio
+# ./gpio-sim.sh
+
+Full test logs.
+[1] https://lkft.validation.linaro.org/scheduler/job/4994124#L1108
+[2] https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220506/testrun/9366936/suite/linux-log-parser/test/check-kernel-oops-4994124/log
+
+--
+Linaro LKFT
+https://lkft.linaro.org
