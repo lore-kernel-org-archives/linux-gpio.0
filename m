@@ -2,121 +2,135 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD925C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE24C4332F
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 09:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236322AbiEIJQP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 May 2022 05:16:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49790 "EHLO
+        id S233028AbiEIJQI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 May 2022 05:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236510AbiEIItU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 04:49:20 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A85871F0DC5;
-        Mon,  9 May 2022 01:45:26 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id g20so15409680edw.6;
-        Mon, 09 May 2022 01:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pACjuUWFJ5GZIbniWMSNPk/IN6wOmnS55W0CKNtZNbk=;
-        b=Ifmf8JI3lGr7NqR25+3ysog33HBpALcK432GUQBzkzQ0BDuRT6oUV6cIXRXot5s1nn
-         D/nobqvlRNRbiCCE7wwNyV+2kAxj1RLdPffHBT4QbVbukqt+Uj9zxt3EG4zEXvFO3PtV
-         4GW75c5lRqwc4bqouS+jO4egMbalASyYHgqEuBuqJYoHnenTe6VRtfneSo/9RYOQRuBz
-         7V+/rspE/7RbYF4N0iVwQRGgJzNo3e9V2jFXgFQyuEA8WVsJ4u+olbEiwy0HHFJUf+ez
-         v83Qcq9QC1UIRd3F++wYpm9zy9+VxV9sjBu0yXQXh7B7KeiWRbh5UBXAY7NIVTo/KcOP
-         cjkg==
+        with ESMTP id S233097AbiEIJBK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 05:01:10 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AEBE15A3CE;
+        Mon,  9 May 2022 01:57:14 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id h3so10488247qtn.4;
+        Mon, 09 May 2022 01:57:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pACjuUWFJ5GZIbniWMSNPk/IN6wOmnS55W0CKNtZNbk=;
-        b=mr61ygtuW0q8moYahNlYr2qQkdZZVZ6k0PlGLkqNIUseG6uQq4/sBmcKdhr9+XURCJ
-         5xCwvA0Cnpseljj/rp3e1BuHYYMtNTX2rUE0p3W/V/N8qPt31zReqOkGkgVbvNy7eJvu
-         Ijj7ReJiDuqx0FavDaxro7mk/qydYX4cCpjp8wASIXxyvl0o2rsOew9SwOl1WH32wBju
-         cQiGSzyxtX6etk4kF/xJX369Xoe/m0mtU20AxDYX67dd0OAvwid9yb8BOcZ8RY2MNhi7
-         9tNwf5MVHyNb9eFIvOm68npoPtfssslhBGdyMvK2rJanZr8jOw5PzBqXOKYp6+BBvkWe
-         AtMw==
-X-Gm-Message-State: AOAM531ucla1wRCeFXCMx4fvFqpYCTcUWA3bnJDu5ua2H6Lb3NpCZFoX
-        9mqlDpfZ2UcnGxhKRNM8UoF2+uXoautFLUJPtk0=
-X-Google-Smtp-Source: ABdhPJxAyMOf+0tdFqa4L6QCJYoi99Yp4xMOthZru/m//p1OZVJgjJvBaoTjUcXNoTY2kPSYCsp+IKPQuEpnlaAOK1Y=
-X-Received: by 2002:a50:e696:0:b0:419:998d:5feb with SMTP id
- z22-20020a50e696000000b00419998d5febmr16548918edm.122.1652085917945; Mon, 09
- May 2022 01:45:17 -0700 (PDT)
+        bh=fkNL9UF9gn3bo4ZBmPpkTUdSu1SkuvIXS7tPfz0O7Z4=;
+        b=WxLPzbiNEEJgF+73W19C4piyoT9Rk94USD83uAZjnJuYs2nUh07S0InPXZUHLyiCpd
+         MausihgTOysVgKkhtHJET9/0U6bPQ8cVvL9niJr+fSWDIXrsVHUQpiQlnxyK4X8eznYa
+         Ane25Xviw+lG+sGXOAA1PTeTvDwFh8dxma8mkqkzeuqoUop0+qxFrxQaOUFreiKdxLBs
+         WNVDk3pcJ95iJREWMvUXQhV5X+np8k6SbeAyVS/LnBsvG2Zt+aT5j0Kk+kbQObubeWZf
+         /QE/AJWhTwVfJhqOL5TkW+qTM5D46ua9uNQ0yfg0aMRYPRGbVPpUws7yRmoV98ihQXVo
+         HcDA==
+X-Gm-Message-State: AOAM530QIC5fvJhPjQw17nu8dxVJFC899efiRFKFKFh1KpzqggW5K68T
+        zGPOqArHts7WWXmtLVolm2zqJaGqvKqq6g==
+X-Google-Smtp-Source: ABdhPJziinEhRR9kq9fTEUIXGw1u6VGoI1Xd9iZX4Sdh99qd6a/LWRQP5UPyaQ3eIMyGte0Gtr4rAQ==
+X-Received: by 2002:ac8:578a:0:b0:2e1:a0d2:c3a with SMTP id v10-20020ac8578a000000b002e1a0d20c3amr14075087qta.261.1652086633446;
+        Mon, 09 May 2022 01:57:13 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id cm11-20020a05622a250b00b002f39b99f66fsm7505297qtb.9.2022.05.09.01.57.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 May 2022 01:57:13 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id m128so23647360ybm.5;
+        Mon, 09 May 2022 01:57:12 -0700 (PDT)
+X-Received: by 2002:a25:4506:0:b0:648:cfc2:301d with SMTP id
+ s6-20020a254506000000b00648cfc2301dmr12216717yba.380.1652086632606; Mon, 09
+ May 2022 01:57:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220508185313.2222956-1-colin.foster@in-advantage.com> <20220508185313.2222956-7-colin.foster@in-advantage.com>
-In-Reply-To: <20220508185313.2222956-7-colin.foster@in-advantage.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 9 May 2022 10:44:42 +0200
-Message-ID: <CAHp75VcWWDvakG_OLkTgZYbNeoDH5Bw5U0t-NqmzcYyd44uU_g@mail.gmail.com>
-Subject: Re: [RFC v8 net-next 06/16] pinctrl: microchip-sgpio: add ability to
- be used in a non-mmio configuration
-To:     Colin Foster <colin.foster@in-advantage.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        netdev@vger.kernel.org, Terry Bowman <terry.bowman@amd.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
+References: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220509050953.11005-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20220509050953.11005-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 May 2022 10:57:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW0RF=ESX+WmLTrMYyhQ_M18FVn_g3A83WOe6gBzn19mg@mail.gmail.com>
+Message-ID: <CAMuHMdW0RF=ESX+WmLTrMYyhQ_M18FVn_g3A83WOe6gBzn19mg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: interrupt-controller: Add Renesas
+ RZ/G2L Interrupt Controller
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Lee Jones <lee.jones@linaro.org>
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, May 8, 2022 at 8:53 PM Colin Foster
-<colin.foster@in-advantage.com> wrote:
->
-> There are a few Ocelot chips that can contain SGPIO logic, but can be
-> controlled externally. Specifically the VSC7511, 7512, 7513, and 7514. In
-> the externally controlled configurations these registers are not
-> memory-mapped.
->
-> Add support for these non-memory-mapped configurations.
+Hi Prabhakar,
 
-...
+On Mon, May 9, 2022 at 7:10 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add DT bindings for the Renesas RZ/G2L Interrupt Controller.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> -       regs = devm_platform_ioremap_resource(pdev, 0);
-> -       if (IS_ERR(regs))
-> -               return PTR_ERR(regs);
-> +       regs = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-> +       if (IS_ERR(regs)) {
-> +               /*
-> +                * Fall back to using IORESOURCE_REG, which is possible in an
-> +                * MFD configuration
-> +                */
-> +               res = platform_get_resource(pdev, IORESOURCE_REG, 0);
-> +               if (!res) {
-> +                       dev_err(dev, "Failed to get resource\n");
-> +                       return -ENODEV;
-> +               }
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+> @@ -0,0 +1,131 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/renesas,rzg2l-irqc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +               priv->regs = ocelot_init_regmap_from_resource(dev, res);
-> +       } else {
-> +               priv->regs = devm_regmap_init_mmio(dev, regs, &regmap_config);
-> +       }
->
-> -       priv->regs = devm_regmap_init_mmio(dev, regs, &regmap_config);
->         if (IS_ERR(priv->regs))
->                 return PTR_ERR(priv->regs);
+> +title: Renesas RZ/G2L (and alike SoC's) Interrupt Controller (IA55)
+> +
+> +maintainers:
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> +  - Geert Uytterhoeven <geert+renesas@glider.be>
+> +
+> +description: |
+> +  IA55 performs various interrupt controls including synchronization for the external
+> +  interrupts of NMI, IRQ, and GPIOINT and the interrupts of the built-in peripheral
+> +  interrupts output by each IP. And it notifies the interrupt to the GIC
+> +    - IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI interrupts
+> +    - GPIO pins used as external interrupt input pins, mapped to 32 GIC SPI interrupts
+> +    - NMI edge select (NMI is not treated as NMI exception and supports fall edge and
+> +      stand-up edge detection interrupts)
+> +
+> +allOf:
+> +  - $ref: /schemas/interrupt-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - renesas,r9a07g044-irqc    # RZ/G2L
+> +      - const: renesas,rzg2l-irqc
+> +
+> +  '#interrupt-cells':
+> +    const: 2
 
-This looks like repetition of something you have done in a few
-previous patches. Can you avoid code duplication by introducing a
-corresponding helper function?
+Please document the meaning of the cells.
 
--- 
-With Best Regards,
-Andy Shevchenko
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
