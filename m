@@ -2,95 +2,284 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FF3C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC86C433F5
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 09:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236140AbiEIJQM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 May 2022 05:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34932 "EHLO
+        id S236071AbiEIJQK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 May 2022 05:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237359AbiEII60 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 04:58:26 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 386951FB2CC;
-        Mon,  9 May 2022 01:54:33 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF85F1042;
-        Mon,  9 May 2022 01:54:32 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.3.22])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 203253F66F;
-        Mon,  9 May 2022 01:54:28 -0700 (PDT)
-Date:   Mon, 9 May 2022 09:54:21 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     maz@kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org,
-        Octavian Purdila <octavian.purdila@nxp.com>,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu,
-        catalin.marinas@arm.com, deanbo422@gmail.com, green.hu@gmail.com,
-        guoren@kernel.org, jonas@southpole.se, kernelfans@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        nickhu@andestech.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
-        shorne@gmail.com, stefan.kristiansson@saunalahti.fi,
-        tglx@linutronix.de, tsbogend@alpha.franken.de, vgupta@kernel.org,
-        vladimir.murzin@arm.com, will@kernel.org
-Subject: Re: [PATCH v2 17/17] irq: remove handle_domain_{irq,nmi}()
-Message-ID: <YnjWvbzn8ox+f2Y2@FVFF77S0Q05N>
-References: <20211026092504.27071-1-mark.rutland@arm.com>
- <20211026092504.27071-18-mark.rutland@arm.com>
- <20220506203242.GA1855@wunner.de>
+        with ESMTP id S236381AbiEIJH2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 05:07:28 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F3891D4A01;
+        Mon,  9 May 2022 02:03:34 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id d6so15456964ede.8;
+        Mon, 09 May 2022 02:03:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CUCKrYgDcQ1ovRNlaPi0ouGBWPagl7uuIjCRC+fjjgU=;
+        b=iwyNx79zCyjneqByG4hWPdFpAWnpNfBTGCCL8MHC2ie7qSqt0rFxosc5hNbfqe5uA9
+         EANnHF2Tr2gQGK0dWUjifLqkTCt191jsteGrJTEOxf/pTxUYOpkP9tQryU7nGN2dOVal
+         eBFEP+T0hwqWsM8RbfbrlmURZKwbyGDv0FtCaRCMBEo+loAZll0tM/A1vStsGtPlforY
+         nNshSRxaYeU4ky3Sl9ktxki2AsEXcvuRHfNx7YKenN4if8yGKp4W2TQJqoe9jdRarQ/3
+         XtyWfmbEor0oM/9ma3wZGY9b7cFGO7RSoesgUuVXHz08/1l+lIg7F01kwD72Q3s5e/JO
+         e64g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CUCKrYgDcQ1ovRNlaPi0ouGBWPagl7uuIjCRC+fjjgU=;
+        b=Dkx8+3HsHFR3p6x1l1B/nNq0NWhDyUEeQNLDbzp7WALpPI3jEnltYPd5mbUCtLk2ty
+         JYhZ9cCrXa2QASQiRfOqPTi+vnHeguSZxidA/91oy43PG5fK2oK2TecC+pyMJs1Tj8Ye
+         Y2lbJOmUxA6wq3jC/fGcP4ckxwhm0kRjY0Pv09fqDXLICYQegurkE1orBNQ83NRg30RW
+         pINCEvTJZoU4wXw91VVxzNtLChx81iOS5aw8hGzfpWc/UtqKdPhlHK7dFj0E/3IGJ6tB
+         UTBzamsEqZEjI8xAutSeNPSBdz5Ye/3oqT3tUkfds17x8wZUjPJ8dRifxXgUfVwrJPcx
+         qENg==
+X-Gm-Message-State: AOAM533vLUiU1x/t3iyv05ArtEVadsRzaA/gz6MRc2TBMEnfbBwsdJnV
+        n8Mhyjbh1ucjivdqwLOxlTGAa7FrDNYK+7j8Xmk=
+X-Google-Smtp-Source: ABdhPJzvQXgP0aZCwYzhKA0UAEobSdjZ/pC+3IXCRCcSEQQekkq6YODgbL/1UTXpty2C+UM1Z+oBKG0W+vULZTtwrdI=
+X-Received: by 2002:aa7:d916:0:b0:425:d75f:ae68 with SMTP id
+ a22-20020aa7d916000000b00425d75fae68mr16090053edr.270.1652086998298; Mon, 09
+ May 2022 02:03:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220506203242.GA1855@wunner.de>
+References: <20220508185313.2222956-1-colin.foster@in-advantage.com> <20220508185313.2222956-9-colin.foster@in-advantage.com>
+In-Reply-To: <20220508185313.2222956-9-colin.foster@in-advantage.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 9 May 2022 11:02:42 +0200
+Message-ID: <CAHp75VdnFSP9-D=O3h5L80O19xK7ct6ax6kXGfHEiKe9niktYA@mail.gmail.com>
+Subject: Re: [RFC v8 net-next 08/16] mfd: ocelot: add support for the vsc7512
+ chip via spi
+To:     Colin Foster <colin.foster@in-advantage.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, Terry Bowman <terry.bowman@amd.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, May 06, 2022 at 10:32:42PM +0200, Lukas Wunner wrote:
-> On Tue, Oct 26, 2021 at 10:25:04AM +0100, Mark Rutland wrote:
-> > Now that entry code handles IRQ entry (including setting the IRQ regs)
-> > before calling irqchip code, irqchip code can safely call
-> > generic_handle_domain_irq(), and there's no functional reason for it to
-> > call handle_domain_irq().
-> > 
-> > Let's cement this split of responsibility and remove handle_domain_irq()
-> > entirely, updating irqchip drivers to call generic_handle_domain_irq().
-> > 
-> > For consistency, handle_domain_nmi() is similarly removed and replaced
-> > with a generic_handle_domain_nmi() function which also does not perform
-> > any entry logic.
-> > 
-> > Previously handle_domain_{irq,nmi}() had a WARN_ON() which would fire
-> > when they were called in an inappropriate context. So that we can
-> > identify similar issues going forward, similar WARN_ON_ONCE() logic is
-> > added to the generic_handle_*() functions, and comments are updated for
-> > clarity and consistency.
-> [...]
-> >  int generic_handle_domain_irq(struct irq_domain *domain, unsigned int hwirq)
-> >  {
-> > +	WARN_ON_ONCE(!in_irq());
-> >  	return handle_irq_desc(irq_resolve_mapping(domain, hwirq));
-> >  }
-> >  EXPORT_SYMBOL_GPL(generic_handle_domain_irq);
-> 
-> Why isn't the WARN_ON_ONCE() conditional on handle_enforce_irqctx()?
-> (See handle_irq_desc() and c16816acd086.)
+On Sun, May 8, 2022 at 8:53 PM Colin Foster
+<colin.foster@in-advantage.com> wrote:
+>
+> The VSC7512 is a networking chip that contains several peripherals. Many of
+> these peripherals are currently supported by the VSC7513 and VSC7514 chips,
+> but those run on an internal CPU. The VSC7512 lacks this CPU, and must be
+> controlled externally.
+>
+> Utilize the existing drivers by referencing the chip as an MFD. Add support
+> for the two MDIO buses, the internal phys, pinctrl, and serial GPIO.
 
-I did this for consistency with the in_nmi() check in
-generic_handle_domain_nmi(); I was unaware of commit c16816acd086 and
-IRQD_HANDLE_ENFORCE_IRQCTX.
+...
 
-I'll have ot leave it to Marc and Thomas as to what we should do there.
+> +         If unsure, say N
 
-> I believe the above change causes a regression in drivers/gpio/gpio-dln2.c
-> such that a gratuitous WARN splat is now emitted.
+Seems like an abrupt sentence.
 
-Do you mean you beleive that from inspection, or are you actually seeing this
-go wrong in practice?
+...
 
-If it's the latter, are you able to give a copy of the dmesg splat?
+> +EXPORT_SYMBOL(ocelot_chip_reset);
 
-Thanks,
-Mark.
+Please, switch to the namespace (_NS) variant of the exported-imported
+symbols for these drivers.
+
+...
+
+> +int ocelot_core_init(struct device *dev)
+> +{
+> +       int ret;
+> +
+> +       ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, vsc7512_devs,
+> +                                  ARRAY_SIZE(vsc7512_devs), NULL, 0, NULL);
+> +       if (ret) {
+> +               dev_err(dev, "Failed to add sub-devices: %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+
+Isn't it simple
+
+  return devm_mfd_add_devices(...);
+
+?
+
+> +}
+
+...
+
+> +#include <linux/of.h>
+
+Do you really use this? (See also below).
+
+...
+
+> +#define VSC7512_CPUORG_RES_START       0x71000000
+> +#define VSC7512_CPUORG_RES_SIZE                0x2ff
+
+Doesn't look right.
+I'm expecting to see 0x300 here and -1 where it's needed in the code.
+
+...
+
+> +static const struct regmap_config ocelot_spi_regmap_config = {
+> +       .reg_bits = 24,
+> +       .reg_stride = 4,
+> +       .reg_downshift = 2,
+> +       .val_bits = 32,
+> +
+> +       .write_flag_mask = 0x80,
+
+> +       .max_register = 0xffffffff,
+
+Is it for real?! Have you considered what happens if someone actually
+tries to read all these registers (and for the record it's not a
+theoretical case, since the user may do it via debugfs)?
+
+> +       .use_single_write = true,
+> +       .can_multi_write = false,
+> +
+> +       .reg_format_endian = REGMAP_ENDIAN_BIG,
+> +       .val_format_endian = REGMAP_ENDIAN_NATIVE,
+> +};
+
+...
+
+> +       if (ddata->spi_padding_bytes > 0) {
+
+' > 0' part is redundant.
+
+> +               memset(&padding, 0, sizeof(padding));
+> +
+> +               padding.len = ddata->spi_padding_bytes;
+> +               padding.tx_buf = dummy_buf;
+> +               padding.dummy_data = 1;
+> +
+> +               spi_message_add_tail(&padding, &msg);
+> +       }
+
+...
+
+> +       memcpy(&regmap_config, &ocelot_spi_regmap_config,
+> +              sizeof(ocelot_spi_regmap_config));
+
+sizeof(regmap_config) is a bit safer (in case somebody changes the
+types of the src and dst).
+
+...
+
+> +       err = spi_setup(spi);
+> +       if (err < 0) {
+> +               dev_err(&spi->dev, "Error %d initializing SPI\n", err);
+> +               return err;
+
+return dev_err_probe(...);
+
+> +       }
+...
+
+> +       ddata->cpuorg_regmap =
+> +               ocelot_spi_devm_init_regmap(dev, dev,
+> +                                           &vsc7512_dev_cpuorg_resource);
+
+It's easier to read when it's a longer line. At least the last two can
+be on one line.
+
+...
+
+> +       ddata->gcb_regmap = ocelot_spi_devm_init_regmap(dev, dev,
+> +                                                       &vsc7512_gcb_resource);
+
+Do you have different cases for two first parameters? If not, drop duplication.
+
+...
+
+> +       if (err) {
+> +               dev_err(dev, "Error %d initializing Ocelot SPI bus\n", err);
+> +               return err;
+
+return dev_err_probe(...);
+
+And everywhere else where it's appropriate.
+
+> +       }
+
+...
+
+> +const struct of_device_id ocelot_spi_of_match[] = {
+> +       { .compatible = "mscc,vsc7512_mfd_spi" },
+> +       { },
+
+No comma for terminator entry.
+
+> +};
+
+...
+
+> +               .of_match_table = of_match_ptr(ocelot_spi_of_match),
+
+of_match_ptr() is rather harmful than useful. We have a lot of
+compiler warnings due to misuse of this. Besides that it prevents to
+use driver in non-OF environments (if it is / will be the case).
+
+...
+
+> +/*
+> + * Copyright 2021 Innovative Advantage Inc.
+> + */
+
+One line.
+
+...
+
+> +#include <linux/regmap.h>
+
+I don't see the users of this. Use forward declarations (many of them
+are actually missed).
+
+Also, seems kconfig.h, err.h and errno.h missed.
+
+> +#include <asm/byteorder.h>
+
+> +struct ocelot_ddata {
+> +       struct device *dev;
+> +       struct regmap *gcb_regmap;
+> +       struct regmap *cpuorg_regmap;
+> +       int spi_padding_bytes;
+> +       struct spi_device *spi;
+> +};
+
+...
+
+> +#if IS_ENABLED(CONFIG_MFD_OCELOT)
+> +struct regmap *ocelot_init_regmap_from_resource(struct device *child,
+> +                                               const struct resource *res);
+> +#else
+>  static inline struct regmap *
+>  ocelot_init_regmap_from_resource(struct device *child,
+>                                  const struct resource *res)
+>  {
+>         return ERR_PTR(-EOPNOTSUPP);
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
