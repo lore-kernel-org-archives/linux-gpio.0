@@ -2,128 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE22C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD925C43219
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 09:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236401AbiEIJQR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 May 2022 05:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35032 "EHLO
+        id S236322AbiEIJQP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 May 2022 05:16:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238238AbiEIJNd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 05:13:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84141201EA8;
-        Mon,  9 May 2022 02:09:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B9285B810A6;
-        Mon,  9 May 2022 09:09:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72612C385AB;
-        Mon,  9 May 2022 09:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652087369;
-        bh=rYlTPSQ6FXF7zF9p7LDZTYP/JQglCROOG1/iNS2upeo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fkuJHZv3/usYj/OGKMcXT2qWre9/pHK4qg5n16+A6fFX+IDvUi8SI9RV5GRCWCshT
-         WOZKLk1Y13ZwwbjkGw0qlEfxoSM7yG4L6cvqL0tz5pUhXKX/eXT6GUAvuQxyTtJJne
-         Bx5AuXTil4kjjnugWv8OQJaYJD9DC8tAGIAzbXxipGExl9NWlQGFd7favllpB/NRpN
-         j01O7gs2TjlJiWP9SzMDRzDHYLBR7SKB3NJ8uAkyoTCoH3OhqHlbm35U6YcaUbZKsc
-         /9HtUeroHAVvTdVK4auEZnSnF9hT2mZbP9jd573dccqjDg+HEETQQ0ssMe3zqRjvVW
-         C2n0H3hWWU4RA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nnzOQ-009uuU-VM; Mon, 09 May 2022 10:09:27 +0100
-Date:   Mon, 09 May 2022 10:09:26 +0100
-Message-ID: <87h75z6pix.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Lukas Wunner <lukas@wunner.de>,
+        with ESMTP id S236510AbiEIItU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 04:49:20 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A85871F0DC5;
+        Mon,  9 May 2022 01:45:26 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id g20so15409680edw.6;
+        Mon, 09 May 2022 01:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pACjuUWFJ5GZIbniWMSNPk/IN6wOmnS55W0CKNtZNbk=;
+        b=Ifmf8JI3lGr7NqR25+3ysog33HBpALcK432GUQBzkzQ0BDuRT6oUV6cIXRXot5s1nn
+         D/nobqvlRNRbiCCE7wwNyV+2kAxj1RLdPffHBT4QbVbukqt+Uj9zxt3EG4zEXvFO3PtV
+         4GW75c5lRqwc4bqouS+jO4egMbalASyYHgqEuBuqJYoHnenTe6VRtfneSo/9RYOQRuBz
+         7V+/rspE/7RbYF4N0iVwQRGgJzNo3e9V2jFXgFQyuEA8WVsJ4u+olbEiwy0HHFJUf+ez
+         v83Qcq9QC1UIRd3F++wYpm9zy9+VxV9sjBu0yXQXh7B7KeiWRbh5UBXAY7NIVTo/KcOP
+         cjkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pACjuUWFJ5GZIbniWMSNPk/IN6wOmnS55W0CKNtZNbk=;
+        b=mr61ygtuW0q8moYahNlYr2qQkdZZVZ6k0PlGLkqNIUseG6uQq4/sBmcKdhr9+XURCJ
+         5xCwvA0Cnpseljj/rp3e1BuHYYMtNTX2rUE0p3W/V/N8qPt31zReqOkGkgVbvNy7eJvu
+         Ijj7ReJiDuqx0FavDaxro7mk/qydYX4cCpjp8wASIXxyvl0o2rsOew9SwOl1WH32wBju
+         cQiGSzyxtX6etk4kF/xJX369Xoe/m0mtU20AxDYX67dd0OAvwid9yb8BOcZ8RY2MNhi7
+         9tNwf5MVHyNb9eFIvOm68npoPtfssslhBGdyMvK2rJanZr8jOw5PzBqXOKYp6+BBvkWe
+         AtMw==
+X-Gm-Message-State: AOAM531ucla1wRCeFXCMx4fvFqpYCTcUWA3bnJDu5ua2H6Lb3NpCZFoX
+        9mqlDpfZ2UcnGxhKRNM8UoF2+uXoautFLUJPtk0=
+X-Google-Smtp-Source: ABdhPJxAyMOf+0tdFqa4L6QCJYoi99Yp4xMOthZru/m//p1OZVJgjJvBaoTjUcXNoTY2kPSYCsp+IKPQuEpnlaAOK1Y=
+X-Received: by 2002:a50:e696:0:b0:419:998d:5feb with SMTP id
+ z22-20020a50e696000000b00419998d5febmr16548918edm.122.1652085917945; Mon, 09
+ May 2022 01:45:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220508185313.2222956-1-colin.foster@in-advantage.com> <20220508185313.2222956-7-colin.foster@in-advantage.com>
+In-Reply-To: <20220508185313.2222956-7-colin.foster@in-advantage.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 9 May 2022 10:44:42 +0200
+Message-ID: <CAHp75VcWWDvakG_OLkTgZYbNeoDH5Bw5U0t-NqmzcYyd44uU_g@mail.gmail.com>
+Subject: Re: [RFC v8 net-next 06/16] pinctrl: microchip-sgpio: add ability to
+ be used in a non-mmio configuration
+To:     Colin Foster <colin.foster@in-advantage.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, Terry Bowman <terry.bowman@amd.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org,
-        Octavian Purdila <octavian.purdila@nxp.com>,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu,
-        catalin.marinas@arm.com, deanbo422@gmail.com, green.hu@gmail.com,
-        guoren@kernel.org, jonas@southpole.se, kernelfans@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        nickhu@andestech.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
-        shorne@gmail.com, stefan.kristiansson@saunalahti.fi,
-        tglx@linutronix.de, tsbogend@alpha.franken.de, vgupta@kernel.org,
-        vladimir.murzin@arm.com, will@kernel.org
-Subject: Re: [PATCH v2 17/17] irq: remove handle_domain_{irq,nmi}()
-In-Reply-To: <YnjWvbzn8ox+f2Y2@FVFF77S0Q05N>
-References: <20211026092504.27071-1-mark.rutland@arm.com>
-        <20211026092504.27071-18-mark.rutland@arm.com>
-        <20220506203242.GA1855@wunner.de>
-        <YnjWvbzn8ox+f2Y2@FVFF77S0Q05N>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: mark.rutland@arm.com, lukas@wunner.de, linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org, octavian.purdila@nxp.com, linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu, catalin.marinas@arm.com, deanbo422@gmail.com, green.hu@gmail.com, guoren@kernel.org, jonas@southpole.se, kernelfans@gmail.com, linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk, nickhu@andestech.com, palmer@dabbelt.com, paul.walmsley@sifive.com, shorne@gmail.com, stefan.kristiansson@saunalahti.fi, tglx@linutronix.de, tsbogend@alpha.franken.de, vgupta@kernel.org, vladimir.murzin@arm.com, will@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        Russell King <linux@armlinux.org.uk>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 09 May 2022 09:54:21 +0100,
-Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> On Fri, May 06, 2022 at 10:32:42PM +0200, Lukas Wunner wrote:
-> > On Tue, Oct 26, 2021 at 10:25:04AM +0100, Mark Rutland wrote:
-> > > Now that entry code handles IRQ entry (including setting the IRQ regs)
-> > > before calling irqchip code, irqchip code can safely call
-> > > generic_handle_domain_irq(), and there's no functional reason for it to
-> > > call handle_domain_irq().
-> > > 
-> > > Let's cement this split of responsibility and remove handle_domain_irq()
-> > > entirely, updating irqchip drivers to call generic_handle_domain_irq().
-> > > 
-> > > For consistency, handle_domain_nmi() is similarly removed and replaced
-> > > with a generic_handle_domain_nmi() function which also does not perform
-> > > any entry logic.
-> > > 
-> > > Previously handle_domain_{irq,nmi}() had a WARN_ON() which would fire
-> > > when they were called in an inappropriate context. So that we can
-> > > identify similar issues going forward, similar WARN_ON_ONCE() logic is
-> > > added to the generic_handle_*() functions, and comments are updated for
-> > > clarity and consistency.
-> > [...]
-> > >  int generic_handle_domain_irq(struct irq_domain *domain, unsigned int hwirq)
-> > >  {
-> > > +	WARN_ON_ONCE(!in_irq());
-> > >  	return handle_irq_desc(irq_resolve_mapping(domain, hwirq));
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(generic_handle_domain_irq);
-> > 
-> > Why isn't the WARN_ON_ONCE() conditional on handle_enforce_irqctx()?
-> > (See handle_irq_desc() and c16816acd086.)
-> 
-> I did this for consistency with the in_nmi() check in
-> generic_handle_domain_nmi(); I was unaware of commit c16816acd086 and
-> IRQD_HANDLE_ENFORCE_IRQCTX.
-> 
-> I'll have ot leave it to Marc and Thomas as to what we should do there.
+On Sun, May 8, 2022 at 8:53 PM Colin Foster
+<colin.foster@in-advantage.com> wrote:
+>
+> There are a few Ocelot chips that can contain SGPIO logic, but can be
+> controlled externally. Specifically the VSC7511, 7512, 7513, and 7514. In
+> the externally controlled configurations these registers are not
+> memory-mapped.
+>
+> Add support for these non-memory-mapped configurations.
 
-My preference would be to not introduce things that result in
-different behaviours for drivers, specially for things that are
-evidently cross-architecture such as USB drivers (which seems to be
-the case here).
+...
 
-I'd rather do something that allows these to be handled in the right
-context such as a self-IPI. This would certainly work for the GIC. No
-idea whether this is valid for x86, which is the other user.
+> -       regs = devm_platform_ioremap_resource(pdev, 0);
+> -       if (IS_ERR(regs))
+> -               return PTR_ERR(regs);
+> +       regs = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+> +       if (IS_ERR(regs)) {
+> +               /*
+> +                * Fall back to using IORESOURCE_REG, which is possible in an
+> +                * MFD configuration
+> +                */
+> +               res = platform_get_resource(pdev, IORESOURCE_REG, 0);
+> +               if (!res) {
+> +                       dev_err(dev, "Failed to get resource\n");
+> +                       return -ENODEV;
+> +               }
+> +
+> +               priv->regs = ocelot_init_regmap_from_resource(dev, res);
+> +       } else {
+> +               priv->regs = devm_regmap_init_mmio(dev, regs, &regmap_config);
+> +       }
+>
+> -       priv->regs = devm_regmap_init_mmio(dev, regs, &regmap_config);
+>         if (IS_ERR(priv->regs))
+>                 return PTR_ERR(priv->regs);
 
-Thanks,
-
-	M.
-
+This looks like repetition of something you have done in a few
+previous patches. Can you avoid code duplication by introducing a
+corresponding helper function?
 
 -- 
-Without deviation from the norm, progress is not possible.
+With Best Regards,
+Andy Shevchenko
