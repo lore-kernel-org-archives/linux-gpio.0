@@ -2,112 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3FDC433EF
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 May 2022 21:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55223C433F5
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 05:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232963AbiEHVSm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 8 May 2022 17:18:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43690 "EHLO
+        id S230473AbiEIFRr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 May 2022 01:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiEHVSm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 May 2022 17:18:42 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87CE1765F;
-        Sun,  8 May 2022 14:14:50 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id g23so14195257edy.13;
-        Sun, 08 May 2022 14:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w+wW2j4Qi2ZhKYtEoYitFu0KdkNdZFsS+kowU+VfreY=;
-        b=Wj4XjWI2kf1xIO5YfBwwdg2vdJWpb1sNLQhpYx1yxsTqitNWCVQ5/Kb65yVMFm5coF
-         Mu8rT6p6VeemiMfz28Aw4L+MoYBvc4sU+5ESTP50bzMSQjPe+W5W0J61hV6cA05+0KG4
-         W+LUm4H2iFJ3qf4CHWPu+iTCKRXJKY1jDbCKFtsHBK6pLOaXXterBldefbbTAJJ9syx8
-         ffu5FuTqyUsL6bqL1Hm+bbX/q3vnW4zaLw9nmI8HvNrNWQ0HRP3AFhRuLcjP/jBne3O+
-         CmNFjgj09fq4+lsny6mVR78KIS/FtEdGZ2Yhm07WUkkwNyTtilEQkmW97TQWJ9/u8WkR
-         cCcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w+wW2j4Qi2ZhKYtEoYitFu0KdkNdZFsS+kowU+VfreY=;
-        b=LrJe8Sn6eHlN+z334h+68Gl4vV4KRJ+fbECmX3FXg8R3z6h9crzM990pneL+YCGBL6
-         Yftm8Etl6XLFi9Zm4lb3EM6KL3XRz+1b/rTmZxROdpK2JNtHJRnwCh7Do8ARdS/6FSm9
-         w4TnHhBYfZwf66RRXjizc2DCvTySzqYWbZuduNeKGQ6HH4dw8D2rnWCrHAagR7+z7Adh
-         XHuXQGV/TjzLaxJ06dZbu0u/1Md9kjyHbzSEibzKJo9krP6VWt5ooiKDMbL8toE2sJGI
-         rxSQDgf+S8oH8lH2qws9VbyPAOWT5zA1detYenfKxD5/QpL3Xtges8Zc97Pbb9b1CIA6
-         +W3Q==
-X-Gm-Message-State: AOAM532Rtoou9YURBMCzmmU6OROoFij8lSysyhEeDMi2L72npyuNJh24
-        zwtQfS+/5YK17sOHrggvoShRmmTGxtteCb9Jw7s=
-X-Google-Smtp-Source: ABdhPJyoW50uF0WrtGrEbHbI9iwmrV+S8/zNPOIFMyKSdKez42MdNCM8dpOaAKhXpe/Sf/uREYeC+0buKxPavuthygY=
-X-Received: by 2002:a05:6402:1d4c:b0:427:d1f5:3a41 with SMTP id
- dz12-20020a0564021d4c00b00427d1f53a41mr14079196edb.218.1652044488894; Sun, 08
- May 2022 14:14:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220508185313.2222956-1-colin.foster@in-advantage.com> <20220508185313.2222956-5-colin.foster@in-advantage.com>
-In-Reply-To: <20220508185313.2222956-5-colin.foster@in-advantage.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 8 May 2022 23:14:12 +0200
-Message-ID: <CAHp75VdAE70EbAyuPXFQPLq+4E_Bj+8VbmY7amEB7TFB=U5HZQ@mail.gmail.com>
-Subject: Re: [RFC v8 net-next 04/16] net: mdio: mscc-miim: add ability to be
- used in a non-mmio configuration
-To:     Colin Foster <colin.foster@in-advantage.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        netdev@vger.kernel.org, Terry Bowman <terry.bowman@amd.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
+        with ESMTP id S234422AbiEIFO3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 01:14:29 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C60CF2F8;
+        Sun,  8 May 2022 22:10:35 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,210,1647270000"; 
+   d="scan'208";a="119072773"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 09 May 2022 14:10:35 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 84CB040083F7;
+        Mon,  9 May 2022 14:10:30 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 3/5] gpio: gpiolib: Allow free() callback to be overridden
+Date:   Mon,  9 May 2022 06:09:51 +0100
+Message-Id: <20220509050953.11005-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, May 8, 2022 at 8:53 PM Colin Foster
-<colin.foster@in-advantage.com> wrote:
->
-> There are a few Ocelot chips that contain the logic for this bus, but are
-> controlled externally. Specifically the VSC7511, 7512, 7513, and 7514. In
-> the externally controlled configurations these registers are not
-> memory-mapped.
->
-> Add support for these non-memory-mapped configurations.
+Allow free() callback to be overridden from irq_domain_ops for
+hierarchical chips.
 
-...
+This allows drivers to free any resources which are allocated during
+populate_parent_alloc_arg().
 
-> +               res = platform_get_resource(pdev, IORESOURCE_REG, 0);
-> +               if (!res) {
-> +                       dev_err(dev, "Unable to get MIIM resource\n");
-> +                       return -ENODEV;
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/gpio/gpiolib.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-return dev_err_probe(...); ?
-
-> +               }
-
-...
-
-> +       if (IS_ERR(phy_regmap)) {
-> +               dev_err(dev, "Unable to create phy register regmap\n");
-> +               return PTR_ERR(phy_regmap);
-
-Ditto.
-
->         }
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index b7694171655c..7be01c70ee4e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1187,15 +1187,18 @@ static void gpiochip_hierarchy_setup_domain_ops(struct irq_domain_ops *ops)
+ 	ops->activate = gpiochip_irq_domain_activate;
+ 	ops->deactivate = gpiochip_irq_domain_deactivate;
+ 	ops->alloc = gpiochip_hierarchy_irq_domain_alloc;
+-	ops->free = irq_domain_free_irqs_common;
+ 
+ 	/*
+-	 * We only allow overriding the translate() function for
++	 * We only allow overriding the translate() and free() function for
+ 	 * hierarchical chips, and this should only be done if the user
+-	 * really need something other than 1:1 translation.
++	 * really need something other than 1:1 translation for translate()
++	 * callback and free if user wants to free up any resources which
++	 * were allocated during callbacks for example populate_parent_alloc_arg.
+ 	 */
+ 	if (!ops->translate)
+ 		ops->translate = gpiochip_hierarchy_irq_domain_translate;
++	if (!ops->free)
++		ops->free = irq_domain_free_irqs_common;
+ }
+ 
+ static int gpiochip_hierarchy_add_domain(struct gpio_chip *gc)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1
+
