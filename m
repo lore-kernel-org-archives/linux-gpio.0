@@ -2,155 +2,122 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08051C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 17:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB358C433F5
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 18:34:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239915AbiEISCN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 May 2022 14:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55242 "EHLO
+        id S240204AbiEISiq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 May 2022 14:38:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239971AbiEISCM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 14:02:12 -0400
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-eopbgr150057.outbound.protection.outlook.com [40.107.15.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B8D220791C;
-        Mon,  9 May 2022 10:58:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K7S5JFQhFlS2eZTQGnF0NmaRx3OQvZcTRh7RK5bWLHZaIU6yxRmuHbjWJldA/CDq0iEnLINOMy87lbgOLHK33O7u/f1CGPX+YTGr0k2ma/efCmwQ8TqPI0LYjUiVW2VaGDnctV/1FyDpJ7gwIvmSxr9WdWXzEeQlJBZZg+ctsrhgunrU88Cj2yhc2wS8y4NyRoa/JJV9fNaIgZo1lcVjIoqWfxYNLx9V+qlEKpUeXSwZxj0krWwvtckc3vsKTlAOZ/I0HXNSgcOkQbbg9q2/Rlv5xZgrWoNbfr6ea3ERi0tNCbKj8sV9Fg8pCZFLRx5wzHtdQmdaPKHIfjpm3kz8kw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KaEFp+yrAVaoEBiiwOPVgyIa9O9dQ/eJ2RwdwCaugPM=;
- b=Q0YCJdD6QmqplDwHLEsFz8dY4sgdM0fJ8RiAjv6F1Hu2Lko1P1EdXiybOWEtCWRGCY0Uyz5o5/YjysFzB80B58xI9cMhEbQiTeNptp0e2O6S4MvJqP2Aazb/zMyNwVpIoTcw6rm4JpLPE2ff36QvNoKdx4b3ZEpmdkLzTUBMxXMqgbXiCgXLQSZNsVGGxFyHAxI7+3KkBjfQlezE3L8MCcVNHtH9Y4EaGiCMZxsBD8ibXvf5obvFrSfNBURQxa9GOTJrLLWGaU+ORpZBvjZrVw1HhaqKXfHEEAgNMkRZqjdmzSQtN9B03j/GlCgg3MqmJGuhR5c8aPvnVWeuCl74mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KaEFp+yrAVaoEBiiwOPVgyIa9O9dQ/eJ2RwdwCaugPM=;
- b=rutXl+thx/Gj7vs66xih4XOHm6iQSVd4NL1+bn32Dv9ec29KJJ12hrgloq7WLpJUQkY471i4kcLO5v+YBmtexm8PnR889Lm7yrD5WXoXqTEVFZbBdorZHNTE5njz2HYwhEtYhT3FCXScbeNGt3K3db/bZTsSTZNwMKY5jqSIWSE=
-Received: from AM0PR04MB5121.eurprd04.prod.outlook.com (2603:10a6:208:c1::16)
- by AM0PR04MB4595.eurprd04.prod.outlook.com (2603:10a6:208:72::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.21; Mon, 9 May
- 2022 17:58:07 +0000
-Received: from AM0PR04MB5121.eurprd04.prod.outlook.com
- ([fe80::d42:c23c:780e:78eb]) by AM0PR04MB5121.eurprd04.prod.outlook.com
- ([fe80::d42:c23c:780e:78eb%4]) with mapi id 15.20.5227.022; Mon, 9 May 2022
- 17:58:07 +0000
-From:   Vladimir Oltean <vladimir.oltean@nxp.com>
-To:     Colin Foster <colin.foster@in-advantage.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Terry Bowman <terry.bowman@amd.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
+        with ESMTP id S240185AbiEISio (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 14:38:44 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 133E46A017;
+        Mon,  9 May 2022 11:34:50 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id h29so25357931lfj.2;
+        Mon, 09 May 2022 11:34:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=udQyw+DhWCn+rKR8KsicvB5NUKY/PggLFMaO+ooAS+E=;
+        b=LkkY77gEBT77IYxp9bRLSLV3T+LCjFGAtTs8aU6JncwwAGh5tNM1r0duXSnSkx5JOC
+         wIlw81feNeZB2TcLX7n3jbx57S+2xtilSHVdX8P0fwA7AGdNa8dPqJGCrb7ygCsz5hOD
+         ySJyVtfqspC+nCaWdMPC8MmObsCrLn4Eky9tIpkxKB+VpcmaebYEXO5iG3blL/Af8RAN
+         xc+LUluyUWi5Xlsqoc0Dns/ziPhuUbooMa61M9Wd1dsICWCRx1zxu1CFAxVM2k+tWvUM
+         J0HJiTDTJ6+PopEzHlwCFHKrU7qM6gQM5+9V105fPf8GqkzIxyx5TsalNuqSC4dBdFS+
+         GxvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=udQyw+DhWCn+rKR8KsicvB5NUKY/PggLFMaO+ooAS+E=;
+        b=NBEbDceLm4BEENKR3O5mEfbDeWdX4WlpMaoXqEjo/5uLoXRayC5mZEcNkQ8IQb6sJ7
+         HViwSFVfpNXGFPJZITyMVCoD4YEwsoVeawPMzBg767svqOp73lkLAcPvkEfDSZxJ5+ul
+         bBrIqKf9mks0sHdgXCangNTq47Nl2ArHemcYHRZdRCD4muLUiLe16oCgoazqy2bq5F5y
+         Zc40zOBU2hLpU/n3tsk3OX9B9VXEWz9zy1yvhGkpPS9S60hsmIgodUN1V7Kyf32Dys0U
+         OMqUvp0tcRPnzfJHrp1T+vnlAh52Eplj043QiycBwLbxS4lhXq4ykBTw2thOpqozlqt+
+         y7mQ==
+X-Gm-Message-State: AOAM533uUMXXSGNfqh/MPJtQ8jZVIfguyIkfPpQtQzfaEYAzZyyESffA
+        uIhp4DSx9hH6oNDgT2KjGSI=
+X-Google-Smtp-Source: ABdhPJzbP4BJRcGFlfs9fuWO/TIfRn/IPBGJNw6wigGxQ2vRVKCffAuRVtUnsXnIIb61VYQxe/qeng==
+X-Received: by 2002:a05:6512:b1c:b0:474:193a:755c with SMTP id w28-20020a0565120b1c00b00474193a755cmr8301046lfu.340.1652121288278;
+        Mon, 09 May 2022 11:34:48 -0700 (PDT)
+Received: from [192.168.1.103] ([178.176.75.57])
+        by smtp.gmail.com with ESMTPSA id c2-20020a05651200c200b0047255d211ebsm2007062lfp.282.2022.05.09.11.34.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 May 2022 11:34:47 -0700 (PDT)
+Subject: Re: [PATCH v2 3/5] gpio: gpiolib: Allow free() callback to be
+ overridden
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC v8 net-next 15/16] net: dsa: felix: add phylink_get_caps
- capability
-Thread-Topic: [RFC v8 net-next 15/16] net: dsa: felix: add phylink_get_caps
- capability
-Thread-Index: AQHYYwz+Nv3GsOP+t02gQrIoyWAlJK0WWrEAgADnkAD//4yZgIAAfF6A//+LWQA=
-Date:   Mon, 9 May 2022 17:58:07 +0000
-Message-ID: <20220509175806.osytlqnrri6t3g6r@skbuf>
-References: <20220508185313.2222956-1-colin.foster@in-advantage.com>
- <20220508185313.2222956-16-colin.foster@in-advantage.com>
- <20220509103444.bg6g6wt6mxohi2vm@skbuf>
- <20220510002332.GF895@COLIN-DESKTOP1.localdomain>
- <20220509173029.xkwajrngvejkyjzs@skbuf>
- <20220510005537.GH895@COLIN-DESKTOP1.localdomain>
-In-Reply-To: <20220510005537.GH895@COLIN-DESKTOP1.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6c21b2d9-4913-4931-7636-08da31e5792a
-x-ms-traffictypediagnostic: AM0PR04MB4595:EE_
-x-microsoft-antispam-prvs: <AM0PR04MB4595AF75BCBE8D52F961CD61E0C69@AM0PR04MB4595.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NtKeLHigHJPPKmCEb+yMjcn5cBo0rjffcGAq0+upLjWED2m+CQHfqfVe1+2G9qMpaWfNxxxehqaAZ5ppM0LWS+HT2RgY0/KKFBa96vdGzuTE89jax/+z85KUFHBA5S/CgFhfsbVdkc4u0QgPpe0H8AhGWRGgWZBFSG7bQ2fLCdj8Hl4B3aYqIlNgjO4JYu75c5R/lYfPr/XM58mCBXEY9lC5wcrif2spfKklu37cCufKo62l6YWq5LNjfkjAS5+Xs/UziVPuGNRc2CoiD7xEPeq9fbUp9koXecmQmLSrK++AF1RyTRdVThC6s93gaw0xh7TPz/hSISKNxdX/JwMAYpcuXGf4tUlI/5K68dJFwTTEu+ddfkkdMqC99BMooim7ffIuZH57l/YBLOaf/MqZd8XpN1TIhNiMB3pPWsUoBKAv9PH9YhO4PW/866FxM9ccGbN6/tdJIb/D1N0OGv4Pgu0mbFEQo8o+BAelB+5NKY5SjQ16FiORAsR52XXlRpwOZkVS98SgfQ515545w7GUNsmTMrlKtBx4naaV/Gl6AUDBy1H40hR23qkAlRPPqfKlmqsYukxVrfwBFOeFsLbuEvhWs6beFDaLLlP274+FIY8MFYhxnccgEj3MGjoiNRFdEvS/i9Pc3OWUsOzuOlFhlj59wr+Wykary11OFPxYEf9JI1VB9iJKwWylcT7ZlfjkyqQGjV8nw5m9LeOKOMmtZA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB5121.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(8676002)(54906003)(76116006)(66946007)(66556008)(64756008)(4326008)(2906002)(6916009)(66446008)(6486002)(508600001)(86362001)(38100700002)(316002)(122000001)(38070700005)(71200400001)(83380400001)(8936002)(6512007)(33716001)(7416002)(1076003)(5660300002)(44832011)(4744005)(9686003)(26005)(186003)(6506007)(66476007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0Bq9ba0GmfqimE7IatOf1LPDxDeRcl8SbnNOBJEuCT6Belg/TWuIQYkkM+8W?=
- =?us-ascii?Q?vHDByFrd8t65knZDZkwtaQkyUQIKox5COvvE4o8xS+/2o2qnfs3im9YzGYdW?=
- =?us-ascii?Q?2yruEYOjO4jfVZZ8dQD2BlH/YaG91CrjF94DXhs9zPfUvwiP2k1XHSSp3EA5?=
- =?us-ascii?Q?9kZqrFF3TOCMPA3xN5v+INZi3z/XAlx+GOJ8JgvXS1byqecopXXJl01oERB1?=
- =?us-ascii?Q?I3NwNZoGTisn8Qu8TuZhUxl30Smk8qOgXZjNwSwDMjNjXWaPTqNKNyKDVQCO?=
- =?us-ascii?Q?TShyX5fAtQIDfj1Cz6MpGPLO5gYSuMNHMTPaSXj/wH2Iz/O819wV3nYUDTST?=
- =?us-ascii?Q?WZB6LYNGSQHzYlDtBON43snSylVv2Ukca2bU5N4Bsmdb4tTILCt9gMkUt0Dx?=
- =?us-ascii?Q?hNc8xJvHgTsIFL2WBixc9MFPO/dO25h/RO54Bc0WZVK557ZmBBSwfNIogbFk?=
- =?us-ascii?Q?FLAmu797cwIyV0RaKbiffguxpMf/MaUVZ5oVtsZFXGYpAEVSSox943ATRfTq?=
- =?us-ascii?Q?IB23fIAzsGy8IJBAqPo6MoGyJQt8pyXd1RWsqdN3zKb0m0yfbqlKy7CFAKvE?=
- =?us-ascii?Q?uHOWNEBEd/U56Ho9Wo3vvavNo43NvFUV4HX51Fpaat2VZZo4yUvS2igNdH7B?=
- =?us-ascii?Q?dKIJGQ0PjW2gqfOYkYJoGaZfGvNnID8IMoNE1lF36WRWDhBRyApHjHTTuw9t?=
- =?us-ascii?Q?fAiOoysro0EKMnU5/T99qrnhcuai7iLhblQNrhmKux/YOkoDy/VxIRXMtk0/?=
- =?us-ascii?Q?cKSJiiMxtS72cT1nrOc216kU+tFM4Dfp//fL2iOoENiKWJ1k7F6BdBkl4dzC?=
- =?us-ascii?Q?CJ481MgWNJEPL4X3AUutZTwB9sDgZFyo9/bKnZ9L+uWbuczaao3tRSRWgo9d?=
- =?us-ascii?Q?qRAA05a5mSIa0ZSUavWW/7cI9f/ErBIV4sQm0gxjQffKek0pFOXtOw6EBk0O?=
- =?us-ascii?Q?d2yAPqCRT/j3G4goIb7GdC2oXBua9C/bnnXXCltVaUTIs4ynFaxYUv/9sOH7?=
- =?us-ascii?Q?AEKmrHs2o0AoIqI1PMVjtG4VcGXivxE5FHdzCOX3b/obrzb+zItHo9tMOfB+?=
- =?us-ascii?Q?3OelRDANzg/HT6CJByvOaaiIyLLmJ8+yGcM3/yLUB2NaQoknxM2TXotAQIYi?=
- =?us-ascii?Q?Cxi5rfJzpM1dMvbPQtfxYO4d5IxuRp12vyyPRxdP4Z4y4Wr/tyGbxeA1UBlc?=
- =?us-ascii?Q?N1jAT/SiicN6aUqVgS5B457exVbIebJwu+w/5QTPaHMkMjARZCeq69y6u08a?=
- =?us-ascii?Q?eDchYwtFv7AXJxLDdEm/EbilBcCLrWLgp5JRfU4PkGlVaodAB2/fpaQ5pt9Y?=
- =?us-ascii?Q?Cn8Diy+Z7eQZMTdkXf5xobjORDCGd4gkdTwJ4+qcnDf40ujsNUHfcZKnIGCQ?=
- =?us-ascii?Q?GbTo4KwFQMi4azuKxH+ydxaWktgS5mvOwpCWg7Kx4ksa9Mivj2eOSGRLpeH0?=
- =?us-ascii?Q?erKH3kBlV2fpeXdFO+73XMIaij6pvh63jDXgF6cy5EQ/sc6xMtJGdk8lMqjP?=
- =?us-ascii?Q?8SicNLUgLd1I941NKilbclrrMp2+BMBPLZc4vK3b7rFPP7Ks6/pnF461x1lu?=
- =?us-ascii?Q?oMHgjCqIMWKaHyGbOfPiGuQTPS21gpvnGm2KoT248DEUIj2b75kPXPk4Jsx2?=
- =?us-ascii?Q?n0N+LP0aaHwZRrsR6Rv7OsVCtKIpTHuFQcDER/S2a7wQeY3T53Ooy1BxI+uo?=
- =?us-ascii?Q?O1udxvnIgE4ocvzZKaWHVMkg5uYbnYOtso6ywCLV/YyUxX7WtSEK5H7yDSRc?=
- =?us-ascii?Q?BuKCKHOV6UVzxYS63Od2blVX3igfCPI=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C409FDC4BB55534AB60613437489AD78@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+References: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220509050953.11005-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <6eeaf18c-ac3d-1c1d-eb79-92bc508ce03c@gmail.com>
+Date:   Mon, 9 May 2022 21:34:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB5121.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c21b2d9-4913-4931-7636-08da31e5792a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2022 17:58:07.6131
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: T5BjKnclOYZEMcWkGOTnyZ+pe7lxY6cyv7RXD6UwIX38jd2mMUQKu6kSqNHw0IKeh33YEqPXrLRONk17DTiFig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4595
+In-Reply-To: <20220509050953.11005-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, May 09, 2022 at 05:55:37PM -0700, Colin Foster wrote:
-> Hmm... So the main reason I needed get_caps was because
-> phylink_generic_validate looks at mac_capabilities. I know I'll have to
-> deal with supported_interfaces once I finally get the other four ports
-> working, but for now the main purpose of this patch is to allow me to
-> populate the mac_capabilities entry for phylink_generic_validate.
->=20
-> Aside from ensuring legacy_pre_march2020 =3D false, I feel like the rest
-> of the patch makes sense.
+Hello!
 
-But still. Just populate mac_capabilities for everybody in the common
-felix_phylink_get_caps(), and use the generic phylink validation only
-for your driver.=
+On 5/9/22 8:09 AM, Lad Prabhakar wrote:
+
+> Allow free() callback to be overridden from irq_domain_ops for
+> hierarchical chips.
+> 
+> This allows drivers to free any resources which are allocated during
+> populate_parent_alloc_arg().
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/gpio/gpiolib.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index b7694171655c..7be01c70ee4e 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1187,15 +1187,18 @@ static void gpiochip_hierarchy_setup_domain_ops(struct irq_domain_ops *ops)
+>  	ops->activate = gpiochip_irq_domain_activate;
+>  	ops->deactivate = gpiochip_irq_domain_deactivate;
+>  	ops->alloc = gpiochip_hierarchy_irq_domain_alloc;
+> -	ops->free = irq_domain_free_irqs_common;
+>  
+>  	/*
+> -	 * We only allow overriding the translate() function for
+> +	 * We only allow overriding the translate() and free() function for
+
+   Functions now?
+
+>  	 * hierarchical chips, and this should only be done if the user
+> -	 * really need something other than 1:1 translation.
+> +	 * really need something other than 1:1 translation for translate()
+> +	 * callback and free if user wants to free up any resources which
+> +	 * were allocated during callbacks for example populate_parent_alloc_arg.
+                                          ^ need comma here?
+
+[...]
+
+MBR, Sergey
