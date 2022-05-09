@@ -2,173 +2,84 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE934C4167D
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 09:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D64C43219
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 May 2022 09:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236744AbiEIJQS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 May 2022 05:16:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39676 "EHLO
+        id S229946AbiEIJxC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 May 2022 05:53:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238319AbiEIJOR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 05:14:17 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD9321572B;
-        Mon,  9 May 2022 02:10:24 -0700 (PDT)
-Received: by mail-qk1-f180.google.com with SMTP id z126so10288762qkb.2;
-        Mon, 09 May 2022 02:10:24 -0700 (PDT)
+        with ESMTP id S238203AbiEIJpd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2022 05:45:33 -0400
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707DD27161;
+        Mon,  9 May 2022 02:41:36 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso10440034wma.0;
+        Mon, 09 May 2022 02:41:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CgQLbQVdIN14SPt3YzwHXDrfh8JRKAmJocLk5KwR+yk=;
-        b=CoM3Jn0gY4RTQLUh5mul6q4k1LbmPG7Xf2bLFJAhTx7kGLie8eWTqnko4hlHCMDCiy
-         0zo+vLGC3IALXPbB5lWNjV3SXDjJmoMuFUt9daucrQQ5028/LA4qxs8velATTuGiH3W0
-         65x38TBN5dfliT4mPQRDZXLsEub292mzuYA8xCaho8SOVyK2FGBHNpWCe9Rg87HVl9lC
-         rbNiTm728F5F+SoqirChKn5S7qRR7lMBWcP2C0uEtjGGUUrTpBQHPulSakNWA5YwX9Az
-         whINVSLUA9B9AB0o/gMRHKpPzrdUa+U/bHb/JqCxpt2OjrE3Zuiz+eYckHhtqpPa8+c2
-         GUXA==
-X-Gm-Message-State: AOAM530xVfcw4GbNgMdzlaTn6SBby29Vra/bJZCYfNIpoIXr23XESmQb
-        hnS2MJgz3ivBXS1+Y/cWZQB0a/WNVKAnzw==
-X-Google-Smtp-Source: ABdhPJxdc3uoOtr8jzAZ5g6dgVL6PCn7gBiAhbUBMVoPz6Umt8CKVTgCfE51/93MENuFL2EYnUzhog==
-X-Received: by 2002:a05:620a:444e:b0:6a0:68da:2105 with SMTP id w14-20020a05620a444e00b006a068da2105mr5045212qkp.366.1652087423153;
-        Mon, 09 May 2022 02:10:23 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id d5-20020ae9ef05000000b0069fc13ce1ebsm6504891qkg.28.2022.05.09.02.10.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 May 2022 02:10:22 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-2f7b815ac06so136900937b3.3;
-        Mon, 09 May 2022 02:10:22 -0700 (PDT)
-X-Received: by 2002:a81:547:0:b0:2f8:6e8:19d7 with SMTP id 68-20020a810547000000b002f806e819d7mr13589711ywf.383.1652087422113;
- Mon, 09 May 2022 02:10:22 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MIo4iJaNWWiT8L0aREHccyFQKBU+YIpBaS+29bvc/oc=;
+        b=CljfGAPOH+8alNnaPgQ/ZfOeWWCyDXqWHuFhGjBWPlxXe37Lt6k538+7qYpiz24Uxh
+         wwCnpfootpzp2ttGz1SYDaY7+99KCpsz+fl5o1BG5x26uGCJl7WBi9pFJjh8xxmFF4A6
+         sfeVUHaFyqhkPTbuggUYfTosqoZ22ySb3B/8IkPYFoX6Dn/pwD0bemYob/2cu7I+NfHi
+         D424KCaeTqVKYsMI1omxqI3JViqArtz2hVFrQUv0MNcYF+W/ts0rP9ccBbXprFueBxqw
+         Vtall6hKoE7EYpGehq4xKEj3ijfm1tt/d1HlyDySG+5W0tIiDYhmM5WRzmDIlec7zksg
+         pRvQ==
+X-Gm-Message-State: AOAM533KIFwgy+QVhvkpxh3AYNikqIrIyQ27BWhMOFcfuqzwOeS77UP1
+        /bOyxv5AlGam4Z60i8hhRaI=
+X-Google-Smtp-Source: ABdhPJz/KKcTrgbBKiQDbLem0UVallm03r9n1V5yq/fpMjCoclkduFXgbKOowrI9BpO7enF+NSOlDA==
+X-Received: by 2002:a7b:c4c8:0:b0:394:26c5:b79e with SMTP id g8-20020a7bc4c8000000b0039426c5b79emr15176076wmk.15.1652089180818;
+        Mon, 09 May 2022 02:39:40 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
+        by smtp.gmail.com with ESMTPSA id w7-20020adfee47000000b0020c5253d8efsm10503017wro.59.2022.05.09.02.39.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 May 2022 02:39:40 -0700 (PDT)
+Date:   Mon, 9 May 2022 09:39:38 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        kunit-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, live-patching@vger.kernel.org,
+        Wei Liu <wei.liu@kernel.org>
+Subject: Re: [PATCH v6 00/23] Rust support
+Message-ID: <20220509093938.fdrh5hhhreqi46wn@liuwe-devbox-debian-v2>
+References: <20220507052451.12890-1-ojeda@kernel.org>
+ <202205070056.ACC3C3D@keescook>
 MIME-Version: 1.0
-References: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220509050953.11005-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <OS0PR01MB5922B58BB70B92813041745786C69@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922B58BB70B92813041745786C69@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 May 2022 11:10:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVuLq1Q2KB7gFQ5MsQmyUTv4yuu-GUBVn_xGwKhUwYQZg@mail.gmail.com>
-Message-ID: <CAMuHMdVuLq1Q2KB7gFQ5MsQmyUTv4yuu-GUBVn_xGwKhUwYQZg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] irqchip: Add RZ/G2L IA55 Interrupt Controller driver
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202205070056.ACC3C3D@keescook>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, May 9, 2022 at 9:22 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: [PATCH v2 2/5] irqchip: Add RZ/G2L IA55 Interrupt Controller
-> > driver
-> >
-> > Add a driver for the Renesas RZ/G2L Interrupt Controller.
-> >
-> > This supports external pins being used as interrupts. It supports one line
-> > for NMI, 8 external pins and 32 GPIO pins (out of 123) to be used as IRQ
-> > lines.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Sat, May 07, 2022 at 01:06:18AM -0700, Kees Cook wrote:
+> On Sat, May 07, 2022 at 07:23:58AM +0200, Miguel Ojeda wrote:
+> > ## Patch series status
+> > 
+> > The Rust support is still to be considered experimental. However,
+> > support is good enough that kernel developers can start working on the
+> > Rust abstractions for subsystems and write drivers and other modules.
+> 
+> I'd really like to see this landed for a few reasons:
+> 
+> - It's under active development, and I'd rather review the changes
+>   "normally", incrementally, etc. Right now it can be hard to re-review
+>   some of the "mostly the same each version" patches in the series.
+> 
+> - I'd like to break the catch-22 of "ask for a new driver to be
+>   written in rust but the rust support isn't landed" vs "the rust
+>   support isn't landed because there aren't enough drivers". It
+>   really feels like "release early, release often" is needed here;
+>   it's hard to develop against -next. :)
 
-> > --- /dev/null
-> > +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-
-> > +static void rzg2l_irqc_irq_disable(struct irq_data *d) {
-> > +     unsigned int hw_irq = irqd_to_hwirq(d);
-> > +
-> > +     if (hw_irq >= IRQC_TINT_START && hw_irq <= IRQC_TINT_COUNT) {
-> > +             struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-> > +             u32 offset = hw_irq - IRQC_TINT_START;
-> > +             u32 tssr_offset = TSSR_OFFSET(offset);
-> > +             u8 tssr_index = TSSR_INDEX(offset);
-> > +             u32 reg;
-> > +
-> > +             raw_spin_lock(&priv->lock);
-> > +             reg = readl_relaxed(priv->base + TSSR(tssr_index));
-> > +             reg &= ~(TSSEL_MASK << tssr_offset);
-> > +             writel_relaxed(reg, priv->base + TSSR(tssr_index));
-> > +             raw_spin_unlock(&priv->lock);
-> > +     }
-> > +     irq_chip_disable_parent(d);
-> > +}
-
-> > +static int rzg2l_tint_set_edge(struct irq_data *d, unsigned int type) {
-> > +     struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-> > +     unsigned int hwirq = irqd_to_hwirq(d);
-> > +     u32 titseln = hwirq - IRQC_TINT_START;
-> > +     u32 offset;
-> > +     u8 sense;
-> > +     u32 reg;
-> > +
-> > +     switch (type & IRQ_TYPE_SENSE_MASK) {
-> > +     case IRQ_TYPE_EDGE_RISING:
-> > +             sense = TITSR_TITSEL_EDGE_RISING;
-> > +             break;
-> > +
-> > +     case IRQ_TYPE_EDGE_FALLING:
-> > +             sense = TITSR_TITSEL_EDGE_FALLING;
-> > +             break;
-> > +
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +
->
-> > +     if (titseln < TITSR0_MAX_INT) {
-> > +             offset = TITSR0;
-> > +     } else {
-> > +             titseln /= TITSEL_WIDTH;
-> > +             offset  = TITSR1;
-> > +     }
->
-> as TITSR0 (0x24) and TITSR1(0x28) are contiguous address location
->
-> May be like others, above declare it as
-> u32 offset = TITSR0; ??
->
-> and here
->  if ((titseln >= TITSR0_MAX_INT) {
->         titseln /= TITSEL_WIDTH;
->         offset  += 4;
->  }
-
-Why "titseln /= TITSEL_WIDTH"?
-Shouldn't that be "titseln -= TITSR0_MAX_INT"?
-Do I need more coffee?
-
-Can't you define TITSR_{OFFSET,INDEX}() helper macros, like for
-TSSR above?
-
-> > +
-> > +     raw_spin_lock(&priv->lock);
-> > +     reg = readl_relaxed(priv->base + offset);
-> > +     reg &= ~(IRQ_MASK << (titseln * TITSEL_WIDTH));
-> > +     reg |= sense << (titseln * TITSEL_WIDTH);
-> > +     writel_relaxed(reg, priv->base + offset);
-> > +     raw_spin_unlock(&priv->lock);
-> > +
-> > +     return 0;
-> > +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
++1 to both points. :-)
