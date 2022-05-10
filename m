@@ -2,104 +2,199 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A179C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 May 2022 17:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2027C4167B
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 May 2022 17:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348273AbiEJRfc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 May 2022 13:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59652 "EHLO
+        id S1348298AbiEJRfe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 May 2022 13:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348250AbiEJRfa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2022 13:35:30 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07AA41992
-        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:20 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id t16so14049103qtr.9
-        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:20 -0700 (PDT)
+        with ESMTP id S1348263AbiEJRfb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2022 13:35:31 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0075546677
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:23 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id eq14so13108999qvb.4
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0iY23zFExaBL60617nuIY2YUPps8RPXgyzTZFJOKDcA=;
-        b=g6+UAI3/t5qZDSi024NMaSQW9L1woLMbAa8zYqN9d6WnrslvlGDfqNkkgLr3snUKtq
-         5d9SMcLKaL/sqsEKckXJORH48a4ImkyIW/S4Kj6a5dEvU55+H4/0k2lIE2zwLBATCRud
-         WexDhY4FRVJWO8Kk4gnubeld01Mz4LyUTAJTySPyaHuxIB2BXBwNWvnQanz01cz1wi2K
-         zSzTFqibTRMbbCCK7FWBy0jVq+BU3pbfY/DYDnyhZ4GZTL1IRSb2d7ub5JyaorbYSgEP
-         nJv5P65erTue4oIdoxVge8N8ts/BSe+JeEzEbvKDJCipWqe/0FoGcYZ6oKpK8ap+NF/k
-         5kZg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dAiResiSDR0UVkYFGpWdpsHXqinI6QYsvByx1jrEmYs=;
+        b=SmmF/FWHV+dCZpxlqQIcq5MpAYpbVHs5XeWkXs50nvqsMsfMPAe20HNuw3lb9DmnCz
+         nhR6Oh9i33Nnl+dkQGXcQy1UsSS+1JCKWlv71waan9SGO3QIc6qUv1hYJ4faRLFUOzgO
+         Vrd9i7LcUnn2HaSymBKkBrRTjtwFyAZxwiByr11d554bO+pxIwEnsEXucjXiL9t+JV+m
+         oD2vsa5ZTVWEJqOow2LE9V7Oq9vl46IDGqW/Mw1BOa0+pLIo/VXC/XbedDb0PJlW0Ev+
+         am3BzMDXimMibkr9AqJSkGnpBtX14wbczsUEnUwe+l5Y8AkYK46iauj3sC+bLWBYZrQX
+         M4Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0iY23zFExaBL60617nuIY2YUPps8RPXgyzTZFJOKDcA=;
-        b=QsTUgJ8Gbe+N8U22VsOLkjQCZcUeviNgXWQnd9wOtPsyxTNv8vRKhJPzKmPYNYBoTj
-         qzE77mxz5m5SurZXCZfDxcMtSyJ1cy2NDjKrZSghCokj1EFkIxyj2031UN6phi+BuQkc
-         lwFem4J1zCwgSl26dp5PTO1o/5RF4PJJij2rqgBdYMZi1/e8OW1PRYnm37Ehw19Jgrjr
-         C7ArDbQz3r2G1zi1Ybeal0LkhH9p70rSTDvkyRb7NxNiFFCliaBGsQZsy7CE36zXaw3+
-         uK9WD9uOK+p4pfxHXMAG4Pj43cEOWPAvF2LBunwC71HyGWtGFLKWNnlSX4V9Qqw6Zyg/
-         h2NQ==
-X-Gm-Message-State: AOAM530HmqKmNQuqndCMYG8gck/gs4y5c9SvYifhTk0oIY76yGRVeeFl
-        f344aRKIm6lS7ZvNdS7Dg3158g==
-X-Google-Smtp-Source: ABdhPJzIphDLwXNNwnWOU9HcLMnKXbbHnEPAd9b4DF6Hhn7oxdik8+xWMeo59u5F3o8KH4j873bs1Q==
-X-Received: by 2002:a05:622a:1713:b0:2f3:dc97:eb24 with SMTP id h19-20020a05622a171300b002f3dc97eb24mr9109511qtk.547.1652203880008;
-        Tue, 10 May 2022 10:31:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dAiResiSDR0UVkYFGpWdpsHXqinI6QYsvByx1jrEmYs=;
+        b=jVspLR1siZqQm2nSM8a0SzMt46j13yxiwGfBuSaRn7+yxe0Z3D3XhS8MI8pWt4q4HA
+         ZjZ6l0g0bdzpr0NiAM37IUoi25llfp1Xn0ttiUf/PkVGzYAo6nR5ndiSSzUaffF3/Nqt
+         R3aEv6oi3T6I9OumrsyFcZVVy/4spBsfVk+4lzw+Mq4Hz8wqKdNb6f0bNYq2mJfqvVJo
+         gN79CoWCuMv6bykAaLgqU1LIyVLSqgcWN35Cp7n90u4vNM0h7K8w2cRd5eHn7h2cbWwn
+         uEMRkdgHls66Ca+J/ERyH/HuYSn7xciZCD0nIaIeS2KqYO6qHz1n+phZfbdf+YcMKYfq
+         A3dw==
+X-Gm-Message-State: AOAM532aChqwcjH/W5r94TfBECR3giQIL803ilGzY41Xd0j43yojY66H
+        a0PhUJOMxAQa5WFuy81FrQSmeg==
+X-Google-Smtp-Source: ABdhPJza0jR2kpJcC/r1piienpe1i5hTVSk12hHR973c1jA2x/FkiKwoSb4zCs2oaY70NW9rwOk6Ig==
+X-Received: by 2002:a05:6214:21e1:b0:440:fa7a:493e with SMTP id p1-20020a05621421e100b00440fa7a493emr18645248qvj.55.1652203883031;
+        Tue, 10 May 2022 10:31:23 -0700 (PDT)
 Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id i6-20020a05620a150600b0069ff8ebec64sm8490411qkk.103.2022.05.10.10.31.19
+        by smtp.gmail.com with ESMTPSA id i6-20020a05620a150600b0069ff8ebec64sm8490411qkk.103.2022.05.10.10.31.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 10:31:19 -0700 (PDT)
+        Tue, 10 May 2022 10:31:22 -0700 (PDT)
 From:   William Breathitt Gray <william.gray@linaro.org>
 To:     linux-iio@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linus.walleij@linaro.org, schnelle@linux.ibm.com,
         David.Laight@ACULAB.COM, macro@orcam.me.uk,
         William Breathitt Gray <william.gray@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH 0/8] Utilize iomap interface for PC104 and friends
-Date:   Tue, 10 May 2022 13:30:52 -0400
-Message-Id: <cover.1652201921.git.william.gray@linaro.org>
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 4/8] gpio: 104-idio-16: Utilize iomap interface
+Date:   Tue, 10 May 2022 13:30:56 -0400
+Message-Id: <1aed489e67526819d9f5c5a11f4bb3a172acd1f1.1652201921.git.william.gray@linaro.org>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <cover.1652201921.git.william.gray@linaro.org>
+References: <cover.1652201921.git.william.gray@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-PC104 cards and similar devices do not need to access I/O ports directly
-via inb()/outb() and can instead use the more typical I/O memory
-ioread8()/iowrite8() accessor calls by first calling ioport_map(). This
-patchset converts the relevant PC104/ISA card drivers to do such. With
-these drivers now utilizing I/O memory accessor calls, work can be done
-to consolidate some similar devices (e.g. 104-idio-16, pci-idio-16,
-etc.) into a unified driver in a future patchset.
+This driver doesn't need to access I/O ports directly via inb()/outb()
+and friends. This patch abstracts such access by calling ioport_map()
+to enable the use of more typical ioread8()/iowrite8() I/O memory
+accessor calls.
 
-This patchset spawned from a suggestion made in another thread titled
-"gpio: add HAS_IOPORT dependencies":
-https://lore.kernel.org/all/c3a3cdd99d4645e2bbbe082808cbb2a5@AcuMS.aculab.com/
+Suggested-by: David Laight <David.Laight@ACULAB.COM>
+Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
+---
+ drivers/gpio/gpio-104-idio-16.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
-William Breathitt Gray (8):
-  counter: 104-quad-8: Utilize iomap interface
-  gpio: 104-dio-48e: Utilize iomap interface
-  gpio: 104-idi-48: Utilize iomap interface
-  gpio: 104-idio-16: Utilize iomap interface
-  gpio: gpio-mm: Utilize iomap interface
-  gpio: ws16c48: Utilize iomap interface
-  iio: adc: stx104: Utilize iomap interface
-  iio: dac: cio-dac: Utilize iomap interface
-
- drivers/counter/104-quad-8.c    | 169 +++++++++++++++++---------------
- drivers/gpio/gpio-104-dio-48e.c |  63 ++++++------
- drivers/gpio/gpio-104-idi-48.c  |  27 ++---
- drivers/gpio/gpio-104-idio-16.c |  33 ++++---
- drivers/gpio/gpio-gpio-mm.c     |  43 ++++----
- drivers/gpio/gpio-ws16c48.c     |  65 ++++++------
- drivers/iio/adc/stx104.c        |  56 ++++++-----
- drivers/iio/dac/cio-dac.c       |  14 +--
- 8 files changed, 248 insertions(+), 222 deletions(-)
-
-
-base-commit: ce522ba9ef7e2d9fb22a39eb3371c0c64e2a433e
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index c68ed1a135fa..45f7ad8573e1 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -44,7 +44,7 @@ struct idio_16_gpio {
+ 	struct gpio_chip chip;
+ 	raw_spinlock_t lock;
+ 	unsigned long irq_mask;
+-	unsigned int base;
++	void __iomem *base;
+ 	unsigned int out_state;
+ };
+ 
+@@ -79,9 +79,9 @@ static int idio_16_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 		return -EINVAL;
+ 
+ 	if (offset < 24)
+-		return !!(inb(idio16gpio->base + 1) & mask);
++		return !!(ioread8(idio16gpio->base + 1) & mask);
+ 
+-	return !!(inb(idio16gpio->base + 5) & (mask>>8));
++	return !!(ioread8(idio16gpio->base + 5) & (mask>>8));
+ }
+ 
+ static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+@@ -91,9 +91,9 @@ static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+ 
+ 	*bits = 0;
+ 	if (*mask & GENMASK(23, 16))
+-		*bits |= (unsigned long)inb(idio16gpio->base + 1) << 16;
++		*bits |= (unsigned long)ioread8(idio16gpio->base + 1) << 16;
+ 	if (*mask & GENMASK(31, 24))
+-		*bits |= (unsigned long)inb(idio16gpio->base + 5) << 24;
++		*bits |= (unsigned long)ioread8(idio16gpio->base + 5) << 24;
+ 
+ 	return 0;
+ }
+@@ -116,9 +116,9 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 		idio16gpio->out_state &= ~mask;
+ 
+ 	if (offset > 7)
+-		outb(idio16gpio->out_state >> 8, idio16gpio->base + 4);
++		iowrite8(idio16gpio->out_state >> 8, idio16gpio->base + 4);
+ 	else
+-		outb(idio16gpio->out_state, idio16gpio->base);
++		iowrite8(idio16gpio->out_state, idio16gpio->base);
+ 
+ 	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ }
+@@ -135,9 +135,9 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+ 	idio16gpio->out_state |= *mask & *bits;
+ 
+ 	if (*mask & 0xFF)
+-		outb(idio16gpio->out_state, idio16gpio->base);
++		iowrite8(idio16gpio->out_state, idio16gpio->base);
+ 	if ((*mask >> 8) & 0xFF)
+-		outb(idio16gpio->out_state >> 8, idio16gpio->base + 4);
++		iowrite8(idio16gpio->out_state >> 8, idio16gpio->base + 4);
+ 
+ 	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ }
+@@ -158,7 +158,7 @@ static void idio_16_irq_mask(struct irq_data *data)
+ 	if (!idio16gpio->irq_mask) {
+ 		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+-		outb(0, idio16gpio->base + 2);
++		iowrite8(0, idio16gpio->base + 2);
+ 
+ 		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ 	}
+@@ -177,7 +177,7 @@ static void idio_16_irq_unmask(struct irq_data *data)
+ 	if (!prev_irq_mask) {
+ 		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+-		inb(idio16gpio->base + 2);
++		ioread8(idio16gpio->base + 2);
+ 
+ 		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ 	}
+@@ -212,7 +212,7 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
+ 
+ 	raw_spin_lock(&idio16gpio->lock);
+ 
+-	outb(0, idio16gpio->base + 1);
++	iowrite8(0, idio16gpio->base + 1);
+ 
+ 	raw_spin_unlock(&idio16gpio->lock);
+ 
+@@ -232,8 +232,8 @@ static int idio_16_irq_init_hw(struct gpio_chip *gc)
+ 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(gc);
+ 
+ 	/* Disable IRQ by default */
+-	outb(0, idio16gpio->base + 2);
+-	outb(0, idio16gpio->base + 1);
++	iowrite8(0, idio16gpio->base + 2);
++	iowrite8(0, idio16gpio->base + 1);
+ 
+ 	return 0;
+ }
+@@ -255,6 +255,10 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+ 		return -EBUSY;
+ 	}
+ 
++	idio16gpio->base = devm_ioport_map(dev, base[id], IDIO_16_EXTENT);
++	if (!idio16gpio->base)
++		return -ENOMEM;
++
+ 	idio16gpio->chip.label = name;
+ 	idio16gpio->chip.parent = dev;
+ 	idio16gpio->chip.owner = THIS_MODULE;
+@@ -268,7 +272,6 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+ 	idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
+ 	idio16gpio->chip.set = idio_16_gpio_set;
+ 	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+-	idio16gpio->base = base[id];
+ 	idio16gpio->out_state = 0xFFFF;
+ 
+ 	girq = &idio16gpio->chip.irq;
 -- 
 2.35.3
 
