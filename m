@@ -2,62 +2,61 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 285D0C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A23F3C4332F
 	for <linux-gpio@archiver.kernel.org>; Tue, 10 May 2022 17:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348253AbiEJRfm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 May 2022 13:35:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59678 "EHLO
+        id S1348252AbiEJRfn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 May 2022 13:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348252AbiEJRfc (ORCPT
+        with ESMTP id S1348267AbiEJRfc (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2022 13:35:32 -0400
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B2A64B1D3
-        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:26 -0700 (PDT)
-Received: by mail-qv1-xf2f.google.com with SMTP id eq14so13109087qvb.4
-        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:25 -0700 (PDT)
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 997FA47545
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:24 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id v11so3306597qkf.1
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=seOjmihEBRKsZp4b34pJA/ndUMIaVSf7C6FlpVBGPxk=;
-        b=wmwYtqg29pKeFXBRyIVmMMB5jXw+g9NzFNeJb3vvTmD7qXtMYZRgrQrL8PieMDygNo
-         h+dqTmyo22/puKrfK8c21hUSNlBFmGBhZYngefgcyRMWYm+Gucxwz4IYLFZ/CnvXKN+A
-         5ebu2EVI9eBbBge4y0/Q1JE1Z7GLGJRKjEY6MBuzTRELfaotpjuYYx5y/yjXtJYyfR+B
-         RVA6ARVZQtRAn7WpXSOHv7w23TWVU498vBwfJBj4S9nRIkcSwTwarukhZV8Zg5RSlqjT
-         dw/Rq015C1K4/5bSG7oYv2QGMtSe2S0iMBJjDNSfcIvFFBwOay4mpQKyxe5xIH59HvjJ
-         bZ6w==
+        bh=H2AK5sECXXWOxpJaFbUfWcwhgtP35mSHuJJkQivb894=;
+        b=VcKW5OAEtI9CIIGbpJVturNwnTEXXxGHV15anSA7hIHQNL8i+uXg1rRWq5C3e94fZ0
+         P+9fP2H/Jy+DHF5Nk/I9YsLyWm9PRGMXopfp6qAucu6aoDwMtNTGJFyNBRowGI3dJvAP
+         JHKNdUYERax1iYceZ1cTZzfn5qR4Bzs6VPuY4ZLtvfPNncpu1R5DJsklss8fdztFoPg0
+         7Cribio15rvAGrbr8TXCBubM4A24nK1EnQx8XxHN5tlzrPGan24EVzUp4BoxQfav2xE0
+         R2W4xUzZWygvNbcZEeTOlkFxDkjetJEGog2gcoJyCRda2+0e4fe4l9sFnWBquTaHzmot
+         54VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=seOjmihEBRKsZp4b34pJA/ndUMIaVSf7C6FlpVBGPxk=;
-        b=JjZQ50CnzT/mx9BZ7v+sn22NRBUGslKW82DgjAjHqWeGFP3cmCkz6WK92N8QYTbrTl
-         oC+b21MMZ5kr5XVj2XqvpduzwiiEZ/BcvA3pmMXMovTw8oPckJ9A6rQN4vw2T5bVB4e0
-         hnYah68Rhi77YBScpr2qHLZqnHu45mKH9v4thWfLogDJeSKnk5BMd9CY7ZcrCahnGGK7
-         Z2GRvvv4q3eCDDZe8Q0KMOJmpOdoSGxMGpiQn+hcsnF9U+lYifRjit5hegFvafuPM81K
-         KG8oDVcYL5JSFfTcK7ccxKOZsDf/VY9jFSkPDLNNelgAUttoxAS4edQiMswjd2eJC6WM
-         fZCw==
-X-Gm-Message-State: AOAM533Wr6Ub4C9XYuv6/AnZH3dWhLFLd+lPBNm21qeQD3bmHm8IqbAy
-        V7PDC+2YuThy8nXAsTDqW+5jIg==
-X-Google-Smtp-Source: ABdhPJzZQJHFV8UJ1NPGzpYgeWXgn4ciBhy6e9TckMU1/L3vVDqbAWahmnq8VC8unCEvQMTOrR0teQ==
-X-Received: by 2002:a05:6214:c6f:b0:45a:a2f2:6d23 with SMTP id t15-20020a0562140c6f00b0045aa2f26d23mr19357429qvj.55.1652203885151;
-        Tue, 10 May 2022 10:31:25 -0700 (PDT)
+        bh=H2AK5sECXXWOxpJaFbUfWcwhgtP35mSHuJJkQivb894=;
+        b=X+aBtyjcTpj8yG+jLIb2CNglEF1bElWTLlirs+fRjLWyQrQ//SOScQKD9wWYlY1gZv
+         32nm2tOiWq3GFPg4eSf7RXbatARtfpIGwG3xJX+WMTZC2D/LeLOVuBo4yYwTArfYrauz
+         62qE2r2XnAhKykBBb1HsaDYkJfJt3okfXDlkF0GJFMtUCZa+A3/OABOtGrsq4ZANEbCG
+         nVHB/2dbPZgmdICsYk00ysMqGqEzFNRFHMEXlJMIpa6QBngaH8OYv5wRbnWO7H+QaDHf
+         omhWec5uP3T4Wb3S0jzk8TYBpr6ZsF2qOaDT20EV0P2x3/46ogiZ6CPAifINe64roNQY
+         ZbSA==
+X-Gm-Message-State: AOAM532AOTR/3+jiTMXFXLwWo0iecwvbjZ+XSv9IBNp3NrPImC8Pt5tD
+        WYp/Ai+07Apnrspku9QQPxZXjw==
+X-Google-Smtp-Source: ABdhPJx9VrK2hOiDY6jNzkQ/GWTB+b92TOrNM9oe99NIxVJ138UceIhQn9xggxOFs+XzKDFvrIfirg==
+X-Received: by 2002:a37:bbc4:0:b0:69b:db2c:c962 with SMTP id l187-20020a37bbc4000000b0069bdb2cc962mr16165564qkf.565.1652203883755;
+        Tue, 10 May 2022 10:31:23 -0700 (PDT)
 Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id i6-20020a05620a150600b0069ff8ebec64sm8490411qkk.103.2022.05.10.10.31.24
+        by smtp.gmail.com with ESMTPSA id i6-20020a05620a150600b0069ff8ebec64sm8490411qkk.103.2022.05.10.10.31.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 10:31:24 -0700 (PDT)
+        Tue, 10 May 2022 10:31:23 -0700 (PDT)
 From:   William Breathitt Gray <william.gray@linaro.org>
 To:     linux-iio@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linus.walleij@linaro.org, schnelle@linux.ibm.com,
         David.Laight@ACULAB.COM, macro@orcam.me.uk,
         William Breathitt Gray <william.gray@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH 7/8] iio: adc: stx104: Utilize iomap interface
-Date:   Tue, 10 May 2022 13:30:59 -0400
-Message-Id: <64673797df382c52fc32fce24348b25a0b05e73a.1652201921.git.william.gray@linaro.org>
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 5/8] gpio: gpio-mm: Utilize iomap interface
+Date:   Tue, 10 May 2022 13:30:57 -0400
+Message-Id: <1b274435871047e85fc8bbbf15840424632c47d0.1652201921.git.william.gray@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1652201921.git.william.gray@linaro.org>
 References: <cover.1652201921.git.william.gray@linaro.org>
@@ -75,187 +74,155 @@ accessor calls.
 Suggested-by: David Laight <David.Laight@ACULAB.COM>
 Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
 ---
- drivers/iio/adc/stx104.c | 56 +++++++++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 27 deletions(-)
+ drivers/gpio/gpio-gpio-mm.c | 43 +++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
-index 55bd2dc514e9..7552351bfed9 100644
---- a/drivers/iio/adc/stx104.c
-+++ b/drivers/iio/adc/stx104.c
-@@ -51,7 +51,7 @@ MODULE_PARM_DESC(base, "Apex Embedded Systems STX104 base addresses");
-  */
- struct stx104_iio {
- 	unsigned int chan_out_states[STX104_NUM_OUT_CHAN];
--	unsigned int base;
-+	void __iomem *base;
- };
- 
- /**
-@@ -64,7 +64,7 @@ struct stx104_iio {
- struct stx104_gpio {
- 	struct gpio_chip chip;
+diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+index b89b8c5ff1f5..097a06463d01 100644
+--- a/drivers/gpio/gpio-gpio-mm.c
++++ b/drivers/gpio/gpio-gpio-mm.c
+@@ -42,7 +42,7 @@ struct gpiomm_gpio {
+ 	unsigned char out_state[6];
+ 	unsigned char control[2];
  	spinlock_t lock;
 -	unsigned int base;
 +	void __iomem *base;
- 	unsigned int out_state;
  };
  
-@@ -79,7 +79,7 @@ static int stx104_read_raw(struct iio_dev *indio_dev,
- 	switch (mask) {
- 	case IIO_CHAN_INFO_HARDWAREGAIN:
- 		/* get gain configuration */
--		adc_config = inb(priv->base + 11);
-+		adc_config = ioread8(priv->base + 11);
- 		gain = adc_config & 0x3;
+ static int gpiomm_gpio_get_direction(struct gpio_chip *chip,
+@@ -64,7 +64,6 @@ static int gpiomm_gpio_direction_input(struct gpio_chip *chip,
+ 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
+ 	const unsigned int io_port = offset / 8;
+ 	const unsigned int control_port = io_port / 3;
+-	const unsigned int control_addr = gpiommgpio->base + 3 + control_port*4;
+ 	unsigned long flags;
+ 	unsigned int control;
  
- 		*val = 1 << gain;
-@@ -91,24 +91,24 @@ static int stx104_read_raw(struct iio_dev *indio_dev,
- 		}
+@@ -89,7 +88,7 @@ static int gpiomm_gpio_direction_input(struct gpio_chip *chip,
+ 	}
  
- 		/* select ADC channel */
--		outb(chan->channel | (chan->channel << 4), priv->base + 2);
-+		iowrite8(chan->channel | (chan->channel << 4), priv->base + 2);
+ 	control = BIT(7) | gpiommgpio->control[control_port];
+-	outb(control, control_addr);
++	iowrite8(control, gpiommgpio->base + 3 + control_port*4);
  
- 		/* trigger ADC sample capture and wait for completion */
--		outb(0, priv->base);
--		while (inb(priv->base + 8) & BIT(7));
-+		iowrite8(0, priv->base);
-+		while (ioread8(priv->base + 8) & BIT(7));
+ 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
  
--		*val = inw(priv->base);
-+		*val = ioread16(priv->base);
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_OFFSET:
- 		/* get ADC bipolar/unipolar configuration */
--		adc_config = inb(priv->base + 11);
-+		adc_config = ioread8(priv->base + 11);
- 		adbu = !(adc_config & BIT(2));
+@@ -103,7 +102,6 @@ static int gpiomm_gpio_direction_output(struct gpio_chip *chip,
+ 	const unsigned int io_port = offset / 8;
+ 	const unsigned int control_port = io_port / 3;
+ 	const unsigned int mask = BIT(offset % 8);
+-	const unsigned int control_addr = gpiommgpio->base + 3 + control_port*4;
+ 	const unsigned int out_port = (io_port > 2) ? io_port + 1 : io_port;
+ 	unsigned long flags;
+ 	unsigned int control;
+@@ -134,9 +132,9 @@ static int gpiomm_gpio_direction_output(struct gpio_chip *chip,
+ 		gpiommgpio->out_state[io_port] &= ~mask;
  
- 		*val = -32768 * adbu;
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
- 		/* get ADC bipolar/unipolar and gain configuration */
--		adc_config = inb(priv->base + 11);
-+		adc_config = ioread8(priv->base + 11);
- 		adbu = !(adc_config & BIT(2));
- 		gain = adc_config & 0x3;
+ 	control = BIT(7) | gpiommgpio->control[control_port];
+-	outb(control, control_addr);
++	iowrite8(control, gpiommgpio->base + 3 + control_port*4);
  
-@@ -130,16 +130,16 @@ static int stx104_write_raw(struct iio_dev *indio_dev,
- 		/* Only four gain states (x1, x2, x4, x8) */
- 		switch (val) {
- 		case 1:
--			outb(0, priv->base + 11);
-+			iowrite8(0, priv->base + 11);
- 			break;
- 		case 2:
--			outb(1, priv->base + 11);
-+			iowrite8(1, priv->base + 11);
- 			break;
- 		case 4:
--			outb(2, priv->base + 11);
-+			iowrite8(2, priv->base + 11);
- 			break;
- 		case 8:
--			outb(3, priv->base + 11);
-+			iowrite8(3, priv->base + 11);
- 			break;
- 		default:
- 			return -EINVAL;
-@@ -153,7 +153,7 @@ static int stx104_write_raw(struct iio_dev *indio_dev,
- 				return -EINVAL;
+-	outb(gpiommgpio->out_state[io_port], gpiommgpio->base + out_port);
++	iowrite8(gpiommgpio->out_state[io_port], gpiommgpio->base + out_port);
  
- 			priv->chan_out_states[chan->channel] = val;
--			outw(val, priv->base + 4 + 2 * chan->channel);
-+			iowrite16(val, priv->base + 4 + 2 * chan->channel);
+ 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
  
- 			return 0;
- 		}
-@@ -222,7 +222,7 @@ static int stx104_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	if (offset >= 4)
+@@ -160,7 +158,7 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
  		return -EINVAL;
+ 	}
  
--	return !!(inb(stx104gpio->base) & BIT(offset));
-+	return !!(ioread8(stx104gpio->base) & BIT(offset));
- }
+-	port_state = inb(gpiommgpio->base + in_port);
++	port_state = ioread8(gpiommgpio->base + in_port);
  
- static int stx104_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-@@ -230,7 +230,7 @@ static int stx104_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- {
- 	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
+ 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
  
--	*bits = inb(stx104gpio->base);
-+	*bits = ioread8(stx104gpio->base);
+@@ -175,7 +173,7 @@ static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
+ 	unsigned long offset;
+ 	unsigned long gpio_mask;
+-	unsigned int port_addr;
++	void __iomem *port_addr;
+ 	unsigned long port_state;
  
- 	return 0;
- }
-@@ -252,7 +252,7 @@ static void stx104_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	/* clear bits array to a clean slate */
+@@ -183,7 +181,7 @@ static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 
+ 	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
+ 		port_addr = gpiommgpio->base + ports[offset / 8];
+-		port_state = inb(port_addr) & gpio_mask;
++		port_state = ioread8(port_addr) & gpio_mask;
+ 
+ 		bitmap_set_value8(bits, port_state, offset);
+ 	}
+@@ -207,7 +205,7 @@ static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
  	else
- 		stx104gpio->out_state &= ~mask;
+ 		gpiommgpio->out_state[port] &= ~mask;
  
--	outb(stx104gpio->out_state, stx104gpio->base);
-+	iowrite8(stx104gpio->out_state, stx104gpio->base);
+-	outb(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
++	iowrite8(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
  
- 	spin_unlock_irqrestore(&stx104gpio->lock, flags);
+ 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
  }
-@@ -279,7 +279,7 @@ static void stx104_gpio_set_multiple(struct gpio_chip *chip,
+@@ -219,7 +217,7 @@ static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
+ 	unsigned long offset;
+ 	unsigned long gpio_mask;
+ 	size_t index;
+-	unsigned int port_addr;
++	void __iomem *port_addr;
+ 	unsigned long bitmask;
+ 	unsigned long flags;
  
- 	stx104gpio->out_state &= ~*mask;
- 	stx104gpio->out_state |= *mask & *bits;
--	outb(stx104gpio->out_state, stx104gpio->base);
-+	iowrite8(stx104gpio->out_state, stx104gpio->base);
+@@ -234,7 +232,7 @@ static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
+ 		/* update output state data and set device gpio register */
+ 		gpiommgpio->out_state[index] &= ~gpio_mask;
+ 		gpiommgpio->out_state[index] |= bitmask;
+-		outb(gpiommgpio->out_state[index], port_addr);
++		iowrite8(gpiommgpio->out_state[index], port_addr);
  
- 	spin_unlock_irqrestore(&stx104gpio->lock, flags);
- }
-@@ -306,11 +306,16 @@ static int stx104_probe(struct device *dev, unsigned int id)
+ 		spin_unlock_irqrestore(&gpiommgpio->lock, flags);
+ 	}
+@@ -268,6 +266,10 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
  		return -EBUSY;
  	}
  
-+	priv = iio_priv(indio_dev);
-+	priv->base = devm_ioport_map(dev, base[id], STX104_EXTENT);
-+	if (!priv->base)
++	gpiommgpio->base = devm_ioport_map(dev, base[id], GPIOMM_EXTENT);
++	if (!gpiommgpio->base)
 +		return -ENOMEM;
 +
- 	indio_dev->info = &stx104_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 	gpiommgpio->chip.label = name;
+ 	gpiommgpio->chip.parent = dev;
+ 	gpiommgpio->chip.owner = THIS_MODULE;
+@@ -281,7 +283,6 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
+ 	gpiommgpio->chip.get_multiple = gpiomm_gpio_get_multiple;
+ 	gpiommgpio->chip.set = gpiomm_gpio_set;
+ 	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
+-	gpiommgpio->base = base[id];
  
- 	/* determine if differential inputs */
--	if (inb(base[id] + 8) & BIT(5)) {
-+	if (ioread8(priv->base + 8) & BIT(5)) {
- 		indio_dev->num_channels = ARRAY_SIZE(stx104_channels_diff);
- 		indio_dev->channels = stx104_channels_diff;
- 	} else {
-@@ -320,18 +325,15 @@ static int stx104_probe(struct device *dev, unsigned int id)
+ 	spin_lock_init(&gpiommgpio->lock);
  
- 	indio_dev->name = dev_name(dev);
+@@ -292,14 +293,14 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
+ 	}
  
--	priv = iio_priv(indio_dev);
--	priv->base = base[id];
--
- 	/* configure device for software trigger operation */
--	outb(0, base[id] + 9);
-+	iowrite8(0, priv->base + 9);
+ 	/* initialize all GPIO as output */
+-	outb(0x80, base[id] + 3);
+-	outb(0x00, base[id]);
+-	outb(0x00, base[id] + 1);
+-	outb(0x00, base[id] + 2);
+-	outb(0x80, base[id] + 7);
+-	outb(0x00, base[id] + 4);
+-	outb(0x00, base[id] + 5);
+-	outb(0x00, base[id] + 6);
++	iowrite8(0x80, gpiommgpio->base + 3);
++	iowrite8(0x00, gpiommgpio->base);
++	iowrite8(0x00, gpiommgpio->base + 1);
++	iowrite8(0x00, gpiommgpio->base + 2);
++	iowrite8(0x80, gpiommgpio->base + 7);
++	iowrite8(0x00, gpiommgpio->base + 4);
++	iowrite8(0x00, gpiommgpio->base + 5);
++	iowrite8(0x00, gpiommgpio->base + 6);
  
- 	/* initialize gain setting to x1 */
--	outb(0, base[id] + 11);
-+	iowrite8(0, priv->base + 11);
- 
- 	/* initialize DAC output to 0V */
--	outw(0, base[id] + 4);
--	outw(0, base[id] + 6);
-+	iowrite16(0, priv->base + 4);
-+	iowrite16(0, priv->base + 6);
- 
- 	stx104gpio->chip.label = dev_name(dev);
- 	stx104gpio->chip.parent = dev;
-@@ -346,7 +348,7 @@ static int stx104_probe(struct device *dev, unsigned int id)
- 	stx104gpio->chip.get_multiple = stx104_gpio_get_multiple;
- 	stx104gpio->chip.set = stx104_gpio_set;
- 	stx104gpio->chip.set_multiple = stx104_gpio_set_multiple;
--	stx104gpio->base = base[id] + 3;
-+	stx104gpio->base = priv->base + 3;
- 	stx104gpio->out_state = 0x0;
- 
- 	spin_lock_init(&stx104gpio->lock);
+ 	return 0;
+ }
 -- 
 2.35.3
 
