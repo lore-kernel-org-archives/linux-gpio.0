@@ -2,198 +2,151 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A68C4167D
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 May 2022 15:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20ACAC43219
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 May 2022 15:34:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345777AbiEJPak (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 May 2022 11:30:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45336 "EHLO
+        id S1345845AbiEJPh6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 May 2022 11:37:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345792AbiEJP37 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2022 11:29:59 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4FC8192A5;
-        Tue, 10 May 2022 08:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652196052; x=1683732052;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=An2DWh+lnicdQp5Dv4UeRITSb7pkwS9koGVbJHHuvPo=;
-  b=N0hpA3cQWSVBPVamn3rJRSt5MqsZYoTvjsvt+Y5fKbqBy1gIu2kL2d/b
-   Ewhm7MEzCdz41njYLkv/Fuou8ZYAQc5it9C4bn1SWyY69NJ84CNsw5KdV
-   PMoqFKwUMyyXU5azsbB2kfQ8dsJJdZhihbwxOHdZOPLmSyZ4M9kgtYoO+
-   /c0zsofXjWFMzINEJoo9HQ2vfI62O0sXfd3fFy+M+QIX1mwFIzGa+Z7FB
-   6iIYboSKoLOoKWUn6J+so/qCB5T6O6o+fgibF4R+zb7WgENzGl62di2FO
-   0n94uPfZpaj223nEwxIQJm0iqN7RtjHBZ0HRSfSCWchsg5+9XGOTgJDbF
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="256943417"
-X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="256943417"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 08:17:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="593559675"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 10 May 2022 08:17:38 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B77435D0; Tue, 10 May 2022 18:15:16 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Tony Luck <tony.luck@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa@kernel.org>, Jean Delvare <jdelvare@suse.de>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?q?=C5=81ukasz=20Bartosik?= <lb@semihalf.com>,
-        Hans de Goede <hdegoede@redhat.com>,
+        with ESMTP id S1346223AbiEJPg2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2022 11:36:28 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEF8C63C4
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 08:32:30 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id u3so24357601wrg.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 08:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=ibDKLmqXZAEEFTExzRdfpLVElcsKcx9KbemDnOPns+k=;
+        b=figfC27hBQ7YIl202+8UV+l1HErOFJIF9/fpjPlCPer5g3I7PjAtzfad9fQkyRxLjr
+         2Rn89ZkXFnj/ZtK9VRdPLP2LkZM3RIZHLXiPF7jTPH2sjLvKyJyyZhA8IU8nvYI6dAq8
+         eWWDHyE0BiwMx0ztz4HjHBdxVDNMORyJ3lEV0cf+voR+rNEqAWWKymQdZiy6Bu0isRA0
+         sx/2yAsnZP4Up/rDDDUE9k3t+Ayuee8qbQu+lddnI/2qPWWDITuddK7AaNrlWrBvSbHh
+         +GKPURa/WCWQELR5zsHNR3B0osJYPBBuowvHljLEI/p32ixzYEuxagZ/9me25B5QZUhV
+         zZYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ibDKLmqXZAEEFTExzRdfpLVElcsKcx9KbemDnOPns+k=;
+        b=OTlJfQoJWh3uEIrIZPpwjhBVVcXGClZn8A0zfYXq6iNwiOJ8hjB3thMJ7CTMBEmePa
+         651zq5ZuGlWDnXNj91tbrvhDfiqXyFsOFvgsh7kwZvMYUZuqzW1dF1xFJl5GxlLrILKt
+         VzDIZLTub3aTzRPpNxvLzVqOqHuVOgxgjU5hkO6EmDNoXBHQ2uOBtDZOgsv/UEwNAUAz
+         rbev8u1fQxTLGenX22sMnrsNd2r5h6okLaI62k4WUfAzr3d6qFSXUY9LJyVK8M65LdT/
+         djPam1UTuTbcgLfGbE2MX3M8G0gq8+7TbX55Id88J4yEsHPVbg3TAw3c4VOGNS0h9tCx
+         yq+w==
+X-Gm-Message-State: AOAM530AN+8O15ADIQ6GO71DzVUJt0UpU7gszA/ir2N+9foNovAeGbFp
+        WG19rTFTbzBsWfahlnohxsS+Kw==
+X-Google-Smtp-Source: ABdhPJxhbL0kXjtF40z+/oU1QTJ/WF63V5u/yXTZ1XONjVrTuv3E338FNMTKvYPqbqjTgY9CE4ly0A==
+X-Received: by 2002:a5d:4205:0:b0:20a:e23c:a7f4 with SMTP id n5-20020a5d4205000000b0020ae23ca7f4mr19616144wrq.576.1652196749233;
+        Tue, 10 May 2022 08:32:29 -0700 (PDT)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id x18-20020adfdd92000000b0020c5253d915sm13895707wrl.97.2022.05.10.08.32.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 May 2022 08:32:28 -0700 (PDT)
+Date:   Tue, 10 May 2022 16:32:26 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc:     Colin Foster <colin.foster@in-advantage.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Terry Bowman <terry.bowman@amd.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Yong <jonathan.yong@intel.com>,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Peter Tyser <ptyser@xes-inc.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Mark Gross <markgross@kernel.org>,
-        Henning Schild <henning.schild@siemens.com>
-Subject: [PATCH v5 6/8] i2c: i801: convert to use common P2SB accessor
-Date:   Tue, 10 May 2022 18:14:49 +0300
-Message-Id: <20220510151451.85561-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220510151451.85561-1-andriy.shevchenko@linux.intel.com>
-References: <20220510151451.85561-1-andriy.shevchenko@linux.intel.com>
+        Russell King <linux@armlinux.org.uk>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>
+Subject: Re: [RFC v8 net-next 08/16] mfd: ocelot: add support for the vsc7512
+ chip via spi
+Message-ID: <YnqFijExn8Nn+xhs@google.com>
+References: <20220508185313.2222956-1-colin.foster@in-advantage.com>
+ <20220508185313.2222956-9-colin.foster@in-advantage.com>
+ <20220509105239.wriaryaclzsq5ia3@skbuf>
+ <20220509234922.GC895@COLIN-DESKTOP1.localdomain>
+ <20220509172028.qcxzexnabovrdatq@skbuf>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220509172028.qcxzexnabovrdatq@skbuf>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since we have a common P2SB accessor in tree we may use it instead of
-open coded variants.
+On Mon, 09 May 2022, Vladimir Oltean wrote:
 
-Replace custom code by p2sb_bar() call.
+> On Mon, May 09, 2022 at 04:49:22PM -0700, Colin Foster wrote:
+> > > > +struct regmap *ocelot_init_regmap_from_resource(struct device *child,
+> > > > +						const struct resource *res)
+> > > > +{
+> > > > +	struct device *dev = child->parent;
+> > > > +
+> > > > +	return ocelot_spi_devm_init_regmap(dev, child, res);
+> > > 
+> > > So much for being bus-agnostic :-/
+> > > Maybe get the struct ocelot_ddata and call ocelot_spi_devm_init_regmap()
+> > > via a function pointer which is populated by ocelot-spi.c? If you do
+> > > that don't forget to clean up drivers/mfd/ocelot.h of SPI specific stuff.
+> > 
+> > That was my initial design. "core" was calling into "spi" exclusively
+> > via function pointers.
+> > 
+> > The request was "Please find a clearer way to do this without function
+> > pointers"
+> > 
+> > https://lore.kernel.org/netdev/Ydwju35sN9QJqJ%2FP@google.com/
+> 
+> Yeah, I'm not sure what Lee was looking for, either. In any case I agree
+> with the comment that you aren't configuring a bus. In this context it
+> seems more appropriate to call this function pointer "init_regmap", with
+> different implementations per transport.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Henning Schild <henning.schild@siemens.com>
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Acked-by: Wolfram Sang <wsa@kernel.org>
----
- drivers/i2c/busses/Kconfig        |  1 +
- drivers/i2c/busses/i2c-i801.c     | 39 +++++++------------------------
- drivers/platform/x86/intel/p2sb.c |  6 +++++
- 3 files changed, 16 insertions(+), 30 deletions(-)
+FWIW, I'm still against using function pointers for this.
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index a1bae59208e3..4d0a195ca3ef 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -108,6 +108,7 @@ config I2C_HIX5HD2
- config I2C_I801
- 	tristate "Intel 82801 (ICH/PCH)"
- 	depends on PCI
-+	select P2SB if X86
- 	select CHECK_SIGNATURE if X86 && DMI
- 	select I2C_SMBUS
- 	help
-diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-index ff706349bdfb..f7a0bb372e8e 100644
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -111,6 +111,7 @@
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/itco_wdt.h>
-+#include <linux/platform_data/x86/p2sb.h>
- #include <linux/pm_runtime.h>
- #include <linux/mutex.h>
- 
-@@ -140,7 +141,6 @@
- #define TCOBASE		0x050
- #define TCOCTL		0x054
- 
--#define SBREG_BAR		0x10
- #define SBREG_SMBCTRL		0xc6000c
- #define SBREG_SMBCTRL_DNV	0xcf000c
- 
-@@ -1482,45 +1482,24 @@ i801_add_tco_spt(struct i801_priv *priv, struct pci_dev *pci_dev,
- 		.version = 4,
- 	};
- 	struct resource *res;
--	unsigned int devfn;
--	u64 base64_addr;
--	u32 base_addr;
--	u8 hidden;
-+	int ret;
- 
- 	/*
- 	 * We must access the NO_REBOOT bit over the Primary to Sideband
--	 * bridge (P2SB). The BIOS prevents the P2SB device from being
--	 * enumerated by the PCI subsystem, so we need to unhide/hide it
--	 * to lookup the P2SB BAR.
-+	 * (P2SB) bridge.
- 	 */
--	pci_lock_rescan_remove();
--
--	devfn = PCI_DEVFN(PCI_SLOT(pci_dev->devfn), 1);
--
--	/* Unhide the P2SB device, if it is hidden */
--	pci_bus_read_config_byte(pci_dev->bus, devfn, 0xe1, &hidden);
--	if (hidden)
--		pci_bus_write_config_byte(pci_dev->bus, devfn, 0xe1, 0x0);
--
--	pci_bus_read_config_dword(pci_dev->bus, devfn, SBREG_BAR, &base_addr);
--	base64_addr = base_addr & 0xfffffff0;
--
--	pci_bus_read_config_dword(pci_dev->bus, devfn, SBREG_BAR + 0x4, &base_addr);
--	base64_addr |= (u64)base_addr << 32;
--
--	/* Hide the P2SB device, if it was hidden before */
--	if (hidden)
--		pci_bus_write_config_byte(pci_dev->bus, devfn, 0xe1, hidden);
--	pci_unlock_rescan_remove();
- 
- 	res = &tco_res[1];
-+	ret = p2sb_bar(pci_dev->bus, 0, res);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
- 	if (pci_dev->device == PCI_DEVICE_ID_INTEL_DNV_SMBUS)
--		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL_DNV;
-+		res->start += SBREG_SMBCTRL_DNV;
- 	else
--		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL;
-+		res->start += SBREG_SMBCTRL;
- 
- 	res->end = res->start + 3;
--	res->flags = IORESOURCE_MEM;
- 
- 	return platform_device_register_resndata(&pci_dev->dev, "iTCO_wdt", -1,
- 					tco_res, 2, &pldata, sizeof(pldata));
-diff --git a/drivers/platform/x86/intel/p2sb.c b/drivers/platform/x86/intel/p2sb.c
-index b598ef14dbc6..fb2e141f3eb8 100644
---- a/drivers/platform/x86/intel/p2sb.c
-+++ b/drivers/platform/x86/intel/p2sb.c
-@@ -21,6 +21,12 @@
- 
- static const struct x86_cpu_id p2sb_cpu_ids[] = {
- 	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT,	PCI_DEVFN(13, 0)),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_D,	PCI_DEVFN(31, 1)),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT_D,	PCI_DEVFN(31, 1)),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE,		PCI_DEVFN(31, 1)),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE_L,		PCI_DEVFN(31, 1)),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE,		PCI_DEVFN(31, 1)),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_L,		PCI_DEVFN(31, 1)),
- 	{}
- };
- 
+What about making ocelot_init_regmap_from_resource() an inline
+function and pushing it into one of the header files?
+
+[As an aside, you don't need to pass both dev (parent) and child]
+
+In there you could simply do:
+
+inline struct regmap *ocelot_init_regmap_from_resource(struct device *dev,
+						       const struct resource *res)
+{
+	if (dev_get_drvdata(dev->parent)->spi)
+		return ocelot_spi_devm_init_regmap(dev, res);
+
+	return NULL;
+}
+
+Also, do you really need devm in the title?
+
+> Or alternatively you could leave the "core"/"spi" pseudo-separation up
+> to the next person who needs to add support for some other register I/O
+> method.
+
+Or this.  Your call.
+
 -- 
-2.35.1
-
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
