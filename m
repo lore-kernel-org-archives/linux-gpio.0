@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A23F3C4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 May 2022 17:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F11E4C433FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 May 2022 17:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348252AbiEJRfn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 May 2022 13:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59042 "EHLO
+        id S1348248AbiEJRfo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 May 2022 13:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348267AbiEJRfc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2022 13:35:32 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 997FA47545
-        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:24 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id v11so3306597qkf.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:24 -0700 (PDT)
+        with ESMTP id S1348244AbiEJRfb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2022 13:35:31 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C5C44A0B
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:22 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id fu47so14064763qtb.5
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2022 10:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=H2AK5sECXXWOxpJaFbUfWcwhgtP35mSHuJJkQivb894=;
-        b=VcKW5OAEtI9CIIGbpJVturNwnTEXXxGHV15anSA7hIHQNL8i+uXg1rRWq5C3e94fZ0
-         P+9fP2H/Jy+DHF5Nk/I9YsLyWm9PRGMXopfp6qAucu6aoDwMtNTGJFyNBRowGI3dJvAP
-         JHKNdUYERax1iYceZ1cTZzfn5qR4Bzs6VPuY4ZLtvfPNncpu1R5DJsklss8fdztFoPg0
-         7Cribio15rvAGrbr8TXCBubM4A24nK1EnQx8XxHN5tlzrPGan24EVzUp4BoxQfav2xE0
-         R2W4xUzZWygvNbcZEeTOlkFxDkjetJEGog2gcoJyCRda2+0e4fe4l9sFnWBquTaHzmot
-         54VQ==
+        bh=bGocoAF4XnDshiIFwV2UZS9TD3DaSuUYN+zlu0xXJbk=;
+        b=F9CRF4WkRUCxKWi+OaY2dPbGEQmUQz6J7M77VupTCPKmE79pxzAfkFGa0h+w0iHlwi
+         v4LnIT9iNqOMIvTWQcXpV/J9Kgd6aDkX/wJz+pekpBWDH3jatuMqzhhOpxGBuzvk9/eW
+         bRKoic0IHtRa0L2QqY9NFqkhbyFufoV/I1FRNJnDhjGy8eHtxZ5y+9nnYoeSYT4n/dfV
+         BnHXGZ7EIJdhLe10cd3XjTqqgh4aFd4n5C3SA/JwDG0qgfge2JViqCgsaFKgtiMTbHta
+         dvEomHDGJMwfsHe0VVo0I24iPpsNwp2dOv3RocpQzPMGGfSBCFSxwtOD8RzymP7j1FAS
+         3sYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=H2AK5sECXXWOxpJaFbUfWcwhgtP35mSHuJJkQivb894=;
-        b=X+aBtyjcTpj8yG+jLIb2CNglEF1bElWTLlirs+fRjLWyQrQ//SOScQKD9wWYlY1gZv
-         32nm2tOiWq3GFPg4eSf7RXbatARtfpIGwG3xJX+WMTZC2D/LeLOVuBo4yYwTArfYrauz
-         62qE2r2XnAhKykBBb1HsaDYkJfJt3okfXDlkF0GJFMtUCZa+A3/OABOtGrsq4ZANEbCG
-         nVHB/2dbPZgmdICsYk00ysMqGqEzFNRFHMEXlJMIpa6QBngaH8OYv5wRbnWO7H+QaDHf
-         omhWec5uP3T4Wb3S0jzk8TYBpr6ZsF2qOaDT20EV0P2x3/46ogiZ6CPAifINe64roNQY
-         ZbSA==
-X-Gm-Message-State: AOAM532AOTR/3+jiTMXFXLwWo0iecwvbjZ+XSv9IBNp3NrPImC8Pt5tD
-        WYp/Ai+07Apnrspku9QQPxZXjw==
-X-Google-Smtp-Source: ABdhPJx9VrK2hOiDY6jNzkQ/GWTB+b92TOrNM9oe99NIxVJ138UceIhQn9xggxOFs+XzKDFvrIfirg==
-X-Received: by 2002:a37:bbc4:0:b0:69b:db2c:c962 with SMTP id l187-20020a37bbc4000000b0069bdb2cc962mr16165564qkf.565.1652203883755;
-        Tue, 10 May 2022 10:31:23 -0700 (PDT)
+        bh=bGocoAF4XnDshiIFwV2UZS9TD3DaSuUYN+zlu0xXJbk=;
+        b=wIJeUUaB1b54CME5rJGEkBmt9lrbzVeg4/x+K4fHCZp1JJDgr0t4pIuoLZYat1kolQ
+         LJHY5PAy0Ewc5LYerhZMkCHg3E2EMvzrK1k0xRKnqedwf0rJyVFYHASRK5zy8t0FSmsi
+         XL4jEM2uLYFbG7HVLnnmPOP1JloeOONx3XPvjjOw0QUxQ07g+iqDFiIYv1WcrMHzmESv
+         Irywl1kAT9XaPhtVvOK7X/H28Jl88z2MBOtYWt7Mz7M43KTVO1tC1CuQPjm795pM+hsu
+         FU4djfyxdwGgbzn6mFg0n6KdORQvrVm4+oqWDQK7BtxYUvAPR313a9pjVoIChugU7hTu
+         +Q/w==
+X-Gm-Message-State: AOAM53127D9fykvamwdgrFGW1+bBktE/i9mQY+Y6JAS7PixcTfjrxHt3
+        a6qdLtoj0a+UzuerCX0In7eM1A==
+X-Google-Smtp-Source: ABdhPJy5RQkWywaRqfa0z64Zh9FS8XQyNqa+2kkzAzAadQ4ALqgkMC+5ABn4xV4HXIs+3d8d0qlibQ==
+X-Received: by 2002:ac8:598a:0:b0:2f3:cbf4:7b4e with SMTP id e10-20020ac8598a000000b002f3cbf47b4emr18654814qte.449.1652203881569;
+        Tue, 10 May 2022 10:31:21 -0700 (PDT)
 Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id i6-20020a05620a150600b0069ff8ebec64sm8490411qkk.103.2022.05.10.10.31.23
+        by smtp.gmail.com with ESMTPSA id i6-20020a05620a150600b0069ff8ebec64sm8490411qkk.103.2022.05.10.10.31.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 10:31:23 -0700 (PDT)
+        Tue, 10 May 2022 10:31:21 -0700 (PDT)
 From:   William Breathitt Gray <william.gray@linaro.org>
 To:     linux-iio@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
@@ -54,9 +54,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         David.Laight@ACULAB.COM, macro@orcam.me.uk,
         William Breathitt Gray <william.gray@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 5/8] gpio: gpio-mm: Utilize iomap interface
-Date:   Tue, 10 May 2022 13:30:57 -0400
-Message-Id: <1b274435871047e85fc8bbbf15840424632c47d0.1652201921.git.william.gray@linaro.org>
+Subject: [PATCH 2/8] gpio: 104-dio-48e: Utilize iomap interface
+Date:   Tue, 10 May 2022 13:30:54 -0400
+Message-Id: <8bc6e7d2fef9f0c320580dd8266eb27da2670feb.1652201921.git.william.gray@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1652201921.git.william.gray@linaro.org>
 References: <cover.1652201921.git.william.gray@linaro.org>
@@ -74,70 +74,79 @@ accessor calls.
 Suggested-by: David Laight <David.Laight@ACULAB.COM>
 Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
 ---
- drivers/gpio/gpio-gpio-mm.c | 43 +++++++++++++++++++------------------
- 1 file changed, 22 insertions(+), 21 deletions(-)
+ drivers/gpio/gpio-104-dio-48e.c | 63 +++++++++++++++++----------------
+ 1 file changed, 33 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index b89b8c5ff1f5..097a06463d01 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -42,7 +42,7 @@ struct gpiomm_gpio {
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index 6bf41040c41f..f118ad9bcd33 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -49,7 +49,7 @@ struct dio48e_gpio {
  	unsigned char out_state[6];
  	unsigned char control[2];
- 	spinlock_t lock;
+ 	raw_spinlock_t lock;
 -	unsigned int base;
 +	void __iomem *base;
+ 	unsigned char irq_mask;
  };
  
- static int gpiomm_gpio_get_direction(struct gpio_chip *chip,
-@@ -64,7 +64,6 @@ static int gpiomm_gpio_direction_input(struct gpio_chip *chip,
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
+@@ -70,7 +70,7 @@ static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned int offs
+ 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
  	const unsigned int io_port = offset / 8;
  	const unsigned int control_port = io_port / 3;
--	const unsigned int control_addr = gpiommgpio->base + 3 + control_port*4;
+-	const unsigned int control_addr = dio48egpio->base + 3 + control_port * 4;
++	void __iomem *const control_addr = dio48egpio->base + 3 + control_port * 4;
  	unsigned long flags;
  	unsigned int control;
  
-@@ -89,7 +88,7 @@ static int gpiomm_gpio_direction_input(struct gpio_chip *chip,
+@@ -95,9 +95,9 @@ static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned int offs
  	}
  
- 	control = BIT(7) | gpiommgpio->control[control_port];
+ 	control = BIT(7) | dio48egpio->control[control_port];
 -	outb(control, control_addr);
-+	iowrite8(control, gpiommgpio->base + 3 + control_port*4);
++	iowrite8(control, control_addr);
+ 	control &= ~BIT(7);
+-	outb(control, control_addr);
++	iowrite8(control, control_addr);
  
- 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
+ 	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
  
-@@ -103,7 +102,6 @@ static int gpiomm_gpio_direction_output(struct gpio_chip *chip,
+@@ -111,7 +111,7 @@ static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned int off
  	const unsigned int io_port = offset / 8;
  	const unsigned int control_port = io_port / 3;
  	const unsigned int mask = BIT(offset % 8);
--	const unsigned int control_addr = gpiommgpio->base + 3 + control_port*4;
+-	const unsigned int control_addr = dio48egpio->base + 3 + control_port * 4;
++	void __iomem *const control_addr = dio48egpio->base + 3 + control_port * 4;
  	const unsigned int out_port = (io_port > 2) ? io_port + 1 : io_port;
  	unsigned long flags;
  	unsigned int control;
-@@ -134,9 +132,9 @@ static int gpiomm_gpio_direction_output(struct gpio_chip *chip,
- 		gpiommgpio->out_state[io_port] &= ~mask;
+@@ -142,12 +142,12 @@ static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned int off
+ 		dio48egpio->out_state[io_port] &= ~mask;
  
- 	control = BIT(7) | gpiommgpio->control[control_port];
+ 	control = BIT(7) | dio48egpio->control[control_port];
 -	outb(control, control_addr);
-+	iowrite8(control, gpiommgpio->base + 3 + control_port*4);
++	iowrite8(control, control_addr);
  
--	outb(gpiommgpio->out_state[io_port], gpiommgpio->base + out_port);
-+	iowrite8(gpiommgpio->out_state[io_port], gpiommgpio->base + out_port);
+-	outb(dio48egpio->out_state[io_port], dio48egpio->base + out_port);
++	iowrite8(dio48egpio->out_state[io_port], dio48egpio->base + out_port);
  
- 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
+ 	control &= ~BIT(7);
+-	outb(control, control_addr);
++	iowrite8(control, control_addr);
  
-@@ -160,7 +158,7 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+ 
+@@ -171,7 +171,7 @@ static int dio48e_gpio_get(struct gpio_chip *chip, unsigned int offset)
  		return -EINVAL;
  	}
  
--	port_state = inb(gpiommgpio->base + in_port);
-+	port_state = ioread8(gpiommgpio->base + in_port);
+-	port_state = inb(dio48egpio->base + in_port);
++	port_state = ioread8(dio48egpio->base + in_port);
  
- 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
+ 	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
  
-@@ -175,7 +173,7 @@ static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
+@@ -186,7 +186,7 @@ static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
  	unsigned long offset;
  	unsigned long gpio_mask;
 -	unsigned int port_addr;
@@ -145,25 +154,25 @@ index b89b8c5ff1f5..097a06463d01 100644
  	unsigned long port_state;
  
  	/* clear bits array to a clean slate */
-@@ -183,7 +181,7 @@ static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+@@ -194,7 +194,7 @@ static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
  
  	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
- 		port_addr = gpiommgpio->base + ports[offset / 8];
+ 		port_addr = dio48egpio->base + ports[offset / 8];
 -		port_state = inb(port_addr) & gpio_mask;
 +		port_state = ioread8(port_addr) & gpio_mask;
  
  		bitmap_set_value8(bits, port_state, offset);
  	}
-@@ -207,7 +205,7 @@ static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
+@@ -217,7 +217,7 @@ static void dio48e_gpio_set(struct gpio_chip *chip, unsigned int offset, int val
  	else
- 		gpiommgpio->out_state[port] &= ~mask;
+ 		dio48egpio->out_state[port] &= ~mask;
  
--	outb(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
-+	iowrite8(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
+-	outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
++	iowrite8(dio48egpio->out_state[port], dio48egpio->base + out_port);
  
- 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
+ 	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
  }
-@@ -219,7 +217,7 @@ static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
+@@ -229,7 +229,7 @@ static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
  	unsigned long offset;
  	unsigned long gpio_mask;
  	size_t index;
@@ -172,57 +181,99 @@ index b89b8c5ff1f5..097a06463d01 100644
  	unsigned long bitmask;
  	unsigned long flags;
  
-@@ -234,7 +232,7 @@ static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
+@@ -244,7 +244,7 @@ static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
  		/* update output state data and set device gpio register */
- 		gpiommgpio->out_state[index] &= ~gpio_mask;
- 		gpiommgpio->out_state[index] |= bitmask;
--		outb(gpiommgpio->out_state[index], port_addr);
-+		iowrite8(gpiommgpio->out_state[index], port_addr);
+ 		dio48egpio->out_state[index] &= ~gpio_mask;
+ 		dio48egpio->out_state[index] |= bitmask;
+-		outb(dio48egpio->out_state[index], port_addr);
++		iowrite8(dio48egpio->out_state[index], port_addr);
  
- 		spin_unlock_irqrestore(&gpiommgpio->lock, flags);
+ 		raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
  	}
-@@ -268,6 +266,10 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
+@@ -274,7 +274,7 @@ static void dio48e_irq_mask(struct irq_data *data)
+ 
+ 	if (!dio48egpio->irq_mask)
+ 		/* disable interrupts */
+-		inb(dio48egpio->base + 0xB);
++		ioread8(dio48egpio->base + 0xB);
+ 
+ 	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+ }
+@@ -294,8 +294,8 @@ static void dio48e_irq_unmask(struct irq_data *data)
+ 
+ 	if (!dio48egpio->irq_mask) {
+ 		/* enable interrupts */
+-		outb(0x00, dio48egpio->base + 0xF);
+-		outb(0x00, dio48egpio->base + 0xB);
++		iowrite8(0x00, dio48egpio->base + 0xF);
++		iowrite8(0x00, dio48egpio->base + 0xB);
+ 	}
+ 
+ 	if (offset == 19)
+@@ -341,7 +341,7 @@ static irqreturn_t dio48e_irq_handler(int irq, void *dev_id)
+ 
+ 	raw_spin_lock(&dio48egpio->lock);
+ 
+-	outb(0x00, dio48egpio->base + 0xF);
++	iowrite8(0x00, dio48egpio->base + 0xF);
+ 
+ 	raw_spin_unlock(&dio48egpio->lock);
+ 
+@@ -373,7 +373,7 @@ static int dio48e_irq_init_hw(struct gpio_chip *gc)
+ 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(gc);
+ 
+ 	/* Disable IRQ by default */
+-	inb(dio48egpio->base + 0xB);
++	ioread8(dio48egpio->base + 0xB);
+ 
+ 	return 0;
+ }
+@@ -395,6 +395,10 @@ static int dio48e_probe(struct device *dev, unsigned int id)
  		return -EBUSY;
  	}
  
-+	gpiommgpio->base = devm_ioport_map(dev, base[id], GPIOMM_EXTENT);
-+	if (!gpiommgpio->base)
++	dio48egpio->base = devm_ioport_map(dev, base[id], DIO48E_EXTENT);
++	if (!dio48egpio->base)
 +		return -ENOMEM;
 +
- 	gpiommgpio->chip.label = name;
- 	gpiommgpio->chip.parent = dev;
- 	gpiommgpio->chip.owner = THIS_MODULE;
-@@ -281,7 +283,6 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 	gpiommgpio->chip.get_multiple = gpiomm_gpio_get_multiple;
- 	gpiommgpio->chip.set = gpiomm_gpio_set;
- 	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
--	gpiommgpio->base = base[id];
+ 	dio48egpio->chip.label = name;
+ 	dio48egpio->chip.parent = dev;
+ 	dio48egpio->chip.owner = THIS_MODULE;
+@@ -408,7 +412,6 @@ static int dio48e_probe(struct device *dev, unsigned int id)
+ 	dio48egpio->chip.get_multiple = dio48e_gpio_get_multiple;
+ 	dio48egpio->chip.set = dio48e_gpio_set;
+ 	dio48egpio->chip.set_multiple = dio48e_gpio_set_multiple;
+-	dio48egpio->base = base[id];
  
- 	spin_lock_init(&gpiommgpio->lock);
- 
-@@ -292,14 +293,14 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 	}
+ 	girq = &dio48egpio->chip.irq;
+ 	girq->chip = &dio48e_irqchip;
+@@ -423,16 +426,16 @@ static int dio48e_probe(struct device *dev, unsigned int id)
+ 	raw_spin_lock_init(&dio48egpio->lock);
  
  	/* initialize all GPIO as output */
 -	outb(0x80, base[id] + 3);
 -	outb(0x00, base[id]);
 -	outb(0x00, base[id] + 1);
 -	outb(0x00, base[id] + 2);
+-	outb(0x00, base[id] + 3);
 -	outb(0x80, base[id] + 7);
 -	outb(0x00, base[id] + 4);
 -	outb(0x00, base[id] + 5);
 -	outb(0x00, base[id] + 6);
-+	iowrite8(0x80, gpiommgpio->base + 3);
-+	iowrite8(0x00, gpiommgpio->base);
-+	iowrite8(0x00, gpiommgpio->base + 1);
-+	iowrite8(0x00, gpiommgpio->base + 2);
-+	iowrite8(0x80, gpiommgpio->base + 7);
-+	iowrite8(0x00, gpiommgpio->base + 4);
-+	iowrite8(0x00, gpiommgpio->base + 5);
-+	iowrite8(0x00, gpiommgpio->base + 6);
+-	outb(0x00, base[id] + 7);
++	iowrite8(0x80, dio48egpio->base + 3);
++	iowrite8(0x00, dio48egpio->base);
++	iowrite8(0x00, dio48egpio->base + 1);
++	iowrite8(0x00, dio48egpio->base + 2);
++	iowrite8(0x00, dio48egpio->base + 3);
++	iowrite8(0x80, dio48egpio->base + 7);
++	iowrite8(0x00, dio48egpio->base + 4);
++	iowrite8(0x00, dio48egpio->base + 5);
++	iowrite8(0x00, dio48egpio->base + 6);
++	iowrite8(0x00, dio48egpio->base + 7);
  
- 	return 0;
- }
+ 	err = devm_gpiochip_add_data(dev, &dio48egpio->chip, dio48egpio);
+ 	if (err) {
 -- 
 2.35.3
 
