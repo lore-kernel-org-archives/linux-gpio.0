@@ -2,126 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CBBC433F5
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 May 2022 11:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB61C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 May 2022 12:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353315AbiELLWG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 May 2022 07:22:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46012 "EHLO
+        id S1353513AbiELMDG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 May 2022 08:03:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353388AbiELLVI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2022 07:21:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77D015EA42;
-        Thu, 12 May 2022 04:19:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9B5F9B82796;
-        Thu, 12 May 2022 11:19:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664FEC385B8;
-        Thu, 12 May 2022 11:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652354390;
-        bh=8QUBHhVx6onGOMeXELO/RliEcskwHr2ea09LwLCtTwA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bnqPpwX5fp24gDNsShY8x9P/lOXXDRMPJGp3H2U8H9x+UOPNMxGJaQjwJ5iy1MXZR
-         JaAQXqflCTaHTd67UeZ4Gka+6NO/ZK4/3h/+Fc9D2CmLX5eWNR2CtSQDAytgr4Z40b
-         RDxF/VmeJSL/Ey7oxPZ8Xm6B4GW3m0FDqYY7vwucmG+JqtAG9sAyJ/iZ+6TC3Yqi59
-         vYlNOtcYFX/mlRvYP5011VbXVeNXtyPDnph562EtCRRFnQayEvLKXTevPMyVkIReLp
-         yGzGulz5qdrHaIjEANR6Nh/yvjAGDHNuv+u5HA89MvpsDcLCbuvA/iiukv9y7xZVwD
-         7MhHzNFwvg8cQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1np6rD-00Aqc1-Mz; Thu, 12 May 2022 12:19:47 +0100
-Date:   Thu, 12 May 2022 12:19:47 +0100
-Message-ID: <87y1z75770.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S1353525AbiELMDG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2022 08:03:06 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D265B24641F;
+        Thu, 12 May 2022 05:03:03 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id dk23so9754104ejb.8;
+        Thu, 12 May 2022 05:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P8DztgiE9mGfQ9+syuvCxSlmidaYWBeDuE+eqHZI9lA=;
+        b=HNZvzGlvSX2igikUFuv/1QDtRHTZ57NYU+kNwE/eD+XkmJSeji+sxMOp69qq0s884y
+         EZfx0+oC6/iAVlvONYXChFp6C74oF9WPt5zoYq/c/8qQfAGn9+0tcO+8BbRXxLQkexO2
+         B4bgiXafIWkstwOXpEStjspqCxOBbLGVrhL1yPn2MSvSxQ/TobXbxgKIFYfe04aiQeKd
+         2A8H4Ey23E2p+g0qx75OxIw2OBIwtFL8aQKTxYs0elcezdv4WPDn3wN0EGRhGOE/ok2N
+         +cr56Aa+XxzCxQRVk+pygSTh4HXgAb85njr+8hCQCrJ2RaXS0dL0pb8RvY9xewU5CYId
+         1rFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P8DztgiE9mGfQ9+syuvCxSlmidaYWBeDuE+eqHZI9lA=;
+        b=R3hxZWVhXw7Yhm0uDA0bkK/B/HXbMPoAVM+o/YYe6sSOb2FaRbTXUXxIiIJhK5CCEH
+         RgVL+LEo2sqSmM1anI2nKI5uWnPuRsykFsGrt2Jqvq1tvk60TA7x9gsn21vjp0q+AHX8
+         ActEUr+jMlym6EUR523rH5i58LzAzeWAhazKEeQk3KgCA4QZCUrO2lXhgYuTTYejYM1K
+         BZhYSPPulKNLwIywBwHKrZuT9e9WOM2k/GTBjYH0g/gwRR3VD9dM4gkNyyA1AM6Vos6M
+         hXx3sasxyeI0I+SOwJNZsjTkwCOtDdRvdmZMIwyf1yfioRXtGNnUSa8zTuNR6YAhm4M4
+         qDbg==
+X-Gm-Message-State: AOAM532wiVz3OdjawgyXMZvOlzcS6/zGPiF7mQ+9lQo8ZK5oOYGZZUVo
+        JLmhKj0cXikXKS5h97vOse5OpdDtTNaHSmJ+lEc=
+X-Google-Smtp-Source: ABdhPJxi0li8Rp85YKbP4hlNqLqT33IF1kfJdmoXMOeGWis0z1a7KLfAAh/HXJh1CYP/i//1EhTuWgZWrqVCMLYaYj8=
+X-Received: by 2002:a17:906:c10d:b0:6f4:a770:846e with SMTP id
+ do13-20020a170906c10d00b006f4a770846emr30333355ejc.497.1652356982129; Thu, 12
+ May 2022 05:03:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220512112106.2356120-1-zheyuma97@gmail.com>
+In-Reply-To: <20220512112106.2356120-1-zheyuma97@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 12 May 2022 14:02:25 +0200
+Message-ID: <CAHp75Vfz-Qq3qo3Re7tsL0mfXNVYZYspGDFCDXhtZxwac7bEiw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: ml-ioh: Add devm_free_irq() call to remove flow
+To:     Zheyu Ma <zheyuma97@gmail.com>
+Cc:     Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v3 3/5] gpio: gpiolib: Allow free() callback to be overridden
-In-Reply-To: <20220511183210.5248-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220511183210.5248-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <20220511183210.5248-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: prabhakar.mahadev-lad.rj@bp.renesas.com, geert+renesas@glider.be, linus.walleij@linaro.org, tglx@linutronix.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, brgl@bgdev.pl, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, phil.edworthy@renesas.com, biju.das.jz@bp.renesas.com, prabhakar.csengg@gmail.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 11 May 2022 19:32:08 +0100,
-Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> 
-> Allow free() callback to be overridden from irq_domain_ops for
-> hierarchical chips.
-> 
-> This allows drivers to free any resources which are allocated during
-> populate_parent_alloc_arg().
+On Thu, May 12, 2022 at 1:21 PM Zheyu Ma <zheyuma97@gmail.com> wrote:
+>
+> When removing the module, we will get the following flaw:
 
-Do you mean more than the fwspec? I don't see this being used.
+Thanks for the report and patch! My comments below.
 
-There is also the question of why we need to have dynamic allocation
-for the fwspec itself. Why isn't that a simple stack allocation in the
-context of gpiochip_hierarchy_irq_domain_alloc()?
+> [   14.204955] remove_proc_entry: removing non-empty directory 'irq/21', leaking at least 'gpio_ml_ioh'
+> [   14.205827] WARNING: CPU: 0 PID: 305 at fs/proc/generic.c:717 remove_proc_entry+0x389/0x3f0
+> [   14.209994] RIP: 0010:remove_proc_entry+0x389/0x3f0
+> [   14.217820] Call Trace:
+> [   14.218057]  <TASK>
+> [   14.218264]  unregister_irq_proc+0x14c/0x170
+> [   14.218674]  irq_free_descs+0x94/0xe0
+> [   14.219019]  mp_unmap_irq+0xb6/0x100
+> [   14.219357]  acpi_unregister_gsi_ioapic+0x27/0x40
+> [   14.219796]  acpi_pci_irq_disable+0x1d3/0x320
+> [   14.220206]  pci_disable_device+0x1ad/0x380
+> [   14.220613]  ioh_gpio_remove+0xc5/0xe0 [gpio_ml_ioh]
+> [   14.221075]  pci_device_remove+0x92/0x240
 
-	M.
+Can we remove not so important lines from the above? I guess ~3-4
+selected ones would be enough.
 
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/gpio/gpiolib.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index b7694171655c..d36c4a965efc 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1187,15 +1187,18 @@ static void gpiochip_hierarchy_setup_domain_ops(struct irq_domain_ops *ops)
->  	ops->activate = gpiochip_irq_domain_activate;
->  	ops->deactivate = gpiochip_irq_domain_deactivate;
->  	ops->alloc = gpiochip_hierarchy_irq_domain_alloc;
-> -	ops->free = irq_domain_free_irqs_common;
->  
->  	/*
-> -	 * We only allow overriding the translate() function for
-> +	 * We only allow overriding the translate() and free() functions for
->  	 * hierarchical chips, and this should only be done if the user
-> -	 * really need something other than 1:1 translation.
-> +	 * really need something other than 1:1 translation for translate()
-> +	 * callback and free if user wants to free up any resources which
-> +	 * were allocated during callbacks, for example populate_parent_alloc_arg.
->  	 */
->  	if (!ops->translate)
->  		ops->translate = gpiochip_hierarchy_irq_domain_translate;
-> +	if (!ops->free)
-> +		ops->free = irq_domain_free_irqs_common;
->  }
->  
->  static int gpiochip_hierarchy_add_domain(struct gpio_chip *gc)
-> -- 
-> 2.25.1
-> 
-> 
+> Fix this bug by adding devm_free_irq() call to remove flow.
+
+Fixes tag?
+
+> Signed-off-by: Zheyu Ma <zheyuma97@gmail.com>
+
+The code looks okay on the first glance.
+
+P.S. Do you have such hardware?
 
 -- 
-Without deviation from the norm, progress is not possible.
+With Best Regards,
+Andy Shevchenko
