@@ -2,158 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8F9C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 May 2022 17:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C9AC433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 May 2022 17:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357168AbiELRmC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 May 2022 13:42:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48514 "EHLO
+        id S1357025AbiELRoI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 May 2022 13:44:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357183AbiELRl5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2022 13:41:57 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD2E60BAB;
-        Thu, 12 May 2022 10:41:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652377315; x=1683913315;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ZJ1onh2Zr7lWF0ZhgH2Zhxb8WH3RUU0eJg8bTS9xfQg=;
-  b=Z0xXA5C3z34Lv+yU8ibYWBBBRG0AKvZUAActEIVby6AXVjQ1fbToYRix
-   UPNfgw3vkRHySAF/v5MEVhjz1dzEkoEvvSh3Swgrm38qoKlWRdIutnJZv
-   NpKFzNd4KmK757U8k446xdtrGsGMiZPwKzos1FggpJbXPxUq4/58Trlws
-   ldosR7vUB86qzD2D4FppIs3kum1fFU0P6SYkVaUVLR+6Vil8kgFi4bKw5
-   tTyV+ck/8cXWJibq7gLU08MWqCGRhvux8MPRUw/sfpEGi7unifcw4s/Rb
-   FSQRi8BhUt+vbaUngbqfrfo5vSDqQwDFzWmv2vLkF/oJ/BUvS12XH4Zye
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10345"; a="270026663"
-X-IronPort-AV: E=Sophos;i="5.91,220,1647327600"; 
-   d="scan'208";a="270026663"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2022 10:39:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,220,1647327600"; 
-   d="scan'208";a="712025245"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 12 May 2022 10:39:34 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 4609A45; Thu, 12 May 2022 20:39:33 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 2/5] Documentation: gpio: Advertise irqd_to_hwirq() helper in the examples
-Date:   Thu, 12 May 2022 20:39:18 +0300
-Message-Id: <20220512173921.8210-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220512173921.8210-1-andriy.shevchenko@linux.intel.com>
-References: <20220512173921.8210-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S1353035AbiELRoF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2022 13:44:05 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09FF06E8DD;
+        Thu, 12 May 2022 10:44:05 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id y76so11170553ybe.1;
+        Thu, 12 May 2022 10:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8dV6HUB7SxpjK+7mBEuOiLof9qR8uoa5I2hxfC6B+U0=;
+        b=V0BWORNUjzvdj7VCoVnOtF+BzEUkQT/FPg3TIY4oQR/ngKTsDne6/7cO1iY7svOI/c
+         J3vw05flqg8wbznzwHXi8paRcDRGowDTt0vkoicwau9AWyFe1p4je/pJyOW8gaDDyl7B
+         nbHkFN25tMl0xIij0PQsyFekN/u4+4n4oer8I+2t6TeWF8OGPT8FcV2D7JpQg1iPdC3a
+         ihAM/FPGEUlJ6N3Zrl3QGIsOCAfqy2l7ZBIzYAtrOZjf1ZswvQZ/iiRL27rC0XkRP3l1
+         6JwoGxlp+ZZ3VwxLdH0PXb05IvXvlRYQCLdJ7vaZvFDKRGjN5rgumo/TqjW1WR2cWAOw
+         nAAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8dV6HUB7SxpjK+7mBEuOiLof9qR8uoa5I2hxfC6B+U0=;
+        b=VQ9834yQ3jglJPEpdosW9Xok+O+gRNHz8OBVRHZatB2fiRpanOBh3p8yROWJL8Ui5V
+         Bhf1VBxXQGl+ru/oq8SDbyP4HRyXsWA8+IOV5HysADH0OduCTZMHxbYkzG+LASZn178F
+         4auwaaJH4wLBHtYtm1JdvEKPd9NIkUyYXmtRYCMgpV39TqXz3Y7Vl3BWyrVDkrVg+M5y
+         39jFab5wyiCwEcpKkQPSEuFGQEBoaOYr/G+2nSigKRe7VViEV+KeMw9EI0SHGDD8vKLM
+         SH1mRAWw6JP2Z2aWLEghcML8Nyq1SolWyBNSX0y2xHT7GtOFiA3uy2pXOZlS+T8o+SVM
+         y6Xg==
+X-Gm-Message-State: AOAM533MulTvnb/BPoTJdFfb4OmnhapnL+G2CKcWHUxwZOr/Ln714aLs
+        rxzvaQ4YV1T9QIZXGREAJaUw5ny8m9yrB+f1J2I=
+X-Google-Smtp-Source: ABdhPJy1WwkC5EbZMV5JPFIASaM/e60AvOA4texGRaJe7EsXmlzHKWzVwopGa+RtsniYx0rlTvcvSI8zzJwoVRF4llo=
+X-Received: by 2002:a25:bfce:0:b0:648:963b:1ccb with SMTP id
+ q14-20020a25bfce000000b00648963b1ccbmr951675ybm.417.1652377444242; Thu, 12
+ May 2022 10:44:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220511183210.5248-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220511183210.5248-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <OS0PR01MB59221ADFC86483FE2C8765C486CB9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB59221ADFC86483FE2C8765C486CB9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 12 May 2022 18:43:37 +0100
+Message-ID: <CA+V-a8s4RfNSXCHG5xo4LhkHw09aj2wFnH0iCDos_ysunV1+5g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to
+ handle GPIO interrupt
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Instead of direct dereferencing the IRQ data in order to get HW IRQ number
-use the irqd_to_hwirq() helper.
+Hi Biju,
 
-Fixes: 5644b66a9c63 ("Documentation: Update the recommended pattern for GPIO irqchips")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- Documentation/driver-api/gpio/driver.rst | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+Thank you for the review.
 
-diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
-index 964d09118d17..70ff43ac4fcc 100644
---- a/Documentation/driver-api/gpio/driver.rst
-+++ b/Documentation/driver-api/gpio/driver.rst
-@@ -430,6 +430,7 @@ call into the core gpiolib code:
-   static void my_gpio_mask_irq(struct irq_data *d)
-   {
-       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+      irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
-       /*
-        * Perform any necessary action to mask the interrupt,
-@@ -437,14 +438,15 @@ call into the core gpiolib code:
-        * state.
-        */
- 
--      gpiochip_disable_irq(gc, d->hwirq);
-+      gpiochip_disable_irq(gc, hwirq);
-   }
- 
-   static void my_gpio_unmask_irq(struct irq_data *d)
-   {
-       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+      irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
--      gpiochip_enable_irq(gc, d->hwirq);
-+      gpiochip_enable_irq(gc, hwirq);
- 
-       /*
-        * Perform any necessary action to unmask the interrupt,
-@@ -502,6 +504,7 @@ the interrupt separately and go with it:
-   static void my_gpio_mask_irq(struct irq_data *d)
-   {
-       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+      irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
-       /*
-        * Perform any necessary action to mask the interrupt,
-@@ -509,14 +512,15 @@ the interrupt separately and go with it:
-        * state.
-        */
- 
--      gpiochip_disable_irq(gc, d->hwirq);
-+      gpiochip_disable_irq(gc, hwirq);
-   }
- 
-   static void my_gpio_unmask_irq(struct irq_data *d)
-   {
-       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+      irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
--      gpiochip_enable_irq(gc, d->hwirq);
-+      gpiochip_enable_irq(gc, hwirq);
- 
-       /*
-        * Perform any necessary action to unmask the interrupt,
-@@ -577,6 +581,7 @@ In this case the typical set-up will look like this:
-   static void my_gpio_mask_irq(struct irq_data *d)
-   {
-       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+      irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
-       /*
-        * Perform any necessary action to mask the interrupt,
-@@ -584,15 +589,16 @@ In this case the typical set-up will look like this:
-        * state.
-        */
- 
--      gpiochip_disable_irq(gc, d->hwirq);
-+      gpiochip_disable_irq(gc, hwirq);
-       irq_mask_mask_parent(d);
-   }
- 
-   static void my_gpio_unmask_irq(struct irq_data *d)
-   {
-       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+      irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
--      gpiochip_enable_irq(gc, d->hwirq);
-+      gpiochip_enable_irq(gc, hwirq);
- 
-       /*
-        * Perform any necessary action to unmask the interrupt,
--- 
-2.35.1
+On Thu, May 12, 2022 at 6:35 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for the patch.
+>
+> > Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Subject: [PATCH v3 5/5] pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to
+> > handle GPIO interrupt
+> >
+> > Add IRQ domian to RZ/G2L pinctrl driver to handle GPIO interrupt.
+> >
+> > GPIO0-GPIO122 pins can be used as IRQ lines but only 32 pins can be used as
+> > IRQ lines at given time. Selection of pins as IRQ lines is handled by IA55
+> > (which is the IRQC block) which sits in between the GPIO and GIC.
+>
+> Do we need to update bindings with interrupt-cells on [1] like [2] as it act as parent for GPIO interrupts?
+>
+Yes interrupt-controller and interrupt-parent needs to be added. I'm
+wondering if "interrupt-cells" is not required. If the pin is an
+interrupt it will be passed as an GPIO.
 
+@Geert - your thoughts ?
+
+Cheers,
+Prabhakar
