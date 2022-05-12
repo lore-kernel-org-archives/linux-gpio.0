@@ -2,109 +2,182 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183A9C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 May 2022 17:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D50CBC433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 May 2022 17:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356891AbiELRLz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 May 2022 13:11:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34560 "EHLO
+        id S1356707AbiELRgq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 May 2022 13:36:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356931AbiELRLB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2022 13:11:01 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F061327CD6;
-        Thu, 12 May 2022 10:10:54 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6400,9594,10345"; a="252120842"
-X-IronPort-AV: E=Sophos;i="5.91,220,1647327600"; 
-   d="scan'208";a="252120842"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2022 10:08:38 -0700
-X-IronPort-AV: E=Sophos;i="5.91,220,1647327600"; 
-   d="scan'208";a="658684239"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2022 10:08:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1npCIe-00FHkY-Cq;
-        Thu, 12 May 2022 20:08:28 +0300
-Date:   Thu, 12 May 2022 20:08:28 +0300
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 00/10] gpiolib: Handle immutable irq_chip structures
-Message-ID: <Yn0/DIl3+i/heRH6@smile.fi.intel.com>
-References: <20220419141846.598305-1-maz@kernel.org>
+        with ESMTP id S242790AbiELRgp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2022 13:36:45 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F1D3326DC;
+        Thu, 12 May 2022 10:36:44 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id v59so11048420ybi.12;
+        Thu, 12 May 2022 10:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KciQs1/yGPFy4fqE//6Ur4aaE5S7VXUIcGW3EivMUbE=;
+        b=oyqcMoSqA9aJbw6tLEyAEmjGIo5MGdgCc178Lenc5EP96fr8XQpAKmLnA0r3Hi77nE
+         518JToT5uKJfGIh9i852Ija2MoD3hdQ0F14OmHn0ZLpw5B1kVXqS0UcIM0LtEGz+x6oo
+         03JwJm4oSNliaI7ciuuM594DUQEuyWnx1yxB2wCorI1NmSCMnJ03PtPwSrnZr9ZvLDlb
+         vYlrXeMT10Pp523tln1zkXiJX/Dj3pEjFBGWwisLCoohWK3vMh6RHb1quHAJzt/mSJzI
+         uwPM4GZI+j256eRqydeg/bRYI7p3Yqqeaq3DDxUqm/nqQirO/4B7kLiaBfaxE0WXlPLu
+         b7ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KciQs1/yGPFy4fqE//6Ur4aaE5S7VXUIcGW3EivMUbE=;
+        b=QC/UqLAfrk9XGplj4Rm1tT02TGPvqt6umhPI8uPCbNen73fbFJ4MsDemg5K+QLgQTu
+         McR5kuj5AiPyWxB0wTSMDhB6OT2hYIML56kT5xr0CRwJB2hwWs0qvdBRiwG1dKP5DXJl
+         C2jqVjGmS4Fqr5Z6DJSweQvkSjqEThWdxm35ezjENdAXCGtPFYaH9pDN4lgzpL8+yCvn
+         bdMKBdKvSvaUispWWpBzyuQsKPM2Di0CeIXqvk2eTn0P+zCoYi1CamaYb4jzNZxCr4qn
+         folLg/uTnTtPc6okKc8nempP1NYobi0ffCgUGwBHhD9SRmZ+YajYVVl8wHsFFRMsynsa
+         GKoA==
+X-Gm-Message-State: AOAM531GeW1/WkHo9s2Fsh7OSeMuW7xRXQLgDE1lcycaSChAvUctmT3t
+        lOYW4AB2gV6XfTbIbVUGTF/vgxroC0r3XIOoLlezGyvxCiPfIg==
+X-Google-Smtp-Source: ABdhPJy7tamfWD3GzonlIuCs/c5Z8ME6ymOgP0txO82R0MNHZdWpF2nfgYrkTEGiVeSfyg5H1eLJ6i+GhPCdudBItZ8=
+X-Received: by 2002:a25:83d1:0:b0:648:725c:6a05 with SMTP id
+ v17-20020a2583d1000000b00648725c6a05mr915020ybm.218.1652377003238; Thu, 12
+ May 2022 10:36:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220419141846.598305-1-maz@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20220511183210.5248-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220511183210.5248-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXDQ+eECWwvAGOb-MaN16H17qm_v_1baZ7PdT8qx9McSw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXDQ+eECWwvAGOb-MaN16H17qm_v_1baZ7PdT8qx9McSw@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 12 May 2022 18:36:16 +0100
+Message-ID: <CA+V-a8tNrJQtAQYoUKVwH9w4QOyA9JUWNjiYDPUPsj6UuJ4vaA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to
+ handle GPIO interrupt
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 03:18:36PM +0100, Marc Zyngier wrote:
-> This is a followup from [2].
-> 
-> I recently realised that the gpiolib play ugly tricks on the
-> unsuspecting irq_chip structures by patching the callbacks.
-> 
-> Not only this breaks when an irq_chip structure is made const (which
-> really should be the default case), but it also forces this structure
-> to be copied at nauseam for each instance of the GPIO block, which is
-> a waste of memory.
+Hi Geert,
 
-Is this brings us to the issue with IRQ chip name?
+Thank you for the review.
 
-The use case in my mind is the following:
-1) we have two or more GPIO chips that supports IRQ;
-2) the user registers two IRQs of the same (by number) pin on different chips;
-3) cat /proc/interrupt will show 'my_gpio_chip XX', where XX is the number.
+On Thu, May 12, 2022 at 8:39 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, May 11, 2022 at 8:32 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > Add IRQ domian to RZ/G2L pinctrl driver to handle GPIO interrupt.
+>
+> domain
+>
+ouch.
 
-So, do I understand correct current state of affairs?
+> > GPIO0-GPIO122 pins can be used as IRQ lines but only 32 pins can be
+> > used as IRQ lines at given time. Selection of pins as IRQ lines
+>
+> at a given time
+>
+will fix that.
 
-If so, we have to fix this to have any kind of ID added to the chip name that
-we can map /proc/interrupts output correctly.
+> > is handled by IA55 (which is the IRQC block) which sits in between the
+> > GPIO and GIC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>
+> >  static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+> >  {
+> >         struct device_node *np = pctrl->dev->of_node;
+> >         struct gpio_chip *chip = &pctrl->gpio_chip;
+> >         const char *name = dev_name(pctrl->dev);
+> > +       struct irq_domain *parent_domain;
+> >         struct of_phandle_args of_args;
+> > +       struct device_node *parent_np;
+> > +       struct gpio_irq_chip *girq;
+> >         int ret;
+> >
+> > +       parent_np = of_irq_find_parent(np);
+> > +       if (!parent_np)
+> > +               return -ENXIO;
+> > +
+> > +       parent_domain = irq_find_host(parent_np);
+> > +       of_node_put(parent_np);
+> > +       if (!parent_domain)
+> > +               return -EPROBE_DEFER;
+> > +
+> >         ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &of_args);
+> >         if (ret) {
+> >                 dev_err(pctrl->dev, "Unable to parse gpio-ranges\n");
+> > @@ -1138,6 +1330,15 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+> >         chip->base = -1;
+> >         chip->ngpio = of_args.args[2];
+> >
+> > +       girq = &chip->irq;
+> > +       girq->chip = &rzg2l_gpio_irqchip;
+> > +       girq->fwnode = of_node_to_fwnode(np);
+> > +       girq->parent_domain = parent_domain;
+> > +       girq->child_to_parent_hwirq = rzg2l_gpio_child_to_parent_hwirq;
+> > +       girq->populate_parent_alloc_arg = rzg2l_gpio_populate_parent_fwspec;
+> > +       girq->child_irq_domain_ops.free = rzg2l_gpio_irq_domain_free;
+> > +       girq->ngirq = RZG2L_TINT_MAX_INTERRUPT;
+> > +
+>
+> I think you need to provide a .init_valid_mask() callback, as
+> gpiochip_irqchip_remove() relies on that for destroying interrupts.
+Are you suggesting  the callback to avoid looping through all the GPIO pins?
 
-> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
-> which does what it says on the tin: don't you dare writing to them.
-> Gpiolib is further updated not to install its own callbacks, and it
-> becomes the responsibility of the driver to call into the gpiolib when
-> required. This is similar to what we do for other subsystems such as
-> PCI-MSI.
-> 
-> 5 drivers are updated to this new model: M1, QC, Tegra, pl061 and AMD
-> (as I actively use them) keeping a single irq_chip structure, marking
-> it const, and exposing the new flag.
-> 
-> Nothing breaks, the volume of change is small, the memory usage goes
-> down and we have fewer callbacks that can be used as attack vectors.
-> What's not to love?
-> 
-> Since there wasn't any objection in the previous round of review, I'm
-> going to take this series into -next to see if anything breaks at
-> scale.
+> However, the mask will need to be dynamic, as GPIO interrupts can be
+> mapped and unmapped to one of the 32 available interrupts dynamically,
+> right?
+Yep that's correct.
 
+> I'm not sure if that can be done easily: if gpiochip_irqchip_irq_valid()
+> is ever called too early, before the mapping is done, it would fail.
+>
+The mask initialization is a one time process and that is during
+adding the GPIO chip. At this stage we won't be knowing what will be
+the valid GPIO pins used as interrupts. Maybe the core needs to
+implement a callback which lands in the GPIO controller driver to tell
+if the gpio irq line is valid. This way we can handle dynamic
+interrupts.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Cheers,
+Prabhakar
 
-
+> >         pctrl->gpio_range.id = 0;
+> >         pctrl->gpio_range.pin_base = 0;
+> >         pctrl->gpio_range.base = 0;
+>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
