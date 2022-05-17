@@ -2,64 +2,75 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A311C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 17:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A362C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 18:36:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351361AbiEQRIe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 May 2022 13:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57582 "EHLO
+        id S1347597AbiEQSgi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 May 2022 14:36:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351350AbiEQRId (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 13:08:33 -0400
-X-Greylist: delayed 2400 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 May 2022 10:08:31 PDT
-Received: from mail.neweas.com (mail.neweas.com [162.19.155.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA45B42A2B
-        for <linux-gpio@vger.kernel.org>; Tue, 17 May 2022 10:08:31 -0700 (PDT)
-Received: by mail.neweas.com (Postfix, from userid 1002)
-        id 6530C22DF3; Tue, 17 May 2022 15:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neweas.com; s=mail;
-        t=1652802693; bh=qQhd+6rcOH+OhrNQ6A9OWLCE/79cwvyTtb6LUe1aYuU=;
-        h=Date:From:To:Subject:From;
-        b=Hj3/fByFkNtF2r7vKfNsOAkNU2g12Vvu0CSUw/CeB/othL/1BkSxKv7dcJ8aLA2F6
-         Q0L0EbLb6Zqe0zK9Jn+9VV+cgJIx3HF1jBZdJTeZBhHUpmhaigBQjJbRxGc4fZPiTa
-         klp/q7j+AK/Jnypgs0XF6ujTwQvyHJR5LFAXrFr+tOtRoLVmg9ladg8jyjNqfaIDmq
-         kQHeF5vAP00faERgxxe/JneddwSYBPECfgJKBB725xcAQK1EZQserzPXmBKVM4KX2D
-         e4tibx+aUdAUc4YjQy4rF7WgSDAxgDN53IX2sz4zDreF4IF0Mv3JuqvqfqDPhPcjoC
-         9GQdtiOOznKEQ==
-Received: by mail.neweas.com for <linux-gpio@vger.kernel.org>; Tue, 17 May 2022 15:50:50 GMT
-Message-ID: <20220517141500-0.1.f.10wc.0.ms3p5j7l1p@neweas.com>
-Date:   Tue, 17 May 2022 15:50:50 GMT
-From:   "Luca Gauthier" <luca.gauthier@neweas.com>
-To:     <linux-gpio@vger.kernel.org>
-Subject: New collaboration
-X-Mailer: mail.neweas.com
+        with ESMTP id S1352263AbiEQSfy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 14:35:54 -0400
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E568C17;
+        Tue, 17 May 2022 11:35:52 -0700 (PDT)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-d39f741ba0so25253174fac.13;
+        Tue, 17 May 2022 11:35:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uT4mlGSo9wkGcsmi1CtjInRJB/kA6igNndb7eOFpdHc=;
+        b=HDPT+ZTgz2H6kdptO+Zkb0Hoo+zpvbFQrRCklyDsVoo7P+5qxHDsh3TApi+UdiCllL
+         havTadYDc3WA/8kuXCS4vauFLVlZ0UuhE+G7jkTHggAlu5bfkGWSwvK6hCiGm4rws22u
+         aqgn2R0hExyphjm5U8vHTkCEdsOZUIwHla3FBuZhmAqzXWUtZfjVTUhF6TqN8MFVfXyS
+         Hn/Q4F7GbKDKnnwB/VbtTJ7a3dlKJ1Eu1oXraRR14asfJqu1mVTJ/LhEDf4C0qWAC5rA
+         HWDvgdKtxvw6lhrbygFcopvayIHnBI/yIxOWhzNX5pAS6nraV0ct1If+mUcJ+0XHvNw0
+         8C2w==
+X-Gm-Message-State: AOAM530xMmf++RXinfZL706LkN+kFdSpipTMqUDNMggKaPSVbodajdCX
+        Aiv/EV1derzCXeIkOxqs8YptLBQ5jg==
+X-Google-Smtp-Source: ABdhPJzUR8Qm1+s37SFKkN3y3YVTp69fOdZZUeq8CYIbwWDdBHEW2LD9zUy8Dm7A0l84PqMmkVSVww==
+X-Received: by 2002:a05:6870:b40a:b0:d7:5c87:64ab with SMTP id x10-20020a056870b40a00b000d75c8764abmr13350053oap.168.1652812552134;
+        Tue, 17 May 2022 11:35:52 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id l10-20020a4a434a000000b0035eb4e5a6d2sm47454ooj.40.2022.05.17.11.35.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 May 2022 11:35:51 -0700 (PDT)
+Received: (nullmailer pid 1387304 invoked by uid 1000);
+        Tue, 17 May 2022 18:35:50 -0000
+Date:   Tue, 17 May 2022 13:35:50 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        kernel@collabora.com, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+        nfraprado@collabora.com, sean.wang@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: pinctrl: Add MediaTek MT6795 pinctrl
+ bindings
+Message-ID: <20220517183550.GA1387243-robh@kernel.org>
+References: <20220517083957.11816-1-angelogioacchino.delregno@collabora.com>
+ <20220517083957.11816-2-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220517083957.11816-2-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+On Tue, 17 May 2022 10:39:56 +0200, AngeloGioacchino Del Regno wrote:
+> Add devicetree and pinfunc bindings for MediaTek Helio X10 MT6795.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../pinctrl/mediatek,pinctrl-mt6795.yaml      | 224 +++++
+>  include/dt-bindings/pinctrl/mt6795-pinfunc.h  | 908 ++++++++++++++++++
+>  2 files changed, 1132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml
+>  create mode 100644 include/dt-bindings/pinctrl/mt6795-pinfunc.h
+> 
 
-are you looking for more business clients?
-
-We would like to start working with you as a partner in acquiring or exch=
-anging leads, which directly translates into mutual benefits in the form =
-of an increased client portfolio.
-
-We work in the sector of internet marketing and as one of the first in Eu=
-rope SEO Agencies we=E2=80=99ve introduced the SEO 360 service which allo=
-ws your clients to gain the access to original SEO consultations.
-
-By choosing to work with us you receive support in achieving your busines=
-s goals, and help in handling Digital Marketing for your clients.
-
-We support over 237 partner companies. We have one of the biggest executi=
-ve departments in Europe at our disposal, we=E2=80=99ve prepared over 200=
-0 campaigns in Europe and 200 in the USA and Canada.
-
-Are you interested in the details of our partnership programme?
-
-Yours sincerely,
-Luca Gauthier
+Reviewed-by: Rob Herring <robh@kernel.org>
