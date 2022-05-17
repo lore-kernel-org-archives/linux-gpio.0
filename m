@@ -2,106 +2,118 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B696C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 12:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C2CC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 13:18:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346192AbiEQMlV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 May 2022 08:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
+        id S1347405AbiEQNSr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 May 2022 09:18:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346225AbiEQMlF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 08:41:05 -0400
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B94D15A3E;
-        Tue, 17 May 2022 05:41:04 -0700 (PDT)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-edf9ddb312so23978532fac.8;
-        Tue, 17 May 2022 05:41:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=dmRe+wb3qB33LoKWee22zj7uRY4UjJW/ZlvarK0xJ4I=;
-        b=McgQOwCtPchEgymXSFKwAV+buRxA7hrizEVgq99sHU0MUzjZfvPrbVhsSkPOkFuGqn
-         WDKVmIIR5a03YtJkbasWg43FGPjQVn8iN+E5oy1UYqBhwc8p4cV2d8Xz4b9kOsx/0vLh
-         8+BCGzaCEuDA/Gdlu8uzgGosbGUfUeLzcIiqO02UhIbFhzWUl8ZFMvIPKU1cjDiyK0PI
-         LE0+74KgApMILpa3X/wVja7idNtxfrssmp46fMTNi65vL5kYxmqQ8yiFDfCC6L5FFB6l
-         /amjU48L0wwBZjrcpunRbOvGXa2L+uzMAh7QsjA5hjVBsCCBPW/bYbLtlg/zHcGOkixS
-         v5Hw==
-X-Gm-Message-State: AOAM531beHJUgsZloqMx2zyvprNiVGragzsq1lndQSfx6EqHqeU3Crc9
-        BzdGh342PztJhA89LLYjaFE0McLWQQ==
-X-Google-Smtp-Source: ABdhPJwnnXeDtNIrD9oMGMg+yVK7oZSnR6U4Y5GhHjmScQw8t3Gp/MJckdluI0FDFeWymxO+NodkOw==
-X-Received: by 2002:a05:6870:b61d:b0:f1:9674:f095 with SMTP id cm29-20020a056870b61d00b000f19674f095mr5886409oab.187.1652791263511;
-        Tue, 17 May 2022 05:41:03 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id d6-20020a056870d28600b000f1ca01a7besm265451oae.24.2022.05.17.05.41.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 May 2022 05:41:02 -0700 (PDT)
-Received: (nullmailer pid 785396 invoked by uid 1000);
-        Tue, 17 May 2022 12:40:59 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     daniel.lezcano@linaro.org, clin@suse.com,
-        linux-kernel@vger.kernel.org,
-        giulio.benetti@benettiengineering.com, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        cniedermaier@dh-electronics.com, dev@lynxeye.de,
-        mturquette@baylibre.com, arnd@arndb.de, s.hauer@pengutronix.de,
-        Mr.Bossman075@gmail.com, festevam@gmail.com, olof@lixom.net,
-        robh+dt@kernel.org, linus.walleij@linaro.org,
-        marcel.ziswiler@toradex.com, aisheng.dong@nxp.com,
-        tglx@linutronix.de, kernel@pengutronix.de, linux@armlinux.org.uk,
-        stefan@agner.ch, abel.vesa@nxp.com,
-        sebastian.reichel@collabora.com, soc@kernel.org,
-        shawnguo@kernel.org, leoyang.li@nxp.com, sboyd@kernel.org,
-        linux-gpio@vger.kernel.org, tharvey@gateworks.com
-In-Reply-To: <20220517032802.451743-6-Mr.Bossman075@gmail.com>
-References: <20220517032802.451743-1-Mr.Bossman075@gmail.com> <20220517032802.451743-6-Mr.Bossman075@gmail.com>
-Subject: Re: [PATCH v3 07/15] dt-bindings: clock: imx: Add documentation for i.MXRT1170 clock
-Date:   Tue, 17 May 2022 07:40:59 -0500
-Message-Id: <1652791259.484121.785395.nullmailer@robh.at.kernel.org>
+        with ESMTP id S239044AbiEQNSp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 09:18:45 -0400
+X-Greylist: delayed 60 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 May 2022 06:18:43 PDT
+Received: from smtpcmd10101.aruba.it (smtpcmd10101.aruba.it [62.149.156.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E0F09419B9
+        for <linux-gpio@vger.kernel.org>; Tue, 17 May 2022 06:18:43 -0700 (PDT)
+Received: from [192.168.50.220] ([146.241.66.179])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id qx4zn3r0zcKJdqx50nLnQ1; Tue, 17 May 2022 15:17:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1652793461; bh=Im7bn8a6g50JK3DLRhOYV+yX/muSvMy/n6AfP0SgSe4=;
+        h=Date:MIME-Version:Subject:To:From:Content-Type;
+        b=OVztRY5e+Vo5wgr9R2CB53OXd7RMc+lqZ63p8dXb7vn42RVpWUbZxi/LCyGqI1Rli
+         I32xy8js5rYtmVCwnqcS1/Aiebq2Mqmrf1j8y9FuwY+Kj4eGa93PlRMaFK/EZSzezH
+         ppP3Kf74YsLBgdKoxPLcSHoX7hjZYnyApUcuudOxto316yvmBzBD7WFz4bAUxj+wZY
+         nawiMBUinSxt/DomGEoB+TNWOrSdAnufRmBsXn5fB0BnwMw7rMZCROazheFY61UCdX
+         RDpGMh8JAsYFebpsKiyax+Aif7H5RxnQm7D3PfTJgtto/17IIA5dkIeLefwc3RzOvk
+         3VHKCrHTVNbvA==
+Message-ID: <5a01ca81-f49a-a6f5-c80c-4bb8ac5bead8@benettiengineering.com>
+Date:   Tue, 17 May 2022 15:17:37 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3 05/15] dt-bindings: serial: fsl-lpuart: add i.MXRT1170
+ compatible
+Content-Language: en-US
+To:     Jesse Taube <mr.bossman075@gmail.com>, linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, stefan@agner.ch,
+        linus.walleij@linaro.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
+References: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
+ <20220517032802.451743-4-Mr.Bossman075@gmail.com>
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+In-Reply-To: <20220517032802.451743-4-Mr.Bossman075@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfJoC1DnIsmkpTb3OFMpYCrF2/0Umj6FeZvAjR9UVESNbar/h4sXktlDGKjA68llpEIhr8dv49CFeWUt1wXCB+UndhB9vvyX4ui1NQ7ZNcjTNhx/SRryN
+ UiKVsbY8NjUC3PayD/agYb3dNN1eeWRK6mwnGwg2+uDvr4V9bd0PLNqNw+FhxwspAIcDq1uSapJC9GdTic0eXKg6bJ+IFaI9cmcqzuY76K2i6SSRQLa0IVz7
+ zUtC4zQ6z/162ORDu0B2Lm5vq12JQyM/NXwwYCmj8XofSqbeNzvudmceTlmZUqwu1cJX+xuYgupDXkB4JwKykQK9KMCiZg3gHVDcsR5krp8x9eFxIZYJ8LBO
+ j/zzH2GDz4i6upuJxJrZEjKv8dK44Y4fg8+freEhPRaGsM/23fmo9MwK3ESqihBf2SHE9PyQM1g7GnWJptxuvgTk4zOxQuPVTaCcSqtzS/FK0vmbAge0m5dP
+ 94gREfP5ufET4qmbX9EeR7Nt0zglEAgyRxNjid9ZMAt7nItoWoDOgoQI7sMysWFVRzyEnbfnlQZkbu1QfvhhpFoUmXRNHsuxFEO48Bzjl1KUoCevReKUjUDO
+ Ogznm483V8u+/rxSNWtbgBDuBpw14GAMKmsxJBVK1uAccrOv9UHsHboPebA6tdq+XVmtzgfTI1i/HRjEmBahbVJNfd48/OeVT2mX8hhXEd8l8L+oTUvRtytR
+ G6tA4w3wW/lZFbE2e1BdmHg03ROsWCRcD1kymrnIBbSw/uf8BYE0b0vr2lpTYrrYQo3mbI27iGXFnbY7YW0GCPLlMOhwUkL5A/PuyYYtDM+8WajnHU3d7nAr
+ h0rejpEE4lHTpmGU9wxBNdUWip8ETBoo139oiMRi0O7WE+NIxXq18gpL64zeureA1HVNuhdzyZ90W0R7GRqIlQJS9Lb83/MB81uQA2gofK/LHdLYWSECChaf
+ G8KLH/X4Big95DopvE/AL185nNQOZq5bLogfPVnirfFj/M7/YuSdFXARFkBfiPa1tGXoX3ZwoZ2pMcmkoxCgU/+zKHcVpRnfvL4gYDlZKq/S11fLkWlJoAtH
+ zzllnhCy7Z6zrIjSJnSV9fPuwUT4DNcySdDEOa3rPsuQpiiT4w6kfqfFTEFtPuMCUiQj6OXOFPGdeoeoxZ0No6Fq6wpBamCPvaNVgi/Of1anm316qOvpSFDE
+ qNZpn2hIiXNm4w5anAJCkS4hqdkawiLYm26UbXKmecOMhgnB6JUG/GYQzJyY0lB/
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 16 May 2022 23:27:54 -0400, Jesse Taube wrote:
-> Add DT binding documentation for i.MXRT1170 clock driver.
+Hi Jesse,
+
+On 17/05/22 05:27, Jesse Taube wrote:
+> Add i.MXRT1170 compatible string to Documentation.
 > 
 > Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
 > Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 > ---
 > V1 -> V2:
->  - Change title to Clock Controller
->  - Rename to add fsl
+>   - New commit to fix dtbs_check
 > V2 -> V3:
->  - Remove unused include causing error
+>   - Nothing done
 > ---
->  .../bindings/clock/fsl,imxrt1170-clock.yaml   | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.yaml
+>   Documentation/devicetree/bindings/serial/fsl-lpuart.yaml | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+> index 30eaa62e1aed..d988d93eb5e6 100644
+> --- a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+> @@ -21,6 +21,7 @@ properties:
+>             - fsl,ls1028a-lpuart
+>             - fsl,imx7ulp-lpuart
+>             - fsl,imx8qxp-lpuart
+> +          - fsl,imx8qm-lpuart
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+this ^^^ looks like a rebase left-over
 
-yamllint warnings/errors:
+Kind regards
+-- 
+Giulio Benetti
+Benetti Engineering sas
 
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/fsl,imxrt1170-clock.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+>             - fsl,imxrt1050-lpuart
+>         - items:
+>             - enum:
+> @@ -32,6 +33,9 @@ properties:
+>                 - fsl,imx8qm-lpuart
+>                 - fsl,imx8dxl-lpuart
+>             - const: fsl,imx8qxp-lpuart
+> +      - items:
+> +          - const: fsl,imxrt1170-lpuart
+> +          - const: fsl,imxrt1050-lpuart
+>   
+>     reg:
+>       maxItems: 1
 
