@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 855DCC433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 03:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DA2C4167E
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 03:28:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239969AbiEQD2S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 May 2022 23:28:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33958 "EHLO
+        id S240007AbiEQD2U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 May 2022 23:28:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239730AbiEQD2O (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 May 2022 23:28:14 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A07B2403DE;
-        Mon, 16 May 2022 20:28:12 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id fu47so13514502qtb.5;
-        Mon, 16 May 2022 20:28:12 -0700 (PDT)
+        with ESMTP id S239781AbiEQD2Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 May 2022 23:28:16 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 201803FBE4;
+        Mon, 16 May 2022 20:28:16 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id hh4so13495736qtb.10;
+        Mon, 16 May 2022 20:28:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ckisIL9iAyTE4pUnDPg1R/R7BKAMhIgwT/MHwqfszWs=;
-        b=MzWgAuNDpXYgLguXagmIo79bRto3HrYN1kloxBM3Eowj1dLboAoKYIRMCBEHVZdZmQ
-         uOWdSwtLuv+XRbyreeyUdcXw7vm9CfoIhAcPM1SMV8XDSoS+5pIa82pesYRYt6HKJCW5
-         WsCen+FBRFUO11sm54JzF0bilfRz8GRw/RD/MJ9svL4ARIb0aS946AclLPt1haonq3T6
-         ao8a+Oe6Pxiof3Lf/3YqblB0KeE/Q54J0Yom8Mxpam3KRymzhiB00XGr/nwuuJnAOTaU
-         mh8WISv8pM+FGSj+MklNuNECnFNbsIoRWZdQNh33e/yZoUJLni1twfxUFp3wWEYS+FVc
-         O//w==
+        bh=PdMLJHGeYL3BkhQ1IKPvlOorpUAGvppwW+eNkTKAgQY=;
+        b=epVeU20/PWITUh/PnZQO4gV6FOnPwRd3wuGGCHycYRbslbbSXVxdItsjxJJS5FoCDY
+         m/Q4JfToGoRu9DGDMz9Khxn/QfnB9ap8f8DSUEiRs46YOazpmedmJv6d+UYYCxBfGdEi
+         TICDdsa/yw4Ph5BLLQqNxnTL/mFwPzlKuyyAem+WI1mRSwi7Ac1DygQdMYjQ1rM0fwpV
+         Nvl6JH+K66D4GbEoqtuhcp4gDoPZpQBcrQn8A/D6625KiuBbb716dRQd6f23nt2wAyml
+         tRdyDNA4YgAKrbRMr7BLUGpUr8FJDfRq+PTIHF8BSBD1O548zVggFEdp0Mt5mfpDt4NI
+         oTDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ckisIL9iAyTE4pUnDPg1R/R7BKAMhIgwT/MHwqfszWs=;
-        b=LyxXdf5WSFDfivcL8qT0NMECL9MS8rPrmoL9MKne/P2c6XSXkzfHdYjUShxcXYnMXN
-         XSN4LlRs/t8MlSx3ynFXERWREyTAYrJpoXKVtI8w0cMxtW6sJ/rs1raYnNQvgfV6Q1Fl
-         sbXQMvwiGyfzsGRSm1gKPevFs5MDeKzYxe/oPoPv+FIIFd2arDz76szZh3vbwD6o6vGw
-         H5F30c9zlr+AFq+6egoEYdAQ9AxMjHrma2ekFeXsWZ18bsoPi2rt8ukhkk37etWjI7jI
-         HhLBxcVvst4oddDhokFp+1J/Mne67FN3XssQczAPNBrrixGXWL6zplKPGdumgWn6cUyW
-         HpEw==
-X-Gm-Message-State: AOAM533zwvEMYwad+2VcRD/DiVKJ27i0BIFWmV0JlLLU32HE3WSc/D6k
-        XRzdsMdnptu5an9mSOuOZrA=
-X-Google-Smtp-Source: ABdhPJyfyP6/60RdGr1J93JW2NLj9F6EjD/gcB69+D8iZNQdLXIRMUHr2tUvr8HIeUfU9OCt+/4Sag==
-X-Received: by 2002:a05:622a:a:b0:2f3:b91d:a329 with SMTP id x10-20020a05622a000a00b002f3b91da329mr18062278qtw.276.1652758091697;
-        Mon, 16 May 2022 20:28:11 -0700 (PDT)
+        bh=PdMLJHGeYL3BkhQ1IKPvlOorpUAGvppwW+eNkTKAgQY=;
+        b=wpAoHocFEiCp2WJPUiztGhfYx40pKkXobv3pTqNzArcKTkYiaGD8cvUPbqalywrg2U
+         APEMGMQYXV/XDv4DXNWszQsbGDvhy/gnchQYBDODs+JJoF3Bkmwr2fgncLTMOMc/5DIr
+         xxxt6xyijDYxB9ViKraVIMKOFFtzP9JuOjtW6h1KFKvLK33UUi8X9Y2c4J5OjDAVX9rp
+         BhINe6MmkE49AjBe7N/LY+Los98eqmaoLGKRVelMr975l+99mjoOEsDhDsiDvAtHu9un
+         1poNRSGhHCv8Jn7r1gfuEcpEgPPQHmgPv3IHZwod5R1Xd3wmbbVQyRBwFMLhzNyIlrju
+         wAfw==
+X-Gm-Message-State: AOAM530ZEUvhkWd0lYXYCRfU5c+bpoxOLhYv1EQMo+tHhJPf99E8tVnJ
+        UPfYwO0tUQYEMPYnwU1BafU=
+X-Google-Smtp-Source: ABdhPJxhDCOOwtl7muxq2EoiLkbbJ3pSULu366CSCoCkoPrUpdovla0DLB8Xkq4oYUvZSpAmqX9neA==
+X-Received: by 2002:ac8:5e4f:0:b0:2f7:b5bf:7541 with SMTP id i15-20020ac85e4f000000b002f7b5bf7541mr10075787qtx.59.1652758095266;
+        Mon, 16 May 2022 20:28:15 -0700 (PDT)
 Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id a19-20020a376613000000b006a098381abcsm7079535qkc.114.2022.05.16.20.28.10
+        by smtp.gmail.com with ESMTPSA id a19-20020a376613000000b006a098381abcsm7079535qkc.114.2022.05.16.20.28.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 20:28:11 -0700 (PDT)
+        Mon, 16 May 2022 20:28:14 -0700 (PDT)
 From:   Jesse Taube <mr.bossman075@gmail.com>
 X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
 To:     linux-imx@nxp.com
@@ -62,10 +62,10 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         clin@suse.com, giulio.benetti@benettiengineering.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 06/15] dt-bindings: pinctrl: add i.MXRT1170 pinctrl Documentation
-Date:   Mon, 16 May 2022 23:27:53 -0400
-Message-Id: <20220517032802.451743-5-Mr.Bossman075@gmail.com>
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v3 08/15] ARM: mach-imx: Add support for i.MXRT1170
+Date:   Mon, 16 May 2022 23:27:55 -0400
+Message-Id: <20220517032802.451743-7-Mr.Bossman075@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
 References: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
@@ -75,104 +75,31 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add i.MXRT1170 pinctrl binding Documentation
+Add "fsl,imxrt1170" to imxrt_compat
 
 Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
 Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 V1 -> V2:
  - Nothing done
 V2 -> V3:
  - Nothing done
 ---
- .../bindings/pinctrl/fsl,imxrt1170.yaml       | 77 +++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
+ arch/arm/mach-imx/mach-imxrt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
-new file mode 100644
-index 000000000000..2e880b3e537c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/fsl,imxrt1170.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale i.MXRT1170 IOMUX Controller
-+
-+maintainers:
-+  - Giulio Benetti <giulio.benetti@benettiengineering.com>
-+  - Jesse Taube <Mr.Bossman075@gmail.com>
-+
-+description:
-+  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-+  for common binding part and usage.
-+
-+properties:
-+  compatible:
-+    const: fsl,imxrt1170-iomuxc
-+
-+  reg:
-+    maxItems: 1
-+
-+# Client device subnode's properties
-+patternProperties:
-+  'grp$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+
-+    properties:
-+      fsl,pins:
-+        description:
-+          each entry consists of 6 integers and represents the mux and config
-+          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
-+          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
-+          be found in <arch/arm/boot/dts/imxrt1170-pinfunc.h>. The last
-+          integer CONFIG is the pad setting value like pull-up on this pin. Please
-+          refer to i.MXRT1170 Reference Manual for detailed CONFIG settings.
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        items:
-+          items:
-+            - description: |
-+                "mux_reg" indicates the offset of mux register.
-+            - description: |
-+                "conf_reg" indicates the offset of pad configuration register.
-+            - description: |
-+                "input_reg" indicates the offset of select input register.
-+            - description: |
-+                "mux_val" indicates the mux value to be applied.
-+            - description: |
-+                "input_val" indicates the select input value to be applied.
-+            - description: |
-+                "pad_setting" indicates the pad configuration value to be applied.
-+    required:
-+      - fsl,pins
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    iomuxc: iomuxc@400e8000 {
-+        compatible = "fsl,imxrt1170-iomuxc";
-+        reg = <0x400e8000 0x4000>;
-+        pinctrl_lpuart1: lpuart1grp {
-+            fsl,pins =
-+              <0x16C 0x3B0 0x620 0x0 0x0  0xf1>,
-+              <0x170 0x3B4 0x61C 0x0 0x0	0xf1>;
-+        };
-+    };
+diff --git a/arch/arm/mach-imx/mach-imxrt.c b/arch/arm/mach-imx/mach-imxrt.c
+index 2063a3059c84..0070214feb42 100644
+--- a/arch/arm/mach-imx/mach-imxrt.c
++++ b/arch/arm/mach-imx/mach-imxrt.c
+@@ -10,6 +10,7 @@
+ 
+ static const char *const imxrt_compat[] __initconst = {
+ 	"fsl,imxrt1050",
++	"fsl,imxrt1170",
+ 	NULL
+ };
+ 
 -- 
 2.36.1
 
