@@ -2,89 +2,64 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1387C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 16:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A311C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 17:08:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350010AbiEQQi3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 May 2022 12:38:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47552 "EHLO
+        id S1351361AbiEQRIe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 May 2022 13:08:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351035AbiEQQi2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 12:38:28 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1710633E86;
-        Tue, 17 May 2022 09:38:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652805507; x=1684341507;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=T7Duo2KDAAYE18QSBhb5vxqT20qzgjq8uzh+AeSioMY=;
-  b=C8wMroHU/SfyTs06kBG+JOonmnuOiyXsp5EJ5jEHBgRxBsBYz0dCEBLJ
-   l5XGtfdE0SN/KvJtRXThU2zJtuFZq0e5MeSxHz5LwyvYVJ2Tw17vULhZz
-   60BIQ7pPaCwIfzqQLfaatmWulHfO20AsYIXLKYq5u4wSAc0RVMDfASYNz
-   KSV0f4bMR5ZChtFEmqr+qDscEXyzbRSSMuapEEIN72w5xjJH8JmMTLGKj
-   RKqmO5Y/whzsq0MDpWoPqChgX1mqsOnJ2HqIhbUYLT5Zmma+ll72MnTYf
-   BL3aJTS/frMQMr5xpj32P1TRlxNlggcxZmby41VrbLYX4cyB1e1eFewmg
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10350"; a="268827681"
-X-IronPort-AV: E=Sophos;i="5.91,233,1647327600"; 
-   d="scan'208";a="268827681"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2022 09:38:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,233,1647327600"; 
-   d="scan'208";a="597225299"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 17 May 2022 09:38:23 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BF64B159; Tue, 17 May 2022 19:38:23 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 2/2] pinctrl: intel: Drop unsued irqchip member in struct intel_pinctrl
-Date:   Tue, 17 May 2022 19:38:20 +0300
-Message-Id: <20220517163820.86768-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220517163820.86768-1-andriy.shevchenko@linux.intel.com>
-References: <20220517163820.86768-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S1351350AbiEQRId (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 13:08:33 -0400
+X-Greylist: delayed 2400 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 May 2022 10:08:31 PDT
+Received: from mail.neweas.com (mail.neweas.com [162.19.155.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA45B42A2B
+        for <linux-gpio@vger.kernel.org>; Tue, 17 May 2022 10:08:31 -0700 (PDT)
+Received: by mail.neweas.com (Postfix, from userid 1002)
+        id 6530C22DF3; Tue, 17 May 2022 15:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neweas.com; s=mail;
+        t=1652802693; bh=qQhd+6rcOH+OhrNQ6A9OWLCE/79cwvyTtb6LUe1aYuU=;
+        h=Date:From:To:Subject:From;
+        b=Hj3/fByFkNtF2r7vKfNsOAkNU2g12Vvu0CSUw/CeB/othL/1BkSxKv7dcJ8aLA2F6
+         Q0L0EbLb6Zqe0zK9Jn+9VV+cgJIx3HF1jBZdJTeZBhHUpmhaigBQjJbRxGc4fZPiTa
+         klp/q7j+AK/Jnypgs0XF6ujTwQvyHJR5LFAXrFr+tOtRoLVmg9ladg8jyjNqfaIDmq
+         kQHeF5vAP00faERgxxe/JneddwSYBPECfgJKBB725xcAQK1EZQserzPXmBKVM4KX2D
+         e4tibx+aUdAUc4YjQy4rF7WgSDAxgDN53IX2sz4zDreF4IF0Mv3JuqvqfqDPhPcjoC
+         9GQdtiOOznKEQ==
+Received: by mail.neweas.com for <linux-gpio@vger.kernel.org>; Tue, 17 May 2022 15:50:50 GMT
+Message-ID: <20220517141500-0.1.f.10wc.0.ms3p5j7l1p@neweas.com>
+Date:   Tue, 17 May 2022 15:50:50 GMT
+From:   "Luca Gauthier" <luca.gauthier@neweas.com>
+To:     <linux-gpio@vger.kernel.org>
+Subject: New collaboration
+X-Mailer: mail.neweas.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is no users of irqchip member in struct intel_pinctrl. Drop it.
+Hello,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: no changes
- drivers/pinctrl/intel/pinctrl-intel.h | 2 --
- 1 file changed, 2 deletions(-)
+are you looking for more business clients?
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index c4fef03b663f..710341bb67cc 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -223,7 +223,6 @@ struct intel_pinctrl_context {
-  * @pctldesc: Pin controller description
-  * @pctldev: Pointer to the pin controller device
-  * @chip: GPIO chip in this pin controller
-- * @irqchip: IRQ chip in this pin controller
-  * @soc: SoC/PCH specific pin configuration data
-  * @communities: All communities in this pin controller
-  * @ncommunities: Number of communities in this pin controller
-@@ -236,7 +235,6 @@ struct intel_pinctrl {
- 	struct pinctrl_desc pctldesc;
- 	struct pinctrl_dev *pctldev;
- 	struct gpio_chip chip;
--	struct irq_chip irqchip;
- 	const struct intel_pinctrl_soc_data *soc;
- 	struct intel_community *communities;
- 	size_t ncommunities;
--- 
-2.35.1
+We would like to start working with you as a partner in acquiring or exch=
+anging leads, which directly translates into mutual benefits in the form =
+of an increased client portfolio.
 
+We work in the sector of internet marketing and as one of the first in Eu=
+rope SEO Agencies we=E2=80=99ve introduced the SEO 360 service which allo=
+ws your clients to gain the access to original SEO consultations.
+
+By choosing to work with us you receive support in achieving your busines=
+s goals, and help in handling Digital Marketing for your clients.
+
+We support over 237 partner companies. We have one of the biggest executi=
+ve departments in Europe at our disposal, we=E2=80=99ve prepared over 200=
+0 campaigns in Europe and 200 in the USA and Canada.
+
+Are you interested in the details of our partnership programme?
+
+Yours sincerely,
+Luca Gauthier
