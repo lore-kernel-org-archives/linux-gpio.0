@@ -2,151 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4B6C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 15:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B938C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 May 2022 16:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242519AbiEQPq0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 May 2022 11:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
+        id S1350918AbiEQQdK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 May 2022 12:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350948AbiEQPqR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 11:46:17 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99AA650B1D
-        for <linux-gpio@vger.kernel.org>; Tue, 17 May 2022 08:45:17 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:c0f6:7ccf:c217:5f21])
-        by laurent.telenet-ops.be with bizsmtp
-        id XrlF2700H0nFbBY01rlFiK; Tue, 17 May 2022 17:45:16 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nqzNr-000jGZ-CH; Tue, 17 May 2022 17:45:15 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nqzNq-004Pdf-QY; Tue, 17 May 2022 17:45:14 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: rcar: Make the irqchip immutable
-Date:   Tue, 17 May 2022 17:45:13 +0200
-Message-Id: <29398fc1c9a16e5ea9c678be2c44c488a94ddce3.1652802220.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S1350912AbiEQQdJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2022 12:33:09 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F2633358;
+        Tue, 17 May 2022 09:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652805188; x=1684341188;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KCbhEy6vdSkzBqE0YJ9VgoWS4GbK8olfcLls77Yab2Q=;
+  b=cpDmOzFtqKk7oRfQ2tqaAkO1LIkRkrIac9TfCpTkoHQNfIxFk/hT1b0H
+   rDwmM6+9d2PtoL+0vbhuPi1PSkHL13jzcRkZETIigkktcaSIeqfwC8eeA
+   t4NWha63RbqF0PXaEggb+XNtlaRyb4+BZAq8bVYsJrBUwm7+UO8cSqCOz
+   9VjAmv50HruX+ihzPLTope8nRysrqkkUUuHO3ZWgFOzBHjmhZRb4Kaitx
+   LgbTjmjHJJBmcvR34GfNgMwW9YCsegE+2ILvUu8jKxgA1gY/BjwZ/wSBD
+   9Tm2VCgs5CAUjUkzu0QBtpTYaGerY0drTsLq9oKr+vmAAF1EEt0uL8Lny
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10350"; a="334286604"
+X-IronPort-AV: E=Sophos;i="5.91,233,1647327600"; 
+   d="scan'208";a="334286604"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2022 09:33:08 -0700
+X-IronPort-AV: E=Sophos;i="5.91,233,1647327600"; 
+   d="scan'208";a="523036457"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2022 09:33:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nr086-0008CP-M7;
+        Tue, 17 May 2022 19:33:02 +0300
+Date:   Tue, 17 May 2022 19:33:02 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/2] pinctrl: intel: make irq_chip immutable
+Message-ID: <YoPOPsmBj8LEZ2uD@smile.fi.intel.com>
+References: <20220516185618.32448-1-andriy.shevchenko@linux.intel.com>
+ <YoN0cdUdYQotyod9@lahna>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoN0cdUdYQotyod9@lahna>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
-immutable") added a warning to indicate if the gpiolib is altering the
-internals of irqchips.  Following this change the following warning is
-now observed for the gpio-rcar driver:
+On Tue, May 17, 2022 at 01:09:53PM +0300, Mika Westerberg wrote:
+> On Mon, May 16, 2022 at 09:56:17PM +0300, Andy Shevchenko wrote:
+> > Since recently, the kernel is nagging about mutable irq_chips:
+> > 
+> >    "not an immutable chip, please consider fixing it!"
+> > 
+> > Drop the unneeded copy, flag it as IRQCHIP_IMMUTABLE, add the new
+> > helper functions and call the appropriate gpiolib functions.
+> > 
+> > While at it, align IRQ chip callback names with member names for
+> > the sake of consistency.
+> 
+> Or for the sake of inconsistency? ;-)  All the other structs are not
+> using this kind of alignment and I would like to keep this one matching
+> the rest too. Also I prefer the format currently used in the driver.
 
-    gpio gpiochip0: (e6050000.gpio): not an immutable chip, please consider fixing it!
+I got your point. I will drop that part from v2.
 
-Fix this by making the irqchip in the gpio-rcar driver immutable.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Against linux-next.
-Tested on the koelsch development board (R-Car M2-W).
-
-On Tue, Apr 5, 2022 at 4:07 PM Marc Zyngier <maz@kernel.org> wrote:
-> Nothing breaks, the volume of change is small, the memory usage goes
-> down and we have fewer callbacks that can be used as attack vectors.
-> What's not to love?
-
-Does it?
-
-    arm32$ size drivers/gpio/gpio-rcar.o{.orig,}
-       text	   data	    bss	    dec	    hex	filename
-       4543	    112	     24	   4679	   1247	drivers/gpio/gpio-rcar.o.orig
-       4647	    112	     24	   4783	   12af	drivers/gpio/gpio-rcar.o
-
-    arm64$ size drivers/gpio/gpio-rcar.o{.orig,}
-       text	   data	    bss	    dec	    hex	filename
-       4919	    216	     48	   5183	   143f	drivers/gpio/gpio-rcar.o.orig
-       5159	    216	     48	   5423	   152f	drivers/gpio/gpio-rcar.o
----
- drivers/gpio/gpio-rcar.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 9a1e0c37c04baa58..6d1b105a4ae81f75 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -44,7 +44,6 @@ struct gpio_rcar_priv {
- 	spinlock_t lock;
- 	struct device *dev;
- 	struct gpio_chip gpio_chip;
--	struct irq_chip irq_chip;
- 	unsigned int irq_parent;
- 	atomic_t wakeup_path;
- 	struct gpio_rcar_info info;
-@@ -98,6 +97,7 @@ static void gpio_rcar_irq_disable(struct irq_data *d)
- 	struct gpio_rcar_priv *p = gpiochip_get_data(gc);
- 
- 	gpio_rcar_write(p, INTMSK, ~BIT(irqd_to_hwirq(d)));
-+	gpiochip_disable_irq(gc, d->hwirq);
- }
- 
- static void gpio_rcar_irq_enable(struct irq_data *d)
-@@ -105,6 +105,7 @@ static void gpio_rcar_irq_enable(struct irq_data *d)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct gpio_rcar_priv *p = gpiochip_get_data(gc);
- 
-+	gpiochip_enable_irq(gc, d->hwirq);
- 	gpio_rcar_write(p, MSKCLR, BIT(irqd_to_hwirq(d)));
- }
- 
-@@ -203,6 +204,17 @@ static int gpio_rcar_irq_set_wake(struct irq_data *d, unsigned int on)
- 	return 0;
- }
- 
-+static const struct irq_chip gpio_rcar_irq_chip = {
-+	.name		= "gpio-rcar",
-+	.irq_mask	= gpio_rcar_irq_disable,
-+	.irq_unmask	= gpio_rcar_irq_enable,
-+	.irq_set_type	= gpio_rcar_irq_set_type,
-+	.irq_set_wake	= gpio_rcar_irq_set_wake,
-+	.flags		= IRQCHIP_IMMUTABLE | IRQCHIP_SET_TYPE_MASKED |
-+			  IRQCHIP_MASK_ON_SUSPEND,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+};
-+
- static irqreturn_t gpio_rcar_irq_handler(int irq, void *dev_id)
- {
- 	struct gpio_rcar_priv *p = dev_id;
-@@ -531,7 +543,6 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- {
- 	struct gpio_rcar_priv *p;
- 	struct gpio_chip *gpio_chip;
--	struct irq_chip *irq_chip;
- 	struct gpio_irq_chip *girq;
- 	struct device *dev = &pdev->dev;
- 	const char *name = dev_name(dev);
-@@ -581,16 +592,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	gpio_chip->base = -1;
- 	gpio_chip->ngpio = npins;
- 
--	irq_chip = &p->irq_chip;
--	irq_chip->name = "gpio-rcar";
--	irq_chip->irq_mask = gpio_rcar_irq_disable;
--	irq_chip->irq_unmask = gpio_rcar_irq_enable;
--	irq_chip->irq_set_type = gpio_rcar_irq_set_type;
--	irq_chip->irq_set_wake = gpio_rcar_irq_set_wake;
--	irq_chip->flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
--
- 	girq = &gpio_chip->irq;
--	girq->chip = irq_chip;
-+	gpio_irq_chip_set_chip(girq, &gpio_rcar_irq_chip);
- 	/* This will let us handle the parent IRQ in the driver */
- 	girq->parent_handler = NULL;
- 	girq->num_parents = 0;
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
