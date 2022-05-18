@@ -2,138 +2,106 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4038C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 May 2022 13:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 699D3C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 May 2022 13:51:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237425AbiERNGv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 May 2022 09:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53374 "EHLO
+        id S238241AbiERNvn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 May 2022 09:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237560AbiERNGN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2022 09:06:13 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C5E2377E0
-        for <linux-gpio@vger.kernel.org>; Wed, 18 May 2022 06:06:10 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:1425:89ca:2e9e:5fc1])
-        by laurent.telenet-ops.be with bizsmtp
-        id YD692700810zdRX01D69Vy; Wed, 18 May 2022 15:06:09 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nrJNQ-000qdh-LZ; Wed, 18 May 2022 15:06:08 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nrJNQ-00BiOD-6s; Wed, 18 May 2022 15:06:08 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: pcf857x: Make the irqchip immutable
-Date:   Wed, 18 May 2022 15:06:07 +0200
-Message-Id: <3a1d870a24f4490677b1e379faab326037b07cda.1652879138.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S238245AbiERNvk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2022 09:51:40 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B8719CEE9
+        for <linux-gpio@vger.kernel.org>; Wed, 18 May 2022 06:51:39 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-2ff1ed64f82so25431247b3.1
+        for <linux-gpio@vger.kernel.org>; Wed, 18 May 2022 06:51:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ezkF+KufCRulaATTf+tA3i0YmPN8Lg/E/OJ5KWGLi9s=;
+        b=uGNd03MI81VqlOTp83UbNvG7RNsf4JwdkIUpBemFFroQN/ghPDZN15hQVkSIUo9Y+m
+         RFdhHMVM5nbW1OSRcv2fiztcN2rNCYuW03ZVkrmJl3jMIZO9FdAyBMJt7AigMbN9Lyb4
+         bL2Mmh06bmrMQ2Pss2J1tW+AgVMFOU8a0pcQccwayaDXEYxlvL4+rUohNDiH2hG62G4R
+         vyRU9BoSvX4w5wx6gy6MzyofxQ0LHJ1cbBgRXfxdVHe/wQkybembQwu/7B4cQViqMdsm
+         3z+3FMMPKNU0mcLT9JPS4HItaf9sbLRk+z8Rqur7f//JbGqsugsLG2+2Pb6syuJ/NKyU
+         cguA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ezkF+KufCRulaATTf+tA3i0YmPN8Lg/E/OJ5KWGLi9s=;
+        b=B40du7gk/i5DGyTwJafusvjRl2zcxVMVi6to0X0rh5Zk7J9GaBXv4aKr6xDqbvCTz2
+         j4m/xeXiyzM7WTfldRTj1OsdiF/b8jUil1F2dFOsQHZyWtoFAdXHsOxzbruPj+lo5FRp
+         JD4qW2Gwit+NAamEBv714yKh5LLw8q0yn0xUuHM4eSQ5Ayh+PJAlDKcHlJgl5mR/SpRf
+         A9DIOn4n9BiRuZWLSCm5omTO4aLZugZPqnz9g54K6nDV/voshK7eK11ARkpEmiRx3YAG
+         uulL5ykYEKrpxR2gEnFWAzgDbig0h/Nu9p/4lYgfyuqlUKy50IjrkFkyY+tMr5hIY94W
+         N7Cw==
+X-Gm-Message-State: AOAM532kloviRl0wEzZ0HvpZR7HnMV711N8+fyFUgU6JdCuN4cF28VPh
+        bDWmVO/8QakBaWXY19D5SZlxEfPEn5w4tOM53ProoQ==
+X-Google-Smtp-Source: ABdhPJxpHy6dIs00LRXeGNRMgX921VLukf4liJgNBcyAdsNr2nvvmrO+nqIa6p9eJAUAaA5lDN2SqFDUk598KuThmrQ=
+X-Received: by 2002:a81:2154:0:b0:2f4:d79e:35dc with SMTP id
+ h81-20020a812154000000b002f4d79e35dcmr31816444ywh.126.1652881898898; Wed, 18
+ May 2022 06:51:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220418141416.27529-1-asmaa@nvidia.com> <CH2PR12MB3895A1FB2977B725ED92AB57D7C29@CH2PR12MB3895.namprd12.prod.outlook.com>
+ <CACRpkdY1uK=73zpEM5zUyXacm5xaUUFYkuKMxi_q6vwmOPy6tw@mail.gmail.com>
+ <CH2PR12MB389560A1873030472A7A371DD7C29@CH2PR12MB3895.namprd12.prod.outlook.com>
+ <CACRpkdZhW9XK3opXLLzdMiVLVkGQyJCf7RLZtRQLsmzv-aqwbA@mail.gmail.com>
+ <CH2PR12MB38953FF57D91FA75AB9CB102D7CB9@CH2PR12MB3895.namprd12.prod.outlook.com>
+ <CACRpkdbAhMa2CXvQra3E13n8WfiBxyHNqzEp4dW3qo5upr_=gw@mail.gmail.com> <CH2PR12MB38958CD365876A2106712C3CD7CF9@CH2PR12MB3895.namprd12.prod.outlook.com>
+In-Reply-To: <CH2PR12MB38958CD365876A2106712C3CD7CF9@CH2PR12MB3895.namprd12.prod.outlook.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 18 May 2022 15:51:27 +0200
+Message-ID: <CACRpkdZp9hx2SHxsmjBm2oj7m3UT-4S+MKw5qqNME0PLjPNV2A@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] Add driver for Mellanox BlueField-3 GPIO controller
+To:     Asmaa Mnebhi <asmaa@nvidia.com>
+Cc:     "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
-immutable") added a warning to indicate if the gpiolib is altering the
-internals of irqchips.  Following this change the following warning is
-now observed for the pcf857x driver:
+On Mon, May 16, 2022 at 3:00 PM Asmaa Mnebhi <asmaa@nvidia.com> wrote:
 
-    gpio gpiochip1: (pcf8575): not an immutable chip, please consider fixing it!
+> So these GPIO pins are assigned one specific HW functionality on the boards
+>  and software should never change them.
+>
+> By default, for security purposes, I think we shouldn't let the user have the option
+> to control the GPIO pins since they have a specific HW functionality.
+>
+> But for bringup/debug purposes, we would like to support the option of software
+> being able to change these pin values. We also might have customers that choose
+> to change the default HW connection of a certain GPIO pin and connect it to
+> control their LEDs for instance.
 
-Fix this by making the irqchip in the pcf857x driver immutable.
+The fact that the usecase is bringup/debug does not mean we cut
+corners and do "quick fixes". The proper APIs have to be implemented,
+the alternative is to not submit the driver at all.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Against linux-next.
-Tested with pcf8575 and gpio-keys (including wake-up) on the
-sh73a0/kzm9g development board.
----
- drivers/gpio/gpio-pcf857x.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+What I hear is that these pins have two modes:
 
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index e3a53dd5df1ec472..ea8801622ba572a9 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -71,7 +71,6 @@ MODULE_DEVICE_TABLE(of, pcf857x_of_table);
-  */
- struct pcf857x {
- 	struct gpio_chip	chip;
--	struct irq_chip		irqchip;
- 	struct i2c_client	*client;
- 	struct mutex		lock;		/* protect 'out' */
- 	unsigned		out;		/* software latch */
-@@ -204,6 +203,7 @@ static void pcf857x_irq_enable(struct irq_data *data)
- {
- 	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
- 
-+	gpiochip_enable_irq(&gpio->chip, data->hwirq);
- 	gpio->irq_enabled |= (1 << data->hwirq);
- }
- 
-@@ -212,6 +212,7 @@ static void pcf857x_irq_disable(struct irq_data *data)
- 	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
- 
- 	gpio->irq_enabled &= ~(1 << data->hwirq);
-+	gpiochip_disable_irq(&gpio->chip, data->hwirq);
- }
- 
- static void pcf857x_irq_bus_lock(struct irq_data *data)
-@@ -228,6 +229,20 @@ static void pcf857x_irq_bus_sync_unlock(struct irq_data *data)
- 	mutex_unlock(&gpio->lock);
- }
- 
-+static const struct irq_chip pcf857x_irq_chip = {
-+	.name			= "pcf857x",
-+	.irq_enable		= pcf857x_irq_enable,
-+	.irq_disable		= pcf857x_irq_disable,
-+	.irq_ack		= noop,
-+	.irq_mask		= noop,
-+	.irq_unmask		= noop,
-+	.irq_set_wake		= pcf857x_irq_set_wake,
-+	.irq_bus_lock		= pcf857x_irq_bus_lock,
-+	.irq_bus_sync_unlock	= pcf857x_irq_bus_sync_unlock,
-+	.flags			= IRQCHIP_IMMUTABLE,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+};
-+
- /*-------------------------------------------------------------------------*/
- 
- static int pcf857x_probe(struct i2c_client *client,
-@@ -338,16 +353,6 @@ static int pcf857x_probe(struct i2c_client *client,
- 	if (client->irq) {
- 		struct gpio_irq_chip *girq;
- 
--		gpio->irqchip.name = "pcf857x";
--		gpio->irqchip.irq_enable = pcf857x_irq_enable;
--		gpio->irqchip.irq_disable = pcf857x_irq_disable;
--		gpio->irqchip.irq_ack = noop;
--		gpio->irqchip.irq_mask = noop;
--		gpio->irqchip.irq_unmask = noop;
--		gpio->irqchip.irq_set_wake = pcf857x_irq_set_wake;
--		gpio->irqchip.irq_bus_lock = pcf857x_irq_bus_lock;
--		gpio->irqchip.irq_bus_sync_unlock = pcf857x_irq_bus_sync_unlock;
--
- 		status = devm_request_threaded_irq(&client->dev, client->irq,
- 					NULL, pcf857x_irq, IRQF_ONESHOT |
- 					IRQF_TRIGGER_FALLING | IRQF_SHARED,
-@@ -356,7 +361,7 @@ static int pcf857x_probe(struct i2c_client *client,
- 			goto fail;
- 
- 		girq = &gpio->chip.irq;
--		girq->chip = &gpio->irqchip;
-+		gpio_irq_chip_set_chip(girq, &pcf857x_irq_chip);
- 		/* This will let us handle the parent IRQ in the driver */
- 		girq->parent_handler = NULL;
- 		girq->num_parents = 0;
--- 
-2.25.1
+1. Used for a device (I2C etc)
+2. Used as GPIO by setting a bit in YU_GPIO_FW_CONTROL_SET
 
+This is two pin control multiplexing states already.
+
+So this should have a simple pin control driver as back-end with
+the GPIO as front end. A shortcut to enabling pins into GPIO
+mode can be provided using .gpio_request_enable() from
+struct pinmux_ops.
+
+Please refer to
+https://docs.kernel.org/driver-api/pin-control.html
+
+I know this means more work and is kind of complex. But drivers/pinctrl
+has a lot of examples you can follow, for example
+drivers/pinctrl/pinctrl-sx150x.c and other simple multipurpose
+chips.
+
+Yours,
+Linus Walleij
