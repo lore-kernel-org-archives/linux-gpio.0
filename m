@@ -2,113 +2,144 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9A7C433F5
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 May 2022 10:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3DCC433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 May 2022 13:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234997AbiERKLu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 May 2022 06:11:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34678 "EHLO
+        id S237375AbiERNGv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 May 2022 09:06:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234980AbiERKLs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2022 06:11:48 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38B3323BE8;
-        Wed, 18 May 2022 03:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652868707; x=1684404707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fb/5ARR3YO8OMuxywWGPResY3kOWVu7cT520bf4RQsA=;
-  b=ZRF4xmiSvVHNy/lyauhaFg1KM9QfKfLZoYugICHPLc9ZFakiA6+nbNEA
-   QLnNMNICUmVS4LsHbi/LbufwSM7/RN4vMvFDisMMrJck2eH8Jh9GsuLAv
-   798PPSLzCRT/rYqgORuut0e9RLj4DNXSu+RVOvH4tTFA5NbW1Vm+ex/wR
-   ssh0veNnrl+sj0r7/za4e4jIy4cwIcvtc6LLNdYqGE84UFfKuNY6M02jh
-   /+RwHDc6l6uFntfQ3EBiYslZ3BonIHJZxX9SNYtgQac4S34YKwxu8ZZ0w
-   KWgpElmDt/bHUcUI4ZCHhesoJxagMjO8e4Fl2WeqGGX4XGmOEKUyfD+yz
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10350"; a="252114448"
-X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
-   d="scan'208";a="252114448"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 03:11:47 -0700
-X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
-   d="scan'208";a="639193497"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.162])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 03:11:44 -0700
-Received: by lahna (sSMTP sendmail emulation); Wed, 18 May 2022 13:11:42 +0300
-Date:   Wed, 18 May 2022 13:11:42 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] pinctrl: intel: make irq_chip immutable
-Message-ID: <YoTGXmxTMFTBgwy9@lahna>
-References: <20220517163820.86768-1-andriy.shevchenko@linux.intel.com>
- <YoR/QXuS+VlLVWto@lahna>
- <YoSyTq2908EptTGd@smile.fi.intel.com>
- <YoS6EkfU1TdggKS/@lahna>
- <CAHp75VenknSRSUkGj9rKfzw2q1Mm-+zRrzAmcYRLdK1GJHDoHw@mail.gmail.com>
+        with ESMTP id S237606AbiERNGY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2022 09:06:24 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7285C2F002
+        for <linux-gpio@vger.kernel.org>; Wed, 18 May 2022 06:06:23 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:1425:89ca:2e9e:5fc1])
+        by laurent.telenet-ops.be with bizsmtp
+        id YD6P2700310zdRX01D6PYx; Wed, 18 May 2022 15:06:23 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nrJNe-000qds-Kg; Wed, 18 May 2022 15:06:22 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nrJNe-00BiPm-7r; Wed, 18 May 2022 15:06:22 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: pca953x: Make the irqchip immutable
+Date:   Wed, 18 May 2022 15:06:21 +0200
+Message-Id: <6dc8b18570f63d9841c11441c8d203ee655007c7.1652879174.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VenknSRSUkGj9rKfzw2q1Mm-+zRrzAmcYRLdK1GJHDoHw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, May 18, 2022 at 12:05:38PM +0200, Andy Shevchenko wrote:
-> On Wed, May 18, 2022 at 11:19 AM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Wed, May 18, 2022 at 11:46:06AM +0300, Andy Shevchenko wrote:
-> > > On Wed, May 18, 2022 at 08:08:17AM +0300, Mika Westerberg wrote:
-> > > > On Tue, May 17, 2022 at 07:38:19PM +0300, Andy Shevchenko wrote:
-> > > > > +static const struct irq_chip intel_gpio_irq_chip = {
-> > > > > + .name           = "intel-gpio",
-> > > > > + .irq_ack        = intel_gpio_irq_ack,
-> > > > > + .irq_mask       = intel_gpio_irq_mask,
-> > > > > + .irq_unmask     = intel_gpio_irq_unmask,
-> > > > > + .irq_set_type   = intel_gpio_irq_type,
-> > > > > + .irq_set_wake   = intel_gpio_irq_wake,
-> > > > > + .flags          = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_IMMUTABLE,
-> > > > > + GPIOCHIP_IRQ_RESOURCE_HELPERS,
-> > > > > +};
-> > > >
-> > > > You still have the inconsistent alignment here.
-> > >
-> > > I'm not sure what problem do you see.
-> >
-> > I mean the tab alignment you use:
-> >
-> >         .name           = "intel-gpio",
-> >         .irq_ack        = intel_gpio_irq_ack,
-> >         .irq_mask       = intel_gpio_irq_mask,
-> >         .irq_unmask     = intel_gpio_irq_unmask,
-> >         .irq_set_type   = intel_gpio_irq_type,
-> >         .irq_set_wake   = intel_gpio_irq_wake,
-> >
-> > All the other struct initializations in the driver use this style (and I
-> > prefer it too):
-> >
-> >         .name = "intel-gpio",
-> >         .irq_ack = intel_gpio_irq_ack,
-> >         .irq_mask = intel_gpio_irq_mask,
-> >         .irq_unmask = intel_gpio_irq_unmask,
-> >         .irq_set_type = intel_gpio_irq_type,
-> >         .irq_set_wake = intel_gpio_irq_wake,
-> >
-> > Hope this explains.
-> 
-> Yes, thanks!
-> 
-> Okay, can you give your conditional Ack if there are no other
-> comments? I will fix it locally.
+Commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
+immutable") added a warning to indicate if the gpiolib is altering the
+internals of irqchips.  Following this change the following warning is
+now observed for the pca953x driver:
 
-Sure. There was typo also in the second patch $subject, please fix it
-too while you apply them. For both,
+    gpio gpiochip7: (0-0020): not an immutable chip, please consider fixing it!
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Fix this by making the irqchip in the pca953x driver immutable.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Against linux-next.
+Boot-tested with pca9654 on the r8a77990/ebisu development board.
+---
+ drivers/gpio/gpio-pca953x.c | 35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index ba36de7a384527de..0a28f30ff111cd1b 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -201,7 +201,6 @@ struct pca953x_chip {
+ 	DECLARE_BITMAP(irq_stat, MAX_LINE);
+ 	DECLARE_BITMAP(irq_trig_raise, MAX_LINE);
+ 	DECLARE_BITMAP(irq_trig_fall, MAX_LINE);
+-	struct irq_chip irq_chip;
+ #endif
+ 	atomic_t wakeup_path;
+ 
+@@ -629,6 +628,7 @@ static void pca953x_irq_mask(struct irq_data *d)
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 
+ 	clear_bit(hwirq, chip->irq_mask);
++	gpiochip_disable_irq(gc, d->hwirq);
+ }
+ 
+ static void pca953x_irq_unmask(struct irq_data *d)
+@@ -637,6 +637,7 @@ static void pca953x_irq_unmask(struct irq_data *d)
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 
++	gpiochip_enable_irq(gc, d->hwirq);
+ 	set_bit(hwirq, chip->irq_mask);
+ }
+ 
+@@ -721,6 +722,26 @@ static void pca953x_irq_shutdown(struct irq_data *d)
+ 	clear_bit(hwirq, chip->irq_trig_fall);
+ }
+ 
++static void pca953x_irq_print_chip(struct irq_data *data, struct seq_file *p)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
++
++	seq_printf(p, dev_name(gc->parent));
++}
++
++static const struct irq_chip pca953x_irq_chip = {
++	.irq_mask		= pca953x_irq_mask,
++	.irq_unmask		= pca953x_irq_unmask,
++	.irq_set_wake		= pca953x_irq_set_wake,
++	.irq_bus_lock		= pca953x_irq_bus_lock,
++	.irq_bus_sync_unlock	= pca953x_irq_bus_sync_unlock,
++	.irq_set_type		= pca953x_irq_set_type,
++	.irq_shutdown		= pca953x_irq_shutdown,
++	.irq_print_chip		= pca953x_irq_print_chip,
++	.flags			= IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
+ static bool pca953x_irq_pending(struct pca953x_chip *chip, unsigned long *pending)
+ {
+ 	struct gpio_chip *gc = &chip->gpio_chip;
+@@ -812,7 +833,6 @@ static irqreturn_t pca953x_irq_handler(int irq, void *devid)
+ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ {
+ 	struct i2c_client *client = chip->client;
+-	struct irq_chip *irq_chip = &chip->irq_chip;
+ 	DECLARE_BITMAP(reg_direction, MAX_LINE);
+ 	DECLARE_BITMAP(irq_stat, MAX_LINE);
+ 	struct gpio_irq_chip *girq;
+@@ -846,17 +866,8 @@ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ 	bitmap_and(chip->irq_stat, irq_stat, reg_direction, chip->gpio_chip.ngpio);
+ 	mutex_init(&chip->irq_lock);
+ 
+-	irq_chip->name = dev_name(&client->dev);
+-	irq_chip->irq_mask = pca953x_irq_mask;
+-	irq_chip->irq_unmask = pca953x_irq_unmask;
+-	irq_chip->irq_set_wake = pca953x_irq_set_wake;
+-	irq_chip->irq_bus_lock = pca953x_irq_bus_lock;
+-	irq_chip->irq_bus_sync_unlock = pca953x_irq_bus_sync_unlock;
+-	irq_chip->irq_set_type = pca953x_irq_set_type;
+-	irq_chip->irq_shutdown = pca953x_irq_shutdown;
+-
+ 	girq = &chip->gpio_chip.irq;
+-	girq->chip = irq_chip;
++	gpio_irq_chip_set_chip(girq, &pca953x_irq_chip);
+ 	/* This will let us handle the parent IRQ in the driver */
+ 	girq->parent_handler = NULL;
+ 	girq->num_parents = 0;
+-- 
+2.25.1
+
