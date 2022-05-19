@@ -2,116 +2,140 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DDDC433F5
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 May 2022 21:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50736C433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 19 May 2022 01:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243095AbiERVKi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 May 2022 17:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52776 "EHLO
+        id S231608AbiESBMz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 May 2022 21:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243004AbiERVKh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2022 17:10:37 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693AE2550B5;
-        Wed, 18 May 2022 14:10:36 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id c10so4605689edr.2;
-        Wed, 18 May 2022 14:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JKV9lVU79l7/vRGdMw2VsgQs72ssBgmwLYPjAHdPP+k=;
-        b=j0k+UnRq5J9c8xRJb8t2ZFQxvhVMSIEUS06QQ3g8MRSG0RhOcHfvHDar/OqRnEUMSg
-         eLv81Hp3bTCBl+auQwcV8fuWNnk59F1lpJk1UDYmNTfW00LGRqRRk+I/WpfcCJQmQt2j
-         VCnlZy66/ZMgr9Yugy5li82Be3EDvd6utsKvcuG5NZh8YxO7IMo6n11HLKUAZlSjfbFc
-         MXGDevQ8kZOJYsd/s1gs8SQXjTVumsBsc6B7Ga/ZUrFFBXFm6n8SBu3y9BbHOtJGf9h7
-         UgI0BNHUEchB+aB89eR7A5JeNbs/Jfdz5AI5GZ4dOCqaSLxkz3D0SUNG/GqhTdtpflb4
-         Za6g==
+        with ESMTP id S229603AbiESBMz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2022 21:12:55 -0400
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B5A712D24;
+        Wed, 18 May 2022 18:12:54 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-f1eafa567cso1538219fac.8;
+        Wed, 18 May 2022 18:12:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JKV9lVU79l7/vRGdMw2VsgQs72ssBgmwLYPjAHdPP+k=;
-        b=nJebd5kGxH9Q2BXDqsQD7FHSWw5ylvNxrH+4RPk+YqyAy9Bbci+cXQ2hO44mWHM2C7
-         FDMBIW/fGYLIXbGZ/5mIQcUbZLTeGS5jol2CdM3cm4CQT0QVVTjJsePAtuK1HVwaZ92C
-         ZkQPT9CbdHg4r2qkcjERO79gF0elHRKcgaHOlb1xZnqoknRrrc317ZFINc+9lGp5D6jr
-         Rb03r5+HckqlzHm2cwM4cEiC1GpHkzjK8Hauh7mkIQwMoFzt8MxxtWZrq7JIEEogV1Aa
-         euvh0/RaFRhQnY7o+diQKTUhOXDC6URYR1LiTamvIhI50hxIzMvoG2GT8OO/LxW+vghT
-         xfYg==
-X-Gm-Message-State: AOAM532h8f9I6vxqH0ogtYPBGaagmiSHl82h9hbC1UIziYXuN62KrN2q
-        lkUsfZLbNwWjvNCGNbpE3tGuaW6W2Qv4BTTr6VM=
-X-Google-Smtp-Source: ABdhPJw51DfdxfGRtfLi5oKyYAPymH2LdfYbR1w83oGWn93l2R5ph/BmGYdd3FNyq5X+5mv5vg8vCwJVKWA3RHzvv80=
-X-Received: by 2002:aa7:d911:0:b0:42a:af69:e167 with SMTP id
- a17-20020aa7d911000000b0042aaf69e167mr1825172edr.54.1652908234980; Wed, 18
- May 2022 14:10:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 18 May 2022 23:09:58 +0200
-Message-ID: <CAHp75VeyU4Ox76wz9VfT8qEKHsE1eAo2iw27Lro1tmjJB0npMg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] Renesas RZ/G2L IRQC support
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dm0pT+M2kdQ8FRbmsyDYG7h2MbeTEk0HslEwcbyXupE=;
+        b=q25MpA4lXiKaQDLn1qOYZNCg+hOpy6IN/gxtZRxNriV5ElMfh8TAagapewGD3LrjQg
+         hjhYSbInlxWkL0iRn058Jh5n14sBPuMfq3NtpBlVkfQ5afsAPPzr/YFHR5eQLnlUdoQA
+         UbhMx+d4268Zgq6Gugg2P1uZeLS2KOUhC7ajdgGtrFAE+KtHfhRxW9PobBCMB57C+Bqr
+         RpprA7SMZo9Cwps2GEadqpb3AzT8846UzX+nt1B8UqfIujyWPRpjNTn6g6Eqg+nyhOje
+         bOpJb4uW/LV3P8L1Npr2dajbvmG0AR+eRfLWFPmnmLBdeteh4KHwS2u9wZXydXRdAX7P
+         kh/w==
+X-Gm-Message-State: AOAM5333oTvhT+l7u/TZuYXKZzJMAGsYBzGHN/hdXQFcxH9pSIIvljm9
+        u4A0OrlDbv87KHxmzPV6HA==
+X-Google-Smtp-Source: ABdhPJxXxRG+njkKSFVY0tFBAwJuHh8x0LsBP7KO+7VZ1paiRDMleNdakKkuryEsLEYYJVNZZr8WLQ==
+X-Received: by 2002:a05:6870:61cd:b0:e9:8de7:9c51 with SMTP id b13-20020a05687061cd00b000e98de79c51mr1330385oah.50.1652922773248;
+        Wed, 18 May 2022 18:12:53 -0700 (PDT)
+Received: from xps15.. (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.googlemail.com with ESMTPSA id l13-20020a056870f14d00b000f169cbbb32sm1566263oac.43.2022.05.18.18.12.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 May 2022 18:12:52 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Iskren Chernev <iskren.chernev@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: qcom: Drop 'maxItems' on 'wakeup-parent'
+Date:   Wed, 18 May 2022 20:12:09 -0500
+Message-Id: <20220519011210.170022-1-robh@kernel.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, May 18, 2022 at 9:29 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->
-> Hi All,
->
-> The RZ/G2L Interrupt Controller is a front-end for the GIC found on
-> Renesas RZ/G2L SoC's with below pins:
-> - IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI
->   interrupts
-> - GPIO pins used as external interrupt input pins out of GPIOINT0-122 a
->   maximum of only 32 can be mapped to 32 GIC SPI interrupts,
-> - NMI edge select.
->
->                                                              _____________
->                                                              |    GIC     |
->                                                              |  ________  |
->                                       ____________           | |        | |
-> NMI --------------------------------->|          |  SPI0-479 | | GIC-600| |
->              _______                  |          |------------>|        | |
->              |      |                 |          |  PPI16-31 | |        | |
->              |      | IRQ0-IRQ7       |   IRQC   |------------>|        | |
-> P0_P48_4 --->| GPIO |---------------->|          |           | |________| |
->              |      |GPIOINT0-122     |          |           |            |
->              |      |---------------->| TINT0-31 |           |            |
->              |______|                 |__________|           |____________|
->
-> The proposed patches add hierarchical IRQ domain, one in IRQC driver and
-> another in pinctrl driver. Upon interrupt requests map the interrupt to
-> GIC. Out of GPIOINT0-122 only 32 can be mapped to GIC SPI, this mapping is
-> handled by the pinctrl and IRQC driver.
+'wakeup-parent' is a single phandle and not an array, so 'maxItems' is
+wrong. Drop it.
 
-Where is the explanation on why valid_mask can't be used instead?
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/pinctrl/qcom,qcm2290-pinctrl.yaml      | 3 +--
+ .../devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml       | 3 +--
+ .../devicetree/bindings/pinctrl/qcom,sm6115-pinctrl.yaml       | 3 +--
+ .../devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml       | 3 +--
+ .../devicetree/bindings/pinctrl/qcom,tlmm-common.yaml          | 1 -
+ 5 files changed, 4 insertions(+), 9 deletions(-)
 
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,qcm2290-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,qcm2290-pinctrl.yaml
+index 206f4f238736..3f4f1c0360b5 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,qcm2290-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,qcm2290-pinctrl.yaml
+@@ -42,8 +42,7 @@ properties:
+   gpio-ranges:
+     maxItems: 1
+ 
+-  wakeup-parent:
+-    maxItems: 1
++  wakeup-parent: true
+ 
+ #PIN CONFIGURATION NODES
+ patternProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
+index 6c7c3f6a140e..2d228164357c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
+@@ -42,8 +42,7 @@ properties:
+   gpio-ranges:
+     maxItems: 1
+ 
+-  wakeup-parent:
+-    maxItems: 1
++  wakeup-parent: true
+ 
+ #PIN CONFIGURATION NODES
+ patternProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm6115-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm6115-pinctrl.yaml
+index cfcde405d30a..a7a2bb8bff46 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm6115-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm6115-pinctrl.yaml
+@@ -49,8 +49,7 @@ properties:
+   gpio-ranges:
+     maxItems: 1
+ 
+-  wakeup-parent:
+-    maxItems: 1
++  wakeup-parent: true
+ 
+ #PIN CONFIGURATION NODES
+ patternProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
+index cfa2c50fdb93..15bb1018cf21 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
+@@ -49,8 +49,7 @@ properties:
+   gpio-ranges:
+     maxItems: 1
+ 
+-  wakeup-parent:
+-    maxItems: 1
++  wakeup-parent: true
+ 
+ #PIN CONFIGURATION NODES
+ patternProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+index 780f15bb5e40..c88c8dcb69d9 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+@@ -42,7 +42,6 @@ properties:
+     description:
+       Specifying the interrupt-controller used to wake up the system when the
+       TLMM block has been powered down.
+-    maxItems: 1
+ 
+   gpio-reserved-ranges:
+     description:
 -- 
-With Best Regards,
-Andy Shevchenko
+2.34.1
+
